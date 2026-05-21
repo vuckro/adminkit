@@ -430,7 +430,7 @@ body.block-editor-page.adminkit .edit-post-meta-boxes-area,
 body.block-editor-page.adminkit .editor-meta-boxes-area,
 body.block-editor-page.adminkit .editor-meta-boxes-main,
 body.block-editor-page.adminkit .edit-post-layout__metaboxes {
-	background: var(--ak-bg);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 }
 
@@ -439,6 +439,31 @@ body.block-editor-page.adminkit .editor-meta-boxes-main__resize-handle {
 	background: var(--ak-surface);
 	color: var(--ak-heading);
 	border-color: var(--ak-border);
+}
+
+/* "Meta Boxes" presenter — collapsible header bar with the expand
+   toggle (aria-expanded button + chevron) and the drag-to-resize
+   separator handle. Newer Gutenberg structure that replaces the
+   older .edit-post-meta-boxes-area__label / __resize-handle pair. */
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+	border-bottom: 1px solid var(--ak-border);
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[aria-expanded] {
+	color: var(--ak-heading);
+	background: transparent;
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[aria-expanded]:hover,
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[aria-expanded]:focus {
+	color: var(--ak-heading);
+	background: var(--ak-hover-bg);
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[role="separator"] {
+	background: var(--ak-border-strong);
 }
 
 body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox,
