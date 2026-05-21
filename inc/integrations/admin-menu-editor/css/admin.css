@@ -28,11 +28,11 @@ body.adminkit.settings_page_menu_editor .ws_container {
    from the row stack. */
 body.adminkit.settings_page_menu_editor #ws_menu_editor .ws_active {
 	background-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-text);
 }
 
 body.adminkit.settings_page_menu_editor #ws_menu_editor .ws_active .ws_item_title {
-	color: #ffffff;
+	color: var(--ak-text);
 }
 
 /* Active item that's also hidden for the current actor — keep the
@@ -67,6 +67,12 @@ body.adminkit.settings_page_menu_editor a.ws_edit_link:hover {
    The Classic theme paints a pale blue (#c0c0e0) border. */
 body.adminkit.settings_page_menu_editor .ws_button {
 	border-color: var(--ak-border);
+}
+
+/* AME doc / custom postbox handle separator — hardcoded #ccd0d4. */
+body.adminkit.settings_page_menu_editor .ws_ame_doc_box .hndle,
+body.adminkit.settings_page_menu_editor .ws_ame_custom_postbox .hndle {
+	border-bottom-color: var(--ak-border);
 }
 
 
