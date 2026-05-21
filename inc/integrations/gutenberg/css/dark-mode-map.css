@@ -468,11 +468,14 @@ body.block-editor-page.adminkit .editor-meta-boxes-main__resize-handle {
 /* "Meta Boxes" presenter — collapsible header bar with the expand
    toggle (aria-expanded button + chevron) and the drag-to-resize
    separator handle. Newer Gutenberg structure that replaces the
-   older .edit-post-meta-boxes-area__label / __resize-handle pair. */
+   older .edit-post-meta-boxes-area__label / __resize-handle pair.
+   WP ships `box-shadow: 0 1px #ddd` as a faux border — kill it and
+   use border-bottom on --ak-border so it follows the theme. */
 body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter {
 	background: var(--ak-surface);
 	color: var(--ak-heading);
 	border-bottom: 1px solid var(--ak-border);
+	box-shadow: none;
 }
 
 body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[aria-expanded] {
