@@ -47,10 +47,12 @@ body.adminkit .form-table > tbody > tr > th {
 /* Label color — match WP's combined selector exactly. The previous
    `.form-table > tbody > tr > th` (strict child combinator) missed
    any `<label>` that inherits the column's color, and `.form-wrap label`
-   (taxonomy add forms) had no override at all. */
+   (taxonomy add forms) had no override at all. Routed to --ak-text
+   (not --ak-heading) so the label reads as field metadata, not a
+   section title. */
 body.adminkit .form-table th,
 body.adminkit .form-wrap label {
-	color: var(--ak-heading);
+	color: var(--ak-text);
 }
 
 body.adminkit .form-table td p.description {
