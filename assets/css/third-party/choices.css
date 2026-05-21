@@ -1,0 +1,74 @@
+/* Choices.js — used by admin-menu-editor-pro's "Other Roles" picker
+   (and any other plugin that ships the library on admin pages).
+   Choices.js hardcodes #f9f9f9 wrapper bg + #fff search-input bg,
+   neither flips. Route through tokens. Selectors bumped with `.choices`
+   to win against the library at specificity (0,3,0). Scoped to
+   body.adminkit so a builder shipping its own Choices.js on the
+   frontend stays untouched. */
+
+/* Visible bar (wrapper) */
+body.adminkit .choices .choices__inner {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .choices.is-disabled .choices__inner {
+	background-color: var(--ak-surface);
+}
+
+/* Search input inside the wrapper — transparent so it inherits the
+   bar's surface (otherwise components/inputs.css's `input[type="search"]`
+   paints its own --ak-surface-alt layer). Kill the focus ring too —
+   it would draw inside the wrapper. */
+body.adminkit input.choices__input--cloned,
+body.adminkit input[type="search"].choices__input--cloned {
+	background-color: transparent;
+	border: none;
+	box-shadow: none;
+	outline: none;
+	color: var(--ak-text);
+	min-height: 0;
+}
+
+/* Selected pills */
+body.adminkit .choices__list--multiple .choices__item {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: #ffffff;
+}
+
+body.adminkit .choices__list--multiple .choices__item.is-highlighted {
+	background-color: var(--ak-primary-dark);
+	border-color: var(--ak-primary-dark);
+}
+
+/* Dropdown panel */
+body.adminkit .choices__list--dropdown,
+body.adminkit .choices__list[aria-expanded] {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* Items inside the dropdown */
+body.adminkit .choices__list--dropdown .choices__item {
+	color: var(--ak-text);
+}
+
+body.adminkit .choices__list--dropdown .choices__item--selectable.is-highlighted {
+	background-color: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+/* "No results" placeholder + group headers */
+body.adminkit .choices__placeholder,
+body.adminkit .choices__list--dropdown .has-no-results,
+body.adminkit .choices__list--dropdown .has-no-choices {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .choices__heading {
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-heading);
+}

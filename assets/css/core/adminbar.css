@@ -1,0 +1,128 @@
+/* #wpadminbar — admin + frontend.
+   Token-based restyle. Height and spacing are intentionally untouched
+   so WP's html.wp-toolbar top-offset still aligns on the frontend.
+   All selectors are #wpadminbar-prefixed (no body class) — the
+   frontend admin bar runs without our body.adminkit scope. */
+
+#wpadminbar {
+	/* Remap WP's blue. Declared here (not just on body.adminkit) so
+	   the frontend admin bar also reads the brand color. */
+	--wp-admin-theme-color: var(--ak-primary);
+	--wp-admin-theme-color-darker-10: var(--ak-primary-dark);
+	--wp-admin-theme-color-darker-20: var(--ak-primary-dark);
+
+	background: var(--ak-surface) !important;
+	color: var(--ak-text) !important;
+	font-family: var(--ak-font-body) !important;
+	border-bottom: 1px solid var(--ak-border);
+}
+
+/* Default text — items + labels */
+#wpadminbar .ab-item,
+#wpadminbar a.ab-item,
+#wpadminbar > #wp-toolbar span.ab-label {
+	color: var(--ak-text) !important;
+}
+
+/* Default icons (Dashicons + WP svgs) */
+#wpadminbar .ab-icon::before,
+#wpadminbar .ab-item::before,
+#wpadminbar .ab-item::after {
+	color: var(--ak-text-muted) !important;
+}
+
+/* Hover / focus on top-level items. WP's admin-bar.css ships four
+   selectors painting #2c3338 bg + #72aee6 blue text:
+     1. `#wpadminbar .ab-top-menu>li.hover>.ab-item`                (1,3,1)
+     2. `#wpadminbar:not(.mobile) .ab-top-menu>li:hover>.ab-item`   (1,4,1)
+     3. `#wpadminbar:not(.mobile) .ab-top-menu>li>.ab-item:focus`   (1,4,1)
+     4. `#wpadminbar.nojq .quicklinks .ab-top-menu>li>.ab-item:focus` (1,5,1)
+   Mirror each variant at equal specificity so we win on load order
+   (AdminKit enqueues at priority 9999, after WP). The icon ::before
+   only gets a color change — painting bg there too would stack two
+   layers and leave a visible square behind the glyph. */
+#wpadminbar:not(.mobile) .ab-top-menu > li:hover > .ab-item,
+#wpadminbar:not(.mobile) .ab-top-menu > li.hover > .ab-item,
+#wpadminbar:not(.mobile) .ab-top-menu > li > .ab-item:focus,
+#wpadminbar:not(.mobile) .ab-top-menu > li > .ab-item:hover,
+#wpadminbar.nojq .quicklinks .ab-top-menu > li > .ab-item:focus {
+	color: var(--ak-heading);
+	background: var(--ak-elevated);
+}
+
+#wpadminbar:not(.mobile) .ab-top-menu > li:hover .ab-icon::before,
+#wpadminbar:not(.mobile) .ab-top-menu > li > .ab-item:focus .ab-icon::before {
+	color: var(--ak-heading);
+}
+
+/* Submenu dropdowns — same surface as the bar, native flat look.
+   Using --ak-surface (not --ak-surface-alt) so the dropdown reads as
+   an extension of the bar instead of a brighter floating panel. */
+#wpadminbar .menupop ul {
+	background: var(--ak-surface) !important;
+	border: none !important;
+	box-shadow: none !important;
+}
+
+#wpadminbar .ab-submenu {
+	padding: 6px 0;
+}
+
+#wpadminbar .menupop ul a {
+	color: var(--ak-text) !important;
+}
+
+/* Hover / focus — text color only. No bg tint: the dropdown is
+   already a distinct surface and an extra hover layer would just
+   add visual noise. */
+#wpadminbar .menupop ul a:hover,
+#wpadminbar .menupop ul a:focus {
+	color: var(--ak-heading) !important;
+}
+
+/* User-info block — round avatar (top bar + dropdown), name hierarchy */
+#wpadminbar .with-avatar > a img,
+#wp-admin-bar-user-info img {
+	border-radius: var(--ak-radius-full);
+}
+
+#wp-admin-bar-user-info .display-name {
+	color: var(--ak-heading) !important;
+	font-weight: 600;
+}
+
+#wp-admin-bar-user-info .username {
+	color: var(--ak-text-muted) !important;
+}
+
+/* Pending-count bubble (comments / updates) */
+#wpadminbar .ab-label .pending-count {
+	background: var(--ak-secondary);
+	color: #ffffff;
+	border-radius: var(--ak-radius-full);
+	font-weight: 600;
+}
+
+/* Theme toggle — sun visible in light, moon in dark. */
+#wpadminbar .ak-theme-icon {
+	width: 18px;
+	height: 18px;
+	vertical-align: middle;
+}
+
+/* No hover / focus background on the toggle — it's an icon button,
+   the color shift the universal hover rule applies is enough feedback. */
+#wpadminbar #wp-admin-bar-ak-theme-toggle:hover .ab-item,
+#wpadminbar #wp-admin-bar-ak-theme-toggle.hover .ab-item,
+#wpadminbar #wp-admin-bar-ak-theme-toggle .ab-item:focus {
+	background: transparent !important;
+}
+
+#wp-admin-bar-ak-theme-toggle .ak-theme-dark,
+:root[data-adminkit-theme="dark"] #wp-admin-bar-ak-theme-toggle .ak-theme-light {
+	display: none;
+}
+
+:root[data-adminkit-theme="dark"] #wp-admin-bar-ak-theme-toggle .ak-theme-dark {
+	display: inline;
+}

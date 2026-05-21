@@ -1,0 +1,54 @@
+/* import.php — Tools > Import.
+   WP renders the importer table with `.importer-title { color: #000 }`
+   and `.importer-action { color: #50575e }`, both hardcoded. The
+   `<table class="widefat importers striped">` doesn't carry the
+   .wp-list-table class so it's not covered by components/tables.css —
+   styled here directly. */
+
+body.adminkit.import-php .importer-title {
+	color: var(--ak-heading);
+	font-weight: 500;
+}
+
+body.adminkit.import-php .importer-desc {
+	color: var(--ak-text);
+}
+
+body.adminkit.import-php .importer-action {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.import-php .importer-action a {
+	color: var(--ak-text);
+}
+
+body.adminkit.import-php .importer-action a:hover,
+body.adminkit.import-php .importer-action a:focus {
+	color: var(--ak-heading);
+}
+
+body.adminkit.import-php .widefat.importers {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+}
+
+body.adminkit.import-php .widefat.importers tbody tr {
+	background: var(--ak-surface-alt);
+}
+
+body.adminkit.import-php .widefat.importers tbody tr:nth-child(odd) {
+	background: var(--ak-surface);
+}
+
+body.adminkit.import-php .widefat.importers tbody td {
+	border-top: 1px solid var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.import-php .widefat.importers tbody tr:first-child td {
+	border-top: none;
+}

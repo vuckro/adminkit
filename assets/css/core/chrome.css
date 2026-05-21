@@ -1,0 +1,506 @@
+/* Core wp-admin chrome: sidebar, postboxes, notices, footer, modal frame,
+   tabs. Always loaded on every admin page. Page titles get color only
+   (no font/size changes). */
+
+body.adminkit,
+body.adminkit #wpwrap,
+body.adminkit #wpbody,
+body.adminkit #wpbody-content {
+	font-family: var(--ak-font-body);
+	color: var(--ak-text);
+	background: var(--ak-bg);
+}
+
+body.adminkit {
+	font-size: var(--ak-text-m);
+}
+
+/* Page title color (color only, no font/size changes) */
+body.adminkit .wrap h1,
+body.adminkit .wrap h1.wp-heading-inline {
+	color: var(--ak-heading);
+}
+
+/* Global h1 / h2 / h3 fallback. WP applies `color: #1d2327` to every
+   heading level in common.css; without this catch-all, headings
+   inside random widgets / plugin pages / React UIs stay near-black
+   on a dark surface. */
+body.adminkit h1,
+body.adminkit h2,
+body.adminkit h3 {
+	color: var(--ak-heading);
+}
+
+/* Global `<hr>` fallback. WP's forms.css ships
+   `hr { border-top: 1px solid #dcdcde; border-bottom: 1px solid #f6f7f7 }`
+   (a double-line trick simulating a hairline shadow). The bottom line
+   reads as a bright stripe on dark surfaces. Route the top through
+   --ak-border and transparent the bottom. */
+body.adminkit hr {
+	border-top-color: var(--ak-border);
+	border-bottom-color: transparent;
+}
+
+/* Sidebar admin menu — chrome colors flip with the theme */
+body.adminkit #adminmenuback,
+body.adminkit #adminmenuwrap,
+body.adminkit #adminmenu {
+	background: var(--ak-surface);
+	border-right: 1px solid var(--ak-border);
+}
+
+body.adminkit #adminmenu a {
+	color: var(--ak-text);
+	font-family: var(--ak-font-body);
+	font-weight: 500;
+}
+
+body.adminkit #adminmenu .wp-menu-name {
+	font-size: var(--ak-text-s);
+}
+
+body.adminkit #adminmenu li.menu-top {
+	border: none;
+}
+
+/* Hover / focus on non-current items — match WP's exact selectors with
+   !important to defeat colors.css */
+body.adminkit #adminmenu a:hover,
+body.adminkit #adminmenu li.menu-top:hover,
+body.adminkit #adminmenu li.opensub > a.menu-top,
+body.adminkit #adminmenu li > a.menu-top:focus {
+	color: var(--ak-heading) !important;
+	background-color: var(--ak-hover-bg) !important;
+}
+
+/* WP core ships `#adminmenu a:focus, #adminmenu a:hover` with
+   `box-shadow: inset 4px 0 0 0 currentColor; transition: box-shadow .1s`.
+   That paints a 4px vertical bar in the link's text color — in the Modern
+   scheme that color is blue (#7b90ff), so a colored stripe leaks into our
+   palette on focus / hover, plus the animation we don't want. Kill both. */
+body.adminkit #adminmenu a:focus,
+body.adminkit #adminmenu a:hover,
+body.adminkit.folded #adminmenu .wp-submenu-head:hover {
+	box-shadow: none !important;
+	transition: none !important;
+}
+
+body.adminkit #adminmenu li.menu-top:hover .wp-menu-image::before,
+body.adminkit #adminmenu li.menu-top:focus-within .wp-menu-image::before {
+	color: var(--ak-heading);
+}
+
+body.adminkit #adminmenu .wp-menu-image::before {
+	color: var(--ak-text-muted);
+}
+
+/* Current item — primary green bg with white text/icon in both modes */
+body.adminkit #adminmenu li.current a.menu-top,
+body.adminkit #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
+body.adminkit #adminmenu li.wp-menu-open,
+body.adminkit #adminmenu li.current.menu-top {
+	background: var(--ak-primary) !important;
+	color: #ffffff !important;
+}
+
+body.adminkit #adminmenu li.current a.menu-top .wp-menu-image::before,
+body.adminkit #adminmenu li.wp-has-current-submenu .wp-menu-image::before {
+	color: #ffffff !important;
+}
+
+/* Sidebar submenu — elevated surface. Inline (expanded sidebar, current
+   item) gets a top border only; fly-out variants (hovering a non-current
+   item OR folded sidebar) get a full border to feel like a popup. */
+/* Selector list matches every WP color-scheme variant of .wp-submenu —
+   especially the more specific `.wp-has-current-submenu .wp-submenu` (the
+   currently open item) which we'd otherwise lose to WP's dark default. */
+body.adminkit #adminmenu .wp-submenu,
+body.adminkit #adminmenu .wp-has-current-submenu .wp-submenu,
+body.adminkit #adminmenu .opensub .wp-submenu {
+	background: var(--ak-surface-alt);
+	border: none;
+	border-top: 1px solid var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit #adminmenu li.opensub > .wp-submenu,
+body.adminkit.folded #adminmenu .wp-submenu,
+body.adminkit.auto-fold #adminmenu .wp-submenu {
+	border: 1px solid var(--ak-border);
+}
+
+/* Submenu link colors — WP color schemes ship (0,3,3)-specificity rules
+   like `#adminmenu .wp-has-current-submenu.opensub .wp-submenu a:hover`
+   painting blue/white text designed for their dark sidebar. Our sidebar
+   is light, so those leak. `!important` is the cheapest way to win — chaining
+   every WP variant in the selector would be ten lines for the same effect. */
+body.adminkit #adminmenu .wp-submenu a {
+	color: var(--ak-text) !important;
+	padding: 8px 12px;
+}
+
+body.adminkit #adminmenu .wp-submenu a:hover,
+body.adminkit #adminmenu .wp-submenu a:focus {
+	color: var(--ak-heading) !important;
+	background: var(--ak-hover-bg) !important;
+}
+
+/* Current submenu item — subtle background tint + bold so the active
+   page is visible without leaning on a hardcoded accent color. */
+body.adminkit #adminmenu .wp-submenu li.current a,
+body.adminkit #adminmenu .wp-submenu li.current a:hover,
+body.adminkit #adminmenu .wp-submenu li.current a:focus {
+	color: var(--ak-heading) !important;
+	background: var(--ak-hover-bg) !important;
+	font-weight: 600;
+}
+
+/* Awareness bubbles (pending comments, updates) */
+body.adminkit #adminmenu .awaiting-mod,
+body.adminkit #adminmenu .update-plugins {
+	background: var(--ak-secondary);
+	color: #ffffff;
+	border-radius: var(--ak-radius-full);
+	font-weight: 600;
+}
+
+/* WP color schemes repaint the bubble bg to near-black when the parent
+   item is hovered or current, via selectors like
+     `#adminmenu li.menu-top:hover>a .update-plugins` (1,2,2)
+   which beats our (1,2,1) default override. Mirror the same selector
+   chain with `body.adminkit` so each variant lands at (1,3,2). */
+body.adminkit #adminmenu li a.wp-has-current-submenu .update-plugins,
+body.adminkit #adminmenu li.current a .awaiting-mod,
+body.adminkit #adminmenu li.menu-top:hover > a .update-plugins,
+body.adminkit #adminmenu li:hover a .awaiting-mod {
+	background: var(--ak-secondary);
+	color: #ffffff;
+}
+
+/* Collapse menu */
+body.adminkit #collapse-menu {
+	color: var(--ak-text-muted);
+	border-top: 1px solid var(--ak-border);
+}
+
+body.adminkit #collapse-menu:hover {
+	color: var(--ak-heading);
+}
+
+/* WP color-scheme stylesheets hardcode hex blues in a few places that
+   bypass --wp-admin-theme-color. Group those overrides here. */
+body.adminkit #collapse-button {
+	color: var(--ak-text);
+}
+
+body.adminkit #collapse-button:hover,
+body.adminkit #collapse-button:focus {
+	color: var(--ak-heading);
+}
+
+
+/* Postboxes / metaboxes */
+body.adminkit .postbox {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	margin-bottom: 16px;
+	overflow: hidden;
+}
+
+body.adminkit .postbox-header {
+	background: var(--ak-surface);
+	border-bottom: 1px solid var(--ak-border);
+}
+
+/* Widget / postbox titles — make them visible in both modes */
+body.adminkit .postbox-header h2,
+body.adminkit .postbox-header h3,
+body.adminkit .postbox .hndle,
+body.adminkit .widget .widget-top h3 {
+	color: var(--ak-heading);
+	font-weight: 600;
+}
+
+body.adminkit .postbox .inside {
+	padding: 16px;
+	margin: 0;
+}
+
+body.adminkit .postbox .handle-actions .handlediv,
+body.adminkit .postbox .handle-order-higher,
+body.adminkit .postbox .handle-order-lower {
+	color: var(--ak-text-muted);
+}
+
+/* Dashboard widget separators — WP hardcodes #f0f0f1 / #e9e9ed / #dcdcde
+   on many widget border-tops, all of which read as a bright white line
+   on our dark surface. Route them through --ak-border. The high-specificity
+   selectors (#activity-widget #the-comment-list ...) need to be matched
+   exactly to beat WP's own selector. */
+body.adminkit .activity-block,
+body.adminkit .dashboard-comment-wrap,
+body.adminkit #dashboard-widgets .rss-widget li,
+body.adminkit #dashboard_primary li,
+body.adminkit .wp-dashboard-events-news li,
+body.adminkit .community-events li:first-child,
+body.adminkit .community-events li ~ li,
+body.adminkit .community-events .activity-block.last,
+body.adminkit .community-events-footer,
+body.adminkit #activity-widget #the-comment-list .comment-item:first-child,
+body.adminkit #future-posts li,
+body.adminkit #published-posts li,
+body.adminkit .js #dashboard_quick_press .drafts,
+body.adminkit #dashboard_activity .subsubsub,
+body.adminkit #dashboard_right_now .sub {
+	border-color: var(--ak-border);
+}
+
+/* Dashboard widget inset surfaces — Activity comment cards, Right Now
+   sub-stats, and striped post lists all hardcode `background: #f6f7f7`,
+   a near-white that clashes hard on our dark surface. Route them through
+   --ak-surface (slightly recessed from the postbox surface-alt). */
+body.adminkit #activity-widget #the-comment-list .comment-item,
+body.adminkit #dashboard_right_now .sub,
+body.adminkit #future-posts li:nth-child(odd),
+body.adminkit #published-posts li:nth-child(odd) {
+	background: var(--ak-surface);
+}
+
+/* The `#future-posts li / #published-posts li` rule also hardcodes
+   `color: #646970` on the row, which the `<span>` date inside
+   inherits. Route to --ak-text-muted so the date reads as metadata
+   in both modes. */
+body.adminkit #future-posts li,
+body.adminkit #published-posts li {
+	color: var(--ak-text-muted);
+}
+
+/* Dashboard widget headings — WP hardcodes `color: #1d2327` on every
+   widget h2 / h3 / h4, invisible on our dark surface. */
+body.adminkit #dashboard-widgets h3,
+body.adminkit #dashboard-widgets h4,
+body.adminkit #dashboard_quick_press .drafts h2 {
+	color: var(--ak-heading);
+}
+
+/* Notices */
+body.adminkit .notice,
+body.adminkit div.updated,
+body.adminkit div.error {
+	border-left-width: 4px;
+	background: var(--ak-surface-alt);
+}
+
+/* WP's common.css groups a dozen container classes under a single
+   `border: 1px solid #c3c4c7; box-shadow: 0 1px 1px rgba(0,0,0,0.04)`
+   rule. Strip both — components that need a border get one back
+   explicitly via their token-aware page-specific override. */
+body.adminkit #menu-management .menu-edit,
+body.adminkit #menu-settings-column .accordion-container,
+body.adminkit .comment-ays,
+body.adminkit .feature-filter,
+body.adminkit .manage-menus,
+body.adminkit .menu-item-handle,
+body.adminkit .popular-tags,
+body.adminkit .stuffbox,
+body.adminkit .widget-inside,
+body.adminkit .widget-top,
+body.adminkit .widgets-holder-wrap,
+body.adminkit .wp-editor-container,
+body.adminkit p.popular-tags,
+body.adminkit table.widefat {
+	border: none;
+	box-shadow: none;
+}
+
+/* Accordion section body — WP paints `background: #fff` which leaks
+   in dark mode. Used on nav-menus, edit screens, etc. */
+body.adminkit .accordion-section-content {
+	background: var(--ak-surface-alt);
+}
+
+/* Welcome panel column container (dashboard hero bottom strip) — WP
+   paints `bg: #fff; border: 1px solid #c3c4c7`. The dark hero header
+   above stays as-is (#151515 is a design-intent contrast). */
+body.adminkit .welcome-panel .welcome-panel-column-container {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+/* `.howto` help labels (legend / fieldset hints used by nav-menus,
+   appearance pages, options forms, ...). WP paints #646970. */
+body.adminkit .howto {
+	color: var(--ak-text-muted);
+}
+
+/* Misc nav-menus tab link variants not covered by the nav-menus-php
+   block — the side-sortables column on edit-post screens, and the
+   `.wp-tab-active` active state on wp-tab-bars. WP paints all of
+   them #2c3338 (near-black). */
+body.adminkit #post-body ul.add-menu-item-tabs li.tabs a,
+body.adminkit #post-body ul.category-tabs li.tabs a,
+body.adminkit #side-sortables .add-menu-item-tabs .tabs a,
+body.adminkit #side-sortables .category-tabs .tabs a,
+body.adminkit .wp-tab-bar .wp-tab-active a {
+	color: var(--ak-heading);
+}
+
+body.adminkit .notice-success,
+body.adminkit div.updated {
+	border-left-color: var(--ak-success);
+}
+
+body.adminkit .notice-warning {
+	border-left-color: var(--ak-warning);
+}
+
+body.adminkit .notice-error,
+body.adminkit div.error {
+	border-left-color: var(--ak-error);
+}
+
+body.adminkit .notice-info {
+	border-left-color: var(--ak-info);
+}
+
+/* WP hardcodes `color: #1e1e1e` on notice / updated / error paragraph text,
+   which turns invisible on our dark surface. Route it through the token. */
+body.adminkit .notice p,
+body.adminkit .form-table td .notice p,
+body.adminkit .notice-title,
+body.adminkit div.error p,
+body.adminkit div.updated p {
+	color: var(--ak-text);
+}
+
+/* Notice dismiss cross — same #1e1e1e hardcoded in WP, in default + hover
+   + active + focus states. Route through --ak-text-muted (lighter so the
+   close button reads as secondary) with --ak-text on hover. */
+body.adminkit .notice-dismiss::before,
+body.adminkit .notice-dismiss:hover::before,
+body.adminkit .notice-dismiss:active::before,
+body.adminkit .notice-dismiss:focus::before {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .notice-dismiss:hover::before {
+	color: var(--ak-text);
+	opacity: 1;
+}
+
+/* Screen Options + Help — top-right collapsible panels */
+body.adminkit #screen-meta {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-top: none;
+	color: var(--ak-text);
+}
+
+body.adminkit #screen-meta-links .show-settings,
+body.adminkit #screen-meta-links a {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit #screen-meta-links a:hover,
+body.adminkit #screen-meta-links a:focus {
+	color: var(--ak-heading);
+	background: var(--ak-surface);
+}
+
+body.adminkit #contextual-help-wrap,
+body.adminkit #screen-options-wrap {
+	color: var(--ak-text);
+}
+
+body.adminkit #contextual-help-wrap h5,
+body.adminkit #screen-options-wrap h5,
+body.adminkit #screen-meta h5 {
+	color: var(--ak-heading);
+}
+
+/* Contextual Help tabs (left sidebar of the Help drawer) — WP paints
+   `.contextual-help-tabs a:hover { color: #2c3338 }` at (0,2,1), same
+   spec as my generic `body.adminkit a:hover`. Add a tab-specific
+   override so the cascade has a clear winner. */
+body.adminkit .contextual-help-tabs a,
+body.adminkit .contextual-help-tabs a:hover,
+body.adminkit .contextual-help-tabs a:focus {
+	color: var(--ak-text);
+}
+
+body.adminkit .contextual-help-tabs .active a,
+body.adminkit .contextual-help-tabs li.active a {
+	color: var(--ak-heading);
+}
+
+/* Footer */
+body.adminkit #wpfooter {
+	color: var(--ak-text-muted);
+	font-size: var(--ak-text-xs);
+}
+
+body.adminkit #wpfooter a {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit #wpfooter a:hover {
+	color: var(--ak-text);
+}
+
+/* Media modal chrome (only the frame, never the contents) */
+body.adminkit .media-modal-content {
+	border-radius: var(--ak-radius-m);
+	overflow: hidden;
+}
+
+/* Tab navigation */
+body.adminkit .nav-tab-wrapper {
+	border-bottom: 1px solid var(--ak-border);
+	padding-left: 0;
+}
+
+body.adminkit .nav-tab {
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid transparent;
+	border-radius: 0;
+	color: var(--ak-text-muted);
+	font-weight: 500;
+	padding: 8px 14px;
+	margin: 0 4px -1px 0;
+}
+
+body.adminkit .nav-tab:hover {
+	color: var(--ak-heading);
+	background: transparent;
+}
+
+body.adminkit .nav-tab-active,
+body.adminkit .nav-tab-active:hover,
+body.adminkit .nav-tab-active:focus {
+	background: transparent;
+	color: var(--ak-heading);
+	border-bottom-color: var(--ak-heading);
+}
+
+/* Subsubsub links (filter rows above tables) */
+body.adminkit .subsubsub a {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .subsubsub a:hover {
+	color: var(--ak-text);
+}
+
+body.adminkit .subsubsub a.current {
+	color: var(--ak-heading);
+	font-weight: 600;
+}
+
+body.adminkit .subsubsub .count {
+	color: var(--ak-text-muted);
+}

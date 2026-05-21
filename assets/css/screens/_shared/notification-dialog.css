@@ -1,0 +1,23 @@
+/* `.notification-dialog` — the centered modal card used by the
+   file-editor warning ("Heads up!" prompt when arriving on
+   plugin-editor / theme-editor), the post-lock dialog, and the
+   filesystem-credentials dialog. WP hardcodes `background: #fff` on
+   the card; the backdrop is already a 70% alpha black so it survives
+   both modes. */
+
+body.adminkit .notification-dialog {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+
+body.adminkit .notification-dialog h1,
+body.adminkit .notification-dialog h2,
+body.adminkit .notification-dialog h3 {
+	color: var(--ak-heading);
+}
+
+body.adminkit #file-editor-warning .file-editor-warning-content,
+body.adminkit #post-lock-dialog .post-locked-message,
+body.adminkit #post-lock-dialog .post-taken-over {
+	color: var(--ak-text);
+}

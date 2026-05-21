@@ -1,0 +1,175 @@
+/* WP list tables — .wp-list-table, .widefat, tablenav, Quick Edit.
+   Plugins-table-specific rules (active/inactive/update markers) live
+   in screens/plugins.css since they only apply on plugins.php. */
+
+/* .widefat content text — WP hardcodes #2c3338 which doesn't react to dark mode */
+body.adminkit .widefat p,
+body.adminkit .widefat ol,
+body.adminkit .widefat ul,
+body.adminkit .widefat li {
+	color: var(--ak-text);
+}
+
+/* WP list tables */
+body.adminkit .wp-list-table {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+}
+
+body.adminkit .wp-list-table thead th,
+body.adminkit .wp-list-table thead td,
+body.adminkit .wp-list-table tfoot th,
+body.adminkit .wp-list-table tfoot td,
+body.adminkit .wp-list-table thead th.check-column,
+body.adminkit .wp-list-table tfoot th.check-column {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+	font-weight: 600;
+	font-size: var(--ak-text-s);
+	border-bottom: 1px solid var(--ak-border);
+	border-top: none;
+	padding: 10px;
+}
+
+/* Sort indicators + header links — all heading color */
+body.adminkit .wp-list-table thead th a,
+body.adminkit .wp-list-table tfoot th a,
+body.adminkit .wp-list-table thead th.sorted .sorting-indicator,
+body.adminkit .wp-list-table thead th.sortable:hover .sorting-indicator {
+	color: var(--ak-heading);
+}
+
+body.adminkit .wp-list-table tbody td,
+body.adminkit .wp-list-table tbody th {
+	padding: 10px;
+	border-top: 1px solid var(--ak-border);
+	color: var(--ak-text);
+	font-size: var(--ak-text-s);
+}
+
+body.adminkit .wp-list-table tbody tr:first-child td,
+body.adminkit .wp-list-table tbody tr:first-child th {
+	border-top: none;
+}
+
+body.adminkit .wp-list-table tbody tr:hover,
+body.adminkit .wp-list-table tbody tr:hover td {
+	background: var(--ak-surface);
+}
+
+body.adminkit .wp-list-table .row-title:hover {
+	color: var(--ak-heading);
+}
+
+body.adminkit .wp-list-table .row-actions a {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .wp-list-table .row-actions a:hover {
+	color: var(--ak-text);
+}
+
+body.adminkit .wp-list-table .row-actions .delete a,
+body.adminkit .wp-list-table .row-actions .trash a {
+	color: var(--ak-error);
+}
+
+/* tablenav (pagination row) */
+body.adminkit .tablenav .tablenav-pages a,
+body.adminkit .tablenav .tablenav-pages a:link {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-s);
+	padding: 2px 8px;
+	margin: 0 2px;
+}
+
+body.adminkit .tablenav .tablenav-pages a:hover {
+	background: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+
+body.adminkit .tablenav .tablenav-pages-navspan,
+body.adminkit .tablenav .tablenav-pages span.current {
+	background: var(--ak-heading);
+	color: var(--ak-surface-alt);
+	border-color: var(--ak-heading);
+	border-radius: var(--ak-radius-s);
+	padding: 2px 8px;
+}
+
+/* "No items found" empty state */
+body.adminkit .wp-list-table tbody tr.no-items td {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text-muted);
+	text-align: center;
+	padding: 32px 16px;
+}
+
+/* Quick Edit / Bulk Edit inline form */
+body.adminkit .inline-edit-row,
+body.adminkit tr.inline-edit-row td {
+	background: var(--ak-surface);
+}
+
+body.adminkit .inline-edit-row fieldset {
+	font-size: var(--ak-text-s);
+}
+
+body.adminkit .inline-edit-row fieldset label span.title,
+body.adminkit .inline-edit-row fieldset .inline-edit-categories label {
+	color: var(--ak-heading);
+	font-weight: 500;
+}
+
+body.adminkit .inline-edit-row fieldset label span.input-text-wrap input,
+body.adminkit .inline-edit-row fieldset label textarea,
+body.adminkit .inline-edit-row fieldset select {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+
+body.adminkit .inline-edit-row .inline-edit-save {
+	background: transparent;
+	padding-top: 12px;
+	border-top: 1px solid var(--ak-border);
+	margin-top: 12px;
+}
+
+/* Scrollable category / bulk-title checklists — Quick Edit picker AND
+   the post editor metabox. WP hardcodes a light #ddd border that doesn't
+   flip in dark mode; route it through our token + add a radius. */
+body.adminkit #bulk-titles,
+body.adminkit ul.cat-checklist {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+
+body.adminkit .inline-edit-row h4 {
+	color: var(--ak-heading);
+	font-weight: 600;
+}
+
+/* Striped + bordered cells (refined compatibility) */
+body.adminkit .striped > tbody > :nth-child(odd),
+body.adminkit .alternate {
+	background: var(--ak-surface-alt);
+}
+
+body.adminkit .wp-list-table .check-column {
+	width: 2.2em;
+	padding: 10px 0 10px 10px;
+	vertical-align: middle;
+}
+
+body.adminkit .wp-list-table .check-column input[type="checkbox"] {
+	margin: 0;
+}

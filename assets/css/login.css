@@ -1,0 +1,183 @@
+/* wp-login.php */
+
+body.login,
+body.login.adminkit {
+	background: var(--ak-bg);
+	font-family: var(--ak-font-body);
+	color: var(--ak-text);
+}
+
+#login {
+	width: 360px;
+	padding-top: 64px;
+}
+
+/* Logo — the URL is injected by PHP from the WP site icon (favicon).
+   If no site icon is set, falls back to the default WP logo. */
+#login h1,
+#login h1 a {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 100%;
+	height: 72px;
+	margin-bottom: 16px;
+}
+
+/* Form card — flat, no shadow */
+#loginform,
+.login form {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	padding: 24px;
+}
+
+.login form .input,
+.login input[type="text"],
+.login input[type="password"],
+.login input[type="email"] {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+	font-family: var(--ak-font-body);
+	font-size: var(--ak-text-m);
+	padding: 8px 10px;
+	box-shadow: none;
+}
+
+.login form .input:focus,
+.login input[type="text"]:focus,
+.login input[type="password"]:focus,
+.login input[type="email"]:focus {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+.login label {
+	color: var(--ak-text);
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+}
+
+/* Show/hide password toggle */
+.login .wp-pwd .button.wp-hide-pw {
+	background: transparent;
+	border: none;
+	color: var(--ak-text-muted);
+	box-shadow: none;
+}
+
+.login .wp-pwd .button.wp-hide-pw:hover,
+.login .wp-pwd .button.wp-hide-pw:focus {
+	color: var(--ak-text);
+	background: transparent;
+}
+
+/* Submit button (compact) */
+.login .button-primary,
+.wp-core-ui .login .button-primary,
+#wp-submit {
+	background: var(--ak-primary) !important;
+	border: 1px solid var(--ak-primary) !important;
+	color: #ffffff !important;
+	font-family: var(--ak-font-body);
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	border-radius: var(--ak-radius-s);
+	padding: 0 14px;
+	min-height: 32px;
+	line-height: 2.15;
+	box-shadow: none;
+	text-shadow: none;
+	float: right;
+}
+
+.login .button-primary:hover,
+.login .button-primary:focus,
+#wp-submit:hover,
+#wp-submit:focus {
+	background: var(--ak-primary-dark) !important;
+	border-color: var(--ak-primary-dark) !important;
+	color: #ffffff !important;
+}
+
+.login .button-primary:focus,
+#wp-submit:focus {
+	box-shadow: var(--ak-focus-ring) !important;
+}
+
+/* "Remember me" row */
+.login .forgetmenot label {
+	color: var(--ak-text-muted);
+	font-size: var(--ak-text-s);
+}
+
+/* Nav links below form */
+.login #nav,
+.login #backtoblog {
+	padding: 8px 0;
+	text-align: center;
+}
+
+.login #nav a,
+.login #backtoblog a {
+	color: var(--ak-text-muted);
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.login #nav a:hover,
+.login #backtoblog a:hover,
+.login #nav a:focus,
+.login #backtoblog a:focus {
+	color: var(--ak-heading);
+}
+
+/* Messages */
+.login .message,
+.login #login_error,
+.login .notice {
+	background: var(--ak-surface-alt);
+	border-left: 4px solid var(--ak-info);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+	font-size: var(--ak-text-s);
+	padding: 10px 14px;
+}
+
+.login #login_error {
+	border-left-color: var(--ak-error);
+}
+
+.login .message {
+	border-left-color: var(--ak-success);
+}
+
+/* Language switcher */
+.login .language-switcher select {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+	padding: 4px 8px;
+	font-family: var(--ak-font-body);
+	font-size: var(--ak-text-s);
+}
+
+.login .language-switcher .button {
+	background: transparent;
+	border: 1px solid var(--ak-border);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-s);
+	padding: 4px 10px;
+}
+
+.login .language-switcher .button:hover {
+	background: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}

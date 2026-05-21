@@ -1,0 +1,72 @@
+/* plugin-editor.php — Plugin File Editor.
+   Chrome only. The CodeMirror editor body keeps its native white
+   background and syntax-highlighting colors in light mode — those tokens
+   (.cm-keyword, .cm-string, ...) are calibrated for a light surface
+   and would look wrong if naively flipped. Dark-mode CodeMirror
+   palette lives in screens/code-mirror.css. Everything around the
+   editor (file tree sidebar, gutter, message bar) routes through
+   our tokens here. */
+
+body.adminkit.plugin-editor-php #template .CodeMirror,
+body.adminkit.plugin-editor-php #template textarea {
+	border-color: var(--ak-border);
+}
+
+/* Fallback textarea (when CodeMirror fails to load) */
+body.adminkit.plugin-editor-php #template textarea {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+}
+
+/* File-tree sidebar — primary nav of this page, must read clearly */
+body.adminkit.plugin-editor-php #templateside > ul {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.plugin-editor-php #templateside li:not(.howto) a {
+	color: var(--ak-text);
+}
+
+body.adminkit.plugin-editor-php [role="treeitem"].hover,
+body.adminkit.plugin-editor-php [role="treeitem"] .folder-label.hover {
+	background-color: var(--ak-hover-bg);
+}
+
+/* Tree keyboard focus — WP paints #043959 (dark navy), unreadable on
+   dark. */
+body.adminkit.plugin-editor-php [role="treeitem"] a:focus,
+body.adminkit.plugin-editor-php [role="treeitem"] .folder-label.focus {
+	color: var(--ak-heading);
+}
+
+body.adminkit.plugin-editor-php #templateside .highlight,
+body.adminkit.plugin-editor-php #templateside li.current-file > a {
+	color: var(--ak-heading);
+}
+
+/* Tree indent guides (the folder lines drawn via pseudos) */
+body.adminkit.plugin-editor-php .tree-folder .tree-folder::after,
+body.adminkit.plugin-editor-php .tree-folder > li::before,
+body.adminkit.plugin-editor-php .tree-folder > li::after {
+	border-color: var(--ak-border-strong);
+}
+
+/* CodeMirror gutter (chrome around the editor — NOT the syntax) */
+body.adminkit.plugin-editor-php .CodeMirror-gutters {
+	background-color: var(--ak-surface);
+	border-right-color: var(--ak-border);
+}
+
+body.adminkit.plugin-editor-php .CodeMirror .CodeMirror-linenumber {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.plugin-editor-php .fileedit-sub {
+	border-bottom: 1px solid var(--ak-border);
+	margin-bottom: 12px;
+}
+
+body.adminkit.plugin-editor-php .file-error {
+	color: var(--ak-error);
+}

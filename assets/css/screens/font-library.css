@@ -1,0 +1,39 @@
+/* Font Library (font-library.php / site-editor font management).
+   The page lives in the @wordpress/edit-site bundle and declares its
+   own .font-library__* / .font-library-page__* surfaces without going
+   through any token layer — hardcoded #fff cards, #ddd / #f0f0f0
+   dividers, #757575 muted text. Route through AdminKit tokens. */
+
+body.adminkit .font-library__footer {
+	background-color: var(--ak-surface-alt);
+	border-top-color: var(--ak-border);
+}
+
+body.adminkit .font-library-modal__tablist-container {
+	background-color: var(--ak-surface-alt);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .font-library-page__tablist {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .font-library__font-card {
+	border-color: var(--ak-border);
+}
+
+body.adminkit .font-library__font-card:hover {
+	background-color: var(--ak-hover-bg);
+}
+
+body.adminkit .font-library__font-card__count {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .font-library__upload-area {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit .font-library__local-fonts .font-library__upload-area__text {
+	color: var(--ak-text-muted);
+}

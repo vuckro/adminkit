@@ -1,0 +1,7 @@
+/* Gutenberg dark-mode token mapping.
+   Placeholder — the @wordpress/components, edit-post, edit-site and
+   editor packages expose dozens of `--wp-*` CSS variables that the
+   block editor reads at runtime. Mapping each one to AdminKit's
+   `--ak-*` tokens (so the editor flips with our theme toggle) is the
+   next chantier. Keep selectors scoped to body.block-editor-page.adminkit
+   so nothing leaks into the canvas. */

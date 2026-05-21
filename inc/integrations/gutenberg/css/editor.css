@@ -1,0 +1,59 @@
+/* Gutenberg block editor. All rules scoped to body.block-editor-page so
+   we never bleed into the canvas (.editor-styles-wrapper, .wp-block-*).
+   Starter set — extend as more Gutenberg surfaces need polish. */
+
+body.block-editor-page.adminkit .edit-post-header,
+body.block-editor-page.adminkit .editor-header,
+body.block-editor-page.adminkit .interface-interface-skeleton__header {
+	background: var(--ak-surface-alt);
+	border-bottom: 1px solid var(--ak-border);
+}
+
+body.block-editor-page.adminkit .edit-post-sidebar,
+body.block-editor-page.adminkit .interface-complementary-area {
+	background: var(--ak-surface);
+	border-left: 1px solid var(--ak-border);
+}
+
+/* Primary buttons (Publish, Update, Save) */
+body.block-editor-page.adminkit .components-button.is-primary,
+body.block-editor-page.adminkit .editor-post-publish-button,
+body.block-editor-page.adminkit .editor-post-publish-button__button {
+	background: var(--ak-primary) !important;
+	border-color: var(--ak-primary) !important;
+	color: #ffffff !important;
+	border-radius: var(--ak-radius-s) !important;
+	font-weight: 500;
+	box-shadow: none;
+}
+
+body.block-editor-page.adminkit .components-button.is-primary:hover:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-primary:focus:not(:disabled),
+body.block-editor-page.adminkit .editor-post-publish-button:hover:not(:disabled),
+body.block-editor-page.adminkit .editor-post-publish-button:focus:not(:disabled) {
+	background: var(--ak-primary-dark) !important;
+	border-color: var(--ak-primary-dark) !important;
+	color: #ffffff !important;
+}
+
+body.block-editor-page.adminkit .components-button.is-primary:focus:not(:disabled),
+body.block-editor-page.adminkit .editor-post-publish-button:focus:not(:disabled) {
+	box-shadow: var(--ak-focus-ring) !important;
+}
+
+/* Sidebar tabs (Post / Block) */
+body.block-editor-page.adminkit .components-tab-panel__tabs .components-tab-panel__tabs-item.is-active {
+	color: var(--ak-heading);
+	box-shadow: inset 0 -2px 0 var(--ak-heading);
+}
+
+/* Snackbar notices */
+body.block-editor-page.adminkit .components-snackbar {
+	background: var(--neutral-l-9, hsl(0, 0%, 18%));
+	border-radius: var(--ak-radius-m);
+	font-family: var(--ak-font-body);
+}
+
+body.block-editor-page.adminkit .components-snackbar.components-snackbar--success {
+	background: var(--ak-success);
+}

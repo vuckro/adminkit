@@ -1,0 +1,72 @@
+/* update-core.php — Dashboard > Updates.
+   WP hardcodes #fff row bg + #000 cell text on the plugin/theme update
+   tables, #c3c4c7 thead/tfoot dividers, #1d2327 headings, and a
+   #f0f0f1 / #c3c4c7 fallback square for plugins without an icon. */
+
+body.adminkit.update-core-php h2,
+body.adminkit.update-core-php h2.response,
+body.adminkit.update-core-php h2.wp-current-version {
+	color: var(--ak-heading);
+}
+
+body.adminkit.update-core-php p.update-last-checked,
+body.adminkit.update-core-php p.auto-update-status,
+body.adminkit.update-core-php form.upgrade .hint {
+	color: var(--ak-text-muted);
+}
+
+/* Plugin + theme update tables — `.plugins tr` is #fff and cells are
+   #000, both hardcoded. Route the row surface + text to tokens. */
+body.adminkit.update-core-php .updates-table,
+body.adminkit.update-core-php .updates-table .plugins tr,
+body.adminkit.update-core-php .updates-table tbody.plugins tr th,
+body.adminkit.update-core-php .updates-table tbody.plugins tr td {
+	background-color: var(--ak-surface-alt);
+	color: var(--ak-text);
+}
+
+body.adminkit.update-core-php .updates-table th,
+body.adminkit.update-core-php .updates-table td {
+	color: var(--ak-text);
+}
+
+body.adminkit.update-core-php .updates-table thead tr th,
+body.adminkit.update-core-php .updates-table thead tr td,
+body.adminkit.update-core-php .updates-table tfoot tr th,
+body.adminkit.update-core-php .updates-table tfoot tr td {
+	color: var(--ak-heading);
+}
+
+body.adminkit.update-core-php .updates-table .plugin-title strong {
+	color: var(--ak-heading);
+}
+
+body.adminkit.update-core-php .updates-table thead th,
+body.adminkit.update-core-php .updates-table thead td,
+body.adminkit.update-core-php .updates-table tfoot th,
+body.adminkit.update-core-php .updates-table tfoot td {
+	border-bottom-color: var(--ak-border);
+	border-top-color: var(--ak-border);
+}
+
+/* Plugin-icon fallback square (when a plugin has no icon) — WP paints
+   #f0f0f1 bg + #c3c4c7 glyph. */
+body.adminkit.update-core-php .updates-table .plugin-title .dashicons:before {
+	background-color: var(--ak-surface);
+	color: var(--ak-text-muted);
+	box-shadow: none;
+}
+
+body.adminkit.update-core-php .core-updates,
+body.adminkit.update-core-php .core-updates li {
+	color: var(--ak-text);
+}
+
+/* Info notices on this page (e.g. "An updated version is available") —
+   WP paints #fff bg + #3858e9 blue left border, neither flips and the
+   blue clashes with our brand. */
+body.adminkit.update-core-php .notice-info {
+	background-color: var(--ak-surface-alt);
+	border-left-color: var(--ak-info);
+	color: var(--ak-text);
+}

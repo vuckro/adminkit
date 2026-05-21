@@ -1,0 +1,165 @@
+/* themes.php — theme browser + theme details modal.
+   WP hardcodes white card bg, light borders and dark text that don't
+   flip in dark mode. We only redo the bottom strip + name color;
+   .theme-actions keeps its native WP hover overlay (semi-transparent
+   black) which looks fine in both modes. */
+
+body.adminkit .theme-browser .theme {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .theme-id-container {
+	background: var(--ak-surface-alt);
+	border-top-color: var(--ak-border);
+}
+
+body.adminkit .theme-browser .theme .theme-name {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-heading);
+}
+
+/* Active theme — primary bg with white text. Explicit color so the
+   generic .theme-name rule above doesn't drag it to --ak-heading. */
+body.adminkit .theme-browser .theme.active .theme-name {
+	background: var(--ak-primary);
+	color: #ffffff;
+}
+
+/* "Add New Theme" tile at the end of the themes grid — hide it.
+   Theme install lives under its own page (theme-install.php), the
+   tile is redundant. */
+body.adminkit .theme.add-new-theme {
+	display: none;
+}
+
+
+/* ===== Theme Details overlay (themes.php "Theme Details" modal) =====
+   WP's themes.css paints the whole .theme-overlay shell with #fff bg,
+   #dcdcde borders, hardcoded text colors (#1d2327 / #646970 / #50575e),
+   a #2c3338 "Active Theme" badge, and #787c82 / #000 nav button states.
+   Mirror media-modal treatment: route every surface, border and text
+   through tokens so the modal flips with dark mode. */
+
+/* Backdrop behind the modal (the dimmed page) */
+body.adminkit .theme-overlay .theme-backdrop {
+	background: rgba(0, 0, 0, 0.6);
+}
+
+/* Modal wrapper */
+body.adminkit .theme-overlay .theme-wrap {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+
+/* Top header strip with prev / next / close buttons */
+body.adminkit .theme-overlay .theme-header {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .theme-overlay .theme-header .close,
+body.adminkit .theme-overlay .theme-header .right,
+body.adminkit .theme-overlay .theme-header .left {
+	border-left-color: var(--ak-border);
+	border-right-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .theme-overlay .theme-header .close::before,
+body.adminkit .theme-overlay .theme-header .right::before,
+body.adminkit .theme-overlay .theme-header .left::before {
+	color: var(--ak-text-muted);
+}
+
+/* Hover / focus on nav buttons — WP paints bg #dcdcde + #000 text. */
+body.adminkit .theme-overlay .theme-header .close:hover,
+body.adminkit .theme-overlay .theme-header .close:focus,
+body.adminkit .theme-overlay .theme-header .right:hover,
+body.adminkit .theme-overlay .theme-header .right:focus,
+body.adminkit .theme-overlay .theme-header .left:hover,
+body.adminkit .theme-overlay .theme-header .left:focus {
+	background: var(--ak-hover-bg);
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.adminkit .theme-overlay .theme-header .close:hover::before,
+body.adminkit .theme-overlay .theme-header .close:focus::before {
+	color: var(--ak-heading);
+}
+
+/* Disabled prev/next */
+body.adminkit .theme-overlay .theme-header .left.disabled,
+body.adminkit .theme-overlay .theme-header .right.disabled,
+body.adminkit .theme-overlay .theme-header .left.disabled:hover,
+body.adminkit .theme-overlay .theme-header .right.disabled:hover {
+	color: var(--ak-text-muted);
+	background: transparent;
+}
+
+/* Bottom action bar (Customize / Activate / Live Preview etc.) */
+body.adminkit .theme-overlay .theme-actions {
+	background: var(--ak-surface);
+	border-top-color: var(--ak-border);
+}
+
+/* Big screenshot frame on the left */
+body.adminkit .theme-overlay .screenshot {
+	border-color: var(--ak-border);
+}
+
+body.adminkit .theme-overlay .screenshot.thumb {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .theme-overlay .screenshot.selected {
+	border-color: var(--ak-primary);
+}
+
+/* "Active Theme" badge — WP uses #2c3338 (dark gray) with white text;
+   route through --ak-primary so it picks up the brand color. */
+body.adminkit .theme-overlay .current-label {
+	background: var(--ak-primary);
+	color: #ffffff;
+	border-radius: var(--ak-radius-s);
+}
+
+/* Right-side info typography hierarchy */
+body.adminkit .theme-overlay .theme-name {
+	color: var(--ak-heading);
+}
+
+body.adminkit .theme-overlay .theme-version,
+body.adminkit .theme-overlay .theme-author {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .theme-overlay .theme-author a {
+	color: var(--ak-text);
+}
+
+body.adminkit .theme-overlay .theme-author a:hover,
+body.adminkit .theme-overlay .theme-author a:focus {
+	color: var(--ak-heading);
+}
+
+body.adminkit .theme-overlay .theme-description {
+	color: var(--ak-text);
+}
+
+/* Delete-theme link — keep semantic red via --ak-error */
+body.adminkit .broken-themes a.delete-theme,
+body.adminkit .theme-overlay .theme-actions .delete-theme {
+	color: var(--ak-error);
+}
+
+body.adminkit .broken-themes a.delete-theme:hover,
+body.adminkit .broken-themes a.delete-theme:focus,
+body.adminkit .theme-overlay .theme-actions .delete-theme:hover,
+body.adminkit .theme-overlay .theme-actions .delete-theme:focus {
+	background: var(--ak-error);
+	color: #ffffff;
+	border-color: var(--ak-error);
+	box-shadow: 0 0 0 1px var(--ak-error);
+}

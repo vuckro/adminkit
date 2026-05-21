@@ -1,0 +1,33 @@
+/* `.wp-filter` filter / browse bars — shared by upload.php,
+   plugin-install.php, theme-install.php, themes.php. WP defaults the
+   wrapper to `background: #fff; border: 1px solid #c3c4c7; color: #50575e`,
+   none of which flips. Route the surface globally so every browse page
+   picks it up. */
+body.adminkit .wp-filter {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+/* Tab links inside `.wp-filter`-style bars (Featured / Popular /
+   Recommended / Favorites on plugin-install, Filter links on
+   upload, ...). WP paints `.current` at #1d2327 (near-black). */
+body.adminkit .filter-links li > a {
+	color: var(--ak-text-muted);
+	border-bottom-color: transparent;
+}
+
+body.adminkit .filter-links li > a:hover,
+body.adminkit .filter-links li > a:focus,
+body.adminkit .filter-links .current {
+	color: var(--ak-heading);
+}
+
+/* Count chip ("(123)" pill next to a filter / tab) — WP hardcodes
+   #646970 bg + white text. */
+body.adminkit .title-count,
+body.adminkit .filter-count .count {
+	background: var(--ak-text-muted);
+	color: var(--ak-surface-alt);
+}

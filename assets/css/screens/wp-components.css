@@ -1,0 +1,189 @@
+/* @wordpress/components React UI.
+   Used by options-connectors.php, parts of Gutenberg, font-library,
+   site-editor, customizer-react variants, and many modern React admin
+   pages. Many components consume `--wp-components-color-*` vars (already
+   mapped in tokens.css) but a handful hardcode #1e1e1e text + #ddd / #ccc
+   borders + #fff card surfaces directly. Cover those targeted spots.
+
+   Loaded broadly across admin (any page that pulls @wordpress/components)
+   — selectors are no-ops where the components aren't rendered. */
+
+/* Default button text + base focus */
+body.adminkit .components-button {
+	color: var(--ak-text);
+}
+
+body.adminkit .components-button:not(.is-primary):not(.is-secondary):not(.is-tertiary):not(.is-link):not(.is-destructive):hover {
+	color: var(--ak-heading);
+}
+
+/* Secondary button — WP uses the accent color on both border (via
+   box-shadow) and text, which becomes our --ak-primary. In dark mode
+   that mid-gray on a dark bg loses contrast. Route to a neutral
+   ghost-button look: border + text in --ak-text + --ak-border-strong. */
+body.adminkit .components-button.is-secondary {
+	background: transparent;
+	box-shadow: inset 0 0 0 1px var(--ak-border-strong);
+	color: var(--ak-text);
+}
+
+body.adminkit .components-button.is-secondary:hover:not(:disabled, [aria-disabled="true"], .is-pressed) {
+	background: var(--ak-hover-bg);
+	box-shadow: inset 0 0 0 1px var(--ak-text);
+	color: var(--ak-heading);
+}
+
+/* Cards + panels (the main surface containers) */
+body.adminkit .components-card,
+body.adminkit .components-panel {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .components-card-header,
+body.adminkit .components-panel__header,
+body.adminkit .components-card-footer,
+body.adminkit .components-panel__body {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .components-panel__body-title {
+	color: var(--ak-heading);
+}
+
+body.adminkit .components-panel__body-title:hover {
+	background: var(--ak-hover-bg);
+}
+
+/* Heading + label text */
+body.adminkit .components-base-control__label,
+body.adminkit .components-input-control__label,
+body.adminkit .components-text-control__input + .components-base-control__label,
+body.adminkit .components-input-control__label-wrapper {
+	color: var(--ak-heading);
+}
+
+/* Help text */
+body.adminkit .components-base-control__help {
+	color: var(--ak-text-muted);
+}
+
+/* Inputs (text / number / search / textarea) */
+body.adminkit .components-text-control__input,
+body.adminkit .components-input-control__input,
+body.adminkit .components-textarea-control__input,
+body.adminkit .components-select-control__input {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .components-text-control__input:focus,
+body.adminkit .components-input-control__input:focus,
+body.adminkit .components-textarea-control__input:focus,
+body.adminkit .components-select-control__input:focus {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+/* Modal frame */
+body.adminkit .components-modal__frame {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+
+body.adminkit .components-modal__header {
+	background: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .components-modal__header-heading {
+	color: var(--ak-heading);
+}
+
+/* Notice */
+body.adminkit .components-notice {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+}
+
+body.adminkit .components-notice.is-success {
+	border-left-color: var(--ak-success);
+}
+
+body.adminkit .components-notice.is-warning {
+	border-left-color: var(--ak-warning);
+}
+
+body.adminkit .components-notice.is-error {
+	border-left-color: var(--ak-error);
+}
+
+body.adminkit .components-notice.is-info {
+	border-left-color: var(--ak-info);
+}
+
+/* Toggle */
+body.adminkit .components-form-toggle .components-form-toggle__track {
+	background: var(--ak-border-strong);
+	border-color: var(--ak-border-strong);
+}
+
+body.adminkit .components-form-toggle .components-form-toggle__thumb {
+	background: var(--ak-surface-alt);
+}
+
+body.adminkit .components-form-toggle.is-checked .components-form-toggle__track {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+
+/* Popover + dropdown */
+body.adminkit .components-popover__content {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* Menu items inside popovers */
+body.adminkit .components-menu-item__button,
+body.adminkit .components-menu-item__button .components-menu-item__item {
+	color: var(--ak-text);
+}
+
+body.adminkit .components-menu-item__button:hover,
+body.adminkit .components-menu-item__button:focus {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+/* Form token (multi-select chip input) */
+body.adminkit .components-form-token-field__input-container {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .components-form-token-field__input {
+	background: transparent;
+	color: var(--ak-text);
+}
+
+/* Disabled primary button — WP paints `background: accent;
+   color: rgba(255,255,255,0.4)` which keeps the button visually
+   identical to the active state. Route to a clearly-muted look
+   (gray bg + muted text) so disabled state reads at a glance.
+   !important defends against any downstream override; the rule
+   would already win on specificity (0,3,1) vs WP's (0,2,1). */
+body.adminkit .components-button.is-primary:disabled,
+body.adminkit .components-button.is-primary:disabled:active:enabled,
+body.adminkit .components-button.is-primary[aria-disabled="true"],
+body.adminkit .components-button.is-primary[aria-disabled="true"]:active:enabled,
+body.adminkit .components-button.is-primary[aria-disabled="true"]:enabled {
+	background: var(--ak-border) !important;
+	border-color: var(--ak-border) !important;
+	color: var(--ak-text-muted) !important;
+}

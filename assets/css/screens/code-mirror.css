@@ -1,0 +1,89 @@
+/* CodeMirror dark theme — theme-editor.php + plugin-editor.php.
+   CodeMirror's editor body + syntax tokens are calibrated for a white
+   surface. In dark mode the editor stuck out as a bright slab. Flip
+   the body to a dark surface AND repaint the syntax tokens with a
+   palette that holds contrast on dark — inspired by Material / Tomorrow
+   Night, kept minimal. Only scoped to `data-adminkit-theme="dark"`, so
+   in light mode WP's native palette stays intact. */
+
+:root[data-adminkit-theme="dark"] body.adminkit .CodeMirror {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .CodeMirror-cursor {
+	border-left-color: var(--ak-heading);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .CodeMirror-selected,
+:root[data-adminkit-theme="dark"] body.adminkit .CodeMirror-focused .CodeMirror-selected {
+	background: rgba(255, 255, 255, 0.15);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .CodeMirror-activeline-background {
+	background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .CodeMirror-gutters {
+	background-color: var(--ak-surface);
+	border-right-color: var(--ak-border);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .CodeMirror .CodeMirror-linenumber {
+	color: var(--ak-text-muted);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .CodeMirror-matchingbracket {
+	color: #ffd700 !important;
+}
+
+/* Syntax-highlighting tokens — light-on-dark palette tuned for PHP +
+   JS + CSS readability. */
+:root[data-adminkit-theme="dark"] body.adminkit .cm-keyword,
+:root[data-adminkit-theme="dark"] body.adminkit .cm-meta {
+	color: #c792ea;
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .cm-string,
+:root[data-adminkit-theme="dark"] body.adminkit .cm-string-2 {
+	color: #c3e88d;
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .cm-comment {
+	color: var(--ak-text-muted);
+	font-style: italic;
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .cm-number,
+:root[data-adminkit-theme="dark"] body.adminkit .cm-atom {
+	color: #f78c6c;
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .cm-builtin,
+:root[data-adminkit-theme="dark"] body.adminkit .cm-property {
+	color: #82aaff;
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .cm-variable,
+:root[data-adminkit-theme="dark"] body.adminkit .cm-variable-2,
+:root[data-adminkit-theme="dark"] body.adminkit .cm-variable-3,
+:root[data-adminkit-theme="dark"] body.adminkit .cm-def {
+	color: var(--ak-text);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .cm-operator {
+	color: #89ddff;
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .cm-tag {
+	color: #f07178;
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .cm-attribute {
+	color: #ffcb6b;
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .cm-error {
+	color: var(--ak-error);
+	background: rgba(240, 70, 98, 0.1);
+}

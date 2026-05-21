@@ -1,0 +1,45 @@
+/* profile.php + user-edit.php + user-new.php — profile-specific
+   tweaks only. The generic `.form-table` layout (also used by every
+   settings screen) lives in components/form-table.css. */
+
+body.adminkit.user-edit-php #your-profile,
+body.adminkit.profile-php #your-profile,
+body.adminkit.user-new-php #createuser {
+	max-width: 960px;
+}
+
+/* Hide the legacy WP color-scheme picker on profile pages — AdminKit
+   now owns the chrome palette + light/dark toggle, so the per-user
+   "Admin Color Scheme" row would just confuse and lead nowhere. */
+body.adminkit.user-edit-php tr.user-admin-color-wrap,
+body.adminkit.profile-php tr.user-admin-color-wrap {
+	display: none;
+}
+
+/* Gravatar block on profile pages */
+body.adminkit.user-edit-php .user-profile-picture td,
+body.adminkit.profile-php .user-profile-picture td {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+body.adminkit.user-edit-php .user-profile-picture img,
+body.adminkit.profile-php .user-profile-picture img {
+	border-radius: var(--ak-radius-full);
+	border: 1px solid var(--ak-border);
+}
+
+/* Admin color scheme picker — kept for users who bypass the hide
+   above via filter, and harmless where the markup is absent. */
+body.adminkit .color-option {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	padding: 8px;
+}
+
+body.adminkit .color-option.selected {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+}

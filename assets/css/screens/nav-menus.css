@@ -1,0 +1,207 @@
+/* nav-menus.php — Appearance > Menus.
+   WP paints every wrapper of the menu editor with white/light-grey
+   surfaces and dark text, plus a dozen #dcdcde dividers. Route the
+   whole editor through tokens so dark mode is usable. */
+
+body.adminkit.nav-menus-php .manage-menus {
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+
+body.adminkit.nav-menus-php #post-body {
+	background: var(--ak-surface-alt);
+	border-top-color: transparent;
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.nav-menus-php #nav-menu-header,
+body.adminkit.nav-menus-php #nav-menu-footer {
+	background: var(--ak-surface);
+}
+
+body.adminkit.nav-menus-php #nav-menu-header {
+	border-bottom-color: var(--ak-border);
+}
+
+@media only screen and (min-width: 783px) {
+	body.adminkit.nav-menus-php #nav-menu-footer {
+		box-shadow: 0 -1px 0 0 var(--ak-border);
+	}
+}
+
+/* Each draggable menu item bar */
+body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle:hover {
+	border-color: var(--ak-border-strong);
+}
+
+/* Expanded item settings drawer */
+body.adminkit.nav-menus-php .menu-item-settings {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	box-shadow: none;
+	color: var(--ak-text);
+}
+
+/* Submenu hint, item-type label, "(no title)" placeholder, theme
+   location label — all hardcoded #50575e / #646970. */
+body.adminkit.nav-menus-php .is-submenu,
+body.adminkit.nav-menus-php .menu-item-handle .menu-item-title.no-title,
+body.adminkit.nav-menus-php .item-type,
+body.adminkit.nav-menus-php .theme-location-set {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.nav-menus-php .menu-settings {
+	border-top-color: var(--ak-border);
+}
+
+body.adminkit.nav-menus-php .link-to-original {
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+	background: var(--ak-surface-alt);
+	border-radius: var(--ak-radius-s);
+}
+
+body.adminkit.nav-menus-php .bulk-select-button {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-s);
+}
+
+body.adminkit.nav-menus-php label.bulk-select-button:hover,
+body.adminkit.nav-menus-php label.bulk-select-button:active,
+body.adminkit.nav-menus-php label.bulk-select-button:focus-within {
+	background: var(--ak-hover-bg);
+	border-color: var(--ak-primary);
+	color: var(--ak-heading);
+}
+
+body.adminkit.nav-menus-php .locations-edit-menu-link {
+	border-right-color: var(--ak-border);
+}
+
+/* Item-edit focus ring — Modern color scheme paints a hardcoded blue
+   ring; route to our token. */
+body.adminkit.nav-menus-php .item-edit:focus:before {
+	box-shadow: var(--ak-focus-ring) !important;
+}
+
+/* "Add menu items" form (left column) — accordion shell. WP renders
+   each section as a button (.accordion-trigger) with #1d2327 text and
+   a #787c82 down-arrow that flips to #1d2327 on hover. All hardcoded. */
+body.adminkit.nav-menus-php #nav-menu-meta h2 {
+	color: var(--ak-heading);
+}
+
+body.adminkit.nav-menus-php .accordion-container .outer-border {
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
+}
+
+body.adminkit.nav-menus-php .accordion-section,
+body.adminkit.nav-menus-php .accordion-section.control-section {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.nav-menus-php .accordion-section-title,
+body.adminkit.nav-menus-php .metabox-holder .accordion-section-title {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.nav-menus-php .accordion-section-title button.accordion-trigger,
+body.adminkit.nav-menus-php .metabox-holder .accordion-section-title button.accordion-trigger {
+	color: var(--ak-heading);
+}
+
+body.adminkit.nav-menus-php .accordion-section-title button.accordion-trigger:focus,
+body.adminkit.nav-menus-php .metabox-holder .accordion-section-title button.accordion-trigger:focus {
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+body.adminkit.nav-menus-php .accordion-section-title .dashicons-arrow-down,
+body.adminkit.nav-menus-php .metabox-holder .accordion-section-title .dashicons-arrow-down {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.nav-menus-php .accordion-section-title:hover .dashicons-arrow-down,
+body.adminkit.nav-menus-php .metabox-holder .accordion-section-title:hover .dashicons-arrow-down {
+	color: var(--ak-heading);
+}
+
+/* Tabs row inside each accordion content (Most Recent / View All / Search) */
+body.adminkit.nav-menus-php ul.add-menu-item-tabs li.tabs,
+body.adminkit.nav-menus-php ul.category-tabs li.tabs {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	border-bottom-color: var(--ak-surface-alt);
+	border-radius: var(--ak-radius-s) var(--ak-radius-s) 0 0;
+}
+
+body.adminkit.nav-menus-php #post-body ul.add-menu-item-tabs li.tabs a,
+body.adminkit.nav-menus-php ul.add-menu-item-tabs li a,
+body.adminkit.nav-menus-php ul.category-tabs li a {
+	color: var(--ak-text);
+}
+
+body.adminkit.nav-menus-php #post-body ul.add-menu-item-tabs li.tabs a {
+	color: var(--ak-heading);
+}
+
+body.adminkit.nav-menus-php ul.add-menu-item-tabs li a:hover,
+body.adminkit.nav-menus-php ul.add-menu-item-tabs li a:focus,
+body.adminkit.nav-menus-php ul.category-tabs li a:hover,
+body.adminkit.nav-menus-php ul.category-tabs li a:focus {
+	color: var(--ak-heading);
+}
+
+/* Tabs panel (the scrollable list of checkboxes under the tabs) — WP
+   sets `border: 1px solid #dcdcde; background: #fff`. */
+body.adminkit.nav-menus-php .posttypediv div.tabs-panel,
+body.adminkit.nav-menus-php .taxonomydiv div.tabs-panel,
+body.adminkit.nav-menus-php .customlinkdiv div.tabs-panel,
+body.adminkit.nav-menus-php .wp-tab-panel {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	border-radius: 0 var(--ak-radius-s) var(--ak-radius-s) var(--ak-radius-s);
+	color: var(--ak-text);
+}
+
+/* Focus ring on the active panel — defeats modern scheme's hardcoded
+   blue ring. */
+body.adminkit.nav-menus-php div.tabs-panel-active:focus {
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+/* Quick search input inside the Search tab */
+body.adminkit.nav-menus-php .quick-search-wrap .quick-search {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* "No items." empty state inside an accordion section */
+body.adminkit.nav-menus-php .accordion-section-content .inside > p {
+	color: var(--ak-text-muted);
+}
+
+/* Menu-edit wrapper radius (the right column with the saved menu) */
+body.adminkit.nav-menus-php .menu-edit {
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
+}
+
+body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle {
+	border-radius: var(--ak-radius-s);
+}

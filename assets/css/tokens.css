@@ -1,0 +1,127 @@
+/* Design tokens.
+   ----------------------------------------------------------------------
+   Every color and surface is exposed as a CSS variable so providers
+   (Bricks today, more later) can supply their own palette via the
+   `adminkit/extra_tokens_handle` filter. When no provider is active,
+   each var falls back to a sensible neutral.
+
+   All tokens live on :root only — they inherit through <body> down to
+   every descendant. Declaring them on <body> too would let a body-level
+   stylesheet (Bricks frontend, color schemes…) intercept the cascade
+   and freeze the value at the body layer, blocking the dark-mode flip
+   from reaching #wpadminbar / #adminmenu.
+
+   Typography and radii stay hardcoded in px because some provider rem
+   scales are calibrated for a 1rem = 10px frontend reset that would
+   render too large in admin. AdminKit is intentionally flat — no shadow
+   tokens, just a focus ring. */
+
+:root {
+	/* Brand — provider → provider neutrals → hsl. The neutral middle
+	   step means the plugin still looks coherent without any provider
+	   brand palette set up. */
+	--ak-primary: var(--primary, var(--neutral-l-8, hsl(0, 0%, 35%)));
+	--ak-primary-dark: var(--primary-d-2, var(--neutral-l-9, hsl(0, 0%, 22%)));
+	--ak-primary-subtle: var(--primary-t-1, rgba(117, 163, 59, 0.06));
+	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%)));
+
+	/* Semantic */
+	--ak-success: var(--success, #11b76b);
+	--ak-warning: var(--warning, #ffa100);
+	--ak-error: var(--error, #f04662);
+	--ak-info: var(--info, #2895d4);
+
+	/* Surfaces */
+	--ak-bg: var(--background, hsl(0, 0%, 98%));
+	--ak-surface: var(--surface, hsl(0, 0%, 96%));
+	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
+	--ak-surface-alt: var(--white, #ffffff);
+	--ak-border: var(--border, hsl(0, 0%, 89%));
+	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
+	--ak-text: var(--text, #1E1E1B);
+	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%));
+	--ak-heading: var(--heading, hsl(0, 0%, 18%));
+
+	/* Subtle interaction overlay — used on chrome (sidebar/admin bar)
+	   and anywhere a hover tint is needed. Flips with the theme. */
+	--ak-hover-bg: rgba(0, 0, 0, 0.04);
+
+	/* Geometry */
+	--ak-radius-s: 6px;
+	--ak-radius-m: 10px;
+	--ak-radius-full: 9999px;
+
+	/* Typography */
+	--ak-font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+	--ak-text-xs: 12px;
+	--ak-text-s: 13px;
+	--ak-text-m: 14px;
+
+	/* Focus ring — the only effect token. */
+	--ak-focus-ring: 0 0 0 3px rgba(117, 163, 59, 0.25);
+}
+
+/* Remap WP's built-in theme color (blue) to our primary. Declared on
+   body.adminkit so it beats WP's color-scheme rule (`body.admin-color-fresh
+   { --wp-admin-theme-color: #2271b1; }`) which is one class more specific
+   than :root. One-shot fix for Quick Edit links, focus rings, selected
+   states, and any plugin that consumes --wp-admin-theme-color. */
+body.adminkit {
+	--wp-admin-theme-color: var(--ak-primary);
+	--wp-admin-theme-color--rgb: 117, 163, 59;
+	--wp-admin-theme-color-darker-10: var(--ak-primary-dark);
+	--wp-admin-theme-color-darker-10--rgb: 96, 133, 48;
+	--wp-admin-theme-color-darker-20: var(--ak-primary-dark);
+	--wp-admin-theme-color-darker-20--rgb: 96, 133, 48;
+
+	/* @wordpress/components React UI tokens. Used by options-connectors.php,
+	   parts of Gutenberg, and any custom React admin page that consumes
+	   `--wp-components-color-*`. Routing them through AdminKit tokens
+	   flips the entire React UI between light + dark with the rest. */
+	--wp-components-color-accent: var(--ak-primary);
+	--wp-components-color-accent-darker-10: var(--ak-primary-dark);
+	--wp-components-color-accent-darker-20: var(--ak-primary-dark);
+	--wp-components-color-accent-inverted: #ffffff;
+	--wp-components-color-background: var(--ak-surface-alt);
+	--wp-components-color-foreground: var(--ak-text);
+	--wp-components-color-foreground-inverted: var(--ak-surface-alt);
+	--wp-components-color-gray-100: var(--ak-bg);
+	--wp-components-color-gray-200: var(--ak-surface);
+	--wp-components-color-gray-300: var(--ak-border);
+	--wp-components-color-gray-400: var(--ak-border-strong);
+	--wp-components-color-gray-600: var(--ak-text-muted);
+	--wp-components-color-gray-700: var(--ak-text);
+	--wp-components-color-gray-800: var(--ak-heading);
+	--wp-components-color-gray-900: var(--ak-heading);
+}
+
+/* Dark mode — driven by [data-adminkit-theme="dark"] on <html>. The inline
+   init script in <head> reads localStorage.adminkit-theme (or
+   prefers-color-scheme on first visit) and sets the attribute before
+   paint. AdminKit owns its own attribute so third-party JS (Bricks
+   frontend, color schemes, etc.) can't race or overwrite it. */
+
+:root[data-adminkit-theme="dark"] {
+	--ak-bg: var(--neutral-d-2, hsl(0, 0%, 11%));
+	--ak-surface: var(--neutral-d-3, hsl(0, 0%, 14%));
+	--ak-surface-alt: var(--neutral-d-4, hsl(0, 0%, 18%));
+	--ak-elevated: var(--neutral-d-5, hsl(0, 0%, 24%));
+	--ak-border: var(--neutral-d-5, hsl(0, 0%, 24%));
+	--ak-border-strong: var(--neutral-d-6, hsl(0, 0%, 38%));
+	--ak-text: var(--neutral-d-8, hsl(0, 0%, 72%));
+	--ak-text-muted: var(--neutral-d-7, hsl(0, 0%, 56%));
+	--ak-heading: var(--neutral-d-9, hsl(0, 0%, 86%));
+
+	/* Brand fallbacks pick a mid-gray in dark mode so the white text
+	   that sits on top of --ak-primary (buttons, sidebar current item)
+	   keeps readable contrast — neutral-d-9 was too light, neutral-d-6
+	   (~hsl 38%) gives ~4.5:1 with white. When a provider supplies
+	   --primary the var() short-circuits before the fallback, so the
+	   brand color stays constant across modes. */
+	--ak-primary: var(--primary, var(--neutral-d-6, hsl(0, 0%, 38%)));
+	--ak-primary-dark: var(--primary-d-2, var(--neutral-d-7, hsl(0, 0%, 56%)));
+	--ak-secondary: var(--secondary, var(--neutral-d-7, hsl(0, 0%, 56%)));
+
+	/* Light overlay so the hover tint stays visible on dark surfaces */
+	--ak-hover-bg: rgba(255, 255, 255, 0.08);
+}

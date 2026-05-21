@@ -1,0 +1,108 @@
+/* Form inputs — text inputs, textarea, select, checkbox, radio.
+   Always loaded on every admin page. Skipped on Fluent screens
+   (their UIs ship their own input styling, we'd just clash) — see
+   the FluentForm / FluentCart integrations. */
+
+body.adminkit input[type="text"],
+body.adminkit input[type="email"],
+body.adminkit input[type="url"],
+body.adminkit input[type="password"],
+body.adminkit input[type="search"],
+body.adminkit input[type="number"],
+body.adminkit input[type="tel"],
+body.adminkit input[type="date"],
+body.adminkit input[type="month"],
+body.adminkit input[type="week"],
+body.adminkit input[type="time"],
+body.adminkit input[type="datetime"],
+body.adminkit input[type="datetime-local"],
+body.adminkit input[type="color"],
+body.adminkit textarea,
+body.adminkit select,
+body.adminkit .wp-core-ui select {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+	font-family: var(--ak-font-body);
+	font-size: var(--ak-text-s);
+	line-height: 1.8;
+	padding: 0 10px;
+	min-height: 30px;
+	box-shadow: none;
+}
+
+/* Textarea — restore vertical padding since it can wrap */
+body.adminkit textarea {
+	line-height: 1.5;
+	padding: 6px 10px;
+	min-height: 0;
+}
+
+body.adminkit input[type="text"]:focus,
+body.adminkit input[type="email"]:focus,
+body.adminkit input[type="url"]:focus,
+body.adminkit input[type="password"]:focus,
+body.adminkit input[type="search"]:focus,
+body.adminkit input[type="number"]:focus,
+body.adminkit input[type="tel"]:focus,
+body.adminkit input[type="date"]:focus,
+body.adminkit textarea:focus,
+body.adminkit select:focus {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+/* `<select>` hover — WP's forms.css ships
+   `.wp-core-ui select:hover { color: #1e1e1e; border-color: #1e1e1e }`
+   (both hardcoded near-black). My base `select` rule sits at lower
+   specificity than WP's `:hover` variant, so it leaks through. Match
+   `.wp-core-ui select:hover` plus `body.adminkit` prefix to land at
+   (0,3,2) and beat WP's (0,2,1) without !important. */
+body.adminkit .wp-core-ui select:hover,
+body.adminkit select:hover {
+	color: var(--ak-heading);
+	border-color: var(--ak-border-strong);
+}
+
+/* Checkboxes & radios */
+body.adminkit input[type="checkbox"],
+body.adminkit input[type="radio"] {
+	border: 1px solid var(--ak-border-strong);
+	border-radius: 3px;
+	background: var(--ak-surface-alt);
+	width: 16px;
+	height: 16px;
+}
+
+body.adminkit input[type="radio"] {
+	border-radius: 50%;
+}
+
+body.adminkit input[type="checkbox"]:checked,
+body.adminkit input[type="radio"]:checked {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+
+body.adminkit input[type="checkbox"]:checked::before {
+	color: #ffffff;
+}
+
+body.adminkit input[type="radio"]:checked::before {
+	background: #ffffff;
+}
+
+body.adminkit input[type="checkbox"]:focus,
+body.adminkit input[type="radio"]:focus {
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+	border-color: var(--ak-primary);
+}
+
+/* File input chrome — input itself (the "Choose File" button is
+   styled in buttons.css since it's button-shaped). */
+body.adminkit input[type="file"] {
+	color: var(--ak-text);
+}

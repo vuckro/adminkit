@@ -1,0 +1,40 @@
+/* Admin Menu Editor (Pro) — AME-specific overrides.
+   AME ships its own user-ui-extensions.css that targets
+   `#ame-rex-other-roles-row .choices ...` (specificity 1,3,0),
+   re-painting the Choices widget with WP fresh-scheme colors and
+   beating my generic .choices overrides. Match the same ID-prefixed
+   selectors to win the cascade. */
+
+body.adminkit #ame-rex-other-roles-row .choices .choices__inner {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+body.adminkit #ame-rex-other-roles-row .choices.is-focused .choices__inner {
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit #ame-rex-other-roles-row .choices .choices__input {
+	color: var(--ak-text);
+	background-color: transparent;
+}
+
+/* Pills: brand primary instead of AME's #f6f7f7 + #646970 border */
+body.adminkit #ame-rex-other-roles-row .choices .choices__list--multiple .choices__item {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: #ffffff;
+}
+
+/* Delete-pill button (the × inside each role chip) — invert against
+   the primary pill bg with a subtle alpha-white separator. */
+body.adminkit #ame-rex-other-roles-row .choices .choices__button,
+body.adminkit #ame-rex-other-roles-row .choices .choices__button:before {
+	color: #ffffff;
+	border-left-color: rgba(255, 255, 255, 0.3);
+}
+
+body.adminkit #ame-rex-other-roles-row .choices .choices__button:hover {
+	background-color: transparent;
+}

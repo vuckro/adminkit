@@ -1,0 +1,149 @@
+/* Buttons — primary, secondary, disabled, sizes, file-input chooser,
+   link-delete. Always loaded on every admin page. */
+
+/* Buttons (compact, WP-default sizing).
+   .wrap .page-title-action is included here so the "Add New" button next
+   to page titles inherits all base sizing — the .button-primary rule
+   below then overrides its colors. */
+body.adminkit .button,
+body.adminkit .wp-core-ui .button,
+body.adminkit .button-secondary,
+body.adminkit .wp-core-ui .button-secondary,
+body.adminkit .wrap .page-title-action {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border-strong);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-s);
+	padding: 0 10px;
+	font-family: var(--ak-font-body);
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	line-height: 2.15;
+	min-height: 30px;
+	box-shadow: none;
+	cursor: pointer;
+}
+
+body.adminkit .button:hover,
+body.adminkit .wp-core-ui .button:hover,
+body.adminkit .button-secondary:hover {
+	background: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+
+body.adminkit .button:focus,
+body.adminkit .wp-core-ui .button:focus {
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+body.adminkit .button-primary,
+body.adminkit .wp-core-ui .button-primary,
+body.adminkit .wrap .page-title-action,
+body.adminkit .wrap .page-title-action:active {
+	background: var(--ak-primary);
+	border: 1px solid var(--ak-primary);
+	color: #ffffff;
+	text-shadow: none;
+	box-shadow: none;
+}
+
+body.adminkit .button-primary:hover,
+body.adminkit .wp-core-ui .button-primary:hover,
+body.adminkit .button-primary:focus,
+body.adminkit .wp-core-ui .button-primary:focus,
+body.adminkit .wrap .page-title-action:hover,
+body.adminkit .wrap .page-title-action:focus {
+	background: var(--ak-primary-dark);
+	border-color: var(--ak-primary-dark);
+	color: #ffffff;
+}
+
+body.adminkit .button-primary:focus,
+body.adminkit .wp-core-ui .button-primary:focus,
+body.adminkit .wrap .page-title-action:focus {
+	box-shadow: var(--ak-focus-ring);
+}
+
+body.adminkit .button-primary:disabled,
+body.adminkit .button-primary.disabled,
+body.adminkit .wp-core-ui .button-primary:disabled,
+body.adminkit .wp-core-ui .button-primary.disabled {
+	background: var(--ak-border-strong) !important;
+	border-color: var(--ak-border-strong) !important;
+	color: var(--ak-surface-alt) !important;
+	opacity: 0.7;
+}
+
+/* Generic / secondary disabled button. WP ships its disabled rule
+   with !important on every property:
+     `color: #8a8a8a; border-color: #d8d8d8; background: 0 0`
+   …meaning my override has to use !important too AND match WP's
+   exact selector list (every form of disabled: class, attribute,
+   pseudo). */
+body.adminkit .wp-core-ui .button-disabled,
+body.adminkit .wp-core-ui .button-secondary.disabled,
+body.adminkit .wp-core-ui .button-secondary:disabled,
+body.adminkit .wp-core-ui .button-secondary[disabled],
+body.adminkit .wp-core-ui .button.disabled,
+body.adminkit .wp-core-ui .button:disabled,
+body.adminkit .wp-core-ui .button[disabled],
+body.adminkit .button.disabled,
+body.adminkit .button:disabled,
+body.adminkit .button[disabled] {
+	background: var(--ak-surface) !important;
+	border-color: var(--ak-border) !important;
+	color: var(--ak-text-muted) !important;
+	cursor: not-allowed;
+}
+
+/* File input's "Choose File" button — the OS-native control's only
+   styleable surface. Match the rest of our buttons so file uploads
+   on theme-install / plugin-install / media library don't drop a
+   bright OS-default button in the middle of our flat chrome. */
+body.adminkit input[type="file"]::file-selector-button {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border-strong);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+	font-family: var(--ak-font-body);
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	padding: 4px 12px;
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+body.adminkit input[type="file"]::file-selector-button:hover {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+}
+
+body.adminkit .button-link-delete,
+body.adminkit .wp-core-ui .button-link-delete {
+	color: var(--ak-error);
+	background: transparent;
+	border: none;
+}
+
+body.adminkit .button-link-delete:hover {
+	color: var(--ak-error);
+	text-decoration: underline;
+}
+
+body.adminkit .button.button-large,
+body.adminkit .wp-core-ui .button.button-large {
+	padding: 0 14px;
+	font-size: var(--ak-text-m);
+	min-height: 36px;
+	line-height: 2.4;
+}
+
+body.adminkit .button.button-small,
+body.adminkit .wp-core-ui .button.button-small {
+	padding: 0 8px;
+	font-size: var(--ak-text-xs);
+	min-height: 26px;
+	line-height: 2;
+}

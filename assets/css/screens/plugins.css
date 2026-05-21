@@ -1,0 +1,235 @@
+/* plugins.php (Installed Plugins) + plugin-install.php (Add New Plugin)
+   + "More details" Thickbox modal contents. The Thickbox shell itself
+   is in screens/_shared/thickbox.css since it's used by other modals
+   too. */
+
+/* ===== Plugins list table (plugins.php) =====
+   WP hardcodes `.plugins tr { background: #fff }`. That leaks white through
+   tr.plugin-update-tr (the "update available" row) on our dark surface
+   because that row's td has no background of its own. Route every plugins
+   tr through --ak-surface-alt; the per-state rules below still flip
+   active/inactive on tr.active/tr.inactive cells. */
+body.adminkit .wp-list-table.plugins tr {
+	background: var(--ak-surface-alt);
+}
+
+/* Reset WP's per-cell border indicators */
+body.adminkit .wp-list-table.plugins tbody th,
+body.adminkit .wp-list-table.plugins tbody td {
+	border-left: none !important;
+	box-shadow: none;
+}
+
+/* Active plugins — subtle surface tint + success indicator on check-column */
+body.adminkit .wp-list-table.plugins tr.active th,
+body.adminkit .wp-list-table.plugins tr.active td {
+	background: var(--ak-surface);
+}
+
+body.adminkit .wp-list-table.plugins tr.active th.check-column {
+	box-shadow: inset 3px 0 0 var(--ak-success);
+}
+
+/* Inactive plugins — keep the table surface, mute the title */
+body.adminkit .wp-list-table.plugins tr.inactive th,
+body.adminkit .wp-list-table.plugins tr.inactive td {
+	background: var(--ak-surface-alt);
+}
+
+body.adminkit .wp-list-table.plugins tr.inactive .plugin-title strong {
+	color: var(--ak-text-muted);
+	font-weight: 500;
+}
+
+/* Plugins with available update — warning indicator */
+body.adminkit .wp-list-table.plugins tr.update th.check-column,
+body.adminkit .wp-list-table.plugins tr.updated th.check-column {
+	box-shadow: inset 3px 0 0 var(--ak-warning);
+}
+
+/* Update message row — aliased to Bricks' warning-t-1 (semi-transparent
+   warning tint, ~9% opacity) so it works on any chrome background */
+body.adminkit .wp-list-table.plugins tr.plugin-update-tr td {
+	padding: 0;
+}
+
+body.adminkit .wp-list-table.plugins tr.plugin-update-tr .update-message,
+body.adminkit .wp-list-table.plugins .plugin-update-tr .notice {
+	background: var(--warning-t-1, hsla(38, 100%, 50%, 0.09));
+	border: none;
+	border-radius: 0;
+	margin: 0;
+	padding: 10px 16px;
+}
+
+body.adminkit .wp-list-table.plugins .plugin-title strong {
+	color: var(--ak-heading);
+	font-weight: 600;
+}
+
+body.adminkit .wp-list-table.plugins .plugin-version-author-uri {
+	color: var(--ak-text-muted);
+}
+
+
+/* ===== Plugin install (plugin-install.php) =====
+   Plugin cards, the filter bar, and the "More details" Thickbox modal
+   all hardcode white / #f6f7f7 / #dcdcde / #50575e and a hardcoded
+   close-icon blue. */
+
+body.adminkit.plugin-install-php .plugin-card {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	border-radius: var(--ak-radius-m);
+}
+
+body.adminkit.plugin-install-php .plugin-card-bottom {
+	background-color: var(--ak-surface);
+	border-top-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.plugin-install-php .plugin-card h3,
+body.adminkit.plugin-install-php .plugin-card .column-rating,
+body.adminkit.plugin-install-php .plugin-card .column-updated,
+body.adminkit.plugin-install-php .plugin-card .column-downloaded,
+body.adminkit.plugin-install-php .plugin-card .column-compatibility {
+	color: var(--ak-text);
+}
+
+body.adminkit.plugin-install-php .plugin-card h3 a,
+body.adminkit.plugin-install-php .plugin-card .name a {
+	color: var(--ak-heading);
+}
+
+body.adminkit.plugin-install-php .plugin-card .desc {
+	color: var(--ak-text-muted);
+}
+
+/* Compatibility icons — WP paints #3c434a; flip the neutral case to
+   text-muted, keep the green / red but use our tokens. */
+body.adminkit.plugin-install-php .plugin-card .column-compatibility span:before {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.plugin-install-php .plugin-card .column-compatibility .compatibility-compatible:before {
+	color: var(--ak-success);
+}
+
+body.adminkit.plugin-install-php .plugin-card .column-compatibility .compatibility-incompatible:before {
+	color: var(--ak-error);
+}
+
+/* Search / filter bar surface — both plugin-install and upload-php
+   render `.wp-filter` with this rounded look. */
+body.adminkit.plugin-install-php .wp-filter,
+body.adminkit.upload-php .wp-filter {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	box-shadow: none;
+}
+
+/* Hide the entire "Popular tags" section on plugin-install.php — WP
+   wraps the heading + description + tag cloud inside a single
+   `.plugins-popular-tags-wrapper` div. Page-specific scope so the
+   popular-tags metabox on edit.php (taxonomy picker) stays. */
+body.adminkit.plugin-install-php .plugins-popular-tags-wrapper {
+	display: none;
+}
+
+
+/* ===== "More details" Thickbox modal contents (`#plugin-information`) =====
+   Every panel uses #fff / #f6f7f7 / #dcdcde combos. */
+
+body.adminkit #plugin-information,
+body.adminkit #plugin-information-content {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+}
+
+body.adminkit #plugin-information-title:not(.with-banner) {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+}
+
+body.adminkit #plugin-information-tabs {
+	background: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit #plugin-information-tabs a.current {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	border-bottom-color: var(--ak-surface-alt);
+	color: var(--ak-heading);
+}
+
+/* Right "FYI" sidebar (Version, Author, …). The Thickbox iframe
+   loads my CSS but the panel is inside the iframe's own document —
+   any provider stylesheet enqueued AFTER ours wins on equal
+   specificity. `!important` is the cheapest fix for the bg + text
+   leaks that show through in dark mode. */
+body.adminkit #plugin-information .fyi {
+	background: var(--ak-surface) !important;
+	border-left-color: var(--ak-border) !important;
+	color: var(--ak-text-muted) !important;
+}
+
+body.adminkit #plugin-information .fyi strong,
+body.adminkit #plugin-information .fyi h2,
+body.adminkit #plugin-information .fyi h3 {
+	color: var(--ak-heading);
+}
+
+/* All other h2 / h3 inside the modals (sections inside the description
+   tab, "Contributors" heading in the FYI sidebar, etc.). WP applies a
+   global `h1..h6 { color: #1d2327 }` that doesn't flip. */
+body.adminkit #plugin-information h2,
+body.adminkit #plugin-information h3,
+body.adminkit #plugin-information h4,
+body.adminkit #TB_window h2,
+body.adminkit #TB_window h3 {
+	color: var(--ak-heading);
+}
+
+/* `.fyi` list items — the wrapper sets --ak-text-muted but `<li>`
+   elements with `<strong>` mixed text fell back to default text in
+   some themes. Force the list color too. */
+body.adminkit #plugin-information .fyi ul,
+body.adminkit #plugin-information .fyi li,
+body.adminkit #plugin-information .fyi .contributors li a {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit #plugin-information .fyi a {
+	color: var(--ak-text);
+}
+
+body.adminkit #plugin-information .fyi a:hover,
+body.adminkit #plugin-information .fyi a:focus {
+	color: var(--ak-heading);
+}
+
+body.adminkit #plugin-information .counter-back {
+	background-color: var(--ak-border);
+}
+
+body.adminkit #plugin-information-footer {
+	background: var(--ak-surface);
+	border-top-color: var(--ak-border);
+}
+
+body.adminkit #plugin-information pre {
+	border-color: var(--ak-border);
+	background: var(--ak-surface);
+}
+
+body.adminkit #plugin-information blockquote {
+	border-left-color: var(--ak-border-strong);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit #plugin-information .review {
+	border-bottom-color: var(--ak-border);
+}

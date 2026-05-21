@@ -1,0 +1,13 @@
+/* Links — text color by default, heading on hover.
+   Split into its own file so a child theme can disable just the link
+   restyle (via the `adminkit/enqueue_links` filter) without losing
+   the rest of the chrome. */
+
+body.adminkit a {
+	color: var(--ak-text);
+}
+
+body.adminkit a:hover,
+body.adminkit a:focus {
+	color: var(--ak-heading);
+}

@@ -1,0 +1,10 @@
+/* `.card` — generic content card used on tools.php (Press This,
+   Categories converter, …), the auth-app install screen, and a handful
+   of settings pages. WP hardcodes `background: #ffffff` plus a
+   0.1-alpha-black border (which survives dark mode, no need to override
+   the border alone). */
+body.adminkit .card {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}

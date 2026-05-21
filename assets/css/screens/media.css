@@ -1,0 +1,252 @@
+/* upload.php (Media Library) + Media Modal (Edit Attachment, Add Media
+   frame). Selectors target .attachments-browser so they work on both
+   upload.php AND the media modal frame embedded in post-edit screens. */
+
+body.adminkit .attachments-browser .attachment .attachment-preview {
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
+}
+
+body.adminkit .attachments-browser .attachment.selected .attachment-preview,
+body.adminkit .attachments-browser .attachment.details .attachment-preview {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: 2px;
+	box-shadow: none;
+}
+
+body.adminkit .attachments-browser .attachment .check {
+	background: var(--ak-primary);
+	border-radius: var(--ak-radius-full);
+	box-shadow: none;
+}
+
+body.adminkit .attachments-browser .attachment .check:hover {
+	background: var(--ak-primary-dark);
+}
+
+/* Filename badge on attachments without a `.filename` element —
+   WP renders the aria-label as a `::after` pseudo with an 80% white
+   overlay + #1d2327 text. Route the color through --ak-heading
+   (light mode keeps the white overlay) and flip to a 75% black
+   overlay + white text in dark mode so the badge stays readable on
+   dark thumbnails. */
+body.adminkit .wp-core-ui .attachment:not(:has(.filename))::after {
+	color: var(--ak-heading);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .wp-core-ui .attachment:not(:has(.filename))::after {
+	background-color: rgba(0, 0, 0, 0.75);
+	color: #ffffff;
+}
+
+body.adminkit .uploader-inline {
+	background: var(--ak-surface-alt);
+	border: 2px dashed var(--ak-border-strong);
+	border-radius: var(--ak-radius-m);
+}
+
+body.adminkit .uploader-inline.drag-over {
+	border-color: var(--ak-info);
+	background: rgba(40, 149, 212, 0.06);
+}
+
+/* Drag-and-drop file overlay — WP paints `background:
+   rgba(var(--wp-admin-theme-color--rgb), 0.9)`. With our --rgb token
+   set to the brand green that becomes a loud green overlay covering
+   the whole screen. Route to --ak-info (semantic blue) so the overlay
+   reads as "drop your file here" rather than "brand action". */
+body.adminkit .uploader-window,
+body.adminkit .wp-editor-wrap .uploader-editor.droppable {
+	background-color: rgba(40, 149, 212, 0.85) !important;
+}
+
+/* #drag-drop-area border on drag-over (plupload-based uploader) —
+   was hardcoded #9ec2e6 (soft blue) by WP. Route to --ak-info. */
+body.adminkit .drag-drop.drag-over #drag-drop-area {
+	border-color: var(--ak-info);
+}
+
+/* upload.php chrome (toolbar, filters, sidebar) */
+body.adminkit.upload-php .wp-filter,
+body.adminkit.upload-php .media-toolbar {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	padding: 12px 16px;
+}
+
+body.adminkit.upload-php .wp-filter .attachment-filters,
+body.adminkit.upload-php .wp-filter .search-form input[type="search"] {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+}
+
+body.adminkit.upload-php .media-sidebar {
+	background: var(--ak-surface);
+	border-left: 1px solid var(--ak-border);
+}
+
+body.adminkit.upload-php .media-sidebar .attachment-details h2 {
+	color: var(--ak-heading);
+	border-bottom: 1px solid var(--ak-border);
+	padding-bottom: 8px;
+}
+
+/* View-switch (list / grid toggle above upload.php). WP defaults paint
+   the icon #c3c4c7 -> #787c82 on hover, and the .current icon stays
+   hardcoded #2271b1 (WP blue). Route through tokens. */
+body.adminkit .view-switch a::before {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .view-switch a:hover::before,
+body.adminkit .view-switch a:focus::before {
+	color: var(--ak-text);
+}
+
+body.adminkit .view-switch a.current::before {
+	color: var(--ak-heading) !important;
+}
+
+
+/* Media modal (Edit Attachment, Add Media frame) — WP paints every
+   surface white with dark text, none of which flip in dark mode.
+   Route through tokens so the entire modal reads in both modes. */
+body.adminkit .media-modal-content {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+
+body.adminkit .edit-attachment-frame,
+body.adminkit .media-frame-content,
+body.adminkit .attachment-info {
+	background: var(--ak-bg);
+}
+
+body.adminkit .edit-media-header {
+	background: var(--ak-surface);
+	border-bottom: 1px solid var(--ak-border);
+}
+
+body.adminkit .media-frame-title h1,
+body.adminkit .attachment-info h2 {
+	color: var(--ak-heading);
+}
+
+body.adminkit .attachment-media-view {
+	background: var(--ak-surface);
+}
+
+body.adminkit .attachment-info .details strong,
+body.adminkit .setting label.name {
+	color: var(--ak-heading);
+}
+
+body.adminkit .attachment-info .description {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .attachment-info .links-separator {
+	color: var(--ak-border-strong);
+}
+
+/* Modal chrome buttons — close + prev/next */
+body.adminkit .media-modal-close,
+body.adminkit .edit-media-header .dashicons {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .media-modal-close:hover,
+body.adminkit .media-modal-close:focus,
+body.adminkit .edit-media-header .dashicons:hover,
+body.adminkit .edit-media-header .dashicons:focus {
+	color: var(--ak-heading);
+}
+
+/* Media modal — every internal divider hardcodes `#dcdcde` (and one
+   `#c3c4c7`), all bright on a dark surface. Route through --ak-border.
+   The `.media-frame-content` and `.image-details .column-settings`
+   blocks also hardcode `#fff` / `#f6f7f7` bg, route those too. */
+body.adminkit .media-frame-content,
+body.adminkit .media-frame-toolbar .media-toolbar,
+body.adminkit .media-sidebar,
+body.adminkit .media-menu,
+body.adminkit .media-menu .separator,
+body.adminkit .media-router .active,
+body.adminkit .media-router .media-menu-item.active:last-child,
+body.adminkit .media-selection .button-link,
+body.adminkit .attachment-info,
+body.adminkit .image-details .column-settings,
+body.adminkit .image-details .column-settings h2 {
+	border-color: var(--ak-border);
+}
+
+body.adminkit .media-frame-content {
+	background: var(--ak-bg);
+}
+
+body.adminkit .media-router .active,
+body.adminkit .media-router .media-menu-item.active:last-child {
+	background: var(--ak-bg);
+}
+
+body.adminkit .image-details .column-settings {
+	background: var(--ak-surface);
+}
+
+body.adminkit .image-details .column-settings h2 {
+	color: var(--ak-heading);
+}
+
+body.adminkit .attachment-info {
+	color: var(--ak-text-muted);
+}
+
+/* Right info panel — WP paints `.edit-attachment-frame .attachment-info`
+   with a #dcdcde border-left (the vertical divider with the image
+   preview) and gives `.details` + `.settings` a #dcdcde border-bottom
+   (the horizontal separators between Uploaded / File / Dimensions,
+   Alt text / Title / Caption / Description / URL, and the bottom
+   View / Edit / Download / Delete actions). All bright in dark mode. */
+body.adminkit .edit-attachment-frame .attachment-info,
+body.adminkit .edit-attachment-frame .attachment-info .details,
+body.adminkit .edit-attachment-frame .attachment-info .settings {
+	border-color: var(--ak-border);
+}
+
+/* Top-right nav (prev / next / close in .edit-media-header) — WP's
+   default hover/focus paints `background: #dcdcde; border-color:
+   #c3c4c7; color: #000`, all hardcoded and unreadable on dark.
+   Route through tokens and use our --ak-focus-ring on :focus-visible
+   so keyboard users get a clear indicator. */
+body.adminkit .edit-media-header .left,
+body.adminkit .edit-media-header .right,
+body.adminkit .edit-media-header .media-modal-close {
+	border-left-color: var(--ak-border);
+}
+
+body.adminkit .edit-media-header .left:hover,
+body.adminkit .edit-media-header .left:focus,
+body.adminkit .edit-media-header .right:hover,
+body.adminkit .edit-media-header .right:focus,
+body.adminkit .edit-attachment-frame .media-modal-close:hover,
+body.adminkit .edit-attachment-frame .media-modal-close:focus {
+	background: var(--ak-hover-bg);
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
+	box-shadow: none;
+}
+
+body.adminkit .edit-media-header .left:focus-visible,
+body.adminkit .edit-media-header .right:focus-visible,
+body.adminkit .edit-attachment-frame .media-modal-close:focus-visible {
+	box-shadow: var(--ak-focus-ring);
+}
+
+body.adminkit .edit-media-header [disabled],
+body.adminkit .edit-media-header [disabled]:hover {
+	color: var(--ak-text-muted);
+	background: transparent;
+}

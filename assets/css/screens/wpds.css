@@ -1,0 +1,164 @@
+/* WPDS (WordPress Design System).
+   The new design-token layer used by options-connectors.php and other
+   recent React admin pages. WPDS declares its tokens on a hashed
+   CSS-in-JS class plus `[data-wpds-theme-provider-id="..."]` (the
+   ":r2:" suffix is React's internal counter — changes per render).
+   Match the attribute selector doubled to beat WP's (0,3,0) at (0,3,1)
+   without depending on the hashed class. All my AdminKit tokens flip
+   between light + dark, so a single mapping covers both modes. */
+body.adminkit [data-wpds-theme-provider-id][data-wpds-theme-provider-id] {
+	/* Neutral surfaces */
+	--wpds-color-bg-surface-neutral: var(--ak-bg);
+	--wpds-color-bg-surface-neutral-strong: var(--ak-surface-alt);
+	--wpds-color-bg-surface-neutral-weak: var(--ak-surface);
+
+	/* Neutral text */
+	--wpds-color-fg-content-neutral: var(--ak-text);
+	--wpds-color-fg-content-neutral-weak: var(--ak-text-muted);
+	--wpds-color-fg-interactive-neutral: var(--ak-text);
+	--wpds-color-fg-interactive-neutral-active: var(--ak-heading);
+	--wpds-color-fg-interactive-neutral-weak: var(--ak-text-muted);
+
+	/* Neutral strokes (borders / dividers) */
+	--wpds-color-stroke-interactive-neutral: var(--ak-border-strong);
+	--wpds-color-stroke-interactive-neutral-active: var(--ak-text);
+	--wpds-color-stroke-interactive-neutral-strong: var(--ak-text);
+	--wpds-color-stroke-surface-neutral: var(--ak-border);
+	--wpds-color-stroke-surface-neutral-strong: var(--ak-border-strong);
+	--wpds-color-stroke-surface-neutral-weak: var(--ak-border);
+
+	/* Toggle / slider thumb + track */
+	--wpds-color-bg-thumb-neutral-weak: var(--ak-text-muted);
+	--wpds-color-bg-thumb-neutral-weak-active: var(--ak-text);
+	--wpds-color-bg-track-neutral: var(--ak-border-strong);
+	--wpds-color-bg-track-neutral-weak: var(--ak-border);
+
+	/* Inverted (dark button on light bg in light mode, etc.) */
+	--wpds-color-bg-interactive-neutral-strong: var(--ak-heading);
+	--wpds-color-bg-interactive-neutral-strong-active: var(--ak-text);
+	--wpds-color-bg-interactive-neutral-weak-active: var(--ak-hover-bg);
+	--wpds-color-fg-interactive-neutral-strong: var(--ak-surface-alt);
+	--wpds-color-fg-interactive-neutral-strong-active: var(--ak-surface-alt);
+
+	/* Disabled state */
+	--wpds-color-bg-interactive-neutral-strong-disabled: var(--ak-border);
+	--wpds-color-fg-interactive-neutral-disabled: var(--ak-text-muted);
+	--wpds-color-fg-interactive-neutral-strong-disabled: var(--ak-text-muted);
+	--wpds-color-fg-interactive-neutral-weak-disabled: var(--ak-text-muted);
+	--wpds-color-stroke-interactive-neutral-disabled: var(--ak-border);
+	--wpds-color-bg-thumb-neutral-disabled: var(--ak-border);
+
+	/* Brand */
+	--wpds-color-bg-interactive-brand-strong: var(--ak-primary);
+	--wpds-color-bg-interactive-brand-strong-active: var(--ak-primary-dark);
+	--wpds-color-bg-interactive-brand-weak-active: var(--ak-primary-subtle);
+	--wpds-color-fg-interactive-brand: var(--ak-primary);
+	--wpds-color-fg-interactive-brand-active: var(--ak-primary-dark);
+	--wpds-color-fg-interactive-brand-strong: #ffffff;
+	--wpds-color-fg-interactive-brand-strong-active: #ffffff;
+	--wpds-color-bg-thumb-brand: var(--ak-primary);
+	--wpds-color-bg-thumb-brand-active: var(--ak-primary-dark);
+	--wpds-color-stroke-focus-brand: var(--ak-primary);
+	--wpds-color-stroke-interactive-brand: var(--ak-primary);
+	--wpds-color-stroke-interactive-brand-active: var(--ak-primary-dark);
+	--wpds-color-stroke-surface-brand: var(--ak-border);
+	--wpds-color-stroke-surface-brand-strong: var(--ak-primary);
+	--wpds-color-bg-surface-brand: var(--ak-primary-subtle);
+
+	/* Info */
+	--wpds-color-bg-surface-info-weak: rgba(40, 149, 212, 0.06);
+	--wpds-color-bg-surface-info: rgba(40, 149, 212, 0.12);
+	--wpds-color-fg-content-info: var(--ak-info);
+	--wpds-color-fg-content-info-weak: var(--ak-info);
+	--wpds-color-stroke-surface-info: var(--ak-info);
+	--wpds-color-stroke-surface-info-strong: var(--ak-info);
+
+	/* Success */
+	--wpds-color-bg-surface-success-weak: rgba(17, 183, 107, 0.06);
+	--wpds-color-bg-surface-success: rgba(17, 183, 107, 0.12);
+	--wpds-color-fg-content-success: var(--ak-success);
+	--wpds-color-fg-content-success-weak: var(--ak-success);
+	--wpds-color-stroke-surface-success: var(--ak-success);
+	--wpds-color-stroke-surface-success-strong: var(--ak-success);
+
+	/* Caution (yellow) */
+	--wpds-color-bg-surface-caution-weak: rgba(255, 161, 0, 0.06);
+	--wpds-color-bg-surface-caution: rgba(255, 161, 0, 0.12);
+	--wpds-color-fg-content-caution: var(--ak-warning);
+	--wpds-color-fg-content-caution-weak: var(--ak-warning);
+
+	/* Warning (orange) */
+	--wpds-color-bg-surface-warning-weak: rgba(255, 161, 0, 0.06);
+	--wpds-color-bg-surface-warning: rgba(255, 161, 0, 0.12);
+	--wpds-color-fg-content-warning: var(--ak-warning);
+	--wpds-color-fg-content-warning-weak: var(--ak-warning);
+	--wpds-color-stroke-surface-warning: var(--ak-warning);
+	--wpds-color-stroke-surface-warning-strong: var(--ak-warning);
+
+	/* Error */
+	--wpds-color-bg-interactive-error-strong: var(--ak-error);
+	--wpds-color-bg-interactive-error-strong-active: var(--ak-error);
+	--wpds-color-bg-interactive-error-active: rgba(240, 70, 98, 0.04);
+	--wpds-color-bg-interactive-error-weak-active: rgba(240, 70, 98, 0.08);
+	--wpds-color-bg-surface-error-weak: rgba(240, 70, 98, 0.04);
+	--wpds-color-bg-surface-error: rgba(240, 70, 98, 0.10);
+	--wpds-color-fg-content-error: var(--ak-error);
+	--wpds-color-fg-content-error-weak: var(--ak-error);
+	--wpds-color-fg-interactive-error: var(--ak-error);
+	--wpds-color-fg-interactive-error-active: var(--ak-error);
+	--wpds-color-fg-interactive-error-strong: #ffffff;
+	--wpds-color-fg-interactive-error-strong-active: #ffffff;
+	--wpds-color-stroke-interactive-error: var(--ak-error);
+	--wpds-color-stroke-interactive-error-strong: var(--ak-error);
+	--wpds-color-stroke-interactive-error-active: var(--ak-error);
+	--wpds-color-stroke-surface-error: var(--ak-error);
+	--wpds-color-stroke-surface-error-strong: var(--ak-error);
+}
+
+/* `.connectors-page .components-item` — each connector card. WP hardcodes
+   bg #fff + border #ddd. Routed; my generic .components-card rule had
+   lower specificity and lost to this one. */
+body.adminkit .connectors-page .components-item {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+/* AI plugin callout — pink-purple gradient hero on top of the
+   connectors page. The gradient is design-intent; in dark mode tone
+   it down by overlaying a dark tint via a more subtle multiplier so
+   the text stays legible without losing the brand-y feel. */
+:root[data-adminkit-theme="dark"] body.adminkit .connectors-page .ai-plugin-callout {
+	background-color: #2d1f2b;
+	background-image:
+		radial-gradient(ellipse 70% 120% at 18% 115%, rgba(202, 158, 198, 0.18) 0, rgba(202, 158, 198, 0) 60%),
+		radial-gradient(ellipse 55% 110% at 92% -15%, rgba(208, 175, 217, 0.16) 0, rgba(208, 175, 217, 0) 65%),
+		radial-gradient(ellipse 40% 85% at 58% -10%, rgba(170, 130, 184, 0.12) 0, rgba(170, 130, 184, 0) 70%);
+}
+
+/* Text + button inside the callout — needs to read on the pink-purple
+   bg in light mode and the deepened version in dark. The light-mode
+   default already works (dark text on light pink), only adjust dark
+   mode where the bg is now deeper. */
+:root[data-adminkit-theme="dark"] body.adminkit .connectors-page .ai-plugin-callout,
+:root[data-adminkit-theme="dark"] body.adminkit .connectors-page .ai-plugin-callout h1,
+:root[data-adminkit-theme="dark"] body.adminkit .connectors-page .ai-plugin-callout h2,
+:root[data-adminkit-theme="dark"] body.adminkit .connectors-page .ai-plugin-callout h3,
+:root[data-adminkit-theme="dark"] body.adminkit .connectors-page .ai-plugin-callout p {
+	color: var(--ak-heading);
+}
+
+/* Button inside the callout — needs a surface that contrasts with the
+   pink-purple bg. Use a clean white-on-primary (or dark) chip. */
+body.adminkit .connectors-page .ai-plugin-callout .components-button.is-primary,
+body.adminkit .connectors-page .ai-plugin-callout .components-button.is-secondary {
+	background: var(--ak-primary);
+	color: #ffffff;
+	box-shadow: none;
+	border-color: var(--ak-primary);
+}
+
+body.adminkit .connectors-page .ai-plugin-callout .components-button.is-primary:hover,
+body.adminkit .connectors-page .ai-plugin-callout .components-button.is-secondary:hover {
+	background: var(--ak-primary-dark);
+	color: #ffffff;
+}
