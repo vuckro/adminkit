@@ -1,0 +1,48 @@
+/* Bricks "Edit with Bricks" CTAs — token bridge.
+   Bricks paints these buttons #ffd64f (brand yellow) with uppercase
+   bold text. They appear:
+     - In the Gutenberg toolbar header (when Bricks manages the post)
+     - In the block editor center notice ("This page is built with Bricks")
+     - In the classic editor fallback wrapper
+   Route them through --ak-primary so they read as a normal primary
+   action in dark mode while keeping the bold/uppercase emphasis.
+
+   Selectors stay broad on body.adminkit (no screen condition) — the
+   button hooks only render where Bricks injects them, so this is a
+   no-op everywhere else. */
+
+body.adminkit .bricks-edit-with-bricks-button,
+body.adminkit a.bricks-edit-with-bricks-button,
+body.adminkit button.bricks-edit-with-bricks-button,
+body.adminkit .bricks-block-editor-notice-wrapper .button.button-primary,
+body.adminkit .bricks-block-editor-notice-wrapper a.button-primary,
+body.adminkit .bricks-classic-editor-wrapper .button.button-primary,
+body.adminkit .bricks-editor .wp-editor-container .button.button-primary,
+body.adminkit .edit-post-header-toolbar .button.button-primary,
+body.adminkit .editor-header .bricks-edit-with-bricks-button,
+body.adminkit .edit-post-header .bricks-edit-with-bricks-button {
+	background-color: var(--ak-primary);
+	color: var(--ak-surface-alt);
+	border-color: var(--ak-primary);
+	box-shadow: none;
+}
+
+body.adminkit .bricks-edit-with-bricks-button:hover,
+body.adminkit a.bricks-edit-with-bricks-button:hover,
+body.adminkit button.bricks-edit-with-bricks-button:hover,
+body.adminkit .bricks-edit-with-bricks-button:focus,
+body.adminkit a.bricks-edit-with-bricks-button:focus,
+body.adminkit button.bricks-edit-with-bricks-button:focus,
+body.adminkit .bricks-block-editor-notice-wrapper .button.button-primary:hover,
+body.adminkit .bricks-block-editor-notice-wrapper a.button-primary:hover,
+body.adminkit .bricks-classic-editor-wrapper .button.button-primary:hover,
+body.adminkit .bricks-editor .wp-editor-container .button.button-primary:hover,
+body.adminkit .edit-post-header-toolbar .button.button-primary:hover,
+body.adminkit .bricks-block-editor-notice-wrapper .button.button-primary:focus,
+body.adminkit .bricks-classic-editor-wrapper .button.button-primary:focus,
+body.adminkit .bricks-editor .wp-editor-container .button.button-primary:focus,
+body.adminkit .edit-post-header-toolbar .button.button-primary:focus {
+	background-color: var(--ak-primary-dark);
+	border-color: var(--ak-primary-dark);
+	color: var(--ak-surface-alt);
+}

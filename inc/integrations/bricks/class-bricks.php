@@ -96,12 +96,24 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function register_assets() {
+		// Bricks admin pages (Settings, Templates, …) — full token bridge.
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-bricks-admin',
 			'src'       => 'inc/integrations/bricks/css/admin.css',
 			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_screen' ),
+		) );
+
+		// "Edit with Bricks" CTAs render on post-edit screens (classic
+		// editor wrapper, block editor toolbar, in-canvas notice).
+		// Loaded everywhere when Bricks is active — selectors are
+		// no-ops where the button doesn't render.
+		AdminKit_Assets::register( array(
+			'handle'  => 'adminkit-bricks-edit-button',
+			'src'     => 'inc/integrations/bricks/css/edit-button.css',
+			'deps'    => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context' => 'admin',
 		) );
 	}
 

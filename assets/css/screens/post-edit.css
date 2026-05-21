@@ -30,29 +30,6 @@ body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container {
 }
 
 
-/* ----- "Edit with Bricks" CTA buttons ----- */
-/* Bricks paints these primary buttons #ffd64f (brand yellow) with
-   uppercase bold text — too loud next to AdminKit's neutral chrome.
-   Route them through --ak-primary so they read as a normal primary
-   action while keeping the bold/uppercase emphasis. */
-body.adminkit:is(.post-php, .post-new-php) .bricks-block-editor-notice-wrapper .button.button-primary,
-body.adminkit:is(.post-php, .post-new-php) .bricks-classic-editor-wrapper .button.button-primary,
-body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container .button.button-primary,
-body.adminkit:is(.post-php, .post-new-php) .edit-post-header-toolbar .button.button-primary {
-	background-color: var(--ak-primary);
-	color: var(--ak-surface-alt);
-	border-color: var(--ak-primary);
-}
-
-body.adminkit:is(.post-php, .post-new-php) .bricks-block-editor-notice-wrapper .button.button-primary:hover,
-body.adminkit:is(.post-php, .post-new-php) .bricks-classic-editor-wrapper .button.button-primary:hover,
-body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container .button.button-primary:hover,
-body.adminkit:is(.post-php, .post-new-php) .edit-post-header-toolbar .button.button-primary:hover,
-body.adminkit:is(.post-php, .post-new-php) .bricks-block-editor-notice-wrapper .button.button-primary:focus,
-body.adminkit:is(.post-php, .post-new-php) .bricks-classic-editor-wrapper .button.button-primary:focus,
-body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container .button.button-primary:focus,
-body.adminkit:is(.post-php, .post-new-php) .edit-post-header-toolbar .button.button-primary:focus {
-	background-color: var(--ak-primary-dark);
-	border-color: var(--ak-primary-dark);
-	color: var(--ak-surface-alt);
-}
+/* "Edit with Bricks" CTAs live in inc/integrations/bricks/css/edit-button.css
+   — broader selector coverage (Gutenberg toolbar + classic notice +
+   page editor) and only loads when Bricks is active. */
