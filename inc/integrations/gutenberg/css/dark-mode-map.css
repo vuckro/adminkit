@@ -342,6 +342,20 @@ body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand.co
 	border-top: 1px solid var(--ak-border);
 }
 
+/* Default block appender "+" toggle (the icon button next to "Type /
+   to choose a block"). WP cores its hover to var(--wp-admin-theme-color)
+   + #fff text — even with our remap that fills the button with the
+   brand primary, which is too loud here. Swap to the soft pill
+   pattern (primary-t-2 bg + primary text + radius). */
+body.block-editor-page.adminkit .block-editor-default-block-appender .block-editor-inserter__toggle.components-button.has-icon:hover,
+body.block-editor-page.adminkit .block-editor-default-block-appender .block-editor-inserter__toggle.components-button.has-icon:focus,
+body.block-editor-page.adminkit .block-editor-default-block-appender .block-editor-inserter__toggle.components-button:hover,
+body.block-editor-page.adminkit .block-editor-default-block-appender .block-editor-inserter__toggle.components-button:focus {
+	background: var(--ak-primary-soft);
+	color: var(--ak-primary);
+	border-radius: var(--ak-radius-s);
+}
+
 body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand:hover:not(:disabled),
 body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand:focus:not(:disabled),
 body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand.components-button:hover:not(:disabled),
