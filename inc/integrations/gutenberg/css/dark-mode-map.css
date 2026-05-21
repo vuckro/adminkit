@@ -233,8 +233,9 @@ body.block-editor-page.adminkit .block-editor-block-toolbar .components-button:f
 body.block-editor-page.adminkit .block-editor-block-toolbar .components-button.is-pressed,
 body.block-editor-page.adminkit .block-editor-block-toolbar .components-button[aria-pressed="true"],
 body.block-editor-page.adminkit .block-editor-block-toolbar .components-button[aria-expanded="true"] {
-	background: var(--ak-heading);
-	color: var(--ak-surface-alt);
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+	border-radius: var(--ak-radius-s);
 }
 
 
@@ -997,4 +998,19 @@ body.block-editor-page.adminkit .block-editor-block-inspector__no-blocks {
 body.block-editor-page.adminkit .components-button svg,
 body.block-editor-page.adminkit .components-button svg path {
 	fill: currentColor;
+}
+
+/* Global pressed-state pill (.is-pressed / [aria-pressed="true"]).
+   Gutenberg defaults to `background: var(--primary-t-2, #1e1e1e)` —
+   the t-2 tint works when Bricks supplies it, but the #1e1e1e
+   fallback paints a hard dark slab. Force --ak-primary-subtle + the
+   primary text color + a small radius so every pressed button feels
+   like one consistent pill across the editor. */
+body.block-editor-page.adminkit .components-button.is-pressed:not(:disabled, [aria-disabled="true"]),
+body.block-editor-page.adminkit .components-button.is-pressed:hover:not(:disabled, [aria-disabled="true"]),
+body.block-editor-page.adminkit .components-button[aria-pressed="true"]:not(:disabled, [aria-disabled="true"]),
+body.block-editor-page.adminkit .components-button[aria-pressed="true"]:hover:not(:disabled, [aria-disabled="true"]) {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+	border-radius: var(--ak-radius-s);
 }
