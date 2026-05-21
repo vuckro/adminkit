@@ -316,12 +316,22 @@ body.adminkit.settings_page_menu_editor .rex-category {
 }
 
 body.adminkit.settings_page_menu_editor .rex-category .rex-category-header {
+	background: var(--ak-surface);
 	border-bottom-color: var(--ak-border);
 	color: var(--ak-heading);
 }
 
 body.adminkit.settings_page_menu_editor .rex-category.rex-sub-category {
 	box-shadow: none;
+}
+
+/* Sub-category header — AME paints #fafafa here, a hair lighter than
+   the parent category header. Route to --ak-bg (which holds the same
+   relative position in AdminKit's neutral scale) so the nesting cue
+   survives the dark-mode flip. */
+body.adminkit.settings_page_menu_editor .rex-category.rex-sub-category > .rex-category-header {
+	background: var(--ak-bg);
+	color: var(--ak-text);
 }
 
 /* Permission table zebra striping — WP common zebra rule paints #F9F9F9. */
