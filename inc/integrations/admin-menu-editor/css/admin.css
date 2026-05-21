@@ -222,14 +222,93 @@ body.adminkit.settings_page_menu_editor #ame-widget-editor-sidebar .postbox {
 body.adminkit.settings_page_menu_editor #rex-content-container,
 body.adminkit.settings_page_menu_editor #rex-action-sidebar,
 body.adminkit.settings_page_menu_editor #rex-category-sidebar,
-body.adminkit.settings_page_menu_editor #rex-related-widget {
+body.adminkit.settings_page_menu_editor #rex-related-widget,
+body.adminkit.settings_page_menu_editor #rex-main-buttons {
 	background-color: var(--ak-surface-alt);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }
 
+/* Top toolbar (search, "Readable names" toggle, Options, Hierarchy). */
+body.adminkit.settings_page_menu_editor #rex-view-toolbar {
+	background-color: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+/* Per-category capability panels in the main view. */
+body.adminkit.settings_page_menu_editor .rex-category {
+	border-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_menu_editor .rex-category .rex-category-header {
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.adminkit.settings_page_menu_editor .rex-category.rex-sub-category {
+	box-shadow: none;
+}
+
+/* Permission table zebra striping — WP common zebra rule paints #F9F9F9. */
+body.adminkit.settings_page_menu_editor .rex-permission-table tbody tr:nth-child(2n+1),
+body.adminkit.settings_page_menu_editor .rex-capability-inheritance-breakdown tbody tr:nth-child(2n+1) {
+	background-color: var(--ak-surface);
+}
+
+/* Category sidebar nav rows — hover + selected. */
 body.adminkit.settings_page_menu_editor #rex-category-sidebar .rex-nav-item:hover {
 	background-color: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+body.adminkit.settings_page_menu_editor #rex-category-sidebar .rex-selected-nav-item,
+body.adminkit.settings_page_menu_editor #rex-category-sidebar .rex-selected-nav-item:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	box-shadow: inset 3px 0 0 var(--ak-primary);
+}
+
+
+/* ----- Table Columns module footer "Enable custom order" -----
+   `.ame-tc-other-screen-options` paints #f6f7f7 — too light on dark. */
+body.adminkit.settings_page_menu_editor .ame-tc-other-screen-options {
+	background-color: var(--ak-surface);
+	border-radius: var(--ak-radius-s);
+}
+
+
+/* ----- Consistent border-radius across AME panels -----
+   AME ships its panels as flat 0-radius rectangles (or random 3px
+   on a few). Normalize to --ak-radius-s so they match the rounded
+   corners of AdminKit's postboxes / cards elsewhere. */
+body.adminkit.settings_page_menu_editor .ws_main_container,
+body.adminkit.settings_page_menu_editor .ws-ame-postbox-content,
+body.adminkit.settings_page_menu_editor .ws-ame-postbox-header,
+body.adminkit.settings_page_menu_editor #ame-mb-screen-list,
+body.adminkit.settings_page_menu_editor #ame-mb-main-actions,
+body.adminkit.settings_page_menu_editor #ame-dashboard-widgets,
+body.adminkit.settings_page_menu_editor #ame-major-widget-actions,
+body.adminkit.settings_page_menu_editor .ame-widget-top,
+body.adminkit.settings_page_menu_editor #rex-content-container,
+body.adminkit.settings_page_menu_editor #rex-main-buttons,
+body.adminkit.settings_page_menu_editor #rex-related-widget,
+body.adminkit.settings_page_menu_editor .rex-category,
+body.adminkit.settings_page_menu_editor .ame-rui-redirect-list,
+body.adminkit.settings_page_menu_editor .ame-rui-redirect,
+body.adminkit.settings_page_menu_editor .ame-rui-default-redirect-container {
+	border-radius: var(--ak-radius-s);
+}
+
+/* Header of a postbox-style card needs a matching top radius so the
+   filled header doesn't poke past the rounded outer border. */
+body.adminkit.settings_page_menu_editor .ws-ame-postbox-header {
+	border-top-left-radius: var(--ak-radius-s);
+	border-top-right-radius: var(--ak-radius-s);
+}
+
+body.adminkit.settings_page_menu_editor .ws-ame-postbox-content {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	border-bottom-left-radius: var(--ak-radius-s);
+	border-bottom-right-radius: var(--ak-radius-s);
 }
 
 
