@@ -5,11 +5,13 @@
    `adminkit/extra_tokens_handle` filter. When no provider is active,
    each var falls back to a sensible neutral.
 
-   All tokens live on :root only — they inherit through <body> down to
-   every descendant. Declaring them on <body> too would let a body-level
-   stylesheet (Bricks frontend, color schemes…) intercept the cascade
-   and freeze the value at the body layer, blocking the dark-mode flip
-   from reaching #wpadminbar / #adminmenu.
+   Tokens live on :root so they inherit through <body> to every
+   descendant. We do NOT declare them on <body> — a body-level
+   stylesheet (Bricks frontend, color schemes…) could intercept the
+   cascade and freeze the value, blocking the dark-mode flip. The
+   only intentional re-declaration sits on #wpadminbar / #adminmenu*
+   below: those chrome surfaces are pinned to the dark token set so
+   they stay dark regardless of what :root resolves to.
 
    Typography and radii stay hardcoded in px because some provider rem
    scales are calibrated for a 1rem = 10px frontend reset that would
@@ -123,5 +125,36 @@ body.adminkit {
 	--ak-secondary: var(--secondary, var(--neutral-d-7, hsl(0, 0%, 56%)));
 
 	/* Light overlay so the hover tint stays visible on dark surfaces */
+	--ak-hover-bg: rgba(255, 255, 255, 0.08);
+}
+
+
+/* ----- Chrome stays dark regardless of the global theme -----
+   Pins the dark-mode token set directly on the admin bar and the
+   left admin menu so they always render dark, even when the page
+   content is in light mode. Works because CSS variables resolve
+   from the nearest ancestor that declares them — descendants of
+   #wpadminbar / #adminmenu read these values instead of whatever
+   :root happens to expose. Only the page content cascade flips
+   with the [data-adminkit-theme] attribute.
+
+   #wpadminbar is selector-prefix-only (no body.adminkit) so the
+   frontend admin bar inherits the same dark token set. */
+#wpadminbar,
+#adminmenuback,
+#adminmenuwrap,
+#adminmenu {
+	--ak-bg: var(--neutral-d-2, hsl(0, 0%, 11%));
+	--ak-surface: var(--neutral-d-3, hsl(0, 0%, 14%));
+	--ak-surface-alt: var(--neutral-d-4, hsl(0, 0%, 18%));
+	--ak-elevated: var(--neutral-d-5, hsl(0, 0%, 24%));
+	--ak-border: var(--neutral-d-5, hsl(0, 0%, 24%));
+	--ak-border-strong: var(--neutral-d-6, hsl(0, 0%, 38%));
+	--ak-text: var(--neutral-d-8, hsl(0, 0%, 72%));
+	--ak-text-muted: var(--neutral-d-7, hsl(0, 0%, 56%));
+	--ak-heading: var(--neutral-d-9, hsl(0, 0%, 86%));
+	--ak-primary: var(--primary, var(--neutral-d-6, hsl(0, 0%, 38%)));
+	--ak-primary-dark: var(--primary-d-2, var(--neutral-d-7, hsl(0, 0%, 56%)));
+	--ak-secondary: var(--secondary, var(--neutral-d-7, hsl(0, 0%, 56%)));
 	--ak-hover-bg: rgba(255, 255, 255, 0.08);
 }
