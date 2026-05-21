@@ -147,6 +147,92 @@ body.adminkit.settings_page_menu_editor .ws_is_sticky_toolbar {
 }
 
 
+/* ----- Shared AME postbox primitives -----
+   nav-menus, table-columns, tweaks, and role-editor all wrap their
+   sections in `.ws-ame-postbox-header / -content / -toggle` (their
+   own postbox primitive). Module-specific wrappers (.ame-nv-…,
+   .ame-tc-…, .ame-twm-…) inherit these — one rule set covers all
+   four sub-sections. */
+body.adminkit.settings_page_menu_editor .ws-ame-postbox-header,
+body.adminkit.settings_page_menu_editor .ws-ame-postbox-content {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+body.adminkit.settings_page_menu_editor .ws-ame-postbox-header {
+	border-bottom: 1px solid var(--ak-border);
+}
+
+body.adminkit.settings_page_menu_editor .ws-ame-postbox-header h3 {
+	color: var(--ak-heading);
+}
+
+body.adminkit.settings_page_menu_editor .ws-ame-postbox-toggle:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+
+/* ----- Meta Boxes module (sub_section=metaboxes) ----- */
+body.adminkit.settings_page_menu_editor #ame-mb-screen-list,
+body.adminkit.settings_page_menu_editor #ame-mb-main-actions {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+
+/* ----- Dashboard Widgets module (sub_section=dashboard-widgets) -----
+   The grid container holding the widget columns, the major-actions
+   sidebar, and each widget card. */
+body.adminkit.settings_page_menu_editor #ame-dashboard-widgets,
+body.adminkit.settings_page_menu_editor #ame-major-widget-actions {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit.settings_page_menu_editor .ame-widget-top {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+body.adminkit.settings_page_menu_editor .ame-widget-area-header {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.settings_page_menu_editor .ame-empty-dashboard-widget-collection {
+	outline-color: var(--ak-border-strong);
+}
+
+/* The sidebar's stock .postbox wrapper inside #ame-widget-editor-sidebar
+   is already token-aware via core/chrome.css, but reinforce in case the
+   module's specificity wins. */
+body.adminkit.settings_page_menu_editor #ame-widget-editor-sidebar .postbox {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+
+/* ----- Role Editor module (sub_section=roles) ----- */
+body.adminkit.settings_page_menu_editor #rex-content-container,
+body.adminkit.settings_page_menu_editor #rex-action-sidebar,
+body.adminkit.settings_page_menu_editor #rex-category-sidebar,
+body.adminkit.settings_page_menu_editor #rex-related-widget {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit.settings_page_menu_editor #rex-category-sidebar .rex-nav-item:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+
 /* ===== Easy Hide module (?page=ame-easy-hide) ===== */
 
 /* Two-column layout shell — sidebar (categories) + main area. */
