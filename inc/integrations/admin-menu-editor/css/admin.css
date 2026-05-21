@@ -145,3 +145,99 @@ body.adminkit.settings_page_menu_editor .ws_is_sticky_toolbar {
 	border-bottom-color: var(--ak-border);
 	box-shadow: none;
 }
+
+
+/* ===== Easy Hide module (?page=ame-easy-hide) ===== */
+
+/* Two-column layout shell — sidebar (categories) + main area. */
+body.adminkit.settings_page_ame-easy-hide #ame-easy-hide-ui {
+	border-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_ame-easy-hide #ame-eh-category-container {
+	background-color: var(--ak-surface);
+	border-right-color: var(--ak-border);
+}
+
+/* Toolbar above the item list (#ame-eh-view-toolbar). */
+body.adminkit.settings_page_ame-easy-hide #ame-eh-view-toolbar {
+	background-color: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+/* Search box and clear button. */
+body.adminkit.settings_page_ame-easy-hide #ame-eh-search-query,
+body.adminkit.settings_page_ame-easy-hide .ame-eh-clear-search-box {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* Item list surface. */
+body.adminkit.settings_page_ame-easy-hide #ame-eh-item-container {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+/* Selected category row + hover. */
+body.adminkit.settings_page_ame-easy-hide .ame-cat-nav-item:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+body.adminkit.settings_page_ame-easy-hide .ame-selected-cat-nav-item,
+body.adminkit.settings_page_ame-easy-hide .ame-selected-cat-nav-item:hover {
+	background-color: var(--ak-surface-alt);
+	color: var(--ak-heading);
+}
+
+/* Bottom action bar — appears beneath the item list. */
+body.adminkit.settings_page_ame-easy-hide .ame-eh-bottom-bar {
+	background-color: var(--ak-surface);
+	border-top-color: var(--ak-border);
+	border-bottom-color: var(--ak-border);
+}
+
+
+/* ===== Admin Customizer module (?page=ame-admin-customizer) ===== */
+
+/* Layout shell — sidebar (controls) + preview iframe. */
+body.adminkit.settings_page_ame-admin-customizer #ame-ac-admin-customizer,
+body.adminkit.settings_page_ame-admin-customizer #ame-ac-sidebar {
+	background-color: var(--ak-surface);
+	border-right-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_ame-admin-customizer #ame-ac-preview-container {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+/* Top action bar holding Save / Exit. */
+body.adminkit.settings_page_ame-admin-customizer #ame-ac-primary-actions {
+	background-color: var(--ak-surface-alt);
+	border-bottom-color: var(--ak-border);
+}
+
+/* Sidebar content (scrolling control list). */
+body.adminkit.settings_page_ame-admin-customizer #ame-ac-sidebar-content {
+	background-color: var(--ak-surface);
+}
+
+/* Section header + link rows in the sidebar. */
+body.adminkit.settings_page_ame-admin-customizer .ame-ac-section-header,
+body.adminkit.settings_page_ame-admin-customizer .ame-ac-section-link {
+	background-color: var(--ak-surface-alt);
+	border-bottom-color: var(--ak-border);
+	border-left-color: transparent;
+}
+
+body.adminkit.settings_page_ame-admin-customizer .ame-ac-section-link:hover,
+body.adminkit.settings_page_ame-admin-customizer .ame-ac-section-link .ame-ac-section-title:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+/* Footer / separator strip under the controls. */
+body.adminkit.settings_page_ame-admin-customizer .ame-ac-separator {
+	border-top-color: var(--ak-border);
+	border-bottom-color: var(--ak-border);
+}
