@@ -15,6 +15,61 @@ body.adminkit.settings_page_menu_editor .ws_main_container {
 }
 
 
+/* ----- Menu items (.ws_container) -----
+   AME's Classic theme (style-classic.css) paints each item with
+   pale blue surface + border + canary yellow edit panels. Route
+   the lot through AdminKit tokens. */
+body.adminkit.settings_page_menu_editor .ws_container {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+/* Active (selected) menu item — full primary wash so it stands out
+   from the row stack. */
+body.adminkit.settings_page_menu_editor #ws_menu_editor .ws_active {
+	background-color: var(--ak-primary);
+	color: #ffffff;
+}
+
+body.adminkit.settings_page_menu_editor #ws_menu_editor .ws_active .ws_item_title {
+	color: #ffffff;
+}
+
+/* Active item that's also hidden for the current actor — keep the
+   "selected" treatment but mute it via the secondary token. */
+body.adminkit.settings_page_menu_editor #ws_menu_editor.ws_is_actor_view .ws_is_hidden_for_actor.ws_active {
+	background-color: var(--ak-secondary);
+}
+
+/* Menu separator rows — the Classic theme paints #F9F9F9 bg +
+   #d9d9d9 border + an arrow image. Route to a recessed surface. */
+body.adminkit.settings_page_menu_editor .ws_menu_separator {
+	background-color: var(--ak-bg);
+	border-color: var(--ak-border);
+}
+
+/* Edit panel + collapsed edit-link colors — the Classic theme uses
+   a canary yellow (#ffffd0) to make the open edit box stand out.
+   Route to a slightly elevated surface so it still pops without
+   the eye-watering yellow. */
+body.adminkit.settings_page_menu_editor .ws_editbox,
+body.adminkit.settings_page_menu_editor .ws_edit_link_expanded {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_menu_editor a.ws_edit_link:hover {
+	background-color: var(--ak-elevated);
+}
+
+
+/* ----- Toolbar icon buttons (.ws_button) -----
+   The Classic theme paints a pale blue (#c0c0e0) border. */
+body.adminkit.settings_page_menu_editor .ws_button {
+	border-color: var(--ak-border);
+}
+
+
 /* ----- Toolbar above each box (.ws_toolbar) ----- */
 body.adminkit.settings_page_menu_editor .ws_toolbar {
 	background-color: var(--ak-surface);
