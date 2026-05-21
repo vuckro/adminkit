@@ -25,14 +25,15 @@ body.adminkit.settings_page_menu_editor .ws_container {
 }
 
 /* Active (selected) menu item — full primary wash so it stands out
-   from the row stack. */
+   from the row stack. White text matches the same pattern used by
+   the current sidebar item in core/chrome.css. */
 body.adminkit.settings_page_menu_editor #ws_menu_editor .ws_active {
 	background-color: var(--ak-primary);
-	color: var(--ak-text);
+	color: #ffffff;
 }
 
 body.adminkit.settings_page_menu_editor #ws_menu_editor .ws_active .ws_item_title {
-	color: var(--ak-text);
+	color: #ffffff;
 }
 
 /* Active item that's also hidden for the current actor — keep the
