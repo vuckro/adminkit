@@ -64,13 +64,15 @@ body.adminkit #adminmenu li.menu-top {
 }
 
 /* Hover / focus on non-current items — match WP's exact selectors with
-   !important to defeat colors.css */
+   !important to defeat colors.css. Brand-tinted wash via `--primary-t-1`
+   (Bricks's primary tint, ~9% opacity) with `--ak-hover-bg` as the
+   provider-less fallback. */
 body.adminkit #adminmenu a:hover,
 body.adminkit #adminmenu li.menu-top:hover,
 body.adminkit #adminmenu li.opensub > a.menu-top,
 body.adminkit #adminmenu li > a.menu-top:focus {
 	color: var(--ak-heading) !important;
-	background-color: var(--ak-hover-bg) !important;
+	background-color: var(--primary-t-1, var(--ak-hover-bg)) !important;
 }
 
 /* WP core ships `#adminmenu a:focus, #adminmenu a:hover` with
@@ -143,16 +145,19 @@ body.adminkit #adminmenu .wp-submenu a {
 body.adminkit #adminmenu .wp-submenu a:hover,
 body.adminkit #adminmenu .wp-submenu a:focus {
 	color: var(--ak-heading) !important;
-	background: var(--ak-hover-bg) !important;
+	background: var(--primary-t-1, var(--ak-hover-bg)) !important;
 }
 
-/* Current submenu item — subtle background tint + bold so the active
-   page is visible without leaning on a hardcoded accent color. */
+/* Current submenu item — wash the row in a tinted brand color so the
+   active page is visible at a glance. `--primary-t-1` is Bricks's
+   ~9%-opacity primary tint (piped via the Bricks integration); falls
+   back to `--ak-hover-bg` on sites without a token provider so the
+   row still reads as "selected" without leaning on a hardcoded color. */
 body.adminkit #adminmenu .wp-submenu li.current a,
 body.adminkit #adminmenu .wp-submenu li.current a:hover,
 body.adminkit #adminmenu .wp-submenu li.current a:focus {
 	color: var(--ak-heading) !important;
-	background: var(--ak-hover-bg) !important;
+	background: var(--primary-t-1, var(--ak-hover-bg)) !important;
 	font-weight: 600;
 }
 

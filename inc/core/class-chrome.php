@@ -105,16 +105,6 @@ class AdminKit_Core_Chrome {
 		self::register_screen( 'import',          array( 'import' ) );
 		self::register_screen( 'site-health',     array( 'site-health', 'site-health-info', 'options-privacy', 'privacy-policy-guide' ) );
 
-		// --- third-party/ (always loaded — adapters for non-core admin plugins) ---
-		foreach ( array( 'choices', 'admin-menu-editor' ) as $vendor ) {
-			AdminKit_Assets::register( array(
-				'handle'  => 'adminkit-thirdparty-' . $vendor,
-				'src'     => self::ASSETS_BASE . 'third-party/' . $vendor . '.css',
-				'deps'    => $tokens,
-				'context' => 'admin',
-			) );
-		}
-
 		// --- Frontend admin bar (when bar is showing on the frontend) ---
 		AdminKit_Assets::register( array(
 			'handle'  => 'adminkit-adminbar',

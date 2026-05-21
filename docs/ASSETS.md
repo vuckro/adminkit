@@ -104,12 +104,10 @@ assets/css/
 │       ├── thickbox.css        # ThickBox modal shell
 │       ├── notification-dialog.css  # post-lock, file-editor warning, filesystem creds
 │       └── cards.css           # generic `.card` (tools, settings)
-├── third-party/                # adapters for non-core admin plugins (always-loaded)
-│   ├── choices.css             # Choices.js library
-│   └── admin-menu-editor.css   # Admin Menu Editor's `#ame-rex-other-roles-row`
 └── login.css                   # wp-login.php
 
 inc/integrations/{slug}/css/    # integration-specific CSS, registered by each integration class
+                                # (Bricks admin pages, Gutenberg editor, Admin Menu Editor, ...)
 ```
 
 ---

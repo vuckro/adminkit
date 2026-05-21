@@ -10,6 +10,43 @@ body.adminkit .widefat li {
 	color: var(--ak-text);
 }
 
+/* .widefat (without .wp-list-table) — used by Site Health, Bricks
+   System Information, and any plugin admin table that doesn't extend
+   WP_List_Table. WP ships `.widefat { background: #fff; border: 1px
+   solid #c3c4c7 }` + `.widefat thead { background: #f6f7f7 }`, all
+   hardcoded. The .wp-list-table rules above only kick in when both
+   classes are present, so the bare-widefat case needs its own block. */
+body.adminkit .widefat {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+}
+
+body.adminkit .widefat thead th,
+body.adminkit .widefat thead td,
+body.adminkit .widefat tfoot th,
+body.adminkit .widefat tfoot td {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+	font-weight: 600;
+	border-bottom: 1px solid var(--ak-border);
+	border-top: none;
+}
+
+body.adminkit .widefat tbody td,
+body.adminkit .widefat tbody th {
+	color: var(--ak-text);
+	border-top: 1px solid var(--ak-border);
+}
+
+body.adminkit .widefat tbody tr:first-child td,
+body.adminkit .widefat tbody tr:first-child th {
+	border-top: none;
+}
+
 /* WP list tables */
 body.adminkit .wp-list-table {
 	background: var(--ak-surface-alt);

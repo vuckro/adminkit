@@ -149,8 +149,9 @@ adminkit/
 │   │   └── class-login.php               Registers login.css
 │   └── integrations/
 │       ├── abstract-integration.php      AdminKit_Integration_Base
-│       ├── bricks/class-bricks.php       Bricks adapter
+│       ├── bricks/                      Bricks theme adapter + admin CSS
 │       ├── gutenberg/                    Block editor restyle + dark-mode-map placeholder
+│       ├── admin-menu-editor/            Admin Menu Editor + Choices.js overrides
 │       ├── woocommerce/class-woocommerce.php   Stub
 │       ├── fluentcart/class-fluentcart.php     Stub
 │       ├── fluentform/class-fluentform.php     Stub
@@ -161,7 +162,6 @@ adminkit/
     ├── components/                       Always-loaded primitives (inputs, buttons, tables)
     ├── screens/                          Per-screen polish (loaded conditionally)
     │   └── _shared/                      Small components shared across screens
-    ├── third-party/                      Choices.js + Admin Menu Editor overrides
     └── login.css                         wp-login.php
 ```
 

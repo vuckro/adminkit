@@ -72,8 +72,42 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Wire the two AdminKit filters that integrate Bricks. No assets
-	 * of our own; we piggyback on Bricks's generated stylesheet.
+	 * Match Bricks's own admin pages (Getting Started, Settings,
+	 * Elements, Sidebars, System Information, License, Form Submissions).
+	 * Excludes the Templates list / single edit (`edit-bricks_template`,
+	 * `bricks_template`) which inherit our standard WP list-table /
+	 * post-edit styling.
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return bool
+	 */
+	public static function owns_screen( $screen ) {
+		if ( ! $screen ) {
+			return false;
+		}
+		return 'toplevel_page_bricks' === $screen->id
+			|| 0 === strpos( $screen->id, 'bricks_page_bricks-' );
+	}
+
+	/**
+	 * Register the admin token-bridge stylesheet — loaded only on
+	 * Bricks's own admin pages (see `owns_screen()`).
+	 *
+	 * @return void
+	 */
+	public static function register_assets() {
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-bricks-admin',
+			'src'       => 'inc/integrations/bricks/css/admin.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_screen' ),
+		) );
+	}
+
+	/**
+	 * Wire the two AdminKit filters that integrate Bricks. The token
+	 * piping + builder bypass; CSS overrides come from register_assets().
 	 *
 	 * @return void
 	 */
