@@ -38,15 +38,27 @@ class AdminKit_Integration_Admin_Menu_Editor extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Match the AME settings page (Settings → Menu Editor). All sub-sections
-	 * (`?sub_section=metaboxes`, `redirects`, `roles`, …) live under the
-	 * same screen ID, so a single check covers them.
+	 * AME registers three top-level settings pages: the menu editor
+	 * itself (and all its `?sub_section=…` tabs), the Easy Hide module,
+	 * and the Admin Customizer. All three live under Settings → and
+	 * share the `settings_page_` prefix.
 	 *
 	 * @param \WP_Screen|null $screen
 	 * @return bool
 	 */
 	public static function owns_screen( $screen ) {
-		return $screen && 'settings_page_menu_editor' === $screen->id;
+		if ( ! $screen ) {
+			return false;
+		}
+		return in_array(
+			$screen->id,
+			array(
+				'settings_page_menu_editor',
+				'settings_page_ame-easy-hide',
+				'settings_page_ame-admin-customizer',
+			),
+			true
+		);
 	}
 
 	/**
