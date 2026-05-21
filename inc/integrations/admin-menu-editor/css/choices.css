@@ -72,3 +72,40 @@ body.adminkit .choices__heading {
 	border-bottom-color: var(--ak-border);
 	color: var(--ak-heading);
 }
+
+
+/* ----- AME Role Editor scoped overrides -----
+   AME's user-ui-extensions.css ships rules scoped to
+   `#ame-rex-other-roles-row .choices ...` (specificity 0,3,1) that
+   hardcode #fff and #f6f7f7 — they beat the generic `body.adminkit
+   .choices ...` rules above. Mirror our token application under the
+   same wrapper so specificity matches (then wins on cascade order). */
+body.adminkit #ame-rex-other-roles-row .choices .choices__inner {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit #ame-rex-other-roles-row .choices .choices__input {
+	background-color: transparent;
+	color: var(--ak-text);
+}
+
+body.adminkit #ame-rex-other-roles-row .choices .choices__list--multiple .choices__item {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: #ffffff;
+}
+
+body.adminkit #ame-rex-other-roles-row .choices .choices__button {
+	border-left-color: rgba(255, 255, 255, 0.4);
+	color: #ffffff;
+}
+
+body.adminkit #ame-rex-other-roles-row .choices .choices__button:before {
+	color: #ffffff;
+}
+
+body.adminkit #ame-rex-other-roles-row .choices .choices__button:hover {
+	background-color: var(--ak-primary-dark);
+}
