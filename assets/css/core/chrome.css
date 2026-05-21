@@ -139,7 +139,6 @@ body.adminkit.auto-fold #adminmenu .wp-submenu {
    every WP variant in the selector would be ten lines for the same effect. */
 body.adminkit #adminmenu .wp-submenu a {
 	color: var(--ak-text) !important;
-	padding: 8px 12px;
 }
 
 body.adminkit #adminmenu .wp-submenu a:hover,
