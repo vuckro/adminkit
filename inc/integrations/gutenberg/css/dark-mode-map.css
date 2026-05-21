@@ -949,3 +949,31 @@ body.block-editor-page.adminkit .block-editor-block-inspector__advanced {
 body.block-editor-page.adminkit .block-editor-skip-to-selected-block {
 	border-color: var(--ak-border);
 }
+
+
+/* ========== 32. Sidebar panel wrappers (kill the #fff base) ========== */
+/* The inspector sidebar shows a white slab below the Advanced panel
+   because .editor-sidebar__panel.components-panel hardcodes a #fff
+   background that doesn't flip. Same issue in the secondary sidebar
+   below the List View / Outline content. Letting these inner
+   wrappers be transparent makes the parent (.editor-sidebar /
+   .interface-interface-skeleton__secondary-sidebar) surface paint
+   the full height — Section 1 + editor.css already set those to
+   --ak-surface. */
+body.block-editor-page.adminkit .editor-sidebar__panel,
+body.block-editor-page.adminkit .editor-sidebar__panel.components-panel,
+body.block-editor-page.adminkit .editor-sidebar .components-panel,
+body.block-editor-page.adminkit .edit-post-sidebar > .components-panel,
+body.block-editor-page.adminkit .interface-complementary-area > .components-panel,
+body.block-editor-page.adminkit .block-editor-block-inspector {
+	background: transparent;
+	color: var(--ak-text);
+}
+
+/* Modern outer sidebar wrapper — Gutenberg 16+ wraps the
+   complementary area in .interface-interface-skeleton__sidebar.
+   Mirror Section 1 / editor.css so the slab matches. */
+body.block-editor-page.adminkit .interface-interface-skeleton__sidebar {
+	background: var(--ak-surface);
+	border-left-color: var(--ak-border);
+}
