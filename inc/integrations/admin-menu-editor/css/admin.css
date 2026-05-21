@@ -1,0 +1,147 @@
+/* Admin Menu Editor Pro — settings_page_menu_editor screen.
+   AME hardcodes `background: white` / `#f6f7f7` and `border: 1px
+   solid #ccd0d4` / `#dcdcde` across its menu builder, sticky bar,
+   modules, and dialogs — none of which flip in dark mode. Route
+   every surface + border to AdminKit tokens, scoped to the AME
+   page so we don't disturb other admin screens. */
+
+
+/* ----- Menu builder boxes (.ws_main_container) -----
+   Top-level + submenu columns in the drag-drop editor. */
+body.adminkit.settings_page_menu_editor .ws_main_container {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+
+/* ----- Toolbar above each box (.ws_toolbar) ----- */
+body.adminkit.settings_page_menu_editor .ws_toolbar {
+	background-color: var(--ak-surface);
+}
+
+
+/* ----- Pinned actor-selector sticky bar -----
+   Only appears once the user scrolls down on the menu editor. */
+body.adminkit.settings_page_menu_editor .ame-sticky-top-bar.ame-is-pinned-top-bar {
+	background-color: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+	box-shadow: none;
+}
+
+
+/* ----- Action toolbar buttons (.ws_button) -----
+   The toolbar's icon buttons paint a hardcoded #d0e0ff hover bg
+   with a #9090c0 border. Route to AdminKit's hover overlay. */
+body.adminkit.settings_page_menu_editor a.ws_button:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	border-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_menu_editor .ws_button.ws_button_disabled,
+body.adminkit.settings_page_menu_editor a.ws_button.ws_button_disabled:hover {
+	background-color: transparent;
+	border-color: var(--ak-border);
+}
+
+
+/* ----- Capability / actor dropdowns ----- */
+body.adminkit.settings_page_menu_editor select.ws_dropdown {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+
+/* ----- jQuery UI dialogs (settings page uses them across modules) ----- */
+body.adminkit.settings_page_menu_editor .ui-dialog {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit.settings_page_menu_editor .ui-dialog .ui-dialog-titlebar {
+	background-color: var(--ak-surface);
+	border-bottom: 1px solid var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.adminkit.settings_page_menu_editor .ui-dialog .ui-dialog-buttonpane {
+	background-color: var(--ak-surface);
+	border-top: 1px solid var(--ak-border);
+}
+
+
+/* ----- Redirector module (sub_section=redirects) ----- */
+body.adminkit.settings_page_menu_editor .ame-rui-redirect-list,
+body.adminkit.settings_page_menu_editor .ame-rui-redirect,
+body.adminkit.settings_page_menu_editor .ame-rui-default-redirect-container,
+body.adminkit.settings_page_menu_editor .ame-rui-redirect-content {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_menu_editor .ame-rui-drag-handle {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+/* "Selected" / hover redirect row */
+body.adminkit.settings_page_menu_editor .ame-rui-redirect.ame-rui-selected,
+body.adminkit.settings_page_menu_editor .ame-rui-redirect:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+
+/* ----- Module tab containers (.ame-rui-small-tabs / sub-tabs / filter-like) ----- */
+body.adminkit.settings_page_menu_editor .ame-rui-small-tabs,
+body.adminkit.settings_page_menu_editor .ame-rui-sub-tabs,
+body.adminkit.settings_page_menu_editor .ame-rui-filter-like-tabs {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+
+/* ----- AME postboxes / form containers across modules -----
+   metaboxes / dashboard-widgets / nav-menus / table-columns / roles
+   / tweaks / plugin-visibility all share these postbox-style cards. */
+body.adminkit.settings_page_menu_editor .postbox,
+body.adminkit.settings_page_menu_editor .ame-section-content,
+body.adminkit.settings_page_menu_editor .ame-pv-save-form {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+
+/* ----- Tables used by AME modules -----
+   The plugin-visibility / dashboard-widgets / table-columns / nav-menus
+   editors render rows inside a striped table with white cell bg + a
+   #dcdcde row divider. Route both to tokens. */
+body.adminkit.settings_page_menu_editor table.widefat,
+body.adminkit.settings_page_menu_editor table.widefat th,
+body.adminkit.settings_page_menu_editor table.widefat td,
+body.adminkit.settings_page_menu_editor table.widefat tbody tr {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_menu_editor table.widefat thead th,
+body.adminkit.settings_page_menu_editor table.widefat tfoot th {
+	background-color: var(--ak-surface);
+	color: var(--ak-heading);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_menu_editor table.widefat tbody tr:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+
+/* ----- Tool/icon row separators -----
+   `.ws_is_sticky_toolbar` and various dividers paint #ccc / #dcdcde. */
+body.adminkit.settings_page_menu_editor .ws_is_sticky_toolbar {
+	border-bottom-color: var(--ak-border);
+	box-shadow: none;
+}
