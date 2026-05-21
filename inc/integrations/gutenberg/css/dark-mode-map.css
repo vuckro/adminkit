@@ -448,6 +448,16 @@ body.block-editor-page.adminkit .edit-post-layout__metaboxes {
 	color: var(--ak-text);
 }
 
+/* Top separator between the canvas and the meta-boxes area. WP cores
+   it to `border-top: 1px solid #e0e0e0` — hardcoded light gray that
+   doesn't flip and reads as a faint line against the dark canvas
+   below. Route to --ak-border so it stays a subtle hairline that
+   flips with the theme. */
+body.block-editor-page.adminkit .edit-post-meta-boxes-main,
+body.block-editor-page.adminkit .editor-meta-boxes-main {
+	border-top-color: var(--ak-border);
+}
+
 body.block-editor-page.adminkit .edit-post-meta-boxes-area__label,
 body.block-editor-page.adminkit .editor-meta-boxes-main__resize-handle {
 	background: var(--ak-surface);
