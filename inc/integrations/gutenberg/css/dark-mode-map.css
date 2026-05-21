@@ -762,3 +762,87 @@ body.block-editor-page.adminkit .edit-post-meta-boxes-area .description,
 body.block-editor-page.adminkit .editor-meta-boxes-area .description {
 	color: var(--ak-text-muted);
 }
+
+
+/* ========== 30. Document Overview sidebar (.block-editor-tabbed-sidebar) ========== */
+/* The newer Gutenberg secondary-sidebar wraps the list view + outline
+   tabs in .block-editor-tabbed-sidebar with a hardcoded #fff base.
+   Section 13 only catches the older .editor-list-view-sidebar shell;
+   this section covers the modern wrapper + its tablist/tab/close/panel
+   internals so the Document Overview matches the rest of the chrome. */
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar,
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tablist-and-close-button,
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tabpanel,
+body.block-editor-page.adminkit .editor-list-view-sidebar__list-view-container,
+body.block-editor-page.adminkit .editor-list-view-sidebar__list-view-panel-content {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+/* Tablist strip (List View / Outline) */
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tablist {
+	background: var(--ak-surface);
+	border-bottom: 1px solid var(--ak-border);
+}
+
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tab {
+	color: var(--ak-text-muted);
+	background: transparent;
+}
+
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tab:hover {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tab[aria-selected="true"] {
+	color: var(--ak-heading);
+	box-shadow: inset 0 -2px 0 var(--ak-primary);
+}
+
+/* Close (X) button */
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button {
+	color: var(--ak-text-muted);
+}
+
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button:hover,
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button:focus {
+	color: var(--ak-heading);
+	background: var(--ak-hover-bg);
+}
+
+/* Block tree (treegrid) */
+body.block-editor-page.adminkit .block-editor-list-view-tree {
+	background: transparent;
+	color: var(--ak-text);
+}
+
+/* Block-icon glyphs on rows — without a color, they pick up text color
+   from the cell which keeps them readable in both modes. The has-colors
+   variant uses the block's brand color and is left alone. */
+body.block-editor-page.adminkit .block-editor-list-view-tree .block-editor-block-icon {
+	color: var(--ak-text);
+}
+
+/* Expander arrow on parent rows */
+body.block-editor-page.adminkit .block-editor-list-view__expander {
+	color: var(--ak-text-muted);
+}
+
+/* Per-row Options ("⋮") button — only visible on hover / when selected.
+   Selected-row override below makes sure it stays readable on the
+   primary-colored selected background. */
+body.block-editor-page.adminkit .block-editor-list-view-block__menu {
+	color: var(--ak-text-muted);
+}
+
+body.block-editor-page.adminkit .block-editor-list-view-block__menu:hover,
+body.block-editor-page.adminkit .block-editor-list-view-block__menu:focus {
+	color: var(--ak-heading);
+	background: var(--ak-hover-bg);
+}
+
+body.block-editor-page.adminkit .block-editor-list-view-leaf.is-selected .block-editor-list-view-block__menu,
+body.block-editor-page.adminkit .block-editor-list-view-leaf.is-branch-selected .block-editor-list-view-block__menu {
+	color: var(--ak-surface-alt);
+}
