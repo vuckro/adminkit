@@ -656,7 +656,7 @@ body.block-editor-page.adminkit .editor-notices__dismissible {
 
 body.block-editor-page.adminkit .editor-notices__pinned .components-notice,
 body.block-editor-page.adminkit .editor-notices__dismissible .components-notice {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 	border-color: var(--ak-border);
 }
@@ -976,4 +976,25 @@ body.block-editor-page.adminkit .block-editor-block-inspector {
 body.block-editor-page.adminkit .interface-interface-skeleton__sidebar {
 	background: var(--ak-surface);
 	border-left-color: var(--ak-border);
+}
+
+
+/* ========== 33. Inspector empty states + global icon fill ========== */
+/* "No block selected" / "No blocks available" — Gutenberg paints a
+   white card with center-aligned text when the inspector has nothing
+   to render. The hardcoded #fff stands out against the dark surface. */
+body.block-editor-page.adminkit .block-editor-block-inspector__no-block-tools,
+body.block-editor-page.adminkit .block-editor-block-inspector__no-blocks {
+	background: var(--ak-surface);
+	color: var(--ak-text-muted);
+}
+
+/* Global .components-button SVG fill — Gutenberg ships rules that
+   hardcode `fill: var(--heading)` (Bricks token leakage) or specific
+   gray values on the inner SVG path, breaking icon color when buttons
+   re-theme. Force currentColor so the icon always tracks the button's
+   text color in both modes. */
+body.block-editor-page.adminkit .components-button svg,
+body.block-editor-page.adminkit .components-button svg path {
+	fill: currentColor;
 }

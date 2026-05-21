@@ -5,7 +5,7 @@
 body.block-editor-page.adminkit .edit-post-header,
 body.block-editor-page.adminkit .editor-header,
 body.block-editor-page.adminkit .interface-interface-skeleton__header {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-bottom: 1px solid var(--ak-border);
 }
 
