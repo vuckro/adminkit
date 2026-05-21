@@ -1,0 +1,11 @@
+/* Slim SEO global variable remap.
+   Slim SEO declares --ss-color-primary on :root with WP's default
+   blue (#007cba) — that var bleeds into every Slim SEO surface
+   beyond the dedicated settings page: post-edit meta box tabs,
+   the per-term SEO meta box, etc. Loaded always (no condition) so
+   the remap travels with Slim SEO regardless of screen. The
+   settings-page-specific overrides stay in admin.css. */
+
+body.adminkit {
+	--ss-color-primary: var(--ak-primary);
+}

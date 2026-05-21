@@ -1,0 +1,180 @@
+/* Slim SEO settings page — token bridge.
+   Loaded only on the settings_page_slim-seo screen.
+
+   Slim SEO ships its own design tokens (--ss-color-*) on :root and
+   locally redeclares --wp-admin-theme-color inside .wrap, both of
+   which fight the global AdminKit cascade. Two-tier strategy:
+     1. Remap Slim SEO's own CSS variables → AdminKit tokens so most
+        surfaces flip with the theme toggle automatically.
+     2. Patch the selectors that hardcode white / dark text bypassing
+        the variables (header bar, tabs card, feature titles).
+*/
+
+
+/* ----- 1. Variable remap ----- */
+body.adminkit.settings_page_slim-seo {
+	--ss-color-gray: var(--ak-text-muted);
+	--ss-color-light: var(--ak-border);
+	--ss-color-lighter: var(--ak-border);
+	--ss-color-red: var(--ak-error);
+	--ss-color-primary: var(--ak-primary);
+	--ss-border: 1px solid var(--ak-border);
+	--ss-border-lighter: 1px solid var(--ak-border);
+}
+
+/* Slim SEO redeclares --wp-admin-theme-color (and a parallel --color-*
+   set) inside .wrap, undoing AdminKit's global blue→primary remap on
+   this page. Re-route everything back to AdminKit tokens. */
+body.adminkit.settings_page_slim-seo .wrap {
+	--color-gray: var(--ak-text-muted);
+	--color-light: var(--ak-border);
+	--color-lighter: var(--ak-border);
+	--color-red: var(--ak-error);
+	--shadow-md: none;
+	--border: 1px solid var(--ak-border);
+	--border-lighter: 1px solid var(--ak-border);
+	--wp-admin-theme-color: var(--ak-primary);
+}
+
+
+/* ----- 2. Header bar (.ss-title) ----- */
+/* Slim SEO targets this with `#wpwrap #wpcontent #wpbody .ss-title`
+   (specificity 0,3,1) to outweigh anything else — we mirror that
+   selector chain to win the cascade. */
+body.adminkit.settings_page_slim-seo #wpwrap #wpcontent #wpbody .ss-title {
+	background-color: var(--ak-surface-alt);
+	color: var(--ak-heading);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_slim-seo .ss-title a {
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_slim-seo .ss-title a:hover,
+body.adminkit.settings_page_slim-seo .ss-title a:focus {
+	color: var(--ak-primary);
+}
+
+body.adminkit.settings_page_slim-seo .ss-title__upgrade,
+body.adminkit.settings_page_slim-seo .ss-title__upgrade:hover,
+body.adminkit.settings_page_slim-seo .ss-title__upgrade:focus {
+	color: var(--ak-error);
+}
+
+
+/* ----- 3. Tabs card (.ss-tabs + .react-tabs) ----- */
+/* `.ss-tabs` wraps the General/Social/Tools panes; `.react-tabs` wraps
+   the Meta Tags React app (same #fff surface, no border). */
+body.adminkit.settings_page_slim-seo .ss-tabs,
+body.adminkit.settings_page_slim-seo .react-tabs {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+/* React-tabs divider between tab labels uses hardcoded #ccd0d4. */
+body.adminkit.settings_page_slim-seo .react-tabs__tab:not(:last-child) {
+	border-right-color: var(--ak-border);
+}
+
+/* React-tabs vertical-tabs selected row background (meta-tags inner nav). */
+body.adminkit.settings_page_slim-seo .ss-vertical-tabs .react-tabs__tab--selected {
+	background-color: var(--ak-hover-bg);
+}
+
+body.adminkit.settings_page_slim-seo .ss-tab-list {
+	border-bottom-color: var(--ak-border);
+}
+
+/* Tab links: text color by default, primary on hover/active. Kill the
+   default transition per AdminKit's no-animation rule (active-state
+   underline keeps its box-shadow per memory's tab-indicator exception). */
+body.adminkit.settings_page_slim-seo .ss-tab {
+	color: var(--ak-text);
+	transition: none;
+}
+
+body.adminkit.settings_page_slim-seo .ss-tab:hover,
+body.adminkit.settings_page_slim-seo .ss-tab:focus {
+	color: var(--ak-primary);
+}
+
+body.adminkit.settings_page_slim-seo .ss-tab.ss-is-active {
+	color: var(--ak-primary);
+}
+
+
+/* ----- 4. Postboxes used as content sections ----- */
+body.adminkit.settings_page_slim-seo .postbox {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+body.adminkit.settings_page_slim-seo #poststuff .hndle,
+body.adminkit.settings_page_slim-seo .postbox .hndle {
+	color: var(--ak-heading);
+	background: transparent;
+	border-bottom: none;
+}
+
+
+/* ----- 5. Feature toggle rows (.featureBox) ----- */
+body.adminkit.settings_page_slim-seo .featureBox_title {
+	color: var(--ak-heading);
+}
+
+body.adminkit.settings_page_slim-seo .featureBox_description {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.settings_page_slim-seo .featureBox_description a {
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_slim-seo .featureBox_description a:hover,
+body.adminkit.settings_page_slim-seo .featureBox_description a:focus {
+	color: var(--ak-primary);
+}
+
+
+/* ----- 6. Custom toggle switch (.ss-toggle) ----- */
+/* The off-state and knob hardcode #ccc / #fff. Kill the transitions
+   for instant state flips. */
+body.adminkit.settings_page_slim-seo .ss-toggle__switch {
+	background-color: var(--ak-border-strong);
+	transition: none;
+}
+
+body.adminkit.settings_page_slim-seo .ss-toggle__switch:before {
+	background-color: var(--ak-surface-alt);
+	transition: none;
+}
+
+body.adminkit.settings_page_slim-seo .ss-toggle input:checked + .ss-toggle__switch {
+	background-color: var(--ak-primary);
+}
+
+
+/* ----- 7. Tooltips + upgrade sidebar ----- */
+body.adminkit.settings_page_slim-seo .ss-tooltip {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.settings_page_slim-seo .ss-upgrade .dashicons {
+	color: var(--ak-error);
+}
+
+
+/* ----- 8. Hide promo sidebar ----- */
+/* The right-rail (.ss-content grid 1fr 300px) shows the upgrade /
+   community / extensions cards. Hide it and the main column reflows
+   to full width via the override below. */
+body.adminkit.settings_page_slim-seo aside.ss-sidebar {
+	display: none;
+}
+
+body.adminkit.settings_page_slim-seo .ss-content {
+	grid-template-columns: 1fr;
+}
