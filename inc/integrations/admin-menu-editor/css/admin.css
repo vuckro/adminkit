@@ -173,6 +173,19 @@ body.adminkit.settings_page_menu_editor .ws-ame-postbox-toggle:hover {
 	background-color: var(--primary-t-1, var(--ak-hover-bg));
 }
 
+/* Module-level wrappers (.ame-tc-screen, .ame-nv-navigation-menu,
+   .ame-twm-section) layer their own white bg + #ccd0d4 border + drop
+   shadow on top of the .ws-ame-postbox-* primitives. The inner
+   primitives already provide the surface — strip the wrapper's bg
+   + border + shadow so we don't get a doubled card outline. */
+body.adminkit.settings_page_menu_editor .ame-tc-screen,
+body.adminkit.settings_page_menu_editor .ame-nv-navigation-menu,
+body.adminkit.settings_page_menu_editor .ame-twm-section {
+	background-color: transparent;
+	border: none;
+	box-shadow: none;
+}
+
 
 /* ----- Meta Boxes module (sub_section=metaboxes) ----- */
 body.adminkit.settings_page_menu_editor #ame-mb-screen-list,
