@@ -46,3 +46,56 @@ body.adminkit .edit-post-header-toolbar .button.button-primary:focus {
 	border-color: var(--ak-primary-dark);
 	color: var(--ak-surface-alt);
 }
+
+
+/* ---- "This page is built with Bricks" notice card ----
+   Renders inside the Gutenberg canvas (.editor-styles-wrapper), which
+   AdminKit pins to color-scheme: light so the visitor-view stays
+   light. Hardcoded light surface + dark text here on purpose —
+   --ak-* tokens flip with the theme toggle and would mismatch the
+   white canvas in dark mode. --ak-primary is the only token used,
+   since Bricks provides a brand color that's constant across modes. */
+body.adminkit .bricks-block-editor-notice-wrapper {
+	max-width: 480px;
+	margin: 48px auto;
+	padding: 32px 24px;
+	background: #ffffff;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	text-align: center;
+}
+
+body.adminkit .bricks-block-editor-notice-wrapper .bricks-editor-message {
+	margin: 0 0 20px;
+	font-size: 15px;
+	font-weight: 500;
+	color: #1e1e1e;
+}
+
+body.adminkit .bricks-block-editor-notice-wrapper .bricks-editor-buttons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+/* "Use block editor" — secondary link, subtler than the primary CTA. */
+body.adminkit .bricks-block-editor-notice-wrapper .button:not(.button-primary),
+body.adminkit .bricks-block-editor-notice-wrapper a:not(.button-primary) {
+	background: transparent;
+	color: #1e1e1e;
+	border: none;
+	box-shadow: none;
+	padding: 8px 12px;
+	text-decoration: underline;
+	font-weight: 500;
+}
+
+body.adminkit .bricks-block-editor-notice-wrapper .button:not(.button-primary):hover,
+body.adminkit .bricks-block-editor-notice-wrapper a:not(.button-primary):hover,
+body.adminkit .bricks-block-editor-notice-wrapper .button:not(.button-primary):focus,
+body.adminkit .bricks-block-editor-notice-wrapper a:not(.button-primary):focus {
+	background: transparent;
+	color: var(--ak-primary);
+}
