@@ -11,8 +11,20 @@
 
 
 /* ----- 1. Variable remap ----- */
+/* Slim SEO declares --ss-color-* + --ss-border on :root so its hex
+   values leak into every render context — most visibly the white
+   --ss-color-light hairline between .ss-tab-list and .ss-tab-pane
+   in the SEO meta box on post-edit / term-edit. Route the full
+   token surface (not just primary) at body.adminkit so the meta
+   box matches the rest of the chrome wherever it renders. */
 body.adminkit {
 	--ss-color-primary: var(--ak-primary);
+	--ss-color-gray: var(--ak-text-muted);
+	--ss-color-light: var(--ak-border);
+	--ss-color-lighter: var(--ak-border);
+	--ss-color-red: var(--ak-error);
+	--ss-border: 1px solid var(--ak-border);
+	--ss-border-lighter: 1px solid var(--ak-border);
 }
 
 
