@@ -29,6 +29,7 @@
 	--ak-success: var(--success, #11b76b);
 	--ak-warning: var(--warning, #ffa100);
 	--ak-error: var(--error, #f04662);
+	--ak-error-subtle: var(--error-t-2, rgba(240, 70, 98, 0.10));
 	--ak-info: var(--info, #2895d4);
 
 	/* Surfaces */
