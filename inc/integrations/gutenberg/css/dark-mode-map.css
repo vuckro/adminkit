@@ -45,6 +45,18 @@ body.block-editor-page.adminkit .editor-document-bar .editor-document-bar__post-
 	color: var(--ak-heading);
 }
 
+/* Document bar button hover — the title button hover was tinting
+   text to --ak-heading on the same --ak-surface bg, which in dark
+   mode means lighter text on the same surface (less contrast, not
+   more). Invert instead: fill with --ak-text, flip the icon/title
+   to --ak-surface-alt, add radius. Reads as a clear "attention"
+   cue in both modes. */
+body.block-editor-page.adminkit .editor-document-bar .components-button:hover:not(:disabled, [aria-disabled="true"]) {
+	background: var(--ak-text);
+	color: var(--ak-surface-alt);
+	border-radius: var(--ak-radius-s);
+}
+
 
 /* ========== 3. Sidebar internals ========== */
 /* Outer surface set in editor.css; headings + tab strip here. */
