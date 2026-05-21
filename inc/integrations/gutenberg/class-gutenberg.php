@@ -10,10 +10,14 @@
  *
  * Files:
  *   editor.css         — header / sidebar / publish button / tabs / snackbar
- *   dark-mode-map.css  — placeholder for the @wordpress/components +
- *                        edit-post + edit-site + editor token mapping.
- *                        Contains no rules yet; filled when the Gutenberg
- *                        dark-mode work starts.
+ *   dark-mode-map.css  — @wordpress/components + edit-post + editor +
+ *                        block-editor token bridge. Patches the Gutenberg
+ *                        surfaces that hardcode #fff / #1e1e1e / #ddd
+ *                        (panels, document bar, popovers, modals,
+ *                        inserter, list view, form controls, block
+ *                        toolbar) so the whole chrome flips with the
+ *                        data-adminkit-theme="dark" toggle. Canvas
+ *                        (.editor-styles-wrapper) is left alone.
  *
  * @package AdminKit
  */

@@ -1,7 +1,460 @@
-/* Gutenberg dark-mode token mapping.
-   Placeholder — the @wordpress/components, edit-post, edit-site and
-   editor packages expose dozens of `--wp-*` CSS variables that the
-   block editor reads at runtime. Mapping each one to AdminKit's
-   `--ak-*` tokens (so the editor flips with our theme toggle) is the
-   next chantier. Keep selectors scoped to body.block-editor-page.adminkit
-   so nothing leaks into the canvas. */
+/* Gutenberg @wordpress/components + edit-post + editor + block-editor
+   token bridge. AdminKit already remaps --wp-components-color-* on
+   body.adminkit (tokens.css), which catches every Gutenberg surface
+   that actually consumes those vars. The rest of the chrome hardcodes
+   #fff / #1e1e1e / #ddd / #f0f0f0 — this file patches those selectors
+   so the whole editor flips with the data-adminkit-theme="dark" toggle.
+
+   Scoping rule:
+   - All selectors prefixed with body.block-editor-page.adminkit.
+   - The canvas (.editor-styles-wrapper and everything inside it) is
+     left alone: it represents the visitor-facing surface and must
+     keep its declared block styles. color-scheme is forced light
+     inside the canvas as a defensive measure for native form controls.
+
+   Sections, from outermost shell down to popovers and form controls. */
+
+
+/* ========== 1. Editor shell ========== */
+body.block-editor-page.adminkit .interface-interface-skeleton__body,
+body.block-editor-page.adminkit .interface-interface-skeleton__content {
+	background: var(--ak-bg);
+}
+
+body.block-editor-page.adminkit .interface-interface-skeleton__secondary-sidebar {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .interface-interface-skeleton__footer {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+
+/* ========== 2. Document bar (centered title bar, v15+) ========== */
+body.block-editor-page.adminkit .editor-document-bar {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .editor-document-bar__title,
+body.block-editor-page.adminkit .editor-document-bar .editor-document-bar__post-type-label {
+	color: var(--ak-heading);
+}
+
+
+/* ========== 3. Sidebar internals ========== */
+/* Outer surface set in editor.css; headings + tab strip here. */
+body.block-editor-page.adminkit .editor-sidebar h2,
+body.block-editor-page.adminkit .editor-sidebar h3,
+body.block-editor-page.adminkit .interface-complementary-area h2,
+body.block-editor-page.adminkit .interface-complementary-area h3,
+body.block-editor-page.adminkit .editor-block-inspector h2,
+body.block-editor-page.adminkit .editor-block-inspector h3 {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .editor-sidebar__panel-tabs,
+body.block-editor-page.adminkit .edit-post-sidebar__panel-tabs {
+	border-bottom-color: var(--ak-border);
+}
+
+
+/* ========== 4. Collapsible panels (.components-panel) ========== */
+body.block-editor-page.adminkit .components-panel,
+body.block-editor-page.adminkit .components-panel__body {
+	background: transparent;
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-panel__header {
+	background: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .components-panel__body-title,
+body.block-editor-page.adminkit .components-panel__body-toggle {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .components-panel__body-toggle:hover,
+body.block-editor-page.adminkit .components-panel__body-toggle:focus {
+	background: var(--ak-hover-bg);
+}
+
+
+/* ========== 5. Block card (block icon + title in inspector) ========== */
+body.block-editor-page.adminkit .block-editor-block-card,
+body.block-editor-page.adminkit .block-editor-block-icon {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-block-card__title {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .block-editor-block-card__description {
+	color: var(--ak-text-muted);
+}
+
+
+/* ========== 6. Form controls (text / textarea / select / search) ========== */
+body.block-editor-page.adminkit .components-text-control__input,
+body.block-editor-page.adminkit .components-textarea-control__input,
+body.block-editor-page.adminkit .components-input-control__container input,
+body.block-editor-page.adminkit .components-input-control__input,
+body.block-editor-page.adminkit .components-select-control__input,
+body.block-editor-page.adminkit .components-search-control input[type="search"],
+body.block-editor-page.adminkit .components-form-token-field__input-container,
+body.block-editor-page.adminkit .components-combobox-control__suggestions-container {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-text-control__input:focus,
+body.block-editor-page.adminkit .components-textarea-control__input:focus,
+body.block-editor-page.adminkit .components-input-control__container input:focus,
+body.block-editor-page.adminkit .components-select-control__input:focus,
+body.block-editor-page.adminkit .components-search-control input[type="search"]:focus,
+body.block-editor-page.adminkit .components-form-token-field__input-container:focus-within {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+body.block-editor-page.adminkit .components-base-control__label,
+body.block-editor-page.adminkit .components-input-control__label {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-base-control__help {
+	color: var(--ak-text-muted);
+}
+
+
+/* ========== 7. Toggles, checkboxes ========== */
+body.block-editor-page.adminkit .components-form-toggle .components-form-toggle__track {
+	background: var(--ak-border-strong);
+}
+
+body.block-editor-page.adminkit .components-form-toggle.is-checked .components-form-toggle__track {
+	background: var(--ak-primary);
+}
+
+body.block-editor-page.adminkit .components-form-toggle .components-form-toggle__thumb {
+	background: var(--ak-surface-alt);
+}
+
+body.block-editor-page.adminkit .components-checkbox-control__input {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border-strong);
+}
+
+body.block-editor-page.adminkit .components-checkbox-control__input:checked {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+
+
+/* ========== 8. Secondary / tertiary buttons (primary lives in editor.css) ========== */
+body.block-editor-page.adminkit .components-button.is-secondary {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+	border-color: var(--ak-border-strong);
+	box-shadow: none;
+}
+
+body.block-editor-page.adminkit .components-button.is-secondary:hover:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-secondary:focus:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+	border-color: var(--ak-border-strong);
+}
+
+body.block-editor-page.adminkit .components-button.is-tertiary {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-button.is-tertiary:hover:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-tertiary:focus:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+/* Destructive secondary (Move to trash) — keep it red, not neutral.
+   Section 8's .is-secondary rule wins by source order otherwise. */
+body.block-editor-page.adminkit .components-button.is-secondary.is-destructive,
+body.block-editor-page.adminkit .components-button.is-destructive {
+	background: transparent;
+	color: var(--ak-error);
+	border-color: var(--ak-error);
+	box-shadow: none;
+}
+
+body.block-editor-page.adminkit .components-button.is-secondary.is-destructive:hover:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-secondary.is-destructive:focus:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-destructive:hover:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-destructive:focus:not(:disabled) {
+	background: var(--ak-error);
+	color: var(--ak-surface-alt);
+	border-color: var(--ak-error);
+}
+
+
+/* ========== 9. Block toolbar (floating above selected block) ========== */
+body.block-editor-page.adminkit .block-editor-block-toolbar,
+body.block-editor-page.adminkit .block-editor-block-contextual-toolbar {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-toolbar-group,
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-toolbar {
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button,
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-toolbar-button {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button:hover:not(:disabled),
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button:focus:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button.is-pressed,
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button[aria-pressed="true"],
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button[aria-expanded="true"] {
+	background: var(--ak-heading);
+	color: var(--ak-surface-alt);
+}
+
+
+/* ========== 10. Popovers + dropdowns ========== */
+body.block-editor-page.adminkit .components-popover__content,
+body.block-editor-page.adminkit .components-dropdown-menu__menu {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-s);
+}
+
+body.block-editor-page.adminkit .components-menu-item__button,
+body.block-editor-page.adminkit .components-menu-items__direct-input {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-menu-item__button:hover:not(:disabled),
+body.block-editor-page.adminkit .components-menu-item__button:focus:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .components-menu-group + .components-menu-group {
+	border-top-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-menu-group__label {
+	color: var(--ak-text-muted);
+}
+
+
+/* ========== 11. Modals ========== */
+body.block-editor-page.adminkit .components-modal__frame {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-m);
+}
+
+body.block-editor-page.adminkit .components-modal__header {
+	background: var(--ak-surface-alt);
+	border-bottom-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-modal__header-heading {
+	color: var(--ak-heading);
+}
+
+
+/* ========== 12. Block inserter (the "+" panel) ========== */
+body.block-editor-page.adminkit .block-editor-inserter__menu,
+body.block-editor-page.adminkit .block-editor-inserter__panel-header,
+body.block-editor-page.adminkit .block-editor-inserter__main-area,
+body.block-editor-page.adminkit .block-editor-inserter__tabs {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-inserter__panel-title {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .block-editor-inserter__search input,
+body.block-editor-page.adminkit .block-editor-inserter__search-input {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .block-editor-block-types-list__list-item,
+body.block-editor-page.adminkit .block-editor-block-types-list__item {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-block-types-list__list-item:hover,
+body.block-editor-page.adminkit .block-editor-block-types-list__item:hover,
+body.block-editor-page.adminkit .block-editor-block-types-list__item:focus {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+
+/* ========== 13. List view (left sidebar with block tree) ========== */
+body.block-editor-page.adminkit .editor-list-view-sidebar,
+body.block-editor-page.adminkit .editor-list-view-sidebar__tabs,
+body.block-editor-page.adminkit .editor-list-view-sidebar__panel {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-list-view-leaf .block-editor-list-view-block__contents-cell,
+body.block-editor-page.adminkit .block-editor-list-view-leaf .block-editor-list-view-block-select-button {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-list-view-leaf:hover .block-editor-list-view-block__contents-cell {
+	background: var(--ak-hover-bg);
+}
+
+body.block-editor-page.adminkit .block-editor-list-view-leaf.is-selected .block-editor-list-view-block__contents-cell,
+body.block-editor-page.adminkit .block-editor-list-view-leaf.is-branch-selected .block-editor-list-view-block__contents-cell {
+	background: var(--ak-primary);
+	color: var(--ak-surface-alt);
+}
+
+
+/* ========== 14. Notices (in-editor messages) ========== */
+body.block-editor-page.adminkit .components-notice {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-notice.is-success { border-left-color: var(--ak-success); }
+body.block-editor-page.adminkit .components-notice.is-warning { border-left-color: var(--ak-warning); }
+body.block-editor-page.adminkit .components-notice.is-error   { border-left-color: var(--ak-error); }
+body.block-editor-page.adminkit .components-notice.is-info    { border-left-color: var(--ak-info); }
+
+
+/* ========== 15. Pre-publish + post-publish panels ========== */
+body.block-editor-page.adminkit .editor-post-publish-panel,
+body.block-editor-page.adminkit .editor-post-publish-panel__header,
+body.block-editor-page.adminkit .editor-post-publish-panel__content,
+body.block-editor-page.adminkit .editor-post-publish-panel__footer {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .editor-post-publish-panel__title {
+	color: var(--ak-heading);
+}
+
+
+/* ========== 16. Canvas isolation ========== */
+/* The canvas stays light in both modes — it represents the
+   visitor-facing rendering and must keep its declared block colors.
+   Theming the canvas dark broke text legibility on default blocks
+   (theme.json and core block CSS pin specific dark text colors that
+   become invisible against a dark surface). Industry pattern:
+   light canvas, dark chrome. The frame around the canvas
+   (interface-skeleton__content + edit-post-visual-editor wrappers)
+   is dark via earlier sections — that's the visible "framing".
+   color-scheme: light keeps native form controls light too. */
+body.block-editor-page.adminkit .editor-styles-wrapper {
+	color-scheme: light;
+}
+
+
+/* ========== 17. Classic meta-boxes area (below the canvas) ========== */
+/* WP renders legacy meta boxes (Yoast, Slim SEO, ACF metabox mode,
+   …) below the block editor in an .edit-post-meta-boxes-area wrapper
+   that hardcodes #f0f0f1 / #fff. Surface tokens here so the section
+   blends in. Postboxes themselves get the same surface-alt + border
+   pairing the wp-admin chrome already uses elsewhere. */
+body.block-editor-page.adminkit .edit-post-meta-boxes-area,
+body.block-editor-page.adminkit .editor-meta-boxes-area,
+body.block-editor-page.adminkit .editor-meta-boxes-main,
+body.block-editor-page.adminkit .edit-post-layout__metaboxes {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-area__label,
+body.block-editor-page.adminkit .editor-meta-boxes-main__resize-handle {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox,
+body.block-editor-page.adminkit .editor-meta-boxes-area .postbox {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox-header,
+body.block-editor-page.adminkit .editor-meta-boxes-area .postbox-header,
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox .hndle,
+body.block-editor-page.adminkit .editor-meta-boxes-area .postbox .hndle {
+	background: var(--ak-surface-alt);
+	color: var(--ak-heading);
+	border-bottom-color: var(--ak-border);
+}
+
+
+/* ========== 18. Sidebar dividers (Post panel) ========== */
+/* The editor-post-summary stack is currently flush — sections (post
+   card, featured image, excerpt, last-edited, metadata rows, trash)
+   all flow into each other without visual separation. Add hairline
+   dividers between sections + between consecutive metadata rows so
+   the panel scans cleanly. */
+body.block-editor-page.adminkit .editor-post-card-panel,
+body.block-editor-page.adminkit .editor-post-featured-image,
+body.block-editor-page.adminkit .editor-post-last-edited-panel {
+	border-bottom: 1px solid var(--ak-border);
+	padding-bottom: 12px;
+	margin-bottom: 4px;
+}
+
+body.block-editor-page.adminkit .editor-post-panel__row + .editor-post-panel__row {
+	border-top: 1px solid var(--ak-border);
+	padding-top: 8px;
+	margin-top: 8px;
+}
+
+body.block-editor-page.adminkit .editor-post-card-panel__title-name {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .editor-post-panel__row-label {
+	color: var(--ak-text-muted);
+}
+
+/* Inspector panels (Color / Typography / Dimensions / Border / ...)
+   on the Block tab — add a divider between each tools panel so the
+   stacked sections stop merging visually. */
+body.block-editor-page.adminkit .components-tools-panel + .components-tools-panel {
+	border-top: 1px solid var(--ak-border);
+}
