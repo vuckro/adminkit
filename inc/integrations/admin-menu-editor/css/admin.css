@@ -334,6 +334,16 @@ body.adminkit.settings_page_menu_editor .rex-category.rex-sub-category > .rex-ca
 	color: var(--ak-text);
 }
 
+/* Hide AME's submenu pointer arrow — the 19×30 submenu-tip.png that
+   sits on .ws_menu.ws_active::after, pointing right from the active
+   top-level item toward the submenu panel. Subtle blue in light mode,
+   stark white in dark mode (image is solid-color, doesn't flip).
+   Drops cleanly since the active row is already highlighted with
+   --ak-primary fill — the arrow was redundant context. */
+body.adminkit.settings_page_menu_editor .ws_menu.ws_active::after {
+	display: none;
+}
+
 /* Permission table zebra striping — WP common zebra rule paints #F9F9F9. */
 body.adminkit.settings_page_menu_editor .rex-permission-table tbody tr:nth-child(2n+1),
 body.adminkit.settings_page_menu_editor .rex-capability-inheritance-breakdown tbody tr:nth-child(2n+1) {
