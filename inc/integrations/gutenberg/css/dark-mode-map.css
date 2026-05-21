@@ -338,8 +338,9 @@ body.block-editor-page.adminkit .block-editor-list-view-leaf:hover .block-editor
 
 body.block-editor-page.adminkit .block-editor-list-view-leaf.is-selected .block-editor-list-view-block__contents-cell,
 body.block-editor-page.adminkit .block-editor-list-view-leaf.is-branch-selected .block-editor-list-view-block__contents-cell {
-	background: var(--ak-primary);
-	color: var(--ak-surface-alt);
+	background: var(--ak-primary-subtle);
+	color: var(--ak-text);
+	box-shadow: inset 2px 0 0 var(--ak-primary);
 }
 
 
@@ -882,4 +883,69 @@ body.block-editor-page.adminkit .editor-document-outline__item-content {
 body.block-editor-page.adminkit .editor-document-outline.has-no-headings,
 body.block-editor-page.adminkit .editor-document-outline__no-results {
 	color: var(--ak-text-muted);
+}
+
+
+/* ========== 31. Block inspector controls — hardcoded borders ========== */
+/* Several controls in the Block tab render their own border with a
+   hardcoded gray (#ddd / #cbcbcb / #1e1e1e) that doesn't flip. Route
+   them through --ak-border so the inspector reads as one coherent
+   surface instead of stitched-together cards. */
+
+/* Color row buttons (Text / Background dropdown triggers). */
+body.block-editor-page.adminkit .block-editor-panel-color-gradient-settings__dropdown,
+body.block-editor-page.adminkit .block-editor-tools-panel-color-gradient-settings__item,
+body.block-editor-page.adminkit .block-editor-tools-panel-color-gradient-settings__item .components-button {
+	border-color: var(--ak-border);
+}
+
+/* The color row buttons live inside .block-editor-tools-panel-color-gradient-settings__item
+   which stacks two items with their own top/bottom border. Trim the
+   doubled hairline by clearing the middle joiner. */
+body.block-editor-page.adminkit .block-editor-tools-panel-color-gradient-settings__item + .block-editor-tools-panel-color-gradient-settings__item {
+	border-top-color: var(--ak-border);
+}
+
+/* Font-size segment row (S / M / L / XL) — outer border + segment
+   separators. */
+body.block-editor-page.adminkit .components-toggle-group-control,
+body.block-editor-page.adminkit .components-toggle-group-control-option-base {
+	border-color: var(--ak-border);
+}
+
+/* Inputs / numeric controls inside tools panels — kept consistent with
+   Section 6 form controls. The .components-input-base wraps numeric
+   inputs (e.g. custom font-size, dimensions, border radius) and
+   hardcodes a #cbcbcb border. */
+body.block-editor-page.adminkit .components-input-base,
+body.block-editor-page.adminkit .components-input-control__backdrop,
+body.block-editor-page.adminkit .components-number-control__input,
+body.block-editor-page.adminkit .components-input-control__input {
+	border-color: var(--ak-border);
+}
+
+/* "Set custom size" / "Use size preset" toggle button next to the
+   font-size label — currentColor for the icon stroke. */
+body.block-editor-page.adminkit .components-font-size-picker__header .components-button {
+	color: var(--ak-text-muted);
+}
+
+body.block-editor-page.adminkit .components-font-size-picker__header .components-button:hover,
+body.block-editor-page.adminkit .components-font-size-picker__header .components-button:focus {
+	color: var(--ak-heading);
+	background: var(--ak-hover-bg);
+}
+
+/* Advanced panel toggle (collapsible at the bottom) — the chevron
+   inherits text color but the panel header has a hardcoded
+   border-top that breaks visual rhythm. */
+body.block-editor-page.adminkit .block-editor-block-inspector__advanced {
+	border-top: 1px solid var(--ak-border);
+}
+
+/* "Skip to the selected block" rescue button — secondary already
+   covered by Section 8, but its top spacing reads as a hard edge
+   against the surrounding panel. */
+body.block-editor-page.adminkit .block-editor-skip-to-selected-block {
+	border-color: var(--ak-border);
 }
