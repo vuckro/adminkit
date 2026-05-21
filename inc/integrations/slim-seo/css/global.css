@@ -1,11 +1,126 @@
-/* Slim SEO global variable remap.
-   Slim SEO declares --ss-color-primary on :root with WP's default
-   blue (#007cba) — that var bleeds into every Slim SEO surface
-   beyond the dedicated settings page: post-edit meta box tabs,
-   the per-term SEO meta box, etc. Loaded always (no condition) so
-   the remap travels with Slim SEO regardless of screen. The
-   settings-page-specific overrides stay in admin.css. */
+/* Slim SEO global token bridge.
+   Loaded always (no condition) so Slim SEO's surfaces stay coherent
+   wherever they render: SEO meta box on post-edit, per-term SEO meta
+   box, settings page (which adds settings-specific chrome on top via
+   admin.css).
 
+   1. Variable remap — neutralizes Slim SEO's :root tokens.
+   2. Meta-box internals — the .ef-control rows, .ss-input-wrapper
+      inputs, AI button, and tooltip/required indicators that bypass
+      the variables with hardcoded hex values. */
+
+
+/* ----- 1. Variable remap ----- */
 body.adminkit {
 	--ss-color-primary: var(--ak-primary);
+}
+
+
+/* ----- 2. Meta-box internals (.ef-control rows) ----- */
+body.adminkit .ef-control__label {
+	color: var(--ak-text);
+}
+
+body.adminkit .ef-control__description {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .ef-control__description code {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+	border: 1px solid var(--ak-border);
+}
+
+body.adminkit .ef-control__required {
+	color: var(--ak-error);
+}
+
+body.adminkit .ef-control__tooltip svg {
+	fill: var(--ak-text-muted);
+}
+
+
+/* ----- 3. SS form inputs in meta-box context ----- */
+body.adminkit .ss-input-wrapper input,
+body.adminkit .ss-input-wrapper textarea,
+body.adminkit .ef-control input,
+body.adminkit .ef-control textarea,
+body.adminkit .ef-control select {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .ss-input-wrapper input:focus,
+body.adminkit .ss-input-wrapper textarea:focus,
+body.adminkit .ef-control input:focus,
+body.adminkit .ef-control textarea:focus,
+body.adminkit .ef-control select:focus {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+
+/* ----- 4. AI / inserter / image-picker buttons inside inputs ----- */
+body.adminkit .ss-inserter > button,
+body.adminkit .ef-control .ss-select-image {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .ss-inserter > button:hover,
+body.adminkit .ef-control .ss-select-image:hover {
+	color: var(--ak-text);
+	background: var(--ak-hover-bg);
+}
+
+
+/* ----- 5. SS status dots (after labels: "Meta title •") ----- */
+/* These are .ss-input-success / -warning / -danger circles next to
+   labels — the semantic colors (green/orange/red) already work in
+   both modes since they're solid backgrounds, but the WordPress
+   defaults override the dot bg on dark mode; force the tokens. */
+body.adminkit .ss-input-success label:after {
+	background: var(--ak-success);
+}
+
+body.adminkit .ss-input-warning label:after {
+	background: var(--ak-warning);
+}
+
+body.adminkit .ss-input-danger label:after {
+	background: var(--ak-error);
+}
+
+
+/* ----- 6. SS modal (image picker, snippet editor) ----- */
+body.adminkit .ss-modal-body {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+	box-shadow: none;
+	border: 1px solid var(--ak-border);
+}
+
+body.adminkit .ss-modal-heading {
+	color: var(--ak-heading);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .ss-modal-overlay {
+	background: rgba(0, 0, 0, 0.5);
+}
+
+
+/* ----- 7. SS dropdown items (variable picker, etc.) ----- */
+body.adminkit .ss-dropdown__title {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .ss-dropdown__item {
+	color: var(--ak-text);
+}
+
+body.adminkit .ss-dropdown__item:hover {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
 }
