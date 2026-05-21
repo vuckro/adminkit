@@ -37,29 +37,11 @@ body.adminkit.settings_page_slim-seo .wrap {
 }
 
 
-/* ----- 2. Header bar (.ss-title) ----- */
-/* Slim SEO targets this with `#wpwrap #wpcontent #wpbody .ss-title`
-   (specificity 0,3,1) to outweigh anything else — we mirror that
-   selector chain to win the cascade. */
+/* ----- 2. Hide the header bar (.ss-title) -----
+   Slim SEO targets the bar with `#wpwrap #wpcontent #wpbody .ss-title`
+   (specificity 0,3,1) — mirror that chain so display:none wins. */
 body.adminkit.settings_page_slim-seo #wpwrap #wpcontent #wpbody .ss-title {
-	background-color: var(--ak-surface-alt);
-	color: var(--ak-heading);
-	border-bottom-color: var(--ak-border);
-}
-
-body.adminkit.settings_page_slim-seo .ss-title a {
-	color: var(--ak-text);
-}
-
-body.adminkit.settings_page_slim-seo .ss-title a:hover,
-body.adminkit.settings_page_slim-seo .ss-title a:focus {
-	color: var(--ak-primary);
-}
-
-body.adminkit.settings_page_slim-seo .ss-title__upgrade,
-body.adminkit.settings_page_slim-seo .ss-title__upgrade:hover,
-body.adminkit.settings_page_slim-seo .ss-title__upgrade:focus {
-	color: var(--ak-error);
+	display: none;
 }
 
 

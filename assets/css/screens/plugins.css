@@ -71,6 +71,16 @@ body.adminkit .wp-list-table.plugins .plugin-version-author-uri {
 	color: var(--ak-text-muted);
 }
 
+/* Promo links injected via plugin_action_links / plugin_row_meta —
+   targeted by exact href so the selectors are no-ops when the plugin
+   isn't installed. Slim SEO: "Upgrade" CTA + star-rating widget.
+   Query Monitor: "Sponsor" link. */
+body.adminkit.plugins-php a[href="https://elu.to/spp"],
+body.adminkit.plugins-php a[href*="wordpress.org/support/plugin/slim-seo/reviews"],
+body.adminkit.plugins-php a[href*="github.com/sponsors/johnbillion"] {
+	display: none;
+}
+
 
 /* ===== Plugin install (plugin-install.php) =====
    Plugin cards, the filter bar, and the "More details" Thickbox modal
