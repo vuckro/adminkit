@@ -148,21 +148,17 @@ body.adminkit.settings_page_menu_editor .ws_is_sticky_toolbar {
 
 
 /* ----- Shared AME postbox primitives -----
-   nav-menus, table-columns, tweaks, and role-editor all wrap their
-   sections in `.ws-ame-postbox-header / -content / -toggle` (their
-   own postbox primitive). Module-specific wrappers (.ame-nv-…,
-   .ame-tc-…, .ame-twm-…) inherit these — one rule set covers all
-   four sub-sections. */
+   nav-menus, table-columns, tweaks, and role-editor wrap their
+   sections in `.ws-ame-postbox-header / -content / -toggle`. The
+   stock styling paints a white box with a #ccd0d4 border; we strip
+   both so the section blends into the page surface and only the
+   heading text identifies it. */
 body.adminkit.settings_page_menu_editor .ws-ame-postbox-header,
 body.adminkit.settings_page_menu_editor .ws-ame-postbox-content {
-	background-color: var(--ak-surface-alt);
-	border-color: var(--ak-border);
-	color: var(--ak-text);
+	background-color: transparent;
+	border-color: transparent;
 	box-shadow: none;
-}
-
-body.adminkit.settings_page_menu_editor .ws-ame-postbox-header {
-	border-bottom: 1px solid var(--ak-border);
+	color: var(--ak-text);
 }
 
 body.adminkit.settings_page_menu_editor .ws-ame-postbox-header h3 {
@@ -171,6 +167,18 @@ body.adminkit.settings_page_menu_editor .ws-ame-postbox-header h3 {
 
 body.adminkit.settings_page_menu_editor .ws-ame-postbox-toggle:hover {
 	background-color: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+/* Module-level wrappers (.ame-tc-screen, .ame-nv-navigation-menu,
+   .ame-twm-section) also paint their own #fff bg + #ccd0d4 border
+   + drop shadow — drop them too so the postbox truly disappears
+   into the page background. */
+body.adminkit.settings_page_menu_editor .ame-tc-screen,
+body.adminkit.settings_page_menu_editor .ame-nv-navigation-menu,
+body.adminkit.settings_page_menu_editor .ame-twm-section {
+	background-color: transparent;
+	border: none;
+	box-shadow: none;
 }
 
 
@@ -275,13 +283,12 @@ body.adminkit.settings_page_menu_editor .ame-tc-other-screen-options {
 }
 
 
-/* ----- Consistent border-radius across AME panels -----
-   AME ships its panels as flat 0-radius rectangles (or random 3px
-   on a few). Normalize to --ak-radius-s so they match the rounded
-   corners of AdminKit's postboxes / cards elsewhere. */
+/* ----- Consistent border-radius on standalone AME panels -----
+   Cards that DO keep a surface + border (menu builder boxes, module
+   shells, role editor) get --ak-radius-s so they feel rounded like
+   AdminKit's other cards. The .ws-ame-postbox-* primitives are NOT
+   in this list — they're transparent now and don't need a radius. */
 body.adminkit.settings_page_menu_editor .ws_main_container,
-body.adminkit.settings_page_menu_editor .ws-ame-postbox-content,
-body.adminkit.settings_page_menu_editor .ws-ame-postbox-header,
 body.adminkit.settings_page_menu_editor #ame-mb-screen-list,
 body.adminkit.settings_page_menu_editor #ame-mb-main-actions,
 body.adminkit.settings_page_menu_editor #ame-dashboard-widgets,
@@ -295,20 +302,6 @@ body.adminkit.settings_page_menu_editor .ame-rui-redirect-list,
 body.adminkit.settings_page_menu_editor .ame-rui-redirect,
 body.adminkit.settings_page_menu_editor .ame-rui-default-redirect-container {
 	border-radius: var(--ak-radius-s);
-}
-
-/* Header of a postbox-style card needs a matching top radius so the
-   filled header doesn't poke past the rounded outer border. */
-body.adminkit.settings_page_menu_editor .ws-ame-postbox-header {
-	border-top-left-radius: var(--ak-radius-s);
-	border-top-right-radius: var(--ak-radius-s);
-}
-
-body.adminkit.settings_page_menu_editor .ws-ame-postbox-content {
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
-	border-bottom-left-radius: var(--ak-radius-s);
-	border-bottom-right-radius: var(--ak-radius-s);
 }
 
 
