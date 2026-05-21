@@ -476,8 +476,10 @@ body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[a
 	background: var(--ak-hover-bg);
 }
 
+/* Drag-to-resize handle: no background needed — keeps the native
+   transparent grip shape, no slab. */
 body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[role="separator"] {
-	background: var(--ak-border-strong);
+	background: transparent;
 }
 
 body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox,
