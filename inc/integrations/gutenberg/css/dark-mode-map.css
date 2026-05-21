@@ -322,6 +322,24 @@ body.block-editor-page.adminkit .block-editor-block-types-list__item:focus {
 	color: var(--ak-heading);
 }
 
+/* "Browse all" expand button at the bottom of the quick inserter
+   popup (the / slash-command picker). Has a hardcoded white bg
+   that pops against the dark inserter surface. */
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand,
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand.components-button {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-top: 1px solid var(--ak-border);
+}
+
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand:hover:not(:disabled),
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand:focus:not(:disabled),
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand.components-button:hover:not(:disabled),
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand.components-button:focus:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
 
 /* ========== 13. List view (left sidebar with block tree) ========== */
 body.block-editor-page.adminkit .editor-list-view-sidebar,

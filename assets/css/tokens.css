@@ -62,12 +62,17 @@
 	--ak-focus-ring: 0 0 0 3px rgba(117, 163, 59, 0.25);
 }
 
-/* Remap WP's built-in theme color (blue) to our primary. Declared on
-   body.adminkit so it beats WP's color-scheme rule (`body.admin-color-fresh
-   { --wp-admin-theme-color: #2271b1; }`) which is one class more specific
-   than :root. One-shot fix for Quick Edit links, focus rings, selected
-   states, and any plugin that consumes --wp-admin-theme-color. */
-body.adminkit {
+/* Remap WP's built-in theme color (blue) to our primary. The selector
+   chains .adminkit AND [class*="admin-color-"] so the specificity
+   (0,2,0) outranks WP's own color-scheme rules — body.admin-color-fresh
+   and body.admin-color-modern are (0,1,0) and would otherwise win
+   simply by loading after this stylesheet. The attribute selector
+   catches every scheme (fresh, modern, blue, coffee, ectoplasm, light,
+   midnight, ocean, sunrise) in one shot. One-shot fix for Quick Edit
+   links, focus rings, selected states, and any plugin that consumes
+   --wp-admin-theme-color. */
+body.adminkit,
+body.adminkit[class*="admin-color-"] {
 	--wp-admin-theme-color: var(--ak-primary);
 	--wp-admin-theme-color--rgb: 117, 163, 59;
 	--wp-admin-theme-color-darker-10: var(--ak-primary-dark);
