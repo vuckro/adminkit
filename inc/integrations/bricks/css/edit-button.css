@@ -22,7 +22,7 @@ body.adminkit .edit-post-header-toolbar .button.button-primary,
 body.adminkit .editor-header .bricks-edit-with-bricks-button,
 body.adminkit .edit-post-header .bricks-edit-with-bricks-button {
 	background-color: var(--ak-primary);
-	color: var(--ak-surface-alt);
+	color: var(--ak-heading);
 	border-color: var(--ak-primary);
 	box-shadow: none;
 }
@@ -44,7 +44,7 @@ body.adminkit .bricks-editor .wp-editor-container .button.button-primary:focus,
 body.adminkit .edit-post-header-toolbar .button.button-primary:focus {
 	background-color: var(--ak-primary-dark);
 	border-color: var(--ak-primary-dark);
-	color: var(--ak-surface-alt);
+	color: var(--ak-heading);
 }
 
 
