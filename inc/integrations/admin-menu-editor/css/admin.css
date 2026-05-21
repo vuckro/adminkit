@@ -171,14 +171,18 @@ body.adminkit.settings_page_menu_editor .ws-ame-postbox-toggle:hover {
 
 /* Module-level wrappers (.ame-tc-screen, .ame-nv-navigation-menu,
    .ame-twm-section) also paint their own #fff bg + #ccd0d4 border
-   + drop shadow — drop them too so the postbox truly disappears
-   into the page background. */
+   + drop shadow. Drop bg + shadow + side borders so the section
+   disappears into the page, but keep a thin bottom border so
+   stacked accordion rows stay visually separated. */
 body.adminkit.settings_page_menu_editor .ame-tc-screen,
 body.adminkit.settings_page_menu_editor .ame-nv-navigation-menu,
 body.adminkit.settings_page_menu_editor .ame-twm-section {
 	background-color: transparent;
 	border: none;
+	border-bottom: 1px solid var(--ak-border);
 	box-shadow: none;
+	border-radius: 0;
+	margin-bottom: 0;
 }
 
 
