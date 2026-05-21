@@ -45,15 +45,13 @@ body.block-editor-page.adminkit .editor-document-bar .editor-document-bar__post-
 	color: var(--ak-heading);
 }
 
-/* Document bar button hover — the title button hover was tinting
-   text to --ak-heading on the same --ak-surface bg, which in dark
-   mode means lighter text on the same surface (less contrast, not
-   more). Invert instead: fill with --ak-text, flip the icon/title
-   to --ak-surface-alt, add radius. Reads as a clear "attention"
-   cue in both modes. */
+/* Document bar button hover — fill with --ak-primary-soft (the t-2
+   primary tint, one step stronger than --ak-primary-subtle / t-1
+   used for the pressed-pill state) and route text to --ak-primary
+   so the hover pill stays on-brand without yelling. */
 body.block-editor-page.adminkit .editor-document-bar .components-button:hover:not(:disabled, [aria-disabled="true"]) {
-	background: var(--ak-text);
-	color: var(--ak-surface-alt);
+	background: var(--ak-primary-soft);
+	color: var(--ak-primary);
 	border-radius: var(--ak-radius-s);
 }
 

@@ -23,6 +23,7 @@
 	--ak-primary: var(--primary, var(--neutral-l-8, hsl(0, 0%, 35%)));
 	--ak-primary-dark: var(--primary-d-2, var(--neutral-l-9, hsl(0, 0%, 22%)));
 	--ak-primary-subtle: var(--primary-t-1, rgba(117, 163, 59, 0.06));
+	--ak-primary-soft: var(--primary-t-2, rgba(117, 163, 59, 0.12));
 	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%)));
 
 	/* Semantic */
