@@ -93,13 +93,26 @@ class AdminKit_Core_Chrome {
 		}
 
 		// --- screens/ (per-screen conditional; legacy section 'pages') ---
+		// post-edit uses $screen->base instead of ->id so it fires for every
+		// post type (pages, CPTs like bricks_template, woo products, …),
+		// not just the built-in 'post' type.
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-post-edit',
+			'src'       => self::ASSETS_BASE . 'screens/post-edit.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'section'   => 'pages',
+			'condition' => static function ( $screen ) {
+				return $screen && 'post' === $screen->base;
+			},
+		) );
 		self::register_screen( 'themes',          array( 'themes', 'theme-install' ) );
 		self::register_screen( 'theme-install',   array( 'themes', 'theme-install' ) );
 		self::register_screen( 'media',           array( 'upload', 'media', 'attachment' ) );
 		self::register_screen( 'profile',         array( 'profile', 'user-edit', 'user-new' ) );
 		self::register_screen( 'nav-menus',       array( 'nav-menus' ) );
 		self::register_screen( 'plugins',         array( 'plugins', 'plugin-install' ) );
-		self::register_screen( 'plugin-editor',   array( 'plugin-editor' ) );
+		self::register_screen( 'plugin-editor',   array( 'plugin-editor', 'theme-editor' ) );
 		self::register_screen( 'code-mirror',     array( 'plugin-editor', 'theme-editor' ) );
 		self::register_screen( 'update-core',     array( 'update-core' ) );
 		self::register_screen( 'import',          array( 'import' ) );

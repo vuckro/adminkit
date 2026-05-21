@@ -1,0 +1,58 @@
+/* Post edit screens — post.php + post-new.php.
+   Targets surfaces that hardcode #fff / light grey and don't flip
+   in dark mode: the legacy title input, the Publish box footer, and
+   Bricks's classic-editor fallback wrapper. Also tones the
+   "Edit with Bricks" yellow CTAs to AdminKit primary so they stop
+   competing with everything else on the page.
+
+   Bricks selectors are harmless no-ops when Bricks isn't installed —
+   the class hooks just don't render. */
+
+
+/* ----- Classic editor title input ----- */
+body.adminkit:is(.post-php, .post-new-php) #titlediv #title {
+	background-color: var(--ak-surface-alt);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+
+/* ----- Publish box footer ----- */
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions {
+	background: var(--ak-surface);
+	border-top-color: var(--ak-border);
+}
+
+
+/* ----- Bricks classic-editor fallback wrapper ----- */
+body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container {
+	background-color: var(--ak-surface);
+}
+
+
+/* ----- "Edit with Bricks" CTA buttons ----- */
+/* Bricks paints these primary buttons #ffd64f (brand yellow) with
+   uppercase bold text — too loud next to AdminKit's neutral chrome.
+   Route them through --ak-primary so they read as a normal primary
+   action while keeping the bold/uppercase emphasis. */
+body.adminkit:is(.post-php, .post-new-php) .bricks-block-editor-notice-wrapper .button.button-primary,
+body.adminkit:is(.post-php, .post-new-php) .bricks-classic-editor-wrapper .button.button-primary,
+body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container .button.button-primary,
+body.adminkit:is(.post-php, .post-new-php) .edit-post-header-toolbar .button.button-primary {
+	background-color: var(--ak-primary);
+	color: var(--ak-surface-alt);
+	border-color: var(--ak-primary);
+}
+
+body.adminkit:is(.post-php, .post-new-php) .bricks-block-editor-notice-wrapper .button.button-primary:hover,
+body.adminkit:is(.post-php, .post-new-php) .bricks-classic-editor-wrapper .button.button-primary:hover,
+body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container .button.button-primary:hover,
+body.adminkit:is(.post-php, .post-new-php) .edit-post-header-toolbar .button.button-primary:hover,
+body.adminkit:is(.post-php, .post-new-php) .bricks-block-editor-notice-wrapper .button.button-primary:focus,
+body.adminkit:is(.post-php, .post-new-php) .bricks-classic-editor-wrapper .button.button-primary:focus,
+body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container .button.button-primary:focus,
+body.adminkit:is(.post-php, .post-new-php) .edit-post-header-toolbar .button.button-primary:focus {
+	background-color: var(--ak-primary-dark);
+	border-color: var(--ak-primary-dark);
+	color: var(--ak-surface-alt);
+}
