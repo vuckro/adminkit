@@ -800,9 +800,16 @@ body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tab[aria-selected=
 	box-shadow: inset 0 -2px 0 var(--ak-primary);
 }
 
-/* Close (X) button */
+/* Close (X) button — the inner SVG hardcodes its fill, so currentColor
+   doesn't reach it. Force fill on the SVG path so the icon flips
+   with the button color. */
 body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button {
 	color: var(--ak-text-muted);
+}
+
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button svg,
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button svg path {
+	fill: currentColor;
 }
 
 body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button:hover,
@@ -845,4 +852,34 @@ body.block-editor-page.adminkit .block-editor-list-view-block__menu:focus {
 body.block-editor-page.adminkit .block-editor-list-view-leaf.is-selected .block-editor-list-view-block__menu,
 body.block-editor-page.adminkit .block-editor-list-view-leaf.is-branch-selected .block-editor-list-view-block__menu {
 	color: var(--ak-surface-alt);
+}
+
+/* Outline panel inside the secondary sidebar — the stats block
+   (Characters / Words / Time to read) and the heading-tree preview
+   share a hardcoded #ddd border-bottom that doesn't flip. */
+body.block-editor-page.adminkit .editor-list-view-sidebar__outline {
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .editor-document-outline,
+body.block-editor-page.adminkit .editor-document-outline__item {
+	color: var(--ak-text);
+}
+
+/* Heading hierarchy levels in the outline preview (H1 / H2 / H3 / H4
+   labels) — the level badge text should read clearly. */
+body.block-editor-page.adminkit .editor-document-outline__level {
+	color: var(--ak-text-muted);
+}
+
+body.block-editor-page.adminkit .editor-document-outline__item-content {
+	color: var(--ak-text);
+}
+
+/* Empty state ("Navigate the structure of your document and address
+   issues like empty or incorrect heading levels.") */
+body.block-editor-page.adminkit .editor-document-outline.has-no-headings,
+body.block-editor-page.adminkit .editor-document-outline__no-results {
+	color: var(--ak-text-muted);
 }
