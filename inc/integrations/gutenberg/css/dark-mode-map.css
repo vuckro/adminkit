@@ -998,7 +998,7 @@ body.block-editor-page.adminkit .edit-post-sidebar > .components-panel,
 body.block-editor-page.adminkit .interface-complementary-area > .components-panel,
 body.block-editor-page.adminkit .block-editor-block-inspector {
 	background: transparent;
-	color: var(--ak-text);
+	fill: var(--ak-text);
 }
 
 /* Modern outer sidebar wrapper — Gutenberg 16+ wraps the
