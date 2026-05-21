@@ -443,9 +443,8 @@ body.block-editor-page.adminkit .editor-meta-boxes-main__resize-handle {
 
 body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox,
 body.block-editor-page.adminkit .editor-meta-boxes-area .postbox {
-	background: var(--ak-surface-alt);
-	border-color: var(--ak-border);
-	color: var(--ak-text);
+	background: var(--ak-surface);
+	border-color: var(--ak-surface);
 }
 
 body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox-header,
