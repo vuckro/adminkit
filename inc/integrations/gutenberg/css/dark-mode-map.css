@@ -804,8 +804,11 @@ body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tab[aria-selected=
 
 /* Close (X) button — the inner SVG hardcodes its fill, so currentColor
    doesn't reach it. Force fill on the SVG path so the icon flips
-   with the button color. */
+   with the button color. Also drop the white background — it gets
+   pinned to #fff by Gutenberg and pops a bright square against the
+   dark sidebar. */
 body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button {
+	background: transparent;
 	color: var(--ak-text-muted);
 }
 
