@@ -188,15 +188,14 @@ body.block-editor-page.adminkit .components-button.is-tertiary:focus:not(:disabl
 }
 
 /* Destructive secondary (Move to trash) — soft red pill that matches
-   the pressed-button pattern: subtle error tint bg + error text.
-   --ak-error-subtle resolves to var(--error-t-2) with a safe rgba
-   fallback. Border kept on --ak-error for definition; radius matches
-   the pressed pill. */
+   the pressed-button pattern: subtle error tint bg + error text, no
+   border, no shadow. --ak-error-subtle resolves to var(--error-t-2)
+   with a safe rgba fallback. */
 body.block-editor-page.adminkit .components-button.is-secondary.is-destructive,
 body.block-editor-page.adminkit .components-button.is-destructive {
 	background: var(--ak-error-subtle);
 	color: var(--ak-error);
-	border-color: var(--ak-error);
+	border: 0;
 	border-radius: var(--ak-radius-s);
 	box-shadow: none;
 }
@@ -207,7 +206,8 @@ body.block-editor-page.adminkit .components-button.is-destructive:hover:not(:dis
 body.block-editor-page.adminkit .components-button.is-destructive:focus:not(:disabled) {
 	background: var(--ak-error);
 	color: var(--ak-surface-alt);
-	border-color: var(--ak-error);
+	border: 0;
+	box-shadow: none;
 }
 
 
@@ -625,13 +625,14 @@ body.block-editor-page.adminkit .components-border-control__style-button[aria-pr
 
 /* ========== 25. Featured image upload area ========== */
 /* WP default puts a dashed light-gray border on the container/toggle
-   which reads as too faint against the dark sidebar. Switch to a
-   solid stronger border + small radius. */
+   which clashed with the dark sidebar. Drop the border entirely —
+   the --ak-surface-alt slab + radius alone defines the upload target
+   against --ak-surface. */
 body.block-editor-page.adminkit .editor-post-featured-image__container,
 body.block-editor-page.adminkit .editor-post-featured-image__toggle {
 	background: var(--ak-surface-alt);
 	color: var(--ak-text);
-	border: 1px solid var(--ak-border-strong);
+	border: 0;
 	border-radius: var(--ak-radius-s);
 }
 
