@@ -984,9 +984,13 @@ body.block-editor-page.adminkit .block-editor-block-inspector {
 
 /* Modern outer sidebar wrapper — Gutenberg 16+ wraps the
    complementary area in .interface-interface-skeleton__sidebar.
-   Mirror Section 1 / editor.css so the slab matches. */
+   Mirror Section 1 / editor.css so the slab matches. The
+   border-top: 1px solid #e0e0e0 default cut a visible hairline
+   between the editor header and the sidebar — kill it so the two
+   surfaces flow as one. */
 body.block-editor-page.adminkit .interface-interface-skeleton__sidebar {
 	background: var(--ak-surface);
+	border-top: 0;
 	border-left-color: var(--ak-border);
 }
 
