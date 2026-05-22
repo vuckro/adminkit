@@ -50,7 +50,7 @@ body.adminkit #adminmenu {
 }
 
 body.adminkit #adminmenu a {
-	color: var(--ak-text);
+	color: var(--ak-heading);
 	font-family: var(--ak-font-body);
 	font-weight: 500;
 }
@@ -141,7 +141,7 @@ body.adminkit.auto-fold #adminmenu .wp-submenu {
    is light, so those leak. `!important` is the cheapest way to win — chaining
    every WP variant in the selector would be ten lines for the same effect. */
 body.adminkit #adminmenu .wp-submenu a {
-	color: var(--ak-text) !important;
+	color: var(--ak-heading) !important;
 }
 
 body.adminkit #adminmenu .wp-submenu a:hover,
