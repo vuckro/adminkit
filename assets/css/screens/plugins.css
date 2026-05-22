@@ -297,3 +297,19 @@ body.adminkit .upload-plugin .install-help,
 body.adminkit .upload-theme .install-help {
 	color: var(--ak-text-muted) !important;
 }
+
+/* Plugin-install results is a CARD GRID, not a data table — drop the
+   list-table card chrome (bg/border/radius from components/tables.css) so it
+   sits flush on the page background; each plugin card carries its own border. */
+body.adminkit .wp-list-table.plugin-install {
+	background: var(--ak-bg);
+	border: none;
+	border-radius: 0;
+}
+
+/* Plugin-card link focus paints a box-shadow ring around the .plugin-icon
+   image (WP's `a:focus .plugin-icon`). Drop it — the focused link keeps its
+   own ring, so focus is still visible. */
+body.adminkit a:focus .plugin-icon {
+	box-shadow: none;
+}
