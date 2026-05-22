@@ -47,12 +47,13 @@ body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
 	font-weight: 600;
 }
 
-/* Left-edge indicator for active plugins — a slim --ak-success
-   bar on the check-column. The .plugins tbody td/th reset above
-   sets `box-shadow: none` without !important, so this more
-   specific selector still wins on the cascade. */
-body.adminkit .wp-list-table.plugins tr.active th.check-column {
-	box-shadow: inset 4px 0 0 var(--ak-success);
+/* Left-edge indicator for active plugins — a slim --ak-primary
+   bar on the check-column. Covers both the WP default
+   `.check-column` and AME Pro's renamed `.ame-check-column`
+   (its plugin-visibility module swaps the class). */
+body.adminkit .wp-list-table.plugins tr.active th.check-column,
+body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
+	box-shadow: inset 4px 0 0 var(--ak-primary);
 }
 
 /* Inactive plugins — keep the table surface, mute the title */
@@ -95,9 +96,12 @@ body.adminkit .wp-list-table.plugins .plugin-version-author-uri {
 	color: var(--ak-text-muted);
 }
 
-/* Promo links injected via plugin_row_meta — targeted by exact
-   href so the selector is a no-op when the plugin isn't installed.
-   Query Monitor: "Sponsor" link. */
+/* Promo links injected via plugin_action_links / plugin_row_meta —
+   targeted by exact href so the selectors are no-ops when the
+   plugin isn't installed.
+   - Slim SEO "Upgrade" action link
+   - Query Monitor "Sponsor" row-meta link */
+body.adminkit.plugins-php a[href="https://elu.to/spp"],
 body.adminkit.plugins-php a[href*="github.com/sponsors/johnbillion"] {
 	display: none;
 }
