@@ -60,17 +60,57 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .profile-table .date {
 }
 
 /* Open-state header on child action panels — bundled #396c9c slate
-   bar. Route to --ak-primary so the opened panel speaks the brand. */
+   bar. Route to a recessed token surface (not the loud primary) so
+   the open state reads as a calm "expanded" cue. */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.child-panel.panel-open,
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.panel-open {
-	background: var(--ak-primary);
-	color: #ffffff;
+	background: var(--ak-surface);
+	color: var(--ak-heading);
 }
 
-/* Make sure inner text + arrow stay readable on the primary bar */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.panel-open .panel-title,
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.panel-open .panel-summary {
-	color: #ffffff;
+	color: var(--ak-heading);
+}
+
+
+/* Panel body surface (.action-panel .panel-body) + dividers —
+   bundled #fff / #d6d6d6 don't flip. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-body {
+	background: var(--ak-surface-alt);
+	border-top-color: var(--ak-border);
+}
+
+/* Action-icon tiles (Pull / Push / Import / Export / …) — bundled
+   #fff bg + #d6d6d6 border + #747474 text. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .actions-panel .action-icon,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .action-icon {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .actions-panel .action-icon:hover,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .action-icon:hover {
+	background: var(--primary-t-1, var(--ak-hover-bg));
+	border-color: var(--ak-primary);
+	color: var(--ak-heading);
+}
+
+/* Bundled action-icon SVGs paint their strokes inline with
+   `style="stroke: rgb(50, 110, 255)"` or `rgb(35, 109, 231)` (the
+   #326efe / #236de7 blues). Override via attribute selector so the
+   icons speak --ak-primary. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[style*="stroke: rgb(50, 110, 255)"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[style*="stroke: rgb(35, 109, 231)"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg path[stroke="#236de7"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg [fill="#236de7"] {
+	stroke: var(--ak-primary) !important;
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg [fill="#236de7"] {
+	fill: var(--ak-primary) !important;
+	stroke: none !important;
 }
 
 
