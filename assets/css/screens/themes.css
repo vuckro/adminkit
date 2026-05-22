@@ -50,6 +50,7 @@ body.adminkit .theme-overlay .theme-backdrop {
 body.adminkit .theme-overlay .theme-wrap {
 	background: var(--ak-bg);
 	color: var(--ak-text);
+	border-radius: var(--ak-radius-m);
 }
 
 /* Top header strip with prev / next / close buttons */
@@ -97,15 +98,22 @@ body.adminkit .theme-overlay .theme-header .right.disabled:hover {
 	background: transparent;
 }
 
-/* Bottom action bar (Customize / Activate / Live Preview etc.) */
+/* Bottom action bar (Customize / Activate / Live Preview etc.) — round its
+   own bottom corners to match .theme-wrap (no overflow:hidden on the wrap,
+   since WP's prev/next nav buttons sit outside the modal edges). */
 body.adminkit .theme-overlay .theme-actions {
 	background: var(--ak-surface);
 	border-top-color: var(--ak-border);
+	border-bottom-left-radius: var(--ak-radius-m);
+	border-bottom-right-radius: var(--ak-radius-m);
 }
 
-/* Big screenshot frame on the left */
+/* Big screenshot frame on the left — round it (overflow clips the <img>
+   inside to the rounded corners). */
 body.adminkit .theme-overlay .screenshot {
 	border-color: var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	overflow: hidden;
 }
 
 body.adminkit .theme-overlay .screenshot.thumb {
