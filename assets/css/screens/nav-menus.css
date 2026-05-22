@@ -205,3 +205,46 @@ body.adminkit.nav-menus-php .menu-edit {
 body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle {
 	border-radius: var(--ak-radius-s);
 }
+
+/* When the item is expanded, drop the handle's bottom radius so it
+   connects flush with the settings drawer below, and round the
+   drawer's own bottom corners. */
+body.adminkit.nav-menus-php .menu-item-edit-active .menu-item-bar .menu-item-handle {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+body.adminkit.nav-menus-php .menu-item-settings {
+	border-bottom-left-radius: var(--ak-radius-s);
+	border-bottom-right-radius: var(--ak-radius-s);
+}
+
+/* Thin divider above the action strip (Remove | Cancel) so the
+   strip doesn't sit flush against the last field. */
+body.adminkit.nav-menus-php .menu-item-actions {
+	border-top: 1px solid var(--ak-border);
+	margin-top: 10px;
+}
+
+/* The Bricks custom fields (.field-bricks-mega-menu, -multilevel)
+   come without WP's default p.description top spacing — give them
+   the same rhythm as native fields. */
+body.adminkit.nav-menus-php .field-bricks-mega-menu,
+body.adminkit.nav-menus-php .field-bricks-multilevel {
+	margin-top: 10px;
+}
+
+/* "Add menu items" sidebar (#side-sortables.accordion-container).
+   Mirror the outer-border radius onto the first/last accordion
+   sections so the rounded shell isn't clipped flat by the inner
+   borders. */
+body.adminkit.nav-menus-php #side-sortables.accordion-container .outer-border > li:first-child .accordion-section-title {
+	border-top-left-radius: var(--ak-radius-s);
+	border-top-right-radius: var(--ak-radius-s);
+}
+
+body.adminkit.nav-menus-php #side-sortables.accordion-container .outer-border > li:last-child .accordion-section-title,
+body.adminkit.nav-menus-php #side-sortables.accordion-container .outer-border > li:last-child .accordion-section-content {
+	border-bottom-left-radius: var(--ak-radius-s);
+	border-bottom-right-radius: var(--ak-radius-s);
+}
