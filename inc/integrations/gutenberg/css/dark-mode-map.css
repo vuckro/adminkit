@@ -371,6 +371,12 @@ body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand.co
 	color: var(--ak-heading);
 }
 
+/* Quick inserter item buttons — WP hardcodes a #1e1e1e (near-black)
+   border that disappears on the dark inserter surface. Map to token. */
+body.block-editor-page.adminkit .block-editor-inserter__popover.is-quick .components-popover__content .block-editor-inserter__quick-inserter > .components-button {
+	border-color: var(--ak-border);
+}
+
 
 /* ========== 13. List view (left sidebar with block tree) ========== */
 body.block-editor-page.adminkit .editor-list-view-sidebar,
