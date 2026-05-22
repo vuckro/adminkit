@@ -360,12 +360,20 @@ body.adminkit .stuffbox {
 	overflow: hidden;
 }
 
-/* Stuffbox header — WP draws an #f0f0f1 bottom divider; route it and the
-   title color to tokens (mirrors the .postbox header treatment). */
-body.adminkit .stuffbox > h2,
-body.adminkit .stuffbox > h3 {
+/* Stuffbox header — WP draws the #f0f0f1 bottom divider via
+   `#poststuff .stuffbox > h2` (an ID selector), so scope ours under #poststuff
+   too to beat it. Route the divider + title to tokens. */
+body.adminkit #poststuff .stuffbox > h2,
+body.adminkit #poststuff .stuffbox > h3 {
 	border-bottom: 1px solid var(--ak-border);
 	color: var(--ak-heading);
+}
+
+/* Comment author header (comment edit) — hardcoded #1d2327 text + #f0f0f1
+   bottom divider. */
+body.adminkit .edit-comment-author {
+	color: var(--ak-heading);
+	border-bottom: 1px solid var(--ak-border);
 }
 
 /* Submit / publish box footer (#major-publishing-actions) — the Update /
