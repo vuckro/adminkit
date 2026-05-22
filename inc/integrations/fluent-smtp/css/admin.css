@@ -67,6 +67,56 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_dash_lists li > sp
 	font-weight: 600;
 }
 
+
+/* ===== Dashboard widgets (Sending stats / Sending by time of day) =====
+   The widget wrapper has inline `style="background: white"` baked in
+   by the Vue template — needs !important to override. Also kill the
+   inline-style box-shadow if any. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_widget {
+	background: var(--ak-surface-alt) !important;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+}
+
+/* Heatmap cells inside the "Sending by time of day" widget.
+   Empty level → recessed token; levels 1→5 follow the brand
+   primary-tint scale so the gradient stays on-palette. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_level_0,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour.fss_wid_level_0 {
+	background: var(--ak-surface);
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_level_1,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour.fss_wid_level_1 {
+	background: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_level_2,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour.fss_wid_level_2 {
+	background: var(--primary-t-2, var(--ak-hover-bg));
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_level_3,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour.fss_wid_level_3 {
+	background: var(--primary-t-3, var(--ak-primary));
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_level_4,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour.fss_wid_level_4 {
+	background: var(--primary-t-4, var(--ak-primary));
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_level_5,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour.fss_wid_level_5 {
+	background: var(--ak-primary);
+}
+
+/* Less / More label strip below the heatmap */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_label_info {
+	color: var(--ak-text-muted);
+}
+
 /* Dashboard mailer + stat cards */
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .mailer-block,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .email-stat,
