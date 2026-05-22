@@ -117,6 +117,28 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_label_info {
 	color: var(--ak-text-muted);
 }
 
+/* Day labels (Mon/Tue/…) + hour cell separators ship `border: solid
+   #fff` to create gutters between cells. In dark mode the white
+   lines read as a heavy grid. Route to the wrapper surface so the
+   borders disappear into the bg and only the heat color remains. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_widget_header > div,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_widget_body .fcraft_time_day .fcraft_time_hour {
+	border-color: var(--ak-surface-alt);
+}
+
+/* Day-of-week + hour labels (Mon/Tue/… and 1am/4am/…) — give them
+   token text color since the default inherits a hardcoded dark
+   shade that loses contrast on the surface. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_widget_header .fcraft_time_day,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_sub_headers .fss_wid_sub_header {
+	color: var(--ak-text-muted);
+}
+
+/* The hour-count number that shows when a cell has activity */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour .fcraft_time_hour_value {
+	color: #ffffff;
+}
+
 /* Dashboard mailer + stat cards */
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .mailer-block,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .email-stat,
