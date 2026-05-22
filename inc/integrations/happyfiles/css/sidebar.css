@@ -201,12 +201,27 @@ body.adminkit #happyfiles-resizer {
 }
 
 
-/* ===== Tooltips ===== */
+/* ===== Tooltips (Create / Select / Expand / Sort / Details / Collapse) =====
+   Floating overlay convention: always-dark bg + white text so the
+   tooltip stays readable in both modes (using a theme-flipping
+   token like --ak-elevated would turn the bg near-white in light
+   mode and the white label disappears). Pulls from Bricks's
+   --neutral-d-2 when available, falls back to a WP-friendly dark
+   slate. */
 body.adminkit #happyfiles-sidebar [aria-label]:before {
-	background-color: var(--ak-elevated);
+	background-color: var(--neutral-d-2, #1d2327);
 	color: #ffffff;
+	font-weight: 500;
 }
 
 body.adminkit #happyfiles-sidebar [aria-label]:after {
-	border-top-color: var(--ak-elevated);
+	border-top-color: var(--neutral-d-2, #1d2327);
+}
+
+/* When the tooltip is positioned below the icon, swap the arrow
+   border to border-bottom (HappyFiles handles via
+   [data-aria-pos=bottom]). Keep the same dark bg. */
+body.adminkit #happyfiles-sidebar [aria-label][data-aria-pos="bottom"]:after {
+	border-bottom-color: var(--neutral-d-2, #1d2327);
+	border-top-color: transparent;
 }
