@@ -96,13 +96,16 @@ body.adminkit #adminmenu .wp-menu-image::before {
 	color: var(--ak-text-muted);
 }
 
-/* Current item — primary green bg with white text/icon in both modes */
+/* Current item — neutral gray bg with white text/icon in both modes.
+   Uses --ak-text-muted (the semantic AdminKit equivalent of Bricks's
+   --neutral-l-7, ~50% gray) so the active row reads as "selected"
+   without painting it with the loud brand primary. */
 body.adminkit #adminmenu li.current a.menu-top,
 body.adminkit #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
 body.adminkit #adminmenu li.wp-menu-open,
 body.adminkit #adminmenu li.current.menu-top {
-	background: var(--ak-primary) !important;
+	background: var(--ak-text-muted) !important;
 	color: #ffffff !important;
 }
 
@@ -156,7 +159,7 @@ body.adminkit #adminmenu .wp-submenu li.current a,
 body.adminkit #adminmenu .wp-submenu li.current a:hover,
 body.adminkit #adminmenu .wp-submenu li.current a:focus {
 	color: var(--ak-heading) !important;
-	background: var(--primary-t-1, var(--ak-hover-bg)) !important;
+	background: var(--ak-hover-bg) !important;
 	font-weight: 600;
 }
 
