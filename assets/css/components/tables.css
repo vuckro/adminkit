@@ -181,36 +181,28 @@ body.adminkit .inline-edit-row fieldset .inline-edit-categories label {
 body.adminkit .inline-edit-row fieldset label span.input-text-wrap input,
 body.adminkit .inline-edit-row fieldset label textarea,
 body.adminkit .inline-edit-row fieldset select {
-	background: var(--ak-surface-alt);
+	background: var(--ak-field-bg);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-s);
 }
 
-/* Dark mode contrast — the default row-hover lift reads too bright; use a
-   gentler hover lift. The Quick Edit inputs sit on --ak-surface with a soft
-   --ak-border (a heavier --ak-bg recess + strong border read too dark), so
-   the border alone separates them from the row. Light mode already reads
-   well, so these are dark-only. */
+/* Focus — the resting rule above carries 5 element selectors, so it
+   out-specifies the global input :focus (0,3,2). Restate the primary focus
+   here at matching depth so it wins in both light and dark. */
+body.adminkit .inline-edit-row fieldset label span.input-text-wrap input:focus,
+body.adminkit .inline-edit-row fieldset label textarea:focus,
+body.adminkit .inline-edit-row fieldset select:focus {
+	border-color: var(--ak-primary);
+	background: var(--ak-primary-subtle);
+}
+
+/* Dark mode — the default row-hover lift reads too bright; use a gentler
+   lift (light mode already reads well, so this is dark-only). The Quick Edit
+   fields recess on their own via --ak-field-bg, so no input override here. */
 :root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover,
 :root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover td,
 :root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover th {
 	background: color-mix(in srgb, var(--ak-surface) 75%, var(--ak-elevated));
-}
-
-:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset label span.input-text-wrap input,
-:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset label textarea,
-:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset select {
-	background: var(--ak-surface);
-	border-color: var(--ak-border);
-}
-
-/* The resting override above out-specifies the global input :focus rule, so
-   restore the primary focus (border + subtle fill) for Quick Edit fields. */
-:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset label span.input-text-wrap input:focus,
-:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset label textarea:focus,
-:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset select:focus {
-	border-color: var(--ak-primary);
-	background: var(--ak-primary-subtle);
 }
 
 body.adminkit .inline-edit-row .inline-edit-save {
