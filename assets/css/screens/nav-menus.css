@@ -10,14 +10,14 @@ body.adminkit.nav-menus-php .manage-menus {
 }
 
 body.adminkit.nav-menus-php #post-body {
-	background: var(--ak-surface-alt);
+	background: var(--ak-table-bg);
 	border-top-color: transparent;
 	border-bottom-color: var(--ak-border);
 }
 
 body.adminkit.nav-menus-php #nav-menu-header,
 body.adminkit.nav-menus-php #nav-menu-footer {
-	background: var(--ak-surface);
+	background: var(--ak-table-header-bg);
 }
 
 body.adminkit.nav-menus-php #nav-menu-header {
@@ -34,7 +34,7 @@ body.adminkit.nav-menus-php #nav-menu-header {
    item reads as its own bordered card (resting --ak-border; the hover below
    lifts it to --ak-border-strong). */
 body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle {
-	background: var(--ak-surface);
+	background: var(--ak-table-bg);
 	border: 1px solid var(--ak-border);
 	color: var(--ak-text);
 }
@@ -48,7 +48,7 @@ body.adminkit.nav-menus-php .menu-item:hover .menu-item-settings {
 
 /* Expanded item settings drawer. */
 body.adminkit.nav-menus-php .menu-item-settings {
-	background: var(--ak-surface);
+	background: var(--ak-table-bg);
 	border-color: var(--ak-border);
 	box-shadow: none;
 	color: var(--ak-text);
@@ -114,14 +114,14 @@ body.adminkit.nav-menus-php .accordion-container .outer-border {
 
 body.adminkit.nav-menus-php .accordion-section,
 body.adminkit.nav-menus-php .accordion-section.control-section {
-	background: var(--ak-surface-alt);
+	background: var(--ak-table-bg);
 	border-color: var(--ak-border);
 	border-bottom: 1px solid var(--ak-border);
 }
 
 body.adminkit.nav-menus-php .accordion-section-title,
 body.adminkit.nav-menus-php .metabox-holder .accordion-section-title {
-	background: var(--ak-surface);
+	background: var(--ak-table-header-bg);
 	border-color: var(--ak-border);
 }
 
