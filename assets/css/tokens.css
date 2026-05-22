@@ -236,9 +236,11 @@ body.adminkit[class*="admin-color-"] {
 	   on dark). --white-t-2 is mode-invariant ≈ 11%. */
 	--ak-hover-bg: var(--white-t-2, rgba(255, 255, 255, 0.11));
 
-	/* Tables — darker rows, lighter header (swap of light mode). */
+	/* Tables — darker rows, header lifted only slightly. Sit the header
+	   halfway between surface (14%) and surface-alt (18%) ≈ 16% so it reads
+	   as distinct from the rows without going as light as a full card. */
 	--ak-table-bg: var(--ak-surface);
-	--ak-table-header-bg: var(--ak-surface-alt);
+	--ak-table-header-bg: color-mix(in srgb, var(--ak-surface) 50%, var(--ak-surface-alt));
 
 	/* Chrome state surfaces — keep active contrast, hover stays subtler. */
 	--ak-adminmenu-hover-bg: hsl(0, 0%, 20%);

@@ -537,7 +537,7 @@ body.adminkit .contextual-help-tabs a:focus {
 /* Hover/focus tabs share the active tab's soft brand tint. */
 body.adminkit .contextual-help-tabs a:hover,
 body.adminkit .contextual-help-tabs a:focus {
-	background: var(--ak-primary-subtle);
+	background: color-mix(in srgb, var(--ak-primary) 16%, var(--ak-surface-alt));
 	color: var(--ak-heading);
 }
 
@@ -548,11 +548,13 @@ body.adminkit .contextual-help-tabs li.active a {
 }
 
 /* Active help tab — WP fills it with color-mix(theme 8%, #fff) (a light bar
-   that breaks in dark) plus a box-shadow. Route to a soft brand tint, keep the
-   left-border accent, drop the shadow. */
+   that breaks in dark) plus a box-shadow. Mix the brand into --ak-surface-alt
+   so the tint stays equally subtle in light AND dark (a fixed
+   --ak-primary-subtle looked bright on the dark drawer); keep the left-border
+   accent, drop the shadow. */
 body.adminkit .contextual-help-tabs .active,
 body.adminkit .contextual-help-tabs li.active {
-	background: var(--ak-primary-subtle);
+	background: color-mix(in srgb, var(--ak-primary) 16%, var(--ak-surface-alt));
 	border-left-color: var(--ak-primary);
 	box-shadow: none;
 }
