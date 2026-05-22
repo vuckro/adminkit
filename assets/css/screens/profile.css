@@ -53,7 +53,10 @@ body.adminkit .ak-accordion {
 	margin: 0 0 10px;
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
-	background: var(--ak-surface-alt);
+	/* Same surface logic as list tables: panel body = --ak-table-bg,
+	   header row = --ak-table-header-bg; both flip per light/dark mode. */
+	background: var(--ak-table-bg);
+	overflow: hidden;
 }
 
 body.adminkit .ak-accordion > summary {
@@ -64,10 +67,10 @@ body.adminkit .ak-accordion > summary {
 	font-size: var(--ak-text-m);
 	font-weight: 600;
 	color: var(--ak-heading);
+	background: var(--ak-table-header-bg);
 	cursor: pointer;
 	user-select: none;
 	list-style: none;
-	border-radius: var(--ak-radius-m);
 }
 
 /* Strip the native disclosure triangle (WebKit/Blink + the standard prop) */
@@ -76,12 +79,14 @@ body.adminkit .ak-accordion > summary::-webkit-details-marker {
 }
 
 body.adminkit .ak-accordion > summary:hover {
-	background: var(--ak-hover-bg);
+	background: var(--ak-elevated);
 }
 
+/* Inset outline (not box-shadow) so the focus ring isn't clipped by the
+   container's overflow:hidden. */
 body.adminkit .ak-accordion > summary:focus-visible {
-	outline: none;
-	box-shadow: var(--ak-focus-ring);
+	outline: 2px solid var(--ak-primary);
+	outline-offset: -2px;
 }
 
 /* Chevron drawn from two borders; flipped instantly on open (no transition) */
@@ -98,8 +103,6 @@ body.adminkit .ak-accordion > summary::after {
 
 body.adminkit .ak-accordion[open] > summary {
 	border-bottom: 1px solid var(--ak-border);
-	border-bottom-left-radius: 0;
-	border-bottom-right-radius: 0;
 }
 
 body.adminkit .ak-accordion[open] > summary::after {
