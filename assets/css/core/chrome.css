@@ -62,9 +62,10 @@ body.adminkit #adminmenu .wp-menu-name {
 	font-size: 14.5px;
 }
 
-/* Submenu links — match the top-level slightly above WP default. */
+/* Submenu links — keep compact (--ak-text-s, 13px) so the nested
+   list reads as secondary metadata under the top-level item. */
 body.adminkit #adminmenu .wp-submenu a {
-	font-size: 14.5px;
+	font-size: var(--ak-text-s);
 }
 
 body.adminkit #adminmenu li.menu-top {
