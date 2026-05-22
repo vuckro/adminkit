@@ -38,6 +38,22 @@ body.adminkit .wp-core-ui .button:focus {
 	outline: none;
 }
 
+/* Toggled / pressed buttons (.button.active — e.g. the media list/grid view
+   switch). WP paints them WP-blue with an inset shadow and stacks a blue focus
+   ring on top. Route to a soft primary state and flatten both shadows. */
+body.adminkit .button.active,
+body.adminkit .wp-core-ui .button.active {
+	background-color: var(--ak-primary-subtle);
+	border-color: var(--ak-primary);
+	color: var(--ak-primary);
+	box-shadow: none;
+}
+
+body.adminkit .button.active:focus,
+body.adminkit .wp-core-ui .button.active:focus {
+	box-shadow: none;
+}
+
 body.adminkit .button-primary,
 body.adminkit .wp-core-ui .button-primary,
 body.adminkit .wrap .page-title-action,
