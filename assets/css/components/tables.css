@@ -49,7 +49,7 @@ body.adminkit .widefat tbody tr:first-child th {
 
 /* WP list tables */
 body.adminkit .wp-list-table {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	border-collapse: separate;
@@ -63,7 +63,7 @@ body.adminkit .wp-list-table tfoot th,
 body.adminkit .wp-list-table tfoot td,
 body.adminkit .wp-list-table thead th.check-column,
 body.adminkit .wp-list-table tfoot th.check-column {
-	background: var(--ak-surface);
+	background: var(--ak-surface-alt);
 	color: var(--ak-heading);
 	font-weight: 600;
 	font-size: var(--ak-text-s);
@@ -96,7 +96,7 @@ body.adminkit .wp-list-table tbody tr:first-child th {
 body.adminkit .wp-list-table tbody tr:hover,
 body.adminkit .wp-list-table tbody tr:hover td,
 body.adminkit .wp-list-table tbody tr:hover th {
-	background: var(--primary-t-1, var(--ak-hover-bg));
+	background: color-mix(in srgb, var(--primary, #FFD64F) 2%, transparent);
 }
 
 body.adminkit .wp-list-table .row-title:hover {
@@ -153,7 +153,7 @@ body.adminkit .tablenav .tablenav-pages span.current {
 
 /* "No items found" empty state */
 body.adminkit .wp-list-table tbody tr.no-items td {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text-muted);
 	text-align: center;
 	padding: 32px 16px;
@@ -208,7 +208,7 @@ body.adminkit .inline-edit-row h4 {
 /* Striped + bordered cells (refined compatibility) */
 body.adminkit .striped > tbody > :nth-child(odd),
 body.adminkit .alternate {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 }
 
 body.adminkit .wp-list-table .check-column {
@@ -223,10 +223,10 @@ body.adminkit .wp-list-table .check-column input[type="checkbox"] {
 
 /* WP / Bricks paint a hover bg behind the checkbox via
    `.check-column input:hover + label, .check-column label:hover`.
-   The row hover above (`tr:hover td`) already paints the cell with
-   --primary-t-1; stacking the label bg on top would double-tint
-   and make the check-column visibly darker than the rest of the
-   row. Zero the label bg so the cell stays uniform. */
+   The row hover above (`tr:hover td`) already paints the cell;
+   stacking the label bg on top would make the check-column visibly
+   differ from the rest of the row. Zero the label bg so the cell
+   stays uniform. */
 body.adminkit .check-column input:hover + label,
 body.adminkit .check-column label:hover {
 	background: transparent;

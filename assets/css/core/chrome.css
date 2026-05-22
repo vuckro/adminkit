@@ -51,8 +51,6 @@ body.adminkit #adminmenu {
 
 body.adminkit #adminmenu a {
 	color: var(--ak-heading);
-	font-family: var(--ak-font-body);
-	font-weight: 500;
 }
 
 /* Top-level menu labels + submenu links — leave the font-size
@@ -65,17 +63,16 @@ body.adminkit #adminmenu li.menu-top {
 }
 
 /* Hover / focus on non-current items — match WP's exact selectors
-   with !important to defeat colors.css. Light brand tint
-   (--primary-t-1, Bricks's ~9%-opacity primary) sits below the
-   --primary-t-5 wash used by the current item, keeping the two
-   states clearly distinct. Falls back to --ak-hover-bg on sites
-   without a token provider. */
+   with !important to defeat colors.css. Neutral one-step-darker
+   surface (--ak-elevated) so hover reads as a subtle lift without
+   brand color, consistent with the list-table row hover. The
+   current item shares this bg but stays bold to read as active. */
 body.adminkit #adminmenu a:hover,
 body.adminkit #adminmenu li.menu-top:hover,
 body.adminkit #adminmenu li.opensub > a.menu-top,
 body.adminkit #adminmenu li > a.menu-top:focus {
 	color: var(--ak-heading) !important;
-	background-color: var(--primary-t-1, var(--ak-hover-bg)) !important;
+	background-color: var(--ak-elevated) !important;
 }
 
 /* WP core ships `#adminmenu a:focus, #adminmenu a:hover` with
@@ -99,20 +96,22 @@ body.adminkit #adminmenu .wp-menu-image::before {
 	color: var(--ak-text-muted);
 }
 
-/* Current item — full brand primary wash with white text/icon
-   in both modes. */
+/* Current item — neutral elevated surface + bold label, no brand
+   accent. Replaces the former full --ak-primary wash + white text,
+   unreadable now the brand is a light yellow. */
 body.adminkit #adminmenu li.current a.menu-top,
 body.adminkit #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
 body.adminkit #adminmenu li.wp-menu-open,
 body.adminkit #adminmenu li.current.menu-top {
-	background: var(--ak-primary) !important;
-	color: #ffffff !important;
+	background: var(--ak-elevated) !important;
+	color: var(--ak-heading) !important;
+	font-weight: 600;
 }
 
 body.adminkit #adminmenu li.current a.menu-top .wp-menu-image::before,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-menu-image::before {
-	color: #ffffff !important;
+	color: var(--ak-heading) !important;
 }
 
 /* Sidebar submenu — elevated surface. Inline (expanded sidebar, current
@@ -148,22 +147,18 @@ body.adminkit #adminmenu .wp-submenu a {
 body.adminkit #adminmenu .wp-submenu a:hover,
 body.adminkit #adminmenu .wp-submenu a:focus {
 	color: var(--ak-text);
-	background: var(--primary-t-1, var(--ak-hover-bg)) !important;
+	background: var(--ak-surface) !important;
 }
 
-/* Current submenu item — primary text on a soft brand tint
-   (--primary-t-1, Bricks's ~9% primary). Same tint as the
-   top-level hover so the active submenu reads as "selected"
-   without painting it heavier than nearby hovered rows. Falls
-   back to --ak-hover-bg on sites without a token provider.
-   `!important` on color: WP color-scheme stylesheets paint
-   `.wp-submenu a:hover` with a hardcoded blue at higher
-   specificity, beating our --ak-primary otherwise. */
+/* Current submenu item — neutral surface + bold marks it (no brand
+   accent). `!important` on color: WP color-scheme stylesheets paint
+   `.wp-submenu a:hover` with a hardcoded blue at higher specificity,
+   which would otherwise beat our heading color. */
 body.adminkit #adminmenu .wp-submenu li.current a,
 body.adminkit #adminmenu .wp-submenu li.current a:hover,
 body.adminkit #adminmenu .wp-submenu li.current a:focus {
-	color: var(--ak-primary) !important;
-	background: var(--primary-t-1, var(--ak-hover-bg));
+	color: var(--ak-heading) !important;
+	background: var(--ak-surface);
 	font-weight: 600;
 }
 
