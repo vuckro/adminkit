@@ -43,9 +43,17 @@ body.adminkit .ff_menu_link {
 }
 
 body.adminkit .ff_menu_link:hover,
-body.adminkit .ff_menu_link:focus,
+body.adminkit .ff_menu_link:focus {
+	color: var(--ak-primary);
+}
+
+/* Active nav item — FF paints #e8f2ff bg + #1a7efb text (the .active
+   class sits on the parent li, link is the child). Route to the
+   primary-soft pill. */
+body.adminkit .ff_menu .active .ff_menu_link,
 body.adminkit .ff_menu .active > .ff_menu_link,
 body.adminkit .ff_menu_link.active {
+	background-color: var(--ak-primary-soft);
 	color: var(--ak-primary);
 }
 
@@ -398,3 +406,146 @@ body.adminkit .el-alert--success { border-left: 3px solid var(--ak-success); }
 body.adminkit .el-alert--warning { border-left: 3px solid var(--ak-warning); }
 body.adminkit .el-alert--error   { border-left: 3px solid var(--ak-error); }
 body.adminkit .el-alert--info    { border-left: 3px solid var(--ak-info); }
+
+
+/* ========== 13. Headings ========== */
+/* FF cores every heading to #1e1f21 globally. The file only loads on
+   FF screens, so route them all to --ak-heading. */
+body.adminkit h1,
+body.adminkit h2,
+body.adminkit h3,
+body.adminkit h4,
+body.adminkit h5,
+body.adminkit h6 {
+	color: var(--ak-heading);
+}
+
+
+/* ========== 14. Forms-list table internals ========== */
+body.adminkit .ff_table,
+body.adminkit .el-table__header-wrapper,
+body.adminkit .el-table__body-wrapper {
+	background: var(--ak-surface-alt);
+}
+
+body.adminkit .el-table__cell {
+	background: transparent;
+}
+
+/* Row actions (Edit / Settings / Entries / Duplicate / …) — muted at
+   rest, primary on hover. Delete (.trash) stays error red. */
+body.adminkit .row-actions-item a {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .row-actions-item a:hover,
+body.adminkit .row-actions-item a:focus {
+	color: var(--ak-primary);
+}
+
+body.adminkit .row-actions-item.trash a {
+	color: var(--ak-error);
+}
+
+/* Shortcode pill ([fluentform id="…"]) */
+body.adminkit .ff_shortcode_wrap code,
+body.adminkit .ff_shortcode_btn {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .ff_shortcode_btn:hover {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+/* Switch label (Active / Inactive) next to the status toggle */
+body.adminkit .el-switch__label {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .el-switch__label.is-active {
+	color: var(--ak-primary);
+}
+
+/* Sortable column header carets — neutral at rest, primary when the
+   column is the active sort. */
+body.adminkit .sort-caret.ascending {
+	border-bottom-color: var(--ak-border-strong);
+}
+
+body.adminkit .sort-caret.descending {
+	border-top-color: var(--ak-border-strong);
+}
+
+body.adminkit .ascending .sort-caret.ascending {
+	border-bottom-color: var(--ak-primary);
+}
+
+body.adminkit .descending .sort-caret.descending {
+	border-top-color: var(--ak-primary);
+}
+
+
+/* ========== 15. Settings / Reports / Transfer layout ========== */
+/* Left settings rail (#settings, transfer, etc.) — #fff slab + a
+   shadow that doesn't flip. Surface token + border instead. */
+body.adminkit .ff_layout_section_sidebar {
+	background-color: var(--ak-surface);
+	box-shadow: none;
+	border-right: 1px solid var(--ak-border);
+}
+
+body.adminkit .ff_layout_section_sidebar .active,
+body.adminkit .ff_layout_section_sidebar li.active a {
+	background: var(--ak-primary-soft);
+	color: var(--ak-primary);
+}
+
+body.adminkit .ff_layout_section_container,
+body.adminkit .ff_layout_section_content,
+body.adminkit .ff_settings_wrapper {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+
+/* Generic FF content sections used across Reports / Transfer */
+body.adminkit .ff_card_head,
+body.adminkit .ff_card_body,
+body.adminkit .ff_report_widget,
+body.adminkit .ff_chart_wrapper {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+
+/* ========== 16. Element UI misc surfaces ========== */
+/* Pagination */
+body.adminkit .el-pagination button,
+body.adminkit .el-pagination .el-pager li {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .el-pagination .el-pager li.active {
+	color: var(--ak-primary);
+}
+
+/* Tags / badges */
+body.adminkit .el-tag {
+	background: var(--ak-primary-soft);
+	border-color: var(--ak-border);
+	color: var(--ak-primary);
+}
+
+/* Collapse panels */
+body.adminkit .el-collapse,
+body.adminkit .el-collapse-item__header,
+body.adminkit .el-collapse-item__wrap {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
