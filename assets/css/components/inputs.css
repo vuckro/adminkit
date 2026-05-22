@@ -20,8 +20,8 @@ body.adminkit input[type="color"],
 body.adminkit textarea,
 body.adminkit select,
 body.adminkit .wp-core-ui select {
-	background: var(--ak-surface-alt);
-	border: 1px solid var(--ak-border);
+	background: var(--ak-field-bg);
+	border: 1px solid var(--ak-field-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	font-family: var(--ak-font-body);
@@ -63,7 +63,7 @@ body.adminkit select:focus {
 body.adminkit .wp-core-ui select:hover,
 body.adminkit select:hover {
 	color: var(--ak-heading);
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-field-border-hover);
 }
 
 /* Checkboxes & radios */
@@ -71,7 +71,7 @@ body.adminkit input[type="checkbox"],
 body.adminkit input[type="radio"] {
 	border: 1px solid var(--ak-border-strong);
 	border-radius: 3px;
-	background: var(--ak-surface-alt);
+	background: var(--ak-field-bg);
 	width: 16px;
 	height: 16px;
 }
@@ -87,11 +87,11 @@ body.adminkit input[type="radio"]:checked {
 }
 
 body.adminkit input[type="checkbox"]:checked::before {
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 body.adminkit input[type="radio"]:checked::before {
-	background: #ffffff;
+	background: var(--ak-on-accent);
 }
 
 body.adminkit input[type="checkbox"]:focus,

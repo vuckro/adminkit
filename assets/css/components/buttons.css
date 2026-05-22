@@ -44,7 +44,7 @@ body.adminkit .wrap .page-title-action,
 body.adminkit .wrap .page-title-action:active {
 	background: var(--ak-primary);
 	border: 1px solid var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 	text-shadow: none;
 	box-shadow: none;
 }
@@ -57,7 +57,7 @@ body.adminkit .wrap .page-title-action:hover,
 body.adminkit .wrap .page-title-action:focus {
 	background: var(--ak-primary-dark);
 	border-color: var(--ak-primary-dark);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 body.adminkit .button-primary:focus,

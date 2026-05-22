@@ -46,7 +46,7 @@
 #wpadminbar:not(.mobile) .ab-top-menu > li > .ab-item:hover,
 #wpadminbar.nojq .quicklinks .ab-top-menu > li > .ab-item:focus {
 	color: var(--ak-heading);
-	background: var(--ak-elevated);
+	background: var(--ak-adminbar-hover-bg, var(--ak-elevated));
 }
 
 #wpadminbar:not(.mobile) .ab-top-menu > li:hover .ab-icon::before,
