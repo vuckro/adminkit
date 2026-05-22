@@ -29,7 +29,7 @@
 // (Tier A). Entries below carry debt FORCED by the host, not a code-quality
 // fault — they are the baseline as of the last review.
 $BUDGET = array(
-	'fluent-booking'    => 103, // +7: ApexCharts chart text/grid/tooltip (host inline styles)
+	'fluent-booking'    => 102, // ApexCharts chart text/grid/tooltip + Element Plus (host inline styles)
 	'flying-press'      => 41,
 	'fluentcart'        => 27,
 	'gutenberg'         => 8,

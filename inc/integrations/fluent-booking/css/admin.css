@@ -776,12 +776,6 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_override_da
 	background-color: var( --ak-bg ) !important;
 }
 
-/* Override-date row — solid surface so it doesn't read as see-through;
-   matches the --ak-bg of its inner and the sibling availability cards. */
-body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_override_date {
-	background-color: var( --ak-bg ) !important;
-}
-
 /* Question / notification cards → surface. */
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_question .fcal_question_card,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_notification_container {
