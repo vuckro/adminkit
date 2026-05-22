@@ -44,29 +44,27 @@ body.adminkit #happyfiles-sidebar #happyfiles-title {
    light mode --ak-elevated is near-white and the white text
    disappears.
 
-   Two states:
-   - .icon.active / .has → solid --ak-primary + white text (a true
-     "selected" cue)
-   - .icon:hover → soft --primary-t-1 tint + --ak-heading text (a
-     pointer feedback, but NOT the same weight as the active state) */
+   Inverted hierarchy: the persistent active state stays soft
+   (subtle brand tint) and the transient :hover gets the strong
+   solid primary — hover is the louder feedback. */
 body.adminkit #happyfiles-sidebar .icon.active,
 body.adminkit #happyfiles-sidebar .icon.has {
-	background-color: var(--ak-primary) !important;
-	color: #ffffff !important;
+	background-color: var(--primary-t-1, var(--ak-hover-bg)) !important;
+	color: var(--ak-primary) !important;
 }
 
 body.adminkit #happyfiles-sidebar .icon.active svg g,
 body.adminkit #happyfiles-sidebar .icon.has svg g {
-	fill: #ffffff !important;
+	fill: var(--ak-primary) !important;
 }
 
 body.adminkit #happyfiles-sidebar .icon:hover {
-	background-color: var(--primary-t-1, var(--ak-hover-bg)) !important;
-	color: var(--ak-heading) !important;
+	background-color: var(--ak-primary) !important;
+	color: #ffffff !important;
 }
 
 body.adminkit #happyfiles-sidebar .icon:hover svg g {
-	fill: var(--ak-heading) !important;
+	fill: #ffffff !important;
 }
 
 /* Folder row default state — token text */
