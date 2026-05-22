@@ -187,3 +187,19 @@ body.adminkit .components-button.is-primary[aria-disabled="true"]:enabled {
 	border-color: var(--ak-border) !important;
 	color: var(--ak-text-muted) !important;
 }
+
+
+/* Gutenberg <Tabs /> component active-tab underline indicator.
+   Compiled CSS in @wordpress/components paints
+     [role="tablist"][aria-orientation="horizontal"]::before {
+       border-bottom: ... solid var(--wp-components-color-accent,
+         var(--wp-admin-theme-color, #3858e9));
+     }
+   The variable cascade should resolve to --ak-primary via
+   tokens.css, but Gutenberg's compiled CSS-in-JS sometimes ships
+   later in the cascade and the resolved value falls through to
+   the hardcoded #3858e9 blue (Font Library tabs, parts of Site
+   Editor). Force the border color directly. */
+body.adminkit [role="tablist"][aria-orientation="horizontal"]::before {
+	border-bottom-color: var(--ak-primary) !important;
+}

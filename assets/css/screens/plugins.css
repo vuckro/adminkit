@@ -43,10 +43,12 @@ body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
 /* Left-edge indicator for active plugins — a slim --ak-primary
    bar on the check-column. Covers both the WP default
    `.check-column` and AME Pro's renamed `.ame-check-column`
-   (its plugin-visibility module swaps the class). */
+   (its plugin-visibility module swaps the class). Use border-left
+   with !important to beat the `.plugins tbody td/th` reset above
+   that nukes border-left with !important. */
 body.adminkit .wp-list-table.plugins tr.active th.check-column,
 body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
-	box-shadow: inset 4px 0 0 var(--ak-primary);
+	border-left: 4px solid var(--ak-primary) !important;
 }
 
 /* Inactive plugins — keep the table surface, mute the title */
@@ -93,8 +95,10 @@ body.adminkit .wp-list-table.plugins .plugin-version-author-uri {
    targeted by exact href so the selectors are no-ops when the
    plugin isn't installed.
    - Slim SEO "Upgrade" action link
+   - Slim SEO star-rating row-meta widget
    - Query Monitor "Sponsor" row-meta link */
 body.adminkit.plugins-php a[href="https://elu.to/spp"],
+body.adminkit.plugins-php a[href*="wordpress.org/support/plugin/slim-seo/reviews"],
 body.adminkit.plugins-php a[href*="github.com/sponsors/johnbillion"] {
 	display: none;
 }
