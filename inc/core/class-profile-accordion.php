@@ -142,11 +142,14 @@ class AdminKit_Profile_Accordion {
 	// no duplicate fields, no server change, no CSS override. Edit this list to
 	// curate the panel — order is preserved, missing rows are skipped.
 	var ESSENTIALS = [
+		'.user-profile-picture', // Profile picture
+		['.user-user-login-wrap', '.user-login-wrap'], // Username
 		'.user-first-name-wrap',
 		'.user-last-name-wrap',
 		'.user-nickname-wrap',
-		'.user-display-name-wrap',
+		'.user-display-name-wrap', // "Display name publicly as"
 		'.user-role-wrap',
+		'#ame-rex-other-roles-row', // Admin Menu Editor "Other Roles"
 		'.user-email-wrap',
 		['#password', '.user-pass1-wrap'] // New Password
 	];
@@ -222,8 +225,6 @@ class AdminKit_Profile_Accordion {
 	// account maintenance fields in a predictable sequence.
 	if (account) {
 		var ORDERED_SETTINGS_ROWS = [
-			'.user-profile-picture',                       // Profile picture
-			['.user-user-login-wrap', '.user-login-wrap'], // Username
 			'.user-language-wrap',                         // Language
 			'.user-capabilities-wrap',                     // Capabilities
 			'.user-url-wrap',                              // Website
