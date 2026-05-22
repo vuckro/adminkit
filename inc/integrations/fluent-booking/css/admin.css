@@ -802,6 +802,7 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_questions {
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_calendar_wrap .fcal_create_calendar_body {
 	background: transparent;
 	padding: 0;
+	box-shadow: none;
 }
 
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_calendar_wrap .fcal_create_calendar_body .fcal_create_calendar_form_footer {
@@ -810,6 +811,16 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_cale
 
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_calendar_wrap .fcal_create_calendar_body .fcal_create_calendar_form .fcal_create_calendar_form_header {
 	border-bottom: none;
+}
+
+/* Notifications block + form inputs inside the create-calendar form → elevated,
+   so they read as raised on the now-flat (transparent) form body. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_calendar_wrap .fcal_create_calendar_body .fcal_notification_container_wrap .fcal_notifications {
+	background-color: var( --ak-elevated );
+}
+
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_calendar_wrap .fcal_create_calendar_body .fcal_create_calendar_form_body .el-form .el-form-item .el-input .el-input__wrapper {
+	background-color: var( --ak-elevated );
 }
 
 /* Card-item hover — drop the brand tint, use a neutral surface lift. */
