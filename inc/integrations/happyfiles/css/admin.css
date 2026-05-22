@@ -83,6 +83,66 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content tab
 }
 
 
+/* ===== Modernize form controls — radius + token surfaces ===== */
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content input[type="text"],
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content input[type="password"],
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content input[type="email"],
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content input[type="number"],
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content input[type="url"],
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content textarea,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content select {
+	background-color: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+	padding: 6px 10px;
+	transition: none;
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content input[type="text"]:focus,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content input[type="password"]:focus,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content input[type="email"]:focus,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content input[type="number"]:focus,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content input[type="url"]:focus,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content textarea:focus,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content select:focus {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+/* License key field — wider so the masked key reads cleanly */
+body.adminkit.settings_page_happyfiles_settings #happyfiles-license-key-field input[type="password"] {
+	min-width: 340px;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	letter-spacing: 0.04em;
+}
+
+/* "Deactivate license" + similar secondary buttons inside the table */
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .button-secondary {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .button-secondary:hover,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .button-secondary:focus {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+
+/* Each setting row — a bit more breathing room between checkbox /
+   label rows so the long forms read less dense */
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tbody fieldset label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	line-height: 1.6;
+}
+
+
 /* ===== Info-box callout — light blue card ===== */
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table .description.happyfiles-info-box {
 	background-color: var(--primary-t-1, var(--ak-hover-bg));
