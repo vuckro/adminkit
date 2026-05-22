@@ -20,14 +20,10 @@ body.adminkit .wp-list-table.plugins tbody td {
 	box-shadow: none;
 }
 
-/* Active plugins — drop the row bg tint and lean on two slim
-   indicators instead: a thicker --ak-success bar on the check-column
-   and a 600-weight title. Painting the whole row read too "loud"
-   on top of the brand-tinted hover. */
-body.adminkit .wp-list-table.plugins tr.active th.check-column {
-	box-shadow: inset 4px 0 0 var(--ak-success);
-}
-
+/* Active plugins — no bg, no edge bar. The brand-colored hover is
+   the only tinted state on the plugins table. Active rows are still
+   identifiable by the 600-weight --ak-heading title (vs inactive's
+   500-weight --ak-text-muted) — the contrast lives in the type. */
 body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
 	color: var(--ak-heading);
 	font-weight: 600;
