@@ -39,8 +39,8 @@
    more elevated) so cards stay readable on near-black.
 
    ── Conventions ──────────────────────────────────────────────────────────
-   • Flat by design — no shadow tokens. `--ak-overlay` (modal scrim) is the
-     only depth primitive. Plugin shadows are removed, not themed.
+   • Flat by design — no shadow or scrim tokens. Depth is shown by surface
+     tone, never elevation shadows; plugin shadows are removed, not themed.
    • Radii and type stay in px, not the provider's rem scale: provider
      scales are calibrated for a 1rem≈10px frontend reset that renders too
      large in admin.
@@ -50,26 +50,25 @@
      the color-mix line overrides it (progressive enhancement). */
 
 :root {
-	/* ── Surfaces ──────────────────────────────────────────────────────
-	   page → recessed → hover, plus a bright `surface-alt` for cards,
-	   inputs and buttons meant to pop above the page. */
+	/* ── Surfaces — pick by ROLE, not by lightness ─────────────────────
+	   --ak-bg            page background, behind everything
+	   --ak-surface-alt   raised content: cards, postboxes, inputs, notices
+	   --ak-surface       recessed: section/table headers, wells, insets
+	   --ak-elevated      subtle solid fill / hover-down
+	   --ak-surface-accent  soft selected mid-tone (between the two above)
+	   Values are tuned per mode and the relative order shifts in dark, so
+	   always choose by the role above — never hardcode a lightness. Data
+	   tables use the dedicated --ak-table-* pair (it swaps in dark). */
 	--ak-bg: var(--background, hsl(0, 0%, 98%));
 	--ak-surface: var(--surface, hsl(0, 0%, 96%));
 	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
 	--ak-surface-alt: var(--white, #ffffff);
-	/* Soft selected/active surface between `surface` and `elevated` — for
-	   rows and tabs that stand out gently without looking pressed. */
 	--ak-surface-accent: hsl(0, 0%, 95%);
 	--ak-surface-accent: color-mix(in srgb, var(--ak-surface) 50%, var(--ak-elevated));
 
 	/* ── Borders ───────────────────────────────────────────────────────*/
 	--ak-border: var(--border, hsl(0, 0%, 89%));
 	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
-
-	/* ── Overlay ───────────────────────────────────────────────────────
-	   Modal scrim. Sits over content (not chrome) so it stays dark in both
-	   modes — no dark override needed. */
-	--ak-overlay: var(--overlay, rgba(0, 0, 0, 0.5));
 
 	/* ── Text ──────────────────────────────────────────────────────────*/
 	--ak-text: var(--text, hsl(0, 0%, 32%));
