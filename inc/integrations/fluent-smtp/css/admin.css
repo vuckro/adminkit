@@ -438,20 +438,179 @@ body.adminkit.settings_page_fluent-mail .el-tabs--border-card > .el-tabs__header
 body.adminkit.settings_page_fluent-mail .el-card,
 body.adminkit.settings_page_fluent-mail .el-dialog {
 	background-color: var(--ak-surface-alt);
-	border-color: var(--ak-border);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
 	color: var(--ak-text);
+	box-shadow: none;
+	overflow: hidden;
 }
 
 body.adminkit.settings_page_fluent-mail .el-card__header,
 body.adminkit.settings_page_fluent-mail .el-dialog__header {
 	background-color: var(--ak-surface);
-	border-bottom-color: var(--ak-border);
+	border-bottom: 1px solid var(--ak-border);
+	color: var(--ak-heading);
+	padding: 16px 20px;
+}
+
+body.adminkit.settings_page_fluent-mail .el-dialog__title {
+	color: var(--ak-heading);
+	font-weight: 600;
+}
+
+body.adminkit.settings_page_fluent-mail .el-dialog__body {
+	color: var(--ak-text);
+	padding: 20px;
+}
+
+/* Modal backdrop — soften the dim so the modal stands out cleanly */
+body.adminkit.settings_page_fluent-mail .v-modal {
+	background: rgba(0, 0, 0, 0.5);
+}
+
+/* Close button (X) */
+body.adminkit.settings_page_fluent-mail .el-dialog__close {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.settings_page_fluent-mail .el-dialog__headerbtn:hover .el-dialog__close,
+body.adminkit.settings_page_fluent-mail .el-dialog__headerbtn:focus .el-dialog__close {
 	color: var(--ak-heading);
 }
 
-body.adminkit.settings_page_fluent-mail .el-dialog__title,
-body.adminkit.settings_page_fluent-mail .el-dialog__body {
+
+/* ===== Email Log modal (Fluent SMTP > Logs > row click) ===== */
+
+/* Metadata list (Status / Date-Time / From / To / Subject / Mailer) */
+body.adminkit.settings_page_fluent-mail .fss_log_items {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
+}
+
+body.adminkit.settings_page_fluent-mail .fss_log_items li {
+	display: flex;
+	align-items: center;
+	margin: 0;
+	padding: 10px 14px;
+	border-bottom: 1px solid var(--ak-border);
+}
+
+body.adminkit.settings_page_fluent-mail .fss_log_items li:last-child {
+	border-bottom: none;
+}
+
+body.adminkit.settings_page_fluent-mail .fss_log_items li:nth-child(odd) {
+	background: var(--ak-surface);
+}
+
+body.adminkit.settings_page_fluent-mail .fss_log_items .item_header {
+	color: var(--ak-text-muted);
+	font-weight: 500;
+	min-width: 110px;
+	margin-right: 12px;
+}
+
+body.adminkit.settings_page_fluent-mail .fss_log_items .item_content {
 	color: var(--ak-text);
+	flex: 1;
+}
+
+body.adminkit.settings_page_fluent-mail .fss_log_items .item_content .success {
+	color: var(--ak-success);
+}
+
+body.adminkit.settings_page_fluent-mail .fss_log_items .item_content .failed {
+	color: var(--ak-error);
+}
+
+
+/* Element UI collapse sections (Email Body / Headers / Attachments) */
+body.adminkit.settings_page_fluent-mail .el-collapse {
+	border-top: 1px solid var(--ak-border);
+	border-bottom: 1px solid var(--ak-border);
+}
+
+body.adminkit.settings_page_fluent-mail .el-collapse-item__header {
+	background-color: transparent;
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-text);
+	padding: 4px 0;
+}
+
+body.adminkit.settings_page_fluent-mail .el-collapse-item__header:hover {
+	color: var(--ak-primary);
+}
+
+/* Bundled inline `style="color: rgb(96, 98, 102)"` on the
+   <strong> labels — override with !important. */
+body.adminkit.settings_page_fluent-mail .el-collapse-item__header strong[style] {
+	color: var(--ak-heading) !important;
+}
+
+body.adminkit.settings_page_fluent-mail .el-collapse-item__arrow {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.settings_page_fluent-mail .el-collapse-item.is-active > .el-collapse-item__header .el-collapse-item__arrow,
+body.adminkit.settings_page_fluent-mail .el-collapse-item__header:hover .el-collapse-item__arrow {
+	color: var(--ak-primary);
+}
+
+body.adminkit.settings_page_fluent-mail .el-collapse-item__wrap {
+	background-color: transparent;
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_fluent-mail .el-collapse-item__content {
+	color: var(--ak-text);
+	padding-bottom: 16px;
+}
+
+
+/* JSON / response <pre> blocks inside the modal */
+body.adminkit.settings_page_fluent-mail .el-dialog__body pre {
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+	padding: 12px 14px;
+	font-size: 12px;
+	line-height: 1.5;
+	overflow-x: auto;
+}
+
+
+/* Body iframe (sanitized email preview) — token surface so a light
+   email body still reads cleanly on the dark dialog. */
+body.adminkit.settings_page_fluent-mail .el-dialog__body iframe {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+
+
+/* Divider line inside collapse sections */
+body.adminkit.settings_page_fluent-mail .el-dialog__body hr,
+body.adminkit.settings_page_fluent-mail .el-dialog__body .log-border {
+	border: none;
+	border-top: 1px solid var(--ak-border);
+	margin: 14px 0;
+}
+
+
+/* "Server Response" / "Attachments" headings */
+body.adminkit.settings_page_fluent-mail .el-dialog__body > p > strong {
+	color: var(--ak-heading);
+}
+
+
+/* Prev / Next nav buttons at the bottom of the modal */
+body.adminkit.settings_page_fluent-mail .el-dialog__body .el-button.nav {
+	width: 100%;
 }
 
 
