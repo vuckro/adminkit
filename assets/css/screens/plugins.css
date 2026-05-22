@@ -20,10 +20,20 @@ body.adminkit .wp-list-table.plugins tbody td {
 	box-shadow: none;
 }
 
-/* Active plugins — no bg, no edge bar. The brand-colored hover is
-   the only tinted state on the plugins table. Active rows are still
-   identifiable by the 600-weight --ak-heading title (vs inactive's
-   500-weight --ak-text-muted) — the contrast lives in the type. */
+/* Active plugins — no bg, no edge bar. WP core paints
+   `.plugins .active td/th { background-color: rgba(var(--wp-admin-theme-color--rgb), 0.08) }`,
+   and AdminKit remaps --wp-admin-theme-color--rgb to the brand
+   green so that produces a persistent --primary-t-1-looking wash
+   on every active cell. Zero it out so the row hover is the only
+   tinted state. */
+body.adminkit .wp-list-table.plugins tr.active th,
+body.adminkit .wp-list-table.plugins tr.active td {
+	background: transparent;
+}
+
+/* Active rows are still identifiable by the 600-weight --ak-heading
+   title (vs inactive's 500-weight --ak-text-muted) — the contrast
+   lives in the type. */
 body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
 	color: var(--ak-heading);
 	font-weight: 600;
