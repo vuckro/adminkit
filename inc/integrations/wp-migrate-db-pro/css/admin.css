@@ -155,11 +155,16 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .actions-panel .action-icon:fo
    icons speak --ak-primary. */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[style*="stroke: rgb(50, 110, 255)"],
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[style*="stroke: rgb(35, 109, 231)"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[style*="stroke: rgb(7, 119, 239)"],
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg path[stroke="#236de7"],
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg [fill="#236de7"] {
 	stroke: var(--ak-primary) !important;
 }
 
+/* Inline `style="fill: rgb(7, 119, 239)"` on <g> + the same #236de7
+   fill variant on solid icons → route to --ak-primary. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[style*="fill: rgb(7, 119, 239)"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[style*="fill: rgb(35, 109, 231)"],
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg [fill="#236de7"] {
 	fill: var(--ak-primary) !important;
 	stroke: none !important;
@@ -384,7 +389,7 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb tr:nth-child(odd) {
 }
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb tr:nth-child(2n) {
-	background: var(--ak-surface);
+	background: var(--ak-surface-alt);
 }
 
 
