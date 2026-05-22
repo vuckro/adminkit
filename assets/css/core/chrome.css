@@ -146,7 +146,7 @@ body.adminkit #adminmenu .wp-submenu a {
 
 body.adminkit #adminmenu .wp-submenu a:hover,
 body.adminkit #adminmenu .wp-submenu a:focus {
-	color: var(--ak-primary) !important;
+	color: var(--ak-text);
 	background: var(--primary-t-1, var(--ak-hover-bg)) !important;
 }
 
@@ -154,11 +154,14 @@ body.adminkit #adminmenu .wp-submenu a:focus {
    (--primary-t-1, Bricks's ~9% primary). Same tint as the
    top-level hover so the active submenu reads as "selected"
    without painting it heavier than nearby hovered rows. Falls
-   back to --ak-hover-bg on sites without a token provider. */
+   back to --ak-hover-bg on sites without a token provider.
+   `!important` on color: WP color-scheme stylesheets paint
+   `.wp-submenu a:hover` with a hardcoded blue at higher
+   specificity, beating our --ak-primary otherwise. */
 body.adminkit #adminmenu .wp-submenu li.current a,
 body.adminkit #adminmenu .wp-submenu li.current a:hover,
 body.adminkit #adminmenu .wp-submenu li.current a:focus {
-	color: var(--ak-primary);
+	color: var(--ak-primary) !important;
 	background: var(--primary-t-1, var(--ak-hover-bg));
 	font-weight: 600;
 }
