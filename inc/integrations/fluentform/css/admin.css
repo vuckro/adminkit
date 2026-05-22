@@ -62,6 +62,21 @@ body.adminkit .ff_form_name_inner {
 	color: var(--ak-heading);
 }
 
+/* Replace the FluentForm raster logo with a plain "FluentForm"
+   wordmark (same approach as the Fluent SMTP adapter) — the shipped
+   logo is a fixed-color PNG that doesn't suit the dark chrome. */
+body.adminkit .ff_header .plugin-name img {
+	display: none;
+}
+
+body.adminkit .ff_header .plugin-name::after {
+	content: "FluentForm";
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	color: var(--ak-heading);
+}
+
 
 /* ========== 3. Cards + boxes ========== */
 body.adminkit .ff_card,
@@ -110,6 +125,17 @@ body.adminkit .ff-table td {
 	background: transparent;
 	color: var(--ak-text);
 	border-bottom-color: var(--ak-border);
+}
+
+/* The inner .cell sets its own color — header cells + bold form
+   titles both hardcode #1e1f21. */
+body.adminkit .el-table thead .cell {
+	color: var(--ak-heading);
+}
+
+body.adminkit .ff_table .cell strong,
+body.adminkit .el-table .cell strong {
+	color: var(--ak-heading);
 }
 
 body.adminkit .el-table--striped .el-table__row--striped td {
@@ -365,9 +391,13 @@ body.adminkit .el-tabs__active-bar {
 
 
 /* ========== 11. Brand-blue contexts → primary ========== */
+/* .text-primary ships with !important in FF, so match it to win. */
 body.adminkit .text-primary,
-body.adminkit .lead-text,
 body.adminkit .ff-icon.text-primary {
+	color: var(--ak-primary) !important;
+}
+
+body.adminkit .lead-text {
 	color: var(--ak-primary);
 }
 
@@ -497,10 +527,27 @@ body.adminkit .ff_layout_section_sidebar {
 	border-right: 1px solid var(--ak-border);
 }
 
-body.adminkit .ff_layout_section_sidebar .active,
-body.adminkit .ff_layout_section_sidebar li.active a {
+/* Active settings nav item. Scoped to anchors only — the previous
+   bare `.active` matched any active descendant (switches, badges)
+   and painted them with the primary pill by mistake. */
+body.adminkit .ff_layout_section_sidebar a.active,
+body.adminkit .ff_layout_section_sidebar li.active > a,
+body.adminkit .ff_layout_section_sidebar .el-menu-item.is-active {
 	background: var(--ak-primary-soft);
 	color: var(--ak-primary);
+}
+
+/* Settings list buttons (.ff_list_button_link) — dark #4b4c4d slab
+   by default, #f5f5f3 hover. Route both to tokens. */
+body.adminkit .ff_list_button_link {
+	background-color: var(--ak-surface);
+	color: var(--ak-text);
+}
+
+body.adminkit .ff_list_button_link:hover,
+body.adminkit .ff_list_button_link:focus {
+	background-color: var(--ak-hover-bg);
+	color: var(--ak-heading);
 }
 
 body.adminkit .ff_layout_section_container,
@@ -522,7 +569,13 @@ body.adminkit .ff_chart_wrapper {
 
 
 /* ========== 16. Element UI misc surfaces ========== */
-/* Pagination */
+/* Pagination — FF wraps it in .ff_pagination (#fff slab + shadow). */
+body.adminkit .ff_pagination {
+	background: var(--ak-surface-alt);
+	box-shadow: none;
+	color: var(--ak-text);
+}
+
 body.adminkit .el-pagination button,
 body.adminkit .el-pagination .el-pager li {
 	background: var(--ak-surface-alt);
@@ -532,6 +585,13 @@ body.adminkit .el-pagination .el-pager li {
 
 body.adminkit .el-pagination .el-pager li.active {
 	color: var(--ak-primary);
+}
+
+/* The .is-background pager variant fills the active page with the
+   brand blue — route to primary. */
+body.adminkit .el-pagination.is-background .el-pager li:not(.disabled).active {
+	background-color: var(--ak-primary);
+	color: #ffffff;
 }
 
 /* Tags / badges */
