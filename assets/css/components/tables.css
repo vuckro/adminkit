@@ -95,7 +95,7 @@ body.adminkit .wp-list-table tbody tr:first-child th {
 
 body.adminkit .wp-list-table tbody tr:hover,
 body.adminkit .wp-list-table tbody tr:hover td {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 }
 
 body.adminkit .wp-list-table .row-title:hover {
@@ -195,13 +195,10 @@ body.adminkit .inline-edit-row h4 {
 	font-weight: 600;
 }
 
-/* Striped + bordered cells (refined compatibility). Striped rows
-   sit at --ak-surface (slightly recessed from the base --ak-surface-alt),
-   so the hover above can rise back to --ak-surface-alt as a natural
-   lift. */
+/* Striped + bordered cells (refined compatibility) */
 body.adminkit .striped > tbody > :nth-child(odd),
 body.adminkit .alternate {
-	background: var(--ak-surface);
+	background: var(--ak-surface-alt);
 }
 
 body.adminkit .wp-list-table .check-column {
