@@ -31,6 +31,42 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_content {
 	color: var(--ak-text);
 }
 
+/* Dashboard summary list (.fss_dash_lists) — key/value pairs like
+   "Total Email Sent: 2". Mute the label, emphasize the value, add
+   a row separator + hover tint for scannability. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_dash_lists {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_dash_lists li {
+	color: var(--ak-text);
+	padding: 10px 16px;
+	margin: 0;
+	border-bottom: 1px solid var(--ak-border);
+	transition: background-color 0.12s ease;
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_dash_lists li:last-child {
+	border-bottom: none;
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_dash_lists li:hover {
+	background: var(--primary-t-1, var(--ak-hover-bg));
+	color: var(--ak-heading);
+}
+
+/* The <span> on each row is the value (count / label). Bump its
+   weight + heading color so the data reads first. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_dash_lists li > span {
+	color: var(--ak-heading);
+	font-weight: 600;
+}
+
 /* Dashboard mailer + stat cards */
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .mailer-block,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .email-stat,
