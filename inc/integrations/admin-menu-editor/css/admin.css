@@ -84,8 +84,11 @@ body.adminkit.settings_page_menu_editor .ws_toolbar {
 
 
 /* ----- Pinned actor-selector sticky bar -----
-   Only appears once the user scrolls down on the menu editor. */
-body.adminkit.settings_page_menu_editor .ame-sticky-top-bar.ame-is-pinned-top-bar {
+   Appears once the user scrolls down on any of the three AME
+   settings screens (menu editor, easy hide, admin customizer). */
+body.adminkit.settings_page_menu_editor .ame-sticky-top-bar.ame-is-pinned-top-bar,
+body.adminkit.settings_page_ame-easy-hide .ame-sticky-top-bar.ame-is-pinned-top-bar,
+body.adminkit.settings_page_ame-admin-customizer .ame-sticky-top-bar.ame-is-pinned-top-bar {
 	background-color: var(--ak-surface);
 	border-bottom-color: var(--ak-border);
 	box-shadow: none;

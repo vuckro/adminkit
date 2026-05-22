@@ -496,7 +496,14 @@ body.adminkit .nav-tab-active:focus {
 	border-bottom-color: var(--ak-heading);
 }
 
-/* Subsubsub links (filter rows above tables) */
+/* Subsubsub filter rows above tables — WP core paints the wrapper
+   with `color: #646970` which the literal "|" separators between
+   links inherit. Route the wrapper itself too so the pipes pick
+   up the token. */
+body.adminkit .subsubsub {
+	color: var(--ak-text-muted);
+}
+
 body.adminkit .subsubsub a {
 	color: var(--ak-text-muted);
 }
