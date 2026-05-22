@@ -98,16 +98,14 @@ body.adminkit #adminmenu .wp-menu-image::before {
 	color: var(--ak-text-muted);
 }
 
-/* Current item — strong brand tint (Bricks's --primary-t-5, ~45%
-   opacity primary) with white text/icon. Falls back to --ak-elevated
-   on sites without a token provider so the row still reads as
-   "selected" even without the brand color. */
+/* Current item — full brand primary wash with white text/icon
+   in both modes. */
 body.adminkit #adminmenu li.current a.menu-top,
 body.adminkit #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
 body.adminkit #adminmenu li.wp-menu-open,
 body.adminkit #adminmenu li.current.menu-top {
-	background: var(--primary-t-5, var(--ak-elevated)) !important;
+	background: var(--ak-primary) !important;
 	color: #ffffff !important;
 }
 
