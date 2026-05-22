@@ -20,13 +20,13 @@
  * override — the panel reuses the same `.ak-accordion` + `.form-table`
  * styling as everything else. Curate the set via the `ESSENTIALS` list.
  *
- * Finally, related sections are consolidated into two grouped panels —
- * "My Account" (the essentials + Name) and "Contact Information" (Contact
- * Info, About, Account Management, Application Passwords, Additional
- * Capabilities) — while standalone sections (Personal Options, plugin
- * sections like HappyFiles / Bricks) stay in place. Membership is just the
- * `absorb()` calls in step 4; sections are matched by WP's own localized
- * heading strings, passed from PHP, so the grouping survives translation.
+ * Finally, related sections are consolidated into one grouped panel:
+ * "My Account". It holds the essentials plus Name, Contact Info, About,
+ * Account Management, Application Passwords and Additional Capabilities.
+ * Standalone sections (Personal Options, plugin sections like HappyFiles /
+ * Bricks) stay in place. Membership is just the `absorb()` calls in step 4;
+ * sections are matched by WP's own localized heading strings, passed from
+ * PHP, so the grouping survives translation.
  *
  * Native disclosure was chosen over a scripted toggle on purpose — it
  * is keyboard-accessible for free, animates nothing (matches AdminKit's
@@ -76,7 +76,6 @@ class AdminKit_Profile_Accordion {
 		// text — locale-proof, since WP printed those same strings.
 		$labels = array(
 			'my_account'    => __( 'My Account', 'adminkit' ),
-			'contact_group' => __( 'Contact Information', 'adminkit' ),
 			'name'          => __( 'Name' ),
 			'contact'       => __( 'Contact Info' ),
 			'about'         => array( __( 'About Yourself' ), __( 'About the user' ) ),
@@ -209,27 +208,16 @@ class AdminKit_Profile_Accordion {
 		}
 	});
 
-	// --- 4. Group related sections under combined panels ------------------
-	// Two groups consolidate the long list; everything else (Personal Options,
-	// plugin sections like HappyFiles / Bricks) stays standalone in place.
-	// Change membership by editing the absorb() calls.
-
-	// Group A — fold Name into My Account (keeps the "Name" sub-heading).
-	if (account) absorb(account, find(L.name), true);
-
-	// Group B — Contact Info + About + Account Management + Application
-	// Passwords + Additional Capabilities under one "Contact Information"
-	// panel. The lead section drops its heading (the group is named for it);
-	// the rest keep theirs so each stays labelled.
-	var contact = find(L.contact);
-	if (contact) {
-		var group = makePanel(L.contact_group, false);
-		form.insertBefore(group, contact);
-		absorb(group, contact, false);
-		absorb(group, find(L.about), true);
-		absorb(group, find(L.account), true);
-		absorb(group, find(L.app_passwords), true);
-		absorb(group, find(L.capabilities), true);
+	// --- 4. Group related sections under "My Account" ---------------------
+	// Keep one maintainable panel for account-focused fields. Standalone
+	// sections (Personal Options, plugin sections) remain untouched.
+	if (account) {
+		absorb(account, find(L.name), true);
+		absorb(account, find(L.contact), true);
+		absorb(account, find(L.about), true);
+		absorb(account, find(L.account), true);
+		absorb(account, find(L.app_passwords), true);
+		absorb(account, find(L.capabilities), true);
 	}
 })();
 </script>
