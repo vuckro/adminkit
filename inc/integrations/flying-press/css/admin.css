@@ -226,3 +226,24 @@ body.adminkit.toplevel_page_flying-press .shadow-lg {
 	--tw-shadow: 0 0 #0000 !important;
 	--tw-shadow-colored: 0 0 #0000 !important;
 }
+
+
+/* ===== White-label the header logo as "FlyingPress" text =====
+   The header logo is a React component rendering an inline SVG wordmark
+   (<svg class="w-44 h-auto" viewBox="0 0 1299 235">, indigo #4F46E5) as
+   the first child of the header's left flex group. Hide the SVG and
+   render a plain text wordmark in its place via the wrapper's ::before,
+   so the header speaks the admin's heading color + font instead of the
+   bundled brand mark. `:has(> svg[viewBox])` anchors on the unique
+   viewBox so it doesn't depend on the bundle's minified class names. */
+body.adminkit.toplevel_page_flying-press svg[viewBox="0 0 1299 235"] {
+	display: none !important;
+}
+
+body.adminkit.toplevel_page_flying-press :has(> svg[viewBox="0 0 1299 235"])::before {
+	content: "FlyingPress";
+	color: var(--ak-heading);
+	font-size: 22px;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+}
