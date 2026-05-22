@@ -34,13 +34,13 @@ body.adminkit #happyfiles-sidebar {
 	color: var(--ak-text);
 }
 
-/* In-sidebar notification cards (.happyfiles-notification). The
-   bundled rule paints them solid --hf-color-info (semantic blue) +
-   white text — too loud for a small chrome notice. Route to a soft
-   --primary-t-1 tint with --ak-text body + token border so the
-   notice reads as an inline note instead of a takeover banner. */
+/* In-sidebar notification cards (.happyfiles-notification). The bundled
+   rule paints them solid --hf-color-info (semantic blue) + white text — too
+   loud for a small chrome notice. Route to a soft --ak-info tint with
+   --ak-text body + token border so the notice reads as an inline info note
+   instead of a takeover banner. */
 body.adminkit .happyfiles-notification {
-	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	background-color: color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface-alt));
 	border: 1px solid var(--ak-border);
 	color: var(--ak-text);
 }
