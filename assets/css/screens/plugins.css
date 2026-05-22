@@ -103,15 +103,6 @@ body.adminkit .wp-list-table.plugins .plugin-version-author-uri {
 	color: var(--ak-text-muted);
 }
 
-/* Activate row action — brand-colored "go" cue. Targeted by href
-   so it matches regardless of WP's per-action class naming. */
-body.adminkit.plugins-php .row-actions a[href*="action=activate"],
-body.adminkit.plugins-php .row-actions a[href*="action=activate"]:hover,
-body.adminkit.plugins-php .row-actions a[href*="action=activate"]:focus {
-	color: var(--ak-primary);
-}
-
-
 /* Promo links injected via plugin_action_links / plugin_row_meta —
    targeted by exact href so the selectors are no-ops when the
    plugin isn't installed.
