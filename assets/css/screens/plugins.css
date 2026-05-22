@@ -20,12 +20,13 @@ body.adminkit .wp-list-table.plugins tbody td {
 	box-shadow: none;
 }
 
-/* Active plugins — brand-tinted row (Bricks ~9% primary) so active
-   rows pick up the same color language as list-table hover. Falls
-   back to --ak-hover-bg on sites without a token provider. */
+/* Active plugins — brand-tinted row, one step stronger than the
+   list-table hover (--primary-t-1) so an active row stays visibly
+   "selected" even on hover. Falls back to --ak-hover-bg on sites
+   without a token provider. */
 body.adminkit .wp-list-table.plugins tr.active th,
 body.adminkit .wp-list-table.plugins tr.active td {
-	background: var(--primary-t-1, var(--ak-hover-bg));
+	background: var(--primary-t-2, var(--ak-hover-bg));
 }
 
 body.adminkit .wp-list-table.plugins tr.active th.check-column {
