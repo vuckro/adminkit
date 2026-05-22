@@ -125,3 +125,22 @@
 :root[data-adminkit-theme="dark"] #wp-admin-bar-ak-theme-toggle .ak-theme-dark {
 	display: inline;
 }
+
+/* Keep the theme toggle visible on mobile. WP's responsive admin bar
+   hides every top-level item (`#wp-toolbar > ul > li { display:none }`)
+   then re-shows only a hardcoded id whitelist — our toggle isn't on it.
+   Re-display it at the same specificity as that whitelist; AdminKit loads
+   after core, so equal specificity wins on order. Sized to a 52px / 46px
+   tap target to match WP's other mobile icons. */
+@media screen and (max-width: 782px) {
+	#wpadminbar li#wp-admin-bar-ak-theme-toggle {
+		display: block;
+	}
+
+	#wpadminbar li#wp-admin-bar-ak-theme-toggle > .ab-item {
+		width: 52px;
+		height: 46px;
+		padding: 0;
+		text-align: center;
+	}
+}
