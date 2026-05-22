@@ -9,7 +9,7 @@
 /* ----- Menu builder boxes (.ws_main_container) -----
    Top-level + submenu columns in the drag-drop editor. */
 body.adminkit.settings_page_menu_editor .ws_main_container {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }
@@ -112,7 +112,7 @@ body.adminkit.settings_page_menu_editor a.ws_button.ws_button_disabled:hover {
 
 /* ----- Capability / actor dropdowns ----- */
 body.adminkit.settings_page_menu_editor select.ws_dropdown {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -120,7 +120,7 @@ body.adminkit.settings_page_menu_editor select.ws_dropdown {
 
 /* ----- jQuery UI dialogs (settings page uses them across modules) ----- */
 body.adminkit.settings_page_menu_editor .ui-dialog {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }
@@ -142,7 +142,7 @@ body.adminkit.settings_page_menu_editor .ame-rui-redirect-list,
 body.adminkit.settings_page_menu_editor .ame-rui-redirect,
 body.adminkit.settings_page_menu_editor .ame-rui-default-redirect-container,
 body.adminkit.settings_page_menu_editor .ame-rui-redirect-content {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
@@ -200,7 +200,7 @@ body.adminkit.settings_page_menu_editor .ame-rui-filter-like-tabs {
 body.adminkit.settings_page_menu_editor .postbox,
 body.adminkit.settings_page_menu_editor .ame-section-content,
 body.adminkit.settings_page_menu_editor .ame-pv-save-form {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }
@@ -214,7 +214,7 @@ body.adminkit.settings_page_menu_editor table.widefat,
 body.adminkit.settings_page_menu_editor table.widefat th,
 body.adminkit.settings_page_menu_editor table.widefat td,
 body.adminkit.settings_page_menu_editor table.widefat tbody tr {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -247,7 +247,7 @@ body.adminkit.settings_page_menu_editor .ws_is_sticky_toolbar {
    four sub-sections. */
 body.adminkit.settings_page_menu_editor .ws-ame-postbox-header,
 body.adminkit.settings_page_menu_editor .ws-ame-postbox-content {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 	box-shadow: none;
@@ -282,7 +282,7 @@ body.adminkit.settings_page_menu_editor .ame-twm-section {
 /* ----- Meta Boxes module (sub_section=metaboxes) ----- */
 body.adminkit.settings_page_menu_editor #ame-mb-screen-list,
 body.adminkit.settings_page_menu_editor #ame-mb-main-actions {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }
@@ -293,7 +293,7 @@ body.adminkit.settings_page_menu_editor #ame-mb-main-actions {
    sidebar, and each widget card. */
 body.adminkit.settings_page_menu_editor #ame-dashboard-widgets,
 body.adminkit.settings_page_menu_editor #ame-major-widget-actions {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }
@@ -331,7 +331,7 @@ body.adminkit.settings_page_menu_editor .ame-empty-dashboard-widget-collection {
    is already token-aware via core/chrome.css, but reinforce in case the
    module's specificity wins. */
 body.adminkit.settings_page_menu_editor #ame-widget-editor-sidebar .postbox {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }
@@ -343,7 +343,7 @@ body.adminkit.settings_page_menu_editor #rex-action-sidebar,
 body.adminkit.settings_page_menu_editor #rex-category-sidebar,
 body.adminkit.settings_page_menu_editor #rex-related-widget,
 body.adminkit.settings_page_menu_editor #rex-main-buttons {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }
@@ -506,7 +506,7 @@ body.adminkit.settings_page_menu_editor .rex-category-contents > .rex-category:n
 	max-width: none;
 	margin: 0 0 16px;
 	break-inside: avoid;
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	box-shadow: none;
 }
 
@@ -600,14 +600,14 @@ body.adminkit.settings_page_ame-easy-hide #ame-eh-view-toolbar {
 /* Search box and clear button. */
 body.adminkit.settings_page_ame-easy-hide #ame-eh-search-query,
 body.adminkit.settings_page_ame-easy-hide .ame-eh-clear-search-box {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
 
 /* Item list surface. */
 body.adminkit.settings_page_ame-easy-hide #ame-eh-item-container {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
@@ -618,7 +618,7 @@ body.adminkit.settings_page_ame-easy-hide .ame-cat-nav-item:hover {
 
 body.adminkit.settings_page_ame-easy-hide .ame-selected-cat-nav-item,
 body.adminkit.settings_page_ame-easy-hide .ame-selected-cat-nav-item:hover {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	color: var(--ak-heading);
 	box-shadow: none;
 }
@@ -649,7 +649,7 @@ body.adminkit.settings_page_ame-easy-hide #ame-eh-side-save-button {
    (light blue) + #222 text. Route to the primary-soft tint pill
    pattern we use elsewhere for selection cues. */
 body.adminkit.settings_page_ame-easy-hide .ame-eh-column-option-list .ame-eh-column-option.ame-eh-selected-column-option {
-	background: var(--ak-primary-soft);
+	background: var(--ak-primary-subtle);
 	color: var(--ak-primary);
 }
 
@@ -661,7 +661,7 @@ body.adminkit.settings_page_ame-easy-hide .ame-eh-column-option-list .ame-eh-col
 body.adminkit.settings_page_menu_editor #ws_visible_users_dialog,
 body.adminkit.settings_page_ame-easy-hide #ws_visible_users_dialog,
 body.adminkit.settings_page_ame-admin-customizer #ws_visible_users_dialog {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 }
 
@@ -699,13 +699,13 @@ body.adminkit.settings_page_ame-admin-customizer #ame-ac-sidebar {
 }
 
 body.adminkit.settings_page_ame-admin-customizer #ame-ac-preview-container {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
 /* Top action bar holding Save / Exit. */
 body.adminkit.settings_page_ame-admin-customizer #ame-ac-primary-actions {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-bottom-color: var(--ak-border);
 }
 
@@ -717,7 +717,7 @@ body.adminkit.settings_page_ame-admin-customizer #ame-ac-sidebar-content {
 /* Section header + link rows in the sidebar. */
 body.adminkit.settings_page_ame-admin-customizer .ame-ac-section-header,
 body.adminkit.settings_page_ame-admin-customizer .ame-ac-section-link {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-bottom-color: var(--ak-border);
 	border-left-color: transparent;
 }

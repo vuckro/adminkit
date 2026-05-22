@@ -5,12 +5,12 @@
    dividers, #757575 muted text. Route through AdminKit tokens. */
 
 body.adminkit .font-library__footer {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-top-color: var(--ak-border);
 }
 
 body.adminkit .font-library-modal__tablist-container {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-bottom-color: var(--ak-border);
 }
 
@@ -19,7 +19,7 @@ body.adminkit .font-library-page__tablist {
 }
 
 body.adminkit .font-library__font-card {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
@@ -50,7 +50,7 @@ body.adminkit .font-library__local-fonts .font-library__upload-area__text {
 body.adminkit [class*="components-"],
 body.adminkit .boot-layout-container {
 	--wp-components-color-accent: var(--ak-primary);
-	--wp-components-color-accent-darker-10: var(--ak-primary-dark);
-	--wp-components-color-accent-darker-20: var(--ak-primary-dark);
+	--wp-components-color-accent-darker-10: var(--ak-primary-hover);
+	--wp-components-color-accent-darker-20: var(--ak-primary-hover);
 	--wp-admin-theme-color: var(--ak-primary);
 }

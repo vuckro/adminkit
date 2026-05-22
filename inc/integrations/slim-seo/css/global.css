@@ -58,7 +58,7 @@ body.adminkit .ss-input-wrapper textarea,
 body.adminkit .ef-control input,
 body.adminkit .ef-control textarea,
 body.adminkit .ef-control select {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 	border-color: var(--ak-border);
 }
@@ -107,7 +107,7 @@ body.adminkit .ss-input-danger label:after {
 
 /* ----- 6. SS modal (image picker, snippet editor) ----- */
 body.adminkit .ss-modal-body {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 	box-shadow: none;
 	border: 1px solid var(--ak-border);

@@ -10,7 +10,7 @@ body.adminkit .wp-core-ui .button,
 body.adminkit .button-secondary,
 body.adminkit .wp-core-ui .button-secondary,
 body.adminkit .wrap .page-title-action {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border-strong);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
@@ -71,8 +71,8 @@ body.adminkit .button-primary:focus,
 body.adminkit .wp-core-ui .button-primary:focus,
 body.adminkit .wrap .page-title-action:hover,
 body.adminkit .wrap .page-title-action:focus {
-	background: var(--ak-primary-dark);
-	border-color: var(--ak-primary-dark);
+	background: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
 	color: var(--ak-on-accent);
 }
 
@@ -88,7 +88,7 @@ body.adminkit .wp-core-ui .button-primary:disabled,
 body.adminkit .wp-core-ui .button-primary.disabled {
 	background: var(--ak-border-strong) !important;
 	border-color: var(--ak-border-strong) !important;
-	color: var(--ak-surface-alt) !important;
+	color: var(--ak-surface) !important;
 	opacity: 0.7;
 }
 
@@ -119,7 +119,7 @@ body.adminkit .button[disabled] {
    on theme-install / plugin-install / media library don't drop a
    bright OS-default button in the middle of our flat chrome. */
 body.adminkit input[type="file"]::file-selector-button {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border-strong);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
@@ -178,7 +178,7 @@ body.adminkit button.remove-site-icon {
 
 body.adminkit button.remove-site-icon:hover,
 body.adminkit button.remove-site-icon:focus {
-	background: color-mix(in srgb, var(--ak-error) 16%, var(--ak-surface-alt));
+	background: color-mix(in srgb, var(--ak-error) 16%, var(--ak-surface));
 	border-color: var(--ak-error);
 	color: var(--ak-error);
 	box-shadow: none;

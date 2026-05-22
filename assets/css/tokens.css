@@ -87,25 +87,6 @@
 	--ak-text-xs: 12px;
 	--ak-text-s: 13px;
 	--ak-text-m: 14px;
-
-	/* ── Compat aliases (TEMPORARY — migration in progress) ──────────────────
-	   The old surface-alt / chrome-state / field / table tokens now fold into
-	   the 3 surfaces + --hover + --primary-*. Kept as 1-line aliases so existing
-	   CSS keeps working while usages migrate to the canonical tokens above.
-	   They flip in dark for free (they point at tokens the dark block re-maps).
-	   Delete this block once every usage references a canonical token. */
-	--ak-surface-alt: var(--ak-surface);
-	--ak-surface-accent: var(--ak-elevated);
-	--ak-primary-dark: var(--ak-primary-hover);
-	--ak-primary-soft: var(--ak-primary-subtle);
-	--ak-field-bg: var(--ak-surface);
-	--ak-field-border: var(--ak-border);
-	--ak-field-border-hover: var(--ak-border-strong);
-	--ak-table-bg: var(--ak-surface);
-	--ak-table-header-bg: var(--ak-elevated);
-	--ak-adminmenu-hover-bg: var(--ak-hover-bg);
-	--ak-adminmenu-active-bg: var(--ak-elevated);
-	--ak-adminbar-hover-bg: var(--ak-hover-bg);
 }
 
 /* Remap WP's built-in theme color (blue) to our accent. The selector chains

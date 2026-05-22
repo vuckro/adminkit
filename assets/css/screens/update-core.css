@@ -21,7 +21,7 @@ body.adminkit.update-core-php .updates-table,
 body.adminkit.update-core-php .updates-table .plugins tr,
 body.adminkit.update-core-php .updates-table tbody.plugins tr th,
 body.adminkit.update-core-php .updates-table tbody.plugins tr td {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	color: var(--ak-text);
 }
 
@@ -66,7 +66,7 @@ body.adminkit.update-core-php .core-updates li {
    WP paints #fff bg + #3858e9 blue left border, neither flips and the
    blue clashes with our brand. */
 body.adminkit.update-core-php .notice-info {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-left-color: var(--ak-info);
 	color: var(--ak-text);
 }

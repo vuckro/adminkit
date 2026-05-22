@@ -8,8 +8,8 @@
 	/* Remap WP's blue. Declared here (not just on body.adminkit) so
 	   the frontend admin bar also reads the brand color. */
 	--wp-admin-theme-color: var(--ak-primary);
-	--wp-admin-theme-color-darker-10: var(--ak-primary-dark);
-	--wp-admin-theme-color-darker-20: var(--ak-primary-dark);
+	--wp-admin-theme-color-darker-10: var(--ak-primary-hover);
+	--wp-admin-theme-color-darker-20: var(--ak-primary-hover);
 
 	background: var(--ak-surface) !important;
 	color: var(--ak-text) !important;
@@ -46,7 +46,7 @@
 #wpadminbar:not(.mobile) .ab-top-menu > li > .ab-item:hover,
 #wpadminbar.nojq .quicklinks .ab-top-menu > li > .ab-item:focus {
 	color: var(--ak-heading);
-	background: var(--ak-adminbar-hover-bg, var(--ak-elevated));
+	background: var(--ak-hover-bg, var(--ak-elevated));
 }
 
 #wpadminbar:not(.mobile) .ab-top-menu > li:hover .ab-icon::before,
@@ -55,7 +55,7 @@
 }
 
 /* Submenu dropdowns — same surface as the bar, native flat look.
-   Using --ak-surface (not --ak-surface-alt) so the dropdown reads as
+   Using --ak-surface (not --ak-surface) so the dropdown reads as
    an extension of the bar instead of a brighter floating panel. */
 #wpadminbar .menupop ul {
 	background: var(--ak-surface) !important;

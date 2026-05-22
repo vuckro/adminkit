@@ -7,7 +7,7 @@
    frontend stays untouched. */
 
 /* Visible bar (wrapper) — --ak-surface (recessed one step from
-   --ak-surface-alt) so the field reads as a sunken input in light
+   --ak-surface) so the field reads as a sunken input in light
    mode where surface-alt would otherwise match the page bg. */
 body.adminkit .choices .choices__inner {
 	background-color: var(--ak-surface);
@@ -21,7 +21,7 @@ body.adminkit .choices.is-disabled .choices__inner {
 
 /* Search input inside the wrapper — transparent so it inherits the
    bar's surface (otherwise components/inputs.css's `input[type="search"]`
-   paints its own --ak-surface-alt layer). Kill the focus ring too —
+   paints its own --ak-surface layer). Kill the focus ring too —
    it would draw inside the wrapper. */
 body.adminkit input.choices__input--cloned,
 body.adminkit input[type="search"].choices__input--cloned {
@@ -41,14 +41,14 @@ body.adminkit .choices__list--multiple .choices__item {
 }
 
 body.adminkit .choices__list--multiple .choices__item.is-highlighted {
-	background-color: var(--ak-primary-dark);
-	border-color: var(--ak-primary-dark);
+	background-color: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
 }
 
 /* Dropdown panel */
 body.adminkit .choices__list--dropdown,
 body.adminkit .choices__list[aria-expanded] {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -83,7 +83,7 @@ body.adminkit .choices__heading {
    .choices ...` rules above. Mirror our token application under the
    same wrapper so specificity matches (then wins on cascade order). */
 body.adminkit #ame-rex-other-roles-row .choices .choices__inner {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -97,7 +97,7 @@ body.adminkit #ame-rex-other-roles-row .choices.is-focused .choices__inner {
 }
 
 body.adminkit #ame-rex-other-roles-row #ame-rex-other-roles-field-wrapper {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 }
 
 body.adminkit #ame-rex-other-roles-row .choices .choices__input {
@@ -121,5 +121,5 @@ body.adminkit #ame-rex-other-roles-row .choices .choices__button:before {
 }
 
 body.adminkit #ame-rex-other-roles-row .choices .choices__button:hover {
-	background-color: var(--ak-primary-dark);
+	background-color: var(--ak-primary-hover);
 }

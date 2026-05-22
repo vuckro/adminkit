@@ -5,12 +5,12 @@
    screens via owns_screen().
 
    Palette mapped (from fluent-forms-admin-sass.css):
-     #fff / #f5f5f5 / #f2f2f2  surfaces      → --ak-surface-alt / --ak-surface / --ak-bg
+     #fff / #f5f5f5 / #f2f2f2  surfaces      → --ak-surface / --ak-surface / --ak-bg
      #1e1f21 / #4b4c4d         text/heading  → --ak-text / --ak-heading
      #606266 / #909399         muted text    → --ak-text-muted
      #ececec / #ededed / #dcdfe6 / #dadbdd   → --ak-border
      #1a7efb (brand blue)      primary       → --ak-primary
-     #e8f2ff                   primary tint  → --ak-primary-soft
+     #e8f2ff                   primary tint  → --ak-primary-subtle
      #00b27f success / #fcbe2d warning /
      #0dcaf0 info / #ff6154    error         → semantic tokens
 
@@ -53,7 +53,7 @@ body.adminkit .ff_menu_link:focus {
 body.adminkit .ff_menu .active .ff_menu_link,
 body.adminkit .ff_menu .active > .ff_menu_link,
 body.adminkit .ff_menu_link.active {
-	background-color: var(--ak-primary-soft);
+	background-color: var(--ak-primary-subtle);
 	color: var(--ak-primary);
 }
 
@@ -85,7 +85,7 @@ body.adminkit .ff_update_card,
 body.adminkit .el-card,
 body.adminkit .ff_form_group,
 body.adminkit .ff_block {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 	box-shadow: none;
@@ -99,7 +99,7 @@ body.adminkit .el-card__header {
 /* Single form card in the dashboard grid */
 body.adminkit .ff_each_form,
 body.adminkit .ff_form_item {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
@@ -108,7 +108,7 @@ body.adminkit .ff_form_item {
 body.adminkit .el-table,
 body.adminkit .ff-table,
 body.adminkit .ff_entry_table {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 }
 
@@ -158,7 +158,7 @@ body.adminkit .el-table--border::after {
 body.adminkit .el-button,
 body.adminkit .el-button--default,
 body.adminkit .el-button--soft {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border-strong);
 	color: var(--ak-text);
 }
@@ -183,8 +183,8 @@ body.adminkit .ff_btn_primary {
 body.adminkit .el-button--primary:hover,
 body.adminkit .el-button--primary:focus,
 body.adminkit .ff_btn_primary:hover {
-	background: var(--ak-primary-dark);
-	border-color: var(--ak-primary-dark);
+	background: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
 	color: #ffffff;
 }
 
@@ -204,7 +204,7 @@ body.adminkit .el-button--danger {
 
 /* Icon buttons */
 body.adminkit .ff_icon_btn {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -220,7 +220,7 @@ body.adminkit .el-input__inner,
 body.adminkit .el-textarea__inner,
 body.adminkit .el-input-group__append,
 body.adminkit .el-input-group__prepend {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -243,7 +243,7 @@ body.adminkit .el-input.is-disabled .el-input__inner {
 
 /* Select + its label/value */
 body.adminkit .el-select .el-input__inner {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 }
 
 body.adminkit .el-form-item__label {
@@ -257,7 +257,7 @@ body.adminkit .el-dropdown-menu,
 body.adminkit .el-popper,
 body.adminkit .el-picker-panel,
 body.adminkit .el-autocomplete-suggestion {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 	box-shadow: none;
@@ -290,7 +290,7 @@ body.adminkit .el-popper .popper__arrow::after {
 /* ========== 8. Dialogs / modals ========== */
 body.adminkit .el-dialog,
 body.adminkit .el-message-box {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 	box-shadow: none;
 }
@@ -324,7 +324,7 @@ body.adminkit .v-modal {
 /* ========== 9. Checkboxes / radios / switches ========== */
 body.adminkit .el-checkbox__inner,
 body.adminkit .el-radio__inner {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border-strong);
 }
 
@@ -346,7 +346,7 @@ body.adminkit .el-radio__input.is-checked + .el-radio__label {
 
 /* Radio-button group (segmented control) */
 body.adminkit .el-radio-button__inner {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -403,13 +403,13 @@ body.adminkit .lead-text {
 
 body.adminkit .ff_filter_selected,
 body.adminkit .shortcut {
-	background: var(--ak-primary-soft);
+	background: var(--ak-primary-subtle);
 	border-color: var(--ak-primary);
 	color: var(--ak-primary);
 }
 
 body.adminkit .ff_badge {
-	background: var(--ak-primary-soft);
+	background: var(--ak-primary-subtle);
 	color: var(--ak-primary);
 }
 
@@ -455,7 +455,7 @@ body.adminkit h6 {
 body.adminkit .ff_table,
 body.adminkit .el-table__header-wrapper,
 body.adminkit .el-table__body-wrapper {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 }
 
 body.adminkit .el-table__cell {
@@ -533,7 +533,7 @@ body.adminkit .ff_layout_section_sidebar {
 body.adminkit .ff_layout_section_sidebar a.active,
 body.adminkit .ff_layout_section_sidebar li.active > a,
 body.adminkit .ff_layout_section_sidebar .el-menu-item.is-active {
-	background: var(--ak-primary-soft);
+	background: var(--ak-primary-subtle);
 	color: var(--ak-primary);
 }
 
@@ -562,7 +562,7 @@ body.adminkit .ff_card_head,
 body.adminkit .ff_card_body,
 body.adminkit .ff_report_widget,
 body.adminkit .ff_chart_wrapper {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -571,14 +571,14 @@ body.adminkit .ff_chart_wrapper {
 /* ========== 16. Element UI misc surfaces ========== */
 /* Pagination — FF wraps it in .ff_pagination (#fff slab + shadow). */
 body.adminkit .ff_pagination {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	box-shadow: none;
 	color: var(--ak-text);
 }
 
 body.adminkit .el-pagination button,
 body.adminkit .el-pagination .el-pager li {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 	border-color: var(--ak-border);
 }
@@ -596,7 +596,7 @@ body.adminkit .el-pagination.is-background .el-pager li:not(.disabled).active {
 
 /* Tags / badges */
 body.adminkit .el-tag {
-	background: var(--ak-primary-soft);
+	background: var(--ak-primary-subtle);
 	border-color: var(--ak-border);
 	color: var(--ak-primary);
 }
@@ -605,7 +605,7 @@ body.adminkit .el-tag {
 body.adminkit .el-collapse,
 body.adminkit .el-collapse-item__header,
 body.adminkit .el-collapse-item__wrap {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }

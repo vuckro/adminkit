@@ -80,7 +80,7 @@ body.adminkit #adminmenu li.menu-top:hover,
 body.adminkit #adminmenu li.opensub > a.menu-top,
 body.adminkit #adminmenu li > a.menu-top:focus {
 	color: var(--ak-heading) !important;
-	background-color: var(--ak-adminmenu-hover-bg, var(--ak-elevated)) !important;
+	background-color: var(--ak-hover-bg, var(--ak-elevated)) !important;
 }
 
 /* WP core ships `#adminmenu a:focus, #adminmenu a:hover` with
@@ -112,7 +112,7 @@ body.adminkit #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
 body.adminkit #adminmenu li.wp-menu-open,
 body.adminkit #adminmenu li.current.menu-top {
-	background: var(--ak-adminmenu-active-bg, var(--ak-elevated)) !important;
+	background: var(--ak-elevated, var(--ak-elevated)) !important;
 	color: var(--ak-heading) !important;
 }
 
@@ -141,7 +141,7 @@ body.adminkit #adminmenu li.wp-has-current-submenu .wp-menu-image::before {
 body.adminkit #adminmenu .wp-submenu,
 body.adminkit #adminmenu .wp-has-current-submenu .wp-submenu,
 body.adminkit #adminmenu .opensub .wp-submenu {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: none;
 	border-top: 1px solid var(--ak-border);
 	box-shadow: none;
@@ -228,7 +228,7 @@ body.adminkit #collapse-button:focus {
 
 /* Postboxes / metaboxes */
 body.adminkit .postbox {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	margin-bottom: 16px;
@@ -319,7 +319,7 @@ body.adminkit #dashboard_quick_press .drafts h2 {
 body.adminkit .notice,
 body.adminkit div.updated,
 body.adminkit div.error {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-left-width: 4px;
 	border-radius: var(--ak-radius-s);
@@ -354,7 +354,7 @@ body.adminkit table.widefat {
    border + radius. Used on comment edit, link edit, text widgets, classic
    excerpt, and any plugin that calls wp_editor(). */
 body.adminkit .stuffbox {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	overflow: hidden;
@@ -385,7 +385,7 @@ body.adminkit #major-publishing-actions {
 }
 
 body.adminkit .wp-editor-container {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	overflow: hidden;
@@ -414,14 +414,14 @@ body.adminkit #edit-slug-box {
 /* Accordion section body — WP paints `background: #fff` which leaks
    in dark mode. Used on nav-menus, edit screens, etc. */
 body.adminkit .accordion-section-content {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 }
 
 /* Welcome panel column container (dashboard hero bottom strip) — WP
    paints `bg: #fff; border: 1px solid #c3c4c7`. The dark hero header
    above stays as-is (#151515 is a design-intent contrast). */
 body.adminkit .welcome-panel .welcome-panel-column-container {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
@@ -488,7 +488,7 @@ body.adminkit .notice-dismiss:hover::before {
 
 /* Screen Options + Help — top-right collapsible panels */
 body.adminkit #screen-meta {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-top: none;
 	color: var(--ak-text);
@@ -496,7 +496,7 @@ body.adminkit #screen-meta {
 
 body.adminkit #screen-meta-links .show-settings,
 body.adminkit #screen-meta-links a {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -537,7 +537,7 @@ body.adminkit .contextual-help-tabs a:focus {
 /* Hover/focus tabs share the active tab's soft brand tint. */
 body.adminkit .contextual-help-tabs a:hover,
 body.adminkit .contextual-help-tabs a:focus {
-	background: color-mix(in srgb, var(--ak-primary) 16%, var(--ak-surface-alt));
+	background: color-mix(in srgb, var(--ak-primary) 16%, var(--ak-surface));
 	color: var(--ak-heading);
 }
 
@@ -548,13 +548,13 @@ body.adminkit .contextual-help-tabs li.active a {
 }
 
 /* Active help tab — WP fills it with color-mix(theme 8%, #fff) (a light bar
-   that breaks in dark) plus a box-shadow. Mix the brand into --ak-surface-alt
+   that breaks in dark) plus a box-shadow. Mix the brand into --ak-surface
    so the tint stays equally subtle in light AND dark (a fixed
    --ak-primary-subtle looked bright on the dark drawer); keep the left-border
    accent, drop the shadow. */
 body.adminkit .contextual-help-tabs .active,
 body.adminkit .contextual-help-tabs li.active {
-	background: color-mix(in srgb, var(--ak-primary) 16%, var(--ak-surface-alt));
+	background: color-mix(in srgb, var(--ak-primary) 16%, var(--ak-surface));
 	border-left-color: var(--ak-primary);
 	box-shadow: none;
 }
@@ -674,11 +674,11 @@ body.adminkit .subsubsub a.current:focus {
    count badge then blends into the pill, leaving its colored number. Unmapped
    filters keep the neutral --ak-elevated above. */
 body.adminkit .subsubsub li.publish a.current {
-	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface-alt));
+	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface));
 }
 
 body.adminkit .subsubsub li.draft a.current {
-	background: color-mix(in srgb, var(--ak-warning) 16%, var(--ak-surface-alt));
+	background: color-mix(in srgb, var(--ak-warning) 16%, var(--ak-surface));
 }
 
 body.adminkit .subsubsub li.trash a.current {
@@ -705,12 +705,12 @@ body.adminkit .subsubsub .count {
    active or not (the active state is shown by the pill, not the badge).
    Filters without a mapping keep the neutral badge above. */
 body.adminkit .subsubsub li.publish .count {
-	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface-alt));
+	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface));
 	color: var(--ak-success);
 }
 
 body.adminkit .subsubsub li.draft .count {
-	background: color-mix(in srgb, var(--ak-warning) 16%, var(--ak-surface-alt));
+	background: color-mix(in srgb, var(--ak-warning) 16%, var(--ak-surface));
 	color: var(--ak-warning);
 }
 

@@ -17,7 +17,7 @@ body.adminkit .widefat li {
    hardcoded. The .wp-list-table rules above only kick in when both
    classes are present, so the bare-widefat case needs its own block. */
 body.adminkit .widefat {
-	background: var(--ak-table-bg);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	border-collapse: separate;
@@ -29,7 +29,7 @@ body.adminkit .widefat thead th,
 body.adminkit .widefat thead td,
 body.adminkit .widefat tfoot th,
 body.adminkit .widefat tfoot td {
-	background: var(--ak-table-header-bg);
+	background: var(--ak-elevated);
 	color: var(--ak-heading);
 	font-weight: 600;
 	border-bottom: 1px solid var(--ak-border);
@@ -49,7 +49,7 @@ body.adminkit .widefat tbody tr:first-child th {
 
 /* WP list tables */
 body.adminkit .wp-list-table {
-	background: var(--ak-table-bg);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	border-collapse: separate;
@@ -63,7 +63,7 @@ body.adminkit .wp-list-table tfoot th,
 body.adminkit .wp-list-table tfoot td,
 body.adminkit .wp-list-table thead th.check-column,
 body.adminkit .wp-list-table tfoot th.check-column {
-	background: var(--ak-table-header-bg);
+	background: var(--ak-elevated);
 	color: var(--ak-heading);
 	font-weight: 600;
 	font-size: var(--ak-text-s);
@@ -94,12 +94,12 @@ body.adminkit .wp-list-table tbody tr:first-child th {
 }
 
 /* Row hover — neutral surface, no brand tint (mirrors the submenu hover).
-   Uses --ak-surface-accent, not --ak-surface: in dark mode --ak-table-bg
+   Uses --ak-elevated, not --ak-surface: in dark mode --ak-surface
    resolves to --ak-surface, so a --ak-surface hover would be invisible. */
 body.adminkit .wp-list-table tbody tr:hover,
 body.adminkit .wp-list-table tbody tr:hover td,
 body.adminkit .wp-list-table tbody tr:hover th {
-	background: var(--ak-surface-accent);
+	background: var(--ak-elevated);
 }
 
 body.adminkit .wp-list-table .row-title:hover {
@@ -161,7 +161,7 @@ body.adminkit .tablenav {
 /* tablenav (pagination row) */
 body.adminkit .tablenav .tablenav-pages a,
 body.adminkit .tablenav .tablenav-pages a:link {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
@@ -178,7 +178,7 @@ body.adminkit .tablenav .tablenav-pages a:hover {
 body.adminkit .tablenav .tablenav-pages-navspan,
 body.adminkit .tablenav .tablenav-pages span.current {
 	background: var(--ak-heading);
-	color: var(--ak-surface-alt);
+	color: var(--ak-surface);
 	border-color: var(--ak-heading);
 	border-radius: var(--ak-radius-s);
 	padding: 2px 8px;
@@ -186,7 +186,7 @@ body.adminkit .tablenav .tablenav-pages span.current {
 
 /* "No items found" empty state */
 body.adminkit .wp-list-table tbody tr.no-items td {
-	background: var(--ak-table-bg);
+	background: var(--ak-surface);
 	color: var(--ak-text-muted);
 	text-align: center;
 	padding: 32px 16px;
@@ -211,7 +211,7 @@ body.adminkit .inline-edit-row fieldset .inline-edit-categories label {
 body.adminkit .inline-edit-row fieldset label span.input-text-wrap input,
 body.adminkit .inline-edit-row fieldset label textarea,
 body.adminkit .inline-edit-row fieldset select {
-	background: var(--ak-field-bg);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-s);
 }
@@ -228,7 +228,7 @@ body.adminkit .inline-edit-row fieldset select:focus {
 
 /* Dark mode — the default row-hover lift reads too bright; use a gentler
    lift (light mode already reads well, so this is dark-only). The Quick Edit
-   fields recess on their own via --ak-field-bg, so no input override here. */
+   fields recess on their own via --ak-surface, so no input override here. */
 :root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover,
 :root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover td,
 :root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover th {
@@ -260,7 +260,7 @@ body.adminkit .inline-edit-row h4 {
 /* Striped + bordered cells (refined compatibility) */
 body.adminkit .striped > tbody > :nth-child(odd),
 body.adminkit .alternate {
-	background: var(--ak-table-bg);
+	background: var(--ak-surface);
 }
 
 body.adminkit .wp-list-table .check-column {

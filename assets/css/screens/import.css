@@ -28,7 +28,7 @@ body.adminkit.import-php .importer-action a:focus {
 }
 
 body.adminkit.import-php .widefat.importers {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	border-collapse: separate;
@@ -37,7 +37,7 @@ body.adminkit.import-php .widefat.importers {
 }
 
 body.adminkit.import-php .widefat.importers tbody tr {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 }
 
 body.adminkit.import-php .widefat.importers tbody tr:nth-child(odd) {

@@ -83,10 +83,10 @@ body.adminkit.toplevel_page_fluent-booking {
 
 	/* Primary ramp — keep filled/hover/disabled/plain-bg primary states on
 	   brand instead of EP's blue-derived steps. */
-	--el-color-primary-dark-2: var( --ak-primary-dark );    /* active / pressed */
-	--el-color-primary-light-3: var( --ak-primary-dark );   /* filled-button hover */
-	--el-color-primary-light-5: var( --ak-primary-soft );
-	--el-color-primary-light-7: var( --ak-primary-soft );
+	--el-color-primary-dark-2: var( --ak-primary-hover );    /* active / pressed */
+	--el-color-primary-light-3: var( --ak-primary-hover );   /* filled-button hover */
+	--el-color-primary-light-5: var( --ak-primary-subtle );
+	--el-color-primary-light-7: var( --ak-primary-subtle );
 	--el-color-primary-light-8: var( --ak-primary-subtle );
 	--el-color-primary-light-9: var( --ak-primary-subtle ); /* plain bg / current row */
 
@@ -113,9 +113,9 @@ body.adminkit.toplevel_page_fluent-booking {
 	--el-text-color-disabled: var( --ak-text-muted );
 
 	/* Backgrounds */
-	--el-bg-color: var( --ak-surface-alt );
+	--el-bg-color: var( --ak-surface );
 	--el-bg-color-page: var( --ak-bg );
-	--el-bg-color-overlay: var( --ak-surface-alt );
+	--el-bg-color-overlay: var( --ak-surface );
 
 	/* Borders */
 	--el-border-color: var( --ak-border );
@@ -133,7 +133,7 @@ body.adminkit.toplevel_page_fluent-booking {
 	--el-fill-color-extra-light: var( --ak-surface );
 	--el-fill-color-dark: var( --ak-elevated );
 	--el-fill-color-darker: var( --ak-elevated );
-	--el-fill-color-blank: var( --ak-surface-alt );
+	--el-fill-color-blank: var( --ak-surface );
 
 	/* Disabled — consumed (e.g. `.el-input.is-disabled .el-input__wrapper`)
 	   but never defined by FluentBooking, so EP's stock greys leak in dark. */
@@ -334,9 +334,9 @@ body.adminkit.toplevel_page_fluent-booking .el-button--primary:focus,
 body.adminkit.toplevel_page_fluent-booking .el-button.fcal_primary_btn:hover,
 body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn:hover,
 body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn:focus {
-	background-color: var( --ak-primary-soft ) !important;
+	background-color: var( --ak-primary-subtle ) !important;
 	border-color: var( --ak-primary ) !important;
-	color: var( --ak-primary-dark ) !important;
+	color: var( --ak-primary-hover ) !important;
 }
 
 /* Disabled primary → neutral muted (not a blue). */
@@ -408,7 +408,7 @@ body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-wi
    The border is softened to a 35% tint so it frames the pill without shouting;
    the text keeps the full accent. */
 body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget .stat {
-	background: var( --ak-surface-alt ) !important;
+	background: var( --ak-surface ) !important;
 	border-color: color-mix( in srgb, var( --ak-primary ) 35%, transparent ) !important;
 	color: var( --ak-primary ) !important;
 }
@@ -467,9 +467,9 @@ body.adminkit.toplevel_page_fluent-booking .el-dialog__footer .dialog-footer .fc
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn:hover,
 body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__footer .dialog-footer .fcal_primary_btn:hover,
 body.adminkit.toplevel_page_fluent-booking .el-dialog__footer .dialog-footer .fcal_primary_btn:hover {
-	background: var( --ak-primary-soft ) !important;
+	background: var( --ak-primary-subtle ) !important;
 	border-color: var( --ak-primary ) !important;
-	color: var( --ak-primary-dark ) !important;
+	color: var( --ak-primary-hover ) !important;
 }
 
 /* Deep calendar / date selection. */
@@ -651,7 +651,7 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_plain_btn:n
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_plain_btn:not(.danger):focus,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn2:not(.danger):hover,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn2:not(.danger):focus {
-	background: var( --ak-primary-soft ) !important;
+	background: var( --ak-primary-subtle ) !important;
 	border-color: var( --ak-primary ) !important;
 	color: var( --ak-primary ) !important;
 }
@@ -661,7 +661,7 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn
    through as a black editor. Theme the chrome and give the surfaces a token
    background. */
 body.adminkit.toplevel_page_fluent-booking .mce-panel {
-	background-color: var( --ak-surface-alt ) !important;
+	background-color: var( --ak-surface ) !important;
 	border-color: var( --ak-border ) !important;
 	color: var( --ak-text );
 }
@@ -674,7 +674,7 @@ body.adminkit.toplevel_page_fluent-booking .mce-statusbar {
 
 body.adminkit.toplevel_page_fluent-booking .mce-edit-area,
 body.adminkit.toplevel_page_fluent-booking .mce-edit-area iframe {
-	background-color: var( --ak-surface-alt ) !important;
+	background-color: var( --ak-surface ) !important;
 }
 
 body.adminkit.toplevel_page_fluent-booking .mce-btn button,
@@ -742,7 +742,7 @@ body.adminkit.toplevel_page_fluent-booking .el-message-box__headerbtn i {
    ============================================================ */
 
 body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot {
-	background: var( --ak-surface-alt ) !important;
+	background: var( --ak-surface ) !important;
 }
 
 body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot:hover,
@@ -834,7 +834,7 @@ body.adminkit.toplevel_page_fluent-booking .apexcharts-ycrosshairs {
 body.adminkit.toplevel_page_fluent-booking .apexcharts-tooltip.apexcharts-theme-light,
 body.adminkit.toplevel_page_fluent-booking .apexcharts-xaxistooltip,
 body.adminkit.toplevel_page_fluent-booking .apexcharts-yaxistooltip {
-	background: var( --ak-surface-alt ) !important;
+	background: var( --ak-surface ) !important;
 	border-color: var( --ak-border ) !important;
 	color: var( --ak-text ) !important;
 }

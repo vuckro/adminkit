@@ -63,7 +63,7 @@ body.adminkit .health-check-accordion-heading {
 
 body.adminkit .privacy-settings-accordion-trigger,
 body.adminkit .health-check-accordion-trigger {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 }
 
@@ -126,7 +126,7 @@ body.adminkit .health-check-accordion-trigger .badge.gray {
 /* Panel (the body of an opened accordion item) */
 body.adminkit .privacy-settings-accordion-panel,
 body.adminkit .health-check-accordion-panel {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 }
 
@@ -158,7 +158,7 @@ body.adminkit .health-check-body .hr-separator {
    paints `border: 1px solid #c3c4c7`; rows + cells inherit
    #50575e text and a #fff bg from common.css. */
 body.adminkit .health-check-table {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 }
 
@@ -178,7 +178,7 @@ body.adminkit .health-check-table tfoot td {
 }
 
 body.adminkit .health-check-table tbody tr {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 }
 
 body.adminkit .health-check-table.striped tbody tr:nth-child(odd) {

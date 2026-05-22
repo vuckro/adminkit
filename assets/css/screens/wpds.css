@@ -9,7 +9,7 @@
 body.adminkit [data-wpds-theme-provider-id][data-wpds-theme-provider-id] {
 	/* Neutral surfaces */
 	--wpds-color-bg-surface-neutral: var(--ak-bg);
-	--wpds-color-bg-surface-neutral-strong: var(--ak-surface-alt);
+	--wpds-color-bg-surface-neutral-strong: var(--ak-surface);
 	--wpds-color-bg-surface-neutral-weak: var(--ak-surface);
 
 	/* Neutral text */
@@ -37,8 +37,8 @@ body.adminkit [data-wpds-theme-provider-id][data-wpds-theme-provider-id] {
 	--wpds-color-bg-interactive-neutral-strong: var(--ak-heading);
 	--wpds-color-bg-interactive-neutral-strong-active: var(--ak-text);
 	--wpds-color-bg-interactive-neutral-weak-active: var(--ak-hover-bg);
-	--wpds-color-fg-interactive-neutral-strong: var(--ak-surface-alt);
-	--wpds-color-fg-interactive-neutral-strong-active: var(--ak-surface-alt);
+	--wpds-color-fg-interactive-neutral-strong: var(--ak-surface);
+	--wpds-color-fg-interactive-neutral-strong-active: var(--ak-surface);
 
 	/* Disabled state */
 	--wpds-color-bg-interactive-neutral-strong-disabled: var(--ak-border);
@@ -50,17 +50,17 @@ body.adminkit [data-wpds-theme-provider-id][data-wpds-theme-provider-id] {
 
 	/* Brand */
 	--wpds-color-bg-interactive-brand-strong: var(--ak-primary);
-	--wpds-color-bg-interactive-brand-strong-active: var(--ak-primary-dark);
+	--wpds-color-bg-interactive-brand-strong-active: var(--ak-primary-hover);
 	--wpds-color-bg-interactive-brand-weak-active: var(--ak-primary-subtle);
 	--wpds-color-fg-interactive-brand: var(--ak-primary);
-	--wpds-color-fg-interactive-brand-active: var(--ak-primary-dark);
+	--wpds-color-fg-interactive-brand-active: var(--ak-primary-hover);
 	--wpds-color-fg-interactive-brand-strong: #ffffff;
 	--wpds-color-fg-interactive-brand-strong-active: #ffffff;
 	--wpds-color-bg-thumb-brand: var(--ak-primary);
-	--wpds-color-bg-thumb-brand-active: var(--ak-primary-dark);
+	--wpds-color-bg-thumb-brand-active: var(--ak-primary-hover);
 	--wpds-color-stroke-focus-brand: var(--ak-primary);
 	--wpds-color-stroke-interactive-brand: var(--ak-primary);
-	--wpds-color-stroke-interactive-brand-active: var(--ak-primary-dark);
+	--wpds-color-stroke-interactive-brand-active: var(--ak-primary-hover);
 	--wpds-color-stroke-surface-brand: var(--ak-border);
 	--wpds-color-stroke-surface-brand-strong: var(--ak-primary);
 	--wpds-color-bg-surface-brand: var(--ak-primary-subtle);
@@ -119,7 +119,7 @@ body.adminkit [data-wpds-theme-provider-id][data-wpds-theme-provider-id] {
    bg #fff + border #ddd. Routed; my generic .components-card rule had
    lower specificity and lost to this one. */
 body.adminkit .connectors-page .components-item {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
@@ -159,7 +159,7 @@ body.adminkit .connectors-page .ai-plugin-callout .components-button.is-secondar
 
 body.adminkit .connectors-page .ai-plugin-callout .components-button.is-primary:hover,
 body.adminkit .connectors-page .ai-plugin-callout .components-button.is-secondary:hover {
-	background: var(--ak-primary-dark);
+	background: var(--ak-primary-hover);
 	color: #ffffff;
 }
 
@@ -184,7 +184,7 @@ body.adminkit .font-library-page {
 body.adminkit .boot-layout-container,
 body.adminkit .boot-layout-container *:not([class*="destructive"]) {
 	--wp-components-color-accent: var(--ak-primary) !important;
-	--wp-components-color-accent-darker-10: var(--ak-primary-dark) !important;
-	--wp-components-color-accent-darker-20: var(--ak-primary-dark) !important;
+	--wp-components-color-accent-darker-10: var(--ak-primary-hover) !important;
+	--wp-components-color-accent-darker-20: var(--ak-primary-hover) !important;
 	--wp-admin-theme-color: var(--ak-primary) !important;
 }

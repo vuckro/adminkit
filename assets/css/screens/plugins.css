@@ -7,10 +7,10 @@
    WP hardcodes `.plugins tr { background: #fff }`. That leaks white through
    tr.plugin-update-tr (the "update available" row) on our dark surface
    because that row's td has no background of its own. Route every plugins
-   tr through --ak-table-bg; the per-state rules below still flip
+   tr through --ak-surface; the per-state rules below still flip
    active/inactive on tr.active/tr.inactive cells. */
 body.adminkit .wp-list-table.plugins tr {
-	background: var(--ak-table-bg);
+	background: var(--ak-surface);
 }
 
 /* Reset WP's per-cell border indicators */
@@ -48,7 +48,7 @@ body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
    that nukes border-left with !important. */
 body.adminkit .wp-list-table.plugins tr.active th.check-column,
 body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
-	border-left: 4px solid var(--primary-t-5, var(--primary-t-4, var(--ak-primary-soft))) !important;
+	border-left: 4px solid var(--primary-t-5, var(--primary-t-4, var(--ak-primary-subtle))) !important;
 }
 
 /* Inactive plugins — keep the table surface, mute the title.
@@ -57,7 +57,7 @@ body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
    higher specificity (.inactive class) beat the hover rule. */
 body.adminkit .wp-list-table.plugins tr.inactive:not(:hover) th,
 body.adminkit .wp-list-table.plugins tr.inactive:not(:hover) td {
-	background: var(--ak-table-bg);
+	background: var(--ak-surface);
 }
 
 body.adminkit .wp-list-table.plugins tr.inactive .plugin-title strong {
@@ -126,7 +126,7 @@ body.adminkit.plugins-php tr[data-plugin="fluent-booking-pro/fluent-booking-pro.
    close-icon blue. */
 
 body.adminkit.plugin-install-php .plugin-card {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-m);
 }
@@ -172,7 +172,7 @@ body.adminkit.plugin-install-php .plugin-card .column-compatibility .compatibili
    render `.wp-filter` with this rounded look. */
 body.adminkit.plugin-install-php .wp-filter,
 body.adminkit.upload-php .wp-filter {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	box-shadow: none;
@@ -192,7 +192,7 @@ body.adminkit.plugin-install-php .plugins-popular-tags-wrapper {
 
 body.adminkit #plugin-information,
 body.adminkit #plugin-information-content {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 }
 
@@ -207,9 +207,9 @@ body.adminkit #plugin-information-tabs {
 }
 
 body.adminkit #plugin-information-tabs a.current {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
-	border-bottom-color: var(--ak-surface-alt);
+	border-bottom-color: var(--ak-surface);
 	color: var(--ak-heading);
 }
 

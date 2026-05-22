@@ -40,7 +40,7 @@ body.adminkit #happyfiles-sidebar {
    --ak-text body + token border so the notice reads as an inline info note
    instead of a takeover banner. */
 body.adminkit .happyfiles-notification {
-	background-color: color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface-alt));
+	background-color: color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface));
 	border: 1px solid var(--ak-border);
 	color: var(--ak-text);
 }
@@ -104,7 +104,7 @@ body.adminkit #happyfiles-sidebar .folder .count {
 
 /* Folder search input bar at the top of the sidebar */
 body.adminkit #happyfiles-search-folders {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-radius: var(--ak-radius-s);
 }
 
@@ -122,7 +122,7 @@ body.adminkit #happyfiles-search-folders input:focus {
 }
 
 body.adminkit #happyfiles-create-folders input:focus {
-	background-color: var(--ak-field-bg);
+	background-color: var(--ak-surface);
 }
 
 /* Folder rows themselves — round each row so the hover / open tint
@@ -133,18 +133,18 @@ body.adminkit #happyfiles-sidebar .folder {
 
 /* Folder being renamed inline */
 body.adminkit #happyfiles-sidebar .folder.renaming {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-radius: var(--ak-radius-s);
 }
 
 /* Checkbox inside folder rows */
 body.adminkit #happyfiles-sidebar .folder input[type="checkbox"] {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 }
 
 /* Inline "+ Select" toolbar that appears in select mode */
 body.adminkit #happyfiles-select-folders {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-radius: var(--ak-radius-s);
 }
 
@@ -162,14 +162,14 @@ body.adminkit #happyfiles-create-folders button.button-primary:focus {
 
 /* Sort-by dropdown panel */
 body.adminkit #happyfiles-sort-by ul {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-radius: var(--ak-radius-s);
 }
 
 
 /* ===== Right-click context menu ===== */
 body.adminkit .happyfiles-context-menu {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	box-shadow: 0 6px 24px -8px rgba(0, 0, 0, 0.3);
@@ -180,7 +180,7 @@ body.adminkit .happyfiles-context-menu {
 
 /* ===== Upload progress card ===== */
 body.adminkit #happyfiles-uploading-progress {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
@@ -190,7 +190,7 @@ body.adminkit #happyfiles-uploading-progress {
 
 /* ===== Popup dialogs (color picker, gallery shortcode, …) ===== */
 body.adminkit .happyfiles-popup .inner {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-radius: var(--ak-radius-s);
 	overflow: hidden;
 }
@@ -206,7 +206,7 @@ body.adminkit .happyfiles-popup header .title {
 
 /* ===== Sub-folders grid (in-canvas) ===== */
 body.adminkit .happyfiles-subfolders-list .happyfiles-subfolder-item {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-s);
 }

@@ -41,7 +41,7 @@
 :root,
 body.adminkit.toplevel_page_fluentcrm-admin {
 	/* Surfaces */
-	--fc-primary-bg: var( --ak-surface-alt );   /* cards, inputs, panels, dialogs, dropdowns, overlays */
+	--fc-primary-bg: var( --ak-surface );   /* cards, inputs, panels, dialogs, dropdowns, overlays */
 	--fc-secondary-bg: var( --ak-bg );          /* app page background */
 	--fc-light-bg: var( --ak-surface );
 	--fc-weak-bg-25: var( --ak-surface );
@@ -80,10 +80,10 @@ body.adminkit.toplevel_page_fluentcrm-admin {
 
 	/* Primary ramp — keep filled/hover/disabled primary states on-brand
 	   instead of the greyed text/border tokens FluentCRM aliases them to. */
-	--el-color-primary-dark-2: var( --ak-primary-dark );    /* active / pressed */
-	--el-color-primary-light-3: var( --ak-primary-dark );   /* filled-button hover */
-	--el-color-primary-light-5: var( --ak-primary-soft );
-	--el-color-primary-light-7: var( --ak-primary-soft );
+	--el-color-primary-dark-2: var( --ak-primary-hover );    /* active / pressed */
+	--el-color-primary-light-3: var( --ak-primary-hover );   /* filled-button hover */
+	--el-color-primary-light-5: var( --ak-primary-subtle );
+	--el-color-primary-light-7: var( --ak-primary-subtle );
 	--el-color-primary-light-8: var( --ak-primary-subtle );
 	--el-color-primary-light-9: var( --ak-primary-subtle ); /* plain bg / current row / active menu */
 
@@ -96,7 +96,7 @@ body.adminkit.toplevel_page_fluentcrm-admin {
 	--el-fill-color-extra-light: var( --ak-surface );
 	--el-fill-color-dark: var( --ak-elevated );
 	--el-fill-color-darker: var( --ak-elevated );
-	--el-fill-color-blank: var( --ak-surface-alt );
+	--el-fill-color-blank: var( --ak-surface );
 
 	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
 	--el-box-shadow: none;
@@ -126,8 +126,8 @@ body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_app_wrapper {
    route it to the brand's own dark step instead. */
 body.adminkit.toplevel_page_fluentcrm-admin .el-button--primary:hover,
 body.adminkit.toplevel_page_fluentcrm-admin .el-button--primary:focus {
-	background: var( --ak-primary-dark );
-	border-color: var( --ak-primary-dark );
+	background: var( --ak-primary-hover );
+	border-color: var( --ak-primary-hover );
 	color: #ffffff;
 }
 

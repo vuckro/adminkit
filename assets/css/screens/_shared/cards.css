@@ -4,7 +4,7 @@
    0.1-alpha-black border (which survives dark mode, no need to override
    the border alone). */
 body.adminkit .card {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }

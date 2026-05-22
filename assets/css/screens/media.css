@@ -38,7 +38,7 @@ body.adminkit .attachments-browser .attachment .check {
 }
 
 body.adminkit .attachments-browser .attachment .check:hover {
-	background: var(--ak-primary-dark);
+	background: var(--ak-primary-hover);
 }
 
 /* Filename badge on attachments without a `.filename` element —
@@ -57,7 +57,7 @@ body.adminkit .wp-core-ui .attachment:not(:has(.filename))::after {
 }
 
 body.adminkit .uploader-inline {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 2px dashed var(--ak-border-strong);
 	border-radius: var(--ak-radius-m);
 }
@@ -92,7 +92,7 @@ body.adminkit .drag-drop.drag-over #drag-drop-area {
 /* upload.php chrome (toolbar, filters, sidebar) */
 body.adminkit.upload-php .wp-filter,
 body.adminkit.upload-php .media-toolbar {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	padding: 12px 16px;
@@ -100,7 +100,7 @@ body.adminkit.upload-php .media-toolbar {
 
 body.adminkit.upload-php .wp-filter .attachment-filters,
 body.adminkit.upload-php .wp-filter .search-form input[type="search"] {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
@@ -282,6 +282,11 @@ body.adminkit .edit-attachment-frame .attachment-info,
 body.adminkit .edit-attachment-frame .attachment-info .details,
 body.adminkit .edit-attachment-frame .attachment-info .settings {
 	border-color: var(--ak-border);
+}
+
+/* Info panel surface — WP hardcodes #f6f7f7. */
+body.adminkit .edit-attachment-frame .attachment-info {
+	background: var(--ak-surface);
 }
 
 /* Top-right nav (prev / next / close in .edit-media-header) — WP's

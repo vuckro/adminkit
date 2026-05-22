@@ -7,7 +7,7 @@
    in light mode WP's native palette stays intact. */
 
 :root[data-adminkit-theme="dark"] body.adminkit .CodeMirror {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 }
 

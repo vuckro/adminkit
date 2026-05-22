@@ -39,10 +39,10 @@ body.adminkit[class*="fluent-cart"] {
 	   correctly in BOTH light and dark (a white-mixed tint would blow out
 	   on a dark surface). */
 	--el-color-primary: var(--ak-primary);
-	--el-color-primary-dark-2: var(--ak-primary-dark);
-	--el-color-primary-light-3: var(--ak-primary-dark);   /* filled-button hover → darken */
-	--el-color-primary-light-5: var(--ak-primary-soft);   /* disabled fill / plain border */
-	--el-color-primary-light-7: var(--ak-primary-soft);   /* default-button hover border */
+	--el-color-primary-dark-2: var(--ak-primary-hover);
+	--el-color-primary-light-3: var(--ak-primary-hover);   /* filled-button hover → darken */
+	--el-color-primary-light-5: var(--ak-primary-subtle);   /* disabled fill / plain border */
+	--el-color-primary-light-7: var(--ak-primary-subtle);   /* default-button hover border */
 	--el-color-primary-light-8: var(--ak-primary-subtle);
 	--el-color-primary-light-9: var(--ak-primary-subtle); /* plain bg / current row / active menu / tag */
 
@@ -59,9 +59,9 @@ body.adminkit[class*="fluent-cart"] {
 	--color-neutral: var(--ak-text-muted);
 
 	/* ===== Surfaces ===== */
-	--el-bg-color: var(--ak-surface-alt);          /* cards, panels, inputs */
+	--el-bg-color: var(--ak-surface);          /* cards, panels, inputs */
 	--el-bg-color-page: var(--ak-bg);              /* app page background */
-	--el-bg-color-overlay: var(--ak-surface-alt);  /* dropdowns, dialogs, tooltips */
+	--el-bg-color-overlay: var(--ak-surface);  /* dropdowns, dialogs, tooltips */
 
 	/* Fills — hover backgrounds, zebra rows, disabled, blank canvas */
 	--el-fill-color: var(--ak-surface);
@@ -70,7 +70,7 @@ body.adminkit[class*="fluent-cart"] {
 	--el-fill-color-extra-light: var(--ak-surface);
 	--el-fill-color-dark: var(--ak-elevated);
 	--el-fill-color-darker: var(--ak-elevated);
-	--el-fill-color-blank: var(--ak-surface-alt);
+	--el-fill-color-blank: var(--ak-surface);
 
 	/* FluentCart custom table fills + Element Plus table header */
 	--el-table-header-bg-color: var(--ak-surface);
@@ -152,8 +152,8 @@ body.adminkit[class*="fluent-cart"] {
 	/* Loading mask — FluentCart's dark-theme value is a solid navy that
 	   would tint the overlay; make it a mode-adaptive translucent surface
 	   so v-loading reads the same in light and dark. */
-	--el-mask-color: color-mix(in srgb, var(--ak-surface-alt) 85%, transparent);
-	--el-mask-color-extra-light: color-mix(in srgb, var(--ak-surface-alt) 35%, transparent);
+	--el-mask-color: color-mix(in srgb, var(--ak-surface) 85%, transparent);
+	--el-mask-color-extra-light: color-mix(in srgb, var(--ak-surface) 35%, transparent);
 }
 
 
@@ -205,7 +205,7 @@ body.adminkit[class*="fluent-cart"] .fct-theme-button-container {
 	background-color: var(--ak-surface) !important;
 }
 :root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] .dark\:bg-primary-600 {
-	background-color: var(--ak-surface-alt) !important;
+	background-color: var(--ak-surface) !important;
 }
 :root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(
 	.dark\:bg-dark-500, .dark\:bg-primary-500, .dark\:bg-gray-700, .dark\:bg-gray-800
@@ -249,7 +249,7 @@ body.adminkit[class*="fluent-cart"] .fct-theme-button-container {
 	.el-input-number__increase, .el-input-number__decrease,
 	.el-radio__inner, .el-checkbox__inner, .el-radio-button__inner, .el-step__icon, .el-switch__core
 ) {
-	background-color: var(--ak-surface-alt) !important;
+	background-color: var(--ak-surface) !important;
 }
 
 /* Recessed — tables, collapses, tab bodies → surface */
@@ -265,7 +265,7 @@ body.adminkit[class*="fluent-cart"] .fct-theme-button-container {
 :root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(
 	.el-button, .el-button--info.is-plain, .el-button--danger.is-plain
 ) {
-	background-color: var(--ak-surface-alt) !important;
+	background-color: var(--ak-surface) !important;
 	border-color: var(--ak-border) !important;
 	color: var(--ak-text) !important;
 }
@@ -289,7 +289,7 @@ body.adminkit[class*="fluent-cart"] .fct-theme-button-container {
 	.fct-tax-selection-sum-box, .fct-pdf-template-preview, .fct-color-picker-box,
 	.fct-timeline-node, .fct-save-bar, .fct-offcanvas-menu-close, .fct-setting-search-button
 ) {
-	background-color: var(--ak-surface-alt) !important;
+	background-color: var(--ak-surface) !important;
 }
 
 /* Headers, nav rails, filter bars, dividers → surface */

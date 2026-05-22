@@ -44,7 +44,7 @@ body.adminkit .components-button.is-secondary:hover:not(:disabled, [aria-disable
 /* Cards + panels (the main surface containers) */
 body.adminkit .components-card,
 body.adminkit .components-panel {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -53,7 +53,7 @@ body.adminkit .components-card-header,
 body.adminkit .components-panel__header,
 body.adminkit .components-card-footer,
 body.adminkit .components-panel__body {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -84,7 +84,7 @@ body.adminkit .components-text-control__input,
 body.adminkit .components-input-control__input,
 body.adminkit .components-textarea-control__input,
 body.adminkit .components-select-control__input {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -142,7 +142,7 @@ body.adminkit .components-form-toggle .components-form-toggle__track {
 }
 
 body.adminkit .components-form-toggle .components-form-toggle__thumb {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 }
 
 body.adminkit .components-form-toggle.is-checked .components-form-toggle__track {
@@ -174,7 +174,7 @@ body.adminkit .components-menu-item__button:focus {
 
 /* Form token (multi-select chip input) */
 body.adminkit .components-form-token-field__input-container {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 

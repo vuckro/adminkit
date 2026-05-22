@@ -10,14 +10,14 @@ body.adminkit.nav-menus-php .manage-menus {
 }
 
 body.adminkit.nav-menus-php #post-body {
-	background: var(--ak-table-bg);
+	background: var(--ak-surface);
 	border-top-color: transparent;
 	border-bottom-color: var(--ak-border);
 }
 
 body.adminkit.nav-menus-php #nav-menu-header,
 body.adminkit.nav-menus-php #nav-menu-footer {
-	background: var(--ak-table-header-bg);
+	background: var(--ak-elevated);
 }
 
 body.adminkit.nav-menus-php #nav-menu-header {
@@ -39,14 +39,14 @@ body.adminkit input#menu-name {
    item reads as its own bordered card (resting --ak-border; the hover below
    lifts it to --ak-border-strong). */
 body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	color: var(--ak-text);
 }
 
 /* Expanded item settings drawer. */
 body.adminkit.nav-menus-php .menu-item-settings {
-	background: var(--ak-table-bg);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 	color: var(--ak-text);
@@ -68,7 +68,7 @@ body.adminkit.nav-menus-php .menu-settings {
 body.adminkit.nav-menus-php .link-to-original {
 	border-color: var(--ak-border);
 	color: var(--ak-text-muted);
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-radius: var(--ak-radius-s);
 }
 
@@ -112,7 +112,7 @@ body.adminkit.nav-menus-php .accordion-container .outer-border {
 
 body.adminkit.nav-menus-php .accordion-section,
 body.adminkit.nav-menus-php .accordion-section.control-section {
-	background: var(--ak-table-bg);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	border-bottom: 1px solid var(--ak-border);
 }
@@ -123,7 +123,7 @@ body.adminkit .accordion-section-content {
 
 body.adminkit.nav-menus-php .accordion-section-title,
 body.adminkit.nav-menus-php .metabox-holder .accordion-section-title {
-	background: var(--ak-table-header-bg);
+	background: var(--ak-elevated);
 	border-color: var(--ak-border);
 }
 
@@ -151,9 +151,9 @@ body.adminkit.nav-menus-php .metabox-holder .accordion-section-title:hover .dash
 /* Tabs row inside each accordion content (Most Recent / View All / Search) */
 body.adminkit.nav-menus-php ul.add-menu-item-tabs li.tabs,
 body.adminkit.nav-menus-php ul.category-tabs li.tabs {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
-	border-bottom-color: var(--ak-surface-alt);
+	border-bottom-color: var(--ak-surface);
 	border-radius: var(--ak-radius-s) var(--ak-radius-s) 0 0;
 }
 
@@ -180,7 +180,7 @@ body.adminkit.nav-menus-php .posttypediv div.tabs-panel,
 body.adminkit.nav-menus-php .taxonomydiv div.tabs-panel,
 body.adminkit.nav-menus-php .customlinkdiv div.tabs-panel,
 body.adminkit.nav-menus-php .wp-tab-panel {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	border-radius: 0 var(--ak-radius-s) var(--ak-radius-s) var(--ak-radius-s);
 	color: var(--ak-text);
@@ -195,7 +195,7 @@ body.adminkit.nav-menus-php div.tabs-panel-active:focus {
 
 /* Quick search input inside the Search tab */
 body.adminkit.nav-menus-php .quick-search-wrap .quick-search {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }

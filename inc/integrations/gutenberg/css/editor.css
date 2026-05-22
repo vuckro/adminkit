@@ -31,8 +31,8 @@ body.block-editor-page.adminkit .components-button.is-primary:hover:not(:disable
 body.block-editor-page.adminkit .components-button.is-primary:focus:not(:disabled),
 body.block-editor-page.adminkit .editor-post-publish-button:hover:not(:disabled),
 body.block-editor-page.adminkit .editor-post-publish-button:focus:not(:disabled) {
-	background: var(--ak-primary-dark) !important;
-	border-color: var(--ak-primary-dark) !important;
+	background: var(--ak-primary-hover) !important;
+	border-color: var(--ak-primary-hover) !important;
 	color: #ffffff !important;
 }
 

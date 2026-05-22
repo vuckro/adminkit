@@ -15,7 +15,7 @@ body.adminkit .theme-browser .theme .theme-actions {
 }
 
 body.adminkit .theme-browser .theme .theme-actions .button:not(.button-primary) {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 	border-color: var(--ak-border);
 }
@@ -48,7 +48,7 @@ body.adminkit .theme-install-overlay .wp-full-overlay-sidebar {
 }
 
 body.adminkit .theme-install-overlay .wp-full-overlay-sidebar-content {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-top-color: var(--ak-border);
 	border-bottom-color: var(--ak-border);
 }
@@ -98,7 +98,7 @@ body.adminkit .wp-full-overlay-footer .devices button:before {
 
 body.adminkit .wp-full-overlay-footer .devices button:hover,
 body.adminkit .wp-full-overlay-footer .devices button:focus {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 }
 
 body.adminkit .wp-full-overlay-footer .devices button:hover:before,
@@ -158,7 +158,7 @@ body.adminkit .wp-filter .favorites-form {
 }
 
 body.adminkit .filter-group {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 	color: var(--ak-text);
@@ -167,7 +167,7 @@ body.adminkit .filter-group {
 
 body.adminkit.show-filters .wp-filter .button.drawer-toggle {
 	background: var(--ak-text-muted);
-	color: var(--ak-surface-alt);
+	color: var(--ak-surface);
 }
 
 body.adminkit.show-filters .wp-filter .drawer-toggle:hover,
@@ -176,7 +176,7 @@ body.adminkit.show-filters .wp-filter .drawer-toggle:focus {
 }
 
 body.adminkit .filtered-by .tag {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 	color: var(--ak-text);

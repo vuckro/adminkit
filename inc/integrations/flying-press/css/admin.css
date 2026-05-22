@@ -41,7 +41,7 @@ body.adminkit.toplevel_page_flying-press .text-indigo-700 {
 
 body.adminkit.toplevel_page_flying-press .hover\:text-indigo-700:hover,
 body.adminkit.toplevel_page_flying-press .hover\:text-indigo-600:hover {
-	color: var(--ak-primary-dark) !important;
+	color: var(--ak-primary-hover) !important;
 }
 
 /* Solid brand fills (primary buttons, toggle "on" track, badges) */
@@ -51,12 +51,12 @@ body.adminkit.toplevel_page_flying-press .bg-indigo-700 {
 }
 
 body.adminkit.toplevel_page_flying-press .hover\:bg-indigo-700:hover {
-	background-color: var(--ak-primary-dark) !important;
+	background-color: var(--ak-primary-hover) !important;
 }
 
 /* Soft brand wash (selected rows, info callouts) */
 body.adminkit.toplevel_page_flying-press .bg-indigo-50 {
-	background-color: var(--ak-primary-soft) !important;
+	background-color: var(--ak-primary-subtle) !important;
 }
 
 body.adminkit.toplevel_page_flying-press .border-indigo-600 {
@@ -106,7 +106,7 @@ body.adminkit.toplevel_page_flying-press .focus\:\!outline-indigo-600:focus {
 
 /* Cards, panels, dropdowns, toggle knob */
 body.adminkit.toplevel_page_flying-press .bg-white {
-	background-color: var(--ak-surface-alt) !important;
+	background-color: var(--ak-surface) !important;
 }
 
 /* Page-level / recessed section background */

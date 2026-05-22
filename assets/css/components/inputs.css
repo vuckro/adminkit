@@ -20,8 +20,8 @@ body.adminkit input[type="color"],
 body.adminkit textarea,
 body.adminkit select,
 body.adminkit .wp-core-ui select {
-	background: var(--ak-field-bg);
-	border: 1px solid var(--ak-field-border);
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	font-family: var(--ak-font-body);
@@ -67,7 +67,7 @@ body.adminkit select:focus {
 body.adminkit .wp-core-ui select:hover,
 body.adminkit select:hover {
 	color: var(--ak-heading);
-	border-color: var(--ak-field-border-hover);
+	border-color: var(--ak-border-strong);
 }
 
 /* Checkboxes & radios */
@@ -75,7 +75,7 @@ body.adminkit input[type="checkbox"],
 body.adminkit input[type="radio"] {
 	border: 1px solid var(--ak-border-strong);
 	border-radius: 3px;
-	background: var(--ak-field-bg);
+	background: var(--ak-surface);
 	width: 16px;
 	height: 16px;
 }

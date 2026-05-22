@@ -42,8 +42,8 @@ body.adminkit .bricks-block-editor-notice-wrapper .button.button-primary:focus,
 body.adminkit .bricks-classic-editor-wrapper .button.button-primary:focus,
 body.adminkit .bricks-editor .wp-editor-container .button.button-primary:focus,
 body.adminkit .edit-post-header-toolbar .button.button-primary:focus {
-	background-color: var(--ak-primary-dark);
-	border-color: var(--ak-primary-dark);
+	background-color: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
 	color: #ffffff;
 }
 
@@ -98,7 +98,7 @@ body.adminkit .bricks-block-editor-notice-wrapper .button.button-primary:hover,
 body.adminkit .bricks-block-editor-notice-wrapper .button.button-primary:focus,
 body.adminkit .bricks-block-editor-notice-wrapper a.button-primary:hover,
 body.adminkit .bricks-block-editor-notice-wrapper a.button-primary:focus {
-	background: var(--ak-primary-dark);
+	background: var(--ak-primary-hover);
 	color: #ffffff;
 }
 

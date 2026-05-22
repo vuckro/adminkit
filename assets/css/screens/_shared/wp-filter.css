@@ -4,7 +4,7 @@
    none of which flips. Route the surface globally so every browse page
    picks it up. */
 body.adminkit .wp-filter {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 	box-shadow: none;
@@ -29,5 +29,5 @@ body.adminkit .filter-links .current {
 body.adminkit .title-count,
 body.adminkit .filter-count .count {
 	background: var(--ak-text-muted);
-	color: var(--ak-surface-alt);
+	color: var(--ak-surface);
 }

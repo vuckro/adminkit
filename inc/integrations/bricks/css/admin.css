@@ -23,11 +23,11 @@ body.adminkit {
 	   leaves these semantic vars at light hardcoded values that don't flip in
 	   dark mode — route to a subtle tint of the matching AdminKit status token
 	   plus the token itself for the text. */
-	--bricks-bg-info: color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface-alt));
+	--bricks-bg-info: color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface));
 	--bricks-text-info: var(--ak-info);
-	--bricks-bg-success: color-mix(in srgb, var(--ak-success) 14%, var(--ak-surface-alt));
+	--bricks-bg-success: color-mix(in srgb, var(--ak-success) 14%, var(--ak-surface));
 	--bricks-text-success: var(--ak-success);
-	--bricks-bg-warning: color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface-alt));
+	--bricks-bg-warning: color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface));
 	--bricks-text-warning: var(--ak-warning);
 	--bricks-bg-danger: var(--ak-error-subtle);
 	--bricks-text-danger: var(--ak-error);
@@ -50,7 +50,7 @@ body.adminkit .bricks-admin-wrapper .bricks-admin-lead {
 /* Getting Started / License / Sidebars / System Information all wrap
    content in `.bricks-admin-inner` with hardcoded `background: #fff`. */
 body.adminkit .bricks-admin-wrapper .bricks-admin-inner {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -58,7 +58,7 @@ body.adminkit .bricks-admin-wrapper .bricks-admin-inner {
 /* Bricks feedback form inner shell hardcodes white. Route to token surface
    so the panel follows AdminKit light/dark theme mapping consistently. */
 body.adminkit .bricks-admin-wrapper #bricks-feedback-form-inner {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -82,7 +82,7 @@ body.adminkit #bricks-settings tr {
 
 body.adminkit #bricks-settings th,
 body.adminkit #bricks-settings td {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -92,7 +92,7 @@ body.adminkit #bricks-settings th {
 }
 
 body.adminkit #bricks-settings .section {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -151,7 +151,7 @@ body.adminkit #bricks-settings .bricks-custom-capabilities-wrapper .capability-i
    bypass our standard list-table styling because Bricks applies
    higher-spec overrides. */
 body.bricks_page_bricks-elements.adminkit form#bricks-element-manager .submit-wrapper.sticky {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	box-shadow: none;
@@ -160,7 +160,7 @@ body.bricks_page_bricks-elements.adminkit form#bricks-element-manager .submit-wr
 /* Outer table shell — token surface + border + radius matching the
    rest of AdminKit's list tables. */
 body.adminkit .wp-list-table.elements {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	border-collapse: separate;
@@ -195,12 +195,12 @@ body.adminkit.bricks_page_bricks-elements form#bricks-element-manager tr:not(:la
 	box-shadow: 0 1px 0 0 var(--ak-border);
 }
 
-/* Row hover — neutral --ak-surface-accent to match the global list-table
+/* Row hover — neutral --ak-elevated to match the global list-table
    hover (plugins, posts) in components/tables.css. Bricks paints its own
    #f6f6f6 bg + 1px box-shadow separator on hover; both are replaced here. */
 body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover,
 body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover td {
-	background-color: var(--ak-surface-accent);
+	background-color: var(--ak-elevated);
 	box-shadow: none;
 }
 
@@ -285,7 +285,7 @@ body.adminkit .bricks-admin-wrapper code {
 
 /* ----- 8. Sidebars page table ----- */
 body.adminkit .bricks-admin-wrapper.sidebars table {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
@@ -302,7 +302,7 @@ body.adminkit .bricks-admin-wrapper.sidebars table th {
 
 /* ----- 9. License page form ----- */
 body.adminkit .bricks-admin-wrapper.license form {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 }
 
 body.adminkit .bricks-admin-wrapper.license form input[type="text"] {
@@ -314,7 +314,7 @@ body.adminkit .bricks-admin-wrapper.license form input[type="text"] {
 
 /* ----- 10. Import form ----- */
 body.adminkit #bricks-admin-import-form-wrapper {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }

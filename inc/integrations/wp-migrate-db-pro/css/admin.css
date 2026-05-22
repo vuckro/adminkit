@@ -67,7 +67,7 @@ body.adminkit.tools_page_wp-migrate-db-pro #root > div > div.nav-wrap > div > ul
 }
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav-wrap {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-bottom-color: var(--ak-border);
 }
 
@@ -75,7 +75,7 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav-wrap {
    .shadow-div (action panels, profile tables, nested accordions). */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .container-shadow,
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .shadow-div {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	box-shadow: none;
@@ -113,7 +113,7 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wr
 /* Panel body surface (.action-panel .panel-body) + dividers —
    bundled #fff / #d6d6d6 don't flip. */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-body {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-top-color: var(--ak-border);
 }
 
@@ -216,13 +216,13 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn {
 }
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn:hover {
-	background-color: var(--ak-primary-dark);
-	border-color: var(--ak-primary-dark);
+	background-color: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
 }
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn:active {
-	background-color: var(--ak-primary-dark);
-	border-color: var(--ak-primary-dark);
+	background-color: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
 }
 
 /* Destructive variant keeps the red intent */
@@ -325,7 +325,7 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .wpmdb-form input[type="checkb
 
 /* Compat plugin list card */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .wpmdb-settings-page .compat-plugin-list {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 }
@@ -381,7 +381,7 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .search-replace .custom-search
 
 /* ===== Migration progress card ===== */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .migration-progress {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	box-shadow: none;
@@ -397,11 +397,11 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .migration-percentage {
    the token pair so striped tables (profiles, logs, migration
    details) flip cleanly. */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb tr:nth-child(odd) {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 }
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb tr:nth-child(2n) {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 }
 
 
@@ -447,8 +447,8 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn-stroke {
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn-stroke:hover,
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn-stroke:focus {
 	background: var(--primary-t-1, var(--ak-hover-bg));
-	border-color: var(--ak-primary-dark);
-	color: var(--ak-primary-dark);
+	border-color: var(--ak-primary-hover);
+	color: var(--ak-primary-hover);
 }
 
 
@@ -483,7 +483,7 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .accordion-locked {
 }
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nested-accordion {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }
@@ -515,7 +515,7 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nested-accordion-expanded-bod
    them flips with the theme. Semantic intents (.bg-success /
    -alert / -error) stay as-is — they're per-state cues. */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .bg-white {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 }
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .bg-primary {

@@ -5,12 +5,12 @@
    black) which looks fine in both modes. */
 
 body.adminkit .theme-browser .theme {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
 body.adminkit .theme-id-container {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-top-color: var(--ak-border);
 }
 

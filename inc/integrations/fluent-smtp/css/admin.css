@@ -35,7 +35,7 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_content {
    "Total Email Sent: 2". Mute the label, emphasize the value, add
    a row separator + hover tint for scannability. */
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_dash_lists {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	margin: 0;
@@ -73,7 +73,7 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_dash_lists li > sp
    by the Vue template — needs !important to override. Also kill the
    inline-style box-shadow if any. */
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_widget {
-	background: var(--ak-surface-alt) !important;
+	background: var(--ak-surface) !important;
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
@@ -123,7 +123,7 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_label_info {
    borders disappear into the bg and only the heat color remains. */
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_widget_header > div,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_widget_body .fcraft_time_day .fcraft_time_hour {
-	border-color: var(--ak-surface-alt);
+	border-color: var(--ak-surface);
 }
 
 /* Day-of-week + hour labels (Mon/Tue/… and 1am/4am/…) — give them
@@ -143,7 +143,7 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour .fcra
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .mailer-block,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .email-stat,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-mailer-image {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
@@ -171,7 +171,7 @@ body.adminkit.settings_page_fluent-mail .fss_connection_intro {
    it; the token border carries the edge. */
 body.adminkit.settings_page_fluent-mail .fss_connection_intro .fss_config_section,
 body.adminkit.settings_page_fluent-mail .fss_config_section {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	box-shadow: none;
@@ -191,10 +191,10 @@ body.adminkit.settings_page_fluent-mail .fss_connection_info th {
 
 /* Provider-picker radio buttons inside the wizard (the AWS /
    Mailgun / SendGrid / … tiles). The default radio-button bg was
-   already routed to --ak-surface-alt above; this restores neutral
+   already routed to --ak-surface above; this restores neutral
    token border for the unselected state too. */
 body.adminkit.settings_page_fluent-mail .fss_connection_wizard .fss_connections .el-radio-button__inner {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
@@ -228,7 +228,7 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-mailer-ima
    solid #3f9eff` and a matching #3f9eff check-icon fill. Route both
    to AdminKit tokens so the selected state speaks the brand. */
 body.adminkit.settings_page_fluent-mail .fsmtp_conncection_selected {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-primary);
 }
 
@@ -271,8 +271,8 @@ body.adminkit.settings_page_fluent-mail .el-button--primary {
 
 body.adminkit.settings_page_fluent-mail .el-button--primary:hover,
 body.adminkit.settings_page_fluent-mail .el-button--primary:focus {
-	background-color: var(--ak-primary-dark);
-	border-color: var(--ak-primary-dark);
+	background-color: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
 	color: #ffffff;
 }
 
@@ -287,8 +287,8 @@ body.adminkit.settings_page_fluent-mail .el-button--success {
 
 body.adminkit.settings_page_fluent-mail .el-button--success:hover,
 body.adminkit.settings_page_fluent-mail .el-button--success:focus {
-	background-color: var(--ak-primary-dark);
-	border-color: var(--ak-primary-dark);
+	background-color: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
 	color: #ffffff;
 }
 
@@ -309,7 +309,7 @@ body.adminkit.settings_page_fluent-mail .el-button--danger {
 /* Info / default ghost — neutral surface */
 body.adminkit.settings_page_fluent-mail .el-button--info,
 body.adminkit.settings_page_fluent-mail .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--text) {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -331,7 +331,7 @@ body.adminkit.settings_page_fluent-mail .el-button--text {
 body.adminkit.settings_page_fluent-mail .el-input__inner,
 body.adminkit.settings_page_fluent-mail .el-textarea__inner,
 body.adminkit.settings_page_fluent-mail .el-select .el-input__inner {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -362,7 +362,7 @@ body.adminkit.settings_page_fluent-mail .el-radio {
 
 body.adminkit.settings_page_fluent-mail .el-checkbox__inner,
 body.adminkit.settings_page_fluent-mail .el-radio__inner {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
@@ -391,7 +391,7 @@ body.adminkit.settings_page_fluent-mail .el-table__body-wrapper,
 body.adminkit.settings_page_fluent-mail .el-table tr,
 body.adminkit.settings_page_fluent-mail .el-table th,
 body.adminkit.settings_page_fluent-mail .el-table td {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -459,7 +459,7 @@ body.adminkit.settings_page_fluent-mail .el-tabs--border-card > .el-tabs__header
 /* ===== Element UI cards + dialogs ===== */
 body.adminkit.settings_page_fluent-mail .el-card,
 body.adminkit.settings_page_fluent-mail .el-dialog {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	color: var(--ak-text);
@@ -667,7 +667,7 @@ body.adminkit.settings_page_fluent-mail .el-pagination .btn-prev,
 body.adminkit.settings_page_fluent-mail .el-pagination .btn-next,
 body.adminkit.settings_page_fluent-mail .el-pager li,
 body.adminkit.settings_page_fluent-mail .el-pagination.is-background .el-pager li {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -686,7 +686,7 @@ body.adminkit.settings_page_fluent-mail .el-pager li:not(.disabled):hover {
 /* ===== Element UI menus / dropdowns ===== */
 body.adminkit.settings_page_fluent-mail .el-menu,
 body.adminkit.settings_page_fluent-mail .el-dropdown-menu {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -718,7 +718,7 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-navigation
 
 /* ===== Element UI select dropdown panel ===== */
 body.adminkit.settings_page_fluent-mail .el-select-dropdown {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }
@@ -741,7 +741,7 @@ body.adminkit.settings_page_fluent-mail .el-select-dropdown__item.selected {
 
 /* ===== Element UI radio-button group (segmented control) ===== */
 body.adminkit.settings_page_fluent-mail .el-radio-button__inner {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -756,13 +756,13 @@ body.adminkit.settings_page_fluent-mail .el-radio-button__orig-radio:checked + .
 
 /* ===== Element UI date-range editor inputs ===== */
 body.adminkit.settings_page_fluent-mail .el-range-editor {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
 body.adminkit.settings_page_fluent-mail .el-range-editor .el-range-input,
 body.adminkit.settings_page_fluent-mail .el-range-editor--small .el-range-input {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-text);
 }
 

@@ -30,12 +30,21 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a:f
 
 
 /* ===== Tab content tables ===== */
+/* Round each settings table as a card (more modern than the square grid). The
+   cell borders below draw a single-line grid (cells: bottom+right; tbody:
+   left+top), so border-collapse:separate + spacing:0 keeps single borders while
+   the radius + overflow clip the outer corners. */
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table {
+	border-collapse: separate;
+	border-spacing: 0;
+	border-radius: var(--ak-radius-m);
+	overflow: hidden;
+}
+
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tbody {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-left-color: var(--ak-border);
 	border-top-color: var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	overflow: hidden;
 }
 
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tbody th,
@@ -120,7 +129,7 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-license-key-field in
 
 /* "Deactivate license" + similar secondary buttons inside the table */
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .button-secondary {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);

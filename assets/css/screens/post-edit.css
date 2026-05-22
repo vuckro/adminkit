@@ -11,7 +11,7 @@
 
 /* ----- Classic editor title input ----- */
 body.adminkit:is(.post-php, .post-new-php) #titlediv #title {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	color: var(--ak-text);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-s);

@@ -4,7 +4,7 @@
    #006799 on hover, all unreadable in dark mode. */
 
 body.adminkit #TB_window {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	color: var(--ak-text);
 }
 

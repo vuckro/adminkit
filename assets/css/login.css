@@ -27,7 +27,7 @@ body.login.adminkit {
 /* Form card — flat, no shadow */
 #loginform,
 .login form {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	padding: 24px;
@@ -37,7 +37,7 @@ body.login.adminkit {
 .login input[type="text"],
 .login input[type="password"],
 .login input[type="email"] {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
@@ -99,8 +99,8 @@ body.login.adminkit {
 .login .button-primary:focus,
 #wp-submit:hover,
 #wp-submit:focus {
-	background: var(--ak-primary-dark) !important;
-	border-color: var(--ak-primary-dark) !important;
+	background: var(--ak-primary-hover) !important;
+	border-color: var(--ak-primary-hover) !important;
 	color: #ffffff !important;
 }
 
@@ -141,7 +141,7 @@ body.login.adminkit {
 .login .message,
 .login #login_error,
 .login .notice {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-left: 4px solid var(--ak-info);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
@@ -159,7 +159,7 @@ body.login.adminkit {
 
 /* Language switcher */
 .login .language-switcher select {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);

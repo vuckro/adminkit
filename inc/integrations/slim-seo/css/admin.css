@@ -50,7 +50,7 @@ body.adminkit.settings_page_slim-seo #wpwrap #wpcontent #wpbody .ss-title {
    the Meta Tags React app (same #fff surface, no border). */
 body.adminkit.settings_page_slim-seo .ss-tabs,
 body.adminkit.settings_page_slim-seo .react-tabs {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
@@ -91,7 +91,7 @@ body.adminkit.settings_page_slim-seo .ss-tab.ss-is-active {
 
 /* ----- 4. Postboxes used as content sections ----- */
 body.adminkit.settings_page_slim-seo .postbox {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 	box-shadow: none;
@@ -133,7 +133,7 @@ body.adminkit.settings_page_slim-seo .ss-toggle__switch {
 }
 
 body.adminkit.settings_page_slim-seo .ss-toggle__switch:before {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	transition: none;
 }
 
