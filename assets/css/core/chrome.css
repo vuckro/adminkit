@@ -150,16 +150,13 @@ body.adminkit #adminmenu .wp-submenu a:focus {
 	background: var(--primary-t-1, var(--ak-hover-bg)) !important;
 }
 
-/* Current submenu item — wash the row in a tinted brand color so the
-   active page is visible at a glance. `--primary-t-1` is Bricks's
-   ~9%-opacity primary tint (piped via the Bricks integration); falls
-   back to `--ak-hover-bg` on sites without a token provider so the
-   row still reads as "selected" without leaning on a hardcoded color. */
+/* Current submenu item — primary-colored bold text, no background
+   wash. The brand color + weight bump alone is enough to signal
+   "active page" without painting the whole row. */
 body.adminkit #adminmenu .wp-submenu li.current a,
 body.adminkit #adminmenu .wp-submenu li.current a:hover,
 body.adminkit #adminmenu .wp-submenu li.current a:focus {
-	color: var(--ak-heading) !important;
-	background: var(--ak-hover-bg) !important;
+	color: var(--ak-primary);
 	font-weight: 600;
 }
 
