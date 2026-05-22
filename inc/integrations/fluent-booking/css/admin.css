@@ -883,3 +883,16 @@ body.adminkit.toplevel_page_fluent-booking .apexcharts-tooltip-title {
 	background: var( --ak-surface ) !important;
 	border-bottom-color: var( --ak-border ) !important;
 }
+
+
+/* Flatten settings panels — drop the inner --fcal-primary-bg surface so the
+   availability / uses-list panels sit flat in their wrap (selectors mirror
+   FB's chains + the body prefix, so they win without !important). */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_settings_availability .fcal_settings_content_wrap {
+	background: transparent;
+}
+
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_settings_availability_details .fcal_uses_lists_wrap .fcal_uses_list_body {
+	background: transparent;
+	padding: 0;
+}
