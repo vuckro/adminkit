@@ -523,6 +523,14 @@ body.adminkit.settings_page_ame-admin-customizer #ws_user_selection_panels .ws_u
 	color: var(--ak-text);
 }
 
+/* Category nav toggle hover — hardcoded #3ECEF9 (cyan) on the
+   collapse/expand chevron next to category headings. Route to
+   --ak-primary so the interactive cue stays on-brand. */
+body.adminkit.settings_page_ame-easy-hide .ame-cat-nav-toggle:hover,
+body.adminkit.settings_page_ame-easy-hide .ame-cat-nav-toggle:focus {
+	color: var(--ak-primary);
+}
+
 /* Bottom action bar — appears beneath the item list. */
 body.adminkit.settings_page_ame-easy-hide .ame-eh-bottom-bar {
 	background-color: var(--ak-surface);
