@@ -51,6 +51,9 @@ body.adminkit textarea:focus,
 body.adminkit select:focus {
 	border-color: var(--ak-primary);
 	background: var(--ak-primary-subtle);
+	/* WP's `.wp-core-ui select:focus` hardcodes `color: #1e1e1e`, which stays
+	   near-black (invisible) on the dark focus tint — pin it to the token. */
+	color: var(--ak-text);
 	box-shadow: none;
 	outline: none;
 }

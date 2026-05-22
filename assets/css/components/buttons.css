@@ -147,3 +147,33 @@ body.adminkit .wp-core-ui .button.button-small {
 	min-height: 26px;
 	line-height: 2;
 }
+
+/* "Remove site icon" (Settings → Site Icon, Customizer). WP's `.reset`
+   button turns solid red with white text + a ring on hover. Soften to a
+   flat danger button — light red fill, subtle red border, red label, no
+   shadow — in both the resting and hover/focus states. */
+body.adminkit button.remove-site-icon {
+	background: var(--ak-error-subtle);
+	border: 1px solid color-mix(in srgb, var(--ak-error) 35%, transparent);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-error);
+	box-shadow: none;
+}
+
+body.adminkit button.remove-site-icon:hover,
+body.adminkit button.remove-site-icon:focus {
+	background: color-mix(in srgb, var(--ak-error) 16%, var(--ak-surface-alt));
+	border-color: var(--ak-error);
+	color: var(--ak-error);
+	box-shadow: none;
+}
+
+/* List-table bulk-action "Apply" + the "Filter"/"Search" submit buttons —
+   drop the focus box-shadow ring for a flat focus (primary border only),
+   matching the input focus treatment. */
+body.adminkit #doaction:focus,
+body.adminkit #doaction2:focus,
+body.adminkit #post-query-submit:focus {
+	box-shadow: none;
+	border-color: var(--ak-primary);
+}
