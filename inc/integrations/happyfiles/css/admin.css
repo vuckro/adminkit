@@ -1,0 +1,94 @@
+/* HappyFiles — settings_page_happyfiles_settings.
+   HappyFiles renders its settings as `<table>` blocks (one per tab)
+   with hardcoded #fff bodies + #ccd0d4 grid borders, a `crimson`
+   delete button, and a light-blue `.happyfiles-info-box` callout
+   (#e7f3ff bg, #b7d7f2 border, #1d4f7a text). Route the chrome to
+   AdminKit tokens. */
+
+
+/* ===== Settings shell ===== */
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs {
+	border-bottom: 1px solid var(--ak-border);
+	margin: 0 0 24px;
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a {
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a.active,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a:hover,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a:focus {
+	color: var(--ak-primary);
+}
+
+
+/* ===== Tab content tables ===== */
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tbody {
+	background-color: var(--ak-surface-alt);
+	border-left-color: var(--ak-border);
+	border-top-color: var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tbody th,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tbody td {
+	border-bottom-color: var(--ak-border);
+	border-right-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tbody th {
+	color: var(--ak-heading);
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tbody .description {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table section {
+	border-bottom-color: var(--ak-border);
+}
+
+
+/* ===== Delete button — `crimson` hardcoded ===== */
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tfoot .delete button {
+	background-color: var(--ak-error);
+	border-color: var(--ak-error);
+	color: #ffffff;
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tfoot .delete button:hover,
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tfoot .delete button:focus {
+	background-color: var(--ak-error);
+	border-color: var(--ak-error);
+	filter: brightness(0.92);
+}
+
+
+/* ===== Status messages ===== */
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table .message.happyfiles-success {
+	color: var(--ak-success);
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table .message.happyfiles-error {
+	color: var(--ak-error);
+}
+
+
+/* ===== Info-box callout — light blue card ===== */
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table .description.happyfiles-info-box {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-s);
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table .description.happyfiles-info-box a {
+	color: var(--ak-primary);
+}
+
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table .description.happyfiles-info-box strong {
+	color: var(--ak-heading);
+}
