@@ -680,7 +680,6 @@ body.adminkit.toplevel_page_fluent-booking .mce-edit-area iframe {
 body.adminkit.toplevel_page_fluent-booking .mce-btn button,
 body.adminkit.toplevel_page_fluent-booking .mce-ico {
 	color: var( --ak-text ) !important;
-	background: transparent !important;
 }
 
 body.adminkit.toplevel_page_fluent-booking .mce-btn:hover button,
