@@ -47,6 +47,14 @@ body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
 	font-weight: 600;
 }
 
+/* Left-edge indicator for active plugins — a slim --ak-success
+   bar on the check-column. The .plugins tbody td/th reset above
+   sets `box-shadow: none` without !important, so this more
+   specific selector still wins on the cascade. */
+body.adminkit .wp-list-table.plugins tr.active th.check-column {
+	box-shadow: inset 4px 0 0 var(--ak-success);
+}
+
 /* Inactive plugins — keep the table surface, mute the title */
 body.adminkit .wp-list-table.plugins tr.inactive th,
 body.adminkit .wp-list-table.plugins tr.inactive td {
