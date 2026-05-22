@@ -79,12 +79,6 @@ body.adminkit .wrap .page-title-action:focus {
 	color: var(--primary-l-10, var(--ak-on-accent));
 }
 
-body.adminkit .button-primary:focus,
-body.adminkit .wp-core-ui .button-primary:focus,
-body.adminkit .wrap .page-title-action:focus {
-	box-shadow: var(--ak-focus-ring);
-}
-
 body.adminkit .button-primary:disabled,
 body.adminkit .button-primary.disabled,
 body.adminkit .wp-core-ui .button-primary:disabled,
