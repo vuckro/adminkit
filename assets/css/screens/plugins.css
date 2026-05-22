@@ -103,6 +103,22 @@ body.adminkit .wp-list-table.plugins .plugin-version-author-uri {
 	color: var(--ak-text-muted);
 }
 
+/* Activate / Deactivate row actions — color-code by intent.
+   Targeted by href so they match regardless of which class WP
+   ships them with. */
+body.adminkit.plugins-php .row-actions a[href*="action=activate"],
+body.adminkit.plugins-php .row-actions a[href*="action=activate"]:hover,
+body.adminkit.plugins-php .row-actions a[href*="action=activate"]:focus {
+	color: var(--ak-primary);
+}
+
+body.adminkit.plugins-php .row-actions a[href*="action=deactivate"],
+body.adminkit.plugins-php .row-actions a[href*="action=deactivate"]:hover,
+body.adminkit.plugins-php .row-actions a[href*="action=deactivate"]:focus {
+	color: var(--ak-warning);
+}
+
+
 /* Promo links injected via plugin_action_links / plugin_row_meta —
    targeted by exact href so the selectors are no-ops when the
    plugin isn't installed.
