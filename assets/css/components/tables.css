@@ -213,9 +213,11 @@ body.adminkit .wp-list-table .check-column input[type="checkbox"] {
 
 /* WP / Bricks paint a hover bg behind the checkbox via
    `.check-column input:hover + label, .check-column label:hover`.
-   Route to the same brand tint as the row hover so the column
-   blends instead of flashing a different color. */
+   The row hover above (`tr:hover td`) already paints the cell with
+   --primary-t-1; stacking the label bg on top would double-tint
+   and make the check-column visibly darker than the rest of the
+   row. Zero the label bg so the cell stays uniform. */
 body.adminkit .check-column input:hover + label,
 body.adminkit .check-column label:hover {
-	background: var(--primary-t-1, var(--ak-hover-bg));
+	background: transparent;
 }
