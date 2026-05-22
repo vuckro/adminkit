@@ -134,6 +134,45 @@ public static function register_assets() {
 
 See [ASSETS.md](ASSETS.md) for the full registry API.
 
+### Target the host's colors in the right order
+
+The cheapest adapter to maintain is the one that never touches the host's selectors. When you recolor a host UI, reach for these in order — earlier is more stable:
+
+1. **The host's own CSS variables** (`--fc-*`, `--el-*`). A near-stable API: remap them to `--ak-*` and the host follows, dark mode included. **Zero `!important`.** This is a *Tier A* adapter — see [fluent-crm](../inc/integrations/fluent-crm/css/admin.css).
+2. **Shallow utility / state classes** (`.bg-indigo-600`) — only when the host has no variable layer (e.g. a Tailwind app).
+3. **Deep component chains** (`.el-tabs .el-tabs__item.is-active`) — last resort. Brittle: they break the day the host renames a class.
+
+Always scope to the screen (`body.adminkit.{screen-id}`), and when you must hardcode a host literal, keep it in **one place** so a host change is a one-line fix.
+
+Run `php bin/adapter-audit.php` to see how much override debt each adapter carries — a Tier A adapter reports **0 `!important`**; the script fails if any adapter grows past its recorded ceiling.
+
+### Version-gate selector overrides (Tier B)
+
+An adapter that targets the host's selectors (*Tier B*) breaks **silently** when the host renames them — the override stops matching and the host's original colors bleed back. Declare the tested range so that case degrades to the host's clean native UI instead:
+
+```php
+protected static function host_version() {
+    return defined( 'FOO_VERSION' ) ? FOO_VERSION : null;
+}
+
+protected static function max_tested_host_version() {
+    return '2.1.1'; // bump after re-verifying the skin on a new host major
+}
+```
+
+Then bail the override stylesheet when out of range:
+
+```php
+public static function register_assets() {
+    if ( ! static::host_within_tested_range() ) {
+        return; // host moved past the tested major — fall back to native UI
+    }
+    AdminKit_Assets::register( array( /* … */ ) );
+}
+```
+
+The gate compares **major** versions, so the skin survives the host's minor/patch updates and only steps aside on a new major. Pure variable-remap (Tier A) adapters leave both methods unset. The [fluent-booking](../inc/integrations/fluent-booking/class-fluent-booking.php) and [flying-press](../inc/integrations/flying-press/class-flying-press.php) adapters are the reference.
+
 ### Register a dashboard widget
 
 Use `AdminKit_Dashboard::register_widget()` to surface host-specific stats on the WP dashboard. The registry only mounts `wp_dashboard_setup` if at least one widget is registered, so the cost on a vanilla site is zero.
@@ -164,6 +203,7 @@ Integrations can also expose their own filters for downstream customization. Nam
 - **No hard dependencies on the host.** `class_exists()` / `defined()` checks must live in `is_active()`. Removing the host plugin must not break AdminKit.
 - **No global state mutation outside `boot()`.** Hooks are wired only when active; class constants are fine; static caches are fine; modifying global options or DB rows from an integration is not.
 - **Don't load CSS unconditionally.** Always scope via a `condition` closure. A site running the Fluent plugin globally would otherwise pay the cost on every page.
+- **Don't target deep host component chains when a CSS variable exists.** `.el-tabs .el-tabs__item.is-active { … !important }` breaks when the host reshuffles classes; remapping the host's `--fc-*` / `--el-*` variable doesn't. Use selectors only when the host hardcodes its colors — and version-gate them (see above).
 
 ---
 

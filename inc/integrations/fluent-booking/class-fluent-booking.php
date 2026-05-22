@@ -45,6 +45,23 @@ class AdminKit_Integration_Fluent_Booking extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * @return string|null
+	 */
+	protected static function host_version() {
+		return defined( 'FLUENT_BOOKING_VERSION' ) ? FLUENT_BOOKING_VERSION : null;
+	}
+
+	/**
+	 * Verified against FluentBooking 2.x. Bump after re-checking the skin on a
+	 * new major — register_assets() falls back to native UI until you do.
+	 *
+	 * @return string|null
+	 */
+	protected static function max_tested_host_version() {
+		return '2.1.1';
+	}
+
+	/**
 	 * FluentBooking registers a top-level menu with slug `fluent-booking`
 	 * via `add_menu_page()`, giving the screen id
 	 * `toplevel_page_fluent-booking`. Every sub-page is a hash route under
@@ -61,6 +78,12 @@ class AdminKit_Integration_Fluent_Booking extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function register_assets() {
+		// FluentBooking hardcodes its blue into ~126 Element Plus states; a new
+		// major could rename them, leaving the override missing and the host
+		// blue bleeding back. Fall back to FluentBooking's native UI instead.
+		if ( ! static::host_within_tested_range() ) {
+			return;
+		}
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-fluent-booking-admin',
 			'src'       => 'inc/integrations/fluent-booking/css/admin.css',

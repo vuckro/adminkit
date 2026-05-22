@@ -40,6 +40,23 @@ class AdminKit_Integration_Flying_Press extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * @return string|null
+	 */
+	protected static function host_version() {
+		return defined( 'FLYING_PRESS_VERSION' ) ? FLYING_PRESS_VERSION : null;
+	}
+
+	/**
+	 * Verified against FlyingPress 5.x. Bump after re-checking the skin on a
+	 * new major — register_assets() falls back to native UI until you do.
+	 *
+	 * @return string|null
+	 */
+	protected static function max_tested_host_version() {
+		return '5.4.5';
+	}
+
+	/**
 	 * FlyingPress registers a top-level menu with slug `flying-press`
 	 * via `add_menu_page()`, which gives the screen ID
 	 * `toplevel_page_flying-press`. The matching admin body class is
@@ -56,6 +73,12 @@ class AdminKit_Integration_Flying_Press extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function register_assets() {
+		// FlyingPress remaps Tailwind utilities with !important; a new major
+		// could restructure them, leaving a broken skin. Fall back to
+		// FlyingPress's native UI until the override is re-verified.
+		if ( ! static::host_within_tested_range() ) {
+			return;
+		}
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-flying-press-admin',
 			'src'       => 'inc/integrations/flying-press/css/admin.css',
