@@ -18,6 +18,19 @@ body.adminkit {
 	--bricks-bg-dark: var(--ak-surface);
 	--bricks-border-color: var(--ak-border);
 	--admin-color-border: var(--ak-border);
+
+	/* Inline message boxes (.message.info / .success / .error, etc.). Bricks
+	   leaves these semantic vars at light hardcoded values that don't flip in
+	   dark mode — route to a subtle tint of the matching AdminKit status token
+	   plus the token itself for the text. */
+	--bricks-bg-info: color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface-alt));
+	--bricks-text-info: var(--ak-info);
+	--bricks-bg-success: color-mix(in srgb, var(--ak-success) 14%, var(--ak-surface-alt));
+	--bricks-text-success: var(--ak-success);
+	--bricks-bg-warning: color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface-alt));
+	--bricks-text-warning: var(--ak-warning);
+	--bricks-bg-danger: var(--ak-error-subtle);
+	--bricks-text-danger: var(--ak-error);
 }
 
 
@@ -50,9 +63,11 @@ body.adminkit .bricks-admin-wrapper #bricks-feedback-form-inner {
 	color: var(--ak-text);
 }
 
-/* Getting Started step boxes — divider via box-shadow */
+/* Getting Started step boxes — bordered rounded cards. */
 body.adminkit .bricks-admin-wrapper.getting-started .box-wrapper {
-	box-shadow: 0 -1px 0 var(--ak-border);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	box-shadow: none;
 }
 
 
@@ -180,13 +195,12 @@ body.adminkit.bricks_page_bricks-elements form#bricks-element-manager tr:not(:la
 	box-shadow: 0 1px 0 0 var(--ak-border);
 }
 
-/* Row hover — brand-tint primary-t-1, consistent with the global
-   list-table hover defined in components/tables.css. The earlier
-   --ak-surface + 1px shadow read as a different language than the
-   rest of admin. */
+/* Row hover — neutral --ak-surface-accent to match the global list-table
+   hover (plugins, posts) in components/tables.css. Bricks paints its own
+   #f6f6f6 bg + 1px box-shadow separator on hover; both are replaced here. */
 body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover,
 body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover td {
-	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	background-color: var(--ak-surface-accent);
 	box-shadow: none;
 }
 
@@ -303,4 +317,41 @@ body.adminkit #bricks-admin-import-form-wrapper {
 	background-color: var(--ak-surface-alt);
 	border-color: var(--ak-border);
 	box-shadow: none;
+}
+
+
+/* ----- 11. Modernization: rounded corners ----- */
+/* Card / panel surfaces that ship with a border but square corners. */
+body.adminkit .bricks-admin-wrapper .bricks-admin-inner,
+body.adminkit .bricks-admin-wrapper #bricks-feedback-form-inner,
+body.adminkit .bricks-admin-wrapper.license form,
+body.adminkit .bricks-admin-wrapper.sidebars .new-sidebar-wrapper form,
+body.adminkit #bricks-admin-import-form-wrapper {
+	border-radius: var(--ak-radius-m);
+}
+
+/* Settings tab table — #bricks-settings table.active is the visible tab.
+   Bricks renders it with border-spacing:0 (separate model), so a border +
+   radius + overflow:hidden rounds it as a card. */
+body.adminkit #bricks-settings table.active {
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	overflow: hidden;
+}
+
+/* Registered-sidebars + System Information list tables — round as cards
+   (cells already carry token borders). Scoped to the list wrappers so the
+   new-sidebar form's inner layout table isn't boxed. */
+body.adminkit .bricks-admin-wrapper.sidebars .registered-sidebars-wrapper table,
+body.adminkit .bricks-admin-wrapper.system-information table {
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+}
+
+/* Welcome / Getting Started: round the version badge next to the title. */
+body.adminkit .bricks-admin-wrapper .badge {
+	border-radius: var(--ak-radius-s);
 }
