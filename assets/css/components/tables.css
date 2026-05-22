@@ -94,7 +94,8 @@ body.adminkit .wp-list-table tbody tr:first-child th {
 }
 
 body.adminkit .wp-list-table tbody tr:hover,
-body.adminkit .wp-list-table tbody tr:hover td {
+body.adminkit .wp-list-table tbody tr:hover td,
+body.adminkit .wp-list-table tbody tr:hover th {
 	background: var(--primary-t-1, var(--ak-hover-bg));
 }
 
