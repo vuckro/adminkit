@@ -38,12 +38,76 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-mailer-ima
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
+	box-shadow: none;
 }
 
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .email-stat:hover,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-mailer-image:hover {
 	background: var(--primary-t-1, var(--ak-hover-bg));
 	border-color: var(--ak-border-strong);
+	box-shadow: none;
+}
+
+
+/* ===== Edit Connection page (#/connection?...) ===== */
+
+/* Outer light blue-grey wrapper (#eff4f7) */
+body.adminkit.settings_page_fluent-mail .fss_connection_intro {
+	background: var(--ak-surface);
+	border-radius: var(--ak-radius-s);
+}
+
+/* Nested white sections (provider grid + form panels) */
+body.adminkit.settings_page_fluent-mail .fss_connection_intro .fss_config_section {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+}
+
+/* Connection info table (sender summary, provider details) */
+body.adminkit.settings_page_fluent-mail .fss_connection_info th,
+body.adminkit.settings_page_fluent-mail .fss_connection_info td {
+	color: var(--ak-text);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_fluent-mail .fss_connection_info th {
+	color: var(--ak-heading);
+}
+
+/* Provider-picker radio buttons inside the wizard (the AWS /
+   Mailgun / SendGrid / … tiles). The default radio-button bg was
+   already routed to --ak-surface-alt above; this restores neutral
+   token border for the unselected state too. */
+body.adminkit.settings_page_fluent-mail .fss_connection_wizard .fss_connections .el-radio-button__inner {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+/* Selected provider tile — the bundled CSS ships per-provider
+   overrides (`.con_gmail.is-active`, `.con_outlook.is-active`
+   red, `.con_postmark.is-active` yellow, etc.) with !important.
+   Force the brand border + a soft tint so every active provider
+   reads with the same brand cue regardless of which one Fluent
+   ships colors for. */
+body.adminkit.settings_page_fluent-mail .fss_connection_wizard .fss_connections .el-radio-button.is-active .el-radio-button__inner,
+body.adminkit.settings_page_fluent-mail .fss_connection_wizard .fss_connections .el-radio-button.is-active.con_gmail .el-radio-button__inner,
+body.adminkit.settings_page_fluent-mail .fss_connection_wizard .fss_connections .el-radio-button.is-active.con_outlook .el-radio-button__inner,
+body.adminkit.settings_page_fluent-mail .fss_connection_wizard .fss_connections .el-radio-button.is-active.con_postmark .el-radio-button__inner {
+	background: var(--primary-t-1, var(--ak-hover-bg)) !important;
+	border-color: var(--ak-primary) !important;
+	box-shadow: -1px 0 0 0 var(--ak-primary) !important;
+}
+
+/* The mailer logo inside each provider tile uses opacity .7 — keep
+   them visible on dark surfaces. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-mailer-image img {
+	opacity: 0.85;
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-mailer-image:hover img {
+	opacity: 1;
 }
 
 
