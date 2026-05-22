@@ -243,7 +243,26 @@ body.adminkit.settings_page_fluent-mail .el-input--prefix .el-input__icon {
 }
 
 
-/* ===== Element UI checkbox / radio active states ===== */
+/* ===== Element UI checkbox / radio ===== */
+
+/* Default (unchecked) box + label */
+body.adminkit.settings_page_fluent-mail .el-checkbox,
+body.adminkit.settings_page_fluent-mail .el-radio {
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-checkbox__inner,
+body.adminkit.settings_page_fluent-mail .el-radio__inner {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_fluent-mail .el-checkbox__label,
+body.adminkit.settings_page_fluent-mail .el-radio__label {
+	color: var(--ak-text);
+}
+
+/* Active (checked / indeterminate) state */
 body.adminkit.settings_page_fluent-mail .el-checkbox__input.is-checked .el-checkbox__inner,
 body.adminkit.settings_page_fluent-mail .el-checkbox__input.is-indeterminate .el-checkbox__inner,
 body.adminkit.settings_page_fluent-mail .el-radio__input.is-checked .el-radio__inner {
