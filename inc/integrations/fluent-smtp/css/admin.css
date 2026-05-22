@@ -57,11 +57,15 @@ body.adminkit.settings_page_fluent-mail .fss_connection_intro {
 	border-radius: var(--ak-radius-s);
 }
 
-/* Nested white sections (provider grid + form panels) */
-body.adminkit.settings_page_fluent-mail .fss_connection_intro .fss_config_section {
+/* Nested white sections (provider grid + form panels). The default
+   .fss_config_section ships `box-shadow: 0 0 2px 2px #dcdfe5` — kill
+   it; the token border carries the edge. */
+body.adminkit.settings_page_fluent-mail .fss_connection_intro .fss_config_section,
+body.adminkit.settings_page_fluent-mail .fss_config_section {
 	background: var(--ak-surface-alt);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
+	box-shadow: none;
 	color: var(--ak-text);
 }
 
@@ -110,6 +114,42 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-mailer-ima
 	opacity: 1;
 }
 
+/* "Selected connection" card on the Test page — Fluent SMTP ships
+   `.fsmtp_conncection_selected` with `background: #fff; border: 3px
+   solid #3f9eff` and a matching #3f9eff check-icon fill. Route both
+   to AdminKit tokens so the selected state speaks the brand. */
+body.adminkit.settings_page_fluent-mail .fsmtp_conncection_selected {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-primary);
+}
+
+body.adminkit.settings_page_fluent-mail .fsmtp_conncection_selected i.fstmp_check_icon svg {
+	fill: var(--ak-primary);
+}
+
+
+/* ===== Element UI switch (Test page) ===== */
+body.adminkit.settings_page_fluent-mail .el-switch__label {
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-switch__label.is-active {
+	color: var(--ak-primary);
+}
+
+
+/* ===== Hide promo nav items (6th + 7th menu items in the top nav) =====
+   Fluent SMTP renders About + Documentation as the 6th and 7th
+   .fluent-mail-main-menu-items entries. The earlier
+   a[href*="fluentsmtp.com"] catch-all hides them when they're
+   <a> children of the header; this nth-child rule covers the case
+   where they're rendered as Vue router-link / button items inside
+   the menu list. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-main-menu-items > ul > li:nth-child(6),
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-main-menu-items > ul > li:nth-child(7) {
+	display: none;
+}
+
 
 /* ===== Element UI buttons — route each intent to its AdminKit token ===== */
 
@@ -127,10 +167,19 @@ body.adminkit.settings_page_fluent-mail .el-button--primary:focus {
 	color: #ffffff;
 }
 
-/* Success */
+/* Success — routed to --ak-primary so the brand green is the
+   single "go" cue across the plugin (avoids competing with the
+   semantic --ak-success used elsewhere). */
 body.adminkit.settings_page_fluent-mail .el-button--success {
-	background-color: var(--ak-success);
-	border-color: var(--ak-success);
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: #ffffff;
+}
+
+body.adminkit.settings_page_fluent-mail .el-button--success:hover,
+body.adminkit.settings_page_fluent-mail .el-button--success:focus {
+	background-color: var(--ak-primary-dark);
+	border-color: var(--ak-primary-dark);
 	color: #ffffff;
 }
 
