@@ -476,6 +476,24 @@ body.adminkit .contextual-help-tabs li.active a {
 	color: var(--ak-heading);
 }
 
+/* Active help tab — WP fills it with color-mix(theme 8%, #fff) (a light bar
+   that breaks in dark) plus a box-shadow. Route to a soft brand tint, keep the
+   left-border accent, drop the shadow. */
+body.adminkit .contextual-help-tabs .active,
+body.adminkit .contextual-help-tabs li.active {
+	background: var(--ak-primary-subtle);
+	border-left-color: var(--ak-primary);
+	box-shadow: none;
+}
+
+/* Framing strip behind the help columns — WP tints it with
+   rgba(var(--wp-admin-theme-color--rgb), .08), but that rgb is the brand
+   yellow, so it renders an odd yellow wash. Transparent + token side borders. */
+body.adminkit #contextual-help-back {
+	background: transparent;
+	border-color: var(--ak-border);
+}
+
 /* Footer */
 body.adminkit #wpfooter {
 	color: var(--ak-text-muted);
@@ -567,7 +585,19 @@ body.adminkit .subsubsub a.current:focus {
 	font-weight: 600;
 }
 
+/* Counts become little notification badges. */
 body.adminkit .subsubsub .count {
+	display: inline-block;
+	margin-left: 5px;
+	padding: 1px 7px;
+	border-radius: var(--ak-radius-full);
+	background: var(--ak-surface-alt);
 	color: var(--ak-text-muted);
-	font-weight: 400;
+	font-size: 11px;
+	font-weight: 600;
+}
+
+body.adminkit .subsubsub a.current .count {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
 }
