@@ -49,24 +49,17 @@ body.adminkit .edit-post-header-toolbar .button.button-primary:focus {
 
 
 /* ---- "This page is built with Bricks" notice card ----
-   Renders inside the Gutenberg canvas (.editor-styles-wrapper),
-   which AdminKit pins to color-scheme: light so the visitor view
-   stays light. Hardcoded light surface + dark text on purpose —
-   --ak-* tokens flip with the theme toggle and would mismatch the
-   white canvas in dark mode. --ak-primary is the only token used:
-   constant brand green via Bricks (or AdminKit fallback), safe
-   across modes.
-
-   Layout: roomy soft card (no border), bold message above, primary
-   CTA + neutral link side-by-side. */
+   Renders inside the Gutenberg canvas. Every surface, border, text,
+   and link is token-mapped so the card flips cleanly with the
+   light/dark toggle. */
 
 body.adminkit .bricks-block-editor-notice-wrapper {
 	max-width: 560px;
 	margin: 64px auto;
 	padding: 40px 32px;
-	background: #f6f7f7;
-	border: 0;
-	border-radius: 12px;
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
 	text-align: center;
 }
 
@@ -74,7 +67,7 @@ body.adminkit .bricks-block-editor-notice-wrapper .bricks-editor-message {
 	margin: 0 0 24px;
 	font-size: 16px;
 	font-weight: 600;
-	color: #1e1e1e;
+	color: var(--ak-heading);
 	line-height: 1.4;
 }
 
@@ -86,18 +79,14 @@ body.adminkit .bricks-block-editor-notice-wrapper .bricks-editor-buttons {
 	flex-wrap: wrap;
 }
 
-/* Edit-with-Bricks primary CTA inside the canvas notice.
-   Override the global rule above with canvas-light values — the
-   global rule's --ak-heading text flips with the theme and would
-   become hard-to-read on the green pill when the user toggles dark.
-   Inside the canvas (light-locked) we use #fff text on --ak-primary,
-   bumped padding + radius for the polished card. */
+/* Edit-with-Bricks primary CTA inside the notice. White text on
+   --ak-primary stays readable in both modes (brand color is fixed). */
 body.adminkit .bricks-block-editor-notice-wrapper .button.button-primary,
 body.adminkit .bricks-block-editor-notice-wrapper a.button-primary {
 	background: var(--ak-primary);
 	color: #ffffff;
 	border: 0;
-	border-radius: 8px;
+	border-radius: var(--ak-radius-s);
 	padding: 10px 22px;
 	font-size: 14px;
 	font-weight: 600;
@@ -113,12 +102,14 @@ body.adminkit .bricks-block-editor-notice-wrapper a.button-primary:focus {
 	color: #ffffff;
 }
 
-/* "Use block editor" — neutral secondary link, no underline at rest
-   so it doesn't compete with the primary CTA. */
+/* "Use block editor" / any non-primary link inside the notice —
+   muted by default, full text on hover. Catches WP's default
+   `a { color: #2271b1 }` blue link inside the wrapper. */
+body.adminkit .bricks-block-editor-notice-wrapper a,
 body.adminkit .bricks-block-editor-notice-wrapper .button:not(.button-primary),
 body.adminkit .bricks-block-editor-notice-wrapper a:not(.button-primary) {
 	background: transparent;
-	color: #50575e;
+	color: var(--ak-text-muted);
 	border: 0;
 	box-shadow: none;
 	padding: 10px 14px;
@@ -127,11 +118,13 @@ body.adminkit .bricks-block-editor-notice-wrapper a:not(.button-primary) {
 	font-weight: 500;
 }
 
+body.adminkit .bricks-block-editor-notice-wrapper a:hover,
+body.adminkit .bricks-block-editor-notice-wrapper a:focus,
 body.adminkit .bricks-block-editor-notice-wrapper .button:not(.button-primary):hover,
 body.adminkit .bricks-block-editor-notice-wrapper a:not(.button-primary):hover,
 body.adminkit .bricks-block-editor-notice-wrapper .button:not(.button-primary):focus,
 body.adminkit .bricks-block-editor-notice-wrapper a:not(.button-primary):focus {
 	background: transparent;
-	color: #1e1e1e;
+	color: var(--ak-heading);
 	text-decoration: underline;
 }
