@@ -357,6 +357,66 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .migration-percentage {
 	color: var(--ak-primary);
 }
 
+
+/* ===== Generic <tr> zebra striping inside .wpmdb =====
+   Bundled rule paints odd rows #fff + even rows #f7f7f7. Route to
+   the token pair so striped tables (profiles, logs, migration
+   details) flip cleanly. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb tr:nth-child(odd) {
+	background: var(--ak-surface-alt);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb tr:nth-child(2n) {
+	background: var(--ak-surface);
+}
+
+
+/* ===== Media files / Find & Replace options ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .media-files .media-option {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .media-files .media-option strong {
+	color: var(--ak-heading);
+}
+
+
+/* ===== Disabled checkbox label state ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel input[type="checkbox"]:disabled + label,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .child-panel input[type="checkbox"]:disabled + label,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .wpmdb-form input[type="checkbox"]:disabled + label {
+	color: var(--ak-text-muted);
+}
+
+
+/* ===== Select wrap hover row ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .select-wrap ul li:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+
+/* ===== Multiselect mini-action buttons (Select all / Clear) ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .multiselect-options button {
+	color: var(--ak-primary);
+}
+
+
+/* ===== Stroke / outline button variant (.btn-stroke) =====
+   Ghost-primary button: token border + token text, transparent bg. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn-stroke {
+	background: transparent;
+	border-color: var(--ak-primary);
+	color: var(--ak-primary);
+	box-shadow: none;
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn-stroke:hover,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn-stroke:focus {
+	background: var(--primary-t-1, var(--ak-hover-bg));
+	border-color: var(--ak-primary-dark);
+	color: var(--ak-primary-dark);
+}
+
 /* Media files options block (Find & Replace) */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .media-files .media-files-options {
 	border-color: var(--ak-border);
