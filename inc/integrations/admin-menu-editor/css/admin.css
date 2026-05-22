@@ -335,6 +335,14 @@ body.adminkit.settings_page_menu_editor #rex-view-toolbar {
 	border-bottom-color: var(--ak-border);
 }
 
+/* Role list panel — AME hardcodes #f8f8f8, the same near-white gray as
+   its #f6f7f7 surfaces (mapped to --ak-surface elsewhere here). Route it
+   so the recessed list keeps its contrast against the white panels in
+   both light and dark mode. */
+body.adminkit.settings_page_menu_editor #rex-user-role-list {
+	background: var(--ak-surface);
+}
+
 /* Per-category capability panels in the main view. */
 body.adminkit.settings_page_menu_editor .rex-category {
 	border-color: var(--ak-border);
