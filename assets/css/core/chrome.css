@@ -528,3 +528,14 @@ body.adminkit .subsubsub a.current {
 body.adminkit .subsubsub .count {
 	color: var(--ak-text-muted);
 }
+
+/* Generic dashicon sizing — WP defaults to 20px which feels heavy
+   in inline contexts (descriptions, status pills, table cells).
+   Route the base size to a token so it matches the body text rhythm.
+   Context-specific dashicons (sidebar menu icons, admin-bar icons,
+   media frame chrome) keep their own per-place font-size via WP's
+   more-specific rules, so they're not affected. */
+body.adminkit .dashicons,
+body.adminkit .dashicons-before:before {
+	font-size: var(--ak-text-s);
+}
