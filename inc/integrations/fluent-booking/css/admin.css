@@ -186,7 +186,7 @@ body.adminkit.toplevel_page_fluent-booking .el-radio__input.is-checked .el-radio
 body.adminkit.toplevel_page_fluent-booking .el-radio-button.is-active .el-radio-button__inner,
 body.adminkit.toplevel_page_fluent-booking .fcal_tabs > .el-tabs__header .el-tabs__nav .el-tabs__item.is-active {
 	background-color: var( --ak-primary-subtle ) !important;
-	border-color: var( --ak-primary ) !important;
+	border-color: var( --ak-border-strong ) !important;
 	color: var( --ak-primary ) !important;
 }
 
@@ -782,13 +782,34 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_questions_w
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-form-item.fcal_availability_header,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_weekly_schedules,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_override_date .fcal_override_date_inner {
-	background-color: var( --ak-bg ) !important;
+	background-color: var( --ak-surface ) !important;
 }
 
 /* Question / notification cards → surface. */
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_question .fcal_question_card,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_notification_container {
 	background: var( --ak-surface ) !important;
+}
+
+/* Questions container → elevated (raised within its --ak-surface wrapper). */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_questions {
+	background: var( --ak-elevated );
+}
+
+/* Flatten the create-calendar form — drop the inner card bg + padding and the
+   header/footer dividers so it sits flat in its wrap. Selectors mirror
+   FluentBooking's own chains (+ the body prefix) so they win without !important. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_calendar_wrap .fcal_create_calendar_body {
+	background: transparent;
+	padding: 0;
+}
+
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_calendar_wrap .fcal_create_calendar_body .fcal_create_calendar_form_footer {
+	border-top: none;
+}
+
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_calendar_wrap .fcal_create_calendar_body .fcal_create_calendar_form .fcal_create_calendar_form_header {
+	border-bottom: none;
 }
 
 /* Card-item hover — drop the brand tint, use a neutral surface lift. */
