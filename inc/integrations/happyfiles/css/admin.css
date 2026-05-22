@@ -30,11 +30,12 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a:f
 
 
 /* ===== Tab content tables ===== */
-/* Round each settings table as a card (more modern than the square grid). The
-   cell borders below draw a single-line grid (cells: bottom+right; tbody:
-   left+top), so border-collapse:separate + spacing:0 keeps single borders while
-   the radius + overflow clip the outer corners. */
+/* Round each settings table as a card with a light border all around. A border
+   on the <table> follows the radius (so the rounded corners are bordered too);
+   the tbody's own outer left/top is dropped to avoid doubling that edge, and
+   the cells keep their internal grid lines. */
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table {
+	border: 1px solid var(--ak-border);
 	border-collapse: separate;
 	border-spacing: 0;
 	border-radius: var(--ak-radius-m);
@@ -43,8 +44,8 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content tab
 
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tbody {
 	background-color: var(--ak-surface);
-	border-left-color: var(--ak-border);
-	border-top-color: var(--ak-border);
+	border-left: none;
+	border-top: none;
 }
 
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tbody th,
