@@ -805,3 +805,46 @@ body.adminkit.toplevel_page_fluent-booking .el-icon[style*="--color: black"],
 body.adminkit.toplevel_page_fluent-booking .el-icon[style*="--color:black"] {
 	--color: var( --ak-heading ) !important;
 }
+
+/* Settings footer — drop the top divider (user request). */
+body.adminkit.toplevel_page_fluent-booking .fcal_settings_content_wrap .fcal_settings_footer {
+	border-top: none !important;
+}
+
+/* Booking Trends chart (ApexCharts) — the SVG ships hard-coded light-theme
+   colours: #373d3f axis/legend text and #f3f3f3 / #e0e0e0 grid lines, which
+   vanish or glare on dark surfaces. Route text + grid to tokens. The series
+   colours (blue/green/orange) stay: they distinguish the data and live in
+   ApexCharts' JS config, not reachable cleanly from CSS. */
+body.adminkit.toplevel_page_fluent-booking .apexcharts-text,
+body.adminkit.toplevel_page_fluent-booking .apexcharts-yaxis-label,
+body.adminkit.toplevel_page_fluent-booking .apexcharts-xaxis-label {
+	fill: var( --ak-text-muted );
+}
+
+body.adminkit.toplevel_page_fluent-booking .apexcharts-legend-text {
+	color: var( --ak-text ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .apexcharts-gridline,
+body.adminkit.toplevel_page_fluent-booking .apexcharts-xaxis-tick,
+body.adminkit.toplevel_page_fluent-booking .apexcharts-grid-borders line,
+body.adminkit.toplevel_page_fluent-booking .apexcharts-xcrosshairs,
+body.adminkit.toplevel_page_fluent-booking .apexcharts-ycrosshairs {
+	stroke: var( --ak-border );
+}
+
+/* Chart tooltips ship the light theme (.apexcharts-theme-light: white bg,
+   dark text). Route to tokens so they're readable on hover in dark mode. */
+body.adminkit.toplevel_page_fluent-booking .apexcharts-tooltip.apexcharts-theme-light,
+body.adminkit.toplevel_page_fluent-booking .apexcharts-xaxistooltip,
+body.adminkit.toplevel_page_fluent-booking .apexcharts-yaxistooltip {
+	background: var( --ak-surface-alt ) !important;
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-text ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .apexcharts-tooltip-title {
+	background: var( --ak-surface ) !important;
+	border-bottom-color: var( --ak-border ) !important;
+}
