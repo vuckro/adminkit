@@ -130,22 +130,100 @@ body.adminkit #bricks-settings .bricks-custom-capabilities-wrapper .capability-i
 body.bricks_page_bricks-elements.adminkit form#bricks-element-manager .submit-wrapper.sticky {
 	background-color: var(--ak-surface-alt);
 	border-color: var(--ak-border);
-	box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.04);
+	border-radius: var(--ak-radius-s);
+	box-shadow: none;
 }
 
-body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover {
+/* Outer table shell — token surface + border + radius matching the
+   rest of AdminKit's list tables. */
+body.adminkit .wp-list-table.elements {
+	background-color: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+}
+
+/* Header band — recessed surface, heading color */
+body.adminkit .wp-list-table.elements thead th {
 	background-color: var(--ak-surface);
-	box-shadow: 0 0 0 1px var(--ak-border);
+	border-bottom: 1px solid var(--ak-border);
+	color: var(--ak-heading);
+	font-weight: 600;
 }
 
-/* Element status pills (Enabled / Hidden in builder / Disabled).
-   Default state is hardcoded #e6e6e6 + #c9c9c9. Hover variants
-   (green / orange / crimson) stay as-is — they're semantic state
-   colors, not chrome. */
+/* Per-row cell borders + token text */
+body.adminkit .wp-list-table.elements tbody td {
+	border-top: 1px solid var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .wp-list-table.elements tbody tr:first-child td {
+	border-top: none;
+}
+
+/* Row hover — brand-tint primary-t-1, consistent with the global
+   list-table hover defined in components/tables.css. The earlier
+   --ak-surface + 1px shadow read as a different language than the
+   rest of admin. */
+body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover,
+body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover td {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	box-shadow: none;
+}
+
+/* Element-title cell — icon + name should read together. The icon
+   inherits Bricks's default dark color; give it muted token so it
+   blends with the row. */
+body.adminkit .wp-list-table.elements .element-title .icon {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .wp-list-table.elements .element-title .name {
+	color: var(--ak-heading);
+	font-weight: 500;
+}
+
+/* Element status pills (Active / Hidden in builder / Disabled).
+   Default state is a hardcoded #e6e6e6 + #c9c9c9. */
 body.adminkit .wp-list-table.elements .element-status span {
 	background-color: var(--ak-surface);
-	border-color: var(--ak-border-strong);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
+	cursor: pointer;
+	padding: 3px 8px;
+	transition: none;
+}
+
+body.adminkit .wp-list-table.elements .element-status span:hover {
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+
+/* Active (selected) status pill — brand primary so the current
+   choice stands out from the two other options. */
+body.adminkit .wp-list-table.elements .element-status span.active.current {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: #ffffff;
+}
+
+/* Category / usage cells — keep muted so the eye reads the name +
+   status first. */
+body.adminkit .wp-list-table.elements .element-usage,
+body.adminkit .wp-list-table.elements .element-category {
+	color: var(--ak-text-muted);
+}
+
+/* Custom-element badge (.custom-element button) shown next to the
+   name on user-registered Bricks elements (e.g. HappyFiles-Gallery). */
+body.adminkit .wp-list-table.elements .element-title .custom-element {
+	background-color: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text-muted);
 }
 
 
