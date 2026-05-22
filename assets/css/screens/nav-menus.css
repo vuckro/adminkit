@@ -46,10 +46,9 @@ body.adminkit.nav-menus-php .menu-item:hover .menu-item-settings {
 	border-color: var(--ak-border-strong);
 }
 
-/* Expanded item settings drawer — darker (page-bg) content surface so the
-   open body reads as recessed under the handle. */
+/* Expanded item settings drawer. */
 body.adminkit.nav-menus-php .menu-item-settings {
-	background: var(--ak-bg);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	box-shadow: none;
 	color: var(--ak-text);
