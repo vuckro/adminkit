@@ -200,6 +200,7 @@ class AdminKit_Profile_Accordion {
 		'.user-nickname-wrap',
 		'.user-display-name-wrap', // "Display name publicly as"
 		'.user-role-wrap',
+		'#ame-rex-other-roles-row', // Other Roles (AME) — directly under Role
 		'.user-email-wrap',
 		['#password', '.user-pass1-wrap'] // New Password
 	];
@@ -274,7 +275,6 @@ class AdminKit_Profile_Accordion {
 			'.user-syntax-highlighting-wrap',              // Syntax Highlighting
 			'.user-comment-shortcuts-wrap',                // Keyboard Shortcuts
 			['.user-admin-bar-front-wrap', '.show-admin-bar'], // Toolbar
-			'#ame-rex-other-roles-row',                    // Other Roles (AME)
 			'.user-generate-reset-link-wrap',              // Password Reset
 			'.user-pass2-wrap',                            // Password helpers (no-JS)
 			'.pw-weak'                                     // Weak-password confirmation
