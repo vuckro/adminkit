@@ -9,7 +9,9 @@ body.adminkit a {
 
 body.adminkit a:hover,
 body.adminkit a:focus {
-	color: var(--ak-heading);
+	background-color: var(--ak-primary-subtle) !important;
+	border-color: var(--ak-primary) !important;
+	color: var(--ak-primary) !important;
 }
 
 /* WP paints a box-shadow ring on every focused link (a:focus). Drop it for

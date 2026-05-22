@@ -812,13 +812,13 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_cale
 	border-bottom: none;
 }
 
-/* Notifications block + form inputs inside the create-calendar form → elevated,
-   so they read as raised on the now-flat (transparent) form body. */
+/* Create-calendar notifications block → elevated (raised on the flat form). */
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_calendar_wrap .fcal_create_calendar_body .fcal_notification_container_wrap .fcal_notifications {
 	background-color: var( --ak-elevated );
 }
 
-body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_create_calendar_wrap .fcal_create_calendar_body .fcal_create_calendar_form_body .el-form .el-form-item .el-input .el-input__wrapper {
+/* Element Plus input fields → elevated fill across FluentBooking. */
+body.adminkit.toplevel_page_fluent-booking .el-input__wrapper {
 	background-color: var( --ak-elevated );
 }
 
