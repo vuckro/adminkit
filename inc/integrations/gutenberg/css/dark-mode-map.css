@@ -257,10 +257,12 @@ body.block-editor-page.adminkit .block-editor-block-toolbar .components-button[a
 /* Skip popovers explicitly flagged .is-unstyled — Gutenberg uses
    that hook for transparent overlay popovers like the in-between
    block inserter (.block-editor-block-popover__inbetween) where
-   a styled surface would break the layout. */
+   a styled surface would break the layout. Surface is left
+   transparent so the inner card / menu-group surface (theme-mapped
+   elsewhere) shows through cleanly. */
 body.block-editor-page.adminkit .components-popover:not(.is-unstyled) .components-popover__content,
 body.block-editor-page.adminkit .components-dropdown-menu__menu {
-	background: var(--ak-surface-alt);
+	background: transparent;
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
