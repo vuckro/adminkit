@@ -184,7 +184,6 @@ body.adminkit.settings_page_menu_editor .ame-rui-redirect:hover {
 body.adminkit.settings_page_menu_editor .ame-rui-small-tabs,
 body.adminkit.settings_page_menu_editor .ame-rui-sub-tabs,
 body.adminkit.settings_page_menu_editor .ame-rui-filter-like-tabs {
-	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 }
 
@@ -303,7 +302,7 @@ body.adminkit.settings_page_menu_editor .ame-widget-top {
 /* Widget details panel under each header — AME hardcodes white surface,
    gray border, and a drop shadow. Route to tokens and keep it flat. */
 body.adminkit.settings_page_menu_editor .ame-widget-properties {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-elevated);
 	border-color: var(--ak-border);
 	box-shadow: none;
 }

@@ -23,10 +23,10 @@
  *
  * Finally, the remaining profile-heavy sections are consolidated into a
  * second collapsed panel ("Settings"), keeping "My Account" focused
- * on daily edits only. Standalone sections (Personal Options, plugin
- * sections like HappyFiles / Bricks) stay in place. Membership is just the
- * `absorb()` calls in step 4; sections are matched by WP's own localized
- * heading strings, passed from PHP, so the grouping survives translation.
+ * on daily edits only. Personal Options is absorbed into Settings too.
+ * Membership is just the `absorb()` calls in step 4; sections are matched
+ * by WP's own localized heading strings, passed from PHP, so the grouping
+ * survives translation.
  *
  * Native disclosure was chosen over a scripted toggle on purpose — it
  * is keyboard-accessible for free, animates nothing (matches AdminKit's
@@ -75,8 +75,9 @@ class AdminKit_Profile_Accordion {
 		// for the core headings) so the JS matches sections by their *rendered*
 		// text — locale-proof, since WP printed those same strings.
 		$labels = array(
-			'my_account'    => __( 'My Account', 'adminkit' ),
+			'my_account'    => __( 'Account', 'adminkit' ),
 			'more_settings' => __( 'Settings', 'adminkit' ),
+			'personal'      => __( 'Personal Options' ),
 			'name'          => __( 'Name' ),
 			'contact'       => __( 'Contact Info' ),
 			'about'         => array( __( 'About Yourself' ), __( 'About the user' ) ),
@@ -134,6 +135,52 @@ class AdminKit_Profile_Accordion {
 		});
 		src.remove();
 	}
+	// Return the first existing node matching one selector or a selector list.
+	function firstMatch(root, selectorOrList) {
+		var selectors = [].concat(selectorOrList);
+		for (var i = 0; i < selectors.length; i++) {
+			var node = root.querySelector(selectors[i]);
+			if (node) return node;
+		}
+		return null;
+	}
+	// Lift the profile-picture controls out of the form table and place them
+	// right under the page title, above accordions.
+	function mountProfilePictureHero() {
+		var row = firstMatch(form, '.user-profile-picture');
+		if (!row) return;
+		var cell = row.querySelector('td');
+		if (!cell) return;
+
+		var hero = document.createElement('div');
+		hero.className = 'ak-profile-picture-hero';
+		var content = document.createElement('div');
+		content.className = 'ak-profile-picture-hero__content';
+		while (cell.firstChild) {
+			content.appendChild(cell.firstChild);
+		}
+		hero.appendChild(content);
+		row.remove();
+
+		var title = document.querySelector('.wrap h1');
+		if (title && title.parentNode) {
+			var wrap = title.parentNode;
+			var action = wrap.querySelector('.page-title-action');
+			var header = document.createElement('div');
+			header.className = 'ak-profile-header';
+			wrap.insertBefore(header, title);
+			header.appendChild(hero);
+			header.appendChild(title);
+			if (action) {
+				header.appendChild(action);
+			}
+		} else {
+			form.insertBefore(hero, form.firstChild);
+		}
+	}
+
+	// Profile picture lives outside accordions.
+	mountProfilePictureHero();
 
 	// --- 1. "My Account" — open panel of the most-used fields --------------
 	// The 80/20 set, in display order. We MOVE these <tr>s (appendChild moves,
@@ -142,27 +189,18 @@ class AdminKit_Profile_Accordion {
 	// no duplicate fields, no server change, no CSS override. Edit this list to
 	// curate the panel — order is preserved, missing rows are skipped.
 	var ESSENTIALS = [
-		'.user-profile-picture', // Profile picture
 		['.user-user-login-wrap', '.user-login-wrap'], // Username
 		'.user-first-name-wrap',
 		'.user-last-name-wrap',
 		'.user-nickname-wrap',
 		'.user-display-name-wrap', // "Display name publicly as"
 		'.user-role-wrap',
-		'#ame-rex-other-roles-row', // Admin Menu Editor "Other Roles"
 		'.user-email-wrap',
 		['#password', '.user-pass1-wrap'] // New Password
 	];
 
 	var rows = ESSENTIALS
-		.map(function (sel) {
-			var selectors = [].concat(sel);
-			for (var i = 0; i < selectors.length; i++) {
-				var row = form.querySelector(selectors[i]);
-				if (row) return row;
-			}
-			return null;
-		})
+		.map(function (sel) { return firstMatch(form, sel); })
 		.filter(Boolean);
 
 	var account = null;
@@ -221,27 +259,23 @@ class AdminKit_Profile_Accordion {
 	});
 
 	// --- 4. Build "Settings" in the intended editing order ------------------
-	// Keep My Account focused on day-to-day identity fields. Settings groups
-	// account maintenance fields in a predictable sequence.
+	// Keep My Account focused on identity fields; move advanced preferences and
+	// maintenance items into Settings using one explicit display order.
 	if (account) {
 		var ORDERED_SETTINGS_ROWS = [
 			'.user-language-wrap',                         // Language
-			'.user-capabilities-wrap',                     // Capabilities
 			'.user-url-wrap',                              // Website
-			'.user-description-wrap',                      // Biography
-			'.user-pass2-wrap',                            // Password reset helpers
-			'.pw-weak'
+			'.user-description-wrap',                      // Biographical Info
+			'.user-syntax-highlighting-wrap',              // Syntax Highlighting
+			'.user-comment-shortcuts-wrap',                // Keyboard Shortcuts
+			['.user-admin-bar-front-wrap', '.show-admin-bar'], // Toolbar
+			'#ame-rex-other-roles-row',                    // Other Roles (AME)
+			'.user-generate-reset-link-wrap',              // Password Reset
+			'.user-pass2-wrap',                            // Password helpers (no-JS)
+			'.pw-weak'                                     // Weak-password confirmation
 		];
-		function findRow(selectorOrList) {
-			var selectors = [].concat(selectorOrList);
-			for (var i = 0; i < selectors.length; i++) {
-				var row = form.querySelector(selectors[i]);
-				if (row) return row;
-			}
-			return null;
-		}
 
-		var SECONDARY_SECTIONS = [L.name, L.contact, L.about, L.account, L.app_passwords, L.capabilities];
+		var SECONDARY_SECTIONS = [L.personal, L.name, L.contact, L.about, L.account, L.app_passwords, L.capabilities];
 		var lead = SECONDARY_SECTIONS
 			.map(function (label) { return find(label); })
 			.filter(Boolean)[0] || null;
@@ -255,7 +289,7 @@ class AdminKit_Profile_Accordion {
 			settingsTable.setAttribute('role', 'presentation');
 			var settingsBody = document.createElement('tbody');
 			ORDERED_SETTINGS_ROWS.forEach(function (selectorOrList) {
-				var row = findRow(selectorOrList);
+				var row = firstMatch(form, selectorOrList);
 				if (row) settingsBody.appendChild(row);
 			});
 			if (settingsBody.children.length) {
@@ -263,16 +297,22 @@ class AdminKit_Profile_Accordion {
 				more.appendChild(settingsTable);
 			}
 
+			absorb(more, find(L.app_passwords), false);
+			absorb(more, find(L.personal), false);
 			absorb(more, find(L.name), false);
 			absorb(more, find(L.contact), false);
 			absorb(more, find(L.about), false);
 			absorb(more, find(L.account), false);
-			absorb(more, find(L.app_passwords), false);
 			var caps = find(L.capabilities);
 			if (caps && caps.querySelector('.user-capabilities-wrap')) {
 				absorb(more, caps, false);
 			} else if (caps) {
 				caps.remove();
+			}
+
+			// Keep Settings directly under My Account.
+			if (account && more.parentNode === form) {
+				form.insertBefore(more, account.nextSibling);
 			}
 		}
 	}

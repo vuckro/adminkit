@@ -16,16 +16,76 @@ body.adminkit.profile-php tr.user-admin-color-wrap {
 	display: none;
 }
 
-/* Gravatar block on profile pages */
-body.adminkit.user-edit-php .user-profile-picture td,
-body.adminkit.profile-php .user-profile-picture td {
-	display: flex;
-	align-items: center;
-	gap: 16px;
+/* Application Passwords intro paragraph is verbose and redundant once the
+   section is grouped inside Settings. Keep the controls, hide only the intro. */
+body.adminkit.user-edit-php #application-passwords-section > p:first-of-type,
+body.adminkit.profile-php #application-passwords-section > p:first-of-type {
+	display: none;
 }
 
+/* Profile picture hero (moved out of accordions under page title). */
+body.adminkit.user-edit-php .ak-profile-header,
+body.adminkit.profile-php .ak-profile-header {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	max-width: 960px;
+	margin: 2px 0 10px;
+}
+
+body.adminkit.user-edit-php .ak-profile-header > h1,
+body.adminkit.profile-php .ak-profile-header > h1 {
+	margin: 0;
+	padding: 0;
+	line-height: 1.25;
+}
+
+body.adminkit.user-edit-php .ak-profile-header > .page-title-action,
+body.adminkit.profile-php .ak-profile-header > .page-title-action {
+	margin-left: 8px;
+	margin-right: 0;
+	position: static;
+	top: auto;
+	align-self: center;
+}
+
+body.adminkit.user-edit-php .ak-profile-picture-hero,
+body.adminkit.profile-php .ak-profile-picture-hero {
+	margin: 0;
+}
+
+body.adminkit.user-edit-php .ak-profile-picture-hero__content,
+body.adminkit.profile-php .ak-profile-picture-hero__content,
+body.adminkit.user-edit-php .user-profile-picture td,
+body.adminkit.profile-php .user-profile-picture td {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+
+body.adminkit.user-edit-php .ak-profile-picture-hero__content p,
+body.adminkit.profile-php .ak-profile-picture-hero__content p {
+	margin: 0;
+}
+
+body.adminkit.user-edit-php .ak-profile-picture-hero__content > :not(img),
+body.adminkit.profile-php .ak-profile-picture-hero__content > :not(img) {
+	display: none;
+}
+
+body.adminkit.user-edit-php .ak-profile-picture-hero__content .description,
+body.adminkit.profile-php .ak-profile-picture-hero__content .description {
+	margin-top: 4px;
+}
+
+body.adminkit.user-edit-php .ak-profile-picture-hero__content img,
+body.adminkit.profile-php .ak-profile-picture-hero__content img,
 body.adminkit.user-edit-php .user-profile-picture img,
 body.adminkit.profile-php .user-profile-picture img {
+	width: 48px;
+	height: 48px;
 	border-radius: var(--ak-radius-full);
 	border: 1px solid var(--ak-border);
 }
@@ -41,7 +101,26 @@ body.adminkit .color-option {
 
 body.adminkit .color-option.selected {
 	border-color: var(--ak-primary);
-	box-shadow: var(--ak-focus-ring);
+	box-shadow: none;
+}
+
+/* Profile pages: keep the UI fully flat (no focus shadows). */
+body.adminkit.user-edit-php #your-profile input:focus,
+body.adminkit.user-edit-php #your-profile select:focus,
+body.adminkit.user-edit-php #your-profile textarea:focus,
+body.adminkit.user-edit-php #your-profile .button:focus,
+body.adminkit.user-edit-php #your-profile .wp-core-ui .button:focus,
+body.adminkit.profile-php #your-profile input:focus,
+body.adminkit.profile-php #your-profile select:focus,
+body.adminkit.profile-php #your-profile textarea:focus,
+body.adminkit.profile-php #your-profile .button:focus,
+body.adminkit.profile-php #your-profile .wp-core-ui .button:focus,
+body.adminkit.user-new-php #createuser input:focus,
+body.adminkit.user-new-php #createuser select:focus,
+body.adminkit.user-new-php #createuser textarea:focus,
+body.adminkit.user-new-php #createuser .button:focus,
+body.adminkit.user-new-php #createuser .wp-core-ui .button:focus {
+	box-shadow: none !important;
 }
 
 /* --- Section accordions ---------------------------------------------------
@@ -120,6 +199,27 @@ body.adminkit .ak-accordion > .form-table {
 	margin: 6px 16px 14px;
 }
 
+/* My Account panel: denser rhythm and clearer labels for frequent edits. */
+body.adminkit .ak-accordion[data-ak-panel="account"] > .form-table {
+	margin-top: 4px;
+}
+
+body.adminkit .ak-accordion[data-ak-panel="account"] .form-table > tbody > tr > th,
+body.adminkit .ak-accordion[data-ak-panel="account"] .form-table > tbody > tr > td {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+body.adminkit .ak-accordion[data-ak-panel="account"] .form-table > tbody > tr > th {
+	width: 200px;
+	color: var(--ak-heading);
+	font-weight: 600;
+}
+
+body.adminkit .ak-accordion[data-ak-panel="account"] .form-table td p.description {
+	margin-top: 4px;
+}
+
 /* Sub-section headings inside a grouped panel — the section <h2>s folded
    into "My Account" / "Contact Information". (components/form-table.css only
    styles `form > h2`, which these no longer are.) Placed last so it wins the
@@ -131,4 +231,85 @@ body.adminkit .ak-accordion > h2 {
 	font-weight: 600;
 	color: var(--ak-heading);
 	border-bottom: 1px solid var(--ak-border);
+}
+
+/* Application Password creation form inside Settings:
+   label column on the left, controls on the right (table-like rhythm). */
+body.adminkit #application-passwords-section .create-application-password {
+	display: grid;
+	grid-template-columns: 240px minmax(0, 1fr);
+	column-gap: 16px;
+	row-gap: 12px;
+	align-items: start;
+	max-width: none;
+}
+
+body.adminkit #application-passwords-section .create-application-password .form-field {
+	display: grid;
+	grid-template-columns: 240px minmax(0, 1fr);
+	column-gap: 16px;
+	row-gap: 10px;
+	grid-column: 1 / -1;
+	margin: 0;
+	max-width: none;
+	width: 100%;
+}
+
+body.adminkit #application-passwords-section .create-application-password .form-field > label {
+	grid-column: 1;
+	grid-row: 1 / span 2;
+	margin: 0;
+	font-weight: 600;
+	color: var(--ak-heading);
+}
+
+body.adminkit #application-passwords-section .create-application-password .form-field > input {
+	grid-column: 2;
+	min-height: 40px;
+	width: 100%;
+	max-width: 640px;
+}
+
+body.adminkit #application-passwords-section .create-application-password .form-field > .description {
+	grid-column: 2;
+	margin: 0;
+	max-width: 640px;
+	line-height: 1.45;
+}
+
+body.adminkit #application-passwords-section .create-application-password #do_new_application_password {
+	grid-column: 2;
+	justify-self: start;
+	min-height: 40px;
+	padding: 0 16px;
+}
+
+@media (max-width: 782px) {
+	body.adminkit.user-edit-php .ak-profile-header,
+	body.adminkit.profile-php .ak-profile-header {
+		grid-template-columns: auto minmax(0, 1fr);
+	}
+
+	body.adminkit.user-edit-php .ak-profile-header > .page-title-action,
+	body.adminkit.profile-php .ak-profile-header > .page-title-action {
+		grid-column: 1 / -1;
+		margin-left: 0;
+	}
+
+	body.adminkit .ak-accordion[data-ak-panel="account"] .form-table > tbody > tr > th {
+		width: auto;
+	}
+
+	body.adminkit #application-passwords-section .create-application-password,
+	body.adminkit #application-passwords-section .create-application-password .form-field {
+		grid-template-columns: 1fr;
+	}
+
+	body.adminkit #application-passwords-section .create-application-password .form-field > label,
+	body.adminkit #application-passwords-section .create-application-password .form-field > input,
+	body.adminkit #application-passwords-section .create-application-password .form-field > .description,
+	body.adminkit #application-passwords-section .create-application-password #do_new_application_password {
+		grid-column: 1;
+		grid-row: auto;
+	}
 }

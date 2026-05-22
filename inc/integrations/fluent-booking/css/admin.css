@@ -741,7 +741,7 @@ body.adminkit.toplevel_page_fluent-booking .el-message-box__headerbtn i {
    ============================================================ */
 
 body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot {
-	background: var( --ak-bg ) !important;
+	background: var( --ak-surface-accent ) !important;
 }
 
 body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot:hover,

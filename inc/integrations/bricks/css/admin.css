@@ -42,6 +42,14 @@ body.adminkit .bricks-admin-wrapper .bricks-admin-inner {
 	color: var(--ak-text);
 }
 
+/* Bricks feedback form inner shell hardcodes white. Route to token surface
+   so the panel follows AdminKit light/dark theme mapping consistently. */
+body.adminkit .bricks-admin-wrapper #bricks-feedback-form-inner {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
 /* Getting Started step boxes — divider via box-shadow */
 body.adminkit .bricks-admin-wrapper.getting-started .box-wrapper {
 	box-shadow: 0 -1px 0 var(--ak-border);

@@ -15,7 +15,7 @@ body.adminkit .theme-id-container {
 }
 
 body.adminkit .theme-browser .theme .theme-name {
-	background: var(--ak-primary-subtle);
+	background: var(--ak-surface);
 	color: var(--ak-heading);
 }
 
