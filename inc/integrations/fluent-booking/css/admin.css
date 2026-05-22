@@ -403,17 +403,18 @@ body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-wi
 	background: var( --ak-error ) !important;
 }
 
-/* Trend "stat" pill inside the overview card — white pill, brand-green accent
-   for "up" (the plugin's #16896b → our brand green, not the success token so
-   the UI keeps a single green), red for "down" (#ef4444). */
+/* Trend "stat" pill inside the overview card — token surface, brand-green
+   accent for "up" (the plugin's #16896b → our brand green) and red for "down".
+   The border is softened to a 35% tint so it frames the pill without shouting;
+   the text keeps the full accent. */
 body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget .stat {
 	background: var( --ak-surface-alt ) !important;
-	border-color: var( --ak-primary ) !important;
+	border-color: color-mix( in srgb, var( --ak-primary ) 35%, transparent ) !important;
 	color: var( --ak-primary ) !important;
 }
 
 body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget .stat.down {
-	border-color: var( --ak-error ) !important;
+	border-color: color-mix( in srgb, var( --ak-error ) 35%, transparent ) !important;
 	color: var( --ak-error ) !important;
 }
 
