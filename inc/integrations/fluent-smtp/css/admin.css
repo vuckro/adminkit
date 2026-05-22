@@ -636,15 +636,20 @@ body.adminkit.settings_page_fluent-mail .el-alert--info {
 }
 
 
-/* ===== Element UI pagination ===== */
+/* ===== Element UI pagination =====
+   Two variants to cover: the default `.el-pager li` (no is-background
+   parent) ships `background: #fff` + #409eff active text; the
+   `.is-background` variant uses #f4f4f5 chips. Map both. */
 body.adminkit.settings_page_fluent-mail .el-pagination .btn-prev,
 body.adminkit.settings_page_fluent-mail .el-pagination .btn-next,
+body.adminkit.settings_page_fluent-mail .el-pager li,
 body.adminkit.settings_page_fluent-mail .el-pagination.is-background .el-pager li {
 	background-color: var(--ak-surface-alt);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
 
+body.adminkit.settings_page_fluent-mail .el-pager li.active,
 body.adminkit.settings_page_fluent-mail .el-pagination.is-background .el-pager li:not(.disabled).active {
 	background-color: var(--ak-primary);
 	color: #ffffff;
