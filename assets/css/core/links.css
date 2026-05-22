@@ -11,3 +11,11 @@ body.adminkit a:hover,
 body.adminkit a:focus {
 	color: var(--ak-heading);
 }
+
+/* WP paints a box-shadow ring on every focused link (a:focus). Drop it for
+   a flat focus — the color shift above marks focus, and real controls
+   (.button, .page-title-action, …) keep their own ring via higher-specificity
+   rules in buttons.css. */
+body.adminkit a:focus {
+	box-shadow: none;
+}
