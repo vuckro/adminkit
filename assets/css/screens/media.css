@@ -203,6 +203,29 @@ body.adminkit .media-router .media-menu-item.active:last-child {
 	background: var(--ak-bg);
 }
 
+/* Modal side panels — WP paints .media-menu (left) and .media-sidebar (right)
+   with #f6f7f7. The .upload-php variants above only cover the library page, so
+   the modal kept the raw grey; route the generic surfaces to a recessed token
+   (border colors already handled in the divider group above). */
+body.adminkit .media-menu,
+body.adminkit .media-sidebar {
+	background: var(--ak-surface);
+}
+
+/* Modal attachments toolbar (filters + search) — WP hardcodes #fff. Scoped to
+   .media-modal so the upload.php toolbar-card treatment stays untouched. */
+body.adminkit .media-modal .attachments-browser .media-toolbar {
+	background: var(--ak-bg);
+}
+
+/* Menu / router tabs — swap WP's blue focus ring + blue text for a flat
+   primary focus. */
+body.adminkit .media-menu-item:focus {
+	box-shadow: none;
+	color: var(--ak-primary);
+	outline: none;
+}
+
 body.adminkit .image-details .column-settings {
 	background: var(--ak-surface);
 }
