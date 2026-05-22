@@ -6,9 +6,11 @@
    body.adminkit so a builder shipping its own Choices.js on the
    frontend stays untouched. */
 
-/* Visible bar (wrapper) */
+/* Visible bar (wrapper) — --ak-surface (recessed one step from
+   --ak-surface-alt) so the field reads as a sunken input in light
+   mode where surface-alt would otherwise match the page bg. */
 body.adminkit .choices .choices__inner {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -81,7 +83,7 @@ body.adminkit .choices__heading {
    .choices ...` rules above. Mirror our token application under the
    same wrapper so specificity matches (then wins on cascade order). */
 body.adminkit #ame-rex-other-roles-row .choices .choices__inner {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
