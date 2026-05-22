@@ -639,6 +639,7 @@ body.adminkit .subsubsub a {
 	gap: 6px;
 	color: var(--ak-text-muted);
 	padding: 4px 6px 4px 10px;
+	border: 1px solid transparent;
 	border-radius: var(--ak-radius-s);
 	text-decoration: none;
 	line-height: 1.3;
@@ -655,6 +656,7 @@ body.adminkit .subsubsub a.current,
 body.adminkit .subsubsub a.current:hover,
 body.adminkit .subsubsub a.current:focus {
 	background: var(--ak-surface);
+	border-color: var(--ak-border);
 	color: var(--ak-heading);
 	font-weight: 600;
 }
