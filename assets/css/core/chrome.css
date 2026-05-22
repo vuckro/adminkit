@@ -55,11 +55,10 @@ body.adminkit #adminmenu a {
 	font-weight: 500;
 }
 
-/* Top-level menu labels — WP default is 14px. AdminKit was
-   undercutting at 13px; bump to 14.5px so the labels read a touch
-   bigger than native without losing the compact sidebar density. */
+/* Top-level menu labels — matches WP's native 14px (we were
+   undercutting at 13px which read slightly smaller than expected). */
 body.adminkit #adminmenu .wp-menu-name {
-	font-size: 14.5px;
+	font-size: var(--ak-text-m);
 }
 
 /* Submenu links — keep compact (--ak-text-s, 13px) so the nested
