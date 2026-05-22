@@ -186,6 +186,24 @@ body.adminkit .inline-edit-row fieldset select {
 	border-radius: var(--ak-radius-s);
 }
 
+/* Dark mode contrast — the default row-hover lift reads too bright, and the
+   Quick Edit inputs don't separate from the form row. Use a gentler hover lift
+   and recess the inputs (darker than the row + a stronger border) so the
+   editable fields clearly stand out. Light mode already reads well, so these
+   are dark-only. */
+:root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover,
+:root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover td,
+:root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover th {
+	background: color-mix(in srgb, var(--ak-surface) 75%, var(--ak-elevated));
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset label span.input-text-wrap input,
+:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset label textarea,
+:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset select {
+	background: var(--ak-bg);
+	border-color: var(--ak-border-strong);
+}
+
 body.adminkit .inline-edit-row .inline-edit-save {
 	background: transparent;
 	padding-top: 12px;
