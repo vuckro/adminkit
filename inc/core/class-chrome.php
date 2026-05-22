@@ -109,7 +109,9 @@ class AdminKit_Core_Chrome {
 		self::register_screen( 'themes',          array( 'themes', 'theme-install' ) );
 		self::register_screen( 'theme-install',   array( 'themes', 'theme-install' ) );
 		self::register_screen( 'media',           array( 'upload', 'media', 'attachment' ) );
-		self::register_screen( 'profile',         array( 'profile', 'user-edit', 'user-new' ) );
+		// user-new.php reports screen id 'user' (WP strips '-new'); the CSS
+		// still scopes via the .user-new-php body class. Keep 'user-new' too.
+		self::register_screen( 'profile',         array( 'profile', 'user-edit', 'user', 'user-new' ) );
 		self::register_screen( 'nav-menus',       array( 'nav-menus' ) );
 		self::register_screen( 'plugins',         array( 'plugins', 'plugin-install' ) );
 		self::register_screen( 'plugin-editor',   array( 'plugin-editor', 'theme-editor' ) );

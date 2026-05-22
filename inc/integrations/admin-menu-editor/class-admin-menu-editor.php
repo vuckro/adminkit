@@ -74,7 +74,9 @@ class AdminKit_Integration_Admin_Menu_Editor extends AdminKit_Integration_Base {
 		if ( ! $screen ) {
 			return false;
 		}
-		return in_array( $screen->id, array( 'user-edit', 'profile', 'user-new' ), true );
+		// user-new.php reports screen id 'user' (WP strips the '-new' suffix in
+		// class-wp-screen.php). Keep 'user-new' too as belt-and-suspenders.
+		return in_array( $screen->id, array( 'user-edit', 'profile', 'user', 'user-new' ), true );
 	}
 
 	/**

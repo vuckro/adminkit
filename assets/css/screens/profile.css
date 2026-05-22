@@ -123,6 +123,65 @@ body.adminkit.user-new-php #createuser .wp-core-ui .button:focus {
 	box-shadow: none !important;
 }
 
+/* Password strength meter (Add User / profile / user-edit). WP paints light
+   pastel state backgrounds (#b8e6bf strong, #f5e6ab good, #f1adad short) that
+   glare on dark surfaces. Route each state to a subtle token tint + semantic
+   border, and give the box a little breathing room above the field. */
+body.adminkit #pass-strength-result {
+	margin-top: 8px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background-color: var(--ak-surface-alt);
+	color: var(--ak-text);
+}
+
+body.adminkit #pass-strength-result.short,
+body.adminkit #pass-strength-result.bad {
+	background-color: var(--ak-error-subtle);
+	border-color: var(--ak-error);
+	color: var(--ak-text);
+}
+
+body.adminkit #pass-strength-result.good {
+	background-color: color-mix(in srgb, var(--ak-warning) 18%, var(--ak-surface-alt));
+	border-color: var(--ak-warning);
+	color: var(--ak-text);
+}
+
+body.adminkit #pass-strength-result.strong {
+	background-color: color-mix(in srgb, var(--ak-success) 18%, var(--ak-surface-alt));
+	border-color: var(--ak-success);
+	color: var(--ak-text);
+}
+
+/* Align the password tools and the Other Roles picker to the 320px text-input
+   width (components/form-table.css) so they don't sprawl past the other
+   fields' right edge. */
+body.adminkit .wp-pwd,
+body.adminkit #pass-strength-result,
+body.adminkit #ame-rex-other-roles-field-wrapper {
+	max-width: 320px;
+}
+
+/* Password row: flex so the Hide button sits inside the 320px cap and the
+   input fills the rest — its own 320px min-width would otherwise push the
+   button past the field column. */
+body.adminkit .wp-pwd {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+
+body.adminkit .wp-pwd .password-input-wrapper {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+body.adminkit .wp-pwd input#pass1 {
+	min-width: 0;
+	width: 100%;
+}
+
 /* --- Section accordions ---------------------------------------------------
    JS folds each WP profile <h2> + its .form-table into a native <details>
    (see inc/core/class-profile-accordion.php). Flat + motionless to match
@@ -259,8 +318,9 @@ body.adminkit #application-passwords-section .create-application-password .form-
 	grid-column: 1;
 	grid-row: 1 / span 2;
 	margin: 0;
-	font-weight: 600;
-	color: var(--ak-heading);
+	font-weight: 500;
+	font-size: var(--ak-text-s);
+	color: var(--ak-text);
 }
 
 body.adminkit #application-passwords-section .create-application-password .form-field > input {
