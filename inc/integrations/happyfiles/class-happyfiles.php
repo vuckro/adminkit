@@ -46,6 +46,26 @@ class AdminKit_Integration_Happyfiles extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * Screens where HappyFiles mounts its folders sidebar (`#happyfiles-sidebar`):
+	 * every edit.php list (Posts, Pages, CPTs incl. Bricks templates +
+	 * fonts), the Media library (upload.php), Plugins, and Users.
+	 * `edit-*` covers any post-type list automatically — no need to
+	 * enumerate Bricks CPT IDs by hand.
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return bool
+	 */
+	public static function owns_sidebar_screen( $screen ) {
+		if ( ! $screen ) {
+			return false;
+		}
+		if ( 0 === strpos( $screen->id, 'edit-' ) ) {
+			return true;
+		}
+		return in_array( $screen->id, array( 'upload', 'plugins', 'users' ), true );
+	}
+
+	/**
 	 * @return void
 	 */
 	public static function register_assets() {
@@ -55,6 +75,18 @@ class AdminKit_Integration_Happyfiles extends AdminKit_Integration_Base {
 			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_screen' ),
+		) );
+
+		// Folders sidebar (#happyfiles-sidebar) mounted on list-table
+		// screens. Loaded on every screen where the sidebar can mount;
+		// the selectors are #happyfiles-sidebar-prefixed so they're
+		// no-ops where HappyFiles isn't rendering anything.
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-happyfiles-sidebar',
+			'src'       => 'inc/integrations/happyfiles/css/sidebar.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_sidebar_screen' ),
 		) );
 	}
 }

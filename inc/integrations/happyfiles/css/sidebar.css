@@ -1,0 +1,145 @@
+/* HappyFiles folders sidebar (#happyfiles-sidebar).
+   Mounts on Posts / Pages / CPT lists, Media library, Plugins, and
+   Users list. HappyFiles exposes its own CSS variables on :root and
+   uses them throughout the sidebar, so a single var remap on
+   body.adminkit propagates almost everywhere. The few selectors that
+   hardcode `#fff` directly (search input, renaming row, context
+   menu, popup, uploading progress card) get explicit overrides
+   below. */
+
+
+/* ===== HappyFiles design tokens → AdminKit tokens ===== */
+body.adminkit {
+	--hf-color-border: var(--ak-border);
+	--hf-color-muted: var(--ak-text-muted);
+	--hf-color-accent: var(--ak-primary);
+	--hf-color-info: var(--ak-info);
+	--hf-color-success: var(--ak-success);
+	--hf-color-danger: var(--ak-error);
+	--hf-bg-light: var(--ak-surface);
+	--hf-bg-dark: var(--ak-elevated);
+	--hf-bg-info: var(--primary-t-1, var(--ak-hover-bg));
+	--hf-bg-success: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+
+/* ===== Sidebar shell ===== */
+body.adminkit #happyfiles-sidebar {
+	color: var(--ak-text);
+}
+
+body.adminkit #happyfiles-sidebar #happyfiles-title {
+	color: var(--ak-heading);
+}
+
+/* Folder row default state — token text */
+body.adminkit #happyfiles-sidebar .folder {
+	color: var(--ak-text);
+}
+
+/* Hovered / open folder uses --hf-bg-light (already mapped above).
+   Active "open" + hovered states keep the text legible. */
+body.adminkit #happyfiles-sidebar .folder.open,
+body.adminkit #happyfiles-sidebar .folder:hover {
+	color: var(--ak-heading);
+}
+
+/* Count badge on default state */
+body.adminkit #happyfiles-sidebar .folder .count {
+	color: var(--ak-text);
+}
+
+
+/* ===== Hardcoded #fff surfaces ===== */
+
+/* Folder search input bar at the top of the sidebar */
+body.adminkit #happyfiles-search-folders {
+	background-color: var(--ak-surface-alt);
+}
+
+body.adminkit #happyfiles-search-folders input {
+	background-color: var(--ak-surface-alt);
+	color: var(--ak-text);
+}
+
+/* Folder being renamed inline */
+body.adminkit #happyfiles-sidebar .folder.renaming {
+	background-color: var(--ak-surface-alt);
+}
+
+/* Checkbox inside folder rows */
+body.adminkit #happyfiles-sidebar .folder input[type="checkbox"] {
+	background-color: var(--ak-surface-alt);
+}
+
+/* Inline "+ Select" toolbar that appears in select mode */
+body.adminkit #happyfiles-select-folders {
+	background-color: var(--ak-surface-alt);
+}
+
+/* Sort-by dropdown panel */
+body.adminkit #happyfiles-sort-by ul {
+	background-color: var(--ak-surface-alt);
+}
+
+
+/* ===== Right-click context menu ===== */
+body.adminkit .happyfiles-context-menu {
+	background-color: var(--ak-surface-alt);
+	box-shadow: 0 6px 24px -8px rgba(0, 0, 0, 0.3);
+	color: var(--ak-text);
+}
+
+
+/* ===== Upload progress card ===== */
+body.adminkit #happyfiles-uploading-progress {
+	background-color: var(--ak-surface-alt);
+	color: var(--ak-text);
+}
+
+
+/* ===== Popup dialogs (color picker, gallery shortcode, …) ===== */
+body.adminkit .happyfiles-popup .inner {
+	background-color: var(--ak-surface-alt);
+}
+
+body.adminkit .happyfiles-popup header {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit .happyfiles-popup header .title {
+	color: var(--ak-heading);
+}
+
+
+/* ===== Sub-folders grid (in-canvas) ===== */
+body.adminkit .happyfiles-subfolders-list .happyfiles-subfolder-item {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .happyfiles-subfolders-list .happyfiles-subfolder-item .name {
+	color: var(--ak-text);
+}
+
+body.adminkit .happyfiles-subfolders-list .happyfiles-subfolder-item .count {
+	background-color: var(--ak-surface);
+	color: var(--ak-text);
+}
+
+
+/* ===== Resize handle ===== */
+body.adminkit #happyfiles-resizer {
+	border-right-color: var(--ak-border);
+}
+
+
+/* ===== Tooltips ===== */
+body.adminkit #happyfiles-sidebar [aria-label]:before {
+	background-color: var(--ak-elevated);
+	color: #ffffff;
+}
+
+body.adminkit #happyfiles-sidebar [aria-label]:after {
+	border-top-color: var(--ak-elevated);
+}
