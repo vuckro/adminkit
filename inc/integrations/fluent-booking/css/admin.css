@@ -1,0 +1,780 @@
+/* FluentBooking — toplevel_page_fluent-booking.
+
+   FluentBooking v2 is a Vue 3 SPA on Element Plus. It themes itself through
+   TWO INDEPENDENT layers of CSS custom properties:
+
+     1. its own --fcal-* tokens — surfaces (--fcal-primary-bg = card/white,
+        --fcal-secondary-bg = page, --fcal-active-bg = hover/zebra), text
+        (--fcal-primary-text = heading, --fcal-secondary-text = muted),
+        borders (--fcal-primary-border, --fcal-secondary-border) and a single
+        blue accent PAIR: --fcal-color-text (#306ae0) + --fcal-color-bg
+        (#f0f6fe, the pale tint behind it);
+
+     2. Element Plus --el-* tokens, set to LITERAL HEX — and, unlike FluentCRM,
+        NOT aliased to the --fcal-* layer. So the two layers are unrelated and
+        each has to be remapped on its own (block 1 below does both).
+
+   The catch — and the reason a plain variable remap isn't enough — is that
+   FluentBooking ALSO hard-codes its brand blue #306ae0 directly into ~126
+   Element Plus component states: checked switches / checkboxes / radios,
+   focused inputs, active tabs, pagination, calendar selection, primary
+   buttons, links and focus rings. Those are literals (no var()), so the
+   token remap can't reach them. Block 3 catches them with grouped overrides.
+
+   Two brand intents collapse to one. FluentBooking splits "primary" in two —
+   a near-black #19283a it parks in --el-color-primary (used for a handful of
+   neutral chrome bits) and the blue #306ae0 it uses for every interactive
+   accent. AdminKit has one brand, so BOTH route to --ak-primary: buttons,
+   links, switches, checks, active states all speak the brand, white pinned on
+   top of filled controls. Because --ak-* flip with AdminKit's dark mode this
+   one file covers light AND dark — we never touch FluentBooking's own html.dark
+   theme.
+
+   Why these selectors win. FluentBooking declares its tokens on `body` (light)
+   and `html.dark body` / `html.dark` (dark). Our token block targets
+   `:root, body.adminkit.toplevel_page_fluent-booking` (0,2,1) which outranks
+   all three. The hard-coded #306ae0 lives in very deep component selectors, so
+   block 3 uses short grouped selectors + !important to win regardless of depth
+   — that's what lets one rule per *category of state* replace 126 per-element
+   rules. Element Plus teleports dialogs/poppers to <body>, so the body-scoped
+   selectors reach them too. */
+
+
+/* ============================================================
+   1. TOKEN REMAP — --fcal-* and --el-* → AdminKit tokens
+   ============================================================ */
+
+:root,
+body.adminkit.toplevel_page_fluent-booking {
+	/* --- FluentBooking's own --fcal-* layer --- */
+
+	/* Surfaces */
+	--fcal-primary-bg: var( --ak-surface );       /* cards, inputs, panels, dialogs */
+	--fcal-secondary-bg: var( --ak-bg );          /* app page background */
+	--fcal-active-bg: var( --ak-surface );        /* hover / zebra / active row */
+
+	/* Text */
+	--fcal-primary-text: var( --ak-heading );     /* titles, labels, values */
+	--fcal-secondary-text: var( --ak-text-muted );/* descriptions, meta */
+
+	/* Borders */
+	--fcal-primary-border: var( --ak-border );
+	--fcal-secondary-border: var( --ak-border-strong );
+
+	/* Blue accent pair → brand (links, selected text, and the pale tint
+	   behind them). This is the #306ae0 / #f0f6fe couple the user sees as
+	   "the blue that keeps coming back" — anywhere it flows through the
+	   variable it's handled here; the hard-coded copies are block 3. */
+	--fcal-color-text: var( --ak-primary );
+	--fcal-color-bg: var( --ak-primary-subtle );
+
+	/* --- Element Plus --el-* layer (independent — must be set directly) --- */
+
+	/* Brand. --el-color-primary is FluentBooking's near-black; route it to
+	   the brand so any EP default that still reads it is on-brand. */
+	--el-color-primary: var( --ak-primary );
+
+	/* The blue source EP never exposes as a token: every
+	   `rgba(var(--el-color-primary-rgb), a)` focus ring / selection fill /
+	   hover tint falls back to EP's stock #409eff when this is unset. Pin it
+	   to the brand rgb (same literal as tokens.css --wp-admin-theme-color--rgb)
+	   — alpha tints read correctly over any surface in both modes. */
+	--el-color-primary-rgb: 117, 163, 59;
+
+	/* Primary ramp — keep filled/hover/disabled/plain-bg primary states on
+	   brand instead of EP's blue-derived steps. */
+	--el-color-primary-dark-2: var( --ak-primary-dark );    /* active / pressed */
+	--el-color-primary-light-3: var( --ak-primary-dark );   /* filled-button hover */
+	--el-color-primary-light-5: var( --ak-primary-soft );
+	--el-color-primary-light-7: var( --ak-primary-soft );
+	--el-color-primary-light-8: var( --ak-primary-subtle );
+	--el-color-primary-light-9: var( --ak-primary-subtle ); /* plain bg / current row */
+
+	/* Semantic. NOTE: Element Plus "info" is a NEUTRAL grey (#909399), not a
+	   blue — FluentBooking leans on --el-color-info as a generic muted color
+	   (the dialog close X, input-group append text, …). Mapping it to --ak-info
+	   (which IS blue) painted all of those blue, so route info to the muted
+	   text token + a neutral ramp instead. */
+	--el-color-success: var( --ak-success );
+	--el-color-warning: var( --ak-warning );
+	--el-color-danger: var( --ak-error );
+	--el-color-error: var( --ak-error );
+	--el-color-info: var( --ak-text-muted );
+	--el-color-info-light-3: var( --ak-text-muted );
+	--el-color-info-light-5: var( --ak-border-strong );
+	--el-color-info-light-9: var( --ak-surface );
+	--el-color-info-dark-2: var( --ak-heading );
+
+	/* Text */
+	--el-text-color-primary: var( --ak-heading );
+	--el-text-color-regular: var( --ak-text );
+	--el-text-color-secondary: var( --ak-text-muted );
+	--el-text-color-placeholder: var( --ak-text-muted );
+	--el-text-color-disabled: var( --ak-text-muted );
+
+	/* Backgrounds */
+	--el-bg-color: var( --ak-surface-alt );
+	--el-bg-color-page: var( --ak-bg );
+	--el-bg-color-overlay: var( --ak-surface-alt );
+
+	/* Borders */
+	--el-border-color: var( --ak-border );
+	--el-border-color-light: var( --ak-border );
+	--el-border-color-lighter: var( --ak-border );
+	--el-border-color-extra-light: var( --ak-border );
+	--el-border-color-dark: var( --ak-border-strong );
+	--el-border-color-darker: var( --ak-border-strong );
+
+	/* Fills — hover bgs, zebra rows, disabled, blank canvas. EP greys leak
+	   on dark surfaces if left unset; pin the whole set to neutral surfaces. */
+	--el-fill-color: var( --ak-surface );
+	--el-fill-color-light: var( --ak-surface );
+	--el-fill-color-lighter: var( --ak-surface );
+	--el-fill-color-extra-light: var( --ak-surface );
+	--el-fill-color-dark: var( --ak-elevated );
+	--el-fill-color-darker: var( --ak-elevated );
+	--el-fill-color-blank: var( --ak-surface-alt );
+
+	/* Disabled — consumed (e.g. `.el-input.is-disabled .el-input__wrapper`)
+	   but never defined by FluentBooking, so EP's stock greys leak in dark. */
+	--el-disabled-bg-color: var( --ak-surface );
+	--el-disabled-text-color: var( --ak-text-muted );
+	--el-disabled-border-color: var( --ak-border );
+
+	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
+	--el-box-shadow: none;
+	--el-box-shadow-light: none;
+	--el-box-shadow-lighter: none;
+	--el-box-shadow-dark: none;
+}
+
+
+/* ============================================================
+   2. PAGE CANVAS
+   AdminKit's chrome.css themes #wpbody but not #wpcontent, and FluentBooking
+   only paints #wpcontent inside its own html.dark class (which AdminKit's mode
+   never triggers). Give the content strip and the app shell the page token
+   directly so the area behind the SPA flips with the theme.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-booking #wpcontent,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
+	background-color: var( --ak-bg );
+}
+
+
+/* ============================================================
+   3. HARD-CODED BLUE OVERRIDES (#306ae0)
+   126 literals the variable remap can't reach. Grouped by the kind of state
+   that carries the blue, short selectors + !important so they win over
+   FluentBooking's deep component rules. Everything → --ak-primary.
+   ============================================================ */
+
+/* 3a. Soft brand controls — "soft coordinated" style: pale tint background +
+   brand border + brand-colored content. Primary buttons read as ghost
+   buttons; checked states are tinted. The visible glyphs (check tick, radio
+   dot, switch knob) are pinned to the brand color just below so they stay
+   legible on the pale fill. */
+body.adminkit.toplevel_page_fluent-booking .el-button--primary,
+body.adminkit.toplevel_page_fluent-booking .el-button.fcal_primary_btn,
+body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn,
+body.adminkit.toplevel_page_fluent-booking .el-switch.is-checked .el-switch__core,
+body.adminkit.toplevel_page_fluent-booking .fcal_switch.is-checked .el-switch__core,
+body.adminkit.toplevel_page_fluent-booking .el-checkbox__input.is-checked .el-checkbox__inner,
+body.adminkit.toplevel_page_fluent-booking .fcal_checkbox.is-checked .el-checkbox__inner,
+body.adminkit.toplevel_page_fluent-booking .el-radio__input.is-checked .el-radio__inner,
+body.adminkit.toplevel_page_fluent-booking .el-radio-button.is-active .el-radio-button__inner,
+body.adminkit.toplevel_page_fluent-booking .fcal_tabs > .el-tabs__header .el-tabs__nav .el-tabs__item.is-active {
+	background-color: var( --ak-primary-subtle ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-primary ) !important;
+}
+
+/* Control glyphs on the pale fill → brand color so they stay visible. */
+body.adminkit.toplevel_page_fluent-booking .el-checkbox__input.is-checked .el-checkbox__inner:after {
+	border-color: var( --ak-primary ) !important;        /* check tick */
+}
+body.adminkit.toplevel_page_fluent-booking .el-radio__input.is-checked .el-radio__inner:after,
+body.adminkit.toplevel_page_fluent-booking .el-radio__input .el-radio__inner:after {
+	background: var( --ak-primary ) !important;           /* radio dot */
+}
+body.adminkit.toplevel_page_fluent-booking .el-switch.is-checked .el-switch__action,
+body.adminkit.toplevel_page_fluent-booking .fcal_switch.is-checked .el-switch__action {
+	background-color: var( --ak-primary ) !important;     /* switch knob → clearly "on" */
+}
+
+/* 3b. Status indicators that carry WHITE content — timeline current-markers
+   and the finished-step check — stay SOLID brand so they read clearly. */
+body.adminkit.toplevel_page_fluent-booking .fcal_spot_line.is-active,
+body.adminkit.toplevel_page_fluent-booking .fcal_each_spot.fcal_is_current:before,
+body.adminkit.toplevel_page_fluent-booking .fcal_each_spot.fcal_is_current .fcal_spot_line:before,
+body.adminkit.toplevel_page_fluent-booking .fcal_steps .el-step__head.is-finish .el-step__icon {
+	background-color: var( --ak-primary ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: #ffffff !important;
+}
+
+/* Soft brand surfaces / buttons / badges / pills — pale tint + brand text
+   (the "soft coordinated" style: ghost buttons, tinted active states). */
+body.adminkit.toplevel_page_fluent-booking .fcal_schedule_header_bar,
+body.adminkit.toplevel_page_fluent-booking .fcal_settings_sidebar li a.router-link-exact-active,
+body.adminkit.toplevel_page_fluent-booking .fcal_photo_card .fcal_upload_btn,
+body.adminkit.toplevel_page_fluent-booking .el-table.fcal_table .fcal_action.edit_btn,
+body.adminkit.toplevel_page_fluent-booking .fframe_menu li.fframe_item_buy .fframe_menu_primary,
+body.adminkit.toplevel_page_fluent-booking .fcal_feature_module span.fcal_addon_installed {
+	background-color: var( --ak-primary-subtle ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-primary ) !important;
+}
+
+/* 3c. Calendar / date-picker selection — selected day, today marker, range
+   endpoints, hover. Filled with brand, text white. */
+body.adminkit.toplevel_page_fluent-booking .el-calendar-table td.is-selected .el-calendar-day p.is-selected,
+body.adminkit.toplevel_page_fluent-booking .el-calendar-table td .el-calendar-day p.is-selected,
+body.adminkit.toplevel_page_fluent-booking .el-calendar-table td .el-calendar-day:hover p:not(.fcal_date_disabled),
+body.adminkit.toplevel_page_fluent-booking .el-calendar-table td.is-today p:before,
+body.adminkit.toplevel_page_fluent-booking .el-date-table td.start-date .el-date-table-cell__text,
+body.adminkit.toplevel_page_fluent-booking .el-date-table td.end-date .el-date-table-cell__text,
+body.adminkit.toplevel_page_fluent-booking .fcal_time.fcal_spot_selected,
+body.adminkit.toplevel_page_fluent-booking .fcal_time .fcal_selected_time_icon {
+	background-color: var( --ak-primary ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: #ffffff !important;
+}
+
+/* 3d. Brand text — links, active nav, checked labels, active/hover tabs,
+   pagination, finished steps, calendar today text, dropdown hover, badges. */
+body.adminkit.toplevel_page_fluent-booking .el-link--primary,
+body.adminkit.toplevel_page_fluent-booking .el-link--primary .el-link__inner,
+body.adminkit.toplevel_page_fluent-booking .el-checkbox.is-checked .el-checkbox__label,
+body.adminkit.toplevel_page_fluent-booking .el-checkbox__input.is-checked + .el-checkbox__label,
+body.adminkit.toplevel_page_fluent-booking .el-switch.is-checked .el-switch__label.is-active,
+body.adminkit.toplevel_page_fluent-booking .el-tabs__item:hover,
+body.adminkit.toplevel_page_fluent-booking .el-tabs__item.is-active:hover,
+body.adminkit.toplevel_page_fluent-booking .el-pagination .el-pager li.is-active,
+body.adminkit.toplevel_page_fluent-booking .el-pagination .el-pager li:hover,
+body.adminkit.toplevel_page_fluent-booking .el-step__title.is-finish,
+body.adminkit.toplevel_page_fluent-booking .el-calendar-table td.is-today,
+body.adminkit.toplevel_page_fluent-booking .el-date-table td.today .el-date-table-cell__text,
+body.adminkit.toplevel_page_fluent-booking .el-date-table td.available:hover .el-date-table-cell__text,
+body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_popover .el-dropdown-menu li:hover,
+body.adminkit.toplevel_page_fluent-booking .fcal_nav li.active_item a,
+body.adminkit.toplevel_page_fluent-booking .fframe_menu li.active_item a,
+body.adminkit.toplevel_page_fluent-booking .fcal_settings_sidebar li ul li a.router-link-exact-active,
+body.adminkit.toplevel_page_fluent-booking .fcal_settings_sub_menu li.submenu_item a.item_menu_link:before,
+body.adminkit.toplevel_page_fluent-booking .fcal_badge,
+body.adminkit.toplevel_page_fluent-booking .fcal_add_question,
+body.adminkit.toplevel_page_fluent-booking .fcal_back_btn:hover,
+body.adminkit.toplevel_page_fluent-booking .fcal_empty_text a,
+body.adminkit.toplevel_page_fluent-booking .fcal_license_box p a,
+body.adminkit.toplevel_page_fluent-booking .fcal_source_link a,
+body.adminkit.toplevel_page_fluent-booking .fcal_spot_details_value a,
+body.adminkit.toplevel_page_fluent-booking .fcal_remote_cal_link,
+body.adminkit.toplevel_page_fluent-booking .fcal_create_calendar_body p a,
+body.adminkit.toplevel_page_fluent-booking .el-link:not(.el-link--danger):not(.el-link--success):not(.el-link--warning):not(.el-link--info) {
+	color: var( --ak-primary ) !important;
+}
+
+/* 3e. Brand borders — focused inputs/textareas, active under-line tabs,
+   active sub-nav, payment/feature/integration active+hover edges.
+   (Checked controls already get their border in 3a.) */
+body.adminkit.toplevel_page_fluent-booking .el-input__wrapper.is-focus,
+body.adminkit.toplevel_page_fluent-booking .el-textarea__inner:focus,
+body.adminkit.toplevel_page_fluent-booking .el-textarea textarea:focus,
+body.adminkit.toplevel_page_fluent-booking .fcal_tabs2 .el-tabs__nav .el-tabs__item.is-active,
+body.adminkit.toplevel_page_fluent-booking .fcal_schedule_meetings_nav ul li.fcal_active,
+body.adminkit.toplevel_page_fluent-booking .fcal_payment_method_tab.active,
+body.adminkit.toplevel_page_fluent-booking .fcal_feature_module:hover,
+body.adminkit.toplevel_page_fluent-booking .fcal_configure_integration_card:hover {
+	border-color: var( --ak-primary ) !important;
+}
+
+/* 3f. Default (non-primary) buttons on hover — EP turns text to the accent.
+   Text only, NO forced border: a primary border here also landed on the
+   search-magnifier button. The few default hovers the plugin gave a hard
+   blue BORDER (drawer actions, calendar nav) get the brand border just below.
+   Exclude the filled variants so they keep white-on-brand. */
+body.adminkit.toplevel_page_fluent-booking .el-button:not([class*="el-button--"]):hover,
+body.adminkit.toplevel_page_fluent-booking .el-button.is-text:hover,
+body.adminkit.toplevel_page_fluent-booking .el-button-group .el-button:not([class*="el-button--"]):hover {
+	color: var( --ak-primary ) !important;
+}
+
+/* Default-button hovers the plugin painted with a #306ae0 border → brand
+   border (not blue), kept narrow so it doesn't reach other buttons. */
+body.adminkit.toplevel_page_fluent-booking .fcal_clone_event_drawer .el-button:hover,
+body.adminkit.toplevel_page_fluent-booking .fcal_create_new_booking_type_drawer .el-button:hover,
+body.adminkit.toplevel_page_fluent-booking .el-dialog.fcal_override_dropdown .el-calendar .el-button-group .el-button:hover {
+	border-color: var( --ak-primary ) !important;
+}
+
+/* 3g. Blue box-shadows. The two drawer buttons used a blue glow on hover —
+   AdminKit is flat, so drop it rather than recolor. The selected
+   appearance-theme card keeps an outline (a selection indicator), routed to
+   the brand ring token. */
+body.adminkit.toplevel_page_fluent-booking .fcal_clone_event_drawer .el-button:hover,
+body.adminkit.toplevel_page_fluent-booking .fcal_create_new_booking_type_drawer .el-button:hover {
+	box-shadow: none !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .fcal_appearance_theme .el-radio.is-checked .el-radio__label svg {
+	box-shadow: var( --ak-focus-ring ) !important;
+}
+
+
+/* ============================================================
+   4. HOVER / PRESSED / DISABLED for the soft brand controls
+   (the plugin's darker-blue #416ddd variant). Ghost buttons deepen their
+   tint on hover rather than flipping to a solid fill.
+   ============================================================ */
+
+/* Ghost primary buttons — hover/focus deepens the tint. */
+body.adminkit.toplevel_page_fluent-booking .el-button--primary:hover,
+body.adminkit.toplevel_page_fluent-booking .el-button--primary:focus,
+body.adminkit.toplevel_page_fluent-booking .el-button.fcal_primary_btn:hover,
+body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn:hover,
+body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn:focus {
+	background-color: var( --ak-primary-soft ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-primary-dark ) !important;
+}
+
+/* Disabled primary → neutral muted (not a blue). */
+body.adminkit.toplevel_page_fluent-booking .el-button.el-button--primary.is-disabled,
+body.adminkit.toplevel_page_fluent-booking .el-button--primary.is-disabled:hover {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Filter-popover checked radio → soft tint like the other checked controls. */
+body.adminkit.toplevel_page_fluent-booking .fcal_filter_popover .el-radio__input.is-checked .el-radio__inner {
+	background-color: var( --ak-primary-subtle ) !important;
+	border-color: var( --ak-primary ) !important;
+}
+
+
+/* ============================================================
+   5. PALE BLUE TINTS — selection / info backgrounds that used hard-coded
+   light-blue (#f0f6fe, #f5f8fc, #e3e8ee) instead of --fcal-color-bg.
+   ============================================================ */
+
+/* Brand-pale tint → --ak-primary-subtle (link / action hover feedback). */
+body.adminkit.toplevel_page_fluent-booking .el-link--primary .el-link__inner:hover,
+body.adminkit.toplevel_page_fluent-booking .fcal_all_driver_actions .fcal_driver_action:hover {
+	background-color: var( --ak-primary-subtle ) !important;
+}
+
+/* Dashboard overview — 4 distinct accents like native FluentBooking
+   (orange / green / red / blue icon chips on pale tinted cards), mapped to
+   AdminKit semantic tokens. Each card gets a ~10% wash of its accent; the
+   icon chip the solid token (white glyph). nth-child mirrors the plugin:
+   1 = warning, 2 = success, 3 = error, 4/default = info. */
+
+/* 4th / default (Total Guests) — info */
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget {
+	background-color: color-mix( in srgb, var( --ak-info ) 10%, transparent ) !important;
+}
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget .icon {
+	background: var( --ak-info ) !important;
+}
+
+/* 1 — Total Bookings — warning */
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget:first-child {
+	background-color: color-mix( in srgb, var( --ak-warning ) 10%, transparent ) !important;
+}
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget:first-child .icon {
+	background: var( --ak-warning ) !important;
+}
+
+/* 2 — Completed — success */
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget:nth-child(2) {
+	background-color: color-mix( in srgb, var( --ak-success ) 10%, transparent ) !important;
+}
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget:nth-child(2) .icon {
+	background: var( --ak-success ) !important;
+}
+
+/* 3 — Cancelled — error */
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget:nth-child(3) {
+	background-color: color-mix( in srgb, var( --ak-error ) 10%, transparent ) !important;
+}
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget:nth-child(3) .icon {
+	background: var( --ak-error ) !important;
+}
+
+/* Trend "stat" pill inside the overview card — white pill, brand-green accent
+   for "up" (the plugin's #16896b → our brand green, not the success token so
+   the UI keeps a single green), red for "down" (#ef4444). */
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget .stat {
+	background: var( --ak-surface-alt ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-primary ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget .stat.down {
+	border-color: var( --ak-error ) !important;
+	color: var( --ak-error ) !important;
+}
+
+/* Same green (#16896b) used for paid/active status accents → brand green. */
+body.adminkit.toplevel_page_fluent-booking .fcal_spot_payment_status.paid,
+body.adminkit.toplevel_page_fluent-booking .fcal_badge.active {
+	color: var( --ak-primary ) !important;
+}
+
+/* Near-neutral blue-greys → plain surface / border. */
+body.adminkit.toplevel_page_fluent-booking .el-table.fcal_schedule_meeting_table table tbody tr td,
+body.adminkit.toplevel_page_fluent-booking .fcal_schedule_meetings_header_filters_inner,
+body.adminkit.toplevel_page_fluent-booking .fcal_settings_availability .el-table tbody tr td {
+	background-color: var( --ak-surface ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .fcal_booking_header {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border ) !important;
+}
+
+
+/* ============================================================
+   6. STRONG OVERRIDES — plugin rules shipping #306ae0 with !important AT
+   HIGH SPECIFICITY (focused inputs up to 0,7,0; the new-booking footer
+   button 0,5,0; deep calendar selection 0,7,3). A short selector loses to
+   these even with !important, so we add specificity: the app ID
+   `#fluent-booking-app` (1,x,x — beats any class-only rule) for in-app
+   nodes, and scope-prefixed deep chains for the dialogs Element Plus
+   teleports to <body> (outside the app root).
+   ============================================================ */
+
+/* Focused inputs — blue border everywhere (settings, dialogs, selects). */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-input__wrapper.is-focus,
+body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__body .el-form .el-form-item .el-input .el-input__wrapper.is-focus,
+body.adminkit.toplevel_page_fluent-booking .el-overlay .el-dialog .el-input__wrapper.is-focus,
+body.adminkit.toplevel_page_fluent-booking .el-input__wrapper.is-focus {
+	border-color: var( --ak-primary ) !important;
+}
+
+/* New-booking dialog footer primary button — ghost style (matches 3a). */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn,
+body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__footer .dialog-footer .fcal_primary_btn,
+body.adminkit.toplevel_page_fluent-booking .el-dialog__footer .dialog-footer .fcal_primary_btn {
+	background: var( --ak-primary-subtle ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-primary ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn:hover,
+body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__footer .dialog-footer .fcal_primary_btn:hover,
+body.adminkit.toplevel_page_fluent-booking .el-dialog__footer .dialog-footer .fcal_primary_btn:hover {
+	background: var( --ak-primary-soft ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-primary-dark ) !important;
+}
+
+/* Deep calendar / date selection. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-calendar-table td.is-selected p,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-calendar-table td .el-calendar-day p.is-selected,
+body.adminkit.toplevel_page_fluent-booking .el-overlay .el-calendar-table td.is-selected p {
+	background-color: var( --ak-primary ) !important;
+	color: #ffffff !important;
+}
+
+
+/* ============================================================
+   7. HARD-CODED NEUTRAL BORDERS + DISABLED ICONS
+   FluentBooking hard-codes a light-grey border (#ecedee / #eaecf0) into
+   dialog chrome instead of routing it through --fcal-primary-border —
+   fine in light, a glowing edge in dark. Route the dialog frame to the
+   token. Input prefix/suffix icons (the search magnifier etc., painted
+   with fill:currentColor) get a neutral color so they never inherit blue.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-booking .el-dialog,
+body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__header,
+body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__footer,
+body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__body {
+	border-color: var( --ak-border ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .el-input__prefix,
+body.adminkit.toplevel_page_fluent-booking .el-input__suffix,
+body.adminkit.toplevel_page_fluent-booking .el-input__icon,
+body.adminkit.toplevel_page_fluent-booking .el-input__prefix-inner i {
+	color: var( --ak-text-muted );
+}
+
+
+/* ============================================================
+   8. WHITE-LABEL THE MENU LOGO AS "Booking"
+   The in-app top menu renders two <img> (.fcal_light_logo / .fcal_dark_logo)
+   inside .menu_logo_holder a. Hide both and drop a plain text wordmark in
+   their place — same approach as the Fluent SMTP / FlyingPress adapters.
+   The anchor ships line-height:0 + overflow:hidden (to crop the img), so
+   reset those before injecting the text.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a .fcal_light_logo,
+body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a .fcal_dark_logo {
+	display: none !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a,
+body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a:hover,
+body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a:focus {
+	line-height: normal;
+	overflow: visible;
+	text-decoration: none;
+	box-shadow: none;
+	background: none;
+}
+
+body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a::after {
+	content: "Booking";
+	color: var( --ak-heading );
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+}
+
+/* The version label sits absolutely positioned with a hard-coded #000 —
+   retint so it stays legible in dark mode. */
+body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a span {
+	color: var( --ak-text-muted );
+}
+
+
+/* ============================================================
+   9. CLEANUP — hidden chrome, semantic tints, fixed contrasts
+   ============================================================ */
+
+/* Decorative party emoji in the dashboard welcome banner — drop it. */
+body.adminkit.toplevel_page_fluent-booking .fcal_welcome_banner .party_icon {
+	display: none;
+}
+
+/* FluentBooking's own light/dark toggle — AdminKit's switch is the single
+   source of truth now (PHP sync_theme mirrors it onto FluentBooking), so
+   hide the redundant in-header control. */
+body.adminkit.toplevel_page_fluent-booking .settings_menu_wrapper[data-key="color_mode"] {
+	display: none;
+}
+
+/* Error "tips" callout — hard-coded #fde2e2 bg + #f56c6c bar → error tokens. */
+body.adminkit.toplevel_page_fluent-booking .fcal_tips_error {
+	background-color: var( --ak-error-subtle ) !important;
+	border-left-color: var( --ak-error ) !important;
+}
+
+/* Active main-nav item — the plugin paints it with the blue accent PAIR
+   (pale bg + accent text). Keep that relationship on-brand: a subtle tint
+   behind brand-colored text so the two never collapse to one color. */
+body.adminkit.toplevel_page_fluent-booking .fcal_nav li.active_item a,
+body.adminkit.toplevel_page_fluent-booking .fframe_menu li.active_item a {
+	background: var( --ak-primary-subtle ) !important;
+	color: var( --ak-primary ) !important;
+}
+
+/* Search-box magnifier (Element Plus Search icon, fill:currentColor) reads
+   as a brand affordance — override the neutral input-icon color above. */
+body.adminkit.toplevel_page_fluent-booking .fcal_search_input .el-input__prefix,
+body.adminkit.toplevel_page_fluent-booking .fcal_search_input .el-input__prefix-inner,
+body.adminkit.toplevel_page_fluent-booking .fcal_search_input .el-input__prefix-inner i,
+body.adminkit.toplevel_page_fluent-booking .fcal_search_input .el-icon {
+	color: var( --ak-primary );
+}
+
+/* Dialog close (X) — the plugin colors it with --el-color-info, which is the
+   (blue) info token, and tints it #306ae0 on hover in some modals. It's just
+   a close affordance, so route it to neutral text → heading on hover. */
+body.adminkit.toplevel_page_fluent-booking .el-dialog__headerbtn .el-dialog__close,
+body.adminkit.toplevel_page_fluent-booking .el-dialog__headerbtn i {
+	color: var( --ak-text-muted ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .el-dialog__headerbtn:hover .el-dialog__close,
+body.adminkit.toplevel_page_fluent-booking .el-dialog__headerbtn:hover i,
+body.adminkit.toplevel_page_fluent-booking .el-dialog__headerbtn:focus .el-dialog__close {
+	color: var( --ak-heading ) !important;
+}
+
+
+/* ============================================================
+   10. MORE FIXES — soft banner, slate text, blue focus, TinyMCE
+   ============================================================ */
+
+/* Welcome banner — was a solid brand fill (heavy). Soften to a ~25% brand
+   wash with dark text so it reads as a gentle hero, not a green slab. */
+body.adminkit.toplevel_page_fluent-booking .fcal_welcome_banner {
+	background-color: color-mix( in srgb, var( --ak-primary ) 25%, transparent ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-heading ) !important;
+}
+
+/* Dashboard overview widgets — the big stat value (h1) hard-codes the
+   near-black #19283a (unreadable in dark) → heading token. */
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget h1 {
+	color: var( --ak-heading ) !important;
+}
+
+/* Hard-coded slate text #445164 (input-group append, widget/host subtitles,
+   inactive tabs, grouped-select items, license copy) → token text. */
+body.adminkit.toplevel_page_fluent-booking .el-input-group.fcal_input_with_copy .el-input-group__append,
+body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget h3,
+body.adminkit.toplevel_page_fluent-booking .fcal_tabs > .el-tabs__header .el-tabs__nav .el-tabs__item,
+body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_select .el-select-group li,
+body.adminkit.toplevel_page_fluent-booking .fcal_card_items .fcal_card_item .fcal_card_item_host h3,
+body.adminkit.toplevel_page_fluent-booking .fcal_license_box p {
+	color: var( --ak-text ) !important;
+}
+
+/* Plain / secondary buttons — the plugin tints hover+focus with a hard blue
+   (rgba(38,83,199,…) + #306ae0), and the blue survives on :focus. Route to a
+   brand tint; keep the `.danger` variants on the error token. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_plain_btn:not(.danger):hover,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_plain_btn:not(.danger):focus,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn2:not(.danger):hover,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn2:not(.danger):focus {
+	background: var( --ak-primary-soft ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-primary ) !important;
+}
+
+/* TinyMCE (classic editor used in notification/email fields). Its panels +
+   edit area + transparent iframe had no token bg, so the dark page showed
+   through as a black editor. Theme the chrome and give the surfaces a token
+   background. */
+body.adminkit.toplevel_page_fluent-booking .mce-panel {
+	background-color: var( --ak-surface-alt ) !important;
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-text );
+}
+
+body.adminkit.toplevel_page_fluent-booking .mce-toolbar-grp,
+body.adminkit.toplevel_page_fluent-booking .mce-statusbar {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .mce-edit-area,
+body.adminkit.toplevel_page_fluent-booking .mce-edit-area iframe {
+	background-color: var( --ak-surface-alt ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .mce-btn button,
+body.adminkit.toplevel_page_fluent-booking .mce-ico {
+	color: var( --ak-text ) !important;
+	background: transparent !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .mce-btn:hover button,
+body.adminkit.toplevel_page_fluent-booking .mce-btn.mce-active button {
+	background: var( --ak-hover-bg ) !important;
+	color: var( --ak-heading ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .mce-btn.mce-disabled button,
+body.adminkit.toplevel_page_fluent-booking .mce-btn.mce-disabled .mce-ico {
+	color: var( --ak-text-muted ) !important;
+	opacity: 0.5;
+}
+
+body.adminkit.toplevel_page_fluent-booking .mce-path,
+body.adminkit.toplevel_page_fluent-booking .mce-path-item {
+	color: var( --ak-text-muted ) !important;
+}
+
+
+/* ============================================================
+   11. REMAINING HARD-CODED TEXT LITERALS
+   The few text colors that bypass the --fcal-* text vars and so stay
+   near-black/slate in dark mode. Swept here so they don't have to be
+   reported one by one: #19283a / #1b2533 = heading, #637083 = muted.
+   (#445164 is handled in section 10; the overview h1 #19283a too.)
+   ============================================================ */
+
+/* Headings / titles → heading token. */
+body.adminkit.toplevel_page_fluent-booking .fcal_pro_notice h3,
+body.adminkit.toplevel_page_fluent-booking .el-dialog.fcal_modal .el-dialog__header,
+body.adminkit.toplevel_page_fluent-booking .el-dialog.fcal_notification_modal .fcal_sms_form .fcal_sms_body .el-form-item__label,
+body.adminkit.toplevel_page_fluent-booking .el-message-box .el-message-box__header {
+	color: var( --ak-heading ) !important;
+}
+
+/* Disabled input text (#637083) → muted. */
+body.adminkit.toplevel_page_fluent-booking .el-input.is-disabled .el-input__inner {
+	color: var( --ak-text-muted ) !important;
+}
+
+/* License-key input text (#1b2533) → body text. */
+body.adminkit.toplevel_page_fluent-booking .fcal_license_box .el-input .el-input__wrapper {
+	color: var( --ak-text ) !important;
+}
+
+/* Message-box close (X) — same neutral treatment as the dialog close. */
+body.adminkit.toplevel_page_fluent-booking .el-message-box__headerbtn .el-message-box__close,
+body.adminkit.toplevel_page_fluent-booking .el-message-box__headerbtn i {
+	color: var( --ak-text-muted ) !important;
+}
+
+
+/* ============================================================
+   12. CARDS — surfaces + flat hover
+   Event-type "slots" ship no background (transparent on the page); give them
+   a surface token. Several cards add a hover-elevation box-shadow — AdminKit
+   is flat, so drop those and use a border shift for the hover affordance.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot {
+	background: var( --ak-bg ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot:hover,
+body.adminkit.toplevel_page_fluent-booking .fcal_settings_card:hover,
+body.adminkit.toplevel_page_fluent-booking .fcal_configure_integration_card:hover {
+	box-shadow: none !important;
+}
+
+body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot:hover {
+	border-color: var( --ak-border-strong ) !important;
+}
+
+
+/* ============================================================
+   13. CREATE-CALENDAR FORM — section cards → surface
+   The nested section cards in the event/calendar form ship transparent or
+   white backgrounds via deep selectors. Give them the surface token so they
+   read as recessed cards on the form. Targeted by leaf class (covers every
+   occurrence regardless of the deep ancestor chain). Scoped under the app ID
+   so the !important wins over the plugin's deep rules.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_event_details_wrap,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_event_card,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_weekly_existing_schedule,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_time_limit_wrap,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_notification_container_wrap,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_questions_wrapper,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-form-item.fcal_availability_header,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_weekly_schedules,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_override_date .fcal_override_date_inner,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_card_items .fcal_card_item:last-child {
+	background-color: var( --ak-bg ) !important;
+}
+
+/* Override-date row — outer transparent (inner gets --ak-bg above). */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_override_date {
+	background: transparent !important;
+}
+
+/* Integration card header — drop its full border. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_configure_integration_card .fcal_configure_integration_card_header {
+	border: none !important;
+}
+
+/* Element Plus icons with an inline `--color: black` (hard-coded by some Vue
+   components) go invisible in dark mode. An author !important beats the inline
+   custom property, so route it to a theme token that flips with the mode. */
+body.adminkit.toplevel_page_fluent-booking .el-icon[style*="--color: black"],
+body.adminkit.toplevel_page_fluent-booking .el-icon[style*="--color:black"] {
+	--color: var( --ak-heading ) !important;
+}

@@ -1,0 +1,149 @@
+/* FluentCRM — toplevel_page_fluentcrm-admin.
+
+   FluentCRM v3 is a Vue 3 SPA on Element Plus, themed through two layers
+   of CSS custom properties:
+     1. its own --fc-* tokens (surfaces, text, borders, brand, semantic);
+     2. Element Plus --el-* tokens, which FluentCRM wires TO the --fc-*
+        layer — e.g. --el-color-primary: var(--fc-deep-bg),
+        --el-bg-color: var(--fc-primary-bg), --el-text-color-primary:
+        var(--fc-primary-text).
+   So the whole UI can be themed at the --fc-* layer alone: Element Plus
+   follows automatically (its aliases re-resolve against --fc-*), and so
+   does the PHP-rendered topbar (.fcrm_topbar, .fcrm_menu, …) which reads
+   the same vars. Because --ak-* tokens flip with AdminKit's dark mode,
+   this one mapping covers light AND dark — we never touch FluentCRM's own
+   .fluent_theme_dark / #fcrm_theme toggle.
+
+   Why two selectors. A var() resolves against the element it's declared
+   on, and FluentCRM declares its --fc-*/--el-* sets in two element scopes:
+   on :root (the <html> element, light state) and on body.fluent_theme_dark
+   (FluentCRM toggles its own dark class on <body>, not <html>). To keep
+   AdminKit authoritative in either state we redeclare --fc-* in both:
+     • :root  — wins over FluentCRM's :root (loaded earlier; AdminKit
+                dispatches at priority 9999) so the html-level --el-*
+                aliases recompute against our tokens in the default
+                (FluentCRM-light) state;
+     • body.adminkit.toplevel_page_fluentcrm-admin (0,2,1) — outranks
+                body.fluent_theme_dark (0,1,1) so the chrome and the
+                body-level --el-* aliases follow AdminKit even if the
+                user also flips FluentCRM's own dark switch.
+   We also set a few --el-* directly (see the block below): the ones
+   FluentCRM never aliases fall back to Element Plus's stock blue/grey —
+   most importantly --el-color-primary-rgb, the source of the blue focus/
+   selection/hover tints — so they must be pinned, not just inherited.
+
+   Brand. FluentCRM's "primary action" intent is a near-black (#222530),
+   shared by --fc-primary-button and --fc-deep-bg (the latter also backs
+   --el-color-primary). Routing that intent to --ak-primary makes buttons,
+   links, active states, switches and Element Plus primary speak the brand,
+   with white pinned on top. */
+
+:root,
+body.adminkit.toplevel_page_fluentcrm-admin {
+	/* Surfaces */
+	--fc-primary-bg: var( --ak-surface-alt );   /* cards, inputs, panels, dialogs, dropdowns, overlays */
+	--fc-secondary-bg: var( --ak-bg );          /* app page background */
+	--fc-light-bg: var( --ak-surface );
+	--fc-weak-bg-25: var( --ak-surface );
+
+	/* Text */
+	--fc-primary-text: var( --ak-heading );
+	--fc-secondary-text: var( --ak-text );
+	--fc-text-muted: var( --ak-text-muted );
+	--fc-text-inverse: #ffffff;                 /* always white — only ever sits on the brand primary */
+
+	/* Borders */
+	--fc-primary-border: var( --ak-border );
+	--fc-secondary-border: var( --ak-border-strong );
+
+	/* Brand / primary action — near-black (#222530) routed to brand */
+	--fc-deep-bg: var( --ak-primary );
+	--fc-primary-button: var( --ak-primary );
+	--fc-text-link: var( --ak-primary );
+	--fc-text-link-bg: var( --ak-primary-subtle );
+
+	/* Semantic */
+	--fc-success: var( --ak-success );
+	--fc-error: var( --ak-error );
+	--fc-warning: var( --ak-warning );
+
+	/* ===== Element Plus internals FluentCRM leaves at EP defaults =====
+	   FluentCRM aliases most --el-* to its --fc-* layer (so they follow the
+	   remap above), but a few are never set and fall back to Element Plus's
+	   stock palette — which is BLUE. The worst offender is
+	   --el-color-primary-rgb: every `rgba(var(--el-color-primary-rgb), a)`
+	   focus ring, selection fill and hover tint defaults to EP's #409eff, so
+	   the app sprouts blue patches (loud in dark mode). Pin it to the brand
+	   rgb — alpha tints overlay any surface, so one value reads correctly in
+	   both modes. Same literal as tokens.css's --wp-admin-theme-color--rgb. */
+	--el-color-primary-rgb: 117, 163, 59;
+
+	/* Primary ramp — keep filled/hover/disabled primary states on-brand
+	   instead of the greyed text/border tokens FluentCRM aliases them to. */
+	--el-color-primary-dark-2: var( --ak-primary-dark );    /* active / pressed */
+	--el-color-primary-light-3: var( --ak-primary-dark );   /* filled-button hover */
+	--el-color-primary-light-5: var( --ak-primary-soft );
+	--el-color-primary-light-7: var( --ak-primary-soft );
+	--el-color-primary-light-8: var( --ak-primary-subtle );
+	--el-color-primary-light-9: var( --ak-primary-subtle ); /* plain bg / current row / active menu */
+
+	/* Fills — hover backgrounds, zebra rows, disabled, blank canvas. The
+	   base/dark/extra-light steps are unset by FluentCRM (EP greys leak in
+	   dark); pin the whole set to neutral surfaces. */
+	--el-fill-color: var( --ak-surface );
+	--el-fill-color-light: var( --ak-surface );
+	--el-fill-color-lighter: var( --ak-surface );
+	--el-fill-color-extra-light: var( --ak-surface );
+	--el-fill-color-dark: var( --ak-elevated );
+	--el-fill-color-darker: var( --ak-elevated );
+	--el-fill-color-blank: var( --ak-surface-alt );
+
+	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
+	--el-box-shadow: none;
+	--el-box-shadow-light: none;
+	--el-box-shadow-lighter: none;
+	--el-box-shadow-dark: none;
+}
+
+
+/* ===== Page canvas =====
+   AdminKit's chrome.css themes #wpbody / #wpbody-content but not
+   #wpcontent, and FluentCRM only paints #wpcontent inside its OWN dark
+   class (.fluent_theme_dark #wpcontent { background: var(--fc-secondary-bg) }),
+   which AdminKit's mode never triggers — so the strip behind the SPA stays
+   light in AdminKit dark. Give the content area and the app shell the
+   page-background token directly; it flips with the theme. */
+body.adminkit.toplevel_page_fluentcrm-admin #wpcontent,
+body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app,
+body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_app_wrapper {
+	background-color: var( --ak-bg );
+}
+
+/* Element Plus primary button hover/focus — FluentCRM's bundle hardcodes
+   `background: var(--fc-primary-text)` for the hover (darken toward the
+   body-text colour, not toward a primary-dark token). With the brand
+   mapping above that would flip a green button to near-black on hover, so
+   route it to the brand's own dark step instead. */
+body.adminkit.toplevel_page_fluentcrm-admin .el-button--primary:hover,
+body.adminkit.toplevel_page_fluentcrm-admin .el-button--primary:focus {
+	background: var( --ak-primary-dark );
+	border-color: var( --ak-primary-dark );
+	color: #ffffff;
+}
+
+/* Topbar icons (settings gear, submenu chevrons) ship hardcoded dark
+   fills as inline SVG presentation attributes (fill="#0E121B" /
+   "#99A0AE"). A CSS `fill` beats a presentation attribute, so route them
+   to the token text colour — otherwise they vanish on dark surfaces. */
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar .fcrm_icon_btn svg path,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar .fcrm_submenu_handler svg path {
+	fill: currentColor;
+}
+
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar .fcrm_icon_btn {
+	color: var( --ak-text-muted );
+}
+
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar .fcrm_icon_btn:hover {
+	color: var( --ak-heading );
+}

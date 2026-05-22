@@ -1,0 +1,343 @@
+/* FluentCart — toplevel_page_fluent-cart.
+   ----------------------------------------------------------------------
+   FluentCart's admin is an Element Plus SPA. Element Plus is entirely
+   CSS-variable driven, and FluentCart declares its palette (the `--el-*`
+   ramp plus its own `--color-*` set) on `:root`. So instead of overriding
+   components selector-by-selector (the approach forced on us by the older
+   Element UI in fluent-smtp/fluentform, which hardcoded hex), we just
+   reassign the variables to AdminKit tokens. Element Plus recomputes
+   every component from them.
+
+   Two things make this the correct lever:
+     1. The reassignment lives on `body` — not on the app root
+        (#fluent_cart_plugin_app) — because Element Plus teleports
+        overlays (dropdowns, selects, dialogs, tooltips, message boxes,
+        date pickers) to direct children of <body>. Body-level custom
+        properties cascade into those teleported nodes; an app-root scope
+        would leave every popper showing default Element Plus blue/white.
+        A `body` declaration also wins over FluentCart's `:root` (and its
+        `.dark`) values for the whole body subtree — `body` is downstream
+        in the inheritance chain, so specificity never enters into it.
+     2. Every token already flips under :root[data-adminkit-theme="dark"].
+        Pointing `--el-*` at the tokens means the entire plugin follows
+        AdminKit dark mode for free — FluentCart's own `.dark` theme is
+        bypassed, not fought.
+
+   The [class*="fluent-cart"] hook matches the screen body class
+   (`toplevel_page_fluent-cart`) and any future FluentCart sub-page.
+   The stylesheet only loads on FluentCart screens anyway (owns_screen),
+   so the selector is double-gated. */
+
+body.adminkit[class*="fluent-cart"] {
+
+	/* ===== Brand / primary ramp =====
+	   Element Plus bakes the primary light/dark steps as static rgb at
+	   build time and uses them directly (button hover/disabled, plain
+	   button bg, hovered/current table row, active menu, tags). Route
+	   the solid ends to the brand tokens and the light end to AdminKit's
+	   alpha tints — alpha tints overlay whatever surface, so they read
+	   correctly in BOTH light and dark (a white-mixed tint would blow out
+	   on a dark surface). */
+	--el-color-primary: var(--ak-primary);
+	--el-color-primary-dark-2: var(--ak-primary-dark);
+	--el-color-primary-light-3: var(--ak-primary-dark);   /* filled-button hover → darken */
+	--el-color-primary-light-5: var(--ak-primary-soft);   /* disabled fill / plain border */
+	--el-color-primary-light-7: var(--ak-primary-soft);   /* default-button hover border */
+	--el-color-primary-light-8: var(--ak-primary-subtle);
+	--el-color-primary-light-9: var(--ak-primary-subtle); /* plain bg / current row / active menu / tag */
+
+	/* Focus glows + selection use rgba(var(--el-color-primary-rgb), a).
+	   Keep them on-brand with the same literal tokens.css pins for
+	   --wp-admin-theme-color--rgb (the Bricks brand green). */
+	--el-color-primary-rgb: 117, 163, 59;
+
+	/* FluentCart's own namespace (non-Element-Plus components) */
+	--color-primary: var(--ak-primary);
+	--color-secondary: var(--ak-secondary);
+	--color-success: var(--ak-success);
+	--color-warning: var(--ak-warning);
+	--color-neutral: var(--ak-text-muted);
+
+	/* ===== Surfaces ===== */
+	--el-bg-color: var(--ak-surface-alt);          /* cards, panels, inputs */
+	--el-bg-color-page: var(--ak-bg);              /* app page background */
+	--el-bg-color-overlay: var(--ak-surface-alt);  /* dropdowns, dialogs, tooltips */
+
+	/* Fills — hover backgrounds, zebra rows, disabled, blank canvas */
+	--el-fill-color: var(--ak-surface);
+	--el-fill-color-light: var(--ak-surface);
+	--el-fill-color-lighter: var(--ak-surface);
+	--el-fill-color-extra-light: var(--ak-surface);
+	--el-fill-color-dark: var(--ak-elevated);
+	--el-fill-color-darker: var(--ak-elevated);
+	--el-fill-color-blank: var(--ak-surface-alt);
+
+	/* FluentCart custom table fills + Element Plus table header */
+	--el-table-header-bg-color: var(--ak-surface);
+	--table-header-bg: var(--ak-surface);
+	--table-cell-bg-lighter: var(--ak-surface);
+
+	/* ===== Text ===== */
+	--el-text-color-primary: var(--ak-heading);     /* strongest: titles, labels */
+	--el-text-color-regular: var(--ak-text);        /* body */
+	--el-text-color-secondary: var(--ak-text-muted);
+	--el-text-color-placeholder: var(--ak-text-muted);
+	--el-text-color-disabled: var(--ak-text-muted);
+
+	/* ===== Borders ===== */
+	--el-border-color: var(--ak-border);
+	--el-border-color-light: var(--ak-border);
+	--el-border-color-lighter: var(--ak-border);
+	--el-border-color-extra-light: var(--ak-border);
+	--el-border-color-hover: var(--ak-border-strong);
+	--el-border-color-dark: var(--ak-border-strong);
+	--el-border-color-darker: var(--ak-border-strong);
+
+	/* ===== Semantic ramps =====
+	   Surfaced mostly as alerts + status pills/tags (subtle bg + colored
+	   text/border) — common in an order admin. Keep the solid ends on the
+	   semantic token and derive the subtle backgrounds with color-mix
+	   alpha tints so colored status pills survive dark mode instead of
+	   becoming pale light patches (Element Plus's baked light-9 values).
+	   info → neutral text-muted, so default/"neutral" status tags stay
+	   grey rather than turning blue. */
+	--el-color-success: var(--ak-success);
+	--el-color-success-dark-2: var(--ak-success);
+	--el-color-success-light-3: var(--ak-success);
+	--el-color-success-light-5: color-mix(in srgb, var(--ak-success) 45%, transparent);
+	--el-color-success-light-7: color-mix(in srgb, var(--ak-success) 28%, transparent);
+	--el-color-success-light-8: color-mix(in srgb, var(--ak-success) 20%, transparent);
+	--el-color-success-light-9: color-mix(in srgb, var(--ak-success) 12%, transparent);
+
+	--el-color-warning: var(--ak-warning);
+	--el-color-warning-dark-2: var(--ak-warning);
+	--el-color-warning-light-3: var(--ak-warning);
+	--el-color-warning-light-5: color-mix(in srgb, var(--ak-warning) 45%, transparent);
+	--el-color-warning-light-7: color-mix(in srgb, var(--ak-warning) 28%, transparent);
+	--el-color-warning-light-8: color-mix(in srgb, var(--ak-warning) 20%, transparent);
+	--el-color-warning-light-9: color-mix(in srgb, var(--ak-warning) 12%, transparent);
+
+	--el-color-danger: var(--ak-error);
+	--el-color-danger-dark-2: var(--ak-error);
+	--el-color-danger-light-3: var(--ak-error);
+	--el-color-danger-light-5: color-mix(in srgb, var(--ak-error) 45%, transparent);
+	--el-color-danger-light-7: color-mix(in srgb, var(--ak-error) 28%, transparent);
+	--el-color-danger-light-8: color-mix(in srgb, var(--ak-error) 20%, transparent);
+	--el-color-danger-light-9: color-mix(in srgb, var(--ak-error) 12%, transparent);
+
+	--el-color-error: var(--ak-error);
+	--el-color-error-dark-2: var(--ak-error);
+	--el-color-error-light-3: var(--ak-error);
+	--el-color-error-light-5: color-mix(in srgb, var(--ak-error) 45%, transparent);
+	--el-color-error-light-7: color-mix(in srgb, var(--ak-error) 28%, transparent);
+	--el-color-error-light-8: color-mix(in srgb, var(--ak-error) 20%, transparent);
+	--el-color-error-light-9: color-mix(in srgb, var(--ak-error) 12%, transparent);
+
+	--el-color-info: var(--ak-text-muted);
+	--el-color-info-dark-2: var(--ak-text-muted);
+	--el-color-info-light-3: var(--ak-text-muted);
+	--el-color-info-light-5: color-mix(in srgb, var(--ak-text-muted) 40%, transparent);
+	--el-color-info-light-7: color-mix(in srgb, var(--ak-text-muted) 26%, transparent);
+	--el-color-info-light-8: color-mix(in srgb, var(--ak-text-muted) 18%, transparent);
+	--el-color-info-light-9: color-mix(in srgb, var(--ak-text-muted) 10%, transparent);
+
+	/* ===== Flat — no surface shadows (AdminKit is shadow-free) =====
+	   Element Plus leans on box-shadow for cards + floating overlays; the
+	   remapped border tokens carry the edge, dialogs keep their backdrop. */
+	--el-box-shadow: none;
+	--el-box-shadow-light: none;
+	--el-box-shadow-lighter: none;
+	--el-box-shadow-dark: none;
+
+	/* Loading mask — FluentCart's dark-theme value is a solid navy that
+	   would tint the overlay; make it a mode-adaptive translucent surface
+	   so v-loading reads the same in light and dark. */
+	--el-mask-color: color-mix(in srgb, var(--ak-surface-alt) 85%, transparent);
+	--el-mask-color-extra-light: color-mix(in srgb, var(--ak-surface-alt) 35%, transparent);
+}
+
+
+/* ===== App canvas =====
+   FluentCart's own #fluent_cart_plugin_app rule sets only sizing/padding,
+   so give the SPA shell an explicit page background token. */
+body.adminkit[class*="fluent-cart"] #fluent_cart_plugin_app {
+	background: var(--ak-bg);
+}
+
+
+/* ===== Hide FluentCart's own light/dark toggle =====
+   AdminKit owns the theme switch and slaves FluentCart's theme to it
+   (see class-fluentcart.php::sync_theme). Remove their control so there
+   aren't two competing toggles. */
+body.adminkit[class*="fluent-cart"] .fct-theme-button-container {
+	display: none !important;
+}
+
+
+/* ===== Dark mode — replace FluentCart's navy with the AdminKit palette =====
+   FluentCart ships a full hardcoded `fluent_theme_dark` theme (navy
+   #1c2732 / #151d26) that paints straight over Element Plus and its own
+   chrome, bypassing the variable remap at the top of this file. The
+   integration slaves that theme to AdminKit's mode, so the navy is only
+   ever present when AdminKit is dark — these rules recolor its recurring
+   surfaces to the AdminKit dark tokens. Text is left to FluentCart (its
+   dark theme already uses light-on-dark). The [data-adminkit-theme="dark"]
+   scope keeps it dark-only; the specificity easily beats FluentCart's
+   zero-specificity :where(.fluent_theme_dark) rules. */
+
+/* All rules below are !important: FluentCart scopes some of its dark
+   rules under #fct_admin_app_wrapper (an ID), which outranks any
+   class-based selector. Since this is a deliberate recolor of a
+   third-party theme, !important is the right tool. Everything stays
+   gated to FluentCart screens in AdminKit dark, so the blast radius
+   is contained.
+
+   --- 1. Tailwind named palette → tokens (the scalable bulk) ---
+   FluentCart's dark theme is generated from a fixed Tailwind palette:
+   dark-*/primary-* are the navy surfaces, gray-* the text. Remapping
+   the utility classes catches every element that uses them at once. */
+
+/* Surfaces (darkest → page, mid-navy → surface, elevated → elevated) */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] .dark\:bg-dark-800 {
+	background-color: var(--ak-bg) !important;
+}
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(.dark\:bg-dark-700, .dark\:bg-primary-700) {
+	background-color: var(--ak-surface) !important;
+}
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] .dark\:bg-primary-600 {
+	background-color: var(--ak-surface-alt) !important;
+}
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(
+	.dark\:bg-dark-500, .dark\:bg-primary-500, .dark\:bg-gray-700, .dark\:bg-gray-800
+) {
+	background-color: var(--ak-elevated) !important;
+}
+
+/* Borders */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(.dark\:border-dark-400, .dark\:border-gray-200) {
+	border-color: var(--ak-border) !important;
+}
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(.dark\:border-dark-500, .dark\:border-primary-500, .dark\:border-gray-700) {
+	border-color: var(--ak-border-strong) !important;
+}
+
+/* Text */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(.dark\:text-gray-50, .dark\:text-gray-100) {
+	color: var(--ak-heading) !important;
+}
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(.dark\:text-gray-200, .dark\:text-gray-300) {
+	color: var(--ak-text) !important;
+}
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(.dark\:text-gray-400, .dark\:text-system-light) {
+	color: var(--ak-text-muted) !important;
+}
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] .dark\:text-blue-400 {
+	color: var(--ak-primary) !important;
+}
+
+
+/* --- 2. Element Plus components that compile the navy inline ---
+   These hardcode the navy on the component class (bypassing --el-*),
+   so the variable remap at the top of the file can't reach them. */
+
+/* Elevated panels, popovers, inputs, controls → surface-alt */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(
+	.el-dialog, .el-drawer, .el-drawer__footer, .el-dropdown-menu, .el-message-box,
+	.el-notification, .el-picker-panel, .el-picker-panel__footer, .el-picker-panel__sidebar,
+	.el-popover.el-popper, .el-popper.is-light, .el-popper__arrow,
+	.el-select__wrapper, .el-input__wrapper, .el-input__wrapper.is-focus, .el-input__count,
+	.el-input-number__increase, .el-input-number__decrease,
+	.el-radio__inner, .el-checkbox__inner, .el-radio-button__inner, .el-step__icon, .el-switch__core
+) {
+	background-color: var(--ak-surface-alt) !important;
+}
+
+/* Recessed — tables, collapses, tab bodies → surface */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(
+	.el-table, .el-table__cell, .el-table__inner-wrapper, .el-table__empty-block,
+	.el-table-fixed-column--right, .el-collapse, .el-collapse-item__header,
+	.el-collapse-item__header.is-active, .el-collapse-item__wrap, .el-tabs__content
+) {
+	background-color: var(--ak-surface) !important;
+}
+
+/* Buttons — default/ghost to a neutral surface, primary stays on brand */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(
+	.el-button, .el-button--info.is-plain, .el-button--danger.is-plain
+) {
+	background-color: var(--ak-surface-alt) !important;
+	border-color: var(--ak-border) !important;
+	color: var(--ak-text) !important;
+}
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(.el-button--primary, .el-button--primary.is-plain) {
+	background-color: var(--ak-primary) !important;
+	border-color: var(--ak-primary) !important;
+	color: #ffffff !important;
+}
+
+
+/* --- 3. FluentCart chrome that compiles the navy inline --- */
+
+/* Cards, badges, tiles, pickers → surface-alt */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(
+	.fct-card, .fct-card-body, .fct-report-card, .fct-dashboard-stat-widget__inner,
+	.fct-storage-activated-card, .fct-onboarding-card-body, .fct-order-stats-card,
+	.fct-inventory-stats-card, .fct-package-type-card, .fct-packages-cards,
+	.fct-content-card-header, .fct-congrats-dialog-content-inner, .fct-integration-setting-body-inner,
+	.fct-tag-item, .fct-variant-badge, .fct-applied-filter, .fct-filter-dropdown,
+	.fct-media-button, .fct-upload-btn, .fct-specific-country-box, .fct-eu-union-countries,
+	.fct-tax-selection-sum-box, .fct-pdf-template-preview, .fct-color-picker-box,
+	.fct-timeline-node, .fct-save-bar, .fct-offcanvas-menu-close, .fct-setting-search-button
+) {
+	background-color: var(--ak-surface-alt) !important;
+}
+
+/* Headers, nav rails, filter bars, dividers → surface */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(
+	.fct-card-header, .fct-report-header, .fct-setting-header, .heading-wrap,
+	.fct-settings-nav-container, .fct_admin_menu_wrap, .fct-filter-nav, .fct-fluid-tab,
+	.fct-report-filter-wrap, .fct-report-global-filter-wrap, .fct-report-avg-wrap,
+	.fct-report-order-summary, .fct-tab-item-wrapper, .fct-bulk-product-title-cell,
+	.fct-condition-or, .fct-onboarding-bottom, .fct-onboarding-form-header,
+	.fct-custom-legend-controls, .fct-module-disabled-notice, .fct-tax-collection-method,
+	.fct-licensed-product-table-mobile, .fct-content-card-list-icon
+) {
+	background-color: var(--ak-surface) !important;
+}
+
+/* Borders on the navy chrome */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(
+	.el-button, .fct-card, .fct-card-header, .fct-settings-nav-container, .fct_admin_menu_wrap,
+	.fct-report-card, .fct-report-header, .fct-tab-item-wrapper, .fct-tag-item, .fct-variant-badge
+) {
+	border-color: var(--ak-border) !important;
+}
+
+/* Active nav / selected states → brand primary */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] :is(
+	.fct_menu_item.active_admin_menu > a, .fct_menu_item.active_admin_menu > button,
+	.fct-settings-nav .fct-settings-nav-item-active .fct-settings-nav-link,
+	.fct-device-btn.active, .fct-onboarding-step-completed-button
+) {
+	background-color: var(--ak-primary) !important;
+	color: #ffffff !important;
+}
+
+
+/* --- 4. Page canvas + loader + un-themed text --- */
+
+/* WP content area behind the SPA */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] #wpcontent {
+	background-color: var(--ak-bg) !important;
+}
+
+/* Loading / preload surfaces */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] .fct-test-orders-loading-content {
+	color: var(--ak-text) !important;
+}
+
+/* A few FluentCart base text rules ship no dark variant, so they stay
+   dark-on-dark once the theme flips — pull them to a token. */
+:root[data-adminkit-theme="dark"] body.adminkit[class*="fluent-cart"] .fct-dashboard-recent-activities__header_title {
+	color: var(--ak-heading) !important;
+}
