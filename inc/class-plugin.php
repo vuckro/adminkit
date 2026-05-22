@@ -26,6 +26,7 @@ class AdminKit_Plugin {
 		AdminKit_Settings::init();
 		AdminKit_Theme_Toggle::init();
 		AdminKit_Profile_Accordion::init();
+		AdminKit_Core_List_Table_Chrome::init();
 
 		self::boot_integrations();
 

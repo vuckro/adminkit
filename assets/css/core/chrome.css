@@ -544,30 +544,32 @@ body.adminkit .nav-tab-active:focus {
 	border-bottom-color: var(--ak-heading);
 }
 
-/* Subsubsub filter rows above tables (All | Active | Inactive …). Modernize
-   into subtle inline filters: collapse WP's literal "|" separators (font-size:0
-   on the <li> zeroes the pipe text node; the <a> restores its own size), give
-   each link a soft hover / current pill, and keep the counts muted. */
+/* Subsubsub filter rows above tables (All | Active | Inactive …). Presented as
+   inline filter pills, each with a round count "notification" badge. The literal
+   "|" separators and the count's parentheses are stripped in JS
+   (inc/core/class-list-table-chrome.php), so this styles clean links + numbers —
+   no font-size hacks. */
 body.adminkit .subsubsub {
 	display: inline-flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 2px;
+	gap: 4px;
 	margin: 8px 0;
-	color: var(--ak-text-muted);
 }
 
 body.adminkit .subsubsub li {
 	margin: 0;
-	font-size: 0;
 }
 
 body.adminkit .subsubsub a {
-	font-size: var(--ak-text-s);
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
 	color: var(--ak-text-muted);
-	padding: 3px 10px;
+	padding: 4px 10px;
 	border-radius: var(--ak-radius-s);
 	text-decoration: none;
+	line-height: 1.3;
 }
 
 body.adminkit .subsubsub a:hover,
@@ -585,19 +587,23 @@ body.adminkit .subsubsub a.current:focus {
 	font-weight: 600;
 }
 
-/* Counts become little notification badges. */
+/* Round notification badge for the count. */
 body.adminkit .subsubsub .count {
-	display: inline-block;
-	margin-left: 5px;
-	padding: 1px 7px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 5px;
 	border-radius: var(--ak-radius-full);
-	background: var(--ak-surface-alt);
+	background: var(--ak-elevated);
 	color: var(--ak-text-muted);
 	font-size: 11px;
 	font-weight: 600;
+	line-height: 1;
 }
 
 body.adminkit .subsubsub a.current .count {
-	background: var(--ak-primary-subtle);
-	color: var(--ak-primary);
+	background: var(--ak-primary);
+	color: var(--ak-on-accent);
 }
