@@ -417,6 +417,18 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn-stroke:focus {
 	color: var(--ak-primary-dark);
 }
 
+
+/* ===== Section dividers (#e1e1e1 hardcoded) =====
+   .wpmdb-backups hr ships `border-top: 2px solid #e1e1e1 !important`
+   so the override needs !important too. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb-backups hr {
+	border-top-color: var(--ak-border) !important;
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb-settings-page .settings-row {
+	border-bottom-color: var(--ak-border);
+}
+
 /* Media files options block (Find & Replace) */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .media-files .media-files-options {
 	border-color: var(--ak-border);
