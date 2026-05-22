@@ -77,6 +77,28 @@ body.adminkit.toplevel_page_flying-press .focus\:outline-indigo-600:focus {
 	outline-color: var(--ak-primary) !important;
 }
 
+/* Segmented controls / toggles render a hidden `peer` checkbox with the
+   visible label styled via `peer-checked:*`. The active button's purple
+   comes from these variants — the compiled selectors are
+   `.peer:checked ~ .peer-checked\:bg-indigo-600` (and the ring), which
+   the plain `.bg-indigo-600` rule above can't reach. Route them to
+   primary too. Covers the active AVIF / WebP / Lossy / Defer-loading
+   options and every other segmented choice. */
+body.adminkit.toplevel_page_flying-press .peer:checked ~ .peer-checked\:bg-indigo-600 {
+	background-color: var(--ak-primary) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .peer:checked ~ .peer-checked\:ring-indigo-600 {
+	--tw-ring-color: var(--ak-primary) !important;
+}
+
+/* The focus outline ships with Tailwind's `!` important modifier
+   (`focus:!outline-indigo-600`) — a distinct selector from the plain
+   `focus:outline-indigo-600` handled above. */
+body.adminkit.toplevel_page_flying-press .focus\:\!outline-indigo-600:focus {
+	outline-color: var(--ak-primary) !important;
+}
+
 
 /* ===== Surfaces (gray scale → tokens) =====
    Ordered light→dark so the recession reads the same in both themes;
