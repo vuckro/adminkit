@@ -1,0 +1,206 @@
+/* WP Migrate (Pro) — tools_page_wp-migrate-db-pro.
+   The plugin's React SPA bundles its own utility classes with hex
+   hardcoded across the board:
+     #236de7  — primary blue (CTAs, switches, links)
+     #04223f  — brand dark (active nav)
+     #a5ddf1  — brand light (header strip background)
+     #d6d6d6  — borders / dividers
+     #53aa59  — success bg
+     #dc3232 / #cf2a27 — error / destructive bg
+     #ffba00  — alert/warning bg
+     #fff     — every container surface
+   Route the most visible chrome through AdminKit tokens, leave
+   utility "semantic" colors (success/alert/error) as-is — they're
+   intent cues, not chrome. */
+
+
+/* ===== Shell + chrome ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb {
+	color: var(--ak-text);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .header-wrap {
+	background: var(--ak-surface);
+	border-bottom: 1px solid var(--ak-border);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav-wrap {
+	background: var(--ak-surface-alt);
+	border-bottom-color: var(--ak-border);
+}
+
+/* Container card (every panel uses .container-shadow) */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .container-shadow {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	box-shadow: none;
+}
+
+
+/* ===== Primary nav + subnav ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav li a {
+	color: var(--ak-text);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav-item-active {
+	border-bottom-color: var(--ak-primary);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav-item-active a {
+	color: var(--ak-heading) !important;
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .subnav {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .subnav li a {
+	color: var(--ak-text);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .subnav-item-active {
+	border-bottom-color: var(--ak-primary);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .subnav-item-active a {
+	color: var(--ak-primary) !important;
+}
+
+
+/* ===== Primary CTA (.btn) ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: #ffffff;
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn:hover {
+	background-color: var(--ak-primary-dark);
+	border-color: var(--ak-primary-dark);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn:active {
+	background-color: var(--ak-primary-dark);
+	border-color: var(--ak-primary-dark);
+}
+
+/* Destructive variant keeps the red intent */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn.delete {
+	background: var(--ak-error);
+	border-color: var(--ak-error);
+}
+
+
+/* ===== Inline links ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .link {
+	color: var(--ak-primary);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb a.docs-link,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .license-block .license-status span.license-label {
+	color: var(--ak-primary);
+}
+
+
+/* ===== Form inputs ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb input[type="text"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb input[type="email"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb input[type="password"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb input[type="url"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb textarea,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb select {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+
+/* ===== Toggle slider switch (.slider-switch / -bg / -active) ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .slider-switch-bg {
+	background: var(--ak-border-strong);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .slider-switch-active,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .slider-switch {
+	background: var(--ak-primary);
+}
+
+
+/* ===== Accordions (locked + nested + expanded) ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .accordion-locked {
+	border-color: var(--ak-border);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nested-accordion {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nested-accordion-title {
+	color: var(--ak-heading);
+	opacity: 1;
+}
+
+/* Expanded accordion uses #45719b (a dark slate blue) for the bar.
+   Route to a brand wash so the open state speaks our palette. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .db-accordion-expanded,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nested-accordion-expanded {
+	background: var(--ak-primary);
+	box-shadow: none;
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nested-accordion-expanded-title {
+	color: #ffffff;
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nested-accordion-expanded-body {
+	background: var(--ak-surface);
+}
+
+
+/* ===== Tailwind-utility classes the SPA composes its UI with =====
+   Override the most-used bg utilities so any markup tagged with
+   them flips with the theme. Semantic intents (.bg-success /
+   -alert / -error) stay as-is — they're per-state cues. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .bg-white {
+	background: var(--ak-surface-alt);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .bg-primary {
+	background: var(--ak-primary);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .bg-brand-dark {
+	background: var(--ak-elevated);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .bg-brand-light {
+	background: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .bg-grey-light {
+	background: var(--ak-surface);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .bg-grey-dark {
+	background: var(--ak-text-muted);
+}
+
+/* Same idea for text utilities */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .text-brand-dark {
+	color: var(--ak-heading);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .text-brand-light {
+	color: var(--ak-primary);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .text-grey-light {
+	color: var(--ak-border);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .text-grey-dark {
+	color: var(--ak-text-muted);
+}
