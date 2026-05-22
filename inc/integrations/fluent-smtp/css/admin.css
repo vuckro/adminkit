@@ -276,6 +276,96 @@ body.adminkit.settings_page_fluent-mail .el-dropdown-menu__item:hover {
 }
 
 
+/* ===== Element UI horizontal menu (top nav) ===== */
+body.adminkit.settings_page_fluent-mail .el-menu--horizontal > .el-menu-item.is-active {
+	border-bottom-color: var(--ak-primary);
+	color: var(--ak-heading);
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-navigation.el-menu--horizontal.el-menu .el-menu-item.is-active {
+	background: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+
+/* ===== Element UI select dropdown panel ===== */
+body.adminkit.settings_page_fluent-mail .el-select-dropdown {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit.settings_page_fluent-mail .el-select-dropdown__item {
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-select-dropdown__item.hover,
+body.adminkit.settings_page_fluent-mail .el-select-dropdown__item:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	color: var(--ak-primary);
+}
+
+body.adminkit.settings_page_fluent-mail .el-select-dropdown__item.selected {
+	background-color: transparent;
+	color: var(--ak-primary);
+}
+
+
+/* ===== Element UI radio-button group (segmented control) ===== */
+body.adminkit.settings_page_fluent-mail .el-radio-button__inner {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	box-shadow: -1px 0 0 0 var(--ak-primary);
+	color: #ffffff;
+}
+
+
+/* ===== Element UI date-range editor inputs ===== */
+body.adminkit.settings_page_fluent-mail .el-range-editor {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_fluent-mail .el-range-editor .el-range-input,
+body.adminkit.settings_page_fluent-mail .el-range-editor--small .el-range-input {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-range-separator {
+	color: var(--ak-text-muted);
+}
+
+
+/* ===== Element UI striped table — zebra row ===== */
+body.adminkit.settings_page_fluent-mail .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+	background: var(--ak-surface);
+}
+
+
+/* ===== Vue templates that emit inline `style="color: rgb(70, 160, 252)"`
+   (the Element UI primary blue rgb literal — "+ Add Another Connection"
+   link and similar inline-styled CTAs). Override with !important
+   since inline styles already beat any selector specificity. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app [style*="rgb(70, 160, 252)"] {
+	color: var(--ak-primary) !important;
+}
+
+
+/* ===== Hide promo "About" + "Documentation" header links =====
+   Both link out to fluentsmtp.com — kill them in the in-app header
+   so the chrome stays focused on the plugin's own UI. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-header a[href*="fluentsmtp.com"],
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_header a[href*="fluentsmtp.com"] {
+	display: none;
+}
+
+
 /* ===== Element UI tags ===== */
 body.adminkit.settings_page_fluent-mail .el-tag,
 body.adminkit.settings_page_fluent-mail .el-tag--info {
