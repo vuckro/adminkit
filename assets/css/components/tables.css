@@ -106,16 +106,46 @@ body.adminkit .wp-list-table .row-title:hover {
 	color: var(--ak-heading);
 }
 
-body.adminkit .wp-list-table .row-actions a {
-	color: var(--ak-text-muted);
+/* Row actions (Edit / Quick Edit / Trash / View / …) — modern, pipe-less
+   chips. The literal " | " separators are text nodes inside each <span>;
+   collapse them with font-size:0 and restore the link text, then space the
+   actions with a flex gap. Each action gets a soft hover chip; Trash stays
+   red with a danger-tint hover. */
+body.adminkit .wp-list-table .row-actions {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	align-items: center;
 }
 
-body.adminkit .wp-list-table .row-actions a:hover {
-	color: var(--ak-text);
+body.adminkit .wp-list-table .row-actions span {
+	font-size: 0;
+}
+
+body.adminkit .wp-list-table .row-actions a,
+body.adminkit .wp-list-table .row-actions button.button-link {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+	padding: 2px 6px;
+	border-radius: var(--ak-radius-s);
+	text-decoration: none;
+	line-height: 1.6;
+}
+
+body.adminkit .wp-list-table .row-actions a:hover,
+body.adminkit .wp-list-table .row-actions button.button-link:hover {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
 }
 
 body.adminkit .wp-list-table .row-actions .delete a,
 body.adminkit .wp-list-table .row-actions .trash a {
+	color: var(--ak-error);
+}
+
+body.adminkit .wp-list-table .row-actions .delete a:hover,
+body.adminkit .wp-list-table .row-actions .trash a:hover {
+	background: var(--ak-error-subtle);
 	color: var(--ak-error);
 }
 
