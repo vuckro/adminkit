@@ -132,10 +132,15 @@ body.adminkit .wp-list-table .row-actions button.button-link {
 	line-height: 1.6;
 }
 
+/* Hover/focus — neutral chip (Trash gets the danger chip below). The
+   !important + higher specificity beat the global brand chip on a:hover in
+   links.css, so row actions stay neutral instead of going primary. */
 body.adminkit .wp-list-table .row-actions a:hover,
-body.adminkit .wp-list-table .row-actions button.button-link:hover {
-	background: var(--ak-hover-bg);
-	color: var(--ak-heading);
+body.adminkit .wp-list-table .row-actions a:focus,
+body.adminkit .wp-list-table .row-actions button.button-link:hover,
+body.adminkit .wp-list-table .row-actions button.button-link:focus {
+	background: var(--ak-hover-bg) !important;
+	color: var(--ak-heading) !important;
 }
 
 body.adminkit .wp-list-table .row-actions .delete a,
@@ -144,9 +149,11 @@ body.adminkit .wp-list-table .row-actions .trash a {
 }
 
 body.adminkit .wp-list-table .row-actions .delete a:hover,
-body.adminkit .wp-list-table .row-actions .trash a:hover {
-	background: var(--ak-error-subtle);
-	color: var(--ak-error);
+body.adminkit .wp-list-table .row-actions .delete a:focus,
+body.adminkit .wp-list-table .row-actions .trash a:hover,
+body.adminkit .wp-list-table .row-actions .trash a:focus {
+	background: var(--ak-error-subtle) !important;
+	color: var(--ak-error) !important;
 }
 
 /* tablenav (bulk actions + pagination row above + below list tables) —
