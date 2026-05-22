@@ -38,6 +38,10 @@
 	--ak-surface: var(--surface, hsl(0, 0%, 96%));
 	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
 	--ak-surface-alt: var(--white, #ffffff);
+	/* List tables — row + header surfaces swap per mode: white rows /
+	   gray header in light, darker rows / lighter header in dark. */
+	--ak-table-bg: var(--ak-surface-alt);
+	--ak-table-header-bg: var(--ak-surface);
 	--ak-border: var(--border, hsl(0, 0%, 89%));
 	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
 	--ak-text: var(--text, hsl(0, 0%, 32%));
@@ -112,6 +116,8 @@ body.adminkit[class*="admin-color-"] {
 	--ak-bg: var(--neutral-d-2, hsl(0, 0%, 11%));
 	--ak-surface: var(--neutral-d-3, hsl(0, 0%, 14%));
 	--ak-surface-alt: var(--neutral-d-4, hsl(0, 0%, 18%));
+	--ak-table-bg: var(--ak-surface);
+	--ak-table-header-bg: var(--ak-surface-alt);
 	--ak-elevated: var(--neutral-d-5, hsl(0, 0%, 24%));
 	--ak-border: var(--neutral-d-5, hsl(0, 0%, 24%));
 	--ak-border-strong: var(--neutral-d-6, hsl(0, 0%, 38%));

@@ -7,10 +7,10 @@
    WP hardcodes `.plugins tr { background: #fff }`. That leaks white through
    tr.plugin-update-tr (the "update available" row) on our dark surface
    because that row's td has no background of its own. Route every plugins
-   tr through --ak-surface; the per-state rules below still flip
+   tr through --ak-table-bg; the per-state rules below still flip
    active/inactive on tr.active/tr.inactive cells. */
 body.adminkit .wp-list-table.plugins tr {
-	background: var(--ak-surface);
+	background: var(--ak-table-bg);
 }
 
 /* Reset WP's per-cell border indicators */
@@ -57,7 +57,7 @@ body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
    higher specificity (.inactive class) beat the hover rule. */
 body.adminkit .wp-list-table.plugins tr.inactive:not(:hover) th,
 body.adminkit .wp-list-table.plugins tr.inactive:not(:hover) td {
-	background: var(--ak-surface);
+	background: var(--ak-table-bg);
 }
 
 body.adminkit .wp-list-table.plugins tr.inactive .plugin-title strong {
