@@ -1,185 +1,136 @@
 /* AdminKit design tokens
    ======================================================================
-   AdminKit is a token-based restyle of wp-admin. Every color, surface and
-   border is exposed as a `--ak-*` custom property; all AdminKit CSS reads
-   ONLY these tokens, never raw colors. That indirection is what lets one
-   palette flip the whole admin between light and dark — and lets an
-   optional design-system provider (Bricks today, ACSS / Core Framework
-   later) repaint everything from a single source of truth.
-
-   ── Three layers ───────────────────────────────────────────────────────
-     1. Provider primitives   --neutral-l-*, --primary, …   (raw ramps)
-     2. Provider semantics     --surface, --text, --accent…  (named roles)
-     3. AdminKit tokens        --ak-*                         (this file)
-
-   Each `--ak-*` resolves through a fallback chain, semantic first:
+   AdminKit restyles wp-admin entirely through `--ak-*` custom properties;
+   no AdminKit rule reads a raw color. Each token resolves through a
+   fallback chain — provider SEMANTIC role first, self-contained neutral
+   default last:
 
         --ak-surface: var(--surface, hsl(0, 0%, 96%));
                           │                  └ standalone default (no provider)
                           └ provider semantic role (wins when present)
 
-   So AdminKit consumes the provider's SEMANTIC layer and degrades to a
-   self-contained neutral palette when no provider is active. Bricks feeds
-   its generated variables in via `adminkit/extra_tokens_handle` (see
-   inc/integrations/bricks/). Full mapping + how to add a provider:
-   docs/TOKENS.md.
+   So AdminKit mirrors the provider's semantic layer 1:1 (Bricks today —
+   background / surface / elevated / border / text / accent / hover / focus)
+   and degrades to a neutral palette standalone. Full mapping: docs/TOKENS.md.
 
    ── Light / dark ────────────────────────────────────────────────────────
-   Tokens live on :root only so they inherit through <body> down to
-   #wpadminbar and #adminmenu. Declaring them on <body> too would let a
-   body-scoped provider sheet freeze the value and block the dark flip.
+   Tokens live on :root so they inherit down to #wpadminbar / #adminmenu.
+   Dark mode is AdminKit's own [data-adminkit-theme="dark"] on <html>; a
+   provider's own dark toggle never fires in wp-admin, so the dark block
+   re-maps onto the provider INVERSE ramp (--neutral-d-N), whose
+   light-context value already equals the matching --neutral-l-N DARK value.
+   That reproduces the provider's dark palette exactly — no provider toggle.
 
-   Dark mode is AdminKit's own `data-adminkit-theme="dark"` on <html>. A
-   provider's own dark mode (Bricks' `data-brx-theme`, etc.) never fires
-   inside wp-admin, so provider primitives sit at their light-context value
-   here. The dark block therefore re-maps onto the provider INVERSE ramp
-   (--neutral-d-*) — whose light-context value already equals the matching
-   --neutral-l-* dark value — giving correct dark surfaces without relying
-   on the provider's toggle. The ramp lifts one step vs light (brighter =
-   more elevated) so cards stay readable on near-black.
+   ── Surfaces: 3 levels, by ROLE ───────────────────────────────────────────
+     --ak-bg        page background, behind everything        (--background)
+     --ak-surface   cards, panels, inputs, table rows         (--surface)
+     --ak-elevated  raised / distinct: headers, hover-down,
+                    dropdowns, selected, chrome state          (--elevated)
+   The lightness order flips between modes (correct for an elevation model) —
+   always pick by role, never by a hardcoded lightness.
 
    ── Conventions ──────────────────────────────────────────────────────────
-   • Flat by design — no shadow or scrim tokens. Depth is shown by surface
-     tone, never elevation shadows; plugin shadows are removed, not themed.
-   • Radii and type stay in px, not the provider's rem scale: provider
-     scales are calibrated for a 1rem≈10px frontend reset that renders too
-     large in admin.
-   • Derived tints use color-mix off --ak-primary so a custom primary
-     (settings or provider) carries through to hovers, rings and tints.
-     Each color-mix token ships a static first line for old engines, then
-     the color-mix line overrides it (progressive enhancement). */
+   • Flat by design — no shadow / scrim tokens; depth is shown by surface tone.
+   • Radii + type stay in px (the provider rem scale renders too large in admin).
+   • Derived tints use color-mix off --ak-primary so a custom brand carries
+     through to hovers, rings and tints. Each color-mix token ships a static
+     first line for old engines, then the color-mix line overrides it. */
 
 :root {
-	/* ── Surfaces — pick by ROLE, not by lightness ─────────────────────
-	   --ak-bg            page background, behind everything
-	   --ak-surface-alt   raised content: cards, postboxes, inputs, notices
-	   --ak-surface       recessed: section/table headers, wells, insets
-	   --ak-elevated      subtle solid fill / hover-down
-	   --ak-surface-accent  soft selected mid-tone (between the two above)
-	   Values are tuned per mode and the relative order shifts in dark, so
-	   always choose by the role above — never hardcode a lightness. Data
-	   tables use the dedicated --ak-table-* pair (it swaps in dark). */
+	/* ── Surfaces ──────────────────────────────────────────────────────── */
 	--ak-bg: var(--background, hsl(0, 0%, 98%));
 	--ak-surface: var(--surface, hsl(0, 0%, 96%));
 	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
-	--ak-surface-alt: var(--white, #ffffff);
-	--ak-surface-accent: hsl(0, 0%, 95%);
-	--ak-surface-accent: color-mix(in srgb, var(--ak-surface) 50%, var(--ak-elevated));
 
-	/* ── Borders ───────────────────────────────────────────────────────*/
+	/* ── Borders ───────────────────────────────────────────────────────── */
 	--ak-border: var(--border, hsl(0, 0%, 89%));
 	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
 
-	/* ── Text ──────────────────────────────────────────────────────────*/
+	/* ── Text ──────────────────────────────────────────────────────────── */
 	--ak-text: var(--text, hsl(0, 0%, 32%));
 	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%));
 	--ak-heading: var(--heading, hsl(0, 0%, 18%));
 
-	/* ── Accent (brand) ─────────────────────────────────────────────────
-	   accent → brand primitive → neutral gray. The neutral last step keeps
-	   AdminKit coherent (a calm gray UI) when no brand palette is set. */
+	/* ── Accent (brand) ────────────────────────────────────────────────────
+	   accent → brand primitive → neutral gray (a calm gray UI when unbranded). */
 	--ak-primary: var(--accent, var(--primary, var(--neutral-l-8, hsl(0, 0%, 32%))));
-	/* Hover/active shade. Provider's tuned step wins; else darken the live
-	   primary so a custom color still gets a real hover (not a gray). */
-	--ak-primary-dark: var(--primary-d-2, hsl(0, 0%, 18%));
-	--ak-primary-dark: var(--primary-d-2, color-mix(in srgb, var(--ak-primary) 82%, #000));
-	/* Tinted fills — chips, selected rows, soft backgrounds. */
+	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, hsl(0, 0%, 18%)));
+	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, color-mix(in srgb, var(--ak-primary) 82%, #000)));
 	--ak-primary-subtle: var(--accent-bg, var(--primary-t-1, rgba(0, 0, 0, 0.06)));
 	--ak-primary-subtle: var(--accent-bg, var(--primary-t-1, color-mix(in srgb, var(--ak-primary) 9%, transparent)));
-	--ak-primary-soft: var(--primary-t-2, rgba(0, 0, 0, 0.12));
-	--ak-primary-soft: var(--primary-t-2, color-mix(in srgb, var(--ak-primary) 18%, transparent));
-	/* Readable foreground on a primary fill (text/icon on a brand button).
-	   Soft off-white from the neutral ramp's light end — the counterpart to
-	   --ak-heading (which leans on --neutral-l-9). NOT pure white (too harsh)
-	   and NOT the provider's --on-accent (Bricks computes it near-black =
-	   neutral-l-10, reading dark on the green #628c2d accent). Stays ~98%:
-	   contrast on the green is already ~4:1, so a greyer value drops below. */
-	--ak-on-accent: var(--neutral-l-1, hsl(0, 0%, 98%));
+	/* Foreground on a brand fill. Provider --on-accent is tuned per brand
+	   (near-black on a light/yellow accent); standalone falls back to off-white
+	   for the neutral-gray primary. */
+	--ak-on-accent: var(--on-accent, hsl(0, 0%, 98%));
 	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%)));
 
-	/* ── State ───────────────────────────────────────────────────────────
-	   Neutral hover tint for chrome; focus color, then the ring built on it
-	   so a custom primary tints its own focus ring. */
+	/* ── State ─────────────────────────────────────────────────────────────
+	   --hover is a mode-aware translucent tint (black in light, white in dark);
+	   focus color + the ring built on it so a custom brand tints its own ring. */
 	--ak-hover-bg: var(--hover, rgba(0, 0, 0, 0.04));
 	--ak-focus: var(--focus, rgba(255, 214, 79, 0.25));
 	--ak-focus: var(--focus, color-mix(in srgb, var(--ak-primary) 27%, transparent));
 	--ak-focus-ring: 0 0 0 3px var(--ak-focus);
 
-	/* ── Status (notifications) ──────────────────────────────────────────*/
+	/* ── Status (notifications) ────────────────────────────────────────── */
 	--ak-success: var(--success, #11b76b);
 	--ak-warning: var(--warning, #ffa100);
 	--ak-error: var(--error, #f04662);
 	--ak-error-subtle: var(--error-t-2, rgba(240, 70, 98, 0.18));
 	--ak-info: var(--info, #2895d4);
 
-	/* ── Fields (inputs / selects / checkboxes) ──────────────────────────
-	   One place to retune every form control. They alias the surface/border
-	   tokens, so dark mode flips them for free — no field override below. */
-	--ak-field-bg: var(--ak-surface-alt);
-	--ak-field-border: var(--ak-border);
-	--ak-field-border-hover: var(--ak-border-strong);
-
-	/* ── List tables ─────────────────────────────────────────────────────
-	   White rows / gray header in light; swapped in dark (see dark block). */
-	--ak-table-bg: var(--ak-surface-alt);
-	--ak-table-header-bg: var(--ak-surface);
-
-	/* ── Admin menu (sidebar) state surfaces ──────────────────────────────
-	   Distinct hover vs active; active a step stronger than hover. Hover steps
-	   straight to --ak-elevated — near white, --ak-surface (96%) and a 65/35
-	   mix (~95%) read as no change against the menu bg; elevated (93%) makes
-	   the hover visible. Gradation: base 96 -> hover 93 -> active 90 (hover
-	   can't go lower without crowding the 90% active state). */
-	--ak-adminmenu-hover-bg: var(--ak-elevated);
-	--ak-adminmenu-active-bg: hsl(0, 0%, 90%);
-	--ak-adminmenu-active-bg: color-mix(in srgb, var(--ak-elevated) 82%, var(--ak-border-strong));
-
-	/* ── Admin bar hover ──────────────────────────────────────────────────
-	   The bar surface is near-white, so --ak-elevated (93%) sat only 3%
-	   below it and read flat. ~89% gives a clearly visible hover/focus. */
-	--ak-adminbar-hover-bg: hsl(0, 0%, 89%);
-	--ak-adminbar-hover-bg: color-mix(in srgb, var(--ak-surface) 50%, var(--ak-border-strong));
-
-	/* ── Geometry (px on purpose — see header) ────────────────────────────*/
+	/* ── Geometry + type (px on purpose — see header) ───────────────────── */
 	--ak-radius-s: 6px;
 	--ak-radius-m: 10px;
 	--ak-radius-full: 9999px;
-
-	/* ── Typography (px on purpose — see header) ──────────────────────────*/
 	--ak-font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 	--ak-text-xs: 12px;
 	--ak-text-s: 13px;
 	--ak-text-m: 14px;
+
+	/* ── Compat aliases (TEMPORARY — migration in progress) ──────────────────
+	   The old surface-alt / chrome-state / field / table tokens now fold into
+	   the 3 surfaces + --hover + --primary-*. Kept as 1-line aliases so existing
+	   CSS keeps working while usages migrate to the canonical tokens above.
+	   They flip in dark for free (they point at tokens the dark block re-maps).
+	   Delete this block once every usage references a canonical token. */
+	--ak-surface-alt: var(--ak-surface);
+	--ak-surface-accent: var(--ak-elevated);
+	--ak-primary-dark: var(--ak-primary-hover);
+	--ak-primary-soft: var(--ak-primary-subtle);
+	--ak-field-bg: var(--ak-surface);
+	--ak-field-border: var(--ak-border);
+	--ak-field-border-hover: var(--ak-border-strong);
+	--ak-table-bg: var(--ak-surface);
+	--ak-table-header-bg: var(--ak-elevated);
+	--ak-adminmenu-hover-bg: var(--ak-hover-bg);
+	--ak-adminmenu-active-bg: var(--ak-elevated);
+	--ak-adminbar-hover-bg: var(--ak-hover-bg);
 }
 
-/* Remap WP's built-in theme color (blue) to our accent. The selector
-   chains .adminkit AND [class*="admin-color-"] so the specificity (0,2,0)
-   outranks WP's own color-scheme rules — body.admin-color-fresh /
-   -modern are (0,1,0) and would otherwise win by load order. The
-   attribute selector catches every scheme (fresh, modern, blue, coffee,
-   ectoplasm, light, midnight, ocean, sunrise) in one shot. One-shot fix
-   for Quick Edit links, focus rings, selected states, and any plugin that
-   consumes --wp-admin-theme-color. */
+/* Remap WP's built-in theme color (blue) to our accent. The selector chains
+   .adminkit AND [class*="admin-color-"] so specificity (0,2,0) outranks WP's
+   own color-scheme rules (0,1,0). One-shot fix for Quick Edit links, focus
+   rings, selected states, and any plugin that reads --wp-admin-theme-color. */
 body.adminkit,
 body.adminkit[class*="admin-color-"] {
 	--wp-admin-theme-color: var(--ak-primary);
 	--wp-admin-theme-color--rgb: 255, 214, 79;
-	--wp-admin-theme-color-darker-10: var(--ak-primary-dark);
+	--wp-admin-theme-color-darker-10: var(--ak-primary-hover);
 	--wp-admin-theme-color-darker-10--rgb: 209, 175, 65;
-	--wp-admin-theme-color-darker-20: var(--ak-primary-dark);
+	--wp-admin-theme-color-darker-20: var(--ak-primary-hover);
 	--wp-admin-theme-color-darker-20--rgb: 209, 175, 65;
 
-	/* @wordpress/components React UI tokens. Used by options-connectors.php,
-	   parts of Gutenberg, and any custom React admin page that consumes
-	   `--wp-components-color-*`. Routing them through AdminKit tokens flips
-	   the whole React UI between light + dark with the rest. */
+	/* @wordpress/components React UI tokens (options-connectors, Gutenberg meta,
+	   custom React admin pages). Routing them through AdminKit tokens flips the
+	   whole React UI between light + dark with the rest. */
 	--wp-components-color-accent: var(--ak-primary);
-	--wp-components-color-accent-darker-10: var(--ak-primary-dark);
-	--wp-components-color-accent-darker-20: var(--ak-primary-dark);
+	--wp-components-color-accent-darker-10: var(--ak-primary-hover);
+	--wp-components-color-accent-darker-20: var(--ak-primary-hover);
 	--wp-components-color-accent-inverted: var(--ak-on-accent);
-	--wp-components-color-background: var(--ak-surface-alt);
+	--wp-components-color-background: var(--ak-surface);
 	--wp-components-color-foreground: var(--ak-text);
-	--wp-components-color-foreground-inverted: var(--ak-surface-alt);
+	--wp-components-color-foreground-inverted: var(--ak-surface);
 	--wp-components-color-gray-100: var(--ak-bg);
 	--wp-components-color-gray-200: var(--ak-surface);
 	--wp-components-color-gray-300: var(--ak-border);
@@ -190,61 +141,31 @@ body.adminkit[class*="admin-color-"] {
 	--wp-components-color-gray-900: var(--ak-heading);
 }
 
-/* Dark mode — driven by [data-adminkit-theme="dark"] on <html>. The inline
-   init script in <head> reads localStorage.adminkit-theme (or
-   prefers-color-scheme on first visit) and sets the attribute before
-   paint. AdminKit owns its attribute so third-party JS can't race it.
-
-   Surfaces/borders/text re-map onto the provider INVERSE ramp
-   (--neutral-d-*); only tokens that genuinely differ from light are
-   re-declared. Accent, on-accent, overlay and focus carry over from
-   :root unchanged; only --ak-field-bg is re-declared (below). */
+/* Dark mode — [data-adminkit-theme="dark"] on <html>. Surfaces / borders /
+   text mirror the provider's DARK palette via the inverse ramp: --neutral-d-N
+   resolves (in the admin's light context) to --neutral-l-N's dark value, so
+   these match what --background / --surface / --text would be in the provider's
+   own dark mode — no provider toggle required. Only tokens that differ from
+   :root are re-declared; the compat aliases above follow automatically. */
 :root[data-adminkit-theme="dark"] {
-	/* Surfaces — ramp lifts one step (brighter = elevated). */
-	--ak-bg: var(--neutral-d-2, hsl(0, 0%, 11%));
-	--ak-surface: var(--neutral-d-3, hsl(0, 0%, 14%));
-	--ak-surface-alt: var(--neutral-d-4, hsl(0, 0%, 18%));
-	--ak-elevated: var(--neutral-d-5, hsl(0, 0%, 24%));
-	--ak-surface-accent: hsl(0, 0%, 19%);
-	--ak-surface-accent: color-mix(in srgb, var(--ak-surface) 50%, var(--ak-elevated));
+	--ak-bg: var(--neutral-d-1, hsl(0, 0%, 7%));
+	--ak-surface: var(--neutral-d-2, hsl(0, 0%, 11%));
+	--ak-elevated: var(--neutral-d-3, hsl(0, 0%, 14%));
 
-	/* Fields recess below cards in dark. --ak-field-bg aliases --ak-surface-alt
-	   — the lightest surface in light (white, so fields pop) but a mid tone in
-	   dark (18%, the same level as the cards fields sit on, so they'd vanish).
-	   Drop to --ak-surface (14%) so a dark field reads as an inset well against
-	   the 18% card, its border defining the edge. Light keeps the white alias. */
-	--ak-field-bg: var(--ak-surface);
+	--ak-border: var(--neutral-d-4, hsl(0, 0%, 18%));
+	--ak-border-strong: var(--neutral-d-5, hsl(0, 0%, 24%));
 
-	/* Borders */
-	--ak-border: var(--neutral-d-5, hsl(0, 0%, 24%));
-	--ak-border-strong: var(--neutral-d-6, hsl(0, 0%, 38%));
-
-	/* Text */
 	--ak-text: var(--neutral-d-8, hsl(0, 0%, 72%));
 	--ak-text-muted: var(--neutral-d-7, hsl(0, 0%, 56%));
 	--ak-heading: var(--neutral-d-9, hsl(0, 0%, 86%));
 
-	/* Accent — fall back to a mid-gray (not the light gray) so white text on
-	   a brand-less primary keeps ~4.5:1 contrast. With a provider, --accent
-	   / --primary short-circuit and the brand stays constant across modes. */
+	/* Accent stays the brand (provider --accent/--primary don't flip in admin);
+	   standalone falls to a mid-gray for ~4.5:1 contrast with white text. */
 	--ak-primary: var(--accent, var(--primary, var(--neutral-d-6, hsl(0, 0%, 38%))));
-	--ak-primary-dark: var(--primary-d-2, hsl(0, 0%, 56%));
-	--ak-primary-dark: var(--primary-d-2, color-mix(in srgb, var(--ak-primary) 82%, #fff));
+	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, hsl(0, 0%, 56%)));
+	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, color-mix(in srgb, var(--ak-primary) 82%, #fff)));
 	--ak-secondary: var(--secondary, var(--neutral-d-7, hsl(0, 0%, 56%)));
 
-	/* State — white-tint hover (the neutral hover is a black tint, invisible
-	   on dark). --white-t-2 is mode-invariant ≈ 11%. */
+	/* Hover — white tint (the neutral --hover is a black tint, invisible on dark). */
 	--ak-hover-bg: var(--white-t-2, rgba(255, 255, 255, 0.11));
-
-	/* Tables — darker rows, header lifted only slightly. Sit the header
-	   halfway between surface (14%) and surface-alt (18%) ≈ 16% so it reads
-	   as distinct from the rows without going as light as a full card. */
-	--ak-table-bg: var(--ak-surface);
-	--ak-table-header-bg: color-mix(in srgb, var(--ak-surface) 50%, var(--ak-surface-alt));
-
-	/* Chrome state surfaces — keep active contrast, hover stays subtler. */
-	--ak-adminmenu-hover-bg: hsl(0, 0%, 20%);
-	--ak-adminmenu-hover-bg: color-mix(in srgb, var(--ak-surface) 70%, var(--ak-elevated));
-	--ak-adminmenu-active-bg: var(--ak-elevated);
-	--ak-adminbar-hover-bg: var(--ak-elevated);
 }
