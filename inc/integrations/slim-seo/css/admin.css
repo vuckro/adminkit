@@ -65,7 +65,10 @@ body.adminkit.settings_page_slim-seo .ss-vertical-tabs .react-tabs__tab--selecte
 }
 
 body.adminkit.settings_page_slim-seo .ss-tab-list {
+	background-color: var(--ak-surface);
 	border-bottom-color: var(--ak-border);
+	border-top-left-radius: var(--ak-radius-s);
+	border-top-right-radius: var(--ak-radius-s);
 }
 
 /* Tab links: text color by default, primary on hover/active. Kill the
