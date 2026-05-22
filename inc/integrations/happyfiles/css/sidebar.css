@@ -114,6 +114,17 @@ body.adminkit #happyfiles-search-folders input {
 	border-radius: var(--ak-radius-s);
 }
 
+/* The global input :focus wash (--ak-primary-subtle) reads as a loud green
+   fill against the HappyFiles sidebar surfaces. Keep each field's resting
+   background on focus and let the primary border carry the focus state. */
+body.adminkit #happyfiles-search-folders input:focus {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit #happyfiles-create-folders input:focus {
+	background-color: var(--ak-field-bg);
+}
+
 /* Folder rows themselves — round each row so the hover / open tint
    matches the rest of AdminKit's chrome. */
 body.adminkit #happyfiles-sidebar .folder {
