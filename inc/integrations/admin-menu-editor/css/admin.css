@@ -300,6 +300,20 @@ body.adminkit.settings_page_menu_editor .ame-widget-top {
 	box-shadow: none;
 }
 
+/* Widget details panel under each header — AME hardcodes white surface,
+   gray border, and a drop shadow. Route to tokens and keep it flat. */
+body.adminkit.settings_page_menu_editor .ame-widget-properties {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+/* The title action hover defaults to near-black in AME. Keep it on-brand. */
+body.adminkit.settings_page_menu_editor .ame-widget-top .ame-widget-title-action:hover,
+body.adminkit.settings_page_menu_editor .ame-widget-top .ame-widget-title-action:focus {
+	color: var(--ak-primary);
+}
+
 body.adminkit.settings_page_menu_editor .ame-widget-area-header {
 	color: var(--ak-text-muted);
 }
@@ -463,6 +477,49 @@ body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts.rex-with-ca
 	background: var(--ak-primary);
 	border-color: var(--ak-primary);
 	color: #ffffff;
+}
+
+
+/* ----- Role Editor capability grid -----
+   AME lays the sub-category cards out as fixed-250px flex items that wrap,
+   leaving ragged empty space at the end of each row. Switch each card
+   container to equal-width CSS columns so the cards pack top-to-bottom and
+   fill the width with no gaps. Section cards (categories that hold their own
+   sub-cards) and permission tables break out to the full width. The :has()
+   guard scopes the column layout to containers that actually hold cards;
+   where :has() isn't supported it falls back cleanly to AME's flex wrap. */
+body.adminkit.settings_page_menu_editor .rex-category-contents:has(> .rex-category) {
+	display: block;
+	column-width: 250px;
+	column-gap: 16px;
+}
+
+/* Leaf capability cards flow inside the columns as self-contained cards. */
+body.adminkit.settings_page_menu_editor .rex-category-contents > .rex-category:not(.rex-has-subcategories) {
+	width: auto;
+	min-width: 0;
+	max-width: none;
+	margin: 0 0 16px;
+	break-inside: avoid;
+	background: var(--ak-surface-alt);
+	box-shadow: none;
+}
+
+/* Section cards wrap their own sub-grid — span the full width and drop the
+   frame so the inner cards aren't double-outlined. */
+body.adminkit.settings_page_menu_editor .rex-category-contents > .rex-category.rex-has-subcategories {
+	column-span: all;
+	width: auto;
+	max-width: none;
+	margin: 0 0 16px;
+	background: transparent;
+	border: none;
+	box-shadow: none;
+}
+
+/* Permission tables (Post Types / Taxonomies) always span the full width. */
+body.adminkit.settings_page_menu_editor .rex-category-contents > table {
+	column-span: all;
 }
 
 
