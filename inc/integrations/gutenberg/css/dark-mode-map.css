@@ -544,11 +544,14 @@ body.block-editor-page.adminkit .editor-post-panel__row-label {
 	color: var(--ak-text-muted);
 }
 
-/* Inspector panels (Color / Typography / Dimensions / Border / ...)
-   on the Block tab — add a divider between each tools panel so the
-   stacked sections stop merging visually. */
-body.block-editor-page.adminkit .components-tools-panel + .components-tools-panel {
-	border-top: 1px solid var(--ak-border);
+/* Inspector panels (Color / Typography / Dimensions / Border /
+   Attributes / Advanced) — each .components-tools-panel ships its
+   own `border-top: 1px solid #ddd` via an emotion-generated class
+   (e.g. .css-1oux3db, .c-ce-ab-b-cbbbbfc-an13vn). Map the color on
+   every panel directly so the divider follows the theme regardless
+   of whether the panel sits next to another or not. */
+body.block-editor-page.adminkit .components-tools-panel {
+	border-top-color: var(--ak-border);
 }
 
 
