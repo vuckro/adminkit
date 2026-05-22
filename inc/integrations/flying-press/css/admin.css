@@ -276,3 +276,12 @@ body.adminkit.toplevel_page_flying-press :has(> svg[viewBox="0 0 1299 235"])::be
 	font-weight: 700;
 	letter-spacing: 0.01em;
 }
+
+
+/* ===== Hide the FlyingCDN upsell card (CDN tab) =====
+   The first block in the page section is the "FlyingCDN — Next-Gen CDN"
+   promo. Structural selector (the SPA's Tailwind classes have no stable
+   hook); the #app ID wins without !important. */
+body.adminkit.toplevel_page_flying-press #app > div.max-w-6xl.mx-auto.px-4.py-8 > div > section > div:nth-child(1) {
+	display: none;
+}
