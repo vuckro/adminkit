@@ -607,10 +607,10 @@ body.adminkit.settings_page_fluent-mail .el-dialog__body pre {
 }
 
 
-/* Body iframe (sanitized email preview) — token surface so a light
-   email body still reads cleanly on the dark dialog. */
+/* Body iframe (sanitized email preview) — leave the bg to the
+   embedded email itself (most are white/light by design); only
+   add a token border + radius so it sits cleanly in the modal. */
 body.adminkit.settings_page_fluent-mail .el-dialog__body iframe {
-	background: var(--ak-surface-alt);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 }
