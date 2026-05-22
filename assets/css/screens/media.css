@@ -22,12 +22,12 @@ body.adminkit .attachments-browser .attachment.details .attachment-preview {
 	box-shadow: none;
 }
 
-/* Attachment focus — drop WP's box-shadow focus ring (an outset ring that
-   nudges the grid into scrolling at the edges). The selected / details outline
-   above still marks the chosen item. Global, so it covers upload.php too. */
+/* Attachment focus / selection — drop WP's box-shadow rings (outset rings
+   that nudge the grid into scrolling at the edges). The selected / details
+   outline above still marks the chosen item. Global, covers upload.php too. */
 body.adminkit .attachment:focus,
-body.adminkit .attachment.details:focus,
-body.adminkit .selected.attachment:focus {
+body.adminkit .attachment.details,
+body.adminkit .attachment.selected {
 	box-shadow: none;
 }
 
