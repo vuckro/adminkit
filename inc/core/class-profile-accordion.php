@@ -13,16 +13,16 @@
  *
  * On top of that the script surfaces a single open "My Account" panel at
  * the very top — the 80/20 set of fields (first/last name, nickname,
- * display name, role, email, password) an admin reaches for most. It is
- * built by MOVING (never
- * copying) the matching `<tr>`s out of their native sections; because
+ * display name, role, email) an admin reaches for most. It is
+ * built by MOVING (never copying) the matching `<tr>`s out of their native
+ * sections; because
  * each `<input>` keeps its `name`, the form posts exactly as WP expects,
  * so there is no server-side change, no duplicate field, and no CSS
  * override — the panel reuses the same `.ak-accordion` + `.form-table`
  * styling as everything else. Curate the set via the `ESSENTIALS` list.
  *
  * Finally, the remaining profile-heavy sections are consolidated into a
- * second collapsed panel ("More Settings"), keeping "My Account" focused
+ * second collapsed panel ("Settings"), keeping "My Account" focused
  * on daily edits only. Standalone sections (Personal Options, plugin
  * sections like HappyFiles / Bricks) stay in place. Membership is just the
  * `absorb()` calls in step 4; sections are matched by WP's own localized
@@ -76,7 +76,7 @@ class AdminKit_Profile_Accordion {
 		// text — locale-proof, since WP printed those same strings.
 		$labels = array(
 			'my_account'    => __( 'My Account', 'adminkit' ),
-			'more_settings' => __( 'More Settings', 'adminkit' ),
+			'more_settings' => __( 'Settings', 'adminkit' ),
 			'name'          => __( 'Name' ),
 			'contact'       => __( 'Contact Info' ),
 			'about'         => array( __( 'About Yourself' ), __( 'About the user' ) ),
@@ -110,9 +110,10 @@ class AdminKit_Profile_Accordion {
 			return names.indexOf(titleOf(d)) !== -1;
 		})[0] || null;
 	}
-	function makePanel(title, open) {
+	function makePanel(title, open, panel) {
 		var d = document.createElement('details');
 		d.className = 'ak-accordion';
+		if (panel) d.dataset.akPanel = panel;
 		if (open) d.open = true;
 		var s = document.createElement('summary');
 		s.textContent = title;
@@ -147,13 +148,18 @@ class AdminKit_Profile_Accordion {
 		'.user-display-name-wrap',
 		'.user-role-wrap',
 		'.user-email-wrap',
-		'#password',         // New Password (tr#password.user-pass1-wrap)
-		'.user-pass2-wrap',  // Repeat New Password
-		'.pw-weak'           // Confirm use of weak password
+		['#password', '.user-pass1-wrap'] // New Password
 	];
 
 	var rows = ESSENTIALS
-		.map(function (sel) { return form.querySelector(sel); })
+		.map(function (sel) {
+			var selectors = [].concat(sel);
+			for (var i = 0; i < selectors.length; i++) {
+				var row = form.querySelector(selectors[i]);
+				if (row) return row;
+			}
+			return null;
+		})
 		.filter(Boolean);
 
 	var account = null;
@@ -165,7 +171,7 @@ class AdminKit_Profile_Accordion {
 		rows.forEach(function (row) { tbody.appendChild(row); });
 		table.appendChild(tbody);
 
-		account = makePanel(L.my_account, true);
+		account = makePanel(L.my_account, true, 'account');
 		account.appendChild(table);
 
 		// Place it above the first native section (Personal Options).
@@ -211,21 +217,62 @@ class AdminKit_Profile_Accordion {
 		}
 	});
 
-	// --- 4. Group remaining account sections under "More Settings" ---------
-	// Keep My Account focused on daily edits; fold the rest in one secondary
-	// panel. Standalone sections (Personal Options, plugin sections) remain
-	// untouched.
+	// --- 4. Build "Settings" in the intended editing order ------------------
+	// Keep My Account focused on day-to-day identity fields. Settings groups
+	// account maintenance fields in a predictable sequence.
 	if (account) {
-		var lead = find(L.name) || find(L.contact) || find(L.about) || find(L.account) || find(L.app_passwords) || find(L.capabilities);
+		var ORDERED_SETTINGS_ROWS = [
+			'.user-profile-picture',                       // Profile picture
+			['.user-user-login-wrap', '.user-login-wrap'], // Username
+			'.user-language-wrap',                         // Language
+			'.user-capabilities-wrap',                     // Capabilities
+			'.user-url-wrap',                              // Website
+			'.user-description-wrap',                      // Biography
+			'.user-pass2-wrap',                            // Password reset helpers
+			'.pw-weak'
+		];
+		function findRow(selectorOrList) {
+			var selectors = [].concat(selectorOrList);
+			for (var i = 0; i < selectors.length; i++) {
+				var row = form.querySelector(selectors[i]);
+				if (row) return row;
+			}
+			return null;
+		}
+
+		var SECONDARY_SECTIONS = [L.name, L.contact, L.about, L.account, L.app_passwords, L.capabilities];
+		var lead = SECONDARY_SECTIONS
+			.map(function (label) { return find(label); })
+			.filter(Boolean)[0] || null;
+
 		if (lead) {
-			var more = makePanel(L.more_settings, false);
+			var more = makePanel(L.more_settings, false, 'more');
 			form.insertBefore(more, lead);
-			absorb(more, find(L.name), true);
-			absorb(more, find(L.contact), true);
-			absorb(more, find(L.about), true);
-			absorb(more, find(L.account), true);
-			absorb(more, find(L.app_passwords), true);
-			absorb(more, find(L.capabilities), true);
+
+			var settingsTable = document.createElement('table');
+			settingsTable.className = 'form-table';
+			settingsTable.setAttribute('role', 'presentation');
+			var settingsBody = document.createElement('tbody');
+			ORDERED_SETTINGS_ROWS.forEach(function (selectorOrList) {
+				var row = findRow(selectorOrList);
+				if (row) settingsBody.appendChild(row);
+			});
+			if (settingsBody.children.length) {
+				settingsTable.appendChild(settingsBody);
+				more.appendChild(settingsTable);
+			}
+
+			absorb(more, find(L.name), false);
+			absorb(more, find(L.contact), false);
+			absorb(more, find(L.about), false);
+			absorb(more, find(L.account), false);
+			absorb(more, find(L.app_passwords), false);
+			var caps = find(L.capabilities);
+			if (caps && caps.querySelector('.user-capabilities-wrap')) {
+				absorb(more, caps, false);
+			} else if (caps) {
+				caps.remove();
+			}
 		}
 	}
 })();
