@@ -150,6 +150,21 @@ body.adminkit.settings_page_menu_editor .ame-rui-sub-tabs .ame-rui-active-tab a 
 	color: var(--ak-primary);
 }
 
+/* "Shortcodes enabled" toggle pill — ships with hardcoded
+   background: #f6f7f7 + border: 1px solid #dcdcde. Route to tokens
+   so the pill reads as a soft surface card in both modes. */
+body.adminkit.settings_page_menu_editor .ame-rui-shortcodes-enabled {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_menu_editor .ame-rui-shortcodes-enabled:hover,
+body.adminkit.settings_page_menu_editor .ame-rui-shortcodes-enabled:active {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
 body.adminkit.settings_page_menu_editor .ame-rui-drag-handle {
 	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
