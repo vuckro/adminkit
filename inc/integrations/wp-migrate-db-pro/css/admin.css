@@ -203,6 +203,32 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .slider-switch {
 }
 
 
+/* ===== Toggle switch (.toggle-switch — checkbox + styled label) =====
+   Bundled rule paints `.toggle-switch input[type=checkbox] { all:
+   unset; height: 0; width: 0 }` to hide the underlying checkbox.
+   AdminKit's inputs.css then re-styles input[type=checkbox] at
+   higher specificity and re-paints the now-visible 30px square
+   next to the toggle pill. Re-apply the hide here so only the
+   styled label shows. Also route the checked state from #236de7
+   to --ak-primary. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .toggle-switch input[type="checkbox"] {
+	all: unset;
+	height: 0;
+	width: 0;
+	min-height: 0;
+	min-width: 0;
+	padding: 0;
+	margin: 0;
+	border: none;
+	background: none;
+	box-shadow: none;
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .toggle-switch label.checked {
+	background: var(--ak-primary);
+}
+
+
 /* ===== Accordions (locked + nested + expanded) ===== */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .accordion-locked {
 	border-color: var(--ak-border);
