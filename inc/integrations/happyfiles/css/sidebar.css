@@ -42,19 +42,31 @@ body.adminkit #happyfiles-sidebar #happyfiles-title {
    `.icon.active` / `.icon.has` with --hf-bg-dark + #fff text. We
    remapped --hf-bg-dark to --ak-elevated for general use, but in
    light mode --ak-elevated is near-white and the white text
-   disappears. Force --ak-primary + white text so the active/has
-   state stays visible in both modes. */
+   disappears.
+
+   Two states:
+   - .icon.active / .has → solid --ak-primary + white text (a true
+     "selected" cue)
+   - .icon:hover → soft --primary-t-1 tint + --ak-heading text (a
+     pointer feedback, but NOT the same weight as the active state) */
 body.adminkit #happyfiles-sidebar .icon.active,
-body.adminkit #happyfiles-sidebar .icon.has,
-body.adminkit #happyfiles-sidebar .icon:hover {
+body.adminkit #happyfiles-sidebar .icon.has {
 	background-color: var(--ak-primary) !important;
 	color: #ffffff !important;
 }
 
 body.adminkit #happyfiles-sidebar .icon.active svg g,
-body.adminkit #happyfiles-sidebar .icon.has svg g,
-body.adminkit #happyfiles-sidebar .icon:hover svg g {
+body.adminkit #happyfiles-sidebar .icon.has svg g {
 	fill: #ffffff !important;
+}
+
+body.adminkit #happyfiles-sidebar .icon:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg)) !important;
+	color: var(--ak-heading) !important;
+}
+
+body.adminkit #happyfiles-sidebar .icon:hover svg g {
+	fill: var(--ak-heading) !important;
 }
 
 /* Folder row default state — token text */
