@@ -93,6 +93,18 @@ body.adminkit #happyfiles-select-folders {
 	border-radius: var(--ak-radius-s);
 }
 
+/* "Create folder" primary button — bundled CSS paints it with
+   --hf-color-success (mapped to --ak-success above). Route to
+   --ak-primary so the create CTA picks up the brand color
+   instead of the semantic success token. */
+body.adminkit #happyfiles-create-folders button.button-primary,
+body.adminkit #happyfiles-create-folders button.button-primary:hover,
+body.adminkit #happyfiles-create-folders button.button-primary:focus {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: #ffffff;
+}
+
 /* Sort-by dropdown panel */
 body.adminkit #happyfiles-sort-by ul {
 	background-color: var(--ak-surface-alt);
