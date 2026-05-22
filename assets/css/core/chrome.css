@@ -654,7 +654,7 @@ body.adminkit .subsubsub a:focus {
 body.adminkit .subsubsub a.current,
 body.adminkit .subsubsub a.current:hover,
 body.adminkit .subsubsub a.current:focus {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-heading);
 	font-weight: 600;
 }
