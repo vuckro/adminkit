@@ -21,7 +21,7 @@ body.adminkit.nav-menus-php #nav-menu-footer {
 }
 
 body.adminkit.nav-menus-php #nav-menu-header {
-	border-bottom-color: var(--ak-border);
+	border-bottom: 1px solid var(--ak-border);
 }
 
 @media only screen and (min-width: 783px) {
@@ -30,20 +30,26 @@ body.adminkit.nav-menus-php #nav-menu-header {
 	}
 }
 
-/* Each draggable menu item bar */
+/* Each draggable menu item bar — explicit full border so every collapsed
+   item reads as its own bordered card (resting --ak-border; the hover below
+   lifts it to --ak-border-strong). */
 body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle {
 	background: var(--ak-surface);
-	border-color: var(--ak-border);
+	border: 1px solid var(--ak-border);
 	color: var(--ak-text);
 }
 
-body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle:hover {
+/* On hover, the strong border wraps the whole item — the handle AND the
+   expanded settings drawer — so the outline reads as one box. */
+body.adminkit.nav-menus-php .menu-item:hover .menu-item-handle,
+body.adminkit.nav-menus-php .menu-item:hover .menu-item-settings {
 	border-color: var(--ak-border-strong);
 }
 
-/* Expanded item settings drawer */
+/* Expanded item settings drawer — darker (page-bg) content surface so the
+   open body reads as recessed under the handle. */
 body.adminkit.nav-menus-php .menu-item-settings {
-	background: var(--ak-surface);
+	background: var(--ak-bg);
 	border-color: var(--ak-border);
 	box-shadow: none;
 	color: var(--ak-text);
@@ -102,6 +108,7 @@ body.adminkit.nav-menus-php #nav-menu-meta h2 {
 }
 
 body.adminkit.nav-menus-php .accordion-container .outer-border {
+	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	overflow: hidden;
 }
@@ -110,6 +117,7 @@ body.adminkit.nav-menus-php .accordion-section,
 body.adminkit.nav-menus-php .accordion-section.control-section {
 	background: var(--ak-surface-alt);
 	border-color: var(--ak-border);
+	border-bottom: 1px solid var(--ak-border);
 }
 
 body.adminkit.nav-menus-php .accordion-section-title,
@@ -196,8 +204,10 @@ body.adminkit.nav-menus-php .accordion-section-content .inside > p {
 	color: var(--ak-text-muted);
 }
 
-/* Menu-edit wrapper radius (the right column with the saved menu) */
+/* Menu-edit wrapper (the "Menu structure" right column) — bordered rounded
+   card so the whole panel reads as one surface. */
 body.adminkit.nav-menus-php .menu-edit {
+	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	overflow: hidden;
 }
