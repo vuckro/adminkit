@@ -133,7 +133,7 @@ body.adminkit.nav-menus-php .metabox-holder .accordion-section-title button.acco
 
 body.adminkit.nav-menus-php .accordion-section-title button.accordion-trigger:focus,
 body.adminkit.nav-menus-php .metabox-holder .accordion-section-title button.accordion-trigger:focus {
-	box-shadow: var(--ak-focus-ring);
+	box-shadow: none;
 	outline: none;
 }
 
