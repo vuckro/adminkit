@@ -282,15 +282,18 @@ body.adminkit #plugin-information .review {
 	border-bottom-color: var(--ak-border);
 }
 
-/* Upload Plugin / Upload Theme drop box — WP hardcodes #f6f7f7 bg +
-   #c3c4c7 border + #50575e help text, all light. */
+/* Upload Plugin drop box — mirror the Upload Theme treatment in
+   screens/theme-install.css (WP hardcodes #f6f7f7 bg + #c3c4c7 border +
+   #50575e help text). Same tokens so both uploaders look identical. */
 body.adminkit .upload-plugin .wp-upload-form,
 body.adminkit .upload-theme .wp-upload-form {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
 }
 
 body.adminkit .upload-plugin .install-help,
 body.adminkit .upload-theme .install-help {
-	color: var(--ak-text-muted);
+	color: var(--ak-text-muted) !important;
 }
