@@ -103,19 +103,12 @@ body.adminkit .wp-list-table.plugins .plugin-version-author-uri {
 	color: var(--ak-text-muted);
 }
 
-/* Activate / Deactivate row actions — color-code by intent.
-   Targeted by href so they match regardless of which class WP
-   ships them with. */
+/* Activate row action — brand-colored "go" cue. Targeted by href
+   so it matches regardless of WP's per-action class naming. */
 body.adminkit.plugins-php .row-actions a[href*="action=activate"],
 body.adminkit.plugins-php .row-actions a[href*="action=activate"]:hover,
 body.adminkit.plugins-php .row-actions a[href*="action=activate"]:focus {
 	color: var(--ak-primary);
-}
-
-body.adminkit.plugins-php .row-actions a[href*="action=deactivate"],
-body.adminkit.plugins-php .row-actions a[href*="action=deactivate"]:hover,
-body.adminkit.plugins-php .row-actions a[href*="action=deactivate"]:focus {
-	color: var(--ak-warning);
 }
 
 
