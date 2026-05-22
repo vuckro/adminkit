@@ -128,3 +128,24 @@ body.adminkit .bricks-block-editor-notice-wrapper a:not(.button-primary):focus {
 	color: var(--ak-heading);
 	text-decoration: underline;
 }
+
+/* Modern block-editor header — WP 6.6+ renamed .edit-post-header-toolbar
+   to .editor-header, so the "Edit with Bricks" header button (Bricks
+   paints it #ffd64f) slipped past the selectors above. Catch it here.
+   Native header actions are .components-button, never .button, so this
+   only hits the Bricks-injected classic button. */
+body.adminkit .editor-header .button.button-primary,
+body.adminkit .editor-header__toolbar .button.button-primary {
+	background-color: var(--ak-primary);
+	color: #ffffff;
+	border-color: var(--ak-primary);
+	box-shadow: none;
+}
+
+body.adminkit .editor-header .button.button-primary:hover,
+body.adminkit .editor-header .button.button-primary:focus,
+body.adminkit .editor-header__toolbar .button.button-primary:hover,
+body.adminkit .editor-header__toolbar .button.button-primary:focus {
+	background-color: var(--ak-primary-dark);
+	color: #ffffff;
+}
