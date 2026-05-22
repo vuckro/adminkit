@@ -612,7 +612,6 @@ body.adminkit .subsubsub .count {
 	align-items: center;
 	justify-content: center;
 	min-width: 20px;
-	padding: 1px 6px;
 	border-radius: var(--ak-radius-full);
 	background: var(--ak-elevated);
 	color: var(--ak-text-muted);
