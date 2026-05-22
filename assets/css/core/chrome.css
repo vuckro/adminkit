@@ -659,6 +659,26 @@ body.adminkit .subsubsub a.current:focus {
 	font-weight: 600;
 }
 
+/* Selected pill takes its filter's semantic tint — the same color as that
+   filter's count badge — so the active state reads as "this status". The
+   count badge then blends into the pill, leaving its colored number. Unmapped
+   filters keep the neutral --ak-elevated above. */
+body.adminkit .subsubsub li.all a.current {
+	background: color-mix(in srgb, var(--ak-info) 16%, var(--ak-surface-alt));
+}
+
+body.adminkit .subsubsub li.publish a.current {
+	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface-alt));
+}
+
+body.adminkit .subsubsub li.draft a.current {
+	background: color-mix(in srgb, var(--ak-warning) 16%, var(--ak-surface-alt));
+}
+
+body.adminkit .subsubsub li.trash a.current {
+	background: var(--ak-error-subtle);
+}
+
 /* Round notification badge for the count (parens stripped in JS). Padding +
    line-height size it (no fixed height) so it never clips, single digits stay
    round via min-width. */
