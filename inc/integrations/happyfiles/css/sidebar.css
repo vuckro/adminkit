@@ -38,6 +38,25 @@ body.adminkit #happyfiles-sidebar #happyfiles-title {
 	color: var(--ak-heading);
 }
 
+/* Header action icons (+, sort, eye, …). HappyFiles paints
+   `.icon.active` / `.icon.has` with --hf-bg-dark + #fff text. We
+   remapped --hf-bg-dark to --ak-elevated for general use, but in
+   light mode --ak-elevated is near-white and the white text
+   disappears. Force --ak-primary + white text so the active/has
+   state stays visible in both modes. */
+body.adminkit #happyfiles-sidebar .icon.active,
+body.adminkit #happyfiles-sidebar .icon.has,
+body.adminkit #happyfiles-sidebar .icon:hover {
+	background-color: var(--ak-primary) !important;
+	color: #ffffff !important;
+}
+
+body.adminkit #happyfiles-sidebar .icon.active svg g,
+body.adminkit #happyfiles-sidebar .icon.has svg g,
+body.adminkit #happyfiles-sidebar .icon:hover svg g {
+	fill: #ffffff !important;
+}
+
 /* Folder row default state — token text */
 body.adminkit #happyfiles-sidebar .folder {
 	color: var(--ak-text);
