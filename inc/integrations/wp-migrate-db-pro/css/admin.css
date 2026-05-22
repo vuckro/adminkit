@@ -296,10 +296,65 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .wpmdb-settings-page .compat-p
 	border-radius: var(--ak-radius-s);
 }
 
-/* Closed child-panel header (collapsed state) — bundled #575757 */
+/* Closed child-panel header (collapsed state) — bundled #575757
+   text + transparent bg. Recess the surface so the header reads
+   as a tab strip and round the top corners. */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.child-panel,
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.child-panel .panel-title {
 	color: var(--ak-heading);
+	background: var(--ak-surface);
+	border-top-left-radius: var(--ak-radius-s);
+	border-top-right-radius: var(--ak-radius-s);
+}
+
+/* Panel summary ellipsis text (the styled-components .cGMrHJ class
+   the bundle generates) — rgb(87, 87, 87) by default. Targeting
+   the structural `.panel-summary span` keeps the rule stable
+   across builds where the hash changes. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .panel-summary span {
+	color: var(--ak-text-muted);
+}
+
+/* Bundled accordion arrow SVG fills `<g fill="#000">` directly on
+   its inner group — currentColor inheritance doesn't help. Force
+   the fill to white on the panels whose header is dark / brand,
+   and to --ak-text on the neutral header surfaces. The
+   .white-arrow class is set by the plugin on the dark-bar variant. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .panel-arrow g,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .panel-arrow path {
+	fill: var(--ak-text);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .white-arrow g,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .white-arrow path {
+	fill: #ffffff;
+}
+
+
+/* ===== Search & Replace screen ===== */
+
+/* Zebra-striped row inside the .search-replace list */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .search-replace .content-row-wrap:nth-child(2n) {
+	background: var(--ak-surface);
+}
+
+/* Drag handle on custom search rows — bundled border: 1px solid #fff
+   creates a faint white outline (invisible in light, bright in dark). */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .search-replace .custom-search .custom-search-row .handle {
+	border-color: var(--ak-border);
+}
+
+
+/* ===== Migration progress card ===== */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .migration-progress {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	box-shadow: none;
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .migration-percentage {
+	color: var(--ak-primary);
 }
 
 /* Media files options block (Find & Replace) */
