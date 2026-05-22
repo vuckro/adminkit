@@ -20,7 +20,8 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app {
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-header,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_header {
 	background: var(--ak-surface);
-	border-bottom: 1px solid var(--ak-border);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
 	color: var(--ak-heading);
 }
 
@@ -285,6 +286,20 @@ body.adminkit.settings_page_fluent-mail .el-table td {
 	background-color: var(--ak-surface-alt);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
+}
+
+/* Round the outer table wrapper so striped + bordered tables match
+   the rest of the chrome. `overflow: hidden` clips the corners cleanly
+   (tables don't clip by default). */
+body.adminkit.settings_page_fluent-mail .el-table {
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
+}
+
+/* The bordered variant adds its own 1px wrapper border; round it too
+   so the corners stay clean. */
+body.adminkit.settings_page_fluent-mail .el-table--border {
+	border-radius: var(--ak-radius-s);
 }
 
 body.adminkit.settings_page_fluent-mail .el-table thead,
