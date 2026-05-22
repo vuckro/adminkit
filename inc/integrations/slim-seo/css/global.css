@@ -136,3 +136,13 @@ body.adminkit .ss-dropdown__item:hover {
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
 }
+
+
+/* ----- 8. SS toggle switch (.ss-toggle) ----- */
+/* Off-state track hardcodes #ccc — a light bar that stays bright in dark
+   mode. The checked state already uses --ss-color-primary (remapped to
+   --ak-primary above); route the off track to a token grey. The #fff thumb
+   reads fine on both states. */
+body.adminkit .ss-toggle__switch {
+	background: var(--ak-border-strong);
+}
