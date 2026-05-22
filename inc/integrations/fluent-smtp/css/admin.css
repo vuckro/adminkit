@@ -470,6 +470,7 @@ body.adminkit.settings_page_fluent-mail .el-dialog {
 body.adminkit.settings_page_fluent-mail .el-card__header,
 body.adminkit.settings_page_fluent-mail .el-dialog__header {
 	background-color: var(--ak-surface);
+	border: none;
 	border-bottom: 1px solid var(--ak-border);
 	color: var(--ak-heading);
 	padding: 16px 20px;
