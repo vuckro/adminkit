@@ -29,7 +29,7 @@ body.adminkit .widefat thead th,
 body.adminkit .widefat thead td,
 body.adminkit .widefat tfoot th,
 body.adminkit .widefat tfoot td {
-	background: var(--ak-elevated);
+	background: var(--ak-surface);
 	color: var(--ak-heading);
 	font-weight: 600;
 	border-bottom: 1px solid var(--ak-border);
@@ -63,7 +63,7 @@ body.adminkit .wp-list-table tfoot th,
 body.adminkit .wp-list-table tfoot td,
 body.adminkit .wp-list-table thead th.check-column,
 body.adminkit .wp-list-table tfoot th.check-column {
-	background: var(--ak-elevated);
+	background: var(--ak-surface);
 	color: var(--ak-heading);
 	font-weight: 600;
 	font-size: var(--ak-text-s);

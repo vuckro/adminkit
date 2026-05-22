@@ -125,7 +125,7 @@ body.adminkit #bricks-settings select {
 /* iOS-style toggle checkbox — Bricks renders <input type=checkbox>
    with `appearance:none` + #eaecef pill track. */
 body.adminkit #bricks-settings input[type="checkbox"] {
-	background-color: var(--ak-surface);
+	background-color: var(--ak-elevated);
 }
 
 body.adminkit #bricks-settings input[type="checkbox"]:checked {
