@@ -15,6 +15,16 @@ body.adminkit {
 	font-size: var(--ak-text-m);
 }
 
+/* Dark-mode scrollbars. The browser paints native scrollbars from the page's
+   color-scheme, which AdminKit keeps light (so native form controls stay
+   light — see gutenberg/dark-mode-map.css). Scrollable boxes — e.g. the Quick
+   Edit category list on edit.php — therefore show a white scrollbar on dark
+   surfaces. scrollbar-color is inherited, so setting it once here recolors
+   every scrollable area in admin: a muted thumb on a track that blends in. */
+:root[data-adminkit-theme="dark"] body.adminkit {
+	scrollbar-color: var(--ak-border-strong) transparent;
+}
+
 /* Page title color (color only, no font/size changes) */
 body.adminkit .wrap h1,
 body.adminkit .wrap h1.wp-heading-inline {
