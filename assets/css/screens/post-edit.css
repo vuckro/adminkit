@@ -18,13 +18,6 @@ body.adminkit:is(.post-php, .post-new-php) #titlediv #title {
 }
 
 
-/* ----- Publish box footer ----- */
-body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions {
-	background: var(--ak-surface);
-	border-top-color: var(--ak-border);
-}
-
-
 /* ----- Bricks classic-editor fallback wrapper ----- */
 body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container {
 	background-color: var(--ak-surface);

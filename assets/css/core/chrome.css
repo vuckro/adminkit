@@ -360,6 +360,22 @@ body.adminkit .stuffbox {
 	overflow: hidden;
 }
 
+/* Stuffbox header — WP draws an #f0f0f1 bottom divider; route it and the
+   title color to tokens (mirrors the .postbox header treatment). */
+body.adminkit .stuffbox > h2,
+body.adminkit .stuffbox > h3 {
+	border-bottom: 1px solid var(--ak-border);
+	color: var(--ak-heading);
+}
+
+/* Submit / publish box footer (#major-publishing-actions) — the Update /
+   Publish button row on comment edit, post edit, etc. WP hardcodes #f6f7f7
+   bg + #dcdcde top border; recess it through tokens. */
+body.adminkit #major-publishing-actions {
+	background: var(--ak-surface);
+	border-top: 1px solid var(--ak-border);
+}
+
 body.adminkit .wp-editor-container {
 	background: var(--ak-surface-alt);
 	border: 1px solid var(--ak-border);
