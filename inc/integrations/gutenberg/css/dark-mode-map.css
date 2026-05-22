@@ -505,8 +505,9 @@ body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox-header,
 body.block-editor-page.adminkit .editor-meta-boxes-area .postbox-header,
 body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox .hndle,
 body.block-editor-page.adminkit .editor-meta-boxes-area .postbox .hndle {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	color: var(--ak-heading);
+	border-top-color: var(--ak-border);
 	border-bottom-color: var(--ak-border);
 }
 
