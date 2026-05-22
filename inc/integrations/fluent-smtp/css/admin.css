@@ -282,6 +282,15 @@ body.adminkit.settings_page_fluent-mail .el-table__row--striped td {
 	background-color: var(--ak-surface);
 }
 
+/* The bottom + right border pseudo-elements on Element UI tables
+   hardcode #ebeef5 — too light against the dark surface. Route to
+   the token. */
+body.adminkit.settings_page_fluent-mail .el-table--border:after,
+body.adminkit.settings_page_fluent-mail .el-table--group:after,
+body.adminkit.settings_page_fluent-mail .el-table:before {
+	background-color: var(--ak-border);
+}
+
 
 /* ===== Element UI tabs ===== */
 body.adminkit.settings_page_fluent-mail .el-tabs__item {
