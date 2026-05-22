@@ -162,10 +162,17 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg [fill="#236de7"] {
 }
 
 /* Inline `style="fill: rgb(7, 119, 239)"` on <g> + the same #236de7
-   fill variant on solid icons → route to --ak-primary. */
+   fill variant on solid icons → route to --ak-primary. Also covers
+   the `<g fill="…">` attribute-based variants for any of the three
+   blue hex / rgb forms the bundle uses. */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[style*="fill: rgb(7, 119, 239)"],
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[style*="fill: rgb(35, 109, 231)"],
-body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg [fill="#236de7"] {
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[fill="#236de7"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[fill="#0777ef"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg g[fill="#326efe"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg [fill="#236de7"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg [fill="#0777ef"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb svg [fill="#326efe"] {
 	fill: var(--ak-primary) !important;
 	stroke: none !important;
 }
