@@ -74,12 +74,12 @@ body.adminkit #happyfiles-sidebar .icon.has svg g {
 }
 
 body.adminkit #happyfiles-sidebar .icon:hover {
-	background-color: var(--primary-t-1, var(--ak-hover-bg)) !important;
-	color: var(--ak-primary) !important;
+	background-color: var(--ak-primary) !important;
+	color: #ffffff !important;
 }
 
 body.adminkit #happyfiles-sidebar .icon:hover svg g {
-	fill: var(--ak-primary) !important;
+	fill: #ffffff !important;
 }
 
 /* Folder row default state — token text */
@@ -139,14 +139,14 @@ body.adminkit #happyfiles-select-folders {
 
 /* "Create folder" primary button — bundled CSS paints it with
    --hf-color-success (mapped to --ak-success above). Route to a
-   soft --primary-t-1 brand tint with --ak-primary text so the
-   create CTA stays calm (matches the icon hover language). */
+   solid --ak-primary brand button so the create CTA reads as a
+   strong action. */
 body.adminkit #happyfiles-create-folders button.button-primary,
 body.adminkit #happyfiles-create-folders button.button-primary:hover,
 body.adminkit #happyfiles-create-folders button.button-primary:focus {
-	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	background-color: var(--ak-primary);
 	border-color: var(--ak-primary);
-	color: var(--ak-primary);
+	color: #ffffff;
 }
 
 /* Sort-by dropdown panel */
@@ -217,26 +217,26 @@ body.adminkit #happyfiles-resizer {
 
 
 /* ===== Tooltips (Create / Select / Expand / Sort / Details / Collapse) =====
-   Floating overlay convention: always-dark bg + white text so the
-   tooltip stays readable in both modes (using a theme-flipping
-   token like --ak-elevated would turn the bg near-white in light
-   mode and the white label disappears). Pulls from Bricks's
-   --neutral-d-2 when available, falls back to a WP-friendly dark
-   slate. */
+   The tooltip needs to read against the surrounding page surface in
+   BOTH modes. Using --ak-heading (dark in light, light in dark) as
+   the bg and --ak-bg (the inverse) as the text naturally inverts:
+     light mode  → dark bg + light text (stands out vs the light page)
+     dark mode   → light bg + dark text (stands out vs the dark page)
+   No hardcoded color needed — the token pair flips itself. */
 body.adminkit #happyfiles-sidebar [aria-label]:before {
-	background-color: var(--neutral-d-2, #1d2327);
-	color: #ffffff;
+	background-color: var(--ak-heading);
+	color: var(--ak-bg);
 	font-weight: 500;
 }
 
 body.adminkit #happyfiles-sidebar [aria-label]:after {
-	border-top-color: var(--neutral-d-2, #1d2327);
+	border-top-color: var(--ak-heading);
 }
 
 /* When the tooltip is positioned below the icon, swap the arrow
-   border to border-bottom (HappyFiles handles via
-   [data-aria-pos=bottom]). Keep the same dark bg. */
+   border side (HappyFiles handles via [data-aria-pos=bottom]).
+   Keep the same auto-flipping bg. */
 body.adminkit #happyfiles-sidebar [aria-label][data-aria-pos="bottom"]:after {
-	border-bottom-color: var(--neutral-d-2, #1d2327);
+	border-bottom-color: var(--ak-heading);
 	border-top-color: transparent;
 }
