@@ -143,8 +143,7 @@ body.adminkit .media-modal-content {
 }
 
 body.adminkit .edit-attachment-frame,
-body.adminkit .media-frame-content,
-body.adminkit .attachment-info {
+body.adminkit .media-frame-content {
 	background: var(--ak-bg);
 }
 
@@ -169,6 +168,10 @@ body.adminkit .setting label.name {
 
 body.adminkit .attachment-info .description {
 	color: var(--ak-text-muted);
+}
+
+body.adminkit .attachment-info .filename {
+	color: var(--ak-text);
 }
 
 body.adminkit .attachment-info .links-separator {
