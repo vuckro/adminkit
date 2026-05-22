@@ -351,7 +351,20 @@ body.adminkit .bricks-admin-wrapper.system-information table {
 	overflow: hidden;
 }
 
-/* Welcome / Getting Started: round the version badge next to the title. */
+/* Inline badges (Settings "deprecated" / "experimental" pills, etc.). */
 body.adminkit .bricks-admin-wrapper .badge {
 	border-radius: var(--ak-radius-s);
+}
+
+/* Getting Started: the version badge + the numbered step markers form a
+   strip down the card's left edge. Round only the strip's two outer corners
+   so they follow the .bricks-admin-inner card — the version badge (top)
+   rounds top-left, the last step marker (bottom) rounds bottom-left. Every
+   other corner stays square so the strip reads as one continuous run. */
+body.adminkit .bricks-admin-wrapper.getting-started .title .badge {
+	border-radius: var(--ak-radius-m) 0 0 0;
+}
+
+body.adminkit .bricks-admin-wrapper.getting-started .box-wrapper:last-child::after {
+	border-bottom-left-radius: var(--ak-radius-m);
 }
