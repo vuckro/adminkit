@@ -394,6 +394,12 @@ body.adminkit.settings_page_menu_editor .ame-tc-other-screen-options {
 	border-radius: var(--ak-radius-s);
 }
 
+/* Vertical divider between the column list and the screen-elements
+   side panel — bundled CSS paints border-left: 1px solid #f0f0f1. */
+body.adminkit.settings_page_menu_editor .ame-tc-screen-settings-section {
+	border-left-color: var(--ak-border);
+}
+
 
 /* ----- Consistent border-radius across AME panels -----
    AME ships its panels as flat 0-radius rectangles (or random 3px

@@ -55,17 +55,10 @@ body.adminkit #adminmenu a {
 	font-weight: 500;
 }
 
-/* Top-level menu labels — matches WP's native 14px (we were
-   undercutting at 13px which read slightly smaller than expected). */
-body.adminkit #adminmenu .wp-menu-name {
-	font-size: var(--ak-text-m);
-}
-
-/* Submenu links — keep compact (--ak-text-s, 13px) so the nested
-   list reads as secondary metadata under the top-level item. */
-body.adminkit #adminmenu .wp-submenu a {
-	font-size: var(--ak-text-s);
-}
+/* Top-level menu labels + submenu links — leave the font-size
+   to WP's own admin-menu.css (14px top / 13px sub native). Our
+   earlier override drifted away from those defaults; pulling
+   the rules entirely keeps the sidebar at native sizing. */
 
 body.adminkit #adminmenu li.menu-top {
 	border: none;
@@ -302,12 +295,19 @@ body.adminkit #dashboard_quick_press .drafts h2 {
 	color: var(--ak-heading);
 }
 
-/* Notices */
+/* Notices — modernize with a full token border + radius. WP
+   ships just a border-left accent; add the three remaining
+   sides + --ak-radius-s so the notice reads as a card. The
+   per-status border-left below (success/warning/error/info)
+   keeps the 4px colored accent. */
 body.adminkit .notice,
 body.adminkit div.updated,
 body.adminkit div.error {
-	border-left-width: 4px;
 	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-left-width: 4px;
+	border-radius: var(--ak-radius-s);
+	box-shadow: none;
 }
 
 /* WP's common.css groups a dozen container classes under a single

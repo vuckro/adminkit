@@ -116,6 +116,15 @@ body.adminkit .wp-list-table .row-actions .trash a {
 	color: var(--ak-error);
 }
 
+/* tablenav (bulk actions + pagination row above + below list tables) —
+   WP defaults to 6px vertical margin which feels cramped against
+   the table. Bump to var(--ak-tablenav-gap, 24px) so the row
+   breathes; the token-with-fallback lets us swap from a single
+   place if we add a spacing scale later. */
+body.adminkit .tablenav {
+	margin: var(--ak-tablenav-gap, 24px) 0;
+}
+
 /* tablenav (pagination row) */
 body.adminkit .tablenav .tablenav-pages a,
 body.adminkit .tablenav .tablenav-pages a:link {
