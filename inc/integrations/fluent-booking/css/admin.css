@@ -756,14 +756,24 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_notificatio
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_questions_wrapper,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-form-item.fcal_availability_header,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_weekly_schedules,
-body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_override_date .fcal_override_date_inner,
-body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_card_items .fcal_card_item:last-child {
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_override_date .fcal_override_date_inner {
 	background-color: var( --ak-bg ) !important;
 }
 
 /* Override-date row — outer transparent (inner gets --ak-bg above). */
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_override_date {
 	background: transparent !important;
+}
+
+/* Question / notification cards → surface. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_question .fcal_question_card,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_notification_container {
+	background: var( --ak-surface ) !important;
+}
+
+/* Card-item hover — drop the brand tint, use a neutral surface lift. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_card_items .fcal_card_item:hover {
+	background-color: var( --ak-surface ) !important;
 }
 
 /* Integration card header — drop its full border. */
