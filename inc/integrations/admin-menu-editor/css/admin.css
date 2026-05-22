@@ -490,6 +490,19 @@ body.adminkit.settings_page_ame-easy-hide #ame-eh-item-container input[type="che
 	background: var(--ak-primary);
 }
 
+/* Side save button container — hardcoded #dcdcde top divider. */
+body.adminkit.settings_page_ame-easy-hide #ame-eh-side-save-button {
+	border-top-color: var(--ak-border);
+}
+
+/* Column-option picker — the selected option hardcodes #CCE8FF
+   (light blue) + #222 text. Route to the primary-soft tint pill
+   pattern we use elsewhere for selection cues. */
+body.adminkit.settings_page_ame-easy-hide .ame-eh-column-option-list .ame-eh-column-option.ame-eh-selected-column-option {
+	background: var(--ak-primary-soft);
+	color: var(--ak-primary);
+}
+
 /* Bottom action bar — appears beneath the item list. */
 body.adminkit.settings_page_ame-easy-hide .ame-eh-bottom-bar {
 	background-color: var(--ak-surface);
