@@ -89,8 +89,11 @@
 	--ak-primary-soft: var(--primary-t-2, rgba(0, 0, 0, 0.12));
 	--ak-primary-soft: var(--primary-t-2, color-mix(in srgb, var(--ak-primary) 18%, transparent));
 	/* Readable foreground on a primary fill (text/icon on a brand button).
-	   Defaults to white; the provider supplies dark-on-light brands. */
-	--ak-on-accent: var(--on-accent, #ffffff);
+	   Leans on the provider's --white, NOT its --on-accent: this Bricks
+	   palette computes --on-accent as near-black (neutral-l-10), which reads
+	   as dark text on the green (#628c2d) accent. We want the conventional
+	   white, so source it from --white (degrades to #ffffff with no provider). */
+	--ak-on-accent: var(--white, #ffffff);
 	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%)));
 
 	/* ── State ───────────────────────────────────────────────────────────

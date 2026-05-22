@@ -29,7 +29,7 @@ body.adminkit .wp-core-ui .button:hover,
 body.adminkit .button-secondary:hover {
 	background: var(--ak-surface);
 	border-color: var(--ak-border-strong);
-	color: var(--ak-heading);
+	color: var(--ak-text);
 }
 
 body.adminkit .button:focus,
@@ -117,7 +117,7 @@ body.adminkit input[type="file"]::file-selector-button {
 
 body.adminkit input[type="file"]::file-selector-button:hover {
 	background: var(--ak-surface);
-	color: var(--ak-heading);
+	color: var(--ak-text);
 }
 
 body.adminkit .button-link-delete,

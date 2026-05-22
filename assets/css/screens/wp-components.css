@@ -17,6 +17,14 @@ body.adminkit .components-button:not(.is-primary):not(.is-secondary):not(.is-ter
 	color: var(--ak-heading);
 }
 
+/* Primary button — accent (green) fill from wp-components core; force the
+   readable foreground. The blanket `.components-button { color: --ak-text }`
+   above (0,2,1) outranks core's is-primary color, so set it explicitly here
+   (0,3,1) — otherwise the accent button keeps dark text. */
+body.adminkit .components-button.is-primary {
+	color: var(--ak-on-accent);
+}
+
 /* Secondary button — WP uses the accent color on both border (via
    box-shadow) and text, which becomes our --ak-primary. In dark mode
    that mid-gray on a dark bg loses contrast. Route to a neutral
