@@ -204,6 +204,15 @@ body.adminkit .inline-edit-row fieldset select {
 	border-color: var(--ak-border);
 }
 
+/* The resting override above out-specifies the global input :focus rule, so
+   restore the primary focus (border + subtle fill) for Quick Edit fields. */
+:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset label span.input-text-wrap input:focus,
+:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset label textarea:focus,
+:root[data-adminkit-theme="dark"] body.adminkit .inline-edit-row fieldset select:focus {
+	border-color: var(--ak-primary);
+	background: var(--ak-primary-subtle);
+}
+
 body.adminkit .inline-edit-row .inline-edit-save {
 	background: transparent;
 	padding-top: 12px;
@@ -216,7 +225,7 @@ body.adminkit .inline-edit-row .inline-edit-save {
    flip in dark mode; route it through our token + add a radius. */
 body.adminkit #bulk-titles,
 body.adminkit ul.cat-checklist {
-	background: var(--ak-surface-alt);
+	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 }
