@@ -571,7 +571,7 @@ body.adminkit .subsubsub {
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 4px;
-	margin: 8px 0;
+	margin: 24px 0;
 }
 
 body.adminkit .subsubsub li {
