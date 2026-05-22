@@ -755,6 +755,14 @@ body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot:hover {
 	border-color: var( --ak-border-strong ) !important;
 }
 
+/* The each-calendar wrapper paints --fcal-primary-bg (= our --ak-surface) on
+   top of the page — drop it so the calendar list sits flat on the canvas.
+   ID-scoped so it beats FluentBooking's `#fluent-booking-app .fcal_each_cal`
+   without !important. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_each_cal {
+	background: transparent;
+}
+
 
 /* ============================================================
    13. CREATE-CALENDAR FORM — section cards → surface
