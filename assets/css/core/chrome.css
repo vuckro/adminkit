@@ -663,10 +663,6 @@ body.adminkit .subsubsub a.current:focus {
    filter's count badge — so the active state reads as "this status". The
    count badge then blends into the pill, leaving its colored number. Unmapped
    filters keep the neutral --ak-elevated above. */
-body.adminkit .subsubsub li.all a.current {
-	background: color-mix(in srgb, var(--ak-info) 16%, var(--ak-surface-alt));
-}
-
 body.adminkit .subsubsub li.publish a.current {
 	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface-alt));
 }
@@ -698,11 +694,6 @@ body.adminkit .subsubsub .count {
 /* Color-code each filter's count by status — applies whether the filter is
    active or not (the active state is shown by the pill, not the badge).
    Filters without a mapping keep the neutral badge above. */
-body.adminkit .subsubsub li.all .count {
-	background: color-mix(in srgb, var(--ak-info) 16%, var(--ak-surface-alt));
-	color: var(--ak-info);
-}
-
 body.adminkit .subsubsub li.publish .count {
 	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface-alt));
 	color: var(--ak-success);
