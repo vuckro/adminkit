@@ -30,6 +30,16 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .local-callout {
 	display: none;
 }
 
+/* Hide the "Upgrades / Help / What's New" nav items in the top
+   .nav strip — promo / off-site links that clutter the chrome.
+   Targets by href fragment so the rule is stable across versions. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav li:has(a[href*="upgrades"]),
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav li:has(a[href*="help"]),
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav li:has(a[href*="whats-new"]),
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav li:has(a[href*="changelog"]) {
+	display: none;
+}
+
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav-wrap {
 	background: var(--ak-surface-alt);
 	border-bottom-color: var(--ak-border);
