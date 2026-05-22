@@ -351,13 +351,14 @@ body.adminkit.settings_page_menu_editor .rex-category {
 }
 
 body.adminkit.settings_page_menu_editor .rex-category .rex-category-header {
-	background: var(--ak-surface);
 	border-bottom-color: var(--ak-border);
 	color: var(--ak-heading);
 }
 
 body.adminkit.settings_page_menu_editor .rex-category.rex-sub-category {
 	box-shadow: none;
+	border-radius: var(--ak-radius-m);
+	overflow: hidden;
 }
 
 /* Sub-category header — AME paints #fafafa here, a hair lighter than
@@ -385,6 +386,12 @@ body.adminkit.settings_page_menu_editor .rex-capability-inheritance-breakdown tb
 	background-color: var(--ak-surface);
 }
 
+/* Capability row hover — AME hardcodes #fafafa. Route through the
+   shared hover token so it flips cleanly in dark mode. */
+body.adminkit.settings_page_menu_editor .rex-permission:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+}
+
 /* Category sidebar nav rows — hover + selected. */
 body.adminkit.settings_page_menu_editor #rex-category-sidebar .rex-nav-item:hover {
 	background-color: var(--primary-t-1, var(--ak-hover-bg));
@@ -407,10 +414,55 @@ body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts .rex-capabi
 	color: var(--ak-text);
 }
 
+/* Explicit state mapping for role-capability pills:
+   - none    -> neutral surface
+   - partial -> brand-tinted progress fill
+   - all     -> semantic success tint */
+body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts .rex-capability-count.rex-no-capabilities-enabled {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
 body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts .rex-capability-count.rex-all-capabilities-enabled {
+	background: rgba(17, 183, 107, 0.12);
 	background: color-mix(in srgb, var(--ak-success) 12%, transparent);
 	border-color: var(--ak-success);
 	color: var(--ak-success);
+}
+
+/* Progress-bar variant (Hierarchy view): AME paints hardcoded light blue
+   + white layers here, so we must override both the gradient and the
+   pseudo-element background to avoid "white chips" in dark mode. */
+body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts.rex-with-capability-count-bars .rex-capability-count {
+	background: linear-gradient(
+		to right,
+		rgba(255, 214, 79, 0.24) 0%,
+		rgba(255, 214, 79, 0.24) var(--ame-rex-enabled-cap-percent, 75%),
+		var(--ak-elevated) var(--ame-rex-enabled-cap-percent, 75%),
+		var(--ak-elevated) 100%
+	);
+	background: linear-gradient(
+		to right,
+		color-mix(in srgb, var(--ak-primary) 24%, transparent) 0%,
+		color-mix(in srgb, var(--ak-primary) 24%, transparent) var(--ame-rex-enabled-cap-percent, 75%),
+		var(--ak-elevated) var(--ame-rex-enabled-cap-percent, 75%),
+		var(--ak-elevated) 100%
+	);
+}
+
+body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts.rex-with-capability-count-bars .rex-capability-count:before {
+	background: var(--ak-elevated);
+}
+
+body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts.rex-with-capability-count-bars .rex-capability-count.rex-no-capabilities-enabled {
+	background: var(--ak-surface);
+}
+
+body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts.rex-with-capability-count-bars .rex-capability-count.rex-all-capabilities-enabled {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: #ffffff;
 }
 
 
