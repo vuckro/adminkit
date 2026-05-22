@@ -20,6 +20,12 @@ body.adminkit {
 	--hf-bg-dark: var(--ak-elevated);
 	--hf-bg-info: var(--primary-t-1, var(--ak-hover-bg));
 	--hf-bg-success: var(--primary-t-1, var(--ak-hover-bg));
+
+	/* HappyFiles default --hf-border-radius is 2px (very sharp).
+	   Remap to --ak-radius-s so every element that consumes the
+	   variable (folder counts, context menus, upload progress,
+	   subfolders grid, tooltips) gets AdminKit's rounded feel. */
+	--hf-border-radius: var(--ak-radius-s);
 }
 
 
@@ -55,16 +61,25 @@ body.adminkit #happyfiles-sidebar .folder .count {
 /* Folder search input bar at the top of the sidebar */
 body.adminkit #happyfiles-search-folders {
 	background-color: var(--ak-surface-alt);
+	border-radius: var(--ak-radius-s);
 }
 
 body.adminkit #happyfiles-search-folders input {
 	background-color: var(--ak-surface-alt);
 	color: var(--ak-text);
+	border-radius: var(--ak-radius-s);
+}
+
+/* Folder rows themselves — round each row so the hover / open tint
+   matches the rest of AdminKit's chrome. */
+body.adminkit #happyfiles-sidebar .folder {
+	border-radius: var(--ak-radius-s);
 }
 
 /* Folder being renamed inline */
 body.adminkit #happyfiles-sidebar .folder.renaming {
 	background-color: var(--ak-surface-alt);
+	border-radius: var(--ak-radius-s);
 }
 
 /* Checkbox inside folder rows */
@@ -75,32 +90,42 @@ body.adminkit #happyfiles-sidebar .folder input[type="checkbox"] {
 /* Inline "+ Select" toolbar that appears in select mode */
 body.adminkit #happyfiles-select-folders {
 	background-color: var(--ak-surface-alt);
+	border-radius: var(--ak-radius-s);
 }
 
 /* Sort-by dropdown panel */
 body.adminkit #happyfiles-sort-by ul {
 	background-color: var(--ak-surface-alt);
+	border-radius: var(--ak-radius-s);
 }
 
 
 /* ===== Right-click context menu ===== */
 body.adminkit .happyfiles-context-menu {
 	background-color: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
 	box-shadow: 0 6px 24px -8px rgba(0, 0, 0, 0.3);
 	color: var(--ak-text);
+	overflow: hidden;
 }
 
 
 /* ===== Upload progress card ===== */
 body.adminkit #happyfiles-uploading-progress {
 	background-color: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
+	overflow: hidden;
 }
 
 
 /* ===== Popup dialogs (color picker, gallery shortcode, …) ===== */
 body.adminkit .happyfiles-popup .inner {
 	background-color: var(--ak-surface-alt);
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
 }
 
 body.adminkit .happyfiles-popup header {
@@ -116,6 +141,7 @@ body.adminkit .happyfiles-popup header .title {
 body.adminkit .happyfiles-subfolders-list .happyfiles-subfolder-item {
 	background-color: var(--ak-surface-alt);
 	border-color: var(--ak-border);
+	border-radius: var(--ak-radius-s);
 }
 
 body.adminkit .happyfiles-subfolders-list .happyfiles-subfolder-item .name {
