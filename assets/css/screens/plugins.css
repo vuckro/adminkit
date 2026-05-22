@@ -20,17 +20,17 @@ body.adminkit .wp-list-table.plugins tbody td {
 	box-shadow: none;
 }
 
-/* Active plugins — brand-tinted row, one step stronger than the
-   list-table hover (--primary-t-1) so an active row stays visibly
-   "selected" even on hover. Falls back to --ak-hover-bg on sites
-   without a token provider. */
-body.adminkit .wp-list-table.plugins tr.active th,
-body.adminkit .wp-list-table.plugins tr.active td {
-	background: var(--primary-t-2, var(--ak-hover-bg));
+/* Active plugins — drop the row bg tint and lean on two slim
+   indicators instead: a thicker --ak-success bar on the check-column
+   and a 600-weight title. Painting the whole row read too "loud"
+   on top of the brand-tinted hover. */
+body.adminkit .wp-list-table.plugins tr.active th.check-column {
+	box-shadow: inset 4px 0 0 var(--ak-success);
 }
 
-body.adminkit .wp-list-table.plugins tr.active th.check-column {
-	box-shadow: inset 3px 0 0 var(--ak-success);
+body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
+	color: var(--ak-heading);
+	font-weight: 600;
 }
 
 /* Inactive plugins — keep the table surface, mute the title */
