@@ -19,9 +19,15 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb {
 	color: var(--ak-text);
 }
 
+/* Hide the WP Engine branded header strip — the in-app nav already
+   anchors the page, the hero bar is redundant + off-brand. */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .header-wrap {
-	background: var(--ak-surface);
-	border-bottom: 1px solid var(--ak-border);
+	display: none;
+}
+
+/* Hide the upsell / local-callout cards (promo blocks). */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .local-callout {
+	display: none;
 }
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav-wrap {
@@ -29,12 +35,42 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav-wrap {
 	border-bottom-color: var(--ak-border);
 }
 
-/* Container card (every panel uses .container-shadow) */
-body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .container-shadow {
+/* Container cards — every panel uses .container-shadow or
+   .shadow-div (action panels, profile tables, nested accordions). */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .container-shadow,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .shadow-div {
 	background: var(--ak-surface-alt);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	box-shadow: none;
+}
+
+/* Profile / data tables inside .container-shadow keep token text */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .container-shadow.table table,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .profile-table {
+	color: var(--ak-text);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .table-heading {
+	color: var(--ak-heading);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .profile-table .date {
+	color: var(--ak-text-muted);
+}
+
+/* Open-state header on child action panels — bundled #396c9c slate
+   bar. Route to --ak-primary so the opened panel speaks the brand. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.child-panel.panel-open,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.panel-open {
+	background: var(--ak-primary);
+	color: #ffffff;
+}
+
+/* Make sure inner text + arrow stay readable on the primary bar */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.panel-open .panel-title,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.panel-open .panel-summary {
+	color: #ffffff;
 }
 
 
