@@ -235,8 +235,17 @@ body.adminkit .edit-attachment-frame .media-modal-close:hover,
 body.adminkit .edit-attachment-frame .media-modal-close:focus {
 	background: var(--ak-hover-bg);
 	border-color: var(--ak-border);
-	color: var(--ak-heading);
+	color: var(--ak-primary);
 	box-shadow: none;
+}
+
+/* WP paints the × glyph via `.media-modal-icon::before` which uses
+   `color: inherit` — so the parent button color above propagates.
+   Explicitly route the icon too in case a more-specific WP variant
+   beats us. */
+body.adminkit .edit-attachment-frame .media-modal-close:hover .media-modal-icon::before,
+body.adminkit .edit-attachment-frame .media-modal-close:focus .media-modal-icon::before {
+	color: var(--ak-primary);
 }
 
 body.adminkit .edit-media-header .left:focus-visible,
