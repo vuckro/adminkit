@@ -17,7 +17,7 @@ body.adminkit .widefat li {
    hardcoded. The .wp-list-table rules above only kick in when both
    classes are present, so the bare-widefat case needs its own block. */
 body.adminkit .widefat {
-	background: var(--ak-surface-alt);
+	background: var(--ak-table-bg);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	border-collapse: separate;
@@ -29,7 +29,7 @@ body.adminkit .widefat thead th,
 body.adminkit .widefat thead td,
 body.adminkit .widefat tfoot th,
 body.adminkit .widefat tfoot td {
-	background: var(--ak-surface);
+	background: var(--ak-table-header-bg);
 	color: var(--ak-heading);
 	font-weight: 600;
 	border-bottom: 1px solid var(--ak-border);
