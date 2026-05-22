@@ -63,16 +63,16 @@ body.adminkit #adminmenu li.menu-top {
 	border: none;
 }
 
-/* Hover / focus on non-current items — match WP's exact selectors with
-   !important to defeat colors.css. Brand-tinted wash via `--primary-t-1`
-   (Bricks's primary tint, ~9% opacity) with `--ak-hover-bg` as the
-   provider-less fallback. */
+/* Hover / focus on non-current items — match WP's exact selectors
+   with !important to defeat colors.css. Use --ak-hover-bg (neutral
+   overlay) so the hover doesn't compete with the current item's
+   --ak-elevated raised state. */
 body.adminkit #adminmenu a:hover,
 body.adminkit #adminmenu li.menu-top:hover,
 body.adminkit #adminmenu li.opensub > a.menu-top,
 body.adminkit #adminmenu li > a.menu-top:focus {
 	color: var(--ak-heading) !important;
-	background-color: var(--primary-t-1, var(--ak-hover-bg)) !important;
+	background-color: var(--ak-hover-bg) !important;
 }
 
 /* WP core ships `#adminmenu a:focus, #adminmenu a:hover` with
@@ -146,8 +146,8 @@ body.adminkit #adminmenu .wp-submenu a {
 
 body.adminkit #adminmenu .wp-submenu a:hover,
 body.adminkit #adminmenu .wp-submenu a:focus {
-	color: var(--ak-heading) !important;
-	background: var(--primary-t-1, var(--ak-hover-bg)) !important;
+	color: var(--ak-primary) !important;
+	background: transparent !important;
 }
 
 /* Current submenu item — primary-colored bold text, no background
