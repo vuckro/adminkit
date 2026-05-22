@@ -37,42 +37,11 @@ body.adminkit.settings_page_slim-seo .wrap {
 }
 
 
-/* ----- 2. Header bar (.ss-title) — white-labeled "SEO" hero -----
-   Slim SEO ships a header strip with their logo SVG + Upgrade /
-   Browser extensions / Docs / Feedback links. Hide the logo SVG +
-   every <a> link, and drop a token text "SEO" in via ::after so
-   the strip reads as a generic SEO module hero (mirror of the
-   Fluent SMTP white-label treatment). Mirrors the
-   `#wpwrap #wpcontent #wpbody` chain (specificity 0,3,1) so the
-   reveal wins. */
+/* ----- 2. Hide the header bar (.ss-title) -----
+   Slim SEO targets the bar with `#wpwrap #wpcontent #wpbody .ss-title`
+   (specificity 0,3,1) — mirror that chain so display:none wins. */
 body.adminkit.settings_page_slim-seo #wpwrap #wpcontent #wpbody .ss-title {
-	display: flex;
-	align-items: center;
-	background-color: var(--ak-surface-alt);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
-	padding: 20px 24px;
-	margin: 20px 0;
-}
-
-/* Drop the bundled logo SVG (it's the direct child of .ss-title) */
-body.adminkit.settings_page_slim-seo .ss-title > svg {
 	display: none;
-}
-
-/* Hide every header link (Upgrade to Pro / Browser extensions /
-   Docs / Feedback) */
-body.adminkit.settings_page_slim-seo .ss-title a {
-	display: none;
-}
-
-/* White-label text token — generic "SEO" wordmark */
-body.adminkit.settings_page_slim-seo .ss-title::after {
-	content: "SEO";
-	color: var(--ak-heading);
-	font-size: 18px;
-	font-weight: 700;
-	letter-spacing: 0.05em;
 }
 
 
