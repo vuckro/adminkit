@@ -20,6 +20,14 @@
  * override — the panel reuses the same `.ak-accordion` + `.form-table`
  * styling as everything else. Curate the set via the `ESSENTIALS` list.
  *
+ * Finally, related sections are consolidated into two grouped panels —
+ * "My Account" (the essentials + Name) and "Contact Information" (Contact
+ * Info, About, Account Management, Application Passwords, Additional
+ * Capabilities) — while standalone sections (Personal Options, plugin
+ * sections like HappyFiles / Bricks) stay in place. Membership is just the
+ * `absorb()` calls in step 4; sections are matched by WP's own localized
+ * heading strings, passed from PHP, so the grouping survives translation.
+ *
  * Native disclosure was chosen over a scripted toggle on purpose — it
  * is keyboard-accessible for free, animates nothing (matches AdminKit's
  * flat, motion-free design) and needs zero click handlers. The script
@@ -63,7 +71,19 @@ class AdminKit_Profile_Accordion {
 			return;
 		}
 
-		$account_label = __( 'My Account', 'adminkit' );
+		// Section labels passed from PHP via WP's own __() (default text domain
+		// for the core headings) so the JS matches sections by their *rendered*
+		// text — locale-proof, since WP printed those same strings.
+		$labels = array(
+			'my_account'    => __( 'My Account', 'adminkit' ),
+			'contact_group' => __( 'Contact Information', 'adminkit' ),
+			'name'          => __( 'Name' ),
+			'contact'       => __( 'Contact Info' ),
+			'about'         => array( __( 'About Yourself' ), __( 'About the user' ) ),
+			'account'       => __( 'Account Management' ),
+			'app_passwords' => __( 'Application Passwords' ),
+			'capabilities'  => __( 'Additional Capabilities' ),
+		);
 		?>
 <script id="adminkit-profile-accordion">
 (function () {
@@ -71,7 +91,50 @@ class AdminKit_Profile_Accordion {
 	if (!form || form.dataset.akAccordion) return;
 	form.dataset.akAccordion = '1';
 
-	// --- 1. "My Account" — one open panel of the most-used fields ----------
+	var L = <?php echo wp_json_encode( $labels ); ?>;
+
+	// --- helpers ----------------------------------------------------------
+	function panels() {
+		return Array.prototype.filter.call(form.children, function (c) {
+			return c.tagName === 'DETAILS' && c.classList.contains('ak-accordion');
+		});
+	}
+	function titleOf(d) {
+		var s = d.querySelector('summary');
+		return s ? s.textContent.trim() : '';
+	}
+	// Find a folded section panel by its (localized) heading text.
+	function find(names) {
+		names = [].concat(names);
+		return panels().filter(function (d) {
+			return names.indexOf(titleOf(d)) !== -1;
+		})[0] || null;
+	}
+	function makePanel(title, open) {
+		var d = document.createElement('details');
+		d.className = 'ak-accordion';
+		if (open) d.open = true;
+		var s = document.createElement('summary');
+		s.textContent = title;
+		d.appendChild(s);
+		return d;
+	}
+	// Move a section's body into a group panel, optionally keeping its heading
+	// as an <h2> sub-header, then drop the now-empty source panel.
+	function absorb(group, src, keepHeading) {
+		if (!src || src === group) return;
+		if (keepHeading) {
+			var h = document.createElement('h2');
+			h.textContent = titleOf(src);
+			group.appendChild(h);
+		}
+		Array.prototype.slice.call(src.children).forEach(function (child) {
+			if (child.tagName !== 'SUMMARY') group.appendChild(child);
+		});
+		src.remove();
+	}
+
+	// --- 1. "My Account" — open panel of the most-used fields --------------
 	// The 80/20 set, in display order. We MOVE these <tr>s (appendChild moves,
 	// it doesn't clone) out of their native sections into one open table. Each
 	// <input> keeps its name=, so the form still posts exactly as WP expects:
@@ -91,6 +154,7 @@ class AdminKit_Profile_Accordion {
 		.map(function (sel) { return form.querySelector(sel); })
 		.filter(Boolean);
 
+	var account = null;
 	if (rows.length) {
 		var table = document.createElement('table');
 		table.className = 'form-table';
@@ -99,12 +163,7 @@ class AdminKit_Profile_Accordion {
 		rows.forEach(function (row) { tbody.appendChild(row); });
 		table.appendChild(tbody);
 
-		var account = document.createElement('details');
-		account.className = 'ak-accordion';
-		account.open = true;
-		var accountSummary = document.createElement('summary');
-		accountSummary.textContent = <?php echo wp_json_encode( $account_label ); ?>;
-		account.appendChild(accountSummary);
+		account = makePanel(L.my_account, true);
 		account.appendChild(table);
 
 		// Place it above the first native section (Personal Options).
@@ -122,7 +181,7 @@ class AdminKit_Profile_Accordion {
 		if (apwHeading) form.insertBefore(apwHeading, apw);
 	}
 
-	// --- 3. Fold every remaining section into a collapsed <details> --------
+	// --- 3. Fold every remaining section into its own collapsed <details> --
 	// Snapshot the headings first: we move nodes below, so walking a frozen
 	// list (not the live child collection) keeps the iteration stable.
 	var headings = [];
@@ -131,13 +190,7 @@ class AdminKit_Profile_Accordion {
 	}
 
 	headings.forEach(function (heading) {
-		var details = document.createElement('details');
-		details.className = 'ak-accordion';
-
-		var summary = document.createElement('summary');
-		summary.textContent = heading.textContent;
-		details.appendChild(summary);
-
+		var details = makePanel(heading.textContent.trim(), false);
 		form.insertBefore(details, heading);
 
 		// Fold everything between this heading and the next section boundary
@@ -155,6 +208,29 @@ class AdminKit_Profile_Accordion {
 			node = next;
 		}
 	});
+
+	// --- 4. Group related sections under combined panels ------------------
+	// Two groups consolidate the long list; everything else (Personal Options,
+	// plugin sections like HappyFiles / Bricks) stays standalone in place.
+	// Change membership by editing the absorb() calls.
+
+	// Group A — fold Name into My Account (keeps the "Name" sub-heading).
+	if (account) absorb(account, find(L.name), true);
+
+	// Group B — Contact Info + About + Account Management + Application
+	// Passwords + Additional Capabilities under one "Contact Information"
+	// panel. The lead section drops its heading (the group is named for it);
+	// the rest keep theirs so each stays labelled.
+	var contact = find(L.contact);
+	if (contact) {
+		var group = makePanel(L.contact_group, false);
+		form.insertBefore(group, contact);
+		absorb(group, contact, false);
+		absorb(group, find(L.about), true);
+		absorb(group, find(L.account), true);
+		absorb(group, find(L.app_passwords), true);
+		absorb(group, find(L.capabilities), true);
+	}
 })();
 </script>
 		<?php

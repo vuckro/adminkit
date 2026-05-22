@@ -119,3 +119,16 @@ body.adminkit .ak-accordion > :not(summary) {
 body.adminkit .ak-accordion > .form-table {
 	margin: 6px 16px 14px;
 }
+
+/* Sub-section headings inside a grouped panel — the section <h2>s folded
+   into "My Account" / "Contact Information". (components/form-table.css only
+   styles `form > h2`, which these no longer are.) Placed last so it wins the
+   equal-specificity tie with the `:not(summary)` margin rule above. */
+body.adminkit .ak-accordion > h2 {
+	margin: 18px 16px 6px;
+	padding-bottom: 8px;
+	font-size: var(--ak-text-m);
+	font-weight: 600;
+	color: var(--ak-heading);
+	border-bottom: 1px solid var(--ak-border);
+}
