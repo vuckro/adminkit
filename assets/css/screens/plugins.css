@@ -51,9 +51,12 @@ body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
 	border-left: 4px solid var(--ak-primary) !important;
 }
 
-/* Inactive plugins — keep the table surface, mute the title */
-body.adminkit .wp-list-table.plugins tr.inactive th,
-body.adminkit .wp-list-table.plugins tr.inactive td {
+/* Inactive plugins — keep the table surface, mute the title.
+   `:not(:hover)` so the global tr:hover --primary-t-1 still wins
+   when the row is hovered; without it the inactive rule's
+   higher specificity (.inactive class) beat the hover rule. */
+body.adminkit .wp-list-table.plugins tr.inactive:not(:hover) th,
+body.adminkit .wp-list-table.plugins tr.inactive:not(:hover) td {
 	background: var(--ak-surface-alt);
 }
 
@@ -80,6 +83,15 @@ body.adminkit .wp-list-table.plugins .plugin-update-tr .notice {
 	border-radius: 0;
 	margin: 0;
 	padding: 10px 16px;
+}
+
+/* Don't tint the update-tr row on hover — the warning bg above
+   already paints the cue, and the global --primary-t-1 row hover
+   would muddy the orange into a green-orange mix. */
+body.adminkit .wp-list-table.plugins tr.plugin-update-tr:hover,
+body.adminkit .wp-list-table.plugins tr.plugin-update-tr:hover td,
+body.adminkit .wp-list-table.plugins tr.plugin-update-tr:hover th {
+	background: transparent;
 }
 
 body.adminkit .wp-list-table.plugins .plugin-title strong {
