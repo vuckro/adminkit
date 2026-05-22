@@ -171,10 +171,17 @@ body.adminkit.toplevel_page_flying-press .divide-gray-200 > :not([hidden]) ~ :no
 	border-color: var(--ak-border) !important;
 }
 
-/* `ring-1 ring-inset ring-gray-300` is FlyingPress's input/field border —
-   route the ring color to the border token. */
+/* FlyingPress draws input/field borders two ways: the older
+   `ring-1 ring-inset ring-gray-300` (ring-as-border) and the newer
+   `outline outline-1 outline-gray-300` (outline-as-border, e.g. the
+   Cloudflare Zone ID / API key fields). Route both neutral edges to
+   the border token so they flip in dark mode. */
 body.adminkit.toplevel_page_flying-press .ring-gray-300 {
 	--tw-ring-color: var(--ak-border) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .outline-gray-300 {
+	outline-color: var(--ak-border) !important;
 }
 
 
