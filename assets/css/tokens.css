@@ -122,9 +122,12 @@
 	--ak-table-header-bg: var(--ak-surface);
 
 	/* ── Admin menu (sidebar) state surfaces ──────────────────────────────
-	   Distinct hover vs active; active a step stronger than hover. */
-	--ak-adminmenu-hover-bg: hsl(0, 0%, 94%);
-	--ak-adminmenu-hover-bg: color-mix(in srgb, var(--ak-surface) 65%, var(--ak-elevated));
+	   Distinct hover vs active; active a step stronger than hover. Hover steps
+	   straight to --ak-elevated — near white, --ak-surface (96%) and a 65/35
+	   mix (~95%) read as no change against the menu bg; elevated (93%) makes
+	   the hover visible. Gradation: base 96 -> hover 93 -> active 90 (hover
+	   can't go lower without crowding the 90% active state). */
+	--ak-adminmenu-hover-bg: var(--ak-elevated);
 	--ak-adminmenu-active-bg: hsl(0, 0%, 90%);
 	--ak-adminmenu-active-bg: color-mix(in srgb, var(--ak-elevated) 82%, var(--ak-border-strong));
 

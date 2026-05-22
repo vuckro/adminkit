@@ -30,9 +30,11 @@
  *
  * Native disclosure was chosen over a scripted toggle on purpose — it
  * is keyboard-accessible for free, animates nothing (matches AdminKit's
- * flat, motion-free design) and needs zero click handlers. The script
- * is printed inline — like the theme toggle — rather than enqueued as a
- * file, so the asset registry stays CSS-only.
+ * flat, motion-free design) and needs zero click handlers. All panels
+ * share one `name`, so the browser keeps a single panel open at a time —
+ * opening one closes the others, still with zero JS (the platform does the
+ * bookkeeping). The script is printed inline — like the theme toggle —
+ * rather than enqueued as a file, so the asset registry stays CSS-only.
  *
  * Visuals live in assets/css/screens/profile.css, already enqueued on
  * exactly these three screens.
@@ -114,6 +116,9 @@ class AdminKit_Profile_Accordion {
 	function makePanel(title, open, panel) {
 		var d = document.createElement('details');
 		d.className = 'ak-accordion';
+		// Shared name = native single-open group: opening any panel closes
+		// the others, no toggle handler needed.
+		d.name = 'ak-profile-accordion';
 		if (panel) d.dataset.akPanel = panel;
 		if (open) d.open = true;
 		var s = document.createElement('summary');

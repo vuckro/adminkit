@@ -94,8 +94,9 @@ body.adminkit #adminmenu .wp-menu-image::before {
 	color: var(--ak-text-muted);
 }
 
-/* Current item — dedicated active surface + bold label, no brand
-   accent. Dark mode keeps the same contrast as before via token values. */
+/* Current item — dedicated active surface + heading color. Background and
+   color cover the whole <li> (incl. wp-menu-open / current.menu-top) so the
+   active row is fully painted. Dark mode keeps the same contrast via tokens. */
 body.adminkit #adminmenu li.current a.menu-top,
 body.adminkit #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
@@ -103,6 +104,16 @@ body.adminkit #adminmenu li.wp-menu-open,
 body.adminkit #adminmenu li.current.menu-top {
 	background: var(--ak-adminmenu-active-bg, var(--ak-elevated)) !important;
 	color: var(--ak-heading) !important;
+}
+
+/* Bold the active top-level label — applied to the <a> (and the submenu
+   head), NEVER the wrapping <li>. font-weight inherits, and wp-menu-open /
+   current.menu-top wrap the .wp-submenu, so setting it on the <li> would
+   bold every submenu link below. The submenu's own active item is bolded
+   separately further down. */
+body.adminkit #adminmenu li.current a.menu-top,
+body.adminkit #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head {
 	font-weight: 600;
 }
 
@@ -147,10 +158,12 @@ body.adminkit #adminmenu .wp-submenu a:focus {
 	background: var(--ak-surface) !important;
 }
 
-/* Current submenu item — neutral surface + bold marks it (no brand
-   accent). `!important` on color: WP color-scheme stylesheets paint
-   `.wp-submenu a:hover` with a hardcoded blue at higher specificity,
-   which would otherwise beat our heading color. */
+/* Current submenu item — neutral surface + bold marks it (no brand accent).
+   This is the ONLY bold submenu link: non-active links stay normal weight
+   now that the parent <li> no longer leaks font-weight into the submenu.
+   `!important` on color: WP color-scheme stylesheets paint `.wp-submenu
+   a:hover` with a hardcoded blue at higher specificity, which would
+   otherwise beat our heading color. */
 body.adminkit #adminmenu .wp-submenu li.current a,
 body.adminkit #adminmenu .wp-submenu li.current a:hover,
 body.adminkit #adminmenu .wp-submenu li.current a:focus {

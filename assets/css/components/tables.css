@@ -93,10 +93,13 @@ body.adminkit .wp-list-table tbody tr:first-child th {
 	border-top: none;
 }
 
+/* Row hover — neutral surface, no brand tint (mirrors the submenu hover).
+   Uses --ak-surface-accent, not --ak-surface: in dark mode --ak-table-bg
+   resolves to --ak-surface, so a --ak-surface hover would be invisible. */
 body.adminkit .wp-list-table tbody tr:hover,
 body.adminkit .wp-list-table tbody tr:hover td,
 body.adminkit .wp-list-table tbody tr:hover th {
-	background: color-mix(in srgb, var(--primary, #FFD64F) 2%, transparent);
+	background: var(--ak-surface-accent);
 }
 
 body.adminkit .wp-list-table .row-title:hover {
