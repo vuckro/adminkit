@@ -89,11 +89,12 @@
 	--ak-primary-soft: var(--primary-t-2, rgba(0, 0, 0, 0.12));
 	--ak-primary-soft: var(--primary-t-2, color-mix(in srgb, var(--ak-primary) 18%, transparent));
 	/* Readable foreground on a primary fill (text/icon on a brand button).
-	   Leans on the provider's --white, NOT its --on-accent: this Bricks
-	   palette computes --on-accent as near-black (neutral-l-10), which reads
-	   as dark text on the green (#628c2d) accent. We want the conventional
-	   white, so source it from --white (degrades to #ffffff with no provider). */
-	--ak-on-accent: var(--white, #ffffff);
+	   Soft off-white from the neutral ramp's light end — the counterpart to
+	   --ak-heading (which leans on --neutral-l-9). NOT pure white (too harsh)
+	   and NOT the provider's --on-accent (Bricks computes it near-black =
+	   neutral-l-10, reading dark on the green #628c2d accent). Stays ~98%:
+	   contrast on the green is already ~4:1, so a greyer value drops below. */
+	--ak-on-accent: var(--neutral-l-1, hsl(0, 0%, 98%));
 	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%)));
 
 	/* ── State ───────────────────────────────────────────────────────────
@@ -196,8 +197,8 @@ body.adminkit[class*="admin-color-"] {
 
    Surfaces/borders/text re-map onto the provider INVERSE ramp
    (--neutral-d-*); only tokens that genuinely differ from light are
-   re-declared. Accent, on-accent, overlay, focus and the field aliases
-   carry over from :root unchanged. */
+   re-declared. Accent, on-accent, overlay and focus carry over from
+   :root unchanged; only --ak-field-bg is re-declared (below). */
 :root[data-adminkit-theme="dark"] {
 	/* Surfaces — ramp lifts one step (brighter = elevated). */
 	--ak-bg: var(--neutral-d-2, hsl(0, 0%, 11%));
@@ -206,6 +207,13 @@ body.adminkit[class*="admin-color-"] {
 	--ak-elevated: var(--neutral-d-5, hsl(0, 0%, 24%));
 	--ak-surface-accent: hsl(0, 0%, 19%);
 	--ak-surface-accent: color-mix(in srgb, var(--ak-surface) 50%, var(--ak-elevated));
+
+	/* Fields recess below cards in dark. --ak-field-bg aliases --ak-surface-alt
+	   — the lightest surface in light (white, so fields pop) but a mid tone in
+	   dark (18%, the same level as the cards fields sit on, so they'd vanish).
+	   Drop to --ak-surface (14%) so a dark field reads as an inset well against
+	   the 18% card, its border defining the edge. Light keeps the white alias. */
+	--ak-field-bg: var(--ak-surface);
 
 	/* Borders */
 	--ak-border: var(--neutral-d-5, hsl(0, 0%, 24%));
