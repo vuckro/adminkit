@@ -143,6 +143,13 @@ body.adminkit.settings_page_menu_editor .ame-rui-redirect-content {
 	border-color: var(--ak-border);
 }
 
+/* Sub-tabs strip — active tab is painted with hardcoded #000 text
+   that turns invisible in dark mode. Route to --ak-primary so the
+   active tab reads as a brand-aligned indicator in both modes. */
+body.adminkit.settings_page_menu_editor .ame-rui-sub-tabs .ame-rui-active-tab a {
+	color: var(--ak-primary);
+}
+
 body.adminkit.settings_page_menu_editor .ame-rui-drag-handle {
 	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
