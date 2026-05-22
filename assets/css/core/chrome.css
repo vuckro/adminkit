@@ -531,11 +531,12 @@ body.adminkit .subsubsub .count {
 
 /* Generic dashicon sizing — WP defaults to 20px which feels heavy
    in inline contexts (descriptions, status pills, table cells).
-   Route the base size to a token so it matches the body text rhythm.
-   Context-specific dashicons (sidebar menu icons, admin-bar icons,
-   media frame chrome) keep their own per-place font-size via WP's
-   more-specific rules, so they're not affected. */
+   Route the base size to Bricks's --text-s typography token when
+   present, falling back to our own --ak-text-s otherwise. Context-
+   specific dashicons (sidebar menu icons, admin-bar icons, media
+   frame chrome) keep their own per-place font-size via WP's
+   more-specific rules. */
 body.adminkit .dashicons,
 body.adminkit .dashicons-before:before {
-	font-size: var(--ak-text-s);
+	font-size: var(--text-s, var(--ak-text-s));
 }
