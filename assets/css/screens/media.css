@@ -218,8 +218,27 @@ body.adminkit .media-modal .attachments-browser .media-toolbar {
 	background: var(--ak-bg);
 }
 
+/* Tab labels — WP hardcodes #1d2327 (dark) on the active tabs, invisible in
+   dark mode. Inactive router tab → text, active tab → heading. */
+body.adminkit .media-router .media-menu-item {
+	color: var(--ak-text);
+}
+
+body.adminkit .media-menu .active,
+body.adminkit .media-menu .active:hover,
+body.adminkit .media-router .active,
+body.adminkit .media-router .active:hover {
+	color: var(--ak-heading);
+}
+
+/* Bottom action toolbar (the "Set featured image" bar) — WP hardcodes #fff;
+   recess to a footer surface (top border already handled in the divider group). */
+body.adminkit .media-frame-toolbar .media-toolbar {
+	background: var(--ak-surface);
+}
+
 /* Menu / router tabs — swap WP's blue focus ring + blue text for a flat
-   primary focus. */
+   primary focus. Declared after the resting colors so it wins on focus. */
 body.adminkit .media-menu-item:focus {
 	box-shadow: none;
 	color: var(--ak-primary);
