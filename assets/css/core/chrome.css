@@ -63,16 +63,14 @@ body.adminkit #adminmenu li.menu-top {
 }
 
 /* Hover / focus on non-current items — match WP's exact selectors
-   with !important to defeat colors.css. Neutral one-step-darker
-   surface (--ak-elevated) so hover reads as a subtle lift without
-   brand color, consistent with the list-table row hover. The
-   current item shares this bg but stays bold to read as active. */
+   with !important to defeat colors.css. Uses a dedicated hover token
+   so we can tune contrast independently from the active/current item. */
 body.adminkit #adminmenu a:hover,
 body.adminkit #adminmenu li.menu-top:hover,
 body.adminkit #adminmenu li.opensub > a.menu-top,
 body.adminkit #adminmenu li > a.menu-top:focus {
 	color: var(--ak-heading) !important;
-	background-color: var(--ak-elevated) !important;
+	background-color: var(--ak-adminmenu-hover-bg, var(--ak-elevated)) !important;
 }
 
 /* WP core ships `#adminmenu a:focus, #adminmenu a:hover` with
@@ -96,15 +94,14 @@ body.adminkit #adminmenu .wp-menu-image::before {
 	color: var(--ak-text-muted);
 }
 
-/* Current item — neutral elevated surface + bold label, no brand
-   accent. Replaces the former full --ak-primary wash + white text,
-   unreadable now the brand is a light yellow. */
+/* Current item — dedicated active surface + bold label, no brand
+   accent. Dark mode keeps the same contrast as before via token values. */
 body.adminkit #adminmenu li.current a.menu-top,
 body.adminkit #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
 body.adminkit #adminmenu li.wp-menu-open,
 body.adminkit #adminmenu li.current.menu-top {
-	background: var(--ak-elevated) !important;
+	background: var(--ak-adminmenu-active-bg, var(--ak-elevated)) !important;
 	color: var(--ak-heading) !important;
 	font-weight: 600;
 }
@@ -524,4 +521,3 @@ body.adminkit .subsubsub a.current {
 body.adminkit .subsubsub .count {
 	color: var(--ak-text-muted);
 }
-

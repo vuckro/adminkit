@@ -22,8 +22,12 @@
 	   brand palette set up. */
 	--ak-primary: var(--primary, var(--neutral-l-8, hsl(0, 0%, 32%)));
 	--ak-primary-dark: var(--primary-d-2, var(--neutral-l-9, hsl(0, 0%, 18%)));
-	--ak-primary-subtle: var(--primary-t-1, rgba(255, 214, 79, 0.09));
-	--ak-primary-soft: var(--primary-t-2, rgba(255, 214, 79, 0.18));
+	/* Fallback tints derive from --ak-primary (not hardcoded yellow) so
+	   disabling a provider (e.g. Bricks) doesn't leave a yellow wash. */
+	--ak-primary-subtle: var(--primary-t-1, rgba(0, 0, 0, 0.06));
+	--ak-primary-subtle: var(--primary-t-1, color-mix(in srgb, var(--ak-primary) 9%, transparent));
+	--ak-primary-soft: var(--primary-t-2, rgba(0, 0, 0, 0.12));
+	--ak-primary-soft: var(--primary-t-2, color-mix(in srgb, var(--ak-primary) 18%, transparent));
 	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%)));
 
 	/* Semantic */
@@ -37,6 +41,16 @@
 	--ak-bg: var(--background, hsl(0, 0%, 98%));
 	--ak-surface: var(--surface, hsl(0, 0%, 96%));
 	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
+	/* Admin menu state surfaces (light mode): distinct hover vs active.
+	   Active is intentionally a bit more contrasted than hover. */
+	--ak-adminmenu-hover-bg: hsl(0, 0%, 94%);
+	--ak-adminmenu-hover-bg: color-mix(in srgb, var(--ak-surface) 65%, var(--ak-elevated));
+	--ak-adminmenu-active-bg: hsl(0, 0%, 90%);
+	--ak-adminmenu-active-bg: color-mix(in srgb, var(--ak-elevated) 82%, var(--ak-border-strong));
+	/* Soft active surface between `surface` and `elevated` for selected rows
+	   and tabs that should stand out gently without looking pressed. */
+	--ak-surface-accent: hsl(0, 0%, 95%);
+	--ak-surface-accent: color-mix(in srgb, var(--ak-surface) 50%, var(--ak-elevated));
 	--ak-surface-alt: var(--white, #ffffff);
 	/* List tables — row + header surfaces swap per mode: white rows /
 	   gray header in light, darker rows / lighter header in dark. */
@@ -118,6 +132,12 @@ body.adminkit[class*="admin-color-"] {
 	--ak-surface-alt: var(--neutral-d-4, hsl(0, 0%, 18%));
 	--ak-table-bg: var(--ak-surface);
 	--ak-table-header-bg: var(--ak-surface-alt);
+	/* Dark mode keeps the current active contrast; hover stays subtler. */
+	--ak-adminmenu-hover-bg: hsl(0, 0%, 20%);
+	--ak-adminmenu-hover-bg: color-mix(in srgb, var(--ak-surface) 70%, var(--ak-elevated));
+	--ak-adminmenu-active-bg: var(--ak-elevated);
+	--ak-surface-accent: hsl(0, 0%, 19%);
+	--ak-surface-accent: color-mix(in srgb, var(--ak-surface) 50%, var(--ak-elevated));
 	--ak-elevated: var(--neutral-d-5, hsl(0, 0%, 24%));
 	--ak-border: var(--neutral-d-5, hsl(0, 0%, 24%));
 	--ak-border-strong: var(--neutral-d-6, hsl(0, 0%, 38%));
