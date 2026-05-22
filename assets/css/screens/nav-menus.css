@@ -13,8 +13,6 @@ body.adminkit.nav-menus-php #post-body {
 	background: var(--ak-surface-alt);
 	border-top-color: transparent;
 	border-bottom-color: var(--ak-border);
-	border-left: 1px solid var(--ak-border);
-	border-right: 1px solid var(--ak-border);
 }
 
 body.adminkit.nav-menus-php #nav-menu-header,
@@ -26,9 +24,10 @@ body.adminkit.nav-menus-php #nav-menu-header {
 	border-bottom: 1px solid var(--ak-border);
 }
 
-/* Footer gets a real top divider (header already has its border-bottom). */
-body.adminkit.nav-menus-php #nav-menu-footer {
-	border-top: 1px solid var(--ak-border);
+@media only screen and (min-width: 783px) {
+	body.adminkit.nav-menus-php #nav-menu-footer {
+		box-shadow: 0 -1px 0 0 var(--ak-border);
+	}
 }
 
 /* Each draggable menu item bar — explicit full border so every collapsed
@@ -47,9 +46,10 @@ body.adminkit.nav-menus-php .menu-item:hover .menu-item-settings {
 	border-color: var(--ak-border-strong);
 }
 
-/* Expanded item settings drawer. */
+/* Expanded item settings drawer — darker (page-bg) content surface so the
+   open body reads as recessed under the handle. */
 body.adminkit.nav-menus-php .menu-item-settings {
-	background: var(--ak-surface);
+	background: var(--ak-bg);
 	border-color: var(--ak-border);
 	box-shadow: none;
 	color: var(--ak-text);
