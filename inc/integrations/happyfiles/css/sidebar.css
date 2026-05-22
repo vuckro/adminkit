@@ -34,6 +34,21 @@ body.adminkit #happyfiles-sidebar {
 	color: var(--ak-text);
 }
 
+/* In-sidebar notification cards (.happyfiles-notification). The
+   bundled rule paints them solid --hf-color-info (semantic blue) +
+   white text — too loud for a small chrome notice. Route to a soft
+   --primary-t-1 tint with --ak-text body + token border so the
+   notice reads as an inline note instead of a takeover banner. */
+body.adminkit .happyfiles-notification {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	border: 1px solid var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .happyfiles-notification a {
+	color: var(--ak-primary);
+}
+
 body.adminkit #happyfiles-sidebar #happyfiles-title {
 	color: var(--ak-heading);
 }
@@ -59,12 +74,12 @@ body.adminkit #happyfiles-sidebar .icon.has svg g {
 }
 
 body.adminkit #happyfiles-sidebar .icon:hover {
-	background-color: var(--ak-primary) !important;
-	color: #ffffff !important;
+	background-color: var(--primary-t-1, var(--ak-hover-bg)) !important;
+	color: var(--ak-primary) !important;
 }
 
 body.adminkit #happyfiles-sidebar .icon:hover svg g {
-	fill: #ffffff !important;
+	fill: var(--ak-primary) !important;
 }
 
 /* Folder row default state — token text */
@@ -123,15 +138,15 @@ body.adminkit #happyfiles-select-folders {
 }
 
 /* "Create folder" primary button — bundled CSS paints it with
-   --hf-color-success (mapped to --ak-success above). Route to
-   --ak-primary so the create CTA picks up the brand color
-   instead of the semantic success token. */
+   --hf-color-success (mapped to --ak-success above). Route to a
+   soft --primary-t-1 brand tint with --ak-primary text so the
+   create CTA stays calm (matches the icon hover language). */
 body.adminkit #happyfiles-create-folders button.button-primary,
 body.adminkit #happyfiles-create-folders button.button-primary:hover,
 body.adminkit #happyfiles-create-folders button.button-primary:focus {
-	background-color: var(--ak-primary);
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
 	border-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-primary);
 }
 
 /* Sort-by dropdown panel */
