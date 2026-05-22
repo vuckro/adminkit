@@ -522,6 +522,23 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_header a[href*="fl
 }
 
 
+/* ===== White-label the header logo as "SMTP" text =====
+   Swaps the bundled <img src="logo.svg"> for a plain text token so
+   the plugin reads as a generic SMTP module instead of branding the
+   admin with Fluent SMTP. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .logo img {
+	display: none;
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .logo::after {
+	content: "SMTP";
+	color: var(--ak-heading);
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+}
+
+
 /* ===== Element UI tags ===== */
 body.adminkit.settings_page_fluent-mail .el-tag,
 body.adminkit.settings_page_fluent-mail .el-tag--info {
