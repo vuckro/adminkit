@@ -1,0 +1,228 @@
+/* FlyingPress — toplevel_page_flying-press.
+   React SPA (mounted in #app) styled with Tailwind. The brand intent
+   is the Tailwind `indigo` palette (indigo-600 = #4F46E5); every
+   surface is a hardcoded Tailwind utility that never flips in dark
+   mode:
+     - bg-white / bg-gray-50/100/200/300  surfaces
+     - text-gray-900/700/600/500/400      headings / body / muted
+     - border-gray-200/300, divide-gray-200, ring-gray-300  edges
+     - indigo-*                           brand (buttons, links, focus)
+     - red / green / yellow               semantic state
+   Map the indigo intent to AdminKit's primary and the gray scale to
+   the surface/text/border tokens so the page reads on-brand and flips
+   with the rest of admin in dark mode. Scoped to the FlyingPress
+   screen via the body class so no other admin screen is touched.
+
+   !important is mandatory here: FlyingPress compiles Tailwind with
+   `important: true`, so EVERY utility declaration ships `!important`
+   (e.g. `.bg-white{background-color:#fff !important}`). A non-important
+   override loses regardless of specificity. Between two !important
+   declarations, specificity + load order decide — the
+   `body.adminkit.toplevel_page_flying-press` prefix (0,2,1) + a utility
+   class (0,3,1) outranks Tailwind's (0,1,0) / variant (0,2,0), and
+   AdminKit loads at priority 9999 (after FlyingPress's injected
+   <style>), so these win. */
+
+
+/* ===== App shell ===== */
+body.adminkit.toplevel_page_flying-press #app {
+	color: var(--ak-text);
+}
+
+
+/* ===== Brand → primary ===== */
+
+/* Accent text (links, active tab labels, inline CTAs) */
+body.adminkit.toplevel_page_flying-press .text-indigo-600,
+body.adminkit.toplevel_page_flying-press .text-indigo-500,
+body.adminkit.toplevel_page_flying-press .text-indigo-700 {
+	color: var(--ak-primary) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .hover\:text-indigo-700:hover,
+body.adminkit.toplevel_page_flying-press .hover\:text-indigo-600:hover {
+	color: var(--ak-primary-dark) !important;
+}
+
+/* Solid brand fills (primary buttons, toggle "on" track, badges) */
+body.adminkit.toplevel_page_flying-press .bg-indigo-600,
+body.adminkit.toplevel_page_flying-press .bg-indigo-700 {
+	background-color: var(--ak-primary) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .hover\:bg-indigo-700:hover {
+	background-color: var(--ak-primary-dark) !important;
+}
+
+/* Soft brand wash (selected rows, info callouts) */
+body.adminkit.toplevel_page_flying-press .bg-indigo-50 {
+	background-color: var(--ak-primary-soft) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .border-indigo-600 {
+	border-color: var(--ak-primary) !important;
+}
+
+/* Tailwind rings drive their color through --tw-ring-color (the ring
+   box-shadow reads the var live, so re-pointing it recolors the ring
+   without touching the width). */
+body.adminkit.toplevel_page_flying-press .ring-indigo-600,
+body.adminkit.toplevel_page_flying-press .ring-indigo-500,
+body.adminkit.toplevel_page_flying-press .focus\:ring-indigo-500:focus {
+	--tw-ring-color: var(--ak-primary) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .outline-indigo-600,
+body.adminkit.toplevel_page_flying-press .focus\:outline-indigo-600:focus {
+	outline-color: var(--ak-primary) !important;
+}
+
+
+/* ===== Surfaces (gray scale → tokens) =====
+   Ordered light→dark so the recession reads the same in both themes;
+   the tokens carry the dark-mode inversion. */
+
+/* Cards, panels, dropdowns, toggle knob */
+body.adminkit.toplevel_page_flying-press .bg-white {
+	background-color: var(--ak-surface-alt) !important;
+}
+
+/* Page-level / recessed section background */
+body.adminkit.toplevel_page_flying-press .bg-gray-50 {
+	background-color: var(--ak-bg) !important;
+}
+
+/* Subtle neutral hover (list rows, menu items) */
+body.adminkit.toplevel_page_flying-press .hover\:bg-gray-50:hover {
+	background-color: var(--ak-hover-bg) !important;
+}
+
+/* Recessed panels */
+body.adminkit.toplevel_page_flying-press .bg-gray-100 {
+	background-color: var(--ak-surface) !important;
+}
+
+/* Toggle "off" track, neutral chips */
+body.adminkit.toplevel_page_flying-press .bg-gray-200 {
+	background-color: var(--ak-elevated) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .bg-gray-300 {
+	background-color: var(--ak-border-strong) !important;
+}
+
+
+/* ===== Text (gray scale → tokens) ===== */
+body.adminkit.toplevel_page_flying-press .text-gray-900,
+body.adminkit.toplevel_page_flying-press .text-gray-800 {
+	color: var(--ak-heading) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .text-gray-700,
+body.adminkit.toplevel_page_flying-press .text-gray-600 {
+	color: var(--ak-text) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .text-gray-500,
+body.adminkit.toplevel_page_flying-press .text-gray-400 {
+	color: var(--ak-text-muted) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .hover\:text-gray-500:hover {
+	color: var(--ak-text) !important;
+}
+
+
+/* ===== Borders, dividers, neutral rings ===== */
+body.adminkit.toplevel_page_flying-press .border-gray-200,
+body.adminkit.toplevel_page_flying-press .border-gray-300 {
+	border-color: var(--ak-border) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .border-gray-600 {
+	border-color: var(--ak-border-strong) !important;
+}
+
+/* Tailwind's `divide-*` colors the gap between stacked children via the
+   same child combinator it generates — match it to outrank. */
+body.adminkit.toplevel_page_flying-press .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+	border-color: var(--ak-border) !important;
+}
+
+/* `ring-1 ring-inset ring-gray-300` is FlyingPress's input/field border —
+   route the ring color to the border token. */
+body.adminkit.toplevel_page_flying-press .ring-gray-300 {
+	--tw-ring-color: var(--ak-border) !important;
+}
+
+
+/* ===== Semantic state ===== */
+
+/* Error */
+body.adminkit.toplevel_page_flying-press .text-red-600,
+body.adminkit.toplevel_page_flying-press .text-red-500 {
+	color: var(--ak-error) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .bg-red-500,
+body.adminkit.toplevel_page_flying-press .bg-red-600,
+body.adminkit.toplevel_page_flying-press .bg-red-700,
+body.adminkit.toplevel_page_flying-press .hover\:bg-red-700:hover {
+	background-color: var(--ak-error) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .bg-red-50 {
+	background-color: var(--ak-error-subtle) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .border-red-600 {
+	border-color: var(--ak-error) !important;
+}
+
+/* Success */
+body.adminkit.toplevel_page_flying-press .text-green-600,
+body.adminkit.toplevel_page_flying-press .text-green-500 {
+	color: var(--ak-success) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .bg-green-500 {
+	background-color: var(--ak-success) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .bg-green-50 {
+	background-color: var(--success-t-2, rgba(17, 183, 107, 0.10)) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .border-green-600 {
+	border-color: var(--ak-success) !important;
+}
+
+/* Warning */
+body.adminkit.toplevel_page_flying-press .text-yellow-600,
+body.adminkit.toplevel_page_flying-press .text-orange-400 {
+	color: var(--ak-warning) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .bg-yellow-500 {
+	background-color: var(--ak-warning) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .bg-yellow-50 {
+	background-color: var(--warning-t-2, rgba(255, 161, 0, 0.10)) !important;
+}
+
+body.adminkit.toplevel_page_flying-press .border-yellow-600 {
+	border-color: var(--ak-warning) !important;
+}
+
+
+/* ===== Flatten surface shadows (AdminKit is flat) =====
+   Neutralize Tailwind's --tw-shadow var rather than zeroing box-shadow
+   outright — the box-shadow property composes ring + shadow, so killing
+   only the shadow var keeps focus rings intact. */
+body.adminkit.toplevel_page_flying-press .shadow-sm,
+body.adminkit.toplevel_page_flying-press .shadow,
+body.adminkit.toplevel_page_flying-press .shadow-lg {
+	--tw-shadow: 0 0 #0000 !important;
+	--tw-shadow-colored: 0 0 #0000 !important;
+}
