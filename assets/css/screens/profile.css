@@ -43,3 +43,76 @@ body.adminkit .color-option.selected {
 	border-color: var(--ak-primary);
 	box-shadow: var(--ak-focus-ring);
 }
+
+/* --- Section accordions ---------------------------------------------------
+   JS folds each WP profile <h2> + its .form-table into a native <details>
+   (see inc/core/class-profile-accordion.php). Flat + motionless to match
+   AdminKit: border + radius only, instant open/close, no transitions. */
+
+body.adminkit .ak-accordion {
+	margin: 0 0 10px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	background: var(--ak-surface-alt);
+}
+
+body.adminkit .ak-accordion > summary {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 13px 16px;
+	font-size: var(--ak-text-m);
+	font-weight: 600;
+	color: var(--ak-heading);
+	cursor: pointer;
+	user-select: none;
+	list-style: none;
+	border-radius: var(--ak-radius-m);
+}
+
+/* Strip the native disclosure triangle (WebKit/Blink + the standard prop) */
+body.adminkit .ak-accordion > summary::-webkit-details-marker {
+	display: none;
+}
+
+body.adminkit .ak-accordion > summary:hover {
+	background: var(--ak-hover-bg);
+}
+
+body.adminkit .ak-accordion > summary:focus-visible {
+	outline: none;
+	box-shadow: var(--ak-focus-ring);
+}
+
+/* Chevron drawn from two borders; flipped instantly on open (no transition) */
+body.adminkit .ak-accordion > summary::after {
+	content: "";
+	flex: none;
+	margin-left: auto;
+	width: 7px;
+	height: 7px;
+	border-right: 2px solid var(--ak-text-muted);
+	border-bottom: 2px solid var(--ak-text-muted);
+	transform: rotate(45deg);
+}
+
+body.adminkit .ak-accordion[open] > summary {
+	border-bottom: 1px solid var(--ak-border);
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+body.adminkit .ak-accordion[open] > summary::after {
+	transform: rotate(-135deg);
+}
+
+/* Panel body — inset every section's content uniformly... */
+body.adminkit .ak-accordion > :not(summary) {
+	margin: 14px 16px;
+}
+
+/* ...and pull the form-table flush under the summary divider (its own
+   top margin from components/form-table.css would double the gap). */
+body.adminkit .ak-accordion > .form-table {
+	margin: 6px 16px 14px;
+}
