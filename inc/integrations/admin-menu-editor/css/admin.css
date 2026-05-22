@@ -396,6 +396,23 @@ body.adminkit.settings_page_menu_editor #rex-category-sidebar .rex-selected-nav-
 	box-shadow: inset 3px 0 0 var(--ak-primary);
 }
 
+/* Capability-count badges — AME ships a hard blue info pill (#f0f6fc /
+   #9ec2e6 / #2271b1) that turns green once every cap in the group is on.
+   Blue is off our palette and would collide with our (often green) brand,
+   so the resting badge becomes a neutral elevated chip and only the
+   "all enabled" state keeps a semantic success green. Both flip with mode. */
+body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts .rex-capability-count {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts .rex-capability-count.rex-all-capabilities-enabled {
+	background: color-mix(in srgb, var(--ak-success) 12%, transparent);
+	border-color: var(--ak-success);
+	color: var(--ak-success);
+}
+
 
 /* ----- Table Columns module footer "Enable custom order" -----
    `.ame-tc-other-screen-options` paints #f6f7f7 — too light on dark. */
