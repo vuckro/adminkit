@@ -348,6 +348,45 @@ body.adminkit table.widefat {
 	box-shadow: none;
 }
 
+/* Classic editor box (wp_editor) + comment/link metaboxes (.stuffbox).
+   WP hardcodes #fff / #f6f7f7 surfaces that don't flip, and the generic
+   border was stripped just above — give them token surfaces and a card
+   border + radius. Used on comment edit, link edit, text widgets, classic
+   excerpt, and any plugin that calls wp_editor(). */
+body.adminkit .stuffbox {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	overflow: hidden;
+}
+
+body.adminkit .wp-editor-container {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
+}
+
+/* Quicktags (Text tab) toolbar — recessed header band inside the editor box. */
+body.adminkit .quicktags-toolbar {
+	background: var(--ak-surface);
+	border-bottom: 1px solid var(--ak-border);
+}
+
+/* Editor textarea fills the box — drop its own border/radius so it doesn't
+   nest a second framed box inside the container. */
+body.adminkit .wp-editor-container .wp-editor-area {
+	border: none;
+	border-radius: 0;
+}
+
+/* Link / permalink helper text (comment edit link box, post slug box) —
+   WP hardcodes #646970. */
+body.adminkit #comment-link-box,
+body.adminkit #edit-slug-box {
+	color: var(--ak-text-muted);
+}
+
 /* Accordion section body — WP paints `background: #fff` which leaks
    in dark mode. Used on nav-menus, edit screens, etc. */
 body.adminkit .accordion-section-content {
