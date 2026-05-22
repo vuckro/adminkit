@@ -1,0 +1,303 @@
+/* Fluent SMTP — settings_page_fluent-mail.
+   Vue SPA bundling Element UI 2.x. Element UI hardcodes:
+     - blue #409eff for primary state (buttons, tabs, links, focus)
+     - white #fff for cards, panels, dialogs, inputs
+     - #dcdfe6 / #ebeef5 for borders
+     - #f4f4f5 / #f0f2f5 for muted surfaces
+   None of these flip in dark mode. Map the most visible surfaces
+   and the Element UI primary intent to AdminKit tokens. Scoped to
+   the settings page so we don't disturb other admin screens. */
+
+
+/* ===== Plugin shell ===== */
+body.adminkit.settings_page_fluent-mail #fluent_mail_app,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+
+/* Header strip + body wrapper */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-header,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_header {
+	background: var(--ak-surface);
+	border-bottom: 1px solid var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-body,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_content {
+	background: transparent;
+	color: var(--ak-text);
+}
+
+/* Dashboard mailer + stat cards */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .mailer-block,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .email-stat,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-mailer-image {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .email-stat:hover,
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-mailer-image:hover {
+	background: var(--primary-t-1, var(--ak-hover-bg));
+	border-color: var(--ak-border-strong);
+}
+
+
+/* ===== Element UI buttons — route each intent to its AdminKit token ===== */
+
+/* Primary */
+body.adminkit.settings_page_fluent-mail .el-button--primary {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: #ffffff;
+}
+
+body.adminkit.settings_page_fluent-mail .el-button--primary:hover,
+body.adminkit.settings_page_fluent-mail .el-button--primary:focus {
+	background-color: var(--ak-primary-dark);
+	border-color: var(--ak-primary-dark);
+	color: #ffffff;
+}
+
+/* Success */
+body.adminkit.settings_page_fluent-mail .el-button--success {
+	background-color: var(--ak-success);
+	border-color: var(--ak-success);
+	color: #ffffff;
+}
+
+/* Warning */
+body.adminkit.settings_page_fluent-mail .el-button--warning {
+	background-color: var(--ak-warning);
+	border-color: var(--ak-warning);
+	color: #ffffff;
+}
+
+/* Danger */
+body.adminkit.settings_page_fluent-mail .el-button--danger {
+	background-color: var(--ak-error);
+	border-color: var(--ak-error);
+	color: #ffffff;
+}
+
+/* Info / default ghost — neutral surface */
+body.adminkit.settings_page_fluent-mail .el-button--info,
+body.adminkit.settings_page_fluent-mail .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--text) {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-button--info:hover,
+body.adminkit.settings_page_fluent-mail .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--text):hover {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+
+/* Text-only buttons keep the primary as their link color */
+body.adminkit.settings_page_fluent-mail .el-button--text {
+	color: var(--ak-primary);
+}
+
+
+/* ===== Element UI form inputs ===== */
+body.adminkit.settings_page_fluent-mail .el-input__inner,
+body.adminkit.settings_page_fluent-mail .el-textarea__inner,
+body.adminkit.settings_page_fluent-mail .el-select .el-input__inner {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-input__inner:focus,
+body.adminkit.settings_page_fluent-mail .el-textarea__inner:focus {
+	border-color: var(--ak-primary);
+}
+
+body.adminkit.settings_page_fluent-mail .el-form-item__label {
+	color: var(--ak-heading);
+}
+
+body.adminkit.settings_page_fluent-mail .el-input__icon,
+body.adminkit.settings_page_fluent-mail .el-form-item__error,
+body.adminkit.settings_page_fluent-mail .el-input--prefix .el-input__icon {
+	color: var(--ak-text-muted);
+}
+
+
+/* ===== Element UI checkbox / radio active states ===== */
+body.adminkit.settings_page_fluent-mail .el-checkbox__input.is-checked .el-checkbox__inner,
+body.adminkit.settings_page_fluent-mail .el-checkbox__input.is-indeterminate .el-checkbox__inner,
+body.adminkit.settings_page_fluent-mail .el-radio__input.is-checked .el-radio__inner {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+
+body.adminkit.settings_page_fluent-mail .el-checkbox__input.is-checked + .el-checkbox__label,
+body.adminkit.settings_page_fluent-mail .el-radio__input.is-checked + .el-radio__label {
+	color: var(--ak-primary);
+}
+
+
+/* ===== Element UI tables ===== */
+body.adminkit.settings_page_fluent-mail .el-table,
+body.adminkit.settings_page_fluent-mail .el-table__body-wrapper,
+body.adminkit.settings_page_fluent-mail .el-table tr,
+body.adminkit.settings_page_fluent-mail .el-table th,
+body.adminkit.settings_page_fluent-mail .el-table td {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-table thead,
+body.adminkit.settings_page_fluent-mail .el-table thead th {
+	background-color: var(--ak-surface);
+	color: var(--ak-heading);
+}
+
+body.adminkit.settings_page_fluent-mail .el-table--enable-row-hover .el-table__body tr:hover > td {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+}
+
+body.adminkit.settings_page_fluent-mail .el-table__row--striped td {
+	background-color: var(--ak-surface);
+}
+
+
+/* ===== Element UI tabs ===== */
+body.adminkit.settings_page_fluent-mail .el-tabs__item {
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-tabs__item.is-active,
+body.adminkit.settings_page_fluent-mail .el-tabs__item:hover {
+	color: var(--ak-primary);
+}
+
+body.adminkit.settings_page_fluent-mail .el-tabs__active-bar {
+	background-color: var(--ak-primary);
+}
+
+body.adminkit.settings_page_fluent-mail .el-tabs__nav-wrap::after,
+body.adminkit.settings_page_fluent-mail .el-tabs--border-card,
+body.adminkit.settings_page_fluent-mail .el-tabs--border-card > .el-tabs__header {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+
+/* ===== Element UI cards + dialogs ===== */
+body.adminkit.settings_page_fluent-mail .el-card,
+body.adminkit.settings_page_fluent-mail .el-dialog {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-card__header,
+body.adminkit.settings_page_fluent-mail .el-dialog__header {
+	background-color: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.adminkit.settings_page_fluent-mail .el-dialog__title,
+body.adminkit.settings_page_fluent-mail .el-dialog__body {
+	color: var(--ak-text);
+}
+
+
+/* ===== Element UI alerts — intent colors ===== */
+body.adminkit.settings_page_fluent-mail .el-alert--success {
+	background-color: var(--ak-success);
+	color: #ffffff;
+}
+
+body.adminkit.settings_page_fluent-mail .el-alert--warning {
+	background-color: var(--ak-warning);
+	color: #ffffff;
+}
+
+body.adminkit.settings_page_fluent-mail .el-alert--error {
+	background-color: var(--ak-error);
+	color: #ffffff;
+}
+
+body.adminkit.settings_page_fluent-mail .el-alert--info {
+	background-color: var(--ak-info);
+	color: #ffffff;
+}
+
+
+/* ===== Element UI pagination ===== */
+body.adminkit.settings_page_fluent-mail .el-pagination .btn-prev,
+body.adminkit.settings_page_fluent-mail .el-pagination .btn-next,
+body.adminkit.settings_page_fluent-mail .el-pagination.is-background .el-pager li {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-pagination.is-background .el-pager li:not(.disabled).active {
+	background-color: var(--ak-primary);
+	color: #ffffff;
+}
+
+body.adminkit.settings_page_fluent-mail .el-pager li:not(.disabled):hover {
+	color: var(--ak-primary);
+}
+
+
+/* ===== Element UI menus / dropdowns ===== */
+body.adminkit.settings_page_fluent-mail .el-menu,
+body.adminkit.settings_page_fluent-mail .el-dropdown-menu {
+	background-color: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-menu-item,
+body.adminkit.settings_page_fluent-mail .el-submenu__title,
+body.adminkit.settings_page_fluent-mail .el-dropdown-menu__item {
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-menu-item.is-active,
+body.adminkit.settings_page_fluent-mail .el-menu-item:hover,
+body.adminkit.settings_page_fluent-mail .el-dropdown-menu__item:hover {
+	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	color: var(--ak-primary);
+}
+
+
+/* ===== Element UI tags ===== */
+body.adminkit.settings_page_fluent-mail .el-tag,
+body.adminkit.settings_page_fluent-mail .el-tag--info {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.settings_page_fluent-mail .el-tag--success {
+	background-color: var(--ak-success);
+	color: #ffffff;
+	border-color: var(--ak-success);
+}
+
+body.adminkit.settings_page_fluent-mail .el-tag--warning {
+	background-color: var(--ak-warning);
+	color: #ffffff;
+	border-color: var(--ak-warning);
+}
+
+body.adminkit.settings_page_fluent-mail .el-tag--danger {
+	background-color: var(--ak-error);
+	color: #ffffff;
+	border-color: var(--ak-error);
+}
