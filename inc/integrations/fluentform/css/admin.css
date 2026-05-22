@@ -1,0 +1,400 @@
+/* FluentForm admin — token bridge.
+   FluentForm ships a Vue SPA built on a bundled (older) Element UI
+   that hardcodes every color as hex — no CSS variables to remap, so
+   each surface is overridden by selector. Loaded only on FluentForm
+   screens via owns_screen().
+
+   Palette mapped (from fluent-forms-admin-sass.css):
+     #fff / #f5f5f5 / #f2f2f2  surfaces      → --ak-surface-alt / --ak-surface / --ak-bg
+     #1e1f21 / #4b4c4d         text/heading  → --ak-text / --ak-heading
+     #606266 / #909399         muted text    → --ak-text-muted
+     #ececec / #ededed / #dcdfe6 / #dadbdd   → --ak-border
+     #1a7efb (brand blue)      primary       → --ak-primary
+     #e8f2ff                   primary tint  → --ak-primary-soft
+     #00b27f success / #fcbe2d warning /
+     #0dcaf0 info / #ff6154    error         → semantic tokens
+
+   All rules scoped under body.adminkit (the file only enqueues on
+   FF screens, so no extra screen guard is needed). */
+
+
+/* ========== 1. Layout shell ========== */
+body.adminkit .ff_form_wrap,
+body.adminkit .ff_form_wrap_area,
+body.adminkit .ff_all_forms,
+body.adminkit .ff_form_application {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+
+
+/* ========== 2. Header + navigation ========== */
+body.adminkit .ff_header,
+body.adminkit .ff_nav_top,
+body.adminkit .ff-navigation-right,
+body.adminkit .ff_menu {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .ff_menu_link {
+	color: var(--ak-text);
+}
+
+body.adminkit .ff_menu_link:hover,
+body.adminkit .ff_menu_link:focus,
+body.adminkit .ff_menu .active > .ff_menu_link,
+body.adminkit .ff_menu_link.active {
+	color: var(--ak-primary);
+}
+
+body.adminkit .ff_form_name,
+body.adminkit .ff_form_name_inner {
+	color: var(--ak-heading);
+}
+
+
+/* ========== 3. Cards + boxes ========== */
+body.adminkit .ff_card,
+body.adminkit .ff-card,
+body.adminkit .ff_update_card,
+body.adminkit .el-card,
+body.adminkit .ff_form_group,
+body.adminkit .ff_block {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+body.adminkit .el-card__header {
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+/* Single form card in the dashboard grid */
+body.adminkit .ff_each_form,
+body.adminkit .ff_form_item {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+
+/* ========== 4. Tables (forms list + entries) ========== */
+body.adminkit .el-table,
+body.adminkit .ff-table,
+body.adminkit .ff_entry_table {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+}
+
+body.adminkit .el-table th,
+body.adminkit .el-table thead th,
+body.adminkit .ff-table thead th {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .el-table td,
+body.adminkit .ff-table td {
+	background: transparent;
+	color: var(--ak-text);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .el-table--striped .el-table__row--striped td {
+	background: var(--ak-surface);
+}
+
+body.adminkit .el-table__row:hover > td,
+body.adminkit .el-table__body tr:hover > td {
+	background: var(--ak-hover-bg) !important;
+}
+
+body.adminkit .el-table::before,
+body.adminkit .el-table--border::after {
+	background: var(--ak-border);
+}
+
+
+/* ========== 5. Buttons ========== */
+/* Default / soft buttons */
+body.adminkit .el-button,
+body.adminkit .el-button--default,
+body.adminkit .el-button--soft {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-text);
+}
+
+body.adminkit .el-button:hover,
+body.adminkit .el-button:focus,
+body.adminkit .el-button--default:hover,
+body.adminkit .el-button--soft:hover {
+	background: var(--ak-hover-bg);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+
+/* Primary buttons — FF brand blue → AdminKit primary */
+body.adminkit .el-button--primary,
+body.adminkit .ff_btn_primary {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: #ffffff;
+}
+
+body.adminkit .el-button--primary:hover,
+body.adminkit .el-button--primary:focus,
+body.adminkit .ff_btn_primary:hover {
+	background: var(--ak-primary-dark);
+	border-color: var(--ak-primary-dark);
+	color: #ffffff;
+}
+
+/* Text / link buttons */
+body.adminkit .el-button--text {
+	color: var(--ak-primary);
+	background: transparent;
+	border-color: transparent;
+}
+
+/* Danger buttons */
+body.adminkit .el-button--danger {
+	background: var(--ak-error);
+	border-color: var(--ak-error);
+	color: #ffffff;
+}
+
+/* Icon buttons */
+body.adminkit .ff_icon_btn {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .ff_icon_btn:hover {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+
+/* ========== 6. Inputs / textareas / selects ========== */
+body.adminkit .el-input__inner,
+body.adminkit .el-textarea__inner,
+body.adminkit .el-input-group__append,
+body.adminkit .el-input-group__prepend {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .el-input__inner::placeholder,
+body.adminkit .el-textarea__inner::placeholder {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .el-input__inner:focus,
+body.adminkit .el-textarea__inner:focus {
+	border-color: var(--ak-primary);
+}
+
+body.adminkit .el-input.is-disabled .el-input__inner {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
+/* Select + its label/value */
+body.adminkit .el-select .el-input__inner {
+	background: var(--ak-surface-alt);
+}
+
+body.adminkit .el-form-item__label {
+	color: var(--ak-text);
+}
+
+
+/* ========== 7. Dropdowns / popovers / menus ========== */
+body.adminkit .el-select-dropdown,
+body.adminkit .el-dropdown-menu,
+body.adminkit .el-popper,
+body.adminkit .el-picker-panel,
+body.adminkit .el-autocomplete-suggestion {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+body.adminkit .el-select-dropdown__item,
+body.adminkit .el-dropdown-menu__item {
+	color: var(--ak-text);
+}
+
+body.adminkit .el-select-dropdown__item.hover,
+body.adminkit .el-select-dropdown__item:hover,
+body.adminkit .el-dropdown-menu__item:hover {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+body.adminkit .el-select-dropdown__item.selected {
+	color: var(--ak-primary);
+	font-weight: 600;
+}
+
+/* Element UI popper arrows */
+body.adminkit .el-popper .popper__arrow,
+body.adminkit .el-popper .popper__arrow::after {
+	border-bottom-color: var(--ak-border);
+}
+
+
+/* ========== 8. Dialogs / modals ========== */
+body.adminkit .el-dialog,
+body.adminkit .el-message-box {
+	background: var(--ak-surface-alt);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+body.adminkit .el-dialog__header,
+body.adminkit .el-message-box__header {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .el-dialog__title,
+body.adminkit .el-message-box__title {
+	color: var(--ak-heading);
+}
+
+body.adminkit .el-dialog__body,
+body.adminkit .el-message-box__content {
+	color: var(--ak-text);
+}
+
+body.adminkit .el-dialog__footer,
+body.adminkit .el-message-box__btns {
+	border-top-color: var(--ak-border);
+}
+
+body.adminkit .el-overlay,
+body.adminkit .v-modal {
+	background: rgba(0, 0, 0, 0.5);
+}
+
+
+/* ========== 9. Checkboxes / radios / switches ========== */
+body.adminkit .el-checkbox__inner,
+body.adminkit .el-radio__inner {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border-strong);
+}
+
+body.adminkit .el-checkbox__input.is-checked .el-checkbox__inner,
+body.adminkit .el-radio__input.is-checked .el-radio__inner {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+
+body.adminkit .el-checkbox__label,
+body.adminkit .el-radio__label {
+	color: var(--ak-text);
+}
+
+body.adminkit .el-checkbox__input.is-checked + .el-checkbox__label,
+body.adminkit .el-radio__input.is-checked + .el-radio__label {
+	color: var(--ak-primary);
+}
+
+/* Radio-button group (segmented control) */
+body.adminkit .el-radio-button__inner {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: #ffffff;
+	box-shadow: none;
+}
+
+/* Switch */
+body.adminkit .el-switch__core {
+	background: var(--ak-border-strong);
+	border-color: var(--ak-border-strong);
+}
+
+body.adminkit .el-switch.is-checked .el-switch__core {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+
+
+/* ========== 10. Tabs ========== */
+body.adminkit .el-tabs__header,
+body.adminkit .el-tabs__nav-wrap {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .el-tabs__item {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .el-tabs__item:hover,
+body.adminkit .el-tabs__item.is-active {
+	color: var(--ak-primary);
+}
+
+body.adminkit .el-tabs__active-bar {
+	background: var(--ak-primary);
+}
+
+
+/* ========== 11. Brand-blue contexts → primary ========== */
+body.adminkit .text-primary,
+body.adminkit .lead-text,
+body.adminkit .ff-icon.text-primary {
+	color: var(--ak-primary);
+}
+
+body.adminkit .ff_filter_selected,
+body.adminkit .shortcut {
+	background: var(--ak-primary-soft);
+	border-color: var(--ak-primary);
+	color: var(--ak-primary);
+}
+
+body.adminkit .ff_badge {
+	background: var(--ak-primary-soft);
+	color: var(--ak-primary);
+}
+
+
+/* ========== 12. Semantic colors ========== */
+body.adminkit .text-success,
+body.adminkit .ff_success { color: var(--ak-success); }
+body.adminkit .text-warning,
+body.adminkit .ff_warning { color: var(--ak-warning); }
+body.adminkit .text-danger,
+body.adminkit .ff_danger  { color: var(--ak-error); }
+body.adminkit .text-info,
+body.adminkit .ff_info    { color: var(--ak-info); }
+
+/* FF notices */
+body.adminkit .ff_global_notice,
+body.adminkit .el-alert {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .el-alert--success { border-left: 3px solid var(--ak-success); }
+body.adminkit .el-alert--warning { border-left: 3px solid var(--ak-warning); }
+body.adminkit .el-alert--error   { border-left: 3px solid var(--ak-error); }
+body.adminkit .el-alert--info    { border-left: 3px solid var(--ak-info); }
