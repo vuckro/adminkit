@@ -16,10 +16,16 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a {
 	color: var(--ak-text);
 }
 
-body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a.active,
+/* Active tab → brand primary (persistent selected state) */
+body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a.active {
+	color: var(--ak-primary);
+}
+
+/* Hover / focus → neutral heading bump, no brand color so the
+   transient state doesn't claim "selected". */
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a:hover,
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a:focus {
-	color: var(--ak-primary);
+	color: var(--ak-heading);
 }
 
 
