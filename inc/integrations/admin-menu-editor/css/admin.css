@@ -470,6 +470,24 @@ body.adminkit.settings_page_ame-easy-hide .ame-selected-cat-nav-item,
 body.adminkit.settings_page_ame-easy-hide .ame-selected-cat-nav-item:hover {
 	background-color: var(--ak-surface-alt);
 	color: var(--ak-heading);
+	box-shadow: none;
+}
+
+/* Category heading inside the items panel — hardcodes #fcfcfc bg +
+   #ddd top/bottom borders. Route to surface tokens so the divider
+   strip follows the theme. */
+body.adminkit.settings_page_ame-easy-hide .ame-eh-category-heading {
+	background: var(--ak-surface);
+	border-top-color: var(--ak-border);
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+/* Indeterminate checkbox indicator — AME paints the inner square
+   with #D81536 (red). Route to --ak-primary so the partial-select
+   state reads as a brand cue, not a destructive one. */
+body.adminkit.settings_page_ame-easy-hide #ame-eh-item-container input[type="checkbox"]:indeterminate::before {
+	background: var(--ak-primary);
 }
 
 /* Bottom action bar — appears beneath the item list. */
