@@ -629,8 +629,8 @@ body.adminkit .subsubsub li.all .count {
 }
 
 body.adminkit .subsubsub li.publish .count {
-	background: var(--ak-primary-subtle);
-	color: var(--ak-primary);
+	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface-alt));
+	color: var(--ak-success);
 }
 
 body.adminkit .subsubsub li.draft .count {
