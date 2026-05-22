@@ -12,21 +12,21 @@
  * siblings into a native `<details>` / `<summary>` pair.
  *
  * On top of that the script surfaces a single open "My Account" panel at
- * the very top — the 80/20 set of fields (name, role, email, new
- * password) an admin reaches for most. It is built by MOVING (never
+ * the very top — the 80/20 set of fields (first/last name, nickname,
+ * display name, role, email, password) an admin reaches for most. It is
+ * built by MOVING (never
  * copying) the matching `<tr>`s out of their native sections; because
  * each `<input>` keeps its `name`, the form posts exactly as WP expects,
  * so there is no server-side change, no duplicate field, and no CSS
  * override — the panel reuses the same `.ak-accordion` + `.form-table`
  * styling as everything else. Curate the set via the `ESSENTIALS` list.
  *
- * Finally, related sections are consolidated into one grouped panel:
- * "My Account". It holds the essentials plus Name, Contact Info, About,
- * Account Management, Application Passwords and Additional Capabilities.
- * Standalone sections (Personal Options, plugin sections like HappyFiles /
- * Bricks) stay in place. Membership is just the `absorb()` calls in step 4;
- * sections are matched by WP's own localized heading strings, passed from
- * PHP, so the grouping survives translation.
+ * Finally, the remaining profile-heavy sections are consolidated into a
+ * second collapsed panel ("More Settings"), keeping "My Account" focused
+ * on daily edits only. Standalone sections (Personal Options, plugin
+ * sections like HappyFiles / Bricks) stay in place. Membership is just the
+ * `absorb()` calls in step 4; sections are matched by WP's own localized
+ * heading strings, passed from PHP, so the grouping survives translation.
  *
  * Native disclosure was chosen over a scripted toggle on purpose — it
  * is keyboard-accessible for free, animates nothing (matches AdminKit's
@@ -76,6 +76,7 @@ class AdminKit_Profile_Accordion {
 		// text — locale-proof, since WP printed those same strings.
 		$labels = array(
 			'my_account'    => __( 'My Account', 'adminkit' ),
+			'more_settings' => __( 'More Settings', 'adminkit' ),
 			'name'          => __( 'Name' ),
 			'contact'       => __( 'Contact Info' ),
 			'about'         => array( __( 'About Yourself' ), __( 'About the user' ) ),
@@ -142,6 +143,8 @@ class AdminKit_Profile_Accordion {
 	var ESSENTIALS = [
 		'.user-first-name-wrap',
 		'.user-last-name-wrap',
+		'.user-nickname-wrap',
+		'.user-display-name-wrap',
 		'.user-role-wrap',
 		'.user-email-wrap',
 		'#password',         // New Password (tr#password.user-pass1-wrap)
@@ -208,16 +211,22 @@ class AdminKit_Profile_Accordion {
 		}
 	});
 
-	// --- 4. Group related sections under "My Account" ---------------------
-	// Keep one maintainable panel for account-focused fields. Standalone
-	// sections (Personal Options, plugin sections) remain untouched.
+	// --- 4. Group remaining account sections under "More Settings" ---------
+	// Keep My Account focused on daily edits; fold the rest in one secondary
+	// panel. Standalone sections (Personal Options, plugin sections) remain
+	// untouched.
 	if (account) {
-		absorb(account, find(L.name), true);
-		absorb(account, find(L.contact), true);
-		absorb(account, find(L.about), true);
-		absorb(account, find(L.account), true);
-		absorb(account, find(L.app_passwords), true);
-		absorb(account, find(L.capabilities), true);
+		var lead = find(L.name) || find(L.contact) || find(L.about) || find(L.account) || find(L.app_passwords) || find(L.capabilities);
+		if (lead) {
+			var more = makePanel(L.more_settings, false);
+			form.insertBefore(more, lead);
+			absorb(more, find(L.name), true);
+			absorb(more, find(L.contact), true);
+			absorb(more, find(L.about), true);
+			absorb(more, find(L.account), true);
+			absorb(more, find(L.app_passwords), true);
+			absorb(more, find(L.capabilities), true);
+		}
 	}
 })();
 </script>
