@@ -520,27 +520,48 @@ body.adminkit .nav-tab-active:focus {
 	border-bottom-color: var(--ak-heading);
 }
 
-/* Subsubsub filter rows above tables — WP core paints the wrapper
-   with `color: #646970` which the literal "|" separators between
-   links inherit. Route the wrapper itself too so the pipes pick
-   up the token. */
+/* Subsubsub filter rows above tables (All | Active | Inactive …). Modernize
+   into subtle inline filters: collapse WP's literal "|" separators (font-size:0
+   on the <li> zeroes the pipe text node; the <a> restores its own size), give
+   each link a soft hover / current pill, and keep the counts muted. */
 body.adminkit .subsubsub {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 2px;
+	margin: 8px 0;
 	color: var(--ak-text-muted);
+}
+
+body.adminkit .subsubsub li {
+	margin: 0;
+	font-size: 0;
 }
 
 body.adminkit .subsubsub a {
+	font-size: var(--ak-text-s);
 	color: var(--ak-text-muted);
+	padding: 3px 10px;
+	border-radius: var(--ak-radius-s);
+	text-decoration: none;
 }
 
-body.adminkit .subsubsub a:hover {
-	color: var(--ak-text);
+body.adminkit .subsubsub a:hover,
+body.adminkit .subsubsub a:focus {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+	box-shadow: none;
 }
 
-body.adminkit .subsubsub a.current {
+body.adminkit .subsubsub a.current,
+body.adminkit .subsubsub a.current:hover,
+body.adminkit .subsubsub a.current:focus {
+	background: var(--ak-surface-alt);
 	color: var(--ak-heading);
 	font-weight: 600;
 }
 
 body.adminkit .subsubsub .count {
 	color: var(--ak-text-muted);
+	font-weight: 400;
 }
