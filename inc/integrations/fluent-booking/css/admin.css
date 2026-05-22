@@ -496,6 +496,13 @@ body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__body {
 	border-color: var( --ak-border ) !important;
 }
 
+/* Dialog form inputs — recessed surface so each field reads as distinct
+   from the white dialog body it sits on (EP defaults the wrapper to the
+   blank surface, i.e. white-on-white). */
+body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__body .el-form .el-form-item .el-input .el-input__wrapper {
+	background: var( --ak-surface );
+}
+
 body.adminkit.toplevel_page_fluent-booking .el-input__prefix,
 body.adminkit.toplevel_page_fluent-booking .el-input__suffix,
 body.adminkit.toplevel_page_fluent-booking .el-input__icon,
@@ -625,6 +632,15 @@ body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_select .el-select-gro
 body.adminkit.toplevel_page_fluent-booking .fcal_card_items .fcal_card_item .fcal_card_item_host h3,
 body.adminkit.toplevel_page_fluent-booking .fcal_license_box p {
 	color: var( --ak-text ) !important;
+}
+
+/* Default-schedule pill in the schedule picker dropdown — the plugin paints
+   a hard blue tint (rgba(38,83,199,.1) + #306ae0). Route to the brand tint
+   pair so the "default" cue flips with the theme. The scoped selector
+   out-specifies the plugin's, so no !important needed. */
+body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_select .default_schedule {
+	background: var( --ak-primary-subtle );
+	color: var( --ak-primary );
 }
 
 /* Plain / secondary buttons — the plugin tints hover+focus with a hard blue
@@ -760,9 +776,10 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_override_da
 	background-color: var( --ak-bg ) !important;
 }
 
-/* Override-date row — outer transparent (inner gets --ak-bg above). */
+/* Override-date row — solid surface so it doesn't read as see-through;
+   matches the --ak-bg of its inner and the sibling availability cards. */
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_override_date {
-	background: transparent !important;
+	background-color: var( --ak-bg ) !important;
 }
 
 /* Question / notification cards → surface. */
