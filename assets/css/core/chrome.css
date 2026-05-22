@@ -471,9 +471,17 @@ body.adminkit .contextual-help-tabs a:focus {
 	color: var(--ak-text);
 }
 
+/* Hover/focus tabs share the active tab's soft brand tint. */
+body.adminkit .contextual-help-tabs a:hover,
+body.adminkit .contextual-help-tabs a:focus {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-heading);
+}
+
 body.adminkit .contextual-help-tabs .active a,
 body.adminkit .contextual-help-tabs li.active a {
 	color: var(--ak-heading);
+	border-color: transparent;
 }
 
 /* Active help tab — WP fills it with color-mix(theme 8%, #fff) (a light bar
@@ -492,6 +500,15 @@ body.adminkit .contextual-help-tabs li.active {
 body.adminkit #contextual-help-back {
 	background: transparent;
 	border-color: var(--ak-border);
+}
+
+/* Drop the box-shadow ring WP paints around avatar / media / plugin icons
+   inside focused links (a:focus .gravatar / .media-icon img / .plugin-icon).
+   The link itself keeps its focus ring. */
+body.adminkit a:focus .gravatar,
+body.adminkit a:focus .media-icon img,
+body.adminkit a:focus .plugin-icon {
+	box-shadow: none;
 }
 
 /* Footer */
@@ -587,23 +604,35 @@ body.adminkit .subsubsub a.current:focus {
 	font-weight: 600;
 }
 
-/* Round notification badge for the count. */
+/* On a pill (current / hover), snug the count badge to the right edge so it
+   reads as part of the pill instead of floating with a gap. */
+body.adminkit .subsubsub a.current,
+body.adminkit .subsubsub a:hover,
+body.adminkit .subsubsub a:focus {
+	padding-right: 4px;
+}
+
+/* Round notification badge for the count (parens stripped in JS). Padding +
+   line-height size it (no fixed height) so it never clips, single digits stay
+   round via min-width. */
 body.adminkit .subsubsub .count {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-width: 18px;
-	height: 18px;
-	padding: 0 5px;
+	min-width: 20px;
+	padding: 1px 6px;
 	border-radius: var(--ak-radius-full);
 	background: var(--ak-elevated);
 	color: var(--ak-text-muted);
 	font-size: 11px;
 	font-weight: 600;
-	line-height: 1;
+	line-height: 1.5;
 }
 
-body.adminkit .subsubsub a.current .count {
-	background: var(--ak-primary);
-	color: var(--ak-on-accent);
+/* Active / hovered filter: soft translucent brand tint, not solid primary. */
+body.adminkit .subsubsub a.current .count,
+body.adminkit .subsubsub a:hover .count,
+body.adminkit .subsubsub a:focus .count {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
 }
