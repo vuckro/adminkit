@@ -19,6 +19,7 @@ body.adminkit .font-library-page__tablist {
 }
 
 body.adminkit .font-library__font-card {
+	background-color: var(--ak-surface-alt);
 	border-color: var(--ak-border);
 }
 
@@ -36,4 +37,20 @@ body.adminkit .font-library__upload-area {
 
 body.adminkit .font-library__local-fonts .font-library__upload-area__text {
 	color: var(--ak-text-muted);
+}
+
+/* @wordpress/components computes hover / focus / selected accents from
+   --wp-components-color-accent. WP sets that var on individual .components-*
+   wrappers (and, on the new wpds admin pages like Font Library, the
+   .boot-layout-container app shell) — both sit BELOW body.adminkit, so they
+   beat the body-level remap in tokens.css and the accent falls through to the
+   stock #3858e9 blue. Pin it on every components element + the app shell so
+   accents read brand; targeting the components elements directly also reaches
+   the popovers/dropdowns that teleport out to <body>. */
+body.adminkit [class*="components-"],
+body.adminkit .boot-layout-container {
+	--wp-components-color-accent: var(--ak-primary);
+	--wp-components-color-accent-darker-10: var(--ak-primary-dark);
+	--wp-components-color-accent-darker-20: var(--ak-primary-dark);
+	--wp-admin-theme-color: var(--ak-primary);
 }
