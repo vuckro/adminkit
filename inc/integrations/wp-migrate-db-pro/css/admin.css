@@ -281,6 +281,11 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .toggle-switch input[type="che
 	box-shadow: none;
 }
 
+/* Default (unchecked) track — bundled #cbd5e0 light gray-blue. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .toggle-switch label {
+	background: var(--ak-border-strong);
+}
+
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .toggle-switch label.checked {
 	background: var(--ak-primary);
 }
