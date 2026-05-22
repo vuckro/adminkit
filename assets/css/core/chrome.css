@@ -187,7 +187,7 @@ body.adminkit #adminmenu .wp-submenu li.current a,
 body.adminkit #adminmenu .wp-submenu li.current a:hover,
 body.adminkit #adminmenu .wp-submenu li.current a:focus {
 	color: var(--ak-heading) !important;
-	background: var(--ak-surface);
+	background: var(--ak-elevated);
 	font-weight: 600;
 }
 
