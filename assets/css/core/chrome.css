@@ -444,6 +444,12 @@ body.adminkit #screen-meta-links a:focus {
 	background: var(--ak-surface);
 }
 
+/* Drop the focus ring on the Screen Options / Help toggle — WP paints a
+   box-shadow ring; the border-color change keeps focus visible. */
+body.adminkit #screen-meta-links .show-settings:focus {
+	box-shadow: none;
+}
+
 body.adminkit #contextual-help-wrap,
 body.adminkit #screen-options-wrap {
 	color: var(--ak-text);

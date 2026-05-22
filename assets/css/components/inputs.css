@@ -50,7 +50,7 @@ body.adminkit input[type="date"]:focus,
 body.adminkit textarea:focus,
 body.adminkit select:focus {
 	border-color: var(--ak-primary);
-	box-shadow: var(--ak-focus-ring);
+	box-shadow: none;
 	outline: none;
 }
 
