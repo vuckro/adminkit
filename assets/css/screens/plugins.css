@@ -281,3 +281,16 @@ body.adminkit #plugin-information blockquote {
 body.adminkit #plugin-information .review {
 	border-bottom-color: var(--ak-border);
 }
+
+/* Upload Plugin / Upload Theme drop box — WP hardcodes #f6f7f7 bg +
+   #c3c4c7 border + #50575e help text, all light. */
+body.adminkit .upload-plugin .wp-upload-form,
+body.adminkit .upload-theme .wp-upload-form {
+	background: var(--ak-surface-alt);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .upload-plugin .install-help,
+body.adminkit .upload-theme .install-help {
+	color: var(--ak-text-muted);
+}
