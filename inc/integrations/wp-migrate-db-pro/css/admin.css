@@ -58,6 +58,14 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb a[href*="#whats-new"] {
 	display: none;
 }
 
+/* Fallback: positional hide for the top-nav "Upgrades" item — the
+   :has(a[href*="upgrades"]) rule above misses it because the
+   bundled link doesn't actually carry "upgrades" in the href.
+   The 5th <li> in the top .nav-wrap is the Upgrades tab. */
+body.adminkit.tools_page_wp-migrate-db-pro #root > div > div.nav-wrap > div > ul > li:nth-child(5) {
+	display: none;
+}
+
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav-wrap {
 	background: var(--ak-surface-alt);
 	border-bottom-color: var(--ak-border);
