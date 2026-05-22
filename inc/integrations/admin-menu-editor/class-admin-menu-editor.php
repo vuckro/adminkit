@@ -7,11 +7,9 @@
  * `#fff` search-input bg, neither of which flips in dark mode. We ship
  * one stylesheet that maps the `.choices.*` DOM to AdminKit tokens.
  *
- * Loaded in the admin context with no `condition` closure — Choices.js
- * widgets can appear on AME's settings pages, role-edit screens, and
- * (most visibly) user-edit.php. Selectors are no-ops where the markup
- * isn't rendered, so always-loading when AME is active is cheaper than
- * enumerating every screen.
+ * Scoped to the screens where AME's Choices.js widget actually
+ * renders: AME's own settings pages + user-edit / profile / user-new
+ * (where the "Other Roles" picker shows up).
  *
  * @package AdminKit
  */
@@ -62,14 +60,33 @@ class AdminKit_Integration_Admin_Menu_Editor extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * Screens where AME's Choices.js widget can render: the three AME
+	 * settings pages above + user profile / edit / new (Role Editor's
+	 * "Other Roles" picker).
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return bool
+	 */
+	public static function owns_choices_screen( $screen ) {
+		if ( self::owns_screen( $screen ) ) {
+			return true;
+		}
+		if ( ! $screen ) {
+			return false;
+		}
+		return in_array( $screen->id, array( 'user-edit', 'profile', 'user-new' ), true );
+	}
+
+	/**
 	 * @return void
 	 */
 	public static function register_assets() {
 		AdminKit_Assets::register( array(
-			'handle'  => 'adminkit-ame-choices',
-			'src'     => 'inc/integrations/admin-menu-editor/css/choices.css',
-			'deps'    => array( AdminKit_Assets::TOKENS_HANDLE ),
-			'context' => 'admin',
+			'handle'    => 'adminkit-ame-choices',
+			'src'       => 'inc/integrations/admin-menu-editor/css/choices.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_choices_screen' ),
 		) );
 
 		// Settings page chrome (menu builder boxes, module tables,

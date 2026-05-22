@@ -107,13 +107,17 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 
 		// "Edit with Bricks" CTAs render on post-edit screens (classic
 		// editor wrapper, block editor toolbar, in-canvas notice).
-		// Loaded everywhere when Bricks is active — selectors are
-		// no-ops where the button doesn't render.
+		// Scoped to $screen->base === 'post' which covers post.php +
+		// post-new.php for every post type (posts, pages, CPTs, Bricks
+		// templates).
 		AdminKit_Assets::register( array(
-			'handle'  => 'adminkit-bricks-edit-button',
-			'src'     => 'inc/integrations/bricks/css/edit-button.css',
-			'deps'    => array( AdminKit_Assets::TOKENS_HANDLE ),
-			'context' => 'admin',
+			'handle'    => 'adminkit-bricks-edit-button',
+			'src'       => 'inc/integrations/bricks/css/edit-button.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => static function ( $screen ) {
+				return $screen && 'post' === $screen->base;
+			},
 		) );
 	}
 

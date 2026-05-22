@@ -48,18 +48,38 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * Screens where Slim SEO loads CSS that sets --ss-color-* on
+	 * :root: post-edit (meta-tags + redirection meta boxes), term-edit
+	 * (meta-tags), and the Slim SEO settings page itself. Anywhere
+	 * else, Slim SEO's :root vars aren't declared so our override is
+	 * dead weight.
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return bool
+	 */
+	public static function owns_global_screen( $screen ) {
+		if ( ! $screen ) {
+			return false;
+		}
+		if ( self::owns_screen( $screen ) ) {
+			return true;
+		}
+		return in_array( $screen->base, array( 'post', 'edit-tags', 'term' ), true );
+	}
+
+	/**
 	 * @return void
 	 */
 	public static function register_assets() {
-		// Variable remap that has to travel with Slim SEO anywhere it
-		// renders (post-edit meta box tabs, term-edit SEO meta box, ...).
-		// No condition — Slim SEO's own CSS sets --ss-color-primary on
-		// :root, so we need the override on every admin screen.
+		// Variable remap routing Slim SEO's --ss-color-* vars to our
+		// tokens. Loaded only where Slim SEO actually enqueues a
+		// stylesheet that sets those vars on :root (see owns_global_screen).
 		AdminKit_Assets::register( array(
-			'handle'  => 'adminkit-slim-seo-global',
-			'src'     => 'inc/integrations/slim-seo/css/global.css',
-			'deps'    => array( AdminKit_Assets::TOKENS_HANDLE ),
-			'context' => 'admin',
+			'handle'    => 'adminkit-slim-seo-global',
+			'src'       => 'inc/integrations/slim-seo/css/global.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_global_screen' ),
 		) );
 
 		// Settings-page-only chrome (header bar, sidebar hide, postbox
