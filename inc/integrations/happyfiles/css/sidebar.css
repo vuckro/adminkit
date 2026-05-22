@@ -109,7 +109,7 @@ body.adminkit #happyfiles-search-folders {
 }
 
 body.adminkit #happyfiles-search-folders input {
-	background-color: var(--ak-surface-alt);
+	background-color: var(--ak-surface);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
 }
