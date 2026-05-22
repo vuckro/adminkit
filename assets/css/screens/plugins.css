@@ -40,11 +40,10 @@ body.adminkit .wp-list-table.plugins tr.inactive .plugin-title strong {
 	font-weight: 500;
 }
 
-/* Plugins with available update — warning indicator */
-body.adminkit .wp-list-table.plugins tr.update th.check-column,
-body.adminkit .wp-list-table.plugins tr.updated th.check-column {
-	box-shadow: inset 3px 0 0 var(--ak-warning);
-}
+/* No edge indicator on rows with an available update either —
+   the dedicated tr.plugin-update-tr row below carries the
+   "update available" message with its own warning tint, which is
+   enough signal without a second cue on the row's check-column. */
 
 /* Update message row — aliased to Bricks' warning-t-1 (semi-transparent
    warning tint, ~9% opacity) so it works on any chrome background */
