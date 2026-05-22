@@ -20,17 +20,17 @@
 	/* Brand — provider → provider neutrals → hsl. The neutral middle
 	   step means the plugin still looks coherent without any provider
 	   brand palette set up. */
-	--ak-primary: var(--primary, var(--neutral-l-8, hsl(0, 0%, 35%)));
-	--ak-primary-dark: var(--primary-d-2, var(--neutral-l-9, hsl(0, 0%, 22%)));
-	--ak-primary-subtle: var(--primary-t-1, rgba(117, 163, 59, 0.06));
-	--ak-primary-soft: var(--primary-t-2, rgba(117, 163, 59, 0.12));
+	--ak-primary: var(--primary, var(--neutral-l-8, hsl(0, 0%, 32%)));
+	--ak-primary-dark: var(--primary-d-2, var(--neutral-l-9, hsl(0, 0%, 18%)));
+	--ak-primary-subtle: var(--primary-t-1, rgba(255, 214, 79, 0.09));
+	--ak-primary-soft: var(--primary-t-2, rgba(255, 214, 79, 0.18));
 	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%)));
 
 	/* Semantic */
 	--ak-success: var(--success, #11b76b);
 	--ak-warning: var(--warning, #ffa100);
 	--ak-error: var(--error, #f04662);
-	--ak-error-subtle: var(--error-t-2, rgba(240, 70, 98, 0.10));
+	--ak-error-subtle: var(--error-t-2, rgba(240, 70, 98, 0.18));
 	--ak-info: var(--info, #2895d4);
 
 	/* Surfaces */
@@ -40,7 +40,7 @@
 	--ak-surface-alt: var(--white, #ffffff);
 	--ak-border: var(--border, hsl(0, 0%, 89%));
 	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
-	--ak-text: var(--text, #1E1E1B);
+	--ak-text: var(--text, hsl(0, 0%, 32%));
 	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%));
 	--ak-heading: var(--heading, hsl(0, 0%, 18%));
 
@@ -60,7 +60,7 @@
 	--ak-text-m: 14px;
 
 	/* Focus ring — the only effect token. */
-	--ak-focus-ring: 0 0 0 3px rgba(117, 163, 59, 0.25);
+	--ak-focus-ring: 0 0 0 3px rgba(255, 214, 79, 0.25);
 }
 
 /* Remap WP's built-in theme color (blue) to our primary. The selector
@@ -75,11 +75,11 @@
 body.adminkit,
 body.adminkit[class*="admin-color-"] {
 	--wp-admin-theme-color: var(--ak-primary);
-	--wp-admin-theme-color--rgb: 117, 163, 59;
+	--wp-admin-theme-color--rgb: 255, 214, 79;
 	--wp-admin-theme-color-darker-10: var(--ak-primary-dark);
-	--wp-admin-theme-color-darker-10--rgb: 96, 133, 48;
+	--wp-admin-theme-color-darker-10--rgb: 209, 175, 65;
 	--wp-admin-theme-color-darker-20: var(--ak-primary-dark);
-	--wp-admin-theme-color-darker-20--rgb: 96, 133, 48;
+	--wp-admin-theme-color-darker-20--rgb: 209, 175, 65;
 
 	/* @wordpress/components React UI tokens. Used by options-connectors.php,
 	   parts of Gutenberg, and any custom React admin page that consumes
