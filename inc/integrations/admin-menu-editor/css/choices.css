@@ -88,6 +88,14 @@ body.adminkit #ame-rex-other-roles-row .choices .choices__inner {
 	color: var(--ak-text);
 }
 
+/* Focus — AME hardcodes a #2271b1 (WP blue) border + 1px ring. Route the
+   border to --ak-primary and drop the ring for a flat focus, matching the
+   rest of AdminKit's field focus convention. */
+body.adminkit #ame-rex-other-roles-row .choices.is-focused .choices__inner {
+	border-color: var(--ak-primary);
+	box-shadow: none;
+}
+
 body.adminkit #ame-rex-other-roles-row #ame-rex-other-roles-field-wrapper {
 	background-color: var(--ak-surface-alt);
 }
