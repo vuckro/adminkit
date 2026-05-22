@@ -81,8 +81,11 @@ class AdminKit_Core_Chrome {
 		// --- screens/ (always-loaded broad-usage files; legacy section 'pages') ---
 		// wp-components / wpds / font-library are used across many screens
 		// (Gutenberg, site editor, customizer, options-connectors, font-library).
-		// Loading them broadly is cheaper than enumerating every screen.
-		foreach ( array( 'wp-components', 'wpds', 'font-library' ) as $broad ) {
+		// media.css styles the Media modal (Featured image, Site Icon, …), which
+		// opens on almost any screen, plus upload.php chrome (self-scoped via the
+		// .upload-php body class). Loading these broadly is cheaper — and, for the
+		// modal, more correct — than enumerating every screen.
+		foreach ( array( 'wp-components', 'wpds', 'font-library', 'media' ) as $broad ) {
 			AdminKit_Assets::register( array(
 				'handle'  => 'adminkit-' . $broad,
 				'src'     => self::ASSETS_BASE . 'screens/' . $broad . '.css',
@@ -108,7 +111,6 @@ class AdminKit_Core_Chrome {
 		) );
 		self::register_screen( 'themes',          array( 'themes', 'theme-install' ) );
 		self::register_screen( 'theme-install',   array( 'themes', 'theme-install' ) );
-		self::register_screen( 'media',           array( 'upload', 'media', 'attachment' ) );
 		// user-new.php reports screen id 'user' (WP strips '-new'); the CSS
 		// still scopes via the .user-new-php body class. Keep 'user-new' too.
 		self::register_screen( 'profile',         array( 'profile', 'user-edit', 'user', 'user-new' ) );

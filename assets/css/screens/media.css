@@ -1,6 +1,8 @@
-/* upload.php (Media Library) + Media Modal (Edit Attachment, Add Media
-   frame). Selectors target .attachments-browser so they work on both
-   upload.php AND the media modal frame embedded in post-edit screens. */
+/* upload.php (Media Library) + the Media modal (Featured image, Site Icon,
+   Edit Attachment, Add Media …). Loaded globally — the modal opens on
+   almost any screen — but every selector is scoped to a media-UI class
+   (.media-modal, .media-frame, .attachment, …) or the .upload-php body
+   class, so the file is inert on pages without media UI. */
 
 body.adminkit .attachments-browser .attachment .attachment-preview {
 	border-radius: var(--ak-radius-s);
