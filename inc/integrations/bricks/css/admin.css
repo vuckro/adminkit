@@ -163,6 +163,15 @@ body.adminkit .wp-list-table.elements tbody tr:first-child td {
 	border-top: none;
 }
 
+/* Bricks paints `tr:not(:last-child) { box-shadow: 0 1px 0 0 #e6e6e6 }`
+   to fake a row separator. The hex stays as a bright line in dark
+   mode and doubles with our --ak-border row top. Route to the
+   token (or kill it — keeping it ensures the separator survives
+   when our border-top fails to render via Bricks's overrides). */
+body.adminkit.bricks_page_bricks-elements form#bricks-element-manager tr:not(:last-child) {
+	box-shadow: 0 1px 0 0 var(--ak-border);
+}
+
 /* Row hover — brand-tint primary-t-1, consistent with the global
    list-table hover defined in components/tables.css. The earlier
    --ak-surface + 1px shadow read as a different language than the
