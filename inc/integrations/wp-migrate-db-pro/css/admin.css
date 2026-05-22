@@ -19,6 +19,15 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb {
 	color: var(--ak-text);
 }
 
+/* All heading levels — bundled #04223f brand dark. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb h1,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb h2,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb h3,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb h4,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb h5 {
+	color: var(--ak-heading);
+}
+
 /* Hide the WP Engine branded header strip — the in-app nav already
    anchors the page, the hero bar is redundant + off-brand. */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .header-wrap {
@@ -105,6 +114,22 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .action-icon:hov
 	background: var(--primary-t-1, var(--ak-hover-bg));
 	border-color: var(--ak-primary);
 	color: var(--ak-heading);
+}
+
+/* Action title (Pull / Push / Import / …) on active + hover —
+   bundled #236de7. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .actions-panel .action-icon.active .action-title,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .actions-panel .action-icon:hover .action-title {
+	color: var(--ak-primary);
+	opacity: 1;
+}
+
+/* Drop the bundled #4f8aec double-ring focus halo and route to our
+   own --ak-focus-ring token. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .actions-panel .action-icon:focus,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .actions-panel .action-icon:focus-visible {
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
 }
 
 /* Bundled action-icon SVGs paint their strokes inline with
@@ -236,6 +261,58 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .toggle-switch input[type="che
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .toggle-switch label.checked {
 	background: var(--ak-primary);
+}
+
+
+/* ===== Material UI slider (.MuiSlider-*) =====
+   Bundled root paints `color: #236DE7` and the track uses
+   `background-color: currentColor` — routing the root color
+   flips the whole component to brand primary. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .MuiSlider-root {
+	color: var(--ak-primary);
+}
+
+
+/* ===== Form controls: native radio / checkbox checked state =====
+   The plugin paints `input[type=radio/checkbox]:checked` inside
+   action / child / form panels with #236de7 hardcoded. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel input[type="radio"]:checked,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .child-panel input[type="radio"]:checked,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .wpmdb-form input[type="radio"]:checked,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel input[type="checkbox"]:checked,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .child-panel input[type="checkbox"]:checked,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .wpmdb-form input[type="checkbox"]:checked {
+	background: var(--ak-primary);
+	border: none;
+}
+
+
+/* ===== Settings page bits ===== */
+
+/* Compat plugin list card */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .wpmdb-settings-page .compat-plugin-list {
+	background: var(--ak-surface-alt);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+
+/* Closed child-panel header (collapsed state) — bundled #575757 */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.child-panel,
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .action-panel .panel-header-wrap.child-panel .panel-title {
+	color: var(--ak-heading);
+}
+
+/* Media files options block (Find & Replace) */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .media-files .media-files-options {
+	border-color: var(--ak-border);
+}
+
+/* The "selected tables" scrollable list (.jqRdjt is a generated
+   styled-components class — selector targets the structural shape
+   via the bundled border so it stays stable across builds). */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb [style*="overflow-y: scroll"],
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .jqRdjt {
+	border-color: var(--ak-border);
 }
 
 
