@@ -538,6 +538,15 @@ body.adminkit.acf-admin-page #acf-admin-tools .acf-meta-box-wrap .acf-fields .ac
 	border-color: var(--ak-border);
 }
 
+/* Section-heading icons (Export / Import / License / Update boxes) — masked
+   :before glyph, #98a2b3. Route to heading so it matches the title. */
+body.adminkit.acf-admin-page #acf-admin-tool-export :is(h2, h3):before,
+body.adminkit.acf-admin-page #acf-admin-tool-import :is(h2, h3):before,
+body.adminkit.acf-admin-page #acf-license-information :is(h2, h3):before,
+body.adminkit.acf-admin-page #acf-update-information :is(h2, h3):before {
+	background-color: var(--ak-heading);
+}
+
 /* ----- 13. Field-group editor — deep mapping -----
    The editor is ACF's heaviest screen: the field list + field settings paint
    dozens of hardcoded Untitled-UI hex — a #f5f5f5 list canvas, a solid #2a9bd9
@@ -634,7 +643,7 @@ body.adminkit.acf-admin-page .acf-term-search-term-name {
 	color: var(--ak-text-muted);
 }
 
-/* Form controls — flatten ACF's input drop shadow. */
+/* Form controls — flatten ACF's input drop shadow + map the #344054 text. */
 body.adminkit.acf-admin-page input[type="text"],
 body.adminkit.acf-admin-page input[type="search"],
 body.adminkit.acf-admin-page input[type="number"],
@@ -644,6 +653,7 @@ body.adminkit.acf-admin-page input[type="url"],
 body.adminkit.acf-admin-page textarea,
 body.adminkit.acf-admin-page select {
 	box-shadow: none;
+	color: var(--ak-text);
 }
 
 /* Input prepend/append addons (#d0d5dd border + shadow + #667085 text). */
@@ -782,6 +792,10 @@ body.adminkit.acf-admin-page .acf-field-icon-picker .acf-tab-wrap .acf-tab-group
 	outline-color: var(--ak-primary);
 }
 
+body.adminkit.acf-admin-page .acf-field-icon-picker .acf-tab-wrap .acf-tab-group {
+	margin-bottom: 12px;
+}
+
 body.adminkit.acf-admin-page .acf-field-icon-picker .acf-icon-picker-media-library,
 body.adminkit.acf-admin-page .acf-field-icon-picker .acf-icon-picker-url-tabs {
 	background-color: var(--ak-elevated);
@@ -794,7 +808,9 @@ body.adminkit.acf-admin-page .acf-field-icon-picker .acf-icon-picker-media-libra
 	color: var(--ak-text);
 }
 
-body.adminkit.acf-admin-page .acf-field-icon-picker .acf-icon-picker-media-library-button {
+/* .acf-internal-post-type bumps specificity above ACF's
+   `…media-library .acf-icon-picker-media-library-button` (0,5,0). */
+body.adminkit.acf-admin-page.acf-internal-post-type .acf-field-icon-picker .acf-icon-picker-media-library-button {
 	background-color: var(--ak-primary);
 	color: var(--primary-l-10, var(--ak-on-accent));
 }
