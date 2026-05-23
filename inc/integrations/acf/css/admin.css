@@ -329,6 +329,11 @@ body.adminkit.acf-admin-page .select2-container.-acf .select2-selection--multipl
 	color: var(--ak-heading);
 }
 
+/* Chip remove (x) button (#6bb5d8) -> match the chip text. */
+body.adminkit.acf-admin-page .select2-container.-acf .select2-selection--multiple .select2-selection__choice .select2-selection__choice__remove {
+	color: var(--ak-heading);
+}
+
 /* The inline search field in a multi-select is an <input type=search>, so
    AdminKit's global input styling wraps it in a border + surface bg + min-height
    — a bordered box nested inside the select2 box = the "double border". Reset it
