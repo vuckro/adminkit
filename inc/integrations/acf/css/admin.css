@@ -59,6 +59,23 @@ body.adminkit.acf-admin-page .acf-btn.acf-btn-secondary:hover {
 	border-color: var(--ak-border-strong);
 }
 
+/* Kill ACF's transitions on elements we recolor (.acf-btn `transition: all .2s`,
+   the switch): on page load they ANIMATE the token recolor from ACF's defaults —
+   a visible flash — and the no-animation rule wants instant states regardless. */
+body.adminkit.acf-admin-page .acf-btn,
+body.adminkit.acf-admin-page .acf-switch,
+body.adminkit.acf-admin-page .acf-switch .acf-switch-slider {
+	transition: none;
+}
+
+/* WP secondary .button focus — ACF paints a pale-blue bg + #ebf5fa ring + blue
+   label; route to a neutral focus. */
+body.adminkit.acf-admin-page .button:focus {
+	background-color: var(--ak-surface);
+	outline-color: var(--ak-primary-subtle);
+	color: var(--ak-text);
+}
+
 /* ----- 3. Toolbar masthead → light surface + flyout ("...") menu -----
    ACF's toolbar is a dark #344054 bar with slate (#475467) tabs and light-grey
    (#eaecf0) icons. Route the bar to --ak-elevated and remap the tab states +
@@ -297,13 +314,13 @@ body.adminkit.acf-admin-page .select2-dropdown {
 	border-color: var(--ak-border) !important;
 }
 
-body.adminkit.acf-admin-page .select2-container--default .select2-selection--single {
-	background-color: var(--ak-surface);
-	border-color: var(--ak-border-strong);
-}
-
+/* The visible box border lives on .select2-selection__rendered (ACF's). Keep the
+   outer --single/--multiple borderless so it doesn't double up — select2's
+   default #aaa border was nesting outside ACF's inner border. */
+body.adminkit.acf-admin-page .select2-container--default .select2-selection--single,
 body.adminkit.acf-admin-page .select2-container--default .select2-selection--multiple {
 	background-color: var(--ak-surface);
+	border: none;
 }
 
 body.adminkit.acf-admin-page .select2-container.-acf .select2-selection--multiple .select2-selection__choice {
