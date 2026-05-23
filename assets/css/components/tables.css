@@ -296,7 +296,7 @@ body.adminkit .alternate {
 
 body.adminkit .wp-list-table .check-column {
 	width: 2.2em;
-	padding: 10px 0 10px 10px;
+	padding: 10px 0 10px 14px;
 	vertical-align: middle;
 }
 
@@ -313,4 +313,53 @@ body.adminkit .wp-list-table .check-column input[type="checkbox"] {
 body.adminkit .check-column input:hover + label,
 body.adminkit .check-column label:hover {
 	background: transparent;
+}
+
+/* Row status diode — a small colored dot at each row's leading edge, driven
+   ENTIRELY by the class WP already puts on the <tr>: status-* on post-type
+   lists (this file) and .active / .inactive on the plugins list (mapped in
+   screens/plugins.css). Pure CSS — no JS, no markup, no server change. The
+   color rides a --ak-diode custom property set per status on the row; it
+   inherits down to the check-column's ::before. Rows with no mapped status set
+   nothing, so var(--ak-diode, transparent) leaves the dot invisible — the cue
+   only appears where a status exists. Drawn in the check-column so it sits at
+   the row's start on every list table. */
+body.adminkit .wp-list-table tbody .check-column {
+	position: relative;
+}
+
+body.adminkit .wp-list-table tbody .check-column::before {
+	content: "";
+	position: absolute;
+	left: 3px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 8px;
+	height: 8px;
+	border-radius: var(--ak-radius-full);
+	background: var(--ak-diode, transparent);
+}
+
+/* Post-type statuses → diode color (green live, blue scheduled, amber
+   draft/pending, neutral private, red trash). Set on the <tr>; the dot reads
+   it via inheritance. */
+body.adminkit .wp-list-table tbody > tr.status-publish {
+	--ak-diode: var(--ak-success);
+}
+
+body.adminkit .wp-list-table tbody > tr.status-future {
+	--ak-diode: var(--ak-info);
+}
+
+body.adminkit .wp-list-table tbody > tr.status-draft,
+body.adminkit .wp-list-table tbody > tr.status-pending {
+	--ak-diode: var(--ak-warning);
+}
+
+body.adminkit .wp-list-table tbody > tr.status-private {
+	--ak-diode: var(--ak-text-muted);
+}
+
+body.adminkit .wp-list-table tbody > tr.status-trash {
+	--ak-diode: var(--ak-error);
 }

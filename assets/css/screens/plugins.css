@@ -40,15 +40,17 @@ body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
 	font-weight: 600;
 }
 
-/* Left-edge indicator for active plugins — a slim --ak-primary
-   bar on the check-column. Covers both the WP default
-   `.check-column` and AME Pro's renamed `.ame-check-column`
-   (its plugin-visibility module swaps the class). Use border-left
-   with !important to beat the `.plugins tbody td/th` reset above
-   that nukes border-left with !important. */
-body.adminkit .wp-list-table.plugins tr.active th.check-column,
-body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
-	border-left: 4px solid var(--primary-t-5, var(--primary-t-4, var(--ak-primary-subtle))) !important;
+/* Status diode for plugins — map active / inactive onto the shared row dot
+   (geometry lives in components/tables.css). Replaces the old left-edge bar so
+   there's a single, color-coded cue per row: green = active, grey = inactive.
+   Rows with an available update keep their warning-tinted message row below as
+   the cue (no diode), matching the prior intent. */
+body.adminkit .wp-list-table.plugins tbody > tr.active {
+	--ak-diode: var(--ak-success);
+}
+
+body.adminkit .wp-list-table.plugins tbody > tr.inactive {
+	--ak-diode: var(--ak-text-muted);
 }
 
 /* Inactive plugins — keep the table surface, mute the title.

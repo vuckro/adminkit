@@ -72,6 +72,11 @@
 	--ak-focus: var(--focus, color-mix(in srgb, var(--ak-primary) 27%, transparent));
 	--ak-focus-ring: 0 0 0 3px var(--ak-focus);
 
+	/* Row status diode — transparent by default so the list-table row dot is
+	   invisible until a row sets it per status (see components/tables.css +
+	   screens/plugins.css). */
+	--ak-diode: transparent;
+
 	/* ── Status (notifications) ────────────────────────────────────────── */
 	--ak-success: var(--success, #11b76b);
 	--ak-warning: var(--warning, #ffa100);
