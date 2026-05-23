@@ -1,0 +1,440 @@
+/* AdminKit settings page (SPA).
+   Modern but flat — no decorative shadows, no animations. Depth comes from
+   surface tone, spacing and type. Everything is built from --ak-* tokens so the
+   page themes light/dark with the rest of wp-admin. Interactive controls are
+   scoped under .adminkit-app so they outrank wp-admin's own input styling. */
+
+.adminkit-app {
+	/* Full width of the admin content area; Save sits flush top-right. */
+	max-width: none;
+	margin-top: 10px;
+	margin-right: 20px;
+	font-family: var(--ak-font-body);
+	color: var(--ak-text);
+}
+
+/* Header ------------------------------------------------------------------ */
+.adminkit-app .ak-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 0 0 20px;
+}
+.adminkit-app .ak-title {
+	margin: 0;
+	padding: 0;
+	font-family: "Bricolage Grotesque", var(--ak-font-body);
+	font-size: 25px;
+	font-weight: 600;
+	letter-spacing: -.015em;
+	line-height: 1.15;
+	color: var(--ak-heading);
+}
+.adminkit-app .ak-actions {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+.adminkit-app .ak-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	font-size: var(--ak-text-s);
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-status.is-dirty::before,
+.adminkit-app .ak-status.is-saved::before,
+.adminkit-app .ak-status.is-error::before,
+.adminkit-app .ak-status.is-saving::before {
+	content: "";
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: currentColor;
+}
+.adminkit-app .ak-status.is-dirty { color: var(--ak-warning); }
+.adminkit-app .ak-status.is-saved { color: var(--ak-success); }
+.adminkit-app .ak-status.is-error { color: var(--ak-error); }
+
+.adminkit-app .ak-btn {
+	font: inherit;
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	line-height: 1;
+	padding: 9px 18px;
+	border: 1px solid var(--ak-border-strong);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	cursor: pointer;
+}
+.adminkit-app .ak-btn--primary {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+.adminkit-app .ak-btn--primary:hover { background: var(--ak-primary-hover); border-color: var(--ak-primary-hover); }
+.adminkit-app .ak-btn:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
+.adminkit-app .ak-btn[disabled] { opacity: .45; cursor: default; }
+
+/* Tabs — pill style matching the account screen (.ak-tabs button.on). Active =
+   elevated pill with the icon picked out; single line, scrolls sideways. */
+.adminkit-app .ak-tabs {
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 4px;
+	margin: 0 0 24px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: none;
+}
+.adminkit-app .ak-tabs::-webkit-scrollbar { display: none; }
+.adminkit-app .ak-tabs button {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 7px 13px;
+	font: inherit;
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	line-height: 1.3;
+	color: var(--ak-text-muted);
+	background: transparent;
+	border: 0;
+	border-radius: var(--ak-radius-s);
+	cursor: pointer;
+	white-space: nowrap;
+}
+.adminkit-app .ak-tabs button .ic { display: inline-flex; color: var(--ak-text-muted); }
+.adminkit-app .ak-tabs button:hover { background: var(--ak-hover-bg); color: var(--ak-heading); }
+.adminkit-app .ak-tabs button:hover .ic,
+.adminkit-app .ak-tabs button.on .ic { color: var(--ak-heading); }
+.adminkit-app .ak-tabs button.on {
+	background: var(--ak-elevated);
+	color: var(--ak-heading);
+	font-weight: 600;
+}
+.adminkit-app .ak-tabs button:focus-visible { outline: 2px solid var(--ak-primary); outline-offset: -2px; }
+
+/* Panels ------------------------------------------------------------------ */
+.adminkit-app .ak-panel[hidden] { display: none; }
+.adminkit-app .ak-intro {
+	margin: 0 0 20px;
+	max-width: 62ch;
+	font-size: var(--ak-text-s);
+	line-height: 1.6;
+	color: var(--ak-text-muted);
+}
+
+.adminkit-app .ak-group { margin-bottom: 28px; }
+.adminkit-app .ak-group:last-child { margin-bottom: 0; }
+.adminkit-app .ak-group__title {
+	margin: 0 0 10px;
+	padding-left: 2px;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .06em;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-group__title + .ak-group__desc { margin-top: -6px; }
+.adminkit-app .ak-group__desc {
+	margin: 0 0 12px;
+	padding-left: 2px;
+	max-width: 60ch;
+	font-size: var(--ak-text-xs);
+	line-height: 1.5;
+	color: var(--ak-text-muted);
+}
+
+/* Rows -------------------------------------------------------------------- */
+.adminkit-app .ak-rows {
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	background: var(--ak-surface);
+	overflow: hidden;
+}
+.adminkit-app .ak-row {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 13px 16px;
+	border-top: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-row:first-child { border-top: 0; }
+.adminkit-app .ak-row:hover { background: var(--ak-hover-bg); }
+/* Nested feature (e.g. mShots under Post previews): indented; muted + locked
+   when its parent is off. */
+.adminkit-app .ak-row--child { padding-left: 34px; }
+.adminkit-app .ak-row.is-disabled { opacity: .5; }
+.adminkit-app .ak-row.is-disabled .ak-switch { pointer-events: none; }
+.adminkit-app .ak-row__main {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+.adminkit-app .ak-row__label { font-size: var(--ak-text-s); font-weight: 500; color: var(--ak-heading); }
+.adminkit-app .ak-row__desc { font-size: var(--ak-text-xs); line-height: 1.5; color: var(--ak-text-muted); max-width: 54ch; }
+/* Integration rows: status pill (left) + name + enable toggle (right). */
+.adminkit-app .ak-row--int .ak-row__label { flex: 1; min-width: 0; }
+
+/* Generator toolbar (Palette / Radius / Randomise) ------------------------ */
+.adminkit-app .ak-toolbar {
+	display: flex;
+	align-items: flex-end;
+	flex-wrap: wrap;
+	gap: 18px;
+	margin: 0 0 22px;
+}
+.adminkit-app .ak-toolbar__group { display: flex; flex-direction: column; gap: 6px; }
+.adminkit-app .ak-toolbar__label {
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .06em;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-toolbar__spacer { flex: 1 1 auto; }
+.adminkit-app .ak-btn--ghost {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	background: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-text);
+}
+.adminkit-app .ak-btn--ghost:hover { background: var(--ak-hover-bg); color: var(--ak-heading); }
+.adminkit-app .ak-btn--ghost .ic { display: inline-flex; }
+
+/* Segmented control (Palette / Radius) ----------------------------------- */
+.adminkit-app .ak-seg {
+	display: inline-flex;
+	gap: 2px;
+	padding: 3px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	background: var(--ak-surface);
+}
+.adminkit-app .ak-seg__btn {
+	font: inherit;
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	line-height: 1;
+	padding: 7px 14px;
+	border: 0;
+	border-radius: var(--ak-radius-s);
+	background: transparent;
+	color: var(--ak-text-muted);
+	cursor: pointer;
+}
+.adminkit-app .ak-seg__btn:hover { color: var(--ak-heading); }
+.adminkit-app .ak-seg__btn.on {
+	background: var(--ak-elevated);
+	color: var(--ak-heading);
+	font-weight: 600;
+}
+.adminkit-app .ak-seg__btn:focus-visible { outline: 2px solid var(--ak-primary); outline-offset: -2px; }
+
+/* Design-token table — one column-aligned grid per group ------------------ */
+.adminkit-app .ak-tbl {
+	display: grid;
+	grid-template-columns: 34px minmax( 120px, 1fr ) minmax( 180px, 2.2fr ) auto;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	background: var(--ak-surface);
+	overflow: hidden;
+}
+/* Every cell shares padding + a top divider; stretch (default) keeps the
+   dividers continuous across the row, and flex centres each cell's content.
+   The first row (first 4 cells) has no divider. */
+.adminkit-app .ak-tbl > * {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 9px 12px;
+	min-width: 0;
+	border-top: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-tbl > :nth-child(-n+4) { border-top: 0; }
+.adminkit-app .ak-tbl__sw {
+	width: 22px;
+	height: 22px;
+	border: 1px solid var(--ak-border-strong);
+	border-radius: var(--ak-radius-s);
+	background-clip: padding-box;
+}
+.adminkit-app .ak-tbl__name {
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	color: var(--ak-heading);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.adminkit-app .ak-tbl__badge {
+	flex: 0 0 auto;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	padding: 2px 6px;
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-tbl__map { flex-wrap: wrap; font-size: 11px; }
+/* Reset wp-admin's default <code> styling (grey pill, padding, Consolas) so the
+   mono cells read as plain monospace text. */
+.adminkit-app .ak-tbl code {
+	margin: 0;
+	padding: 0;
+	background: none;
+	border: 0;
+	font-family: monospace;
+	color: inherit;
+}
+.adminkit-app .ak-tbl__tok { color: var(--ak-text); }
+.adminkit-app .ak-tbl__from,
+.adminkit-app .ak-tbl__prim { color: var(--ak-text-muted); }
+.adminkit-app .ak-tbl__val {
+	justify-content: flex-end;
+	font-family: monospace;
+	font-size: 11px;
+	color: var(--ak-text);
+	white-space: nowrap;
+}
+
+/* Cascade explainer ------------------------------------------------------- */
+.adminkit-app .ak-cascade {
+	margin: -8px 0 18px;
+	max-width: 72ch;
+	padding: 10px 12px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-bg);
+	font-size: var(--ak-text-xs);
+	line-height: 1.6;
+	color: var(--ak-text-muted);
+}
+
+.adminkit-app .ak-muted { font-size: var(--ak-text-xs); color: var(--ak-text-muted); }
+
+/* Toggle switch (flat, no transition) ------------------------------------- */
+.adminkit-app .ak-switch {
+	position: relative;
+	flex: 0 0 auto;
+	display: inline-block;
+	width: 42px;
+	height: 24px;
+	vertical-align: middle;
+}
+.adminkit-app .ak-switch__input {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	opacity: 0;
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+}
+.adminkit-app .ak-switch__track {
+	position: absolute;
+	inset: 0;
+	border-radius: 999px;
+	background: var(--ak-border-strong);
+	pointer-events: none;
+}
+.adminkit-app .ak-switch__knob {
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #fff;
+	pointer-events: none;
+}
+.adminkit-app .ak-switch__input:checked ~ .ak-switch__track { background: var(--ak-primary); }
+.adminkit-app .ak-switch__input:checked ~ .ak-switch__knob { left: 21px; }
+.adminkit-app .ak-switch__input:focus-visible ~ .ak-switch__track { outline: 2px solid var(--ak-primary); outline-offset: 2px; }
+
+/* Integration pills (status on the left) ---------------------------------- */
+.adminkit-app .ak-row--int { gap: 12px; }
+.adminkit-app .ak-pill {
+	flex: 0 0 auto;
+	min-width: 72px;
+	text-align: center;
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+	padding: 4px 10px;
+	border-radius: var(--ak-radius-s);
+}
+/* "Active" = soft tinted chip (not a solid fill), echoing the account tabs. */
+.adminkit-app .ak-pill--on {
+	background: var(--ak-elevated);
+	background: color-mix( in srgb, var(--ak-success) 15%, transparent );
+	color: var(--ak-success);
+}
+.adminkit-app .ak-pill--off { background: var(--ak-elevated); color: var(--ak-text-muted); }
+
+/* Dashboard — overview cards ---------------------------------------------- */
+.adminkit-app .ak-stat-grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 220px, 1fr ) );
+	gap: 12px;
+}
+.adminkit-app .ak-stat {
+	display: block;
+	width: 100%;
+	text-align: left;
+	padding: 16px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	background: var(--ak-surface);
+}
+.adminkit-app button.ak-stat { font: inherit; cursor: pointer; }
+.adminkit-app .ak-stat--link:hover { background: var(--ak-hover-bg); border-color: var(--ak-border-strong); }
+.adminkit-app .ak-stat--link:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
+.adminkit-app .ak-stat__row { display: flex; align-items: center; gap: 13px; }
+.adminkit-app .ak-stat__chip {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	border-radius: var(--ak-radius-m);
+	background: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-stat__chip svg { width: 19px; height: 19px; }
+.adminkit-app .ak-stat__chip--swatch { border: 1px solid var(--ak-border-strong); }
+.adminkit-app .ak-stat__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.adminkit-app .ak-stat__label {
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-stat__value {
+	font-family: "Bricolage Grotesque", var(--ak-font-body);
+	font-size: 22px;
+	font-weight: 600;
+	color: var(--ak-heading);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.adminkit-app .ak-stat__hint { font-size: var(--ak-text-xs); color: var(--ak-text-muted); }
+.adminkit-app .ak-dash__ver { margin: 18px 0 0; font-size: var(--ak-text-xs); color: var(--ak-text-muted); }
+
+/* "Coming soon" pill (dashboard roadmap rows) ---------------------------- */
+.adminkit-app .ak-pill--soon { background: var(--ak-elevated); color: var(--ak-text-muted); }

@@ -4,7 +4,12 @@
 
 Source: [`assets/css/tokens.css`](../assets/css/tokens.css).
 
-AdminKit deliberately keeps a **small** token set that mirrors the provider's *semantic* layer 1:1 — three surfaces, two borders, three text roles, accent, state and status. There are no element-specific tokens (no `table-*`, `field-*`, `adminmenu-*`): those are just surfaces, picked by role.
+AdminKit keeps a **small, two-tier** token set:
+
+- **Tier 1 — provider semantics (15 roles), mirrored 1:1.** Three surfaces, two borders, four text roles (incl. inverse), accent + hover + subtle, hover, focus, overlay. These are exactly the provider's definitive semantic layer.
+- **Tier 2 — AdminKit additions.** The few roles wp-admin needs that the semantic layer doesn't define — muted text, on-accent, input fill, secondary, the status set (success / warning / error / info) — built on the provider's *primitives*. Tagged `+ AdminKit addition` in `tokens.css`.
+
+There are no element-specific tokens (no `table-*`, `adminmenu-*`): those are just surfaces, picked by role.
 
 ---
 
@@ -30,7 +35,9 @@ A provider feeds its variables in ahead of `tokens.css` via the `adminkit/extra_
 
 ## Mapping
 
-`--ak-*` token → provider semantic consumed → standalone fallback (light).
+### Tier 1 — provider semantics (1:1)
+
+`--ak-*` token → provider semantic consumed → standalone fallback (light). One declaration each: `color-mix` is only the no-provider fallback (the provider's `--accent-hover` / `--accent-bg` / `--focus` win when present).
 
 | Group | AdminKit token | Provider semantic | Fallback (light) |
 | ----- | -------------- | ----------------- | ---------------- |
@@ -39,19 +46,31 @@ A provider feeds its variables in ahead of `tokens.css` via the `adminkit/extra_
 | | `--ak-elevated` | `--elevated` | `hsl(0 0% 93%)` |
 | **Border** | `--ak-border` | `--border` | `hsl(0 0% 89%)` |
 | | `--ak-border-strong` | `--border-strong` | `hsl(0 0% 82%)` |
-| **Text** | `--ak-text` | `--text` | `hsl(0 0% 32%)` |
-| | `--ak-text-muted` | `--text-muted` | `hsl(0 0% 50%)` |
-| | `--ak-heading` | `--heading` | `hsl(0 0% 18%)` |
+| **Text** | `--ak-heading` | `--heading` | `hsl(0 0% 18%)` |
+| | `--ak-text` | `--text` | `hsl(0 0% 32%)` |
+| | `--ak-heading-inverse` | `--heading-inverse` | `--neutral-d-9` |
+| | `--ak-text-inverse` | `--text-inverse` | `--neutral-d-8` |
 | **Accent** | `--ak-primary` | `--accent` → `--primary` | neutral gray `hsl(0 0% 32%)` |
-| | `--ak-primary-hover` | `--accent-hover` → `--primary-l-2` | darken `--ak-primary` |
+| | `--ak-primary-hover` | `--accent-hover` → `--primary-l-2` | `color-mix` darken |
 | | `--ak-primary-subtle` | `--accent-bg` → `--primary-t-1` | `--ak-primary` @ 9% |
-| | `--ak-on-accent` | `--on-accent` | off-white `hsl(0 0% 98%)` |
-| | `--ak-secondary` | `--secondary` | `hsl(0 0% 50%)` |
 | **State** | `--ak-hover-bg` | `--hover` | `rgba(0 0 0 / .04)` |
 | | `--ak-focus` | `--focus` | `--ak-primary` @ 27% |
-| | `--ak-focus-ring` | — (`0 0 0 3px var(--ak-focus)`) | — |
-| **Status** | `--ak-success` / `--ak-warning` / `--ak-error` / `--ak-info` | `--success` / `--warning` / `--error` / `--info` | `#11b76b` / `#ffa100` / `#f04662` / `#2895d4` |
-| | `--ak-error-subtle` | `--error-t-2` | `rgba(240 70 98 / .18)` |
+| **Overlay** | `--ak-overlay` | `--overlay` | `rgba(0 0 0 / .5)` |
+
+### Tier 2 — AdminKit additions
+
+Roles the semantic layer doesn't define; they consume the provider's *primitives* (or stand alone). Tagged `+ AdminKit addition` in `tokens.css`.
+
+| AdminKit token | Consumes | Fallback (light) |
+| -------------- | -------- | ---------------- |
+| `--ak-text-muted` | `--neutral-l-7` (no semantic) | `hsl(0 0% 50%)` |
+| `--ak-on-accent` | `--on-accent` if present | off-white `hsl(0 0% 98%)` |
+| `--ak-input-bg` | `--field-bg` if present | white |
+| `--ak-secondary` | `--secondary` (primitive) | `hsl(0 0% 50%)` |
+| `--ak-success` / `--ak-warning` / `--ak-error` / `--ak-info` | `--success` / `--warning` / `--error` / `--info` | `#11b76b` / `#ffa100` / `#f04662` / `#2895d4` |
+| `--ak-error-subtle` | `--error-t-2` | `rgba(240 70 98 / .18)` |
+| `--ak-focus-ring` | — (`0 0 0 3px var(--ak-focus)`) | — |
+| `--ak-shadow-elevated` | — (the one flat-rule exception) | mode-aware drop |
 
 Geometry (`--ak-radius-*`) and type (`--ak-text-*`, `--ak-font-body`) are intentionally **not** taken from the provider — see [Conventions](#conventions).
 
@@ -96,6 +115,27 @@ A provider that exposes no inverse ramp simply falls back to AdminKit's built-in
 
 ---
 
+## Neutral / Branded palette
+
+The Design system tab offers a global **palette mode** (stored as `palette_mode`):
+
+- **Neutral** (default) — surfaces and borders use the neutral ramp above.
+- **Branded** — surfaces + borders are remapped onto the provider's **primary** ramp, so the whole admin picks up the brand tint straight from the provider primitives (no computed colours). Text stays neutral for legibility.
+
+The mapping lives in one place — `AdminKit_Settings::branded_surface_map()` — and is emitted as an inline override on top of `tokens.css`: admin-wide via `inline_tokens()`, and mirrored in the settings live preview.
+
+```css
+/* Branded, light */
+--ak-bg:       var(--primary-l-10, var(--neutral-l-1));
+--ak-surface:  var(--primary-l-9,  var(--neutral-l-2));
+--ak-elevated: var(--primary-l-8,  var(--neutral-l-3));
+/* …borders → --primary-l-7 / l-6 ; dark → --primary-d-10 … d-6 */
+```
+
+Each declaration falls back to the matching neutral step, so Branded degrades gracefully when the provider exposes no primary ramp.
+
+---
+
 ## Conventions
 
 - **Small set, no element tokens.** Everything is a surface / border / text / accent / state / status role. An element that needs to look different uses the role that matches (a table header is `--ak-elevated`, not a `--ak-table-header-bg`). Fewer tokens = one obvious choice per role and nothing to keep in sync.
@@ -126,6 +166,8 @@ AdminKit consumes a fixed **semantic vocabulary**. A new provider adapter only h
 }
 ```
 
-Consumed names: `--background`, `--surface`, `--elevated`, `--border`, `--border-strong`, `--text`, `--text-muted`, `--heading`, `--accent`, `--accent-hover`, `--accent-bg`, `--on-accent`, `--primary`, `--primary-l-2`, `--primary-t-1`, `--secondary`, `--hover`, `--focus`, `--success`, `--warning`, `--error`, `--error-t-2`, `--info`. For dark mode, optionally the inverse ramp `--neutral-d-1…9` and `--white-t-2`; otherwise AdminKit's built-in dark values apply.
+**Tier 1 — the 15 semantics (required vocabulary):** `--background`, `--surface`, `--elevated`, `--border`, `--border-strong`, `--heading`, `--text`, `--heading-inverse`, `--text-inverse`, `--accent`, `--accent-hover`, `--accent-bg`, `--hover`, `--focus`, `--overlay`.
+
+**Tier 2 — primitives the AdminKit additions consume (optional but recommended):** the neutral ramp `--neutral-l-1…10` + inverse `--neutral-d-1…10` (surfaces, muted text, dark mode), the primary ramp `--primary-l-1…10` / `--primary-d-1…10` / `--primary-t-1` (accent derivations + the **Branded** palette), `--secondary`, and the notification primitives `--success` / `--warning` / `--error` / `--error-t-2` / `--info`. Anything absent falls back to AdminKit's built-in values.
 
 Register the adapter sheet as a dependency of `adminkit-tokens` via `adminkit/extra_tokens_handle` so it loads first — see the Bricks integration for the pattern.

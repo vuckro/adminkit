@@ -23,18 +23,35 @@
 
    ── Surfaces: 3 levels, by ROLE ───────────────────────────────────────────
      --ak-bg        page background, behind everything        (--background)
-     --ak-surface   cards, panels, inputs, table rows         (--surface)
+     --ak-surface   cards, panels, table rows                 (--surface)
      --ak-elevated  raised / distinct: headers, hover-down,
                     dropdowns, selected, chrome state          (--elevated)
    The lightness order flips between modes (correct for an elevation model) —
    always pick by role, never by a hardcoded lightness.
+   Form fields use their own --ak-input-bg (lifted lighter than --ak-surface) so
+   they detach from cards; see below.
+
+   ── Two tiers ─────────────────────────────────────────────────────────────
+   1. Provider semantics (1:1) — surfaces, borders, text (+inverse), accent
+      (+hover/subtle), hover, focus, overlay. These mirror the provider's
+      definitive 15-role semantic layer exactly.
+   2. AdminKit additions — roles the semantic layer doesn't define but wp-admin
+      needs: --ak-text-muted, --ak-on-accent, --ak-input-bg, --ak-secondary, the
+      status set (--ak-success/-warning/-error/-info/-error-subtle) and the
+      geometry/type tokens. Tagged "+ AdminKit addition" below. Map: docs/TOKENS.md.
 
    ── Conventions ──────────────────────────────────────────────────────────
-   • Flat by design — no shadow / scrim tokens; depth is shown by surface tone.
+   • Flat by design — depth is shown by surface tone. The lone exception is
+     --ak-shadow-elevated for true floating layers (dropdowns); it inverts
+     black→white between light/dark so the lift reads in both modes.
    • Radii + type stay in px (the provider rem scale renders too large in admin).
-   • Derived tints use color-mix off --ak-primary so a custom brand carries
-     through to hovers, rings and tints. Each color-mix token ships a static
-     first line for old engines, then the color-mix line overrides it. */
+   • One declaration per token. Derived tints use color-mix off --ak-primary as
+     the no-provider FALLBACK only — the provider's --accent-hover / --accent-bg /
+     --focus win when present (so no duplicate static line is needed anymore).
+   • Branded palette: when the user picks "Branded", surfaces + borders are
+     remapped onto the provider PRIMARY ramp (--primary-l-*/-d-*) via an inline
+     override (AdminKit_Settings::branded_surface_map); Neutral = this file's
+     defaults. Text stays neutral for legibility. */
 
 :root {
 	/* ── Surfaces ──────────────────────────────────────────────────────── */
@@ -42,37 +59,55 @@
 	--ak-surface: var(--surface, hsl(0, 0%, 96%));
 	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
 
+	/* Form-field fill — lifts lighter than --ak-surface so an <input> / <select>
+	   / <textarea> reads as raised off cards, panels and the page. Light = white;
+	   dark uses the provider's elevated ramp (see the dark block). */
+	--ak-input-bg: var(--field-bg, hsl(0, 0%, 100%)); /* + AdminKit addition */
+
 	/* ── Borders ───────────────────────────────────────────────────────── */
 	--ak-border: var(--border, hsl(0, 0%, 89%));
 	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
 
 	/* ── Text ──────────────────────────────────────────────────────────── */
 	--ak-text: var(--text, hsl(0, 0%, 32%));
-	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%));
+	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%)); /* + AdminKit addition (no provider semantic) */
 	--ak-heading: var(--heading, hsl(0, 0%, 18%));
 
+	/* Inverse text — for content on an inverted surface (a dark chip in light
+	   mode). Provider --text-inverse / --heading-inverse map to the dark ramp,
+	   which in the admin's light context resolves light, so it reads on dark. */
+	--ak-text-inverse: var(--text-inverse, var(--neutral-d-8, hsl(0, 0%, 72%)));
+	--ak-heading-inverse: var(--heading-inverse, var(--neutral-d-9, hsl(0, 0%, 86%)));
+
 	/* ── Accent (brand) ────────────────────────────────────────────────────
-	   accent → brand primitive → neutral gray (a calm gray UI when unbranded). */
+	   --ak-primary mirrors the semantic --accent; --primary-hover / --primary-subtle
+	   mirror --accent-hover / --accent-bg (the provider defines both now, so a
+	   single line — color-mix is just the no-provider fallback). */
 	--ak-primary: var(--accent, var(--primary, var(--neutral-l-8, hsl(0, 0%, 32%))));
-	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, hsl(0, 0%, 18%)));
 	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, color-mix(in srgb, var(--ak-primary) 82%, #000)));
-	--ak-primary-subtle: var(--accent-bg, var(--primary-t-1, rgba(0, 0, 0, 0.06)));
 	--ak-primary-subtle: var(--accent-bg, var(--primary-t-1, color-mix(in srgb, var(--ak-primary) 9%, transparent)));
-	/* Foreground on a brand fill. Provider --on-accent is tuned per brand
-	   (near-black on a light/yellow accent); standalone falls back to off-white
-	   for the neutral-gray primary. */
-	--ak-on-accent: var(--on-accent, hsl(0, 0%, 98%));
-	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%)));
+	/* Foreground on a brand fill — tuned per brand (dark on a light/yellow accent). */
+	--ak-on-accent: var(--on-accent, hsl(0, 0%, 98%));            /* + AdminKit addition */
+	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%))); /* + AdminKit addition (consumes the --secondary primitive) */
 
 	/* ── State ─────────────────────────────────────────────────────────────
 	   --hover is a mode-aware translucent tint (black in light, white in dark);
 	   focus color + the ring built on it so a custom brand tints its own ring. */
 	--ak-hover-bg: var(--hover, rgba(0, 0, 0, 0.04));
-	--ak-focus: var(--focus, rgba(255, 214, 79, 0.25));
+	/* Elevation shadow — the one sanctioned exception to the flat rule, for
+	   true floating layers (admin-bar dropdowns). Mode-aware like --hover-bg:
+	   a black drop in light, inverted to a white lift in dark (a dark drop is
+	   invisible on a dark page). */
+	--ak-shadow-elevated: 0 8px 24px -10px rgba(0, 0, 0, 0.3);
 	--ak-focus: var(--focus, color-mix(in srgb, var(--ak-primary) 27%, transparent));
 	--ak-focus-ring: 0 0 0 3px var(--ak-focus);
 
-	/* ── Status (notifications) ────────────────────────────────────────── */
+	/* ── Overlay ─────────────────────────────────────────────────────────
+	   Scrim behind modals / drawers — a translucent black, both modes. */
+	--ak-overlay: var(--overlay, var(--black-t-7, rgba(0, 0, 0, 0.5)));
+
+	/* ── Status (notifications) — + AdminKit additions (consume the provider
+	   notification primitives; the semantic layer has no status roles) ───── */
 	--ak-success: var(--success, #11b76b);
 	--ak-warning: var(--warning, #ffa100);
 	--ak-error: var(--error, #f04662);
@@ -133,6 +168,10 @@ body.adminkit[class*="admin-color-"] {
 	--ak-surface: var(--neutral-d-2, hsl(0, 0%, 11%));
 	--ak-elevated: var(--neutral-d-3, hsl(0, 0%, 14%));
 
+	/* Dark field — lifts a step lighter than the card (the provider's elevated
+	   ramp, --neutral-d-3) so it detaches, mirroring the white field in light. */
+	--ak-input-bg: var(--neutral-d-3, hsl(0, 0%, 14%));
+
 	--ak-border: var(--neutral-d-4, hsl(0, 0%, 18%));
 	--ak-border-strong: var(--neutral-d-5, hsl(0, 0%, 24%));
 
@@ -140,13 +179,21 @@ body.adminkit[class*="admin-color-"] {
 	--ak-text-muted: var(--neutral-d-7, hsl(0, 0%, 56%));
 	--ak-heading: var(--neutral-d-9, hsl(0, 0%, 86%));
 
+	/* Inverse flips with the mode — dark text now, so it reads on a light chip.
+	   Goes straight to the light ramp (the provider --text-inverse var doesn't
+	   flip in admin, so consuming it here would stay light). */
+	--ak-text-inverse: var(--neutral-l-8, hsl(0, 0%, 32%));
+	--ak-heading-inverse: var(--neutral-l-9, hsl(0, 0%, 18%));
+
 	/* Accent stays the brand (provider --accent/--primary don't flip in admin);
 	   standalone falls to a mid-gray for ~4.5:1 contrast with white text. */
 	--ak-primary: var(--accent, var(--primary, var(--neutral-d-6, hsl(0, 0%, 38%))));
-	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, hsl(0, 0%, 56%)));
 	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, color-mix(in srgb, var(--ak-primary) 82%, #fff)));
 	--ak-secondary: var(--secondary, var(--neutral-d-7, hsl(0, 0%, 56%)));
 
 	/* Hover — white tint (the neutral --hover is a black tint, invisible on dark). */
 	--ak-hover-bg: var(--white-t-2, rgba(255, 255, 255, 0.11));
+	/* Inverted elevation — a white lift reads on a dark page where a black
+	   drop would vanish. */
+	--ak-shadow-elevated: 0 8px 24px -10px rgba(255, 255, 255, 0.14);
 }
