@@ -23,6 +23,7 @@ define( 'ADMINKIT_URL', plugin_dir_url( __FILE__ ) );
 
 require_once ADMINKIT_PATH . 'inc/class-screen.php';
 require_once ADMINKIT_PATH . 'inc/class-settings.php';
+require_once ADMINKIT_PATH . 'inc/class-settings-page.php';
 require_once ADMINKIT_PATH . 'inc/class-dashboard.php';
 require_once ADMINKIT_PATH . 'inc/class-plugin.php';
 require_once ADMINKIT_PATH . 'inc/class-assets.php';
@@ -30,6 +31,7 @@ require_once ADMINKIT_PATH . 'inc/class-theme-toggle.php';
 require_once ADMINKIT_PATH . 'inc/core/class-chrome.php';
 require_once ADMINKIT_PATH . 'inc/core/class-login.php';
 require_once ADMINKIT_PATH . 'inc/core/class-profile-account.php';
+require_once ADMINKIT_PATH . 'inc/core/class-account-bar.php';
 require_once ADMINKIT_PATH . 'inc/core/class-list-table-chrome.php';
 require_once ADMINKIT_PATH . 'inc/core/class-post-previews.php';
 

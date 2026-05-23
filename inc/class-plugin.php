@@ -27,6 +27,7 @@ class AdminKit_Plugin {
 		AdminKit_Settings_Page::init();
 		AdminKit_Theme_Toggle::init();
 		AdminKit_Profile_Account::init();
+		AdminKit_Account_Bar::init();
 		AdminKit_Core_List_Table_Chrome::init();
 		AdminKit_Post_Previews::init();
 
