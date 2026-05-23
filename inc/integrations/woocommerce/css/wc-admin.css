@@ -182,6 +182,14 @@ body.adminkit.woocommerce-admin-page .woocommerce-table .woocommerce-pagination 
 	background-color: var(--ak-surface);
 }
 
+/* Round the table card and clip the header + pagination corners to it. The
+   inner horizontal scroll sits on a child element, so overflow:hidden here
+   only shapes the outer corners — it doesn't trap the scroll. */
+body.adminkit.woocommerce-admin-page .woocommerce-table {
+	border-radius: var(--ak-radius-m);
+	overflow: hidden;
+}
+
 /* Header row — recessed fill, muted labels, divider. */
 body.adminkit.woocommerce-admin-page .woocommerce-table__header {
 	background-color: var(--ak-elevated);
