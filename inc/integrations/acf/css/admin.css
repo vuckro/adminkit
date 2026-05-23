@@ -429,17 +429,12 @@ body.adminkit.acf-admin-page .acf-tab-wrap .acf-tab-group li a:hover {
 	color: var(--ak-heading);
 }
 
-/* Keep position:relative (not static) so ACF's base `.acf-tab-wrap { z-index: 1 }`
-   stays active — otherwise the bar drops out of the stacking order and sibling
-   field rows can overlap it, making the tabs unclickable. top/left:0 cancels
-   ACF's -48px breakout pull; width:auto stops the calc() overflow. */
+/* Sit the tab bar in normal flow: drop ACF's -48px/-48px breakout pull (which
+   overlapped the header and needed z-index) and its calc() width overflow. */
 body.adminkit.acf-admin-page .postbox-container .acf-tab-wrap {
-	position: relative;
-	top: 0;
-	left: 0;
+	position: static;
 	width: auto;
 	margin: 0 0 20px 0;
-	border-radius: var(--ak-radius-s);
 }
 
 /* "Regenerate labels" bar (post-type / taxonomy / options editors). */
@@ -497,19 +492,16 @@ body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object .handle
    blue links. Route to a neutral raised handle + a thin brand left-accent on the
    settings panel; links go heading (delete stays danger). ACF's link colors are
    !important, so the overrides match. */
-body.adminkit.acf-admin-page .acf-field-object.open > .handle,
 body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open .handle {
 	background: var(--ak-primary-subtle);
 	border-color: var(--ak-border);
 	color: var(--ak-heading);
 }
 
-body.adminkit.acf-admin-page .acf-field-object.open > .handle a,
 body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open .handle a {
 	color: var(--ak-heading) !important;
 }
 
-body.adminkit.acf-admin-page .acf-field-object.open > .handle a.delete-field,
 body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open .handle a.delete-field {
 	color: var(--ak-error) !important;
 }
@@ -634,6 +626,7 @@ body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picke
 /* Segmented toggles (e.g. Required Yes/No): #d0d5dd border, #475467 label;
    selected = #f9fafb bg + #0783be text -> brand-tint selection. */
 body.adminkit.acf-admin-page .acf-button-group label {
+	background: var(--ak-surface);
 	border-color: var(--ak-border-strong);
 	color: var(--ak-text);
 }
