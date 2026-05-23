@@ -15,13 +15,15 @@
    pages (the wc-admin React app is excluded — it has its own file). */
 
 
-/* ===== wc-admin embed chrome ===== */
+/* ===== wc-admin layout header ===== */
 
-/* WC injects the wc-admin activity-panel bar (.woocommerce-layout__header,
-   under body.woocommerce-embed-page) atop classic screens. The wc-admin.css
-   rule only scopes .woocommerce-admin-page (React screens), so the embedded
-   copy slips through here — hide it too, to match. */
-body.adminkit.woocommerce-embed-page .woocommerce-layout__header {
+/* WC injects the wc-admin layout header (breadcrumbs + activity-panel icons)
+   atop classic screens too — embed pages, the modern Settings/Payments React
+   app, and the coupon marketing page. wc-admin.css hides it on React screens
+   (.woocommerce-admin-page); this bare scope covers every classic WC screen
+   admin.css loads on. The class is WC-specific and this file only loads on WC
+   screens, so it can't leak elsewhere. */
+body.adminkit .woocommerce-layout__header {
 	display: none;
 }
 
@@ -42,9 +44,12 @@ body.adminkit .woocommerce_options_panel {
 /* Vertical tab nav — WC paints the column #fafafa with an #eee right edge and
    per-tab #eee dividers. Route to a recessed elevated column + token dividers;
    inactive tabs muted; the active tab (WC #eee) merges into the panel surface
-   for a connected-tab look. */
+   for a connected-tab look. The ::after is WC's tall absolute filler that
+   continues the column fill + right edge below the last tab — recolor it to match. */
 body.adminkit #woocommerce-product-data ul.wc-tabs,
-body.adminkit #woocommerce-coupon-data ul.wc-tabs {
+body.adminkit #woocommerce-coupon-data ul.wc-tabs,
+body.adminkit #woocommerce-product-data ul.wc-tabs::after,
+body.adminkit #woocommerce-coupon-data ul.wc-tabs::after {
 	background-color: var(--ak-elevated);
 	border-right-color: var(--ak-border);
 }
@@ -100,6 +105,11 @@ body.adminkit .woocommerce_options_panel legend .req {
 
 /* ===== Repeatable metaboxes (variations, attributes, shipping classes) ===== */
 
+/* List container's closing rule (WC #eee). */
+body.adminkit .wc-metaboxes-wrapper .wc-metaboxes {
+	border-bottom-color: var(--ak-border);
+}
+
 body.adminkit .wc-metaboxes-wrapper .wc-metabox,
 body.adminkit .wc-metaboxes-wrapper .wc-metabox table {
 	background-color: var(--ak-surface);
@@ -117,6 +127,12 @@ body.adminkit .wc-metaboxes-wrapper .wc-metabox table {
 body.adminkit .wc-metaboxes-wrapper .wc-metabox-sortable-placeholder {
 	background-color: var(--ak-elevated);
 	border-color: var(--ak-border);
+}
+
+/* Toolbar (add / expand rows) — WC tops it with a 1px #fff highlight that's
+   invisible on light but glares on dark; drop it (the surface separates). */
+body.adminkit .wc-metaboxes-wrapper .toolbar {
+	border-top-color: transparent;
 }
 
 
@@ -263,4 +279,338 @@ body.adminkit .select2-dropdown .select2-search__field {
 body.adminkit .select2-container--default.select2-container--disabled .select2-selection--single,
 body.adminkit .select2-container--default.select2-container--disabled .select2-selection--multiple {
 	background-color: var(--ak-bg);
+}
+
+
+/* ===== Modern Settings / Payments page (React) ===== */
+
+/* With the `settings` feature on, admin.php?page=wc-settings renders a React
+   app (the Payments tab, opened from the Payments menu item, plus other modern
+   tabs) into the classic settings screen. That page deliberately does NOT carry
+   .woocommerce-admin-page — Loader::add_admin_body_classes() bails on modern
+   settings — so wc-admin.css never reaches it. These rules live here instead,
+   scoped to the page's own body class (woocommerce_page_wc-settings, i.e. the
+   wc-settings screen id). Because that scope sits on <body>, the
+   @wordpress/components overlays that portal to the document root (popovers, the
+   WooPayments setup modal) inherit it too, and its two classes out-specify
+   WooCommerce's own selectors with no !important.
+
+   tokens.css already remaps the whole --wp-components-color-* palette on
+   body.adminkit, so components that read those vars (cards, accent buttons,
+   checkboxes, toggles) flip for free. These rules patch only what WooCommerce
+   and core @wordpress/components paint with HARDCODED hex:
+       #fff → surface   #f0f0f0 → elevated   #e0e0e0 / #ddd → border
+       #1e1e1e / #3c434a → heading   #757575 → muted */
+
+/* Page header — the React-rendered "Payments" title + description (this screen
+   shows the header rather than hiding it like the wc-admin embed bar). */
+body.adminkit.woocommerce_page_wc-settings .woocommerce-settings-payments-header__title {
+	color: var(--ak-heading);
+}
+
+body.adminkit.woocommerce_page_wc-settings .woocommerce-settings-payments-header__description {
+	color: var(--ak-text-muted);
+}
+
+/* Gateway-list loading skeleton — row dividers, hover fill, shimmer bars. */
+body.adminkit.woocommerce_page_wc-settings .woocommerce-item__payment-gateway-placeholder {
+	border-top-color: var(--ak-border);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce_page_wc-settings .woocommerce-item__payment-gateway-placeholder:hover {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce_page_wc-settings .woocommerce-item__payment-gateway-placeholder .list-placeholder__title,
+body.adminkit.woocommerce_page_wc-settings .woocommerce-item__payment-gateway-placeholder .list-placeholder__before,
+body.adminkit.woocommerce_page_wc-settings .woocommerce-item__payment-gateway-placeholder .list-placeholder__after,
+body.adminkit.woocommerce_page_wc-settings .woocommerce-item__payment-gateway-placeholder .list-placeholder__content {
+	background-color: var(--ak-elevated);
+}
+
+/* Store-location select (the country / currency picker above the gateway list). */
+body.adminkit.woocommerce_page_wc-settings .settings-payment-gateways__header-select-container {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce_page_wc-settings .settings-payment-gateways__header-select-container--indicator-icon {
+	border-left-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce_page_wc-settings .settings-payment-gateways__header-select-container .components-input-control__prefix {
+	color: var(--ak-text-muted);
+}
+
+/* "More payment options" section (collapsible list of additional gateways). */
+body.adminkit.woocommerce_page_wc-settings .other-payment-gateways {
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce_page_wc-settings .other-payment-gateways__header__title-image-placeholder {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce_page_wc-settings .other-payment-gateways__header .components-button,
+body.adminkit.woocommerce_page_wc-settings .other-payment-gateways__content__title__h3 {
+	color: var(--ak-heading);
+}
+
+body.adminkit.woocommerce_page_wc-settings .other-payment-gateways__content__title__icon,
+body.adminkit.woocommerce_page_wc-settings .other-payment-gateways__content__grid-item__content__description {
+	color: var(--ak-text-muted);
+}
+
+/* Recommended-gateway card rows. */
+body.adminkit.woocommerce_page_wc-settings .woocommerce-recommended-payments-card .woocommerce-list__item-title,
+body.adminkit.woocommerce_page_wc-settings .woocommerce-recommended-payments-card .woocommerce-list__item:hover .woocommerce-list__item-title {
+	color: var(--ak-heading);
+}
+
+body.adminkit.woocommerce_page_wc-settings .woocommerce-recommended-payments-card .woocommerce-list__item:hover {
+	background-color: var(--ak-elevated);
+}
+
+/* Offline payment-methods sub-page header. */
+body.adminkit.woocommerce_page_wc-settings .settings-payments-offline__header h1 {
+	color: var(--ak-heading);
+}
+
+/* Popovers — the status / official-extension badges, the select indicator and
+   the section tooltips all render .components-popover__content, which core and
+   WC paint #fff. Match the wc-admin.css treatment: elevated surface, token
+   border, flat (the drop shadow's first layer is a 1px ring acting as border). */
+body.adminkit.woocommerce_page_wc-settings .components-popover:not(.is-unstyled) .components-popover__content {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+/* WooPayments setup modal — core .components-modal__frame hardcodes #fff /
+   #1e1e1e; the frame consumes no themeable var, so map it directly. */
+body.adminkit.woocommerce_page_wc-settings .components-modal__frame {
+	background-color: var(--ak-surface);
+	color: var(--ak-text);
+}
+
+body.adminkit.woocommerce_page_wc-settings .components-modal__header {
+	background-color: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce_page_wc-settings .components-modal__header-heading,
+body.adminkit.woocommerce_page_wc-settings .components-modal__frame h1,
+body.adminkit.woocommerce_page_wc-settings .components-modal__frame h2,
+body.adminkit.woocommerce_page_wc-settings .components-modal__frame h3 {
+	color: var(--ak-heading);
+}
+
+body.adminkit.woocommerce_page_wc-settings .woocommerce-woopayments-modal__content__item {
+	color: var(--ak-text);
+}
+
+
+/* ===== Order items metabox (order edit screen) ===== */
+
+/* #woocommerce-order-items paints a white (#fff) line-items table on #f8f8f8
+   bands, with #555 input text and #dfdfdf / #ddd / #f8f8f8 rules — none flip in
+   dark mode (mapping only the two outer bands would leave a glaring white table
+   under them). Route surfaces to the table convention used elsewhere (surface
+   body, elevated header/footer bands), dividers to the border token, and the
+   grey label/icon text to muted. The `.woocommerce_order_items_wrapper` class
+   is dropped from each selector — the body.adminkit prefix already out-specifies
+   WC's own rules. */
+
+/* Footer / action bands (totals, refund) + their dividers. */
+body.adminkit #woocommerce-order-items .wc-order-data-row {
+	background-color: var(--ak-elevated);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit #woocommerce-order-items .refund-actions {
+	border-top-color: var(--ak-border);
+}
+
+/* "N items" sub-heading caption. */
+body.adminkit #woocommerce-order-items h3 small {
+	color: var(--ak-text-muted);
+}
+
+/* Line-items table — surface body, elevated header band, muted column labels. */
+body.adminkit #woocommerce-order-items table.woocommerce_order_items {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit #woocommerce-order-items table.woocommerce_order_items thead th {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+
+/* Row dividers (between items + the closing rule); the 8px header gap keeps the
+   band tone so it reads as a spacer, not a hairline. */
+body.adminkit #woocommerce-order-items table.woocommerce_order_items tbody th,
+body.adminkit #woocommerce-order-items table.woocommerce_order_items tbody td,
+body.adminkit #woocommerce-order-items table.woocommerce_order_items tbody tr:last-child td {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit #woocommerce-order-items table.woocommerce_order_items tbody tr:first-child td {
+	border-top-color: var(--ak-elevated);
+}
+
+/* Product-thumbnail placeholder cell. */
+body.adminkit #woocommerce-order-items table.woocommerce_order_items td.thumb .wc-order-item-thumbnail {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+
+/* Item meta — SKU, discount, display-meta, cost labels (WC #888 / #999). */
+body.adminkit #woocommerce-order-items table.woocommerce_order_items td.name .wc-order-item-sku,
+body.adminkit #woocommerce-order-items table.woocommerce_order_items .cost label,
+body.adminkit #woocommerce-order-items table.woocommerce_order_items .cost .wc-order-item-discount,
+body.adminkit #woocommerce-order-items table.woocommerce_order_items table.display_meta {
+	color: var(--ak-text-muted);
+}
+
+/* Editable inputs (qty / cost / tax) — WC pins them #555. */
+body.adminkit #woocommerce-order-items table.woocommerce_order_items tbody th input,
+body.adminkit #woocommerce-order-items table.woocommerce_order_items .cost .split-input div.input label,
+body.adminkit #woocommerce-order-items table.woocommerce_order_items .cost .split-input div.input input {
+	color: var(--ak-text);
+}
+
+/* Cost / tax split-input editor field. */
+body.adminkit #woocommerce-order-items table.woocommerce_order_items .cost .split-input {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit #woocommerce-order-items table.woocommerce_order_items .cost .split-input div.input:first-child {
+	background-color: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+/* Row-action icons (edit / delete line item) — muted, stronger on hover. */
+body.adminkit #woocommerce-order-items .wc-order-edit-line-item-actions a {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit #woocommerce-order-items .wc-order-edit-line-item-actions a:hover::before {
+	color: var(--ak-text);
+}
+
+/* Fee / refund / shipping row glyphs + the tax-delete icon. */
+body.adminkit #woocommerce-order-items table.woocommerce_order_items tr.fee .thumb div::before,
+body.adminkit #woocommerce-order-items table.woocommerce_order_items tr.refund .thumb div::before,
+body.adminkit #woocommerce-order-items table.woocommerce_order_items tr.shipping .thumb div::before,
+body.adminkit #woocommerce-order-items table.woocommerce_order_items td.line_tax .delete-order-tax::before {
+	color: var(--ak-text-muted);
+}
+
+
+/* ===== Order data, actions & notes ===== */
+
+/* Order data metabox headings (Order #, Billing, Shipping). WC pins #333. */
+body.adminkit #order_data h3,
+body.adminkit #order_data h4 {
+	color: var(--ak-heading);
+}
+
+/* Order actions box (Update / status list) — WC stacks a #fff top highlight on
+   an #ddd bottom line per row; flatten to a single token divider. */
+body.adminkit .order_actions li {
+	border-top-color: transparent;
+	border-bottom-color: var(--ak-border);
+}
+
+/* "Add note" form divider in the Order notes metabox. */
+body.adminkit .add_note {
+	border-top-color: var(--ak-border);
+}
+
+
+/* ===== Marketing — recommended-extensions card (Coupons page) ===== */
+/* edit.php?post_type=shop_coupon mounts a React @wordpress/components card into
+   #coupon-root recommending coupon extensions. The Card surface + its default
+   text flip for free (they read --wp-components-color-*, remapped in tokens.css),
+   and the product-icon's ring + glyph track --wp-admin-theme-color → --ak-primary.
+   These rules cover only what WC paints with HARDCODED hex: the item name /
+   description text and the icon's #fff fill. */
+
+/* Extension name (WC #1e1e1e) + description (WC #757575). On hover WC darkens
+   the description and accent-tints the name (the name's hover flips for free). */
+body.adminkit .woocommerce-marketing-recommended-extensions-item h4 {
+	color: var(--ak-heading);
+}
+
+body.adminkit .woocommerce-marketing-recommended-extensions-item p {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .woocommerce-marketing-recommended-extensions-item:hover p {
+	color: var(--ak-text);
+}
+
+/* Card-header description / subtitle (WC #757575). */
+body.adminkit .woocommerce-marketing-card-header-description,
+body.adminkit .woocommerce-admin-marketing-card .woocommerce-admin-marketing-card-subtitle {
+	color: var(--ak-text-muted);
+}
+
+/* Product-icon bubble — WC fills it #fff with an accent ring. Route the fill to
+   the surface token so it flips, and the ring to the neutral border token (the
+   task-icon bubble convention in wc-admin.css). The glyph and the hover fill
+   stay accent via --wp-admin-theme-color. The +1 element (body) over WC's own
+   4-class ring selector lands the border override at (0,4,1) so it wins. */
+body.adminkit .woocommerce-marketing-recommended-extensions-item .woocommerce-admin-marketing-product-icon {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit .woocommerce-marketing-recommended-extensions-item .woocommerce-admin-marketing-product-icon:not(.is-placeholder) {
+	border-color: var(--ak-border);
+}
+
+/* Hover fills the bubble with the accent and forces the glyph #fff !important —
+   white on the yellow brand is unreadable. Route it to the on-accent token
+   (near-black on yellow); !important + the extra element beat WC's own rule. */
+body.adminkit .woocommerce-marketing-recommended-extensions-item:hover .woocommerce-admin-marketing-product-icon:not(.is-placeholder) svg {
+	fill: var(--ak-on-accent) !important;
+}
+
+/* Pagination prev/next arrow group — the knowledgebase card uses the wc-admin
+   <Pagination> component. wc-admin.css maps it on React screens; mirror that
+   here for the classic coupon page: WC's #f0f2f4 fill → recessed surface,
+   #b5bfc9 frame → the stronger control border (it reads as a button). */
+body.adminkit .woocommerce-pagination__page-arrows-buttons {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border-strong);
+}
+
+/* Arrow glyphs (WC #24292d, invisible on the dark fill) + their hover, and the
+   2px divider between the two buttons (#d3d9de — both edges so LTR/RTL match). */
+body.adminkit .woocommerce-pagination__page-arrows-buttons .components-button {
+	color: var(--ak-text);
+}
+
+body.adminkit .woocommerce-pagination__page-arrows-buttons .components-button:not(:disabled):not([aria-disabled="true"]):hover {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .woocommerce-pagination__page-arrows-buttons button:first-child {
+	border-left-color: var(--ak-border);
+	border-right-color: var(--ak-border);
+}
+
+
+/* ===== System Status table ===== */
+
+/* The status report table (admin.php?page=wc-status) is a .widefat (base mapped
+   to --ak-surface) that WC zebra-stripes on even rows with #fcfcfc — near-white
+   on dark. Route it to the recessed band token; the +1 element from the body
+   scope clears WC's nth-child selector without !important. */
+body.adminkit table.wc_status_table tr:nth-child(2n) td,
+body.adminkit table.wc_status_table tr:nth-child(2n) th {
+	background-color: var(--ak-elevated);
 }
