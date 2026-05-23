@@ -53,9 +53,9 @@ body.adminkit.woocommerce-admin-page .woocommerce-onboarding-loader {
 
 /* ===== 2. wc-admin chrome ===== */
 
-/* App header bar. */
+/* App header bar (breadcrumbs + activity-panel icons) — hidden per request. */
 body.adminkit.woocommerce-admin-page .woocommerce-layout__header {
-	background-color: var(--ak-surface);
+	display: none;
 }
 
 /* Experimental list rows (Home task lists, activity panels). */
