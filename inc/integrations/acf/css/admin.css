@@ -778,7 +778,7 @@ body.adminkit.acf-admin-page .acf-button-group label {
 
 body.adminkit.acf-admin-page .acf-button-group label.selected {
 	background: var(--ak-primary);
-	color: var(--ak-on-accent);
+	color: var(--ak-heading);
 }
 
 /* Field-group options two-column split divider (#eaecf0). */
