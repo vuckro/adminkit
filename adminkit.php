@@ -29,7 +29,8 @@ require_once ADMINKIT_PATH . 'inc/class-assets.php';
 require_once ADMINKIT_PATH . 'inc/class-theme-toggle.php';
 require_once ADMINKIT_PATH . 'inc/core/class-chrome.php';
 require_once ADMINKIT_PATH . 'inc/core/class-login.php';
-require_once ADMINKIT_PATH . 'inc/core/class-profile-accordion.php';
+require_once ADMINKIT_PATH . 'inc/core/class-profile-account.php';
 require_once ADMINKIT_PATH . 'inc/core/class-list-table-chrome.php';
+require_once ADMINKIT_PATH . 'inc/core/class-post-previews.php';
 
 AdminKit_Plugin::init();

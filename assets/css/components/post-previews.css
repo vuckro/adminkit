@@ -1,0 +1,106 @@
+/* Post previews — list-table thumbnail column + hover preview panel.
+   Loaded only on the list table of targeted post types (see
+   AdminKit_Post_Previews::owns_screen). Flat by design: a border, no shadow,
+   no animation — depth reads from the surface tone, matching tokens.css. */
+
+/* ── Column cell ───────────────────────────────────────────────────────── */
+.adminkit .column-ak_preview {
+	width: 72px;
+	text-align: center;
+	vertical-align: middle;
+}
+/* Quick Edit / inline-edit rows: keep our column out of the editable grid. */
+.adminkit .inline-edit-row .column-ak_preview {
+	display: none;
+}
+
+/* ── Thumbnail ─────────────────────────────────────────────────────────── */
+.adminkit .ak-preview {
+	display: inline-block;
+	line-height: 0;
+	cursor: zoom-in;
+}
+.adminkit .ak-preview__thumb {
+	display: block;
+	width: 56px;
+	height: 42px;
+	object-fit: cover;
+	object-position: top center;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-elevated);
+}
+
+/* Empty (no screenshot, no featured image) + broken (both failed) → flat box. */
+.adminkit .ak-preview--empty,
+.adminkit .ak-preview--broken .ak-preview__thumb {
+	width: 56px;
+	height: 42px;
+	border: 1px dashed var(--ak-border-strong);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+}
+.adminkit .ak-preview--empty {
+	display: inline-block;
+	cursor: default;
+}
+.adminkit .ak-preview--broken .ak-preview__thumb {
+	object-fit: none; /* hide the browser's broken-image glyph */
+}
+
+/* ── Hover preview panel (appended to <body>) ──────────────────────────── */
+.adminkit #ak-preview-pop {
+	position: fixed;
+	z-index: 100000;
+	display: none;
+	padding: 6px;
+	background: var(--ak-elevated);
+	border: 1px solid var(--ak-border-strong);
+	border-radius: var(--ak-radius-m);
+	pointer-events: auto;
+}
+.adminkit #ak-preview-pop.is-visible {
+	display: block;
+}
+.adminkit #ak-preview-pop img {
+	display: block;
+	width: 480px;
+	max-width: 70vw;
+	height: auto;
+	border-radius: var(--ak-radius-s);
+}
+
+/* While the screenshot loads, hold a fixed box so the panel doesn't jump. */
+.adminkit #ak-preview-pop.is-loading {
+	width: 480px;
+	max-width: 70vw;
+	height: 320px;
+}
+.adminkit #ak-preview-pop.is-loading img {
+	visibility: hidden;
+}
+.adminkit #ak-preview-pop.is-loading::after {
+	content: attr(data-loading-label);
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--ak-text-muted);
+	font: 500 var(--ak-text-s) / 1.4 var(--ak-font-body);
+}
+
+/* Both sources failed → a small message instead of a stretched broken image. */
+.adminkit #ak-preview-pop.is-broken img {
+	display: none;
+}
+.adminkit #ak-preview-pop.is-broken {
+	width: auto;
+	height: auto;
+	padding: 14px 16px;
+	color: var(--ak-text-muted);
+	font: 500 var(--ak-text-s) / 1.4 var(--ak-font-body);
+}
+.adminkit #ak-preview-pop.is-broken::after {
+	content: attr(data-broken-label);
+}
