@@ -47,6 +47,12 @@ body.adminkit.post-new-php.post-type-product h3 {
 	color: var(--ak-text);
 }
 
+/* Add New Product — restore top breathing room (the hidden page heading used to
+   provide it) so the content isn't glued under the Screen Options / Help tabs. */
+body.adminkit.post-new-php.post-type-product .wrap {
+	padding-top: 16px;
+}
+
 
 /* ===== Product data — panel & tab polish ===== */
 
@@ -69,6 +75,13 @@ body.adminkit #woocommerce-product-data ul.wc-tabs li a {
 body.adminkit #woocommerce-product-data ul.wc-tabs li:not(.active) a:hover {
 	background-color: var(--ak-hover-bg);
 	color: var(--ak-heading);
+}
+
+/* Hide the "Get more options" marketplace-suggestions promo in the Product data
+   box — the tab itself plus any inline suggestion container. */
+body.adminkit #woocommerce-product-data ul.wc-tabs li.marketplace-suggestions_tab,
+body.adminkit #woocommerce-product-data .marketplace-suggestions-container {
+	display: none;
 }
 
 
