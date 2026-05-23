@@ -27,9 +27,10 @@ body.adminkit.post-type-product #titlediv #title {
 	padding: 10px 12px;
 }
 
-/* Title placeholder ("Product name") — WP hardcodes #646970; route to the muted
-   token so it stays legible in dark mode. */
-body.adminkit.post-type-product #titlediv #title-prompt-text {
+/* Title placeholder ("Product name" / "Coupon code") — WP hardcodes #646970;
+   route to the muted token so it stays legible in dark mode, on any WC classic
+   screen this stylesheet loads on. */
+body.adminkit #titlediv #title-prompt-text {
 	color: var(--ak-text-muted);
 }
 
@@ -51,6 +52,28 @@ body.adminkit.post-new-php.post-type-product h3 {
    provide it) so the content isn't glued under the Screen Options / Help tabs. */
 body.adminkit.post-new-php.post-type-product .wrap {
 	padding-top: 16px;
+}
+
+
+/* ===== Coupon edit — title ===== */
+
+/* Float WC's "Generate coupon code" button inside the coupon-code field, on the
+   right. WC's JS inserts <a class="button generate-coupon-code"> right after
+   #title inside #titlewrap, so anchor it there and pad the input to clear it. */
+body.adminkit.post-type-shop_coupon #titlewrap {
+	position: relative;
+}
+
+body.adminkit.post-type-shop_coupon #titlewrap #title {
+	padding-right: 175px;
+}
+
+body.adminkit.post-type-shop_coupon #titlewrap .generate-coupon-code {
+	position: absolute;
+	top: 50%;
+	right: 6px;
+	transform: translateY(-50%);
+	margin: 0;
 }
 
 
