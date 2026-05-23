@@ -479,7 +479,12 @@ body.adminkit.acf-admin-page .acf-regenerate-labels-bar {
 	top: 0;
 	left: 0;
 	width: auto;
-	border-bottom-color: var(--ak-border);
+	border-bottom-color: transparent;
+}
+
+/* Labels-tip note (Labels tab) — #eaecf0 left rule. */
+body.adminkit.acf-admin-page .acf-labels-tip {
+	border-left-color: var(--ak-border);
 }
 
 /* ----- 12. Tools page — Export / Import field areas hardcode #fff. ACF's id
