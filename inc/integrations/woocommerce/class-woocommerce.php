@@ -117,6 +117,18 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * The WP Dashboard (index.php), where WooCommerce injects widgets (e.g. the
+	 * "Finish setup" store-setup progress widget) that the WC-screen-scoped
+	 * admin.css doesn't reach — see css/dashboard.css.
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return bool
+	 */
+	public static function owns_dashboard( $screen ) {
+		return $screen && isset( $screen->base ) && 'dashboard' === $screen->base;
+	}
+
+	/**
 	 * WooCommerce exposes its version via the WC_VERSION constant.
 	 *
 	 * @return string|null
@@ -166,6 +178,14 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_select2_screen' ),
+		) );
+		// Dashboard-only WC widgets (the WP Dashboard isn't a classic WC screen).
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-woocommerce-dashboard',
+			'src'       => 'inc/integrations/woocommerce/css/dashboard.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_dashboard' ),
 		) );
 	}
 }

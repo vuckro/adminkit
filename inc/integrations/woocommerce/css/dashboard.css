@@ -1,0 +1,20 @@
+/* WooCommerce widgets on the WP Dashboard (index.php).
+
+   The WC adapter's admin.css is scoped to WooCommerce's own screens (products /
+   coupons / orders / settings) and doesn't load on the dashboard, so this small
+   file carries the dashboard-only WC widget fixes. Loaded by class-woocommerce.php
+   on `$screen->base === 'dashboard'` when WooCommerce is active.
+
+   Tier B. */
+
+
+/* "Finish setup" store-setup progress widget — WC hardcodes #757575 on the
+   progress wrapper's border and its label text; route both to tokens so the
+   widget reads in dark mode. */
+body.adminkit .dashboard-widget-finish-setup .progress-wrapper {
+	border-color: var(--ak-border);
+}
+
+body.adminkit .dashboard-widget-finish-setup .progress-wrapper > span {
+	color: var(--ak-text-muted);
+}
