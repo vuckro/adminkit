@@ -177,12 +177,12 @@ body.adminkit.acf-admin-page .acf-switch.-on {
 	border-color: var(--ak-primary);
 }
 
-/* Hide ACF's own checkmark SVG (field-states/checkbox-active.svg) on the
-   checkbox :before — the brand-yellow box marks the checked state, and the SVG
-   (built for ACF's blue) would clash on it. */
+/* Keep ACF's checkmark SVG (field-states/checkbox-active.svg) but recolor it
+   white for the yellow box — brightness(0) invert(1) turns the SVG white whatever
+   its source color, so no fragile path to a white asset is needed. */
 body.adminkit.acf-admin-page input[type="checkbox"]:checked:before,
 body.adminkit.acf-admin-page input[type="checkbox"]:focus:before {
-	display: none;
+	filter: brightness(0) invert(1);
 }
 
 /* Checkbox/radio hover — ACF flashes a pale-blue #ebf5fa fill + #0783be
