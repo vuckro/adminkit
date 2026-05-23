@@ -40,16 +40,15 @@ body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
 	font-weight: 600;
 }
 
-/* Status line for plugins — the familiar left-edge accent, color-coded by state.
-   Restated here directly because the per-cell box-shadow reset above zeroes it:
-   green = active, grey = inactive. Update rows keep their warning-tinted message
-   row below as the cue. */
-body.adminkit .wp-list-table.plugins tbody > tr.active > .check-column {
-	box-shadow: inset 3px 0 0 var(--ak-success);
-}
-
-body.adminkit .wp-list-table.plugins tbody > tr.inactive > .check-column {
-	box-shadow: inset 3px 0 0 var(--ak-text-muted);
+/* Left-edge indicator for active plugins — a slim --ak-primary
+   bar on the check-column. Covers both the WP default
+   `.check-column` and AME Pro's renamed `.ame-check-column`
+   (its plugin-visibility module swaps the class). Use border-left
+   with !important to beat the `.plugins tbody td/th` reset above
+   that nukes border-left with !important. */
+body.adminkit .wp-list-table.plugins tr.active th.check-column,
+body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
+	border-left: 4px solid var(--primary-t-5, var(--primary-t-4, var(--ak-primary-subtle))) !important;
 }
 
 /* Inactive plugins — keep the table surface, mute the title.

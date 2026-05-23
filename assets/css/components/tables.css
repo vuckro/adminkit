@@ -314,31 +314,3 @@ body.adminkit .check-column input:hover + label,
 body.adminkit .check-column label:hover {
 	background: transparent;
 }
-
-/* Row status line — a colored accent on the row's LEFT edge (the plugins
-   list's familiar active bar, here color-coded per post status). One inset
-   box-shadow per status, keyed off the class WP already puts on the <tr> — pure
-   CSS, no markup / JS / server change. An inset accent line, not a surface
-   shadow (allowed by the flat design rules). Rows with no status (other list
-   tables) get no line. Green = published, blue = scheduled, amber = draft /
-   pending, neutral = private, red = trash. */
-body.adminkit .wp-list-table tbody > tr.status-publish > .check-column {
-	box-shadow: inset 3px 0 0 var(--ak-success);
-}
-
-body.adminkit .wp-list-table tbody > tr.status-future > .check-column {
-	box-shadow: inset 3px 0 0 var(--ak-info);
-}
-
-body.adminkit .wp-list-table tbody > tr.status-draft > .check-column,
-body.adminkit .wp-list-table tbody > tr.status-pending > .check-column {
-	box-shadow: inset 3px 0 0 var(--ak-warning);
-}
-
-body.adminkit .wp-list-table tbody > tr.status-private > .check-column {
-	box-shadow: inset 3px 0 0 var(--ak-text-muted);
-}
-
-body.adminkit .wp-list-table tbody > tr.status-trash > .check-column {
-	box-shadow: inset 3px 0 0 var(--ak-error);
-}
