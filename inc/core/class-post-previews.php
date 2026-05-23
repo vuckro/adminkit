@@ -20,22 +20,30 @@
  *   "generating" placeholder until the screenshot is ready (it lands on the next
  *   view). That transient state is left as-is — kept deliberately simple.
  *
+ * ── Refresh ─────────────────────────────────────────────────────────────────
+ * Screenshots aren't frozen: the mShots request URL carries a coarse time bucket
+ * (default weekly — `adminkit/post_previews/refresh_interval`, in seconds), so it
+ * regenerates once per window. The URL is stable WITHIN a window, so the browser
+ * and mShots keep serving the cached image — it refreshes regularly without
+ * re-fetching on every page load. Set the interval to 0 to pin screenshots.
+ *
  * ── Modularity / the future settings ("CBI") page ───────────────────────────
  * The whole feature is gated by is_enabled(), which reads the
  * `post_previews_enabled` setting (registered here, default ON). The future
  * settings page only has to write
  *   adminkit_settings['post_previews_enabled'] = false
  * to switch it off — no code change. Which post types get the column is curated
- * through a filter, and the provider + image sizes are filterable too, so a
- * settings UI can drive any of them later without touching this class.
+ * through a filter, and the image sizes and refresh cadence are filterable too,
+ * so a settings UI can drive any of them later without touching this class.
  *
  * Filters:
- *   adminkit/post_previews/enabled      (bool)                         master on/off
- *   adminkit/post_previews/post_types   (string[] $types)              list tables that get the column
- *   adminkit/post_previews/thumb_size   (int[2] [w,h])                 column thumbnail px (mShots request)
- *   adminkit/post_previews/full_size    (int[2] [w,h])                 hover preview px (mShots request)
- *   adminkit/post_previews/thumb_url    (string $url, WP_Post, $w, $h) override the small URL
- *   adminkit/post_previews/full_url     (string $url, WP_Post, $w, $h) override the large URL
+ *   adminkit/post_previews/enabled          (bool)                         master on/off
+ *   adminkit/post_previews/post_types       (string[] $types)              list tables that get the column
+ *   adminkit/post_previews/thumb_size       (int[2] [w,h])                 column thumbnail px (mShots request)
+ *   adminkit/post_previews/full_size        (int[2] [w,h])                 hover preview px (mShots request)
+ *   adminkit/post_previews/refresh_interval (int $seconds)                 screenshot refresh window (0 = pin)
+ *   adminkit/post_previews/thumb_url        (string $url, WP_Post, $w, $h) override the small URL
+ *   adminkit/post_previews/full_url         (string $url, WP_Post, $w, $h) override the large URL
  *
  * The hover panel is built by a small inline footer script (like
  * AdminKit_Core_List_Table_Chrome) so the asset registry stays CSS-only.
@@ -152,7 +160,9 @@ class AdminKit_Post_Previews {
 			return $columns;
 		}
 
-		$label = '<span class="screen-reader-text">' . esc_html__( 'Preview', 'adminkit' ) . '</span>';
+		// Visible column header. English source string — translate to "Aperçu"
+		// etc. via the adminkit text domain (e.g. Loco Translate).
+		$label = esc_html__( 'Preview', 'adminkit' );
 
 		// On products, replace WC's product-image column; elsewhere, follow cb.
 		$replace = ( 'product' === self::$screen_pt && isset( $columns['thumb'] ) );
@@ -245,10 +255,18 @@ class AdminKit_Post_Previews {
 	 * @return string
 	 */
 	private static function mshots_url( $url, $w, $h ) {
-		return add_query_arg(
-			array( 'w' => $w, 'h' => $h ),
-			self::MSHOTS_BASE . rawurlencode( $url )
-		);
+		$args = array( 'w' => $w, 'h' => $h );
+
+		// Rotate the cache key once per interval so the screenshot refreshes
+		// instead of staying frozen forever — yet the URL is stable WITHIN the
+		// interval, so the browser and mShots keep serving the cached image (no
+		// re-fetch on every load). Default weekly; 0 disables the rotation.
+		$interval = (int) apply_filters( 'adminkit/post_previews/refresh_interval', WEEK_IN_SECONDS );
+		if ( $interval > 0 ) {
+			$args['v'] = (int) floor( time() / $interval );
+		}
+
+		return add_query_arg( $args, self::MSHOTS_BASE . rawurlencode( $url ) );
 	}
 
 	/**
