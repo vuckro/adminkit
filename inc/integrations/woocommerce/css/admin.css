@@ -129,6 +129,15 @@ body.adminkit .woocommerce-BlankState .woocommerce-BlankState-message {
 	color: var(--ak-text);
 }
 
+/* The big placeholder icon above the message — WC paints the glyph #ddd with
+   an embossed text-shadow (a white bottom highlight that inverts wrong on
+   dark). Route the glyph to the border token; drop the shadow (AdminKit is
+   flat — no shadow tokens). */
+body.adminkit .woocommerce-BlankState .woocommerce-BlankState-message::before {
+	color: var(--ak-border);
+	text-shadow: none;
+}
+
 
 /* ===== Marketplace suggestions ===== */
 /* The "Tools for your store" promo cards under blank-state lists and in the
