@@ -15,14 +15,17 @@
  *    (?bricks=run, builder iframe, etc.) we skip every restyle so the
  *    builder UI stays pristine.
  *
- * Theme-toggle sync with Bricks is intentionally **not** done here.
- * Bricks's frontend JS owns `data-brx-theme` + `brx_mode` and a
- * MutationObserver bridge against it caused a feedback loop that
- * broke frontend interactivity. AdminKit's toggle uses its own
- * `data-adminkit-theme` + `adminkit-theme` so the two systems coexist
- * without interfering. Users who want sync can build their own bridge
- * via the `adminkit/theme_attribute` / `adminkit/theme_storage_key`
- * filters.
+ *  - **Frontend theme sync.** Bricks owns the site's light/dark mode on
+ *    the frontend via `data-brx-theme` + `brx_mode`. Left alone, AdminKit's
+ *    admin-bar mode runs on its own `data-adminkit-theme` and drifts out of
+ *    sync (it falls back to `prefers-color-scheme` while Bricks uses the
+ *    project's default mode, so the bar can read inverted). print_theme_bridge()
+ *    fixes this on the frontend only: a **one-way, read-only** mirror copies
+ *    `data-brx-theme` onto `data-adminkit-theme`, and the bar's sun/moon button
+ *    drives Bricks (writes `data-brx-theme` + `brx_mode`) so there is a single
+ *    source of truth. It never writes back into AdminKit's own state, so the
+ *    feedback loop a two-way bridge once caused can't recur. In wp-admin (where
+ *    Bricks doesn't theme anything) AdminKit's own toggle is untouched.
  *
  * Removing this folder removes Bricks support entirely; nothing else
  * in the plugin references Bricks.
@@ -108,6 +111,16 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			'condition' => array( __CLASS__, 'owns_screen' ),
 		) );
 
+		// Frontend dark-mode token bridge — re-points the admin bar's dark
+		// tokens at Bricks's live semantics so it follows the site's mode
+		// instead of the wp-admin inverse ramp (which double-inverts here).
+		AdminKit_Assets::register( array(
+			'handle'  => 'adminkit-bricks-frontend-mode',
+			'src'     => 'inc/integrations/bricks/css/frontend-mode.css',
+			'deps'    => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context' => 'frontend',
+		) );
+
 		// "Edit with Bricks" CTAs render on post-edit screens (classic
 		// editor wrapper, block editor toolbar, in-canvas notice).
 		// Scoped to $screen->base === 'post' which covers post.php +
@@ -133,6 +146,51 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	protected static function boot() {
 		add_filter( 'adminkit/should_load', array( __CLASS__, 'bypass_builder' ), 10, 2 );
 		add_filter( 'adminkit/extra_tokens_handle', array( __CLASS__, 'provide_tokens' ), 10, 2 );
+
+		// Priority 2: register the observer before Bricks's own inline mode
+		// script (printed with the head scripts, ~priority 9) sets the attribute,
+		// so the first flip is caught and the bar paints in sync.
+		add_action( 'wp_head', array( __CLASS__, 'print_theme_bridge' ), 2 );
+	}
+
+	/**
+	 * Print the frontend theme bridge (see the class header for the rationale).
+	 *
+	 * One-way, read-only: `data-brx-theme` -> `data-adminkit-theme`. The admin
+	 * bar's sun/moon button is rerouted (capture-phase, so it preempts AdminKit's
+	 * own handler) to flip Bricks's mode instead of AdminKit's, keeping Bricks the
+	 * single source of truth. Skipped in wp-admin and inside the builder.
+	 *
+	 * @return void
+	 */
+	public static function print_theme_bridge() {
+		if ( is_admin() || self::is_builder() ) {
+			return;
+		}
+		$attr = AdminKit_Theme_Toggle::attribute();
+		$node = AdminKit_Theme_Toggle::NODE_ID;
+		?>
+<script id="adminkit-bricks-theme-bridge">
+(function(){
+	var d = document.documentElement;
+	var ATTR = <?php echo wp_json_encode( $attr ); ?>;
+	var SEL = '#wp-admin-bar-<?php echo esc_js( $node ); ?> a';
+	function brx(){ return d.getAttribute('data-brx-theme'); }
+	function sync(){ var m = brx(); if (m === 'dark' || m === 'light') d.setAttribute(ATTR, m); }
+	sync();
+	new MutationObserver(sync).observe(d, { attributes:true, attributeFilter:['data-brx-theme'] });
+	document.addEventListener('click', function(e){
+		var a = e.target.closest && e.target.closest(SEL);
+		if (!a) return;
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		var n = brx() === 'dark' ? 'light' : 'dark';
+		d.setAttribute('data-brx-theme', n);
+		try { localStorage.setItem('brx_mode', n); } catch (err) {}
+	}, true);
+})();
+</script>
+		<?php
 	}
 
 	/**

@@ -1,0 +1,36 @@
+/* Bricks frontend dark-mode token bridge.
+   ======================================================================
+   In wp-admin, AdminKit's dark block maps --ak-* onto the provider INVERSE
+   ramp (--neutral-d-N), because Bricks's own light/dark toggle never fires
+   there — the admin is always a light context, so the inverse ramp yields
+   the dark palette (see assets/css/tokens.css header).
+
+   On the FRONTEND that assumption breaks: Bricks DOES flip its semantic
+   tokens per mode (it generates `:root[data-brx-theme="dark"] { --surface: … }`),
+   so the inverse ramp inverts a second time and the admin bar reads LIGHT
+   while the site is dark.
+
+   Fix: when AdminKit is in dark mode here, point the surface/text/border
+   family back at Bricks's LIVE semantics — the same mappings AdminKit's
+   light :root block uses. Bricks has already flipped those to dark, so the
+   bar matches the site. Loaded only on the frontend with Bricks active, so
+   wp-admin keeps the inverse-ramp behaviour untouched. Accent, hover tint
+   and elevation shadow are left to the dark block (correct as-is on a dark
+   bar). Fallbacks mirror the light block so it degrades cleanly if Bricks
+   doesn't define a given semantic. */
+
+:root[data-adminkit-theme="dark"] {
+	--ak-bg: var(--background, hsl(0, 0%, 98%));
+	--ak-surface: var(--surface, hsl(0, 0%, 96%));
+	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
+	--ak-input-bg: var(--field-bg, hsl(0, 0%, 100%));
+
+	--ak-border: var(--border, hsl(0, 0%, 89%));
+	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
+
+	--ak-text: var(--text, hsl(0, 0%, 32%));
+	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%));
+	--ak-heading: var(--heading, hsl(0, 0%, 18%));
+
+	--ak-secondary: var(--secondary, hsl(0, 0%, 50%));
+}
