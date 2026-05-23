@@ -296,7 +296,7 @@ body.adminkit .alternate {
 
 body.adminkit .wp-list-table .check-column {
 	width: 2.2em;
-	padding: 10px 0 10px 14px;
+	padding: 10px 0 10px 10px;
 	vertical-align: middle;
 }
 
@@ -315,29 +315,17 @@ body.adminkit .check-column label:hover {
 	background: transparent;
 }
 
-/* Row status diode — a small colored dot at each row's leading edge, driven
+/* Row status indicator — a colored accent line on each row's LEFT edge (the
+   plugins list's familiar active bar, now unified for every status). Driven
    ENTIRELY by the class WP already puts on the <tr>: status-* on post-type
-   lists (this file) and .active / .inactive on the plugins list (mapped in
-   screens/plugins.css). Pure CSS — no JS, no markup, no server change. The
-   color rides a --ak-diode custom property set per status on the row; it
-   inherits down to the check-column's ::before. Rows with no mapped status set
-   nothing, so var(--ak-diode, transparent) leaves the dot invisible — the cue
-   only appears where a status exists. Drawn in the check-column so it sits at
-   the row's start on every list table. */
-body.adminkit .wp-list-table tbody .check-column {
-	position: relative;
-}
-
-body.adminkit .wp-list-table tbody .check-column::before {
-	content: "";
-	position: absolute;
-	left: 3px;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 8px;
-	height: 8px;
-	border-radius: var(--ak-radius-full);
-	background: var(--ak-diode, transparent);
+   lists (color map below) + .active / .inactive on plugins (screens/plugins.css).
+   Pure CSS — no JS, no markup, no server change: an inset box-shadow on the
+   first cell whose color rides the --ak-diode custom property. Rows with no
+   mapped status keep --ak-diode transparent, so the line stays invisible there
+   — the cue only shows where a status exists. (An inset accent line, not a
+   surface shadow — allowed by the flat design rules.) */
+body.adminkit .wp-list-table tbody > tr > .check-column {
+	box-shadow: inset 3px 0 0 var(--ak-diode, transparent);
 }
 
 /* Post-type statuses → diode color (green live, blue scheduled, amber
