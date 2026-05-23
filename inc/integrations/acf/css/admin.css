@@ -259,3 +259,28 @@ body.adminkit.acf-admin-page #poststuff .postbox-header h3,
 body.adminkit.acf-admin-page .acf-postbox-header h2 {
 	color: var(--ak-heading) !important;
 }
+
+/* ----- 11. Editor tab bars (.acf-tab-wrap — e.g. Advanced Settings) -----
+   ACF paints the bar #f9fafb with a dark #1d2939 bottom rule + an #eaecf0 line
+   under the tabs, and pulls it up 48px (top:-48px) so it overlaps the postbox
+   header — which reads as sitting too high. .inside has padding-top:0, so
+   top:0 drops the bar flush under the header; ACF's left/width full-width
+   breakout is left untouched. */
+body.adminkit.acf-admin-page .acf-tab-wrap {
+	background: var(--ak-elevated);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.acf-admin-page .acf-tab-wrap .acf-tab-group {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.acf-admin-page .postbox-container .acf-tab-wrap {
+	top: 0;
+}
+
+/* ----- 12. Tools page — Export / Import field areas hardcode #fff. ACF's id
+   gives the rule (1,2,0), so keep the id to win. ----- */
+body.adminkit.acf-admin-page #acf-admin-tools .acf-meta-box-wrap .acf-fields {
+	background: var(--ak-surface);
+}
