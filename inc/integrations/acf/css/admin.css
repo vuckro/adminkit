@@ -673,6 +673,16 @@ body.adminkit.acf-admin-page #acf-field-group-fields .acf-input-sub {
 /* Flexible Content layout settings (#fff layouts, #f9fafb head, #eaecf0 rule). */
 body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field.acf-field-setting-fc_layout {
 	background-color: var(--ak-surface);
+	border-color: var(--ak-border) !important;
+}
+
+/* FC layout duplicate/delete are tertiary buttons (ACF: #fff !important). Keep
+   them neutral — surface bg, text label (the .acf-btn rule forces the pale
+   primary label with !important, so override it too). */
+body.adminkit.acf-admin-page.post-type-acf-field-group button.acf-btn.acf-btn-tertiary.acf-field-setting-fc-duplicate,
+body.adminkit.acf-admin-page.post-type-acf-field-group button.acf-btn.acf-btn-tertiary.acf-field-setting-fc-delete {
+	background-color: var(--ak-surface) !important;
+	color: var(--ak-text) !important;
 }
 
 body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-settings-fc_head {
