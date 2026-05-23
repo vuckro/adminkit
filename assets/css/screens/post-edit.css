@@ -18,6 +18,23 @@ body.adminkit:is(.post-php, .post-new-php) #titlediv #title {
 }
 
 
+/* ----- "Move to Trash" — a quiet link, not a loud red action -----
+   In the Publish box, WP paints the delete link red and prominent. Tone it to a
+   muted link (Shopify-style sober destructive action) that only reveals its red
+   on hover/focus, so the box's primary action (Update) stays the focal point. */
+body.adminkit:is(.post-php, .post-new-php) #delete-action .submitdelete {
+	color: var(--ak-text-muted);
+	text-decoration: none;
+	font-size: var(--ak-text-xs);
+}
+
+body.adminkit:is(.post-php, .post-new-php) #delete-action .submitdelete:hover,
+body.adminkit:is(.post-php, .post-new-php) #delete-action .submitdelete:focus {
+	color: var(--ak-error);
+	text-decoration: underline;
+}
+
+
 /* ----- Bricks classic-editor fallback wrapper ----- */
 body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container {
 	background-color: var(--ak-surface);
