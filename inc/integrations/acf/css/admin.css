@@ -189,6 +189,13 @@ body.adminkit.acf-admin-page .acf-table {
 	border-color: var(--ak-border);
 }
 
+body.adminkit.acf-admin-page .acf-table > tbody > tr > th,
+body.adminkit.acf-admin-page .acf-table > tbody > tr > td,
+body.adminkit.acf-admin-page .acf-table > thead > tr > th,
+body.adminkit.acf-admin-page .acf-table > thead > tr > td {
+	background: var(--ak-surface);
+}
+
 body.adminkit.acf-admin-page .acf-thead {
 	border-bottom-color: var(--ak-border);
 	color: var(--ak-heading);
@@ -352,11 +359,19 @@ body.adminkit.acf-admin-page .acf-tab-wrap .acf-tab-group li.active a {
 	border-bottom-color: var(--ak-primary);
 }
 
+body.adminkit.acf-admin-page .acf-field-settings-tab-bar li a:hover,
+body.adminkit.acf-admin-page .acf-tab-wrap .acf-tab-group li a:hover {
+	color: var(--ak-heading);
+}
+
 body.adminkit.acf-admin-page .postbox-container .acf-tab-wrap {
-	position: relative;
-	top: -15px;
-	left: -25px;
-	width: calc(100% + 200px);
+	position: static;
+	background: transparent;
+}
+
+/* "Regenerate labels" bar (post-type / taxonomy / options editors). */
+body.adminkit.acf-admin-page .acf-regenerate-labels-bar {
+	border-bottom-color: var(--ak-border);
 }
 
 /* ----- 12. Tools page — Export / Import field areas hardcode #fff. ACF's id
@@ -405,8 +420,9 @@ body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object .handl
    blue links. Route to a neutral raised handle + a thin brand left-accent on the
    settings panel; links go heading (delete stays danger). ACF's link colors are
    !important, so the overrides match. */
-body.adminkit.acf-admin-page .acf-field-object.open > .handle {
-	background: var(--ak-elevated);
+body.adminkit.acf-admin-page .acf-field-object.open > .handle,
+body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object.open .handle {
+	background: var(--ak-primary-subtle);
 	border-color: var(--ak-border);
 	color: var(--ak-heading);
 }
@@ -426,6 +442,7 @@ body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object.open {
 }
 
 body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object .settings {
+	background-color: var(--ak-surface);
 	border-left-color: var(--ak-primary);
 }
 
