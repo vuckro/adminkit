@@ -8,20 +8,16 @@
  * thumbnail opens a larger floating preview, so you can eyeball a page before
  * opening it — no need to leave wp-admin to remember what a page looks like.
  *
- * ── Thumbnail source (the "provider") ───────────────────────────────────────
- *   'mshots'    WordPress.com's mShots service screenshots the live URL. The
- *               default on a public site.
- *               ⚠ mShots runs on wp.com's servers and CANNOT reach a local dev
- *               host (localhost, *.local, *.test, private IPs). On those hosts,
- *               and for any non-published post (mShots can't shoot a non-public
- *               URL), the provider falls back to 'featured' so something useful
- *               still shows. Expose the site (e.g. Local's "Live Link") to get
- *               real screenshots in development.
- *   'featured'  The post's featured image.
+ * ── Thumbnail source ────────────────────────────────────────────────────────
+ * Always a WordPress.com mShots screenshot of the post's own permalink — the
+ * actual rendered page, never the featured image. A post with no public URL
+ * shows a flat placeholder; if mShots itself fails the cell degrades to that
+ * same placeholder rather than a broken image.
  *
- * Whatever the provider, the browser-side <img> degrades gracefully:
- *   primary src → (onerror) featured image → (onerror) a flat placeholder box,
- * so a missing screenshot never shows a broken image.
+ *   ⚠ mShots runs on wp.com's servers, so it can only reach a PUBLIC URL. On a
+ *   local dev host (localhost, *.local, …) it returns a generic placeholder, not
+ *   your page — test on a public site, or remap the URL via the thumb_url /
+ *   full_url filters (or Local's "Live Link") to preview screenshots in dev.
  *
  * ── Modularity / the future settings ("CBI") page ───────────────────────────
  * The whole feature is gated by is_enabled(), which reads the
@@ -35,7 +31,6 @@
  * Filters:
  *   adminkit/post_previews/enabled      (bool)                         master on/off
  *   adminkit/post_previews/post_types   (string[] $types)              list tables that get the column
- *   adminkit/post_previews/provider     (string $provider, WP_Post)    'mshots' | 'featured'
  *   adminkit/post_previews/thumb_size   (int[2] [w,h])                 column thumbnail px (mShots request)
  *   adminkit/post_previews/full_size    (int[2] [w,h])                 hover preview px (mShots request)
  *   adminkit/post_previews/thumb_url    (string $url, WP_Post, $w, $h) override the small URL
@@ -121,10 +116,18 @@ class AdminKit_Post_Previews {
 		}
 		$pt = $screen->post_type;
 
-		// In WP these dynamic hooks fire for EVERY post type, pages included
-		// (the per-type filter/action is the last one core runs), so a single
-		// pair covers posts, pages and CPTs with no risk of a double render.
-		add_filter( "manage_{$pt}_posts_columns", array( __CLASS__, 'add_column' ) );
+		// Add the column on the SCREEN-ID filter at a late priority. WP seeds
+		// the list table's own columns into `manage_{$screen->id}_columns` at
+		// priority 0, so this is the last word on the column set — running at 99
+		// lands our column even when a host rebuilds the set from scratch (e.g.
+		// WooCommerce's product table, whose define_columns() would otherwise
+		// drop ours or shove it to the far right).
+		add_filter( "manage_{$screen->id}_columns", array( __CLASS__, 'add_column' ), 99 );
+
+		// The custom-column render action fires for every post type, pages
+		// included (the per-type action is the last one core runs), for any
+		// non-built-in column present in the final set — so a single hook
+		// covers posts, pages and CPTs with no risk of a double render.
 		add_action( "manage_{$pt}_posts_custom_column", array( __CLASS__, 'render_column' ), 10, 2 );
 
 		add_action( 'admin_footer', array( __CLASS__, 'print_script' ) );
@@ -138,6 +141,10 @@ class AdminKit_Post_Previews {
 	 * @return array
 	 */
 	public static function add_column( $columns ) {
+		if ( isset( $columns[ self::COLUMN ] ) ) {
+			return $columns;
+		}
+
 		$label = '<span class="screen-reader-text">' . esc_html__( 'Preview', 'adminkit' ) . '</span>';
 
 		if ( ! isset( $columns['cb'] ) ) {
@@ -169,8 +176,9 @@ class AdminKit_Post_Previews {
 	}
 
 	/**
-	 * Build the thumbnail markup for a post. URLs are escaped here; the
-	 * browser-side fallback chain lives in the data-* attributes.
+	 * Build the thumbnail markup for a post — always an mShots screenshot of
+	 * the post's own permalink (never the featured image). A post with no
+	 * public URL renders a flat placeholder. URLs are escaped here.
 	 *
 	 * @param int $post_id
 	 * @return string
@@ -181,55 +189,29 @@ class AdminKit_Post_Previews {
 			return '';
 		}
 
+		$permalink = get_permalink( $post );
+		if ( ! $permalink ) {
+			return '<span class="ak-preview ak-preview--empty" aria-hidden="true"></span>';
+		}
+
 		list( $tw, $th ) = self::thumb_size();
 		list( $fw, $fh ) = self::full_size();
 
-		$feat_thumb = (string) get_the_post_thumbnail_url( $post, 'medium' );
-		$feat_full  = (string) get_the_post_thumbnail_url( $post, 'large' );
+		$thumb = apply_filters( 'adminkit/post_previews/thumb_url', self::mshots_url( $permalink, $tw, $th ), $post, $tw, $th );
+		$full  = apply_filters( 'adminkit/post_previews/full_url', self::mshots_url( $permalink, $fw, $fh ), $post, $fw, $fh );
 
-		if ( 'featured' === self::provider_for( $post ) ) {
-			$thumb = $feat_thumb;
-			$full  = $feat_full;
-		} else {
-			$permalink = get_permalink( $post );
-			$thumb     = $permalink ? self::mshots_url( $permalink, $tw, $th ) : $feat_thumb;
-			$full      = $permalink ? self::mshots_url( $permalink, $fw, $fh ) : $feat_full;
-		}
-
-		$thumb = apply_filters( 'adminkit/post_previews/thumb_url', $thumb, $post, $tw, $th );
-		$full  = apply_filters( 'adminkit/post_previews/full_url', $full, $post, $fw, $fh );
-
-		// No screenshot and no featured image → flat placeholder, nothing to hover.
-		if ( '' === $thumb && '' === $feat_thumb ) {
+		if ( '' === (string) $thumb ) {
 			return '<span class="ak-preview ak-preview--empty" aria-hidden="true"></span>';
-		}
-		if ( '' === $thumb ) {
-			$thumb = $feat_thumb;
 		}
 
 		return sprintf(
-			'<span class="ak-preview" data-ak-full="%1$s" data-ak-full-fallback="%2$s">'
-				. '<img class="ak-preview__thumb" src="%3$s" data-ak-fallback="%4$s" '
+			'<span class="ak-preview" data-ak-full="%1$s">'
+				. '<img class="ak-preview__thumb" src="%2$s" '
 				. 'width="56" height="42" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="" />'
 				. '</span>',
 			esc_url( $full ),
-			esc_url( $feat_full ),
-			esc_url( $thumb ),
-			esc_url( $feat_thumb )
+			esc_url( $thumb )
 		);
-	}
-
-	/**
-	 * Decide the thumbnail source for a post. mShots everywhere except where
-	 * it can't reach: local hosts and non-published posts fall back to the
-	 * featured image.
-	 *
-	 * @param \WP_Post $post
-	 * @return string 'mshots' | 'featured'
-	 */
-	private static function provider_for( $post ) {
-		$provider = ( self::is_local_site() || 'publish' !== get_post_status( $post ) ) ? 'featured' : 'mshots';
-		return apply_filters( 'adminkit/post_previews/provider', $provider, $post );
 	}
 
 	/**
@@ -299,42 +281,6 @@ class AdminKit_Post_Previews {
 	}
 
 	/**
-	 * Whether this site is a local/dev host mShots can't reach. Conservative
-	 * on purpose — a public site must always resolve to mShots. Memoized.
-	 *
-	 * @return bool
-	 */
-	private static function is_local_site() {
-		static $local = null;
-		if ( null !== $local ) {
-			return $local;
-		}
-
-		if ( function_exists( 'wp_get_environment_type' ) && 'local' === wp_get_environment_type() ) {
-			return $local = true;
-		}
-
-		$host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
-		$host = strtolower( $host );
-		if ( '' === $host ) {
-			return $local = false;
-		}
-		if ( in_array( $host, array( 'localhost', '127.0.0.1', '::1' ), true ) ) {
-			return $local = true;
-		}
-		foreach ( array( '.local', '.test', '.localhost', '.wip', '.example', '.invalid' ) as $tld ) {
-			if ( substr( $host, -strlen( $tld ) ) === $tld ) {
-				return $local = true;
-			}
-		}
-		// RFC 1918 private ranges (10/8, 172.16/12, 192.168/16).
-		if ( preg_match( '/^(10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.)/', $host ) ) {
-			return $local = true;
-		}
-		return $local = false;
-	}
-
-	/**
 	 * Print the inline footer script that builds the hover preview panel.
 	 * No-op when AdminKit isn't styling this screen.
 	 *
@@ -353,13 +299,12 @@ class AdminKit_Post_Previews {
 	var LOADING_LABEL = '<?php echo $loading_label; ?>';
 	var BROKEN_LABEL = '<?php echo $broken_label; ?>';
 
-	// Thumbnail fallback chain: primary src -> featured image -> broken marker.
+	// If a screenshot fails to load, flag its cell as broken (a flat
+	// placeholder) instead of showing the browser's broken-image glyph.
 	function wireThumb(img) {
 		if (img.dataset.akWired) { return; }
 		img.dataset.akWired = '1';
 		img.addEventListener('error', function () {
-			var fb = img.getAttribute('data-ak-fallback');
-			if (fb && img.getAttribute('src') !== fb) { img.setAttribute('src', fb); return; }
 			var span = img.closest('.ak-preview');
 			if (span) { span.classList.add('ak-preview--broken'); }
 		});
@@ -402,16 +347,14 @@ class AdminKit_Post_Previews {
 		clearTimeout(hideTimer);
 		current = span;
 		var full = span.getAttribute('data-ak-full');
-		var fb = span.getAttribute('data-ak-full-fallback');
 		pop.className = 'is-visible is-loading';
 		popImg.onload = function () { pop.classList.remove('is-loading'); position(span); };
 		popImg.onerror = function () {
-			if (fb && popImg.getAttribute('src') !== fb) { popImg.setAttribute('src', fb); return; }
 			pop.classList.remove('is-loading');
 			pop.classList.add('is-broken');
 			position(span);
 		};
-		popImg.setAttribute('src', full || fb || '');
+		popImg.setAttribute('src', full || '');
 		position(span);
 	}
 
