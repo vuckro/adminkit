@@ -68,6 +68,16 @@ body.adminkit .woocommerce_options_panel .options_group {
 	border-bottom-color: var(--ak-border);
 }
 
+/* "hr-section" divider lines (the rule flanking a centred sub-heading, e.g. in
+   the coupon usage-restriction group) — WC draws them as 1px ::before/::after
+   pseudo-bars filled #eee (a background acting as a border). The selector is
+   ID-scoped (#usage_restriction_coupon_data, spec 1,3,1), so match the ID +
+   body scope (1,4,2) to recolor the bars to the divider token. */
+body.adminkit #usage_restriction_coupon_data.woocommerce_options_panel .options_group .hr-section::before,
+body.adminkit #usage_restriction_coupon_data.woocommerce_options_panel .options_group .hr-section::after {
+	background-color: var(--ak-border);
+}
+
 /* Inline notices inside the data panels (variations / inventory messages). */
 body.adminkit #variable_product_options .notice,
 body.adminkit #variable_product_options #message,
