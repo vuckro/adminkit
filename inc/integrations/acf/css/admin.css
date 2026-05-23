@@ -577,6 +577,11 @@ body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object .settin
 	border-left-color: var(--ak-primary);
 }
 
+/* Nested sub-field container (repeater/group/flexible content). */
+body.adminkit.acf-admin-page #acf-field-group-fields .acf-input-sub {
+	border-color: var(--ak-border);
+}
+
 /* The forest of #eaecf0 hairlines (settings splits, footers, setting rows,
    conditional-logic + term-search dividers). */
 body.adminkit.acf-admin-page .acf-field-settings-split,
