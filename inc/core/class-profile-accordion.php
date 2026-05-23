@@ -77,7 +77,7 @@ class AdminKit_Profile_Accordion {
 		// for the core headings) so the JS matches sections by their *rendered*
 		// text — locale-proof, since WP printed those same strings.
 		$labels = array(
-			'my_account'    => __( 'Account', 'adminkit' ),
+			'my_account'    => __( 'Informations', 'adminkit' ),
 			'more_settings' => __( 'Settings', 'adminkit' ),
 			'personal'      => __( 'Personal Options' ),
 			'name'          => __( 'Name' ),
