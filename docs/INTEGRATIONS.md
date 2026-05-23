@@ -18,7 +18,6 @@ inc/integrations/{slug}/class-{slug}.php
 | `bricks/class-bricks.php`                  | `AdminKit_Integration_Bricks`       |
 | `gutenberg/class-gutenberg.php`            | `AdminKit_Integration_Gutenberg`    |
 | `woocommerce/class-woocommerce.php`        | `AdminKit_Integration_Woocommerce`  |
-| `fluentcart/class-fluentcart.php`          | `AdminKit_Integration_Fluentcart`   |
 | `fluentform/class-fluentform.php`          | `AdminKit_Integration_Fluentform`   |
 | `slim-seo/class-slim-seo.php`              | `AdminKit_Integration_Slim_Seo`     |
 | `acf/class-acf.php`                         | `AdminKit_Integration_Acf`          |
@@ -161,7 +160,7 @@ php bin/adapter-scan.php ../<host-plugin>/assets --slug=foo --emit
 
 The cheapest adapter to maintain is the one that never touches the host's selectors. When you recolor a host UI, reach for these in order — earlier is more stable:
 
-1. **The host's own CSS variables** (`--fc-*`, `--el-*`). A near-stable API: remap them to `--ak-*` and the host follows, dark mode included. **Zero `!important`.** This is a *Tier A* adapter — see [fluent-crm](../inc/integrations/fluent-crm/css/admin.css).
+1. **The host's own CSS variables** (e.g. `--wpcode-*`). A near-stable API: remap them to `--ak-*` and the host follows, dark mode included. **Zero `!important`.** This is a *Tier A* adapter — see [wpcode](../inc/integrations/wpcode/css/admin.css).
 2. **Shallow utility / state classes** (`.bg-indigo-600`) — only when the host has no variable layer (e.g. a Tailwind app).
 3. **Deep component chains** (`.el-tabs .el-tabs__item.is-active`) — last resort. Brittle: they break the day the host renames a class.
 
@@ -235,6 +234,6 @@ Integrations can also expose their own filters for downstream customization. Nam
 - [`inc/integrations/bricks/class-bricks.php`](../inc/integrations/bricks/class-bricks.php) — Bricks adapter, covers token injection + builder bypass.
 - [`inc/integrations/gutenberg/class-gutenberg.php`](../inc/integrations/gutenberg/class-gutenberg.php) — block editor restyle, hooks the `editor` asset context.
 - [`inc/integrations/acf/class-acf.php`](../inc/integrations/acf/class-acf.php) — ACF 6.x adapter; a clean Tier B example (host hardcodes hex, no CSS vars), screen-scoped via the host's `.acf-admin-page` body class and version-gated on the major.
-- [`inc/integrations/fluent-crm/class-fluent-crm.php`](../inc/integrations/fluent-crm/class-fluent-crm.php) — the minimal Tier A example: remaps the host's `--fc-*` variables and nothing else, so dark mode and brand color come for free with zero `!important`.
+- [`inc/integrations/wpcode/class-wpcode.php`](../inc/integrations/wpcode/class-wpcode.php) — a minimal Tier A example: remaps the host's `--wpcode-*` variables to tokens, so dark mode and brand color come for free with zero `!important`.
 - [`inc/integrations/woocommerce/`](../inc/integrations/woocommerce) — the most comprehensive adapter: the wc-admin React app plus the classic order/settings/tool screens, done by token remap rather than selector overrides (run the audit for its current budget).
 - [`inc/integrations/flying-press/class-flying-press.php`](../inc/integrations/flying-press/class-flying-press.php) — Tier B against a Tailwind app compiled with `important: true`; every override carries `!important` by necessity and the adapter is version-gated.

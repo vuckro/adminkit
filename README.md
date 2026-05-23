@@ -154,7 +154,7 @@ adminkit/
 │       ├── gutenberg/                    Block / site / widgets / nav editor restyle
 │       ├── woocommerce/                  wc-admin (React) + classic-screen restyle
 │       ├── acf/                          ACF 6.x field UI
-│       ├── fluent-crm/ · fluent-smtp/ · fluentform/ · fluentcart/ · fluent-booking/
+│       ├── fluent-smtp/ · fluentform/ · fluent-booking/
 │       ├── slim-seo/ · happyfiles/ · flying-press/ · wp-migrate-db-pro/
 │       └── admin-menu-editor/            Admin Menu Editor + Choices.js overrides
 └── assets/css/

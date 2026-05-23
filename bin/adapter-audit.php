@@ -31,7 +31,6 @@
 $BUDGET = array(
 	'fluent-booking'    => 101, // ApexCharts chart text/grid/tooltip + Element Plus (host inline styles)
 	'flying-press'      => 41,
-	'fluentcart'        => 27,
 	'gutenberg'         => 8,
 	'fluent-smtp'       => 6,
 	'happyfiles'        => 6,
