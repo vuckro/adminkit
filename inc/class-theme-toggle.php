@@ -170,9 +170,12 @@ class AdminKit_Theme_Toggle {
 	 * keeps the normal white editor and only dark mode recolors it.
 	 *
 	 * Values are literal (the iframe has no access to tokens.css) and track the
-	 * AdminKit dark neutrals: surface #1c1c1c, text #bfbfbf, heading #dbdbdb,
-	 * border #2e2e2e, elevated #242424. Links use a readable blue rather than the
-	 * brand accent, which is poor as body-copy link color.
+	 * AdminKit dark neutrals: bg #121212, surface #1c1c1c, text #bfbfbf, heading
+	 * #dbdbdb, border #2e2e2e, elevated #242424. The editing well uses the bg tone
+	 * (recessed below the surface .wp-editor-container) so it reads with relief in
+	 * dark mode, mirroring the white-on-grey relief light mode gets for free.
+	 * Links use a readable blue rather than the brand accent, which is poor as
+	 * body-copy link color.
 	 *
 	 * @param array $init TinyMCE init settings.
 	 * @return array
@@ -181,8 +184,8 @@ class AdminKit_Theme_Toggle {
 		if ( ! is_admin() ) {
 			return $init;
 		}
-		$css = 'html.ak-editor-dark{background-color:#1c1c1c}'
-			. 'html.ak-editor-dark body#tinymce{background-color:#1c1c1c;color:#bfbfbf}'
+		$css = 'html.ak-editor-dark{background-color:#121212}'
+			. 'html.ak-editor-dark body#tinymce{background-color:#121212;color:#bfbfbf}'
 			. 'html.ak-editor-dark a{color:#6aa0ff}'
 			. 'html.ak-editor-dark h1,html.ak-editor-dark h2,html.ak-editor-dark h3,html.ak-editor-dark h4,html.ak-editor-dark h5,html.ak-editor-dark h6{color:#dbdbdb}'
 			. 'html.ak-editor-dark hr{border-color:#2e2e2e}'

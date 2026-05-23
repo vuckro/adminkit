@@ -52,6 +52,32 @@ body.adminkit #woocommerce-product-data ul.wc-tabs li:not(.active) a:hover {
 }
 
 
+/* ===== Product edit — sidebar action links as buttons ===== */
+
+/* "Add product gallery images" — an outline button instead of a bare link, so
+   the affordance in the Product gallery box reads as clickable. (The "Set
+   product image" link is left alone: it wraps the thumbnail once an image is
+   set, where button chrome would frame the image.) */
+body.adminkit.post-type-product .add_product_images a {
+	display: inline-block;
+	margin-top: 8px;
+	padding: 5px 11px;
+	border-radius: var(--ak-radius-s);
+	border: 1px solid var(--ak-border-strong);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+body.adminkit.post-type-product .add_product_images a:hover,
+body.adminkit.post-type-product .add_product_images a:focus {
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+
+
 /* ===== wc-admin layout header ===== */
 
 /* WC injects the wc-admin layout header (breadcrumbs + activity-panel icons)

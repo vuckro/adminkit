@@ -18,35 +18,66 @@ body.adminkit:is(.post-php, .post-new-php) #titlediv #title {
 }
 
 
-/* ----- "Move to Trash" — a quiet link, not a loud red action -----
-   In the Publish box, WP paints the delete link red and prominent. Tone it to a
-   muted link (Shopify-style sober destructive action) that only reveals its red
-   on hover/focus, so the box's primary action (Update) stays the focal point. */
-body.adminkit:is(.post-php, .post-new-php) #delete-action .submitdelete {
-	color: var(--ak-text-muted);
+/* ----- Publish box secondary actions as buttons -----
+   "Copy to a new draft" + "Move to Trash" become real buttons (vs WP's loud red
+   text link) so the footer reads as a clean action row: outline buttons on the
+   left, the primary Update on the right. Both share the secondary-button base;
+   Trash then takes the flat danger style (mirrors buttons.css .remove-site-icon). */
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-action .submitdelete,
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #duplicate-action .submitduplicate {
+	display: inline-block;
+	min-height: 30px;
+	padding: 0 10px;
+	line-height: 2.15;
+	border-radius: var(--ak-radius-s);
+	border: 1px solid var(--ak-border-strong);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	font-size: var(--ak-text-s);
+	font-weight: 500;
 	text-decoration: none;
-	font-size: var(--ak-text-xs);
 }
 
-body.adminkit:is(.post-php, .post-new-php) #delete-action .submitdelete:hover,
-body.adminkit:is(.post-php, .post-new-php) #delete-action .submitdelete:focus {
-	color: var(--ak-error);
-	text-decoration: underline;
-}
-
-/* "Copy to a new draft" (WooCommerce duplicate) — same quiet treatment as the
-   trash link, so the Publish box footer reads as one calm row of secondary
-   actions with Update as the only emphasized button. */
-body.adminkit:is(.post-php, .post-new-php) #duplicate-action .submitduplicate {
-	color: var(--ak-text-muted);
-	text-decoration: none;
-	font-size: var(--ak-text-xs);
-}
-
-body.adminkit:is(.post-php, .post-new-php) #duplicate-action .submitduplicate:hover,
-body.adminkit:is(.post-php, .post-new-php) #duplicate-action .submitduplicate:focus {
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #duplicate-action .submitduplicate:hover,
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #duplicate-action .submitduplicate:focus {
+	border-color: var(--ak-border-strong);
 	color: var(--ak-heading);
-	text-decoration: underline;
+}
+
+/* Move to Trash — flat danger button. */
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-action .submitdelete {
+	background: var(--ak-error-subtle);
+	border-color: color-mix(in srgb, var(--ak-error) 35%, transparent);
+	color: var(--ak-error);
+}
+
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-action .submitdelete:hover,
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-action .submitdelete:focus {
+	background: color-mix(in srgb, var(--ak-error) 16%, var(--ak-surface));
+	border-color: var(--ak-error);
+	color: var(--ak-error);
+}
+
+/* "+ Add new category / tag / brand" toggles — small outline buttons instead of
+   bare links, so the add-term affordance reads as a button (all taxonomy
+   metaboxes use .taxonomy-add-new). */
+body.adminkit:is(.post-php, .post-new-php) .taxonomy-add-new {
+	display: inline-block;
+	margin-top: 6px;
+	padding: 3px 9px;
+	border-radius: var(--ak-radius-s);
+	border: 1px solid var(--ak-border-strong);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+body.adminkit:is(.post-php, .post-new-php) .taxonomy-add-new:hover,
+body.adminkit:is(.post-php, .post-new-php) .taxonomy-add-new:focus {
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
 }
 
 /* Inline "Edit" toggles in the Publish box (next to Status / Visibility /
