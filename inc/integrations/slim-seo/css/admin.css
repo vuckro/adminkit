@@ -81,6 +81,8 @@ body.adminkit.settings_page_slim-seo .ss-tab {
 
 body.adminkit.settings_page_slim-seo .ss-tab:hover,
 body.adminkit.settings_page_slim-seo .ss-tab:focus {
+	background-color: transparent;
+	border-color: transparent;
 	color: var(--ak-primary);
 }
 
