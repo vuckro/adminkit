@@ -78,6 +78,59 @@ body.adminkit.post-type-product .add_product_images a:focus {
 }
 
 
+/* ===== Products list table — stock status pills + thumbnails ===== */
+
+/* Stock status (the `is_in_stock` column) — WC prints <mark class="instock|
+   outofstock|onbackorder">. Render each as a soft status pill with a leading
+   dot, mirroring the post-status / .subsubsub vocabulary: green in stock, red
+   out of stock, amber on backorder. The qty (e.g. " (5)") sits after the pill. */
+body.adminkit.post-type-product .wp-list-table td.column-is_in_stock mark {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 2px 9px;
+	border-radius: var(--ak-radius-full);
+	background: var(--ak-elevated);
+	color: var(--ak-text-muted);
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.6;
+}
+
+body.adminkit.post-type-product .wp-list-table td.column-is_in_stock mark::before {
+	content: "";
+	flex: none;
+	width: 6px;
+	height: 6px;
+	border-radius: var(--ak-radius-full);
+	background: currentColor;
+	opacity: 0.9;
+}
+
+body.adminkit.post-type-product .wp-list-table td.column-is_in_stock mark.instock {
+	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface));
+	color: var(--ak-success);
+}
+
+body.adminkit.post-type-product .wp-list-table td.column-is_in_stock mark.outofstock {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
+}
+
+body.adminkit.post-type-product .wp-list-table td.column-is_in_stock mark.onbackorder {
+	background: color-mix(in srgb, var(--ak-warning) 16%, var(--ak-surface));
+	color: var(--ak-warning);
+}
+
+/* Product thumbnails — give the small list image a token border + radius (S,
+   not full) so it reads as a framed product image. Covers the WC placeholder
+   too (also an <img> in .column-thumb). */
+body.adminkit.post-type-product .wp-list-table td.column-thumb img {
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+
+
 /* ===== wc-admin layout header ===== */
 
 /* WC injects the wc-admin layout header (breadcrumbs + activity-panel icons)
