@@ -226,13 +226,36 @@ body.adminkit ul.subsubsub {
 	overflow-x: auto;
 }
 
-/* tablenav (bulk actions + pagination row above + below list tables) —
-   WP defaults to 6px vertical margin which feels cramped against
-   the table. Bump to var(--ak-tablenav-gap, 24px) so the row
-   breathes; the token-with-fallback lets us swap from a single
-   place if we add a spacing scale later. */
+/* tablenav (bulk actions + filters + pagination, above & below list tables).
+   Lay the controls out in a SINGLE horizontal row that scrolls when narrow
+   instead of wrapping/stacking — matching the table and the .subsubsub strip.
+   WP floats the children (.actions left, .tablenav-pages right); flex supersedes
+   the floats, flex-shrink:0 keeps each control its natural size (so they overflow
+   → scroll rather than squashing), and WP's clearing <br> becomes a no-op.
+   Margin: WP defaults to a cramped 6px; bump to var(--ak-tablenav-gap, 24px). */
 body.adminkit .tablenav {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 8px;
+	overflow-x: auto;
 	margin: var(--ak-tablenav-gap, 24px) 0;
+}
+
+body.adminkit .tablenav br.clear {
+	display: none;
+}
+
+body.adminkit .tablenav .actions,
+body.adminkit .tablenav .tablenav-pages {
+	float: none;
+	flex-shrink: 0;
+}
+
+/* Pagination sits at the right when the row has room; once it scrolls, the auto
+   margin collapses to 0 and it simply follows the controls. */
+body.adminkit .tablenav .tablenav-pages {
+	margin-left: auto;
 }
 
 /* tablenav (pagination row) */
