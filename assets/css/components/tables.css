@@ -170,14 +170,26 @@ body.adminkit .wp-list-table .row-actions span {
 	font-size: 0;
 }
 
+/* Normalize the two action element types to ONE identical box so they line up:
+   Edit / Trash / View are <a> (inline) but Quick Edit is a <button.button-link>
+   (inline-block, and a button doesn't inherit the font). Left as-is they computed
+   different heights/baselines and "Quick Edit" sat off the line. inline-flex +
+   the same font / padding / line-height makes every chip the same box. */
 body.adminkit .wp-list-table .row-actions a,
 body.adminkit .wp-list-table .row-actions button.button-link {
+	display: inline-flex;
+	align-items: center;
+	vertical-align: middle;
+	font-family: inherit;
 	font-size: var(--ak-text-xs);
+	line-height: 1.6;
 	color: var(--ak-text-muted);
 	padding: 2px 6px;
+	border: 0;
+	background: none;
 	border-radius: var(--ak-radius-s);
 	text-decoration: none;
-	line-height: 1.6;
+	cursor: pointer;
 }
 
 /* Hover/focus — neutral chip (Trash gets the danger chip below). The
