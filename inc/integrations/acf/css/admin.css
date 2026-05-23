@@ -630,6 +630,19 @@ body.adminkit.acf-admin-page a.acf-icon {
 	background-color: var(--ak-surface);
 }
 
+/* Error notices: standalone banner is solid red (#d94f4f); the field-level
+   variant is a pale tint. The field rule out-specifies the base, so each keeps
+   its weight. */
+body.adminkit.acf-admin-page .acf-notice.-error {
+	background: var(--ak-error);
+	border-color: var(--ak-error);
+}
+
+body.adminkit.acf-admin-page .acf-field .acf-notice.-error {
+	background: var(--ak-error-subtle);
+	border-color: color-mix(in srgb, var(--ak-error) 35%, transparent);
+}
+
 body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open {
 	border-top-color: var(--ak-border);
 }
