@@ -269,7 +269,9 @@ body.adminkit.acf-admin-page .select2-container--default .select2-results__optio
    carries .acf-admin-page) + the multi-select box and its #ebf5fa tag chips. */
 body.adminkit.acf-admin-page .select2-dropdown {
 	background-color: var(--ak-surface);
-	border-color: var(--ak-border);
+	/* !important: ACF rings the options-page dropdown with `border-color:
+	   #6bb5d8 !important`, which a plain token rule can't beat. */
+	border-color: var(--ak-border) !important;
 }
 
 body.adminkit.acf-admin-page .select2-container--default .select2-selection--multiple {
@@ -286,6 +288,27 @@ body.adminkit.acf-admin-page .acf-input .select2-container--focus,
 body.adminkit.acf-admin-page .rule-groups .select2-container--focus {
 	outline: 3px solid var(--ak-primary-subtle);
 	border-color: var(--ak-primary);
+}
+
+/* Field-type / schema picker dropdowns (.*-select-results) — group headers,
+   selected + highlighted options. ACF marks the option states with !important,
+   so the overrides do too. The [class*=] catches all four picker variants
+   (field-type / schema-property / schema-type / schema-output-format). */
+body.adminkit.acf-admin-page [class*="-select-results"] .select2-results__group {
+	background-color: var(--ak-elevated);
+	border-top-color: var(--ak-border);
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.acf-admin-page [class*="-select-results"] .select2-results__option[aria-selected="true"] {
+	background-color: var(--ak-primary-subtle) !important;
+	color: var(--ak-heading) !important;
+}
+
+body.adminkit.acf-admin-page [class*="-select-results"] .select2-results__option .select2-results__option--highlighted {
+	background-color: var(--ak-primary) !important;
+	color: var(--ak-on-accent) !important;
 }
 
 /* ----- 9. WP list tables on ACF screens -----
