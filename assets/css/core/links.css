@@ -7,13 +7,12 @@ body.adminkit a {
 	color: var(--ak-text);
 }
 
-/* Branded chip on link hover/focus. No !important — kept deliberately low so
-   structural link groups with their own (more specific) hovers — subsubsub
-   filters, row actions, admin menu, help tabs — win naturally and don't all
-   turn primary. Plain links still get the chip (this out-specifies WP). */
+/* Branded link hover/focus — primary color (+ border where a link carries one),
+   no background fill. No !important — kept deliberately low so structural link
+   groups with their own (more specific) hovers — subsubsub filters, row actions,
+   admin menu, help tabs — win naturally and don't all turn primary. */
 body.adminkit a:hover,
 body.adminkit a:focus {
-	background-color: var(--ak-primary-subtle);
 	border-color: var(--ak-primary);
 	color: var(--ak-primary);
 }
