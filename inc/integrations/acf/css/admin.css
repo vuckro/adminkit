@@ -296,6 +296,11 @@ body.adminkit.acf-admin-page .select2-dropdown {
 	border-color: var(--ak-border) !important;
 }
 
+body.adminkit.acf-admin-page .select2-container--default .select2-selection--single {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+}
+
 body.adminkit.acf-admin-page .select2-container--default .select2-selection--multiple {
 	background-color: var(--ak-surface);
 }
