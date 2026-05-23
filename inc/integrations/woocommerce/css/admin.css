@@ -593,6 +593,27 @@ body.adminkit.woocommerce_page_wc-settings .site-visibility-settings-slotfill .c
 	color: var(--ak-text-muted);
 }
 
+/* Private-link box (shown when "Share with a private link" is on) — WC hardcodes
+   #fff bg + #dcdcde border; route to tokens. */
+body.adminkit.woocommerce_page_wc-settings .site-visibility-settings-slotfill-private-link {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+/* Its copy/share button — a borderless text button. @wordpress/components draws
+   the outline as an inset box-shadow, so dropping it removes the border. */
+body.adminkit.woocommerce_page_wc-settings .site-visibility-settings-slotfill-private-link .components-button {
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+/* Radio dot — @wordpress/components paints the checked inner dot #fff, which is
+   low-contrast on the brand fill (and invisible on a light fill). Route it to
+   --ak-on-accent (near-black): readable on either the accent or a surface fill. */
+body.adminkit.woocommerce_page_wc-settings .components-radio-control__input[type="radio"]:checked::before {
+	background-color: var(--ak-on-accent);
+}
+
 
 /* ===== Shipping settings (zones / classes / methods tables) ===== */
 
