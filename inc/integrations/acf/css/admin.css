@@ -455,16 +455,26 @@ body.adminkit.acf-admin-page .acf-tab-wrap .acf-tab-group li a:hover {
 	color: var(--ak-heading);
 }
 
-/* Sit the tab bar in normal flow: drop ACF's -48px/-48px breakout pull (which
-   overlapped the header and needed z-index) and its calc() width overflow. */
+/* Cancel ACF's -48px/-48px breakout pull + calc() width overflow so the tab bar
+   sits in place. Keep position:relative (not static): ACF's tab JS and the
+   active-tab underline expect a positioned bar, and the regenerate-labels bar
+   (which SHARES ACF's breakout rule) must reset too — left pulled up it overlaps
+   the tabs and blocks selection. */
 body.adminkit.acf-admin-page .postbox-container .acf-tab-wrap {
-	position: static;
+	position: relative;
+	top: 0;
+	left: 0;
 	width: auto;
 	margin: 0 0 20px 0;
 }
 
-/* "Regenerate labels" bar (post-type / taxonomy / options editors). */
+/* "Regenerate labels" bar (post-type / taxonomy / options editors) — same
+   breakout reset as the tab bar above, plus the tokened bottom border. */
 body.adminkit.acf-admin-page .acf-regenerate-labels-bar {
+	position: relative;
+	top: 0;
+	left: 0;
+	width: auto;
 	border-bottom-color: var(--ak-border);
 }
 
