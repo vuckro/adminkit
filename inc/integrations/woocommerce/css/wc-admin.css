@@ -7,20 +7,33 @@
    select listboxes) inherit it too.
 
    wc-admin paints hardcoded hex on @wordpress/components + its own
-   .woocommerce-* classes with no themeable variable layer (Tier B), so these
-   rules override those selectors with tokens.
+   .woocommerce-* classes with no themeable variable layer (Tier B). The brand
+   accent is the exception: it consumes --wp-admin-theme-color /
+   --wp-components-color-accent, which tokens.css already remaps to --ak-primary,
+   so accents flip for free. These rules remap the remaining hardcoded
+   STRUCTURE — surfaces, borders, text — 1:1 to the matching token. WC's palette
+   is consistent across the app:
+       #fff → surface   #f0f0f0/#f6f7f7 → elevated   #e0e0e0/#ccc → border
+       #1e1e1e/#50575e → text   #2c3338/#1d2327 → heading   #757575 → muted
+       #d94f4f → error   greens → success
 
    CONVENTION: keep the body scope CONCATENATED
    (body.adminkit.woocommerce-admin-page …). A space before
    `.woocommerce-admin-page` turns it into a descendant combinator that never
-   matches the body's own classes. Several profiler selectors carry an extra
-   class (or rely on the trailing element) purely to out-specify WooCommerce's
-   deep, hardcoded chains without resorting to !important.
+   matches the body's own classes. The +2 scope classes also out-specify WC's
+   own rules, so none of this needs !important. `border-color` is used for grid
+   dividers (summary, tables): it only recolors borders WC already gave width.
 
    ===== Sections =====
-   1. Onboarding profiler (setup wizard: choice cards, business info, loader)
-   2. wc-admin chrome (layout header, list rows, badges)
-   3. @wordpress/components (select control, popovers) */
+   1.  Onboarding profiler            7.  Lists
+   2.  Layout chrome                  8.  Ellipsis menu
+   3.  Cards & filter panels          9.  Filters, calendar & date picker
+   4.  Tables                         10. Search & select controls
+   5.  Summary (big numbers)          11. Stepper
+   6.  Section headers                12. Chart legend
+                                      13. Badges, pills, tags
+                                      14. Timeline
+                                      15. Popovers (generic) */
 
 
 /* ===== 1. Onboarding profiler ===== */
@@ -46,43 +59,356 @@ body.adminkit.woocommerce-admin-page .core-profiler__checkbox .components-checkb
 }
 
 /* Full-screen loader shown while the profiler boots — route to the page bg. */
-body.adminkit.woocommerce-admin-page .woocommerce-onboarding-loader {
+body.adminkit.woocommerce-admin-page .woocommerce-onboarding-loader,
+body.adminkit.woocommerce-admin-page .woocommerce-admin-full-screen {
 	background-color: var(--ak-bg);
 }
 
 
-/* ===== 2. wc-admin chrome ===== */
+/* ===== 2. Layout chrome ===== */
 
 /* App header bar (breadcrumbs + activity-panel icons) — hidden per request. */
 body.adminkit.woocommerce-admin-page .woocommerce-layout__header {
 	display: none;
 }
 
-/* Experimental list rows (Home task lists, activity panels). */
+/* Footer (version / docs links). */
+body.adminkit.woocommerce-admin-page .woocommerce-layout__footer,
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__footer {
+	background-color: var(--ak-surface);
+	border-top-color: var(--ak-border);
+}
+
+/* Activity panel (the right-hand inbox / notices / stock drawer). */
+body.adminkit.woocommerce-admin-page .woocommerce-layout__activity-panel-wrapper {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-layout__activity-panel-tabs .woocommerce-layout__activity-panel-tab {
+	background-color: var(--ak-surface);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-layout__activity-panel-tabs .woocommerce-layout__activity-panel-tab.is-active,
+body.adminkit.woocommerce-admin-page .woocommerce-layout__activity-panel-tabs .woocommerce-layout__activity-panel-tab.is-opened {
+	color: var(--ak-text);
+}
+
+/* Inbox / experimental list rows (Home task lists, notes). */
 body.adminkit.woocommerce-admin-page .woocommerce-experimental-list__item {
 	background-color: var(--ak-surface);
 }
 
-/* Count / status badges — a soft raised pill. */
-body.adminkit.woocommerce-admin-page .woocommerce-badge {
+body.adminkit.woocommerce-admin-page .woocommerce-layout .woocommerce-experimental-list__item:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-layout .woocommerce-inbox-message:hover {
 	background-color: var(--ak-elevated);
 }
 
 
-/* ===== 3. @wordpress/components ===== */
+/* ===== 3. Cards & filter panels ===== */
 
-/* Select control field surface + its dropdown listbox. */
-body.adminkit.woocommerce-admin-page .woocommerce-select-control .components-base-control {
+/* Advanced-filters card body + chart placeholder — recessed surfaces. */
+body.adminkit.woocommerce-admin-page .woocommerce-filters-advanced .components-card__body,
+body.adminkit.woocommerce-admin-page .woocommerce-filters__advanced-filters .components-card__body,
+body.adminkit.woocommerce-admin-page .woocommerce-chart-placeholder {
+	background-color: var(--ak-elevated);
+}
+
+
+/* ===== 4. Tables ===== */
+
+/* Table body + its pagination bar. */
+body.adminkit.woocommerce-admin-page .woocommerce-table,
+body.adminkit.woocommerce-admin-page .woocommerce-table .woocommerce-pagination {
 	background-color: var(--ak-surface);
 }
 
+/* Header row — recessed fill, muted labels, divider. */
+body.adminkit.woocommerce-admin-page .woocommerce-table__header {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text-muted);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-table__item {
+	border-color: var(--ak-border);
+}
+
+/* Empty state. */
+body.adminkit.woocommerce-admin-page .woocommerce-table.is-empty,
+body.adminkit.woocommerce-admin-page .woocommerce-table__empty-item {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+
+/* Negative figures (trend columns). */
+body.adminkit.woocommerce-admin-page .woocommerce-table__header .is-negative,
+body.adminkit.woocommerce-admin-page .woocommerce-table__item .is-negative {
+	color: var(--ak-error);
+}
+
+
+/* ===== 5. Summary (big numbers) ===== */
+
+/* Container + the grid of stat cells. */
+body.adminkit.woocommerce-admin-page .woocommerce-summary {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item:active {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item-container {
+	border-top-color: var(--ak-border);
+}
+
+/* Label muted, value strong, neutral delta on a recessed pill. */
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item-label {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item-value {
+	color: var(--ak-heading);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item-delta {
+	background-color: var(--ak-elevated);
+}
+
+/* Trend deltas — keep WC's white label, just route the fill to the token. */
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item.is-bad-trend .woocommerce-summary__item-delta {
+	background-color: var(--ak-error);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item.is-good-trend .woocommerce-summary__item-delta {
+	background-color: var(--ak-success);
+}
+
+
+/* ===== 6. Section headers ===== */
+
+body.adminkit.woocommerce-admin-page .woocommerce-section-header {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-section-header__title {
+	color: var(--ak-heading);
+}
+
+
+/* ===== 7. Lists ===== */
+
+body.adminkit.woocommerce-admin-page .woocommerce-list__item,
+body.adminkit.woocommerce-admin-page .woocommerce-list-item {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-list__item:hover {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-list__item .woocommerce-list__item-title,
+body.adminkit.woocommerce-admin-page .woocommerce-list__item-title {
+	color: var(--ak-heading);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-list__item-content,
+body.adminkit.woocommerce-admin-page .woocommerce-list__item.is-complete .woocommerce-list__item-title {
+	color: var(--ak-text-muted);
+}
+
+
+/* ===== 8. Ellipsis menu ===== */
+
+body.adminkit.woocommerce-admin-page .woocommerce-ellipsis-menu__popover .components-popover__content {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-ellipsis-menu__popover .woocommerce-ellipsis-menu__item {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-ellipsis-menu__popover .woocommerce-ellipsis-menu__title {
+	color: var(--ak-heading);
+}
+
+
+/* ===== 9. Filters, calendar & date picker ===== */
+
+/* Calendar shell + the react-dates month grid. */
+body.adminkit.woocommerce-admin-page .woocommerce-calendar {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__react-dates .DayPicker,
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__react-dates .CalendarMonth,
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__react-dates .CalendarMonthGrid,
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__react-dates .DayPicker_transitionContainer {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__date-picker-title,
+body.adminkit.woocommerce-admin-page .woocommerce-filters-date__text {
+	background-color: var(--ak-surface);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__input .woocommerce-calendar__input-text {
+	color: var(--ak-text-muted);
+}
+
+/* Filter dropdown list items. */
+body.adminkit.woocommerce-admin-page .woocommerce-filters-filter__content-list-item .woocommerce-filters-filter__button {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-filters-filter__content-list-item .woocommerce-filters-filter__button:hover {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-filters-filter__content-list-item.is-selected .woocommerce-filters-filter__button {
+	background-color: var(--ak-surface);
+}
+
+
+/* ===== 10. Search & select controls ===== */
+
+/* Field surface + muted label. */
+body.adminkit.woocommerce-admin-page .woocommerce-select-control .components-base-control,
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control .components-base-control {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-select-control .components-base-control__label,
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control__label,
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control__help {
+	color: var(--ak-text-muted);
+}
+
+/* Active focus — flat brand border instead of WC's blue ring shadow. */
+body.adminkit.woocommerce-admin-page .woocommerce-select-control .components-base-control.is-active {
+	border-color: var(--ak-primary);
+	box-shadow: none;
+}
+
+/* Dropdown listbox + its options. */
 body.adminkit.woocommerce-admin-page .woocommerce-select-control .woocommerce-select-control__listbox {
 	background-color: var(--ak-elevated);
 }
 
-/* Popovers (dropdowns, tooltips). Flat treatment: drop the layered drop
-   shadow — whose first layer is a 1px #ccc ring acting as a border — for a
-   single token border on an elevated surface. */
+body.adminkit.woocommerce-admin-page .woocommerce-select-control .woocommerce-select-control__option:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-select-control .woocommerce-select-control__option.is-selected {
+	background-color: var(--ak-elevated);
+}
+
+/* Search-list rows + count chips. */
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__list .woocommerce-search-list__item {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__list .woocommerce-search-list__item:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__list .woocommerce-search-list__item:focus {
+	background-color: var(--ak-elevated);
+}
+
+/* Segmented selection (toggle group). */
+body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__container {
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__label {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__input:checked + label .woocommerce-segmented-selection__label {
+	background-color: var(--ak-surface);
+}
+
+
+/* ===== 11. Stepper ===== */
+
+body.adminkit.woocommerce-admin-page .woocommerce-stepper .woocommerce-stepper__step-icon {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-stepper .woocommerce-stepper__step .woocommerce-stepper__step-description {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-stepper .woocommerce-stepper__step.is-active .woocommerce-stepper__step-label,
+body.adminkit.woocommerce-admin-page .woocommerce-stepper .woocommerce-stepper__step.is-complete .woocommerce-stepper__step-label {
+	color: var(--ak-heading);
+}
+
+
+/* ===== 12. Chart legend ===== */
+/* Chart canvas/SVG internals keep WC's own series colors. */
+
+body.adminkit.woocommerce-admin-page .woocommerce-chart {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-legend__item > button {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-legend__item > button:hover {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-legend__total {
+	color: var(--ak-text-muted);
+	border-color: var(--ak-border);
+}
+
+
+/* ===== 13. Badges, pills, tags ===== */
+
+body.adminkit.woocommerce-admin-page .woocommerce-badge {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-pill {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-tag .woocommerce-tag__text,
+body.adminkit.woocommerce-admin-page .woocommerce-tag .woocommerce-tag__remove {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+
+
+/* ===== 14. Timeline ===== */
+
+body.adminkit.woocommerce-admin-page .woocommerce-timeline .woocommerce-timeline-item .woocommerce-timeline-item__body {
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-timeline .woocommerce-timeline-item .woocommerce-timeline-item__title,
+body.adminkit.woocommerce-admin-page .woocommerce-timeline .woocommerce-timeline-group .woocommerce-timeline-group__title {
+	color: var(--ak-heading);
+}
+
+
+/* ===== 15. Popovers (generic) ===== */
+
+/* Flat treatment: drop the layered drop shadow — whose first layer is a 1px
+   #ccc ring acting as a border — for a single token border on an elevated
+   surface. Covers @wordpress/components popovers across the app. */
 body.adminkit.woocommerce-admin-page .components-popover__content {
 	background-color: var(--ak-elevated);
 	border: 1px solid var(--ak-border);
