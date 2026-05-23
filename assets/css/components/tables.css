@@ -102,7 +102,16 @@ body.adminkit .wp-list-table tbody tr:hover th {
 	background: var(--ak-elevated);
 }
 
-body.adminkit .wp-list-table .row-title:hover {
+/* Primary-column title links — post/page `.row-title` and the users.php
+   username (`td.username strong a`, which has no `.row-title` class). The
+   global link chip (links.css) would paint a primary bg+border on hover/focus;
+   neutralize it to a plain heading-color shift, matching row actions. */
+body.adminkit .wp-list-table .row-title:hover,
+body.adminkit .wp-list-table .row-title:focus,
+body.adminkit .wp-list-table td.username strong a:hover,
+body.adminkit .wp-list-table td.username strong a:focus {
+	background-color: transparent;
+	border-color: transparent;
 	color: var(--ak-heading);
 }
 
