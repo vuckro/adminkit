@@ -19,11 +19,12 @@ body.adminkit .theme-browser .theme .theme-name {
 	color: var(--ak-heading);
 }
 
-/* Active theme — primary bg with white text. Explicit color so the
-   generic .theme-name rule above doesn't drag it to --ak-heading. */
+/* Active theme — an inverted neutral strip (heading bg + surface text), not
+   the brand fill: it reads as "current" and flips with the mode — a dark bar
+   in light mode (like WP's own #2c3338 active badge), light bar in dark. */
 body.adminkit .theme-browser .theme.active .theme-name {
-	background: var(--ak-primary);
-	color: #ffffff;
+	background: var(--ak-heading);
+	color: var(--ak-surface);
 }
 
 /* "Add New Theme" tile at the end of the themes grid — hide it.
