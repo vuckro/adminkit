@@ -47,14 +47,29 @@ body.adminkit .widefat tbody tr:first-child th {
 	border-top: none;
 }
 
-/* WP list tables */
+/* WP list tables. Three declarations make fill + horizontal scroll work together:
+   - width:100% fills the area (no dead space, Quick Edit spans full width).
+   - table-layout:auto OVERRIDES WP's `table.fixed { table-layout: fixed }`
+     (list-tables.css). Fixed layout caps the table at width:100% and sizes
+     columns by the HEADER row, ignoring cell content — so long nowrap cells
+     overflow and overlap their neighbours (the "compacted / overlapping text,
+     no scroll" bug). Auto layout sizes columns to their content (cells are
+     nowrap — see "Anti-squish"), so a wide table grows PAST its .ak-table-scroll
+     wrapper and scrolls instead of squashing; a narrow one fills via width:100%.
+   - overflow:visible lets the table overflow the wrapper (→ scroll) AND defeats
+     the .widefat `overflow:hidden` on .wp-list-table.widefat (which would clip
+     the overflowing cells).
+   The frame (border + radius + clipping) lives on the wrapper, not here, so the
+   scroll happens inside a fixed bordered box. */
 body.adminkit .wp-list-table {
 	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
+	border: 0;
+	border-radius: 0;
 	border-collapse: separate;
 	border-spacing: 0;
-	overflow: hidden;
+	overflow: visible;
+	width: 100%;
+	table-layout: auto;
 }
 
 body.adminkit .wp-list-table thead th,
@@ -120,7 +135,8 @@ body.adminkit .wp-list-table td.username strong a:focus {
    sits high against the round image; inline-block + middle alignment puts the
    avatar and name on one centered line. */
 body.adminkit .wp-list-table .column-username img {
-	border-radius: var(--ak-radius-full);
+	border-radius: var(--ak-radius-m);
+	border: 1px solid var(--ak-border);
 	float: none;
 	vertical-align: middle;
 	margin: 0 10px 0 0;
@@ -130,13 +146,21 @@ body.adminkit .wp-list-table .column-username strong {
 	vertical-align: middle;
 }
 
-/* Row actions (Edit / Quick Edit / Trash / View / …) — modern, pipe-less
-   chips. The literal " | " separators are text nodes inside each <span>;
-   collapse them with font-size:0 and restore the link text, then space the
-   actions with a flex gap. Each action gets a soft hover chip; Trash stays
-   red with a danger-tint hover. */
+/* The centered avatar leaves the row actions hugging its bottom edge — add a
+   little breathing room between the name line and Edit / Delete / View. */
+body.adminkit .wp-list-table .column-username .row-actions {
+	margin-top: 8px;
+}
+
+/* Row actions (Edit / Quick Edit / Trash / View / …) — modern, pipe-less chips,
+   laid out as a block UNDER the title. display:flex (not inline-flex): inline-flex
+   made the actions flow to the RIGHT of the title and inflate the primary column,
+   which on phones pushed Title and the next column far apart. The literal " | "
+   separators are text nodes inside each <span>; collapse them with font-size:0 and
+   restore the link text, then space the actions with a flex gap that wraps. Each
+   action gets a soft hover chip; Trash stays red with a danger-tint hover. */
 body.adminkit .wp-list-table .row-actions {
-	display: inline-flex;
+	display: flex;
 	flex-wrap: wrap;
 	gap: 4px;
 	align-items: center;
@@ -178,6 +202,16 @@ body.adminkit .wp-list-table .row-actions .trash a:hover,
 body.adminkit .wp-list-table .row-actions .trash a:focus {
 	background: var(--ak-error-subtle) !important;
 	color: var(--ak-error) !important;
+}
+
+/* Comment-count bubble (Comments / Response columns) — WP turns the approved
+   count #3858e9 (blue) on hover/focus; keep it neutral instead of the brand. */
+body.adminkit .column-comments a.post-com-count-approved:hover .comment-count-approved,
+body.adminkit .column-comments a.post-com-count-approved:focus .comment-count-approved,
+body.adminkit .column-response a.post-com-count-approved:hover .comment-count-approved,
+body.adminkit .column-response a.post-com-count-approved:focus .comment-count-approved {
+	background: var(--ak-secondary);
+	color: #fff;
 }
 
 /* tablenav (bulk actions + pagination row above + below list tables) —
@@ -259,7 +293,7 @@ body.adminkit .inline-edit-row fieldset select:focus {
 
 /* Dark mode — the default row-hover lift reads too bright; use a gentler
    lift (light mode already reads well, so this is dark-only). The Quick Edit
-   fields recess on their own via --ak-surface, so no input override here. */
+   fields detach on their own via --ak-input-bg, so no input override here. */
 :root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover,
 :root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover td,
 :root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover th {
@@ -313,4 +347,115 @@ body.adminkit .wp-list-table .check-column input[type="checkbox"] {
 body.adminkit .check-column input:hover + label,
 body.adminkit .check-column label:hover {
 	background: transparent;
+}
+
+/* --- Wide-table horizontal scroll ----------------------------------------
+   A list table wider than the content area scrolls horizontally as a unit
+   (header + rows together) instead of squashing its columns or — below 782px —
+   collapsing into WP's stacked pile. The wrapper carries the frame (border +
+   radius + surface) and the scroll; the table inside is border-less width:100%,
+   so it FILLS the wrapper when it fits (no dead space, Quick Edit spans full
+   width) and overflows → scrolls when wide. overflow-x:auto scrolls horizontally;
+   overflow-y:hidden clips the table's square corners to the wrapper's radius (and
+   suppresses any vertical scrollbar). class-list-table-chrome.php injects this
+   <div> around each table. */
+body.adminkit .ak-table-scroll {
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+/* Anti-squish: every column sizes to its content (nowrap), so a table wider than
+   its wrapper overflows → scrolls (the .ak-table-scroll above) instead of
+   squashing or wrapping. This is what makes a wide table (e.g. Products with many
+   columns, or a long title) scroll horizontally on desktop rather than shrinking
+   to fit. Exceptions: free-text columns are capped + wrapped (below), and on
+   phones the primary column wraps (media query) so a long title doesn't force a
+   wide horizontal scroll on a narrow screen. */
+body.adminkit .wp-list-table thead th,
+body.adminkit .wp-list-table thead td,
+body.adminkit .wp-list-table tfoot th,
+body.adminkit .wp-list-table tfoot td,
+body.adminkit .wp-list-table tbody th,
+body.adminkit .wp-list-table tbody td {
+	white-space: nowrap;
+}
+
+/* Primary (title / name) column floor. Short content — e.g. a one-word product
+   name — would otherwise collapse this column so narrow that the row-actions block
+   below the title wraps onto many lines, inflating every row's height (very
+   visible on the Products list). A min-width keeps it wide enough for the actions
+   to sit on ~1–2 lines. With table-layout:auto the table just scrolls when this
+   pushes it past the wrapper, so the floor never crams the other columns. */
+body.adminkit .wp-list-table td.column-primary,
+body.adminkit .wp-list-table th.column-primary {
+	min-width: 240px;
+}
+
+/* Free-text columns (excerpt, description, comments, SlimSEO Meta desc.) wrap
+   within a min/max range: min-width keeps a short value from being squashed thin,
+   max-width caps a long one so it can't blow the table width out. Quick Edit forms
+   span all columns, so they wrap too. */
+body.adminkit .wp-list-table td.column-description,
+body.adminkit .wp-list-table td.column-excerpt,
+body.adminkit .wp-list-table td.comment,
+body.adminkit .wp-list-table td.column-comment,
+body.adminkit .wp-list-table td[class*="seo"],
+body.adminkit .wp-list-table td[class*="description"] {
+	white-space: normal;
+	min-width: 240px;
+	max-width: 420px;
+}
+
+body.adminkit .wp-list-table .inline-edit-row td,
+body.adminkit .wp-list-table .inline-edit-row th {
+	white-space: normal;
+}
+
+/* --- Phones (≤782px) ------------------------------------------------------
+   WP collapses list tables into a stacked one-column layout below 783px, which
+   reads as a broken pile under AdminKit. We keep the SAME table as wider screens
+   (it scrolls inside its .ak-table-scroll wrapper), so this block's whole job is
+   to undo WP's stacked-mode styling: re-show every column at its natural width,
+   reset the stacked padding, drop the per-cell labels + the expand toggle, and —
+   since touch has no hover — reveal the row actions inline. Selectors mirror WP's
+   own (+ the body.adminkit prefix) so they out-specify and reverse them. */
+@media (max-width: 782px) {
+	/* Re-show every NON-hidden, non-checkbox column — header AND body — at its
+	   natural width, and reset WP's stacked-mode padding (it parks non-primary
+	   cells at `padding-left: 35%` for the per-cell label, which here just reads as
+	   a big gap). Header and body MUST list the SAME columns or cells slide under
+	   the wrong header: WooCommerce hides the product thumbnail column on mobile,
+	   and our body rule re-shows the thumb cell — without re-showing its header too
+	   (it sits before the primary, outside the old `~` selector), every product
+	   cell shifted one column left. This also overrides WP's primary-header
+	   width:100%. :not(.hidden) keeps Screen Options' column toggles working. */
+	body.adminkit .wp-list-table thead th:not(.check-column):not(.hidden),
+	body.adminkit .wp-list-table tfoot th:not(.check-column):not(.hidden),
+	body.adminkit .wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.check-column):not(.hidden) {
+		display: table-cell;
+		clear: none;
+		width: auto;
+		padding: 10px;
+	}
+
+	/* Drop the stacked-mode per-cell labels and the expand toggle — every column
+	   is already visible, so neither is needed. */
+	body.adminkit .wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.column-primary)::before {
+		content: none;
+	}
+
+	body.adminkit .wp-list-table .column-primary .toggle-row {
+		display: none;
+	}
+
+	/* Touch has no hover, so reveal the row actions inline (under the title). WP
+	   parks them at left:-9999em and only un-parks on tr:hover — which never fires
+	   on touch — so force them on-screen here. */
+	body.adminkit .wp-list-table .row-actions {
+		position: static;
+		left: auto;
+	}
 }

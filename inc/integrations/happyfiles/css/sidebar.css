@@ -29,6 +29,39 @@ body.adminkit {
 }
 
 
+/* ===== Layout: stop the flex page row from overflowing the viewport =====
+   To seat its folders panel beside the list table, HappyFiles turns the admin
+   content wrapper into a flex row:
+       .happyfiles-mounted#wpbody { display: flex }   →  [ sidebar | #wpbody-content ]
+   WP ships `#wpbody-content { width: 100% }`, so as a flex item its basis is the
+   FULL row width; the sidebar (#happyfiles-sidebar-inner is 300px, flex-shrink:0)
+   then doesn't fit, and #wpbody-content's default `min-width: auto` refuses to
+   shrink below its content — so the row overflows and the WHOLE page gets a
+   horizontal scrollbar (the "décalage"). min-width:0 lets the content flex item
+   shrink into the space the sidebar leaves; the list table still scrolls on its
+   own .ak-table-scroll wrapper, so no data is clipped. Scoped to the mounted
+   state so it's inert on every other screen. */
+body.adminkit #wpbody.happyfiles-mounted #wpbody-content {
+	min-width: 0;
+}
+
+/* Phones: HappyFiles ships NO media queries, so the flex layout above persists on
+   mobile and the 300px sidebar keeps stealing horizontal space — below ~580px the
+   content can't shrink past its own min-content (toolbar, search) and the whole
+   page scrolls sideways. Folder management isn't practical on a phone, so drop
+   back to the normal stacked admin layout (block #wpbody) and hide the panel
+   there; it returns on wider screens. */
+@media (max-width: 782px) {
+	body.adminkit #wpbody.happyfiles-mounted {
+		display: block;
+	}
+
+	body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar {
+		display: none;
+	}
+}
+
+
 /* ===== Sidebar shell ===== */
 body.adminkit #happyfiles-sidebar {
 	color: var(--ak-text);
