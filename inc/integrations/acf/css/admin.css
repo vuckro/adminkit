@@ -118,7 +118,7 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-logo img {
 
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-logo {
 	align-items: center;
-	height: 72px;
+	height: 45px;
 }
 
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-logo::after {
@@ -143,7 +143,6 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a {
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a:hover,
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a:focus,
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a.acf-tab.is-active {
-	background-color: var(--ak-hover-bg);
 	color: var(--ak-heading);
 }
 
