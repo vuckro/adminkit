@@ -311,6 +311,13 @@ body.adminkit.acf-admin-page .rule-groups .select2-container--focus {
 	border-color: var(--ak-primary);
 }
 
+/* The focused box border also sits on .select2-selection__rendered, with
+   !important — match it. */
+body.adminkit.acf-admin-page .acf-input .select2-container--focus .select2-selection__rendered,
+body.adminkit.acf-admin-page .rule-groups .select2-container--focus .select2-selection__rendered {
+	border-color: var(--ak-primary) !important;
+}
+
 /* Field-type / schema picker dropdowns (.*-select-results) — group headers,
    selected + highlighted options. ACF marks the option states with !important,
    so the overrides do too. The [class*=] catches all four picker variants
