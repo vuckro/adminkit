@@ -5,6 +5,8 @@
  * A sun/moon button in the admin bar that flips between light and dark
  * mode. The choice is persisted in localStorage and applied as an
  * attribute on <html> so CSS variables can re-cascade without a reload.
+ * It also carries that mode into the classic editor's content iframe (a
+ * separate document the page CSS can't reach) via TinyMCE content styles.
  *
  * Identifiers (kept in `data-` / localStorage so integrations can mirror
  * them with other systems):
@@ -41,6 +43,11 @@ class AdminKit_Theme_Toggle {
 
 		add_filter( 'login_headerurl', static function () { return home_url( '/' ); } );
 		add_filter( 'login_headertext', static function () { return get_bloginfo( 'name' ); } );
+
+		// Carry dark mode into the classic editor's content iframe (a separate
+		// document the page CSS can't reach).
+		add_filter( 'tiny_mce_before_init', array( __CLASS__, 'editor_content_style' ) );
+		add_action( 'admin_print_footer_scripts', array( __CLASS__, 'print_editor_bridge' ), 20 );
 	}
 
 	/**
@@ -150,6 +157,71 @@ class AdminKit_Theme_Toggle {
 			'<style id="adminkit-login-logo">#login h1 a{background-image:url(%s) !important}</style>',
 			esc_url( $icon )
 		);
+	}
+
+	/**
+	 * Inject dark editor-content CSS into TinyMCE.
+	 *
+	 * The Visual editor renders post content inside an <iframe> — a separate
+	 * document the admin stylesheet can't style. WP's `tiny_mce_before_init`
+	 * lets us append CSS (`content_style`) to that document's <head>. The rules
+	 * are gated behind an `.ak-editor-dark` class on the iframe's <html>, which
+	 * print_editor_bridge() toggles to mirror AdminKit's mode — so light mode
+	 * keeps the normal white editor and only dark mode recolors it.
+	 *
+	 * Values are literal (the iframe has no access to tokens.css) and track the
+	 * AdminKit dark neutrals: surface #1c1c1c, text #bfbfbf, heading #dbdbdb,
+	 * border #2e2e2e, elevated #242424. Links use a readable blue rather than the
+	 * brand accent, which is poor as body-copy link color.
+	 *
+	 * @param array $init TinyMCE init settings.
+	 * @return array
+	 */
+	public static function editor_content_style( $init ) {
+		if ( ! is_admin() ) {
+			return $init;
+		}
+		$css = 'html.ak-editor-dark{background-color:#1c1c1c}'
+			. 'html.ak-editor-dark body#tinymce{background-color:#1c1c1c;color:#bfbfbf}'
+			. 'html.ak-editor-dark a{color:#6aa0ff}'
+			. 'html.ak-editor-dark h1,html.ak-editor-dark h2,html.ak-editor-dark h3,html.ak-editor-dark h4,html.ak-editor-dark h5,html.ak-editor-dark h6{color:#dbdbdb}'
+			. 'html.ak-editor-dark hr{border-color:#2e2e2e}'
+			. 'html.ak-editor-dark table td,html.ak-editor-dark table th{border-color:#2e2e2e}'
+			. 'html.ak-editor-dark blockquote{border-left-color:#3a3a3a;color:#a8a8a8}'
+			. 'html.ak-editor-dark code,html.ak-editor-dark pre{background-color:#242424;color:#dbdbdb}';
+
+		$init['content_style'] = isset( $init['content_style'] )
+			? $init['content_style'] . ' ' . $css
+			: $css;
+		return $init;
+	}
+
+	/**
+	 * Print the JS that mirrors AdminKit's mode into each TinyMCE iframe.
+	 *
+	 * Adds/removes `.ak-editor-dark` on the iframe's <html> on editor init
+	 * (via WP's `tinymce-editor-init` jQuery event) and re-applies to every
+	 * editor when the page's theme attribute flips. Reads the attribute, never
+	 * writes it — no loop with the toggle handler.
+	 *
+	 * @return void
+	 */
+	public static function print_editor_bridge() {
+		$attr = self::attribute();
+		?>
+<script id="adminkit-editor-theme">
+(function(){
+	var ATTR = <?php echo wp_json_encode( $attr ); ?>;
+	function isDark(){ return document.documentElement.getAttribute(ATTR) === 'dark'; }
+	function apply(ed){
+		try { var d = ed.getDoc(); if (d && d.documentElement) d.documentElement.classList.toggle('ak-editor-dark', isDark()); } catch (e) {}
+	}
+	function applyAll(){ if (window.tinymce && tinymce.editors) tinymce.editors.forEach(apply); }
+	if (window.jQuery) { jQuery(document).on('tinymce-editor-init', function(e, ed){ apply(ed); }); }
+	new MutationObserver(applyAll).observe(document.documentElement, { attributes:true, attributeFilter:[ATTR] });
+})();
+</script>
+		<?php
 	}
 
 	/**
