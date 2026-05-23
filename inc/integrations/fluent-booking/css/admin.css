@@ -652,7 +652,6 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_plain_btn:n
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn2:not(.danger):hover,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn2:not(.danger):focus {
 	background: var( --ak-primary-subtle ) !important;
-	border-color: var( --ak-primary ) !important;
 	color: var( --ak-primary ) !important;
 }
 
