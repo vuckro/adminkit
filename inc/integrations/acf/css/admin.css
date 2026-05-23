@@ -261,6 +261,13 @@ body.adminkit.acf-admin-page .select2-container.-acf .select2-selection--multipl
 	color: var(--ak-text);
 }
 
+/* Focused select2 — ACF rings it with a pale #ebf5fa outline + #399ccb border. */
+body.adminkit.acf-admin-page .acf-input .select2-container--focus,
+body.adminkit.acf-admin-page .rule-groups .select2-container--focus {
+	outline: 3px solid var(--ak-primary-subtle);
+	border-color: var(--ak-primary);
+}
+
 /* ----- 9. WP list tables on ACF screens -----
    ACF (.acf-internal-post-type) repaints the standard WP_List_Table with
    hardcoded light hex — #fff cells, #f9fafb header, #eaecf0 borders, a drop
@@ -524,4 +531,50 @@ body.adminkit.acf-admin-page #acf-popup .acf-popup-box .title h1,
 body.adminkit.acf-admin-page #acf-popup .acf-popup-box .title h2,
 body.adminkit.acf-admin-page #acf-popup .acf-popup-box .title h3 {
 	color: var(--ak-heading);
+}
+
+/* ----- 14. Browse Fields modal (field-type picker) -----
+   The two-pane picker hardcodes #fff panels, #f9fafb header + preview, #eaecf0
+   card borders and an #ebf5fa/#399ccb selected state. Map to tokens. The
+   field-type icon (#0783be) goes heading, not brand — yellow would vanish on the
+   selected pale-brand card — and the "requires PRO" upsell pills are hidden. */
+body.adminkit.acf-admin-page .acf-modal .acf-modal-content,
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker {
+	background: var(--ak-surface);
+}
+
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-title {
+	background: var(--ak-elevated);
+}
+
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-type-preview {
+	background-color: var(--ak-elevated);
+	border-left-color: var(--ak-border);
+}
+
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-types-tab .acf-field-type,
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-type-search-results .acf-field-type {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-types-tab .acf-field-type:hover,
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-types-tab .acf-field-type:active,
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-types-tab .acf-field-type.selected,
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-type-search-results .acf-field-type:hover,
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-type-search-results .acf-field-type:active,
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-type-search-results .acf-field-type.selected {
+	background: var(--ak-primary-subtle);
+	border-color: var(--ak-primary);
+	box-shadow: inset 0 0 0 1px var(--ak-primary);
+}
+
+body.adminkit.acf-admin-page .field-type-icon:before {
+	background-color: var(--ak-heading);
+}
+
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-types-tab .field-type-requires-pro,
+body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-type-search-results .field-type-requires-pro {
+	display: none;
 }
