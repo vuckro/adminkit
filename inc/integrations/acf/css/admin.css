@@ -90,6 +90,7 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab.is-active {
 	background-color: var(--ak-hover-bg);
 	color: var(--ak-heading);
 	border-color: transparent;
+	font-weight: 600;
 }
 
 /* Tab icons (masked, colored via background-color) — ACF's #eaecf0 on
