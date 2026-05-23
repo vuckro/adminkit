@@ -73,10 +73,12 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 
 	/**
 	 * Match Bricks's own admin pages (Getting Started, Settings,
-	 * Elements, Sidebars, System Information, License, Form Submissions).
-	 * Excludes the Templates list / single edit (`edit-bricks_template`,
-	 * `bricks_template`) which inherit our standard WP list-table /
-	 * post-edit styling.
+	 * Elements, Sidebars, System Information, License, Form Submissions)
+	 * plus the Templates list (`edit-bricks_template`) — the latter only so
+	 * its hidden import-form wrapper gets the token bridge. The list table
+	 * itself keeps standard WP styling: the adapter's table rules are scoped
+	 * to `.wp-list-table.elements`, which the Templates list doesn't use. The
+	 * single template edit (`bricks_template`) stays excluded.
 	 *
 	 * @param \WP_Screen|null $screen
 	 * @return bool
@@ -86,7 +88,8 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return false;
 		}
 		return 'toplevel_page_bricks' === $screen->id
-			|| 0 === strpos( $screen->id, 'bricks_page_bricks-' );
+			|| 0 === strpos( $screen->id, 'bricks_page_bricks-' )
+			|| 'edit-bricks_template' === $screen->id;
 	}
 
 	/**
