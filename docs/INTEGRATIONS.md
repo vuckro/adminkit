@@ -21,6 +21,7 @@ inc/integrations/{slug}/class-{slug}.php
 | `fluentcart/class-fluentcart.php`          | `AdminKit_Integration_Fluentcart`   |
 | `fluentform/class-fluentform.php`          | `AdminKit_Integration_Fluentform`   |
 | `slim-seo/class-slim-seo.php`              | `AdminKit_Integration_Slim_Seo`     |
+| `acf/class-acf.php`                         | `AdminKit_Integration_Acf`          |
 
 The boot orchestrator in [`inc/class-plugin.php`](../inc/class-plugin.php) globs every `inc/integrations/*/class-*.php`, derives the class name, and queues `maybe_init()` on `after_setup_theme`. **No edits to the loader are needed** — drop the folder and it's live.
 
@@ -211,4 +212,5 @@ Integrations can also expose their own filters for downstream customization. Nam
 
 - [`inc/integrations/bricks/class-bricks.php`](../inc/integrations/bricks/class-bricks.php) — Bricks adapter, covers token injection + builder bypass.
 - [`inc/integrations/gutenberg/class-gutenberg.php`](../inc/integrations/gutenberg/class-gutenberg.php) — block editor restyle, hooks the `editor` asset context.
+- [`inc/integrations/acf/class-acf.php`](../inc/integrations/acf/class-acf.php) — ACF 6.x adapter; a clean Tier B example (host hardcodes hex, no CSS vars), screen-scoped via the host's `.acf-admin-page` body class and version-gated on the major.
 - The `woocommerce`, `fluentcart`, `fluentform`, and `slim-seo` folders ship empty stubs — flip `is_active()` and fill in the CSS to enable.
