@@ -429,8 +429,14 @@ body.adminkit.acf-admin-page .acf-tab-wrap .acf-tab-group li a:hover {
 	color: var(--ak-heading);
 }
 
+/* Keep position:relative (not static) so ACF's base `.acf-tab-wrap { z-index: 1 }`
+   stays active — otherwise the bar drops out of the stacking order and sibling
+   field rows can overlap it, making the tabs unclickable. top/left:0 cancels
+   ACF's -48px breakout pull; width:auto stops the calc() overflow. */
 body.adminkit.acf-admin-page .postbox-container .acf-tab-wrap {
-	position: static;
+	position: relative;
+	top: 0;
+	left: 0;
 	width: auto;
 	margin: 0 0 20px 0;
 	border-radius: var(--ak-radius-s);
@@ -473,17 +479,17 @@ body.adminkit.acf-admin-page #acf-field-group-fields .acf-field-list.-empty .no-
 }
 
 /* Field-list header/footer (Order | Label | Name | Key | Type) */
-body.adminkit.acf-admin-page .post-type-acf-field-group .acf-thead,
-body.adminkit.acf-admin-page .post-type-acf-field-group .acf-tfoot {
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-thead,
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-tfoot {
 	border-color: var(--ak-border);
 }
 
-body.adminkit.acf-admin-page .post-type-acf-field-group .acf-thead {
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-thead {
 	background-color: var(--ak-elevated);
 }
 
-body.adminkit.acf-admin-page .post-type-acf-field-group .acf-thead li,
-body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object .handle li {
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-thead li,
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object .handle li {
 	color: var(--ak-heading);
 }
 
@@ -492,27 +498,27 @@ body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object .handl
    settings panel; links go heading (delete stays danger). ACF's link colors are
    !important, so the overrides match. */
 body.adminkit.acf-admin-page .acf-field-object.open > .handle,
-body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object.open .handle {
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open .handle {
 	background: var(--ak-primary-subtle);
 	border-color: var(--ak-border);
 	color: var(--ak-heading);
 }
 
 body.adminkit.acf-admin-page .acf-field-object.open > .handle a,
-body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object.open .handle a {
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open .handle a {
 	color: var(--ak-heading) !important;
 }
 
 body.adminkit.acf-admin-page .acf-field-object.open > .handle a.delete-field,
-body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object.open .handle a.delete-field {
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open .handle a.delete-field {
 	color: var(--ak-error) !important;
 }
 
-body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object.open {
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open {
 	border-top-color: var(--ak-border);
 }
 
-body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object .settings {
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object .settings {
 	background-color: var(--ak-surface);
 	border-left-color: var(--ak-primary);
 }
