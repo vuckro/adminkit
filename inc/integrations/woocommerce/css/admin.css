@@ -553,20 +553,34 @@ body.adminkit.woocommerce_page_wc-settings .wc-settings-marketplace-link {
 	color: var(--ak-text-muted);
 }
 
-/* Settings nav tabs — WC repaints them per-page (resting links #505050, active
-   #070707 with a yellow --wp-admin-theme-color underline): breaks on dark and
-   diverges from AdminKit's global nav-tab skin (chrome.css — muted resting,
-   heading active + heading underline). Re-align to that global convention. WC
-   asserts the active color across base/hover/focus/focus:active (up to 0,5,1),
-   so each variant is replayed with the +1 from .adminkit. */
-body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper a {
+/* Settings nav tabs — WC repaints them as boxed per-page tabs (resting #505050,
+   active #070707 + yellow underline) that diverge from AdminKit's modern
+   underline tabs (chrome.css `.nav-tab`, also used on profile / Loco Translate).
+   Fully replicate that skin here: flat (transparent, no box border), a 2px
+   bottom-border underline, muted resting → heading active. The
+   .woocommerce_page_wc-settings + .nav-tab-wrapper chain (0,5,1) beats WC's
+   .woo-nav-tab-wrapper .nav-tab variants. */
+body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab {
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid transparent;
+	border-radius: 0;
+	margin: 0 4px -1px 0;
+	padding: 8px 14px;
 	color: var(--ak-text-muted);
+	font-weight: 500;
+}
+
+body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab:hover {
+	background: transparent;
+	color: var(--ak-heading);
 }
 
 body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active,
 body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active:hover,
 body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active:focus,
 body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active:focus:active {
+	background: transparent;
 	color: var(--ak-heading);
 	border-bottom-color: var(--ak-heading);
 }
@@ -607,11 +621,23 @@ body.adminkit.woocommerce_page_wc-settings .site-visibility-settings-slotfill-pr
 	box-shadow: none;
 }
 
-/* Radio dot — @wordpress/components paints the checked inner dot #fff, which is
-   low-contrast on the brand fill (and invisible on a light fill). Route it to
-   --ak-on-accent (near-black): readable on either the accent or a surface fill. */
+/* The link field in it — WC hardcodes #fff bg + #1e1e1e text; the box already
+   carries the surface, so blend the input (transparent) and token the text. */
+body.adminkit.woocommerce_page_wc-settings .site-visibility-settings-slotfill-private-link input {
+	background: transparent;
+	color: var(--ak-text);
+}
+
+/* Radio (Coming soon / Live) — match AdminKit's native radio: a neutral surface
+   fill with a brand (primary) ring + dot, instead of @wordpress/components'
+   accent fill + white dot. */
+body.adminkit.woocommerce_page_wc-settings .components-radio-control__input[type="radio"]:checked {
+	background: var(--ak-surface);
+	border-color: var(--ak-primary);
+}
+
 body.adminkit.woocommerce_page_wc-settings .components-radio-control__input[type="radio"]:checked::before {
-	background-color: var(--ak-on-accent);
+	background-color: var(--ak-primary);
 }
 
 
