@@ -269,6 +269,12 @@ body.adminkit .postbox .handle-order-lower {
 	color: var(--ak-text-muted);
 }
 
+/* Collapse-toggle focus — WP paints an inset theme-color ring on the round
+   handle. Flatten it like our other focus states (.button, links). */
+body.adminkit .postbox .handlediv:focus {
+	box-shadow: none;
+}
+
 /* Dashboard widget separators — WP hardcodes #f0f0f1 / #e9e9ed / #dcdcde
    on many widget border-tops, all of which read as a bright white line
    on our dark surface. Route them through --ak-border. The high-specificity
