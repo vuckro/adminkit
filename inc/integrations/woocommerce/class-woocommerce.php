@@ -62,8 +62,19 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 	/**
 	 * The classic (non-React) WooCommerce screens: product / coupon / order
 	 * editors and everything under the WooCommerce admin menu (Settings, Status,
-	 * Extensions). The wc-admin React app is excluded — it owns wc-admin.css —
-	 * even though it also reports `parent_base === 'woocommerce'`.
+	 * Extensions, Reports). The full wc-admin React app is excluded — it owns
+	 * wc-admin.css — via the `wc-admin` screen-id bail.
+	 *
+	 * Note the Settings / Status / Extensions / Reports pages are "connected" to
+	 * wc-admin: WooCommerce re-parents them under the wc-admin menu (so their
+	 * `parent_base` is `wc-admin`, NOT `woocommerce`) and wraps their classic PHP
+	 * body in the wc-admin embed chrome (adding `woocommerce-admin-page` +
+	 * `woocommerce-embed-page` to <body>). Their screen id stays
+	 * `woocommerce_page_wc-<x>` — no `wc-admin` substring, so they don't hit the
+	 * bail — and they need the classic skin for their body (status tables,
+	 * settings forms) plus the shared chrome rules (e.g. hiding the embed header).
+	 * The `woocommerce_page_wc-` prefix catches them without depending on the
+	 * re-parented `parent_base`.
 	 *
 	 * @param \WP_Screen|null $screen
 	 * @return bool
@@ -76,7 +87,10 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 		if ( isset( $screen->post_type ) && in_array( $screen->post_type, $post_types, true ) ) {
 			return true;
 		}
-		return isset( $screen->parent_base ) && 'woocommerce' === $screen->parent_base;
+		if ( isset( $screen->parent_base ) && 'woocommerce' === $screen->parent_base ) {
+			return true;
+		}
+		return isset( $screen->id ) && 0 === strpos( $screen->id, 'woocommerce_page_wc-' );
 	}
 
 	/**

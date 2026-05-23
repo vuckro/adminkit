@@ -518,6 +518,12 @@ body.adminkit #order_data h4 {
 	color: var(--ak-heading);
 }
 
+/* Order title (h2) — WC embosses it with a 1px #fff text-shadow that haloes on
+   dark; AdminKit is flat, so drop it. */
+body.adminkit #order_data h2 {
+	text-shadow: none;
+}
+
 /* Order actions box (Update / status list) — WC stacks a #fff top highlight on
    an #ddd bottom line per row; flatten to a single token divider. */
 body.adminkit .order_actions li {
@@ -532,75 +538,12 @@ body.adminkit .add_note {
 
 
 /* ===== Marketing — recommended-extensions card (Coupons page) ===== */
-/* edit.php?post_type=shop_coupon mounts a React @wordpress/components card into
-   #coupon-root recommending coupon extensions. The Card surface + its default
-   text flip for free (they read --wp-components-color-*, remapped in tokens.css),
-   and the product-icon's ring + glyph track --wp-admin-theme-color → --ak-primary.
-   These rules cover only what WC paints with HARDCODED hex: the item name /
-   description text and the icon's #fff fill. */
-
-/* Extension name (WC #1e1e1e) + description (WC #757575). On hover WC darkens
-   the description and accent-tints the name (the name's hover flips for free). */
-body.adminkit .woocommerce-marketing-recommended-extensions-item h4 {
-	color: var(--ak-heading);
-}
-
-body.adminkit .woocommerce-marketing-recommended-extensions-item p {
-	color: var(--ak-text-muted);
-}
-
-body.adminkit .woocommerce-marketing-recommended-extensions-item:hover p {
-	color: var(--ak-text);
-}
-
-/* Card-header description / subtitle (WC #757575). */
-body.adminkit .woocommerce-marketing-card-header-description,
-body.adminkit .woocommerce-admin-marketing-card .woocommerce-admin-marketing-card-subtitle {
-	color: var(--ak-text-muted);
-}
-
-/* Product-icon bubble — WC fills it #fff with an accent ring. Route the fill to
-   the surface token so it flips, and the ring to the neutral border token (the
-   task-icon bubble convention in wc-admin.css). The glyph and the hover fill
-   stay accent via --wp-admin-theme-color. The +1 element (body) over WC's own
-   4-class ring selector lands the border override at (0,4,1) so it wins. */
-body.adminkit .woocommerce-marketing-recommended-extensions-item .woocommerce-admin-marketing-product-icon {
-	background-color: var(--ak-surface);
-}
-
-body.adminkit .woocommerce-marketing-recommended-extensions-item .woocommerce-admin-marketing-product-icon:not(.is-placeholder) {
-	border-color: var(--ak-border);
-}
-
-/* Hover fills the bubble with the accent and forces the glyph #fff !important —
-   white on the yellow brand is unreadable. Route it to the on-accent token
-   (near-black on yellow); !important + the extra element beat WC's own rule. */
-body.adminkit .woocommerce-marketing-recommended-extensions-item:hover .woocommerce-admin-marketing-product-icon:not(.is-placeholder) svg {
-	fill: var(--ak-on-accent) !important;
-}
-
-/* Pagination prev/next arrow group — the knowledgebase card uses the wc-admin
-   <Pagination> component. wc-admin.css maps it on React screens; mirror that
-   here for the classic coupon page: WC's #f0f2f4 fill → recessed surface,
-   #b5bfc9 frame → the stronger control border (it reads as a button). */
-body.adminkit .woocommerce-pagination__page-arrows-buttons {
-	background-color: var(--ak-elevated);
-	border-color: var(--ak-border-strong);
-}
-
-/* Arrow glyphs (WC #24292d, invisible on the dark fill) + their hover, and the
-   2px divider between the two buttons (#d3d9de — both edges so LTR/RTL match). */
-body.adminkit .woocommerce-pagination__page-arrows-buttons .components-button {
-	color: var(--ak-text);
-}
-
-body.adminkit .woocommerce-pagination__page-arrows-buttons .components-button:not(:disabled):not([aria-disabled="true"]):hover {
-	color: var(--ak-text-muted);
-}
-
-body.adminkit .woocommerce-pagination__page-arrows-buttons button:first-child {
-	border-left-color: var(--ak-border);
-	border-right-color: var(--ak-border);
+/* edit.php?post_type=shop_coupon mounts a React promo into #coupon-root —
+   recommended coupon extensions + a knowledge-base slider. Hidden per request,
+   so all the per-element color / icon / pagination mapping it used to need is
+   gone with it. (#coupon-root only ever holds this promo on classic screens.) */
+body.adminkit #coupon-root {
+	display: none;
 }
 
 
@@ -608,9 +551,10 @@ body.adminkit .woocommerce-pagination__page-arrows-buttons button:first-child {
 
 /* The status report table (admin.php?page=wc-status) is a .widefat (base mapped
    to --ak-surface) that WC zebra-stripes on even rows with #fcfcfc — near-white
-   on dark. Route it to the recessed band token; the +1 element from the body
-   scope clears WC's nth-child selector without !important. */
+   on dark. We don't want the stripe: pin the even rows back to the base surface
+   so the table reads flat while still overriding WC's #fcfcfc. The +1 element
+   from the body scope clears WC's nth-child selector without !important. */
 body.adminkit table.wc_status_table tr:nth-child(2n) td,
 body.adminkit table.wc_status_table tr:nth-child(2n) th {
-	background-color: var(--ak-elevated);
+	background-color: var(--ak-surface);
 }
