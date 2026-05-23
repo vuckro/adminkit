@@ -572,6 +572,28 @@ body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active:focu
 }
 
 
+/* ===== Site visibility setting (General tab slotfill) ===== */
+/* The "Site visibility" React slotfill hardcodes its heading + description text
+   grays, which don't flip in dark mode. Route the heading to --ak-heading, the
+   option labels to --ak-text, and the descriptions (incl. each toggle's
+   sub-paragraph) to --ak-text-muted. The radio / toggle controls themselves
+   already flip via the --wp-components-* mapping in tokens.css. */
+body.adminkit.woocommerce_page_wc-settings .site-visibility-settings-slotfill h2 {
+	color: var(--ak-heading);
+}
+
+body.adminkit.woocommerce_page_wc-settings .site-visibility-settings-slotfill .components-radio-control__label,
+body.adminkit.woocommerce_page_wc-settings .site-visibility-settings-slotfill .components-toggle-control__label {
+	color: var(--ak-text);
+}
+
+body.adminkit.woocommerce_page_wc-settings .site-visibility-settings-slotfill-description,
+body.adminkit.woocommerce_page_wc-settings .site-visibility-settings-slotfill-section-description,
+body.adminkit.woocommerce_page_wc-settings .site-visibility-settings-slotfill .components-toggle-control__label p {
+	color: var(--ak-text-muted);
+}
+
+
 /* ===== Shipping settings (zones / classes / methods tables) ===== */
 
 /* admin.php?page=wc-settings&tab=shipping. The zone / class / method tables zebra
