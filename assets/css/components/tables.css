@@ -428,8 +428,16 @@ body.adminkit .check-column label:hover {
    width) and overflows → scrolls when wide. overflow-x:auto scrolls horizontally;
    overflow-y:hidden clips the table's square corners to the wrapper's radius (and
    suppresses any vertical scrollbar). class-list-table-chrome.php injects this
-   <div> around each table. */
+   <div> around each table.
+
+   clear:both is essential: overflow-x:auto makes this wrapper a block formatting
+   context, and a BFC refuses to overlap floats — so without it the wrapper would
+   shrink into the narrow gap beside the floated tablenav controls (.alignleft
+   .actions — wide on WooCommerce's product list — and the floated .search-box)
+   instead of dropping below them full-width. (Seen as the table collapsing to a
+   ~118px sliver wedged to the right.) Clearing the floats keeps it full-width. */
 body.adminkit .ak-table-scroll {
+	clear: both;
 	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
