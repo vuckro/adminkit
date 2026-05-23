@@ -191,9 +191,9 @@ body.adminkit .ak-accordion {
 	margin: 0 0 10px;
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
-	/* Same surface logic as list tables: panel body = --ak-surface,
-	   header row = --ak-elevated; both flip per light/dark mode. */
-	background: var(--ak-surface);
+	/* Panel body = --ak-elevated, header row (summary) = --ak-surface;
+	   both flip per light/dark mode. */
+	background: var(--ak-elevated);
 	overflow: hidden;
 }
 
@@ -205,7 +205,7 @@ body.adminkit .ak-accordion > summary {
 	font-size: var(--ak-text-m);
 	font-weight: 600;
 	color: var(--ak-heading);
-	background: var(--ak-elevated);
+	background: var(--ak-surface);
 	cursor: pointer;
 	user-select: none;
 	list-style: none;
@@ -217,7 +217,7 @@ body.adminkit .ak-accordion > summary::-webkit-details-marker {
 }
 
 body.adminkit .ak-accordion > summary:hover {
-	background: var(--ak-elevated);
+	background: var(--ak-surface);
 }
 
 /* Inset outline (not box-shadow) so the focus ring isn't clipped by the
