@@ -425,6 +425,13 @@ body.adminkit .wp-editor-container .wp-editor-area {
 	border-radius: 0;
 }
 
+/* Editor textarea (Code / Text mode) — neutralize the global input focus tint.
+   The brand primary-subtle bg (inputs.css) looks wrong as a content/code field
+   highlight, so on focus keep the plain surface — the caret marks focus. */
+body.adminkit .wp-editor-area:focus {
+	background: var(--ak-surface);
+}
+
 /* TinyMCE "Visual" editor chrome (the lightgray skin) — toolbars, menubar,
    dropdowns and status bar all hardcode #fff / light-grey surfaces and #595959
    glyphs that don't flip. Route the frame to tokens. The content iframe is a
@@ -466,11 +473,37 @@ body.adminkit .mce-statusbar .mce-path .mce-divider {
 	color: var(--ak-text-muted);
 }
 
-/* "Visual / Text" switch tabs above the editor. */
+/* "Visual / Code" switch — a modern segmented toggle (vs WP's dated stacked
+   tabs). The .wp-editor-tabs row becomes a recessed track; each
+   .wp-switch-editor is a pill segment; the active one (marked by .tmce-active /
+   .html-active on the .wp-editor-wrap) reads as a raised, bordered pill. */
+body.adminkit .wp-editor-tabs {
+	display: inline-flex;
+	gap: 2px;
+	padding: 3px;
+	background: var(--ak-elevated);
+	border-radius: var(--ak-radius-s);
+}
+
 body.adminkit .wp-editor-tabs .wp-switch-editor {
-	background-color: var(--ak-surface);
-	border-color: var(--ak-border);
+	margin: 0;
+	padding: 3px 12px;
+	border: 1px solid transparent;
+	border-radius: 5px;
+	background: transparent;
 	color: var(--ak-text-muted);
+	font-weight: 500;
+}
+
+body.adminkit .wp-editor-tabs .wp-switch-editor:hover {
+	color: var(--ak-heading);
+}
+
+body.adminkit .wp-editor-wrap.tmce-active .wp-switch-editor.switch-tmce,
+body.adminkit .wp-editor-wrap.html-active .wp-switch-editor.switch-html {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
 }
 
 /* Toolbar listbox — the "Paragraph" format dropdown. WP gives it a white box +

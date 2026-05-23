@@ -18,37 +18,26 @@ body.adminkit:is(.post-php, .post-new-php) #titlediv #title {
 }
 
 
-/* ----- Publish box secondary actions as buttons -----
-   "Copy to a new draft" + "Move to Trash" become real buttons (vs WP's loud red
-   text link) so the footer reads as a clean action row: outline buttons on the
-   left, the primary Update on the right. Both share the secondary-button base;
-   Trash then takes the flat danger style (mirrors buttons.css .remove-site-icon). */
-body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-action .submitdelete,
-body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #duplicate-action .submitduplicate {
+/* ----- Publish box footer -----
+   Hide "Copy to a new draft" (WooCommerce duplicate) per request, and turn
+   "Move to Trash" into a flat danger button. The footer then reads cleanly:
+   [Move to Trash] … [Update]. */
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #duplicate-action {
+	display: none;
+}
+
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-action .submitdelete {
 	display: inline-block;
 	min-height: 30px;
 	padding: 0 10px;
 	line-height: 2.15;
 	border-radius: var(--ak-radius-s);
-	border: 1px solid var(--ak-border-strong);
-	background: var(--ak-surface);
-	color: var(--ak-text);
+	border: 1px solid color-mix(in srgb, var(--ak-error) 35%, transparent);
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
 	font-size: var(--ak-text-s);
 	font-weight: 500;
 	text-decoration: none;
-}
-
-body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #duplicate-action .submitduplicate:hover,
-body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #duplicate-action .submitduplicate:focus {
-	border-color: var(--ak-border-strong);
-	color: var(--ak-heading);
-}
-
-/* Move to Trash — flat danger button. */
-body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-action .submitdelete {
-	background: var(--ak-error-subtle);
-	border-color: color-mix(in srgb, var(--ak-error) 35%, transparent);
-	color: var(--ak-error);
 }
 
 body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-action .submitdelete:hover,
