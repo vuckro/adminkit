@@ -1,50 +1,38 @@
 <?php
 /**
- * Profile-screen accordions.
+ * Account screen — horizontal tabs, one section at a time.
  *
- * WordPress renders profile.php / user-edit.php as one long form: a
- * run of `<h2>` section headings (Personal Options, Name, Contact Info,
- * About the user, Account Management, Application Passwords, plus
- * anything plugins inject via show_user_profile / edit_user_profile),
- * each followed by a `.form-table`. Core exposes no per-section wrapper
- * hook, so the folding is done client-side: a tiny script walks the
- * form's top-level `<h2>`s and folds each heading + its following
- * siblings into a native `<details>` / `<summary>` pair.
+ * WordPress renders profile.php / user-edit.php / user-new.php as one long
+ * form: a run of `<h2>` headings (Personal Options, Name, Contact Info,
+ * About, Account Management, Application Passwords, plus anything plugins
+ * inject — WooCommerce billing/shipping, ACF, …), each followed by a
+ * `.form-table`. Core exposes no per-section wrapper hook, so the regrouping
+ * is done client-side.
  *
- * On top of that the script surfaces a single open "My Account" panel at
- * the very top — the 80/20 set of fields (first/last name, nickname,
- * display name, role, email) an admin reaches for most. It is
- * built by MOVING (never copying) the matching `<tr>`s out of their native
- * sections; because
- * each `<input>` keeps its `name`, the form posts exactly as WP expects,
- * so there is no server-side change, no duplicate field, and no CSS
- * override — the panel reuses the same `.ak-accordion` + `.form-table`
- * styling as everything else. Curate the set via the `ESSENTIALS` list.
+ * A tiny inline script rebuilds the screen as a tab strip + one visible
+ * panel. Two curated tabs (Informations — the day-to-day identity, e-mail,
+ * role and new-password fields; Réglages — everything else) are filled by
+ * MOVING (never cloning) the matching native
+ * `<tr>`s into it; every `<input>` keeps its `name`, so the form posts exactly
+ * as WP expects — hidden panels still submit. Any section a plugin adds that
+ * we don't map is swept into its own tab, with an icon picked from the
+ * fields it contains (billing / shipping / ACF / generic), so third-party
+ * data stays reachable. Layout lives in assets/css/screens/profile.css:
+ * fields render label-above in a two-column grid, with a few pairs
+ * (first/last name, nickname/display name) sitting side by side.
  *
- * Finally, the remaining profile-heavy sections are consolidated into a
- * second collapsed panel ("Settings"), keeping "My Account" focused
- * on daily edits only. Personal Options is absorbed into Settings too.
- * Membership is just the `absorb()` calls in step 4; sections are matched
- * by WP's own localized heading strings, passed from PHP, so the grouping
- * survives translation.
- *
- * Native disclosure was chosen over a scripted toggle on purpose — it
- * is keyboard-accessible for free, animates nothing (matches AdminKit's
- * flat, motion-free design) and needs zero click handlers. All panels
- * share one `name`, so the browser keeps a single panel open at a time —
- * opening one closes the others, still with zero JS (the platform does the
- * bookkeeping). The script is printed inline — like the theme toggle —
- * rather than enqueued as a file, so the asset registry stays CSS-only.
- *
- * Visuals live in assets/css/screens/profile.css, already enqueued on
- * exactly these three screens.
+ * Matching is by WP's own localized heading strings + the rows' stable
+ * `.user-*-wrap` classes (passed from PHP) so it survives translation; plugin
+ * icons key off the non-localized field `name`s. Flat + motionless: tab
+ * switches are an instant show/hide, nothing animates. The script is printed
+ * inline (like the theme toggle) so the asset registry stays CSS-only.
  *
  * @package AdminKit
  */
 
 defined( 'ABSPATH' ) || exit;
 
-class AdminKit_Profile_Accordion {
+class AdminKit_Profile_Account {
 
 	/**
 	 * Screen ids that carry the profile form.
@@ -63,8 +51,8 @@ class AdminKit_Profile_Accordion {
 	}
 
 	/**
-	 * Print the inline accordion-builder, but only on the user
-	 * profile / edit / new screens.
+	 * Print the inline tab builder, but only on the user profile / edit /
+	 * new screens.
 	 *
 	 * @return void
 	 */
@@ -73,74 +61,52 @@ class AdminKit_Profile_Accordion {
 			return;
 		}
 
-		// Section labels passed from PHP via WP's own __() (default text domain
-		// for the core headings) so the JS matches sections by their *rendered*
-		// text — locale-proof, since WP printed those same strings.
-		$labels = array(
-			'my_account'    => __( 'Informations', 'adminkit' ),
-			'more_settings' => __( 'Settings', 'adminkit' ),
-			'personal'      => __( 'Personal Options' ),
-			'name'          => __( 'Name' ),
-			'contact'       => __( 'Contact Info' ),
-			'about'         => array( __( 'About Yourself' ), __( 'About the user' ) ),
-			'account'       => __( 'Account Management' ),
-			'app_passwords' => __( 'Application Passwords' ),
-			'capabilities'  => __( 'Additional Capabilities' ),
+		// `sections` use WP core's default text domain so the JS matches each
+		// heading by its *rendered* text — locale-proof. `cards` are AdminKit's
+		// own UI copy (adminkit domain).
+		$strings = array(
+			'sections' => array(
+				'name'          => __( 'Name' ),
+				'contact'       => __( 'Contact Info' ),
+				'personal'      => __( 'Personal Options' ),
+				'account'       => __( 'Account Management' ),
+				'app_passwords' => __( 'Application Passwords' ),
+				'about'         => array( __( 'About Yourself' ), __( 'About the user' ) ),
+				'capabilities'  => __( 'Additional Capabilities' ),
+			),
+			'cards'    => array(
+				'info'     => array( 'label' => __( 'Informations', 'adminkit' ), 'desc' => __( 'Identité, contact et mot de passe.', 'adminkit' ) ),
+				'settings' => array( 'label' => __( 'Réglages', 'adminkit' ), 'desc' => __( 'Rôles, langue et préférences.', 'adminkit' ) ),
+			),
+			'addresses'       => __( 'Adresses', 'adminkit' ),
+			'more'            => __( 'Autres réglages', 'adminkit' ),
+			'nav'             => __( 'Sections du compte', 'adminkit' ),
+			'username_locked' => __( 'Ce nom d’utilisateur ne peut pas être modifié.', 'adminkit' ),
 		);
 		?>
-<script id="adminkit-profile-accordion">
+<script id="adminkit-profile-account">
 (function () {
 	var form = document.querySelector('#your-profile, #createuser');
-	if (!form || form.dataset.akAccordion) return;
-	form.dataset.akAccordion = '1';
+	if (!form || form.dataset.akAccount) return;
+	form.dataset.akAccount = '1';
 
-	var L = <?php echo wp_json_encode( $labels ); ?>;
+	var S = <?php echo wp_json_encode( $strings ); ?>;
+
+	// Inline stroke icons (currentColor). One per curated tab + a set keyed to
+	// the kind of fields a plugin section carries.
+	var I = {
+		users:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0M16 11a3 3 0 0 0 0-6M22 21a6 6 0 0 0-4-5.6"/></svg>',
+		sliders:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>',
+		billing:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>',
+		shipping: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h1"/><path d="M14 9h4l4 4v4a1 1 0 0 1-1 1h-1"/><circle cx="7" cy="18" r="2"/><path d="M9 18h6"/><circle cx="18" cy="18" r="2"/></svg>',
+		address:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+		acf:      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>',
+		plugin:   '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v4M14 3v4M6 7h12v5a6 6 0 0 1-12 0zM12 17v4"/></svg>'
+	};
 
 	// --- helpers ----------------------------------------------------------
-	function panels() {
-		return Array.prototype.filter.call(form.children, function (c) {
-			return c.tagName === 'DETAILS' && c.classList.contains('ak-accordion');
-		});
-	}
-	function titleOf(d) {
-		var s = d.querySelector('summary');
-		return s ? s.textContent.trim() : '';
-	}
-	// Find a folded section panel by its (localized) heading text.
-	function find(names) {
-		names = [].concat(names);
-		return panels().filter(function (d) {
-			return names.indexOf(titleOf(d)) !== -1;
-		})[0] || null;
-	}
-	function makePanel(title, open, panel) {
-		var d = document.createElement('details');
-		d.className = 'ak-accordion';
-		// Shared name = native single-open group: opening any panel closes
-		// the others, no toggle handler needed.
-		d.name = 'ak-profile-accordion';
-		if (panel) d.dataset.akPanel = panel;
-		if (open) d.open = true;
-		var s = document.createElement('summary');
-		s.textContent = title;
-		d.appendChild(s);
-		return d;
-	}
-	// Move a section's body into a group panel, optionally keeping its heading
-	// as an <h2> sub-header, then drop the now-empty source panel.
-	function absorb(group, src, keepHeading) {
-		if (!src || src === group) return;
-		if (keepHeading) {
-			var h = document.createElement('h2');
-			h.textContent = titleOf(src);
-			group.appendChild(h);
-		}
-		Array.prototype.slice.call(src.children).forEach(function (child) {
-			if (child.tagName !== 'SUMMARY') group.appendChild(child);
-		});
-		src.remove();
-	}
-	// Return the first existing node matching one selector or a selector list.
+
+	// First existing node matching one selector or a selector list.
 	function firstMatch(root, selectorOrList) {
 		var selectors = [].concat(selectorOrList);
 		for (var i = 0; i < selectors.length; i++) {
@@ -149,8 +115,86 @@ class AdminKit_Profile_Accordion {
 		}
 		return null;
 	}
+	// A top-level section heading matched by its (localized) text.
+	function topH2(titles) {
+		titles = [].concat(titles);
+		var h2s = form.querySelectorAll(':scope > h2');
+		for (var i = 0; i < h2s.length; i++) {
+			if (titles.indexOf(h2s[i].textContent.trim()) !== -1) return h2s[i];
+		}
+		return null;
+	}
+	// Every node between a heading and the next section boundary.
+	function sectionNodes(h2) {
+		var nodes = [], n = h2.nextSibling;
+		while (n) {
+			if (n.nodeType === 1 && (n.tagName === 'H2' || (n.classList && n.classList.contains('submit')))) break;
+			nodes.push(n);
+			n = n.nextSibling;
+		}
+		return nodes;
+	}
+	// A top-level section heading whose body carries a field matching `sel`
+	// (used to find WooCommerce billing/shipping sections by their field names).
+	function sectionByField(sel) {
+		var h2s = form.querySelectorAll(':scope > h2');
+		for (var i = 0; i < h2s.length; i++) {
+			var n = h2s[i].nextElementSibling;
+			while (n && n.tagName !== 'H2') {
+				if (n.classList && n.classList.contains('submit')) break;
+				if ((n.matches && n.matches(sel)) || (n.querySelector && n.querySelector(sel))) return h2s[i];
+				n = n.nextElementSibling;
+			}
+		}
+		return null;
+	}
+	// Move specific native rows into a panel's table body, in listed order.
+	function moveRows(tbody, selectors) {
+		(selectors || []).forEach(function (sel) {
+			var row = firstMatch(form, sel);
+			if (row) tbody.appendChild(row);
+		});
+	}
+	// Pour a section's nodes into a panel: `.form-table` rows merge into its
+	// single table body; non-table content (e.g. the Application Passwords UI,
+	// ACF field groups) is appended under an optional sub-heading.
+	function consume(card, tbody, nodes, subTitle) {
+		var subAdded = false;
+		nodes.forEach(function (node) {
+			if (node.nodeType !== 1) { if (node.parentNode) node.parentNode.removeChild(node); return; }
+			if (node.classList && node.classList.contains('form-table')) {
+				Array.prototype.forEach.call(node.querySelectorAll('tr'), function (tr) { tbody.appendChild(tr); });
+				if (node.parentNode) node.parentNode.removeChild(node);
+			} else {
+				if (subTitle && !subAdded) {
+					var sh = document.createElement('h3');
+					sh.className = 'ak-card-sub';
+					sh.textContent = subTitle;
+					card.appendChild(sh);
+					subAdded = true;
+				}
+				card.appendChild(node);
+			}
+		});
+	}
+	// Absorb a whole native section (heading + body) into a panel, then drop
+	// the now-empty heading.
+	function absorb(card, tbody, titles) {
+		var h2 = topH2(titles);
+		if (!h2) return;
+		consume(card, tbody, sectionNodes(h2), h2.textContent.trim());
+		if (h2.parentNode) h2.parentNode.removeChild(h2);
+	}
+	// Pick an icon for a swept plugin section from the fields it carries.
+	function pluginIcon(scope) {
+		if (scope.querySelector('[name^="billing_"], [id*="billing"]')) return 'billing';
+		if (scope.querySelector('[name^="shipping_"], [id*="shipping"]')) return 'shipping';
+		if (scope.querySelector('.acf-field, [name^="acf"]')) return 'acf';
+		return 'plugin';
+	}
+
 	// Lift the profile-picture controls out of the form table and place them
-	// right under the page title, above accordions.
+	// beside the page title (avatar hero), above the tabs.
 	function mountProfilePictureHero() {
 		var row = firstMatch(form, '.user-profile-picture');
 		if (!row) return;
@@ -184,142 +228,257 @@ class AdminKit_Profile_Accordion {
 		}
 	}
 
-	// Profile picture lives outside accordions.
 	mountProfilePictureHero();
 
-	// --- 1. "My Account" — open panel of the most-used fields --------------
-	// The 80/20 set, in display order. We MOVE these <tr>s (appendChild moves,
-	// it doesn't clone) out of their native sections into one open table. Each
-	// <input> keeps its name=, so the form still posts exactly as WP expects:
-	// no duplicate fields, no server change, no CSS override. Edit this list to
-	// curate the panel — order is preserved, missing rows are skipped.
-	var ESSENTIALS = [
-		['.user-user-login-wrap', '.user-login-wrap'], // Username
-		'.user-first-name-wrap',
-		'.user-last-name-wrap',
-		'.user-nickname-wrap',
-		'.user-display-name-wrap', // "Display name publicly as"
-		'.user-role-wrap',
-		'#ame-rex-other-roles-row', // Other Roles (AME) — directly under Role
-		'.user-email-wrap',
-		['#password', '.user-pass1-wrap'] // New Password
-	];
+	// Application Passwords is the one heading WP nests in a <div>; lift the
+	// heading out (the wrapper keeps its id + classes for WP's own JS) so
+	// absorb() can find it as a top-level section.
+	var apw = form.querySelector('#application-passwords-section');
+	if (apw) {
+		var apwH2 = apw.querySelector('h2');
+		if (apwH2) form.insertBefore(apwH2, apw);
+	}
 
-	var rows = ESSENTIALS
-		.map(function (sel) { return firstMatch(form, sel); })
-		.filter(Boolean);
+	// Ensure the username carries a "can't be changed" note shown below it —
+	// WP only prints this hint on profile.php, not on user-edit.php.
+	var loginRow = firstMatch(form, ['.user-user-login-wrap', '.user-login-wrap']);
+	if (loginRow) {
+		var loginCell = loginRow.querySelector('td');
+		if (loginCell && !loginCell.querySelector('.description')) {
+			var note = document.createElement('p');
+			note.className = 'description';
+			note.textContent = S.username_locked;
+			loginCell.appendChild(note);
+		}
+	}
 
-	var account = null;
-	if (rows.length) {
+	// --- layout shell: tab strip + panels ---------------------------------
+	var box = document.createElement('div'); box.className = 'ak-account';
+	var tabs = document.createElement('div'); tabs.className = 'ak-tabs'; tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', S.nav);
+	var panels = document.createElement('div'); panels.className = 'ak-panels';
+	box.appendChild(tabs);
+	box.appendChild(panels);
+	form.insertBefore(box, form.firstChild); // native submit row stays below
+
+	var used = {};
+	function uid(base) {
+		var id = base, i = 2;
+		while (used[id]) { id = base + '-' + (i++); }
+		used[id] = 1;
+		return id;
+	}
+	function makePanel(id, label, desc) {
+		var card = document.createElement('section');
+		card.className = 'ak-card';
+		card.id = id;
+		card.setAttribute('role', 'tabpanel');
+		card.setAttribute('aria-labelledby', 'tab-' + id);
+		var head = document.createElement('div'); head.className = 'ak-card-head';
+		var h = document.createElement('h2'); h.textContent = label; head.appendChild(h);
+		if (desc) {
+			var p = document.createElement('p'); p.className = 'ak-card-desc'; p.textContent = desc; head.appendChild(p);
+		}
+		card.appendChild(head);
 		var table = document.createElement('table');
 		table.className = 'form-table';
 		table.setAttribute('role', 'presentation');
 		var tbody = document.createElement('tbody');
-		rows.forEach(function (row) { tbody.appendChild(row); });
 		table.appendChild(tbody);
-
-		account = makePanel(L.my_account, true, 'account');
-		account.appendChild(table);
-
-		// Place it above the first native section (Personal Options).
-		var firstHeading = form.querySelector('h2');
-		form.insertBefore(account, firstHeading || form.firstChild);
+		card.appendChild(table);
+		return { card: card, tbody: tbody };
+	}
+	function addTab(id, icon, label, order) {
+		var b = document.createElement('button');
+		b.type = 'button';
+		b.id = 'tab-' + id;
+		b.dataset.target = id;
+		b.dataset.order = order;
+		b.setAttribute('role', 'tab');
+		var ic = document.createElement('span'); ic.className = 'ic'; ic.innerHTML = I[icon] || I.plugin;
+		var tx = document.createElement('span'); tx.className = 'tx'; tx.textContent = label;
+		b.appendChild(ic);
+		b.appendChild(tx);
+		tabs.appendChild(b);
+	}
+	// Side-by-side: tag rows so the CSS grid pairs them two-up.
+	function markHalf(card, selectors) {
+		(selectors || []).forEach(function (sel) {
+			var row = firstMatch(card, sel);
+			if (row) row.classList.add('ak-half');
+		});
 	}
 
-	// --- 2. Normalize the one wrapped section ------------------------------
-	// "Application Passwords" is the only heading WP nests in a <div>; lift it
-	// out (the wrapper keeps its id + classes for WP's own app-password JS) so
-	// the fold loop below can treat it like any other section.
-	var apw = form.querySelector('#application-passwords-section');
-	if (apw) {
-		var apwHeading = apw.querySelector('h2');
-		if (apwHeading) form.insertBefore(apwHeading, apw);
-	}
+	// --- curated tabs -----------------------------------------------------
+	// `rows` fix the display order (moved in phase 1, before any whole-section
+	// absorb in phase 2 — so cross-section donors like Language leave Personal
+	// Options first). `half` rows pair up side by side.
+	// `order` sets the tab position: Informations (0), then WooCommerce
+	// customer addresses (10/20, assigned at sweep), Réglages (30), then any
+	// other plugin section (40, sorted alphabetically), then loose (90).
+	var CARDS = [
+		{ id: 'ak-info', icon: 'users', t: S.cards.info, grid: true, order: 0,
+		  rows: [ ['.user-user-login-wrap', '.user-login-wrap'], '.user-nickname-wrap', '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-url-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', '.user-description-wrap', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
+		  half: [ ['.user-user-login-wrap', '.user-login-wrap'], '.user-nickname-wrap', '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-url-wrap', '.user-display-name-wrap', '.user-role-wrap', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
+		  absorb: [ S.sections.name ] },
+		{ id: 'ak-settings', icon: 'sliders', t: S.cards.settings, order: 30,
+		  rows: [ '.user-language-wrap', '.user-syntax-highlighting-wrap', '.user-comment-shortcuts-wrap', ['.user-admin-bar-front-wrap', '.show-admin-bar'], '.user-pass2-wrap', '.pw-weak' ],
+		  absorb: [ S.sections.app_passwords, S.sections.personal, S.sections.contact, S.sections.about, S.sections.account, S.sections.capabilities ] }
+	];
 
-	// --- 3. Fold every remaining section into its own collapsed <details> --
-	// Snapshot the headings first: we move nodes below, so walking a frozen
-	// list (not the live child collection) keeps the iteration stable.
-	var headings = [];
-	for (var i = 0; i < form.children.length; i++) {
-		if (form.children[i].tagName === 'H2') headings.push(form.children[i]);
-	}
-
-	headings.forEach(function (heading) {
-		var details = makePanel(heading.textContent.trim(), false);
-		form.insertBefore(details, heading);
-
-		// Fold everything between this heading and the next section boundary
-		// (the next <h2>, or the submit button) into the panel.
-		var node = heading.nextSibling;
-		form.removeChild(heading);
-		while (node) {
-			var next = node.nextSibling;
-			if (node.nodeType === 1 &&
-				(node.tagName === 'H2' ||
-				(node.classList && node.classList.contains('submit')))) {
-				break;
+	var build = CARDS.map(function (def) {
+		used[def.id] = 1;
+		var c = makePanel(def.id, def.t.label, def.t.desc);
+		moveRows(c.tbody, def.rows);
+		return { def: def, c: c };
+	});
+	build.forEach(function (b) {
+		(b.def.absorb || []).forEach(function (title) { absorb(b.c.card, b.c.tbody, title); });
+	});
+	build.forEach(function (b) {
+		if (b.c.tbody.children.length || b.c.card.children.length > 2) {
+			if (b.def.grid) {
+				b.c.card.classList.add('ak-grid');
+				markHalf(b.c.card, b.def.half);
 			}
-			details.appendChild(node);
-			node = next;
+			panels.appendChild(b.c.card);
+			addTab(b.def.id, b.def.icon, b.def.t.label, b.def.order);
+		} else {
+			delete used[b.def.id];
 		}
 	});
 
-	// --- 4. Build "Settings" in the intended editing order ------------------
-	// Keep My Account focused on identity fields; move advanced preferences and
-	// maintenance items into Settings using one explicit display order.
-	if (account) {
-		var ORDERED_SETTINGS_ROWS = [
-			'.user-language-wrap',                         // Language
-			'.user-url-wrap',                              // Website
-			'.user-description-wrap',                      // Biographical Info
-			'.user-syntax-highlighting-wrap',              // Syntax Highlighting
-			'.user-comment-shortcuts-wrap',                // Keyboard Shortcuts
-			['.user-admin-bar-front-wrap', '.show-admin-bar'], // Toolbar
-			'.user-generate-reset-link-wrap',              // Password Reset
-			'.user-pass2-wrap',                            // Password helpers (no-JS)
-			'.pw-weak'                                     // Weak-password confirmation
-		];
-
-		var SECONDARY_SECTIONS = [L.personal, L.name, L.contact, L.about, L.account, L.app_passwords, L.capabilities];
-		var lead = SECONDARY_SECTIONS
-			.map(function (label) { return find(label); })
-			.filter(Boolean)[0] || null;
-
-		if (lead) {
-			var more = makePanel(L.more_settings, false, 'more');
-			form.insertBefore(more, lead);
-
-			var settingsTable = document.createElement('table');
-			settingsTable.className = 'form-table';
-			settingsTable.setAttribute('role', 'presentation');
-			var settingsBody = document.createElement('tbody');
-			ORDERED_SETTINGS_ROWS.forEach(function (selectorOrList) {
-				var row = firstMatch(form, selectorOrList);
-				if (row) settingsBody.appendChild(row);
+	// Group WooCommerce customer addresses (billing + shipping) into one tidy
+	// "Adresses" tab. Each address is a collapsible <details> so the panel
+	// doesn't dump ~16 fields at once — the first (billing) opens, the rest
+	// fold away. Native <details> = keyboard-accessible, instant, zero JS.
+	(function () {
+		var sections = ['[name^="billing_"]', '[name^="shipping_"]']
+			.map(function (sel) { return sectionByField(sel); })
+			.filter(Boolean);
+		if (!sections.length) return;
+		var c = makePanel(uid('ak-addresses'), S.addresses, '');
+		c.card.classList.add('ak-grid'); // fields render label-above, paired two-up
+		if (c.tbody.parentNode) c.tbody.parentNode.remove(); // drop the empty default table
+		sections.forEach(function (h2, idx) {
+			var d = document.createElement('details');
+			d.className = 'ak-subsection';
+			if (idx === 0) d.open = true;
+			var sum = document.createElement('summary');
+			sum.textContent = h2.textContent.trim();
+			d.appendChild(sum);
+			sectionNodes(h2).forEach(function (node) {
+				if (node.nodeType === 1 && node.tagName !== 'H2') d.appendChild(node);
+				else if (node.parentNode) node.parentNode.removeChild(node);
 			});
-			if (settingsBody.children.length) {
-				settingsTable.appendChild(settingsBody);
-				more.appendChild(settingsTable);
-			}
+			// Pair short address fields side by side; company + street stay full.
+			['_first_name', '_last_name', '_city', '_postcode', '_country', '_state', '_phone', '_email'].forEach(function (suffix) {
+				var field = d.querySelector('[id$="' + suffix + '"]');
+				var tr = field && field.closest('tr');
+				if (tr) tr.classList.add('ak-half');
+			});
+			c.card.appendChild(d);
+			if (h2.parentNode) h2.parentNode.removeChild(h2);
+		});
+		panels.appendChild(c.card);
+		addTab(c.card.id, 'address', S.addresses, 10);
+	})();
 
-			absorb(more, find(L.app_passwords), false);
-			absorb(more, find(L.personal), false);
-			absorb(more, find(L.name), false);
-			absorb(more, find(L.contact), false);
-			absorb(more, find(L.about), false);
-			absorb(more, find(L.account), false);
-			var caps = find(L.capabilities);
-			if (caps && caps.querySelector('.user-capabilities-wrap')) {
-				absorb(more, caps, false);
-			} else if (caps) {
-				caps.remove();
-			}
-
-			// Keep Settings directly under My Account.
-			if (account && more.parentNode === form) {
-				form.insertBefore(more, account.nextSibling);
-			}
+	// --- sweep leftovers (plugin sections + loose tables) -----------------
+	Array.prototype.forEach.call(form.querySelectorAll(':scope > h2'), function (h2) {
+		var label = h2.textContent.trim();
+		var slug = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'section';
+		var id = uid('ak-' + slug);
+		var c = makePanel(id, label, '');
+		consume(c.card, c.tbody, sectionNodes(h2), null);
+		if (h2.parentNode) h2.parentNode.removeChild(h2);
+		if (c.tbody.children.length || c.card.children.length > 2) {
+			var icon = pluginIcon(c.card);
+			var order = icon === 'billing' ? 10 : icon === 'shipping' ? 20 : 40;
+			panels.appendChild(c.card);
+			addTab(id, icon, label, order);
 		}
+	});
+	var loose = Array.prototype.filter.call(form.children, function (ch) {
+		return ch.classList && ch.classList.contains('form-table') && ch.querySelector('tr');
+	});
+	if (loose.length) {
+		var moreId = uid('ak-more');
+		var more = makePanel(moreId, S.more, '');
+		loose.forEach(function (t) {
+			Array.prototype.forEach.call(t.querySelectorAll('tr'), function (tr) { more.tbody.appendChild(tr); });
+			if (t.parentNode) t.parentNode.removeChild(t);
+		});
+		if (more.tbody.children.length) {
+			panels.appendChild(more.card);
+			addTab(moreId, pluginIcon(more.card), S.more, 90);
+		}
+	}
+
+	// Order the strip: by `data-order`, then alphabetically within a group
+	// (so sibling plugin tabs sort by name). Panels follow their tab.
+	Array.prototype.slice.call(tabs.children)
+		.sort(function (a, b) {
+			var d = (+a.dataset.order) - (+b.dataset.order);
+			return d || a.textContent.localeCompare(b.textContent);
+		})
+		.forEach(function (btn) {
+			tabs.appendChild(btn);
+			var panel = document.getElementById(btn.dataset.target);
+			if (panel) panels.appendChild(panel);
+		});
+
+	// --- tabs: show one panel at a time -----------------------------------
+	var buttons = tabs.querySelectorAll('button');
+	if (!buttons.length) {
+		box.parentNode.removeChild(box); // nothing grouped — leave the form be
+		form.removeAttribute('data-ak-account');
+		return;
+	}
+	function activate(id) {
+		Array.prototype.forEach.call(buttons, function (b) {
+			var on = b.dataset.target === id;
+			b.classList.toggle('on', on);
+			b.setAttribute('aria-selected', on ? 'true' : 'false');
+			b.tabIndex = on ? 0 : -1;
+		});
+		Array.prototype.forEach.call(panels.children, function (p) { p.hidden = (p.id !== id); });
+	}
+	tabs.addEventListener('click', function (e) {
+		var b = e.target.closest('button');
+		if (b) activate(b.dataset.target);
+	});
+	// Roving arrow-key nav across the tab strip.
+	tabs.addEventListener('keydown', function (e) {
+		if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+		var list = Array.prototype.slice.call(buttons);
+		var i = list.indexOf(document.activeElement);
+		if (i === -1) return;
+		var next = list[(i + (e.key === 'ArrowRight' ? 1 : list.length - 1)) % list.length];
+		next.focus();
+		activate(next.dataset.target);
+		e.preventDefault();
+	});
+	activate(buttons[0].dataset.target);
+
+	// On narrow screens, move the page's primary action ("Add New User") below
+	// the tabs + panels — it shouldn't sit above the content on mobile. The
+	// button lives in the title header (a different container), so a media-query
+	// listener relocates it rather than CSS order. Restored to the header on
+	// wide screens.
+	var pageAction = document.querySelector('.page-title-action');
+	if (pageAction) {
+		var actionHome = pageAction.parentNode;
+		var narrow = window.matchMedia('(max-width: 782px)');
+		var placeAction = function () {
+			if (narrow.matches) {
+				box.appendChild(pageAction);
+			} else if (pageAction.parentNode !== actionHome) {
+				actionHome.appendChild(pageAction);
+			}
+		};
+		placeAction();
+		if (narrow.addEventListener) narrow.addEventListener('change', placeAction);
+		else if (narrow.addListener) narrow.addListener(placeAction);
 	}
 })();
 </script>

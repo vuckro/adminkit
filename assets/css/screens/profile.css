@@ -86,7 +86,7 @@ body.adminkit.user-edit-php .user-profile-picture img,
 body.adminkit.profile-php .user-profile-picture img {
 	width: 48px;
 	height: 48px;
-	border-radius: var(--ak-radius-full);
+	border-radius: var(--ak-radius-m);
 	border: 1px solid var(--ak-border);
 }
 
@@ -154,12 +154,10 @@ body.adminkit #pass-strength-result.strong {
 	color: var(--ak-text);
 }
 
-/* Align the password tools and the Other Roles picker to the 320px text-input
-   width (components/form-table.css) so they don't sprawl past the other
-   fields' right edge. */
+/* Align the password tools to the 320px text-input width
+   (components/form-table.css) so they don't sprawl past the field's edge. */
 body.adminkit .wp-pwd,
-body.adminkit #pass-strength-result,
-body.adminkit #ame-rex-other-roles-field-wrapper {
+body.adminkit #pass-strength-result {
 	max-width: 320px;
 }
 
@@ -182,55 +180,244 @@ body.adminkit .wp-pwd input#pass1 {
 	width: 100%;
 }
 
-/* --- Section accordions ---------------------------------------------------
-   JS folds each WP profile <h2> + its .form-table into a native <details>
-   (see inc/core/class-profile-accordion.php). Flat + motionless to match
-   AdminKit: border + radius only, instant open/close, no transitions. */
+/* --- Account screen: horizontal tabs, one panel at a time ----------------
+   JS regroups each WP profile <h2> + its .form-table into an .ak-card panel
+   plus a tab strip; only the active panel is shown (see
+   inc/core/class-profile-account.php). Rows are MOVED, never cloned, so each
+   field keeps its name= and hidden panels still submit. Flat + motionless. */
 
-body.adminkit .ak-accordion {
-	margin: 0 0 10px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
-	/* Panel body = --ak-elevated, header row (summary) = --ak-surface;
-	   both flip per light/dark mode. */
-	background: var(--ak-elevated);
-	overflow: hidden;
+/* Whole block aligns to the page-title / hero width so the tabs, the panel and
+   the "Add New User" button all share the same left + right edges. */
+body.adminkit .ak-account {
+	max-width: 960px;
 }
 
-body.adminkit .ak-accordion > summary {
+/* Tab strip styled like WP's .subsubsub filters (All | Administrator | …) so
+   the account tabs match the list-table status links across screens: pill
+   links, active = elevated pill, NO bottom border. Single line; scrolls
+   sideways if it overflows, never vertically; scrollbar hidden for a clean
+   strip. (See core/chrome.css `.subsubsub`.) */
+body.adminkit .ak-tabs {
 	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 13px 16px;
-	font-size: var(--ak-text-m);
-	font-weight: 600;
-	color: var(--ak-heading);
-	background: var(--ak-surface);
-	cursor: pointer;
-	user-select: none;
-	list-style: none;
+	flex-wrap: nowrap;
+	gap: 4px;
+	margin-bottom: 22px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: none;
 }
 
-/* Strip the native disclosure triangle (WebKit/Blink + the standard prop) */
-body.adminkit .ak-accordion > summary::-webkit-details-marker {
+body.adminkit .ak-tabs::-webkit-scrollbar {
 	display: none;
 }
 
-body.adminkit .ak-accordion > summary:hover {
-	background: var(--ak-surface);
+body.adminkit .ak-tabs button {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 5px 11px;
+	font: inherit;
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	line-height: 1.3;
+	color: var(--ak-text-muted);
+	background: transparent;
+	border: 0;
+	border-radius: var(--ak-radius-s);
+	cursor: pointer;
+	white-space: nowrap;
 }
 
-/* Inset outline (not box-shadow) so the focus ring isn't clipped by the
-   container's overflow:hidden. */
-body.adminkit .ak-accordion > summary:focus-visible {
+body.adminkit .ak-tabs button .ic {
+	display: inline-flex;
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .ak-tabs button:hover {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+body.adminkit .ak-tabs button:hover .ic,
+body.adminkit .ak-tabs button.on .ic {
+	color: var(--ak-heading);
+}
+
+body.adminkit .ak-tabs button.on {
+	background: var(--ak-elevated);
+	color: var(--ak-heading);
+	font-weight: 600;
+}
+
+body.adminkit .ak-tabs button:focus-visible {
 	outline: 2px solid var(--ak-primary);
 	outline-offset: -2px;
 }
 
-/* Chevron drawn from two borders; flipped instantly on open (no transition) */
-body.adminkit .ak-accordion > summary::after {
+/* Panel — one flat card, no border (distinguished by its surface tone). Hidden
+   panels keep their inputs in the form. */
+body.adminkit .ak-card {
+	background: var(--ak-surface);
+	border-radius: var(--ak-radius-m);
+	padding: 22px 24px;
+}
+
+body.adminkit .ak-card[hidden] {
+	display: none;
+}
+
+body.adminkit .ak-card-head {
+	margin-bottom: 18px;
+}
+
+body.adminkit .ak-card-head h2 {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: var(--ak-heading);
+}
+
+body.adminkit .ak-card-desc {
+	margin: 3px 0 0;
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+
+/* Reset the table's native top margin inside every card. */
+body.adminkit .ak-card > .form-table {
+	margin: 0;
+}
+
+/* Grid cards (Identité, Email & langue) render fields label-above in a
+   two-column grid; rows are full-width by default and pair up only when JS
+   tags them .ak-half (first/last name, nickname/display name). Recasts WP's
+   <table> via display overrides — no DOM rewrite. Other cards keep the native
+   label-left table, which is safe with JS-toggled password rows and arbitrary
+   plugin markup. */
+body.adminkit .ak-card.ak-grid .form-table,
+body.adminkit .ak-card.ak-grid .form-table > tbody {
+	display: block;
+}
+
+body.adminkit .ak-card.ak-grid .form-table > tbody {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px 20px;
+}
+
+body.adminkit .ak-card.ak-grid .form-table > tbody > tr {
+	display: block;
+	grid-column: 1 / -1;
+	margin: 0;
+}
+
+body.adminkit .ak-card.ak-grid .form-table > tbody > tr.ak-half {
+	grid-column: span 1;
+}
+
+body.adminkit .ak-card.ak-grid .form-table > tbody > tr > th,
+body.adminkit .ak-card.ak-grid .form-table > tbody > tr > td {
+	display: block;
+	width: auto;
+	padding: 0;
+}
+
+body.adminkit .ak-card.ak-grid .form-table > tbody > tr > th {
+	margin-bottom: 6px;
+	color: var(--ak-text);
+	font-weight: 600;
+	font-size: var(--ak-text-xs);
+}
+
+/* Informations stays clean — drop WP's inline field hints (e.g. the
+   password-reset blurb) for a tidy render... */
+body.adminkit .ak-card.ak-grid .description {
+	display: none;
+}
+
+/* ...but keep the username note, shown below the field (not inline / right). */
+body.adminkit .ak-card.ak-grid .user-user-login-wrap .description {
+	display: block;
+	margin-top: 6px;
+}
+
+/* Each field fills its grid cell: half rows take ~half the width, full-width
+   rows (display name, role, biography) span the whole panel. */
+body.adminkit .ak-card.ak-grid .form-table input[type="text"],
+body.adminkit .ak-card.ak-grid .form-table input[type="email"],
+body.adminkit .ak-card.ak-grid .form-table input[type="url"],
+body.adminkit .ak-card.ak-grid .form-table input[type="password"],
+body.adminkit .ak-card.ak-grid .form-table select,
+body.adminkit .ak-card.ak-grid .form-table textarea {
+	min-width: 0;
+	width: 100%;
+	max-width: none;
+}
+
+/* WP core scopes .form-table textarea/select widths with #profile-page /
+   #your-profile (ID specificity), which otherwise beats the class rule above
+   and leaves selects + textareas content-width. Match the ID specificity so
+   the display-name select and the biography textarea fill their cell too. */
+body.adminkit #your-profile .ak-card.ak-grid .form-table select,
+body.adminkit #your-profile .ak-card.ak-grid .form-table textarea,
+body.adminkit #createuser .ak-card.ak-grid .form-table select,
+body.adminkit #createuser .ak-card.ak-grid .form-table textarea {
+	width: 100%;
+}
+
+/* Sub-heading for a secondary section folded into a panel (e.g. Application
+   Passwords inside Sécurité) — a divider + label, no extra container. */
+body.adminkit .ak-card-sub {
+	margin: 22px 0 12px;
+	padding-top: 16px;
+	border-top: 1px solid var(--ak-border);
+	font-size: var(--ak-text-m);
+	font-weight: 600;
+	color: var(--ak-heading);
+}
+
+body.adminkit .ak-card-sub:first-child {
+	margin-top: 0;
+	padding-top: 0;
+	border-top: 0;
+}
+
+/* Collapsible address sub-sections (Adresses tab) — a clickable summary styled
+   like .ak-card-sub, with a chevron. Flat + instant via native <details>, so
+   billing/shipping fold away and the panel isn't a wall of fields. */
+body.adminkit .ak-subsection > summary {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	padding: 16px 0 12px;
+	border-top: 1px solid var(--ak-border);
+	font-size: var(--ak-text-m);
+	font-weight: 600;
+	color: var(--ak-heading);
+	cursor: pointer;
+	list-style: none;
+	user-select: none;
+}
+
+body.adminkit .ak-subsection:first-of-type > summary {
+	padding-top: 0;
+	border-top: 0;
+}
+
+body.adminkit .ak-subsection > summary::-webkit-details-marker {
+	display: none;
+}
+
+body.adminkit .ak-subsection > summary:focus-visible {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: 2px;
+}
+
+/* Chevron from two borders; flips instantly when the section opens. */
+body.adminkit .ak-subsection > summary::after {
 	content: "";
-	flex: none;
 	margin-left: auto;
 	width: 7px;
 	height: 7px;
@@ -239,57 +426,12 @@ body.adminkit .ak-accordion > summary::after {
 	transform: rotate(45deg);
 }
 
-body.adminkit .ak-accordion[open] > summary {
-	border-bottom: 1px solid var(--ak-border);
-}
-
-body.adminkit .ak-accordion[open] > summary::after {
+body.adminkit .ak-subsection[open] > summary::after {
 	transform: rotate(-135deg);
 }
 
-/* Panel body — inset every section's content uniformly... */
-body.adminkit .ak-accordion > :not(summary) {
-	margin: 14px 16px;
-}
-
-/* ...and pull the form-table flush under the summary divider (its own
-   top margin from components/form-table.css would double the gap). */
-body.adminkit .ak-accordion > .form-table {
-	margin: 6px 16px 14px;
-}
-
-/* My Account panel: denser rhythm and clearer labels for frequent edits. */
-body.adminkit .ak-accordion[data-ak-panel="account"] > .form-table {
-	margin-top: 4px;
-}
-
-body.adminkit .ak-accordion[data-ak-panel="account"] .form-table > tbody > tr > th,
-body.adminkit .ak-accordion[data-ak-panel="account"] .form-table > tbody > tr > td {
-	padding-top: 10px;
-	padding-bottom: 10px;
-}
-
-body.adminkit .ak-accordion[data-ak-panel="account"] .form-table > tbody > tr > th {
-	width: 200px;
-	color: var(--ak-heading);
-	font-weight: 600;
-}
-
-body.adminkit .ak-accordion[data-ak-panel="account"] .form-table td p.description {
-	margin-top: 4px;
-}
-
-/* Sub-section headings inside a grouped panel — the section <h2>s folded
-   into "My Account" / "Contact Information". (components/form-table.css only
-   styles `form > h2`, which these no longer are.) Placed last so it wins the
-   equal-specificity tie with the `:not(summary)` margin rule above. */
-body.adminkit .ak-accordion > h2 {
-	margin: 18px 16px 6px;
-	padding-bottom: 8px;
-	font-size: var(--ak-text-m);
-	font-weight: 600;
-	color: var(--ak-heading);
-	border-bottom: 1px solid var(--ak-border);
+body.adminkit .ak-subsection > .form-table {
+	margin: 0 0 14px;
 }
 
 /* Application Password creation form inside Settings:
@@ -356,8 +498,19 @@ body.adminkit #application-passwords-section .create-application-password #do_ne
 		margin-left: 0;
 	}
 
-	body.adminkit .ak-accordion[data-ak-panel="account"] .form-table > tbody > tr > th {
-		width: auto;
+	/* "Add New User" relocated below the tabs/panels on mobile (moved by JS in
+	   class-profile-account.php) — a full-width button at the foot of the block. */
+	body.adminkit .ak-account > .page-title-action {
+		display: block;
+		width: 100%;
+		margin-top: 16px;
+		text-align: center;
+	}
+
+	/* Paired fields stack to one column on narrow screens (tabs already
+	   single-line + horizontally scrollable by default). */
+	body.adminkit .ak-card.ak-grid .form-table > tbody {
+		grid-template-columns: 1fr;
 	}
 
 	body.adminkit #application-passwords-section .create-application-password,
