@@ -20,7 +20,7 @@ body.adminkit input[type="color"],
 body.adminkit textarea,
 body.adminkit select,
 body.adminkit .wp-core-ui select {
-	background: var(--ak-surface);
+	background: var(--ak-input-bg);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
@@ -70,50 +70,129 @@ body.adminkit select:hover {
 	border-color: var(--ak-border-strong);
 }
 
-/* Checkboxes & radios */
-body.adminkit input[type="checkbox"],
+/* Radios — 16px round, neutral fill + a brand dot when checked. */
 body.adminkit input[type="radio"] {
 	border: 1px solid var(--ak-border-strong);
-	border-radius: 3px;
-	background: var(--ak-surface);
+	border-radius: 50%;
+	background: var(--ak-input-bg);
 	width: 16px;
 	height: 16px;
 }
 
-body.adminkit input[type="radio"] {
-	border-radius: 50%;
-}
-
-/* Checked state: checkbox = brand primary fill + --ak-on-accent (stable dark)
-   check. Radio = surface fill + primary ring + primary dot (a primary dot would
-   vanish on a primary fill, so the radio keeps a neutral fill). */
-body.adminkit input[type="checkbox"]:checked,
 body.adminkit input[type="radio"]:checked {
-	background: var(--ak-primary);
+	background: var(--ak-input-bg);
 	border-color: var(--ak-primary);
-}
-
-/* Checkmark glyph — light on the brand fill. Not --ak-on-accent: the provider
-   tunes that dark (readable as button-label text on yellow), which renders a
-   black tick that reads poorly here. A literal light works since the fill is
-   always --ak-primary and no token stays light across both modes. */
-body.adminkit input[type="checkbox"]:checked::before {
-	color: #fff;
-}
-
-body.adminkit input[type="radio"]:checked {
-	background: var(--ak-surface);
 }
 
 body.adminkit input[type="radio"]:checked::before {
 	background: var(--ak-primary);
 }
 
-body.adminkit input[type="checkbox"]:focus,
 body.adminkit input[type="radio"]:focus {
 	outline: none;
 	border-color: var(--ak-primary);
 	box-shadow: none;
+}
+
+/* Checkboxes → a flat on/off toggle (à la Bricks): a pill track + sliding knob
+   replacing the native box. Instant, no transition — AdminKit is motion-free.
+   Track greys when off, fills --ak-primary when on; the knob is the ::before
+   (WP's checkmark glyph is dropped). Row-selection checkboxes in list tables
+   and multi-select taxonomy checklists stay real checkboxes — see the override
+   block right below. */
+body.adminkit input[type="checkbox"] {
+	-webkit-appearance: none;
+	appearance: none;
+	box-sizing: border-box;
+	flex: none;
+	position: relative;
+	width: 34px;
+	height: 20px;
+	min-width: 34px;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding: 0;
+	border: none;
+	border-radius: var(--ak-radius-full);
+	background: var(--ak-border-strong);
+	cursor: pointer;
+	vertical-align: middle;
+}
+
+body.adminkit input[type="checkbox"]::before {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+	border-radius: var(--ak-radius-full);
+	background: #fff;
+}
+
+body.adminkit input[type="checkbox"]:checked {
+	background: var(--ak-primary);
+	border: none;
+}
+
+body.adminkit input[type="checkbox"]:checked::before {
+	content: "";
+	left: 16px;
+	color: transparent;
+}
+
+body.adminkit input[type="checkbox"]:focus {
+	outline: none;
+	box-shadow: none;
+}
+
+body.adminkit input[type="checkbox"]:focus-visible {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: 2px;
+}
+
+/* Keep real checkboxes where a toggle makes no sense: list-table row selection
+   ("select all" + per-row) and multi-select taxonomy checklists (categories,
+   nav-menu item panels). Restore the native control, brand-tinted. */
+body.adminkit td.check-column input[type="checkbox"],
+body.adminkit th.check-column input[type="checkbox"],
+body.adminkit #cb-select-all-1,
+body.adminkit #cb-select-all-2,
+body.adminkit .categorychecklist input[type="checkbox"],
+body.adminkit .category-checklist input[type="checkbox"] {
+	-webkit-appearance: auto;
+	appearance: auto;
+	accent-color: var(--ak-primary);
+	position: static;
+	width: 16px;
+	height: 16px;
+	min-width: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+}
+
+body.adminkit td.check-column input[type="checkbox"]::before,
+body.adminkit th.check-column input[type="checkbox"]::before,
+body.adminkit #cb-select-all-1::before,
+body.adminkit #cb-select-all-2::before,
+body.adminkit .categorychecklist input[type="checkbox"]::before,
+body.adminkit .category-checklist input[type="checkbox"]::before {
+	content: none;
+}
+
+/* Dark mode: the page color-scheme stays light by design (see core/chrome.css),
+   so a restored NATIVE checkbox renders its box white even on a dark surface
+   (accent-color only tints the check, not the box). Flip just these checkboxes
+   to the dark scheme so the box adapts; the brand check stays the same. */
+:root[data-adminkit-theme="dark"] body.adminkit td.check-column input[type="checkbox"],
+:root[data-adminkit-theme="dark"] body.adminkit th.check-column input[type="checkbox"],
+:root[data-adminkit-theme="dark"] body.adminkit #cb-select-all-1,
+:root[data-adminkit-theme="dark"] body.adminkit #cb-select-all-2,
+:root[data-adminkit-theme="dark"] body.adminkit .categorychecklist input[type="checkbox"],
+:root[data-adminkit-theme="dark"] body.adminkit .category-checklist input[type="checkbox"] {
+	color-scheme: dark;
 }
 
 /* File input chrome — input itself (the "Choose File" button is
