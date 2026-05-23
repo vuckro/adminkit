@@ -728,3 +728,11 @@ body.adminkit.acf-admin-page .acf-button-group label.selected {
 body.adminkit.acf-admin-page #acf-field-group-options .field-group-setting-split-container .field-group-setting-split:nth-child(2n) {
 	border-left-color: var(--ak-border);
 }
+
+/* Selected radio/checkbox option label -> primary (ACF flags the checked
+   <label> with .selected). Scoped to the lists so the button-group's own
+   selected style is untouched. */
+body.adminkit.acf-admin-page .acf-radio-list label.selected,
+body.adminkit.acf-admin-page .acf-checkbox-list label.selected {
+	color: var(--ak-primary);
+}
