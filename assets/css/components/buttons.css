@@ -34,7 +34,7 @@ body.adminkit .button-secondary:hover {
 
 body.adminkit .button:focus,
 body.adminkit .wp-core-ui .button:focus {
-	box-shadow: var(--ak-focus-ring);
+	box-shadow: none;
 	outline: none;
 }
 
