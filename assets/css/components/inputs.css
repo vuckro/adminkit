@@ -102,7 +102,6 @@ body.adminkit input[type="radio"]:checked::before {
 
 body.adminkit input[type="checkbox"]:focus,
 body.adminkit input[type="radio"]:focus {
-	box-shadow: var(--ak-focus-ring);
 	outline: none;
 	border-color: var(--ak-primary);
 }
