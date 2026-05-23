@@ -406,6 +406,12 @@ body.adminkit .wp-editor-container {
 	overflow: hidden;
 }
 
+/* Excerpt / short-description editor — WP pins #wp-excerpt-editor-container white
+   with an ID rule that beats the .wp-editor-container class above; match the ID. */
+body.adminkit #wp-excerpt-editor-container {
+	background-color: var(--ak-surface);
+}
+
 /* Quicktags (Text tab) toolbar — recessed header band inside the editor box. */
 body.adminkit .quicktags-toolbar {
 	background: var(--ak-surface);

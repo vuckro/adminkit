@@ -93,8 +93,12 @@ body.adminkit input[type="radio"]:checked {
 	border-color: var(--ak-primary);
 }
 
+/* Checkmark glyph — light on the brand fill. Not --ak-on-accent: the provider
+   tunes that dark (readable as button-label text on yellow), which renders a
+   black tick that reads poorly here. A literal light works since the fill is
+   always --ak-primary and no token stays light across both modes. */
 body.adminkit input[type="checkbox"]:checked::before {
-	color: var(--ak-on-accent);
+	color: #fff;
 }
 
 body.adminkit input[type="radio"]:checked {
