@@ -800,11 +800,12 @@ body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picke
 }
 
 /* Field-type icon badge (round #ebf5fa chip + #a5d2e7 ring) -> brand tint.
-   box-shadow:none drops ACF's #f9fafb ring around the icon in the picker. */
+   box-shadow:none drops ACF's icon rings; !important because the open/highlighted
+   state rings it at higher specificity (.select2-container--open …). */
 body.adminkit.acf-admin-page .field-type-icon {
 	background-color: var(--ak-primary-subtle);
 	border-color: color-mix(in srgb, var(--ak-primary) 40%, transparent);
-	box-shadow: none;
+	box-shadow: none !important;
 }
 
 body.adminkit.acf-admin-page .field-type-icon:before {
