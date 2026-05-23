@@ -29,12 +29,9 @@ body.adminkit .widefat thead th,
 body.adminkit .widefat thead td,
 body.adminkit .widefat tfoot th,
 body.adminkit .widefat tfoot td {
-	background: var(--ak-elevated);
-	color: var(--ak-text-muted);
+	background: var(--ak-surface);
+	color: var(--ak-heading);
 	font-weight: 600;
-	font-size: 11px;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
 	border-bottom: 1px solid var(--ak-border);
 	border-top: none;
 }
@@ -66,29 +63,18 @@ body.adminkit .wp-list-table tfoot th,
 body.adminkit .wp-list-table tfoot td,
 body.adminkit .wp-list-table thead th.check-column,
 body.adminkit .wp-list-table tfoot th.check-column {
-	background: var(--ak-elevated);
-	color: var(--ak-text-muted);
+	background: var(--ak-surface);
+	color: var(--ak-heading);
 	font-weight: 600;
-	font-size: 11px;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
+	font-size: var(--ak-text-s);
 	border-bottom: 1px solid var(--ak-border);
 	border-top: none;
 	padding: 10px;
 }
 
-/* Header sort links inherit the muted header color; the sorted column (and
-   hover) lift to heading so the current sort reads clearly. Split from the
-   resting state so non-sorted columns stay quiet. The :hover rule also beats
-   the global a:hover brand tint (links.css) on higher specificity. */
+/* Sort indicators + header links — all heading color */
 body.adminkit .wp-list-table thead th a,
-body.adminkit .wp-list-table tfoot th a {
-	color: var(--ak-text-muted);
-}
-
-body.adminkit .wp-list-table thead th.sorted a,
-body.adminkit .wp-list-table tfoot th.sorted a,
-body.adminkit .wp-list-table thead th.sortable:hover a,
+body.adminkit .wp-list-table tfoot th a,
 body.adminkit .wp-list-table thead th.sorted .sorting-indicator,
 body.adminkit .wp-list-table thead th.sortable:hover .sorting-indicator {
 	color: var(--ak-heading);
@@ -127,48 +113,6 @@ body.adminkit .wp-list-table td.username strong a:focus {
 	background-color: transparent;
 	border-color: transparent;
 	color: var(--ak-heading);
-}
-
-/* Post status chips — WP appends `— <span class="post-state">Draft</span>` to
-   non-published titles (published rows carry no span). Render each as a soft
-   status pill with a leading dot. The " — " mdash and the trailing ", "
-   separator are stripped in JS (inc/core/class-list-table-chrome.php); the
-   pill color is keyed off the row's status-* class below, not the localized
-   label, so it survives translation and mirrors the .subsubsub filter tints. */
-body.adminkit .wp-list-table .post-state {
-	display: inline-flex;
-	align-items: center;
-	gap: 5px;
-	vertical-align: middle;
-	margin-left: 8px;
-	padding: 2px 9px;
-	border-radius: var(--ak-radius-full);
-	background: var(--ak-elevated);
-	color: var(--ak-text-muted);
-	font-size: 11px;
-	font-weight: 600;
-	line-height: 1.6;
-}
-
-body.adminkit .wp-list-table .post-state::before {
-	content: "";
-	flex: none;
-	width: 6px;
-	height: 6px;
-	border-radius: var(--ak-radius-full);
-	background: currentColor;
-	opacity: 0.9;
-}
-
-body.adminkit .wp-list-table tr.status-draft .post-state,
-body.adminkit .wp-list-table tr.status-pending .post-state {
-	background: color-mix(in srgb, var(--ak-warning) 16%, var(--ak-surface));
-	color: var(--ak-warning);
-}
-
-body.adminkit .wp-list-table tr.status-future .post-state {
-	background: color-mix(in srgb, var(--ak-info) 16%, var(--ak-surface));
-	color: var(--ak-info);
 }
 
 /* users.php — round the gravatar (matches the admin bar / user dropdown) and

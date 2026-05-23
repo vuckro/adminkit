@@ -2,22 +2,18 @@
 /**
  * List-table chrome polish.
  *
- * Two bits of list-table markup fight a modern presentation, and neither can
- * be fixed with CSS alone:
- *   1. the status-filter row (`.subsubsub`: All | Active | …) ships literal
- *      " |" separators as text nodes and counts wrapped in parentheses "(12)";
- *   2. post status labels render as `— <span class="post-state">Draft</span>`
- *      after the title — a leading mdash plus a trailing ", " separator inside
- *      multi-state spans.
+ * The status-filter row (`.subsubsub`: All | Active | Inactive …) ships two
+ * bits of markup that fight a modern presentation:
+ *   1. literal " |" separators as text nodes between the links, and
+ *   2. counts wrapped in parentheses, e.g. "(12)".
  *
- * A tiny footer script strips all of it — leaving clean filter links + numeric
- * counts (styled into pills by core/chrome.css) and clean status spans (styled
- * into colored chips by components/tables.css, keyed off the row's status-*
- * class so no localized label matching is needed here).
+ * CSS can hide the pipes (font-size tricks) but can't strip the parentheses,
+ * so a tiny footer script removes both — leaving clean links + numeric counts
+ * that core/chrome.css styles into inline pills with round notification badges.
  *
  * Printed inline on every admin page (like the theme toggle / profile
- * accordion) so the asset registry stays CSS-only. Each block is a no-op
- * wherever its markup is absent.
+ * accordion) so the asset registry stays CSS-only. It is a no-op wherever no
+ * `.subsubsub` is present.
  *
  * @package AdminKit
  */
@@ -36,9 +32,8 @@ class AdminKit_Core_List_Table_Chrome {
 	}
 
 	/**
-	 * Normalize list-table markup for the modern presentation:
-	 *   - strip parentheses from `.subsubsub .count` + drop the " |" separators;
-	 *   - strip the leading " — " and trailing ", " from `.post-state` chips.
+	 * Strip the parentheses from `.subsubsub .count` and remove the literal
+	 * " |" separator text nodes between the filter links.
 	 *
 	 * @return void
 	 */
@@ -47,10 +42,11 @@ class AdminKit_Core_List_Table_Chrome {
 			return;
 		}
 		?>
-<script id="adminkit-list-table-chrome">
+<script id="adminkit-subsubsub">
 (function () {
-	// --- Status filters (.subsubsub: All | Published | Draft | …) ----------
-	Array.prototype.forEach.call(document.querySelectorAll('.subsubsub'), function (ul) {
+	var lists = document.querySelectorAll('.subsubsub');
+	if (!lists.length) return;
+	Array.prototype.forEach.call(lists, function (ul) {
 		// "(12)" -> "12"
 		Array.prototype.forEach.call(ul.querySelectorAll('.count'), function (count) {
 			var n = count.textContent.replace(/[()]/g, '').trim();
@@ -61,28 +57,6 @@ class AdminKit_Core_List_Table_Chrome {
 			Array.prototype.slice.call(li.childNodes).forEach(function (node) {
 				if (node.nodeType === 3) { li.removeChild(node); }
 			});
-		});
-	});
-
-	// --- Status chips (.post-state) ----------------------------------------
-	// Strip the trailing ", " separator WP packs inside multi-state spans so
-	// each chip reads as a clean label; color is applied in CSS by status-* row
-	// class, so we don't match the (localized) text here.
-	var states = document.querySelectorAll('.wp-list-table .post-state');
-	Array.prototype.forEach.call(states, function (span) {
-		span.textContent = span.textContent.replace(/[,\s]+$/, '').trim();
-	});
-	// Remove the " — " mdash text node(s) WP prints before the chips, inside the
-	// title's <strong>. Only whitespace / dash text nodes are touched.
-	var cleaned = [];
-	Array.prototype.forEach.call(states, function (span) {
-		var parent = span.parentNode;
-		if (!parent || cleaned.indexOf(parent) !== -1) { return; }
-		cleaned.push(parent);
-		Array.prototype.slice.call(parent.childNodes).forEach(function (node) {
-			if (node.nodeType === 3 && /^[\s—–-]*$/.test(node.textContent)) {
-				parent.removeChild(node);
-			}
 		});
 	});
 })();
