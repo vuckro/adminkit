@@ -1,0 +1,46 @@
+/* WordPress "About" cluster — about.php + credits / freedoms / privacy /
+   get-involved. All share the `.about__container` wrapper and a `.{slug}-php`
+   body class. WP 7.0 drives these pages through a semantic CSS-variable layer
+   on `.about__container` (--background / --text / --accent-* / --nav-* / hr /
+   radius), so this is a Tier-A variable remap onto AdminKit tokens — no
+   selector overrides for the content. Only the page canvas (core hard-pins
+   #fff outside the variable layer) and a dark-mode header guard need rules. */
+
+/* Page canvas — core pins the body + #wpcontent to #fff, which punches a white
+   hole through the themed admin (and breaks dark mode). Route to the bg token. */
+body.adminkit.about-php,
+body.adminkit.credits-php,
+body.adminkit.freedoms-php,
+body.adminkit.privacy-php,
+body.adminkit.contribute-php,
+body.adminkit.about-php #wpcontent,
+body.adminkit.credits-php #wpcontent,
+body.adminkit.freedoms-php #wpcontent,
+body.adminkit.privacy-php #wpcontent,
+body.adminkit.contribute-php #wpcontent {
+	background: var(--ak-bg);
+}
+
+/* Remap the page's own semantic variables onto AdminKit tokens. Everything
+   downstream — sections, links, accent panels, nav tabs, hr, radii — inherits
+   from these, so this one block themes the whole content area in both modes. */
+body.adminkit .about__container {
+	--background: var(--ak-surface);
+	--subtle-background: var(--ak-surface);
+	--text: var(--ak-text);
+	--text-light: var(--ak-on-accent);   /* text sitting on an accent fill */
+	--accent-1: var(--ak-primary);       /* links + active nav tab */
+	--accent-2: var(--ak-primary);       /* accent fills + accent text */
+	--accent-3: var(--ak-border);        /* hr / dividers */
+	--nav-background: var(--ak-surface);
+	--nav-border: var(--ak-border);
+	--border-radius: var(--ak-radius-m);
+}
+
+/* The header is a fixed WP marketing image (identical in both modes) with dark
+   title text baked for it. In dark mode the remapped --text flips light and
+   would sink into the artwork — re-pin the header's --text dark so the title
+   and tagline stay legible on the banner. */
+:root[data-adminkit-theme="dark"] body.adminkit .about__header {
+	--text: #1e1e1e;
+}

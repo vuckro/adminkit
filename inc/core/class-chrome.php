@@ -9,12 +9,10 @@
  *   - screens/*        per-screen polish, conditionally loaded by `$screen->id`
  *   - screens/_shared  small components used across several screens (wp-filter,
  *                      thickbox, notification-dialog, cards) — always-loaded
- *   - third-party/*    overrides for non-core admin plugins (Choices.js,
- *                      Admin Menu Editor) — always-loaded; selectors are
- *                      no-ops when the host is absent
  *
- * Integration CSS (Gutenberg, WooCommerce, FluentCart, ...) lives in
- * each integration's own folder and is registered by the integration class.
+ * Integration CSS (Gutenberg, WooCommerce, the Fluent suite, ...) lives in
+ * each integration's own folder under `inc/integrations/{slug}/css/` and is
+ * registered by that integration's class, not here.
  *
  * @package AdminKit
  */
@@ -121,6 +119,7 @@ class AdminKit_Core_Chrome {
 		self::register_screen( 'update-core',     array( 'update-core' ) );
 		self::register_screen( 'import',          array( 'import' ) );
 		self::register_screen( 'site-health',     array( 'site-health', 'site-health-info', 'options-privacy', 'privacy-policy-guide' ) );
+		self::register_screen( 'about',           array( 'about', 'credits', 'freedoms', 'privacy', 'contribute' ) );
 
 		// --- Frontend admin bar (when bar is showing on the frontend) ---
 		AdminKit_Assets::register( array(
