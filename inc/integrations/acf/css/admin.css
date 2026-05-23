@@ -329,6 +329,17 @@ body.adminkit.acf-admin-page .select2-container.-acf .select2-selection--multipl
 	color: var(--ak-heading);
 }
 
+/* The inline search field in a multi-select is an <input type=search>, so
+   AdminKit's global input styling wraps it in a border + surface bg + min-height
+   — a bordered box nested inside the select2 box = the "double border". Reset it
+   to a clean inline field. */
+body.adminkit.acf-admin-page .select2-search--inline .select2-search__field {
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	min-height: 0;
+}
+
 /* Focused select2 — ACF rings it with a pale #ebf5fa outline + #399ccb border. */
 body.adminkit.acf-admin-page .acf-input .select2-container--focus,
 body.adminkit.acf-admin-page .rule-groups .select2-container--focus {
