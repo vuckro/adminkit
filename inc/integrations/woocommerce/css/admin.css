@@ -173,3 +173,84 @@ body.adminkit a.suggestion-dismiss:hover,
 body.adminkit a.suggestion-dismiss:focus {
 	color: var(--ak-text);
 }
+
+
+/* ===== select2 / selectWoo dropdowns ===== */
+/* WC's enhanced selects (order Status / Customer, product & downloadable search,
+   settings) render via select2 (the --default skin) with #fff boxes, #aaa
+   borders, #444 text, #e4e4e4 tag chips and a #5897fb highlight — none flip in
+   dark mode. The results dropdown is appended to <body>, which on WC screens
+   carries this stylesheet, so the portaled panel is covered too. These rules
+   only load on WC screens (ACF styles its own select2 separately). */
+
+/* Selection box (single + multiple; both skins). */
+body.adminkit .select2-container--default .select2-selection--single,
+body.adminkit .select2-container--default .select2-selection--multiple,
+body.adminkit .select2-container--classic .select2-selection--single,
+body.adminkit .select2-container--classic .select2-selection--multiple {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+/* Rendered value + placeholder + the caret triangle. */
+body.adminkit .select2-container--default .select2-selection--single .select2-selection__rendered {
+	color: var(--ak-text);
+}
+
+body.adminkit .select2-container--default .select2-selection__placeholder {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .select2-container--default .select2-selection--single .select2-selection__arrow b {
+	border-top-color: var(--ak-text-muted);
+}
+
+/* Results dropdown panel (portaled to <body>). */
+body.adminkit .select2-dropdown {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+/* Highlighted (keyboard / hover) + already-selected option. */
+body.adminkit .select2-container--default .select2-results__option--highlighted[aria-selected] {
+	background-color: var(--ak-primary-subtle);
+	color: var(--ak-heading);
+}
+
+body.adminkit .select2-container--default .select2-results__option[aria-selected="true"] {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
+}
+
+/* Multi-select tag chips + their remove (x). */
+body.adminkit .select2-container--default .select2-selection--multiple .select2-selection__choice {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+	color: var(--ak-text-muted);
+}
+
+/* Inline search field (multi-select) — AdminKit's global input styling would
+   nest a bordered box inside the select2 box; reset it to a clean inline field. */
+body.adminkit .select2-search--inline .select2-search__field {
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	min-height: 0;
+}
+
+/* The dropdown's own search field (single-select search box). */
+body.adminkit .select2-dropdown .select2-search__field {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* Disabled select. */
+body.adminkit .select2-container--default.select2-container--disabled .select2-selection--single,
+body.adminkit .select2-container--default.select2-container--disabled .select2-selection--multiple {
+	background-color: var(--ak-bg);
+}
