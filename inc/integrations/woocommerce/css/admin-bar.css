@@ -1,0 +1,24 @@
+/* WooCommerce toolbar (admin bar) — the site-visibility badge.
+
+   The badge sits in the toolbar, present on every admin page, so this file is
+   loaded admin-wide by class-woocommerce.php (the WC-screen-scoped admin.css
+   doesn't reach the toolbar, and AdminKit's core adminbar.css is mode-agnostic
+   about WC state). Tier B.
+
+   WC renders the badge with a state class on the <li>
+   (woocommerce-site-status-badge-{live|coming-soon|store-coming-soon}) and
+   injects its own inline CSS (grey for coming-soon, pale green for live). Color
+   it by state in AdminKit tokens instead: "Coming soon" = warning, "Live" =
+   success. The `.quicklinks` + state-class chain matches WC's inline-CSS
+   specificity; !important beats the late-printed inline <style>. */
+
+#wpadminbar .quicklinks #wp-admin-bar-woocommerce-site-visibility-badge.woocommerce-site-status-badge-coming-soon a.ab-item,
+#wpadminbar .quicklinks #wp-admin-bar-woocommerce-site-visibility-badge.woocommerce-site-status-badge-store-coming-soon a.ab-item {
+	background-color: color-mix(in srgb, var(--ak-warning) 16%, var(--ak-surface)) !important;
+	color: var(--ak-warning) !important;
+}
+
+#wpadminbar .quicklinks #wp-admin-bar-woocommerce-site-visibility-badge.woocommerce-site-status-badge-live a.ab-item {
+	background-color: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface)) !important;
+	color: var(--ak-success) !important;
+}
