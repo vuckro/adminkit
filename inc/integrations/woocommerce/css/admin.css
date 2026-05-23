@@ -27,6 +27,18 @@ body.adminkit.post-type-product #titlediv #title {
 	padding: 10px 12px;
 }
 
+/* Title placeholder ("Product name") — WP hardcodes #646970; route to the muted
+   token so it stays legible in dark mode. */
+body.adminkit.post-type-product #titlediv #title-prompt-text {
+	color: var(--ak-text-muted);
+}
+
+/* Add New Product — hide the redundant "Add new product" page heading; the
+   prominent title field below is the focal point on the create screen. */
+body.adminkit.post-new-php.post-type-product .wrap h1.wp-heading-inline {
+	display: none;
+}
+
 
 /* ===== Product data — panel & tab polish ===== */
 
