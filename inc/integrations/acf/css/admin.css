@@ -431,6 +431,9 @@ body.adminkit.acf-admin-page .acf-tab-wrap .acf-tab-group li a:hover {
 
 body.adminkit.acf-admin-page .postbox-container .acf-tab-wrap {
 	position: static;
+	width: auto;
+	margin: 0 0 20px 0;
+	border-radius: var(--ak-radius-s);
 }
 
 /* "Regenerate labels" bar (post-type / taxonomy / options editors). */
