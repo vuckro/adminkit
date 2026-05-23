@@ -89,7 +89,7 @@ body.adminkit input[type="radio"] {
 body.adminkit input[type="checkbox"]:checked,
 body.adminkit input[type="radio"]:checked {
 	background: var(--ak-primary);
-	border-color: var(--ak-heading);
+	border-color: var(--ak-primary);
 }
 
 body.adminkit input[type="checkbox"]:checked::before {
