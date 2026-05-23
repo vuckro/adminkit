@@ -185,6 +185,14 @@ body.adminkit.woocommerce-admin-page .woocommerce-table .woocommerce-pagination 
 	background-color: var(--ak-surface);
 }
 
+/* Pagination prev/next arrow group — a segmented control. Map WC's hardcoded
+   #f0f2f4 fill + #b5bfc9 frame to a recessed surface + the stronger control
+   border (it reads as a button, like AdminKit's own buttons). */
+body.adminkit.woocommerce-admin-page .woocommerce-pagination__page-arrows-buttons {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border-strong);
+}
+
 /* Round the table card and clip the header + pagination corners to it. The
    inner horizontal scroll sits on a child element, so overflow:hidden here
    only shapes the outer corners — it doesn't trap the scroll. */
