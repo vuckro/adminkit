@@ -125,6 +125,32 @@ body.adminkit.woocommerce-admin-page .woocommerce-task-list__item .woocommerce-t
 	color: var(--ak-heading);
 }
 
+/* Task progress header — muted caption + recessed progress-bar track. */
+body.adminkit.woocommerce-admin-page .woocommerce-task-progress-header p {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-task-progress-header .woocommerce-task-progress-header__progress-bar {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+/* Inbox message (Home notes) — muted text on a recessed surface. */
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-message {
+	background-color: var(--ak-surface);
+	color: var(--ak-text-muted);
+}
+
+/* Stats overview (Home widget) — tab strip + Jetpack-promo dividers. */
+body.adminkit.woocommerce-admin-page .woocommerce-stats-overview__tabs .components-tab-panel__tabs {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page article.woocommerce-stats-overview__install-jetpack-promo footer {
+	border-top-color: var(--ak-border);
+	border-bottom-color: var(--ak-border);
+}
+
 
 /* ===== 3. Cards & filter panels ===== */
 
