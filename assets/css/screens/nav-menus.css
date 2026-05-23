@@ -39,14 +39,14 @@ body.adminkit input#menu-name {
    item reads as its own bordered card (resting --ak-border; the hover below
    lifts it to --ak-border-strong). */
 body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle {
-	background: var(--ak-surface);
+	background: var(--ak-elevated);
 	border: 1px solid var(--ak-border);
 	color: var(--ak-text);
 }
 
 /* Expanded item settings drawer. */
 body.adminkit.nav-menus-php .menu-item-settings {
-	background: var(--ak-surface);
+	background: var(--ak-elevated);
 	border-color: var(--ak-border);
 	box-shadow: none;
 	color: var(--ak-text);
