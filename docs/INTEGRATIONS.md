@@ -135,6 +135,28 @@ public static function register_assets() {
 
 See [ASSETS.md](ASSETS.md) for the full registry API.
 
+### Start with a scan
+
+Don't hunt for the host's colors by hand — let the scanner draft the mapping:
+
+```
+php bin/adapter-scan.php ../<host-plugin>            # whole plugin, recursive
+php bin/adapter-scan.php ../<host-plugin> --slug=foo --scope=.foo-admin-page
+```
+
+It reports two things and emits a paste-ready scaffold:
+
+- **Tier A** — every `--x: <color>` the host defines, with a suggested `--ak-*` remap. If this list is non-empty, remap these first and most of the UI (dark mode included) follows for free. The scan also reveals the host's variable *graph* — e.g. Element Plus's `--el-*` all alias down to a few `--fc-*` roots, so you remap the roots.
+- **Tier B** — hardcoded `#hex` / `rgb()` / `hsl()` literals, ranked by use, grouped by the property they sit on (background / border / text), each classified to a token by lightness + chroma + hue.
+
+The suggestions are heuristic — they get the base ~right (brand, the four status colors, surfaces, borders), and you do the fine-tuning: the 3-surface split (`--ak-bg` / `--ak-surface` / `--ak-elevated`) and any role the literal can't reveal. Then verify in the browser and run `php bin/adapter-audit.php`.
+
+Add `--emit` (with `--slug=`) to **write the whole folder** instead of printing — `inc/integrations/{slug}/class-{slug}.php` (a correctly-named, live-but-inert stub) + `css/admin.css` (the scaffold). The loader auto-discovers it; you just fill the detection/scope TODOs and fine-tune. The full step-by-step (incl. the 20% checklist) is in [ONBOARDING-A-PLUGIN.md](ONBOARDING-A-PLUGIN.md).
+
+```
+php bin/adapter-scan.php ../<host-plugin>/assets --slug=foo --emit
+```
+
 ### Target the host's colors in the right order
 
 The cheapest adapter to maintain is the one that never touches the host's selectors. When you recolor a host UI, reach for these in order — earlier is more stable:
