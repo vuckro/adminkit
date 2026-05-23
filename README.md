@@ -29,12 +29,12 @@ That's it. No settings page yet — see [`docs/SETTINGS.md`](docs/SETTINGS.md) f
 
 ### Tokens
 
-`assets/css/tokens.css` declares every color, surface, border and font as a CSS variable. Each one falls back through three layers:
+`assets/css/tokens.css` declares every color, surface, border and font as a CSS variable. Each one resolves through a fallback chain — the provider's semantic role first, then a self-contained default:
 
 ```css
---ak-primary: var(--primary, var(--neutral-l-8, hsl(0, 0%, 35%)));
-                /* provider     /* provider           /* hardcoded
-                   brand */         neutrals */          neutral */
+--ak-primary: var(--accent, var(--primary, var(--neutral-l-8, hsl(0, 0%, 32%))));
+              /*  provider    provider       provider          standalone
+                  accent      brand          neutral ramp      fallback */
 ```
 
 The dark-mode block redeclares the semantic surface / border / text tokens for `[data-adminkit-theme="dark"]` — brand colors stay constant across modes.
@@ -58,7 +58,7 @@ The **Bricks** adapter, when active:
 
 The **Gutenberg** adapter ships token-mapped header / sidebar / publish-button polish for the block, site, widgets, and navigation editors via the `enqueue_block_editor_assets` hook (NOT `admin_enqueue_scripts`) so the CSS only enters editor surfaces.
 
-`woocommerce`, `fluentcart`, `fluentform`, and `slim-seo` ship as empty stubs — flip `is_active()` and fill in the CSS to enable.
+AdminKit also ships adapters for **WooCommerce**, **ACF**, the **Fluent** suite (CRM, Forms, SMTP, Booking, Cart), **Slim SEO**, **HappyFiles**, **FlyingPress**, **WP Migrate**, and **Admin Menu Editor**. Each self-detects its host and stays dormant when the host isn't installed. They split into two flavors: *Tier A* adapters remap the host's own CSS variables (zero `!important`, dark mode for free); *Tier B* adapters override the host's selectors because it hardcodes its colors — run `php bin/adapter-audit.php` to see each adapter's override budget.
 
 AdminKit's theme toggle owns its own attribute (`data-adminkit-theme`) and storage key (`adminkit-theme`) — never shared with the host. Users who want a sync bridge can build one via the `adminkit/theme_attribute` / `adminkit/theme_storage_key` filters.
 
@@ -143,19 +143,20 @@ adminkit/
 │   ├── class-settings.php                Settings registry (registers primary_color)
 │   ├── class-dashboard.php               Dashboard widget registry (dormant until used)
 │   ├── class-theme-toggle.php            Dark / light toggle + login logo
-│   ├── helpers.php                       Backwards-compat alias to AdminKit_Screen
 │   ├── core/
 │   │   ├── class-chrome.php              Registers every admin/frontend CSS file
-│   │   └── class-login.php               Registers login.css
-│   └── integrations/
+│   │   ├── class-login.php               Registers login.css
+│   │   ├── class-profile-accordion.php   Profile screen → accordion (DOM move, no override)
+│   │   └── class-list-table-chrome.php   List-table toolbar / pagination polish
+│   └── integrations/                    Host adapters — auto-discovered, drop a folder
 │       ├── abstract-integration.php      AdminKit_Integration_Base
-│       ├── bricks/                      Bricks theme adapter + admin CSS
-│       ├── gutenberg/                    Block editor restyle + dark-mode-map placeholder
-│       ├── admin-menu-editor/            Admin Menu Editor + Choices.js overrides
-│       ├── woocommerce/class-woocommerce.php   Stub
-│       ├── fluentcart/class-fluentcart.php     Stub
-│       ├── fluentform/class-fluentform.php     Stub
-│       └── slim-seo/class-slim-seo.php         Stub
+│       ├── bricks/                       Token provider + Bricks Builder bypass
+│       ├── gutenberg/                    Block / site / widgets / nav editor restyle
+│       ├── woocommerce/                  wc-admin (React) + classic-screen restyle
+│       ├── acf/                          ACF 6.x field UI
+│       ├── fluent-crm/ · fluent-smtp/ · fluentform/ · fluentcart/ · fluent-booking/
+│       ├── slim-seo/ · happyfiles/ · flying-press/ · wp-migrate-db-pro/
+│       └── admin-menu-editor/            Admin Menu Editor + Choices.js overrides
 └── assets/css/
     ├── tokens.css                        Design tokens (always loaded)
     ├── core/                             Always-loaded chrome (sidebar, postboxes, ...)
@@ -181,7 +182,6 @@ That's it — the boot orchestrator picks the folder up automatically on `after_
 
 - **Settings page.** Toggle individual sections (chrome, forms, pages, editor) without touching code; pick a primary color when Bricks isn't active.
 - **Custom dashboard.** Widgets registered via `AdminKit_Dashboard::register_widget()` (the registry exists; widgets land with the WooCommerce / FluentCart integrations).
-- **Plugin polish.** Concrete WooCommerce, FluentCart, FluentForm, Slim SEO restyles in the stub folders.
 - **Provider adapters.** Oxygen, Breakdance, Elementor, GeneratePress — same pattern as Bricks.
 - **Theme variants.** Beyond light/dark — sepia, high-contrast.
 - **Per-role visibility.** Show certain admin chrome only to specific roles.

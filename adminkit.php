@@ -22,7 +22,6 @@ define( 'ADMINKIT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ADMINKIT_URL', plugin_dir_url( __FILE__ ) );
 
 require_once ADMINKIT_PATH . 'inc/class-screen.php';
-require_once ADMINKIT_PATH . 'inc/helpers.php';
 require_once ADMINKIT_PATH . 'inc/class-settings.php';
 require_once ADMINKIT_PATH . 'inc/class-dashboard.php';
 require_once ADMINKIT_PATH . 'inc/class-plugin.php';

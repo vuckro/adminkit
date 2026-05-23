@@ -213,4 +213,6 @@ Integrations can also expose their own filters for downstream customization. Nam
 - [`inc/integrations/bricks/class-bricks.php`](../inc/integrations/bricks/class-bricks.php) — Bricks adapter, covers token injection + builder bypass.
 - [`inc/integrations/gutenberg/class-gutenberg.php`](../inc/integrations/gutenberg/class-gutenberg.php) — block editor restyle, hooks the `editor` asset context.
 - [`inc/integrations/acf/class-acf.php`](../inc/integrations/acf/class-acf.php) — ACF 6.x adapter; a clean Tier B example (host hardcodes hex, no CSS vars), screen-scoped via the host's `.acf-admin-page` body class and version-gated on the major.
-- The `woocommerce`, `fluentcart`, `fluentform`, and `slim-seo` folders ship empty stubs — flip `is_active()` and fill in the CSS to enable.
+- [`inc/integrations/fluent-crm/class-fluent-crm.php`](../inc/integrations/fluent-crm/class-fluent-crm.php) — the minimal Tier A example: remaps the host's `--fc-*` variables and nothing else, so dark mode and brand color come for free with zero `!important`.
+- [`inc/integrations/woocommerce/`](../inc/integrations/woocommerce) — the most comprehensive adapter: the wc-admin React app plus the classic order/settings/tool screens, done by token remap rather than selector overrides (run the audit for its current budget).
+- [`inc/integrations/flying-press/class-flying-press.php`](../inc/integrations/flying-press/class-flying-press.php) — Tier B against a Tailwind app compiled with `important: true`; every override carries `!important` by necessity and the adapter is version-gated.

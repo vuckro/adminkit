@@ -36,6 +36,25 @@ class AdminKit_Integration_Fluentform extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * @return string|null
+	 */
+	protected static function host_version() {
+		return defined( 'FLUENTFORM_VERSION' ) ? FLUENTFORM_VERSION : null;
+	}
+
+	/**
+	 * Verified against FluentForm 6.x. admin.css overrides the bundled
+	 * Element UI's hardcoded hex by selector, which a new major could
+	 * restructure — register_assets() falls back to the native UI until
+	 * the skin is re-checked and this is bumped.
+	 *
+	 * @return string|null
+	 */
+	protected static function max_tested_host_version() {
+		return '6.2.2';
+	}
+
+	/**
 	 * Match every FluentForm admin screen. The top-level menu slug is
 	 * `fluent_forms` (screen `toplevel_page_fluent_forms`); all
 	 * sub-pages keep the `fluent_forms` slug fragment in their id
@@ -54,6 +73,11 @@ class AdminKit_Integration_Fluentform extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function register_assets() {
+		// Element UI hex is overridden by selector; a new FluentForm major
+		// could restructure it. Fall back to the native UI until re-verified.
+		if ( ! static::host_within_tested_range() ) {
+			return;
+		}
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-fluentform-admin',
 			'src'       => 'inc/integrations/fluentform/css/admin.css',

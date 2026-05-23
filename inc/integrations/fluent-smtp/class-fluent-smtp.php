@@ -32,6 +32,25 @@ class AdminKit_Integration_Fluent_Smtp extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * @return string|null
+	 */
+	protected static function host_version() {
+		return defined( 'FLUENTMAIL_PLUGIN_VERSION' ) ? FLUENTMAIL_PLUGIN_VERSION : null;
+	}
+
+	/**
+	 * Verified against Fluent SMTP 2.x. admin.css overrides the bundled
+	 * Element UI's hardcoded hex by selector, which a new major could
+	 * restructure — register_assets() falls back to the native UI until
+	 * the skin is re-checked and this is bumped.
+	 *
+	 * @return string|null
+	 */
+	protected static function max_tested_host_version() {
+		return '2.2.95';
+	}
+
+	/**
 	 * Fluent SMTP registers under Settings → Fluent SMTP via
 	 * `add_options_page( ..., 'fluent-mail', ... )`, which gives the
 	 * screen ID `settings_page_fluent-mail`.
@@ -47,6 +66,11 @@ class AdminKit_Integration_Fluent_Smtp extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function register_assets() {
+		// Element UI hex is overridden by selector; a new Fluent SMTP major
+		// could restructure it. Fall back to the native UI until re-verified.
+		if ( ! static::host_within_tested_range() ) {
+			return;
+		}
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-fluent-smtp-admin',
 			'src'       => 'inc/integrations/fluent-smtp/css/admin.css',

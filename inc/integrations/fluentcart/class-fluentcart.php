@@ -38,6 +38,27 @@ class AdminKit_Integration_Fluentcart extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * @return string|null
+	 */
+	protected static function host_version() {
+		return defined( 'FLUENTCART_VERSION' ) ? FLUENTCART_VERSION : null;
+	}
+
+	/**
+	 * Targets FluentCart 1.x. admin.css remaps the bundled Element Plus's
+	 * `--el-*` / `--color-*` variables; a new major could rename them,
+	 * leaving the remap inert. (Not installed on this site; pinned to the
+	 * major the skin targets.) When out of range register_assets() and the
+	 * theme-sync both step aside, leaving FluentCart's native UI + own
+	 * light/dark toggle — bump this after re-checking on a new major.
+	 *
+	 * @return string|null
+	 */
+	protected static function max_tested_host_version() {
+		return '1.0';
+	}
+
+	/**
 	 * Match every FluentCart admin screen. The top-level menu slug is
 	 * `fluent-cart` (screen `toplevel_page_fluent-cart`); the whole UI
 	 * is a hash-routed SPA on that one page. A substring check also
@@ -55,6 +76,12 @@ class AdminKit_Integration_Fluentcart extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function register_assets() {
+		// The --el-* / --color-* remap rides Element Plus's variable names;
+		// a new FluentCart major could rename them. Fall back to the native
+		// UI until re-verified.
+		if ( ! static::host_within_tested_range() ) {
+			return;
+		}
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-fluentcart-admin',
 			'src'       => 'inc/integrations/fluentcart/css/admin.css',
@@ -75,7 +102,11 @@ class AdminKit_Integration_Fluentcart extends AdminKit_Integration_Base {
 	 */
 	protected static function boot() {
 		add_filter( 'adminkit/enqueue_forms', array( __CLASS__, 'bail_forms_on_fc' ) );
-		add_action( 'admin_head', array( __CLASS__, 'sync_theme' ) );
+		// Only slave FluentCart's theme while our recolor CSS is loading;
+		// out of tested range we leave its native toggle alone.
+		if ( static::host_within_tested_range() ) {
+			add_action( 'admin_head', array( __CLASS__, 'sync_theme' ) );
+		}
 	}
 
 	/**

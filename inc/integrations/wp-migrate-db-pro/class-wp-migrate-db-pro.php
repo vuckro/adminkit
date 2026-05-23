@@ -36,6 +36,33 @@ class AdminKit_Integration_Wp_Migrate_Db_Pro extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * WP Migrate exposes no version constant, so read it from the plugin
+	 * header — the same source `get_plugin_data()` uses — keyed off the
+	 * bootstrap file in WPMDBPRO_FILE.
+	 *
+	 * @return string|null
+	 */
+	protected static function host_version() {
+		if ( ! defined( 'WPMDBPRO_FILE' ) ) {
+			return null;
+		}
+		$data = get_file_data( WPMDBPRO_FILE, array( 'Version' => 'Version' ) );
+		return empty( $data['Version'] ) ? null : $data['Version'];
+	}
+
+	/**
+	 * Verified against WP Migrate 2.x. admin.css overrides the React
+	 * SPA's hardcoded utility classes by selector, which a new major
+	 * could restructure — register_assets() falls back to the native UI
+	 * until the skin is re-checked and this is bumped.
+	 *
+	 * @return string|null
+	 */
+	protected static function max_tested_host_version() {
+		return '2.7.7';
+	}
+
+	/**
 	 * The plugin registers under Tools → Migrate, which gives the
 	 * screen ID `tools_page_wp-migrate-db-pro`.
 	 *
@@ -50,6 +77,12 @@ class AdminKit_Integration_Wp_Migrate_Db_Pro extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function register_assets() {
+		// Hardcoded utility classes are overridden by selector; a new WP
+		// Migrate major could restructure them. Fall back to the native UI
+		// until re-verified.
+		if ( ! static::host_within_tested_range() ) {
+			return;
+		}
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-wp-migrate-db-pro-admin',
 			'src'       => 'inc/integrations/wp-migrate-db-pro/css/admin.css',
