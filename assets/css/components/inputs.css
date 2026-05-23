@@ -84,21 +84,22 @@ body.adminkit input[type="radio"] {
 	border-radius: 50%;
 }
 
-/* Checked state: a neutral fill that inverts with the theme (dark box in light
-   mode, light box in dark) instead of the yellow brand, with the check/dot in
-   the inverse surface so it always contrasts. */
+/* Checked state: a soft white fill in BOTH themes (not the yellow brand, not the
+   theme-inverting heading) — a literal, since every surface token flips. The
+   check/dot uses --ak-on-accent (the stable dark on-brand color, not redefined
+   in dark mode) so it always contrasts the white box. */
 body.adminkit input[type="checkbox"]:checked,
 body.adminkit input[type="radio"]:checked {
-	background: var(--ak-heading);
+	background: hsl(0, 0%, 98%);
 	border-color: var(--ak-heading);
 }
 
 body.adminkit input[type="checkbox"]:checked::before {
-	color: var(--ak-surface);
+	color: var(--ak-on-accent);
 }
 
 body.adminkit input[type="radio"]:checked::before {
-	background: var(--ak-surface);
+	background: var(--ak-on-accent);
 }
 
 body.adminkit input[type="checkbox"]:focus,
