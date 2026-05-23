@@ -59,9 +59,57 @@ body.adminkit.acf-admin-page .acf-btn.acf-btn-secondary:hover {
 	border-color: var(--ak-border-strong);
 }
 
-/* ----- 3. Toolbar flyout ("...") — the dark masthead keeps ACF's background
-   (its logo SVG needs the dark bar); only the light dropdown is tokenized so it
-   matches AdminKit and flips in dark mode. ----- */
+/* ----- 3. Toolbar masthead → light surface + flyout ("...") menu -----
+   ACF's toolbar is a dark #344054 bar with slate (#475467) tabs and light-grey
+   (#eaecf0) icons. Route the bar to --ak-elevated and remap the tab states +
+   icons for a light surface. The logo is a self-contained gradient shield
+   (white "ACF" letters sit ON the navy shield), so it stays visible on a light
+   bar; the WP Engine wordmark is a plain white SVG, so it's hidden (it'd vanish
+   anyway, and matches hiding the WPE upsell). The tab hover/active also reset
+   border-color: the global link chip (links.css `a:hover`, specificity 0,2,2)
+   out-specifies ACF's resting `.acf-admin-toolbar .acf-tab` (0,2,0) and paints
+   a primary border on every nav tab on hover. */
+body.adminkit.acf-admin-page .acf-admin-toolbar {
+	background: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab:hover,
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab:focus,
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more:hover .acf-tab.acf-more-tab {
+	background-color: var(--ak-hover-bg);
+	color: var(--ak-heading);
+	border-color: transparent;
+}
+
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab.is-active {
+	background-color: var(--ak-surface);
+	color: var(--ak-heading);
+	border-color: transparent;
+}
+
+/* Tab icons (masked, colored via background-color) — ACF's #eaecf0 on
+   active/hover is invisible on a light bar. */
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab i.acf-icon {
+	background-color: var(--ak-text-muted);
+}
+
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab.is-active i.acf-icon,
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab:hover i.acf-icon,
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more:hover i.acf-icon {
+	background-color: var(--ak-heading);
+}
+
+/* WP Engine wordmark (white SVG) — invisible on the light bar; hide it. */
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-nav-wpengine-logo {
+	display: none;
+}
+
+/* Flyout ("...") dropdown — light surface, tokenized. */
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul {
 	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
