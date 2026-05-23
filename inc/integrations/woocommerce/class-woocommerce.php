@@ -129,19 +129,6 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * The WooCommerce site-visibility badge lives in the toolbar, present on
-	 * every admin page — so its skin (css/admin-bar.css) loads admin-wide, not
-	 * just on WC screens. Always true; register_assets only runs when WC is
-	 * active and within the tested range.
-	 *
-	 * @param \WP_Screen|null $screen
-	 * @return bool
-	 */
-	public static function owns_admin_bar( $screen ) {
-		return true;
-	}
-
-	/**
 	 * WooCommerce exposes its version via the WC_VERSION constant.
 	 *
 	 * @return string|null
@@ -199,14 +186,6 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_dashboard' ),
-		) );
-		// Toolbar (admin bar) — the site-visibility badge, present admin-wide.
-		AdminKit_Assets::register( array(
-			'handle'    => 'adminkit-woocommerce-admin-bar',
-			'src'       => 'inc/integrations/woocommerce/css/admin-bar.css',
-			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
-			'context'   => 'admin',
-			'condition' => array( __CLASS__, 'owns_admin_bar' ),
 		) );
 	}
 }
