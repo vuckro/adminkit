@@ -191,7 +191,9 @@ body.adminkit.acf-admin-page input[type="radio"]:hover {
 	border-color: var(--ak-primary);
 }
 
-body.adminkit.acf-admin-page input[type="checkbox"]:hover {
+/* :not(:checked) so hovering a CHECKED box keeps its primary fill — the pale
+   hover tint is only the unchecked affordance. */
+body.adminkit.acf-admin-page input[type="checkbox"]:hover:not(:checked) {
 	background-color: var(--ak-primary-subtle);
 }
 
