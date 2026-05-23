@@ -39,6 +39,14 @@ body.adminkit.post-new-php.post-type-product .wrap h1.wp-heading-inline {
 	display: none;
 }
 
+/* Add New Product — soften headings to the body-text color on this screen
+   (overrides chrome.css's global h1/h2/h3 → --ak-heading), per request. */
+body.adminkit.post-new-php.post-type-product h1,
+body.adminkit.post-new-php.post-type-product h2,
+body.adminkit.post-new-php.post-type-product h3 {
+	color: var(--ak-text);
+}
+
 
 /* ===== Product data — panel & tab polish ===== */
 
