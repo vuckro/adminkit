@@ -352,6 +352,14 @@ body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper {
 	border-bottom-color: var(--ak-border);
 }
 
+/* Settings nav bar — full-bleed it to the form's edges (negative side margins)
+   while keeping its tab labels aligned to the page padding, so it reads as a
+   header strip rather than a boxed-in row. */
+body.adminkit.woocommerce_page_wc-settings #mainform nav {
+	margin: 0 -30px 24px -30px;
+	padding-left: 30px;
+}
+
 /* Page header — the React-rendered "Payments" title + description (this screen
    shows the header rather than hiding it like the wc-admin embed bar). */
 body.adminkit.woocommerce_page_wc-settings .woocommerce-settings-payments-header__title {
