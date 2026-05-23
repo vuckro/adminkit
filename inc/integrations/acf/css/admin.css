@@ -614,6 +614,14 @@ body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open .h
 	color: var(--ak-heading);
 }
 
+/* Nested sub-field open handles carry ACF's pale depth tints (purple/teal/…) via
+   per-nesting-level id selectors; unify them to the brand-subtle open state
+   (depth still reads from the colored left border). !important to clear all the
+   nesting-depth rules at once. */
+body.adminkit.acf-admin-page #acf-field-group-fields .acf-input-sub .acf-field-object.open .handle {
+	background-color: var(--ak-primary-subtle) !important;
+}
+
 body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open .handle a {
 	color: var(--ak-heading) !important;
 }
