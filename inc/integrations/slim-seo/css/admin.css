@@ -71,23 +71,22 @@ body.adminkit.settings_page_slim-seo .ss-tab-list {
 	border-top-right-radius: var(--ak-radius-s);
 }
 
-/* Tab links: text color by default, primary on hover/active. Kill the
-   default transition per AdminKit's no-animation rule (active-state
-   underline keeps its box-shadow per memory's tab-indicator exception). */
+/* Tab links: text color by default. On hover/focus/active they go primary
+   and gain a bottom underline (box-shadow on currentColor) as the indicator —
+   no chip background. Underlines are the documented tab-indicator exception to
+   the no-shadow rule. Transition killed per the no-animation rule. */
 body.adminkit.settings_page_slim-seo .ss-tab {
 	color: var(--ak-text);
 	transition: none;
 }
 
 body.adminkit.settings_page_slim-seo .ss-tab:hover,
-body.adminkit.settings_page_slim-seo .ss-tab:focus {
+body.adminkit.settings_page_slim-seo .ss-tab:focus,
+body.adminkit.settings_page_slim-seo .ss-tab.ss-is-active {
 	background-color: transparent;
 	border-color: transparent;
 	color: var(--ak-primary);
-}
-
-body.adminkit.settings_page_slim-seo .ss-tab.ss-is-active {
-	color: var(--ak-primary);
+	box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, 0), inset 0 -3.5px 0 0 currentColor;
 }
 
 
