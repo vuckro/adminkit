@@ -9,15 +9,16 @@
  * opening it — no need to leave wp-admin to remember what a page looks like.
  *
  * ── Thumbnail source ────────────────────────────────────────────────────────
- * Always a WordPress.com mShots screenshot of the post's own permalink — the
- * actual rendered page, never the featured image. A post with no public URL
- * shows a flat placeholder; if mShots itself fails the cell degrades to that
- * same placeholder rather than a broken image.
+ * A WordPress.com mShots screenshot of the post's own permalink — the actual
+ * rendered page. mShots only reaches PUBLIC URLs, so on a local dev host
+ * (localhost, *.local, *.test) — where it would only ever return its
+ * "generating" placeholder — we fall back to the post's featured image for a
+ * cleaner view. When there's neither a usable screenshot nor a featured image,
+ * a flat placeholder shows instead of a broken image.
  *
- *   ⚠ mShots runs on wp.com's servers, so it can only reach a PUBLIC URL. On a
- *   local dev host (localhost, *.local, …) it returns a generic placeholder, not
- *   your page — test on a public site, or remap the URL via the thumb_url /
- *   full_url filters (or Local's "Live Link") to preview screenshots in dev.
+ *   ⚠ On a public site a just-published page can briefly show mShots' own
+ *   "generating" placeholder until the screenshot is ready (it lands on the next
+ *   view). That transient state is left as-is — kept deliberately simple.
  *
  * ── Modularity / the future settings ("CBI") page ───────────────────────────
  * The whole feature is gated by is_enabled(), which reads the
@@ -54,6 +55,9 @@ class AdminKit_Post_Previews {
 
 	/** Memoized target post-type list (per request). @var string[]|null */
 	private static $targets = null;
+
+	/** Post type of the list-table screen currently being hooked. @var string */
+	private static $screen_pt = '';
 
 	/**
 	 * Register the setting + wire the screen hook. Called once from the
@@ -115,6 +119,7 @@ class AdminKit_Post_Previews {
 			return;
 		}
 		$pt = $screen->post_type;
+		self::$screen_pt = $pt;
 
 		// Add the column on the SCREEN-ID filter at a late priority. WP seeds
 		// the list table's own columns into `manage_{$screen->id}_columns` at
@@ -134,8 +139,10 @@ class AdminKit_Post_Previews {
 	}
 
 	/**
-	 * Insert the preview column right after the checkbox (so it sits to the
-	 * left of Title). Falls back to prepending when there's no checkbox.
+	 * Place the preview column. Normally just after the checkbox (so it sits to
+	 * the left of the Title). On WooCommerce products — which already ship a
+	 * product-image 'thumb' column — it takes that column's slot instead, so the
+	 * row keeps a single image column rather than two.
 	 *
 	 * @param array $columns
 	 * @return array
@@ -147,16 +154,22 @@ class AdminKit_Post_Previews {
 
 		$label = '<span class="screen-reader-text">' . esc_html__( 'Preview', 'adminkit' ) . '</span>';
 
-		if ( ! isset( $columns['cb'] ) ) {
-			return array( self::COLUMN => $label ) + $columns;
-		}
+		// On products, replace WC's product-image column; elsewhere, follow cb.
+		$replace = ( 'product' === self::$screen_pt && isset( $columns['thumb'] ) );
 
 		$out = array();
 		foreach ( $columns as $key => $value ) {
+			if ( $replace && 'thumb' === $key ) {
+				$out[ self::COLUMN ] = $label; // our preview takes the image slot
+				continue;
+			}
 			$out[ $key ] = $value;
-			if ( 'cb' === $key ) {
+			if ( ! $replace && 'cb' === $key ) {
 				$out[ self::COLUMN ] = $label;
 			}
+		}
+		if ( ! isset( $out[ self::COLUMN ] ) ) {
+			$out = array( self::COLUMN => $label ) + $out; // no cb/thumb anchor
 		}
 		return $out;
 	}
@@ -176,9 +189,12 @@ class AdminKit_Post_Previews {
 	}
 
 	/**
-	 * Build the thumbnail markup for a post — always an mShots screenshot of
-	 * the post's own permalink (never the featured image). A post with no
-	 * public URL renders a flat placeholder. URLs are escaped here.
+	 * Build the thumbnail markup for a post. On a public site it's an mShots
+	 * screenshot of the post's permalink (the real page); on a local host —
+	 * where mShots can't reach the site and would only return its "generating"
+	 * placeholder — it falls back to the featured image (the product image, for
+	 * WooCommerce products) for a cleaner view. With neither, a flat placeholder.
+	 * URLs are escaped here.
 	 *
 	 * @param int $post_id
 	 * @return string
@@ -189,16 +205,22 @@ class AdminKit_Post_Previews {
 			return '';
 		}
 
-		$permalink = get_permalink( $post );
-		if ( ! $permalink ) {
-			return '<span class="ak-preview ak-preview--empty" aria-hidden="true"></span>';
-		}
-
 		list( $tw, $th ) = self::thumb_size();
 		list( $fw, $fh ) = self::full_size();
 
-		$thumb = apply_filters( 'adminkit/post_previews/thumb_url', self::mshots_url( $permalink, $tw, $th ), $post, $tw, $th );
-		$full  = apply_filters( 'adminkit/post_previews/full_url', self::mshots_url( $permalink, $fw, $fh ), $post, $fw, $fh );
+		$permalink = get_permalink( $post );
+
+		if ( $permalink && ! self::is_local_site() ) {
+			$thumb = self::mshots_url( $permalink, $tw, $th );
+			$full  = self::mshots_url( $permalink, $fw, $fh );
+		} else {
+			// No public screenshot possible here → the featured image is nicer.
+			$thumb = (string) get_the_post_thumbnail_url( $post, 'medium' );
+			$full  = (string) get_the_post_thumbnail_url( $post, 'large' );
+		}
+
+		$thumb = apply_filters( 'adminkit/post_previews/thumb_url', $thumb, $post, $tw, $th );
+		$full  = apply_filters( 'adminkit/post_previews/full_url', $full, $post, $fw, $fh );
 
 		if ( '' === (string) $thumb ) {
 			return '<span class="ak-preview ak-preview--empty" aria-hidden="true"></span>';
@@ -227,6 +249,22 @@ class AdminKit_Post_Previews {
 			array( 'w' => $w, 'h' => $h ),
 			self::MSHOTS_BASE . rawurlencode( $url )
 		);
+	}
+
+	/**
+	 * Whether this is a local/dev host mShots can't screenshot. Kept simple —
+	 * covers the common local cases; a public site always resolves to false.
+	 *
+	 * @return bool
+	 */
+	private static function is_local_site() {
+		static $local = null;
+		if ( null === $local ) {
+			$host  = strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
+			$local = in_array( $host, array( 'localhost', '127.0.0.1', '::1' ), true )
+				|| (bool) preg_match( '/\.(local|test|localhost)$/', $host );
+		}
+		return $local;
 	}
 
 	/**
