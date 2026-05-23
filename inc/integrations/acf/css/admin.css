@@ -684,6 +684,13 @@ body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-setting-fc_lay
 	border-top-color: var(--ak-border);
 }
 
+/* Inline <code> chips in prefix label/name descriptions (#f2f4f7 / #667085). */
+body.adminkit.acf-admin-page .acf-field-setting-prefix_label p.description code,
+body.adminkit.acf-admin-page .acf-field-setting-prefix_name p.description code {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+
 /* The forest of #eaecf0 hairlines (settings splits, footers, setting rows,
    conditional-logic + term-search dividers). */
 body.adminkit.acf-admin-page .acf-field-settings-split,
