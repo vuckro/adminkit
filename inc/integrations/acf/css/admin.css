@@ -609,6 +609,15 @@ body.adminkit.acf-admin-page .acf-input .acf-input-append {
 	color: var(--ak-text-muted);
 }
 
+/* File-input "Choose File" button (e.g. #acf_import_file) — ACF forces #0783be
+   !important on the ::file-selector-button label; route it back to a neutral
+   button (the !important is needed to beat ACF's). */
+body.adminkit.acf-admin-page input::file-selector-button,
+body.adminkit.acf-admin-page input::file-selector-button:hover {
+	color: var(--ak-text) !important;
+	border-color: var(--ak-border-strong);
+}
+
 /* WYSIWYG (TinyMCE) toolbars in default-value fields. */
 body.adminkit.acf-admin-page div.mce-toolbar-grp {
 	background: var(--ak-elevated);
