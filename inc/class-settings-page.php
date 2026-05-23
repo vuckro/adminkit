@@ -235,35 +235,12 @@ class AdminKit_Settings_Page {
 			);
 		}
 
-		$sizing = array();
-		foreach ( AdminKit_Settings::size_map() as $group ) {
-			$tokens = array();
-			foreach ( $group['tokens'] as $t ) {
-				$tokens[] = array(
-					'token'       => $t['token'],
-					'label'       => $t['label'],
-					'key'         => $t['key'],
-					'placeholder' => isset( $t['placeholder'] ) ? $t['placeholder'] : '',
-					'value'       => isset( $stored[ $t['key'] ] ) ? (string) $stored[ $t['key'] ] : '',
-				);
-			}
-			$sizing[] = array(
-				'group'  => $group['group'],
-				'label'  => $group['label'],
-				'desc'   => isset( $group['desc'] ) ? $group['desc'] : '',
-				'tokens' => $tokens,
-			);
-		}
-
 		$integrations = self::integrations();
 
 		return array(
 			'route'        => self::REST_NS . self::REST_ROUTE,
 			'dashboard'    => self::dashboard( $features, $integrations, $stored ),
 			'colors'       => $colors,
-			'palette'      => isset( $stored['palette_mode'] ) ? (string) $stored['palette_mode'] : 'neutral',
-			'brandedMap'   => AdminKit_Settings::branded_surface_map(),
-			'sizing'       => $sizing,
 			'providers'    => self::providers(),
 			'features'     => $features,
 			'integrations' => $integrations,
@@ -273,20 +250,10 @@ class AdminKit_Settings_Page {
 				'features'          => __( 'Features', 'adminkit' ),
 				'integrations'      => __( 'Integrations', 'adminkit' ),
 				'soon'              => __( 'Coming soon', 'adminkit' ),
-				'designIntro'       => __( 'Every colour wp-admin uses, shown as the semantic roles your framework (Bricks) already defines — AdminKit mirrors them 1:1. This view is read-only; shape the whole palette at once with the controls below.', 'adminkit' ),
-				'cascade'           => __( 'How it flows: your framework defines raw primitive scales → those feed the semantic roles below → AdminKit styles wp-admin from the roles. Primitives are detected automatically.', 'adminkit' ),
+				'designIntro'       => __( 'Every colour wp-admin uses, shown as the semantic roles your framework (Bricks) already defines — AdminKit mirrors them 1:1. A read-only reference for now.', 'adminkit' ),
+				'cascade'           => __( 'How it flows: your framework defines raw primitive scales → those feed the semantic roles below → AdminKit styles wp-admin from the roles.', 'adminkit' ),
 				'own'               => __( 'AdminKit', 'adminkit' ),
 				'ownHint'           => __( 'AdminKit-defined role (no provider equivalent).', 'adminkit' ),
-				'palette'           => __( 'Palette', 'adminkit' ),
-				'paletteNeutral'    => __( 'Neutral', 'adminkit' ),
-				'paletteBranded'    => __( 'Branded', 'adminkit' ),
-				'paletteHint'       => __( 'Branded tints surfaces, borders and text with your accent; Neutral keeps them grey.', 'adminkit' ),
-				'radius'            => __( 'Radius', 'adminkit' ),
-				'radiusNone'        => __( 'None', 'adminkit' ),
-				'radiusDefault'     => __( 'Default', 'adminkit' ),
-				'radiusRounded'     => __( 'Rounded', 'adminkit' ),
-				'randomize'         => __( 'Randomise', 'adminkit' ),
-				'randomizeHint'     => __( 'Generate a fresh accent, surfaces, text and radius.', 'adminkit' ),
 				'featuresIntro'     => __( 'Turn AdminKit modules on or off.', 'adminkit' ),
 				'integrationsIntro' => __( 'Plugins and themes AdminKit adapts to. Disable one if its styling ever conflicts.', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),

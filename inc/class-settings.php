@@ -50,26 +50,21 @@ class AdminKit_Settings {
 	 * @return void
 	 */
 	public static function init() {
-		add_action( 'init', array( __CLASS__, 'register_color_catalog' ) );
-		add_action( 'init', array( __CLASS__, 'register_size_catalog' ) );
-
 		// Feature toggles carry no translated labels (those live in the settings
 		// page UI), so they register immediately rather than on `init` — modules
 		// read these values at load / enqueue time, before the `init` action.
 		self::register_feature_catalog();
 		self::bind_modules();
 
-		// Design-system UI state (no token, not a module): which palette the
-		// Design tab last generated. Drives the Neutral/Branded segmented control;
-		// the actual tints live in the surface/border/text colour keys.
-		self::register( 'palette_mode', array(
-			'type'     => 'text',
-			'group'    => 'design',
-			'default'  => 'neutral',
-			'sanitize' => array( __CLASS__, 'sanitize_palette_mode' ),
-		) );
-
-		add_action( 'adminkit/tokens_enqueued', array( __CLASS__, 'apply_inline_tokens' ) );
+		// NOTE: the design-system token layer is intentionally NOT wired for now.
+		// The Design system tab is a static reference (no per-token settings, no
+		// palette_mode, no inline `--ak-*` overrides). The machinery below
+		// (register_color_catalog / register_size_catalog / apply_inline_tokens /
+		// branded_surface_map) is kept dormant — re-enable by restoring:
+		//   add_action( 'init', array( __CLASS__, 'register_color_catalog' ) );
+		//   add_action( 'init', array( __CLASS__, 'register_size_catalog' ) );
+		//   add_action( 'adminkit/tokens_enqueued', array( __CLASS__, 'apply_inline_tokens' ) );
+		// plus the palette_mode registration.
 	}
 
 	/**

@@ -181,67 +181,10 @@
 /* Integration rows: status pill (left) + name + enable toggle (right). */
 .adminkit-app .ak-row--int .ak-row__label { flex: 1; min-width: 0; }
 
-/* Generator toolbar (Palette / Radius / Randomise) ------------------------ */
-.adminkit-app .ak-toolbar {
-	display: flex;
-	align-items: flex-end;
-	flex-wrap: wrap;
-	gap: 18px;
-	margin: 0 0 22px;
-}
-.adminkit-app .ak-toolbar__group { display: flex; flex-direction: column; gap: 6px; }
-.adminkit-app .ak-toolbar__label {
-	font-size: var(--ak-text-xs);
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: .06em;
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-toolbar__spacer { flex: 1 1 auto; }
-.adminkit-app .ak-btn--ghost {
-	display: inline-flex;
-	align-items: center;
-	gap: 7px;
-	background: var(--ak-surface);
-	border-color: var(--ak-border-strong);
-	color: var(--ak-text);
-}
-.adminkit-app .ak-btn--ghost:hover { background: var(--ak-hover-bg); color: var(--ak-heading); }
-.adminkit-app .ak-btn--ghost .ic { display: inline-flex; }
-
-/* Segmented control (Palette / Radius) ----------------------------------- */
-.adminkit-app .ak-seg {
-	display: inline-flex;
-	gap: 2px;
-	padding: 3px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
-	background: var(--ak-surface);
-}
-.adminkit-app .ak-seg__btn {
-	font: inherit;
-	font-size: var(--ak-text-s);
-	font-weight: 500;
-	line-height: 1;
-	padding: 7px 14px;
-	border: 0;
-	border-radius: var(--ak-radius-s);
-	background: transparent;
-	color: var(--ak-text-muted);
-	cursor: pointer;
-}
-.adminkit-app .ak-seg__btn:hover { color: var(--ak-heading); }
-.adminkit-app .ak-seg__btn.on {
-	background: var(--ak-elevated);
-	color: var(--ak-heading);
-	font-weight: 600;
-}
-.adminkit-app .ak-seg__btn:focus-visible { outline: 2px solid var(--ak-primary); outline-offset: -2px; }
-
-/* Design-token table — one column-aligned grid per group ------------------ */
+/* Design-token table — one column-aligned grid per group (static reference) -- */
 .adminkit-app .ak-tbl {
 	display: grid;
-	grid-template-columns: 34px minmax( 120px, 1fr ) minmax( 180px, 2.2fr ) auto;
+	grid-template-columns: 34px minmax( 140px, 1fr ) minmax( 200px, 2fr );
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	background: var(--ak-surface);
@@ -249,7 +192,7 @@
 }
 /* Every cell shares padding + a top divider; stretch (default) keeps the
    dividers continuous across the row, and flex centres each cell's content.
-   The first row (first 4 cells) has no divider. */
+   The first row (first 3 cells) has no divider. */
 .adminkit-app .ak-tbl > * {
 	display: flex;
 	align-items: center;
@@ -258,7 +201,7 @@
 	min-width: 0;
 	border-top: 1px solid var(--ak-border);
 }
-.adminkit-app .ak-tbl > :nth-child(-n+4) { border-top: 0; }
+.adminkit-app .ak-tbl > :nth-child(-n+3) { border-top: 0; }
 .adminkit-app .ak-tbl__sw {
 	width: 22px;
 	height: 22px;
@@ -285,27 +228,21 @@
 	background: var(--ak-elevated);
 	color: var(--ak-text-muted);
 }
-.adminkit-app .ak-tbl__map { flex-wrap: wrap; font-size: 11px; }
-/* Reset wp-admin's default <code> styling (grey pill, padding, Consolas) so the
-   mono cells read as plain monospace text. */
+.adminkit-app .ak-tbl__map { flex-wrap: wrap; }
+/* Reset wp-admin's default <code> styling (grey pill, padding, 13px Consolas) so
+   the mono cells read as plain 11px monospace text. No `color` here — that would
+   out-specify the per-cell colours below. */
 .adminkit-app .ak-tbl code {
 	margin: 0;
 	padding: 0;
 	background: none;
 	border: 0;
 	font-family: monospace;
-	color: inherit;
+	font-size: 11px;
 }
 .adminkit-app .ak-tbl__tok { color: var(--ak-text); }
 .adminkit-app .ak-tbl__from,
 .adminkit-app .ak-tbl__prim { color: var(--ak-text-muted); }
-.adminkit-app .ak-tbl__val {
-	justify-content: flex-end;
-	font-family: monospace;
-	font-size: 11px;
-	color: var(--ak-text);
-	white-space: nowrap;
-}
 
 /* Cascade explainer ------------------------------------------------------- */
 .adminkit-app .ak-cascade {

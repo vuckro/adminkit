@@ -5,10 +5,10 @@
  * #adminkit-app from the data PHP hands over in window.AdminKitData. Tabs are
  * pill buttons driven by the URL hash (#design / #features / …).
  *
- * The Design system tab shows every semantic colour role read-only, and offers
- * three global generators — Palette (neutral ⇄ branded), a Radius preset and
- * Randomise — that write the underlying settings, preview live via an inline
- * <style>, and POST to the REST route on save.
+ * The Design system tab is a STATIC reference for now: it lists every semantic
+ * colour role (swatch + the --ak token and the provider var / primitive it maps
+ * to), read-only, with no generators and no live token manipulation. Features
+ * and Integrations hold the only interactive controls (toggles), saved via REST.
  *
  * No framework, no build step — vanilla DOM.
  */
@@ -26,42 +26,15 @@
 	var state = {
 		dirty: false,
 		saving: false,
-		colors: {},        // setting key -> hex string ('' = follow provider)
-		sizes: {},         // setting key -> length string ('' = default)
 		features: {},      // setting key -> bool
 		integrations: {}   // slug -> bool (enabled)
 	};
-	var sizeMeta = {};     // setting key -> --ak-* token
-
-	var colorMeta = {}; // setting key -> { token, bucket: 'light' | 'dark' | 'both' }
-	( D.colors || [] ).forEach( function ( g ) {
-		( g.tokens || [] ).forEach( function ( t ) {
-			if ( t.edit === 'agnostic' ) {
-				state.colors[ t.key ] = t.value || '';
-				colorMeta[ t.key ] = { token: t.token, bucket: 'both' };
-			} else if ( t.edit === 'dual' ) {
-				state.colors[ t.keyLight ] = t.valueLight || '';
-				state.colors[ t.keyDark ] = t.valueDark || '';
-				colorMeta[ t.keyLight ] = { token: t.token, bucket: 'light' };
-				colorMeta[ t.keyDark ] = { token: t.token, bucket: 'dark' };
-			}
-		} );
-	} );
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
 	} );
 	( D.integrations || [] ).forEach( function ( it ) {
 		state.integrations[ it.slug ] = it.enabled !== false;
 	} );
-	( D.sizing || [] ).forEach( function ( g ) {
-		( g.tokens || [] ).forEach( function ( t ) {
-			state.sizes[ t.key ] = t.value || '';
-			sizeMeta[ t.key ] = t.token;
-		} );
-	} );
-	// Palette mode (neutral | branded) — UI state for the segmented control; the
-	// actual tints live in the surface/border/text colour keys.
-	state.palette = ( D.palette === 'branded' ) ? 'branded' : 'neutral';
 
 	// --- tiny DOM helper -----------------------------------------------------
 	function el( tag, attrs, kids ) {
@@ -81,162 +54,6 @@
 			n.appendChild( typeof c === 'string' ? document.createTextNode( c ) : c );
 		} );
 		return n;
-	}
-
-	// Live preview: mirror PHP inline_tokens() into a <style> so light + dark
-	// overrides resolve correctly per the page's current theme (toggled from the
-	// admin bar). Rebuilt from state on every colour change.
-	var liveStyle = document.getElementById( 'adminkit-live-tokens' );
-	if ( ! liveStyle ) {
-		liveStyle = document.createElement( 'style' );
-		liveStyle.id = 'adminkit-live-tokens';
-		document.head.appendChild( liveStyle );
-	}
-	function applyLive() {
-		var light = '', dark = '';
-		Object.keys( state.colors ).forEach( function ( k ) {
-			var v = state.colors[ k ];
-			if ( ! v ) { return; }
-			var m = colorMeta[ k ];
-			if ( ! m ) { return; }
-			var decl = m.token + ':' + v + ';';
-			if ( m.bucket === 'light' ) { light += decl; }
-			else if ( m.bucket === 'dark' ) { dark += decl; }
-			else { light += decl; dark += decl; }
-		} );
-		Object.keys( state.sizes ).forEach( function ( k ) {
-			var v = state.sizes[ k ];
-			if ( ! v || ! sizeMeta[ k ] ) { return; }
-			var decl = sizeMeta[ k ] + ':' + v + ';';
-			light += decl; dark += decl;
-		} );
-		// Branded palette: mirror PHP inline_tokens() — remap surfaces + borders
-		// onto the provider primary ramp (var(primary, var(neutral))). Appended
-		// last so it wins, exactly like the server.
-		if ( state.palette === 'branded' && D.brandedMap ) {
-			[ 'light', 'dark' ].forEach( function ( bk ) {
-				var m = D.brandedMap[ bk ] || {};
-				Object.keys( m ).forEach( function ( tok ) {
-					var decl = tok + ':var(' + m[ tok ][ 0 ] + ', var(' + m[ tok ][ 1 ] + '));';
-					if ( bk === 'light' ) { light += decl; } else { dark += decl; }
-				} );
-			} );
-		}
-		liveStyle.textContent =
-			( light ? ':root{' + light + '}' : '' ) +
-			( dark ? ':root[data-adminkit-theme="dark"]{' + dark + '}' : '' );
-	}
-
-	function rgbToHex( rgb ) {
-		var m = ( rgb || '' ).match( /\d+/g );
-		if ( ! m || m.length < 3 ) { return ''; }
-		return '#' + m.slice( 0, 3 ).map( function ( n ) {
-			var h = parseInt( n, 10 ).toString( 16 );
-			return h.length === 1 ? '0' + h : h;
-		} ).join( '' );
-	}
-
-	// Resolve a token's actual colour for a given mode — the hex shown in each
-	// design-table row. Briefly flips <html>'s theme attribute to read the value;
-	// synchronous, so no repaint happens between flip and restore.
-	var _probe = null;
-	function resolvedHex( token, mode ) {
-		var html = document.documentElement;
-		var prev = html.getAttribute( 'data-adminkit-theme' );
-		html.setAttribute( 'data-adminkit-theme', mode );
-		if ( ! _probe ) {
-			_probe = document.createElement( 'span' );
-			_probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none';
-			( document.body || html ).appendChild( _probe );
-		}
-		_probe.style.color = 'var(' + token + ')';
-		var hex = rgbToHex( getComputedStyle( _probe ).color );
-		if ( prev === null ) { html.removeAttribute( 'data-adminkit-theme' ); }
-		else { html.setAttribute( 'data-adminkit-theme', prev ); }
-		return hex || '#888888';
-	}
-
-	// --- palette + radius generators -----------------------------------------
-	function hslToHex( h, s, l ) {
-		s /= 100; l /= 100;
-		var a = s * Math.min( l, 1 - l );
-		var f = function ( n ) {
-			var k = ( n + h / 30 ) % 12;
-			var c = l - a * Math.max( -1, Math.min( k - 3, Math.min( 9 - k, 1 ) ) );
-			var x = Math.round( 255 * c ).toString( 16 );
-			return x.length === 1 ? '0' + x : x;
-		};
-		return '#' + f( 0 ) + f( 8 ) + f( 4 );
-	}
-	function onAccent( hex ) {
-		var m = ( hex || '' ).match( /[0-9a-f]{2}/gi );
-		if ( ! m ) { return '#ffffff'; }
-		var lum = 0.2126 * parseInt( m[ 0 ], 16 ) + 0.7152 * parseInt( m[ 1 ], 16 ) + 0.0722 * parseInt( m[ 2 ], 16 );
-		return lum > 150 ? '#111111' : '#ffffff';
-	}
-	// Radius presets → the two radius size tokens. 'default' clears them so the
-	// stylesheet defaults (6 / 10px) win.
-	var RADIUS_PRESETS = {
-		none:    { radius_s: '0px',  radius_m: '0px' },
-		default: { radius_s: '',     radius_m: '' },
-		rounded: { radius_s: '10px', radius_m: '16px' }
-	};
-
-	// Write a colour / size map into state (only keys that already exist).
-	function applyColors( map ) {
-		Object.keys( map ).forEach( function ( k ) {
-			if ( state.colors.hasOwnProperty( k ) ) { state.colors[ k ] = map[ k ]; }
-		} );
-	}
-	function applySizes( map ) {
-		Object.keys( map ).forEach( function ( k ) {
-			if ( state.sizes.hasOwnProperty( k ) ) { state.sizes[ k ] = map[ k ]; }
-		} );
-	}
-
-	// Randomise a brand accent (+ a readable on-accent and a complementary
-	// secondary) and a radius preset. Surfaces are NOT touched — they follow the
-	// Neutral/Branded toggle, which maps them onto the provider primitives.
-	function randomize() {
-		var h = Math.floor( Math.random() * 360 );
-		var accent = hslToHex( h, 68, 48 );
-		applyColors( {
-			primary_color: accent,
-			on_accent_color: onAccent( accent ),
-			secondary_color: hslToHex( ( h + 150 ) % 360, 58, 50 )
-		} );
-		var keys = Object.keys( RADIUS_PRESETS );
-		applySizes( RADIUS_PRESETS[ keys[ Math.floor( Math.random() * keys.length ) ] ] );
-		applyLive(); markDirty(); renderDesign(); syncControls();
-	}
-
-	// Neutral ⇄ Branded — a global structural switch, no stored hexes: Branded
-	// maps surfaces + borders onto the provider PRIMARY ramp (see applyLive() +
-	// PHP branded_surface_map()); Neutral returns them to the neutral ramp.
-	function setPalette( mode ) {
-		state.palette = ( mode === 'branded' ) ? 'branded' : 'neutral';
-		applyLive(); markDirty(); renderDesign(); syncControls();
-	}
-
-	// Set the corner radius from a preset and reflect it on the segmented control.
-	function setRadius( preset ) {
-		applySizes( RADIUS_PRESETS[ preset ] || {} );
-		applyLive(); markDirty(); syncControls();
-	}
-	// Which preset the current radius matches (drives the active segment).
-	function radiusKeyFromState() {
-		var s = state.sizes.radius_s || '', m = state.sizes.radius_m || '';
-		var keys = Object.keys( RADIUS_PRESETS );
-		for ( var i = 0; i < keys.length; i++ ) {
-			var p = RADIUS_PRESETS[ keys[ i ] ];
-			if ( ( p.radius_s || '' ) === s && ( p.radius_m || '' ) === m ) { return keys[ i ]; }
-		}
-		return '';
-	}
-	function shuffleIcon() {
-		var s = el( 'span', { 'class': 'ic' } );
-		s.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M21 3 13 11"/><path d="M16 21h5v-5"/><path d="m21 21-7-7"/><path d="M3 8l5-5"/><path d="M3 16l8 0"/></svg>';
-		return s;
 	}
 
 	// --- header chrome -------------------------------------------------------
@@ -339,7 +156,7 @@
 		} );
 	}
 
-	// URL hash reflects the active tab (#colours / #features / #integrations).
+	// URL hash reflects the active tab (#design / #features / #integrations).
 	function go( id ) {
 		if ( '#' + id === location.hash ) { selectTab( id ); }
 		else { location.hash = id; } // triggers hashchange → applyHash
@@ -352,7 +169,6 @@
 	window.addEventListener( 'hashchange', applyHash );
 	applyHash();
 	updateBar();
-	applyLive();
 
 	// --- panels --------------------------------------------------------------
 	function intro( text ) { return el( 'p', { 'class': 'ak-intro', text: text } ); }
@@ -414,85 +230,27 @@
 		return p;
 	}
 
-	var designWrap = null; // role groups (re-rendered on each generate)
-	var paletteSeg = null; // { neutral, branded } buttons
-	var radiusSeg  = null; // { none, default, rounded } buttons
-
-	// Design system tab: a short explainer, the generator toolbar, then every
-	// semantic role shown read-only.
+	// Design system tab — STATIC reference (no generators / no token writes for
+	// now). One table per group: swatch · role (+ AdminKit badge) · the --ak
+	// token and the provider var / primitive it maps to.
 	function buildDesign() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( I.designIntro ) ] );
 		if ( I.cascade ) { p.appendChild( el( 'p', { 'class': 'ak-cascade', text: I.cascade } ) ); }
-		p.appendChild( designToolbar() );
-		designWrap = el( 'div', { 'class': 'ak-color-groups' } );
-		p.appendChild( designWrap );
-		renderDesign();
-		return p;
-	}
-
-	// Toolbar: Palette (Neutral/Branded) + Radius (None/Default/Rounded) on the
-	// left, Randomise on the right. Each segmented control reflects state.
-	function designToolbar() {
-		function seg( store, opts, onpick, aria ) {
-			var wrap = el( 'div', { 'class': 'ak-seg', role: 'group', 'aria-label': aria } );
-			opts.forEach( function ( o ) {
-				var b = el( 'button', { type: 'button', 'class': 'ak-seg__btn', onclick: function () { onpick( o[ 0 ] ); } }, [ el( 'span', { text: o[ 1 ] } ) ] );
-				store[ o[ 0 ] ] = b;
-				wrap.appendChild( b );
-			} );
-			return wrap;
-		}
-		paletteSeg = {};
-		radiusSeg = {};
-		var pal = seg( paletteSeg, [ [ 'neutral', I.paletteNeutral ], [ 'branded', I.paletteBranded ] ], setPalette, I.palette );
-		var rad = seg( radiusSeg, [ [ 'none', I.radiusNone ], [ 'default', I.radiusDefault ], [ 'rounded', I.radiusRounded ] ], setRadius, I.radius );
-		var random = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--ghost', onclick: randomize, title: I.randomizeHint || '' },
-			[ shuffleIcon(), el( 'span', { text: I.randomize } ) ] );
-		var bar = el( 'div', { 'class': 'ak-toolbar' }, [
-			el( 'div', { 'class': 'ak-toolbar__group', title: I.paletteHint || '' }, [ el( 'span', { 'class': 'ak-toolbar__label', text: I.palette } ), pal ] ),
-			el( 'div', { 'class': 'ak-toolbar__group' }, [ el( 'span', { 'class': 'ak-toolbar__label', text: I.radius } ), rad ] ),
-			el( 'div', { 'class': 'ak-toolbar__spacer' } ),
-			random
-		] );
-		syncControls();
-		return bar;
-	}
-
-	// Reflect state on the segmented controls (active button + aria-pressed).
-	function syncControls() {
-		function mark( store, active ) {
-			if ( ! store ) { return; }
-			Object.keys( store ).forEach( function ( k ) {
-				var on = k === active;
-				store[ k ].classList.toggle( 'on', on );
-				store[ k ].setAttribute( 'aria-pressed', on ? 'true' : 'false' );
-			} );
-		}
-		mark( paletteSeg, state.palette );
-		mark( radiusSeg, radiusKeyFromState() );
-	}
-
-	// Render every semantic role as a row in a clean, column-aligned table — one
-	// table per group: swatch · role (+ AdminKit badge) · mapping (--ak token ←
-	// provider semantic · primitive) · resolved hex. Re-run after each generator.
-	function renderDesign() {
-		if ( ! designWrap ) { return; }
-		designWrap.textContent = '';
-		var mode = document.documentElement.getAttribute( 'data-adminkit-theme' ) === 'dark' ? 'dark' : 'light';
 		( D.colors || [] ).forEach( function ( g ) {
 			var tbl = el( 'div', { 'class': 'ak-tbl' } );
-			( g.tokens || [] ).forEach( function ( t ) { roleRow( tbl, t, mode ); } );
-			designWrap.appendChild( el( 'div', { 'class': 'ak-group' }, [
+			( g.tokens || [] ).forEach( function ( t ) { roleRow( tbl, t ); } );
+			p.appendChild( el( 'div', { 'class': 'ak-group' }, [
 				el( 'h2', { 'class': 'ak-group__title', text: g.label } ),
 				g.desc ? el( 'p', { 'class': 'ak-group__desc', text: g.desc } ) : null,
 				tbl
 			] ) );
 		} );
+		return p;
 	}
 
-	// Append one row (four aligned grid cells) to a group table. Cells are direct
-	// grid children so columns line up across rows; CSS draws the separators.
-	function roleRow( tbl, t, mode ) {
+	// Append one row (three aligned grid cells) to a group table. Cells are
+	// direct grid children so columns line up across rows; CSS draws the dividers.
+	function roleRow( tbl, t ) {
 		tbl.appendChild( el( 'span', { 'class': 'ak-tbl__swc' }, [
 			el( 'span', { 'class': 'ak-tbl__sw', style: 'background:var(' + t.token + ')', title: t.token } )
 		] ) );
@@ -505,7 +263,6 @@
 			t.bricks ? el( 'code', { 'class': 'ak-tbl__from', text: '← ' + t.bricks } ) : null,
 			t.source ? el( 'code', { 'class': 'ak-tbl__prim', text: t.source } ) : null
 		] ) );
-		tbl.appendChild( el( 'span', { 'class': 'ak-tbl__val', text: resolvedHex( t.token, mode ) } ) );
 	}
 
 	function buildFeatures() {
@@ -588,13 +345,12 @@
 	}
 
 	// --- save ----------------------------------------------------------------
+	// Only the Features + Integrations toggles are interactive for now; the
+	// Design system tab writes nothing.
 	function gather() {
 		var v = {};
-		Object.keys( state.colors ).forEach( function ( k ) { v[ k ] = state.colors[ k ] || ''; } );
-		Object.keys( state.sizes ).forEach( function ( k ) { v[ k ] = state.sizes[ k ] || ''; } );
 		Object.keys( state.features ).forEach( function ( k ) { v[ k ] = !! state.features[ k ]; } );
 		Object.keys( state.integrations ).forEach( function ( s ) { v[ 'integration_' + s + '_enabled' ] = !! state.integrations[ s ]; } );
-		v.palette_mode = state.palette || 'neutral';
 		return v;
 	}
 
@@ -610,9 +366,8 @@
 				state.dirty = false;
 				updateBar();
 				setStatus( 'is-saved', I.saved );
-				// No reload — colours/sizes already preview live via the inline
-				// <style>, and module/integration toggles take effect on the next
-				// visit to those screens. Fluid, no flash.
+				// Module / integration toggles take effect on the next visit to
+				// those screens. No reload here.
 			} )
 			.catch( function () {
 				state.saving = false;

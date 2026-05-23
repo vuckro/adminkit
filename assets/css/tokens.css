@@ -49,7 +49,7 @@
      the no-provider FALLBACK only — the provider's --accent-hover / --accent-bg /
      --focus win when present (so no duplicate static line is needed anymore).
    • Branded palette: when the user picks "Branded", surfaces + borders are
-     remapped onto the provider PRIMARY ramp (--primary-l-*/-d-*) via an inline
+     remapped onto the provider PRIMARY ramp (--primary-l-N / --primary-d-N) via an inline
      override (AdminKit_Settings::branded_surface_map); Neutral = this file's
      defaults. Text stays neutral for legibility. */
 
