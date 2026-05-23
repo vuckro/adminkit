@@ -143,6 +143,7 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a {
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a:hover,
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a:focus,
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a.acf-tab.is-active {
+	background-color: transparent;
 	color: var(--ak-heading);
 }
 
@@ -406,7 +407,8 @@ body.adminkit.acf-admin-page .acf-box .inner {
 body.adminkit.acf-admin-page .postbox .postbox-header,
 body.adminkit.acf-admin-page .postbox .title,
 body.adminkit.acf-admin-page .acf-box .postbox-header,
-body.adminkit.acf-admin-page .acf-box .title {
+body.adminkit.acf-admin-page .acf-box .title,
+body.adminkit.acf-admin-page .acf-postbox-header {
 	border-bottom-color: var(--ak-border);
 }
 
@@ -482,6 +484,10 @@ body.adminkit.acf-admin-page .acf-regenerate-labels-bar {
    gives the rule (1,2,0), so keep the id to win. ----- */
 body.adminkit.acf-admin-page #acf-admin-tools .acf-meta-box-wrap .acf-fields {
 	background: var(--ak-surface);
+}
+
+body.adminkit.acf-admin-page #acf-admin-tools .acf-meta-box-wrap .acf-fields .acf-input {
+	border-color: var(--ak-border);
 }
 
 /* ----- 13. Field-group editor — deep mapping -----
