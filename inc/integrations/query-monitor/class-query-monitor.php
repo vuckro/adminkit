@@ -43,14 +43,16 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 	/**
 	 * The token remap can't ride the AdminKit asset registry: that enqueues
 	 * into the main document, which QM's shadow-DOM panel never sees. Instead
-	 * hook a tiny bridge script onto the admin enqueue pass; it injects the CSS
-	 * into the shadow root itself. QM prints on every admin page, so no screen
-	 * condition — the script no-ops unless the QM host is present.
+	 * hook a tiny bridge script onto the enqueue pass; it injects the CSS into
+	 * the shadow root itself. QM renders on every admin page AND on the frontend
+	 * for logged-in users (alongside the admin bar), so hook both contexts — no
+	 * screen condition; the script no-ops unless QM's host is present.
 	 *
 	 * @return void
 	 */
 	public static function register_assets() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_shadow_bridge' ) );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_shadow_bridge' ) );
 	}
 
 	/**
@@ -60,6 +62,14 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function enqueue_shadow_bridge() {
+		// QM only paints its frontend panel when the admin bar is showing (a
+		// logged-in user who can view it) — the same gate AdminKit uses to load
+		// its frontend tokens, so --ak-* are present to inherit into the shadow.
+		// Skip public / logged-out page views entirely.
+		if ( ! is_admin() && ! is_admin_bar_showing() ) {
+			return;
+		}
+
 		$js_rel   = 'inc/integrations/query-monitor/js/shadow-bridge.js';
 		$css_rel  = 'inc/integrations/query-monitor/css/admin.css';
 		$js_path  = ADMINKIT_PATH . $js_rel;
