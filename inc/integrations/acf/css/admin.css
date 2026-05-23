@@ -328,8 +328,8 @@ body.adminkit.acf-admin-page [class*="-select-results"] .select2-results__option
 }
 
 body.adminkit.acf-admin-page [class*="-select-results"] .select2-results__option .select2-results__option--highlighted {
-	background-color: var(--ak-primary) !important;
-	color: var(--ak-on-accent) !important;
+	background-color: var(--ak-primary-subtle) !important;
+	color: var(--ak-heading) !important;
 }
 
 /* Selected option's checkmark indicator (:after, a masked #0783be glyph) — dark
