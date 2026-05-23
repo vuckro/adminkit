@@ -218,9 +218,24 @@ body.adminkit.acf-admin-page .acf-options-preview-wrapper p {
 	color: var(--ak-text-muted);
 }
 
-/* ----- 8. Select2 (ACF-styled dropdowns) ----- */
-body.adminkit.acf-admin-page .acf-input .select2-container.-acf .select2-selection__rendered {
+/* ----- 8. Select2 (ACF-styled dropdowns) -----
+   ACF gives the selection box #fff + #d0d5dd border + a drop shadow; flatten +
+   token it (covers .acf-input and the location-rule .rule-groups). The results
+   dropdown is appended to <body>, but body carries .acf-admin-page so the
+   highlighted-option scope still matches. */
+body.adminkit.acf-admin-page .acf-input .select2-container.-acf .select2-selection__rendered,
+body.adminkit.acf-admin-page .rule-groups .select2-container.-acf .select2-selection__rendered {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+	box-shadow: none;
+	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
+}
+
+/* Highlighted result (ACF/select2 default is #5897fb blue + white). */
+body.adminkit.acf-admin-page .select2-container--default .select2-results__option--highlighted[aria-selected] {
+	background-color: var(--ak-primary-subtle);
+	color: var(--ak-heading);
 }
 
 /* ----- 9. WP list tables on ACF screens -----
@@ -323,8 +338,25 @@ body.adminkit.acf-admin-page .acf-tab-wrap .acf-tab-group {
 	border-bottom-color: var(--ak-border);
 }
 
+/* Tab labels: resting muted; active = heading text + brand underline (ACF used
+   #667085 resting and #0783be for both the active label and its underline).
+   Covers the field-settings tab bar and the postbox tab groups. */
+body.adminkit.acf-admin-page .acf-field-settings-tab-bar li a,
+body.adminkit.acf-admin-page .acf-tab-wrap .acf-tab-group li a {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.acf-admin-page .acf-field-settings-tab-bar li.active a,
+body.adminkit.acf-admin-page .acf-tab-wrap .acf-tab-group li.active a {
+	color: var(--ak-heading);
+	border-bottom-color: var(--ak-primary);
+}
+
 body.adminkit.acf-admin-page .postbox-container .acf-tab-wrap {
-	top: 0;
+	position: relative;
+	top: -15px;
+	left: -25px;
+	width: calc(100% + 200px);
 }
 
 /* ----- 12. Tools page — Export / Import field areas hardcode #fff. ACF's id
