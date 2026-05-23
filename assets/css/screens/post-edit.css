@@ -32,7 +32,9 @@ body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-act
 	padding: 0 10px;
 	line-height: 2.15;
 	border-radius: var(--ak-radius-s);
-	border: 1px solid color-mix(in srgb, var(--ak-error) 35%, transparent);
+	/* Transparent (not removed) border so the box keeps the same height as the
+	   Publish button it sits beside — same trick as the base .button. */
+	border: 1px solid transparent;
 	background: var(--ak-error-subtle);
 	color: var(--ak-error);
 	font-size: var(--ak-text-s);
@@ -43,7 +45,6 @@ body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-act
 body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-action .submitdelete:hover,
 body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #delete-action .submitdelete:focus {
 	background: color-mix(in srgb, var(--ak-error) 16%, var(--ak-surface));
-	border-color: var(--ak-error);
 	color: var(--ak-error);
 }
 

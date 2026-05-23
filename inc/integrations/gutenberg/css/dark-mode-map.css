@@ -35,7 +35,7 @@ body.block-editor-page.adminkit .interface-interface-skeleton__footer {
 
 /* ========== 2. Document bar (centered title bar, v15+) ========== */
 body.block-editor-page.adminkit .editor-document-bar {
-	background: var(--ak-surface);
+	background: var(--ak-elevated);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -45,13 +45,11 @@ body.block-editor-page.adminkit .editor-document-bar .editor-document-bar__post-
 	color: var(--ak-heading);
 }
 
-/* Document bar button hover — fill with --ak-primary-subtle (the t-2
-   primary tint, one step stronger than --ak-primary-subtle / t-1
-   used for the pressed-pill state) and route text to --ak-primary
-   so the hover pill stays on-brand without yelling. */
+/* Document bar button hover — neutral hover wash, consistent with the
+   rest of the editor chrome. */
 body.block-editor-page.adminkit .editor-document-bar .components-button:hover:not(:disabled, [aria-disabled="true"]) {
-	background: var(--ak-primary-subtle);
-	color: var(--ak-primary);
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
 	border-radius: var(--ak-radius-s);
 }
 
@@ -278,6 +276,19 @@ body.block-editor-page.adminkit .components-menu-item__button:hover:not(:disable
 body.block-editor-page.adminkit .components-menu-item__button:focus:not(:disabled) {
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
+}
+
+/* "Reset" / "Reset all" tools-panel menu items — destructive, so red text
+   and no border to match the rest of the destructive pattern. */
+body.block-editor-page.adminkit .components-menu-item__button.is-destructive {
+	color: var(--ak-error);
+	border: 0;
+}
+
+body.block-editor-page.adminkit .components-menu-item__button.is-destructive:hover:not(:disabled),
+body.block-editor-page.adminkit .components-menu-item__button.is-destructive:focus:not(:disabled) {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
 }
 
 body.block-editor-page.adminkit .components-menu-group + .components-menu-group {
@@ -524,6 +535,12 @@ body.block-editor-page.adminkit .editor-meta-boxes-area .postbox .hndle {
 	border-bottom-color: var(--ak-border);
 }
 
+/* Collapsible header hover — WP block editor hardcodes #f0f0f0; route to token. */
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox > .postbox-header:hover,
+body.block-editor-page.adminkit .editor-meta-boxes-area .postbox > .postbox-header:hover {
+	background: var(--ak-hover-bg);
+}
+
 
 /* ========== 18. Sidebar dividers (Post panel) ========== */
 /* The editor-post-summary stack is currently flush — sections (post
@@ -700,6 +717,13 @@ body.block-editor-page.adminkit .components-color-indicator {
 	border-color: var(--ak-border-strong);
 }
 
+/* "No color" indicator — WP hardcodes a #fff base with a #ddd diagonal slash;
+   route both to tokens so it reads correctly in dark mode. */
+body.block-editor-page.adminkit .components-color-indicator.component-color-indicator,
+body.block-editor-page.adminkit .component-color-indicator {
+	background: var(--ak-surface) linear-gradient(-45deg, transparent 48%, var(--ak-border) 0, var(--ak-border) 52%, transparent 0);
+}
+
 
 /* ========== 24. Border control (border style picker) ========== */
 body.block-editor-page.adminkit .components-border-box-control,
@@ -856,7 +880,7 @@ body.block-editor-page.adminkit .editor-meta-boxes-area input[type="number"],
 body.block-editor-page.adminkit .editor-meta-boxes-area input[type="search"],
 body.block-editor-page.adminkit .editor-meta-boxes-area textarea,
 body.block-editor-page.adminkit .editor-meta-boxes-area select {
-	background: var(--ak-surface);
+	background: var(--ak-input-bg);
 	color: var(--ak-text);
 	border-color: var(--ak-border);
 }
@@ -1008,6 +1032,11 @@ body.block-editor-page.adminkit .block-editor-panel-color-gradient-settings__dro
 body.block-editor-page.adminkit .block-editor-tools-panel-color-gradient-settings__item,
 body.block-editor-page.adminkit .block-editor-tools-panel-color-gradient-settings__item .components-button {
 	border-color: var(--ak-border);
+}
+
+/* Open-state dropdown trigger — WP hardcodes #f0f0f0; route to token. */
+body.block-editor-page.adminkit .block-editor-tools-panel-color-gradient-settings__dropdown > button.is-open {
+	background: var(--ak-hover-bg);
 }
 
 /* The color row buttons live inside .block-editor-tools-panel-color-gradient-settings__item

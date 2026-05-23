@@ -100,7 +100,7 @@ body.adminkit.upload-php .media-toolbar {
 
 body.adminkit.upload-php .wp-filter .attachment-filters,
 body.adminkit.upload-php .wp-filter .search-form input[type="search"] {
-	background: var(--ak-surface);
+	background: var(--ak-input-bg);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);

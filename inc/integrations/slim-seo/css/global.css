@@ -58,7 +58,7 @@ body.adminkit .ss-input-wrapper textarea,
 body.adminkit .ef-control input,
 body.adminkit .ef-control textarea,
 body.adminkit .ef-control select {
-	background: var(--ak-surface);
+	background: var(--ak-input-bg);
 	color: var(--ak-text);
 	border-color: var(--ak-border);
 }

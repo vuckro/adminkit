@@ -109,7 +109,7 @@ body.adminkit #happyfiles-search-folders {
 }
 
 body.adminkit #happyfiles-search-folders input {
-	background-color: var(--ak-surface);
+	background-color: var(--ak-input-bg);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
 }
@@ -118,11 +118,11 @@ body.adminkit #happyfiles-search-folders input {
    fill against the HappyFiles sidebar surfaces. Keep each field's resting
    background on focus and let the primary border carry the focus state. */
 body.adminkit #happyfiles-search-folders input:focus {
-	background-color: var(--ak-surface);
+	background-color: var(--ak-input-bg);
 }
 
 body.adminkit #happyfiles-create-folders input:focus {
-	background-color: var(--ak-surface);
+	background-color: var(--ak-input-bg);
 }
 
 /* Folder rows themselves — round each row so the hover / open tint
