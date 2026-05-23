@@ -34,6 +34,37 @@ body.adminkit:is(.post-php, .post-new-php) #delete-action .submitdelete:focus {
 	text-decoration: underline;
 }
 
+/* "Copy to a new draft" (WooCommerce duplicate) — same quiet treatment as the
+   trash link, so the Publish box footer reads as one calm row of secondary
+   actions with Update as the only emphasized button. */
+body.adminkit:is(.post-php, .post-new-php) #duplicate-action .submitduplicate {
+	color: var(--ak-text-muted);
+	text-decoration: none;
+	font-size: var(--ak-text-xs);
+}
+
+body.adminkit:is(.post-php, .post-new-php) #duplicate-action .submitduplicate:hover,
+body.adminkit:is(.post-php, .post-new-php) #duplicate-action .submitduplicate:focus {
+	color: var(--ak-heading);
+	text-decoration: underline;
+}
+
+/* Inline "Edit" toggles in the Publish box (next to Status / Visibility /
+   Published) — tone the WP-blue links to subtle muted links so the box reads as
+   a calm "Status" panel, brand color only on hover. */
+body.adminkit:is(.post-php, .post-new-php) #misc-publishing-actions a.edit-post-status,
+body.adminkit:is(.post-php, .post-new-php) #misc-publishing-actions a.edit-visibility,
+body.adminkit:is(.post-php, .post-new-php) #misc-publishing-actions a.edit-timestamp {
+	color: var(--ak-text-muted);
+	text-decoration: none;
+}
+
+body.adminkit:is(.post-php, .post-new-php) #misc-publishing-actions a.edit-post-status:hover,
+body.adminkit:is(.post-php, .post-new-php) #misc-publishing-actions a.edit-visibility:hover,
+body.adminkit:is(.post-php, .post-new-php) #misc-publishing-actions a.edit-timestamp:hover {
+	color: var(--ak-heading);
+}
+
 
 /* ----- Bricks classic-editor fallback wrapper ----- */
 body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container {
