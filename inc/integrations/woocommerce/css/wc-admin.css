@@ -147,10 +147,13 @@ body.adminkit.woocommerce-admin-page .woocommerce-task-progress-header .woocomme
 	border-color: var(--ak-border);
 }
 
-/* Inbox message (Home notes) — muted text on a recessed surface. */
+/* Inbox message (Home notes) — muted text on a recessed surface, with a
+   token row divider (WC pins it #e0e0e0 on :not(.is-placeholder); this base
+   rule out-specifies that, and placeholders have no border width to recolor). */
 body.adminkit.woocommerce-admin-page .woocommerce-inbox-message {
 	background-color: var(--ak-surface);
 	color: var(--ak-text-muted);
+	border-bottom-color: var(--ak-border);
 }
 
 /* Stats overview (Home widget) — tab strip + Jetpack-promo dividers. */
