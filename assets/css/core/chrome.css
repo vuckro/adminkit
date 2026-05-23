@@ -541,6 +541,7 @@ body.adminkit .contextual-help-tabs a,
 body.adminkit .contextual-help-tabs a:hover,
 body.adminkit .contextual-help-tabs a:focus {
 	color: var(--ak-text);
+	border: none;
 }
 
 /* Hover/focus tabs share the active tab's soft brand tint. */
