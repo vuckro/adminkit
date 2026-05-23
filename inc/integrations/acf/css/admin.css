@@ -9,7 +9,27 @@
      #0783be brand → primary    · #066998 → primary-hover
      #344054 / #23282d heading  · #475467 text · #667085/#98a2b3 muted
      #fff surface · #f9fafb/#f5f5f5 elevated
-     #eaecf0/#d0d5dd/#ccd0d4 borders */
+     #eaecf0/#d0d5dd/#ccd0d4 borders
+
+   Sections:
+     1. Headerbar             9. WP list tables
+     2. Buttons              10. Postboxes
+     3. Toolbar masthead     11. Editor tab bars (.acf-tab-wrap)
+     4. Switches             12. Tools page
+     5. Field-group surfaces 13. Field-group editor — deep mapping
+     6. ACF data tables      14. Browse Fields modal (field-type picker)
+     7. Empty states         15. Field settings (button groups, options split)
+     8. Select2              16. Field icon picker
+
+   Conventions (read before editing):
+   - Every rule is scoped to `body.adminkit.acf-admin-page` (the host body class).
+   - Field-group-EDITOR-only rules concatenate `.post-type-acf-field-group`
+     directly onto the body — `body.adminkit.acf-admin-page.post-type-...`. It is
+     a BODY class, so a SPACE before it (a descendant combinator) silently fails
+     to match. This was the cause of several "still hardcoded" bugs.
+   - `!important` is used only where ACF forces it (own !important or a deep
+     id/specificity rule). bin/adapter-audit.php records the accepted budget; the
+     `hex` column there counts `#acf-*` id SELECTORS, not colour literals. */
 
 /* ----- 1. Headerbar (sticky page header: title + Save / Add actions) -----
    ACF ships #fff + a drop shadow. Flatten to a token surface with a bottom
@@ -683,6 +703,12 @@ body.adminkit.acf-admin-page.post-type-acf-field-group button.acf-btn.acf-btn-te
 body.adminkit.acf-admin-page.post-type-acf-field-group button.acf-btn.acf-btn-tertiary.acf-field-setting-fc-delete {
 	background-color: var(--ak-surface) !important;
 	color: var(--ak-text) !important;
+}
+
+/* FC delete-layout trash glyph (masked i.acf-icon: background-color = color). */
+body.adminkit.acf-admin-page.post-type-acf-field-group i.acf-icon.acf-icon-trash.delete-layout {
+	background-color: var(--ak-text-muted);
+	color: var(--ak-text-muted);
 }
 
 body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-settings-fc_head {
