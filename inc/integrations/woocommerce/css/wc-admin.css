@@ -225,6 +225,19 @@ body.adminkit.woocommerce-admin-page .woocommerce-table__item .is-negative {
 	color: var(--ak-error);
 }
 
+/* Horizontal-scroll fade overlays — the table is the scroll container; WC fades
+   its edges to #fff (::before left, ::after right) to hint at off-screen columns,
+   toggling their opacity by scroll position. Recolor the fade to the table
+   surface so it matches in both themes; fade to transparent (modern gradients
+   premultiply, so no grey haze). WC keeps the opacity logic. */
+body.adminkit.woocommerce-admin-page .woocommerce-table__table::before {
+	background: linear-gradient(90deg, var(--ak-surface), transparent);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-table__table::after {
+	background: linear-gradient(90deg, transparent, var(--ak-surface));
+}
+
 
 /* ===== 5. Summary (big numbers) ===== */
 
@@ -346,9 +359,15 @@ body.adminkit.woocommerce-admin-page .woocommerce-calendar__input .woocommerce-c
 	color: var(--ak-text-muted);
 }
 
-/* Filter dropdown list items. */
+/* Filter dropdown list items — base fill (WC #f0f0f0) + muted label, and the
+   row divider (WC #ccc). Hover / selected fills follow. */
 body.adminkit.woocommerce-admin-page .woocommerce-filters-filter__content-list-item .woocommerce-filters-filter__button {
+	background-color: var(--ak-elevated);
 	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-filters-filter__content-list-item {
+	border-bottom-color: var(--ak-border);
 }
 
 body.adminkit.woocommerce-admin-page .woocommerce-filters-filter__content-list-item .woocommerce-filters-filter__button:hover {
@@ -411,6 +430,34 @@ body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__label {
 
 body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__input:checked + label .woocommerce-segmented-selection__label {
 	background-color: var(--ak-surface);
+}
+
+/* Dropdown button (Analytics filter / compare trigger) — WC paints it #fff with
+   a #1e1e1e label and caret (the ::after is a masked arrow whose `background`
+   is the glyph color). Map to a surface control with token text. The accent
+   hover (label + caret → --wp-admin-theme-color) needs re-asserting: our resting
+   overrides out-specify WC's hover, so they'd otherwise pin the resting color
+   through hover. WC's #757575 outline maps to the strong border token. */
+body.adminkit.woocommerce-admin-page .components-button.woocommerce-dropdown-button {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-text);
+}
+
+body.adminkit.woocommerce-admin-page .components-button.woocommerce-dropdown-button::after {
+	background-color: var(--ak-text);
+}
+
+body.adminkit.woocommerce-admin-page .components-button.woocommerce-dropdown-button:hover,
+body.adminkit.woocommerce-admin-page .components-button.woocommerce-dropdown-button:active,
+body.adminkit.woocommerce-admin-page .components-button.woocommerce-dropdown-button.is-open {
+	color: var(--ak-primary);
+}
+
+body.adminkit.woocommerce-admin-page .components-button.woocommerce-dropdown-button:hover::after,
+body.adminkit.woocommerce-admin-page .components-button.woocommerce-dropdown-button:active::after,
+body.adminkit.woocommerce-admin-page .components-button.woocommerce-dropdown-button.is-open::after {
+	background-color: var(--ak-primary);
 }
 
 
@@ -528,4 +575,34 @@ body.adminkit.woocommerce-admin-page .woocommerce-marketplace__category-dropdown
 body.adminkit.woocommerce-admin-page .woocommerce-marketplace__category-item-button--selected {
 	background-color: var(--ak-primary-subtle);
 	color: var(--ak-heading);
+}
+
+
+/* ===== 17. Analytics report header ===== */
+
+/* Import-status bar (the "importing N orders…" pill in the report header) — WC
+   frames it with a #ccc border on a transparent fill. Recolor to the token. */
+body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar {
+	border-color: var(--ak-border);
+}
+
+
+/* ===== 18. Tour kit (feature-tour popover) ===== */
+
+body.adminkit.woocommerce-admin-page .woocommerce-tour-kit .woocommerce-tour-kit-step__heading {
+	color: var(--ak-heading);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-tour-kit .woocommerce-tour-kit-step__description {
+	color: var(--ak-text);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-tour-kit .woocommerce-tour-kit-step-controls__close-btn svg {
+	fill: var(--ak-text);
+}
+
+/* Selected filter row keeps a #fff fill on :focus — match WC's deep focus
+   selector (the body scope lifts it over WC's specificity). */
+body.adminkit.woocommerce-admin-page .woocommerce-filters-filter__content-list-item.is-selected .woocommerce-filters-filter__button.components-button:not(:disabled):not([aria-disabled=true]):focus {
+	background-color: var(--ak-surface);
 }
