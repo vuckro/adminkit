@@ -586,6 +586,22 @@ body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar {
 	border-color: var(--ak-border);
 }
 
+/* Its label (#757575) + value (#1e1e1e). */
+body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__label {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__value {
+	color: var(--ak-text);
+}
+
+/* Search control's magnifying-glass icon — WC's loupe path carries a fixed fill
+   that vanishes on dark; route it to text so it flips. */
+body.adminkit.woocommerce-admin-page .woocommerce-search .woocommerce-select-control__control-icon,
+body.adminkit.woocommerce-admin-page .woocommerce-search .woocommerce-select-control__control-icon path {
+	fill: var(--ak-text);
+}
+
 
 /* ===== 18. Tour kit (feature-tour popover) ===== */
 
