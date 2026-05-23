@@ -175,6 +175,14 @@ body.adminkit.acf-admin-page .acf-switch.-on {
 	border-color: var(--ak-primary);
 }
 
+/* Hide ACF's own checkmark SVG (field-states/checkbox-active.svg) on the
+   checkbox :before — the brand-yellow box marks the checked state, and the SVG
+   (built for ACF's blue) would clash on it. */
+body.adminkit.acf-admin-page input[type="checkbox"]:checked:before,
+body.adminkit.acf-admin-page input[type="checkbox"]:focus:before {
+	display: none;
+}
+
 /* ----- 5. Field-group editor surfaces ----- */
 /* Field list card — drop ACF's drop shadow (flat). */
 body.adminkit.acf-admin-page #acf-field-group-fields .acf-field-list-wrap {
@@ -406,6 +414,7 @@ body.adminkit.acf-admin-page .acf-tab-wrap {
 	border-bottom-color: var(--ak-border);
 }
 
+body.adminkit.acf-admin-page .acf-field-settings-tab-bar,
 body.adminkit.acf-admin-page .acf-tab-wrap .acf-tab-group {
 	border-bottom-color: var(--ak-border);
 }
@@ -504,6 +513,12 @@ body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open .h
 
 body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open .handle a.delete-field {
 	color: var(--ak-error) !important;
+}
+
+/* Field row-options link hover (move / duplicate / delete actions) — ACF
+   darkens to a blue; route to heading. */
+body.adminkit.acf-admin-page .acf-field-object > .handle .row-options a:hover {
+	color: var(--ak-heading);
 }
 
 body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open {
@@ -632,8 +647,8 @@ body.adminkit.acf-admin-page .acf-button-group label {
 }
 
 body.adminkit.acf-admin-page .acf-button-group label.selected {
-	background: var(--ak-primary-subtle);
-	color: var(--ak-heading);
+	background: var(--ak-primary);
+	color: var(--ak-on-accent);
 }
 
 /* Field-group options two-column split divider (#eaecf0). */
