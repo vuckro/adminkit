@@ -279,9 +279,17 @@ body.adminkit.toplevel_page_flying-press :has(> svg[viewBox="0 0 1299 235"])::be
 
 
 /* ===== Hide the FlyingCDN upsell card (CDN tab) =====
-   The first block in the page section is the "FlyingCDN — Next-Gen CDN"
-   promo. Structural selector (the SPA's Tailwind classes have no stable
-   hook); the #app ID wins without !important. */
-body.adminkit.toplevel_page_flying-press #app > div.max-w-6xl.mx-auto.px-4.py-8 > div > section > div:nth-child(1) {
+   The CDN tab leads with a "FlyingCDN — Next-Gen CDN" promo card. Anchor
+   on its "Try FlyingCDN" link so only this card is hidden, and only on
+   the route where it renders. Match the href exactly (no trailing slash)
+   — the dashboard's separate promo links to "https://flyingcdn.com/", so
+   exact match leaves it alone. `.rounded-xl` pins the match to the card
+   root: a bare `div:has(...)` would also match the page wrapper (it too
+   contains the link) and blank the whole tab. The earlier positional
+   `section > div:nth-child(1)` matched the first block of EVERY hash
+   route — the SPA swaps content in place without changing the body class
+   — so it also blanked the first section of Bloat / Images / Cache. The
+   #app ID wins without !important. */
+body.adminkit.toplevel_page_flying-press #app .rounded-xl:has(a[href="https://flyingcdn.com"]) {
 	display: none;
 }
