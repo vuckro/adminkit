@@ -100,6 +100,7 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab i.acf-icon {
 
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab.is-active i.acf-icon,
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab:hover i.acf-icon,
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab:focus i.acf-icon,
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more:hover i.acf-icon {
 	background-color: var(--ak-heading);
 }
