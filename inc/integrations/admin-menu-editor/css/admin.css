@@ -63,6 +63,12 @@ body.adminkit.settings_page_menu_editor a.ws_edit_link:hover {
 	background-color: var(--ak-elevated);
 }
 
+/* Field-group heading strip — AME fills it #ccc, where the gray reads as a
+   divider between groups inside the edit box. Route to the border token. */
+body.adminkit.settings_page_menu_editor .ws_edit_field.ws_field_group_heading {
+	background-color: var(--ak-border);
+}
+
 
 /* ----- Toolbar icon buttons (.ws_button) -----
    The Classic theme paints a pale blue (#c0c0e0) border. */
