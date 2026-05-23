@@ -125,6 +125,12 @@ body.adminkit.woocommerce-admin-page .woocommerce-task-list__item .woocommerce-t
 	color: var(--ak-heading);
 }
 
+/* Home notes wrapper + the task card's loading-skeleton header. */
+body.adminkit.woocommerce-admin-page .woocommerce-homepage-notes-wrapper,
+body.adminkit.woocommerce-admin-page .woocommerce-task-dashboard__container .woocommerce-task-card.is-loading .components-card__header {
+	background-color: var(--ak-surface);
+}
+
 /* Task progress header — muted caption + recessed progress-bar track. */
 body.adminkit.woocommerce-admin-page .woocommerce-task-progress-header p {
 	color: var(--ak-text-muted);
