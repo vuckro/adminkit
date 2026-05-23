@@ -84,9 +84,9 @@ body.adminkit input[type="radio"] {
 	border-radius: 50%;
 }
 
-/* Checked state: brand primary fill. The checkbox check uses --ak-on-accent
-   (stable dark on the yellow); the radio dot is white (always, hence a literal —
-   a primary dot would vanish on the yellow fill). */
+/* Checked state: checkbox = brand primary fill + --ak-on-accent (stable dark)
+   check. Radio = surface fill + primary ring + primary dot (a primary dot would
+   vanish on a primary fill, so the radio keeps a neutral fill). */
 body.adminkit input[type="checkbox"]:checked,
 body.adminkit input[type="radio"]:checked {
 	background: var(--ak-primary);
@@ -97,8 +97,12 @@ body.adminkit input[type="checkbox"]:checked::before {
 	color: var(--ak-on-accent);
 }
 
+body.adminkit input[type="radio"]:checked {
+	background: var(--ak-surface);
+}
+
 body.adminkit input[type="radio"]:checked::before {
-	background: hsl(0, 0%, 100%);
+	background: var(--ak-primary);
 }
 
 body.adminkit input[type="checkbox"]:focus,
