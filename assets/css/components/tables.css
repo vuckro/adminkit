@@ -252,13 +252,26 @@ body.adminkit .tablenav .tablenav-pages a:hover {
 	color: var(--ak-heading);
 }
 
-body.adminkit .tablenav .tablenav-pages-navspan,
+/* Current-page indicator, when a paginated list renders it as a span. */
 body.adminkit .tablenav .tablenav-pages span.current {
 	background: var(--ak-heading);
 	color: var(--ak-surface);
 	border-color: var(--ak-heading);
 	border-radius: var(--ak-radius-s);
 	padding: 2px 8px;
+}
+
+/* Disabled « ‹ › » arrows — non-link spans WP renders at the ends of a range (or
+   on a single-page list, where ALL four are disabled). The active-page fill above
+   made them read as live buttons — and in dark mode --ak-heading is near-white, so
+   they became glaring white boxes next to "N items". Mute them to a disabled chip. */
+body.adminkit .tablenav .tablenav-pages-navspan {
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	color: var(--ak-text-muted);
+	border-radius: var(--ak-radius-s);
+	padding: 2px 8px;
+	margin: 0 2px;
 }
 
 /* "No items found" empty state */
