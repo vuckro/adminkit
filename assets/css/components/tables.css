@@ -315,39 +315,30 @@ body.adminkit .check-column label:hover {
 	background: transparent;
 }
 
-/* Row status indicator — a colored accent line on each row's LEFT edge (the
-   plugins list's familiar active bar, now unified for every status). Driven
-   ENTIRELY by the class WP already puts on the <tr>: status-* on post-type
-   lists (color map below) + .active / .inactive on plugins (screens/plugins.css).
-   Pure CSS — no JS, no markup, no server change: an inset box-shadow on the
-   first cell whose color rides the --ak-diode custom property. Rows with no
-   mapped status keep --ak-diode transparent, so the line stays invisible there
-   — the cue only shows where a status exists. (An inset accent line, not a
-   surface shadow — allowed by the flat design rules.) */
-body.adminkit .wp-list-table tbody > tr > .check-column {
-	box-shadow: inset 3px 0 0 var(--ak-diode, transparent);
+/* Row status line — a colored accent on the row's LEFT edge (the plugins
+   list's familiar active bar, here color-coded per post status). One inset
+   box-shadow per status, keyed off the class WP already puts on the <tr> — pure
+   CSS, no markup / JS / server change. An inset accent line, not a surface
+   shadow (allowed by the flat design rules). Rows with no status (other list
+   tables) get no line. Green = published, blue = scheduled, amber = draft /
+   pending, neutral = private, red = trash. */
+body.adminkit .wp-list-table tbody > tr.status-publish > .check-column {
+	box-shadow: inset 3px 0 0 var(--ak-success);
 }
 
-/* Post-type statuses → diode color (green live, blue scheduled, amber
-   draft/pending, neutral private, red trash). Set on the <tr>; the dot reads
-   it via inheritance. */
-body.adminkit .wp-list-table tbody > tr.status-publish {
-	--ak-diode: var(--ak-success);
+body.adminkit .wp-list-table tbody > tr.status-future > .check-column {
+	box-shadow: inset 3px 0 0 var(--ak-info);
 }
 
-body.adminkit .wp-list-table tbody > tr.status-future {
-	--ak-diode: var(--ak-info);
+body.adminkit .wp-list-table tbody > tr.status-draft > .check-column,
+body.adminkit .wp-list-table tbody > tr.status-pending > .check-column {
+	box-shadow: inset 3px 0 0 var(--ak-warning);
 }
 
-body.adminkit .wp-list-table tbody > tr.status-draft,
-body.adminkit .wp-list-table tbody > tr.status-pending {
-	--ak-diode: var(--ak-warning);
+body.adminkit .wp-list-table tbody > tr.status-private > .check-column {
+	box-shadow: inset 3px 0 0 var(--ak-text-muted);
 }
 
-body.adminkit .wp-list-table tbody > tr.status-private {
-	--ak-diode: var(--ak-text-muted);
-}
-
-body.adminkit .wp-list-table tbody > tr.status-trash {
-	--ak-diode: var(--ak-error);
+body.adminkit .wp-list-table tbody > tr.status-trash > .check-column {
+	box-shadow: inset 3px 0 0 var(--ak-error);
 }

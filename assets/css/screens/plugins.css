@@ -40,21 +40,16 @@ body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
 	font-weight: 600;
 }
 
-/* Status line for plugins — the familiar left-edge accent, now color-coded by
-   state. The shared geometry in components/tables.css gets zeroed for plugins by
-   the per-cell box-shadow reset above, so restate the line on the check-column
-   here; its color rides --ak-diode. green = active, grey = inactive. Update rows
-   keep their warning-tinted message row below as the cue. */
-body.adminkit .wp-list-table.plugins tbody > tr.active {
-	--ak-diode: var(--ak-success);
+/* Status line for plugins — the familiar left-edge accent, color-coded by state.
+   Restated here directly because the per-cell box-shadow reset above zeroes it:
+   green = active, grey = inactive. Update rows keep their warning-tinted message
+   row below as the cue. */
+body.adminkit .wp-list-table.plugins tbody > tr.active > .check-column {
+	box-shadow: inset 3px 0 0 var(--ak-success);
 }
 
-body.adminkit .wp-list-table.plugins tbody > tr.inactive {
-	--ak-diode: var(--ak-text-muted);
-}
-
-body.adminkit .wp-list-table.plugins tbody > tr > .check-column {
-	box-shadow: inset 3px 0 0 var(--ak-diode, transparent);
+body.adminkit .wp-list-table.plugins tbody > tr.inactive > .check-column {
+	box-shadow: inset 3px 0 0 var(--ak-text-muted);
 }
 
 /* Inactive plugins — keep the table surface, mute the title.
