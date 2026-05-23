@@ -54,13 +54,32 @@
 	color: var(--ak-heading);
 }
 
-/* Submenu dropdowns — same surface as the bar, native flat look.
-   Using --ak-surface (not --ak-surface) so the dropdown reads as
-   an extension of the bar instead of a brighter floating panel. */
-#wpadminbar .menupop ul {
-	background: var(--ak-surface) !important;
+/* Submenu dropdowns — a detached, modern card. WP wraps each submenu in
+   .ab-sub-wrapper (dark bg + a hard little shadow); neutralize that, then put
+   the card on the inner <ul> with a margin-top gap. The gap stays INSIDE the
+   transparent wrapper — and the wrapper is the hover bridge — so detaching the
+   card from the bar doesn't break hover-to-open. Elevated surface + token
+   border + radius + a soft shadow (a deliberate, refined exception to the
+   otherwise flat chrome). */
+#wpadminbar .menupop .ab-sub-wrapper {
+	background: transparent !important;
 	border: none !important;
 	box-shadow: none !important;
+}
+
+#wpadminbar .menupop ul {
+	background: var(--ak-elevated) !important;
+	border: 1px solid var(--ak-border) !important;
+	border-radius: var(--ak-radius-m);
+	box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.3) !important;
+	margin-top: 6px;
+	overflow: hidden;
+}
+
+/* Right-secondary dropdowns (account / profile, comments, updates) anchor to the
+   screen's right edge — inset them so the card floats off the corner too. */
+#wpadminbar #wp-admin-bar-top-secondary .menupop ul {
+	margin-right: 8px;
 }
 
 #wpadminbar .ab-submenu {
