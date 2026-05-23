@@ -37,7 +37,7 @@ $BUDGET = array(
 	'happyfiles'        => 6,
 	'wp-migrate-db-pro' => 6,
 	'fluentform'        => 2,
-	'acf'               => 3, // ACF forces !important on .acf-btn / -secondary labels + #poststuff postbox titles (hex col = #acf-* id selectors, not colors)
+	'acf'               => 5, // ACF forces !important on .acf-btn/-secondary labels, #poststuff postbox titles, open-field handle links (hex col = #acf-* id selectors, not colors)
 );
 
 $root = dirname( __DIR__ ) . '/inc/integrations';

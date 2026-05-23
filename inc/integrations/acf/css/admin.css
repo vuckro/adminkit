@@ -364,3 +364,128 @@ body.adminkit.acf-admin-page .postbox-container .acf-tab-wrap {
 body.adminkit.acf-admin-page #acf-admin-tools .acf-meta-box-wrap .acf-fields {
 	background: var(--ak-surface);
 }
+
+/* ----- 13. Field-group editor — deep mapping -----
+   The editor is ACF's heaviest screen: the field list + field settings paint
+   dozens of hardcoded Untitled-UI hex — a #f5f5f5 list canvas, a solid #2a9bd9
+   blue "open field" handle, #eaecf0 hairlines everywhere, an input drop shadow,
+   and the WYSIWYG #f6f7f7 TinyMCE bar. None flip for dark mode; route to tokens.
+   (Input border/color is already handled by AdminKit's global input styling,
+   which out-specifies ACF's `.acf-admin-page input` — only the shadow leaks.) */
+
+/* Field list canvas + empty state */
+body.adminkit.acf-admin-page #acf-field-group-fields .acf-field-list {
+	background: var(--ak-elevated);
+}
+
+body.adminkit.acf-admin-page #acf-field-group-fields .acf-field-list .no-fields-message {
+	background: var(--ak-surface);
+}
+
+body.adminkit.acf-admin-page #acf-field-group-fields .acf-field-list.-empty .no-fields-message .no-fields-message-inner h2 {
+	color: var(--ak-heading);
+}
+
+body.adminkit.acf-admin-page #acf-field-group-fields .acf-field-list.-empty .no-fields-message .no-fields-message-inner p {
+	color: var(--ak-text-muted);
+}
+
+/* Field-list header/footer (Order | Label | Name | Key | Type) */
+body.adminkit.acf-admin-page .post-type-acf-field-group .acf-thead,
+body.adminkit.acf-admin-page .post-type-acf-field-group .acf-tfoot {
+	border-color: var(--ak-border);
+}
+
+body.adminkit.acf-admin-page .post-type-acf-field-group .acf-thead li,
+body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object .handle li {
+	color: var(--ak-text);
+}
+
+/* Open ("editing") field — ACF paints the handle solid #2a9bd9 blue with white/
+   blue links. Route to a neutral raised handle + a thin brand left-accent on the
+   settings panel; links go heading (delete stays danger). ACF's link colors are
+   !important, so the overrides match. */
+body.adminkit.acf-admin-page .acf-field-object.open > .handle {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.adminkit.acf-admin-page .acf-field-object.open > .handle a,
+body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object.open .handle a {
+	color: var(--ak-heading) !important;
+}
+
+body.adminkit.acf-admin-page .acf-field-object.open > .handle a.delete-field,
+body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object.open .handle a.delete-field {
+	color: var(--ak-error) !important;
+}
+
+body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object.open {
+	border-top-color: var(--ak-border);
+}
+
+body.adminkit.acf-admin-page .post-type-acf-field-group .acf-field-object .settings {
+	border-left-color: var(--ak-primary);
+}
+
+/* The forest of #eaecf0 hairlines (settings splits, footers, setting rows,
+   conditional-logic + term-search dividers). */
+body.adminkit.acf-admin-page .acf-field-settings-split,
+body.adminkit.acf-admin-page .acf-field-settings-split .acf-field:nth-child(2n),
+body.adminkit.acf-admin-page .acf-field-settings .acf-field-setting-label,
+body.adminkit.acf-admin-page .acf-field-settings .acf-field-setting-wrapper,
+body.adminkit.acf-admin-page .acf-field-settings .acf-field-settings-footer,
+body.adminkit.acf-admin-page .acf-field-group-settings-footer,
+body.adminkit.acf-admin-page .acf-field-settings-main-conditional-logic .acf-field .rule-groups,
+body.adminkit.acf-admin-page .acf-term-search-term-name {
+	border-color: var(--ak-border);
+}
+
+body.adminkit.acf-admin-page .acf-field-group-settings-footer .acf-created-on,
+body.adminkit.acf-admin-page .acf-term-search-term-name {
+	color: var(--ak-text-muted);
+}
+
+/* Form controls — flatten ACF's input drop shadow. */
+body.adminkit.acf-admin-page input[type="text"],
+body.adminkit.acf-admin-page input[type="search"],
+body.adminkit.acf-admin-page input[type="number"],
+body.adminkit.acf-admin-page input[type="password"],
+body.adminkit.acf-admin-page input[type="email"],
+body.adminkit.acf-admin-page input[type="url"],
+body.adminkit.acf-admin-page textarea,
+body.adminkit.acf-admin-page select {
+	box-shadow: none;
+}
+
+/* Input prepend/append addons (#d0d5dd border + shadow + #667085 text). */
+body.adminkit.acf-admin-page .acf-input .acf-input-prepend,
+body.adminkit.acf-admin-page .acf-input .acf-input-append {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border-strong);
+	box-shadow: none;
+	color: var(--ak-text-muted);
+}
+
+/* WYSIWYG (TinyMCE) toolbars in default-value fields. */
+body.adminkit.acf-admin-page div.mce-toolbar-grp {
+	background: var(--ak-elevated);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.acf-admin-page div.mce-inline-toolbar-grp {
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+/* Popups (#acf-popup — link field groups, create options page, …). */
+body.adminkit.acf-admin-page #acf-popup .acf-popup-box .title {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.acf-admin-page #acf-popup .acf-popup-box .title h1,
+body.adminkit.acf-admin-page #acf-popup .acf-popup-box .title h2,
+body.adminkit.acf-admin-page #acf-popup .acf-popup-box .title h3 {
+	color: var(--ak-heading);
+}
