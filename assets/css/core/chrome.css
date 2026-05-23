@@ -467,6 +467,27 @@ body.adminkit .wp-editor-tabs .wp-switch-editor {
 	color: var(--ak-text-muted);
 }
 
+/* Toolbar listbox — the "Paragraph" format dropdown. WP gives it a white box +
+   #dcdcde border that the generic .mce-btn rules above don't reach. */
+body.adminkit .mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+/* Editor tools bar (Add Media + Visual/Text tabs, above the field) — recolor
+   the #c3c4c7 bottom divider WP draws in the expanded/sticky layout. */
+body.adminkit #wp-content-editor-tools {
+	border-bottom-color: var(--ak-border);
+}
+
+/* Editor status bar (word count, below the field) — WP ships its #f6f7f7 bg +
+   #c3c4c7 frame commented out; restore them as tokens so the bar reads as a
+   themed strip in dark mode. */
+body.adminkit #post-status-info {
+	background-color: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+}
+
 /* Link / permalink helper text (comment edit link box, post slug box) —
    WP hardcodes #646970. */
 body.adminkit #comment-link-box,
