@@ -1,14 +1,14 @@
 /**
  * AdminKit settings — a small, build-free single-page app.
  *
- * Renders four tabs (Dashboard / Design system / Features / Integrations) into
+ * Renders three tabs (Dashboard / Design system / Features) into
  * #adminkit-app from the data PHP hands over in window.AdminKitData. Tabs are
  * pill buttons driven by the URL hash (#design / #features / …).
  *
  * The Design system tab is a STATIC reference for now: it lists every semantic
  * colour role (swatch + the --ak token and the provider var / primitive it maps
  * to), read-only, with no generators and no live token manipulation. Features
- * and Integrations hold the only interactive controls (toggles), saved via REST.
+ * holds the only interactive controls (toggles), saved via REST.
  *
  * No framework, no build step — vanilla DOM.
  */
@@ -26,14 +26,10 @@
 	var state = {
 		dirty: false,
 		saving: false,
-		features: {},      // setting key -> bool
-		integrations: {}   // slug -> bool (enabled)
+		features: {}       // setting key -> bool
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
-	} );
-	( D.integrations || [] ).forEach( function ( it ) {
-		state.integrations[ it.slug ] = it.enabled !== false;
 	} );
 
 	// --- tiny DOM helper -----------------------------------------------------
@@ -58,7 +54,6 @@
 
 	// --- header chrome -------------------------------------------------------
 	var statusEl = el( 'span', { 'class': 'ak-status', 'aria-live': 'polite' } );
-	var resetBtn = el( 'button', { 'class': 'ak-btn', type: 'button', text: I.resetAll, onclick: resetAll } );
 	var saveBtn = el( 'button', { 'class': 'ak-btn ak-btn--primary', type: 'button', text: I.save, onclick: save } );
 
 	function setStatus( cls, text ) {
@@ -72,38 +67,25 @@
 	}
 	function markDirty() { state.dirty = true; updateBar(); }
 
-	// Reset every AdminKit setting to its default (clears the stored option),
-	// then reload so the SPA re-renders from defaults.
-	function resetAll() {
-		if ( ! apiFetch ) { setStatus( 'is-error', I.error ); return; }
-		if ( ! window.confirm( I.resetConfirm ) ) { return; }
-		var path = D.route.charAt( 0 ) === '/' ? D.route : '/' + D.route;
-		apiFetch( { path: path, method: 'POST', data: { reset: true } } )
-			.then( function () { window.location.reload(); } )
-			.catch( function () { setStatus( 'is-error', I.error ); } );
-	}
-
 	// --- build ---------------------------------------------------------------
 	app.removeAttribute( 'aria-busy' );
 	app.textContent = '';
 
 	app.appendChild( el( 'div', { 'class': 'ak-head' }, [
 		el( 'h1', { 'class': 'ak-title', text: 'AdminKit' } ),
-		el( 'div', { 'class': 'ak-actions' }, [ statusEl, resetBtn, saveBtn ] )
+		el( 'div', { 'class': 'ak-actions' }, [ statusEl, saveBtn ] )
 	] ) );
 
 	var ICONS = {
 		dashboard: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>',
 		colours: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8c3.4 3.9 5.4 6.5 5.4 9.2a5.4 5.4 0 0 1-10.8 0c0-2.7 2-5.3 5.4-9.2z"/></svg>',
-		features: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><circle cx="8" cy="12" r="2.6"/></svg>',
-		integrations: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.6 13.4 7 16a3.7 3.7 0 0 1-5.2-5.2l2.6-2.6"/><path d="M14.4 10.6 17 8a3.7 3.7 0 0 1 5.2 5.2l-2.6 2.6"/><path d="M9 15l6-6"/></svg>'
+		features: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><circle cx="8" cy="12" r="2.6"/></svg>'
 	};
 
 	var tabs = [
 		{ id: 'dashboard', label: I.dashboard, icon: ICONS.dashboard, build: buildDashboard },
 		{ id: 'design', label: I.design, icon: ICONS.colours, build: buildDesign },
-		{ id: 'features', label: I.features, icon: ICONS.features, build: buildFeatures },
-		{ id: 'integrations', label: I.integrations, icon: ICONS.integrations, build: buildIntegrations }
+		{ id: 'features', label: I.features, icon: ICONS.features, build: buildFeatures }
 	];
 	var activeId = tabs[ 0 ].id;
 	var panels = {};
@@ -156,7 +138,7 @@
 		} );
 	}
 
-	// URL hash reflects the active tab (#design / #features / #integrations).
+	// URL hash reflects the active tab (#design / #features).
 	function go( id ) {
 		if ( '#' + id === location.hash ) { selectTab( id ); }
 		else { location.hash = id; } // triggers hashchange → applyHash
@@ -234,8 +216,7 @@
 	// now). One table per group: swatch · role (+ AdminKit badge) · the --ak
 	// token and the provider var / primitive it maps to.
 	function buildDesign() {
-		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( I.designIntro ) ] );
-		if ( I.cascade ) { p.appendChild( el( 'p', { 'class': 'ak-cascade', text: I.cascade } ) ); }
+		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' } );
 		( D.colors || [] ).forEach( function ( g ) {
 			var tbl = el( 'div', { 'class': 'ak-tbl' } );
 			( g.tokens || [] ).forEach( function ( t ) { roleRow( tbl, t ); } );
@@ -245,14 +226,41 @@
 				tbl
 			] ) );
 		} );
+		p.appendChild( typeSection() );
 		return p;
+	}
+
+	// Typography — static reference. The body font follows the provider (Bricks
+	// --font-base) when set, else Inter; the scale is AdminKit's px admin sizes.
+	// Samples render in --ak-font-body (inherited from .adminkit-app).
+	function typeSection() {
+		var scale = el( 'div', { 'class': 'ak-type' } );
+		[
+			[ '--ak-text-m', 'Body' ],
+			[ '--ak-text-s', 'Small' ],
+			[ '--ak-text-xs', 'Caption' ]
+		].forEach( function ( s ) {
+			scale.appendChild( el( 'div', { 'class': 'ak-type__row' }, [
+				el( 'span', { 'class': 'ak-type__sample', style: 'font-size:var(' + s[ 0 ] + ')', text: 'The quick brown fox jumps over the lazy dog' } ),
+				el( 'code', { 'class': 'ak-tbl__prim', text: s[ 0 ] } )
+			] ) );
+		} );
+		return el( 'div', { 'class': 'ak-group' }, [
+			el( 'h2', { 'class': 'ak-group__title', text: I.typography || 'Typography' } ),
+			el( 'p', { 'class': 'ak-group__desc', text: I.typographyDesc || 'Body font follows Bricks (--font-base) when set, otherwise Inter.' } ),
+			el( 'div', { 'class': 'ak-type-hero' }, [
+				el( 'span', { 'class': 'ak-type-hero__aa', text: 'Ag' } ),
+				el( 'code', { 'class': 'ak-tbl__prim', text: '--ak-font-body' } )
+			] ),
+			scale
+		] );
 	}
 
 	// Append one row (three aligned grid cells) to a group table. Cells are
 	// direct grid children so columns line up across rows; CSS draws the dividers.
 	function roleRow( tbl, t ) {
 		tbl.appendChild( el( 'span', { 'class': 'ak-tbl__swc' }, [
-			el( 'span', { 'class': 'ak-tbl__sw', style: 'background:var(' + t.token + ')', title: t.token } )
+			el( 'span', { 'class': 'ak-tbl__sw', style: '--sw: var(' + t.token + ')', title: t.token } )
 		] ) );
 		tbl.appendChild( el( 'span', { 'class': 'ak-tbl__role' }, [
 			el( 'span', { 'class': 'ak-tbl__name', text: t.label } ),
@@ -261,7 +269,7 @@
 		tbl.appendChild( el( 'span', { 'class': 'ak-tbl__map' }, [
 			el( 'code', { 'class': 'ak-tbl__tok', text: t.token } ),
 			t.bricks ? el( 'code', { 'class': 'ak-tbl__from', text: '← ' + t.bricks } ) : null,
-			t.source ? el( 'code', { 'class': 'ak-tbl__prim', text: t.source } ) : null
+			t.source ? el( 'code', { 'class': 'ak-tbl__prim', text: ( t.bricks ? '· ' : '← ' ) + t.source } ) : null
 		] ) );
 	}
 
@@ -307,50 +315,12 @@
 		return p;
 	}
 
-	function buildIntegrations() {
-		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( I.integrationsIntro ) ] );
-		if ( ! D.integrations || ! D.integrations.length ) {
-			p.appendChild( el( 'p', { 'class': 'ak-muted', text: I.none } ) );
-			return p;
-		}
-		[ { type: 'plugin', label: I.plugins }, { type: 'theme', label: I.themes } ].forEach( function ( grp ) {
-			var items = D.integrations.filter( function ( it ) { return it.type === grp.type; } );
-			if ( ! items.length ) { return; }
-			var rows = el( 'div', { 'class': 'ak-rows' } );
-			items.forEach( function ( it ) { rows.appendChild( integrationRow( it ) ); } );
-			p.appendChild( el( 'div', { 'class': 'ak-group' }, [
-				el( 'h2', { 'class': 'ak-group__title', text: grp.label } ),
-				rows
-			] ) );
-		} );
-		return p;
-	}
-
-	// pill = host detected; toggle = AdminKit applies its skin (off as an escape
-	// hatch for conflicts). The toggle is locked when the host isn't present.
-	function integrationRow( it ) {
-		var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
-		input.checked = state.integrations[ it.slug ] !== false;
-		input.disabled = ! it.active;
-		input.addEventListener( 'change', function () { state.integrations[ it.slug ] = input.checked; markDirty(); } );
-		return el( 'div', { 'class': 'ak-row ak-row--int' + ( it.active ? '' : ' is-disabled' ) }, [
-			el( 'span', { 'class': 'ak-pill ' + ( it.active ? 'ak-pill--on' : 'ak-pill--off' ), text: it.active ? I.active : I.inactive } ),
-			el( 'span', { 'class': 'ak-row__label', text: it.label } ),
-			el( 'label', { 'class': 'ak-switch' }, [
-				input,
-				el( 'span', { 'class': 'ak-switch__track' } ),
-				el( 'span', { 'class': 'ak-switch__knob' } )
-			] )
-		] );
-	}
-
 	// --- save ----------------------------------------------------------------
-	// Only the Features + Integrations toggles are interactive for now; the
-	// Design system tab writes nothing.
+	// Only the Features toggles are interactive for now; the Design system tab
+	// writes nothing.
 	function gather() {
 		var v = {};
 		Object.keys( state.features ).forEach( function ( k ) { v[ k ] = !! state.features[ k ]; } );
-		Object.keys( state.integrations ).forEach( function ( s ) { v[ 'integration_' + s + '_enabled' ] = !! state.integrations[ s ]; } );
 		return v;
 	}
 
@@ -366,8 +336,8 @@
 				state.dirty = false;
 				updateBar();
 				setStatus( 'is-saved', I.saved );
-				// Module / integration toggles take effect on the next visit to
-				// those screens. No reload here.
+				// Module toggles take effect on the next visit to those screens.
+				// No reload here.
 			} )
 			.catch( function () {
 				state.saving = false;

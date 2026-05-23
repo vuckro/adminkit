@@ -235,41 +235,26 @@ class AdminKit_Settings_Page {
 			);
 		}
 
-		$integrations = self::integrations();
-
 		return array(
 			'route'        => self::REST_NS . self::REST_ROUTE,
-			'dashboard'    => self::dashboard( $features, $integrations, $stored ),
+			'dashboard'    => self::dashboard( $features, $stored ),
 			'colors'       => $colors,
 			'providers'    => self::providers(),
 			'features'     => $features,
-			'integrations' => $integrations,
 			'i18n'         => array(
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
-				'design'            => __( 'Design system', 'adminkit' ),
+				'design'            => __( 'Appearance', 'adminkit' ),
 				'features'          => __( 'Features', 'adminkit' ),
-				'integrations'      => __( 'Integrations', 'adminkit' ),
 				'soon'              => __( 'Coming soon', 'adminkit' ),
-				'designIntro'       => __( 'Every colour wp-admin uses, shown as the semantic roles your framework (Bricks) already defines — AdminKit mirrors them 1:1. A read-only reference for now.', 'adminkit' ),
-				'cascade'           => __( 'How it flows: your framework defines raw primitive scales → those feed the semantic roles below → AdminKit styles wp-admin from the roles.', 'adminkit' ),
 				'own'               => __( 'AdminKit', 'adminkit' ),
 				'ownHint'           => __( 'AdminKit-defined role (no provider equivalent).', 'adminkit' ),
 				'featuresIntro'     => __( 'Turn AdminKit modules on or off.', 'adminkit' ),
-				'integrationsIntro' => __( 'Plugins and themes AdminKit adapts to. Disable one if its styling ever conflicts.', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),
 				'error'             => __( 'Could not save', 'adminkit' ),
-				'reset'             => __( 'Reset', 'adminkit' ),
-				'resetAll'          => __( 'Reset to defaults', 'adminkit' ),
-				'resetConfirm'      => __( 'Reset all AdminKit settings to their defaults? This clears your colour overrides and toggles.', 'adminkit' ),
 				'light'             => __( 'Light', 'adminkit' ),
 				'dark'              => __( 'Dark', 'adminkit' ),
-				'active'            => __( 'Active', 'adminkit' ),
-				'inactive'          => __( 'Inactive', 'adminkit' ),
-				'plugins'           => __( 'Plugins', 'adminkit' ),
-				'themes'            => __( 'Themes', 'adminkit' ),
-				'none'              => __( 'No integrations detected.', 'adminkit' ),
 				'unsaved'           => __( 'Unsaved changes', 'adminkit' ),
 			),
 		);
@@ -281,29 +266,22 @@ class AdminKit_Settings_Page {
 	 * card: `label`, `value`, optional `hint`, optional `swatch` (an `--ak-*`
 	 * token to preview) and optional `tab` (turns the card into a shortcut).
 	 *
-	 * @param array $features     Built feature rows (each with a bool `value`).
-	 * @param array $integrations Built integration rows (each with a bool `active`).
-	 * @param array $stored       Raw stored options.
+	 * @param array $features Built feature rows (each with a bool `value`).
+	 * @param array $stored   Raw stored options.
 	 * @return array
 	 */
-	private static function dashboard( $features, $integrations, $stored ) {
+	private static function dashboard( $features, $stored ) {
 		$features_on = 0;
 		foreach ( $features as $f ) {
 			if ( ! empty( $f['value'] ) ) {
 				$features_on++;
 			}
 		}
-		$active = 0;
-		foreach ( $integrations as $i ) {
-			if ( ! empty( $i['active'] ) && ! empty( $i['enabled'] ) ) {
-				$active++;
-			}
-		}
 		$primary = ( isset( $stored['primary_color'] ) && $stored['primary_color'] ) ? (string) $stored['primary_color'] : '';
 
 		$cards = array(
 			array(
-				'label'  => __( 'Design system', 'adminkit' ),
+				'label'  => __( 'Appearance', 'adminkit' ),
 				'value'  => self::active_provider_label(),
 				'hint'   => $primary ? sprintf( __( 'accent %s', 'adminkit' ), $primary ) : __( 'accent inherited', 'adminkit' ),
 				'swatch' => '--ak-primary',
@@ -315,13 +293,6 @@ class AdminKit_Settings_Page {
 				'hint'  => sprintf( __( 'of %d modules on', 'adminkit' ), count( $features ) ),
 				'icon'  => 'features',
 				'tab'   => 'features',
-			),
-			array(
-				'label' => __( 'Integrations', 'adminkit' ),
-				'value' => (string) $active,
-				'hint'  => sprintf( __( 'of %d detected, active', 'adminkit' ), count( $integrations ) ),
-				'icon'  => 'integrations',
-				'tab'   => 'integrations',
 			),
 		);
 
@@ -492,27 +463,6 @@ class AdminKit_Settings_Page {
 	public static function gate_integration( $enabled, $slug ) {
 		$v = AdminKit_Settings::get( 'integration_' . $slug . '_enabled' );
 		return ( null === $v ) ? $enabled : (bool) $v;
-	}
-
-	/**
-	 * Integration rows for the UI: detected host (active), user-enabled state
-	 * and type. Mirrors the orchestrator's auto-discovery.
-	 *
-	 * @return array
-	 */
-	private static function integrations() {
-		self::register_integration_toggles();
-		$out = array();
-		foreach ( self::integration_specs() as $s ) {
-			$out[] = array(
-				'slug'    => $s['slug'],
-				'label'   => $s['label'],
-				'type'    => $s['type'],
-				'active'  => (bool) call_user_func( array( $s['class'], 'is_active' ) ),
-				'enabled' => (bool) AdminKit_Settings::get( 'integration_' . $s['slug'] . '_enabled' ),
-			);
-		}
-		return $out;
 	}
 
 	/**
