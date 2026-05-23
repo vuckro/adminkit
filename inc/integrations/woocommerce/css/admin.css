@@ -1,0 +1,74 @@
+/* WooCommerce — classic admin screens (product / coupon data, settings, status).
+
+   Unlike the wc-admin React app (see wc-admin.css), the classic screens carry
+   no single body class, so each rule is scoped `body.adminkit` + a distinctive
+   WooCommerce id/class. Most classic chrome — postboxes, list tables, form
+   tables, nav tabs — is ALREADY handled by AdminKit's global components, so
+   these rules cover only the WC-specific containers that hardcode
+   #fff / #eee / #fdfdfd / #555 / #666 and therefore break in dark mode.
+
+   Order-status pills (.order-status.status-*) are intentionally left alone:
+   they're self-contained colored badges (paired pastel bg + dark text) that
+   stay legible in both modes.
+
+   Tier B. Enqueued on product/coupon/order edit screens + the WooCommerce menu
+   pages (the wc-admin React app is excluded — it has its own file). */
+
+
+/* ===== Product / coupon data metabox ===== */
+
+/* Data panel (right side, holds the option groups). */
+body.adminkit #woocommerce-product-data .panel-wrap,
+body.adminkit #woocommerce-coupon-data .panel-wrap {
+	background-color: var(--ak-surface);
+}
+
+/* Option-group body text (WC pins it #555). */
+body.adminkit .woocommerce_options_panel {
+	color: var(--ak-text);
+}
+
+/* Vertical tab nav — inactive tabs muted with a token divider; the active tab
+   merges into the panel surface (WC's connected-tab look). */
+body.adminkit #woocommerce-product-data ul.wc-tabs li a,
+body.adminkit #woocommerce-coupon-data ul.wc-tabs li a {
+	color: var(--ak-text-muted);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit #woocommerce-product-data ul.wc-tabs li.active a,
+body.adminkit #woocommerce-coupon-data ul.wc-tabs li.active a {
+	background-color: var(--ak-surface);
+	color: var(--ak-heading);
+}
+
+
+/* ===== Repeatable metaboxes (variations, attributes, shipping classes) ===== */
+
+body.adminkit .wc-metaboxes-wrapper .wc-metabox,
+body.adminkit .wc-metaboxes-wrapper .wc-metabox table {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit .wc-metaboxes-wrapper .wc-metabox {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .wc-metaboxes-wrapper .wc-metabox table {
+	border-top-color: var(--ak-border);
+}
+
+/* Drag placeholder. */
+body.adminkit .wc-metaboxes-wrapper .wc-metabox-sortable-placeholder {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+
+
+/* ===== Help tips ===== */
+
+/* The (?) tooltip icons sprinkled across settings + product data. */
+body.adminkit .woocommerce-help-tip,
+body.adminkit .woocommerce-product-type-tip {
+	color: var(--ak-text-muted);
+}

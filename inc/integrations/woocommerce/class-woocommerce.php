@@ -60,6 +60,26 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * The classic (non-React) WooCommerce screens: product / coupon / order
+	 * editors and everything under the WooCommerce admin menu (Settings, Status,
+	 * Extensions). The wc-admin React app is excluded — it owns wc-admin.css —
+	 * even though it also reports `parent_base === 'woocommerce'`.
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return bool
+	 */
+	public static function owns_classic_screen( $screen ) {
+		if ( ! $screen || false !== strpos( $screen->id, 'wc-admin' ) ) {
+			return false;
+		}
+		$post_types = array( 'product', 'shop_coupon', 'shop_order' );
+		if ( isset( $screen->post_type ) && in_array( $screen->post_type, $post_types, true ) ) {
+			return true;
+		}
+		return isset( $screen->parent_base ) && 'woocommerce' === $screen->parent_base;
+	}
+
+	/**
 	 * WooCommerce exposes its version via the WC_VERSION constant.
 	 *
 	 * @return string|null
@@ -93,6 +113,13 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_screen' ),
+		) );
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-woocommerce-admin',
+			'src'       => 'inc/integrations/woocommerce/css/admin.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_classic_screen' ),
 		) );
 	}
 }
