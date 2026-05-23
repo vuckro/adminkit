@@ -324,8 +324,9 @@ body.adminkit.acf-admin-page .select2-container--default .select2-selection--mul
 }
 
 body.adminkit.acf-admin-page .select2-container.-acf .select2-selection--multiple .select2-selection__choice {
-	background-color: var(--ak-elevated);
-	color: var(--ak-text);
+	background-color: var(--ak-primary-subtle);
+	border-color: color-mix(in srgb, var(--ak-primary) 40%, transparent);
+	color: var(--ak-heading);
 }
 
 /* Focused select2 — ACF rings it with a pale #ebf5fa outline + #399ccb border. */
