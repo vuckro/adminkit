@@ -39,8 +39,16 @@ body.adminkit .woocommerce_options_panel {
 	color: var(--ak-text);
 }
 
-/* Vertical tab nav — inactive tabs muted with a token divider; the active tab
-   merges into the panel surface (WC's connected-tab look). */
+/* Vertical tab nav — WC paints the column #fafafa with an #eee right edge and
+   per-tab #eee dividers. Route to a recessed elevated column + token dividers;
+   inactive tabs muted; the active tab (WC #eee) merges into the panel surface
+   for a connected-tab look. */
+body.adminkit #woocommerce-product-data ul.wc-tabs,
+body.adminkit #woocommerce-coupon-data ul.wc-tabs {
+	background-color: var(--ak-elevated);
+	border-right-color: var(--ak-border);
+}
+
 body.adminkit #woocommerce-product-data ul.wc-tabs li a,
 body.adminkit #woocommerce-coupon-data ul.wc-tabs li a {
 	color: var(--ak-text-muted);
@@ -51,6 +59,32 @@ body.adminkit #woocommerce-product-data ul.wc-tabs li.active a,
 body.adminkit #woocommerce-coupon-data ul.wc-tabs li.active a {
 	background-color: var(--ak-surface);
 	color: var(--ak-heading);
+}
+
+/* Option-group section dividers — WC stacks a #fff top "highlight" on an #eee
+   bottom line; the white edge shows on dark, so flatten to one token divider. */
+body.adminkit .woocommerce_options_panel .options_group {
+	border-top-color: transparent;
+	border-bottom-color: var(--ak-border);
+}
+
+/* Inline notices inside the data panels (variations / inventory messages). */
+body.adminkit #variable_product_options .notice,
+body.adminkit #variable_product_options #message,
+body.adminkit #inventory_product_data .notice {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+/* "Expand / Close" links above the variations / attributes list. */
+body.adminkit .wc-metaboxes-wrapper .expand-close {
+	color: var(--ak-text-muted);
+}
+
+/* Required-field asterisk. */
+body.adminkit .woocommerce_options_panel label .req,
+body.adminkit .woocommerce_options_panel legend .req {
+	color: var(--ak-error);
 }
 
 
@@ -92,5 +126,32 @@ body.adminkit .woocommerce-product-type-tip {
    wc-orders / customer-stock-notifications); the BlankState parent here
    out-specifies all four screen variants at once. */
 body.adminkit .woocommerce-BlankState .woocommerce-BlankState-message {
+	color: var(--ak-text);
+}
+
+
+/* ===== Marketplace suggestions ===== */
+/* The "Tools for your store" promo cards under blank-state lists and in the
+   product-edit meta-tab footer. */
+
+/* Container rails — WC fences the strip with #ddd / #eee borders. The
+   .showing-suggestion class + body scope out-specify WC's contextual
+   [data-...] selectors; border-color recolors only the sides WC gave width. */
+body.adminkit .marketplace-suggestions-container.showing-suggestion {
+	border-color: var(--ak-border);
+}
+
+/* Suggestion description text (WC #444). */
+body.adminkit .marketplace-suggestions-container .marketplace-suggestion-container .marketplace-suggestion-container-content p {
+	color: var(--ak-text-muted);
+}
+
+/* Dismiss "x" (WC #ddd, #aaa on hover). */
+body.adminkit a.suggestion-dismiss {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit a.suggestion-dismiss:hover,
+body.adminkit a.suggestion-dismiss:focus {
 	color: var(--ak-text);
 }
