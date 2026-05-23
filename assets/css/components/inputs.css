@@ -109,6 +109,7 @@ body.adminkit input[type="checkbox"]:focus,
 body.adminkit input[type="radio"]:focus {
 	outline: none;
 	border-color: var(--ak-primary);
+	box-shadow: none;
 }
 
 /* File input chrome — input itself (the "Choose File" button is
