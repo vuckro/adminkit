@@ -1,8 +1,7 @@
 /* themes.php — theme browser + theme details modal.
    WP hardcodes white card bg, light borders and dark text that don't
-   flip in dark mode. We only redo the bottom strip + name color;
-   .theme-actions keeps its native WP hover overlay (semi-transparent
-   black) which looks fine in both modes. */
+   flip in dark mode. We redo the bottom strip, the name color and the
+   hover action strip through tokens. */
 
 body.adminkit .theme-browser .theme {
 	background: var(--ak-surface);
@@ -19,12 +18,22 @@ body.adminkit .theme-browser .theme .theme-name {
 	color: var(--ak-heading);
 }
 
+/* Theme card action strip (Activate / Live Preview / Customize) — WP overlays
+   it with semi-transparent black; route to a token surface so the buttons sit
+   on a themed strip in both modes, and tokenize the divider. */
+body.adminkit .theme-browser .theme .theme-actions {
+	background: var(--ak-surface);
+	border-left-color: var(--ak-border);
+}
+
 /* Active theme — an inverted neutral strip (heading bg + surface text), not
    the brand fill: it reads as "current" and flips with the mode — a dark bar
-   in light mode (like WP's own #2c3338 active badge), light bar in dark. */
+   in light mode (like WP's own #2c3338 active badge), light bar in dark. Drop
+   WP's inset box-shadow to keep it flat. */
 body.adminkit .theme-browser .theme.active .theme-name {
 	background: var(--ak-heading);
 	color: var(--ak-surface);
+	box-shadow: none;
 }
 
 /* "Add New Theme" tile at the end of the themes grid — hide it.
