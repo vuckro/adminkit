@@ -670,6 +670,20 @@ body.adminkit.acf-admin-page #acf-field-group-fields .acf-input-sub {
 	border-color: var(--ak-border);
 }
 
+/* Flexible Content layout settings (#fff layouts, #f9fafb head, #eaecf0 rule). */
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field.acf-field-setting-fc_layout {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-settings-fc_head {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-setting-fc_layout .acf-field-layout-settings.open {
+	background-color: var(--ak-surface);
+	border-top-color: var(--ak-border);
+}
+
 /* The forest of #eaecf0 hairlines (settings splits, footers, setting rows,
    conditional-logic + term-search dividers). */
 body.adminkit.acf-admin-page .acf-field-settings-split,
