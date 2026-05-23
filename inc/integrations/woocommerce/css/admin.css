@@ -28,6 +28,30 @@ body.adminkit.post-type-product #titlediv #title {
 }
 
 
+/* ===== Product data — panel & tab polish ===== */
+
+/* Breathing room in the option panels so fields aren't cramped — VERTICAL
+   rhythm only; WC's label-left / input-right horizontal layout (the 150px label
+   gutter) is left untouched, so nothing shifts sideways. */
+body.adminkit #woocommerce-product-data .woocommerce_options_panel .form-field {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+/* Vertical tab links — a touch taller + a subtle hover on inactive tabs, while
+   keeping WC's connected-active look (the active tab already merges into the
+   panel surface, mapped earlier in this file). */
+body.adminkit #woocommerce-product-data ul.wc-tabs li a {
+	padding-top: 11px;
+	padding-bottom: 11px;
+}
+
+body.adminkit #woocommerce-product-data ul.wc-tabs li:not(.active) a:hover {
+	background-color: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+
 /* ===== wc-admin layout header ===== */
 
 /* WC injects the wc-admin layout header (breadcrumbs + activity-panel icons)
