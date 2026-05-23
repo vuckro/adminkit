@@ -179,6 +179,20 @@ body.adminkit.settings_page_menu_editor .ws_tool_tab {
 	border-top-color: var(--ak-border);
 }
 
+/* Active tool tab — merge it into the panel below (bottom edge = panel
+   surface, jQuery UI's connected-tab look); other edges stay --ak-border.
+   AME pins the active label to #32373C, which would vanish on a dark
+   surface, so route it to --ak-text. */
+body.adminkit.settings_page_menu_editor .ws_tool_tab_nav li.ui-tabs-active {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	border-bottom-color: var(--ak-surface);
+}
+
+body.adminkit.settings_page_menu_editor .ws_tool_tab_nav li.ui-tabs-active a {
+	color: var(--ak-text);
+}
+
 
 /* ----- Redirector module (sub_section=redirects) ----- */
 body.adminkit.settings_page_menu_editor .ame-rui-redirect-list,
