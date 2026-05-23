@@ -15,6 +15,17 @@
    pages (the wc-admin React app is excluded — it has its own file). */
 
 
+/* ===== wc-admin embed chrome ===== */
+
+/* WC injects the wc-admin activity-panel bar (.woocommerce-layout__header,
+   under body.woocommerce-embed-page) atop classic screens. The wc-admin.css
+   rule only scopes .woocommerce-admin-page (React screens), so the embedded
+   copy slips through here — hide it too, to match. */
+body.adminkit.woocommerce-embed-page .woocommerce-layout__header {
+	display: none;
+}
+
+
 /* ===== Product / coupon data metabox ===== */
 
 /* Data panel (right side, holds the option groups). */
