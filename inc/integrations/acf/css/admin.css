@@ -87,7 +87,7 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more:hover .acf-tab.acf-mor
 }
 
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab.is-active {
-	background-color: var(--ak-primary-subtle);
+	background-color: var(--ak-hover-bg);
 	color: var(--ak-heading);
 	border-color: transparent;
 }
@@ -108,6 +108,25 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more:hover i.acf-icon {
 /* WP Engine wordmark (white SVG) — invisible on the light bar; hide it. */
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-nav-wpengine-logo {
 	display: none;
+}
+
+/* White-label the ACF logo as "ACF" text (mirrors the Fluent SMTP logo swap):
+   drop the bundled SVG and render a plain text token, centered in the bar. */
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-logo img {
+	display: none;
+}
+
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-logo {
+	align-items: center;
+	height: 72px;
+}
+
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-logo::after {
+	content: "ACF";
+	color: var(--ak-heading);
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
 }
 
 /* Flyout ("...") dropdown — light surface, tokenized. */
