@@ -1,0 +1,90 @@
+/* WooCommerce — wc-admin React app (Home, Onboarding, Analytics, …).
+
+   Scope: body.adminkit.woocommerce-admin-page. WooCommerce adds
+   `woocommerce-admin-page` to <body> on every wc-admin screen
+   (Loader::add_admin_body_classes), so the scope sits on the body element —
+   @wordpress/components overlays that portal to the document root (popovers,
+   select listboxes) inherit it too.
+
+   wc-admin paints hardcoded hex on @wordpress/components + its own
+   .woocommerce-* classes with no themeable variable layer (Tier B), so these
+   rules override those selectors with tokens.
+
+   CONVENTION: keep the body scope CONCATENATED
+   (body.adminkit.woocommerce-admin-page …). A space before
+   `.woocommerce-admin-page` turns it into a descendant combinator that never
+   matches the body's own classes. Several profiler selectors carry an extra
+   class (or rely on the trailing element) purely to out-specify WooCommerce's
+   deep, hardcoded chains without resorting to !important.
+
+   ===== Sections =====
+   1. Onboarding profiler (setup wizard: choice cards, business info, loader)
+   2. wc-admin chrome (layout header, list rows, badges)
+   3. @wordpress/components (select control, popovers) */
+
+
+/* ===== 1. Onboarding profiler ===== */
+
+/* Choice cards (e.g. the "who is this store for" / industry steps). */
+body.adminkit.woocommerce-admin-page .woocommerce-profiler-choice-container {
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-profiler-choice label {
+	color: var(--ak-text);
+}
+
+/* Business-information step — email input border + opt-in checkbox label.
+   Both carry a profiler wrapper class so the trailing element nudges them
+   past WooCommerce's 4-class hardcoded selectors. */
+body.adminkit.woocommerce-admin-page .woocommerce-profiler-business-information .components-text-control__input {
+	border-color: var(--ak-border);
+}
+
+body.adminkit.woocommerce-admin-page .core-profiler__checkbox .components-checkbox-control__label {
+	color: var(--ak-text-muted);
+}
+
+/* Full-screen loader shown while the profiler boots — route to the page bg. */
+body.adminkit.woocommerce-admin-page .woocommerce-onboarding-loader {
+	background-color: var(--ak-bg);
+}
+
+
+/* ===== 2. wc-admin chrome ===== */
+
+/* App header bar. */
+body.adminkit.woocommerce-admin-page .woocommerce-layout__header {
+	background-color: var(--ak-surface);
+}
+
+/* Experimental list rows (Home task lists, activity panels). */
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-list__item {
+	background-color: var(--ak-surface);
+}
+
+/* Count / status badges — a soft raised pill. */
+body.adminkit.woocommerce-admin-page .woocommerce-badge {
+	background-color: var(--ak-elevated);
+}
+
+
+/* ===== 3. @wordpress/components ===== */
+
+/* Select control field surface + its dropdown listbox. */
+body.adminkit.woocommerce-admin-page .woocommerce-select-control .components-base-control {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-select-control .woocommerce-select-control__listbox {
+	background-color: var(--ak-elevated);
+}
+
+/* Popovers (dropdowns, tooltips). Flat treatment: drop the layered drop
+   shadow — whose first layer is a 1px #ccc ring acting as a border — for a
+   single token border on an elevated surface. */
+body.adminkit.woocommerce-admin-page .components-popover__content {
+	background-color: var(--ak-elevated);
+	border: 1px solid var(--ak-border);
+	box-shadow: none;
+}
