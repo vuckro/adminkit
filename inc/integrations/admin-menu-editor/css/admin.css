@@ -24,16 +24,18 @@ body.adminkit.settings_page_menu_editor .ws_container {
 	border-color: var(--ak-border);
 }
 
-/* Active (selected) menu item — full primary wash so it stands out
-   from the row stack. White text matches the same pattern used by
-   the current sidebar item in core/chrome.css. */
+/* Active (selected) menu item — a pale brand wash, stronger than the 9%
+   --ak-primary-subtle so the row stands out from the stack, paired with
+   heading text. (Mirrors the sidebar current item's elevated/heading idea
+   in core/chrome.css, but brand-tinted to read as the editor's selection;
+   --ak-heading flips with the mode, where white would vanish on a pale fill.) */
 body.adminkit.settings_page_menu_editor #ws_menu_editor .ws_active {
-	background-color: var(--ak-primary);
-	color: #ffffff;
+	background-color: color-mix(in srgb, var(--ak-primary) 25%, var(--ak-surface));
+	color: var(--ak-heading);
 }
 
 body.adminkit.settings_page_menu_editor #ws_menu_editor .ws_active .ws_item_title {
-	color: #ffffff;
+	color: var(--ak-heading);
 }
 
 /* Active item that's also hidden for the current actor — keep the
