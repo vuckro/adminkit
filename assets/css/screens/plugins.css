@@ -40,14 +40,15 @@ body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
 	font-weight: 600;
 }
 
-/* Left-edge indicator for active plugins — a slim SUCCESS (green) bar marking
-   the plugin as active. Covers both the WP default `.check-column` and AME Pro's
-   renamed `.ame-check-column` (its plugin-visibility module swaps the class).
-   Use border-left with !important to beat the `.plugins tbody td/th` reset above
-   that nukes border-left with !important. */
+/* Left-edge indicator for active plugins — a slim green bar marking the plugin
+   as active. A BALANCED success tone (color-mix ~60% into the surface): clearly
+   green but not the solid-green that read too flashy on the dark surface. The
+   surface side flips per mode, so it stays balanced in light and dark. Covers
+   the WP default `.check-column` and AME Pro's renamed `.ame-check-column`. Use
+   border-left with !important to beat the `.plugins tbody td/th` reset above. */
 body.adminkit .wp-list-table.plugins tr.active th.check-column,
 body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
-	border-left: 4px solid var(--ak-success) !important;
+	border-left: 4px solid color-mix(in srgb, var(--ak-success) 60%, var(--ak-surface)) !important;
 }
 
 /* Inactive plugins — keep the table surface, mute the title.
