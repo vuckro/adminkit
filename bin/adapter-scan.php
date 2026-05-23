@@ -579,10 +579,15 @@ function ak_classify( $rgba, $domCat ) {
 	$chroma = max( $r, $g, $b ) - min( $r, $g, $b );
 
 	if ( $a < 0.95 ) {
-		if ( $chroma > 12 ) { return array( '--ak-primary-subtle', sprintf( 'translucent tint (a=%.2f)', $a ) ); }
+		if ( $chroma > 24 ) { return array( '--ak-primary-subtle', sprintf( 'translucent tint (a=%.2f)', $a ) ); }
 		return array( '--ak-hover-bg', sprintf( 'translucent overlay (a=%.2f)', $a ) );
 	}
-	if ( $chroma <= 12 ) {
+	// Neutral = a true grey (chroma ≤ 12) OR a low-chroma "tinted grey" that
+	// isn't a light tint. Modern UI palettes (Untitled-UI etc.) build their
+	// greys with a faint blue cast (#99A0AE, #525866, #222530) — chroma in the
+	// 12–24 band; treat those as neutrals, not the brand. A light low-chroma
+	// value (L ≥ 90) is a genuine tint and falls through to the subtle branch.
+	if ( $chroma <= 12 || ( $chroma <= 24 && $L < 90 ) ) {
 		// White used AS TEXT is almost always white-on-a-colored-fill.
 		if ( $L >= 92 && 'text' === $domCat ) { return array( '--ak-on-accent', 'white text on a fill' ); }
 		if ( 'text' === $domCat ) {
