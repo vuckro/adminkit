@@ -598,3 +598,21 @@ body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picke
 body.adminkit.acf-admin-page .acf-modal.acf-browse-fields-modal .acf-field-picker .acf-modal-content .acf-field-type-search-results .field-type-requires-pro {
 	display: none;
 }
+
+/* ----- 15. Field settings: button groups + options split ----- */
+/* Segmented toggles (e.g. Required Yes/No): #d0d5dd border, #475467 label;
+   selected = #f9fafb bg + #0783be text -> brand-tint selection. */
+body.adminkit.acf-admin-page .acf-button-group label {
+	border-color: var(--ak-border-strong);
+	color: var(--ak-text);
+}
+
+body.adminkit.acf-admin-page .acf-button-group label.selected {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-heading);
+}
+
+/* Field-group options two-column split divider (#eaecf0). */
+body.adminkit.acf-admin-page #acf-field-group-options .field-group-setting-split-container .field-group-setting-split:nth-child(2n) {
+	border-left-color: var(--ak-border);
+}
