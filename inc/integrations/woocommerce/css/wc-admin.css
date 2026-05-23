@@ -492,3 +492,40 @@ body.adminkit.woocommerce-admin-page .components-popover__content {
 	border: 1px solid var(--ak-border);
 	box-shadow: none;
 }
+
+
+/* ===== 16. Marketplace (Extensions / Themes browser) ===== */
+/* The promo banner + the sticky header (search + Connect bar) hardcode a pale
+   lilac / #fff. The dark #3c3c3c extension cards are left as-is — a deliberate
+   dark card that already reads fine in dark mode. */
+
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__banner {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__header {
+	background-color: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+/* "Connect" reminder strip (#fef8ee). */
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__connect-notice {
+	background-color: var(--ak-elevated);
+}
+
+/* Category dropdown panel + its rows. */
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__category-dropdown-content {
+	background-color: var(--ak-surface);
+	color: var(--ak-text);
+}
+
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__category-dropdown-item:hover {
+	background-color: var(--ak-elevated);
+}
+
+/* Selected category (WC inverts it to a #1a1a1a chip) — brand-tinted instead. */
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__category-dropdown-item-button--selected,
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__category-item-button--selected {
+	background-color: var(--ak-primary-subtle);
+	color: var(--ak-heading);
+}
