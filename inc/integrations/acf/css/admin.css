@@ -245,6 +245,22 @@ body.adminkit.acf-admin-page .select2-container--default .select2-results__optio
 	color: var(--ak-heading);
 }
 
+/* Dropdown panel (select2 default: white + #aaa, appended to <body> which still
+   carries .acf-admin-page) + the multi-select box and its #ebf5fa tag chips. */
+body.adminkit.acf-admin-page .select2-dropdown {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.acf-admin-page .select2-container--default .select2-selection--multiple {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit.acf-admin-page .select2-container.-acf .select2-selection--multiple .select2-selection__choice {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
+}
+
 /* ----- 9. WP list tables on ACF screens -----
    ACF (.acf-internal-post-type) repaints the standard WP_List_Table with
    hardcoded light hex — #fff cells, #f9fafb header, #eaecf0 borders, a drop
