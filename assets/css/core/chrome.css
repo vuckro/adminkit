@@ -419,6 +419,54 @@ body.adminkit .wp-editor-container .wp-editor-area {
 	border-radius: 0;
 }
 
+/* TinyMCE "Visual" editor chrome (the lightgray skin) — toolbars, menubar,
+   dropdowns and status bar all hardcode #fff / light-grey surfaces and #595959
+   glyphs that don't flip. Route the frame to tokens. The content iframe is a
+   separate document (themed in PHP via tiny_mce_before_init). */
+body.adminkit .mce-panel,
+body.adminkit .mce-toolbar-grp,
+body.adminkit .mce-menubar,
+body.adminkit .mce-statusbar,
+body.adminkit .mce-menu {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+/* Button glyphs + menubar labels. */
+body.adminkit .mce-ico,
+body.adminkit .mce-btn button,
+body.adminkit .mce-menubar .mce-menubtn span,
+body.adminkit .mce-menu .mce-text,
+body.adminkit .mce-menu .mce-menu-item .mce-text {
+	color: var(--ak-text);
+}
+
+/* Hover / active button + selected menu item — recessed fill. */
+body.adminkit .mce-btn:hover,
+body.adminkit .mce-btn:focus,
+body.adminkit .mce-btn.mce-active,
+body.adminkit .mce-menubar .mce-menubtn:hover,
+body.adminkit .mce-menubar .mce-menubtn.mce-active,
+body.adminkit .mce-menu .mce-menu-item:hover,
+body.adminkit .mce-menu .mce-menu-item.mce-selected,
+body.adminkit .mce-menu .mce-menu-item:focus {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+
+/* Status-bar breadcrumb path. */
+body.adminkit .mce-statusbar .mce-path-item,
+body.adminkit .mce-statusbar .mce-path .mce-divider {
+	color: var(--ak-text-muted);
+}
+
+/* "Visual / Text" switch tabs above the editor. */
+body.adminkit .wp-editor-tabs .wp-switch-editor {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
 /* Link / permalink helper text (comment edit link box, post slug box) —
    WP hardcodes #646970. */
 body.adminkit #comment-link-box,
@@ -456,6 +504,27 @@ body.adminkit #side-sortables .add-menu-item-tabs .tabs a,
 body.adminkit #side-sortables .category-tabs .tabs a,
 body.adminkit .wp-tab-bar .wp-tab-active a {
 	color: var(--ak-heading);
+}
+
+/* Taxonomy meta-box checklist boxes (Categories / Tags / Brands, on post +
+   product edit). WP paints the .tabs-panel scroll box #fff with a light border
+   and the active tab #fff; route to tokens. The active tab's bottom edge
+   merges into the panel surface (connected-tab look). */
+body.adminkit .tabs-panel {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .category-tabs li.tabs,
+body.adminkit .add-menu-item-tabs li.tabs {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	border-bottom-color: var(--ak-surface);
+}
+
+/* Tag chips under the tag input. */
+body.adminkit .tagchecklist > li {
+	color: var(--ak-text);
 }
 
 body.adminkit .notice-success,
