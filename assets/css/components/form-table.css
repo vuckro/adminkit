@@ -61,6 +61,14 @@ body.adminkit .form-table td p.description {
 	margin-top: 6px;
 }
 
+/* Generic helper text — bare `p.description` and `.form-wrap` body
+   paragraphs (Tools → Export, taxonomy add-forms). WP hardcodes #646970;
+   only the `.form-table` variant above was mapped, leaving these unstyled. */
+body.adminkit p.description,
+body.adminkit .form-wrap p {
+	color: var(--ak-text-muted);
+}
+
 body.adminkit .form-table input.regular-text,
 body.adminkit .form-table input[type="text"],
 body.adminkit .form-table input[type="email"],
