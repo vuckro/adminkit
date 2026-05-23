@@ -137,6 +137,29 @@ body.adminkit.settings_page_menu_editor .ui-dialog .ui-dialog-buttonpane {
 }
 
 
+/* ----- Color scheme presets + icon selector dialog -----
+   AME hardcodes `background: white` on the theme-preset panel, the
+   color-scheme swatch, and the icon-selector dialog, plus #eee / #ddd
+   borders — none flip in dark mode. */
+body.adminkit.settings_page_menu_editor .ame-tp-content,
+body.adminkit.settings_page_menu_editor .ws_color_scheme_display,
+body.adminkit.settings_page_menu_editor #ws_icon_selector {
+	background-color: var(--ak-surface);
+}
+
+/* Preset group divider. */
+body.adminkit.settings_page_menu_editor .ame-tp-section-children .ame-mc-color-presets-group {
+	border-bottom-color: var(--ak-border);
+}
+
+/* Color-scheme swatch outline — WP 5.3+ darkens it to #7e8993 (the edge
+   everyone actually sees), so keep the stronger token. One rule beats both
+   AME variants: scoped (3 classes) out-specifies `.ame-is-wp53-plus …` (2). */
+body.adminkit.settings_page_menu_editor .ws_color_scheme_display {
+	border-color: var(--ak-border-strong);
+}
+
+
 /* ----- Redirector module (sub_section=redirects) ----- */
 body.adminkit.settings_page_menu_editor .ame-rui-redirect-list,
 body.adminkit.settings_page_menu_editor .ame-rui-redirect,
