@@ -170,3 +170,54 @@ body.adminkit.acf-admin-page .acf-options-preview-wrapper p {
 body.adminkit.acf-admin-page .acf-input .select2-container.-acf .select2-selection__rendered {
 	color: var(--ak-text);
 }
+
+/* ----- 9. WP list tables on ACF screens -----
+   ACF (.acf-internal-post-type) repaints the standard WP_List_Table with
+   hardcoded light hex — #fff cells, #f9fafb header, #eaecf0 borders, a drop
+   shadow and an #f7f7f7 row hover — none of which flip in dark mode, and most
+   tie ACF's specificity with AdminKit core (so the winner depends on load
+   order). Re-point them to tokens at a higher specificity; the hover keeps WP's
+   #the-list id to match ACF's id-level rule without !important. */
+body.adminkit.acf-admin-page .wp-list-table {
+	box-shadow: none;
+}
+
+body.adminkit.acf-admin-page .wp-list-table thead th,
+body.adminkit.acf-admin-page .wp-list-table thead td,
+body.adminkit.acf-admin-page .wp-list-table tfoot th,
+body.adminkit.acf-admin-page .wp-list-table tfoot td,
+body.adminkit.acf-admin-page .wp-list-table tbody th,
+body.adminkit.acf-admin-page .wp-list-table tbody td {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.acf-admin-page .wp-list-table thead th,
+body.adminkit.acf-admin-page .wp-list-table thead td {
+	color: var(--ak-heading);
+}
+
+/* Row title (<strong>) — ACF mutes it to #98a2b3; lift it to heading. */
+body.adminkit.acf-admin-page .wp-list-table strong {
+	color: var(--ak-heading);
+}
+
+/* Row hover/focus — ACF's #f7f7f7 wins via #the-list; match the id + token it. */
+body.adminkit.acf-admin-page #the-list tr:hover td,
+body.adminkit.acf-admin-page #the-list tr:hover th,
+body.adminkit.acf-admin-page #the-list tr:focus-within td,
+body.adminkit.acf-admin-page #the-list tr:focus-within th {
+	background-color: var(--ak-elevated);
+}
+
+/* Count pill, emdash placeholder, post-state labels. */
+body.adminkit.acf-admin-page .wp-list-table .acf-more-items {
+	background: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.acf-admin-page .wp-list-table .acf-emdash,
+body.adminkit.acf-admin-page .wp-list-table .post-state {
+	color: var(--ak-text-muted);
+}
