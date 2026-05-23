@@ -73,9 +73,10 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a {
 }
 
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a:hover,
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a:focus,
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li a.acf-tab.is-active {
 	background-color: var(--ak-hover-bg);
-	color: var(--ak-primary);
+	color: var(--ak-heading);
 }
 
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li.acf-more-section-header {
@@ -88,8 +89,11 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li.acf-more-section
 	color: var(--ak-text-muted);
 }
 
-/* Hide the WP Engine upsell row in the "..." menu. */
-body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul .acf-wp-engine {
+/* Hide the WP Engine upsell row + the Updates entry in the "..." menu. The
+   Updates hide follows ACF's own in-dropdown pattern: display:none on the
+   .acf-header-tab-* link (its plain <li> then collapses). */
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul .acf-wp-engine,
+body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more ul li .acf-header-tab-acf-settings-updates {
 	display: none;
 }
 
