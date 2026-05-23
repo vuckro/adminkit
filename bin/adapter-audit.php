@@ -38,6 +38,7 @@ $BUDGET = array(
 	'wp-migrate-db-pro' => 6,
 	'fluentform'        => 2,
 	'acf'               => 17, // ACF forces !important on btn labels, postbox titles, open-field handle links, field-type picker option states, options-page dropdown border + file-selector-button label (hex col = #acf-* id selectors, not colors)
+	'woocommerce'       => 1, // WC forces #d5d5d5 !important on the disabled list-reorder arrows (admin.css .wc-move-disabled) — can't be beaten without !important
 );
 
 $root = dirname( __DIR__ ) . '/inc/integrations';

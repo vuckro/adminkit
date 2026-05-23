@@ -137,6 +137,24 @@ body.adminkit.woocommerce-admin-page .woocommerce-task-dashboard__container .woo
 	background-color: var(--ak-surface);
 }
 
+/* Round + recolor WooCommerce's loading-skeleton bars. WC paints them a flat
+   #f0f0f0 (a `loading-fade` opacity pulse runs on top); route the fill to the
+   elevated token so skeletons read correctly in dark mode too, and round the
+   corners. Most bars are the leaf `.is-placeholder` itself (task cards, tables,
+   marketing); the inbox + analytics-summary cards instead put `.is-placeholder`
+   on a wrapper and render the bars as inner elements, so those are explicit. */
+body.adminkit.woocommerce-admin-page .is-placeholder,
+body.adminkit.woocommerce-admin-page .is-placeholder .woocommerce-inbox-message__date > div,
+body.adminkit.woocommerce-admin-page .is-placeholder .woocommerce-inbox-message__title div,
+body.adminkit.woocommerce-admin-page .is-placeholder .woocommerce-inbox-message__text > div,
+body.adminkit.woocommerce-admin-page .is-placeholder .woocommerce-inbox-message__actions > div,
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-label,
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-value,
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-delta {
+	background-color: var(--ak-elevated);
+	border-radius: var(--ak-radius-s);
+}
+
 /* Task progress header — muted caption + recessed progress-bar track. */
 body.adminkit.woocommerce-admin-page .woocommerce-task-progress-header p {
 	color: var(--ak-text-muted);
@@ -154,6 +172,12 @@ body.adminkit.woocommerce-admin-page .woocommerce-inbox-message {
 	background-color: var(--ak-surface);
 	color: var(--ak-text-muted);
 	border-bottom-color: var(--ak-border);
+}
+
+/* Inbox note title — WC paints it #1e1e1e bold; route to heading text. */
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-message__content .woocommerce-inbox-message__title,
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-message__content .woocommerce-inbox-message__title a {
+	color: var(--ak-heading);
 }
 
 /* Stats overview (Home widget) — tab strip + Jetpack-promo dividers. */

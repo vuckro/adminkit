@@ -281,6 +281,29 @@ body.adminkit .select2-container--default.select2-container--disabled .select2-s
 	background-color: var(--ak-bg);
 }
 
+/* WC version-gates a focus skin onto select2 (.wp-admin.wc-wp-version-gte-53 …):
+   the open dropdown and the focused/open box get an accent border (now yellow,
+   via --wp-admin-theme-color → --ak-primary) plus a hard 1px ring + drop shadow.
+   That fights AdminKit's flat look, so re-assert a flat skin: a neutral dropdown
+   border with no shadow, and a neutral focus border (--ak-border-strong, a step
+   up from the resting border) with no ring — dropping WC's yellow accent rather
+   than re-painting focus yellow. The WC rules carry two body classes (0,3,0 /
+   0,5,0); matching them with body.adminkit.wp-admin (two body classes + the body
+   element) clears them by one without !important. */
+body.adminkit.wp-admin .select2-dropdown,
+body.adminkit.wp-admin .select2-dropdown--above,
+body.adminkit.wp-admin .select2-dropdown--below {
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit.wp-admin .select2-container.select2-container--focus .select2-selection--single,
+body.adminkit.wp-admin .select2-container.select2-container--open .select2-selection--single,
+body.adminkit.wp-admin .select2-container.select2-container--open .select2-selection--multiple {
+	border-color: var(--ak-border-strong);
+	box-shadow: none;
+}
+
 
 /* ===== Modern Settings / Payments page (React) ===== */
 
@@ -301,6 +324,21 @@ body.adminkit .select2-container--default.select2-container--disabled .select2-s
    and core @wordpress/components paint with HARDCODED hex:
        #fff → surface   #f0f0f0 → elevated   #e0e0e0 / #ddd → border
        #1e1e1e / #3c434a → heading   #757575 → muted */
+
+/* Page frame — these wrappers back every wc-settings tab (the classic General /
+   Products / Shipping forms as well as the React tabs). WC paints the form
+   wrapper #f0f0f1 and the tab strip #fff over a #ebebeb underline; none flip in
+   dark mode. #wpcontent is already themed by AdminKit core, so only WC's two own
+   wrappers need mapping: the form wrapper to the page background, the tab strip
+   to a surface above it (per this file's #fff → surface convention). */
+body.adminkit.woocommerce_page_wc-settings #mainform {
+	background-color: var(--ak-bg);
+}
+
+body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper {
+	background-color: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
 
 /* Page header — the React-rendered "Payments" title + description (this screen
    shows the header rather than hiding it like the wc-admin embed bar). */
@@ -409,6 +447,79 @@ body.adminkit.woocommerce_page_wc-settings .components-modal__frame h3 {
 
 body.adminkit.woocommerce_page_wc-settings .woocommerce-woopayments-modal__content__item {
 	color: var(--ak-text);
+}
+
+
+/* ===== Settings page chrome (content surfaces, nav tabs, promo) ===== */
+
+/* The settings screen (admin.php?page=wc-settings, every tab) injects its own
+   chrome over AdminKit's: a grey #f0f0f1 #wpcontent wrapping a white #fff
+   #wpbody-content, plus a grey embedded-layout strip — all hardcoded, so they
+   stay grey/white in dark mode. Flatten the WC-injected surfaces to the page
+   background; the forms / cards inside keep their own tokens. WC scopes these
+   with the page body class (#wpcontent at 1,1,1), so
+   body.adminkit.woocommerce_page_wc-settings (one extra class) clears them. */
+body.adminkit.woocommerce_page_wc-settings #wpcontent,
+body.adminkit.woocommerce_page_wc-settings #wpbody-content,
+body.adminkit.woocommerce_page_wc-settings .woocommerce-embedded-layout__primary {
+	background: var(--ak-bg);
+}
+
+/* Dismissable upsell strip in the embedded layout — hidden per request, like the
+   coupon / blank-state marketplace promos elsewhere in this file. */
+body.adminkit.woocommerce_page_wc-settings .woocommerce-embedded-layout__primary .woocommerce-dismissable-list {
+	display: none;
+}
+
+/* Marketplace-link footer (WC #c3c4c7 border + #50575e text). */
+body.adminkit.woocommerce_page_wc-settings .wc-settings-marketplace-link {
+	border-top-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
+/* Settings nav tabs — WC repaints them per-page (resting links #505050, active
+   #070707 with a yellow --wp-admin-theme-color underline): breaks on dark and
+   diverges from AdminKit's global nav-tab skin (chrome.css — muted resting,
+   heading active + heading underline). Re-align to that global convention. WC
+   asserts the active color across base/hover/focus/focus:active (up to 0,5,1),
+   so each variant is replayed with the +1 from .adminkit. */
+body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper a {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active,
+body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active:hover,
+body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active:focus,
+body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active:focus:active {
+	color: var(--ak-heading);
+	border-bottom-color: var(--ak-heading);
+}
+
+
+/* ===== Shipping settings (zones / classes / methods tables) ===== */
+
+/* admin.php?page=wc-settings&tab=shipping. The zone / class / method tables zebra
+   even rows (body + tfoot) with #f9f9f9 and paint the empty-state copy with a
+   white text-shadow over WC's --wc-secondary-text — both break on dark. Route the
+   zebra to the alt-band token, the copy + heading help text to muted, and drop
+   the shadow (flat). Page-scoped so the three table variants are covered at once. */
+body.adminkit.woocommerce_page_wc-settings .wc-shipping-zone-rows tr:nth-child(even) td,
+body.adminkit.woocommerce_page_wc-settings .wc-shipping-zone-method-rows tr:nth-child(even) td,
+body.adminkit.woocommerce_page_wc-settings .wc-shipping-class-rows tr:nth-child(even) td,
+body.adminkit.woocommerce_page_wc-settings .wc-shipping-zone-rows-tfoot .even td {
+	background: var(--ak-elevated);
+}
+
+body.adminkit.woocommerce_page_wc-settings .wc-shipping-zones-blank-state p,
+body.adminkit.woocommerce_page_wc-settings .wc-shipping-zones-blank-state li,
+body.adminkit.woocommerce_page_wc-settings .wc-shipping-zone-method-blank-state p,
+body.adminkit.woocommerce_page_wc-settings .wc-shipping-zone-method-blank-state li {
+	color: var(--ak-text-muted);
+	text-shadow: none;
+}
+
+body.adminkit.woocommerce_page_wc-settings .wc-shipping-zone-heading-help-text {
+	color: var(--ak-text-muted);
 }
 
 
@@ -557,4 +668,398 @@ body.adminkit #coupon-root {
 body.adminkit table.wc_status_table tr:nth-child(2n) td,
 body.adminkit table.wc_status_table tr:nth-child(2n) th {
 	background-color: var(--ak-surface);
+}
+
+
+/* ===== Importer / Exporter / progress-form tool pages ===== */
+
+/* The CSV importer (edit.php?post_type=product&page=product_importer), the
+   product exporter and the shared wc-progress-form render a centered card flow:
+   a step indicator on the page background, a card holding the form, then a
+   column-mapping table, a progress bar and a done state. WC paints the chrome
+   with hardcoded hex — #fff cards, #555 text, #eee/#ddd rules, #ccc step track,
+   #999/#32373c sub-text, #f5f5f5 progress track, #fbfbfb zebra — none of which
+   flip in dark mode. The accent bits (active/done steps, progress fill, the done
+   checkmark) ride var(--wp-admin-theme-color) → --ak-primary, so they already
+   flip; only the greys are mapped here. AdminKit is flat, so the card / track
+   drop-shadows and 1px white highlights are dropped.
+
+   Specificity: WC scopes every paint under wrapper > card. The importer's
+   wrapper is .woocommerce-progress-form-wrapper and its card always carries
+   .woocommerce-importer (on every step — upload, mapping, progress, done); the
+   exporter card is .woocommerce-exporter under .woocommerce-exporter-wrapper.
+   Card-level leaves fall to body.adminkit + the leaf (0,2,1 > 0,2,0); the deeper
+   leaves (option labels, the file-path field, the mapping-table zebra +
+   description) are scoped under the card class — reliably present on every step,
+   and enough to clear WC's wrapper > card > … chain without !important. */
+
+/* Step indicator — upcoming steps' track line, ring marker and label (WC #ccc);
+   the ring's #fff fill masks the track behind it, so it takes the page bg.
+   active/done steps keep WC's accent (more specific) → flip via --ak-primary. */
+body.adminkit .wc-progress-steps {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .wc-progress-steps li {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .wc-progress-steps li::before {
+	border-color: var(--ak-border);
+	background: var(--ak-bg);
+}
+
+/* Cards (upload / export form, progress form, mapping + done panels). */
+body.adminkit .woocommerce-exporter,
+body.adminkit .woocommerce-importer,
+body.adminkit .wc-progress-form-content {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+/* Card header rule + heading + body copy. */
+body.adminkit .woocommerce-exporter header,
+body.adminkit .woocommerce-importer header,
+body.adminkit .wc-progress-form-content header {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .woocommerce-exporter h2,
+body.adminkit .woocommerce-importer h2,
+body.adminkit .wc-progress-form-content h2 {
+	color: var(--ak-heading);
+}
+
+body.adminkit .woocommerce-exporter p,
+body.adminkit .woocommerce-importer p,
+body.adminkit .wc-progress-form-content p {
+	color: var(--ak-text);
+}
+
+/* Footer action bar divider + the "advanced options" toggle link (WC #eee/#999). */
+body.adminkit .wc-actions {
+	border-top-color: var(--ak-border);
+}
+
+body.adminkit .wc-actions .woocommerce-importer-toggle-advanced-options {
+	color: var(--ak-text-muted);
+}
+
+/* Option-row labels (WC #555) — card-scoped to clear WC's
+   wrapper > card > options th/td label chain (0,3,2). */
+body.adminkit .woocommerce-importer .woocommerce-importer-options th label,
+body.adminkit .woocommerce-importer .woocommerce-importer-options td label,
+body.adminkit .woocommerce-exporter .woocommerce-exporter-options th label,
+body.adminkit .woocommerce-exporter .woocommerce-exporter-options td label {
+	color: var(--ak-text);
+}
+
+/* CSV file-path field (a label styled as an input, behind "advanced options") and
+   its helper code — card-scoped to clear WC's deep chain; flat (no inset). */
+body.adminkit .woocommerce-importer .woocommerce-importer-options th .woocommerce-importer-file-url-field-wrapper,
+body.adminkit .woocommerce-importer .woocommerce-importer-options td .woocommerce-importer-file-url-field-wrapper {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+body.adminkit .woocommerce-importer .woocommerce-importer-options th .woocommerce-importer-file-url-field-wrapper code,
+body.adminkit .woocommerce-importer .woocommerce-importer-options td .woocommerce-importer-file-url-field-wrapper code {
+	color: var(--ak-text-muted);
+}
+
+/* Progress bar track (the accent fill rides --wp-admin-theme-color, already
+   themed) — recessed track + token border, drop the white top highlight. */
+body.adminkit .woocommerce-exporter progress,
+body.adminkit .woocommerce-importer progress,
+body.adminkit .wc-progress-form-content progress {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+/* Column-mapping / error-log tables — zebra (WC #fbfbfb odd rows) + the field
+   description (WC #999) — card-scoped to clear WC's wrapper > card > table chain. */
+body.adminkit .woocommerce-importer .wc-importer-mapping-table tbody tr:nth-child(odd) td,
+body.adminkit .woocommerce-importer .wc-importer-mapping-table tbody tr:nth-child(odd) th,
+body.adminkit .woocommerce-importer .wc-importer-error-log-table tbody tr:nth-child(odd) td,
+body.adminkit .woocommerce-importer .wc-importer-error-log-table tbody tr:nth-child(odd) th {
+	background: var(--ak-elevated);
+}
+
+body.adminkit .woocommerce-importer .wc-importer-mapping-table .wc-importer-mapping-table-name .description {
+	color: var(--ak-text-muted);
+}
+
+
+/* ===== Settings tabs — classic list tables (Emails / Gateways / Shipping) ===== */
+
+/* table.wc_emails / wc_gateways / wc_shipping (all .widefat) zebra their odd
+   rows #f9f9f9 — near-white on dark. The base + even rows already ride the
+   global widefat surface, so pin the odd rows back to it for a flat table
+   (same treatment as wc_status_table). */
+body.adminkit table.wc_emails tr:nth-child(odd) td,
+body.adminkit table.wc_gateways tr:nth-child(odd) td,
+body.adminkit table.wc_shipping tr:nth-child(odd) td {
+	background-color: var(--ak-surface);
+}
+
+/* Email/gateway sub-title text in the name cell (WC #999). */
+body.adminkit .wc-email-settings-table-name span,
+body.adminkit .wc_gateways .wc-payment-gateway-method-name span {
+	color: var(--ak-text-muted);
+}
+
+/* Reorder (drag / up / down) column glyphs — WC paints the drag dots #999, the
+   move buttons #82878c, the hover #191e23 (near-black → invisible on dark) and
+   the disabled arrows #d5d5d5 (light → reads as active on dark). The .widefat
+   td.sort hook clears WC's table-scoped chain across all three tables. */
+body.adminkit .widefat td.sort .wc-item-reorder-nav::before,
+body.adminkit .widefat td.sort .wc-item-reorder-nav button {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .widefat td.sort .wc-item-reorder-nav button:hover,
+body.adminkit .widefat td.sort .wc-item-reorder-nav button:focus {
+	color: var(--ak-text);
+}
+
+/* Disabled at the top/bottom of the list — WC forces #d5d5d5 !important. */
+body.adminkit .widefat td.sort .wc-item-reorder-nav .wc-move-disabled {
+	color: var(--ak-border-strong) !important;
+}
+
+
+/* ===== Settings → Tax — rate / input tables ===== */
+
+/* table.wc_tax_rates / wc_input_table paint each editable cell #fff with
+   #dfdfdf rules — a glaring white grid on dark. Map cells to the surface and
+   the rules to the border token. */
+body.adminkit table.wc_tax_rates td,
+body.adminkit table.wc_input_table td {
+	background-color: var(--ak-surface);
+	border-right-color: var(--ak-border);
+	border-bottom-color: var(--ak-border);
+}
+
+/* The row being edited (WC pale-yellow #fefbcc) — route to the accent tint. */
+body.adminkit table.wc_tax_rates tr.current td,
+body.adminkit table.wc_input_table tr.current td {
+	background-color: var(--ak-primary-subtle);
+}
+
+/* Drag-sort handle column (WC #f9f9f9 fill, #999 glyph, #333 on hover). The
+   .ui-sortable hook clears WC's :not(.ui-sortable-disabled) chain. */
+body.adminkit table.wc_tax_rates .ui-sortable td.sort,
+body.adminkit table.wc_input_table .ui-sortable td.sort {
+	background-color: var(--ak-elevated);
+}
+
+body.adminkit table.wc_tax_rates .ui-sortable td.sort::before,
+body.adminkit table.wc_input_table .ui-sortable td.sort::before {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit table.wc_tax_rates .ui-sortable td.sort:hover::before,
+body.adminkit table.wc_input_table .ui-sortable td.sort:hover::before {
+	color: var(--ak-text);
+}
+
+/* Pagination current-page button (WC #bbb). */
+body.adminkit table.wc_tax_rates .pagination .current,
+body.adminkit table.wc_input_table .pagination .current {
+	background-color: var(--ak-elevated);
+}
+
+
+/* ===== Settings → Shipping — zones / methods / classes tables ===== */
+/* The primary Shipping view. WC hardcodes near-black icons + labels that
+   vanish on dark and light grey bands/chips that glare; map them all. */
+
+/* Row zebra (#f9f9f9 even rows + tfoot) → flat surface. */
+body.adminkit .wc-shipping-zone-rows tr:nth-child(even) td,
+body.adminkit .wc-shipping-zone-method-rows tr:nth-child(even) td,
+body.adminkit .wc-shipping-class-rows tr:nth-child(even) td,
+body.adminkit .wc-shipping-zone-rows-tfoot .even td {
+	background-color: var(--ak-surface);
+}
+
+/* "Locations not covered by your other zones" row — WC distinguishes it with a
+   #f9f9f9 band + 2px #e1e1e1 top rule; keep the separation via elevated +
+   a token divider. */
+body.adminkit tr.wc-shipping-zone-worldwide td {
+	background-color: var(--ak-elevated);
+	border-top-color: var(--ak-border-strong);
+}
+
+/* Blank state ("add your first zone") — WC pins the copy #515151 with a white
+   text-shadow (haloes on dark) over a near-white #e9e9e9 watermark glyph. */
+body.adminkit td.wc-shipping-zones-blank-state p,
+body.adminkit td.wc-shipping-zones-blank-state li,
+body.adminkit td.wc-shipping-zone-method-blank-state p,
+body.adminkit td.wc-shipping-zone-method-blank-state li {
+	color: var(--ak-text);
+	text-shadow: none;
+}
+
+body.adminkit td.wc-shipping-zones-blank-state::before,
+body.adminkit td.wc-shipping-zone-method-blank-state::before {
+	color: var(--ak-border);
+}
+
+/* Drag-move handle (an SVG mask filled via background-color: WC #1E1E1E,
+   #999 on hover) → invisible on dark; route the fill to text tokens. */
+body.adminkit td.wc-shipping-zone-sort::before,
+body.adminkit td.wc-shipping-zone-method-sort::before {
+	background-color: var(--ak-text-muted);
+}
+
+body.adminkit td.wc-shipping-zone-sort:hover::before,
+body.adminkit td.wc-shipping-zone-method-sort:hover::before {
+	background-color: var(--ak-text);
+}
+
+/* Worldwide globe dashicon (#000) + the method labels (#000) — both vanish. */
+body.adminkit td.wc-shipping-zone-worldwide::before,
+body.adminkit td.wc-shipping-zone-methods ul li {
+	color: var(--ak-text);
+}
+
+/* Method "pill" chips behind each zone (WC #F0F0F0). */
+body.adminkit td.wc-shipping-zone-methods .wc-shipping-zone-method {
+	background-color: var(--ak-elevated);
+}
+
+/* "+" add-method glyph (#999, #ccc when disabled). */
+body.adminkit td.wc-shipping-zone-methods .add_shipping_method::before {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit td.wc-shipping-zone-methods .add_shipping_method.disabled::before {
+	color: var(--ak-border);
+}
+
+/* Delete-zone action (WC --wc-red) → mode-aware error token. */
+body.adminkit .wc-shipping-zone-actions a.wc-shipping-zone-actions,
+body.adminkit .wc-shipping-zone-actions a.wc-shipping-zone-actions:hover {
+	color: var(--ak-error);
+}
+
+
+/* ===== Settings → Shipping — single-zone settings page ===== */
+
+/* Postcode-restriction help copy (WC #3C434A → unreadable on dark). */
+body.adminkit .wc-shipping-zone-postcodes .description {
+	color: var(--ak-text-muted);
+}
+
+/* Legacy selectWoo multi-select (region picker) box border (WC #ddd). */
+body.adminkit .wc-shipping-zone-region-select .select2-choices {
+	border-color: var(--ak-border);
+}
+
+
+/* ===== Settings → Shipping — Backbone modals (add/edit method, class) ===== */
+/* The .wc-backbone-modal flow (also used by other classic WC screens) paints a
+   #fff panel, #fcfcfc/#fff header + footer over #ddd/#dfdfdf/#E0E0E0 rules with
+   a drop shadow, a #777/#666 close button (#000 + #ddd on hover) and #1e1e1e
+   body text — none flip in dark mode. Map surfaces/borders/text to tokens and
+   drop the shadow (AdminKit is flat). The backdrop (#000 .7) is left as the
+   intended scrim. body.adminkit clears WC's base + shipping overrides by one;
+   the close-hover (a 0,5,0 shipping rule) needs the extra .wp-admin class. */
+body.adminkit .wc-backbone-modal-content {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit .wc-backbone-modal .wc-backbone-modal-header {
+	background-color: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .wc-backbone-modal footer {
+	background-color: var(--ak-surface);
+	border-top-color: var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit .wc-backbone-modal {
+	color: var(--ak-text);
+}
+
+body.adminkit .wc-backbone-modal .modal-close-link {
+	color: var(--ak-text-muted);
+	border-left-color: var(--ak-border);
+}
+
+body.adminkit .wc-backbone-modal .modal-close-link::before {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.wp-admin .wc-backbone-modal .modal-close-link:hover,
+body.adminkit.wp-admin .wc-backbone-modal .modal-close-link:focus {
+	background-color: var(--ak-hover-bg);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* Modal field chrome — footer info, currency prefix, help text (WC #787C82 /
+   #757575), the method radio-card resting outline (#DDDDDD; the checked state
+   keeps its themed accent outline) and the legacy method-settings form-table
+   (#fff body, #f8f8f8 row rules). */
+body.adminkit.wp-admin .wc-backbone-modal .wc-shipping-zone-method-modal-info,
+body.adminkit.wp-admin .wc-backbone-modal .wc-shipping-zone-method-currency,
+body.adminkit.wp-admin .wc-backbone-modal .wc-shipping-zone-method-fields-help-text,
+body.adminkit.wp-admin .wc-backbone-modal .wc-shipping-class-modal-help-text,
+body.adminkit.wp-admin .wc-backbone-modal .dashicons-yes {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.wp-admin .wc-backbone-modal .wc-shipping-zone-method-input label {
+	outline-color: var(--ak-border);
+}
+
+body.adminkit .wc-modal-shipping-method-settings .form-table {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit .wc-modal-shipping-method-settings .form-table td,
+body.adminkit .wc-modal-shipping-method-settings .form-table th {
+	border-bottom-color: var(--ak-border);
+}
+
+
+/* ===== Settings — misc chrome ===== */
+
+/* Email-template colour-picker preview swatch border (WC #ddd). */
+body.adminkit .colorpickpreview {
+	border-color: var(--ak-border);
+}
+
+/* "Browse the Marketplace" footer link block (WC #c3c4c7 rule, #50575e text). */
+body.adminkit .wc-settings-marketplace-link {
+	border-top-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
+/* select2 result-row descriptions (WC #999). */
+body.adminkit .select2-results .description {
+	color: var(--ak-text-muted);
+}
+
+/* Method status icons — keep the enabled accent (themed); map the neutral
+   manual (#999) and disabled (#ccc, light → reads active on dark). */
+body.adminkit .status-manual::before {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .status-disabled::before {
+	color: var(--ak-border);
+}
+
+/* Offline payment-methods section rendered in legacy (non-React) mode pins
+   #wpbody-content #f0f0f1. */
+body.adminkit.woocommerce-settings-payments-section_legacy #wpbody-content {
+	background-color: var(--ak-bg);
 }
