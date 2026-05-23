@@ -183,6 +183,17 @@ body.adminkit.acf-admin-page input[type="checkbox"]:focus:before {
 	display: none;
 }
 
+/* Checkbox/radio hover — ACF flashes a pale-blue #ebf5fa fill + #0783be
+   border; route to a brand tint (radio has no fill, just the border). */
+body.adminkit.acf-admin-page input[type="checkbox"]:hover,
+body.adminkit.acf-admin-page input[type="radio"]:hover {
+	border-color: var(--ak-primary);
+}
+
+body.adminkit.acf-admin-page input[type="checkbox"]:hover {
+	background-color: var(--ak-primary-subtle);
+}
+
 /* ----- 5. Field-group editor surfaces ----- */
 /* Field list card — drop ACF's drop shadow (flat). */
 body.adminkit.acf-admin-page #acf-field-group-fields .acf-field-list-wrap {
