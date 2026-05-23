@@ -72,3 +72,14 @@ body.adminkit .woocommerce-help-tip,
 body.adminkit .woocommerce-product-type-tip {
 	color: var(--ak-text-muted);
 }
+
+
+/* ===== Empty (blank) states ===== */
+
+/* "No products/orders yet" message on the list tables. WC pins it #444 per
+   screen (.post-type-product / .post-type-shop_order / .woocommerce_page_
+   wc-orders / customer-stock-notifications); the BlankState parent here
+   out-specifies all four screen variants at once. */
+body.adminkit .woocommerce-BlankState .woocommerce-BlankState-message {
+	color: var(--ak-text);
+}

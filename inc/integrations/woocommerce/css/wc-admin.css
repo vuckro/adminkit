@@ -125,6 +125,12 @@ body.adminkit.woocommerce-admin-page .woocommerce-task-list__item .woocommerce-t
 	color: var(--ak-heading);
 }
 
+/* Incomplete task icon — a neutral surface bubble with a token ring. */
+body.adminkit.woocommerce-admin-page .woocommerce-task-list__item:not(.complete) .woocommerce-task__icon {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
 /* Home notes wrapper + the task card's loading-skeleton header. */
 body.adminkit.woocommerce-admin-page .woocommerce-homepage-notes-wrapper,
 body.adminkit.woocommerce-admin-page .woocommerce-task-dashboard__container .woocommerce-task-card.is-loading .components-card__header {
