@@ -139,11 +139,10 @@ body.adminkit.settings_page_menu_editor .ui-dialog .ui-dialog-buttonpane {
 
 /* ----- Color scheme presets + icon selector dialog -----
    AME hardcodes `background: white` on the theme-preset panel, the
-   color-scheme swatch, and the icon-selector dialog, plus #eee / #ddd
-   borders — none flip in dark mode. */
+   color-scheme swatch, and the icon-selector dialog, plus silver / #eee /
+   #ddd / #DFDFDF borders and #FDFDFD inner strips — none flip in dark mode. */
 body.adminkit.settings_page_menu_editor .ame-tp-content,
-body.adminkit.settings_page_menu_editor .ws_color_scheme_display,
-body.adminkit.settings_page_menu_editor #ws_icon_selector {
+body.adminkit.settings_page_menu_editor .ws_color_scheme_display {
 	background-color: var(--ak-surface);
 }
 
@@ -157,6 +156,21 @@ body.adminkit.settings_page_menu_editor .ame-tp-section-children .ame-mc-color-p
    AME variants: scoped (3 classes) out-specifies `.ame-is-wp53-plus …` (2). */
 body.adminkit.settings_page_menu_editor .ws_color_scheme_display {
 	border-color: var(--ak-border-strong);
+}
+
+/* Icon-selector dialog frame + inner chrome (search bar, tool tabs). */
+body.adminkit.settings_page_menu_editor #ws_icon_selector {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.settings_page_menu_editor #ws_icon_selector .ws_icon_search_bar,
+body.adminkit.settings_page_menu_editor .ws_tool_tab {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit.settings_page_menu_editor .ws_tool_tab {
+	border-top-color: var(--ak-border);
 }
 
 
