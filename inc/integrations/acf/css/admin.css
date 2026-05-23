@@ -87,7 +87,6 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-more:hover .acf-tab.acf-mor
 }
 
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab.is-active {
-	background-color: var(--ak-surface);
 	color: var(--ak-heading);
 	border-color: transparent;
 }
