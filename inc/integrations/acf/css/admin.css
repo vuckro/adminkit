@@ -352,6 +352,16 @@ body.adminkit.acf-admin-page [class*="-select-results"] .select2-results__option
 	background-color: var(--ak-heading);
 }
 
+/* Select2 dropdown chevron (a masked icon on :after) + the "default" pill. */
+body.adminkit.acf-admin-page .select2-selection__arrow:after {
+	background-color: var(--ak-text-muted);
+}
+
+body.adminkit.acf-admin-page .acf-select2-default-pill {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+
 /* ----- 9. WP list tables on ACF screens -----
    ACF (.acf-internal-post-type) repaints the standard WP_List_Table with
    hardcoded light hex — #fff cells, #f9fafb header, #eaecf0 borders, a drop
@@ -736,4 +746,38 @@ body.adminkit.acf-admin-page #acf-field-group-options .field-group-setting-split
 body.adminkit.acf-admin-page .acf-radio-list label.selected,
 body.adminkit.acf-admin-page .acf-checkbox-list label.selected {
 	color: var(--ak-primary);
+}
+
+/* ----- 16. Field icon picker (post-type / taxonomy / options editors) -----
+   Pill tabs (Dashicons / Media Library / URL), the media-library row (container
+   + dark preview box + primary button). ACF paints them with #667085 slate,
+   #0783be blue and a #191e23 preview. */
+body.adminkit.acf-admin-page .acf-field-icon-picker .acf-tab-wrap .acf-tab-group li a {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.acf-admin-page .acf-field-icon-picker .acf-tab-wrap .acf-tab-group li.active a {
+	background-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+
+body.adminkit.acf-admin-page .acf-field-icon-picker .acf-tab-wrap .acf-tab-group li a:focus {
+	outline-color: var(--ak-primary);
+}
+
+body.adminkit.acf-admin-page .acf-field-icon-picker .acf-icon-picker-media-library,
+body.adminkit.acf-admin-page .acf-field-icon-picker .acf-icon-picker-url-tabs {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+
+body.adminkit.acf-admin-page .acf-field-icon-picker .acf-icon-picker-media-library-preview-dashicon,
+body.adminkit.acf-admin-page .acf-field-icon-picker .acf-icon-picker-media-library-preview-img {
+	background-color: var(--ak-surface);
+	color: var(--ak-text);
+}
+
+body.adminkit.acf-admin-page .acf-field-icon-picker .acf-icon-picker-media-library-button {
+	background-color: var(--ak-primary);
+	color: var(--primary-l-10, var(--ak-on-accent));
 }
