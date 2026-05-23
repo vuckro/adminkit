@@ -221,3 +221,37 @@ body.adminkit.acf-admin-page .wp-list-table .acf-emdash,
 body.adminkit.acf-admin-page .wp-list-table .post-state {
 	color: var(--ak-text-muted);
 }
+
+/* ----- 10. Postboxes (field-group / post-type / taxonomy / options editors) -
+   ACF gives every postbox a drop shadow + #eaecf0 hairlines and hardcodes
+   #344054 on the header titles (with !important via the #poststuff variant) —
+   the shadow fights AdminKit's flat look and the title is unreadable on a dark
+   postbox. Flatten + token the lot. */
+body.adminkit.acf-admin-page .postbox,
+body.adminkit.acf-admin-page .acf-box {
+	box-shadow: none;
+}
+
+body.adminkit.acf-admin-page .postbox .inside,
+body.adminkit.acf-admin-page .postbox .inner,
+body.adminkit.acf-admin-page .acf-box .inside,
+body.adminkit.acf-admin-page .acf-box .inner {
+	border-top-color: var(--ak-border);
+}
+
+body.adminkit.acf-admin-page .postbox .postbox-header,
+body.adminkit.acf-admin-page .postbox .title,
+body.adminkit.acf-admin-page .acf-box .postbox-header,
+body.adminkit.acf-admin-page .acf-box .title {
+	border-bottom-color: var(--ak-border);
+}
+
+/* Header titles — ACF forces #344054 (the #poststuff variant uses !important),
+   so the override matches its specificity and !important to stay readable. */
+body.adminkit.acf-admin-page .postbox .postbox-header h2,
+body.adminkit.acf-admin-page .postbox .postbox-header h3,
+body.adminkit.acf-admin-page #poststuff .postbox-header h2,
+body.adminkit.acf-admin-page #poststuff .postbox-header h3,
+body.adminkit.acf-admin-page .acf-postbox-header h2 {
+	color: var(--ak-heading) !important;
+}
