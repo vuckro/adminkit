@@ -1,0 +1,113 @@
+/* ===== select2 / selectWoo dropdowns ===== */
+/* WC's enhanced selects (order Status / Customer, product & downloadable search,
+   settings) render via select2 (the --default skin) with #fff boxes, #aaa
+   borders, #444 text, #e4e4e4 tag chips and a #5897fb highlight — none flip in
+   dark mode. The results dropdown is appended to <body>, so the portaled panel
+   is covered too.
+
+   Split out of admin.css because select2 is the one piece of WC chrome that
+   escapes the WooCommerce admin menu: WC_Admin_Profile injects the customer
+   billing / shipping address fields (country + state enhanced selects) onto
+   profile.php and user-edit.php — core screens that don't carry the rest of the
+   WC admin skin. This file loads on the classic WC screens AND those two user
+   screens (see owns_select2_screen), so the country picker matches everywhere
+   it appears instead of falling back to select2's hardcoded light skin. */
+
+/* Selection box (single + multiple; both skins). */
+body.adminkit .select2-container--default .select2-selection--single,
+body.adminkit .select2-container--default .select2-selection--multiple,
+body.adminkit .select2-container--classic .select2-selection--single,
+body.adminkit .select2-container--classic .select2-selection--multiple {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+/* Rendered value + placeholder + the caret triangle. */
+body.adminkit .select2-container--default .select2-selection--single .select2-selection__rendered {
+	color: var(--ak-text);
+}
+
+body.adminkit .select2-container--default .select2-selection__placeholder {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .select2-container--default .select2-selection--single .select2-selection__arrow b {
+	border-top-color: var(--ak-text-muted);
+}
+
+/* Results dropdown panel (portaled to <body>). */
+body.adminkit .select2-dropdown {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+/* Highlighted (keyboard / hover) + already-selected option. */
+body.adminkit .select2-container--default .select2-results__option--highlighted[aria-selected] {
+	background-color: var(--ak-primary-subtle);
+	color: var(--ak-heading);
+}
+
+body.adminkit .select2-container--default .select2-results__option[aria-selected="true"] {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
+}
+
+/* Multi-select tag chips + their remove (x). */
+body.adminkit .select2-container--default .select2-selection--multiple .select2-selection__choice {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+	color: var(--ak-text-muted);
+}
+
+/* Inline search field (multi-select) — AdminKit's global input styling would
+   nest a bordered box inside the select2 box; reset it to a clean inline field. */
+body.adminkit .select2-search--inline .select2-search__field {
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	min-height: 0;
+}
+
+/* The dropdown's own search field (single-select search box). The global input
+   focus rule (inputs.css) out-specifies a plain class chain when the field is
+   auto-focused on open, so restate the flat skin at matching depth + focus. */
+body.adminkit .select2-dropdown .select2-search__field,
+body.adminkit .select2-dropdown .select2-search__field:focus {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+/* Disabled select. */
+body.adminkit .select2-container--default.select2-container--disabled .select2-selection--single,
+body.adminkit .select2-container--default.select2-container--disabled .select2-selection--multiple {
+	background-color: var(--ak-bg);
+}
+
+/* WC version-gates a focus skin onto select2 (.wp-admin.wc-wp-version-gte-53 …):
+   the open dropdown and the focused/open box get an accent border (now yellow,
+   via --wp-admin-theme-color → --ak-primary) plus a hard 1px ring + drop shadow.
+   That fights AdminKit's flat look, so re-assert a flat skin: a neutral dropdown
+   border with no shadow, and a neutral focus border (--ak-border-strong, a step
+   up from the resting border) with no ring — dropping WC's yellow accent rather
+   than re-painting focus yellow. The WC rules carry two body classes (0,3,0 /
+   0,5,0); matching them with body.adminkit.wp-admin (two body classes + the body
+   element) clears them by one without !important. */
+body.adminkit.wp-admin .select2-dropdown,
+body.adminkit.wp-admin .select2-dropdown--above,
+body.adminkit.wp-admin .select2-dropdown--below {
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit.wp-admin .select2-container.select2-container--focus .select2-selection--single,
+body.adminkit.wp-admin .select2-container.select2-container--open .select2-selection--single,
+body.adminkit.wp-admin .select2-container.select2-container--open .select2-selection--multiple {
+	border-color: var(--ak-border-strong);
+	box-shadow: none;
+}

@@ -25,15 +25,16 @@
    dividers (summary, tables): it only recolors borders WC already gave width.
 
    ===== Sections =====
-   1.  Onboarding profiler            7.  Lists
-   2.  Layout chrome                  8.  Ellipsis menu
-   3.  Cards & filter panels          9.  Filters, calendar & date picker
-   4.  Tables                         10. Search & select controls
-   5.  Summary (big numbers)          11. Stepper
-   6.  Section headers                12. Chart legend
-                                      13. Badges, pills, tags
-                                      14. Timeline
-                                      15. Popovers (generic) */
+   1.  Onboarding profiler            11. Stepper
+   2.  Layout chrome                  12. Chart legend
+   3.  Cards & filter panels          13. Badges, pills, tags
+   4.  Tables                         14. Timeline
+   5.  Summary (big numbers)          15. Popovers (generic)
+   6.  Section headers                16. Marketplace
+   7.  Lists                          17. Analytics report header
+   8.  Ellipsis menu                  18. Tour kit
+   9.  Filters, calendar & date       19. Color audit (systematic pass —
+   10. Search & select controls           extends sections 1–18) */
 
 
 /* ===== 1. Onboarding profiler ===== */
@@ -645,4 +646,534 @@ body.adminkit.woocommerce-admin-page .woocommerce-tour-kit .woocommerce-tour-kit
    selector (the body scope lifts it over WC's specificity). */
 body.adminkit.woocommerce-admin-page .woocommerce-filters-filter__content-list-item.is-selected .woocommerce-filters-filter__button.components-button:not(:disabled):not([aria-disabled=true]):focus {
 	background-color: var(--ak-surface);
+}
+
+
+/* ===== 19. Color audit (systematic pass) ===== */
+/* Sweep of hardcoded WC hex not caught by sections 1–18, mapped 1:1 per the
+   palette in the file header. Property decides the token: borders → border /
+   border-strong, fills → surface / elevated, text + icon fills → text tokens,
+   status → success / warning / error. On-accent #fff/#000 sitting on a brand or
+   status fill is left as-is, as are deliberately-dark banners and self-contained
+   tooltips. Each group extends the like-named section above. */
+
+/* — Summary: inter-cell grid dividers. WC re-asserts #e0e0e0 through ~18
+   `.has-N-items …:nth-of-type` selectors that out-specify the base item rule;
+   one higher-specificity rule recolors them all. The last-of-type bottom border
+   is pinned `!important` by WC, so match it. The container's inset shadow acts
+   as the outer 1px frame. */
+body.adminkit.woocommerce-admin-page .woocommerce-summary[class*="has-"] .woocommerce-summary__item-container .woocommerce-summary__item {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item-container:last-of-type .woocommerce-summary__item {
+	border-bottom-color: var(--ak-border) !important;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-summary {
+	box-shadow: inset -1px -1px 0 var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item.is-selected {
+	background-color: var(--ak-surface);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-summary__item .woocommerce-summary__info-tooltip {
+	color: var(--ak-text-muted);
+}
+
+/* — Tables: row hover + sorted-column cells. */
+body.adminkit.woocommerce-admin-page .woocommerce-table__table tr:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-table__table tr:focus-within,
+body.adminkit.woocommerce-admin-page .woocommerce-table__header.is-sorted,
+body.adminkit.woocommerce-admin-page .woocommerce-table__item.is-sorted {
+	background-color: var(--ak-elevated);
+}
+
+/* — Tree-select control (only its label/help were mapped before). */
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control .components-base-control {
+	background: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control .woocommerce-tree-select-control__control-input {
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control .components-base-control i,
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control .woocommerce-tree-select-control__clear > .clear-icon {
+	color: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control .woocommerce-tree-select-control__tree {
+	background: var(--ak-surface);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control .woocommerce-tree-select-control__node.has-children {
+	border-bottom-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control .woocommerce-tree-select-control__main {
+	border-top-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control__option .components-checkbox-control__input[type=checkbox] {
+	background: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control__option .components-checkbox-control__input[type=checkbox][aria-disabled=true],
+body.adminkit.woocommerce-admin-page .woocommerce-tree-select-control__option .components-checkbox-control__input[type=checkbox]:disabled {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+
+/* — Select control: resting frame, input text, icons, dropdown panels,
+   read-only + disabled (only the field surface / label were mapped before). */
+body.adminkit.woocommerce-admin-page .woocommerce-select-control .components-base-control {
+	border-color: var(--ak-border-strong);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-select-control .components-base-control .woocommerce-select-control__control-input {
+	color: var(--ak-text);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-select-control .components-base-control i,
+body.adminkit.woocommerce-admin-page .woocommerce-select-control .woocommerce-select-control__clear > .clear-icon,
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-select-control__icon-clear svg {
+	color: var(--ak-text-muted);
+	fill: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-select-control__combo-box-wrapper {
+	background: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-select-control__combo-box-wrapper--disabled {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .components-popover.woocommerce-experimental-select-control__popover-menu {
+	background: var(--ak-elevated);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-select-control__popover-menu-container > .category-field-dropdown__item:not(:first-child) .category-field-dropdown__item-content {
+	border-top-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-select-control__selected-items.is-read-only {
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-select-control__input:disabled {
+	background-color: var(--ak-elevated);
+}
+
+/* — Calendar / date picker internals (only the shell + title were mapped). */
+body.adminkit.woocommerce-admin-page .woocommerce-calendar {
+	border-top-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__react-dates .CalendarDay__selected_span,
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__react-dates .CalendarDay__selected {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__react-dates .CalendarDay__selected_span:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__react-dates .CalendarDay__selected:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__react-dates .CalendarDay__hovered_span {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__react-dates .CalendarDay__blocked_out_of_range,
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__react-dates .DayPicker_weekHeader_li {
+	color: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__input .calendar-icon path {
+	fill: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__input.is-error .calendar-icon path {
+	fill: var(--ak-error);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__input.is-error .woocommerce-calendar__input-text {
+	border-color: var(--ak-error);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-calendar__input .woocommerce-calendar__input-text::placeholder {
+	color: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-filters-date__tabs,
+body.adminkit.woocommerce-admin-page .woocommerce-filters-date__content-controls.is-custom {
+	border-top-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-filters-date__content-controls {
+	background-color: var(--ak-surface);
+}
+
+/* — Search control (the `.woocommerce-search` select variant — distinct from
+   the generic select control). Flat: drop its layered drop-shadow. */
+body.adminkit.woocommerce-admin-page .woocommerce-search .woocommerce-select-control__control {
+	border-color: var(--ak-border-strong);
+	box-shadow: none;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search .woocommerce-select-control__control-icon {
+	color: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search .components-base-control__label {
+	color: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search .woocommerce-select-control__listbox {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search .woocommerce-select-control__option {
+	background: var(--ak-elevated);
+	border-bottom-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search .woocommerce-select-control__option:hover {
+	background: var(--ak-elevated);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search .woocommerce-select-control__option.is-selected,
+body.adminkit.woocommerce-admin-page .woocommerce-search .woocommerce-select-control__option:focus,
+body.adminkit.woocommerce-admin-page .woocommerce-search .woocommerce-select-control__option:active {
+	background: var(--ak-surface);
+}
+
+/* — Search-list: resting surfaces, borders, prefixes, count chips
+   (only item color + hover/focus bg were mapped; :active fell through). */
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__list {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__selected,
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__search,
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__list > [role=menu],
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__list .woocommerce-search-list__item:not(.depth-0) + .depth-0 {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__list .woocommerce-search-list__item {
+	background: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__list .woocommerce-search-list__item:active {
+	background: var(--ak-elevated);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__list .woocommerce-search-list__item-prefix {
+	color: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__list .woocommerce-search-list__item.is-searching .woocommerce-search-list__item-name {
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-search-list__list .woocommerce-search-list__item-count {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
+/* — Segmented selection: grid gap / dividers, resting + state fills. */
+body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection {
+	color: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__container {
+	background-color: var(--ak-border);
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__item:nth-child(2n),
+body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__item:nth-child(2n+1) {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__label {
+	background-color: var(--ak-elevated);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__label:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__label:active,
+body.adminkit.woocommerce-admin-page .woocommerce-segmented-selection__input:active + label .woocommerce-segmented-selection__label {
+	background-color: var(--ak-elevated);
+}
+
+/* — Chart / legend internals (only the canvas + a couple states were mapped). */
+body.adminkit.woocommerce-admin-page .woocommerce-chart .woocommerce-chart__header,
+body.adminkit.woocommerce-admin-page .woocommerce-chart__interval-select,
+body.adminkit.woocommerce-admin-page .woocommerce-legend.woocommerce-legend__direction-column,
+body.adminkit.woocommerce-admin-page .woocommerce-chart__footer .woocommerce-legend__direction-column .woocommerce-legend__list {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-chart__type-button.components-button {
+	color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-chart__type-button.woocommerce-chart__type-button-selected {
+	color: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-legend__list {
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-legend__item > button {
+	background-color: var(--ak-surface);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-legend__item > button .woocommerce-legend__item-checkmark {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-legend__item > button:hover input ~ .woocommerce-legend__item-checkmark {
+	background-color: var(--ak-elevated);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-legend__total {
+	background: var(--ak-surface);
+}
+
+/* — Advanced filters: panel borders, list rows, hovers, add/remove controls. */
+body.adminkit.woocommerce-admin-page .woocommerce-filters-advanced,
+body.adminkit.woocommerce-admin-page .woocommerce-filters-advanced__list-item {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-filters-advanced .components-card__body.is-size-small:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-filters-advanced__list-item:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-filters-advanced__add-dropdown .components-button:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-filters-advanced__add-dropdown .components-button:focus {
+	background-color: var(--ak-elevated);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-filters-advanced__list-item .woocommerce-filters-advanced__remove,
+body.adminkit.woocommerce-admin-page .woocommerce-filters-advanced__add-button {
+	color: var(--ak-text-muted);
+}
+
+/* — Filter / date popover panels (WC compound selectors out-specify the generic
+   popover rule in section 15). */
+body.adminkit.woocommerce-admin-page .woocommerce-filters-date__content .components-popover__content,
+body.adminkit.woocommerce-admin-page .woocommerce-filters-filter__content .components-popover__content {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-filters-filter__content.is-mobile .components-popover__header-title {
+	color: var(--ak-text-muted);
+}
+
+/* — Pagination: arrow glyphs, segment divider, error input. */
+body.adminkit.woocommerce-admin-page .woocommerce-pagination__page-arrows-buttons .components-button {
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-pagination__page-arrows-buttons .components-button:hover {
+	color: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-pagination__page-arrows-buttons button:first-child {
+	border-right-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-pagination__page-picker-input.has-error {
+	border-color: var(--ak-error);
+}
+
+/* — Stepper resting label + dividers; spinner ring (near-invisible on dark). */
+body.adminkit.woocommerce-admin-page .woocommerce-stepper .woocommerce-stepper__step .woocommerce-stepper__step-label {
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-stepper .woocommerce-stepper__step-divider,
+body.adminkit.woocommerce-admin-page .woocommerce-stepper.is-vertical .woocommerce-stepper__step::after {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-spinner__circle {
+	stroke: var(--ak-heading);
+}
+
+/* — Order-status indicator dots (neutral default + semantic states). */
+body.adminkit.woocommerce-admin-page .woocommerce-order-status__indicator {
+	background: var(--ak-border);
+	border-color: var(--ak-elevated);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-order-status__indicator.is-processing {
+	background: var(--ak-success);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-order-status__indicator.is-on-hold {
+	background: var(--ak-warning);
+}
+
+/* — Misc components. */
+body.adminkit.woocommerce-admin-page .woocommerce-abbreviated-card a,
+body.adminkit.woocommerce-admin-page .woocommerce-image-gallery__item img,
+body.adminkit.woocommerce-admin-page .woocommerce-pill {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-flag .woocommerce-flag__fallback,
+body.adminkit.woocommerce-admin-page .woocommerce-web-preview {
+	background: var(--ak-elevated);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-image-gallery__toolbar {
+	background-color: var(--ak-surface);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-rating .gridicon {
+	fill: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-rating .woocommerce-rating__star-outline .gridicon {
+	fill: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-collapsible-content .woocommerce-collapsible-content__toggle,
+body.adminkit.woocommerce-admin-page .woocommerce-collapsible-content .woocommerce-collapsible-content__toggle svg {
+	color: var(--ak-primary);
+	fill: var(--ak-primary);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-list__item .woocommerce-list__item-after > svg {
+	fill: var(--ak-text);
+}
+
+/* — Timeline body text + group rule + node default (icon glyphs left white). */
+body.adminkit.woocommerce-admin-page .woocommerce-timeline .woocommerce-timeline-item .woocommerce-timeline-item__body {
+	color: var(--ak-text);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-timeline .woocommerce-timeline-group hr,
+body.adminkit.woocommerce-admin-page .woocommerce-timeline .woocommerce-timeline-item .woocommerce-timeline-item__top-border {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-timeline .woocommerce-timeline-item__headline svg {
+	background: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-timeline .woocommerce-timeline-item__headline.is-success svg {
+	background: var(--ak-success);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-timeline .woocommerce-timeline-item__headline.is-warning svg {
+	background: var(--ak-warning);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-timeline .woocommerce-timeline-item__headline.is-error svg {
+	background: var(--ak-error);
+}
+
+/* — App: activity-panel unread dots + heading icons (focus rings left to WC). */
+body.adminkit.woocommerce-admin-page .woocommerce-layout__activity-panel-tabs .woocommerce-layout__activity-panel-tab.has-unread::after,
+body.adminkit.woocommerce-admin-page .woocommerce-layout__activity-panel-tabs .woocommerce-layout__activity-panel-tab-wordpress-notices::after {
+	background: var(--ak-error);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-layout:has(.woocommerce-homescreen) .woocommerce-layout__activity-panel-tab svg {
+	fill: var(--ak-text);
+}
+
+/* — App: Launch-Your-Store status pill (neutral state) + order-attribution
+   install banner. The is-live pill is a semantic status badge, left as-is. */
+body.adminkit.woocommerce-admin-page .woocommerce-lys-status-pill {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-order-attribution-install-banner.components-card,
+body.adminkit.woocommerce-admin-page .woocommerce-order-attribution-install-banner.components-card.small {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-order-attribution-install-banner .woocommerce-order-attribution-install-banner__text-badge {
+	background: var(--ak-elevated);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-order-attribution-install-banner .woocommerce-order-attribution-install-banner__text-badge p {
+	color: var(--ak-text);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-order-attribution-install-banner .woocommerce-order-attribution-install-banner__text-title {
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-order-attribution-install-banner .woocommerce-order-attribution-install-banner__text-description {
+	color: var(--ak-text);
+}
+
+/* — App: full-screen text, usage/cart modals, error boundary, table download. */
+body.adminkit.woocommerce-admin-page .woocommerce-admin-full-screen,
+body.adminkit.woocommerce-admin-page .components-modal__frame.woocommerce-usage-modal a {
+	color: var(--ak-text);
+}
+body.adminkit.woocommerce-admin-page .components-modal__frame.woocommerce-cart-modal .woocommerce-list .woocommerce-list__item:first-child,
+body.adminkit.woocommerce-admin-page .components-modal__frame.woocommerce-cart-modal .woocommerce-list__item {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-global-error-boundary .woocommerce-global-error-boundary__heading {
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page button.woocommerce-table__download-button {
+	color: var(--ak-heading);
+}
+
+/* — App: Marketplace text greys not covered by section 16. */
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__sub-text,
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__icon-group-description {
+	color: var(--ak-text);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__footer-title,
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__icon-group-title {
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__header-account-trigger {
+	border-color: var(--ak-border);
+}
+
+/* — Experimental: list-item text + icons (only the row surface was mapped). */
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-list__item .woocommerce-list__item-title,
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-list__item-title {
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-list__item .woocommerce-list__item-expandable-content,
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-list__item-expandable-content {
+	color: var(--ak-text);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-list__item .woocommerce-list__item-after > svg {
+	fill: var(--ak-text);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-list__item.complete .woocommerce-list__item-title {
+	color: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-list-wrapper {
+	border-top-color: var(--ak-border);
+}
+
+/* — Experimental: Home task-list rows (badges, markers, meta). Level markers
+   are notification dots → status tokens; the badge is a recessed chip. */
+body.adminkit.woocommerce-admin-page .woocommerce-task-list__item.level-1::before {
+	background-color: var(--ak-error);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-task-list__item.level-1 .gridicons-notice-outline {
+	fill: var(--ak-error);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-task-list__item.level-2::before {
+	background-color: var(--ak-warning);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-task-list__item .woocommerce-task-list__item-badge {
+	background-color: var(--ak-elevated);
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-task-list__item .woocommerce-task__additional-info,
+body.adminkit.woocommerce-admin-page .woocommerce-task-list__item .woocommerce-task-list__item-expandable-content,
+body.adminkit.woocommerce-admin-page .woocommerce-task-list__item .woocommerce-task__estimated-time,
+body.adminkit.woocommerce-admin-page .woocommerce-task-list__item.complete .woocommerce-task-list__item-title {
+	color: var(--ak-text-muted);
+}
+
+/* — Experimental: inbox note meta + dismiss (bare :hover falls through the
+   section-2 rule, which needs a .woocommerce-layout ancestor). */
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-message:hover {
+	background: var(--ak-elevated);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-message__content .woocommerce-inbox-message__date,
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-message__text,
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-message__actions button.woocommerce-admin-dismiss-notification,
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-dismiss-confirmation_wrapper p {
+	color: var(--ak-text-muted);
+}
+
+/* — Marketing: Marketplace notice system (border + left accent + icon + text). */
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__notice {
+	border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__notice--error {
+	border-left-color: var(--ak-error);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__notice--warning {
+	border-left-color: var(--ak-warning);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__notice--success {
+	border-left-color: var(--ak-success);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__notice-icon--error {
+	fill: var(--ak-error);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__notice-icon--warning {
+	fill: var(--ak-warning);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__notice-icon--success {
+	fill: var(--ak-success);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__notice-description,
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__notice-children {
+	color: var(--ak-heading);
+}
+
+/* — Marketing: recommendation + knowledge-base cards. */
+body.adminkit.woocommerce-admin-page .woocommerce-marketing-recommended-extensions-item h4,
+body.adminkit.woocommerce-admin-page .woocommerce-marketing-knowledgebase-card__post h3 {
+	color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketing-recommended-extensions-item p,
+body.adminkit.woocommerce-admin-page .woocommerce_marketing_plugin_card_body__details-name .woocommerce-pill,
+body.adminkit.woocommerce-admin-page .woocommerce-marketing-card-header-description,
+body.adminkit.woocommerce-admin-page .woocommerce-admin-marketing-card .components-card__header .woocommerce-admin-marketing-card-subtitle,
+body.adminkit.woocommerce-admin-page .woocommerce-marketing-knowledgebase-card__post-meta {
+	color: var(--ak-text-muted);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketing-create-campaign-modal .woocommerce-marketing-add-channels {
+	border-top-color: var(--ak-border);
+}
+
+/* — Customer-effort-score survey footer + radio option tints. */
+body.adminkit.woocommerce-admin-page .woocommerce-customer-effort-score__buttons {
+	background-color: var(--ak-surface);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-customer-effort-score__selection .components-radio-control__option label:hover,
+body.adminkit.woocommerce-admin-page .woocommerce-customer-effort-score__selection .components-radio-control__option input:checked + label {
+	background-color: var(--ak-elevated);
 }

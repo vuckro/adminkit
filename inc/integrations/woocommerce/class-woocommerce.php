@@ -94,6 +94,29 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * Screens that carry select2 / selectWoo enhanced selects. The classic WC
+	 * screens (orders, products, settings) plus the two core user screens where
+	 * WC_Admin_Profile injects the customer billing / shipping address fields —
+	 * profile.php (`profile`) and user-edit.php (`user-edit`) — whose country and
+	 * state pickers are select2 widgets. Those user screens carry none of the
+	 * rest of the WC admin skin, so select2.css is split out of admin.css and
+	 * loaded here on its own to skin the picker without dragging in 900 lines of
+	 * order / shipping / settings CSS.
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return bool
+	 */
+	public static function owns_select2_screen( $screen ) {
+		if ( ! $screen ) {
+			return false;
+		}
+		if ( self::owns_classic_screen( $screen ) ) {
+			return true;
+		}
+		return in_array( $screen->id, array( 'profile', 'user-edit' ), true );
+	}
+
+	/**
 	 * WooCommerce exposes its version via the WC_VERSION constant.
 	 *
 	 * @return string|null
@@ -134,6 +157,15 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_classic_screen' ),
+		) );
+		// select2 skin — classic WC screens AND the user profile/edit screens
+		// where WC injects the customer address country/state pickers.
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-woocommerce-select2',
+			'src'       => 'inc/integrations/woocommerce/css/select2.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_select2_screen' ),
 		) );
 	}
 }
