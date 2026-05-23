@@ -79,6 +79,15 @@ body.adminkit .wrap .page-title-action:focus {
 	color: var(--primary-l-10, var(--ak-on-accent));
 }
 
+/* When several header action buttons stack (e.g. Add New + Import on the
+   Bricks templates list), keep only the first filled; the rest become outline
+   so the page has a single primary CTA. */
+body.adminkit .wrap .page-title-action ~ .page-title-action {
+	background: transparent;
+	border-color: var(--ak-primary);
+	color: var(--ak-primary);
+}
+
 body.adminkit .button-primary:disabled,
 body.adminkit .button-primary.disabled,
 body.adminkit .wp-core-ui .button-primary:disabled,
