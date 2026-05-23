@@ -263,6 +263,27 @@ body.adminkit tr.inline-edit-row td {
 	background: var(--ak-surface);
 }
 
+/* Keep the form within the screen even when the list table is wide enough to
+   scroll sideways. The edit cell (td.colspanchange) spans every (wide) column, so
+   WP's percentage-width fieldsets stretch across the whole scroll width — and the
+   right column even floats to the far edge, off-screen. Pin the cell to the left
+   of the scroll viewport (sticky) and stack the fieldsets into one capped,
+   responsive column (min(480px, 90vw)) so the form stays anchored and fully
+   visible instead of riding the wide table. WP sizes these via an #id selector
+   (#wpbody-content …), so the width override needs #wpbody-content to win. */
+body.adminkit .inline-edit-row td.colspanchange {
+	position: sticky;
+	left: 0;
+}
+
+body.adminkit #wpbody-content .inline-edit-row .inline-edit-col-left,
+body.adminkit #wpbody-content .inline-edit-row .inline-edit-col-center,
+body.adminkit #wpbody-content .inline-edit-row .inline-edit-col-right {
+	float: none;
+	width: min(480px, 90vw);
+	box-sizing: border-box;
+}
+
 body.adminkit .inline-edit-row fieldset {
 	font-size: var(--ak-text-s);
 }
