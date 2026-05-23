@@ -623,6 +623,13 @@ body.adminkit.acf-admin-page .acf-field-object > .handle .row-options a:hover {
 	color: var(--ak-heading);
 }
 
+/* Circular icon buttons (a.acf-icon) hardcode a #fff background. The masked
+   glyph variants (i.acf-icon) colour via background-color, so this is scoped to
+   the link/button variant only. */
+body.adminkit.acf-admin-page a.acf-icon {
+	background-color: var(--ak-surface);
+}
+
 body.adminkit.acf-admin-page.post-type-acf-field-group .acf-field-object.open {
 	border-top-color: var(--ak-border);
 }
