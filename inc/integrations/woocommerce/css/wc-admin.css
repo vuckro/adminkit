@@ -104,6 +104,27 @@ body.adminkit.woocommerce-admin-page .woocommerce-layout .woocommerce-inbox-mess
 	background-color: var(--ak-elevated);
 }
 
+/* Drop the 1px top divider between list rows — the surface already separates. */
+body.adminkit.woocommerce-admin-page .woocommerce-experimental-list__item:not(:first-child) {
+	border-top: none;
+}
+
+/* Setup task list (Home "Get started" checklist). */
+/* Per-row bottom divider off — the grid layout reads cleanly without it. */
+body.adminkit.woocommerce-admin-page .woocommerce-task-dashboard__container.setup-task-list ul li {
+	border-bottom: none;
+}
+
+/* Task-card header divider — map WC's hardcoded #dcdcde to the border token. */
+body.adminkit.woocommerce-admin-page .woocommerce-task-dashboard__container .woocommerce-task-card__header-container {
+	border-bottom-color: var(--ak-border);
+}
+
+/* Task title — WC paints it with the brand accent; route to heading text. */
+body.adminkit.woocommerce-admin-page .woocommerce-task-list__item .woocommerce-task-list__item-title {
+	color: var(--ak-heading);
+}
+
 
 /* ===== 3. Cards & filter panels ===== */
 
