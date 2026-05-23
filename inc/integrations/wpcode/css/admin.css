@@ -1,0 +1,70 @@
+/* WPCode (insert-headers-and-footers) admin — Tier A token bridge.
+   Scaffolded by bin/adapter-scan.php --emit, then hand-tuned.
+
+   WPCode paints its admin UI from a `--wpcode-*` variable layer defined on
+   :root, so remapping that layer to AdminKit tokens reskins the whole UI and
+   flips it with AdminKit's dark mode for free. Scoped to WPCode's own
+   `.wpcode-admin-page` body class (added on every WPCode screen) so the
+   override out-specifies the host's :root defaults.
+
+   Hand-tuning over the generated base:
+     • surfaces split by ROLE (scanner lumps them into one token) — from actual
+       usage: white = cards, gray = page canvas, light = recessed, highlight =
+       selected tint.
+     • text that sits on a fill (button-primary-text, notice-success-text) → on-accent.
+     • disabled/placeholder text → muted (scanner read #bbb as a border).
+     • the orange "Upgrade" CTA folded into the brand.
+
+   Note: keep WPCode's own "Dark Mode" setting OFF — AdminKit's dark mode drives
+   the theme. Hardcoded-hex chrome in WPCode's bundled widgets (jconfirm modals,
+   flatpickr, select2) is left for follow-up affinage. */
+
+body.adminkit.wpcode-admin-page {
+
+	/* ---- Surfaces (split by role) ---- */
+	--wpcode-background-white: var(--ak-surface);            /* cards / panels */
+	--wpcode-background-gray: var(--ak-bg);                  /* page canvas */
+	--wpcode-background-light: var(--ak-elevated);           /* recessed sections */
+	--wpcode-background-highlight: var(--ak-primary-subtle); /* selected / highlight */
+
+	/* ---- Borders ---- */
+	--wpcode-border-color: var(--ak-border);
+
+	/* ---- Text ---- */
+	--wpcode-text-color-heading: var(--ak-heading);
+	--wpcode-input-text-color: var(--ak-heading);
+	--wpcode-text-color-paragraph: var(--ak-text-muted);
+	--wpcode-text-color-light-bg: var(--ak-text-muted);
+	--wpcode-text-color-placeholder: var(--ak-text-muted);
+	--wpcode-text-color-highlight: var(--ak-primary);
+
+	/* ---- Brand / accent ---- */
+	--wpcode-color-primary: var(--ak-primary);
+	--wpcode-input-border-active: var(--ak-primary);
+
+	/* ---- Status ---- */
+	--wpcode-color-red: var(--ak-error);
+	--wpcode-color-red-darker: var(--ak-error);
+	--wpcode-background-red: var(--ak-error);
+	--wpcode-notice-success-bg: var(--ak-success);
+	--wpcode-notice-success-text: var(--ak-on-accent);
+
+	/* ---- Primary button ---- */
+	--wpcode-button-primary-bg-hover: var(--ak-primary-hover);
+	--wpcode-button-primary-text: var(--ak-on-accent);
+	--wpcode-button-primary-text-hover: var(--ak-on-accent);
+
+	/* ---- Secondary button ---- */
+	--wpcode-button-secondary-bg: var(--ak-surface);
+	--wpcode-button-secondary-bg-hover: var(--ak-elevated);
+	--wpcode-button-secondary-text: var(--ak-text-muted);
+	--wpcode-button-secondary-text-hover: var(--ak-heading);
+
+	/* ---- "Upgrade" CTA — fold into the brand ---- */
+	--wpcode-button-orange-bg: var(--ak-primary);
+	--wpcode-button-orange-bg-hover: var(--ak-primary-hover);
+
+	/* ---- Disabled ---- */
+	--wpcode-button-disabled-bg: var(--ak-surface);
+	--wpcode-button-disabled-text: var(--ak-text-muted);
+}
