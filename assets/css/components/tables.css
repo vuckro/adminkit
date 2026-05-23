@@ -214,6 +214,18 @@ body.adminkit .column-response a.post-com-count-approved:focus .comment-count-ap
 	color: #fff;
 }
 
+/* Status-filter row (.subsubsub: All | Published | Drafts | Trash | …). core
+   chrome.css lays it out as inline pills that wrap (flex-wrap: wrap), so on a
+   narrow screen they pile onto several lines. Keep them on ONE line and let the
+   row scroll horizontally instead — like the table itself — so the filters stay a
+   single tidy strip. ul.subsubsub (0,2,2) out-specifies the chrome.css rule
+   (0,2,1) so flex-wrap flips without !important. */
+body.adminkit ul.subsubsub {
+	flex-wrap: nowrap;
+	max-width: 100%;
+	overflow-x: auto;
+}
+
 /* tablenav (bulk actions + pagination row above + below list tables) —
    WP defaults to 6px vertical margin which feels cramped against
    the table. Bump to var(--ak-tablenav-gap, 24px) so the row
