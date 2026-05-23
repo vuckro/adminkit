@@ -134,6 +134,25 @@ public static function register_assets() {
 
 See [ASSETS.md](ASSETS.md) for the full registry API.
 
+### Deliver CSS into a shadow root
+
+Some hosts (Query Monitor 4.0+) render their UI inside an **open shadow root**, so
+a registry-enqueued stylesheet never reaches it — CSS selectors don't cross the
+shadow boundary, and a `body.adminkit …` rule silently matches nothing. CSS
+**custom properties do inherit across it**, though, so the token remap itself is
+unchanged; only the *delivery* differs:
+
+- Scope the CSS to the in-shadow id (no `body.adminkit` prefix — that element isn't
+  in the shadow tree); the id still outranks the host's `.container` var defs.
+- Enqueue a small bridge on `admin_enqueue_scripts` that injects the stylesheet as
+  a `<link>` into the host's `shadowRoot` (poll for it — `attachShadow` fires no
+  observer). `--ak-*` then resolve inside by inheritance and flip with dark mode.
+- The dark hook can't select `<html>` from inside the shadow; mirror AdminKit's
+  mode onto the host's own theme attribute from the bridge (one-way).
+
+The [query-monitor adapter](../inc/integrations/query-monitor/) is the reference;
+the step-by-step is in [ONBOARDING-A-PLUGIN.md](ONBOARDING-A-PLUGIN.md#special-case-the-panel-is-in-a-shadow-root).
+
 ### Start with a scan
 
 Don't hunt for the host's colors by hand — let the scanner draft the mapping:
@@ -237,3 +256,4 @@ Integrations can also expose their own filters for downstream customization. Nam
 - [`inc/integrations/wpcode/class-wpcode.php`](../inc/integrations/wpcode/class-wpcode.php) — a minimal Tier A example: remaps the host's `--wpcode-*` variables to tokens, so dark mode and brand color come for free with zero `!important`.
 - [`inc/integrations/woocommerce/`](../inc/integrations/woocommerce) — the most comprehensive adapter: the wc-admin React app plus the classic order/settings/tool screens, done by token remap rather than selector overrides (run the audit for its current budget).
 - [`inc/integrations/flying-press/class-flying-press.php`](../inc/integrations/flying-press/class-flying-press.php) — Tier B against a Tailwind app compiled with `important: true`; every override carries `!important` by necessity and the adapter is version-gated.
+- [`inc/integrations/query-monitor/`](../inc/integrations/query-monitor) — Tier A remap delivered **into an open shadow root** via a JS bridge (the host's panel is shadow-DOM, unreachable by a normal stylesheet). Custom-property inheritance carries `--ak-*` across the boundary; the bridge also mirrors the theme onto the panel for `color-scheme`.

@@ -1,0 +1,122 @@
+/* Query Monitor — token bridge (Tier A). Panel only — the admin-bar toolbar
+   (assets/build/toolbar.css) is intentionally left on QM's native colours.
+
+   IMPORTANT: this sheet is injected INTO QM's open shadow root by
+   js/shadow-bridge.js — it is NOT a normal main-document stylesheet. That's why
+   selectors here are scoped to #query-monitor-main (no body.adminkit prefix):
+   they run inside the shadow tree, where that ID exists and `body` does not. An
+   ID (1,x,x) beats every one of QM's own var definitions (.qm-container,
+   [data-theme], [data-color-scheme]).
+
+   QM 4.0 declares its palette as --qm-* custom properties on .qm-container via
+   light-dark(). We re-point them at AdminKit --ak-* tokens. Custom properties
+   inherit ACROSS the shadow boundary, so var(--ak-*) resolves from the main
+   document's :root and flips with AdminKit's dark mode — one value per var
+   covers both modes (no light-dark() needed). Surfaces are mapped by ROLE, not
+   by QM's literal lightness. QM's color-scheme (scrollbars, the SQL value tint)
+   is handled by the bridge mirroring AdminKit's mode onto the panel data-theme. */
+
+#query-monitor-main {
+	/* ── Accent ──────────────────────────────────────────────────────────────
+	   QM's WP-blue accent (fed by the fresh/modern scheme). Overriding the
+	   consumed var re-colours links, buttons, the selected menu item and SQL
+	   keywords in one move. */
+	--qm-wp-color: var(--ak-primary);
+
+	/* ── Surfaces (by role) ───────────────────────────────────────────────── */
+	--qm-container-bg: var(--ak-bg);             /* backdrop behind the panels */
+	--qm-container-fg: var(--ak-text);
+	--qm-container-overflow: var(--ak-elevated); /* left menu rail fill */
+	--qm-panel-bg: var(--ak-surface);            /* data panel = card surface */
+	--qm-panel-fg: var(--ak-text);
+	--qm-panel-border: var(--ak-border);
+	--qm-panel-separator: var(--ak-border);
+
+	/* ── Left menu (nav rail) ────────────────────────────────────────────────
+	   Hover + selected both take the accent, faithful to QM — so hovering the
+	   active tab doesn't read as de-selecting it. */
+	--qm-panel-menu-bg: var(--ak-elevated);
+	--qm-panel-menu-fg: var(--ak-text);
+	--qm-panel-menu-bg-hover: var(--ak-primary);
+	--qm-panel-menu-fg-hover: var(--ak-on-accent);
+	--qm-panel-menu-bg-selected: var(--ak-primary);
+	--qm-panel-menu-fg-selected: var(--ak-on-accent);
+	--qm-panel-menu-shadow: transparent;         /* flat: drop the selected-text glow */
+	--qm-panel-menu-bg-current: var(--ak-surface);   /* ancestor of an open sub-panel */
+	--qm-panel-menu-fg-current: var(--ak-heading);
+	--qm-panel-menu-bg-current-focus: var(--ak-elevated);
+
+	/* ── Data tables ─────────────────────────────────────────────────────────
+	   Yellow "attention" highlights → brand tint (AdminKit's primary is warm,
+	   so the yellow intent survives and follows a rebrand). */
+	--qm-table-header-bg: var(--ak-elevated);
+	--qm-table-footer-bg: var(--ak-elevated);
+	--qm-cell-border: var(--ak-border);
+	--qm-cell-bg-hover: var(--ak-hover-bg);
+	--qm-cell-bg-stripe: var(--ak-bg);
+	--qm-cell-fg-highlight: var(--ak-heading);
+	--qm-cell-bg-highlight: color-mix(in srgb, var(--ak-primary) 14%, var(--ak-surface));
+	--qm-cell-bg-highlight-alt: color-mix(in srgb, var(--ak-primary) 20%, var(--ak-surface));
+	--qm-cell-bg-highlight-dark: color-mix(in srgb, var(--ak-primary) 30%, var(--ak-surface));
+
+	/* ── Links ───────────────────────────────────────────────────────────── */
+	--qm-link-fg: var(--ak-primary);
+	--qm-link-fg-hover: var(--ak-primary-hover);
+	--qm-link-fg-active: var(--ak-primary-hover);
+
+	/* ── Accent buttons (filter triggers, toggles) ──────────────────────────── */
+	--qm-button-fg: var(--ak-on-accent);
+	--qm-button-bg: var(--ak-primary);
+	--qm-button-fg-hover: var(--ak-on-accent);
+	--qm-button-bg-hover: var(--ak-primary-hover);
+	--qm-button-fg-active: var(--ak-on-accent);
+	--qm-button-bg-active: var(--ak-primary-hover);
+
+	/* ── Title bar + its icon buttons (neutral chrome) ──────────────────────── */
+	--qm-title-bg: var(--ak-elevated);
+	--qm-title-button-fg: var(--ak-text-muted);
+	--qm-title-button-fg-hover: var(--ak-heading);
+	--qm-title-button-bg-hover: var(--ak-hover-bg);
+	--qm-title-button-bg-active: var(--ak-border-strong);
+
+	/* ── Muted text ──────────────────────────────────────────────────────────
+	   (--qm-nonselect-fg is QM's magenta placeholder ink → neutralised.) */
+	--qm-info-fg: var(--ak-text-muted);
+	--qm-nonselect-fg: var(--ak-text-muted);
+
+	/* ── Warnings + warn badges ──────────────────────────────────────────────
+	   QM paints these red/pink → AdminKit's error family (hue-faithful, and
+	   --ak-error ships a ready subtle tint). */
+	--qm-warn-fg: var(--ak-error);
+	--qm-warn-bg: var(--ak-error-subtle);
+	--qm-warn-bg-dark: color-mix(in srgb, var(--ak-error) 26%, transparent);
+	--qm-warn-bg-hover: color-mix(in srgb, var(--ak-error) 22%, transparent);
+	--qm-warn-border: color-mix(in srgb, var(--ak-error) 45%, transparent);
+	--qm-badge-warn-fg: var(--ak-error);
+	--qm-badge-warn-bg: var(--ak-error-subtle);
+
+	/* ── Neutral count badges ───────────────────────────────────────────────── */
+	--qm-badge-fg: var(--ak-text);
+	--qm-badge-bg: var(--ak-border-strong);
+
+	/* ── Text selection → soft brand tint ───────────────────────────────────── */
+	--qm-selection-bg: color-mix(in srgb, var(--ak-primary) 35%, transparent);
+	--qm-selection-fg: var(--ak-heading);
+
+	/* ── SQL keywords → brand ────────────────────────────────────────────────
+	   Left on QM's own colours (code / data, like chart series): the SQL string
+	   value tint (--qm-sql-value-fg), the 8 timeline series, the fonts, and the
+	   easter-egg --qm-fabulous-gradient. The bridge's data-theme sync keeps the
+	   value tint resolving to AdminKit's mode. */
+	--qm-sql-keyword-fg: var(--ak-primary);
+}
+
+/* Selected menu item's count badge — the one hardcoded paint that bypasses the
+   variable layer and clashes with the remap: QM gives it a translucent-white
+   chip with #fff text, which is invisible once the selected item carries the
+   brand fill set above. Recolour to the on-accent ink. The 2-ID scope beats
+   QM's #qm-panel-menu … button[aria-selected=true] .qm-menu-badge rule. */
+#query-monitor-main #qm-panel-menu button[aria-selected="true"] .qm-menu-badge {
+	background: color-mix(in srgb, var(--ak-on-accent) 20%, transparent);
+	color: var(--ak-on-accent);
+}

@@ -30,8 +30,8 @@ That's it. The sections below explain each step.
 
 ## 1. Discover the host
 
-Two things must be confirmed by hand — they're host-specific and not reliably in
-the CSS. Both are quick:
+Three things must be confirmed by hand — they're host-specific and not reliably
+in the CSS. All quick:
 
 **Version constant** (for `is_active()` / the Tier B gate):
 ```bash
@@ -54,6 +54,17 @@ A single-page app keeps one slug fragment across all its sub-pages, so a
 > body class (good) > anything guessed from the CSS (unreliable — framework
 > classes like `.v-row` dominate a Vue/Element app).
 
+**Render target — is the panel in a shadow root?** This decides how the CSS gets
+*delivered*, so check it before writing any. Newer plugins (Query Monitor 4.0+)
+mount their UI inside an **open shadow root**: a normally-enqueued stylesheet
+*cannot* reach it (selectors don't cross the boundary), though CSS custom
+properties *do* inherit in. Detect it:
+```bash
+grep -rln "attachShadow" ../<host>     # or: spot "#shadow-root (open)" in DevTools
+```
+If present, the token remap is identical but ships via a JS bridge, not the asset
+registry — see [Special case: the panel is in a shadow root](#special-case-the-panel-is-in-a-shadow-root).
+
 ---
 
 ## 2. Scan the CSS (admin **and** frontend)
@@ -72,6 +83,13 @@ lives in its *frontend* bundle. The report has two halves:
 - **TIER B — hardcoded colors.** Every `#hex` / `rgb()` / `hsl()` ranked by use,
   grouped by the property it sits on (bg / border / text), each classified to a
   token by lightness + chroma + hue.
+
+> **Scanner blind spots.** It reads CSS *files* by regex, so it can't parse
+> `light-dark()`, native CSS nesting, or `oklch()` — a host built on those
+> (Query Monitor 4.0) reports an empty Tier A and leaks nested declarations as
+> garbage selectors. It also can't see shadow DOM. When the scaffold comes back
+> wrong, skip it and hand-map straight from the host's `:root` / `.container`
+> variable block: the mapping is mechanical once you have the variable list.
 
 ---
 
@@ -165,10 +183,51 @@ php bin/adapter-audit.php
 
 ---
 
+## Special case: the panel is in a shadow root
+
+If step 1 found `attachShadow`, the asset registry won't help — it enqueues into
+the main document, which the shadow tree never sees, so a `body.adminkit …` rule
+matches **nothing**. (This is the trap: everything looks correct and applies
+zero styles.) Two facts make the fix small:
+
+- **CSS custom properties inherit across the boundary.** `--ak-*` declared on the
+  main document's `:root` reach inside, so the **token remap is unchanged** — only
+  the delivery differs. Scope the CSS to the in-shadow id with **no `body.adminkit`
+  prefix** (that element doesn't exist inside the shadow); the panel's own id still
+  outranks the host's `.container` variable defs.
+- **Selectors can't reach out** to `<html>`, so the usual `html[data-adminkit-theme]`
+  dark hook can't fire from inside. Mirror AdminKit's mode onto the panel instead —
+  set the host's own theme attribute from JS, one-way (AdminKit → host) — and let
+  the host's existing `[data-theme]{color-scheme}` rule do the rest.
+
+Deliver it with a tiny bridge: `register_assets()` hooks `admin_enqueue_scripts`
+to `wp_enqueue_script` the bridge + `wp_localize_script` the mtime-stamped CSS URL.
+The bridge injects the stylesheet as a `<link>` into the host's `shadowRoot`:
+
+```js
+( function () {
+    var host = document.getElementById( 'host-shadow-container' );
+    if ( ! host || ! host.shadowRoot ) { return; }   // poll if the host attaches late
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.href = window.myCfg.cssUrl;                  // localized, mtime-stamped
+    host.shadowRoot.appendChild( link );             // --ak-* now resolve by inheritance
+}() );
+```
+
+`attachShadow` fires no MutationObserver, so **poll briefly** for `host.shadowRoot`
+when the host builds it from a deferred/module script. The
+[query-monitor adapter](../inc/integrations/query-monitor/) is the reference
+(bridge + theme-attribute sync + the shadow-scoped remap). Then continue with
+Verify and Audit as normal.
+
+---
+
 ## Checklist (paste into the PR)
 
 ```md
 - [ ] Discovered host: version constant `____`, screen scope `____` (body inspect)
+- [ ] Checked render target: shadow DOM? → JS-bridge delivery; else asset registry
 - [ ] Scanned admin + frontend CSS; decided Tier A / B
 - [ ] Generated folder with `adapter-scan.php --slug=<slug> --emit`
 - [ ] Filled is_active() + owns_screen() (and version gate if Tier B)
