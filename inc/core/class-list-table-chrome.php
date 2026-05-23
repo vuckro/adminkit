@@ -57,6 +57,39 @@ class AdminKit_Core_List_Table_Chrome {
 		wrap.appendChild(table);
 	});
 
+	// Quick / Bulk Edit: keep the inline-edit form within the visible area on a
+	// wide (horizontally scrollable) table. The edit cell spans every column, so
+	// (a) publish each wrapper's visible width as --ak-qe-w for the form grid to
+	// size against, and (b) wrap the form columns in .ak-qe-grid so CSS can lay
+	// them out as a responsive grid instead of letting them ride the wide cell.
+	var scrolls = document.querySelectorAll('.ak-table-scroll');
+	function setQEWidth(el) { el.style.setProperty('--ak-qe-w', el.clientWidth + 'px'); }
+	if (window.ResizeObserver) {
+		var ro = new ResizeObserver(function (entries) {
+			entries.forEach(function (e) { setQEWidth(e.target); });
+		});
+		Array.prototype.forEach.call(scrolls, function (el) { ro.observe(el); });
+	} else {
+		Array.prototype.forEach.call(scrolls, setQEWidth);
+		window.addEventListener('resize', function () {
+			Array.prototype.forEach.call(scrolls, setQEWidth);
+		});
+	}
+	// Wrap the hidden Quick/Bulk Edit templates once. WP clones them into rows on
+	// demand, so the clones inherit both the .ak-qe-grid wrapper and --ak-qe-w
+	// (inherited from the .ak-table-scroll the clone lands in).
+	['inline-edit', 'bulk-edit'].forEach(function (id) {
+		var tmpl = document.getElementById(id);
+		var cell = tmpl && tmpl.querySelector('td.colspanchange');
+		if (!cell) return;
+		var first = cell.firstElementChild;
+		if (first && first.classList.contains('ak-qe-grid')) return;
+		var grid = document.createElement('div');
+		grid.className = 'ak-qe-grid';
+		while (cell.firstChild) { grid.appendChild(cell.firstChild); }
+		cell.appendChild(grid);
+	});
+
 	var lists = document.querySelectorAll('.subsubsub');
 	if (!lists.length) return;
 	function clean(ul) {
