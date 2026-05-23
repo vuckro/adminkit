@@ -130,12 +130,12 @@ body.adminkit .wp-list-table td.username strong a:focus {
 	color: var(--ak-heading);
 }
 
-/* users.php — round the gravatar (matches the admin bar / user dropdown) and
-   vertically center it with the username. WP floats the avatar top-left, which
-   sits high against the round image; inline-block + middle alignment puts the
-   avatar and name on one centered line. */
+/* users.php — round the gravatar (radius S) and vertically center it with the
+   username. WP floats the avatar top-left, which sits high against the rounded
+   image; inline-block + middle alignment puts the avatar and name on one
+   centered line. */
 body.adminkit .wp-list-table .column-username img {
-	border-radius: var(--ak-radius-m);
+	border-radius: var(--ak-radius-s);
 	border: 1px solid var(--ak-border);
 	float: none;
 	vertical-align: middle;
