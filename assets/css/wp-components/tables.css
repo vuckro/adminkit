@@ -236,6 +236,7 @@ body.adminkit ul.subsubsub {
 	flex-wrap: nowrap;
 	max-width: 100%;
 	overflow-x: auto;
+	overflow-y: hidden; /* horizontal scroll only — no phantom vertical scrollbar */
 }
 
 /* tablenav (bulk actions + filters + pagination, above & below list tables).
@@ -251,6 +252,10 @@ body.adminkit .tablenav {
 	align-items: center;
 	gap: 8px;
 	overflow-x: auto;
+	/* Horizontal scroll only when narrow. Without an explicit overflow-y the
+	   browser computes it to `auto` (visible+auto coupling), and a sub-pixel
+	   height overflow then shows a phantom vertical scrollbar — clip it. */
+	overflow-y: hidden;
 	margin: var(--ak-tablenav-gap, 24px) 0;
 }
 
