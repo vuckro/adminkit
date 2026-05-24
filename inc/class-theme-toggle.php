@@ -78,17 +78,25 @@ class AdminKit_Theme_Toggle {
 	 *   1. Apply the stored theme BEFORE first paint.
 	 *   2. Pass PHP-filtered identifiers in a single place.
 	 *
+	 * When the "Dark mode" feature is off, this forces light and ignores any
+	 * saved/system preference — disabling the feature disables dark mode.
+	 *
 	 * @return void
 	 */
 	public static function print_script() {
 		$attr        = self::attribute();
 		$dataset_key = self::attribute_to_dataset( $attr );
 		$key         = self::storage_key();
+		$enabled     = (bool) AdminKit_Settings::get( 'theme_toggle_enabled' );
 		?>
 <script id="adminkit-theme">
 (function(){
 	var d = document.documentElement;
 	var DS = <?php echo wp_json_encode( $dataset_key ); ?>;
+<?php if ( ! $enabled ) : ?>
+	d.dataset[DS] = 'light'; /* "Dark mode" feature off → force light, ignore any saved/system preference. */
+	return;
+<?php endif; ?>
 	var KEY = <?php echo wp_json_encode( $key ); ?>;
 	var m;
 	try {

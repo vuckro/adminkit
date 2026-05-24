@@ -361,7 +361,7 @@ class AdminKit_Settings_Page {
 		return array(
 			array( 'key' => 'post_previews_enabled', 'label' => __( 'Post previews', 'adminkit' ),             'desc' => __( 'Screenshot thumbnail column in post-type list tables.', 'adminkit' ) ),
 			array( 'key' => 'post_previews_mshots',  'label' => __( 'Live screenshots (mShots)', 'adminkit' ), 'desc' => __( 'Use WordPress.com mShots. Off = featured image only (no external calls).', 'adminkit' ), 'parent' => 'post_previews_enabled' ),
-			array( 'key' => 'theme_toggle_enabled',  'label' => __( 'Light / dark toggle', 'adminkit' ),       'desc' => __( 'Show the light/dark switch in the admin bar.', 'adminkit' ) ),
+			array( 'key' => 'theme_toggle_enabled',  'label' => __( 'Dark mode', 'adminkit' ),       'desc' => __( 'Enable dark mode with a toggle in the admin bar. Off forces light mode everywhere.', 'adminkit' ) ),
 			array( 'key' => 'module_login_enabled',  'label' => __( 'Login screen', 'adminkit' ),              'desc' => __( 'Style the wp-login.php screen.', 'adminkit' ) ),
 			array( 'key' => 'module_editor_enabled', 'label' => __( 'Block editor', 'adminkit' ),              'desc' => __( 'Style the Gutenberg editor.', 'adminkit' ) ),
 		);
