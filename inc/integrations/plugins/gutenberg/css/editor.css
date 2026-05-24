@@ -9,6 +9,18 @@ body.block-editor-page.adminkit .interface-interface-skeleton__header {
 	border-bottom: 1px solid var(--ak-border);
 }
 
+/* Light/dark toggle injected into the editor header (js/theme-toggle.js) — the
+   admin-bar toggle is hidden in the fullscreen editor. Inherits .components-button
+   sizing; just size the icon and tint it with the header foreground. */
+body.block-editor-page.adminkit .ak-editor-theme-toggle {
+	color: var(--ak-text);
+}
+body.block-editor-page.adminkit .ak-editor-theme-toggle svg {
+	width: 24px;
+	height: 24px;
+	fill: currentColor;
+}
+
 body.block-editor-page.adminkit .edit-post-sidebar,
 body.block-editor-page.adminkit .interface-complementary-area {
 	background: var(--ak-surface);
