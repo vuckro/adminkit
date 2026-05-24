@@ -177,21 +177,11 @@ body.block-editor-page.adminkit .components-checkbox-control__input[type=checkbo
 }
 
 
-/* ========== 8. Secondary / tertiary buttons (primary lives in editor.css) ========== */
-body.block-editor-page.adminkit .components-button.is-secondary {
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	border-color: var(--ak-border-strong);
-	box-shadow: none;
-}
-
-body.block-editor-page.adminkit .components-button.is-secondary:hover:not(:disabled),
-body.block-editor-page.adminkit .components-button.is-secondary:focus:not(:disabled) {
-	background: var(--ak-hover-bg);
-	color: var(--ak-heading);
-	border-color: var(--ak-border-strong);
-}
-
+/* ========== 8. Tertiary / destructive buttons ==========
+   Primary + the neutral secondary both live in editor.css (the editor's button
+   file) — it owns .is-secondary, so there's a single source of truth and no
+   conflicting override here. This section only adds the tiers editor.css doesn't:
+   the quiet tertiary text button and the destructive (Move to trash) pill. */
 body.block-editor-page.adminkit .components-button.is-tertiary {
 	color: var(--ak-text);
 }
