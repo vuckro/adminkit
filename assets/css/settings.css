@@ -75,6 +75,10 @@
 	color: var(--ak-on-accent);
 }
 .adminkit-app .ak-btn--primary:hover { background: var(--ak-primary-hover); border-color: var(--ak-primary-hover); }
+/* Secondary .ak-btn hover/focus — the canonical secondary feedback (shared
+   --ak-btn-hover-* tokens), matching .button-secondary across wp-admin. */
+.adminkit-app .ak-btn:not(.ak-btn--primary):hover,
+.adminkit-app .ak-btn:not(.ak-btn--primary):focus-visible { background: var(--ak-btn-hover-bg); border-color: var(--ak-btn-hover-border); }
 .adminkit-app .ak-btn:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
 .adminkit-app .ak-btn[disabled] { opacity: .45; cursor: default; }
 
