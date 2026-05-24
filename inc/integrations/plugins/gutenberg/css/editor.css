@@ -84,6 +84,16 @@ body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-seconda
 	color: var(--ak-text);
 }
 
+/* Pressed / active toolbar toggles (Bold, List view, the open inserter, …). WP
+   fills them with the dark foreground (--wp-components-color-foreground), which
+   reads as a heavy grey block in the light editor. Route to AdminKit's soft
+   selected look — a brand tint + accent icon — matching .button.active. */
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-pressed,
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-pressed:hover:not(:disabled, [aria-disabled="true"]) {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+}
+
 /* Sidebar tabs (Post / Block) */
 body.adminkit:is(.block-editor-page, .widgets-php) .components-tab-panel__tabs .components-tab-panel__tabs-item.is-active {
 	color: var(--ak-heading);
