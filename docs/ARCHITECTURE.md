@@ -1,20 +1,23 @@
 # Architecture
 
-How AdminKit fits together, end to end. For task-specific detail follow the
-links; this page is the mental model.
+How AdminKit fits together, end to end — the mental model plus the two APIs you
+touch most (the **asset registry** and the **settings registry**). Token
+specifics live in [TOKENS.md](TOKENS.md); integration patterns in
+[INTEGRATIONS.md](INTEGRATIONS.md); every hook in [EXTENDING.md](EXTENDING.md).
 
 ## The shape of it
 
 AdminKit is **standalone** — it ships a complete look with no dependencies — and
-optionally takes brand colours from a **provider** (a theme/framework like Bricks).
-Everything visual flows through CSS custom properties (`--ak-*`), so one
+optionally takes brand colours from a **provider** (a theme/framework like
+Bricks). Everything visual flows through CSS custom properties (`--ak-*`), so one
 indirection drives both dark mode and provider theming.
 
 ```
 adminkit.php
   └─ AdminKit_Plugin::init()
        ├─ AdminKit_Assets::init()          wire the 4 dispatch hooks
-       ├─ wp-core modules ::register()/init()   chrome, login, profile, admin bar, …
+       ├─ wp-core modules ::init()         chrome, login, profile, admin bar,
+       │                                   list-table, post-previews (CSS + JS bricks)
        ├─ Settings + Theme toggle init
        ├─ boot_integrations()              glob inc/integrations/*/*/class-*.php,
        │                                   queue each maybe_init() on after_setup_theme
@@ -23,33 +26,86 @@ adminkit.php
 
 `after_setup_theme` runs after the active theme loads, so host constants
 (`BRICKS_VERSION`, `WC_VERSION`, …) are reliable when an integration checks
-`is_active()`.
+`is_active()`. Class names (`AdminKit_*`) are stable; the folder grouping is
+organizational only — integration discovery derives the class from the file
+basename (see [INTEGRATIONS.md](INTEGRATIONS.md)).
 
-## Asset pipeline
+## Asset registry (CSS + JS)
 
 CSS is **declared**, not enqueued directly. Each module calls
-`AdminKit_Assets::register([ handle, src, deps, context, section, condition ])`.
-A dispatcher then enqueues the matching entries once per request, per **context**:
+`AdminKit_Assets::register([ … ])`; a dispatcher enqueues the matching entries
+once per request, per **context**:
 
-| Context | WP hook | When |
+| Context | WP hook | When (priority 9999, after WP) |
 | --- | --- | --- |
-| `admin` | `admin_enqueue_scripts` | wp-admin |
+| `admin` | `admin_enqueue_scripts` | every wp-admin page |
 | `login` | `login_enqueue_scripts` | wp-login.php |
 | `frontend` | `wp_enqueue_scripts` | only when the admin bar shows |
 | `editor` | `enqueue_block_editor_assets` | block / site / widgets / nav editors |
 
-Per-screen files load conditionally via a `condition` closure on `$screen`
-(e.g. `wp-screens/themes.css` only on `themes.php`). `filemtime` cache-busts every
-file. Bail filters exist at every level (`adminkit/should_load`,
-`adminkit/enqueue_{context}`, `adminkit/enqueue_{section}`, `adminkit/enqueue_{handle}`).
-Full API: [ASSETS.md](ASSETS.md).
+```php
+AdminKit_Assets::register( array(
+    'handle'    => 'adminkit-themes',
+    'src'       => 'assets/css/wp-screens/themes.css', // relative to ADMINKIT_PATH
+    'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+    'context'   => 'admin',
+    'section'   => 'pages',  // optional; defaults to handle minus `adminkit-`
+    'condition' => static function ( $screen ) {        // null = always-load
+        return $screen && in_array( $screen->id, array( 'themes', 'theme-install' ), true );
+    },
+) );
+```
+
+**Three gates** decide whether a registered entry enqueues, in order — any false
+skips it: `adminkit/enqueue_{section}` (per-section bail), `adminkit/enqueue_{handle}`
+(per-asset bail), then the `condition` closure. `filemtime` cache-busts every
+file (edit CSS/JS → no version bump). All bail filters are in [EXTENDING.md](EXTENDING.md).
+
+**JS bricks.** Feature behaviour (profile tabs, post-preview hover, list-table
+polish) ships as `assets/js/wp-core/*.js`, enqueued in the footer via
+`AdminKit_Assets::enqueue_script( $handle, $src, $deps, $data )` — same
+`filemtime` cache-bust as CSS, with PHP data passed as a `before` inline
+bootstrap (`window.AdminKit*`). The one exception is the **theme pre-paint
+script** in `class-theme-toggle.php`: it stays inline in `<head>` so dark/light
+applies before first paint (no FOUC). `assets/js/settings.js` is the settings SPA.
+
+**Where AdminKit registers its own assets:** `inc/wp-core/class-chrome.php` (all
+admin CSS — chrome, components, screens), `class-login.php` (login), the wp-core
+feature classes (their CSS + JS), and each integration's `register_assets()`.
+The dispatcher itself knows about no specific asset.
+
+```
+assets/
+├── css/
+│   ├── tokens.css                 # the --ak-* layer, ALWAYS on; owns dark mode
+│   ├── waaskit-tokens.css         # GENERATED baseline (see TOKENS.md — do not edit)
+│   ├── wp-core/                   # always in admin: chrome, links, adminbar
+│   ├── wp-components/             # always in admin (section `forms`): inputs, buttons, tables, form-table, post-previews
+│   ├── wp-screens/                # per-screen (section `pages`) + _shared/ + a few broad always-on (wp-components, wpds, font-library, media)
+│   ├── login.css                  # login context
+│   └── settings.css               # AdminKit settings page
+└── js/
+    ├── settings.js                # settings SPA
+    └── wp-core/                   # footer bricks: profile-account, post-previews, list-table-chrome
+inc/integrations/{plugins|themes}/{slug}/css/   # integration CSS, registered by each class
+```
+
+**Add a per-screen file:** drop `assets/css/wp-screens/{name}.css`, then add a
+`self::register_screen( '{name}', array( '{screen-id}', … ) )` line in
+`inc/wp-core/class-chrome.php`. The helper wraps the registry call with the
+`section => 'pages'` filter and a screen-matching `condition`.
+
+**Dynamic CSS:** the `adminkit/tokens_enqueued` action fires right after
+`adminkit-tokens` is enqueued for a context — hook it with
+`wp_add_inline_style( AdminKit_Assets::TOKENS_HANDLE, $css )` to inject runtime
+token overrides (e.g. a provider/integration applying live values).
 
 ## The token cascade (the core idea)
 
 Every `--ak-*` token resolves through layers, each **optional**, degrading cleanly:
 
 ```
-provider tokens   (Bricks live CSS at /uploads/bricks/css/…, runtime)   ← optional
+provider tokens   (Bricks live CSS at /uploads/bricks/css/…, runtime)    ← optional
       ↓ overrides
 WaasKit baseline  (assets/css/waaskit-tokens.css, generated from tokens/) ← optional
       ↓ feeds
@@ -63,51 +119,59 @@ neutral greys     (hardcoded hsl() at the end of each var() chain)
               /*  provider    baseline       baseline          standalone */
 ```
 
-- **Cascade order** is set in `enqueue_tokens()` (class-assets.php): WP core →
-  `adminkit-waaskit` (baseline) → provider handle → `adminkit-tokens`. Later
-  sheets win, so a provider overrides the baseline; the baseline fills anything
-  the provider doesn't set.
-- **Dark mode** is AdminKit's: `tokens.css` redeclares semantic surface/border/text
-  under `[data-adminkit-theme="dark"]`. Brand colours stay constant across modes.
-  The baseline carries no dark block (it's a light-context drop-in).
-- **Turning layers off:**
-  - provider → its integration toggle (`integration_{slug}_enabled`) /
-    `adminkit/integration_enabled`; a disabled/absent provider feeds nothing.
-  - baseline → `add_filter( 'adminkit/enqueue_baseline', '__return_false' )`;
-    with no provider either, the admin rides the neutral fallbacks.
-
-The baseline source + build live in [tokens/](../tokens/README.md); the token
-catalogue + mapping in [TOKENS.md](TOKENS.md).
+Cascade order is set in `enqueue_tokens()` (class-assets.php): WP core →
+`adminkit-waaskit` (baseline) → provider handle → `adminkit-tokens`. Later sheets
+win. Dark mode is AdminKit's: `tokens.css` redeclares semantic surface/border/text
+under `[data-adminkit-theme="dark"]`; brand colours stay constant. Turn the
+baseline off with `add_filter( 'adminkit/enqueue_baseline', '__return_false' )`;
+a provider off via its integration toggle. Full catalogue + build: [TOKENS.md](TOKENS.md).
 
 ## Provider model
 
 A provider is just an integration that supplies tokens at runtime. Bricks
 (`inc/integrations/themes/bricks/class-bricks.php`) is the reference:
-
-1. `provide_tokens()` (hooked on `adminkit/extra_tokens_handle`) enqueues the
-   host's live token sheet **as a dependency of the baseline**, so it loads after
-   and wins the cascade. Returns `null` when the host hasn't generated one — then
-   AdminKit falls back to the baseline.
-2. The settings page lists providers via `providers()` (class-settings-page.php),
-   each `{ id, label, status, detected }`.
+`provide_tokens()` (on `adminkit/extra_tokens_handle`) enqueues the host's live
+token sheet **as a dependency of the baseline**, so it loads after and wins;
+returns `null` when the host hasn't generated one (AdminKit falls back to the
+baseline). The settings page lists providers via `providers()`.
 
 **To add a provider:** create an integration that returns its token handle from
-`adminkit/extra_tokens_handle`. No core changes.
-
-**Future colour sync** (import/sync the active theme's palette) plugs into the
-same seams — `adminkit/extra_tokens_handle`, the `providers()` list, the
-`adminkit/setting/{key}` value filter, and the REST save in
-`class-settings-page.php`. Nothing new in core is required to wire it.
+`adminkit/extra_tokens_handle`. No core changes. A future palette-sync feature
+plugs into the same seams — `adminkit/extra_tokens_handle`, the `providers()`
+list, the `adminkit/setting/{key}` filter, and the REST save.
 
 ## Settings
 
-`AdminKit_Settings` is the registry (defaults + sanitizers + `color_map()`).
-`AdminKit_Settings_Page` mounts a small vanilla-JS SPA (`assets/js/settings.js`)
-on the top-level **AdminKit** menu and persists via one REST route. Today the
-Appearance tab is a read-only token map plus a palette switch; integration
-toggles persist. See [SETTINGS.md](SETTINGS.md).
+`AdminKit_Settings` is the registry; `AdminKit_Settings_Page` mounts a small
+vanilla-JS SPA (`assets/js/settings.js`) on the top-level **AdminKit** menu and
+persists via one REST route (`adminkit/v1/settings`). Three tabs: Dashboard,
+**Tokens** (a read-only reference of the semantic token map), Features (the only
+interactive controls — module toggles).
+
+```php
+AdminKit_Settings::register( $key, array $args );  // declare a setting (idempotent)
+AdminKit_Settings::get( $key );                    // option → default → adminkit/setting/{key} filter
+AdminKit_Settings::schema();                        // registered schema (UI render + save sanitising)
+AdminKit_Settings::color_map();                     // semantic token taxonomy the Tokens tab renders
+```
+
+What's registered today: the feature toggles (`module_login_enabled`,
+`module_editor_enabled`, `theme_toggle_enabled`, `post_previews_mshots`,
+`post_previews_enabled`), all boolean, default ON, bound to existing enqueue
+filters in `bind_modules()`. Add one from an integration in its `boot()`:
+
+```php
+AdminKit_Settings::register( 'foo_density', array( 'default' => 'comfortable' ) );
+add_filter( 'adminkit/setting/foo_density', fn( $v ) => $v ); // optional override
+$density = AdminKit_Settings::get( 'foo_density' );
+```
+
+Saving keeps only registered keys and runs each through its `sanitize` callback.
+There is intentionally **no per-token colour editor** — the Tokens tab is a
+read-only map; the palette is driven by the provider/baseline cascade.
 
 ## Where to go next
 
-[CLAUDE.md](../CLAUDE.md) (task index + guardrails) · [ASSETS.md](ASSETS.md) ·
-[INTEGRATIONS.md](INTEGRATIONS.md) · [TOKENS.md](TOKENS.md) · [SETTINGS.md](SETTINGS.md)
+[CLAUDE.md](../CLAUDE.md) (task index + guardrails) ·
+[INTEGRATIONS.md](INTEGRATIONS.md) · [TOKENS.md](TOKENS.md) ·
+[EXTENDING.md](EXTENDING.md)
