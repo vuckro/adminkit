@@ -48,7 +48,7 @@ any palette change: `php design-system/build-tokens.php` (and
 
 ### Tier 1 — WaasKit semantics (1:1)
 
-`--ak-*` token → WaasKit semantic consumed → the primitive it resolves from → standalone fallback (light). One declaration each: `color-mix` / the `l-*` ramp are only the no-provider fallback (the provider's `--accent-hover` / `--accent-subtle` / `--focus` win when present). The `-subtle` fills are **opaque** per WaasKit (the `l-9`/`l-10` ramp); the dark block re-maps them onto the `d-9`/`d-10` ramp (see [Light / dark](#light--dark)).
+`--ak-*` token → WaasKit semantic consumed → the primitive it resolves from → standalone fallback (light). One declaration each: `color-mix` / the `l-*` ramp are only the no-provider fallback (the provider's `--accent-hover` / `--accent-subtle` / `--focus` win when present). The `-subtle` fills are **opaque** per WaasKit (the `l-9` ramp); the dark block re-maps them onto the `d-9` ramp (see [Light / dark](#light--dark)).
 
 | Group | AdminKit token | WaasKit semantic | → primitive | Fallback (light) |
 | ----- | -------------- | ---------------- | ----------- | ---------------- |
@@ -63,7 +63,7 @@ any palette change: `php design-system/build-tokens.php` (and
 | | `--ak-text-muted` | `--text-muted` | `--neutral-l-7` | `hsl(0 0% 50%)` |
 | **Accent** | `--ak-primary` | `--accent` | `--primary` | neutral gray `hsl(0 0% 32%)` |
 | | `--ak-primary-hover` | `--accent-hover` | `--primary-d-1` | `color-mix` darken |
-| | `--ak-primary-subtle` | `--accent-subtle` | `--primary-l-10` | `--ak-primary` @ 12% over surface |
+| | `--ak-primary-subtle` | `--accent-subtle` | `--primary-l-9` | `--ak-primary` @ 12% over surface |
 | | `--ak-on-accent` | `--accent-on` | `--primary-d-10` | off-white `hsl(0 0% 98%)` |
 | **State** | `--ak-focus` | `--focus` | `--primary-t-5` ⚠️ | `--ak-primary` @ 27% |
 | **Overlay** | `--ak-overlay` | `--overlay` | `--black-t-7` | `rgba(0 0 0 / .5)` |

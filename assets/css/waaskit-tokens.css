@@ -308,7 +308,7 @@
 	--accent: var(--primary);
 	--accent-hover: var(--primary-d-1);
 	--accent-on: var(--primary-d-10);
-	--accent-subtle: var(--primary-l-10);
+	--accent-subtle: var(--primary-l-9);
 	--input: var(--neutral-l-1);
 	--focus: var(--primary);
 	--heading: var(--neutral-l-9);
