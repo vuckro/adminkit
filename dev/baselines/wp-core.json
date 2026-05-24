@@ -1,0 +1,435 @@
+{
+    "slug": "wp-core",
+    "host_dir": "wp-admin/css",
+    "host_version": "7.0",
+    "captured_at": "2026-05-24",
+    "files": 101,
+    "brand": "3858e9@1.00",
+    "variables": {
+        "--accent-1": "#3858e9",
+        "--accent-2": "#183ad6",
+        "--accent-3": "#ececec",
+        "--accent-gradient": "linear-gradient(-90deg, #000000 4.7%, var(--accent-1) 83.84%)",
+        "--background": "#ebe8e5",
+        "--nav-background": "#fff",
+        "--nav-color": "var(--text)",
+        "--nav-current": "var(--accent-1)",
+        "--site-icon-address-bar-background": "#f0f0f1",
+        "--site-icon-address-bar-close": "#646970",
+        "--site-icon-address-bar-text": "#3c434a",
+        "--site-icon-input-border": "#8c8f94",
+        "--site-icon-preview-background": "#fff",
+        "--site-icon-preview-browser-border": "rgba(255, 255, 255, 0.2)",
+        "--site-icon-preview-browser-bottom": "#a7aaad",
+        "--site-icon-preview-browser-top": "#dcdcde",
+        "--site-icon-removal": "#b32d2e",
+        "--site-icon-shadow-1": "rgba(0, 0, 0, 0.1)",
+        "--site-icon-shadow-2": "rgba(0, 0, 0, 0.2)",
+        "--site-icon-shadow-3": "rgba(0, 0, 0, 0.5)",
+        "--subtle-background": "#ebe8e5",
+        "--text": "#1e1e1e",
+        "--text-light": "#fff"
+    },
+    "colors": {
+        "ffffff@1.00": {
+            "count": 1389,
+            "cat": "text",
+            "token": "--ak-on-accent"
+        },
+        "dcdcde@1.00": {
+            "count": 378,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "c3c4c7@1.00": {
+            "count": 315,
+            "cat": "border",
+            "token": "--ak-border-strong"
+        },
+        "3858e9@1.00": {
+            "count": 261,
+            "cat": "shadow",
+            "token": "--ak-primary"
+        },
+        "f0f0f1@1.00": {
+            "count": 255,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "0073aa@1.00": {
+            "count": 213,
+            "cat": "text",
+            "token": "--ak-info"
+        },
+        "646970@1.00": {
+            "count": 195,
+            "cat": "text",
+            "token": "--ak-text"
+        },
+        "f6f7f7@1.00": {
+            "count": 156,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "50575e@1.00": {
+            "count": 153,
+            "cat": "text",
+            "token": "--ak-text"
+        },
+        "d63638@1.00": {
+            "count": 129,
+            "cat": "text",
+            "token": "--ak-error"
+        },
+        "f0f0f0@1.00": {
+            "count": 123,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "9ebaa0@1.00": {
+            "count": 123,
+            "cat": "text",
+            "token": "--ak-success"
+        },
+        "e14d43@1.00": {
+            "count": 123,
+            "cat": "text",
+            "token": "--ak-error"
+        },
+        "c7a589@1.00": {
+            "count": 123,
+            "cat": "text",
+            "token": "--ak-warning"
+        },
+        "a3b745@1.00": {
+            "count": 123,
+            "cat": "text",
+            "token": "--ak-primary"
+        },
+        "1d2327@1.00": {
+            "count": 120,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "949494@1.00": {
+            "count": 111,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "04a4cc@1.00": {
+            "count": 105,
+            "cat": "text",
+            "token": "--ak-info"
+        },
+        "dd823b@1.00": {
+            "count": 96,
+            "cat": "bg",
+            "token": "--ak-warning"
+        },
+        "000000@0.10": {
+            "count": 93,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "1e1e1e@1.00": {
+            "count": 90,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "2c3338@1.00": {
+            "count": 78,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "2271b1@1.00": {
+            "count": 72,
+            "cat": "text",
+            "token": "--ak-primary"
+        },
+        "3c434a@1.00": {
+            "count": 63,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "000000@1.00": {
+            "count": 60,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "8c8f94@1.00": {
+            "count": 57,
+            "cat": "border",
+            "token": "--ak-border-strong"
+        },
+        "dddddd@1.00": {
+            "count": 57,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "e1a948@1.00": {
+            "count": 57,
+            "cat": "border",
+            "token": "--ak-warning"
+        },
+        "096484@1.00": {
+            "count": 54,
+            "cat": "bg",
+            "token": "--ak-info"
+        },
+        "f3f1f1@1.00": {
+            "count": 54,
+            "cat": "text",
+            "token": "--ak-on-accent"
+        },
+        "a7aaad@1.00": {
+            "count": 51,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "b32d2e@1.00": {
+            "count": 45,
+            "cat": "text",
+            "token": "--ak-error"
+        },
+        "787c82@1.00": {
+            "count": 42,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "0096dd@1.00": {
+            "count": 42,
+            "cat": "text",
+            "token": "--ak-info"
+        },
+        "72aee6@1.00": {
+            "count": 39,
+            "cat": "text",
+            "token": "--ak-primary"
+        },
+        "000000@0.04": {
+            "count": 30,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "cc1818@1.00": {
+            "count": 30,
+            "cat": "text",
+            "token": "--ak-error"
+        },
+        "333333@1.00": {
+            "count": 30,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "f2fcff@1.00": {
+            "count": 27,
+            "cat": "text",
+            "token": "--ak-primary-subtle"
+        },
+        "f1f2f3@1.00": {
+            "count": 27,
+            "cat": "text",
+            "token": "--ak-on-accent"
+        },
+        "e5f8ff@1.00": {
+            "count": 27,
+            "cat": "text",
+            "token": "--ak-primary-subtle"
+        },
+        "f7e3d3@1.00": {
+            "count": 27,
+            "cat": "text",
+            "token": "--ak-warning"
+        },
+        "f3f2f1@1.00": {
+            "count": 27,
+            "cat": "text",
+            "token": "--ak-on-accent"
+        },
+        "ece6f6@1.00": {
+            "count": 27,
+            "cat": "text",
+            "token": "--ak-primary-subtle"
+        },
+        "7b90ff@1.00": {
+            "count": 27,
+            "cat": "text",
+            "token": "--ak-primary"
+        },
+        "dba617@1.00": {
+            "count": 24,
+            "cat": "text",
+            "token": "--ak-warning"
+        },
+        "000000@0.50": {
+            "count": 24,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "0a4b78@1.00": {
+            "count": 24,
+            "cat": "text",
+            "token": "--ak-primary"
+        },
+        "e73030@1.00": {
+            "count": 24,
+            "cat": "text",
+            "token": "--ak-error"
+        },
+        "fbfbfc@1.00": {
+            "count": 24,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "999999@1.00": {
+            "count": 24,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "000000@0.30": {
+            "count": 21,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "738e96@1.00": {
+            "count": 21,
+            "cat": "bg",
+            "token": "--ak-info"
+        },
+        "363b3f@1.00": {
+            "count": 21,
+            "cat": "bg",
+            "token": "--ak-heading"
+        },
+        "52accc@1.00": {
+            "count": 21,
+            "cat": "bg",
+            "token": "--ak-info"
+        },
+        "cf4944@1.00": {
+            "count": 21,
+            "cat": "bg",
+            "token": "--ak-error"
+        },
+        "59524c@1.00": {
+            "count": 21,
+            "cat": "bg",
+            "token": "--ak-text"
+        },
+        "523f6d@1.00": {
+            "count": 21,
+            "cat": "bg",
+            "token": "--ak-primary"
+        },
+        "e5e5e5@1.00": {
+            "count": 21,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "888888@1.00": {
+            "count": 21,
+            "cat": "bg",
+            "token": "--ak-text-muted"
+        },
+        "007017@1.00": {
+            "count": 18,
+            "cat": "text",
+            "token": "--ak-success"
+        },
+        "4f94d4@1.00": {
+            "count": 18,
+            "cat": "border",
+            "token": "--ak-primary"
+        },
+        "000000@0.20": {
+            "count": 18,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "68de7c@1.00": {
+            "count": 18,
+            "cat": "text",
+            "token": "--ak-success"
+        },
+        "fcf0f1@1.00": {
+            "count": 18,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "627c83@1.00": {
+            "count": 18,
+            "cat": "bg",
+            "token": "--ak-info"
+        },
+        "26292c@1.00": {
+            "count": 18,
+            "cat": "bg",
+            "token": "--ak-heading"
+        },
+        "4796b3@1.00": {
+            "count": 18,
+            "cat": "bg",
+            "token": "--ak-info"
+        },
+        "be3631@1.00": {
+            "count": 18,
+            "cat": "bg",
+            "token": "--ak-error"
+        },
+        "46403c@1.00": {
+            "count": 18,
+            "cat": "bg",
+            "token": "--ak-heading"
+        },
+        "413256@1.00": {
+            "count": 18,
+            "cat": "bg",
+            "token": "--ak-primary"
+        },
+        "0c0c0c@1.00": {
+            "count": 18,
+            "cat": "bg",
+            "token": "--ak-heading"
+        },
+        "3582c4@1.00": {
+            "count": 15,
+            "cat": "shadow",
+            "token": "--ak-primary"
+        },
+        "fcf9e8@1.00": {
+            "count": 15,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "aa9d88@1.00": {
+            "count": 15,
+            "cat": "bg",
+            "token": "--ak-warning"
+        },
+        "69a8bb@1.00": {
+            "count": 15,
+            "cat": "bg",
+            "token": "--ak-info"
+        },
+        "ccaf0b@1.00": {
+            "count": 15,
+            "cat": "bg",
+            "token": "--ak-primary"
+        },
+        "9ea476@1.00": {
+            "count": 15,
+            "cat": "bg",
+            "token": "--ak-primary"
+        },
+        "d46f15@1.00": {
+            "count": 15,
+            "cat": "bg",
+            "token": "--ak-warning"
+        },
+        "d64e07@1.00": {
+            "count": 15,
+            "cat": "bg",
+            "token": "--ak-warning"
+        }
+    }
+}
