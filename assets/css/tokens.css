@@ -104,6 +104,13 @@
 	--ak-focus: var(--focus, color-mix(in srgb, var(--ak-primary) 27%, transparent));
 	--ak-focus-ring: 0 0 0 3px var(--ak-focus);
 
+	/* Secondary-button hover/focus feedback (V2: neutral tint + stronger border).
+	   Tokenised so dark mode can calm the fill + lift the border on its own,
+	   WITHOUT touching the global --ak-hover-bg / --ak-border-strong (which menus,
+	   rows and inputs also use). Light = the global values. */
+	--ak-btn-hover-bg: var(--ak-hover-bg);
+	--ak-btn-hover-border: var(--ak-border-strong);
+
 	/* ── Overlay ─────────────────────────────────────────────────────────
 	   Scrim behind modals / drawers — a translucent black, both modes. */
 	--ak-overlay: var(--overlay, var(--black-t-7, rgba(0, 0, 0, 0.5)));
@@ -208,18 +215,25 @@ body.adminkit[class*="admin-color-"] {
 	/* Inverted elevation — a white lift reads on a dark page where a black
 	   drop would vanish. */
 	--ak-shadow-elevated: 0 8px 24px -10px rgba(255, 255, 255, 0.14);
+
+	/* Secondary-button hover: the global white tint reads too strong and the d-5
+	   border too faint on dark surfaces — soften the fill, lift the border. */
+	--ak-btn-hover-bg: rgba(255, 255, 255, 0.05);
+	--ak-btn-hover-border: var(--neutral-d-6, hsl(0, 0%, 38%));
 }
 
-/* The block + widgets editors have NO dark theme: WordPress ships none, and
-   half-theming their many hardcoded surfaces looks broken. So the editor stays
-   LIGHT even when AdminKit dark mode is on globally — and even when the "Block
-   editor" feature is OFF (this lives in tokens.css, ALWAYS loaded, not the gated
-   editor.css). Re-pin the tokens the dark block flips back to their light values
-   on the editor body; the whole editor (chrome + @wordpress/components, which
-   read --wp-components-color-* → --ak-*) then renders light regardless of the
-   global toggle. Brand/geometry tokens don't flip, so they're not repeated. */
-body.adminkit.block-editor-page,
-body.adminkit.widgets-php {
+/* Force-light fallback for the block + widgets editors when the "Block editor"
+   feature is OFF. tokens.css is ALWAYS loaded, so it still maps
+   --wp-components-color-* → the dark-flipped --ak-*; with the feature off (no
+   editor.css / dark-mode-map.css, no toggle) that alone would leave the editor
+   half-dark. Re-pin the flipped tokens to light here so it stays WP-default.
+
+   When the feature is ON, class-gutenberg.php adds `ak-editor-themed` to <body>,
+   this block drops out (via :not), and the editor follows the global light/dark
+   toggle — editor.css + dark-mode-map.css then theme it coherently in both modes.
+   Brand/geometry tokens don't flip, so they're not repeated. */
+body.adminkit.block-editor-page:not(.ak-editor-themed),
+body.adminkit.widgets-php:not(.ak-editor-themed) {
 	--ak-bg: var(--background, hsl(0, 0%, 98%));
 	--ak-surface: var(--surface, hsl(0, 0%, 96%));
 	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
@@ -235,4 +249,6 @@ body.adminkit.widgets-php {
 	--ak-warning-subtle: var(--warning-subtle, var(--warning-l-9, color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface))));
 	--ak-error-subtle: var(--error-subtle, var(--error-l-9, color-mix(in srgb, var(--ak-error) 14%, var(--ak-surface))));
 	--ak-info-subtle: var(--info-subtle, var(--info-l-9, color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface))));
+	--ak-btn-hover-bg: var(--ak-hover-bg);
+	--ak-btn-hover-border: var(--ak-border-strong);
 }

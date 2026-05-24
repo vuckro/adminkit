@@ -1,0 +1,1166 @@
+/* Gutenberg @wordpress/components + edit-post + editor + block-editor
+   token bridge. AdminKit already remaps --wp-components-color-* on
+   body.adminkit (tokens.css), which catches every Gutenberg surface
+   that actually consumes those vars. The rest of the chrome hardcodes
+   #fff / #1e1e1e / #ddd / #f0f0f0 — this file patches those selectors
+   so the whole editor flips with the data-adminkit-theme="dark" toggle.
+
+   Scoping rule:
+   - All selectors prefixed with body.block-editor-page.adminkit.
+   - The canvas (.editor-styles-wrapper and everything inside it) is
+     left alone: it represents the visitor-facing surface and must
+     keep its declared block styles. color-scheme is forced light
+     inside the canvas as a defensive measure for native form controls.
+
+   Sections, from outermost shell down to popovers and form controls. */
+
+
+/* ========== 1. Editor shell ========== */
+body.block-editor-page.adminkit .interface-interface-skeleton__body,
+body.block-editor-page.adminkit .interface-interface-skeleton__content {
+	background: var(--ak-bg);
+}
+
+body.block-editor-page.adminkit .interface-interface-skeleton__secondary-sidebar {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .interface-interface-skeleton__footer {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+
+/* ========== 2. Document bar (centered title bar, v15+) ========== */
+body.block-editor-page.adminkit .editor-document-bar {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .editor-document-bar__title,
+body.block-editor-page.adminkit .editor-document-bar .editor-document-bar__post-type-label {
+	color: var(--ak-heading);
+}
+
+/* Document bar button hover — neutral hover wash, consistent with the
+   rest of the editor chrome. */
+body.block-editor-page.adminkit .editor-document-bar .components-button:hover:not(:disabled, [aria-disabled="true"]) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+	border-radius: var(--ak-radius-s);
+}
+
+
+/* ========== 3. Sidebar internals ========== */
+/* Outer surface set in editor.css; headings + tab strip here. */
+body.block-editor-page.adminkit .editor-sidebar h2,
+body.block-editor-page.adminkit .editor-sidebar h3,
+body.block-editor-page.adminkit .interface-complementary-area h2,
+body.block-editor-page.adminkit .interface-complementary-area h3,
+body.block-editor-page.adminkit .editor-block-inspector h2,
+body.block-editor-page.adminkit .editor-block-inspector h3 {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .editor-sidebar__panel-tabs,
+body.block-editor-page.adminkit .edit-post-sidebar__panel-tabs {
+	border-bottom-color: var(--ak-border);
+}
+
+
+/* ========== 4. Collapsible panels (.components-panel) ========== */
+body.block-editor-page.adminkit .components-panel,
+body.block-editor-page.adminkit .components-panel__body {
+	background: transparent;
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-panel__header {
+	background: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .components-panel__body-title,
+body.block-editor-page.adminkit .components-panel__body-toggle {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .components-panel__body-toggle:hover,
+body.block-editor-page.adminkit .components-panel__body-toggle:focus {
+	background: var(--ak-hover-bg);
+}
+
+
+/* ========== 5. Block card (block icon + title in inspector) ========== */
+body.block-editor-page.adminkit .block-editor-block-card,
+body.block-editor-page.adminkit .block-editor-block-icon {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-block-card__title {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .block-editor-block-card__description {
+	color: var(--ak-text-muted);
+}
+
+
+/* ========== 6. Form controls (text / textarea / select / search) ========== */
+body.block-editor-page.adminkit .components-text-control__input,
+body.block-editor-page.adminkit .components-textarea-control__input,
+body.block-editor-page.adminkit .components-input-control__container input,
+body.block-editor-page.adminkit .components-input-control__input,
+body.block-editor-page.adminkit .components-select-control__input,
+body.block-editor-page.adminkit .components-search-control input[type="search"],
+body.block-editor-page.adminkit .components-form-token-field__input-container,
+body.block-editor-page.adminkit .components-combobox-control__suggestions-container {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-text-control__input:focus,
+body.block-editor-page.adminkit .components-textarea-control__input:focus,
+body.block-editor-page.adminkit .components-input-control__container input:focus,
+body.block-editor-page.adminkit .components-select-control__input:focus,
+body.block-editor-page.adminkit .components-search-control input[type="search"]:focus,
+body.block-editor-page.adminkit .components-form-token-field__input-container:focus-within {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+body.block-editor-page.adminkit .components-base-control__label,
+body.block-editor-page.adminkit .components-input-control__label {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-base-control__help {
+	color: var(--ak-text-muted);
+}
+
+
+/* ========== 7. Toggles, checkboxes ========== */
+body.block-editor-page.adminkit .components-form-toggle .components-form-toggle__track {
+	background: var(--ak-border-strong);
+}
+
+body.block-editor-page.adminkit .components-form-toggle.is-checked .components-form-toggle__track {
+	background: var(--ak-primary);
+}
+
+body.block-editor-page.adminkit .components-form-toggle .components-form-toggle__thumb {
+	background: var(--ak-surface);
+}
+
+body.block-editor-page.adminkit .components-checkbox-control__input {
+	background: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+}
+
+body.block-editor-page.adminkit .components-checkbox-control__input:checked {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+
+
+/* ========== 8. Secondary / tertiary buttons (primary lives in editor.css) ========== */
+body.block-editor-page.adminkit .components-button.is-secondary {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border-strong);
+	box-shadow: none;
+}
+
+body.block-editor-page.adminkit .components-button.is-secondary:hover:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-secondary:focus:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+	border-color: var(--ak-border-strong);
+}
+
+body.block-editor-page.adminkit .components-button.is-tertiary {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-button.is-tertiary:hover:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-tertiary:focus:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+/* Destructive secondary (Move to trash) — soft red pill that matches
+   the pressed-button pattern: subtle error tint bg + error text, no
+   border, no shadow. --ak-error-subtle bridges WaasKit --error-subtle
+   (opaque --error-l-9 in light, --error-d-9 in dark). */
+body.block-editor-page.adminkit .components-button.is-secondary.is-destructive,
+body.block-editor-page.adminkit .components-button.is-destructive {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
+	border: 0;
+	border-radius: var(--ak-radius-s);
+	box-shadow: none;
+}
+
+body.block-editor-page.adminkit .components-button.is-secondary.is-destructive:hover:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-secondary.is-destructive:focus:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-destructive:hover:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-destructive:focus:not(:disabled) {
+	background: var(--ak-error);
+	color: var(--ak-surface);
+	border: 0;
+	box-shadow: none;
+}
+
+
+/* ========== 9. Block toolbar (floating above selected block) ========== */
+body.block-editor-page.adminkit .block-editor-block-toolbar,
+body.block-editor-page.adminkit .block-editor-block-contextual-toolbar {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-toolbar-group,
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-toolbar {
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button,
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-toolbar-button {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button:hover:not(:disabled),
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button:focus:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button.is-pressed,
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button[aria-pressed="true"],
+body.block-editor-page.adminkit .block-editor-block-toolbar .components-button[aria-expanded="true"] {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+	border-radius: var(--ak-radius-s);
+}
+
+
+/* ========== 10. Popovers + dropdowns ========== */
+/* Skip popovers explicitly flagged .is-unstyled — Gutenberg uses
+   that hook for transparent overlay popovers like the in-between
+   block inserter (.block-editor-block-popover__inbetween) where
+   a styled surface would break the layout. Everything else gets a
+   solid surface so dropdown menus + popover cards stay opaque —
+   transparent left plain menus (no inner surface) see-through and
+   unreadable. */
+body.block-editor-page.adminkit .components-popover:not(.is-unstyled) .components-popover__content,
+body.block-editor-page.adminkit .components-dropdown-menu__menu {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-s);
+}
+
+body.block-editor-page.adminkit .components-menu-item__button,
+body.block-editor-page.adminkit .components-menu-items__direct-input {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-menu-item__button:hover:not(:disabled),
+body.block-editor-page.adminkit .components-menu-item__button:focus:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+/* "Reset" / "Reset all" tools-panel menu items — destructive, so red text
+   and no border to match the rest of the destructive pattern. */
+body.block-editor-page.adminkit .components-menu-item__button.is-destructive {
+	color: var(--ak-error);
+	border: 0;
+}
+
+body.block-editor-page.adminkit .components-menu-item__button.is-destructive:hover:not(:disabled),
+body.block-editor-page.adminkit .components-menu-item__button.is-destructive:focus:not(:disabled) {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
+}
+
+body.block-editor-page.adminkit .components-menu-group + .components-menu-group {
+	border-top-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-menu-group__label {
+	color: var(--ak-text-muted);
+}
+
+
+/* ========== 11. Modals ========== */
+body.block-editor-page.adminkit .components-modal__frame {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-m);
+}
+
+body.block-editor-page.adminkit .components-modal__header {
+	background: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-modal__header-heading {
+	color: var(--ak-heading);
+}
+
+
+/* ========== 12. Block inserter (the "+" panel) ========== */
+body.block-editor-page.adminkit .block-editor-inserter__menu,
+body.block-editor-page.adminkit .block-editor-inserter__panel-header,
+body.block-editor-page.adminkit .block-editor-inserter__main-area,
+body.block-editor-page.adminkit .block-editor-inserter__tabs {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-inserter__panel-title {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .block-editor-inserter__search input,
+body.block-editor-page.adminkit .block-editor-inserter__search-input {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .block-editor-block-types-list__list-item,
+body.block-editor-page.adminkit .block-editor-block-types-list__item {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-block-types-list__list-item:hover,
+body.block-editor-page.adminkit .block-editor-block-types-list__item:hover,
+body.block-editor-page.adminkit .block-editor-block-types-list__item:focus {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+/* "Browse all" expand button at the bottom of the quick inserter
+   popup (the / slash-command picker). Has a hardcoded white bg
+   that pops against the dark inserter surface. */
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand,
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand.components-button {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-top: 1px solid var(--ak-border);
+}
+
+/* Default block appender "+" toggle (the icon button next to "Type /
+   to choose a block"). WP cores its hover to var(--wp-admin-theme-color)
+   + #fff text — even with our remap that fills the button with the
+   brand primary, which is too loud here. Swap to the soft pill
+   pattern (primary-t-2 bg + primary text + radius). */
+body.block-editor-page.adminkit .block-editor-default-block-appender .block-editor-inserter__toggle.components-button.has-icon:hover,
+body.block-editor-page.adminkit .block-editor-default-block-appender .block-editor-inserter__toggle.components-button.has-icon:focus,
+body.block-editor-page.adminkit .block-editor-default-block-appender .block-editor-inserter__toggle.components-button:hover,
+body.block-editor-page.adminkit .block-editor-default-block-appender .block-editor-inserter__toggle.components-button:focus {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+	border-radius: var(--ak-radius-s);
+}
+
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand:hover:not(:disabled),
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand:focus:not(:disabled),
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand.components-button:hover:not(:disabled),
+body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand.components-button:focus:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+/* Quick inserter item buttons — WP hardcodes a #1e1e1e (near-black)
+   border that disappears on the dark inserter surface. Map to token. */
+body.block-editor-page.adminkit .block-editor-inserter__popover.is-quick .components-popover__content .block-editor-inserter__quick-inserter > .components-button {
+	border-color: var(--ak-border);
+}
+
+
+/* ========== 13. List view (left sidebar with block tree) ========== */
+body.block-editor-page.adminkit .editor-list-view-sidebar,
+body.block-editor-page.adminkit .editor-list-view-sidebar__tabs,
+body.block-editor-page.adminkit .editor-list-view-sidebar__panel {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-list-view-leaf .block-editor-list-view-block__contents-cell,
+body.block-editor-page.adminkit .block-editor-list-view-leaf .block-editor-list-view-block-select-button {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-list-view-leaf:hover .block-editor-list-view-block__contents-cell {
+	background: var(--ak-hover-bg);
+}
+
+body.block-editor-page.adminkit .block-editor-list-view-leaf.is-selected .block-editor-list-view-block__contents-cell,
+body.block-editor-page.adminkit .block-editor-list-view-leaf.is-branch-selected .block-editor-list-view-block__contents-cell {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-text);
+	box-shadow: inset 2px 0 0 var(--ak-primary);
+}
+
+
+/* ========== 14. Notices (in-editor messages) ========== */
+body.block-editor-page.adminkit .components-notice {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-notice.is-success { border-left-color: var(--ak-success); }
+body.block-editor-page.adminkit .components-notice.is-warning { border-left-color: var(--ak-warning); }
+body.block-editor-page.adminkit .components-notice.is-error   { border-left-color: var(--ak-error); }
+body.block-editor-page.adminkit .components-notice.is-info    { border-left-color: var(--ak-info); }
+
+
+/* ========== 15. Pre-publish + post-publish panels ========== */
+body.block-editor-page.adminkit .editor-post-publish-panel,
+body.block-editor-page.adminkit .editor-post-publish-panel__header,
+body.block-editor-page.adminkit .editor-post-publish-panel__content,
+body.block-editor-page.adminkit .editor-post-publish-panel__footer {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .editor-post-publish-panel__title {
+	color: var(--ak-heading);
+}
+
+
+/* ========== 16. Canvas isolation ========== */
+/* The canvas stays light in both modes — it represents the
+   visitor-facing rendering and must keep its declared block colors.
+   Theming the canvas dark broke text legibility on default blocks
+   (theme.json and core block CSS pin specific dark text colors that
+   become invisible against a dark surface). Industry pattern:
+   light canvas, dark chrome. The frame around the canvas
+   (interface-skeleton__content + edit-post-visual-editor wrappers)
+   is dark via earlier sections — that's the visible "framing".
+   color-scheme: light keeps native form controls light too. */
+body.block-editor-page.adminkit .editor-styles-wrapper {
+	color-scheme: light;
+}
+
+
+/* ========== 17. Classic meta-boxes area (below the canvas) ========== */
+/* WP renders legacy meta boxes (Yoast, Slim SEO, ACF metabox mode,
+   …) below the block editor in an .edit-post-meta-boxes-area wrapper
+   that hardcodes #f0f0f1 / #fff. Surface tokens here so the section
+   blends in. Postboxes themselves get the same surface-alt + border
+   pairing the wp-admin chrome already uses elsewhere. */
+body.block-editor-page.adminkit .edit-post-meta-boxes-area,
+body.block-editor-page.adminkit .editor-meta-boxes-area,
+body.block-editor-page.adminkit .editor-meta-boxes-main,
+body.block-editor-page.adminkit .edit-post-layout__metaboxes {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+}
+
+/* Top separator between the canvas and the meta-boxes area. WP cores
+   it to `border-top: 1px solid #e0e0e0` — hardcoded light gray that
+   doesn't flip and reads as a faint line against the dark canvas
+   below. Route to --ak-border so it stays a subtle hairline that
+   flips with the theme. */
+body.block-editor-page.adminkit .edit-post-meta-boxes-main,
+body.block-editor-page.adminkit .editor-meta-boxes-main {
+	border-top-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-area__label,
+body.block-editor-page.adminkit .editor-meta-boxes-main__resize-handle {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+	border-color: var(--ak-border);
+}
+
+/* "Meta Boxes" presenter — collapsible header bar with the expand
+   toggle (aria-expanded button + chevron) and the drag-to-resize
+   separator handle. Newer Gutenberg structure that replaces the
+   older .edit-post-meta-boxes-area__label / __resize-handle pair.
+   WP ships `box-shadow: 0 1px #ddd` as a faux border — kill it and
+   use border-bottom on --ak-border so it follows the theme. */
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+	border-bottom: 1px solid var(--ak-border);
+	box-shadow: none;
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[aria-expanded] {
+	color: var(--ak-heading);
+	background: transparent;
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[aria-expanded]:hover,
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[aria-expanded]:focus {
+	color: var(--ak-heading);
+	background: var(--ak-hover-bg);
+}
+
+/* Drag-to-resize handle: no background needed — keeps the native
+   transparent grip shape, no slab. */
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[role="separator"] {
+	background: transparent;
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox,
+body.block-editor-page.adminkit .editor-meta-boxes-area .postbox {
+	background: var(--ak-surface);
+	border-color: var(--ak-surface);
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox-header,
+body.block-editor-page.adminkit .editor-meta-boxes-area .postbox-header,
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox .hndle,
+body.block-editor-page.adminkit .editor-meta-boxes-area .postbox .hndle {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+	border-top-color: var(--ak-border);
+	border-bottom-color: var(--ak-border);
+}
+
+/* Collapsible header hover — WP block editor hardcodes #f0f0f0; route to token. */
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox > .postbox-header:hover,
+body.block-editor-page.adminkit .editor-meta-boxes-area .postbox > .postbox-header:hover {
+	background: var(--ak-hover-bg);
+}
+
+
+/* ========== 18. Sidebar dividers (Post panel) ========== */
+/* The editor-post-summary stack is currently flush — sections (post
+   card, featured image, excerpt, last-edited, metadata rows, trash)
+   all flow into each other without visual separation. Add hairline
+   dividers between sections + between consecutive metadata rows so
+   the panel scans cleanly. */
+body.block-editor-page.adminkit .editor-post-card-panel,
+body.block-editor-page.adminkit .editor-post-featured-image,
+body.block-editor-page.adminkit .editor-post-last-edited-panel {
+	border-bottom: 1px solid var(--ak-border);
+	padding-bottom: 12px;
+	margin-bottom: 4px;
+}
+
+body.block-editor-page.adminkit .editor-post-panel__row + .editor-post-panel__row {
+	border-top: 1px solid var(--ak-border);
+	padding-top: 8px;
+	margin-top: 8px;
+}
+
+body.block-editor-page.adminkit .editor-post-card-panel__title-name {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .editor-post-panel__row-label {
+	color: var(--ak-text-muted);
+}
+
+/* Inspector panels (Color / Typography / Dimensions / Border /
+   Attributes / Advanced) — each .components-tools-panel ships its
+   own `border-top: 1px solid #ddd` via an emotion-generated class
+   (e.g. .css-1oux3db, .c-ce-ab-b-cbbbbfc-an13vn). Map the color on
+   every panel directly so the divider follows the theme regardless
+   of whether the panel sits next to another or not. */
+body.block-editor-page.adminkit .components-tools-panel {
+	border-top-color: var(--ak-border);
+}
+
+
+/* ========== 19. Inspector tools-panel headers ========== */
+/* The section title row (Color / Typography / Dimensions / Border /
+   Attributes / Advanced) has hardcoded text colors that don't flip. */
+body.block-editor-page.adminkit .components-tools-panel-header,
+body.block-editor-page.adminkit .components-tools-panel__header {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .components-tools-panel-header h2,
+body.block-editor-page.adminkit .components-tools-panel-header h3 {
+	color: var(--ak-heading);
+}
+
+/* Tools-panel menu (the "..." menu inside a panel header). */
+body.block-editor-page.adminkit .components-tools-panel-header .components-dropdown-menu__toggle,
+body.block-editor-page.adminkit .components-tools-panel-header .components-button {
+	color: var(--ak-text-muted);
+}
+
+body.block-editor-page.adminkit .components-tools-panel-header .components-button:hover:not(:disabled),
+body.block-editor-page.adminkit .components-tools-panel-header .components-button:focus:not(:disabled) {
+	color: var(--ak-heading);
+	background: var(--ak-hover-bg);
+}
+
+
+/* ========== 20. Sidebar Page / Block tab strip ========== */
+/* The header tab strip uses emotion classes that aren't stable — we
+   target by role and aria-selected so we ride the semantic API instead. */
+body.block-editor-page.adminkit .editor-sidebar__panel-tabs [role="tab"],
+body.block-editor-page.adminkit .edit-post-sidebar__panel-tabs [role="tab"] {
+	color: var(--ak-text-muted);
+	background: transparent;
+}
+
+body.block-editor-page.adminkit .editor-sidebar__panel-tabs [role="tab"]:hover,
+body.block-editor-page.adminkit .edit-post-sidebar__panel-tabs [role="tab"]:hover {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .editor-sidebar__panel-tabs [role="tab"][aria-selected="true"],
+body.block-editor-page.adminkit .edit-post-sidebar__panel-tabs [role="tab"][aria-selected="true"] {
+	color: var(--ak-heading);
+	box-shadow: inset 0 -2px 0 var(--ak-primary);
+}
+
+
+/* ========== 21. Range controls (font size, spacing sliders) ========== */
+body.block-editor-page.adminkit .components-range-control__track,
+body.block-editor-page.adminkit .components-range-control__rail-background {
+	background: var(--ak-border-strong);
+}
+
+body.block-editor-page.adminkit .components-range-control__track-active,
+body.block-editor-page.adminkit .components-range-control__rail-fill {
+	background: var(--ak-primary);
+}
+
+body.block-editor-page.adminkit .components-range-control__thumb-wrapper {
+	background: var(--ak-surface);
+	border-color: var(--ak-primary);
+}
+
+body.block-editor-page.adminkit .components-range-control__value {
+	color: var(--ak-text);
+}
+
+
+/* ========== 22. Unit / number controls (px / em / rem switch) ========== */
+body.block-editor-page.adminkit .components-unit-control,
+body.block-editor-page.adminkit .components-unit-control__select {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-number-control {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+/* Font-size segment picker (S / M / L / XL row of buttons). */
+body.block-editor-page.adminkit .components-font-size-picker__buttons-container .components-button {
+	color: var(--ak-text);
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-font-size-picker__buttons-container .components-button.is-pressed,
+body.block-editor-page.adminkit .components-font-size-picker__buttons-container .components-button[aria-pressed="true"] {
+	background: var(--ak-primary);
+	color: var(--ak-surface);
+	border-color: var(--ak-primary);
+}
+
+/* Toggle-group control (used for alignment, justify, item types). */
+body.block-editor-page.adminkit .components-toggle-group-control {
+	background: var(--ak-bg);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-toggle-group-control-option,
+body.block-editor-page.adminkit .components-toggle-group-control-option-base {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-toggle-group-control-option.is-selected,
+body.block-editor-page.adminkit .components-toggle-group-control-option[aria-checked="true"],
+body.block-editor-page.adminkit .components-toggle-group-control-backdrop {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+}
+
+
+/* ========== 23. Color palette (swatches + picker) ========== */
+body.block-editor-page.adminkit .components-color-palette,
+body.block-editor-page.adminkit .components-circular-option-picker {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-circular-option-picker__option-wrapper {
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-color-edit__label,
+body.block-editor-page.adminkit .components-color-palette__custom-clear {
+	color: var(--ak-text);
+}
+
+/* The two circle swatches under "Text" / "Background" rows in section 5
+   of the Color tools panel — they hardcode a white ring when empty. */
+body.block-editor-page.adminkit .components-color-indicator {
+	border-color: var(--ak-border-strong);
+}
+
+/* "No color" indicator — WP hardcodes a #fff base with a #ddd diagonal slash;
+   route both to tokens so it reads correctly in dark mode. */
+body.block-editor-page.adminkit .components-color-indicator.component-color-indicator,
+body.block-editor-page.adminkit .component-color-indicator {
+	background: var(--ak-surface) linear-gradient(-45deg, transparent 48%, var(--ak-border) 0, var(--ak-border) 52%, transparent 0);
+}
+
+
+/* ========== 24. Border control (border style picker) ========== */
+body.block-editor-page.adminkit .components-border-box-control,
+body.block-editor-page.adminkit .components-border-control {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-border-control__style-button {
+	color: var(--ak-text);
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-border-control__style-button.is-pressed,
+body.block-editor-page.adminkit .components-border-control__style-button[aria-pressed="true"] {
+	background: var(--ak-primary);
+	color: var(--ak-surface);
+	border-color: var(--ak-primary);
+}
+
+
+/* ========== 25. Featured image upload area ========== */
+/* WP default puts a dashed light-gray border on the container/toggle
+   which clashed with the dark sidebar. Drop the border entirely —
+   the --ak-surface slab + radius alone defines the upload target
+   against --ak-surface. */
+body.block-editor-page.adminkit .editor-post-featured-image__container,
+body.block-editor-page.adminkit .editor-post-featured-image__toggle {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border: 0;
+	border-radius: var(--ak-radius-s);
+}
+
+body.block-editor-page.adminkit .editor-post-featured-image__toggle:hover,
+body.block-editor-page.adminkit .editor-post-featured-image__toggle:focus {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .components-drop-zone__content {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border-strong);
+}
+
+body.block-editor-page.adminkit .components-drop-zone__content-text,
+body.block-editor-page.adminkit .components-drop-zone__content-icon {
+	color: var(--ak-text-muted);
+}
+
+
+/* ========== 26. Editor notices (autosave warning, errors) ========== */
+/* The bright yellow "There is an autosave..." bar at the top of the
+   editor uses .components-notice and .editor-notices__pinned. Surface
+   tokens here so it stops glaring against the dark chrome. Severity
+   stays signaled by the left-border color. */
+body.block-editor-page.adminkit .editor-notices__pinned,
+body.block-editor-page.adminkit .editor-notices__dismissible {
+	background: transparent;
+}
+
+body.block-editor-page.adminkit .editor-notices__pinned .components-notice,
+body.block-editor-page.adminkit .editor-notices__dismissible .components-notice {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .components-notice__content {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .components-notice__action.is-link {
+	color: var(--ak-primary);
+}
+
+
+/* ========== 27. Block breadcrumb (bottom bar: "Post > Paragraph") ========== */
+body.block-editor-page.adminkit .block-editor-block-breadcrumb,
+body.block-editor-page.adminkit .editor-block-breadcrumb {
+	background: var(--ak-surface);
+	border-top-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-block-breadcrumb__button,
+body.block-editor-page.adminkit .editor-block-breadcrumb__button {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-block-breadcrumb__button:hover,
+body.block-editor-page.adminkit .editor-block-breadcrumb__button:focus,
+body.block-editor-page.adminkit .block-editor-block-breadcrumb__current {
+	color: var(--ak-heading);
+}
+
+
+/* ========== 28. Inserter library tabs + categories ========== */
+body.block-editor-page.adminkit .block-editor-inserter__tabs [role="tab"] {
+	color: var(--ak-text-muted);
+}
+
+body.block-editor-page.adminkit .block-editor-inserter__tabs [role="tab"][aria-selected="true"] {
+	color: var(--ak-heading);
+	box-shadow: inset 0 -2px 0 var(--ak-primary);
+}
+
+body.block-editor-page.adminkit .block-editor-inserter__category-tabs,
+body.block-editor-page.adminkit .block-editor-inserter__category-panel {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-inserter__category-tab {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .block-editor-inserter__category-tab:hover,
+body.block-editor-page.adminkit .block-editor-inserter__category-tab.is-active {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+
+/* ========== 29. Meta-box classic forms (Discussion / Categories / Tags / ...) ========== */
+/* WP renders classic meta boxes with raw form-table markup. Our
+   global form-table.css covers the wp-admin surface but the editor's
+   meta-boxes-area wraps everything in a different stacking context;
+   re-apply the basics so labels, inputs and helper text read clearly
+   inside the editor. */
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .form-table th,
+body.block-editor-page.adminkit .editor-meta-boxes-area .form-table th {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .form-table td,
+body.block-editor-page.adminkit .editor-meta-boxes-area .form-table td {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-area input[type="text"],
+body.block-editor-page.adminkit .edit-post-meta-boxes-area input[type="url"],
+body.block-editor-page.adminkit .edit-post-meta-boxes-area input[type="email"],
+body.block-editor-page.adminkit .edit-post-meta-boxes-area input[type="number"],
+body.block-editor-page.adminkit .edit-post-meta-boxes-area input[type="search"],
+body.block-editor-page.adminkit .edit-post-meta-boxes-area textarea,
+body.block-editor-page.adminkit .edit-post-meta-boxes-area select,
+body.block-editor-page.adminkit .editor-meta-boxes-area input[type="text"],
+body.block-editor-page.adminkit .editor-meta-boxes-area input[type="url"],
+body.block-editor-page.adminkit .editor-meta-boxes-area input[type="email"],
+body.block-editor-page.adminkit .editor-meta-boxes-area input[type="number"],
+body.block-editor-page.adminkit .editor-meta-boxes-area input[type="search"],
+body.block-editor-page.adminkit .editor-meta-boxes-area textarea,
+body.block-editor-page.adminkit .editor-meta-boxes-area select {
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+/* Helper rows inside postboxes — categories list, tags input, etc. */
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .inside,
+body.block-editor-page.adminkit .editor-meta-boxes-area .inside {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-area .description,
+body.block-editor-page.adminkit .editor-meta-boxes-area .description {
+	color: var(--ak-text-muted);
+}
+
+
+/* ========== 30. Document Overview sidebar (.block-editor-tabbed-sidebar) ========== */
+/* The newer Gutenberg secondary-sidebar wraps the list view + outline
+   tabs in .block-editor-tabbed-sidebar with a hardcoded #fff base.
+   Section 13 only catches the older .editor-list-view-sidebar shell;
+   this section covers the modern wrapper + its tablist/tab/close/panel
+   internals so the Document Overview matches the rest of the chrome. */
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar,
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tablist-and-close-button,
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tabpanel,
+body.block-editor-page.adminkit .editor-list-view-sidebar__list-view-container,
+body.block-editor-page.adminkit .editor-list-view-sidebar__list-view-panel-content {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+/* Tablist strip (List View / Outline) */
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tablist {
+	background: var(--ak-surface);
+	border-bottom: 1px solid var(--ak-border);
+}
+
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tab {
+	color: var(--ak-text-muted);
+	background: transparent;
+}
+
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tab:hover {
+	color: var(--ak-heading);
+}
+
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__tab[aria-selected="true"] {
+	color: var(--ak-heading);
+	box-shadow: inset 0 -2px 0 var(--ak-primary);
+}
+
+/* Close (X) button — the inner SVG hardcodes its fill, so currentColor
+   doesn't reach it. Force fill on the SVG path so the icon flips
+   with the button color. Also drop the white background — it gets
+   pinned to #fff by Gutenberg and pops a bright square against the
+   dark sidebar. */
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button {
+	background: transparent;
+	color: var(--ak-text-muted);
+}
+
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button svg,
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button svg path {
+	fill: currentColor;
+}
+
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button:hover,
+body.block-editor-page.adminkit .block-editor-tabbed-sidebar__close-button:focus {
+	color: var(--ak-heading);
+	background: var(--ak-hover-bg);
+}
+
+/* Block tree (treegrid) */
+body.block-editor-page.adminkit .block-editor-list-view-tree {
+	background: transparent;
+	color: var(--ak-text);
+}
+
+/* Block-icon glyphs on rows — without a color, they pick up text color
+   from the cell which keeps them readable in both modes. The has-colors
+   variant uses the block's brand color and is left alone. */
+body.block-editor-page.adminkit .block-editor-list-view-tree .block-editor-block-icon {
+	color: var(--ak-text);
+}
+
+/* Expander arrow on parent rows */
+body.block-editor-page.adminkit .block-editor-list-view__expander {
+	color: var(--ak-text-muted);
+}
+
+/* Per-row Options ("⋮") button — only visible on hover / when selected.
+   Selected-row override below makes sure it stays readable on the
+   primary-colored selected background. */
+body.block-editor-page.adminkit .block-editor-list-view-block__menu {
+	color: var(--ak-text-muted);
+}
+
+body.block-editor-page.adminkit .block-editor-list-view-block__menu:hover,
+body.block-editor-page.adminkit .block-editor-list-view-block__menu:focus {
+	color: var(--ak-heading);
+	background: var(--ak-hover-bg);
+}
+
+body.block-editor-page.adminkit .block-editor-list-view-leaf.is-selected .block-editor-list-view-block__menu,
+body.block-editor-page.adminkit .block-editor-list-view-leaf.is-branch-selected .block-editor-list-view-block__menu {
+	color: var(--ak-surface);
+}
+
+/* Outline panel inside the secondary sidebar — the stats block
+   (Characters / Words / Time to read) and the heading-tree preview
+   share a hardcoded #ddd border-bottom that doesn't flip. */
+body.block-editor-page.adminkit .editor-list-view-sidebar__outline {
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .editor-document-outline,
+body.block-editor-page.adminkit .editor-document-outline__item {
+	color: var(--ak-text);
+}
+
+/* Heading hierarchy levels in the outline preview (H1 / H2 / H3 / H4
+   labels) — the level badge text should read clearly. */
+body.block-editor-page.adminkit .editor-document-outline__level {
+	color: var(--ak-text-muted);
+}
+
+/* Badges (.components-badge) — WP hardcodes the default badge as #f0f0f0 / #2f2f2f.
+   Route to the token surface + text so it flips with dark mode. */
+body.block-editor-page.adminkit .components-badge.is-default {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .editor-document-outline__item-content {
+	color: var(--ak-text);
+}
+
+/* Empty state ("Navigate the structure of your document and address
+   issues like empty or incorrect heading levels.") */
+body.block-editor-page.adminkit .editor-document-outline.has-no-headings,
+body.block-editor-page.adminkit .editor-document-outline__no-results {
+	color: var(--ak-text-muted);
+}
+
+
+/* ========== 31. Block inspector controls — hardcoded borders ========== */
+/* Several controls in the Block tab render their own border with a
+   hardcoded gray (#ddd / #cbcbcb / #1e1e1e) that doesn't flip. Route
+   them through --ak-border so the inspector reads as one coherent
+   surface instead of stitched-together cards. */
+
+/* Color row buttons (Text / Background dropdown triggers). */
+body.block-editor-page.adminkit .block-editor-panel-color-gradient-settings__dropdown,
+body.block-editor-page.adminkit .block-editor-tools-panel-color-gradient-settings__item,
+body.block-editor-page.adminkit .block-editor-tools-panel-color-gradient-settings__item .components-button {
+	border-color: var(--ak-border);
+}
+
+/* Open-state dropdown trigger — WP hardcodes #f0f0f0; route to token. */
+body.block-editor-page.adminkit .block-editor-tools-panel-color-gradient-settings__dropdown > button.is-open {
+	background: var(--ak-hover-bg);
+}
+
+/* The color row buttons live inside .block-editor-tools-panel-color-gradient-settings__item
+   which stacks two items with their own top/bottom border. Trim the
+   doubled hairline by clearing the middle joiner. */
+body.block-editor-page.adminkit .block-editor-tools-panel-color-gradient-settings__item + .block-editor-tools-panel-color-gradient-settings__item {
+	border-top-color: var(--ak-border);
+}
+
+/* Font-size segment row (S / M / L / XL) — outer border + segment
+   separators. */
+body.block-editor-page.adminkit .components-toggle-group-control,
+body.block-editor-page.adminkit .components-toggle-group-control-option-base {
+	border-color: var(--ak-border);
+}
+
+/* Inputs / numeric controls inside tools panels — kept consistent with
+   Section 6 form controls. The .components-input-base wraps numeric
+   inputs (e.g. custom font-size, dimensions, border radius) and
+   hardcodes a #cbcbcb border. */
+body.block-editor-page.adminkit .components-input-base,
+body.block-editor-page.adminkit .components-input-control__backdrop,
+body.block-editor-page.adminkit .components-number-control__input,
+body.block-editor-page.adminkit .components-input-control__input {
+	border-color: var(--ak-border);
+}
+
+/* "Set custom size" / "Use size preset" toggle button next to the
+   font-size label — currentColor for the icon stroke. */
+body.block-editor-page.adminkit .components-font-size-picker__header .components-button {
+	color: var(--ak-text-muted);
+}
+
+body.block-editor-page.adminkit .components-font-size-picker__header .components-button:hover,
+body.block-editor-page.adminkit .components-font-size-picker__header .components-button:focus {
+	color: var(--ak-heading);
+	background: var(--ak-hover-bg);
+}
+
+/* Advanced panel toggle (collapsible at the bottom) — the chevron
+   inherits text color but the panel header has a hardcoded
+   border-top that breaks visual rhythm. */
+body.block-editor-page.adminkit .block-editor-block-inspector__advanced {
+	border-top: 1px solid var(--ak-border);
+}
+
+/* "Skip to the selected block" rescue button — secondary already
+   covered by Section 8, but its top spacing reads as a hard edge
+   against the surrounding panel. */
+body.block-editor-page.adminkit .block-editor-skip-to-selected-block {
+	border-color: var(--ak-border);
+}
+
+
+/* ========== 32. Sidebar panel wrappers (kill the #fff base) ========== */
+/* The inspector sidebar shows a white slab below the Advanced panel
+   because .editor-sidebar__panel.components-panel hardcodes a #fff
+   background that doesn't flip. Same issue in the secondary sidebar
+   below the List View / Outline content. Letting these inner
+   wrappers be transparent makes the parent (.editor-sidebar /
+   .interface-interface-skeleton__secondary-sidebar) surface paint
+   the full height — Section 1 + editor.css already set those to
+   --ak-surface. */
+body.block-editor-page.adminkit .editor-sidebar__panel,
+body.block-editor-page.adminkit .editor-sidebar__panel.components-panel,
+body.block-editor-page.adminkit .editor-sidebar .components-panel,
+body.block-editor-page.adminkit .edit-post-sidebar > .components-panel,
+body.block-editor-page.adminkit .interface-complementary-area > .components-panel,
+body.block-editor-page.adminkit .block-editor-block-inspector {
+	background: transparent;
+	fill: var(--ak-text);
+}
+
+/* Modern outer sidebar wrapper — Gutenberg 16+ wraps the
+   complementary area in .interface-interface-skeleton__sidebar.
+   Mirror Section 1 / editor.css so the slab matches. The
+   border-top: 1px solid #e0e0e0 default cut a visible hairline
+   between the editor header and the sidebar — kill it so the two
+   surfaces flow as one. */
+body.block-editor-page.adminkit .interface-interface-skeleton__sidebar {
+	background: var(--ak-surface);
+	border-top: 0;
+	border-left-color: var(--ak-border);
+}
+
+
+/* ========== 33. Inspector empty states + global icon fill ========== */
+/* "No block selected" / "No blocks available" — Gutenberg paints a
+   white card with center-aligned text when the inspector has nothing
+   to render. The hardcoded #fff stands out against the dark surface. */
+body.block-editor-page.adminkit .block-editor-block-inspector__no-block-tools,
+body.block-editor-page.adminkit .block-editor-block-inspector__no-blocks {
+	background: var(--ak-surface);
+	color: var(--ak-text-muted);
+}
+
+/* Global .components-button SVG fill — Gutenberg ships rules that
+   hardcode `fill: var(--heading)` (Bricks token leakage) or specific
+   gray values on the inner SVG path, breaking icon color when buttons
+   re-theme. Force currentColor so the icon always tracks the button's
+   text color in both modes. */
+body.block-editor-page.adminkit .components-button svg,
+body.block-editor-page.adminkit .components-button svg path {
+	fill: currentColor;
+}
+
+/* Global pressed-state pill (.is-pressed / [aria-pressed="true"]).
+   Gutenberg defaults to `background: var(--primary-t-2, #1e1e1e)` —
+   the t-2 tint works when Bricks supplies it, but the #1e1e1e
+   fallback paints a hard dark slab. Force --ak-primary-subtle + the
+   primary text color + a small radius so every pressed button feels
+   like one consistent pill across the editor. */
+body.block-editor-page.adminkit .components-button.is-pressed:not(:disabled, [aria-disabled="true"]),
+body.block-editor-page.adminkit .components-button.is-pressed:hover:not(:disabled, [aria-disabled="true"]),
+body.block-editor-page.adminkit .components-button[aria-pressed="true"]:not(:disabled, [aria-disabled="true"]),
+body.block-editor-page.adminkit .components-button[aria-pressed="true"]:hover:not(:disabled, [aria-disabled="true"]) {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+	border-radius: var(--ak-radius-s);
+}
