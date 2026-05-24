@@ -1,4 +1,4 @@
-# Onboarding a new plugin
+# Add an integration
 
 > A repeatable runbook for skinning a third-party plugin's admin UI into AdminKit.
 > The scanner does the mechanical ~80% (find the colors, map them to `--ak-*`

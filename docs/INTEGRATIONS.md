@@ -154,7 +154,7 @@ unchanged; only the *delivery* differs:
   mode onto the host's own theme attribute from the bridge (one-way).
 
 The [query-monitor adapter](../inc/integrations/plugins/query-monitor/) is the reference;
-the step-by-step is in [ONBOARDING-A-PLUGIN.md](ONBOARDING-A-PLUGIN.md#special-case-the-panel-is-in-a-shadow-root).
+the step-by-step is in [ADD-AN-INTEGRATION.md](ADD-AN-INTEGRATION.md#special-case-the-panel-is-in-a-shadow-root).
 
 ### Start with a scan
 
@@ -172,7 +172,7 @@ It reports two things and emits a paste-ready scaffold:
 
 The suggestions are heuristic — they get the base ~right (brand, the four status colors, surfaces, borders), and you do the fine-tuning: the 3-surface split (`--ak-bg` / `--ak-surface` / `--ak-elevated`) and any role the literal can't reveal. Then verify in the browser and run `php .claude/skills/adminkit-adapter-audit/adapter-audit.php`.
 
-Add `--emit` (with `--slug=`) to **write the whole folder** instead of printing — `inc/integrations/plugins/{slug}/class-{slug}.php` (a correctly-named, live-but-inert stub) + `css/admin.css` (the scaffold). The loader auto-discovers it; you just fill the detection/scope TODOs and fine-tune. The full step-by-step (incl. the 20% checklist) is in [ONBOARDING-A-PLUGIN.md](ONBOARDING-A-PLUGIN.md).
+Add `--emit` (with `--slug=`) to **write the whole folder** instead of printing — `inc/integrations/plugins/{slug}/class-{slug}.php` (a correctly-named, live-but-inert stub) + `css/admin.css` (the scaffold). The loader auto-discovers it; you just fill the detection/scope TODOs and fine-tune. The full step-by-step (incl. the 20% checklist) is in [ADD-AN-INTEGRATION.md](ADD-AN-INTEGRATION.md).
 
 ```
 php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host-plugin>/assets --slug=foo --emit

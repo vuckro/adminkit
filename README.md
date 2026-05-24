@@ -21,7 +21,7 @@ A clean, modern restyle of the WordPress admin built on a token-based design sys
 1. Download a release zip (or clone this repo into `wp-content/plugins/adminkit/`).
 2. Activate "AdminKit" in the WordPress Plugins screen.
 
-That's it. No settings page yet — see [`docs/SETTINGS.md`](docs/SETTINGS.md) for the registry that the future UI will plug into.
+That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) lets you review the design tokens, switch the palette (neutral / branded) and toggle individual integrations; see [`docs/SETTINGS.md`](docs/SETTINGS.md) for the registry behind it.
 
 ---
 
@@ -29,15 +29,15 @@ That's it. No settings page yet — see [`docs/SETTINGS.md`](docs/SETTINGS.md) f
 
 ### Tokens
 
-`assets/css/tokens.css` declares every color, surface, border and font as a CSS variable. Each one resolves through a fallback chain — the provider's semantic role first, then a self-contained default:
+`assets/css/tokens.css` declares every color, surface, border and font as a CSS variable (`--ak-*`). Each one resolves through a fallback chain — a provider's semantic role first, then AdminKit's shipped **WaasKit baseline**, then a self-contained neutral default:
 
 ```css
 --ak-primary: var(--accent, var(--primary, var(--neutral-l-8, hsl(0, 0%, 32%))));
-              /*  provider    provider       provider          standalone
+              /*  provider    baseline       baseline          standalone
                   accent      brand          neutral ramp      fallback */
 ```
 
-The dark-mode block redeclares the semantic surface / border / text tokens for `[data-adminkit-theme="dark"]` — brand colors stay constant across modes.
+The baseline (`assets/css/waaskit-tokens.css`, generated from `tokens/palettes/*` by `php tokens/build.php`) ships so AdminKit looks complete with no provider; a provider (Bricks) loads after it and overrides it. Every layer is optional and degrades cleanly — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). The dark-mode block redeclares the semantic surface / border / text tokens for `[data-adminkit-theme="dark"]` — brand colors stay constant across modes.
 
 ### Theme toggle
 
@@ -49,7 +49,7 @@ CSS is declared via `AdminKit_Assets::register()` and dispatched per context (ad
 
 ### Integrations
 
-Optional adapters live in `inc/integrations/{slug}/`. Each one self-detects its host and silently does nothing if the host isn't present. **They auto-load** — drop a `class-{slug}.php` file inside its slug folder and the orchestrator wires it on `after_setup_theme`.
+Optional adapters live in `inc/integrations/plugins/{slug}/` (plugin adapters) and `inc/integrations/themes/{slug}/` (theme adapters). Each one self-detects its host and silently does nothing if the host isn't present. **They auto-load** — drop a `class-{slug}.php` file inside its slug folder and the orchestrator wires it on `after_setup_theme`.
 
 The **Bricks** adapter, when active:
 
@@ -132,57 +132,83 @@ add_filter( 'adminkit/should_load', function ( $load, $context ) {
 ```
 adminkit/
 ├── adminkit.php                          Plugin loader
-├── docs/
-│   ├── INTEGRATIONS.md                   Guide for writing host adapters
-│   ├── ASSETS.md                         Asset registry API
-│   └── SETTINGS.md                       Settings registry (no UI yet)
+├── CLAUDE.md                             Orientation for AI assistants — start here
+├── README.md                            This file
+├── docs/                                Guides (see "Documentation" below)
+├── tokens/                              WaasKit baseline source (build-time only)
+│   ├── build.php                        Generates assets/css/waaskit-tokens.css
+│   └── palettes/                        Committed palette JSON — the source of truth
 ├── inc/
-│   ├── class-plugin.php                  Boot orchestrator + integration auto-discovery
-│   ├── class-assets.php                  Asset registry + dispatcher
-│   ├── class-screen.php                  get_current_screen() helpers
-│   ├── class-settings.php                Settings registry (registers primary_color)
-│   ├── class-dashboard.php               Dashboard widget registry (dormant until used)
-│   ├── class-theme-toggle.php            Dark / light toggle + login logo
-│   ├── core/
-│   │   ├── class-chrome.php              Registers every admin/frontend CSS file
-│   │   ├── class-login.php               Registers login.css
-│   │   ├── class-profile-accordion.php   Profile screen → accordion (DOM move, no override)
-│   │   └── class-list-table-chrome.php   List-table toolbar / pagination polish
+│   ├── class-plugin.php                 Boot orchestrator + integration auto-discovery
+│   ├── class-assets.php                 Asset registry + dispatcher + token cascade
+│   ├── class-screen.php                 get_current_screen() helpers
+│   ├── class-settings.php               Settings registry + color map
+│   ├── class-settings-page.php          Settings SPA (admin menu) + REST save
+│   ├── class-dashboard.php              Dashboard widget registry (dormant until used)
+│   ├── class-theme-toggle.php           Dark / light toggle + login logo
+│   ├── wp-core/                         AdminKit's restyle of WP-core surfaces
+│   │   ├── class-chrome.php             Registers every admin/frontend CSS file
+│   │   ├── class-login.php              Registers login.css
+│   │   ├── class-account-bar.php        Admin-bar account menu
+│   │   ├── class-profile-account.php    Profile / user-edit screen layout
+│   │   ├── class-post-previews.php      List-table screenshot thumbnails
+│   │   └── class-list-table-chrome.php  List-table toolbar / pagination polish
 │   └── integrations/                    Host adapters — auto-discovered, drop a folder
-│       ├── abstract-integration.php      AdminKit_Integration_Base
-│       ├── bricks/                       Token provider + Bricks Builder bypass
-│       ├── gutenberg/                    Block / site / widgets / nav editor restyle
-│       ├── woocommerce/                  wc-admin (React) + classic-screen restyle
-│       ├── acf/                          ACF 6.x field UI
-│       ├── fluent-smtp/ · fluentform/ · fluent-booking/
-│       ├── slim-seo/ · happyfiles/ · flying-press/ · wp-migrate-db-pro/
-│       └── admin-menu-editor/            Admin Menu Editor + Choices.js overrides
-└── assets/css/
-    ├── tokens.css                        Design tokens (always loaded)
-    ├── core/                             Always-loaded chrome (sidebar, postboxes, ...)
-    ├── components/                       Always-loaded primitives (inputs, buttons, tables)
-    ├── screens/                          Per-screen polish (loaded conditionally)
-    │   └── _shared/                      Small components shared across screens
-    └── login.css                         wp-login.php
+│       ├── abstract-integration.php     AdminKit_Integration_Base
+│       ├── themes/
+│       │   └── bricks/                  Token provider + Bricks Builder bypass
+│       └── plugins/
+│           ├── gutenberg/ · woocommerce/ · acf/
+│           ├── fluent-smtp/ · fluentform/ · fluent-booking/
+│           ├── slim-seo/ · happyfiles/ · flying-press/ · wp-migrate-db-pro/
+│           └── admin-menu-editor/       Admin Menu Editor + Choices.js overrides
+└── assets/
+    ├── css/
+    │   ├── tokens.css                   AdminKit --ak-* layer (always loaded; owns dark)
+    │   ├── waaskit-tokens.css           Generated WaasKit baseline — do not hand-edit
+    │   ├── wp-core/                     Always-loaded chrome (sidebar, postboxes, ...)
+    │   ├── wp-components/               Always-loaded primitives (inputs, buttons, tables)
+    │   ├── wp-screens/                  Per-screen polish (loaded conditionally)
+    │   │   └── _shared/                 Small components shared across screens
+    │   ├── settings.css                 Settings SPA styles
+    │   └── login.css                    wp-login.php
+    └── js/
+        └── settings.js                  Settings SPA
 ```
 
 ---
 
 ## Writing an integration
 
-1. Create a folder at `inc/integrations/{slug}/` and drop a class extending `AdminKit_Integration_Base` into `class-{slug}.php`.
+1. Create a folder at `inc/integrations/plugins/{slug}/` (or `inc/integrations/themes/{slug}/` for a theme) and drop a class extending `AdminKit_Integration_Base` into `class-{slug}.php`.
 2. Implement `slug()` + `is_active()`. Override `register_assets()` and/or `boot()` as needed.
-3. Put any CSS at `inc/integrations/{slug}/css/` and register it via `AdminKit_Assets::register()`.
+3. Put any CSS at `…/{slug}/css/` and register it via `AdminKit_Assets::register()`.
 
-That's it — the boot orchestrator picks the folder up automatically on `after_setup_theme`. The Bricks integration at [`inc/integrations/bricks/class-bricks.php`](inc/integrations/bricks/class-bricks.php) is the reference implementation; the full guide is in [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md).
+That's it — the boot orchestrator picks the folder up automatically on `after_setup_theme`. The Bricks integration at [`inc/integrations/themes/bricks/class-bricks.php`](inc/integrations/themes/bricks/class-bricks.php) is the reference implementation; the full guide is in [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md).
+
+---
+
+## Documentation
+
+| Doc | Read it for |
+| --- | --- |
+| [`CLAUDE.md`](CLAUDE.md) | **Start here if you're an AI assistant** — project map, common tasks, guardrails. |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | How it all fits: contexts, the asset dispatcher, the token layers, the provider model. |
+| [`docs/ASSETS.md`](docs/ASSETS.md) | Registering CSS per context and per screen. |
+| [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md) | Writing a host adapter (the contract + patterns). |
+| [`docs/ADD-AN-INTEGRATION.md`](docs/ADD-AN-INTEGRATION.md) | Step-by-step runbook for skinning a new plugin. |
+| [`docs/SETTINGS.md`](docs/SETTINGS.md) | The settings registry and resolution order. |
+| [`docs/TOKENS.md`](docs/TOKENS.md) | The token system (mapping, layers, usage). |
+| [`tokens/README.md`](tokens/README.md) | Building the WaasKit baseline from the palette source. |
 
 ---
 
 ## Roadmap
 
-- **Settings page.** Toggle individual sections (chrome, forms, pages, editor) without touching code; pick a primary color when Bricks isn't active.
+- **Settings UI — colour editing.** The settings page ships today (palette switch, integration toggles, a read-only token map); per-token colour pickers are next.
+- **Colour sync.** Import / live-sync colours from the active provider or theme (Bricks today; the provider hooks already exist — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)).
+- **More provider adapters.** Oxygen, Breakdance, Elementor, GeneratePress, ACSS / Core Framework — same pattern as Bricks.
 - **Custom dashboard.** Widgets registered via `AdminKit_Dashboard::register_widget()` (the registry exists; widgets land with the WooCommerce / FluentCart integrations).
-- **Provider adapters.** Oxygen, Breakdance, Elementor, GeneratePress — same pattern as Bricks.
 - **Theme variants.** Beyond light/dark — sepia, high-contrast.
 - **Per-role visibility.** Show certain admin chrome only to specific roles.
 
