@@ -15,8 +15,8 @@
  *   editor   → enqueue_block_editor_assets  (priority 9999, block / site / widgets editors)
  *
  * `src` is a path relative to ADMINKIT_PATH (the plugin root). This
- * lets integration files in `inc/integrations/{slug}/css/` use the
- * registry without special-casing.
+ * lets integration files in `inc/integrations/{plugins|themes}/{slug}/css/`
+ * use the registry without special-casing.
  *
  * Public API:
  *   AdminKit_Assets::register([ ... ])  declare an asset
@@ -45,6 +45,12 @@ class AdminKit_Assets {
 	const FONTS_URL     = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap';
 	const TOKENS_HANDLE = 'adminkit-tokens';
 	const TOKENS_SRC    = 'assets/css/tokens.css';
+
+	// Built-in WaasKit design-system baseline (generated from design-system/palettes/*
+	// by the adminkit-tokens-build skill). Shipped so AdminKit is brand-complete with
+	// no provider; a live provider (Bricks) loads AFTER it and overrides it.
+	const WAASKIT_HANDLE = 'adminkit-waaskit';
+	const WAASKIT_SRC    = 'assets/css/waaskit-tokens.css';
 
 	/**
 	 * Registered asset entries.
@@ -86,7 +92,7 @@ class AdminKit_Assets {
 	 *
 	 * @param array $args {
 	 *   @type string        $handle    REQUIRED. WP style handle, e.g. `adminkit-themes`.
-	 *   @type string        $src       REQUIRED. Path relative to ADMINKIT_PATH, e.g. `assets/css/screens/themes.css`.
+	 *   @type string        $src       REQUIRED. Path relative to ADMINKIT_PATH, e.g. `assets/css/wp-screens/themes.css`.
 	 *   @type string[]      $deps      Style handles this depends on.
 	 *   @type string        $context   admin | login | frontend | editor.
 	 *   @type string|null   $section   Section name for the back-compat
@@ -255,8 +261,28 @@ class AdminKit_Assets {
 	 * @return void
 	 */
 	private static function enqueue_tokens( $context, array $core_deps = array() ) {
+		// Ship the WaasKit baseline first, as the leading dep of adminkit-tokens, so
+		// the brand design system is always present even with no provider. A provider
+		// (Bricks) returns its handle below and is registered to depend on this
+		// baseline, so it loads AFTER and overrides it (see Bricks::provide_tokens()).
+		// Not on the frontend: there a live provider already themes the page and the
+		// admin bar follows it (mode-flipping) via the provider's frontend bridge —
+		// a static light-context baseline would fight that in dark mode. The baseline
+		// is for wp-admin / login / editor, where no live provider theming runs.
+		$baseline = '';
+		$wk_path  = ADMINKIT_PATH . self::WAASKIT_SRC;
+		if ( 'frontend' !== $context && file_exists( $wk_path ) ) {
+			wp_enqueue_style(
+				self::WAASKIT_HANDLE,
+				ADMINKIT_URL . self::WAASKIT_SRC,
+				$core_deps,
+				(string) filemtime( $wk_path )
+			);
+			$baseline = self::WAASKIT_HANDLE;
+		}
+
 		$extra = apply_filters( 'adminkit/extra_tokens_handle', null, $context );
-		$deps  = array_filter( array_merge( $core_deps, array( $extra ) ) );
+		$deps  = array_filter( array_merge( $core_deps, array( $baseline, $extra ) ) );
 
 		$path = ADMINKIT_PATH . self::TOKENS_SRC;
 		wp_enqueue_style(

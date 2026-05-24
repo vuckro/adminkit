@@ -2,16 +2,19 @@
    ======================================================================
    AdminKit restyles wp-admin entirely through `--ak-*` custom properties;
    no AdminKit rule reads a raw color. Each token resolves through a
-   fallback chain — provider SEMANTIC role first, self-contained neutral
-   default last:
+   fallback chain — WaasKit SEMANTIC role first, then a self-contained default:
 
         --ak-surface: var(--surface, hsl(0, 0%, 96%));
-                          │                  └ standalone default (no provider)
-                          └ provider semantic role (wins when present)
+                          │                  └ last-resort literal (see below)
+                          └ WaasKit semantic role (normal source)
 
-   So AdminKit mirrors the provider's semantic layer 1:1 (Bricks today —
-   background / surface / elevated / border / text / accent / hover / focus)
-   and degrades to a neutral palette standalone. Full mapping: docs/TOKENS.md.
+   `--surface` and the rest of the WaasKit semantic layer are ALWAYS present:
+   AdminKit ships the full WaasKit token baseline (assets/css/waaskit-tokens.css,
+   generated from design-system/palettes/* — enqueued before this file). A live
+   provider (Bricks) loads after the baseline and overrides it. So the inline
+   hsl/hex defaults here are an emergency fallback only — for the (unexpected)
+   case where the baseline file is missing. AdminKit mirrors the WaasKit semantic
+   layer 1:1. Full mapping: docs/TOKENS.md.
 
    ── Light / dark ────────────────────────────────────────────────────────
    Tokens live on :root so they inherit down to #wpadminbar / #adminmenu.
