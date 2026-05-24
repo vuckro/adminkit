@@ -1009,6 +1009,13 @@ body.block-editor-page.adminkit .editor-document-outline__level {
 	color: var(--ak-text-muted);
 }
 
+/* Badges (.components-badge) — WP hardcodes the default badge as #f0f0f0 / #2f2f2f.
+   Route to the token surface + text so it flips with dark mode. */
+body.block-editor-page.adminkit .components-badge.is-default {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
+}
+
 body.block-editor-page.adminkit .editor-document-outline__item-content {
 	color: var(--ak-text);
 }
