@@ -8,7 +8,8 @@
 /* Secondary / generic button — flat: light surface, a neutral --ak-border
    (NOT primary at rest or hover — a brand-tinted border would read as a primary
    button), text in --ak-text. The label color is constant across rest/hover/focus;
-   hover lifts the fill to a faint primary tint and the border to --ak-border-strong.
+   hover lifts the fill to a faint primary tint while the border stays the soft
+   --ak-border (a gentle CTA, no hard outline on hover).
    Keyboard focus may carry a primary border (the focus indicator). Only
    .button-primary carries the filled brand style. */
 body.adminkit .button,
@@ -37,7 +38,7 @@ body.adminkit .button:focus,
 body.adminkit .wp-core-ui .button:focus,
 body.adminkit .button-secondary:focus {
 	background: var(--ak-primary-subtle);
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
 
@@ -160,7 +161,7 @@ body.adminkit input[type="file"]::file-selector-button {
 
 body.adminkit input[type="file"]::file-selector-button:hover {
 	background: var(--ak-primary-subtle);
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
 
