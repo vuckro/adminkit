@@ -56,8 +56,6 @@ The **Bricks** adapter, when active:
 - Enqueues the Bricks-generated tokens (`/uploads/bricks/css/style-manager.min.css`) so a color changed in the Bricks builder propagates to wp-admin on the next page load.
 - Bypasses every restyle inside the Bricks Builder UI itself.
 
-The **Gutenberg** adapter ships token-mapped header / sidebar / publish-button polish for the block, site, widgets, and navigation editors via the `enqueue_block_editor_assets` hook (NOT `admin_enqueue_scripts`) so the CSS only enters editor surfaces.
-
 AdminKit also ships adapters for **WooCommerce**, **ACF**, the **Fluent** suite (CRM, Forms, SMTP, Booking, Cart), **Slim SEO**, **HappyFiles**, **FlyingPress**, **WP Migrate**, and **Admin Menu Editor**. Each self-detects its host and stays dormant when the host isn't installed. They split into two flavors: *Tier A* adapters remap the host's own CSS variables (zero `!important`, dark mode for free); *Tier B* adapters override the host's selectors because it hardcodes its colors — run `php dev/adapter-audit.php` to see each adapter's override budget.
 
 AdminKit's theme toggle owns its own attribute (`data-adminkit-theme`) and storage key (`adminkit-theme`) — never shared with the host. Users who want a sync bridge can build one via the `adminkit/theme_attribute` / `adminkit/theme_storage_key` filters.
@@ -102,7 +100,7 @@ add_action( 'adminkit/enqueued_admin', function () {
 | `adminkit/enqueue_admin` | `(bool)` | Skip admin enqueue. |
 | `adminkit/enqueue_login` | `(bool)` | Skip login enqueue. |
 | `adminkit/enqueue_frontend` | `(bool)` | Skip frontend admin-bar enqueue. |
-| `adminkit/enqueue_editor` | `(bool)` | Skip block-editor enqueue. |
+| `adminkit/enqueue_editor` | `(bool)` | Skip the editor-context enqueue (block / site / widgets editors). |
 | `adminkit/enqueue_forms` | `(bool)` | Skip the form components (`inputs` / `buttons` / `tables`). |
 | `adminkit/enqueue_pages` | `(bool)` | Skip every screen-specific polish file. |
 | `adminkit/enqueue_{$handle}` | `(bool)` | Skip a single asset by handle (1.1+). |
@@ -164,7 +162,7 @@ adminkit/
 │       ├── themes/
 │       │   └── bricks/                  Token provider + Bricks Builder bypass
 │       └── plugins/
-│           ├── gutenberg/ · woocommerce/ · acf/
+│           ├── woocommerce/ · acf/
 │           ├── fluent-smtp/ · fluentform/ · fluent-booking/
 │           ├── slim-seo/ · happyfiles/ · flying-press/ · wp-migrate-db-pro/
 │           └── admin-menu-editor/       Admin Menu Editor + Choices.js overrides

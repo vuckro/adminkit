@@ -156,9 +156,9 @@ AdminKit_Settings::color_map();                     // semantic token taxonomy t
 ```
 
 What's registered today: the feature toggles (`module_login_enabled`,
-`module_editor_enabled`, `theme_toggle_enabled`, `post_previews_mshots`,
-`post_previews_enabled`), all boolean, default ON, bound to existing enqueue
-filters in `bind_modules()`. Add one from an integration in its `boot()`:
+`theme_toggle_enabled`, `post_previews_mshots`, `post_previews_enabled`), all
+boolean, default ON, bound to existing enqueue filters in `bind_modules()`. Add
+one from an integration in its `boot()`:
 
 ```php
 AdminKit_Settings::register( 'foo_density', array( 'default' => 'comfortable' ) );

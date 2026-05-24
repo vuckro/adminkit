@@ -363,7 +363,6 @@ class AdminKit_Settings_Page {
 			array( 'key' => 'post_previews_mshots',  'label' => __( 'Live screenshots (mShots)', 'adminkit' ), 'desc' => __( 'Use WordPress.com mShots. Off = featured image only (no external calls).', 'adminkit' ), 'parent' => 'post_previews_enabled' ),
 			array( 'key' => 'theme_toggle_enabled',  'label' => __( 'Dark mode', 'adminkit' ),       'desc' => __( 'Enable dark mode with a toggle in the admin bar. Off forces light mode everywhere.', 'adminkit' ) ),
 			array( 'key' => 'module_login_enabled',  'label' => __( 'Login screen', 'adminkit' ),              'desc' => __( 'Style the wp-login.php screen.', 'adminkit' ) ),
-			array( 'key' => 'module_editor_enabled', 'label' => __( 'Block editor', 'adminkit' ),              'desc' => __( 'Style the Gutenberg editor.', 'adminkit' ) ),
 		);
 	}
 
@@ -390,7 +389,6 @@ class AdminKit_Settings_Page {
 			'fluent-smtp'       => 'FluentSMTP',
 			'fluentform'        => 'Fluent Forms',
 			'flying-press'      => 'FlyingPress',
-			'gutenberg'         => 'Gutenberg',
 			'happyfiles'        => 'HappyFiles',
 			'loco-translate'    => 'Loco Translate',
 			'query-monitor'     => 'Query Monitor',

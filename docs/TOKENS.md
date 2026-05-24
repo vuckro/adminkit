@@ -217,8 +217,7 @@ grep -rnE 'var\(--(neutral|primary|success|warning|error|info)-(l|d|t)-[0-9]' --
   | grep -v '/tokens.css:' | grep -v -- '--ak-'
 ```
 
-**Documented exceptions:** `gutenberg/editor.css` snackbar (always-dark chip),
-`chrome.css` translucent white scrim.
+**Documented exceptions:** `chrome.css` translucent white scrim.
 
 ## Adding a provider
 

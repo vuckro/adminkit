@@ -47,16 +47,6 @@ class AdminKit_Screen {
 	}
 
 	/**
-	 * Whether the current admin screen is the Gutenberg block editor.
-	 *
-	 * @return bool
-	 */
-	public static function is_block_editor() {
-		$screen = self::get();
-		return $screen && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor();
-	}
-
-	/**
 	 * Resolve the current screen object, or null if unavailable.
 	 *
 	 * @return \WP_Screen|null

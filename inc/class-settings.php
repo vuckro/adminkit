@@ -123,7 +123,6 @@ class AdminKit_Settings {
 	private static function register_feature_catalog() {
 		$toggles = array(
 			'module_login_enabled',
-			'module_editor_enabled',
 			'theme_toggle_enabled',
 			'post_previews_mshots',
 		);
@@ -150,8 +149,7 @@ class AdminKit_Settings {
 	 */
 	private static function bind_modules() {
 		$contexts = array(
-			'module_login_enabled'  => 'adminkit/enqueue_login',
-			'module_editor_enabled' => 'adminkit/enqueue_editor',
+			'module_login_enabled' => 'adminkit/enqueue_login',
 		);
 		foreach ( $contexts as $key => $filter ) {
 			add_filter( $filter, static function ( $enabled ) use ( $key ) {
