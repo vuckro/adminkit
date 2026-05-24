@@ -80,11 +80,14 @@
 	gap: var(--ak-space-s);
 }
 
-/* The Appearance node gets a roomier submenu gap than the tight default (per
-   design). Higher specificity (its #id) wins over the rule above; layout is
-   inherited from it. */
-#wpadminbar #wp-admin-bar-appearance.hover > .ab-sub-wrapper,
-#wpadminbar.nojs #wp-admin-bar-appearance:hover > .ab-sub-wrapper {
+/* The Site Name menu — the 2nd toolbar node, the gateway to the backend (its
+   submenu holds Dashboard, then the Appearance group: Themes / Widgets / Menus…).
+   Give its wrapper a roomier gap than the tight default so the Dashboard entry and
+   the Appearance group separate clearly. Its #id wins over the general rule above;
+   the flex column layout is inherited from it. (The `appearance` node is only a
+   group INSIDE this submenu — it has no fly-out wrapper of its own to target.) */
+#wpadminbar #wp-admin-bar-site-name.hover > .ab-sub-wrapper,
+#wpadminbar.nojs #wp-admin-bar-site-name:hover > .ab-sub-wrapper {
 	gap: var(--ak-space-l);
 }
 
