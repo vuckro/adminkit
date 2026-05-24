@@ -7,6 +7,30 @@ body.block-editor-page.adminkit .editor-header,
 body.block-editor-page.adminkit .interface-interface-skeleton__header {
 	background: var(--ak-surface);
 	border-bottom: 1px solid var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* The header's inner regions must not repaint a white bar over the surface
+   above — keep them transparent so the whole bar flips with the chrome (not
+   just the shell), and route the icon buttons to the token foreground. All
+   --ak-* so it's correct in light AND dark. */
+body.block-editor-page.adminkit .editor-header__toolbar,
+body.block-editor-page.adminkit .editor-header__center,
+body.block-editor-page.adminkit .editor-header__settings,
+body.block-editor-page.adminkit .edit-post-header__toolbar,
+body.block-editor-page.adminkit .edit-post-header__center,
+body.block-editor-page.adminkit .edit-post-header__settings {
+	background: transparent;
+}
+
+body.block-editor-page.adminkit .editor-header .components-button:not(.is-primary),
+body.block-editor-page.adminkit .edit-post-header .components-button:not(.is-primary) {
+	color: var(--ak-text);
+}
+body.block-editor-page.adminkit .editor-header .components-button:not(.is-primary):hover:not(:disabled),
+body.block-editor-page.adminkit .edit-post-header .components-button:not(.is-primary):hover:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
 }
 
 /* Light/dark toggle injected into the editor header (js/theme-toggle.js) — the
