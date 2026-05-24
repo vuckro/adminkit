@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AdminKit — Secondary button variations</title>
+<style>
+	/* ── AdminKit tokens (representative of assets/css/tokens.css) ───────────── */
+	.theme {
+		--ak-bg: hsl(0 0% 98%);
+		--ak-surface: hsl(0 0% 96%);
+		--ak-elevated: hsl(0 0% 93%);
+		--ak-border: hsl(0 0% 89%);
+		--ak-border-strong: hsl(0 0% 82%);
+		--ak-text: hsl(0 0% 32%);
+		--ak-heading: hsl(0 0% 18%);
+		--ak-text-muted: hsl(0 0% 50%);
+		--ak-primary: #ffd64f;          /* brand yellow */
+		--ak-primary-hover: #d1af41;
+		--ak-on-accent: #2b2300;        /* dark text on the yellow */
+		--ak-primary-subtle: #fcf3cf;   /* pale yellow */
+		--ak-hover-bg: rgba(0, 0, 0, .045);
+		--ak-focus: #ffd64f;
+		--ak-radius-s: 6px;
+		--ak-font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+	}
+	.theme.dark {
+		--ak-bg: hsl(0 0% 7%);
+		--ak-surface: hsl(0 0% 11%);
+		--ak-elevated: hsl(0 0% 14%);
+		--ak-border: hsl(0 0% 18%);
+		--ak-border-strong: hsl(0 0% 24%);
+		--ak-text: hsl(0 0% 72%);
+		--ak-heading: hsl(0 0% 86%);
+		--ak-text-muted: hsl(0 0% 56%);
+		--ak-primary: #ffd64f;
+		--ak-primary-hover: #ffe071;
+		--ak-on-accent: #2b2300;
+		--ak-primary-subtle: #3a3414;   /* dark amber tint */
+		--ak-hover-bg: rgba(255, 255, 255, .11);
+		--ak-focus: #ffd64f;
+	}
+
+	/* ── Page chrome ────────────────────────────────────────────────────────── */
+	* { box-sizing: border-box; }
+	body {
+		margin: 0;
+		font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+		background: #2a2a2e;
+		color: #e8e8ea;
+		line-height: 1.5;
+	}
+	header { padding: 28px 32px 8px; max-width: 1180px; margin: 0 auto; }
+	header h1 { margin: 0 0 6px; font-size: 22px; }
+	header p { margin: 4px 0; color: #b9b9bf; font-size: 14px; max-width: 70ch; }
+	header code { background: #1c1c1f; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+	main { max-width: 1180px; margin: 0 auto; padding: 16px 32px 64px; }
+
+	.card {
+		border: 1px solid #3a3a40;
+		border-radius: 12px;
+		margin: 18px 0;
+		overflow: hidden;
+		background: #232327;
+	}
+	.card__head { padding: 14px 18px; border-bottom: 1px solid #3a3a40; }
+	.card__head h2 { margin: 0 0 2px; font-size: 15px; }
+	.card__head .tag { display: inline-block; font-size: 11px; font-weight: 700; color: #ffd64f; letter-spacing: .04em; text-transform: uppercase; }
+	.card__head p { margin: 4px 0 0; font-size: 13px; color: #aeaeb4; }
+	.card__head code { background: #1c1c1f; padding: 1px 5px; border-radius: 4px; font-size: 12px; color: #d8d8da; }
+
+	.panels { display: grid; grid-template-columns: 1fr 1fr; }
+	.panel { padding: 22px 18px; }
+	.panel + .panel { border-left: 1px solid #3a3a40; }
+	.panel__label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #87878d; margin-bottom: 14px; }
+
+	/* The themed surface each button group sits on */
+	.theme {
+		background: var(--ak-bg);
+		border-radius: 8px;
+		padding: 18px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 12px;
+	}
+	.state { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+	.state small { font-size: 10px; letter-spacing: .04em; text-transform: uppercase; color: var(--ak-text-muted); }
+
+	/* ── Buttons (mirror wp-components/buttons.css) ─────────────────────────── */
+	.btn {
+		font-family: var(--ak-font);
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 2.15;
+		min-height: 30px;
+		padding: 0 12px;
+		border-radius: var(--ak-radius-s);
+		border: 1px solid transparent;
+		cursor: pointer;
+		box-shadow: none;
+		transition: background .12s, border-color .12s, color .12s, box-shadow .12s;
+	}
+	/* PRIMARY (validated — shown for reference) */
+	.btn-primary { background: var(--ak-primary); border-color: var(--ak-primary); color: var(--ak-on-accent); }
+	.btn-primary:hover, .btn-primary.s-hover,
+	.btn-primary:focus, .btn-primary.s-focus { background: var(--ak-primary-hover); border-color: var(--ak-primary-hover); color: var(--ak-on-accent); outline: none; }
+
+	/* SECONDARY base (rest is identical for every variation) */
+	.btn-sec { background: var(--ak-surface); border-color: var(--ak-border); color: var(--ak-text); }
+	.btn-sec:focus { outline: none; }
+
+	/* ── Variations: only the hover/focus treatment differs ─────────────────── */
+	/* V1 — Quiet neutral */
+	.v1:hover, .v1.s-hover, .v1:focus, .v1.s-focus { background: var(--ak-hover-bg); border-color: var(--ak-border); }
+	/* V2 — Neutral, stronger border */
+	.v2:hover, .v2.s-hover, .v2:focus, .v2.s-focus { background: var(--ak-hover-bg); border-color: var(--ak-border-strong); }
+	/* V3 — Accent outline (CURRENT) */
+	.v3:hover, .v3.s-hover, .v3:focus, .v3.s-focus { background: var(--ak-hover-bg); border-color: var(--ak-primary); }
+	/* V4 — Muted accent outline */
+	.v4:hover, .v4.s-hover, .v4:focus, .v4.s-focus { background: var(--ak-hover-bg); border-color: color-mix(in srgb, var(--ak-primary) 55%, var(--ak-border)); }
+	/* V5 — Accent label, neutral border */
+	.v5:hover, .v5.s-hover, .v5:focus, .v5.s-focus { background: var(--ak-hover-bg); border-color: var(--ak-border); color: var(--ak-primary); }
+	/* V6 — Subtle brand tint + accent border (the "wow") */
+	.v6:hover, .v6.s-hover, .v6:focus, .v6.s-focus { background: var(--ak-primary-subtle); border-color: var(--ak-primary); }
+	/* V7 — Elevated lift, neutral */
+	.v7:hover, .v7.s-hover, .v7:focus, .v7.s-focus { background: var(--ak-elevated); border-color: var(--ak-border-strong); }
+	/* V8 — Soft accent ring */
+	.v8:hover, .v8.s-hover, .v8:focus, .v8.s-focus { background: var(--ak-hover-bg); border-color: var(--ak-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ak-primary) 28%, transparent); }
+</style>
+</head>
+<body>
+<header>
+	<h1>AdminKit — secondary button, pick one</h1>
+	<p>The <strong>primary</strong> button (filled yellow) is the validated reference. Below are <strong>8 secondary variations</strong> — only the <em>hover / focus</em> treatment differs (rest is always: surface fill, neutral border, body text). Each is shown in light + dark, with the <strong>rest / hover / focus</strong> states laid out so you can judge without hovering (the buttons are live too).</p>
+	<p>Tell me the number (e.g. <code>V4</code>) and I deploy it everywhere — generic <code>.button</code>, header CTAs, file inputs, the editor <code>.is-secondary</code>.</p>
+</header>
+<main id="app"></main>
+
+<script>
+	var VARIATIONS = [
+		{ id: 'v1', name: 'Quiet neutral', desc: 'Hover/focus: faint neutral tint, border stays neutral. The most discreet — clearly secondary.' },
+		{ id: 'v2', name: 'Neutral, stronger border', desc: 'Hover/focus: neutral tint + border darkens to --ak-border-strong. Subtle, no brand.' },
+		{ id: 'v3', name: 'Accent outline (current)', desc: 'Hover/focus: neutral tint + brand --ak-primary border. Accent outline, no brand fill.' },
+		{ id: 'v4', name: 'Muted accent outline', desc: 'Hover/focus: neutral tint + a softened accent border (55% brand / 45% neutral). Half-way.' },
+		{ id: 'v5', name: 'Accent label', desc: 'Hover/focus: neutral tint, neutral border, the LABEL turns brand. Accent without an outline.' },
+		{ id: 'v6', name: 'Subtle brand tint ("wow")', desc: 'Hover/focus: pale brand fill + brand border. The loudest — closest to the primary.' },
+		{ id: 'v7', name: 'Elevated lift', desc: 'Hover/focus: lifts to --ak-elevated + stronger neutral border. A "raise" feel, zero brand.' },
+		{ id: 'v8', name: 'Soft accent ring', desc: 'Hover/focus: brand border + a soft translucent brand glow ring. Distinct but not filled.' }
+	];
+
+	function group(theme, variationId, withPrimary) {
+		var states = [
+			{ cls: '', label: 'Rest' },
+			{ cls: ' s-hover', label: 'Hover' },
+			{ cls: ' s-focus', label: 'Focus' }
+		];
+		var html = '<div class="theme ' + theme + '">';
+		if (withPrimary) {
+			html += '<div class="state"><button class="btn btn-primary">Primary</button><small>Primary</small></div>';
+		}
+		states.forEach(function (s) {
+			html += '<div class="state"><button class="btn btn-sec ' + variationId + s.cls + '">Secondary</button><small>' + s.label + '</small></div>';
+		});
+		html += '</div>';
+		return html;
+	}
+
+	var app = document.getElementById('app');
+
+	// Primary reference card
+	app.insertAdjacentHTML('beforeend',
+		'<div class="card"><div class="card__head"><span class="tag">Reference</span>' +
+		'<h2>Primary button (validated)</h2><p>For comparison — the secondary must stay clearly below this.</p></div>' +
+		'<div class="panels"><div class="panel"><div class="panel__label">Light</div>' +
+		'<div class="theme"><div class="state"><button class="btn btn-primary">Primary</button><small>Rest</small></div>' +
+		'<div class="state"><button class="btn btn-primary s-hover">Primary</button><small>Hover</small></div></div></div>' +
+		'<div class="panel"><div class="panel__label">Dark</div>' +
+		'<div class="theme dark"><div class="state"><button class="btn btn-primary">Primary</button><small>Rest</small></div>' +
+		'<div class="state"><button class="btn btn-primary s-hover">Primary</button><small>Hover</small></div></div></div></div></div>'
+	);
+
+	VARIATIONS.forEach(function (v) {
+		app.insertAdjacentHTML('beforeend',
+			'<div class="card"><div class="card__head"><span class="tag">' + v.id.toUpperCase() + '</span>' +
+			'<h2>' + v.name + '</h2><p>' + v.desc + '</p></div>' +
+			'<div class="panels">' +
+			'<div class="panel"><div class="panel__label">Light</div>' + group('', v.id, true) + '</div>' +
+			'<div class="panel"><div class="panel__label">Dark</div>' + group('dark', v.id, true) + '</div>' +
+			'</div></div>'
+		);
+	});
+</script>
+</body>
+</html>
