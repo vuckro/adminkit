@@ -58,6 +58,7 @@ All in `inc/wp-core/class-post-previews.php`:
 | Hook | Signature | Purpose |
 | --- | --- | --- |
 | `adminkit/post_previews/enabled` | `(bool)` | Master on/off for the preview column. |
+| `adminkit/post_previews/provider` | `(string `mshots`\|`featured`)` | Screenshot source; the "Live screenshots" toggle forces `featured` when off. |
 | `adminkit/post_previews/post_types` | `(string[])` | Which list tables get the column. |
 | `adminkit/post_previews/thumb_size` / `full_size` | `(int[2] [w,h])` | Column thumbnail / hover sizes. |
 | `adminkit/post_previews/refresh_interval` | `(int $seconds)` | Screenshot cache window (0 = pin). |
