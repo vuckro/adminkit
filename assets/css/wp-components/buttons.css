@@ -5,13 +5,11 @@
    .wrap .page-title-action is included here so the "Add New" button next
    to page titles inherits all base sizing — the .button-primary rule
    below then overrides its colors. */
-/* Secondary / generic button — flat: light surface, a neutral --ak-border
-   (NOT primary at rest or hover — a brand-tinted border would read as a primary
-   button), text in --ak-text. The label color is constant across rest/hover/focus;
-   hover lifts the fill to a faint primary tint while the border stays the soft
-   --ak-border (a gentle CTA, no hard outline on hover).
-   Keyboard focus may carry a primary border (the focus indicator). Only
-   .button-primary carries the filled brand style. */
+/* Secondary / generic button — flat: surface fill, neutral --ak-border at rest,
+   text in --ak-text. The label color is constant across rest/hover/focus. On
+   hover AND focus the fill lifts to a faint primary tint and the border
+   accentuates to the brand --ak-primary — one consistent accent feedback across
+   every secondary button. Only .button-primary carries the filled brand style. */
 body.adminkit .button,
 body.adminkit .wp-core-ui .button,
 body.adminkit .button-secondary,
@@ -38,7 +36,7 @@ body.adminkit .button:focus,
 body.adminkit .wp-core-ui .button:focus,
 body.adminkit .button-secondary:focus {
 	background: var(--ak-primary-subtle);
-	border-color: var(--ak-border);
+	border-color: var(--ak-primary);
 	color: var(--ak-text);
 }
 
@@ -92,11 +90,10 @@ body.adminkit .wrap .page-title-action:focus {
 
 /* When several header action buttons stack (e.g. Add New + Import on the
    Bricks templates list), keep only the FIRST filled (primary). The rest are
-   secondary CTAs ("secondary" only by position) — they read as neutral
-   secondary buttons (surface + --ak-border) at rest AND on hover/focus, exactly
-   like every other secondary button (homogenized — no brand border). (This
-   override is also needed because the .button-primary rule above matches every
-   .page-title-action and would otherwise fill them.) */
+   secondary CTAs ("secondary" only by position) — neutral at rest, with the same
+   brand --ak-primary border on hover/focus as every other secondary button
+   (homogenized). (This override is also needed because the .button-primary rule
+   above matches every .page-title-action and would otherwise fill them.) */
 body.adminkit .wrap .page-title-action ~ .page-title-action {
 	background: var(--ak-surface);
 	border-color: var(--ak-border);
@@ -106,7 +103,7 @@ body.adminkit .wrap .page-title-action ~ .page-title-action {
 body.adminkit .wrap .page-title-action ~ .page-title-action:hover,
 body.adminkit .wrap .page-title-action ~ .page-title-action:focus {
 	background: var(--ak-primary-subtle);
-	border-color: var(--ak-border);
+	border-color: var(--ak-primary);
 	color: var(--ak-text);
 }
 
@@ -161,7 +158,7 @@ body.adminkit input[type="file"]::file-selector-button {
 
 body.adminkit input[type="file"]::file-selector-button:hover {
 	background: var(--ak-primary-subtle);
-	border-color: var(--ak-border);
+	border-color: var(--ak-primary);
 	color: var(--ak-text);
 }
 
@@ -215,11 +212,11 @@ body.adminkit button.remove-site-icon:focus {
 
 /* List-table bulk-action "Apply" + the "Filter"/"Search" submit buttons are
    plain secondary buttons — pin them (id specificity, so they win over any
-   host/WP id rule) to the SAME flat focus as every secondary button: the soft
-   --ak-border, no ring. Homogenized — no brand border on focus. */
+   host/WP id rule) to the SAME accent focus as every secondary button: the
+   --ak-primary border, no box-shadow ring. */
 body.adminkit #doaction:focus,
 body.adminkit #doaction2:focus,
 body.adminkit #post-query-submit:focus {
 	box-shadow: none;
-	border-color: var(--ak-border);
+	border-color: var(--ak-primary);
 }

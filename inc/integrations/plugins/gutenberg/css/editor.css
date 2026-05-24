@@ -89,7 +89,7 @@ body.block-editor-page.adminkit .components-button.is-secondary {
 body.block-editor-page.adminkit .components-button.is-secondary:hover:not(:disabled),
 body.block-editor-page.adminkit .components-button.is-secondary:focus:not(:disabled) {
 	background: var(--ak-primary-subtle);
-	box-shadow: inset 0 0 0 1px var(--ak-border);
+	box-shadow: inset 0 0 0 1px var(--ak-primary);
 	color: var(--ak-text);
 }
 
