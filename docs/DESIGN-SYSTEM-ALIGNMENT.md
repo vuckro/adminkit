@@ -43,7 +43,7 @@ design-system/palettes/*.json   →  assets/css/waaskit-tokens.css  →  (opt.) 
   in turn read the WaasKit semantics. Component/integration CSS reads only `--ak-*`.
 - **Dark mode.** Bricks' own dark toggle never fires in wp-admin, so AdminKit owns dark
   via `:root[data-adminkit-theme="dark"]`. It re-maps `--ak-*` onto the **inverse
-  primitive ramp** (`--neutral-d-*`, `--primary-d-10`, `--*-d-9`) — exactly the
+  primitive ramp** (`--neutral-d-*`, `--primary-d-9`, `--*-d-9`) — exactly the
   mechanism WaasKit prescribes for a forced scheme (`.scheme-dark`, WaasKit §11).
 
 ---
@@ -64,7 +64,7 @@ with it.
 | `--accent` | `--primary` | `--ak-primary` | brand, no flip |
 | `--accent-hover` | `--primary-d-1` | `--ak-primary-hover` | dark→`l-1` |
 | `--accent-on` | `--primary-d-10` | `--ak-on-accent` | **dark text on yellow** |
-| `--accent-subtle` | `--primary-l-10` (opaque) | `--ak-primary-subtle` | dark→`--primary-d-10` |
+| `--accent-subtle` | `--primary-l-9` (opaque) | `--ak-primary-subtle` | dark→`--primary-d-9` |
 | `--input` | `--neutral-l-1` | `--ak-input-bg` | flip→`--neutral-d-3` |
 | `--focus` | `--primary-t-5` ⚠️ | `--ak-focus` | see open item F1 |
 | `--success` | `--success` | `--ak-success` | |
@@ -89,11 +89,13 @@ with it.
 
 ## 3. Decision log
 
-- **D1 — `-subtle` is opaque, dark-remapped.** WaasKit §7.3 locked `--accent-subtle`
-  to an *opaque* pale (`--primary-l-10`), not the old transparent `--primary-t-1`.
-  AdminKit consumes the opaque value in light and, in its own dark scope, re-maps each
-  `-subtle` onto the `d-9`/`d-10` ramp — WaasKit's own `.scheme-dark` mechanism (§11).
-  Rationale: faithful to the locked doc **and** correct on AdminKit's dark UI.
+- **D1 — `-subtle` is opaque, dark-remapped, on the `-9` step.** WaasKit §7.3 locked
+  `--accent-subtle` to an *opaque* pale, not the old transparent `--primary-t-1`. It now
+  sits on `--primary-l-9` (harmonised 2026-05-24 with the status `-subtle` set, which were
+  already `l-9`; `l-10` read too pale once swatches became visible). AdminKit consumes the
+  opaque value in light and, in its own dark scope, re-maps each `-subtle` onto the `d-9`
+  ramp — WaasKit's own `.scheme-dark` mechanism (§11). Faithful to the system **and**
+  correct on AdminKit's dark UI.
 - **D2 — on-accent is dark.** The brand is a light yellow (`#fed53e`); text on it must
   be dark. `--ak-on-accent` now reads `--accent-on` (`--primary-d-10`). Fixes white/pale
   text on yellow buttons (was the most visible defect).
@@ -248,6 +250,19 @@ PHP. Not done: browser QA (no-Bricks vs Bricks, light + dark).
 
 SPA assets are filemtime-cache-busted, so a refresh picks the changes up. Browser QA of
 the rendered swatches still pending.
+
+### Iteration 5 — `--accent-subtle` → `-9` step · 2026-05-24
+**Goal:** harmonise `--accent-subtle` with the status `-subtle` set (all on the `-9`
+step). `l-10` read too pale once the swatches became visible. Done in Bricks by the user;
+mirrored here in the source + plugin + docs.
+
+- `design-system/palettes/semantique.json` — `--accent-subtle`: `--primary-l-10`→`l-9`
+  (light), `--primary-d-10`→`d-9` (dark). Regenerated `waaskit-tokens.css`.
+- `assets/css/tokens.css` — `--ak-primary-subtle` `:root` fallback `--primary-l-9`; dark
+  remap `--primary-d-9`. `class-settings.php` `color_map()` source `--primary-l-9`.
+- `--accent-on` is **unchanged** (`--primary-d-10`); only the `-subtle` step moved.
+
+Branch `adminkit/accent-subtle-l9` (off `refactor/folder-structure`).
 
 ---
 

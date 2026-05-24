@@ -87,11 +87,11 @@
 	   --ak-primary mirrors WaasKit --accent; --primary-hover / --primary-subtle
 	   mirror --accent-hover / --accent-subtle (WaasKit defines all three, so a
 	   single line — color-mix / the l-* ramp are just the no-provider fallback).
-	   --ak-primary-subtle is OPAQUE per WaasKit (--accent-subtle → --primary-l-10);
-	   the dark block re-maps it onto --primary-d-10. */
+	   --ak-primary-subtle is OPAQUE per WaasKit (--accent-subtle → --primary-l-9,
+	   harmonised with the status -subtle set); the dark block re-maps it onto --primary-d-9. */
 	--ak-primary: var(--accent, var(--primary, var(--neutral-l-8, hsl(0, 0%, 32%))));
 	--ak-primary-hover: var(--accent-hover, var(--primary-d-1, color-mix(in srgb, var(--ak-primary) 82%, #000)));
-	--ak-primary-subtle: var(--accent-subtle, var(--primary-l-10, color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface))));
+	--ak-primary-subtle: var(--accent-subtle, var(--primary-l-9, color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface))));
 	/* Foreground on a brand fill — WaasKit --accent-on (→ --primary-d-10): dark
 	   text on the light/yellow brand. Standalone falls to off-white for the
 	   no-provider mid-gray accent. */
@@ -209,7 +209,7 @@ body.adminkit[class*="admin-color-"] {
 	   d-9/d-10 ramp). The provider's own dark mode never fires in wp-admin, so we
 	   read those dark primitives straight (same trick as the surfaces above) to
 	   reproduce WaasKit dark instead of leaving a pale light tint on a dark UI. */
-	--ak-primary-subtle: var(--primary-d-10, color-mix(in srgb, var(--ak-primary) 22%, var(--ak-surface)));
+	--ak-primary-subtle: var(--primary-d-9, color-mix(in srgb, var(--ak-primary) 22%, var(--ak-surface)));
 	--ak-success-subtle: var(--success-d-9, color-mix(in srgb, var(--ak-success) 22%, var(--ak-surface)));
 	--ak-warning-subtle: var(--warning-d-9, color-mix(in srgb, var(--ak-warning) 22%, var(--ak-surface)));
 	--ak-error-subtle:   var(--error-d-9, color-mix(in srgb, var(--ak-error) 22%, var(--ak-surface)));

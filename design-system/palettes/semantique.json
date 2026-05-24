@@ -67,9 +67,9 @@
     {
       "id": "accsb17",
       "raw": "var(--accent-subtle)",
-      "light": "var(--primary-l-10)",
+      "light": "var(--primary-l-9)",
       "darkModeEnabled": true,
-      "dark": "var(--primary-d-10)"
+      "dark": "var(--primary-d-9)"
     },
     {
       "id": "section_state",
