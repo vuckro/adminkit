@@ -341,8 +341,11 @@
 				state.dirty = false;
 				updateBar();
 				setStatus( 'is-saved', I.saved );
-				// Module toggles take effect on the next visit to those screens.
-				// No reload here.
+				// The toggles gate asset loading SERVER-side, so reflecting them
+				// without a reload would mean duplicating that gating in JS (bloat).
+				// Instead reload automatically, just after the "Saved" flash, so the
+				// change shows with no manual refresh. The #hash keeps the active tab.
+				setTimeout( function () { location.reload(); }, 600 );
 			} )
 			.catch( function () {
 				state.saving = false;
