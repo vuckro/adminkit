@@ -36,6 +36,8 @@
 	align-items: center;
 	gap: 14px;
 }
+/* Bulk enable/disable-all row on the Features tab — reuses .ak-actions layout. */
+.adminkit-app .ak-bulk { margin-bottom: 14px; }
 .adminkit-app .ak-status {
 	display: inline-flex;
 	align-items: center;

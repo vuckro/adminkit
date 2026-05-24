@@ -292,6 +292,16 @@
 			refs[ f.key ].row.classList.toggle( 'is-disabled', ! on );
 		}
 
+		// Flip every feature at once (the "enable / disable all" controls).
+		function setAll( on ) {
+			( D.features || [] ).forEach( function ( f ) {
+				state.features[ f.key ] = on;
+				if ( refs[ f.key ] ) { refs[ f.key ].input.checked = on; }
+			} );
+			( D.features || [] ).forEach( applyDep );
+			markDirty();
+		}
+
 		( D.features || [] ).forEach( function ( f ) {
 			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
 			input.checked = !! state.features[ f.key ];
@@ -316,6 +326,13 @@
 		} );
 
 		( D.features || [] ).forEach( applyDep ); // initial dependency state
+
+		// Bulk controls — flip every feature on/off in one click (reuses the
+		// header's flex row + secondary buttons; no new layout CSS).
+		p.appendChild( el( 'div', { 'class': 'ak-actions ak-bulk' }, [
+			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.enableAll, onclick: function () { setAll( true ); } } ),
+			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.disableAll, onclick: function () { setAll( false ); } } )
+		] ) );
 		p.appendChild( rows );
 		return p;
 	}

@@ -236,6 +236,8 @@ class AdminKit_Settings_Page {
 				'own'               => __( 'AdminKit', 'adminkit' ),
 				'ownHint'           => __( 'AdminKit-defined role (no provider equivalent).', 'adminkit' ),
 				'featuresIntro'     => __( 'Turn AdminKit modules on or off.', 'adminkit' ),
+				'enableAll'         => __( 'Enable all', 'adminkit' ),
+				'disableAll'        => __( 'Disable all', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),
