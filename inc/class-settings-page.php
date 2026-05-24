@@ -243,7 +243,7 @@ class AdminKit_Settings_Page {
 			'features'     => $features,
 			'i18n'         => array(
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
-				'design'            => __( 'Appearance', 'adminkit' ),
+				'design'            => __( 'Tokens', 'adminkit' ),
 				'features'          => __( 'Features', 'adminkit' ),
 				'soon'              => __( 'Coming soon', 'adminkit' ),
 				'own'               => __( 'AdminKit', 'adminkit' ),
@@ -281,7 +281,7 @@ class AdminKit_Settings_Page {
 
 		$cards = array(
 			array(
-				'label'  => __( 'Appearance', 'adminkit' ),
+				'label'  => __( 'Tokens', 'adminkit' ),
 				'value'  => self::active_provider_label(),
 				'hint'   => $primary ? sprintf( __( 'accent %s', 'adminkit' ), $primary ) : __( 'accent inherited', 'adminkit' ),
 				'swatch' => '--ak-primary',
@@ -323,7 +323,7 @@ class AdminKit_Settings_Page {
 
 	/**
 	 * Colour providers AdminKit can inherit its palette from. Data-driven +
-	 * filterable (`adminkit/providers`) so new design systems slot in without
+	 * filterable (`adminkit/providers`) so new token providers slot in without
 	 * touching the UI. Each: `id`, `label`, `status` ('available' | 'soon'),
 	 * `detected` (host present). Only Bricks ships today; the rest are
 	 * placeholders ("coming soon"). `custom` = map every colour by hand.

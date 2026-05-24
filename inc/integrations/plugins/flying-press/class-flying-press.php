@@ -8,7 +8,7 @@
  * Tailwind utility (`bg-white`, `text-gray-900`, `border-gray-200`, …)
  * that never flips in dark mode. admin.css routes the indigo intent to
  * AdminKit's primary and the gray surface/text/border scale to the
- * tokens, so the page inherits the design system and the dark-mode flip.
+ * tokens, so the page inherits the tokens and the dark-mode flip.
  *
  * Loaded only on the FlyingPress screen (`toplevel_page_flying-press`).
  * AdminKit's own form primitives (inputs / buttons / tables) are bailed

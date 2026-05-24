@@ -10,7 +10,7 @@
 
    `--surface` and the rest of the WaasKit semantic layer are ALWAYS present:
    AdminKit ships the full WaasKit token baseline (assets/css/waaskit-tokens.css,
-   generated from design-system/palettes/* — enqueued before this file). A live
+   generated from tokens/palettes/* — enqueued before this file). A live
    provider (Bricks) loads after the baseline and overrides it. So the inline
    hsl/hex defaults here are an emergency fallback only — for the (unexpected)
    case where the baseline file is missing. AdminKit mirrors the WaasKit semantic

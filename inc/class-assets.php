@@ -46,7 +46,7 @@ class AdminKit_Assets {
 	const TOKENS_HANDLE = 'adminkit-tokens';
 	const TOKENS_SRC    = 'assets/css/tokens.css';
 
-	// Built-in WaasKit design-system baseline (generated from tokens/palettes/*
+	// Built-in WaasKit token baseline (generated from tokens/palettes/*
 	// by the adminkit-tokens-build skill). Shipped so AdminKit is brand-complete with
 	// no provider; a live provider (Bricks) loads AFTER it and overrides it.
 	const WAASKIT_HANDLE = 'adminkit-waaskit';
@@ -262,7 +262,7 @@ class AdminKit_Assets {
 	 */
 	private static function enqueue_tokens( $context, array $core_deps = array() ) {
 		// Ship the WaasKit baseline first, as the leading dep of adminkit-tokens, so
-		// the brand design system is always present even with no provider. A provider
+		// the brand tokens are always present even with no provider. A provider
 		// (Bricks) returns its handle below and is registered to depend on this
 		// baseline, so it loads AFTER and overrides it (see Bricks::provide_tokens()).
 		// Not on the frontend: there a live provider already themes the page and the
