@@ -33,7 +33,7 @@ Resolution order:
 ```php
 $primary = AdminKit_Settings::get( 'primary_color' );
 // → null on a fresh install
-// → user's chosen hex when the future UI has saved one
+// → user's chosen hex once a value has been saved (settings UI / migration)
 // → filter result if anyone hooks adminkit/setting/primary_color
 ```
 
