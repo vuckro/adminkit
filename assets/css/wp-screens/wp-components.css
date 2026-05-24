@@ -158,10 +158,10 @@ body.adminkit .components-popover__content {
 	background: transparent;
 	border-color: var(--ak-border);
 	color: var(--ak-text);
-	/* Flatten WP's #ccc ring + 4-layer drop shadow to AdminKit's clean look:
-	   a 1px token ring + the one sanctioned elevation (a popover is a true
-	   floating layer), so it reads crisp instead of grey-fuzzy. */
-	box-shadow: 0 0 0 1px var(--ak-border), var(--ak-shadow-elevated);
+	/* Flatten WP's #ccc ring + 4-layer drop shadow to a clean 1px token ring —
+	   no drop halo (the content wrapper is transparent, so a drop would shadow an
+	   empty box). The ring keeps the popover's crisp edge. */
+	box-shadow: 0 0 0 1px var(--ak-border);
 }
 
 /* Menu items inside popovers */
