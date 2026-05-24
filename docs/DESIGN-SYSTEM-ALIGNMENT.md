@@ -11,22 +11,29 @@
 | **Token reference** | [`TOKENS.md`](TOKENS.md) · runtime: [`../assets/css/tokens.css`](../assets/css/tokens.css) |
 | **`#design` tab data** | `AdminKit_Settings::color_map()` in [`../inc/class-settings.php`](../inc/class-settings.php) |
 | **Last reviewed** | 2026-05-24 |
-| **Status** | Token spine aligned ✅ · on-accent sweep done ✅ · status-tint cleanup pending ⏳ |
+| **Status** | Token spine ✅ · on-accent sweep ✅ · shipped WaasKit baseline ✅ · status-tint cleanup pending ⏳ |
 
 ---
 
 ## 1. How the two systems connect
 
 ```
-WaasKit primitives          WaasKit semantics (23)        AdminKit              wp-admin
-⚙️Neutre 🎨Marque 🔔Notif  →  🏷️Sémantique             →   --ak-*           →   every AK rule
---neutral-l-1, --primary…      --surface, --accent…          (tokens.css)         (components, integrations)
+design-system/palettes/*.json   →  assets/css/waaskit-tokens.css  →  (opt.) Bricks override  →  --ak-*  →  wp-admin
+  (committed source of truth)        (GENERATED baseline, shipped)      style-manager.min.css      tokens.css    every AK rule
+        ⚙️🎨🔔🏷️                       :root{ --neutral-l-1; --accent… }   live, wins when active
 ```
 
+- **Shipped baseline (the primary connection).** AdminKit ships the FULL WaasKit token
+  layer — every primitive + the 23 semantics — as `assets/css/waaskit-tokens.css`,
+  **generated** from the committed `design-system/palettes/*.json` by the
+  `adminkit-tokens-build` skill. `enqueue_tokens()` (class-assets.php) enqueues it as the
+  leading dep of `adminkit-tokens`, so the brand design system is always present — even
+  with no provider. It emits each token's light-context value (what Bricks feeds wp-admin);
+  no dark block — AdminKit owns dark via `--ak-*`.
 - **Where WaasKit lives at runtime.** When Bricks is active, it writes every variable
   (primitives **and** the `🏷️ Sémantique` palette) to
   `/uploads/bricks/css/style-manager.min.css`. The Bricks adapter
-  ([`class-bricks.php`](../inc/integrations/bricks/class-bricks.php)) enqueues that file
+  ([`class-bricks.php`](../inc/integrations/themes/bricks/class-bricks.php)) enqueues that file
   and pins it as a dependency of `adminkit-tokens`, so the semantics resolve before
   `tokens.css` reads them. Verified present in the generated file: `--accent`,
   `--accent-on`, `--accent-subtle`, `--input`, `--focus`, `--success-subtle` … (see
@@ -144,15 +151,15 @@ Changed:
 - `inc/class-settings.php` — `color_map()` updated so the `#design` reference table
   shows the real bridges + primitives + `own` flags; added the four `*-subtle` status
   rows; docstring refreshed.
-- `inc/integrations/bricks/css/frontend-mode.css` — `--field-bg`→`--input`.
-- `inc/integrations/bricks/css/admin.css` — message-box info/success/warning now use
+- `inc/integrations/themes/bricks/css/frontend-mode.css` — `--field-bg`→`--input`.
+- `inc/integrations/themes/bricks/css/admin.css` — message-box info/success/warning now use
   `--ak-*-subtle` (danger already did) → uniform + validates the new tokens.
-- `assets/css/components/buttons.css` — primary-button label was hard-pinned to
+- `assets/css/wp-components/buttons.css` — primary-button label was hard-pinned to
   `--primary-l-10` (pale cream on yellow); now `var(--ak-on-accent)`.
-- `assets/css/screens/plugins.css` — plugin-update highlight → `--ak-warning-subtle`.
-- `inc/integrations/flying-press/css/admin.css` — `.bg-green-50` / `.bg-yellow-50`
+- `assets/css/wp-screens/plugins.css` — plugin-update highlight → `--ak-warning-subtle`.
+- `inc/integrations/plugins/flying-press/css/admin.css` — `.bg-green-50` / `.bg-yellow-50`
   → `--ak-success-subtle` / `--ak-warning-subtle`.
-- `inc/integrations/gutenberg/css/dark-mode-map.css` — stale `--error-t-2` comment.
+- `inc/integrations/plugins/gutenberg/css/dark-mode-map.css` — stale `--error-t-2` comment.
 - `docs/TOKENS.md` — rewritten to the 23-token vocabulary.
 - `docs/WAASKIT-DESIGN-SYSTEM.md` — added (copy of the locked source of truth).
 
@@ -186,6 +193,45 @@ bubble (`chrome.css`), and non-accent contexts (`media.css`, `tables.css`,
 
 Not done (browser QA): visual confirmation on the converted plugin screens.
 
+### Palette note — 2026-05-24
+Provider-side fix (WaasKit `⚙️ Neutre`): the `--black` / `--white` families were
+corrected — pure black/white (no stray dark flip) + proper **light** transparent
+ramps (`--black-t-*`, `--white-t-*` at 9→91 %) instead of dark-only stops. Confirmed
+live in `style-manager.min.css`. AdminKit needs no change; `--ak-overlay`
+(→ `--black-t-7` = .64) and the dark hover (→ `--white-t-2` = .18) now resolve to real
+provider values instead of their built-in fallbacks.
+
+### Iteration 3 — Shipped WaasKit baseline + single source of truth · 2026-05-24
+**Goal:** make the WaasKit design system a first-class, self-contained part of the
+plugin — brand-complete without Bricks — with one versioned source and zero drift.
+(Decisions: ship the full brand by default; source = committed JSON + generator.)
+
+Added / changed:
+- `design-system/palettes/*.json` — the 6 WaasKit Bricks exports committed as the
+  **source of truth** (were unversioned in `~/Downloads`). The 4 colour palettes feed
+  the generator; `variables.json` / `theme-style-waaskit.json` are kept for traceability.
+- `.claude/skills/adminkit-tokens-build/` (local dev skill; `.claude` is untracked) —
+  `build-tokens.php` transcribes the 4 colour palettes → `assets/css/waaskit-tokens.css`
+  (309 tokens). Emits each token's light-context value; skips divider rows and no-op
+  self-aliases (`--success: var(--success)`). `--check` is the drift gate.
+- `assets/css/waaskit-tokens.css` — **GENERATED, committed** baseline (`:root{…}`).
+- `inc/class-assets.php` — new `WAASKIT_HANDLE` / `WAASKIT_SRC`; `enqueue_tokens()`
+  enqueues the baseline as the leading dep of `adminkit-tokens`.
+- `inc/integrations/themes/bricks/class-bricks.php` — `provide_tokens()` now depends on
+  `WAASKIT_HANDLE`, so a live Bricks palette loads after and overrides the baseline.
+- `assets/css/tokens.css` — header: inline hsl/hex are now an emergency fallback (the
+  baseline is the normal source).
+- **F1 resolved at source:** `design-system/palettes/semantique.json` `--focus` →
+  `var(--primary)` (opaque, per the locked doc). ⚠️ The user must also fix `--focus` in
+  the live Bricks palette (or re-import this JSON), else a future Bricks export reverts
+  it and, while Bricks is active, its translucent `--primary-t-5` still wins.
+
+Cascade now: `WP core → waaskit-tokens.css (baseline) → optional Bricks → --ak-*`.
+
+Verified: generator `--check` green (309 tokens); status bases resolve to real colours
+(`--success: #11b76b`, parity with the live Bricks file); `php -l` clean on the new/edited
+PHP. Not done: browser QA (no-Bricks vs Bricks, light + dark).
+
 ---
 
 ## 6. Backlog (next iterations, prioritized)
@@ -206,12 +252,12 @@ Not done (browser QA): visual confirmation on the converted plugin screens.
 
 ## 7. Open items needing a decision
 
-- **F1 — Focus translucency.** WaasKit's locked doc (§7.4 + final "vigilance" note)
-  says `--focus` must be **opaque** (`var(--primary)`) for accessibility; the **exported
-  Bricks palette** ships `--focus: var(--primary-t-5)` (translucent). This is a
-  discrepancy in the *palette data*, not AdminKit. AdminKit reads `--focus` as-is.
-  → Decide whether to fix the Bricks palette (recommended by your own doc) or keep the
-  translucent ring.
+- **F1 — Focus translucency.** ✅ Fixed in the committed source
+  (`semantique.json` `--focus` → `var(--primary)`, opaque, per the locked doc), so the
+  shipped baseline is correct. **Still needs a one-time Bricks-side fix:** set `--focus`
+  to `var(--primary)` in the live Bricks palette (or re-import the corrected JSON), else
+  (a) a future Bricks export reverts the committed JSON, and (b) while Bricks is active
+  its translucent `--primary-t-5` overrides the baseline.
 - **`*-on` status tokens** (`--success-on`, …): only needed if vivid-fill notices (light
   text on a solid status colour) are introduced. WaasKit §13 lists them as future.
 

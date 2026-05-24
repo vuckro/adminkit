@@ -18,8 +18,8 @@ php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host>/assets --slu
 # 2. generate — write the live (but inert) integration folder
 php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host>/assets --slug=<slug> --emit
 
-# 3. fill the 2–3 TODOs in inc/integrations/<slug>/class-<slug>.php
-# 4. fine-tune inc/integrations/<slug>/css/admin.css   (the 20% checklist below)
+# 3. fill the 2–3 TODOs in inc/integrations/plugins/<slug>/class-<slug>.php
+# 4. fine-tune inc/integrations/plugins/<slug>/css/admin.css   (the 20% checklist below)
 # 5. verify in Chrome (light + dark), then:
 php .claude/skills/adminkit-adapter-audit/adapter-audit.php
 ```
@@ -111,7 +111,7 @@ tier automatically from whether the scan found variables.
 php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host>/assets --slug=<slug> --emit
 ```
 
-Writes `inc/integrations/<slug>/`:
+Writes `inc/integrations/plugins/<slug>/`:
 - `class-<slug>.php` — the integration class, **correctly named** so the loader
   auto-discovers it (no loader edit needed). It's **live but inert**:
   `is_active()` and `owns_screen()` return `false`, so it can't mis-skin anything
@@ -217,7 +217,7 @@ The bridge injects the stylesheet as a `<link>` into the host's `shadowRoot`:
 
 `attachShadow` fires no MutationObserver, so **poll briefly** for `host.shadowRoot`
 when the host builds it from a deferred/module script. The
-[query-monitor adapter](../inc/integrations/query-monitor/) is the reference
+[query-monitor adapter](../inc/integrations/plugins/query-monitor/) is the reference
 (bridge + theme-attribute sync + the shadow-scoped remap). Then continue with
 Verify and Audit as normal.
 

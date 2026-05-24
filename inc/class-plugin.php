@@ -46,26 +46,28 @@ class AdminKit_Plugin {
 
 	/**
 	 * Require the integration base class, then every
-	 * `inc/integrations/{slug}/class-{slug}.php` file, and queue each
-	 * integration's `maybe_init()` on `after_setup_theme`. The deferred
-	 * hook ensures the host's own constants (e.g. BRICKS_VERSION) are
+	 * `inc/integrations/{plugins|themes}/{slug}/class-{slug}.php` file, and
+	 * queue each integration's `maybe_init()` on `after_setup_theme`. The
+	 * deferred hook ensures the host's own constants (e.g. BRICKS_VERSION) are
 	 * defined by the time the integration checks for them — plugins
 	 * load before themes.
 	 *
 	 * Convention:
-	 *   Folder        inc/integrations/{slug}/
-	 *   File          inc/integrations/{slug}/class-{slug}.php
+	 *   Folder        inc/integrations/{plugins|themes}/{slug}/
+	 *   File          inc/integrations/{plugins|themes}/{slug}/class-{slug}.php
 	 *   Class         AdminKit_Integration_{Slug}  (Studly_Case_With_Underscores)
 	 *                 extends AdminKit_Integration_Base
 	 *
-	 * Adding a new integration = drop one folder. No edits here.
+	 * The class name derives from the file's basename, so the {plugins,themes}
+	 * grouping is purely organizational — it does not affect discovery.
+	 * Adding a new integration = drop one folder under the right group. No edits here.
 	 *
 	 * @return void
 	 */
 	private static function boot_integrations() {
 		require_once ADMINKIT_PATH . 'inc/integrations/abstract-integration.php';
 
-		$files = glob( ADMINKIT_PATH . 'inc/integrations/*/class-*.php' );
+		$files = glob( ADMINKIT_PATH . 'inc/integrations/*/*/class-*.php' );
 		if ( empty( $files ) ) {
 			return;
 		}

@@ -13,23 +13,34 @@ There are no element-specific tokens (no `table-*`, `adminmenu-*`): those are ju
 
 ---
 
-## Three layers
+## Layers
 
 ```
-1. Provider primitives   --neutral-l-*, --primary, --white-t-* …   raw ramps
-2. Provider semantics     --surface, --text, --accent, --hover …    named roles
-3. AdminKit tokens        --ak-*                                     consumed by all CSS
+0. WaasKit source         design-system/palettes/*.json             committed source of truth
+1. Shipped baseline       assets/css/waaskit-tokens.css (:root{…})   GENERATED from (0); always loaded
+2. Provider override       --neutral-l-*, --surface, --accent …      Bricks, optional; overrides (1)
+3. AdminKit tokens         --ak-*                                    consumed by all CSS
 ```
 
-Each `--ak-*` token resolves through a fallback chain, **semantic first**, then a self-contained default:
+AdminKit **ships the full WaasKit token layer** (every primitive + the 23 semantics) as
+`assets/css/waaskit-tokens.css`, generated from the committed `design-system/palettes/*`
+by the `adminkit-tokens-build` skill and enqueued before `tokens.css`. So the semantic
+roles are *always present* and a fresh install is fully on-brand. A provider (Bricks)
+loads after the baseline and overrides it. Each `--ak-*` token still resolves through a
+fallback chain, **semantic first**, then a self-contained literal that now only fires if
+the baseline file is somehow missing:
 
 ```css
 --ak-surface: var(--surface, hsl(0, 0%, 96%));
-/*                  │                  └ standalone default — no provider present
-                    └ provider semantic role — wins when the provider sheet loads */
+/*                  │                  └ emergency literal (baseline absent)
+                    └ WaasKit semantic role — from the shipped baseline, or a provider override */
 ```
 
-A provider feeds its variables in ahead of `tokens.css` via the `adminkit/extra_tokens_handle` filter (see [`inc/integrations/bricks/class-bricks.php`](../inc/integrations/bricks/class-bricks.php)). With no provider, AdminKit is a complete, calm gray palette on its own.
+The provider injects its sheet via the `adminkit/extra_tokens_handle` filter (see
+[`inc/integrations/themes/bricks/class-bricks.php`](../inc/integrations/themes/bricks/class-bricks.php)),
+registered to depend on the baseline so it loads after it. Regenerate the baseline after
+any palette change: `php .claude/skills/adminkit-tokens-build/build-tokens.php` (and
+`--check` as a drift gate).
 
 ---
 

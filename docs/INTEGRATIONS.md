@@ -9,24 +9,27 @@
 ## Conventions
 
 ```
-inc/integrations/{slug}/class-{slug}.php
+inc/integrations/{plugins|themes}/{slug}/class-{slug}.php
     └─ class AdminKit_Integration_{Slug} extends AdminKit_Integration_Base
 ```
 
-| Folder + file                              | Class name                          |
-| ------------------------------------------ | ----------------------------------- |
-| `bricks/class-bricks.php`                  | `AdminKit_Integration_Bricks`       |
-| `gutenberg/class-gutenberg.php`            | `AdminKit_Integration_Gutenberg`    |
-| `woocommerce/class-woocommerce.php`        | `AdminKit_Integration_Woocommerce`  |
-| `fluentform/class-fluentform.php`          | `AdminKit_Integration_Fluentform`   |
-| `slim-seo/class-slim-seo.php`              | `AdminKit_Integration_Slim_Seo`     |
-| `acf/class-acf.php`                         | `AdminKit_Integration_Acf`          |
+Plugin adapters live under `plugins/`, theme adapters under `themes/`. The class
+name derives from the file's basename, so the group is purely organizational.
 
-The boot orchestrator in [`inc/class-plugin.php`](../inc/class-plugin.php) globs every `inc/integrations/*/class-*.php`, derives the class name, and queues `maybe_init()` on `after_setup_theme`. **No edits to the loader are needed** — drop the folder and it's live.
+| Folder + file                                  | Class name                          |
+| ---------------------------------------------- | ----------------------------------- |
+| `themes/bricks/class-bricks.php`               | `AdminKit_Integration_Bricks`       |
+| `plugins/gutenberg/class-gutenberg.php`        | `AdminKit_Integration_Gutenberg`    |
+| `plugins/woocommerce/class-woocommerce.php`    | `AdminKit_Integration_Woocommerce`  |
+| `plugins/fluentform/class-fluentform.php`      | `AdminKit_Integration_Fluentform`   |
+| `plugins/slim-seo/class-slim-seo.php`          | `AdminKit_Integration_Slim_Seo`     |
+| `plugins/acf/class-acf.php`                     | `AdminKit_Integration_Acf`          |
+
+The boot orchestrator in [`inc/class-plugin.php`](../inc/class-plugin.php) globs every `inc/integrations/*/*/class-*.php`, derives the class name, and queues `maybe_init()` on `after_setup_theme`. **No edits to the loader are needed** — drop the folder under `plugins/` or `themes/` and it's live.
 
 `after_setup_theme` runs after the active theme's `functions.php`, so host constants (`BRICKS_VERSION`, `WC_VERSION`, …) are reliably available at detection time.
 
-CSS for the integration lives next to the PHP at `inc/integrations/{slug}/css/`. The asset registry can load files from there directly (path is relative to the plugin root).
+CSS for the integration lives next to the PHP at `inc/integrations/{plugins|themes}/{slug}/css/`. The asset registry can load files from there directly (path is relative to the plugin root).
 
 ---
 
@@ -93,7 +96,7 @@ public static function provide_tokens( $handle, $context ) {
 }
 ```
 
-The [Bricks adapter](../inc/integrations/bricks/class-bricks.php) is the canonical example — it pipes Bricks' generated `style-manager.min.css`.
+The [Bricks adapter](../inc/integrations/themes/bricks/class-bricks.php) is the canonical example — it pipes Bricks' generated `style-manager.min.css`.
 
 ### Bypass restyling in a host's UI
 
@@ -116,13 +119,13 @@ public static function bypass( $should_load, $context ) {
 
 When the host's own admin UI needs visual harmonization (rounded buttons, themed accents…), register CSS through the asset registry so it inherits the design system and only loads on the right screens.
 
-**Convention:** integration CSS lives at `inc/integrations/{slug}/css/`.
+**Convention:** integration CSS lives at `inc/integrations/{plugins|themes}/{slug}/css/`.
 
 ```php
 public static function register_assets() {
     AdminKit_Assets::register( array(
         'handle'    => 'adminkit-foo',
-        'src'       => 'inc/integrations/foo/css/admin.css',
+        'src'       => 'inc/integrations/plugins/foo/css/admin.css',
         'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
         'context'   => 'admin',
         'condition' => static function ( $screen ) {
@@ -150,7 +153,7 @@ unchanged; only the *delivery* differs:
 - The dark hook can't select `<html>` from inside the shadow; mirror AdminKit's
   mode onto the host's own theme attribute from the bridge (one-way).
 
-The [query-monitor adapter](../inc/integrations/query-monitor/) is the reference;
+The [query-monitor adapter](../inc/integrations/plugins/query-monitor/) is the reference;
 the step-by-step is in [ONBOARDING-A-PLUGIN.md](ONBOARDING-A-PLUGIN.md#special-case-the-panel-is-in-a-shadow-root).
 
 ### Start with a scan
@@ -169,7 +172,7 @@ It reports two things and emits a paste-ready scaffold:
 
 The suggestions are heuristic — they get the base ~right (brand, the four status colors, surfaces, borders), and you do the fine-tuning: the 3-surface split (`--ak-bg` / `--ak-surface` / `--ak-elevated`) and any role the literal can't reveal. Then verify in the browser and run `php .claude/skills/adminkit-adapter-audit/adapter-audit.php`.
 
-Add `--emit` (with `--slug=`) to **write the whole folder** instead of printing — `inc/integrations/{slug}/class-{slug}.php` (a correctly-named, live-but-inert stub) + `css/admin.css` (the scaffold). The loader auto-discovers it; you just fill the detection/scope TODOs and fine-tune. The full step-by-step (incl. the 20% checklist) is in [ONBOARDING-A-PLUGIN.md](ONBOARDING-A-PLUGIN.md).
+Add `--emit` (with `--slug=`) to **write the whole folder** instead of printing — `inc/integrations/plugins/{slug}/class-{slug}.php` (a correctly-named, live-but-inert stub) + `css/admin.css` (the scaffold). The loader auto-discovers it; you just fill the detection/scope TODOs and fine-tune. The full step-by-step (incl. the 20% checklist) is in [ONBOARDING-A-PLUGIN.md](ONBOARDING-A-PLUGIN.md).
 
 ```
 php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host-plugin>/assets --slug=foo --emit
@@ -179,7 +182,7 @@ php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host-plugin>/asset
 
 The cheapest adapter to maintain is the one that never touches the host's selectors. When you recolor a host UI, reach for these in order — earlier is more stable:
 
-1. **The host's own CSS variables** (e.g. `--wpcode-*`). A near-stable API: remap them to `--ak-*` and the host follows, dark mode included. **Zero `!important`.** This is a *Tier A* adapter — see [wpcode](../inc/integrations/wpcode/css/admin.css).
+1. **The host's own CSS variables** (e.g. `--wpcode-*`). A near-stable API: remap them to `--ak-*` and the host follows, dark mode included. **Zero `!important`.** This is a *Tier A* adapter — see [wpcode](../inc/integrations/plugins/wpcode/css/admin.css).
 2. **Shallow utility / state classes** (`.bg-indigo-600`) — only when the host has no variable layer (e.g. a Tailwind app).
 3. **Deep component chains** (`.el-tabs .el-tabs__item.is-active`) — last resort. Brittle: they break the day the host renames a class.
 
@@ -212,7 +215,7 @@ public static function register_assets() {
 }
 ```
 
-The gate compares **major** versions, so the skin survives the host's minor/patch updates and only steps aside on a new major. Pure variable-remap (Tier A) adapters leave both methods unset. The [fluent-booking](../inc/integrations/fluent-booking/class-fluent-booking.php) and [flying-press](../inc/integrations/flying-press/class-flying-press.php) adapters are the reference.
+The gate compares **major** versions, so the skin survives the host's minor/patch updates and only steps aside on a new major. Pure variable-remap (Tier A) adapters leave both methods unset. The [fluent-booking](../inc/integrations/plugins/fluent-booking/class-fluent-booking.php) and [flying-press](../inc/integrations/plugins/flying-press/class-flying-press.php) adapters are the reference.
 
 ### Register a dashboard widget
 
@@ -250,10 +253,10 @@ Integrations can also expose their own filters for downstream customization. Nam
 
 ## Reference implementations
 
-- [`inc/integrations/bricks/class-bricks.php`](../inc/integrations/bricks/class-bricks.php) — Bricks adapter, covers token injection + builder bypass.
-- [`inc/integrations/gutenberg/class-gutenberg.php`](../inc/integrations/gutenberg/class-gutenberg.php) — block editor restyle, hooks the `editor` asset context.
-- [`inc/integrations/acf/class-acf.php`](../inc/integrations/acf/class-acf.php) — ACF 6.x adapter; a clean Tier B example (host hardcodes hex, no CSS vars), screen-scoped via the host's `.acf-admin-page` body class and version-gated on the major.
-- [`inc/integrations/wpcode/class-wpcode.php`](../inc/integrations/wpcode/class-wpcode.php) — a minimal Tier A example: remaps the host's `--wpcode-*` variables to tokens, so dark mode and brand color come for free with zero `!important`.
-- [`inc/integrations/woocommerce/`](../inc/integrations/woocommerce) — the most comprehensive adapter: the wc-admin React app plus the classic order/settings/tool screens, done by token remap rather than selector overrides (run the audit for its current budget).
-- [`inc/integrations/flying-press/class-flying-press.php`](../inc/integrations/flying-press/class-flying-press.php) — Tier B against a Tailwind app compiled with `important: true`; every override carries `!important` by necessity and the adapter is version-gated.
-- [`inc/integrations/query-monitor/`](../inc/integrations/query-monitor) — Tier A remap delivered **into an open shadow root** via a JS bridge (the host's panel is shadow-DOM, unreachable by a normal stylesheet). Custom-property inheritance carries `--ak-*` across the boundary; the bridge also mirrors the theme onto the panel for `color-scheme`.
+- [`inc/integrations/themes/bricks/class-bricks.php`](../inc/integrations/themes/bricks/class-bricks.php) — Bricks adapter, covers token injection + builder bypass.
+- [`inc/integrations/plugins/gutenberg/class-gutenberg.php`](../inc/integrations/plugins/gutenberg/class-gutenberg.php) — block editor restyle, hooks the `editor` asset context.
+- [`inc/integrations/plugins/acf/class-acf.php`](../inc/integrations/plugins/acf/class-acf.php) — ACF 6.x adapter; a clean Tier B example (host hardcodes hex, no CSS vars), screen-scoped via the host's `.acf-admin-page` body class and version-gated on the major.
+- [`inc/integrations/plugins/wpcode/class-wpcode.php`](../inc/integrations/plugins/wpcode/class-wpcode.php) — a minimal Tier A example: remaps the host's `--wpcode-*` variables to tokens, so dark mode and brand color come for free with zero `!important`.
+- [`inc/integrations/plugins/woocommerce/`](../inc/integrations/plugins/woocommerce) — the most comprehensive adapter: the wc-admin React app plus the classic order/settings/tool screens, done by token remap rather than selector overrides (run the audit for its current budget).
+- [`inc/integrations/plugins/flying-press/class-flying-press.php`](../inc/integrations/plugins/flying-press/class-flying-press.php) — Tier B against a Tailwind app compiled with `important: true`; every override carries `!important` by necessity and the adapter is version-gated.
+- [`inc/integrations/plugins/query-monitor/`](../inc/integrations/plugins/query-monitor) — Tier A remap delivered **into an open shadow root** via a JS bridge (the host's panel is shadow-DOM, unreachable by a normal stylesheet). Custom-property inheritance carries `--ak-*` across the boundary; the bridge also mirrors the theme onto the panel for `color-scheme`.

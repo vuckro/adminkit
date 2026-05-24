@@ -22,7 +22,7 @@ All four dispatchers run at priority `9999` (last) so AdminKit's CSS cascades af
 ```php
 AdminKit_Assets::register( array(
     'handle'    => 'adminkit-themes',
-    'src'       => 'assets/css/screens/themes.css',
+    'src'       => 'assets/css/wp-screens/themes.css',
     'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
     'context'   => 'admin',
     'section'   => 'pages',     // optional — defaults to handle minus `adminkit-` prefix
@@ -61,9 +61,9 @@ If any of the three returns false, the asset doesn't enqueue.
 
 | File                                       | What it registers                                                                  |
 | ------------------------------------------ | ---------------------------------------------------------------------------------- |
-| [`inc/core/class-chrome.php`](../inc/core/class-chrome.php)             | All admin-context CSS — core chrome, components, screens, third-party adapters.    |
-| [`inc/core/class-login.php`](../inc/core/class-login.php)               | `login.css` in the `login` context.                                                |
-| [`inc/integrations/gutenberg/class-gutenberg.php`](../inc/integrations/gutenberg/class-gutenberg.php) | `editor.css` + `dark-mode-map.css` in the `editor` context.                       |
+| [`inc/wp-core/class-chrome.php`](../inc/wp-core/class-chrome.php)             | All admin-context CSS — core chrome, components, screens, third-party adapters.    |
+| [`inc/wp-core/class-login.php`](../inc/wp-core/class-login.php)               | `login.css` in the `login` context.                                                |
+| [`inc/integrations/plugins/gutenberg/class-gutenberg.php`](../inc/integrations/plugins/gutenberg/class-gutenberg.php) | `editor.css` + `dark-mode-map.css` in the `editor` context.                       |
 | Other integrations                                                       | Each integration registers its own CSS via `register_assets()`.                    |
 
 The dispatcher itself (`AdminKit_Assets::init()`) only wires the four hooks. It does not know about any specific asset.
@@ -75,16 +75,16 @@ The dispatcher itself (`AdminKit_Assets::init()`) only wires the four hooks. It 
 ```
 assets/css/
 ├── tokens.css                  # always loaded (foundation)
-├── core/                       # always loaded in admin
+├── wp-core/                    # always loaded in admin
 │   ├── chrome.css              # sidebar, postboxes, notices, footer, tabs
 │   ├── links.css               # global link colors
 │   └── adminbar.css            # #wpadminbar (admin + frontend)
-├── components/                 # always loaded in admin (legacy section: forms)
+├── wp-components/              # always loaded in admin (legacy section: forms)
 │   ├── inputs.css              # text inputs, textarea, select, checkbox, radio
 │   ├── buttons.css             # .button, .button-primary, file selector, sizes
 │   ├── tables.css              # .wp-list-table, tablenav, Quick Edit
 │   └── form-table.css          # .form-table layout (settings + profile + taxonomy forms)
-├── screens/                    # per-screen conditional (legacy section: pages)
+├── wp-screens/                 # per-screen conditional (legacy section: pages)
 │   ├── themes.css              # themes.php + theme-install.php
 │   ├── theme-install.css       # theme installer + full-page preview
 │   ├── media.css               # upload.php + media modal
@@ -106,16 +106,16 @@ assets/css/
 │       └── cards.css           # generic `.card` (tools, settings)
 └── login.css                   # wp-login.php
 
-inc/integrations/{slug}/css/    # integration-specific CSS, registered by each integration class
-                                # (Bricks admin pages, Gutenberg editor, Admin Menu Editor, ...)
+inc/integrations/{plugins|themes}/{slug}/css/  # integration-specific CSS, registered by each integration class
+                                               # (Bricks admin pages, Gutenberg editor, Admin Menu Editor, ...)
 ```
 
 ---
 
 ## Adding a new screen-specific file
 
-1. Drop the CSS at `assets/css/screens/{name}.css`.
-2. Add a `self::register_screen( '{name}', array( '{screen-id}', ... ) )` line in [`inc/core/class-chrome.php`](../inc/core/class-chrome.php) — done.
+1. Drop the CSS at `assets/css/wp-screens/{name}.css`.
+2. Add a `self::register_screen( '{name}', array( '{screen-id}', ... ) )` line in [`inc/wp-core/class-chrome.php`](../inc/wp-core/class-chrome.php) — done.
 
 The helper wraps the registry call with the right `section => 'pages'` legacy filter and a `condition` closure that matches the given screen IDs.
 

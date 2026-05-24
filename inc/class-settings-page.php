@@ -408,7 +408,7 @@ class AdminKit_Settings_Page {
 			'wp-migrate-db-pro' => 'WP Migrate DB Pro',
 			'wpcode'            => 'WPCode',
 		);
-		$files = glob( ADMINKIT_PATH . 'inc/integrations/*/class-*.php' );
+		$files = glob( ADMINKIT_PATH . 'inc/integrations/*/*/class-*.php' );
 		if ( ! $files ) {
 			return $specs;
 		}
