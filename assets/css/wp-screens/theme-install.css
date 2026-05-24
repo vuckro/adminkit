@@ -23,7 +23,7 @@ body.adminkit .theme-browser .theme .theme-actions .button:not(.button-primary) 
 body.adminkit .theme-browser .theme .theme-actions .button:not(.button-primary):hover,
 body.adminkit .theme-browser .theme .theme-actions .button:not(.button-primary):focus {
 	background: var(--ak-hover-bg);
-	color: var(--ak-heading);
+	color: var(--ak-text);
 }
 
 body.adminkit .theme-browser .theme .more-details {
