@@ -100,10 +100,14 @@ body.adminkit input[type="radio"]:focus {
    (WP's checkmark glyph is dropped). Row-selection checkboxes in list tables
    and multi-select taxonomy checklists stay real checkboxes — see the override
    block right below. @wordpress/components CheckboxControl is also kept a real
-   checkbox (the :not below): it's a genuine checkbox component — often in
-   multi-select lists like the editor's Categories panel — where a toggle is
-   wrong, and WP draws its own box + check glyph that the pill geometry breaks. */
-body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input) {
+   checkbox (the :not(:where()) below): it's a genuine checkbox component — often
+   in multi-select lists like the editor's Categories panel — where a toggle is
+   wrong, and WP draws its own box + check glyph that the pill geometry breaks.
+   The exclusion is wrapped in :where() so it stays at ZERO specificity — without
+   it the toggle's :checked rules would outrank the override block below and the
+   "real" checkboxes (Quick Edit categories, list-table rows) would get the
+   sliding knob back when checked. */
+body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)) {
 	-webkit-appearance: none;
 	appearance: none;
 	box-sizing: border-box;
@@ -122,7 +126,7 @@ body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input) {
 	vertical-align: middle;
 }
 
-body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input)::before {
+body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input))::before {
 	content: "";
 	position: absolute;
 	top: 2px;
@@ -134,34 +138,38 @@ body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input)::b
 	background: #fff;
 }
 
-body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input):checked {
+body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):checked {
 	background: var(--ak-primary);
 	border: none;
 }
 
-body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input):checked::before {
+body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):checked::before {
 	content: "";
 	left: 16px;
 	color: transparent;
 }
 
-body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input):focus {
+body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):focus {
 	outline: none;
 	box-shadow: none;
 }
 
-body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input):focus-visible {
+body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):focus-visible {
 	outline: 2px solid var(--ak-primary);
 	outline-offset: 2px;
 }
 
 /* Keep real checkboxes where a toggle makes no sense: list-table row selection
-   ("select all" + per-row) and multi-select taxonomy checklists (categories,
-   nav-menu item panels). Restore the native control, brand-tinted. */
+   ("select all" + per-row) and multi-select taxonomy checklists — the post-edit
+   metabox (.categorychecklist) AND the Quick/Bulk Edit inline checklists, which
+   WP renders as `.cat-checklist .{taxonomy}-checklist` (so .cat-checklist covers
+   every taxonomy there, not just categories). Restore the native control,
+   brand-tinted. */
 body.adminkit td.check-column input[type="checkbox"],
 body.adminkit th.check-column input[type="checkbox"],
 body.adminkit #cb-select-all-1,
 body.adminkit #cb-select-all-2,
+body.adminkit .cat-checklist input[type="checkbox"],
 body.adminkit .categorychecklist input[type="checkbox"],
 body.adminkit .category-checklist input[type="checkbox"] {
 	-webkit-appearance: auto;
@@ -180,6 +188,7 @@ body.adminkit td.check-column input[type="checkbox"]::before,
 body.adminkit th.check-column input[type="checkbox"]::before,
 body.adminkit #cb-select-all-1::before,
 body.adminkit #cb-select-all-2::before,
+body.adminkit .cat-checklist input[type="checkbox"]::before,
 body.adminkit .categorychecklist input[type="checkbox"]::before,
 body.adminkit .category-checklist input[type="checkbox"]::before {
 	content: none;
@@ -193,6 +202,7 @@ body.adminkit .category-checklist input[type="checkbox"]::before {
 :root[data-adminkit-theme="dark"] body.adminkit th.check-column input[type="checkbox"],
 :root[data-adminkit-theme="dark"] body.adminkit #cb-select-all-1,
 :root[data-adminkit-theme="dark"] body.adminkit #cb-select-all-2,
+:root[data-adminkit-theme="dark"] body.adminkit .cat-checklist input[type="checkbox"],
 :root[data-adminkit-theme="dark"] body.adminkit .categorychecklist input[type="checkbox"],
 :root[data-adminkit-theme="dark"] body.adminkit .category-checklist input[type="checkbox"] {
 	color-scheme: dark;
