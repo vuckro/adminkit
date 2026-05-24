@@ -77,16 +77,15 @@ commit **both** the JSON and the regenerated CSS. The palettes: `neutre.json`
 | | `--ak-primary-hover` | `--accent-hover` | `--primary-d-1` | `color-mix` darken |
 | | `--ak-primary-subtle` | `--accent-subtle` | `--primary-l-9` | `--ak-primary` @ 12% |
 | | `--ak-on-accent` | `--accent-on` | `--primary-d-9` | `hsl(0 0% 98%)` |
-| **State** | `--ak-focus` | `--focus` | `--primary-t-5` ⚠️ | `--ak-primary` @ 27% |
+| **State** | `--ak-focus` | `--focus` | `--primary` | `--ak-primary` @ 27% |
 | **Overlay** | `--ak-overlay` | `--overlay` | `--black-t-7` | `rgba(0 0 0 / .5)` |
 | **Status** | `--ak-success`(+`-subtle`) | `--success`(+`-subtle`) | `--success`(+`-l-9`) | `#11b76b` / mix |
 | | `--ak-warning`(+`-subtle`) | `--warning`(+`-subtle`) | `--warning`(+`-l-9`) | `#ffa100` / mix |
 | | `--ak-error`(+`-subtle`) | `--error`(+`-subtle`) | `--error`(+`-l-9`) | `#f04662` / mix |
 | | `--ak-info`(+`-subtle`) | `--info`(+`-subtle`) | `--info`(+`-l-9`) | `#2895d4` / mix |
 
-> ⚠️ **Focus** is locked to **opaque** (`--primary`) in the committed source, but a
-> live Bricks palette may still emit translucent `--primary-t-5` until fixed
-> Bricks-side. See [Alignment](#alignment--decisions) F1.
+> **Focus** is opaque — `--ak-focus` reads WaasKit's `--focus` (= `--primary`), a
+> hard accessibility requirement (WCAG/RGAA). Never route it to a translucent stop.
 
 ### Tier 2 — AdminKit additions
 
@@ -217,11 +216,8 @@ grep -rnE 'var\(--(neutral|primary|success|warning|error|info)-(l|d|t)-[0-9]' --
   | grep -v '/tokens.css:' | grep -v -- '--ak-'
 ```
 
-**Open item F1 — Focus translucency.** Fixed in the committed source
-(`semantique.json` `--focus` → `var(--primary)`); still needs a one-time Bricks-side
-fix or a future Bricks export reverts it (and while Bricks is active its translucent
-`--primary-t-5` wins). Documented exceptions: `gutenberg/editor.css` snackbar
-(always-dark chip), `chrome.css` translucent white scrim.
+**Documented exceptions:** `gutenberg/editor.css` snackbar (always-dark chip),
+`chrome.css` translucent white scrim.
 
 ## Adding a provider
 
