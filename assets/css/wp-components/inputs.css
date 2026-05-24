@@ -99,8 +99,11 @@ body.adminkit input[type="radio"]:focus {
    Track greys when off, fills --ak-primary when on; the knob is the ::before
    (WP's checkmark glyph is dropped). Row-selection checkboxes in list tables
    and multi-select taxonomy checklists stay real checkboxes — see the override
-   block right below. */
-body.adminkit input[type="checkbox"] {
+   block right below. @wordpress/components CheckboxControl is also kept a real
+   checkbox (the :not below): it's a genuine checkbox component — often in
+   multi-select lists like the editor's Categories panel — where a toggle is
+   wrong, and WP draws its own box + check glyph that the pill geometry breaks. */
+body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input) {
 	-webkit-appearance: none;
 	appearance: none;
 	box-sizing: border-box;
@@ -119,7 +122,7 @@ body.adminkit input[type="checkbox"] {
 	vertical-align: middle;
 }
 
-body.adminkit input[type="checkbox"]::before {
+body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input)::before {
 	content: "";
 	position: absolute;
 	top: 2px;
@@ -131,23 +134,23 @@ body.adminkit input[type="checkbox"]::before {
 	background: #fff;
 }
 
-body.adminkit input[type="checkbox"]:checked {
+body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input):checked {
 	background: var(--ak-primary);
 	border: none;
 }
 
-body.adminkit input[type="checkbox"]:checked::before {
+body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input):checked::before {
 	content: "";
 	left: 16px;
 	color: transparent;
 }
 
-body.adminkit input[type="checkbox"]:focus {
+body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input):focus {
 	outline: none;
 	box-shadow: none;
 }
 
-body.adminkit input[type="checkbox"]:focus-visible {
+body.adminkit input[type="checkbox"]:not(.components-checkbox-control__input):focus-visible {
 	outline: 2px solid var(--ak-primary);
 	outline-offset: 2px;
 }
