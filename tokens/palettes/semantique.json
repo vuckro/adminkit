@@ -60,9 +60,9 @@
     {
       "id": "dgzllh",
       "raw": "var(--accent-on)",
-      "light": "var(--primary-d-10)",
+      "light": "var(--primary-d-9)",
       "darkModeEnabled": true,
-      "dark": "var(--primary-l-10)"
+      "dark": "var(--primary-l-9)"
     },
     {
       "id": "accsb17",

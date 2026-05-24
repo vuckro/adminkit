@@ -155,7 +155,7 @@ class AdminKit_Settings {
 				array( 'token' => '--ak-primary',        'bricks' => '--accent',       'source' => '--primary',      'label' => __( 'Accent', 'adminkit' ),        'key' => 'primary_color',   'edit' => 'agnostic' ),
 				array( 'token' => '--ak-primary-hover',  'bricks' => '--accent-hover',  'source' => '--primary-d-1',  'label' => __( 'Accent hover', 'adminkit' ),  'edit' => 'none' ),
 				array( 'token' => '--ak-primary-subtle', 'bricks' => '--accent-subtle', 'source' => '--primary-l-9', 'label' => __( 'Accent subtle', 'adminkit' ), 'edit' => 'none' ),
-				array( 'token' => '--ak-on-accent',      'bricks' => '--accent-on',     'source' => '--primary-d-10', 'label' => __( 'On accent', 'adminkit' ),     'key' => 'on_accent_color', 'edit' => 'agnostic' ),
+				array( 'token' => '--ak-on-accent',      'bricks' => '--accent-on',     'source' => '--primary-d-9',  'label' => __( 'On accent', 'adminkit' ),     'key' => 'on_accent_color', 'edit' => 'agnostic' ),
 				array( 'token' => '--ak-secondary',      'bricks' => '',               'source' => '--secondary',    'label' => __( 'Secondary', 'adminkit' ),     'key' => 'secondary_color', 'edit' => 'agnostic', 'own' => true ),
 			) ),
 			array( 'group' => 'state', 'label' => __( 'State', 'adminkit' ), 'desc' => __( 'Hover and focus feedback.', 'adminkit' ), 'tokens' => array(

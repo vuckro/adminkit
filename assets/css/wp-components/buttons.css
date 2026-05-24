@@ -69,7 +69,7 @@ body.adminkit .wrap .page-title-action,
 body.adminkit .wrap .page-title-action:active {
 	background: var(--ak-primary);
 	border: 1px solid var(--ak-primary);
-	/* Foreground on the brand fill — WaasKit --accent-on (→ --primary-d-10):
+	/* Foreground on the brand fill — WaasKit --accent-on (→ --primary-d-9):
 	   dark text on the yellow brand. Read via the token so it tracks the
 	   design system instead of pinning a primitive. */
 	color: var(--ak-on-accent);

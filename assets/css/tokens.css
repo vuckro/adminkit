@@ -86,7 +86,7 @@
 	--ak-primary: var(--accent, var(--primary, var(--neutral-l-8, hsl(0, 0%, 32%))));
 	--ak-primary-hover: var(--accent-hover, var(--primary-d-1, color-mix(in srgb, var(--ak-primary) 82%, #000)));
 	--ak-primary-subtle: var(--accent-subtle, var(--primary-l-9, color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface))));
-	/* Foreground on a brand fill — WaasKit --accent-on (→ --primary-d-10): dark
+	/* Foreground on a brand fill — WaasKit --accent-on (→ --primary-d-9): dark
 	   text on the light/yellow brand. Standalone falls to off-white for the
 	   no-provider mid-gray accent. */
 	--ak-on-accent: var(--accent-on, hsl(0, 0%, 98%));
