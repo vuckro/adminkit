@@ -108,8 +108,8 @@
 	   Every secondary button reads ONLY these two tokens on hover/focus:
 	   .button / .button-secondary, the "Choose File" chooser, the stacked header
 	   CTAs, #doaction / #post-query-submit, .components-button.is-secondary, the
-	   Gutenberg editor secondary, the ACF / HappyFiles secondaries, the post
-	   editor's .taxonomy-add-new and the settings-page .ak-btn. To iterate the
+	   ACF / HappyFiles secondaries, the post editor's .taxonomy-add-new and the
+	   settings-page .ak-btn. To iterate the
 	   secondary button, THIS is the one place to edit — every consumer updates.
 
 	   The fill is OPAQUE (the surface nudged toward the text colour), so the
