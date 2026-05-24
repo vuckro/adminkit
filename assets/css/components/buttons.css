@@ -60,10 +60,10 @@ body.adminkit .wrap .page-title-action,
 body.adminkit .wrap .page-title-action:active {
 	background: var(--ak-primary);
 	border: 1px solid var(--ak-primary);
-	/* Match the Bricks theme's primary button: a pale brand label
-	   (--primary-l-10) on the brand fill, not the neutral --on-accent. Falls
-	   back to --on-accent standalone (no provider). */
-	color: var(--primary-l-10, var(--ak-on-accent));
+	/* Foreground on the brand fill — WaasKit --accent-on (→ --primary-d-10):
+	   dark text on the yellow brand. Read via the token so it tracks the
+	   design system instead of pinning a primitive. */
+	color: var(--ak-on-accent);
 	text-shadow: none;
 	box-shadow: none;
 }

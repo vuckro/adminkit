@@ -21,13 +21,14 @@ body.adminkit {
 
 	/* Inline message boxes (.message.info / .success / .error, etc.). Bricks
 	   leaves these semantic vars at light hardcoded values that don't flip in
-	   dark mode — route to a subtle tint of the matching AdminKit status token
-	   plus the token itself for the text. */
-	--bricks-bg-info: color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface));
+	   dark mode — route each to the matching AdminKit -subtle fill (WaasKit's
+	   opaque pale status role, dark-remapped in tokens.css) plus the base token
+	   for the text. */
+	--bricks-bg-info: var(--ak-info-subtle);
 	--bricks-text-info: var(--ak-info);
-	--bricks-bg-success: color-mix(in srgb, var(--ak-success) 14%, var(--ak-surface));
+	--bricks-bg-success: var(--ak-success-subtle);
 	--bricks-text-success: var(--ak-success);
-	--bricks-bg-warning: color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface));
+	--bricks-bg-warning: var(--ak-warning-subtle);
 	--bricks-text-warning: var(--ak-warning);
 	--bricks-bg-danger: var(--ak-error-subtle);
 	--bricks-text-danger: var(--ak-error);
@@ -313,7 +314,7 @@ body.adminkit .wp-list-table.elements .element-status span:hover {
 body.adminkit .wp-list-table.elements .element-status span.active.current {
 	background-color: var(--ak-primary);
 	border-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 /* Category / usage cells — keep muted so the eye reads the name +

@@ -21,7 +21,7 @@ body.block-editor-page.adminkit .editor-post-publish-button,
 body.block-editor-page.adminkit .editor-post-publish-button__button {
 	background: var(--ak-primary) !important;
 	border-color: var(--ak-primary) !important;
-	color: #ffffff !important;
+	color: var(--ak-on-accent) !important;
 	border-radius: var(--ak-radius-s) !important;
 	font-weight: 500;
 	box-shadow: none;
@@ -33,7 +33,7 @@ body.block-editor-page.adminkit .editor-post-publish-button:hover:not(:disabled)
 body.block-editor-page.adminkit .editor-post-publish-button:focus:not(:disabled) {
 	background: var(--ak-primary-hover) !important;
 	border-color: var(--ak-primary-hover) !important;
-	color: #ffffff !important;
+	color: var(--ak-on-accent) !important;
 }
 
 body.block-editor-page.adminkit .components-button.is-primary:focus:not(:disabled),

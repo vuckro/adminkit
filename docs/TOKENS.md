@@ -6,8 +6,8 @@ Source: [`assets/css/tokens.css`](../assets/css/tokens.css).
 
 AdminKit keeps a **small, two-tier** token set:
 
-- **Tier 1 — provider semantics (15 roles), mirrored 1:1.** Three surfaces, two borders, four text roles (incl. inverse), accent + hover + subtle, hover, focus, overlay. These are exactly the provider's definitive semantic layer.
-- **Tier 2 — AdminKit additions.** The few roles wp-admin needs that the semantic layer doesn't define — muted text, on-accent, input fill, secondary, the status set (success / warning / error / info) — built on the provider's *primitives*. Tagged `+ AdminKit addition` in `tokens.css`.
+- **Tier 1 — WaasKit semantics, mirrored 1:1.** Surfaces, borders, text (+ muted), accent (+ hover / on / subtle), input, focus, overlay, and the full notification set (success / warning / error / info, each with a `-subtle` fill). These are exactly WaasKit's locked **23-token** semantic layer — see [`WAASKIT-DESIGN-SYSTEM.md`](WAASKIT-DESIGN-SYSTEM.md).
+- **Tier 2 — AdminKit additions.** The handful of roles WaasKit doesn't expose as a token but wp-admin needs: secondary text, the hover tint, the inverse text pair (WaasKit inverts via a `.scheme-*` scope, not tokens), the elevation shadow, and the geometry / type tokens. Tagged `+ AdminKit addition` in `tokens.css`.
 
 There are no element-specific tokens (no `table-*`, `adminmenu-*`): those are just surfaces, picked by role.
 
@@ -35,40 +35,48 @@ A provider feeds its variables in ahead of `tokens.css` via the `adminkit/extra_
 
 ## Mapping
 
-### Tier 1 — provider semantics (1:1)
+### Tier 1 — WaasKit semantics (1:1)
 
-`--ak-*` token → provider semantic consumed → standalone fallback (light). One declaration each: `color-mix` is only the no-provider fallback (the provider's `--accent-hover` / `--accent-bg` / `--focus` win when present).
+`--ak-*` token → WaasKit semantic consumed → the primitive it resolves from → standalone fallback (light). One declaration each: `color-mix` / the `l-*` ramp are only the no-provider fallback (the provider's `--accent-hover` / `--accent-subtle` / `--focus` win when present). The `-subtle` fills are **opaque** per WaasKit (the `l-9`/`l-10` ramp); the dark block re-maps them onto the `d-9`/`d-10` ramp (see [Light / dark](#light--dark)).
 
-| Group | AdminKit token | Provider semantic | Fallback (light) |
-| ----- | -------------- | ----------------- | ---------------- |
-| **Surface** | `--ak-bg` | `--background` | `hsl(0 0% 98%)` |
-| | `--ak-surface` | `--surface` | `hsl(0 0% 96%)` |
-| | `--ak-elevated` | `--elevated` | `hsl(0 0% 93%)` |
-| **Border** | `--ak-border` | `--border` | `hsl(0 0% 89%)` |
-| | `--ak-border-strong` | `--border-strong` | `hsl(0 0% 82%)` |
-| **Text** | `--ak-heading` | `--heading` | `hsl(0 0% 18%)` |
-| | `--ak-text` | `--text` | `hsl(0 0% 32%)` |
-| | `--ak-heading-inverse` | `--heading-inverse` | `--neutral-d-9` |
-| | `--ak-text-inverse` | `--text-inverse` | `--neutral-d-8` |
-| **Accent** | `--ak-primary` | `--accent` → `--primary` | neutral gray `hsl(0 0% 32%)` |
-| | `--ak-primary-hover` | `--accent-hover` → `--primary-l-2` | `color-mix` darken |
-| | `--ak-primary-subtle` | `--accent-bg` → `--primary-t-1` | `--ak-primary` @ 9% |
-| **State** | `--ak-hover-bg` | `--hover` | `rgba(0 0 0 / .04)` |
-| | `--ak-focus` | `--focus` | `--ak-primary` @ 27% |
-| **Overlay** | `--ak-overlay` | `--overlay` | `rgba(0 0 0 / .5)` |
+| Group | AdminKit token | WaasKit semantic | → primitive | Fallback (light) |
+| ----- | -------------- | ---------------- | ----------- | ---------------- |
+| **Surface** | `--ak-bg` | `--background` | `--neutral-l-1` | `hsl(0 0% 98%)` |
+| | `--ak-surface` | `--surface` | `--neutral-l-2` | `hsl(0 0% 96%)` |
+| | `--ak-elevated` | `--elevated` | `--neutral-l-3` | `hsl(0 0% 93%)` |
+| | `--ak-input-bg` | `--input` | `--neutral-l-1` | white |
+| **Border** | `--ak-border` | `--border` | `--neutral-l-4` | `hsl(0 0% 89%)` |
+| | `--ak-border-strong` | `--border-strong` | `--neutral-l-5` | `hsl(0 0% 82%)` |
+| **Text** | `--ak-heading` | `--heading` | `--neutral-l-9` | `hsl(0 0% 18%)` |
+| | `--ak-text` | `--text` | `--neutral-l-8` | `hsl(0 0% 32%)` |
+| | `--ak-text-muted` | `--text-muted` | `--neutral-l-7` | `hsl(0 0% 50%)` |
+| **Accent** | `--ak-primary` | `--accent` | `--primary` | neutral gray `hsl(0 0% 32%)` |
+| | `--ak-primary-hover` | `--accent-hover` | `--primary-d-1` | `color-mix` darken |
+| | `--ak-primary-subtle` | `--accent-subtle` | `--primary-l-10` | `--ak-primary` @ 12% over surface |
+| | `--ak-on-accent` | `--accent-on` | `--primary-d-10` | off-white `hsl(0 0% 98%)` |
+| **State** | `--ak-focus` | `--focus` | `--primary-t-5` ⚠️ | `--ak-primary` @ 27% |
+| **Overlay** | `--ak-overlay` | `--overlay` | `--black-t-7` | `rgba(0 0 0 / .5)` |
+| **Status** | `--ak-success` | `--success` | `--success` | `#11b76b` |
+| | `--ak-success-subtle` | `--success-subtle` | `--success-l-9` | mix over surface |
+| | `--ak-warning` | `--warning` | `--warning` | `#ffa100` |
+| | `--ak-warning-subtle` | `--warning-subtle` | `--warning-l-9` | mix over surface |
+| | `--ak-error` | `--error` | `--error` | `#f04662` |
+| | `--ak-error-subtle` | `--error-subtle` | `--error-l-9` | mix over surface |
+| | `--ak-info` | `--info` | `--info` | `#2895d4` |
+| | `--ak-info-subtle` | `--info-subtle` | `--info-l-9` | mix over surface |
+
+> ⚠️ **Focus.** WaasKit's locked doc says `--focus` must be **opaque** (`--primary`); the current exported Bricks palette emits `--primary-t-5` (translucent). AdminKit's ring reads `--focus` as-is, so it inherits whichever the palette ships. See the alignment log's open items.
 
 ### Tier 2 — AdminKit additions
 
-Roles the semantic layer doesn't define; they consume the provider's *primitives* (or stand alone). Tagged `+ AdminKit addition` in `tokens.css`.
+Roles WaasKit doesn't expose as a token; they consume a *primitive* or stand alone. Tagged `+ AdminKit addition` in `tokens.css`.
 
 | AdminKit token | Consumes | Fallback (light) |
 | -------------- | -------- | ---------------- |
-| `--ak-text-muted` | `--neutral-l-7` (no semantic) | `hsl(0 0% 50%)` |
-| `--ak-on-accent` | `--on-accent` if present | off-white `hsl(0 0% 98%)` |
-| `--ak-input-bg` | `--field-bg` if present | white |
 | `--ak-secondary` | `--secondary` (primitive) | `hsl(0 0% 50%)` |
-| `--ak-success` / `--ak-warning` / `--ak-error` / `--ak-info` | `--success` / `--warning` / `--error` / `--info` | `#11b76b` / `#ffa100` / `#f04662` / `#2895d4` |
-| `--ak-error-subtle` | `--error-t-2` | `rgba(240 70 98 / .18)` |
+| `--ak-hover-bg` | — (mode-aware translucent tint; WaasKit has no `--hover`) | `rgba(0 0 0 / .04)` |
+| `--ak-heading-inverse` | `--neutral-d-9` (WaasKit inverts via `.scheme-*`, not a token) | `--neutral-d-9` |
+| `--ak-text-inverse` | `--neutral-d-8` | `--neutral-d-8` |
 | `--ak-focus-ring` | — (`0 0 0 3px var(--ak-focus)`) | — |
 | `--ak-shadow-elevated` | — (the one flat-rule exception) | mode-aware drop |
 
@@ -91,7 +99,7 @@ Pick by **role**, not by lightness — surface values are tuned per mode and the
 | Brand fill / brand hover / soft brand tint | `--ak-primary` / `--ak-primary-hover` / `--ak-primary-subtle` |
 | Text/icon on a brand fill | `--ak-on-accent` |
 | Focus ring | `--ak-focus-ring` |
-| Status fill / text | `--ak-success` · `--ak-warning` · `--ak-error` · `--ak-info` (+ `--ak-error-subtle`) |
+| Status fill / subtle bg | `--ak-success` · `--ak-warning` · `--ak-error` · `--ak-info` (+ each `*-subtle`) |
 
 **Three surfaces, by role.** `--ak-bg` is the deepest layer; `--ak-surface` is everything that sits on it (cards, panels, inputs, table rows); `--ak-elevated` is anything that should read as raised or distinct (headers, dropdowns, hover-down, the selected/active state). A "recessed" element (a table header, a well) is just `--ak-elevated` — distinct from the surface it sits on. The lightness direction of that distinction flips between modes, which is expected and correct.
 
@@ -166,8 +174,8 @@ AdminKit consumes a fixed **semantic vocabulary**. A new provider adapter only h
 }
 ```
 
-**Tier 1 — the 15 semantics (required vocabulary):** `--background`, `--surface`, `--elevated`, `--border`, `--border-strong`, `--heading`, `--text`, `--heading-inverse`, `--text-inverse`, `--accent`, `--accent-hover`, `--accent-bg`, `--hover`, `--focus`, `--overlay`.
+**Tier 1 — the WaasKit semantics (required vocabulary):** `--background`, `--surface`, `--elevated`, `--overlay`, `--border`, `--border-strong`, `--accent`, `--accent-hover`, `--accent-on`, `--accent-subtle`, `--input`, `--focus`, `--heading`, `--text`, `--text-muted`, and the notification set `--success` / `--success-subtle` / `--warning` / `--warning-subtle` / `--error` / `--error-subtle` / `--info` / `--info-subtle`.
 
-**Tier 2 — primitives the AdminKit additions consume (optional but recommended):** the neutral ramp `--neutral-l-1…10` + inverse `--neutral-d-1…10` (surfaces, muted text, dark mode), the primary ramp `--primary-l-1…10` / `--primary-d-1…10` / `--primary-t-1` (accent derivations + the **Branded** palette), `--secondary`, and the notification primitives `--success` / `--warning` / `--error` / `--error-t-2` / `--info`. Anything absent falls back to AdminKit's built-in values.
+**Tier 2 — primitives the AdminKit additions consume (optional but recommended):** the neutral ramp `--neutral-l-1…10` + inverse `--neutral-d-1…10` (surfaces, muted text, dark mode, inverse text), the primary ramp `--primary-l-1…10` / `--primary-d-1…10` (accent derivations + the **Branded** palette), `--secondary`, and the notification `l-9` / `d-9` ramps the `-subtle` fills fall back to. Anything absent falls back to AdminKit's built-in values.
 
 Register the adapter sheet as a dependency of `adminkit-tokens` via `adminkit/extra_tokens_handle` so it loads first — see the Bricks integration for the pattern.

@@ -37,7 +37,7 @@ body.adminkit input[type="search"].choices__input--cloned {
 body.adminkit .choices__list--multiple .choices__item {
 	background-color: var(--ak-primary);
 	border-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 body.adminkit .choices__list--multiple .choices__item.is-highlighted {
@@ -108,7 +108,7 @@ body.adminkit #ame-rex-other-roles-row .choices .choices__input {
 body.adminkit #ame-rex-other-roles-row .choices .choices__list--multiple .choices__item {
 	background-color: var(--ak-primary);
 	border-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 body.adminkit #ame-rex-other-roles-row .choices .choices__button {

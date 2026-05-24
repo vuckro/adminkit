@@ -197,8 +197,8 @@ body.block-editor-page.adminkit .components-button.is-tertiary:focus:not(:disabl
 
 /* Destructive secondary (Move to trash) — soft red pill that matches
    the pressed-button pattern: subtle error tint bg + error text, no
-   border, no shadow. --ak-error-subtle resolves to var(--error-t-2)
-   with a safe rgba fallback. */
+   border, no shadow. --ak-error-subtle bridges WaasKit --error-subtle
+   (opaque --error-l-9 in light, --error-d-9 in dark). */
 body.block-editor-page.adminkit .components-button.is-secondary.is-destructive,
 body.block-editor-page.adminkit .components-button.is-destructive {
 	background: var(--ak-error-subtle);

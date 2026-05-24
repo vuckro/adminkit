@@ -23,7 +23,7 @@
 	--ak-bg: var(--background, hsl(0, 0%, 98%));
 	--ak-surface: var(--surface, hsl(0, 0%, 96%));
 	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
-	--ak-input-bg: var(--field-bg, hsl(0, 0%, 100%));
+	--ak-input-bg: var(--input, hsl(0, 0%, 100%));
 
 	--ak-border: var(--border, hsl(0, 0%, 89%));
 	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));

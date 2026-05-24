@@ -211,7 +211,7 @@ body.adminkit.toplevel_page_fluent-booking .fcal_each_spot.fcal_is_current .fcal
 body.adminkit.toplevel_page_fluent-booking .fcal_steps .el-step__head.is-finish .el-step__icon {
 	background-color: var( --ak-primary ) !important;
 	border-color: var( --ak-primary ) !important;
-	color: #ffffff !important;
+	color: var(--ak-on-accent) !important;
 }
 
 /* Soft brand surfaces / buttons / badges / pills — pale tint + brand text
@@ -239,7 +239,7 @@ body.adminkit.toplevel_page_fluent-booking .fcal_time.fcal_spot_selected,
 body.adminkit.toplevel_page_fluent-booking .fcal_time .fcal_selected_time_icon {
 	background-color: var( --ak-primary ) !important;
 	border-color: var( --ak-primary ) !important;
-	color: #ffffff !important;
+	color: var(--ak-on-accent) !important;
 }
 
 /* 3d. Brand text — links, active nav, checked labels, active/hover tabs,
@@ -477,7 +477,7 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-calendar-tabl
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-calendar-table td .el-calendar-day p.is-selected,
 body.adminkit.toplevel_page_fluent-booking .el-overlay .el-calendar-table td.is-selected p {
 	background-color: var( --ak-primary ) !important;
-	color: #ffffff !important;
+	color: var(--ak-on-accent) !important;
 }
 
 

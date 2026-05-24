@@ -152,7 +152,7 @@ body.adminkit .connectors-page .components-item {
 body.adminkit .connectors-page .ai-plugin-callout .components-button.is-primary,
 body.adminkit .connectors-page .ai-plugin-callout .components-button.is-secondary {
 	background: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 	box-shadow: none;
 	border-color: var(--ak-primary);
 }
@@ -160,7 +160,7 @@ body.adminkit .connectors-page .ai-plugin-callout .components-button.is-secondar
 body.adminkit .connectors-page .ai-plugin-callout .components-button.is-primary:hover,
 body.adminkit .connectors-page .ai-plugin-callout .components-button.is-secondary:hover {
 	background: var(--ak-primary-hover);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 /* New wpds admin pages (Connectors, Font Library) render inside

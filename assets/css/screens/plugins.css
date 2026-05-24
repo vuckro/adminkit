@@ -78,7 +78,7 @@ body.adminkit .wp-list-table.plugins tr.plugin-update-tr td {
 
 body.adminkit .wp-list-table.plugins tr.plugin-update-tr .update-message,
 body.adminkit .wp-list-table.plugins .plugin-update-tr .notice {
-	background: var(--warning-t-1, hsla(38, 100%, 50%, 0.09));
+	background: var(--ak-warning-subtle);
 	border: none;
 	border-radius: 0;
 	margin: 0;

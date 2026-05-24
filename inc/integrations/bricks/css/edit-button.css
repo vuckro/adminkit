@@ -22,7 +22,7 @@ body.adminkit .edit-post-header-toolbar .button.button-primary,
 body.adminkit .editor-header .bricks-edit-with-bricks-button,
 body.adminkit .edit-post-header .bricks-edit-with-bricks-button {
 	background-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 	border-color: var(--ak-primary);
 	box-shadow: none;
 }
@@ -44,7 +44,7 @@ body.adminkit .bricks-editor .wp-editor-container .button.button-primary:focus,
 body.adminkit .edit-post-header-toolbar .button.button-primary:focus {
 	background-color: var(--ak-primary-hover);
 	border-color: var(--ak-primary-hover);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 
@@ -79,12 +79,12 @@ body.adminkit .bricks-block-editor-notice-wrapper .bricks-editor-buttons {
 	flex-wrap: wrap;
 }
 
-/* Edit-with-Bricks primary CTA inside the notice. White text on
-   --ak-primary stays readable in both modes (brand color is fixed). */
+/* Edit-with-Bricks primary CTA inside the notice. --ak-on-accent on
+   --ak-primary (dark text on the yellow brand), readable in both modes. */
 body.adminkit .bricks-block-editor-notice-wrapper .button.button-primary,
 body.adminkit .bricks-block-editor-notice-wrapper a.button-primary {
 	background: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 	border: 0;
 	border-radius: var(--ak-radius-s);
 	padding: 10px 22px;
@@ -99,7 +99,7 @@ body.adminkit .bricks-block-editor-notice-wrapper .button.button-primary:focus,
 body.adminkit .bricks-block-editor-notice-wrapper a.button-primary:hover,
 body.adminkit .bricks-block-editor-notice-wrapper a.button-primary:focus {
 	background: var(--ak-primary-hover);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 /* "Use block editor" / any non-primary link inside the notice —

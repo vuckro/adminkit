@@ -219,7 +219,7 @@ body.adminkit.toplevel_page_flying-press .bg-green-500 {
 }
 
 body.adminkit.toplevel_page_flying-press .bg-green-50 {
-	background-color: var(--success-t-2, rgba(17, 183, 107, 0.10)) !important;
+	background-color: var(--ak-success-subtle) !important;
 }
 
 body.adminkit.toplevel_page_flying-press .border-green-600 {
@@ -237,7 +237,7 @@ body.adminkit.toplevel_page_flying-press .bg-yellow-500 {
 }
 
 body.adminkit.toplevel_page_flying-press .bg-yellow-50 {
-	background-color: var(--warning-t-2, rgba(255, 161, 0, 0.10)) !important;
+	background-color: var(--ak-warning-subtle) !important;
 }
 
 body.adminkit.toplevel_page_flying-press .border-yellow-600 {

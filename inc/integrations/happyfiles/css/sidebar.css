@@ -108,7 +108,7 @@ body.adminkit #happyfiles-sidebar .icon.has svg g {
 
 body.adminkit #happyfiles-sidebar .icon:hover {
 	background-color: var(--ak-primary) !important;
-	color: #ffffff !important;
+	color: var(--ak-on-accent) !important;
 }
 
 body.adminkit #happyfiles-sidebar .icon:hover svg g {
@@ -190,7 +190,7 @@ body.adminkit #happyfiles-create-folders button.button-primary:hover,
 body.adminkit #happyfiles-create-folders button.button-primary:focus {
 	background-color: var(--ak-primary);
 	border-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 /* Sort-by dropdown panel */

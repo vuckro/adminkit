@@ -212,7 +212,7 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .subnav-item-active a {
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn {
 	background-color: var(--ak-primary);
 	border-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn:hover {

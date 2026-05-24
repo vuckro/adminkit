@@ -32,13 +32,14 @@
    they detach from cards; see below.
 
    ── Two tiers ─────────────────────────────────────────────────────────────
-   1. Provider semantics (1:1) — surfaces, borders, text (+inverse), accent
-      (+hover/subtle), hover, focus, overlay. These mirror the provider's
-      definitive 15-role semantic layer exactly.
-   2. AdminKit additions — roles the semantic layer doesn't define but wp-admin
-      needs: --ak-text-muted, --ak-on-accent, --ak-input-bg, --ak-secondary, the
-      status set (--ak-success/-warning/-error/-info/-error-subtle) and the
-      geometry/type tokens. Tagged "+ AdminKit addition" below. Map: docs/TOKENS.md.
+   1. WaasKit semantics (1:1) — surfaces, borders, text (+ muted), accent
+      (+ hover / on / subtle), input, focus, overlay, and the notification set
+      (success/warning/error/info + each -subtle). These mirror WaasKit's locked
+      23-token semantic layer exactly (see docs/WAASKIT-DESIGN-SYSTEM.md).
+   2. AdminKit additions — roles WaasKit doesn't expose as a token but wp-admin
+      needs: --ak-secondary, --ak-hover-bg, the inverse text pair (WaasKit inverts
+      via a .scheme-* scope, not tokens), --ak-shadow-elevated and the geometry/
+      type tokens. Tagged "+ AdminKit addition" below. Map: docs/TOKENS.md.
 
    ── Conventions ──────────────────────────────────────────────────────────
    • Flat by design — depth is shown by surface tone. The lone exception is
@@ -46,7 +47,7 @@
      black→white between light/dark so the lift reads in both modes.
    • Radii + type stay in px (the provider rem scale renders too large in admin).
    • One declaration per token. Derived tints use color-mix off --ak-primary as
-     the no-provider FALLBACK only — the provider's --accent-hover / --accent-bg /
+     the no-provider FALLBACK only — the provider's --accent-hover / --accent-subtle /
      --focus win when present (so no duplicate static line is needed anymore).
    • Branded palette: when the user picks "Branded", surfaces + borders are
      remapped onto the provider PRIMARY ramp (--primary-l-N / --primary-d-N) via an inline
@@ -62,7 +63,7 @@
 	/* Form-field fill — lifts lighter than --ak-surface so an <input> / <select>
 	   / <textarea> reads as raised off cards, panels and the page. Light = white;
 	   dark uses the provider's elevated ramp (see the dark block). */
-	--ak-input-bg: var(--field-bg, hsl(0, 0%, 100%)); /* + AdminKit addition */
+	--ak-input-bg: var(--input, hsl(0, 0%, 100%)); /* bridges WaasKit --input (→ --neutral-l-1) */
 
 	/* ── Borders ───────────────────────────────────────────────────────── */
 	--ak-border: var(--border, hsl(0, 0%, 89%));
@@ -70,7 +71,7 @@
 
 	/* ── Text ──────────────────────────────────────────────────────────── */
 	--ak-text: var(--text, hsl(0, 0%, 32%));
-	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%)); /* + AdminKit addition (no provider semantic) */
+	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%)); /* bridges WaasKit --text-muted (→ --neutral-l-7) */
 	--ak-heading: var(--heading, hsl(0, 0%, 18%));
 
 	/* Inverse text — for content on an inverted surface (a dark chip in light
@@ -80,14 +81,18 @@
 	--ak-heading-inverse: var(--heading-inverse, var(--neutral-d-9, hsl(0, 0%, 86%)));
 
 	/* ── Accent (brand) ────────────────────────────────────────────────────
-	   --ak-primary mirrors the semantic --accent; --primary-hover / --primary-subtle
-	   mirror --accent-hover / --accent-bg (the provider defines both now, so a
-	   single line — color-mix is just the no-provider fallback). */
+	   --ak-primary mirrors WaasKit --accent; --primary-hover / --primary-subtle
+	   mirror --accent-hover / --accent-subtle (WaasKit defines all three, so a
+	   single line — color-mix / the l-* ramp are just the no-provider fallback).
+	   --ak-primary-subtle is OPAQUE per WaasKit (--accent-subtle → --primary-l-10);
+	   the dark block re-maps it onto --primary-d-10. */
 	--ak-primary: var(--accent, var(--primary, var(--neutral-l-8, hsl(0, 0%, 32%))));
-	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, color-mix(in srgb, var(--ak-primary) 82%, #000)));
-	--ak-primary-subtle: var(--accent-bg, var(--primary-t-1, color-mix(in srgb, var(--ak-primary) 9%, transparent)));
-	/* Foreground on a brand fill — tuned per brand (dark on a light/yellow accent). */
-	--ak-on-accent: var(--on-accent, hsl(0, 0%, 98%));            /* + AdminKit addition */
+	--ak-primary-hover: var(--accent-hover, var(--primary-d-1, color-mix(in srgb, var(--ak-primary) 82%, #000)));
+	--ak-primary-subtle: var(--accent-subtle, var(--primary-l-10, color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface))));
+	/* Foreground on a brand fill — WaasKit --accent-on (→ --primary-d-10): dark
+	   text on the light/yellow brand. Standalone falls to off-white for the
+	   no-provider mid-gray accent. */
+	--ak-on-accent: var(--accent-on, hsl(0, 0%, 98%));
 	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%))); /* + AdminKit addition (consumes the --secondary primitive) */
 
 	/* ── State ─────────────────────────────────────────────────────────────
@@ -106,13 +111,19 @@
 	   Scrim behind modals / drawers — a translucent black, both modes. */
 	--ak-overlay: var(--overlay, var(--black-t-7, rgba(0, 0, 0, 0.5)));
 
-	/* ── Status (notifications) — + AdminKit additions (consume the provider
-	   notification primitives; the semantic layer has no status roles) ───── */
+	/* ── Status (notifications) ──────────────────────────────────────────────
+	   Base hues mirror WaasKit --success/-warning/-error/-info. The -subtle fills
+	   bridge WaasKit's semantic subtle roles (opaque pale, the l-9 ramp, in light);
+	   the dark block re-maps them onto the d-9 ramp. color-mix over --ak-surface is
+	   the no-provider fallback only. */
 	--ak-success: var(--success, #11b76b);
+	--ak-success-subtle: var(--success-subtle, var(--success-l-9, color-mix(in srgb, var(--ak-success) 14%, var(--ak-surface))));
 	--ak-warning: var(--warning, #ffa100);
+	--ak-warning-subtle: var(--warning-subtle, var(--warning-l-9, color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface))));
 	--ak-error: var(--error, #f04662);
-	--ak-error-subtle: var(--error-t-2, rgba(240, 70, 98, 0.18));
+	--ak-error-subtle: var(--error-subtle, var(--error-l-9, color-mix(in srgb, var(--ak-error) 14%, var(--ak-surface))));
 	--ak-info: var(--info, #2895d4);
+	--ak-info-subtle: var(--info-subtle, var(--info-l-9, color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface))));
 
 	/* ── Geometry + type (px on purpose — see header) ───────────────────── */
 	--ak-radius-s: 6px;
@@ -190,6 +201,16 @@ body.adminkit[class*="admin-color-"] {
 	--ak-primary: var(--accent, var(--primary, var(--neutral-d-6, hsl(0, 0%, 38%))));
 	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, color-mix(in srgb, var(--ak-primary) 82%, #fff)));
 	--ak-secondary: var(--secondary, var(--neutral-d-7, hsl(0, 0%, 56%)));
+
+	/* Subtle fills — WaasKit's -subtle roles carry an explicit dark value (the
+	   d-9/d-10 ramp). The provider's own dark mode never fires in wp-admin, so we
+	   read those dark primitives straight (same trick as the surfaces above) to
+	   reproduce WaasKit dark instead of leaving a pale light tint on a dark UI. */
+	--ak-primary-subtle: var(--primary-d-10, color-mix(in srgb, var(--ak-primary) 22%, var(--ak-surface)));
+	--ak-success-subtle: var(--success-d-9, color-mix(in srgb, var(--ak-success) 22%, var(--ak-surface)));
+	--ak-warning-subtle: var(--warning-d-9, color-mix(in srgb, var(--ak-warning) 22%, var(--ak-surface)));
+	--ak-error-subtle:   var(--error-d-9, color-mix(in srgb, var(--ak-error) 22%, var(--ak-surface)));
+	--ak-info-subtle:    var(--info-d-9, color-mix(in srgb, var(--ak-info) 22%, var(--ak-surface)));
 
 	/* Hover — white tint (the neutral --hover is a black tint, invisible on dark). */
 	--ak-hover-bg: var(--white-t-2, rgba(255, 255, 255, 0.11));

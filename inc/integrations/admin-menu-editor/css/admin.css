@@ -540,7 +540,7 @@ body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts.rex-with-ca
 body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts.rex-with-capability-count-bars .rex-capability-count.rex-all-capabilities-enabled {
 	background: var(--ak-primary);
 	border-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 

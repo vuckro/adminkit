@@ -107,12 +107,13 @@ class AdminKit_Settings {
 	}
 
 	/**
-	 * The semantic colour taxonomy — mirrors the design provider's SEMANTIC
-	 * palette 1:1 (Bricks/WaasKit: surface / border / text / accent / state /
-	 * overlay) so a user moving between Bricks and AdminKit sees the same roles.
-	 * Where the provider has no matching semantic (input field, muted/secondary
-	 * text, on-accent, the status scales) AdminKit defines its own, flagged
-	 * `own` so the UI can badge it.
+	 * The semantic colour taxonomy — mirrors WaasKit's locked 23-token SEMANTIC
+	 * layer 1:1 (surface / border / text / accent / input / focus / overlay +
+	 * the notification set with each -subtle) so a user moving between Bricks and
+	 * AdminKit sees the same roles. The few roles WaasKit doesn't expose as a
+	 * token — secondary text, the hover tint, and the inverse text pair (WaasKit
+	 * inverts via a .scheme-* scope, not tokens) — AdminKit defines itself,
+	 * flagged `own` so the UI can badge it. See docs/WAASKIT-DESIGN-SYSTEM.md.
 	 *
 	 * In v1 the Design system tab DISPLAYS this read-only (no per-token pickers);
 	 * the whole palette is driven globally: the Neutral⇄Branded toggle remaps
@@ -139,7 +140,7 @@ class AdminKit_Settings {
 				array( 'token' => '--ak-bg',       'bricks' => '--background', 'source' => '--neutral-l-1', 'label' => __( 'Background', 'adminkit' ),  'key' => 'bg_color',       'edit' => 'none' ),
 				array( 'token' => '--ak-surface',  'bricks' => '--surface',    'source' => '--neutral-l-2', 'label' => __( 'Surface', 'adminkit' ),     'key' => 'surface_color',  'edit' => 'none' ),
 				array( 'token' => '--ak-elevated', 'bricks' => '--elevated',   'source' => '--neutral-l-3', 'label' => __( 'Elevated', 'adminkit' ),    'key' => 'elevated_color', 'edit' => 'none' ),
-				array( 'token' => '--ak-input-bg', 'bricks' => '',             'source' => '--neutral-l-1', 'label' => __( 'Input field', 'adminkit' ), 'key' => 'input_bg_color', 'edit' => 'none', 'own' => true ),
+				array( 'token' => '--ak-input-bg', 'bricks' => '--input',       'source' => '--neutral-l-1', 'label' => __( 'Input field', 'adminkit' ), 'key' => 'input_bg_color', 'edit' => 'none' ),
 			) ),
 			array( 'group' => 'border', 'label' => __( 'Borders', 'adminkit' ), 'desc' => __( 'Outlines and dividers.', 'adminkit' ), 'tokens' => array(
 				array( 'token' => '--ak-border',        'bricks' => '--border',        'source' => '--neutral-l-4', 'label' => __( 'Border', 'adminkit' ),        'key' => 'border_color',        'edit' => 'none' ),
@@ -148,29 +149,33 @@ class AdminKit_Settings {
 			array( 'group' => 'text', 'label' => __( 'Text', 'adminkit' ), 'desc' => __( 'Headings, body copy and their inverse.', 'adminkit' ), 'tokens' => array(
 				array( 'token' => '--ak-heading',         'bricks' => '--heading',         'source' => '--neutral-l-9', 'label' => __( 'Heading', 'adminkit' ),           'key' => 'heading_color',    'edit' => 'none' ),
 				array( 'token' => '--ak-text',            'bricks' => '--text',            'source' => '--neutral-l-8', 'label' => __( 'Body text', 'adminkit' ),         'key' => 'text_color',       'edit' => 'none' ),
-				array( 'token' => '--ak-text-muted',      'bricks' => '',                  'source' => '--neutral-l-7', 'label' => __( 'Muted text', 'adminkit' ),        'key' => 'text_muted_color', 'edit' => 'none', 'own' => true ),
-				array( 'token' => '--ak-heading-inverse', 'bricks' => '--heading-inverse', 'source' => '--neutral-d-9', 'label' => __( 'Heading (inverse)', 'adminkit' ), 'edit' => 'none' ),
-				array( 'token' => '--ak-text-inverse',    'bricks' => '--text-inverse',    'source' => '--neutral-d-8', 'label' => __( 'Text (inverse)', 'adminkit' ),    'edit' => 'none' ),
+				array( 'token' => '--ak-text-muted',      'bricks' => '--text-muted', 'source' => '--neutral-l-7', 'label' => __( 'Muted text', 'adminkit' ),        'key' => 'text_muted_color', 'edit' => 'none' ),
+				array( 'token' => '--ak-heading-inverse', 'bricks' => '',             'source' => '--neutral-d-9', 'label' => __( 'Heading (inverse)', 'adminkit' ), 'edit' => 'none', 'own' => true ),
+				array( 'token' => '--ak-text-inverse',    'bricks' => '',             'source' => '--neutral-d-8', 'label' => __( 'Text (inverse)', 'adminkit' ),    'edit' => 'none', 'own' => true ),
 			) ),
 			array( 'group' => 'accent', 'label' => __( 'Accent', 'adminkit' ), 'desc' => __( 'Brand — buttons, links, highlights. Hover, subtle and focus derive from it automatically.', 'adminkit' ), 'tokens' => array(
 				array( 'token' => '--ak-primary',        'bricks' => '--accent',       'source' => '--primary',      'label' => __( 'Accent', 'adminkit' ),        'key' => 'primary_color',   'edit' => 'agnostic' ),
-				array( 'token' => '--ak-primary-hover',  'bricks' => '--accent-hover', 'source' => '--primary-l-2',  'label' => __( 'Accent hover', 'adminkit' ),  'edit' => 'none' ),
-				array( 'token' => '--ak-primary-subtle', 'bricks' => '--accent-bg',    'source' => '--primary-t-1',  'label' => __( 'Accent subtle', 'adminkit' ), 'edit' => 'none' ),
-				array( 'token' => '--ak-on-accent',      'bricks' => '',               'source' => '--neutral-l-10', 'label' => __( 'On accent', 'adminkit' ),     'key' => 'on_accent_color', 'edit' => 'agnostic', 'own' => true ),
+				array( 'token' => '--ak-primary-hover',  'bricks' => '--accent-hover',  'source' => '--primary-d-1',  'label' => __( 'Accent hover', 'adminkit' ),  'edit' => 'none' ),
+				array( 'token' => '--ak-primary-subtle', 'bricks' => '--accent-subtle', 'source' => '--primary-l-10', 'label' => __( 'Accent subtle', 'adminkit' ), 'edit' => 'none' ),
+				array( 'token' => '--ak-on-accent',      'bricks' => '--accent-on',     'source' => '--primary-d-10', 'label' => __( 'On accent', 'adminkit' ),     'key' => 'on_accent_color', 'edit' => 'agnostic' ),
 				array( 'token' => '--ak-secondary',      'bricks' => '',               'source' => '--secondary',    'label' => __( 'Secondary', 'adminkit' ),     'key' => 'secondary_color', 'edit' => 'agnostic', 'own' => true ),
 			) ),
 			array( 'group' => 'state', 'label' => __( 'State', 'adminkit' ), 'desc' => __( 'Hover and focus feedback.', 'adminkit' ), 'tokens' => array(
-				array( 'token' => '--ak-hover-bg', 'bricks' => '--hover', 'source' => '--neutral-t-2', 'label' => __( 'Hover', 'adminkit' ),      'edit' => 'none' ),
-				array( 'token' => '--ak-focus',    'bricks' => '--focus', 'source' => '--primary-t-2', 'label' => __( 'Focus ring', 'adminkit' ), 'edit' => 'none' ),
+				array( 'token' => '--ak-hover-bg', 'bricks' => '',        'source' => '--neutral-t-2', 'label' => __( 'Hover', 'adminkit' ),      'edit' => 'none', 'own' => true ),
+				array( 'token' => '--ak-focus',    'bricks' => '--focus', 'source' => '--primary-t-5', 'label' => __( 'Focus ring', 'adminkit' ), 'edit' => 'none' ),
 			) ),
 			array( 'group' => 'overlay', 'label' => __( 'Overlay', 'adminkit' ), 'desc' => __( 'Scrim behind modals and drawers.', 'adminkit' ), 'tokens' => array(
 				array( 'token' => '--ak-overlay', 'bricks' => '--overlay', 'source' => '--black-t-7', 'label' => __( 'Overlay', 'adminkit' ), 'edit' => 'none' ),
 			) ),
-			array( 'group' => 'status', 'label' => __( 'Status', 'adminkit' ), 'desc' => __( 'Info, success, warning and error — built on the framework\'s notification scales.', 'adminkit' ), 'tokens' => array(
-				array( 'token' => '--ak-info',    'bricks' => '', 'source' => '--info',    'label' => __( 'Info', 'adminkit' ),    'edit' => 'none', 'own' => true ),
-				array( 'token' => '--ak-success', 'bricks' => '', 'source' => '--success', 'label' => __( 'Success', 'adminkit' ), 'edit' => 'none', 'own' => true ),
-				array( 'token' => '--ak-warning', 'bricks' => '', 'source' => '--warning', 'label' => __( 'Warning', 'adminkit' ), 'edit' => 'none', 'own' => true ),
-				array( 'token' => '--ak-error',   'bricks' => '', 'source' => '--error',   'label' => __( 'Error', 'adminkit' ),   'edit' => 'none', 'own' => true ),
+			array( 'group' => 'status', 'label' => __( 'Status', 'adminkit' ), 'desc' => __( 'Info, success, warning and error — and their subtle fills — from the framework\'s notification roles.', 'adminkit' ), 'tokens' => array(
+				array( 'token' => '--ak-info',           'bricks' => '--info',           'source' => '--info',        'label' => __( 'Info', 'adminkit' ),           'edit' => 'none' ),
+				array( 'token' => '--ak-info-subtle',    'bricks' => '--info-subtle',    'source' => '--info-l-9',    'label' => __( 'Info subtle', 'adminkit' ),    'edit' => 'none' ),
+				array( 'token' => '--ak-success',        'bricks' => '--success',        'source' => '--success',     'label' => __( 'Success', 'adminkit' ),        'edit' => 'none' ),
+				array( 'token' => '--ak-success-subtle', 'bricks' => '--success-subtle', 'source' => '--success-l-9', 'label' => __( 'Success subtle', 'adminkit' ), 'edit' => 'none' ),
+				array( 'token' => '--ak-warning',        'bricks' => '--warning',        'source' => '--warning',     'label' => __( 'Warning', 'adminkit' ),        'edit' => 'none' ),
+				array( 'token' => '--ak-warning-subtle', 'bricks' => '--warning-subtle', 'source' => '--warning-l-9', 'label' => __( 'Warning subtle', 'adminkit' ), 'edit' => 'none' ),
+				array( 'token' => '--ak-error',          'bricks' => '--error',          'source' => '--error',       'label' => __( 'Error', 'adminkit' ),          'edit' => 'none' ),
+				array( 'token' => '--ak-error-subtle',   'bricks' => '--error-subtle',   'source' => '--error-l-9',   'label' => __( 'Error subtle', 'adminkit' ),   'edit' => 'none' ),
 			) ),
 		);
 	}

@@ -177,7 +177,7 @@ body.adminkit .el-button--primary,
 body.adminkit .ff_btn_primary {
 	background: var(--ak-primary);
 	border-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 body.adminkit .el-button--primary:hover,
@@ -185,7 +185,7 @@ body.adminkit .el-button--primary:focus,
 body.adminkit .ff_btn_primary:hover {
 	background: var(--ak-primary-hover);
 	border-color: var(--ak-primary-hover);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 /* Text / link buttons */
@@ -354,7 +354,7 @@ body.adminkit .el-radio-button__inner {
 body.adminkit .el-radio-button__orig-radio:checked + .el-radio-button__inner {
 	background: var(--ak-primary);
 	border-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 	box-shadow: none;
 }
 
@@ -591,7 +591,7 @@ body.adminkit .el-pagination .el-pager li.active {
    brand blue — route to primary. */
 body.adminkit .el-pagination.is-background .el-pager li:not(.disabled).active {
 	background-color: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 /* Tags / badges */

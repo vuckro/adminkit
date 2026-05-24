@@ -139,7 +139,7 @@ body.adminkit .theme-overlay .screenshot.selected {
    route through --ak-primary so it picks up the brand color. */
 body.adminkit .theme-overlay .current-label {
 	background: var(--ak-primary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 	border-radius: var(--ak-radius-s);
 }
 
