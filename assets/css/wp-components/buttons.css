@@ -7,9 +7,10 @@
    below then overrides its colors. */
 /* Secondary / generic button — flat: surface fill, neutral --ak-border at rest,
    text in --ak-text. The label color is constant across rest/hover/focus. On
-   hover AND focus a NEUTRAL tint (--ak-hover-bg) lifts the fill and the border
-   accentuates to --ak-primary — an accent OUTLINE, no brand fill, so it reads
-   clearly secondary and never competes with the filled primary. */
+   hover AND focus a neutral tint (--ak-hover-bg) lifts the fill and the border
+   strengthens to --ak-border-strong — quiet and fully neutral (no brand), so it
+   stays clearly below the filled primary. (Pressed/active states keep an accent —
+   that's a selection indicator, not hover.) */
 body.adminkit .button,
 body.adminkit .wp-core-ui .button,
 body.adminkit .button-secondary,
@@ -36,7 +37,7 @@ body.adminkit .button:focus,
 body.adminkit .wp-core-ui .button:focus,
 body.adminkit .button-secondary:focus {
 	background: var(--ak-hover-bg);
-	border-color: var(--ak-primary);
+	border-color: var(--ak-border-strong);
 	color: var(--ak-text);
 }
 
@@ -103,7 +104,7 @@ body.adminkit .wrap .page-title-action ~ .page-title-action {
 body.adminkit .wrap .page-title-action ~ .page-title-action:hover,
 body.adminkit .wrap .page-title-action ~ .page-title-action:focus {
 	background: var(--ak-hover-bg);
-	border-color: var(--ak-primary);
+	border-color: var(--ak-border-strong);
 	color: var(--ak-text);
 }
 
@@ -158,7 +159,7 @@ body.adminkit input[type="file"]::file-selector-button {
 
 body.adminkit input[type="file"]::file-selector-button:hover {
 	background: var(--ak-hover-bg);
-	border-color: var(--ak-primary);
+	border-color: var(--ak-border-strong);
 	color: var(--ak-text);
 }
 
@@ -218,5 +219,5 @@ body.adminkit #doaction:focus,
 body.adminkit #doaction2:focus,
 body.adminkit #post-query-submit:focus {
 	box-shadow: none;
-	border-color: var(--ak-primary);
+	border-color: var(--ak-border-strong);
 }
