@@ -88,21 +88,22 @@ body.adminkit .wrap .page-title-action:focus {
 }
 
 /* When several header action buttons stack (e.g. Add New + Import on the
-   Bricks templates list), keep only the first filled; the rest become a flat
-   subtle-primary CTA so the page keeps a single solid primary. The label color
-   (primary) is constant — the :hover rule re-asserts it so the .button-primary
-   hover above (which also matches these siblings) can't repaint them filled. */
+   Bricks templates list), keep only the FIRST filled (primary); the rest are
+   plain secondary buttons. They only need this override because the
+   .button-primary rule above also matches every .page-title-action and would
+   otherwise fill them — so we re-assert the standard secondary style (surface
+   background + --ak-border), matching every other secondary button. */
 body.adminkit .wrap .page-title-action ~ .page-title-action {
-	background: var(--ak-primary-subtle);
-	border-color: transparent;
-	color: var(--ak-primary);
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
 }
 
 body.adminkit .wrap .page-title-action ~ .page-title-action:hover,
 body.adminkit .wrap .page-title-action ~ .page-title-action:focus {
-	background: color-mix(in srgb, var(--ak-primary) 20%, var(--ak-surface));
-	border-color: transparent;
-	color: var(--ak-primary);
+	background: var(--ak-primary-subtle);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-text);
 }
 
 body.adminkit .button-primary:disabled,
