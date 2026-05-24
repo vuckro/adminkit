@@ -220,11 +220,16 @@ class AdminKit_Post_Previews {
 
 		$permalink = get_permalink( $post );
 
-		if ( $permalink && ! self::is_local_site() ) {
+		// mShots on a public site; the featured image on a local host (mShots can't
+		// reach it) or when the user turns "Live screenshots" off — AdminKit_Settings
+		// forces 'featured' on that toggle via adminkit/post_previews/provider.
+		$provider = apply_filters( 'adminkit/post_previews/provider', self::is_local_site() ? 'featured' : 'mshots' );
+
+		if ( $permalink && 'mshots' === $provider ) {
 			$thumb = self::mshots_url( $permalink, $tw, $th );
 			$full  = self::mshots_url( $permalink, $fw, $fh );
 		} else {
-			// No public screenshot possible here → the featured image is nicer.
+			// No public screenshot → the featured image is nicer.
 			$thumb = (string) get_the_post_thumbnail_url( $post, 'medium' );
 			$full  = (string) get_the_post_thumbnail_url( $post, 'large' );
 		}
