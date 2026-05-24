@@ -152,8 +152,8 @@ body.adminkit .components-form-toggle.is-checked .components-form-toggle__track 
 
 /* Popover + dropdown — content wrapper bg stays transparent so it
    never stacks a surface over an inner card (or onto .is-unstyled
-   overlays like the block inserter); opaque dropdown menus are
-   handled by the block-editor rule in gutenberg/dark-mode-map.css. */
+   overlays like the block inserter); opaque dropdown menus are left
+   to WP's own (light) block-editor styling. */
 body.adminkit .components-popover__content {
 	background: transparent;
 	border-color: var(--ak-border);

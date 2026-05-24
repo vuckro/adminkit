@@ -17,7 +17,7 @@ body.adminkit {
 
 /* Dark-mode scrollbars. The browser paints native scrollbars from the page's
    color-scheme, which AdminKit keeps light (so native form controls stay
-   light — see gutenberg/dark-mode-map.css). Scrollable boxes — e.g. the Quick
+   light). Scrollable boxes — e.g. the Quick
    Edit category list on edit.php — therefore show a white scrollbar on dark
    surfaces. scrollbar-color is inherited, so setting it once here recolors
    every scrollable area in admin: a muted thumb on a track that blends in. */

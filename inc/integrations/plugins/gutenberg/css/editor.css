@@ -1,6 +1,31 @@
-/* Gutenberg block editor. All rules scoped to body.block-editor-page so
-   we never bleed into the canvas (.editor-styles-wrapper, .wp-block-*).
-   Starter set — extend as more Gutenberg surfaces need polish. */
+/* Gutenberg block editor — AdminKit's LIGHT styling for the editor chrome
+   (header, sidebar, buttons, tabs). All rules scoped to body.block-editor-page
+   so we never bleed into the canvas (.editor-styles-wrapper, .wp-block-*).
+
+   No dark theme: WordPress ships none, and half-theming the editor's many
+   hardcoded surfaces looks broken. So the editor stays LIGHT even when AdminKit
+   dark mode is on globally — re-pin the tokens the dark block flips back to their
+   light values on the editor shell. The whole editor (this chrome + the
+   @wordpress/components that read --wp-components-color-* → --ak-*) then renders
+   light regardless of the global toggle. Values mirror the :root block in
+   tokens.css (brand/geometry tokens don't flip, so they're not repeated). */
+body.block-editor-page.adminkit {
+	--ak-bg: var(--background, hsl(0, 0%, 98%));
+	--ak-surface: var(--surface, hsl(0, 0%, 96%));
+	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
+	--ak-input-bg: var(--input, hsl(0, 0%, 100%));
+	--ak-border: var(--border, hsl(0, 0%, 89%));
+	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
+	--ak-text: var(--text, hsl(0, 0%, 32%));
+	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%));
+	--ak-heading: var(--heading, hsl(0, 0%, 18%));
+	--ak-hover-bg: var(--hover, rgba(0, 0, 0, 0.04));
+	--ak-primary-subtle: var(--accent-subtle, var(--primary-l-9, color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface))));
+	--ak-success-subtle: var(--success-subtle, var(--success-l-9, color-mix(in srgb, var(--ak-success) 14%, var(--ak-surface))));
+	--ak-warning-subtle: var(--warning-subtle, var(--warning-l-9, color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface))));
+	--ak-error-subtle: var(--error-subtle, var(--error-l-9, color-mix(in srgb, var(--ak-error) 14%, var(--ak-surface))));
+	--ak-info-subtle: var(--info-subtle, var(--info-l-9, color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface))));
+}
 
 body.block-editor-page.adminkit .edit-post-header,
 body.block-editor-page.adminkit .editor-header,
@@ -11,9 +36,8 @@ body.block-editor-page.adminkit .interface-interface-skeleton__header {
 }
 
 /* The header's inner regions must not repaint a white bar over the surface
-   above — keep them transparent so the whole bar flips with the chrome (not
-   just the shell), and route the icon buttons to the token foreground. All
-   --ak-* so it's correct in light AND dark. */
+   above — keep them transparent so the whole bar reads on the header surface,
+   and route the icon buttons to the token foreground. */
 body.block-editor-page.adminkit .editor-header__toolbar,
 body.block-editor-page.adminkit .editor-header__center,
 body.block-editor-page.adminkit .editor-header__settings,
@@ -31,18 +55,6 @@ body.block-editor-page.adminkit .editor-header .components-button:not(.is-primar
 body.block-editor-page.adminkit .edit-post-header .components-button:not(.is-primary):hover:not(:disabled) {
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
-}
-
-/* Light/dark toggle injected into the editor header (js/theme-toggle.js) — the
-   admin-bar toggle is hidden in the fullscreen editor. Inherits .components-button
-   sizing; just size the icon and tint it with the header foreground. */
-body.block-editor-page.adminkit .ak-editor-theme-toggle {
-	color: var(--ak-text);
-}
-body.block-editor-page.adminkit .ak-editor-theme-toggle svg {
-	width: 18px;
-	height: 18px;
-	fill: currentColor;
 }
 
 body.block-editor-page.adminkit .edit-post-sidebar,
@@ -108,4 +120,10 @@ body.block-editor-page.adminkit .components-snackbar {
 
 body.block-editor-page.adminkit .components-snackbar.components-snackbar--success {
 	background: var(--ak-success);
+}
+
+/* Badges (.components-badge) — WP hardcodes the default badge as #f0f0f0 / #2f2f2f. */
+body.block-editor-page.adminkit .components-badge.is-default {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
 }
