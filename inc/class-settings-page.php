@@ -8,11 +8,10 @@
  *   - enqueues the SPA assets and hands it its data via `window.AdminKitData`,
  *   - exposes one REST route (`adminkit/v1/settings`) the SPA POSTs to.
  *
- * The data is built from the settings registry: every colour token (with the
- * editable ones flagged) plus the feature toggles and the detected
- * integrations. Saving runs each field through its registered `sanitize`
- * callback; an empty colour is dropped so the token falls back to its CSS
- * chain (provider/Bricks → neutral) — i.e. "inherit".
+ * The data is built from the settings registry: the semantic token taxonomy
+ * (rendered read-only on the Tokens tab), the feature toggles, and the detected
+ * integrations. Saving runs each known field through its registered `sanitize`
+ * callback and persists only registered keys.
  *
  * @package AdminKit
  */
@@ -196,25 +195,13 @@ class AdminKit_Settings_Page {
 		foreach ( AdminKit_Settings::color_map() as $group ) {
 			$tokens = array();
 			foreach ( $group['tokens'] as $t ) {
-				$edit  = isset( $t['edit'] ) ? $t['edit'] : 'none';
-				$entry = array(
+				$tokens[] = array(
 					'token'  => $t['token'],
 					'label'  => $t['label'],
 					'bricks' => isset( $t['bricks'] ) ? $t['bricks'] : '',
 					'source' => isset( $t['source'] ) ? $t['source'] : '',
-					'edit'   => $edit,
 					'own'    => ! empty( $t['own'] ),
 				);
-				if ( 'agnostic' === $edit ) {
-					$entry['key']   = $t['key'];
-					$entry['value'] = isset( $stored[ $t['key'] ] ) ? (string) $stored[ $t['key'] ] : '';
-				} elseif ( 'dual' === $edit ) {
-					$entry['keyLight']   = $t['key'];
-					$entry['keyDark']    = $t['key'] . '_dark';
-					$entry['valueLight'] = isset( $stored[ $t['key'] ] ) ? (string) $stored[ $t['key'] ] : '';
-					$entry['valueDark']  = isset( $stored[ $t['key'] . '_dark' ] ) ? (string) $stored[ $t['key'] . '_dark' ] : '';
-				}
-				$tokens[] = $entry;
 			}
 			$colors[] = array(
 				'group'  => $group['group'],

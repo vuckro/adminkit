@@ -307,8 +307,8 @@ class AdminKit_Assets {
 		/**
 		 * Fires right after `adminkit-tokens` is enqueued for a context.
 		 * Hook here with `wp_add_inline_style` to inject dynamic CSS
-		 * variable overrides (AdminKit_Settings uses this to apply the
-		 * user's primary color).
+		 * variable overrides (e.g. a provider or integration applying
+		 * runtime token values).
 		 *
 		 * @param string $context  admin | login | frontend | editor
 		 */
