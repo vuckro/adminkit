@@ -1,6 +1,6 @@
 # AdminKit
 
-A clean, modern restyle of the WordPress admin built on a token-based design system. Standalone — optional adapters layer in design-system providers (Bricks today, more later).
+A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone — optional adapters layer in token providers (Bricks today, more later).
 
 > Status: **v1.1.0** — registry-based assets, per-screen conditional loading, integration scaffolding.
 

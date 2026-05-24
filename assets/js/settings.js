@@ -1,11 +1,11 @@
 /**
  * AdminKit settings — a small, build-free single-page app.
  *
- * Renders three tabs (Dashboard / Design system / Features) into
+ * Renders three tabs (Dashboard / Tokens / Features) into
  * #adminkit-app from the data PHP hands over in window.AdminKitData. Tabs are
  * pill buttons driven by the URL hash (#apparence / #features / …).
  *
- * The Design system tab is a STATIC reference for now: it lists every semantic
+ * The Tokens tab is a STATIC reference for now: it lists every semantic
  * colour role (swatch + the --ak token and the provider var / primitive it maps
  * to), read-only, with no generators and no live token manipulation. Features
  * holds the only interactive controls (toggles), saved via REST.
@@ -162,7 +162,7 @@
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( dd.intro || '' ) ] );
 		var grid = el( 'div', { 'class': 'ak-stat-grid' } );
 		( dd.cards || [] ).forEach( function ( c ) {
-			// Visual chip: a colour swatch (design system / accent) or an icon.
+			// Visual chip: a colour swatch (token / accent) or an icon.
 			var chip;
 			if ( c.swatch ) {
 				chip = el( 'span', { 'class': 'ak-stat__chip ak-stat__chip--swatch', style: 'background:var(' + c.swatch + ')' } );
@@ -212,7 +212,7 @@
 		return p;
 	}
 
-	// Design system tab — STATIC reference (no generators / no token writes for
+	// Tokens tab — STATIC reference (no generators / no token writes for
 	// now). One table per group: swatch · role (+ AdminKit badge) · the --ak
 	// token and the provider var / primitive it maps to.
 	function buildDesign() {
@@ -220,7 +220,7 @@
 		// Legend — explains the read-only mapping notation up front.
 		p.appendChild( el( 'div', { 'class': 'ak-cascade' }, [
 			el( 'strong', { text: I.designLegendTitle || 'Live colour reference' } ),
-			el( 'span', { text: ' ' + ( I.designLegend || 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your design system.' ) } )
+			el( 'span', { text: ' ' + ( I.designLegend || 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.' ) } )
 		] ) );
 		( D.colors || [] ).forEach( function ( g ) {
 			var tbl = el( 'div', { 'class': 'ak-tbl' } );
@@ -321,7 +321,7 @@
 	}
 
 	// --- save ----------------------------------------------------------------
-	// Only the Features toggles are interactive for now; the Design system tab
+	// Only the Features toggles are interactive for now; the Tokens tab
 	// writes nothing.
 	function gather() {
 		var v = {};

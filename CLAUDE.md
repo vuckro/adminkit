@@ -1,7 +1,7 @@
 # AdminKit — guide for AI assistants
 
 AdminKit restyles wp-admin, wp-login, and the frontend admin bar through a
-CSS-custom-property (`--ak-*`) design system. It is **standalone** (ships a
+CSS-custom-property (`--ak-*`) token system. It is **standalone** (ships a
 complete look with no dependencies) and gains brand colours from an optional
 **provider** (Bricks today). Read this first, then the doc that matches the task.
 

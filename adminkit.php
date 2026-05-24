@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       AdminKit
  * Plugin URI:        https://github.com/vuckro/adminkit
- * Description:       Clean, modern restyle of wp-admin built on a token-based design system. Standalone — optional adapters layer in design-system providers (Bricks today, more later).
+ * Description:       Clean, modern restyle of wp-admin built on CSS tokens. Standalone — optional adapters layer in token providers (Bricks today, more later).
  * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
