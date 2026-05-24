@@ -65,25 +65,29 @@
 	background: transparent !important;
 	border: none !important;
 	box-shadow: none !important;
+	/* Token gap so dropdowns that stack several submenu groups (WP makes the
+	   wrapper a flexbox on hover and it can hold multiple <ul>s) get breathing
+	   room — from the --ak-space scale, not a magic number. */
+	gap: var(--ak-space-s);
 }
 
 #wpadminbar .menupop ul {
 	background: var(--ak-elevated) !important;
 	border: 1px solid var(--ak-border) !important;
 	border-radius: var(--ak-radius-m);
-	box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.3) !important;
-	margin-top: 6px;
+	box-shadow: var(--ak-shadow-elevated) !important;
+	margin-top: var(--ak-space-s);
 	overflow: hidden;
 }
 
 /* Right-secondary dropdowns (account / profile, comments, updates) anchor to the
    screen's right edge — inset them so the card floats off the corner too. */
 #wpadminbar #wp-admin-bar-top-secondary .menupop ul {
-	margin-right: 8px;
+	margin-right: var(--ak-space-s);
 }
 
 #wpadminbar .ab-submenu {
-	padding: 6px 0;
+	padding: var(--ak-space-xs) 0;
 }
 
 #wpadminbar .menupop ul a {
