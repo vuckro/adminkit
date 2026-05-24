@@ -24,7 +24,7 @@ There are no element-specific tokens (no `table-*`, `adminmenu-*`): those are ju
 
 AdminKit **ships the full WaasKit token layer** (every primitive + the 23 semantics) as
 `assets/css/waaskit-tokens.css`, generated from the committed `design-system/palettes/*`
-by the `adminkit-tokens-build` skill and enqueued before `tokens.css`. So the semantic
+by `design-system/build-tokens.php` and enqueued before `tokens.css`. So the semantic
 roles are *always present* and a fresh install is fully on-brand. A provider (Bricks)
 loads after the baseline and overrides it. Each `--ak-*` token still resolves through a
 fallback chain, **semantic first**, then a self-contained literal that now only fires if
@@ -39,7 +39,7 @@ the baseline file is somehow missing:
 The provider injects its sheet via the `adminkit/extra_tokens_handle` filter (see
 [`inc/integrations/themes/bricks/class-bricks.php`](../inc/integrations/themes/bricks/class-bricks.php)),
 registered to depend on the baseline so it loads after it. Regenerate the baseline after
-any palette change: `php .claude/skills/adminkit-tokens-build/build-tokens.php` (and
+any palette change: `php design-system/build-tokens.php` (and
 `--check` as a drift gate).
 
 ---

@@ -26,7 +26,7 @@ design-system/palettes/*.json   →  assets/css/waaskit-tokens.css  →  (opt.) 
 - **Shipped baseline (the primary connection).** AdminKit ships the FULL WaasKit token
   layer — every primitive + the 23 semantics — as `assets/css/waaskit-tokens.css`,
   **generated** from the committed `design-system/palettes/*.json` by the
-  `adminkit-tokens-build` skill. `enqueue_tokens()` (class-assets.php) enqueues it as the
+  `design-system/build-tokens.php` generator. `enqueue_tokens()` (class-assets.php) enqueues it as the
   leading dep of `adminkit-tokens`, so the brand design system is always present — even
   with no provider. It emits each token's light-context value (what Bricks feeds wp-admin);
   no dark block — AdminKit owns dark via `--ak-*`.
@@ -210,8 +210,8 @@ Added / changed:
 - `design-system/palettes/*.json` — the 6 WaasKit Bricks exports committed as the
   **source of truth** (were unversioned in `~/Downloads`). The 4 colour palettes feed
   the generator; `variables.json` / `theme-style-waaskit.json` are kept for traceability.
-- `.claude/skills/adminkit-tokens-build/` (local dev skill; `.claude` is untracked) —
-  `build-tokens.php` transcribes the 4 colour palettes → `assets/css/waaskit-tokens.css`
+- `design-system/build-tokens.php` (tracked generator; a thin `.claude` skill wraps it
+  for discoverability) — transcribes the 4 colour palettes → `assets/css/waaskit-tokens.css`
   (309 tokens). Emits each token's light-context value; skips divider rows and no-op
   self-aliases (`--success: var(--success)`). `--check` is the drift gate.
 - `assets/css/waaskit-tokens.css` — **GENERATED, committed** baseline (`:root{…}`).
@@ -231,6 +231,23 @@ Cascade now: `WP core → waaskit-tokens.css (baseline) → optional Bricks → 
 Verified: generator `--check` green (309 tokens); status bases resolve to real colours
 (`--success: #11b76b`, parity with the live Bricks file); `php -l` clean on the new/edited
 PHP. Not done: browser QA (no-Bricks vs Bricks, light + dark).
+
+### Iteration 4 — Appearance tab polish · 2026-05-24
+**Goal:** fix the Appearance (`#design`) page's display bugs and improve legibility.
+
+- **Colour swatch bug.** `.ak-tbl__sw` set `width/height` but had **no `background`** and
+  no `flex:0 0 auto`, in a 34px column with 12px padding — so each swatch rendered as a
+  squashed, colourless sliver. Now: `display:block; flex:0 0 auto; 26×26`, the token
+  colour painted over a faint checker (so translucent tokens — overlay/hover/focus —
+  still read), centred in a wider **52px** column. (`assets/css/settings.css`)
+- **URL hash.** The Appearance tab id `design` → **`apparence`** so the URL reads
+  `#apparence`. Updated the dashboard shortcut card (`class-settings-page.php` `'tab'`)
+  to match. (`assets/js/settings.js`, `inc/class-settings-page.php`)
+- **Comprehension.** Added a one-line legend at the top of the tab explaining the
+  read-only mapping notation (`--ak-* ← semantic · primitive`). (`assets/js/settings.js`)
+
+SPA assets are filemtime-cache-busted, so a refresh picks the changes up. Browser QA of
+the rendered swatches still pending.
 
 ---
 
