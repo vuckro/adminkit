@@ -104,11 +104,20 @@
 	--ak-focus: var(--focus, color-mix(in srgb, var(--ak-primary) 27%, transparent));
 	--ak-focus-ring: 0 0 0 3px var(--ak-focus);
 
-	/* Secondary-button hover/focus feedback (V2: neutral tint + stronger border).
-	   Tokenised so dark mode can calm the fill + lift the border on its own,
-	   WITHOUT touching the global --ak-hover-bg / --ak-border-strong (which menus,
-	   rows and inputs also use). Light = the global values. */
-	--ak-btn-hover-bg: var(--ak-hover-bg);
+	/* ── Secondary button — single source of truth ───────────────────────────
+	   Every secondary button reads ONLY these two tokens on hover/focus:
+	   .button / .button-secondary, the "Choose File" chooser, the stacked header
+	   CTAs, #doaction / #post-query-submit, .components-button.is-secondary, the
+	   Gutenberg editor secondary, the ACF / HappyFiles secondaries, the post
+	   editor's .taxonomy-add-new and the settings-page .ak-btn. To iterate the
+	   secondary button, THIS is the one place to edit — every consumer updates.
+
+	   The fill is OPAQUE (the surface nudged toward the text colour), so the
+	   darken is identical on ANY parent; a translucent tint was invisible on the
+	   white / surface panels buttons actually sit on. color-mix auto-adapts to
+	   dark (surface + text flip → it lightens instead), so no dark fill override
+	   is needed — only the hover border is re-tuned per mode below. */
+	--ak-btn-hover-bg: color-mix(in srgb, var(--ak-surface), var(--ak-text) 7%);
 	--ak-btn-hover-border: var(--ak-border-strong);
 
 	/* ── Overlay ─────────────────────────────────────────────────────────
@@ -226,9 +235,9 @@ body.adminkit[class*="admin-color-"] {
 	   drop would vanish. */
 	--ak-shadow-elevated: 0 8px 24px -10px rgba(255, 255, 255, 0.14);
 
-	/* Secondary-button hover: the global white tint reads too strong and the d-5
-	   border too faint on dark surfaces — soften the fill, lift the border. */
-	--ak-btn-hover-bg: rgba(255, 255, 255, 0.05);
+	/* Secondary-button hover: the fill auto-adapts via the :root color-mix (it
+	   lightens here as surface + text flip). Only the border needs a lift — the
+	   d-5 border reads too faint on dark surfaces, so step it to d-6. */
 	--ak-btn-hover-border: var(--neutral-d-6, hsl(0, 0%, 38%));
 }
 
@@ -259,6 +268,5 @@ body.adminkit.widgets-php:not(.ak-editor-themed) {
 	--ak-warning-subtle: var(--warning-subtle, var(--warning-l-9, color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface))));
 	--ak-error-subtle: var(--error-subtle, var(--error-l-9, color-mix(in srgb, var(--ak-error) 14%, var(--ak-surface))));
 	--ak-info-subtle: var(--info-subtle, var(--info-l-9, color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface))));
-	--ak-btn-hover-bg: var(--ak-hover-bg);
 	--ak-btn-hover-border: var(--ak-border-strong);
 }
