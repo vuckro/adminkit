@@ -3,7 +3,7 @@
  *
  * Renders three tabs (Dashboard / Design system / Features) into
  * #adminkit-app from the data PHP hands over in window.AdminKitData. Tabs are
- * pill buttons driven by the URL hash (#design / #features / …).
+ * pill buttons driven by the URL hash (#apparence / #features / …).
  *
  * The Design system tab is a STATIC reference for now: it lists every semantic
  * colour role (swatch + the --ak token and the provider var / primitive it maps
@@ -84,7 +84,7 @@
 
 	var tabs = [
 		{ id: 'dashboard', label: I.dashboard, icon: ICONS.dashboard, build: buildDashboard },
-		{ id: 'design', label: I.design, icon: ICONS.colours, build: buildDesign },
+		{ id: 'apparence', label: I.design, icon: ICONS.colours, build: buildDesign },
 		{ id: 'features', label: I.features, icon: ICONS.features, build: buildFeatures }
 	];
 	var activeId = tabs[ 0 ].id;
@@ -138,7 +138,7 @@
 		} );
 	}
 
-	// URL hash reflects the active tab (#design / #features).
+	// URL hash reflects the active tab (#apparence / #features).
 	function go( id ) {
 		if ( '#' + id === location.hash ) { selectTab( id ); }
 		else { location.hash = id; } // triggers hashchange → applyHash
@@ -217,6 +217,11 @@
 	// token and the provider var / primitive it maps to.
 	function buildDesign() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' } );
+		// Legend — explains the read-only mapping notation up front.
+		p.appendChild( el( 'div', { 'class': 'ak-cascade' }, [
+			el( 'strong', { text: I.designLegendTitle || 'Live colour reference' } ),
+			el( 'span', { text: ' ' + ( I.designLegend || 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your design system.' ) } )
+		] ) );
 		( D.colors || [] ).forEach( function ( g ) {
 			var tbl = el( 'div', { 'class': 'ak-tbl' } );
 			( g.tokens || [] ).forEach( function ( t ) { roleRow( tbl, t ); } );

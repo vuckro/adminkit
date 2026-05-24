@@ -184,7 +184,7 @@
 /* Design-token table — one column-aligned grid per group (static reference) -- */
 .adminkit-app .ak-tbl {
 	display: grid;
-	grid-template-columns: 34px minmax( 140px, 1fr ) minmax( 200px, 2fr );
+	grid-template-columns: 52px minmax( 140px, 1fr ) minmax( 200px, 2fr );
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	background: var(--ak-surface);
@@ -202,11 +202,26 @@
 	border-top: 1px solid var(--ak-border);
 }
 .adminkit-app .ak-tbl > :nth-child(-n+3) { border-top: 0; }
+/* Swatch cell — centre a fixed square so the colour reads at a glance. */
+.adminkit-app .ak-tbl__swc {
+	justify-content: center;
+	padding-left: 8px;
+	padding-right: 8px;
+}
 .adminkit-app .ak-tbl__sw {
-	width: 22px;
-	height: 22px;
+	flex: 0 0 auto;
+	display: block;
+	width: 26px;
+	height: 26px;
 	border: 1px solid var(--ak-border-strong);
 	border-radius: var(--ak-radius-s);
+	/* Colour layer over a faint checker, so translucent tokens (overlay, hover,
+	   focus) still read; opaque tokens fully cover the checker beneath. */
+	background-image:
+		linear-gradient( var(--sw, transparent), var(--sw, transparent) ),
+		repeating-conic-gradient( var(--ak-border) 0% 25%, var(--ak-bg) 0% 50% );
+	background-size: auto, 10px 10px;
+	background-position: center;
 	background-clip: padding-box;
 }
 .adminkit-app .ak-tbl__name {
