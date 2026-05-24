@@ -2,7 +2,7 @@
 
 A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone — optional adapters layer in token providers (Bricks today, more later).
 
-> Status: **v1.1.0** — registry-based assets, per-screen conditional loading, integration scaffolding.
+> Status: **v1.1.0** — registry-based assets, per-screen conditional loading, integration scaffolding + host-drift detection.
 
 ---
 
@@ -21,7 +21,7 @@ A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone �
 1. Download a release zip (or clone this repo into `wp-content/plugins/adminkit/`).
 2. Activate "AdminKit" in the WordPress Plugins screen.
 
-That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) lets you review the design tokens, switch the palette (neutral / branded) and toggle individual integrations; see [`docs/SETTINGS.md`](docs/SETTINGS.md) for the registry behind it.
+That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) has a read-only **Tokens** reference and per-integration toggles; the registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
@@ -45,7 +45,7 @@ The admin bar carries a sun/moon button. Clicking it flips `<html data-adminkit-
 
 ### Asset registry
 
-CSS is declared via `AdminKit_Assets::register()` and dispatched per context (admin / login / frontend / editor) and per WP screen. The dashboard loads ~900 lines of CSS; the themes page loads ~900 + screens/themes.css; the plugin editor loads ~900 + screens/plugin-editor.css + screens/code-mirror.css. See [`docs/ASSETS.md`](docs/ASSETS.md) for the full API.
+CSS is declared via `AdminKit_Assets::register()` and dispatched per context (admin / login / frontend / editor) and per WP screen. Feature JavaScript (profile tabs, post-preview hover, list-table polish) ships as footer "bricks" under `assets/js/wp-core/`, enqueued via `AdminKit_Assets::enqueue_script()`. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full API.
 
 ### Integrations
 
@@ -138,6 +138,12 @@ adminkit/
 ├── tokens/                              WaasKit baseline source (build-time only)
 │   ├── build.php                        Generates assets/css/waaskit-tokens.css
 │   └── palettes/                        Committed palette JSON — the source of truth
+├── dev/                                 Dev tooling (tracked; excluded from the dist zip via .distignore)
+│   ├── css-scan.php                     Shared CSS parser + colour→token classifier
+│   ├── adapter-scan.php                 Scaffold a new integration from a host's CSS
+│   ├── adapter-audit.php                Integration !important-debt ratchet
+│   ├── adapter-drift.php                Host / WP-core CSS drift detector
+│   └── baselines/                       WP-core drift baseline
 ├── inc/
 │   ├── class-plugin.php                 Boot orchestrator + integration auto-discovery
 │   ├── class-assets.php                 Asset registry + dispatcher + token cascade
@@ -173,8 +179,12 @@ adminkit/
     │   ├── settings.css                 Settings SPA styles
     │   └── login.css                    wp-login.php
     └── js/
-        └── settings.js                  Settings SPA
+        ├── settings.js                  Settings SPA
+        └── wp-core/                     Footer behaviour bricks (profile, previews, list-table)
 ```
+
+Each integration folder may also carry `css/` and a `baseline.json` (its host CSS
+snapshot for drift detection).
 
 ---
 
@@ -193,19 +203,17 @@ That's it — the boot orchestrator picks the folder up automatically on `after_
 | Doc | Read it for |
 | --- | --- |
 | [`CLAUDE.md`](CLAUDE.md) | **Start here if you're an AI assistant** — project map, common tasks, guardrails. |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | How it all fits: contexts, the asset dispatcher, the token layers, the provider model. |
-| [`docs/ASSETS.md`](docs/ASSETS.md) | Registering CSS per context and per screen. |
-| [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md) | Writing a host adapter (the contract + patterns). |
-| [`docs/ADD-AN-INTEGRATION.md`](docs/ADD-AN-INTEGRATION.md) | Step-by-step runbook for skinning a new plugin. |
-| [`docs/SETTINGS.md`](docs/SETTINGS.md) | The settings registry and resolution order. |
-| [`docs/TOKENS.md`](docs/TOKENS.md) | The token system (mapping, layers, usage). |
-| [`tokens/README.md`](tokens/README.md) | Building the WaasKit baseline from the palette source. |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | How it all fits: bootstrap, the asset registry (CSS + JS), the token cascade, settings. |
+| [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md) | Writing a host adapter — the contract, the build walkthrough, and the patterns. |
+| [`docs/TOKENS.md`](docs/TOKENS.md) | The token system: mapping, build, drift detection, WaasKit alignment. |
+| [`docs/EXTENDING.md`](docs/EXTENDING.md) | Every hook + the integration contract — change behaviour without editing core. |
+| [`docs/WAASKIT-DESIGN-SYSTEM.md`](docs/WAASKIT-DESIGN-SYSTEM.md) | The locked WaasKit colour-system spec that AdminKit's tokens mirror. |
 
 ---
 
 ## Roadmap
 
-- **Settings UI — colour editing.** The settings page ships today (palette switch, integration toggles, a read-only token map); per-token colour pickers are next.
+- **Settings UI — colour editing.** The settings page ships today (a read-only token map + integration toggles); per-token colour pickers are a future direction.
 - **Colour sync.** Import / live-sync colours from the active provider or theme (Bricks today; the provider hooks already exist — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)).
 - **More provider adapters.** Oxygen, Breakdance, Elementor, GeneratePress, ACSS / Core Framework — same pattern as Bricks.
 - **Custom dashboard.** Widgets registered via `AdminKit_Dashboard::register_widget()` (the registry exists; widgets land with the WooCommerce / FluentCart integrations).
