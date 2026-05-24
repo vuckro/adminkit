@@ -77,6 +77,22 @@ body.block-editor-page.adminkit .editor-post-publish-button:focus:not(:disabled)
 	box-shadow: var(--ak-focus-ring) !important;
 }
 
+/* Secondary buttons (Cancel, etc.). WP gives .is-secondary a brand-accent inset
+   border + accent text — the exact "secondary button with a brand border"
+   inconsistency we homogenize away in wp-components/buttons.css. Match the flat
+   neutral secondary here too: surface fill, soft --ak-border, neutral text. */
+body.block-editor-page.adminkit .components-button.is-secondary {
+	background: var(--ak-surface);
+	box-shadow: inset 0 0 0 1px var(--ak-border);
+	color: var(--ak-text);
+}
+body.block-editor-page.adminkit .components-button.is-secondary:hover:not(:disabled),
+body.block-editor-page.adminkit .components-button.is-secondary:focus:not(:disabled) {
+	background: var(--ak-primary-subtle);
+	box-shadow: inset 0 0 0 1px var(--ak-border);
+	color: var(--ak-text);
+}
+
 /* Sidebar tabs (Post / Block) */
 body.block-editor-page.adminkit .components-tab-panel__tabs .components-tab-panel__tabs-item.is-active {
 	color: var(--ak-heading);

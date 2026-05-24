@@ -92,10 +92,10 @@ body.adminkit .wrap .page-title-action:focus {
 
 /* When several header action buttons stack (e.g. Add New + Import on the
    Bricks templates list), keep only the FIRST filled (primary). The rest are
-   prominent header CTAs ("secondary" only by position) — at rest they read as
-   neutral secondary buttons (surface + --ak-border); on hover/focus the border
-   accentuates to the brand --ak-primary to signal the action. (This override is
-   also needed because the .button-primary rule above matches every
+   secondary CTAs ("secondary" only by position) — they read as neutral
+   secondary buttons (surface + --ak-border) at rest AND on hover/focus, exactly
+   like every other secondary button (homogenized — no brand border). (This
+   override is also needed because the .button-primary rule above matches every
    .page-title-action and would otherwise fill them.) */
 body.adminkit .wrap .page-title-action ~ .page-title-action {
 	background: var(--ak-surface);
@@ -106,7 +106,7 @@ body.adminkit .wrap .page-title-action ~ .page-title-action {
 body.adminkit .wrap .page-title-action ~ .page-title-action:hover,
 body.adminkit .wrap .page-title-action ~ .page-title-action:focus {
 	background: var(--ak-primary-subtle);
-	border-color: var(--ak-primary);
+	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
 
@@ -213,12 +213,13 @@ body.adminkit button.remove-site-icon:focus {
 	box-shadow: none;
 }
 
-/* List-table bulk-action "Apply" + the "Filter"/"Search" submit buttons —
-   drop the focus box-shadow ring for a flat focus (primary border only),
-   matching the input focus treatment. */
+/* List-table bulk-action "Apply" + the "Filter"/"Search" submit buttons are
+   plain secondary buttons — pin them (id specificity, so they win over any
+   host/WP id rule) to the SAME flat focus as every secondary button: the soft
+   --ak-border, no ring. Homogenized — no brand border on focus. */
 body.adminkit #doaction:focus,
 body.adminkit #doaction2:focus,
 body.adminkit #post-query-submit:focus {
 	box-shadow: none;
-	border-color: var(--ak-primary);
+	border-color: var(--ak-border);
 }
