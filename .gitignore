@@ -6,3 +6,6 @@ Thumbs.db
 .vscode/
 node_modules/
 vendor/
+
+# Local dev tooling — kept out of the distributed plugin / GitHub.
+.claude/
