@@ -26,7 +26,7 @@
 	Array.prototype.forEach.call(document.querySelectorAll('.ak-preview__thumb'), wireThumb);
 
 	// One shared floating panel, reused across rows.
-	var pop = null, popImg = null, hideTimer = null, current = null;
+	var pop = null, popImg = null, current = null;
 
 	function ensurePop() {
 		if (pop) { return; }
@@ -39,8 +39,6 @@
 		pop.setAttribute('data-loading-label', LOADING_LABEL);
 		pop.setAttribute('data-broken-label', BROKEN_LABEL);
 		document.body.appendChild(pop);
-		pop.addEventListener('mouseenter', function () { clearTimeout(hideTimer); });
-		pop.addEventListener('mouseleave', scheduleHide);
 	}
 
 	function position(anchor) {
@@ -58,7 +56,6 @@
 
 	function show(span) {
 		ensurePop();
-		clearTimeout(hideTimer);
 		current = span;
 		var full = span.getAttribute('data-ak-full');
 		pop.className = 'is-visible is-loading';
@@ -72,21 +69,32 @@
 		position(span);
 	}
 
-	function scheduleHide() { hideTimer = setTimeout(hide, 120); }
-
 	function hide() {
 		if (!pop) { return; }
 		pop.classList.remove('is-visible');
 		current = null;
 	}
 
+	// A cell is previewable unless it's the empty placeholder. (Broken cells
+	// still surface an "unavailable" message, so they count as previewable.)
+	function previewable(span) {
+		return !!span && !span.classList.contains('ak-preview--empty');
+	}
+
 	document.addEventListener('mouseover', function (e) {
 		var span = e.target.closest ? e.target.closest('.ak-preview') : null;
-		if (span && span !== current && !span.classList.contains('ak-preview--empty')) { show(span); }
+		if (span && span !== current && previewable(span)) { show(span); }
 	});
+	// Hide the instant the pointer leaves the active thumb. The panel is
+	// pointer-events:none, so drifting onto it still counts as leaving — it can
+	// never keep itself open. Sole exception: a move straight onto another
+	// previewable thumb, which `mouseover` takes over (avoids a hide/show flash).
 	document.addEventListener('mouseout', function (e) {
-		var span = e.target.closest ? e.target.closest('.ak-preview') : null;
-		if (span) { scheduleHide(); }
+		if (!current) { return; }
+		var to = e.relatedTarget;
+		var next = (to && to.closest) ? to.closest('.ak-preview') : null;
+		if (previewable(next)) { return; }
+		hide();
 	});
 	window.addEventListener('scroll', hide, true);
 	window.addEventListener('resize', hide);
