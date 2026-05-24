@@ -5,17 +5,19 @@
    .wrap .page-title-action is included here so the "Add New" button next
    to page titles inherits all base sizing — the .button-primary rule
    below then overrides its colors. */
-/* Secondary / generic button — flat: light surface, a subtle primary-tinted
-   border (no hard outline), text in --ak-text. The label color is constant
-   across rest/hover/focus; hover only lifts the fill to a faint primary tint.
-   Only .button-primary carries a different (filled) label color. */
+/* Secondary / generic button — flat: light surface, a neutral --ak-border
+   (NOT primary at rest or hover — a brand-tinted border would read as a primary
+   button), text in --ak-text. The label color is constant across rest/hover/focus;
+   hover lifts the fill to a faint primary tint and the border to --ak-border-strong.
+   Keyboard focus may carry a primary border (the focus indicator). Only
+   .button-primary carries the filled brand style. */
 body.adminkit .button,
 body.adminkit .wp-core-ui .button,
 body.adminkit .button-secondary,
 body.adminkit .wp-core-ui .button-secondary,
 body.adminkit .wrap .page-title-action {
 	background: var(--ak-surface);
-	border: 1px solid color-mix(in srgb, var(--ak-primary) 22%, transparent);
+	border: 1px solid var(--ak-border);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
 	padding: 0 10px;
@@ -35,7 +37,7 @@ body.adminkit .button:focus,
 body.adminkit .wp-core-ui .button:focus,
 body.adminkit .button-secondary:focus {
 	background: var(--ak-primary-subtle);
-	border-color: color-mix(in srgb, var(--ak-primary) 40%, transparent);
+	border-color: var(--ak-border-strong);
 	color: var(--ak-text);
 }
 
@@ -144,7 +146,7 @@ body.adminkit .button[disabled] {
    bright OS-default button in the middle of our flat chrome. */
 body.adminkit input[type="file"]::file-selector-button {
 	background: var(--ak-surface);
-	border: 1px solid color-mix(in srgb, var(--ak-primary) 22%, transparent);
+	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	font-family: var(--ak-font-body);
@@ -157,7 +159,7 @@ body.adminkit input[type="file"]::file-selector-button {
 
 body.adminkit input[type="file"]::file-selector-button:hover {
 	background: var(--ak-primary-subtle);
-	border-color: color-mix(in srgb, var(--ak-primary) 40%, transparent);
+	border-color: var(--ak-border-strong);
 	color: var(--ak-text);
 }
 
