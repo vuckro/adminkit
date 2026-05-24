@@ -36,8 +36,8 @@ body.adminkit .button-secondary:hover,
 body.adminkit .button:focus,
 body.adminkit .wp-core-ui .button:focus,
 body.adminkit .button-secondary:focus {
-	background: var(--ak-hover-bg);
-	border-color: var(--ak-border-strong);
+	background: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
 	color: var(--ak-text);
 }
 
@@ -103,8 +103,8 @@ body.adminkit .wrap .page-title-action ~ .page-title-action {
 
 body.adminkit .wrap .page-title-action ~ .page-title-action:hover,
 body.adminkit .wrap .page-title-action ~ .page-title-action:focus {
-	background: var(--ak-hover-bg);
-	border-color: var(--ak-border-strong);
+	background: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
 	color: var(--ak-text);
 }
 
@@ -158,8 +158,8 @@ body.adminkit input[type="file"]::file-selector-button {
 }
 
 body.adminkit input[type="file"]::file-selector-button:hover {
-	background: var(--ak-hover-bg);
-	border-color: var(--ak-border-strong);
+	background: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
 	color: var(--ak-text);
 }
 
@@ -219,5 +219,5 @@ body.adminkit #doaction:focus,
 body.adminkit #doaction2:focus,
 body.adminkit #post-query-submit:focus {
 	box-shadow: none;
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-btn-hover-border);
 }
