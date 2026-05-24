@@ -64,7 +64,7 @@ any palette change: `php tokens/build.php` (and
 | **Accent** | `--ak-primary` | `--accent` | `--primary` | neutral gray `hsl(0 0% 32%)` |
 | | `--ak-primary-hover` | `--accent-hover` | `--primary-d-1` | `color-mix` darken |
 | | `--ak-primary-subtle` | `--accent-subtle` | `--primary-l-9` | `--ak-primary` @ 12% over surface |
-| | `--ak-on-accent` | `--accent-on` | `--primary-d-10` | off-white `hsl(0 0% 98%)` |
+| | `--ak-on-accent` | `--accent-on` | `--primary-d-9` | off-white `hsl(0 0% 98%)` |
 | **State** | `--ak-focus` | `--focus` | `--primary-t-5` ⚠️ | `--ak-primary` @ 27% |
 | **Overlay** | `--ak-overlay` | `--overlay` | `--black-t-7` | `rgba(0 0 0 / .5)` |
 | **Status** | `--ak-success` | `--success` | `--success` | `#11b76b` |
@@ -95,7 +95,7 @@ Geometry (`--ak-radius-*`) and type (`--ak-text-*`, `--ak-font-body`) are intent
 
 ## Which token do I use?
 
-Pick by **role**, not by lightness — surface values are tuned per mode and their relative order flips in dark (that's correct for an elevation model), so choosing a token by its number will break one mode.
+Pick by **role**, not by lightness — surface values are tuned per mode and their relative order flips in dark (that's correct for an elevation model), so choosing a token by its number will break one mode. For the WordPress-native view — *what each admin element (page background, forms, surfaces, borders…) gets, traced to its WaasKit role* — see **[RENDERING.md](RENDERING.md)**.
 
 | Element | Token |
 | ------- | ----- |

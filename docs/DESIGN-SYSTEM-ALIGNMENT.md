@@ -63,7 +63,7 @@ with it.
 | `--border-strong` | `--neutral-l-5` | `--ak-border-strong` | flip |
 | `--accent` | `--primary` | `--ak-primary` | brand, no flip |
 | `--accent-hover` | `--primary-d-1` | `--ak-primary-hover` | dark→`l-1` |
-| `--accent-on` | `--primary-d-10` | `--ak-on-accent` | **dark text on yellow** |
+| `--accent-on` | `--primary-d-9` | `--ak-on-accent` | **dark text on yellow** |
 | `--accent-subtle` | `--primary-l-9` (opaque) | `--ak-primary-subtle` | dark→`--primary-d-9` |
 | `--input` | `--neutral-l-1` | `--ak-input-bg` | flip→`--neutral-d-3` |
 | `--focus` | `--primary-t-5` ⚠️ | `--ak-focus` | see open item F1 |
@@ -96,7 +96,7 @@ with it.
   ramp — WaasKit's own `.scheme-dark` mechanism (§11). Faithful to the system **and**
   correct on AdminKit's dark UI.
 - **D2 — on-accent is dark.** The brand is a light yellow (`#fed53e`); text on it must
-  be dark. `--ak-on-accent` now reads `--accent-on` (`--primary-d-10`). Fixes white/pale
+  be dark. `--ak-on-accent` now reads `--accent-on` (`--primary-d-9`). Fixes white/pale
   text on yellow buttons (was the most visible defect).
 - **D3 — `--input`, `--text-muted`, `--accent-on` are NOT AdminKit-own anymore.** The
   finalized WaasKit layer defines them, so they bridge the semantic (previously they
@@ -258,7 +258,8 @@ mirrored here in the source + plugin + docs.
   (light), `--primary-d-10`→`d-9` (dark). Regenerated `waaskit-tokens.css`.
 - `assets/css/tokens.css` — `--ak-primary-subtle` `:root` fallback `--primary-l-9`; dark
   remap `--primary-d-9`. `class-settings.php` `color_map()` source `--primary-l-9`.
-- `--accent-on` is **unchanged** (`--primary-d-10`); only the `-subtle` step moved.
+- `--accent-on` later also moved to the `-9` step (`--primary-d-9` / dark `--primary-l-9`),
+  harmonising the whole accent set on `-9`.
 
 Branch: re-applied on `adminkit/accent-subtle-9` (off `main`) after the folder-structure
 work was rebased onto `main`; the spec `WAASKIT-DESIGN-SYSTEM.md` was synced to `l-9`
@@ -276,6 +277,17 @@ consumers) and inversion is done with a `.scheme-*` scope class, not tokens.
   AdminKit-only mention.
 
 The `--neutral-d-*` *inverse primitive ramp* (used for dark mode) is unrelated and stays.
+
+### Iteration 7 — `--accent-on` → `-9` + rendering doc · 2026-05-24
+- **`--accent-on` moved to the `-9` step** (`--primary-d-9` light / `--primary-l-9` dark),
+  finishing the accent-set harmonisation (`--accent`/`-hover`/`-on`/`-subtle` all on the
+  `-9`/`d-1` family). Synced: `tokens/palettes/semantique.json` → regenerated
+  `waaskit-tokens.css`; `tokens.css` comment; `color_map()` source; `WAASKIT-DESIGN-SYSTEM.md`
+  (tables + §7.3 prose).
+- **New [`RENDERING.md`](RENDERING.md)** — plain-language map of how native wp-admin UI
+  (page background, surfaces, forms, borders, text, buttons, notices, focus, overlay)
+  renders through `--ak-*` → WaasKit, plus the full list of AdminKit-only additions and
+  why each exists (answers "what's mapped vs AdminKit-own").
 
 ---
 

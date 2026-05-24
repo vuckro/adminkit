@@ -309,7 +309,7 @@ aux inputs (décision délibérée : éviter un token redondant).
 |---|---|---|---|
 | `--accent` | `--primary` | `--primary` | Bouton principal, lien, élément actif/sélectionné |
 | `--accent-hover` | `--primary-d-1` | `--primary-l-1` | État survol de l'accent |
-| `--accent-on` | `--primary-d-10` | `--primary-l-10` | Texte / icône posé SUR un fond `--accent` |
+| `--accent-on` | `--primary-d-9` | `--primary-l-9` | Texte / icône posé SUR un fond `--accent` |
 | `--accent-subtle` | `--primary-l-9` | `--primary-d-9` | Fond pâle teinté marque : section, badge |
 
 **`--accent-hover`** assombrit en light (`d-1`) et éclaircit en dark (`l-1`).
@@ -318,8 +318,8 @@ sur fond clair on assombrit, sur fond sombre on éclaircit.
 
 **`--accent-on`** est le contenu posé sur le bouton accent. La marque WaasKit est
 un jaune clair : le texte dessus doit être **foncé** pour rester lisible. Le token
-pointe vers un primitif marque très foncé (`--primary-d-10`), jamais vers un stop
-clair.
+pointe vers un primitif marque foncé (`--primary-d-9`, aligné sur le palier `-9` de
+`--accent-subtle`), jamais vers un stop clair.
 
 **`--accent-subtle`** est un jaune **très pâle et opaque**. Usage principal dans
 WaasKit : **fond de section ou de page légèrement teinté marque**. Usage secondaire :
@@ -744,7 +744,7 @@ lisible et maintenable dans la durée.
 | 6 | Bordure | `--border-strong` | `--neutral-l-5` | flip |
 | 7 | Accent | `--accent` | `--primary` | `--primary` |
 | 8 | Accent | `--accent-hover` | `--primary-d-1` | `--primary-l-1` |
-| 9 | Accent | `--accent-on` | `--primary-d-10` | `--primary-l-10` |
+| 9 | Accent | `--accent-on` | `--primary-d-9` | `--primary-l-9` |
 | 10 | Accent | `--accent-subtle` | `--primary-l-9` | `--primary-d-9` |
 | 11 | State | `--input` | `--neutral-l-1` | flip |
 | 12 | State | `--focus` | `--primary` | `--primary` |
