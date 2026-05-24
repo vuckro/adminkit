@@ -10,7 +10,7 @@
  *   - wp-screens/_shared  small components used across several screens (wp-filter,
  *                         thickbox, notification-dialog, cards) — always-loaded
  *
- * Integration CSS (WooCommerce, the Fluent suite, ...) lives in
+ * Integration CSS (Gutenberg, WooCommerce, the Fluent suite, ...) lives in
  * each integration's own folder under `inc/integrations/{plugins|themes}/{slug}/css/`
  * and is registered by that integration's class, not here.
  *

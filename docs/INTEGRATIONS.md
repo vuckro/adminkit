@@ -219,6 +219,7 @@ nothing.
 ## Reference implementations
 
 - [bricks](../inc/integrations/themes/bricks/class-bricks.php) — token injection + builder bypass.
+- [gutenberg](../inc/integrations/plugins/gutenberg/class-gutenberg.php) — the `editor` asset context.
 - [wpcode](../inc/integrations/plugins/wpcode/class-wpcode.php) — minimal Tier A (remap `--wpcode-*`, zero `!important`).
 - [acf](../inc/integrations/plugins/acf/class-acf.php) — clean Tier B (host hardcodes hex), screen-scoped + version-gated.
 - [woocommerce](../inc/integrations/plugins/woocommerce) — the most comprehensive: wc-admin React app + classic screens by token remap.

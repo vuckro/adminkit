@@ -1,0 +1,150 @@
+/* Gutenberg block + widgets editors — AdminKit chrome (header, sidebar, buttons,
+   tabs, the injected light/dark toggle, the WP logo button). Always loaded — the
+   editor restyle is standard (no feature toggle). Scoped to the editor body so we
+   never bleed into the canvas (.editor-styles-wrapper, .wp-block-*).
+
+   Every rule reads --ak-* tokens, so the chrome follows the global light/dark
+   toggle. dark-mode-map.css (same `editor` context) patches the surfaces WP
+   hardcodes (popovers, modals, inserter, list view, form controls) so the whole
+   editor flips coherently in both modes. */
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header,
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header,
+body.adminkit:is(.block-editor-page, .widgets-php) .interface-interface-skeleton__header {
+	background: var(--ak-surface);
+	border-bottom: 1px solid var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* Light/dark toggle injected into the editor header (js/theme-toggle.js) — the
+   admin-bar toggle is hidden in the fullscreen editor. Inherits .components-button
+   sizing; just size the icon and tint it with the header foreground. */
+body.adminkit:is(.block-editor-page, .widgets-php) .ak-editor-theme-toggle {
+	color: var(--ak-text);
+}
+body.adminkit:is(.block-editor-page, .widgets-php) .ak-editor-theme-toggle svg {
+	width: 18px;
+	height: 18px;
+	fill: currentColor;
+}
+
+/* WP logo / "view mode" button (top-left). WP bakes the glyph onto a #1e1e1e
+   chip — a black square in light mode. Blend the chip into the header surface
+   and route the glyph to the token foreground (the WP logo SVG inherits
+   currentColor), so it reads in both light and dark. */
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle .components-button {
+	color: var(--ak-text);
+}
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle .components-button:hover {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle-icon img,
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle-icon svg {
+	background: var(--ak-surface);
+}
+
+/* The header's inner regions must not repaint a white bar over the surface
+   above — keep them transparent so the whole bar reads on the header surface,
+   and route the icon buttons to the token foreground. */
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header__toolbar,
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header__center,
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header__settings,
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header__toolbar,
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header__center,
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header__settings {
+	background: transparent;
+}
+
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header .components-button:not(.is-primary),
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header .components-button:not(.is-primary) {
+	color: var(--ak-text);
+}
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header .components-button:not(.is-primary):hover:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header .components-button:not(.is-primary):hover:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-sidebar,
+body.adminkit:is(.block-editor-page, .widgets-php) .interface-complementary-area {
+	background: var(--ak-surface);
+	border-left: 1px solid var(--ak-border);
+}
+
+/* Primary buttons (Publish, Update, Save) */
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-primary,
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-post-publish-button,
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-post-publish-button__button {
+	background: var(--ak-primary) !important;
+	border-color: var(--ak-primary) !important;
+	color: var(--ak-on-accent) !important;
+	border-radius: var(--ak-radius-s) !important;
+	font-weight: 500;
+	box-shadow: none;
+}
+
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-primary:hover:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-primary:focus:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-post-publish-button:hover:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-post-publish-button:focus:not(:disabled) {
+	background: var(--ak-primary-hover) !important;
+	border-color: var(--ak-primary-hover) !important;
+	color: var(--ak-on-accent) !important;
+}
+
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-primary:focus:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-post-publish-button:focus:not(:disabled) {
+	box-shadow: var(--ak-focus-ring) !important;
+}
+
+/* Secondary buttons (Cancel, etc.) — the single source of truth for the editor's
+   neutral secondary (dark-mode-map.css defers to this; primary + pressed also live
+   here). WP gives .is-secondary a brand-accent inset border + accent text — the
+   same inconsistency we homogenize in wp-components/buttons.css. Match the canonical
+   AdminKit secondary: surface fill, soft --ak-border, neutral --ak-text label, with
+   hover/focus on the shared --ak-btn-hover-* tokens (calmer fill + a more visible
+   border in dark, identical in light — exactly like .button-secondary). */
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary {
+	background: var(--ak-surface);
+	box-shadow: inset 0 0 0 1px var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary:hover:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary:focus:not(:disabled) {
+	background: var(--ak-btn-hover-bg);
+	box-shadow: inset 0 0 0 1px var(--ak-btn-hover-border);
+	color: var(--ak-text);
+}
+
+/* Pressed / active toolbar toggles (Bold, List view, the open inserter, …). WP
+   fills them with the dark foreground (--wp-components-color-foreground), which
+   reads as a heavy grey block in the light editor. Route to AdminKit's soft
+   selected look — a brand tint + accent icon — matching .button.active. */
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-pressed,
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-pressed:hover:not(:disabled, [aria-disabled="true"]) {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+}
+
+/* Sidebar tabs (Post / Block) */
+body.adminkit:is(.block-editor-page, .widgets-php) .components-tab-panel__tabs .components-tab-panel__tabs-item.is-active {
+	color: var(--ak-heading);
+	box-shadow: inset 0 -2px 0 var(--ak-heading);
+}
+
+/* Snackbar notices */
+body.adminkit:is(.block-editor-page, .widgets-php) .components-snackbar {
+	background: var(--neutral-l-9, hsl(0, 0%, 18%));
+	border-radius: var(--ak-radius-m);
+	font-family: var(--ak-font-body);
+}
+
+body.adminkit:is(.block-editor-page, .widgets-php) .components-snackbar.components-snackbar--success {
+	background: var(--ak-success);
+}
+
+/* Badges (.components-badge) — WP hardcodes the default badge as #f0f0f0 / #2f2f2f. */
+body.adminkit:is(.block-editor-page, .widgets-php) .components-badge.is-default {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
+}
