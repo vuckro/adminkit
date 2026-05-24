@@ -310,7 +310,7 @@ aux inputs (décision délibérée : éviter un token redondant).
 | `--accent` | `--primary` | `--primary` | Bouton principal, lien, élément actif/sélectionné |
 | `--accent-hover` | `--primary-d-1` | `--primary-l-1` | État survol de l'accent |
 | `--accent-on` | `--primary-d-10` | `--primary-l-10` | Texte / icône posé SUR un fond `--accent` |
-| `--accent-subtle` | `--primary-l-10` | `--primary-d-10` | Fond pâle teinté marque : section, badge |
+| `--accent-subtle` | `--primary-l-9` | `--primary-d-9` | Fond pâle teinté marque : section, badge |
 
 **`--accent-hover`** assombrit en light (`d-1`) et éclaircit en dark (`l-1`).
 Un survol doit toujours produire un retour visuel par contraste avec le fond :
@@ -326,12 +326,13 @@ WaasKit : **fond de section ou de page légèrement teinté marque**. Usage seco
 fond de badge. ⚠️ Sur un badge, le texte posé dessus doit être `--accent-on`
 (foncé), pas `--accent` (jaune vif sur jaune pâle = contraste insuffisant).
 
-> **Note de cohérence avec les versions antérieures.** Dans les premières
-> itérations du système, `--accent-subtle` pointait vers `--primary-t-1` (jaune
-> *transparent*). La version finale utilise un jaune *opaque* (`--primary-l-10`).
-> Un fond opaque est plus prévisible — il ne se mélange pas avec ce qu'il y a
-> derrière. C'est l'approche de Radix pour ses couleurs « subtle ». Ce choix est
-> définitif.
+> **Note de cohérence avec les versions antérieures.** `--accent-subtle` a pointé
+> successivement vers `--primary-t-1` (jaune *transparent*), puis le jaune *opaque*
+> `--primary-l-10`. La version actuelle utilise `--primary-l-9` (clair) /
+> `--primary-d-9` (sombre), **aligné sur le palier `-9`** des `-subtle` de
+> notification : `l-10` rendait un jaune quasi blanc, peu lisible une fois
+> prévisualisé. Un fond opaque reste préférable au transparent (plus prévisible —
+> approche Radix pour les couleurs « subtle »).
 
 ### 7.4 — STATE · interaction et formulaires · 2 tokens
 
@@ -744,7 +745,7 @@ lisible et maintenable dans la durée.
 | 7 | Accent | `--accent` | `--primary` | `--primary` |
 | 8 | Accent | `--accent-hover` | `--primary-d-1` | `--primary-l-1` |
 | 9 | Accent | `--accent-on` | `--primary-d-10` | `--primary-l-10` |
-| 10 | Accent | `--accent-subtle` | `--primary-l-10` | `--primary-d-10` |
+| 10 | Accent | `--accent-subtle` | `--primary-l-9` | `--primary-d-9` |
 | 11 | State | `--input` | `--neutral-l-1` | flip |
 | 12 | State | `--focus` | `--primary` | `--primary` |
 | 13 | Notification | `--success` | `--success` | `--success` |

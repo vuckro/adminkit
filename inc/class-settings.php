@@ -111,9 +111,9 @@ class AdminKit_Settings {
 	 * layer 1:1 (surface / border / text / accent / input / focus / overlay +
 	 * the notification set with each -subtle) so a user moving between Bricks and
 	 * AdminKit sees the same roles. The few roles WaasKit doesn't expose as a
-	 * token — secondary text, the hover tint, and the inverse text pair (WaasKit
-	 * inverts via a .scheme-* scope, not tokens) — AdminKit defines itself,
-	 * flagged `own` so the UI can badge it. See docs/WAASKIT-DESIGN-SYSTEM.md.
+	 * token — secondary text and the hover tint — AdminKit defines itself, flagged
+	 * `own` so the UI can badge it. (Inverse text is done with a .scheme-* scope
+	 * class, not a token, so it's not listed.) See docs/WAASKIT-DESIGN-SYSTEM.md.
 	 *
 	 * In v1 the Design system tab DISPLAYS this read-only (no per-token pickers);
 	 * the whole palette is driven globally: the Neutral⇄Branded toggle remaps
@@ -127,7 +127,7 @@ class AdminKit_Settings {
 	 *                  (primary / on-accent / secondary), written by Randomise.
 	 *   - 'none'     — display-only: every surface/border/text role (Branded is
 	 *                  applied globally, not per token), the derived accent
-	 *                  hover/subtle, inverse text, state, overlay and status.
+	 *                  hover/subtle, state, overlay and status.
 	 *
 	 * Single source of truth: drives registration (above) and the UI payload
 	 * (AdminKit_Settings_Page). Runs on `init` so `__()` resolves.
@@ -146,12 +146,10 @@ class AdminKit_Settings {
 				array( 'token' => '--ak-border',        'bricks' => '--border',        'source' => '--neutral-l-4', 'label' => __( 'Border', 'adminkit' ),        'key' => 'border_color',        'edit' => 'none' ),
 				array( 'token' => '--ak-border-strong', 'bricks' => '--border-strong', 'source' => '--neutral-l-5', 'label' => __( 'Border strong', 'adminkit' ), 'key' => 'border_strong_color', 'edit' => 'none' ),
 			) ),
-			array( 'group' => 'text', 'label' => __( 'Text', 'adminkit' ), 'desc' => __( 'Headings, body copy and their inverse.', 'adminkit' ), 'tokens' => array(
-				array( 'token' => '--ak-heading',         'bricks' => '--heading',         'source' => '--neutral-l-9', 'label' => __( 'Heading', 'adminkit' ),           'key' => 'heading_color',    'edit' => 'none' ),
-				array( 'token' => '--ak-text',            'bricks' => '--text',            'source' => '--neutral-l-8', 'label' => __( 'Body text', 'adminkit' ),         'key' => 'text_color',       'edit' => 'none' ),
-				array( 'token' => '--ak-text-muted',      'bricks' => '--text-muted', 'source' => '--neutral-l-7', 'label' => __( 'Muted text', 'adminkit' ),        'key' => 'text_muted_color', 'edit' => 'none' ),
-				array( 'token' => '--ak-heading-inverse', 'bricks' => '',             'source' => '--neutral-d-9', 'label' => __( 'Heading (inverse)', 'adminkit' ), 'edit' => 'none', 'own' => true ),
-				array( 'token' => '--ak-text-inverse',    'bricks' => '',             'source' => '--neutral-d-8', 'label' => __( 'Text (inverse)', 'adminkit' ),    'edit' => 'none', 'own' => true ),
+			array( 'group' => 'text', 'label' => __( 'Text', 'adminkit' ), 'desc' => __( 'Headings, body copy and captions.', 'adminkit' ), 'tokens' => array(
+				array( 'token' => '--ak-heading',    'bricks' => '--heading',    'source' => '--neutral-l-9', 'label' => __( 'Heading', 'adminkit' ),    'key' => 'heading_color',    'edit' => 'none' ),
+				array( 'token' => '--ak-text',       'bricks' => '--text',       'source' => '--neutral-l-8', 'label' => __( 'Body text', 'adminkit' ),  'key' => 'text_color',       'edit' => 'none' ),
+				array( 'token' => '--ak-text-muted', 'bricks' => '--text-muted', 'source' => '--neutral-l-7', 'label' => __( 'Muted text', 'adminkit' ), 'key' => 'text_muted_color', 'edit' => 'none' ),
 			) ),
 			array( 'group' => 'accent', 'label' => __( 'Accent', 'adminkit' ), 'desc' => __( 'Brand — buttons, links, highlights. Hover, subtle and focus derive from it automatically.', 'adminkit' ), 'tokens' => array(
 				array( 'token' => '--ak-primary',        'bricks' => '--accent',       'source' => '--primary',      'label' => __( 'Accent', 'adminkit' ),        'key' => 'primary_color',   'edit' => 'agnostic' ),

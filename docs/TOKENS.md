@@ -7,7 +7,7 @@ Source: [`assets/css/tokens.css`](../assets/css/tokens.css).
 AdminKit keeps a **small, two-tier** token set:
 
 - **Tier 1 — WaasKit semantics, mirrored 1:1.** Surfaces, borders, text (+ muted), accent (+ hover / on / subtle), input, focus, overlay, and the full notification set (success / warning / error / info, each with a `-subtle` fill). These are exactly WaasKit's locked **23-token** semantic layer — see [`WAASKIT-DESIGN-SYSTEM.md`](WAASKIT-DESIGN-SYSTEM.md).
-- **Tier 2 — AdminKit additions.** The handful of roles WaasKit doesn't expose as a token but wp-admin needs: secondary text, the hover tint, the inverse text pair (WaasKit inverts via a `.scheme-*` scope, not tokens), the elevation shadow, and the geometry / type tokens. Tagged `+ AdminKit addition` in `tokens.css`.
+- **Tier 2 — AdminKit additions.** The handful of roles WaasKit doesn't expose as a token but wp-admin needs: secondary text, the hover tint, the elevation shadow, and the geometry / type tokens. Tagged `+ AdminKit addition` in `tokens.css`. (Inverse text isn't a token — it's done with a `.scheme-*` scope class.)
 
 There are no element-specific tokens (no `table-*`, `adminmenu-*`): those are just surfaces, picked by role.
 
@@ -86,8 +86,6 @@ Roles WaasKit doesn't expose as a token; they consume a *primitive* or stand alo
 | -------------- | -------- | ---------------- |
 | `--ak-secondary` | `--secondary` (primitive) | `hsl(0 0% 50%)` |
 | `--ak-hover-bg` | — (mode-aware translucent tint; WaasKit has no `--hover`) | `rgba(0 0 0 / .04)` |
-| `--ak-heading-inverse` | `--neutral-d-9` (WaasKit inverts via `.scheme-*`, not a token) | `--neutral-d-9` |
-| `--ak-text-inverse` | `--neutral-d-8` | `--neutral-d-8` |
 | `--ak-focus-ring` | — (`0 0 0 3px var(--ak-focus)`) | — |
 | `--ak-shadow-elevated` | — (the one flat-rule exception) | mode-aware drop |
 

@@ -40,9 +40,9 @@
       (success/warning/error/info + each -subtle). These mirror WaasKit's locked
       23-token semantic layer exactly (see docs/WAASKIT-DESIGN-SYSTEM.md).
    2. AdminKit additions — roles WaasKit doesn't expose as a token but wp-admin
-      needs: --ak-secondary, --ak-hover-bg, the inverse text pair (WaasKit inverts
-      via a .scheme-* scope, not tokens), --ak-shadow-elevated and the geometry/
+      needs: --ak-secondary, --ak-hover-bg, --ak-shadow-elevated and the geometry/
       type tokens. Tagged "+ AdminKit addition" below. Map: docs/TOKENS.md.
+      (Inverse text is NOT a token — it's done with a .scheme-* scope class.)
 
    ── Conventions ──────────────────────────────────────────────────────────
    • Flat by design — depth is shown by surface tone. The lone exception is
@@ -76,12 +76,6 @@
 	--ak-text: var(--text, hsl(0, 0%, 32%));
 	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%)); /* bridges WaasKit --text-muted (→ --neutral-l-7) */
 	--ak-heading: var(--heading, hsl(0, 0%, 18%));
-
-	/* Inverse text — for content on an inverted surface (a dark chip in light
-	   mode). Provider --text-inverse / --heading-inverse map to the dark ramp,
-	   which in the admin's light context resolves light, so it reads on dark. */
-	--ak-text-inverse: var(--text-inverse, var(--neutral-d-8, hsl(0, 0%, 72%)));
-	--ak-heading-inverse: var(--heading-inverse, var(--neutral-d-9, hsl(0, 0%, 86%)));
 
 	/* ── Accent (brand) ────────────────────────────────────────────────────
 	   --ak-primary mirrors WaasKit --accent; --primary-hover / --primary-subtle
@@ -192,12 +186,6 @@ body.adminkit[class*="admin-color-"] {
 	--ak-text: var(--neutral-d-8, hsl(0, 0%, 72%));
 	--ak-text-muted: var(--neutral-d-7, hsl(0, 0%, 56%));
 	--ak-heading: var(--neutral-d-9, hsl(0, 0%, 86%));
-
-	/* Inverse flips with the mode — dark text now, so it reads on a light chip.
-	   Goes straight to the light ramp (the provider --text-inverse var doesn't
-	   flip in admin, so consuming it here would stay light). */
-	--ak-text-inverse: var(--neutral-l-8, hsl(0, 0%, 32%));
-	--ak-heading-inverse: var(--neutral-l-9, hsl(0, 0%, 18%));
 
 	/* Accent stays the brand (provider --accent/--primary don't flip in admin);
 	   standalone falls to a mid-gray for ~4.5:1 contrast with white text. */

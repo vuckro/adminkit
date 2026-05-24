@@ -81,9 +81,8 @@ with it.
 
 **AdminKit-only** (no WaasKit token — legitimately additions): `--ak-secondary`
 (consumes the `--secondary` primitive), `--ak-hover-bg` (WaasKit has no `--hover`),
-`--ak-text-inverse` / `--ak-heading-inverse` (WaasKit inverts via `.scheme-*`),
 `--ak-shadow-elevated`, and geometry/type (`--ak-radius-*`, `--ak-text-*`,
-`--ak-font-body`).
+`--ak-font-body`). Inverse text is **not** a token — done with a `.scheme-*` scope class.
 
 ---
 
@@ -262,7 +261,22 @@ mirrored here in the source + plugin + docs.
   remap `--primary-d-9`. `class-settings.php` `color_map()` source `--primary-l-9`.
 - `--accent-on` is **unchanged** (`--primary-d-10`); only the `-subtle` step moved.
 
-Branch `adminkit/accent-subtle-l9` (off `refactor/folder-structure`).
+Branch: re-applied on `adminkit/accent-subtle-9` (off `main`) after the folder-structure
+work was rebased onto `main`; the spec `WAASKIT-DESIGN-SYSTEM.md` was synced to `l-9`
+(§7.3 note + tables).
+
+### Iteration 6 — Drop the inverse-text tokens · 2026-05-24
+**Goal:** remove `--ak-text-inverse` / `--ak-heading-inverse`. They were unused (zero
+consumers) and inversion is done with a `.scheme-*` scope class, not tokens.
+
+- `inc/class-settings.php` — removed the two "(inverse)" rows from `color_map()` (so they
+  no longer show on the Appearance page); docstring + group desc updated.
+- `assets/css/tokens.css` — removed the `:root` and dark-block definitions + comments; the
+  "two tiers" header note now states inverse is a `.scheme-*` class, not a token.
+- `docs/TOKENS.md` + `docs/DESIGN-SYSTEM-ALIGNMENT.md` — dropped the inverse rows /
+  AdminKit-only mention.
+
+The `--neutral-d-*` *inverse primitive ramp* (used for dark mode) is unrelated and stays.
 
 ---
 
