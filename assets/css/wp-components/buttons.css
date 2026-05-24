@@ -33,16 +33,20 @@ body.adminkit .wrap .page-title-action {
 body.adminkit .button:hover,
 body.adminkit .wp-core-ui .button:hover,
 body.adminkit .button-secondary:hover,
+body.adminkit .wp-core-ui .button-secondary:hover,
 body.adminkit .button:focus,
 body.adminkit .wp-core-ui .button:focus,
-body.adminkit .button-secondary:focus {
+body.adminkit .button-secondary:focus,
+body.adminkit .wp-core-ui .button-secondary:focus {
 	background: var(--ak-btn-hover-bg);
 	border-color: var(--ak-btn-hover-border);
 	color: var(--ak-text);
 }
 
 body.adminkit .button:focus,
-body.adminkit .wp-core-ui .button:focus {
+body.adminkit .wp-core-ui .button:focus,
+body.adminkit .button-secondary:focus,
+body.adminkit .wp-core-ui .button-secondary:focus {
 	box-shadow: none;
 	outline: none;
 }
