@@ -63,7 +63,7 @@ docs/                   Deep-dive guides (see "More docs" below).
 
 - Lint PHP: `php -l <file>`.
 - Token drift: `php tokens/build.php --check`.
-- Adapter CSS-debt: `php .claude/skills/adminkit-adapter-audit/adapter-audit.php`.
+- Adapter CSS-debt: `php dev/adapter-audit.php`.
 - UI: reload any wp-admin page (CSS auto-busts via mtime) and check light + dark.
 
 ## More docs
