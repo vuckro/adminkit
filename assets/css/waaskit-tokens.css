@@ -1,7 +1,7 @@
-/* WaasKit design-system tokens — GENERATED, do not edit by hand.
-   Source:     design-system/palettes/{neutre,marque,notifications,semantique}.json
-   Regenerate: php design-system/build-tokens.php
-   Drift gate: php design-system/build-tokens.php --check
+/* WaasKit baseline tokens — GENERATED, do not edit by hand.
+   Source:     tokens/palettes/{neutre,marque,notifications,semantique}.json
+   Regenerate: php tokens/build.php
+   Drift gate: php tokens/build.php --check
 
    Each token is its LIGHT-CONTEXT value (what Bricks feeds wp-admin). The
    --ak-* layer (assets/css/tokens.css) owns the dark flip, so there is no dark

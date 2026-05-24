@@ -46,7 +46,7 @@ class AdminKit_Assets {
 	const TOKENS_HANDLE = 'adminkit-tokens';
 	const TOKENS_SRC    = 'assets/css/tokens.css';
 
-	// Built-in WaasKit design-system baseline (generated from design-system/palettes/*
+	// Built-in WaasKit design-system baseline (generated from tokens/palettes/*
 	// by the adminkit-tokens-build skill). Shipped so AdminKit is brand-complete with
 	// no provider; a live provider (Bricks) loads AFTER it and overrides it.
 	const WAASKIT_HANDLE = 'adminkit-waaskit';
@@ -271,7 +271,19 @@ class AdminKit_Assets {
 		// is for wp-admin / login / editor, where no live provider theming runs.
 		$baseline = '';
 		$wk_path  = ADMINKIT_PATH . self::WAASKIT_SRC;
-		if ( 'frontend' !== $context && file_exists( $wk_path ) ) {
+
+		/**
+		 * Whether to ship the built-in WaasKit baseline tokens. Return false to
+		 * drop the baseline entirely: the --ak-* layer then rides its own neutral
+		 * fallbacks (the "no provider, no baseline" case) — or, with a provider
+		 * active, lets that provider own the whole palette on its own.
+		 *
+		 * @param bool   $enabled true to load the baseline.
+		 * @param string $context admin | login | frontend | editor.
+		 */
+		$load_baseline = (bool) apply_filters( 'adminkit/enqueue_baseline', true, $context );
+
+		if ( $load_baseline && 'frontend' !== $context && file_exists( $wk_path ) ) {
 			wp_enqueue_style(
 				self::WAASKIT_HANDLE,
 				ADMINKIT_URL . self::WAASKIT_SRC,

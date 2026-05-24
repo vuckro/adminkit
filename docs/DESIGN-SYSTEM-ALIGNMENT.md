@@ -18,15 +18,15 @@
 ## 1. How the two systems connect
 
 ```
-design-system/palettes/*.json   →  assets/css/waaskit-tokens.css  →  (opt.) Bricks override  →  --ak-*  →  wp-admin
+tokens/palettes/*.json   →  assets/css/waaskit-tokens.css  →  (opt.) Bricks override  →  --ak-*  →  wp-admin
   (committed source of truth)        (GENERATED baseline, shipped)      style-manager.min.css      tokens.css    every AK rule
         ⚙️🎨🔔🏷️                       :root{ --neutral-l-1; --accent… }   live, wins when active
 ```
 
 - **Shipped baseline (the primary connection).** AdminKit ships the FULL WaasKit token
   layer — every primitive + the 23 semantics — as `assets/css/waaskit-tokens.css`,
-  **generated** from the committed `design-system/palettes/*.json` by the
-  `design-system/build-tokens.php` generator. `enqueue_tokens()` (class-assets.php) enqueues it as the
+  **generated** from the committed `tokens/palettes/*.json` by the
+  `tokens/build.php` generator. `enqueue_tokens()` (class-assets.php) enqueues it as the
   leading dep of `adminkit-tokens`, so the brand design system is always present — even
   with no provider. It emits each token's light-context value (what Bricks feeds wp-admin);
   no dark block — AdminKit owns dark via `--ak-*`.
@@ -208,10 +208,9 @@ plugin — brand-complete without Bricks — with one versioned source and zero 
 (Decisions: ship the full brand by default; source = committed JSON + generator.)
 
 Added / changed:
-- `design-system/palettes/*.json` — the 6 WaasKit Bricks exports committed as the
-  **source of truth** (were unversioned in `~/Downloads`). The 4 colour palettes feed
-  the generator; `variables.json` / `theme-style-waaskit.json` are kept for traceability.
-- `design-system/build-tokens.php` (tracked generator; a thin `.claude` skill wraps it
+- `tokens/palettes/*.json` — the 4 WaasKit colour palettes committed as the
+  **source of truth** (were unversioned in `~/Downloads`). They feed the generator.
+- `tokens/build.php` (tracked generator; a thin `.claude` skill wraps it
   for discoverability) — transcribes the 4 colour palettes → `assets/css/waaskit-tokens.css`
   (309 tokens). Emits each token's light-context value; skips divider rows and no-op
   self-aliases (`--success: var(--success)`). `--check` is the drift gate.
@@ -222,7 +221,7 @@ Added / changed:
   `WAASKIT_HANDLE`, so a live Bricks palette loads after and overrides the baseline.
 - `assets/css/tokens.css` — header: inline hsl/hex are now an emergency fallback (the
   baseline is the normal source).
-- **F1 resolved at source:** `design-system/palettes/semantique.json` `--focus` →
+- **F1 resolved at source:** `tokens/palettes/semantique.json` `--focus` →
   `var(--primary)` (opaque, per the locked doc). ⚠️ The user must also fix `--focus` in
   the live Bricks palette (or re-import this JSON), else a future Bricks export reverts
   it and, while Bricks is active, its translucent `--primary-t-5` still wins.
@@ -255,7 +254,7 @@ the rendered swatches still pending.
 step). `l-10` read too pale once the swatches became visible. Done in Bricks by the user;
 mirrored here in the source + plugin + docs.
 
-- `design-system/palettes/semantique.json` — `--accent-subtle`: `--primary-l-10`→`l-9`
+- `tokens/palettes/semantique.json` — `--accent-subtle`: `--primary-l-10`→`l-9`
   (light), `--primary-d-10`→`d-9` (dark). Regenerated `waaskit-tokens.css`.
 - `assets/css/tokens.css` — `--ak-primary-subtle` `:root` fallback `--primary-l-9`; dark
   remap `--primary-d-9`. `class-settings.php` `color_map()` source `--primary-l-9`.

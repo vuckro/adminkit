@@ -1,36 +1,35 @@
 <?php
 /**
- * build-tokens.php — generate the shipped WaasKit token baseline.
+ * build.php — generate the shipped WaasKit token baseline.
  *
  * Reads the committed WaasKit palette source
- *   design-system/palettes/{neutre,marque,notifications,semantique}.json
+ *   tokens/palettes/{neutre,marque,notifications,semantique}.json
  * and writes
  *   assets/css/waaskit-tokens.css
  * a single `:root { … }` block of every WaasKit primitive + semantic token.
  *
- * Design-system source of truth = the JSON; this CSS is a GENERATED artifact.
+ * The JSON is the source of truth; this CSS is a GENERATED artifact.
  * It emits each token's LIGHT-CONTEXT value (the JSON `light` field) — i.e. exactly
  * what Bricks supplies in wp-admin (always a light context). AdminKit owns the
  * dark flip via the --ak-* layer (assets/css/tokens.css), so the baseline carries
  * no dark block: it is a drop-in for what a provider would feed.
  *
  * Usage:
- *   php design-system/build-tokens.php            write assets/css/waaskit-tokens.css
- *   php design-system/build-tokens.php --check    exit 1 if the committed file is stale (drift gate)
- *   php design-system/build-tokens.php --print    print to stdout, write nothing
+ *   php tokens/build.php            write assets/css/waaskit-tokens.css
+ *   php tokens/build.php --check    exit 1 if the committed file is stale (drift gate)
+ *   php tokens/build.php --print    print to stdout, write nothing
  *
- * Only the 4 COLOUR palettes are consumed. variables.json (spacing/grid/type) and
- * theme-style-waaskit.json are committed for traceability but not used — AdminKit
- * keeps geometry/type in px on purpose (see assets/css/tokens.css "Conventions").
+ * Only the 4 colour palettes are consumed. AdminKit keeps geometry/type in px on
+ * purpose (see assets/css/tokens.css "Conventions"), so no spacing/type palette.
  *
  * @package AdminKit
  */
 
-/** Walk up from this script to the plugin root (adminkit.php + design-system/). */
+/** Walk up from this script to the plugin root (adminkit.php + tokens/). */
 function ak_root() {
 	$d = __DIR__;
 	for ( $i = 0; $i < 6; $i++ ) {
-		if ( is_file( "$d/adminkit.php" ) && is_dir( "$d/design-system" ) ) {
+		if ( is_file( "$d/adminkit.php" ) && is_dir( "$d/tokens" ) ) {
 			return $d;
 		}
 		$p = dirname( $d );
@@ -39,12 +38,12 @@ function ak_root() {
 		}
 		$d = $p;
 	}
-	fwrite( STDERR, "error: cannot locate plugin root (adminkit.php + design-system/)\n" );
+	fwrite( STDERR, "error: cannot locate plugin root (adminkit.php + tokens/)\n" );
 	exit( 2 );
 }
 
 $root    = ak_root();
-$src_dir = "$root/design-system/palettes";
+$src_dir = "$root/tokens/palettes";
 $out     = "$root/assets/css/waaskit-tokens.css";
 
 // Order matters only for readability: primitives first, then the semantic layer.
@@ -103,10 +102,10 @@ $lines = array();
 foreach ( $tokens as $token => $value ) {
 	$lines[] = "\t--$token: $value;";
 }
-$css  = "/* WaasKit design-system tokens — GENERATED, do not edit by hand.\n";
-$css .= "   Source:     design-system/palettes/{neutre,marque,notifications,semantique}.json\n";
-$css .= "   Regenerate: php design-system/build-tokens.php\n";
-$css .= "   Drift gate: php design-system/build-tokens.php --check\n";
+$css  = "/* WaasKit baseline tokens — GENERATED, do not edit by hand.\n";
+$css .= "   Source:     tokens/palettes/{neutre,marque,notifications,semantique}.json\n";
+$css .= "   Regenerate: php tokens/build.php\n";
+$css .= "   Drift gate: php tokens/build.php --check\n";
 $css .= "\n";
 $css .= "   Each token is its LIGHT-CONTEXT value (what Bricks feeds wp-admin). The\n";
 $css .= "   --ak-* layer (assets/css/tokens.css) owns the dark flip, so there is no dark\n";
@@ -127,7 +126,7 @@ if ( in_array( '--check', $args, true ) ) {
 		echo 'OK: waaskit-tokens.css is in sync (' . count( $tokens ) . " tokens)\n";
 		exit( 0 );
 	}
-	fwrite( STDERR, "DRIFT: waaskit-tokens.css differs from the palette source — run build-tokens.php\n" );
+	fwrite( STDERR, "DRIFT: waaskit-tokens.css differs from the palette source — run tokens/build.php\n" );
 	exit( 1 );
 }
 
