@@ -66,8 +66,9 @@ body.adminkit:is(.post-php, .post-new-php) .taxonomy-add-new {
 
 body.adminkit:is(.post-php, .post-new-php) .taxonomy-add-new:hover,
 body.adminkit:is(.post-php, .post-new-php) .taxonomy-add-new:focus {
-	border-color: var(--ak-border);
-	color: var(--ak-heading);
+	background: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
+	color: var(--ak-text);
 }
 
 /* Inline "Edit" toggles in the Publish box (next to Status / Visibility /
