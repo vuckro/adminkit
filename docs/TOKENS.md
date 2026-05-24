@@ -96,8 +96,8 @@ commit **both** the JSON and the regenerated CSS. The palettes: `neutre.json`
 | `--ak-focus-ring` | — (`0 0 0 3px var(--ak-focus)`) | — |
 | `--ak-shadow-elevated` | — (the one flat-rule exception) | mode-aware drop |
 
-Geometry (`--ak-radius-*`), spacing (`--ak-space-*`: `xs` 4 / `s` 8 / `m` 12 /
-`l` 16) and type (`--ak-text-*`, `--ak-font-body`) are intentionally **not** taken
+Geometry (`--ak-radius-*`), spacing (`--ak-space-*`: `2xs` 2 / `xs` 4 / `s` 8 /
+`m` 12 / `l` 16) and type (`--ak-text-*`, `--ak-font-body`) are intentionally **not** taken
 from the provider — fixed px, not the provider's fluid rem scale, which is sized
 for frontend layout and renders far too large in dense admin chrome.
 
