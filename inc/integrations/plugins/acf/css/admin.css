@@ -69,14 +69,14 @@ body.adminkit.acf-admin-page .acf-btn:hover {
 /* Secondary: neutral outline (matches AdminKit's .button-secondary). ACF's own
    label color is !important here too. */
 body.adminkit.acf-admin-page .acf-btn.acf-btn-secondary {
-	background-color: transparent;
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text) !important;
 }
 
 body.adminkit.acf-admin-page .acf-btn.acf-btn-secondary:hover {
-	background-color: var(--ak-hover-bg);
-	border-color: var(--ak-border);
+	background-color: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
 }
 
 /* Kill ACF's transitions on elements we recolor (.acf-btn `transition: all .2s`,

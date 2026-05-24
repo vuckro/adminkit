@@ -25,20 +25,23 @@ body.adminkit .components-button.is-primary {
 	color: var(--ak-on-accent);
 }
 
-/* Secondary button — WP uses the accent color on both border (via
-   box-shadow) and text, which becomes our --ak-primary. In dark mode
-   that mid-gray on a dark bg loses contrast. Route to a neutral
-   ghost-button look: border + text in --ak-text + --ak-border-strong. */
+/* Secondary button — match the canonical AdminKit secondary (the file-input
+   "Choose File" chooser / .button-secondary): surface fill, soft --ak-border,
+   neutral --ak-text label. WP paints .is-secondary with the accent colour on
+   border + text (→ our --ak-primary), which also loses contrast on dark; route
+   it to the flat neutral secondary. Border via box-shadow (no layout shift);
+   hover uses the shared --ak-btn-hover-* tokens (calmer fill + a more visible
+   border in dark, identical to light). */
 body.adminkit .components-button.is-secondary {
-	background: transparent;
-	box-shadow: inset 0 0 0 1px var(--ak-border-strong);
+	background: var(--ak-surface);
+	box-shadow: inset 0 0 0 1px var(--ak-border);
 	color: var(--ak-text);
 }
 
 body.adminkit .components-button.is-secondary:hover:not(:disabled, [aria-disabled="true"], .is-pressed) {
-	background: var(--ak-hover-bg);
-	box-shadow: inset 0 0 0 1px var(--ak-text);
-	color: var(--ak-heading);
+	background: var(--ak-btn-hover-bg);
+	box-shadow: inset 0 0 0 1px var(--ak-btn-hover-border);
+	color: var(--ak-text);
 }
 
 /* Cards + panels (the main surface containers) */
