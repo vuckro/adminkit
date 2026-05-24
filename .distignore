@@ -1,0 +1,15 @@
+# Files excluded from the distributed plugin zip (e.g. `wp dist-archive`).
+# Nothing listed here is loaded at runtime — the plugin ships its generated
+# assets/css/* (incl. waaskit-tokens.css) and PHP only. Build sources and dev
+# tooling stay in the GitHub repo but are stripped from the distributable.
+
+.git
+.gitignore
+.distignore
+.claude
+dev
+tokens
+**/baseline.json
+*.log
+node_modules
+vendor
