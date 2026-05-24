@@ -39,10 +39,15 @@ class AdminKit_Theme_Toggle {
 		add_action( 'login_head', array( __CLASS__, 'print_script' ), 1 );
 		add_action( 'wp_head', array( __CLASS__, 'print_script' ), 1 );
 		add_action( 'admin_bar_menu', array( __CLASS__, 'register_node' ), 999 );
-		add_action( 'login_head', array( __CLASS__, 'print_login_logo_style' ) );
 
-		add_filter( 'login_headerurl', static function () { return home_url( '/' ); } );
-		add_filter( 'login_headertext', static function () { return get_bloginfo( 'name' ); } );
+		// Login-screen branding (site-icon logo + its link/text) is part of the
+		// "Login screen" feature, so it follows that toggle — with it off, AdminKit
+		// leaves wp-login.php entirely WP-default (no stylesheet, no logo override).
+		if ( AdminKit_Settings::get( 'module_login_enabled' ) ) {
+			add_action( 'login_head', array( __CLASS__, 'print_login_logo_style' ) );
+			add_filter( 'login_headerurl', static function () { return home_url( '/' ); } );
+			add_filter( 'login_headertext', static function () { return get_bloginfo( 'name' ); } );
+		}
 
 		// Carry dark mode into the classic editor's content iframe (a separate
 		// document the page CSS can't reach).
