@@ -4,7 +4,7 @@
  *
  * WPCode renders its admin from a `--wpcode-*` CSS variable layer on :root, so
  * css/admin.css remaps that layer to AdminKit tokens (the whole UI follows,
- * dark mode included). Scaffolded by bin/adapter-scan.php --emit, then tuned.
+ * dark mode included). Scaffolded by the adminkit-adapter-scan skill (--emit), then tuned.
  *
  * @package AdminKit
  */

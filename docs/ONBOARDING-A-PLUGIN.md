@@ -13,15 +13,15 @@
 ```bash
 # from the adminkit plugin root
 # 1. scan — see what the host paints (admin AND frontend css)
-php bin/adapter-scan.php ../<host>/assets --slug=<slug>
+php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host>/assets --slug=<slug>
 
 # 2. generate — write the live (but inert) integration folder
-php bin/adapter-scan.php ../<host>/assets --slug=<slug> --emit
+php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host>/assets --slug=<slug> --emit
 
 # 3. fill the 2–3 TODOs in inc/integrations/<slug>/class-<slug>.php
 # 4. fine-tune inc/integrations/<slug>/css/admin.css   (the 20% checklist below)
 # 5. verify in Chrome (light + dark), then:
-php bin/adapter-audit.php
+php .claude/skills/adminkit-adapter-audit/adapter-audit.php
 ```
 
 That's it. The sections below explain each step.
@@ -70,7 +70,7 @@ registry — see [Special case: the panel is in a shadow root](#special-case-the
 ## 2. Scan the CSS (admin **and** frontend)
 
 ```bash
-php bin/adapter-scan.php ../<host>/assets ../<host>/public --slug=<slug>
+php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host>/assets ../<host>/public --slug=<slug>
 ```
 
 Pass both the admin and the frontend dirs — a host's `:root` variable layer often
@@ -108,7 +108,7 @@ tier automatically from whether the scan found variables.
 ## 4. Generate the adapter
 
 ```bash
-php bin/adapter-scan.php ../<host>/assets --slug=<slug> --emit
+php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host>/assets --slug=<slug> --emit
 ```
 
 Writes `inc/integrations/<slug>/`:
@@ -172,7 +172,7 @@ color, legible text in dark mode.
 ## 7. Audit + gate
 
 ```bash
-php bin/adapter-audit.php
+php .claude/skills/adminkit-adapter-audit/adapter-audit.php
 ```
 
 - **Tier A** must report `!important = 0`. If you needed an `!important`, you
@@ -229,12 +229,12 @@ Verify and Audit as normal.
 - [ ] Discovered host: version constant `____`, screen scope `____` (body inspect)
 - [ ] Checked render target: shadow DOM? → JS-bridge delivery; else asset registry
 - [ ] Scanned admin + frontend CSS; decided Tier A / B
-- [ ] Generated folder with `adapter-scan.php --slug=<slug> --emit`
+- [ ] Generated folder with the adminkit-adapter-scan skill (`--slug=<slug> --emit`)
 - [ ] Filled is_active() + owns_screen() (and version gate if Tier B)
 - [ ] 3-surface split confirmed (bg / surface / elevated)
 - [ ] Brand vs info blue routed correctly
 - [ ] Tier B selectors pruned, merged, scoped to the host screen
 - [ ] Logos/rasters left alone; shadows flattened; dark-mode guarded
 - [ ] Verified every host screen in Chrome — light AND dark
-- [ ] `php bin/adapter-audit.php` clean (Tier A = 0 !important; gate set for Tier B)
+- [ ] `php .claude/skills/adminkit-adapter-audit/adapter-audit.php` clean (Tier A = 0 !important; gate set for Tier B)
 ```

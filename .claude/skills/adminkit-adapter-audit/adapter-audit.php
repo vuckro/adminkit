@@ -20,10 +20,31 @@
  * genuinely unavoidable (and prefer remapping the host's variables instead;
  * see docs/INTEGRATIONS.md).
  *
- * Usage:  php bin/adapter-audit.php
+ * Usage (run from anywhere inside the AdminKit repo):
+ *   php .claude/skills/adminkit-adapter-audit/adapter-audit.php
  *
  * @package AdminKit
  */
+
+/**
+ * Locate the AdminKit plugin root (the folder holding adminkit.php +
+ * inc/integrations) by walking up from the current working directory, with a
+ * fallback to this skill's known position at <root>/.claude/skills/<name>/.
+ */
+function ak_find_root() {
+	$d = getcwd();
+	while ( is_string( $d ) && '' !== $d && '/' !== $d ) {
+		if ( is_file( $d . '/adminkit.php' ) && is_dir( $d . '/inc/integrations' ) ) {
+			return $d;
+		}
+		$d = dirname( $d );
+	}
+	$rel = dirname( __DIR__, 3 ); // <root>/.claude/skills/<name>/ -> <root>
+	if ( is_file( $rel . '/adminkit.php' ) ) {
+		return $rel;
+	}
+	return getcwd();
+}
 
 // Accepted `!important` ceiling per adapter. Anything not listed must stay at 0
 // (Tier A). Entries below carry debt FORCED by the host, not a code-quality
@@ -40,7 +61,7 @@ $BUDGET = array(
 	'woocommerce'       => 1, // WC forces #d5d5d5 !important on the disabled list-reorder arrows (admin.css .wc-move-disabled) — can't be beaten without !important
 );
 
-$root = dirname( __DIR__ ) . '/inc/integrations';
+$root = ak_find_root() . '/inc/integrations';
 if ( ! is_dir( $root ) ) {
 	fwrite( STDERR, "integrations dir not found: $root\n" );
 	exit( 2 );

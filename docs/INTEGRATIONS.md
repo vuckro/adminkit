@@ -158,8 +158,8 @@ the step-by-step is in [ONBOARDING-A-PLUGIN.md](ONBOARDING-A-PLUGIN.md#special-c
 Don't hunt for the host's colors by hand — let the scanner draft the mapping:
 
 ```
-php bin/adapter-scan.php ../<host-plugin>            # whole plugin, recursive
-php bin/adapter-scan.php ../<host-plugin> --slug=foo --scope=.foo-admin-page
+php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host-plugin>            # whole plugin, recursive
+php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host-plugin> --slug=foo --scope=.foo-admin-page
 ```
 
 It reports two things and emits a paste-ready scaffold:
@@ -167,12 +167,12 @@ It reports two things and emits a paste-ready scaffold:
 - **Tier A** — every `--x: <color>` the host defines, with a suggested `--ak-*` remap. If this list is non-empty, remap these first and most of the UI (dark mode included) follows for free. The scan also reveals the host's variable *graph* — e.g. Element Plus's `--el-*` all alias down to a few `--fc-*` roots, so you remap the roots.
 - **Tier B** — hardcoded `#hex` / `rgb()` / `hsl()` literals, ranked by use, grouped by the property they sit on (background / border / text), each classified to a token by lightness + chroma + hue.
 
-The suggestions are heuristic — they get the base ~right (brand, the four status colors, surfaces, borders), and you do the fine-tuning: the 3-surface split (`--ak-bg` / `--ak-surface` / `--ak-elevated`) and any role the literal can't reveal. Then verify in the browser and run `php bin/adapter-audit.php`.
+The suggestions are heuristic — they get the base ~right (brand, the four status colors, surfaces, borders), and you do the fine-tuning: the 3-surface split (`--ak-bg` / `--ak-surface` / `--ak-elevated`) and any role the literal can't reveal. Then verify in the browser and run `php .claude/skills/adminkit-adapter-audit/adapter-audit.php`.
 
 Add `--emit` (with `--slug=`) to **write the whole folder** instead of printing — `inc/integrations/{slug}/class-{slug}.php` (a correctly-named, live-but-inert stub) + `css/admin.css` (the scaffold). The loader auto-discovers it; you just fill the detection/scope TODOs and fine-tune. The full step-by-step (incl. the 20% checklist) is in [ONBOARDING-A-PLUGIN.md](ONBOARDING-A-PLUGIN.md).
 
 ```
-php bin/adapter-scan.php ../<host-plugin>/assets --slug=foo --emit
+php .claude/skills/adminkit-adapter-scan/adapter-scan.php ../<host-plugin>/assets --slug=foo --emit
 ```
 
 ### Target the host's colors in the right order
@@ -185,7 +185,7 @@ The cheapest adapter to maintain is the one that never touches the host's select
 
 Always scope to the screen (`body.adminkit.{screen-id}`), and when you must hardcode a host literal, keep it in **one place** so a host change is a one-line fix.
 
-Run `php bin/adapter-audit.php` to see how much override debt each adapter carries — a Tier A adapter reports **0 `!important`**; the script fails if any adapter grows past its recorded ceiling.
+Run `php .claude/skills/adminkit-adapter-audit/adapter-audit.php` to see how much override debt each adapter carries — a Tier A adapter reports **0 `!important`**; the script fails if any adapter grows past its recorded ceiling.
 
 ### Version-gate selector overrides (Tier B)
 
