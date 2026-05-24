@@ -65,9 +65,18 @@
 	background: transparent !important;
 	border: none !important;
 	box-shadow: none !important;
-	/* Token gap so dropdowns that stack several submenu groups (WP makes the
-	   wrapper a flexbox on hover and it can hold multiple <ul>s) get breathing
-	   room — from the --ak-space scale, not a magic number. */
+}
+
+/* WP shows the hovered submenu wrapper as display:block, which leaves `gap` with
+   nothing to act on. Lay it out as a flex column so stacked submenu groups (the
+   wrapper can hold a primary + an .ab-sub-secondary <ul>) get a consistent token
+   gap — the admin --ak-space scale, NOT the provider's fluid --space-* (sized for
+   frontend layout, ~20px+, far too large here). Scoped to the show selectors so
+   the menu's own open/close is untouched. */
+#wpadminbar li.hover > .ab-sub-wrapper,
+#wpadminbar.nojs li:hover > .ab-sub-wrapper {
+	display: flex;
+	flex-direction: column;
 	gap: var(--ak-space-s);
 }
 
