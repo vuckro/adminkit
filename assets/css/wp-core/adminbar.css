@@ -77,7 +77,7 @@
 #wpadminbar.nojs li:hover > .ab-sub-wrapper {
 	display: flex;
 	flex-direction: column;
-	gap: var(--ak-space-2xs);
+	gap: var(--ak-space-s);
 }
 
 /* The Appearance node gets a roomier submenu gap than the tight default (per
