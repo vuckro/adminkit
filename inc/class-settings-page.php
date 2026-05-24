@@ -285,7 +285,7 @@ class AdminKit_Settings_Page {
 				'value'  => self::active_provider_label(),
 				'hint'   => $primary ? sprintf( __( 'accent %s', 'adminkit' ), $primary ) : __( 'accent inherited', 'adminkit' ),
 				'swatch' => '--ak-primary',
-				'tab'    => 'design',
+				'tab'    => 'apparence',
 			),
 			array(
 				'label' => __( 'Features', 'adminkit' ),
