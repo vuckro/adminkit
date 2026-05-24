@@ -337,6 +337,34 @@ class AdminKit_Assets {
 	}
 
 	/**
+	 * Enqueue a footer script shipped under the plugin, mtime-stamped like the
+	 * stylesheets. The JS counterpart of the style helpers — the wp-core feature
+	 * "bricks" (profile tabs, post previews, list-table polish) keep their
+	 * behaviour in their own `assets/js/*.js` file and enqueue it through here,
+	 * passing any PHP data as a `before` inline bootstrap.
+	 *
+	 * @param string      $handle Script handle.
+	 * @param string      $src    Path relative to ADMINKIT_PATH.
+	 * @param string[]    $deps   Script dependencies.
+	 * @param string|null $data   Optional JS printed before the file (e.g.
+	 *                            `window.AdminKitX = {…};`) for config/i18n.
+	 * @return void
+	 */
+	public static function enqueue_script( $handle, $src, array $deps = array(), $data = null ) {
+		$path = ADMINKIT_PATH . $src;
+		wp_enqueue_script(
+			$handle,
+			ADMINKIT_URL . $src,
+			$deps,
+			file_exists( $path ) ? (string) filemtime( $path ) : ADMINKIT_VERSION,
+			true
+		);
+		if ( null !== $data && '' !== $data ) {
+			wp_add_inline_script( $handle, $data, 'before' );
+		}
+	}
+
+	/**
 	 * Add the `adminkit` body class on admin pages so every CSS rule
 	 * can scope itself cleanly. Skipped when `should_load` bails.
 	 *

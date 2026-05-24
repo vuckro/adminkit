@@ -45,8 +45,8 @@
  *   adminkit/post_previews/thumb_url        (string $url, WP_Post, $w, $h) override the small URL
  *   adminkit/post_previews/full_url         (string $url, WP_Post, $w, $h) override the large URL
  *
- * The hover panel is built by a small inline footer script (like
- * AdminKit_Core_List_Table_Chrome) so the asset registry stays CSS-only.
+ * The hover panel is driven by assets/js/wp-core/post-previews.js, loaded as a
+ * footer script only on a targeted list-table screen.
  *
  * @package AdminKit
  */
@@ -143,7 +143,7 @@ class AdminKit_Post_Previews {
 		// covers posts, pages and CPTs with no risk of a double render.
 		add_action( "manage_{$pt}_posts_custom_column", array( __CLASS__, 'render_column' ), 10, 2 );
 
-		add_action( 'admin_footer', array( __CLASS__, 'print_script' ) );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 	}
 
 	/**
@@ -337,103 +337,25 @@ class AdminKit_Post_Previews {
 	}
 
 	/**
-	 * Print the inline footer script that builds the hover preview panel.
-	 * No-op when AdminKit isn't styling this screen.
+	 * Enqueue the footer script that builds the hover preview panel. i18n labels
+	 * ride along as an inline bootstrap. No-op when AdminKit isn't styling this
+	 * screen. Hooked from maybe_hook_screen(), so it only fires on a targeted
+	 * list-table screen.
 	 *
 	 * @return void
 	 */
-	public static function print_script() {
+	public static function enqueue() {
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return;
 		}
-		$loading_label = esc_js( __( 'Loading preview…', 'adminkit' ) );
-		$broken_label  = esc_js( __( 'Preview unavailable', 'adminkit' ) );
-		?>
-<script id="adminkit-post-previews">
-(function () {
-	if (!document.querySelector('.ak-preview')) { return; }
-	var LOADING_LABEL = '<?php echo $loading_label; ?>';
-	var BROKEN_LABEL = '<?php echo $broken_label; ?>';
-
-	// If a screenshot fails to load, flag its cell as broken (a flat
-	// placeholder) instead of showing the browser's broken-image glyph.
-	function wireThumb(img) {
-		if (img.dataset.akWired) { return; }
-		img.dataset.akWired = '1';
-		img.addEventListener('error', function () {
-			var span = img.closest('.ak-preview');
-			if (span) { span.classList.add('ak-preview--broken'); }
-		});
-	}
-	Array.prototype.forEach.call(document.querySelectorAll('.ak-preview__thumb'), wireThumb);
-
-	// One shared floating panel, reused across rows.
-	var pop = null, popImg = null, hideTimer = null, current = null;
-
-	function ensurePop() {
-		if (pop) { return; }
-		pop = document.createElement('div');
-		pop.id = 'ak-preview-pop';
-		pop.setAttribute('role', 'tooltip');
-		popImg = document.createElement('img');
-		popImg.alt = '';
-		pop.appendChild(popImg);
-		pop.setAttribute('data-loading-label', LOADING_LABEL);
-		pop.setAttribute('data-broken-label', BROKEN_LABEL);
-		document.body.appendChild(pop);
-		pop.addEventListener('mouseenter', function () { clearTimeout(hideTimer); });
-		pop.addEventListener('mouseleave', scheduleHide);
-	}
-
-	function position(anchor) {
-		var r = anchor.getBoundingClientRect();
-		var pw = pop.offsetWidth, ph = pop.offsetHeight, gap = 12;
-		var left = r.right + gap;
-		if (left + pw > window.innerWidth - 8) { left = r.left - gap - pw; } // flip left
-		if (left < 8) { left = 8; }
-		var top = r.top + r.height / 2 - ph / 2; // vertically centered on the thumb
-		if (top < 8) { top = 8; }
-		if (top + ph > window.innerHeight - 8) { top = window.innerHeight - 8 - ph; }
-		pop.style.left = Math.round(left) + 'px';
-		pop.style.top = Math.round(top) + 'px';
-	}
-
-	function show(span) {
-		ensurePop();
-		clearTimeout(hideTimer);
-		current = span;
-		var full = span.getAttribute('data-ak-full');
-		pop.className = 'is-visible is-loading';
-		popImg.onload = function () { pop.classList.remove('is-loading'); position(span); };
-		popImg.onerror = function () {
-			pop.classList.remove('is-loading');
-			pop.classList.add('is-broken');
-			position(span);
-		};
-		popImg.setAttribute('src', full || '');
-		position(span);
-	}
-
-	function scheduleHide() { hideTimer = setTimeout(hide, 120); }
-
-	function hide() {
-		if (!pop) { return; }
-		pop.classList.remove('is-visible');
-		current = null;
-	}
-
-	document.addEventListener('mouseover', function (e) {
-		var span = e.target.closest ? e.target.closest('.ak-preview') : null;
-		if (span && span !== current && !span.classList.contains('ak-preview--empty')) { show(span); }
-	});
-	document.addEventListener('mouseout', function (e) {
-		var span = e.target.closest ? e.target.closest('.ak-preview') : null;
-		if (span) { scheduleHide(); }
-	});
-	window.addEventListener('scroll', hide, true);
-	window.addEventListener('resize', hide);
-})();
-</script>
-		<?php
+		AdminKit_Assets::enqueue_script(
+			'adminkit-post-previews',
+			'assets/js/wp-core/post-previews.js',
+			array(),
+			'window.AdminKitPostPreviews=' . wp_json_encode( array(
+				'loading' => __( 'Loading preview…', 'adminkit' ),
+				'broken'  => __( 'Preview unavailable', 'adminkit' ),
+			) ) . ';'
+		);
 	}
 }
