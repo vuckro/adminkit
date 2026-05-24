@@ -5,13 +5,17 @@
    .wrap .page-title-action is included here so the "Add New" button next
    to page titles inherits all base sizing — the .button-primary rule
    below then overrides its colors. */
+/* Secondary / generic button — flat: light surface, a subtle primary-tinted
+   border (no hard outline), text in --ak-text. The label color is constant
+   across rest/hover/focus; hover only lifts the fill to a faint primary tint.
+   Only .button-primary carries a different (filled) label color. */
 body.adminkit .button,
 body.adminkit .wp-core-ui .button,
 body.adminkit .button-secondary,
 body.adminkit .wp-core-ui .button-secondary,
 body.adminkit .wrap .page-title-action {
 	background: var(--ak-surface);
-	border: 1px solid var(--ak-border-strong);
+	border: 1px solid color-mix(in srgb, var(--ak-primary) 22%, transparent);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
 	padding: 0 10px;
@@ -26,9 +30,12 @@ body.adminkit .wrap .page-title-action {
 
 body.adminkit .button:hover,
 body.adminkit .wp-core-ui .button:hover,
-body.adminkit .button-secondary:hover {
-	background: var(--ak-surface);
-	border-color: var(--ak-border-strong);
+body.adminkit .button-secondary:hover,
+body.adminkit .button:focus,
+body.adminkit .wp-core-ui .button:focus,
+body.adminkit .button-secondary:focus {
+	background: var(--ak-primary-subtle);
+	border-color: color-mix(in srgb, var(--ak-primary) 40%, transparent);
 	color: var(--ak-text);
 }
 
@@ -76,15 +83,25 @@ body.adminkit .wrap .page-title-action:hover,
 body.adminkit .wrap .page-title-action:focus {
 	background: var(--ak-primary-hover);
 	border-color: var(--ak-primary-hover);
-	color: var(--primary-l-10, var(--ak-on-accent));
+	/* Keep the resting label color — the text must not shift on hover. */
+	color: var(--ak-on-accent);
 }
 
 /* When several header action buttons stack (e.g. Add New + Import on the
-   Bricks templates list), keep only the first filled; the rest become outline
-   so the page has a single primary CTA. */
+   Bricks templates list), keep only the first filled; the rest become a flat
+   subtle-primary CTA so the page keeps a single solid primary. The label color
+   (primary) is constant — the :hover rule re-asserts it so the .button-primary
+   hover above (which also matches these siblings) can't repaint them filled. */
 body.adminkit .wrap .page-title-action ~ .page-title-action {
-	background: transparent;
-	border-color: var(--ak-primary);
+	background: var(--ak-primary-subtle);
+	border-color: transparent;
+	color: var(--ak-primary);
+}
+
+body.adminkit .wrap .page-title-action ~ .page-title-action:hover,
+body.adminkit .wrap .page-title-action ~ .page-title-action:focus {
+	background: color-mix(in srgb, var(--ak-primary) 20%, var(--ak-surface));
+	border-color: transparent;
 	color: var(--ak-primary);
 }
 
@@ -126,7 +143,7 @@ body.adminkit .button[disabled] {
    bright OS-default button in the middle of our flat chrome. */
 body.adminkit input[type="file"]::file-selector-button {
 	background: var(--ak-surface);
-	border: 1px solid var(--ak-border-strong);
+	border: 1px solid color-mix(in srgb, var(--ak-primary) 22%, transparent);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	font-family: var(--ak-font-body);
@@ -138,7 +155,8 @@ body.adminkit input[type="file"]::file-selector-button {
 }
 
 body.adminkit input[type="file"]::file-selector-button:hover {
-	background: var(--ak-surface);
+	background: var(--ak-primary-subtle);
+	border-color: color-mix(in srgb, var(--ak-primary) 40%, transparent);
 	color: var(--ak-text);
 }
 
