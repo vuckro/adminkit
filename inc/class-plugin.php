@@ -20,6 +20,7 @@ class AdminKit_Plugin {
 	 * @return void
 	 */
 	public static function init() {
+		add_action( 'init', array( __CLASS__, 'load_textdomain' ) );
 		AdminKit_Assets::init();
 		AdminKit_Core_Chrome::register();
 		AdminKit_Core_Login::register();
@@ -42,6 +43,17 @@ class AdminKit_Plugin {
 		 * AdminKit's own filters from third-party plugins.
 		 */
 		do_action( 'adminkit/loaded' );
+	}
+
+	/**
+	 * Load the plugin text domain so bundled translations in `/languages/` apply
+	 * when the site language changes. Hooked on `init` — WordPress 6.7+ flags
+	 * text domains loaded earlier (`_load_textdomain_just_in_time`).
+	 *
+	 * @return void
+	 */
+	public static function load_textdomain() {
+		load_plugin_textdomain( 'adminkit', false, dirname( plugin_basename( ADMINKIT_FILE ) ) . '/languages' );
 	}
 
 	/**

@@ -243,6 +243,10 @@ class AdminKit_Settings_Page {
 				'light'             => __( 'Light', 'adminkit' ),
 				'dark'              => __( 'Dark', 'adminkit' ),
 				'unsaved'           => __( 'Unsaved changes', 'adminkit' ),
+				'designLegendTitle' => __( 'Live colour reference', 'adminkit' ),
+				'designLegend'      => __( 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.', 'adminkit' ),
+				'typography'        => __( 'Typography', 'adminkit' ),
+				'typographyDesc'    => __( 'Body font follows Bricks (--font-base) when set, otherwise Inter.', 'adminkit' ),
 			),
 		);
 	}
