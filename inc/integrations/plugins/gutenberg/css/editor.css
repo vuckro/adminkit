@@ -16,8 +16,8 @@ body.block-editor-page.adminkit .ak-editor-theme-toggle {
 	color: var(--ak-text);
 }
 body.block-editor-page.adminkit .ak-editor-theme-toggle svg {
-	width: 24px;
-	height: 24px;
+	width: 18px;
+	height: 18px;
 	fill: currentColor;
 }
 
