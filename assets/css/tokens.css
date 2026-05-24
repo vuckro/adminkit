@@ -209,3 +209,30 @@ body.adminkit[class*="admin-color-"] {
 	   drop would vanish. */
 	--ak-shadow-elevated: 0 8px 24px -10px rgba(255, 255, 255, 0.14);
 }
+
+/* The block + widgets editors have NO dark theme: WordPress ships none, and
+   half-theming their many hardcoded surfaces looks broken. So the editor stays
+   LIGHT even when AdminKit dark mode is on globally — and even when the "Block
+   editor" feature is OFF (this lives in tokens.css, ALWAYS loaded, not the gated
+   editor.css). Re-pin the tokens the dark block flips back to their light values
+   on the editor body; the whole editor (chrome + @wordpress/components, which
+   read --wp-components-color-* → --ak-*) then renders light regardless of the
+   global toggle. Brand/geometry tokens don't flip, so they're not repeated. */
+body.adminkit.block-editor-page,
+body.adminkit.widgets-php {
+	--ak-bg: var(--background, hsl(0, 0%, 98%));
+	--ak-surface: var(--surface, hsl(0, 0%, 96%));
+	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
+	--ak-input-bg: var(--input, hsl(0, 0%, 100%));
+	--ak-border: var(--border, hsl(0, 0%, 89%));
+	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
+	--ak-text: var(--text, hsl(0, 0%, 32%));
+	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%));
+	--ak-heading: var(--heading, hsl(0, 0%, 18%));
+	--ak-hover-bg: var(--hover, rgba(0, 0, 0, 0.04));
+	--ak-primary-subtle: var(--accent-subtle, var(--primary-l-9, color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface))));
+	--ak-success-subtle: var(--success-subtle, var(--success-l-9, color-mix(in srgb, var(--ak-success) 14%, var(--ak-surface))));
+	--ak-warning-subtle: var(--warning-subtle, var(--warning-l-9, color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface))));
+	--ak-error-subtle: var(--error-subtle, var(--error-l-9, color-mix(in srgb, var(--ak-error) 14%, var(--ak-surface))));
+	--ak-info-subtle: var(--info-subtle, var(--info-l-9, color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface))));
+}

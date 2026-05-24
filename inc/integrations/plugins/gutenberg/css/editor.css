@@ -1,35 +1,14 @@
-/* Gutenberg block editor — AdminKit's LIGHT styling for the editor chrome
-   (header, sidebar, buttons, tabs). All rules scoped to body.block-editor-page
-   so we never bleed into the canvas (.editor-styles-wrapper, .wp-block-*).
+/* Gutenberg block + widgets editors — AdminKit's LIGHT chrome look (header,
+   sidebar, buttons, tabs). Loaded only when the "Block editor" feature is on.
+   Scoped to the editor body so we never bleed into the canvas
+   (.editor-styles-wrapper, .wp-block-*).
 
-   No dark theme: WordPress ships none, and half-theming the editor's many
-   hardcoded surfaces looks broken. So the editor stays LIGHT even when AdminKit
-   dark mode is on globally — re-pin the tokens the dark block flips back to their
-   light values on the editor shell. The whole editor (this chrome + the
-   @wordpress/components that read --wp-components-color-* → --ak-*) then renders
-   light regardless of the global toggle. Values mirror the :root block in
-   tokens.css (brand/geometry tokens don't flip, so they're not repeated). */
-body.block-editor-page.adminkit {
-	--ak-bg: var(--background, hsl(0, 0%, 98%));
-	--ak-surface: var(--surface, hsl(0, 0%, 96%));
-	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
-	--ak-input-bg: var(--input, hsl(0, 0%, 100%));
-	--ak-border: var(--border, hsl(0, 0%, 89%));
-	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
-	--ak-text: var(--text, hsl(0, 0%, 32%));
-	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%));
-	--ak-heading: var(--heading, hsl(0, 0%, 18%));
-	--ak-hover-bg: var(--hover, rgba(0, 0, 0, 0.04));
-	--ak-primary-subtle: var(--accent-subtle, var(--primary-l-9, color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface))));
-	--ak-success-subtle: var(--success-subtle, var(--success-l-9, color-mix(in srgb, var(--ak-success) 14%, var(--ak-surface))));
-	--ak-warning-subtle: var(--warning-subtle, var(--warning-l-9, color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface))));
-	--ak-error-subtle: var(--error-subtle, var(--error-l-9, color-mix(in srgb, var(--ak-error) 14%, var(--ak-surface))));
-	--ak-info-subtle: var(--info-subtle, var(--info-l-9, color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface))));
-}
-
-body.block-editor-page.adminkit .edit-post-header,
-body.block-editor-page.adminkit .editor-header,
-body.block-editor-page.adminkit .interface-interface-skeleton__header {
+   The editor has no dark theme; the LIGHT force-pin lives in tokens.css (always
+   loaded, so the editor stays light even when this feature is off — see the
+   block-editor-page / widgets-php block there). */
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header,
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header,
+body.adminkit:is(.block-editor-page, .widgets-php) .interface-interface-skeleton__header {
 	background: var(--ak-surface);
 	border-bottom: 1px solid var(--ak-border);
 	color: var(--ak-text);
@@ -38,35 +17,35 @@ body.block-editor-page.adminkit .interface-interface-skeleton__header {
 /* The header's inner regions must not repaint a white bar over the surface
    above — keep them transparent so the whole bar reads on the header surface,
    and route the icon buttons to the token foreground. */
-body.block-editor-page.adminkit .editor-header__toolbar,
-body.block-editor-page.adminkit .editor-header__center,
-body.block-editor-page.adminkit .editor-header__settings,
-body.block-editor-page.adminkit .edit-post-header__toolbar,
-body.block-editor-page.adminkit .edit-post-header__center,
-body.block-editor-page.adminkit .edit-post-header__settings {
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header__toolbar,
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header__center,
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header__settings,
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header__toolbar,
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header__center,
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header__settings {
 	background: transparent;
 }
 
-body.block-editor-page.adminkit .editor-header .components-button:not(.is-primary),
-body.block-editor-page.adminkit .edit-post-header .components-button:not(.is-primary) {
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header .components-button:not(.is-primary),
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header .components-button:not(.is-primary) {
 	color: var(--ak-text);
 }
-body.block-editor-page.adminkit .editor-header .components-button:not(.is-primary):hover:not(:disabled),
-body.block-editor-page.adminkit .edit-post-header .components-button:not(.is-primary):hover:not(:disabled) {
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header .components-button:not(.is-primary):hover:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header .components-button:not(.is-primary):hover:not(:disabled) {
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
 }
 
-body.block-editor-page.adminkit .edit-post-sidebar,
-body.block-editor-page.adminkit .interface-complementary-area {
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-sidebar,
+body.adminkit:is(.block-editor-page, .widgets-php) .interface-complementary-area {
 	background: var(--ak-surface);
 	border-left: 1px solid var(--ak-border);
 }
 
 /* Primary buttons (Publish, Update, Save) */
-body.block-editor-page.adminkit .components-button.is-primary,
-body.block-editor-page.adminkit .editor-post-publish-button,
-body.block-editor-page.adminkit .editor-post-publish-button__button {
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-primary,
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-post-publish-button,
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-post-publish-button__button {
 	background: var(--ak-primary) !important;
 	border-color: var(--ak-primary) !important;
 	color: var(--ak-on-accent) !important;
@@ -75,17 +54,17 @@ body.block-editor-page.adminkit .editor-post-publish-button__button {
 	box-shadow: none;
 }
 
-body.block-editor-page.adminkit .components-button.is-primary:hover:not(:disabled),
-body.block-editor-page.adminkit .components-button.is-primary:focus:not(:disabled),
-body.block-editor-page.adminkit .editor-post-publish-button:hover:not(:disabled),
-body.block-editor-page.adminkit .editor-post-publish-button:focus:not(:disabled) {
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-primary:hover:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-primary:focus:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-post-publish-button:hover:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-post-publish-button:focus:not(:disabled) {
 	background: var(--ak-primary-hover) !important;
 	border-color: var(--ak-primary-hover) !important;
 	color: var(--ak-on-accent) !important;
 }
 
-body.block-editor-page.adminkit .components-button.is-primary:focus:not(:disabled),
-body.block-editor-page.adminkit .editor-post-publish-button:focus:not(:disabled) {
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-primary:focus:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-post-publish-button:focus:not(:disabled) {
 	box-shadow: var(--ak-focus-ring) !important;
 }
 
@@ -93,37 +72,37 @@ body.block-editor-page.adminkit .editor-post-publish-button:focus:not(:disabled)
    border + accent text — the exact "secondary button with a brand border"
    inconsistency we homogenize away in wp-components/buttons.css. Match the flat
    neutral secondary here too: surface fill, soft --ak-border, neutral text. */
-body.block-editor-page.adminkit .components-button.is-secondary {
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary {
 	background: var(--ak-surface);
 	box-shadow: inset 0 0 0 1px var(--ak-border);
 	color: var(--ak-text);
 }
-body.block-editor-page.adminkit .components-button.is-secondary:hover:not(:disabled),
-body.block-editor-page.adminkit .components-button.is-secondary:focus:not(:disabled) {
-	background: var(--ak-primary-subtle);
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary:hover:not(:disabled),
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary:focus:not(:disabled) {
+	background: var(--ak-hover-bg);
 	box-shadow: inset 0 0 0 1px var(--ak-primary);
 	color: var(--ak-text);
 }
 
 /* Sidebar tabs (Post / Block) */
-body.block-editor-page.adminkit .components-tab-panel__tabs .components-tab-panel__tabs-item.is-active {
+body.adminkit:is(.block-editor-page, .widgets-php) .components-tab-panel__tabs .components-tab-panel__tabs-item.is-active {
 	color: var(--ak-heading);
 	box-shadow: inset 0 -2px 0 var(--ak-heading);
 }
 
 /* Snackbar notices */
-body.block-editor-page.adminkit .components-snackbar {
+body.adminkit:is(.block-editor-page, .widgets-php) .components-snackbar {
 	background: var(--neutral-l-9, hsl(0, 0%, 18%));
 	border-radius: var(--ak-radius-m);
 	font-family: var(--ak-font-body);
 }
 
-body.block-editor-page.adminkit .components-snackbar.components-snackbar--success {
+body.adminkit:is(.block-editor-page, .widgets-php) .components-snackbar.components-snackbar--success {
 	background: var(--ak-success);
 }
 
 /* Badges (.components-badge) — WP hardcodes the default badge as #f0f0f0 / #2f2f2f. */
-body.block-editor-page.adminkit .components-badge.is-default {
+body.adminkit:is(.block-editor-page, .widgets-php) .components-badge.is-default {
 	background-color: var(--ak-elevated);
 	color: var(--ak-text);
 }
