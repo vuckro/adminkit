@@ -2,8 +2,9 @@
 /**
  * Base class for AdminKit integrations.
  *
- * Each integration lives in its own folder under `inc/integrations/{slug}/`
- * with a `class-{slug}.php` file declaring a class that extends this one.
+ * Each integration lives in its own folder under
+ * `inc/integrations/{plugins|themes}/{slug}/` with a `class-{slug}.php` file
+ * declaring a class that extends this one.
  * The plugin orchestrator auto-discovers those files via glob and queues
  * `maybe_init()` on `after_setup_theme`.
  *
