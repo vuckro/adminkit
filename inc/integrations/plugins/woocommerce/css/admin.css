@@ -119,7 +119,7 @@ body.adminkit.post-type-product .add_product_images a {
 	margin-top: 8px;
 	padding: 5px 11px;
 	border-radius: var(--ak-radius-s);
-	border: 1px solid var(--ak-border-strong);
+	border: 1px solid var(--ak-border);
 	background: var(--ak-surface);
 	color: var(--ak-text);
 	font-size: var(--ak-text-s);
@@ -129,7 +129,7 @@ body.adminkit.post-type-product .add_product_images a {
 
 body.adminkit.post-type-product .add_product_images a:hover,
 body.adminkit.post-type-product .add_product_images a:focus {
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-border);
 	color: var(--ak-heading);
 }
 

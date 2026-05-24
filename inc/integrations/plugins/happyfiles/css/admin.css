@@ -139,7 +139,7 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .bu
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .button-secondary:hover,
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .button-secondary:focus {
 	background-color: var(--ak-surface);
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-border);
 	color: var(--ak-heading);
 }
 

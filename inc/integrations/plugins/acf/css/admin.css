@@ -70,13 +70,13 @@ body.adminkit.acf-admin-page .acf-btn:hover {
    label color is !important here too. */
 body.adminkit.acf-admin-page .acf-btn.acf-btn-secondary {
 	background-color: transparent;
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-border);
 	color: var(--ak-text) !important;
 }
 
 body.adminkit.acf-admin-page .acf-btn.acf-btn-secondary:hover {
 	background-color: var(--ak-hover-bg);
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-border);
 }
 
 /* Kill ACF's transitions on elements we recolor (.acf-btn `transition: all .2s`,
@@ -773,7 +773,7 @@ body.adminkit.acf-admin-page .acf-input .acf-input-append {
 body.adminkit.acf-admin-page input::file-selector-button,
 body.adminkit.acf-admin-page input::file-selector-button:hover {
 	color: var(--ak-text) !important;
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-border);
 }
 
 /* WYSIWYG (TinyMCE) toolbars in default-value fields. */
