@@ -90,11 +90,12 @@ body.adminkit .wrap .page-title-action:focus {
 }
 
 /* When several header action buttons stack (e.g. Add New + Import on the
-   Bricks templates list), keep only the FIRST filled (primary); the rest are
-   plain secondary buttons. They only need this override because the
-   .button-primary rule above also matches every .page-title-action and would
-   otherwise fill them — so we re-assert the standard secondary style (surface
-   background + --ak-border), matching every other secondary button. */
+   Bricks templates list), keep only the FIRST filled (primary). The rest are
+   prominent header CTAs ("secondary" only by position) — at rest they read as
+   neutral secondary buttons (surface + --ak-border); on hover/focus the border
+   accentuates to the brand --ak-primary to signal the action. (This override is
+   also needed because the .button-primary rule above matches every
+   .page-title-action and would otherwise fill them.) */
 body.adminkit .wrap .page-title-action ~ .page-title-action {
 	background: var(--ak-surface);
 	border-color: var(--ak-border);
@@ -104,7 +105,7 @@ body.adminkit .wrap .page-title-action ~ .page-title-action {
 body.adminkit .wrap .page-title-action ~ .page-title-action:hover,
 body.adminkit .wrap .page-title-action ~ .page-title-action:focus {
 	background: var(--ak-primary-subtle);
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-primary);
 	color: var(--ak-text);
 }
 
