@@ -1,3 +1,9 @@
+/* Generic plugin-page surfaces — common WP-core containers/elements that
+   third-party settings pages reuse. Themed through tokens so an UNSUPPORTED
+   plugin still reads cleanly (especially in dark mode) with no per-plugin
+   adapter. Loaded admin-wide. Scoped to KNOWN WP classes/elements only (never
+   bare divs) and colour-only (no geometry) so plugin layouts stay untouched. */
+
 /* `.card` — generic content card used on tools.php (Press This,
    Categories converter, …), the auth-app install screen, and a handful
    of settings pages. WP hardcodes `background: #ffffff` plus a
@@ -6,5 +12,24 @@
 body.adminkit .card {
 	background: var(--ak-surface);
 	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* `.welcome-panel` — WP's dashboard welcome panel, reused by some plugins as a
+   highlight box. Same hardcoded white surface. */
+body.adminkit .welcome-panel {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* Inline code / keys / preformatted blocks inside an admin page body — WP
+   hardcodes a light grey that's low-contrast on a dark surface. Colour only, so
+   the box geometry (padding, size) WP/plugins set is preserved. The settings
+   SPA's own mono cells (.ak-tbl code) outrank this, so they're unaffected. */
+body.adminkit .wrap code,
+body.adminkit .wrap kbd,
+body.adminkit .wrap pre {
+	background: var(--ak-elevated);
 	color: var(--ak-text);
 }
