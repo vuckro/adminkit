@@ -170,14 +170,9 @@ body.adminkit #adminmenu li.wp-menu-open > a.menu-top::before {
 	pointer-events: none;
 }
 
-/* Folded / fly-out: the current item's submenu detaches (position:absolute) and
-   pops out beside the rail, so the in-flow <li> collapses to just the icon — the
-   thread above then correctly marks only that icon tile. The detached fly-out
-   panel gets its own short accent edge so the connection still reads when open. */
-body.adminkit.folded #adminmenu li.wp-has-current-submenu .wp-submenu,
-body.adminkit.auto-fold #adminmenu li.wp-has-current-submenu .wp-submenu {
-	border-left: 3px solid var(--ak-primary) !important;
-}
+/* Folded / fly-out current submenu: NO accent left edge (per request). It keeps
+   the neutral popup border defined below, like every other fly-out — submenus
+   carry no accent border. */
 
 /* RIGHT-SIDE arrow on the active/open top-level item → ACCENT. WP draws no
    `wp-menu-arrow` element; the indicator is a pure CSS border-triangle on
