@@ -153,8 +153,10 @@ persists via one REST route (`adminkit/v1/settings`). Four tabs: **Dashboard**;
 **Design** (a read-only reference of the semantic token map — the `design` i18n
 key, formerly "Tokens"); **Settings** (the module toggles plus a Branding block —
 the brand logo and the `wp_logo` mode for the site-name brand mark — the
-`features` key, formerly "Features"); and **Plugins** (enable/disable each detected integration, inactive
-hosts shown dimmed and locked off).
+`features` key, formerly "Features"); and **Plugins** (the site's *active*
+plugins and themes, each tagged **Native** — a tuned adapter you can switch per
+host — or **Generic** — no dedicated adapter, so it inherits AdminKit's base
+token styling. Nothing dormant is listed, so there's no "inactive" state).
 
 ```php
 AdminKit_Settings::register( $key, array $args );  // declare a setting (idempotent)

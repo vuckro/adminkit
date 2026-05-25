@@ -217,6 +217,16 @@
 .adminkit-app .ak-row__desc { font-size: var(--ak-text-xs); line-height: 1.5; color: var(--ak-text-muted); max-width: 54ch; }
 /* Integration rows: status pill (left) + name + enable toggle (right). */
 .adminkit-app .ak-row--int .ak-row__label { flex: 1; min-width: 0; }
+/* Title + native/generic support badge, side by side next to the plugin name. */
+.adminkit-app .ak-row__head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+/* A switch that's ON tints its own row label to the brand accent — AdminKit's
+   canonical "this is active" cue, mirrored on the wp-admin toggles (inputs.css). */
+.adminkit-app .ak-row:has( .ak-switch__input:checked ) .ak-row__label { color: var(--ak-primary); }
 
 /* Design-token table — one column-aligned grid per group (static reference) -- */
 .adminkit-app .ak-tbl {
@@ -354,24 +364,8 @@
 .adminkit-app .ak-switch__input:checked ~ .ak-switch__knob { left: 21px; }
 .adminkit-app .ak-switch__input:focus-visible ~ .ak-switch__track { outline: 2px solid var(--ak-primary); outline-offset: 2px; }
 
-/* Integration pills (status on the left) ---------------------------------- */
+/* Integration rows — name + support badge (left), enable toggle (right). */
 .adminkit-app .ak-row--int { gap: 12px; }
-.adminkit-app .ak-pill {
-	flex: 0 0 auto;
-	min-width: 72px;
-	text-align: center;
-	font-size: var(--ak-text-xs);
-	font-weight: 500;
-	padding: 4px 10px;
-	border-radius: var(--ak-radius-s);
-}
-/* "Active" = soft tinted chip (not a solid fill), echoing the account tabs. */
-.adminkit-app .ak-pill--on {
-	background: var(--ak-elevated);
-	background: color-mix( in srgb, var(--ak-success) 15%, transparent );
-	color: var(--ak-success);
-}
-.adminkit-app .ak-pill--off { background: var(--ak-elevated); color: var(--ak-text-muted); }
 
 /* Dashboard — overview hero strip ----------------------------------------- */
 /* Bordered cells sharing a 1px grid gap (the --ak-border shows through), so the
@@ -575,9 +569,6 @@
 .ak-modal__list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
 .ak-modal__list li { font-size: var(--ak-text-s); line-height: 1.5; color: var(--ak-text); }
 
-/* "Coming soon" pill (dashboard roadmap rows) ---------------------------- */
-.adminkit-app .ak-pill--soon { background: var(--ak-elevated); color: var(--ak-text-muted); }
-
 /* Branding logo URL fields (Features tab) -------------------------------- */
 .adminkit-app .ak-field {
 	display: flex;
@@ -746,11 +737,6 @@
 	color: var(--ak-on-accent);
 	background: var(--ak-primary);
 }
-
-/* Inactive plugin row — no toggle; an "Inactive" pill sits in the control slot
-   (right), mirroring the switch position on active rows. The label stays at full
-   strength (the pill alone signals the state, so the name stays legible). */
-.adminkit-app .ak-row__state { margin-left: auto; }
 
 /* Mobile (≤782px) — narrow-viewport polish for AdminKit's own surfaces. The tab
    strip already scrolls sideways; the hero + roadmap already collapse. Here:
