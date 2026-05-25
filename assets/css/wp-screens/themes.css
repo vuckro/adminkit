@@ -26,13 +26,12 @@ body.adminkit .theme-browser .theme .theme-actions {
 	border-left-color: var(--ak-border);
 }
 
-/* Active theme — an inverted neutral strip (heading bg + surface text), not
-   the brand fill: it reads as "current" and flips with the mode — a dark bar
-   in light mode (like WP's own #2c3338 active badge), light bar in dark. Drop
-   WP's inset box-shadow to keep it flat. */
+/* Active theme — the brand accent strip (--ak-primary fill + --ak-on-accent
+   label) so the current theme reads at a glance in both modes. Drop WP's inset
+   box-shadow to keep it flat. */
 body.adminkit .theme-browser .theme.active .theme-name {
-	background: var(--ak-heading);
-	color: var(--ak-surface);
+	background: var(--ak-primary);
+	color: var(--ak-on-accent);
 	box-shadow: none;
 }
 

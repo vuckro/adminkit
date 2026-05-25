@@ -135,6 +135,19 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 				return $screen && 'post' === $screen->base;
 			},
 		) );
+
+		// Bricks injects its feedback form into the WP themes page footer
+		// (admin_footer-themes.php) — outside its own admin pages, so it gets its
+		// own tiny load there.
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-bricks-feedback',
+			'src'       => 'inc/integrations/themes/bricks/css/feedback.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => static function ( $screen ) {
+				return $screen && 'themes' === $screen->id;
+			},
+		) );
 	}
 
 	/**

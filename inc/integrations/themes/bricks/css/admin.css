@@ -56,14 +56,6 @@ body.adminkit .bricks-admin-wrapper .bricks-admin-inner {
 	color: var(--ak-text);
 }
 
-/* Bricks feedback form inner shell hardcodes white. Route to token surface
-   so the panel follows AdminKit light/dark theme mapping consistently. */
-body.adminkit .bricks-admin-wrapper #bricks-feedback-form-inner {
-	background-color: var(--ak-surface);
-	border-color: var(--ak-border);
-	color: var(--ak-text);
-}
-
 /* Getting Started step boxes — bordered rounded cards. */
 body.adminkit .bricks-admin-wrapper.getting-started .box-wrapper {
 	border: 1px solid var(--ak-border);
@@ -399,7 +391,6 @@ body.adminkit #bricks-admin-import-form-wrapper {
 /* ----- 11. Modernization: rounded corners ----- */
 /* Card / panel surfaces that ship with a border but square corners. */
 body.adminkit .bricks-admin-wrapper .bricks-admin-inner,
-body.adminkit .bricks-admin-wrapper #bricks-feedback-form-inner,
 body.adminkit .bricks-admin-wrapper.license form,
 body.adminkit .bricks-admin-wrapper.sidebars .new-sidebar-wrapper form,
 body.adminkit #bricks-admin-import-form-wrapper {
