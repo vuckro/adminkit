@@ -27,13 +27,20 @@
 		return document.documentElement.getAttribute( ATTR ) === 'dark' ? 'dark' : 'light';
 	}
 
-	// Resolve the parent's current --ak-bg to a concrete colour, so the canvas can
+	// Resolve the parent's CURRENT --ak-bg to a concrete colour, so the canvas can
 	// paint it SYNCHRONOUSLY (inline) before the injected token stylesheets finish
-	// loading — that async gap is what flashed white in dark mode. Cached per mode.
+	// loading — that async gap is what flashed white. The dark token block is keyed
+	// `:root[data-adminkit-theme="dark"]` on the parent <html>, so --ak-bg only
+	// resolves to the dark value while the parent root is in dark mode; we read it
+	// in whatever mode the parent is in now and cache per mode. We resolve it for
+	// BOTH modes (not just dark) so the inline background carries a concrete colour
+	// in every mode and never goes empty mid-switch — an empty/transparent inline
+	// value briefly exposes the white iframe substrate during the flip.
 	var bgCache = {};
-	function darkBg() {
-		if ( bgCache.dark ) {
-			return bgCache.dark;
+	function akBg() {
+		var m = mode();
+		if ( bgCache[ m ] ) {
+			return bgCache[ m ];
 		}
 		var probe = document.createElement( 'div' );
 		probe.style.cssText = 'position:absolute;visibility:hidden;background-color:var(--ak-bg)';
@@ -42,7 +49,7 @@
 		probe.remove();
 		// Only cache once it resolves to a real colour (tokens loaded in the parent).
 		if ( c && 'rgba(0, 0, 0, 0)' !== c && 'transparent' !== c ) {
-			bgCache.dark = c;
+			bgCache[ m ] = c;
 		}
 		return c;
 	}
@@ -68,18 +75,27 @@
 			return;
 		}
 		var root = doc.documentElement;
+		var m    = mode();
 
-		// 1) Paint the canvas background IMMEDIATELY (inline, synchronous) in dark
-		//    mode, so nothing flashes white while the injected stylesheets load.
-		//    Cleared in light mode — the canvas stays light, like the front end.
-		var bg = ( 'dark' === mode() ) ? darkBg() : '';
+		// Make the switch ATOMIC: in ONE synchronous step set the mode attribute
+		// AND the inline background to the matching concrete colour. We never clear
+		// the attribute (a frame with no attribute = the light/white default) and
+		// never blank the inline background (an empty value exposes the white iframe
+		// substrate for a frame). Paint the background BEFORE flipping the attribute
+		// so the surface is already the right colour the instant the mode changes.
+
+		// 1) Paint the canvas background IMMEDIATELY (inline, synchronous) for BOTH
+		//    modes, so nothing flashes white while the injected stylesheets load and
+		//    nothing flashes white mid-switch. Falls back to the CSS --ak-bg paint
+		//    (canvas.css) if the probe can't resolve a colour yet.
+		var bg = akBg();
 		root.style.backgroundColor = bg;
 		if ( doc.body ) {
 			doc.body.style.backgroundColor = bg;
 		}
 
 		// 2) Mirror the mode attribute — drives the --ak-* dark block once tokens load.
-		root.setAttribute( ATTR, mode() );
+		root.setAttribute( ATTR, m );
 
 		// 3) Inject the token + canvas stylesheets once per (re)mounted document.
 		if ( doc.head && ! root.hasAttribute( MARK ) ) {

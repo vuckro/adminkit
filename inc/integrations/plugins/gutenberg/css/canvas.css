@@ -12,8 +12,22 @@
    over theme defaults on equal specificity on its own. */
 
 /* ── Canvas surface + base text ─────────────────────────────────────────── */
+/* The canvas <body> carries a white background (theme.json / wp-embed-responsive)
+   and can be shorter than the iframe — both expose white: a gap under short posts
+   and a frame during a theme switch. Override it ON THE BODY (enough specificity to
+   beat the theme defaults), and fill the iframe with --ak-bg by giving the ROOT a
+   min-height of 100vh — NOT the body: the body carries the editor's writing padding,
+   so 100vh on it overflows the viewport and forces a scrollbar. The root has no such
+   padding, so 100vh there fills the viewport exactly (no scroll) and backstops any
+   gap below a short body. Zero !important — specificity does the work. */
+html[data-adminkit-canvas] {
+	background: var(--ak-bg);
+	min-height: 100vh;
+}
+html[data-adminkit-canvas] body.editor-styles-wrapper {
+	background: var(--ak-bg);
+}
 .editor-styles-wrapper {
-	background-color: var(--ak-bg);
 	color: var(--ak-text);
 }
 /* Native form controls (date pickers, selects in blocks) follow the mode. */
