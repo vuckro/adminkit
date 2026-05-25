@@ -109,6 +109,7 @@ add_action( 'adminkit/enqueued_admin', function () {
 | `adminkit/extra_tokens_handle` | `(string\|null, string $context)` | Integrations return a style handle that becomes a dependency of `adminkit-tokens`. |
 | `adminkit/integration_enabled` | `(bool, string $slug)` | Enable/disable one integration — drives the Plugins tab. |
 | `adminkit/brand_logo` | `('' \| string \| array)` | Brand-logo fallback when the Branding settings are empty. |
+| `adminkit/menu_icons` / `adminkit/toolbar_icons` | `(array)` | Override the native-icon replacement maps (dashicon-class / node-id ⇒ SVG). |
 | `adminkit/setting/{$key}` | `(mixed)` | Override a registered setting at read time. |
 | `adminkit/theme_attribute` | `(string)` | Override the dark/light HTML attribute name. |
 | `adminkit/theme_storage_key` | `(string)` | Override the localStorage key. |
@@ -158,6 +159,7 @@ adminkit/
 │   │   ├── class-chrome.php             Registers every admin/frontend CSS file
 │   │   ├── class-login.php              Registers login.css
 │   │   ├── class-branding.php           Brand logo (admin menu) + WP-admin-bar-logo mode (favicon / hide)
+│   │   ├── class-menu-icons.php         Opt-in native-icon replacement (menu + toolbar), filterable
 │   │   ├── class-profile-account.php    Profile / user-edit screen layout
 │   │   ├── class-post-previews.php      List-table screenshot thumbnails
 │   │   └── class-list-table-chrome.php  List-table toolbar / pagination polish

@@ -163,9 +163,11 @@ What's registered today:
   `theme_toggle_enabled`, `post_previews_enabled`, `post_previews_mshots` — bound
   to existing enqueue filters / providers in `bind_modules()`.
 - **Opt-in toggles** (default OFF): `editor_content_theme` (themes the Gutenberg
-  block-editor canvas) and `bricks_builder_enabled` (restyles the Bricks builder
-  UI, only shown when Bricks is active). They stay off so a third-party / client
-  surface is never altered unasked.
+  block-editor canvas), `bricks_builder_enabled` (restyles the Bricks builder UI,
+  only shown when Bricks is active), and `replace_icons_enabled` (swaps native
+  menu/toolbar dashicons for AdminKit's set — `inc/wp-core/class-menu-icons.php`,
+  filterable via `adminkit/menu_icons` / `adminkit/toolbar_icons`). They stay off
+  so a third-party / client surface is never altered unasked.
 - **Master pause**: `wp_default_ui` — gates *every* context through
   `adminkit/should_load` → `maybe_restore_wp_ui()`, so wp-admin renders 100%
   native while the plugin stays active (only AdminKit's own settings screen keeps

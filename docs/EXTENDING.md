@@ -62,6 +62,22 @@ no-code in Settings → Features → Branding, alongside the `wp_logo` mode that
 swaps the WP admin-bar logo for the site icon (`favicon`, the default), hides it
 (`hide`), or leaves WordPress's own (`default`); `inc/wp-core/class-branding.php`.
 
+## Icons
+
+The "AdminKit icons" feature (`replace_icons_enabled`, opt-in) swaps WordPress's
+native dashicons for a cohesive set. Both maps are filterable — that's how an
+integration ships its plugin's icon, or how you override/remove any entry.
+
+| Hook | Type | Signature | Purpose |
+| --- | --- | --- | --- |
+| `adminkit/menu_icons` | filter | `(array)` | Admin-menu map, **dashicon-class ⇒ SVG markup** (e.g. `'dashicons-admin-post' => '<svg…>'`). Return `''` for a key to skip it. |
+| `adminkit/toolbar_icons` | filter | `(array)` | Admin-bar map, **node-id ⇒ SVG markup** (e.g. `'wp-admin-bar-comments' => '<svg…>'`). |
+
+Keyed by dashicon class / node id so only items still using a stock icon are
+touched — a custom icon (Admin Menu Editor, a plugin's own image) is never
+overridden. The SVG is painted via CSS `mask` + `currentColor` (no `!important`),
+so it inherits the menu/toolbar colour. `inc/wp-core/class-menu-icons.php`.
+
 ## Post previews
 
 All in `inc/wp-core/class-post-previews.php`:
