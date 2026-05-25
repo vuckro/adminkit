@@ -374,7 +374,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$css .= '#bricks-toolbar .logo{background-color:transparent!important;border-radius:6px;overflow:hidden}';
 			$css .= '#bricks-toolbar .logo a{display:block;width:100%;height:100%}';
 			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:100%;height:100%;'
-				. 'box-sizing:border-box;padding:2px;object-fit:contain}';
+				. 'box-sizing:border-box;padding:4px;object-fit:contain;border-radius:5px}';
 		} else {
 			$css .= self::builder_toolbar_letter_css();
 		}
@@ -390,7 +390,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
 			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";display:block;'
-				. 'width:9rem;height:9rem;border-radius:1.25rem;'
+				. 'width:10rem;height:10rem;border-radius:1.5rem;'
 				. 'background:' . self::css_url( $logo ) . ' center/contain no-repeat;'
 				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
 			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.08)}}';
