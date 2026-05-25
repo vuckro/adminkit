@@ -128,9 +128,12 @@ body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head 
 	font-weight: 600;
 }
 
+/* Active item's ICON only → accent. The sole accent cue on the current item:
+   its row background (--ak-elevated) and label (--ak-heading) stay neutral, and
+   hover stays fully neutral too. */
 body.adminkit #adminmenu li.current a.menu-top .wp-menu-image::before,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-menu-image::before {
-	color: var(--ak-heading) !important;
+	color: var(--ak-primary) !important;
 }
 
 /* Sidebar submenu — elevated surface. Inline (expanded sidebar, current
