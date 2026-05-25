@@ -440,7 +440,7 @@ body.adminkit .bricks-admin-wrapper.getting-started .box-wrapper:last-child::aft
 /* ----- 12. Custom Fonts metabox (bricks_fonts edit screen) ----- */
 /* Each font-variant row ships a hardcoded white bg + #ccd0d4 border that don't
    flip; route to the token surface + border. */
-body.adminkit .bricks-font-metabox .bricks-font-variant {
+body.adminkit #bricks-font-metabox .bricks-font-variant {
 	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 }
