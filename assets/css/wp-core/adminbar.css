@@ -228,3 +228,75 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 #wpadminbar #wp-admin-bar-woocommerce-site-visibility-badge a.ab-item {
 	background-color: var(--ak-elevated) !important;
 }
+
+
+/* Admin-bar SEARCH (front-end, far right in #wp-admin-bar-top-secondary). WP's
+   node is `#wp-admin-bar-search` → form-wrapper `#adminbarsearch` → an
+   `input.adminbar-input`; the magnifying glass is a dashicon FONT glyph painted
+   on `#adminbarsearch:before` ("\f179"), NOT an .ab-icon span. WP ships it as a
+   collapsed pill (input width:24px, transparent, no border, pointer cursor) that
+   expands to a hard white box on focus. We turn it into a proper tokenized field
+   that reads on the AdminKit bar in both themes. Rules are harmless if the node
+   is absent (some installs / the command-palette variant don't render it). */
+
+/* The form wrapper sets the field's own footprint so the input can fill it. WP
+   already gives it height:32px; we widen it to a real search affordance. */
+#wpadminbar #adminbarsearch {
+	width: 200px;
+	max-width: 100%;
+}
+
+/* The input. WP styles it through a FOUR-id chain
+   (`#wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary > #wp-admin-bar-search
+   #adminbarsearch input.adminbar-input`, 4,1,0 — and 4,1,1 on :focus) with
+   hardcoded white bg + #000 focus text and a collapse/expand width transition.
+   Mirror that exact chain so we win at equal specificity on load order (AdminKit
+   enqueues after core), then make it a steady, full-width token field: surface
+   bg, token border + radius, token text. Left padding clears the 20px glyph.
+   No collapse — keep it open and legible. !important is avoided; the matched
+   specificity is enough. */
+#wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary > #wp-admin-bar-search #adminbarsearch input.adminbar-input {
+	box-sizing: border-box;
+	width: 100%;
+	height: 24px;
+	padding: 0 8px 0 26px;
+	background-color: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+	cursor: text;
+}
+
+/* Focus: keep the field's footprint (no width jump) and swap WP's #000 text +
+   white bg for a token-driven focused state with a brand border. Matches WP's
+   4,1,1 :focus selector so it overrides the white-box focus styles. */
+#wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary > #wp-admin-bar-search #adminbarsearch input.adminbar-input:focus {
+	width: 100%;
+	background-color: var(--ak-surface);
+	border: 1px solid var(--ak-primary);
+	color: var(--ak-text);
+}
+
+/* Placeholder — muted, both themes (token-driven). */
+#wpadminbar #adminbarsearch input.adminbar-input::placeholder {
+	color: var(--ak-text-muted);
+	opacity: 1;
+}
+
+/* The magnifying-glass glyph. Leave the dashicon font glyph in place, just
+   recolor + nudge it to match the other toolbar icons. WP paints its base color
+   on `#wpadminbar #adminbarsearch:before` (2,0,1) — we match that and win on load
+   order — and recenters it over our 26px text-indent. */
+#wpadminbar #adminbarsearch:before {
+	left: 7px;
+	color: var(--ak-text-muted);
+}
+
+/* Hover / focus glyph color. WP repaints it to #72aee6 via
+   `#wpadminbar li:hover #adminbarsearch:before` and
+   `#wpadminbar li #adminbarsearch.adminbar-focused:before` (both 2,1,1); mirror
+   both at equal specificity so our brand color wins on load order. */
+#wpadminbar li:hover #adminbarsearch:before,
+#wpadminbar li #adminbarsearch.adminbar-focused:before {
+	color: var(--ak-primary);
+}

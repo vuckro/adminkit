@@ -229,11 +229,10 @@ body.adminkit #adminmenu .wp-submenu a:focus {
 	background: var(--ak-elevated) !important;
 }
 
-/* Selected submenu item → ACCENT TEXT. The current submenu link carries the
-   accent purely through its label color (--ak-primary) + bold — no dot, marker or
-   surface repaint (an earlier version had a stray --ak-primary "bille" dot here;
-   removed). This keeps the submenu otherwise neutral: only the one active link
-   reads as accent, so it's the clear "you are here" without a second highlight.
+/* Selected submenu item → ACCENT. The current submenu link reads as a discreet
+   "selected row": accent label (--ak-primary) + bold on a SUBTLE accent tint
+   (--ak-primary-subtle). No dot/marker — the tint + accent text are the single
+   "you are here" cue; the other submenu links stay fully neutral.
    This is the ONLY bold submenu link: non-active links stay normal weight now that
    the parent <li> no longer leaks font-weight into the submenu.
    `!important` on color: WP color-scheme stylesheets paint `.wp-submenu a` /
@@ -243,7 +242,7 @@ body.adminkit #adminmenu .wp-submenu li.current a,
 body.adminkit #adminmenu .wp-submenu li.current a:hover,
 body.adminkit #adminmenu .wp-submenu li.current a:focus {
 	color: var(--ak-primary) !important;
-	background: transparent;
+	background: var(--ak-primary-subtle) !important;
 	font-weight: 600;
 }
 

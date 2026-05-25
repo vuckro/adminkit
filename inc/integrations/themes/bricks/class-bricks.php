@@ -417,7 +417,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			// overridden to transparent so nothing shows behind/around it.
 			$css .= '#bricks-toolbar .logo{background-color:transparent!important;display:flex;align-items:center;justify-content:center}';
 			$css .= '#bricks-toolbar .logo a{display:flex;align-items:center;justify-content:center;width:100%;height:100%}';
-			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:28px;height:28px;'
+			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:32px;height:32px;'
 				. 'box-sizing:border-box;padding:0;object-fit:cover;border-radius:6px}';
 		} else {
 			$css .= self::builder_toolbar_letter_css();
