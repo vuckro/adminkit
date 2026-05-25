@@ -113,8 +113,9 @@ html[data-adminkit-canvas]::-webkit-scrollbar-thumb {
    the two read as a primary/secondary pair. Plain selectors beat Bricks's. */
 .editor-styles-wrapper .bricks-block-editor-notice-wrapper .button {
 	border-radius: var(--ak-radius-s);
-	padding: 6px 14px;
-	line-height: 1.6;
+	padding: 4px 12px;
+	font-size: var(--ak-text-s);
+	line-height: 1.7;
 	text-decoration: none;
 }
 .editor-styles-wrapper .bricks-block-editor-notice-wrapper .button-primary {
@@ -122,12 +123,13 @@ html[data-adminkit-canvas]::-webkit-scrollbar-thumb {
 	border: 1px solid var(--ak-primary);
 	color: var(--ak-on-accent);
 }
-/* Secondary = the SAME button as the primary, just OUTLINED in the brand accent
-   (transparent fill, accent border + label) so the two read as a matched pair. */
+/* Secondary = a NEUTRAL secondary (NOT the brand accent): same size as the primary,
+   surface fill + neutral border + body text — reads like every other AdminKit
+   secondary button, not a yellow outline. */
 .editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:not(.button-primary) {
-	background-color: transparent;
-	border: 1px solid var(--ak-primary);
-	color: var(--ak-primary);
+	background-color: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	color: var(--ak-text);
 }
 /* Never underline the label, in any state (WP underlines link-buttons on hover). */
 .editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:hover,
@@ -136,7 +138,7 @@ html[data-adminkit-canvas]::-webkit-scrollbar-thumb {
 }
 .editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:not(.button-primary):hover,
 .editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:not(.button-primary):focus {
-	background-color: var(--ak-primary-subtle);
-	border-color: var(--ak-primary);
-	color: var(--ak-primary);
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
 }
