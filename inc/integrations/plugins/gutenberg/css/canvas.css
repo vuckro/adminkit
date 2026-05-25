@@ -115,6 +115,7 @@ html[data-adminkit-canvas]::-webkit-scrollbar-thumb {
 	border-radius: var(--ak-radius-s);
 	padding: 6px 14px;
 	line-height: 1.6;
+	text-decoration: none;
 }
 .editor-styles-wrapper .bricks-block-editor-notice-wrapper .button-primary {
 	background-color: var(--ak-primary);
