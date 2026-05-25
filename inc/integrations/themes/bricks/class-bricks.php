@@ -320,35 +320,68 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Build the CSS that brands the builder toolbar.
+	 * Build the CSS that brands the builder toolbar + preloader.
 	 *
-	 * Always a text mark: the first letter of the site title on the accent chip.
-	 * We deliberately do NOT use the favicon or a configured brand logo here — the
-	 * builder toolbar wants one tiny, crisp, theme-coloured glyph (and the
-	 * preloader is just a flat dark splash, handled in builder.css). Returns '' if
-	 * the title has no usable letter, leaving Bricks's own logo in place.
+	 * If a brand logo is configured (Settings → Features → Branding, or the
+	 * adminkit/brand_logo filter) it is used as an IMAGE — the proven approach:
+	 * `content:var(--ak-builder-logo)` swaps the toolbar <img>, and the preloader
+	 * splash uses it as a background. logo_dark is the default (toolbar bg is
+	 * dark); logo_light kicks in in light mode (`body:has(.mode [data-name="sun"])`).
+	 *
+	 * With NO logo configured, fall back to a clean text mark: the first letter of
+	 * the site title on the accent chip (li.logo out-specifies Bricks, display:none
+	 * drops the native <img>, --accent-on keeps the letter legible on the chip).
 	 *
 	 * @return string Inline CSS.
 	 */
 	private static function builder_logo_css() {
-		$name   = wp_strip_all_tags( get_bloginfo( 'name' ) );
-		$letter = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 1 ) : substr( $name, 0, 1 );
-		$letter = preg_replace( '/[^\p{L}\p{N}]/u', '', (string) $letter ); // CSS-safe: letters/digits only
-		$letter = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $letter ) : strtoupper( $letter );
-		if ( '' === $letter ) {
-			return '';
+		$dark    = AdminKit_Settings::brand_logo( 'dark' );
+		$light   = AdminKit_Settings::brand_logo( 'light' );
+		$primary = '' !== $dark ? $dark : $light; // dark-bg variant leads (toolbar + preloader are dark)
+
+		// No configured logo → the first-letter text mark.
+		if ( '' === $primary ) {
+			$name   = wp_strip_all_tags( get_bloginfo( 'name' ) );
+			$letter = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 1 ) : substr( $name, 0, 1 );
+			$letter = preg_replace( '/[^\p{L}\p{N}]/u', '', (string) $letter ); // CSS-safe: letters/digits only
+			$letter = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $letter ) : strtoupper( $letter );
+			if ( '' === $letter ) {
+				return '';
+			}
+			return '#bricks-toolbar li.logo{background-color:var(--accent,#ffd64f);'
+				. 'display:flex;align-items:center;justify-content:center;min-width:34px}'
+				. '#bricks-toolbar li.logo img{display:none}'
+				. '#bricks-toolbar li.logo::after{content:"' . $letter . '";'
+				. 'color:var(--accent-on,#18181b);font-weight:700;font-size:15px;line-height:1}';
 		}
-		// Replace Bricks's native logo (an <img> on a yellow <li class="logo">) with
-		// just the letter. Use `li.logo` (not `.logo`) so we out-specify Bricks's own
-		// rules regardless of stylesheet order; `display:none` drops the <img>
-		// entirely; the letter is centred on the brand chip. The text colour is
-		// `--accent-on` — the provider's on-accent token; `--on-accent` does NOT exist
-		// and would fall back to white, vanishing on the yellow chip (the bug).
-		return '#bricks-toolbar li.logo{background-color:var(--accent,#ffd64f);'
-			. 'display:flex;align-items:center;justify-content:center;min-width:34px}'
-			. '#bricks-toolbar li.logo img{display:none}'
-			. '#bricks-toolbar li.logo::after{content:"' . $letter . '";'
-			. 'color:var(--accent-on,#18181b);font-weight:700;font-size:15px;line-height:1}';
+
+		// Configured logo → image (toolbar swap + preloader splash), light + dark.
+		$css  = '#bricks-toolbar{--ak-builder-logo:' . self::css_url( $primary ) . '}';
+		$css .= '#bricks-toolbar .logo{background-color:var(--accent)}';
+		$css .= '#bricks-toolbar .logo img{content:var(--ak-builder-logo);height:22px;width:auto}';
+		if ( '' !== $light && $light !== $primary ) {
+			$css .= 'body:has(.mode [data-name="sun"]) #bricks-toolbar{--ak-builder-logo:' . self::css_url( $light ) . '}';
+		}
+		// Preloader: the same logo, pulsing on the (fixed dark) splash from builder.css.
+		$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
+		$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
+		$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:15rem;aspect-ratio:1;'
+			. 'background:' . self::css_url( $primary ) . ' center/contain no-repeat;'
+			. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
+		$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
+		return $css;
+	}
+
+	/**
+	 * Wrap a URL for safe use inside a CSS url() (esc_url_raw keeps query-string
+	 * ampersands intact, unlike esc_url which entity-encodes them and breaks CSS).
+	 *
+	 * @param string $url
+	 * @return string url("…") or ''.
+	 */
+	private static function css_url( $url ) {
+		$url = esc_url_raw( (string) $url );
+		return ( '' === $url ) ? '' : 'url("' . $url . '")';
 	}
 
 	/**
