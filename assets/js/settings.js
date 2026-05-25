@@ -210,22 +210,23 @@
 			hero
 		] ) );
 
-		// What's next — a light roadmap teaser so the page hints at the rest of
-		// the SPA. Reuses the row + Soon-pill styles; data comes from D.dashboard.
-		if ( dd.next && dd.next.length ) {
-			var rows = el( 'div', { 'class': 'ak-rows' } );
-			dd.next.forEach( function ( n ) {
-				rows.appendChild( el( 'div', { 'class': 'ak-row' }, [
-					el( 'div', { 'class': 'ak-row__main' }, [
-						el( 'span', { 'class': 'ak-row__label', text: n.label } ),
-						n.hint ? el( 'span', { 'class': 'ak-row__desc', text: n.hint } ) : null
-					] ),
-					el( 'span', { 'class': 'ak-pill ak-pill--soon', text: I.soon } )
-				] ) );
+		// Roadmap — three columns (Planned / Next / In progress), Bricks-style cards.
+		// Data-driven from dd.roadmap (the single source in class-settings-page.php).
+		if ( dd.roadmap && dd.roadmap.length ) {
+			var board = el( 'div', { 'class': 'ak-roadmap' } );
+			dd.roadmap.forEach( function ( col ) {
+				var kids = [ el( 'h3', { 'class': 'ak-roadmap__head', text: col.title } ) ];
+				( col.items || [] ).forEach( function ( it ) {
+					kids.push( el( 'div', { 'class': 'ak-roadmap__card' }, [
+						el( 'span', { 'class': 'ak-roadmap__title', text: it.label } ),
+						it.desc ? el( 'span', { 'class': 'ak-roadmap__desc', text: it.desc } ) : null
+					] ) );
+				} );
+				board.appendChild( el( 'div', { 'class': 'ak-roadmap__col' }, kids ) );
 			} );
 			p.appendChild( el( 'div', { 'class': 'ak-group' }, [
-				dd.nextLabel ? el( 'h2', { 'class': 'ak-group__title', text: dd.nextLabel } ) : null,
-				rows
+				dd.roadmapLabel ? el( 'h2', { 'class': 'ak-group__title', text: dd.roadmapLabel } ) : null,
+				board
 			] ) );
 		}
 

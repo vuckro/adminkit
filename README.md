@@ -217,12 +217,12 @@ That's it — the boot orchestrator picks the folder up automatically on `after_
 
 ## Roadmap
 
-- **Settings UI — colour editing.** The settings page ships today (read-only token map, feature + branding controls, per-integration toggles); per-token colour pickers are a future direction.
-- **Colour sync.** Import / live-sync colours from the active provider or theme (Bricks today; the provider hooks already exist — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)).
-- **More provider adapters.** Oxygen, Breakdance, Elementor, GeneratePress, ACSS / Core Framework — same pattern as Bricks.
-- **Custom dashboard.** Widgets registered via `AdminKit_Dashboard::register_widget()` (the registry exists; widgets land with the WooCommerce / FluentCart integrations).
-- **Theme variants.** Beyond light/dark — sepia, high-contrast.
-- **Per-role visibility.** Show certain admin chrome only to specific roles.
+This mirrors the **in-app roadmap** (Dashboard tab) — the single source lives in
+`AdminKit_Settings_Page::dashboard()`. Keep the two in sync (see [`CLAUDE.md`](CLAUDE.md)).
+
+- **In progress** — branding & admin-bar logo (toolbar logo / favicon, size control, light + dark); the AdminKit icon set (native menu + toolbar icon replacement, growing plugin coverage); Bricks builder polish (toolbar logo, preloader, canvas theming + fallback).
+- **Next** — colour sync from the active provider/theme; custom dashboard widgets; import / export settings; white-label & admin footer.
+- **Planned** — in-app palette editor; more provider adapters (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress); theme variants (sepia, high-contrast); per-role visibility; accessibility / contrast checks.
 
 ---
 

@@ -351,25 +351,48 @@ class AdminKit_Settings_Page {
 		);
 
 		/**
-		 * Filter the AdminKit dashboard overview. Add cards by appending to
-		 * `$data['cards']`, or upcoming items to `$data['next']`.
+		 * Filter the AdminKit dashboard overview. Add overview cards via
+		 * `$data['cards']`, or roadmap items via `$data['roadmap'][N]['items']`.
 		 *
-		 * @param array $data { intro, version, cards[], next[] }
+		 * @param array $data { intro, version, cards[], roadmap[] }
 		 */
 		return apply_filters( 'adminkit/dashboard', array(
 			'intro'         => __( 'A quick overview of your AdminKit setup.', 'adminkit' ),
 			'version'       => 'v' . ADMINKIT_VERSION,
 			'overviewLabel' => __( 'Overview', 'adminkit' ),
-			'nextLabel'     => __( 'What\'s next', 'adminkit' ),
 			'cards'         => $cards,
-			'next'          => array(
-				array( 'label' => __( 'Connect more frameworks', 'adminkit' ), 'hint' => __( 'Automatic.css, Core Framework, Frames, Advanced Themer — beyond Bricks', 'adminkit' ) ),
-				array( 'label' => __( 'Custom dashboard widgets', 'adminkit' ), 'hint' => __( 'Replace the WP home screen: quick actions, site status, recent activity, agency contact', 'adminkit' ) ),
-				array( 'label' => __( 'Brand logo & white-label', 'adminkit' ), 'hint' => __( 'Your logo on login, admin bar and footer; hide WordPress branding', 'adminkit' ) ),
-				array( 'label' => __( 'Dark-mode behaviour', 'adminkit' ),      'hint' => __( 'Default mode: auto, light, dark or follow the system', 'adminkit' ) ),
-				array( 'label' => __( 'Import / export settings', 'adminkit' ), 'hint' => __( 'Clone an AdminKit setup across client sites in one file', 'adminkit' ) ),
-				array( 'label' => __( 'Roles & access', 'adminkit' ),           'hint' => __( 'Choose which roles get the skin and who may edit it', 'adminkit' ) ),
-				array( 'label' => __( 'Contrast & accessibility checks', 'adminkit' ), 'hint' => __( 'Warn when a chosen colour fails legibility', 'adminkit' ) ),
+			'roadmapLabel'  => __( 'Roadmap', 'adminkit' ),
+			// AdminKit's roadmap — THE single source. Keep it coherent with what's
+			// actually being built, and mirror it in README.md's Roadmap section when
+			// it changes (see CLAUDE.md → "Keep the docs alive").
+			'roadmap'       => array(
+				array(
+					'title' => __( 'Planned', 'adminkit' ),
+					'items' => array(
+						array( 'label' => __( 'In-app palette editor', 'adminkit' ), 'desc' => __( 'Pick accent, surface and text colours directly — the token map is read-only today.', 'adminkit' ) ),
+						array( 'label' => __( 'More provider adapters', 'adminkit' ), 'desc' => __( 'Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress — beyond Bricks.', 'adminkit' ) ),
+						array( 'label' => __( 'Theme variants', 'adminkit' ), 'desc' => __( 'Beyond light and dark — sepia, high-contrast.', 'adminkit' ) ),
+						array( 'label' => __( 'Per-role visibility', 'adminkit' ), 'desc' => __( 'Choose which roles get the skin and who may edit it.', 'adminkit' ) ),
+						array( 'label' => __( 'Accessibility checks', 'adminkit' ), 'desc' => __( 'Warn when a chosen colour fails contrast / legibility.', 'adminkit' ) ),
+					),
+				),
+				array(
+					'title' => __( 'Next', 'adminkit' ),
+					'items' => array(
+						array( 'label' => __( 'Colour sync', 'adminkit' ), 'desc' => __( 'Pull colours from the active provider or theme and keep them in sync.', 'adminkit' ) ),
+						array( 'label' => __( 'Custom dashboard widgets', 'adminkit' ), 'desc' => __( 'Replace the WP home screen: quick actions, site status, recent activity.', 'adminkit' ) ),
+						array( 'label' => __( 'Import / export settings', 'adminkit' ), 'desc' => __( 'Clone an AdminKit setup across client sites in one file.', 'adminkit' ) ),
+						array( 'label' => __( 'White-label & admin footer', 'adminkit' ), 'desc' => __( 'Hide WordPress branding everywhere and add an agency credit.', 'adminkit' ) ),
+					),
+				),
+				array(
+					'title' => __( 'In progress', 'adminkit' ),
+					'items' => array(
+						array( 'label' => __( 'Branding & admin-bar logo', 'adminkit' ), 'desc' => __( 'Brand logo / favicon in the toolbar, size control, light + dark.', 'adminkit' ) ),
+						array( 'label' => __( 'AdminKit icon set', 'adminkit' ), 'desc' => __( 'Replace native menu + toolbar icons; growing plugin coverage.', 'adminkit' ) ),
+						array( 'label' => __( 'Bricks builder polish', 'adminkit' ), 'desc' => __( 'Toolbar logo, preloader, canvas theming + colour fallback.', 'adminkit' ) ),
+					),
+				),
 			),
 		) );
 	}

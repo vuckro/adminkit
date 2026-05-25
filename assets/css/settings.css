@@ -399,6 +399,34 @@
 .adminkit-app .ak-hero__sub { font-size: var(--ak-text-xs); color: var(--ak-text-muted); }
 .adminkit-app .ak-dash__ver { margin: 18px 0 0; font-size: var(--ak-text-xs); color: var(--ak-text-muted); }
 
+/* Roadmap board — three columns of cards (Planned / Next / In progress) ---- */
+.adminkit-app .ak-roadmap {
+	display: grid;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	gap: 16px;
+	align-items: start;
+}
+.adminkit-app .ak-roadmap__col { display: flex; flex-direction: column; gap: 10px; }
+.adminkit-app .ak-roadmap__head {
+	margin: 0 0 2px;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-roadmap__card {
+	padding: 12px 14px;
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+}
+.adminkit-app .ak-roadmap__title { display: block; font-weight: 600; font-size: var(--ak-text-s); color: var(--ak-heading); }
+.adminkit-app .ak-roadmap__desc { display: block; margin-top: 4px; font-size: var(--ak-text-xs); line-height: 1.5; color: var(--ak-text-muted); }
+@media screen and ( max-width: 782px ) {
+	.adminkit-app .ak-roadmap { grid-template-columns: 1fr; }
+}
+
 /* "Coming soon" pill (dashboard roadmap rows) ---------------------------- */
 .adminkit-app .ak-pill--soon { background: var(--ak-elevated); color: var(--ak-text-muted); }
 
