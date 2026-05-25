@@ -48,6 +48,61 @@
 	object-fit: none; /* hide the browser's broken-image glyph */
 }
 
+/* ── Click to refresh (live mShots screenshots only) ───────────────────────
+   A live screenshot can be re-captured on demand: clicking the thumbnail
+   rotates the mShots cache key (post-previews.js). Surface that with a small
+   refresh chip on hover and a spinner while the fresh capture loads. Featured-
+   image previews carry no `--shot` class, so they keep the plain hover-zoom. */
+.adminkit .ak-preview__thumb { transition: opacity .15s ease, border-color .2s ease; }
+.adminkit .ak-preview--shot {
+	position: relative;
+	cursor: pointer;
+}
+.adminkit .ak-preview--shot::after {
+	content: "";
+	position: absolute;
+	top: 3px;
+	right: 3px;
+	width: 17px;
+	height: 17px;
+	border-radius: var(--ak-radius-s);
+	background:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='23 4 23 10 17 10'/%3E%3Cpolyline points='1 20 1 14 7 14'/%3E%3Cpath d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15'/%3E%3C/svg%3E") center / 11px 11px no-repeat,
+		var(--ak-overlay);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity .12s ease;
+}
+.adminkit .ak-preview--shot:hover::after { opacity: 1; }
+
+/* Busy state — dim the thumb, hide the hint chip, spin a ring over it. */
+.adminkit .ak-preview--refreshing { cursor: progress; }
+.adminkit .ak-preview--refreshing::after { opacity: 0; }
+.adminkit .ak-preview--refreshing .ak-preview__thumb { opacity: .4; }
+.adminkit .ak-preview--refreshing::before {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 16px;
+	height: 16px;
+	margin: -8px 0 0 -8px;
+	border: 2px solid var(--ak-border-strong);
+	border-top-color: var(--ak-primary);
+	border-radius: 50%;
+	animation: ak-preview-spin .7s linear infinite;
+	pointer-events: none;
+}
+@keyframes ak-preview-spin { to { transform: rotate(360deg); } }
+
+/* Brief confirmation — the fresh capture loaded. */
+.adminkit .ak-preview--refreshed .ak-preview__thumb { border-color: var(--ak-primary); }
+
+@media (prefers-reduced-motion: reduce) {
+	.adminkit .ak-preview--refreshing::before { animation: none; }
+	.adminkit .ak-preview__thumb { transition: none; }
+}
+
 /* ── Hover preview panel (appended to <body>) ──────────────────────────── */
 .adminkit #ak-preview-pop {
 	position: fixed;

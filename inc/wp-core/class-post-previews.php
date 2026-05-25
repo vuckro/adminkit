@@ -241,12 +241,24 @@ class AdminKit_Post_Previews {
 			return '<span class="ak-preview ak-preview--empty" aria-hidden="true"></span>';
 		}
 
+		// Only a live mShots screenshot can be re-captured on demand — a featured
+		// image is the post's own media, nothing to refresh. Tag those cells so the
+		// CSS shows the refresh affordance and the JS wires the click (see
+		// post-previews.js → it rotates the `v` cache key to force a fresh capture).
+		$is_shot = ( $permalink && 'mshots' === $provider );
+		$class   = 'ak-preview' . ( $is_shot ? ' ak-preview--shot' : '' );
+		$title   = $is_shot
+			? ' title="' . esc_attr__( 'Click to refresh this screenshot', 'adminkit' ) . '"'
+			: '';
+
 		return sprintf(
-			'<span class="ak-preview" data-ak-full="%1$s">'
-				. '<img class="ak-preview__thumb" src="%2$s" '
+			'<span class="%1$s" data-ak-full="%2$s"%3$s>'
+				. '<img class="ak-preview__thumb" src="%4$s" '
 				. 'width="56" height="42" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="" />'
 				. '</span>',
+			esc_attr( $class ),
 			esc_url( $full ),
+			$title, // already escaped via esc_attr__ above
 			esc_url( $thumb )
 		);
 	}

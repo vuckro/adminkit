@@ -81,6 +81,55 @@
 		return !!span && !span.classList.contains('ak-preview--empty');
 	}
 
+	// ── Click to refresh ──────────────────────────────────────────────────────
+	// Only a live mShots screenshot (`.ak-preview--shot`, set in PHP) can be
+	// re-captured. Clicking the thumbnail rotates the `v` cache key so mShots
+	// renders a fresh shot instead of serving the cached one. The first response
+	// can briefly be mShots' own "generating" placeholder until the new capture
+	// lands — clicking again requests another fresh one.
+	function bustShot(url) {
+		try {
+			var u = new URL(url, window.location.href);
+			u.searchParams.set('v', String(Date.now()));
+			return u.toString();
+		} catch (e) { return url; }
+	}
+
+	function refresh(span) {
+		var img = span.querySelector('.ak-preview__thumb');
+		if (!img || span.classList.contains('ak-preview--refreshing')) { return; }
+		span.classList.remove('ak-preview--broken', 'ak-preview--refreshed');
+		span.classList.add('ak-preview--refreshing');
+
+		// Rotate the larger hover-panel URL too, so an open panel reloads fresh.
+		var full = span.getAttribute('data-ak-full');
+		if (full) { span.setAttribute('data-ak-full', bustShot(full)); }
+
+		var cleanup = function () {
+			img.removeEventListener('load', onLoad);
+			img.removeEventListener('error', onErr);
+			span.classList.remove('ak-preview--refreshing');
+		};
+		var onLoad = function () {
+			cleanup();
+			span.classList.add('ak-preview--refreshed');
+			window.setTimeout(function () { span.classList.remove('ak-preview--refreshed'); }, 1500);
+		};
+		var onErr = cleanup; // the thumb's own error handler flags it broken
+		img.addEventListener('load', onLoad);
+		img.addEventListener('error', onErr);
+		img.src = bustShot(img.src);
+
+		if (current === span) { show(span); } // keep an open panel in sync
+	}
+
+	document.addEventListener('click', function (e) {
+		var span = e.target.closest ? e.target.closest('.ak-preview--shot') : null;
+		if (!span) { return; }
+		e.preventDefault();
+		refresh(span);
+	});
+
 	document.addEventListener('mouseover', function (e) {
 		var span = e.target.closest ? e.target.closest('.ak-preview') : null;
 		if (span && span !== current && previewable(span)) { show(span); }

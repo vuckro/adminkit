@@ -791,6 +791,10 @@ msgstr "Cela définit un avatar généré et remplace tout Gravatar pour ce comp
 msgid "Preview"
 msgstr "Aperçu"
 
+#: inc/wp-core/class-post-previews.php:251
+msgid "Click to refresh this screenshot"
+msgstr "Cliquer pour rafraîchir cette capture d’écran"
+
 #: inc/wp-core/class-post-previews.php:361
 msgid "Loading preview…"
 msgstr "Chargement de l’aperçu…"

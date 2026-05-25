@@ -787,6 +787,10 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
+#: inc/wp-core/class-post-previews.php:251
+msgid "Click to refresh this screenshot"
+msgstr ""
+
 #: inc/wp-core/class-post-previews.php:361
 msgid "Loading preview…"
 msgstr ""
