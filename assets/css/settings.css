@@ -176,6 +176,9 @@
 /* Nested feature (e.g. mShots under Post previews): indented; muted + locked
    when its parent is off. */
 .adminkit-app .ak-row--child { padding-left: 34px; }
+/* Dimmed when switched off (is-off — switch stays clickable to re-enable) or
+   locked (is-disabled — a child whose parent is off; switch disabled below). */
+.adminkit-app .ak-row.is-off,
 .adminkit-app .ak-row.is-disabled { opacity: .5; }
 .adminkit-app .ak-row.is-disabled .ak-switch { pointer-events: none; }
 .adminkit-app .ak-row__main {

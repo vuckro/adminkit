@@ -304,13 +304,19 @@
 			return byGroup[ label ].rows;
 		}
 
-		// A child feature (e.g. mShots under Post previews) is only meaningful
-		// while its parent is on; disable + mute it otherwise.
-		function applyDep( f ) {
-			if ( ! f.parent || ! refs[ f.key ] ) { return; }
-			var on = !! state.features[ f.parent ];
-			refs[ f.key ].input.disabled = ! on;
-			refs[ f.key ].row.classList.toggle( 'is-disabled', ! on );
+		// Reflect a feature's state on its row: dim it ("is-off") when switched off
+		// — the switch stays clickable so it can be turned back on — and, for a
+		// child (e.g. mShots under Post previews), lock + dim it ("is-disabled")
+		// while its parent is off.
+		function refreshRow( f ) {
+			var r = refs[ f.key ];
+			if ( ! r ) { return; }
+			r.row.classList.toggle( 'is-off', ! state.features[ f.key ] );
+			if ( f.parent ) {
+				var parentOn = !! state.features[ f.parent ];
+				r.input.disabled = ! parentOn;
+				r.row.classList.toggle( 'is-disabled', ! parentOn );
+			}
 		}
 
 		// Flip every feature at once (the "enable / disable all" controls).
@@ -319,7 +325,7 @@
 				state.features[ f.key ] = on;
 				if ( refs[ f.key ] ) { refs[ f.key ].input.checked = on; }
 			} );
-			( D.features || [] ).forEach( applyDep );
+			( D.features || [] ).forEach( refreshRow );
 			markDirty();
 		}
 
@@ -328,7 +334,7 @@
 			input.checked = !! state.features[ f.key ];
 			input.addEventListener( 'change', function () {
 				state.features[ f.key ] = input.checked;
-				( D.features || [] ).forEach( function ( c ) { if ( c.parent === f.key ) { applyDep( c ); } } );
+				( D.features || [] ).forEach( refreshRow );
 				markDirty();
 			} );
 			var row = el( 'div', { 'class': 'ak-row' + ( f.parent ? ' ak-row--child' : '' ) }, [
@@ -346,7 +352,7 @@
 			rowsFor( f.group || '' ).appendChild( row );
 		} );
 
-		( D.features || [] ).forEach( applyDep ); // initial dependency state
+		( D.features || [] ).forEach( refreshRow ); // initial dim + dependency state
 
 		// Bulk controls — flip every feature on/off in one click (reuses the
 		// header's flex row + secondary buttons; no new layout CSS).
