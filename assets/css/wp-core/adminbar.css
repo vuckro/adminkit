@@ -128,6 +128,20 @@
 	border-radius: var(--ak-radius-m);
 }
 
+/* Toolbar account avatar — a touch bigger than WP's 16px so the user's face
+   reads at a glance, while still clearing the 32px bar. WP sizes it via
+   `#wpadminbar #wp-admin-bar-my-account.with-avatar > a img` (2,3,0) with a
+   `-4px` top margin tuned to 16px; mirror that chain at equal specificity (we
+   load after core) and re-tune the top margin so the taller chip stays
+   centred. Width auto keeps any non-square avatar's ratio. Theme-agnostic
+   (pure geometry) — the radius above already covers both modes. */
+#wpadminbar #wp-admin-bar-my-account.with-avatar > .ab-empty-item img,
+#wpadminbar #wp-admin-bar-my-account.with-avatar > a img {
+	width: auto;
+	height: 20px;
+	margin-top: -6px;
+}
+
 #wp-admin-bar-user-info .display-name {
 	color: var(--ak-heading) !important;
 	font-weight: 600;

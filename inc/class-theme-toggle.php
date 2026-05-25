@@ -41,14 +41,10 @@ class AdminKit_Theme_Toggle {
 		add_action( 'admin_bar_menu', array( __CLASS__, 'register_node' ), 999 );
 		add_action( 'admin_bar_menu', array( __CLASS__, 'register_view_site_node' ), 998 );
 
-		// Login-screen branding (site-icon logo + its link/text) is part of the
-		// "Login screen" feature, so it follows that toggle — with it off, AdminKit
-		// leaves wp-login.php entirely WP-default (no stylesheet, no logo override).
-		if ( AdminKit_Settings::get( 'module_login_enabled' ) ) {
-			add_action( 'login_head', array( __CLASS__, 'print_login_logo_style' ) );
-			add_filter( 'login_headerurl', static function () { return home_url( '/' ); } );
-			add_filter( 'login_headertext', static function () { return get_bloginfo( 'name' ); } );
-		}
+		// Login-screen branding (logo + its link/text) and the login light/dark
+		// switch live in AdminKit_Core_Login (the wp-login owner). This class still
+		// prints the pre-paint bootstrap on login_head above so the theme attribute
+		// is set before first paint there too.
 
 		// Carry dark mode into the classic editor's content iframe (a separate
 		// document the page CSS can't reach).
@@ -193,23 +189,6 @@ class AdminKit_Theme_Toggle {
 			'href'   => $in_admin ? home_url( '/' ) : admin_url(),
 			'meta'   => $meta,
 		) );
-	}
-
-	/**
-	 * Use the WP site icon (favicon) as the login logo. Falls back
-	 * silently to WP's default WordPress logo if no site icon is set.
-	 *
-	 * @return void
-	 */
-	public static function print_login_logo_style() {
-		$icon = get_site_icon_url( 200 );
-		if ( ! $icon ) {
-			return;
-		}
-		printf(
-			'<style id="adminkit-login-logo">#login h1 a{background-image:url(%s) !important}</style>',
-			esc_url( $icon )
-		);
 	}
 
 	/**

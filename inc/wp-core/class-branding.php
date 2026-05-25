@@ -106,15 +106,19 @@ class AdminKit_Core_Branding {
 	}
 
 	/**
-	 * Brand logo in the admin-bar wp-logo slot — a BORDERED rounded chip, fixed at
-	 * 28px square (bigger than the favicon to read as the primary mark). With its
-	 * 1px border that's 30px tall, so it sits with a ~1px gap in the 32px bar and
-	 * NEVER overflows. The logo is painted `center/cover`. Light variant by
-	 * default; dark variant under the dark flag. '' when no logo is set.
+	 * Brand logo in the admin-bar wp-logo slot — a RECTANGULAR wordmark: fixed at
+	 * 24px tall, width auto (so a wide wordmark keeps its aspect ratio and is NEVER
+	 * cropped), centred vertically in the 32px bar with a small rounding. Unlike the
+	 * favicon chip this is borderless and uncropped — the logo IS the mark, so it
+	 * must read in full. Light variant by default; dark variant under the dark flag.
+	 * '' when no logo is set.
 	 *
-	 * Painted as a BACKGROUND, not `content:url()`: a pseudo-element's content image
-	 * does not resize reliably (it rendered at full intrinsic size — the "too big"
-	 * bug), whereas a sized background box always fits.
+	 * Painted with `content:url()` (NOT a background): a content image is a REPLACED
+	 * element, so `height:24px;width:auto` scales it to the bar height while keeping
+	 * its intrinsic aspect ratio — exactly the auto-width behaviour a wordmark needs.
+	 * `object-fit:contain` + a `max-width` cap guard against an oversized source ever
+	 * overflowing. (The favicon case stays a background box: it's a fixed SQUARE, so
+	 * it has no aspect ratio to preserve and `cover` is the right fit there.)
 	 *
 	 * @return string
 	 */
@@ -136,14 +140,16 @@ class AdminKit_Core_Branding {
 		// overflow the bar.
 		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon.ab-icon';
 		// Neutralise WP core's padding/margin-right on this .ab-icon and FLEX-CENTRE
-		// a 28px bordered rounded chip in the 32px bar — no margin maths, no overflow.
+		// the wordmark in the 32px bar — no margin maths, no overflow.
 		return $sel . '{display:flex;align-items:center;justify-content:center;width:auto;height:32px;padding:0;margin-right:0}'
-			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:28px;height:28px;margin:0;top:0;'
-			. 'transform:translateY(-3px);'
-			. 'border:1px solid var(--ak-border);'
-			. 'border-radius:var(--ak-radius-m,8px);'
-			. 'background:' . $light . ' center/cover no-repeat}'
-			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{background-image:' . $dark . '}'
+			// content:url() makes ::before a replaced element so height:24px / width:auto
+			// scales the wordmark by its own ratio (uncropped); object-fit:contain +
+			// max-width are belt-and-braces against an oversized source.
+			. $sel . '::before{content:' . $light . ';display:block;box-sizing:border-box;'
+			. 'width:auto;height:24px;max-width:180px;margin:0;top:0;'
+			. 'object-fit:contain;object-position:center;'
+			. 'border-radius:var(--ak-radius-s,6px)}'
+			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{content:' . $dark . '}'
 			. self::hide_site_name_glyph();
 	}
 

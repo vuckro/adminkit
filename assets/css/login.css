@@ -12,9 +12,12 @@ body.login.adminkit {
 	padding-top: 64px;
 }
 
-/* Logo — the URL is injected by PHP from the WP site icon (favicon).
-   If no site icon is set, falls back to the default WP logo. The radius softens
-   the favicon's hard square corners (the background is clipped to it). */
+/* Logo — the URL is injected by PHP (AdminKit_Core_Login::print_login_logo_style)
+   from the brand logo or the site icon, following the `wp_logo` setting; the dark
+   variant swaps under the theme flag. `contain` fits a wide wordmark uncropped just
+   as well as a square favicon; the tokenised radius softens a square favicon's hard
+   corners (the background is clipped to it) and is a harmless no-op on a wordmark
+   that doesn't reach its edges. */
 #login h1,
 #login h1 a {
 	background-position: center center;
@@ -24,6 +27,57 @@ body.login.adminkit {
 	height: 72px;
 	margin-bottom: 16px;
 	border-radius: var(--ak-radius-m, 8px);
+}
+
+/* Light / dark switch (AdminKit_Core_Login::print_theme_toggle) — a flat, bordered
+   icon button centred below the form, matching AdminKit's secondary-button chrome.
+   Shown only when the dark-mode feature is on; persistence is shared with the rest
+   of the plugin (data-adminkit-theme + the adminkit-theme storage key). */
+.ak-login-theme-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	margin: 4px auto 0;
+	padding: 0;
+	background: var(--ak-btn-bg);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-full);
+	color: var(--ak-text);
+	cursor: pointer;
+	transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.ak-login-theme-toggle:hover {
+	background: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
+	color: var(--ak-heading);
+}
+
+.ak-login-theme-toggle:focus-visible {
+	outline: none;
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+}
+
+.ak-login-theme-icon {
+	display: block;
+	width: 18px;
+	height: 18px;
+}
+
+/* Show the glyph matching the current theme: sun in light, moon in dark. */
+.ak-login-theme-toggle .ak-theme-dark {
+	display: none;
+}
+
+:root[data-adminkit-theme="dark"] .ak-login-theme-toggle .ak-theme-light {
+	display: none;
+}
+
+:root[data-adminkit-theme="dark"] .ak-login-theme-toggle .ak-theme-dark {
+	display: block;
 }
 
 /* Form card — flat, no shadow */
