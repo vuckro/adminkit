@@ -129,6 +129,47 @@ detection retries on DOM mutations and, once found, runs a one-shot brand pass.
 | `[data-ak-no-auto]` (attribute) | opt an element + its subtree out |
 | `adminkit/should_load` (filter) | the global AdminKit veto (per context) |
 
+## Calibration — getting smarter as adapters grow
+
+The runtime classifier mirrors `ak_classify()`, the logic behind every hand-tuned
+adapter. So the adapters and the generic engine share one brain — and we keep that
+brain learning with a feedback loop driven by `dev/auto-theme-calibrate.php`.
+
+Every adapter captures the real colours of its host plugin in `baseline.json`
+(`php dev/adapter-drift.php --slug=<slug> --host=<path> --update`). The calibrate
+tool turns **all** those baselines into one corpus of real-world colours and
+re-runs the classifier over it, reporting three things:
+
+- **Drift** — colours the classifier now maps to a *different* token than the
+  baseline captured. Each is a signal: confirm it's an improvement (then re-capture
+  the baseline), or a regression (then fix the band).
+- **Band-edge colours** — real colours sitting within a hair of a threshold (the
+  ones a small band tweak would move). These are the highest-value review targets.
+- **Token distribution** — how the whole corpus maps, to sanity-check the balance.
+
+```
+php dev/auto-theme-calibrate.php          # full report
+php dev/auto-theme-calibrate.php --drift  # only colours that changed class
+php dev/auto-theme-calibrate.php --check  # exit 1 if any baseline drifted (CI gate)
+```
+
+**The loop when you add or update an adapter:**
+
+1. `php dev/adapter-drift.php --slug=<slug> --host=<path> --update` — capture its colours.
+2. `php dev/auto-theme-calibrate.php` — review how the classifier maps them.
+3. Mis-mapped? Tune the bands in **`dev/css-scan.php` `ak_classify()`** AND mirror
+   them in **`assets/js/wp-core/auto-theme.js` `classify()`** (the two must stay in
+   lock-step — the tool's footer reminds you), then re-run until the corpus reads
+   right.
+
+So each integration we ship makes the generic detector measurably better on real
+plugin colours — without writing a connector for every plugin.
+
+> Note: a plugin's *brand* colour can read as a generic hue here (e.g. a brand
+> blue classifies as `--ak-info`). That's expected — the runtime **brand vote**
+> (from the host's buttons) resolves brand→`--ak-primary` at runtime; the static
+> classifier handles neutral surfaces/text/borders.
+
 ## Known limits
 
 - **Dark mode only** by design (a light plugin panel on AdminKit light is fine).
