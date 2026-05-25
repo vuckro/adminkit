@@ -228,6 +228,17 @@ class AdminKit_Settings {
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
+		// Local avatars — OFF by default (opt-in). Lets users set a profile picture
+		// (a Media Library image) that replaces Gravatar. Read by
+		// AdminKit_Local_Avatars; non-destructive — with nothing set, Gravatar
+		// behaviour is 100% unchanged.
+		self::register( 'local_avatars_enabled', array(
+			'type'     => 'toggle',
+			'group'    => 'features',
+			'default'  => false,
+			'sanitize' => 'rest_sanitize_boolean',
+		) );
+
 		// WordPress default UI — OFF by default. A master "pause" switch: when ON,
 		// AdminKit ships ZERO styling (admin, login, frontend bar, editor, Bricks
 		// builder) so wp-admin looks 100% native — the plugin and every feature stay

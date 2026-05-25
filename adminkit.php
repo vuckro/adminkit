@@ -34,6 +34,7 @@ require_once ADMINKIT_PATH . 'inc/wp-core/class-login.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-branding.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-menu-icons.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-profile-account.php';
+require_once ADMINKIT_PATH . 'inc/wp-core/class-local-avatars.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-list-table-chrome.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-post-previews.php';
 

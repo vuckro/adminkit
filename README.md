@@ -13,6 +13,7 @@ A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone �
 - Exposes its design as **CSS custom properties** (`--ak-*`) that any other admin-side stylesheet can consume.
 - **Doesn't require any builder.** A site with no theme provider lands on neutral fallbacks. A site with Bricks gets its brand colors automatically.
 - Loads CSS **conditionally per screen** — the themes page CSS doesn't run on the dashboard, plugin-editor CSS doesn't run on profile, etc.
+- Optional **local avatars** (off by default) — let users set a profile picture that replaces Gravatar; leave it unset and Gravatar behaves exactly as before.
 
 ---
 
@@ -162,6 +163,7 @@ adminkit/
 │   │   ├── class-branding.php           Admin-bar logo: brand logo / favicon / hide (wp_logo)
 │   │   ├── class-menu-icons.php         Opt-in native-icon replacement (menu + toolbar), filterable
 │   │   ├── class-profile-account.php    Profile / user-edit screen layout
+│   │   ├── class-local-avatars.php      Opt-in per-user avatar image that replaces Gravatar
 │   │   ├── class-post-previews.php      List-table screenshot thumbnails
 │   │   └── class-list-table-chrome.php  List-table toolbar / pagination polish
 │   └── integrations/                    Host adapters — auto-discovered, drop a folder
@@ -185,7 +187,7 @@ adminkit/
     │   └── login.css                    wp-login.php
     └── js/
         ├── settings.js                  Settings SPA
-        └── wp-core/                     Footer behaviour bricks (profile, previews, list-table)
+        └── wp-core/                     Footer behaviour bricks (profile, avatars, previews, list-table)
 ```
 
 Each integration folder may also carry `css/` and a `baseline.json` (its host CSS

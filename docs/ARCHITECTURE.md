@@ -86,7 +86,7 @@ assets/
 │   └── settings.css               # AdminKit settings page
 └── js/
     ├── settings.js                # settings SPA
-    └── wp-core/                   # footer bricks: profile-account, post-previews, list-table-chrome
+    └── wp-core/                   # footer bricks: profile-account, local-avatars, post-previews, list-table-chrome
 inc/integrations/{plugins|themes}/{slug}/css/   # integration CSS, registered by each class
 ```
 
@@ -165,10 +165,14 @@ What's registered today:
   to existing enqueue filters / providers in `bind_modules()`.
 - **Opt-in toggles** (default OFF): `editor_content_theme` (themes the Gutenberg
   block-editor canvas), `bricks_builder_enabled` (restyles the Bricks builder UI,
-  only shown when Bricks is active), and `replace_icons_enabled` (swaps native
+  only shown when Bricks is active), `replace_icons_enabled` (swaps native
   menu/toolbar dashicons for AdminKit's set — `inc/wp-core/class-menu-icons.php`,
-  filterable via `adminkit/menu_icons` / `adminkit/toolbar_icons`). They stay off
-  so a third-party / client surface is never altered unasked.
+  filterable via `adminkit/menu_icons` / `adminkit/toolbar_icons`), and
+  `local_avatars_enabled` (a per-user profile picture that replaces Gravatar —
+  `inc/wp-core/class-local-avatars.php`, stored in the `adminkit_local_avatar`
+  user meta, served via `pre_get_avatar_data`; non-destructive — Gravatar is
+  untouched until an avatar is set). They stay off so a third-party / client
+  surface is never altered unasked.
 - **Master pause**: `wp_default_ui` — gates *every* context through
   `adminkit/should_load` → `maybe_restore_wp_ui()`, so wp-admin renders 100%
   native while the plugin stays active (only AdminKit's own settings screen keeps
