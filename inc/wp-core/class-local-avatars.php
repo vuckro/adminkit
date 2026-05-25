@@ -17,7 +17,16 @@
  *   - The avatar is a Media Library attachment id stored in user meta
  *     (`adminkit_local_avatar`). If that attachment is later deleted, the meta is
  *     cleared (`delete_attachment`) and, defensively, an id that no longer
- *     resolves to an image is treated as "no avatar" at read time.
+ *     resolves to an image is treated as "no avatar" at read time. Deleting the
+ *     USER deletes the attachment they own too (`delete_user`/`wpmu_delete_user`),
+ *     so the Media Library is never left with an orphan.
+ *
+ * Generated avatars (opt-in, `generated_avatars_enabled`, only meaningful with
+ * local avatars on): when a user has no uploaded avatar, AdminKit hands WordPress
+ * a friendly auto-generated avatar (DiceBear's hosted, key-less HTTP API) as the
+ * Gravatar `d=` *default* — so a real Gravatar still wins and only a missing one
+ * falls back to the generated image. The seed is NON-PII (md5 of the login); the
+ * style + final URL are filterable. Off = Gravatar's own default, byte-identical.
  *
  * The profile field renders on show_user_profile / edit_user_profile and saves on
  * personal_options_update / edit_user_profile_update, guarded by a dedicated
@@ -70,16 +79,29 @@ class AdminKit_Local_Avatars {
 		// no profile is left referencing a dead id.
 		add_action( 'delete_attachment', array( __CLASS__, 'on_delete_attachment' ) );
 
+		// When a user is deleted, delete the avatar attachment they own so the
+		// Media Library isn't left with an orphan. Fires BEFORE deletion, while the
+		// user meta is still readable. wpmu_delete_user mirrors it on multisite.
+		add_action( 'delete_user', array( __CLASS__, 'on_delete_user' ) );
+		add_action( 'wpmu_delete_user', array( __CLASS__, 'on_delete_user' ) );
+
 		// Media picker on the profile / user-edit screens.
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 	}
 
 	/**
-	 * Supply a local avatar's URL to WordPress's avatar pipeline, when one is set.
+	 * Feed WordPress's avatar pipeline. Two non-destructive behaviours:
 	 *
-	 * Non-destructive contract: returns $args UNCHANGED unless the resolved user
-	 * has a usable local avatar — so with nothing set (or `force_default` asked),
-	 * core proceeds to Gravatar / the default exactly as it would without us.
+	 *   1. A user with an uploaded local avatar gets its URL set directly (core
+	 *      short-circuits to it, skipping Gravatar).
+	 *   2. With `generated_avatars_enabled` on, a user with NO local avatar gets a
+	 *      friendly generated avatar passed only as the Gravatar `d=` *default* —
+	 *      $args['url'] is left unset, so a real Gravatar still wins and only a
+	 *      missing one falls back to the generated image.
+	 *
+	 * Otherwise $args is returned UNCHANGED (nothing set, `force_default` asked, or
+	 * the generated-avatars toggle off) — core proceeds to Gravatar / its own
+	 * default exactly as it would without us.
 	 *
 	 * @param array $args        get_avatar_data() args (size, url, found_avatar, …).
 	 * @param mixed $id_or_email User id, email, WP_User, WP_Post or WP_Comment.
@@ -97,14 +119,86 @@ class AdminKit_Local_Avatars {
 		}
 
 		$size = isset( $args['size'] ) ? (int) $args['size'] : 96;
-		$url  = self::get_local_avatar_url( $user_id, $size );
-		if ( '' === $url ) {
+
+		// 1) An uploaded local avatar always wins — set the URL directly so core
+		//    short-circuits straight to it (Gravatar is skipped entirely).
+		$url = self::get_local_avatar_url( $user_id, $size );
+		if ( '' !== $url ) {
+			$args['url']          = $url;
+			$args['found_avatar'] = true;
 			return $args;
 		}
 
-		$args['url']          = $url;
-		$args['found_avatar'] = true;
+		// 2) No local avatar: optionally hand WordPress a generated avatar as the
+		//    Gravatar `d=` *default*. We deliberately leave $args['url'] UNSET so
+		//    core still builds the Gravatar URL — a real Gravatar therefore wins,
+		//    and only a missing one redirects to our generated image. With the
+		//    setting off, $args is returned untouched → Gravatar's own default.
+		if ( AdminKit_Settings::get( 'generated_avatars_enabled' ) ) {
+			$args['default'] = self::get_generated_avatar_url( $user_id, $size );
+		}
+
 		return $args;
+	}
+
+	/**
+	 * Build a deterministic, friendly auto-generated avatar URL for a user, used
+	 * as the Gravatar `d=` fallback when the user has neither a local avatar nor a
+	 * real Gravatar.
+	 *
+	 * Privacy: the avatar is seeded with a NON-PII, stable per-user value — an md5
+	 * of the user_login (NOT the email). The same user always gets the same face,
+	 * but the seed leaks nothing about them. The generator is DiceBear's hosted
+	 * HTTP API (https://api.dicebear.com), a free, key-less, URL-based service.
+	 *
+	 * Both the style and the whole URL are filterable so a site can swap the
+	 * service or self-host:
+	 *   - `adminkit/generated_avatar_style` — the DiceBear style slug.
+	 *   - `adminkit/generated_avatar_url`   — the final URL (args: url, user_id, size).
+	 *
+	 * @param int $user_id
+	 * @param int $size    Requested square size in px (DiceBear PNG caps at 256).
+	 * @return string
+	 */
+	public static function get_generated_avatar_url( $user_id, $size = 96 ) {
+		$user_id = (int) $user_id;
+		$size    = max( 1, min( 256, (int) $size ) ); // DiceBear PNG max is 256px.
+
+		// Non-PII, stable seed: md5 of the login (never the raw email).
+		$user = get_userdata( $user_id );
+		$seed = $user ? md5( strtolower( $user->user_login ) ) : (string) $user_id;
+
+		/**
+		 * Filter the DiceBear style used for generated avatars. Friendly, memoji-ish
+		 * defaults: fun-emoji, big-smile, adventurer, notionists, micah, big-ears…
+		 *
+		 * @param string $style   Default 'fun-emoji'.
+		 * @param int    $user_id The user the avatar is for.
+		 */
+		$style = apply_filters( 'adminkit/generated_avatar_style', 'fun-emoji', $user_id );
+		$style = preg_replace( '/[^a-z0-9-]/', '', strtolower( (string) $style ) );
+		if ( '' === $style ) {
+			$style = 'fun-emoji';
+		}
+
+		$url = add_query_arg(
+			array(
+				'seed' => $seed,
+				'size' => $size,
+			),
+			'https://api.dicebear.com/9.x/' . $style . '/png'
+		);
+
+		/**
+		 * Filter the final generated-avatar URL (e.g. to self-host or swap service).
+		 *
+		 * @param string $url     The DiceBear PNG URL.
+		 * @param int    $user_id The user the avatar is for.
+		 * @param int    $size    Requested square size in px.
+		 */
+		$url = apply_filters( 'adminkit/generated_avatar_url', $url, $user_id, $size );
+
+		return esc_url_raw( (string) $url );
 	}
 
 	/**
@@ -198,12 +292,11 @@ class AdminKit_Local_Avatars {
 		$can_pick  = current_user_can( 'upload_files' );
 		$has_image = '' !== $preview;
 
-		// Visible label inside the hover overlay, and the button's accessible name.
-		$overlay_label = $has_image ? __( 'Change photo', 'adminkit' ) : __( 'Add a photo', 'adminkit' );
-		$media_aria    = $has_image
+		// The button's accessible name (static — clicking always opens the picker).
+		$media_aria  = $has_image
 			? __( 'Change the profile picture', 'adminkit' )
 			: __( 'Upload a profile picture', 'adminkit' );
-		$state_class   = $has_image ? 'is-filled' : 'is-empty';
+		$state_class = $has_image ? 'is-filled' : 'is-empty';
 
 		wp_nonce_field( self::NONCE_ACTION, self::NONCE_FIELD );
 		?>
@@ -226,10 +319,6 @@ class AdminKit_Local_Avatars {
 								<span class="adminkit-local-avatar__placeholder" id="adminkit-local-avatar-placeholder"
 									aria-hidden="true"<?php echo $has_image ? ' hidden' : ''; ?>>
 									<?php echo self::icon_user(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, self-contained SVG markup. ?>
-								</span>
-								<span class="adminkit-local-avatar__overlay" aria-hidden="true">
-									<?php echo self::icon_camera(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, self-contained SVG markup. ?>
-									<span class="adminkit-local-avatar__overlay-label" id="adminkit-local-avatar-overlay-label"><?php echo esc_html( $overlay_label ); ?></span>
 								</span>
 							</button>
 							<p class="adminkit-local-avatar__actions">
@@ -264,18 +353,6 @@ class AdminKit_Local_Avatars {
 	private static function icon_user() {
 		return '<svg viewBox="0 0 24 24" role="presentation" focusable="false" aria-hidden="true">'
 			. '<path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.69-8 6v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-3.31-3.58-6-8-6Z"/>'
-			. '</svg>';
-	}
-
-	/**
-	 * Inline "camera" glyph for the hover overlay. Static, self-contained SVG
-	 * (currentColor) — no user data, safe to echo as-is.
-	 *
-	 * @return string
-	 */
-	private static function icon_camera() {
-		return '<svg viewBox="0 0 24 24" role="presentation" focusable="false" aria-hidden="true">'
-			. '<path d="M9 3a1 1 0 0 0-.8.4L7 5H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3l-1.2-1.6A1 1 0 0 0 15 3H9Zm3 5a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/>'
 			. '</svg>';
 	}
 
@@ -333,6 +410,25 @@ class AdminKit_Local_Avatars {
 	}
 
 	/**
+	 * When a user is deleted, delete the avatar attachment they own so it doesn't
+	 * linger in the Media Library as an orphan.
+	 *
+	 * Tight guard: only the attachment id stored in THIS user's meta, and only
+	 * when it still resolves to a real image attachment, is force-deleted. Anything
+	 * empty / invalid / not theirs is left untouched — we never delete anything but
+	 * the single avatar this user pointed at.
+	 *
+	 * @param int $user_id The user being deleted (meta still readable at this point).
+	 * @return void
+	 */
+	public static function on_delete_user( $user_id ) {
+		$id = self::get_local_avatar_id( $user_id ); // 0 unless a valid image they own.
+		if ( $id > 0 ) {
+			wp_delete_attachment( $id, true );
+		}
+	}
+
+	/**
 	 * Enqueue the media-picker script on the profile / user-edit screens, with the
 	 * WordPress media frame and the localized button labels (kept out of the JS).
 	 *
@@ -371,13 +467,12 @@ class AdminKit_Local_Avatars {
 			'assets/js/wp-core/local-avatars.js',
 			array( 'media-editor' ),
 			'window.AdminKitLocalAvatars=' . wp_json_encode( array(
-				'title'        => __( 'Select a profile picture', 'adminkit' ),
-				'button'       => __( 'Use this image', 'adminkit' ),
-				// Overlay label + button accessible name, per filled / empty state.
-				'overlayFill'  => __( 'Change photo', 'adminkit' ),
-				'overlayEmpty' => __( 'Add a photo', 'adminkit' ),
-				'ariaFill'     => __( 'Change the profile picture', 'adminkit' ),
-				'ariaEmpty'    => __( 'Upload a profile picture', 'adminkit' ),
+				'title'    => __( 'Select a profile picture', 'adminkit' ),
+				'button'   => __( 'Use this image', 'adminkit' ),
+				// Button accessible name, swapped per filled / empty state after a
+				// pick or a remove (the bubble always opens the media picker).
+				'ariaFill'  => __( 'Change the profile picture', 'adminkit' ),
+				'ariaEmpty' => __( 'Upload a profile picture', 'adminkit' ),
 			) ) . ';'
 		);
 	}

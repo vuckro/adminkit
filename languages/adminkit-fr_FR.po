@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdminKit 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/vuckro/adminkit/issues\n"
-"POT-Creation-Date: 2026-05-25 11:16+0200\n"
+"POT-Creation-Date: 2026-05-25 11:43+0200\n"
 "PO-Revision-Date: 2026-05-25 11:18+0200\n"
 "Last-Translator: AdminKit\n"
 "Language-Team: French\n"
@@ -16,19 +16,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: adminkit\n"
 
-#: inc/class-theme-toggle.php:157
-#: inc/integrations/plugins/gutenberg/class-gutenberg.php:109
-msgid "Toggle light / dark mode"
-msgstr "Basculer entre le mode clair et sombre"
-
-#: inc/class-theme-toggle.php:181
-msgid "View site"
-msgstr "Voir le site"
-
-#: inc/class-theme-toggle.php:181 inc/class-settings-page.php:265
-msgid "Dashboard"
-msgstr "Tableau de bord"
-
 #: inc/class-settings-page.php:53 inc/class-settings-page.php:54
 #: inc/class-settings-page.php:73 inc/class-settings-page.php:269
 msgid "AdminKit"
@@ -37,6 +24,10 @@ msgstr "AdminKit"
 #: inc/class-settings-page.php:76
 msgid "AdminKit settings require JavaScript."
 msgstr "Les réglages d’AdminKit nécessitent JavaScript."
+
+#: inc/class-settings-page.php:265 inc/class-theme-toggle.php:181
+msgid "Dashboard"
+msgstr "Tableau de bord"
 
 #: inc/class-settings-page.php:266
 msgid "Design"
@@ -115,7 +106,7 @@ msgstr "Retirer le logo"
 msgid "Select a logo"
 msgstr "Sélectionner un logo"
 
-#: inc/class-settings-page.php:285 inc/wp-core/class-local-avatars.php:369
+#: inc/class-settings-page.php:285 inc/wp-core/class-local-avatars.php:455
 msgid "Use this image"
 msgstr "Utiliser cette image"
 
@@ -196,10 +187,22 @@ msgid "Unsaved changes"
 msgstr "Modifications non enregistrées"
 
 #: inc/class-settings-page.php:303
+msgid "Close"
+msgstr "Fermer"
+
+#: inc/class-settings-page.php:304
+msgid "Details"
+msgstr "Détails"
+
+#: inc/class-settings-page.php:305
+msgid "Click a card for details."
+msgstr "Cliquez sur une carte pour les détails."
+
+#: inc/class-settings-page.php:306
 msgid "Live colour reference"
 msgstr "Référence des couleurs en direct"
 
-#: inc/class-settings-page.php:304
+#: inc/class-settings-page.php:307
 msgid ""
 "Each row shows a live colour preview, the role, then its AdminKit token ← "
 "the WaasKit semantic it reads · the primitive it resolves from. Read-only — "
@@ -209,247 +212,413 @@ msgstr ""
 "AdminKit ← la sémantique WaasKit qu’il lit · la primitive dont il dérive. En "
 "lecture seule — la palette est pilotée par vos tokens."
 
-#: inc/class-settings-page.php:305
+#: inc/class-settings-page.php:308
 msgid "Typography"
 msgstr "Typographie"
 
-#: inc/class-settings-page.php:306
+#: inc/class-settings-page.php:309
 msgid "Body font follows Bricks (--font-base) when set, otherwise Inter."
 msgstr ""
 "La police du corps de texte suit Bricks (--font-base) si défini, sinon Inter."
 
-#: inc/class-settings-page.php:307
+#: inc/class-settings-page.php:310
 msgid "Body"
 msgstr "Corps"
 
-#: inc/class-settings-page.php:308
+#: inc/class-settings-page.php:311
 msgid "Small"
 msgstr "Petit"
 
-#: inc/class-settings-page.php:309
+#: inc/class-settings-page.php:312
 msgid "Caption"
 msgstr "Légende"
 
 #. translators: pangram used as a font preview sample — translate to a sentence that exercises your language's letters.
-#: inc/class-settings-page.php:311
+#: inc/class-settings-page.php:314
 msgid "The quick brown fox jumps over the lazy dog"
 msgstr "Portez ce vieux whisky au juge blond qui fume"
 
-#: inc/class-settings-page.php:338
+#: inc/class-settings-page.php:341
 msgid "Tokens"
 msgstr "Tokens"
 
 #. translators: %s: the selected accent colour value (e.g. #2563eb).
-#: inc/class-settings-page.php:341
+#: inc/class-settings-page.php:344
 #, php-format
 msgid "accent %s"
 msgstr "accent %s"
 
-#: inc/class-settings-page.php:341
+#: inc/class-settings-page.php:344
 msgid "accent inherited"
 msgstr "accent hérité"
 
-#: inc/class-settings-page.php:346
+#: inc/class-settings-page.php:349
 msgid "Features"
 msgstr "Fonctionnalités"
 
 #. translators: %d: total number of feature modules.
-#: inc/class-settings-page.php:349
+#: inc/class-settings-page.php:352
 #, php-format
 msgid "of %d module on"
 msgid_plural "of %d modules on"
 msgstr[0] "sur %d module"
 msgstr[1] "sur %d modules"
 
-#: inc/class-settings-page.php:362
+#: inc/class-settings-page.php:365
 msgid "A quick overview of your AdminKit setup."
 msgstr "Un aperçu rapide de votre configuration AdminKit."
 
-#: inc/class-settings-page.php:364
+#: inc/class-settings-page.php:367
 msgid "Overview"
 msgstr "Aperçu"
 
-#: inc/class-settings-page.php:366
+#: inc/class-settings-page.php:369
 msgid "Roadmap"
 msgstr "Feuille de route"
 
-#: inc/class-settings-page.php:372
-msgid "Planned"
-msgstr "Planifié"
-
-#: inc/class-settings-page.php:374
-msgid "More provider adapters"
-msgstr "Plus d’adaptateurs de fournisseurs"
-
-#: inc/class-settings-page.php:374
-msgid ""
-"Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress — beyond "
-"Bricks."
-msgstr ""
-"Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress — au-delà de "
-"Bricks."
-
-#: inc/class-settings-page.php:375
-msgid "Theme variants"
-msgstr "Variantes de thème"
-
-#: inc/class-settings-page.php:375
-msgid "Beyond light and dark — sepia, high-contrast."
-msgstr "Au-delà du clair et du sombre — sépia, contraste élevé."
-
-#: inc/class-settings-page.php:376
-msgid "Per-role visibility"
-msgstr "Visibilité par rôle"
-
-#: inc/class-settings-page.php:376
-msgid "Choose which roles get the skin and who may edit it."
-msgstr "Choisir quels rôles voient le thème et qui peut le modifier."
-
-#: inc/class-settings-page.php:377
-msgid "Accessibility checks"
-msgstr "Contrôles d’accessibilité"
-
-#: inc/class-settings-page.php:377
-msgid "Warn when a chosen colour fails contrast / legibility."
-msgstr ""
-"Avertir lorsqu’une couleur choisie échoue au contraste / à la lisibilité."
-
 #: inc/class-settings-page.php:378
-msgid "Custom dashboard widgets"
-msgstr "Widgets de tableau de bord personnalisés"
-
-#: inc/class-settings-page.php:378
-msgid ""
-"Replace the WP home screen: quick actions, site status, recent activity."
-msgstr ""
-"Remplacer l’écran d’accueil de WP : actions rapides, état du site, activité "
-"récente."
-
-#: inc/class-settings-page.php:379
-msgid "Import / export settings"
-msgstr "Importer / exporter les réglages"
-
-#: inc/class-settings-page.php:379
-msgid "Clone an AdminKit setup across client sites in one file."
-msgstr ""
-"Cloner une configuration AdminKit entre sites clients en un seul fichier."
-
-#: inc/class-settings-page.php:380
-msgid "White-label & admin footer"
-msgstr "Marque blanche et pied de page admin"
-
-#: inc/class-settings-page.php:380
-msgid "Hide WordPress branding everywhere and add an agency credit."
-msgstr "Masquer la marque WordPress partout et ajouter un crédit d’agence."
-
-#: inc/class-settings-page.php:384
-msgid "Next"
-msgstr "Prochainement"
-
-#: inc/class-settings-page.php:386
-msgid "In-app palette editor"
-msgstr "Éditeur de palette intégré"
-
-#: inc/class-settings-page.php:386
-msgid ""
-"Pick accent, surface and text colours directly — the token map is read-only "
-"today."
-msgstr ""
-"Choisir directement les couleurs d’accent, de surface et de texte — la carte "
-"des tokens est en lecture seule pour le moment."
-
-#: inc/class-settings-page.php:387
-msgid "Colour sync"
-msgstr "Synchronisation des couleurs"
-
-#: inc/class-settings-page.php:387
-msgid "Pull colours from the active provider or theme and keep them in sync."
-msgstr ""
-"Récupérer les couleurs du fournisseur ou du thème actif et les garder "
-"synchronisées."
-
-#: inc/class-settings-page.php:391
 msgid "In progress"
 msgstr "En cours"
 
-#: inc/class-settings-page.php:393
-msgid "Branding & admin-bar logo"
-msgstr "Image de marque et logo de la barre d’admin"
+#: inc/class-settings-page.php:381 inc/class-settings-page.php:541
+msgid "Generated avatars"
+msgstr "Avatars générés"
+
+#: inc/class-settings-page.php:382
+msgid "Auto-create a friendly avatar for users without a photo."
+msgstr ""
+"Crée automatiquement un avatar sympathique pour les utilisateurs sans photo."
+
+#: inc/class-settings-page.php:383
+msgid ""
+"When an account has no uploaded photo and no Gravatar, AdminKit fills the "
+"gap with a friendly, auto-generated avatar — so every user looks intentional "
+"instead of a blank silhouette. Avatars come from a hosted generator (nothing "
+"is stored on your site), stay the same for each user, and a real Gravatar "
+"always wins."
+msgstr ""
+"Lorsqu’un compte n’a ni photo envoyée ni Gravatar, AdminKit comble le vide "
+"avec un avatar sympathique généré automatiquement — ainsi chaque utilisateur "
+"a une apparence soignée plutôt qu’une silhouette vide. Les avatars "
+"proviennent d’un générateur hébergé (rien n’est stocké sur votre site), "
+"restent identiques pour chaque utilisateur, et un vrai Gravatar a toujours "
+"la priorité."
+
+#: inc/class-settings-page.php:385
+msgid "Opt-in — pairs with Local avatars."
+msgstr "Optionnel — fonctionne avec les avatars locaux."
+
+#: inc/class-settings-page.php:386
+msgid "Nothing stored: generated on demand."
+msgstr "Rien n’est stocké : généré à la demande."
+
+#: inc/class-settings-page.php:387
+msgid "A real Gravatar still takes priority."
+msgstr "Un vrai Gravatar garde la priorité."
+
+#: inc/class-settings-page.php:388
+msgid "Avatar style is overridable via a filter."
+msgstr "Le style d’avatar est modifiable via un filtre."
+
+#: inc/class-settings-page.php:392
+msgid "Roadmap detail view"
+msgstr "Vue détaillée de la feuille de route"
 
 #: inc/class-settings-page.php:393
-msgid "Brand logo / favicon in the toolbar, size control, light + dark."
-msgstr ""
-"Logo de marque / favicon dans la barre d’outils, contrôle de la taille, "
-"clair + sombre."
+msgid "Hover a card, click for a clean detail panel."
+msgstr "Survolez une carte, cliquez pour un panneau de détails épuré."
 
 #: inc/class-settings-page.php:394
-msgid "AdminKit icon set"
-msgstr "Jeu d’icônes AdminKit"
-
-#: inc/class-settings-page.php:394
-msgid "Replace native menu + toolbar icons; growing plugin coverage."
+msgid ""
+"Every card on this roadmap is interactive: hover to highlight it, click to "
+"open a tidy panel describing the feature and where it stands — so this page "
+"stays a plan you can actually follow."
 msgstr ""
-"Remplacer les icônes natives du menu et de la barre d’outils ; couverture "
-"d’extensions croissante."
-
-#: inc/class-settings-page.php:395
-msgid "Bricks builder polish"
-msgstr "Peaufinage du constructeur Bricks"
-
-#: inc/class-settings-page.php:395
-msgid "Toolbar logo, preloader, canvas theming + colour fallback."
-msgstr ""
-"Logo de la barre d’outils, préchargeur, thématisation du canevas + repli de "
-"couleur."
-
-#: inc/class-settings-page.php:396 inc/class-settings-page.php:461
-msgid "Local avatars"
-msgstr "Avatars locaux"
+"Chaque carte de cette feuille de route est interactive : survolez-la pour la "
+"mettre en évidence, cliquez pour ouvrir un panneau soigné décrivant la "
+"fonctionnalité et son avancement — ainsi cette page reste un plan que vous "
+"pouvez réellement suivre."
 
 #: inc/class-settings-page.php:396
-msgid "Per-user avatar image that replaces Gravatar — no Gravatar dependency."
+msgid "Click any card for details."
+msgstr "Cliquez sur n’importe quelle carte pour les détails."
+
+#: inc/class-settings-page.php:397
+msgid "Keyboard and screen-reader friendly."
+msgstr "Compatible clavier et lecteurs d’écran."
+
+#: inc/class-settings-page.php:398
+msgid "Looks right in light and dark."
+msgstr "Rendu impeccable en mode clair et sombre."
+
+#: inc/class-settings-page.php:404
+msgid "Next"
+msgstr "Prochainement"
+
+#: inc/class-settings-page.php:407
+msgid "Login screen branding"
+msgstr "Personnalisation de l’écran de connexion"
+
+#: inc/class-settings-page.php:408
+msgid "Your logo on the wp-login screen."
+msgstr "Votre logo sur l’écran wp-login."
+
+#: inc/class-settings-page.php:409
+msgid ""
+"Carry the brand logo (with its light and dark variants) you already set for "
+"the admin bar onto the wp-login.php screen, replacing the WordPress mark — a "
+"small change with a big first-impression payoff."
 msgstr ""
-"Image d’avatar par utilisateur qui remplace Gravatar — sans dépendance à "
-"Gravatar."
+"Reprenez le logo de marque (avec ses variantes claire et sombre) déjà défini "
+"pour la barre d’administration sur l’écran wp-login.php, en remplaçant le "
+"logo WordPress — un petit changement pour une grande première impression."
+
+#: inc/class-settings-page.php:412
+msgid "More native screens styled"
+msgstr "Davantage d’écrans natifs stylés"
+
+#: inc/class-settings-page.php:413
+msgid "Taxonomies, custom post types and the rest."
+msgstr "Taxonomies, types de publication personnalisés et le reste."
+
+#: inc/class-settings-page.php:414
+msgid ""
+"Extend AdminKit's per-screen polish to the pages still wearing default "
+"WordPress styling: the category and tag editors, custom-post-type lists, and "
+"the few remaining core screens — so the whole admin feels like one product."
+msgstr ""
+"Étendez le soin apporté par AdminKit à chaque écran aux pages encore "
+"habillées du style WordPress par défaut : les éditeurs de catégories et "
+"d’étiquettes, les listes de types de publication personnalisés et les "
+"quelques écrans natifs restants — pour que toute l’administration paraisse "
+"d’un seul tenant."
+
+#: inc/class-settings-page.php:417
+msgid "In-app palette editor"
+msgstr "Éditeur de palette intégré"
+
+#: inc/class-settings-page.php:418
+msgid "Pick accent, surface and text colours directly."
+msgstr "Choisissez directement les couleurs d’accent, de surface et de texte."
+
+#: inc/class-settings-page.php:419
+msgid ""
+"Turn today's read-only token map into a real editor: choose your accent, "
+"surfaces and text, preview the change live across wp-admin, and export the "
+"palette to a provider like Bricks."
+msgstr ""
+"Transformez l’actuelle carte de jetons en lecture seule en un véritable "
+"éditeur : choisissez votre accent, vos surfaces et votre texte, "
+"prévisualisez le changement en direct dans tout wp-admin, et exportez la "
+"palette vers un fournisseur comme Bricks."
+
+#: inc/class-settings-page.php:424
+msgid "Planned"
+msgstr "Planifié"
+
+#: inc/class-settings-page.php:427
+msgid "Colour sync"
+msgstr "Synchronisation des couleurs"
+
+#: inc/class-settings-page.php:428
+msgid "Pull colours from your provider or theme."
+msgstr "Récupérez les couleurs de votre fournisseur ou de votre thème."
+
+#: inc/class-settings-page.php:429
+msgid ""
+"Read the active provider or theme palette and keep AdminKit in sync "
+"automatically, so the admin always matches the brand without manual edits."
+msgstr ""
+"Lit la palette du fournisseur ou du thème actif et garde AdminKit "
+"synchronisé automatiquement, pour que l’administration corresponde toujours "
+"à la marque sans modification manuelle."
+
+#: inc/class-settings-page.php:432
+msgid "More provider adapters"
+msgstr "Plus d’adaptateurs de fournisseurs"
+
+#: inc/class-settings-page.php:433
+msgid "Beyond Bricks — ACSS, Core Framework, Oxygen, Elementor…"
+msgstr "Au-delà de Bricks — ACSS, Core Framework, Oxygen, Elementor…"
+
+#: inc/class-settings-page.php:434
+msgid ""
+"Inherit brand colours from more page builders and frameworks (Automatic.css, "
+"Core Framework, Oxygen, Elementor, GeneratePress), the same way the Bricks "
+"adapter works today."
+msgstr ""
+"Héritez des couleurs de marque depuis davantage de constructeurs de pages et "
+"de frameworks (Automatic.css, Core Framework, Oxygen, Elementor, "
+"GeneratePress), comme le fait aujourd’hui l’adaptateur Bricks."
+
+#: inc/class-settings-page.php:437
+msgid "Theme variants"
+msgstr "Variantes de thème"
+
+#: inc/class-settings-page.php:438
+msgid "Beyond light and dark — sepia, high-contrast."
+msgstr "Au-delà du clair et du sombre — sépia, contraste élevé."
 
 #: inc/class-settings-page.php:439
+msgid ""
+"Ship additional admin themes on top of light and dark, including an "
+"accessibility-minded high-contrast variant."
+msgstr ""
+"Proposez des thèmes d’administration supplémentaires en plus du clair et du "
+"sombre, dont une variante à contraste élevé pensée pour l’accessibilité."
+
+#: inc/class-settings-page.php:442
+msgid "Per-role visibility"
+msgstr "Visibilité par rôle"
+
+#: inc/class-settings-page.php:443
+msgid "Choose which roles get the skin and who may edit it."
+msgstr "Choisir quels rôles voient le thème et qui peut le modifier."
+
+#: inc/class-settings-page.php:444
+msgid ""
+"Decide which user roles see the AdminKit skin and which may change its "
+"settings — handy for client sites."
+msgstr ""
+"Décidez quels rôles utilisateurs voient l’habillage AdminKit et lesquels "
+"peuvent en modifier les réglages — pratique pour les sites clients."
+
+#: inc/class-settings-page.php:447
+msgid "Accessibility checks"
+msgstr "Contrôles d’accessibilité"
+
+#: inc/class-settings-page.php:448
+msgid "Warn when a colour fails contrast."
+msgstr "Alerte lorsqu’une couleur échoue au contraste."
+
+#: inc/class-settings-page.php:449
+msgid ""
+"Flag colour choices that fall below contrast and legibility thresholds, "
+"right where you pick them."
+msgstr ""
+"Signale les choix de couleurs qui passent sous les seuils de contraste et de "
+"lisibilité, là où vous les choisissez."
+
+#: inc/class-settings-page.php:452
+msgid "Custom dashboard widgets"
+msgstr "Widgets de tableau de bord personnalisés"
+
+#: inc/class-settings-page.php:453
+msgid "Replace the WP home screen."
+msgstr "Remplacez l’écran d’accueil de WordPress."
+
+#: inc/class-settings-page.php:454
+msgid ""
+"Swap the default dashboard for quick actions, site status and recent "
+"activity that are actually useful."
+msgstr ""
+"Remplacez le tableau de bord par défaut par des actions rapides, l’état du "
+"site et l’activité récente réellement utiles."
+
+#: inc/class-settings-page.php:457
+msgid "Import / export settings"
+msgstr "Importer / exporter les réglages"
+
+#: inc/class-settings-page.php:458
+msgid "Clone an AdminKit setup across sites."
+msgstr "Clonez une configuration AdminKit d’un site à l’autre."
+
+#: inc/class-settings-page.php:459
+msgid ""
+"Save a whole AdminKit configuration to a file and import it on another site "
+"in one step — ideal for agencies."
+msgstr ""
+"Enregistrez toute une configuration AdminKit dans un fichier et importez-la "
+"sur un autre site en une étape — idéal pour les agences."
+
+#: inc/class-settings-page.php:462
+msgid "Bricks dynamic logo tag"
+msgstr "Balise de logo dynamique Bricks"
+
+#: inc/class-settings-page.php:463
+msgid "Use your AdminKit logo anywhere in Bricks."
+msgstr "Utilisez votre logo AdminKit n’importe où dans Bricks."
+
+#: inc/class-settings-page.php:464
+msgid ""
+"Expose the configured brand logo as a Bricks dynamic-data tag, so it can be "
+"dropped into any Bricks design and stays in sync."
+msgstr ""
+"Expose le logo de marque configuré sous forme de balise de données "
+"dynamiques Bricks, pour pouvoir l’insérer dans n’importe quelle conception "
+"Bricks tout en restant synchronisé."
+
+#: inc/class-settings-page.php:467
+msgid "WordPress Playground demo"
+msgstr "Démo WordPress Playground"
+
+#: inc/class-settings-page.php:468
+msgid "Try AdminKit live in the browser."
+msgstr "Essayez AdminKit en direct dans le navigateur."
+
+#: inc/class-settings-page.php:469
+msgid ""
+"A one-click WordPress Playground link so anyone can try AdminKit in the "
+"browser with no install — great for the README and the .org listing."
+msgstr ""
+"Un lien WordPress Playground en un clic pour que chacun puisse essayer "
+"AdminKit dans le navigateur sans installation — parfait pour le README et la "
+"fiche .org."
+
+#: inc/class-settings-page.php:472
+msgid "White-label & admin footer"
+msgstr "Marque blanche et pied de page admin"
+
+#: inc/class-settings-page.php:473
+msgid "Hide WordPress branding, add an agency credit."
+msgstr "Masquez la marque WordPress, ajoutez un crédit d’agence."
+
+#: inc/class-settings-page.php:474
+msgid ""
+"Remove WordPress branding across the admin and add your own footer credit "
+"and version line."
+msgstr ""
+"Supprimez la marque WordPress dans toute l’administration et ajoutez votre "
+"propre crédit de pied de page et votre ligne de version."
+
+#: inc/class-settings-page.php:518
 msgid "Default"
 msgstr "Par défaut"
 
-#: inc/class-settings-page.php:452
+#: inc/class-settings-page.php:531
 msgid "Content & lists"
 msgstr "Contenu et listes"
 
-#: inc/class-settings-page.php:453
+#: inc/class-settings-page.php:532
 msgid "Appearance & access"
 msgstr "Apparence et accès"
 
-#: inc/class-settings-page.php:455
+#: inc/class-settings-page.php:534
 msgid "Post previews"
 msgstr "Aperçus des publications"
 
-#: inc/class-settings-page.php:455
+#: inc/class-settings-page.php:534
 msgid "Screenshot thumbnail column in post-type list tables."
 msgstr ""
 "Colonne de vignettes (captures d’écran) dans les tableaux de liste des types "
 "de publication."
 
-#: inc/class-settings-page.php:456
+#: inc/class-settings-page.php:535
 msgid "Live screenshots (mShots)"
 msgstr "Captures d’écran en direct (mShots)"
 
-#: inc/class-settings-page.php:456
+#: inc/class-settings-page.php:535
 msgid ""
 "Use WordPress.com mShots. Off = featured image only (no external calls)."
 msgstr ""
 "Utiliser mShots de WordPress.com. Désactivé = image mise en avant uniquement "
 "(aucun appel externe)."
 
-#: inc/class-settings-page.php:457
+#: inc/class-settings-page.php:536
 msgid "Dark mode"
 msgstr "Mode sombre"
 
-#: inc/class-settings-page.php:457
+#: inc/class-settings-page.php:536
 msgid ""
 "Enable dark mode with a toggle in the admin bar. Off forces light mode "
 "everywhere."
@@ -457,19 +626,19 @@ msgstr ""
 "Activer le mode sombre avec un interrupteur dans la barre d’administration. "
 "Désactivé force le mode clair partout."
 
-#: inc/class-settings-page.php:458
+#: inc/class-settings-page.php:537
 msgid "Login screen"
 msgstr "Écran de connexion"
 
-#: inc/class-settings-page.php:458
+#: inc/class-settings-page.php:537
 msgid "Style the wp-login.php screen."
 msgstr "Styliser l’écran wp-login.php."
 
-#: inc/class-settings-page.php:459
+#: inc/class-settings-page.php:538
 msgid "Gutenberg"
 msgstr "Gutenberg"
 
-#: inc/class-settings-page.php:459
+#: inc/class-settings-page.php:538
 msgid ""
 "Theme the Gutenberg block-editor canvas (content + native blocks) in light "
 "and dark. Off (default) keeps the canvas matching your live site."
@@ -478,11 +647,11 @@ msgstr ""
 "natifs) en clair et sombre. Désactivé (par défaut), le canevas reste fidèle "
 "à votre site."
 
-#: inc/class-settings-page.php:460
+#: inc/class-settings-page.php:539
 msgid "AdminKit icons"
 msgstr "Icônes AdminKit"
 
-#: inc/class-settings-page.php:460
+#: inc/class-settings-page.php:539
 msgid ""
 "Replace WordPress's native menu and toolbar icons with AdminKit's set. Non-"
 "destructive: icons already customised (e.g. via Admin Menu Editor) are left "
@@ -492,7 +661,7 @@ msgstr ""
 "par le jeu d’AdminKit. Non destructif : les icônes déjà personnalisées (ex. "
 "via Admin Menu Editor) sont laissées intactes."
 
-#: inc/class-settings-page.php:461
+#: inc/class-settings-page.php:540
 msgid ""
 "Let users upload a profile picture that replaces Gravatar. Off = Gravatar "
 "everywhere."
@@ -500,11 +669,24 @@ msgstr ""
 "Permet d’envoyer une photo de profil qui remplace Gravatar. Désactivé = "
 "Gravatar partout."
 
-#: inc/class-settings-page.php:466
+#: inc/class-settings-page.php:540
+msgid "Local avatars"
+msgstr "Avatars locaux"
+
+#: inc/class-settings-page.php:541
+msgid ""
+"Auto-generate a friendly avatar for users with no photo, instead of "
+"Gravatar's blank icon. Uses a hosted generator (disclosed in the readme)."
+msgstr ""
+"Génère automatiquement un avatar sympathique pour les utilisateurs sans "
+"photo, au lieu de l’icône vide de Gravatar. Utilise un générateur hébergé "
+"(divulgué dans le readme)."
+
+#: inc/class-settings-page.php:546
 msgid "Bricks builder"
 msgstr "Constructeur Bricks"
 
-#: inc/class-settings-page.php:466
+#: inc/class-settings-page.php:546
 msgid ""
 "Restyle the Bricks builder UI with your tokens. Needs Bricks builder mode "
 "set to \"Custom\"."
@@ -512,15 +694,11 @@ msgstr ""
 "Restyle l'interface du constructeur Bricks avec vos tokens. Nécessite le "
 "mode constructeur Bricks réglé sur « Custom »."
 
-#: inc/class-settings-page.php:470
+#: inc/class-settings-page.php:550
 msgid "Advanced"
 msgstr "Avancé"
 
-#: inc/class-settings-page.php:471
-msgid "WordPress default interface"
-msgstr "Interface WordPress par défaut"
-
-#: inc/class-settings-page.php:471
+#: inc/class-settings-page.php:551
 msgid ""
 "Pause all AdminKit styling and show WordPress's native look — the plugin and "
 "features stay active (handy for debugging). The AdminKit settings page keeps "
@@ -531,13 +709,17 @@ msgstr ""
 "le débogage). La page de réglages AdminKit garde son style pour pouvoir "
 "revenir en arrière."
 
-#: inc/class-settings.php:132
-msgid "Surfaces"
-msgstr "Surfaces"
+#: inc/class-settings-page.php:551
+msgid "WordPress default interface"
+msgstr "Interface WordPress par défaut"
 
 #: inc/class-settings.php:132
 msgid "Page and panel backgrounds — behind everything."
 msgstr "Arrière-plans des pages et des panneaux — derrière tout le reste."
+
+#: inc/class-settings.php:132
+msgid "Surfaces"
+msgstr "Surfaces"
 
 #: inc/class-settings.php:133
 msgid "Background"
@@ -572,12 +754,12 @@ msgid "Border strong"
 msgstr "Bordure forte"
 
 #: inc/class-settings.php:142
-msgid "Text"
-msgstr "Texte"
-
-#: inc/class-settings.php:142
 msgid "Headings, body copy and captions."
 msgstr "Titres, corps de texte et légendes."
+
+#: inc/class-settings.php:142
+msgid "Text"
+msgstr "Texte"
 
 #: inc/class-settings.php:143
 msgid "Heading"
@@ -620,12 +802,12 @@ msgid "Secondary"
 msgstr "Secondaire"
 
 #: inc/class-settings.php:154
-msgid "State"
-msgstr "État"
-
-#: inc/class-settings.php:154
 msgid "Hover and focus feedback."
 msgstr "Retour visuel au survol et au focus."
+
+#: inc/class-settings.php:154
+msgid "State"
+msgstr "État"
 
 #: inc/class-settings.php:155
 msgid "Hover"
@@ -644,16 +826,16 @@ msgid "Scrim behind modals and drawers."
 msgstr "Voile derrière les fenêtres modales et les tiroirs."
 
 #: inc/class-settings.php:161
-msgid "Status"
-msgstr "Statut"
-
-#: inc/class-settings.php:161
 msgid ""
 "Info, success, warning and error — and their subtle fills — from the "
 "framework's notification roles."
 msgstr ""
 "Info, succès, avertissement et erreur — et leurs remplissages subtils — "
 "issus des rôles de notification du framework."
+
+#: inc/class-settings.php:161
+msgid "Status"
+msgstr "Statut"
 
 #: inc/class-settings.php:162
 msgid "Info"
@@ -686,6 +868,66 @@ msgstr "Erreur"
 #: inc/class-settings.php:169
 msgid "Error subtle"
 msgstr "Erreur subtile"
+
+#: inc/class-theme-toggle.php:157
+#: inc/integrations/plugins/gutenberg/class-gutenberg.php:109
+msgid "Toggle light / dark mode"
+msgstr "Basculer entre le mode clair et sombre"
+
+#: inc/class-theme-toggle.php:181
+msgid "View site"
+msgstr "Voir le site"
+
+#: inc/wp-core/class-chrome.php:191
+msgid "General"
+msgstr "Général"
+
+#: inc/wp-core/class-chrome.php:193
+msgid "Settings sections"
+msgstr "Sections de réglages"
+
+#: inc/wp-core/class-local-avatars.php:281
+#: inc/wp-core/class-local-avatars.php:458
+msgid "Change the profile picture"
+msgstr "Changer la photo de profil"
+
+#: inc/wp-core/class-local-avatars.php:282
+#: inc/wp-core/class-local-avatars.php:459
+msgid "Upload a profile picture"
+msgstr "Envoyer une photo de profil"
+
+#: inc/wp-core/class-local-avatars.php:287
+#: inc/wp-core/class-local-avatars.php:290
+msgid "Profile picture"
+msgstr "Photo de profil"
+
+#: inc/wp-core/class-local-avatars.php:311
+msgid "Remove"
+msgstr "Retirer"
+
+#: inc/wp-core/class-local-avatars.php:323
+msgid ""
+"This image replaces the Gravatar everywhere this user appears. Leave empty "
+"to use Gravatar."
+msgstr ""
+"Cette image remplace le Gravatar partout où cet utilisateur apparaît. "
+"Laisser vide pour utiliser Gravatar."
+
+#: inc/wp-core/class-local-avatars.php:454
+msgid "Select a profile picture"
+msgstr "Sélectionner une photo de profil"
+
+#: inc/wp-core/class-post-previews.php:165
+msgid "Preview"
+msgstr "Aperçu"
+
+#: inc/wp-core/class-post-previews.php:361
+msgid "Loading preview…"
+msgstr "Chargement de l’aperçu…"
+
+#: inc/wp-core/class-post-previews.php:362
+msgid "Preview unavailable"
+msgstr "Aperçu indisponible"
 
 #: inc/wp-core/class-profile-account.php:75
 msgid "Name"
@@ -720,12 +962,12 @@ msgid "Additional Capabilities"
 msgstr "Capacités supplémentaires"
 
 #: inc/wp-core/class-profile-account.php:84
-msgid "Information"
-msgstr "Informations"
-
-#: inc/wp-core/class-profile-account.php:84
 msgid "Identity, contact and password."
 msgstr "Identité, contact et mot de passe."
+
+#: inc/wp-core/class-profile-account.php:84
+msgid "Information"
+msgstr "Informations"
 
 #: inc/wp-core/class-profile-account.php:85
 msgid "Roles, language and preferences."
@@ -746,68 +988,3 @@ msgstr "Sections du compte"
 #: inc/wp-core/class-profile-account.php:90
 msgid "This username cannot be changed."
 msgstr "Ce nom d’utilisateur ne peut pas être modifié."
-
-#: inc/wp-core/class-local-avatars.php:200
-#: inc/wp-core/class-local-avatars.php:371
-msgid "Change photo"
-msgstr "Changer la photo"
-
-#: inc/wp-core/class-local-avatars.php:200
-#: inc/wp-core/class-local-avatars.php:372
-msgid "Add a photo"
-msgstr "Ajouter une photo"
-
-#: inc/wp-core/class-local-avatars.php:202
-#: inc/wp-core/class-local-avatars.php:373
-msgid "Change the profile picture"
-msgstr "Changer la photo de profil"
-
-#: inc/wp-core/class-local-avatars.php:203
-#: inc/wp-core/class-local-avatars.php:374
-msgid "Upload a profile picture"
-msgstr "Envoyer une photo de profil"
-
-#: inc/wp-core/class-local-avatars.php:208
-#: inc/wp-core/class-local-avatars.php:211
-msgid "Profile picture"
-msgstr "Photo de profil"
-
-#: inc/wp-core/class-local-avatars.php:236
-msgid "Remove"
-msgstr "Retirer"
-
-#: inc/wp-core/class-local-avatars.php:248
-msgid ""
-"This image replaces the Gravatar everywhere this user appears. Leave empty "
-"to use Gravatar."
-msgstr ""
-"Cette image remplace le Gravatar partout où cet utilisateur apparaît. "
-"Laisser vide pour utiliser Gravatar."
-
-#: inc/wp-core/class-local-avatars.php:368
-msgid "Select a profile picture"
-msgstr "Sélectionner une photo de profil"
-
-#: inc/wp-core/class-post-previews.php:165
-msgid "Preview"
-msgstr "Aperçu"
-
-#: inc/wp-core/class-post-previews.php:361
-msgid "Loading preview…"
-msgstr "Chargement de l’aperçu…"
-
-#: inc/wp-core/class-post-previews.php:362
-msgid "Preview unavailable"
-msgstr "Aperçu indisponible"
-
-#: inc/wp-core/class-chrome.php:186
-msgid "Collapse section"
-msgstr "Réduire la section"
-
-#: inc/wp-core/class-chrome.php:187
-msgid "Expand section"
-msgstr "Développer la section"
-
-#: inc/wp-core/class-chrome.php:188
-msgid "General"
-msgstr "Général"

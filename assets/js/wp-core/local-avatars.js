@@ -1,15 +1,15 @@
 /**
  * AdminKit — local avatars media picker.
  *
- * The avatar preview itself is the upload target: clicking it (a focusable
- * <button> wrapping the image + a hover overlay) opens the WordPress media
- * frame; picking an image stores its attachment id in the hidden field, swaps
- * the preview in, and flips the field to its "filled" state. "Remove" clears the
- * id + preview and reverts to the empty placeholder. Filled / empty is carried
- * by an `is-filled` / `is-empty` class on the root (CSS owns the visuals). i18n
- * labels arrive via `window.AdminKitLocalAvatars` (set by an inline bootstrap).
- * No-op when the field or `wp.media` isn't present. Footer script, loaded only on
- * profile.php / user-edit.php (and only when the user can upload files).
+ * The avatar bubble itself is the upload target: clicking it (a focusable
+ * <button> wrapping the image) opens the WordPress media frame; picking an image
+ * stores its attachment id in the hidden field, swaps the preview in, and flips
+ * the field to its "filled" state. "Remove" clears the id + preview and reverts
+ * to the empty placeholder. Filled / empty is carried by an `is-filled` /
+ * `is-empty` class on the root (CSS owns the visuals). i18n labels arrive via
+ * `window.AdminKitLocalAvatars` (set by an inline bootstrap). No-op when the
+ * field or `wp.media` isn't present. Footer script, loaded only on profile.php /
+ * user-edit.php (and only when the user can upload files).
  */
 (function () {
 	var root = document.getElementById('adminkit-local-avatar');
@@ -21,7 +21,6 @@
 	var input = document.getElementById('adminkit-local-avatar-input');
 	var preview = document.getElementById('adminkit-local-avatar-preview');
 	var placeholder = document.getElementById('adminkit-local-avatar-placeholder');
-	var overlayLabel = document.getElementById('adminkit-local-avatar-overlay-label');
 	var mediaBtn = document.getElementById('adminkit-local-avatar-btn');
 	var removeBtn = document.getElementById('adminkit-local-avatar-remove');
 	if (!input || !preview || !mediaBtn) { return; }
@@ -30,7 +29,7 @@
 
 	// Reflect the current state into the UI: toggle the root's filled/empty class
 	// (CSS shows the preview vs. the placeholder), show/hide Remove, and swap the
-	// overlay label + the button's accessible name to match.
+	// button's accessible name to match.
 	function sync() {
 		var hasImage = !!input.value && !!preview.getAttribute('src');
 		root.classList.toggle('is-filled', hasImage);
@@ -40,14 +39,12 @@
 			preview.removeAttribute('hidden');
 			if (placeholder) { placeholder.setAttribute('hidden', ''); }
 			if (removeBtn) { removeBtn.removeAttribute('hidden'); }
-			if (overlayLabel && L.overlayFill) { overlayLabel.textContent = L.overlayFill; }
 			if (L.ariaFill) { mediaBtn.setAttribute('aria-label', L.ariaFill); }
 		} else {
 			preview.setAttribute('hidden', '');
 			preview.removeAttribute('src');
 			if (placeholder) { placeholder.removeAttribute('hidden'); }
 			if (removeBtn) { removeBtn.setAttribute('hidden', ''); }
-			if (overlayLabel && L.overlayEmpty) { overlayLabel.textContent = L.overlayEmpty; }
 			if (L.ariaEmpty) { mediaBtn.setAttribute('aria-label', L.ariaEmpty); }
 		}
 	}

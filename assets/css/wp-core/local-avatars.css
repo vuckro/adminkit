@@ -1,39 +1,36 @@
-/* Local avatars — the clickable profile-picture uploader.
-   A round avatar that doubles as the upload target: hovering (or focusing) it
-   reveals a dark scrim + camera icon + a short label, signalling "click to
-   replace". With nothing set, the same target shows a dashed placeholder and an
-   "Add a photo" prompt. Scoped to .adminkit-local-avatar so it never leaks; all
-   colours read --ak-* tokens (with literal fallbacks) so dark mode + provider
-   theming carry for free. Split into its own file so it can be disabled via the
-   `adminkit/enqueue_local-avatars` filter without touching the rest of chrome. */
+/* Local avatars — the clickable profile-picture bubble.
+   A single crisp circular avatar that doubles as the upload target: clicking it
+   opens the media picker. With an image set it shows the picture, clipped to the
+   circle; empty, it shows a faint person glyph on a muted surface. A "Remove"
+   link sits below, then the help text. Scoped to .adminkit-local-avatar so it
+   never leaks; every colour reads --ak-* tokens (with literal fallbacks) so dark
+   mode + provider theming carry for free. Split into its own file so it can be
+   disabled via the `adminkit/enqueue_local-avatars` filter. */
 
 .adminkit-local-avatar {
 	display: block;
 }
 
-/* The avatar IS the button — square-rounded, sized to the 96px preview. */
+/* The avatar IS the button — ONE circular frame, sized square, clipping its
+   contents to the circle so nothing peeks past the image. */
 .adminkit-local-avatar__media {
 	position: relative;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
+	display: block;
 	width: 96px;
 	height: 96px;
 	padding: 0;
 	margin: 0;
 	border: 1px solid var(--ak-border, #c3c4c7);
 	border-radius: var(--ak-radius-full, 9999px);
-	background: var(--ak-input-bg, #fff);
+	background: var(--ak-surface, #f0f0f1);
 	overflow: hidden;
-	color: var(--ak-on-accent, #fff);
 	-webkit-appearance: none;
 	appearance: none;
 	transition: border-color .15s ease, box-shadow .15s ease;
 }
 
 /* Only the editable variant is a real <button>; the read-only span (shown to a
-   user who may view but not upload) stays a plain framed image — no pointer, no
-   hover affordance. */
+   user who may view but not upload) stays a plain framed image — no pointer. */
 button.adminkit-local-avatar__media {
 	cursor: pointer;
 }
@@ -53,16 +50,17 @@ button.adminkit-local-avatar__media:hover {
 	box-shadow: var(--ak-focus-ring, 0 0 0 3px rgba(34, 113, 177, .3));
 }
 
-/* The picked image fills the circle. */
+/* The picked image fills the circle exactly: no letterboxing, centred crop. */
 .adminkit-local-avatar__preview {
 	display: block;
 	width: 100%;
 	height: 100%;
-	border-radius: inherit;
 	object-fit: cover;
+	object-position: center;
 }
 
-/* Empty-state placeholder glyph (a faint person) — only shown with no image. */
+/* Empty-state placeholder glyph (a faint person) — fills the same circle so the
+   frame reads as one clean shape whether filled or empty. */
 .adminkit-local-avatar__placeholder {
 	display: flex;
 	width: 100%;
@@ -72,55 +70,11 @@ button.adminkit-local-avatar__media:hover {
 	color: var(--ak-text-muted, #787c82);
 }
 
-.adminkit-local-avatar__placeholder svg,
-.adminkit-local-avatar__overlay svg {
+.adminkit-local-avatar__placeholder svg {
 	display: block;
-	width: 28px;
-	height: 28px;
+	width: 40%;
+	height: 40%;
 	fill: currentColor;
-}
-
-/* The empty target reads as a drop-zone: dashed ring, muted glyph. */
-.adminkit-local-avatar.is-empty .adminkit-local-avatar__media {
-	border-style: dashed;
-	background: var(--ak-surface, #f0f0f1);
-}
-
-/* Hover/focus overlay — a scrim with a camera icon + label, faded in. */
-.adminkit-local-avatar__overlay {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 2px;
-	padding: var(--ak-space-2xs, 4px);
-	background: var(--ak-overlay, rgba(0, 0, 0, .5));
-	color: var(--ak-on-accent, #fff);
-	text-align: center;
-	opacity: 0;
-	transition: opacity .15s ease;
-	pointer-events: none;
-}
-
-.adminkit-local-avatar__overlay-label {
-	font-size: var(--ak-text-xs, 11px);
-	font-weight: 600;
-	line-height: 1.2;
-}
-
-/* Reveal the overlay on hover or keyboard focus of the button. */
-.adminkit-local-avatar__media:hover .adminkit-local-avatar__overlay,
-.adminkit-local-avatar__media:focus-visible .adminkit-local-avatar__overlay {
-	opacity: 1;
-}
-
-/* When empty, the placeholder already invites a click, so let the overlay layer
-   on hover for the explicit "Add a photo" affordance. */
-.adminkit-local-avatar.is-empty .adminkit-local-avatar__overlay svg {
-	width: 24px;
-	height: 24px;
 }
 
 /* Actions row beneath the avatar. */
@@ -141,8 +95,7 @@ button.adminkit-local-avatar__media:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.adminkit-local-avatar__media,
-	.adminkit-local-avatar__overlay {
+	.adminkit-local-avatar__media {
 		transition: none;
 	}
 }
