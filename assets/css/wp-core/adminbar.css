@@ -162,6 +162,10 @@
 	   — kill it here at matching specificity (we load after core). */
 	border: 0;
 	background: none;
+	/* This top-bar avatar is only 20px tall, so the shared --ak-radius-m (10px =
+	   half its height) renders a full circle. Use the small radius here so it reads
+	   as a rounded SQUARE, matching the other profile photos. */
+	border-radius: var(--ak-radius-s);
 }
 
 #wp-admin-bar-user-info .display-name {
