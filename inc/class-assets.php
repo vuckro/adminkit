@@ -9,10 +9,11 @@
  * condition — always-load).
  *
  * Contexts:
- *   admin    → admin_enqueue_scripts        (priority 9999)
- *   login    → login_enqueue_scripts        (priority 9999)
- *   frontend → wp_enqueue_scripts           (priority 9999, only when admin bar shows)
- *   editor   → enqueue_block_editor_assets  (priority 9999, block / site / widgets editors)
+ *   admin     → admin_enqueue_scripts               (priority 9999)
+ *   login     → login_enqueue_scripts               (priority 9999)
+ *   frontend  → wp_enqueue_scripts                  (priority 9999, only when admin bar shows)
+ *   editor    → enqueue_block_editor_assets         (priority 9999, block / site / widgets editors)
+ *   customize → customize_controls_enqueue_scripts  (priority 9999, the Customizer controls pane)
  *
  * `src` is a path relative to ADMINKIT_PATH (the plugin root). This
  * lets integration files in `inc/integrations/{plugins|themes}/{slug}/css/`
@@ -78,6 +79,9 @@ class AdminKit_Assets {
 		add_action( 'login_enqueue_scripts', array( __CLASS__, 'dispatch_login' ), 9999 );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'dispatch_frontend' ), 9999 );
 		add_action( 'enqueue_block_editor_assets', array( __CLASS__, 'dispatch_editor' ), 9999 );
+		// The Customizer (customize.php) skips admin_enqueue_scripts, so its own
+		// enqueue hook gets the dispatch — fonts + tokens + every `customize`-context entry.
+		add_action( 'customize_controls_enqueue_scripts', array( __CLASS__, 'dispatch_customize' ), 9999 );
 
 		add_filter( 'admin_body_class', array( __CLASS__, 'add_admin_body_class' ) );
 		add_filter( 'login_body_class', array( __CLASS__, 'add_login_body_class' ) );
@@ -164,6 +168,19 @@ class AdminKit_Assets {
 	 */
 	public static function dispatch_editor() {
 		self::dispatch_context( 'editor' );
+	}
+
+	/**
+	 * Dispatch the `customize` context (wp-admin/customize.php). The
+	 * Customizer does NOT fire `admin_enqueue_scripts`, so it has its own
+	 * enqueue hook (`customize_controls_enqueue_scripts`). This brings the
+	 * --ak-* tokens (+ fonts) and our customize.css to the Customizer
+	 * controls pane.
+	 *
+	 * @return void
+	 */
+	public static function dispatch_customize() {
+		self::dispatch_context( 'customize' );
 	}
 
 	/**

@@ -38,6 +38,10 @@ class AdminKit_Theme_Toggle {
 		add_action( 'admin_head', array( __CLASS__, 'print_script' ), 1 );
 		add_action( 'login_head', array( __CLASS__, 'print_script' ), 1 );
 		add_action( 'wp_head', array( __CLASS__, 'print_script' ), 1 );
+		// The Customizer (customize.php) skips admin_head, so the pre-paint
+		// bootstrap rides its own scripts hook — sets data-adminkit-theme on the
+		// Customizer's <html> so the tokens' dark block applies there too.
+		add_action( 'customize_controls_print_scripts', array( __CLASS__, 'print_script' ), 1 );
 		add_action( 'admin_bar_menu', array( __CLASS__, 'register_node' ), 999 );
 		add_action( 'admin_bar_menu', array( __CLASS__, 'register_view_site_node' ), 998 );
 

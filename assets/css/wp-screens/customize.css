@@ -1,0 +1,257 @@
+/* customize.php — the WordPress Customizer controls pane.
+   ======================================================================
+   The Customizer skips the normal admin hooks (admin_enqueue_scripts /
+   admin_body_class / admin_head), so AdminKit's usual `body.adminkit`
+   class is ABSENT here. It is wired separately (see AdminKit_Assets's
+   `customize` context + AdminKit_Theme_Toggle's customize hooks): the
+   --ak-* tokens load on :root and the dark-mode attribute lands on <html>,
+   so we just scope to WP's own always-present `body.wp-customizer` class
+   and read tokens — dark + light Just Work.
+
+   WP hardcodes the sidebar shell, the two action bars, section headers,
+   form controls and the info box with #fff / #f0f0f1 surfaces, #dcdcde
+   dividers and #1d2327 / #50575e / #646970 text — none flip in dark mode.
+   This first pass routes the MAIN surfaces (shell, header + footer action
+   bars, panel / section headers, controls + inputs, info + search) through
+   tokens. It does not try to cover every control type. */
+
+/* ── Sidebar shell ──────────────────────────────────────────────────────
+   The controls column: outer frame, the sidebar surface and its scrolling
+   content area. WP paints #fff / #eee with a #ddd right divider. */
+body.wp-customizer #customize-controls,
+body.wp-customizer .wp-full-overlay-sidebar {
+	background: var(--ak-bg);
+	border-right-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.wp-customizer .wp-full-overlay-sidebar-content {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+
+/* Preview/loading area edge + the full-overlay main container divider. */
+body.wp-customizer .wp-full-overlay-main {
+	background: var(--ak-bg);
+}
+
+/* ── Header actions bar (top of the sidebar) ────────────────────────────
+   Holds the Publish button, the spinner and the close (X). WP paints it
+   #fff with a #ddd bottom divider. */
+body.wp-customizer #customize-header-actions {
+	background: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+/* Publish — the primary CTA. WP gives it the admin theme blue; pin it to
+   the brand fill at rest and the hover token, label on --ak-on-accent. */
+body.wp-customizer #customize-header-actions .button-primary,
+body.wp-customizer #save {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+	box-shadow: none;
+}
+
+body.wp-customizer #customize-header-actions .button-primary:hover,
+body.wp-customizer #customize-header-actions .button-primary:focus,
+body.wp-customizer #save:hover,
+body.wp-customizer #save:focus {
+	background: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
+	color: var(--ak-on-accent);
+}
+
+/* Close (X) button — WP paints the glyph #50575e on a #fff strip and
+   #f3f5f6 on hover. Route to text tokens + a token hover surface. */
+body.wp-customizer .customize-controls-close {
+	background: var(--ak-surface);
+	border-right-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.wp-customizer .customize-controls-close:hover,
+body.wp-customizer .customize-controls-close:focus {
+	background: var(--ak-elevated);
+	border-bottom-color: var(--ak-primary);
+	color: var(--ak-heading);
+}
+
+/* ── Panel / section headers + back buttons ─────────────────────────────
+   Section/panel title rows (the buttons you click to drill in) and the
+   "back" rows shown once inside. WP paints them #fff with #ddd dividers
+   and #1d2327 text; hover goes #f3f5f6. */
+body.wp-customizer .accordion-section-title,
+body.wp-customizer .customize-section-title,
+body.wp-customizer .control-section .accordion-section-title,
+body.wp-customizer .customize-panel-back,
+body.wp-customizer .customize-section-back {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.wp-customizer .accordion-section-title:hover,
+body.wp-customizer .accordion-section-title:focus,
+body.wp-customizer .control-section .accordion-section-title:hover,
+body.wp-customizer .control-section .accordion-section-title:focus,
+body.wp-customizer .customize-panel-back:hover,
+body.wp-customizer .customize-panel-back:focus,
+body.wp-customizer .customize-section-back:hover,
+body.wp-customizer .customize-section-back:focus {
+	background: var(--ak-elevated);
+	color: var(--ak-heading);
+}
+
+/* The little ">" / "<" chevrons and meta text in those rows. */
+body.wp-customizer .accordion-section-title::after,
+body.wp-customizer .customize-panel-back::before,
+body.wp-customizer .customize-section-back::before {
+	color: var(--ak-text-muted);
+}
+
+/* The expanded section's title bar (shown pinned at the top once open). */
+body.wp-customizer .customize-section-title {
+	border-bottom-color: var(--ak-border);
+}
+
+body.wp-customizer .customize-section-title h3,
+body.wp-customizer .customize-section-title .customize-action,
+body.wp-customizer .customize-panel-back,
+body.wp-customizer .customize-section-back {
+	color: var(--ak-heading);
+}
+
+/* The faint "Customizing ▸ …" eyebrow above the section title. */
+body.wp-customizer .customize-section-title .customize-action,
+body.wp-customizer .panel-meta .customize-action {
+	color: var(--ak-text-muted);
+}
+
+/* ── Controls (the actual settings) ─────────────────────────────────────
+   Each control's label + helper description, then the form fields. */
+body.wp-customizer .customize-control,
+body.wp-customizer .customize-control-title {
+	color: var(--ak-text);
+}
+
+body.wp-customizer .customize-control .description,
+body.wp-customizer .customize-control-description,
+body.wp-customizer .customize-section-description {
+	color: var(--ak-text-muted);
+}
+
+/* Text-ish inputs, selects and textareas — recess onto --ak-input-bg with
+   a token border + text; focus picks up the brand border + ring. */
+body.wp-customizer .customize-control input[type="text"],
+body.wp-customizer .customize-control input[type="search"],
+body.wp-customizer .customize-control input[type="url"],
+body.wp-customizer .customize-control input[type="email"],
+body.wp-customizer .customize-control input[type="number"],
+body.wp-customizer .customize-control input[type="password"],
+body.wp-customizer .customize-control input[type="tel"],
+body.wp-customizer .customize-control input[type="date"],
+body.wp-customizer .customize-control select,
+body.wp-customizer .customize-control textarea {
+	background: var(--ak-input-bg);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-s);
+}
+
+body.wp-customizer .customize-control input[type="text"]:focus,
+body.wp-customizer .customize-control input[type="search"]:focus,
+body.wp-customizer .customize-control input[type="url"]:focus,
+body.wp-customizer .customize-control input[type="email"]:focus,
+body.wp-customizer .customize-control input[type="number"]:focus,
+body.wp-customizer .customize-control input[type="password"]:focus,
+body.wp-customizer .customize-control input[type="tel"]:focus,
+body.wp-customizer .customize-control input[type="date"]:focus,
+body.wp-customizer .customize-control select:focus,
+body.wp-customizer .customize-control textarea:focus {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+/* Links inside controls (e.g. "Edit" / external help). */
+body.wp-customizer .customize-control a {
+	color: var(--ak-primary);
+}
+
+/* ── Info box (top of the controls pane on the root screen) ─────────────
+   WP paints it #fff with a #ddd bottom border and #50575e text. */
+body.wp-customizer .customize-info,
+body.wp-customizer .customize-info .accordion-section-title {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.wp-customizer .customize-info .customize-panel-description,
+body.wp-customizer .customize-info .preview-notice {
+	color: var(--ak-text-muted);
+}
+
+body.wp-customizer .customize-info .preview-notice .theme-name {
+	color: var(--ak-heading);
+}
+
+/* ── Search (theme/section search box in the header) ────────────────────
+   The full-overlay header that holds the search field, plus the field. */
+body.wp-customizer .wp-full-overlay-header {
+	background: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.wp-customizer #customize-search-input,
+body.wp-customizer .customize-search input[type="text"],
+body.wp-customizer .customize-search input[type="search"] {
+	background: var(--ak-input-bg);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-s);
+}
+
+body.wp-customizer #customize-search-input:focus,
+body.wp-customizer .customize-search input[type="text"]:focus,
+body.wp-customizer .customize-search input[type="search"]:focus {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+/* ── Footer actions (bottom of the sidebar) ─────────────────────────────
+   The responsive device-preview switcher (desktop / tablet / mobile). WP
+   paints the bar #fff with a #ddd top divider; the active device button
+   gets a #f0f0f1 fill + #1d2327 glyph. */
+body.wp-customizer #customize-footer-actions {
+	background: var(--ak-surface);
+	border-top-color: var(--ak-border);
+}
+
+body.wp-customizer #customize-footer-actions .devices button {
+	color: var(--ak-text-muted);
+	background: transparent;
+}
+
+body.wp-customizer #customize-footer-actions .devices button:hover,
+body.wp-customizer #customize-footer-actions .devices button:focus {
+	color: var(--ak-heading);
+}
+
+body.wp-customizer #customize-footer-actions .devices button.active {
+	background: var(--ak-elevated);
+	color: var(--ak-heading);
+}
+
+/* The collapse (◂) sidebar toggle that sits in the footer bar. */
+body.wp-customizer .collapse-sidebar {
+	color: var(--ak-text-muted);
+}
+
+body.wp-customizer .collapse-sidebar:hover,
+body.wp-customizer .collapse-sidebar:focus {
+	color: var(--ak-heading);
+}

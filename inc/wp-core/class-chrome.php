@@ -128,6 +128,18 @@ class AdminKit_Core_Chrome {
 			) );
 		}
 
+		// --- Customizer (wp-admin/customize.php) ---
+		// Its own context: customize.php skips admin_enqueue_scripts, so this rides
+		// the `customize` dispatch (customize_controls_enqueue_scripts) wired in
+		// AdminKit_Assets. No screen condition — it always loads in that context.
+		AdminKit_Assets::register( array(
+			'handle'  => 'adminkit-customize',
+			'src'     => self::ASSETS_BASE . 'wp-screens/customize.css',
+			'deps'    => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context' => 'customize',
+			'section' => 'pages',
+		) );
+
 		// --- wp-screens/ (per-screen conditional; legacy section 'pages') ---
 		// post-edit uses $screen->base instead of ->id so it fires for every
 		// post type (pages, CPTs like bricks_template, woo products, …),
