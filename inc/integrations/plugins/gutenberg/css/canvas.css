@@ -84,3 +84,25 @@
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
+/* Notice buttons: "Edit with Bricks" stays the brand CTA; "use the block
+   editor" (a.button, no .button-primary) becomes a proper SECONDARY button so
+   the two read as a primary/secondary pair. Plain selectors beat Bricks's. */
+.editor-styles-wrapper .bricks-block-editor-notice-wrapper .button {
+	border-radius: var(--ak-radius-s);
+	padding: 6px 14px;
+	line-height: 1.6;
+}
+.editor-styles-wrapper .bricks-block-editor-notice-wrapper .button-primary {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+.editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:not(.button-primary) {
+	background-color: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	color: var(--ak-text);
+}
+.editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:not(.button-primary):hover {
+	background-color: var(--ak-elevated);
+	color: var(--ak-heading);
+}

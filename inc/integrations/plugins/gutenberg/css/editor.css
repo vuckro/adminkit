@@ -38,16 +38,15 @@ body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-cl
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
 }
-/* The glyph / site icon itself: a small, contained card (border + radius) so the
-   favicon doesn't fill the chip oversized, and reads in light + dark. */
+/* The glyph / site icon itself: a standard-size rounded mark (NO border, radius
+   kept) so it reads clearly in light + dark without looking cramped. */
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle-icon img,
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle-icon svg {
-	width: 26px;
-	height: 26px;
+	width: 32px;
+	height: 32px;
 	object-fit: contain;
-	padding: 3px;
+	padding: 2px;
 	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 }
 
