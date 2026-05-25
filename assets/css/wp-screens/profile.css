@@ -23,6 +23,16 @@ body.adminkit.profile-php #application-passwords-section > p:first-of-type {
 	display: none;
 }
 
+/* "User updated." success notice (user-edit.php) appends a 2nd <p> holding a
+   "← Go to Users" / go-to-account link. Hide just that link paragraph — keep the
+   confirmation text on its own. (profile.php / user-new have no such 2nd <p>, so
+   this is harmless there; it never touches the 1st <p> = the message itself.) */
+body.adminkit.user-edit-php #message p:nth-of-type(2),
+body.adminkit.profile-php #message p:nth-of-type(2),
+body.adminkit.user-new-php #message p:nth-of-type(2) {
+	display: none;
+}
+
 /* Profile picture hero (moved out of accordions under page title). */
 body.adminkit.user-edit-php .ak-profile-header,
 body.adminkit.profile-php .ak-profile-header {
