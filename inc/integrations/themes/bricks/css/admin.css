@@ -263,12 +263,12 @@ body.adminkit.bricks_page_bricks-elements form#bricks-element-manager tr:not(:la
 	box-shadow: 0 1px 0 0 var(--ak-border);
 }
 
-/* Row hover — neutral --ak-elevated to match the global list-table
+/* Row hover — the central --ak-hover-bg token, matching the global list-table
    hover (plugins, posts) in components/tables.css. Bricks paints its own
    #f6f6f6 bg + 1px box-shadow separator on hover; both are replaced here. */
 body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover,
 body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover td {
-	background-color: var(--ak-elevated);
+	background-color: var(--ak-hover-bg);
 	box-shadow: none;
 }
 

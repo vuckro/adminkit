@@ -93,9 +93,12 @@
 	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%))); /* + AdminKit addition (consumes the --secondary primitive) */
 
 	/* ── State ─────────────────────────────────────────────────────────────
-	   --hover is a mode-aware translucent tint (black in light, white in dark);
-	   focus color + the ring built on it so a custom brand tints its own ring. */
-	--ak-hover-bg: var(--hover, rgba(0, 0, 0, 0.04));
+	   --ak-hover-bg is THE single neutral hover token — every row / menu / item /
+	   list-table hover reads it, light AND dark. It aliases --ak-elevated (the
+	   "hover-down" surface), so a hover lifts a row to the elevated tone; since
+	   --ak-elevated flips per mode, this one line covers both (no dark override).
+	   Then the focus color + the ring built on it (a custom brand tints its own). */
+	--ak-hover-bg: var(--ak-elevated);
 	/* Elevation shadow — the one sanctioned exception to the flat rule, for
 	   true floating layers (admin-bar dropdowns). Mode-aware like --hover-bg:
 	   a black drop in light, inverted to a white lift in dark (a dark drop is
@@ -234,11 +237,6 @@ body.adminkit[class*="admin-color-"] {
 	--ak-error-subtle:   var(--error-d-9, color-mix(in srgb, var(--ak-error) 22%, var(--ak-surface)));
 	--ak-info-subtle:    var(--info-d-9, color-mix(in srgb, var(--ak-info) 22%, var(--ak-surface)));
 
-	/* Hover — a gentle white tint that lands ~the elevated tone: a subtle lift,
-	   slightly above --ak-elevated so it still reads as interactive (the neutral
-	   --hover is a black tint, invisible on dark, hence white here). --white-t-2
-	   (0.18) overshot well past elevated, so use the gentlest step. */
-	--ak-hover-bg: var(--white-t-1, rgba(255, 255, 255, 0.06));
 	/* Inverted elevation — a white lift reads on a dark page where a black
 	   drop would vanish. */
 	--ak-shadow-elevated: 0 8px 24px -10px rgba(255, 255, 255, 0.14);
