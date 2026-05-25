@@ -166,8 +166,10 @@ the brand logo and the `wp_logo` mode for the site-name brand mark — the
 plus AdminKit's active theme adapter, each carrying a **Native** badge when
 AdminKit ships a tuned adapter for it — a per-host enable toggle plus dark mode —
 while everything else inherits AdminKit's **generic** base token styling
-automatically. The Native badge tracks whether an adapter exists, not whether the
-plugin is currently active).
+automatically. Rows are grouped (Plugins, Themes) with a count pill per group
+title, and AdminKit itself appears as a locked **System** row (always on, not
+toggleable here). The Native badge tracks whether an adapter exists, not whether
+the plugin is currently active).
 
 ```php
 AdminKit_Settings::register( $key, array $args );  // declare a setting (idempotent)
