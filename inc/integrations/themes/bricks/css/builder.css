@@ -1,8 +1,9 @@
 /**
  * Bricks builder UI — AdminKit restyle.
  *
- * Loaded ONLY inside the Bricks builder main frame (AdminKit_Integration_Bricks::
- * enqueue_builder), and ONLY when the "Bricks builder" feature is enabled.
+ * Loaded across the Bricks builder — the main frame AND the canvas iframe
+ * (AdminKit_Integration_Bricks::enqueue_builder) — and ONLY when the "Bricks
+ * builder" feature is enabled. Each rule self-scopes to the frame it targets.
  *
  * EXCEPTION to AdminKit's "every stylesheet reads --ak-* tokens" rule. The
  * builder is a Bricks/WaasKit-native surface: it has no admin bar, so AdminKit's
@@ -21,6 +22,14 @@
  * The CodeMirror block is a deliberate fixed-palette syntax theme (Catppuccin
  * Mocha) — its hex literals are code-content colours, not UI chrome.
  */
+
+/* ============================================================
+   PRELOADER  (loading splash before the builder paints)
+   ============================================================ */
+#bricks-preloader {
+	background: var(--neutral-d-2, #171717);
+}
+
 
 /* ============================================================
    TOOLBAR
@@ -56,11 +65,11 @@
 	--builder-color-knob:             var(--neutral-l-7);
 	--builder-placeholder-opacity:    .32;
 
-	/* Accent / selection / highlight */
+	/* Accent / selection / highlight (highlight lives on :root below so it
+	   also applies outside "Custom" builder mode) */
 	--builder-bg-accent:              var(--surface);
 	--builder-color-accent:           var(--accent);
 	--builder-color-accent-inverse:   var(--on-accent, #fff);
-	--builder-color-highlight:        var(--primary);
 	--builder-bg-highlight:           var(--focus);
 
 	/* Classes */
@@ -104,6 +113,9 @@
 	--bricks-vh:               1vh;
 	--bricks-transition:       var(--transition-s, .15s);
 	--bricks-border-radius:    var(--radius-s, 4px);
+
+	/* Selection / highlight — on :root so it also applies outside "Custom" mode. */
+	--builder-color-highlight: var(--primary);
 
 	--bricks-color-primary:    var(--primary);
 	--bricks-color-secondary:  var(--secondary);
@@ -187,10 +199,22 @@
 
 
 /* ============================================================
-   CANVAS CHROME
+   CANVAS  (main-frame resizer + the canvas iframe)
    ============================================================ */
 .canvas-resizer {
 	border-inline-start: 1px solid var(--border);
+}
+
+/* Empty-state canvas — let the surface behind it show through. */
+#bricks-blank-canvas {
+	background-color: transparent;
+}
+
+/* Drop the focus outline inside the editing canvas (native Bricks form fields
+   double it up). Builder-only: this file never loads on the live frontend, so
+   the real site keeps its focus ring. */
+body.bricks-is-frontend :focus-visible {
+	outline: none;
 }
 
 
