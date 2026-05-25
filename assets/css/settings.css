@@ -412,8 +412,10 @@
 }
 .adminkit-app .ak-field:first-child { border-top: 0; }
 .adminkit-app .ak-field__label { font-size: var(--ak-text-s); font-weight: 500; color: var(--ak-heading); }
+.adminkit-app .ak-field__control { display: flex; gap: 8px; align-items: center; }
 .adminkit-app .ak-field__input {
-	width: 100%;
+	flex: 1;
+	min-width: 0;
 	font: inherit;
 	font-size: var(--ak-text-s);
 	color: var(--ak-text);
@@ -427,3 +429,4 @@
 	border-color: var(--ak-primary);
 	box-shadow: var(--ak-focus-ring);
 }
+.adminkit-app .ak-field__btn { flex: none; white-space: nowrap; }

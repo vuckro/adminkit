@@ -93,6 +93,7 @@ class AdminKit_Settings_Page {
 		$css = 'assets/css/settings.css';
 		$js  = 'assets/js/settings.js';
 
+		wp_enqueue_media(); // WordPress media frame, for the Branding logo pickers.
 		wp_enqueue_style( self::HANDLE, ADMINKIT_URL . $css, array( AdminKit_Assets::TOKENS_HANDLE ), self::ver( $css ) );
 		wp_enqueue_script( self::HANDLE, ADMINKIT_URL . $js, array( 'wp-api-fetch' ), self::ver( $js ), true );
 		wp_add_inline_script( self::HANDLE, 'window.AdminKitData=' . wp_json_encode( self::boot_data() ) . ';', 'before' );
@@ -251,6 +252,9 @@ class AdminKit_Settings_Page {
 				'logoLight'         => __( 'Logo — light mode', 'adminkit' ),
 				'logoDark'          => __( 'Logo — dark mode', 'adminkit' ),
 				'logoPlaceholder'   => __( 'https://…/logo.svg', 'adminkit' ),
+				'mediaPick'         => __( 'Media library', 'adminkit' ),
+				'mediaTitle'        => __( 'Select a logo', 'adminkit' ),
+				'mediaButton'       => __( 'Use this image', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),

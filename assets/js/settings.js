@@ -295,6 +295,51 @@
 
 	function buildFeatures() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( I.featuresIntro ) ] );
+
+		// --- Branding (top) — light/dark logo: URL field + media-library picker ---
+		function openMedia( slot, input ) {
+			if ( ! window.wp || ! wp.media ) { return; }
+			var frame = wp.media( {
+				title: I.mediaTitle || 'Select a logo',
+				button: { text: I.mediaButton || 'Use this image' },
+				library: { type: 'image' },
+				multiple: false
+			} );
+			frame.on( 'select', function () {
+				var att = frame.state().get( 'selection' ).first().toJSON();
+				var url = ( att && att.url ) || '';
+				input.value = url;
+				state.logos[ slot ] = url;
+				markDirty();
+			} );
+			frame.open();
+		}
+		function logoField( slot, label ) {
+			var id = 'ak-logo-' + slot;
+			var input = el( 'input', {
+				id: id, type: 'url', 'class': 'ak-field__input', value: state.logos[ slot ],
+				placeholder: I.logoPlaceholder || '', spellcheck: 'false'
+			} );
+			input.addEventListener( 'input', function () {
+				state.logos[ slot ] = input.value.trim();
+				markDirty();
+			} );
+			var pick = el( 'button', { type: 'button', 'class': 'ak-btn ak-field__btn', text: I.mediaPick || 'Media library' } );
+			pick.addEventListener( 'click', function () { openMedia( slot, input ); } );
+			return el( 'div', { 'class': 'ak-field' }, [
+				el( 'label', { 'class': 'ak-field__label', 'for': id, text: label } ),
+				el( 'div', { 'class': 'ak-field__control' }, [ input, pick ] )
+			] );
+		}
+		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
+			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
+			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
+			el( 'div', { 'class': 'ak-rows' }, [
+				logoField( 'light', I.logoLight ),
+				logoField( 'dark', I.logoDark )
+			] )
+		] ) );
+
 		var refs = {};     // key -> { input, row }
 		var groups = [];   // [{ label, rows }] in first-seen order
 		var byGroup = {};
@@ -375,30 +420,6 @@
 				g.rows
 			] ) );
 		} );
-
-		// Branding — optional light/dark logo URLs (consumed by the Bricks builder).
-		function logoField( slot, label ) {
-			var input = el( 'input', {
-				type: 'url', 'class': 'ak-field__input', value: state.logos[ slot ],
-				placeholder: I.logoPlaceholder || '', spellcheck: 'false'
-			} );
-			input.addEventListener( 'input', function () {
-				state.logos[ slot ] = input.value.trim();
-				markDirty();
-			} );
-			return el( 'label', { 'class': 'ak-field' }, [
-				el( 'span', { 'class': 'ak-field__label', text: label } ),
-				input
-			] );
-		}
-		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
-			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
-			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
-			el( 'div', { 'class': 'ak-rows' }, [
-				logoField( 'light', I.logoLight ),
-				logoField( 'dark', I.logoDark )
-			] )
-		] ) );
 
 		return p;
 	}
