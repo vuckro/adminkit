@@ -1,5 +1,5 @@
 /* Bricks theme admin pages — token bridge.
-   Loaded only on toplevel_page_bricks + bricks_page_bricks-* screens.
+   Loaded on toplevel_page_bricks + bricks_page_bricks-* + the bricks_fonts edit screen.
    Bricks's admin.min.css hardcodes light surfaces + dark text that
    don't flip in dark mode; route them through AdminKit tokens.
 
@@ -434,4 +434,13 @@ body.adminkit .bricks-admin-wrapper.getting-started .title .badge {
 
 body.adminkit .bricks-admin-wrapper.getting-started .box-wrapper:last-child::after {
 	border-bottom-left-radius: var(--ak-radius-m);
+}
+
+
+/* ----- 12. Custom Fonts metabox (bricks_fonts edit screen) ----- */
+/* Each font-variant row ships a hardcoded white bg + #ccd0d4 border that don't
+   flip; route to the token surface + border. */
+body.adminkit .bricks-font-metabox .bricks-font-variant {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
 }

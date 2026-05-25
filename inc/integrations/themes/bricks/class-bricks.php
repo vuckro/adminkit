@@ -96,7 +96,9 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		}
 		return 'toplevel_page_bricks' === $screen->id
 			|| 0 === strpos( $screen->id, 'bricks_page_bricks-' )
-			|| 'edit-bricks_template' === $screen->id;
+			|| 'edit-bricks_template' === $screen->id
+			// The Custom Fonts edit screen (bricks_fonts CPT) — for its variants metabox.
+			|| 'bricks_fonts' === $screen->id;
 	}
 
 	/**
@@ -469,27 +471,24 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
 		if ( '' !== $logo ) {
-			// Center the brand logo on the preloader splash and show it in a softly
-			// rounded chip. CENTERING: force #bricks-preloader to flex-center both axes —
-			// Bricks lays it out as a flex COLUMN, where `margin:0 auto` only centers on
-			// the main (vertical) axis, so the logo drifted right; `align-items:center`
-			// fixes the horizontal axis. RADIUS: a `contain` logo on a transparent box has
-			// nothing to round, so the 8px never read — give the box a faint chip
-			// background + padding so the rounded corners show, with the logo whole inside
-			// (background-origin:content-box, never cropped). Colours are fixed (the splash
-			// paints before tokens load — same reason #bricks-preloader is #171717). `> *`
-			// hides Bricks's animated cubes; .title/.sub-title hide its wordmark. id+class
-			// beats Bricks's class-only rules — no !important.
-			$css .= '#bricks-preloader{display:flex;flex-direction:column;align-items:center;justify-content:center}';
-			$css .= '#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
-			$css .= '#bricks-preloader .bricks-logo-animated{'
-				. 'box-sizing:border-box;width:260px;height:120px;max-width:60vw;flex:0 0 auto;align-self:center;'
-				. 'padding:16px;border-radius:14px;background-color:rgba(255,255,255,0.06);'
+			// Brand the preloader the way Bricks actually builds it: its loader hides
+			// its own logo/title and paints the mark on `.bricks-loading-inner::before`,
+			// centred by the inner's `display:grid;place-items:center`. We do the same —
+			// THAT is what truly centres the logo (styling .bricks-logo-animated drifted
+			// it right, because that element isn't the centred one). The mark sits in a
+			// softly-rounded chip (faint fixed bg + padding) so the border-radius reads
+			// even for a transparent/contain logo, never cropped. Fixed colours: the
+			// splash paints before tokens load (same reason #bricks-preloader is #171717).
+			// id+class beats Bricks's class-only rules — no !important.
+			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
+			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
+			$css .= '#bricks-preloader .bricks-loading-inner::before{'
+				. 'content:"";box-sizing:border-box;width:16rem;height:6rem;max-width:70vw;padding:1rem;'
+				. 'background-color:rgba(255,255,255,0.06);'
 				. 'background-image:' . self::css_url( $logo ) . ';'
 				. 'background-position:center;background-repeat:no-repeat;background-size:contain;background-origin:content-box;'
-				. 'overflow:hidden;animation:ak-bricks-preload 1.1s ease-in-out infinite}';
-			$css .= '#bricks-preloader .bricks-logo-animated > *{display:none}';
-			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.06)}}';
+				. 'border-radius:16px;animation:ak-bricks-preload 1.4s ease-in-out infinite}';
+			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
 		}
 		return $css;
 	}
