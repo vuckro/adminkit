@@ -1,0 +1,24 @@
+/* Admin Menu Editor Pro — Content Permissions (CPE) metabox on the post editor.
+   AME's content-permissions styles hardcode light surfaces for the "Direct Access
+   Protection" option boxes (#fafafa fill / #c3c4c7 border, plus a #f0f0fc / #72aee6
+   active state) that don't flip in dark mode. Route them to AdminKit tokens. Loaded
+   on post.php / post-new.php (where the metabox renders), scoped to body.adminkit.
+   The metabox text already inherits --ak-text from AdminKit's meta-boxes theming. */
+
+/* Each protection-type option box (replacement / 404 / block / redirect). */
+body.adminkit .ame-cpe-protection-type {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* The selected option — AME tints it light blue; use the brand accent wash. */
+body.adminkit .ame-cpe-protection-type.ame-cpe-is-active-protection {
+	background-color: var(--ak-primary-subtle);
+	border-color: var(--ak-primary);
+}
+
+/* Tab strip (Basic / Advanced / Protection / About) divider. */
+body.adminkit .ame-cpe-main-tabs {
+	border-bottom-color: var(--ak-border);
+}

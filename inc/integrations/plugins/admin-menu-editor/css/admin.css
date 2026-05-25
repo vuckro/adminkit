@@ -5,6 +5,14 @@
    every surface + border to AdminKit tokens, scoped to the AME
    page so we don't disturb other admin screens. */
 
+/* ----- :target highlight -----
+   WP highlights an anchored element (e.g. #ame-available-modules) with a hardcoded
+   yellow wash + outline; route it through tokens so it reads in dark mode. */
+body.adminkit.settings_page_menu_editor .wrap :target {
+	background-color: var(--ak-primary-subtle);
+	outline-color: var(--ak-primary);
+}
+
 
 /* ----- Menu builder boxes (.ws_main_container) -----
    Top-level + submenu columns in the drag-drop editor. */

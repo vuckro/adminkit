@@ -109,5 +109,19 @@ class AdminKit_Integration_Admin_Menu_Editor extends AdminKit_Integration_Base {
 			'deps'    => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context' => 'admin',
 		) );
+
+		// Content Permissions (CPE) metabox — renders on the post editor
+		// (post.php / post-new.php) for post types with AME's per-post access
+		// control on. AME hardcodes light option-box surfaces; load the token map
+		// there, scoped to $screen->base === 'post'.
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-ame-content-permissions',
+			'src'       => 'inc/integrations/plugins/admin-menu-editor/css/content-permissions.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => static function ( $screen ) {
+				return $screen && 'post' === $screen->base;
+			},
+		) );
 	}
 }
