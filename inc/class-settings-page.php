@@ -402,11 +402,6 @@ class AdminKit_Settings_Page {
 							'desc'   => __( 'Any plugin looks right, even without an adapter.', 'adminkit' ),
 							'detail' => __( 'Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common form controls — so a plugin with no dedicated adapter still looks coherent in light and dark out of the box. The stronger this layer, the less per-plugin work is ever needed.', 'adminkit' ),
 						),
-						array(
-							'label'  => __( 'Login & admin-bar polish', 'adminkit' ),
-							'desc'   => __( 'Every login state and the admin bar, front and back.', 'adminkit' ),
-							'detail' => __( 'Finish the most-seen surfaces end to end: every wp-login state (reset, register, check-email, interim login…), the admin bar on both the front and back end, consistent notices, and clear keyboard focus styles throughout.', 'adminkit' ),
-						),
 					),
 				),
 				array(

@@ -227,7 +227,7 @@ This mirrors the **in-app roadmap** (Dashboard tab) — the single source lives 
 `AdminKit_Settings_Page::dashboard()`. Keep the two in sync (see [`CLAUDE.md`](CLAUDE.md)).
 
 - **In progress** — _nothing in flight right now_ (just shipped: editor canvas theming; and builder & integration polish — Bricks preloader / scrollbars / code editor + the Admin Menu Editor popup).
-- **Next** — more native plugin support (tuned adapters for popular plugins); more native screens styled (taxonomies, custom post types, the rest); universal plugin compatibility (any plugin themed without an adapter); login & admin-bar polish (every login state + the front/back admin bar).
+- **Next** — more native plugin support (tuned adapters for popular plugins); more native screens styled (taxonomies, custom post types, the rest); universal plugin compatibility (any plugin themed without an adapter).
 - **Planned** — in-app palette editor; colour sync from the active provider/theme; more provider adapters (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress); theme variants (sepia, high-contrast); per-role visibility; accessibility / contrast checks; custom dashboard widgets; import / export settings; Bricks dynamic logo tag; WordPress Playground demo; white-label & admin footer.
 
 ---
