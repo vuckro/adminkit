@@ -320,8 +320,11 @@
 		}
 
 		// Flip every feature at once (the "enable / disable all" controls).
+		// Rows flagged `bulk: false` (e.g. the WordPress-default master pause) are
+		// left untouched — sweeping them would be nonsensical.
 		function setAll( on ) {
 			( D.features || [] ).forEach( function ( f ) {
+				if ( f.bulk === false ) { return; }
 				state.features[ f.key ] = on;
 				if ( refs[ f.key ] ) { refs[ f.key ].input.checked = on; }
 			} );

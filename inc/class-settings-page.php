@@ -220,6 +220,9 @@ class AdminKit_Settings_Page {
 				'desc'   => $f['desc'],
 				'parent' => isset( $f['parent'] ) ? $f['parent'] : '',
 				'value'  => (bool) AdminKit_Settings::get( $f['key'] ),
+				// `bulk => false` keeps a row out of the Enable all / Disable all sweep
+				// (e.g. the "WordPress default UI" master pause).
+				'bulk'   => ! isset( $f['bulk'] ) || (bool) $f['bulk'],
 			);
 		}
 
@@ -386,6 +389,10 @@ class AdminKit_Settings_Page {
 		if ( class_exists( 'AdminKit_Integration_Bricks' ) && AdminKit_Integration_Bricks::is_active() ) {
 			$rows[] = array( 'key' => 'bricks_builder_enabled', 'group' => $appearance, 'label' => __( 'Bricks builder', 'adminkit' ), 'desc' => __( 'Restyle the Bricks builder UI with your tokens. Needs Bricks builder mode set to "Custom".', 'adminkit' ) );
 		}
+
+		// Master pause — kept in its own group so it reads as an override, not a feature.
+		$advanced = __( 'Advanced', 'adminkit' );
+		$rows[] = array( 'key' => 'wp_default_ui', 'group' => $advanced, 'bulk' => false, 'label' => __( 'WordPress default interface', 'adminkit' ), 'desc' => __( 'Pause all AdminKit styling and show WordPress\'s native look — the plugin and features stay active (handy for debugging). The AdminKit settings page keeps its styling so you can switch back.', 'adminkit' ) );
 
 		return $rows;
 	}

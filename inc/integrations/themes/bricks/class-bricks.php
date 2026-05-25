@@ -236,6 +236,10 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		if ( ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
 			return;
 		}
+		// Respect the global "WordPress default UI" pause (adminkit/should_load).
+		if ( ! apply_filters( 'adminkit/should_load', true, 'builder' ) ) {
+			return;
+		}
 		$base = 'inc/integrations/themes/bricks/css/';
 
 		// Canvas IFRAME first. It renders the real page, so it gets ONLY the canvas
