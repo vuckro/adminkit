@@ -135,7 +135,7 @@ body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__in
 	height: 16px;
 	margin: 0;
 	border-radius: var(--ak-radius-full);
-	background: #fff;
+	background: var(--ak-input-bg);
 }
 
 body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):checked {
@@ -157,6 +157,13 @@ body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__in
 body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):focus-visible {
 	outline: 2px solid var(--ak-primary);
 	outline-offset: 2px;
+}
+
+/* Toggle knob in dark mode. The light-mode knob is --ak-input-bg (white); in dark
+   that token flips dark and would vanish into the track, so re-pin the knob to a
+   soft light chip that reads on the dark track without the glare of pure white. */
+:root[data-adminkit-theme="dark"] body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input))::before {
+	background: var(--ak-heading);
 }
 
 /* Keep real checkboxes where a toggle makes no sense: list-table row selection
