@@ -371,20 +371,20 @@ class AdminKit_Settings_Page {
 				array(
 					'title' => __( 'Planned', 'adminkit' ),
 					'items' => array(
-						array( 'label' => __( 'In-app palette editor', 'adminkit' ), 'desc' => __( 'Pick accent, surface and text colours directly — the token map is read-only today.', 'adminkit' ) ),
 						array( 'label' => __( 'More provider adapters', 'adminkit' ), 'desc' => __( 'Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress — beyond Bricks.', 'adminkit' ) ),
 						array( 'label' => __( 'Theme variants', 'adminkit' ), 'desc' => __( 'Beyond light and dark — sepia, high-contrast.', 'adminkit' ) ),
 						array( 'label' => __( 'Per-role visibility', 'adminkit' ), 'desc' => __( 'Choose which roles get the skin and who may edit it.', 'adminkit' ) ),
 						array( 'label' => __( 'Accessibility checks', 'adminkit' ), 'desc' => __( 'Warn when a chosen colour fails contrast / legibility.', 'adminkit' ) ),
+						array( 'label' => __( 'Custom dashboard widgets', 'adminkit' ), 'desc' => __( 'Replace the WP home screen: quick actions, site status, recent activity.', 'adminkit' ) ),
+						array( 'label' => __( 'Import / export settings', 'adminkit' ), 'desc' => __( 'Clone an AdminKit setup across client sites in one file.', 'adminkit' ) ),
+						array( 'label' => __( 'White-label & admin footer', 'adminkit' ), 'desc' => __( 'Hide WordPress branding everywhere and add an agency credit.', 'adminkit' ) ),
 					),
 				),
 				array(
 					'title' => __( 'Next', 'adminkit' ),
 					'items' => array(
+						array( 'label' => __( 'In-app palette editor', 'adminkit' ), 'desc' => __( 'Pick accent, surface and text colours directly — the token map is read-only today.', 'adminkit' ) ),
 						array( 'label' => __( 'Colour sync', 'adminkit' ), 'desc' => __( 'Pull colours from the active provider or theme and keep them in sync.', 'adminkit' ) ),
-						array( 'label' => __( 'Custom dashboard widgets', 'adminkit' ), 'desc' => __( 'Replace the WP home screen: quick actions, site status, recent activity.', 'adminkit' ) ),
-						array( 'label' => __( 'Import / export settings', 'adminkit' ), 'desc' => __( 'Clone an AdminKit setup across client sites in one file.', 'adminkit' ) ),
-						array( 'label' => __( 'White-label & admin footer', 'adminkit' ), 'desc' => __( 'Hide WordPress branding everywhere and add an agency credit.', 'adminkit' ) ),
 					),
 				),
 				array(

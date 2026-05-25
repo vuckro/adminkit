@@ -73,11 +73,22 @@ integration ships its plugin's icon, or how you override/remove any entry.
 | --- | --- | --- | --- |
 | `adminkit/menu_icons` | filter | `(array)` | Admin-menu map, **dashicon-class ⇒ SVG markup** (e.g. `'dashicons-admin-post' => '<svg…>'`). Return `''` for a key to skip it. |
 | `adminkit/toolbar_icons` | filter | `(array)` | Admin-bar map, **node-id ⇒ SVG markup** (e.g. `'wp-admin-bar-comments' => '<svg…>'`). |
+| `adminkit/toolbar_icon_ab_item_nodes` | filter | `(array)` | Map of **node-id ⇒ bool** marking toolbar nodes whose icon must be painted on `> .ab-item::before` instead of a child `.ab-icon` span. Set this for a node that renders a dashicon-font glyph or plain text rather than an `.ab-icon` child (core `edit`/`customize`, Bricks `edit_with_bricks`/`editor_mode`). A node not listed is assumed to carry an `.ab-icon`. |
 
 Keyed by dashicon class / node id so only items still using a stock icon are
 touched — a custom icon (Admin Menu Editor, a plugin's own image) is never
 overridden. The SVG is painted via CSS `mask` + `currentColor` (no `!important`),
 so it inherits the menu/toolbar colour. `inc/wp-core/class-menu-icons.php`.
+
+Example — register a text-only toolbar node so AdminKit paints its glyph on the
+link itself:
+
+```php
+add_filter( 'adminkit/toolbar_icon_ab_item_nodes', function ( $map ) {
+    $map['wp-admin-bar-my-plugin'] = true;
+    return $map;
+} );
+```
 
 ## Post previews
 

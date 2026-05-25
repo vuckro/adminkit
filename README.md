@@ -110,6 +110,7 @@ add_action( 'adminkit/enqueued_admin', function () {
 | `adminkit/integration_enabled` | `(bool, string $slug)` | Enable/disable one integration — drives the Plugins tab. |
 | `adminkit/brand_logo` | `('' \| string \| array)` | Brand-logo fallback when the Branding settings are empty. |
 | `adminkit/menu_icons` / `adminkit/toolbar_icons` | `(array)` | Override the native-icon replacement maps (dashicon-class / node-id ⇒ SVG). |
+| `adminkit/toolbar_icon_ab_item_nodes` | `(array)` | Mark toolbar nodes (node-id ⇒ bool) whose icon paints on `> .ab-item::before` instead of an `.ab-icon` child — for text/dashicon-font nodes. |
 | `adminkit/setting/{$key}` | `(mixed)` | Override a registered setting at read time. |
 | `adminkit/theme_attribute` | `(string)` | Override the dark/light HTML attribute name. |
 | `adminkit/theme_storage_key` | `(string)` | Override the localStorage key. |
@@ -221,8 +222,8 @@ This mirrors the **in-app roadmap** (Dashboard tab) — the single source lives 
 `AdminKit_Settings_Page::dashboard()`. Keep the two in sync (see [`CLAUDE.md`](CLAUDE.md)).
 
 - **In progress** — branding & admin-bar logo (toolbar logo / favicon, size control, light + dark); the AdminKit icon set (native menu + toolbar icon replacement, growing plugin coverage); Bricks builder polish (toolbar logo, preloader, canvas theming + fallback).
-- **Next** — colour sync from the active provider/theme; custom dashboard widgets; import / export settings; white-label & admin footer.
-- **Planned** — in-app palette editor; more provider adapters (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress); theme variants (sepia, high-contrast); per-role visibility; accessibility / contrast checks.
+- **Next** — in-app palette editor; colour sync from the active provider/theme.
+- **Planned** — more provider adapters (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress); theme variants (sepia, high-contrast); per-role visibility; accessibility / contrast checks; custom dashboard widgets; import / export settings; white-label & admin footer.
 
 ---
 
