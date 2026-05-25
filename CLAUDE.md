@@ -136,6 +136,18 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   replaced element: `width:auto` + `border-radius` work). This bit the admin-bar
   brand logo and the site-name favicon — both now render as `<img>` /
   `background-image`, not `content:url()`. See `inc/wp-core/class-branding.php`.
+- **Bricks BUILDER logo + scrollbars (hard-won — don't regress).** The preloader
+  logo is a **real `<img>` injected by JS** (`themes/bricks/js/preloader-logo.js`
+  appends `<img class="ak-preloader-logo">` into `#bricks-preloader`;
+  `builder-essentials.css` sizes it `height:Xrem; width:auto` so it hugs the logo's
+  natural ratio at any size — a CSS background on a fixed box letterboxes or crops a
+  logo of unknown aspect). Don't revert it to a background. The logo branding
+  (toolbar favicon + preloader) loads **ALWAYS via `builder-essentials.css`** (a REAL
+  stylesheet — a `src=false` inline-only handle can be dropped in the builder),
+  independent of `bricks_builder_enabled`, which only gates the heavier chrome
+  restyle (`builder.css`). Builder chrome **scrollbar theming is abandoned** —
+  Bricks's panels use a non-native scrollbar `::-webkit-scrollbar` can't reach
+  (unlike the Gutenberg native iframe scrollbar). Don't re-add it.
 - **`options.js` tabs the six built-in Settings screens** — it splits each screen
   at its `<h2>` sections into tabs, and "explodes" the Discussion
   `.form-table.indent-children` table (the one core screen that packs its groups
