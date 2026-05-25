@@ -219,6 +219,16 @@ class AdminKit_Settings {
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
+		// AdminKit icons — OFF by default (opt-in). Replaces WordPress's native menu
+		// + toolbar dashicons with AdminKit's icon set. Read by
+		// AdminKit_Core_Menu_Icons; non-destructive (only stock dashicons, no override).
+		self::register( 'replace_icons_enabled', array(
+			'type'     => 'toggle',
+			'group'    => 'features',
+			'default'  => false,
+			'sanitize' => 'rest_sanitize_boolean',
+		) );
+
 		// WordPress default UI — OFF by default. A master "pause" switch: when ON,
 		// AdminKit ships ZERO styling (admin, login, frontend bar, editor, Bricks
 		// builder) so wp-admin looks 100% native — the plugin and every feature stay

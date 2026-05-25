@@ -428,6 +428,7 @@ class AdminKit_Settings_Page {
 			array( 'key' => 'theme_toggle_enabled',  'group' => $appearance, 'label' => __( 'Dark mode', 'adminkit' ),       'desc' => __( 'Enable dark mode with a toggle in the admin bar. Off forces light mode everywhere.', 'adminkit' ) ),
 			array( 'key' => 'module_login_enabled',  'group' => $appearance, 'label' => __( 'Login screen', 'adminkit' ),              'desc' => __( 'Style the wp-login.php screen.', 'adminkit' ) ),
 			array( 'key' => 'editor_content_theme',   'group' => $appearance, 'label' => __( 'Gutenberg', 'adminkit' ),     'desc' => __( 'Theme the Gutenberg block-editor canvas (content + native blocks) in light and dark. Off (default) keeps the canvas matching your live site.', 'adminkit' ) ),
+			array( 'key' => 'replace_icons_enabled',  'group' => $appearance, 'label' => __( 'AdminKit icons', 'adminkit' ), 'desc' => __( 'Replace WordPress\'s native menu and toolbar icons with AdminKit\'s set. Non-destructive: icons already customised (e.g. via Admin Menu Editor) are left untouched.', 'adminkit' ) ),
 		);
 
 		// Bricks builder restyle — only meaningful when the Bricks theme is active.
