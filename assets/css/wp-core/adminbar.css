@@ -54,56 +54,70 @@
 	color: var(--ak-heading);
 }
 
-/* Submenu dropdowns — a detached, modern card. WP wraps each submenu in
-   .ab-sub-wrapper (dark bg + a hard little shadow); neutralize that, then put
-   the card on the inner <ul> with a margin-top gap. The gap stays INSIDE the
-   transparent wrapper — and the wrapper is the hover bridge — so detaching the
-   card from the bar doesn't break hover-to-open. Elevated surface + token
-   border + radius + a soft shadow (a deliberate, refined exception to the
-   otherwise flat chrome). */
+/* Submenu dropdowns — a detached, modern card (desktop). WP wraps each submenu
+   in .ab-sub-wrapper (dark bg + a hard little shadow); neutralize that here, then
+   the >782px block below puts the card on the inner <ul> with a margin-top gap.
+   The gap stays INSIDE the transparent wrapper — and the wrapper is the hover
+   bridge — so detaching the card from the bar doesn't break hover-to-open. The
+   card geometry (radius + soft shadow, a deliberate refined exception to the flat
+   chrome) is desktop-only; the responsive bar keeps WP's flush native panels. */
 #wpadminbar .menupop .ab-sub-wrapper {
 	background: transparent !important;
 	border: none !important;
 	box-shadow: none !important;
 }
 
-/* WP shows the hovered submenu wrapper as display:block, which leaves `gap` with
-   nothing to act on. Lay it out as a flex column so stacked submenu groups (the
-   wrapper can hold a primary + an .ab-sub-secondary <ul>) get a consistent token
-   gap — the admin --ak-space scale, NOT the provider's fluid --space-* (sized for
-   frontend layout, ~20px+, far too large here). Scoped to the show selectors so
-   the menu's own open/close is untouched. */
-#wpadminbar li.hover > .ab-sub-wrapper,
-#wpadminbar.nojs li:hover > .ab-sub-wrapper {
-	display: flex;
-	flex-direction: column;
-	gap: var(--ak-space-s);
-}
-
-/* The Site Name menu — the 2nd toolbar node, the gateway to the backend (its
-   submenu holds Dashboard, then the Appearance group: Themes / Widgets / Menus…).
-   Give its wrapper a roomier gap than the tight default so the Dashboard entry and
-   the Appearance group separate clearly. Its #id wins over the general rule above;
-   the flex column layout is inherited from it. (The `appearance` node is only a
-   group INSIDE this submenu — it has no fly-out wrapper of its own to target.) */
-#wpadminbar #wp-admin-bar-site-name.hover > .ab-sub-wrapper,
-#wpadminbar.nojs #wp-admin-bar-site-name:hover > .ab-sub-wrapper {
-	gap: var(--ak-space-l);
-}
-
+/* Submenu inner <ul> — surface + text tokens, both contexts (incl. the
+   responsive bar, where the dropdown still needs to read on the token surface).
+   The detached-CARD geometry (radius / shadow / margin gap / flex layout) is
+   desktop-only — see the >782px block below — because WP's responsive bar turns
+   these into full-width, static, flush panels and that geometry would misalign
+   them (a margin-top gap, an inset right edge, a floating shadow WP removed). */
 #wpadminbar .menupop ul {
 	background: var(--ak-elevated) !important;
 	border: 1px solid var(--ak-border) !important;
-	border-radius: var(--ak-radius-m);
-	box-shadow: var(--ak-shadow-elevated) !important;
-	margin-top: var(--ak-space-s);
-	overflow: hidden;
 }
 
-/* Right-secondary dropdowns (account / profile, comments, updates) anchor to the
-   screen's right edge — inset them so the card floats off the corner too. */
-#wpadminbar #wp-admin-bar-top-secondary .menupop ul {
-	margin-right: var(--ak-space-s);
+/* Desktop fly-out treatment — only above WP's responsive breakpoint (>782px).
+   Below it WP repositions submenus to full-width/static panels, so we leave them
+   flush and native rather than fight that with a detached card. */
+@media screen and (min-width: 783px) {
+	/* WP shows the hovered submenu wrapper as display:block, which leaves `gap`
+	   with nothing to act on. Lay it out as a flex column so stacked submenu groups
+	   (the wrapper can hold a primary + an .ab-sub-secondary <ul>) get a consistent
+	   token gap — the admin --ak-space scale, NOT the provider's fluid --space-*
+	   (sized for frontend layout, ~20px+, far too large here). Scoped to the show
+	   selectors so the menu's own open/close is untouched. */
+	#wpadminbar li.hover > .ab-sub-wrapper,
+	#wpadminbar.nojs li:hover > .ab-sub-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: var(--ak-space-s);
+	}
+
+	/* The Site Name menu — the 2nd toolbar node, the gateway to the backend (its
+	   submenu holds Dashboard, then the Appearance group: Themes / Widgets / Menus…).
+	   Give its wrapper a roomier gap than the tight default so the Dashboard entry and
+	   the Appearance group separate clearly. Its #id wins over the general rule above;
+	   the flex column layout is inherited from it. (The `appearance` node is only a
+	   group INSIDE this submenu — it has no fly-out wrapper of its own to target.) */
+	#wpadminbar #wp-admin-bar-site-name.hover > .ab-sub-wrapper,
+	#wpadminbar.nojs #wp-admin-bar-site-name:hover > .ab-sub-wrapper {
+		gap: var(--ak-space-l);
+	}
+
+	#wpadminbar .menupop ul {
+		border-radius: var(--ak-radius-m);
+		box-shadow: var(--ak-shadow-elevated) !important;
+		margin-top: var(--ak-space-s);
+		overflow: hidden;
+	}
+
+	/* Right-secondary dropdowns (account / profile, comments, updates) anchor to the
+	   screen's right edge — inset them so the card floats off the corner too. */
+	#wpadminbar #wp-admin-bar-top-secondary .menupop ul {
+		margin-right: var(--ak-space-s);
+	}
 }
 
 #wpadminbar .ab-submenu {
@@ -213,12 +227,16 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 	display: inline;
 }
 
-/* Keep the theme toggle visible on mobile. WP's responsive admin bar
-   hides every top-level item (`#wp-toolbar > ul > li { display:none }`)
-   then re-shows only a hardcoded id whitelist — our toggle isn't on it.
-   Re-display it at the same specificity as that whitelist; AdminKit loads
-   after core, so equal specificity wins on order. Sized to a 52px / 46px
-   tap target to match WP's other mobile icons. */
+/* Keep the theme toggle + view-site visible on WP's responsive bar (≤782px).
+   WP hides every top-level item (`#wp-toolbar > ul > li { display:none }`, 1,0,2)
+   then re-shows only a hardcoded id whitelist (`#wpadminbar li#wp-admin-bar-X`,
+   2,0,1) — our nodes aren't on it. Re-display them at that SAME specificity;
+   AdminKit loads after core, so equal specificity wins on order. The whole cell
+   is the tap target: 52×46 (matching WP's own mobile icons, and ≥ the ~44px
+   minimum), with the glyph flex-centred (see the rule above) and bumped a touch
+   for legibility on the taller bar. Search is intentionally NOT re-shown — WP
+   hides `#wp-admin-bar-search` here, and we respect that (it expands on tap only
+   at desktop widths, where it renders). */
 @media screen and (max-width: 782px) {
 	#wpadminbar li#wp-admin-bar-ak-theme-toggle,
 	#wpadminbar li#wp-admin-bar-ak-view-site {
@@ -231,6 +249,14 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 		height: 46px;
 		padding: 0;
 		text-align: center;
+	}
+
+	/* Larger glyph on the 46px touch bar so the sun/moon + house read clearly
+	   next to WP's own 32px+ dashicons (the bare 18px reads small here). */
+	#wpadminbar li#wp-admin-bar-ak-theme-toggle .ak-theme-icon,
+	#wpadminbar li#wp-admin-bar-ak-view-site .ak-theme-icon {
+		width: 22px;
+		height: 22px;
 	}
 }
 

@@ -20,12 +20,16 @@
  *    admin-bar mode runs on its own `data-adminkit-theme` and drifts out of
  *    sync (it falls back to `prefers-color-scheme` while Bricks uses the
  *    project's default mode, so the bar can read inverted). print_theme_bridge()
- *    fixes this on the frontend only: a **one-way, read-only** mirror copies
- *    `data-brx-theme` onto `data-adminkit-theme`, and the bar's sun/moon button
- *    drives Bricks (writes `data-brx-theme` + `brx_mode`) so there is a single
- *    source of truth. It never writes back into AdminKit's own state, so the
- *    feedback loop a two-way bridge once caused can't recur. In wp-admin (where
- *    Bricks doesn't theme anything) AdminKit's own toggle is untouched.
+ *    keeps them in step on the frontend — but AdminKit's own toggle stays
+ *    AUTHORITATIVE: its inline handler always flips `data-adminkit-theme` (so the
+ *    bar switches with or without Bricks), and this bridge is purely additive. It
+ *    adopts Bricks's mode on load, mirrors `data-brx-theme` -> `data-adminkit-theme`
+ *    going forward, and pushes AdminKit's own flips back into Bricks
+ *    (`data-brx-theme` + `brx_mode`) so the site repaints too. A reentrancy guard
+ *    stops the mirrors looping. The bridge no longer intercepts the toggle click —
+ *    that interception was the bug (when Bricks didn't repaint, e.g. on the
+ *    responsive bar, the bar never flipped). In wp-admin (where Bricks doesn't
+ *    theme anything) AdminKit's own toggle is untouched.
  *
  * Removing this folder removes Bricks support entirely; nothing else
  * in the plugin references Bricks.
@@ -247,10 +251,22 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	/**
 	 * Print the frontend theme bridge (see the class header for the rationale).
 	 *
-	 * One-way, read-only: `data-brx-theme` -> `data-adminkit-theme`. The admin
-	 * bar's sun/moon button is rerouted (capture-phase, so it preempts AdminKit's
-	 * own handler) to flip Bricks's mode instead of AdminKit's, keeping Bricks the
-	 * single source of truth. Skipped in wp-admin and inside the builder.
+	 * AdminKit's own toggle is AUTHORITATIVE: its inline handler (class-theme-toggle)
+	 * always flips `data-adminkit-theme` + persists, so the admin bar (and the
+	 * --ak-* layer) switch with or without Bricks. This bridge is purely additive —
+	 * it keeps the two systems in sync, never blocks AdminKit's flip:
+	 *
+	 *   - on load, adopt Bricks's current mode (`data-brx-theme`) into AdminKit ONCE,
+	 *     so the bar starts matching the site's mode rather than its own fallback;
+	 *   - keep mirroring `data-brx-theme` -> `data-adminkit-theme` (one-way), so if
+	 *     Bricks flips by other means the bar follows;
+	 *   - when AdminKit's own attribute flips (the user clicked the bar toggle), push
+	 *     that mode INTO Bricks (`data-brx-theme` + `brx_mode`) so Bricks repaints too.
+	 *
+	 * A reentrancy guard stops the two mirrors from ping-ponging. There is no click
+	 * interception any more (the previous capture-phase handler that preempted
+	 * AdminKit's flip was the bug: when Bricks didn't repaint — notably on the
+	 * responsive bar — the bar never switched). Skipped in wp-admin and the builder.
 	 *
 	 * @return void
 	 */
@@ -259,26 +275,37 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 		$attr = AdminKit_Theme_Toggle::attribute();
-		$node = AdminKit_Theme_Toggle::NODE_ID;
 		?>
 <script id="adminkit-bricks-theme-bridge">
 (function(){
 	var d = document.documentElement;
 	var ATTR = <?php echo wp_json_encode( $attr ); ?>;
-	var SEL = '#wp-admin-bar-<?php echo esc_js( $node ); ?> a';
+	var lock = false; // reentrancy guard: don't let the two mirrors feed each other.
+	function ak(){ return d.getAttribute(ATTR); }
 	function brx(){ return d.getAttribute('data-brx-theme'); }
-	function sync(){ var m = brx(); if (m === 'dark' || m === 'light') d.setAttribute(ATTR, m); }
-	sync();
-	new MutationObserver(sync).observe(d, { attributes:true, attributeFilter:['data-brx-theme'] });
-	document.addEventListener('click', function(e){
-		var a = e.target.closest && e.target.closest(SEL);
-		if (!a) return;
-		e.preventDefault();
-		e.stopImmediatePropagation();
-		var n = brx() === 'dark' ? 'light' : 'dark';
-		d.setAttribute('data-brx-theme', n);
-		try { localStorage.setItem('brx_mode', n); } catch (err) {}
-	}, true);
+	// Bricks -> AdminKit (one-way read of Bricks's mode onto the bar).
+	function pull(){
+		if (lock) return;
+		var m = brx();
+		if ((m === 'dark' || m === 'light') && m !== ak()) {
+			lock = true; d.setAttribute(ATTR, m); lock = false;
+		}
+	}
+	// AdminKit -> Bricks (AdminKit's own handler is the source of truth; mirror its
+	// flip into Bricks so the site repaints alongside the bar).
+	function push(){
+		if (lock) return;
+		var m = ak();
+		if ((m === 'dark' || m === 'light') && m !== brx()) {
+			lock = true;
+			d.setAttribute('data-brx-theme', m);
+			try { localStorage.setItem('brx_mode', m); } catch (err) {}
+			lock = false;
+		}
+	}
+	pull(); // adopt Bricks's current mode on load (before its own script may re-set it).
+	new MutationObserver(pull).observe(d, { attributes:true, attributeFilter:['data-brx-theme'] });
+	new MutationObserver(push).observe(d, { attributes:true, attributeFilter:[ATTR] });
 })();
 </script>
 		<?php

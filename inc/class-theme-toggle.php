@@ -111,19 +111,20 @@ class AdminKit_Theme_Toggle {
 		m = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 	}
 	d.dataset[DS] = m;
-	function bind() {
-		var a = document.querySelector('#wp-admin-bar-<?php echo esc_js( self::NODE_ID ); ?> a');
+	// AUTHORITATIVE flip. Delegated on document (capture-phase) so it fires no
+	// matter when the node mounts or how the bar re-renders — and on the front
+	// end with or without any provider (e.g. Bricks). It always flips AdminKit's
+	// own attribute + persists; an optional provider bridge mirrors that flip into
+	// the provider afterwards, but the bar's own switch never depends on it.
+	var SEL = '#wp-admin-bar-<?php echo esc_js( self::NODE_ID ); ?> a';
+	document.addEventListener('click', function (e) {
+		var a = e.target.closest && e.target.closest(SEL);
 		if (!a) return;
-		a.addEventListener('click', function (e) {
-			e.preventDefault();
-			var n = d.dataset[DS] === 'dark' ? 'light' : 'dark';
-			d.dataset[DS] = n;
-			try { localStorage.setItem(KEY, n); } catch (e) {}
-		});
-	}
-	document.readyState === 'loading'
-		? document.addEventListener('DOMContentLoaded', bind)
-		: bind();
+		e.preventDefault();
+		var n = d.dataset[DS] === 'dark' ? 'light' : 'dark';
+		d.dataset[DS] = n;
+		try { localStorage.setItem(KEY, n); } catch (err) {}
+	}, true);
 })();
 </script>
 		<?php
