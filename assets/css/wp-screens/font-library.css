@@ -24,7 +24,7 @@ body.adminkit .font-library__font-card {
 }
 
 body.adminkit .font-library__font-card:hover {
-	background-color: var(--ak-hover-bg);
+	background-color: var(--ak-elevated);
 }
 
 body.adminkit .font-library__font-card__count {

@@ -640,7 +640,7 @@ body.adminkit #screen-meta-links a {
 body.adminkit #screen-meta-links a:hover,
 body.adminkit #screen-meta-links a:focus {
 	color: var(--ak-heading);
-	background: var(--ak-surface);
+	background: var(--ak-elevated);
 }
 
 /* Drop the focus ring on the Screen Options / Help toggle — WP paints a

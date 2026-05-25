@@ -71,7 +71,7 @@ body.adminkit .privacy-settings-accordion-trigger:hover,
 body.adminkit .privacy-settings-accordion-trigger:active,
 body.adminkit .health-check-accordion-trigger:hover,
 body.adminkit .health-check-accordion-trigger:active {
-	background: var(--ak-surface);
+	background: var(--ak-elevated);
 	color: var(--ak-heading);
 }
 

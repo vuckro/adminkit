@@ -369,7 +369,7 @@
 	text-align: left;
 }
 .adminkit-app button.ak-hero__cell { font: inherit; border: 0; cursor: pointer; }
-.adminkit-app .ak-hero__cell--link:hover { background: var(--ak-hover-bg); }
+.adminkit-app .ak-hero__cell--link:hover { background: var(--ak-elevated); }
 .adminkit-app .ak-hero__cell--link:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
 .adminkit-app .ak-hero__k {
 	font-size: var(--ak-text-xs);
