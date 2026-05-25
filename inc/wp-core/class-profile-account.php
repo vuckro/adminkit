@@ -65,8 +65,11 @@ class AdminKit_Profile_Account {
 		}
 
 		// `sections` use WP core's default text domain so the JS matches each
-		// heading by its *rendered* text — locale-proof. `cards` are AdminKit's
-		// own UI copy (adminkit domain).
+		// heading by its *rendered* text — locale-proof. `cards` (and the labels
+		// below) are AdminKit's own UI copy: English source strings in the
+		// `adminkit` domain. Keep the source English — translations live in
+		// languages/ (fr_FR maps "Information" → "Informations", etc.). A French
+		// source string would leak to every untranslated locale.
 		$strings = array(
 			'sections' => array(
 				'name'          => __( 'Name' ),
@@ -78,13 +81,13 @@ class AdminKit_Profile_Account {
 				'capabilities'  => __( 'Additional Capabilities' ),
 			),
 			'cards'    => array(
-				'info'     => array( 'label' => __( 'Informations', 'adminkit' ), 'desc' => __( 'Identité, contact et mot de passe.', 'adminkit' ) ),
-				'settings' => array( 'label' => __( 'Réglages', 'adminkit' ), 'desc' => __( 'Rôles, langue et préférences.', 'adminkit' ) ),
+				'info'     => array( 'label' => __( 'Information', 'adminkit' ), 'desc' => __( 'Identity, contact and password.', 'adminkit' ) ),
+				'settings' => array( 'label' => __( 'Settings', 'adminkit' ), 'desc' => __( 'Roles, language and preferences.', 'adminkit' ) ),
 			),
-			'addresses'       => __( 'Adresses', 'adminkit' ),
-			'more'            => __( 'Autres réglages', 'adminkit' ),
-			'nav'             => __( 'Sections du compte', 'adminkit' ),
-			'username_locked' => __( 'Ce nom d’utilisateur ne peut pas être modifié.', 'adminkit' ),
+			'addresses'       => __( 'Addresses', 'adminkit' ),
+			'more'            => __( 'Other settings', 'adminkit' ),
+			'nav'             => __( 'Account sections', 'adminkit' ),
+			'username_locked' => __( 'This username cannot be changed.', 'adminkit' ),
 		);
 
 		AdminKit_Assets::enqueue_script(
