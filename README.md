@@ -2,7 +2,7 @@
 
 A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone — optional adapters layer in token providers (Bricks today, more later).
 
-> Status: **v1.0.0** — ships fully-featured out of the box (Gutenberg canvas theming, AdminKit icons and local + generated avatars all on by default), with tabbed Settings screens and an interactive dashboard roadmap on top of the registry-based assets, per-screen conditional loading and host-drift detection.
+> Status: **v1.0.0** — ships fully-featured out of the box (Gutenberg canvas theming, AdminKit icons and local avatars all on by default), with tabbed Settings screens, a unified Tools page and an interactive dashboard roadmap on top of the registry-based assets, per-screen conditional loading and host-drift detection.
 
 ---
 
@@ -13,8 +13,7 @@ A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone �
 - Exposes its design as **CSS custom properties** (`--ak-*`) that any other admin-side stylesheet can consume.
 - **Doesn't require any builder.** A site with no theme provider lands on neutral fallbacks. A site with Bricks gets its brand colors automatically.
 - Loads CSS **conditionally per screen** — the themes page CSS doesn't run on the dashboard, plugin-editor CSS doesn't run on profile, etc.
-- **Local avatars** (on by default) — let users set a profile picture that replaces Gravatar; leave it unset and Gravatar behaves exactly as before.
-- **Generated avatars** (on by default) — gives any user with no upload *and* no real Gravatar a friendly auto-generated face instead of a blank silhouette; a real Gravatar always wins. Served via a hosted generator ([DiceBear](https://www.dicebear.com)) with a non-PII seed — see [`docs/EXTENDING.md`](docs/EXTENDING.md#avatars) and the disclosure in `readme.txt`.
+- **Local avatars** (on by default) — let users set a profile picture that replaces Gravatar; leave it unset and Gravatar behaves exactly as before. When it's on, any user with no upload *and* no real Gravatar gets a friendly auto-generated face instead of a blank silhouette (a real Gravatar always wins) — served via a hosted generator ([DiceBear](https://www.dicebear.com)) with a non-PII seed, opt-out per user. No separate toggle. See [`docs/EXTENDING.md`](docs/EXTENDING.md#avatars) and the disclosure in `readme.txt`.
 
 ---
 
@@ -23,7 +22,7 @@ A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone �
 1. Download a release zip (or clone this repo into `wp-content/plugins/adminkit/`).
 2. Activate "AdminKit" in the WordPress Plugins screen.
 
-That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) has a **Design** tab (a read-only token reference), a **Settings** tab (module toggles + your brand logo and the site-name brand-mark mode), and a **Plugins** tab to enable/disable each detected integration; the registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) has a **Design** tab (a read-only token reference), a **Settings** tab (module toggles + your brand logo and the site-name brand-mark mode), and a **Plugins** tab listing *every installed* plugin (plus AdminKit's active theme adapter). Each row carries a **Native** badge when AdminKit ships a tuned adapter for it (a per-host enable toggle plus dark mode; the badge tracks whether an adapter exists, not whether the plugin is currently active); everything else is themed automatically by AdminKit's **generic** base token layer. The registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 

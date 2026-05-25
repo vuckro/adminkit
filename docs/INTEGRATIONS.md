@@ -7,6 +7,32 @@ cleanly. This page is the contract, the build walkthrough, and the patterns.
 Token vocabulary: [TOKENS.md](TOKENS.md). Asset registry: [ARCHITECTURE.md](ARCHITECTURE.md).
 Every hook: [EXTENDING.md](EXTENDING.md).
 
+## Native vs. generic — the support model
+
+AdminKit themes plugins at two levels; the **Plugins** tab lists every installed
+plugin and badges the Native ones:
+
+- **Generic** — *every* plugin gets this for free, with no adapter. AdminKit's
+  base layer themes the building blocks any plugin shares with WP core: the
+  admin-wide component CSS (buttons, inputs, tables, `form-table`, chrome), a
+  WordPress / `@wordpress-components` CSS-variable remap (`assets/css/tokens.css`),
+  and shared surfaces — `.card`, `.welcome-panel`, inline `code` / `kbd` / `pre` —
+  in `assets/css/wp-screens/_shared/cards.css`. A plugin built on standard WP
+  markup and the WordPress component variables lands here looking right with zero
+  per-host work.
+- **Native** — a plugin (or theme) with a tuned adapter under
+  `inc/integrations/`. The adapter remaps the host's *own* colours/variables (and
+  gets dark mode), adds a per-host enable toggle, and handles surfaces the generic
+  layer can't.
+
+**The honest limit.** A plugin that **hardcodes its own colours in its own
+classes** (e.g. `.acme-panel { background: #1e2a3a }`) can't be reached by the
+generic layer — no CSS algorithm can auto-map a literal it has never seen to a
+token. Those plugins need a **native adapter** to override (or version-gate) those
+selectors. The generic layer covers the shared, variable-driven vocabulary;
+everything a host paints in its own private classes is adapter territory. The rest
+of this page is how to write that adapter.
+
 ## Conventions
 
 ```

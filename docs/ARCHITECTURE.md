@@ -61,17 +61,26 @@ skips it: `adminkit/enqueue_{section}` (per-section bail), `adminkit/enqueue_{ha
 (per-asset bail), then the `condition` closure. `filemtime` cache-busts every
 file (edit CSS/JS → no version bump). All bail filters are in [EXTENDING.md](EXTENDING.md).
 
-**JS bricks.** Feature behaviour (profile tabs, post-preview hover, list-table
-polish, local/generated avatars) ships as `assets/js/wp-core/*.js`; per-screen
-behaviour lives in `assets/js/wp-screens/*.js` (today `options.js`, which tabs the
+**JS bricks.** Feature behaviour (profile tabs, post-preview hover + click-to-recapture,
+list-table polish, local avatars) ships as `assets/js/wp-core/*.js`; per-screen
+behaviour lives in `assets/js/wp-screens/*.js` (`options.js`, which tabs the
 six built-in Settings screens — splitting each at its `<h2>` section and
 "exploding" the Discussion `indent-children` table into one tab per `<th>` row,
-while every field stays in the one submitting form). Both are enqueued in the
-footer via `AdminKit_Assets::enqueue_script( $handle, $src, $deps, $data )` — same
+while every field stays in the one submitting form; and `tools.js`, see **Unified
+Tools** below). All are enqueued in the footer via
+`AdminKit_Assets::enqueue_script( $handle, $src, $deps, $data )` — same
 `filemtime` cache-bust as CSS, with PHP data passed as a `before` inline
 bootstrap (`window.AdminKit*`). The one exception is the **theme pre-paint
 script** in `class-theme-toggle.php`: it stays inline in `<head>` so dark/light
 applies before first paint (no FOUC). `assets/js/settings.js` is the settings SPA.
+
+**Unified Tools.** `AdminKit_Core_Chrome` injects ONE pill tab strip across the
+built-in Tools screens (Available Tools / Import / Export / Site Health / Export
++ Erase Personal Data) so they read as a single tabbed section. Each tab is a
+plain link to its native screen — nothing is moved or fetched, so every page
+keeps its own markup, forms and handlers, and with JS off the pages are 100%
+native (progressive enhancement). The strip ships as `assets/js/wp-screens/tools.js`,
+gated by the `tools_unified_enabled` setting (default ON).
 
 **Where AdminKit registers its own assets:** `inc/wp-core/class-chrome.php` (all
 admin CSS — chrome, components, screens), `class-login.php` (login), the wp-core
@@ -153,11 +162,12 @@ persists via one REST route (`adminkit/v1/settings`). Four tabs: **Dashboard**;
 **Design** (a read-only reference of the semantic token map — the `design` i18n
 key, formerly "Tokens"); **Settings** (the module toggles plus a Branding block —
 the brand logo and the `wp_logo` mode for the site-name brand mark — the
-`features` key, formerly "Features"); and **Plugins** (the site's *active*
-plugins and themes, each tagged **Native** — a tuned adapter you can switch per
-host — or **Generic** — no dedicated adapter, so it inherits AdminKit's base
-token styling automatically. Nothing dormant is listed, so there's no "inactive"
-state).
+`features` key, formerly "Features"); and **Plugins** (every installed plugin
+plus AdminKit's active theme adapter, each carrying a **Native** badge when
+AdminKit ships a tuned adapter for it — a per-host enable toggle plus dark mode —
+while everything else inherits AdminKit's **generic** base token styling
+automatically. The Native badge tracks whether an adapter exists, not whether the
+plugin is currently active).
 
 ```php
 AdminKit_Settings::register( $key, array $args );  // declare a setting (idempotent)
@@ -179,14 +189,17 @@ individually switch-off-able:
   `replace_icons_enabled` (swaps native menu/toolbar dashicons for AdminKit's set
   — `inc/wp-core/class-menu-icons.php`, filterable via `adminkit/menu_icons` /
   `adminkit/toolbar_icons`; non-destructive — only stock dashicons),
-  `local_avatars_enabled` (a per-user profile picture that replaces Gravatar —
+  `tools_unified_enabled` (one pill tab strip across the built-in Tools screens —
+  see **Unified Tools** above; off = the native, separate Tools pages),
+  and `local_avatars_enabled` (a per-user profile picture that replaces Gravatar —
   `inc/wp-core/class-local-avatars.php`, stored in the `adminkit_local_avatar`
   user meta, served via `pre_get_avatar_data`; non-destructive — Gravatar is
-  untouched until an avatar is set), and `generated_avatars_enabled` (a child of
-  local avatars: when a user has no upload **and** no real Gravatar, AdminKit
-  serves a friendly auto-generated avatar via the Gravatar `d=` fallback — a real
-  Gravatar always wins; uses DiceBear's hosted API with a non-PII seed, see
-  [EXTENDING.md → Avatars](EXTENDING.md#avatars)).
+  untouched until an avatar is set). Generated avatars fold into this one toggle:
+  when local avatars are on, a user with no upload **and** no real Gravatar
+  automatically gets a friendly auto-generated avatar via the Gravatar `d=`
+  fallback — a real Gravatar always wins; uses DiceBear's hosted API with a
+  non-PII seed (opt-out per user). There is no separate generated-avatars toggle,
+  see [EXTENDING.md → Avatars](EXTENDING.md#avatars).
 - **Off by default** (opt-in): `bricks_builder_enabled` (restyles a third-party
   builder's own UI, so it stays inert until asked for; only shown when Bricks is
   active).

@@ -101,7 +101,10 @@ add_filter( 'adminkit/toolbar_icon_ab_item_nodes', function ( $map ) {
 
 ## Post previews
 
-All in `inc/wp-core/class-post-previews.php`:
+A list-table screenshot column (mShots or featured image). The thumbnail re-captures
+on demand: clicking an mShots thumbnail rotates its `v` cache key to force a fresh
+capture and updates it in place. All hooks are in
+`inc/wp-core/class-post-previews.php`:
 
 | Hook | Signature | Purpose |
 | --- | --- | --- |
@@ -115,24 +118,19 @@ All in `inc/wp-core/class-post-previews.php`:
 ## Avatars
 
 The **Local avatars** feature (`local_avatars_enabled`, on by default) lets users
-upload a profile picture that replaces Gravatar. Its child **Generated avatars**
-feature (`generated_avatars_enabled`, on by default) fills in a friendly
-auto-generated face for any user with no upload *and* no real Gravatar — served as
-the Gravatar `d=` fallback, so a real Gravatar always wins. The generator is
-[DiceBear](https://www.dicebear.com)'s hosted, key-less HTTP API
-(`https://api.dicebear.com`), seeded with a non-PII value (the md5 of the login,
-or a stored random seed when the user rolls one). Both hooks are in
-`inc/wp-core/class-local-avatars.php`:
+upload a profile picture that replaces Gravatar. With it on, any user with no
+upload *and* no real Gravatar automatically gets a friendly auto-generated face —
+served as the Gravatar `d=` fallback, so a real Gravatar always wins. This is
+folded into the local-avatars toggle: there is **no separate generated-avatars
+setting**. The generator is [DiceBear](https://www.dicebear.com)'s hosted,
+key-less HTTP API (`https://api.dicebear.com`), seeded with a non-PII value (the
+md5 of the login, or a stored random seed when the user rolls one). Both hooks are
+in `inc/wp-core/class-local-avatars.php`:
 
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
 | `adminkit/generated_avatar_style` | filter | `(string $style, int $user_id)` | The DiceBear style slug (default `fun-emoji`). Return another slug to change the look (e.g. `notionists`, `adventurer`). |
 | `adminkit/generated_avatar_url` | filter | `(string $url, int $user_id, int $size)` | The final generated-avatar URL — override to self-host or swap the service entirely. |
-
-AdminKit also registers a **"Generated avatar (AdminKit)"** entry in
-Settings → Discussion's default-avatar list (the `avatar_defaults` filter) when
-generated avatars are on, so the admin sees the real fallback instead of a stale
-"Mystery Person".
 
 Example — self-host the generated avatars instead of calling DiceBear:
 

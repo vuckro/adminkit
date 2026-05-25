@@ -115,18 +115,21 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 - **The token layers are each optional** (provider → baseline → neutral). Don't
   hard-require any one of them. See ARCHITECTURE.
 - **Default feature toggles ship ON** — Gutenberg canvas theming
-  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`) and local +
-  generated avatars (`local_avatars_enabled`, `generated_avatars_enabled`) all
-  default ON (decided this cycle), so the plugin presents fully-featured on
+  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`), local avatars
+  (`local_avatars_enabled`) and the unified Tools strip (`tools_unified_enabled`)
+  all default ON (decided this cycle), so the plugin presents fully-featured on
   activation. Each stays individually switch-off-able; only `bricks_builder_enabled`
   is opt-in (it restyles a third-party builder's own UI). Keep the on-by-default
-  posture — don't quietly flip these back to opt-in.
+  posture — don't quietly flip these back to opt-in. **Generated avatars are NOT a
+  separate toggle** — they ride along with `local_avatars_enabled` (don't re-add the
+  removed `generated_avatars_enabled`; that merge was deliberate).
 - **Generated avatars call an external service (DiceBear, `api.dicebear.com`)** —
   served as the Gravatar `d=` fallback for users with no upload and no real
-  Gravatar. It's disclosed in `readme.txt` (the .org "External services" section),
-  opt-out, and the seed is NON-PII (md5 of the login, or a stored random seed) —
-  **never send the raw email.** If you change the service or what's sent, update
-  that disclosure in the same change.
+  Gravatar, automatically whenever `local_avatars_enabled` is on (no separate
+  toggle — opt out by turning local avatars off). It's disclosed in `readme.txt`
+  (the .org "External services" section) and the seed is NON-PII (md5 of the login,
+  or a stored random seed) — **never send the raw email.** If you change the service
+  or what's sent, update that disclosure in the same change.
 - **`content:url()` on a pseudo-element renders at the image's intrinsic size** —
   browsers ignore `width`/`height` on a pseudo-element's `content` image. For a
   *sized* icon/logo use a `background-image` on a sized box, or a real `<img>` (a
