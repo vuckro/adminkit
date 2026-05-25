@@ -601,6 +601,14 @@ msgstr "Avatars locaux"
 msgid "Let users upload a profile picture that replaces Gravatar; anyone with no photo gets a friendly auto-generated face (via a hosted generator, disclosed in the readme). Off = Gravatar everywhere."
 msgstr "Permet d’envoyer une photo de profil qui remplace Gravatar ; les personnes sans photo reçoivent un avatar généré automatiquement (via un générateur hébergé, divulgué dans le readme). Désactivé = Gravatar partout."
 
+#: inc/class-settings-page.php:540
+msgid "Unified Tools"
+msgstr "Outils unifiés"
+
+#: inc/class-settings-page.php:540
+msgid "Add one tab strip across the Tools screens (Available Tools, Import, Export, Site Health, personal data) so they read as a single tabbed section. Off = the native separate Tools pages."
+msgstr "Ajoute une barre d’onglets sur les écrans Outils (Outils disponibles, Importer, Exporter, Santé du site, données personnelles) pour qu’ils forment une seule section à onglets. Désactivé = les pages Outils natives séparées."
+
 #: inc/class-settings-page.php:553
 msgid "Bricks builder"
 msgstr "Constructeur Bricks"

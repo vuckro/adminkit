@@ -597,6 +597,14 @@ msgstr ""
 msgid "Let users upload a profile picture that replaces Gravatar; anyone with no photo gets a friendly auto-generated face (via a hosted generator, disclosed in the readme). Off = Gravatar everywhere."
 msgstr ""
 
+#: inc/class-settings-page.php:540
+msgid "Unified Tools"
+msgstr ""
+
+#: inc/class-settings-page.php:540
+msgid "Add one tab strip across the Tools screens (Available Tools, Import, Export, Site Health, personal data) so they read as a single tabbed section. Off = the native separate Tools pages."
+msgstr ""
+
 #: inc/class-settings-page.php:553
 msgid "Bricks builder"
 msgstr ""

@@ -227,6 +227,7 @@ body.adminkit input[type="file"] {
    We do NOT touch the viewport meta (disabling pinch-zoom would break a11y / .org
    rules). 16px is the exact iOS threshold — a deliberate fixed value, not a token. */
 @media screen and (max-width: 782px) {
+	body.adminkit input:not([type]),
 	body.adminkit input[type="text"],
 	body.adminkit input[type="email"],
 	body.adminkit input[type="url"],

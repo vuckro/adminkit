@@ -256,6 +256,17 @@ class AdminKit_Settings {
 			'default'  => true,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
+
+		// Unified Tools — ON by default. Adds the one pill tab strip across the Tools
+		// screens (Available Tools / Import / Export / Site Health / personal-data) so
+		// they read as a single tabbed section. Read by AdminKit_Core_Chrome::
+		// enqueue_tools_js; OFF keeps the native, separate Tools pages untouched.
+		self::register( 'tools_unified_enabled', array(
+			'type'     => 'toggle',
+			'group'    => 'features',
+			'default'  => true,
+			'sanitize' => 'rest_sanitize_boolean',
+		) );
 	}
 
 	/**

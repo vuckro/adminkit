@@ -230,6 +230,9 @@ class AdminKit_Core_Chrome {
 	 * @return void
 	 */
 	public static function enqueue_tools_js() {
+		if ( ! AdminKit_Settings::get( 'tools_unified_enabled' ) ) {
+			return; // feature toggle off → leave the native, separate Tools pages.
+		}
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return;
 		}
