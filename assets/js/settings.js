@@ -516,14 +516,25 @@
 			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' }
 		] );
 
+		// Block 1 — Logo (upload): the light + dark brand-logo images, with the
+		// ideal-proportions hint. Block 2 below controls where/how it's shown.
 		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
 			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
 			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
 			el( 'div', { 'class': 'ak-rows' }, [
-				wpField,
-				loginField,
 				logoField( 'light', I.logoLight, I.logoLightMode ),
 				logoField( 'dark', I.logoDark, I.logoDarkMode )
+			] )
+		] ) );
+
+		// Block 2 — Logo display: how the uploaded logo appears in each location
+		// (the admin bar + the login screen). Bricks reads the logo directly.
+		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
+			el( 'h2', { 'class': 'ak-group__title', text: I.logoDisplay || 'Logo display' } ),
+			I.logoDisplayHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoDisplayHint } ) : null,
+			el( 'div', { 'class': 'ak-rows' }, [
+				wpField,
+				loginField
 			] )
 		] ) );
 

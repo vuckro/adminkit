@@ -61,8 +61,16 @@ msgstr ""
 msgid "Branding"
 msgstr ""
 
-#: inc/class-settings-page.php:275
-msgid "Optional brand logo URLs (light + dark). Used for the brand mark by the site title and the Bricks builder. Leave empty to fall back to the adminkit/brand_logo filter."
+#: inc/class-settings-page.php:276
+msgid "Your brand logo, light and dark. Ideally a horizontal SVG (crisp at any size), or a PNG at least ~320×80px (≈ 4:1), on a transparent background. Used for the site-title mark, the login screen and the Bricks builder."
+msgstr ""
+
+#: inc/class-settings-page.php:277
+msgid "Logo display"
+msgstr ""
+
+#: inc/class-settings-page.php:278
+msgid "Choose how the logo shows in each location."
 msgstr ""
 
 #: inc/class-settings-page.php:276
