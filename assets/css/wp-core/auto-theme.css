@@ -1,0 +1,20 @@
+/* AdminKit runtime auto-theming — the dark-only paint layer.
+
+   assets/js/wp-core/auto-theme.js tags elements still painted in fixed light
+   surfaces / dark text (the ones no static sheet could reach — CSS-in-JS, inline
+   styles, unknown plugin classes). Here we remap those tags to --ak-* tokens,
+   but ONLY in dark mode, where glaring white panels are the actual problem. In
+   light mode these selectors don't match, so the original look returns with zero
+   JS cleanup.
+
+   !important is deliberate and necessary: it's the only way to beat a plugin's
+   own hardcoded inline / emotion colours. This is a wp-core feature sheet (not a
+   Tier-A/B adapter), so it sits outside the adapter !important budget by design. */
+
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-surface {
+	background-color: var(--ak-surface) !important;
+}
+
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-text {
+	color: var(--ak-text) !important;
+}

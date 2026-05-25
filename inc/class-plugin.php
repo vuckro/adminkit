@@ -33,6 +33,7 @@ class AdminKit_Plugin {
 		AdminKit_Local_Avatars::init();
 		AdminKit_Core_List_Table_Chrome::init();
 		AdminKit_Post_Previews::init();
+		AdminKit_Auto_Theme::init();
 
 		self::boot_integrations();
 
