@@ -121,15 +121,27 @@ msgstr "Utiliser cette image"
 msgid "Plugins"
 msgstr "Extensions"
 
-#: inc/class-settings-page.php:287
-msgid "Turn AdminKit's styling on or off per supported plugin. Dimmed rows aren't active on this site."
-msgstr "Activez ou désactivez le style d’AdminKit pour chaque extension prise en charge. Les lignes grisées ne sont pas actives sur ce site."
+#: inc/class-settings-page.php:274
+msgid "Your active plugins and themes. Native ones have a tuned AdminKit adapter you can switch per host; the rest inherit AdminKit's base styling automatically."
+msgstr "Vos extensions et thèmes actifs. Les natifs ont un adaptateur AdminKit dédié, activable par hôte ; les autres héritent automatiquement du style de base d’AdminKit."
 
-#: inc/class-settings-page.php:288
-msgid "Not active"
-msgstr "Inactif"
+#: inc/class-settings-page.php:275
+msgid "Native"
+msgstr "Natif"
 
-#: inc/class-settings-page.php:289
+#: inc/class-settings-page.php:276
+msgid "Generic"
+msgstr "Générique"
+
+#: inc/class-settings-page.php:277
+msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
+msgstr "AdminKit fournit un adaptateur dédié pour cette extension — clair et sombre."
+
+#: inc/class-settings-page.php:278
+msgid "No dedicated adapter — themed automatically by AdminKit's base styles."
+msgstr "Pas d’adaptateur dédié — thémé automatiquement par les styles de base d’AdminKit."
+
+#: inc/class-settings-page.php:279
 msgid "Themes"
 msgstr "Thèmes"
 

@@ -196,6 +196,7 @@ body.adminkit[class*="admin-color-"] {
 	--wp-components-color-gray-200: var(--ak-surface);
 	--wp-components-color-gray-300: var(--ak-border);
 	--wp-components-color-gray-400: var(--ak-border-strong);
+	--wp-components-color-gray-500: var(--ak-text-muted);
 	--wp-components-color-gray-600: var(--ak-text-muted);
 	--wp-components-color-gray-700: var(--ak-text);
 	--wp-components-color-gray-800: var(--ak-heading);

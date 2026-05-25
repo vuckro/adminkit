@@ -117,15 +117,27 @@ msgstr ""
 msgid "Plugins"
 msgstr ""
 
-#: inc/class-settings-page.php:287
-msgid "Turn AdminKit's styling on or off per supported plugin. Dimmed rows aren't active on this site."
+#: inc/class-settings-page.php:274
+msgid "Your active plugins and themes. Native ones have a tuned AdminKit adapter you can switch per host; the rest inherit AdminKit's base styling automatically."
 msgstr ""
 
-#: inc/class-settings-page.php:288
-msgid "Not active"
+#: inc/class-settings-page.php:275
+msgid "Native"
 msgstr ""
 
-#: inc/class-settings-page.php:289
+#: inc/class-settings-page.php:276
+msgid "Generic"
+msgstr ""
+
+#: inc/class-settings-page.php:277
+msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
+msgstr ""
+
+#: inc/class-settings-page.php:278
+msgid "No dedicated adapter — themed automatically by AdminKit's base styles."
+msgstr ""
+
+#: inc/class-settings-page.php:279
 msgid "Themes"
 msgstr ""
 
