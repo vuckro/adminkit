@@ -158,6 +158,17 @@
 	vertical-align: middle;
 }
 
+/* The view-site node swaps glyph per context (external "open in new tab" icon in
+   wp-admin, house on the front end), and each reads a hair off centre vs the
+   sun/moon. Nudge per context: the external icon a touch DOWN in admin, the
+   house a touch UP on the front end. Scoped to the view-site node only. */
+.wp-admin #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
+	transform: translateY(1px);
+}
+body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
+	transform: translateY(-1px);
+}
+
 /* Icon-only action items (theme toggle + view-site): centre the glyph in the bar
    so both line up perfectly, whatever each SVG's bounds. */
 #wpadminbar #wp-admin-bar-ak-theme-toggle > .ab-item,

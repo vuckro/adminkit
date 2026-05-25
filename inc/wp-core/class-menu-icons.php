@@ -190,9 +190,9 @@ class AdminKit_Core_Menu_Icons {
 			'wp-admin-bar-new-content' => self::svg( 'plus' ),
 			'wp-admin-bar-updates'     => self::svg( 'update' ),
 			// Front-end / edit-screen core nodes. These paint via `> .ab-item::before`.
-			// `edit` (edit page/post) uses pencil-square so it reads distinctly from the
-			// Articles menu glyph (a newspaper), not the same bare pencil.
-			'wp-admin-bar-edit'        => self::svg( 'pencil-square' ),
+			// `edit` (edit page/post) → a pencil; the Articles menu uses a newspaper, so
+			// the two read distinctly.
+			'wp-admin-bar-edit'        => self::svg( 'pencil' ),
 			'wp-admin-bar-customize'   => self::svg( 'sliders' ),
 		);
 		return (array) apply_filters( 'adminkit/toolbar_icons', $map );

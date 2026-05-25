@@ -129,10 +129,56 @@ body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head 
 }
 
 /* Active item's ICON only → accent (both modes; kept simple). Row bg
-   (--ak-elevated) + label (--ak-heading) stay neutral; hover stays neutral. */
+   (--ak-elevated) + label (--ak-heading) stay neutral; hover stays neutral.
+   The masked icon (icons feature ON) paints with background-color:currentColor,
+   so it follows `color` — accent in both modes; the native dashicon FONT glyph
+   (feature OFF) is coloured the same way, so this one rule covers both. */
 body.adminkit #adminmenu li.current a.menu-top .wp-menu-image::before,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-menu-image::before {
 	color: var(--ak-primary) !important;
+}
+
+/* "You-are-here" ACCENT THREAD — a single continuous --ak-primary line down the
+   left edge of the active top-level item AND its open submenu, so the eye follows
+   from the accent icon into the submenu. WP nests the open `.wp-submenu` INSIDE
+   the same `li.menu-top` (which is position:relative) and lays it out in-flow
+   (position:relative, not the fly-out's absolute), so ONE absolutely-positioned
+   ::before on that <li> with top:0/bottom:0 spans the whole stack — icon row
+   through the last submenu link — as a single unbroken bar. A ::before (not a
+   border) avoids shifting the icons right; z-index lifts it above the row's
+   --ak-elevated bg AND the submenu's --ak-surface bg (which both start at left:0).
+   Scoped to the current/open item, so the fly-out (absolute, off to the side) and
+   non-current items are untouched. Token-based → correct in light + dark.
+   `!important` only on the paint props, matching the surrounding menu rules where
+   WP color-schemes fight us; specificity stays modest (1 id + classes). */
+body.adminkit #adminmenu li.current.menu-top,
+body.adminkit #adminmenu li.wp-has-current-submenu,
+body.adminkit #adminmenu li.wp-menu-open {
+	position: relative;
+}
+
+body.adminkit #adminmenu li.current.menu-top::before,
+body.adminkit #adminmenu li.wp-has-current-submenu::before,
+body.adminkit #adminmenu li.wp-menu-open::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 3px;
+	background: var(--ak-primary) !important;
+	border-radius: 0 var(--ak-radius-s, 5px) var(--ak-radius-s, 5px) 0;
+	z-index: 4;
+	pointer-events: none;
+}
+
+/* Folded / fly-out: the current item's submenu detaches (position:absolute) and
+   pops out beside the rail, so the in-flow <li> collapses to just the icon — the
+   thread above then correctly marks only that icon tile. The detached fly-out
+   panel gets its own short accent edge so the connection still reads when open. */
+body.adminkit.folded #adminmenu li.wp-has-current-submenu .wp-submenu,
+body.adminkit.auto-fold #adminmenu li.wp-has-current-submenu .wp-submenu {
+	border-left: 3px solid var(--ak-primary) !important;
 }
 
 /* Sidebar submenu — elevated surface. Inline (expanded sidebar, current
@@ -171,7 +217,12 @@ body.adminkit #adminmenu .wp-submenu a:focus {
 	background: var(--ak-elevated) !important;
 }
 
-/* Current submenu item — neutral surface + bold marks it (no brand accent).
+/* Current submenu item — neutral surface + bold, PLUS a small --ak-primary dot
+   marking exactly where the accent thread lands ("you are here"). The label/bg
+   stay neutral (no accent repaint); only the dot carries the accent, so it reads
+   as the thread's terminus, not a second highlight. The dot is an absolutely
+   positioned ::before on the relative <a>, sitting in its left padding (WP gives
+   the open submenu link padding:5px 12px) so it never shifts the text.
    This is the ONLY bold submenu link: non-active links stay normal weight
    now that the parent <li> no longer leaks font-weight into the submenu.
    `!important` on color: WP color-scheme stylesheets paint `.wp-submenu
@@ -180,9 +231,23 @@ body.adminkit #adminmenu .wp-submenu a:focus {
 body.adminkit #adminmenu .wp-submenu li.current a,
 body.adminkit #adminmenu .wp-submenu li.current a:hover,
 body.adminkit #adminmenu .wp-submenu li.current a:focus {
+	position: relative;
 	color: var(--ak-heading) !important;
 	background: var(--ak-elevated);
 	font-weight: 600;
+}
+
+body.adminkit #adminmenu .wp-submenu li.current > a::before {
+	content: "";
+	position: absolute;
+	left: 4px;
+	top: 50%;
+	width: 4px;
+	height: 4px;
+	margin-top: -2px;
+	border-radius: var(--ak-radius-full, 999px);
+	background: var(--ak-primary) !important;
+	pointer-events: none;
 }
 
 /* Awareness bubbles (pending comments, updates) */

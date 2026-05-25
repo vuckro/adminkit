@@ -56,8 +56,10 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Paint an AdminKit bug icon on QM's admin-bar node when the icons feature
-	 * is on.
+	 * Paint an AdminKit stopwatch icon on QM's admin-bar node when the icons
+	 * feature is on. A stopwatch reads as "page timing" — QM's headline number in
+	 * the toolbar is the page-generation time, so the glyph mirrors what the node
+	 * actually shows (timing + DB query profiling) far better than a generic bug.
 	 *
 	 * Why a DEDICATED printer instead of the shared `adminkit/toolbar_icons` map:
 	 * QM's node renders an `.ab-icon` child, but QM's own toolbar.css forces it
@@ -66,10 +68,10 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 	 * shared map paints on `.ab-icon::before` AND is desktop-gated, so it could
 	 * NEVER show in the back office (icon hidden on desktop, CSS absent on mobile).
 	 *
-	 * Instead we prepend the bug glyph on the link's own `> .ab-item::before` — the
-	 * link is always visible (it carries the timing label), so the icon sits just
-	 * before that label. NOT desktop-gated, so it paints in every context; it never
-	 * touches QM's `.ab-icon` or its timing display, so nothing breaks. Zero
+	 * Instead we prepend the stopwatch glyph on the link's own `> .ab-item::before`
+	 * — the link is always visible (it carries the timing label), so the icon sits
+	 * just before that label. NOT desktop-gated, so it paints in every context; it
+	 * never touches QM's `.ab-icon` or its timing display, so nothing breaks. Zero
 	 * `!important` (keeps this Tier A adapter clean): a 2-id selector on a
 	 * `::before` QM/WP-core don't otherwise set, so a plain rule wins.
 	 *
@@ -100,10 +102,12 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 			return;
 		}
 
-		// Bug glyph (Heroicons-style solid) — Query Monitor is a debugging tool. The
-		// fill is irrelevant — it's a mask; the visible colour is currentColor (the
-		// toolbar foreground).
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M8.478 1.6a.75.75 0 0 1 .273 1.024 3.72 3.72 0 0 0-.425 1.122c.058.057.118.114.18.168A4.491 4.491 0 0 1 12 4.5c1.413 0 2.687.65 3.514 1.667.06-.054.12-.111.178-.168a3.717 3.717 0 0 0-.425-1.123.75.75 0 1 1 1.296-.752 5.23 5.23 0 0 1 .717 2.483c0 .386-.273.744-.674.79-.643.073-1.27.207-1.875.396-.069.408-.193.798-.366 1.16.421.5.74 1.087.929 1.728.336-.092.687-.156 1.046-.19a.75.75 0 1 1 .14 1.493 7.51 7.51 0 0 0-1.026.214c.013.169.02.34.02.512v.5a7.5 7.5 0 0 0 1.052.211.75.75 0 1 1-.14 1.494 8.974 8.974 0 0 1-1.135-.226 4.502 4.502 0 0 1-3.085 3.117l-.001.077v.493c.398.058.787.146 1.166.262a.75.75 0 0 1-.434 1.435 7.516 7.516 0 0 0-.97-.221 4.494 4.494 0 0 1-1.193 2.084.75.75 0 0 1-1.06 0 4.494 4.494 0 0 1-1.193-2.084 7.512 7.512 0 0 0-.97.221.75.75 0 0 1-.434-1.435c.379-.116.768-.204 1.166-.262v-.493l-.002-.077a4.502 4.502 0 0 1-3.084-3.117 8.97 8.97 0 0 1-1.135.226.75.75 0 1 1-.14-1.494c.357-.034.706-.097 1.052-.211v-.5c0-.172.007-.343.02-.512a7.51 7.51 0 0 0-1.026-.214.75.75 0 1 1 .14-1.494c.359.034.71.098 1.046.19.189-.64.508-1.228.93-1.728a4.493 4.493 0 0 1-.367-1.16 7.476 7.476 0 0 0-1.875-.395.75.75 0 0 1-.674-.79 5.23 5.23 0 0 1 .717-2.484.75.75 0 0 1 1.022-.272Z" clip-rule="evenodd"/></svg>';
+		// Stopwatch / timer glyph (Heroicons-style solid clock) — Query Monitor's
+		// headline toolbar number is the page-generation time, so a timer reads far
+		// more clearly than a generic bug as "performance / timing". The fill is
+		// irrelevant — it's a mask; the visible colour is currentColor (the toolbar
+		// foreground). The clock face + hands give the unmistakable "timing" read.
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm.75 4.5a.75.75 0 0 0-1.5 0v5.25c0 .199.079.39.22.53l3.182 3.182a.75.75 0 0 0 1.06-1.06l-2.962-2.963V6.75Z" clip-rule="evenodd"/></svg>';
 		$uri = 'url("data:image/svg+xml,' . rawurlencode( $svg ) . '")';
 
 		// Model the floated ::before as exactly the 32px bar (padding 6 + 20 + 6 = 32)
