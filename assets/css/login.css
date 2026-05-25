@@ -5,11 +5,20 @@ body.login.adminkit {
 	background: var(--ak-bg);
 	font-family: var(--ak-font-body);
 	color: var(--ak-text);
+	/* Centre the login card in the middle of the viewport (vertically + horizontally)
+	   instead of WP's top-anchored layout. */
+	min-height: 100vh;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 #login {
 	width: 360px;
-	padding-top: 64px;
+	padding-top: 24px;
+	padding-bottom: 24px;
 }
 
 /* Logo — the URL is injected by PHP (AdminKit_Core_Login::print_login_logo_style)
@@ -58,7 +67,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
    (data-adminkit-theme + the adminkit-theme storage key). */
 .ak-login-theme-toggle {
 	position: fixed;
-	top: 20px;
+	bottom: 20px;
 	right: 20px;
 	z-index: 10;
 	display: flex;
