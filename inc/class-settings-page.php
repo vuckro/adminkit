@@ -335,7 +335,7 @@ class AdminKit_Settings_Page {
 				/* translators: %s: the selected accent colour value (e.g. #2563eb). */
 				'hint'   => $primary ? sprintf( __( 'accent %s', 'adminkit' ), $primary ) : __( 'accent inherited', 'adminkit' ),
 				'swatch' => '--ak-primary',
-				'tab'    => 'apparence',
+				'tab'    => 'design',
 			),
 			array(
 				'label' => __( 'Features', 'adminkit' ),

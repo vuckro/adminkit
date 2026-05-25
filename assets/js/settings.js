@@ -3,7 +3,7 @@
  *
  * Renders three tabs (Dashboard / Tokens / Features) into
  * #adminkit-app from the data PHP hands over in window.AdminKitData. Tabs are
- * pill buttons driven by the URL hash (#apparence / #settings / …).
+ * pill buttons driven by the URL hash (#design / #settings / …).
  *
  * The Tokens tab is a STATIC reference for now: it lists every semantic
  * colour role (swatch + the --ak token and the provider var / primitive it maps
@@ -100,7 +100,7 @@
 
 	var tabs = [
 		{ id: 'dashboard', label: I.dashboard, icon: ICONS.dashboard, build: buildDashboard },
-		{ id: 'apparence', label: I.design, icon: ICONS.colours, build: buildDesign },
+		{ id: 'design', label: I.design, icon: ICONS.colours, build: buildDesign },
 		{ id: 'settings', label: I.features, icon: ICONS.features, build: buildFeatures },
 		{ id: 'plugins', label: I.plugins, icon: ICONS.plugins, build: buildPlugins }
 	];
@@ -155,7 +155,7 @@
 		} );
 	}
 
-	// URL hash reflects the active tab (#apparence / #settings).
+	// URL hash reflects the active tab (#design / #settings).
 	function go( id ) {
 		if ( '#' + id === location.hash ) { selectTab( id ); }
 		else { location.hash = id; } // triggers hashchange → applyHash
