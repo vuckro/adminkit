@@ -367,9 +367,9 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	border-left-color: var(--ak-error);
 }
 
-.login .message {
-	border-left-color: var(--ak-success);
-}
+/* `.message` stays the base blue (--ak-info): on wp-login it carries informational
+   notes — the lost-password instruction, "check your email", etc. — not success,
+   so blue reads truer than WP's default green. */
 
 /* Language switcher */
 .login .language-switcher select {
