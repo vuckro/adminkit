@@ -12,6 +12,34 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: adminkit\n"
 
+#: inc/wp-core/class-chrome.php:242
+msgid "Available Tools"
+msgstr ""
+
+#: inc/wp-core/class-chrome.php:243
+msgid "Import"
+msgstr ""
+
+#: inc/wp-core/class-chrome.php:244
+msgid "Export"
+msgstr ""
+
+#: inc/wp-core/class-chrome.php:245
+msgid "Site Health"
+msgstr ""
+
+#: inc/wp-core/class-chrome.php:246
+msgid "Export Personal Data"
+msgstr ""
+
+#: inc/wp-core/class-chrome.php:247
+msgid "Erase Personal Data"
+msgstr ""
+
+#: inc/wp-core/class-chrome.php:256
+msgid "Tools"
+msgstr ""
+
 #: inc/class-settings-page.php:291
 msgid "Admin bar"
 msgstr ""

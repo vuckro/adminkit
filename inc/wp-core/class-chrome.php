@@ -41,6 +41,22 @@ class AdminKit_Core_Chrome {
 	);
 
 	/**
+	 * The built-in Tools screens unified under one pill tab strip (tools.js) so
+	 * they read as a single tabbed section. Shared by the tools.css registration
+	 * and the tab-nav enqueue below.
+	 *
+	 * @var string[]
+	 */
+	const TOOLS_SCREENS = array(
+		'tools',
+		'import',
+		'export',
+		'site-health',
+		'export-personal-data',
+		'erase-personal-data',
+	);
+
+	/**
 	 * Register every asset. Called once from the plugin orchestrator
 	 * after `AdminKit_Assets::init()`.
 	 *
@@ -54,6 +70,10 @@ class AdminKit_Core_Chrome {
 		// registry. Hook it here — registered alongside the CSS, gated to the
 		// same six screens — so all options-screen wiring stays in one place.
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_options_js' ) );
+		// Same idea for the Tools screens: one pill tab strip linking Available
+		// Tools / Import / Export / Site Health / personal-data export + erase, so
+		// they read as one tabbed section. Footer script, gated to TOOLS_SCREENS.
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_tools_js' ) );
 
 		// --- wp-core/ (always loaded in admin) ---
 		AdminKit_Assets::register( array(
@@ -137,6 +157,9 @@ class AdminKit_Core_Chrome {
 		// tab navigation ships as a footer script, enqueued for the same six
 		// screens (see enqueue_options_js, hooked just below).
 		self::register_screen( 'options', self::OPTIONS_SCREENS );
+		// Tools screens — the pill tab strip styling (the JS that builds it ships as
+		// a footer script, see enqueue_tools_js below).
+		self::register_screen( 'tools', self::TOOLS_SCREENS );
 		self::register_screen( 'themes',          array( 'themes', 'theme-install' ) );
 		self::register_screen( 'theme-install',   array( 'themes', 'theme-install' ) );
 		// user-new.php reports screen id 'user' (WP strips '-new'); the CSS
@@ -191,6 +214,46 @@ class AdminKit_Core_Chrome {
 				'general' => __( 'General', 'adminkit' ),
 				// Accessible label for the tablist (aria-label).
 				'nav'     => __( 'Settings sections', 'adminkit' ),
+			) ) . ';'
+		);
+	}
+
+	/**
+	 * Enqueue the Tools-screen tab strip on the built-in Tools pages. The script
+	 * inserts ONE pill tab strip (plain links) after the screen's <h1> so Available
+	 * Tools / Import / Export / Site Health / personal-data export + erase read as a
+	 * single tabbed section. Nothing is moved or fetched — each tab links to its
+	 * native screen, so every page keeps its own markup, forms and handlers, and
+	 * with JS off the pages are 100% native. i18n labels + the tab list (id, label,
+	 * url) + the current screen ride along as an inline bootstrap.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_tools_js() {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return;
+		}
+		if ( ! AdminKit_Screen::is_one_of( self::TOOLS_SCREENS ) ) {
+			return;
+		}
+		$screen  = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		$current = $screen ? $screen->id : '';
+		$tabs    = array(
+			array( 'id' => 'tools',                'label' => __( 'Available Tools', 'adminkit' ),      'url' => admin_url( 'tools.php' ) ),
+			array( 'id' => 'import',               'label' => __( 'Import', 'adminkit' ),               'url' => admin_url( 'import.php' ) ),
+			array( 'id' => 'export',               'label' => __( 'Export', 'adminkit' ),               'url' => admin_url( 'export.php' ) ),
+			array( 'id' => 'site-health',          'label' => __( 'Site Health', 'adminkit' ),          'url' => admin_url( 'site-health.php' ) ),
+			array( 'id' => 'export-personal-data', 'label' => __( 'Export Personal Data', 'adminkit' ), 'url' => admin_url( 'export-personal-data.php' ) ),
+			array( 'id' => 'erase-personal-data',  'label' => __( 'Erase Personal Data', 'adminkit' ),  'url' => admin_url( 'erase-personal-data.php' ) ),
+		);
+		AdminKit_Assets::enqueue_script(
+			'adminkit-tools',
+			'assets/js/wp-screens/tools.js',
+			array(),
+			'window.AdminKitTools=' . wp_json_encode( array(
+				'tabs'    => $tabs,
+				'current' => $current,
+				'nav'     => __( 'Tools', 'adminkit' ),
 			) ) . ';'
 		);
 	}
