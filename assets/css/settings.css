@@ -225,9 +225,6 @@
 	gap: 8px;
 	flex-wrap: wrap;
 }
-/* A switch that's ON tints its own row label to the brand accent — AdminKit's
-   canonical "this is active" cue, mirrored on the wp-admin toggles (inputs.css). */
-.adminkit-app .ak-row:has( .ak-switch__input:checked ) .ak-row__label { color: var(--ak-primary); }
 
 /* Design-token table — one column-aligned grid per group (static reference) -- */
 .adminkit-app .ak-tbl {

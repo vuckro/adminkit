@@ -157,6 +157,11 @@
 	width: auto;
 	height: 20px;
 	margin-top: -4px;
+	/* WP core paints `border:1px solid #8c8f94; background:#f0f0f1` on this exact
+	   selector (2,1,2). The radius rule above is only (1,1,2), so core's frame won
+	   — kill it here at matching specificity (we load after core). */
+	border: 0;
+	background: none;
 }
 
 #wp-admin-bar-user-info .display-name {
