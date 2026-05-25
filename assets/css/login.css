@@ -63,7 +63,7 @@ body.ak-login-mark--logo #login h1 a {
 }
 body.ak-login-mark--logo #login h1 a .ak-login-logo-img {
 	display: none;
-	height: 72px;          /* wordmark sits a little larger than the 56px default; the favicon tile keeps its own 84px size */
+	height: 96px;          /* wordmark sits noticeably larger; width auto + max-width:100% keep it tight to the card. The favicon tile keeps its own 84px size */
 	width: auto;
 	max-width: 100%;
 	margin: 0 auto;
