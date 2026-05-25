@@ -470,6 +470,12 @@
 .adminkit-app .ak-roadmap__card--verify {
 	border-color: var(--ak-success, var(--ak-primary));
 }
+.adminkit-app .ak-roadmap__star {
+	color: var(--ak-warning, #f5a623);
+	font-size: var(--ak-text-s);
+	line-height: 1;
+	margin-right: 4px;
+}
 
 /* Clickable roadmap card (has detail) + the "click for details" hint ------ */
 .adminkit-app button.ak-roadmap__card {

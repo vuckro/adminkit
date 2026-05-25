@@ -298,6 +298,7 @@ class AdminKit_Settings_Page {
 				'roadmapHint'       => __( 'Click a card for details.', 'adminkit' ),
 				'roadmapVerifyLabel' => __( 'To verify', 'adminkit' ),
 				'roadmapVerifyHint'  => __( 'Done — confirm so it can be removed from the roadmap.', 'adminkit' ),
+				'roadmapStarHint'    => __( 'Game-changer', 'adminkit' ),
 				'designLegendTitle' => __( 'Live colour reference', 'adminkit' ),
 				'designLegend'      => __( 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.', 'adminkit' ),
 				'typography'        => __( 'Typography', 'adminkit' ),
@@ -379,24 +380,17 @@ class AdminKit_Settings_Page {
 				array(
 					'title' => __( 'In progress', 'adminkit' ),
 					'items' => array(
-						// Empty: the two finished items were confirmed by the maintainer and
-						// retired here (the verify → confirmed → removed flow). Promote the
-						// next chantier from "Next" into this column when work on it starts.
+						array(
+							'label'  => __( 'Universal plugin compatibility', 'adminkit' ),
+							'desc'   => __( 'Any plugin looks right, even without an adapter.', 'adminkit' ),
+							'detail' => __( 'Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common form controls — so a plugin with no dedicated adapter still looks coherent in light and dark out of the box. The stronger this layer, the less per-plugin work is ever needed.', 'adminkit' ),
+							'star'   => true,
+						),
 					),
 				),
 				array(
 					'title' => __( 'Next', 'adminkit' ),
 					'items' => array(
-						array(
-							'label'  => __( 'More native plugin support', 'adminkit' ),
-							'desc'   => __( 'Tuned adapters for more popular plugins.', 'adminkit' ),
-							'detail' => __( 'First-class adapters for widely-used plugins (SEO, form builders, commerce, LMS and more) so their admin screens inherit AdminKit\'s look and dark mode — the same treatment Bricks, WooCommerce and ACF already get.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Universal plugin compatibility', 'adminkit' ),
-							'desc'   => __( 'Any plugin looks right, even without an adapter.', 'adminkit' ),
-							'detail' => __( 'Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common form controls — so a plugin with no dedicated adapter still looks coherent in light and dark out of the box. The stronger this layer, the less per-plugin work is ever needed.', 'adminkit' ),
-						),
 						array(
 							'label'  => __( 'More native screens styled', 'adminkit' ),
 							'desc'   => __( 'Taxonomies, custom post types and the rest.', 'adminkit' ),
@@ -406,6 +400,7 @@ class AdminKit_Settings_Page {
 							'label'  => __( 'In-app palette editor', 'adminkit' ),
 							'desc'   => __( 'Pick accent, surface and text colours directly.', 'adminkit' ),
 							'detail' => __( 'Turn today\'s read-only token map into a real editor: choose your accent, surfaces and text, preview the change live across wp-admin, and export the palette to a provider like Bricks.', 'adminkit' ),
+							'star'   => true,
 						),
 						array(
 							'label'  => __( 'Colour sync', 'adminkit' ),
@@ -446,6 +441,7 @@ class AdminKit_Settings_Page {
 							'label'  => __( 'Command palette', 'adminkit' ),
 							'desc'   => __( 'Jump anywhere with a keystroke.', 'adminkit' ),
 							'detail' => __( 'A ⌘K / Ctrl-K launcher to jump straight to any admin page, setting or post — no more hunting through menus.', 'adminkit' ),
+							'star'   => true,
 						),
 						array(
 							'label'  => __( 'Custom dashboard widgets', 'adminkit' ),

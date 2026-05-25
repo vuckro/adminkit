@@ -237,6 +237,10 @@ msgstr ""
 msgid "Done — confirm so it can be removed from the roadmap."
 msgstr ""
 
+#: inc/class-settings-page.php:301
+msgid "Game-changer"
+msgstr ""
+
 #: inc/class-settings-page.php:306
 msgid "Live colour reference"
 msgstr ""
@@ -319,18 +323,6 @@ msgstr ""
 
 #: inc/class-settings-page.php:411
 msgid "Next"
-msgstr ""
-
-#: inc/class-settings-page.php:410
-msgid "More native plugin support"
-msgstr ""
-
-#: inc/class-settings-page.php:411
-msgid "Tuned adapters for more popular plugins."
-msgstr ""
-
-#: inc/class-settings-page.php:412
-msgid "First-class adapters for widely-used plugins (SEO, form builders, commerce, LMS and more) so their admin screens inherit AdminKit's look and dark mode — the same treatment Bricks, WooCommerce and ACF already get."
 msgstr ""
 
 #: inc/class-settings-page.php:419

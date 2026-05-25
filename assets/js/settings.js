@@ -294,6 +294,7 @@
 						onclick: hasDetail ? function () { openRoadmapModal( it, col.title ); } : null
 					}, [
 						it.verify ? el( 'span', { 'class': 'ak-roadmap__flag', title: I.roadmapVerifyHint || '', text: I.roadmapVerifyLabel || 'To verify' } ) : null,
+						it.star ? el( 'span', { 'class': 'ak-roadmap__star', title: I.roadmapStarHint || '', text: '★', 'aria-label': I.roadmapStarHint || 'Game-changer' } ) : null,
 						el( 'span', { 'class': 'ak-roadmap__title', text: it.label } ),
 						it.desc ? el( 'span', { 'class': 'ak-roadmap__desc', text: it.desc } ) : null
 					] ) );

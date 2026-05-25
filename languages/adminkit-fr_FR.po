@@ -241,6 +241,10 @@ msgstr "À vérifier"
 msgid "Done — confirm so it can be removed from the roadmap."
 msgstr "Terminé — confirme pour qu'elle puisse être retirée de la feuille de route."
 
+#: inc/class-settings-page.php:301
+msgid "Game-changer"
+msgstr "Change la donne"
+
 #: inc/class-settings-page.php:306
 msgid "Live colour reference"
 msgstr "Référence des couleurs en direct"
@@ -324,18 +328,6 @@ msgstr "En cours"
 #: inc/class-settings-page.php:411
 msgid "Next"
 msgstr "Prochainement"
-
-#: inc/class-settings-page.php:410
-msgid "More native plugin support"
-msgstr "Plus d'extensions prises en charge nativement"
-
-#: inc/class-settings-page.php:411
-msgid "Tuned adapters for more popular plugins."
-msgstr "Des adaptateurs dédiés pour plus d'extensions populaires."
-
-#: inc/class-settings-page.php:412
-msgid "First-class adapters for widely-used plugins (SEO, form builders, commerce, LMS and more) so their admin screens inherit AdminKit's look and dark mode — the same treatment Bricks, WooCommerce and ACF already get."
-msgstr "Des adaptateurs de premier ordre pour des extensions très utilisées (SEO, formulaires, e-commerce, LMS, etc.) afin que leurs écrans d'administration héritent du style et du mode sombre d'AdminKit — le même traitement que Bricks, WooCommerce et ACF aujourd'hui."
 
 #: inc/class-settings-page.php:419
 msgid "More native screens styled"
