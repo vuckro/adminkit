@@ -131,8 +131,12 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   at its `<h2>` sections into tabs, and "explodes" the Discussion
   `.form-table.indent-children` table (the one core screen that packs its groups
   into `<th>` rows of a single table) into one tab per `<th>` row. Every field
-  stays in the one submitting form. Don't assume one `<h2>` per section on
-  Discussion — it has none.
+  stays in the one submitting form. Gotchas it must handle (all real): a screen
+  with NO `<h2>` (Reading) or only one section → render a single plain card, **no
+  tab strip** (a lone tab reads as a stray raw button); the leading
+  `settings_fields()` hidden inputs sit *before* the first table, so the explode
+  scans the section body (not "is the table the only node?") and a lead run of only
+  hidden inputs is folded into the first real section (no empty "General" tab).
 - **Class names are stable public-ish API** (`AdminKit_*`). Folder reorg keeps them.
 - **All user-facing strings stay translatable** — wrap them in `__()` / `esc_html__()`
   with the `adminkit` text domain; pass JS copy from PHP via `wp_localize_script` /

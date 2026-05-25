@@ -59,6 +59,16 @@
 	function isSubmit(node) {
 		return node.nodeType === 1 && node.tagName === 'P' && node.classList.contains('submit');
 	}
+	// `settings_fields()` opens every options form with bare `<input type="hidden">`
+	// (option_page, action, the nonce). They carry no UI, so they must never count
+	// as a section's "content" — a leading run of only these would otherwise become
+	// an empty "General" tab (this is why Media showed a content-less first tab).
+	// They still have to stay inside the form, so callers re-home them rather than
+	// drop them.
+	function isHiddenField(node) {
+		return node.nodeType === 1 && node.tagName === 'INPUT' &&
+			(node.getAttribute('type') || '').toLowerCase() === 'hidden';
+	}
 
 	// The Discussion screen is the odd one out: instead of a real `<h2>` per
 	// section it crams SEVEN distinct titled groups ("Default post settings",
@@ -109,9 +119,20 @@
 		child = next; // whitespace text nodes are ignored, left in place
 	}
 
-	// Leading tables (no heading) become a synthesized "General" section, first.
+	// Leading tables (no heading) become a synthesized "General" section, first —
+	// BUT only if the leading run holds something visible. On screens whose first
+	// content is an `<h2>` (Media), the only leading nodes are the `settings_fields`
+	// hidden inputs; those must stay in the form yet must NOT spawn an empty
+	// "General" tab, so fold them into the first real section instead. If there's no
+	// section to fold into (a heading-less screen), keep the General section so the
+	// fields (and any stray markup) are never dropped.
 	if (leading.length) {
-		sections.unshift({ header: null, label: GENERAL_LABEL, body: leading });
+		var leadingHasContent = leading.some(function (n) { return !isHiddenField(n); });
+		if (leadingHasContent || !sections.length) {
+			sections.unshift({ header: null, label: GENERAL_LABEL, body: leading });
+		} else {
+			sections[0].body = leading.concat(sections[0].body);
+		}
 	}
 
 	// Explode any `indent-children` table (the Discussion comment-settings table)
@@ -119,13 +140,25 @@
 	// row is re-homed into a fresh single-row `.form-table` that copies the source
 	// table's classes (minus `indent-children`) so all the card + row-grid CSS in
 	// options.css keeps matching unchanged. Rows are MOVED, never cloned, so every
-	// field keeps its `name` and the one form still posts them all on Save. Any
-	// non-`<tr>` body siblings (none today, but be defensive) ride with the first
-	// row's section so nothing is dropped. Tables without a title-bearing `<th>`
-	// row are left intact (no sensible per-tab split). Sections that aren't a lone
-	// explodable table pass straight through.
+	// field keeps its `name` and the one form still posts them all on Save.
+	//
+	// The table is NOT necessarily the section's only body node: `settings_fields()`
+	// prints the option_page / action / nonce `<input type="hidden">` at the top of
+	// the form, so on Discussion the synthesized "General" section is actually
+	// `[…hidden inputs…, indent-children table]`. We therefore SCAN the body for the
+	// explodable table rather than requiring it to be the lone element (the old
+	// `body.length === 1` guard silently disabled the explode on the live screen).
+	// Any non-table body siblings (those hidden inputs, plus, defensively, anything
+	// else) ride with the FIRST resulting section so they stay in the form and
+	// nothing is dropped. Tables without ≥2 title-bearing `<th>` rows, and sections
+	// with no explodable table at all, pass straight through unchanged.
 	sections = sections.reduce(function (acc, sect) {
-		var table = sect.body.length === 1 && isExplodableTable(sect.body[0]) ? sect.body[0] : null;
+		var table = null;
+		var others = [];
+		sect.body.forEach(function (node) {
+			if (!table && isExplodableTable(node)) { table = node; }
+			else { others.push(node); }
+		});
 		var rows = table ? Array.prototype.slice.call(table.querySelectorAll(':scope > tbody > tr, :scope > tr')) : [];
 		var titled = rows.filter(function (tr) { return rowLabel(tr); });
 		// Need a real heading-per-row split to be worthwhile: ≥2 titled rows.
@@ -133,6 +166,9 @@
 			acc.push(sect);
 			return acc;
 		}
+		// Carry the non-table siblings (hidden inputs) into the first section so
+		// they remain inside the form; `prepend` tracks whether that's still owed.
+		var prepend = others;
 		rows.forEach(function (tr) {
 			var label = rowLabel(tr);
 			var holder = document.createElement('table');
@@ -148,21 +184,72 @@
 			tbody.appendChild(tr); // MOVE the row (keeps every field + its name)
 			holder.appendChild(tbody);
 			if (label) {
-				acc.push({ header: null, label: label, body: [holder] });
+				acc.push({ header: null, label: label, body: prepend.concat([holder]) });
+				prepend = []; // hidden inputs placed once, on the first real section
 			} else if (acc.length) {
 				// Untitled stray row — keep it visible by folding it into the
 				// previous section rather than orphaning it in a nameless tab.
 				acc[acc.length - 1].body.push(holder);
 			} else {
-				acc.push({ header: null, label: sect.label, body: [holder] });
+				acc.push({ header: null, label: sect.label, body: prepend.concat([holder]) });
+				prepend = [];
 			}
 		});
+		// If every row was untitled (no section ever opened) the leftover hidden
+		// inputs would be lost — re-home them into the last section as a safety net.
+		if (prepend.length && acc.length) {
+			Array.prototype.push.apply(acc[acc.length - 1].body, prepend);
+		}
+		// All rows were MOVED out, so the source table is now an empty shell still
+		// sitting in the form — drop it, or options.css would paint it as a blank
+		// card (and the no-JS fallback rule also targets `.wrap > form > .form-table`).
+		if (table.parentNode) { table.parentNode.removeChild(table); }
 		return acc;
 	}, []);
 
 	// Drop empty sections (a heading with no body — nothing to show in a panel).
 	sections = sections.filter(function (s) { return s.body.length; });
 	if (!sections.length) { return; }
+
+	var used = {};
+	function uid(base) {
+		var id = base, i = 2;
+		while (used[id]) { id = base + '-' + (i++); }
+		used[id] = 1;
+		return id;
+	}
+
+	// Build the `.ak-options-panel` card for a section: its header `<h2>` (if any)
+	// rides along as the panel heading and the body nodes are MOVED in (every field
+	// keeps its `name`, so the one form still posts them all). options.css keys its
+	// whole card/grid system off `.ak-options-panel > …`, so the panel wrapper is
+	// what makes a section render as a styled card — with OR without a tab strip.
+	function buildPanel(sect, i) {
+		var slug = (sect.label || '').toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+		var id = uid('ak-options-' + (slug || 'sect-' + i));
+		var panel = document.createElement('div');
+		panel.className = 'ak-options-panel';
+		panel.id = id;
+		if (sect.header) { panel.appendChild(sect.header); }
+		sect.body.forEach(function (node) { panel.appendChild(node); });
+		return { id: id, label: sect.label, header: sect.header, panel: panel };
+	}
+
+	// --- single section: NO tab strip ------------------------------------------
+	// A one-tab strip is meaningless — a lone pill button floating under the page
+	// title reads as a stray, raw control, not navigation. This is the steady
+	// state of Reading (its whole form is ONE `.form-table`, no `<h2>` sections)
+	// and of Writing whenever its optional `<h2>` blocks ("Post via email",
+	// "Update Services") are filtered off. When there's only one section, drop its
+	// card straight into the form as a plain, always-visible panel: still a styled
+	// card (options.css `.ak-options-panel > …` matches), no tablist, no roving
+	// tabindex, nothing to switch. The native submit row stays below it.
+	if (sections.length === 1) {
+		var only = buildPanel(sections[0], 0);
+		form.insertBefore(only.panel, form.firstChild);
+		return;
+	}
 
 	// --- layout shell: tab strip + panels, inserted at the top of the form -----
 	// (the native submit row stays below, outside this block).
@@ -177,29 +264,15 @@
 	form.insertBefore(tabs, form.firstChild);
 	form.insertBefore(panels, tabs.nextSibling);
 
-	var used = {};
-	function uid(base) {
-		var id = base, i = 2;
-		while (used[id]) { id = base + '-' + (i++); }
-		used[id] = 1;
-		return id;
-	}
-
 	var built = sections.map(function (sect, i) {
-		var slug = (sect.label || '').toLowerCase()
-			.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-		var id = uid('ak-options-' + (slug || 'sect-' + i));
-
 		// Panel: a real tabpanel element holding the section's moved nodes. The
 		// header <h2> rides along (re-used as the panel heading) so card CSS keeps
 		// matching; a synthesized section gets no header element (the tab names it).
-		var panel = document.createElement('div');
-		panel.className = 'ak-options-panel';
-		panel.id = id;
+		var info = buildPanel(sect, i);
+		var id = info.id;
+		var panel = info.panel;
 		panel.setAttribute('role', 'tabpanel');
 		panel.setAttribute('aria-labelledby', 'tab-' + id);
-		if (sect.header) { panel.appendChild(sect.header); }
-		sect.body.forEach(function (node) { panel.appendChild(node); });
 		panels.appendChild(panel);
 
 		// Tab: a real <button> → focusable + Enter/Space for free.
