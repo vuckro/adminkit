@@ -284,13 +284,16 @@
 				var kids = [ el( 'h3', { 'class': 'ak-roadmap__head', text: col.title } ) ];
 				( col.items || [] ).forEach( function ( it ) {
 					// A card with a detail / bullets becomes a focusable button that
-					// opens the detail modal; otherwise it stays a plain div.
+					// opens the detail modal; otherwise it stays a plain div. A card
+					// flagged `verify` (done, awaiting confirmation before removal)
+					// gets an accent modifier + a small "To verify" badge.
 					var hasDetail = !! ( it.detail || ( it.bullets && it.bullets.length ) );
 					kids.push( el( hasDetail ? 'button' : 'div', {
 						type: hasDetail ? 'button' : null,
-						'class': 'ak-roadmap__card' + ( hasDetail ? ' ak-roadmap__card--link' : '' ),
+						'class': 'ak-roadmap__card' + ( hasDetail ? ' ak-roadmap__card--link' : '' ) + ( it.verify ? ' ak-roadmap__card--verify' : '' ),
 						onclick: hasDetail ? function () { openRoadmapModal( it, col.title ); } : null
 					}, [
+						it.verify ? el( 'span', { 'class': 'ak-roadmap__flag', title: I.roadmapVerifyHint || '', text: I.roadmapVerifyLabel || 'To verify' } ) : null,
 						el( 'span', { 'class': 'ak-roadmap__title', text: it.label } ),
 						it.desc ? el( 'span', { 'class': 'ak-roadmap__desc', text: it.desc } ) : null
 					] ) );

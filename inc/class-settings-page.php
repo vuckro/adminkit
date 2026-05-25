@@ -296,6 +296,8 @@ class AdminKit_Settings_Page {
 				'close'             => __( 'Close', 'adminkit' ),
 				'details'           => __( 'Details', 'adminkit' ),
 				'roadmapHint'       => __( 'Click a card for details.', 'adminkit' ),
+				'roadmapVerifyLabel' => __( 'To verify', 'adminkit' ),
+				'roadmapVerifyHint'  => __( 'Done — confirm so it can be removed from the roadmap.', 'adminkit' ),
 				'designLegendTitle' => __( 'Live colour reference', 'adminkit' ),
 				'designLegend'      => __( 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.', 'adminkit' ),
 				'typography'        => __( 'Typography', 'adminkit' ),
@@ -378,24 +380,25 @@ class AdminKit_Settings_Page {
 					'title' => __( 'In progress', 'adminkit' ),
 					'items' => array(
 						array(
-							'label'   => __( 'Generated avatars', 'adminkit' ),
-							'desc'    => __( 'Auto-create a friendly avatar for users without a photo.', 'adminkit' ),
-							'detail'  => __( 'When an account has no uploaded photo and no Gravatar, AdminKit fills the gap with a friendly, auto-generated avatar — so every user looks intentional instead of a blank silhouette. Avatars come from a hosted generator (nothing is stored on your site), stay the same for each user, and a real Gravatar always wins.', 'adminkit' ),
+							'label'   => __( 'Editor canvas theming', 'adminkit' ),
+							'desc'    => __( 'Block content in the editor follows your theme.', 'adminkit' ),
+							'detail'  => __( 'AdminKit themes the Gutenberg editor canvas — the block content itself, not just the chrome — so writing matches your admin in light and dark. Default blocks pick up the palette; any block you gave explicit colours keeps them; switching theme stays smooth with no white flash.', 'adminkit' ),
+							'verify'  => true,
 							'bullets' => array(
-								__( 'Opt-in — pairs with Local avatars.', 'adminkit' ),
-								__( 'Nothing stored: generated on demand.', 'adminkit' ),
-								__( 'A real Gravatar still takes priority.', 'adminkit' ),
-								__( 'Avatar style is overridable via a filter.', 'adminkit' ),
+								__( 'Themed blocks in light and dark.', 'adminkit' ),
+								__( 'Your custom block colours are respected.', 'adminkit' ),
+								__( 'Smooth, flash-free theme switching.', 'adminkit' ),
 							),
 						),
 						array(
-							'label'   => __( 'Roadmap detail view', 'adminkit' ),
-							'desc'    => __( 'Hover a card, click for a clean detail panel.', 'adminkit' ),
-							'detail'  => __( 'Every card on this roadmap is interactive: hover to highlight it, click to open a tidy panel describing the feature and where it stands — so this page stays a plan you can actually follow.', 'adminkit' ),
+							'label'   => __( 'Builder & integration polish', 'adminkit' ),
+							'desc'    => __( 'Third-party surfaces refined in dark mode.', 'adminkit' ),
+							'detail'  => __( 'Rounding off the surfaces other tools render inside the admin: the Bricks builder (preloader, panel scrollbars and the code editor) and the Admin Menu Editor search popup — so the experience stays consistent and dark-mode-correct even outside AdminKit\'s own screens.', 'adminkit' ),
+							'verify'  => true,
 							'bullets' => array(
-								__( 'Click any card for details.', 'adminkit' ),
-								__( 'Keyboard and screen-reader friendly.', 'adminkit' ),
-								__( 'Looks right in light and dark.', 'adminkit' ),
+								__( 'Bricks preloader, scrollbars and code editor.', 'adminkit' ),
+								__( 'Admin Menu Editor search popup.', 'adminkit' ),
+								__( 'Consistent tokens across integrations.', 'adminkit' ),
 							),
 						),
 					),
@@ -404,9 +407,9 @@ class AdminKit_Settings_Page {
 					'title' => __( 'Next', 'adminkit' ),
 					'items' => array(
 						array(
-							'label'  => __( 'Login screen branding', 'adminkit' ),
-							'desc'   => __( 'Your logo on the wp-login screen.', 'adminkit' ),
-							'detail' => __( 'Carry the brand logo (with its light and dark variants) you already set for the admin bar onto the wp-login.php screen, replacing the WordPress mark — a small change with a big first-impression payoff.', 'adminkit' ),
+							'label'  => __( 'More native plugin support', 'adminkit' ),
+							'desc'   => __( 'Tuned adapters for more popular plugins.', 'adminkit' ),
+							'detail' => __( 'First-class adapters for widely-used plugins (SEO, form builders, commerce, LMS and more) so their admin screens inherit AdminKit\'s look and dark mode — the same treatment Bricks, WooCommerce and ACF already get.', 'adminkit' ),
 						),
 						array(
 							'label'  => __( 'More native screens styled', 'adminkit' ),
@@ -414,15 +417,25 @@ class AdminKit_Settings_Page {
 							'detail' => __( 'Extend AdminKit\'s per-screen polish to the pages still wearing default WordPress styling: the category and tag editors, custom-post-type lists, and the few remaining core screens — so the whole admin feels like one product.', 'adminkit' ),
 						),
 						array(
-							'label'  => __( 'In-app palette editor', 'adminkit' ),
-							'desc'   => __( 'Pick accent, surface and text colours directly.', 'adminkit' ),
-							'detail' => __( 'Turn today\'s read-only token map into a real editor: choose your accent, surfaces and text, preview the change live across wp-admin, and export the palette to a provider like Bricks.', 'adminkit' ),
+							'label'  => __( 'Universal plugin compatibility', 'adminkit' ),
+							'desc'   => __( 'Any plugin looks right, even without an adapter.', 'adminkit' ),
+							'detail' => __( 'Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common form controls — so a plugin with no dedicated adapter still looks coherent in light and dark out of the box. The stronger this layer, the less per-plugin work is ever needed.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Login & admin-bar polish', 'adminkit' ),
+							'desc'   => __( 'Every login state and the admin bar, front and back.', 'adminkit' ),
+							'detail' => __( 'Finish the most-seen surfaces end to end: every wp-login state (reset, register, check-email, interim login…), the admin bar on both the front and back end, consistent notices, and clear keyboard focus styles throughout.', 'adminkit' ),
 						),
 					),
 				),
 				array(
 					'title' => __( 'Planned', 'adminkit' ),
 					'items' => array(
+						array(
+							'label'  => __( 'In-app palette editor', 'adminkit' ),
+							'desc'   => __( 'Pick accent, surface and text colours directly.', 'adminkit' ),
+							'detail' => __( 'Turn today\'s read-only token map into a real editor: choose your accent, surfaces and text, preview the change live across wp-admin, and export the palette to a provider like Bricks.', 'adminkit' ),
+						),
 						array(
 							'label'  => __( 'Colour sync', 'adminkit' ),
 							'desc'   => __( 'Pull colours from your provider or theme.', 'adminkit' ),

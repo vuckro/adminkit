@@ -452,6 +452,25 @@
 	.adminkit-app .ak-roadmap { grid-template-columns: 1fr; }
 }
 
+/* "To verify" workflow: a card flagged done (awaiting confirmation before it's
+   removed) carries a small success-tinted badge + a subtle accent border. */
+.adminkit-app .ak-roadmap__flag {
+	display: inline-flex;
+	align-items: center;
+	margin-bottom: 6px;
+	padding: 1px 7px;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	line-height: 1.5;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-success-subtle, var(--ak-elevated));
+	color: var(--ak-success, var(--ak-heading));
+}
+.adminkit-app .ak-roadmap__card--verify {
+	border-color: var(--ak-success, var(--ak-primary));
+}
+
 /* Clickable roadmap card (has detail) + the "click for details" hint ------ */
 .adminkit-app button.ak-roadmap__card {
 	width: 100%;
