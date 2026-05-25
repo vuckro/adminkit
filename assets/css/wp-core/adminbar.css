@@ -178,15 +178,16 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 	justify-content: center;
 }
 
-/* No hover / focus background on the toggle — it's an icon button,
-   the color shift the universal hover rule applies is enough feedback. */
+/* Hover / focus background on the icon buttons (theme toggle + view-site) — a
+   visible hover surface (NOT transparent), consistent with the other toolbar
+   items so the button reads as interactive. */
 #wpadminbar #wp-admin-bar-ak-theme-toggle:hover .ab-item,
 #wpadminbar #wp-admin-bar-ak-theme-toggle.hover .ab-item,
 #wpadminbar #wp-admin-bar-ak-theme-toggle .ab-item:focus,
 #wpadminbar #wp-admin-bar-ak-view-site:hover .ab-item,
 #wpadminbar #wp-admin-bar-ak-view-site.hover .ab-item,
 #wpadminbar #wp-admin-bar-ak-view-site .ab-item:focus {
-	background: transparent !important;
+	background: var(--ak-hover-bg, var(--ak-elevated)) !important;
 }
 
 #wp-admin-bar-ak-theme-toggle .ak-theme-dark,
