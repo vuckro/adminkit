@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdminKit 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/vuckro/adminkit/issues\n"
-"POT-Creation-Date: 2026-05-25 11:03+0200\n"
-"PO-Revision-Date: 2026-05-25 11:05+0200\n"
+"POT-Creation-Date: 2026-05-25 11:16+0200\n"
+"PO-Revision-Date: 2026-05-25 11:18+0200\n"
 "Last-Translator: AdminKit\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -799,3 +799,15 @@ msgstr "Chargement de l’aperçu…"
 #: inc/wp-core/class-post-previews.php:362
 msgid "Preview unavailable"
 msgstr "Aperçu indisponible"
+
+#: inc/wp-core/class-chrome.php:186
+msgid "Collapse section"
+msgstr "Réduire la section"
+
+#: inc/wp-core/class-chrome.php:187
+msgid "Expand section"
+msgstr "Développer la section"
+
+#: inc/wp-core/class-chrome.php:188
+msgid "General"
+msgstr "Général"
