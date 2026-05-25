@@ -98,7 +98,7 @@
 	function refresh(span) {
 		var img = span.querySelector('.ak-preview__thumb');
 		if (!img || span.classList.contains('ak-preview--refreshing')) { return; }
-		span.classList.remove('ak-preview--broken', 'ak-preview--refreshed');
+		span.classList.remove('ak-preview--broken', 'ak-preview--done');
 		span.classList.add('ak-preview--refreshing');
 
 		// Rotate the larger hover-panel URL too, so an open panel reloads fresh.
@@ -111,9 +111,11 @@
 			span.classList.remove('ak-preview--refreshing');
 		};
 		var onLoad = function () {
+			// The fresh capture is in place (no page reload) — flash a translucent
+			// "done" overlay with a tick over the thumbnail, then let it settle.
 			cleanup();
-			span.classList.add('ak-preview--refreshed');
-			window.setTimeout(function () { span.classList.remove('ak-preview--refreshed'); }, 1500);
+			span.classList.add('ak-preview--done');
+			window.setTimeout(function () { span.classList.remove('ak-preview--done'); }, 1100);
 		};
 		var onErr = cleanup; // the thumb's own error handler flags it broken
 		img.addEventListener('load', onLoad);
