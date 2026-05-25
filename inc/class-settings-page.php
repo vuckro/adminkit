@@ -300,6 +300,9 @@ class AdminKit_Settings_Page {
 				'dark'              => __( 'Dark', 'adminkit' ),
 				'mode'              => __( 'Mode', 'adminkit' ),
 				'unsaved'           => __( 'Unsaved changes', 'adminkit' ),
+				'close'             => __( 'Close', 'adminkit' ),
+				'details'           => __( 'Details', 'adminkit' ),
+				'roadmapHint'       => __( 'Click a card for details.', 'adminkit' ),
 				'designLegendTitle' => __( 'Live colour reference', 'adminkit' ),
 				'designLegend'      => __( 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.', 'adminkit' ),
 				'typography'        => __( 'Typography', 'adminkit' ),
@@ -367,33 +370,109 @@ class AdminKit_Settings_Page {
 			// AdminKit's roadmap — THE single source. Keep it coherent with what's
 			// actually being built, and mirror it in README.md's Roadmap section when
 			// it changes (see CLAUDE.md → "Keep the docs alive").
+			// Columns render left→right in this order: In progress · Next · Planned.
+			// Each item: label (card title), desc (one-line on the card), detail
+			// (paragraph shown in the click-through modal) and optional bullets[].
 			'roadmap'       => array(
 				array(
-					'title' => __( 'Planned', 'adminkit' ),
+					'title' => __( 'In progress', 'adminkit' ),
 					'items' => array(
-						array( 'label' => __( 'More provider adapters', 'adminkit' ), 'desc' => __( 'Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress — beyond Bricks.', 'adminkit' ) ),
-						array( 'label' => __( 'Theme variants', 'adminkit' ), 'desc' => __( 'Beyond light and dark — sepia, high-contrast.', 'adminkit' ) ),
-						array( 'label' => __( 'Per-role visibility', 'adminkit' ), 'desc' => __( 'Choose which roles get the skin and who may edit it.', 'adminkit' ) ),
-						array( 'label' => __( 'Accessibility checks', 'adminkit' ), 'desc' => __( 'Warn when a chosen colour fails contrast / legibility.', 'adminkit' ) ),
-						array( 'label' => __( 'Custom dashboard widgets', 'adminkit' ), 'desc' => __( 'Replace the WP home screen: quick actions, site status, recent activity.', 'adminkit' ) ),
-						array( 'label' => __( 'Import / export settings', 'adminkit' ), 'desc' => __( 'Clone an AdminKit setup across client sites in one file.', 'adminkit' ) ),
-						array( 'label' => __( 'White-label & admin footer', 'adminkit' ), 'desc' => __( 'Hide WordPress branding everywhere and add an agency credit.', 'adminkit' ) ),
+						array(
+							'label'   => __( 'Generated avatars', 'adminkit' ),
+							'desc'    => __( 'Auto-create a friendly avatar for users without a photo.', 'adminkit' ),
+							'detail'  => __( 'When an account has no uploaded photo and no Gravatar, AdminKit fills the gap with a friendly, auto-generated avatar — so every user looks intentional instead of a blank silhouette. Avatars come from a hosted generator (nothing is stored on your site), stay the same for each user, and a real Gravatar always wins.', 'adminkit' ),
+							'bullets' => array(
+								__( 'Opt-in — pairs with Local avatars.', 'adminkit' ),
+								__( 'Nothing stored: generated on demand.', 'adminkit' ),
+								__( 'A real Gravatar still takes priority.', 'adminkit' ),
+								__( 'Avatar style is overridable via a filter.', 'adminkit' ),
+							),
+						),
+						array(
+							'label'   => __( 'Roadmap detail view', 'adminkit' ),
+							'desc'    => __( 'Hover a card, click for a clean detail panel.', 'adminkit' ),
+							'detail'  => __( 'Every card on this roadmap is interactive: hover to highlight it, click to open a tidy panel describing the feature and where it stands — so this page stays a plan you can actually follow.', 'adminkit' ),
+							'bullets' => array(
+								__( 'Click any card for details.', 'adminkit' ),
+								__( 'Keyboard and screen-reader friendly.', 'adminkit' ),
+								__( 'Looks right in light and dark.', 'adminkit' ),
+							),
+						),
 					),
 				),
 				array(
 					'title' => __( 'Next', 'adminkit' ),
 					'items' => array(
-						array( 'label' => __( 'In-app palette editor', 'adminkit' ), 'desc' => __( 'Pick accent, surface and text colours directly — the token map is read-only today.', 'adminkit' ) ),
-						array( 'label' => __( 'Colour sync', 'adminkit' ), 'desc' => __( 'Pull colours from the active provider or theme and keep them in sync.', 'adminkit' ) ),
+						array(
+							'label'  => __( 'Login screen branding', 'adminkit' ),
+							'desc'   => __( 'Your logo on the wp-login screen.', 'adminkit' ),
+							'detail' => __( 'Carry the brand logo (with its light and dark variants) you already set for the admin bar onto the wp-login.php screen, replacing the WordPress mark — a small change with a big first-impression payoff.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'More native screens styled', 'adminkit' ),
+							'desc'   => __( 'Taxonomies, custom post types and the rest.', 'adminkit' ),
+							'detail' => __( 'Extend AdminKit\'s per-screen polish to the pages still wearing default WordPress styling: the category and tag editors, custom-post-type lists, and the few remaining core screens — so the whole admin feels like one product.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'In-app palette editor', 'adminkit' ),
+							'desc'   => __( 'Pick accent, surface and text colours directly.', 'adminkit' ),
+							'detail' => __( 'Turn today\'s read-only token map into a real editor: choose your accent, surfaces and text, preview the change live across wp-admin, and export the palette to a provider like Bricks.', 'adminkit' ),
+						),
 					),
 				),
 				array(
-					'title' => __( 'In progress', 'adminkit' ),
+					'title' => __( 'Planned', 'adminkit' ),
 					'items' => array(
-						array( 'label' => __( 'Branding & admin-bar logo', 'adminkit' ), 'desc' => __( 'Brand logo / favicon in the toolbar, size control, light + dark.', 'adminkit' ) ),
-						array( 'label' => __( 'AdminKit icon set', 'adminkit' ), 'desc' => __( 'Replace native menu + toolbar icons; growing plugin coverage.', 'adminkit' ) ),
-						array( 'label' => __( 'Bricks builder polish', 'adminkit' ), 'desc' => __( 'Toolbar logo, preloader, canvas theming + colour fallback.', 'adminkit' ) ),
-						array( 'label' => __( 'Local avatars', 'adminkit' ), 'desc' => __( 'Per-user avatar image that replaces Gravatar — no Gravatar dependency.', 'adminkit' ) ),
+						array(
+							'label'  => __( 'Colour sync', 'adminkit' ),
+							'desc'   => __( 'Pull colours from your provider or theme.', 'adminkit' ),
+							'detail' => __( 'Read the active provider or theme palette and keep AdminKit in sync automatically, so the admin always matches the brand without manual edits.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'More provider adapters', 'adminkit' ),
+							'desc'   => __( 'Beyond Bricks — ACSS, Core Framework, Oxygen, Elementor…', 'adminkit' ),
+							'detail' => __( 'Inherit brand colours from more page builders and frameworks (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress), the same way the Bricks adapter works today.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Theme variants', 'adminkit' ),
+							'desc'   => __( 'Beyond light and dark — sepia, high-contrast.', 'adminkit' ),
+							'detail' => __( 'Ship additional admin themes on top of light and dark, including an accessibility-minded high-contrast variant.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Per-role visibility', 'adminkit' ),
+							'desc'   => __( 'Choose which roles get the skin and who may edit it.', 'adminkit' ),
+							'detail' => __( 'Decide which user roles see the AdminKit skin and which may change its settings — handy for client sites.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Accessibility checks', 'adminkit' ),
+							'desc'   => __( 'Warn when a colour fails contrast.', 'adminkit' ),
+							'detail' => __( 'Flag colour choices that fall below contrast and legibility thresholds, right where you pick them.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Custom dashboard widgets', 'adminkit' ),
+							'desc'   => __( 'Replace the WP home screen.', 'adminkit' ),
+							'detail' => __( 'Swap the default dashboard for quick actions, site status and recent activity that are actually useful.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Import / export settings', 'adminkit' ),
+							'desc'   => __( 'Clone an AdminKit setup across sites.', 'adminkit' ),
+							'detail' => __( 'Save a whole AdminKit configuration to a file and import it on another site in one step — ideal for agencies.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Bricks dynamic logo tag', 'adminkit' ),
+							'desc'   => __( 'Use your AdminKit logo anywhere in Bricks.', 'adminkit' ),
+							'detail' => __( 'Expose the configured brand logo as a Bricks dynamic-data tag, so it can be dropped into any Bricks design and stays in sync.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'WordPress Playground demo', 'adminkit' ),
+							'desc'   => __( 'Try AdminKit live in the browser.', 'adminkit' ),
+							'detail' => __( 'A one-click WordPress Playground link so anyone can try AdminKit in the browser with no install — great for the README and the .org listing.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'White-label & admin footer', 'adminkit' ),
+							'desc'   => __( 'Hide WordPress branding, add an agency credit.', 'adminkit' ),
+							'detail' => __( 'Remove WordPress branding across the admin and add your own footer credit and version line.', 'adminkit' ),
+						),
 					),
 				),
 			),
@@ -459,6 +538,7 @@ class AdminKit_Settings_Page {
 			array( 'key' => 'editor_content_theme',   'group' => $appearance, 'label' => __( 'Gutenberg', 'adminkit' ),     'desc' => __( 'Theme the Gutenberg block-editor canvas (content + native blocks) in light and dark. Off (default) keeps the canvas matching your live site.', 'adminkit' ) ),
 			array( 'key' => 'replace_icons_enabled',  'group' => $appearance, 'label' => __( 'AdminKit icons', 'adminkit' ), 'desc' => __( 'Replace WordPress\'s native menu and toolbar icons with AdminKit\'s set. Non-destructive: icons already customised (e.g. via Admin Menu Editor) are left untouched.', 'adminkit' ) ),
 			array( 'key' => 'local_avatars_enabled',  'group' => $appearance, 'label' => __( 'Local avatars', 'adminkit' ), 'desc' => __( 'Let users upload a profile picture that replaces Gravatar. Off = Gravatar everywhere.', 'adminkit' ) ),
+			array( 'key' => 'generated_avatars_enabled', 'group' => $appearance, 'label' => __( 'Generated avatars', 'adminkit' ), 'desc' => __( 'Auto-generate a friendly avatar for users with no photo, instead of Gravatar\'s blank icon. Uses a hosted generator (disclosed in the readme).', 'adminkit' ), 'parent' => 'local_avatars_enabled' ),
 		);
 
 		// Bricks builder restyle — only meaningful when the Bricks theme is active.

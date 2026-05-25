@@ -169,6 +169,67 @@
 	// --- panels --------------------------------------------------------------
 	function intro( text ) { return el( 'p', { 'class': 'ak-intro', text: text } ); }
 
+	// --- roadmap detail modal ------------------------------------------------
+	// One reusable, accessible dialog (built lazily). A roadmap card click opens
+	// it with that item's title / lede / detail / bullets; ESC, the close button
+	// and a backdrop click dismiss it, and focus returns to the card.
+	var roadmapModal = null;
+	var roadmapTrigger = null;
+
+	function buildRoadmapModal() {
+		var closeBtn = el( 'button', { 'class': 'ak-modal__close', type: 'button', 'aria-label': I.close || 'Close', onclick: closeRoadmapModal, text: '×' } );
+		var chip   = el( 'span', { 'class': 'ak-modal__chip' } );
+		var title  = el( 'h2', { 'class': 'ak-modal__title', id: 'ak-roadmap-modal-title' } );
+		var lede   = el( 'p', { 'class': 'ak-modal__lede' } );
+		var detail = el( 'p', { 'class': 'ak-modal__detail' } );
+		var list   = el( 'ul', { 'class': 'ak-modal__list' } );
+		var dialog = el( 'div', { 'class': 'ak-modal__dialog', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'ak-roadmap-modal-title' }, [ closeBtn, chip, title, lede, detail, list ] );
+		var root   = el( 'div', { 'class': 'ak-modal', hidden: 'hidden' }, [ dialog ] );
+		root.addEventListener( 'click', function ( e ) { if ( e.target === root ) { closeRoadmapModal(); } } );
+		document.body.appendChild( root );
+		roadmapModal = { root: root, dialog: dialog, chip: chip, title: title, lede: lede, detail: detail, list: list, close: closeBtn };
+		return roadmapModal;
+	}
+
+	function openRoadmapModal( item, status ) {
+		var m = roadmapModal || buildRoadmapModal();
+		roadmapTrigger = document.activeElement;
+		m.chip.textContent = status || '';
+		m.chip.style.display = status ? '' : 'none';
+		m.title.textContent = item.label || '';
+		m.lede.textContent = item.desc || '';
+		m.lede.style.display = item.desc ? '' : 'none';
+		m.detail.textContent = item.detail || '';
+		m.detail.style.display = item.detail ? '' : 'none';
+		m.list.textContent = '';
+		( item.bullets || [] ).forEach( function ( b ) { m.list.appendChild( el( 'li', { text: b } ) ); } );
+		m.list.style.display = ( item.bullets && item.bullets.length ) ? '' : 'none';
+		m.root.removeAttribute( 'hidden' );
+		requestAnimationFrame( function () { m.root.classList.add( 'is-open' ); } );
+		document.addEventListener( 'keydown', onModalKey );
+		m.close.focus();
+	}
+
+	function closeRoadmapModal() {
+		if ( ! roadmapModal ) { return; }
+		roadmapModal.root.classList.remove( 'is-open' );
+		roadmapModal.root.setAttribute( 'hidden', 'hidden' );
+		document.removeEventListener( 'keydown', onModalKey );
+		if ( roadmapTrigger && roadmapTrigger.focus ) { roadmapTrigger.focus(); }
+		roadmapTrigger = null;
+	}
+
+	function onModalKey( e ) {
+		if ( e.key === 'Escape' ) { e.preventDefault(); closeRoadmapModal(); return; }
+		if ( e.key === 'Tab' && roadmapModal ) {
+			var f = roadmapModal.dialog.querySelectorAll( 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])' );
+			if ( ! f.length ) { return; }
+			var first = f[ 0 ], last = f[ f.length - 1 ];
+			if ( e.shiftKey && document.activeElement === first ) { e.preventDefault(); last.focus(); }
+			else if ( ! e.shiftKey && document.activeElement === last ) { e.preventDefault(); first.focus(); }
+		}
+	}
+
 	// Overview tab. Renders the data-driven card list from D.dashboard; a card
 	// with a `tab` becomes a shortcut button to that tab.
 	function buildDashboard() {
@@ -219,7 +280,14 @@
 			dd.roadmap.forEach( function ( col ) {
 				var kids = [ el( 'h3', { 'class': 'ak-roadmap__head', text: col.title } ) ];
 				( col.items || [] ).forEach( function ( it ) {
-					kids.push( el( 'div', { 'class': 'ak-roadmap__card' }, [
+					// A card with a detail / bullets becomes a focusable button that
+					// opens the detail modal; otherwise it stays a plain div.
+					var hasDetail = !! ( it.detail || ( it.bullets && it.bullets.length ) );
+					kids.push( el( hasDetail ? 'button' : 'div', {
+						type: hasDetail ? 'button' : null,
+						'class': 'ak-roadmap__card' + ( hasDetail ? ' ak-roadmap__card--link' : '' ),
+						onclick: hasDetail ? function () { openRoadmapModal( it, col.title ); } : null
+					}, [
 						el( 'span', { 'class': 'ak-roadmap__title', text: it.label } ),
 						it.desc ? el( 'span', { 'class': 'ak-roadmap__desc', text: it.desc } ) : null
 					] ) );
@@ -228,6 +296,7 @@
 			} );
 			p.appendChild( el( 'div', { 'class': 'ak-group' }, [
 				dd.roadmapLabel ? el( 'h2', { 'class': 'ak-group__title', text: dd.roadmapLabel } ) : null,
+				I.roadmapHint ? el( 'p', { 'class': 'ak-roadmap__hint', text: I.roadmapHint } ) : null,
 				board
 			] ) );
 		}

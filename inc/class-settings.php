@@ -239,6 +239,19 @@ class AdminKit_Settings {
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
+		// Generated avatars — OFF by default (opt-in); only meaningful with
+		// local_avatars_enabled on. When a user has no uploaded avatar, AdminKit
+		// serves a friendly auto-generated avatar from a hosted generator instead
+		// of Gravatar's blank "mystery person". Read by AdminKit_Local_Avatars.
+		// Off = Gravatar's own default. The generator is an external service
+		// (disclosed in readme.txt) seeded with a NON-PII per-user value.
+		self::register( 'generated_avatars_enabled', array(
+			'type'     => 'toggle',
+			'group'    => 'features',
+			'default'  => false,
+			'sanitize' => 'rest_sanitize_boolean',
+		) );
+
 		// WordPress default UI — OFF by default. A master "pause" switch: when ON,
 		// AdminKit ships ZERO styling (admin, login, frontend bar, editor, Bricks
 		// builder) so wp-admin looks 100% native — the plugin and every feature stay

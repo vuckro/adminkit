@@ -223,9 +223,9 @@ That's it — the boot orchestrator picks the folder up automatically on `after_
 This mirrors the **in-app roadmap** (Dashboard tab) — the single source lives in
 `AdminKit_Settings_Page::dashboard()`. Keep the two in sync (see [`CLAUDE.md`](CLAUDE.md)).
 
-- **In progress** — branding & admin-bar logo (toolbar logo / favicon, size control, light + dark); the AdminKit icon set (native menu + toolbar icon replacement, growing plugin coverage); Bricks builder polish (toolbar logo, preloader, canvas theming + fallback); local avatars (per-user avatar image that replaces Gravatar — no Gravatar dependency).
-- **Next** — in-app palette editor; colour sync from the active provider/theme.
-- **Planned** — more provider adapters (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress); theme variants (sepia, high-contrast); per-role visibility; accessibility / contrast checks; custom dashboard widgets; import / export settings; white-label & admin footer.
+- **In progress** — generated avatars (auto-create a friendly avatar for users without a photo); roadmap detail view (hover + click-through detail panels on the dashboard cards).
+- **Next** — login-screen branding (your logo on wp-login); more native screens styled (taxonomies, custom post types, the rest); in-app palette editor.
+- **Planned** — colour sync from the active provider/theme; more provider adapters (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress); theme variants (sepia, high-contrast); per-role visibility; accessibility / contrast checks; custom dashboard widgets; import / export settings; Bricks dynamic logo tag; WordPress Playground demo; white-label & admin footer.
 
 ---
 
