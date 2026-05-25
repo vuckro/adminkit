@@ -158,7 +158,7 @@ adminkit/
 │   ├── wp-core/                         AdminKit's restyle of WP-core surfaces
 │   │   ├── class-chrome.php             Registers every admin/frontend CSS file
 │   │   ├── class-login.php              Registers login.css
-│   │   ├── class-branding.php           Brand logo (admin menu) + WP-admin-bar-logo mode (favicon / hide)
+│   │   ├── class-branding.php           Admin-bar logo: brand logo / favicon / hide (wp_logo)
 │   │   ├── class-menu-icons.php         Opt-in native-icon replacement (menu + toolbar), filterable
 │   │   ├── class-profile-account.php    Profile / user-edit screen layout
 │   │   ├── class-post-previews.php      List-table screenshot thumbnails
