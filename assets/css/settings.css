@@ -169,10 +169,10 @@
 	border-top: 1px solid var(--ak-border);
 }
 .adminkit-app .ak-row:first-child { border-top: 0; }
-/* Row hover — the central --ak-hover-bg token (which aliases the --ak-elevated
-   hover-down surface), shared with list tables, the admin-bar submenu and every
-   other neutral hover so they all read identically. */
-.adminkit-app .ak-row:hover { background: var(--ak-hover-bg); }
+/* Row hover lifts to --ak-elevated — a crisp step, since the row sits on a known
+   surface (the .ak-rows card). Floating / any-surface hovers (dropdowns, menus)
+   use the translucent --ak-hover-bg instead, which stays visible on elevated. */
+.adminkit-app .ak-row:hover { background: var(--ak-elevated); }
 /* Nested feature (e.g. mShots under Post previews): indented; muted + locked
    when its parent is off. */
 .adminkit-app .ak-row--child { padding-left: 34px; }

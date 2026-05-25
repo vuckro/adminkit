@@ -73,15 +73,15 @@ body.adminkit #adminmenu li.menu-top {
 }
 
 /* Hover / focus on non-current items — match WP's exact selectors with
-   !important to defeat colors.css. Uses the central --ak-hover-bg token (a
-   translucent tint that composites over the sidebar surface) so the sidebar
-   hover matches every other neutral hover, light AND dark. */
+   !important to defeat colors.css. Lifts to --ak-elevated — a crisp step on the
+   sidebar surface, matching the settings rows + list tables (the current item,
+   also --ak-elevated, stays distinct by its bold label). */
 body.adminkit #adminmenu a:hover,
 body.adminkit #adminmenu li.menu-top:hover,
 body.adminkit #adminmenu li.opensub > a.menu-top,
 body.adminkit #adminmenu li > a.menu-top:focus {
 	color: var(--ak-heading) !important;
-	background-color: var(--ak-hover-bg) !important;
+	background-color: var(--ak-elevated) !important;
 }
 
 /* WP core ships `#adminmenu a:focus, #adminmenu a:hover` with
@@ -166,7 +166,7 @@ body.adminkit #adminmenu .wp-submenu a {
 body.adminkit #adminmenu .wp-submenu a:hover,
 body.adminkit #adminmenu .wp-submenu a:focus {
 	color: var(--ak-heading);
-	background: var(--ak-hover-bg) !important;
+	background: var(--ak-elevated) !important;
 }
 
 /* Current submenu item — neutral surface + bold marks it (no brand accent).

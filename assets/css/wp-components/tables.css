@@ -108,13 +108,13 @@ body.adminkit .wp-list-table tbody tr:first-child th {
 	border-top: none;
 }
 
-/* Row hover — the central --ak-hover-bg token (it aliases --ak-elevated, the
-   hover-down surface, and flips per mode), shared with the settings rows + the
-   admin-bar submenu so every neutral hover reads identically. */
+/* Row hover lifts to --ak-elevated — a crisp step (rows sit on the --ak-surface
+   table), matching the settings rows + the admin menu. Floating / any-surface
+   hovers use the translucent --ak-hover-bg, which stays visible on elevated. */
 body.adminkit .wp-list-table tbody tr:hover,
 body.adminkit .wp-list-table tbody tr:hover td,
 body.adminkit .wp-list-table tbody tr:hover th {
-	background: var(--ak-hover-bg);
+	background: var(--ak-elevated);
 }
 
 /* Primary-column title links — post/page `.row-title` and the users.php

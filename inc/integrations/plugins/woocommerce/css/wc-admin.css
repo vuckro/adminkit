@@ -678,13 +678,10 @@ body.adminkit.woocommerce-admin-page .woocommerce-summary__item .woocommerce-sum
 	color: var(--ak-text-muted);
 }
 
-/* Row hover + focus → the central --ak-hover-bg token (homogenized with every
-   other neutral hover). Sorted-column cells stay --ak-elevated — a steady
-   highlight, not a hover. */
+/* Row hover + focus + sorted-column cells → --ak-elevated, the crisp lift used by
+   the global list tables + settings rows. */
 body.adminkit.woocommerce-admin-page .woocommerce-table__table tr:hover,
-body.adminkit.woocommerce-admin-page .woocommerce-table__table tr:focus-within {
-	background-color: var(--ak-hover-bg);
-}
+body.adminkit.woocommerce-admin-page .woocommerce-table__table tr:focus-within,
 body.adminkit.woocommerce-admin-page .woocommerce-table__header.is-sorted,
 body.adminkit.woocommerce-admin-page .woocommerce-table__item.is-sorted {
 	background-color: var(--ak-elevated);

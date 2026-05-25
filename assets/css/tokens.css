@@ -93,13 +93,14 @@
 	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%))); /* + AdminKit addition (consumes the --secondary primitive) */
 
 	/* ── State ─────────────────────────────────────────────────────────────
-	   --ak-hover-bg is THE single neutral hover token — every row / menu / item /
-	   list-table hover reads it, light AND dark. It MUST be a TRANSLUCENT tint:
-	   hover targets are transparent at rest, so the tint composites over whatever
-	   is beneath → a visible step on ANY surface, including --ak-elevated elements
-	   (an opaque elevated value is invisible there, and barely a step on surfaces).
-	   Black in light, white in dark (calmed value in the dark block below).
-	   Then the focus color + the ring built on it (a custom brand tints its own). */
+	   --ak-hover-bg is the hover tint for FLOATING / any-surface targets — dropdown
+	   & component menu items, panels, etc. It MUST be a TRANSLUCENT tint: those
+	   targets are transparent at rest, so it composites over whatever is beneath →
+	   a visible step on ANY surface, including --ak-elevated elements (an opaque
+	   elevated value would be invisible there). Black in light, white in dark
+	   (calmed value in the dark block below). Known-surface rows / tables / menu
+	   items instead lift to --ak-elevated directly — a crisper step (see
+	   settings.css, tables.css, chrome.css). Then the focus color + its ring. */
 	--ak-hover-bg: var(--hover, rgba(0, 0, 0, 0.04));
 	/* Elevation shadow — the one sanctioned exception to the flat rule, for
 	   true floating layers (admin-bar dropdowns). Mode-aware like --hover-bg:
