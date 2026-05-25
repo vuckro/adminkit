@@ -382,19 +382,21 @@ body.adminkit #dashboard_quick_press .drafts h2 {
 	color: var(--ak-heading);
 }
 
-/* Notices — modernize with a full token border + radius. WP
-   ships just a border-left accent; add the three remaining
-   sides + --ak-radius-s so the notice reads as a card. The
-   per-status border-left below (success/warning/error/info)
-   keeps the 4px colored accent. */
+/* Notices — soft style (matches the validated login notices): no border, no
+   shadow, a flat rounded card whose colour is the per-status SUBTLE tint as bg +
+   the status colour as text (set below). Untyped .notice stays neutral. */
 body.adminkit .notice,
 body.adminkit div.updated,
-body.adminkit div.error {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-left-width: 4px;
+body.adminkit div.error,
+body.adminkit .update-nag {
+	border: 0;
 	border-radius: var(--ak-radius-s);
 	box-shadow: none;
+	padding: 12px 16px;
+}
+body.adminkit .notice {
+	background: var(--ak-elevated);
+	color: var(--ak-text);
 }
 
 /* WP's common.css groups a dozen container classes under a single
@@ -652,32 +654,41 @@ body.adminkit .tagchecklist > li {
 	color: var(--ak-text);
 }
 
-body.adminkit .notice-success,
-body.adminkit div.updated {
-	border-left-color: var(--ak-success);
+body.adminkit .notice-info {
+	background: var(--ak-info-subtle);
+	color: var(--ak-info);
 }
 
-body.adminkit .notice-warning {
-	border-left-color: var(--ak-warning);
+body.adminkit .notice-success,
+body.adminkit div.updated,
+body.adminkit .updated {
+	background: var(--ak-success-subtle);
+	color: var(--ak-success);
 }
 
 body.adminkit .notice-error,
-body.adminkit div.error {
-	border-left-color: var(--ak-error);
+body.adminkit div.error,
+body.adminkit .error {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
 }
 
-body.adminkit .notice-info {
-	border-left-color: var(--ak-info);
+body.adminkit .notice-warning,
+body.adminkit .update-nag {
+	background: var(--ak-warning-subtle);
+	color: var(--ak-warning);
 }
 
 /* WP hardcodes `color: #1e1e1e` on notice / updated / error paragraph text,
    which turns invisible on our dark surface. Route it through the token. */
+/* Let the message text take the notice's own colour (set per status above) so the
+   soft tint + coloured copy read as one — instead of WP's hardcoded #1e1e1e. */
 body.adminkit .notice p,
 body.adminkit .form-table td .notice p,
 body.adminkit .notice-title,
 body.adminkit div.error p,
 body.adminkit div.updated p {
-	color: var(--ak-text);
+	color: inherit;
 }
 
 /* Notice dismiss cross — same #1e1e1e hardcoded in WP, in default + hover
