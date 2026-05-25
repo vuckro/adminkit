@@ -238,8 +238,17 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		}
 		$base = 'inc/integrations/themes/bricks/css/';
 
-		// Main builder frame → the chrome. ?bricks=run is the builder URL;
-		// bricks_is_builder_main() confirms it.
+		// Canvas IFRAME first. It renders the real page, so it gets ONLY the canvas
+		// sheet (no variable remaps). This MUST be tested before the main-frame
+		// check: the iframe request also satisfies ?bricks=run / bricks_is_builder_main(),
+		// so testing "main" first would leak the chrome — and its :root { --bricks-* }
+		// remap — into the page and recolour it (the bug this fixes).
+		if ( function_exists( 'bricks_is_builder_iframe' ) && bricks_is_builder_iframe() ) {
+			self::enqueue_style_file( 'adminkit-bricks-builder-canvas', $base . 'builder-canvas.css' );
+			return;
+		}
+
+		// Otherwise → the builder MAIN frame: the chrome.
 		$is_main = ( isset( $_GET['bricks'] ) && 'run' === $_GET['bricks'] )
 			|| ( function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main() );
 		if ( $is_main ) {
@@ -249,12 +258,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 					wp_add_inline_style( 'adminkit-bricks-builder', $logo_css );
 				}
 			}
-			return;
-		}
-
-		// Canvas iframe (the rendered page) → only canvas-surface tweaks.
-		if ( function_exists( 'bricks_is_builder_iframe' ) && bricks_is_builder_iframe() ) {
-			self::enqueue_style_file( 'adminkit-bricks-builder-canvas', $base . 'builder-canvas.css' );
 		}
 	}
 
