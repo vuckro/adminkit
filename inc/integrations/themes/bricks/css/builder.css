@@ -1,0 +1,244 @@
+/**
+ * Bricks builder UI — AdminKit restyle.
+ *
+ * Loaded ONLY inside the Bricks builder main frame (AdminKit_Integration_Bricks::
+ * enqueue_builder), and ONLY when the "Bricks builder" feature is enabled.
+ *
+ * EXCEPTION to AdminKit's "every stylesheet reads --ak-* tokens" rule. The
+ * builder is a Bricks/WaasKit-native surface: it has no admin bar, so AdminKit's
+ * frontend dispatch (and its --ak-* layer) never loads here — but the WaasKit
+ * design-system variables (--surface, --neutral-l-*, --accent, …) ARE present,
+ * printed live by Bricks. So this file maps Bricks's --builder-* / --bricks-*
+ * variables onto those provider variables directly: the correct, and only
+ * available, source of truth in the builder. It also gives the builder's own
+ * light/dark for free, since the WaasKit variables flip with the builder mode.
+ *
+ * Bricks consumes the --builder-* variables only when Builder mode = "Custom"
+ * (Bricks → Settings → Builder). The toolbar / structure / context-menu rules
+ * apply in every builder mode.
+ *
+ * No --ak-* tokens here, and no !important (keeps the adapter audit at Tier A).
+ * The CodeMirror block is a deliberate fixed-palette syntax theme (Catppuccin
+ * Mocha) — its hex literals are code-content colours, not UI chrome.
+ */
+
+/* ============================================================
+   TOOLBAR
+   ============================================================ */
+#bricks-toolbar {
+	background-color: var(--background);
+}
+/* The logo swap (accent chip + image) is injected by PHP only when a logo is
+   configured — see the adminkit/bricks/builder_logo filter. */
+
+
+/* ============================================================
+   BUILDER PANELS  (--builder-*, consumed in "Custom" builder mode)
+   ============================================================ */
+[data-builder-mode="custom"] {
+	background-color: var(--surface);
+
+	/* Surfaces */
+	--builder-bg:                     var(--background);
+	--builder-bg-2:                   var(--surface);
+	--builder-bg-3:                   var(--elevated);
+	--builder-bg-4:                   var(--neutral-l-4);
+	--builder-bg-muted:               var(--surface);
+
+	/* Text */
+	--builder-color:                  var(--heading);
+	--builder-color-description:      var(--text);
+	--builder-color-muted:            var(--text-muted);
+
+	/* Borders & radius */
+	--builder-border-color:           var(--border);
+	--builder-border-radius:          var(--radius-s, 4px);
+	--builder-color-knob:             var(--neutral-l-7);
+	--builder-placeholder-opacity:    .32;
+
+	/* Accent / selection / highlight */
+	--builder-bg-accent:              var(--surface);
+	--builder-color-accent:           var(--accent);
+	--builder-color-accent-inverse:   var(--on-accent, #fff);
+	--builder-color-highlight:        var(--primary);
+	--builder-bg-highlight:           var(--focus);
+
+	/* Classes */
+	--builder-color-class:            var(--accent);
+	--builder-bg-class:               var(--background);
+
+	/* Components */
+	--builder-color-component:        var(--tertiary-l-2);
+	--builder-bg-component:           var(--tertiary-t-2);
+
+	/* Component slots */
+	--builder-color-component-slot:   var(--info-l-2);
+	--builder-bg-component-slot:      var(--info-t-2);
+
+	/* Semantic states */
+	--builder-color-info:             var(--info);
+	--builder-bg-info:                var(--info-t-2);
+	--builder-color-success:          var(--success);
+	--builder-bg-success:             var(--success-t-2);
+	--builder-color-warning:          var(--warning);
+	--builder-bg-warning:             var(--warning-t-2);
+	--builder-color-danger:           var(--error);
+	--builder-bg-danger:              var(--error-t-2);
+
+	/* Tooltip */
+	--bricks-tooltip-bg:              var(--neutral-d-2);
+	--bricks-tooltip-text:            var(--neutral-d-9);
+
+	/* Canvas scrollbar */
+	--builder-canvas-scrollbar-thumb:        var(--neutral-t-3);
+	--builder-canvas-scrollbar-thumb_hover:  var(--neutral-t-4);
+	--builder-canvas-scrollbar-track:        transparent;
+}
+
+
+/* ============================================================
+   GLOBAL DESIGN TOKENS  (--bricks-* + --builder-gray-*)
+   Scoped to the builder because this file only loads there.
+   ============================================================ */
+:root {
+	--bricks-vh:               1vh;
+	--bricks-transition:       var(--transition-s, .15s);
+	--bricks-border-radius:    var(--radius-s, 4px);
+
+	--bricks-color-primary:    var(--primary);
+	--bricks-color-secondary:  var(--secondary);
+
+	--bricks-text-dark:        var(--heading);
+	--bricks-text-medium:      var(--text);
+	--bricks-text-light:       var(--text-muted);
+
+	--bricks-text-info:        var(--info);
+	--bricks-text-success:     var(--success);
+	--bricks-text-warning:     var(--warning);
+	--bricks-text-danger:      var(--error);
+
+	--bricks-bg-light:         var(--background);
+	--bricks-bg-dark:          var(--neutral-d-2);
+
+	--bricks-bg-info:          var(--info-l-9);
+	--bricks-bg-success:       var(--success-l-9);
+	--bricks-bg-warning:       var(--warning-l-9);
+	--bricks-bg-danger:        var(--error-l-9);
+
+	--bricks-border-color:     var(--border);
+
+	--bricks-tooltip-bg:       var(--neutral-d-2);
+	--bricks-tooltip-text:     var(--neutral-d-9);
+
+	--builder-gray-0:          var(--neutral-l-10);
+	--builder-gray-1:          var(--neutral-l-9);
+	--builder-gray-2:          var(--neutral-l-8);
+	--builder-gray-3:          var(--neutral-l-7);
+	--builder-gray-4:          var(--neutral-l-6);
+	--builder-gray-5:          var(--neutral-l-5);
+	--builder-gray-6:          var(--neutral-l-4);
+	--builder-gray-7:          var(--neutral-l-3);
+	--builder-gray-8:          var(--neutral-l-2);
+	--builder-gray-9:          var(--neutral-l-1);
+
+	--builder-gray-a:          var(--neutral-t-6);
+	--builder-gray-b:          var(--neutral-t-5);
+	--builder-gray-c:          var(--neutral-t-4);
+	--builder-gray-d:          var(--neutral-t-3);
+	--builder-gray-e:          var(--neutral-t-2);
+	--builder-gray-f:          var(--neutral-t-1);
+}
+
+
+/* ============================================================
+   PANELS & CONTROLS
+   ============================================================ */
+/* Active controls-search field */
+#bricks-panel-controls-search.active {
+	background-color: var(--primary-t-1);
+}
+
+/* "Sign code" prompt on unsigned code elements */
+.bricks-popup.code-signatures .unsigned-code-element:hover {
+	background-color: var(--accent-subtle);
+}
+
+
+/* ============================================================
+   STRUCTURE  (element tree)
+   ============================================================ */
+#bricks-structure .element.active > .structure-item {
+	background-color: var(--primary-t-1);
+}
+
+
+/* ============================================================
+   CONTEXT MENU  (right-click)
+   ============================================================ */
+#bricks-builder-context-menu {
+	background-color: var(--elevated);
+}
+#bricks-builder-context-menu ul li.sep {
+	border-bottom: 1px solid var(--border-strong);
+}
+#bricks-builder-context-menu ul li:hover:not(.convert) {
+	background-color: var(--surface);
+}
+
+
+/* ============================================================
+   CANVAS CHROME
+   ============================================================ */
+.canvas-resizer {
+	border-inline-start: 1px solid var(--border);
+}
+
+
+/* ============================================================
+   CODE EDITOR — CodeMirror (Catppuccin Mocha)
+   A fixed-palette syntax theme: hex values are code-content colours,
+   deliberately not tokenised.
+   ============================================================ */
+[data-builder-mode="custom"] .CodeMirror {
+	background: #1e1e2e;
+	color: #cdd6f4;
+}
+[data-builder-mode="custom"] .CodeMirror.CodeMirror-focused .CodeMirror-cursor { border-left-color: #f5e0dc; }
+[data-builder-mode="custom"] .CodeMirror .CodeMirror-selected              { background: #45475a; }
+[data-builder-mode="custom"] .CodeMirror .CodeMirror-cursor                { border-left: 2px solid #f5e0dc; }
+[data-builder-mode="custom"] .CodeMirror .CodeMirror-linenumber            { color: #6c7086; }
+[data-builder-mode="custom"] .CodeMirror .CodeMirror-activeline-background { background: #313244; }
+[data-builder-mode="custom"] .CodeMirror .CodeMirror-matchingbracket       { color: #f9e2af; background: #45475a; font-weight: 600; }
+[data-builder-mode="custom"] .CodeMirror .CodeMirror-nonmatchingbracket    { color: #f38ba8; }
+[data-builder-mode="custom"] .CodeMirror .CodeMirror-gutters               { background: #181825; border-right: 1px solid #313244; }
+
+[data-builder-mode="custom"] .CodeMirror .cm-comment     { color: #6c7086; font-style: italic; }
+[data-builder-mode="custom"] .CodeMirror .cm-bracket,
+[data-builder-mode="custom"] .CodeMirror .cm-punctuation { color: #cdd6f4; }
+[data-builder-mode="custom"] .CodeMirror .cm-operator    { color: #94e2d5; }
+
+[data-builder-mode="custom"] .CodeMirror .cm-def,
+[data-builder-mode="custom"] .CodeMirror .cm-qualifier,
+[data-builder-mode="custom"] .CodeMirror .cm-keyword     { color: #cba6f7; }
+[data-builder-mode="custom"] .CodeMirror .cm-def,
+[data-builder-mode="custom"] .CodeMirror .cm-keyword     { font-weight: 600; }
+
+[data-builder-mode="custom"] .CodeMirror .cm-variable    { color: #89b4fa; }
+[data-builder-mode="custom"] .CodeMirror .cm-variable-2  { color: #74c7ec; }
+[data-builder-mode="custom"] .CodeMirror .cm-variable-3  { color: #b4befe; }
+
+[data-builder-mode="custom"] .CodeMirror .cm-tag,
+[data-builder-mode="custom"] .CodeMirror .cm-builtin     { color: #f5c2e7; }
+[data-builder-mode="custom"] .CodeMirror .cm-meta        { color: #f2cdcd; }
+
+[data-builder-mode="custom"] .CodeMirror .cm-property,
+[data-builder-mode="custom"] .CodeMirror .cm-attribute   { color: #fab387; }
+
+[data-builder-mode="custom"] .CodeMirror .cm-string      { color: #a6e3a1; }
+[data-builder-mode="custom"] .CodeMirror .cm-string-2    { color: #94e2d5; }
+
+[data-builder-mode="custom"] .CodeMirror .cm-number,
+[data-builder-mode="custom"] .CodeMirror .cm-unit        { color: #f9e2af; }
+[data-builder-mode="custom"] .CodeMirror .cm-atom        { color: #fab387; }
+
+[data-builder-mode="custom"] .CodeMirror .cm-error       { color: #f38ba8; text-decoration: underline wavy; }

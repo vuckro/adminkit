@@ -374,13 +374,20 @@ class AdminKit_Settings_Page {
 		// its parent's group by carrying the same label.
 		$content    = __( 'Content & lists', 'adminkit' );
 		$appearance = __( 'Appearance & access', 'adminkit' );
-		return array(
+		$rows = array(
 			array( 'key' => 'post_previews_enabled', 'group' => $content,    'label' => __( 'Post previews', 'adminkit' ),             'desc' => __( 'Screenshot thumbnail column in post-type list tables.', 'adminkit' ) ),
 			array( 'key' => 'post_previews_mshots',  'group' => $content,    'label' => __( 'Live screenshots (mShots)', 'adminkit' ), 'desc' => __( 'Use WordPress.com mShots. Off = featured image only (no external calls).', 'adminkit' ), 'parent' => 'post_previews_enabled' ),
 			array( 'key' => 'theme_toggle_enabled',  'group' => $appearance, 'label' => __( 'Dark mode', 'adminkit' ),       'desc' => __( 'Enable dark mode with a toggle in the admin bar. Off forces light mode everywhere.', 'adminkit' ) ),
 			array( 'key' => 'module_login_enabled',  'group' => $appearance, 'label' => __( 'Login screen', 'adminkit' ),              'desc' => __( 'Style the wp-login.php screen.', 'adminkit' ) ),
 			array( 'key' => 'editor_content_theme',   'group' => $appearance, 'label' => __( 'Editor content theming', 'adminkit' ),     'desc' => __( 'Apply AdminKit\'s light/dark theme to the block content inside the editor canvas. Off (default) keeps the editor preview matching your live site.', 'adminkit' ) ),
 		);
+
+		// Bricks builder restyle — only meaningful when the Bricks theme is active.
+		if ( class_exists( 'AdminKit_Integration_Bricks' ) && AdminKit_Integration_Bricks::is_active() ) {
+			$rows[] = array( 'key' => 'bricks_builder_enabled', 'group' => $appearance, 'label' => __( 'Bricks builder', 'adminkit' ), 'desc' => __( 'Restyle the Bricks builder UI with your tokens. Needs Bricks builder mode set to "Custom".', 'adminkit' ) );
+		}
+
+		return $rows;
 	}
 
 	/**

@@ -164,6 +164,12 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		// script (printed with the head scripts, ~priority 9) sets the attribute,
 		// so the first flip is caught and the bar paints in sync.
 		add_action( 'wp_head', array( __CLASS__, 'print_theme_bridge' ), 2 );
+
+		// Opt-in builder restyle. Separate from bypass_builder() above (which keeps
+		// the builder pristine for the rest of AdminKit): this one stylesheet is the
+		// "Bricks builder" feature, gated inside enqueue_builder(). Priority 9999 so
+		// it lands after Bricks's own builder CSS.
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_builder' ), 9999 );
 	}
 
 	/**
@@ -204,6 +210,47 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 })();
 </script>
 		<?php
+	}
+
+	/**
+	 * Restyle the Bricks builder UI — the "Bricks builder" feature.
+	 *
+	 * Dedicated enqueue: the builder has no admin bar, so AdminKit's normal
+	 * frontend dispatch (and its --ak-* layer) skips it. builder.css instead maps
+	 * Bricks's --builder-* / --bricks-* variables onto the live WaasKit provider
+	 * variables that ARE present in the builder (see the file header). Scoped to
+	 * the builder MAIN frame so the canvas iframe (the rendered page) is untouched.
+	 *
+	 * Off by default — opt in via Settings → Features → Bricks builder.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_builder() {
+		// Main builder frame only (not the canvas iframe): ?bricks=run is the
+		// builder URL; bricks_is_builder_main() confirms it.
+		$is_main = ( isset( $_GET['bricks'] ) && 'run' === $_GET['bricks'] )
+			|| ( function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main() );
+		if ( ! $is_main || ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
+			return;
+		}
+
+		$rel  = 'inc/integrations/themes/bricks/css/builder.css';
+		$path = ADMINKIT_PATH . $rel;
+		if ( ! file_exists( $path ) ) {
+			return;
+		}
+		wp_enqueue_style( 'adminkit-bricks-builder', ADMINKIT_URL . $rel, array(), (string) filemtime( $path ) );
+
+		// Optional toolbar logo. Opt-in + filterable so no external asset is baked
+		// in: defaults to the site icon; an empty value leaves Bricks's own logo.
+		$logo = apply_filters( 'adminkit/bricks/builder_logo', get_site_icon_url( 96 ) );
+		if ( $logo ) {
+			wp_add_inline_style(
+				'adminkit-bricks-builder',
+				'#bricks-toolbar .logo{background-color:var(--accent)}'
+				. '#bricks-toolbar .logo img{content:url(' . esc_url( $logo ) . ');height:22px;width:auto}'
+			);
+		}
 	}
 
 	/**

@@ -54,7 +54,10 @@ docs/                   Deep-dive guides (see "More docs" below).
 - **`assets/css/waaskit-tokens.css` is GENERATED.** Never hand-edit it. Change
   `tokens/palettes/*.json` and run `php tokens/build.php`. `--check` is a drift gate.
 - **Every AdminKit stylesheet reads `--ak-*` tokens, never raw colours.** That
-  indirection powers dark mode and provider theming. Keep it.
+  indirection powers dark mode and provider theming. Keep it. (One deliberate
+  exception: `integrations/themes/bricks/css/builder.css` — the Bricks builder is
+  a live-WaasKit surface where `--ak-*` isn't loaded but the WaasKit provider vars
+  are, so it maps to those directly. See its header.)
 - **Integration discovery is `glob( inc/integrations/*/*/class-*.php )`** — two
   levels deep (`{plugins,themes}/{slug}/`). The class name derives from the file
   basename (`AdminKit_Integration_{Studly_Slug}`). Don't rename a class without

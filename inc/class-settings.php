@@ -145,6 +145,17 @@ class AdminKit_Settings {
 			'default'  => false,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
+
+		// Bricks builder restyle — OFF by default (opt-in). Restyles a third-party
+		// builder's own UI, so it stays inert until asked for. Read by
+		// AdminKit_Integration_Bricks::enqueue_builder(); the Features row only
+		// shows when Bricks is active.
+		self::register( 'bricks_builder_enabled', array(
+			'type'     => 'toggle',
+			'group'    => 'features',
+			'default'  => false,
+			'sanitize' => 'rest_sanitize_boolean',
+		) );
 	}
 
 	/**
