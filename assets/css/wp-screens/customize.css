@@ -322,3 +322,90 @@ body.wp-customizer.wp-core-ui .button-primary {
 	border-color: var(--ak-primary);
 	color: var(--ak-on-accent);
 }
+
+/* ── Third pass (maintainer's list): links, descriptions, dividers, code editor,
+   close/preview hover, and the whole Menus panel + available-items drawer. ────── */
+
+/* Links — WP hardcodes `a { color:#3858e9 }` (a literal, not the variable). */
+body.wp-customizer a {
+	color: var(--ak-primary);
+}
+
+/* customize-info accordion title (id-level #fff / #50575e). */
+body.wp-customizer #customize-controls .customize-info .accordion-section-title {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+}
+
+/* Panel / section descriptions — WP's full id selector (incl. .customize-info +
+   #customize-outer-theme-controls). */
+body.wp-customizer #customize-controls .customize-info .customize-panel-description,
+body.wp-customizer #customize-controls .customize-info .customize-section-description,
+body.wp-customizer #customize-controls .no-widget-areas-rendered-notice,
+body.wp-customizer #customize-outer-theme-controls .customize-info .customize-section-description {
+	background: var(--ak-surface);
+	color: var(--ak-text-muted);
+	border-top-color: var(--ak-border);
+}
+
+/* Section dividers + open-section bottom edge + the notifications area. */
+body.wp-customizer #customize-theme-controls .control-section.open {
+	border-bottom-color: var(--ak-border);
+}
+body.wp-customizer #customize-controls #customize-notifications-area {
+	border-bottom-color: var(--ak-border);
+}
+body.wp-customizer #customize-theme-controls .control-panel-content:not(.control-panel-nav_menus) .control-section:nth-child(2),
+body.wp-customizer #customize-theme-controls .control-panel-nav_menus .control-section-nav_menu,
+body.wp-customizer #customize-theme-controls .control-section-nav_menu_locations .accordion-section-title {
+	border-top-color: var(--ak-border);
+}
+
+/* Close (X) + preview-toggle hover — WP hardcodes #3858e9 on colour + top border. */
+body.wp-customizer.wp-core-ui .customize-controls-close:hover,
+body.wp-customizer.wp-core-ui .customize-controls-close:focus,
+body.wp-customizer.wp-core-ui .customize-controls-preview-toggle:hover,
+body.wp-customizer.wp-core-ui .customize-controls-preview-toggle:focus {
+	color: var(--ak-heading);
+	border-top-color: var(--ak-primary);
+}
+
+/* Footer device switcher's left-edge fade (#f0f0f1 → match the footer surface). */
+body.wp-customizer .wp-full-overlay-footer .devices {
+	box-shadow: -20px 0 10px -5px var(--ak-surface);
+}
+
+/* Additional-CSS code editor (CodeMirror) surface. */
+body.wp-customizer .CodeMirror {
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+
+/* ── Menus panel ──────────────────────────────────────────────────────────── */
+/* Available menu-items / widgets drawer (slides in from the left). */
+body.wp-customizer #available-menu-items,
+body.wp-customizer #available-widgets {
+	background: var(--ak-surface);
+	border-right-color: var(--ak-border);
+}
+body.wp-customizer #available-menu-items #available-menu-items-search .accordion-section-title,
+body.wp-customizer #available-menu-items .open .accordion-section-title {
+	background: var(--ak-elevated);
+}
+body.wp-customizer #available-menu-items .menu-item-handle.item-added .item-title,
+body.wp-customizer #available-menu-items .menu-item-handle.item-added .item-type,
+body.wp-customizer #available-menu-items .menu-item-handle.item-added .item-add:focus,
+body.wp-customizer #available-menu-items .menu-item-handle.item-added:hover .item-add {
+	color: var(--ak-text-muted);
+}
+
+/* Added menu-item rows + their expanded settings panel. */
+body.wp-customizer .menu-item-bar .menu-item-handle {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.wp-customizer .menu-item-settings {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
