@@ -382,14 +382,15 @@ body.adminkit #dashboard_quick_press .drafts h2 {
 	color: var(--ak-heading);
 }
 
-/* Notices — soft style (matches the validated login notices): no border, no
-   shadow, a flat rounded card whose colour is the per-status SUBTLE tint as bg +
-   the status colour as text (set below). Untyped .notice stays neutral. */
+/* Notices — soft style (matches the login notices): no shadow, a flat rounded
+   card; per-status SUBTLE tint as bg + the colour as text + a VERY LIGHT border
+   blended from the colour (color-mix → no new token), set below. Untyped .notice
+   = neutral. */
 body.adminkit .notice,
 body.adminkit div.updated,
 body.adminkit div.error,
 body.adminkit .update-nag {
-	border: 0;
+	border: 1px solid transparent;
 	border-radius: var(--ak-radius-s);
 	box-shadow: none;
 	padding: 12px 16px;
@@ -397,6 +398,7 @@ body.adminkit .update-nag {
 body.adminkit .notice {
 	background: var(--ak-elevated);
 	color: var(--ak-text);
+	border-color: var(--ak-border);
 }
 
 /* WP's common.css groups a dozen container classes under a single
@@ -657,6 +659,7 @@ body.adminkit .tagchecklist > li {
 body.adminkit .notice-info {
 	background: var(--ak-info-subtle);
 	color: var(--ak-info);
+	border-color: color-mix(in srgb, var(--ak-info) 30%, transparent);
 }
 
 body.adminkit .notice-success,
@@ -664,6 +667,7 @@ body.adminkit div.updated,
 body.adminkit .updated {
 	background: var(--ak-success-subtle);
 	color: var(--ak-success);
+	border-color: color-mix(in srgb, var(--ak-success) 30%, transparent);
 }
 
 body.adminkit .notice-error,
@@ -671,12 +675,14 @@ body.adminkit div.error,
 body.adminkit .error {
 	background: var(--ak-error-subtle);
 	color: var(--ak-error);
+	border-color: color-mix(in srgb, var(--ak-error) 30%, transparent);
 }
 
 body.adminkit .notice-warning,
 body.adminkit .update-nag {
 	background: var(--ak-warning-subtle);
 	color: var(--ak-warning);
+	border-color: color-mix(in srgb, var(--ak-warning) 30%, transparent);
 }
 
 /* WP hardcodes `color: #1e1e1e` on notice / updated / error paragraph text,

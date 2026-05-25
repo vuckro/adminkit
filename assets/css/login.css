@@ -353,14 +353,14 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 }
 
 /* Messages */
-/* Soft notices: coloured text on the colour's subtle tint — NO border, the tint
-   alone defines the box; even padding (no asymmetric left-accent). .message/.notice
-   = info (blue); #login_error = error. Pattern to roll out to wp-admin notices. */
+/* Soft notices: coloured text on the colour's subtle tint + a VERY LIGHT border
+   blended from the colour (color-mix → no new token); even padding (no asymmetric
+   left-accent). .message/.notice = info (blue); #login_error = error. */
 .login .message,
 .login #login_error,
 .login .notice {
 	background: var(--ak-info-subtle);
-	border: 0;
+	border: 1px solid color-mix(in srgb, var(--ak-info) 30%, transparent);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-info);
 	font-size: var(--ak-text-s);
@@ -370,6 +370,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 .login #login_error {
 	background: var(--ak-error-subtle);
 	color: var(--ak-error);
+	border-color: color-mix(in srgb, var(--ak-error) 30%, transparent);
 }
 
 /* `.message` stays the base blue (--ak-info): on wp-login it carries informational
