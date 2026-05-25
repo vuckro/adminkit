@@ -1,75 +1,78 @@
 /**
- * AdminKit — collapsible sections for the core Settings screens.
+ * AdminKit — tab navigation for the core Settings screens.
  *
  * The six built-in options pages (general, writing, reading, discussion, media,
  * permalink) render as a flat list inside `.wrap > form`: a run of optional
- * leading `.form-table`s, then repeating `<h2 class="title">` headings each
- * followed by that section's body (`<p>` notes, a `.form-table`, the Writing
- * "Update Services" `<textarea>`, …). options.css paints those as cards; this
- * brick makes each card COLLAPSIBLE.
+ * leading `.form-table`s, then repeating section headings (`<h2 class="title">`,
+ * plus plain `<h2>` for any section a plugin registers via do_settings_sections)
+ * each followed by that section's body (`<p>` notes, a `.form-table`, the Writing
+ * "Update Services" `<textarea>`, …), and finally the single `<p class="submit">`
+ * Save row. options.css paints those bodies as cards; this brick turns the screen
+ * into a TAB strip + one visible panel, mirroring the accounts page
+ * (assets/js/wp-core/profile-account.js): each section becomes a tab panel, a tab
+ * bar under the page title switches between them, first tab active by default.
  *
- * It keeps the markup FLAT (no wrapper element) so options.css's `.wrap > form >
- * .form-table` rules keep matching: each heading becomes a real `<button>`
- * toggle (chevron + aria-expanded → keyboard-operable for free), and toggling a
- * section simply shows/hides the sibling body nodes that follow it. Leading
- * tables with no heading get a synthesized header so they collapse too.
+ * Fields are never removed — each section's nodes are MOVED into its panel
+ * `<div>` (every `<input>` keeps its `name`), and hidden panels are toggled with
+ * the `hidden` attribute, so the screen's ONE `<form>` still posts every field on
+ * Save regardless of which tab is showing. The submit row is left in place at the
+ * form foot, outside the panels, always visible across tabs.
  *
- * Sections default to OPEN — the toggle only lets users FOLD groups they don't
- * need; settings are never hidden on load. Open state is remembered per section
- * in localStorage (best-effort). The submit row is left untouched, always shown.
+ * Accessibility mirrors the accounts page: `role="tablist"`/`tab`/`tabpanel`,
+ * `aria-selected`, `aria-controls`/`aria-labelledby`, roving tabindex and
+ * Arrow-Left/Right navigation. The active tab is remembered per-screen in
+ * localStorage (best-effort try/catch). With JS off there is no tab bar and every
+ * panel is just an open card — no settings are ever hidden.
  *
- * i18n labels arrive via `window.AdminKitOptions` (inline bootstrap). Vanilla,
- * no jQuery; degrades to plain open sections if JS is off. Footer script,
- * enqueued only on the six options screens.
+ * i18n labels arrive via `window.AdminKitOptions` (inline bootstrap). Vanilla, no
+ * jQuery. Footer script, enqueued only on the six options screens.
  */
 (function () {
 	var form = document.querySelector('.wrap form');
-	if (!form) { return; }
+	if (!form || form.dataset.akOptions) { return; }
+	form.dataset.akOptions = '1';
 
 	var DATA = window.AdminKitOptions || {};
-	var COLLAPSE_LABEL = DATA.collapse || 'Collapse section';
-	var EXPAND_LABEL = DATA.expand || 'Expand section';
 	// A synthesized title for the leading table(s) with no own heading (the
-	// first table on general / reading / discussion).
+	// first table(s) on general / reading / discussion).
 	var GENERAL_LABEL = DATA.general || 'General';
-	// Per-page key prefix for the localStorage open/closed memory.
+	var NAV_LABEL = DATA.nav || 'Settings sections';
+	// Per-page key prefix for the localStorage active-tab memory.
 	var PAGE = (document.body.className.match(/\b(options-[a-z]+)-php\b/) || [])[1] || 'page';
-	var STORE_PREFIX = 'adminkit:options:' + PAGE + ':';
+	var STORE_KEY = 'adminkit:options:' + PAGE + ':tab';
 
-	// Only `<h2 class="title">` starts a new section; any other element is body
-	// content belonging to the current section.
+	// A section starts at a top-level heading: WP prints curated sections as
+	// `<h2 class="title">` and plugin-registered ones (do_settings_sections) as a
+	// plain `<h2>`; treat both as boundaries. Anything else is body content.
 	function isHeading(node) {
-		return node.nodeType === 1 && node.tagName === 'H2' && node.classList.contains('title');
+		return node.nodeType === 1 && node.tagName === 'H2';
 	}
-	// The submit row + trailing hidden fields must never fold — collecting stops
-	// at the submit paragraph.
+	// The single submit row (+ any trailing hidden fields) must stay at the form
+	// foot, outside the panels — collecting stops at the submit paragraph.
 	function isSubmit(node) {
 		return node.nodeType === 1 && node.tagName === 'P' && node.classList.contains('submit');
 	}
 
 	// localStorage is best-effort (private mode / disabled storage throws).
-	function readOpen(key, fallback) {
-		try {
-			var v = window.localStorage.getItem(key);
-			return v === null ? fallback : v === '1';
-		} catch (e) { return fallback; }
+	function readActive() {
+		try { return window.localStorage.getItem(STORE_KEY); } catch (e) { return null; }
 	}
-	function writeOpen(key, open) {
-		try { window.localStorage.setItem(key, open ? '1' : '0'); } catch (e) {}
+	function writeActive(id) {
+		try { window.localStorage.setItem(STORE_KEY, id); } catch (e) {}
 	}
 
-	var sections = [];      // { header: <h2>, body: [el, …] }
+	var sections = [];      // { header: <h2>|null, label: string, body: [el, …] }
 	var leading = [];       // body elements before the first heading
 	var current = null;
 	var child = form.firstChild;
 
 	// Walk the form's direct children once, splitting the flat stream into
-	// { header, body[] } sections. Stop at the submit row.
+	// sections. Stop at the submit row (it and everything after stay put).
 	while (child) {
 		var next = child.nextSibling;
-		if (child.nodeType === 1 && isSubmit(child)) { break; }
+		if (isSubmit(child)) { break; }
 		if (isHeading(child)) {
-			current = { header: child, body: [] };
+			current = { header: child, label: (child.textContent || '').trim(), body: [] };
 			sections.push(current);
 		} else if (child.nodeType === 1) {
 			(current ? current.body : leading).push(child);
@@ -77,85 +80,103 @@
 		child = next; // whitespace text nodes are ignored, left in place
 	}
 
-	if (!sections.length && !leading.length) { return; }
+	// Leading tables (no heading) become a synthesized "General" section, first.
+	if (leading.length) {
+		sections.unshift({ header: null, label: GENERAL_LABEL, body: leading });
+	}
 
-	var idSeq = 0;
+	// Drop empty sections (a heading with no body — nothing to show in a panel).
+	sections = sections.filter(function (s) { return s.body.length; });
+	if (!sections.length) { return; }
 
-	// Turn one heading + its body nodes into a collapsible group. `headerEl` is
-	// the existing <h2> (re-used as the toggle host) or null → we synthesize one
-	// with `synthLabel`, inserted before the first body node.
-	function buildGroup(headerEl, bodyNodes, synthLabel, storeKey) {
-		if (!bodyNodes.length) { return; } // header with no body — leave as-is
+	// --- layout shell: tab strip + panels, inserted at the top of the form -----
+	// (the native submit row stays below, outside this block).
+	var tabs = document.createElement('div');
+	tabs.className = 'ak-tabs ak-options-tabs';
+	tabs.setAttribute('role', 'tablist');
+	tabs.setAttribute('aria-label', NAV_LABEL);
 
-		var open = readOpen(storeKey, true); // default OPEN
-		var ids = [];
+	var panels = document.createElement('div');
+	panels.className = 'ak-options-panels';
 
-		// Tag every body node so the toggle can target the exact set (avoids any
-		// reliance on sibling order) and aria-controls can reference them.
-		bodyNodes.forEach(function (n) {
-			if (!n.id) { n.id = 'ak-options-body-' + (idSeq++); }
-			n.classList.add('ak-options-section__body');
-			ids.push(n.id);
-		});
+	form.insertBefore(tabs, form.firstChild);
+	form.insertBefore(panels, tabs.nextSibling);
 
-		var host = headerEl;
-		if (!host) {
-			host = document.createElement('h2');
-			host.className = 'title ak-options-section__synth';
-			bodyNodes[0].parentNode.insertBefore(host, bodyNodes[0]);
-		}
-		host.classList.add('ak-options-section__header');
+	var used = {};
+	function uid(base) {
+		var id = base, i = 2;
+		while (used[id]) { id = base + '-' + (i++); }
+		used[id] = 1;
+		return id;
+	}
 
-		// A real <button> → focusable + Enter/Space for free.
+	var built = sections.map(function (sect, i) {
+		var slug = (sect.label || '').toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+		var id = uid('ak-options-' + (slug || 'sect-' + i));
+
+		// Panel: a real tabpanel element holding the section's moved nodes. The
+		// header <h2> rides along (re-used as the panel heading) so card CSS keeps
+		// matching; a synthesized section gets no header element (the tab names it).
+		var panel = document.createElement('div');
+		panel.className = 'ak-options-panel';
+		panel.id = id;
+		panel.setAttribute('role', 'tabpanel');
+		panel.setAttribute('aria-labelledby', 'tab-' + id);
+		if (sect.header) { panel.appendChild(sect.header); }
+		sect.body.forEach(function (node) { panel.appendChild(node); });
+		panels.appendChild(panel);
+
+		// Tab: a real <button> → focusable + Enter/Space for free.
 		var btn = document.createElement('button');
 		btn.type = 'button';
-		btn.className = 'ak-options-section__toggle';
-		btn.setAttribute('aria-controls', ids.join(' '));
+		btn.id = 'tab-' + id;
+		btn.className = 'ak-options-tab';
+		btn.dataset.target = id;
+		btn.setAttribute('role', 'tab');
+		btn.setAttribute('aria-controls', id);
+		var tx = document.createElement('span');
+		tx.className = 'tx';
+		tx.textContent = sect.label;
+		btn.appendChild(tx);
+		tabs.appendChild(btn);
 
-		// Move the heading's existing text/markup into the label so the whole
-		// header is the clickable target; synthesized headers get `synthLabel`.
-		var label = document.createElement('span');
-		label.className = 'ak-options-section__label';
-		if (headerEl) {
-			while (host.firstChild) { label.appendChild(host.firstChild); }
-		} else {
-			label.textContent = synthLabel;
-		}
-
-		// Chevron — a CSS-drawn rotated caret (decorative; the button text names it).
-		var chevron = document.createElement('span');
-		chevron.className = 'ak-options-section__chevron';
-		chevron.setAttribute('aria-hidden', 'true');
-
-		btn.appendChild(label);
-		btn.appendChild(chevron);
-		host.appendChild(btn);
-
-		function apply(isOpen) {
-			btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-			btn.setAttribute('aria-label', isOpen ? COLLAPSE_LABEL : EXPAND_LABEL);
-			host.classList.toggle('is-collapsed', !isOpen);
-			bodyNodes.forEach(function (n) { n.hidden = !isOpen; });
-		}
-		apply(open);
-
-		btn.addEventListener('click', function () {
-			open = !open;
-			apply(open);
-			writeOpen(storeKey, open);
-		});
-	}
-
-	// Leading tables (no heading) → a synthesized "General" group first.
-	if (leading.length) {
-		buildGroup(null, leading, GENERAL_LABEL, STORE_PREFIX + 'lead');
-	}
-
-	// Each real heading → its own group, keyed by a slug of its text so the
-	// memory survives section reorders across WP versions.
-	sections.forEach(function (sect, i) {
-		var slug = (sect.header.textContent || '').trim().toLowerCase()
-			.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-		buildGroup(sect.header, sect.body, '', STORE_PREFIX + (slug || 'sect-' + i));
+		return { id: id, btn: btn, panel: panel };
 	});
+
+	// --- tabs: show one panel at a time ---------------------------------------
+	var buttons = built.map(function (b) { return b.btn; });
+
+	function activate(id, remember) {
+		built.forEach(function (b) {
+			var on = b.id === id;
+			b.btn.classList.toggle('on', on);
+			b.btn.setAttribute('aria-selected', on ? 'true' : 'false');
+			b.btn.tabIndex = on ? 0 : -1;
+			b.panel.hidden = !on;
+		});
+		if (remember) { writeActive(id); }
+	}
+
+	tabs.addEventListener('click', function (e) {
+		var b = e.target.closest('button');
+		if (b && b.dataset.target) { activate(b.dataset.target, true); }
+	});
+
+	// Roving Arrow-Left/Right navigation across the tab strip (mirrors the
+	// accounts page): move focus, activate, and remember the new tab.
+	tabs.addEventListener('keydown', function (e) {
+		if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') { return; }
+		var i = buttons.indexOf(document.activeElement);
+		if (i === -1) { return; }
+		var next = buttons[(i + (e.key === 'ArrowRight' ? 1 : buttons.length - 1)) % buttons.length];
+		next.focus();
+		activate(next.dataset.target, true);
+		e.preventDefault();
+	});
+
+	// Restore the remembered tab if it still exists, else default to the first.
+	var saved = readActive();
+	var initial = built.some(function (b) { return b.id === saved; }) ? saved : built[0].id;
+	activate(initial, false);
 })();

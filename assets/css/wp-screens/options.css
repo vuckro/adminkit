@@ -1,24 +1,31 @@
 /* Core Settings screens — options-general, options-writing, options-reading,
    options-discussion, options-media, options-permalink.
 
-   These pages are long `.form-table` lists under `<h2 class="title">` section
-   headings inside `.wrap`. The base label/td rhythm, the section-heading colour
-   and the `.description` styling already live in
-   `wp-components/form-table.css` (always loaded); this file layers SCREEN-LEVEL
-   CLARITY on top so each settings group reads as a distinct, titled CARD rather
-   than a wall of text — clearer hierarchy, generous spacing, scannable
-   checkbox/radio rows, and obvious selected states.
+   These pages are long `.form-table` lists under section headings (`<h2
+   class="title">`, plus plain `<h2>` for any plugin-registered section) inside
+   `.wrap`. The base label/td rhythm, the section-heading colour and the
+   `.description` styling already live in `wp-components/form-table.css` (always
+   loaded); this file layers SCREEN-LEVEL CLARITY on top: each settings group
+   reads as a distinct, titled CARD, and options.js turns the whole screen into a
+   TAB strip + one visible panel (the SAME pattern AdminKit uses on the accounts
+   page — see assets/css/wp-screens/profile.css `.ak-tabs`/`.ak-card`).
+
+   options.js wraps each section (its heading + body) in an `.ak-options-panel`
+   `<div role="tabpanel">`, builds an `.ak-tabs` strip above the panels, and shows
+   one panel at a time. The card rules below therefore key off the panel as the
+   direct parent (`.ak-options-panel > …`) rather than `.wrap > form > …`. With JS
+   OFF there is no tab strip and the sections stay as flat siblings inside the
+   form; a small fallback block at the end keeps those readable as plain cards.
 
    Scope: every rule is under `body.adminkit` AND a settings-page body class
    (`.options-general-php`, `.options-writing-php`, `.options-reading-php`,
    `.options-discussion-php`, `.options-media-php`, `.options-permalink-php`) so
    it can never leak onto plugin settings screens that reuse `.form-table`.
-   The shared selector list below is aliased once via a custom-property-free
-   grouping; we repeat the six body classes per block to stay explicit. */
+   We repeat the six body classes per block to stay explicit. */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   0. PAGE TITLE — give the screen heading clear breathing room before the first
-   section so the title reads as a header, not as part of the content. WP prints
+   0. PAGE TITLE — give the screen heading clear breathing room before the tab
+   strip so the title reads as a header, not as part of the content. WP prints
    `.wrap > h1` (sometimes `h1.wp-heading-inline`) immediately followed by the
    settings `<form>`; chrome.css only colours it, so we own the spacing here.
    ────────────────────────────────────────────────────────────────────────── */
@@ -39,29 +46,70 @@ body.adminkit.options-permalink-php .wrap > h1.wp-heading-inline {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   1. CARD SYSTEM — each `.form-table` becomes a padded, bordered surface, and
-   an immediately-preceding `<h2 class="title">` becomes its connected header.
+   1. TAB STRIP + PANELS — options.js inserts an `.ak-tabs` strip and a run of
+   `.ak-options-panel` tabpanels at the top of the form (the native submit row
+   stays below). The strip reuses the accounts page's `.ak-tabs` look (pill tabs,
+   active = elevated pill, single line, scrolls sideways on overflow) so the
+   Settings screens feel identical to the accounts page; the per-screen rules
+   here only own the strip's spacing under the page title and the active panel.
 
-   The markup is flat (h2 and table are siblings, not wrapped), so we build the
-   card visually: the table is the body; a preceding `h2.title` is pulled flush
-   to it and given the top corners, the table the bottom corners. A table with
-   NO preceding heading (the first table on general / reading / discussion) is a
-   full standalone card on its own.
+   `.ak-tabs` button styling (colours, pill, hover, focus) lives in profile.css
+   under `body.adminkit .ak-tabs` (not screen-scoped), so it applies here too —
+   we don't restate it. options.js also adds `.ak-options-tabs` / `.ak-options-tab`
+   hooks for any options-only tweaks.
    ────────────────────────────────────────────────────────────────────────── */
 
-body.adminkit.options-general-php .wrap > form > .form-table,
-body.adminkit.options-writing-php .wrap > form > .form-table,
-body.adminkit.options-reading-php .wrap > form > .form-table,
-body.adminkit.options-discussion-php .wrap > form > .form-table,
-body.adminkit.options-media-php .wrap > form > .form-table,
-body.adminkit.options-permalink-php .wrap > form > .form-table {
+body.adminkit.options-general-php .ak-options-tabs,
+body.adminkit.options-writing-php .ak-options-tabs,
+body.adminkit.options-reading-php .ak-options-tabs,
+body.adminkit.options-discussion-php .ak-options-tabs,
+body.adminkit.options-media-php .ak-options-tabs,
+body.adminkit.options-permalink-php .ak-options-tabs {
+	max-width: 920px;
+	/* A touch more room under the strip than the accounts page (these panels are
+	   full cards, not flat surfaces). */
+	margin-bottom: var(--ak-space-l);
+}
+
+/* Only the active panel shows; hidden panels keep every field in the DOM (just
+   `hidden`) so the one form still submits them all. */
+body.adminkit.options-general-php .ak-options-panel[hidden],
+body.adminkit.options-writing-php .ak-options-panel[hidden],
+body.adminkit.options-reading-php .ak-options-panel[hidden],
+body.adminkit.options-discussion-php .ak-options-panel[hidden],
+body.adminkit.options-media-php .ak-options-panel[hidden],
+body.adminkit.options-permalink-php .ak-options-panel[hidden] {
+	display: none;
+}
+
+/* The panel itself is a transparent layout wrapper — the card surface is drawn
+   on the header/table/`<p>` inside it (section 2). The tabpanel isn't a tab stop
+   (its form fields are), mirroring the accounts page, so it needs no focus ring. */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   2. CARD SYSTEM — inside a panel, each `.form-table` becomes a padded, bordered
+   surface, and an immediately-preceding heading becomes its connected header.
+
+   The markup stays flat within the panel (heading and table are siblings, not
+   wrapped), so we build the card visually: the table is the body; a preceding
+   heading is pulled flush to it and given the top corners, the table the bottom
+   corners. A table with NO preceding heading (the synthesized "General" panel on
+   general / reading / discussion) is a full standalone card on its own.
+   ────────────────────────────────────────────────────────────────────────── */
+
+body.adminkit.options-general-php .ak-options-panel > .form-table,
+body.adminkit.options-writing-php .ak-options-panel > .form-table,
+body.adminkit.options-reading-php .ak-options-panel > .form-table,
+body.adminkit.options-discussion-php .ak-options-panel > .form-table,
+body.adminkit.options-media-php .ak-options-panel > .form-table,
+body.adminkit.options-permalink-php .ak-options-panel > .form-table {
 	display: block;
 	width: 100%;
 	max-width: 920px;
 	box-sizing: border-box;
-	/* Clear, consistent gap BELOW each card so sections read as distinct,
-	   scannable blocks — not one merged slab. 24px = space-l + space-s (no XL
-	   token exists); the header's matching top margin keeps the rhythm even. */
+	/* Clear, consistent gap BELOW each card so stacked tables within a panel read
+	   as distinct, scannable blocks. 24px = space-l + space-s (no XL token); a
+	   following header's matching top margin keeps the rhythm even. */
 	margin: 0 0 calc(var(--ak-space-l) + var(--ak-space-s)) 0;
 	padding: var(--ak-space-s) var(--ak-space-l) var(--ak-space-m);
 	background: var(--ak-surface);
@@ -69,33 +117,43 @@ body.adminkit.options-permalink-php .wrap > form > .form-table {
 	border-radius: var(--ak-radius-m);
 }
 
+/* The last card in a panel carries no trailing gap (the panel ends there). */
+body.adminkit.options-general-php .ak-options-panel > .form-table:last-child,
+body.adminkit.options-writing-php .ak-options-panel > .form-table:last-child,
+body.adminkit.options-reading-php .ak-options-panel > .form-table:last-child,
+body.adminkit.options-discussion-php .ak-options-panel > .form-table:last-child,
+body.adminkit.options-media-php .ak-options-panel > .form-table:last-child,
+body.adminkit.options-permalink-php .ak-options-panel > .form-table:last-child {
+	margin-bottom: 0;
+}
+
 /* Make the table internals flow inside the card box (a `display:block` table
    would otherwise collapse the two-column grid). `<tbody>` becomes the row
-   container; rows lay out as the label/control grid in section 2. */
-body.adminkit.options-general-php .wrap > form > .form-table > tbody,
-body.adminkit.options-writing-php .wrap > form > .form-table > tbody,
-body.adminkit.options-reading-php .wrap > form > .form-table > tbody,
-body.adminkit.options-discussion-php .wrap > form > .form-table > tbody,
-body.adminkit.options-media-php .wrap > form > .form-table > tbody,
-body.adminkit.options-permalink-php .wrap > form > .form-table > tbody {
+   container; rows lay out as the label/control grid in section 3. */
+body.adminkit.options-general-php .ak-options-panel > .form-table > tbody,
+body.adminkit.options-writing-php .ak-options-panel > .form-table > tbody,
+body.adminkit.options-reading-php .ak-options-panel > .form-table > tbody,
+body.adminkit.options-discussion-php .ak-options-panel > .form-table > tbody,
+body.adminkit.options-media-php .ak-options-panel > .form-table > tbody,
+body.adminkit.options-permalink-php .ak-options-panel > .form-table > tbody {
 	display: block;
 }
 
-/* Section heading → connected card header. WP emits `<h2 class="title">`;
-   form-table.css already colours it + draws a bottom border, so here we only
-   add the header surface, padding and TOP radius, and clear the inherited
-   margins so it sits flush on the table card that follows. */
-body.adminkit.options-general-php .wrap > form > h2.title,
-body.adminkit.options-writing-php .wrap > form > h2.title,
-body.adminkit.options-reading-php .wrap > form > h2.title,
-body.adminkit.options-discussion-php .wrap > form > h2.title,
-body.adminkit.options-media-php .wrap > form > h2.title,
-body.adminkit.options-permalink-php .wrap > form > h2.title {
+/* Section heading → connected card header. WP emits `<h2 class="title">` (or a
+   plain `<h2>` for plugin-registered sections); options.js moves it into the
+   panel as the first child. form-table.css already colours it + draws a bottom
+   border, so here we only add the header surface, padding and TOP radius, and
+   clear margins so it sits flush on the table card that follows. The synthesized
+   "General" panel has no heading element — its lone table is a standalone card. */
+body.adminkit.options-general-php .ak-options-panel > h2,
+body.adminkit.options-writing-php .ak-options-panel > h2,
+body.adminkit.options-reading-php .ak-options-panel > h2,
+body.adminkit.options-discussion-php .ak-options-panel > h2,
+body.adminkit.options-media-php .ak-options-panel > h2,
+body.adminkit.options-permalink-php .ak-options-panel > h2 {
 	box-sizing: border-box;
 	max-width: 920px;
-	/* Matches the card's bottom gap (24px) so consecutive sections sit an even
-	   distance apart, with clear separation between distinct cards. */
-	margin: calc(var(--ak-space-l) + var(--ak-space-s)) 0 0 0;
+	margin: 0;
 	padding: var(--ak-space-m) var(--ak-space-l);
 	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
@@ -108,15 +166,15 @@ body.adminkit.options-permalink-php .wrap > form > h2.title {
    "Common Settings"/"Optional", Discussion "Avatars", Writing "Post via email"
    / "Update Services") — fold it into the card as muted helper copy that
    continues the side borders. By DEFAULT it also closes the card (bottom border
-   + bottom radius), which is correct for the Writing "Update Services"
-   no-pings branch where the `<p>` is the last block of the section; the
-   `:has()` overrides below re-open the bottom when a table or textarea follows. */
-body.adminkit.options-general-php .wrap > form > h2.title + p,
-body.adminkit.options-writing-php .wrap > form > h2.title + p,
-body.adminkit.options-reading-php .wrap > form > h2.title + p,
-body.adminkit.options-discussion-php .wrap > form > h2.title + p,
-body.adminkit.options-media-php .wrap > form > h2.title + p,
-body.adminkit.options-permalink-php .wrap > form > h2.title + p {
+   + bottom radius), which is correct for the Writing "Update Services" no-pings
+   branch where the `<p>` is the last block of the section; the `:has()` overrides
+   below re-open the bottom when a table or textarea follows. */
+body.adminkit.options-general-php .ak-options-panel > h2 + p,
+body.adminkit.options-writing-php .ak-options-panel > h2 + p,
+body.adminkit.options-reading-php .ak-options-panel > h2 + p,
+body.adminkit.options-discussion-php .ak-options-panel > h2 + p,
+body.adminkit.options-media-php .ak-options-panel > h2 + p,
+body.adminkit.options-permalink-php .ak-options-panel > h2 + p {
 	box-sizing: border-box;
 	max-width: 920px;
 	margin: 0 0 var(--ak-space-l) 0;
@@ -135,12 +193,12 @@ body.adminkit.options-permalink-php .wrap > form > h2.title + p {
    the same card. (When followed instead by a bare control like the Writing
    "Update Services" textarea, the `<p>` keeps its self-closing rounded bottom
    above and the control renders as a normal full-width field below it.) */
-body.adminkit.options-general-php .wrap > form > h2.title + p:has(+ .form-table),
-body.adminkit.options-writing-php .wrap > form > h2.title + p:has(+ .form-table),
-body.adminkit.options-reading-php .wrap > form > h2.title + p:has(+ .form-table),
-body.adminkit.options-discussion-php .wrap > form > h2.title + p:has(+ .form-table),
-body.adminkit.options-media-php .wrap > form > h2.title + p:has(+ .form-table),
-body.adminkit.options-permalink-php .wrap > form > h2.title + p:has(+ .form-table) {
+body.adminkit.options-general-php .ak-options-panel > h2 + p:has(+ .form-table),
+body.adminkit.options-writing-php .ak-options-panel > h2 + p:has(+ .form-table),
+body.adminkit.options-reading-php .ak-options-panel > h2 + p:has(+ .form-table),
+body.adminkit.options-discussion-php .ak-options-panel > h2 + p:has(+ .form-table),
+body.adminkit.options-media-php .ak-options-panel > h2 + p:has(+ .form-table),
+body.adminkit.options-permalink-php .ak-options-panel > h2 + p:has(+ .form-table) {
 	margin-bottom: 0;
 	padding-bottom: 0;
 	border-bottom-left-radius: 0;
@@ -150,7 +208,7 @@ body.adminkit.options-permalink-php .wrap > form > h2.title + p:has(+ .form-tabl
 /* Writing "Update Services" trailing `<textarea>` (the section has no
    `.form-table`) — full-width input under its self-closed header note, with a
    little breathing room and a comfortable min height for the URL list. */
-body.adminkit.options-writing-php .wrap > form > h2.title + p + textarea.large-text {
+body.adminkit.options-writing-php .ak-options-panel > h2 + p + textarea.large-text {
 	display: block;
 	width: 100%;
 	max-width: 920px;
@@ -161,35 +219,35 @@ body.adminkit.options-writing-php .wrap > form > h2.title + p + textarea.large-t
 
 /* A table directly after the heading (or after the heading's intro `<p>`)
    loses its top corners + top margin so the header and body read as one card. */
-body.adminkit.options-general-php .wrap > form > h2.title + .form-table,
-body.adminkit.options-general-php .wrap > form > h2.title + p + .form-table,
-body.adminkit.options-writing-php .wrap > form > h2.title + .form-table,
-body.adminkit.options-writing-php .wrap > form > h2.title + p + .form-table,
-body.adminkit.options-reading-php .wrap > form > h2.title + .form-table,
-body.adminkit.options-reading-php .wrap > form > h2.title + p + .form-table,
-body.adminkit.options-discussion-php .wrap > form > h2.title + .form-table,
-body.adminkit.options-discussion-php .wrap > form > h2.title + p + .form-table,
-body.adminkit.options-media-php .wrap > form > h2.title + .form-table,
-body.adminkit.options-media-php .wrap > form > h2.title + p + .form-table,
-body.adminkit.options-permalink-php .wrap > form > h2.title + .form-table,
-body.adminkit.options-permalink-php .wrap > form > h2.title + p + .form-table {
+body.adminkit.options-general-php .ak-options-panel > h2 + .form-table,
+body.adminkit.options-general-php .ak-options-panel > h2 + p + .form-table,
+body.adminkit.options-writing-php .ak-options-panel > h2 + .form-table,
+body.adminkit.options-writing-php .ak-options-panel > h2 + p + .form-table,
+body.adminkit.options-reading-php .ak-options-panel > h2 + .form-table,
+body.adminkit.options-reading-php .ak-options-panel > h2 + p + .form-table,
+body.adminkit.options-discussion-php .ak-options-panel > h2 + .form-table,
+body.adminkit.options-discussion-php .ak-options-panel > h2 + p + .form-table,
+body.adminkit.options-media-php .ak-options-panel > h2 + .form-table,
+body.adminkit.options-media-php .ak-options-panel > h2 + p + .form-table,
+body.adminkit.options-permalink-php .ak-options-panel > h2 + .form-table,
+body.adminkit.options-permalink-php .ak-options-panel > h2 + p + .form-table {
 	margin-top: 0;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   2. ROW GRID — turn each `<tr>` into a clean two-column (label / control) grid
+   3. ROW GRID — turn each `<tr>` into a clean two-column (label / control) grid
    with generous spacing and a soft divider between rows, so a long card reads
    as discrete settings rather than a dense table.
    ────────────────────────────────────────────────────────────────────────── */
 
-body.adminkit.options-general-php .wrap > form > .form-table > tbody > tr,
-body.adminkit.options-writing-php .wrap > form > .form-table > tbody > tr,
-body.adminkit.options-reading-php .wrap > form > .form-table > tbody > tr,
-body.adminkit.options-discussion-php .wrap > form > .form-table > tbody > tr,
-body.adminkit.options-media-php .wrap > form > .form-table > tbody > tr,
-body.adminkit.options-permalink-php .wrap > form > .form-table > tbody > tr {
+body.adminkit.options-general-php .ak-options-panel > .form-table > tbody > tr,
+body.adminkit.options-writing-php .ak-options-panel > .form-table > tbody > tr,
+body.adminkit.options-reading-php .ak-options-panel > .form-table > tbody > tr,
+body.adminkit.options-discussion-php .ak-options-panel > .form-table > tbody > tr,
+body.adminkit.options-media-php .ak-options-panel > .form-table > tbody > tr,
+body.adminkit.options-permalink-php .ak-options-panel > .form-table > tbody > tr {
 	display: grid;
 	grid-template-columns: 220px minmax(0, 1fr);
 	gap: var(--ak-space-l);
@@ -200,41 +258,41 @@ body.adminkit.options-permalink-php .wrap > form > .form-table > tbody > tr {
 
 /* First row in a card carries no divider (the card edge / header is the
    separator). */
-body.adminkit.options-general-php .wrap > form > .form-table > tbody > tr:first-child,
-body.adminkit.options-writing-php .wrap > form > .form-table > tbody > tr:first-child,
-body.adminkit.options-reading-php .wrap > form > .form-table > tbody > tr:first-child,
-body.adminkit.options-discussion-php .wrap > form > .form-table > tbody > tr:first-child,
-body.adminkit.options-media-php .wrap > form > .form-table > tbody > tr:first-child,
-body.adminkit.options-permalink-php .wrap > form > .form-table > tbody > tr:first-child {
+body.adminkit.options-general-php .ak-options-panel > .form-table > tbody > tr:first-child,
+body.adminkit.options-writing-php .ak-options-panel > .form-table > tbody > tr:first-child,
+body.adminkit.options-reading-php .ak-options-panel > .form-table > tbody > tr:first-child,
+body.adminkit.options-discussion-php .ak-options-panel > .form-table > tbody > tr:first-child,
+body.adminkit.options-media-php .ak-options-panel > .form-table > tbody > tr:first-child,
+body.adminkit.options-permalink-php .ak-options-panel > .form-table > tbody > tr:first-child {
 	border-top: 0;
 }
 
 /* Reset the cell box model the base sheet set for the native table layout —
    inside the grid the cells are just blocks. Keep the label readable + slightly
    stronger so it anchors each setting; align it to the top of the control. */
-body.adminkit.options-general-php .wrap > form > .form-table > tbody > tr > th,
-body.adminkit.options-general-php .wrap > form > .form-table > tbody > tr > td,
-body.adminkit.options-writing-php .wrap > form > .form-table > tbody > tr > th,
-body.adminkit.options-writing-php .wrap > form > .form-table > tbody > tr > td,
-body.adminkit.options-reading-php .wrap > form > .form-table > tbody > tr > th,
-body.adminkit.options-reading-php .wrap > form > .form-table > tbody > tr > td,
-body.adminkit.options-discussion-php .wrap > form > .form-table > tbody > tr > th,
-body.adminkit.options-discussion-php .wrap > form > .form-table > tbody > tr > td,
-body.adminkit.options-media-php .wrap > form > .form-table > tbody > tr > th,
-body.adminkit.options-media-php .wrap > form > .form-table > tbody > tr > td,
-body.adminkit.options-permalink-php .wrap > form > .form-table > tbody > tr > th,
-body.adminkit.options-permalink-php .wrap > form > .form-table > tbody > tr > td {
+body.adminkit.options-general-php .ak-options-panel > .form-table > tbody > tr > th,
+body.adminkit.options-general-php .ak-options-panel > .form-table > tbody > tr > td,
+body.adminkit.options-writing-php .ak-options-panel > .form-table > tbody > tr > th,
+body.adminkit.options-writing-php .ak-options-panel > .form-table > tbody > tr > td,
+body.adminkit.options-reading-php .ak-options-panel > .form-table > tbody > tr > th,
+body.adminkit.options-reading-php .ak-options-panel > .form-table > tbody > tr > td,
+body.adminkit.options-discussion-php .ak-options-panel > .form-table > tbody > tr > th,
+body.adminkit.options-discussion-php .ak-options-panel > .form-table > tbody > tr > td,
+body.adminkit.options-media-php .ak-options-panel > .form-table > tbody > tr > th,
+body.adminkit.options-media-php .ak-options-panel > .form-table > tbody > tr > td,
+body.adminkit.options-permalink-php .ak-options-panel > .form-table > tbody > tr > th,
+body.adminkit.options-permalink-php .ak-options-panel > .form-table > tbody > tr > td {
 	display: block;
 	width: auto;
 	padding: 0;
 }
 
-body.adminkit.options-general-php .wrap > form > .form-table > tbody > tr > th,
-body.adminkit.options-writing-php .wrap > form > .form-table > tbody > tr > th,
-body.adminkit.options-reading-php .wrap > form > .form-table > tbody > tr > th,
-body.adminkit.options-discussion-php .wrap > form > .form-table > tbody > tr > th,
-body.adminkit.options-media-php .wrap > form > .form-table > tbody > tr > th,
-body.adminkit.options-permalink-php .wrap > form > .form-table > tbody > tr > th {
+body.adminkit.options-general-php .ak-options-panel > .form-table > tbody > tr > th,
+body.adminkit.options-writing-php .ak-options-panel > .form-table > tbody > tr > th,
+body.adminkit.options-reading-php .ak-options-panel > .form-table > tbody > tr > th,
+body.adminkit.options-discussion-php .ak-options-panel > .form-table > tbody > tr > th,
+body.adminkit.options-media-php .ak-options-panel > .form-table > tbody > tr > th,
+body.adminkit.options-permalink-php .ak-options-panel > .form-table > tbody > tr > th {
 	padding-top: 2px;
 	color: var(--ak-heading);
 	font-weight: 600;
@@ -242,27 +300,30 @@ body.adminkit.options-permalink-php .wrap > form > .form-table > tbody > tr > th
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   3. CHECKBOX / RADIO ROWS — the scannable part. AdminKit renders checkboxes as
+   4. CHECKBOX / RADIO ROWS — the scannable part. AdminKit renders checkboxes as
    34px toggle switches and radios as 16px dots; lay each option out as a flex
    row (control + label) with comfortable vertical spacing so the long lists on
    Discussion / Reading read as a clean, aligned column.
+
+   These match within any `.form-table fieldset` inside a panel (descendant
+   selectors), so they're unaffected by the panel wrapper.
    ────────────────────────────────────────────────────────────────────────── */
 
 /* Each option label in a fieldset → a flex row. Covers both WP patterns:
    `<label><input> text</label>` and a bare `<input>` followed by `<label>`.
    `<p>`-wrapped option rows (Reading front-page, RSS excerpt) get the same gap. */
-body.adminkit.options-general-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-media-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-general-php .wrap > form > .form-table fieldset > p > label,
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset > p > label,
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset > p > label,
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset > p > label,
-body.adminkit.options-media-php .wrap > form > .form-table fieldset > p > label,
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset > p > label {
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset > p > label,
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset > p > label,
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset > p > label,
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset > p > label,
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset > p > label,
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset > p > label {
 	display: flex;
 	align-items: center;
 	gap: var(--ak-space-s);
@@ -273,101 +334,101 @@ body.adminkit.options-permalink-php .wrap > form > .form-table fieldset > p > la
 /* Vertical rhythm between stacked options. Fieldsets stack their options with a
    mix of `<br>`, `<p>` and bare block labels; normalise the gap with margins on
    the option carriers and neutralise the `<br>` spacers. */
-body.adminkit.options-general-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-media-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset > label,
-body.adminkit.options-general-php .wrap > form > .form-table fieldset > p,
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset > p,
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset > p,
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset > p,
-body.adminkit.options-media-php .wrap > form > .form-table fieldset > p,
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset > p {
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset > label,
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset > p,
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset > p,
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset > p,
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset > p,
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset > p,
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset > p {
 	margin: 0 0 var(--ak-space-s) 0;
 }
 
-body.adminkit.options-general-php .wrap > form > .form-table fieldset > label:last-child,
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset > label:last-child,
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset > label:last-child,
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset > label:last-child,
-body.adminkit.options-media-php .wrap > form > .form-table fieldset > label:last-child,
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset > label:last-child,
-body.adminkit.options-general-php .wrap > form > .form-table fieldset > p:last-child,
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset > p:last-child,
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset > p:last-child,
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset > p:last-child,
-body.adminkit.options-media-php .wrap > form > .form-table fieldset > p:last-child,
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset > p:last-child {
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset > label:last-child,
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset > label:last-child,
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset > label:last-child,
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset > label:last-child,
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset > label:last-child,
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset > label:last-child,
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset > p:last-child,
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset > p:last-child,
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset > p:last-child,
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset > p:last-child,
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset > p:last-child,
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset > p:last-child {
 	margin-bottom: 0;
 }
 
 /* `<br>` separators inside fieldsets only add stray height now that options are
    block/flex rows with their own spacing — collapse them. */
-body.adminkit.options-general-php .wrap > form > .form-table fieldset > br,
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset > br,
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset > br,
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset > br,
-body.adminkit.options-media-php .wrap > form > .form-table fieldset > br,
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset > br {
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset > br,
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset > br,
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset > br,
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset > br,
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset > br,
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset > br {
 	display: none;
 }
 
 /* Inline `<input> text` patterns where the checkbox/radio is a direct child of
    the fieldset followed by a sibling `<label>` (Discussion "old posts", cookies
    opt-in, threaded comments) — give the control a little trailing space. */
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset > input[type="checkbox"],
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset > input[type="radio"],
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset > input[type="checkbox"],
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset > input[type="radio"] {
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset > input[type="checkbox"],
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset > input[type="radio"],
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset > input[type="checkbox"],
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset > input[type="radio"] {
 	margin-right: var(--ak-space-xs);
 	vertical-align: middle;
 }
 
 /* Keep the toggle / radio from shrinking in a flex row. */
-body.adminkit.options-general-php .wrap > form > .form-table fieldset label > input[type="checkbox"],
-body.adminkit.options-general-php .wrap > form > .form-table fieldset label > input[type="radio"],
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset label > input[type="checkbox"],
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset label > input[type="radio"],
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset label > input[type="checkbox"],
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset label > input[type="radio"],
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset label > input[type="checkbox"],
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset label > input[type="radio"],
-body.adminkit.options-media-php .wrap > form > .form-table fieldset label > input[type="checkbox"],
-body.adminkit.options-media-php .wrap > form > .form-table fieldset label > input[type="radio"],
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset label > input[type="checkbox"],
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset label > input[type="radio"] {
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset label > input[type="checkbox"],
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset label > input[type="radio"],
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset label > input[type="checkbox"],
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset label > input[type="radio"],
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset label > input[type="checkbox"],
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset label > input[type="radio"],
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset label > input[type="checkbox"],
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset label > input[type="radio"],
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset label > input[type="checkbox"],
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset label > input[type="radio"],
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset label > input[type="checkbox"],
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset label > input[type="radio"] {
 	flex: none;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   4. NESTED SUB-OPTIONS — fieldsets frequently hang dependent settings under a
+   5. NESTED SUB-OPTIONS — fieldsets frequently hang dependent settings under a
    parent option in a `<ul>` (Discussion: comments-per-page under "Break
    comments into pages"; threaded-comment depth; Reading: front-page dropdowns).
    Indent + tint them so the dependency reads at a glance.
    ────────────────────────────────────────────────────────────────────────── */
 
-body.adminkit.options-general-php .wrap > form > .form-table fieldset ul,
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset ul,
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset ul,
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset ul,
-body.adminkit.options-media-php .wrap > form > .form-table fieldset ul,
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset ul,
-body.adminkit.options-reading-php .wrap > form > .form-table td#front-static-pages ul {
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset ul,
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset ul,
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset ul,
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset ul,
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset ul,
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset ul,
+body.adminkit.options-reading-php .ak-options-panel .form-table td#front-static-pages ul {
 	margin: var(--ak-space-s) 0 var(--ak-space-s) var(--ak-space-l);
 	padding: var(--ak-space-s) 0 var(--ak-space-s) var(--ak-space-l);
 	border-left: 2px solid var(--ak-border);
 	list-style: none;
 }
 
-body.adminkit.options-general-php .wrap > form > .form-table fieldset ul li,
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset ul li,
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset ul li,
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset ul li,
-body.adminkit.options-media-php .wrap > form > .form-table fieldset ul li,
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset ul li,
-body.adminkit.options-reading-php .wrap > form > .form-table td#front-static-pages ul li {
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset ul li,
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset ul li,
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset ul li,
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset ul li,
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset ul li,
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset ul li,
+body.adminkit.options-reading-php .ak-options-panel .form-table td#front-static-pages ul li {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -376,13 +437,13 @@ body.adminkit.options-reading-php .wrap > form > .form-table td#front-static-pag
 	color: var(--ak-text);
 }
 
-body.adminkit.options-general-php .wrap > form > .form-table fieldset ul li:last-child,
-body.adminkit.options-writing-php .wrap > form > .form-table fieldset ul li:last-child,
-body.adminkit.options-reading-php .wrap > form > .form-table fieldset ul li:last-child,
-body.adminkit.options-discussion-php .wrap > form > .form-table fieldset ul li:last-child,
-body.adminkit.options-media-php .wrap > form > .form-table fieldset ul li:last-child,
-body.adminkit.options-permalink-php .wrap > form > .form-table fieldset ul li:last-child,
-body.adminkit.options-reading-php .wrap > form > .form-table td#front-static-pages ul li:last-child {
+body.adminkit.options-general-php .ak-options-panel .form-table fieldset ul li:last-child,
+body.adminkit.options-writing-php .ak-options-panel .form-table fieldset ul li:last-child,
+body.adminkit.options-reading-php .ak-options-panel .form-table fieldset ul li:last-child,
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset ul li:last-child,
+body.adminkit.options-media-php .ak-options-panel .form-table fieldset ul li:last-child,
+body.adminkit.options-permalink-php .ak-options-panel .form-table fieldset ul li:last-child,
+body.adminkit.options-reading-php .ak-options-panel .form-table td#front-static-pages ul li:last-child {
 	margin-bottom: 0;
 }
 
@@ -391,32 +452,33 @@ body.adminkit.options-reading-php .wrap > form > .form-table td#front-static-pag
    so no extra handling needed beyond the card + grid. */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   5. HELP TEXT — make `.description` clearly secondary but legible, and give it
+   6. HELP TEXT — make `.description` clearly secondary but legible, and give it
    breathing room from the control it explains. (Base colour/size come from
    form-table.css; here we just tune spacing inside the new grid.)
    ────────────────────────────────────────────────────────────────────────── */
 
-body.adminkit.options-general-php .wrap > form > .form-table td .description,
-body.adminkit.options-general-php .wrap > form > .form-table td p.description,
-body.adminkit.options-writing-php .wrap > form > .form-table td .description,
-body.adminkit.options-writing-php .wrap > form > .form-table td p.description,
-body.adminkit.options-reading-php .wrap > form > .form-table td .description,
-body.adminkit.options-reading-php .wrap > form > .form-table td p.description,
-body.adminkit.options-discussion-php .wrap > form > .form-table td .description,
-body.adminkit.options-discussion-php .wrap > form > .form-table td p.description,
-body.adminkit.options-media-php .wrap > form > .form-table td .description,
-body.adminkit.options-media-php .wrap > form > .form-table td p.description,
-body.adminkit.options-permalink-php .wrap > form > .form-table td .description,
-body.adminkit.options-permalink-php .wrap > form > .form-table td p.description {
+body.adminkit.options-general-php .ak-options-panel .form-table td .description,
+body.adminkit.options-general-php .ak-options-panel .form-table td p.description,
+body.adminkit.options-writing-php .ak-options-panel .form-table td .description,
+body.adminkit.options-writing-php .ak-options-panel .form-table td p.description,
+body.adminkit.options-reading-php .ak-options-panel .form-table td .description,
+body.adminkit.options-reading-php .ak-options-panel .form-table td p.description,
+body.adminkit.options-discussion-php .ak-options-panel .form-table td .description,
+body.adminkit.options-discussion-php .ak-options-panel .form-table td p.description,
+body.adminkit.options-media-php .ak-options-panel .form-table td .description,
+body.adminkit.options-media-php .ak-options-panel .form-table td p.description,
+body.adminkit.options-permalink-php .ak-options-panel .form-table td .description,
+body.adminkit.options-permalink-php .ak-options-panel .form-table td p.description {
 	margin-top: var(--ak-space-s);
 	line-height: 1.5;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   6. PERMALINK — the structure picker is the screen's centrepiece. Render the
+   7. PERMALINK — the structure picker is the screen's centrepiece. Render the
    radio list as spaced option cards, make the selected one obvious, and lift
    the custom-structure builder (URL preview + available tags) into its own
-   recessed block.
+   recessed block. (These selectors are descendant-scoped, so they work the same
+   inside the "Common Settings" panel.)
    ────────────────────────────────────────────────────────────────────────── */
 
 /* The picker fieldset spans the full card width (it carries lots of content),
@@ -540,14 +602,14 @@ body.adminkit.options-permalink-php .available-structure-tags li {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   7. READING — the "Your homepage displays" radios and the search-engine
+   8. READING — the "Your homepage displays" radios and the search-engine
    visibility choice. Give the radio rows room and make the dependent page
    dropdowns read as a sub-group.
    ────────────────────────────────────────────────────────────────────────── */
 
 /* Front-page radios (`<p><label><input>...`) already pick up the flex-row rule
-   in section 3; widen the gap above the dependent page-selectors `<ul>`. */
-body.adminkit.options-reading-php .wrap > form > .form-table td#front-static-pages fieldset > p {
+   in section 4; widen the gap above the dependent page-selectors `<ul>`. */
+body.adminkit.options-reading-php .ak-options-panel .form-table td#front-static-pages fieldset > p {
 	margin-bottom: var(--ak-space-xs);
 }
 
@@ -568,177 +630,137 @@ body.adminkit.options-reading-php .option-site-visibility fieldset > input[type=
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   8. RESPONSIVE — WP collapses `.form-table` to a single stacked column at
+   9. RESPONSIVE — WP collapses `.form-table` to a single stacked column at
    ≤782px (the touch breakpoint). Our grid must follow: one column, labels above
-   controls, and the cards span the full width with tighter padding.
+   controls, and the cards span the full width with tighter padding. The tab
+   strip already wraps gracefully — it's a single line that scrolls sideways on
+   overflow (inherited from `.ak-tabs`), so it never breaks on narrow screens.
    ────────────────────────────────────────────────────────────────────────── */
 
 @media screen and (max-width: 782px) {
-	body.adminkit.options-general-php .wrap > form > .form-table,
-	body.adminkit.options-writing-php .wrap > form > .form-table,
-	body.adminkit.options-reading-php .wrap > form > .form-table,
-	body.adminkit.options-discussion-php .wrap > form > .form-table,
-	body.adminkit.options-media-php .wrap > form > .form-table,
-	body.adminkit.options-permalink-php .wrap > form > .form-table,
-	body.adminkit.options-general-php .wrap > form > h2.title,
-	body.adminkit.options-writing-php .wrap > form > h2.title,
-	body.adminkit.options-reading-php .wrap > form > h2.title,
-	body.adminkit.options-discussion-php .wrap > form > h2.title,
-	body.adminkit.options-media-php .wrap > form > h2.title,
-	body.adminkit.options-permalink-php .wrap > form > h2.title,
-	body.adminkit.options-general-php .wrap > form > h2.title + p,
-	body.adminkit.options-writing-php .wrap > form > h2.title + p,
-	body.adminkit.options-reading-php .wrap > form > h2.title + p,
-	body.adminkit.options-discussion-php .wrap > form > h2.title + p,
-	body.adminkit.options-media-php .wrap > form > h2.title + p,
-	body.adminkit.options-permalink-php .wrap > form > h2.title + p {
+	body.adminkit.options-general-php .ak-options-tabs,
+	body.adminkit.options-writing-php .ak-options-tabs,
+	body.adminkit.options-reading-php .ak-options-tabs,
+	body.adminkit.options-discussion-php .ak-options-tabs,
+	body.adminkit.options-media-php .ak-options-tabs,
+	body.adminkit.options-permalink-php .ak-options-tabs,
+	body.adminkit.options-general-php .ak-options-panel > .form-table,
+	body.adminkit.options-writing-php .ak-options-panel > .form-table,
+	body.adminkit.options-reading-php .ak-options-panel > .form-table,
+	body.adminkit.options-discussion-php .ak-options-panel > .form-table,
+	body.adminkit.options-media-php .ak-options-panel > .form-table,
+	body.adminkit.options-permalink-php .ak-options-panel > .form-table,
+	body.adminkit.options-general-php .ak-options-panel > h2,
+	body.adminkit.options-writing-php .ak-options-panel > h2,
+	body.adminkit.options-reading-php .ak-options-panel > h2,
+	body.adminkit.options-discussion-php .ak-options-panel > h2,
+	body.adminkit.options-media-php .ak-options-panel > h2,
+	body.adminkit.options-permalink-php .ak-options-panel > h2,
+	body.adminkit.options-general-php .ak-options-panel > h2 + p,
+	body.adminkit.options-writing-php .ak-options-panel > h2 + p,
+	body.adminkit.options-reading-php .ak-options-panel > h2 + p,
+	body.adminkit.options-discussion-php .ak-options-panel > h2 + p,
+	body.adminkit.options-media-php .ak-options-panel > h2 + p,
+	body.adminkit.options-permalink-php .ak-options-panel > h2 + p {
 		max-width: 100%;
 	}
 
-	body.adminkit.options-general-php .wrap > form > .form-table,
-	body.adminkit.options-writing-php .wrap > form > .form-table,
-	body.adminkit.options-reading-php .wrap > form > .form-table,
-	body.adminkit.options-discussion-php .wrap > form > .form-table,
-	body.adminkit.options-media-php .wrap > form > .form-table,
-	body.adminkit.options-permalink-php .wrap > form > .form-table {
+	body.adminkit.options-general-php .ak-options-panel > .form-table,
+	body.adminkit.options-writing-php .ak-options-panel > .form-table,
+	body.adminkit.options-reading-php .ak-options-panel > .form-table,
+	body.adminkit.options-discussion-php .ak-options-panel > .form-table,
+	body.adminkit.options-media-php .ak-options-panel > .form-table,
+	body.adminkit.options-permalink-php .ak-options-panel > .form-table {
 		padding-left: var(--ak-space-m);
 		padding-right: var(--ak-space-m);
 	}
 
-	body.adminkit.options-general-php .wrap > form > .form-table > tbody > tr,
-	body.adminkit.options-writing-php .wrap > form > .form-table > tbody > tr,
-	body.adminkit.options-reading-php .wrap > form > .form-table > tbody > tr,
-	body.adminkit.options-discussion-php .wrap > form > .form-table > tbody > tr,
-	body.adminkit.options-media-php .wrap > form > .form-table > tbody > tr,
-	body.adminkit.options-permalink-php .wrap > form > .form-table > tbody > tr {
+	body.adminkit.options-general-php .ak-options-panel > .form-table > tbody > tr,
+	body.adminkit.options-writing-php .ak-options-panel > .form-table > tbody > tr,
+	body.adminkit.options-reading-php .ak-options-panel > .form-table > tbody > tr,
+	body.adminkit.options-discussion-php .ak-options-panel > .form-table > tbody > tr,
+	body.adminkit.options-media-php .ak-options-panel > .form-table > tbody > tr,
+	body.adminkit.options-permalink-php .ak-options-panel > .form-table > tbody > tr {
 		grid-template-columns: 1fr;
 		gap: var(--ak-space-s);
 	}
 
 	/* Full-width text inputs on mobile, matching WP's stacked layout. */
-	body.adminkit.options-general-php .wrap > form > .form-table input.regular-text,
-	body.adminkit.options-writing-php .wrap > form > .form-table input.regular-text,
-	body.adminkit.options-reading-php .wrap > form > .form-table input.regular-text,
-	body.adminkit.options-discussion-php .wrap > form > .form-table input.regular-text,
-	body.adminkit.options-media-php .wrap > form > .form-table input.regular-text,
-	body.adminkit.options-permalink-php .wrap > form > .form-table input.regular-text {
+	body.adminkit.options-general-php .ak-options-panel .form-table input.regular-text,
+	body.adminkit.options-writing-php .ak-options-panel .form-table input.regular-text,
+	body.adminkit.options-reading-php .ak-options-panel .form-table input.regular-text,
+	body.adminkit.options-discussion-php .ak-options-panel .form-table input.regular-text,
+	body.adminkit.options-media-php .ak-options-panel .form-table input.regular-text,
+	body.adminkit.options-permalink-php .ak-options-panel .form-table input.regular-text {
 		width: 100%;
 		min-width: 0;
 	}
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   9. COLLAPSIBLE SECTIONS — progressive enhancement layered by options.js.
-   The JS keeps the markup FLAT (so every rule above keeps matching): it turns
-   each `h2.title` into a toggle `<button>` and shows/hides the sibling body
-   nodes that follow it (now tagged `.ak-options-section__body`). Tables with no
-   own heading get a synthesized `h2.title.ak-options-section__synth` first, so
-   they collapse too.
-
-   Sections DEFAULT OPEN — the toggle only folds groups the user doesn't need;
-   nothing is hidden on load, and with JS off the page is just open cards. These
-   rules style the toggle + chevron and turn a collapsed header into a complete,
-   self-contained closed card (its connected table being hidden).
+   10. NO-JS FALLBACK — with JavaScript off, options.js never runs: there is no
+   `.ak-options-panel` wrapper and no tab strip, just the native flat stream of
+   headings + tables inside `.wrap > form`. Re-apply the card surface to those
+   raw siblings so the page still reads as titled cards (no tabs, every section
+   visible). Mirrors section 2 but keyed to the flat `.wrap > form >` markup.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* The header is now a button host: drop its own padding (the button carries it
-   so the whole bar is the click target) and let the button define the layout. */
-body.adminkit.options-general-php .wrap > form > h2.title.ak-options-section__header,
-body.adminkit.options-writing-php .wrap > form > h2.title.ak-options-section__header,
-body.adminkit.options-reading-php .wrap > form > h2.title.ak-options-section__header,
-body.adminkit.options-discussion-php .wrap > form > h2.title.ak-options-section__header,
-body.adminkit.options-media-php .wrap > form > h2.title.ak-options-section__header,
-body.adminkit.options-permalink-php .wrap > form > h2.title.ak-options-section__header {
-	padding: 0;
-}
-
-/* The toggle fills the header: a full-width flex bar, label left / chevron
-   right. Transparent + inherits the heading type so it reads as the header, not
-   a control. Comfortable click target via the original header padding. */
-body.adminkit .ak-options-section__toggle {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--ak-space-m);
+body.adminkit.options-general-php .wrap > form > .form-table,
+body.adminkit.options-writing-php .wrap > form > .form-table,
+body.adminkit.options-reading-php .wrap > form > .form-table,
+body.adminkit.options-discussion-php .wrap > form > .form-table,
+body.adminkit.options-media-php .wrap > form > .form-table,
+body.adminkit.options-permalink-php .wrap > form > .form-table {
+	display: block;
 	width: 100%;
-	margin: 0;
+	max-width: 920px;
+	box-sizing: border-box;
+	margin: 0 0 calc(var(--ak-space-l) + var(--ak-space-s)) 0;
+	padding: var(--ak-space-s) var(--ak-space-l) var(--ak-space-m);
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+}
+
+body.adminkit.options-general-php .wrap > form > .form-table > tbody,
+body.adminkit.options-writing-php .wrap > form > .form-table > tbody,
+body.adminkit.options-reading-php .wrap > form > .form-table > tbody,
+body.adminkit.options-discussion-php .wrap > form > .form-table > tbody,
+body.adminkit.options-media-php .wrap > form > .form-table > tbody,
+body.adminkit.options-permalink-php .wrap > form > .form-table > tbody {
+	display: block;
+}
+
+body.adminkit.options-general-php .wrap > form > h2.title,
+body.adminkit.options-writing-php .wrap > form > h2.title,
+body.adminkit.options-reading-php .wrap > form > h2.title,
+body.adminkit.options-discussion-php .wrap > form > h2.title,
+body.adminkit.options-media-php .wrap > form > h2.title,
+body.adminkit.options-permalink-php .wrap > form > h2.title {
+	box-sizing: border-box;
+	max-width: 920px;
+	margin: calc(var(--ak-space-l) + var(--ak-space-s)) 0 0 0;
 	padding: var(--ak-space-m) var(--ak-space-l);
-	background: transparent;
-	border: 0;
-	border-radius: inherit;
-	color: inherit;
-	font: inherit;
-	line-height: 1.4;
-	text-align: left;
-	cursor: pointer;
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-bottom: 0;
+	border-top-left-radius: var(--ak-radius-m);
+	border-top-right-radius: var(--ak-radius-m);
 }
 
-body.adminkit .ak-options-section__toggle:hover {
-	color: var(--ak-heading);
-}
-
-body.adminkit .ak-options-section__toggle:focus-visible {
-	outline: 2px solid var(--ak-primary);
-	outline-offset: -2px;
-	border-radius: var(--ak-radius-s);
-}
-
-body.adminkit .ak-options-section__label {
-	min-width: 0;
-}
-
-/* Chevron — a token-coloured rotated-square caret (border-right + border-bottom),
-   matching the chevrons AdminKit draws elsewhere (Site Health). Points DOWN when
-   open; rotates to point RIGHT when the section is collapsed. */
-body.adminkit .ak-options-section__chevron {
-	flex: none;
-	width: 8px;
-	height: 8px;
-	margin-right: 2px;
-	border-right: 2px solid var(--ak-text-muted);
-	border-bottom: 2px solid var(--ak-text-muted);
-	transform: rotate(45deg);
-	transition: transform .15s ease;
-}
-
-body.adminkit .ak-options-section__header.is-collapsed .ak-options-section__chevron {
-	transform: rotate(-45deg);
-}
-
-body.adminkit .ak-options-section__toggle:hover .ak-options-section__chevron {
-	border-color: var(--ak-heading);
-}
-
-/* A COLLAPSED header has no visible body below it, so close the card: restore
-   the bottom border + bottom radius the open/connected state drops. */
-body.adminkit.options-general-php .wrap > form > h2.title.ak-options-section__header.is-collapsed,
-body.adminkit.options-writing-php .wrap > form > h2.title.ak-options-section__header.is-collapsed,
-body.adminkit.options-reading-php .wrap > form > h2.title.ak-options-section__header.is-collapsed,
-body.adminkit.options-discussion-php .wrap > form > h2.title.ak-options-section__header.is-collapsed,
-body.adminkit.options-media-php .wrap > form > h2.title.ak-options-section__header.is-collapsed,
-body.adminkit.options-permalink-php .wrap > form > h2.title.ak-options-section__header.is-collapsed {
-	border-bottom: 1px solid var(--ak-border);
-	border-bottom-left-radius: var(--ak-radius-m);
-	border-bottom-right-radius: var(--ak-radius-m);
-}
-
-/* `[hidden]` body nodes — make sure a folded table / note / textarea is truly
-   gone. The UA `[hidden] { display: none }` rule loses to our high-specificity
-   `display: block` card rules above, so re-assert it at matching specificity
-   (the `.wrap > form >` prefix) for every body-node type at once. */
-body.adminkit.options-general-php .wrap > form > .ak-options-section__body[hidden],
-body.adminkit.options-writing-php .wrap > form > .ak-options-section__body[hidden],
-body.adminkit.options-reading-php .wrap > form > .ak-options-section__body[hidden],
-body.adminkit.options-discussion-php .wrap > form > .ak-options-section__body[hidden],
-body.adminkit.options-media-php .wrap > form > .ak-options-section__body[hidden],
-body.adminkit.options-permalink-php .wrap > form > .ak-options-section__body[hidden] {
-	display: none;
-}
-
-/* Respect reduced-motion: AdminKit is largely motion-free, so drop the chevron
-   tween for users who ask for no animation. */
-@media (prefers-reduced-motion: reduce) {
-	body.adminkit .ak-options-section__chevron {
-		transition: none;
-	}
+body.adminkit.options-general-php .wrap > form > h2.title + .form-table,
+body.adminkit.options-writing-php .wrap > form > h2.title + .form-table,
+body.adminkit.options-reading-php .wrap > form > h2.title + .form-table,
+body.adminkit.options-discussion-php .wrap > form > h2.title + .form-table,
+body.adminkit.options-media-php .wrap > form > h2.title + .form-table,
+body.adminkit.options-permalink-php .wrap > form > h2.title + .form-table,
+body.adminkit.options-general-php .wrap > form > h2.title + p + .form-table,
+body.adminkit.options-writing-php .wrap > form > h2.title + p + .form-table,
+body.adminkit.options-reading-php .wrap > form > h2.title + p + .form-table,
+body.adminkit.options-discussion-php .wrap > form > h2.title + p + .form-table,
+body.adminkit.options-media-php .wrap > form > h2.title + p + .form-table,
+body.adminkit.options-permalink-php .wrap > form > h2.title + p + .form-table {
+	margin-top: 0;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
 }

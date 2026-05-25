@@ -24,10 +24,10 @@ class AdminKit_Core_Chrome {
 	const ASSETS_BASE = 'assets/css/';
 
 	/**
-	 * The six built-in WP Settings screens AdminKit restyles as collapsible
-	 * card stacks. Screen ids are the page basenames minus `.php`. Single
-	 * source of truth for both the `options.css` registration and the
-	 * `options.js` accordion enqueue below.
+	 * The six built-in WP Settings screens AdminKit restyles as a tabbed card
+	 * UI. Screen ids are the page basenames minus `.php`. Single source of truth
+	 * for both the `options.css` registration and the `options.js` tab-navigation
+	 * enqueue below.
 	 *
 	 * @var string[]
 	 */
@@ -49,8 +49,8 @@ class AdminKit_Core_Chrome {
 	public static function register() {
 		$tokens = array( AdminKit_Assets::TOKENS_HANDLE );
 
-		// JS counterpart of the per-screen stylesheets: the options-screen
-		// accordion is a footer script, so it can't ride the (style-only) asset
+		// JS counterpart of the per-screen stylesheets: the options-screen tab
+		// navigation is a footer script, so it can't ride the (style-only) asset
 		// registry. Hook it here — registered alongside the CSS, gated to the
 		// same six screens — so all options-screen wiring stays in one place.
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_options_js' ) );
@@ -134,7 +134,7 @@ class AdminKit_Core_Chrome {
 		// six built-in options pages. The screen ids are the page basenames minus
 		// `.php` (e.g. options-general.php → 'options-general'); each file's rules
 		// also self-scope via the matching `.{page}-php` body class. The matching
-		// accordion behaviour ships as a footer script, enqueued for the same six
+		// tab navigation ships as a footer script, enqueued for the same six
 		// screens (see enqueue_options_js, hooked just below).
 		self::register_screen( 'options', self::OPTIONS_SCREENS );
 		self::register_screen( 'themes',          array( 'themes', 'theme-install' ) );
@@ -163,11 +163,14 @@ class AdminKit_Core_Chrome {
 	}
 
 	/**
-	 * Enqueue the options-screen accordion script on the six built-in Settings
-	 * pages. Mirrors the `options.css` gate (same `OPTIONS_SCREENS` list) but on
-	 * the JS side: the script wraps each `h2.title` + body into a collapsible
-	 * card (default OPEN, never hides settings on load). i18n labels ride along
-	 * as an inline bootstrap. No-op when AdminKit isn't styling the admin.
+	 * Enqueue the options-screen tab-navigation script on the six built-in
+	 * Settings pages. Mirrors the `options.css` gate (same `OPTIONS_SCREENS`
+	 * list) but on the JS side: the script wraps each section (its heading +
+	 * body) into a tab panel and builds a tab strip above them, showing one panel
+	 * at a time (first tab active by default; remembered per-screen). Every field
+	 * stays in the DOM so the single form still submits them all. i18n labels
+	 * ride along as an inline bootstrap. No-op when AdminKit isn't styling the
+	 * admin.
 	 *
 	 * @return void
 	 */
@@ -183,9 +186,11 @@ class AdminKit_Core_Chrome {
 			'assets/js/wp-screens/options.js',
 			array(),
 			'window.AdminKitOptions=' . wp_json_encode( array(
-				'collapse' => __( 'Collapse section', 'adminkit' ),
-				'expand'   => __( 'Expand section', 'adminkit' ),
-				'general'  => __( 'General', 'adminkit' ),
+				// Synthesized tab title for the leading table(s) that have no own
+				// heading (general / reading / discussion).
+				'general' => __( 'General', 'adminkit' ),
+				// Accessible label for the tablist (aria-label).
+				'nav'     => __( 'Settings sections', 'adminkit' ),
 			) ) . ';'
 		);
 	}
