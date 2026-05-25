@@ -177,8 +177,10 @@ class AdminKit_Theme_Toggle {
 			'title'  => $home,
 			'href'   => home_url( '/' ),
 			'meta'   => array(
-				'class' => 'ak-view-site',
-				'title' => __( 'View site', 'adminkit' ),
+				'class'  => 'ak-view-site',
+				'title'  => __( 'View site', 'adminkit' ),
+				'target' => '_blank',
+				'rel'    => 'noopener',
 			),
 		) );
 	}
