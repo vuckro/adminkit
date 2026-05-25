@@ -164,7 +164,7 @@ class AdminKit_Theme_Toggle {
 	 * toggle — shown in BOTH contexts with a context-appropriate icon:
 	 *   - in wp-admin: an "open site" (external) icon → opens the live site in a
 	 *     new tab (you're heading out to view it);
-	 *   - on the front end: a "home" (house) icon → goes to the homepage.
+	 *   - on the front end: a "home" (house) icon → goes to the backend (dashboard).
 	 *
 	 * @param WP_Admin_Bar $bar
 	 * @return void
@@ -178,7 +178,7 @@ class AdminKit_Theme_Toggle {
 
 		$meta = array(
 			'class' => 'ak-view-site',
-			'title' => $in_admin ? __( 'View site', 'adminkit' ) : __( 'Home', 'adminkit' ),
+			'title' => $in_admin ? __( 'View site', 'adminkit' ) : __( 'Dashboard', 'adminkit' ),
 		);
 		if ( $in_admin ) {
 			$meta['target'] = '_blank';
@@ -188,7 +188,9 @@ class AdminKit_Theme_Toggle {
 			'id'     => 'ak-view-site',
 			'parent' => 'top-secondary',
 			'title'  => $in_admin ? $open : $house,
-			'href'   => home_url( '/' ),
+			// Admin → open the live site (new tab); front end → back to the
+			// dashboard (the house is the admin's "home base" / way back in).
+			'href'   => $in_admin ? home_url( '/' ) : admin_url(),
 			'meta'   => $meta,
 		) );
 	}
