@@ -24,7 +24,7 @@
 	height: 7rem;
 	width: auto;
 	max-width: 80vw;
-	border-radius: 16px;
+	border-radius: 10px;
 	animation: ak-bricks-preload 1.4s ease-in-out infinite;
 }
 @keyframes ak-bricks-preload { 50% { transform: scale( 1.05 ); } }
