@@ -152,8 +152,8 @@ vanilla-JS SPA (`assets/js/settings.js`) on the top-level **AdminKit** menu and
 persists via one REST route (`adminkit/v1/settings`). Four tabs: **Dashboard**;
 **Design** (a read-only reference of the semantic token map — the `design` i18n
 key, formerly "Tokens"); **Settings** (the module toggles plus a Branding block —
-the brand logo and the WP-admin-bar-logo mode — the `features` key, formerly
-"Features"); and **Plugins** (enable/disable each detected integration, inactive
+the brand logo and the `wp_logo` mode for the site-name brand mark — the
+`features` key, formerly "Features"); and **Plugins** (enable/disable each detected integration, inactive
 hosts shown dimmed and locked off).
 
 ```php
@@ -191,8 +191,11 @@ individually switch-off-able:
   veto (an integration bypassing a host's full-screen UI, say) pauses AdminKit's
   styling there while the plugin stays active.
 - **Branding**: `logo_light`, `logo_dark`, `wp_logo` (`logo` | `favicon` | `hide`
-  — the admin-bar logo slot) and `logo_size` (px, 16–32) — resolved by
-  `AdminKit_Settings::brand_logo()` / `AdminKit_Core_Branding`.
+  — the brand mark at the site-name node; the top-left WordPress logo is always
+  hidden) and `logo_size` (px, 16–32) — resolved by
+  `AdminKit_Settings::brand_logo()` / `AdminKit_Core_Branding`. `login_logo` takes
+  the same `logo` | `favicon` | `hide` plus `''` (inherit `wp_logo`) and
+  independently drives the wp-login.php mark via `AdminKit_Core_Login`.
 - **Integration gates**: one `integration_{slug}_enabled` per discovered adapter
   (default ON), bound to `adminkit/integration_enabled` and driven by the Plugins
   tab.

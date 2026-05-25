@@ -4,7 +4,7 @@ Tags: admin, dashboard, dark-mode, admin-theme, avatars
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,17 +64,18 @@ Yes. Every feature is an individual toggle on the AdminKit settings page, even t
 
 == Changelog ==
 
-= 1.2.0 =
-* New: Generated avatars — a friendly auto-generated avatar (via DiceBear) for users with no upload and no Gravatar; a real Gravatar always wins. Opt-out; non-PII seed.
-* Changed: Gutenberg canvas theming, AdminKit icons, and local + generated avatars now ship on by default (each still individually switch-off-able).
-* New: tabbed Settings screens (including Discussion, Reading and Writing) and an interactive dashboard roadmap with status badges and detail modals.
-* Improved: login-screen branding with a centred logo and a light/dark toggle; admin-bar brand logo and site-title favicon polish.
-* Removed: the "WordPress default interface" feature.
-
-= 1.1.0 =
-* Registry-based assets, per-screen conditional loading, integration scaffolding and host-drift detection.
+= 1.0.0 =
+* Initial release.
+* A flat, modern restyle of wp-admin, wp-login.php and the frontend admin bar, built entirely on CSS custom properties (`--ak-*` tokens).
+* Light + dark mode with a sun/moon toggle in the admin bar (and `prefers-color-scheme` on first visit).
+* Local avatars (upload a profile picture that replaces Gravatar) and generated avatars (a friendly auto-generated face, via DiceBear, for users with no photo — opt-out, non-PII seed).
+* Gutenberg canvas theming and AdminKit's own icon set, both on by default and individually switch-off-able.
+* Tabbed Settings screens (including Discussion, Reading and Writing) and an interactive dashboard roadmap with status badges and detail modals.
+* Login-screen branding with a centred logo and a light/dark toggle; admin-bar brand logo and site-title favicon.
+* Registry-based assets with per-screen conditional loading, integration scaffolding and host-drift detection.
+* Optional adapters that skin popular plugins/themes (Bricks, WooCommerce, ACF, the Fluent suite, and more).
 
 == Upgrade Notice ==
 
-= 1.2.0 =
-Generated avatars and several feature toggles now ship on by default. Generated avatars use the hosted DiceBear service (opt-out; no personal data sent).
+= 1.0.0 =
+Initial release. Generated avatars use the hosted DiceBear service (opt-out; no personal data sent) — see the "External services" section.

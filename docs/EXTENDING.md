@@ -49,19 +49,28 @@ is in [ARCHITECTURE.md](ARCHITECTURE.md#asset-registry-css--js).
 | `adminkit/theme_attribute` | filter | `(string)` | The HTML attribute carrying the mode (default `data-adminkit-theme`). |
 | `adminkit/theme_storage_key` | filter | `(string)` | The localStorage key (default `adminkit-theme`). |
 
-Both in `inc/class-theme-toggle.php`.
+Both in `inc/class-theme-toggle.php`. AdminKit's toggle is **authoritative** — it
+always flips its own attribute and persists, so dark mode works standalone with no
+provider. When Bricks is active its adapter adds an **additive** bridge on top
+(adopts Bricks's mode on load, then mirrors AdminKit's flips into Bricks via
+`data-brx-theme` + `brx_mode`, guarded against loops); AdminKit never hands the
+toggle over to the host.
 
 ## Branding
 
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
-| `adminkit/brand_logo` | filter | `('' \| string \| array)` | Brand logo fallback when the Branding settings are empty. Return a URL string, or `array( 'light' => …, 'dark' => …, 'preloader' => … )`. Drives the admin-bar logo **and** the Bricks builder; the settings win over the filter. |
+| `adminkit/brand_logo` | filter | `('' \| string \| array)` | Brand logo fallback when the Branding settings are empty. Return a URL string, or `array( 'light' => …, 'dark' => …, 'preloader' => … )`. Drives the brand mark at the site-name node **and** the Bricks builder; the settings win over the filter. |
 
 Resolved by `AdminKit_Settings::brand_logo( $mode )`. Logos are normally set
 no-code in Settings → Features → Branding, alongside the `wp_logo` mode for the
-admin-bar logo slot: `logo` (the brand logo), `favicon` (the site icon), or
-`hide`. `logo` falls back to `favicon` then WordPress's own when nothing is set;
-`inc/wp-core/class-branding.php`.
+brand mark rendered at the site-name node (next to the site title; the top-left
+WordPress logo is always hidden): `logo` (the brand logo), `favicon` (the site
+icon), or `hide`. `logo` falls back to `favicon`, then to a bare site title when
+nothing is set; `inc/wp-core/class-branding.php`. The login screen has its own
+`login_logo` setting (the same `logo` | `favicon` | `hide`, or empty to inherit
+`wp_logo`), so it can show a square favicon while the bar shows a wide logo, or
+vice versa; resolved in `inc/wp-core/class-login.php`.
 
 ## Icons
 

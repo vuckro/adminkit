@@ -207,8 +207,11 @@ nothing.
 
 ## Anti-patterns
 
-- **No third-party JS feedback loops.** A MutationObserver bridging two theme
-  attributes once caused a runtime loop. Sync one-way at load, let the user re-click.
+- **No *unguarded* third-party JS feedback loops.** A MutationObserver bridging two
+  theme attributes once caused a runtime loop. AdminKit's own toggle stays
+  authoritative; if you mirror it both ways (as the Bricks adapter does —
+  `data-adminkit-theme` ⇄ `data-brx-theme`), gate the observers with a reentrancy
+  lock so the two mirrors can't ping-pong.
 - **No hard dependencies on the host.** `class_exists()` / `defined()` live in
   `is_active()`. Removing the host must not break AdminKit.
 - **No global state mutation outside `boot()`.** Hooks wire only when active.

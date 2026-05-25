@@ -2,7 +2,7 @@
 
 A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone — optional adapters layer in token providers (Bricks today, more later).
 
-> Status: **v1.2.0** — ships fully-featured out of the box (Gutenberg canvas theming, AdminKit icons and local + generated avatars all on by default), with tabbed Settings screens and an interactive dashboard roadmap on top of the registry-based assets, per-screen conditional loading and host-drift detection.
+> Status: **v1.0.0** — ships fully-featured out of the box (Gutenberg canvas theming, AdminKit icons and local + generated avatars all on by default), with tabbed Settings screens and an interactive dashboard roadmap on top of the registry-based assets, per-screen conditional loading and host-drift detection.
 
 ---
 
@@ -23,7 +23,7 @@ A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone �
 1. Download a release zip (or clone this repo into `wp-content/plugins/adminkit/`).
 2. Activate "AdminKit" in the WordPress Plugins screen.
 
-That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) has a **Design** tab (a read-only token reference), a **Settings** tab (module toggles + your brand logo and WP-admin-bar-logo mode), and a **Plugins** tab to enable/disable each detected integration; the registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) has a **Design** tab (a read-only token reference), a **Settings** tab (module toggles + your brand logo and the site-name brand-mark mode), and a **Plugins** tab to enable/disable each detected integration; the registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
@@ -62,7 +62,7 @@ The **Gutenberg** adapter ships token-mapped header / sidebar / publish-button p
 
 AdminKit also ships adapters for **WooCommerce**, **ACF**, the **Fluent** suite (CRM, Forms, SMTP, Booking, Cart), **Slim SEO**, **HappyFiles**, **FlyingPress**, **WP Migrate**, and **Admin Menu Editor**. Each self-detects its host and stays dormant when the host isn't installed. They split into two flavors: *Tier A* adapters remap the host's own CSS variables (zero `!important`, dark mode for free); *Tier B* adapters override the host's selectors because it hardcodes its colors — run `php dev/adapter-audit.php` to see each adapter's override budget.
 
-AdminKit's theme toggle owns its own attribute (`data-adminkit-theme`) and storage key (`adminkit-theme`) — never shared with the host. Users who want a sync bridge can build one via the `adminkit/theme_attribute` / `adminkit/theme_storage_key` filters.
+AdminKit's theme toggle is authoritative and self-contained: it always flips its own attribute (`data-adminkit-theme`) and storage key (`adminkit-theme`), so dark mode works standalone with no provider. When Bricks is present, its adapter adds a bridge on top — it adopts Bricks's mode on load and then mirrors AdminKit's mode into Bricks (`data-brx-theme` + `brx_mode`, guarded against loops) so the front end repaints too. You can repoint or rename the attribute / storage key via the `adminkit/theme_attribute` / `adminkit/theme_storage_key` filters.
 
 **See [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md) for the full guide on writing a new integration.**
 
@@ -163,7 +163,7 @@ adminkit/
 │   ├── wp-core/                         AdminKit's restyle of WP-core surfaces
 │   │   ├── class-chrome.php             Registers every admin/frontend CSS file
 │   │   ├── class-login.php              Registers login.css
-│   │   ├── class-branding.php           Admin-bar logo: brand logo / favicon / hide (wp_logo)
+│   │   ├── class-branding.php           Site-name brand mark: brand logo / favicon / hide (wp_logo)
 │   │   ├── class-menu-icons.php         Opt-in native-icon replacement (menu + toolbar), filterable
 │   │   ├── class-profile-account.php    Profile / user-edit screen layout
 │   │   ├── class-local-avatars.php      Per-user avatar that replaces Gravatar + generated-avatar fallback (DiceBear)
