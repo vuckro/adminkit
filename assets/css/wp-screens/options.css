@@ -17,6 +17,28 @@
    grouping; we repeat the six body classes per block to stay explicit. */
 
 /* ──────────────────────────────────────────────────────────────────────────
+   0. PAGE TITLE — give the screen heading clear breathing room before the first
+   section so the title reads as a header, not as part of the content. WP prints
+   `.wrap > h1` (sometimes `h1.wp-heading-inline`) immediately followed by the
+   settings `<form>`; chrome.css only colours it, so we own the spacing here.
+   ────────────────────────────────────────────────────────────────────────── */
+
+body.adminkit.options-general-php .wrap > h1,
+body.adminkit.options-general-php .wrap > h1.wp-heading-inline,
+body.adminkit.options-writing-php .wrap > h1,
+body.adminkit.options-writing-php .wrap > h1.wp-heading-inline,
+body.adminkit.options-reading-php .wrap > h1,
+body.adminkit.options-reading-php .wrap > h1.wp-heading-inline,
+body.adminkit.options-discussion-php .wrap > h1,
+body.adminkit.options-discussion-php .wrap > h1.wp-heading-inline,
+body.adminkit.options-media-php .wrap > h1,
+body.adminkit.options-media-php .wrap > h1.wp-heading-inline,
+body.adminkit.options-permalink-php .wrap > h1,
+body.adminkit.options-permalink-php .wrap > h1.wp-heading-inline {
+	margin-bottom: var(--ak-space-l);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    1. CARD SYSTEM — each `.form-table` becomes a padded, bordered surface, and
    an immediately-preceding `<h2 class="title">` becomes its connected header.
 
@@ -37,7 +59,10 @@ body.adminkit.options-permalink-php .wrap > form > .form-table {
 	width: 100%;
 	max-width: 920px;
 	box-sizing: border-box;
-	margin: 0 0 var(--ak-space-l) 0;
+	/* Clear, consistent gap BELOW each card so sections read as distinct,
+	   scannable blocks — not one merged slab. 24px = space-l + space-s (no XL
+	   token exists); the header's matching top margin keeps the rhythm even. */
+	margin: 0 0 calc(var(--ak-space-l) + var(--ak-space-s)) 0;
 	padding: var(--ak-space-s) var(--ak-space-l) var(--ak-space-m);
 	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
@@ -68,7 +93,9 @@ body.adminkit.options-media-php .wrap > form > h2.title,
 body.adminkit.options-permalink-php .wrap > form > h2.title {
 	box-sizing: border-box;
 	max-width: 920px;
-	margin: var(--ak-space-l) 0 0 0;
+	/* Matches the card's bottom gap (24px) so consecutive sections sit an even
+	   distance apart, with clear separation between distinct cards. */
+	margin: calc(var(--ak-space-l) + var(--ak-space-s)) 0 0 0;
 	padding: var(--ak-space-m) var(--ak-space-l);
 	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
@@ -597,5 +624,121 @@ body.adminkit.options-reading-php .option-site-visibility fieldset > input[type=
 	body.adminkit.options-permalink-php .wrap > form > .form-table input.regular-text {
 		width: 100%;
 		min-width: 0;
+	}
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   9. COLLAPSIBLE SECTIONS — progressive enhancement layered by options.js.
+   The JS keeps the markup FLAT (so every rule above keeps matching): it turns
+   each `h2.title` into a toggle `<button>` and shows/hides the sibling body
+   nodes that follow it (now tagged `.ak-options-section__body`). Tables with no
+   own heading get a synthesized `h2.title.ak-options-section__synth` first, so
+   they collapse too.
+
+   Sections DEFAULT OPEN — the toggle only folds groups the user doesn't need;
+   nothing is hidden on load, and with JS off the page is just open cards. These
+   rules style the toggle + chevron and turn a collapsed header into a complete,
+   self-contained closed card (its connected table being hidden).
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* The header is now a button host: drop its own padding (the button carries it
+   so the whole bar is the click target) and let the button define the layout. */
+body.adminkit.options-general-php .wrap > form > h2.title.ak-options-section__header,
+body.adminkit.options-writing-php .wrap > form > h2.title.ak-options-section__header,
+body.adminkit.options-reading-php .wrap > form > h2.title.ak-options-section__header,
+body.adminkit.options-discussion-php .wrap > form > h2.title.ak-options-section__header,
+body.adminkit.options-media-php .wrap > form > h2.title.ak-options-section__header,
+body.adminkit.options-permalink-php .wrap > form > h2.title.ak-options-section__header {
+	padding: 0;
+}
+
+/* The toggle fills the header: a full-width flex bar, label left / chevron
+   right. Transparent + inherits the heading type so it reads as the header, not
+   a control. Comfortable click target via the original header padding. */
+body.adminkit .ak-options-section__toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--ak-space-m);
+	width: 100%;
+	margin: 0;
+	padding: var(--ak-space-m) var(--ak-space-l);
+	background: transparent;
+	border: 0;
+	border-radius: inherit;
+	color: inherit;
+	font: inherit;
+	line-height: 1.4;
+	text-align: left;
+	cursor: pointer;
+}
+
+body.adminkit .ak-options-section__toggle:hover {
+	color: var(--ak-heading);
+}
+
+body.adminkit .ak-options-section__toggle:focus-visible {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: -2px;
+	border-radius: var(--ak-radius-s);
+}
+
+body.adminkit .ak-options-section__label {
+	min-width: 0;
+}
+
+/* Chevron — a token-coloured rotated-square caret (border-right + border-bottom),
+   matching the chevrons AdminKit draws elsewhere (Site Health). Points DOWN when
+   open; rotates to point RIGHT when the section is collapsed. */
+body.adminkit .ak-options-section__chevron {
+	flex: none;
+	width: 8px;
+	height: 8px;
+	margin-right: 2px;
+	border-right: 2px solid var(--ak-text-muted);
+	border-bottom: 2px solid var(--ak-text-muted);
+	transform: rotate(45deg);
+	transition: transform .15s ease;
+}
+
+body.adminkit .ak-options-section__header.is-collapsed .ak-options-section__chevron {
+	transform: rotate(-45deg);
+}
+
+body.adminkit .ak-options-section__toggle:hover .ak-options-section__chevron {
+	border-color: var(--ak-heading);
+}
+
+/* A COLLAPSED header has no visible body below it, so close the card: restore
+   the bottom border + bottom radius the open/connected state drops. */
+body.adminkit.options-general-php .wrap > form > h2.title.ak-options-section__header.is-collapsed,
+body.adminkit.options-writing-php .wrap > form > h2.title.ak-options-section__header.is-collapsed,
+body.adminkit.options-reading-php .wrap > form > h2.title.ak-options-section__header.is-collapsed,
+body.adminkit.options-discussion-php .wrap > form > h2.title.ak-options-section__header.is-collapsed,
+body.adminkit.options-media-php .wrap > form > h2.title.ak-options-section__header.is-collapsed,
+body.adminkit.options-permalink-php .wrap > form > h2.title.ak-options-section__header.is-collapsed {
+	border-bottom: 1px solid var(--ak-border);
+	border-bottom-left-radius: var(--ak-radius-m);
+	border-bottom-right-radius: var(--ak-radius-m);
+}
+
+/* `[hidden]` body nodes — make sure a folded table / note / textarea is truly
+   gone. The UA `[hidden] { display: none }` rule loses to our high-specificity
+   `display: block` card rules above, so re-assert it at matching specificity
+   (the `.wrap > form >` prefix) for every body-node type at once. */
+body.adminkit.options-general-php .wrap > form > .ak-options-section__body[hidden],
+body.adminkit.options-writing-php .wrap > form > .ak-options-section__body[hidden],
+body.adminkit.options-reading-php .wrap > form > .ak-options-section__body[hidden],
+body.adminkit.options-discussion-php .wrap > form > .ak-options-section__body[hidden],
+body.adminkit.options-media-php .wrap > form > .ak-options-section__body[hidden],
+body.adminkit.options-permalink-php .wrap > form > .ak-options-section__body[hidden] {
+	display: none;
+}
+
+/* Respect reduced-motion: AdminKit is largely motion-free, so drop the chevron
+   tween for users who ask for no animation. */
+@media (prefers-reduced-motion: reduce) {
+	body.adminkit .ak-options-section__chevron {
+		transition: none;
 	}
 }

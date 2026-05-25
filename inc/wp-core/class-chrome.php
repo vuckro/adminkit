@@ -24,6 +24,23 @@ class AdminKit_Core_Chrome {
 	const ASSETS_BASE = 'assets/css/';
 
 	/**
+	 * The six built-in WP Settings screens AdminKit restyles as collapsible
+	 * card stacks. Screen ids are the page basenames minus `.php`. Single
+	 * source of truth for both the `options.css` registration and the
+	 * `options.js` accordion enqueue below.
+	 *
+	 * @var string[]
+	 */
+	const OPTIONS_SCREENS = array(
+		'options-general',
+		'options-writing',
+		'options-reading',
+		'options-discussion',
+		'options-media',
+		'options-permalink',
+	);
+
+	/**
 	 * Register every asset. Called once from the plugin orchestrator
 	 * after `AdminKit_Assets::init()`.
 	 *
@@ -31,6 +48,12 @@ class AdminKit_Core_Chrome {
 	 */
 	public static function register() {
 		$tokens = array( AdminKit_Assets::TOKENS_HANDLE );
+
+		// JS counterpart of the per-screen stylesheets: the options-screen
+		// accordion is a footer script, so it can't ride the (style-only) asset
+		// registry. Hook it here — registered alongside the CSS, gated to the
+		// same six screens — so all options-screen wiring stays in one place.
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_options_js' ) );
 
 		// --- wp-core/ (always loaded in admin) ---
 		AdminKit_Assets::register( array(
@@ -110,15 +133,10 @@ class AdminKit_Core_Chrome {
 		// Core Settings screens — one shared stylesheet (cards + clarity) for all
 		// six built-in options pages. The screen ids are the page basenames minus
 		// `.php` (e.g. options-general.php → 'options-general'); each file's rules
-		// also self-scope via the matching `.{page}-php` body class.
-		self::register_screen( 'options', array(
-			'options-general',
-			'options-writing',
-			'options-reading',
-			'options-discussion',
-			'options-media',
-			'options-permalink',
-		) );
+		// also self-scope via the matching `.{page}-php` body class. The matching
+		// accordion behaviour ships as a footer script, enqueued for the same six
+		// screens (see enqueue_options_js, hooked just below).
+		self::register_screen( 'options', self::OPTIONS_SCREENS );
 		self::register_screen( 'themes',          array( 'themes', 'theme-install' ) );
 		self::register_screen( 'theme-install',   array( 'themes', 'theme-install' ) );
 		// user-new.php reports screen id 'user' (WP strips '-new'); the CSS
@@ -142,6 +160,34 @@ class AdminKit_Core_Chrome {
 			'context' => 'frontend',
 			'section' => 'adminbar',
 		) );
+	}
+
+	/**
+	 * Enqueue the options-screen accordion script on the six built-in Settings
+	 * pages. Mirrors the `options.css` gate (same `OPTIONS_SCREENS` list) but on
+	 * the JS side: the script wraps each `h2.title` + body into a collapsible
+	 * card (default OPEN, never hides settings on load). i18n labels ride along
+	 * as an inline bootstrap. No-op when AdminKit isn't styling the admin.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_options_js() {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return;
+		}
+		if ( ! AdminKit_Screen::is_one_of( self::OPTIONS_SCREENS ) ) {
+			return;
+		}
+		AdminKit_Assets::enqueue_script(
+			'adminkit-options',
+			'assets/js/wp-screens/options.js',
+			array(),
+			'window.AdminKitOptions=' . wp_json_encode( array(
+				'collapse' => __( 'Collapse section', 'adminkit' ),
+				'expand'   => __( 'Expand section', 'adminkit' ),
+				'general'  => __( 'General', 'adminkit' ),
+			) ) . ';'
+		);
 	}
 
 	/**
