@@ -56,6 +56,17 @@ body.login.adminkit {
 	outline: none;
 }
 
+/* Browser autofill — the default pale-yellow/blue fill clashes with the surface
+   (and is unreadable in dark mode). Pin it back to AdminKit's tokens. */
+.login input:-webkit-autofill,
+.login input:-webkit-autofill:hover,
+.login input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--ak-text);
+	-webkit-box-shadow: 0 0 0 1000px var(--ak-surface) inset;
+	box-shadow: 0 0 0 1000px var(--ak-surface) inset;
+	caret-color: var(--ak-text);
+}
+
 .login label {
 	color: var(--ak-text);
 	font-size: var(--ak-text-s);
@@ -109,10 +120,76 @@ body.login.adminkit {
 	box-shadow: var(--ak-focus-ring) !important;
 }
 
-/* "Remember me" row */
+/* "Remember me" — the checkbox becomes a flat on/off toggle, matching AdminKit's
+   admin inputs. inputs.css isn't loaded on wp-login.php, so the toggle geometry
+   is defined here; #rememberme is the only checkbox on the screen, so applying it
+   to .login checkboxes broadly is safe. */
+.login .forgetmenot {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
 .login .forgetmenot label {
 	color: var(--ak-text-muted);
 	font-size: var(--ak-text-s);
+}
+
+.login input[type="checkbox"] {
+	-webkit-appearance: none;
+	appearance: none;
+	box-sizing: border-box;
+	flex: none;
+	position: relative;
+	width: 34px;
+	height: 20px;
+	min-width: 34px;
+	margin: 0;
+	padding: 0;
+	border: none;
+	border-radius: var(--ak-radius-full);
+	background: var(--ak-border-strong);
+	cursor: pointer;
+	vertical-align: middle;
+}
+
+.login input[type="checkbox"]::before {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+	border-radius: var(--ak-radius-full);
+	background: var(--ak-input-bg);
+}
+
+.login input[type="checkbox"]:checked {
+	background: var(--ak-primary);
+	border: none;
+}
+
+.login input[type="checkbox"]:checked::before {
+	content: "";
+	left: 16px;
+	color: transparent;
+}
+
+.login input[type="checkbox"]:focus {
+	outline: none;
+	box-shadow: none;
+}
+
+.login input[type="checkbox"]:focus-visible {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: 2px;
+}
+
+/* Dark-mode knob — --ak-input-bg flips dark and would vanish into the track,
+   so re-pin the knob to a light chip that reads on the dark track. */
+:root[data-adminkit-theme="dark"] .login input[type="checkbox"]::before {
+	background: var(--ak-heading);
 }
 
 /* Nav links below form */
@@ -134,6 +211,24 @@ body.login.adminkit {
 .login #backtoblog a:hover,
 .login #nav a:focus,
 .login #backtoblog a:focus {
+	color: var(--ak-heading);
+}
+
+/* Privacy-policy link (shown when a privacy page is set) */
+.login .privacy-policy-page-link {
+	padding: 8px 0;
+	text-align: center;
+}
+
+.login .privacy-policy-page-link a {
+	color: var(--ak-text-muted);
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.login .privacy-policy-page-link a:hover,
+.login .privacy-policy-page-link a:focus {
 	color: var(--ak-heading);
 }
 
