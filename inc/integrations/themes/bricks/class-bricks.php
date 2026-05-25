@@ -352,10 +352,10 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	/**
 	 * Build the CSS that brands the builder toolbar + preloader.
 	 *
-	 * Toolbar: the site FAVICON (square), rounded, on the accent chip so a
-	 * transparent icon still reads; first-letter mark when no Site Icon is set.
-	 * Preloader: the configured brand LOGO (dark variant) shown plainly — contained,
-	 * centred and simply rounded on the fixed dark splash (no card, no pulse);
+	 * Toolbar: the site FAVICON, contained (shown in full, not cropped) and rounded;
+	 * first-letter mark when no Site Icon is set.
+	 * Preloader: the configured brand LOGO shown in full (contained, never cropped),
+	 * centred and rounded with a gentle pulse on the fixed dark splash (no card);
 	 * Bricks's own loader shows when no logo is set.
 	 *
 	 * @return string Inline CSS.
@@ -368,12 +368,13 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		$favicon = get_site_icon_url( 192 );
 		if ( '' !== $favicon ) {
 			$url  = self::css_url( $favicon );
-			// Favicon FILLS the chip (covers the whole surface), clipped to the rounded
-			// corners. No chip colour — the favicon already covers it (and Bricks's
-			// yellow is overridden to transparent so nothing shows behind/around it).
+			// Favicon CONTAINED (shown in full, not cropped) and rounded, with a small
+			// inset so it isn't cut at the chip edges. No chip colour — Bricks's yellow
+			// is overridden to transparent so nothing shows behind/around it.
 			$css .= '#bricks-toolbar .logo{background-color:transparent!important;border-radius:6px;overflow:hidden}';
 			$css .= '#bricks-toolbar .logo a{display:block;width:100%;height:100%}';
-			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:100%;height:100%;object-fit:cover}';
+			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:100%;height:100%;'
+				. 'box-sizing:border-box;padding:2px;object-fit:contain}';
 		} else {
 			$css .= self::builder_toolbar_letter_css();
 		}
@@ -384,16 +385,15 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
 		if ( '' !== $logo ) {
-			// Just the logo, rounded — nothing else. Hide Bricks's animated mark +
-			// the title/sub-title, then let the (square) logo FILL a square box with
-			// `cover` so the border-radius actually rounds the logo's own corners
-			// (with `contain` the radius falls in the empty space around it). No card,
-			// no border, no margin, no pulse.
+			// Show the FULL brand logo (contain → never cropped), centred and rounded,
+			// with a gentle pulse. No card, no border, no margin — just the logo.
 			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
 			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";display:block;'
-				. 'width:9rem;height:9rem;border-radius:1.25rem;overflow:hidden;'
-				. 'background:' . self::css_url( $logo ) . ' center/cover no-repeat}';
+				. 'width:9rem;height:9rem;border-radius:1.25rem;'
+				. 'background:' . self::css_url( $logo ) . ' center/contain no-repeat;'
+				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
+			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.08)}}';
 		}
 		return $css;
 	}
