@@ -146,7 +146,7 @@ msgid "Plugins"
 msgstr ""
 
 #: inc/class-settings-page.php:275
-msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry no badge and inherit AdminKit's base styling automatically."
+msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
 msgstr ""
 
 #: inc/class-settings-page.php:275
@@ -166,6 +166,14 @@ msgid "AdminKit itself — always on and not removable here."
 msgstr ""
 
 #: inc/class-settings-page.php:280
+msgid "Generic"
+msgstr ""
+
+#: inc/class-settings-page.php:281
+msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
+msgstr ""
+
+#: inc/class-settings-page.php:282
 msgid "Themes"
 msgstr ""
 

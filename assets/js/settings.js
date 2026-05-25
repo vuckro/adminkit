@@ -641,9 +641,7 @@
 
 		var inputs = []; // native-integration toggles, for the bulk controls
 
-		// Brand "Native" chip, right after the plugin name — supported plugins only.
-		// Unknown plugins (no adapter) get no badge; the generic base layer themes
-		// them silently, so the absence of a badge is itself the "generic" signal.
+		// Brand "Native" chip, left of the plugin name — supported plugins only.
 		function nativeBadge() {
 			return el( 'span', {
 				'class': 'ak-badge ak-badge--brand',
@@ -661,14 +659,26 @@
 			} );
 		}
 
+		// Neutral "Generic" chip for installed plugins with no adapter — the base
+		// layer themes them automatically, so it shares the System badge's look.
+		function genericBadge() {
+			return el( 'span', {
+				'class': 'ak-badge',
+				title: I.genericHint || '',
+				text: I.generic || 'Generic'
+			} );
+		}
+
 		function pluginRow( i ) {
-			// Name + badge hug the left together (.ak-row__head); the switch (native
-			// only) is pushed right by .ak-row__main's flex:1.
-			var badge = i.system ? systemBadge() : ( i.supported ? nativeBadge() : null );
+			// Badge + name hug the left together (.ak-row__head), badge first; the
+			// switch (native only) is pushed right by .ak-row__main's flex:1.
+			// System (AdminKit itself) → neutral System; supported → brand Native;
+			// any other installed plugin → neutral Generic (no dedicated adapter).
+			var badge = i.system ? systemBadge() : ( i.supported ? nativeBadge() : genericBadge() );
 			var main = el( 'div', { 'class': 'ak-row__main' }, [
 				el( 'div', { 'class': 'ak-row__head' }, [
-					el( 'span', { 'class': 'ak-row__label', text: i.label } ),
-					badge
+					badge,
+					el( 'span', { 'class': 'ak-row__label', text: i.label } )
 				] )
 			] );
 
@@ -688,7 +698,7 @@
 				] );
 			}
 
-			// Unknown plugin → no adapter to switch, and no badge: just the name.
+			// Generic plugin → no adapter to switch (Generic badge, no toggle).
 			if ( ! i.supported || ! i.slug ) {
 				return el( 'div', { 'class': 'ak-row' }, [ main ] );
 			}

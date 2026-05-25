@@ -150,8 +150,8 @@ msgid "Plugins"
 msgstr "Extensions"
 
 #: inc/class-settings-page.php:274
-msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry no badge and inherit AdminKit's base styling automatically."
-msgstr "Toutes les extensions installées sur votre site, ainsi que les adaptateurs de thème actifs d’AdminKit. Les natifs ont un adaptateur dédié, activable par hôte ; les autres ne portent aucun badge et héritent automatiquement du style de base d’AdminKit."
+msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
+msgstr "Toutes les extensions installées sur votre site, ainsi que les adaptateurs de thème actifs d’AdminKit. Les natifs ont un adaptateur dédié, activable par hôte ; les autres portent un badge Générique et héritent automatiquement du style de base d’AdminKit."
 
 #: inc/class-settings-page.php:275
 msgid "Native"
@@ -170,6 +170,14 @@ msgid "AdminKit itself — always on and not removable here."
 msgstr "AdminKit lui-même — toujours actif, non désactivable ici."
 
 #: inc/class-settings-page.php:280
+msgid "Generic"
+msgstr "Générique"
+
+#: inc/class-settings-page.php:281
+msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
+msgstr "Aucun adaptateur dédié — thémé automatiquement par la couche de base d'AdminKit."
+
+#: inc/class-settings-page.php:282
 msgid "Themes"
 msgstr "Thèmes"
 
