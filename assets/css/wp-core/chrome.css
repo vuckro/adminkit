@@ -203,10 +203,16 @@ body.adminkit #adminmenu .opensub .wp-submenu {
 	box-shadow: none;
 }
 
+/* Fly-out submenu (hovering a non-current item, or any submenu when the sidebar is
+   folded): detach it into a FLOATING popup — a small gap off the rail, rounded
+   corners and an elevated shadow. The inline current submenu (above) stays flush. */
 body.adminkit #adminmenu li.opensub > .wp-submenu,
 body.adminkit.folded #adminmenu .wp-submenu,
 body.adminkit.auto-fold #adminmenu .wp-submenu {
 	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	box-shadow: var(--ak-shadow-elevated, 0 8px 24px rgba(0, 0, 0, 0.18));
+	margin-left: 6px;
 }
 
 /* Submenu link colors — WP color schemes ship (0,3,3)-specificity rules
