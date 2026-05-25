@@ -69,7 +69,7 @@ body.adminkit.acf-admin-page .acf-btn:hover {
 /* Secondary: neutral outline (matches AdminKit's .button-secondary). ACF's own
    label color is !important here too. */
 body.adminkit.acf-admin-page .acf-btn.acf-btn-secondary {
-	background-color: var(--ak-surface);
+	background-color: var(--ak-btn-bg);
 	border-color: var(--ak-border);
 	color: var(--ak-text) !important;
 }

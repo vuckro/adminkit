@@ -57,7 +57,7 @@ body.adminkit:is(.post-php, .post-new-php) .taxonomy-add-new {
 	padding: 3px 9px;
 	border-radius: var(--ak-radius-s);
 	border: 1px solid var(--ak-border);
-	background: var(--ak-surface);
+	background: var(--ak-btn-bg);
 	color: var(--ak-text);
 	font-size: var(--ak-text-xs);
 	font-weight: 500;

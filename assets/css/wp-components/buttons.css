@@ -16,7 +16,7 @@ body.adminkit .wp-core-ui .button,
 body.adminkit .button-secondary,
 body.adminkit .wp-core-ui .button-secondary,
 body.adminkit .wrap .page-title-action {
-	background: var(--ak-surface);
+	background: var(--ak-btn-bg);
 	border: 1px solid var(--ak-border);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
@@ -100,7 +100,7 @@ body.adminkit .wrap .page-title-action:focus {
    (homogenized). (This override is also needed because the .button-primary rule
    above matches every .page-title-action and would otherwise fill them.) */
 body.adminkit .wrap .page-title-action ~ .page-title-action {
-	background: var(--ak-surface);
+	background: var(--ak-btn-bg);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -149,7 +149,7 @@ body.adminkit .button[disabled] {
    on theme-install / plugin-install / media library don't drop a
    bright OS-default button in the middle of our flat chrome. */
 body.adminkit input[type="file"]::file-selector-button {
-	background: var(--ak-surface);
+	background: var(--ak-btn-bg);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);

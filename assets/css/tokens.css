@@ -105,19 +105,23 @@
 	--ak-focus-ring: 0 0 0 3px var(--ak-focus);
 
 	/* ── Secondary button — single source of truth ───────────────────────────
-	   Every secondary button reads ONLY these two tokens on hover/focus:
-	   .button / .button-secondary, the "Choose File" chooser, the stacked header
-	   CTAs, #doaction / #post-query-submit, .components-button.is-secondary, the
-	   ACF / HappyFiles secondaries, the post editor's .taxonomy-add-new and the
-	   settings-page .ak-btn. To iterate the
-	   secondary button, THIS is the one place to edit — every consumer updates.
+	   Every secondary button reads ONLY these three tokens — rest fill from
+	   --ak-btn-bg, hover/focus from --ak-btn-hover-*. Consumers: .button /
+	   .button-secondary, the "Choose File" chooser, the stacked header CTAs,
+	   #doaction / #post-query-submit, .components-button.is-secondary, the ACF /
+	   HappyFiles secondaries, the post editor's .taxonomy-add-new and the
+	   settings-page .ak-btn. To iterate the secondary button, THIS is the one
+	   place to edit — every consumer updates, light + dark.
 
-	   The fill is OPAQUE (the surface nudged toward the text colour), so the
-	   darken is identical on ANY parent; a translucent tint was invisible on the
-	   white / surface panels buttons actually sit on. color-mix auto-adapts to
-	   dark (surface + text flip → it lightens instead), so no dark fill override
-	   is needed — only the hover border is re-tuned per mode below. */
-	--ak-btn-hover-bg: color-mix(in srgb, var(--ak-surface), var(--ak-text) 7%);
+	   Rest fill = --ak-elevated: a step off --ak-surface (darker in light, lighter
+	   in dark) so the button stands out from the surface cards it sits on. The
+	   hover fill is OPAQUE — the rest fill nudged toward the text colour — so the
+	   darken is identical on ANY parent (a translucent tint vanished on
+	   same-coloured panels). Both derive from --ak-elevated / --ak-text, which
+	   flip per mode, so no dark fill override is needed; only the hover border is
+	   re-tuned per mode below. */
+	--ak-btn-bg: var(--ak-elevated);
+	--ak-btn-hover-bg: color-mix(in srgb, var(--ak-btn-bg), var(--ak-text) 7%);
 	--ak-btn-hover-border: var(--ak-border-strong);
 
 	/* ── Overlay ─────────────────────────────────────────────────────────
