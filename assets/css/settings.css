@@ -446,7 +446,8 @@
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 }
-.adminkit-app .ak-roadmap__title { display: block; font-weight: 600; font-size: var(--ak-text-s); color: var(--ak-heading); }
+.adminkit-app .ak-roadmap__titlerow { display: flex; align-items: center; gap: 6px; }
+.adminkit-app .ak-roadmap__title { font-weight: 600; font-size: var(--ak-text-s); color: var(--ak-heading); }
 .adminkit-app .ak-roadmap__desc { display: block; margin-top: 4px; font-size: var(--ak-text-xs); line-height: 1.5; color: var(--ak-text-muted); }
 @media screen and ( max-width: 782px ) {
 	.adminkit-app .ak-roadmap { grid-template-columns: 1fr; }
@@ -474,7 +475,6 @@
 	color: var(--ak-warning, #f5a623);
 	font-size: var(--ak-text-s);
 	line-height: 1;
-	margin-right: 4px;
 }
 
 /* Clickable roadmap card (has detail) + the "click for details" hint ------ */
