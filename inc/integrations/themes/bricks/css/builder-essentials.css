@@ -28,4 +28,7 @@
 	border-radius: 10px;
 	animation: ak-bricks-preload 1.4s ease-in-out infinite;
 }
+/* Last-resort fallback only: the generic WordPress logo is a dark mark — invert it
+   to white so it reads on the dark splash. (Brand logo / favicon are shown as-is.) */
+#bricks-preloader .ak-preloader-logo--wp { filter: brightness( 0 ) invert( 1 ); }
 @keyframes ak-bricks-preload { 50% { transform: scale( 1.05 ); } }

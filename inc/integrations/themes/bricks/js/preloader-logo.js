@@ -26,7 +26,9 @@
 		// .bricks-loading-inner — Bricks positions that wrapper off-centre, which
 		// pushed the logo right. The CSS centres #bricks-preloader itself.
 		var img = document.createElement( 'img' );
-		img.className = 'ak-preloader-logo';
+		// cfg.wp = the generic WordPress logo fallback → flag it so CSS inverts it
+		// (a dark mark needs to read on the dark splash).
+		img.className = cfg.wp ? 'ak-preloader-logo ak-preloader-logo--wp' : 'ak-preloader-logo';
 		img.alt = '';
 		img.src = cfg.logo;
 		pre.appendChild( img );

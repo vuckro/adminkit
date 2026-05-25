@@ -389,18 +389,28 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			}
 		}
 
-		// Preloader brand logo → injected as a real <img> by JS so it hugs the logo's
-		// natural aspect (no letterbox gutters); styled by builder-essentials.css.
+		// Preloader logo → injected as a real <img> by JS (hugs the logo's natural
+		// aspect, no gutters). Smart fallback for the dark splash: the DARK brand logo
+		// → the site favicon → WordPress's own logo (the last one is inverted in CSS so
+		// the dark WP mark reads on the dark splash). So a logo always shows.
 		$logo = AdminKit_Settings::brand_logo( 'dark' );
+		$wp   = false;
 		if ( '' === $logo ) {
-			$logo = AdminKit_Settings::brand_logo( 'light' );
+			$logo = (string) get_site_icon_url( 192 );
+		}
+		if ( '' === $logo ) {
+			$wp_logo = ABSPATH . 'wp-admin/images/wordpress-logo.svg';
+			if ( file_exists( $wp_logo ) ) {
+				$logo = admin_url( 'images/wordpress-logo.svg' );
+				$wp   = true;
+			}
 		}
 		if ( '' !== $logo ) {
 			$js_rel  = 'inc/integrations/themes/bricks/js/preloader-logo.js';
 			$js_path = ADMINKIT_PATH . $js_rel;
 			if ( file_exists( $js_path ) ) {
 				wp_enqueue_script( 'adminkit-bricks-preloader', ADMINKIT_URL . $js_rel, array(), (string) filemtime( $js_path ), true );
-				wp_add_inline_script( 'adminkit-bricks-preloader', 'window.AdminKitBricksPreloader=' . wp_json_encode( array( 'logo' => $logo ) ) . ';', 'before' );
+				wp_add_inline_script( 'adminkit-bricks-preloader', 'window.AdminKitBricksPreloader=' . wp_json_encode( array( 'logo' => $logo, 'wp' => $wp ) ) . ';', 'before' );
 			}
 		}
 
