@@ -261,6 +261,7 @@ class AdminKit_Settings_Page {
 			),
 			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
 			'hasSiteIcon'  => '' !== (string) get_site_icon_url(),
+			'logoSize'     => (int) AdminKit_Settings::get( 'logo_size' ),
 			'i18n'         => array(
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
 				'design'            => __( 'Design', 'adminkit' ),
@@ -288,6 +289,7 @@ class AdminKit_Settings_Page {
 				'wpLogoFavicon'     => __( 'Favicon', 'adminkit' ),
 				'wpLogoHide'        => __( 'Hide', 'adminkit' ),
 				'wpLogoNoIcon'      => __( 'No Site Icon set — the WordPress logo shows until you add one (Settings → General).', 'adminkit' ),
+				'logoSize'          => __( 'Logo size (px)', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),

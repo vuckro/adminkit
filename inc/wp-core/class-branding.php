@@ -90,8 +90,12 @@ class AdminKit_Core_Branding {
 			return '#wpadminbar #wp-admin-bar-wp-logo{display:none}';
 		}
 
+		// Configurable size (Settings → Branding), clamped to the 32px toolbar.
+		$size = (int) AdminKit_Settings::get( 'logo_size' );
+		$size = max( 16, min( 32, 0 !== $size ? $size : 28 ) );
+
 		if ( 'logo' === $mode ) {
-			$css = self::brand_logo_css();
+			$css = self::brand_logo_css( $size );
 			if ( '' !== $css ) {
 				return $css;
 			}
@@ -99,14 +103,15 @@ class AdminKit_Core_Branding {
 		}
 
 		if ( 'favicon' === $mode ) {
-			return self::favicon_css();
+			return self::favicon_css( $size );
 		}
 
 		return '';
 	}
 
 	/**
-	 * Brand logo in the admin-bar wp-logo slot — a 22px rounded chip (same footprint
+	 * Brand logo in the admin-bar wp-logo slot — a rounded chip sized by logo_size
+	 * ($size px), same footprint
 	 * as the favicon, for consistency) with the logo CONTAINED so any mark fits
 	 * without overflowing. Light variant by default; dark variant under the dark
 	 * flag. '' when no logo is set.
@@ -117,7 +122,7 @@ class AdminKit_Core_Branding {
 	 *
 	 * @return string
 	 */
-	private static function brand_logo_css() {
+	private static function brand_logo_css( $size ) {
 		$light = self::css_url( AdminKit_Settings::brand_logo( 'light' ) );
 		$dark  = self::css_url( AdminKit_Settings::brand_logo( 'dark' ) );
 		if ( '' === $light && '' === $dark ) {
@@ -129,9 +134,10 @@ class AdminKit_Core_Branding {
 		if ( '' === $dark ) {
 			$dark = $light;
 		}
+		$px  = (int) $size . 'px';
 		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon';
-		return $sel . '{width:22px}'
-			. $sel . '::before{content:"";display:block;width:22px;height:22px;top:0;'
+		return $sel . '{width:' . $px . '}'
+			. $sel . '::before{content:"";display:block;width:' . $px . ';height:' . $px . ';top:0;'
 			. 'border-radius:var(--ak-radius-s,5px);'
 			. 'background:' . $light . ' center/contain no-repeat}'
 			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{background-image:' . $dark . '}'
@@ -145,14 +151,15 @@ class AdminKit_Core_Branding {
 	 *
 	 * @return string
 	 */
-	private static function favicon_css() {
-		$favicon = self::css_url( get_site_icon_url( 64 ) );
+	private static function favicon_css( $size ) {
+		$favicon = self::css_url( get_site_icon_url( 96 ) );
 		if ( '' === $favicon ) {
 			return '';
 		}
-		return '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon{width:22px}'
+		$px = (int) $size . 'px';
+		return '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon{width:' . $px . '}'
 			. '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon::before{'
-			. 'content:"";display:block;width:22px;height:22px;top:0;'
+			. 'content:"";display:block;width:' . $px . ';height:' . $px . ';top:0;'
 			. 'border-radius:var(--ak-radius-s,5px);'
 			. 'background:' . $favicon . ' center/contain no-repeat}'
 			. self::hide_site_name_glyph();

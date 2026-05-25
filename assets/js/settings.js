@@ -32,7 +32,8 @@
 			light: ( D.logos && D.logos.light ) || '',
 			dark:  ( D.logos && D.logos.dark ) || ''
 		},
-		wpLogo: D.wpLogo || 'favicon'   // admin-bar WP logo: favicon | hide | default
+		wpLogo: D.wpLogo || 'favicon',  // admin-bar WP logo: logo | favicon | hide
+		logoSize: D.logoSize || 28      // admin-bar logo size in px
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
@@ -88,7 +89,7 @@
 	var ICONS = {
 		dashboard: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>',
 		colours: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8c3.4 3.9 5.4 6.5 5.4 9.2a5.4 5.4 0 0 1-10.8 0c0-2.7 2-5.3 5.4-9.2z"/></svg>',
-		features: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><circle cx="8" cy="12" r="2.6"/></svg>',
+		features: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
 		plugins: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>'
 	};
 
@@ -391,13 +392,29 @@
 			wpField.appendChild( el( 'p', { 'class': 'ak-field__hint', text: I.wpLogoNoIcon } ) );
 		}
 
+		// Admin-bar logo size (px) — a small number input, right-aligned.
+		var sizeInput = el( 'input', {
+			type: 'number', 'class': 'ak-field__input ak-field__num', id: 'ak-logo-size',
+			min: '16', max: '32', step: '1', value: String( state.logoSize )
+		} );
+		sizeInput.addEventListener( 'input', function () {
+			var n = parseInt( sizeInput.value, 10 );
+			state.logoSize = ( n >= 16 && n <= 32 ) ? n : 28;
+			markDirty();
+		} );
+		var sizeField = el( 'div', { 'class': 'ak-field ak-field--inline' }, [
+			el( 'label', { 'class': 'ak-field__label', 'for': 'ak-logo-size', text: I.logoSize || 'Logo size (px)' } ),
+			sizeInput
+		] );
+
 		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
 			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
 			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
 			el( 'div', { 'class': 'ak-rows' }, [
 				logoField( 'light', I.logoLight ),
 				logoField( 'dark', I.logoDark ),
-				wpField
+				wpField,
+				sizeField
 			] )
 		] ) );
 
@@ -572,6 +589,7 @@
 		v.logo_light = state.logos.light;
 		v.logo_dark  = state.logos.dark;
 		v.wp_logo    = state.wpLogo;
+		v.logo_size  = state.logoSize;
 		return v;
 	}
 

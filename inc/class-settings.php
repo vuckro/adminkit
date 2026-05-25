@@ -81,6 +81,17 @@ class AdminKit_Settings {
 				return in_array( $v, array( 'logo', 'favicon', 'hide' ), true ) ? $v : 'favicon';
 			},
 		) );
+
+		// Admin-bar logo size in px (the wp-logo slot). Clamped to the 32px toolbar.
+		self::register( 'logo_size', array(
+			'type'     => 'number',
+			'group'    => 'branding',
+			'default'  => 28,
+			'sanitize' => static function ( $v ) {
+				$n = absint( $v );
+				return max( 16, min( 32, 0 !== $n ? $n : 28 ) );
+			},
+		) );
 	}
 
 	/**

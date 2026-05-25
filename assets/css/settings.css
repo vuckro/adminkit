@@ -451,6 +451,8 @@
 }
 .adminkit-app .ak-field--inline > .ak-field__label { flex: none; }
 .adminkit-app .ak-field--inline > .ak-field__hint { flex-basis: 100%; margin-top: 0; }
+/* Compact number input (e.g. the logo size), right-aligned in an inline field. */
+.adminkit-app .ak-field__num { flex: none; max-width: 96px; margin-left: auto; }
 .adminkit-app .ak-seg {
 	display: inline-flex;
 	margin-left: auto;            /* push the options to the right */
