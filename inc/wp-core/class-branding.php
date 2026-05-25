@@ -3,8 +3,9 @@
  * Branding — the brand logo across AdminKit surfaces.
  *
  * Two things, both controllable:
- *   - WordPress admin-bar logo: replaced with the site icon (favicon), hidden, or
- *     left as-is, per the `wp_logo` setting (Settings → Features → Branding).
+ *   - WordPress admin-bar logo: replaced with the site icon (favicon — which also
+ *     hides the redundant "house" glyph next to the site name), hidden, or left
+ *     as-is, per the `wp_logo` setting (Settings → Features → Branding).
  *   - When a brand logo is configured (Settings → Features → Branding, light +
  *     dark), prints it as a contained card at the top of the admin menu (full
  *     width, with a background + border so most logos fit), switching per
@@ -51,11 +52,19 @@ class AdminKit_Core_Branding {
 		} elseif ( 'favicon' === $mode ) {
 			$favicon = self::css_url( get_site_icon_url( 64 ) );
 			if ( '' !== $favicon ) {
-				// Drop WordPress's glyph — `content:none` removes the pseudo-element
-				// (an empty string would leave a phantom floated box) — and paint the
-				// site icon in its place, sized like the other toolbar icons.
-				$css .= '#wpadminbar #wp-admin-bar-wp-logo .ab-item .ab-icon::before{content:none}';
-				$css .= '#wpadminbar #wp-admin-bar-wp-logo .ab-item .ab-icon{width:20px;height:20px;background:' . $favicon . ' center/contain no-repeat}';
+				// Paint the site icon onto the .ab-icon::BEFORE box — NOT .ab-icon
+				// itself: WP core forces `background-image:none !important` on .ab-icon
+				// (that was the bug — our image was silently killed), but its ::before
+				// is exempt. Clear WP's glyph (content:""), size the box, and drop the
+				// +2px glyph nudge so it sits straight.
+				$css .= '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon{width:20px}';
+				$css .= '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon::before{'
+					. 'content:"";display:block;width:20px;height:20px;top:0;'
+					. 'background:' . $favicon . ' center/contain no-repeat}';
+				// The site icon now brands the bar, so hide the redundant "house"
+				// glyph WordPress shows next to the site name. WP's wp-admin rule
+				// carries a `.wp-admin` prefix, so we match it to win on specificity.
+				$css .= '.wp-admin #wpadminbar #wp-admin-bar-site-name > .ab-item::before{content:none}';
 			}
 		}
 		// 'default' (or favicon with no site icon set) → leave the WP logo untouched.
