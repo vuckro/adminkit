@@ -294,7 +294,17 @@ class AdminKit_Assets {
 		}
 
 		$extra = apply_filters( 'adminkit/extra_tokens_handle', null, $context );
-		$deps  = array_filter( array_merge( $core_deps, array( $baseline, $extra ) ) );
+		// Only depend on handles that are actually registered. WP 6.9.1+ DROPS a
+		// stylesheet — and everything that transitively depends on it — if it lists
+		// a missing dependency. The baseline is skipped on the frontend, and a
+		// provider could return a handle it didn't enqueue; either would otherwise
+		// take the whole --ak-* layer (and the admin bar) down with it.
+		$deps = array_filter(
+			array_merge( $core_deps, array( $baseline, $extra ) ),
+			static function ( $dep ) {
+				return $dep && wp_style_is( $dep, 'registered' );
+			}
+		);
 
 		$path = ADMINKIT_PATH . self::TOKENS_SRC;
 		wp_enqueue_style(

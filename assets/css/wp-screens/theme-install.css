@@ -98,7 +98,7 @@ body.adminkit .wp-full-overlay-footer .devices button:before {
 
 body.adminkit .wp-full-overlay-footer .devices button:hover,
 body.adminkit .wp-full-overlay-footer .devices button:focus {
-	background-color: var(--ak-surface);
+	background-color: var(--ak-elevated);
 }
 
 body.adminkit .wp-full-overlay-footer .devices button:hover:before,

@@ -678,7 +678,8 @@ body.adminkit.woocommerce-admin-page .woocommerce-summary__item .woocommerce-sum
 	color: var(--ak-text-muted);
 }
 
-/* — Tables: row hover + sorted-column cells. */
+/* Row hover + focus + sorted-column cells → --ak-elevated, the crisp lift used by
+   the global list tables + settings rows. */
 body.adminkit.woocommerce-admin-page .woocommerce-table__table tr:hover,
 body.adminkit.woocommerce-admin-page .woocommerce-table__table tr:focus-within,
 body.adminkit.woocommerce-admin-page .woocommerce-table__header.is-sorted,

@@ -159,7 +159,7 @@ body.adminkit .el-button,
 body.adminkit .el-button--default,
 body.adminkit .el-button--soft {
 	background: var(--ak-surface);
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
 
@@ -168,7 +168,7 @@ body.adminkit .el-button:focus,
 body.adminkit .el-button--default:hover,
 body.adminkit .el-button--soft:hover {
 	background: var(--ak-hover-bg);
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-border);
 	color: var(--ak-heading);
 }
 

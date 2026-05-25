@@ -67,23 +67,47 @@
 	box-shadow: none !important;
 }
 
+/* WP shows the hovered submenu wrapper as display:block, which leaves `gap` with
+   nothing to act on. Lay it out as a flex column so stacked submenu groups (the
+   wrapper can hold a primary + an .ab-sub-secondary <ul>) get a consistent token
+   gap — the admin --ak-space scale, NOT the provider's fluid --space-* (sized for
+   frontend layout, ~20px+, far too large here). Scoped to the show selectors so
+   the menu's own open/close is untouched. */
+#wpadminbar li.hover > .ab-sub-wrapper,
+#wpadminbar.nojs li:hover > .ab-sub-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: var(--ak-space-s);
+}
+
+/* The Site Name menu — the 2nd toolbar node, the gateway to the backend (its
+   submenu holds Dashboard, then the Appearance group: Themes / Widgets / Menus…).
+   Give its wrapper a roomier gap than the tight default so the Dashboard entry and
+   the Appearance group separate clearly. Its #id wins over the general rule above;
+   the flex column layout is inherited from it. (The `appearance` node is only a
+   group INSIDE this submenu — it has no fly-out wrapper of its own to target.) */
+#wpadminbar #wp-admin-bar-site-name.hover > .ab-sub-wrapper,
+#wpadminbar.nojs #wp-admin-bar-site-name:hover > .ab-sub-wrapper {
+	gap: var(--ak-space-l);
+}
+
 #wpadminbar .menupop ul {
 	background: var(--ak-elevated) !important;
 	border: 1px solid var(--ak-border) !important;
 	border-radius: var(--ak-radius-m);
-	box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.3) !important;
-	margin-top: 6px;
+	box-shadow: var(--ak-shadow-elevated) !important;
+	margin-top: var(--ak-space-s);
 	overflow: hidden;
 }
 
 /* Right-secondary dropdowns (account / profile, comments, updates) anchor to the
    screen's right edge — inset them so the card floats off the corner too. */
 #wpadminbar #wp-admin-bar-top-secondary .menupop ul {
-	margin-right: 8px;
+	margin-right: var(--ak-space-s);
 }
 
 #wpadminbar .ab-submenu {
-	padding: 6px 0;
+	padding: var(--ak-space-xs) 0;
 }
 
 #wpadminbar .menupop ul a {

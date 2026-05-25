@@ -169,22 +169,19 @@ body.block-editor-page.adminkit .components-checkbox-control__input:checked {
 	border-color: var(--ak-primary);
 }
 
-
-/* ========== 8. Secondary / tertiary buttons (primary lives in editor.css) ========== */
-body.block-editor-page.adminkit .components-button.is-secondary {
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	border-color: var(--ak-border-strong);
-	box-shadow: none;
+/* The check glyph: WP paints it #fff (fine on its blue, poor on the yellow
+   brand fill). Route it to --ak-on-accent — the readable foreground on the
+   brand (same token the primary buttons use). */
+body.block-editor-page.adminkit .components-checkbox-control__input[type=checkbox]:checked::before {
+	color: var(--ak-on-accent);
 }
 
-body.block-editor-page.adminkit .components-button.is-secondary:hover:not(:disabled),
-body.block-editor-page.adminkit .components-button.is-secondary:focus:not(:disabled) {
-	background: var(--ak-hover-bg);
-	color: var(--ak-heading);
-	border-color: var(--ak-border-strong);
-}
 
+/* ========== 8. Tertiary / destructive buttons ==========
+   Primary + the neutral secondary both live in editor.css (the editor's button
+   file) — it owns .is-secondary, so there's a single source of truth and no
+   conflicting override here. This section only adds the tiers editor.css doesn't:
+   the quiet tertiary text button and the destructive (Move to trash) pill. */
 body.block-editor-page.adminkit .components-button.is-tertiary {
 	color: var(--ak-text);
 }
@@ -386,6 +383,15 @@ body.block-editor-page.adminkit .block-editor-inserter__quick-inserter-expand.co
    border that disappears on the dark inserter surface. Map to token. */
 body.block-editor-page.adminkit .block-editor-inserter__popover.is-quick .components-popover__content .block-editor-inserter__quick-inserter > .components-button {
 	border-color: var(--ak-border);
+}
+
+/* Block HOVER outline. WP outlines the hovered block in --wp-admin-theme-color
+   (our brand yellow via the remap) — too loud on the light canvas just for a
+   hover. Soften it to a neutral token border. The SELECTED block keeps the
+   accent outline (a deliberate selection affordance), so this only calms the
+   passive hover. */
+body.block-editor-page.adminkit .block-editor-block-list__block.is-hovered:not(.is-selected)::after {
+	outline-color: var(--ak-border-strong);
 }
 
 
@@ -1007,6 +1013,13 @@ body.block-editor-page.adminkit .editor-document-outline__item {
    labels) — the level badge text should read clearly. */
 body.block-editor-page.adminkit .editor-document-outline__level {
 	color: var(--ak-text-muted);
+}
+
+/* Badges (.components-badge) — WP hardcodes the default badge as #f0f0f0 / #2f2f2f.
+   Route to the token surface + text so it flips with dark mode. */
+body.block-editor-page.adminkit .components-badge.is-default {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
 }
 
 body.block-editor-page.adminkit .editor-document-outline__item-content {

@@ -93,8 +93,14 @@
 	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%))); /* + AdminKit addition (consumes the --secondary primitive) */
 
 	/* ── State ─────────────────────────────────────────────────────────────
-	   --hover is a mode-aware translucent tint (black in light, white in dark);
-	   focus color + the ring built on it so a custom brand tints its own ring. */
+	   --ak-hover-bg is the hover tint for FLOATING / any-surface targets — dropdown
+	   & component menu items, panels, etc. It MUST be a TRANSLUCENT tint: those
+	   targets are transparent at rest, so it composites over whatever is beneath →
+	   a visible step on ANY surface, including --ak-elevated elements (an opaque
+	   elevated value would be invisible there). Black in light, white in dark
+	   (calmed value in the dark block below). Known-surface rows / tables / menu
+	   items instead lift to --ak-elevated directly — a crisper step (see
+	   settings.css, tables.css, chrome.css). Then the focus color + its ring. */
 	--ak-hover-bg: var(--hover, rgba(0, 0, 0, 0.04));
 	/* Elevation shadow — the one sanctioned exception to the flat rule, for
 	   true floating layers (admin-bar dropdowns). Mode-aware like --hover-bg:
@@ -103,6 +109,26 @@
 	--ak-shadow-elevated: 0 8px 24px -10px rgba(0, 0, 0, 0.3);
 	--ak-focus: var(--focus, color-mix(in srgb, var(--ak-primary) 27%, transparent));
 	--ak-focus-ring: 0 0 0 3px var(--ak-focus);
+
+	/* ── Secondary button — single source of truth ───────────────────────────
+	   Every secondary button reads ONLY these three tokens — rest fill from
+	   --ak-btn-bg, hover/focus from --ak-btn-hover-*. Consumers: .button /
+	   .button-secondary, the "Choose File" chooser, the stacked header CTAs,
+	   #doaction / #post-query-submit, .components-button.is-secondary, the ACF /
+	   HappyFiles secondaries, the post editor's .taxonomy-add-new and the
+	   settings-page .ak-btn. To iterate the secondary button, THIS is the one
+	   place to edit — every consumer updates, light + dark.
+
+	   Rest fill = --ak-elevated: a step off --ak-surface (darker in light, lighter
+	   in dark) so the button stands out from the surface cards it sits on. The
+	   hover fill is OPAQUE — the rest fill nudged toward the text colour — so the
+	   darken is identical on ANY parent (a translucent tint vanished on
+	   same-coloured panels). Both derive from --ak-elevated / --ak-text, which
+	   flip per mode, so no dark fill override is needed; only the hover border is
+	   re-tuned per mode below. */
+	--ak-btn-bg: var(--ak-elevated);
+	--ak-btn-hover-bg: color-mix(in srgb, var(--ak-btn-bg), var(--ak-text) 7%);
+	--ak-btn-hover-border: var(--ak-border-strong);
 
 	/* ── Overlay ─────────────────────────────────────────────────────────
 	   Scrim behind modals / drawers — a translucent black, both modes. */
@@ -126,6 +152,17 @@
 	--ak-radius-s: 6px;
 	--ak-radius-m: 10px;
 	--ak-radius-full: 9999px;
+
+	/* Spacing — px on purpose, same rationale as radii/type: the provider's
+	   --space-* scale is fluid (rem/clamp) and sized for frontend layout, far too
+	   large for admin chrome. A tight, fixed admin scale so component spacing reads
+	   from one source instead of scattered magic numbers. + AdminKit addition. */
+	--ak-space-2xs: 2px;
+	--ak-space-xs: 4px;
+	--ak-space-s: 8px;
+	--ak-space-m: 12px;
+	--ak-space-l: 16px;
+
 	--ak-font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 	--ak-text-xs: 12px;
 	--ak-text-s: 13px;
@@ -203,9 +240,15 @@ body.adminkit[class*="admin-color-"] {
 	--ak-error-subtle:   var(--error-d-9, color-mix(in srgb, var(--ak-error) 22%, var(--ak-surface)));
 	--ak-info-subtle:    var(--info-d-9, color-mix(in srgb, var(--ak-info) 22%, var(--ak-surface)));
 
-	/* Hover — white tint (the neutral --hover is a black tint, invisible on dark). */
-	--ak-hover-bg: var(--white-t-2, rgba(255, 255, 255, 0.11));
 	/* Inverted elevation — a white lift reads on a dark page where a black
 	   drop would vanish. */
 	--ak-shadow-elevated: 0 8px 24px -10px rgba(255, 255, 255, 0.14);
+	/* Hover tint — white in dark (a black tint vanishes on a dark UI); calmed
+	   (~0.06) so row / menu / tab hovers stay subtle but visible on any surface. */
+	--ak-hover-bg: rgba(255, 255, 255, 0.06);
+
+	/* Secondary-button hover: the fill auto-adapts via the :root color-mix (it
+	   lightens here as surface + text flip). Only the border needs a lift — the
+	   d-5 border reads too faint on dark surfaces, so step it to d-6. */
+	--ak-btn-hover-border: var(--neutral-d-6, hsl(0, 0%, 38%));
 }

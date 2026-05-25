@@ -215,6 +215,7 @@ class AdminKit_Settings_Page {
 		foreach ( self::feature_descriptors() as $f ) {
 			$features[] = array(
 				'key'    => $f['key'],
+				'group'  => isset( $f['group'] ) ? $f['group'] : '',
 				'label'  => $f['label'],
 				'desc'   => $f['desc'],
 				'parent' => isset( $f['parent'] ) ? $f['parent'] : '',
@@ -236,13 +237,25 @@ class AdminKit_Settings_Page {
 				'own'               => __( 'AdminKit', 'adminkit' ),
 				'ownHint'           => __( 'AdminKit-defined role (no provider equivalent).', 'adminkit' ),
 				'featuresIntro'     => __( 'Turn AdminKit modules on or off.', 'adminkit' ),
+				'enableAll'         => __( 'Enable all', 'adminkit' ),
+				'disableAll'        => __( 'Disable all', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),
 				'error'             => __( 'Could not save', 'adminkit' ),
 				'light'             => __( 'Light', 'adminkit' ),
 				'dark'              => __( 'Dark', 'adminkit' ),
+				'mode'              => __( 'Mode', 'adminkit' ),
 				'unsaved'           => __( 'Unsaved changes', 'adminkit' ),
+				'designLegendTitle' => __( 'Live colour reference', 'adminkit' ),
+				'designLegend'      => __( 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.', 'adminkit' ),
+				'typography'        => __( 'Typography', 'adminkit' ),
+				'typographyDesc'    => __( 'Body font follows Bricks (--font-base) when set, otherwise Inter.', 'adminkit' ),
+				'typeBody'          => __( 'Body', 'adminkit' ),
+				'typeSmall'         => __( 'Small', 'adminkit' ),
+				'typeCaption'       => __( 'Caption', 'adminkit' ),
+				/* translators: pangram used as a font preview sample — translate to a sentence that exercises your language's letters. */
+				'pangram'           => __( 'The quick brown fox jumps over the lazy dog', 'adminkit' ),
 			),
 		);
 	}
@@ -265,11 +278,13 @@ class AdminKit_Settings_Page {
 			}
 		}
 		$primary = ( isset( $stored['primary_color'] ) && $stored['primary_color'] ) ? (string) $stored['primary_color'] : '';
+		$total   = count( $features );
 
 		$cards = array(
 			array(
 				'label'  => __( 'Tokens', 'adminkit' ),
 				'value'  => self::active_provider_label(),
+				/* translators: %s: the selected accent colour value (e.g. #2563eb). */
 				'hint'   => $primary ? sprintf( __( 'accent %s', 'adminkit' ), $primary ) : __( 'accent inherited', 'adminkit' ),
 				'swatch' => '--ak-primary',
 				'tab'    => 'apparence',
@@ -277,7 +292,8 @@ class AdminKit_Settings_Page {
 			array(
 				'label' => __( 'Features', 'adminkit' ),
 				'value' => (string) $features_on,
-				'hint'  => sprintf( __( 'of %d modules on', 'adminkit' ), count( $features ) ),
+				/* translators: %d: total number of feature modules. */
+				'hint'  => sprintf( _n( 'of %d module on', 'of %d modules on', $total, 'adminkit' ), $total ),
 				'icon'  => 'features',
 				'tab'   => 'features',
 			),
@@ -354,12 +370,17 @@ class AdminKit_Settings_Page {
 	 * @return array
 	 */
 	private static function feature_descriptors() {
+		// `group` is the section heading the Features tab buckets a row under
+		// (identical strings = same group; order = first-seen). A child inherits
+		// its parent's group by carrying the same label.
+		$content    = __( 'Content & lists', 'adminkit' );
+		$appearance = __( 'Appearance & access', 'adminkit' );
 		return array(
-			array( 'key' => 'post_previews_enabled', 'label' => __( 'Post previews', 'adminkit' ),             'desc' => __( 'Screenshot thumbnail column in post-type list tables.', 'adminkit' ) ),
-			array( 'key' => 'post_previews_mshots',  'label' => __( 'Live screenshots (mShots)', 'adminkit' ), 'desc' => __( 'Use WordPress.com mShots. Off = featured image only (no external calls).', 'adminkit' ), 'parent' => 'post_previews_enabled' ),
-			array( 'key' => 'theme_toggle_enabled',  'label' => __( 'Light / dark toggle', 'adminkit' ),       'desc' => __( 'Show the light/dark switch in the admin bar.', 'adminkit' ) ),
-			array( 'key' => 'module_login_enabled',  'label' => __( 'Login screen', 'adminkit' ),              'desc' => __( 'Style the wp-login.php screen.', 'adminkit' ) ),
-			array( 'key' => 'module_editor_enabled', 'label' => __( 'Block editor', 'adminkit' ),              'desc' => __( 'Style the Gutenberg editor.', 'adminkit' ) ),
+			array( 'key' => 'post_previews_enabled', 'group' => $content,    'label' => __( 'Post previews', 'adminkit' ),             'desc' => __( 'Screenshot thumbnail column in post-type list tables.', 'adminkit' ) ),
+			array( 'key' => 'post_previews_mshots',  'group' => $content,    'label' => __( 'Live screenshots (mShots)', 'adminkit' ), 'desc' => __( 'Use WordPress.com mShots. Off = featured image only (no external calls).', 'adminkit' ), 'parent' => 'post_previews_enabled' ),
+			array( 'key' => 'theme_toggle_enabled',  'group' => $appearance, 'label' => __( 'Dark mode', 'adminkit' ),       'desc' => __( 'Enable dark mode with a toggle in the admin bar. Off forces light mode everywhere.', 'adminkit' ) ),
+			array( 'key' => 'module_login_enabled',  'group' => $appearance, 'label' => __( 'Login screen', 'adminkit' ),              'desc' => __( 'Style the wp-login.php screen.', 'adminkit' ) ),
+			array( 'key' => 'editor_content_theme',   'group' => $appearance, 'label' => __( 'Editor content theming', 'adminkit' ),     'desc' => __( 'Apply AdminKit\'s light/dark theme to the block content inside the editor canvas. Off (default) keeps the editor preview matching your live site.', 'adminkit' ) ),
 		);
 	}
 
@@ -386,7 +407,6 @@ class AdminKit_Settings_Page {
 			'fluent-smtp'       => 'FluentSMTP',
 			'fluentform'        => 'Fluent Forms',
 			'flying-press'      => 'FlyingPress',
-			'gutenberg'         => 'Gutenberg',
 			'happyfiles'        => 'HappyFiles',
 			'loco-translate'    => 'Loco Translate',
 			'query-monitor'     => 'Query Monitor',

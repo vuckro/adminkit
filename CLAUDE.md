@@ -72,6 +72,11 @@ docs/                   Deep-dive guides (see "More docs" below).
 - **The token layers are each optional** (provider → baseline → neutral). Don't
   hard-require any one of them. See ARCHITECTURE.
 - **Class names are stable public-ish API** (`AdminKit_*`). Folder reorg keeps them.
+- **All user-facing strings stay translatable** — wrap them in `__()` / `esc_html__()`
+  with the `adminkit` text domain; pass JS copy from PHP via `wp_localize_script` /
+  `wp_add_inline_script` (never hardcode UI text in `.js`). The domain loads on `init`
+  (`AdminKit_Plugin::load_textdomain`); after adding strings, regenerate the template:
+  `wp i18n make-pot . languages/adminkit.pot`.
 
 ## Verify a change
 
@@ -80,6 +85,19 @@ docs/                   Deep-dive guides (see "More docs" below).
 - Adapter CSS-debt: `php dev/adapter-audit.php` (Tier A = 0 `!important`).
 - Host/WP CSS drift: `php dev/adapter-drift.php`.
 - UI: reload any wp-admin page (CSS/JS auto-bust via mtime) and check light + dark.
+
+## Git & GitHub workflow
+
+Keep `main` clean and the history readable:
+
+- **Never commit straight to `main`** (direct pushes to `main` are blocked here).
+  Work on a feature branch: `feat/…`, `fix/…`, `refactor/…`, `docs/…` — one topic each.
+- **Conventional commits, one concern per commit**: `feat:`, `fix:`, `refactor:`,
+  `docs:`, `style:`, `chore:`, scoped where useful (`fix(buttons): …`).
+- **Stage explicit paths, never `git add -A`** (a shared working copy can hold
+  unrelated in-flight work). Push often so work is backed up.
+- **Land via a PR and squash-merge it**, so `main` keeps one clean commit per
+  feature. Delete the branch after merge — don't let topic branches pile up.
 
 ## More docs
 

@@ -178,6 +178,6 @@ body.login.adminkit {
 
 .login .language-switcher .button:hover {
 	background: var(--ak-surface);
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-border);
 	color: var(--ak-heading);
 }

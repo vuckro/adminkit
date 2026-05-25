@@ -317,7 +317,7 @@ body.adminkit.settings_page_fluent-mail .el-button:not(.el-button--primary):not(
 body.adminkit.settings_page_fluent-mail .el-button--info:hover,
 body.adminkit.settings_page_fluent-mail .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--text):hover {
 	background-color: var(--ak-surface);
-	border-color: var(--ak-border-strong);
+	border-color: var(--ak-border);
 	color: var(--ak-heading);
 }
 

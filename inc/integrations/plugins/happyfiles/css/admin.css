@@ -130,7 +130,7 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-license-key-field in
 
 /* "Deactivate license" + similar secondary buttons inside the table */
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .button-secondary {
-	background-color: var(--ak-surface);
+	background-color: var(--ak-btn-bg);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
@@ -138,9 +138,9 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .bu
 
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .button-secondary:hover,
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .button-secondary:focus {
-	background-color: var(--ak-surface);
-	border-color: var(--ak-border-strong);
-	color: var(--ak-heading);
+	background-color: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
+	color: var(--ak-text);
 }
 
 /* Each setting row — a bit more breathing room between checkbox /

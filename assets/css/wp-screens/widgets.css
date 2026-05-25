@@ -1,0 +1,52 @@
+/* Block-based Widgets editor (widgets.php) chrome.
+   Most @wordpress/components surfaces flip via the --wp-components-color-*
+   remap in tokens.css, but the editor header hardcodes #fff and doesn't —
+   it reads as a white bar over the dark editor. Map the header chrome to
+   tokens so the screen flips coherently in light + dark. Scoped to
+   .widgets-php (the post block-editor feature lives elsewhere / removed). */
+
+/* Header bar — WP paints .edit-widgets-header { background: #fff }. */
+body.adminkit.widgets-php .edit-widgets-header,
+body.adminkit.widgets-php .interface-interface-skeleton__header {
+	background: var(--ak-surface);
+	border-bottom: 1px solid var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* Inner header regions stay transparent so they don't repaint a white bar
+   over the header surface above. */
+body.adminkit.widgets-php .edit-widgets-header__navigable-toolbar-wrapper,
+body.adminkit.widgets-php .edit-widgets-header__actions {
+	background: transparent;
+}
+
+/* Header title reads as a heading on the surface. */
+body.adminkit.widgets-php .edit-widgets-header__title {
+	color: var(--ak-heading);
+}
+
+/* Header icon buttons (everything but the primary "Update") tint with the
+   header foreground; soft neutral hover. */
+body.adminkit.widgets-php .edit-widgets-header .components-button:not(.is-primary) {
+	color: var(--ak-text);
+}
+body.adminkit.widgets-php .edit-widgets-header .components-button:not(.is-primary):hover:not(:disabled, [aria-disabled="true"]) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+/* Widget-area blocks render as collapsible panels. The generic editor panel
+   rule keeps .components-panel transparent (right for the post-editor sidebar
+   sections), but in the widgets editor each widget area should read as a CARD.
+   Scoped to the widget-area block so post-editor panels stay transparent:
+   surface body, an elevated header bar, and a surface for the inner block-list
+   so it isn't the stark white .editor-styles-wrapper canvas. */
+body.adminkit.widgets-php .wp-block[data-type="core/widget-area"] .components-panel__body {
+	background: var(--ak-surface);
+}
+body.adminkit.widgets-php .wp-block[data-type="core/widget-area"] .components-panel__body > .components-panel__body-title {
+	background: var(--ak-elevated);
+}
+body.adminkit.widgets-php .wp-block-widget-area__inner-blocks.editor-styles-wrapper > .block-editor-block-list__layout {
+	background: var(--ak-surface);
+}

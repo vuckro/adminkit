@@ -113,6 +113,7 @@ class AdminKit_Core_Chrome {
 		// still scopes via the .user-new-php body class. Keep 'user-new' too.
 		self::register_screen( 'profile',         array( 'profile', 'user-edit', 'user', 'user-new' ) );
 		self::register_screen( 'nav-menus',       array( 'nav-menus' ) );
+		self::register_screen( 'widgets',         array( 'widgets' ) );
 		self::register_screen( 'plugins',         array( 'plugins', 'plugin-install' ) );
 		self::register_screen( 'plugin-editor',   array( 'plugin-editor', 'theme-editor' ) );
 		self::register_screen( 'code-mirror',     array( 'plugin-editor', 'theme-editor' ) );

@@ -92,7 +92,7 @@ class AdminKit_Settings {
 			) ),
 			array( 'group' => 'state', 'label' => __( 'State', 'adminkit' ), 'desc' => __( 'Hover and focus feedback.', 'adminkit' ), 'tokens' => array(
 				array( 'token' => '--ak-hover-bg', 'bricks' => '',        'source' => '--neutral-t-2', 'label' => __( 'Hover', 'adminkit' ), 'own' => true ),
-				array( 'token' => '--ak-focus',    'bricks' => '--focus', 'source' => '--primary-t-5', 'label' => __( 'Focus ring', 'adminkit' ) ),
+				array( 'token' => '--ak-focus',    'bricks' => '--focus', 'source' => '--primary', 'label' => __( 'Focus ring', 'adminkit' ) ),
 			) ),
 			array( 'group' => 'overlay', 'label' => __( 'Overlay', 'adminkit' ), 'desc' => __( 'Scrim behind modals and drawers.', 'adminkit' ), 'tokens' => array(
 				array( 'token' => '--ak-overlay', 'bricks' => '--overlay', 'source' => '--black-t-7', 'label' => __( 'Overlay', 'adminkit' ) ),
@@ -123,7 +123,6 @@ class AdminKit_Settings {
 	private static function register_feature_catalog() {
 		$toggles = array(
 			'module_login_enabled',
-			'module_editor_enabled',
 			'theme_toggle_enabled',
 			'post_previews_mshots',
 		);
@@ -135,6 +134,17 @@ class AdminKit_Settings {
 				'sanitize' => 'rest_sanitize_boolean',
 			) );
 		}
+
+		// Editor content theming — OFF by default (opt-in). The gate for theming
+		// the block content inside the editor canvas (iframe). Left off, the
+		// canvas keeps its real frontend appearance, so a client's page layout is
+		// never altered. The canvas-injection wiring plugs into this flag.
+		self::register( 'editor_content_theme', array(
+			'type'     => 'toggle',
+			'group'    => 'features',
+			'default'  => false,
+			'sanitize' => 'rest_sanitize_boolean',
+		) );
 	}
 
 	/**
@@ -150,8 +160,7 @@ class AdminKit_Settings {
 	 */
 	private static function bind_modules() {
 		$contexts = array(
-			'module_login_enabled'  => 'adminkit/enqueue_login',
-			'module_editor_enabled' => 'adminkit/enqueue_editor',
+			'module_login_enabled' => 'adminkit/enqueue_login',
 		);
 		foreach ( $contexts as $key => $filter ) {
 			add_filter( $filter, static function ( $enabled ) use ( $key ) {

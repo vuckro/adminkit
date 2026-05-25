@@ -13,7 +13,7 @@ body.adminkit .components-button {
 	color: var(--ak-text);
 }
 
-body.adminkit .components-button:not(.is-primary):not(.is-secondary):not(.is-tertiary):not(.is-link):not(.is-destructive):hover {
+body.adminkit .components-button:not(.is-primary):not(.is-secondary):not(.is-tertiary):not(.is-link):not(.is-destructive):not(.is-pressed):hover {
 	color: var(--ak-heading);
 }
 
@@ -25,20 +25,35 @@ body.adminkit .components-button.is-primary {
 	color: var(--ak-on-accent);
 }
 
-/* Secondary button — WP uses the accent color on both border (via
-   box-shadow) and text, which becomes our --ak-primary. In dark mode
-   that mid-gray on a dark bg loses contrast. Route to a neutral
-   ghost-button look: border + text in --ak-text + --ak-border-strong. */
+/* Secondary button — match the canonical AdminKit secondary (the file-input
+   "Choose File" chooser / .button-secondary): surface fill, soft --ak-border,
+   neutral --ak-text label. WP paints .is-secondary with the accent colour on
+   border + text (→ our --ak-primary), which also loses contrast on dark; route
+   it to the flat neutral secondary. Border via box-shadow (no layout shift);
+   hover uses the shared --ak-btn-hover-* tokens (calmer fill + a more visible
+   border in dark, identical to light). */
 body.adminkit .components-button.is-secondary {
-	background: transparent;
-	box-shadow: inset 0 0 0 1px var(--ak-border-strong);
+	background: var(--ak-btn-bg);
+	box-shadow: inset 0 0 0 1px var(--ak-border);
 	color: var(--ak-text);
 }
 
 body.adminkit .components-button.is-secondary:hover:not(:disabled, [aria-disabled="true"], .is-pressed) {
-	background: var(--ak-hover-bg);
-	box-shadow: inset 0 0 0 1px var(--ak-text);
-	color: var(--ak-heading);
+	background: var(--ak-btn-hover-bg);
+	box-shadow: inset 0 0 0 1px var(--ak-btn-hover-border);
+	color: var(--ak-text);
+}
+
+/* Pressed / active toggles (Bold, list view, the open inserter, …). WP fills
+   .is-pressed with --wp-components-color-foreground — a heavy #1e1e1e block in
+   light. Route to AdminKit's soft selected look (brand tint + accent icon),
+   matching .button.active. @wordpress/components renders these across admin
+   (modern settings pages, the block-editor chrome), so the override lives here
+   with the other component button states. */
+body.adminkit .components-button.is-pressed,
+body.adminkit .components-button.is-pressed:hover:not(:disabled, [aria-disabled="true"]) {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
 }
 
 /* Cards + panels (the main surface containers) */
@@ -152,12 +167,16 @@ body.adminkit .components-form-toggle.is-checked .components-form-toggle__track 
 
 /* Popover + dropdown — content wrapper bg stays transparent so it
    never stacks a surface over an inner card (or onto .is-unstyled
-   overlays like the block inserter); opaque dropdown menus are
-   handled by the block-editor rule in gutenberg/dark-mode-map.css. */
+   overlays like the block inserter); opaque dropdown menus are left
+   to WP's own (light) block-editor styling. */
 body.adminkit .components-popover__content {
 	background: transparent;
 	border-color: var(--ak-border);
 	color: var(--ak-text);
+	/* Flatten WP's #ccc ring + 4-layer drop shadow to a clean 1px token ring —
+	   no drop halo (the content wrapper is transparent, so a drop would shadow an
+	   empty box). The ring keeps the popover's crisp edge. */
+	box-shadow: 0 0 0 1px var(--ak-border);
 }
 
 /* Menu items inside popovers */
@@ -213,4 +232,23 @@ body.adminkit .components-button.is-primary[aria-disabled="true"]:enabled {
    Editor). Force the border color directly. */
 body.adminkit [role="tablist"][aria-orientation="horizontal"]::before {
 	border-bottom-color: var(--ak-primary) !important;
+}
+
+/* Collapsible block-toolbar group dividers — WP hardcodes the :after separator
+   as #ddd, a light-grey line that doesn't theme. Map to the token divider so it
+   stays subtle (≈ invisible in dark) and flips with the mode. */
+body.adminkit .editor-collapsible-block-toolbar:after,
+body.adminkit .editor-collapsible-block-toolbar .components-toolbar-group:after,
+body.adminkit .editor-collapsible-block-toolbar .components-toolbar:after {
+	background-color: var(--ak-border);
+}
+
+/* Block / media placeholder (empty Image/Gallery/embed blocks; placeholder
+   panels on React admin screens like the settings page). WP hardcodes #fff bg +
+   #1e1e1e border/text. Map to tokens — this is editor/UI STRUCTURE in the main
+   document, so the visitor-facing content canvas stays untouched. */
+body.adminkit .components-placeholder.components-placeholder {
+	background-color: var(--ak-surface);
+	box-shadow: inset 0 0 0 1px var(--ak-border);
+	color: var(--ak-text);
 }

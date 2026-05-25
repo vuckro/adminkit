@@ -1,0 +1,10 @@
+/* Bricks feedback form — Bricks injects #bricks-feedback-form on the WP themes
+   page footer (admin_footer-themes.php), OUTSIDE its own admin pages, so this
+   loads on themes.php (not with admin.css). Bricks hardcodes the inner shell
+   white; route it to token surfaces so the panel follows AdminKit light/dark. */
+body.adminkit #bricks-feedback-form-inner {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-m);
+}

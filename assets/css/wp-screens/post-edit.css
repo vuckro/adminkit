@@ -56,8 +56,8 @@ body.adminkit:is(.post-php, .post-new-php) .taxonomy-add-new {
 	margin-top: 6px;
 	padding: 3px 9px;
 	border-radius: var(--ak-radius-s);
-	border: 1px solid var(--ak-border-strong);
-	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	background: var(--ak-btn-bg);
 	color: var(--ak-text);
 	font-size: var(--ak-text-xs);
 	font-weight: 500;
@@ -66,8 +66,9 @@ body.adminkit:is(.post-php, .post-new-php) .taxonomy-add-new {
 
 body.adminkit:is(.post-php, .post-new-php) .taxonomy-add-new:hover,
 body.adminkit:is(.post-php, .post-new-php) .taxonomy-add-new:focus {
-	border-color: var(--ak-border-strong);
-	color: var(--ak-heading);
+	background: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
+	color: var(--ak-text);
 }
 
 /* Inline "Edit" toggles in the Publish box (next to Status / Visibility /

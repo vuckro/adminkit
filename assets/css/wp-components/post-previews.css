@@ -57,7 +57,7 @@
 	background: var(--ak-elevated);
 	border: 1px solid var(--ak-border-strong);
 	border-radius: var(--ak-radius-m);
-	pointer-events: auto;
+	pointer-events: none; /* purely a hover indicator of the thumb — never captures the cursor */
 }
 .adminkit #ak-preview-pop.is-visible {
 	display: block;

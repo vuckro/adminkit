@@ -108,9 +108,9 @@ body.adminkit .wp-list-table tbody tr:first-child th {
 	border-top: none;
 }
 
-/* Row hover — neutral surface, no brand tint (mirrors the submenu hover).
-   Uses --ak-elevated, not --ak-surface: in dark mode --ak-surface
-   resolves to --ak-surface, so a --ak-surface hover would be invisible. */
+/* Row hover lifts to --ak-elevated — a crisp step (rows sit on the --ak-surface
+   table), matching the settings rows + the admin menu. Floating / any-surface
+   hovers use the translucent --ak-hover-bg, which stays visible on elevated. */
 body.adminkit .wp-list-table tbody tr:hover,
 body.adminkit .wp-list-table tbody tr:hover td,
 body.adminkit .wp-list-table tbody tr:hover th {
@@ -236,6 +236,7 @@ body.adminkit ul.subsubsub {
 	flex-wrap: nowrap;
 	max-width: 100%;
 	overflow-x: auto;
+	overflow-y: hidden; /* horizontal scroll only — no phantom vertical scrollbar */
 }
 
 /* tablenav (bulk actions + filters + pagination, above & below list tables).
@@ -251,6 +252,10 @@ body.adminkit .tablenav {
 	align-items: center;
 	gap: 8px;
 	overflow-x: auto;
+	/* Horizontal scroll only when narrow. Without an explicit overflow-y the
+	   browser computes it to `auto` (visible+auto coupling), and a sub-pixel
+	   height overflow then shows a phantom vertical scrollbar — clip it. */
+	overflow-y: hidden;
 	margin: var(--ak-tablenav-gap, 24px) 0;
 }
 
@@ -282,7 +287,7 @@ body.adminkit .tablenav .tablenav-pages a:link {
 }
 
 body.adminkit .tablenav .tablenav-pages a:hover {
-	background: var(--ak-surface);
+	background: var(--ak-elevated);
 	border-color: var(--ak-border-strong);
 	color: var(--ak-heading);
 }
@@ -394,15 +399,6 @@ body.adminkit .inline-edit-row fieldset label textarea:focus,
 body.adminkit .inline-edit-row fieldset select:focus {
 	border-color: var(--ak-primary);
 	background: var(--ak-primary-subtle);
-}
-
-/* Dark mode — the default row-hover lift reads too bright; use a gentler
-   lift (light mode already reads well, so this is dark-only). The Quick Edit
-   fields detach on their own via --ak-input-bg, so no input override here. */
-:root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover,
-:root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover td,
-:root[data-adminkit-theme="dark"] body.adminkit .wp-list-table tbody tr:hover th {
-	background: color-mix(in srgb, var(--ak-surface) 75%, var(--ak-elevated));
 }
 
 body.adminkit .inline-edit-row .inline-edit-save {

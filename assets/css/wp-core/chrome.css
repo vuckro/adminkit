@@ -17,7 +17,7 @@ body.adminkit {
 
 /* Dark-mode scrollbars. The browser paints native scrollbars from the page's
    color-scheme, which AdminKit keeps light (so native form controls stay
-   light — see gutenberg/dark-mode-map.css). Scrollable boxes — e.g. the Quick
+   light). Scrollable boxes — e.g. the Quick
    Edit category list on edit.php — therefore show a white scrollbar on dark
    surfaces. scrollbar-color is inherited, so setting it once here recolors
    every scrollable area in admin: a muted thumb on a track that blends in. */
@@ -72,24 +72,16 @@ body.adminkit #adminmenu li.menu-top {
 	border: none;
 }
 
-/* Hover / focus on non-current items — match WP's exact selectors
-   with !important to defeat colors.css. Uses a dedicated hover token
-   so we can tune contrast independently from the active/current item. */
+/* Hover / focus on non-current items — match WP's exact selectors with
+   !important to defeat colors.css. Lifts to --ak-elevated — a crisp step on the
+   sidebar surface, matching the settings rows + list tables (the current item,
+   also --ak-elevated, stays distinct by its bold label). */
 body.adminkit #adminmenu a:hover,
 body.adminkit #adminmenu li.menu-top:hover,
 body.adminkit #adminmenu li.opensub > a.menu-top,
 body.adminkit #adminmenu li > a.menu-top:focus {
 	color: var(--ak-heading) !important;
-	background-color: var(--ak-hover-bg, var(--ak-elevated)) !important;
-}
-
-/* Dark mode: the white 11% hover tint reads too bright on the sidebar — dim it
-   to a gentler ~7% lift (light mode's black-4% hover is already subtle). */
-:root[data-adminkit-theme="dark"] body.adminkit #adminmenu a:hover,
-:root[data-adminkit-theme="dark"] body.adminkit #adminmenu li.menu-top:hover,
-:root[data-adminkit-theme="dark"] body.adminkit #adminmenu li.opensub > a.menu-top,
-:root[data-adminkit-theme="dark"] body.adminkit #adminmenu li > a.menu-top:focus {
-	background-color: var(--white-t-1, rgba(255, 255, 255, 0.07)) !important;
+	background-color: var(--ak-elevated) !important;
 }
 
 /* WP core ships `#adminmenu a:focus, #adminmenu a:hover` with
@@ -173,8 +165,8 @@ body.adminkit #adminmenu .wp-submenu a {
 
 body.adminkit #adminmenu .wp-submenu a:hover,
 body.adminkit #adminmenu .wp-submenu a:focus {
-	color: var(--ak-text);
-	background: var(--ak-surface) !important;
+	color: var(--ak-heading);
+	background: var(--ak-elevated) !important;
 }
 
 /* Current submenu item — neutral surface + bold marks it (no brand accent).
@@ -648,7 +640,7 @@ body.adminkit #screen-meta-links a {
 body.adminkit #screen-meta-links a:hover,
 body.adminkit #screen-meta-links a:focus {
 	color: var(--ak-heading);
-	background: var(--ak-surface);
+	background: var(--ak-elevated);
 }
 
 /* Drop the focus ring on the Screen Options / Help toggle — WP paints a

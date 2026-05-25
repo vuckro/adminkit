@@ -135,6 +135,19 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 				return $screen && 'post' === $screen->base;
 			},
 		) );
+
+		// Bricks injects its feedback form into the WP themes page footer
+		// (admin_footer-themes.php) — outside its own admin pages, so it gets its
+		// own tiny load there.
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-bricks-feedback',
+			'src'       => 'inc/integrations/themes/bricks/css/feedback.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => static function ( $screen ) {
+				return $screen && 'themes' === $screen->id;
+			},
+		) );
 	}
 
 	/**
@@ -224,11 +237,18 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		}
 		// Depend on AdminKit's shipped WaasKit baseline so Bricks' live tokens load
 		// AFTER it and win the cascade — a Bricks site that customises the palette
-		// still overrides the bundled defaults.
+		// still overrides the bundled defaults. BUT only when that baseline is
+		// actually present: it's intentionally skipped on the frontend (and can be
+		// disabled via adminkit/enqueue_baseline). WP 6.9.1+ DROPS any stylesheet —
+		// and everything that transitively depends on it (adminkit-tokens → the
+		// whole admin bar) — if it lists an unregistered dependency, so guard it.
+		$deps = wp_style_is( AdminKit_Assets::WAASKIT_HANDLE, 'registered' )
+			? array( AdminKit_Assets::WAASKIT_HANDLE )
+			: array();
 		wp_enqueue_style(
 			self::TOKENS_HANDLE,
 			$upload['baseurl'] . self::TOKENS_REL,
-			array( AdminKit_Assets::WAASKIT_HANDLE ),
+			$deps,
 			(string) filemtime( $path )
 		);
 		return self::TOKENS_HANDLE;

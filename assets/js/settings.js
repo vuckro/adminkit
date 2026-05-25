@@ -160,31 +160,42 @@
 	function buildDashboard() {
 		var dd = D.dashboard || {};
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( dd.intro || '' ) ] );
-		var grid = el( 'div', { 'class': 'ak-stat-grid' } );
+		// Overview — a tight strip of bordered cells (provider / modules / mode).
+		// Data-driven from dd.cards; a card with a `tab` becomes a shortcut. The
+		// provider card carries a `swatch` rendered inline before its value.
+		var hero = el( 'div', { 'class': 'ak-hero' } );
 		( dd.cards || [] ).forEach( function ( c ) {
-			// Visual chip: a colour swatch (token / accent) or an icon.
-			var chip;
-			if ( c.swatch ) {
-				chip = el( 'span', { 'class': 'ak-stat__chip ak-stat__chip--swatch', style: 'background:var(' + c.swatch + ')' } );
-			} else {
-				chip = el( 'span', { 'class': 'ak-stat__chip' } );
-				chip.innerHTML = ICONS[ c.icon ] || '';
-			}
-			var body = el( 'div', { 'class': 'ak-stat__body' }, [
-				el( 'span', { 'class': 'ak-stat__label', text: c.label } ),
-				el( 'span', { 'class': 'ak-stat__value', text: c.value } ),
-				c.hint ? el( 'span', { 'class': 'ak-stat__hint', text: c.hint } ) : null
-			] );
-			var inner = el( 'div', { 'class': 'ak-stat__row' }, [ chip, body ] );
-			grid.appendChild(
-				c.tab
-					? el( 'button', { type: 'button', 'class': 'ak-stat ak-stat--link', onclick: function () { go( c.tab ); } }, [ inner ] )
-					: el( 'div', { 'class': 'ak-stat' }, [ inner ] )
-			);
+			hero.appendChild( el( c.tab ? 'button' : 'div', {
+				type: c.tab ? 'button' : null,
+				'class': 'ak-hero__cell' + ( c.tab ? ' ak-hero__cell--link' : '' ),
+				onclick: c.tab ? function () { go( c.tab ); } : null
+			}, [
+				el( 'span', { 'class': 'ak-hero__k', text: c.label } ),
+				el( 'span', { 'class': 'ak-hero__v' }, [
+					c.swatch ? el( 'span', { 'class': 'ak-hero__swatch', style: 'background:var(' + c.swatch + ')' } ) : null,
+					c.value
+				] ),
+				c.hint ? el( 'span', { 'class': 'ak-hero__sub', text: c.hint } ) : null
+			] ) );
 		} );
+
+		// Mode cell — reflects the live theme and updates when the admin-bar
+		// toggle flips it (reads the attribute, never writes it).
+		var modeV = el( 'span', { 'class': 'ak-hero__v' } );
+		function paintMode() {
+			var dark = document.documentElement.getAttribute( 'data-adminkit-theme' ) === 'dark';
+			modeV.textContent = dark ? ( I.dark || 'Dark' ) : ( I.light || 'Light' );
+		}
+		paintMode();
+		new MutationObserver( paintMode ).observe( document.documentElement, { attributes: true, attributeFilter: [ 'data-adminkit-theme' ] } );
+		hero.appendChild( el( 'div', { 'class': 'ak-hero__cell' }, [
+			el( 'span', { 'class': 'ak-hero__k', text: I.mode || 'Mode' } ),
+			modeV
+		] ) );
+
 		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
 			dd.overviewLabel ? el( 'h2', { 'class': 'ak-group__title', text: dd.overviewLabel } ) : null,
-			grid
+			hero
 		] ) );
 
 		// What's next — a light roadmap teaser so the page hints at the rest of
@@ -241,12 +252,12 @@
 	function typeSection() {
 		var scale = el( 'div', { 'class': 'ak-type' } );
 		[
-			[ '--ak-text-m', 'Body' ],
-			[ '--ak-text-s', 'Small' ],
-			[ '--ak-text-xs', 'Caption' ]
+			[ '--ak-text-m', I.typeBody || 'Body' ],
+			[ '--ak-text-s', I.typeSmall || 'Small' ],
+			[ '--ak-text-xs', I.typeCaption || 'Caption' ]
 		].forEach( function ( s ) {
 			scale.appendChild( el( 'div', { 'class': 'ak-type__row' }, [
-				el( 'span', { 'class': 'ak-type__sample', style: 'font-size:var(' + s[ 0 ] + ')', text: 'The quick brown fox jumps over the lazy dog' } ),
+				el( 'span', { 'class': 'ak-type__sample', style: 'font-size:var(' + s[ 0 ] + ')', text: I.pangram || 'The quick brown fox jumps over the lazy dog' } ),
 				el( 'code', { 'class': 'ak-tbl__prim', text: s[ 0 ] } )
 			] ) );
 		} );
@@ -280,16 +291,42 @@
 
 	function buildFeatures() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( I.featuresIntro ) ] );
-		var rows = el( 'div', { 'class': 'ak-rows' } );
-		var refs = {}; // key -> { input, row }
+		var refs = {};     // key -> { input, row }
+		var groups = [];   // [{ label, rows }] in first-seen order
+		var byGroup = {};
+		// Bucket each feature row under its `group` label (identical labels share
+		// a block); keeps a child in the same group as its parent.
+		function rowsFor( label ) {
+			if ( ! byGroup[ label ] ) {
+				byGroup[ label ] = { label: label, rows: el( 'div', { 'class': 'ak-rows' } ) };
+				groups.push( byGroup[ label ] );
+			}
+			return byGroup[ label ].rows;
+		}
 
-		// A child feature (e.g. mShots under Post previews) is only meaningful
-		// while its parent is on; disable + mute it otherwise.
-		function applyDep( f ) {
-			if ( ! f.parent || ! refs[ f.key ] ) { return; }
-			var on = !! state.features[ f.parent ];
-			refs[ f.key ].input.disabled = ! on;
-			refs[ f.key ].row.classList.toggle( 'is-disabled', ! on );
+		// Reflect a feature's state on its row: dim it ("is-off") when switched off
+		// — the switch stays clickable so it can be turned back on — and, for a
+		// child (e.g. mShots under Post previews), lock + dim it ("is-disabled")
+		// while its parent is off.
+		function refreshRow( f ) {
+			var r = refs[ f.key ];
+			if ( ! r ) { return; }
+			r.row.classList.toggle( 'is-off', ! state.features[ f.key ] );
+			if ( f.parent ) {
+				var parentOn = !! state.features[ f.parent ];
+				r.input.disabled = ! parentOn;
+				r.row.classList.toggle( 'is-disabled', ! parentOn );
+			}
+		}
+
+		// Flip every feature at once (the "enable / disable all" controls).
+		function setAll( on ) {
+			( D.features || [] ).forEach( function ( f ) {
+				state.features[ f.key ] = on;
+				if ( refs[ f.key ] ) { refs[ f.key ].input.checked = on; }
+			} );
+			( D.features || [] ).forEach( refreshRow );
+			markDirty();
 		}
 
 		( D.features || [] ).forEach( function ( f ) {
@@ -297,7 +334,7 @@
 			input.checked = !! state.features[ f.key ];
 			input.addEventListener( 'change', function () {
 				state.features[ f.key ] = input.checked;
-				( D.features || [] ).forEach( function ( c ) { if ( c.parent === f.key ) { applyDep( c ); } } );
+				( D.features || [] ).forEach( refreshRow );
 				markDirty();
 			} );
 			var row = el( 'div', { 'class': 'ak-row' + ( f.parent ? ' ak-row--child' : '' ) }, [
@@ -312,11 +349,25 @@
 				] )
 			] );
 			refs[ f.key ] = { input: input, row: row };
-			rows.appendChild( row );
+			rowsFor( f.group || '' ).appendChild( row );
 		} );
 
-		( D.features || [] ).forEach( applyDep ); // initial dependency state
-		p.appendChild( rows );
+		( D.features || [] ).forEach( refreshRow ); // initial dim + dependency state
+
+		// Bulk controls — flip every feature on/off in one click (reuses the
+		// header's flex row + secondary buttons; no new layout CSS).
+		p.appendChild( el( 'div', { 'class': 'ak-actions ak-bulk' }, [
+			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.enableAll, onclick: function () { setAll( true ); } } ),
+			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.disableAll, onclick: function () { setAll( false ); } } )
+		] ) );
+
+		// One titled .ak-rows block per group label (order = first-seen).
+		groups.forEach( function ( g ) {
+			p.appendChild( el( 'div', { 'class': 'ak-group' }, [
+				g.label ? el( 'h2', { 'class': 'ak-group__title', text: g.label } ) : null,
+				g.rows
+			] ) );
+		} );
 		return p;
 	}
 
@@ -341,8 +392,11 @@
 				state.dirty = false;
 				updateBar();
 				setStatus( 'is-saved', I.saved );
-				// Module toggles take effect on the next visit to those screens.
-				// No reload here.
+				// The toggles gate asset loading SERVER-side, so reflecting them
+				// without a reload would mean duplicating that gating in JS (bloat).
+				// Instead reload automatically, just after the "Saved" flash, so the
+				// change shows with no manual refresh. The #hash keeps the active tab.
+				setTimeout( function () { location.reload(); }, 600 );
 			} )
 			.catch( function () {
 				state.saving = false;
