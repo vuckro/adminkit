@@ -256,12 +256,49 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		$is_main = ( isset( $_GET['bricks'] ) && 'run' === $_GET['bricks'] )
 			|| ( function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main() );
 		if ( $is_main ) {
+			self::enqueue_builder_fallback_tokens();
 			if ( self::enqueue_style_file( 'adminkit-bricks-builder', $base . 'builder.css' ) ) {
 				$logo_css = self::builder_logo_css();
 				if ( '' !== $logo_css ) {
 					wp_add_inline_style( 'adminkit-bricks-builder', $logo_css );
 				}
 			}
+		}
+	}
+
+	/**
+	 * Load AdminKit's shipped WaasKit baseline as a FALLBACK palette in the builder.
+	 *
+	 * builder.css maps Bricks's --builder-* variables onto WaasKit provider
+	 * variables (--surface, --background, --neutral-l-*, …). Those normally come
+	 * from Bricks's saved colours (bricks-style-manager). If the user clears every
+	 * colour in Bricks, those variables vanish and the builder would lose its look.
+	 *
+	 * So we enqueue the baseline (which defines all of them) and make Bricks's
+	 * style-manager DEPEND on it — Bricks therefore loads AFTER and wins whenever
+	 * colours exist, while the baseline stays as the fallback when they don't.
+	 * AdminKit transparently takes over; nothing breaks.
+	 *
+	 * @return void
+	 */
+	private static function enqueue_builder_fallback_tokens() {
+		$path = ADMINKIT_PATH . AdminKit_Assets::WAASKIT_SRC;
+		if ( ! file_exists( $path ) ) {
+			return;
+		}
+		wp_enqueue_style(
+			AdminKit_Assets::WAASKIT_HANDLE,
+			ADMINKIT_URL . AdminKit_Assets::WAASKIT_SRC,
+			array(),
+			(string) filemtime( $path )
+		);
+
+		// Print Bricks's live colours after the baseline so they override it.
+		$styles = wp_styles();
+		if ( isset( $styles->registered['bricks-style-manager'] )
+			&& ! in_array( AdminKit_Assets::WAASKIT_HANDLE, $styles->registered['bricks-style-manager']->deps, true )
+		) {
+			$styles->registered['bricks-style-manager']->deps[] = AdminKit_Assets::WAASKIT_HANDLE;
 		}
 	}
 
