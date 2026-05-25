@@ -625,10 +625,9 @@
 		return p;
 	}
 
-	// Plugins tab — the site's active plugins (and AdminKit's active theme
-	// adapters), each tagged Native (a tuned adapter you can toggle per host) or
-	// Generic (no dedicated adapter; AdminKit's base styles theme it automatically).
-	// Nothing dormant is listed, so there's no "inactive" state.
+	// Plugins tab — every installed plugin (plus AdminKit's active theme adapters).
+	// Supported plugins (a tuned adapter you can toggle per host) wear a "Native"
+	// badge; the rest carry no badge — AdminKit's base styles theme them silently.
 	function buildPlugins() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( I.pluginsIntro ) ] );
 		var list = D.integrations || [];
@@ -636,13 +635,14 @@
 
 		var inputs = []; // native-integration toggles, for the bulk controls
 
-		// Support chip, sitting right after the plugin name: brand "Native" vs
-		// neutral "Generic".
-		function supportBadge( supported ) {
+		// Brand "Native" chip, right after the plugin name — supported plugins only.
+		// Unknown plugins (no adapter) get no badge; the generic base layer themes
+		// them silently, so the absence of a badge is itself the "generic" signal.
+		function nativeBadge() {
 			return el( 'span', {
-				'class': 'ak-badge' + ( supported ? ' ak-badge--brand' : '' ),
-				title: supported ? ( I.nativeHint || '' ) : ( I.genericHint || '' ),
-				text: supported ? ( I.native || 'Native' ) : ( I.generic || 'Generic' )
+				'class': 'ak-badge ak-badge--brand',
+				title: I.nativeHint || '',
+				text: I.native || 'Native'
 			} );
 		}
 
@@ -652,11 +652,11 @@
 			var main = el( 'div', { 'class': 'ak-row__main' }, [
 				el( 'div', { 'class': 'ak-row__head' }, [
 					el( 'span', { 'class': 'ak-row__label', text: i.label } ),
-					supportBadge( i.supported )
+					i.supported ? nativeBadge() : null
 				] )
 			] );
 
-			// Generic plugin → no adapter to switch: the badge alone tells the story.
+			// Unknown plugin → no adapter to switch, and no badge: just the name.
 			if ( ! i.supported || ! i.slug ) {
 				return el( 'div', { 'class': 'ak-row' }, [ main ] );
 			}

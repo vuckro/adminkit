@@ -227,8 +227,9 @@ class AdminKit_Settings_Page {
 			);
 		}
 
-		// Plugins tab — the site's actually-active plugins/themes, each tagged as
-		// natively themed (a tuned AdminKit adapter) or generic (base styles only).
+		// Plugins tab — every installed plugin (plus AdminKit's active theme
+		// adapters); supported ones are badged "Native" (a tuned AdminKit adapter),
+		// the rest carry no badge and ride the generic base layer.
 		self::register_integration_toggles();
 		$integrations = self::plugins_list();
 
@@ -271,11 +272,9 @@ class AdminKit_Settings_Page {
 				'mediaTitle'        => __( 'Select a logo', 'adminkit' ),
 				'mediaButton'       => __( 'Use this image', 'adminkit' ),
 				'plugins'           => __( 'Plugins', 'adminkit' ),
-				'pluginsIntro'      => __( 'Your active plugins and themes. Native ones have a tuned AdminKit adapter you can switch per host; the rest inherit AdminKit\'s base styling automatically.', 'adminkit' ),
+				'pluginsIntro'      => __( 'Every plugin installed on your site, plus AdminKit\'s active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry no badge and inherit AdminKit\'s base styling automatically.', 'adminkit' ),
 				'native'            => __( 'Native', 'adminkit' ),
-				'generic'           => __( 'Generic', 'adminkit' ),
 				'nativeHint'        => __( 'AdminKit ships a tuned adapter for this plugin — light and dark.', 'adminkit' ),
-				'genericHint'       => __( 'No dedicated adapter — themed automatically by AdminKit\'s base styles.', 'adminkit' ),
 				'themesLabel'       => __( 'Themes', 'adminkit' ),
 				'wpLogoLabel'       => __( 'Admin bar', 'adminkit' ),
 				'loginLogoLabel'    => __( 'Login screen', 'adminkit' ),
@@ -606,11 +605,11 @@ class AdminKit_Settings_Page {
 
 	/**
 	 * Known host plugin file(s) per adapter slug, so the Plugins tab can tell which
-	 * of the site's active plugins AdminKit themes natively. Kept central (no
+	 * of the site's installed plugins AdminKit themes natively. Kept central (no
 	 * per-adapter edits) and tolerant — free/pro variants are listed together. A
-	 * miss degrades gracefully: the plugin simply shows as "generic" rather than
-	 * "native" (never a duplicate row). Theme adapters (e.g. Bricks) aren't here —
-	 * they're matched from the active theme set instead.
+	 * miss degrades gracefully: the plugin simply shows unbadged (generic base
+	 * styling) rather than "Native" (never a duplicate row). Theme adapters (e.g.
+	 * Bricks) aren't here — they're matched from the active theme set instead.
 	 *
 	 * @return array<string, string[]>
 	 */
@@ -633,49 +632,45 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Build the Plugins-tab list: every ACTIVE plugin on the site (plus AdminKit's
-	 * active theme adapters), each tagged as natively themed (a tuned AdminKit
-	 * adapter — toggleable, dark-mode included) or generic (no dedicated adapter,
-	 * so it inherits AdminKit's base token styling). Nothing dormant is listed —
-	 * the tab mirrors what's actually running, so there's no "inactive" state.
+	 * Build the Plugins-tab list: EVERY plugin installed on the site (plus
+	 * AdminKit's active theme adapters). Supported hosts — those AdminKit ships a
+	 * tuned adapter for — are flagged native (toggleable, dark-mode included);
+	 * every other plugin is left unbadged and simply inherits AdminKit's base
+	 * token styling. The tab mirrors the site's plugin list, active or not.
 	 *
-	 * Row shape: slug (adapter slug when native, '' when generic), label (adapter
-	 * label when native, the plugin's own name when generic), type, supported
-	 * (bool), enabled (adapter toggle — native rows only). Native first, then
-	 * alphabetical.
+	 * Row shape: slug (adapter slug when native, '' otherwise), label (the
+	 * plugin's own name), type, supported (bool), enabled (adapter toggle — native
+	 * rows only). Native first, then alphabetical.
 	 *
 	 * @return array<int, array>
 	 */
 	private static function plugins_list() {
-		// Active adapters, keyed by slug.
-		$active = array();
-		foreach ( self::integration_specs() as $s ) {
-			if ( call_user_func( array( $s['class'], 'is_active' ) ) ) {
-				$active[ $s['slug'] ] = $s;
-			}
-		}
-
-		// Map active PLUGIN adapters' host files → slug (themes matched below).
+		// basename → adapter slug for EVERY plugin adapter (active or not), so an
+		// installed-but-inactive supported plugin still earns its Native badge. The
+		// "Native" mark means "AdminKit ships a tuned adapter for this", independent
+		// of whether the plugin is currently active.
 		$hosts   = self::integration_host_files();
 		$by_file = array();
-		foreach ( $active as $slug => $s ) {
+		foreach ( self::integration_specs() as $s ) {
 			if ( 'plugin' !== $s['type'] ) {
 				continue;
 			}
-			foreach ( (array) ( isset( $hosts[ $slug ] ) ? $hosts[ $slug ] : array() ) as $file ) {
-				$by_file[ $file ] = $slug;
+			foreach ( (array) ( isset( $hosts[ $s['slug'] ] ) ? $hosts[ $s['slug'] ] : array() ) as $file ) {
+				$by_file[ $file ] = $s['slug'];
 			}
 		}
 
 		$rows = array();
 
-		// 1) Active plugins on the site.
-		if ( ! function_exists( 'get_plugins' ) || ! function_exists( 'is_plugin_active' ) ) {
+		// 1) EVERY installed plugin — the tab mirrors the site's plugins. Unknown
+		// (no adapter) ones carry no badge; they're themed automatically by
+		// AdminKit's generic layer (base component CSS + WP-var remap) when active.
+		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 		$self = plugin_basename( ADMINKIT_FILE ); // don't list AdminKit in its own tab
 		foreach ( get_plugins() as $file => $data ) {
-			if ( ! is_plugin_active( $file ) || $file === $self ) {
+			if ( $file === $self ) {
 				continue;
 			}
 			$slug      = isset( $by_file[ $file ] ) ? $by_file[ $file ] : '';
@@ -683,25 +678,25 @@ class AdminKit_Settings_Page {
 			$name      = '' !== (string) $data['Name'] ? $data['Name'] : $file;
 			$rows[]    = array(
 				'slug'      => $slug,
-				'label'     => $supported ? $active[ $slug ]['label'] : $name,
+				'label'     => $name,
 				'type'      => 'plugin',
 				'supported' => $supported,
 				'enabled'   => $supported ? (bool) AdminKit_Settings::get( 'integration_' . $slug . '_enabled' ) : false,
 			);
 		}
 
-		// 2) Active THEME adapters (e.g. Bricks) — themes aren't in get_plugins(),
-		// so add them straight from the active adapter set. Always native.
-		foreach ( $active as $slug => $s ) {
-			if ( 'theme' !== $s['type'] ) {
+		// 2) AdminKit's ACTIVE theme adapter (e.g. Bricks) — themes aren't in
+		// get_plugins(); list the active one so the user sees their theme is native.
+		foreach ( self::integration_specs() as $s ) {
+			if ( 'theme' !== $s['type'] || ! call_user_func( array( $s['class'], 'is_active' ) ) ) {
 				continue;
 			}
 			$rows[] = array(
-				'slug'      => $slug,
+				'slug'      => $s['slug'],
 				'label'     => $s['label'],
 				'type'      => 'theme',
 				'supported' => true,
-				'enabled'   => (bool) AdminKit_Settings::get( 'integration_' . $slug . '_enabled' ),
+				'enabled'   => (bool) AdminKit_Settings::get( 'integration_' . $s['slug'] . '_enabled' ),
 			);
 		}
 
