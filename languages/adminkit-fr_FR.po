@@ -569,13 +569,9 @@ msgstr "Remplacer les icônes natives du menu et de la barre d’outils de WordP
 msgid "Local avatars"
 msgstr "Avatars locaux"
 
-#: inc/class-settings-page.php:547
-msgid "Let users upload a profile picture that replaces Gravatar. Off = Gravatar everywhere."
-msgstr "Permet d’envoyer une photo de profil qui remplace Gravatar. Désactivé = Gravatar partout."
-
-#: inc/class-settings-page.php:548
-msgid "Auto-generate a friendly avatar for users with no photo, instead of Gravatar's blank icon. Uses a hosted generator (disclosed in the readme)."
-msgstr "Génère automatiquement un avatar sympathique pour les utilisateurs sans photo, au lieu de l’icône vide de Gravatar. Utilise un générateur hébergé (divulgué dans le readme)."
+#: inc/class-settings-page.php:539
+msgid "Let users upload a profile picture that replaces Gravatar; anyone with no photo gets a friendly auto-generated face (via a hosted generator, disclosed in the readme). Off = Gravatar everywhere."
+msgstr "Permet d’envoyer une photo de profil qui remplace Gravatar ; les personnes sans photo reçoivent un avatar généré automatiquement (via un générateur hébergé, divulgué dans le readme). Désactivé = Gravatar partout."
 
 #: inc/class-settings-page.php:553
 msgid "Bricks builder"
@@ -750,10 +746,6 @@ msgstr "Général"
 #: inc/wp-core/class-chrome.php:193
 msgid "Settings sections"
 msgstr "Sections de réglages"
-
-#: inc/wp-core/class-local-avatars.php:266
-msgid "Generated avatar (AdminKit)"
-msgstr "Avatar généré (AdminKit)"
 
 #: inc/wp-core/class-local-avatars.php:446
 #: inc/wp-core/class-local-avatars.php:718

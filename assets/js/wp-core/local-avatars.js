@@ -12,9 +12,9 @@
  * too as a SECOND trigger that shares the one hidden input + state — no media
  * frame logic is duplicated. Picking/removing/generating syncs BOTH previews.
  *
- * With `generated_avatars_enabled` on, a "Generate a random avatar" control rolls
- * a fresh client-side seed, previews the matching DiceBear face, and writes the
- * seed into a hidden input that the PHP save persists (which also clears any
+ * A "Generate a random avatar" control (available whenever local avatars are on)
+ * rolls a fresh client-side seed, previews the matching DiceBear face, and writes
+ * the seed into a hidden input that the PHP save persists (which also clears any
  * upload). Before applying it over an existing photo it shows a small, tokenised
  * DANGER confirm. All generated-avatar wiring is gated on the localized
  * `generated` flag, so with the feature off the brick behaves exactly as before.

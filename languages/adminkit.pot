@@ -565,12 +565,8 @@ msgstr ""
 msgid "Local avatars"
 msgstr ""
 
-#: inc/class-settings-page.php:547
-msgid "Let users upload a profile picture that replaces Gravatar. Off = Gravatar everywhere."
-msgstr ""
-
-#: inc/class-settings-page.php:548
-msgid "Auto-generate a friendly avatar for users with no photo, instead of Gravatar's blank icon. Uses a hosted generator (disclosed in the readme)."
+#: inc/class-settings-page.php:539
+msgid "Let users upload a profile picture that replaces Gravatar; anyone with no photo gets a friendly auto-generated face (via a hosted generator, disclosed in the readme). Off = Gravatar everywhere."
 msgstr ""
 
 #: inc/class-settings-page.php:553
@@ -745,10 +741,6 @@ msgstr ""
 
 #: inc/wp-core/class-chrome.php:193
 msgid "Settings sections"
-msgstr ""
-
-#: inc/wp-core/class-local-avatars.php:266
-msgid "Generated avatar (AdminKit)"
 msgstr ""
 
 #: inc/wp-core/class-local-avatars.php:446

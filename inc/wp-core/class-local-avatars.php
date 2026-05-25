@@ -21,8 +21,8 @@
  *     USER deletes the attachment they own too (`delete_user`/`wpmu_delete_user`),
  *     so the Media Library is never left with an orphan.
  *
- * Generated avatars (opt-in, `generated_avatars_enabled`, only meaningful with
- * local avatars on): when a user has no uploaded avatar, AdminKit hands WordPress
+ * Generated avatars (automatic whenever local avatars are on — no separate
+ * toggle): when a user has no uploaded avatar, AdminKit hands WordPress
  * a friendly auto-generated avatar (DiceBear's hosted, key-less HTTP API) as the
  * Gravatar `d=` *default* — so a real Gravatar still wins and only a missing one
  * falls back to the generated image. The seed is NON-PII: by default an md5 of the
@@ -71,13 +71,6 @@ class AdminKit_Local_Avatars {
 	 */
 	const DICEBEAR_BASE = 'https://api.dicebear.com/9.x/';
 
-	/**
-	 * Sentinel key for the "Generated avatar" entry AdminKit adds to the
-	 * Settings → Discussion default-avatar list (avatar_defaults). Per-user faces
-	 * have no single Gravatar default, so we resolve this key ourselves.
-	 */
-	const DEFAULT_KEY = 'adminkit-generated';
-
 	/** Screen ids that carry the user profile / edit form. @var string[] */
 	const SCREENS = array( 'profile', 'user-edit' );
 
@@ -113,16 +106,6 @@ class AdminKit_Local_Avatars {
 		add_action( 'personal_options_update', array( __CLASS__, 'save_field' ) );
 		add_action( 'edit_user_profile_update', array( __CLASS__, 'save_field' ) );
 
-		// With generated avatars on, surface an AdminKit "Generated avatar" choice in
-		// Settings → Discussion (the avatar_defaults list) so the admin sees what's
-		// actually used as the fallback, rather than a stale "Mystery Person". The
-		// generated face is already served as the Gravatar d= default by
-		// filter_avatar_data(), so this is purely the Discussion-screen surface —
-		// the single behavioural switch stays `generated_avatars_enabled`.
-		if ( AdminKit_Settings::get( 'generated_avatars_enabled' ) ) {
-			add_filter( 'avatar_defaults', array( __CLASS__, 'register_default_avatar' ) );
-		}
-
 		// When an attachment is deleted, clear it from any user pointing at it so
 		// no profile is left referencing a dead id.
 		add_action( 'delete_attachment', array( __CLASS__, 'on_delete_attachment' ) );
@@ -142,14 +125,13 @@ class AdminKit_Local_Avatars {
 	 *
 	 *   1. A user with an uploaded local avatar gets its URL set directly (core
 	 *      short-circuits to it, skipping Gravatar).
-	 *   2. With `generated_avatars_enabled` on, a user with NO local avatar gets a
-	 *      friendly generated avatar passed only as the Gravatar `d=` *default* —
+	 *   2. A user with NO local avatar gets a friendly generated avatar passed only
+	 *      as the Gravatar `d=` *default* (automatic when local avatars are on) —
 	 *      $args['url'] is left unset, so a real Gravatar still wins and only a
 	 *      missing one falls back to the generated image.
 	 *
-	 * Otherwise $args is returned UNCHANGED (nothing set, `force_default` asked, or
-	 * the generated-avatars toggle off) — core proceeds to Gravatar / its own
-	 * default exactly as it would without us.
+	 * Otherwise $args is returned UNCHANGED (nothing set or `force_default` asked) —
+	 * core proceeds to Gravatar / its own default exactly as it would without us.
 	 *
 	 * @param array $args        get_avatar_data() args (size, url, found_avatar, …).
 	 * @param mixed $id_or_email User id, email, WP_User, WP_Post or WP_Comment.
@@ -158,17 +140,9 @@ class AdminKit_Local_Avatars {
 	public static function filter_avatar_data( $args, $id_or_email ) {
 		$size = isset( $args['size'] ) ? (int) $args['size'] : 96;
 
-		// Honour the explicit "show the default avatar" request — EXCEPT when the
-		// requested default is our own Settings → Discussion sentinel: there we must
-		// resolve the generated face ourselves (Gravatar wouldn't know the key, and
-		// WP renders the Discussion preview with force_default = true).
+		// Honour the explicit "show the default avatar" request unchanged — AdminKit
+		// no longer adds an entry to the Settings → Discussion default-avatar list.
 		if ( ! empty( $args['force_default'] ) ) {
-			if ( self::DEFAULT_KEY === ( isset( $args['default'] ) ? $args['default'] : '' )
-				&& AdminKit_Settings::get( 'generated_avatars_enabled' ) ) {
-				$user_id = self::resolve_user_id( $id_or_email );
-				$args['url']          = self::get_generated_avatar_url( $user_id, $size );
-				$args['found_avatar'] = true;
-			}
 			return $args;
 		}
 
@@ -189,14 +163,11 @@ class AdminKit_Local_Avatars {
 			}
 		}
 
-		// 2) No local avatar: optionally hand WordPress a generated avatar as the
-		//    Gravatar `d=` *default*. We deliberately leave $args['url'] UNSET so
-		//    core still builds the Gravatar URL — a real Gravatar therefore wins,
-		//    and only a missing one redirects to our generated image. With the
-		//    setting off, $args is returned untouched → Gravatar's own default.
-		if ( AdminKit_Settings::get( 'generated_avatars_enabled' ) ) {
-			$args['default'] = self::get_generated_avatar_url( $user_id, $size );
-		}
+		// 2) No local avatar: hand WordPress a generated avatar as the Gravatar `d=`
+		//    *default* — automatic whenever local avatars are on (no separate toggle).
+		//    $args['url'] is deliberately left UNSET so core still builds the Gravatar
+		//    URL: a real Gravatar wins, and only a missing one redirects to ours.
+		$args['default'] = self::get_generated_avatar_url( $user_id, $size );
 
 		return $args;
 	}
@@ -247,25 +218,6 @@ class AdminKit_Local_Avatars {
 		return esc_url_raw( (string) $url );
 	}
 
-	/**
-	 * Add an AdminKit "Generated avatar" entry to the Settings → Discussion default
-	 * avatar list (the `avatar_defaults` filter), shown only when generated avatars
-	 * are on. WP keys this list by the `default` arg it would pass to Gravatar; our
-	 * generated faces are per-user, so the key is a sentinel ('adminkit-generated')
-	 * and the visible label explains it. Selecting it is harmless — the generated
-	 * avatar is already the fallback via filter_avatar_data() regardless — it simply
-	 * lets the admin see the real default instead of a misleading "Mystery Person".
-	 *
-	 * @param array $defaults map of default-key => label.
-	 * @return array
-	 */
-	public static function register_default_avatar( $defaults ) {
-		if ( ! is_array( $defaults ) ) {
-			return $defaults;
-		}
-		$defaults[ self::DEFAULT_KEY ] = __( 'Generated avatar (AdminKit)', 'adminkit' );
-		return $defaults;
-	}
 
 	/**
 	 * The seed used to generate a user's avatar. A user who has "rolled" a random
@@ -431,7 +383,7 @@ class AdminKit_Local_Avatars {
 		$upload_id  = self::get_local_avatar_id( $user->ID );
 		$has_upload = $upload_id > 0;
 		$can_pick   = current_user_can( 'upload_files' );
-		$can_roll   = (bool) AdminKit_Settings::get( 'generated_avatars_enabled' );
+		$can_roll   = true; // generated avatars are automatic whenever local avatars are on
 
 		// Preview the EFFECTIVE avatar so the bubble is never blank: the uploaded
 		// image if any, otherwise whatever get_avatar() resolves to (a real
@@ -595,7 +547,7 @@ class AdminKit_Local_Avatars {
 		// "use a generated face" — so it BOTH stores the new seed AND clears any
 		// uploaded image, keeping the user's effective avatar coherent. Takes
 		// precedence over the upload id for exactly that reason.
-		if ( AdminKit_Settings::get( 'generated_avatars_enabled' ) && ! empty( $_POST[ self::SEED_FIELD ] ) ) {
+		if ( ! empty( $_POST[ self::SEED_FIELD ] ) ) {
 			$seed = self::sanitize_seed( wp_unslash( $_POST[ self::SEED_FIELD ] ) );
 			if ( '' !== $seed ) {
 				update_user_meta( $user_id, self::SEED_KEY, $seed );
@@ -709,7 +661,7 @@ class AdminKit_Local_Avatars {
 		// previewed face is the one that persists. The "Generate" control, the seed
 		// input and the danger dialog are also gated on this, so with the feature off
 		// the bootstrap stays exactly as before.
-		$generated = (bool) AdminKit_Settings::get( 'generated_avatars_enabled' );
+		$generated = true; // automatic whenever local avatars are on
 		$bootstrap = array(
 			'title'    => __( 'Select a profile picture', 'adminkit' ),
 			'button'   => __( 'Use this image', 'adminkit' ),

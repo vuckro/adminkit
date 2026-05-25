@@ -69,10 +69,11 @@ class AdminKit_Settings {
 			) );
 		}
 
-		// WordPress admin-bar logo: replace with the brand logo, with the site icon
-		// (favicon), or hide it. `logo` falls back to `favicon` (then WP's own) when
-		// no brand logo is configured. Read by AdminKit_Core_Branding. Unknown /
-		// legacy values degrade to `favicon`.
+		// The site-name brand mark (next to the site title; the top-left WordPress
+		// logo is always hidden): the brand logo, the site icon (favicon), or hidden.
+		// `logo` falls back to `favicon`, then to the bare site title, when no brand
+		// logo is configured. Read by AdminKit_Core_Branding. Unknown / legacy values
+		// degrade to `favicon`.
 		self::register( 'wp_logo', array(
 			'type'     => 'select',
 			'group'    => 'branding',
@@ -244,21 +245,12 @@ class AdminKit_Settings {
 		// Local avatars — ON by default. Lets users set a profile picture (a Media
 		// Library image) that replaces Gravatar. Read by AdminKit_Local_Avatars;
 		// non-destructive — with nothing set, Gravatar behaviour is 100% unchanged.
+		// Generated avatars ride along automatically (no separate toggle): when this
+		// is on, a user with an EMPTY avatar (no upload AND no real Gravatar) gets a
+		// friendly auto-generated face as the Gravatar `d=` default via a hosted
+		// generator (external service, disclosed in readme.txt; seed is NON-PII). A
+		// real Gravatar always wins, so existing avatars are never auto-replaced.
 		self::register( 'local_avatars_enabled', array(
-			'type'     => 'toggle',
-			'group'    => 'features',
-			'default'  => true,
-			'sanitize' => 'rest_sanitize_boolean',
-		) );
-
-		// Generated avatars — ON by default; only meaningful with local_avatars_enabled
-		// on. AUTO-generates a friendly avatar ONLY for users with an EMPTY avatar (no
-		// upload AND no real Gravatar) — a real Gravatar always wins, so existing
-		// avatars are never auto-replaced. Served as the Gravatar `d=` default via a
-		// hosted generator (external service, disclosed in readme.txt; seed is NON-PII).
-		// Replacing an existing photo is a deliberate, manual action (the "Generate"
-		// button + a danger confirm), never automatic.
-		self::register( 'generated_avatars_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
 			'default'  => true,
