@@ -71,6 +71,37 @@ body.adminkit #ame-quick-search .ame-qs-breadcrumb {
 	color: var(--ak-text-muted);
 }
 
+/* Header strip — AME ships a light #F9F9F9 panel with a #EBECF0 divider that
+   doesn't flip; raise it to the elevated surface + our border. */
+body.adminkit #ame-quick-search .ame-qs-header {
+	background: var(--ak-elevated);
+	border-bottom-color: var(--ak-border);
+}
+
+/* Active tab — AME hardcodes #2c3338 text + a #3877ED underline. Route the
+   label to the heading colour and the active border to the brand accent. */
+body.adminkit #ame-quick-search .ame-qs-tab-nav .current a {
+	color: var(--ak-heading);
+	border-color: var(--ak-primary);
+}
+
+/* Keyboard-selected result — AME uses the CSS SYSTEM colours
+   `SelectedItem`/`SelectedItemText`, ignoring the theme entirely. Pin it to a
+   subtle brand fill with heading-strength text so it reads in light + dark. */
+body.adminkit #ame-quick-search .ame-qs-selected-result {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-heading);
+}
+
+/* Crawler "let us index your menus" offer strip — AME's light blue info panel
+   (#e1effc / #72aee6) doesn't flip. It's an info/offer role, so map it to the
+   info-subtle fill + info border, muted body text. */
+body.adminkit #ame-quick-search #ame-qs-crawler-offer-main {
+	background: var(--ak-info-subtle);
+	color: var(--ak-text-muted);
+	border-color: var(--ak-info);
+}
+
 /* Scrollbar (the list scrolls within the popup's max-height) */
 body.adminkit #ame-quick-search,
 body.adminkit #ame-quick-search * {
