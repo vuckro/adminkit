@@ -47,11 +47,15 @@
 
 	var SKIP_TAGS = /^(IMG|SVG|PATH|G|USE|CANVAS|VIDEO|AUDIO|IFRAME|PICTURE|SOURCE|OBJECT|EMBED|MAP|AREA|HR|BR|SCRIPT|STYLE|LINK|TEMPLATE|NOSCRIPT)$/;
 	var HARD_SKIP = '#wpadminbar, #adminmenuwrap, #adminmenuback, #adminkit-app, .adminkit-app, [data-ak-no-auto]';
-	// Buttons + special inputs: their SURFACE is left alone (only brand-unified) —
-	// the hard guarantee a CTA's colours are never washed out. Text fields / selects
-	// are NOT here, so they get themed like any other surface.
-	var BUTTONS = 'button, a.button, a.btn, .button, .btn, .components-button, .MuiButton-root, .ant-btn, ' +
-		'input[type="submit"], input[type="button"], input[type="reset"], input[type="checkbox"], input[type="radio"], input[type="range"], input[type="color"]';
+	// Real action buttons: their surface is only ever darkened when NEUTRAL (white /
+	// grey secondary buttons, incl. Element-UI .el-button) — a vivid or tinted CTA
+	// fill is left untouched (it goes through the brand pass instead). That's the
+	// hard guarantee a CTA can't be washed out. Form fields / selects are NOT here,
+	// so they're themed like any surface.
+	var ACTION_BTN = 'button, a.button, a.btn, .button, .btn, .components-button, .MuiButton-root, .ant-btn, .el-button, ' +
+		'input[type="submit"], input[type="button"], input[type="reset"]';
+	// Tiny native controls — never touch their box colours (browser-rendered).
+	var SPECIAL_TYPES = /^(checkbox|radio|range|color|file)$/;
 
 	function parse( c ) {
 		if ( ! c ) { return null; }
@@ -207,18 +211,30 @@
 			var s = window.getComputedStyle( el );
 			var add = [];
 			var bgCls = null;
-			if ( ! ( el.closest && el.closest( BUTTONS ) ) ) {
-				if ( s.backgroundImage === 'none' ) {
-					bgCls = classify( parse( s.backgroundColor ), 'bg', el );
-					if ( bgCls ) { add.push( bgCls ); }
-				}
+			var btn = el.closest && el.closest( ACTION_BTN );
+			var special = el.tagName === 'INPUT' && SPECIAL_TYPES.test( el.type || '' );
+
+			// Background. Buttons & form fields are included now (so white secondary
+			// buttons / inputs get themed), but a button only ever takes a NEUTRAL
+			// surface — a vivid / tinted CTA fill is left for the brand pass.
+			if ( ! special && s.backgroundImage === 'none' ) {
+				bgCls = classify( parse( s.backgroundColor ), 'bg', el );
+				if ( bgCls && btn && bgCls !== C.surface && bgCls !== C.elevated ) { bgCls = null; }
+				if ( bgCls ) { add.push( bgCls ); }
+			}
+			// Text — on a button, only when we darkened its surface (keep CTA contrast).
+			if ( ! btn || bgCls === C.surface || bgCls === C.elevated ) {
 				var tc = classify( parse( s.color ), 'text', el );
 				if ( tc ) { add.push( tc ); }
-				var bd = classifyBorders( s );
-				if ( bd ) { add.push( bd ); }
-				if ( ( bgCls === C.surface || bgCls === C.elevated ) && lightShadow( s.boxShadow ) ) { add.push( C.noshadow ); }
 			}
+			// Borders (neutral/light only — coloured borders are left by classify).
+			var bd = classifyBorders( s );
+			if ( bd ) { add.push( bd ); }
+			// Light shadow on a darkened surface → drop the halo.
+			if ( ( bgCls === C.surface || bgCls === C.elevated ) && lightShadow( s.boxShadow ) ) { add.push( C.noshadow ); }
+			// Brand unification (all elements, incl. buttons).
 			if ( BRAND ) { brandClasses( s, add ); el.__akBrand = 1; }
+
 			for ( var i = 0; i < add.length; i++ ) { el.classList.add( add[ i ] ); }
 		} catch ( e ) { /* one odd element must never break the page or abort the scan */ }
 	}
