@@ -1,44 +1,16 @@
-/* Bricks builder — ESSENTIALS.
+/* Bricks builder — ESSENTIALS (brand-logo carrier).
 
-   Loaded in the builder MAIN frame ALWAYS, independent of the opt-in "Bricks
-   builder" restyle. The dynamic brand-logo CSS (toolbar favicon + preloader) is
-   attached to THIS handle as inline CSS from class-bricks.php. Zero !important.
+   Loaded in the builder MAIN frame ALWAYS (independent of the opt-in "Bricks
+   builder" restyle), so the brand logo — toolbar favicon + preloader — reliably
+   shows. The dynamic logo CSS is attached to THIS handle as inline CSS from
+   class-bricks.php::builder_logo_css(); this real stylesheet is the carrier (a
+   src=false handle can be dropped in the builder, an enqueued file is not).
 
-   DARK SCROLLBARS — Bricks's dark builder paints native LIGHT scrollbars on its
-   panels. Because this sheet loads ONLY inside the builder, we target the
-   scrollbar pseudo-elements DIRECTLY — no `body[data-builder-mode]` prefix (that
-   attribute may not be present, which is exactly what stopped the earlier rules
-   from ever applying). Colours are FIXED dark: the builder is a dark app, and the
-   only "dark" var (var(--background)) resolves to the *site* background, which is
-   light on a light-mode site even while the builder chrome is dark. The thumb is a
-   translucent white so it reads on any dark panel shade.
+   No rules live here on purpose — the logo CSS is the inline payload.
 
-   The LEFT Structure panel scrolls on #bricks-structure, which Bricks styles with
-   an ID-level scrollbar rule; we match that ID so we tie on specificity and win by
-   loading after Bricks (this sheet enqueues at priority 9999). */
-
-/* ── Every scrollbar in the builder ───────────────────────────────────────── */
-:root { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.26) #1e1e1e; }
-::-webkit-scrollbar { width: 12px; height: 12px; background: #1e1e1e; }
-::-webkit-scrollbar-track { background: #1e1e1e; }
-::-webkit-scrollbar-thumb {
-	background: rgba(255, 255, 255, 0.26);
-	border-radius: 8px;
-	border: 3px solid #1e1e1e;
-	background-clip: padding-box;
-}
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.38); }
-::-webkit-scrollbar-corner { background: #1e1e1e; }
-
-/* ── Structure panel (Bricks styles its scrollbar at ID level — match to win) ─ */
-#bricks-structure { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.26) #1e1e1e; }
-#bricks-structure::-webkit-scrollbar { width: 12px; height: 12px; background: #1e1e1e; }
-#bricks-structure::-webkit-scrollbar-track { background: #1e1e1e; }
-#bricks-structure::-webkit-scrollbar-thumb {
-	background: rgba(255, 255, 255, 0.26);
-	border-radius: 8px;
-	border: 3px solid #1e1e1e;
-	background-clip: padding-box;
-}
-#bricks-structure::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.38); }
-#bricks-structure::-webkit-scrollbar-corner { background: #1e1e1e; }
+   NOTE — builder CHROME scrollbar theming was abandoned (intentionally). Bricks's
+   builder panels use a CUSTOM (non-native) scrollbar, so `::-webkit-scrollbar` /
+   `scrollbar-color` never reach it — unlike the Gutenberg canvas, which is a native
+   iframe scrollbar that AdminKit does theme (see gutenberg/css/canvas.css). Theming
+   Bricks's custom scrollbar would mean chasing its private DOM and isn't worth the
+   fragility. */

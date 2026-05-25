@@ -487,14 +487,14 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
 		if ( '' !== $logo ) {
-			// Bricks's own proven preloader structure: hide Bricks's logo/title and paint
-			// the brand logo on `.bricks-loading-inner::before`, centred by the inner's
-			// `place-items:center` (no drift). `contain` = the WHOLE logo, never cropped.
-			// To make the rounded corners VISIBLE without a filled card ("no weird
-			// background"), the box wears a thin rounded BORDER (a transparent-fill frame)
-			// — the border traces the radius, the splash shows through inside it.
-			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
+			// Paint the brand logo on `.bricks-loading-inner::before`, centred by the
+			// inner's `place-items:center`. HIDE EVERY real child of the inner wrapper
+			// (`> *`) — Bricks's default mark sits in a child whose class we don't need to
+			// guess (it was NOT .bricks-logo-animated); the ::before pseudo isn't a child,
+			// so our logo survives. `contain` = the whole logo, never cropped; a thin
+			// rounded BORDER (transparent fill, no card) makes the radius visible.
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
+			$css .= '#bricks-preloader .bricks-loading-inner > *{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner::before{'
 				. 'content:"";box-sizing:border-box;width:16rem;aspect-ratio:5/2;max-width:72vw;padding:1.25rem;'
 				. 'border:1px solid rgba(255,255,255,0.16);border-radius:16px;'
