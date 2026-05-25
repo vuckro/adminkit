@@ -105,6 +105,7 @@ class AdminKit_Core_Branding {
 			return '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon{width:22px}'
 				. '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon::before{'
 				. 'content:"";display:block;width:22px;height:22px;top:0;'
+				. 'border-radius:var(--ak-radius-s,5px);'
 				. 'background:' . $favicon . ' center/contain no-repeat}'
 				// Hide the now-redundant site-name glyph: once with the .wp-admin
 				// prefix (to beat WP's wp-admin rule) and once plain (front end).
@@ -134,14 +135,20 @@ class AdminKit_Core_Branding {
 		if ( '' === $dark ) {
 			$dark = $light;
 		}
-		// Full menu width, the logo contained within the card (auto width, 62% of
-		// the card height) so any aspect ratio is centred with breathing room.
-		return '#adminmenu::before{content:"";display:block;height:54px;margin:10px 8px;'
-			. 'background:var(--ak-elevated) ' . $light . ' center/auto 62% no-repeat;'
+		// A near-full-width card; the logo is CONTAINED within an 8px inset
+		// (background-size:contain + background-origin:content-box), so ANY logo —
+		// wide, tall, square, transparent — is centred and fully visible without
+		// clipping, with consistent breathing room. The card colour + border fill
+		// the whole box.
+		return '#adminmenu::before{content:"";display:block;box-sizing:border-box;'
+			. 'height:60px;margin:10px 6px;padding:8px;'
+			. 'background-color:var(--ak-elevated);background-image:' . $light . ';'
+			. 'background-repeat:no-repeat;background-position:center;'
+			. 'background-size:contain;background-origin:content-box;'
 			. 'border:1px solid var(--ak-border);border-radius:var(--ak-radius-m)}'
 			. ':root[data-adminkit-theme="dark"] #adminmenu::before{background-image:' . $dark . '}'
-			// Collapsed menu (folded / responsive auto-fold): a compact square card.
-			. '.folded #adminmenu::before,.auto-fold.folded #adminmenu::before{height:34px;margin:8px 4px;background-size:auto 64%}';
+			// Collapsed menu (folded / responsive auto-fold): a compact card, same rules.
+			. '.folded #adminmenu::before,.auto-fold.folded #adminmenu::before{height:36px;margin:8px 4px;padding:5px}';
 	}
 
 	/**
