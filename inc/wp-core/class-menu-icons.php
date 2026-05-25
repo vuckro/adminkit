@@ -137,8 +137,11 @@ class AdminKit_Core_Menu_Icons {
 			if ( '' === $svg || ! is_string( $svg ) ) {
 				continue;
 			}
-			$css .= '#wpadminbar #' . $id . ' .ab-icon::before{'
-				. 'content:"";display:block;width:20px;height:20px;margin:6px 0;'
+			// Reset WP's icon padding + give the box the bar height, then centre a
+			// 20px masked ::before in it (margin:6px → 6+20+6 = the 32px bar).
+			$sel  = '#wpadminbar #' . $id . ' .ab-icon';
+			$css .= $sel . '{height:32px;padding:0}';
+			$css .= $sel . '::before{content:"";display:block;width:20px;height:20px;margin:6px 0;'
 				. self::mask( $svg )
 				. '}';
 		}

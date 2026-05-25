@@ -86,10 +86,10 @@ class AdminKit_Settings {
 		self::register( 'logo_size', array(
 			'type'     => 'number',
 			'group'    => 'branding',
-			'default'  => 28,
+			'default'  => 30,
 			'sanitize' => static function ( $v ) {
 				$n = absint( $v );
-				return max( 16, min( 32, 0 !== $n ? $n : 28 ) );
+				return max( 16, min( 32, 0 !== $n ? $n : 30 ) );
 			},
 		) );
 	}

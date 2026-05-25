@@ -33,7 +33,7 @@
 			dark:  ( D.logos && D.logos.dark ) || ''
 		},
 		wpLogo: D.wpLogo || 'favicon',  // admin-bar WP logo: logo | favicon | hide
-		logoSize: D.logoSize || 28      // admin-bar logo size in px
+		logoSize: D.logoSize || 30      // admin-bar logo size in px
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;

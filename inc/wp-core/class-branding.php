@@ -135,10 +135,14 @@ class AdminKit_Core_Branding {
 			$dark = $light;
 		}
 		$px  = (int) $size . 'px';
+		$top = (int) max( 0, floor( ( 32 - (int) $size ) / 2 ) ) . 'px'; // centre in the 32px bar
 		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon';
-		return $sel . '{width:' . $px . '}'
-			. $sel . '::before{content:"";display:block;width:' . $px . ';height:' . $px . ';top:0;'
-			. 'border-radius:var(--ak-radius-s,5px);'
+		// Reset WP's icon padding (it makes a sized chip overflow the bar), give the
+		// .ab-icon the bar height, then centre a bordered, rounded chip in it.
+		return $sel . '{width:' . $px . ';height:32px;padding:0}'
+			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:' . $px . ';height:' . $px . ';'
+			. 'margin:' . $top . ' 0;top:0;'
+			. 'border:1px solid var(--ak-border,rgba(140,140,140,.35));border-radius:var(--ak-radius-s,6px);'
 			. 'background:' . $light . ' center/contain no-repeat}'
 			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{background-image:' . $dark . '}'
 			. self::hide_site_name_glyph();
@@ -156,11 +160,13 @@ class AdminKit_Core_Branding {
 		if ( '' === $favicon ) {
 			return '';
 		}
-		$px = (int) $size . 'px';
-		return '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon{width:' . $px . '}'
-			. '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon::before{'
-			. 'content:"";display:block;width:' . $px . ';height:' . $px . ';top:0;'
-			. 'border-radius:var(--ak-radius-s,5px);'
+		$px  = (int) $size . 'px';
+		$top = (int) max( 0, floor( ( 32 - (int) $size ) / 2 ) ) . 'px'; // centre in the 32px bar
+		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon';
+		return $sel . '{width:' . $px . ';height:32px;padding:0}'
+			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:' . $px . ';height:' . $px . ';'
+			. 'margin:' . $top . ' 0;top:0;'
+			. 'border:1px solid var(--ak-border,rgba(140,140,140,.35));border-radius:var(--ak-radius-s,6px);'
 			. 'background:' . $favicon . ' center/contain no-repeat}'
 			. self::hide_site_name_glyph();
 	}
