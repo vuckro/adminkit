@@ -26,8 +26,8 @@
  * apply in every builder mode.
  *
  * No --ak-* tokens here, and no !important (keeps the adapter audit at Tier A).
- * The CodeMirror block is a deliberate fixed-palette syntax theme (Catppuccin
- * Mocha) — its hex literals are code-content colours, not UI chrome.
+ * The CodeMirror code-editor block is themed from these same WaasKit provider
+ * variables (see its section header) so it stays consistent in light AND dark.
  */
 
 /* ============================================================
@@ -222,50 +222,104 @@
 
 
 /* ============================================================
-   CODE EDITOR — CodeMirror (Catppuccin Mocha)
-   A fixed-palette syntax theme: hex values are code-content colours,
-   deliberately not tokenised.
+   CODE EDITOR — CodeMirror (code controls: Code element, Custom CSS…)
+   ------------------------------------------------------------
+   Bricks picks the CodeMirror theme from its OWN builder mode, set at
+   instantiation (main.min.js): `theme = (bricks.mode === 'dark') ? 'one-dark'
+   : 'default'`. CodeMirror writes that as a class on the `.CodeMirror` node —
+   `cm-s-one-dark` in dark mode, `cm-s-default` otherwise (light AND custom).
+   So we scope by that class, NOT by [data-builder-mode]:
+
+     • LIGHT  → `.cm-s-default`  is present  → we re-skin it to AdminKit tones.
+     • DARK   → `.cm-s-one-dark` is present  → Bricks already ships a coherent
+                one-dark syntax theme; we leave its `.cm-*` colours alone and
+                only align its CHROME (surface/gutters) to the builder panels.
+
+   No `!important`: the builder body always carries `data-builder-mode`, so
+   `body[data-builder-mode]` (0,1,1) prefixes every rule. That lifts our
+   selectors one notch above Bricks's `.cm-s-default .cm-keyword` (0,2,0 → ours
+   0,2,1), `.CodeMirror` (0,1,0), `.CodeMirror-focused .CodeMirror-selected`
+   (0,2,0 → ours 0,3,1) and `.cm-s-one-dark .CodeMirror-gutters` (0,2,0 → ours
+   0,2,1) — winning the cascade purely on specificity.
+
+   Tokens: this file is the documented `--ak-*` exception — the builder has no
+   admin-bar dispatch, so the --ak-* layer never loads here; the live WaasKit
+   provider variables do. We therefore map to those directly (--surface, --text,
+   --primary…), exactly like the rest of this sheet. They flip with the builder's
+   own light/dark for free.
+
+   FLASH on open — cause & fix. The code editor is instantiated late (only when a
+   code control is opened), but builder.css is a real <link> loaded UP-FRONT
+   (enqueue_builder, priority 9999), so its rules are already parsed before that.
+   The old block keyed on [data-builder-mode="custom"] .CodeMirror — a selector
+   that matches a DIFFERENT axis than the theme class CodeMirror actually writes
+   (custom mode renders `cm-s-default`, not a dark editor), so at first layout the
+   raw Bricks theme painted and our override never co-resolved → the visible
+   glitch. Keying on the SAME class Bricks sets at instantiation means our rule
+   matches the `.CodeMirror` node on its very first layout, in the same paint as
+   Bricks's base rule — no intermediate unstyled frame. Pure-CSS, no JS hook.
    ============================================================ */
-[data-builder-mode="custom"] .CodeMirror {
-	background: #1e1e2e;
-	color: #cdd6f4;
+
+/* ---- LIGHT mode (cm-s-default): full AdminKit re-skin ---- */
+body[data-builder-mode] .CodeMirror.cm-s-default {
+	background: var(--surface);
+	color: var(--text);
 }
-[data-builder-mode="custom"] .CodeMirror.CodeMirror-focused .CodeMirror-cursor { border-left-color: #f5e0dc; }
-[data-builder-mode="custom"] .CodeMirror .CodeMirror-selected              { background: #45475a; }
-[data-builder-mode="custom"] .CodeMirror .CodeMirror-cursor                { border-left: 2px solid #f5e0dc; }
-[data-builder-mode="custom"] .CodeMirror .CodeMirror-linenumber            { color: #6c7086; }
-[data-builder-mode="custom"] .CodeMirror .CodeMirror-activeline-background { background: #313244; }
-[data-builder-mode="custom"] .CodeMirror .CodeMirror-matchingbracket       { color: #f9e2af; background: #45475a; font-weight: 600; }
-[data-builder-mode="custom"] .CodeMirror .CodeMirror-nonmatchingbracket    { color: #f38ba8; }
-[data-builder-mode="custom"] .CodeMirror .CodeMirror-gutters               { background: #181825; border-right: 1px solid #313244; }
+body[data-builder-mode] .cm-s-default .CodeMirror-gutters {
+	background: var(--elevated);
+	border-right: 1px solid var(--border);
+}
+body[data-builder-mode] .cm-s-default .CodeMirror-linenumber { color: var(--text-muted); }
+body[data-builder-mode] .cm-s-default .CodeMirror-cursor     { border-left-color: var(--text); }
 
-[data-builder-mode="custom"] .CodeMirror .cm-comment     { color: #6c7086; font-style: italic; }
-[data-builder-mode="custom"] .CodeMirror .cm-bracket,
-[data-builder-mode="custom"] .CodeMirror .cm-punctuation { color: #cdd6f4; }
-[data-builder-mode="custom"] .CodeMirror .cm-operator    { color: #94e2d5; }
+/* Selection — translucent primary so the highlighted text stays readable. */
+body[data-builder-mode] .cm-s-default .CodeMirror-selected,
+body[data-builder-mode] .cm-s-default.CodeMirror-focused .CodeMirror-selected,
+body[data-builder-mode] .cm-s-default .CodeMirror-focused .CodeMirror-selected,
+body[data-builder-mode] .cm-s-default .CodeMirror-line::selection,
+body[data-builder-mode] .cm-s-default .CodeMirror-line > span::selection,
+body[data-builder-mode] .cm-s-default .CodeMirror-line > span > span::selection {
+	background: var(--primary-t-1);
+}
 
-[data-builder-mode="custom"] .CodeMirror .cm-def,
-[data-builder-mode="custom"] .CodeMirror .cm-qualifier,
-[data-builder-mode="custom"] .CodeMirror .cm-keyword     { color: #cba6f7; }
-[data-builder-mode="custom"] .CodeMirror .cm-def,
-[data-builder-mode="custom"] .CodeMirror .cm-keyword     { font-weight: 600; }
+/* Active line — a faint neutral wash. */
+body[data-builder-mode] .cm-s-default .CodeMirror-activeline-background {
+	background: var(--elevated);
+}
 
-[data-builder-mode="custom"] .CodeMirror .cm-variable    { color: #89b4fa; }
-[data-builder-mode="custom"] .CodeMirror .cm-variable-2  { color: #74c7ec; }
-[data-builder-mode="custom"] .CodeMirror .cm-variable-3  { color: #b4befe; }
+/* Matching bracket — primary, with a subtle underline cue. */
+body[data-builder-mode] .cm-s-default .CodeMirror-matchingbracket {
+	color: var(--primary);
+	text-decoration: underline;
+}
 
-[data-builder-mode="custom"] .CodeMirror .cm-tag,
-[data-builder-mode="custom"] .CodeMirror .cm-builtin     { color: #f5c2e7; }
-[data-builder-mode="custom"] .CodeMirror .cm-meta        { color: #f2cdcd; }
+/* Syntax tokens → AdminKit semantic palette. */
+body[data-builder-mode] .cm-s-default .cm-comment                   { color: var(--text-muted); font-style: italic; }
+body[data-builder-mode] .cm-s-default .cm-string,
+body[data-builder-mode] .cm-s-default .cm-string-2                  { color: var(--success); }
+body[data-builder-mode] .cm-s-default .cm-keyword,
+body[data-builder-mode] .cm-s-default .cm-atom                      { color: var(--primary); }
+body[data-builder-mode] .cm-s-default .cm-number                    { color: var(--warning); }
+body[data-builder-mode] .cm-s-default .cm-tag,
+body[data-builder-mode] .cm-s-default .cm-attribute,
+body[data-builder-mode] .cm-s-default .cm-def,
+body[data-builder-mode] .cm-s-default .cm-variable-2               { color: var(--info); }
+body[data-builder-mode] .cm-s-default .cm-property,
+body[data-builder-mode] .cm-s-default .cm-variable,
+body[data-builder-mode] .cm-s-default .cm-operator,
+body[data-builder-mode] .cm-s-default .cm-bracket,
+body[data-builder-mode] .cm-s-default .cm-punctuation             { color: var(--text); }
+body[data-builder-mode] .cm-s-default .cm-meta,
+body[data-builder-mode] .cm-s-default .cm-qualifier               { color: var(--text-muted); }
+body[data-builder-mode] .cm-s-default .cm-link                     { color: var(--info); }
 
-[data-builder-mode="custom"] .CodeMirror .cm-property,
-[data-builder-mode="custom"] .CodeMirror .cm-attribute   { color: #fab387; }
-
-[data-builder-mode="custom"] .CodeMirror .cm-string      { color: #a6e3a1; }
-[data-builder-mode="custom"] .CodeMirror .cm-string-2    { color: #94e2d5; }
-
-[data-builder-mode="custom"] .CodeMirror .cm-number,
-[data-builder-mode="custom"] .CodeMirror .cm-unit        { color: #f9e2af; }
-[data-builder-mode="custom"] .CodeMirror .cm-atom        { color: #fab387; }
-
-[data-builder-mode="custom"] .CodeMirror .cm-error       { color: #f38ba8; text-decoration: underline wavy; }
+/* ---- DARK mode (cm-s-one-dark): keep Bricks's syntax, align the CHROME ----
+   Only surface + gutters, so the editor sits flush with the AdminKit-toned
+   panels. `.cm-*` syntax colours are intentionally NOT touched here. */
+body[data-builder-mode] .CodeMirror.cm-s-one-dark {
+	background: var(--surface);
+}
+body[data-builder-mode] .cm-s-one-dark .CodeMirror-gutters {
+	background: var(--elevated);
+	border-right: 1px solid var(--border);
+}
