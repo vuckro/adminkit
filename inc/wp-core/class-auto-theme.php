@@ -75,6 +75,21 @@ class AdminKit_Auto_Theme {
 			return;
 		}
 
+		// Performance gate — only load on a *plugin's own* admin pages. Their
+		// settings / app screens carry '_page_' in the screen id (toplevel_page_*,
+		// {parent}_page_*). WP-core screens (dashboard, posts, options, users,
+		// CPT / taxonomy tables…) don't — and AdminKit already themes those fully,
+		// so the detector would be pure wasted work there. AdminKit's own page is
+		// themed too. (The native-adapter skip is layered on top later.)
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		$id     = $screen ? (string) $screen->id : '';
+		if ( '' === $id || false === strpos( $id, '_page_' ) ) {
+			return;
+		}
+		if ( 'toplevel_page_' . AdminKit_Settings_Page::SLUG === $id ) {
+			return;
+		}
+
 		$css_src  = 'assets/css/wp-core/auto-theme.css';
 		$js_src   = 'assets/js/wp-core/auto-theme.js';
 		$css_path = ADMINKIT_PATH . $css_src;

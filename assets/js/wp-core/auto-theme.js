@@ -136,10 +136,14 @@
 	function resolveToken( name ) {
 		var probe = document.createElement( 'span' );
 		probe.style.cssText = 'color:var(' + name + ');position:absolute;left:-9999px;top:-9999px';
-		document.body.appendChild( probe );
-		var c = parse( window.getComputedStyle( probe ).color );
-		document.body.removeChild( probe );
-		return c;
+		try {
+			document.body.appendChild( probe );
+			return parse( window.getComputedStyle( probe ).color );
+		} catch ( e ) {
+			return null;
+		} finally {
+			if ( probe.parentNode ) { probe.parentNode.removeChild( probe ); }
+		}
 	}
 	function brandCandidate( c ) {
 		if ( ! c || c.a < 0.7 ) { return false; }
@@ -151,20 +155,24 @@
 	function quant( c ) { return ( c.r >> 4 ) + ',' + ( c.g >> 4 ) + ',' + ( c.b >> 4 ); }
 
 	function detectBrand( root ) {
-		var votes = {}, rep = {};
-		function vote( c, w ) {
-			if ( ! brandCandidate( c ) ) { return; }
-			var k = quant( c );
-			votes[ k ] = ( votes[ k ] || 0 ) + w;
-			if ( ! rep[ k ] ) { rep[ k ] = c; }
+		try {
+			var votes = {}, rep = {};
+			var vote = function ( c, w ) {
+				if ( ! brandCandidate( c ) ) { return; }
+				var k = quant( c );
+				votes[ k ] = ( votes[ k ] || 0 ) + w;
+				if ( ! rep[ k ] ) { rep[ k ] = c; }
+			};
+			var btns = root.querySelectorAll( 'button, [type="submit"], .button-primary, a.button-primary, .MuiButton-contained, .MuiButton-containedPrimary, .components-button.is-primary, [class*="-primary"]' );
+			for ( var i = 0; i < btns.length; i++ ) { vote( parse( window.getComputedStyle( btns[ i ] ).backgroundColor ), 2 ); }
+			var links = root.querySelectorAll( 'a' );
+			for ( var j = 0; j < links.length && j < 400; j++ ) { vote( parse( window.getComputedStyle( links[ j ] ).color ), 1 ); }
+			var bestK = null, best = 0;
+			for ( var k in votes ) { if ( votes[ k ] > best ) { best = votes[ k ]; bestK = k; } }
+			return ( bestK && best >= T.brandMinVotes ) ? rep[ bestK ] : null;
+		} catch ( e ) {
+			return null;
 		}
-		var btns = root.querySelectorAll( 'button, [type="submit"], .button-primary, a.button-primary, .MuiButton-contained, .MuiButton-containedPrimary, .components-button.is-primary, [class*="-primary"]' );
-		for ( var i = 0; i < btns.length; i++ ) { vote( parse( window.getComputedStyle( btns[ i ] ).backgroundColor ), 2 ); }
-		var links = root.querySelectorAll( 'a' );
-		for ( var j = 0; j < links.length && j < 400; j++ ) { vote( parse( window.getComputedStyle( links[ j ] ).color ), 1 ); }
-		var bestK = null, best = 0;
-		for ( var k in votes ) { if ( votes[ k ] > best ) { best = votes[ k ]; bestK = k; } }
-		return ( bestK && best >= T.brandMinVotes ) ? rep[ bestK ] : null;
 	}
 	function brandClasses( s, add ) {
 		if ( ! BRAND ) { return; }
@@ -191,29 +199,31 @@
 		el.__akAuto = 1;
 		if ( shouldHardSkip( el ) ) { return; }
 
-		var s = window.getComputedStyle( el );
-		var add = [];
-		var bgCls = null;
-		var control = el.closest && el.closest( CONTROL );
+		try {
+			var s = window.getComputedStyle( el );
+			var add = [];
+			var bgCls = null;
+			var control = el.closest && el.closest( CONTROL );
 
-		if ( ! control ) {
-			if ( s.backgroundImage === 'none' ) {
-				var bg = parse( s.backgroundColor );
-				if ( bg && bg.a >= 0.9 ) { bgCls = bgClass( el, bg ); if ( bgCls ) { add.push( bgCls ); } }
+			if ( ! control ) {
+				if ( s.backgroundImage === 'none' ) {
+					var bg = parse( s.backgroundColor );
+					if ( bg && bg.a >= 0.9 ) { bgCls = bgClass( el, bg ); if ( bgCls ) { add.push( bgCls ); } }
+				}
+				var col = parse( s.color );
+				if ( col && col.a >= 0.5 && saturation( col ) < T.textSatMax ) {
+					var lt = luminance( col );
+					if ( lt <= T.textLum ) { add.push( C.text ); }
+					else if ( lt <= T.mutedLumMax ) { add.push( C.muted ); }
+				}
+				if ( subtleBorder( s ) ) { add.push( C.bd ); }
+				if ( ( bgCls === C.surface || bgCls === C.elevated ) && lightShadow( s.boxShadow ) ) { add.push( C.noshadow ); }
 			}
-			var col = parse( s.color );
-			if ( col && col.a >= 0.5 && saturation( col ) < T.textSatMax ) {
-				var lt = luminance( col );
-				if ( lt <= T.textLum ) { add.push( C.text ); }
-				else if ( lt <= T.mutedLumMax ) { add.push( C.muted ); }
-			}
-			if ( subtleBorder( s ) ) { add.push( C.bd ); }
-			if ( ( bgCls === C.surface || bgCls === C.elevated ) && lightShadow( s.boxShadow ) ) { add.push( C.noshadow ); }
-		}
 
-		if ( BRAND ) { brandClasses( s, add ); el.__akBrand = 1; }
+			if ( BRAND ) { brandClasses( s, add ); el.__akBrand = 1; }
 
-		for ( var i = 0; i < add.length; i++ ) { el.classList.add( add[ i ] ); }
+			for ( var i = 0; i < add.length; i++ ) { el.classList.add( add[ i ] ); }
+		} catch ( e ) { /* one odd element must never break the page or abort the scan */ }
 	}
 
 	// Brand-only re-pass, for when the brand is detected AFTER the first scan
@@ -222,9 +232,11 @@
 		if ( el.nodeType !== 1 || el.__akBrand ) { return; }
 		el.__akBrand = 1;
 		if ( shouldHardSkip( el ) ) { return; }
-		var add = [];
-		brandClasses( window.getComputedStyle( el ), add );
-		for ( var i = 0; i < add.length; i++ ) { el.classList.add( add[ i ] ); }
+		try {
+			var add = [];
+			brandClasses( window.getComputedStyle( el ), add );
+			for ( var i = 0; i < add.length; i++ ) { el.classList.add( add[ i ] ); }
+		} catch ( e ) { /* never let one element break the brand pass */ }
 	}
 	function brandPass( root ) {
 		if ( ! BRAND || ! root || root.nodeType !== 1 ) { return; }
