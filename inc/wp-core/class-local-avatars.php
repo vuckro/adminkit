@@ -480,7 +480,7 @@ class AdminKit_Local_Avatars {
 							</button>
 							<?php if ( $can_roll ) : ?>
 								<p class="adminkit-local-avatar__actions">
-									<button type="button" class="button button-primary adminkit-local-avatar__action adminkit-local-avatar__generate" id="adminkit-local-avatar-generate">
+									<button type="button" class="button adminkit-local-avatar__action adminkit-local-avatar__generate" id="adminkit-local-avatar-generate">
 										<?php echo self::icon_refresh(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, self-contained SVG markup. ?>
 										<span><?php echo esc_html__( 'Generate a random avatar', 'adminkit' ); ?></span>
 									</button>

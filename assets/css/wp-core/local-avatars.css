@@ -111,13 +111,13 @@ button.adminkit-local-avatar__media:focus-visible .adminkit-local-avatar__overla
 	opacity: 1;
 }
 
-/* Actions row beneath the avatar. */
+/* Actions row beneath the avatar — a touch more breathing room above it. */
 .adminkit-local-avatar__actions {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	gap: var(--ak-space-s, 8px);
-	margin: var(--ak-space-s, 8px) 0 var(--ak-space-2xs, 4px);
+	margin: var(--ak-space-l, 16px) 0 var(--ak-space-2xs, 4px);
 }
 
 /* "Generate a random avatar" is a real button in the actions row — it carries the
