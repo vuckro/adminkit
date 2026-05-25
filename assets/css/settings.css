@@ -173,14 +173,39 @@
    surface (the .ak-rows card). Floating / any-surface hovers (dropdowns, menus)
    use the translucent --ak-hover-bg instead, which stays visible on elevated. */
 .adminkit-app .ak-row:hover { background: var(--ak-elevated); }
-/* Nested feature (e.g. mShots under Post previews): indented; muted + locked
-   when its parent is off. */
-.adminkit-app .ak-row--child { padding-left: 34px; }
-/* Dimmed when switched off (is-off — switch stays clickable to re-enable) or
-   locked (is-disabled — a child whose parent is off; switch disabled below). */
-.adminkit-app .ak-row.is-off,
-.adminkit-app .ak-row.is-disabled { opacity: .5; }
-.adminkit-app .ak-row.is-disabled .ak-switch { pointer-events: none; }
+/* Nested feature (e.g. mShots under Post previews) — clearly a child of the row
+   above: indented into a gutter with a subtle L-shaped connector rail. The rail
+   is a pseudo-element drawn in the gutter (a vertical drop + a horizontal tick
+   into the label), so it stays crisp even when the row content is dimmed. */
+.adminkit-app .ak-row--child {
+	position: relative;
+	padding-left: 38px;
+}
+.adminkit-app .ak-row--child::before {
+	content: "";
+	position: absolute;
+	left: 18px;
+	top: 0;
+	width: 9px;
+	height: 50%;                                   /* drop from the top edge to the vertical centre */
+	border-left: 1.5px solid var(--ak-border-strong);
+	border-bottom: 1.5px solid var(--ak-border-strong);
+	border-bottom-left-radius: 6px;
+	pointer-events: none;
+}
+
+/* Dim states. The dim is applied to the row CONTENT (label + switch), never the
+   connector rail, so a locked child still reads as nested. Two cases:
+   • is-off  — the feature is simply switched off; its switch stays operable so it
+     can be turned back on.
+   • is-locked — a child whose parent is off: dimmed AND non-operable (the input
+     is also `disabled` in JS; pointer-events here blocks the label hit area too).
+   Snaps back the instant the parent is on again (the classes are toggled live). */
+.adminkit-app .ak-row.is-off .ak-row__main,
+.adminkit-app .ak-row.is-off .ak-switch,
+.adminkit-app .ak-row.is-locked .ak-row__main,
+.adminkit-app .ak-row.is-locked .ak-switch { opacity: .5; }
+.adminkit-app .ak-row.is-locked .ak-switch { pointer-events: none; }
 .adminkit-app .ak-row__main {
 	flex: 1;
 	min-width: 0;
@@ -693,5 +718,7 @@
 	background: var(--ak-primary);
 }
 
-/* Plugin row chips (type / inactive) ------------------------------------- */
-.adminkit-app .ak-tags { display: flex; gap: 6px; margin-top: 5px; }
+/* Inactive plugin row — no toggle; an "Inactive" pill sits in the control slot
+   (right), mirroring the switch position on active rows. The label stays at full
+   strength (the pill alone signals the state, so the name stays legible). */
+.adminkit-app .ak-row__state { margin-left: auto; }

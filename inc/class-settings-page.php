@@ -287,7 +287,7 @@ class AdminKit_Settings_Page {
 				'pluginsIntro'      => __( 'Turn AdminKit\'s styling on or off per supported plugin. Dimmed rows aren\'t active on this site.', 'adminkit' ),
 				'inactive'          => __( 'Not active', 'adminkit' ),
 				'themesLabel'       => __( 'Themes', 'adminkit' ),
-				'wpLogoLabel'       => __( 'WordPress logo (admin bar)', 'adminkit' ),
+				'wpLogoLabel'       => __( 'WordPress logo', 'adminkit' ),
 				'wpLogoBrand'       => __( 'Logo', 'adminkit' ),
 				'wpLogoFavicon'     => __( 'Favicon', 'adminkit' ),
 				'wpLogoHide'        => __( 'Hide', 'adminkit' ),
@@ -351,7 +351,7 @@ class AdminKit_Settings_Page {
 				/* translators: %d: total number of feature modules. */
 				'hint'  => sprintf( _n( 'of %d module on', 'of %d modules on', $total, 'adminkit' ), $total ),
 				'icon'  => 'features',
-				'tab'   => 'features',
+				'tab'   => 'settings',
 			),
 		);
 

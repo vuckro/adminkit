@@ -3,7 +3,7 @@
  *
  * Renders three tabs (Dashboard / Tokens / Features) into
  * #adminkit-app from the data PHP hands over in window.AdminKitData. Tabs are
- * pill buttons driven by the URL hash (#apparence / #features / …).
+ * pill buttons driven by the URL hash (#apparence / #settings / …).
  *
  * The Tokens tab is a STATIC reference for now: it lists every semantic
  * colour role (swatch + the --ak token and the provider var / primitive it maps
@@ -98,7 +98,7 @@
 	var tabs = [
 		{ id: 'dashboard', label: I.dashboard, icon: ICONS.dashboard, build: buildDashboard },
 		{ id: 'apparence', label: I.design, icon: ICONS.colours, build: buildDesign },
-		{ id: 'features', label: I.features, icon: ICONS.features, build: buildFeatures },
+		{ id: 'settings', label: I.features, icon: ICONS.features, build: buildFeatures },
 		{ id: 'plugins', label: I.plugins, icon: ICONS.plugins, build: buildPlugins }
 	];
 	var activeId = tabs[ 0 ].id;
@@ -152,7 +152,7 @@
 		} );
 	}
 
-	// URL hash reflects the active tab (#apparence / #features).
+	// URL hash reflects the active tab (#apparence / #settings).
 	function go( id ) {
 		if ( '#' + id === location.hash ) { selectTab( id ); }
 		else { location.hash = id; } // triggers hashchange → applyHash
@@ -500,9 +500,9 @@
 			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
 			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
 			el( 'div', { 'class': 'ak-rows' }, [
+				wpField,
 				logoField( 'light', I.logoLight, I.logoLightMode ),
-				logoField( 'dark', I.logoDark, I.logoDarkMode ),
-				wpField
+				logoField( 'dark', I.logoDark, I.logoDarkMode )
 			] )
 		] ) );
 
@@ -521,8 +521,9 @@
 
 		// Reflect a feature's state on its row: dim it ("is-off") when switched off
 		// — the switch stays clickable so it can be turned back on — and, for a
-		// child (e.g. mShots under Post previews), lock + dim it ("is-disabled")
-		// while its parent is off.
+		// child (e.g. mShots under Post previews), lock it ("is-locked": dimmed +
+		// the switch made non-operable, both via CSS and the disabled input) while
+		// its parent is off, snapping back the moment the parent is on again.
 		function refreshRow( f ) {
 			var r = refs[ f.key ];
 			if ( ! r ) { return; }
@@ -530,7 +531,7 @@
 			if ( f.parent ) {
 				var parentOn = !! state.features[ f.parent ];
 				r.input.disabled = ! parentOn;
-				r.row.classList.toggle( 'is-disabled', ! parentOn );
+				r.row.classList.toggle( 'is-locked', ! parentOn );
 			}
 		}
 
@@ -601,26 +602,29 @@
 		var inputs = []; // active-integration toggles, for the bulk controls
 
 		function pluginRow( i ) {
+			// Inactive host → the adapter can't run, so there's no toggle at all:
+			// the row shows an "Inactive" pill in the control slot (right) instead.
+			// The stored value is left untouched, so the toggle returns when the
+			// host is back active.
+			if ( ! i.active ) {
+				return el( 'div', { 'class': 'ak-row is-inactive' }, [
+					el( 'div', { 'class': 'ak-row__main' }, [
+						el( 'span', { 'class': 'ak-row__label', text: i.label } )
+					] ),
+					el( 'span', { 'class': 'ak-pill ak-pill--off ak-row__state', text: I.inactive } )
+				] );
+			}
 			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
-			// Inactive host → the adapter can't run, so show the toggle OFF + lock it.
-			// The stored value is left untouched, so it returns when the host is back.
-			input.checked  = i.active ? !! state.integrations[ i.slug ] : false;
-			input.disabled = ! i.active;
+			input.checked = !! state.integrations[ i.slug ];
 			input.addEventListener( 'change', function () {
 				state.integrations[ i.slug ] = input.checked;
 				markDirty();
 			} );
-			if ( i.active ) {
-				inputs.push( { slug: i.slug, input: input } );
-			}
-			var main = [ el( 'span', { 'class': 'ak-row__label', text: i.label } ) ];
-			if ( ! i.active ) {
-				main.push( el( 'div', { 'class': 'ak-tags' }, [
-					el( 'span', { 'class': 'ak-pill ak-pill--off', text: I.inactive } )
-				] ) );
-			}
-			return el( 'div', { 'class': 'ak-row' + ( i.active ? '' : ' is-disabled' ) }, [
-				el( 'div', { 'class': 'ak-row__main' }, main ),
+			inputs.push( { slug: i.slug, input: input } );
+			return el( 'div', { 'class': 'ak-row' }, [
+				el( 'div', { 'class': 'ak-row__main' }, [
+					el( 'span', { 'class': 'ak-row__label', text: i.label } )
+				] ),
 				el( 'label', { 'class': 'ak-switch' }, [
 					input,
 					el( 'span', { 'class': 'ak-switch__track' } ),
