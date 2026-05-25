@@ -71,6 +71,34 @@ class AdminKit_Settings {
 	}
 
 	/**
+	 * Resolve the brand logo URL for a mode — the single source of truth used
+	 * everywhere AdminKit shows a logo (admin menu, Bricks builder).
+	 *
+	 * Order: the Branding setting (logo_light / logo_dark) wins; otherwise the
+	 * `adminkit/brand_logo` filter (a URL string, or an array keyed
+	 * light / dark / preloader). Returns '' when nothing is set, so each consumer
+	 * can no-op cleanly (no asset is ever shipped).
+	 *
+	 * @param string $mode 'light' | 'dark'.
+	 * @return string Raw URL, or '' when unset.
+	 */
+	public static function brand_logo( $mode ) {
+		$mode = ( 'light' === $mode ) ? 'light' : 'dark';
+		$url  = trim( (string) self::get( 'logo_' . $mode ) );
+		if ( '' !== $url ) {
+			return $url;
+		}
+		$f = apply_filters( 'adminkit/brand_logo', '' );
+		if ( is_array( $f ) && ! empty( $f[ $mode ] ) ) {
+			return (string) $f[ $mode ];
+		}
+		if ( is_string( $f ) ) {
+			return $f;
+		}
+		return '';
+	}
+
+	/**
 	 * The semantic colour taxonomy — mirrors WaasKit's locked 23-token SEMANTIC
 	 * layer 1:1 (surface / border / text / accent / input / focus / overlay +
 	 * the notification set with each -subtle) so a user moving between Bricks and

@@ -45,7 +45,7 @@
 	background-color: var(--background);
 }
 /* The logo swap (accent chip + image) is injected by PHP only when a logo is
-   configured — see the adminkit/bricks/builder_logo filter. */
+   configured — Settings → Features → Branding, or the adminkit/brand_logo filter. */
 
 
 /* ============================================================

@@ -285,29 +285,23 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	/**
 	 * Build the optional brand-logo CSS for the builder toolbar + preloader.
 	 *
-	 * Resolution (no asset is shipped in the plugin):
-	 *   1. Branding settings — Settings → Features → Branding. `logo_dark` is the
-	 *      toolbar default + preloader splash; `logo_light` is the light-mode
-	 *      toolbar variant.
-	 *   2. The `adminkit/bricks/builder_logo` filter as a fallback for any slot —
-	 *      a URL string, or array( 'default', 'light', 'preloader' ). Handy for a
-	 *      WaasKit default via snippet.
+	 * Reads the shared brand logo (AdminKit_Settings::brand_logo): the Branding
+	 * settings win, the adminkit/brand_logo filter is the fallback — the same
+	 * source the admin-menu logo uses. `logo_dark` is the toolbar default +
+	 * preloader; `logo_light` is the light-mode toolbar variant. A distinct
+	 * preloader logo can come from the filter's `preloader` key.
 	 *
 	 * With nothing configured, returns '' and Bricks's own logo + preloader stay.
 	 *
 	 * @return string Inline CSS, or '' when no logo resolves.
 	 */
 	private static function builder_logo_css() {
-		// Settings win; the filter fills any empty slot.
-		$f = apply_filters( 'adminkit/bricks/builder_logo', '' );
-		$f = is_array( $f ) ? $f : ( is_string( $f ) && '' !== $f ? array( 'default' => $f ) : array() );
+		$dark  = AdminKit_Settings::brand_logo( 'dark' );
+		$light = AdminKit_Settings::brand_logo( 'light' );
 
-		$set_light = trim( (string) AdminKit_Settings::get( 'logo_light' ) );
-		$set_dark  = trim( (string) AdminKit_Settings::get( 'logo_dark' ) );
-
-		$dark      = '' !== $set_dark  ? $set_dark  : ( isset( $f['default'] ) ? $f['default'] : '' );
-		$light     = '' !== $set_light ? $set_light : ( isset( $f['light'] ) ? $f['light'] : '' );
-		$preloader = isset( $f['preloader'] ) ? $f['preloader'] : $dark;
+		// Optional distinct preloader logo; else reuse the dark-mode logo.
+		$f         = apply_filters( 'adminkit/brand_logo', '' );
+		$preloader = ( is_array( $f ) && ! empty( $f['preloader'] ) ) ? $f['preloader'] : $dark;
 
 		// The dark-mode logo is the toolbar default; fall back to the light one.
 		$toolbar = '' !== $dark ? $dark : $light;

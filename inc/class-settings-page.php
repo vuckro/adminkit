@@ -248,7 +248,7 @@ class AdminKit_Settings_Page {
 				'enableAll'         => __( 'Enable all', 'adminkit' ),
 				'disableAll'        => __( 'Disable all', 'adminkit' ),
 				'branding'          => __( 'Branding', 'adminkit' ),
-				'logoHint'          => __( 'Optional brand logo URLs. Used by the Bricks builder (toolbar + preloader); leave empty to fall back to the adminkit/bricks/builder_logo filter.', 'adminkit' ),
+				'logoHint'          => __( 'Optional brand logo URLs (light + dark). Shown above the admin menu and in the Bricks builder. Leave empty to fall back to the adminkit/brand_logo filter.', 'adminkit' ),
 				'logoLight'         => __( 'Logo — light mode', 'adminkit' ),
 				'logoDark'          => __( 'Logo — dark mode', 'adminkit' ),
 				'logoPlaceholder'   => __( 'https://…/logo.svg', 'adminkit' ),

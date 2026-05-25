@@ -24,6 +24,7 @@ class AdminKit_Plugin {
 		AdminKit_Assets::init();
 		AdminKit_Core_Chrome::register();
 		AdminKit_Core_Login::register();
+		AdminKit_Core_Branding::init();
 		AdminKit_Settings::init();
 		AdminKit_Settings_Page::init();
 		AdminKit_Theme_Toggle::init();
