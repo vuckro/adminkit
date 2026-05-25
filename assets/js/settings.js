@@ -493,6 +493,8 @@
 		var list = D.integrations || [];
 		if ( ! list.length ) { return p; }
 
+		var inputs = []; // active-integration toggles, for the bulk controls
+
 		function pluginRow( i ) {
 			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
 			// Inactive host → the adapter can't run, so show the toggle OFF + lock it.
@@ -503,6 +505,9 @@
 				state.integrations[ i.slug ] = input.checked;
 				markDirty();
 			} );
+			if ( i.active ) {
+				inputs.push( { slug: i.slug, input: input } );
+			}
 			var main = [ el( 'span', { 'class': 'ak-row__label', text: i.label } ) ];
 			if ( ! i.active ) {
 				main.push( el( 'div', { 'class': 'ak-tags' }, [
@@ -519,7 +524,17 @@
 			] );
 		}
 
-		// Themes (e.g. Bricks) on top, then plugins — each in its own section.
+		// Flip every ACTIVE integration in one click (locked/inactive rows ignored).
+		function setAll( on ) {
+			inputs.forEach( function ( r ) {
+				r.input.checked = on;
+				state.integrations[ r.slug ] = on;
+			} );
+			markDirty();
+		}
+
+		// Build the sections first (this fills `inputs`), then prepend the bulk bar.
+		var sections = [];
 		[
 			{ type: 'theme',  label: I.themesLabel || 'Themes' },
 			{ type: 'plugin', label: I.plugins || 'Plugins' }
@@ -528,11 +543,20 @@
 			if ( ! items.length ) { return; }
 			var rows = el( 'div', { 'class': 'ak-rows' } );
 			items.forEach( function ( i ) { rows.appendChild( pluginRow( i ) ); } );
-			p.appendChild( el( 'div', { 'class': 'ak-group' }, [
+			sections.push( el( 'div', { 'class': 'ak-group' }, [
 				el( 'h2', { 'class': 'ak-group__title', text: sec.label } ),
 				rows
 			] ) );
 		} );
+
+		// Bulk controls — only when there's at least one active integration to flip.
+		if ( inputs.length ) {
+			p.appendChild( el( 'div', { 'class': 'ak-actions ak-bulk' }, [
+				el( 'button', { type: 'button', 'class': 'ak-btn', text: I.enableAll, onclick: function () { setAll( true ); } } ),
+				el( 'button', { type: 'button', 'class': 'ak-btn', text: I.disableAll, onclick: function () { setAll( false ); } } )
+			] ) );
+		}
+		sections.forEach( function ( s ) { p.appendChild( s ); } );
 		return p;
 	}
 
