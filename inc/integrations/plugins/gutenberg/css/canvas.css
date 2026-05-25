@@ -119,15 +119,24 @@ html[data-adminkit-canvas]::-webkit-scrollbar-thumb {
 }
 .editor-styles-wrapper .bricks-block-editor-notice-wrapper .button-primary {
 	background-color: var(--ak-primary);
-	border-color: var(--ak-primary);
+	border: 1px solid var(--ak-primary);
 	color: var(--ak-on-accent);
 }
+/* Secondary = the SAME button as the primary, just OUTLINED in the brand accent
+   (transparent fill, accent border + label) so the two read as a matched pair. */
 .editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:not(.button-primary) {
-	background-color: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	color: var(--ak-text);
+	background-color: transparent;
+	border: 1px solid var(--ak-primary);
+	color: var(--ak-primary);
 }
-.editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:not(.button-primary):hover {
-	background-color: var(--ak-elevated);
-	color: var(--ak-heading);
+/* Never underline the label, in any state (WP underlines link-buttons on hover). */
+.editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:hover,
+.editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:focus {
+	text-decoration: none;
+}
+.editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:not(.button-primary):hover,
+.editor-styles-wrapper .bricks-block-editor-notice-wrapper .button:not(.button-primary):focus {
+	background-color: var(--ak-primary-subtle);
+	border-color: var(--ak-primary);
+	color: var(--ak-primary);
 }
