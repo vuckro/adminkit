@@ -145,8 +145,14 @@
 	font-weight: 600;
 }
 
-/* Theme toggle — sun visible in light, moon in dark. */
+/* Action-item glyphs (theme toggle's sun/moon + view-site's external/house).
+   `display:block` removes the inline-SVG descender gap: the view-site icon is a
+   BARE <svg> flex child (no wrapper span), so left inline it sat a few px low off
+   its baseline, while the sun/moon — wrapped in a <span> with vertical-align —
+   read centred. Blockifying the SVG drops that baseline gap so the external icon
+   lines up with the sun/moon (the span case stays centred too). */
 #wpadminbar .ak-theme-icon {
+	display: block;
 	width: 18px;
 	height: 18px;
 	vertical-align: middle;

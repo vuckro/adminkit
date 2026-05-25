@@ -393,6 +393,7 @@ class AdminKit_Settings_Page {
 						array( 'label' => __( 'Branding & admin-bar logo', 'adminkit' ), 'desc' => __( 'Brand logo / favicon in the toolbar, size control, light + dark.', 'adminkit' ) ),
 						array( 'label' => __( 'AdminKit icon set', 'adminkit' ), 'desc' => __( 'Replace native menu + toolbar icons; growing plugin coverage.', 'adminkit' ) ),
 						array( 'label' => __( 'Bricks builder polish', 'adminkit' ), 'desc' => __( 'Toolbar logo, preloader, canvas theming + colour fallback.', 'adminkit' ) ),
+						array( 'label' => __( 'Local avatars', 'adminkit' ), 'desc' => __( 'Per-user avatar image that replaces Gravatar — no Gravatar dependency.', 'adminkit' ) ),
 					),
 				),
 			),

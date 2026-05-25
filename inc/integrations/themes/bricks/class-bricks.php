@@ -394,7 +394,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	/**
 	 * Build the CSS that brands the builder toolbar + preloader.
 	 *
-	 * Toolbar: the site FAVICON as a fixed rounded SQUARE (24px, centred, cover) so
+	 * Toolbar: the site FAVICON as a fixed rounded SQUARE (28px, centred, cover) so
 	 * the radius reads on the chip; first-letter mark when no Site Icon is set.
 	 * Preloader: the configured brand LOGO filling a wide ROUNDED RECTANGLE (cover →
 	 * the radius is on the logo card), centred with a gentle pulse on the fixed dark
@@ -417,7 +417,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			// overridden to transparent so nothing shows behind/around it.
 			$css .= '#bricks-toolbar .logo{background-color:transparent!important;display:flex;align-items:center;justify-content:center}';
 			$css .= '#bricks-toolbar .logo a{display:flex;align-items:center;justify-content:center;width:100%;height:100%}';
-			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:24px;height:24px;'
+			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:28px;height:28px;'
 				. 'box-sizing:border-box;padding:0;object-fit:cover;border-radius:6px}';
 		} else {
 			$css .= self::builder_toolbar_letter_css();
@@ -437,7 +437,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
 			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";display:block;'
-				. 'width:16rem;height:6rem;border-radius:1.25rem;overflow:hidden;'
+				. 'width:17rem;height:6.5rem;border-radius:1rem;overflow:hidden;'
 				. 'background:' . self::css_url( $logo ) . ' center / cover no-repeat;'
 				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
 			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.08)}}';

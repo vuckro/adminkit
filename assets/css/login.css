@@ -13,7 +13,8 @@ body.login.adminkit {
 }
 
 /* Logo — the URL is injected by PHP from the WP site icon (favicon).
-   If no site icon is set, falls back to the default WP logo. */
+   If no site icon is set, falls back to the default WP logo. The radius softens
+   the favicon's hard square corners (the background is clipped to it). */
 #login h1,
 #login h1 a {
 	background-position: center center;
@@ -22,6 +23,7 @@ body.login.adminkit {
 	width: 100%;
 	height: 72px;
 	margin-bottom: 16px;
+	border-radius: var(--ak-radius-m, 8px);
 }
 
 /* Form card — flat, no shadow */
