@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdminKit 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/vuckro/adminkit/issues\n"
-"POT-Creation-Date: 2026-05-25 06:18+0200\n"
+"POT-Creation-Date: 2026-05-25 06:56+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -557,4 +557,36 @@ msgstr ""
 
 #: inc/wp-core/class-profile-account.php:90
 msgid "This username cannot be changed."
+msgstr ""
+
+#: inc/class-theme-toggle.php:181
+msgid "View site"
+msgstr ""
+
+#: inc/class-settings-page.php:281
+msgid "Plugins"
+msgstr ""
+
+#: inc/class-settings-page.php:283
+msgid "Not active"
+msgstr ""
+
+#: inc/class-settings-page.php:284
+msgid "Themes"
+msgstr ""
+
+#: inc/class-settings-page.php:285
+msgid "WordPress logo (admin bar)"
+msgstr ""
+
+#: inc/class-settings-page.php:286
+msgid "Replace with site icon"
+msgstr ""
+
+#: inc/class-settings-page.php:287
+msgid "Hide"
+msgstr ""
+
+#: inc/class-settings-page.php:288
+msgid "Keep WordPress logo"
 msgstr ""

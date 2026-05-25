@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdminKit 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/vuckro/adminkit/issues\n"
-"POT-Creation-Date: 2026-05-25 06:18+0200\n"
-"PO-Revision-Date: 2026-05-25 00:00:19+0000\n"
+"POT-Creation-Date: 2026-05-25 06:56+0200\n"
+"PO-Revision-Date: 2026-05-25 06:56+0200\n"
 "Last-Translator: AdminKit\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -594,6 +594,38 @@ msgstr "Sections du compte"
 #: inc/wp-core/class-profile-account.php:90
 msgid "This username cannot be changed."
 msgstr "Ce nom d’utilisateur ne peut pas être modifié."
+
+#: inc/class-theme-toggle.php:181
+msgid "View site"
+msgstr "Voir le site"
+
+#: inc/class-settings-page.php:281
+msgid "Plugins"
+msgstr "Extensions"
+
+#: inc/class-settings-page.php:283
+msgid "Not active"
+msgstr "Inactif"
+
+#: inc/class-settings-page.php:284
+msgid "Themes"
+msgstr "Thèmes"
+
+#: inc/class-settings-page.php:285
+msgid "WordPress logo (admin bar)"
+msgstr "Logo WordPress (barre d’administration)"
+
+#: inc/class-settings-page.php:286
+msgid "Replace with site icon"
+msgstr "Remplacer par l’icône du site"
+
+#: inc/class-settings-page.php:287
+msgid "Hide"
+msgstr "Masquer"
+
+#: inc/class-settings-page.php:288
+msgid "Keep WordPress logo"
+msgstr "Conserver le logo WordPress"
 
 #~ msgid "Login experience"
 #~ msgstr "Expérience de connexion"
