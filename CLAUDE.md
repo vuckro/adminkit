@@ -46,8 +46,38 @@ docs/                   Deep-dive guides (see "More docs" below).
 | Add a JS behaviour | New `assets/js/wp-core/{name}.js`, enqueue via `AdminKit_Assets::enqueue_script()` | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 | Change a baseline token | Edit `tokens/palettes/*.json`, run `php tokens/build.php`, commit JSON + regenerated CSS | [docs/TOKENS.md](docs/TOKENS.md) |
 | Detect host / WP-core CSS changes | `php dev/adapter-drift.php` (per adapter) or `--wp-core` | [docs/TOKENS.md](docs/TOKENS.md#drift-detection-keeping-adapters-alive) |
-| Add a setting / hook into AdminKit | `AdminKit_Settings::register()`; the filters/actions | [docs/EXTENDING.md](docs/EXTENDING.md) |
+| Add a setting / feature toggle | `AdminKit_Settings::register()` (+ a `feature_descriptors()` row for the UI), then update the Settings inventory | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#settings) |
+| Add a hook (filter / action) | namespace it `adminkit/…`, then document it | [docs/EXTENDING.md](docs/EXTENDING.md) |
+| Add a branding / logo option | `inc/wp-core/class-branding.php` + the `brand_logo()` resolver | [docs/EXTENDING.md](docs/EXTENDING.md) |
 | Understand the whole system | — | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+
+## Keep the docs alive (every iteration)
+
+AdminKit grows through many small iterations. These docs are how we *don't*
+re-derive context each time — and how we move fast without drifting. **Treat docs
+as part of the code: a change isn't done until the docs that describe it are true
+again, in the SAME branch — not "later".**
+
+**Definition of done** for any behaviour change:
+
+1. Code it, then **verify** (lint + gates — see [Verify a change](#verify-a-change)).
+2. **Update whatever the change made stale:**
+   - new / renamed **setting or feature toggle** → the Settings inventory in
+     [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#settings) + its UI label.
+   - new / changed **hook** → [docs/EXTENDING.md](docs/EXTENDING.md) (+ the README filter table).
+   - new **integration** or integration behaviour → [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) + the README integrations list.
+   - **file / folder move** → the README file tree + the Map at the top of this file.
+   - any **user-facing string** → refresh i18n (see [Verify a change](#verify-a-change)).
+3. **Record important decisions as guardrails.** When you lock a non-obvious
+   choice (a default, an order, a "don't do X — it broke Y"), add a one-line
+   bullet to [Guardrails](#guardrails--do-not-break-these) *with the why*. The why
+   is what stops a later iteration from silently undoing it.
+4. **Re-read the touched docs** for consistency — the same names, defaults and
+   paths everywhere. A quick `grep` for a renamed key across `README.md`,
+   `CLAUDE.md` and `docs/` catches drift in seconds.
+
+The loop that keeps us fast: **build → verify → make the docs true → lock the
+decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 
 ## Guardrails — do NOT break these
 
@@ -80,6 +110,10 @@ docs/                   Deep-dive guides (see "More docs" below).
   `wp_add_inline_script` (never hardcode UI text in `.js`). The domain loads on `init`
   (`AdminKit_Plugin::load_textdomain`); after adding strings, regenerate the template:
   `wp i18n make-pot . languages/adminkit.pot`.
+- **Docs are part of the change, not a follow-up.** A new/renamed setting, hook or
+  integration, or a moved file, isn't done until `README.md`, this map, the matching
+  `docs/*` and i18n are true again — same branch. Lock non-obvious decisions as a
+  new guardrail here (with the *why*). See [Keep the docs alive](#keep-the-docs-alive-every-iteration).
 
 ## Verify a change
 
@@ -87,6 +121,10 @@ docs/                   Deep-dive guides (see "More docs" below).
 - Token drift gate: `php tokens/build.php --check`.
 - Adapter CSS-debt: `php dev/adapter-audit.php` (Tier A = 0 `!important`).
 - Host/WP CSS drift: `php dev/adapter-drift.php`.
+- i18n fresh: new strings wrapped in `__()` (domain `adminkit`) AND present in
+  `languages/adminkit.pot` + `adminkit-fr_FR.po` (then recompile the `.mo`).
+  Regenerate with `wp i18n make-pot …`; if wp-cli is absent, the gettext toolchain
+  works — `xgettext` (WP keywords) to diff, `msgfmt -c` to compile + validate.
 - UI: reload any wp-admin page (CSS/JS auto-bust via mtime) and check light + dark.
 
 ## Git & GitHub workflow
