@@ -111,8 +111,10 @@ button.adminkit-local-avatar__media:focus-visible .adminkit-local-avatar__overla
 	opacity: 1;
 }
 
-/* Actions row beneath the avatar — a touch more breathing room above it. */
-.adminkit-local-avatar__actions {
+/* Actions row beneath the avatar. It's a <p> inside a form-table <td>, so WP's
+   `.form-table td p` margin (0,2,1) out-specifies a lone class and ate the gap —
+   scope through the container (0,3,0) so our breathing room above the button wins. */
+body.adminkit .adminkit-local-avatar .adminkit-local-avatar__actions {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
