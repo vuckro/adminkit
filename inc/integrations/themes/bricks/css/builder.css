@@ -37,6 +37,13 @@
 	background: var(--neutral-d-2, #171717);
 }
 
+/* Keep the builder root dark in dark mode so nothing white flashes behind the
+   preloader as it fades out. data-adminkit-theme is set pre-paint (before
+   Bricks's own builder mode resolves), so it's reliable this early. */
+:root[data-adminkit-theme="dark"] {
+	background-color: var(--neutral-d-2, #171717);
+}
+
 
 /* ============================================================
    TOOLBAR

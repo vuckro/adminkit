@@ -283,45 +283,50 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Build the optional brand-logo CSS for the builder toolbar + preloader.
+	 * Build the CSS that brands the builder toolbar (+ preloader splash).
 	 *
-	 * Reads the shared brand logo (AdminKit_Settings::brand_logo): the Branding
-	 * settings win, the adminkit/brand_logo filter is the fallback — the same
-	 * source the admin-menu logo uses. `logo_dark` is the toolbar default +
-	 * preloader; `logo_light` is the light-mode toolbar variant. A distinct
+	 * A configured brand logo wins (AdminKit_Settings::brand_logo — Branding
+	 * settings, then the adminkit/brand_logo filter): `logo_dark` is the toolbar
+	 * default + preloader, `logo_light` the light-mode toolbar variant; a distinct
 	 * preloader logo can come from the filter's `preloader` key.
 	 *
-	 * With nothing configured, returns '' and Bricks's own logo + preloader stay.
+	 * With NO logo configured, the toolbar shows a text mark — the first letter of
+	 * the site title on the accent chip — so AdminKit always replaces Bricks's own
+	 * logo (no external asset needed).
 	 *
-	 * @return string Inline CSS, or '' when no logo resolves.
+	 * @return string Inline CSS.
 	 */
 	private static function builder_logo_css() {
-		$dark  = AdminKit_Settings::brand_logo( 'dark' );
-		$light = AdminKit_Settings::brand_logo( 'light' );
-
-		// Optional distinct preloader logo; else reuse the dark-mode logo.
-		$f         = apply_filters( 'adminkit/brand_logo', '' );
-		$preloader = ( is_array( $f ) && ! empty( $f['preloader'] ) ) ? $f['preloader'] : $dark;
-
-		// The dark-mode logo is the toolbar default; fall back to the light one.
+		$dark    = AdminKit_Settings::brand_logo( 'dark' );
+		$light   = AdminKit_Settings::brand_logo( 'light' );
 		$toolbar = '' !== $dark ? $dark : $light;
+
+		// No image logo → first letter of the site title as a text mark.
 		if ( '' === $toolbar ) {
-			return '';
+			$name   = wp_strip_all_tags( get_bloginfo( 'name' ) );
+			$letter = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 1 ) : substr( $name, 0, 1 );
+			$letter = preg_replace( '/[^\p{L}\p{N}]/u', '', (string) $letter ); // CSS-safe: letters/digits only
+			$letter = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $letter ) : strtoupper( $letter );
+			if ( '' === $letter ) {
+				return '';
+			}
+			return '#bricks-toolbar .logo{background-color:var(--accent);position:relative}'
+				. '#bricks-toolbar .logo img{height:22px;width:22px;visibility:hidden}'
+				. '#bricks-toolbar .logo::after{content:"' . $letter . '";position:absolute;inset:0;display:grid;place-items:center;color:var(--on-accent,#fff);font-weight:700;font-size:14px;line-height:1}';
 		}
 
+		// Configured image logo (with an optional light-mode + preloader variant).
+		$f         = apply_filters( 'adminkit/brand_logo', '' );
+		$preloader = ( is_array( $f ) && ! empty( $f['preloader'] ) ) ? $f['preloader'] : $dark;
 		$toolbar   = esc_url( $toolbar );
 		$light     = esc_url( $light );
 		$preloader = esc_url( $preloader );
 
-		// Toolbar logo chip + image (with a light-mode variant when distinct).
 		$css  = '#bricks-toolbar .logo{background-color:var(--accent)}';
 		$css .= '#bricks-toolbar .logo img{content:url(' . $toolbar . ');height:22px;width:auto}';
 		if ( '' !== $light && $light !== $toolbar ) {
 			$css .= 'body:has(.mode [data-name="sun"]) #bricks-toolbar .logo img{content:url(' . $light . ')}';
 		}
-
-		// Preloader splash — only when a preloader logo resolves (otherwise leave
-		// Bricks's own splash, never hide it into a blank screen).
 		if ( '' !== $preloader ) {
 			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
