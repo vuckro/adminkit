@@ -323,3 +323,20 @@ body[data-builder-mode] .cm-s-one-dark .CodeMirror-gutters {
 	background: var(--elevated);
 	border-right: 1px solid var(--border);
 }
+
+/* ---- Dark scrollbars for the builder CHROME (panels: structure, settings, …) ----
+   The builder UI is dark, but WebKit/Firefox paint native LIGHT scrollbars on the
+   panels. This file loads only in the builder MAIN frame, so it can't reach the
+   canvas iframe (that's a separate document with its own scrollbar vars) — these
+   rules touch the chrome only. WaasKit neutrals match the canvas thumb tokens. */
+body[data-builder-mode] { scrollbar-width: thin; scrollbar-color: var(--neutral-t-3) transparent; }
+body[data-builder-mode] ::-webkit-scrollbar { width: 12px; height: 12px; }
+body[data-builder-mode] ::-webkit-scrollbar-track { background: transparent; }
+body[data-builder-mode] ::-webkit-scrollbar-thumb {
+	background: var(--neutral-t-3);
+	border-radius: 8px;
+	border: 3px solid transparent;
+	background-clip: padding-box;
+}
+body[data-builder-mode] ::-webkit-scrollbar-thumb:hover { background: var(--neutral-t-4); }
+body[data-builder-mode] ::-webkit-scrollbar-corner { background: transparent; }

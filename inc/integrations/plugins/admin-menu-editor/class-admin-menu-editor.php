@@ -100,5 +100,14 @@ class AdminKit_Integration_Admin_Menu_Editor extends AdminKit_Integration_Base {
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_screen' ),
 		) );
+
+		// Quick-search popup (#ame-quick-search) — AME Pro's admin-bar search opens
+		// it on ANY admin page, so this one loads admin-wide (no screen condition).
+		AdminKit_Assets::register( array(
+			'handle'  => 'adminkit-ame-quick-search',
+			'src'     => 'inc/integrations/plugins/admin-menu-editor/css/quick-search.css',
+			'deps'    => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context' => 'admin',
+		) );
 	}
 }

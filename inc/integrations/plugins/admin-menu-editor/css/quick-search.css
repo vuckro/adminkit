@@ -1,0 +1,95 @@
+/* Admin Menu Editor Pro — quick-search popup (#ame-quick-search).
+
+   AME Pro's admin-bar "search" opens this overlay (appended to <body>) on ANY
+   admin page, so this file loads admin-wide rather than on the AME settings page.
+   AME hardcodes a white surface + grey border/shadow + a white field that don't
+   flip in dark mode. Route every surface / border / text through AdminKit tokens,
+   scoped to the popup id so nothing else on the page is touched. */
+
+body.adminkit #ame-quick-search {
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	box-shadow: var(--ak-shadow-elevated, 0 8px 24px rgba(0, 0, 0, 0.18));
+	color: var(--ak-text);
+}
+
+/* Search field */
+body.adminkit #ame-quick-search input[type="text"],
+body.adminkit #ame-quick-search input[type="search"],
+body.adminkit #ame-quick-search input {
+	background: var(--ak-input-bg);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+body.adminkit #ame-quick-search input::placeholder {
+	color: var(--ak-text-muted);
+}
+body.adminkit #ame-quick-search input:focus {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+	outline: none;
+}
+
+/* Results list + rows */
+body.adminkit #ame-quick-search ul,
+body.adminkit #ame-quick-search ol,
+body.adminkit #ame-quick-search li {
+	background: transparent;
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit #ame-quick-search a {
+	color: var(--ak-text);
+	text-decoration: none;
+}
+/* Hovered / keyboard-selected result */
+body.adminkit #ame-quick-search li:hover,
+body.adminkit #ame-quick-search li.selected,
+body.adminkit #ame-quick-search li.active,
+body.adminkit #ame-quick-search li.ui-state-active,
+body.adminkit #ame-quick-search li:hover a,
+body.adminkit #ame-quick-search li.selected a,
+body.adminkit #ame-quick-search li.active a {
+	background: var(--ak-elevated);
+	color: var(--ak-heading);
+}
+/* Matched substring highlight */
+body.adminkit #ame-quick-search strong,
+body.adminkit #ame-quick-search mark,
+body.adminkit #ame-quick-search .ame-qs-match {
+	color: var(--ak-primary);
+	background: transparent;
+	font-weight: 600;
+}
+/* Breadcrumb / secondary metadata */
+body.adminkit #ame-quick-search small,
+body.adminkit #ame-quick-search .description,
+body.adminkit #ame-quick-search .ame-qs-breadcrumb {
+	color: var(--ak-text-muted);
+}
+
+/* Scrollbar (the list scrolls within the popup's max-height) */
+body.adminkit #ame-quick-search,
+body.adminkit #ame-quick-search * {
+	scrollbar-width: thin;
+	scrollbar-color: var(--ak-border-strong) transparent;
+}
+body.adminkit #ame-quick-search ::-webkit-scrollbar,
+body.adminkit #ame-quick-search::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+body.adminkit #ame-quick-search ::-webkit-scrollbar-track,
+body.adminkit #ame-quick-search::-webkit-scrollbar-track {
+	background: transparent;
+}
+body.adminkit #ame-quick-search ::-webkit-scrollbar-thumb,
+body.adminkit #ame-quick-search::-webkit-scrollbar-thumb {
+	background: var(--ak-border-strong);
+	border-radius: 6px;
+	border: 2px solid transparent;
+	background-clip: padding-box;
+}

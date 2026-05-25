@@ -192,3 +192,25 @@ body.adminkit .block-editor-inserter__popover.is-quick .components-popover__cont
 body.adminkit .block-editor-inserter__popover.is-quick .components-popover__content .block-editor-inserter__quick-inserter > .components-button:focus {
 	background: var(--ak-hover-bg);
 }
+
+/* Classic meta-boxes area below the block canvas ("Boîtes méta") — WP renders the
+   AREA wrapper on a hardcoded light surface that AdminKit's editor chrome missed,
+   so it stayed a pale band in dark mode and flashed white on a theme toggle. Route
+   the wrapper through tokens so it matches the editor in both modes (the postboxes
+   themselves are already themed by wp-core/chrome.css). Covers the legacy
+   `.edit-post-*` names and the newer `.editor-meta-boxes-area`. */
+body.adminkit .edit-post-meta-boxes-area,
+body.adminkit .edit-post-meta-boxes-area__container,
+body.adminkit .edit-post-layout__metaboxes,
+body.adminkit .editor-meta-boxes-area {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+/* The inner #poststuff / metabox holder sits transparent on that surface — its
+   postboxes carry their own token surface from chrome.css. */
+body.adminkit .edit-post-meta-boxes-area #poststuff,
+body.adminkit .editor-meta-boxes-area #poststuff,
+body.adminkit .edit-post-meta-boxes-area .metabox-holder,
+body.adminkit .editor-meta-boxes-area .metabox-holder {
+	background: transparent;
+}
