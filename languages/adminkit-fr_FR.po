@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdminKit 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/vuckro/adminkit/issues\n"
-"POT-Creation-Date: 2026-05-25 06:56+0200\n"
-"PO-Revision-Date: 2026-05-25 06:56+0200\n"
+"POT-Creation-Date: 2026-05-25 07:06+0200\n"
+"PO-Revision-Date: 2026-05-25 07:06+0200\n"
 "Last-Translator: AdminKit\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -626,6 +626,12 @@ msgstr "Masquer"
 #: inc/class-settings-page.php:288
 msgid "Keep WordPress logo"
 msgstr "Conserver le logo WordPress"
+
+#: inc/class-settings-page.php:290
+msgid "No Site Icon set — add one under Settings → General to use this."
+msgstr ""
+"Aucune icône de site définie — ajoutez-en une dans Réglages → Général pour "
+"l’utiliser."
 
 #~ msgid "Login experience"
 #~ msgstr "Expérience de connexion"
