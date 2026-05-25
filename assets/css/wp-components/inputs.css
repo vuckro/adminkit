@@ -166,16 +166,6 @@ body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__in
 	background: var(--ak-heading);
 }
 
-/* A toggle that's ON tints its label to the brand accent — a consistent "active"
-   cue across the admin. Covers both markup shapes (a <label> right after the
-   input, or one wrapping it). The :where() exclusions mirror the real-checkbox
-   block below — row-selection, taxonomy checklists and @wordpress/components
-   CheckboxControl stay native, so only true toggles light their label up. */
-body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input, .check-column input, .cat-checklist input, .categorychecklist input, .category-checklist input)):checked + label,
-body.adminkit label:has( > input[type="checkbox"]:not(:where(.components-checkbox-control__input, .check-column input, .cat-checklist input, .categorychecklist input, .category-checklist input)):checked ) {
-	color: var(--ak-primary);
-}
-
 /* Keep real checkboxes where a toggle makes no sense: list-table row selection
    ("select all" + per-row) and multi-select taxonomy checklists — the post-edit
    metabox (.categorychecklist) AND the Quick/Bulk Edit inline checklists, which

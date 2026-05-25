@@ -105,31 +105,19 @@ msgstr ""
 msgid "Use this image"
 msgstr ""
 
-#: inc/class-settings-page.php:271
+#: inc/class-settings-page.php:286
 msgid "Plugins"
 msgstr ""
 
-#: inc/class-settings-page.php:272
-msgid "Your active plugins and themes. Ones marked Native have a tuned AdminKit adapter you can switch per host; the rest inherit AdminKit's base styling."
+#: inc/class-settings-page.php:287
+msgid "Turn AdminKit's styling on or off per supported plugin. Dimmed rows aren't active on this site."
 msgstr ""
 
-#: inc/class-settings-page.php:273
-msgid "Native"
+#: inc/class-settings-page.php:288
+msgid "Not active"
 msgstr ""
 
-#: inc/class-settings-page.php:274
-msgid "Generic"
-msgstr ""
-
-#: inc/class-settings-page.php:275
-msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
-msgstr ""
-
-#: inc/class-settings-page.php:276
-msgid "No dedicated adapter — themed by AdminKit's base styles."
-msgstr ""
-
-#: inc/class-settings-page.php:277
+#: inc/class-settings-page.php:289
 msgid "Themes"
 msgstr ""
 

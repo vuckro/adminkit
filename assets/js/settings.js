@@ -39,9 +39,7 @@
 		state.features[ f.key ] = !! f.value;
 	} );
 	( D.integrations || [] ).forEach( function ( i ) {
-		// Only native integrations carry a per-host toggle; generic plugins have
-		// no adapter to switch, so they stay out of the saved state.
-		if ( i.supported && i.slug ) { state.integrations[ i.slug ] = !! i.enabled; }
+		state.integrations[ i.slug ] = !! i.enabled;
 	} );
 
 	// --- tiny DOM helper -----------------------------------------------------
@@ -614,39 +612,29 @@
 		return p;
 	}
 
-	// Plugins tab — the site's active plugins (and AdminKit's active theme
-	// adapters), each tagged Native (a tuned adapter you can toggle per host) or
-	// Generic (no dedicated adapter; inherits AdminKit's base styles). Nothing
-	// dormant is listed, so there's no "inactive" state.
+	// Plugins tab — every supported integration. Toggle AdminKit's adapter per
+	// host; rows whose host isn't active are dimmed + locked (the adapter can't
+	// run anyway), but still listed so you can see what's supported.
 	function buildPlugins() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( I.pluginsIntro ) ] );
 		var list = D.integrations || [];
 		if ( ! list.length ) { return p; }
 
-		var inputs = []; // native-integration toggles, for the bulk controls
-
-		// Support chip shown next to the title: brand "Native" vs neutral "Generic".
-		function supportBadge( supported ) {
-			return el( 'span', {
-				'class': 'ak-badge' + ( supported ? ' ak-badge--brand' : '' ),
-				title: supported ? ( I.nativeHint || '' ) : ( I.genericHint || '' ),
-				text: supported ? ( I.native || 'Native' ) : ( I.generic || 'Generic' )
-			} );
-		}
+		var inputs = []; // active-integration toggles, for the bulk controls
 
 		function pluginRow( i ) {
-			var main = el( 'div', { 'class': 'ak-row__main' }, [
-				el( 'div', { 'class': 'ak-row__head' }, [
-					el( 'span', { 'class': 'ak-row__label', text: i.label } ),
-					supportBadge( i.supported )
-				] )
-			] );
-
-			// Generic plugin → no adapter to switch: the badge alone tells the story.
-			if ( ! i.supported || ! i.slug ) {
-				return el( 'div', { 'class': 'ak-row ak-row--int' }, [ main ] );
+			// Inactive host → the adapter can't run, so there's no toggle at all:
+			// the row shows an "Inactive" pill in the control slot (right) instead.
+			// The stored value is left untouched, so the toggle returns when the
+			// host is back active.
+			if ( ! i.active ) {
+				return el( 'div', { 'class': 'ak-row is-inactive' }, [
+					el( 'div', { 'class': 'ak-row__main' }, [
+						el( 'span', { 'class': 'ak-row__label', text: i.label } )
+					] ),
+					el( 'span', { 'class': 'ak-pill ak-pill--off ak-row__state', text: I.inactive } )
+				] );
 			}
-
 			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
 			input.checked = !! state.integrations[ i.slug ];
 			input.addEventListener( 'change', function () {
@@ -654,8 +642,10 @@
 				markDirty();
 			} );
 			inputs.push( { slug: i.slug, input: input } );
-			return el( 'div', { 'class': 'ak-row ak-row--int' }, [
-				main,
+			return el( 'div', { 'class': 'ak-row' }, [
+				el( 'div', { 'class': 'ak-row__main' }, [
+					el( 'span', { 'class': 'ak-row__label', text: i.label } )
+				] ),
 				el( 'label', { 'class': 'ak-switch' }, [
 					input,
 					el( 'span', { 'class': 'ak-switch__track' } ),
@@ -664,7 +654,7 @@
 			] );
 		}
 
-		// Flip every native integration in one click (generic rows have no toggle).
+		// Flip every ACTIVE integration in one click (locked/inactive rows ignored).
 		function setAll( on ) {
 			inputs.forEach( function ( r ) {
 				r.input.checked = on;
