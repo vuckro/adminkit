@@ -288,7 +288,26 @@
 		idle( flush );
 	}
 
+	// Standalone admin pages (setup wizards: Rank Math, WooCommerce…) render their
+	// own full <body> and print only their own stylesheet — so AdminKit's token +
+	// paint sheets never load, and body.adminkit is absent. The engine's JS DOES
+	// load there (wizards print all head/footer scripts), so it self-injects the
+	// two sheets it needs when they're missing. A no-op on normal pages (the
+	// presence check finds the already-enqueued <link>). The theme attribute is set
+	// by AdminKit's head pre-paint script, which those wizards also print.
+	function ensureSheet( href, marker ) {
+		if ( ! href || document.querySelector( 'link[rel="stylesheet"][href*="' + marker + '"]' ) ) { return; }
+		try {
+			var l = document.createElement( 'link' );
+			l.rel = 'stylesheet';
+			l.href = href;
+			( document.head || document.documentElement ).appendChild( l );
+		} catch ( e ) { /* nothing we can do */ }
+	}
+
 	function boot() {
+		ensureSheet( D.tokensHref, 'assets/css/tokens.css' );
+		ensureSheet( D.cssHref, 'assets/css/wp-core/auto-theme.css' );
 		if ( BRAND_ON ) {
 			AKPRIMARY = resolveToken( '--ak-primary' );
 			BRAND = detectBrand( scope );

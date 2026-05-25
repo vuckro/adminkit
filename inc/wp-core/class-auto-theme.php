@@ -108,11 +108,20 @@ class AdminKit_Auto_Theme {
 			file_exists( $js_path ) ? (string) filemtime( $js_path ) : ADMINKIT_VERSION,
 			true
 		);
+		// URLs handed to the brick so it can self-inject the token + paint sheets on
+		// standalone pages (setup wizards) that don't print AdminKit's stylesheets.
+		$tokens_src  = 'assets/css/tokens.css';
+		$tokens_path = ADMINKIT_PATH . $tokens_src;
+		$tokens_href = ADMINKIT_URL . $tokens_src . '?ver=' . ( file_exists( $tokens_path ) ? filemtime( $tokens_path ) : ADMINKIT_VERSION );
+		$css_href    = ADMINKIT_URL . $css_src . '?ver=' . ( file_exists( $css_path ) ? filemtime( $css_path ) : ADMINKIT_VERSION );
+
 		wp_add_inline_script(
 			self::HANDLE,
 			'window.AdminKitAuto=' . wp_json_encode( array(
-				'enabled' => true,
-				'brand'   => (bool) AdminKit_Settings::get( self::SETTING_BRAND ),
+				'enabled'    => true,
+				'brand'      => (bool) AdminKit_Settings::get( self::SETTING_BRAND ),
+				'tokensHref' => $tokens_href,
+				'cssHref'    => $css_href,
 			) ) . ';',
 			'before'
 		);

@@ -15,53 +15,53 @@
    Tier-A/B adapter), so it sits outside the adapter !important budget by design. */
 
 /* ── Neutral surfaces — fixed white/light panels → surface, nested → elevated ── */
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-surface {
+html[data-adminkit-theme="dark"] .ak-auto-surface {
 	background-color: var(--ak-surface) !important;
 }
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-elevated {
+html[data-adminkit-theme="dark"] .ak-auto-elevated {
 	background-color: var(--ak-elevated) !important;
 }
 
 /* ── Faint neutral-ish light tint used as a fill → subtle primary wash ── */
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-primary-sub {
+html[data-adminkit-theme="dark"] .ak-auto-primary-sub {
 	background-color: var(--ak-primary-subtle) !important;
 }
 
 /* ── Pale tinted backgrounds → matching subtle token (kept semantic) ── */
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-info {
+html[data-adminkit-theme="dark"] .ak-auto-info {
 	background-color: var(--ak-info-subtle) !important;
 }
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-success {
+html[data-adminkit-theme="dark"] .ak-auto-success {
 	background-color: var(--ak-success-subtle) !important;
 }
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-warning {
+html[data-adminkit-theme="dark"] .ak-auto-warning {
 	background-color: var(--ak-warning-subtle) !important;
 }
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-error {
+html[data-adminkit-theme="dark"] .ak-auto-error {
 	background-color: var(--ak-error-subtle) !important;
 }
 
 /* ── Text — near-black → heading, dark → body text, mid-grey → muted ── */
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-heading {
+html[data-adminkit-theme="dark"] .ak-auto-heading {
 	color: var(--ak-heading) !important;
 }
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-text {
+html[data-adminkit-theme="dark"] .ak-auto-text {
 	color: var(--ak-text) !important;
 }
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-muted {
+html[data-adminkit-theme="dark"] .ak-auto-muted {
 	color: var(--ak-text-muted) !important;
 }
 
 /* ── Borders — light → border, medium/strong → border-strong ── */
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-bd {
+html[data-adminkit-theme="dark"] .ak-auto-bd {
 	border-color: var(--ak-border) !important;
 }
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-bd-strong {
+html[data-adminkit-theme="dark"] .ak-auto-bd-strong {
 	border-color: var(--ak-border-strong) !important;
 }
 
 /* ── Light box-shadows (halos in dark) on darkened surfaces → removed ── */
-html[data-adminkit-theme="dark"] body.adminkit .ak-auto-noshadow {
+html[data-adminkit-theme="dark"] .ak-auto-noshadow {
 	box-shadow: none !important;
 }
 
@@ -73,12 +73,12 @@ html[data-adminkit-theme="dark"] body.adminkit .ak-auto-noshadow {
    UNLIKE the surface/text/border mapping above (a dark-mode fix), the brand
    unification applies in BOTH modes — a consistent accent across every plugin is
    wanted in light mode too. --ak-primary already carries the right value per mode. ── */
-body.adminkit .ak-auto-brand-bg {
+.ak-auto-brand-bg {
 	background-color: var(--ak-primary) !important;
 }
-body.adminkit .ak-auto-brand-fg {
+.ak-auto-brand-fg {
 	color: var(--ak-primary) !important;
 }
-body.adminkit .ak-auto-brand-bd {
+.ak-auto-brand-bd {
 	border-color: var(--ak-primary) !important;
 }

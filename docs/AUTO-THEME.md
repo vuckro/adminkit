@@ -111,6 +111,13 @@ detection retries on DOM mutations and, once found, runs a one-shot brand pass.
   app (thousands of nodes) never blocks the main thread.
 - **Incremental updates.** A debounced `MutationObserver` scans only newly-added
   subtrees (how the late-mounting React/MUI Home gets themed).
+- **Standalone pages (setup wizards).** Some plugins render a full custom `<body>`
+  and print only their own stylesheet (Rank Math / WooCommerce setup wizards) — so
+  AdminKit's token + paint sheets never load and `body.adminkit` is absent. The
+  brick's JS does load there (those pages print all head/footer scripts), so it
+  **self-injects** the two sheets it needs when they're missing, and its CSS no
+  longer requires `body.adminkit` (it anchors on `:root` + the `.ak-auto-*` class).
+  A no-op on normal pages (the already-enqueued `<link>` is detected).
 
 ## Controls & extensibility
 
