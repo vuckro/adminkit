@@ -315,7 +315,6 @@ class AdminKit_Settings_Page {
 				array( 'label' => __( 'Connect more frameworks', 'adminkit' ), 'hint' => __( 'Automatic.css, Core Framework, Frames, Advanced Themer — beyond Bricks', 'adminkit' ) ),
 				array( 'label' => __( 'Custom dashboard widgets', 'adminkit' ), 'hint' => __( 'Replace the WP home screen: quick actions, site status, recent activity, agency contact', 'adminkit' ) ),
 				array( 'label' => __( 'Brand logo & white-label', 'adminkit' ), 'hint' => __( 'Your logo on login, admin bar and footer; hide WordPress branding', 'adminkit' ) ),
-				array( 'label' => __( 'Login experience', 'adminkit' ),         'hint' => __( 'Full login styling + “Remember me” as a toggle', 'adminkit' ) ),
 				array( 'label' => __( 'Dark-mode behaviour', 'adminkit' ),      'hint' => __( 'Default mode: auto, light, dark or follow the system', 'adminkit' ) ),
 				array( 'label' => __( 'Import / export settings', 'adminkit' ), 'hint' => __( 'Clone an AdminKit setup across client sites in one file', 'adminkit' ) ),
 				array( 'label' => __( 'Roles & access', 'adminkit' ),           'hint' => __( 'Choose which roles get the skin and who may edit it', 'adminkit' ) ),

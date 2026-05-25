@@ -9,7 +9,6 @@
 .claude
 dev
 tokens
-playground
 **/baseline.json
 *.log
 node_modules
