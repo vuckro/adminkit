@@ -42,8 +42,8 @@ body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-cl
    kept) so it reads clearly in light + dark without looking cramped. */
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle-icon img,
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle-icon svg {
-	width: 36px;
-	height: 36px;
+	width: 40px;
+	height: 40px;
 	object-fit: contain;
 	padding: 2px;
 	background: var(--ak-surface);
@@ -154,4 +154,26 @@ body.adminkit:is(.block-editor-page, .widgets-php) .components-snackbar.componen
 body.adminkit:is(.block-editor-page, .widgets-php) .components-badge.is-default {
 	background-color: var(--ak-elevated);
 	color: var(--ak-text);
+}
+
+/* Quick inserter popover — WP core draws a #ccc top border on the first child and
+   #ccc side borders on each child. The popover renders in the editor chrome (under
+   body.adminkit), NOT inside .editor-styles-wrapper. Drop the top + side borders;
+   the long core selector is replicated under body.adminkit to win on specificity. */
+body.adminkit .block-editor-inserter__popover.is-quick .components-popover__content .block-editor-inserter__quick-inserter > :first-child {
+	border-top: 0;
+}
+body.adminkit .block-editor-inserter__popover.is-quick .components-popover__content .block-editor-inserter__quick-inserter > * {
+	border-left: 0;
+	border-right: 0;
+}
+/* The "Browse all" button at the foot of the quick inserter — core gives it a hard
+   #1e1e1e box border. Drop it; sit it on the surface with a soft hover instead. */
+body.adminkit .block-editor-inserter__popover.is-quick .components-popover__content .block-editor-inserter__quick-inserter > .components-button {
+	border: 0;
+	background: var(--ak-surface);
+}
+body.adminkit .block-editor-inserter__popover.is-quick .components-popover__content .block-editor-inserter__quick-inserter > .components-button:hover,
+body.adminkit .block-editor-inserter__popover.is-quick .components-popover__content .block-editor-inserter__quick-inserter > .components-button:focus {
+	background: var(--ak-hover-bg);
 }
