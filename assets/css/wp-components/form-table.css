@@ -82,3 +82,33 @@ body.adminkit p.submit {
 	padding-top: 24px;
 	margin-top: 0;
 }
+
+/* Mobile (≤782px) — WP core stacks `.form-table` cells to full width here, but
+   AdminKit's desktop rules above (the 220px label column + the 320px input
+   min-width) carry higher specificity than core's responsive selectors and would
+   otherwise win, forcing horizontal overflow on phones. Re-assert the stack at
+   matching specificity so the label sits above a full-width control on every raw
+   form-table screen (profile, user-edit, taxonomy add-forms, Tools, and any
+   plugin settings page). Screens AdminKit restructures itself — the options-*
+   panels and the profile cards — collapse via their own rules and are unaffected. */
+@media screen and (max-width: 782px) {
+	body.adminkit .form-table > tbody > tr > th,
+	body.adminkit .form-table > tbody > tr > td {
+		display: block;
+		width: auto;
+		padding: 4px 0;
+	}
+	body.adminkit .form-table > tbody > tr > th {
+		padding-top: 12px;
+		padding-bottom: 4px;
+	}
+	body.adminkit .form-table input.regular-text,
+	body.adminkit .form-table input[type="text"],
+	body.adminkit .form-table input[type="email"],
+	body.adminkit .form-table input[type="url"],
+	body.adminkit .form-table input[type="password"] {
+		min-width: 0;
+		max-width: 100%;
+		width: 100%;
+	}
+}

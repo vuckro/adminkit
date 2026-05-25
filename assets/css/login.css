@@ -16,7 +16,10 @@ body.login.adminkit {
 }
 
 #login {
-	width: 360px;
+	/* 360px on roomy screens, but never wider than the viewport less a 16px gutter
+	   each side — so the card stays clear of the edges on ≤360px phones instead of
+	   forcing horizontal scroll. */
+	width: min( 360px, calc( 100% - 32px ) );
 	padding-top: 24px;
 	padding-bottom: 24px;
 }

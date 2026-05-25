@@ -751,3 +751,20 @@
    (right), mirroring the switch position on active rows. The label stays at full
    strength (the pill alone signals the state, so the name stays legible). */
 .adminkit-app .ak-row__state { margin-left: auto; }
+
+/* Mobile (≤782px) — narrow-viewport polish for AdminKit's own surfaces. The tab
+   strip already scrolls sideways; the hero + roadmap already collapse. Here:
+   • the Design token table's fixed first two tracks (52px + 140px + 200px ≈ 392px)
+     would clip inside its overflow-hidden card below ~392px, so let the name and
+     mapping tracks shrink to 0 — the name ellipsises and the mapping chips wrap.
+   • inline fields wrap their segmented control onto its own line; drop the
+     left-auto push so it reads left-aligned under the label rather than stranded
+     on the right.
+   • let the header wrap so a long title never squashes the Save action. */
+@media screen and (max-width: 782px) {
+	.adminkit-app .ak-tbl {
+		grid-template-columns: 52px minmax( 0, 1fr ) minmax( 0, 1.6fr );
+	}
+	.adminkit-app .ak-field--inline .ak-seg { margin-left: 0; }
+	.adminkit-app .ak-head { flex-wrap: wrap; }
+}
