@@ -1,46 +1,46 @@
 /* Bricks builder — ESSENTIALS.
 
    Loaded in the builder MAIN frame ALWAYS, independent of the opt-in "Bricks
-   builder" restyle (Settings → Bricks builder). Two safe, compatibility-level
-   touches that a dark builder needs regardless of whether you opt into the full
-   chrome restyle:
+   builder" restyle (Settings → Bricks builder). One safe, compatibility-level fix
+   a dark builder needs regardless of whether you opt into the full chrome restyle:
 
-   1. Dark scrollbars — a dark builder must not show light native scrollbars. Give
-      every chrome scrollbar a SOLID dark track (--background, the builder bg) + a
-      neutral thumb — the same treatment as the Gutenberg canvas scrollbar. A
-      transparent track let the panels' light areas show through.
+   Dark scrollbars — Bricks's dark builder paints native LIGHT scrollbars on its
+   panels. Give every chrome scrollbar a SOLID dark track + a light-grey thumb.
 
-   These read the WaasKit provider vars (--background, --neutral-t-*), which Bricks's
-   style-manager provides in the builder even when the full restyle sheet is off.
+   Colours are FIXED here (not WaasKit vars): the builder UI is a dark app, and the
+   only var that tracks "dark" — var(--background) — resolves to the *site*
+   background, which is light on a light-mode site even while the builder chrome is
+   dark. So a fixed dark is the reliable choice (same rationale as the preloader
+   splash being a fixed #171717). The thumb is a translucent white so it reads on
+   any dark panel shade.
 
    The dynamic brand-logo CSS (toolbar favicon + preloader) is attached to THIS
-   handle as inline CSS from class-bricks.php (builder_logo_css()), so the logo
-   branding loads on the same always-present sheet. Zero !important (Tier A). */
+   handle as inline CSS from class-bricks.php (builder_logo_css()). Zero !important. */
 
 /* ── Chrome scrollbars (panels: structure, settings, …) ───────────────────── */
-body[data-builder-mode] { scrollbar-width: thin; scrollbar-color: var(--neutral-t-3) var(--background); }
-body[data-builder-mode] ::-webkit-scrollbar { width: 12px; height: 12px; background: var(--background); }
-body[data-builder-mode] ::-webkit-scrollbar-track { background: var(--background); }
+body[data-builder-mode] { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.24) #1e1e1e; }
+body[data-builder-mode] ::-webkit-scrollbar { width: 12px; height: 12px; background: #1e1e1e; }
+body[data-builder-mode] ::-webkit-scrollbar-track { background: #1e1e1e; }
 body[data-builder-mode] ::-webkit-scrollbar-thumb {
-	background: var(--neutral-t-3);
+	background: rgba(255,255,255,0.24);
 	border-radius: 8px;
-	border: 3px solid transparent;
+	border: 3px solid #1e1e1e;
 	background-clip: padding-box;
 }
-body[data-builder-mode] ::-webkit-scrollbar-thumb:hover { background: var(--neutral-t-4); }
-body[data-builder-mode] ::-webkit-scrollbar-corner { background: var(--background); }
+body[data-builder-mode] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.34); }
+body[data-builder-mode] ::-webkit-scrollbar-corner { background: #1e1e1e; }
 
 /* The LEFT Structure panel scrolls on #bricks-structure itself, which Bricks styles
    with ID-level scrollbar rules — re-theme with an ID-bearing selector to win on
    specificity (no !important). */
-body[data-builder-mode] #bricks-structure { scrollbar-width: thin; scrollbar-color: var(--neutral-t-3) var(--background); }
-body[data-builder-mode] #bricks-structure::-webkit-scrollbar { width: 12px; height: 12px; background: var(--background); }
-body[data-builder-mode] #bricks-structure::-webkit-scrollbar-track { background: var(--background); }
+body[data-builder-mode] #bricks-structure { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.24) #1e1e1e; }
+body[data-builder-mode] #bricks-structure::-webkit-scrollbar { width: 12px; height: 12px; background: #1e1e1e; }
+body[data-builder-mode] #bricks-structure::-webkit-scrollbar-track { background: #1e1e1e; }
 body[data-builder-mode] #bricks-structure::-webkit-scrollbar-thumb {
-	background: var(--neutral-t-3);
+	background: rgba(255,255,255,0.24);
 	border-radius: 8px;
-	border: 3px solid transparent;
+	border: 3px solid #1e1e1e;
 	background-clip: padding-box;
 }
-body[data-builder-mode] #bricks-structure::-webkit-scrollbar-thumb:hover { background: var(--neutral-t-4); }
-body[data-builder-mode] #bricks-structure::-webkit-scrollbar-corner { background: var(--background); }
+body[data-builder-mode] #bricks-structure::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.34); }
+body[data-builder-mode] #bricks-structure::-webkit-scrollbar-corner { background: #1e1e1e; }

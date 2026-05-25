@@ -487,27 +487,20 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
 		if ( '' !== $logo ) {
-			// THE builder preloader renders the brand mark on `.bricks-logo-animated`
-			// (the white "bricks" box in the splash) — NOT on `.bricks-loading-inner::before`
-			// (that's the frontend theme's structure, absent in the builder). So we restyle
-			// THAT element: override its box, paint the configured brand logo as its
-			// background, and hide its inner cubes/wordmark (> *) + any direct text
-			// (font-size/text-indent) + the .title/.sub-title. Centre it via the inner
-			// wrapper's grid (beats Bricks on specificity). A softly-rounded chip (faint
-			// fixed bg + padding) makes the border-radius read for a transparent/contain
-			// logo, never cropped. Colours are fixed — the splash paints before tokens
-			// load (same reason #bricks-preloader is #171717). No !important.
-			$css .= '#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
+			// Use Bricks's OWN proven preloader structure (exactly how the theme brands
+			// it): hide Bricks's logo/title, and paint the brand logo on
+			// `.bricks-loading-inner::before` — the inner's `place-items:center` centres
+			// that pseudo-element perfectly, so NO drift and NO chip needed. `contain`
+			// shows the whole logo (never cropped); `border-radius` rounds the box;
+			// NO background colour — the bare logo, not a card.
+			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
-			$css .= '#bricks-preloader .bricks-logo-animated{'
-				. 'box-sizing:border-box;width:16rem;height:6rem;max-width:70vw;margin:0;padding:1rem;'
-				. 'background-color:rgba(255,255,255,0.10);'
-				. 'background-image:' . self::css_url( $logo ) . ';'
-				. 'background-position:center;background-repeat:no-repeat;background-size:contain;background-origin:content-box;'
-				. 'border-radius:16px;font-size:0;text-indent:-9999px;overflow:hidden;'
+			$css .= '#bricks-preloader .bricks-loading-inner::before{'
+				. 'content:"";width:15rem;aspect-ratio:1;max-width:70vw;'
+				. 'background:' . self::css_url( $logo ) . ' center / contain no-repeat;'
+				. 'border-radius:16px;'
 				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
-			$css .= '#bricks-preloader .bricks-logo-animated > *{display:none}';
-			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.05)}}';
+			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
 		}
 		return $css;
 	}
