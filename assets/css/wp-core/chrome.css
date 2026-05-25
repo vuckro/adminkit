@@ -215,7 +215,7 @@ body.adminkit.auto-fold #adminmenu .wp-submenu {
    is light, so those leak. `!important` is the cheapest way to win — chaining
    every WP variant in the selector would be ten lines for the same effect. */
 body.adminkit #adminmenu .wp-submenu a {
-	color: var(--ak-heading) !important;
+	color: var(--ak-text-muted) !important;
 }
 
 body.adminkit #adminmenu .wp-submenu a:hover,
