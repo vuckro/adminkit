@@ -18,6 +18,13 @@
  * Save regardless of which tab is showing. The submit row is left in place at the
  * form foot, outside the panels, always visible across tabs.
  *
+ * Discussion is special-cased: it doesn't use a real `<h2>` per section but packs
+ * seven titled groups into the `<tr>` rows of one `<table class="form-table
+ * indent-children">`. That `indent-children` table (unique to this screen among
+ * the six) is "exploded" — each `<th>`-titled row is moved into its own single-
+ * row `.form-table` and becomes its own tab — so the screen tabs cleanly instead
+ * of collapsing every group into one giant panel.
+ *
  * Accessibility mirrors the accounts page: `role="tablist"`/`tab`/`tabpanel`,
  * `aria-selected`, `aria-controls`/`aria-labelledby`, roving tabindex and
  * Arrow-Left/Right navigation. The active tab is remembered per-screen in
@@ -53,6 +60,28 @@
 		return node.nodeType === 1 && node.tagName === 'P' && node.classList.contains('submit');
 	}
 
+	// The Discussion screen is the odd one out: instead of a real `<h2>` per
+	// section it crams SEVEN distinct titled groups ("Default post settings",
+	// "Other comment settings", "Comment Pagination", "Email me whenever", …)
+	// into the `<tr>` rows of a SINGLE `<table class="form-table indent-children">`,
+	// each row carrying its title as a `<th scope="row">`. Splitting only on
+	// `<h2>` would therefore collapse all seven into one giant unusable tab. WP
+	// uses the `indent-children` class on exactly this table (and on no other core
+	// options table), so it's a reliable, self-documenting signal: treat each such
+	// table as a mini section list, one tab per `<th>`-titled row.
+	function isExplodableTable(node) {
+		return node.nodeType === 1 && node.tagName === 'TABLE' &&
+			node.classList.contains('form-table') &&
+			node.classList.contains('indent-children');
+	}
+	// Pull the row's section title from its `<th>` (the `screen-reader-text`
+	// `<legend>` inside the fieldset mirrors it, but the `<th>` is the visible
+	// one). Falls back to empty so the caller can drop title-less rows in safely.
+	function rowLabel(tr) {
+		var th = tr.querySelector(':scope > th');
+		return th ? (th.textContent || '').trim() : '';
+	}
+
 	// localStorage is best-effort (private mode / disabled storage throws).
 	function readActive() {
 		try { return window.localStorage.getItem(STORE_KEY); } catch (e) { return null; }
@@ -84,6 +113,52 @@
 	if (leading.length) {
 		sections.unshift({ header: null, label: GENERAL_LABEL, body: leading });
 	}
+
+	// Explode any `indent-children` table (the Discussion comment-settings table)
+	// into one section per `<th>`-titled row, so each group gets its own tab. Each
+	// row is re-homed into a fresh single-row `.form-table` that copies the source
+	// table's classes (minus `indent-children`) so all the card + row-grid CSS in
+	// options.css keeps matching unchanged. Rows are MOVED, never cloned, so every
+	// field keeps its `name` and the one form still posts them all on Save. Any
+	// non-`<tr>` body siblings (none today, but be defensive) ride with the first
+	// row's section so nothing is dropped. Tables without a title-bearing `<th>`
+	// row are left intact (no sensible per-tab split). Sections that aren't a lone
+	// explodable table pass straight through.
+	sections = sections.reduce(function (acc, sect) {
+		var table = sect.body.length === 1 && isExplodableTable(sect.body[0]) ? sect.body[0] : null;
+		var rows = table ? Array.prototype.slice.call(table.querySelectorAll(':scope > tbody > tr, :scope > tr')) : [];
+		var titled = rows.filter(function (tr) { return rowLabel(tr); });
+		// Need a real heading-per-row split to be worthwhile: ≥2 titled rows.
+		if (!table || titled.length < 2) {
+			acc.push(sect);
+			return acc;
+		}
+		rows.forEach(function (tr) {
+			var label = rowLabel(tr);
+			var holder = document.createElement('table');
+			// Mirror the source table's look minus the explode marker; the
+			// per-screen card/grid CSS keys off `.ak-options-panel > .form-table`.
+			// `ak-options-exploded` flags it so options.css can drop the now-
+			// redundant row label (the tab already names the section) and give the
+			// controls the full card width.
+			holder.className = (table.className.replace(/\bindent-children\b/, '').trim() +
+				' ak-options-exploded').trim();
+			holder.setAttribute('role', 'presentation');
+			var tbody = document.createElement('tbody');
+			tbody.appendChild(tr); // MOVE the row (keeps every field + its name)
+			holder.appendChild(tbody);
+			if (label) {
+				acc.push({ header: null, label: label, body: [holder] });
+			} else if (acc.length) {
+				// Untitled stray row — keep it visible by folding it into the
+				// previous section rather than orphaning it in a nameless tab.
+				acc[acc.length - 1].body.push(holder);
+			} else {
+				acc.push({ header: null, label: sect.label, body: [holder] });
+			}
+		});
+		return acc;
+	}, []);
 
 	// Drop empty sections (a heading with no body — nothing to show in a panel).
 	sections = sections.filter(function (s) { return s.body.length; });

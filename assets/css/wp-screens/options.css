@@ -300,6 +300,44 @@ body.adminkit.options-permalink-php .ak-options-panel > .form-table > tbody > tr
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
+   3b. EXPLODED ROWS (Discussion) — options.js splits the Discussion comment-
+   settings table (the lone `.form-table.indent-children`) into one card per
+   `<th>`-titled row, tagging each holder table `.ak-options-exploded`. The tab
+   now names the section, so the row's `<th>` label would just repeat it: collapse
+   the row to a SINGLE column and hide the `<th>` (kept in the DOM with its
+   `scope="row"` for screen readers — the fieldset's `<legend>` still labels the
+   group). The controls then use the full card width, matching the standalone
+   "Avatars" card on the same screen.
+   ────────────────────────────────────────────────────────────────────────── */
+
+body.adminkit.options-discussion-php .ak-options-panel > .form-table.ak-options-exploded > tbody > tr {
+	display: block;
+	padding: 0;
+	border-top: 0;
+}
+
+/* Visually hide the now-redundant row label without removing it from the
+   accessibility tree (no `display:none`). */
+body.adminkit.options-discussion-php .ak-options-panel > .form-table.ak-options-exploded > tbody > tr > th {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* The control cell spans the full card width. */
+body.adminkit.options-discussion-php .ak-options-panel > .form-table.ak-options-exploded > tbody > tr > td {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    4. CHECKBOX / RADIO ROWS — the scannable part. AdminKit renders checkboxes as
    34px toggle switches and radios as 16px dots; lay each option out as a flex
    row (control + label) with comfortable vertical spacing so the long lists on
@@ -627,6 +665,55 @@ body.adminkit.options-reading-php .option-site-visibility fieldset > label {
 body.adminkit.options-reading-php .option-site-visibility fieldset > input[type="radio"] {
 	margin-right: var(--ak-space-xs);
 	vertical-align: middle;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   8b. DISCUSSION KEYWORD BOXES — the two big "one word / IP per line" textareas,
+   "Comment Moderation" (#moderation_keys) and "Disallowed Comment Keys"
+   (#disallowed_keys). Both ship as `<textarea class="large-text code">`: WP gives
+   them a stray `width: 99%` and a `Consolas` monospace face, so against the rest
+   of the screen they read as raw, unstyled full-width boxes. Pin them to the
+   AdminKit input tokens — full card width, comfortable height, themed surface +
+   border (light + dark via `--ak-*`) — so they match every other control. (The
+   base `body.adminkit textarea` already supplies bg/border/radius/`--ak-font-body`;
+   here we own the sizing + spacing that the `.large-text`/`.code` combo missed.)
+   The label/help `<p>`s above them are the fieldset's own copy; give them a small
+   gap so the box doesn't crowd its explanation.
+   ────────────────────────────────────────────────────────────────────────── */
+
+body.adminkit.options-discussion-php .ak-options-panel .form-table fieldset textarea.large-text {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	min-height: 132px;
+	margin: 0;
+	resize: vertical;
+	/* Override WP's `.code` Consolas face with the AdminKit body token so the box
+	   matches every other input (the base textarea rule already sets this; restate
+	   it here to win over `.code` at this higher, panel-scoped specificity). */
+	font-family: var(--ak-font-body);
+	line-height: 1.6;
+}
+
+/* The `<textarea>` and the label/help notes above it are each wrapped in their
+   own `<p>` inside the fieldset; section 4 already gives those `<p>`s the option-
+   row gap, so the box sits in a clean column under its description with no extra
+   rule needed here. */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   8c. AVATARS visibility toggle — when "Show Avatars" is unchecked, WP's inline
+   script (options.php → options_discussion_add_js) puts `.hide-if-js` on the
+   "Maximum Rating" + "Default Avatar" rows, which core hides via `.js .hide-if-js
+   { display:none }` (specificity 0,2,0). Our row-grid rule turns every `<tr>`
+   into `display:grid` at far higher specificity, so it would override that and
+   leave the rows visible when avatars are off. Re-assert the hide for these rows
+   (and the legacy `.hidden` utility) so the toggle keeps working on this screen.
+   ────────────────────────────────────────────────────────────────────────── */
+
+body.adminkit.options-discussion-php .ak-options-panel > .form-table > tbody > tr.hide-if-js,
+body.adminkit.options-discussion-php .ak-options-panel > .form-table > tbody > tr.hidden {
+	display: none;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
