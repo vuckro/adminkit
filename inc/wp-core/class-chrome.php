@@ -109,6 +109,18 @@ class AdminKit_Core_Chrome {
 			) );
 		}
 
+		// Generic feedback surfaces (solid-fill `.notice-alt` + the AJAX
+		// update/install/activate states) — extends the notices already themed in
+		// wp-core/chrome.css so an UNSUPPORTED plugin's feedback reads right in
+		// dark too. Kept OUT of the 'forms' section so it isn't bailed by the
+		// Fluent `adminkit/enqueue_forms` switch; toggle via `adminkit/enqueue_adminkit-feedback`.
+		AdminKit_Assets::register( array(
+			'handle'  => 'adminkit-feedback',
+			'src'     => self::ASSETS_BASE . 'wp-components/feedback.css',
+			'deps'    => $tokens,
+			'context' => 'admin',
+		) );
+
 		// --- wp-screens/_shared/ (always loaded — small, used by several screens) ---
 		foreach ( array( 'wp-filter', 'thickbox', 'notification-dialog', 'cards' ) as $shared ) {
 			AdminKit_Assets::register( array(

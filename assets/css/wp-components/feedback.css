@@ -1,0 +1,120 @@
+/* Generic feedback surfaces — the WP-core "feedback" family that ANY plugin
+   reuses without shipping an adapter: the SOLID-fill notice variant and the
+   AJAX progress/result states (update / install / activate). Themed through
+   --ak-* so an UNSUPPORTED plugin still reads cleanly in light AND dark.
+
+   Scope: the standard bordered notices (`.notice`, `.notice-success|-error|
+   -warning|-info`, `.notice p`, `.notice-dismiss`, postboxes and nav-tabs) are
+   ALREADY themed in wp-core/chrome.css — this file does NOT redeclare them, it
+   only fills the variants chrome.css leaves to WP's hardcoded colours:
+
+     1. `.notice-alt`        — WP's solid-fill variant (used inside meta-boxes,
+                               the plugin-info modal, `wp.updates` rows). WP pins
+                               opaque pale fills (#eff9f1 / #fef8ee / #fcf0f0 /
+                               #fff) that survive into dark mode and clash.
+     2. AJAX feedback states — `.update-message` / `.updating-message` /
+                               `.updated-message` containers + the dashicon
+                               glyphs WP hardcodes #d63638 (red) / #68de7c
+                               (green) on, including the `.button.*` inline
+                               states (installing / activating / installed …).
+
+   Always loaded in admin (registered alongside the other wp-components files);
+   every selector is a no-op where the markup is absent. Colour/token only — no
+   geometry — so plugin layouts stay untouched. Wins by specificity (the
+   `body.adminkit` + compound-class chains out-rank WP's own rules), so no
+   `!important`. */
+
+/* ── 1. Solid-fill notices (`.notice-alt`) ──────────────────────────────────
+   The bare `.notice-alt` has no own fill in WP (it only drops the shadow), so
+   it inherits the elevated card from chrome.css's `.notice` — fine. The
+   per-status `.notice-X.notice-alt` combos, though, re-assert WP's opaque pale
+   fills at (0,2,0); chrome.css's `body.adminkit .notice-X` is (0,2,1) and wins
+   on light, but we restate them here as a compound chain (higher specificity,
+   one clear winner in both modes) routed through the SAME subtle tints + tinted
+   border the standard notices use, so a solid-variant notice matches its
+   bordered sibling. */
+body.adminkit .notice-success.notice-alt,
+body.adminkit div.updated.notice-alt {
+	background: var(--ak-success-subtle);
+	color: var(--ak-success);
+	border-color: color-mix(in srgb, var(--ak-success) 30%, transparent);
+}
+
+body.adminkit .notice-error.notice-alt,
+body.adminkit div.error.notice-alt {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
+	border-color: color-mix(in srgb, var(--ak-error) 30%, transparent);
+}
+
+body.adminkit .notice-warning.notice-alt {
+	background: var(--ak-warning-subtle);
+	color: var(--ak-warning);
+	border-color: color-mix(in srgb, var(--ak-warning) 30%, transparent);
+}
+
+body.adminkit .notice-info.notice-alt {
+	background: var(--ak-info-subtle);
+	color: var(--ak-info);
+	border-color: color-mix(in srgb, var(--ak-info) 30%, transparent);
+}
+
+/* ── 2. AJAX feedback notices (in-progress / result) ─────────────────────────
+   `.update-message` / `.updating-message` / `.updated-message` are the inline
+   notices `wp.updates` swaps in while a plugin/theme/translation job runs. WP
+   styles each as a `.notice` and adds a hardcoded bg per state. Give the
+   neutral "updating" state a token surface, and route the success/error results
+   to the matching subtle tint. (The plugins-list `.plugin-update-tr` row keeps
+   its own screen-scoped warning treatment in wp-screens/plugins.css — these
+   class selectors are (0,2,1) and don't reach into that more-specific rule.) */
+body.adminkit .updating-message,
+body.adminkit .update-message {
+	background: var(--ak-elevated);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .updated-message,
+body.adminkit .update-message.notice-success {
+	background: var(--ak-success-subtle);
+	color: var(--ak-success);
+	border-color: color-mix(in srgb, var(--ak-success) 30%, transparent);
+}
+
+body.adminkit .update-message.notice-error {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
+	border-color: color-mix(in srgb, var(--ak-error) 30%, transparent);
+}
+
+/* Let the AJAX-notice body text take the state colour (WP hardcodes #1e1e1e on
+   `.notice p`, invisible on dark), matching the tinted-copy convention
+   chrome.css uses for the standard notices. */
+body.adminkit .updating-message p,
+body.adminkit .update-message p,
+body.adminkit .updated-message p {
+	color: inherit;
+}
+
+/* ── 3. AJAX feedback icon glyphs ────────────────────────────────────────────
+   The spinner / check / error dashicons WP draws via `::before` on the notice
+   `<p>` AND on the inline `.button.*` action states. WP hardcodes #d63638 (red)
+   for the in-progress + error glyphs and #68de7c (green) for the done glyph;
+   route them to the status tokens so they track light/dark and the brand. Only
+   the colour is set — WP's `content`, font and spin animation are untouched. */
+body.adminkit .update-message p::before,
+body.adminkit .updating-message p::before,
+body.adminkit .import-php .updating-message::before,
+body.adminkit .button.updating-message::before,
+body.adminkit .button.installing::before,
+body.adminkit .button.activating-message::before,
+body.adminkit .update-message.notice-error p::before {
+	color: var(--ak-error);
+}
+
+body.adminkit .updated-message p::before,
+body.adminkit .installed p::before,
+body.adminkit .button.updated-message::before,
+body.adminkit .button.activated-message::before {
+	color: var(--ak-success);
+}
