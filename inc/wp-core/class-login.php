@@ -51,6 +51,10 @@ class AdminKit_Core_Login {
 		add_action( 'login_head', array( __CLASS__, 'print_login_logo_style' ) );
 		add_filter( 'login_headerurl', array( __CLASS__, 'filter_header_url' ) );
 		add_filter( 'login_headertext', array( __CLASS__, 'filter_header_text' ) );
+		// Tag the body with which mark is shown so login.css can frame it correctly
+		// (a square rounded tile for a favicon, a wide rounded card for a wordmark)
+		// — that's what makes the radius actually read on the logo.
+		add_filter( 'login_body_class', array( __CLASS__, 'filter_body_class' ) );
 
 		// The login light/dark switch (also gated inside, on BOTH the login feature
 		// and the dark-mode feature — the toggle only makes sense when dark mode is
@@ -88,6 +92,46 @@ class AdminKit_Core_Login {
 	 */
 	public static function filter_header_text( $text ) {
 		return self::is_enabled() ? get_bloginfo( 'name' ) : $text;
+	}
+
+	/**
+	 * Add a body class describing which mark the login screen shows, so login.css
+	 * can frame it for a visible radius: `ak-login-mark--favicon` (a square rounded
+	 * tile) or `ak-login-mark--logo` (a wide rounded card). No class when no mark is
+	 * configured (WordPress's own logo then shows, unstyled by us).
+	 *
+	 * @param string[] $classes
+	 * @return string[]
+	 */
+	public static function filter_body_class( $classes ) {
+		if ( ! self::is_enabled() ) {
+			return $classes;
+		}
+		$type = self::login_mark_type();
+		if ( '' !== $type ) {
+			$classes[] = 'ak-login-mark--' . $type;
+		}
+		return $classes;
+	}
+
+	/**
+	 * Which mark the login screen will show: 'logo' (a configured brand wordmark,
+	 * only when wp_logo is "logo"), else 'favicon' (the site icon), else '' (none).
+	 * Mirrors the resolution order in print_login_logo_style().
+	 *
+	 * @return string 'logo' | 'favicon' | ''
+	 */
+	private static function login_mark_type() {
+		if ( 'logo' === AdminKit_Settings::get( 'wp_logo' ) ) {
+			$logo = AdminKit_Settings::brand_logo( 'light' );
+			if ( '' === $logo ) {
+				$logo = AdminKit_Settings::brand_logo( 'dark' );
+			}
+			if ( '' !== $logo ) {
+				return 'logo';
+			}
+		}
+		return '' !== get_site_icon_url( 200 ) ? 'favicon' : '';
 	}
 
 	/**

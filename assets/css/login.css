@@ -14,32 +14,58 @@ body.login.adminkit {
 
 /* Logo — the URL is injected by PHP (AdminKit_Core_Login::print_login_logo_style)
    from the brand logo or the site icon, following the `wp_logo` setting; the dark
-   variant swaps under the theme flag. `contain` fits a wide wordmark uncropped just
-   as well as a square favicon; the tokenised radius softens a square favicon's hard
-   corners (the background is clipped to it) and is a harmless no-op on a wordmark
-   that doesn't reach its edges. */
-#login h1,
+   variant swaps under the theme flag. AdminKit_Core_Login also tags <body> with the
+   mark type so we can frame it as a tidy rounded tile where the radius actually
+   reads (a transparent wordmark on a bare box shows no rounding). */
 #login h1 a {
+	display: block;
+	margin: 0 auto 20px;
 	background-position: center center;
 	background-repeat: no-repeat;
+	border-radius: var(--ak-radius-l, 14px);
+}
+/* Favicon → a square rounded tile, image covering it so the corners round (app-icon
+   feel). */
+body.ak-login-mark--favicon #login h1 a {
+	width: 84px;
+	height: 84px;
+	background-size: cover;
+	border: 1px solid var(--ak-border);
+}
+/* Wordmark → a wide rounded card on a surface, the logo contained INSIDE padding
+   (background-origin: content-box) so it breathes and the rounded corners show. */
+body.ak-login-mark--logo #login h1 a {
+	width: 100%;
+	height: 92px;
+	padding: 18px 26px;
+	box-sizing: border-box;
+	background-color: var(--ak-surface);
+	background-origin: content-box;
 	background-size: contain;
+	border: 1px solid var(--ak-border);
+}
+/* No AdminKit mark configured: keep WP's own logo sizing, just centre it. */
+body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	width: 100%;
 	height: 72px;
-	margin-bottom: 16px;
-	border-radius: var(--ak-radius-m, 8px);
+	background-size: contain;
 }
 
 /* Light / dark switch (AdminKit_Core_Login::print_theme_toggle) — a flat, bordered
-   icon button centred below the form, matching AdminKit's secondary-button chrome.
-   Shown only when the dark-mode feature is on; persistence is shared with the rest
-   of the plugin (data-adminkit-theme + the adminkit-theme storage key). */
+   icon button pinned to the top-right of the screen (out of the form flow, a
+   familiar spot), matching AdminKit's secondary-button chrome. Shown only when the
+   dark-mode feature is on; persistence is shared with the rest of the plugin
+   (data-adminkit-theme + the adminkit-theme storage key). */
 .ak-login-theme-toggle {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: 10;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 36px;
-	height: 36px;
-	margin: 4px auto 0;
+	width: 38px;
+	height: 38px;
 	padding: 0;
 	background: var(--ak-btn-bg);
 	border: 1px solid var(--ak-border);
