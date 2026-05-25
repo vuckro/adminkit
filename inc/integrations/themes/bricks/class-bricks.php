@@ -374,7 +374,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$css .= '#bricks-toolbar .logo{background-color:transparent!important;border-radius:6px;overflow:hidden}';
 			$css .= '#bricks-toolbar .logo a{display:block;width:100%;height:100%}';
 			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:100%;height:100%;'
-				. 'box-sizing:border-box;padding:4px;object-fit:contain;border-radius:5px}';
+				. 'box-sizing:border-box;padding:4px;object-fit:contain;border-radius:6px}';
 		} else {
 			$css .= self::builder_toolbar_letter_css();
 		}
@@ -385,13 +385,16 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
 		if ( '' !== $logo ) {
-			// Show the FULL brand logo (contain → never cropped), centred and rounded,
-			// with a gentle pulse. No card, no border, no margin — just the logo.
+			// Show the FULL brand logo (contain → never cropped) on a SUBTLE rounded
+			// panel, centred, with a gentle pulse. The panel fills the rounded box so
+			// the border-radius is visible for ANY logo shape (a transparent logo on a
+			// bare rounded box would leave the radius in empty space). The logo sits at
+			// 72% centred so the rounded panel edge reads around it. The splash is dark.
 			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
 			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";display:block;'
-				. 'width:10rem;height:10rem;border-radius:1.5rem;'
-				. 'background:' . self::css_url( $logo ) . ' center/contain no-repeat;'
+				. 'width:11rem;height:11rem;border-radius:1.75rem;'
+				. 'background:color-mix(in srgb, var(--ak-text, #fff) 7%, transparent) ' . self::css_url( $logo ) . ' center / 72% no-repeat;'
 				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
 			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.08)}}';
 		}

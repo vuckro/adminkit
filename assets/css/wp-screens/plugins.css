@@ -139,6 +139,15 @@ body.adminkit.plugin-install-php .plugin-card {
 	border-radius: var(--ak-radius-m);
 }
 
+/* Plugin card icon — round the thumbnail so it matches the rounded card. Covers
+   both the install cards (plugin-install.php) and any plugin list icon image. */
+body.adminkit .plugin-card .plugin-icon,
+body.adminkit .plugin-card .plugin-icon img,
+body.adminkit .wp-list-table.plugins .plugin-icon img {
+	border-radius: var(--ak-radius-m);
+	overflow: hidden;
+}
+
 body.adminkit.plugin-install-php .plugin-card-bottom {
 	background-color: var(--ak-surface);
 	border-top-color: var(--ak-border);

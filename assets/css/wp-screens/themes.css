@@ -26,6 +26,28 @@ body.adminkit .theme-browser .theme .theme-actions {
 	border-left-color: var(--ak-border);
 }
 
+/* Active theme primary button (e.g. "Customize") — WP's active-card rules
+   (`.theme.active .theme-actions .button-primary`, specificity 0,4,0) set a
+   white border on a TRANSPARENT strip, so the button reads as transparent and
+   loses its fill on hover. Pin it (id + the same active-card selector depth) to
+   the brand fill at rest and --ak-primary-hover on hover so it stays a solid,
+   visible button. The label keeps --ak-on-accent across both states. */
+body.adminkit .theme-browser .theme.active .theme-actions .button-primary,
+body.adminkit .theme-browser .theme.active .theme-actions .button.activate {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+	box-shadow: none;
+}
+body.adminkit .theme-browser .theme.active .theme-actions .button-primary:hover,
+body.adminkit .theme-browser .theme.active .theme-actions .button-primary:focus,
+body.adminkit .theme-browser .theme.active .theme-actions .button.activate:hover,
+body.adminkit .theme-browser .theme.active .theme-actions .button.activate:focus {
+	background: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
+	color: var(--ak-on-accent);
+}
+
 /* Active theme — a soft brand tint (--ak-primary-subtle, the --ak token for
    --accent-subtle) + readable heading text, so the current theme reads as
    selected without the loud solid accent. Drop WP's inset box-shadow to keep it
@@ -34,6 +56,16 @@ body.adminkit .theme-browser .theme.active .theme-name {
 	background: var(--ak-primary-subtle);
 	color: var(--ak-heading);
 	box-shadow: none;
+}
+
+/* Theme screenshot — round the thumbnail so cards read as soft rounded tiles.
+   The container clips (overflow:hidden) so the <img> corners follow the radius. */
+body.adminkit .theme-browser .theme .theme-screenshot {
+	border-radius: var(--ak-radius-m);
+	overflow: hidden;
+}
+body.adminkit .theme-browser .theme .theme-screenshot img {
+	border-radius: var(--ak-radius-m);
 }
 
 /* "Add New Theme" tile at the end of the themes grid — hide it.

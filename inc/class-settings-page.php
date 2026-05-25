@@ -275,6 +275,8 @@ class AdminKit_Settings_Page {
 				'logoHint'          => __( 'Optional brand logo URLs (light + dark). Used for the admin-bar logo and the Bricks builder. Leave empty to fall back to the adminkit/brand_logo filter.', 'adminkit' ),
 				'logoLight'         => __( 'Logo — light mode', 'adminkit' ),
 				'logoDark'          => __( 'Logo — dark mode', 'adminkit' ),
+				'logoLightMode'     => __( 'Light Mode', 'adminkit' ),
+				'logoDarkMode'      => __( 'Dark Mode', 'adminkit' ),
 				'logoPlaceholder'   => __( 'https://…/logo.svg', 'adminkit' ),
 				'logoPick'          => __( 'Choose a logo', 'adminkit' ),
 				'logoChange'        => __( 'Change logo', 'adminkit' ),

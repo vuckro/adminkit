@@ -171,7 +171,7 @@ class AdminKit_Core_Branding {
 		return $sel . '{width:20px;height:32px;padding:0;overflow:hidden}'
 			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:20px;height:20px;'
 			. 'margin:6px 0;top:0;'
-			. 'border-radius:var(--ak-radius-m,8px);'
+			. 'border-radius:var(--ak-radius-s,5px);'
 			. 'background:' . $favicon . ' center/cover no-repeat}'
 			. self::hide_site_name_glyph();
 	}

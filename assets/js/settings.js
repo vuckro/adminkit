@@ -328,7 +328,7 @@
 			} );
 			frame.open();
 		}
-		function logoField( slot, label, iconKey ) {
+		function logoField( slot, label, iconKey, textLabel ) {
 			var id = 'ak-logo-' + slot;
 			var preview = el( 'img', { 'class': 'ak-logo-pick__img', alt: '' } );
 			// Empty-state placeholder shown inside the picker when no logo is set.
@@ -374,8 +374,15 @@
 				markDirty();
 			} );
 			syncPreview();
-			var lbl = el( 'label', { 'class': 'ak-field__label ak-field__label--icon', 'for': id, 'aria-label': label, title: label } );
-			lbl.innerHTML = ICONS[ iconKey ] || '';
+			// Label = sun/moon ICON then the localized TEXT ("Light Mode" / "Dark Mode"),
+			// laid out horizontally (icon left, text right). The full label stays the
+			// title/aria-label for assistive tech.
+			var lblIc = el( 'span', { 'class': 'ak-field__label-ic' } );
+			lblIc.innerHTML = ICONS[ iconKey ] || '';
+			var lbl = el( 'label', { 'class': 'ak-field__label ak-field__label--icon', 'for': id, title: label }, [
+				lblIc,
+				el( 'span', { 'class': 'ak-field__label-tx', text: textLabel || label } )
+			] );
 			return el( 'div', { 'class': 'ak-field' }, [
 				lbl,
 				el( 'div', { 'class': 'ak-field__control' }, [
@@ -428,8 +435,8 @@
 			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
 			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
 			el( 'div', { 'class': 'ak-rows' }, [
-				logoField( 'light', I.logoLight, 'sun' ),
-				logoField( 'dark', I.logoDark, 'moon' ),
+				logoField( 'light', I.logoLight, 'sun', I.logoLightMode ),
+				logoField( 'dark', I.logoDark, 'moon', I.logoDarkMode ),
 				wpField
 			] )
 		] ) );

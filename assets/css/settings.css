@@ -470,6 +470,92 @@
 }
 .adminkit-app .ak-field__hint { margin: 6px 0 0; font-size: var(--ak-text-s); color: var(--ak-text-muted); }
 
+/* Icon + text field label (Branding light/dark logos) — sun/moon glyph then
+   the localized "Light Mode" / "Dark Mode" text, laid out horizontally. */
+.adminkit-app .ak-field__label--icon {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+}
+.adminkit-app .ak-field__label-ic {
+	display: inline-flex;
+	flex: 0 0 auto;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-field__label-tx { line-height: 1.2; }
+
+/* Logo media picker (Branding) — the PREVIEW itself is the click target that
+   opens the WP media frame; a small × clears it. The wrap holds the picker + the
+   clear button side by side; a hidden URL <input> stays in sync below. */
+.adminkit-app .ak-logo-pick__wrap {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+/* The picker: a small fixed-height box (never huge) with a token border. Holds
+   either the contained preview image or the empty-state placeholder text. */
+.adminkit-app .ak-logo-pick {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	height: 44px;
+	min-width: 64px;
+	max-width: 120px;
+	padding: 4px 8px;
+	margin: 0;
+	font: inherit;
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+	background: var(--ak-input-bg);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	cursor: pointer;
+}
+.adminkit-app .ak-logo-pick:hover { border-color: var(--ak-border-strong); }
+.adminkit-app .ak-logo-pick:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
+/* Preview image — constrained to the small box so a large source NEVER blows up
+   the layout; shown in full (contain), not cropped. */
+.adminkit-app .ak-logo-pick__img {
+	display: block;
+	max-width: 100%;
+	max-height: 36px;
+	width: auto;
+	height: auto;
+	object-fit: contain;
+}
+.adminkit-app .ak-logo-pick__ph {
+	display: block;
+	text-align: center;
+	line-height: 1.2;
+}
+/* When a logo is set, hide the placeholder text and let the image fill the box. */
+.adminkit-app .ak-logo-pick.is-set { padding: 3px; }
+.adminkit-app .ak-logo-pick.is-set .ak-logo-pick__ph { display: none; }
+/* Clear (×) button — small neutral icon button next to the picker. */
+.adminkit-app .ak-logo-pick__clear {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	box-sizing: border-box;
+	width: 26px;
+	height: 26px;
+	padding: 0;
+	color: var(--ak-text-muted);
+	background: var(--ak-btn-bg);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	cursor: pointer;
+}
+.adminkit-app .ak-logo-pick__clear:hover {
+	color: var(--ak-text);
+	background: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
+}
+.adminkit-app .ak-logo-pick__clear:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
+.adminkit-app .ak-logo-pick__clear[hidden] { display: none; }
+
 /* Inline field (label left, control right) + segmented control ----------- */
 .adminkit-app .ak-field--inline {
 	flex-direction: row;
