@@ -137,3 +137,12 @@ html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button-primary:
 html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button-primary:focus {
 	text-decoration: none;
 }
+/* "Edit with Bricks" must NOT go black on hover (Bricks / its theme darkens it).
+   Pin a filled brand hover with a dark label. The :hover lifts specificity, so this
+   can beat Bricks without !important. */
+html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button-primary:hover,
+html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button-primary:focus {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
