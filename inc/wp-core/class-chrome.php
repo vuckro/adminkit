@@ -107,6 +107,18 @@ class AdminKit_Core_Chrome {
 				return $screen && 'post' === $screen->base;
 			},
 		) );
+		// Core Settings screens — one shared stylesheet (cards + clarity) for all
+		// six built-in options pages. The screen ids are the page basenames minus
+		// `.php` (e.g. options-general.php → 'options-general'); each file's rules
+		// also self-scope via the matching `.{page}-php` body class.
+		self::register_screen( 'options', array(
+			'options-general',
+			'options-writing',
+			'options-reading',
+			'options-discussion',
+			'options-media',
+			'options-permalink',
+		) );
 		self::register_screen( 'themes',          array( 'themes', 'theme-install' ) );
 		self::register_screen( 'theme-install',   array( 'themes', 'theme-install' ) );
 		// user-new.php reports screen id 'user' (WP strips '-new'); the CSS
