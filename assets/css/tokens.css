@@ -94,11 +94,13 @@
 
 	/* ── State ─────────────────────────────────────────────────────────────
 	   --ak-hover-bg is THE single neutral hover token — every row / menu / item /
-	   list-table hover reads it, light AND dark. It aliases --ak-elevated (the
-	   "hover-down" surface), so a hover lifts a row to the elevated tone; since
-	   --ak-elevated flips per mode, this one line covers both (no dark override).
+	   list-table hover reads it, light AND dark. It MUST be a TRANSLUCENT tint:
+	   hover targets are transparent at rest, so the tint composites over whatever
+	   is beneath → a visible step on ANY surface, including --ak-elevated elements
+	   (an opaque elevated value is invisible there, and barely a step on surfaces).
+	   Black in light, white in dark (calmed value in the dark block below).
 	   Then the focus color + the ring built on it (a custom brand tints its own). */
-	--ak-hover-bg: var(--ak-elevated);
+	--ak-hover-bg: var(--hover, rgba(0, 0, 0, 0.04));
 	/* Elevation shadow — the one sanctioned exception to the flat rule, for
 	   true floating layers (admin-bar dropdowns). Mode-aware like --hover-bg:
 	   a black drop in light, inverted to a white lift in dark (a dark drop is
@@ -240,6 +242,9 @@ body.adminkit[class*="admin-color-"] {
 	/* Inverted elevation — a white lift reads on a dark page where a black
 	   drop would vanish. */
 	--ak-shadow-elevated: 0 8px 24px -10px rgba(255, 255, 255, 0.14);
+	/* Hover tint — white in dark (a black tint vanishes on a dark UI); calmed
+	   (~0.06) so row / menu / tab hovers stay subtle but visible on any surface. */
+	--ak-hover-bg: rgba(255, 255, 255, 0.06);
 
 	/* Secondary-button hover: the fill auto-adapts via the :root color-mix (it
 	   lightens here as surface + text flip). Only the border needs a lift — the

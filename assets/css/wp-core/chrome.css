@@ -73,9 +73,9 @@ body.adminkit #adminmenu li.menu-top {
 }
 
 /* Hover / focus on non-current items — match WP's exact selectors with
-   !important to defeat colors.css. Uses the central --ak-hover-bg token (= the
-   --ak-elevated lift; it flips per mode) so the sidebar hover matches every other
-   neutral hover, light AND dark. */
+   !important to defeat colors.css. Uses the central --ak-hover-bg token (a
+   translucent tint that composites over the sidebar surface) so the sidebar
+   hover matches every other neutral hover, light AND dark. */
 body.adminkit #adminmenu a:hover,
 body.adminkit #adminmenu li.menu-top:hover,
 body.adminkit #adminmenu li.opensub > a.menu-top,
