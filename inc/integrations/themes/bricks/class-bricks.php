@@ -354,8 +354,9 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 *
 	 * Toolbar: the site FAVICON (square), rounded, on the accent chip so a
 	 * transparent icon still reads; first-letter mark when no Site Icon is set.
-	 * Preloader: the configured brand LOGO (dark variant), rounded, pulsing on the
-	 * fixed dark splash; Bricks's own loader shows when no logo is set.
+	 * Preloader: the configured brand LOGO (dark variant) shown plainly — contained,
+	 * centred and simply rounded on the fixed dark splash (no card, no pulse);
+	 * Bricks's own loader shows when no logo is set.
 	 *
 	 * @return string Inline CSS.
 	 */
@@ -383,15 +384,14 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
 		if ( '' !== $logo ) {
+			// Show the brand logo plainly: hide Bricks's animated mark + the
+			// title/sub-title, then drop the logo in CONTAINED and centred on a
+			// simply-rounded box. No card fill, no pulse — kept minimal on purpose.
 			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
-			// A rounded card (subtle fill) with the logo contained inside — the card is
-			// what makes the radius visible (a bare contained logo leaves the rounded
-			// corners empty/transparent, so the radius never showed).
-			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:13rem;height:13rem;border-radius:2rem;'
-				. 'background:rgba(255,255,255,.08) ' . self::css_url( $logo ) . ' center/60% no-repeat;'
-				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
-			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
+			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";display:block;'
+				. 'width:9rem;height:9rem;border-radius:1.25rem;'
+				. 'background:' . self::css_url( $logo ) . ' center/contain no-repeat}';
 		}
 		return $css;
 	}
