@@ -32,8 +32,7 @@
 			light: ( D.logos && D.logos.light ) || '',
 			dark:  ( D.logos && D.logos.dark ) || ''
 		},
-		wpLogo: D.wpLogo || 'favicon',  // admin-bar WP logo: logo | favicon | hide
-		logoSize: D.logoSize || 30      // admin-bar logo size in px
+		wpLogo: D.wpLogo || 'favicon'   // admin-bar WP logo: logo | favicon | hide
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
@@ -90,7 +89,10 @@
 		dashboard: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>',
 		colours: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8c3.4 3.9 5.4 6.5 5.4 9.2a5.4 5.4 0 0 1-10.8 0c0-2.7 2-5.3 5.4-9.2z"/></svg>',
 		features: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
-		plugins: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>'
+		plugins: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>',
+		sun: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+		moon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+		close: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'
 	};
 
 	var tabs = [
@@ -305,8 +307,11 @@
 	function buildFeatures() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( I.featuresIntro ) ] );
 
-		// --- Branding (top) — light/dark logo: URL field + media-library picker ---
-		function openMedia( slot, input, onChange ) {
+		// --- Branding (top) — light/dark logo. The PREVIEW itself is the picker:
+		// clicking it opens the WP media frame; a small × clears the logo. A hidden
+		// URL field stays in sync so a logo can also be typed/pasted. The label is a
+		// sun (light) / moon (dark) ICON, with the localized text as aria-label/title.
+		function openMedia( slot, onChange ) {
 			if ( ! window.wp || ! wp.media ) { return; }
 			var frame = wp.media( {
 				title: I.mediaTitle || 'Select a logo',
@@ -317,40 +322,66 @@
 			frame.on( 'select', function () {
 				var att = frame.state().get( 'selection' ).first().toJSON();
 				var url = ( att && att.url ) || '';
-				input.value = url;
 				state.logos[ slot ] = url;
 				if ( onChange ) { onChange(); }
 				markDirty();
 			} );
 			frame.open();
 		}
-		function logoField( slot, label ) {
+		function logoField( slot, label, iconKey ) {
 			var id = 'ak-logo-' + slot;
-			var preview = el( 'img', { 'class': 'ak-field__preview', alt: '' } );
+			var preview = el( 'img', { 'class': 'ak-logo-pick__img', alt: '' } );
+			// Empty-state placeholder shown inside the picker when no logo is set.
+			var ph = el( 'span', { 'class': 'ak-logo-pick__ph', text: I.logoPick || 'Choose a logo' } );
+			var input = el( 'input', {
+				id: id, type: 'url', 'class': 'ak-field__input', value: state.logos[ slot ],
+				placeholder: I.logoPlaceholder || '', spellcheck: 'false'
+			} );
+			var clear = el( 'button', {
+				type: 'button', 'class': 'ak-logo-pick__clear',
+				'aria-label': I.logoRemove || 'Remove logo', title: I.logoRemove || 'Remove logo'
+			} );
+			clear.innerHTML = ICONS.close;
+			var pick = el( 'button', {
+				type: 'button', 'class': 'ak-logo-pick',
+				'aria-label': I.logoChange || 'Change logo'
+			}, [ preview, ph ] );
 			function syncPreview() {
-				if ( state.logos[ slot ] ) {
-					preview.src = state.logos[ slot ];
+				var url = state.logos[ slot ];
+				pick.classList.toggle( 'is-set', !! url );
+				pick.setAttribute( 'title', url ? ( I.logoChange || 'Change logo' ) : ( I.logoPick || 'Choose a logo' ) );
+				clear.hidden = ! url;
+				if ( url ) {
+					preview.src = url;
 					preview.style.display = '';
 				} else {
 					preview.removeAttribute( 'src' );
 					preview.style.display = 'none';
 				}
 			}
-			var input = el( 'input', {
-				id: id, type: 'url', 'class': 'ak-field__input', value: state.logos[ slot ],
-				placeholder: I.logoPlaceholder || '', spellcheck: 'false'
-			} );
 			input.addEventListener( 'input', function () {
 				state.logos[ slot ] = input.value.trim();
 				syncPreview();
 				markDirty();
 			} );
-			var pick = el( 'button', { type: 'button', 'class': 'ak-btn ak-field__btn', text: I.mediaPick || 'Media library' } );
-			pick.addEventListener( 'click', function () { openMedia( slot, input, syncPreview ); } );
+			pick.addEventListener( 'click', function () {
+				openMedia( slot, function () { input.value = state.logos[ slot ]; syncPreview(); } );
+			} );
+			clear.addEventListener( 'click', function () {
+				state.logos[ slot ] = '';
+				input.value = '';
+				syncPreview();
+				markDirty();
+			} );
 			syncPreview();
+			var lbl = el( 'label', { 'class': 'ak-field__label ak-field__label--icon', 'for': id, 'aria-label': label, title: label } );
+			lbl.innerHTML = ICONS[ iconKey ] || '';
 			return el( 'div', { 'class': 'ak-field' }, [
-				el( 'label', { 'class': 'ak-field__label', 'for': id, text: label } ),
-				el( 'div', { 'class': 'ak-field__control' }, [ preview, input, pick ] )
+				lbl,
+				el( 'div', { 'class': 'ak-field__control' }, [
+					el( 'div', { 'class': 'ak-logo-pick__wrap' }, [ pick, clear ] ),
+					input
+				] )
 			] );
 		}
 		// WordPress admin-bar logo mode — a segmented control (the three options
@@ -393,29 +424,13 @@
 			wpField.appendChild( el( 'p', { 'class': 'ak-field__hint', text: I.wpLogoNoIcon } ) );
 		}
 
-		// Admin-bar logo size (px) — a small number input, right-aligned.
-		var sizeInput = el( 'input', {
-			type: 'number', 'class': 'ak-field__input ak-field__num', id: 'ak-logo-size',
-			min: '16', max: '50', step: '1', value: String( state.logoSize )
-		} );
-		sizeInput.addEventListener( 'input', function () {
-			var n = parseInt( sizeInput.value, 10 );
-			state.logoSize = ( n >= 16 && n <= 50 ) ? n : 30;
-			markDirty();
-		} );
-		var sizeField = el( 'div', { 'class': 'ak-field ak-field--inline' }, [
-			el( 'label', { 'class': 'ak-field__label', 'for': 'ak-logo-size', text: I.logoSize || 'Logo size (px)' } ),
-			sizeInput
-		] );
-
 		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
 			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
 			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
 			el( 'div', { 'class': 'ak-rows' }, [
-				logoField( 'light', I.logoLight ),
-				logoField( 'dark', I.logoDark ),
-				wpField,
-				sizeField
+				logoField( 'light', I.logoLight, 'sun' ),
+				logoField( 'dark', I.logoDark, 'moon' ),
+				wpField
 			] )
 		] ) );
 
@@ -590,7 +605,6 @@
 		v.logo_light = state.logos.light;
 		v.logo_dark  = state.logos.dark;
 		v.wp_logo    = state.wpLogo;
-		v.logo_size  = state.logoSize;
 		return v;
 	}
 

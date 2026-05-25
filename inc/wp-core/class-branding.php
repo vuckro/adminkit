@@ -90,12 +90,8 @@ class AdminKit_Core_Branding {
 			return '#wpadminbar #wp-admin-bar-wp-logo{display:none}';
 		}
 
-		// Configurable size (Settings → Branding), clamped to the 32px toolbar.
-		$size = (int) AdminKit_Settings::get( 'logo_size' );
-		$size = max( 16, min( 32, 0 !== $size ? $size : 28 ) );
-
 		if ( 'logo' === $mode ) {
-			$css = self::brand_logo_css( $size );
+			$css = self::brand_logo_css();
 			if ( '' !== $css ) {
 				return $css;
 			}
@@ -103,26 +99,26 @@ class AdminKit_Core_Branding {
 		}
 
 		if ( 'favicon' === $mode ) {
-			return self::favicon_css( $size );
+			return self::favicon_css();
 		}
 
 		return '';
 	}
 
 	/**
-	 * Brand logo in the admin-bar wp-logo slot — a rounded chip sized by logo_size
-	 * ($size px), same footprint
-	 * as the favicon, for consistency) with the logo CONTAINED so any mark fits
-	 * without overflowing. Light variant by default; dark variant under the dark
-	 * flag. '' when no logo is set.
+	 * Brand logo in the admin-bar wp-logo slot — a BORDERED rounded chip, fixed at
+	 * 28px square (bigger than the favicon to read as the primary mark). With its
+	 * 1px border that's 30px tall, so it sits with a ~1px gap in the 32px bar and
+	 * NEVER overflows. The logo is painted `center/cover`. Light variant by
+	 * default; dark variant under the dark flag. '' when no logo is set.
 	 *
 	 * Painted as a BACKGROUND, not `content:url()`: a pseudo-element's content image
 	 * does not resize reliably (it rendered at full intrinsic size — the "too big"
-	 * bug), whereas background-size:contain always fits the box.
+	 * bug), whereas a sized background box always fits.
 	 *
 	 * @return string
 	 */
-	private static function brand_logo_css( $size ) {
+	private static function brand_logo_css() {
 		$light = self::css_url( AdminKit_Settings::brand_logo( 'light' ) );
 		$dark  = self::css_url( AdminKit_Settings::brand_logo( 'dark' ) );
 		if ( '' === $light && '' === $dark ) {
@@ -134,17 +130,21 @@ class AdminKit_Core_Branding {
 		if ( '' === $dark ) {
 			$dark = $light;
 		}
-		$px  = (int) $size . 'px';
-		$top = (int) floor( ( 32 - (int) $size ) / 2 ) . 'px'; // centre in the bar (negative when larger)
-		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon';
-		// Reset WP's icon padding (it makes a sized chip overflow oddly), give the
-		// .ab-icon the bar height, then centre a ROUNDED chip in it (radius, no
-		// border). overflow:visible lets a logo larger than the bar show in full.
-		return $sel . '{width:' . $px . ';height:32px;padding:0;overflow:visible}'
-			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:' . $px . ';height:' . $px . ';'
-			. 'margin:' . $top . ' 0;top:0;'
+		// Double `.ab-icon` → specificity (2,3,0), beating WP core's own wp-logo rule
+		// `#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon` (2,2,0, loaded after
+		// us) which would otherwise re-apply its height:20px/padding:6px 0 5px and
+		// overflow the bar.
+		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon.ab-icon';
+		// Reset WP's icon padding, give the .ab-icon the bar height, then centre a
+		// 28px BORDERED rounded chip in it (28 + 2×1px border = 30px → 1px gap top
+		// and bottom in the 32px bar). overflow:hidden clips the cover image to the
+		// rounded box so it never spills past the bar.
+		return $sel . '{width:30px;height:32px;padding:0;overflow:hidden}'
+			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:28px;height:28px;'
+			. 'margin:1px;top:0;'
+			. 'border:1px solid var(--ak-border);'
 			. 'border-radius:var(--ak-radius-m,8px);'
-			. 'background:' . $light . ' center/contain no-repeat}'
+			. 'background:' . $light . ' center/cover no-repeat}'
 			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{background-image:' . $dark . '}'
 			. self::hide_site_name_glyph();
 	}
@@ -152,23 +152,27 @@ class AdminKit_Core_Branding {
 	/**
 	 * Site icon (favicon) in the admin-bar wp-logo slot — painted onto the
 	 * .ab-icon::BEFORE box (WP forces background-image:none on .ab-icon itself, but
-	 * its ::before is exempt), as a rounded chip. '' when there's no Site Icon.
+	 * its ::before is exempt), as a SMALL rounded chip: fixed 20px square, no
+	 * border, painted `center/cover`, vertically centred in the 32px bar
+	 * ((32−20)/2 = 6px margin top and bottom). '' when there's no Site Icon.
 	 *
 	 * @return string
 	 */
-	private static function favicon_css( $size ) {
+	private static function favicon_css() {
 		$favicon = self::css_url( get_site_icon_url( 96 ) );
 		if ( '' === $favicon ) {
 			return '';
 		}
-		$px  = (int) $size . 'px';
-		$top = (int) floor( ( 32 - (int) $size ) / 2 ) . 'px'; // centre in the bar (negative when larger)
-		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon';
-		return $sel . '{width:' . $px . ';height:32px;padding:0;overflow:visible}'
-			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:' . $px . ';height:' . $px . ';'
-			. 'margin:' . $top . ' 0;top:0;'
+		// Double `.ab-icon` → specificity (2,3,0), beating WP core's own wp-logo rule
+		// `#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon` (2,2,0, loaded after
+		// us) which would otherwise re-apply its height:20px/padding:6px 0 5px and
+		// overflow the bar.
+		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon.ab-icon';
+		return $sel . '{width:20px;height:32px;padding:0;overflow:hidden}'
+			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:20px;height:20px;'
+			. 'margin:6px 0;top:0;'
 			. 'border-radius:var(--ak-radius-m,8px);'
-			. 'background:' . $favicon . ' center/contain no-repeat}'
+			. 'background:' . $favicon . ' center/cover no-repeat}'
 			. self::hide_site_name_glyph();
 	}
 
