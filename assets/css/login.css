@@ -170,8 +170,9 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 .login input[type="text"]:focus,
 .login input[type="password"]:focus,
 .login input[type="email"]:focus {
+	/* Focus = just a clean 1px brand border, no glow ring (maintainer's call). */
 	border-color: var(--ak-primary);
-	box-shadow: var(--ak-focus-ring);
+	box-shadow: none;
 	outline: none;
 }
 
