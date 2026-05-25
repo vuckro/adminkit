@@ -139,7 +139,7 @@
 #wpadminbar #wp-admin-bar-my-account.with-avatar > a img {
 	width: auto;
 	height: 20px;
-	margin-top: -6px;
+	margin-top: -4px;
 }
 
 #wp-admin-bar-user-info .display-name {
