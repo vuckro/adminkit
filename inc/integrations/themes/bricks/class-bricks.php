@@ -275,24 +275,21 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 		$attr = AdminKit_Theme_Toggle::attribute();
+		$key  = AdminKit_Theme_Toggle::storage_key();
 		?>
 <script id="adminkit-bricks-theme-bridge">
 (function(){
 	var d = document.documentElement;
 	var ATTR = <?php echo wp_json_encode( $attr ); ?>;
+	var KEY = <?php echo wp_json_encode( $key ); ?>;
 	var lock = false; // reentrancy guard: don't let the two mirrors feed each other.
 	function ak(){ return d.getAttribute(ATTR); }
 	function brx(){ return d.getAttribute('data-brx-theme'); }
-	// Bricks -> AdminKit (one-way read of Bricks's mode onto the bar).
-	function pull(){
-		if (lock) return;
-		var m = brx();
-		if ((m === 'dark' || m === 'light') && m !== ak()) {
-			lock = true; d.setAttribute(ATTR, m); lock = false;
-		}
-	}
-	// AdminKit -> Bricks (AdminKit's own handler is the source of truth; mirror its
-	// flip into Bricks so the site repaints alongside the bar).
+	// AdminKit's own stored choice — shared front <-> back via localStorage. When
+	// set, it is the single source of truth; Bricks must never override it.
+	function stored(){ try { var m = localStorage.getItem(KEY); return (m === 'dark' || m === 'light') ? m : ''; } catch (e) { return ''; } }
+	// AdminKit -> Bricks: push AdminKit's mode into Bricks so the SITE repaints to
+	// match the mode chosen anywhere (front OR back). AdminKit stays authoritative.
 	function push(){
 		if (lock) return;
 		var m = ak();
@@ -303,9 +300,25 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			lock = false;
 		}
 	}
-	pull(); // adopt Bricks's current mode on load (before its own script may re-set it).
-	new MutationObserver(pull).observe(d, { attributes:true, attributeFilter:['data-brx-theme'] });
+	// Bricks -> AdminKit: ONLY on a first visit (no stored AdminKit choice). Adopt
+	// Bricks's mode so the bar matches the site, and PERSIST it so it then stays in
+	// sync across front + back. Once the user has chosen, this never fires again.
+	function pull(){
+		if (lock || stored()) return;
+		var m = brx();
+		if ((m === 'dark' || m === 'light') && m !== ak()) {
+			lock = true;
+			d.setAttribute(ATTR, m);
+			try { localStorage.setItem(KEY, m); } catch (err) {}
+			lock = false;
+		}
+	}
+	// On load: a stored AdminKit choice wins — push it into Bricks so the front end
+	// matches what was chosen in the back end (and vice versa). With no stored
+	// choice, adopt Bricks once so the bar matches the site on first visit.
+	if (stored()) { push(); } else { pull(); }
 	new MutationObserver(push).observe(d, { attributes:true, attributeFilter:[ATTR] });
+	new MutationObserver(pull).observe(d, { attributes:true, attributeFilter:['data-brx-theme'] });
 })();
 </script>
 		<?php
