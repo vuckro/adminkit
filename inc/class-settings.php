@@ -196,14 +196,14 @@ class AdminKit_Settings {
 			) );
 		}
 
-		// Editor content theming — OFF by default (opt-in). The gate for theming
-		// the block content inside the editor canvas (iframe). Left off, the
-		// canvas keeps its real frontend appearance, so a client's page layout is
-		// never altered. The canvas-injection wiring plugs into this flag.
+		// Editor content theming ("Gutenberg") — ON by default. Themes the block
+		// content inside the editor canvas (iframe) to match AdminKit. Set OFF to keep
+		// the canvas matching the live site exactly (a client's page layout untouched).
+		// The canvas-injection wiring plugs into this flag.
 		self::register( 'editor_content_theme', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => false,
+			'default'  => true,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
@@ -218,37 +218,37 @@ class AdminKit_Settings {
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// AdminKit icons — OFF by default (opt-in). Replaces WordPress's native menu
-		// + toolbar dashicons with AdminKit's icon set. Read by
-		// AdminKit_Core_Menu_Icons; non-destructive (only stock dashicons, no override).
+		// AdminKit icons — ON by default. Replaces WordPress's native menu + toolbar
+		// dashicons with AdminKit's icon set. Read by AdminKit_Core_Menu_Icons;
+		// non-destructive (only stock dashicons, no override).
 		self::register( 'replace_icons_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => false,
+			'default'  => true,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// Local avatars — OFF by default (opt-in). Lets users set a profile picture
-		// (a Media Library image) that replaces Gravatar. Read by
-		// AdminKit_Local_Avatars; non-destructive — with nothing set, Gravatar
-		// behaviour is 100% unchanged.
+		// Local avatars — ON by default. Lets users set a profile picture (a Media
+		// Library image) that replaces Gravatar. Read by AdminKit_Local_Avatars;
+		// non-destructive — with nothing set, Gravatar behaviour is 100% unchanged.
 		self::register( 'local_avatars_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => false,
+			'default'  => true,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// Generated avatars — OFF by default (opt-in); only meaningful with
-		// local_avatars_enabled on. When a user has no uploaded avatar, AdminKit
-		// serves a friendly auto-generated avatar from a hosted generator instead
-		// of Gravatar's blank "mystery person". Read by AdminKit_Local_Avatars.
-		// Off = Gravatar's own default. The generator is an external service
-		// (disclosed in readme.txt) seeded with a NON-PII per-user value.
+		// Generated avatars — ON by default; only meaningful with local_avatars_enabled
+		// on. AUTO-generates a friendly avatar ONLY for users with an EMPTY avatar (no
+		// upload AND no real Gravatar) — a real Gravatar always wins, so existing
+		// avatars are never auto-replaced. Served as the Gravatar `d=` default via a
+		// hosted generator (external service, disclosed in readme.txt; seed is NON-PII).
+		// Replacing an existing photo is a deliberate, manual action (the "Generate"
+		// button + a danger confirm), never automatic.
 		self::register( 'generated_avatars_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => false,
+			'default'  => true,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 	}
