@@ -7,14 +7,16 @@ body.adminkit a {
 	color: var(--ak-text);
 }
 
-/* Branded link hover/focus — primary color (+ border where a link carries one),
-   no background fill. No !important — kept deliberately low so structural link
-   groups with their own (more specific) hovers — subsubsub filters, row actions,
-   admin menu, help tabs — win naturally and don't all turn primary. */
+/* Link hover/focus — a READABLE link colour (--ak-info), never the brand accent:
+   --ak-primary is yellow → poor as link text, and inconsistent with the canvas,
+   which already uses --ak-info for links. No underline, no background fill. No
+   !important — kept low so structural link groups with their own (more specific)
+   hovers — subsubsub filters, row actions, admin menu, help tabs — win naturally. */
 body.adminkit a:hover,
 body.adminkit a:focus {
-	border-color: var(--ak-primary);
-	color: var(--ak-primary);
+	border-color: var(--ak-info);
+	color: var(--ak-info);
+	text-decoration: none;
 }
 
 /* WP paints a box-shadow ring on every focused link (a:focus). Drop it for
