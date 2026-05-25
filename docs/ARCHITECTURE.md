@@ -173,10 +173,9 @@ What's registered today:
   user meta, served via `pre_get_avatar_data`; non-destructive — Gravatar is
   untouched until an avatar is set). They stay off so a third-party / client
   surface is never altered unasked.
-- **Master pause**: `wp_default_ui` — gates *every* context through
-  `adminkit/should_load` → `maybe_restore_wp_ui()`, so wp-admin renders 100%
-  native while the plugin stays active (only AdminKit's own settings screen keeps
-  its styling, so you can switch back).
+- **Asset gate**: the `adminkit/should_load` filter wraps *every* context, so any
+  veto (an integration bypassing a host's full-screen UI, say) pauses AdminKit's
+  styling there while the plugin stays active.
 - **Branding**: `logo_light`, `logo_dark`, `wp_logo` (`logo` | `favicon` | `hide`
   — the admin-bar logo slot) and `logo_size` (px, 16–32) — resolved by
   `AdminKit_Settings::brand_logo()` / `AdminKit_Core_Branding`.

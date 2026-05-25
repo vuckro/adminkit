@@ -308,7 +308,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		if ( ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
 			return;
 		}
-		// Respect the global "WordPress default UI" pause (adminkit/should_load).
+		// Respect the global asset gate (adminkit/should_load).
 		if ( ! apply_filters( 'adminkit/should_load', true, 'builder' ) ) {
 			return;
 		}

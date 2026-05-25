@@ -13,7 +13,7 @@ the host (`adminkit/foo/…`). `{…}` in a name is a dynamic segment.
 
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
-| `adminkit/should_load` | filter | `(bool, string $context)` | Master switch for a context (`admin`/`login`/`frontend`/`editor`/`builder`). Return false to disable all AdminKit styling there — integrations use it to bypass a host's full-screen UI; the "WordPress default UI" toggle uses it to pause everything at once. |
+| `adminkit/should_load` | filter | `(bool, string $context)` | Master switch for a context (`admin`/`login`/`frontend`/`editor`/`builder`). Return false to disable all AdminKit styling there — e.g. integrations use it to bypass a host's full-screen UI. |
 | `adminkit/enqueue_{context}` | filter | `(bool)` | Per-context gate, e.g. `adminkit/enqueue_login`. The `login` + `editor` ones are wired to the feature toggles. |
 | `adminkit/enqueue_{section}` | filter | `(bool)` | Per-section gate (section = handle minus `adminkit-`), e.g. `adminkit/enqueue_forms` drops inputs+buttons+tables together. |
 | `adminkit/enqueue_{handle}` | filter | `(bool)` | Per-asset gate, e.g. `adminkit/enqueue_adminkit-themes`. |

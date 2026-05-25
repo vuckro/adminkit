@@ -251,18 +251,6 @@ class AdminKit_Settings {
 			'default'  => false,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
-
-		// WordPress default UI — OFF by default. A master "pause" switch: when ON,
-		// AdminKit ships ZERO styling (admin, login, frontend bar, editor, Bricks
-		// builder) so wp-admin looks 100% native — the plugin and every feature stay
-		// active. Handy for A/B debugging, and a clean proof that the whole visual
-		// layer is gated behind one filter. See maybe_restore_wp_ui().
-		self::register( 'wp_default_ui', array(
-			'type'     => 'toggle',
-			'group'    => 'features',
-			'default'  => false,
-			'sanitize' => 'rest_sanitize_boolean',
-		) );
 	}
 
 	/**
@@ -286,40 +274,6 @@ class AdminKit_Settings {
 		add_filter( 'adminkit/post_previews/provider', static function ( $provider ) {
 			return self::get( 'post_previews_mshots' ) ? $provider : 'featured';
 		} );
-
-		// "WordPress default UI" master pause — gates every asset context at once.
-		add_filter( 'adminkit/should_load', array( __CLASS__, 'maybe_restore_wp_ui' ), 10, 2 );
-	}
-
-	/**
-	 * Master "pause" for AdminKit's styling — the `wp_default_ui` toggle.
-	 *
-	 * When ON, returns false for every asset context, so AdminKit ships no CSS/JS
-	 * and wp-admin (+ login, frontend bar, editor, Bricks builder) renders 100%
-	 * native. The plugin and every feature stay registered — only the visual layer
-	 * is paused (handy for A/B debugging, and proof the whole skin is gated behind
-	 * one filter).
-	 *
-	 * The ONE exception is AdminKit's own settings screen: its stylesheet depends
-	 * on the token layer, which only registers when the admin dispatch runs, so we
-	 * keep loading there — otherwise the switch would render itself unstyled and
-	 * the user couldn't turn it back off.
-	 *
-	 * @param bool   $load
-	 * @param string $context  admin | login | frontend | editor | builder
-	 * @return bool
-	 */
-	public static function maybe_restore_wp_ui( $load, $context ) {
-		if ( ! self::get( 'wp_default_ui' ) ) {
-			return $load;
-		}
-		if ( 'admin' === $context && function_exists( 'get_current_screen' ) ) {
-			$screen = get_current_screen();
-			if ( $screen && 'toplevel_page_' . AdminKit_Settings_Page::SLUG === $screen->id ) {
-				return $load; // keep AdminKit's settings page styled (and reachable)
-			}
-		}
-		return false;
 	}
 
 	/**
