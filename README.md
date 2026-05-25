@@ -2,7 +2,7 @@
 
 A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone — optional adapters layer in token providers (Bricks today, more later).
 
-> Status: **v1.1.0** — registry-based assets, per-screen conditional loading, integration scaffolding + host-drift detection.
+> Status: **v1.2.0** — ships fully-featured out of the box (Gutenberg canvas theming, AdminKit icons and local + generated avatars all on by default), with tabbed Settings screens and an interactive dashboard roadmap on top of the registry-based assets, per-screen conditional loading and host-drift detection.
 
 ---
 
@@ -13,7 +13,8 @@ A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone �
 - Exposes its design as **CSS custom properties** (`--ak-*`) that any other admin-side stylesheet can consume.
 - **Doesn't require any builder.** A site with no theme provider lands on neutral fallbacks. A site with Bricks gets its brand colors automatically.
 - Loads CSS **conditionally per screen** — the themes page CSS doesn't run on the dashboard, plugin-editor CSS doesn't run on profile, etc.
-- Optional **local avatars** (off by default) — let users set a profile picture that replaces Gravatar; leave it unset and Gravatar behaves exactly as before.
+- **Local avatars** (on by default) — let users set a profile picture that replaces Gravatar; leave it unset and Gravatar behaves exactly as before.
+- **Generated avatars** (on by default) — gives any user with no upload *and* no real Gravatar a friendly auto-generated face instead of a blank silhouette; a real Gravatar always wins. Served via a hosted generator ([DiceBear](https://www.dicebear.com)) with a non-PII seed — see [`docs/EXTENDING.md`](docs/EXTENDING.md#avatars) and the disclosure in `readme.txt`.
 
 ---
 
@@ -57,7 +58,7 @@ The **Bricks** adapter, when active:
 - Enqueues the Bricks-generated tokens (`/uploads/bricks/css/style-manager.min.css`) so a color changed in the Bricks builder propagates to wp-admin on the next page load.
 - Leaves the Bricks Builder UI native by default; an opt-in **Bricks builder** toggle (Settings tab) restyles the builder chrome with your tokens, and falls back to AdminKit's shipped baseline if you clear Bricks's own colours — so the builder never loses its look.
 
-The **Gutenberg** adapter ships token-mapped header / sidebar / publish-button polish for the block, site, widgets, and navigation editors via the `enqueue_block_editor_assets` hook (NOT `admin_enqueue_scripts`) so the CSS only enters editor surfaces. An opt-in **Gutenberg** toggle (Settings tab, off by default) additionally themes the iframed editor canvas — content + native blocks — in light and dark; left off, the canvas keeps matching your live site.
+The **Gutenberg** adapter ships token-mapped header / sidebar / publish-button polish for the block, site, widgets, and navigation editors via the `enqueue_block_editor_assets` hook (NOT `admin_enqueue_scripts`) so the CSS only enters editor surfaces. The **Gutenberg** toggle (Settings tab, on by default) additionally themes the iframed editor canvas — content + native blocks — in light and dark; turn it off to keep the canvas matching your live site exactly.
 
 AdminKit also ships adapters for **WooCommerce**, **ACF**, the **Fluent** suite (CRM, Forms, SMTP, Booking, Cart), **Slim SEO**, **HappyFiles**, **FlyingPress**, **WP Migrate**, and **Admin Menu Editor**. Each self-detects its host and stays dormant when the host isn't installed. They split into two flavors: *Tier A* adapters remap the host's own CSS variables (zero `!important`, dark mode for free); *Tier B* adapters override the host's selectors because it hardcodes its colors — run `php dev/adapter-audit.php` to see each adapter's override budget.
 
@@ -112,6 +113,8 @@ add_action( 'adminkit/enqueued_admin', function () {
 | `adminkit/brand_logo` | `('' \| string \| array)` | Brand-logo fallback when the Branding settings are empty. |
 | `adminkit/menu_icons` / `adminkit/toolbar_icons` | `(array)` | Override the native-icon replacement maps (dashicon-class / node-id ⇒ SVG). |
 | `adminkit/toolbar_icon_ab_item_nodes` | `(array)` | Mark toolbar nodes (node-id ⇒ bool) whose icon paints on `> .ab-item::before` instead of an `.ab-icon` child — for text/dashicon-font nodes. |
+| `adminkit/generated_avatar_style` | `(string $style, int $user_id)` | The DiceBear style slug for generated avatars (default `fun-emoji`). |
+| `adminkit/generated_avatar_url` | `(string $url, int $user_id, int $size)` | The final generated-avatar URL — override to self-host or swap the service. |
 | `adminkit/setting/{$key}` | `(mixed)` | Override a registered setting at read time. |
 | `adminkit/theme_attribute` | `(string)` | Override the dark/light HTML attribute name. |
 | `adminkit/theme_storage_key` | `(string)` | Override the localStorage key. |
@@ -163,7 +166,7 @@ adminkit/
 │   │   ├── class-branding.php           Admin-bar logo: brand logo / favicon / hide (wp_logo)
 │   │   ├── class-menu-icons.php         Opt-in native-icon replacement (menu + toolbar), filterable
 │   │   ├── class-profile-account.php    Profile / user-edit screen layout
-│   │   ├── class-local-avatars.php      Opt-in per-user avatar image that replaces Gravatar
+│   │   ├── class-local-avatars.php      Per-user avatar that replaces Gravatar + generated-avatar fallback (DiceBear)
 │   │   ├── class-post-previews.php      List-table screenshot thumbnails
 │   │   └── class-list-table-chrome.php  List-table toolbar / pagination polish
 │   └── integrations/                    Host adapters — auto-discovered, drop a folder
@@ -187,7 +190,8 @@ adminkit/
     │   └── login.css                    wp-login.php
     └── js/
         ├── settings.js                  Settings SPA
-        └── wp-core/                     Footer behaviour bricks (profile, avatars, previews, list-table)
+        ├── wp-core/                     Footer behaviour bricks (profile, avatars, previews, list-table)
+        └── wp-screens/                  Per-screen footer bricks (options — Settings-screen tabs)
 ```
 
 Each integration folder may also carry `css/` and a `baseline.json` (its host CSS

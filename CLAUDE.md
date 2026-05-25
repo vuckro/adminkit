@@ -108,6 +108,31 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   cascade. Don't re-add the removed editing machinery.
 - **The token layers are each optional** (provider → baseline → neutral). Don't
   hard-require any one of them. See ARCHITECTURE.
+- **Default feature toggles ship ON** — Gutenberg canvas theming
+  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`) and local +
+  generated avatars (`local_avatars_enabled`, `generated_avatars_enabled`) all
+  default ON (decided this cycle), so the plugin presents fully-featured on
+  activation. Each stays individually switch-off-able; only `bricks_builder_enabled`
+  is opt-in (it restyles a third-party builder's own UI). Keep the on-by-default
+  posture — don't quietly flip these back to opt-in.
+- **Generated avatars call an external service (DiceBear, `api.dicebear.com`)** —
+  served as the Gravatar `d=` fallback for users with no upload and no real
+  Gravatar. It's disclosed in `readme.txt` (the .org "External services" section),
+  opt-out, and the seed is NON-PII (md5 of the login, or a stored random seed) —
+  **never send the raw email.** If you change the service or what's sent, update
+  that disclosure in the same change.
+- **`content:url()` on a pseudo-element renders at the image's intrinsic size** —
+  browsers ignore `width`/`height` on a pseudo-element's `content` image. For a
+  *sized* icon/logo use a `background-image` on a sized box, or a real `<img>` (a
+  replaced element: `width:auto` + `border-radius` work). This bit the admin-bar
+  brand logo and the site-name favicon — both now render as `<img>` /
+  `background-image`, not `content:url()`. See `inc/wp-core/class-branding.php`.
+- **`options.js` tabs the six built-in Settings screens** — it splits each screen
+  at its `<h2>` sections into tabs, and "explodes" the Discussion
+  `.form-table.indent-children` table (the one core screen that packs its groups
+  into `<th>` rows of a single table) into one tab per `<th>` row. Every field
+  stays in the one submitting form. Don't assume one `<h2>` per section on
+  Discussion — it has none.
 - **Class names are stable public-ish API** (`AdminKit_*`). Folder reorg keeps them.
 - **All user-facing strings stay translatable** — wrap them in `__()` / `esc_html__()`
   with the `adminkit` text domain; pass JS copy from PHP via `wp_localize_script` /

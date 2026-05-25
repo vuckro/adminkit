@@ -62,8 +62,12 @@ skips it: `adminkit/enqueue_{section}` (per-section bail), `adminkit/enqueue_{ha
 file (edit CSS/JS → no version bump). All bail filters are in [EXTENDING.md](EXTENDING.md).
 
 **JS bricks.** Feature behaviour (profile tabs, post-preview hover, list-table
-polish) ships as `assets/js/wp-core/*.js`, enqueued in the footer via
-`AdminKit_Assets::enqueue_script( $handle, $src, $deps, $data )` — same
+polish, local/generated avatars) ships as `assets/js/wp-core/*.js`; per-screen
+behaviour lives in `assets/js/wp-screens/*.js` (today `options.js`, which tabs the
+six built-in Settings screens — splitting each at its `<h2>` section and
+"exploding" the Discussion `indent-children` table into one tab per `<th>` row,
+while every field stays in the one submitting form). Both are enqueued in the
+footer via `AdminKit_Assets::enqueue_script( $handle, $src, $deps, $data )` — same
 `filemtime` cache-bust as CSS, with PHP data passed as a `before` inline
 bootstrap (`window.AdminKit*`). The one exception is the **theme pre-paint
 script** in `class-theme-toggle.php`: it stays inline in `<head>` so dark/light
@@ -86,7 +90,8 @@ assets/
 │   └── settings.css               # AdminKit settings page
 └── js/
     ├── settings.js                # settings SPA
-    └── wp-core/                   # footer bricks: profile-account, local-avatars, post-previews, list-table-chrome
+    ├── wp-core/                   # footer bricks: profile-account, local-avatars, post-previews, list-table-chrome
+    └── wp-screens/                # per-screen footer bricks: options (Settings-screen tabs)
 inc/integrations/{plugins|themes}/{slug}/css/   # integration CSS, registered by each class
 ```
 
@@ -158,21 +163,30 @@ AdminKit_Settings::schema();                        // registered schema (UI ren
 AdminKit_Settings::color_map();                     // semantic token taxonomy the Design tab renders
 ```
 
-What's registered today:
+What's registered today. AdminKit ships **fully-featured** — every feature toggle
+defaults ON, so the plugin looks complete on activation — and each stays
+individually switch-off-able:
 
-- **Always-on toggles** (default ON): `module_login_enabled`,
-  `theme_toggle_enabled`, `post_previews_enabled`, `post_previews_mshots` — bound
-  to existing enqueue filters / providers in `bind_modules()`.
-- **Opt-in toggles** (default OFF): `editor_content_theme` (themes the Gutenberg
-  block-editor canvas), `bricks_builder_enabled` (restyles the Bricks builder UI,
-  only shown when Bricks is active), `replace_icons_enabled` (swaps native
-  menu/toolbar dashicons for AdminKit's set — `inc/wp-core/class-menu-icons.php`,
-  filterable via `adminkit/menu_icons` / `adminkit/toolbar_icons`), and
+- **On by default** (bound to existing enqueue filters / providers in
+  `bind_modules()`): `module_login_enabled`, `theme_toggle_enabled`,
+  `post_previews_enabled`, `post_previews_mshots`.
+- **On by default** (feature modules, each individually disable-able):
+  `editor_content_theme` (themes the Gutenberg block-editor canvas — content +
+  native blocks — in light/dark; off keeps the canvas matching the live site),
+  `replace_icons_enabled` (swaps native menu/toolbar dashicons for AdminKit's set
+  — `inc/wp-core/class-menu-icons.php`, filterable via `adminkit/menu_icons` /
+  `adminkit/toolbar_icons`; non-destructive — only stock dashicons),
   `local_avatars_enabled` (a per-user profile picture that replaces Gravatar —
   `inc/wp-core/class-local-avatars.php`, stored in the `adminkit_local_avatar`
   user meta, served via `pre_get_avatar_data`; non-destructive — Gravatar is
-  untouched until an avatar is set). They stay off so a third-party / client
-  surface is never altered unasked.
+  untouched until an avatar is set), and `generated_avatars_enabled` (a child of
+  local avatars: when a user has no upload **and** no real Gravatar, AdminKit
+  serves a friendly auto-generated avatar via the Gravatar `d=` fallback — a real
+  Gravatar always wins; uses DiceBear's hosted API with a non-PII seed, see
+  [EXTENDING.md → Avatars](EXTENDING.md#avatars)).
+- **Off by default** (opt-in): `bricks_builder_enabled` (restyles a third-party
+  builder's own UI, so it stays inert until asked for; only shown when Bricks is
+  active).
 - **Asset gate**: the `adminkit/should_load` filter wraps *every* context, so any
   veto (an integration bypassing a host's full-screen UI, say) pauses AdminKit's
   styling there while the plugin stays active.

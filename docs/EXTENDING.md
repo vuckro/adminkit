@@ -65,9 +65,9 @@ admin-bar logo slot: `logo` (the brand logo), `favicon` (the site icon), or
 
 ## Icons
 
-The "AdminKit icons" feature (`replace_icons_enabled`, opt-in) swaps WordPress's
-native dashicons for a cohesive set. Both maps are filterable — that's how an
-integration ships its plugin's icon, or how you override/remove any entry.
+The "AdminKit icons" feature (`replace_icons_enabled`, on by default) swaps
+WordPress's native dashicons for a cohesive set. Both maps are filterable — that's
+how an integration ships its plugin's icon, or how you override/remove any entry.
 
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
@@ -102,6 +102,36 @@ All in `inc/wp-core/class-post-previews.php`:
 | `adminkit/post_previews/thumb_size` / `full_size` | `(int[2] [w,h])` | Column thumbnail / hover sizes. |
 | `adminkit/post_previews/refresh_interval` | `(int $seconds)` | Screenshot cache window (0 = pin). |
 | `adminkit/post_previews/thumb_url` / `full_url` | `(string, WP_Post, $w, $h)` | Override the screenshot URL. |
+
+## Avatars
+
+The **Local avatars** feature (`local_avatars_enabled`, on by default) lets users
+upload a profile picture that replaces Gravatar. Its child **Generated avatars**
+feature (`generated_avatars_enabled`, on by default) fills in a friendly
+auto-generated face for any user with no upload *and* no real Gravatar — served as
+the Gravatar `d=` fallback, so a real Gravatar always wins. The generator is
+[DiceBear](https://www.dicebear.com)'s hosted, key-less HTTP API
+(`https://api.dicebear.com`), seeded with a non-PII value (the md5 of the login,
+or a stored random seed when the user rolls one). Both hooks are in
+`inc/wp-core/class-local-avatars.php`:
+
+| Hook | Type | Signature | Purpose |
+| --- | --- | --- | --- |
+| `adminkit/generated_avatar_style` | filter | `(string $style, int $user_id)` | The DiceBear style slug (default `fun-emoji`). Return another slug to change the look (e.g. `notionists`, `adventurer`). |
+| `adminkit/generated_avatar_url` | filter | `(string $url, int $user_id, int $size)` | The final generated-avatar URL — override to self-host or swap the service entirely. |
+
+AdminKit also registers a **"Generated avatar (AdminKit)"** entry in
+Settings → Discussion's default-avatar list (the `avatar_defaults` filter) when
+generated avatars are on, so the admin sees the real fallback instead of a stale
+"Mystery Person".
+
+Example — self-host the generated avatars instead of calling DiceBear:
+
+```php
+add_filter( 'adminkit/generated_avatar_url', function ( $url, $user_id, $size ) {
+    return home_url( "/avatars/{$user_id}-{$size}.png" );
+}, 10, 3 );
+```
 
 ## Lifecycle
 
