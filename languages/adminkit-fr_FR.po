@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdminKit 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/vuckro/adminkit/issues\n"
-"POT-Creation-Date: 2026-05-25 10:39+0200\n"
-"PO-Revision-Date: 2026-05-25 10:40+0200\n"
+"POT-Creation-Date: 2026-05-25 11:03+0200\n"
+"PO-Revision-Date: 2026-05-25 11:05+0200\n"
 "Last-Translator: AdminKit\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -115,7 +115,7 @@ msgstr "Retirer le logo"
 msgid "Select a logo"
 msgstr "Sélectionner un logo"
 
-#: inc/class-settings-page.php:285
+#: inc/class-settings-page.php:285 inc/wp-core/class-local-avatars.php:369
 msgid "Use this image"
 msgstr "Utiliser cette image"
 
@@ -402,44 +402,54 @@ msgstr ""
 "Logo de la barre d’outils, préchargeur, thématisation du canevas + repli de "
 "couleur."
 
-#: inc/class-settings-page.php:438
+#: inc/class-settings-page.php:396 inc/class-settings-page.php:461
+msgid "Local avatars"
+msgstr "Avatars locaux"
+
+#: inc/class-settings-page.php:396
+msgid "Per-user avatar image that replaces Gravatar — no Gravatar dependency."
+msgstr ""
+"Image d’avatar par utilisateur qui remplace Gravatar — sans dépendance à "
+"Gravatar."
+
+#: inc/class-settings-page.php:439
 msgid "Default"
 msgstr "Par défaut"
 
-#: inc/class-settings-page.php:451
+#: inc/class-settings-page.php:452
 msgid "Content & lists"
 msgstr "Contenu et listes"
 
-#: inc/class-settings-page.php:452
+#: inc/class-settings-page.php:453
 msgid "Appearance & access"
 msgstr "Apparence et accès"
 
-#: inc/class-settings-page.php:454
+#: inc/class-settings-page.php:455
 msgid "Post previews"
 msgstr "Aperçus des publications"
 
-#: inc/class-settings-page.php:454
+#: inc/class-settings-page.php:455
 msgid "Screenshot thumbnail column in post-type list tables."
 msgstr ""
 "Colonne de vignettes (captures d’écran) dans les tableaux de liste des types "
 "de publication."
 
-#: inc/class-settings-page.php:455
+#: inc/class-settings-page.php:456
 msgid "Live screenshots (mShots)"
 msgstr "Captures d’écran en direct (mShots)"
 
-#: inc/class-settings-page.php:455
+#: inc/class-settings-page.php:456
 msgid ""
 "Use WordPress.com mShots. Off = featured image only (no external calls)."
 msgstr ""
 "Utiliser mShots de WordPress.com. Désactivé = image mise en avant uniquement "
 "(aucun appel externe)."
 
-#: inc/class-settings-page.php:456
+#: inc/class-settings-page.php:457
 msgid "Dark mode"
 msgstr "Mode sombre"
 
-#: inc/class-settings-page.php:456
+#: inc/class-settings-page.php:457
 msgid ""
 "Enable dark mode with a toggle in the admin bar. Off forces light mode "
 "everywhere."
@@ -447,19 +457,19 @@ msgstr ""
 "Activer le mode sombre avec un interrupteur dans la barre d’administration. "
 "Désactivé force le mode clair partout."
 
-#: inc/class-settings-page.php:457
+#: inc/class-settings-page.php:458
 msgid "Login screen"
 msgstr "Écran de connexion"
 
-#: inc/class-settings-page.php:457
+#: inc/class-settings-page.php:458
 msgid "Style the wp-login.php screen."
 msgstr "Styliser l’écran wp-login.php."
 
-#: inc/class-settings-page.php:458
+#: inc/class-settings-page.php:459
 msgid "Gutenberg"
 msgstr "Gutenberg"
 
-#: inc/class-settings-page.php:458
+#: inc/class-settings-page.php:459
 msgid ""
 "Theme the Gutenberg block-editor canvas (content + native blocks) in light "
 "and dark. Off (default) keeps the canvas matching your live site."
@@ -468,11 +478,11 @@ msgstr ""
 "natifs) en clair et sombre. Désactivé (par défaut), le canevas reste fidèle "
 "à votre site."
 
-#: inc/class-settings-page.php:459
+#: inc/class-settings-page.php:460
 msgid "AdminKit icons"
 msgstr "Icônes AdminKit"
 
-#: inc/class-settings-page.php:459
+#: inc/class-settings-page.php:460
 msgid ""
 "Replace WordPress's native menu and toolbar icons with AdminKit's set. Non-"
 "destructive: icons already customised (e.g. via Admin Menu Editor) are left "
@@ -482,11 +492,19 @@ msgstr ""
 "par le jeu d’AdminKit. Non destructif : les icônes déjà personnalisées (ex. "
 "via Admin Menu Editor) sont laissées intactes."
 
-#: inc/class-settings-page.php:464
+#: inc/class-settings-page.php:461
+msgid ""
+"Let users upload a profile picture that replaces Gravatar. Off = Gravatar "
+"everywhere."
+msgstr ""
+"Permet d’envoyer une photo de profil qui remplace Gravatar. Désactivé = "
+"Gravatar partout."
+
+#: inc/class-settings-page.php:466
 msgid "Bricks builder"
 msgstr "Constructeur Bricks"
 
-#: inc/class-settings-page.php:464
+#: inc/class-settings-page.php:466
 msgid ""
 "Restyle the Bricks builder UI with your tokens. Needs Bricks builder mode "
 "set to \"Custom\"."
@@ -494,15 +512,15 @@ msgstr ""
 "Restyle l'interface du constructeur Bricks avec vos tokens. Nécessite le "
 "mode constructeur Bricks réglé sur « Custom »."
 
-#: inc/class-settings-page.php:468
+#: inc/class-settings-page.php:470
 msgid "Advanced"
 msgstr "Avancé"
 
-#: inc/class-settings-page.php:469
+#: inc/class-settings-page.php:471
 msgid "WordPress default interface"
 msgstr "Interface WordPress par défaut"
 
-#: inc/class-settings-page.php:469
+#: inc/class-settings-page.php:471
 msgid ""
 "Pause all AdminKit styling and show WordPress's native look — the plugin and "
 "features stay active (handy for debugging). The AdminKit settings page keeps "
@@ -728,6 +746,47 @@ msgstr "Sections du compte"
 #: inc/wp-core/class-profile-account.php:90
 msgid "This username cannot be changed."
 msgstr "Ce nom d’utilisateur ne peut pas être modifié."
+
+#: inc/wp-core/class-local-avatars.php:200
+#: inc/wp-core/class-local-avatars.php:371
+msgid "Change photo"
+msgstr "Changer la photo"
+
+#: inc/wp-core/class-local-avatars.php:200
+#: inc/wp-core/class-local-avatars.php:372
+msgid "Add a photo"
+msgstr "Ajouter une photo"
+
+#: inc/wp-core/class-local-avatars.php:202
+#: inc/wp-core/class-local-avatars.php:373
+msgid "Change the profile picture"
+msgstr "Changer la photo de profil"
+
+#: inc/wp-core/class-local-avatars.php:203
+#: inc/wp-core/class-local-avatars.php:374
+msgid "Upload a profile picture"
+msgstr "Envoyer une photo de profil"
+
+#: inc/wp-core/class-local-avatars.php:208
+#: inc/wp-core/class-local-avatars.php:211
+msgid "Profile picture"
+msgstr "Photo de profil"
+
+#: inc/wp-core/class-local-avatars.php:236
+msgid "Remove"
+msgstr "Retirer"
+
+#: inc/wp-core/class-local-avatars.php:248
+msgid ""
+"This image replaces the Gravatar everywhere this user appears. Leave empty "
+"to use Gravatar."
+msgstr ""
+"Cette image remplace le Gravatar partout où cet utilisateur apparaît. "
+"Laisser vide pour utiliser Gravatar."
+
+#: inc/wp-core/class-local-avatars.php:368
+msgid "Select a profile picture"
+msgstr "Sélectionner une photo de profil"
 
 #: inc/wp-core/class-post-previews.php:165
 msgid "Preview"
