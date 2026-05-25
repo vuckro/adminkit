@@ -122,10 +122,10 @@
 	color: var(--ak-heading) !important;
 }
 
-/* User-info block — round avatar (top bar + dropdown), name hierarchy */
+/* User-info block — rounded avatar (top bar + dropdown), name hierarchy */
 #wpadminbar .with-avatar > a img,
 #wp-admin-bar-user-info img {
-	border-radius: var(--ak-radius-full);
+	border-radius: var(--ak-radius-m);
 }
 
 #wp-admin-bar-user-info .display-name {
