@@ -176,7 +176,7 @@ adminkit/
 │           ├── gutenberg/ · woocommerce/ · acf/
 │           ├── fluent-smtp/ · fluentform/ · fluent-booking/
 │           ├── slim-seo/ · happyfiles/ · flying-press/ · wp-migrate-db-pro/
-│           └── admin-menu-editor/       Admin Menu Editor + Choices.js overrides
+│           └── admin-menu-editor/       Admin Menu Editor (Choices, settings, search, CPE metabox)
 └── assets/
     ├── css/
     │   ├── tokens.css                   AdminKit --ak-* layer (always loaded; owns dark)

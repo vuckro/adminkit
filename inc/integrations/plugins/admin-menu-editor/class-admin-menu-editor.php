@@ -2,14 +2,19 @@
 /**
  * Admin Menu Editor integration.
  *
- * AME (free + Pro) bundles Choices.js for its "Other Roles" multi-select
- * picker on user-edit.php. The library hardcodes `#f9f9f9` wrapper bg +
- * `#fff` search-input bg, neither of which flips in dark mode. We ship
- * one stylesheet that maps the `.choices.*` DOM to AdminKit tokens.
+ * AME (free + Pro) hardcodes light surfaces across several UIs that don't flip in
+ * dark mode. This adapter ships a token map per surface, each loaded only where it
+ * renders (see register_assets()):
  *
- * Scoped to the screens where AME's Choices.js widget actually
- * renders: AME's own settings pages + user-edit / profile / user-new
- * (where the "Other Roles" picker shows up).
+ *  - choices.css           — Choices.js "Other Roles" multi-select (AME settings
+ *                            pages + user-edit / profile / user-new).
+ *  - admin.css             — the menu-editor settings page chrome (builder boxes,
+ *                            module tables, dialogs, the :target highlight),
+ *                            scoped to settings_page_menu_editor.
+ *  - quick-search.css      — the #ame-quick-search popup (AME Pro's admin-bar
+ *                            search opens it on ANY admin page → loads admin-wide).
+ *  - content-permissions.css — the Content Permissions (CPE) metabox on the post
+ *                            editor (post.php / post-new.php).
  *
  * @package AdminKit
  */
