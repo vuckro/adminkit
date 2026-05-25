@@ -29,28 +29,69 @@ defined( 'ABSPATH' ) || exit;
 class AdminKit_Core_Menu_Icons {
 
 	/**
-	 * Hook the printer. admin_head priority 21 (just after branding). Admin only.
+	 * Hook the printers. In wp-admin (admin_head, priority 21 — just after
+	 * branding) we print the FULL set: menu + toolbar. On the FRONT END the admin
+	 * bar exists for logged-in users too, but #adminmenu does not — so on wp_head
+	 * (same priority 21) we print ONLY the toolbar half, gated for the frontend.
 	 *
 	 * @return void
 	 */
 	public static function init() {
 		add_action( 'admin_head', array( __CLASS__, 'print_styles' ), 21 );
+		add_action( 'wp_head', array( __CLASS__, 'print_toolbar_styles' ), 21 );
 	}
 
 	/**
-	 * Print the icon CSS — gated by the opt-in toggle and the should_load pause.
+	 * wp-admin printer: menu + toolbar icon CSS — gated by the opt-in toggle and
+	 * the should_load pause.
 	 *
 	 * @return void
 	 */
 	public static function print_styles() {
-		if ( ! AdminKit_Settings::get( 'replace_icons_enabled' ) ) {
+		if ( ! self::enabled( 'admin' ) ) {
 			return;
 		}
-		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
-			return;
-		}
+		self::emit( self::menu_css() . self::toolbar_css() );
+	}
 
-		$css = self::menu_css() . self::toolbar_css();
+	/**
+	 * Front-end printer: TOOLBAR icon CSS only (no #adminmenu on the front end).
+	 * Runs only when the admin bar is actually showing for this request, gated by
+	 * the opt-in toggle and the frontend should_load pause.
+	 *
+	 * @return void
+	 */
+	public static function print_toolbar_styles() {
+		if ( ! is_admin_bar_showing() ) {
+			return;
+		}
+		if ( ! self::enabled( 'frontend' ) ) {
+			return;
+		}
+		self::emit( self::toolbar_css() );
+	}
+
+	/**
+	 * Whether the icon feature should print for this context: the opt-in toggle is
+	 * on AND the global should_load pause hasn't disabled AdminKit here.
+	 *
+	 * @param string $context 'admin' | 'frontend'
+	 * @return bool
+	 */
+	private static function enabled( $context ) {
+		if ( ! AdminKit_Settings::get( 'replace_icons_enabled' ) ) {
+			return false;
+		}
+		return (bool) apply_filters( 'adminkit/should_load', true, $context );
+	}
+
+	/**
+	 * Echo a <style> block for the built CSS (skipping an empty build).
+	 *
+	 * @param string $css
+	 * @return void
+	 */
+	private static function emit( $css ) {
 		if ( '' !== $css ) {
 			echo '<style id="adminkit-icons">' . $css . "</style>\n"; // SVGs are URL-encoded in mask().
 		}
@@ -134,6 +175,13 @@ class AdminKit_Core_Menu_Icons {
 	/**
 	 * Admin-bar icons, keyed by node id. Filter `adminkit/toolbar_icons`.
 	 *
+	 * Covers both wp-admin AND the front-end admin bar (logged-in users):
+	 *   - comments / new-content / updates render an `.ab-icon` child span.
+	 *   - edit (pencil) / customize (Customizer) paint their glyph on the link's
+	 *     own `> .ab-item::before` instead — toolbar_css() detects which form a
+	 *     node uses (see $ab_item_nodes there) and emits the matching selector.
+	 * Integrations register their own plugin's node via this filter (Bricks, QM).
+	 *
 	 * @return array<string,string> node-id => SVG markup ('' = skip)
 	 */
 	private static function toolbar_icon_map() {
@@ -141,8 +189,34 @@ class AdminKit_Core_Menu_Icons {
 			'wp-admin-bar-comments'    => self::svg( 'chat' ),
 			'wp-admin-bar-new-content' => self::svg( 'plus' ),
 			'wp-admin-bar-updates'     => self::svg( 'update' ),
+			// Front-end / edit-screen core nodes. These paint via `> .ab-item::before`.
+			'wp-admin-bar-edit'        => self::svg( 'pencil' ),
+			'wp-admin-bar-customize'   => self::svg( 'sliders' ),
 		);
 		return (array) apply_filters( 'adminkit/toolbar_icons', $map );
+	}
+
+	/**
+	 * Node ids whose icon is painted on the link's own `> .ab-item::before` rather
+	 * than on a child `.ab-icon` span. Two cases:
+	 *   - WP core nodes that ALREADY paint a dashicon FONT glyph there (edit,
+	 *     customize) — we out-specify and replace it with our mask.
+	 *   - nodes with a PLAIN-TEXT title and NO icon element at all (e.g. Bricks's
+	 *     "Edit with Bricks" / "Rendered with Bricks") — here the same `::before`
+	 *     rule CREATES the icon, prepending the masked glyph before the label.
+	 * A node NOT listed here is assumed to carry an `.ab-icon` child span.
+	 *
+	 * Filterable so integrations can declare their own text-only node uses this
+	 * form (return the node id => true). Mirrors `adminkit/toolbar_icons`.
+	 *
+	 * @return array<string,bool> node-id => true
+	 */
+	private static function ab_item_nodes() {
+		$nodes = array(
+			'wp-admin-bar-edit'      => true,
+			'wp-admin-bar-customize' => true,
+		);
+		return (array) apply_filters( 'adminkit/toolbar_icon_ab_item_nodes', $nodes );
 	}
 
 	/**
@@ -208,31 +282,69 @@ class AdminKit_Core_Menu_Icons {
 	 * @return string
 	 */
 	private static function toolbar_css() {
-		$css = '';
+		$css     = '';
+		$ab_item = self::ab_item_nodes();
 		foreach ( self::toolbar_icon_map() as $id => $svg ) {
 			if ( '' === $svg || ! is_string( $svg ) ) {
 				continue;
 			}
-			// WP core paints `.ab-icon` with `padding:4px 0; float:left` through a
-			// THREE-id selector (`#wpadminbar>#wp-toolbar>#wp-admin-bar-root-default
-			// .ab-icon`, specificity 3,1,0) and nudges the glyph with
-			// `position:relative; top:Npx`. A 2-id selector loses that tie, so the
-			// padding/top survived and shoved our icon ~4px low, overflowing the bar.
-			// Out-specify it: mirror the #wp-toolbar id chain AND double the class
-			// (`.ab-icon.ab-icon` → 3,2,0) so we win no matter the load order. Then
-			// model the box as exactly the 32px bar and centre a 20px mask in it
-			// (padding 6px → 6+20+6 = 32). Reset core's relative `top` on ::before.
-			// Desktop only: the ≤782px bar is 46px and core re-styles it there.
-			$sel  = '#wpadminbar #wp-toolbar #' . $id . ' .ab-icon.ab-icon';
-			$css .= $sel . '{box-sizing:border-box;height:32px;width:20px;padding:6px 0;margin-right:6px}';
-			$css .= $sel . '::before{content:"";display:block;width:20px;height:20px;margin:0;'
-				. 'position:static;top:auto;' . self::mask( $svg )
-				. '}';
+			$css .= isset( $ab_item[ $id ] )
+				? self::toolbar_ab_item_css( $id, $svg )
+				: self::toolbar_ab_icon_css( $id, $svg );
 		}
 		if ( '' !== $css ) {
 			$css = '@media screen and (min-width:783px){' . $css . '}';
 		}
 		return $css;
+	}
+
+	/**
+	 * Icon CSS for a node that renders a child `.ab-icon` span (comments,
+	 * new-content, updates, and most plugin nodes).
+	 *
+	 * WP core paints `.ab-icon` with `padding:4px 0; float:left` through a
+	 * THREE-id selector (`#wpadminbar>#wp-toolbar>#wp-admin-bar-root-default
+	 * .ab-icon`, specificity 3,1,0) and nudges the glyph with
+	 * `position:relative; top:Npx`. A 2-id selector loses that tie, so the
+	 * padding/top survived and shoved our icon ~4px low, overflowing the bar.
+	 * Out-specify it: mirror the #wp-toolbar id chain AND double the class
+	 * (`.ab-icon.ab-icon` → 3,2,0) so we win no matter the load order. Then
+	 * model the box as exactly the 32px bar and centre a 20px mask in it
+	 * (padding 6px → 6+20+6 = 32). Reset core's relative `top` on ::before.
+	 *
+	 * @param string $id
+	 * @param string $svg
+	 * @return string
+	 */
+	private static function toolbar_ab_icon_css( $id, $svg ) {
+		$sel  = '#wpadminbar #wp-toolbar #' . $id . ' .ab-icon.ab-icon';
+		$css  = $sel . '{box-sizing:border-box;height:32px;width:20px;padding:6px 0;margin-right:6px}';
+		$css .= $sel . '::before{content:"";display:block;width:20px;height:20px;margin:0;'
+			. 'position:static;top:auto;' . self::mask( $svg )
+			. '}';
+		return $css;
+	}
+
+	/**
+	 * Icon CSS for a node whose glyph WP paints on the link's own
+	 * `> .ab-item::before` as a dashicon FONT glyph (edit, customize, …) — there's
+	 * no `.ab-icon` span here. WP's rule
+	 * `#wpadminbar #wp-admin-bar-<id> > .ab-item:before { content:"\fXXX"; top:2px }`
+	 * is (2,1,1); float/padding come from the (1,1,1) base rule. Out-specify both
+	 * by mirroring the #wp-toolbar id chain and doubling the class
+	 * (`> .ab-item.ab-item::before` → 3,2,1): drop the font glyph (`content:""`),
+	 * model the same 32px box (the floated ::before IS the box here) and mask a
+	 * 20px glyph in it, resetting core's relative `top`.
+	 *
+	 * @param string $id
+	 * @param string $svg
+	 * @return string
+	 */
+	private static function toolbar_ab_item_css( $id, $svg ) {
+		$sel = '#wpadminbar #wp-toolbar #' . $id . ' > .ab-item.ab-item::before';
+		return $sel . '{content:"";box-sizing:border-box;float:left;height:32px;width:20px;'
+			. 'padding:6px 0;margin-right:6px;position:static;top:auto;' . self::mask( $svg )
+			. '}';
 	}
 
 	/**
@@ -314,6 +426,11 @@ class AdminKit_Core_Menu_Icons {
 			'gallery'     => '<path fill-rule="evenodd" d="M1.5 6A2.25 2.25 0 0 1 3.75 3.75h16.5A2.25 2.25 0 0 1 22.5 6v9a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 15V6Zm14.13 2.25a1.13 1.13 0 1 0 0 2.25 1.13 1.13 0 0 0 0-2.25ZM3 13.06l3.69-3.69a1.5 1.5 0 0 1 2.12 0l3.07 3.07.94-.94a1.5 1.5 0 0 1 2.12 0L21 16.44V15.75H3v-2.69Z" clip-rule="evenodd"/><path d="M3.75 19.5a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 0-1.5H3.75Z"/>',
 			'list'        => '<path fill-rule="evenodd" d="M2.62 6.75a1.12 1.12 0 1 1 2.25 0 1.12 1.12 0 0 1-2.25 0ZM7.5 6.75a.75.75 0 0 1 .75-.75h12a.75.75 0 0 1 0 1.5h-12a.75.75 0 0 1-.75-.75ZM2.62 12a1.12 1.12 0 1 1 2.25 0 1.12 1.12 0 0 1-2.25 0ZM7.5 12a.75.75 0 0 1 .75-.75h12a.75.75 0 0 1 0 1.5h-12A.75.75 0 0 1 7.5 12ZM2.62 17.25a1.12 1.12 0 1 1 2.25 0 1.12 1.12 0 0 1-2.25 0ZM7.5 17.25a.75.75 0 0 1 .75-.75h12a.75.75 0 0 1 0 1.5h-12a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd"/>',
 			'sliders'     => '<path fill-rule="evenodd" d="M10.5 3.75a.75.75 0 0 0-1.5 0v6.51a3 3 0 0 0 0 5.98v4.01a.75.75 0 0 0 1.5 0v-4.01a3 3 0 0 0 0-5.98V3.75ZM5.25 3.75a.75.75 0 0 0-1.5 0v.51a3 3 0 0 0 0 5.98V20.25a.75.75 0 0 0 1.5 0V10.24a3 3 0 0 0 0-5.98V3.75ZM18.75 3.75a.75.75 0 0 0-1.5 0V13.76a3 3 0 0 0 0 5.98v.51a.75.75 0 0 0 1.5 0v-.51a3 3 0 0 0 0-5.98V3.75Z" clip-rule="evenodd"/>',
+			// Gauge / activity — used by the Query Monitor toolbar node (see its
+			// adapter). NOTE: QM hides its own `.ab-icon` on desktop (it shows a text
+			// timing label there) and the toolbar CSS is desktop-only, so this glyph is
+			// only registered for completeness; it isn't actually painted on desktop.
+			'gauge'       => '<path fill-rule="evenodd" d="M2.25 13.5a9.75 9.75 0 0 1 19.5 0c0 .76-.09 1.51-.25 2.23a1.5 1.5 0 0 1-1.46 1.17H4.46A1.5 1.5 0 0 1 3 15.73a9.8 9.8 0 0 1-.75-2.23Zm14.4-4.16a.75.75 0 0 1 0 1.06l-2.6 2.6a2.25 2.25 0 1 1-1.06-1.06l2.6-2.6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/>',
 			// Generic neutral fallback for unmapped plugin menu items (a "squares/app"
 			// grid). Used ONLY by the low-specificity fallback rule in menu_css().
 			'app'         => '<path fill-rule="evenodd" d="M4.5 3.75a.75.75 0 0 0-.75.75v4.5c0 .41.34.75.75.75H9a.75.75 0 0 0 .75-.75v-4.5A.75.75 0 0 0 9 3.75H4.5ZM15 3.75a.75.75 0 0 0-.75.75v4.5c0 .41.34.75.75.75h4.5a.75.75 0 0 0 .75-.75v-4.5a.75.75 0 0 0-.75-.75H15ZM4.5 14.25a.75.75 0 0 0-.75.75v4.5c0 .41.34.75.75.75H9a.75.75 0 0 0 .75-.75V15a.75.75 0 0 0-.75-.75H4.5ZM15 14.25a.75.75 0 0 0-.75.75v4.5c0 .41.34.75.75.75h4.5a.75.75 0 0 0 .75-.75V15a.75.75 0 0 0-.75-.75H15Z" clip-rule="evenodd"/>',

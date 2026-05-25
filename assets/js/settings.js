@@ -309,8 +309,8 @@
 
 		// --- Branding (top) — light/dark logo. The PREVIEW itself is the picker:
 		// clicking it opens the WP media frame; a small × clears the logo. A hidden
-		// URL field stays in sync so a logo can also be typed/pasted. The label is a
-		// sun (light) / moon (dark) ICON, with the localized text as aria-label/title.
+		// URL field stays in sync so a logo can also be typed/pasted. The label is the
+		// localized text only ("Light Mode" / "Dark Mode"), no leading icon.
 		function openMedia( slot, onChange ) {
 			if ( ! window.wp || ! wp.media ) { return; }
 			var frame = wp.media( {
@@ -328,7 +328,7 @@
 			} );
 			frame.open();
 		}
-		function logoField( slot, label, iconKey, textLabel ) {
+		function logoField( slot, label, textLabel ) {
 			var id = 'ak-logo-' + slot;
 			var preview = el( 'img', { 'class': 'ak-logo-pick__img', alt: '' } );
 			// Empty-state placeholder shown inside the picker when no logo is set.
@@ -374,13 +374,9 @@
 				markDirty();
 			} );
 			syncPreview();
-			// Label = sun/moon ICON then the localized TEXT ("Light Mode" / "Dark Mode"),
-			// laid out horizontally (icon left, text right). The full label stays the
-			// title/aria-label for assistive tech.
-			var lblIc = el( 'span', { 'class': 'ak-field__label-ic' } );
-			lblIc.innerHTML = ICONS[ iconKey ] || '';
-			var lbl = el( 'label', { 'class': 'ak-field__label ak-field__label--icon', 'for': id, title: label }, [
-				lblIc,
+			// Label = the localized TEXT only ("Light Mode" / "Dark Mode"); no leading
+			// icon. The full label stays the title for assistive tech.
+			var lbl = el( 'label', { 'class': 'ak-field__label', 'for': id, title: label }, [
 				el( 'span', { 'class': 'ak-field__label-tx', text: textLabel || label } )
 			] );
 			return el( 'div', { 'class': 'ak-field' }, [
@@ -435,8 +431,8 @@
 			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
 			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
 			el( 'div', { 'class': 'ak-rows' }, [
-				logoField( 'light', I.logoLight, 'sun', I.logoLightMode ),
-				logoField( 'dark', I.logoDark, 'moon', I.logoDarkMode ),
+				logoField( 'light', I.logoLight, I.logoLightMode ),
+				logoField( 'dark', I.logoDark, I.logoDarkMode ),
 				wpField
 			] )
 		] ) );

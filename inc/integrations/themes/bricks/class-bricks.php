@@ -174,6 +174,46 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		// When the AdminKit "icons" feature is on, give Bricks's own menu item a "B"
 		// mark so it matches the set (priority 22 = just after AdminKit_Core_Menu_Icons).
 		add_action( 'admin_head', array( __CLASS__, 'print_menu_icon' ), 22 );
+
+		// Bricks's front-end admin-bar nodes ("Edit with Bricks", "Rendered with
+		// Bricks"). Register cohesive AdminKit glyphs for them and flag them as
+		// text-only nodes so the icon CSS paints on the link's own ::before. The
+		// CSS only prints when the icons feature is on, so no extra gating needed.
+		add_filter( 'adminkit/toolbar_icons', array( __CLASS__, 'toolbar_icons' ) );
+		add_filter( 'adminkit/toolbar_icon_ab_item_nodes', array( __CLASS__, 'toolbar_ab_item_nodes' ) );
+	}
+
+	/**
+	 * Bricks admin-bar node ids that need an AdminKit icon, with raw SVG markup
+	 * (same shape AdminKit_Core_Menu_Icons::svg() produces — the filter value is
+	 * raw SVG used as a CSS mask, so the fill colour is irrelevant).
+	 *
+	 * Node ids come from Bricks's setup.php Admin_Bar registration:
+	 *   - `edit_with_bricks` ("Edit with Bricks")        -> pencil
+	 *   - `editor_mode`      ("Rendered with Bricks/WP") -> layout grid
+	 *
+	 * @param array<string,string> $map
+	 * @return array<string,string>
+	 */
+	public static function toolbar_icons( $map ) {
+		$pencil = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path d="M21.73 2.27a2.63 2.63 0 0 0-3.71 0L16.86 3.43l3.71 3.71 1.16-1.16a2.63 2.63 0 0 0 0-3.71ZM19.51 8.2 15.8 4.49 3.65 16.64a5.25 5.25 0 0 0-1.32 2.21l-.8 2.69a.75.75 0 0 0 .93.93l2.69-.8a5.25 5.25 0 0 0 2.21-1.32L19.51 8.2Z"/></svg>';
+		$layout = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M3 6a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3V6ZM3 15.75a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2.25Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3v-2.25Z" clip-rule="evenodd"/></svg>';
+		$map['wp-admin-bar-edit_with_bricks'] = $pencil;
+		$map['wp-admin-bar-editor_mode']      = $layout;
+		return $map;
+	}
+
+	/**
+	 * Flag the Bricks toolbar nodes as text-only (no `.ab-icon` child) so the icon
+	 * CSS paints on their link's own `> .ab-item::before`.
+	 *
+	 * @param array<string,bool> $nodes
+	 * @return array<string,bool>
+	 */
+	public static function toolbar_ab_item_nodes( $nodes ) {
+		$nodes['wp-admin-bar-edit_with_bricks'] = true;
+		$nodes['wp-admin-bar-editor_mode']      = true;
+		return $nodes;
 	}
 
 	/**

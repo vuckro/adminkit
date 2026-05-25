@@ -56,6 +56,37 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * Register an AdminKit toolbar icon for QM's admin-bar node when the icons
+	 * feature is on (the icon CSS only prints then, so no extra gating here).
+	 *
+	 * CAVEAT: QM hides its own `.ab-icon` on desktop (≥783px) — there it shows a
+	 * TEXT timing/memory label instead, and only reveals the icon on mobile
+	 * (≤782px). AdminKit's toolbar icon CSS is itself desktop-only
+	 * (`@media min-width:783px`), so this mapping is effectively a no-op on the
+	 * surfaces AdminKit paints: registered for completeness/consistency, but QM's
+	 * desktop label is deliberately left untouched.
+	 *
+	 * @return void
+	 */
+	protected static function boot() {
+		add_filter( 'adminkit/toolbar_icons', array( __CLASS__, 'toolbar_icons' ) );
+	}
+
+	/**
+	 * QM's admin-bar node id is `wp-admin-bar-query-monitor`. Map a gauge/activity
+	 * glyph onto it (raw SVG markup — the filter value is used as a CSS mask, so
+	 * the fill colour is irrelevant). It renders an `.ab-icon` child, so the
+	 * default `.ab-icon` selector form in AdminKit_Core_Menu_Icons applies.
+	 *
+	 * @param array<string,string> $map
+	 * @return array<string,string>
+	 */
+	public static function toolbar_icons( $map ) {
+		$map['wp-admin-bar-query-monitor'] = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M2.25 13.5a9.75 9.75 0 0 1 19.5 0c0 .76-.09 1.51-.25 2.23a1.5 1.5 0 0 1-1.46 1.17H4.46A1.5 1.5 0 0 1 3 15.73a9.8 9.8 0 0 1-.75-2.23Zm14.4-4.16a.75.75 0 0 1 0 1.06l-2.6 2.6a2.25 2.25 0 1 1-1.06-1.06l2.6-2.6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>';
+		return $map;
+	}
+
+	/**
 	 * Enqueue the shadow-root bridge and hand it the CSS URL (mtime-stamped so
 	 * edits skip the browser cache, matching AdminKit_Assets::do_enqueue()).
 	 *
