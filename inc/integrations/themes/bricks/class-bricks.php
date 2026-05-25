@@ -322,30 +322,39 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	/**
 	 * Build the CSS that brands the builder toolbar + preloader.
 	 *
-	 * Toolbar logo: ALWAYS the first letter of the site title on the accent chip —
-	 * clean and robust (li.logo out-specifies Bricks, display:none drops the native
-	 * <img>, --accent-on keeps the letter legible). No image is shown here, so it
-	 * never renders oversized or mis-fitted.
-	 *
-	 * Preloader: when a brand logo IS configured, it pulses on the (fixed dark)
-	 * splash; otherwise Bricks's own loader shows on that dark background.
+	 * When a brand logo is configured it is shown as an IMAGE, rounded: the toolbar
+	 * <img> via `content:var(--ak-builder-logo)` (a real <img>, so height:22px
+	 * scales it reliably), and the preloader as a background — both with a
+	 * border-radius. logo_dark leads (the toolbar + splash are dark); logo_light
+	 * kicks in in light mode. With NO logo configured, the toolbar falls back to the
+	 * first-letter mark.
 	 *
 	 * @return string Inline CSS.
 	 */
 	private static function builder_logo_css() {
-		$css = self::builder_toolbar_letter_css();
-
 		$dark    = AdminKit_Settings::brand_logo( 'dark' );
 		$light   = AdminKit_Settings::brand_logo( 'light' );
-		$preload = '' !== $dark ? $dark : $light;
-		if ( '' !== $preload ) {
-			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
-			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
-			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:15rem;aspect-ratio:1;'
-				. 'background:' . self::css_url( $preload ) . ' center/contain no-repeat;'
-				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
-			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
+		$primary = '' !== $dark ? $dark : $light;
+
+		// No configured logo → the first-letter mark.
+		if ( '' === $primary ) {
+			return self::builder_toolbar_letter_css();
 		}
+
+		// Toolbar: the logo image on the accent chip, rounded, light + dark.
+		$css  = '#bricks-toolbar{--ak-builder-logo:' . self::css_url( $primary ) . '}';
+		$css .= '#bricks-toolbar .logo{background-color:var(--accent);border-radius:6px}';
+		$css .= '#bricks-toolbar .logo img{content:var(--ak-builder-logo);height:22px;width:auto;border-radius:6px}';
+		if ( '' !== $light && $light !== $primary ) {
+			$css .= 'body:has(.mode [data-name="sun"]) #bricks-toolbar{--ak-builder-logo:' . self::css_url( $light ) . '}';
+		}
+		// Preloader: the same logo, rounded, pulsing on the (fixed dark) splash.
+		$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
+		$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
+		$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:15rem;aspect-ratio:1;border-radius:1.5rem;'
+			. 'background:' . self::css_url( $primary ) . ' center/contain no-repeat;'
+			. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
+		$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
 		return $css;
 	}
 
