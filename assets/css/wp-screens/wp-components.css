@@ -237,6 +237,7 @@ body.adminkit [role="tablist"][aria-orientation="horizontal"]::before {
 /* Collapsible block-toolbar group dividers — WP hardcodes the :after separator
    as #ddd, a light-grey line that doesn't theme. Map to the token divider so it
    stays subtle (≈ invisible in dark) and flips with the mode. */
+body.adminkit .editor-collapsible-block-toolbar:after,
 body.adminkit .editor-collapsible-block-toolbar .components-toolbar-group:after,
 body.adminkit .editor-collapsible-block-toolbar .components-toolbar:after {
 	background-color: var(--ak-border);
