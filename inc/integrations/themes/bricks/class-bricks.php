@@ -384,14 +384,16 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
 		if ( '' !== $logo ) {
-			// Show the brand logo plainly: hide Bricks's animated mark + the
-			// title/sub-title, then drop the logo in CONTAINED and centred on a
-			// simply-rounded box. No card fill, no pulse — kept minimal on purpose.
+			// Just the logo, rounded — nothing else. Hide Bricks's animated mark +
+			// the title/sub-title, then let the (square) logo FILL a square box with
+			// `cover` so the border-radius actually rounds the logo's own corners
+			// (with `contain` the radius falls in the empty space around it). No card,
+			// no border, no margin, no pulse.
 			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
 			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";display:block;'
-				. 'width:9rem;height:9rem;border-radius:1.25rem;'
-				. 'background:' . self::css_url( $logo ) . ' center/contain no-repeat}';
+				. 'width:9rem;height:9rem;border-radius:1.25rem;overflow:hidden;'
+				. 'background:' . self::css_url( $logo ) . ' center/cover no-repeat}';
 		}
 		return $css;
 	}
