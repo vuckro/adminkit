@@ -232,6 +232,10 @@ class AdminKit_Settings_Page {
 			'colors'       => $colors,
 			'providers'    => self::providers(),
 			'features'     => $features,
+			'logos'        => array(
+				'light' => (string) AdminKit_Settings::get( 'logo_light' ),
+				'dark'  => (string) AdminKit_Settings::get( 'logo_dark' ),
+			),
 			'i18n'         => array(
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
 				'design'            => __( 'Tokens', 'adminkit' ),
@@ -242,6 +246,11 @@ class AdminKit_Settings_Page {
 				'featuresIntro'     => __( 'Turn AdminKit modules on or off.', 'adminkit' ),
 				'enableAll'         => __( 'Enable all', 'adminkit' ),
 				'disableAll'        => __( 'Disable all', 'adminkit' ),
+				'branding'          => __( 'Branding', 'adminkit' ),
+				'logoHint'          => __( 'Optional brand logo URLs. Used by the Bricks builder (toolbar + preloader); leave empty to fall back to the adminkit/bricks/builder_logo filter.', 'adminkit' ),
+				'logoLight'         => __( 'Logo — light mode', 'adminkit' ),
+				'logoDark'          => __( 'Logo — dark mode', 'adminkit' ),
+				'logoPlaceholder'   => __( 'https://…/logo.svg', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),

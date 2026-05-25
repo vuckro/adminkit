@@ -26,7 +26,11 @@
 	var state = {
 		dirty: false,
 		saving: false,
-		features: {}       // setting key -> bool
+		features: {},      // setting key -> bool
+		logos: {           // setting key -> url string
+			light: ( D.logos && D.logos.light ) || '',
+			dark:  ( D.logos && D.logos.dark ) || ''
+		}
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
@@ -371,6 +375,31 @@
 				g.rows
 			] ) );
 		} );
+
+		// Branding — optional light/dark logo URLs (consumed by the Bricks builder).
+		function logoField( slot, label ) {
+			var input = el( 'input', {
+				type: 'url', 'class': 'ak-field__input', value: state.logos[ slot ],
+				placeholder: I.logoPlaceholder || '', spellcheck: 'false'
+			} );
+			input.addEventListener( 'input', function () {
+				state.logos[ slot ] = input.value.trim();
+				markDirty();
+			} );
+			return el( 'label', { 'class': 'ak-field' }, [
+				el( 'span', { 'class': 'ak-field__label', text: label } ),
+				input
+			] );
+		}
+		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
+			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
+			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
+			el( 'div', { 'class': 'ak-rows' }, [
+				logoField( 'light', I.logoLight ),
+				logoField( 'dark', I.logoDark )
+			] )
+		] ) );
+
 		return p;
 	}
 
@@ -380,6 +409,8 @@
 	function gather() {
 		var v = {};
 		Object.keys( state.features ).forEach( function ( k ) { v[ k ] = !! state.features[ k ]; } );
+		v.logo_light = state.logos.light;
+		v.logo_dark  = state.logos.dark;
 		return v;
 	}
 

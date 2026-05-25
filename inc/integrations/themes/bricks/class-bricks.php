@@ -285,35 +285,48 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	/**
 	 * Build the optional brand-logo CSS for the builder toolbar + preloader.
 	 *
-	 * Opt-in and filterable, so NO external asset is shipped in the plugin. The
-	 * `adminkit/bricks/builder_logo` filter may return:
-	 *   - '' (default) — leave Bricks's own logo + preloader untouched.
-	 *   - a URL string — used for the toolbar logo.
-	 *   - an array( 'default' => url, 'light' => url, 'preloader' => url ) — the
-	 *     toolbar logo (with a light-mode variant) and the preloader splash logo.
+	 * Resolution (no asset is shipped in the plugin):
+	 *   1. Branding settings — Settings → Features → Branding. `logo_dark` is the
+	 *      toolbar default + preloader splash; `logo_light` is the light-mode
+	 *      toolbar variant.
+	 *   2. The `adminkit/bricks/builder_logo` filter as a fallback for any slot —
+	 *      a URL string, or array( 'default', 'light', 'preloader' ). Handy for a
+	 *      WaasKit default via snippet.
 	 *
-	 * @return string Inline CSS, or '' when no logo is configured.
+	 * With nothing configured, returns '' and Bricks's own logo + preloader stay.
+	 *
+	 * @return string Inline CSS, or '' when no logo resolves.
 	 */
 	private static function builder_logo_css() {
-		$logo = apply_filters( 'adminkit/bricks/builder_logo', '' );
-		if ( empty( $logo ) ) {
-			return '';
-		}
-		$dark      = esc_url( is_array( $logo ) ? ( isset( $logo['default'] ) ? $logo['default'] : '' ) : $logo );
-		$light     = esc_url( is_array( $logo ) && isset( $logo['light'] ) ? $logo['light'] : '' );
-		$preloader = esc_url( is_array( $logo ) && isset( $logo['preloader'] ) ? $logo['preloader'] : '' );
-		if ( '' === $dark ) {
+		// Settings win; the filter fills any empty slot.
+		$f = apply_filters( 'adminkit/bricks/builder_logo', '' );
+		$f = is_array( $f ) ? $f : ( is_string( $f ) && '' !== $f ? array( 'default' => $f ) : array() );
+
+		$set_light = trim( (string) AdminKit_Settings::get( 'logo_light' ) );
+		$set_dark  = trim( (string) AdminKit_Settings::get( 'logo_dark' ) );
+
+		$dark      = '' !== $set_dark  ? $set_dark  : ( isset( $f['default'] ) ? $f['default'] : '' );
+		$light     = '' !== $set_light ? $set_light : ( isset( $f['light'] ) ? $f['light'] : '' );
+		$preloader = isset( $f['preloader'] ) ? $f['preloader'] : $dark;
+
+		// The dark-mode logo is the toolbar default; fall back to the light one.
+		$toolbar = '' !== $dark ? $dark : $light;
+		if ( '' === $toolbar ) {
 			return '';
 		}
 
-		// Toolbar logo chip + image (with an optional light-mode variant).
+		$toolbar   = esc_url( $toolbar );
+		$light     = esc_url( $light );
+		$preloader = esc_url( $preloader );
+
+		// Toolbar logo chip + image (with a light-mode variant when distinct).
 		$css  = '#bricks-toolbar .logo{background-color:var(--accent)}';
-		$css .= '#bricks-toolbar .logo img{content:url(' . $dark . ');height:22px;width:auto}';
-		if ( '' !== $light ) {
+		$css .= '#bricks-toolbar .logo img{content:url(' . $toolbar . ');height:22px;width:auto}';
+		if ( '' !== $light && $light !== $toolbar ) {
 			$css .= 'body:has(.mode [data-name="sun"]) #bricks-toolbar .logo img{content:url(' . $light . ')}';
 		}
 
-		// Preloader splash — only when a preloader logo is given (otherwise leave
+		// Preloader splash — only when a preloader logo resolves (otherwise leave
 		// Bricks's own splash, never hide it into a blank screen).
 		if ( '' !== $preloader ) {
 			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';

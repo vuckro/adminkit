@@ -47,7 +47,27 @@ class AdminKit_Settings {
 	 */
 	public static function init() {
 		self::register_feature_catalog();
+		self::register_branding();
 		self::bind_modules();
+	}
+
+	/**
+	 * Branding settings — optional brand logo URLs for light + dark mode. Empty by
+	 * default (no asset shipped). Consumed by the Bricks builder integration (and
+	 * available to any integration) via AdminKit_Settings::get(). URLs are stored
+	 * sanitized; an empty value is dropped so the consumer can fall back.
+	 *
+	 * @return void
+	 */
+	private static function register_branding() {
+		foreach ( array( 'logo_light', 'logo_dark' ) as $key ) {
+			self::register( $key, array(
+				'type'     => 'text',
+				'group'    => 'branding',
+				'default'  => '',
+				'sanitize' => 'esc_url_raw',
+			) );
+		}
 	}
 
 	/**

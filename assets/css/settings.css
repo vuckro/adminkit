@@ -401,3 +401,29 @@
 
 /* "Coming soon" pill (dashboard roadmap rows) ---------------------------- */
 .adminkit-app .ak-pill--soon { background: var(--ak-elevated); color: var(--ak-text-muted); }
+
+/* Branding logo URL fields (Features tab) -------------------------------- */
+.adminkit-app .ak-field {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	padding: 12px 16px;
+	border-top: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-field:first-child { border-top: 0; }
+.adminkit-app .ak-field__label { font-size: var(--ak-text-s); font-weight: 500; color: var(--ak-heading); }
+.adminkit-app .ak-field__input {
+	width: 100%;
+	font: inherit;
+	font-size: var(--ak-text-s);
+	color: var(--ak-text);
+	background: var(--ak-input-bg);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	padding: 7px 10px;
+}
+.adminkit-app .ak-field__input:focus {
+	outline: none;
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+}
