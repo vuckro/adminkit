@@ -171,18 +171,38 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 
 ## Git & GitHub workflow
 
-`main` is the single source of truth: always clean, always deployable. The pain
-we hit before all came from drifting off that — read the **anti-patterns**.
+`main` is the *eventual* source of truth: always clean, always deployable. **But today
+the live, active integration branch is `docs/overhaul`** — read the box below before you
+branch. The pain we hit before all came from drifting off the right branch — read the
+**anti-patterns**.
+
+### ⚠️ Current working branch — `docs/overhaul` (read before you start)
+
+All work happens on the long-lived **`docs/overhaul`** branch, NOT `main`. `main` is
+~250+ commits behind and is only refreshed in periodic promotions. So, today:
+
+- **Base off `docs/overhaul` and PR into `docs/overhaul`.** Never branch off `main`
+  (it's stale — you'd be missing almost everything), and never start from a downloaded
+  release / ZIP (it's a snapshot, not a git checkout — you can't branch or PR from it).
+  Get the live code with:
+  `git fetch origin && git checkout docs/overhaul && git pull --ff-only`.
+- **Pull before you branch, and re-sync often.** After ANY PR merges into
+  `docs/overhaul`, every in-flight branch should `git fetch && git rebase
+  origin/docs/overhaul` so it never drifts — that's also how two PRs touching the same
+  file stay mergeable (rebase the second one before it merges).
+- The clean `main`-based loop below is the model for **after** `docs/overhaul` is promoted
+  to `main`; until then, read every "`main`" in it as "`docs/overhaul`".
 
 ### The loop (one topic at a time)
 
-1. Branch **off a freshly-pulled `main`**: `feat/…`, `fix/…`, `refactor/…`,
-   `docs/…`, `chore/…` — one topic, short-lived. Direct pushes to `main` are blocked.
+1. Branch **off a freshly-pulled `docs/overhaul`** (the current integration branch — it's
+   `main` only once we've promoted): `feat/…`, `fix/…`, `refactor/…`, `docs/…`,
+   `chore/…` — one topic, short-lived. Direct pushes to `main` are blocked.
 2. **Conventional commits, one concern each** (`feat:`, `fix:`, `refactor:`,
    `docs:`, `style:`, `chore:`, scoped: `fix(buttons): …`). **Stage explicit
    paths — never `git add -A`** (the tree may hold a second agent's work). Push often.
-3. Open a PR, run the pre-merge checks, **squash-merge** (one clean commit on
-   `main`), then **delete the branch immediately**.
+3. Open a PR **into `docs/overhaul`**, run the pre-merge checks, **squash-merge** (one
+   clean commit on the integration branch), then **delete the branch immediately**.
 
 ### Anti-patterns (these bit us — don't repeat)
 
@@ -200,16 +220,21 @@ we hit before all came from drifting off that — read the **anti-patterns**.
 - **Don't pile up branches.** Delete merged branches locally too
   (`git branch -d`) and `git fetch --prune` to clear gone remotes.
 
-### Two agents, one repo
+### Multiple agents, one repo
 
-A second AI agent may share this working tree. To avoid collisions:
+Several AI agents may work in parallel. To avoid collisions:
 
-- **Best — separate `git worktree`s:** one branch per agent, one directory each
-  (`git worktree add ../adminkit-b feat/…`). No shared-file races at all.
-- **Sharing the tree anyway:** stage explicit paths only, **never touch the
-  other agent's uncommitted files**, push often, and on a rejected push
-  `git fetch` + `git rebase`/merge — never force-push a shared branch, never
-  drop their work.
+- **Separate clones / sites (the current sprint model):** each agent works on its own
+  site (a full clone), all branching off and PR-ing into `docs/overhaul`, with
+  `git fetch && git rebase origin/docs/overhaul` after each merge (see the box above).
+  No shared working tree = no file races; the only coordination is git + the explicit
+  "don't touch" scope handed to each agent. Per-task briefs live in `.claude/agent-briefs/`
+  (gitignored — hand each agent its brief; it won't be in the clone).
+- **Separate `git worktree`s:** one branch per agent, one directory each
+  (`git worktree add ../adminkit-b feat/…`). No shared-file races either.
+- **Sharing one tree:** stage explicit paths only, **never touch the other agent's
+  uncommitted files**, push often, and on a rejected push `git fetch` + `git rebase`/merge
+  — never force-push a shared branch, never drop their work.
 
 ### Before you merge
 
