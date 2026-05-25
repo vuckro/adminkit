@@ -436,9 +436,9 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 *
 	 * Toolbar: the site FAVICON as a fixed rounded SQUARE (28px, centred, cover) so
 	 * the radius reads on the chip; first-letter mark when no Site Icon is set.
-	 * Preloader: the configured brand LOGO filling a wide ROUNDED RECTANGLE (cover →
-	 * the radius is on the logo card), centred with a gentle pulse on the fixed dark
-	 * splash; Bricks's own loader shows when no logo is set.
+	 * Preloader: the configured brand LOGO in a wide ROUNDED box (contain → the whole
+	 * logo, undistorted), centred with a gentle pulse on the fixed dark splash;
+	 * Bricks's own loader shows when no logo is set.
 	 *
 	 * @return string Inline CSS.
 	 */
@@ -469,20 +469,26 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
 		if ( '' !== $logo ) {
-			// Paint the brand logo straight onto Bricks's OWN preloader logo element
-			// (.bricks-logo-animated — always present and already centred on the splash),
-			// hiding its inner mark. `contain` shows the WHOLE wordmark (never cropped),
-			// and the box is sized in PX (not rem) so the builder's own root font-size
-			// can't distort it. Gentle pulse. Targeting the logo element directly (rather
-			// than a wrapper pseudo-element) keeps it working across Bricks markup tweaks.
+			// Center the brand logo on the preloader splash and show it in a softly
+			// rounded chip. CENTERING: force #bricks-preloader to flex-center both axes —
+			// Bricks lays it out as a flex COLUMN, where `margin:0 auto` only centers on
+			// the main (vertical) axis, so the logo drifted right; `align-items:center`
+			// fixes the horizontal axis. RADIUS: a `contain` logo on a transparent box has
+			// nothing to round, so the 8px never read — give the box a faint chip
+			// background + padding so the rounded corners show, with the logo whole inside
+			// (background-origin:content-box, never cropped). Colours are fixed (the splash
+			// paints before tokens load — same reason #bricks-preloader is #171717). `> *`
+			// hides Bricks's animated cubes; .title/.sub-title hide its wordmark. id+class
+			// beats Bricks's class-only rules — no !important.
+			$css .= '#bricks-preloader{display:flex;flex-direction:column;align-items:center;justify-content:center}';
 			$css .= '#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-logo-animated{'
-				. 'width:240px;height:90px;max-width:60vw;'
-				. 'background:' . self::css_url( $logo ) . ' center / contain no-repeat;'
-				. 'animation:ak-bricks-preload 1.1s ease-in-out infinite}';
-			$css .= '#bricks-preloader .bricks-logo-animated svg,'
-				. '#bricks-preloader .bricks-logo-animated img,'
-				. '#bricks-preloader .bricks-logo-animated > *{display:none}';
+				. 'box-sizing:border-box;width:260px;height:120px;max-width:60vw;flex:0 0 auto;align-self:center;'
+				. 'padding:16px;border-radius:14px;background-color:rgba(255,255,255,0.06);'
+				. 'background-image:' . self::css_url( $logo ) . ';'
+				. 'background-position:center;background-repeat:no-repeat;background-size:contain;background-origin:content-box;'
+				. 'overflow:hidden;animation:ak-bricks-preload 1.1s ease-in-out infinite}';
+			$css .= '#bricks-preloader .bricks-logo-animated > *{display:none}';
 			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.06)}}';
 		}
 		return $css;

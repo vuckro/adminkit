@@ -300,6 +300,16 @@ body[data-builder-mode] .cm-s-default .cm-string-2                  { color: var
 body[data-builder-mode] .cm-s-default .cm-keyword,
 body[data-builder-mode] .cm-s-default .cm-atom                      { color: var(--primary); }
 body[data-builder-mode] .cm-s-default .cm-number                    { color: var(--warning); }
+/* dev4: CodeMirror token colours
+   Bricks's raw cm-s-default theme ships a few tokens dark enough to be illegible
+   once the WaasKit vars flip dark (custom builder mode renders cm-s-default).
+   `.cm-builtin` was #30a (dark purple) — the reported bug; grouped with the
+   keyword/atom family on --primary (builtins read as keyword-like). `.cm-type`/
+   `.cm-variable-3` were still raw #085 (dark green) → the def/type family colour
+   --info. Same provider vars as the rest of this CodeMirror block. */
+body[data-builder-mode] .cm-s-default .cm-builtin                   { color: var(--primary); }
+body[data-builder-mode] .cm-s-default .cm-type,
+body[data-builder-mode] .cm-s-default .cm-variable-3               { color: var(--info); }
 body[data-builder-mode] .cm-s-default .cm-tag,
 body[data-builder-mode] .cm-s-default .cm-attribute,
 body[data-builder-mode] .cm-s-default .cm-def,
@@ -340,3 +350,25 @@ body[data-builder-mode] ::-webkit-scrollbar-thumb {
 }
 body[data-builder-mode] ::-webkit-scrollbar-thumb:hover { background: var(--neutral-t-4); }
 body[data-builder-mode] ::-webkit-scrollbar-corner { background: transparent; }
+
+/* dev3: structure-panel scrollbar
+   The LEFT Structure panel scrolls on #bricks-structure ITSELF (it carries
+   `overflow-y:scroll`; .panel-content / .bricks-structure-list set no overflow).
+   Bricks styles that scrollbar with ID-level rules — `#bricks-structure` +
+   `#bricks-structure::-webkit-scrollbar` (specificity 1,0,1) — which out-rank the
+   universal `body[data-builder-mode] ::-webkit-scrollbar` rules above (0,1,1),
+   so the panel kept a native WHITE track in the dark builder. Re-theme it with
+   an ID-bearing selector: `body[data-builder-mode] #bricks-structure` is (1,1,1)
+   and beats Bricks's (1,0,1) on specificity — no !important needed. Same dark
+   provider neutrals + rounding as the chrome scrollbar block above. */
+body[data-builder-mode] #bricks-structure { scrollbar-width: thin; scrollbar-color: var(--neutral-t-3) transparent; }
+body[data-builder-mode] #bricks-structure::-webkit-scrollbar { width: 12px; height: 12px; }
+body[data-builder-mode] #bricks-structure::-webkit-scrollbar-track { background: transparent; }
+body[data-builder-mode] #bricks-structure::-webkit-scrollbar-thumb {
+	background: var(--neutral-t-3);
+	border-radius: 8px;
+	border: 3px solid transparent;
+	background-clip: padding-box;
+}
+body[data-builder-mode] #bricks-structure::-webkit-scrollbar-thumb:hover { background: var(--neutral-t-4); }
+body[data-builder-mode] #bricks-structure::-webkit-scrollbar-corner { background: transparent; }
