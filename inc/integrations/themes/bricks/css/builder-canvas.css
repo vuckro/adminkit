@@ -1,11 +1,14 @@
 /**
  * Bricks builder — CANVAS iframe only.
  *
- * The canvas iframe renders the actual page. So this sheet must touch NO design
- * variables: remapping --bricks-* / --builder-* here would change the page's own
- * appearance and make the canvas diverge from the live frontend (that exact bug
- * is why the chrome lives in builder.css, main frame only). This file carries
- * only canvas-surface tweaks.
+ * The canvas iframe renders the actual page. So this sheet must NOT remap the
+ * design variables the PAGE uses (--bricks-*, surfaces, text…): that would
+ * recolour the page and make the canvas diverge from the live frontend (the exact
+ * bug that keeps the chrome in builder.css, main frame only).
+ *
+ * The ONE safe exception is `--builder-color-highlight` — the builder's own
+ * selection / hover highlight drawn OVER the canvas (builder UI, not page
+ * content) — pointed at the brand accent. Otherwise: canvas-surface tweaks only.
  *
  * Loaded by AdminKit_Integration_Bricks::enqueue_builder() when
  * bricks_is_builder_iframe(). It never loads on the live frontend, so the real
@@ -20,4 +23,10 @@
 /* Native Bricks form fields: drop the doubled focus outline while editing. */
 body.bricks-is-frontend :focus-visible {
 	outline: none;
+}
+
+/* Builder selection / hover highlight (builder UI in the canvas, NOT a page var)
+   → the brand accent. */
+:root {
+	--builder-color-highlight: var(--primary);
 }

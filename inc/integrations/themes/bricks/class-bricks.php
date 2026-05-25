@@ -170,6 +170,32 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		// "Bricks builder" feature, gated inside enqueue_builder(). Priority 9999 so
 		// it lands after Bricks's own builder CSS.
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_builder' ), 9999 );
+
+		// When the AdminKit "icons" feature is on, give Bricks's own menu item a "B"
+		// mark so it matches the set (priority 22 = just after AdminKit_Core_Menu_Icons).
+		add_action( 'admin_head', array( __CLASS__, 'print_menu_icon' ), 22 );
+	}
+
+	/**
+	 * Replace Bricks's admin-menu icon with a "B" mark when the AdminKit icons
+	 * feature is on — so it matches the set instead of standing out as a base64 SVG.
+	 * Bricks sets that icon as an INLINE background, so `!important` is the only way
+	 * to clear it: a deliberate, scoped exception (like the builder.css var mapping).
+	 *
+	 * @return void
+	 */
+	public static function print_menu_icon() {
+		if ( ! AdminKit_Settings::get( 'replace_icons_enabled' ) ) {
+			return;
+		}
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return;
+		}
+		echo '<style id="adminkit-bricks-menu-icon">'
+			. '#adminmenu #toplevel_page_bricks .wp-menu-image{background-image:none!important}'
+			. '#adminmenu #toplevel_page_bricks .wp-menu-image::before{content:"B";display:block;'
+			. 'font:700 17px/34px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;text-align:center;color:currentColor}'
+			. "</style>\n"; // static markup; no dynamic input.
 	}
 
 	/**
@@ -322,39 +348,40 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	/**
 	 * Build the CSS that brands the builder toolbar + preloader.
 	 *
-	 * When a brand logo is configured it is shown as an IMAGE, rounded: the toolbar
-	 * <img> via `content:var(--ak-builder-logo)` (a real <img>, so height:22px
-	 * scales it reliably), and the preloader as a background — both with a
-	 * border-radius. logo_dark leads (the toolbar + splash are dark); logo_light
-	 * kicks in in light mode. With NO logo configured, the toolbar falls back to the
-	 * first-letter mark.
+	 * Toolbar: the site FAVICON (square), rounded, on the accent chip so a
+	 * transparent icon still reads; first-letter mark when no Site Icon is set.
+	 * Preloader: the configured brand LOGO (dark variant), rounded, pulsing on the
+	 * fixed dark splash; Bricks's own loader shows when no logo is set.
 	 *
 	 * @return string Inline CSS.
 	 */
 	private static function builder_logo_css() {
-		$dark    = AdminKit_Settings::brand_logo( 'dark' );
-		$light   = AdminKit_Settings::brand_logo( 'light' );
-		$primary = '' !== $dark ? $dark : $light;
+		$css = '';
 
-		// No configured logo → the first-letter mark.
-		if ( '' === $primary ) {
-			return self::builder_toolbar_letter_css();
+		// Toolbar → favicon on the accent chip, rounded. `content:url()` on the real
+		// <img> scales reliably; the accent background covers transparent icons.
+		$favicon = get_site_icon_url( 192 );
+		if ( '' !== $favicon ) {
+			$url  = self::css_url( $favicon );
+			$css .= '#bricks-toolbar .logo{background-color:var(--accent);border-radius:6px}';
+			$css .= '#bricks-toolbar .logo img{content:' . $url . ';height:22px;width:22px;border-radius:6px}';
+		} else {
+			$css .= self::builder_toolbar_letter_css();
 		}
 
-		// Toolbar: the logo image on the accent chip, rounded, light + dark.
-		$css  = '#bricks-toolbar{--ak-builder-logo:' . self::css_url( $primary ) . '}';
-		$css .= '#bricks-toolbar .logo{background-color:var(--accent);border-radius:6px}';
-		$css .= '#bricks-toolbar .logo img{content:var(--ak-builder-logo);height:22px;width:auto;border-radius:6px}';
-		if ( '' !== $light && $light !== $primary ) {
-			$css .= 'body:has(.mode [data-name="sun"]) #bricks-toolbar{--ak-builder-logo:' . self::css_url( $light ) . '}';
+		// Preloader → the configured brand logo (dark variant), rounded.
+		$logo = AdminKit_Settings::brand_logo( 'dark' );
+		if ( '' === $logo ) {
+			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
-		// Preloader: the same logo, rounded, pulsing on the (fixed dark) splash.
-		$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
-		$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
-		$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:15rem;aspect-ratio:1;border-radius:1.5rem;'
-			. 'background:' . self::css_url( $primary ) . ' center/contain no-repeat;'
-			. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
-		$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
+		if ( '' !== $logo ) {
+			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
+			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
+			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:15rem;aspect-ratio:1;border-radius:1.5rem;'
+				. 'background:' . self::css_url( $logo ) . ' center/contain no-repeat;'
+				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
+			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
+		}
 		return $css;
 	}
 
