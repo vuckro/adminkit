@@ -88,16 +88,52 @@ docs/                   Deep-dive guides (see "More docs" below).
 
 ## Git & GitHub workflow
 
-Keep `main` clean and the history readable:
+`main` is the single source of truth: always clean, always deployable. The pain
+we hit before all came from drifting off that — read the **anti-patterns**.
 
-- **Never commit straight to `main`** (direct pushes to `main` are blocked here).
-  Work on a feature branch: `feat/…`, `fix/…`, `refactor/…`, `docs/…` — one topic each.
-- **Conventional commits, one concern per commit**: `feat:`, `fix:`, `refactor:`,
-  `docs:`, `style:`, `chore:`, scoped where useful (`fix(buttons): …`).
-- **Stage explicit paths, never `git add -A`** (a shared working copy can hold
-  unrelated in-flight work). Push often so work is backed up.
-- **Land via a PR and squash-merge it**, so `main` keeps one clean commit per
-  feature. Delete the branch after merge — don't let topic branches pile up.
+### The loop (one topic at a time)
+
+1. Branch **off a freshly-pulled `main`**: `feat/…`, `fix/…`, `refactor/…`,
+   `docs/…`, `chore/…` — one topic, short-lived. Direct pushes to `main` are blocked.
+2. **Conventional commits, one concern each** (`feat:`, `fix:`, `refactor:`,
+   `docs:`, `style:`, `chore:`, scoped: `fix(buttons): …`). **Stage explicit
+   paths — never `git add -A`** (the tree may hold a second agent's work). Push often.
+3. Open a PR, run the pre-merge checks, **squash-merge** (one clean commit on
+   `main`), then **delete the branch immediately**.
+
+### Anti-patterns (these bit us — don't repeat)
+
+- **Never reuse a branch after its PR is merged.** A squash-merge collapses the
+  branch into one *new* commit on `main`, so the old branch **diverges** and the
+  next PR returns `CONFLICTING`. Fix: delete + re-branch per topic. If a
+  long-lived integration branch is unavoidable, **re-sync it right after every
+  merge** (`git merge origin/main` into it) so `main` stays an ancestor — never
+  let it drift, never force-push it.
+- **Never let scratch reach the repo.** Throw-away mockups, experiments and
+  one-off blueprints belong in a **gitignored** spot (`.claude/` is already
+  ignored; or add `scratch/` to `.gitignore`) — not in tracked folders, or they
+  get swept into `main` on the next squash. `.distignore` only strips files from
+  the **zip**; it does **not** keep them out of `main`.
+- **Don't pile up branches.** Delete merged branches locally too
+  (`git branch -d`) and `git fetch --prune` to clear gone remotes.
+
+### Two agents, one repo
+
+A second AI agent may share this working tree. To avoid collisions:
+
+- **Best — separate `git worktree`s:** one branch per agent, one directory each
+  (`git worktree add ../adminkit-b feat/…`). No shared-file races at all.
+- **Sharing the tree anyway:** stage explicit paths only, **never touch the
+  other agent's uncommitted files**, push often, and on a rejected push
+  `git fetch` + `git rebase`/merge — never force-push a shared branch, never
+  drop their work.
+
+### Before you merge
+
+`php -l <changed>` · `php tokens/build.php --check` · `php dev/adapter-audit.php`
+· `php dev/adapter-drift.php` · re-read the diff · confirm no scratch/secret is
+staged. One-time per machine: set `git config user.name` + `user.email` so
+commits aren't attributed to `user@host`.
 
 ## More docs
 
