@@ -105,17 +105,26 @@ class AdminKit_Core_Menu_Icons {
 	 * @return string
 	 */
 	private static function menu_css() {
-		$css = '';
+		$rules = '';
 		foreach ( self::menu_icon_map() as $class => $svg ) {
 			if ( '' === $svg || ! is_string( $svg ) ) {
 				continue;
 			}
-			$css .= '#adminmenu .wp-menu-image.' . $class . '::before{'
-				. 'content:"";display:block;width:20px;height:20px;margin:7px auto;'
+			// Fill the icon box and centre a 20px mask in it — identical placement for
+			// every icon, at any menu size (expanded 36×34 or folded). margin:auto
+			// centring was per-icon flaky; absolute inset:0 is exact.
+			$rules .= '#adminmenu .wp-menu-image.' . $class . '::before{'
+				. 'content:"";position:absolute;inset:0;'
 				. self::mask( $svg )
 				. '}';
 		}
-		return $css;
+		if ( '' === $rules ) {
+			return '';
+		}
+		// The mapped ::before is absolutely positioned to fill its icon box, so the
+		// box needs to be a positioning context. Harmless on non-mapped items (their
+		// dashicon glyph flows normally and is left untouched).
+		return '#adminmenu .wp-menu-image{position:relative}' . $rules;
 	}
 
 	/**
@@ -148,8 +157,8 @@ class AdminKit_Core_Menu_Icons {
 	private static function mask( $svg ) {
 		$uri = 'url("data:image/svg+xml,' . rawurlencode( $svg ) . '")';
 		return 'background-color:currentColor;'
-			. '-webkit-mask:' . $uri . ' center/contain no-repeat;'
-			. 'mask:' . $uri . ' center/contain no-repeat;';
+			. '-webkit-mask:' . $uri . ' center/20px 20px no-repeat;'
+			. 'mask:' . $uri . ' center/20px 20px no-repeat;';
 	}
 
 	/**
