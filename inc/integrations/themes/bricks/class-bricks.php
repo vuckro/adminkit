@@ -342,41 +342,54 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 *                                          variable remaps (those would alter
 	 *                                          the rendered page itself).
 	 *
-	 * Off by default — opt in via Settings → Features → Bricks builder.
+	 * The CHROME restyle (panels, scrollbars, code editor, variable remaps) is opt-in
+	 * via Settings → Bricks builder. The LOGO branding (toolbar favicon + preloader
+	 * brand logo) always loads in the builder when a brand logo is set — it's a safe,
+	 * brand-positive touch, so it doesn't require the toggle.
 	 *
 	 * @return void
 	 */
 	public static function enqueue_builder() {
-		if ( ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
-			return;
-		}
 		// Respect the global asset gate (adminkit/should_load).
 		if ( ! apply_filters( 'adminkit/should_load', true, 'builder' ) ) {
 			return;
 		}
-		$base = 'inc/integrations/themes/bricks/css/';
+		$restyle = (bool) AdminKit_Settings::get( 'bricks_builder_enabled' );
+		$base    = 'inc/integrations/themes/bricks/css/';
 
 		// Canvas IFRAME first. It renders the real page, so it gets ONLY the canvas
-		// sheet (no variable remaps). This MUST be tested before the main-frame
-		// check: the iframe request also satisfies ?bricks=run / bricks_is_builder_main(),
-		// so testing "main" first would leak the chrome — and its :root { --bricks-* }
-		// remap — into the page and recolour it (the bug this fixes).
+		// sheet (no variable remaps) — and ONLY under the opt-in restyle (it recolours
+		// the rendered page). MUST be tested before the main-frame check: the iframe
+		// request also satisfies ?bricks=run / bricks_is_builder_main(), so testing
+		// "main" first would leak the chrome's :root { --bricks-* } remap into the page.
 		if ( function_exists( 'bricks_is_builder_iframe' ) && bricks_is_builder_iframe() ) {
-			self::enqueue_style_file( 'adminkit-bricks-builder-canvas', $base . 'builder-canvas.css' );
+			if ( $restyle ) {
+				self::enqueue_style_file( 'adminkit-bricks-builder-canvas', $base . 'builder-canvas.css' );
+			}
 			return;
 		}
 
-		// Otherwise → the builder MAIN frame: the chrome.
+		// Builder MAIN frame.
 		$is_main = ( isset( $_GET['bricks'] ) && 'run' === $_GET['bricks'] )
 			|| ( function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main() );
-		if ( $is_main ) {
+		if ( ! $is_main ) {
+			return;
+		}
+
+		// 1) Logo branding — ALWAYS (independent of the restyle toggle). Carried on an
+		//    inline-only style handle (no file, src=false) so it loads even when the
+		//    chrome sheet below doesn't. Empty string when no brand logo is set.
+		$logo_css = self::builder_logo_css();
+		if ( '' !== $logo_css ) {
+			wp_register_style( 'adminkit-bricks-logo', false );
+			wp_enqueue_style( 'adminkit-bricks-logo' );
+			wp_add_inline_style( 'adminkit-bricks-logo', $logo_css );
+		}
+
+		// 2) Chrome restyle — opt-in.
+		if ( $restyle ) {
 			self::enqueue_builder_fallback_tokens();
-			if ( self::enqueue_style_file( 'adminkit-bricks-builder', $base . 'builder.css' ) ) {
-				$logo_css = self::builder_logo_css();
-				if ( '' !== $logo_css ) {
-					wp_add_inline_style( 'adminkit-bricks-builder', $logo_css );
-				}
-			}
+			self::enqueue_style_file( 'adminkit-bricks-builder', $base . 'builder.css' );
 		}
 	}
 
@@ -484,7 +497,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
 			$css .= '#bricks-preloader .bricks-loading-inner::before{'
 				. 'content:"";box-sizing:border-box;width:16rem;height:6rem;max-width:70vw;padding:1rem;'
-				. 'background-color:rgba(255,255,255,0.06);'
+				. 'background-color:rgba(255,255,255,0.08);'
 				. 'background-image:' . self::css_url( $logo ) . ';'
 				. 'background-position:center;background-repeat:no-repeat;background-size:contain;background-origin:content-box;'
 				. 'border-radius:16px;animation:ak-bricks-preload 1.4s ease-in-out infinite}';
