@@ -215,6 +215,7 @@ class AdminKit_Settings_Page {
 		foreach ( self::feature_descriptors() as $f ) {
 			$features[] = array(
 				'key'    => $f['key'],
+				'group'  => isset( $f['group'] ) ? $f['group'] : '',
 				'label'  => $f['label'],
 				'desc'   => $f['desc'],
 				'parent' => isset( $f['parent'] ) ? $f['parent'] : '',
@@ -244,6 +245,7 @@ class AdminKit_Settings_Page {
 				'error'             => __( 'Could not save', 'adminkit' ),
 				'light'             => __( 'Light', 'adminkit' ),
 				'dark'              => __( 'Dark', 'adminkit' ),
+				'mode'              => __( 'Mode', 'adminkit' ),
 				'unsaved'           => __( 'Unsaved changes', 'adminkit' ),
 				'designLegendTitle' => __( 'Live colour reference', 'adminkit' ),
 				'designLegend'      => __( 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.', 'adminkit' ),
@@ -360,11 +362,16 @@ class AdminKit_Settings_Page {
 	 * @return array
 	 */
 	private static function feature_descriptors() {
+		// `group` is the section heading the Features tab buckets a row under
+		// (identical strings = same group; order = first-seen). A child inherits
+		// its parent's group by carrying the same label.
+		$content    = __( 'Content & lists', 'adminkit' );
+		$appearance = __( 'Appearance & access', 'adminkit' );
 		return array(
-			array( 'key' => 'post_previews_enabled', 'label' => __( 'Post previews', 'adminkit' ),             'desc' => __( 'Screenshot thumbnail column in post-type list tables.', 'adminkit' ) ),
-			array( 'key' => 'post_previews_mshots',  'label' => __( 'Live screenshots (mShots)', 'adminkit' ), 'desc' => __( 'Use WordPress.com mShots. Off = featured image only (no external calls).', 'adminkit' ), 'parent' => 'post_previews_enabled' ),
-			array( 'key' => 'theme_toggle_enabled',  'label' => __( 'Dark mode', 'adminkit' ),       'desc' => __( 'Enable dark mode with a toggle in the admin bar. Off forces light mode everywhere.', 'adminkit' ) ),
-			array( 'key' => 'module_login_enabled',  'label' => __( 'Login screen', 'adminkit' ),              'desc' => __( 'Style the wp-login.php screen.', 'adminkit' ) ),
+			array( 'key' => 'post_previews_enabled', 'group' => $content,    'label' => __( 'Post previews', 'adminkit' ),             'desc' => __( 'Screenshot thumbnail column in post-type list tables.', 'adminkit' ) ),
+			array( 'key' => 'post_previews_mshots',  'group' => $content,    'label' => __( 'Live screenshots (mShots)', 'adminkit' ), 'desc' => __( 'Use WordPress.com mShots. Off = featured image only (no external calls).', 'adminkit' ), 'parent' => 'post_previews_enabled' ),
+			array( 'key' => 'theme_toggle_enabled',  'group' => $appearance, 'label' => __( 'Dark mode', 'adminkit' ),       'desc' => __( 'Enable dark mode with a toggle in the admin bar. Off forces light mode everywhere.', 'adminkit' ) ),
+			array( 'key' => 'module_login_enabled',  'group' => $appearance, 'label' => __( 'Login screen', 'adminkit' ),              'desc' => __( 'Style the wp-login.php screen.', 'adminkit' ) ),
 		);
 	}
 
