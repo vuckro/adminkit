@@ -233,3 +233,21 @@ body.adminkit .components-button.is-primary[aria-disabled="true"]:enabled {
 body.adminkit [role="tablist"][aria-orientation="horizontal"]::before {
 	border-bottom-color: var(--ak-primary) !important;
 }
+
+/* Collapsible block-toolbar group dividers — WP hardcodes the :after separator
+   as #ddd, a light-grey line that doesn't theme. Map to the token divider so it
+   stays subtle (≈ invisible in dark) and flips with the mode. */
+body.adminkit .editor-collapsible-block-toolbar .components-toolbar-group:after,
+body.adminkit .editor-collapsible-block-toolbar .components-toolbar:after {
+	background-color: var(--ak-border);
+}
+
+/* Block / media placeholder (empty Image/Gallery/embed blocks; placeholder
+   panels on React admin screens like the settings page). WP hardcodes #fff bg +
+   #1e1e1e border/text. Map to tokens — this is editor/UI STRUCTURE in the main
+   document, so the visitor-facing content canvas stays untouched. */
+body.adminkit .components-placeholder.components-placeholder {
+	background-color: var(--ak-surface);
+	box-shadow: inset 0 0 0 1px var(--ak-border);
+	color: var(--ak-text);
+}
