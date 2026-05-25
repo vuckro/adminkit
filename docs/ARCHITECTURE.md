@@ -145,16 +145,17 @@ list, the `adminkit/setting/{key}` filter, and the REST save.
 `AdminKit_Settings` is the registry; `AdminKit_Settings_Page` mounts a small
 vanilla-JS SPA (`assets/js/settings.js`) on the top-level **AdminKit** menu and
 persists via one REST route (`adminkit/v1/settings`). Four tabs: **Dashboard**;
-**Tokens** (a read-only reference of the semantic token map); **Features** (the
-module toggles plus a Branding block — the brand logos and the WP-admin-bar-logo
-mode); and **Plugins** (enable/disable each detected integration, inactive hosts
-shown dimmed and locked off).
+**Design** (a read-only reference of the semantic token map — the `design` i18n
+key, formerly "Tokens"); **Settings** (the module toggles plus a Branding block —
+the brand logo and the WP-admin-bar-logo mode — the `features` key, formerly
+"Features"); and **Plugins** (enable/disable each detected integration, inactive
+hosts shown dimmed and locked off).
 
 ```php
 AdminKit_Settings::register( $key, array $args );  // declare a setting (idempotent)
 AdminKit_Settings::get( $key );                    // option → default → adminkit/setting/{key} filter
 AdminKit_Settings::schema();                        // registered schema (UI render + save sanitising)
-AdminKit_Settings::color_map();                     // semantic token taxonomy the Tokens tab renders
+AdminKit_Settings::color_map();                     // semantic token taxonomy the Design tab renders
 ```
 
 What's registered today:
@@ -187,7 +188,7 @@ $density = AdminKit_Settings::get( 'foo_density' );
 ```
 
 Saving keeps only registered keys and runs each through its `sanitize` callback.
-There is intentionally **no per-token colour editor** — the Tokens tab is a
+There is intentionally **no per-token colour editor** — the Design tab is a
 read-only map; the palette is driven by the provider/baseline cascade.
 
 ## Where to go next

@@ -99,9 +99,9 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 - **Dev tooling lives in `dev/` (tracked) and is excluded from the dist zip via
   `.distignore`.** `tokens/build.php` stays in `tokens/` (next to its palettes).
   Don't point docs at `.claude/` — that's local-only and gitignored.
-- **The Tokens settings tab is a read-only reference.** There is no per-token colour
-  editor; the palette is driven by the provider/baseline cascade. Don't re-add the
-  removed editing machinery.
+- **The Design settings tab (the token reference, i18n key `design`) is read-only.**
+  There is no per-token colour editor; the palette is driven by the provider/baseline
+  cascade. Don't re-add the removed editing machinery.
 - **The token layers are each optional** (provider → baseline → neutral). Don't
   hard-require any one of them. See ARCHITECTURE.
 - **Class names are stable public-ish API** (`AdminKit_*`). Folder reorg keeps them.
