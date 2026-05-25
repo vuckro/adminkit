@@ -263,7 +263,7 @@ class AdminKit_Settings_Page {
 			'hasSiteIcon'  => '' !== (string) get_site_icon_url(),
 			'i18n'         => array(
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
-				'design'            => __( 'Tokens', 'adminkit' ),
+				'design'            => __( 'Design', 'adminkit' ),
 				'features'          => __( 'Features', 'adminkit' ),
 				'soon'              => __( 'Coming soon', 'adminkit' ),
 				'own'               => __( 'AdminKit', 'adminkit' ),
@@ -284,7 +284,8 @@ class AdminKit_Settings_Page {
 				'inactive'          => __( 'Not active', 'adminkit' ),
 				'themesLabel'       => __( 'Themes', 'adminkit' ),
 				'wpLogoLabel'       => __( 'WordPress logo (admin bar)', 'adminkit' ),
-				'wpLogoFavicon'     => __( 'Replace with favicon', 'adminkit' ),
+				'wpLogoBrand'       => __( 'Logo', 'adminkit' ),
+				'wpLogoFavicon'     => __( 'Favicon', 'adminkit' ),
 				'wpLogoHide'        => __( 'Hide', 'adminkit' ),
 				'wpLogoNoIcon'      => __( 'No Site Icon set — the WordPress logo shows until you add one (Settings → General).', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),

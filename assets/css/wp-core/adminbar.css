@@ -152,6 +152,15 @@
 	vertical-align: middle;
 }
 
+/* Icon-only action items (theme toggle + view-site): centre the glyph in the bar
+   so both line up perfectly, whatever each SVG's bounds. */
+#wpadminbar #wp-admin-bar-ak-theme-toggle > .ab-item,
+#wpadminbar #wp-admin-bar-ak-view-site > .ab-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 /* No hover / focus background on the toggle — it's an icon button,
    the color shift the universal hover rule applies is enough feedback. */
 #wpadminbar #wp-admin-bar-ak-theme-toggle:hover .ab-item,

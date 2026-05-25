@@ -356,7 +356,8 @@
 		var wpBtns = [];
 		var wpSeg = el( 'div', { 'class': 'ak-seg', role: 'radiogroup', 'aria-labelledby': 'ak-wp-logo-label' } );
 		[
-			{ v: 'favicon', label: I.wpLogoFavicon || 'Replace with favicon' },
+			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
+			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' },
 			{ v: 'hide',    label: I.wpLogoHide || 'Hide' }
 		].forEach( function ( o ) {
 			var active = state.wpLogo === o.v;

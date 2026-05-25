@@ -2,16 +2,14 @@
 /**
  * Branding — the brand logo across AdminKit surfaces.
  *
- * Two things, both controllable:
- *   - WordPress admin-bar logo: replaced with the site icon (favicon — which also
- *     hides the redundant "house" glyph next to the site name), hidden, or left
- *     as-is, per the `wp_logo` setting (Settings → Features → Branding). Applied in
- *     wp-admin AND on the front-end toolbar (logged-in users see the bar there too).
- *   - When a brand logo is configured (Settings → Features → Branding, light +
- *     dark), prints it as a contained card at the top of the admin menu (full
- *     width, with a background + border so most logos fit), switching per
- *     light/dark mode. With nothing configured, the menu is left untouched —
- *     nothing is added, and no asset is ever shipped.
+ * The WordPress admin-bar logo (top-left), per the `wp_logo` setting:
+ *   - `logo`    → the configured brand logo (Settings → Features → Branding,
+ *                 light + dark), shown as an image so wide wordmarks fit;
+ *   - `favicon` → the site icon, as a rounded chip;
+ *   - `hide`    → removed.
+ * `logo` falls back to `favicon`, then WordPress's own, when nothing is set; either
+ * branded mode also hides the now-redundant site-name "house" glyph. Applied in
+ * wp-admin AND on the front-end toolbar (logged-in users see it there too).
  *
  * The Bricks builder reads the SAME source (AdminKit_Settings::brand_logo()), so
  * one configuration drives the brand everywhere. The whole output is paused by
@@ -37,7 +35,7 @@ class AdminKit_Core_Branding {
 	}
 
 	/**
-	 * wp-admin: the admin-bar logo treatment + the admin-menu brand-logo card.
+	 * wp-admin: the admin-bar logo treatment.
 	 * Skipped when AdminKit styling is paused (any adminkit/should_load veto).
 	 *
 	 * @return void
@@ -46,12 +44,12 @@ class AdminKit_Core_Branding {
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return;
 		}
-		self::print_css( self::admin_bar_logo_css() . self::admin_menu_logo_css() );
+		self::print_css( self::admin_bar_logo_css() );
 	}
 
 	/**
 	 * Front end: the SAME admin-bar logo treatment, for logged-in users who see
-	 * the toolbar there. (No admin menu on the front end, so no brand-logo card.)
+	 * the toolbar there.
 	 *
 	 * @return void
 	 */
@@ -80,9 +78,9 @@ class AdminKit_Core_Branding {
 
 	/**
 	 * The WordPress admin-bar logo treatment — identical in wp-admin and on the
-	 * front-end toolbar. `hide` removes it; `favicon` swaps WordPress's glyph for
-	 * the site icon (and hides the now-redundant site-name glyph in both contexts).
-	 * 'default' (or favicon with no Site Icon) leaves the WP logo untouched.
+	 * front-end toolbar. `hide` removes it; `logo` shows the configured brand logo;
+	 * `favicon` shows the site icon. `logo` with nothing configured falls through to
+	 * `favicon`, which itself no-ops (WP logo stays) when there's no Site Icon.
 	 *
 	 * @return string
 	 */
@@ -93,37 +91,30 @@ class AdminKit_Core_Branding {
 			return '#wpadminbar #wp-admin-bar-wp-logo{display:none}';
 		}
 
-		if ( 'favicon' === $mode ) {
-			$favicon = self::css_url( get_site_icon_url( 64 ) );
-			if ( '' === $favicon ) {
-				return '';
+		if ( 'logo' === $mode ) {
+			$css = self::brand_logo_css();
+			if ( '' !== $css ) {
+				return $css;
 			}
-			// Paint the site icon onto the .ab-icon::BEFORE box — NOT .ab-icon itself:
-			// WP core forces `background-image:none !important` on .ab-icon (that was
-			// the original bug), but its ::before is exempt. Clear WP's glyph
-			// (content:""), size the box, drop the +2px glyph nudge.
-			return '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon{width:22px}'
-				. '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon::before{'
-				. 'content:"";display:block;width:22px;height:22px;top:0;'
-				. 'border-radius:var(--ak-radius-s,5px);'
-				. 'background:' . $favicon . ' center/contain no-repeat}'
-				// Hide the now-redundant site-name glyph: once with the .wp-admin
-				// prefix (to beat WP's wp-admin rule) and once plain (front end).
-				. '.wp-admin #wpadminbar #wp-admin-bar-site-name > .ab-item::before,'
-				. '#wpadminbar #wp-admin-bar-site-name > .ab-item::before{content:none}';
+			$mode = 'favicon'; // no brand logo configured → fall back to the site icon
+		}
+
+		if ( 'favicon' === $mode ) {
+			return self::favicon_css();
 		}
 
 		return '';
 	}
 
 	/**
-	 * The brand-logo card above the admin menu (wp-admin only) — a contained card
-	 * (background + border + radius) so most logos sit well whatever their shape or
-	 * colour, in light + dark. Empty string when no logo is configured.
+	 * Brand logo in the admin-bar wp-logo slot. `content:url()` turns the ::before
+	 * into a replaced image, so `height:22px` scales it and `width:auto` keeps the
+	 * aspect ratio (wide wordmarks fit). Light variant by default (the bar is light
+	 * in light mode); dark variant under the dark flag. '' when no logo is set.
 	 *
 	 * @return string
 	 */
-	private static function admin_menu_logo_css() {
+	private static function brand_logo_css() {
 		$light = self::css_url( AdminKit_Settings::brand_logo( 'light' ) );
 		$dark  = self::css_url( AdminKit_Settings::brand_logo( 'dark' ) );
 		if ( '' === $light && '' === $dark ) {
@@ -135,20 +126,43 @@ class AdminKit_Core_Branding {
 		if ( '' === $dark ) {
 			$dark = $light;
 		}
-		// A near-full-width card; the logo is CONTAINED within an 8px inset
-		// (background-size:contain + background-origin:content-box), so ANY logo —
-		// wide, tall, square, transparent — is centred and fully visible without
-		// clipping, with consistent breathing room. The card colour + border fill
-		// the whole box.
-		return '#adminmenu::before{content:"";display:block;box-sizing:border-box;'
-			. 'height:60px;margin:10px 6px;padding:8px;'
-			. 'background-color:var(--ak-elevated);background-image:' . $light . ';'
-			. 'background-repeat:no-repeat;background-position:center;'
-			. 'background-size:contain;background-origin:content-box;'
-			. 'border:1px solid var(--ak-border);border-radius:var(--ak-radius-m)}'
-			. ':root[data-adminkit-theme="dark"] #adminmenu::before{background-image:' . $dark . '}'
-			// Collapsed menu (folded / responsive auto-fold): a compact card, same rules.
-			. '.folded #adminmenu::before,.auto-fold.folded #adminmenu::before{height:36px;margin:8px 4px;padding:5px}';
+		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon';
+		return $sel . '{width:auto}'
+			. $sel . '::before{content:' . $light . ';display:block;height:22px;width:auto;top:0;margin:5px 6px 5px 0}'
+			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{content:' . $dark . '}'
+			. self::hide_site_name_glyph();
+	}
+
+	/**
+	 * Site icon (favicon) in the admin-bar wp-logo slot — painted onto the
+	 * .ab-icon::BEFORE box (WP forces background-image:none on .ab-icon itself, but
+	 * its ::before is exempt), as a rounded chip. '' when there's no Site Icon.
+	 *
+	 * @return string
+	 */
+	private static function favicon_css() {
+		$favicon = self::css_url( get_site_icon_url( 64 ) );
+		if ( '' === $favicon ) {
+			return '';
+		}
+		return '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon{width:22px}'
+			. '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon::before{'
+			. 'content:"";display:block;width:22px;height:22px;top:0;'
+			. 'border-radius:var(--ak-radius-s,5px);'
+			. 'background:' . $favicon . ' center/contain no-repeat}'
+			. self::hide_site_name_glyph();
+	}
+
+	/**
+	 * Hide WordPress's "house"/site glyph next to the site name — redundant once the
+	 * bar carries a brand mark. Two selectors: the .wp-admin-prefixed one beats WP's
+	 * wp-admin rule; the plain one covers the front end.
+	 *
+	 * @return string
+	 */
+	private static function hide_site_name_glyph() {
+		return '.wp-admin #wpadminbar #wp-admin-bar-site-name > .ab-item::before,'
+			. '#wpadminbar #wp-admin-bar-site-name > .ab-item::before{content:none}';
 	}
 
 	/**
