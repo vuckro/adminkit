@@ -178,20 +178,22 @@ branch. The pain we hit before all came from drifting off the right branch — r
 
 ### ⚠️ Current working branch — `docs/overhaul` (read before you start)
 
-All work happens on the long-lived **`docs/overhaul`** branch, NOT `main`. `main` is
-~250+ commits behind and is only refreshed in periodic promotions. So, today:
+`main` is the trunk — what people clone / download — and we keep it current by
+**promoting `docs/overhaul` → `main` at each verified checkpoint** (it's a fast-forward,
+since `main` stays an ancestor of `docs/overhaul`). Between promotions, active work lands
+on **`docs/overhaul`** first. So:
 
-- **Base off `docs/overhaul` and PR into `docs/overhaul`.** Never branch off `main`
-  (it's stale — you'd be missing almost everything), and never start from a downloaded
-  release / ZIP (it's a snapshot, not a git checkout — you can't branch or PR from it).
-  Get the live code with:
-  `git fetch origin && git checkout docs/overhaul && git pull --ff-only`.
-- **Pull before you branch, and re-sync often.** After ANY PR merges into
-  `docs/overhaul`, every in-flight branch should `git fetch && git rebase
-  origin/docs/overhaul` so it never drifts — that's also how two PRs touching the same
-  file stay mergeable (rebase the second one before it merges).
-- The clean `main`-based loop below is the model for **after** `docs/overhaul` is promoted
-  to `main`; until then, read every "`main`" in it as "`docs/overhaul`".
+- **Work on `docs/overhaul`** (the orchestrator commits + pushes here). Get the live code
+  with `git fetch origin && git checkout docs/overhaul && git pull --ff-only`. Never start
+  from a downloaded release / ZIP — it's a snapshot, not a git checkout.
+- **Pull before you start, re-sync often.** After anything merges into `docs/overhaul`,
+  `git fetch && git rebase origin/docs/overhaul` so nothing drifts (also how two changes
+  to the same file stay mergeable — rebase the second).
+- **Promote to `main` at clean checkpoints** so `main` never lags far behind the live
+  site — that gap is exactly what makes a fresh download look "wrong". Fast-forward only;
+  never force-push or rewrite `main`.
+- The clean `main`-based loop below is the long-term target (once `docs/overhaul` retires);
+  until then, read each "`main`" in it as "`docs/overhaul`".
 
 ### The loop (one topic at a time)
 
@@ -220,16 +222,19 @@ All work happens on the long-lived **`docs/overhaul`** branch, NOT `main`. `main
 - **Don't pile up branches.** Delete merged branches locally too
   (`git branch -d`) and `git fetch --prune` to clear gone remotes.
 
-### Multiple agents, one repo
+### Agents — centralised, one working tree
 
-Several AI agents may work in parallel. To avoid collisions:
+Development is **centralised in the main Claude conversation** (the orchestrator), working
+in the single tree on the live site. When a task needs parallel hands, the orchestrator
+spawns **non-isolated sub-agents** (the Agent tool) that **edit + verify in this same tree
+and leave everything uncommitted** — the orchestrator does ALL git (stage explicit paths,
+commit, push, PR, promote). Why non-isolated: the Agent tool's `isolation:"worktree"`
+branches off the DEFAULT branch (`main`), not `docs/overhaul`, so an isolated worktree is
+missing the branch's work and is unusable here.
 
-- **Separate clones / sites (the current sprint model):** each agent works on its own
-  site (a full clone), all branching off and PR-ing into `docs/overhaul`, with
-  `git fetch && git rebase origin/docs/overhaul` after each merge (see the box above).
-  No shared working tree = no file races; the only coordination is git + the explicit
-  "don't touch" scope handed to each agent. Per-task briefs live in `.claude/agent-briefs/`
-  (gitignored — hand each agent its brief; it won't be in the clone).
+(We earlier ran agents on separate clones/sites; that's retired in favour of this
+centralised model. The two notes below still apply if you ever do run a second checkout.)
+
 - **Separate `git worktree`s:** one branch per agent, one directory each
   (`git worktree add ../adminkit-b feat/…`). No shared-file races either.
 - **Sharing one tree:** stage explicit paths only, **never touch the other agent's
