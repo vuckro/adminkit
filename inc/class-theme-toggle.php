@@ -160,28 +160,36 @@ class AdminKit_Theme_Toggle {
 	}
 
 	/**
-	 * Admin-bar shortcut to the site frontend — a house icon sitting beside the
-	 * light/dark toggle. wp-admin only (on the frontend it would be redundant).
+	 * Admin-bar shortcut between wp-admin and the live site, beside the light/dark
+	 * toggle — shown in BOTH contexts with a context-appropriate icon:
+	 *   - in wp-admin: an "open site" (external) icon → opens the live site in a
+	 *     new tab (you're heading out to view it);
+	 *   - on the front end: a "home" (house) icon → goes to the homepage.
 	 *
 	 * @param WP_Admin_Bar $bar
 	 * @return void
 	 */
 	public static function register_view_site_node( $bar ) {
-		if ( ! is_admin() ) {
-			return;
+		$in_admin = is_admin();
+
+		// wp-admin → "open in new tab" (external) glyph; front end → house.
+		$open  = '<svg class="ak-theme-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M15.75 2.25H21a.75.75 0 0 1 .75.75v5.25a.75.75 0 0 1-1.5 0V4.81L8.03 17.03a.75.75 0 0 1-1.06-1.06L19.19 3.75h-3.44a.75.75 0 0 1 0-1.5Z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M1.5 4.5a3 3 0 0 1 3-3h6a.75.75 0 0 1 0 1.5h-6a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-6a.75.75 0 0 1 1.5 0v6a3 3 0 0 1-3 3h-12a3 3 0 0 1-3-3v-12Z" clip-rule="evenodd"/></svg>';
+		$house = '<svg class="ak-theme-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.47 3.84a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.06l-8.69-8.69a2.25 2.25 0 0 0-3.18 0l-8.69 8.69a.75.75 0 1 0 1.06 1.06l8.69-8.69Z"/><path d="m12 5.43 8.16 8.16c.03.02.05.05.08.09v6.2A1.88 1.88 0 0 1 18.37 22H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75v4.5A.75.75 0 0 1 9 22H5.63a1.88 1.88 0 0 1-1.88-1.88v-6.2l.09-.09L12 5.43Z"/></svg>';
+
+		$meta = array(
+			'class' => 'ak-view-site',
+			'title' => $in_admin ? __( 'View site', 'adminkit' ) : __( 'Home', 'adminkit' ),
+		);
+		if ( $in_admin ) {
+			$meta['target'] = '_blank';
+			$meta['rel']    = 'noopener';
 		}
-		$home = '<svg class="ak-theme-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.47 3.84a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.06l-8.69-8.69a2.25 2.25 0 0 0-3.18 0l-8.69 8.69a.75.75 0 1 0 1.06 1.06l8.69-8.69Z"/><path d="m12 5.43 8.16 8.16c.03.02.05.05.08.09v6.2A1.88 1.88 0 0 1 18.37 22H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75v4.5A.75.75 0 0 1 9 22H5.63a1.88 1.88 0 0 1-1.88-1.88v-6.2l.09-.09L12 5.43Z"/></svg>';
 		$bar->add_node( array(
 			'id'     => 'ak-view-site',
 			'parent' => 'top-secondary',
-			'title'  => $home,
+			'title'  => $in_admin ? $open : $house,
 			'href'   => home_url( '/' ),
-			'meta'   => array(
-				'class'  => 'ak-view-site',
-				'title'  => __( 'View site', 'adminkit' ),
-				'target' => '_blank',
-				'rel'    => 'noopener',
-			),
+			'meta'   => $meta,
 		) );
 	}
 
