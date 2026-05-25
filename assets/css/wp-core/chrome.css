@@ -128,17 +128,10 @@ body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head 
 	font-weight: 600;
 }
 
-/* Active item's ICON only → accent. Row bg (--ak-elevated) + label
-   (--ak-heading) stay neutral; hover stays neutral too. A saturated accent
-   (e.g. yellow) is hard to read on the LIGHT sidebar, so blend it toward the
-   heading colour for legibility; DARK mode keeps the pure accent (it already
-   reads well there). */
+/* Active item's ICON only → accent (both modes; kept simple). Row bg
+   (--ak-elevated) + label (--ak-heading) stay neutral; hover stays neutral. */
 body.adminkit #adminmenu li.current a.menu-top .wp-menu-image::before,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-menu-image::before {
-	color: color-mix(in srgb, var(--ak-primary) 65%, var(--ak-heading)) !important;
-}
-:root[data-adminkit-theme="dark"] body.adminkit #adminmenu li.current a.menu-top .wp-menu-image::before,
-:root[data-adminkit-theme="dark"] body.adminkit #adminmenu li.wp-has-current-submenu .wp-menu-image::before {
 	color: var(--ak-primary) !important;
 }
 
