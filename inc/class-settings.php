@@ -5,7 +5,7 @@
  * Exposes a typed getter and the schema of declared settings. The admin UI
  * lives in `AdminKit_Settings_Page`; values land in the option
  * `adminkit_settings` (written by that UI) or via the `adminkit/setting/{key}`
- * filter. `color_map()` is the semantic token taxonomy the Tokens tab renders
+ * filter. `color_map()` is the semantic token taxonomy the Design tab renders
  * read-only.
  *
  * Public API:
@@ -122,7 +122,7 @@ class AdminKit_Settings {
 	 *
 	 * Per token: `token` (--ak-* var), `bricks` (provider semantic it bridges, ''
 	 * when AdminKit-own), `source` (the primitive it ultimately resolves from),
-	 * `label`, and optional `own`. Consumed by the settings SPA (Tokens tab) as a
+	 * `label`, and optional `own`. Consumed by the settings SPA (Design tab) as a
 	 * read-only reference. Runs on display so `__()` resolves.
 	 *
 	 * @return array

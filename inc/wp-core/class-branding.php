@@ -24,8 +24,7 @@ class AdminKit_Core_Branding {
 
 	/**
 	 * Wire the hooks. The admin-bar logo treatment runs in BOTH wp-admin and on
-	 * the front end (logged-in users see the toolbar there too); the admin-menu
-	 * brand-logo card is wp-admin only.
+	 * the front end (logged-in users see the toolbar there too).
 	 *
 	 * @return void
 	 */

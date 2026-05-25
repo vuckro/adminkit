@@ -9,7 +9,7 @@
  *   - exposes one REST route (`adminkit/v1/settings`) the SPA POSTs to.
  *
  * The data is built from the settings registry: the semantic token taxonomy
- * (rendered read-only on the Tokens tab), the feature toggles, and the detected
+ * (rendered read-only on the Design tab), the feature toggles, and the detected
  * integrations. Saving runs each known field through its registered `sanitize`
  * callback and persists only registered keys.
  *
@@ -272,7 +272,7 @@ class AdminKit_Settings_Page {
 				'enableAll'         => __( 'Enable all', 'adminkit' ),
 				'disableAll'        => __( 'Disable all', 'adminkit' ),
 				'branding'          => __( 'Branding', 'adminkit' ),
-				'logoHint'          => __( 'Optional brand logo URLs (light + dark). Shown above the admin menu and in the Bricks builder. Leave empty to fall back to the adminkit/brand_logo filter.', 'adminkit' ),
+				'logoHint'          => __( 'Optional brand logo URLs (light + dark). Used for the admin-bar logo and the Bricks builder. Leave empty to fall back to the adminkit/brand_logo filter.', 'adminkit' ),
 				'logoLight'         => __( 'Logo — light mode', 'adminkit' ),
 				'logoDark'          => __( 'Logo — dark mode', 'adminkit' ),
 				'logoPlaceholder'   => __( 'https://…/logo.svg', 'adminkit' ),
@@ -412,13 +412,13 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Feature toggles shown on the Features tab, in display order. Keys match
+	 * Feature toggles shown on the Settings tab, in display order. Keys match
 	 * settings registered in AdminKit_Settings / AdminKit_Post_Previews.
 	 *
 	 * @return array
 	 */
 	private static function feature_descriptors() {
-		// `group` is the section heading the Features tab buckets a row under
+		// `group` is the section heading the Settings tab buckets a row under
 		// (identical strings = same group; order = first-seen). A child inherits
 		// its parent's group by carrying the same label.
 		$content    = __( 'Content & lists', 'adminkit' );
