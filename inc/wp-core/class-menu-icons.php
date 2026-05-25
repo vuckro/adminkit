@@ -107,7 +107,7 @@ class AdminKit_Core_Menu_Icons {
 		$map = array(
 			'dashicons-dashboard'        => self::svg( 'home' ),
 			'dashicons-admin-home'       => self::svg( 'home' ),
-			'dashicons-admin-post'       => self::svg( 'pencil' ),
+			'dashicons-admin-post'       => self::svg( 'article' ),
 			'dashicons-admin-media'      => self::svg( 'photo' ),
 			'dashicons-admin-page'       => self::svg( 'document' ),
 			'dashicons-admin-comments'   => self::svg( 'chat' ),
@@ -190,7 +190,9 @@ class AdminKit_Core_Menu_Icons {
 			'wp-admin-bar-new-content' => self::svg( 'plus' ),
 			'wp-admin-bar-updates'     => self::svg( 'update' ),
 			// Front-end / edit-screen core nodes. These paint via `> .ab-item::before`.
-			'wp-admin-bar-edit'        => self::svg( 'pencil' ),
+			// `edit` (edit page/post) uses pencil-square so it reads distinctly from the
+			// Articles menu glyph (a newspaper), not the same bare pencil.
+			'wp-admin-bar-edit'        => self::svg( 'pencil-square' ),
 			'wp-admin-bar-customize'   => self::svg( 'sliders' ),
 		);
 		return (array) apply_filters( 'adminkit/toolbar_icons', $map );
@@ -386,6 +388,12 @@ class AdminKit_Core_Menu_Icons {
 		return array(
 			'home'     => '<path d="M11.47 3.84a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.06l-8.69-8.69a2.25 2.25 0 0 0-3.18 0l-8.69 8.69a.75.75 0 1 0 1.06 1.06l8.69-8.69Z"/><path d="m12 5.43 8.16 8.16c.03.02.05.05.08.09v6.2A1.88 1.88 0 0 1 18.37 22H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75v4.5A.75.75 0 0 1 9 22H5.63a1.88 1.88 0 0 1-1.88-1.88v-6.2l.09-.09L12 5.43Z"/>',
 			'pencil'   => '<path d="M21.73 2.27a2.63 2.63 0 0 0-3.71 0L16.86 3.43l3.71 3.71 1.16-1.16a2.63 2.63 0 0 0 0-3.71ZM19.51 8.2 15.8 4.49 3.65 16.64a5.25 5.25 0 0 0-1.32 2.21l-.8 2.69a.75.75 0 0 0 .93.93l2.69-.8a5.25 5.25 0 0 0 2.21-1.32L19.51 8.2Z"/>',
+			// Pencil-in-a-square — "edit this document" (toolbar `wp-admin-bar-edit`),
+			// distinct from the bare `pencil` and from the article glyph below.
+			'pencil-square' => '<path d="M5.43 13.92l1.27-3.16a4 4 0 0 1 .88-1.34L14.5 2.5a2.12 2.12 0 0 1 3 3l-6.92 6.92c-.38.38-.84.69-1.34.89l-3.15 1.26a.5.5 0 0 1-.66-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10a.75.75 0 0 0 0-1.5H4.75A2.75 2.75 0 0 0 2 5.75v13.5A2.75 2.75 0 0 0 4.75 22h13.5A2.75 2.75 0 0 0 21 19.25V14a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25V5.75Z"/>',
+			// Newspaper — "Articles" (`dashicons-admin-post`). A news/article mark,
+			// distinct from `document` (Pages) and from the edit glyphs.
+			'article'  => '<path fill-rule="evenodd" d="M4.13 3C3.09 3 2.25 3.84 2.25 4.88V18a3 3 0 0 0 3 3h15a3 3 0 0 1-3-3V4.88C17.25 3.84 16.41 3 15.38 3H4.13ZM12 9.75a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5H12Zm-.75-2.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5H12a.75.75 0 0 1-.75-.75ZM6 12.75a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5H6Zm-.75 3.75a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5H6a.75.75 0 0 1-.75-.75ZM6 6.75a.75.75 0 0 0-.75.75v3c0 .41.34.75.75.75h3a.75.75 0 0 0 .75-.75v-3A.75.75 0 0 0 9 6.75H6Z" clip-rule="evenodd"/><path d="M18.75 6.75h1.88c.62 0 1.12.5 1.12 1.13V18a1.5 1.5 0 0 1-3 0V6.75Z"/>',
 			'photo'    => '<path fill-rule="evenodd" d="M1.5 6A2.25 2.25 0 0 1 3.75 3.75h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .41.34.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.69a1.5 1.5 0 0 0-2.12 0l-.88.88.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.16a1.5 1.5 0 0 0-2.12 0L3 16.06Zm10.13-7.81a1.13 1.13 0 1 1 2.25 0 1.13 1.13 0 0 1-2.25 0Z" clip-rule="evenodd"/>',
 			'document' => '<path fill-rule="evenodd" d="M5.63 1.5c-1.04 0-1.88.84-1.88 1.88v17.25c0 1.03.84 1.88 1.88 1.88h12.75c1.03 0 1.88-.84 1.88-1.88V12.75A3.75 3.75 0 0 0 16.5 9h-1.88a1.88 1.88 0 0 1-1.87-1.88V5.25A3.75 3.75 0 0 0 9 1.5H5.63ZM7.5 15a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 7.5 15Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H8.25Z" clip-rule="evenodd"/><path d="M12.97 1.82A5.23 5.23 0 0 1 14.25 5.25v1.88c0 .2.17.37.38.37H16.5a5.23 5.23 0 0 1 3.43 1.28 9.77 9.77 0 0 0-6.96-6.96Z"/>',
 			'chat'     => '<path fill-rule="evenodd" d="M4.85 2.77A49.14 49.14 0 0 1 12 2.25c2.43 0 4.82.18 7.15.52 1.98.29 3.35 2.02 3.35 3.97v6.02c0 1.95-1.37 3.68-3.35 3.97-1.15.17-2.31.3-3.48.38a.39.39 0 0 0-.3.17l-2.75 4.13a.75.75 0 0 1-1.25 0l-2.75-4.13a.39.39 0 0 0-.3-.17 48.9 48.9 0 0 1-3.48-.38C2.87 16.44 1.5 14.7 1.5 12.76V6.74c0-1.95 1.37-3.68 3.35-3.97Z" clip-rule="evenodd"/>',
@@ -426,11 +434,6 @@ class AdminKit_Core_Menu_Icons {
 			'gallery'     => '<path fill-rule="evenodd" d="M1.5 6A2.25 2.25 0 0 1 3.75 3.75h16.5A2.25 2.25 0 0 1 22.5 6v9a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 15V6Zm14.13 2.25a1.13 1.13 0 1 0 0 2.25 1.13 1.13 0 0 0 0-2.25ZM3 13.06l3.69-3.69a1.5 1.5 0 0 1 2.12 0l3.07 3.07.94-.94a1.5 1.5 0 0 1 2.12 0L21 16.44V15.75H3v-2.69Z" clip-rule="evenodd"/><path d="M3.75 19.5a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 0-1.5H3.75Z"/>',
 			'list'        => '<path fill-rule="evenodd" d="M2.62 6.75a1.12 1.12 0 1 1 2.25 0 1.12 1.12 0 0 1-2.25 0ZM7.5 6.75a.75.75 0 0 1 .75-.75h12a.75.75 0 0 1 0 1.5h-12a.75.75 0 0 1-.75-.75ZM2.62 12a1.12 1.12 0 1 1 2.25 0 1.12 1.12 0 0 1-2.25 0ZM7.5 12a.75.75 0 0 1 .75-.75h12a.75.75 0 0 1 0 1.5h-12A.75.75 0 0 1 7.5 12ZM2.62 17.25a1.12 1.12 0 1 1 2.25 0 1.12 1.12 0 0 1-2.25 0ZM7.5 17.25a.75.75 0 0 1 .75-.75h12a.75.75 0 0 1 0 1.5h-12a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd"/>',
 			'sliders'     => '<path fill-rule="evenodd" d="M10.5 3.75a.75.75 0 0 0-1.5 0v6.51a3 3 0 0 0 0 5.98v4.01a.75.75 0 0 0 1.5 0v-4.01a3 3 0 0 0 0-5.98V3.75ZM5.25 3.75a.75.75 0 0 0-1.5 0v.51a3 3 0 0 0 0 5.98V20.25a.75.75 0 0 0 1.5 0V10.24a3 3 0 0 0 0-5.98V3.75ZM18.75 3.75a.75.75 0 0 0-1.5 0V13.76a3 3 0 0 0 0 5.98v.51a.75.75 0 0 0 1.5 0v-.51a3 3 0 0 0 0-5.98V3.75Z" clip-rule="evenodd"/>',
-			// Gauge / activity — used by the Query Monitor toolbar node (see its
-			// adapter). NOTE: QM hides its own `.ab-icon` on desktop (it shows a text
-			// timing label there) and the toolbar CSS is desktop-only, so this glyph is
-			// only registered for completeness; it isn't actually painted on desktop.
-			'gauge'       => '<path fill-rule="evenodd" d="M2.25 13.5a9.75 9.75 0 0 1 19.5 0c0 .76-.09 1.51-.25 2.23a1.5 1.5 0 0 1-1.46 1.17H4.46A1.5 1.5 0 0 1 3 15.73a9.8 9.8 0 0 1-.75-2.23Zm14.4-4.16a.75.75 0 0 1 0 1.06l-2.6 2.6a2.25 2.25 0 1 1-1.06-1.06l2.6-2.6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/>',
 			// Generic neutral fallback for unmapped plugin menu items (a "squares/app"
 			// grid). Used ONLY by the low-specificity fallback rule in menu_css().
 			'app'         => '<path fill-rule="evenodd" d="M4.5 3.75a.75.75 0 0 0-.75.75v4.5c0 .41.34.75.75.75H9a.75.75 0 0 0 .75-.75v-4.5A.75.75 0 0 0 9 3.75H4.5ZM15 3.75a.75.75 0 0 0-.75.75v4.5c0 .41.34.75.75.75h4.5a.75.75 0 0 0 .75-.75v-4.5a.75.75 0 0 0-.75-.75H15ZM4.5 14.25a.75.75 0 0 0-.75.75v4.5c0 .41.34.75.75.75H9a.75.75 0 0 0 .75-.75V15a.75.75 0 0 0-.75-.75H4.5ZM15 14.25a.75.75 0 0 0-.75.75v4.5c0 .41.34.75.75.75h4.5a.75.75 0 0 0 .75-.75V15a.75.75 0 0 0-.75-.75H15Z" clip-rule="evenodd"/>',

@@ -56,34 +56,67 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Register an AdminKit toolbar icon for QM's admin-bar node when the icons
-	 * feature is on (the icon CSS only prints then, so no extra gating here).
+	 * Paint an AdminKit gauge icon on QM's admin-bar node when the icons feature
+	 * is on.
 	 *
-	 * CAVEAT: QM hides its own `.ab-icon` on desktop (≥783px) — there it shows a
-	 * TEXT timing/memory label instead, and only reveals the icon on mobile
-	 * (≤782px). AdminKit's toolbar icon CSS is itself desktop-only
-	 * (`@media min-width:783px`), so this mapping is effectively a no-op on the
-	 * surfaces AdminKit paints: registered for completeness/consistency, but QM's
-	 * desktop label is deliberately left untouched.
+	 * Why a DEDICATED printer instead of the shared `adminkit/toolbar_icons` map:
+	 * QM's node renders an `.ab-icon` child, but QM's own toolbar.css forces it
+	 * `display:none` on desktop (≥783px) — there it shows a TEXT timing/memory
+	 * `.ab-label` instead, only revealing the `.ab-icon` on mobile (≤782px). The
+	 * shared map paints on `.ab-icon::before` AND is desktop-gated, so it could
+	 * NEVER show in the back office (icon hidden on desktop, CSS absent on mobile).
+	 *
+	 * Instead we prepend the gauge on the link's own `> .ab-item::before` — the
+	 * link is always visible (it carries the timing label), so the icon sits just
+	 * before that label. NOT desktop-gated, so it paints in every context; it never
+	 * touches QM's `.ab-icon` or its timing display, so nothing breaks. Zero
+	 * `!important` (keeps this Tier A adapter clean): a 2-id selector on a
+	 * `::before` QM/WP-core don't otherwise set, so a plain rule wins.
 	 *
 	 * @return void
 	 */
 	protected static function boot() {
-		add_filter( 'adminkit/toolbar_icons', array( __CLASS__, 'toolbar_icons' ) );
+		add_action( 'admin_head', array( __CLASS__, 'print_toolbar_icon' ), 21 );
+		add_action( 'wp_head', array( __CLASS__, 'print_toolbar_icon' ), 21 );
 	}
 
 	/**
-	 * QM's admin-bar node id is `wp-admin-bar-query-monitor`. Map a gauge/activity
-	 * glyph onto it (raw SVG markup — the filter value is used as a CSS mask, so
-	 * the fill colour is irrelevant). It renders an `.ab-icon` child, so the
-	 * default `.ab-icon` selector form in AdminKit_Core_Menu_Icons applies.
+	 * Echo the QM toolbar-icon CSS (see boot() for the rationale). Gated exactly
+	 * like AdminKit_Core_Menu_Icons: only when the icons feature is on AND the
+	 * global should_load pause hasn't disabled AdminKit for this context; on the
+	 * front end, only when the admin bar is actually showing.
 	 *
-	 * @param array<string,string> $map
-	 * @return array<string,string>
+	 * @return void
 	 */
-	public static function toolbar_icons( $map ) {
-		$map['wp-admin-bar-query-monitor'] = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M2.25 13.5a9.75 9.75 0 0 1 19.5 0c0 .76-.09 1.51-.25 2.23a1.5 1.5 0 0 1-1.46 1.17H4.46A1.5 1.5 0 0 1 3 15.73a9.8 9.8 0 0 1-.75-2.23Zm14.4-4.16a.75.75 0 0 1 0 1.06l-2.6 2.6a2.25 2.25 0 1 1-1.06-1.06l2.6-2.6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>';
-		return $map;
+	public static function print_toolbar_icon() {
+		$context = is_admin() ? 'admin' : 'frontend';
+		if ( 'frontend' === $context && ! is_admin_bar_showing() ) {
+			return;
+		}
+		if ( ! AdminKit_Settings::get( 'replace_icons_enabled' ) ) {
+			return;
+		}
+		if ( ! apply_filters( 'adminkit/should_load', true, $context ) ) {
+			return;
+		}
+
+		// Gauge / activity glyph (Heroicons solid). The fill is irrelevant — it's a
+		// mask; the visible colour is currentColor (the toolbar foreground).
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M2.25 13.5a9.75 9.75 0 0 1 19.5 0c0 .76-.09 1.51-.25 2.23a1.5 1.5 0 0 1-1.46 1.17H4.46A1.5 1.5 0 0 1 3 15.73a9.8 9.8 0 0 1-.75-2.23Zm14.4-4.16a.75.75 0 0 1 0 1.06l-2.6 2.6a2.25 2.25 0 1 1-1.06-1.06l2.6-2.6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>';
+		$uri = 'url("data:image/svg+xml,' . rawurlencode( $svg ) . '")';
+
+		// Model the floated ::before as exactly the 32px bar (padding 6 + 20 + 6 = 32)
+		// and centre a 20px mask in it, just before QM's timing label. Mirrors
+		// AdminKit_Core_Menu_Icons::toolbar_ab_item_css(), but NOT wrapped in a
+		// desktop media query, so it shows in every context.
+		$sel = '#wpadminbar #wp-admin-bar-query-monitor > .ab-item::before';
+		$css = $sel . '{content:"";box-sizing:border-box;float:left;height:32px;width:20px;'
+			. 'padding:6px 0;margin-right:6px;position:static;top:auto;'
+			. 'background-color:currentColor;'
+			. '-webkit-mask:' . $uri . ' center/20px 20px no-repeat;'
+			. 'mask:' . $uri . ' center/20px 20px no-repeat}';
+
+		echo '<style id="adminkit-qm-icon">' . $css . "</style>\n"; // SVG is URL-encoded.
 	}
 
 	/**

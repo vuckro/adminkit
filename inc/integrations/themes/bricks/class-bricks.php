@@ -189,16 +189,18 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 * raw SVG used as a CSS mask, so the fill colour is irrelevant).
 	 *
 	 * Node ids come from Bricks's setup.php Admin_Bar registration:
-	 *   - `edit_with_bricks` ("Edit with Bricks")        -> pencil
+	 *   - `edit_with_bricks` ("Edit with Bricks")        -> paintbrush (design/build)
 	 *   - `editor_mode`      ("Rendered with Bricks/WP") -> layout grid
 	 *
 	 * @param array<string,string> $map
 	 * @return array<string,string>
 	 */
 	public static function toolbar_icons( $map ) {
-		$pencil = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path d="M21.73 2.27a2.63 2.63 0 0 0-3.71 0L16.86 3.43l3.71 3.71 1.16-1.16a2.63 2.63 0 0 0 0-3.71ZM19.51 8.2 15.8 4.49 3.65 16.64a5.25 5.25 0 0 0-1.32 2.21l-.8 2.69a.75.75 0 0 0 .93.93l2.69-.8a5.25 5.25 0 0 0 2.21-1.32L19.51 8.2Z"/></svg>';
+		// Paintbrush (Heroicons solid `paint-brush`): "design/build with Bricks", and
+		// distinct from the layout grid used by `editor_mode` below.
+		$brush  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path d="M20.6 1.5c-.38 0-.74.11-1.06.32l-5.08 3.39a18.75 18.75 0 0 0-3.47 2.98 10.04 10.04 0 0 1 4.82 4.82 18.75 18.75 0 0 0 2.98-3.47l3.39-5.08A1.9 1.9 0 0 0 20.6 1.5Zm-8.3 14.03a18.76 18.76 0 0 0 1.9-1.21 8.03 8.03 0 0 0-4.52-4.51 18.75 18.75 0 0 0-1.2 1.9l-.28.5a5.26 5.26 0 0 1 3.6 3.6l.5-.28ZM6.75 13.5A3.75 3.75 0 0 0 3 17.25a1.5 1.5 0 0 1-1.6 1.5.75.75 0 0 0-.7 1.12 5.25 5.25 0 0 0 9.8-2.62 3.75 3.75 0 0 0-3.75-3.75Z"/></svg>';
 		$layout = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M3 6a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3V6ZM3 15.75a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2.25Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3v-2.25Z" clip-rule="evenodd"/></svg>';
-		$map['wp-admin-bar-edit_with_bricks'] = $pencil;
+		$map['wp-admin-bar-edit_with_bricks'] = $brush;
 		$map['wp-admin-bar-editor_mode']      = $layout;
 		return $map;
 	}
@@ -392,11 +394,11 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	/**
 	 * Build the CSS that brands the builder toolbar + preloader.
 	 *
-	 * Toolbar: the site FAVICON, contained (shown in full, not cropped) and rounded;
-	 * first-letter mark when no Site Icon is set.
-	 * Preloader: the configured brand LOGO shown in full (contained, never cropped),
-	 * centred and rounded with a gentle pulse on the fixed dark splash (no card);
-	 * Bricks's own loader shows when no logo is set.
+	 * Toolbar: the site FAVICON as a fixed rounded SQUARE (24px, centred, cover) so
+	 * the radius reads on the chip; first-letter mark when no Site Icon is set.
+	 * Preloader: the configured brand LOGO filling a wide ROUNDED RECTANGLE (cover →
+	 * the radius is on the logo card), centred with a gentle pulse on the fixed dark
+	 * splash; Bricks's own loader shows when no logo is set.
 	 *
 	 * @return string Inline CSS.
 	 */
@@ -408,13 +410,15 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		$favicon = get_site_icon_url( 192 );
 		if ( '' !== $favicon ) {
 			$url  = self::css_url( $favicon );
-			// Favicon CONTAINED (shown in full, not cropped) and rounded, with a small
-			// inset so it isn't cut at the chip edges. No chip colour — Bricks's yellow
-			// is overridden to transparent so nothing shows behind/around it.
-			$css .= '#bricks-toolbar .logo{background-color:transparent!important;border-radius:6px;overflow:hidden}';
-			$css .= '#bricks-toolbar .logo a{display:block;width:100%;height:100%}';
-			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:100%;height:100%;'
-				. 'box-sizing:border-box;padding:4px;object-fit:contain;border-radius:6px}';
+			// Favicon as a FIXED 24px rounded SQUARE, CENTRED in the wide-short slot so
+			// the radius reads on the chip itself (contain floated it small, leaving the
+			// radius in empty space). `cover` fills the 24px box — the site icon is
+			// square so nothing is cropped. No chip colour — Bricks's yellow is
+			// overridden to transparent so nothing shows behind/around it.
+			$css .= '#bricks-toolbar .logo{background-color:transparent!important;display:flex;align-items:center;justify-content:center}';
+			$css .= '#bricks-toolbar .logo a{display:flex;align-items:center;justify-content:center;width:100%;height:100%}';
+			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:24px;height:24px;'
+				. 'box-sizing:border-box;padding:0;object-fit:cover;border-radius:6px}';
 		} else {
 			$css .= self::builder_toolbar_letter_css();
 		}
@@ -425,16 +429,16 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
 		if ( '' !== $logo ) {
-			// Show the FULL brand logo (contain → never cropped) on a SUBTLE rounded
-			// panel, centred, with a gentle pulse. The panel fills the rounded box so
-			// the border-radius is visible for ANY logo shape (a transparent logo on a
-			// bare rounded box would leave the radius in empty space). The logo sits at
-			// 72% centred so the rounded panel edge reads around it. The splash is dark.
+			// Show the brand logo as a wide ROUNDED RECTANGLE that the logo FILLS — the
+			// brand mark is a wide wordmark, so a wide card matches its aspect (a square
+			// box left it floating small inside). `cover` makes the logo fill the box so
+			// the border-radius lives on the logo card itself; overflow:hidden clips the
+			// corners. Centred on the dark splash with a gentle pulse.
 			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
 			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";display:block;'
-				. 'width:11rem;height:11rem;border-radius:1.75rem;'
-				. 'background:color-mix(in srgb, var(--ak-text, #fff) 7%, transparent) ' . self::css_url( $logo ) . ' center / 72% no-repeat;'
+				. 'width:16rem;height:6rem;border-radius:1.25rem;overflow:hidden;'
+				. 'background:' . self::css_url( $logo ) . ' center / cover no-repeat;'
 				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
 			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.08)}}';
 		}

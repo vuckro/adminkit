@@ -42,8 +42,8 @@ body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-cl
    kept) so it reads clearly in light + dark without looking cramped. */
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle-icon img,
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle-icon svg {
-	width: 32px;
-	height: 32px;
+	width: 36px;
+	height: 36px;
 	object-fit: contain;
 	padding: 2px;
 	background: var(--ak-surface);
