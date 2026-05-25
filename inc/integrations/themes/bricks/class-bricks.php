@@ -417,7 +417,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			// overridden to transparent so nothing shows behind/around it.
 			$css .= '#bricks-toolbar .logo{background-color:transparent!important;display:flex;align-items:center;justify-content:center}';
 			$css .= '#bricks-toolbar .logo a{display:flex;align-items:center;justify-content:center;width:100%;height:100%}';
-			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:32px;height:32px;'
+			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:36px;height:36px;'
 				. 'box-sizing:border-box;padding:0;object-fit:cover;border-radius:6px}';
 		} else {
 			$css .= self::builder_toolbar_letter_css();
@@ -439,7 +439,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";display:block;'
 				. 'width:17rem;height:6.5rem;border-radius:1rem;overflow:hidden;'
 				. 'background:' . self::css_url( $logo ) . ' center / cover no-repeat;'
-				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
+				. 'animation:ak-bricks-preload 1.1s ease-in-out infinite}';
 			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.08)}}';
 		}
 		return $css;
