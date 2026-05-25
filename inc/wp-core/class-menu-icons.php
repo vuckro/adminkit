@@ -119,8 +119,11 @@ class AdminKit_Core_Menu_Icons {
 			// width; this no longer relies on that.)
 			$sel  = '#adminmenu .wp-menu-image.' . $class;
 			$css .= $sel . '{box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
+			// `vertical-align:middle` centres against the font's x-height, which sits a
+			// hair low next to the menu label; a 2px relative lift optically aligns the
+			// icon with the text (purely visual — `top` doesn't shift layout).
 			$css .= $sel . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
-				. 'vertical-align:middle;' . self::mask( $svg ) . '}';
+				. 'vertical-align:middle;position:relative;top:-2px;' . self::mask( $svg ) . '}';
 		}
 		return $css;
 	}
@@ -137,13 +140,24 @@ class AdminKit_Core_Menu_Icons {
 			if ( '' === $svg || ! is_string( $svg ) ) {
 				continue;
 			}
-			// Reset WP's icon padding + give the box the bar height, then centre a
-			// 20px masked ::before in it (margin:6px → 6+20+6 = the 32px bar).
-			$sel  = '#wpadminbar #' . $id . ' .ab-icon';
-			$css .= $sel . '{height:32px;padding:0}';
-			$css .= $sel . '::before{content:"";display:block;width:20px;height:20px;margin:6px 0;'
-				. self::mask( $svg )
+			// WP core paints `.ab-icon` with `padding:4px 0; float:left` through a
+			// THREE-id selector (`#wpadminbar>#wp-toolbar>#wp-admin-bar-root-default
+			// .ab-icon`, specificity 3,1,0) and nudges the glyph with
+			// `position:relative; top:Npx`. A 2-id selector loses that tie, so the
+			// padding/top survived and shoved our icon ~4px low, overflowing the bar.
+			// Out-specify it: mirror the #wp-toolbar id chain AND double the class
+			// (`.ab-icon.ab-icon` → 3,2,0) so we win no matter the load order. Then
+			// model the box as exactly the 32px bar and centre a 20px mask in it
+			// (padding 6px → 6+20+6 = 32). Reset core's relative `top` on ::before.
+			// Desktop only: the ≤782px bar is 46px and core re-styles it there.
+			$sel  = '#wpadminbar #wp-toolbar #' . $id . ' .ab-icon.ab-icon';
+			$css .= $sel . '{box-sizing:border-box;height:32px;width:20px;padding:6px 0;margin-right:6px}';
+			$css .= $sel . '::before{content:"";display:block;width:20px;height:20px;margin:0;'
+				. 'position:static;top:auto;' . self::mask( $svg )
 				. '}';
+		}
+		if ( '' !== $css ) {
+			$css = '@media screen and (min-width:783px){' . $css . '}';
 		}
 		return $css;
 	}
