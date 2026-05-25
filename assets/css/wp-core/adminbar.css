@@ -109,7 +109,7 @@
 	#wpadminbar .menupop ul {
 		border-radius: var(--ak-radius-m);
 		box-shadow: var(--ak-shadow-elevated) !important;
-		margin-top: var(--ak-space-s);
+		margin-top: var(--ak-space-xs);
 		overflow: hidden;
 	}
 
