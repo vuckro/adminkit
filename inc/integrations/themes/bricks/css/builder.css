@@ -34,14 +34,15 @@
    PRELOADER  (loading splash before the builder paints)
    ============================================================ */
 #bricks-preloader {
-	background: var(--neutral-d-2, #171717);
+	background: #171717;   /* fixed, NOT a token: the preloader paints before any
+	                          provider/--neutral-* var is guaranteed, so a var here
+	                          could resolve to nothing → a white flash. */
 }
 
-/* Keep the builder root dark in dark mode so nothing white flashes behind the
-   preloader as it fades out. data-adminkit-theme is set pre-paint (before
-   Bricks's own builder mode resolves), so it's reliable this early. */
+/* Keep the builder root dark too, so nothing white flashes behind the preloader
+   as it fades out. data-adminkit-theme is set pre-paint, so it's reliable here. */
 :root[data-adminkit-theme="dark"] {
-	background-color: var(--neutral-d-2, #171717);
+	background-color: #171717;
 }
 
 

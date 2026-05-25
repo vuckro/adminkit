@@ -320,57 +320,27 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Build the CSS that brands the builder toolbar (+ preloader splash).
+	 * Build the CSS that brands the builder toolbar.
 	 *
-	 * A configured brand logo wins (AdminKit_Settings::brand_logo — Branding
-	 * settings, then the adminkit/brand_logo filter): `logo_dark` is the toolbar
-	 * default + preloader, `logo_light` the light-mode toolbar variant; a distinct
-	 * preloader logo can come from the filter's `preloader` key.
-	 *
-	 * With NO logo configured, the toolbar shows a text mark — the first letter of
-	 * the site title on the accent chip — so AdminKit always replaces Bricks's own
-	 * logo (no external asset needed).
+	 * Always a text mark: the first letter of the site title on the accent chip.
+	 * We deliberately do NOT use the favicon or a configured brand logo here — the
+	 * builder toolbar wants one tiny, crisp, theme-coloured glyph (and the
+	 * preloader is just a flat dark splash, handled in builder.css). Returns '' if
+	 * the title has no usable letter, leaving Bricks's own logo in place.
 	 *
 	 * @return string Inline CSS.
 	 */
 	private static function builder_logo_css() {
-		$dark    = AdminKit_Settings::brand_logo( 'dark' );
-		$light   = AdminKit_Settings::brand_logo( 'light' );
-		$toolbar = '' !== $dark ? $dark : $light;
-
-		// No image logo → first letter of the site title as a text mark.
-		if ( '' === $toolbar ) {
-			$name   = wp_strip_all_tags( get_bloginfo( 'name' ) );
-			$letter = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 1 ) : substr( $name, 0, 1 );
-			$letter = preg_replace( '/[^\p{L}\p{N}]/u', '', (string) $letter ); // CSS-safe: letters/digits only
-			$letter = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $letter ) : strtoupper( $letter );
-			if ( '' === $letter ) {
-				return '';
-			}
-			return '#bricks-toolbar .logo{background-color:var(--accent);position:relative}'
-				. '#bricks-toolbar .logo img{height:22px;width:22px;visibility:hidden}'
-				. '#bricks-toolbar .logo::after{content:"' . $letter . '";position:absolute;inset:0;display:grid;place-items:center;color:var(--on-accent,#fff);font-weight:700;font-size:14px;line-height:1}';
+		$name   = wp_strip_all_tags( get_bloginfo( 'name' ) );
+		$letter = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 1 ) : substr( $name, 0, 1 );
+		$letter = preg_replace( '/[^\p{L}\p{N}]/u', '', (string) $letter ); // CSS-safe: letters/digits only
+		$letter = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $letter ) : strtoupper( $letter );
+		if ( '' === $letter ) {
+			return '';
 		}
-
-		// Configured image logo (with an optional light-mode + preloader variant).
-		$f         = apply_filters( 'adminkit/brand_logo', '' );
-		$preloader = ( is_array( $f ) && ! empty( $f['preloader'] ) ) ? $f['preloader'] : $dark;
-		$toolbar   = esc_url( $toolbar );
-		$light     = esc_url( $light );
-		$preloader = esc_url( $preloader );
-
-		$css  = '#bricks-toolbar .logo{background-color:var(--accent)}';
-		$css .= '#bricks-toolbar .logo img{content:url(' . $toolbar . ');height:22px;width:auto}';
-		if ( '' !== $light && $light !== $toolbar ) {
-			$css .= 'body:has(.mode [data-name="sun"]) #bricks-toolbar .logo img{content:url(' . $light . ')}';
-		}
-		if ( '' !== $preloader ) {
-			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
-			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
-			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:15rem;aspect-ratio:1;background:url(' . $preloader . ') center/contain no-repeat;animation:ak-bricks-preload 1.4s ease-in-out infinite}';
-			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
-		}
-		return $css;
+		return '#bricks-toolbar .logo{background-color:var(--accent);position:relative}'
+			. '#bricks-toolbar .logo img{height:22px;width:22px;visibility:hidden}'
+			. '#bricks-toolbar .logo::after{content:"' . $letter . '";position:absolute;inset:0;display:grid;place-items:center;color:var(--on-accent,#fff);font-weight:700;font-size:14px;line-height:1}';
 	}
 
 	/**
