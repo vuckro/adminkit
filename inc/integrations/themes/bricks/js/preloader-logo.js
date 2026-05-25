@@ -19,15 +19,17 @@
 		if ( ! pre ) {
 			return false;
 		}
-		var box = pre.querySelector( '.bricks-loading-inner' ) || pre;
-		if ( box.querySelector( '.ak-preloader-logo' ) ) {
+		if ( pre.querySelector( '.ak-preloader-logo' ) ) {
 			return true; // already done
 		}
+		// Append straight to #bricks-preloader (the full-screen splash), NOT
+		// .bricks-loading-inner — Bricks positions that wrapper off-centre, which
+		// pushed the logo right. The CSS centres #bricks-preloader itself.
 		var img = document.createElement( 'img' );
 		img.className = 'ak-preloader-logo';
 		img.alt = '';
 		img.src = cfg.logo;
-		box.appendChild( img );
+		pre.appendChild( img );
 		return true;
 	}
 

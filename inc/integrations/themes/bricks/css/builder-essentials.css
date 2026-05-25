@@ -12,13 +12,14 @@
    fragility. */
 
 /* ── Preloader brand logo ─────────────────────────────────────────────────────
-   js/preloader-logo.js injects a real <img class="ak-preloader-logo"> into the
-   preloader. A real img at a fixed HEIGHT + width:auto takes the logo's NATURAL
-   aspect, so the box hugs the logo EXACTLY — no surrounding space, no padding/margin,
-   no letterbox gutters — and border-radius rounds the logo itself. Bricks's own
-   preloader children are hidden. */
-#bricks-preloader .bricks-loading-inner { display: grid; place-items: center; }
-#bricks-preloader .bricks-loading-inner > *:not( .ak-preloader-logo ) { display: none; }
+   js/preloader-logo.js appends a real <img class="ak-preloader-logo"> straight to
+   #bricks-preloader (the full-screen splash) and we centre it THERE — not in
+   .bricks-loading-inner, which Bricks positions off-centre (that was the right-shift).
+   A real img at a fixed HEIGHT + width:auto takes the logo's NATURAL aspect, so it
+   hugs the logo exactly — no surrounding space, no padding/margin, no gutters — and
+   border-radius rounds the logo itself. Bricks's own preloader content is hidden. */
+#bricks-preloader { display: grid; place-items: center; }
+#bricks-preloader > *:not( .ak-preloader-logo ) { display: none; }
 #bricks-preloader .ak-preloader-logo {
 	display: block;
 	height: 7rem;
