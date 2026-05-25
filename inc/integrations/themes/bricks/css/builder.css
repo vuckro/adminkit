@@ -84,7 +84,7 @@
 	   also applies outside "Custom" builder mode) */
 	--builder-bg-accent:              var(--surface);
 	--builder-color-accent:           var(--accent);
-	--builder-color-accent-inverse:   var(--on-accent, #fff);
+	--builder-color-accent-inverse:   var(--accent-on, #fff);
 	--builder-bg-highlight:           var(--focus);
 
 	/* Classes */

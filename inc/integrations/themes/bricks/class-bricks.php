@@ -338,9 +338,17 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		if ( '' === $letter ) {
 			return '';
 		}
-		return '#bricks-toolbar .logo{background-color:var(--accent);position:relative}'
-			. '#bricks-toolbar .logo img{height:22px;width:22px;visibility:hidden}'
-			. '#bricks-toolbar .logo::after{content:"' . $letter . '";position:absolute;inset:0;display:grid;place-items:center;color:var(--on-accent,#fff);font-weight:700;font-size:14px;line-height:1}';
+		// Replace Bricks's native logo (an <img> on a yellow <li class="logo">) with
+		// just the letter. Use `li.logo` (not `.logo`) so we out-specify Bricks's own
+		// rules regardless of stylesheet order; `display:none` drops the <img>
+		// entirely; the letter is centred on the brand chip. The text colour is
+		// `--accent-on` — the provider's on-accent token; `--on-accent` does NOT exist
+		// and would fall back to white, vanishing on the yellow chip (the bug).
+		return '#bricks-toolbar li.logo{background-color:var(--accent,#ffd64f);'
+			. 'display:flex;align-items:center;justify-content:center;min-width:34px}'
+			. '#bricks-toolbar li.logo img{display:none}'
+			. '#bricks-toolbar li.logo::after{content:"' . $letter . '";'
+			. 'color:var(--accent-on,#18181b);font-weight:700;font-size:15px;line-height:1}';
 	}
 
 	/**
