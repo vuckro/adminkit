@@ -124,13 +124,19 @@ abstract class AdminKit_Integration_Base {
 	protected static function boot() {}
 
 	/**
-	 * Entry point — orchestrates the lifecycle. Called on
-	 * `after_setup_theme` by the plugin orchestrator.
+	 * Entry point — orchestrates the lifecycle. Called on `after_setup_theme` by
+	 * the plugin orchestrator. Runs only when the host is active AND the
+	 * integration is enabled — the latter via `adminkit/integration_enabled`
+	 * (wired to the per-integration toggle on Settings → Plugins). So a user can
+	 * switch off AdminKit's adapter for a specific host without touching the host.
 	 *
 	 * @return void
 	 */
 	public static function maybe_init() {
 		if ( ! static::is_active() ) {
+			return;
+		}
+		if ( ! apply_filters( 'adminkit/integration_enabled', true, static::slug() ) ) {
 			return;
 		}
 		static::register_assets();

@@ -227,12 +227,34 @@ class AdminKit_Settings_Page {
 			);
 		}
 
+		// Supported integrations, for the Plugins tab. `active` = host present +
+		// active; `enabled` = AdminKit's adapter toggle. Active ones first, then
+		// alphabetical — so the live ones lead and dormant hosts sit (dimmed) below.
+		self::register_integration_toggles();
+		$integrations = array();
+		foreach ( self::integration_specs() as $s ) {
+			$integrations[] = array(
+				'slug'    => $s['slug'],
+				'label'   => $s['label'],
+				'type'    => $s['type'],
+				'active'  => (bool) call_user_func( array( $s['class'], 'is_active' ) ),
+				'enabled' => (bool) AdminKit_Settings::get( 'integration_' . $s['slug'] . '_enabled' ),
+			);
+		}
+		usort( $integrations, static function ( $a, $b ) {
+			if ( $a['active'] !== $b['active'] ) {
+				return $a['active'] ? -1 : 1;
+			}
+			return strcasecmp( $a['label'], $b['label'] );
+		} );
+
 		return array(
 			'route'        => self::REST_NS . self::REST_ROUTE,
 			'dashboard'    => self::dashboard( $features, $stored ),
 			'colors'       => $colors,
 			'providers'    => self::providers(),
 			'features'     => $features,
+			'integrations' => $integrations,
 			'logos'        => array(
 				'light' => (string) AdminKit_Settings::get( 'logo_light' ),
 				'dark'  => (string) AdminKit_Settings::get( 'logo_dark' ),
@@ -255,6 +277,10 @@ class AdminKit_Settings_Page {
 				'mediaPick'         => __( 'Media library', 'adminkit' ),
 				'mediaTitle'        => __( 'Select a logo', 'adminkit' ),
 				'mediaButton'       => __( 'Use this image', 'adminkit' ),
+				'plugins'           => __( 'Plugins', 'adminkit' ),
+				'pluginsIntro'      => __( 'Turn AdminKit\'s styling on or off per supported plugin. Dimmed rows aren\'t active on this site.', 'adminkit' ),
+				'inactive'          => __( 'Not active', 'adminkit' ),
+				'typeTheme'         => __( 'Theme', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),

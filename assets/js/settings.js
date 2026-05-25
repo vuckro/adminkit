@@ -27,6 +27,7 @@
 		dirty: false,
 		saving: false,
 		features: {},      // setting key -> bool
+		integrations: {},  // integration slug -> bool (adapter enabled)
 		logos: {           // setting key -> url string
 			light: ( D.logos && D.logos.light ) || '',
 			dark:  ( D.logos && D.logos.dark ) || ''
@@ -34,6 +35,9 @@
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
+	} );
+	( D.integrations || [] ).forEach( function ( i ) {
+		state.integrations[ i.slug ] = !! i.enabled;
 	} );
 
 	// --- tiny DOM helper -----------------------------------------------------
@@ -83,13 +87,15 @@
 	var ICONS = {
 		dashboard: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>',
 		colours: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8c3.4 3.9 5.4 6.5 5.4 9.2a5.4 5.4 0 0 1-10.8 0c0-2.7 2-5.3 5.4-9.2z"/></svg>',
-		features: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><circle cx="8" cy="12" r="2.6"/></svg>'
+		features: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><circle cx="8" cy="12" r="2.6"/></svg>',
+		plugins: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>'
 	};
 
 	var tabs = [
 		{ id: 'dashboard', label: I.dashboard, icon: ICONS.dashboard, build: buildDashboard },
 		{ id: 'apparence', label: I.design, icon: ICONS.colours, build: buildDesign },
-		{ id: 'features', label: I.features, icon: ICONS.features, build: buildFeatures }
+		{ id: 'features', label: I.features, icon: ICONS.features, build: buildFeatures },
+		{ id: 'plugins', label: I.plugins, icon: ICONS.plugins, build: buildPlugins }
 	];
 	var activeId = tabs[ 0 ].id;
 	var panels = {};
@@ -424,12 +430,53 @@
 		return p;
 	}
 
+	// Plugins tab — every supported integration. Toggle AdminKit's adapter per
+	// host; rows whose host isn't active are dimmed + locked (the adapter can't
+	// run anyway), but still listed so you can see what's supported.
+	function buildPlugins() {
+		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( I.pluginsIntro ) ] );
+		var list = D.integrations || [];
+		if ( ! list.length ) { return p; }
+
+		var rows = el( 'div', { 'class': 'ak-rows' } );
+		list.forEach( function ( i ) {
+			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
+			input.checked = !! state.integrations[ i.slug ];
+			input.disabled = ! i.active;
+			input.addEventListener( 'change', function () {
+				state.integrations[ i.slug ] = input.checked;
+				markDirty();
+			} );
+
+			var tags = el( 'div', { 'class': 'ak-tags' } );
+			if ( i.type === 'theme' ) { tags.appendChild( el( 'span', { 'class': 'ak-pill', text: I.typeTheme } ) ); }
+			if ( ! i.active ) { tags.appendChild( el( 'span', { 'class': 'ak-pill ak-pill--off', text: I.inactive } ) ); }
+
+			rows.appendChild( el( 'div', { 'class': 'ak-row' + ( i.active ? '' : ' is-disabled' ) }, [
+				el( 'div', { 'class': 'ak-row__main' }, [
+					el( 'span', { 'class': 'ak-row__label', text: i.label } ),
+					tags.childNodes.length ? tags : null
+				] ),
+				el( 'label', { 'class': 'ak-switch' }, [
+					input,
+					el( 'span', { 'class': 'ak-switch__track' } ),
+					el( 'span', { 'class': 'ak-switch__knob' } )
+				] )
+			] ) );
+		} );
+		p.appendChild( el( 'div', { 'class': 'ak-group' }, [ rows ] ) );
+		return p;
+	}
+
 	// --- save ----------------------------------------------------------------
-	// Only the Features toggles are interactive for now; the Tokens tab
-	// writes nothing.
+	// Interactive controls (Features toggles, Plugins toggles, Branding logos)
+	// post to REST; the Tokens tab is a read-only reference.
 	function gather() {
 		var v = {};
 		Object.keys( state.features ).forEach( function ( k ) { v[ k ] = !! state.features[ k ]; } );
+		Object.keys( state.integrations ).forEach( function ( slug ) {
+			v[ 'integration_' + slug + '_enabled' ] = !! state.integrations[ slug ];
+		} );
 		v.logo_light = state.logos.light;
 		v.logo_dark  = state.logos.dark;
 		return v;
