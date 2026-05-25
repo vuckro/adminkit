@@ -31,7 +31,8 @@
 		logos: {           // setting key -> url string
 			light: ( D.logos && D.logos.light ) || '',
 			dark:  ( D.logos && D.logos.dark ) || ''
-		}
+		},
+		wpLogo: D.wpLogo || 'favicon'   // admin-bar WP logo: favicon | hide | default
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
@@ -303,7 +304,7 @@
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( I.featuresIntro ) ] );
 
 		// --- Branding (top) — light/dark logo: URL field + media-library picker ---
-		function openMedia( slot, input ) {
+		function openMedia( slot, input, onChange ) {
 			if ( ! window.wp || ! wp.media ) { return; }
 			var frame = wp.media( {
 				title: I.mediaTitle || 'Select a logo',
@@ -316,33 +317,67 @@
 				var url = ( att && att.url ) || '';
 				input.value = url;
 				state.logos[ slot ] = url;
+				if ( onChange ) { onChange(); }
 				markDirty();
 			} );
 			frame.open();
 		}
 		function logoField( slot, label ) {
 			var id = 'ak-logo-' + slot;
+			var preview = el( 'img', { 'class': 'ak-field__preview', alt: '' } );
+			function syncPreview() {
+				if ( state.logos[ slot ] ) {
+					preview.src = state.logos[ slot ];
+					preview.style.display = '';
+				} else {
+					preview.removeAttribute( 'src' );
+					preview.style.display = 'none';
+				}
+			}
 			var input = el( 'input', {
 				id: id, type: 'url', 'class': 'ak-field__input', value: state.logos[ slot ],
 				placeholder: I.logoPlaceholder || '', spellcheck: 'false'
 			} );
 			input.addEventListener( 'input', function () {
 				state.logos[ slot ] = input.value.trim();
+				syncPreview();
 				markDirty();
 			} );
 			var pick = el( 'button', { type: 'button', 'class': 'ak-btn ak-field__btn', text: I.mediaPick || 'Media library' } );
-			pick.addEventListener( 'click', function () { openMedia( slot, input ); } );
+			pick.addEventListener( 'click', function () { openMedia( slot, input, syncPreview ); } );
+			syncPreview();
 			return el( 'div', { 'class': 'ak-field' }, [
 				el( 'label', { 'class': 'ak-field__label', 'for': id, text: label } ),
-				el( 'div', { 'class': 'ak-field__control' }, [ input, pick ] )
+				el( 'div', { 'class': 'ak-field__control' }, [ preview, input, pick ] )
 			] );
 		}
+		// WordPress admin-bar logo mode (favicon / hide / keep).
+		var wpSel = el( 'select', { 'class': 'ak-field__input', id: 'ak-wp-logo' } );
+		[
+			{ v: 'favicon', label: I.wpLogoFavicon || 'Replace with site icon' },
+			{ v: 'hide',    label: I.wpLogoHide || 'Hide' },
+			{ v: 'default', label: I.wpLogoDefault || 'Keep WordPress logo' }
+		].forEach( function ( o ) {
+			var opt = el( 'option', { value: o.v, text: o.label } );
+			if ( state.wpLogo === o.v ) { opt.selected = true; }
+			wpSel.appendChild( opt );
+		} );
+		wpSel.addEventListener( 'change', function () {
+			state.wpLogo = wpSel.value;
+			markDirty();
+		} );
+		var wpField = el( 'div', { 'class': 'ak-field' }, [
+			el( 'label', { 'class': 'ak-field__label', 'for': 'ak-wp-logo', text: I.wpLogoLabel || 'WordPress logo' } ),
+			el( 'div', { 'class': 'ak-field__control' }, [ wpSel ] )
+		] );
+
 		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
 			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
 			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
 			el( 'div', { 'class': 'ak-rows' }, [
 				logoField( 'light', I.logoLight ),
-				logoField( 'dark', I.logoDark )
+				logoField( 'dark', I.logoDark ),
+				wpField
 			] )
 		] ) );
 
@@ -479,6 +514,7 @@
 		} );
 		v.logo_light = state.logos.light;
 		v.logo_dark  = state.logos.dark;
+		v.wp_logo    = state.wpLogo;
 		return v;
 	}
 

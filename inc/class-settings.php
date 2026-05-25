@@ -68,6 +68,17 @@ class AdminKit_Settings {
 				'sanitize' => 'esc_url_raw',
 			) );
 		}
+
+		// WordPress admin-bar logo: replace with the site icon, hide it, or leave
+		// WordPress's own. Read by AdminKit_Core_Branding.
+		self::register( 'wp_logo', array(
+			'type'     => 'select',
+			'group'    => 'branding',
+			'default'  => 'favicon',
+			'sanitize' => static function ( $v ) {
+				return in_array( $v, array( 'default', 'favicon', 'hide' ), true ) ? $v : 'favicon';
+			},
+		) );
 	}
 
 	/**

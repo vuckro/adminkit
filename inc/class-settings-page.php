@@ -259,6 +259,7 @@ class AdminKit_Settings_Page {
 				'light' => (string) AdminKit_Settings::get( 'logo_light' ),
 				'dark'  => (string) AdminKit_Settings::get( 'logo_dark' ),
 			),
+			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
 			'i18n'         => array(
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
 				'design'            => __( 'Tokens', 'adminkit' ),
@@ -281,6 +282,10 @@ class AdminKit_Settings_Page {
 				'pluginsIntro'      => __( 'Turn AdminKit\'s styling on or off per supported plugin. Dimmed rows aren\'t active on this site.', 'adminkit' ),
 				'inactive'          => __( 'Not active', 'adminkit' ),
 				'typeTheme'         => __( 'Theme', 'adminkit' ),
+				'wpLogoLabel'       => __( 'WordPress logo (admin bar)', 'adminkit' ),
+				'wpLogoFavicon'     => __( 'Replace with site icon', 'adminkit' ),
+				'wpLogoHide'        => __( 'Hide', 'adminkit' ),
+				'wpLogoDefault'     => __( 'Keep WordPress logo', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),

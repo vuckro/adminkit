@@ -430,6 +430,16 @@
 	box-shadow: var(--ak-focus-ring);
 }
 .adminkit-app .ak-field__btn { flex: none; white-space: nowrap; }
+.adminkit-app .ak-field__preview {
+	flex: none;
+	width: 32px;
+	height: 32px;
+	object-fit: contain;
+	padding: 3px;
+	background: var(--ak-input-bg);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
 
 /* Plugin row chips (type / inactive) ------------------------------------- */
 .adminkit-app .ak-tags { display: flex; gap: 6px; margin-top: 5px; }
