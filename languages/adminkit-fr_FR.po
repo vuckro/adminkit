@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AdminKit 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/vuckro/adminkit/issues\n"
-"POT-Creation-Date: 2026-05-25 08:59+0200\n"
-"PO-Revision-Date: 2026-05-25 09:00+0200\n"
+"POT-Creation-Date: 2026-05-25 10:39+0200\n"
+"PO-Revision-Date: 2026-05-25 10:40+0200\n"
 "Last-Translator: AdminKit\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -25,12 +25,12 @@ msgstr "Basculer entre le mode clair et sombre"
 msgid "View site"
 msgstr "Voir le site"
 
-#: inc/class-theme-toggle.php:181
-msgid "Home"
-msgstr "Accueil"
+#: inc/class-theme-toggle.php:181 inc/class-settings-page.php:265
+msgid "Dashboard"
+msgstr "Tableau de bord"
 
 #: inc/class-settings-page.php:53 inc/class-settings-page.php:54
-#: inc/class-settings-page.php:73 inc/class-settings-page.php:270
+#: inc/class-settings-page.php:73 inc/class-settings-page.php:269
 msgid "AdminKit"
 msgstr "AdminKit"
 
@@ -39,42 +39,38 @@ msgid "AdminKit settings require JavaScript."
 msgstr "Les réglages d’AdminKit nécessitent JavaScript."
 
 #: inc/class-settings-page.php:266
-msgid "Dashboard"
-msgstr "Tableau de bord"
-
-#: inc/class-settings-page.php:267
 msgid "Design"
 msgstr "Design"
 
-#: inc/class-settings-page.php:268 inc/wp-core/class-profile-account.php:85
+#: inc/class-settings-page.php:267 inc/wp-core/class-profile-account.php:85
 msgid "Settings"
 msgstr "Réglages"
 
-#: inc/class-settings-page.php:269
+#: inc/class-settings-page.php:268
 msgid "Coming soon"
 msgstr "Bientôt disponible"
 
-#: inc/class-settings-page.php:271
+#: inc/class-settings-page.php:270
 msgid "AdminKit-defined role (no provider equivalent)."
 msgstr "Rôle défini par AdminKit (sans équivalent fournisseur)."
 
-#: inc/class-settings-page.php:272
+#: inc/class-settings-page.php:271
 msgid "Turn AdminKit modules on or off."
 msgstr "Activez ou désactivez les modules AdminKit."
 
-#: inc/class-settings-page.php:273
+#: inc/class-settings-page.php:272
 msgid "Enable all"
 msgstr "Tout activer"
 
-#: inc/class-settings-page.php:274
+#: inc/class-settings-page.php:273
 msgid "Disable all"
 msgstr "Tout désactiver"
 
-#: inc/class-settings-page.php:275
+#: inc/class-settings-page.php:274
 msgid "Branding"
 msgstr "Image de marque"
 
-#: inc/class-settings-page.php:276
+#: inc/class-settings-page.php:275
 msgid ""
 "Optional brand logo URLs (light + dark). Used for the admin-bar logo and the "
 "Bricks builder. Leave empty to fall back to the adminkit/brand_logo filter."
@@ -83,35 +79,51 @@ msgstr ""
 "de la barre d’administration et le constructeur Bricks. Laisser vide pour "
 "revenir au filtre adminkit/brand_logo."
 
-#: inc/class-settings-page.php:277
+#: inc/class-settings-page.php:276
 msgid "Logo — light mode"
 msgstr "Logo — mode clair"
 
-#: inc/class-settings-page.php:278
+#: inc/class-settings-page.php:277
 msgid "Logo — dark mode"
 msgstr "Logo — mode sombre"
 
+#: inc/class-settings-page.php:278
+msgid "Light Mode"
+msgstr "Mode clair"
+
 #: inc/class-settings-page.php:279
+msgid "Dark Mode"
+msgstr "Mode sombre"
+
+#: inc/class-settings-page.php:280
 msgid "https://…/logo.svg"
 msgstr "https://…/logo.svg"
 
-#: inc/class-settings-page.php:280
-msgid "Media library"
-msgstr "Médiathèque"
-
 #: inc/class-settings-page.php:281
+msgid "Choose a logo"
+msgstr "Choisir un logo"
+
+#: inc/class-settings-page.php:282
+msgid "Change logo"
+msgstr "Changer le logo"
+
+#: inc/class-settings-page.php:283
+msgid "Remove logo"
+msgstr "Retirer le logo"
+
+#: inc/class-settings-page.php:284
 msgid "Select a logo"
 msgstr "Sélectionner un logo"
 
-#: inc/class-settings-page.php:282
+#: inc/class-settings-page.php:285
 msgid "Use this image"
 msgstr "Utiliser cette image"
 
-#: inc/class-settings-page.php:283
+#: inc/class-settings-page.php:286
 msgid "Plugins"
 msgstr "Extensions"
 
-#: inc/class-settings-page.php:284
+#: inc/class-settings-page.php:287
 msgid ""
 "Turn AdminKit's styling on or off per supported plugin. Dimmed rows aren't "
 "active on this site."
@@ -119,31 +131,31 @@ msgstr ""
 "Activez ou désactivez le style d’AdminKit pour chaque extension prise en "
 "charge. Les lignes grisées ne sont pas actives sur ce site."
 
-#: inc/class-settings-page.php:285
+#: inc/class-settings-page.php:288
 msgid "Not active"
 msgstr "Inactif"
 
-#: inc/class-settings-page.php:286
+#: inc/class-settings-page.php:289
 msgid "Themes"
 msgstr "Thèmes"
 
-#: inc/class-settings-page.php:287
+#: inc/class-settings-page.php:290
 msgid "WordPress logo (admin bar)"
 msgstr "Logo WordPress (barre d’administration)"
 
-#: inc/class-settings-page.php:288
+#: inc/class-settings-page.php:291
 msgid "Logo"
 msgstr "Logo"
 
-#: inc/class-settings-page.php:289
+#: inc/class-settings-page.php:292
 msgid "Favicon"
 msgstr "Favicon"
 
-#: inc/class-settings-page.php:290
+#: inc/class-settings-page.php:293
 msgid "Hide"
 msgstr "Masquer"
 
-#: inc/class-settings-page.php:291
+#: inc/class-settings-page.php:294
 msgid ""
 "No Site Icon set — the WordPress logo shows until you add one (Settings → "
 "General)."
@@ -151,47 +163,43 @@ msgstr ""
 "Aucune icône de site définie — le logo WordPress s’affiche jusqu’à ce que "
 "vous en ajoutiez une (Réglages → Général)."
 
-#: inc/class-settings-page.php:292
-msgid "Logo size (px)"
-msgstr "Taille du logo (px)"
-
-#: inc/class-settings-page.php:293
+#: inc/class-settings-page.php:295
 msgid "Save changes"
 msgstr "Enregistrer les modifications"
 
-#: inc/class-settings-page.php:294
+#: inc/class-settings-page.php:296
 msgid "Saving…"
 msgstr "Enregistrement…"
 
-#: inc/class-settings-page.php:295
+#: inc/class-settings-page.php:297
 msgid "Saved"
 msgstr "Enregistré"
 
-#: inc/class-settings-page.php:296
+#: inc/class-settings-page.php:298
 msgid "Could not save"
 msgstr "Échec de l’enregistrement"
 
-#: inc/class-settings-page.php:297
+#: inc/class-settings-page.php:299
 msgid "Light"
 msgstr "Clair"
 
-#: inc/class-settings-page.php:298
+#: inc/class-settings-page.php:300
 msgid "Dark"
 msgstr "Sombre"
 
-#: inc/class-settings-page.php:299
+#: inc/class-settings-page.php:301
 msgid "Mode"
 msgstr "Mode"
 
-#: inc/class-settings-page.php:300
+#: inc/class-settings-page.php:302
 msgid "Unsaved changes"
 msgstr "Modifications non enregistrées"
 
-#: inc/class-settings-page.php:301
+#: inc/class-settings-page.php:303
 msgid "Live colour reference"
 msgstr "Référence des couleurs en direct"
 
-#: inc/class-settings-page.php:302
+#: inc/class-settings-page.php:304
 msgid ""
 "Each row shows a live colour preview, the role, then its AdminKit token ← "
 "the WaasKit semantic it reads · the primitive it resolves from. Read-only — "
@@ -201,91 +209,79 @@ msgstr ""
 "AdminKit ← la sémantique WaasKit qu’il lit · la primitive dont il dérive. En "
 "lecture seule — la palette est pilotée par vos tokens."
 
-#: inc/class-settings-page.php:303
+#: inc/class-settings-page.php:305
 msgid "Typography"
 msgstr "Typographie"
 
-#: inc/class-settings-page.php:304
+#: inc/class-settings-page.php:306
 msgid "Body font follows Bricks (--font-base) when set, otherwise Inter."
 msgstr ""
 "La police du corps de texte suit Bricks (--font-base) si défini, sinon Inter."
 
-#: inc/class-settings-page.php:305
+#: inc/class-settings-page.php:307
 msgid "Body"
 msgstr "Corps"
 
-#: inc/class-settings-page.php:306
+#: inc/class-settings-page.php:308
 msgid "Small"
 msgstr "Petit"
 
-#: inc/class-settings-page.php:307
+#: inc/class-settings-page.php:309
 msgid "Caption"
 msgstr "Légende"
 
 #. translators: pangram used as a font preview sample — translate to a sentence that exercises your language's letters.
-#: inc/class-settings-page.php:309
+#: inc/class-settings-page.php:311
 msgid "The quick brown fox jumps over the lazy dog"
 msgstr "Portez ce vieux whisky au juge blond qui fume"
 
-#: inc/class-settings-page.php:336
+#: inc/class-settings-page.php:338
 msgid "Tokens"
 msgstr "Tokens"
 
 #. translators: %s: the selected accent colour value (e.g. #2563eb).
-#: inc/class-settings-page.php:339
+#: inc/class-settings-page.php:341
 #, php-format
 msgid "accent %s"
 msgstr "accent %s"
 
-#: inc/class-settings-page.php:339
+#: inc/class-settings-page.php:341
 msgid "accent inherited"
 msgstr "accent hérité"
 
-#: inc/class-settings-page.php:344
+#: inc/class-settings-page.php:346
 msgid "Features"
 msgstr "Fonctionnalités"
 
 #. translators: %d: total number of feature modules.
-#: inc/class-settings-page.php:347
+#: inc/class-settings-page.php:349
 #, php-format
 msgid "of %d module on"
 msgid_plural "of %d modules on"
 msgstr[0] "sur %d module"
 msgstr[1] "sur %d modules"
 
-#: inc/class-settings-page.php:360
+#: inc/class-settings-page.php:362
 msgid "A quick overview of your AdminKit setup."
 msgstr "Un aperçu rapide de votre configuration AdminKit."
 
-#: inc/class-settings-page.php:362
+#: inc/class-settings-page.php:364
 msgid "Overview"
 msgstr "Aperçu"
 
-#: inc/class-settings-page.php:364
+#: inc/class-settings-page.php:366
 msgid "Roadmap"
 msgstr "Feuille de route"
 
-#: inc/class-settings-page.php:370
+#: inc/class-settings-page.php:372
 msgid "Planned"
 msgstr "Planifié"
 
-#: inc/class-settings-page.php:372
-msgid "In-app palette editor"
-msgstr "Éditeur de palette intégré"
-
-#: inc/class-settings-page.php:372
-msgid ""
-"Pick accent, surface and text colours directly — the token map is read-only "
-"today."
-msgstr ""
-"Choisir directement les couleurs d’accent, de surface et de texte — la carte "
-"des tokens est en lecture seule pour le moment."
-
-#: inc/class-settings-page.php:373
+#: inc/class-settings-page.php:374
 msgid "More provider adapters"
 msgstr "Plus d’adaptateurs de fournisseurs"
 
-#: inc/class-settings-page.php:373
+#: inc/class-settings-page.php:374
 msgid ""
 "Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress — beyond "
 "Bricks."
@@ -293,145 +289,157 @@ msgstr ""
 "Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress — au-delà de "
 "Bricks."
 
-#: inc/class-settings-page.php:374
+#: inc/class-settings-page.php:375
 msgid "Theme variants"
 msgstr "Variantes de thème"
 
-#: inc/class-settings-page.php:374
+#: inc/class-settings-page.php:375
 msgid "Beyond light and dark — sepia, high-contrast."
 msgstr "Au-delà du clair et du sombre — sépia, contraste élevé."
 
-#: inc/class-settings-page.php:375
+#: inc/class-settings-page.php:376
 msgid "Per-role visibility"
 msgstr "Visibilité par rôle"
 
-#: inc/class-settings-page.php:375
+#: inc/class-settings-page.php:376
 msgid "Choose which roles get the skin and who may edit it."
 msgstr "Choisir quels rôles voient le thème et qui peut le modifier."
 
-#: inc/class-settings-page.php:376
+#: inc/class-settings-page.php:377
 msgid "Accessibility checks"
 msgstr "Contrôles d’accessibilité"
 
-#: inc/class-settings-page.php:376
+#: inc/class-settings-page.php:377
 msgid "Warn when a chosen colour fails contrast / legibility."
 msgstr ""
 "Avertir lorsqu’une couleur choisie échoue au contraste / à la lisibilité."
 
-#: inc/class-settings-page.php:380
-msgid "Next"
-msgstr "Prochainement"
-
-#: inc/class-settings-page.php:382
-msgid "Colour sync"
-msgstr "Synchronisation des couleurs"
-
-#: inc/class-settings-page.php:382
-msgid "Pull colours from the active provider or theme and keep them in sync."
-msgstr ""
-"Récupérer les couleurs du fournisseur ou du thème actif et les garder "
-"synchronisées."
-
-#: inc/class-settings-page.php:383
+#: inc/class-settings-page.php:378
 msgid "Custom dashboard widgets"
 msgstr "Widgets de tableau de bord personnalisés"
 
-#: inc/class-settings-page.php:383
+#: inc/class-settings-page.php:378
 msgid ""
 "Replace the WP home screen: quick actions, site status, recent activity."
 msgstr ""
 "Remplacer l’écran d’accueil de WP : actions rapides, état du site, activité "
 "récente."
 
-#: inc/class-settings-page.php:384
+#: inc/class-settings-page.php:379
 msgid "Import / export settings"
 msgstr "Importer / exporter les réglages"
 
-#: inc/class-settings-page.php:384
+#: inc/class-settings-page.php:379
 msgid "Clone an AdminKit setup across client sites in one file."
 msgstr ""
 "Cloner une configuration AdminKit entre sites clients en un seul fichier."
 
-#: inc/class-settings-page.php:385
+#: inc/class-settings-page.php:380
 msgid "White-label & admin footer"
 msgstr "Marque blanche et pied de page admin"
 
-#: inc/class-settings-page.php:385
+#: inc/class-settings-page.php:380
 msgid "Hide WordPress branding everywhere and add an agency credit."
 msgstr "Masquer la marque WordPress partout et ajouter un crédit d’agence."
 
-#: inc/class-settings-page.php:389
+#: inc/class-settings-page.php:384
+msgid "Next"
+msgstr "Prochainement"
+
+#: inc/class-settings-page.php:386
+msgid "In-app palette editor"
+msgstr "Éditeur de palette intégré"
+
+#: inc/class-settings-page.php:386
+msgid ""
+"Pick accent, surface and text colours directly — the token map is read-only "
+"today."
+msgstr ""
+"Choisir directement les couleurs d’accent, de surface et de texte — la carte "
+"des tokens est en lecture seule pour le moment."
+
+#: inc/class-settings-page.php:387
+msgid "Colour sync"
+msgstr "Synchronisation des couleurs"
+
+#: inc/class-settings-page.php:387
+msgid "Pull colours from the active provider or theme and keep them in sync."
+msgstr ""
+"Récupérer les couleurs du fournisseur ou du thème actif et les garder "
+"synchronisées."
+
+#: inc/class-settings-page.php:391
 msgid "In progress"
 msgstr "En cours"
 
-#: inc/class-settings-page.php:391
+#: inc/class-settings-page.php:393
 msgid "Branding & admin-bar logo"
 msgstr "Image de marque et logo de la barre d’admin"
 
-#: inc/class-settings-page.php:391
+#: inc/class-settings-page.php:393
 msgid "Brand logo / favicon in the toolbar, size control, light + dark."
 msgstr ""
 "Logo de marque / favicon dans la barre d’outils, contrôle de la taille, "
 "clair + sombre."
 
-#: inc/class-settings-page.php:392
+#: inc/class-settings-page.php:394
 msgid "AdminKit icon set"
 msgstr "Jeu d’icônes AdminKit"
 
-#: inc/class-settings-page.php:392
+#: inc/class-settings-page.php:394
 msgid "Replace native menu + toolbar icons; growing plugin coverage."
 msgstr ""
 "Remplacer les icônes natives du menu et de la barre d’outils ; couverture "
 "d’extensions croissante."
 
-#: inc/class-settings-page.php:393
+#: inc/class-settings-page.php:395
 msgid "Bricks builder polish"
 msgstr "Peaufinage du constructeur Bricks"
 
-#: inc/class-settings-page.php:393
+#: inc/class-settings-page.php:395
 msgid "Toolbar logo, preloader, canvas theming + colour fallback."
 msgstr ""
 "Logo de la barre d’outils, préchargeur, thématisation du canevas + repli de "
 "couleur."
 
-#: inc/class-settings-page.php:436
+#: inc/class-settings-page.php:438
 msgid "Default"
 msgstr "Par défaut"
 
-#: inc/class-settings-page.php:449
+#: inc/class-settings-page.php:451
 msgid "Content & lists"
 msgstr "Contenu et listes"
 
-#: inc/class-settings-page.php:450
+#: inc/class-settings-page.php:452
 msgid "Appearance & access"
 msgstr "Apparence et accès"
 
-#: inc/class-settings-page.php:452
+#: inc/class-settings-page.php:454
 msgid "Post previews"
 msgstr "Aperçus des publications"
 
-#: inc/class-settings-page.php:452
+#: inc/class-settings-page.php:454
 msgid "Screenshot thumbnail column in post-type list tables."
 msgstr ""
 "Colonne de vignettes (captures d’écran) dans les tableaux de liste des types "
 "de publication."
 
-#: inc/class-settings-page.php:453
+#: inc/class-settings-page.php:455
 msgid "Live screenshots (mShots)"
 msgstr "Captures d’écran en direct (mShots)"
 
-#: inc/class-settings-page.php:453
+#: inc/class-settings-page.php:455
 msgid ""
 "Use WordPress.com mShots. Off = featured image only (no external calls)."
 msgstr ""
 "Utiliser mShots de WordPress.com. Désactivé = image mise en avant uniquement "
 "(aucun appel externe)."
 
-#: inc/class-settings-page.php:454
+#: inc/class-settings-page.php:456
 msgid "Dark mode"
 msgstr "Mode sombre"
 
-#: inc/class-settings-page.php:454
+#: inc/class-settings-page.php:456
 msgid ""
 "Enable dark mode with a toggle in the admin bar. Off forces light mode "
 "everywhere."
@@ -439,19 +447,19 @@ msgstr ""
 "Activer le mode sombre avec un interrupteur dans la barre d’administration. "
 "Désactivé force le mode clair partout."
 
-#: inc/class-settings-page.php:455
+#: inc/class-settings-page.php:457
 msgid "Login screen"
 msgstr "Écran de connexion"
 
-#: inc/class-settings-page.php:455
+#: inc/class-settings-page.php:457
 msgid "Style the wp-login.php screen."
 msgstr "Styliser l’écran wp-login.php."
 
-#: inc/class-settings-page.php:456
+#: inc/class-settings-page.php:458
 msgid "Gutenberg"
 msgstr "Gutenberg"
 
-#: inc/class-settings-page.php:456
+#: inc/class-settings-page.php:458
 msgid ""
 "Theme the Gutenberg block-editor canvas (content + native blocks) in light "
 "and dark. Off (default) keeps the canvas matching your live site."
@@ -460,11 +468,11 @@ msgstr ""
 "natifs) en clair et sombre. Désactivé (par défaut), le canevas reste fidèle "
 "à votre site."
 
-#: inc/class-settings-page.php:457
+#: inc/class-settings-page.php:459
 msgid "AdminKit icons"
 msgstr "Icônes AdminKit"
 
-#: inc/class-settings-page.php:457
+#: inc/class-settings-page.php:459
 msgid ""
 "Replace WordPress's native menu and toolbar icons with AdminKit's set. Non-"
 "destructive: icons already customised (e.g. via Admin Menu Editor) are left "
@@ -474,11 +482,11 @@ msgstr ""
 "par le jeu d’AdminKit. Non destructif : les icônes déjà personnalisées (ex. "
 "via Admin Menu Editor) sont laissées intactes."
 
-#: inc/class-settings-page.php:462
+#: inc/class-settings-page.php:464
 msgid "Bricks builder"
 msgstr "Constructeur Bricks"
 
-#: inc/class-settings-page.php:462
+#: inc/class-settings-page.php:464
 msgid ""
 "Restyle the Bricks builder UI with your tokens. Needs Bricks builder mode "
 "set to \"Custom\"."
@@ -486,15 +494,15 @@ msgstr ""
 "Restyle l'interface du constructeur Bricks avec vos tokens. Nécessite le "
 "mode constructeur Bricks réglé sur « Custom »."
 
-#: inc/class-settings-page.php:466
+#: inc/class-settings-page.php:468
 msgid "Advanced"
 msgstr "Avancé"
 
-#: inc/class-settings-page.php:467
+#: inc/class-settings-page.php:469
 msgid "WordPress default interface"
 msgstr "Interface WordPress par défaut"
 
-#: inc/class-settings-page.php:467
+#: inc/class-settings-page.php:469
 msgid ""
 "Pause all AdminKit styling and show WordPress's native look — the plugin and "
 "features stay active (handy for debugging). The AdminKit settings page keeps "
@@ -505,71 +513,71 @@ msgstr ""
 "le débogage). La page de réglages AdminKit garde son style pour pouvoir "
 "revenir en arrière."
 
-#: inc/class-settings.php:144
+#: inc/class-settings.php:132
 msgid "Surfaces"
 msgstr "Surfaces"
 
-#: inc/class-settings.php:144
+#: inc/class-settings.php:132
 msgid "Page and panel backgrounds — behind everything."
 msgstr "Arrière-plans des pages et des panneaux — derrière tout le reste."
 
-#: inc/class-settings.php:145
+#: inc/class-settings.php:133
 msgid "Background"
 msgstr "Arrière-plan"
 
-#: inc/class-settings.php:146
+#: inc/class-settings.php:134
 msgid "Surface"
 msgstr "Surface"
 
-#: inc/class-settings.php:147
+#: inc/class-settings.php:135
 msgid "Elevated"
 msgstr "Surélevé"
 
-#: inc/class-settings.php:148
+#: inc/class-settings.php:136
 msgid "Input field"
 msgstr "Champ de saisie"
 
-#: inc/class-settings.php:150
+#: inc/class-settings.php:138
 msgid "Borders"
 msgstr "Bordures"
 
-#: inc/class-settings.php:150
+#: inc/class-settings.php:138
 msgid "Outlines and dividers."
 msgstr "Contours et séparateurs."
 
-#: inc/class-settings.php:151
+#: inc/class-settings.php:139
 msgid "Border"
 msgstr "Bordure"
 
-#: inc/class-settings.php:152
+#: inc/class-settings.php:140
 msgid "Border strong"
 msgstr "Bordure forte"
 
-#: inc/class-settings.php:154
+#: inc/class-settings.php:142
 msgid "Text"
 msgstr "Texte"
 
-#: inc/class-settings.php:154
+#: inc/class-settings.php:142
 msgid "Headings, body copy and captions."
 msgstr "Titres, corps de texte et légendes."
 
-#: inc/class-settings.php:155
+#: inc/class-settings.php:143
 msgid "Heading"
 msgstr "Titre"
 
-#: inc/class-settings.php:156
+#: inc/class-settings.php:144
 msgid "Body text"
 msgstr "Corps de texte"
 
-#: inc/class-settings.php:157
+#: inc/class-settings.php:145
 msgid "Muted text"
 msgstr "Texte atténué"
 
-#: inc/class-settings.php:159 inc/class-settings.php:160
+#: inc/class-settings.php:147 inc/class-settings.php:148
 msgid "Accent"
 msgstr "Accent"
 
-#: inc/class-settings.php:159
+#: inc/class-settings.php:147
 msgid ""
 "Brand — buttons, links, highlights. Hover, subtle and focus derive from it "
 "automatically."
@@ -577,51 +585,51 @@ msgstr ""
 "Marque — boutons, liens, surbrillances. Le survol, le subtil et le focus en "
 "dérivent automatiquement."
 
-#: inc/class-settings.php:161
+#: inc/class-settings.php:149
 msgid "Accent hover"
 msgstr "Accent survol"
 
-#: inc/class-settings.php:162
+#: inc/class-settings.php:150
 msgid "Accent subtle"
 msgstr "Accent subtil"
 
-#: inc/class-settings.php:163
+#: inc/class-settings.php:151
 msgid "On accent"
 msgstr "Sur accent"
 
-#: inc/class-settings.php:164
+#: inc/class-settings.php:152
 msgid "Secondary"
 msgstr "Secondaire"
 
-#: inc/class-settings.php:166
+#: inc/class-settings.php:154
 msgid "State"
 msgstr "État"
 
-#: inc/class-settings.php:166
+#: inc/class-settings.php:154
 msgid "Hover and focus feedback."
 msgstr "Retour visuel au survol et au focus."
 
-#: inc/class-settings.php:167
+#: inc/class-settings.php:155
 msgid "Hover"
 msgstr "Survol"
 
-#: inc/class-settings.php:168
+#: inc/class-settings.php:156
 msgid "Focus ring"
 msgstr "Anneau de focus"
 
-#: inc/class-settings.php:170 inc/class-settings.php:171
+#: inc/class-settings.php:158 inc/class-settings.php:159
 msgid "Overlay"
 msgstr "Superposition"
 
-#: inc/class-settings.php:170
+#: inc/class-settings.php:158
 msgid "Scrim behind modals and drawers."
 msgstr "Voile derrière les fenêtres modales et les tiroirs."
 
-#: inc/class-settings.php:173
+#: inc/class-settings.php:161
 msgid "Status"
 msgstr "Statut"
 
-#: inc/class-settings.php:173
+#: inc/class-settings.php:161
 msgid ""
 "Info, success, warning and error — and their subtle fills — from the "
 "framework's notification roles."
@@ -629,35 +637,35 @@ msgstr ""
 "Info, succès, avertissement et erreur — et leurs remplissages subtils — "
 "issus des rôles de notification du framework."
 
-#: inc/class-settings.php:174
+#: inc/class-settings.php:162
 msgid "Info"
 msgstr "Info"
 
-#: inc/class-settings.php:175
+#: inc/class-settings.php:163
 msgid "Info subtle"
 msgstr "Info subtile"
 
-#: inc/class-settings.php:176
+#: inc/class-settings.php:164
 msgid "Success"
 msgstr "Succès"
 
-#: inc/class-settings.php:177
+#: inc/class-settings.php:165
 msgid "Success subtle"
 msgstr "Succès subtil"
 
-#: inc/class-settings.php:178
+#: inc/class-settings.php:166
 msgid "Warning"
 msgstr "Avertissement"
 
-#: inc/class-settings.php:179
+#: inc/class-settings.php:167
 msgid "Warning subtle"
 msgstr "Avertissement subtil"
 
-#: inc/class-settings.php:180
+#: inc/class-settings.php:168
 msgid "Error"
 msgstr "Erreur"
 
-#: inc/class-settings.php:181
+#: inc/class-settings.php:169
 msgid "Error subtle"
 msgstr "Erreur subtile"
 
