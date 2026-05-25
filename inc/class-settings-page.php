@@ -249,6 +249,11 @@ class AdminKit_Settings_Page {
 				'designLegend'      => __( 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.', 'adminkit' ),
 				'typography'        => __( 'Typography', 'adminkit' ),
 				'typographyDesc'    => __( 'Body font follows Bricks (--font-base) when set, otherwise Inter.', 'adminkit' ),
+				'typeBody'          => __( 'Body', 'adminkit' ),
+				'typeSmall'         => __( 'Small', 'adminkit' ),
+				'typeCaption'       => __( 'Caption', 'adminkit' ),
+				/* translators: pangram used as a font preview sample — translate to a sentence that exercises your language's letters. */
+				'pangram'           => __( 'The quick brown fox jumps over the lazy dog', 'adminkit' ),
 			),
 		);
 	}
@@ -271,11 +276,13 @@ class AdminKit_Settings_Page {
 			}
 		}
 		$primary = ( isset( $stored['primary_color'] ) && $stored['primary_color'] ) ? (string) $stored['primary_color'] : '';
+		$total   = count( $features );
 
 		$cards = array(
 			array(
 				'label'  => __( 'Tokens', 'adminkit' ),
 				'value'  => self::active_provider_label(),
+				/* translators: %s: the selected accent colour value (e.g. #2563eb). */
 				'hint'   => $primary ? sprintf( __( 'accent %s', 'adminkit' ), $primary ) : __( 'accent inherited', 'adminkit' ),
 				'swatch' => '--ak-primary',
 				'tab'    => 'apparence',
@@ -283,7 +290,8 @@ class AdminKit_Settings_Page {
 			array(
 				'label' => __( 'Features', 'adminkit' ),
 				'value' => (string) $features_on,
-				'hint'  => sprintf( __( 'of %d modules on', 'adminkit' ), count( $features ) ),
+				/* translators: %d: total number of feature modules. */
+				'hint'  => sprintf( _n( 'of %d module on', 'of %d modules on', $total, 'adminkit' ), $total ),
 				'icon'  => 'features',
 				'tab'   => 'features',
 			),

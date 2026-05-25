@@ -241,12 +241,12 @@
 	function typeSection() {
 		var scale = el( 'div', { 'class': 'ak-type' } );
 		[
-			[ '--ak-text-m', 'Body' ],
-			[ '--ak-text-s', 'Small' ],
-			[ '--ak-text-xs', 'Caption' ]
+			[ '--ak-text-m', I.typeBody || 'Body' ],
+			[ '--ak-text-s', I.typeSmall || 'Small' ],
+			[ '--ak-text-xs', I.typeCaption || 'Caption' ]
 		].forEach( function ( s ) {
 			scale.appendChild( el( 'div', { 'class': 'ak-type__row' }, [
-				el( 'span', { 'class': 'ak-type__sample', style: 'font-size:var(' + s[ 0 ] + ')', text: 'The quick brown fox jumps over the lazy dog' } ),
+				el( 'span', { 'class': 'ak-type__sample', style: 'font-size:var(' + s[ 0 ] + ')', text: I.pangram || 'The quick brown fox jumps over the lazy dog' } ),
 				el( 'code', { 'class': 'ak-tbl__prim', text: s[ 0 ] } )
 			] ) );
 		} );
