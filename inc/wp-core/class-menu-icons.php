@@ -105,26 +105,20 @@ class AdminKit_Core_Menu_Icons {
 	 * @return string
 	 */
 	private static function menu_css() {
-		$rules = '';
+		$css = '';
 		foreach ( self::menu_icon_map() as $class => $svg ) {
 			if ( '' === $svg || ! is_string( $svg ) ) {
 				continue;
 			}
-			// Fill the icon box and centre a 20px mask in it — identical placement for
-			// every icon, at any menu size (expanded 36×34 or folded). margin:auto
-			// centring was per-icon flaky; absolute inset:0 is exact.
-			$rules .= '#adminmenu .wp-menu-image.' . $class . '::before{'
-				. 'content:"";position:absolute;inset:0;'
+			// Drop the glyph and let a block ::before fill WP's icon box (36px wide ×
+			// 34px), with a 20px mask centred in it. Simple + predictable — no
+			// positioning tricks — so the icon lands exactly where the dashicon was.
+			$css .= '#adminmenu .wp-menu-image.' . $class . '::before{'
+				. 'content:"";display:block;height:34px;'
 				. self::mask( $svg )
 				. '}';
 		}
-		if ( '' === $rules ) {
-			return '';
-		}
-		// The mapped ::before is absolutely positioned to fill its icon box, so the
-		// box needs to be a positioning context. Harmless on non-mapped items (their
-		// dashicon glyph flows normally and is left untouched).
-		return '#adminmenu .wp-menu-image{position:relative}' . $rules;
+		return $css;
 	}
 
 	/**
