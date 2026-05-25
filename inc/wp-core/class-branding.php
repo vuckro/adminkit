@@ -135,13 +135,10 @@ class AdminKit_Core_Branding {
 		// us) which would otherwise re-apply its height:20px/padding:6px 0 5px and
 		// overflow the bar.
 		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon.ab-icon';
-		// Reset WP's icon padding, give the .ab-icon the bar height, then centre a
-		// 28px BORDERED rounded chip in it (28 + 2×1px border = 30px → 1px gap top
-		// and bottom in the 32px bar). overflow:hidden clips the cover image to the
-		// rounded box so it never spills past the bar.
-		return $sel . '{width:30px;height:32px;padding:0;overflow:hidden}'
-			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:28px;height:28px;'
-			. 'margin:1px;top:0;'
+		// Neutralise WP core's padding/margin-right on this .ab-icon and FLEX-CENTRE
+		// a 28px bordered rounded chip in the 32px bar — no margin maths, no overflow.
+		return $sel . '{display:flex;align-items:center;justify-content:center;width:auto;height:32px;padding:0;margin-right:0}'
+			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:28px;height:28px;margin:0;top:0;'
 			. 'border:1px solid var(--ak-border);'
 			. 'border-radius:var(--ak-radius-m,8px);'
 			. 'background:' . $light . ' center/cover no-repeat}'
@@ -152,9 +149,8 @@ class AdminKit_Core_Branding {
 	/**
 	 * Site icon (favicon) in the admin-bar wp-logo slot — painted onto the
 	 * .ab-icon::BEFORE box (WP forces background-image:none on .ab-icon itself, but
-	 * its ::before is exempt), as a SMALL rounded chip: fixed 20px square, no
-	 * border, painted `center/cover`, vertically centred in the 32px bar
-	 * ((32−20)/2 = 6px margin top and bottom). '' when there's no Site Icon.
+	 * its ::before is exempt), as a 24px rounded chip painted `center/cover` and
+	 * FLEX-centred in the 32px bar. '' when there's no Site Icon.
 	 *
 	 * @return string
 	 */
@@ -168,9 +164,8 @@ class AdminKit_Core_Branding {
 		// us) which would otherwise re-apply its height:20px/padding:6px 0 5px and
 		// overflow the bar.
 		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon.ab-icon';
-		return $sel . '{width:20px;height:32px;padding:0;overflow:hidden}'
-			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:20px;height:20px;'
-			. 'margin:6px 0;top:0;'
+		return $sel . '{display:flex;align-items:center;justify-content:center;width:auto;height:32px;padding:0;margin-right:0}'
+			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:24px;height:24px;margin:0;top:0;'
 			. 'border-radius:var(--ak-radius-s,5px);'
 			. 'background:' . $favicon . ' center/cover no-repeat}'
 			. self::hide_site_name_glyph();
