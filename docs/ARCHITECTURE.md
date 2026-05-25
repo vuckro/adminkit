@@ -173,8 +173,9 @@ What's registered today:
   `adminkit/should_load` → `maybe_restore_wp_ui()`, so wp-admin renders 100%
   native while the plugin stays active (only AdminKit's own settings screen keeps
   its styling, so you can switch back).
-- **Branding**: `logo_light`, `logo_dark`, `wp_logo` (`favicon` | `hide` |
-  `default`) — resolved by `AdminKit_Settings::brand_logo()`.
+- **Branding**: `logo_light`, `logo_dark`, `wp_logo` (`logo` | `favicon` | `hide`
+  — the admin-bar logo slot) and `logo_size` (px, 16–32) — resolved by
+  `AdminKit_Settings::brand_logo()` / `AdminKit_Core_Branding`.
 - **Integration gates**: one `integration_{slug}_enabled` per discovered adapter
   (default ON), bound to `adminkit/integration_enabled` and driven by the Plugins
   tab.
