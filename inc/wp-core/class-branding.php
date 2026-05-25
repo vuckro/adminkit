@@ -107,10 +107,14 @@ class AdminKit_Core_Branding {
 	}
 
 	/**
-	 * Brand logo in the admin-bar wp-logo slot. `content:url()` turns the ::before
-	 * into a replaced image, so `height:22px` scales it and `width:auto` keeps the
-	 * aspect ratio (wide wordmarks fit). Light variant by default (the bar is light
-	 * in light mode); dark variant under the dark flag. '' when no logo is set.
+	 * Brand logo in the admin-bar wp-logo slot — a 22px rounded chip (same footprint
+	 * as the favicon, for consistency) with the logo CONTAINED so any mark fits
+	 * without overflowing. Light variant by default; dark variant under the dark
+	 * flag. '' when no logo is set.
+	 *
+	 * Painted as a BACKGROUND, not `content:url()`: a pseudo-element's content image
+	 * does not resize reliably (it rendered at full intrinsic size — the "too big"
+	 * bug), whereas background-size:contain always fits the box.
 	 *
 	 * @return string
 	 */
@@ -127,9 +131,11 @@ class AdminKit_Core_Branding {
 			$dark = $light;
 		}
 		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon';
-		return $sel . '{width:auto}'
-			. $sel . '::before{content:' . $light . ';display:block;height:22px;width:auto;top:0;margin:5px 6px 5px 0}'
-			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{content:' . $dark . '}'
+		return $sel . '{width:22px}'
+			. $sel . '::before{content:"";display:block;width:22px;height:22px;top:0;'
+			. 'border-radius:var(--ak-radius-s,5px);'
+			. 'background:' . $light . ' center/contain no-repeat}'
+			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{background-image:' . $dark . '}'
 			. self::hide_site_name_glyph();
 	}
 
