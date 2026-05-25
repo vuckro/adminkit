@@ -77,10 +77,11 @@ button.adminkit-local-avatar__media:hover {
 	fill: currentColor;
 }
 
-/* Hover / focus overlay — a scrim with a camera + "Change", shown only on the
-   editable <button>. Built from tokens (--ak-overlay scrim + --ak-on-accent
-   glyph), so the camera reads clearly in BOTH light and dark. Sits inset:0 over
-   the same circle and is hidden at rest, so it never causes the old overlap. */
+/* Hover / focus overlay — a dark scrim with a camera + "Change", shown only on
+   the editable <button>. The glyph is ALWAYS white (#fff, not --ak-on-accent which
+   is dark on the yellow accent) so it reads on the dark scrim in BOTH light and
+   dark mode. Sits inset:0 over the same square and is hidden at rest, so it never
+   causes the old overlap. */
 .adminkit-local-avatar__overlay {
 	position: absolute;
 	inset: 0;
@@ -90,7 +91,7 @@ button.adminkit-local-avatar__media:hover {
 	justify-content: center;
 	gap: 3px;
 	background: var(--ak-overlay, rgba(0, 0, 0, .5));
-	color: var(--ak-on-accent, #fff);
+	color: #fff;
 	opacity: 0;
 	transition: opacity .15s ease;
 	pointer-events: none;
@@ -119,10 +120,9 @@ button.adminkit-local-avatar__media:focus-visible .adminkit-local-avatar__overla
 	margin: var(--ak-space-s, 8px) 0 var(--ak-space-2xs, 4px);
 }
 
-/* Generate + Remove are real (small) buttons in the actions row — they carry the
-   .button base (tokenised in buttons.css); here we only align the icon + label
-   and paint Remove as a danger button. Rules are scoped under .adminkit-local-avatar
-   so they out-specify buttons.css's `body.adminkit .button`. */
+/* "Generate a random avatar" is a real button in the actions row — it carries the
+   .button button-primary base (tokenised to the accent in buttons.css); here we
+   only align the refresh icon + label. */
 .adminkit-local-avatar__action {
 	display: inline-flex;
 	align-items: center;
@@ -132,17 +132,6 @@ button.adminkit-local-avatar__media:focus-visible .adminkit-local-avatar__overla
 	width: 15px;
 	height: 15px;
 	flex: none;
-}
-/* Remove → danger button: red text + border at rest, solid red on hover/focus. */
-.adminkit-local-avatar .adminkit-local-avatar__remove.button {
-	color: var(--ak-error, #d63638);
-	border-color: var(--ak-error, #d63638);
-}
-.adminkit-local-avatar .adminkit-local-avatar__remove.button:hover,
-.adminkit-local-avatar .adminkit-local-avatar__remove.button:focus {
-	color: var(--ak-on-accent, #fff);
-	background: var(--ak-error, #d63638);
-	border-color: var(--ak-error, #d63638);
 }
 
 /* --- Generate danger confirm --------------------------------------------------

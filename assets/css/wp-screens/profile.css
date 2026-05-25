@@ -143,7 +143,9 @@ body.adminkit.profile-php .ak-profile-picture-hero__overlay {
 	align-items: center;
 	justify-content: center;
 	background: var(--ak-overlay);
-	color: var(--ak-on-accent);
+	/* Always white on the dark scrim (NOT --ak-on-accent, which is dark on the
+	   yellow accent) so the camera reads in both light + dark. */
+	color: #fff;
 	opacity: 0;
 	transition: opacity .15s ease;
 	pointer-events: none;

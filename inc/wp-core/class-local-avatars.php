@@ -478,18 +478,14 @@ class AdminKit_Local_Avatars {
 									<span class="adminkit-local-avatar__overlay-text"><?php echo esc_html__( 'Change', 'adminkit' ); ?></span>
 								</span>
 							</button>
-							<p class="adminkit-local-avatar__actions">
-								<?php if ( $can_roll ) : ?>
-									<button type="button" class="button adminkit-local-avatar__action adminkit-local-avatar__generate" id="adminkit-local-avatar-generate">
+							<?php if ( $can_roll ) : ?>
+								<p class="adminkit-local-avatar__actions">
+									<button type="button" class="button button-primary adminkit-local-avatar__action adminkit-local-avatar__generate" id="adminkit-local-avatar-generate">
 										<?php echo self::icon_refresh(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, self-contained SVG markup. ?>
 										<span><?php echo esc_html__( 'Generate a random avatar', 'adminkit' ); ?></span>
 									</button>
-								<?php endif; ?>
-								<button type="button" class="button adminkit-local-avatar__action adminkit-local-avatar__remove" id="adminkit-local-avatar-remove"
-									<?php echo $has_upload ? '' : 'hidden'; ?>>
-									<?php echo esc_html__( 'Remove', 'adminkit' ); ?>
-								</button>
-							</p>
+								</p>
+							<?php endif; ?>
 						<?php else : ?>
 							<?php if ( $has_preview ) : ?>
 								<span class="adminkit-local-avatar__media">
