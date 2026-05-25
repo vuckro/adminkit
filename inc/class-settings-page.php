@@ -361,9 +361,16 @@ class AdminKit_Settings_Page {
 		 *
 		 * @param array $data { intro, version, cards[], roadmap[] }
 		 */
+		// "Last updated" badge — the main plugin file's mtime (changes on every
+		// release / deploy), localised to the site's date format. Dynamic, so it stays
+		// truthful without manual upkeep.
+		$updated = @filemtime( ADMINKIT_FILE );
 		return apply_filters( 'adminkit/dashboard', array(
 			'intro'         => __( 'A quick overview of your AdminKit setup.', 'adminkit' ),
 			'version'       => 'v' . ADMINKIT_VERSION,
+			'updated'       => $updated ? date_i18n( get_option( 'date_format' ), $updated ) : '',
+			/* translators: %s = a date. */
+			'updatedLabel'  => __( 'Updated', 'adminkit' ),
 			'overviewLabel' => __( 'Overview', 'adminkit' ),
 			'cards'         => $cards,
 			'roadmapLabel'  => __( 'Roadmap', 'adminkit' ),

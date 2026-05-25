@@ -479,6 +479,34 @@
 	color: var(--ak-text-muted);
 }
 
+/* Roadmap heading row: title left, status badges (version + last-updated) right. */
+.adminkit-app .ak-roadmap__head-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+.adminkit-app .ak-roadmap__head-row .ak-group__title { margin-bottom: 0; }
+.adminkit-app .ak-roadmap__meta { display: flex; align-items: center; gap: 6px; }
+.adminkit-app .ak-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 9px;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	line-height: 1.6;
+	color: var(--ak-text-muted);
+	background: var(--ak-elevated);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-full);
+}
+.adminkit-app .ak-badge--brand {
+	color: var(--ak-primary);
+	background: var(--ak-primary-subtle);
+	border-color: transparent;
+}
+
 /* Roadmap detail modal — appended to <body>, so it's unscoped; the --ak-*
    tokens resolve from :root (where the dark-mode flip lives), so it themes in
    both modes for free. ----------------------------------------------------- */

@@ -294,8 +294,17 @@
 				} );
 				board.appendChild( el( 'div', { 'class': 'ak-roadmap__col' }, kids ) );
 			} );
+			// Heading row: the "Roadmap" title with status badges on the right —
+			// the version + the last-updated date, so the plan reads as current.
+			var badges = el( 'div', { 'class': 'ak-roadmap__meta' }, [
+				dd.version ? el( 'span', { 'class': 'ak-badge ak-badge--brand', text: dd.version } ) : null,
+				dd.updated ? el( 'span', { 'class': 'ak-badge', text: ( dd.updatedLabel || 'Updated' ) + ' ' + dd.updated } ) : null
+			] );
 			p.appendChild( el( 'div', { 'class': 'ak-group' }, [
-				dd.roadmapLabel ? el( 'h2', { 'class': 'ak-group__title', text: dd.roadmapLabel } ) : null,
+				el( 'div', { 'class': 'ak-roadmap__head-row' }, [
+					dd.roadmapLabel ? el( 'h2', { 'class': 'ak-group__title', text: dd.roadmapLabel } ) : null,
+					( dd.version || dd.updated ) ? badges : null
+				] ),
 				I.roadmapHint ? el( 'p', { 'class': 'ak-roadmap__hint', text: I.roadmapHint } ) : null,
 				board
 			] ) );
