@@ -38,9 +38,17 @@ body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-cl
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
 }
+/* The glyph / site icon itself: a small, contained card (border + radius) so the
+   favicon doesn't fill the chip oversized, and reads in light + dark. */
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle-icon img,
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__view-mode-toggle-icon svg {
+	width: 26px;
+	height: 26px;
+	object-fit: contain;
+	padding: 3px;
 	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
 }
 
 /* The header's inner regions must not repaint a white bar over the surface

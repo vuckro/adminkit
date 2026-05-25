@@ -74,3 +74,13 @@
 .editor-styles-wrapper :where( .wp-block-button__link ):not( .has-text-color ) {
 	color: var(--ak-on-accent);
 }
+
+/* ── Bricks "built with Bricks" notice (Bricks↔Gutenberg) ───────────────────
+   Bricks hardcodes this box to #f0f0f0 / #e0e0e0, which clashes on the dark
+   canvas. Plain selectors (not :where) so we beat Bricks's single-class rule;
+   this is Bricks UI chrome, not user content, so no .has-* respect needed. */
+.editor-styles-wrapper .bricks-block-editor-notice-wrapper {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
