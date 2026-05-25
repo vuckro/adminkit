@@ -234,8 +234,11 @@ body.adminkit[class*="admin-color-"] {
 	--ak-error-subtle:   var(--error-d-9, color-mix(in srgb, var(--ak-error) 22%, var(--ak-surface)));
 	--ak-info-subtle:    var(--info-d-9, color-mix(in srgb, var(--ak-info) 22%, var(--ak-surface)));
 
-	/* Hover — white tint (the neutral --hover is a black tint, invisible on dark). */
-	--ak-hover-bg: var(--white-t-2, rgba(255, 255, 255, 0.11));
+	/* Hover — a gentle white tint that lands ~the elevated tone: a subtle lift,
+	   slightly above --ak-elevated so it still reads as interactive (the neutral
+	   --hover is a black tint, invisible on dark, hence white here). --white-t-2
+	   (0.18) overshot well past elevated, so use the gentlest step. */
+	--ak-hover-bg: var(--white-t-1, rgba(255, 255, 255, 0.06));
 	/* Inverted elevation — a white lift reads on a dark page where a black
 	   drop would vanish. */
 	--ak-shadow-elevated: 0 8px 24px -10px rgba(255, 255, 255, 0.14);
