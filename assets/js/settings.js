@@ -646,15 +646,41 @@
 			} );
 		}
 
+		// Neutral "System" chip for AdminKit's own row — it's listed but locked.
+		function systemBadge() {
+			return el( 'span', {
+				'class': 'ak-badge',
+				title: I.systemHint || '',
+				text: I.system || 'System'
+			} );
+		}
+
 		function pluginRow( i ) {
 			// Name + badge hug the left together (.ak-row__head); the switch (native
 			// only) is pushed right by .ak-row__main's flex:1.
+			var badge = i.system ? systemBadge() : ( i.supported ? nativeBadge() : null );
 			var main = el( 'div', { 'class': 'ak-row__main' }, [
 				el( 'div', { 'class': 'ak-row__head' }, [
 					el( 'span', { 'class': 'ak-row__label', text: i.label } ),
-					i.supported ? nativeBadge() : null
+					badge
 				] )
 			] );
+
+			// System row (AdminKit itself) → greyed + locked: a switch that reads ON
+			// but can't be operated (.is-locked dims it and kills pointer events).
+			if ( i.system ) {
+				var lock = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
+				lock.checked = true;
+				lock.disabled = true;
+				return el( 'div', { 'class': 'ak-row is-locked' }, [
+					main,
+					el( 'label', { 'class': 'ak-switch' }, [
+						lock,
+						el( 'span', { 'class': 'ak-switch__track' } ),
+						el( 'span', { 'class': 'ak-switch__knob' } )
+					] )
+				] );
+			}
 
 			// Unknown plugin → no adapter to switch, and no badge: just the name.
 			if ( ! i.supported || ! i.slug ) {
@@ -698,7 +724,10 @@
 			var rows = el( 'div', { 'class': 'ak-rows' } );
 			items.forEach( function ( i ) { rows.appendChild( pluginRow( i ) ); } );
 			sections.push( el( 'div', { 'class': 'ak-group' }, [
-				el( 'h2', { 'class': 'ak-group__title', text: sec.label } ),
+				el( 'h2', { 'class': 'ak-group__title' }, [
+					el( 'span', { text: sec.label } ),
+					el( 'span', { 'class': 'ak-badge ak-group__count', text: String( items.length ) } )
+				] ),
 				rows
 			] ) );
 		} );

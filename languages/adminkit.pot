@@ -158,6 +158,14 @@ msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
 msgstr ""
 
 #: inc/class-settings-page.php:278
+msgid "System"
+msgstr ""
+
+#: inc/class-settings-page.php:279
+msgid "AdminKit itself — always on and not removable here."
+msgstr ""
+
+#: inc/class-settings-page.php:280
 msgid "Themes"
 msgstr ""
 

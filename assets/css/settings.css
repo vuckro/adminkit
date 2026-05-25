@@ -144,6 +144,14 @@
 	letter-spacing: .06em;
 	color: var(--ak-text-muted);
 }
+/* Neutral count pill beside a group title (e.g. "Plugins 7", "Themes 1"). The
+   title is uppercased + letter-spaced; reset that so the number reads plainly. */
+.adminkit-app .ak-group__count {
+	margin-left: 8px;
+	vertical-align: middle;
+	text-transform: none;
+	letter-spacing: normal;
+}
 .adminkit-app .ak-group__title + .ak-group__desc { margin-top: -6px; }
 .adminkit-app .ak-group__desc {
 	margin: 0 0 12px;

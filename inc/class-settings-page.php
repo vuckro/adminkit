@@ -275,6 +275,8 @@ class AdminKit_Settings_Page {
 				'pluginsIntro'      => __( 'Every plugin installed on your site, plus AdminKit\'s active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry no badge and inherit AdminKit\'s base styling automatically.', 'adminkit' ),
 				'native'            => __( 'Native', 'adminkit' ),
 				'nativeHint'        => __( 'AdminKit ships a tuned adapter for this plugin — light and dark.', 'adminkit' ),
+				'system'            => __( 'System', 'adminkit' ),
+				'systemHint'        => __( 'AdminKit itself — always on and not removable here.', 'adminkit' ),
 				'themesLabel'       => __( 'Themes', 'adminkit' ),
 				'wpLogoLabel'       => __( 'Admin bar', 'adminkit' ),
 				'loginLogoLabel'    => __( 'Login screen', 'adminkit' ),
@@ -639,8 +641,9 @@ class AdminKit_Settings_Page {
 	 * token styling. The tab mirrors the site's plugin list, active or not.
 	 *
 	 * Row shape: slug (adapter slug when native, '' otherwise), label (the
-	 * plugin's own name), type, supported (bool), enabled (adapter toggle — native
-	 * rows only). Native first, then alphabetical.
+	 * plugin's own name), type, supported (bool), system (bool — AdminKit's own
+	 * locked row), enabled (adapter toggle — native rows only). System first, then
+	 * native, then alphabetical.
 	 *
 	 * @return array<int, array>
 	 */
@@ -668,9 +671,20 @@ class AdminKit_Settings_Page {
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
-		$self = plugin_basename( ADMINKIT_FILE ); // don't list AdminKit in its own tab
+		$self = plugin_basename( ADMINKIT_FILE );
 		foreach ( get_plugins() as $file => $data ) {
 			if ( $file === $self ) {
+				// AdminKit itself — shown as a locked "System" row: always on and
+				// not toggleable here (greyed out), so the user sees it but can't
+				// disable its own host from this tab.
+				$rows[] = array(
+					'slug'      => '',
+					'label'     => '' !== (string) $data['Name'] ? $data['Name'] : 'AdminKit',
+					'type'      => 'plugin',
+					'supported' => false,
+					'system'    => true,
+					'enabled'   => true,
+				);
 				continue;
 			}
 			$slug      = isset( $by_file[ $file ] ) ? $by_file[ $file ] : '';
@@ -700,8 +714,13 @@ class AdminKit_Settings_Page {
 			);
 		}
 
-		// Native first, then alphabetical — supported integrations lead each group.
+		// AdminKit's own "System" row leads, then native, then alphabetical.
 		usort( $rows, static function ( $a, $b ) {
+			$as = ! empty( $a['system'] );
+			$bs = ! empty( $b['system'] );
+			if ( $as !== $bs ) {
+				return $as ? -1 : 1;
+			}
 			if ( $a['supported'] !== $b['supported'] ) {
 				return $a['supported'] ? -1 : 1;
 			}
