@@ -85,6 +85,12 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 
 ## Guardrails — do NOT break these
 
+- **NEVER change the version number without the maintainer's explicit go-ahead.**
+  The `Version:` header + `ADMINKIT_VERSION` in `adminkit.php` (and the `readme.txt`
+  Stable tag) are a **release decision the maintainer owns** — do not bump them on
+  your own, ever, even after a big batch of work. Ask first; only then prepare the
+  release (bump the version, write the `readme.txt` changelog entry, set the stable
+  tag together). Leave the version alone otherwise.
 - **`assets/css/waaskit-tokens.css` is GENERATED.** Never hand-edit it. Change
   `tokens/palettes/*.json` and run `php tokens/build.php`. `--check` is a drift gate.
 - **Every AdminKit stylesheet reads `--ak-*` tokens, never raw colours.** That
