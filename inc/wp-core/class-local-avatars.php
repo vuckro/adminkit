@@ -54,6 +54,16 @@ class AdminKit_Local_Avatars {
 	const SCREENS = array( 'profile', 'user-edit' );
 
 	/**
+	 * When true, filter_avatar_data() ignores the uploaded local avatar and
+	 * resolves the "no-upload" effective avatar instead (Gravatar, or the generated
+	 * d= fallback). Used by fallback_preview_url() so the profile field can preview
+	 * what the avatar becomes once a custom upload is removed.
+	 *
+	 * @var bool
+	 */
+	private static $skip_local = false;
+
+	/**
 	 * Wire the hooks — only when the feature is enabled. Called once from the
 	 * plugin orchestrator. Returns early (no hooks at all) when the opt-in toggle
 	 * is off, so Gravatar behaviour is genuinely 100% unchanged.
@@ -121,12 +131,15 @@ class AdminKit_Local_Avatars {
 		$size = isset( $args['size'] ) ? (int) $args['size'] : 96;
 
 		// 1) An uploaded local avatar always wins — set the URL directly so core
-		//    short-circuits straight to it (Gravatar is skipped entirely).
-		$url = self::get_local_avatar_url( $user_id, $size );
-		if ( '' !== $url ) {
-			$args['url']          = $url;
-			$args['found_avatar'] = true;
-			return $args;
+		//    short-circuits straight to it (Gravatar is skipped entirely). Skipped
+		//    when resolving the "no-upload" fallback for the profile preview.
+		if ( ! self::$skip_local ) {
+			$url = self::get_local_avatar_url( $user_id, $size );
+			if ( '' !== $url ) {
+				$args['url']          = $url;
+				$args['found_avatar'] = true;
+				return $args;
+			}
 		}
 
 		// 2) No local avatar: optionally hand WordPress a generated avatar as the
@@ -275,6 +288,28 @@ class AdminKit_Local_Avatars {
 	}
 
 	/**
+	 * The avatar a user would show with NO uploaded local avatar — i.e. their real
+	 * Gravatar, or (with generated avatars on) the generated face via the d=
+	 * fallback. Used to preview the bubble so it's never blank, and handed to the
+	 * JS so "Remove" reverts the preview to it. Returns '' when avatars are globally
+	 * disabled. Temporarily flags filter_avatar_data() to ignore the upload.
+	 *
+	 * @param int $user_id
+	 * @param int $size    Requested square size in px.
+	 * @return string
+	 */
+	public static function fallback_preview_url( $user_id, $size = 96 ) {
+		$user_id = (int) $user_id;
+		if ( $user_id <= 0 || ! get_option( 'show_avatars' ) ) {
+			return '';
+		}
+		self::$skip_local = true;
+		$url = get_avatar_url( $user_id, array( 'size' => (int) $size ) );
+		self::$skip_local = false;
+		return $url ? (string) $url : '';
+	}
+
+	/**
 	 * Render the avatar field on the profile / user-edit form. Shown only to a
 	 * user who may edit the target profile; the upload button shows only when the
 	 * editor can upload files (others see the current avatar read-only).
@@ -287,16 +322,23 @@ class AdminKit_Local_Avatars {
 			return;
 		}
 
-		$id        = self::get_local_avatar_id( $user->ID );
-		$preview   = $id ? self::get_local_avatar_url( $user->ID, 96 ) : '';
-		$can_pick  = current_user_can( 'upload_files' );
-		$has_image = '' !== $preview;
+		$upload_id  = self::get_local_avatar_id( $user->ID );
+		$has_upload = $upload_id > 0;
+		$can_pick   = current_user_can( 'upload_files' );
+
+		// Preview the EFFECTIVE avatar so the bubble is never blank: the uploaded
+		// image if any, otherwise whatever get_avatar() resolves to (a real
+		// Gravatar, or — with generated avatars on — the generated face). The same
+		// no-upload URL is handed to the JS so "Remove" reverts to it.
+		$fallback    = self::fallback_preview_url( $user->ID, 96 );
+		$preview     = $has_upload ? self::get_local_avatar_url( $user->ID, 96 ) : $fallback;
+		$has_preview = '' !== $preview;
 
 		// The button's accessible name (static — clicking always opens the picker).
-		$media_aria  = $has_image
+		$media_aria  = $has_upload
 			? __( 'Change the profile picture', 'adminkit' )
 			: __( 'Upload a profile picture', 'adminkit' );
-		$state_class = $has_image ? 'is-filled' : 'is-empty';
+		$state_class = $has_upload ? 'is-filled' : 'is-empty';
 
 		wp_nonce_field( self::NONCE_ACTION, self::NONCE_FIELD );
 		?>
@@ -307,7 +349,7 @@ class AdminKit_Local_Avatars {
 				<td>
 					<div class="adminkit-local-avatar <?php echo esc_attr( $state_class ); ?>" id="adminkit-local-avatar">
 						<input type="hidden" name="<?php echo esc_attr( self::FIELD ); ?>"
-							id="adminkit-local-avatar-input" value="<?php echo esc_attr( (string) $id ); ?>" />
+							id="adminkit-local-avatar-input" value="<?php echo esc_attr( (string) $upload_id ); ?>" />
 						<?php if ( $can_pick ) : ?>
 							<button type="button" class="adminkit-local-avatar__media" id="adminkit-local-avatar-btn"
 								aria-label="<?php echo esc_attr( $media_aria ); ?>">
@@ -315,20 +357,24 @@ class AdminKit_Local_Avatars {
 									src="<?php echo esc_url( $preview ); ?>"
 									alt=""
 									width="96" height="96"
-									<?php echo $has_image ? '' : 'hidden'; ?> />
+									<?php echo $has_preview ? '' : 'hidden'; ?> />
 								<span class="adminkit-local-avatar__placeholder" id="adminkit-local-avatar-placeholder"
-									aria-hidden="true"<?php echo $has_image ? ' hidden' : ''; ?>>
+									aria-hidden="true"<?php echo $has_preview ? ' hidden' : ''; ?>>
 									<?php echo self::icon_user(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, self-contained SVG markup. ?>
+								</span>
+								<span class="adminkit-local-avatar__overlay" aria-hidden="true">
+									<?php echo self::icon_camera(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, self-contained SVG markup. ?>
+									<span class="adminkit-local-avatar__overlay-text"><?php echo esc_html__( 'Change', 'adminkit' ); ?></span>
 								</span>
 							</button>
 							<p class="adminkit-local-avatar__actions">
 								<button type="button" class="button-link adminkit-local-avatar__remove" id="adminkit-local-avatar-remove"
-									<?php echo $has_image ? '' : 'hidden'; ?>>
+									<?php echo $has_upload ? '' : 'hidden'; ?>>
 									<?php echo esc_html__( 'Remove', 'adminkit' ); ?>
 								</button>
 							</p>
 						<?php else : ?>
-							<?php if ( $has_image ) : ?>
+							<?php if ( $has_preview ) : ?>
 								<span class="adminkit-local-avatar__media">
 									<img class="adminkit-local-avatar__preview"
 										src="<?php echo esc_url( $preview ); ?>"
@@ -336,7 +382,7 @@ class AdminKit_Local_Avatars {
 								</span>
 							<?php endif; ?>
 						<?php endif; ?>
-						<p class="description"><?php echo esc_html__( 'This image replaces the Gravatar everywhere this user appears. Leave empty to use Gravatar.', 'adminkit' ); ?></p>
+						<p class="description"><?php echo esc_html__( 'Upload an image to use as this user\'s avatar everywhere. Leave empty to use Gravatar — or a generated avatar when that option is on.', 'adminkit' ); ?></p>
 					</div>
 				</td>
 			</tr>
@@ -353,6 +399,18 @@ class AdminKit_Local_Avatars {
 	private static function icon_user() {
 		return '<svg viewBox="0 0 24 24" role="presentation" focusable="false" aria-hidden="true">'
 			. '<path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.69-8 6v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-3.31-3.58-6-8-6Z"/>'
+			. '</svg>';
+	}
+
+	/**
+	 * Inline camera glyph for the hover overlay. Static, self-contained SVG
+	 * (currentColor) — no user data, safe to echo as-is.
+	 *
+	 * @return string
+	 */
+	private static function icon_camera() {
+		return '<svg viewBox="0 0 24 24" role="presentation" focusable="false" aria-hidden="true">'
+			. '<path d="M9 3a1 1 0 0 0-.8.4L7 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3l-1.2-1.6A1 1 0 0 0 15 3H9Zm3 5.5A4.5 4.5 0 1 1 7.5 13 4.5 4.5 0 0 1 12 8.5Zm0 2A2.5 2.5 0 1 0 14.5 13 2.5 2.5 0 0 0 12 10.5Z"/>'
 			. '</svg>';
 	}
 
@@ -457,6 +515,12 @@ class AdminKit_Local_Avatars {
 			file_exists( $css_path ) ? (string) filemtime( $css_path ) : ADMINKIT_VERSION
 		);
 
+		// The profile being edited: the current user on profile.php, or the
+		// ?user_id target on user-edit.php. Used for the "Remove → revert to the
+		// effective avatar (Gravatar / generated)" preview handed to the JS.
+		$target_user = isset( $_GET['user_id'] ) ? absint( wp_unslash( $_GET['user_id'] ) ) : get_current_user_id(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- reading the page's own subject id; no state change.
+		$fallback    = self::fallback_preview_url( $target_user, 96 );
+
 		wp_enqueue_media();
 		// Depend on `media-editor` (the handle that defines `wp.media`, pulled in by
 		// wp_enqueue_media()) — not jquery — so this footer script is guaranteed to
@@ -473,6 +537,9 @@ class AdminKit_Local_Avatars {
 				// pick or a remove (the bubble always opens the media picker).
 				'ariaFill'  => __( 'Change the profile picture', 'adminkit' ),
 				'ariaEmpty' => __( 'Upload a profile picture', 'adminkit' ),
+				// Effective no-upload avatar (Gravatar / generated): Remove reverts
+				// the preview to this so the bubble is never left blank.
+				'fallbackUrl' => $fallback,
 			) ) . ';'
 		);
 	}

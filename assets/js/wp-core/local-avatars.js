@@ -27,26 +27,28 @@
 
 	var frame = null;
 
-	// Reflect the current state into the UI: toggle the root's filled/empty class
-	// (CSS shows the preview vs. the placeholder), show/hide Remove, and swap the
-	// button's accessible name to match.
+	// Reflect state into the UI. is-filled/is-empty track whether there's an
+	// UPLOAD (drives Remove + the aria label). The preview always shows the
+	// EFFECTIVE avatar (upload OR the Gravatar/generated fallback), so it's only
+	// swapped for the glyph when there's genuinely no image URL at all.
 	function sync() {
-		var hasImage = !!input.value && !!preview.getAttribute('src');
-		root.classList.toggle('is-filled', hasImage);
-		root.classList.toggle('is-empty', !hasImage);
+		var hasUpload  = !!input.value;
+		var hasPreview = !!preview.getAttribute('src');
+		root.classList.toggle('is-filled', hasUpload);
+		root.classList.toggle('is-empty', !hasUpload);
 
-		if (hasImage) {
+		if (hasPreview) {
 			preview.removeAttribute('hidden');
 			if (placeholder) { placeholder.setAttribute('hidden', ''); }
-			if (removeBtn) { removeBtn.removeAttribute('hidden'); }
-			if (L.ariaFill) { mediaBtn.setAttribute('aria-label', L.ariaFill); }
 		} else {
 			preview.setAttribute('hidden', '');
-			preview.removeAttribute('src');
 			if (placeholder) { placeholder.removeAttribute('hidden'); }
-			if (removeBtn) { removeBtn.setAttribute('hidden', ''); }
-			if (L.ariaEmpty) { mediaBtn.setAttribute('aria-label', L.ariaEmpty); }
 		}
+		if (removeBtn) {
+			if (hasUpload) { removeBtn.removeAttribute('hidden'); }
+			else { removeBtn.setAttribute('hidden', ''); }
+		}
+		mediaBtn.setAttribute('aria-label', hasUpload ? (L.ariaFill || '') : (L.ariaEmpty || ''));
 	}
 
 	function pickSize(sizes) {
@@ -82,10 +84,13 @@
 		removeBtn.addEventListener('click', function (e) {
 			e.preventDefault();
 			input.value = '';
-			preview.removeAttribute('src');
+			// Revert the preview to the effective no-upload avatar (Gravatar /
+			// generated) so the bubble is never left blank.
+			if (L.fallbackUrl) { preview.setAttribute('src', L.fallbackUrl); }
+			else { preview.removeAttribute('src'); }
 			sync();
-			// Move focus back to the now-empty target so keyboard users aren't
-			// stranded on the hidden Remove control.
+			// Move focus back to the target so keyboard users aren't stranded on
+			// the now-hidden Remove control.
 			mediaBtn.focus();
 		});
 	}

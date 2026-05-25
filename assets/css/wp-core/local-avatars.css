@@ -77,6 +77,39 @@ button.adminkit-local-avatar__media:hover {
 	fill: currentColor;
 }
 
+/* Hover / focus overlay — a scrim with a camera + "Change", shown only on the
+   editable <button>. Built from tokens (--ak-overlay scrim + --ak-on-accent
+   glyph), so the camera reads clearly in BOTH light and dark. Sits inset:0 over
+   the same circle and is hidden at rest, so it never causes the old overlap. */
+.adminkit-local-avatar__overlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 3px;
+	background: var(--ak-overlay, rgba(0, 0, 0, .5));
+	color: var(--ak-on-accent, #fff);
+	opacity: 0;
+	transition: opacity .15s ease;
+	pointer-events: none;
+}
+.adminkit-local-avatar__overlay svg {
+	width: 26px;
+	height: 26px;
+	fill: currentColor;
+}
+.adminkit-local-avatar__overlay-text {
+	font-size: var(--ak-text-xs, 12px);
+	font-weight: 600;
+	line-height: 1;
+}
+button.adminkit-local-avatar__media:hover .adminkit-local-avatar__overlay,
+button.adminkit-local-avatar__media:focus-visible .adminkit-local-avatar__overlay {
+	opacity: 1;
+}
+
 /* Actions row beneath the avatar. */
 .adminkit-local-avatar__actions {
 	display: flex;
