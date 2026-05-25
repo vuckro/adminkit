@@ -260,7 +260,7 @@ class AdminKit_Core_Branding {
 		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon.ab-icon';
 		return $sel . '{display:flex;align-items:center;justify-content:center;width:auto;height:32px;padding:0;margin-right:0}'
 			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:24px;height:24px;margin:0;top:0;'
-			. 'transform:translateY(-3px);'
+			. 'transform:translateY(-5px);'
 			. 'border-radius:var(--ak-radius-s,5px);'
 			. 'background:' . $favicon . ' center/cover no-repeat}'
 			. self::hide_site_name_glyph();
