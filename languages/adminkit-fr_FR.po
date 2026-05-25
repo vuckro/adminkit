@@ -878,3 +878,99 @@ msgstr "Sections du compte"
 #: inc/wp-core/class-profile-account.php:175
 msgid "This username cannot be changed."
 msgstr "Ce nom d’utilisateur ne peut pas être modifié."
+
+#: inc/class-settings-page.php
+msgid "Admin-bar polish"
+msgstr "Finitions de la barre d'admin"
+
+#: inc/class-settings-page.php
+msgid "Front and back admin bar, refined."
+msgstr "La barre d'admin, peaufinée à l'avant comme à l'arrière."
+
+#: inc/class-settings-page.php
+msgid "Finish the admin bar end to end — the same on the front end and back end, with tidy submenus, clear keyboard focus, and a clean responsive layout on mobile."
+msgstr "Finaliser la barre d'administration de bout en bout — identique côté site et côté admin, avec des sous-menus soignés, un focus clavier net et une mise en page responsive propre sur mobile."
+
+#: inc/class-settings-page.php
+msgid "Command palette"
+msgstr "Palette de commandes"
+
+#: inc/class-settings-page.php
+msgid "Jump anywhere with a keystroke."
+msgstr "Accédez partout en une frappe."
+
+#: inc/class-settings-page.php
+msgid "A ⌘K / Ctrl-K launcher to jump straight to any admin page, setting or post — no more hunting through menus."
+msgstr "Un lanceur ⌘K / Ctrl-K pour sauter directement vers n'importe quelle page, réglage ou article de l'admin — fini la chasse dans les menus."
+
+#: inc/class-settings-page.php
+msgid "Per-user theme preference"
+msgstr "Préférence de thème par utilisateur"
+
+#: inc/class-settings-page.php
+msgid "Each user picks their own mode."
+msgstr "Chaque utilisateur choisit son propre mode."
+
+#: inc/class-settings-page.php
+msgid "Let every user choose their own light/dark mode and accent, saved per account, so the admin feels personal without changing it for anyone else."
+msgstr "Permettre à chaque utilisateur de choisir son mode clair/sombre et son accent, enregistrés par compte, pour une admin personnelle sans impacter les autres."
+
+#: inc/class-settings-page.php
+msgid "Admin notices manager"
+msgstr "Gestionnaire de notifications admin"
+
+#: inc/class-settings-page.php
+msgid "Tame the notice clutter."
+msgstr "Domptez le fouillis des notifications."
+
+#: inc/class-settings-page.php
+msgid "Gather WordPress's scattered admin notices into one tidy, collapsible area so update nags and plugin messages stop shoving your content down the page."
+msgstr "Regrouper les notifications d'admin éparpillées de WordPress dans une zone unique et repliable, pour que les rappels de mise à jour et messages d'extensions cessent de repousser votre contenu vers le bas."
+
+#: inc/class-settings-page.php
+msgid "Native menu editor"
+msgstr "Éditeur de menu natif"
+
+#: inc/class-settings-page.php
+msgid "Reorder, rename and hide menu items."
+msgstr "Réordonner, renommer et masquer les entrées de menu."
+
+#: inc/class-settings-page.php
+msgid "A lightweight, native way to reorder, rename or hide admin-menu items per role — the essentials, without a separate plugin."
+msgstr "Une façon native et légère de réordonner, renommer ou masquer les entrées du menu d'admin par rôle — l'essentiel, sans extension dédiée."
+
+#: inc/class-settings-page.php
+msgid "Custom admin CSS"
+msgstr "CSS admin personnalisé"
+
+#: inc/class-settings-page.php
+msgid "Drop in your own admin tweaks."
+msgstr "Ajoutez vos propres retouches admin."
+
+#: inc/class-settings-page.php
+msgid "A small sanitised field for your own admin CSS on top of AdminKit's tokens — for the one-off tweak without a child plugin."
+msgstr "Un petit champ assaini pour votre propre CSS d'admin par-dessus les tokens d'AdminKit — pour la retouche ponctuelle sans extension enfant."
+
+#: inc/class-settings-page.php
+msgid "Density / compact mode"
+msgstr "Mode densité / compact"
+
+#: inc/class-settings-page.php
+msgid "Comfortable or compact spacing."
+msgstr "Espacement confortable ou compact."
+
+#: inc/class-settings-page.php
+msgid "An optional denser layout that tightens spacing across wp-admin for power users, while keeping the comfortable default."
+msgstr "Une mise en page plus dense optionnelle qui resserre les espacements dans wp-admin pour les utilisateurs avancés, tout en gardant le confort par défaut."
+
+#: inc/class-settings-page.php
+msgid "Typography controls"
+msgstr "Contrôles de typographie"
+
+#: inc/class-settings-page.php
+msgid "Choose the admin font and scale."
+msgstr "Choisissez la police et l'échelle de l'admin."
+
+#: inc/class-settings-page.php
+msgid "Pick the admin font family and base size from sensible presets so the whole admin matches your brand's type."
+msgstr "Choisir la police et la taille de base de l'admin parmi des préréglages soignés, pour que toute l'admin s'accorde à la typo de votre marque."

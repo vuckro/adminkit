@@ -874,3 +874,99 @@ msgstr ""
 #: inc/wp-core/class-profile-account.php:175
 msgid "This username cannot be changed."
 msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Admin-bar polish"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Front and back admin bar, refined."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Finish the admin bar end to end — the same on the front end and back end, with tidy submenus, clear keyboard focus, and a clean responsive layout on mobile."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Command palette"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Jump anywhere with a keystroke."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "A ⌘K / Ctrl-K launcher to jump straight to any admin page, setting or post — no more hunting through menus."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Per-user theme preference"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Each user picks their own mode."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Let every user choose their own light/dark mode and accent, saved per account, so the admin feels personal without changing it for anyone else."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Admin notices manager"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Tame the notice clutter."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Gather WordPress's scattered admin notices into one tidy, collapsible area so update nags and plugin messages stop shoving your content down the page."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Native menu editor"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Reorder, rename and hide menu items."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "A lightweight, native way to reorder, rename or hide admin-menu items per role — the essentials, without a separate plugin."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Custom admin CSS"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Drop in your own admin tweaks."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "A small sanitised field for your own admin CSS on top of AdminKit's tokens — for the one-off tweak without a child plugin."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Density / compact mode"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Comfortable or compact spacing."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "An optional denser layout that tightens spacing across wp-admin for power users, while keeping the comfortable default."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Typography controls"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Choose the admin font and scale."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Pick the admin font family and base size from sensible presets so the whole admin matches your brand's type."
+msgstr ""

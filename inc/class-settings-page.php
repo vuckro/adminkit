@@ -393,20 +393,15 @@ class AdminKit_Settings_Page {
 							'detail' => __( 'First-class adapters for widely-used plugins (SEO, form builders, commerce, LMS and more) so their admin screens inherit AdminKit\'s look and dark mode — the same treatment Bricks, WooCommerce and ACF already get.', 'adminkit' ),
 						),
 						array(
-							'label'  => __( 'More native screens styled', 'adminkit' ),
-							'desc'   => __( 'Taxonomies, custom post types and the rest.', 'adminkit' ),
-							'detail' => __( 'Extend AdminKit\'s per-screen polish to the pages still wearing default WordPress styling: the category and tag editors, custom-post-type lists, and the few remaining core screens — so the whole admin feels like one product.', 'adminkit' ),
-						),
-						array(
 							'label'  => __( 'Universal plugin compatibility', 'adminkit' ),
 							'desc'   => __( 'Any plugin looks right, even without an adapter.', 'adminkit' ),
 							'detail' => __( 'Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common form controls — so a plugin with no dedicated adapter still looks coherent in light and dark out of the box. The stronger this layer, the less per-plugin work is ever needed.', 'adminkit' ),
 						),
-					),
-				),
-				array(
-					'title' => __( 'Planned', 'adminkit' ),
-					'items' => array(
+						array(
+							'label'  => __( 'More native screens styled', 'adminkit' ),
+							'desc'   => __( 'Taxonomies, custom post types and the rest.', 'adminkit' ),
+							'detail' => __( 'Extend AdminKit\'s per-screen polish to the pages still wearing default WordPress styling: the category and tag editors, custom-post-type lists, and the few remaining core screens — so the whole admin feels like one product.', 'adminkit' ),
+						),
 						array(
 							'label'  => __( 'In-app palette editor', 'adminkit' ),
 							'desc'   => __( 'Pick accent, surface and text colours directly.', 'adminkit' ),
@@ -423,9 +418,14 @@ class AdminKit_Settings_Page {
 							'detail' => __( 'Inherit brand colours from more page builders and frameworks (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress), the same way the Bricks adapter works today.', 'adminkit' ),
 						),
 						array(
-							'label'  => __( 'Theme variants', 'adminkit' ),
-							'desc'   => __( 'Beyond light and dark — sepia, high-contrast.', 'adminkit' ),
-							'detail' => __( 'Ship additional admin themes on top of light and dark, including an accessibility-minded high-contrast variant.', 'adminkit' ),
+							'label'  => __( 'Accessibility checks', 'adminkit' ),
+							'desc'   => __( 'Warn when a colour fails contrast.', 'adminkit' ),
+							'detail' => __( 'Flag colour choices that fall below contrast and legibility thresholds, right where you pick them.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Import / export settings', 'adminkit' ),
+							'desc'   => __( 'Clone an AdminKit setup across sites.', 'adminkit' ),
+							'detail' => __( 'Save a whole AdminKit configuration to a file and import it on another site in one step — ideal for agencies.', 'adminkit' ),
 						),
 						array(
 							'label'  => __( 'Per-role visibility', 'adminkit' ),
@@ -433,9 +433,19 @@ class AdminKit_Settings_Page {
 							'detail' => __( 'Decide which user roles see the AdminKit skin and which may change its settings — handy for client sites.', 'adminkit' ),
 						),
 						array(
-							'label'  => __( 'Accessibility checks', 'adminkit' ),
-							'desc'   => __( 'Warn when a colour fails contrast.', 'adminkit' ),
-							'detail' => __( 'Flag colour choices that fall below contrast and legibility thresholds, right where you pick them.', 'adminkit' ),
+							'label'  => __( 'Admin-bar polish', 'adminkit' ),
+							'desc'   => __( 'Front and back admin bar, refined.', 'adminkit' ),
+							'detail' => __( 'Finish the admin bar end to end — the same on the front end and back end, with tidy submenus, clear keyboard focus, and a clean responsive layout on mobile.', 'adminkit' ),
+						),
+					),
+				),
+				array(
+					'title' => __( 'Planned', 'adminkit' ),
+					'items' => array(
+						array(
+							'label'  => __( 'Command palette', 'adminkit' ),
+							'desc'   => __( 'Jump anywhere with a keystroke.', 'adminkit' ),
+							'detail' => __( 'A ⌘K / Ctrl-K launcher to jump straight to any admin page, setting or post — no more hunting through menus.', 'adminkit' ),
 						),
 						array(
 							'label'  => __( 'Custom dashboard widgets', 'adminkit' ),
@@ -443,9 +453,44 @@ class AdminKit_Settings_Page {
 							'detail' => __( 'Swap the default dashboard for quick actions, site status and recent activity that are actually useful.', 'adminkit' ),
 						),
 						array(
-							'label'  => __( 'Import / export settings', 'adminkit' ),
-							'desc'   => __( 'Clone an AdminKit setup across sites.', 'adminkit' ),
-							'detail' => __( 'Save a whole AdminKit configuration to a file and import it on another site in one step — ideal for agencies.', 'adminkit' ),
+							'label'  => __( 'Theme variants', 'adminkit' ),
+							'desc'   => __( 'Beyond light and dark — sepia, high-contrast.', 'adminkit' ),
+							'detail' => __( 'Ship additional admin themes on top of light and dark, including an accessibility-minded high-contrast variant.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Per-user theme preference', 'adminkit' ),
+							'desc'   => __( 'Each user picks their own mode.', 'adminkit' ),
+							'detail' => __( 'Let every user choose their own light/dark mode and accent, saved per account, so the admin feels personal without changing it for anyone else.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Admin notices manager', 'adminkit' ),
+							'desc'   => __( 'Tame the notice clutter.', 'adminkit' ),
+							'detail' => __( 'Gather WordPress\'s scattered admin notices into one tidy, collapsible area so update nags and plugin messages stop shoving your content down the page.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Native menu editor', 'adminkit' ),
+							'desc'   => __( 'Reorder, rename and hide menu items.', 'adminkit' ),
+							'detail' => __( 'A lightweight, native way to reorder, rename or hide admin-menu items per role — the essentials, without a separate plugin.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'White-label & admin footer', 'adminkit' ),
+							'desc'   => __( 'Hide WordPress branding, add an agency credit.', 'adminkit' ),
+							'detail' => __( 'Remove WordPress branding across the admin and add your own footer credit and version line.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Custom admin CSS', 'adminkit' ),
+							'desc'   => __( 'Drop in your own admin tweaks.', 'adminkit' ),
+							'detail' => __( 'A small sanitised field for your own admin CSS on top of AdminKit\'s tokens — for the one-off tweak without a child plugin.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Density / compact mode', 'adminkit' ),
+							'desc'   => __( 'Comfortable or compact spacing.', 'adminkit' ),
+							'detail' => __( 'An optional denser layout that tightens spacing across wp-admin for power users, while keeping the comfortable default.', 'adminkit' ),
+						),
+						array(
+							'label'  => __( 'Typography controls', 'adminkit' ),
+							'desc'   => __( 'Choose the admin font and scale.', 'adminkit' ),
+							'detail' => __( 'Pick the admin font family and base size from sensible presets so the whole admin matches your brand\'s type.', 'adminkit' ),
 						),
 						array(
 							'label'  => __( 'Bricks dynamic logo tag', 'adminkit' ),
@@ -456,11 +501,6 @@ class AdminKit_Settings_Page {
 							'label'  => __( 'WordPress Playground demo', 'adminkit' ),
 							'desc'   => __( 'Try AdminKit live in the browser.', 'adminkit' ),
 							'detail' => __( 'A one-click WordPress Playground link so anyone can try AdminKit in the browser with no install — great for the README and the .org listing.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'White-label & admin footer', 'adminkit' ),
-							'desc'   => __( 'Hide WordPress branding, add an agency credit.', 'adminkit' ),
-							'detail' => __( 'Remove WordPress branding across the admin and add your own footer credit and version line.', 'adminkit' ),
 						),
 					),
 				),

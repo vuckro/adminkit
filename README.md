@@ -226,9 +226,9 @@ That's it — the boot orchestrator picks the folder up automatically on `after_
 This mirrors the **in-app roadmap** (Dashboard tab) — the single source lives in
 `AdminKit_Settings_Page::dashboard()`. Keep the two in sync (see [`CLAUDE.md`](CLAUDE.md)).
 
-- **In progress** — _nothing in flight right now_ (just shipped: editor canvas theming; and builder & integration polish — Bricks preloader / scrollbars / code editor + the Admin Menu Editor popup).
-- **Next** — more native plugin support (tuned adapters for popular plugins); more native screens styled (taxonomies, custom post types, the rest); universal plugin compatibility (any plugin themed without an adapter).
-- **Planned** — in-app palette editor; colour sync from the active provider/theme; more provider adapters (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress); theme variants (sepia, high-contrast); per-role visibility; accessibility / contrast checks; custom dashboard widgets; import / export settings; Bricks dynamic logo tag; WordPress Playground demo; white-label & admin footer.
+- **In progress** — _nothing in flight right now._
+- **Next** — more native plugin support; universal plugin compatibility; more native screens styled; in-app palette editor; colour sync; more provider adapters; accessibility / contrast checks; import / export settings; per-role visibility; admin-bar polish.
+- **Planned** — command palette (⌘K); custom dashboard widgets; theme variants; per-user theme preference; admin notices manager; native menu editor; white-label & admin footer; custom admin CSS; density / compact mode; typography controls; Bricks dynamic logo tag; WordPress Playground demo.
 
 ---
 
