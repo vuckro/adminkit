@@ -260,6 +260,7 @@ class AdminKit_Settings_Page {
 				'dark'  => (string) AdminKit_Settings::get( 'logo_dark' ),
 			),
 			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
+			'hasSiteIcon'  => '' !== (string) get_site_icon_url(),
 			'i18n'         => array(
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
 				'design'            => __( 'Tokens', 'adminkit' ),
@@ -286,6 +287,7 @@ class AdminKit_Settings_Page {
 				'wpLogoFavicon'     => __( 'Replace with site icon', 'adminkit' ),
 				'wpLogoHide'        => __( 'Hide', 'adminkit' ),
 				'wpLogoDefault'     => __( 'Keep WordPress logo', 'adminkit' ),
+				'wpLogoNoIcon'      => __( 'No Site Icon set — add one under Settings → General to use this.', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),

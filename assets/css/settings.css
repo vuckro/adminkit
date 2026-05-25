@@ -440,6 +440,47 @@
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 }
+.adminkit-app .ak-field__hint { margin: 6px 0 0; font-size: var(--ak-text-s); color: var(--ak-text-muted); }
+
+/* Inline field (label left, control right) + segmented control ----------- */
+.adminkit-app .ak-field--inline {
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 16px;
+}
+.adminkit-app .ak-field--inline > .ak-field__label { flex: none; }
+.adminkit-app .ak-field--inline > .ak-field__hint { flex-basis: 100%; margin-top: 0; }
+.adminkit-app .ak-seg {
+	display: inline-flex;
+	margin-left: auto;            /* push the options to the right */
+	gap: 2px;
+	padding: 2px;
+	background: var(--ak-input-bg);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+.adminkit-app .ak-seg__opt {
+	appearance: none;
+	border: 0;
+	margin: 0;
+	font: inherit;
+	font-size: var(--ak-text-s);
+	line-height: 1.4;
+	white-space: nowrap;
+	cursor: pointer;
+	color: var(--ak-text-muted);
+	background: transparent;
+	padding: 5px 11px;
+	border-radius: calc(var(--ak-radius-s) - 2px);
+}
+.adminkit-app .ak-seg__opt:hover { color: var(--ak-heading); background: var(--ak-hover-bg, var(--ak-elevated)); }
+.adminkit-app .ak-seg__opt:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
+.adminkit-app .ak-seg__opt.is-active,
+.adminkit-app .ak-seg__opt.is-active:hover {
+	color: var(--ak-on-accent);
+	background: var(--ak-primary);
+}
 
 /* Plugin row chips (type / inactive) ------------------------------------- */
 .adminkit-app .ak-tags { display: flex; gap: 6px; margin-top: 5px; }
