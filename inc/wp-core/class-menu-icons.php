@@ -111,14 +111,16 @@ class AdminKit_Core_Menu_Icons {
 			if ( '' === $svg || ! is_string( $svg ) ) {
 				continue;
 			}
-			// Drop the glyph; a centred 20px ::before carries the mask, positioned
-			// like WP's dashicon (margin:7px auto inside the 36px icon box). Explicit
-			// width + auto margins = reliably centred (a block with no width collapsed
-			// and jammed the icon left).
-			$css .= '#adminmenu .wp-menu-image.' . $class . '::before{'
-				. 'content:"";display:block;width:20px;height:20px;margin:7px auto;'
-				. self::mask( $svg )
-				. '}';
+			// Set the icon box EXPLICITLY (don't depend on inherited WP rules that
+			// can vary), then centre an inline-block masked ::before in it — reliably
+			// on both axes: text-align:center handles horizontal (the mechanism WP's
+			// own glyph uses), line-height + vertical-align:middle the vertical.
+			// (margin:auto centring jammed icons left when the box wasn't a definite
+			// width; this no longer relies on that.)
+			$sel  = '#adminmenu .wp-menu-image.' . $class;
+			$css .= $sel . '{box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
+			$css .= $sel . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
+				. 'vertical-align:middle;' . self::mask( $svg ) . '}';
 		}
 		return $css;
 	}
