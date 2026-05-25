@@ -21,8 +21,14 @@
  *                        #fff / #1e1e1e / #ddd / #f0f0f0 (panels, document bar,
  *                        popovers, modals, inserter, list view, form controls,
  *                        block toolbar) so the whole chrome flips with the toggle.
- *                        The canvas (.editor-styles-wrapper) is left alone.
+ *                        Always on; the canvas (.editor-styles-wrapper) is left alone here.
+ *   canvas.css         — OPT-IN theming of the iframed canvas (content + native blocks),
+ *                        gated by the "Gutenberg" feature (editor_content_theme, OFF by
+ *                        default). Injected INTO the editor iframe by canvas-theme.js.
  *   js/theme-toggle.js — sun/moon toggle injected into the editor header
+ *   js/canvas-theme.js — injects the token CSS + canvas.css into the editor iframe and
+ *                        mirrors data-adminkit-theme onto the iframe <html> (so the dark
+ *                        token block flips the canvas). Gated by the "Gutenberg" feature.
  *
  * @package AdminKit
  */
@@ -75,6 +81,7 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 	 */
 	protected static function boot() {
 		add_action( 'enqueue_block_editor_assets', array( __CLASS__, 'enqueue_theme_toggle' ) );
+		add_action( 'enqueue_block_editor_assets', array( __CLASS__, 'enqueue_canvas_theme' ) );
 	}
 
 	/**
@@ -102,5 +109,58 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 				'label' => __( 'Toggle light / dark mode', 'adminkit' ),
 			) ) . ';'
 		);
+	}
+
+	/**
+	 * OPT-IN: theme the editor's iframed canvas (content + native blocks) in light
+	 * + dark. Gated by the "Gutenberg" feature (editor_content_theme, OFF by
+	 * default) so a client's page layout is never altered unless asked.
+	 *
+	 * The block-editor canvas is a separate <iframe> document that neither the
+	 * editor-chrome CSS nor the page's data-adminkit-theme attribute reach. So we
+	 * hand canvas-theme.js the (mtime-stamped) URLs of the token files + canvas.css;
+	 * it injects them as <link>s into the iframe <head> and mirrors the theme
+	 * attribute onto the iframe <html>, so the same --ak-* dark block flips the
+	 * canvas. Raw stylesheets go straight in — no block_editor_settings_all
+	 * transform to fight (which can rewrite :root token blocks).
+	 *
+	 * @return void
+	 */
+	public static function enqueue_canvas_theme() {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'editor' ) ) {
+			return;
+		}
+		if ( ! AdminKit_Settings::get( 'editor_content_theme' ) ) {
+			return; // "Gutenberg" canvas theming off — leave the canvas WP-default.
+		}
+		$styles = array_values( array_filter( array(
+			self::asset_url( AdminKit_Assets::WAASKIT_SRC ), // token primitives (baseline)
+			self::asset_url( AdminKit_Assets::TOKENS_SRC ),  // --ak-* layer (light + dark blocks)
+			self::asset_url( self::BASE . 'canvas.css' ),    // native-block mapping
+		) ) );
+		AdminKit_Assets::enqueue_script(
+			'adminkit-gutenberg-canvas-theme',
+			'inc/integrations/plugins/gutenberg/js/canvas-theme.js',
+			array(),
+			'window.AdminKitCanvas=' . wp_json_encode( array(
+				'attr'   => AdminKit_Theme_Toggle::attribute(),
+				'styles' => $styles,
+			) ) . ';'
+		);
+	}
+
+	/**
+	 * Plugin-root-relative asset path → absolute URL with an mtime cache-bust (so
+	 * canvas edits skip the iframe cache). Empty string when the file is missing.
+	 *
+	 * @param string $src Path relative to ADMINKIT_PATH.
+	 * @return string
+	 */
+	private static function asset_url( $src ) {
+		$path = ADMINKIT_PATH . $src;
+		if ( ! file_exists( $path ) ) {
+			return '';
+		}
+		return ADMINKIT_URL . $src . '?ver=' . filemtime( $path );
 	}
 }

@@ -1,0 +1,76 @@
+/* Gutenberg block-editor CANVAS — native block content, light + dark.
+   OPT-IN: injected INTO the editor iframe (after waaskit-tokens.css + tokens.css)
+   by js/canvas-theme.js, only when the "Gutenberg" feature (editor_content_theme)
+   is on. The iframe <html> carries data-adminkit-theme, so the --ak-* dark block
+   in tokens.css flips everything here — this file is mode-agnostic and only READS
+   --ak-* (never defines them; never raw colours).
+
+   Respects user-set block colours: defaults are scoped :where(...) and excluded
+   on .has-text-color / .has-background (and inline styles win on their own), so a
+   block the user coloured keeps its colours — with no forced overrides (the
+   adapter-audit guardrail). This file loads LAST inside the iframe, so it wins
+   over theme defaults on equal specificity on its own. */
+
+/* ── Canvas surface + base text ─────────────────────────────────────────── */
+.editor-styles-wrapper {
+	background-color: var(--ak-bg);
+	color: var(--ak-text);
+}
+/* Native form controls (date pickers, selects in blocks) follow the mode. */
+:root[data-adminkit-theme="dark"] .editor-styles-wrapper {
+	color-scheme: dark;
+}
+
+/* ── Headings ───────────────────────────────────────────────────────────── */
+.editor-styles-wrapper :where( h1, h2, h3, h4, h5, h6 ):not( .has-text-color ) {
+	color: var(--ak-heading);
+}
+
+/* ── Links — a readable token, never the brand accent (poor as body link) ─── */
+.editor-styles-wrapper :where( a ):not( .has-text-color ) {
+	color: var(--ak-info);
+}
+
+/* ── Captions / muted copy ──────────────────────────────────────────────── */
+.editor-styles-wrapper :where( figcaption, .wp-element-caption ):not( .has-text-color ) {
+	color: var(--ak-text-muted);
+}
+
+/* ── Code + preformatted ────────────────────────────────────────────────── */
+.editor-styles-wrapper :where( code, kbd, samp, pre, .wp-block-code ):not( .has-background ) {
+	background-color: var(--ak-elevated);
+}
+.editor-styles-wrapper :where( code, kbd, samp, pre, .wp-block-code ):not( .has-text-color ) {
+	color: var(--ak-text);
+}
+
+/* ── Quote + pullquote ──────────────────────────────────────────────────── */
+.editor-styles-wrapper :where( blockquote, .wp-block-quote, .wp-block-pullquote ) {
+	border-color: var(--ak-border);
+}
+.editor-styles-wrapper :where( .wp-block-quote cite, .wp-block-pullquote cite, blockquote cite ):not( .has-text-color ) {
+	color: var(--ak-text-muted);
+}
+
+/* ── Tables — token borders + heading-toned header ──────────────────────── */
+.editor-styles-wrapper :where( .wp-block-table ) td,
+.editor-styles-wrapper :where( .wp-block-table ) th {
+	border-color: var(--ak-border);
+}
+.editor-styles-wrapper :where( .wp-block-table ) th:not( .has-text-color ) {
+	color: var(--ak-heading);
+}
+
+/* ── Separator / horizontal rule ────────────────────────────────────────── */
+.editor-styles-wrapper :where( hr, .wp-block-separator ):not( .has-background ) {
+	border-color: var(--ak-border);
+	color: var(--ak-border);
+}
+
+/* ── Default button (CTA) — brand fill; user-coloured buttons keep theirs ─── */
+.editor-styles-wrapper :where( .wp-block-button__link ):not( .has-background ) {
+	background-color: var(--ak-primary);
+}
+.editor-styles-wrapper :where( .wp-block-button__link ):not( .has-text-color ) {
+	color: var(--ak-on-accent);
+}
