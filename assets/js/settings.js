@@ -32,7 +32,8 @@
 			light: ( D.logos && D.logos.light ) || '',
 			dark:  ( D.logos && D.logos.dark ) || ''
 		},
-		wpLogo: D.wpLogo || 'favicon'   // admin-bar WP logo: logo | favicon | hide
+		wpLogo: D.wpLogo || 'favicon',  // admin-bar / site-name mark: logo | favicon | hide
+		loginLogo: D.loginLogo || ''    // login screen mark: '' inherit | logo | favicon
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
@@ -465,51 +466,62 @@
 				] )
 			] );
 		}
-		// WordPress admin-bar logo mode — a segmented control (the three options
-		// laid out cleanly, no dropdown). Right-aligned next to the field label.
-		var wpBtns = [];
-		var wpSeg = el( 'div', { 'class': 'ak-seg', role: 'radiogroup', 'aria-labelledby': 'ak-wp-logo-label' } );
-		[
+		// Per-location brand-mark controls — one segmented control each for the admin
+		// bar and the login screen (favicon = square, logo = rectangle); the login one
+		// adds "Inherit" (= follow the admin bar). Bricks reads brand_logo directly, so
+		// it has no control. Reusable builder so both stay visually identical.
+		function logoSeg( stateKey, labelId, label, opts ) {
+			var btns = [];
+			var seg = el( 'div', { 'class': 'ak-seg', role: 'radiogroup', 'aria-labelledby': labelId } );
+			opts.forEach( function ( o ) {
+				var active = state[ stateKey ] === o.v;
+				var b = el( 'button', {
+					type: 'button',
+					'class': 'ak-seg__opt' + ( active ? ' is-active' : '' ),
+					role: 'radio', 'aria-checked': active ? 'true' : 'false',
+					title: o.label, text: o.label
+				} );
+				b._v = o.v;
+				b.addEventListener( 'click', function () {
+					if ( state[ stateKey ] === o.v ) { return; }
+					state[ stateKey ] = o.v;
+					btns.forEach( function ( x ) {
+						var on = x._v === o.v;
+						x.classList.toggle( 'is-active', on );
+						x.setAttribute( 'aria-checked', on ? 'true' : 'false' );
+					} );
+					markDirty();
+				} );
+				btns.push( b );
+				seg.appendChild( b );
+			} );
+			return el( 'div', { 'class': 'ak-field ak-field--inline' }, [
+				el( 'label', { 'class': 'ak-field__label', id: labelId, text: label } ),
+				seg
+			] );
+		}
+
+		var wpField = logoSeg( 'wpLogo', 'ak-wp-logo-label', I.wpLogoLabel || 'Admin bar', [
 			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
 			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' },
 			{ v: 'hide',    label: I.wpLogoHide || 'Hide' }
-		].forEach( function ( o ) {
-			var active = state.wpLogo === o.v;
-			var b = el( 'button', {
-				type: 'button',
-				'class': 'ak-seg__opt' + ( active ? ' is-active' : '' ),
-				role: 'radio', 'aria-checked': active ? 'true' : 'false',
-				title: o.label, text: o.label
-			} );
-			b._v = o.v;
-			b.addEventListener( 'click', function () {
-				if ( state.wpLogo === o.v ) { return; }
-				state.wpLogo = o.v;
-				wpBtns.forEach( function ( x ) {
-					var on = x._v === o.v;
-					x.classList.toggle( 'is-active', on );
-					x.setAttribute( 'aria-checked', on ? 'true' : 'false' );
-				} );
-				markDirty();
-			} );
-			wpBtns.push( b );
-			wpSeg.appendChild( b );
-		} );
-		var wpField = el( 'div', { 'class': 'ak-field ak-field--inline' }, [
-			el( 'label', { 'class': 'ak-field__label', id: 'ak-wp-logo-label', text: I.wpLogoLabel || 'WordPress logo' } ),
-			wpSeg
 		] );
-		// When no Site Icon is set, the "Replace with site icon" option can't show
-		// anything — tell the user where to set one.
+		// When no Site Icon is set, the favicon option can't show anything — note it.
 		if ( ! D.hasSiteIcon && I.wpLogoNoIcon ) {
 			wpField.appendChild( el( 'p', { 'class': 'ak-field__hint', text: I.wpLogoNoIcon } ) );
 		}
+		var loginField = logoSeg( 'loginLogo', 'ak-login-logo-label', I.loginLogoLabel || 'Login screen', [
+			{ v: '',        label: I.wpLogoInherit || 'Inherit' },
+			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
+			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' }
+		] );
 
 		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
 			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
 			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
 			el( 'div', { 'class': 'ak-rows' }, [
 				wpField,
+				loginField,
 				logoField( 'light', I.logoLight, I.logoLightMode ),
 				logoField( 'dark', I.logoDark, I.logoDarkMode )
 			] )
@@ -687,9 +699,10 @@
 		Object.keys( state.integrations ).forEach( function ( slug ) {
 			v[ 'integration_' + slug + '_enabled' ] = !! state.integrations[ slug ];
 		} );
-		v.logo_light = state.logos.light;
-		v.logo_dark  = state.logos.dark;
-		v.wp_logo    = state.wpLogo;
+		v.logo_light  = state.logos.light;
+		v.logo_dark   = state.logos.dark;
+		v.wp_logo     = state.wpLogo;
+		v.login_logo  = state.loginLogo;
 		return v;
 	}
 

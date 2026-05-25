@@ -81,6 +81,19 @@ class AdminKit_Settings {
 				return in_array( $v, array( 'logo', 'favicon', 'hide' ), true ) ? $v : 'favicon';
 			},
 		) );
+
+		// Login-screen mark — its OWN choice, independent of the admin bar: `logo`
+		// (rectangular wordmark) / `favicon` (square site icon) / `hide`, or '' =
+		// inherit (follow wp_logo). Read by AdminKit_Core_Login::login_mode(). Default
+		// '' so the login keeps following the admin-bar choice until set explicitly.
+		self::register( 'login_logo', array(
+			'type'     => 'select',
+			'group'    => 'branding',
+			'default'  => '',
+			'sanitize' => static function ( $v ) {
+				return in_array( $v, array( '', 'logo', 'favicon', 'hide' ), true ) ? $v : '';
+			},
+		) );
 	}
 
 	/**

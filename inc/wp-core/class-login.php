@@ -120,7 +120,7 @@ class AdminKit_Core_Login {
 	 * @return string '' when no brand <img> applies.
 	 */
 	private static function brand_logo_img( $alt ) {
-		if ( 'logo' !== AdminKit_Settings::get( 'wp_logo' ) ) {
+		if ( 'logo' !== self::login_mode() ) {
 			return '';
 		}
 		$light = AdminKit_Settings::brand_logo( 'light' );
@@ -161,14 +161,26 @@ class AdminKit_Core_Login {
 	}
 
 	/**
+	 * The effective login-screen mark mode — its OWN `login_logo` setting when set,
+	 * otherwise inherit the admin-bar `wp_logo` choice. So the login can show a
+	 * favicon (square) while the bar shows the logo (rectangle), or vice versa.
+	 *
+	 * @return string 'logo' | 'favicon' | 'hide'
+	 */
+	private static function login_mode() {
+		$mode = AdminKit_Settings::get( 'login_logo' );
+		return ( '' !== $mode ) ? $mode : AdminKit_Settings::get( 'wp_logo' );
+	}
+
+	/**
 	 * Which mark the login screen will show: 'logo' (a configured brand wordmark,
-	 * only when wp_logo is "logo"), else 'favicon' (the site icon), else '' (none).
-	 * Mirrors the resolution order in print_login_logo_style().
+	 * when the effective mode is "logo"), else 'favicon' (the site icon), else ''
+	 * (none). Mirrors the resolution order in print_login_logo_style().
 	 *
 	 * @return string 'logo' | 'favicon' | ''
 	 */
 	private static function login_mark_type() {
-		if ( 'logo' === AdminKit_Settings::get( 'wp_logo' ) ) {
+		if ( 'logo' === self::login_mode() ) {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 			if ( '' === $logo ) {
 				$logo = AdminKit_Settings::brand_logo( 'dark' );
