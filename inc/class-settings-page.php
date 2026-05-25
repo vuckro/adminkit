@@ -281,7 +281,7 @@ class AdminKit_Settings_Page {
 				'plugins'           => __( 'Plugins', 'adminkit' ),
 				'pluginsIntro'      => __( 'Turn AdminKit\'s styling on or off per supported plugin. Dimmed rows aren\'t active on this site.', 'adminkit' ),
 				'inactive'          => __( 'Not active', 'adminkit' ),
-				'typeTheme'         => __( 'Theme', 'adminkit' ),
+				'themesLabel'       => __( 'Themes', 'adminkit' ),
 				'wpLogoLabel'       => __( 'WordPress logo (admin bar)', 'adminkit' ),
 				'wpLogoFavicon'     => __( 'Replace with site icon', 'adminkit' ),
 				'wpLogoHide'        => __( 'Hide', 'adminkit' ),

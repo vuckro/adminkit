@@ -473,33 +473,46 @@
 		var list = D.integrations || [];
 		if ( ! list.length ) { return p; }
 
-		var rows = el( 'div', { 'class': 'ak-rows' } );
-		list.forEach( function ( i ) {
+		function pluginRow( i ) {
 			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
-			input.checked = !! state.integrations[ i.slug ];
+			// Inactive host → the adapter can't run, so show the toggle OFF + lock it.
+			// The stored value is left untouched, so it returns when the host is back.
+			input.checked  = i.active ? !! state.integrations[ i.slug ] : false;
 			input.disabled = ! i.active;
 			input.addEventListener( 'change', function () {
 				state.integrations[ i.slug ] = input.checked;
 				markDirty();
 			} );
-
-			var tags = el( 'div', { 'class': 'ak-tags' } );
-			if ( i.type === 'theme' ) { tags.appendChild( el( 'span', { 'class': 'ak-pill', text: I.typeTheme } ) ); }
-			if ( ! i.active ) { tags.appendChild( el( 'span', { 'class': 'ak-pill ak-pill--off', text: I.inactive } ) ); }
-
-			rows.appendChild( el( 'div', { 'class': 'ak-row' + ( i.active ? '' : ' is-disabled' ) }, [
-				el( 'div', { 'class': 'ak-row__main' }, [
-					el( 'span', { 'class': 'ak-row__label', text: i.label } ),
-					tags.childNodes.length ? tags : null
-				] ),
+			var main = [ el( 'span', { 'class': 'ak-row__label', text: i.label } ) ];
+			if ( ! i.active ) {
+				main.push( el( 'div', { 'class': 'ak-tags' }, [
+					el( 'span', { 'class': 'ak-pill ak-pill--off', text: I.inactive } )
+				] ) );
+			}
+			return el( 'div', { 'class': 'ak-row' + ( i.active ? '' : ' is-disabled' ) }, [
+				el( 'div', { 'class': 'ak-row__main' }, main ),
 				el( 'label', { 'class': 'ak-switch' }, [
 					input,
 					el( 'span', { 'class': 'ak-switch__track' } ),
 					el( 'span', { 'class': 'ak-switch__knob' } )
 				] )
+			] );
+		}
+
+		// Themes (e.g. Bricks) on top, then plugins — each in its own section.
+		[
+			{ type: 'theme',  label: I.themesLabel || 'Themes' },
+			{ type: 'plugin', label: I.plugins || 'Plugins' }
+		].forEach( function ( sec ) {
+			var items = list.filter( function ( i ) { return i.type === sec.type; } );
+			if ( ! items.length ) { return; }
+			var rows = el( 'div', { 'class': 'ak-rows' } );
+			items.forEach( function ( i ) { rows.appendChild( pluginRow( i ) ); } );
+			p.appendChild( el( 'div', { 'class': 'ak-group' }, [
+				el( 'h2', { 'class': 'ak-group__title', text: sec.label } ),
+				rows
 			] ) );
 		} );
-		p.appendChild( el( 'div', { 'class': 'ak-group' }, [ rows ] ) );
 		return p;
 	}
 
