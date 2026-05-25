@@ -205,8 +205,11 @@ body.adminkit #adminmenu .opensub .wp-submenu {
 
 /* Fly-out submenu (hovering a non-current item, or any submenu when the sidebar is
    folded): detach it into a FLOATING popup — a small gap off the rail, rounded
-   corners and an elevated shadow. The inline current submenu (above) stays flush. */
-body.adminkit #adminmenu li.opensub > .wp-submenu,
+   corners and an elevated shadow. The inline current submenu stays flush — so we
+   EXCLUDE `.wp-has-current-submenu`: WP also adds `.opensub` to the current item
+   when you hover it, and without this exclusion its inline submenu would jump right
+   by the 6px gap (the reported shift). Folded/auto-fold submenus are always pop-outs. */
+body.adminkit #adminmenu li.opensub:not( .wp-has-current-submenu ) > .wp-submenu,
 body.adminkit.folded #adminmenu .wp-submenu,
 body.adminkit.auto-fold #adminmenu .wp-submenu {
 	border: 1px solid var(--ak-border);
