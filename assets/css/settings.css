@@ -169,7 +169,10 @@
 	border-top: 1px solid var(--ak-border);
 }
 .adminkit-app .ak-row:first-child { border-top: 0; }
-.adminkit-app .ak-row:hover { background: var(--ak-hover-bg); }
+/* Row hover lifts to --ak-elevated (the design's hover-down surface, same token
+   as the active tab) — calmer than the translucent --ak-hover-bg, which
+   over-brightened rows in dark (an 11% white tint on an 11% surface). */
+.adminkit-app .ak-row:hover { background: var(--ak-elevated); }
 /* Nested feature (e.g. mShots under Post previews): indented; muted + locked
    when its parent is off. */
 .adminkit-app .ak-row--child { padding-left: 34px; }
