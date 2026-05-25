@@ -334,41 +334,6 @@ body[data-builder-mode] .cm-s-one-dark .CodeMirror-gutters {
 	border-right: 1px solid var(--border);
 }
 
-/* ---- Dark scrollbars for the builder CHROME (panels: structure, settings, …) ----
-   The builder UI is dark, but WebKit/Firefox paint native LIGHT scrollbars on the
-   panels. Give the TRACK a solid dark fill (--background, the builder bg) — a
-   transparent track let the panels' light areas show through — with a neutral
-   thumb. Same treatment as the Gutenberg canvas scrollbar. */
-body[data-builder-mode] { scrollbar-width: thin; scrollbar-color: var(--neutral-t-3) var(--background); }
-body[data-builder-mode] ::-webkit-scrollbar { width: 12px; height: 12px; background: var(--background); }
-body[data-builder-mode] ::-webkit-scrollbar-track { background: var(--background); }
-body[data-builder-mode] ::-webkit-scrollbar-thumb {
-	background: var(--neutral-t-3);
-	border-radius: 8px;
-	border: 3px solid transparent;
-	background-clip: padding-box;
-}
-body[data-builder-mode] ::-webkit-scrollbar-thumb:hover { background: var(--neutral-t-4); }
-body[data-builder-mode] ::-webkit-scrollbar-corner { background: var(--background); }
-
-/* dev3: structure-panel scrollbar
-   The LEFT Structure panel scrolls on #bricks-structure ITSELF (it carries
-   `overflow-y:scroll`; .panel-content / .bricks-structure-list set no overflow).
-   Bricks styles that scrollbar with ID-level rules — `#bricks-structure` +
-   `#bricks-structure::-webkit-scrollbar` (specificity 1,0,1) — which out-rank the
-   universal `body[data-builder-mode] ::-webkit-scrollbar` rules above (0,1,1),
-   so the panel kept a native WHITE track in the dark builder. Re-theme it with
-   an ID-bearing selector: `body[data-builder-mode] #bricks-structure` is (1,1,1)
-   and beats Bricks's (1,0,1) on specificity — no !important needed. Same dark
-   provider neutrals + rounding as the chrome scrollbar block above. */
-body[data-builder-mode] #bricks-structure { scrollbar-width: thin; scrollbar-color: var(--neutral-t-3) var(--background); }
-body[data-builder-mode] #bricks-structure::-webkit-scrollbar { width: 12px; height: 12px; background: var(--background); }
-body[data-builder-mode] #bricks-structure::-webkit-scrollbar-track { background: var(--background); }
-body[data-builder-mode] #bricks-structure::-webkit-scrollbar-thumb {
-	background: var(--neutral-t-3);
-	border-radius: 8px;
-	border: 3px solid transparent;
-	background-clip: padding-box;
-}
-body[data-builder-mode] #bricks-structure::-webkit-scrollbar-thumb:hover { background: var(--neutral-t-4); }
-body[data-builder-mode] #bricks-structure::-webkit-scrollbar-corner { background: var(--background); }
+/* Builder scrollbars moved to builder-essentials.css — they now load ALWAYS (not
+   only under this opt-in restyle), so the dark builder never shows light scrollbars
+   even with the restyle off. */

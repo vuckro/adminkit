@@ -376,17 +376,20 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 
-		// 1) Logo branding — ALWAYS (independent of the restyle toggle). Carried on an
-		//    inline-only style handle (no file, src=false) so it loads even when the
-		//    chrome sheet below doesn't. Empty string when no brand logo is set.
-		$logo_css = self::builder_logo_css();
-		if ( '' !== $logo_css ) {
-			wp_register_style( 'adminkit-bricks-logo', false );
-			wp_enqueue_style( 'adminkit-bricks-logo' );
-			wp_add_inline_style( 'adminkit-bricks-logo', $logo_css );
+		// 1) Essentials — ALWAYS, independent of the restyle toggle: dark scrollbars +
+		//    the brand logo (toolbar favicon + preloader). Carried on a REAL stylesheet
+		//    (builder-essentials.css) — a real file reliably prints in the builder,
+		//    whereas a src=false inline-only handle may be dropped. The dynamic logo
+		//    CSS attaches to it as inline. The WaasKit provider vars these read are
+		//    present in the builder via Bricks's style-manager, so it works toggle-off.
+		if ( self::enqueue_style_file( 'adminkit-bricks-essentials', $base . 'builder-essentials.css' ) ) {
+			$logo_css = self::builder_logo_css();
+			if ( '' !== $logo_css ) {
+				wp_add_inline_style( 'adminkit-bricks-essentials', $logo_css );
+			}
 		}
 
-		// 2) Chrome restyle — opt-in.
+		// 2) Chrome restyle — opt-in (panels, code editor, variable remaps).
 		if ( $restyle ) {
 			self::enqueue_builder_fallback_tokens();
 			self::enqueue_style_file( 'adminkit-bricks-builder', $base . 'builder.css' );
@@ -484,24 +487,27 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
 		if ( '' !== $logo ) {
-			// Brand the preloader the way Bricks actually builds it: its loader hides
-			// its own logo/title and paints the mark on `.bricks-loading-inner::before`,
-			// centred by the inner's `display:grid;place-items:center`. We do the same —
-			// THAT is what truly centres the logo (styling .bricks-logo-animated drifted
-			// it right, because that element isn't the centred one). The mark sits in a
-			// softly-rounded chip (faint fixed bg + padding) so the border-radius reads
-			// even for a transparent/contain logo, never cropped. Fixed colours: the
-			// splash paints before tokens load (same reason #bricks-preloader is #171717).
-			// id+class beats Bricks's class-only rules — no !important.
-			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
+			// THE builder preloader renders the brand mark on `.bricks-logo-animated`
+			// (the white "bricks" box in the splash) — NOT on `.bricks-loading-inner::before`
+			// (that's the frontend theme's structure, absent in the builder). So we restyle
+			// THAT element: override its box, paint the configured brand logo as its
+			// background, and hide its inner cubes/wordmark (> *) + any direct text
+			// (font-size/text-indent) + the .title/.sub-title. Centre it via the inner
+			// wrapper's grid (beats Bricks on specificity). A softly-rounded chip (faint
+			// fixed bg + padding) makes the border-radius read for a transparent/contain
+			// logo, never cropped. Colours are fixed — the splash paints before tokens
+			// load (same reason #bricks-preloader is #171717). No !important.
+			$css .= '#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
-			$css .= '#bricks-preloader .bricks-loading-inner::before{'
-				. 'content:"";box-sizing:border-box;width:16rem;height:6rem;max-width:70vw;padding:1rem;'
-				. 'background-color:rgba(255,255,255,0.08);'
+			$css .= '#bricks-preloader .bricks-logo-animated{'
+				. 'box-sizing:border-box;width:16rem;height:6rem;max-width:70vw;margin:0;padding:1rem;'
+				. 'background-color:rgba(255,255,255,0.10);'
 				. 'background-image:' . self::css_url( $logo ) . ';'
 				. 'background-position:center;background-repeat:no-repeat;background-size:contain;background-origin:content-box;'
-				. 'border-radius:16px;animation:ak-bricks-preload 1.4s ease-in-out infinite}';
-			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
+				. 'border-radius:16px;font-size:0;text-indent:-9999px;overflow:hidden;'
+				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
+			$css .= '#bricks-preloader .bricks-logo-animated > *{display:none}';
+			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.05)}}';
 		}
 		return $css;
 	}
