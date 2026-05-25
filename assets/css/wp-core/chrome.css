@@ -73,15 +73,15 @@ body.adminkit #adminmenu li.menu-top {
 }
 
 /* Hover / focus on non-current items — match WP's exact selectors with
-   !important to defeat colors.css. Lifts to --ak-elevated — a crisp step on the
-   sidebar surface, matching the settings rows + list tables (the current item,
-   also --ak-elevated, stays distinct by its bold label). */
+   !important to defeat colors.css. A SUBTLE ACCENT tint (--ak-primary-subtle)
+   with accent text; the icon picks up the accent too (rule below). The current
+   item shares the same accent tint and stays distinct by its bold label. */
 body.adminkit #adminmenu a:hover,
 body.adminkit #adminmenu li.menu-top:hover,
 body.adminkit #adminmenu li.opensub > a.menu-top,
 body.adminkit #adminmenu li > a.menu-top:focus {
-	color: var(--ak-heading) !important;
-	background-color: var(--ak-elevated) !important;
+	color: var(--ak-primary) !important;
+	background-color: var(--ak-primary-subtle) !important;
 }
 
 /* WP core ships `#adminmenu a:focus, #adminmenu a:hover` with
@@ -98,23 +98,24 @@ body.adminkit.folded #adminmenu .wp-submenu-head:hover {
 
 body.adminkit #adminmenu li.menu-top:hover .wp-menu-image::before,
 body.adminkit #adminmenu li.menu-top:focus-within .wp-menu-image::before {
-	color: var(--ak-heading);
+	color: var(--ak-primary);
 }
 
 body.adminkit #adminmenu .wp-menu-image::before {
 	color: var(--ak-text-muted);
 }
 
-/* Current item — dedicated active surface + heading color. Background and
-   color cover the whole <li> (incl. wp-menu-open / current.menu-top) so the
-   active row is fully painted. Dark mode keeps the same contrast via tokens. */
+/* Current item — subtle ACCENT surface + accent text. Background and color
+   cover the whole <li> (incl. wp-menu-open / current.menu-top) so the active
+   row is fully painted; the icon picks up the accent too (rule below). Dark
+   mode keeps contrast via the token remap. */
 body.adminkit #adminmenu li.current a.menu-top,
 body.adminkit #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
 body.adminkit #adminmenu li.wp-menu-open,
 body.adminkit #adminmenu li.current.menu-top {
-	background: var(--ak-elevated, var(--ak-elevated)) !important;
-	color: var(--ak-heading) !important;
+	background: var(--ak-primary-subtle) !important;
+	color: var(--ak-primary) !important;
 }
 
 /* Bold the active top-level label — applied to the <a> (and the submenu
@@ -130,7 +131,7 @@ body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head 
 
 body.adminkit #adminmenu li.current a.menu-top .wp-menu-image::before,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-menu-image::before {
-	color: var(--ak-heading) !important;
+	color: var(--ak-primary) !important;
 }
 
 /* Sidebar submenu — elevated surface. Inline (expanded sidebar, current
