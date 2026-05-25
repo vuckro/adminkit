@@ -170,11 +170,15 @@
 }
 
 /* Remap WP's built-in theme color (blue) to our accent. The selector chains
-   .adminkit AND [class*="admin-color-"] so specificity (0,2,0) outranks WP's
-   own color-scheme rules (0,1,0). One-shot fix for Quick Edit links, focus
-   rings, selected states, and any plugin that reads --wp-admin-theme-color. */
+   .adminkit / .wp-customizer AND [class*="admin-color-"] so specificity (0,2,1)
+   outranks WP's own color-scheme rules (body.admin-color-*, 0,1,1). One-shot fix
+   for Quick Edit links, focus rings, selected states, the Customizer's accents,
+   and any plugin that reads --wp-admin-theme-color. The Customizer has no
+   body.adminkit (it skips admin_body_class), so it's listed explicitly. */
 body.adminkit,
-body.adminkit[class*="admin-color-"] {
+body.adminkit[class*="admin-color-"],
+body.wp-customizer,
+body.wp-customizer[class*="admin-color-"] {
 	--wp-admin-theme-color: var(--ak-primary);
 	--wp-admin-theme-color--rgb: 255, 214, 79;
 	--wp-admin-theme-color-darker-10: var(--ak-primary-hover);

@@ -66,6 +66,7 @@ body.wp-customizer #save:focus {
    #f3f5f6 on hover. Route to text tokens + a token hover surface. */
 body.wp-customizer .customize-controls-close {
 	background: var(--ak-surface);
+	border-top-color: var(--ak-surface);
 	border-right-color: var(--ak-border);
 	color: var(--ak-text);
 }
