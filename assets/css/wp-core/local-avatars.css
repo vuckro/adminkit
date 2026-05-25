@@ -21,7 +21,7 @@
 	padding: 0;
 	margin: 0;
 	border: 1px solid var(--ak-border, #c3c4c7);
-	border-radius: var(--ak-radius-full, 9999px);
+	border-radius: var(--ak-radius-l, 14px);
 	background: var(--ak-surface, #f0f0f1);
 	overflow: hidden;
 	-webkit-appearance: none;
@@ -113,18 +113,106 @@ button.adminkit-local-avatar__media:focus-visible .adminkit-local-avatar__overla
 /* Actions row beneath the avatar. */
 .adminkit-local-avatar__actions {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	gap: var(--ak-space-s, 8px);
 	margin: var(--ak-space-s, 8px) 0 var(--ak-space-2xs, 4px);
 }
 
-.adminkit-local-avatar__remove {
+/* Generate + Remove are real (small) buttons in the actions row — they carry the
+   .button base (tokenised in buttons.css); here we only align the icon + label
+   and paint Remove as a danger button. Rules are scoped under .adminkit-local-avatar
+   so they out-specify buttons.css's `body.adminkit .button`. */
+.adminkit-local-avatar__action {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+.adminkit-local-avatar__action-icon {
+	width: 15px;
+	height: 15px;
+	flex: none;
+}
+/* Remove → danger button: red text + border at rest, solid red on hover/focus. */
+.adminkit-local-avatar .adminkit-local-avatar__remove.button {
 	color: var(--ak-error, #d63638);
+	border-color: var(--ak-error, #d63638);
+}
+.adminkit-local-avatar .adminkit-local-avatar__remove.button:hover,
+.adminkit-local-avatar .adminkit-local-avatar__remove.button:focus {
+	color: var(--ak-on-accent, #fff);
+	background: var(--ak-error, #d63638);
+	border-color: var(--ak-error, #d63638);
 }
 
-.adminkit-local-avatar__remove:hover,
-.adminkit-local-avatar__remove:focus {
-	color: var(--ak-error, #d63638);
+/* --- Generate danger confirm --------------------------------------------------
+   A small, flat in-page modal (nicer + on-brand vs window.confirm). A scrim
+   covers the page; a tokenised card holds the title, the warn message and the
+   Cancel / Generate actions. `.is-danger` (replacing a real upload) tints the
+   card's accent rail + the confirm button error-red; the lighter Gravatar-
+   override case keeps the neutral primary. Hidden via [hidden] at rest. */
+.adminkit-local-avatar__confirm {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--ak-space-l, 16px);
+	background: var(--ak-overlay, rgba(0, 0, 0, .5));
+}
+
+.adminkit-local-avatar__confirm[hidden] {
+	display: none;
+}
+
+.adminkit-local-avatar__confirm-box {
+	width: 100%;
+	max-width: 380px;
+	padding: var(--ak-space-l, 16px) var(--ak-space-l, 16px) var(--ak-space-m, 12px);
+	border: 1px solid var(--ak-border, #c3c4c7);
+	border-top: 3px solid var(--ak-primary, #2271b1);
+	border-radius: var(--ak-radius-m, 10px);
+	background: var(--ak-surface, #fff);
+	box-shadow: var(--ak-shadow-elevated, 0 8px 24px -10px rgba(0, 0, 0, .3));
+}
+
+.adminkit-local-avatar__confirm.is-danger .adminkit-local-avatar__confirm-box {
+	border-top-color: var(--ak-error, #d63638);
+}
+
+.adminkit-local-avatar__confirm-title {
+	margin: 0 0 var(--ak-space-xs, 4px);
+	font-size: var(--ak-text-m, 14px);
+	font-weight: 600;
+	color: var(--ak-heading, #1d2327);
+}
+
+.adminkit-local-avatar__confirm-msg {
+	margin: 0 0 var(--ak-space-l, 16px);
+	font-size: var(--ak-text-s, 13px);
+	line-height: 1.5;
+	color: var(--ak-text, #3c434a);
+}
+
+.adminkit-local-avatar__confirm-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--ak-space-s, 8px);
+}
+
+/* The confirm button reads danger-red when we're replacing a real upload. */
+.adminkit-local-avatar__confirm.is-danger .adminkit-local-avatar__confirm-ok {
+	border-color: var(--ak-error, #d63638);
+	background: var(--ak-error, #d63638);
+	color: var(--ak-on-accent, #fff);
+}
+
+.adminkit-local-avatar__confirm.is-danger .adminkit-local-avatar__confirm-ok:hover,
+.adminkit-local-avatar__confirm.is-danger .adminkit-local-avatar__confirm-ok:focus {
+	border-color: var(--ak-error, #d63638);
+	background: color-mix(in srgb, var(--ak-error, #d63638) 88%, #000);
+	color: var(--ak-on-accent, #fff);
 }
 
 @media (prefers-reduced-motion: reduce) {

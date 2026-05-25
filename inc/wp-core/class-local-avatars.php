@@ -25,8 +25,10 @@
  * local avatars on): when a user has no uploaded avatar, AdminKit hands WordPress
  * a friendly auto-generated avatar (DiceBear's hosted, key-less HTTP API) as the
  * Gravatar `d=` *default* — so a real Gravatar still wins and only a missing one
- * falls back to the generated image. The seed is NON-PII (md5 of the login); the
- * style + final URL are filterable. Off = Gravatar's own default, byte-identical.
+ * falls back to the generated image. The seed is NON-PII: by default an md5 of the
+ * login, or a stored short random seed if the user rolled a "random avatar" from
+ * the profile field (only the seed is stored — never an image). The style + final
+ * URL are filterable. Off = Gravatar's own default, byte-identical.
  *
  * The profile field renders on show_user_profile / edit_user_profile and saves on
  * personal_options_update / edit_user_profile_update, guarded by a dedicated
@@ -43,12 +45,38 @@ class AdminKit_Local_Avatars {
 	/** User-meta key holding the local avatar's attachment id (single int). */
 	const META_KEY = 'adminkit_local_avatar';
 
+	/**
+	 * User-meta key holding a per-user "generated avatar" seed (a short random
+	 * string). When present it seeds get_generated_avatar_url() so a user can roll
+	 * a fresh random generated avatar; absent, the seed falls back to the stable,
+	 * non-PII md5 of the login (today's behaviour). NO image is ever stored — only
+	 * this seed — so the generated avatar stays storage-free.
+	 */
+	const SEED_KEY = 'adminkit_generated_seed';
+
 	/** Nonce action + field name guarding the profile save. */
 	const NONCE_ACTION = 'adminkit_local_avatar_save';
 	const NONCE_FIELD  = 'adminkit_local_avatar_nonce';
 
 	/** Form field name carrying the chosen attachment id. */
 	const FIELD = 'adminkit_local_avatar';
+
+	/** Form field name carrying a freshly-rolled generated-avatar seed. */
+	const SEED_FIELD = 'adminkit_generated_seed';
+
+	/**
+	 * DiceBear hosted API base + version. The generated-avatar URL is built from
+	 * this on both PHP (the d= fallback) and JS (the live "generate" preview), so
+	 * they agree byte-for-byte for a given seed + style + size.
+	 */
+	const DICEBEAR_BASE = 'https://api.dicebear.com/9.x/';
+
+	/**
+	 * Sentinel key for the "Generated avatar" entry AdminKit adds to the
+	 * Settings → Discussion default-avatar list (avatar_defaults). Per-user faces
+	 * have no single Gravatar default, so we resolve this key ourselves.
+	 */
+	const DEFAULT_KEY = 'adminkit-generated';
 
 	/** Screen ids that carry the user profile / edit form. @var string[] */
 	const SCREENS = array( 'profile', 'user-edit' );
@@ -85,6 +113,16 @@ class AdminKit_Local_Avatars {
 		add_action( 'personal_options_update', array( __CLASS__, 'save_field' ) );
 		add_action( 'edit_user_profile_update', array( __CLASS__, 'save_field' ) );
 
+		// With generated avatars on, surface an AdminKit "Generated avatar" choice in
+		// Settings → Discussion (the avatar_defaults list) so the admin sees what's
+		// actually used as the fallback, rather than a stale "Mystery Person". The
+		// generated face is already served as the Gravatar d= default by
+		// filter_avatar_data(), so this is purely the Discussion-screen surface —
+		// the single behavioural switch stays `generated_avatars_enabled`.
+		if ( AdminKit_Settings::get( 'generated_avatars_enabled' ) ) {
+			add_filter( 'avatar_defaults', array( __CLASS__, 'register_default_avatar' ) );
+		}
+
 		// When an attachment is deleted, clear it from any user pointing at it so
 		// no profile is left referencing a dead id.
 		add_action( 'delete_attachment', array( __CLASS__, 'on_delete_attachment' ) );
@@ -118,8 +156,19 @@ class AdminKit_Local_Avatars {
 	 * @return array
 	 */
 	public static function filter_avatar_data( $args, $id_or_email ) {
-		// Honour the explicit "show the default avatar" request.
+		$size = isset( $args['size'] ) ? (int) $args['size'] : 96;
+
+		// Honour the explicit "show the default avatar" request — EXCEPT when the
+		// requested default is our own Settings → Discussion sentinel: there we must
+		// resolve the generated face ourselves (Gravatar wouldn't know the key, and
+		// WP renders the Discussion preview with force_default = true).
 		if ( ! empty( $args['force_default'] ) ) {
+			if ( self::DEFAULT_KEY === ( isset( $args['default'] ) ? $args['default'] : '' )
+				&& AdminKit_Settings::get( 'generated_avatars_enabled' ) ) {
+				$user_id = self::resolve_user_id( $id_or_email );
+				$args['url']          = self::get_generated_avatar_url( $user_id, $size );
+				$args['found_avatar'] = true;
+			}
 			return $args;
 		}
 
@@ -127,8 +176,6 @@ class AdminKit_Local_Avatars {
 		if ( ! $user_id ) {
 			return $args;
 		}
-
-		$size = isset( $args['size'] ) ? (int) $args['size'] : 96;
 
 		// 1) An uploaded local avatar always wins — set the URL directly so core
 		//    short-circuits straight to it (Gravatar is skipped entirely). Skipped
@@ -155,14 +202,14 @@ class AdminKit_Local_Avatars {
 	}
 
 	/**
-	 * Build a deterministic, friendly auto-generated avatar URL for a user, used
-	 * as the Gravatar `d=` fallback when the user has neither a local avatar nor a
-	 * real Gravatar.
+	 * Build a friendly auto-generated avatar URL for a user, used as the Gravatar
+	 * `d=` fallback when the user has neither a local avatar nor a real Gravatar.
 	 *
-	 * Privacy: the avatar is seeded with a NON-PII, stable per-user value — an md5
-	 * of the user_login (NOT the email). The same user always gets the same face,
-	 * but the seed leaks nothing about them. The generator is DiceBear's hosted
-	 * HTTP API (https://api.dicebear.com), a free, key-less, URL-based service.
+	 * Privacy: seeded with a NON-PII value (see get_generated_seed()) — either a
+	 * stored random seed (when the user rolled a "random avatar") or, by default,
+	 * an md5 of the user_login (NEVER the raw email). The seed leaks nothing about
+	 * the user. The generator is DiceBear's hosted HTTP API
+	 * (https://api.dicebear.com), a free, key-less, URL-based service.
 	 *
 	 * Both the style and the whole URL are filterable so a site can swap the
 	 * service or self-host:
@@ -177,29 +224,15 @@ class AdminKit_Local_Avatars {
 		$user_id = (int) $user_id;
 		$size    = max( 1, min( 256, (int) $size ) ); // DiceBear PNG max is 256px.
 
-		// Non-PII, stable seed: md5 of the login (never the raw email).
-		$user = get_userdata( $user_id );
-		$seed = $user ? md5( strtolower( $user->user_login ) ) : (string) $user_id;
-
-		/**
-		 * Filter the DiceBear style used for generated avatars. Friendly, memoji-ish
-		 * defaults: fun-emoji, big-smile, adventurer, notionists, micah, big-ears…
-		 *
-		 * @param string $style   Default 'fun-emoji'.
-		 * @param int    $user_id The user the avatar is for.
-		 */
-		$style = apply_filters( 'adminkit/generated_avatar_style', 'fun-emoji', $user_id );
-		$style = preg_replace( '/[^a-z0-9-]/', '', strtolower( (string) $style ) );
-		if ( '' === $style ) {
-			$style = 'fun-emoji';
-		}
+		$seed  = self::get_generated_seed( $user_id );
+		$style = self::generated_avatar_style( $user_id );
 
 		$url = add_query_arg(
 			array(
 				'seed' => $seed,
 				'size' => $size,
 			),
-			'https://api.dicebear.com/9.x/' . $style . '/png'
+			self::DICEBEAR_BASE . $style . '/png'
 		);
 
 		/**
@@ -212,6 +245,79 @@ class AdminKit_Local_Avatars {
 		$url = apply_filters( 'adminkit/generated_avatar_url', $url, $user_id, $size );
 
 		return esc_url_raw( (string) $url );
+	}
+
+	/**
+	 * Add an AdminKit "Generated avatar" entry to the Settings → Discussion default
+	 * avatar list (the `avatar_defaults` filter), shown only when generated avatars
+	 * are on. WP keys this list by the `default` arg it would pass to Gravatar; our
+	 * generated faces are per-user, so the key is a sentinel ('adminkit-generated')
+	 * and the visible label explains it. Selecting it is harmless — the generated
+	 * avatar is already the fallback via filter_avatar_data() regardless — it simply
+	 * lets the admin see the real default instead of a misleading "Mystery Person".
+	 *
+	 * @param array $defaults map of default-key => label.
+	 * @return array
+	 */
+	public static function register_default_avatar( $defaults ) {
+		if ( ! is_array( $defaults ) ) {
+			return $defaults;
+		}
+		$defaults[ self::DEFAULT_KEY ] = __( 'Generated avatar (AdminKit)', 'adminkit' );
+		return $defaults;
+	}
+
+	/**
+	 * The seed used to generate a user's avatar. A user who has "rolled" a random
+	 * avatar has a stored per-user seed (SEED_KEY) — we use that. Otherwise we fall
+	 * back to the stable, NON-PII md5 of the login (never the raw email), so a user
+	 * who never rolled keeps exactly the same deterministic face as before.
+	 *
+	 * @param int $user_id
+	 * @return string
+	 */
+	public static function get_generated_seed( $user_id ) {
+		$user_id = (int) $user_id;
+		$stored  = $user_id > 0 ? (string) get_user_meta( $user_id, self::SEED_KEY, true ) : '';
+		if ( '' !== $stored ) {
+			return $stored;
+		}
+		$user = $user_id > 0 ? get_userdata( $user_id ) : null;
+		return $user ? md5( strtolower( $user->user_login ) ) : (string) $user_id;
+	}
+
+	/**
+	 * Resolve + sanitise the DiceBear style slug used for generated avatars.
+	 * Shared by the PHP d= fallback and handed to the JS so the live "generate"
+	 * preview builds an identical URL.
+	 *
+	 * Friendly, memoji-ish defaults: fun-emoji, big-smile, adventurer, notionists,
+	 * micah, big-ears…
+	 *
+	 * @param int $user_id The user the avatar is for.
+	 * @return string A slug matching [a-z0-9-]+, never empty.
+	 */
+	public static function generated_avatar_style( $user_id ) {
+		/**
+		 * Filter the DiceBear style used for generated avatars.
+		 *
+		 * @param string $style   Default 'fun-emoji'.
+		 * @param int    $user_id The user the avatar is for.
+		 */
+		$style = apply_filters( 'adminkit/generated_avatar_style', 'fun-emoji', (int) $user_id );
+		$style = preg_replace( '/[^a-z0-9-]/', '', strtolower( (string) $style ) );
+		return '' === $style ? 'fun-emoji' : $style;
+	}
+
+	/**
+	 * Generate a fresh, URL-safe random seed for a rolled generated avatar. Short
+	 * (no PII, nothing derived from the user) — just enough entropy to vary the
+	 * face. Mirrored client-side by local-avatars.js for the live preview.
+	 *
+	 * @return string A 12-char lowercase hex string.
+	 */
+	public static function new_seed() {
+		return substr( md5( wp_generate_uuid4() ), 0, 12 );
 	}
 
 	/**
@@ -325,6 +431,7 @@ class AdminKit_Local_Avatars {
 		$upload_id  = self::get_local_avatar_id( $user->ID );
 		$has_upload = $upload_id > 0;
 		$can_pick   = current_user_can( 'upload_files' );
+		$can_roll   = (bool) AdminKit_Settings::get( 'generated_avatars_enabled' );
 
 		// Preview the EFFECTIVE avatar so the bubble is never blank: the uploaded
 		// image if any, otherwise whatever get_avatar() resolves to (a real
@@ -350,6 +457,10 @@ class AdminKit_Local_Avatars {
 					<div class="adminkit-local-avatar <?php echo esc_attr( $state_class ); ?>" id="adminkit-local-avatar">
 						<input type="hidden" name="<?php echo esc_attr( self::FIELD ); ?>"
 							id="adminkit-local-avatar-input" value="<?php echo esc_attr( (string) $upload_id ); ?>" />
+						<?php if ( $can_roll && $can_pick ) : ?>
+							<input type="hidden" name="<?php echo esc_attr( self::SEED_FIELD ); ?>"
+								id="adminkit-local-avatar-seed" value="" />
+						<?php endif; ?>
 						<?php if ( $can_pick ) : ?>
 							<button type="button" class="adminkit-local-avatar__media" id="adminkit-local-avatar-btn"
 								aria-label="<?php echo esc_attr( $media_aria ); ?>">
@@ -368,7 +479,13 @@ class AdminKit_Local_Avatars {
 								</span>
 							</button>
 							<p class="adminkit-local-avatar__actions">
-								<button type="button" class="button-link adminkit-local-avatar__remove" id="adminkit-local-avatar-remove"
+								<?php if ( $can_roll ) : ?>
+									<button type="button" class="button adminkit-local-avatar__action adminkit-local-avatar__generate" id="adminkit-local-avatar-generate">
+										<?php echo self::icon_refresh(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, self-contained SVG markup. ?>
+										<span><?php echo esc_html__( 'Generate a random avatar', 'adminkit' ); ?></span>
+									</button>
+								<?php endif; ?>
+								<button type="button" class="button adminkit-local-avatar__action adminkit-local-avatar__remove" id="adminkit-local-avatar-remove"
 									<?php echo $has_upload ? '' : 'hidden'; ?>>
 									<?php echo esc_html__( 'Remove', 'adminkit' ); ?>
 								</button>
@@ -383,6 +500,36 @@ class AdminKit_Local_Avatars {
 							<?php endif; ?>
 						<?php endif; ?>
 						<p class="description"><?php echo esc_html__( 'Upload an image to use as this user\'s avatar everywhere. Leave empty to use Gravatar — or a generated avatar when that option is on.', 'adminkit' ); ?></p>
+						<?php if ( $can_roll && $can_pick ) : ?>
+							<?php
+							// Danger confirm dialog for the "Generate" action. Hidden until JS
+							// opens it; the message text is swapped per warn-level (replacing a
+							// manual upload = strong danger; otherwise a lighter "overrides
+							// Gravatar" note — a real Gravatar can't be detected client-side).
+							// Whether the user currently has an upload is encoded as a data attr
+							// so the JS starts from the server-known truth.
+							?>
+							<div class="adminkit-local-avatar__confirm" id="adminkit-local-avatar-confirm"
+								role="alertdialog" aria-modal="true"
+								aria-labelledby="adminkit-local-avatar-confirm-title"
+								aria-describedby="adminkit-local-avatar-confirm-msg"
+								data-has-upload="<?php echo $has_upload ? '1' : '0'; ?>" hidden>
+								<div class="adminkit-local-avatar__confirm-box" role="document">
+									<h3 class="adminkit-local-avatar__confirm-title" id="adminkit-local-avatar-confirm-title">
+										<?php echo esc_html__( 'Replace the current avatar?', 'adminkit' ); ?>
+									</h3>
+									<p class="adminkit-local-avatar__confirm-msg" id="adminkit-local-avatar-confirm-msg"></p>
+									<div class="adminkit-local-avatar__confirm-actions">
+										<button type="button" class="button adminkit-local-avatar__confirm-cancel" id="adminkit-local-avatar-confirm-cancel">
+											<?php echo esc_html__( 'Cancel', 'adminkit' ); ?>
+										</button>
+										<button type="button" class="button adminkit-local-avatar__confirm-ok" id="adminkit-local-avatar-confirm-ok">
+											<?php echo esc_html__( 'Generate', 'adminkit' ); ?>
+										</button>
+									</div>
+								</div>
+							</div>
+						<?php endif; ?>
 					</div>
 				</td>
 			</tr>
@@ -415,6 +562,18 @@ class AdminKit_Local_Avatars {
 	}
 
 	/**
+	 * Inline "refresh / regenerate" glyph for the Generate-a-random-avatar button.
+	 * Static, self-contained SVG (currentColor stroke) — safe to echo as-is.
+	 *
+	 * @return string
+	 */
+	private static function icon_refresh() {
+		return '<svg class="adminkit-local-avatar__action-icon" viewBox="0 0 24 24" role="presentation" focusable="false" aria-hidden="true">'
+			. '<path d="M5.07 8A7.5 7.5 0 0 1 19 9M19 4v5h-5M18.93 16A7.5 7.5 0 0 1 5 15m0 5v-5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+			. '</svg>';
+	}
+
+	/**
 	 * Persist the chosen avatar on profile save. Verifies the dedicated nonce and
 	 * the edit_user capability, then stores the absint'd attachment id (or clears
 	 * the meta when empty). No-op silently when the nonce/cap fails so it never
@@ -435,6 +594,20 @@ class AdminKit_Local_Avatars {
 		}
 		check_admin_referer( self::NONCE_ACTION, self::NONCE_FIELD );
 
+		// A freshly-rolled generated-avatar seed (the "Generate" action), only
+		// honoured when generated avatars are on. Choosing a generated avatar means
+		// "use a generated face" — so it BOTH stores the new seed AND clears any
+		// uploaded image, keeping the user's effective avatar coherent. Takes
+		// precedence over the upload id for exactly that reason.
+		if ( AdminKit_Settings::get( 'generated_avatars_enabled' ) && ! empty( $_POST[ self::SEED_FIELD ] ) ) {
+			$seed = self::sanitize_seed( wp_unslash( $_POST[ self::SEED_FIELD ] ) );
+			if ( '' !== $seed ) {
+				update_user_meta( $user_id, self::SEED_KEY, $seed );
+				delete_user_meta( $user_id, self::META_KEY );
+				return;
+			}
+		}
+
 		$raw = isset( $_POST[ self::FIELD ] ) ? absint( wp_unslash( $_POST[ self::FIELD ] ) ) : 0;
 
 		// Only store an id that resolves to a real image; anything else clears it.
@@ -443,6 +616,19 @@ class AdminKit_Local_Avatars {
 		} else {
 			delete_user_meta( $user_id, self::META_KEY );
 		}
+	}
+
+	/**
+	 * Sanitise a generated-avatar seed coming from the form: lowercase, only the
+	 * URL-safe set we ever emit ([a-z0-9-]), length-capped. Returns '' for junk so
+	 * the caller ignores it. Never trusts arbitrary client input into a URL.
+	 *
+	 * @param string $raw
+	 * @return string
+	 */
+	private static function sanitize_seed( $raw ) {
+		$seed = preg_replace( '/[^a-z0-9-]/', '', strtolower( (string) $raw ) );
+		return (string) substr( (string) $seed, 0, 32 );
 	}
 
 	/**
@@ -521,26 +707,57 @@ class AdminKit_Local_Avatars {
 		$target_user = isset( $_GET['user_id'] ) ? absint( wp_unslash( $_GET['user_id'] ) ) : get_current_user_id(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- reading the page's own subject id; no state change.
 		$fallback    = self::fallback_preview_url( $target_user, 96 );
 
+		// Generated-avatar config: only sent when the feature is on. The JS builds a
+		// live preview URL from BASE + style + a fresh client-rolled seed; the SAME
+		// seed is posted and re-resolved by get_generated_avatar_url() on save, so the
+		// previewed face is the one that persists. The "Generate" control, the seed
+		// input and the danger dialog are also gated on this, so with the feature off
+		// the bootstrap stays exactly as before.
+		$generated = (bool) AdminKit_Settings::get( 'generated_avatars_enabled' );
+		$bootstrap = array(
+			'title'    => __( 'Select a profile picture', 'adminkit' ),
+			'button'   => __( 'Use this image', 'adminkit' ),
+			// Button accessible name, swapped per filled / empty state after a
+			// pick or a remove (the bubble always opens the media picker).
+			'ariaFill'  => __( 'Change the profile picture', 'adminkit' ),
+			'ariaEmpty' => __( 'Upload a profile picture', 'adminkit' ),
+			// Effective no-upload avatar (Gravatar / generated): Remove reverts
+			// the preview to this so the bubble is never left blank.
+			'fallbackUrl' => $fallback,
+			// The page-title avatar (built by profile-account.js) doubles as a
+			// second picker trigger; its accessible name lives here with the field's.
+			'heroAria' => __( 'Change the profile picture', 'adminkit' ),
+			'generated' => $generated,
+		);
+
+		if ( $generated ) {
+			// DiceBear pieces so the JS can mint the same URL a rolled seed would
+			// resolve to server-side; size 96 matches the rendered preview.
+			$bootstrap['diceBase']  = self::DICEBEAR_BASE . self::generated_avatar_style( $target_user ) . '/png';
+			$bootstrap['diceSize']  = 96;
+			// Copy for the danger confirm. The level is chosen client-side:
+			//   - replacing a manual upload (known server-side + via the hidden input)
+			//     → the strong `confirmUpload` message;
+			//   - otherwise → the lighter `confirmGravatar` note (a real Gravatar
+			//     can't be reliably detected in the browser, so we still warn).
+			$bootstrap['confirmUpload']   = __( 'This permanently replaces the uploaded photo with a generated avatar. Continue?', 'adminkit' );
+			$bootstrap['confirmGravatar'] = __( 'This sets a generated avatar and overrides any Gravatar for this account. Continue?', 'adminkit' );
+		}
+
 		wp_enqueue_media();
-		// Depend on `media-editor` (the handle that defines `wp.media`, pulled in by
-		// wp_enqueue_media()) — not jquery — so this footer script is guaranteed to
-		// run AFTER `wp.media` exists. The brick itself uses no jQuery; jQuery still
-		// loads transitively via media-editor's own deps.
+		// Deps:
+		//  - `media-editor` (defines `wp.media`, pulled in by wp_enqueue_media()) so
+		//    this footer script runs AFTER `wp.media` exists — not jquery (the brick
+		//    uses none; jQuery still loads transitively via media-editor's deps).
+		//  - `adminkit-profile-account` so it runs AFTER the tab builder has lifted
+		//    the page-title avatar into the hero: setupHero() can then find + wire it
+		//    as a second picker trigger. profile-account is always enqueued on these
+		//    screens (its SCREENS superset ours), so the handle is reliably present.
 		AdminKit_Assets::enqueue_script(
 			'adminkit-local-avatars',
 			'assets/js/wp-core/local-avatars.js',
-			array( 'media-editor' ),
-			'window.AdminKitLocalAvatars=' . wp_json_encode( array(
-				'title'    => __( 'Select a profile picture', 'adminkit' ),
-				'button'   => __( 'Use this image', 'adminkit' ),
-				// Button accessible name, swapped per filled / empty state after a
-				// pick or a remove (the bubble always opens the media picker).
-				'ariaFill'  => __( 'Change the profile picture', 'adminkit' ),
-				'ariaEmpty' => __( 'Upload a profile picture', 'adminkit' ),
-				// Effective no-upload avatar (Gravatar / generated): Remove reverts
-				// the preview to this so the bubble is never left blank.
-				'fallbackUrl' => $fallback,
-			) ) . ';'
+			array( 'media-editor', 'adminkit-profile-account' ),
+			'window.AdminKitLocalAvatars=' . wp_json_encode( $bootstrap ) . ';'
 		);
 	}
 }

@@ -140,6 +140,15 @@
 		hero.appendChild(content);
 		row.remove();
 
+		// When AdminKit's own avatar field is present (local avatars enabled), tag
+		// the hero's avatar image so local-avatars.js can wire it as a second picker
+		// trigger (click the page avatar → same media frame, shared hidden input).
+		// Without the field this stays a plain, non-clickable image — OFF unchanged.
+		if (form.querySelector('.adminkit-local-avatar')) {
+			var heroImg = content.querySelector('img');
+			if (heroImg && !heroImg.id) { heroImg.id = 'ak-hero-avatar'; }
+		}
+
 		var title = document.querySelector('.wrap h1');
 		if (title && title.parentNode) {
 			var wrap = title.parentNode;
