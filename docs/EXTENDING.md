@@ -13,7 +13,7 @@ the host (`adminkit/foo/…`). `{…}` in a name is a dynamic segment.
 
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
-| `adminkit/should_load` | filter | `(bool, string $context)` | Master switch for a context (`admin`/`login`/`frontend`/`editor`). Return false to disable all AdminKit styling there — integrations use it to bypass a host's full-screen UI. |
+| `adminkit/should_load` | filter | `(bool, string $context)` | Master switch for a context (`admin`/`login`/`frontend`/`editor`/`builder`). Return false to disable all AdminKit styling there — integrations use it to bypass a host's full-screen UI; the "WordPress default UI" toggle uses it to pause everything at once. |
 | `adminkit/enqueue_{context}` | filter | `(bool)` | Per-context gate, e.g. `adminkit/enqueue_login`. The `login` + `editor` ones are wired to the feature toggles. |
 | `adminkit/enqueue_{section}` | filter | `(bool)` | Per-section gate (section = handle minus `adminkit-`), e.g. `adminkit/enqueue_forms` drops inputs+buttons+tables together. |
 | `adminkit/enqueue_{handle}` | filter | `(bool)` | Per-asset gate, e.g. `adminkit/enqueue_adminkit-themes`. |
@@ -50,6 +50,15 @@ is in [ARCHITECTURE.md](ARCHITECTURE.md#asset-registry-css--js).
 | `adminkit/theme_storage_key` | filter | `(string)` | The localStorage key (default `adminkit-theme`). |
 
 Both in `inc/class-theme-toggle.php`.
+
+## Branding
+
+| Hook | Type | Signature | Purpose |
+| --- | --- | --- | --- |
+| `adminkit/brand_logo` | filter | `('' \| string \| array)` | Brand logo fallback when the Branding settings are empty. Return a URL string, or `array( 'light' => …, 'dark' => …, 'preloader' => … )`. Drives the admin-menu logo **and** the Bricks builder; the settings win over the filter. |
+
+Resolved by `AdminKit_Settings::brand_logo( $mode )`. Logos are normally set
+no-code in Settings → Features → Branding; `inc/wp-core/class-branding.php`.
 
 ## Post previews
 
