@@ -94,12 +94,26 @@ body.adminkit #ame-quick-search .ame-qs-selected-result {
 }
 
 /* Crawler "let us index your menus" offer strip — AME's light blue info panel
-   (#e1effc / #72aee6) doesn't flip. It's an info/offer role, so map it to the
-   info-subtle fill + info border, muted body text. */
+   (#e1effc / #72aee6) doesn't flip. Info-subtle fill, muted text, NEUTRAL token
+   border (the info-coloured border read too strong). */
 body.adminkit #ame-quick-search #ame-qs-crawler-offer-main {
 	background: var(--ak-info-subtle);
 	color: var(--ak-text-muted);
-	border-color: var(--ak-info);
+	border-color: var(--ak-border);
+}
+
+/* Status bar (bottom strip) — AME's grey #F9F9F9 panel with an #EBECF0 top border:
+   a neutral elevated surface + token border + muted text. */
+body.adminkit #ame-quick-search #ame-qs-status-bar {
+	background: var(--ak-elevated);
+	color: var(--ak-text-muted);
+	border-top-color: var(--ak-border);
+}
+
+/* Hovered result (not the keyboard-selected one) — AME paints a light #f2f2f2;
+   route it to the neutral hover token so it reads in dark too. */
+body.adminkit #ame-quick-search .ame-qs-search-result:hover:not(.ame-qs-selected-result) {
+	background: var(--ak-elevated);
 }
 
 /* Scrollbar (the list scrolls within the popup's max-height) */
