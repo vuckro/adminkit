@@ -34,3 +34,19 @@ body.adminkit.widgets-php .edit-widgets-header .components-button:not(.is-primar
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
 }
+
+/* Widget-area blocks render as collapsible panels. The generic editor panel
+   rule keeps .components-panel transparent (right for the post-editor sidebar
+   sections), but in the widgets editor each widget area should read as a CARD.
+   Scoped to the widget-area block so post-editor panels stay transparent:
+   surface body, an elevated header bar, and a surface for the inner block-list
+   so it isn't the stark white .editor-styles-wrapper canvas. */
+body.adminkit.widgets-php .wp-block[data-type="core/widget-area"] .components-panel__body {
+	background: var(--ak-surface);
+}
+body.adminkit.widgets-php .wp-block[data-type="core/widget-area"] .components-panel__body > .components-panel__body-title {
+	background: var(--ak-elevated);
+}
+body.adminkit.widgets-php .wp-block-widget-area__inner-blocks.editor-styles-wrapper > .block-editor-block-list__layout {
+	background: var(--ak-surface);
+}
