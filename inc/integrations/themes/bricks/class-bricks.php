@@ -218,17 +218,23 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 * Dedicated enqueue: the builder has no admin bar, so AdminKit's normal
 	 * frontend dispatch (and its --ak-* layer) skips it. builder.css instead maps
 	 * Bricks's --builder-* / --bricks-* variables onto the live WaasKit provider
-	 * variables that ARE present in the builder (see the file header). Loaded across
-	 * the whole builder — the main frame (toolbar, panels, …) AND the canvas iframe
-	 * (blank-canvas, native-form focus); each rule self-scopes to the frame its
-	 * selector lives in.
+	 * variables that ARE present in the builder (see the file header).
+	 *
+	 * MAIN frame ONLY — never the canvas iframe. The canvas iframe renders the
+	 * actual page; injecting this stylesheet there would remap the page's own
+	 * --bricks-* design variables and break how the canvas renders vs the live
+	 * frontend. This file is builder CHROME, not page content.
 	 *
 	 * Off by default — opt in via Settings → Features → Bricks builder.
 	 *
 	 * @return void
 	 */
 	public static function enqueue_builder() {
-		if ( ! self::is_builder() || ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
+		// Main builder frame only. ?bricks=run is the builder URL;
+		// bricks_is_builder_main() confirms it (excludes the canvas iframe).
+		$is_main = ( isset( $_GET['bricks'] ) && 'run' === $_GET['bricks'] )
+			|| ( function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main() );
+		if ( ! $is_main || ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
 			return;
 		}
 

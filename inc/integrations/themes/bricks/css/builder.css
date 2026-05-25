@@ -1,9 +1,14 @@
 /**
  * Bricks builder UI — AdminKit restyle.
  *
- * Loaded across the Bricks builder — the main frame AND the canvas iframe
- * (AdminKit_Integration_Bricks::enqueue_builder) — and ONLY when the "Bricks
- * builder" feature is enabled. Each rule self-scopes to the frame it targets.
+ * Loaded ONLY in the Bricks builder MAIN frame (AdminKit_Integration_Bricks::
+ * enqueue_builder), and ONLY when the "Bricks builder" feature is enabled.
+ *
+ * NEVER load this in the canvas iframe. That frame renders the actual page, and
+ * the :root { --bricks-* } block below remaps the page's own design variables —
+ * inside the canvas it would change how the page renders (and diverge from the
+ * live frontend). This file styles builder CHROME only; canvas tweaks, if ever
+ * needed, belong in a separate iframe-only sheet that touches no design vars.
  *
  * EXCEPTION to AdminKit's "every stylesheet reads --ak-* tokens" rule. The
  * builder is a Bricks/WaasKit-native surface: it has no admin bar, so AdminKit's
@@ -199,22 +204,10 @@
 
 
 /* ============================================================
-   CANVAS  (main-frame resizer + the canvas iframe)
+   CANVAS CHROME  (main-frame resizer handle)
    ============================================================ */
 .canvas-resizer {
 	border-inline-start: 1px solid var(--border);
-}
-
-/* Empty-state canvas — let the surface behind it show through. */
-#bricks-blank-canvas {
-	background-color: transparent;
-}
-
-/* Drop the focus outline inside the editing canvas (native Bricks form fields
-   double it up). Builder-only: this file never loads on the live frontend, so
-   the real site keeps its focus ring. */
-body.bricks-is-frontend :focus-visible {
-	outline: none;
 }
 
 
