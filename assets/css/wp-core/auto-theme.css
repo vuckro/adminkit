@@ -22,6 +22,11 @@ html[data-adminkit-theme="dark"] body.adminkit .ak-auto-elevated {
 	background-color: var(--ak-elevated) !important;
 }
 
+/* ── Faint neutral-ish light tint used as a fill → subtle primary wash ── */
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-primary-sub {
+	background-color: var(--ak-primary-subtle) !important;
+}
+
 /* ── Pale tinted backgrounds → matching subtle token (kept semantic) ── */
 html[data-adminkit-theme="dark"] body.adminkit .ak-auto-info {
 	background-color: var(--ak-info-subtle) !important;
@@ -36,7 +41,10 @@ html[data-adminkit-theme="dark"] body.adminkit .ak-auto-error {
 	background-color: var(--ak-error-subtle) !important;
 }
 
-/* ── Text — near-black → body text, mid-grey → muted ── */
+/* ── Text — near-black → heading, dark → body text, mid-grey → muted ── */
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-heading {
+	color: var(--ak-heading) !important;
+}
 html[data-adminkit-theme="dark"] body.adminkit .ak-auto-text {
 	color: var(--ak-text) !important;
 }
@@ -44,9 +52,12 @@ html[data-adminkit-theme="dark"] body.adminkit .ak-auto-muted {
 	color: var(--ak-text-muted) !important;
 }
 
-/* ── Fixed light / translucent borders → border ── */
+/* ── Borders — light → border, medium/strong → border-strong ── */
 html[data-adminkit-theme="dark"] body.adminkit .ak-auto-bd {
 	border-color: var(--ak-border) !important;
+}
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-bd-strong {
+	border-color: var(--ak-border-strong) !important;
 }
 
 /* ── Light box-shadows (halos in dark) on darkened surfaces → removed ── */

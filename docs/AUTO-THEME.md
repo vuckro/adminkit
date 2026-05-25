@@ -42,20 +42,28 @@ to dark is instant, and there is **zero cleanup** to undo.
 
 ## What it maps (dark mode only)
 
-| Detected (computed colour) | Tag | Token |
-| --- | --- | --- |
-| neutral light background | `.ak-auto-surface` | `--ak-surface` |
-| …same, nested in another surface | `.ak-auto-elevated` | `--ak-elevated` |
-| **pale** tinted background, by hue | `.ak-auto-{info\|success\|warning\|error}` | `--ak-*-subtle` |
-| near-black text | `.ak-auto-text` | `--ak-text` |
-| mid-grey text | `.ak-auto-muted` | `--ak-text-muted` |
-| light / translucent border | `.ak-auto-bd` | `--ak-border` |
-| light box-shadow on a darkened surface | `.ak-auto-noshadow` | `box-shadow:none` |
-| the host's **brand** colour (fill/text/border) | `.ak-auto-brand-{bg\|fg\|bd}` | `--ak-primary` |
+| Property | Detected (computed colour) | Tag | Token |
+| --- | --- | --- | --- |
+| background | light neutral | `.ak-auto-surface` | `--ak-surface` |
+| background | …nested in another surface, or light-grey | `.ak-auto-elevated` | `--ak-elevated` |
+| background | **pale** tint, by hue | `.ak-auto-{info\|success\|warning\|error}` | `--ak-*-subtle` |
+| background | **pale** near-neutral tint | `.ak-auto-primary-sub` | `--ak-primary-subtle` |
+| text | near-black | `.ak-auto-heading` | `--ak-heading` |
+| text | dark | `.ak-auto-text` | `--ak-text` |
+| text | mid-grey | `.ak-auto-muted` | `--ak-text-muted` |
+| border | light | `.ak-auto-bd` | `--ak-border` |
+| border | medium / strong | `.ak-auto-bd-strong` | `--ak-border-strong` |
+| background | light box-shadow on a darkened surface | `.ak-auto-noshadow` | `box-shadow:none` |
+| any | the host's **brand** colour (fill/text/border) | `.ak-auto-brand-{bg\|fg\|bd}` | `--ak-primary` |
 
-Classification uses three cheap measures of the parsed `rgb()`: **luminance**
-(light↔dark), **saturation** (grey↔colour) and **hue** (which colour). All
-thresholds live in one table (`T`) at the top of the JS, made for calibration.
+The classifier **mirrors `dev/css-scan.php`'s `ak_classify()`** — the same logic
+that backs every hand-tuned adapter — so the runtime mapping matches the adapters'
+semantics. It branches on the **property** the colour paints (background / border
+/ text) and three cheap measures of the parsed `rgb()`: HSL **lightness**, the
+**absolute chroma** (`max−min` channels — a far more reliable "is this grey?"
+signal than HSL saturation, which balloons for near-white/near-black neutrals),
+and **hue**. Only LIGHT surfaces / borders and DARK text are remapped; already-dark
+fills, light text (white-on-fill) and vivid hued fills are left alone.
 
 ## Brand detection
 
@@ -76,12 +84,14 @@ detection retries on DOM mutations and, once found, runs a one-shot brand pass.
 
 ## Safety guarantees
 
-- **Interactive controls' surfaces are never restyled.** Buttons, links-as-buttons,
-  `input`/`select`/`textarea`, `.button`/`.btn`, `.MuiButton-root`, `.ant-btn` and
-  their contents are left alone (only their brand colour, if any, is unified). This
-  is the hard guarantee a CTA's colours can't be broken.
-- **Only PALE backgrounds are recoloured** (luminance ≥ 218) — vivid brand fills
-  are out of reach of the surface pass entirely.
+- **Buttons' surfaces are never restyled.** True buttons (`button`, `a.button`,
+  `.button`/`.btn`, `.MuiButton-root`, `.ant-btn`, submit/reset inputs) and special
+  controls (checkbox/radio/range/colour inputs) keep their surface — only their
+  brand colour, if any, is unified. This is the hard guarantee a CTA can't break.
+  Text fields / selects / textareas ARE themed, so no surface or border is missed.
+- **Only LIGHT backgrounds are recoloured**, and only **neutral or pale** ones —
+  vivid hued fills (brand buttons, status pills) are out of the surface pass; the
+  brand pass handles the host's primary colour, status fills keep their meaning.
 - **Self-limiting.** It reads *computed* colour, so anything a native adapter or
   AdminKit core already put on a token reads as the dark token value and is
   skipped — it layers on top of adapters, never fights them.
