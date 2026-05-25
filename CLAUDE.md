@@ -67,6 +67,7 @@ again, in the SAME branch — not "later".**
    - new / changed **hook** → [docs/EXTENDING.md](docs/EXTENDING.md) (+ the README filter table).
    - new **integration** or integration behaviour → [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) + the README integrations list.
    - **file / folder move** → the README file tree + the Map at the top of this file.
+   - **renamed UI label / tab** (e.g. a settings tab) → `grep -rn "<old name>" CLAUDE.md README.md docs/` and update every hit. Easy to forget; the doc keeps the old name otherwise.
    - any **user-facing string** → refresh i18n (see [Verify a change](#verify-a-change)).
 3. **Record important decisions as guardrails.** When you lock a non-obvious
    choice (a default, an order, a "don't do X — it broke Y"), add a one-line
