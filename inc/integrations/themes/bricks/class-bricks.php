@@ -322,54 +322,52 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	/**
 	 * Build the CSS that brands the builder toolbar + preloader.
 	 *
-	 * If a brand logo is configured (Settings → Features → Branding, or the
-	 * adminkit/brand_logo filter) it is used as an IMAGE — the proven approach:
-	 * `content:var(--ak-builder-logo)` swaps the toolbar <img>, and the preloader
-	 * splash uses it as a background. logo_dark is the default (toolbar bg is
-	 * dark); logo_light kicks in in light mode (`body:has(.mode [data-name="sun"])`).
+	 * Toolbar logo: ALWAYS the first letter of the site title on the accent chip —
+	 * clean and robust (li.logo out-specifies Bricks, display:none drops the native
+	 * <img>, --accent-on keeps the letter legible). No image is shown here, so it
+	 * never renders oversized or mis-fitted.
 	 *
-	 * With NO logo configured, fall back to a clean text mark: the first letter of
-	 * the site title on the accent chip (li.logo out-specifies Bricks, display:none
-	 * drops the native <img>, --accent-on keeps the letter legible on the chip).
+	 * Preloader: when a brand logo IS configured, it pulses on the (fixed dark)
+	 * splash; otherwise Bricks's own loader shows on that dark background.
 	 *
 	 * @return string Inline CSS.
 	 */
 	private static function builder_logo_css() {
+		$css = self::builder_toolbar_letter_css();
+
 		$dark    = AdminKit_Settings::brand_logo( 'dark' );
 		$light   = AdminKit_Settings::brand_logo( 'light' );
-		$primary = '' !== $dark ? $dark : $light; // dark-bg variant leads (toolbar + preloader are dark)
-
-		// No configured logo → the first-letter text mark.
-		if ( '' === $primary ) {
-			$name   = wp_strip_all_tags( get_bloginfo( 'name' ) );
-			$letter = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 1 ) : substr( $name, 0, 1 );
-			$letter = preg_replace( '/[^\p{L}\p{N}]/u', '', (string) $letter ); // CSS-safe: letters/digits only
-			$letter = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $letter ) : strtoupper( $letter );
-			if ( '' === $letter ) {
-				return '';
-			}
-			return '#bricks-toolbar li.logo{background-color:var(--accent,#ffd64f);'
-				. 'display:flex;align-items:center;justify-content:center;min-width:34px}'
-				. '#bricks-toolbar li.logo img{display:none}'
-				. '#bricks-toolbar li.logo::after{content:"' . $letter . '";'
-				. 'color:var(--accent-on,#18181b);font-weight:700;font-size:15px;line-height:1}';
+		$preload = '' !== $dark ? $dark : $light;
+		if ( '' !== $preload ) {
+			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
+			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
+			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:15rem;aspect-ratio:1;'
+				. 'background:' . self::css_url( $preload ) . ' center/contain no-repeat;'
+				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
+			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
 		}
-
-		// Configured logo → image (toolbar swap + preloader splash), light + dark.
-		$css  = '#bricks-toolbar{--ak-builder-logo:' . self::css_url( $primary ) . '}';
-		$css .= '#bricks-toolbar .logo{background-color:var(--accent)}';
-		$css .= '#bricks-toolbar .logo img{content:var(--ak-builder-logo);height:22px;width:auto}';
-		if ( '' !== $light && $light !== $primary ) {
-			$css .= 'body:has(.mode [data-name="sun"]) #bricks-toolbar{--ak-builder-logo:' . self::css_url( $light ) . '}';
-		}
-		// Preloader: the same logo, pulsing on the (fixed dark) splash from builder.css.
-		$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
-		$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
-		$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:15rem;aspect-ratio:1;'
-			. 'background:' . self::css_url( $primary ) . ' center/contain no-repeat;'
-			. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
-		$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
 		return $css;
+	}
+
+	/**
+	 * The toolbar logo as a first-letter text mark on the accent chip. '' when the
+	 * site title has no usable letter.
+	 *
+	 * @return string
+	 */
+	private static function builder_toolbar_letter_css() {
+		$name   = wp_strip_all_tags( get_bloginfo( 'name' ) );
+		$letter = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 1 ) : substr( $name, 0, 1 );
+		$letter = preg_replace( '/[^\p{L}\p{N}]/u', '', (string) $letter ); // CSS-safe: letters/digits only
+		$letter = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $letter ) : strtoupper( $letter );
+		if ( '' === $letter ) {
+			return '';
+		}
+		return '#bricks-toolbar li.logo{background-color:var(--accent,#ffd64f);'
+			. 'display:flex;align-items:center;justify-content:center;min-width:34px}'
+			. '#bricks-toolbar li.logo img{display:none}'
+			. '#bricks-toolbar li.logo::after{content:"' . $letter . '";'
+			. 'color:var(--accent-on,#18181b);font-weight:700;font-size:15px;line-height:1}';
 	}
 
 	/**
