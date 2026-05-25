@@ -156,7 +156,10 @@
    the color shift the universal hover rule applies is enough feedback. */
 #wpadminbar #wp-admin-bar-ak-theme-toggle:hover .ab-item,
 #wpadminbar #wp-admin-bar-ak-theme-toggle.hover .ab-item,
-#wpadminbar #wp-admin-bar-ak-theme-toggle .ab-item:focus {
+#wpadminbar #wp-admin-bar-ak-theme-toggle .ab-item:focus,
+#wpadminbar #wp-admin-bar-ak-view-site:hover .ab-item,
+#wpadminbar #wp-admin-bar-ak-view-site.hover .ab-item,
+#wpadminbar #wp-admin-bar-ak-view-site .ab-item:focus {
 	background: transparent !important;
 }
 
@@ -176,11 +179,13 @@
    after core, so equal specificity wins on order. Sized to a 52px / 46px
    tap target to match WP's other mobile icons. */
 @media screen and (max-width: 782px) {
-	#wpadminbar li#wp-admin-bar-ak-theme-toggle {
+	#wpadminbar li#wp-admin-bar-ak-theme-toggle,
+	#wpadminbar li#wp-admin-bar-ak-view-site {
 		display: block;
 	}
 
-	#wpadminbar li#wp-admin-bar-ak-theme-toggle > .ab-item {
+	#wpadminbar li#wp-admin-bar-ak-theme-toggle > .ab-item,
+	#wpadminbar li#wp-admin-bar-ak-view-site > .ab-item {
 		width: 52px;
 		height: 46px;
 		padding: 0;

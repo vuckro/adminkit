@@ -39,6 +39,7 @@ class AdminKit_Theme_Toggle {
 		add_action( 'login_head', array( __CLASS__, 'print_script' ), 1 );
 		add_action( 'wp_head', array( __CLASS__, 'print_script' ), 1 );
 		add_action( 'admin_bar_menu', array( __CLASS__, 'register_node' ), 999 );
+		add_action( 'admin_bar_menu', array( __CLASS__, 'register_view_site_node' ), 998 );
 
 		// Login-screen branding (site-icon logo + its link/text) is part of the
 		// "Login screen" feature, so it follows that toggle — with it off, AdminKit
@@ -154,6 +155,30 @@ class AdminKit_Theme_Toggle {
 			'meta'   => array(
 				'class' => 'ak-theme-toggle',
 				'title' => __( 'Toggle light / dark mode', 'adminkit' ),
+			),
+		) );
+	}
+
+	/**
+	 * Admin-bar shortcut to the site frontend — an eye icon sitting beside the
+	 * light/dark toggle. wp-admin only (on the frontend it would be redundant).
+	 *
+	 * @param WP_Admin_Bar $bar
+	 * @return void
+	 */
+	public static function register_view_site_node( $bar ) {
+		if ( ! is_admin() ) {
+			return;
+		}
+		$eye = '<svg class="ak-theme-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12 3.75s9.19 3.226 10.677 7.697c.12.362.12.752 0 1.113C21.19 17.024 16.973 20.25 12 20.25S2.81 17.024 1.323 12.553a1.762 1.762 0 0 1 0-1.106Z" clip-rule="evenodd"/></svg>';
+		$bar->add_node( array(
+			'id'     => 'ak-view-site',
+			'parent' => 'top-secondary',
+			'title'  => $eye,
+			'href'   => home_url( '/' ),
+			'meta'   => array(
+				'class' => 'ak-view-site',
+				'title' => __( 'View site', 'adminkit' ),
 			),
 		) );
 	}
