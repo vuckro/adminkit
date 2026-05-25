@@ -261,6 +261,38 @@ body.adminkit .wp-pwd input#pass1 {
 	width: 100%;
 }
 
+/* --- Account screen: anti-FOUC (hide raw form until tabs are built) -------
+   profile-account.js runs in the footer, so the raw, untabbed WP profile form
+   (every section stacked, the avatar field, full-length tables) would flash
+   before snapping into the tabbed layout. An inline <head> bootstrap
+   (class-profile-account.php) tags <html> with `ak-account-pending` BEFORE
+   first paint; this rule hides the form until the build swaps in
+   `ak-account-ready`. Critically the marker is set by JS, never server-side —
+   so with JS off/blocked the class is never added, the rule never matches, and
+   the form shows in full. A `load`-time safety in the bootstrap also force-
+   reveals if the script throws, so content is never trapped hidden.
+   visibility (not display:none) keeps layout measurable during the build — no
+   reflow jump on reveal; opacity adds a soft fade. */
+html.ak-account-pending #your-profile,
+html.ak-account-pending #createuser {
+	visibility: hidden;
+	opacity: 0;
+}
+
+html.ak-account-ready #your-profile,
+html.ak-account-ready #createuser {
+	visibility: visible;
+	opacity: 1;
+	transition: opacity .12s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html.ak-account-ready #your-profile,
+	html.ak-account-ready #createuser {
+		transition: none;
+	}
+}
+
 /* --- Account screen: horizontal tabs, one panel at a time ----------------
    JS regroups each WP profile <h2> + its .form-table into an .ak-card panel
    plus a tab strip; only the active panel is shown (see

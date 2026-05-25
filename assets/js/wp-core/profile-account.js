@@ -11,11 +11,23 @@
  * loaded only on the account screens. Layout: assets/css/wp-screens/profile.css.
  */
 (function () {
-	var form = document.querySelector('#your-profile, #createuser');
-	if (!form || form.dataset.akAccount) return;
-	form.dataset.akAccount = '1';
-
 	var S = window.AdminKitProfileAccount || {};
+
+	// Anti-FOUC reveal. An inline <head> bootstrap (class-profile-account.php)
+	// tags <html> with the pending class pre-paint so profile.css hides the raw,
+	// untabbed form until the layout below is built; reveal() swaps in the ready
+	// class to show it. Call it on EVERY exit path (including the early returns
+	// and the "nothing to group" bail) so the form is never left hidden — and the
+	// PHP side also force-reveals on `load` as a backstop if this script throws.
+	var docEl = document.documentElement;
+	function reveal() {
+		if (S.pendingClass) { docEl.classList.remove(S.pendingClass); }
+		if (S.readyClass) { docEl.classList.add(S.readyClass); }
+	}
+
+	var form = document.querySelector('#your-profile, #createuser');
+	if (!form || form.dataset.akAccount) { reveal(); return; }
+	form.dataset.akAccount = '1';
 
 	// Inline stroke icons (currentColor). One per curated tab + a set keyed to
 	// the kind of fields a plugin section carries.
@@ -370,6 +382,7 @@
 	if (!buttons.length) {
 		box.parentNode.removeChild(box); // nothing grouped — leave the form be
 		form.removeAttribute('data-ak-account');
+		reveal();
 		return;
 	}
 	function activate(id) {
@@ -418,4 +431,7 @@
 		if (narrow.addEventListener) narrow.addEventListener('change', placeAction);
 		else if (narrow.addListener) narrow.addListener(placeAction);
 	}
+
+	// Layout fully built — reveal the form (clears the pre-paint anti-FOUC hide).
+	reveal();
 })();

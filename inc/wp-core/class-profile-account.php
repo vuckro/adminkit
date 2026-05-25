@@ -42,12 +42,100 @@ class AdminKit_Profile_Account {
 	const SCREENS = array( 'profile', 'user-edit', 'user-new' );
 
 	/**
+	 * Marker class added to <html> while the tab layout is being built, so the
+	 * raw (untabbed) profile form is hidden until profile-account.js reveals it.
+	 *
+	 * @var string
+	 */
+	const PENDING_CLASS = 'ak-account-pending';
+
+	/**
+	 * Marker class swapped in once the build finishes (or a safety fallback
+	 * fires) — flips the form back to visible.
+	 *
+	 * @var string
+	 */
+	const READY_CLASS = 'ak-account-ready';
+
+	/**
 	 * Wire the hooks. Called once from the plugin orchestrator.
 	 *
 	 * @return void
 	 */
 	public static function init() {
+		// Pre-paint, priority 1 like the theme bootstrap, so the marker is on
+		// <html> before first paint and profile.css can hide the raw form before
+		// it ever shows. JS sets it (see print_prepaint) — never server-side — so
+		// a no-JS / failed-JS visitor never enters the hidden state.
+		add_action( 'admin_head', array( __CLASS__, 'print_prepaint' ), 1 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
+	}
+
+	/**
+	 * Whether AdminKit should enhance the current request: an account screen AND
+	 * the plugin's own `should_load` gate. Shared by the pre-paint bootstrap and
+	 * the script enqueue so they switch on/off together.
+	 *
+	 * @return bool
+	 */
+	private static function should_enhance() {
+		return AdminKit_Screen::is_one_of( self::SCREENS )
+			&& (bool) apply_filters( 'adminkit/should_load', true, 'admin' );
+	}
+
+	/**
+	 * Print the anti-FOUC pre-paint bootstrap (inline, in <head>).
+	 *
+	 * profile-account.js runs in the footer — after first paint — so without this
+	 * the raw WordPress profile form (every section stacked, the avatar field,
+	 * the full-length tables) flashes for a moment before snapping into the tabbed
+	 * layout. This synchronously tags <html> with PENDING_CLASS so profile.css
+	 * can hide the form *before* it paints; the footer script swaps in READY_CLASS
+	 * at the end of its build to reveal it.
+	 *
+	 * Inline-in-<head> is the established anti-FOUC exception (see
+	 * class-theme-toggle.php). The marker is added by JS, so:
+	 *   - JS disabled / blocked → the class is never set → the hide rule never
+	 *     matches → the form shows normally (just unstyled-into-tabs).
+	 *   - JS enabled but profile-account.js throws mid-build → a `load` event
+	 *     (and a timed) safety reveals the form regardless, so it can NEVER stay
+	 *     permanently hidden.
+	 *
+	 * @return void
+	 */
+	public static function print_prepaint() {
+		if ( ! self::should_enhance() ) {
+			return;
+		}
+		$pending = self::PENDING_CLASS;
+		$ready   = self::READY_CLASS;
+		?>
+<script id="adminkit-account-prepaint">
+(function () {
+	var d = document.documentElement;
+	d.classList.add(<?php echo wp_json_encode( $pending ); ?>);
+	// Safety net: if the footer builder never reveals the form (script error,
+	// blocked asset, …), force it visible so content is never trapped hidden.
+	function reveal() {
+		d.classList.remove(<?php echo wp_json_encode( $pending ); ?>);
+		d.classList.add(<?php echo wp_json_encode( $ready ); ?>);
+	}
+	window.addEventListener('load', function () {
+		// One frame after load: profile-account.js (also footer) has run by now in
+		// the normal case and already revealed. This only catches the failure case.
+		var after = function () {
+			if (d.classList.contains(<?php echo wp_json_encode( $pending ); ?>)) { reveal(); }
+		};
+		if (window.requestAnimationFrame) { window.requestAnimationFrame(after); }
+		else { window.setTimeout(after, 0); }
+	});
+	// Absolute backstop in case `load` never fires (e.g. a hung subresource).
+	setTimeout(function () {
+		if (d.classList.contains(<?php echo wp_json_encode( $pending ); ?>)) { reveal(); }
+	}, 3000);
+})();
+</script>
+		<?php
 	}
 
 	/**
@@ -57,10 +145,7 @@ class AdminKit_Profile_Account {
 	 * @return void
 	 */
 	public static function enqueue() {
-		if ( ! AdminKit_Screen::is_one_of( self::SCREENS ) ) {
-			return;
-		}
-		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+		if ( ! self::should_enhance() ) {
 			return;
 		}
 
@@ -88,6 +173,11 @@ class AdminKit_Profile_Account {
 			'more'            => __( 'Other settings', 'adminkit' ),
 			'nav'             => __( 'Account sections', 'adminkit' ),
 			'username_locked' => __( 'This username cannot be changed.', 'adminkit' ),
+			// Anti-FOUC marker classes (set on <html> pre-paint by print_prepaint);
+			// the builder swaps pending → ready to reveal the form. Shared from PHP
+			// so both sides use the same identifiers.
+			'pendingClass'    => self::PENDING_CLASS,
+			'readyClass'      => self::READY_CLASS,
 		);
 
 		AdminKit_Assets::enqueue_script(
