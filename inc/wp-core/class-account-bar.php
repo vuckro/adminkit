@@ -48,6 +48,8 @@ class AdminKit_Account_Bar {
 		$edit = $bar->get_node( 'edit-profile' );
 		if ( $edit ) {
 			$edit->href  = $dashboard;
+			// Reuse WP core's "Dashboard" translation (default text domain, no
+			// `adminkit`) so the relabelled item matches core wording in every locale.
 			$edit->title = __( 'Dashboard' );
 			$bar->add_node( (array) $edit );
 		}
