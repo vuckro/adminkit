@@ -177,10 +177,10 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Replace Bricks's admin-menu icon with a "B" mark when the AdminKit icons
-	 * feature is on — so it matches the set instead of standing out as a base64 SVG.
-	 * Bricks sets that icon as an INLINE background, so `!important` is the only way
-	 * to clear it: a deliberate, scoped exception (like the builder.css var mapping).
+	 * Replace Bricks's admin-menu icon with a clean layout/grid glyph (masked, like
+	 * the AdminKit icon set) when the icons feature is on — so it stops standing out
+	 * as a base64 SVG. Bricks sets that icon as an INLINE background, so `!important`
+	 * is the only way to clear it: a deliberate, scoped exception (like builder.css).
 	 *
 	 * @return void
 	 */
@@ -191,11 +191,15 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return;
 		}
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M3 6a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3V6ZM3 15.75a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2.25Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3v-2.25Z" clip-rule="evenodd"/></svg>';
+		$uri = 'url("data:image/svg+xml,' . rawurlencode( $svg ) . '")';
 		echo '<style id="adminkit-bricks-menu-icon">'
-			. '#adminmenu #toplevel_page_bricks .wp-menu-image{background-image:none!important}'
-			. '#adminmenu #toplevel_page_bricks .wp-menu-image::before{content:"B";display:block;'
-			. 'font:700 17px/34px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;text-align:center;color:currentColor}'
-			. "</style>\n"; // static markup; no dynamic input.
+			. '#adminmenu #toplevel_page_bricks .wp-menu-image{background-image:none!important;'
+			. 'box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}'
+			. '#adminmenu #toplevel_page_bricks .wp-menu-image::before{content:"";display:inline-block;'
+			. 'width:20px;height:20px;vertical-align:middle;background-color:currentColor;'
+			. '-webkit-mask:' . $uri . ' center/20px 20px no-repeat;mask:' . $uri . ' center/20px 20px no-repeat}'
+			. "</style>\n"; // SVG is URL-encoded.
 	}
 
 	/**
