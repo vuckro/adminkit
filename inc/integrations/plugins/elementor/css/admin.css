@@ -1,0 +1,113 @@
+/* Elementor (Free + Pro) — admin token bridge.
+   Tier A: Elementor drives its admin UI from its own CSS variables — the classic
+   pages (--e-*) and the React "app"/Home (--app-*, --body-*, the --gray-* ramp,
+   status + brand). We redeclare those variables as AdminKit --ak-* tokens so the
+   whole admin follows light + dark with NO !important and NO flash.
+
+   Scope: body.adminkit is a nearer ancestor than Elementor's :root, so its var
+   definitions win for everything inside <body>. .eps-theme-dark is Elementor's
+   own dark class (added when the user sets Elementor's UI to dark) — a nearer
+   ancestor still — so we redeclare there too, letting AdminKit drive the theme
+   regardless of Elementor's own light/dark preference. The --ak-* tokens already
+   flip under [data-adminkit-theme="dark"], so the flip is automatic.
+
+   The --gray-* ramp is mapped by LIGHTNESS onto AdminKit's semantic ramp (which
+   is built to invert by lightness): lightest greys → surfaces/elevated, mids →
+   borders, darks → text/headings. A panel that is gray-50 bg + gray-900 text in
+   Elementor light therefore becomes a dark panel with light text in AdminKit dark.
+
+   The live builder/editor canvas is out of scope (see class-elementor.php).
+   Bootstrapped by dev/adapter-scan.php (colour→token detection) then hand-tuned.
+   Reads --ak-* only — no raw colours. */
+
+body.adminkit,
+body.adminkit .eps-theme-dark {
+
+	/* ── Surfaces — app/page/card/notice backgrounds → --ak-surface ── */
+	--app-background-color: var(--ak-surface);
+	--card-background-color: var(--ak-surface);
+	--card-background-color-hover: var(--ak-surface);
+	--checkbox-background-color: var(--ak-surface);
+	--body-bg: var(--ak-surface);
+	--e-notice-bg: var(--ak-surface);
+
+	/* ── Body / muted / link text ── */
+	--body-color: var(--ak-text);
+	--text-muted: var(--ak-text-muted);
+	--secondary: var(--ak-text);
+	--link-color: var(--ak-primary);
+	--link-hover-color: var(--ak-primary);
+
+	/* ── Headings, titles, header chrome → --ak-heading ── */
+	--app-header-color: var(--ak-heading);
+	--app-title-color: var(--ak-heading);
+	--app-header-buttons-color: var(--ak-text);
+	--app-header-buttons-color-hover: var(--ak-heading);
+	--e-black: var(--ak-heading);
+	--black: var(--ak-heading);
+
+	/* ── Heading + text scale (Elementor sets these all to one grey) ── */
+	--h1-color: var(--ak-heading);
+	--h2-color: var(--ak-heading);
+	--h3-color: var(--ak-heading);
+	--h4-color: var(--ak-heading);
+	--h5-color: var(--ak-text);
+	--h6-color: var(--ak-text);
+	--display-1-color: var(--ak-heading);
+	--display-2-color: var(--ak-heading);
+	--display-3-color: var(--ak-heading);
+	--display-4-color: var(--ak-heading);
+	--text-base-color: var(--ak-text);
+	--text-xl-color: var(--ak-text);
+	--text-lg-color: var(--ak-text);
+	--text-sm-color: var(--ak-text);
+	--text-xs-color: var(--ak-text-muted);
+	--text-xxs-color: var(--ak-text-muted);
+
+	/* ── Borders / dividers / disabled ── */
+	--hr-color: var(--ak-border);
+	--e-notice-border-color: var(--ak-border);
+	--app-header-buttons-separator-color: var(--ak-border-strong);
+	--card-figure-background-color: var(--ak-border-strong);
+	--disabled: var(--ak-border);
+
+	/* ── Grey ramp → AdminKit semantic ramp, by lightness ── */
+	--gray-900: var(--ak-heading);
+	--gray-800: var(--ak-heading);
+	--gray-750: var(--ak-heading);
+	--gray-725: var(--ak-text);
+	--gray-700: var(--ak-text);
+	--gray-600: var(--ak-text);
+	--gray-500: var(--ak-text-muted);
+	--gray-400: var(--ak-text-muted);
+	--gray-300: var(--ak-border-strong);
+	--gray-200: var(--ak-border-strong);
+	--gray-100: var(--ak-border);
+	--gray-75: var(--ak-border);
+	--gray-50: var(--ak-elevated);
+	--gray-25: var(--ak-elevated);
+
+	/* ── Brand / accent / CTA → --ak-primary ── */
+	--brand: var(--ak-primary);
+	--primary: var(--ak-primary);
+	--cta: var(--ak-primary);
+	--accent: var(--ak-primary);
+	--primary-bg: var(--ak-primary-subtle);
+	--e-context-cta-color: var(--ak-primary);
+	--e-context-promotion-color: var(--ak-primary);
+
+	/* ── Status — success / info / warning / error ── */
+	--success: var(--ak-success);
+	--success-bg: var(--ak-success-subtle);
+	--e-context-success-color: var(--ak-success);
+	--info: var(--ak-info);
+	--info-bg: var(--ak-info-subtle);
+	--e-context-info-color: var(--ak-info);
+	--e-context-primary-color: var(--ak-info);
+	--warning: var(--ak-warning);
+	--warning-bg: var(--ak-warning-subtle);
+	--e-context-warning-color: var(--ak-warning);
+	--danger: var(--ak-error);
+	--danger-bg: var(--ak-error-subtle);
+	--e-context-error-color: var(--ak-error);
+}
