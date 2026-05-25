@@ -496,7 +496,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
 			$css .= '#bricks-preloader .bricks-loading-inner > *{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner::before{'
-				. 'content:"";box-sizing:border-box;width:18rem;aspect-ratio:5/2;max-width:74vw;padding:0.4rem;'
+				. 'content:"";box-sizing:border-box;width:9rem;height:7rem;max-width:74vw;padding:0.4rem;'
 				. 'border:1px solid rgba(255,255,255,0.16);border-radius:16px;'
 				. 'background:' . self::css_url( $logo ) . ' center / contain no-repeat;background-origin:content-box;'
 				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
