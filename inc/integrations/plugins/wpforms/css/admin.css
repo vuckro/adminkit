@@ -1,0 +1,105 @@
+/* WPForms (Lite + Pro) — admin token bridge.
+   Tier B: WPForms hardcodes its colours in its own classes; these rules remap
+   them to AdminKit --ak-* tokens so its admin screens follow light + dark.
+   Bootstrapped by dev/adapter-scan.php (colour→token detection) then hand-tuned:
+   pruned to admin-only selectors (the scan also surfaced front-end form / Divi /
+   Elementor / block-editor matches — dropped here), dropped a broken bare-colour
+   box-shadow group, and kept link colours off solid fills.
+   Scoped under body.adminkit; the sheet only loads on WPForms admin screens
+   (owns_screen). Reads --ak-* only — no raw colours. */
+
+/* ── Surfaces — white panels, cards, dropdowns, striped rows → --ak-surface ── */
+body.adminkit .choices__inner,
+body.adminkit .choices__list--dropdown,
+body.adminkit .choices__list--dropdown .choices__item--selectable.is-highlighted,
+body.adminkit .wpforms-admin-page .postbox,
+body.adminkit .wpforms-overview-chart,
+body.adminkit .wpforms-overview-chart-heading,
+body.adminkit .wpforms-datepicker-popover,
+body.adminkit .wpforms-addons-list-item-footer,
+body.adminkit table.wpforms-table-list.striped > tbody > :nth-child(odd) {
+	background: var(--ak-surface);
+}
+
+/* ── Light surfaces / neutral hovers (#eee/#f0f0f0) → --ak-elevated ── */
+body.adminkit .wpforms-links,
+body.adminkit .wpforms-admin-single-navigation .wpforms-btn-grey,
+body.adminkit .wpforms-admin-page .wpforms-btn-bordered:hover,
+body.adminkit .wpforms-admin-page .wpforms-btn-light-grey:focus {
+	background: var(--ak-elevated);
+}
+
+/* ── Body text → --ak-text ── */
+body.adminkit .wpforms-admin-page .wpforms-btn-bordered,
+body.adminkit .wpforms-admin-page .wpforms-btn-light-grey,
+body.adminkit body.wpforms-admin-page #wpfooter .wpforms-footer-promotion,
+body.adminkit body.wpforms-admin-page #wpfooter .wpforms-footer-promotion-links {
+	color: var(--ak-text);
+}
+
+/* ── Headings / near-black text → --ak-heading ── */
+body.adminkit .wpforms-admin-tabs li a,
+body.adminkit .choices__list--single .choices__item,
+body.adminkit body div.jconfirm .jconfirm-box-container .jconfirm-box .jconfirm-title-c .jconfirm-title,
+body.adminkit body div.jconfirm .jconfirm-box-container .jconfirm-box .jconfirm-content-pane .jconfirm-content {
+	color: var(--ak-heading);
+}
+
+/* ── Muted text — placeholders, badges, reset/dismiss → --ak-text-muted ── */
+body.adminkit #wpforms-reset-filter .reset,
+body.adminkit .wpforms-dyk .wpforms-dyk-buttons .wpforms-dismiss-button,
+body.adminkit .wpforms-admin-tabs::after,
+body.adminkit .choices ::placeholder,
+body.adminkit .wpforms-badge-silver {
+	color: var(--ak-text-muted);
+}
+
+/* ── Light borders → --ak-border ── */
+body.adminkit .wpforms-admin-page .wpforms-file-upload .fld,
+body.adminkit #wpforms-admin-about .wpforms-admin-about-section,
+body.adminkit .wpforms-overview-chart-settings .wpforms-dash-widget-settings-menu-wrap {
+	border-color: var(--ak-border);
+}
+
+/* ── Strong borders — inputs, cards, dialog buttons → --ak-border-strong ── */
+body.adminkit .choices__inner,
+body.adminkit .choices__list--dropdown,
+body.adminkit .wpforms-admin-page .wpforms-btn-bordered,
+body.adminkit .wpforms-admin-page .postbox,
+body.adminkit .wpforms-admin-page .postbox .hndle {
+	border-color: var(--ak-border-strong);
+}
+
+/* ── Brand accent — orange/blue buttons + focus rings → --ak-primary ── */
+body.adminkit .wpforms-admin-page .wpforms-btn-orange,
+body.adminkit .wpforms-admin-page .wpforms-btn-blue:hover,
+body.adminkit .wpforms-admin-page .button:hover {
+	background: var(--ak-primary);
+}
+body.adminkit .choices[data-type*="select-one"] input.choices__input:focus,
+body.adminkit .wpforms-admin-page .is-focused .choices__inner,
+body.adminkit .wpforms-admin-page .is-open .choices__inner {
+	border-color: var(--ak-primary);
+}
+
+/* ── Error (red) — destructive buttons, row-action trash/delete → --ak-error ── */
+body.adminkit .wpforms-admin-page .wpforms-btn-red {
+	background: var(--ak-error);
+}
+body.adminkit .wpforms-admin-page .row-actions .trash a:hover,
+body.adminkit .wpforms-admin-page .row-actions .delete a:hover {
+	color: var(--ak-error);
+}
+
+/* ── Success (green) → --ak-success ── */
+body.adminkit .wpforms-admin-page .wpforms-btn-green {
+	background: var(--ak-success);
+}
+body.adminkit #wpforms-payments.wpforms-payments-wrap-payment .wpforms-payment-actions .status .processed {
+	color: var(--ak-success);
+}
+
+/* ── Warning (amber/yellow) — star ratings, warning glyphs → --ak-warning ── */
+body.adminkit #wpforms-entries-list .wp-list-table .indicator-star.unstar {
+	color: var(--ak-warning);
+}
