@@ -389,6 +389,21 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			}
 		}
 
+		// Preloader brand logo → injected as a real <img> by JS so it hugs the logo's
+		// natural aspect (no letterbox gutters); styled by builder-essentials.css.
+		$logo = AdminKit_Settings::brand_logo( 'dark' );
+		if ( '' === $logo ) {
+			$logo = AdminKit_Settings::brand_logo( 'light' );
+		}
+		if ( '' !== $logo ) {
+			$js_rel  = 'inc/integrations/themes/bricks/js/preloader-logo.js';
+			$js_path = ADMINKIT_PATH . $js_rel;
+			if ( file_exists( $js_path ) ) {
+				wp_enqueue_script( 'adminkit-bricks-preloader', ADMINKIT_URL . $js_rel, array(), (string) filemtime( $js_path ), true );
+				wp_add_inline_script( 'adminkit-bricks-preloader', 'window.AdminKitBricksPreloader=' . wp_json_encode( array( 'logo' => $logo ) ) . ';', 'before' );
+			}
+		}
+
 		// 2) Chrome restyle — opt-in (panels, code editor, variable remaps).
 		if ( $restyle ) {
 			self::enqueue_builder_fallback_tokens();
@@ -450,13 +465,14 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Build the CSS that brands the builder toolbar + preloader.
+	 * Build the inline CSS that brands the builder TOOLBAR (the favicon chip).
 	 *
-	 * Toolbar: the site FAVICON as a fixed rounded SQUARE (28px, centred, cover) so
-	 * the radius reads on the chip; first-letter mark when no Site Icon is set.
-	 * Preloader: the configured brand LOGO in a wide ROUNDED box (contain → the whole
-	 * logo, undistorted), centred with a gentle pulse on the fixed dark splash;
-	 * Bricks's own loader shows when no logo is set.
+	 * The site FAVICON as a fixed rounded SQUARE (centred, cover) so the radius reads
+	 * on the chip; first-letter mark when no Site Icon is set.
+	 *
+	 * The PRELOADER logo is a separate concern: a real <img> injected by
+	 * js/preloader-logo.js (so it hugs the logo's natural aspect — no gutters), styled
+	 * by builder-essentials.css. Enqueued in enqueue_builder().
 	 *
 	 * @return string Inline CSS.
 	 */
@@ -481,27 +497,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			$css .= self::builder_toolbar_letter_css();
 		}
 
-		// Preloader → replace Bricks's animated logo with the configured brand logo.
-		$logo = AdminKit_Settings::brand_logo( 'dark' );
-		if ( '' === $logo ) {
-			$logo = AdminKit_Settings::brand_logo( 'light' );
-		}
-		if ( '' !== $logo ) {
-			// Paint the brand logo on `.bricks-loading-inner::before`, centred by the
-			// inner's `place-items:center`. HIDE EVERY real child of the inner wrapper
-			// (`> *`) — Bricks's default mark sits in a child whose class we don't need to
-			// guess (it was NOT .bricks-logo-animated); the ::before pseudo isn't a child,
-			// so our logo survives. `contain` = the whole logo, never cropped; a thin
-			// rounded BORDER (transparent fill, no card) makes the radius visible.
-			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
-			$css .= '#bricks-preloader .bricks-loading-inner > *{display:none}';
-			$css .= '#bricks-preloader .bricks-loading-inner::before{'
-				. 'content:"";box-sizing:border-box;width:9rem;height:7rem;max-width:74vw;padding:0.4rem;'
-				. 'border:1px solid rgba(255,255,255,0.16);border-radius:16px;'
-				. 'background:' . self::css_url( $logo ) . ' center / contain no-repeat;background-origin:content-box;'
-				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
-			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.05)}}';
-		}
 		return $css;
 	}
 
