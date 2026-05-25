@@ -213,48 +213,108 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Restyle the Bricks builder UI — the "Bricks builder" feature.
+	 * Restyle the Bricks builder — the "Bricks builder" feature.
 	 *
 	 * Dedicated enqueue: the builder has no admin bar, so AdminKit's normal
-	 * frontend dispatch (and its --ak-* layer) skips it. builder.css instead maps
-	 * Bricks's --builder-* / --bricks-* variables onto the live WaasKit provider
-	 * variables that ARE present in the builder (see the file header).
+	 * frontend dispatch (and its --ak-* layer) skips it. The builder is a
+	 * Bricks/WaasKit surface, so the sheets map onto the live WaasKit provider
+	 * variables instead (see each file's header).
 	 *
-	 * MAIN frame ONLY — never the canvas iframe. The canvas iframe renders the
-	 * actual page; injecting this stylesheet there would remap the page's own
-	 * --bricks-* design variables and break how the canvas renders vs the live
-	 * frontend. This file is builder CHROME, not page content.
+	 * The builder is TWO documents, and they get DIFFERENT sheets:
+	 *   - MAIN frame  → builder.css        — chrome (toolbar, panels, structure…),
+	 *                                         including the --bricks-* and
+	 *                                         --builder-* variable remaps.
+	 *   - canvas IFRAME → builder-canvas.css — only canvas-surface tweaks, NO
+	 *                                          variable remaps (those would alter
+	 *                                          the rendered page itself).
 	 *
 	 * Off by default — opt in via Settings → Features → Bricks builder.
 	 *
 	 * @return void
 	 */
 	public static function enqueue_builder() {
-		// Main builder frame only. ?bricks=run is the builder URL;
-		// bricks_is_builder_main() confirms it (excludes the canvas iframe).
+		if ( ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
+			return;
+		}
+		$base = 'inc/integrations/themes/bricks/css/';
+
+		// Main builder frame → the chrome. ?bricks=run is the builder URL;
+		// bricks_is_builder_main() confirms it.
 		$is_main = ( isset( $_GET['bricks'] ) && 'run' === $_GET['bricks'] )
 			|| ( function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main() );
-		if ( ! $is_main || ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
+		if ( $is_main ) {
+			if ( self::enqueue_style_file( 'adminkit-bricks-builder', $base . 'builder.css' ) ) {
+				$logo_css = self::builder_logo_css();
+				if ( '' !== $logo_css ) {
+					wp_add_inline_style( 'adminkit-bricks-builder', $logo_css );
+				}
+			}
 			return;
 		}
 
-		$rel  = 'inc/integrations/themes/bricks/css/builder.css';
+		// Canvas iframe (the rendered page) → only canvas-surface tweaks.
+		if ( function_exists( 'bricks_is_builder_iframe' ) && bricks_is_builder_iframe() ) {
+			self::enqueue_style_file( 'adminkit-bricks-builder-canvas', $base . 'builder-canvas.css' );
+		}
+	}
+
+	/**
+	 * Enqueue one of the integration's stylesheets by repo-relative path, with a
+	 * filemtime cache-bust. Returns false if the file is missing.
+	 *
+	 * @param string $handle
+	 * @param string $rel    Path relative to the plugin root.
+	 * @return bool
+	 */
+	private static function enqueue_style_file( $handle, $rel ) {
 		$path = ADMINKIT_PATH . $rel;
 		if ( ! file_exists( $path ) ) {
-			return;
+			return false;
 		}
-		wp_enqueue_style( 'adminkit-bricks-builder', ADMINKIT_URL . $rel, array(), (string) filemtime( $path ) );
+		wp_enqueue_style( $handle, ADMINKIT_URL . $rel, array(), (string) filemtime( $path ) );
+		return true;
+	}
 
-		// Optional toolbar logo. Opt-in + filterable so no external asset is baked
-		// in: defaults to the site icon; an empty value leaves Bricks's own logo.
-		$logo = apply_filters( 'adminkit/bricks/builder_logo', get_site_icon_url( 96 ) );
-		if ( $logo ) {
-			wp_add_inline_style(
-				'adminkit-bricks-builder',
-				'#bricks-toolbar .logo{background-color:var(--accent)}'
-				. '#bricks-toolbar .logo img{content:url(' . esc_url( $logo ) . ');height:22px;width:auto}'
-			);
+	/**
+	 * Build the optional brand-logo CSS for the builder toolbar + preloader.
+	 *
+	 * Opt-in and filterable, so NO external asset is shipped in the plugin. The
+	 * `adminkit/bricks/builder_logo` filter may return:
+	 *   - '' (default) — leave Bricks's own logo + preloader untouched.
+	 *   - a URL string — used for the toolbar logo.
+	 *   - an array( 'default' => url, 'light' => url, 'preloader' => url ) — the
+	 *     toolbar logo (with a light-mode variant) and the preloader splash logo.
+	 *
+	 * @return string Inline CSS, or '' when no logo is configured.
+	 */
+	private static function builder_logo_css() {
+		$logo = apply_filters( 'adminkit/bricks/builder_logo', '' );
+		if ( empty( $logo ) ) {
+			return '';
 		}
+		$dark      = esc_url( is_array( $logo ) ? ( isset( $logo['default'] ) ? $logo['default'] : '' ) : $logo );
+		$light     = esc_url( is_array( $logo ) && isset( $logo['light'] ) ? $logo['light'] : '' );
+		$preloader = esc_url( is_array( $logo ) && isset( $logo['preloader'] ) ? $logo['preloader'] : '' );
+		if ( '' === $dark ) {
+			return '';
+		}
+
+		// Toolbar logo chip + image (with an optional light-mode variant).
+		$css  = '#bricks-toolbar .logo{background-color:var(--accent)}';
+		$css .= '#bricks-toolbar .logo img{content:url(' . $dark . ');height:22px;width:auto}';
+		if ( '' !== $light ) {
+			$css .= 'body:has(.mode [data-name="sun"]) #bricks-toolbar .logo img{content:url(' . $light . ')}';
+		}
+
+		// Preloader splash — only when a preloader logo is given (otherwise leave
+		// Bricks's own splash, never hide it into a blank screen).
+		if ( '' !== $preloader ) {
+			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
+			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
+			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:15rem;aspect-ratio:1;background:url(' . $preloader . ') center/contain no-repeat;animation:ak-bricks-preload 1.4s ease-in-out infinite}';
+			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
+		}
+		return $css;
 	}
 
 	/**

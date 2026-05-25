@@ -7,8 +7,10 @@
  * NEVER load this in the canvas iframe. That frame renders the actual page, and
  * the :root { --bricks-* } block below remaps the page's own design variables —
  * inside the canvas it would change how the page renders (and diverge from the
- * live frontend). This file styles builder CHROME only; canvas tweaks, if ever
- * needed, belong in a separate iframe-only sheet that touches no design vars.
+ * live frontend). This file styles builder CHROME only; canvas-surface tweaks
+ * live in the companion builder-canvas.css (loaded in the iframe), which touches
+ * no design variables. The split is wired in AdminKit_Integration_Bricks::
+ * enqueue_builder() (main frame → this file; iframe → builder-canvas.css).
  *
  * EXCEPTION to AdminKit's "every stylesheet reads --ak-* tokens" rule. The
  * builder is a Bricks/WaasKit-native surface: it has no admin bar, so AdminKit's

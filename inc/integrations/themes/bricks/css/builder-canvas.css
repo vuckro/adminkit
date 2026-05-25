@@ -1,0 +1,23 @@
+/**
+ * Bricks builder — CANVAS iframe only.
+ *
+ * The canvas iframe renders the actual page. So this sheet must touch NO design
+ * variables: remapping --bricks-* / --builder-* here would change the page's own
+ * appearance and make the canvas diverge from the live frontend (that exact bug
+ * is why the chrome lives in builder.css, main frame only). This file carries
+ * only canvas-surface tweaks.
+ *
+ * Loaded by AdminKit_Integration_Bricks::enqueue_builder() when
+ * bricks_is_builder_iframe(). It never loads on the live frontend, so the real
+ * site keeps its own backgrounds and focus outlines.
+ */
+
+/* Empty-page placeholder — let the canvas surface show through. */
+#bricks-blank-canvas {
+	background-color: transparent;
+}
+
+/* Native Bricks form fields: drop the doubled focus outline while editing. */
+body.bricks-is-frontend :focus-visible {
+	outline: none;
+}
