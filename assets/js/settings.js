@@ -396,11 +396,11 @@
 		// Admin-bar logo size (px) — a small number input, right-aligned.
 		var sizeInput = el( 'input', {
 			type: 'number', 'class': 'ak-field__input ak-field__num', id: 'ak-logo-size',
-			min: '16', max: '32', step: '1', value: String( state.logoSize )
+			min: '16', max: '50', step: '1', value: String( state.logoSize )
 		} );
 		sizeInput.addEventListener( 'input', function () {
 			var n = parseInt( sizeInput.value, 10 );
-			state.logoSize = ( n >= 16 && n <= 32 ) ? n : 28;
+			state.logoSize = ( n >= 16 && n <= 50 ) ? n : 30;
 			markDirty();
 		} );
 		var sizeField = el( 'div', { 'class': 'ak-field ak-field--inline' }, [

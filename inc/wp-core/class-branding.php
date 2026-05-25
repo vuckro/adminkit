@@ -135,14 +135,15 @@ class AdminKit_Core_Branding {
 			$dark = $light;
 		}
 		$px  = (int) $size . 'px';
-		$top = (int) max( 0, floor( ( 32 - (int) $size ) / 2 ) ) . 'px'; // centre in the 32px bar
+		$top = (int) floor( ( 32 - (int) $size ) / 2 ) . 'px'; // centre in the bar (negative when larger)
 		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon';
-		// Reset WP's icon padding (it makes a sized chip overflow the bar), give the
-		// .ab-icon the bar height, then centre a bordered, rounded chip in it.
-		return $sel . '{width:' . $px . ';height:32px;padding:0}'
+		// Reset WP's icon padding (it makes a sized chip overflow oddly), give the
+		// .ab-icon the bar height, then centre a ROUNDED chip in it (radius, no
+		// border). overflow:visible lets a logo larger than the bar show in full.
+		return $sel . '{width:' . $px . ';height:32px;padding:0;overflow:visible}'
 			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:' . $px . ';height:' . $px . ';'
 			. 'margin:' . $top . ' 0;top:0;'
-			. 'border:1px solid var(--ak-border,rgba(140,140,140,.35));border-radius:var(--ak-radius-s,6px);'
+			. 'border-radius:var(--ak-radius-m,8px);'
 			. 'background:' . $light . ' center/contain no-repeat}'
 			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{background-image:' . $dark . '}'
 			. self::hide_site_name_glyph();
@@ -161,12 +162,12 @@ class AdminKit_Core_Branding {
 			return '';
 		}
 		$px  = (int) $size . 'px';
-		$top = (int) max( 0, floor( ( 32 - (int) $size ) / 2 ) ) . 'px'; // centre in the 32px bar
+		$top = (int) floor( ( 32 - (int) $size ) / 2 ) . 'px'; // centre in the bar (negative when larger)
 		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon';
-		return $sel . '{width:' . $px . ';height:32px;padding:0}'
+		return $sel . '{width:' . $px . ';height:32px;padding:0;overflow:visible}'
 			. $sel . '::before{content:"";display:block;box-sizing:border-box;width:' . $px . ';height:' . $px . ';'
 			. 'margin:' . $top . ' 0;top:0;'
-			. 'border:1px solid var(--ak-border,rgba(140,140,140,.35));border-radius:var(--ak-radius-s,6px);'
+			. 'border-radius:var(--ak-radius-m,8px);'
 			. 'background:' . $favicon . ' center/contain no-repeat}'
 			. self::hide_site_name_glyph();
 	}
