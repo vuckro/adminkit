@@ -370,7 +370,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			// Favicon FILLS the chip (covers the whole surface), clipped to the rounded
 			// corners. No chip colour — the favicon already covers it (and Bricks's
 			// yellow is overridden to transparent so nothing shows behind/around it).
-			$css .= '#bricks-toolbar .logo{background-color:transparent;border-radius:6px;overflow:hidden}';
+			$css .= '#bricks-toolbar .logo{background-color:transparent!important;border-radius:6px;overflow:hidden}';
 			$css .= '#bricks-toolbar .logo a{display:block;width:100%;height:100%}';
 			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:100%;height:100%;object-fit:cover}';
 		} else {
@@ -385,8 +385,11 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		if ( '' !== $logo ) {
 			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
 			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
-			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:15rem;aspect-ratio:1;border-radius:1.5rem;'
-				. 'background:' . self::css_url( $logo ) . ' center/contain no-repeat;'
+			// A rounded card (subtle fill) with the logo contained inside — the card is
+			// what makes the radius visible (a bare contained logo leaves the rounded
+			// corners empty/transparent, so the radius never showed).
+			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";width:13rem;height:13rem;border-radius:2rem;'
+				. 'background:rgba(255,255,255,.08) ' . self::css_url( $logo ) . ' center/60% no-repeat;'
 				. 'animation:ak-bricks-preload 1.4s ease-in-out infinite}';
 			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.1)}}';
 		}
