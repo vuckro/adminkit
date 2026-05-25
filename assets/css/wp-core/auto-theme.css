@@ -1,20 +1,55 @@
 /* AdminKit runtime auto-theming — the dark-only paint layer.
 
-   assets/js/wp-core/auto-theme.js tags elements still painted in fixed light
-   surfaces / dark text (the ones no static sheet could reach — CSS-in-JS, inline
-   styles, unknown plugin classes). Here we remap those tags to --ak-* tokens,
-   but ONLY in dark mode, where glaring white panels are the actual problem. In
-   light mode these selectors don't match, so the original look returns with zero
-   JS cleanup.
+   assets/js/wp-core/auto-theme.js tags elements still painted in fixed colours
+   (the ones no static sheet could reach — CSS-in-JS, inline styles, unknown
+   plugin classes) with the .ak-auto-* classes below. Here we remap each tag to
+   the matching --ak-* token, but ONLY in dark mode, where glaring light panels
+   are the actual problem. In light mode these selectors don't match, so the
+   original look returns with zero JS cleanup.
+
+   The engine never tags interactive controls (buttons, links-as-buttons, inputs),
+   and only recolours PALE backgrounds — so brand fills / CTAs keep their colour.
 
    !important is deliberate and necessary: it's the only way to beat a plugin's
    own hardcoded inline / emotion colours. This is a wp-core feature sheet (not a
    Tier-A/B adapter), so it sits outside the adapter !important budget by design. */
 
+/* ── Neutral surfaces — fixed white/light panels → surface, nested → elevated ── */
 html[data-adminkit-theme="dark"] body.adminkit .ak-auto-surface {
 	background-color: var(--ak-surface) !important;
 }
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-elevated {
+	background-color: var(--ak-elevated) !important;
+}
 
+/* ── Pale tinted backgrounds → matching subtle token (kept semantic) ── */
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-info {
+	background-color: var(--ak-info-subtle) !important;
+}
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-success {
+	background-color: var(--ak-success-subtle) !important;
+}
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-warning {
+	background-color: var(--ak-warning-subtle) !important;
+}
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-error {
+	background-color: var(--ak-error-subtle) !important;
+}
+
+/* ── Text — near-black → body text, mid-grey → muted ── */
 html[data-adminkit-theme="dark"] body.adminkit .ak-auto-text {
 	color: var(--ak-text) !important;
+}
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-muted {
+	color: var(--ak-text-muted) !important;
+}
+
+/* ── Fixed light / translucent borders → border ── */
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-bd {
+	border-color: var(--ak-border) !important;
+}
+
+/* ── Light box-shadows (halos in dark) on darkened surfaces → removed ── */
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-noshadow {
+	box-shadow: none !important;
 }
