@@ -1,0 +1,25 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/wp-admin/admin.php?page=adminkit",
+	"login": true,
+	"features": { "networking": true },
+	"steps": [
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "git:directory",
+				"url": "https://github.com/vuckro/adminkit",
+				"ref": "docs/overhaul",
+				"refType": "branch"
+			},
+			"options": {
+				"activate": true,
+				"targetFolderName": "adminkit"
+			}
+		},
+		{
+			"step": "setSiteLanguage",
+			"language": "fr_FR"
+		}
+	]
+}
