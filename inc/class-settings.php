@@ -134,6 +134,17 @@ class AdminKit_Settings {
 				'sanitize' => 'rest_sanitize_boolean',
 			) );
 		}
+
+		// Editor content theming — OFF by default (opt-in). The gate for theming
+		// the block content inside the editor canvas (iframe). Left off, the
+		// canvas keeps its real frontend appearance, so a client's page layout is
+		// never altered. The canvas-injection wiring plugs into this flag.
+		self::register( 'editor_content_theme', array(
+			'type'     => 'toggle',
+			'group'    => 'features',
+			'default'  => false,
+			'sanitize' => 'rest_sanitize_boolean',
+		) );
 	}
 
 	/**
