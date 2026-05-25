@@ -233,6 +233,14 @@ msgstr "Détails"
 msgid "Click a card for details."
 msgstr "Cliquez sur une carte pour les détails."
 
+#: inc/class-settings-page.php:299
+msgid "To verify"
+msgstr "À vérifier"
+
+#: inc/class-settings-page.php:300
+msgid "Done — confirm so it can be removed from the roadmap."
+msgstr "Terminé — confirme pour qu'elle puisse être retirée de la feuille de route."
+
 #: inc/class-settings-page.php:306
 msgid "Live colour reference"
 msgstr "Référence des couleurs en direct"
@@ -313,73 +321,69 @@ msgstr "Feuille de route"
 msgid "In progress"
 msgstr "En cours"
 
-#: inc/class-settings-page.php:388 inc/class-settings-page.php:548
-msgid "Generated avatars"
-msgstr "Avatars générés"
+#: inc/class-settings-page.php:383
+msgid "Editor canvas theming"
+msgstr "Thème du canevas de l'éditeur"
+
+#: inc/class-settings-page.php:384
+msgid "Block content in the editor follows your theme."
+msgstr "Le contenu des blocs suit votre thème."
+
+#: inc/class-settings-page.php:385
+msgid "AdminKit themes the Gutenberg editor canvas — the block content itself, not just the chrome — so writing matches your admin in light and dark. Default blocks pick up the palette; any block you gave explicit colours keeps them; switching theme stays smooth with no white flash."
+msgstr "AdminKit thème le canevas de l'éditeur Gutenberg — le contenu des blocs lui-même, pas seulement l'interface — pour que la rédaction s'accorde à votre admin en clair comme en sombre. Les blocs par défaut adoptent la palette ; tout bloc auquel vous avez donné des couleurs explicites les conserve ; le changement de thème reste fluide, sans flash blanc."
+
+#: inc/class-settings-page.php:388
+msgid "Themed blocks in light and dark."
+msgstr "Blocs thémés en clair et en sombre."
 
 #: inc/class-settings-page.php:389
-msgid "Auto-create a friendly avatar for users without a photo."
-msgstr "Crée automatiquement un avatar sympathique pour les utilisateurs sans photo."
+msgid "Your custom block colours are respected."
+msgstr "Vos couleurs de bloc personnalisées sont respectées."
 
 #: inc/class-settings-page.php:390
-msgid "When an account has no uploaded photo and no Gravatar, AdminKit fills the gap with a friendly, auto-generated avatar — so every user looks intentional instead of a blank silhouette. Avatars come from a hosted generator (nothing is stored on your site), stay the same for each user, and a real Gravatar always wins."
-msgstr "Lorsqu’un compte n’a ni photo envoyée ni Gravatar, AdminKit comble le vide avec un avatar sympathique généré automatiquement — ainsi chaque utilisateur a une apparence soignée plutôt qu’une silhouette vide. Les avatars proviennent d’un générateur hébergé (rien n’est stocké sur votre site), restent identiques pour chaque utilisateur, et un vrai Gravatar a toujours la priorité."
-
-#: inc/class-settings-page.php:392
-msgid "Opt-in — pairs with Local avatars."
-msgstr "Optionnel — fonctionne avec les avatars locaux."
-
-#: inc/class-settings-page.php:393
-msgid "Nothing stored: generated on demand."
-msgstr "Rien n’est stocké : généré à la demande."
+msgid "Smooth, flash-free theme switching."
+msgstr "Changement de thème fluide, sans flash."
 
 #: inc/class-settings-page.php:394
-msgid "A real Gravatar still takes priority."
-msgstr "Un vrai Gravatar garde la priorité."
+msgid "Builder & integration polish"
+msgstr "Finitions builder et intégrations"
 
 #: inc/class-settings-page.php:395
-msgid "Avatar style is overridable via a filter."
-msgstr "Le style d’avatar est modifiable via un filtre."
+msgid "Third-party surfaces refined in dark mode."
+msgstr "Surfaces tierces peaufinées en mode sombre."
+
+#: inc/class-settings-page.php:396
+msgid "Rounding off the surfaces other tools render inside the admin: the Bricks builder (preloader, panel scrollbars and the code editor) and the Admin Menu Editor search popup — so the experience stays consistent and dark-mode-correct even outside AdminKit's own screens."
+msgstr "On peaufine les surfaces que d'autres outils affichent dans l'admin : le builder Bricks (préchargement, barres de défilement des panneaux et éditeur de code) et le pop-up de recherche d'Admin Menu Editor — pour une expérience cohérente et correcte en mode sombre, même hors des écrans d'AdminKit."
 
 #: inc/class-settings-page.php:399
-msgid "Roadmap detail view"
-msgstr "Vue détaillée de la feuille de route"
+msgid "Bricks preloader, scrollbars and code editor."
+msgstr "Préchargement, scrollbars et éditeur de code de Bricks."
 
 #: inc/class-settings-page.php:400
-msgid "Hover a card, click for a clean detail panel."
-msgstr "Survolez une carte, cliquez pour un panneau de détails épuré."
+msgid "Admin Menu Editor search popup."
+msgstr "Pop-up de recherche d'Admin Menu Editor."
 
 #: inc/class-settings-page.php:401
-msgid "Every card on this roadmap is interactive: hover to highlight it, click to open a tidy panel describing the feature and where it stands — so this page stays a plan you can actually follow."
-msgstr "Chaque carte de cette feuille de route est interactive : survolez-la pour la mettre en évidence, cliquez pour ouvrir un panneau soigné décrivant la fonctionnalité et son avancement — ainsi cette page reste un plan que vous pouvez réellement suivre."
-
-#: inc/class-settings-page.php:403
-msgid "Click any card for details."
-msgstr "Cliquez sur n’importe quelle carte pour les détails."
-
-#: inc/class-settings-page.php:404
-msgid "Keyboard and screen-reader friendly."
-msgstr "Compatible clavier et lecteurs d’écran."
-
-#: inc/class-settings-page.php:405
-msgid "Looks right in light and dark."
-msgstr "Rendu impeccable en mode clair et sombre."
+msgid "Consistent tokens across integrations."
+msgstr "Tokens cohérents sur les intégrations."
 
 #: inc/class-settings-page.php:411
 msgid "Next"
 msgstr "Prochainement"
 
-#: inc/class-settings-page.php:414
-msgid "Login screen branding"
-msgstr "Personnalisation de l’écran de connexion"
+#: inc/class-settings-page.php:410
+msgid "More native plugin support"
+msgstr "Plus d'extensions prises en charge nativement"
 
-#: inc/class-settings-page.php:415
-msgid "Your logo on the wp-login screen."
-msgstr "Votre logo sur l’écran wp-login."
+#: inc/class-settings-page.php:411
+msgid "Tuned adapters for more popular plugins."
+msgstr "Des adaptateurs dédiés pour plus d'extensions populaires."
 
-#: inc/class-settings-page.php:416
-msgid "Carry the brand logo (with its light and dark variants) you already set for the admin bar onto the wp-login.php screen, replacing the WordPress mark — a small change with a big first-impression payoff."
-msgstr "Reprenez le logo de marque (avec ses variantes claire et sombre) déjà défini pour la barre d’administration sur l’écran wp-login.php, en remplaçant le logo WordPress — un petit changement pour une grande première impression."
+#: inc/class-settings-page.php:412
+msgid "First-class adapters for widely-used plugins (SEO, form builders, commerce, LMS and more) so their admin screens inherit AdminKit's look and dark mode — the same treatment Bricks, WooCommerce and ACF already get."
+msgstr "Des adaptateurs de premier ordre pour des extensions très utilisées (SEO, formulaires, e-commerce, LMS, etc.) afin que leurs écrans d'administration héritent du style et du mode sombre d'AdminKit — le même traitement que Bricks, WooCommerce et ACF aujourd'hui."
 
 #: inc/class-settings-page.php:419
 msgid "More native screens styled"
@@ -392,6 +396,30 @@ msgstr "Taxonomies, types de publication personnalisés et le reste."
 #: inc/class-settings-page.php:421
 msgid "Extend AdminKit's per-screen polish to the pages still wearing default WordPress styling: the category and tag editors, custom-post-type lists, and the few remaining core screens — so the whole admin feels like one product."
 msgstr "Étendez le soin apporté par AdminKit à chaque écran aux pages encore habillées du style WordPress par défaut : les éditeurs de catégories et d’étiquettes, les listes de types de publication personnalisés et les quelques écrans natifs restants — pour que toute l’administration paraisse d’un seul tenant."
+
+#: inc/class-settings-page.php:420
+msgid "Universal plugin compatibility"
+msgstr "Compatibilité universelle des extensions"
+
+#: inc/class-settings-page.php:421
+msgid "Any plugin looks right, even without an adapter."
+msgstr "N'importe quelle extension s'affiche bien, même sans adaptateur."
+
+#: inc/class-settings-page.php:422
+msgid "Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common form controls — so a plugin with no dedicated adapter still looks coherent in light and dark out of the box. The stronger this layer, the less per-plugin work is ever needed."
+msgstr "Renforcer la couche de base partagée — notices, métaboxes, onglets, fenêtres modales, contrôles de formulaire courants — pour qu'une extension sans adaptateur dédié reste cohérente en clair et en sombre d'emblée. Plus cette couche est solide, moins il faut de travail par extension."
+
+#: inc/class-settings-page.php:425
+msgid "Login & admin-bar polish"
+msgstr "Finitions connexion et barre d'admin"
+
+#: inc/class-settings-page.php:426
+msgid "Every login state and the admin bar, front and back."
+msgstr "Tous les états de connexion et la barre d'admin, avant et arrière."
+
+#: inc/class-settings-page.php:427
+msgid "Finish the most-seen surfaces end to end: every wp-login state (reset, register, check-email, interim login…), the admin bar on both the front and back end, consistent notices, and clear keyboard focus styles throughout."
+msgstr "Terminer les surfaces les plus vues de bout en bout : chaque état de wp-login (réinitialisation, inscription, vérification d'e-mail, connexion intermédiaire…), la barre d'administration côté site et côté admin, des notices cohérentes et des styles de focus clavier nets partout."
 
 #: inc/class-settings-page.php:424
 msgid "In-app palette editor"

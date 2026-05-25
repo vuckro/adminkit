@@ -229,6 +229,14 @@ msgstr ""
 msgid "Click a card for details."
 msgstr ""
 
+#: inc/class-settings-page.php:299
+msgid "To verify"
+msgstr ""
+
+#: inc/class-settings-page.php:300
+msgid "Done — confirm so it can be removed from the roadmap."
+msgstr ""
+
 #: inc/class-settings-page.php:306
 msgid "Live colour reference"
 msgstr ""
@@ -309,72 +317,68 @@ msgstr ""
 msgid "In progress"
 msgstr ""
 
-#: inc/class-settings-page.php:388 inc/class-settings-page.php:548
-msgid "Generated avatars"
+#: inc/class-settings-page.php:383
+msgid "Editor canvas theming"
+msgstr ""
+
+#: inc/class-settings-page.php:384
+msgid "Block content in the editor follows your theme."
+msgstr ""
+
+#: inc/class-settings-page.php:385
+msgid "AdminKit themes the Gutenberg editor canvas — the block content itself, not just the chrome — so writing matches your admin in light and dark. Default blocks pick up the palette; any block you gave explicit colours keeps them; switching theme stays smooth with no white flash."
+msgstr ""
+
+#: inc/class-settings-page.php:388
+msgid "Themed blocks in light and dark."
 msgstr ""
 
 #: inc/class-settings-page.php:389
-msgid "Auto-create a friendly avatar for users without a photo."
+msgid "Your custom block colours are respected."
 msgstr ""
 
 #: inc/class-settings-page.php:390
-msgid "When an account has no uploaded photo and no Gravatar, AdminKit fills the gap with a friendly, auto-generated avatar — so every user looks intentional instead of a blank silhouette. Avatars come from a hosted generator (nothing is stored on your site), stay the same for each user, and a real Gravatar always wins."
-msgstr ""
-
-#: inc/class-settings-page.php:392
-msgid "Opt-in — pairs with Local avatars."
-msgstr ""
-
-#: inc/class-settings-page.php:393
-msgid "Nothing stored: generated on demand."
+msgid "Smooth, flash-free theme switching."
 msgstr ""
 
 #: inc/class-settings-page.php:394
-msgid "A real Gravatar still takes priority."
+msgid "Builder & integration polish"
 msgstr ""
 
 #: inc/class-settings-page.php:395
-msgid "Avatar style is overridable via a filter."
+msgid "Third-party surfaces refined in dark mode."
+msgstr ""
+
+#: inc/class-settings-page.php:396
+msgid "Rounding off the surfaces other tools render inside the admin: the Bricks builder (preloader, panel scrollbars and the code editor) and the Admin Menu Editor search popup — so the experience stays consistent and dark-mode-correct even outside AdminKit's own screens."
 msgstr ""
 
 #: inc/class-settings-page.php:399
-msgid "Roadmap detail view"
+msgid "Bricks preloader, scrollbars and code editor."
 msgstr ""
 
 #: inc/class-settings-page.php:400
-msgid "Hover a card, click for a clean detail panel."
+msgid "Admin Menu Editor search popup."
 msgstr ""
 
 #: inc/class-settings-page.php:401
-msgid "Every card on this roadmap is interactive: hover to highlight it, click to open a tidy panel describing the feature and where it stands — so this page stays a plan you can actually follow."
-msgstr ""
-
-#: inc/class-settings-page.php:403
-msgid "Click any card for details."
-msgstr ""
-
-#: inc/class-settings-page.php:404
-msgid "Keyboard and screen-reader friendly."
-msgstr ""
-
-#: inc/class-settings-page.php:405
-msgid "Looks right in light and dark."
+msgid "Consistent tokens across integrations."
 msgstr ""
 
 #: inc/class-settings-page.php:411
 msgid "Next"
 msgstr ""
 
-#: inc/class-settings-page.php:414
-msgid "Login screen branding"
+#: inc/class-settings-page.php:410
+msgid "More native plugin support"
 msgstr ""
 
-#: inc/class-settings-page.php:415
-msgid "Your logo on the wp-login screen."
+#: inc/class-settings-page.php:411
+msgid "Tuned adapters for more popular plugins."
 msgstr ""
 
-#: inc/class-settings-page.php:416
-msgid "Carry the brand logo (with its light and dark variants) you already set for the admin bar onto the wp-login.php screen, replacing the WordPress mark — a small change with a big first-impression payoff."
+#: inc/class-settings-page.php:412
+msgid "First-class adapters for widely-used plugins (SEO, form builders, commerce, LMS and more) so their admin screens inherit AdminKit's look and dark mode — the same treatment Bricks, WooCommerce and ACF already get."
 msgstr ""
 
 #: inc/class-settings-page.php:419
@@ -387,6 +391,30 @@ msgstr ""
 
 #: inc/class-settings-page.php:421
 msgid "Extend AdminKit's per-screen polish to the pages still wearing default WordPress styling: the category and tag editors, custom-post-type lists, and the few remaining core screens — so the whole admin feels like one product."
+msgstr ""
+
+#: inc/class-settings-page.php:420
+msgid "Universal plugin compatibility"
+msgstr ""
+
+#: inc/class-settings-page.php:421
+msgid "Any plugin looks right, even without an adapter."
+msgstr ""
+
+#: inc/class-settings-page.php:422
+msgid "Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common form controls — so a plugin with no dedicated adapter still looks coherent in light and dark out of the box. The stronger this layer, the less per-plugin work is ever needed."
+msgstr ""
+
+#: inc/class-settings-page.php:425
+msgid "Login & admin-bar polish"
+msgstr ""
+
+#: inc/class-settings-page.php:426
+msgid "Every login state and the admin bar, front and back."
+msgstr ""
+
+#: inc/class-settings-page.php:427
+msgid "Finish the most-seen surfaces end to end: every wp-login state (reset, register, check-email, interim login…), the admin bar on both the front and back end, consistent notices, and clear keyboard focus styles throughout."
 msgstr ""
 
 #: inc/class-settings-page.php:424
