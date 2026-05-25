@@ -136,10 +136,13 @@
 	color: var(--ak-heading) !important;
 }
 
-/* User-info block — rounded avatar (top bar + dropdown), name hierarchy */
+/* User-info block — rounded avatar (top bar + dropdown), name hierarchy.
+   Radius only — no frame: drop any border/shadow so the face reads clean. */
 #wpadminbar .with-avatar > a img,
 #wp-admin-bar-user-info img {
 	border-radius: var(--ak-radius-m);
+	border: 0;
+	box-shadow: none;
 }
 
 /* Toolbar account avatar — a touch bigger than WP's 16px so the user's face
