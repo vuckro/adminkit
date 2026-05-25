@@ -27,8 +27,31 @@
 		return document.documentElement.getAttribute( ATTR ) === 'dark' ? 'dark' : 'light';
 	}
 
+	// Resolve the parent's current --ak-bg to a concrete colour, so the canvas can
+	// paint it SYNCHRONOUSLY (inline) before the injected token stylesheets finish
+	// loading — that async gap is what flashed white in dark mode. Cached per mode.
+	var bgCache = {};
+	function darkBg() {
+		if ( bgCache.dark ) {
+			return bgCache.dark;
+		}
+		var probe = document.createElement( 'div' );
+		probe.style.cssText = 'position:absolute;visibility:hidden;background-color:var(--ak-bg)';
+		document.documentElement.appendChild( probe );
+		var c = getComputedStyle( probe ).backgroundColor;
+		probe.remove();
+		// Only cache once it resolves to a real colour (tokens loaded in the parent).
+		if ( c && 'rgba(0, 0, 0, 0)' !== c && 'transparent' !== c ) {
+			bgCache.dark = c;
+		}
+		return c;
+	}
+
+	function canvasFrame() {
+		return document.querySelector( 'iframe[name="editor-canvas"]' );
+	}
 	function canvasDoc() {
-		var f = document.querySelector( 'iframe[name="editor-canvas"]' );
+		var f = canvasFrame();
 		if ( ! f ) {
 			return null;
 		}
@@ -41,12 +64,25 @@
 
 	function tick() {
 		var doc = canvasDoc();
-		if ( ! doc || ! doc.head || ! doc.documentElement ) {
+		if ( ! doc || ! doc.documentElement ) {
 			return;
 		}
 		var root = doc.documentElement;
-		// Inject the stylesheets once per (re)mounted document.
-		if ( ! root.hasAttribute( MARK ) ) {
+
+		// 1) Paint the canvas background IMMEDIATELY (inline, synchronous) in dark
+		//    mode, so nothing flashes white while the injected stylesheets load.
+		//    Cleared in light mode — the canvas stays light, like the front end.
+		var bg = ( 'dark' === mode() ) ? darkBg() : '';
+		root.style.backgroundColor = bg;
+		if ( doc.body ) {
+			doc.body.style.backgroundColor = bg;
+		}
+
+		// 2) Mirror the mode attribute — drives the --ak-* dark block once tokens load.
+		root.setAttribute( ATTR, mode() );
+
+		// 3) Inject the token + canvas stylesheets once per (re)mounted document.
+		if ( doc.head && ! root.hasAttribute( MARK ) ) {
 			HREFS.forEach( function ( href ) {
 				if ( ! href ) {
 					return;
@@ -59,15 +95,13 @@
 			} );
 			root.setAttribute( MARK, '' );
 		}
-		// Tag the iframe <body> so `body.adminkit …` rules apply inside the canvas:
-		// the --wp-* accent remap (tokens.css) + the @wordpress/components theming
-		// (wp-components.css) — so block placeholders, their buttons and inputs match
-		// the chrome instead of falling back to WP blue.
+
+		// 4) Tag the iframe <body> so `body.adminkit …` rules apply inside the canvas:
+		// the --wp-* accent remap (tokens.css) + the @wordpress/components theming, so
+		// block placeholders, buttons and inputs match the chrome, not WP blue.
 		if ( doc.body && ! doc.body.classList.contains( 'adminkit' ) ) {
 			doc.body.classList.add( 'adminkit' );
 		}
-		// Keep the canvas mode in sync with the parent (cheap, idempotent).
-		root.setAttribute( ATTR, mode() );
 	}
 
 	// Instant flip when the parent toggle changes.
@@ -76,7 +110,25 @@
 		{ attributes: true, attributeFilter: [ ATTR ] }
 	);
 
-	// Poll handles first mount + iframe re-creation; tick() is idempotent.
-	setInterval( tick, 500 );
-	tick();
+	// Catch the iframe being (re)created — first mount, device preview, code-editor
+	// toggle — as early as possible, and bind its `load` so we paint before it shows.
+	var bound;
+	function watch() {
+		var f = canvasFrame();
+		if ( f && f !== bound ) {
+			bound = f;
+			f.addEventListener( 'load', tick );
+		}
+		tick();
+	}
+	new MutationObserver( function () {
+		var f = canvasFrame();
+		if ( f && f !== bound ) {
+			watch();
+		}
+	} ).observe( document.body || document.documentElement, { childList: true, subtree: true } );
+
+	// Fallback poll (idempotent) for anything the observers miss.
+	setInterval( watch, 500 );
+	watch();
 }() );
