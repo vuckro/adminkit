@@ -118,11 +118,14 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 	 *
 	 * The block-editor canvas is a separate <iframe> document that neither the
 	 * editor-chrome CSS nor the page's data-adminkit-theme attribute reach. So we
-	 * hand canvas-theme.js the (mtime-stamped) URLs of the token files + canvas.css;
-	 * it injects them as <link>s into the iframe <head> and mirrors the theme
-	 * attribute onto the iframe <html>, so the same --ak-* dark block flips the
-	 * canvas. Raw stylesheets go straight in — no block_editor_settings_all
-	 * transform to fight (which can rewrite :root token blocks).
+	 * hand canvas-theme.js the (mtime-stamped) URLs of the token files +
+	 * wp-components.css (the @wordpress/components theming — placeholders, buttons,
+	 * inputs) + canvas.css; it injects them as <link>s into the iframe <head>, tags
+	 * the iframe <body> with `adminkit` (so the `body.adminkit …` --wp-* accent
+	 * remap + component rules match inside, instead of falling back to WP blue),
+	 * and mirrors the theme attribute onto the iframe <html> so the same --ak-*
+	 * dark block flips the canvas. Raw stylesheets go straight in — no
+	 * block_editor_settings_all transform to fight (which can rewrite :root).
 	 *
 	 * @return void
 	 */
@@ -134,9 +137,10 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 			return; // "Gutenberg" canvas theming off — leave the canvas WP-default.
 		}
 		$styles = array_values( array_filter( array(
-			self::asset_url( AdminKit_Assets::WAASKIT_SRC ), // token primitives (baseline)
-			self::asset_url( AdminKit_Assets::TOKENS_SRC ),  // --ak-* layer (light + dark blocks)
-			self::asset_url( self::BASE . 'canvas.css' ),    // native-block mapping
+			self::asset_url( AdminKit_Assets::WAASKIT_SRC ),              // token primitives (baseline)
+			self::asset_url( AdminKit_Assets::TOKENS_SRC ),               // --ak-* (light + dark) + --wp-* accent remap
+			self::asset_url( 'assets/css/wp-screens/wp-components.css' ), // @wordpress/components UI (placeholders, buttons, inputs)
+			self::asset_url( self::BASE . 'canvas.css' ),                 // native-block content mapping
 		) ) );
 		AdminKit_Assets::enqueue_script(
 			'adminkit-gutenberg-canvas-theme',

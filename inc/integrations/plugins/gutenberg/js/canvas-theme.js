@@ -59,6 +59,13 @@
 			} );
 			root.setAttribute( MARK, '' );
 		}
+		// Tag the iframe <body> so `body.adminkit …` rules apply inside the canvas:
+		// the --wp-* accent remap (tokens.css) + the @wordpress/components theming
+		// (wp-components.css) — so block placeholders, their buttons and inputs match
+		// the chrome instead of falling back to WP blue.
+		if ( doc.body && ! doc.body.classList.contains( 'adminkit' ) ) {
+			doc.body.classList.add( 'adminkit' );
+		}
 		// Keep the canvas mode in sync with the parent (cheap, idempotent).
 		root.setAttribute( ATTR, mode() );
 	}
