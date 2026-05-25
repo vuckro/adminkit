@@ -12,23 +12,33 @@
    over theme defaults on equal specificity on its own. */
 
 /* ── Canvas surface + base text ─────────────────────────────────────────── */
-/* The canvas <body> carries a white background (theme.json / wp-embed-responsive)
-   and can be shorter than the iframe — both expose white: a gap under short posts
-   and a frame during a theme switch. Override it ON THE BODY (enough specificity to
-   beat the theme defaults), and fill the iframe with --ak-bg by giving the ROOT a
-   min-height of 100vh — NOT the body: the body carries the editor's writing padding,
-   so 100vh on it overflows the viewport and forces a scrollbar. The root has no such
-   padding, so 100vh there fills the viewport exactly (no scroll) and backstops any
-   gap below a short body. Zero !important — specificity does the work. */
-html[data-adminkit-canvas] {
-	background: var(--ak-bg);
-	min-height: 100vh;
-}
+/* Canvas surface: paint --ak-bg on the root + body (beats theme.json's white body),
+   and make the BODY fill the iframe so the dark covers the whole page — min-height:100vh
+   with box-sizing:border-box so the editor's writing-padding sits INSIDE the 100vh
+   instead of overflowing into a scrollbar. Zero !important — specificity wins. */
+html[data-adminkit-canvas],
 html[data-adminkit-canvas] body.editor-styles-wrapper {
 	background: var(--ak-bg);
 }
+html[data-adminkit-canvas] body.editor-styles-wrapper {
+	min-height: 100vh;
+	box-sizing: border-box;
+}
 .editor-styles-wrapper {
 	color: var(--ak-text);
+}
+/* Canvas scrollbar follows the theme (tokens flip in dark). */
+html[data-adminkit-canvas] {
+	scrollbar-width: thin;
+	scrollbar-color: var(--ak-border-strong) transparent;
+}
+html[data-adminkit-canvas]::-webkit-scrollbar { width: 12px; height: 12px; }
+html[data-adminkit-canvas]::-webkit-scrollbar-track { background: transparent; }
+html[data-adminkit-canvas]::-webkit-scrollbar-thumb {
+	background: var(--ak-border-strong);
+	border-radius: 8px;
+	border: 3px solid transparent;
+	background-clip: padding-box;
 }
 /* Native form controls (date pickers, selects in blocks) follow the mode. */
 :root[data-adminkit-theme="dark"] .editor-styles-wrapper {
