@@ -321,54 +321,6 @@ msgstr "Feuille de route"
 msgid "In progress"
 msgstr "En cours"
 
-#: inc/class-settings-page.php:383
-msgid "Editor canvas theming"
-msgstr "Thème du canevas de l'éditeur"
-
-#: inc/class-settings-page.php:384
-msgid "Block content in the editor follows your theme."
-msgstr "Le contenu des blocs suit votre thème."
-
-#: inc/class-settings-page.php:385
-msgid "AdminKit themes the Gutenberg editor canvas — the block content itself, not just the chrome — so writing matches your admin in light and dark. Default blocks pick up the palette; any block you gave explicit colours keeps them; switching theme stays smooth with no white flash."
-msgstr "AdminKit thème le canevas de l'éditeur Gutenberg — le contenu des blocs lui-même, pas seulement l'interface — pour que la rédaction s'accorde à votre admin en clair comme en sombre. Les blocs par défaut adoptent la palette ; tout bloc auquel vous avez donné des couleurs explicites les conserve ; le changement de thème reste fluide, sans flash blanc."
-
-#: inc/class-settings-page.php:388
-msgid "Themed blocks in light and dark."
-msgstr "Blocs thémés en clair et en sombre."
-
-#: inc/class-settings-page.php:389
-msgid "Your custom block colours are respected."
-msgstr "Vos couleurs de bloc personnalisées sont respectées."
-
-#: inc/class-settings-page.php:390
-msgid "Smooth, flash-free theme switching."
-msgstr "Changement de thème fluide, sans flash."
-
-#: inc/class-settings-page.php:394
-msgid "Builder & integration polish"
-msgstr "Finitions builder et intégrations"
-
-#: inc/class-settings-page.php:395
-msgid "Third-party surfaces refined in dark mode."
-msgstr "Surfaces tierces peaufinées en mode sombre."
-
-#: inc/class-settings-page.php:396
-msgid "Rounding off the surfaces other tools render inside the admin: the Bricks builder (preloader, panel scrollbars and the code editor) and the Admin Menu Editor search popup — so the experience stays consistent and dark-mode-correct even outside AdminKit's own screens."
-msgstr "On peaufine les surfaces que d'autres outils affichent dans l'admin : le builder Bricks (préchargement, barres de défilement des panneaux et éditeur de code) et le pop-up de recherche d'Admin Menu Editor — pour une expérience cohérente et correcte en mode sombre, même hors des écrans d'AdminKit."
-
-#: inc/class-settings-page.php:399
-msgid "Bricks preloader, scrollbars and code editor."
-msgstr "Préchargement, scrollbars et éditeur de code de Bricks."
-
-#: inc/class-settings-page.php:400
-msgid "Admin Menu Editor search popup."
-msgstr "Pop-up de recherche d'Admin Menu Editor."
-
-#: inc/class-settings-page.php:401
-msgid "Consistent tokens across integrations."
-msgstr "Tokens cohérents sur les intégrations."
-
 #: inc/class-settings-page.php:411
 msgid "Next"
 msgstr "Prochainement"

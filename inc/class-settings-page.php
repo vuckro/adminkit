@@ -379,28 +379,9 @@ class AdminKit_Settings_Page {
 				array(
 					'title' => __( 'In progress', 'adminkit' ),
 					'items' => array(
-						array(
-							'label'   => __( 'Editor canvas theming', 'adminkit' ),
-							'desc'    => __( 'Block content in the editor follows your theme.', 'adminkit' ),
-							'detail'  => __( 'AdminKit themes the Gutenberg editor canvas — the block content itself, not just the chrome — so writing matches your admin in light and dark. Default blocks pick up the palette; any block you gave explicit colours keeps them; switching theme stays smooth with no white flash.', 'adminkit' ),
-							'verify'  => true,
-							'bullets' => array(
-								__( 'Themed blocks in light and dark.', 'adminkit' ),
-								__( 'Your custom block colours are respected.', 'adminkit' ),
-								__( 'Smooth, flash-free theme switching.', 'adminkit' ),
-							),
-						),
-						array(
-							'label'   => __( 'Builder & integration polish', 'adminkit' ),
-							'desc'    => __( 'Third-party surfaces refined in dark mode.', 'adminkit' ),
-							'detail'  => __( 'Rounding off the surfaces other tools render inside the admin: the Bricks builder (preloader, panel scrollbars and the code editor) and the Admin Menu Editor search popup — so the experience stays consistent and dark-mode-correct even outside AdminKit\'s own screens.', 'adminkit' ),
-							'verify'  => true,
-							'bullets' => array(
-								__( 'Bricks preloader, scrollbars and code editor.', 'adminkit' ),
-								__( 'Admin Menu Editor search popup.', 'adminkit' ),
-								__( 'Consistent tokens across integrations.', 'adminkit' ),
-							),
-						),
+						// Empty: the two finished items were confirmed by the maintainer and
+						// retired here (the verify → confirmed → removed flow). Promote the
+						// next chantier from "Next" into this column when work on it starts.
 					),
 				),
 				array(

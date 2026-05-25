@@ -317,54 +317,6 @@ msgstr ""
 msgid "In progress"
 msgstr ""
 
-#: inc/class-settings-page.php:383
-msgid "Editor canvas theming"
-msgstr ""
-
-#: inc/class-settings-page.php:384
-msgid "Block content in the editor follows your theme."
-msgstr ""
-
-#: inc/class-settings-page.php:385
-msgid "AdminKit themes the Gutenberg editor canvas — the block content itself, not just the chrome — so writing matches your admin in light and dark. Default blocks pick up the palette; any block you gave explicit colours keeps them; switching theme stays smooth with no white flash."
-msgstr ""
-
-#: inc/class-settings-page.php:388
-msgid "Themed blocks in light and dark."
-msgstr ""
-
-#: inc/class-settings-page.php:389
-msgid "Your custom block colours are respected."
-msgstr ""
-
-#: inc/class-settings-page.php:390
-msgid "Smooth, flash-free theme switching."
-msgstr ""
-
-#: inc/class-settings-page.php:394
-msgid "Builder & integration polish"
-msgstr ""
-
-#: inc/class-settings-page.php:395
-msgid "Third-party surfaces refined in dark mode."
-msgstr ""
-
-#: inc/class-settings-page.php:396
-msgid "Rounding off the surfaces other tools render inside the admin: the Bricks builder (preloader, panel scrollbars and the code editor) and the Admin Menu Editor search popup — so the experience stays consistent and dark-mode-correct even outside AdminKit's own screens."
-msgstr ""
-
-#: inc/class-settings-page.php:399
-msgid "Bricks preloader, scrollbars and code editor."
-msgstr ""
-
-#: inc/class-settings-page.php:400
-msgid "Admin Menu Editor search popup."
-msgstr ""
-
-#: inc/class-settings-page.php:401
-msgid "Consistent tokens across integrations."
-msgstr ""
-
 #: inc/class-settings-page.php:411
 msgid "Next"
 msgstr ""
