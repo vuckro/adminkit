@@ -142,18 +142,20 @@ class AdminKit_Core_Branding {
 		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon.ab-icon';
 		// Neutralise WP core's padding/margin-right on this .ab-icon and FLEX-CENTRE
 		// the wordmark in the 32px bar — no margin maths, no overflow.
-		return $sel . '{display:flex;align-items:center;justify-content:center;width:auto;height:32px;padding:0;margin-right:0}'
-			// content:url() makes ::before a replaced element so height:24px / width:auto
-			// scales the wordmark by its own ratio (uncropped); object-fit:contain +
-			// max-width are belt-and-braces against an oversized source. A 1px upward
-			// nudge optically centres the wordmark in the 32px bar (it read a hair low);
-			// purely visual, no layout shift, no cropping.
-			. $sel . '::before{content:' . $light . ';display:block;box-sizing:border-box;'
-			. 'width:auto;height:24px;max-width:180px;margin:0;top:0;'
+		return $sel . '{display:flex;align-items:center;justify-content:flex-start;width:auto;height:32px;padding:0;margin-right:0}'
+			// Paint the wordmark as a BACKGROUND on the ::before (NOT content:url): a
+			// content image renders at its INTRINSIC size — browsers ignore width/height
+			// on a content:url() pseudo-element, which blew the logo up to full size. A
+			// background-image is reliably sized: a fixed-height, capped-width box +
+			// background-size:contain keeps the wordmark's aspect (never cropped, never
+			// huge), left-aligned so it sits where the bar mark belongs. The radius reads
+			// on the box; 1px upward nudge optically centres it in the 32px bar.
+			. $sel . '::before{content:"";display:block;box-sizing:border-box;'
+			. 'width:120px;height:22px;max-width:120px;margin:0;top:0;'
 			. 'transform:translateY(-1px);'
-			. 'object-fit:contain;object-position:center;'
+			. 'background-image:' . $light . ';background-position:left center;background-repeat:no-repeat;background-size:contain;'
 			. 'border-radius:var(--ak-radius-s,6px)}'
-			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{content:' . $dark . '}'
+			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{background-image:' . $dark . '}'
 			. self::hide_site_name_glyph();
 	}
 
