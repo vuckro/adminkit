@@ -115,9 +115,8 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 - **The token layers are each optional** (provider → baseline → neutral). Don't
   hard-require any one of them. See ARCHITECTURE.
 - **Default feature toggles ship ON** — Gutenberg canvas theming
-  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`), local avatars
-  (`local_avatars_enabled`) and the unified Tools strip (`tools_unified_enabled`)
-  all default ON (decided this cycle), so the plugin presents fully-featured on
+  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`) and local avatars
+  (`local_avatars_enabled`) all default ON (decided this cycle), so the plugin presents fully-featured on
   activation. Each stays individually switch-off-able; only `bricks_builder_enabled`
   is opt-in (it restyles a third-party builder's own UI). Keep the on-by-default
   posture — don't quietly flip these back to opt-in. **Generated avatars are NOT a

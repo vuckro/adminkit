@@ -66,21 +66,12 @@ list-table polish, local avatars) ships as `assets/js/wp-core/*.js`; per-screen
 behaviour lives in `assets/js/wp-screens/*.js` (`options.js`, which tabs the
 six built-in Settings screens — splitting each at its `<h2>` section and
 "exploding" the Discussion `indent-children` table into one tab per `<th>` row,
-while every field stays in the one submitting form; and `tools.js`, see **Unified
-Tools** below). All are enqueued in the footer via
+while every field stays in the one submitting form). All are enqueued in the footer via
 `AdminKit_Assets::enqueue_script( $handle, $src, $deps, $data )` — same
 `filemtime` cache-bust as CSS, with PHP data passed as a `before` inline
 bootstrap (`window.AdminKit*`). The one exception is the **theme pre-paint
 script** in `class-theme-toggle.php`: it stays inline in `<head>` so dark/light
 applies before first paint (no FOUC). `assets/js/settings.js` is the settings SPA.
-
-**Unified Tools.** `AdminKit_Core_Chrome` injects ONE pill tab strip across the
-built-in Tools screens (Available Tools / Import / Export / Site Health / Export
-+ Erase Personal Data) so they read as a single tabbed section. Each tab is a
-plain link to its native screen — nothing is moved or fetched, so every page
-keeps its own markup, forms and handlers, and with JS off the pages are 100%
-native (progressive enhancement). The strip ships as `assets/js/wp-screens/tools.js`,
-gated by the `tools_unified_enabled` setting (default ON).
 
 **Where AdminKit registers its own assets:** `inc/wp-core/class-chrome.php` (all
 admin CSS — chrome, components, screens), `class-login.php` (login), the wp-core
@@ -191,8 +182,6 @@ individually switch-off-able:
   `replace_icons_enabled` (swaps native menu/toolbar dashicons for AdminKit's set
   — `inc/wp-core/class-menu-icons.php`, filterable via `adminkit/menu_icons` /
   `adminkit/toolbar_icons`; non-destructive — only stock dashicons),
-  `tools_unified_enabled` (one pill tab strip across the built-in Tools screens —
-  see **Unified Tools** above; off = the native, separate Tools pages),
   and `local_avatars_enabled` (a per-user profile picture that replaces Gravatar —
   `inc/wp-core/class-local-avatars.php`, stored in the `adminkit_local_avatar`
   user meta, served via `pre_get_avatar_data`; non-destructive — Gravatar is

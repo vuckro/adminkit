@@ -563,7 +563,6 @@ class AdminKit_Settings_Page {
 			array( 'key' => 'editor_content_theme',   'group' => $appearance, 'label' => __( 'Gutenberg', 'adminkit' ),     'desc' => __( 'Theme the Gutenberg block-editor canvas (content + native blocks) in light and dark. Turn off to keep the canvas matching your live site exactly.', 'adminkit' ) ),
 			array( 'key' => 'replace_icons_enabled',  'group' => $appearance, 'label' => __( 'AdminKit icons', 'adminkit' ), 'desc' => __( 'Replace WordPress\'s native menu and toolbar icons with AdminKit\'s set. Non-destructive: icons already customised (e.g. via Admin Menu Editor) are left untouched.', 'adminkit' ) ),
 			array( 'key' => 'local_avatars_enabled',  'group' => $appearance, 'label' => __( 'Local avatars', 'adminkit' ), 'desc' => __( 'Let users upload a profile picture that replaces Gravatar; anyone with no photo gets a friendly auto-generated face (via a hosted generator, disclosed in the readme). Off = Gravatar everywhere.', 'adminkit' ) ),
-			array( 'key' => 'tools_unified_enabled', 'group' => $appearance, 'label' => __( 'Unified Tools', 'adminkit' ), 'desc' => __( 'Add one tab strip across the Tools screens (Available Tools, Import, Export, Site Health, personal data) so they read as a single tabbed section. Off = the native separate Tools pages.', 'adminkit' ) ),
 		);
 
 		// Bricks builder restyle — only meaningful when the Bricks theme is active.
