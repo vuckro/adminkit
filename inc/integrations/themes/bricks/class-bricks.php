@@ -367,9 +367,10 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		$favicon = get_site_icon_url( 192 );
 		if ( '' !== $favicon ) {
 			$url  = self::css_url( $favicon );
-			// Favicon FILLS the accent chip (covers the whole surface), clipped to the
-			// rounded corners; a transparent icon still shows the accent behind it.
-			$css .= '#bricks-toolbar .logo{background-color:var(--accent);border-radius:6px;overflow:hidden}';
+			// Favicon FILLS the chip (covers the whole surface), clipped to the rounded
+			// corners. No chip colour — the favicon already covers it (and Bricks's
+			// yellow is overridden to transparent so nothing shows behind/around it).
+			$css .= '#bricks-toolbar .logo{background-color:transparent;border-radius:6px;overflow:hidden}';
 			$css .= '#bricks-toolbar .logo a{display:block;width:100%;height:100%}';
 			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:100%;height:100%;object-fit:cover}';
 		} else {
