@@ -84,21 +84,67 @@ class AdminKit_Core_Login {
 	}
 
 	/**
-	 * Set the login-logo link text to the site name (only when AdminKit brands the
-	 * login screen).
+	 * Set the login-logo link CONTENT (WP echoes this between the <a>…</a> of the
+	 * logo, unescaped). Only when AdminKit brands the login screen.
+	 *
+	 * In `logo` mode with a brand logo configured we return real <img> element(s) —
+	 * a replaced element auto-sizes to the wordmark's aspect ratio (tight, no extra
+	 * "box") and `border-radius` rounds the actual image. Both light + dark variants
+	 * are rendered; login.css shows the right one per the theme flag. The site name
+	 * is the <img>'s alt so the logo link keeps an accessible name (login.css then
+	 * neutralises WP's text-indent hiding for this mode so the <img> shows).
+	 *
+	 * In every other branded case (favicon / fallback) we return the site name as
+	 * plain text — the mark is a CSS background and WP's text-indent hides the text.
 	 *
 	 * @param string $text
 	 * @return string
 	 */
 	public static function filter_header_text( $text ) {
-		return self::is_enabled() ? get_bloginfo( 'name' ) : $text;
+		if ( ! self::is_enabled() ) {
+			return $text;
+		}
+		$name = get_bloginfo( 'name' );
+		$img  = self::brand_logo_img( $name );
+		return ( '' !== $img ) ? $img : $name;
+	}
+
+	/**
+	 * Build the brand-logo <img> markup for the login screen — light + dark variants
+	 * (theme-toggled by login.css), each decorative-but-named (alt = the site name,
+	 * so the wrapping logo link has an accessible name). Returns '' unless the
+	 * `wp_logo` mode is `logo` AND a brand logo is configured (the only case that
+	 * renders an <img>; favicon / fallback stay a CSS background).
+	 *
+	 * @param string $alt Accessible name for the link (the site name).
+	 * @return string '' when no brand <img> applies.
+	 */
+	private static function brand_logo_img( $alt ) {
+		if ( 'logo' !== AdminKit_Settings::get( 'wp_logo' ) ) {
+			return '';
+		}
+		$light = AdminKit_Settings::brand_logo( 'light' );
+		$dark  = AdminKit_Settings::brand_logo( 'dark' );
+		if ( '' === $light && '' === $dark ) {
+			return '';
+		}
+		if ( '' === $light ) {
+			$light = $dark;
+		}
+		if ( '' === $dark ) {
+			$dark = $light;
+		}
+		$alt = esc_attr( $alt );
+		return '<img class="ak-login-logo-img ak-login-logo-img--light" src="' . esc_url( $light ) . '" alt="' . $alt . '" />'
+			. '<img class="ak-login-logo-img ak-login-logo-img--dark" src="' . esc_url( $dark ) . '" alt="" />';
 	}
 
 	/**
 	 * Add a body class describing which mark the login screen shows, so login.css
-	 * can frame it for a visible radius: `ak-login-mark--favicon` (a square rounded
-	 * tile) or `ak-login-mark--logo` (a wide rounded card). No class when no mark is
-	 * configured (WordPress's own logo then shows, unstyled by us).
+	 * can frame it correctly: `ak-login-mark--favicon` (a square rounded tile, a CSS
+	 * background) or `ak-login-mark--logo` (a clean rounded <img>, no surrounding
+	 * box). No class when no mark is configured (WordPress's own logo then shows,
+	 * unstyled by us).
 	 *
 	 * @param string[] $classes
 	 * @return string[]
@@ -135,17 +181,19 @@ class AdminKit_Core_Login {
 	}
 
 	/**
-	 * The login logo — the brand logo or the site icon (favicon), shown `contain`
-	 * (sizing + the tokenised border-radius live in login.css, #login h1 a; here we
-	 * only inject the image URL(s)). The choice follows the `wp_logo` setting:
-	 *   - `logo` → the brand logo (light/dark variants; the dark one swaps under the
-	 *              theme flag), shown `contain` so a wide wordmark fits uncropped;
-	 *   - anything else (`favicon`, `hide`, legacy) → the site icon.
-	 * Note `hide` falls back to the favicon here ON PURPOSE: it hides the admin-bar
-	 * mark (declutters the toolbar) but the login screen is its own surface that
-	 * always reads better WITH a brand mark — and this preserves the long-standing
-	 * "favicon on the login screen" behaviour. No-ops silently when neither a brand
-	 * logo nor a site icon is configured (WordPress's own logo then stays).
+	 * The login logo's IMAGE SOURCE — for the FAVICON / fallback case only (a single
+	 * square site-icon painted as a CSS background on #login h1 a; sizing + the
+	 * tokenised radius live in login.css). The `logo` mode does NOT come through here:
+	 * it renders a real <img> inside the link (see filter_header_text /
+	 * brand_logo_img) so a wide wordmark auto-sizes tight with no extra "box".
+	 *
+	 * Resolution mirrors login_mark_type(): `logo` with a configured brand logo →
+	 * handled as an <img> (no background printed here); anything else (`favicon`,
+	 * `hide`, legacy, or `logo` with nothing set) → the site icon as a background.
+	 * Note `hide` falls back to the favicon here ON PURPOSE: it declutters the
+	 * toolbar but the login screen reads better WITH a brand mark — and this
+	 * preserves the long-standing "favicon on the login screen" behaviour. No-ops
+	 * when neither a brand logo nor a site icon is configured (WP's own logo stays).
 	 *
 	 * @return void
 	 */
@@ -153,41 +201,22 @@ class AdminKit_Core_Login {
 		if ( ! self::is_enabled() ) {
 			return;
 		}
-		$mode = AdminKit_Settings::get( 'wp_logo' );
 
-		$light = '';
-		$dark  = '';
-
-		if ( 'logo' === $mode ) {
-			$light = self::css_url( AdminKit_Settings::brand_logo( 'light' ) );
-			$dark  = self::css_url( AdminKit_Settings::brand_logo( 'dark' ) );
-		}
-
-		// `favicon` / `hide` / legacy, or `logo` with no brand logo configured → fall
-		// back to the site icon (a single square image, same in both themes).
-		if ( '' === $light && '' === $dark ) {
-			$icon  = self::css_url( get_site_icon_url( 200 ) );
-			$light = $icon;
-			$dark  = $icon;
-		}
-
-		if ( '' === $light && '' === $dark ) {
+		// `logo` mode renders a real <img> (filter_header_text); no background here.
+		if ( 'logo' === self::login_mark_type() ) {
 			return;
 		}
-		if ( '' === $light ) {
-			$light = $dark;
-		}
-		if ( '' === $dark ) {
-			$dark = $light;
+
+		// favicon / hide / legacy, or `logo` with no brand logo → the site icon as a
+		// single square background (same image in both themes).
+		$icon = self::css_url( get_site_icon_url( 200 ) );
+		if ( '' === $icon ) {
+			return;
 		}
 
-		// `!important` mirrors WP core's own login-logo rule (it ships an inline-ish
-		// background-image on #login h1 a we have to beat); the dark override needs to
-		// out-specify the light one, hence the attribute-scoped selector + !important.
-		$css = '#login h1 a{background-image:' . $light . ' !important}';
-		if ( $dark !== $light ) {
-			$css .= ':root[data-adminkit-theme="dark"] #login h1 a{background-image:' . $dark . ' !important}';
-		}
+		// `!important` mirrors WP core's own login-logo rule (it ships a background-image
+		// on #login h1 a we have to beat).
+		$css = '#login h1 a{background-image:' . $icon . ' !important}';
 		echo '<style id="adminkit-login-logo">' . $css . "</style>\n";
 	}
 

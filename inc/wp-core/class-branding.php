@@ -4,8 +4,10 @@
  *
  * The WordPress admin-bar logo (top-left), per the `wp_logo` setting:
  *   - `logo`    → the configured brand logo (Settings → Features → Branding,
- *                 light + dark), shown as an image so wide wordmarks fit;
- *   - `favicon` → the site icon, as a rounded chip;
+ *                 light + dark), injected as a real <img> so a wide wordmark
+ *                 auto-sizes to its aspect ratio (tight, no empty box) and the
+ *                 border-radius rounds the actual image;
+ *   - `favicon` → the site icon, as a rounded chip (a background box);
  *   - `hide`    → removed.
  * `logo` falls back to `favicon`, then WordPress's own, when nothing is set; either
  * branded mode also hides the now-redundant site-name "house" glyph. Applied in
@@ -23,14 +25,99 @@ defined( 'ABSPATH' ) || exit;
 class AdminKit_Core_Branding {
 
 	/**
+	 * Marker class added to the #wp-admin-bar-wp-logo node when we inject the brand
+	 * <img> — so the CSS targets ONLY the branded state and leaves the favicon / WP
+	 * default untouched.
+	 */
+	const LOGO_NODE_CLASS = 'ak-has-brand-logo';
+
+	/**
 	 * Wire the hooks. The admin-bar logo treatment runs in BOTH wp-admin and on
 	 * the front end (logged-in users see the toolbar there too).
+	 *
+	 * The `admin_bar_menu` hook (priority 80, after core registers the wp-logo node
+	 * at 10) injects the brand <img> into the node for the `logo` mode; the CSS that
+	 * sizes it — and the favicon / hide treatments — is printed on admin_head/wp_head.
 	 *
 	 * @return void
 	 */
 	public static function init() {
+		add_action( 'admin_bar_menu', array( __CLASS__, 'inject_brand_logo' ), 80 );
 		add_action( 'admin_head', array( __CLASS__, 'print_admin' ), 20 );
 		add_action( 'wp_head', array( __CLASS__, 'print_frontend' ), 20 );
+	}
+
+	/**
+	 * Inject the brand logo as real <img> element(s) into the admin-bar wp-logo
+	 * node — but ONLY when the mode is `logo` AND a brand logo is configured. An
+	 * <img> is a replaced element, so `height:<fixed>;width:auto` (set in CSS) makes
+	 * it auto-size to the wordmark's aspect ratio: tight, no empty box, and the
+	 * border-radius rounds the actual image. A CSS background (the old approach)
+	 * couldn't do that — a fixed-width box left a gap and rounded the box, not the
+	 * white-tile logo.
+	 *
+	 * Both the light and the dark variant are rendered; CSS shows the right one per
+	 * the theme flag (an <img src> can't be swapped from CSS). The node's `title` is
+	 * replaced (preserving its submenu + the screen-reader label) and a marker class
+	 * scopes the CSS to this branded state. Gated by the same should_load veto + the
+	 * showing/context guard the rest of the branding uses.
+	 *
+	 * @param WP_Admin_Bar $bar
+	 * @return void
+	 */
+	public static function inject_brand_logo( $bar ) {
+		if ( ! is_admin_bar_showing() ) {
+			return;
+		}
+		$context = is_admin() ? 'admin' : 'frontend';
+		if ( ! apply_filters( 'adminkit/should_load', true, $context ) ) {
+			return;
+		}
+		if ( 'logo' !== AdminKit_Settings::get( 'wp_logo' ) ) {
+			return;
+		}
+
+		$light = AdminKit_Settings::brand_logo( 'light' );
+		$dark  = AdminKit_Settings::brand_logo( 'dark' );
+		if ( '' === $light && '' === $dark ) {
+			return; // logo mode but nothing configured → admin_bar_logo_css() falls back to favicon.
+		}
+		if ( '' === $light ) {
+			$light = $dark;
+		}
+		if ( '' === $dark ) {
+			$dark = $light;
+		}
+
+		$node = $bar->get_node( 'wp-logo' );
+		if ( ! $node ) {
+			return; // user can't see the wp-logo node (e.g. no `read` cap).
+		}
+
+		// Decorative images (alt=""); the screen-reader span carries the label. Two
+		// <img>s, theme-toggled in CSS. esc_url for the src; the class names are static.
+		$img  = '<img class="ak-brand-logo ak-brand-logo--light" src="' . esc_url( $light ) . '" alt="" />';
+		$img .= '<img class="ak-brand-logo ak-brand-logo--dark" src="' . esc_url( $dark ) . '" alt="" />';
+
+		// Keep the node's accessible name (core sets this node's label to "About
+		// WordPress"); fall back to that core string if the menu_title meta is absent.
+		$label = ( isset( $node->meta['menu_title'] ) && '' !== $node->meta['menu_title'] )
+			? $node->meta['menu_title']
+			: __( 'About WordPress' );
+
+		$meta          = is_array( $node->meta ) ? $node->meta : array();
+		$meta['class'] = ( isset( $meta['class'] ) && '' !== $meta['class'] )
+			? $meta['class'] . ' ' . self::LOGO_NODE_CLASS
+			: self::LOGO_NODE_CLASS;
+
+		// Re-add the node with the same id → REPLACE it in place: only the title (and
+		// the marker class) change, so the submenu and href are preserved.
+		$bar->add_node( array(
+			'id'    => 'wp-logo',
+			'title' => $img . '<span class="screen-reader-text">' . esc_html( $label ) . '</span>',
+			'href'  => $node->href,
+			'meta'  => $meta,
+		) );
 	}
 
 	/**
@@ -107,55 +194,49 @@ class AdminKit_Core_Branding {
 	}
 
 	/**
-	 * Brand logo in the admin-bar wp-logo slot — a RECTANGULAR wordmark: fixed at
-	 * 24px tall, width auto (so a wide wordmark keeps its aspect ratio and is NEVER
-	 * cropped), centred vertically in the 32px bar with a small rounding. Unlike the
-	 * favicon chip this is borderless and uncropped — the logo IS the mark, so it
-	 * must read in full. Light variant by default; dark variant under the dark flag.
-	 * '' when no logo is set.
+	 * CSS for the brand logo in the admin-bar wp-logo slot — sizes the real <img>
+	 * element(s) injected by inject_brand_logo(). An <img> is a REPLACED element, so
+	 * `height:22px;width:auto` makes it auto-size to the wordmark's intrinsic aspect
+	 * ratio: tight (no empty box), never cropped, and `border-radius` rounds the
+	 * actual image (the white-tile logo) — exactly what a CSS background could not do.
 	 *
-	 * Painted with `content:url()` (NOT a background): a content image is a REPLACED
-	 * element, so `height:24px;width:auto` scales it to the bar height while keeping
-	 * its intrinsic aspect ratio — exactly the auto-width behaviour a wordmark needs.
+	 * The light variant shows by default; the dark variant under the theme flag (an
+	 * <img src> can't be swapped from CSS, so both are rendered and toggled here with
+	 * `display`). The injection is gated on `wp_logo === 'logo'` AND a configured
+	 * logo, so the marker class (.ak-has-brand-logo) is the signal that an <img> is
+	 * present; '' here when nothing is configured (admin_bar_logo_css() then falls
+	 * back to favicon_css()).
+	 *
 	 * `object-fit:contain` + a `max-width` cap guard against an oversized source ever
-	 * overflowing. (The favicon case stays a background box: it's a fixed SQUARE, so
-	 * it has no aspect ratio to preserve and `cover` is the right fit there.)
+	 * overflowing the bar. We neutralise WP core's left/right padding on the .ab-item
+	 * link (the injected title carries the <img>s directly, no .ab-icon span) so the
+	 * logo sits flush with just its own small gutter. Specificity beats WP core's own
+	 * wp-logo rule `#wpadminbar #wp-admin-bar-wp-logo > .ab-item` (2,1,0) — the
+	 * .ak-has-brand-logo class on the node lifts our selectors past it cleanly.
 	 *
 	 * @return string
 	 */
 	private static function brand_logo_css() {
-		$light = self::css_url( AdminKit_Settings::brand_logo( 'light' ) );
-		$dark  = self::css_url( AdminKit_Settings::brand_logo( 'dark' ) );
+		$light = AdminKit_Settings::brand_logo( 'light' );
+		$dark  = AdminKit_Settings::brand_logo( 'dark' );
 		if ( '' === $light && '' === $dark ) {
 			return '';
 		}
-		if ( '' === $light ) {
-			$light = $dark;
-		}
-		if ( '' === $dark ) {
-			$dark = $light;
-		}
-		// Double `.ab-icon` → specificity (2,3,0), beating WP core's own wp-logo rule
-		// `#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon` (2,2,0, loaded after
-		// us) which would otherwise re-apply its height:20px/padding:6px 0 5px and
-		// overflow the bar.
-		$sel = '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon.ab-icon';
-		// Neutralise WP core's padding/margin-right on this .ab-icon and FLEX-CENTRE
-		// the wordmark in the 32px bar — no margin maths, no overflow.
-		return $sel . '{display:flex;align-items:center;justify-content:flex-start;width:auto;height:32px;padding:0;margin-right:0}'
-			// Paint the wordmark as a BACKGROUND on the ::before (NOT content:url): a
-			// content image renders at its INTRINSIC size — browsers ignore width/height
-			// on a content:url() pseudo-element, which blew the logo up to full size. A
-			// background-image is reliably sized: a fixed-height, capped-width box +
-			// background-size:contain keeps the wordmark's aspect (never cropped, never
-			// huge), left-aligned so it sits where the bar mark belongs. The radius reads
-			// on the box; 1px upward nudge optically centres it in the 32px bar.
-			. $sel . '::before{content:"";display:block;box-sizing:border-box;'
-			. 'width:120px;height:22px;max-width:120px;margin:0;top:0;'
-			. 'transform:translateY(-1px);'
-			. 'background-image:' . $light . ';background-position:left center;background-repeat:no-repeat;background-size:contain;'
-			. 'border-radius:var(--ak-radius-s,6px)}'
-			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{background-image:' . $dark . '}'
+		// The node carries .ak-has-brand-logo (added by inject_brand_logo); scope all
+		// the logo CSS to it so the favicon / WP-default states are never touched.
+		$item = '#wpadminbar #wp-admin-bar-wp-logo.' . self::LOGO_NODE_CLASS . ' > .ab-item';
+		$img  = $item . ' .ak-brand-logo';
+		return
+			// Kill core's left/right padding on the link so the logo sits flush.
+			$item . '{display:flex;align-items:center;padding:0}'
+			// The replaced <img>: fixed height, auto width (aspect-true wordmark),
+			// rounded on the image itself, a max-width cap against an outsized source.
+			. $img . '{display:none;height:22px;width:auto;max-width:160px;margin:0 8px;padding:0;'
+			. 'object-fit:contain;border-radius:var(--ak-radius-s,6px)}'
+			// Show the light variant by default, the dark one under the theme flag.
+			. $item . ' .ak-brand-logo--light{display:block}'
+			. ':root[data-adminkit-theme="dark"] ' . $item . ' .ak-brand-logo--light{display:none}'
+			. ':root[data-adminkit-theme="dark"] ' . $item . ' .ak-brand-logo--dark{display:block}'
 			. self::hide_site_name_glyph();
 	}
 

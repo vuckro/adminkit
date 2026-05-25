@@ -21,11 +21,12 @@ body.login.adminkit {
 	padding-bottom: 24px;
 }
 
-/* Logo — the URL is injected by PHP (AdminKit_Core_Login::print_login_logo_style)
-   from the brand logo or the site icon, following the `wp_logo` setting; the dark
-   variant swaps under the theme flag. AdminKit_Core_Login also tags <body> with the
-   mark type so we can frame it as a tidy rounded tile where the radius actually
-   reads (a transparent wordmark on a bare box shows no rounding). */
+/* Logo — AdminKit_Core_Login tags <body> with the mark type so we can frame each
+   correctly. The FAVICON / fallback mark is a CSS background (URL injected by
+   AdminKit_Core_Login::print_login_logo_style); the brand-LOGO mark is a real <img>
+   injected INSIDE the link (filter_header_text) — a replaced element auto-sizes to
+   the wordmark's aspect ratio (tight, no surrounding box) and the radius rounds the
+   actual image. */
 #login h1 a {
 	display: block;
 	margin: 0 auto 20px;
@@ -41,17 +42,41 @@ body.ak-login-mark--favicon #login h1 a {
 	background-size: cover;
 	border: 1px solid var(--ak-border);
 }
-/* Wordmark → a wide rounded card on a surface, the logo contained INSIDE padding
-   (background-origin: content-box) so it breathes and the rounded corners show. */
+/* Wordmark → a real <img>, shown CLEANLY with no card/box: just a centred image
+   sized by its height (width auto = tight, aspect-true) with a radius that rounds
+   the image itself. WP core hides the logo-link text with text-indent:-9999px +
+   overflow:hidden — neutralise that here so the injected <img> can show; the link
+   keeps its accessible name from the <img alt>. No bg / border / padding (that was
+   the "box" the wordmark sat in). */
 body.ak-login-mark--logo #login h1 a {
-	width: 100%;
-	height: 92px;
-	padding: 18px 26px;
-	box-sizing: border-box;
-	background-color: var(--ak-surface);
-	background-origin: content-box;
-	background-size: contain;
-	border: 1px solid var(--ak-border);
+	width: auto;
+	height: auto;
+	padding: 0;
+	border: none;
+	background: none;
+	text-indent: 0;
+	overflow: visible;
+	line-height: 0;
+}
+body.ak-login-mark--logo #login h1 a .ak-login-logo-img {
+	display: none;
+	height: 56px;
+	width: auto;
+	max-width: 100%;
+	margin: 0 auto;
+	object-fit: contain;
+	border-radius: var(--ak-radius-l, 14px);
+}
+/* Show the light variant by default, the dark one under the theme flag (an <img src>
+   can't be swapped from CSS, so both are rendered and toggled here). */
+body.ak-login-mark--logo #login h1 a .ak-login-logo-img--light {
+	display: block;
+}
+:root[data-adminkit-theme="dark"] body.ak-login-mark--logo #login h1 a .ak-login-logo-img--light {
+	display: none;
+}
+:root[data-adminkit-theme="dark"] body.ak-login-mark--logo #login h1 a .ak-login-logo-img--dark {
+	display: block;
 }
 /* No AdminKit mark configured: keep WP's own logo sizing, just centre it. */
 body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
