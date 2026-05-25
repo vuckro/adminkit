@@ -150,26 +150,18 @@ msgid "Plugins"
 msgstr "Extensions"
 
 #: inc/class-settings-page.php:274
-msgid "Your active plugins and themes. Native ones have a tuned AdminKit adapter you can switch per host; the rest inherit AdminKit's base styling automatically."
-msgstr "Vos extensions et thèmes actifs. Les natifs ont un adaptateur AdminKit dédié, activable par hôte ; les autres héritent automatiquement du style de base d’AdminKit."
+msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry no badge and inherit AdminKit's base styling automatically."
+msgstr "Toutes les extensions installées sur votre site, ainsi que les adaptateurs de thème actifs d’AdminKit. Les natifs ont un adaptateur dédié, activable par hôte ; les autres ne portent aucun badge et héritent automatiquement du style de base d’AdminKit."
 
 #: inc/class-settings-page.php:275
 msgid "Native"
 msgstr "Natif"
-
-#: inc/class-settings-page.php:276
-msgid "Generic"
-msgstr "Générique"
 
 #: inc/class-settings-page.php:277
 msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
 msgstr "AdminKit fournit un adaptateur dédié pour cette extension — clair et sombre."
 
 #: inc/class-settings-page.php:278
-msgid "No dedicated adapter — themed automatically by AdminKit's base styles."
-msgstr "Pas d’adaptateur dédié — thémé automatiquement par les styles de base d’AdminKit."
-
-#: inc/class-settings-page.php:279
 msgid "Themes"
 msgstr "Thèmes"
 
