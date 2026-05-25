@@ -89,7 +89,14 @@
 		for ( var i = 0; i < els.length; i++ ) { tag( els[ i ] ); }
 	}
 
-	var scope = document.getElementById( 'wpbody-content' ) || document.body;
+	// Scan #wpcontent, not just #wpbody-content: some plugins inject their own
+	// admin chrome (sidebars, top bars) as siblings of #wpbody — e.g. Elementor's
+	// #editor-one-sidebar-navigation / #editor-one-top-bar live directly under
+	// #wpcontent. The WP admin menu (#adminmenumain) sits outside #wpcontent, so
+	// it's naturally excluded (AdminKit themes it natively anyway).
+	var scope = document.getElementById( 'wpcontent' )
+		|| document.getElementById( 'wpbody-content' )
+		|| document.body;
 
 	// Modern admin UIs (React / MUI) mount + inject their emotion styles after
 	// load, so a one-shot scan misses them. Watch for added subtrees and scan
