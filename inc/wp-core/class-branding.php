@@ -102,9 +102,9 @@ class AdminKit_Core_Branding {
 			// WP core forces `background-image:none !important` on .ab-icon (that was
 			// the original bug), but its ::before is exempt. Clear WP's glyph
 			// (content:""), size the box, drop the +2px glyph nudge.
-			return '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon{width:20px}'
+			return '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon{width:22px}'
 				. '#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon::before{'
-				. 'content:"";display:block;width:20px;height:20px;top:0;'
+				. 'content:"";display:block;width:22px;height:22px;top:0;'
 				. 'background:' . $favicon . ' center/contain no-repeat}'
 				// Hide the now-redundant site-name glyph: once with the .wp-admin
 				// prefix (to beat WP's wp-admin rule) and once plain (front end).
