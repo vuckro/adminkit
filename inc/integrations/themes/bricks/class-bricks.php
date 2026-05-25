@@ -450,37 +450,40 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		$favicon = get_site_icon_url( 192 );
 		if ( '' !== $favicon ) {
 			$url  = self::css_url( $favicon );
-			// Favicon as a FIXED 24px rounded SQUARE, CENTRED in the wide-short slot so
+			// Favicon as a FIXED 34px rounded SQUARE, CENTRED in the wide-short slot so
 			// the radius reads on the chip itself (contain floated it small, leaving the
-			// radius in empty space). `cover` fills the 24px box — the site icon is
+			// radius in empty space). `cover` fills the 34px box — the site icon is
 			// square so nothing is cropped. No chip colour — Bricks's yellow is
 			// overridden to transparent so nothing shows behind/around it.
 			$css .= '#bricks-toolbar .logo{background-color:transparent!important;display:flex;align-items:center;justify-content:center}';
 			$css .= '#bricks-toolbar .logo a{display:flex;align-items:center;justify-content:center;width:100%;height:100%}';
-			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:36px;height:36px;'
+			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:34px;height:34px;'
 				. 'box-sizing:border-box;padding:0;object-fit:cover;border-radius:6px}';
 		} else {
 			$css .= self::builder_toolbar_letter_css();
 		}
 
-		// Preloader → the configured brand logo (dark variant), rounded.
+		// Preloader → replace Bricks's animated logo with the configured brand logo.
 		$logo = AdminKit_Settings::brand_logo( 'dark' );
 		if ( '' === $logo ) {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 		}
 		if ( '' !== $logo ) {
-			// Show the brand logo as a wide ROUNDED RECTANGLE that the logo FILLS — the
-			// brand mark is a wide wordmark, so a wide card matches its aspect (a square
-			// box left it floating small inside). `cover` makes the logo fill the box so
-			// the border-radius lives on the logo card itself; overflow:hidden clips the
-			// corners. Centred on the dark splash with a gentle pulse.
-			$css .= '#bricks-preloader .bricks-logo-animated,#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
-			$css .= '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}';
-			$css .= '#bricks-preloader .bricks-loading-inner::before{content:"";display:block;'
-				. 'width:17rem;height:6.5rem;border-radius:1rem;overflow:hidden;'
-				. 'background:' . self::css_url( $logo ) . ' center / cover no-repeat;'
+			// Paint the brand logo straight onto Bricks's OWN preloader logo element
+			// (.bricks-logo-animated — always present and already centred on the splash),
+			// hiding its inner mark. `contain` shows the WHOLE wordmark (never cropped),
+			// and the box is sized in PX (not rem) so the builder's own root font-size
+			// can't distort it. Gentle pulse. Targeting the logo element directly (rather
+			// than a wrapper pseudo-element) keeps it working across Bricks markup tweaks.
+			$css .= '#bricks-preloader .title,#bricks-preloader .sub-title{display:none}';
+			$css .= '#bricks-preloader .bricks-logo-animated{'
+				. 'width:240px;height:90px;max-width:60vw;'
+				. 'background:' . self::css_url( $logo ) . ' center / contain no-repeat;'
 				. 'animation:ak-bricks-preload 1.1s ease-in-out infinite}';
-			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.08)}}';
+			$css .= '#bricks-preloader .bricks-logo-animated svg,'
+				. '#bricks-preloader .bricks-logo-animated img,'
+				. '#bricks-preloader .bricks-logo-animated > *{display:none}';
+			$css .= '@keyframes ak-bricks-preload{50%{transform:scale(1.06)}}';
 		}
 		return $css;
 	}
