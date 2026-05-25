@@ -144,9 +144,11 @@ list, the `adminkit/setting/{key}` filter, and the REST save.
 
 `AdminKit_Settings` is the registry; `AdminKit_Settings_Page` mounts a small
 vanilla-JS SPA (`assets/js/settings.js`) on the top-level **AdminKit** menu and
-persists via one REST route (`adminkit/v1/settings`). Three tabs: Dashboard,
-**Tokens** (a read-only reference of the semantic token map), Features (the only
-interactive controls — module toggles).
+persists via one REST route (`adminkit/v1/settings`). Four tabs: **Dashboard**;
+**Tokens** (a read-only reference of the semantic token map); **Features** (the
+module toggles plus a Branding block — the brand logos and the WP-admin-bar-logo
+mode); and **Plugins** (enable/disable each detected integration, inactive hosts
+shown dimmed and locked off).
 
 ```php
 AdminKit_Settings::register( $key, array $args );  // declare a setting (idempotent)
@@ -155,10 +157,26 @@ AdminKit_Settings::schema();                        // registered schema (UI ren
 AdminKit_Settings::color_map();                     // semantic token taxonomy the Tokens tab renders
 ```
 
-What's registered today: the feature toggles (`module_login_enabled`,
-`theme_toggle_enabled`, `post_previews_mshots`, `post_previews_enabled`), all
-boolean, default ON, bound to existing enqueue filters in `bind_modules()`. Add
-one from an integration in its `boot()`:
+What's registered today:
+
+- **Always-on toggles** (default ON): `module_login_enabled`,
+  `theme_toggle_enabled`, `post_previews_enabled`, `post_previews_mshots` — bound
+  to existing enqueue filters / providers in `bind_modules()`.
+- **Opt-in toggles** (default OFF): `editor_content_theme` (themes the Gutenberg
+  block-editor canvas) and `bricks_builder_enabled` (restyles the Bricks builder
+  UI, only shown when Bricks is active). They stay off so a third-party / client
+  surface is never altered unasked.
+- **Master pause**: `wp_default_ui` — gates *every* context through
+  `adminkit/should_load` → `maybe_restore_wp_ui()`, so wp-admin renders 100%
+  native while the plugin stays active (only AdminKit's own settings screen keeps
+  its styling, so you can switch back).
+- **Branding**: `logo_light`, `logo_dark`, `wp_logo` (`favicon` | `hide` |
+  `default`) — resolved by `AdminKit_Settings::brand_logo()`.
+- **Integration gates**: one `integration_{slug}_enabled` per discovered adapter
+  (default ON), bound to `adminkit/integration_enabled` and driven by the Plugins
+  tab.
+
+Add a setting from an integration in its `boot()`:
 
 ```php
 AdminKit_Settings::register( 'foo_density', array( 'default' => 'comfortable' ) );

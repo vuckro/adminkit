@@ -58,7 +58,9 @@ Both in `inc/class-theme-toggle.php`.
 | `adminkit/brand_logo` | filter | `('' \| string \| array)` | Brand logo fallback when the Branding settings are empty. Return a URL string, or `array( 'light' => …, 'dark' => …, 'preloader' => … )`. Drives the admin-menu logo **and** the Bricks builder; the settings win over the filter. |
 
 Resolved by `AdminKit_Settings::brand_logo( $mode )`. Logos are normally set
-no-code in Settings → Features → Branding; `inc/wp-core/class-branding.php`.
+no-code in Settings → Features → Branding, alongside the `wp_logo` mode that
+swaps the WP admin-bar logo for the site icon (`favicon`, the default), hides it
+(`hide`), or leaves WordPress's own (`default`); `inc/wp-core/class-branding.php`.
 
 ## Post previews
 

@@ -21,7 +21,7 @@ A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone �
 1. Download a release zip (or clone this repo into `wp-content/plugins/adminkit/`).
 2. Activate "AdminKit" in the WordPress Plugins screen.
 
-That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) has a read-only **Tokens** reference and per-integration toggles; the registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) has a read-only **Tokens** reference, a **Features** tab (module toggles + your brand logos and WP-admin-bar-logo mode), and a **Plugins** tab to enable/disable each detected integration; the registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
@@ -54,9 +54,9 @@ Optional adapters live in `inc/integrations/plugins/{slug}/` (plugin adapters) a
 The **Bricks** adapter, when active:
 
 - Enqueues the Bricks-generated tokens (`/uploads/bricks/css/style-manager.min.css`) so a color changed in the Bricks builder propagates to wp-admin on the next page load.
-- Bypasses every restyle inside the Bricks Builder UI itself.
+- Leaves the Bricks Builder UI native by default; an opt-in **Bricks builder** toggle (Features tab) restyles the builder chrome with your tokens, and falls back to AdminKit's shipped baseline if you clear Bricks's own colours — so the builder never loses its look.
 
-The **Gutenberg** adapter ships token-mapped header / sidebar / publish-button polish for the block, site, widgets, and navigation editors via the `enqueue_block_editor_assets` hook (NOT `admin_enqueue_scripts`) so the CSS only enters editor surfaces.
+The **Gutenberg** adapter ships token-mapped header / sidebar / publish-button polish for the block, site, widgets, and navigation editors via the `enqueue_block_editor_assets` hook (NOT `admin_enqueue_scripts`) so the CSS only enters editor surfaces. An opt-in **Gutenberg** toggle (Features tab, off by default) additionally themes the iframed editor canvas — content + native blocks — in light and dark; left off, the canvas keeps matching your live site.
 
 AdminKit also ships adapters for **WooCommerce**, **ACF**, the **Fluent** suite (CRM, Forms, SMTP, Booking, Cart), **Slim SEO**, **HappyFiles**, **FlyingPress**, **WP Migrate**, and **Admin Menu Editor**. Each self-detects its host and stays dormant when the host isn't installed. They split into two flavors: *Tier A* adapters remap the host's own CSS variables (zero `!important`, dark mode for free); *Tier B* adapters override the host's selectors because it hardcodes its colors — run `php dev/adapter-audit.php` to see each adapter's override budget.
 
@@ -107,6 +107,8 @@ add_action( 'adminkit/enqueued_admin', function () {
 | `adminkit/enqueue_pages` | `(bool)` | Skip every screen-specific polish file. |
 | `adminkit/enqueue_{$handle}` | `(bool)` | Skip a single asset by handle (1.1+). |
 | `adminkit/extra_tokens_handle` | `(string\|null, string $context)` | Integrations return a style handle that becomes a dependency of `adminkit-tokens`. |
+| `adminkit/integration_enabled` | `(bool, string $slug)` | Enable/disable one integration — drives the Plugins tab. |
+| `adminkit/brand_logo` | `('' \| string \| array)` | Brand-logo fallback when the Branding settings are empty. |
 | `adminkit/setting/{$key}` | `(mixed)` | Override a registered setting at read time. |
 | `adminkit/theme_attribute` | `(string)` | Override the dark/light HTML attribute name. |
 | `adminkit/theme_storage_key` | `(string)` | Override the localStorage key. |
@@ -155,14 +157,14 @@ adminkit/
 │   ├── wp-core/                         AdminKit's restyle of WP-core surfaces
 │   │   ├── class-chrome.php             Registers every admin/frontend CSS file
 │   │   ├── class-login.php              Registers login.css
-│   │   ├── class-branding.php           Brand logo (admin menu) + hides the WP logo
+│   │   ├── class-branding.php           Brand logo (admin menu) + WP-admin-bar-logo mode (favicon / hide)
 │   │   ├── class-profile-account.php    Profile / user-edit screen layout
 │   │   ├── class-post-previews.php      List-table screenshot thumbnails
 │   │   └── class-list-table-chrome.php  List-table toolbar / pagination polish
 │   └── integrations/                    Host adapters — auto-discovered, drop a folder
 │       ├── abstract-integration.php     AdminKit_Integration_Base
 │       ├── themes/
-│       │   └── bricks/                  Token provider + Bricks Builder bypass
+│       │   └── bricks/                  Token provider + opt-in Bricks builder theming (with baseline fallback)
 │       └── plugins/
 │           ├── gutenberg/ · woocommerce/ · acf/
 │           ├── fluent-smtp/ · fluentform/ · fluent-booking/
@@ -213,7 +215,7 @@ That's it — the boot orchestrator picks the folder up automatically on `after_
 
 ## Roadmap
 
-- **Settings UI — colour editing.** The settings page ships today (a read-only token map + integration toggles); per-token colour pickers are a future direction.
+- **Settings UI — colour editing.** The settings page ships today (read-only token map, feature + branding controls, per-integration toggles); per-token colour pickers are a future direction.
 - **Colour sync.** Import / live-sync colours from the active provider or theme (Bricks today; the provider hooks already exist — see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)).
 - **More provider adapters.** Oxygen, Breakdance, Elementor, GeneratePress, ACSS / Core Framework — same pattern as Bricks.
 - **Custom dashboard.** Widgets registered via `AdminKit_Dashboard::register_widget()` (the registry exists; widgets land with the WooCommerce / FluentCart integrations).
