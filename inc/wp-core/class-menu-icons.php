@@ -195,6 +195,11 @@ class AdminKit_Core_Menu_Icons {
 			// (a plain document). Same node in the front-end toolbar and the back office.
 			'wp-admin-bar-edit'        => self::svg( 'document-pencil' ),
 			'wp-admin-bar-customize'   => self::svg( 'sliders' ),
+			// `archive` → WP's "View Posts"/"View Pages" node on a post-type LIST screen
+			// (edit.php): a plain-text link out to the post-type archive on the front
+			// end. An eye reads as "view/look at the live listing" — distinct from the
+			// menu's Articles (newspaper) / Pages (document) and from `edit`'s pencil.
+			'wp-admin-bar-archive'     => self::svg( 'eye' ),
 		);
 		return (array) apply_filters( 'adminkit/toolbar_icons', $map );
 	}
@@ -218,6 +223,9 @@ class AdminKit_Core_Menu_Icons {
 		$nodes = array(
 			'wp-admin-bar-edit'      => true,
 			'wp-admin-bar-customize' => true,
+			// "View Posts"/"View Pages" on a list screen — a plain-text link with no
+			// `.ab-icon` span, so its glyph is created on `> .ab-item::before`.
+			'wp-admin-bar-archive'   => true,
 		);
 		return (array) apply_filters( 'adminkit/toolbar_icon_ab_item_nodes', $nodes );
 	}
@@ -403,6 +411,9 @@ class AdminKit_Core_Menu_Icons {
 			// Newspaper — "Articles" (`dashicons-admin-post`). A news/article mark,
 			// distinct from `document` (Pages) and from the edit glyphs.
 			'article'  => '<path fill-rule="evenodd" d="M4.13 3C3.09 3 2.25 3.84 2.25 4.88V18a3 3 0 0 0 3 3h15a3 3 0 0 1-3-3V4.88C17.25 3.84 16.41 3 15.38 3H4.13ZM12 9.75a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5H12Zm-.75-2.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5H12a.75.75 0 0 1-.75-.75ZM6 12.75a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5H6Zm-.75 3.75a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5H6a.75.75 0 0 1-.75-.75ZM6 6.75a.75.75 0 0 0-.75.75v3c0 .41.34.75.75.75h3a.75.75 0 0 0 .75-.75v-3A.75.75 0 0 0 9 6.75H6Z" clip-rule="evenodd"/><path d="M18.75 6.75h1.88c.62 0 1.12.5 1.12 1.13V18a1.5 1.5 0 0 1-3 0V6.75Z"/>',
+			// Eye — "View Posts"/"View Pages" toolbar node (`wp-admin-bar-archive`):
+			// look at the live listing. Heroicons solid "eye".
+			'eye'      => '<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path fill-rule="evenodd" d="M1.32 11.51a1.65 1.65 0 0 1 0-1.02C2.77 6.01 6.99 2.75 12 2.75s9.23 3.26 10.68 7.74c.11.33.11.69 0 1.02C21.23 15.99 17.01 19.25 12 19.25S2.77 15.99 1.32 11.51ZM17.25 12a5.25 5.25 0 1 1-10.5 0 5.25 5.25 0 0 1 10.5 0Z" clip-rule="evenodd"/>',
 			'photo'    => '<path fill-rule="evenodd" d="M1.5 6A2.25 2.25 0 0 1 3.75 3.75h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .41.34.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.69a1.5 1.5 0 0 0-2.12 0l-.88.88.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.16a1.5 1.5 0 0 0-2.12 0L3 16.06Zm10.13-7.81a1.13 1.13 0 1 1 2.25 0 1.13 1.13 0 0 1-2.25 0Z" clip-rule="evenodd"/>',
 			'document' => '<path fill-rule="evenodd" d="M5.63 1.5c-1.04 0-1.88.84-1.88 1.88v17.25c0 1.03.84 1.88 1.88 1.88h12.75c1.03 0 1.88-.84 1.88-1.88V12.75A3.75 3.75 0 0 0 16.5 9h-1.88a1.88 1.88 0 0 1-1.87-1.88V5.25A3.75 3.75 0 0 0 9 1.5H5.63ZM7.5 15a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 7.5 15Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H8.25Z" clip-rule="evenodd"/><path d="M12.97 1.82A5.23 5.23 0 0 1 14.25 5.25v1.88c0 .2.17.37.38.37H16.5a5.23 5.23 0 0 1 3.43 1.28 9.77 9.77 0 0 0-6.96-6.96Z"/>',
 			'chat'     => '<path fill-rule="evenodd" d="M4.85 2.77A49.14 49.14 0 0 1 12 2.25c2.43 0 4.82.18 7.15.52 1.98.29 3.35 2.02 3.35 3.97v6.02c0 1.95-1.37 3.68-3.35 3.97-1.15.17-2.31.3-3.48.38a.39.39 0 0 0-.3.17l-2.75 4.13a.75.75 0 0 1-1.25 0l-2.75-4.13a.39.39 0 0 0-.3-.17 48.9 48.9 0 0 1-3.48-.38C2.87 16.44 1.5 14.7 1.5 12.76V6.74c0-1.95 1.37-3.68 3.35-3.97Z" clip-rule="evenodd"/>',

@@ -250,46 +250,61 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
    `input.adminbar-input`; the magnifying glass is a dashicon FONT glyph painted
    on `#adminbarsearch:before` ("\f179"), NOT an .ab-icon span. WP ships it as a
    collapsed pill (input width:24px, transparent, no border, pointer cursor) that
-   expands to a hard white box on focus. We turn it into a proper tokenized field
-   that reads on the AdminKit bar in both themes. Rules are harmless if the node
-   is absent (some installs / the command-palette variant don't render it). */
+   expands to a hard white box on focus. We KEEP that collapse/expand behaviour —
+   the field reads as just the magnifier by default and grows to a real input on
+   click — but tokenize it so it reads on the AdminKit bar in both themes.
 
-/* The form wrapper sets the field's own footprint so the input can fill it. WP
-   already gives it height:32px; we widen it to a real search affordance. */
+   CSS-ONLY: the collapsed input keeps a small footprint (width:28px) sitting
+   directly UNDER the always-visible glyph, transparent + pointer cursor, so a
+   click on the magnifier lands on the input and focuses it — exactly WP's own,
+   proven mechanism. `:focus` then expands it to a tokenized field. No JS, no
+   extra markup. Rules are harmless if the node is absent (some installs / the
+   command-palette variant don't render it). */
+
+/* The form wrapper hugs the (collapsed) input rather than reserving a fixed
+   200px slot — so when closed it only occupies the magnifier's width and doesn't
+   leave dead space that pushes the neighbouring toolbar items around. It grows
+   only while the input is expanded (the input drives the width). WP's own
+   position:relative / height:32px / padding stay. */
 #wpadminbar #adminbarsearch {
-	width: 200px;
+	width: auto;
 	max-width: 100%;
 }
 
 /* The input. WP styles it through a FOUR-id chain
    (`#wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary > #wp-admin-bar-search
-   #adminbarsearch input.adminbar-input`, 4,1,0 — and 4,1,1 on :focus) with
+   #adminbarsearch input.adminbar-input`, 4,1,0 — and 4,1,1 on :focus) with a
    hardcoded white bg + #000 focus text and a collapse/expand width transition.
    Mirror that exact chain so we win at equal specificity on load order (AdminKit
-   enqueues after core), then make it a steady, full-width token field: surface
-   bg, token border + radius, token text. Left padding clears the 20px glyph.
-   No collapse — keep it open and legible. !important is avoided; the matched
-   specificity is enough. */
+   enqueues after core).
+
+   COLLAPSED (default): a 28px-wide, transparent, borderless click target under
+   the glyph — pointer cursor signals "click to search". Left padding clears the
+   glyph; the tiny remaining width hides any placeholder/value until expanded.
+   The transition animates the grow. */
 #wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary > #wp-admin-bar-search #adminbarsearch input.adminbar-input {
 	box-sizing: border-box;
-	width: 100%;
+	width: 28px;
 	height: 24px;
 	padding: 0 8px 0 26px;
-	background-color: var(--ak-surface);
-	border: 1px solid var(--ak-border);
+	background-color: transparent;
+	border: 1px solid transparent;
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
-	cursor: text;
+	cursor: pointer;
+	transition: width 200ms ease, background-color 200ms ease, border-color 200ms ease;
 }
 
-/* Focus: keep the field's footprint (no width jump) and swap WP's #000 text +
-   white bg for a token-driven focused state with a brand border. Matches WP's
-   4,1,1 :focus selector so it overrides the white-box focus styles. */
+/* EXPANDED (on focus): grow to a real tokenized field — surface bg, brand
+   border, token text, text cursor. Matches WP's 4,1,1 :focus selector so it
+   overrides the white-box focus styles. */
 #wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary > #wp-admin-bar-search #adminbarsearch input.adminbar-input:focus {
-	width: 100%;
+	width: 200px;
+	max-width: 60vw;
 	background-color: var(--ak-surface);
 	border: 1px solid var(--ak-primary);
 	color: var(--ak-text);
+	cursor: text;
 }
 
 /* Placeholder — muted, both themes (token-driven). */

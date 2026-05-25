@@ -48,7 +48,8 @@ class AdminKit_Core_Branding {
 
 	/**
 	 * Front end: the SAME admin-bar logo treatment, for logged-in users who see
-	 * the toolbar there.
+	 * the toolbar there — PLUS a front-end-only touch: the Site Icon shown as a
+	 * small rounded chip next to the site-title node (see site_name_favicon_css()).
 	 *
 	 * @return void
 	 */
@@ -59,7 +60,7 @@ class AdminKit_Core_Branding {
 		if ( ! apply_filters( 'adminkit/should_load', true, 'frontend' ) ) {
 			return;
 		}
-		self::print_css( self::admin_bar_logo_css() );
+		self::print_css( self::admin_bar_logo_css() . self::site_name_favicon_css() );
 	}
 
 	/**
@@ -144,9 +145,12 @@ class AdminKit_Core_Branding {
 		return $sel . '{display:flex;align-items:center;justify-content:center;width:auto;height:32px;padding:0;margin-right:0}'
 			// content:url() makes ::before a replaced element so height:24px / width:auto
 			// scales the wordmark by its own ratio (uncropped); object-fit:contain +
-			// max-width are belt-and-braces against an oversized source.
+			// max-width are belt-and-braces against an oversized source. A 1px upward
+			// nudge optically centres the wordmark in the 32px bar (it read a hair low);
+			// purely visual, no layout shift, no cropping.
 			. $sel . '::before{content:' . $light . ';display:block;box-sizing:border-box;'
 			. 'width:auto;height:24px;max-width:180px;margin:0;top:0;'
+			. 'transform:translateY(-1px);'
 			. 'object-fit:contain;object-position:center;'
 			. 'border-radius:var(--ak-radius-s,6px)}'
 			. ':root[data-adminkit-theme="dark"] ' . $sel . '::before{content:' . $dark . '}'
@@ -177,6 +181,43 @@ class AdminKit_Core_Branding {
 			. 'border-radius:var(--ak-radius-s,5px);'
 			. 'background:' . $favicon . ' center/cover no-repeat}'
 			. self::hide_site_name_glyph();
+	}
+
+	/**
+	 * FRONT END only: show the Site Icon (favicon) as a small rounded chip next to
+	 * the site-title node (`#wp-admin-bar-site-name`), replacing WordPress's "house"
+	 * glyph there. Gated exactly like the rest of the branding: nothing when the
+	 * brand mode is `hide` (the user opted out of a brand mark), and nothing when no
+	 * Site Icon is configured — so it degrades cleanly.
+	 *
+	 * Painted with `content:url()` (a REPLACED element), NOT a background: WP forces
+	 * `background-image:none !important` on `.ab-item:before`, so a background chip
+	 * would need its own `!important` to win — but `content` is exempt from that
+	 * rule, so this stays !important-free. `width/height:18px` + `object-fit:cover`
+	 * scale the square icon into a rounded 18px chip, vertically centred in the 32px
+	 * bar (7px top/bottom), with a 6px gap before the site title. Same image in both
+	 * themes (a Site Icon has no light/dark variant).
+	 *
+	 * The selector is front-end-scoped (`body:not(.wp-admin)`) and out-specifies
+	 * hide_site_name_glyph()'s front-end `content:none` (2,1,1 → this is 2,2,1) so
+	 * the chip wins over the hide; printed only by print_frontend(), so wp-admin is
+	 * untouched. '' when gated off.
+	 *
+	 * @return string
+	 */
+	private static function site_name_favicon_css() {
+		if ( 'hide' === AdminKit_Settings::get( 'wp_logo' ) ) {
+			return ''; // user opted out of a brand mark entirely.
+		}
+		$favicon = self::css_url( get_site_icon_url( 96 ) );
+		if ( '' === $favicon ) {
+			return ''; // no Site Icon configured → leave the node as-is.
+		}
+		$sel = 'body:not(.wp-admin) #wpadminbar #wp-admin-bar-site-name > .ab-item::before';
+		return $sel . '{content:' . $favicon . ';display:block;box-sizing:border-box;'
+			. 'float:left;width:18px;height:18px;padding:0;margin:7px 6px 7px 0;top:0;'
+			. 'object-fit:cover;object-position:center;'
+			. 'border-radius:var(--ak-radius-s,5px)}';
 	}
 
 	/**
