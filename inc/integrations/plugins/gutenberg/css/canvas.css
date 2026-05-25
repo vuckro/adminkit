@@ -108,50 +108,32 @@ html[data-adminkit-canvas]::-webkit-scrollbar-thumb {
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
-/* Notice buttons: "Edit with Bricks" stays the brand CTA; "use the block
-   editor" (a.button, no .button-primary) becomes a proper SECONDARY button so
-   the two read as a primary/secondary pair. Plain selectors beat Bricks's. */
-/* Bricks ships a strong rule for its in-canvas notice's "Edit with Bricks" CTA that
-   out-specifies plain selectors (it kept Bricks's big yellow-outline look, mismatched
-   with our neutral secondary). Scope from the canvas root + add `a` to win on
-   specificity (no !important), and size BOTH buttons (the primary may not carry the
-   .button class). Compact matched pair: filled brand primary + neutral secondary,
-   identical size + radius; labels never underline. */
-html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button,
-html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button-primary {
+/* The notice's "Edit with Bricks" PRIMARY keeps Bricks's own button styling — it
+   out-specifies us and stands alone as the single main CTA. The secondary "use the
+   block editor" can't be reliably restyled as a button against Bricks, so present it
+   as a plain TEXT LINK beside the button: strip the button chrome, mute the colour,
+   and never underline it (in any state). */
+html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:not(.button-primary) {
 	min-height: 0;
-	padding: 5px 14px;
-	border-radius: var(--ak-radius-s);
+	padding: 0;
+	border: none;
+	background: none;
+	box-shadow: none;
 	font-size: var(--ak-text-s);
-	line-height: 1.6;
+	font-weight: 400;
+	color: var(--ak-text-muted);
 	text-decoration: none;
 }
-html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button-primary {
-	background-color: var(--ak-primary);
-	border: 1px solid var(--ak-primary);
-	color: var(--ak-on-accent);
-}
-html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:not(.button-primary) {
-	background-color: var(--ak-surface);
-	border: 1px solid var(--ak-border);
+html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:not(.button-primary):hover,
+html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:not(.button-primary):focus {
+	background: none;
 	color: var(--ak-text);
+	text-decoration: none;
 }
-/* No underline on the label in any state (WP underlines link-buttons on hover). */
+/* Belt-and-suspenders: never underline either label on hover. */
 html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:hover,
 html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:focus,
 html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button-primary:hover,
 html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button-primary:focus {
 	text-decoration: none;
-}
-html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button-primary:hover,
-html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button-primary:focus {
-	background-color: var(--ak-primary);
-	border-color: var(--ak-primary);
-	color: var(--ak-on-accent);
-}
-html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:not(.button-primary):hover,
-html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:not(.button-primary):focus {
-	background-color: var(--ak-elevated);
-	border-color: var(--ak-border);
-	color: var(--ak-heading);
 }
