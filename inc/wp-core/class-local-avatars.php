@@ -118,7 +118,9 @@ class AdminKit_Local_Avatars {
 	 */
 	private static function resolve_user_id( $id_or_email ) {
 		if ( is_numeric( $id_or_email ) ) {
-			return (int) $id_or_email;
+			// absint() to mirror core's own get_avatar_data() handling and keep a
+			// stray negative/float id from ever reaching get_user_meta().
+			return absint( $id_or_email );
 		}
 		if ( $id_or_email instanceof WP_User ) {
 			return (int) $id_or_email->ID;
@@ -360,10 +362,14 @@ class AdminKit_Local_Avatars {
 		);
 
 		wp_enqueue_media();
+		// Depend on `media-editor` (the handle that defines `wp.media`, pulled in by
+		// wp_enqueue_media()) — not jquery — so this footer script is guaranteed to
+		// run AFTER `wp.media` exists. The brick itself uses no jQuery; jQuery still
+		// loads transitively via media-editor's own deps.
 		AdminKit_Assets::enqueue_script(
 			'adminkit-local-avatars',
 			'assets/js/wp-core/local-avatars.js',
-			array( 'jquery' ),
+			array( 'media-editor' ),
 			'window.AdminKitLocalAvatars=' . wp_json_encode( array(
 				'title'        => __( 'Select a profile picture', 'adminkit' ),
 				'button'       => __( 'Use this image', 'adminkit' ),

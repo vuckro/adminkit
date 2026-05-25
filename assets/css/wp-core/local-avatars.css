@@ -25,14 +25,20 @@
 	border-radius: var(--ak-radius-full, 9999px);
 	background: var(--ak-input-bg, #fff);
 	overflow: hidden;
-	cursor: pointer;
 	color: var(--ak-on-accent, #fff);
 	-webkit-appearance: none;
 	appearance: none;
 	transition: border-color .15s ease, box-shadow .15s ease;
 }
 
-.adminkit-local-avatar__media:hover {
+/* Only the editable variant is a real <button>; the read-only span (shown to a
+   user who may view but not upload) stays a plain framed image — no pointer, no
+   hover affordance. */
+button.adminkit-local-avatar__media {
+	cursor: pointer;
+}
+
+button.adminkit-local-avatar__media:hover {
 	border-color: var(--ak-border-strong, #8c8f94);
 }
 
