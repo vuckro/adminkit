@@ -643,6 +643,7 @@
 	width: auto;
 	height: auto;
 	object-fit: contain;
+	border-radius: var(--ak-radius-s);
 }
 .adminkit-app .ak-logo-pick__ph {
 	display: block;

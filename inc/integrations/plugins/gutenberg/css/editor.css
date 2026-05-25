@@ -49,6 +49,21 @@ body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-cl
 	background: var(--ak-surface);
 	border-radius: var(--ak-radius-s);
 }
+/* Back-arrow overlay shown on hover/focus of the top-left logo button. WP draws
+   the arrow over a hardcoded grey square (background hsl(0,0%,80%), or a blurred
+   white wash via .has-site-icon) with a currentColor (#fff) glyph. Route both to
+   AdminKit's soft "selected accent" look — a transparent accent tint + accent
+   arrow — matching .is-pressed. Token-driven, so it follows the light/dark flip.
+   body + class outweighs core's single-class rules, so no !important is needed
+   (the .has-site-icon two-class variant is matched explicitly to stay ahead). */
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__back-icon,
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__back-icon.has-site-icon {
+	background-color: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+}
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-close__back-icon svg {
+	fill: currentColor;
+}
 
 /* The header's inner regions must not repaint a white bar over the surface
    above — keep them transparent so the whole bar reads on the header surface,
