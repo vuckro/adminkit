@@ -356,9 +356,8 @@
 		var wpBtns = [];
 		var wpSeg = el( 'div', { 'class': 'ak-seg', role: 'radiogroup', 'aria-labelledby': 'ak-wp-logo-label' } );
 		[
-			{ v: 'favicon', label: I.wpLogoFavicon || 'Replace with site icon' },
-			{ v: 'hide',    label: I.wpLogoHide || 'Hide' },
-			{ v: 'default', label: I.wpLogoDefault || 'Keep WordPress logo' }
+			{ v: 'favicon', label: I.wpLogoFavicon || 'Replace with favicon' },
+			{ v: 'hide',    label: I.wpLogoHide || 'Hide' }
 		].forEach( function ( o ) {
 			var active = state.wpLogo === o.v;
 			var b = el( 'button', {

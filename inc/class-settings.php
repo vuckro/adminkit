@@ -69,14 +69,17 @@ class AdminKit_Settings {
 			) );
 		}
 
-		// WordPress admin-bar logo: replace with the site icon, hide it, or leave
-		// WordPress's own. Read by AdminKit_Core_Branding.
+		// WordPress admin-bar logo: replace with the favicon, or hide it. Two modes
+		// only — "favicon" already keeps WordPress's own logo when no Site Icon is
+		// set, so a separate "keep" option would be redundant. Read by
+		// AdminKit_Core_Branding. ('default' is still accepted so any legacy value
+		// degrades to the WP-logo fallback rather than resetting.)
 		self::register( 'wp_logo', array(
 			'type'     => 'select',
 			'group'    => 'branding',
 			'default'  => 'favicon',
 			'sanitize' => static function ( $v ) {
-				return in_array( $v, array( 'default', 'favicon', 'hide' ), true ) ? $v : 'favicon';
+				return in_array( $v, array( 'favicon', 'hide' ), true ) ? $v : 'favicon';
 			},
 		) );
 	}
