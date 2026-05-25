@@ -126,9 +126,7 @@ html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:not(.but
 }
 html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:not(.button-primary):hover,
 html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:not(.button-primary):focus {
-	background: none;
 	color: var(--ak-text);
-	text-decoration: none;
 }
 /* Belt-and-suspenders: never underline either label on hover. */
 html[data-adminkit-canvas] .bricks-block-editor-notice-wrapper a.button:hover,
