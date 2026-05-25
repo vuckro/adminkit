@@ -160,7 +160,7 @@ class AdminKit_Theme_Toggle {
 	}
 
 	/**
-	 * Admin-bar shortcut to the site frontend — an eye icon sitting beside the
+	 * Admin-bar shortcut to the site frontend — a house icon sitting beside the
 	 * light/dark toggle. wp-admin only (on the frontend it would be redundant).
 	 *
 	 * @param WP_Admin_Bar $bar
@@ -170,11 +170,11 @@ class AdminKit_Theme_Toggle {
 		if ( ! is_admin() ) {
 			return;
 		}
-		$eye = '<svg class="ak-theme-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12 3.75s9.19 3.226 10.677 7.697c.12.362.12.752 0 1.113C21.19 17.024 16.973 20.25 12 20.25S2.81 17.024 1.323 12.553a1.762 1.762 0 0 1 0-1.106Z" clip-rule="evenodd"/></svg>';
+		$home = '<svg class="ak-theme-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.47 3.84a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.06l-8.69-8.69a2.25 2.25 0 0 0-3.18 0l-8.69 8.69a.75.75 0 1 0 1.06 1.06l8.69-8.69Z"/><path d="m12 5.43 8.16 8.16c.03.02.05.05.08.09v6.2A1.88 1.88 0 0 1 18.37 22H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75v4.5A.75.75 0 0 1 9 22H5.63a1.88 1.88 0 0 1-1.88-1.88v-6.2l.09-.09L12 5.43Z"/></svg>';
 		$bar->add_node( array(
 			'id'     => 'ak-view-site',
 			'parent' => 'top-secondary',
-			'title'  => $eye,
+			'title'  => $home,
 			'href'   => home_url( '/' ),
 			'meta'   => array(
 				'class' => 'ak-view-site',
