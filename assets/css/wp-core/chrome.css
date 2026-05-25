@@ -453,6 +453,15 @@ body.adminkit .edit-comment-author {
 body.adminkit #major-publishing-actions {
 	background: var(--ak-surface);
 	border-top: 1px solid var(--ak-border);
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+/* Keep Publish/Update hard right (with or without a Move-to-Trash on the left)
+   and vertically centred with it — fixes the row's button alignment. */
+body.adminkit #major-publishing-actions #publishing-action {
+	margin-left: auto;
 }
 
 body.adminkit .wp-editor-container {
