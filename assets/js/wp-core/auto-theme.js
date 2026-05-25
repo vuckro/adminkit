@@ -16,71 +16,60 @@
  *   • near-black text → --ak-text · mid-grey text → --ak-text-muted
  *   • fixed light / translucent border → --ak-border
  *   • light box-shadow on a darkened surface → removed (no halo)
+ *   • the host's detected brand colour → --ak-primary (see detectBrand)
  *
- * SAFETY — it never touches interactive controls. Buttons, links-as-buttons,
- * inputs/selects/textareas and their contents are skipped entirely (see CONTROL),
- * and only PALE colours are recoloured, so a brand-coloured CTA is doubly safe.
+ * SAFETY — it never restyles interactive controls' SURFACES (buttons, inputs…):
+ * those are left alone (only their brand colour, if any, is unified to
+ * --ak-primary — they stay strong coloured controls, never washed out). Only
+ * PALE backgrounds are recoloured, so a brand fill is doubly safe.
  *
  * SELF-LIMITING — it reads each element's *computed* colour, so anything a native
  * adapter (or AdminKit core) already put on a token reads as the dark token value
  * and is skipped. TAGGING, not restyling (classes + dark-only CSS) → flipping to
- * light needs no cleanup. Tagging runs in any mode so a flip to dark is instant.
+ * light needs no cleanup.
  */
 ( function () {
 	'use strict';
 
 	var D = window.AdminKitAuto || {};
 	if ( ! D.enabled ) { return; }
+	var BRAND_ON = !! D.brand;
 
-	// Tunable thresholds (0–255 luminance). Starting points; calibrated on real
-	// plugin admins. Kept conservative: only PALE colours are recoloured so vivid
-	// brand fills / CTAs are never caught even if a control slips the skip list.
+	// Tunable thresholds (0–255 luminance). Conservative: only PALE colours are
+	// recoloured so vivid brand fills / CTAs are never caught by the surface pass.
 	var T = {
-		surfaceLum:   222,  // neutral background at/above → surface candidate
-		neutralSat:   0.10, // below this saturation = neutral (surface/elevated)
-		tintLumMin:   218,  // tinted background must be at least this light (pale)
-		tintSatMin:   0.10,
-		tintSatMax:   0.55, // above = too vivid (a fill/CTA) → leave it
-		textLum:      105,  // text at/below → body text
-		mutedLumMax:  170,  // text between textLum and this → muted
-		textSatMax:   0.30, // only low-chroma text is remapped (coloured text kept)
-		borderLum:    165,  // opaque border at/above (low sat) → neutral → remap
-		borderSatMax: 0.22,
-		minW:         24,   // a childless light element smaller than this (a swatch…)
-		minH:         16    // …is left alone for backgrounds
+		surfaceLum:   222, neutralSat:  0.10,
+		tintLumMin:   218, tintSatMin:  0.10, tintSatMax: 0.55,
+		textLum:      105, mutedLumMax: 170,  textSatMax: 0.30,
+		borderLum:    165, borderSatMax: 0.22,
+		minW:         24,  minH:        16,
+		brandSatMin:  0.35, brandLumMin: 30, brandLumMax: 225, // brand = clearly hued, mid
+		brandTol:     26,   brandExclTol: 38,                  // colour-match tolerances
+		brandMinVotes: 3
 	};
 
 	var C = {
-		surface:  'ak-auto-surface',
-		elevated: 'ak-auto-elevated',
-		info:     'ak-auto-info',
-		success:  'ak-auto-success',
-		warning:  'ak-auto-warning',
-		error:    'ak-auto-error',
-		text:     'ak-auto-text',
-		muted:    'ak-auto-muted',
-		bd:       'ak-auto-bd',
-		noshadow: 'ak-auto-noshadow'
+		surface: 'ak-auto-surface', elevated: 'ak-auto-elevated',
+		info: 'ak-auto-info', success: 'ak-auto-success', warning: 'ak-auto-warning', error: 'ak-auto-error',
+		text: 'ak-auto-text', muted: 'ak-auto-muted', bd: 'ak-auto-bd', noshadow: 'ak-auto-noshadow',
+		brandBg: 'ak-auto-brand-bg', brandFg: 'ak-auto-brand-fg', brandBd: 'ak-auto-brand-bd'
 	};
 	var NEST_SELECTOR = '.' + C.surface + ',.' + C.elevated;
 
-	// Media + replaced elements: never restyle their box colours.
 	var SKIP_TAGS = /^(IMG|SVG|PATH|G|USE|CANVAS|VIDEO|AUDIO|IFRAME|PICTURE|SOURCE|OBJECT|EMBED|MAP|AREA|HR|BR|SCRIPT|STYLE|LINK|TEMPLATE|NOSCRIPT)$/;
-	// Skip entirely (the element AND its contents) — chrome AdminKit themes
-	// natively, explicit opt-outs, and ALL interactive controls. Leaving controls
-	// untouched is the hard guarantee that a CTA's colours are never altered.
-	var SKIP_CLOSEST = '#wpadminbar, #adminmenuwrap, #adminmenuback, #adminkit-app, .adminkit-app, [data-ak-no-auto], ' +
-		'button, input, select, textarea, a.button, a.btn, .button, .btn, .components-button, .MuiButton-root, .ant-btn';
+	// Never touched at all (media excluded above) — chrome AdminKit themes natively
+	// + explicit opt-outs.
+	var HARD_SKIP = '#wpadminbar, #adminmenuwrap, #adminmenuback, #adminkit-app, .adminkit-app, [data-ak-no-auto]';
+	// Interactive controls: their SURFACE is left alone (only brand-unified). This
+	// is the hard guarantee a CTA's colours are never washed out.
+	var CONTROL = 'button, input, select, textarea, a.button, a.btn, .button, .btn, .components-button, .MuiButton-root, .ant-btn';
 
 	function parse( c ) {
 		if ( ! c ) { return null; }
 		var m = c.match( /rgba?\(([^)]+)\)/ );
 		if ( ! m ) { return null; }
 		var p = m[ 1 ].split( ',' );
-		return {
-			r: parseFloat( p[ 0 ] ), g: parseFloat( p[ 1 ] ), b: parseFloat( p[ 2 ] ),
-			a: p.length > 3 ? parseFloat( p[ 3 ] ) : 1
-		};
+		return { r: parseFloat( p[ 0 ] ), g: parseFloat( p[ 1 ] ), b: parseFloat( p[ 2 ] ), a: p.length > 3 ? parseFloat( p[ 3 ] ) : 1 };
 	}
 	function luminance( c ) { return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b; }
 	function saturation( c ) {
@@ -98,17 +87,14 @@
 		h *= 60;
 		return h < 0 ? h + 360 : h;
 	}
+	function near( a, b, tol ) {
+		return Math.abs( a.r - b.r ) <= tol && Math.abs( a.g - b.g ) <= tol && Math.abs( a.b - b.b ) <= tol;
+	}
 
-	// Decide a background class for an opaque-ish colour, or null to leave it.
 	function bgClass( el, c ) {
 		var L = luminance( c ), S = saturation( c );
-		// Only PALE backgrounds are candidates — vivid fills are never touched.
-		if ( L < T.tintLumMin ) { return null; }
-		// Size guard: a childless light leaf this small is a swatch / dot / chip,
-		// not a panel — leave it (avoids dotting the UI with dark squares).
-		if ( ! el.firstElementChild && el.offsetWidth < T.minW && el.offsetHeight < T.minH ) {
-			return null;
-		}
+		if ( L < T.tintLumMin ) { return null; } // vivid / dark fills never touched
+		if ( ! el.firstElementChild && el.offsetWidth < T.minW && el.offsetHeight < T.minH ) { return null; }
 		if ( S < T.neutralSat && L >= T.surfaceLum ) {
 			return el.closest( NEST_SELECTOR ) ? C.elevated : C.surface;
 		}
@@ -119,18 +105,16 @@
 			if ( h >= 35 && h < 75 ) { return C.warning; }
 			if ( h < 20 || h >= 330 ) { return C.error; }
 		}
-		return null; // purple / pink / other tints → leave (brand identity)
+		return null;
 	}
 
-	// True when an element has a visible border that's neutral-light or translucent
-	// (the subtle dividers MUI / plugins draw; coloured borders are kept semantic).
 	function subtleBorder( s ) {
 		var sides = [ 'Top', 'Right', 'Bottom', 'Left' ];
 		for ( var i = 0; i < 4; i++ ) {
 			if ( parseFloat( s[ 'border' + sides[ i ] + 'Width' ] ) > 0 ) {
 				var c = parse( s[ 'border' + sides[ i ] + 'Color' ] );
 				if ( ! c ) { continue; }
-				if ( c.a > 0 && c.a < 0.6 ) { return true; } // translucent (e.g. rgba(0,0,0,.12))
+				if ( c.a > 0 && c.a < 0.6 ) { return true; }
 				if ( c.a >= 0.6 && luminance( c ) >= T.borderLum && saturation( c ) < T.borderSatMax ) { return true; }
 			}
 		}
@@ -142,46 +126,111 @@
 		return !! c && luminance( c ) >= 180;
 	}
 
-	function shouldSkip( el ) {
+	// ── Brand detection ──────────────────────────────────────────────────────
+	// The host's primary colour is the colour that recurs across its buttons (and,
+	// secondarily, its links). We tally clearly-hued candidates, exclude colours
+	// already equal to --ak-primary (core buttons AdminKit remapped), and take the
+	// clear plurality. No clear winner → null (we never guess).
+	var AKPRIMARY = null, BRAND = null, brandTries = 0;
+
+	function resolveToken( name ) {
+		var probe = document.createElement( 'span' );
+		probe.style.cssText = 'color:var(' + name + ');position:absolute;left:-9999px;top:-9999px';
+		document.body.appendChild( probe );
+		var c = parse( window.getComputedStyle( probe ).color );
+		document.body.removeChild( probe );
+		return c;
+	}
+	function brandCandidate( c ) {
+		if ( ! c || c.a < 0.7 ) { return false; }
+		var L = luminance( c ), S = saturation( c );
+		if ( S < T.brandSatMin || L < T.brandLumMin || L > T.brandLumMax ) { return false; }
+		if ( AKPRIMARY && near( c, AKPRIMARY, T.brandExclTol ) ) { return false; }
+		return true;
+	}
+	function quant( c ) { return ( c.r >> 4 ) + ',' + ( c.g >> 4 ) + ',' + ( c.b >> 4 ); }
+
+	function detectBrand( root ) {
+		var votes = {}, rep = {};
+		function vote( c, w ) {
+			if ( ! brandCandidate( c ) ) { return; }
+			var k = quant( c );
+			votes[ k ] = ( votes[ k ] || 0 ) + w;
+			if ( ! rep[ k ] ) { rep[ k ] = c; }
+		}
+		var btns = root.querySelectorAll( 'button, [type="submit"], .button-primary, a.button-primary, .MuiButton-contained, .MuiButton-containedPrimary, .components-button.is-primary, [class*="-primary"]' );
+		for ( var i = 0; i < btns.length; i++ ) { vote( parse( window.getComputedStyle( btns[ i ] ).backgroundColor ), 2 ); }
+		var links = root.querySelectorAll( 'a' );
+		for ( var j = 0; j < links.length && j < 400; j++ ) { vote( parse( window.getComputedStyle( links[ j ] ).color ), 1 ); }
+		var bestK = null, best = 0;
+		for ( var k in votes ) { if ( votes[ k ] > best ) { best = votes[ k ]; bestK = k; } }
+		return ( bestK && best >= T.brandMinVotes ) ? rep[ bestK ] : null;
+	}
+	function brandClasses( s, add ) {
+		if ( ! BRAND ) { return; }
+		var bg = parse( s.backgroundColor );
+		if ( bg && bg.a >= 0.7 && near( bg, BRAND, T.brandTol ) ) { add.push( C.brandBg ); }
+		var col = parse( s.color );
+		if ( col && col.a >= 0.7 && near( col, BRAND, T.brandTol ) ) { add.push( C.brandFg ); }
+		var sides = [ 'Top', 'Right', 'Bottom', 'Left' ];
+		for ( var i = 0; i < 4; i++ ) {
+			if ( parseFloat( s[ 'border' + sides[ i ] + 'Width' ] ) > 0 ) {
+				var bc = parse( s[ 'border' + sides[ i ] + 'Color' ] );
+				if ( bc && bc.a >= 0.5 && near( bc, BRAND, T.brandTol ) ) { add.push( C.brandBd ); break; }
+			}
+		}
+	}
+
+	function shouldHardSkip( el ) {
 		if ( SKIP_TAGS.test( el.tagName ) ) { return true; }
-		return !! ( el.closest && el.closest( SKIP_CLOSEST ) );
+		return !! ( el.closest && el.closest( HARD_SKIP ) );
 	}
 
 	function tag( el ) {
 		if ( el.nodeType !== 1 || el.__akAuto ) { return; }
 		el.__akAuto = 1;
-		if ( shouldSkip( el ) ) { return; }
+		if ( shouldHardSkip( el ) ) { return; }
 
 		var s = window.getComputedStyle( el );
 		var add = [];
 		var bgCls = null;
+		var control = el.closest && el.closest( CONTROL );
 
-		// Background (skip gradients / images — leave decorative fills alone).
-		if ( s.backgroundImage === 'none' ) {
-			var bg = parse( s.backgroundColor );
-			if ( bg && bg.a >= 0.9 ) {
-				bgCls = bgClass( el, bg );
-				if ( bgCls ) { add.push( bgCls ); }
+		if ( ! control ) {
+			if ( s.backgroundImage === 'none' ) {
+				var bg = parse( s.backgroundColor );
+				if ( bg && bg.a >= 0.9 ) { bgCls = bgClass( el, bg ); if ( bgCls ) { add.push( bgCls ); } }
 			}
+			var col = parse( s.color );
+			if ( col && col.a >= 0.5 && saturation( col ) < T.textSatMax ) {
+				var lt = luminance( col );
+				if ( lt <= T.textLum ) { add.push( C.text ); }
+				else if ( lt <= T.mutedLumMax ) { add.push( C.muted ); }
+			}
+			if ( subtleBorder( s ) ) { add.push( C.bd ); }
+			if ( ( bgCls === C.surface || bgCls === C.elevated ) && lightShadow( s.boxShadow ) ) { add.push( C.noshadow ); }
 		}
 
-		// Text — low-chroma only (coloured links/labels keep their colour).
-		var col = parse( s.color );
-		if ( col && col.a >= 0.5 && saturation( col ) < T.textSatMax ) {
-			var lt = luminance( col );
-			if ( lt <= T.textLum ) { add.push( C.text ); }
-			else if ( lt <= T.mutedLumMax ) { add.push( C.muted ); }
-		}
-
-		// Borders.
-		if ( subtleBorder( s ) ) { add.push( C.bd ); }
-
-		// Light shadow on a surface we're darkening → drop the halo.
-		if ( ( bgCls === C.surface || bgCls === C.elevated ) && lightShadow( s.boxShadow ) ) {
-			add.push( C.noshadow );
-		}
+		if ( BRAND ) { brandClasses( s, add ); el.__akBrand = 1; }
 
 		for ( var i = 0; i < add.length; i++ ) { el.classList.add( add[ i ] ); }
+	}
+
+	// Brand-only re-pass, for when the brand is detected AFTER the first scan
+	// already flagged everything (React apps mount their buttons late).
+	function applyBrand( el ) {
+		if ( el.nodeType !== 1 || el.__akBrand ) { return; }
+		el.__akBrand = 1;
+		if ( shouldHardSkip( el ) ) { return; }
+		var add = [];
+		brandClasses( window.getComputedStyle( el ), add );
+		for ( var i = 0; i < add.length; i++ ) { el.classList.add( add[ i ] ); }
+	}
+	function brandPass( root ) {
+		if ( ! BRAND || ! root || root.nodeType !== 1 ) { return; }
+		applyBrand( root );
+		var els = root.querySelectorAll( '*' );
+		for ( var i = 0; i < els.length; i++ ) { applyBrand( els[ i ] ); }
 	}
 
 	function scan( node ) {
@@ -195,10 +244,6 @@
 		if ( window.requestIdleCallback ) { window.requestIdleCallback( fn, { timeout: 500 } ); }
 		else { window.setTimeout( function () { fn( null ); }, 16 ); }
 	}
-
-	// Initial pass, time-sliced so a huge app (MUI = thousands of nodes) never
-	// blocks the main thread. Document order means ancestors are tagged before
-	// descendants, so the nested-surface (elevated) lookup is correct.
 	function scanChunked( root ) {
 		tag( root );
 		var els = root.querySelectorAll( '*' ), i = 0;
@@ -217,11 +262,16 @@
 		|| document.getElementById( 'wpbody-content' )
 		|| document.body;
 
-	// React / MUI mount + inject their emotion styles after load, so watch for
-	// added subtrees and scan just those, debounced to let CSS-in-JS settle.
 	var queue = [], scheduled = false;
 	function flush() {
 		scheduled = false;
+		// Late brand detection — React/MUI render their buttons after first paint.
+		if ( BRAND_ON && ! BRAND && brandTries < 8 ) {
+			brandTries++;
+			if ( ! AKPRIMARY ) { AKPRIMARY = resolveToken( '--ak-primary' ); }
+			BRAND = detectBrand( scope );
+			if ( BRAND ) { brandPass( scope ); }
+		}
 		var q = queue; queue = [];
 		for ( var i = 0; i < q.length; i++ ) { scan( q[ i ] ); }
 	}
@@ -232,6 +282,10 @@
 	}
 
 	function boot() {
+		if ( BRAND_ON ) {
+			AKPRIMARY = resolveToken( '--ak-primary' );
+			BRAND = detectBrand( scope );
+		}
 		scanChunked( scope );
 		if ( ! window.MutationObserver ) { return; }
 		new MutationObserver( function ( muts ) {

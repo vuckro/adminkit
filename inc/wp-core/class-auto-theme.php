@@ -35,18 +35,26 @@ class AdminKit_Auto_Theme {
 	const SETTING = 'auto_theme_enabled';
 
 	/**
-	 * Register the toggle (idempotent, default ON) and, when enabled, enqueue the
+	 * Setting key — the brand-colour remap sub-toggle (default ON). Detects the
+	 * host plugin's primary/brand colour (from its buttons) and remaps it to
+	 * --ak-primary. Separable so it can be disabled without losing the surface
+	 * mapping, e.g. add_filter( 'adminkit/setting/auto_theme_brand_enabled',
+	 * '__return_false' ).
+	 */
+	const SETTING_BRAND = 'auto_theme_brand_enabled';
+
+	/**
+	 * Register the toggles (idempotent, default ON) and, when enabled, enqueue the
 	 * brick on admin screens. Called once from the orchestrator.
 	 *
 	 * @return void
 	 */
 	public static function init() {
-		AdminKit_Settings::register( self::SETTING, array(
-			'default'  => true,
-			'sanitize' => static function ( $v ) {
-				return (bool) $v;
-			},
-		) );
+		$boolish = static function ( $v ) {
+			return (bool) $v;
+		};
+		AdminKit_Settings::register( self::SETTING, array( 'default' => true, 'sanitize' => $boolish ) );
+		AdminKit_Settings::register( self::SETTING_BRAND, array( 'default' => true, 'sanitize' => $boolish ) );
 
 		if ( ! AdminKit_Settings::get( self::SETTING ) ) {
 			return;
@@ -87,7 +95,10 @@ class AdminKit_Auto_Theme {
 		);
 		wp_add_inline_script(
 			self::HANDLE,
-			'window.AdminKitAuto=' . wp_json_encode( array( 'enabled' => true ) ) . ';',
+			'window.AdminKitAuto=' . wp_json_encode( array(
+				'enabled' => true,
+				'brand'   => (bool) AdminKit_Settings::get( self::SETTING_BRAND ),
+			) ) . ';',
 			'before'
 		);
 	}

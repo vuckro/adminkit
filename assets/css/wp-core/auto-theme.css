@@ -53,3 +53,17 @@ html[data-adminkit-theme="dark"] body.adminkit .ak-auto-bd {
 html[data-adminkit-theme="dark"] body.adminkit .ak-auto-noshadow {
 	box-shadow: none !important;
 }
+
+/* ── Detected brand colour → --ak-primary (unifies the plugin's accent).
+   The JS votes on the host's primary colour from its buttons; here we remap that
+   exact colour wherever it's used as a fill / text / border. Buttons stay strong
+   coloured controls (→ --ak-primary), never washed out. ── */
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-brand-bg {
+	background-color: var(--ak-primary) !important;
+}
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-brand-fg {
+	color: var(--ak-primary) !important;
+}
+html[data-adminkit-theme="dark"] body.adminkit .ak-auto-brand-bd {
+	border-color: var(--ak-primary) !important;
+}
