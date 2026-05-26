@@ -52,18 +52,38 @@ class AdminKit_Local_Avatars {
 	const BACKGROUND = 'b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf,cbd5e8,f4cae4,e6f5c9,fff2ae,fdcdac';
 
 	/**
-	 * Avataaars feature filters — restrict to friendly, positive variants per seed.
-	 * Without these, DiceBear occasionally rolls a "sad", "concerned", "vomit" mouth
-	 * or a "cry" / "eyeRoll" eye set; we only want welcoming portraits in a users
-	 * list. Skin colour, hair, accessories, clothes stay unconstrained so the
-	 * native diversity of avataaars (light / tanned / yellow / brown / dark skin
-	 * tones, many hairstyles, etc.) carries through.
+	 * Avataaars feature filters — narrow the per-seed roll to a clean, standardised
+	 * European look: smiling or neutral expression, natural-but-not-fantasy hair
+	 * colour, light/pale skin. Keeps things consistent across a users list while
+	 * preserving the per-seed variation that comes from hair style, facial hair,
+	 * accessories and clothing. Defaults exclude weird/fantasy variants entirely
+	 * (no hearts eyes, no big "surprised" eyes, no red/pink hair, no eyepatch …).
+	 *
+	 * MOUTH and EYES take DiceBear's named variants. SKIN_COLOR and HAIR_COLOR
+	 * take raw hex values — DiceBear's API rejects the preset names for these
+	 * (the regex is `^(transparent|[a-fA-F0-9]{6})$`). The hexes below match the
+	 * original avataaars project's named presets:
+	 *   - skin: `edb98a` (light caucasian), `ffdbb4` (pale)
+	 *   - hair: `2c1b18` (black), `b58143` (blonde), `d6b370` (blonde golden),
+	 *           `724133` (brown), `4a312c` (dark brown)
 	 */
-	const MOUTH = 'smile,default,twinkle';
-	const EYES  = 'default,happy,wink,winkWacky,hearts,surprised';
+	const MOUTH      = 'smile,default,twinkle';
+	const EYES       = 'default,happy';
+	const SKIN_COLOR = 'edb98a,ffdbb4';
+	const HAIR_COLOR = '2c1b18,b58143,d6b370,724133,4a312c';
 
 	/** User-meta key caching whether the user has a real Gravatar (`1` | `0`). */
 	const GRAVATAR_META = 'adminkit_has_gravatar';
+
+	/**
+	 * User-meta key holding a rolled-by-the-user seed. When present it wins over
+	 * the deterministic md5(login). Cleared by an admin-side delete_user_meta if
+	 * we ever want to restore the default — kept lean for now (forward shuffle only).
+	 */
+	const SEED_META = 'adminkit_avatar_seed';
+
+	/** Nonce action used by the shuffle link (profile button + users-list row action). */
+	const SHUFFLE_NONCE = 'adminkit_shuffle_avatar';
 
 	public static function init() {
 		// Wire the safety net ALWAYS (independent of the toggle): if AdminKit
@@ -80,6 +100,15 @@ class AdminKit_Local_Avatars {
 		add_filter( 'pre_get_avatar_data', array( __CLASS__, 'filter_avatar_data' ), 10, 2 );
 		// Email or login change → drop the cached Gravatar check so it re-runs next render.
 		add_action( 'profile_update', array( __CLASS__, 'invalidate_cache' ) );
+
+		// "Don't like my portrait?" — Shuffle affordance on the profile page + as
+		// a user-row action on users.php. A plain GET link with a nonce; the
+		// `admin_init` handler rolls a new seed and redirects to the clean URL
+		// so a browser refresh doesn't keep shuffling.
+		add_action( 'admin_init', array( __CLASS__, 'maybe_shuffle' ) );
+		add_action( 'show_user_profile', array( __CLASS__, 'render_profile_section' ) );
+		add_action( 'edit_user_profile', array( __CLASS__, 'render_profile_section' ) );
+		add_filter( 'user_row_actions', array( __CLASS__, 'add_row_action' ), 10, 2 );
 	}
 
 	/**
@@ -142,10 +171,10 @@ class AdminKit_Local_Avatars {
 
 		// (c) Generated portrait. Setting $args['url'] bypasses Gravatar entirely so
 		//     the seed survives (Gravatar's Photon proxy would otherwise strip it).
-		//     `backgroundType=gradientLinear` + the pastel palette gives a soft
-		//     two-tone backdrop (DiceBear picks two colours deterministically per
-		//     seed) — subtle enough to read in both light and dark wp-admin themes.
-		$seed = md5( strtolower( $user->user_login ) );
+		//     Solid (not gradient) background — DiceBear picks ONE colour per seed
+		//     from the pastel palette. Solid gives a stronger silhouette against
+		//     the cartoon outlines than a two-tone gradient ever could.
+		$seed = self::get_seed( $user );
 		$size = isset( $args['size'] ) ? max( 1, min( 256, (int) $args['size'] ) ) : 96;
 
 		$args['url'] = esc_url_raw(
@@ -153,9 +182,10 @@ class AdminKit_Local_Avatars {
 			. '?seed=' . rawurlencode( $seed )
 			. '&size=' . $size
 			. '&backgroundColor=' . self::BACKGROUND
-			. '&backgroundType=gradientLinear'
 			. '&mouth=' . self::MOUTH
 			. '&eyes=' . self::EYES
+			. '&skinColor=' . self::SKIN_COLOR
+			. '&hairColor=' . self::HAIR_COLOR
 		);
 		$args['found_avatar'] = true;
 		return $args;
@@ -201,6 +231,119 @@ class AdminKit_Local_Avatars {
 
 	public static function invalidate_cache( $user_id ) {
 		delete_user_meta( (int) $user_id, self::GRAVATAR_META );
+	}
+
+	/**
+	 * Resolve the DiceBear seed for a user. A user-rolled seed (stored by the
+	 * Shuffle action) wins over the deterministic `md5( user_login )` default,
+	 * so an admin or the user themselves can cycle to a different portrait when
+	 * the assigned one doesn't fit.
+	 */
+	private static function get_seed( $user ) {
+		$rolled = (string) get_user_meta( $user->ID, self::SEED_META, true );
+		if ( '' !== $rolled ) {
+			return $rolled;
+		}
+		return md5( strtolower( $user->user_login ) );
+	}
+
+	/**
+	 * Handle a Shuffle GET request — roll a new seed for the target user, then
+	 * redirect to the same page without our query params so a browser refresh
+	 * doesn't keep re-rolling on every reload (GRG, get-redirect-get pattern).
+	 *
+	 * Hooked on `admin_init`. No-op for any request that doesn't carry our
+	 * `?adminkit_shuffle=1` flag.
+	 */
+	public static function maybe_shuffle() {
+		if ( empty( $_GET['adminkit_shuffle'] ) ) {
+			return;
+		}
+		$user_id = isset( $_GET['user_id'] ) ? (int) $_GET['user_id'] : 0;
+		if ( ! $user_id || ! current_user_can( 'edit_user', $user_id ) ) {
+			wp_die( esc_html__( 'You are not allowed to do that.', 'adminkit' ), '', array( 'response' => 403 ) );
+		}
+		check_admin_referer( self::SHUFFLE_NONCE );
+
+		update_user_meta( $user_id, self::SEED_META, md5( wp_generate_uuid4() ) );
+
+		$redirect = remove_query_arg( array( 'adminkit_shuffle', 'user_id', '_wpnonce' ) );
+		wp_safe_redirect( $redirect );
+		exit;
+	}
+
+	/**
+	 * Show a "Profile picture" section on profile.php / user-edit.php — current
+	 * portrait + Shuffle link. Hidden when:
+	 *   - The viewer lacks edit_user capability for this target.
+	 *   - AdminKit Portraits isn't the active WP default (our DiceBear isn't
+	 *     even rendering for this user).
+	 *   - The user has a real Gravatar (Shuffle wouldn't visibly change anything).
+	 */
+	public static function render_profile_section( $user ) {
+		if ( ! ( $user instanceof WP_User ) || ! current_user_can( 'edit_user', $user->ID ) ) {
+			return;
+		}
+		if ( self::AVATAR_KEY !== get_option( 'avatar_default' ) ) {
+			return;
+		}
+		if ( self::has_real_gravatar( $user ) ) {
+			return;
+		}
+
+		$shuffle_url = wp_nonce_url(
+			add_query_arg(
+				array(
+					'adminkit_shuffle' => '1',
+					'user_id'          => $user->ID,
+				)
+			),
+			self::SHUFFLE_NONCE
+		);
+		?>
+		<h2><?php esc_html_e( 'Profile picture', 'adminkit' ); ?></h2>
+		<table class="form-table" role="presentation">
+			<tr>
+				<th><?php esc_html_e( 'Generated portrait', 'adminkit' ); ?></th>
+				<td>
+					<?php echo get_avatar( $user->ID, 96 ); ?>
+					<p>
+						<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Shuffle', 'adminkit' ); ?></a>
+						<span class="description"><?php esc_html_e( "Don't like this portrait? Click to roll a new one.", 'adminkit' ); ?></span>
+					</p>
+				</td>
+			</tr>
+		</table>
+		<?php
+	}
+
+	/**
+	 * Add a "Shuffle avatar" row action on users.php so admins can re-roll any
+	 * user's portrait without opening their profile. Same visibility rules as
+	 * the profile section.
+	 */
+	public static function add_row_action( $actions, $user ) {
+		if ( self::AVATAR_KEY !== get_option( 'avatar_default' ) ) {
+			return $actions;
+		}
+		if ( ! current_user_can( 'edit_user', $user->ID ) ) {
+			return $actions;
+		}
+		if ( self::has_real_gravatar( $user ) ) {
+			return $actions;
+		}
+
+		$url = wp_nonce_url(
+			add_query_arg(
+				array(
+					'adminkit_shuffle' => '1',
+					'user_id'          => $user->ID,
+				)
+			),
+			self::SHUFFLE_NONCE
+		);
+		$actions['adminkit_shuffle'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Shuffle avatar', 'adminkit' ) . '</a>';
+		return $actions;
 	}
 
 	private static function resolve_user_id( $id_or_email ) {
