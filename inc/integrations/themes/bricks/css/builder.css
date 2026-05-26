@@ -54,50 +54,19 @@
 	50% { transform: scale(1.1); }
 }
 
-/* Dark mode. Triggers on EITHER signal so the builder Just Works whatever
-   path the user came in by:
-   • the OS preference (prefers-color-scheme: dark) — no AdminKit setup
-     needed, opens dark when the OS is dark
-   • AdminKit's own attribute (data-adminkit-theme="dark") — set by the
-     theme-toggle script that already prints on wp_head and carries the
-     user's last admin-bar choice via localStorage
+/* Dark mode. The builder chrome's mode mirrors the user's Bricks Style
+   Manager toggle (the sun/moon button at the top of the builder), via a
+   tiny polling bridge in js/builder-mode-mirror.js — it copies the canvas
+   iframe's data-brx-theme onto the chrome's data-adminkit-theme every
+   half-second. When the user toggles to light or dark in the Style
+   Manager, the chrome follows. When no Bricks palette is imported the
+   AdminKit dark values still resolve through the WaasKit baseline's
+   --neutral-d-N ramp, so the chrome paints correctly either way.
 
    The block below re-points Bricks's semantic tokens (--background,
    --surface, --heading, …) to AdminKit's dark values, so every
    var(--background) reference in builder.css picks up the dark tone
-   automatically — no per-rule rewrite needed.
-
-   Bricks's own Style Manager light/dark toggle stays independent (it
-   flips the CANVAS, not the chrome) — that's correct: the canvas reflects
-   what the visitor sees, the chrome is AdminKit's UI surface. */
-@media (prefers-color-scheme: dark) {
-	:root:not([data-adminkit-theme="light"]) {
-		background-color: #171717;
-		--background:     var(--ak-bg);
-		--surface:        var(--ak-surface);
-		--elevated:       var(--ak-elevated);
-		--input:          var(--ak-input-bg);
-		--border:         var(--ak-border);
-		--border-strong:  var(--ak-border-strong);
-		--heading:        var(--ak-heading);
-		--text:           var(--ak-text);
-		--text-muted:     var(--ak-text-muted);
-		--accent:         var(--ak-primary);
-		--accent-hover:   var(--ak-primary-hover);
-		--accent-on:      var(--ak-on-accent);
-		--accent-subtle:  var(--ak-primary-subtle);
-		--focus:          var(--ak-focus);
-		--success:        var(--ak-success);
-		--success-subtle: var(--ak-success-subtle);
-		--warning:        var(--ak-warning);
-		--warning-subtle: var(--ak-warning-subtle);
-		--error:          var(--ak-error);
-		--error-subtle:   var(--ak-error-subtle);
-		--info:           var(--ak-info);
-		--info-subtle:    var(--ak-info-subtle);
-	}
-}
-
+   automatically — no per-rule rewrite needed. */
 :root[data-adminkit-theme="dark"] {
 	background-color: #171717;
 	--background:     var(--ak-bg);
