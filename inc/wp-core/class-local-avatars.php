@@ -249,8 +249,15 @@ class AdminKit_Local_Avatars {
 
 	/**
 	 * Handle a Shuffle GET request — roll a new seed for the target user, then
-	 * redirect to the same page without our query params so a browser refresh
-	 * doesn't keep re-rolling on every reload (GRG, get-redirect-get pattern).
+	 * redirect back to the page the click came from.
+	 *
+	 * We redirect to `wp_get_referer()` (NOT the current URL minus our params).
+	 * Why: when the click was on user-edit.php?user_id=X, the current URL also
+	 * carries that `user_id=X`, and stripping it (it overlaps with our own
+	 * `user_id` shuffle param) would land WP on user-edit.php without an id →
+	 * "Invalid user ID". The referer is whichever page held the link
+	 * (user-edit.php?user_id=X, users.php, profile.php) and is the right place
+	 * to come back to.
 	 *
 	 * Hooked on `admin_init`. No-op for any request that doesn't carry our
 	 * `?adminkit_shuffle=1` flag.
@@ -267,8 +274,14 @@ class AdminKit_Local_Avatars {
 
 		update_user_meta( $user_id, self::SEED_META, md5( wp_generate_uuid4() ) );
 
-		$redirect = remove_query_arg( array( 'adminkit_shuffle', 'user_id', '_wpnonce' ) );
-		wp_safe_redirect( $redirect );
+		$referer = wp_get_referer();
+		if ( $referer ) {
+			// Defensively strip our params in case they got into the referer too.
+			$referer = remove_query_arg( array( 'adminkit_shuffle', '_wpnonce' ), $referer );
+		} else {
+			$referer = admin_url( 'profile.php' );
+		}
+		wp_safe_redirect( $referer );
 		exit;
 	}
 
@@ -306,10 +319,12 @@ class AdminKit_Local_Avatars {
 			<tr>
 				<th><?php esc_html_e( 'Generated portrait', 'adminkit' ); ?></th>
 				<td>
-					<?php echo get_avatar( $user->ID, 96 ); ?>
-					<p>
+					<span style="display:inline-block;border-radius:50%;overflow:hidden;line-height:0;vertical-align:middle">
+						<?php echo get_avatar( $user->ID, 96 ); ?>
+					</span>
+					<p style="margin-top:1em">
 						<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Shuffle', 'adminkit' ); ?></a>
-						<span class="description"><?php esc_html_e( "Don't like this portrait? Click to roll a new one.", 'adminkit' ); ?></span>
+						<span class="description" style="margin-left:8px"><?php esc_html_e( "Don't like this portrait? Click to roll a new one.", 'adminkit' ); ?></span>
 					</p>
 				</td>
 			</tr>
