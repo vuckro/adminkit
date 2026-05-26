@@ -117,28 +117,27 @@ capture and updates it in place. All hooks are in
 
 ## Avatars
 
-Two settings, the second a sub-feature of the first:
+One setting (`custom_avatars_enabled`, on by default). With it on, AdminKit:
 
-- **Custom avatars** (`custom_avatars_enabled`, on by default) — gates the whole
-  feature. Lets users upload a profile picture that replaces Gravatar. Off =
-  Gravatar everywhere, AdminKit's avatar module never wires its hooks.
-- **Generated portrait fallback** (`generated_avatars_enabled`, on by default,
-  child of Custom avatars in the UI) — when on, a user with no upload AND no
-  real Gravatar automatically gets a friendly auto-generated portrait served as
-  the Gravatar `d=` default. A real Gravatar always wins. Off = Gravatar's own
-  mystery-person default for those users (no external request).
+1. Registers **AdminKit Portraits (Generated)** in *Settings → Discussion → Default
+   Avatar* — the same dropdown WordPress already uses for Wavatar / Identicon /
+   Retro / MonsterID. Lives where every WordPress user knows to look.
+2. Silently substitutes its portraits whenever WordPress's stored default is
+   *Mystery Person* (the factory default `mystery` / `mm` / `mp` nobody changes)
+   or *AdminKit Portraits* itself. Any other choice — Wavatar, Identicon, etc. —
+   is left alone, so AdminKit never overrides a user's explicit pick.
+
+AdminKit does **not** add a profile-picture upload field. User-supplied pictures
+are Gravatar's job (or any plugin that does local uploads); AdminKit owns the
+*generated fallback* slot only. With `custom_avatars_enabled` off, AdminKit is
+invisible to the avatar pipeline and Gravatar behaviour is 100% unchanged.
 
 The generator is [DiceBear](https://www.dicebear.com)'s hosted, key-less HTTP API
-(`https://api.dicebear.com`). Each request carries a non-PII seed (the md5 of
-the user_login — never the raw email), the style slug, a pastel palette via
+(`https://api.dicebear.com`). Each request carries a non-PII seed (md5 of the
+user_login — never the raw email), the style slug, a pastel palette via
 `backgroundColor=` and `backgroundType=gradientLinear`. That gradient backdrop
-is what makes a fresh users.php list scan as "obviously different people" at a
-glance, on top of DiceBear's per-seed feature variation.
-
-The profile field is intentionally minimal: the **avatar bubble** opens the media
-frame (upload trigger). No Reset, no re-roll. To revert a user to Gravatar / the
-generated portrait, an admin removes the attachment from the Media Library — the
-existing `on_delete_attachment` cleanup clears the user-meta reference.
+is what makes a users list scan as "obviously different people" at a glance,
+on top of DiceBear's per-seed feature variation.
 
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |

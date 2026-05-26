@@ -183,16 +183,14 @@ individually switch-off-able:
   `replace_icons_enabled` (swaps native menu/toolbar dashicons for AdminKit's set
   — `inc/wp-core/class-menu-icons.php`, filterable via `adminkit/menu_icons` /
   `adminkit/toolbar_icons`; non-destructive — only stock dashicons),
-  `custom_avatars_enabled` (a per-user profile picture that replaces Gravatar —
-  `inc/wp-core/class-local-avatars.php`, stored in the `adminkit_local_avatar`
-  user meta, served via `pre_get_avatar_data`; non-destructive — Gravatar is
-  untouched until an avatar is set),
-  and `generated_avatars_enabled` (sub-toggle, child of Custom avatars in the UI):
-  when on, a user with no upload **and** no real Gravatar automatically gets a
-  friendly auto-generated portrait via the Gravatar `d=` fallback — a real
-  Gravatar always wins; uses DiceBear's hosted API with a non-PII seed +
-  gradient backdrop. Off = Gravatar's own default for those users (no external
-  request). See [EXTENDING.md → Avatars](EXTENDING.md#avatars).
+  and `custom_avatars_enabled` (`inc/wp-core/class-local-avatars.php`) registers
+  "AdminKit Portraits (Generated)" in *Settings → Discussion → Default Avatar*
+  via the core `avatar_defaults` filter, and intercepts `pre_get_avatar_data` to
+  substitute a unique DiceBear portrait whenever WP's stored default is
+  AdminKit's option or *Mystery Person* (the WP factory default). Any other
+  choice — Wavatar, Identicon, Retro, MonsterID, Blank — is left alone. Non-PII
+  seed (md5 of the login) + pastel gradient backdrop so users look obviously
+  distinct. See [EXTENDING.md → Avatars](EXTENDING.md#avatars).
 - **Off by default** (opt-in): `bricks_builder_enabled` (restyles a third-party
   builder's own UI, so it stays inert until asked for; only shown when Bricks is
   active).

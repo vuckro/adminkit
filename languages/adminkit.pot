@@ -558,11 +558,15 @@ msgid "Replace WordPress's native menu and toolbar icons with AdminKit's set. No
 msgstr ""
 
 #: inc/class-settings-page.php:547
-msgid "Local avatars"
+msgid "Custom avatars"
 msgstr ""
 
 #: inc/class-settings-page.php:539
-msgid "Let users upload a profile picture that replaces Gravatar; anyone with no photo gets a friendly auto-generated face (via a hosted generator, disclosed in the readme). Off = Gravatar everywhere."
+msgid "Adds \"AdminKit Portraits (Generated)\" to Settings → Discussion → Default Avatar, and silently replaces Mystery Person so every user gets a unique generated portrait. A real Gravatar always wins. Off = Gravatar everywhere, unchanged."
+msgstr ""
+
+#: inc/wp-core/class-local-avatars.php
+msgid "AdminKit Portraits (Generated)"
 msgstr ""
 
 #: inc/class-settings-page.php:553
@@ -737,34 +741,6 @@ msgstr ""
 
 #: inc/wp-core/class-chrome.php:193
 msgid "Settings sections"
-msgstr ""
-
-#: inc/wp-core/class-local-avatars.php:446
-#: inc/wp-core/class-local-avatars.php:718
-#: inc/wp-core/class-local-avatars.php:725
-msgid "Change the profile picture"
-msgstr ""
-
-#: inc/wp-core/class-local-avatars.php:447
-#: inc/wp-core/class-local-avatars.php:719
-msgid "Upload a profile picture"
-msgstr ""
-
-#: inc/wp-core/class-local-avatars.php:452
-#: inc/wp-core/class-local-avatars.php:455
-msgid "Profile picture"
-msgstr ""
-
-#: inc/wp-core/class-local-avatars.php:417
-msgid "Change"
-msgstr ""
-
-#: inc/wp-core/class-local-avatars.php:432
-msgid "Upload an image to use as this user's avatar everywhere. Leave empty to fall back to Gravatar — or, when Gravatar has no image, a generated portrait unique to this user."
-msgstr ""
-
-#: inc/wp-core/class-local-avatars.php:579
-msgid "Select a profile picture"
 msgstr ""
 
 #: inc/wp-core/class-post-previews.php:165

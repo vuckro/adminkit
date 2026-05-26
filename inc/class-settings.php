@@ -243,23 +243,12 @@ class AdminKit_Settings {
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// Custom avatars — ON by default. Lets users set a profile picture (a Media
-		// Library image) that replaces Gravatar. Read by AdminKit_Local_Avatars to
-		// gate the whole module; non-destructive — with nothing set, Gravatar
-		// behaviour is 100% unchanged.
+		// Custom avatars — ON by default. Registers "AdminKit Portraits (Generated)"
+		// in WordPress's Settings → Discussion → Default Avatar dropdown and serves
+		// a unique generated portrait for users with no real Gravatar. Read by
+		// AdminKit_Local_Avatars. Non-destructive — when off, AdminKit does nothing
+		// to avatars and Gravatar behaviour is 100% unchanged.
 		self::register( 'custom_avatars_enabled', array(
-			'type'     => 'toggle',
-			'group'    => 'features',
-			'default'  => true,
-			'sanitize' => 'rest_sanitize_boolean',
-		) );
-
-		// Generated portrait fallback — ON by default. Sub-feature of Custom avatars:
-		// when a user has no upload AND no real Gravatar, AdminKit hands WordPress an
-		// auto-generated portrait as the Gravatar `d=` default via a hosted generator
-		// (external service, disclosed in readme.txt; seed is NON-PII). A real Gravatar
-		// always wins. Off = the existing user gets Gravatar's mystery person.
-		self::register( 'generated_avatars_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
 			'default'  => true,
@@ -331,6 +320,14 @@ class AdminKit_Settings {
 		$stored  = get_option( self::OPTION_KEY, array() );
 		$default = isset( self::$schema[ $key ]['default'] ) ? self::$schema[ $key ]['default'] : null;
 		$value   = isset( $stored[ $key ] ) ? $stored[ $key ] : $default;
+
+		// An empty string in the stored option is "unset", not "off" — older saves
+		// or schema renames can leave keys behind with no value. Fall back to the
+		// declared default so a renamed toggle doesn't silently disable a feature.
+		if ( '' === $value && null !== $default ) {
+			$value = $default;
+		}
+
 		return apply_filters( "adminkit/setting/{$key}", $value );
 	}
 

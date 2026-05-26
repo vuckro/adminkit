@@ -122,27 +122,29 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 - **The token layers are each optional** (provider → baseline → neutral). Don't
   hard-require any one of them. See ARCHITECTURE.
 - **Default feature toggles ship ON** — Gutenberg canvas theming
-  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`), custom avatars
-  (`custom_avatars_enabled`) and the generated portrait fallback
-  (`generated_avatars_enabled`, a sub-toggle under custom avatars) all default ON,
-  so the plugin presents fully-featured on activation. Each stays individually
-  switch-off-able; only `bricks_builder_enabled` is opt-in (it restyles a third-
-  party builder's own UI). Keep the on-by-default posture — don't quietly flip
-  these back to opt-in.
-- **Avatar toggles split intentionally** — `custom_avatars_enabled` gates the
-  whole avatar module (upload UI + d= override path); `generated_avatars_enabled`
-  gates only the DiceBear fallback inside it. A site can run pure-upload (parent
-  on, child off) or pure-fallback would require parent on too (the upload UI is
-  the only entry to the avatar module). Don't fold them back into one toggle —
-  the split lets sites avoid the external request while keeping uploads.
-- **Generated avatars call an external service (DiceBear, `api.dicebear.com`)** —
-  served as the Gravatar `d=` fallback for users with no upload and no real
-  Gravatar, only when `generated_avatars_enabled` is on. It's disclosed in
-  `readme.txt` (the .org "External services" section) and the seed is NON-PII
-  (md5 of the login) — **never send the raw email.** The URL also carries a
-  pastel `backgroundColor` palette + `backgroundType=gradientLinear` so each
-  user reads as a distinct card. If you change the service or what's sent, update
-  that disclosure in the same change.
+  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`) and custom
+  avatars (`custom_avatars_enabled`) all default ON, so the plugin presents
+  fully-featured on activation. Each stays individually switch-off-able; only
+  `bricks_builder_enabled` is opt-in (it restyles a third-party builder's own
+  UI). Keep the on-by-default posture — don't quietly flip these back to opt-in.
+- **Avatars live in WordPress's native pipeline only** — `custom_avatars_enabled`
+  ON registers "AdminKit Portraits (Generated)" in the core
+  *Settings → Discussion → Default Avatar* dropdown (via `avatar_defaults`) and
+  intercepts `pre_get_avatar_data` to substitute a unique DiceBear portrait
+  when WP's stored default is AdminKit's option or *Mystery Person* / `mm` /
+  `mp` (the factory default, the source of the "all users look identical"
+  collision). Any other explicit choice (Wavatar, Identicon, Retro, MonsterID,
+  Blank) is left alone. **Do NOT re-add an upload field / Media Library picker
+  / profile UI** — Gravatar (or a dedicated upload plugin) is the user-supplied
+  picture slot; AdminKit owns the *generated fallback* slot only.
+- **Generated portraits call an external service (DiceBear, `api.dicebear.com`)** —
+  served as the Gravatar `d=` fallback for users with no real Gravatar, only
+  when `custom_avatars_enabled` is on AND the WP default is one we intercept.
+  Disclosed in `readme.txt` (the .org "External services" section). Seed is
+  NON-PII (md5 of the login) — **never send the raw email.** The URL also
+  carries a pastel `backgroundColor` palette + `backgroundType=gradientLinear`
+  so each user reads as a distinct card. If you change the service or what's
+  sent, update that disclosure in the same change.
 - **`content:url()` on a pseudo-element renders at the image's intrinsic size** —
   browsers ignore `width`/`height` on a pseudo-element's `content` image. For a
   *sized* icon/logo use a `background-image` on a sized box, or a real `<img>` (a
