@@ -166,6 +166,17 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		add_filter( 'adminkit/should_load', array( __CLASS__, 'bypass_builder' ), 10, 2 );
 		add_filter( 'adminkit/extra_tokens_handle', array( __CLASS__, 'provide_tokens' ), 10, 2 );
 
+		// Force-load the WaasKit baseline inside the builder. AdminKit's default
+		// is to skip it on the frontend (a live provider owns the themed page),
+		// but the builder's chrome consumes the baseline ramps directly — without
+		// it, removing palettes from Bricks → Style manager leaves --background /
+		// --surface / the ramps undefined and the restyle paints blank. Forcing
+		// it here also fixes the cascade order: baseline now loads at the same
+		// priority as the rest of the token stack, so Bricks's user-customised
+		// style-manager.min.css (which depends on it via provide_tokens) wins
+		// for every token it overrides.
+		add_filter( 'adminkit/enqueue_baseline', array( __CLASS__, 'force_baseline_in_builder' ), 10, 2 );
+
 		// Priority 2: register the observer before Bricks's own inline mode
 		// script (printed with the head scripts, ~priority 9) sets the attribute,
 		// so the first flip is caught and the bar paints in sync.
@@ -419,63 +430,95 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 
-		// Make sure the WaasKit baseline (309 tokens — `--background`, `--surface`,
-		// the colour ramps, etc.) is available inside the builder. AdminKit's
-		// normal frontend flow skips the baseline (a live provider owns the page
-		// there), but the builder is a different surface: when the user hasn't
-		// imported a palette via Bricks → Style manager, none of the semantic
-		// tokens the restyle reads are defined, and the builder paints blank.
-		// Enqueued with no deps; Bricks's own style-manager.min.css (when
-		// present) loads via provide_tokens() AFTER and overrides cleanly.
-		$wk_handle = AdminKit_Assets::WAASKIT_HANDLE;
-		$wk_path   = ADMINKIT_PATH . AdminKit_Assets::WAASKIT_SRC;
-		$deps      = array();
-		if ( file_exists( $wk_path ) ) {
-			wp_enqueue_style( $wk_handle, ADMINKIT_URL . AdminKit_Assets::WAASKIT_SRC, array(), (string) filemtime( $wk_path ) );
-			$deps[] = $wk_handle;
-		}
+		// Depend on adminkit-tokens (the --ak-* layer). That handle pulls the
+		// whole cascade in the right order: WaasKit baseline → Bricks's
+		// user-customised style-manager.min.css (via provide_tokens) →
+		// adminkit-tokens → builder.css. So baseline tokens are always defined,
+		// the user's palette edits in Bricks still win where set, and --ak-*
+		// is available as a last-resort fallback for our own var(..., --ak-*)
+		// chains inside builder.css.
+		$deps = wp_style_is( AdminKit_Assets::TOKENS_HANDLE, 'registered' )
+			? array( AdminKit_Assets::TOKENS_HANDLE )
+			: array();
 
 		if ( ! self::enqueue_style_file( 'adminkit-bricks-builder', $base . 'builder.css', $deps ) ) {
 			return;
 		}
 
-		$logo_dark  = self::resolve_builder_logo_url( 'dark' );
-		$logo_light = self::resolve_builder_logo_url( 'light' );
-		if ( '' !== $logo_dark ) {
-			$css  = ':root{';
-			$css .= '--preloader-logo:url("' . esc_url_raw( $logo_dark ) . '");';
-			$css .= '--logo-url:url("' . esc_url_raw( $logo_dark ) . '");';
-			if ( '' !== $logo_light && $logo_light !== $logo_dark ) {
-				$css .= '--logo-url-light:url("' . esc_url_raw( $logo_light ) . '");';
-			}
-			$css .= '}';
-			wp_add_inline_style( 'adminkit-bricks-builder', $css );
+		// Two distinct brand assets, two distinct intents:
+		//
+		//   --preloader-logo  → the splash overlay, big and centred. Wants the
+		//                       full brand mark (typically a wordmark). Falls
+		//                       back to favicon, then the WP-admin logo SVG.
+		//   --logo-url        → the toolbar logo, a 22px square next to the
+		//                       hamburger menu. Wants the FAVICON (square,
+		//                       recognisable at small size). Falls back to the
+		//                       brand mark, then the WP-admin logo SVG.
+		//
+		// Two intents because a wordmark is illegible in a 22px square and a
+		// favicon looks lost in the preloader. We resolve each separately and
+		// only emit the variables that have a value.
+		$preloader_logo = self::resolve_builder_asset( 'logo' );
+		$toolbar_mark   = self::resolve_builder_asset( 'mark' );
+		$lines          = array();
+		if ( '' !== $preloader_logo ) {
+			$lines[] = '--preloader-logo:url("' . esc_url_raw( $preloader_logo ) . '");';
+		}
+		if ( '' !== $toolbar_mark ) {
+			$lines[] = '--logo-url:url("' . esc_url_raw( $toolbar_mark ) . '");';
+		}
+		if ( $lines ) {
+			wp_add_inline_style( 'adminkit-bricks-builder', ':root{' . implode( '', $lines ) . '}' );
 		}
 	}
 
 	/**
-	 * Resolve the URL of the brand mark to use in the builder for a given mode.
-	 * Falls back to the site icon (favicon) and finally to wp-admin's own logo
-	 * SVG when nothing is configured — mirrors the chain used elsewhere so the
-	 * builder never opens with a missing logo.
+	 * Resolve the URL of a brand asset for the builder. The fallback chain
+	 * depends on the intent: a wordmark logo for the preloader splash, a
+	 * favicon-shaped mark for the toolbar's small square.
 	 *
-	 * @param string $mode 'light' | 'dark'.
+	 * @param string $intent 'logo' (preloader: brand → favicon → WP)
+	 *                       | 'mark'  (toolbar:  favicon → brand → WP).
 	 * @return string
 	 */
-	private static function resolve_builder_logo_url( $mode = 'dark' ) {
-		$logo = AdminKit_Settings::brand_logo( $mode );
-		if ( '' !== $logo ) {
-			return $logo;
-		}
+	private static function resolve_builder_asset( $intent = 'logo' ) {
+		$brand   = AdminKit_Settings::brand_logo( 'dark' );
 		$favicon = get_site_icon_url( 192 );
-		if ( '' !== $favicon ) {
-			return $favicon;
-		}
-		$wp_logo = ABSPATH . 'wp-admin/images/wordpress-logo.svg';
-		if ( file_exists( $wp_logo ) ) {
-			return admin_url( 'images/wordpress-logo.svg' );
+		$wp_logo = file_exists( ABSPATH . 'wp-admin/images/wordpress-logo.svg' )
+			? admin_url( 'images/wordpress-logo.svg' )
+			: '';
+		$chain   = ( 'mark' === $intent )
+			? array( $favicon, $brand, $wp_logo )   // toolbar: square mark first
+			: array( $brand, $favicon, $wp_logo );  // preloader: wordmark first
+		foreach ( $chain as $url ) {
+			if ( '' !== $url ) {
+				return $url;
+			}
 		}
 		return '';
+	}
+
+	/**
+	 * Filter callback: opt the WaasKit baseline back in on the frontend when
+	 * the request is rendering the Bricks builder and our restyle is enabled.
+	 * Without this the baseline ramps are undefined inside the builder and
+	 * removing palettes from Bricks → Style manager breaks the chrome.
+	 *
+	 * @param bool   $load    Current value (default: true off-frontend).
+	 * @param string $context admin | login | frontend | editor.
+	 * @return bool
+	 */
+	public static function force_baseline_in_builder( $load, $context ) {
+		if ( 'frontend' !== $context ) {
+			return $load;
+		}
+		if ( ! self::is_active() || ! self::is_builder() ) {
+			return $load;
+		}
+		if ( ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
+			return $load;
+		}
+		return true;
 	}
 
 	/**

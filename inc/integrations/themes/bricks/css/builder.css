@@ -75,11 +75,6 @@
 	width: auto;
 }
 
-/* In Bricks light mode, swap to the light-variant logo if PHP provided one. */
-body:has(.mode [data-name="sun"]) #bricks-toolbar {
-	--logo-url: var(--logo-url-light, var(--logo-url));
-}
-
 
 /* ============================================================
    BUILDER UI  (--builder-*, consumed only in "Custom" builder mode)

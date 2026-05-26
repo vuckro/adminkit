@@ -309,25 +309,30 @@ class AdminKit_Assets {
 		// the brand tokens are always present even with no provider. A provider
 		// (Bricks) returns its handle below and is registered to depend on this
 		// baseline, so it loads AFTER and overrides it (see Bricks::provide_tokens()).
-		// Not on the frontend: there a live provider already themes the page and the
-		// admin bar follows it (mode-flipping) via the provider's frontend bridge —
-		// a static light-context baseline would fight that in dark mode. The baseline
-		// is for wp-admin / login / editor, where no live provider theming runs.
+		// Default-off on the frontend: there a live provider already themes the page
+		// and the admin bar follows it (mode-flipping) via the provider's frontend
+		// bridge — a static light-context baseline would fight that in dark mode.
+		// The baseline is for wp-admin / login / editor, where no live provider
+		// theming runs. The filter below makes that exclusion overridable so
+		// integrations can flip it back on in builder/preview surfaces where the
+		// frontend rationale doesn't apply (Bricks does this in is_builder()).
 		$baseline = '';
 		$wk_path  = ADMINKIT_PATH . self::WAASKIT_SRC;
 
 		/**
-		 * Whether to ship the built-in WaasKit baseline tokens. Return false to
-		 * drop the baseline entirely: the --ak-* layer then rides its own neutral
-		 * fallbacks (the "no provider, no baseline" case) — or, with a provider
-		 * active, lets that provider own the whole palette on its own.
+		 * Whether to ship the built-in WaasKit baseline tokens. Default: true
+		 * everywhere except the frontend. Return false to drop the baseline
+		 * entirely (the --ak-* layer then rides its own neutral fallbacks), or
+		 * true on frontend to force-load it (the Bricks integration uses this
+		 * for the builder, where no live theming bridge runs and our restyle
+		 * needs the baseline ramps to paint).
 		 *
 		 * @param bool   $enabled true to load the baseline.
 		 * @param string $context admin | login | frontend | editor.
 		 */
-		$load_baseline = (bool) apply_filters( 'adminkit/enqueue_baseline', true, $context );
+		$load_baseline = (bool) apply_filters( 'adminkit/enqueue_baseline', 'frontend' !== $context, $context );
 
-		if ( $load_baseline && 'frontend' !== $context && file_exists( $wk_path ) ) {
+		if ( $load_baseline && file_exists( $wk_path ) ) {
 			wp_enqueue_style(
 				self::WAASKIT_HANDLE,
 				ADMINKIT_URL . self::WAASKIT_SRC,
