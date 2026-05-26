@@ -432,13 +432,20 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 
-		// Depend on adminkit-tokens (the --ak-* layer). That handle pulls the
-		// whole cascade in the right order: WaasKit baseline → Bricks's
-		// user-customised style-manager.min.css (via provide_tokens) →
-		// adminkit-tokens → builder.css. So baseline tokens are always defined,
-		// the user's palette edits in Bricks still win where set, and --ak-*
-		// is available as a last-resort fallback for our own var(..., --ak-*)
-		// chains inside builder.css.
+		// ── Token stack ──────────────────────────────────────────────────────
+		// AdminKit's normal frontend dispatch (where the token stack — WaasKit
+		// baseline → Bricks's style-manager.min.css → --ak-* layer — is
+		// enqueued) is gated on is_admin_bar_showing(), which is FALSE inside
+		// the Bricks builder (Bricks suppresses the bar). So without an
+		// explicit enqueue here, builder.css would land with NO token layer
+		// underneath it: every var(--background), var(--surface), etc. would
+		// be undefined and the panels paint transparent — showing through to
+		// Bricks's own dark backdrop, so the entire builder UI turns black.
+		// Enqueue the stack ourselves, in cascade order, so the restyle paints
+		// with AdminKit defaults whether or not the user has imported a
+		// Bricks Style Manager palette.
+		self::enqueue_token_stack();
+
 		$deps = wp_style_is( AdminKit_Assets::TOKENS_HANDLE, 'registered' )
 			? array( AdminKit_Assets::TOKENS_HANDLE )
 			: array();
@@ -521,6 +528,59 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return $load;
 		}
 		return true;
+	}
+
+	/**
+	 * Enqueue AdminKit's full token cascade for the builder context. The
+	 * normal frontend dispatch skips it (admin bar isn't showing in the
+	 * builder, so dispatch_frontend bails) — so the builder restyle would
+	 * otherwise reference undefined CSS vars. This recreates the same
+	 * three-layer load order class-assets.php uses elsewhere:
+	 *
+	 *   1. WaasKit baseline   — 309 tokens (--background, --surface, ramps),
+	 *                           the safety net when the user hasn't imported
+	 *                           anything into Bricks's Style Manager.
+	 *   2. Bricks's user palette (style-manager.min.css, via provide_tokens)
+	 *                         — only loaded if the file exists on disk;
+	 *                           depends on the baseline so it cascades on top.
+	 *   3. adminkit-tokens.css (the --ak-* layer) — depends on whichever of
+	 *                           the two above are registered.
+	 *
+	 * wp_enqueue_style is idempotent on handle, so if another code path has
+	 * already enqueued any of these (unlikely in the builder), the call here
+	 * is a no-op.
+	 *
+	 * @return void
+	 */
+	private static function enqueue_token_stack() {
+		// 1. WaasKit baseline.
+		$wk_path = ADMINKIT_PATH . AdminKit_Assets::WAASKIT_SRC;
+		if ( file_exists( $wk_path ) ) {
+			wp_enqueue_style(
+				AdminKit_Assets::WAASKIT_HANDLE,
+				ADMINKIT_URL . AdminKit_Assets::WAASKIT_SRC,
+				array(),
+				(string) filemtime( $wk_path )
+			);
+		}
+
+		// 2. Bricks Style Manager palette (if present). provide_tokens()
+		//    handles the file-exists check + dep-on-baseline wiring.
+		self::provide_tokens( null, 'builder' );
+
+		// 3. adminkit-tokens (--ak-* layer). Depends on whichever of the
+		//    two above are registered so the cascade resolves.
+		$tk_path = ADMINKIT_PATH . AdminKit_Assets::TOKENS_SRC;
+		$deps    = array_filter(
+			array( AdminKit_Assets::WAASKIT_HANDLE, self::TOKENS_HANDLE ),
+			static function ( $h ) { return wp_style_is( $h, 'registered' ); }
+		);
+		wp_enqueue_style(
+			AdminKit_Assets::TOKENS_HANDLE,
+			ADMINKIT_URL . AdminKit_Assets::TOKENS_SRC,
+			$deps,
+			file_exists( $tk_path ) ? (string) filemtime( $tk_path ) : ADMINKIT_VERSION
+		);
 	}
 
 	/**
