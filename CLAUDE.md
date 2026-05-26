@@ -110,16 +110,21 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   via `AdminKit_Settings::accent_source()` (never `get('accent_source')` directly:
   the helper applies the "auto" default at read time, returning `'bricks'` when
   Bricks is active and `'adminkit'` otherwise). `AdminKit_Assets::inject_brand_accent()`
-  hooks `adminkit/tokens_enqueued` and emits ONE inline rule based on the source:
-  `adminkit` → `:root{--ak-primary:#3858E9}` (WordPress Blue, `ADMINKIT_BLUE`
-  constant — force-overrides Bricks too); `bricks` → no rule (let the cascade
-  pick Bricks's `--accent`); `custom` → the `brand_accent` hex. Don't duplicate
-  this injection anywhere else — the derived accent tokens (`--ak-primary-hover`,
-  `--ak-primary-subtle`, `--ak-on-accent`, focus ring) all recalculate automatically
-  through their CSS `color-mix()` fallbacks once `--ak-primary` flips, so one
-  knob covers the whole accent family. Accent-family tokens are flagged
-  `accent_family: true` in `color_map()` so the SPA's `sourcePill()` can label
-  them correctly in the token reference.
+  hooks `adminkit/tokens_enqueued` and emits a SINGLE inline rule:
+  `:root{--ak-primary:<hex>;--ak-on-accent:<computed>}` based on the source.
+  `adminkit` → WordPress Blue (`ADMINKIT_BLUE` constant `#3858E9`, force-overrides
+  Bricks too); `bricks` → no rule (Bricks's `--accent` + `--accent-on` ride the
+  cascade); `custom` → the `brand_accent` hex. Don't duplicate this injection
+  anywhere else. Two notes on the derived tokens:
+    (a) Hover, subtle, and focus ring follow `--ak-primary` automatically via
+        CSS `color-mix()` chains — flipping one variable cascades through.
+    (b) **`--ak-on-accent` is NOT via color-mix** — `AdminKit_Assets::contrast_text_for()`
+        computes white vs deep ink from the accent's WCAG relative luminance,
+        and ships the chosen hex in the same inline rule. Without this, a black
+        custom accent would leave white-on-black text invisible. JS mirrors the
+        same algorithm in `bestOnAccent()` for live preview.
+  Accent-family tokens are flagged `accent_family: true` in `color_map()` so
+  the SPA's `sourcePill()` can label them correctly in the token reference.
 - **Integration discovery is `glob( inc/integrations/*/*/class-*.php )`** — two
   levels deep (`{plugins,themes}/{slug}/`). The class name derives from the file
   basename (`AdminKit_Integration_{Studly_Slug}`). Don't rename a class without

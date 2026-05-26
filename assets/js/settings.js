@@ -688,6 +688,12 @@
 			// source. Removing the node lets the cascade fall through to Bricks /
 			// baseline — that's the behaviour we want for 'bricks' and for empty
 			// 'custom' input.
+			//
+			// IMPORTANT: we also emit `--ak-on-accent` (the text colour on top of
+			// the accent) computed from the accent's luminance. Without this, a
+			// dark custom accent would leave its white default text invisible.
+			// PHP mirrors the same logic in `AdminKit_Assets::contrast_text_for()`
+			// for the persisted-after-save case.
 			function applyPreview() {
 				var id = 'ak-accent-preview';
 				var existing = document.getElementById( id );
@@ -706,7 +712,8 @@
 						existing.id = id;
 						document.head.appendChild( existing );
 					}
-					existing.textContent = ':root{--ak-primary:' + override + '}';
+					var onAccent = bestOnAccent( override );
+					existing.textContent = ':root{--ak-primary:' + override + ';--ak-on-accent:' + onAccent + '}';
 				} else if ( existing ) {
 					existing.parentNode.removeChild( existing );
 				}
@@ -768,6 +775,27 @@
 		// #abc or #aabbcc only, no rgba / hsl.
 		function isValidHex( v ) {
 			return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test( ( v || '' ).trim() );
+		}
+
+		// Pick the most-readable foreground for an accent hex. WCAG relative-
+		// luminance with the sRGB linearisation curve; threshold 0.55 leans
+		// slightly toward white past mid-grey to match WP / Material practice.
+		// Mirrors PHP `AdminKit_Assets::contrast_text_for()` byte-for-byte so
+		// the live preview and the post-save inline style agree.
+		function bestOnAccent( hex ) {
+			if ( ! isValidHex( hex ) ) { return '#ffffff'; }
+			var h = hex.replace( '#', '' );
+			if ( h.length === 3 ) {
+				h = h[ 0 ] + h[ 0 ] + h[ 1 ] + h[ 1 ] + h[ 2 ] + h[ 2 ];
+			}
+			function lin( byte ) {
+				var c = byte / 255;
+				return ( c <= 0.03928 ) ? c / 12.92 : Math.pow( ( c + 0.055 ) / 1.055, 2.4 );
+			}
+			var L = 0.2126 * lin( parseInt( h.slice( 0, 2 ), 16 ) )
+			      + 0.7152 * lin( parseInt( h.slice( 2, 4 ), 16 ) )
+			      + 0.0722 * lin( parseInt( h.slice( 4, 6 ), 16 ) );
+			return ( L < 0.55 ) ? '#ffffff' : '#1d2327';
 		}
 
 		// --- Brand card ----------------------------------------------------------

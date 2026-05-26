@@ -109,18 +109,25 @@ class AdminKit_Assets {
 	}
 
 	/**
-	 * Inline-style the effective `--ak-primary` on top of the tokens stylesheet.
-	 * Switches on `accent_source` (AdminKit / Bricks / Custom):
+	 * Inline-style the effective `--ak-primary` AND `--ak-on-accent` on top of
+	 * the tokens stylesheet. Switches on `accent_source`:
 	 *
-	 *   • 'adminkit' (default) → emit `:root{--ak-primary:#3858E9}` so AdminKit's
-	 *     WordPress-blue beats any Bricks provider --accent. Forced override
-	 *     because picking AdminKit explicitly means "I want this colour, even
-	 *     if Bricks is loaded".
-	 *   • 'bricks' → no inline rule emitted. The Bricks integration's stylesheet
-	 *     (loaded as a dep of TOKENS_HANDLE via `adminkit/extra_tokens_handle`)
-	 *     wins via the normal cascade.
-	 *   • 'custom' → emit the user's hex from `brand_accent`. No-op if the value
-	 *     fails `sanitize_hex_color()`.
+	 *   • 'adminkit' (default) → emit AdminKit's WP-Blue + computed on-accent.
+	 *     Forced over Bricks: picking AdminKit explicitly means "I want this
+	 *     colour, even if Bricks is loaded".
+	 *   • 'bricks' → no inline rule emitted. Bricks's stylesheet (loaded as a
+	 *     dep of TOKENS_HANDLE via `adminkit/extra_tokens_handle`) wins via the
+	 *     normal cascade — including its own `--accent-on` for text contrast.
+	 *   • 'custom' → emit the user's hex from `brand_accent` + a computed
+	 *     on-accent picked from the accent's luminance. No-op if the hex fails
+	 *     `sanitize_hex_color()`.
+	 *
+	 * Why we ALSO emit `--ak-on-accent`: the WaasKit baseline ties it to
+	 * `--primary-d-9` (the deepest accent shade), but a user-picked accent has
+	 * no precomputed ramp. A black accent with white text is unreadable inverted;
+	 * a yellow accent with white text fails contrast. So we compute the right
+	 * foreground (white vs deep ink) from the WCAG relative-luminance of the
+	 * accent itself. Same logic runs JS-side in `applyPreview()` for live preview.
 	 *
 	 * Runs for every context (admin / login / frontend / editor / customize)
 	 * since the accent should be consistent everywhere AdminKit paints.
@@ -132,19 +139,54 @@ class AdminKit_Assets {
 		$source = AdminKit_Settings::accent_source();
 
 		if ( 'bricks' === $source ) {
-			return; // Let the Bricks --accent ride the cascade as-is.
+			return; // Let the Bricks --accent / --accent-on ride the cascade.
 		}
 
+		$hex = '';
 		if ( 'custom' === $source ) {
-			$hex = sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) );
-			if ( $hex ) {
-				wp_add_inline_style( self::TOKENS_HANDLE, ':root{--ak-primary:' . $hex . '}' );
+			$hex = (string) sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) );
+			if ( '' === $hex ) {
+				return;
 			}
-			return;
+		} else {
+			$hex = self::ADMINKIT_BLUE;
 		}
 
-		// 'adminkit' (default) — WP Block Editor blue, forced over Bricks.
-		wp_add_inline_style( self::TOKENS_HANDLE, ':root{--ak-primary:' . self::ADMINKIT_BLUE . '}' );
+		$on = self::contrast_text_for( $hex );
+		wp_add_inline_style(
+			self::TOKENS_HANDLE,
+			':root{--ak-primary:' . $hex . ';--ak-on-accent:' . $on . '}'
+		);
+	}
+
+	/**
+	 * Pick the most-readable foreground colour for a given accent hex —
+	 * `#ffffff` for dark accents, `#1d2327` (WP heading ink) for light accents.
+	 * Uses the WCAG 2.x relative-luminance formula (with the sRGB linearisation
+	 * curve) so it agrees with what a contrast checker would say. Threshold
+	 * 0.55 leans toward white slightly past mid-grey, which matches Material /
+	 * WordPress 6.x conventions on borderline mid-luminance accents.
+	 *
+	 * @param string $hex Sanitised hex like #abc or #aabbcc.
+	 * @return string '#ffffff' or '#1d2327'.
+	 */
+	public static function contrast_text_for( $hex ) {
+		$h = ltrim( (string) $hex, '#' );
+		if ( 3 === strlen( $h ) ) {
+			$h = $h[0] . $h[0] . $h[1] . $h[1] . $h[2] . $h[2];
+		}
+		if ( 6 !== strlen( $h ) || ! ctype_xdigit( $h ) ) {
+			return '#ffffff';
+		}
+		$srgb = static function ( $byte ) {
+			$c = $byte / 255;
+			return ( $c <= 0.03928 ) ? $c / 12.92 : pow( ( $c + 0.055 ) / 1.055, 2.4 );
+		};
+		$r = $srgb( hexdec( substr( $h, 0, 2 ) ) );
+		$g = $srgb( hexdec( substr( $h, 2, 2 ) ) );
+		$b = $srgb( hexdec( substr( $h, 4, 2 ) ) );
+		$lum = ( 0.2126 * $r ) + ( 0.7152 * $g ) + ( 0.0722 * $b );
+		return ( $lum < 0.55 ) ? '#ffffff' : '#1d2327';
 	}
 
 	/**
