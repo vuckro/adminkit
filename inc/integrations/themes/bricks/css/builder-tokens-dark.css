@@ -1,0 +1,65 @@
+/* Bricks builder — dark-mode flip for the WaasKit provider tokens.
+ *
+ * Loaded together with the WaasKit baseline (assets/css/waaskit-tokens.css) by
+ * enqueue_builder_fallback_tokens() whenever AdminKit is acting as the provider
+ * in the Bricks builder — typically a fresh Bricks install where Style Manager
+ * has never been opened, so `uploads/bricks/css/style-manager.min.css` doesn't
+ * exist and our baseline is the only source of `--surface`, `--background`,
+ * `--accent`, `--neutral-l-*`, etc.
+ *
+ * The baseline only defines the LIGHT ramp values for those semantic vars. When
+ * the user is in dark mode (`data-adminkit-theme="dark"`), builder.css consumes
+ * raw provider semantics (NOT `--ak-*` — the builder is a WaasKit-native
+ * surface, see builder.css's header) and they'd stay light → light-themed
+ * panels in a dark UI. This file remaps them onto the dark ramp the baseline
+ * already ships (`--neutral-d-N`), reproducing what Bricks's saved palette
+ * would do in dark mode — but without requiring the user to have saved
+ * anything in Style Manager.
+ *
+ * When Bricks's style-manager.min.css is present, it's enqueued AFTER this file
+ * (via the dep AdminKit pins in enqueue_builder_fallback_tokens) and overrides
+ * these values with the user's saved colours — both light and dark — so this
+ * file is effectively idempotent in the configured-Bricks case.
+ */
+:root[data-adminkit-theme="dark"] {
+	/* Surfaces — flip onto the dark neutral ramp baseline already ships. */
+	--background: var(--neutral-d-1, hsl(0, 0%, 7%));
+	--surface: var(--neutral-d-2, hsl(0, 0%, 11%));
+	--elevated: var(--neutral-d-3, hsl(0, 0%, 14%));
+	--input: var(--neutral-d-3, hsl(0, 0%, 14%));
+
+	/* Borders — step pairs deeper than the equivalents in light. */
+	--border: var(--neutral-d-4, hsl(0, 0%, 18%));
+	--border-strong: var(--neutral-d-5, hsl(0, 0%, 24%));
+
+	/* Text — invert the contrast direction (heading brightest, body lighter,
+	   muted further muted) to match what the WaasKit dark palette ships. */
+	--text: var(--neutral-d-8, hsl(0, 0%, 72%));
+	--text-muted: var(--neutral-d-7, hsl(0, 0%, 56%));
+	--heading: var(--neutral-d-9, hsl(0, 0%, 86%));
+
+	/* Primitive neutral ramp — flip the light values to dark so every raw
+	   --neutral-l-N reference in builder.css automatically picks up the dark
+	   neighbour. Bricks's panels, sidebars, code-editor surfaces all read raw
+	   neutrals; without this remap they'd stay light. */
+	--neutral-l-1: var(--neutral-d-1);
+	--neutral-l-2: var(--neutral-d-2);
+	--neutral-l-3: var(--neutral-d-3);
+	--neutral-l-4: var(--neutral-d-4);
+	--neutral-l-5: var(--neutral-d-5);
+	--neutral-l-6: var(--neutral-d-6);
+	--neutral-l-7: var(--neutral-d-7);
+	--neutral-l-8: var(--neutral-d-8);
+	--neutral-l-9: var(--neutral-d-9);
+	--neutral-l-10: var(--neutral-d-10);
+
+	/* Notification -l-9 subtle fills → use the d-9 dark fills so they read on
+	   the dark surface (a pale tint vanishes; the dark fill reads). */
+	--success-l-9: var(--success-d-9);
+	--warning-l-9: var(--warning-d-9);
+	--error-l-9: var(--error-d-9);
+	--info-l-9: var(--info-d-9);
+
+	/* Shadows on dark should LIFT (white-ish) instead of dropping (black). */
+	--shadow-elevated: 0 8px 24px -10px rgba(255, 255, 255, 0.14);
+}

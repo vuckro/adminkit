@@ -483,6 +483,25 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			(string) filemtime( $path )
 		);
 
+		// Dark-mode companion: flip the provider's semantic + neutral-l-* vars
+		// onto the dark neutral ramp under [data-adminkit-theme="dark"]. The
+		// baseline only ships LIGHT values for those semantics — without this
+		// companion, raw provider vars in builder.css would stay light even
+		// when the user is in dark mode. A configured Bricks Style Manager
+		// brings its own dark block; this companion is the fallback when it
+		// doesn't, and is overridden by Bricks's own when present (which loads
+		// later via the dep we pin below).
+		$dark_rel  = 'inc/integrations/themes/bricks/css/builder-tokens-dark.css';
+		$dark_path = ADMINKIT_PATH . $dark_rel;
+		if ( file_exists( $dark_path ) ) {
+			wp_enqueue_style(
+				'adminkit-bricks-tokens-dark',
+				ADMINKIT_URL . $dark_rel,
+				array( AdminKit_Assets::WAASKIT_HANDLE ),
+				(string) filemtime( $dark_path )
+			);
+		}
+
 		// Print Bricks's live colours after the baseline so they override it.
 		$styles = wp_styles();
 		if ( isset( $styles->registered['bricks-style-manager'] )
@@ -547,16 +566,17 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		}
 
 		// 2) No favicon → fall back to the WordPress logo SVG. Matches the preloader
-		// chain (brand logo → site icon → WP logo). Keeps Bricks's yellow chip
-		// backdrop so the dark WP mark reads cleanly; `object-fit:contain` preserves
-		// the mark's aspect (the WP logo is wider than tall).
+		// chain (brand logo → site icon → WP logo). The shipped SVG is slate-blue;
+		// `filter:brightness(0) invert(1)` forces it to pure white so it reads on
+		// the dark builder toolbar regardless of theme. Backdrop transparent so the
+		// white mark sits on whatever the toolbar surface is.
 		$wp_logo_file = ABSPATH . 'wp-admin/images/wordpress-logo.svg';
 		if ( file_exists( $wp_logo_file ) ) {
 			$url  = self::css_url( admin_url( 'images/wordpress-logo.svg' ) );
-			$css .= '#bricks-toolbar li.logo{background-color:var(--accent,#ffd64f);display:flex;align-items:center;justify-content:center;min-width:34px}';
+			$css .= '#bricks-toolbar li.logo{background-color:transparent!important;display:flex;align-items:center;justify-content:center;min-width:34px}';
 			$css .= '#bricks-toolbar li.logo a{display:flex;align-items:center;justify-content:center;width:100%;height:100%}';
 			$css .= '#bricks-toolbar li.logo img{content:' . $url . ';display:block;width:22px;height:22px;'
-				. 'box-sizing:border-box;padding:0;object-fit:contain}';
+				. 'box-sizing:border-box;padding:0;object-fit:contain;filter:brightness(0) invert(1)}';
 		}
 
 		return $css;
