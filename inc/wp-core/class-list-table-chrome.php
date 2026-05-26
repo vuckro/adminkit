@@ -11,6 +11,11 @@
  * also wraps each list table in a horizontal-scroll container and sizes Quick
  * Edit to the visible width.
  *
+ * On users.php we also drop the native "Send password reset" row action: the
+ * full password-reset affordance still lives on the user-edit screen
+ * (Account Management → Send Reset Link), so removing the hover-row link only
+ * trims one extra click while uncluttering the table.
+ *
  * Behaviour lives in `assets/js/wp-core/list-table-chrome.js`, loaded as a
  * footer script on admin pages; it is a no-op wherever those elements are absent.
  *
@@ -28,6 +33,17 @@ class AdminKit_Core_List_Table_Chrome {
 	 */
 	public static function init() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
+		add_filter( 'user_row_actions', array( __CLASS__, 'trim_row_actions' ), 99 );
+	}
+
+	/**
+	 * Drop native row actions we deemed clutter on users.php. Currently:
+	 *   - `resetpassword` ("Send password reset") — still available in full on
+	 *     the user-edit screen, just removed from the hover row.
+	 */
+	public static function trim_row_actions( $actions ) {
+		unset( $actions['resetpassword'] );
+		return $actions;
 	}
 
 	/**

@@ -113,12 +113,13 @@ class AdminKit_Local_Avatars {
 		add_action( 'profile_update', array( __CLASS__, 'invalidate_cache' ) );
 
 		// "Refresh" affordances — a per-user button on profile.php /
-		// user-edit.php, a row action on users.php, and a bulk action in the
-		// users-list dropdown for refreshing many users at once.
+		// user-edit.php, and a bulk action in the users-list dropdown for
+		// refreshing many users at once. The users.php per-row action was
+		// dropped to keep the hover menu uncluttered; bulk + profile cover
+		// the same use case without the visual noise.
 		add_action( 'admin_init', array( __CLASS__, 'maybe_shuffle' ) );
 		add_action( 'show_user_profile', array( __CLASS__, 'render_profile_section' ) );
 		add_action( 'edit_user_profile', array( __CLASS__, 'render_profile_section' ) );
-		add_filter( 'user_row_actions', array( __CLASS__, 'add_row_action' ), 10, 2 );
 		add_filter( 'bulk_actions-users', array( __CLASS__, 'add_bulk_action' ) );
 		add_filter( 'handle_bulk_actions-users', array( __CLASS__, 'handle_bulk_action' ), 10, 3 );
 		add_action( 'admin_notices', array( __CLASS__, 'maybe_show_bulk_notice' ) );
@@ -376,35 +377,6 @@ class AdminKit_Local_Avatars {
 			</tr>
 		</table>
 		<?php
-	}
-
-	/**
-	 * Add a "Shuffle avatar" row action on users.php so admins can re-roll any
-	 * user's portrait without opening their profile. Same visibility rules as
-	 * the profile section.
-	 */
-	public static function add_row_action( $actions, $user ) {
-		if ( self::AVATAR_KEY !== get_option( 'avatar_default' ) ) {
-			return $actions;
-		}
-		if ( ! current_user_can( 'edit_user', $user->ID ) ) {
-			return $actions;
-		}
-		if ( self::has_real_gravatar( $user ) ) {
-			return $actions;
-		}
-
-		$url = wp_nonce_url(
-			add_query_arg(
-				array(
-					'adminkit_shuffle' => '1',
-					'user_id'          => $user->ID,
-				)
-			),
-			self::SHUFFLE_NONCE
-		);
-		$actions['adminkit_shuffle'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Refresh', 'adminkit' ) . '</a>';
-		return $actions;
 	}
 
 	/**

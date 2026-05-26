@@ -399,6 +399,17 @@ body.adminkit .update-nag {
 	box-shadow: none;
 	padding: 12px 16px;
 }
+
+/* Lift top-level notices off the page-title block so they don't read as stuck
+   against the h1 + "Add new" button. Scoped to direct children of `.wrap` —
+   notices nested inside meta-boxes, form-table cells, etc. keep their tighter
+   inherited spacing untouched. */
+body.adminkit .wrap > .notice,
+body.adminkit .wrap > div.updated,
+body.adminkit .wrap > div.error,
+body.adminkit .wrap > .update-nag {
+	margin-top: var(--ak-space-l);
+}
 body.adminkit .notice {
 	background: var(--ak-elevated);
 	color: var(--ak-text);
