@@ -458,21 +458,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 
-		// Mode mirror — copies Bricks's canvas data-brx-theme onto the chrome's
-		// data-adminkit-theme so the user's Style Manager light/dark toggle
-		// flips the whole builder, not just the canvas. See builder-mode-mirror.js.
-		$mirror_rel = $base . 'js/builder-mode-mirror.js';
-		$mirror_abs = ADMINKIT_PATH . $mirror_rel;
-		if ( file_exists( $mirror_abs ) ) {
-			wp_enqueue_script(
-				'adminkit-bricks-builder-mode-mirror',
-				ADMINKIT_URL . $mirror_rel,
-				array(),
-				(string) filemtime( $mirror_abs ),
-				true
-			);
-		}
-
 		// Two distinct brand assets, two distinct intents:
 		//
 		//   --preloader-logo  → the splash overlay, big and centred. Wants the
