@@ -89,13 +89,19 @@ class AdminKit_Local_Avatars {
 			return $args;
 		}
 
-		// (b) Real Gravatar wins. Cached check avoids HTTP on every render.
-		if ( self::has_real_gravatar( $user ) ) {
+		// (b) Real Gravatar wins UNLESS this is a forced-default render. The
+		//     Discussion settings page sets `force_default = true` to show what
+		//     each option looks like, even for users with a real Gravatar — we
+		//     need to honour that so the AdminKit Portraits preview renders.
+		if ( empty( $args['force_default'] ) && self::has_real_gravatar( $user ) ) {
 			return $args;
 		}
 
 		// (c) Generated portrait. Setting $args['url'] bypasses Gravatar entirely so
 		//     the seed survives (Gravatar's Photon proxy would otherwise strip it).
+		//     `backgroundType=gradientLinear` + the pastel palette gives a soft
+		//     two-tone backdrop (DiceBear picks two colours deterministically per
+		//     seed) — subtle enough to read in both light and dark wp-admin themes.
 		$seed = md5( strtolower( $user->user_login ) );
 		$size = isset( $args['size'] ) ? max( 1, min( 256, (int) $args['size'] ) ) : 96;
 
@@ -104,6 +110,7 @@ class AdminKit_Local_Avatars {
 			. '?seed=' . rawurlencode( $seed )
 			. '&size=' . $size
 			. '&backgroundColor=' . self::BACKGROUND
+			. '&backgroundType=gradientLinear'
 		);
 		$args['found_avatar'] = true;
 		return $args;
