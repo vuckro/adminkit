@@ -483,25 +483,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			(string) filemtime( $path )
 		);
 
-		// Dark-mode companion: flip the provider's semantic + neutral-l-* vars
-		// onto the dark neutral ramp under [data-adminkit-theme="dark"]. The
-		// baseline only ships LIGHT values for those semantics — without this
-		// companion, raw provider vars in builder.css would stay light even
-		// when the user is in dark mode. A configured Bricks Style Manager
-		// brings its own dark block; this companion is the fallback when it
-		// doesn't, and is overridden by Bricks's own when present (which loads
-		// later via the dep we pin below).
-		$dark_rel  = 'inc/integrations/themes/bricks/css/builder-tokens-dark.css';
-		$dark_path = ADMINKIT_PATH . $dark_rel;
-		if ( file_exists( $dark_path ) ) {
-			wp_enqueue_style(
-				'adminkit-bricks-tokens-dark',
-				ADMINKIT_URL . $dark_rel,
-				array( AdminKit_Assets::WAASKIT_HANDLE ),
-				(string) filemtime( $dark_path )
-			);
-		}
-
 		// Print Bricks's live colours after the baseline so they override it.
 		$styles = wp_styles();
 		if ( isset( $styles->registered['bricks-style-manager'] )
