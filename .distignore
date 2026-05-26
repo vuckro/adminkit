@@ -1,15 +1,29 @@
-# Files excluded from the distributed plugin zip (e.g. `wp dist-archive`).
+# Files excluded from the distributed plugin zip (produced by `php dev/package.php`).
 # Nothing listed here is loaded at runtime — the plugin ships its generated
 # assets/css/* (incl. waaskit-tokens.css) and PHP only. Build sources and dev
 # tooling stay in the GitHub repo but are stripped from the distributable.
 
+# Repo / VCS metadata
 .git
+.gitattributes
 .gitignore
 .distignore
+.editorconfig
+
+# AI / agent scratch and internal guides
 .claude
+CLAUDE.md
+
+# Dev tooling + build sources (regenerated assets are committed and DO ship)
 dev
 tokens
 **/baseline.json
-*.log
+
+# Build / dependency artifacts (not used at runtime — adminkit has no JS or PHP deps)
 node_modules
 vendor
+
+# Logs and OS / editor cruft
+*.log
+.DS_Store
+Thumbs.db
