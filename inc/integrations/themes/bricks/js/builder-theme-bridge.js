@@ -1,24 +1,22 @@
 /**
- * Bricks builder — mirror canvas dark mode onto the chrome.
+ * Bricks builder — mirror canvas dark mode onto the chrome via AdminKit's
+ * own theme attribute.
  *
  * Bricks's light/dark toggle in the builder (visible only when at least one
  * Style Manager colour has darkModeEnabled) writes data-brx-theme="dark" to
- * the CANVAS iframe's <html> only — not to the builder chrome's <html>.
- * That's enough for Bricks's own purposes (the canvas is where the page
- * being designed renders, and the dark variants of --background / --surface
- * / etc. are needed THERE), but AdminKit's chrome restyle reads the same
- * tokens off the chrome's :root. With no data-brx-theme set on the chrome,
- * --background never flips, so toggling dark mode leaves the toolbar,
- * panels and structure tree painting in their light-mode colours.
+ * the CANVAS iframe's <html> only. Bricks ALSO generates the matching dark
+ * CSS rules (`:root[data-brx-theme="dark"] { --background: …; }`) and
+ * injects them only into that same canvas iframe — never into the chrome.
+ * So mirroring just the attribute onto the chrome would do nothing: no
+ * rules to react to it.
  *
- * Fix: observe the canvas iframe's <html> for data-brx-theme changes and
- * mirror them onto the chrome's <html>. Bricks's generated rules
- * (`:root[data-brx-theme="dark"] { --background: … }`) are already loaded
- * via style-manager.min.css in the chrome, so once the attribute lands the
- * cascade does the rest.
+ * Fix: mirror onto AdminKit's OWN attribute (data-adminkit-theme), which
+ * builder.css's dark-mode block already targets. That block re-points
+ * Bricks's semantic tokens (--background, --surface, --heading, …) to the
+ * AdminKit dark values, so the whole chrome cascade flips in one shot.
  *
- * Loaded only in the builder MAIN frame (see class-bricks.php enqueue_builder).
- * Loaded only when the "Bricks builder" feature toggle is on.
+ * Loaded only in the builder MAIN frame (see class-bricks.php
+ * enqueue_builder), only when the "Bricks builder" feature toggle is on.
  *
  * @package AdminKit
  */
@@ -42,10 +40,16 @@
 
 	function syncOnce( canvasHtml ) {
 		var mode = canvasHtml.getAttribute( 'data-brx-theme' );
+		// Bricks writes data-brx-theme on the canvas; we mirror to AdminKit's
+		// own attribute on the chrome because the dark-mode CSS that flips
+		// the chrome lives in adminkit-tokens.css + builder.css, both keyed
+		// on data-adminkit-theme.
 		if ( mode === 'dark' || mode === 'light' ) {
-			CHROME.setAttribute( 'data-brx-theme', mode );
+			CHROME.setAttribute( 'data-adminkit-theme', mode );
 		} else {
-			CHROME.removeAttribute( 'data-brx-theme' );
+			// No mode set on the canvas (light by default) — clear so light
+			// styles win.
+			CHROME.removeAttribute( 'data-adminkit-theme' );
 		}
 	}
 
