@@ -172,17 +172,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		add_filter( 'adminkit/should_load', array( __CLASS__, 'bypass_builder' ), 10, 2 );
 		add_filter( 'adminkit/extra_tokens_handle', array( __CLASS__, 'provide_tokens' ), 10, 2 );
 
-		// Force-load the WaasKit baseline inside the builder. AdminKit's default
-		// is to skip it on the frontend (a live provider owns the themed page),
-		// but the builder's chrome consumes the baseline ramps directly — without
-		// it, removing palettes from Bricks → Style manager leaves --background /
-		// --surface / the ramps undefined and the restyle paints blank. Forcing
-		// it here also fixes the cascade order: baseline now loads at the same
-		// priority as the rest of the token stack, so Bricks's user-customised
-		// style-manager.min.css (which depends on it via provide_tokens) wins
-		// for every token it overrides.
-		add_filter( 'adminkit/enqueue_baseline', array( __CLASS__, 'force_baseline_in_builder' ), 10, 2 );
-
 		// Priority 2: register the observer before Bricks's own inline mode
 		// script (printed with the head scripts, ~priority 9) sets the attribute,
 		// so the first flip is caught and the bar paints in sync.
@@ -509,29 +498,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			}
 		}
 		return '';
-	}
-
-	/**
-	 * Filter callback: opt the WaasKit baseline back in on the frontend when
-	 * the request is rendering the Bricks builder and our restyle is enabled.
-	 * Without this the baseline ramps are undefined inside the builder and
-	 * removing palettes from Bricks → Style manager breaks the chrome.
-	 *
-	 * @param bool   $load    Current value (default: true off-frontend).
-	 * @param string $context admin | login | frontend | editor.
-	 * @return bool
-	 */
-	public static function force_baseline_in_builder( $load, $context ) {
-		if ( 'frontend' !== $context ) {
-			return $load;
-		}
-		if ( ! self::is_active() || ! self::is_builder() ) {
-			return $load;
-		}
-		if ( ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
-			return $load;
-		}
-		return true;
 	}
 
 	/**

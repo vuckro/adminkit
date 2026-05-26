@@ -54,11 +54,6 @@
 	50% { transform: scale(1.1); }
 }
 
-/* Keep the root dark so nothing white flashes during the preloader fade. */
-:root[data-adminkit-theme="dark"] {
-	background-color: #171717;
-}
-
 
 /* ============================================================
    TOOLBAR
