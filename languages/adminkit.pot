@@ -928,7 +928,7 @@ msgid "Try another"
 msgstr ""
 
 #: inc/wp-core/class-local-avatars.php
-msgid "Try another portrait"
+msgid "Regenerate"
 msgstr ""
 
 #: inc/wp-core/class-local-avatars.php

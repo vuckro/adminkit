@@ -289,6 +289,14 @@ class AdminKit_Local_Avatars {
 		} else {
 			$referer = admin_url( 'profile.php' );
 		}
+		// When the click came from profile.php / user-edit.php, anchor the
+		// redirect to our section so the page lands on the Profile picture row
+		// instead of scrolling back to the top. The anchor is harmless elsewhere
+		// (e.g. users.php where no matching id exists — browser just doesn't scroll).
+		$basename = basename( (string) wp_parse_url( $referer, PHP_URL_PATH ) );
+		if ( in_array( $basename, array( 'profile.php', 'user-edit.php' ), true ) ) {
+			$referer .= '#adminkit-profile-picture';
+		}
 		wp_safe_redirect( $referer );
 		exit;
 	}
@@ -322,7 +330,7 @@ class AdminKit_Local_Avatars {
 			self::SHUFFLE_NONCE
 		);
 		?>
-		<h2><?php esc_html_e( 'Profile picture', 'adminkit' ); ?></h2>
+		<h2 id="adminkit-profile-picture"><?php esc_html_e( 'Profile picture', 'adminkit' ); ?></h2>
 		<table class="form-table" role="presentation">
 			<tr>
 				<th><?php esc_html_e( 'Generated portrait', 'adminkit' ); ?></th>
@@ -365,7 +373,7 @@ class AdminKit_Local_Avatars {
 			),
 			self::SHUFFLE_NONCE
 		);
-		$actions['adminkit_shuffle'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Try another portrait', 'adminkit' ) . '</a>';
+		$actions['adminkit_shuffle'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Regenerate', 'adminkit' ) . '</a>';
 		return $actions;
 	}
 
