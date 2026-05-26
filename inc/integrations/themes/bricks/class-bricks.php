@@ -108,16 +108,20 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function register_assets() {
-		// Bricks admin pages (Settings, Templates, …) used to load admin.css —
-		// a 400-line token bridge that re-pointed Bricks's hardcoded surfaces
-		// and text colours at our --ak-* tokens, so the pages would flip with
-		// AdminKit's dark mode. Disabled at the user's request: the restyle
-		// caused a visible repaint flash on these pages (Bricks's own CSS paints
-		// the chrome first with --bricks-text-dark: #212121, then our overrides
-		// land with --ak-heading ~#2e2e2e a few ms later → text "shifts to
-		// muted" on every refresh). The file is kept under bricks/css/admin.css
-		// for reference / future revival if the FOUC can be eliminated, but the
-		// registration here is the only thing that ever enqueued it.
+		// Bricks admin pages (Settings, Templates, …) — full token bridge that
+		// re-points Bricks's hardcoded surfaces, borders, radius and table
+		// chrome at our --ak-* tokens, so the pages stay coherent with the
+		// AdminKit theme and flip with dark mode. Without this the pages keep
+		// Bricks's stock #fff surfaces / square cells / hardcoded borders even
+		// when the rest of wp-admin is themed — visibly broken next to every
+		// other admin page.
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-bricks-admin',
+			'src'       => 'inc/integrations/themes/bricks/css/admin.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_screen' ),
+		) );
 
 		// Frontend dark-mode token bridge — re-points the admin bar's dark
 		// tokens at Bricks's live semantics so it follows the site's mode
