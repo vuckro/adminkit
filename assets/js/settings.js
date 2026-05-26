@@ -34,7 +34,15 @@
 		},
 		wpLogo: D.wpLogo || 'favicon',       // admin-bar / site-name mark: logo | favicon | hide
 		loginLogo: D.loginLogo || 'favicon', // login screen mark: logo | favicon | hide (legacy '' inherit → favicon)
-		brandAccent: D.brandAccent || ''     // user hex override of --ak-primary; empty = inherit cascade
+		brandAccent: D.brandAccent || '',    // user hex override of --ak-primary; empty = inherit cascade
+		// Bidirectional binding to WP's native `site_icon` option — see PHP
+		// bootstrap. The favicon slot in the Brand card reads + writes through
+		// THIS, not state.logos, so a change here propagates to Settings →
+		// General and vice-versa (page reload pulls the latest).
+		siteIcon: {
+			id:  ( D.siteIcon && D.siteIcon.id ) || 0,
+			url: ( D.siteIcon && D.siteIcon.url ) || ''
+		}
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
@@ -480,8 +488,8 @@
 		// --- Common helpers used inside the Design tab ---------------------------
 
 		// Open the WP media frame and call back with the chosen attachment URL +
-		// id. Used by every brand slot uploader and (re-used from logoSeg below)
-		// by the segmented controls.
+		// the full attachment object (so callers can grab `id` for site_icon-style
+		// pipelines that need the attachment ID, not just the URL).
 		function openMedia( onPick ) {
 			if ( ! window.wp || ! wp.media ) { return; }
 			var frame = wp.media( {
@@ -500,13 +508,14 @@
 
 		// One brand slot — a dashed card with a fixed-backdrop drop zone (preview
 		// or "DROP" placeholder) + label + sub + Upload / Media library buttons.
-		// `slotKey` is one of 'light' | 'dark' | 'favicon' and drives both the
-		// class modifier (fixed backdrop) and which `state` field the URL persists
-		// to. Favicon inherits the Site Icon at the PHP side when empty, so an
-		// empty preview here just means "use Site Icon".
+		// `slotKey` is one of 'light' | 'dark' | 'favicon'. The first two store
+		// URLs in `state.logos[key]`; favicon is special — it proxies WP's native
+		// `site_icon` option (an attachment ID), so reading + writing routes
+		// through `state.siteIcon` instead. Picking an image here updates the WP
+		// Site Icon on save, and a change in Settings → General shows up here on
+		// next reload — one source of truth, in lockstep both ways.
 		function brandSlot( slotKey, label, sub ) {
-			var key = slotKey === 'favicon' ? 'favicon' : slotKey;
-			var current = ( state.logos && state.logos[ key ] ) || '';
+			var isSiteIcon = ( slotKey === 'favicon' );
 			var preview = el( 'img', { 'class': 'ak-brand-slot__preview', alt: '' } );
 			var dropTxt = el( 'span', { 'class': 'ak-brand-slot__drop', text: I.slotDrop || 'Drop' } );
 			var zone = el( 'div', { 'class': 'ak-brand-slot__zone' }, [ preview, dropTxt ] );
@@ -525,8 +534,11 @@
 				text: '×'
 			} );
 
+			function currentUrl() {
+				return isSiteIcon ? ( state.siteIcon.url || '' ) : ( state.logos[ slotKey ] || '' );
+			}
 			function syncPreview() {
-				var url = state.logos[ key ] || '';
+				var url = currentUrl();
 				if ( url ) {
 					preview.src = url;
 					preview.style.display = '';
@@ -539,8 +551,13 @@
 					clear.style.display = 'none';
 				}
 			}
-			function setLogo( url ) {
-				state.logos[ key ] = url || '';
+			function setLogo( url, att ) {
+				if ( isSiteIcon ) {
+					state.siteIcon.url = url || '';
+					state.siteIcon.id  = ( att && att.id ) ? parseInt( att.id, 10 ) : 0;
+				} else {
+					state.logos[ slotKey ] = url || '';
+				}
 				syncPreview();
 				markDirty();
 			}
@@ -548,13 +565,11 @@
 			// Both buttons open the same media frame — and clicking the zone is a
 			// shortcut for the same. We don't wire native drag-and-drop yet; the
 			// media library covers the same use with one extra click.
-			upload.addEventListener( 'click', function () { openMedia( function ( url ) { setLogo( url ); } ); } );
-			media.addEventListener( 'click', function () { openMedia( function ( url ) { setLogo( url ); } ); } );
-			zone.addEventListener( 'click', function () { openMedia( function ( url ) { setLogo( url ); } ); } );
-			clear.addEventListener( 'click', function ( e ) { e.stopPropagation(); setLogo( '' ); } );
+			upload.addEventListener( 'click', function () { openMedia( setLogo ); } );
+			media.addEventListener( 'click', function () { openMedia( setLogo ); } );
+			zone.addEventListener( 'click', function () { openMedia( setLogo ); } );
+			clear.addEventListener( 'click', function ( e ) { e.stopPropagation(); setLogo( '', null ); } );
 
-			// Seed initial preview.
-			if ( current ) { preview.src = current; }
 			syncPreview();
 
 			return el( 'div', { 'class': 'ak-brand-slot ak-brand-slot--' + slotKey }, [
@@ -752,10 +767,9 @@
 		} );
 		cardHead.appendChild( actionsMenu( menuItems ) );
 
-		// Brand slots row — light / dark / favicon. Each slot persists its URL
-		// in state.logos[key]; favicon falls back to the WP Site Icon server-side
-		// when empty.
-		if ( ! state.logos.favicon ) { state.logos.favicon = ''; } // ensure key exists
+		// Brand slots row — light / dark / favicon. Light + dark persist URLs in
+		// state.logos[key]; favicon proxies WP's native `site_icon` option
+		// through state.siteIcon (see brandSlot for the routing detail).
 		var slotsRow = el( 'div', { 'class': 'ak-brand-slots' }, [
 			brandSlot( 'light', I.slotLight || 'Light-mode logo', I.slotLightSub || 'Shown on light surfaces' ),
 			brandSlot( 'dark', I.slotDark || 'Dark-mode logo', I.slotDarkSub || 'Shown on dark surfaces' ),
@@ -928,28 +942,46 @@
 			} );
 	}
 
-	// Typography — static reference. The body font follows the provider (Bricks
-	// --font-base) when set, else Inter; the scale is AdminKit's px admin sizes.
-	// Samples render in --ak-font-body (inherited from .adminkit-app).
+	// Typography — static reference, laid out in the same card pattern as the
+	// Brand card up top (eyebrow + title + sub, then rows). The body font
+	// follows the provider (Bricks --font-base) when set, else Inter; the scale
+	// is AdminKit's px admin sizes. Each row reads sample-left, token-right
+	// with a `justify-content: space-between` flex layout — same rhythm as the
+	// derived strip chips in the Brand card.
 	function typeSection() {
-		var scale = el( 'div', { 'class': 'ak-type' } );
+		// Hero row — the "Ag" sample sits big at the top, paired with the
+		// body-font token. Same span/code shape as the scale rows so it lines up.
+		var hero = el( 'div', { 'class': 'ak-type-row ak-type-row--hero' }, [
+			el( 'span', { 'class': 'ak-type-row__sample ak-type-row__sample--hero', text: 'Ag' } ),
+			el( 'code', { 'class': 'ak-type-row__token', text: '--ak-font-body' } )
+		] );
+
+		var scale = el( 'div', { 'class': 'ak-type-scale' } );
 		[
-			[ '--ak-text-m', I.typeBody || 'Body' ],
-			[ '--ak-text-s', I.typeSmall || 'Small' ],
-			[ '--ak-text-xs', I.typeCaption || 'Caption' ]
+			{ token: '--ak-text-m', label: I.typeBody || 'Body' },
+			{ token: '--ak-text-s', label: I.typeSmall || 'Small' },
+			{ token: '--ak-text-xs', label: I.typeCaption || 'Caption' }
 		].forEach( function ( s ) {
-			scale.appendChild( el( 'div', { 'class': 'ak-type__row' }, [
-				el( 'span', { 'class': 'ak-type__sample', style: 'font-size:var(' + s[ 0 ] + ')', text: I.pangram || 'The quick brown fox jumps over the lazy dog' } ),
-				el( 'code', { 'class': 'ak-tbl__prim', text: s[ 0 ] } )
+			scale.appendChild( el( 'div', { 'class': 'ak-type-row' }, [
+				el( 'span', { 'class': 'ak-type-row__lbl', text: s.label } ),
+				el( 'span', {
+					'class': 'ak-type-row__sample',
+					style: 'font-size:var(' + s.token + ')',
+					text: I.pangram || 'The quick brown fox jumps over the lazy dog'
+				} ),
+				el( 'code', { 'class': 'ak-type-row__token', text: s.token } )
 			] ) );
 		} );
-		return el( 'div', { 'class': 'ak-group' }, [
-			el( 'h2', { 'class': 'ak-group__title', text: I.typography || 'Typography' } ),
-			el( 'p', { 'class': 'ak-group__desc', text: I.typographyDesc || 'Body font follows Bricks (--font-base) when set, otherwise Inter.' } ),
-			el( 'div', { 'class': 'ak-type-hero' }, [
-				el( 'span', { 'class': 'ak-type-hero__aa', text: 'Ag' } ),
-				el( 'code', { 'class': 'ak-tbl__prim', text: '--ak-font-body' } )
+
+		return el( 'section', { 'class': 'ak-card' }, [
+			el( 'div', { 'class': 'ak-card__head' }, [
+				el( 'div', { 'class': 'ak-card__head-main' }, [
+					el( 'div', { 'class': 'ak-card__eyebrow', text: I.typography || 'Typography' } ),
+					el( 'h2', { 'class': 'ak-card__title', text: I.typeTitle || 'Font & sizes' } ),
+					el( 'p', { 'class': 'ak-tokens-cta__sub', text: I.typographyDesc || 'Body font follows Bricks (--font-base) when set, otherwise Inter.' } )
+				] )
 			] ),
+			hero,
 			scale
 		] );
 	}
@@ -1184,6 +1216,8 @@
 		v.wp_logo      = state.wpLogo;
 		v.login_logo   = state.loginLogo;
 		v.brand_accent = state.brandAccent;
+		// WP-native option proxy — see PHP rest_save() for the round-trip.
+		v.site_icon_id = state.siteIcon.id;
 		return v;
 	}
 

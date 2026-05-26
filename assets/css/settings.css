@@ -1274,6 +1274,57 @@
 .adminkit-app .ak-tokens-ref__cascade { font-family: monospace; font-size: 10px; color: var(--ak-text-muted); }
 .adminkit-app .ak-tokens-ref__value { font-family: monospace; font-size: 11px; color: var(--ak-text); }
 
+/* Typography card — same .ak-card shell as the Brand card; each row pairs a
+   sample (left) with its token (right) via flex justify-between. The hero row
+   carries the big "Ag" sample at --ak-text-2xl-ish (controlled by an explicit
+   size on the sample, not a token, so it stays oversized regardless of the
+   body-font scale). Dividers between rows match the tokens-ref table. */
+.adminkit-app .ak-type-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 10px 0;
+	border-top: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-type-scale > .ak-type-row:first-child { border-top: 0; }
+.adminkit-app .ak-type-row--hero {
+	padding: 16px 0;
+	margin-bottom: 4px;
+	border-top: 0;
+	border-bottom: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-type-row__lbl {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--ak-text-muted);
+	min-width: 60px;
+	flex: 0 0 60px;
+}
+.adminkit-app .ak-type-row__sample {
+	flex: 1 1 auto;
+	min-width: 0;
+	color: var(--ak-text);
+	line-height: 1.4;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.adminkit-app .ak-type-row__sample--hero {
+	font-size: 48px;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--ak-heading);
+	letter-spacing: -0.02em;
+}
+.adminkit-app .ak-type-row__token {
+	flex: 0 0 auto;
+	font-family: monospace;
+	font-size: 11px;
+	color: var(--ak-text-muted);
+	white-space: nowrap;
+}
+
 /* Source pills — Bricks orange is a brand colour exception (same logic as the
    fixed light/dark logo backdrops above). Others ride --ak-* tokens. */
 .adminkit-app .ak-pill {

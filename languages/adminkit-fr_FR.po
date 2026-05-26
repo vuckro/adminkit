@@ -928,8 +928,19 @@ msgid "Avatar"
 msgstr "Avatar"
 
 #: inc/wp-core/class-local-avatars.php
-msgid "Regenerate"
-msgstr "Régénérer"
+msgid "Refresh"
+msgstr "Actualiser"
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Refresh avatar"
+msgstr "Actualiser l'avatar"
+
+#. translators: %d: number of users whose avatars were refreshed.
+#: inc/wp-core/class-local-avatars.php
+msgid "%d avatar refreshed."
+msgid_plural "%d avatars refreshed."
+msgstr[0] "%d avatar actualisé."
+msgstr[1] "%d avatars actualisés."
 
 #: inc/wp-core/class-local-avatars.php
 msgid "You are not allowed to do that."
@@ -1104,3 +1115,7 @@ msgstr "Bricks"
 #: inc/class-settings-page.php
 msgid "Auto"
 msgstr "Auto"
+
+#: inc/class-settings-page.php
+msgid "Font & sizes"
+msgstr "Police et tailles"

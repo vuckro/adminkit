@@ -170,14 +170,33 @@ class AdminKit_Settings_Page {
 	 */
 	public static function rest_save( $request ) {
 		// Reset to defaults: drop the whole option so every setting falls back
-		// to its registered default (colours inherit, toggles on).
+		// to its registered default (colours inherit, toggles on). The native
+		// `site_icon` option is intentionally NOT touched here — a "Reset
+		// AdminKit defaults" shouldn't blow away the WP-wide Site Icon.
 		if ( $request->get_param( 'reset' ) ) {
 			delete_option( AdminKit_Settings::OPTION_KEY );
 			return rest_ensure_response( array( 'ok' => true, 'reset' => true ) );
 		}
 		self::register_integration_toggles(); // so per-integration keys persist
 		$values = $request->get_param( 'values' );
-		$clean  = self::sanitize( is_array( $values ) ? $values : array() );
+		$values = is_array( $values ) ? $values : array();
+
+		// Favicon slot in the Design tab proxies WP's native `site_icon` option —
+		// not an AdminKit setting. Handle it BEFORE the schema sanitiser (which
+		// would drop the unknown key) and update the WP option directly so every
+		// surface that reads `site_icon` (browser tabs, login fallback, OG tags)
+		// stays in lockstep. 0 / empty means "no icon" — same convention as core.
+		if ( array_key_exists( 'site_icon_id', $values ) ) {
+			$icon_id = absint( $values['site_icon_id'] );
+			if ( $icon_id > 0 && wp_attachment_is_image( $icon_id ) ) {
+				update_option( 'site_icon', $icon_id );
+			} else {
+				delete_option( 'site_icon' );
+			}
+			unset( $values['site_icon_id'] );
+		}
+
+		$clean = self::sanitize( $values );
 
 		$existing = get_option( AdminKit_Settings::OPTION_KEY, array() );
 		if ( ! is_array( $existing ) ) {
@@ -289,6 +308,16 @@ class AdminKit_Settings_Page {
 			'loginLogo'    => (string) AdminKit_Settings::get( 'login_logo' ),
 			'brandAccent'  => (string) AdminKit_Settings::get( 'brand_accent' ),
 			'hasSiteIcon'  => '' !== (string) get_site_icon_url(),
+			// Bidirectional binding for the Favicon slot in the Design tab: we read
+			// AND write WordPress's native `site_icon` option, so the slot stays in
+			// lockstep with Settings → General. Changing it here propagates to every
+			// surface WP already uses the site icon for (browser tab, login screen
+			// fallback, Open Graph). No separate AdminKit storage — the WP option
+			// is the single source of truth.
+			'siteIcon'     => array(
+				'id'  => (int) get_option( 'site_icon', 0 ),
+				'url' => (string) get_site_icon_url(),
+			),
 			// Bricks detection is also in `providers`, but a dedicated flag is
 			// cleaner for the Design tab (gates the "Tokens synced…" status row + the
 			// Bricks-only Actions items).
@@ -352,6 +381,7 @@ class AdminKit_Settings_Page {
 				'designLegend'      => __( 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.', 'adminkit' ),
 				'typography'        => __( 'Typography', 'adminkit' ),
 				'typographyDesc'    => __( 'Body font follows Bricks (--font-base) when set, otherwise Inter.', 'adminkit' ),
+				'typeTitle'         => __( 'Font & sizes', 'adminkit' ),
 				'typeBody'          => __( 'Body', 'adminkit' ),
 				'typeSmall'         => __( 'Small', 'adminkit' ),
 				'typeCaption'       => __( 'Caption', 'adminkit' ),
