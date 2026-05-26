@@ -333,15 +333,12 @@ class AdminKit_Local_Avatars {
 		<h2 id="adminkit-profile-picture"><?php esc_html_e( 'Profile picture', 'adminkit' ); ?></h2>
 		<table class="form-table" role="presentation">
 			<tr>
-				<th><?php esc_html_e( 'Generated portrait', 'adminkit' ); ?></th>
+				<th><?php esc_html_e( 'Avatar', 'adminkit' ); ?></th>
 				<td>
-					<span style="display:inline-block;border-radius:50%;overflow:hidden;line-height:0;vertical-align:middle">
+					<span style="display:inline-block;border-radius:50%;overflow:hidden;line-height:0;vertical-align:middle;margin-right:1em">
 						<?php echo get_avatar( $user->ID, 96 ); ?>
 					</span>
-					<p style="margin-top:1em">
-						<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Try another', 'adminkit' ); ?></a>
-						<span class="description" style="margin-left:8px"><?php esc_html_e( "Don't like this portrait? Click to roll a new one.", 'adminkit' ); ?></span>
-					</p>
+					<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Regenerate', 'adminkit' ); ?></a>
 				</td>
 			</tr>
 		</table>

@@ -924,20 +924,12 @@ msgid "Profile picture"
 msgstr "Photo de profil"
 
 #: inc/wp-core/class-local-avatars.php
-msgid "Generated portrait"
-msgstr "Portrait généré"
-
-#: inc/wp-core/class-local-avatars.php
-msgid "Try another"
-msgstr "En essayer un autre"
+msgid "Avatar"
+msgstr "Avatar"
 
 #: inc/wp-core/class-local-avatars.php
 msgid "Regenerate"
 msgstr "Régénérer"
-
-#: inc/wp-core/class-local-avatars.php
-msgid "Don't like this portrait? Click to roll a new one."
-msgstr "Ce portrait ne vous plaît pas ? Cliquez pour en générer un autre."
 
 #: inc/wp-core/class-local-avatars.php
 msgid "You are not allowed to do that."

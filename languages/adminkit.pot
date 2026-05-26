@@ -920,19 +920,11 @@ msgid "Profile picture"
 msgstr ""
 
 #: inc/wp-core/class-local-avatars.php
-msgid "Generated portrait"
-msgstr ""
-
-#: inc/wp-core/class-local-avatars.php
-msgid "Try another"
+msgid "Avatar"
 msgstr ""
 
 #: inc/wp-core/class-local-avatars.php
 msgid "Regenerate"
-msgstr ""
-
-#: inc/wp-core/class-local-avatars.php
-msgid "Don't like this portrait? Click to roll a new one."
 msgstr ""
 
 #: inc/wp-core/class-local-avatars.php
