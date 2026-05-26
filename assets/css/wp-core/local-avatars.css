@@ -1,11 +1,12 @@
 /* Local avatars — the clickable profile-picture bubble.
    A single crisp circular avatar that doubles as the upload target: clicking it
    opens the media picker. With an image set it shows the picture, clipped to the
-   circle; empty, it shows a faint person glyph on a muted surface. A "Remove"
-   link sits below, then the help text. Scoped to .adminkit-local-avatar so it
-   never leaks; every colour reads --ak-* tokens (with literal fallbacks) so dark
-   mode + provider theming carry for free. Split into its own file so it can be
-   disabled via the `adminkit/enqueue_local-avatars` filter. */
+   circle; empty, it shows a faint person glyph on a muted surface. A "Reset to
+   default" button sits below (only when there's an upload to clear), then the
+   help text. Scoped to .adminkit-local-avatar so it never leaks; every colour
+   reads --ak-* tokens (with literal fallbacks) so dark mode + provider theming
+   carry for free. Split into its own file so it can be disabled via the
+   `adminkit/enqueue_local-avatars` filter. */
 
 .adminkit-local-avatar {
 	display: block;
@@ -122,88 +123,19 @@ body.adminkit .adminkit-local-avatar .adminkit-local-avatar__actions {
 	margin: calc(var(--ak-space-l, 16px) + var(--ak-space-s, 8px)) 0 var(--ak-space-2xs, 4px);
 }
 
-/* "Generate a random avatar" is a real button in the actions row — it carries the
-   .button button-primary base (tokenised to the accent in buttons.css); here we
-   only align the refresh icon + label. */
+/* "Reset to default" — a normal .button with an icon. The icon is `display:block`
+   so its baseline doesn't drift against the button's text-line; 16px keeps it
+   on the same visual rhythm as core WP toolbar icons. */
 .adminkit-local-avatar__action {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
 }
 .adminkit-local-avatar__action-icon {
-	width: 15px;
-	height: 15px;
+	display: block;
+	width: 16px;
+	height: 16px;
 	flex: none;
-}
-
-/* --- Generate danger confirm --------------------------------------------------
-   A small, flat in-page modal (nicer + on-brand vs window.confirm). A scrim
-   covers the page; a tokenised card holds the title, the warn message and the
-   Cancel / Generate actions. `.is-danger` (replacing a real upload) tints the
-   card's accent rail + the confirm button error-red; the lighter Gravatar-
-   override case keeps the neutral primary. Hidden via [hidden] at rest. */
-.adminkit-local-avatar__confirm {
-	position: fixed;
-	inset: 0;
-	z-index: 100000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: var(--ak-space-l, 16px);
-	background: var(--ak-overlay, rgba(0, 0, 0, .5));
-}
-
-.adminkit-local-avatar__confirm[hidden] {
-	display: none;
-}
-
-.adminkit-local-avatar__confirm-box {
-	width: 100%;
-	max-width: 380px;
-	padding: var(--ak-space-l, 16px) var(--ak-space-l, 16px) var(--ak-space-m, 12px);
-	border: 1px solid var(--ak-border, #c3c4c7);
-	border-top: 3px solid var(--ak-primary, #2271b1);
-	border-radius: var(--ak-radius-m, 10px);
-	background: var(--ak-surface, #fff);
-	box-shadow: var(--ak-shadow-elevated, 0 8px 24px -10px rgba(0, 0, 0, .3));
-}
-
-.adminkit-local-avatar__confirm.is-danger .adminkit-local-avatar__confirm-box {
-	border-top-color: var(--ak-error, #d63638);
-}
-
-.adminkit-local-avatar__confirm-title {
-	margin: 0 0 var(--ak-space-xs, 4px);
-	font-size: var(--ak-text-m, 14px);
-	font-weight: 600;
-	color: var(--ak-heading, #1d2327);
-}
-
-.adminkit-local-avatar__confirm-msg {
-	margin: 0 0 var(--ak-space-l, 16px);
-	font-size: var(--ak-text-s, 13px);
-	line-height: 1.5;
-	color: var(--ak-text, #3c434a);
-}
-
-.adminkit-local-avatar__confirm-actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: var(--ak-space-s, 8px);
-}
-
-/* The confirm button reads danger-red when we're replacing a real upload. */
-.adminkit-local-avatar__confirm.is-danger .adminkit-local-avatar__confirm-ok {
-	border-color: var(--ak-error, #d63638);
-	background: var(--ak-error, #d63638);
-	color: var(--ak-on-accent, #fff);
-}
-
-.adminkit-local-avatar__confirm.is-danger .adminkit-local-avatar__confirm-ok:hover,
-.adminkit-local-avatar__confirm.is-danger .adminkit-local-avatar__confirm-ok:focus {
-	border-color: var(--ak-error, #d63638);
-	background: color-mix(in srgb, var(--ak-error, #d63638) 88%, #000);
-	color: var(--ak-on-accent, #fff);
 }
 
 @media (prefers-reduced-motion: reduce) {

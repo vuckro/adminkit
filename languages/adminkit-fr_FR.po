@@ -759,45 +759,21 @@ msgstr "Envoyer une photo de profil"
 msgid "Profile picture"
 msgstr "Photo de profil"
 
-#: inc/wp-core/class-local-avatars.php:478
+#: inc/wp-core/class-local-avatars.php:417
 msgid "Change"
 msgstr "Modifier"
 
-#: inc/wp-core/class-local-avatars.php:485
-msgid "Generate a random avatar"
-msgstr "Générer un avatar aléatoire"
-
-#: inc/wp-core/class-local-avatars.php:497
+#: inc/wp-core/class-local-avatars.php:428
 msgid "Reset to default"
 msgstr "Réinitialiser"
 
-#: inc/wp-core/class-local-avatars.php:498
-msgid "Upload an image to use as this user's avatar everywhere. Leave empty to use Gravatar — or a generated avatar when that option is on."
-msgstr "Envoyez une image à utiliser comme avatar de cet utilisateur partout. Laissez vide pour utiliser Gravatar — ou un avatar généré lorsque cette option est activée."
+#: inc/wp-core/class-local-avatars.php:432
+msgid "Upload an image to use as this user's avatar everywhere. Leave empty to fall back to Gravatar — or, when Gravatar has no image, a generated portrait unique to this user."
+msgstr "Envoyez une image à utiliser comme avatar de cet utilisateur partout. Laissez vide pour utiliser Gravatar — ou, si Gravatar n’a pas d’image, un portrait généré unique pour cet utilisateur."
 
-#: inc/wp-core/class-local-avatars.php:515
-msgid "Replace the current avatar?"
-msgstr "Remplacer l’avatar actuel ?"
-
-#: inc/wp-core/class-local-avatars.php:520
-msgid "Cancel"
-msgstr "Annuler"
-
-#: inc/wp-core/class-local-avatars.php:523
-msgid "Generate"
-msgstr "Générer"
-
-#: inc/wp-core/class-local-avatars.php:714
+#: inc/wp-core/class-local-avatars.php:579
 msgid "Select a profile picture"
 msgstr "Sélectionner une photo de profil"
-
-#: inc/wp-core/class-local-avatars.php:739
-msgid "This permanently replaces the uploaded photo with a generated avatar. Continue?"
-msgstr "Cela remplace définitivement la photo envoyée par un avatar généré. Continuer ?"
-
-#: inc/wp-core/class-local-avatars.php:740
-msgid "This sets a generated avatar and overrides any Gravatar for this account. Continue?"
-msgstr "Cela définit un avatar généré et remplace tout Gravatar pour ce compte. Continuer ?"
 
 #: inc/wp-core/class-post-previews.php:165
 msgid "Preview"

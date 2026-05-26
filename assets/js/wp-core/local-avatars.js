@@ -4,22 +4,14 @@
  * The avatar bubble itself is the upload target: clicking it (a focusable
  * <button> wrapping the image) opens the WordPress media frame; picking an image
  * stores its attachment id in the hidden field, swaps the preview in, and flips
- * the field to its "filled" state. "Reset to default" clears the upload AND any
- * rolled seed (flagging the save to clear a stored seed too) and reverts the
- * preview to the default (Gravatar / generated). It shows only when the avatar
- * deviates from the default. Filled / empty is carried by an `is-filled` /
+ * the field to its "filled" state. "Reset to default" clears the upload and
+ * reverts the preview to the default (Gravatar / generated face). It shows only
+ * when there's an upload to clear. Filled / empty is carried by an `is-filled` /
  * `is-empty` class on the root (CSS owns the visuals).
  *
  * The page-title avatar (the "hero", built by profile-account.js) is wired here
  * too as a SECOND trigger that shares the one hidden input + state — no media
- * frame logic is duplicated. Picking/resetting/generating syncs BOTH previews.
- *
- * A "Generate a random avatar" control (available whenever local avatars are on)
- * rolls a fresh client-side seed, previews the matching DiceBear face, and writes
- * the seed into a hidden input that the PHP save persists (which also clears any
- * upload). Before applying it over an existing photo it shows a small, tokenised
- * DANGER confirm. All generated-avatar wiring is gated on the localized
- * `generated` flag, so with the feature off the brick behaves exactly as before.
+ * frame logic is duplicated. Picking / resetting syncs BOTH previews.
  *
  * i18n labels arrive via `window.AdminKitLocalAvatars` (set by an inline
  * bootstrap). No-op when the field or `wp.media` isn't present. Footer script,
@@ -33,23 +25,12 @@
 
 	var L = window.AdminKitLocalAvatars || {};
 	var input = document.getElementById('adminkit-local-avatar-input');
-	var seedInput = document.getElementById('adminkit-local-avatar-seed');
 	var preview = document.getElementById('adminkit-local-avatar-preview');
 	var placeholder = document.getElementById('adminkit-local-avatar-placeholder');
 	var mediaBtn = document.getElementById('adminkit-local-avatar-btn');
 	var resetBtn = document.getElementById('adminkit-local-avatar-reset');
 	var resetInput = document.getElementById('adminkit-local-avatar-reset-input');
-	var generateBtn = document.getElementById('adminkit-local-avatar-generate');
 	if (!input || !preview || !mediaBtn) { return; }
-
-	// The avatar deviates from the default when there's a live upload, a pending
-	// rolled seed, or a server-known custom state (an upload or a stored seed) that
-	// hasn't been reset this session. Drives the Reset button's visibility.
-	var startedCustom = root.dataset.hasCustom === '1';
-	function customActive() {
-		if (resetInput && resetInput.value === '1') { return false; } // reset pending
-		return !!input.value || (seedInput && !!seedInput.value) || startedCustom;
-	}
 
 	var frame = null;
 	// The hero's preview <img>, populated by setupHero() so previews stay in sync.
@@ -65,8 +46,8 @@
 		}
 	}
 
-	// Reflect state into the UI. is-filled/is-empty track whether there's an
-	// UPLOAD (drives Remove + the aria label). The preview always shows the
+	// Reflect state into the UI. is-filled / is-empty track whether there's an
+	// UPLOAD (drives Reset visibility + aria label). The preview always shows the
 	// EFFECTIVE avatar (upload OR the Gravatar/generated fallback), so it's only
 	// swapped for the glyph when there's genuinely no image URL at all.
 	function sync() {
@@ -83,7 +64,7 @@
 			if (placeholder) { placeholder.removeAttribute('hidden'); }
 		}
 		if (resetBtn) {
-			if (customActive()) { resetBtn.removeAttribute('hidden'); }
+			if (hasUpload) { resetBtn.removeAttribute('hidden'); }
 			else { resetBtn.setAttribute('hidden', ''); }
 		}
 		mediaBtn.setAttribute('aria-label', hasUpload ? (L.ariaFill || '') : (L.ariaEmpty || ''));
@@ -107,8 +88,7 @@
 				var attachment = frame.state().get('selection').first().toJSON();
 				if (!attachment || !attachment.id) { return; }
 				input.value = attachment.id;
-				// An explicit upload supersedes a pending generated seed / reset intent.
-				if (seedInput) { seedInput.value = ''; }
+				// An explicit upload supersedes any pending reset intent.
 				if (resetInput) { resetInput.value = ''; }
 				var size = pickSize(attachment.sizes);
 				setPreviewSrc(size ? size.url : (attachment.url || ''));
@@ -124,113 +104,18 @@
 	if (resetBtn) {
 		resetBtn.addEventListener('click', function (e) {
 			e.preventDefault();
-			// Reset to default: clear the upload AND any pending seed, and flag the
-			// reset so save() also clears a STORED seed server-side — reverting to the
-			// real Gravatar / deterministic generated face.
+			// Reset to default: clear the upload AND flag the reset so save() clears
+			// the user meta server-side — reverting to the real Gravatar /
+			// deterministic generated face.
 			input.value = '';
-			if (seedInput) { seedInput.value = ''; }
 			if (resetInput) { resetInput.value = '1'; }
-			// Preview the TRUE default so the bubble is never left blank.
+			// Preview the default so the bubble is never left blank.
 			setPreviewSrc(L.defaultUrl || '');
 			sync();
 			// Move focus back to the picker so keyboard users aren't stranded on the
 			// now-hidden Reset control.
 			mediaBtn.focus();
 		});
-	}
-
-	// --- generated avatars (gated on the localized `generated` flag) -----------
-
-	// A fresh URL-safe seed (mirrors PHP new_seed(): a short lowercase-hex string).
-	function rollSeed() {
-		var s = '';
-		while (s.length < 12) { s += Math.random().toString(16).slice(2); }
-		return s.slice(0, 12);
-	}
-
-	// Build the DiceBear preview URL for a seed, matching the server's URL shape.
-	function generatedUrl(seed) {
-		var base = L.diceBase || '';
-		if (!base) { return ''; }
-		var sep = base.indexOf('?') === -1 ? '?' : '&';
-		return base + sep + 'seed=' + encodeURIComponent(seed) + '&size=' + (L.diceSize || 96);
-	}
-
-	// Apply a rolled generated avatar: stash the seed for save (which clears the
-	// upload server-side), clear the upload id client-side so state is coherent,
-	// and preview the generated face in both spots.
-	function applyGenerated() {
-		var seed = rollSeed();
-		if (seedInput) { seedInput.value = seed; }
-		if (resetInput) { resetInput.value = ''; }
-		input.value = '';
-		var url = generatedUrl(seed);
-		if (url) { setPreviewSrc(url); }
-		sync();
-	}
-
-	if (L.generated && generateBtn) {
-		var confirmBox = document.getElementById('adminkit-local-avatar-confirm');
-		var confirmMsg = document.getElementById('adminkit-local-avatar-confirm-msg');
-		var confirmOk = document.getElementById('adminkit-local-avatar-confirm-ok');
-		var confirmCancel = document.getElementById('adminkit-local-avatar-confirm-cancel');
-		// Server-known starting truth: did this user have a manual upload on load?
-		var startedWithUpload = !!(confirmBox && confirmBox.dataset.hasUpload === '1');
-		var lastFocus = null;
-
-		function closeConfirm() {
-			if (!confirmBox) { return; }
-			confirmBox.setAttribute('hidden', '');
-			if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
-		}
-
-		// Decide whether we're replacing a real photo: a current upload (live hidden
-		// input OR the server-known state) is a hard danger; otherwise it's the
-		// lighter "overrides Gravatar" warning (Gravatar isn't detectable here).
-		function replacingUpload() {
-			return !!input.value || startedWithUpload;
-		}
-
-		function openConfirm() {
-			if (!confirmBox || !confirmMsg) { applyGenerated(); return; }
-			lastFocus = document.activeElement;
-			var danger = replacingUpload();
-			confirmMsg.textContent = danger ? (L.confirmUpload || '') : (L.confirmGravatar || '');
-			confirmBox.classList.toggle('is-danger', danger);
-			confirmBox.removeAttribute('hidden');
-			if (confirmOk) { confirmOk.focus(); }
-		}
-
-		generateBtn.addEventListener('click', function (e) {
-			e.preventDefault();
-			openConfirm();
-		});
-
-		if (confirmOk) {
-			confirmOk.addEventListener('click', function (e) {
-				e.preventDefault();
-				closeConfirm();
-				applyGenerated();
-				// After generating there's no upload, so focus the media button (the
-				// stable, always-present control) rather than the maybe-hidden Remove.
-				mediaBtn.focus();
-			});
-		}
-		if (confirmCancel) {
-			confirmCancel.addEventListener('click', function (e) {
-				e.preventDefault();
-				closeConfirm();
-			});
-		}
-		if (confirmBox) {
-			// Dismiss on backdrop click + Escape, like a normal modal.
-			confirmBox.addEventListener('click', function (e) {
-				if (e.target === confirmBox) { closeConfirm(); }
-			});
-			confirmBox.addEventListener('keydown', function (e) {
-				if (e.key === 'Escape') { e.preventDefault(); closeConfirm(); }
-			});
-		}
 	}
 
 	// --- page-title "hero" as a second picker trigger -------------------------

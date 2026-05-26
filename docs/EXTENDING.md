@@ -119,23 +119,24 @@ capture and updates it in place. All hooks are in
 
 The **Local avatars** feature (`local_avatars_enabled`, on by default) lets users
 upload a profile picture that replaces Gravatar. With it on, any user with no
-upload *and* no real Gravatar automatically gets a friendly auto-generated face —
+upload *and* no real Gravatar automatically gets a friendly auto-generated portrait —
 served as the Gravatar `d=` fallback, so a real Gravatar always wins. This is
 folded into the local-avatars toggle: there is **no separate generated-avatars
 setting**. The generator is [DiceBear](https://www.dicebear.com)'s hosted,
 key-less HTTP API (`https://api.dicebear.com`), seeded with a non-PII value (the
-md5 of the login, or a stored random seed when the user rolls one).
+md5 of the user_login) — so each user reliably gets the same unique face, and any
+two users get visibly distinct portraits.
 
-The profile field offers three actions: **upload** (the avatar bubble opens the
-media frame), **Generate a random avatar** (rolls a new seed), and **Reset to
-default** — shown only when the avatar deviates from the default, it clears both
-the uploaded image and any rolled seed so the user reverts to their real Gravatar
-(or the deterministic generated face). Both hooks are
-in `inc/wp-core/class-local-avatars.php`:
+The profile field is intentionally minimal: the **avatar bubble** opens the media
+frame (upload trigger), and a **Reset to default** button clears any upload, reverting
+to the real Gravatar / the generated face. The button is shown only when there's an
+upload to clear. There is no re-roll affordance — each user already gets a unique
+deterministic face from their login; to change it, upload one. Both hooks are in
+`inc/wp-core/class-local-avatars.php`:
 
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
-| `adminkit/generated_avatar_style` | filter | `(string $style, int $user_id)` | The DiceBear style slug (default `fun-emoji`). Return another slug to change the look (e.g. `notionists`, `adventurer`). |
+| `adminkit/generated_avatar_style` | filter | `(string $style, int $user_id)` | The DiceBear style slug (default `personas` — illustrated human portraits with high variety). Return another slug to change the look (e.g. `notionists`, `avataaars`, `lorelei`, `micah`, `open-peeps`, `fun-emoji`). |
 | `adminkit/generated_avatar_url` | filter | `(string $url, int $user_id, int $size)` | The final generated-avatar URL — override to self-host or swap the service entirely. |
 
 Example — self-host the generated avatars instead of calling DiceBear:

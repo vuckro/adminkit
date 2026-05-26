@@ -133,9 +133,9 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   served as the Gravatar `d=` fallback for users with no upload and no real
   Gravatar, automatically whenever `local_avatars_enabled` is on (no separate
   toggle — opt out by turning local avatars off). It's disclosed in `readme.txt`
-  (the .org "External services" section) and the seed is NON-PII (md5 of the login,
-  or a stored random seed) — **never send the raw email.** If you change the service
-  or what's sent, update that disclosure in the same change.
+  (the .org "External services" section) and the seed is NON-PII (md5 of the login)
+  — **never send the raw email.** If you change the service or what's sent, update
+  that disclosure in the same change.
 - **`content:url()` on a pseudo-element renders at the image's intrinsic size** —
   browsers ignore `width`/`height` on a pseudo-element's `content` image. For a
   *sized* icon/logo use a `background-image` on a sized box, or a real `<img>` (a
