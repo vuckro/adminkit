@@ -187,6 +187,41 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		// CSS only prints when the icons feature is on, so no extra gating needed.
 		add_filter( 'adminkit/toolbar_icons', array( __CLASS__, 'toolbar_icons' ) );
 		add_filter( 'adminkit/toolbar_icon_ab_item_nodes', array( __CLASS__, 'toolbar_ab_item_nodes' ) );
+
+		// When Bricks is the active theme, default `bricks_builder_enabled` ON
+		// (instead of the schema's `false`) — but only when the toggle has never
+		// been explicitly saved. As soon as the user toggles it off and saves, that
+		// explicit `false` lands in the stored option and the filter steps aside.
+		// User choices are never overwritten.
+		add_filter( 'adminkit/setting/bricks_builder_enabled', array( __CLASS__, 'default_on_when_active' ) );
+	}
+
+	/**
+	 * Flip `bricks_builder_enabled`'s schema default from `false` to `true` when
+	 * Bricks is the active theme — but only on a fresh install, where the toggle
+	 * has never been explicitly saved by the user. Detection is "the key isn't in
+	 * the stored option array yet"; once a save lands the key (whatever value),
+	 * we step aside and return the resolved value untouched.
+	 *
+	 * Why a filter and not a schema default: the schema is loaded before we know
+	 * which theme is active, and we don't want to flip the default ON for non-Bricks
+	 * sites (where the row isn't even surfaced in Settings → Features). Gating in
+	 * the integration's own boot() keeps the policy local — when Bricks is gone,
+	 * the filter is gone too.
+	 *
+	 * @param mixed $value What AdminKit_Settings::get() resolved (stored value or
+	 *                     the schema default for the missing case).
+	 * @return bool
+	 */
+	public static function default_on_when_active( $value ) {
+		if ( ! self::is_active() ) {
+			return $value;
+		}
+		$stored = get_option( AdminKit_Settings::OPTION_KEY, array() );
+		if ( ! is_array( $stored ) || ! array_key_exists( 'bricks_builder_enabled', $stored ) ) {
+			return true; // never explicitly saved + Bricks active → default ON.
+		}
+		return $value; // explicit user choice → respect it.
 	}
 
 	/**
@@ -477,8 +512,12 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	/**
 	 * Build the inline CSS that brands the builder TOOLBAR (the favicon chip).
 	 *
-	 * The site FAVICON as a fixed rounded SQUARE (centred, cover) so the radius reads
-	 * on the chip; first-letter mark when no Site Icon is set.
+	 * Fallback chain — mirrors the preloader at L396-407 of enqueue_builder():
+	 *   1. Site Icon (favicon) on a transparent chip, rounded square, cover.
+	 *   2. WordPress logo SVG (wp-admin/images/wordpress-logo.svg) on the accent
+	 *      chip — recognisable mark when the site has neither a brand logo nor a
+	 *      favicon set up. Replaces the previous first-letter-of-site-name mark
+	 *      (the stray "A" hover bug).
 	 *
 	 * The PRELOADER logo is a separate concern: a real <img> injected by
 	 * js/preloader-logo.js (so it hugs the logo's natural aspect — no gutters), styled
@@ -489,46 +528,38 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	private static function builder_logo_css() {
 		$css = '';
 
-		// Toolbar → favicon on the accent chip, rounded. `content:url()` on the real
-		// <img> scales reliably; the accent background covers transparent icons.
+		// 1) Site Icon → favicon on a transparent chip, rounded. `content:url()` on
+		// the real <img> scales reliably; the accent background is overridden so
+		// nothing shows behind transparent icons.
 		$favicon = get_site_icon_url( 192 );
 		if ( '' !== $favicon ) {
-			$url  = self::css_url( $favicon );
+			$url = self::css_url( $favicon );
 			// Favicon as a FIXED 34px rounded SQUARE, CENTRED in the wide-short slot so
 			// the radius reads on the chip itself (contain floated it small, leaving the
 			// radius in empty space). `cover` fills the 34px box — the site icon is
-			// square so nothing is cropped. No chip colour — Bricks's yellow is
-			// overridden to transparent so nothing shows behind/around it.
+			// square so nothing is cropped. Bricks's yellow chip is overridden to
+			// transparent so nothing shows behind/around it.
 			$css .= '#bricks-toolbar .logo{background-color:transparent!important;display:flex;align-items:center;justify-content:center}';
 			$css .= '#bricks-toolbar .logo a{display:flex;align-items:center;justify-content:center;width:100%;height:100%}';
 			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:34px;height:34px;'
 				. 'box-sizing:border-box;padding:0;object-fit:cover;border-radius:6px}';
-		} else {
-			$css .= self::builder_toolbar_letter_css();
+			return $css;
+		}
+
+		// 2) No favicon → fall back to the WordPress logo SVG. Matches the preloader
+		// chain (brand logo → site icon → WP logo). Keeps Bricks's yellow chip
+		// backdrop so the dark WP mark reads cleanly; `object-fit:contain` preserves
+		// the mark's aspect (the WP logo is wider than tall).
+		$wp_logo_file = ABSPATH . 'wp-admin/images/wordpress-logo.svg';
+		if ( file_exists( $wp_logo_file ) ) {
+			$url  = self::css_url( admin_url( 'images/wordpress-logo.svg' ) );
+			$css .= '#bricks-toolbar li.logo{background-color:var(--accent,#ffd64f);display:flex;align-items:center;justify-content:center;min-width:34px}';
+			$css .= '#bricks-toolbar li.logo a{display:flex;align-items:center;justify-content:center;width:100%;height:100%}';
+			$css .= '#bricks-toolbar li.logo img{content:' . $url . ';display:block;width:22px;height:22px;'
+				. 'box-sizing:border-box;padding:0;object-fit:contain}';
 		}
 
 		return $css;
-	}
-
-	/**
-	 * The toolbar logo as a first-letter text mark on the accent chip. '' when the
-	 * site title has no usable letter.
-	 *
-	 * @return string
-	 */
-	private static function builder_toolbar_letter_css() {
-		$name   = wp_strip_all_tags( get_bloginfo( 'name' ) );
-		$letter = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 1 ) : substr( $name, 0, 1 );
-		$letter = preg_replace( '/[^\p{L}\p{N}]/u', '', (string) $letter ); // CSS-safe: letters/digits only
-		$letter = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $letter ) : strtoupper( $letter );
-		if ( '' === $letter ) {
-			return '';
-		}
-		return '#bricks-toolbar li.logo{background-color:var(--accent,#ffd64f);'
-			. 'display:flex;align-items:center;justify-content:center;min-width:34px}'
-			. '#bricks-toolbar li.logo img{display:none}'
-			. '#bricks-toolbar li.logo::after{content:"' . $letter . '";'
-			. 'color:var(--accent-on,#18181b);font-weight:700;font-size:15px;line-height:1}';
 	}
 
 	/**
@@ -569,9 +600,36 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	public static function provide_tokens( $handle, $context ) {
 		$upload = wp_upload_dir();
 		$path   = $upload['basedir'] . self::TOKENS_REL;
+
 		if ( ! file_exists( $path ) ) {
-			return $handle;
+			// Fresh Bricks install where the user hasn't opened Style Manager yet:
+			// the generated `bricks/css/style-manager.min.css` doesn't exist, so we
+			// can't enqueue it. Without a provider stylesheet the cascade collapses
+			// (`--background`, `--surface`, `--accent`, the whole bridge in admin.css)
+			// and admin / frontend renders with broken variables.
+			//
+			// Take over with AdminKit's shipped WaasKit baseline so the SAME variables
+			// resolve — just from our defaults instead of Bricks's saved colours.
+			// adminkit-tokens then chains onto a real handle and the cascade is whole
+			// again. Bricks's live tokens win automatically the moment the user opens
+			// Style Manager and saves (file appears → branch above runs → Bricks
+			// depends on the baseline and loads after, overriding it).
+			//
+			// Mirrors the builder-side pattern in enqueue_builder_fallback_tokens().
+			$baseline_path = ADMINKIT_PATH . AdminKit_Assets::WAASKIT_SRC;
+			if ( ! file_exists( $baseline_path ) ) {
+				return $handle; // baseline missing too — give up cleanly, no broken refs
+			}
+			wp_enqueue_style(
+				AdminKit_Assets::WAASKIT_HANDLE,
+				ADMINKIT_URL . AdminKit_Assets::WAASKIT_SRC,
+				array(),
+				(string) filemtime( $baseline_path )
+			);
+			return AdminKit_Assets::WAASKIT_HANDLE;
 		}
+
+		// Bricks tokens present → enqueue them as the provider layer.
 		// Depend on AdminKit's shipped WaasKit baseline so Bricks' live tokens load
 		// AFTER it and win the cascade — a Bricks site that customises the palette
 		// still overrides the bundled defaults. BUT only when that baseline is
