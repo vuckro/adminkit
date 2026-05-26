@@ -51,6 +51,17 @@ class AdminKit_Local_Avatars {
 	 */
 	const BACKGROUND = 'b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf,cbd5e8,f4cae4,e6f5c9,fff2ae,fdcdac';
 
+	/**
+	 * Avataaars feature filters — restrict to friendly, positive variants per seed.
+	 * Without these, DiceBear occasionally rolls a "sad", "concerned", "vomit" mouth
+	 * or a "cry" / "eyeRoll" eye set; we only want welcoming portraits in a users
+	 * list. Skin colour, hair, accessories, clothes stay unconstrained so the
+	 * native diversity of avataaars (light / tanned / yellow / brown / dark skin
+	 * tones, many hairstyles, etc.) carries through.
+	 */
+	const MOUTH = 'smile,default,twinkle';
+	const EYES  = 'default,happy,wink,winkWacky,hearts,surprised';
+
 	/** User-meta key caching whether the user has a real Gravatar (`1` | `0`). */
 	const GRAVATAR_META = 'adminkit_has_gravatar';
 
@@ -143,6 +154,8 @@ class AdminKit_Local_Avatars {
 			. '&size=' . $size
 			. '&backgroundColor=' . self::BACKGROUND
 			. '&backgroundType=gradientLinear'
+			. '&mouth=' . self::MOUTH
+			. '&eyes=' . self::EYES
 		);
 		$args['found_avatar'] = true;
 		return $args;
