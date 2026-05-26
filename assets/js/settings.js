@@ -769,7 +769,7 @@
 
 		// --- Tokens CTA + revealed reference (lazy build) ------------------------
 		// One disclosure ("Want to dig in? · View all N tokens") gates the entire
-		// read-only reference area — typography card first (humans read top-down,
+		// read-only reference area. Typography card first (humans read top-down,
 		// type before colours), then the token map table below it. Both are built
 		// lazily on first open and live in the same panel so a single click reveals
 		// the whole reference, single click hides it.

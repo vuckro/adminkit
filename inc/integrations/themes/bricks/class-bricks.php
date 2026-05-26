@@ -187,6 +187,49 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		// CSS only prints when the icons feature is on, so no extra gating needed.
 		add_filter( 'adminkit/toolbar_icons', array( __CLASS__, 'toolbar_icons' ) );
 		add_filter( 'adminkit/toolbar_icon_ab_item_nodes', array( __CLASS__, 'toolbar_ab_item_nodes' ) );
+
+		// Force Bricks's own "Builder mode" setting to `custom` whenever the
+		// AdminKit Bricks-builder integration is on — that's the prerequisite for
+		// builder.css's [data-builder-mode="custom"] block to apply. Without it,
+		// Bricks ignores every --builder-* remap we write. Idempotent: only writes
+		// the option when the value actually needs changing.
+		add_action( 'admin_init', array( __CLASS__, 'sync_bricks_builder_mode' ) );
+	}
+
+	/**
+	 * Ensure Bricks's `builderMode` global setting is `custom` so the builder
+	 * actually consumes the --builder-* variables our CSS sets. Bricks supports
+	 * three modes (Light / Dark / Custom) — the `[data-builder-mode="custom"]`
+	 * selector that gates our mapping block only matches in the third one.
+	 *
+	 * Runs on `admin_init`, only when AdminKit's Bricks-builder toggle is on AND
+	 * Bricks is the active theme. The option is read every admin page-load
+	 * (cheap, autoloaded by WordPress) but `update_option` only fires when the
+	 * stored value isn't already `custom` — so on steady state this is a no-op.
+	 *
+	 * Trade-off recorded: when AdminKit's Bricks-builder toggle is on, the user
+	 * can no longer keep Bricks in "Dark" or "Light" builder mode (we'd flip it
+	 * back next admin page-load). That's deliberate — the toggle's whole purpose
+	 * is the Custom-mode restyle. Toggle off if you want Bricks's own modes back.
+	 *
+	 * @return void
+	 */
+	public static function sync_bricks_builder_mode() {
+		if ( ! self::is_active() ) {
+			return;
+		}
+		if ( ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
+			return;
+		}
+		$bricks = get_option( 'bricks_global_settings', array() );
+		if ( ! is_array( $bricks ) ) {
+			$bricks = array();
+		}
+		if ( ( $bricks['builderMode'] ?? '' ) === 'custom' ) {
+			return; // already correct — no write
+		}
+		$bricks['builderMode'] = 'custom';
+		update_option( 'bricks_global_settings', $bricks );
 	}
 
 	/**
