@@ -1,14 +1,14 @@
 /**
  * AdminKit settings — a small, build-free single-page app.
  *
- * Renders three tabs (Dashboard / Tokens / Features) into
+ * Renders four tabs (Dashboard / Design / Features / Plugins) into
  * #adminkit-app from the data PHP hands over in window.AdminKitData. Tabs are
  * pill buttons driven by the URL hash (#design / #settings / …).
  *
- * The Tokens tab is a STATIC reference for now: it lists every semantic
- * colour role (swatch + the --ak token and the provider var / primitive it maps
- * to), read-only, with no generators and no live token manipulation. Features
- * holds the only interactive controls (toggles), saved via REST.
+ * The Design tab leads with the interactive brand controls (light/dark logo
+ * upload + where the mark shows), then a STATIC colour/type reference: every
+ * semantic colour role (swatch + the --ak token and the provider var / primitive
+ * it maps to), read-only. Features holds the module on/off toggles. Both save via REST.
  *
  * No framework, no build step — vanilla DOM.
  */
@@ -32,8 +32,8 @@
 			light: ( D.logos && D.logos.light ) || '',
 			dark:  ( D.logos && D.logos.dark ) || ''
 		},
-		wpLogo: D.wpLogo || 'favicon',  // admin-bar / site-name mark: logo | favicon | hide
-		loginLogo: D.loginLogo || ''    // login screen mark: '' inherit | logo | favicon
+		wpLogo: D.wpLogo || 'favicon',       // admin-bar / site-name mark: logo | favicon | hide
+		loginLogo: D.loginLogo || 'favicon'  // login screen mark: logo | favicon (legacy '' inherit → favicon)
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
@@ -325,11 +325,168 @@
 		return p;
 	}
 
-	// Tokens tab — STATIC reference (no generators / no token writes for
-	// now). One table per group: swatch · role (+ AdminKit badge) · the --ak
-	// token and the provider var / primitive it maps to.
+	// Design tab. Leads with the interactive brand controls — the light/dark logo
+	// upload (Branding) and where/how the mark shows (Logo display) — then the
+	// STATIC reference below: one table per colour group (swatch · role + AdminKit
+	// badge · the --ak token and the provider var / primitive it maps to) + the type scale.
 	function buildDesign() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' } );
+
+		// --- Branding (top) — light/dark logo. The PREVIEW itself is the picker:
+		// clicking it opens the WP media frame; a small × clears the logo. A hidden
+		// URL field stays in sync so a logo can also be typed/pasted. The label is the
+		// localized text only ("Light Mode" / "Dark Mode"), no leading icon.
+		function openMedia( slot, onChange ) {
+			if ( ! window.wp || ! wp.media ) { return; }
+			var frame = wp.media( {
+				title: I.mediaTitle || 'Select a logo',
+				button: { text: I.mediaButton || 'Use this image' },
+				library: { type: 'image' },
+				multiple: false
+			} );
+			frame.on( 'select', function () {
+				var att = frame.state().get( 'selection' ).first().toJSON();
+				var url = ( att && att.url ) || '';
+				state.logos[ slot ] = url;
+				if ( onChange ) { onChange(); }
+				markDirty();
+			} );
+			frame.open();
+		}
+		function logoField( slot, label, textLabel ) {
+			var id = 'ak-logo-' + slot;
+			var preview = el( 'img', { 'class': 'ak-logo-pick__img', alt: '' } );
+			// Empty-state placeholder shown inside the picker when no logo is set.
+			var ph = el( 'span', { 'class': 'ak-logo-pick__ph', text: I.logoPick || 'Choose a logo' } );
+			var input = el( 'input', {
+				id: id, type: 'url', 'class': 'ak-field__input', value: state.logos[ slot ],
+				placeholder: I.logoPlaceholder || '', spellcheck: 'false'
+			} );
+			var clear = el( 'button', {
+				type: 'button', 'class': 'ak-logo-pick__clear',
+				'aria-label': I.logoRemove || 'Remove logo', title: I.logoRemove || 'Remove logo'
+			} );
+			clear.innerHTML = ICONS.close;
+			var pick = el( 'button', {
+				// Slot modifier (--light / --dark) gives each preview a FIXED backdrop
+				// matching the surface that logo is designed for (see settings.css).
+				type: 'button', 'class': 'ak-logo-pick ak-logo-pick--' + slot,
+				'aria-label': I.logoChange || 'Change logo'
+			}, [ preview, ph ] );
+			function syncPreview() {
+				var url = state.logos[ slot ];
+				pick.classList.toggle( 'is-set', !! url );
+				pick.setAttribute( 'title', url ? ( I.logoChange || 'Change logo' ) : ( I.logoPick || 'Choose a logo' ) );
+				clear.hidden = ! url;
+				if ( url ) {
+					preview.src = url;
+					preview.style.display = '';
+				} else {
+					preview.removeAttribute( 'src' );
+					preview.style.display = 'none';
+				}
+			}
+			input.addEventListener( 'input', function () {
+				state.logos[ slot ] = input.value.trim();
+				syncPreview();
+				markDirty();
+			} );
+			pick.addEventListener( 'click', function () {
+				openMedia( slot, function () { input.value = state.logos[ slot ]; syncPreview(); } );
+			} );
+			clear.addEventListener( 'click', function () {
+				state.logos[ slot ] = '';
+				input.value = '';
+				syncPreview();
+				markDirty();
+			} );
+			syncPreview();
+			// Label = the localized TEXT only ("Light Mode" / "Dark Mode"); no leading
+			// icon. The full label stays the title for assistive tech.
+			var lbl = el( 'label', { 'class': 'ak-field__label', 'for': id, title: label }, [
+				el( 'span', { 'class': 'ak-field__label-tx', text: textLabel || label } )
+			] );
+			return el( 'div', { 'class': 'ak-field' }, [
+				lbl,
+				el( 'div', { 'class': 'ak-field__control' }, [
+					el( 'div', { 'class': 'ak-logo-pick__wrap' }, [ pick, clear ] ),
+					input
+				] )
+			] );
+		}
+		// Per-location brand-mark controls — one segmented control each for the admin
+		// bar and the login screen (favicon = square, logo = rectangle). Bricks reads
+		// brand_logo directly, so it has no control. Reusable builder so both stay
+		// visually identical.
+		function logoSeg( stateKey, labelId, label, opts ) {
+			var btns = [];
+			var seg = el( 'div', { 'class': 'ak-seg', role: 'radiogroup', 'aria-labelledby': labelId } );
+			opts.forEach( function ( o ) {
+				var active = state[ stateKey ] === o.v;
+				var b = el( 'button', {
+					type: 'button',
+					'class': 'ak-seg__opt' + ( active ? ' is-active' : '' ),
+					role: 'radio', 'aria-checked': active ? 'true' : 'false',
+					title: o.label, text: o.label
+				} );
+				b._v = o.v;
+				b.addEventListener( 'click', function () {
+					if ( state[ stateKey ] === o.v ) { return; }
+					state[ stateKey ] = o.v;
+					btns.forEach( function ( x ) {
+						var on = x._v === o.v;
+						x.classList.toggle( 'is-active', on );
+						x.setAttribute( 'aria-checked', on ? 'true' : 'false' );
+					} );
+					markDirty();
+				} );
+				btns.push( b );
+				seg.appendChild( b );
+			} );
+			return el( 'div', { 'class': 'ak-field ak-field--inline' }, [
+				el( 'label', { 'class': 'ak-field__label', id: labelId, text: label } ),
+				seg
+			] );
+		}
+
+		var wpField = logoSeg( 'wpLogo', 'ak-wp-logo-label', I.wpLogoLabel || 'Admin bar', [
+			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
+			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' },
+			{ v: 'hide',    label: I.wpLogoHide || 'Hide' }
+		] );
+		// When no Site Icon is set, the favicon option can't show anything — note it.
+		if ( ! D.hasSiteIcon && I.wpLogoNoIcon ) {
+			wpField.appendChild( el( 'p', { 'class': 'ak-field__hint', text: I.wpLogoNoIcon } ) );
+		}
+		// Login screen — its own choice: Logo or Favicon (no "Inherit"; defaults to
+		// favicon server-side, kept simple).
+		var loginField = logoSeg( 'loginLogo', 'ak-login-logo-label', I.loginLogoLabel || 'Login screen', [
+			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
+			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' }
+		] );
+
+		// Block 1 — Logo (upload): the light + dark brand-logo images, with the
+		// ideal-proportions hint. Block 2 below controls where/how it's shown.
+		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
+			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
+			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
+			el( 'div', { 'class': 'ak-rows' }, [
+				logoField( 'light', I.logoLight, I.logoLightMode ),
+				logoField( 'dark', I.logoDark, I.logoDarkMode )
+			] )
+		] ) );
+
+		// Block 2 — Logo display: how the uploaded logo appears in each location
+		// (the admin bar + the login screen). Bricks reads the logo directly.
+		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
+			el( 'h2', { 'class': 'ak-group__title', text: I.logoDisplay || 'Logo display' } ),
+			I.logoDisplayHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoDisplayHint } ) : null,
+			el( 'div', { 'class': 'ak-rows' }, [
+				wpField,
+				loginField
+			] )
+		] ) );
+
 		// Legend — explains the read-only mapping notation up front.
 		p.appendChild( el( 'div', { 'class': 'ak-cascade' }, [
 			el( 'strong', { text: I.designLegendTitle || 'Live colour reference' } ),
@@ -393,158 +550,6 @@
 
 	function buildFeatures() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( I.featuresIntro ) ] );
-
-		// --- Branding (top) — light/dark logo. The PREVIEW itself is the picker:
-		// clicking it opens the WP media frame; a small × clears the logo. A hidden
-		// URL field stays in sync so a logo can also be typed/pasted. The label is the
-		// localized text only ("Light Mode" / "Dark Mode"), no leading icon.
-		function openMedia( slot, onChange ) {
-			if ( ! window.wp || ! wp.media ) { return; }
-			var frame = wp.media( {
-				title: I.mediaTitle || 'Select a logo',
-				button: { text: I.mediaButton || 'Use this image' },
-				library: { type: 'image' },
-				multiple: false
-			} );
-			frame.on( 'select', function () {
-				var att = frame.state().get( 'selection' ).first().toJSON();
-				var url = ( att && att.url ) || '';
-				state.logos[ slot ] = url;
-				if ( onChange ) { onChange(); }
-				markDirty();
-			} );
-			frame.open();
-		}
-		function logoField( slot, label, textLabel ) {
-			var id = 'ak-logo-' + slot;
-			var preview = el( 'img', { 'class': 'ak-logo-pick__img', alt: '' } );
-			// Empty-state placeholder shown inside the picker when no logo is set.
-			var ph = el( 'span', { 'class': 'ak-logo-pick__ph', text: I.logoPick || 'Choose a logo' } );
-			var input = el( 'input', {
-				id: id, type: 'url', 'class': 'ak-field__input', value: state.logos[ slot ],
-				placeholder: I.logoPlaceholder || '', spellcheck: 'false'
-			} );
-			var clear = el( 'button', {
-				type: 'button', 'class': 'ak-logo-pick__clear',
-				'aria-label': I.logoRemove || 'Remove logo', title: I.logoRemove || 'Remove logo'
-			} );
-			clear.innerHTML = ICONS.close;
-			var pick = el( 'button', {
-				type: 'button', 'class': 'ak-logo-pick',
-				'aria-label': I.logoChange || 'Change logo'
-			}, [ preview, ph ] );
-			function syncPreview() {
-				var url = state.logos[ slot ];
-				pick.classList.toggle( 'is-set', !! url );
-				pick.setAttribute( 'title', url ? ( I.logoChange || 'Change logo' ) : ( I.logoPick || 'Choose a logo' ) );
-				clear.hidden = ! url;
-				if ( url ) {
-					preview.src = url;
-					preview.style.display = '';
-				} else {
-					preview.removeAttribute( 'src' );
-					preview.style.display = 'none';
-				}
-			}
-			input.addEventListener( 'input', function () {
-				state.logos[ slot ] = input.value.trim();
-				syncPreview();
-				markDirty();
-			} );
-			pick.addEventListener( 'click', function () {
-				openMedia( slot, function () { input.value = state.logos[ slot ]; syncPreview(); } );
-			} );
-			clear.addEventListener( 'click', function () {
-				state.logos[ slot ] = '';
-				input.value = '';
-				syncPreview();
-				markDirty();
-			} );
-			syncPreview();
-			// Label = the localized TEXT only ("Light Mode" / "Dark Mode"); no leading
-			// icon. The full label stays the title for assistive tech.
-			var lbl = el( 'label', { 'class': 'ak-field__label', 'for': id, title: label }, [
-				el( 'span', { 'class': 'ak-field__label-tx', text: textLabel || label } )
-			] );
-			return el( 'div', { 'class': 'ak-field' }, [
-				lbl,
-				el( 'div', { 'class': 'ak-field__control' }, [
-					el( 'div', { 'class': 'ak-logo-pick__wrap' }, [ pick, clear ] ),
-					input
-				] )
-			] );
-		}
-		// Per-location brand-mark controls — one segmented control each for the admin
-		// bar and the login screen (favicon = square, logo = rectangle); the login one
-		// adds "Inherit" (= follow the admin bar). Bricks reads brand_logo directly, so
-		// it has no control. Reusable builder so both stay visually identical.
-		function logoSeg( stateKey, labelId, label, opts ) {
-			var btns = [];
-			var seg = el( 'div', { 'class': 'ak-seg', role: 'radiogroup', 'aria-labelledby': labelId } );
-			opts.forEach( function ( o ) {
-				var active = state[ stateKey ] === o.v;
-				var b = el( 'button', {
-					type: 'button',
-					'class': 'ak-seg__opt' + ( active ? ' is-active' : '' ),
-					role: 'radio', 'aria-checked': active ? 'true' : 'false',
-					title: o.label, text: o.label
-				} );
-				b._v = o.v;
-				b.addEventListener( 'click', function () {
-					if ( state[ stateKey ] === o.v ) { return; }
-					state[ stateKey ] = o.v;
-					btns.forEach( function ( x ) {
-						var on = x._v === o.v;
-						x.classList.toggle( 'is-active', on );
-						x.setAttribute( 'aria-checked', on ? 'true' : 'false' );
-					} );
-					markDirty();
-				} );
-				btns.push( b );
-				seg.appendChild( b );
-			} );
-			return el( 'div', { 'class': 'ak-field ak-field--inline' }, [
-				el( 'label', { 'class': 'ak-field__label', id: labelId, text: label } ),
-				seg
-			] );
-		}
-
-		var wpField = logoSeg( 'wpLogo', 'ak-wp-logo-label', I.wpLogoLabel || 'Admin bar', [
-			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
-			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' },
-			{ v: 'hide',    label: I.wpLogoHide || 'Hide' }
-		] );
-		// When no Site Icon is set, the favicon option can't show anything — note it.
-		if ( ! D.hasSiteIcon && I.wpLogoNoIcon ) {
-			wpField.appendChild( el( 'p', { 'class': 'ak-field__hint', text: I.wpLogoNoIcon } ) );
-		}
-		var loginField = logoSeg( 'loginLogo', 'ak-login-logo-label', I.loginLogoLabel || 'Login screen', [
-			{ v: '',        label: I.wpLogoInherit || 'Inherit' },
-			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
-			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' }
-		] );
-
-		// Block 1 — Logo (upload): the light + dark brand-logo images, with the
-		// ideal-proportions hint. Block 2 below controls where/how it's shown.
-		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
-			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
-			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
-			el( 'div', { 'class': 'ak-rows' }, [
-				logoField( 'light', I.logoLight, I.logoLightMode ),
-				logoField( 'dark', I.logoDark, I.logoDarkMode )
-			] )
-		] ) );
-
-		// Block 2 — Logo display: how the uploaded logo appears in each location
-		// (the admin bar + the login screen). Bricks reads the logo directly.
-		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
-			el( 'h2', { 'class': 'ak-group__title', text: I.logoDisplay || 'Logo display' } ),
-			I.logoDisplayHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoDisplayHint } ) : null,
-			el( 'div', { 'class': 'ak-rows' }, [
-				wpField,
-				loginField
-			] )
-		] ) );
 
 		var refs = {};     // key -> { input, row }
 		var groups = [];   // [{ label, rows }] in first-seen order

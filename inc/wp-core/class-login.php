@@ -161,9 +161,11 @@ class AdminKit_Core_Login {
 	}
 
 	/**
-	 * The effective login-screen mark mode — its OWN `login_logo` setting when set,
-	 * otherwise inherit the admin-bar `wp_logo` choice. So the login can show a
-	 * favicon (square) while the bar shows the logo (rectangle), or vice versa.
+	 * The effective login-screen mark mode — its OWN `login_logo` setting (`logo`
+	 * or `favicon`, defaulting to `favicon`), independent of the admin bar. So the
+	 * login can show a favicon (square) while the bar shows the logo (rectangle), or
+	 * vice versa. A legacy empty value ("inherit `wp_logo`") is still honoured for
+	 * back-compat, though the UI no longer offers it.
 	 *
 	 * @return string 'logo' | 'favicon' | 'hide'
 	 */

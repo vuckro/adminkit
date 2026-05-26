@@ -150,10 +150,11 @@ list, the `adminkit/setting/{key}` filter, and the REST save.
 `AdminKit_Settings` is the registry; `AdminKit_Settings_Page` mounts a small
 vanilla-JS SPA (`assets/js/settings.js`) on the top-level **AdminKit** menu and
 persists via one REST route (`adminkit/v1/settings`). Four tabs: **Dashboard**;
-**Design** (a read-only reference of the semantic token map — the `design` i18n
-key, formerly "Tokens"); **Settings** (the module toggles plus a Branding block —
-the brand logo and the `wp_logo` mode for the site-name brand mark — the
-`features` key, formerly "Features"); and **Plugins** (every installed plugin
+**Design** (leads with the interactive Branding block — the brand logo plus the
+`wp_logo` / `login_logo` modes for the site-name and login brand marks — then a
+read-only reference of the semantic token map; the `design` i18n key, formerly
+"Tokens"); **Features** (the module toggles — the `features` key, formerly
+"Settings"); and **Plugins** (every installed plugin
 plus AdminKit's active theme adapter, each carrying a **Native** badge when
 AdminKit ships a tuned adapter for it — a per-host enable toggle plus dark mode —
 while everything else inherits AdminKit's **generic** base token styling
@@ -200,9 +201,10 @@ individually switch-off-able:
 - **Branding**: `logo_light`, `logo_dark`, `wp_logo` (`logo` | `favicon` | `hide`
   — the brand mark at the site-name node; the top-left WordPress logo is always
   hidden) and `logo_size` (px, 16–32) — resolved by
-  `AdminKit_Settings::brand_logo()` / `AdminKit_Core_Branding`. `login_logo` takes
-  the same `logo` | `favicon` | `hide` plus `''` (inherit `wp_logo`) and
-  independently drives the wp-login.php mark via `AdminKit_Core_Login`.
+  `AdminKit_Settings::brand_logo()` / `AdminKit_Core_Branding`. `login_logo`
+  (`logo` | `favicon`, default `favicon`) independently drives the wp-login.php mark
+  via `AdminKit_Core_Login` (a legacy `''` = inherit `wp_logo` is still honoured, but
+  the UI no longer offers it).
 - **Integration gates**: one `integration_{slug}_enabled` per discovered adapter
   (default ON), bound to `adminkit/integration_enabled` and driven by the Plugins
   tab.
@@ -216,8 +218,9 @@ $density = AdminKit_Settings::get( 'foo_density' );
 ```
 
 Saving keeps only registered keys and runs each through its `sanitize` callback.
-There is intentionally **no per-token colour editor** — the Design tab is a
-read-only map; the palette is driven by the provider/baseline cascade.
+There is intentionally **no per-token colour editor** — the Design tab's token
+map is a read-only reference (the palette is driven by the provider/baseline
+cascade); its only interactive controls are the Branding block at the top.
 
 ## Where to go next
 

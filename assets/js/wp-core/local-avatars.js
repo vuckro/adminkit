@@ -4,13 +4,15 @@
  * The avatar bubble itself is the upload target: clicking it (a focusable
  * <button> wrapping the image) opens the WordPress media frame; picking an image
  * stores its attachment id in the hidden field, swaps the preview in, and flips
- * the field to its "filled" state. "Remove" clears the id + preview and reverts
- * to the empty placeholder. Filled / empty is carried by an `is-filled` /
+ * the field to its "filled" state. "Reset to default" clears the upload AND any
+ * rolled seed (flagging the save to clear a stored seed too) and reverts the
+ * preview to the default (Gravatar / generated). It shows only when the avatar
+ * deviates from the default. Filled / empty is carried by an `is-filled` /
  * `is-empty` class on the root (CSS owns the visuals).
  *
  * The page-title avatar (the "hero", built by profile-account.js) is wired here
  * too as a SECOND trigger that shares the one hidden input + state — no media
- * frame logic is duplicated. Picking/removing/generating syncs BOTH previews.
+ * frame logic is duplicated. Picking/resetting/generating syncs BOTH previews.
  *
  * A "Generate a random avatar" control (available whenever local avatars are on)
  * rolls a fresh client-side seed, previews the matching DiceBear face, and writes
@@ -35,9 +37,19 @@
 	var preview = document.getElementById('adminkit-local-avatar-preview');
 	var placeholder = document.getElementById('adminkit-local-avatar-placeholder');
 	var mediaBtn = document.getElementById('adminkit-local-avatar-btn');
-	var removeBtn = document.getElementById('adminkit-local-avatar-remove');
+	var resetBtn = document.getElementById('adminkit-local-avatar-reset');
+	var resetInput = document.getElementById('adminkit-local-avatar-reset-input');
 	var generateBtn = document.getElementById('adminkit-local-avatar-generate');
 	if (!input || !preview || !mediaBtn) { return; }
+
+	// The avatar deviates from the default when there's a live upload, a pending
+	// rolled seed, or a server-known custom state (an upload or a stored seed) that
+	// hasn't been reset this session. Drives the Reset button's visibility.
+	var startedCustom = root.dataset.hasCustom === '1';
+	function customActive() {
+		if (resetInput && resetInput.value === '1') { return false; } // reset pending
+		return !!input.value || (seedInput && !!seedInput.value) || startedCustom;
+	}
 
 	var frame = null;
 	// The hero's preview <img>, populated by setupHero() so previews stay in sync.
@@ -70,9 +82,9 @@
 			preview.setAttribute('hidden', '');
 			if (placeholder) { placeholder.removeAttribute('hidden'); }
 		}
-		if (removeBtn) {
-			if (hasUpload) { removeBtn.removeAttribute('hidden'); }
-			else { removeBtn.setAttribute('hidden', ''); }
+		if (resetBtn) {
+			if (customActive()) { resetBtn.removeAttribute('hidden'); }
+			else { resetBtn.setAttribute('hidden', ''); }
 		}
 		mediaBtn.setAttribute('aria-label', hasUpload ? (L.ariaFill || '') : (L.ariaEmpty || ''));
 	}
@@ -95,8 +107,9 @@
 				var attachment = frame.state().get('selection').first().toJSON();
 				if (!attachment || !attachment.id) { return; }
 				input.value = attachment.id;
-				// An explicit upload supersedes a pending generated seed.
+				// An explicit upload supersedes a pending generated seed / reset intent.
 				if (seedInput) { seedInput.value = ''; }
+				if (resetInput) { resetInput.value = ''; }
 				var size = pickSize(attachment.sizes);
 				setPreviewSrc(size ? size.url : (attachment.url || ''));
 				sync();
@@ -108,19 +121,20 @@
 	// The preview/overlay button is the primary upload target.
 	mediaBtn.addEventListener('click', openFrame);
 
-	if (removeBtn) {
-		removeBtn.addEventListener('click', function (e) {
+	if (resetBtn) {
+		resetBtn.addEventListener('click', function (e) {
 			e.preventDefault();
+			// Reset to default: clear the upload AND any pending seed, and flag the
+			// reset so save() also clears a STORED seed server-side — reverting to the
+			// real Gravatar / deterministic generated face.
 			input.value = '';
-			// Removing the upload doesn't roll a generated avatar — drop any pending
-			// seed so save reverts to the effective fallback (Gravatar / generated).
 			if (seedInput) { seedInput.value = ''; }
-			// Revert the preview to the effective no-upload avatar (Gravatar /
-			// generated) so the bubble is never left blank.
-			setPreviewSrc(L.fallbackUrl || '');
+			if (resetInput) { resetInput.value = '1'; }
+			// Preview the TRUE default so the bubble is never left blank.
+			setPreviewSrc(L.defaultUrl || '');
 			sync();
-			// Move focus back to the target so keyboard users aren't stranded on
-			// the now-hidden Remove control.
+			// Move focus back to the picker so keyboard users aren't stranded on the
+			// now-hidden Reset control.
 			mediaBtn.focus();
 		});
 	}
@@ -148,6 +162,7 @@
 	function applyGenerated() {
 		var seed = rollSeed();
 		if (seedInput) { seedInput.value = seed; }
+		if (resetInput) { resetInput.value = ''; }
 		input.value = '';
 		var url = generatedUrl(seed);
 		if (url) { setPreviewSrc(url); }

@@ -270,6 +270,14 @@ class AdminKit_Core_Branding {
 			. $item . ' .ak-brand-logo--light{display:block}'
 			. ':root[data-adminkit-theme="dark"] ' . $item . ' .ak-brand-logo--light{display:none}'
 			. ':root[data-adminkit-theme="dark"] ' . $item . ' .ak-brand-logo--dark{display:block}'
+			// Mobile (≤782px): WP collapses the site-name cell to a 52px icon
+			// (text-indent:100%; overflow:hidden; width:52px), which clips a wordmark.
+			// Let the cell size to the logo and show it in full on the 46px bar — kept
+			// compact (height/max-width) so it doesn't crowd the right-hand icons.
+			. '@media screen and (max-width:782px){'
+			. $item . '{width:auto;text-indent:0;overflow:visible;padding:0 10px}'
+			. $img . '{height:24px;max-width:100px}'
+			. '}'
 			. self::hide_site_name_glyph();
 	}
 

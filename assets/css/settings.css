@@ -685,6 +685,25 @@
 }
 .adminkit-app .ak-logo-pick:hover { border-color: var(--ak-border-strong); }
 .adminkit-app .ak-logo-pick:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
+/* Per-mode FIXED backdrop: the light-mode logo always previews on a light surface,
+   the dark-mode logo always on a dark one — so each logo is shown on the background
+   it's built for (a white logo isn't invisible on a light field) and the two read as
+   distinct. Deliberately raw colours, NOT --ak-* tokens: these must NOT flip with the
+   admin theme — they represent the logo's target surface, like a swatch. */
+.adminkit-app .ak-logo-pick--light {
+	background: #ffffff;
+	color: #50575e;
+	border-color: transparent;
+}
+.adminkit-app .ak-logo-pick--dark {
+	background: #1d1d1d;
+	color: #c3c4c7;
+	border-color: transparent;
+}
+/* Borderless preview — the backdrop alone frames the logo. Override hover too, or
+   the base .ak-logo-pick:hover would re-show a token border. Focus ring stays. */
+.adminkit-app .ak-logo-pick--light:hover,
+.adminkit-app .ak-logo-pick--dark:hover { border-color: transparent; }
 /* Preview image — constrained to the small box so a large source NEVER blows up
    the layout; shown in full (contain), not cropped. */
 .adminkit-app .ak-logo-pick__img {

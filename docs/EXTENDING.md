@@ -63,7 +63,7 @@ toggle over to the host.
 | `adminkit/brand_logo` | filter | `('' \| string \| array)` | Brand logo fallback when the Branding settings are empty. Return a URL string, or `array( 'light' => …, 'dark' => …, 'preloader' => … )`. Drives the brand mark at the site-name node **and** the Bricks builder; the settings win over the filter. |
 
 Resolved by `AdminKit_Settings::brand_logo( $mode )`. Logos are normally set
-no-code in Settings → Features → Branding, alongside the `wp_logo` mode for the
+no-code in the AdminKit **Design** tab → Branding, alongside the `wp_logo` mode for the
 brand mark rendered at the site-name node (next to the site title; the top-left
 WordPress logo is always hidden): `logo` (the brand logo), `favicon` (the site
 icon), or `hide`. `logo` falls back to `favicon`, then to a bare site title when
@@ -124,7 +124,13 @@ served as the Gravatar `d=` fallback, so a real Gravatar always wins. This is
 folded into the local-avatars toggle: there is **no separate generated-avatars
 setting**. The generator is [DiceBear](https://www.dicebear.com)'s hosted,
 key-less HTTP API (`https://api.dicebear.com`), seeded with a non-PII value (the
-md5 of the login, or a stored random seed when the user rolls one). Both hooks are
+md5 of the login, or a stored random seed when the user rolls one).
+
+The profile field offers three actions: **upload** (the avatar bubble opens the
+media frame), **Generate a random avatar** (rolls a new seed), and **Reset to
+default** — shown only when the avatar deviates from the default, it clears both
+the uploaded image and any rolled seed so the user reverts to their real Gravatar
+(or the deterministic generated face). Both hooks are
 in `inc/wp-core/class-local-avatars.php`:
 
 | Hook | Type | Signature | Purpose |

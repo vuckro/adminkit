@@ -49,6 +49,8 @@ docs/                   Deep-dive guides (see "More docs" below).
 | Add a setting / feature toggle | `AdminKit_Settings::register()` (+ a `feature_descriptors()` row for the UI), then update the Settings inventory | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#settings) |
 | Add a hook (filter / action) | namespace it `adminkit/…`, then document it | [docs/EXTENDING.md](docs/EXTENDING.md) |
 | Add a branding / logo option | `inc/wp-core/class-branding.php` + the `brand_logo()` resolver | [docs/EXTENDING.md](docs/EXTENDING.md) |
+| Install / refresh on a WP site (no symlink) | `php dev/package.php --target=/path/to/wp-content/plugins` | [docs/INSTALL.md](docs/INSTALL.md) |
+| Cut a release zip (clean, no `dev/`) | `php dev/package.php --ref=vX.Y.Z --zip=adminkit-X.Y.Z.zip` | [docs/INSTALL.md](docs/INSTALL.md#cutting-a-versioned-release-checklist) |
 | Understand the whole system | — | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 
 ## Keep the docs alive (every iteration)
@@ -94,10 +96,13 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 - **`assets/css/waaskit-tokens.css` is GENERATED.** Never hand-edit it. Change
   `tokens/palettes/*.json` and run `php tokens/build.php`. `--check` is a drift gate.
 - **Every AdminKit stylesheet reads `--ak-*` tokens, never raw colours.** That
-  indirection powers dark mode and provider theming. Keep it. (One deliberate
-  exception: `integrations/themes/bricks/css/builder.css` — the Bricks builder is
-  a live-WaasKit surface where `--ak-*` isn't loaded but the WaasKit provider vars
-  are, so it maps to those directly. See its header.)
+  indirection powers dark mode and provider theming. Keep it. Deliberate exceptions:
+  (1) `integrations/themes/bricks/css/builder.css` — the Bricks builder is a
+  live-WaasKit surface where `--ak-*` isn't loaded but the WaasKit provider vars
+  are, so it maps to those directly (see its header); (2) the `.ak-logo-pick--light`
+  / `--dark` logo-preview backdrops in `settings.css` — fixed light/dark on purpose
+  (they show each brand logo on the surface it's built for, like a swatch, and must
+  NOT flip with the admin theme). Don't "tokenize" these — it'd break the fixed behaviour.
 - **Integration discovery is `glob( inc/integrations/*/*/class-*.php )`** — two
   levels deep (`{plugins,themes}/{slug}/`). The class name derives from the file
   basename (`AdminKit_Integration_{Studly_Slug}`). Don't rename a class without
@@ -109,9 +114,11 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 - **Dev tooling lives in `dev/` (tracked) and is excluded from the dist zip via
   `.distignore`.** `tokens/build.php` stays in `tokens/` (next to its palettes).
   Don't point docs at `.claude/` — that's local-only and gitignored.
-- **The Design settings tab (the token reference, i18n key `design`) is read-only.**
-  There is no per-token colour editor; the palette is driven by the provider/baseline
-  cascade. Don't re-add the removed editing machinery.
+- **The Design tab's token reference (i18n key `design`) is read-only.** There is
+  no per-token colour editor; the palette is driven by the provider/baseline cascade.
+  Don't re-add the removed editing machinery. (The tab itself is NOT fully read-only:
+  it leads with the interactive Branding + Logo display controls — moved here from the
+  Features tab — above the read-only colour/type map.)
 - **The token layers are each optional** (provider → baseline → neutral). Don't
   hard-require any one of them. See ARCHITECTURE.
 - **Default feature toggles ship ON** — Gutenberg canvas theming
@@ -261,7 +268,8 @@ commits aren't attributed to `user@host`.
 
 ## More docs
 
-[README.md](README.md) (overview + extension API) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+[README.md](README.md) (overview + extension API) · [docs/INSTALL.md](docs/INSTALL.md)
+(end users, devs, release process) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 (bootstrap, asset registry, settings) · [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)
 (contract + walkthrough + patterns) · [docs/TOKENS.md](docs/TOKENS.md) (token map,
 build, drift, alignment) · [docs/EXTENDING.md](docs/EXTENDING.md) (every hook) ·

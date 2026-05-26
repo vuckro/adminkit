@@ -22,7 +22,11 @@ A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone �
 1. Download a release zip (or clone this repo into `wp-content/plugins/adminkit/`).
 2. Activate "AdminKit" in the WordPress Plugins screen.
 
-That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) has a **Design** tab (a read-only token reference), a **Settings** tab (module toggles + your brand logo and the site-name brand-mark mode), and a **Plugins** tab listing *every installed* plugin (plus AdminKit's active theme adapter). Each row carries a **Native** badge when AdminKit ships a tuned adapter for it (a per-host enable toggle plus dark mode; the badge tracks whether an adapter exists, not whether the plugin is currently active); everything else is themed automatically by AdminKit's **generic** base token layer. Rows are grouped (**Plugins**, **Themes**) with a count on each group title, and AdminKit itself shows as a locked **System** row (always on, not removable here). The registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+See [`docs/INSTALL.md`](docs/INSTALL.md) for the full install guide — release zip,
+developer clone-and-symlink, and the `dev/package.php` packager that cuts a clean
+release zip from any branch or tag.
+
+That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) has a **Design** tab (your brand logo and the site-name brand-mark mode, then a read-only token reference), a **Features** tab (module toggles), and a **Plugins** tab listing *every installed* plugin (plus AdminKit's active theme adapter). Each row carries a **Native** badge when AdminKit ships a tuned adapter for it (a per-host enable toggle plus dark mode; the badge tracks whether an adapter exists, not whether the plugin is currently active); everything else is themed automatically by AdminKit's **generic** base token layer. Rows are grouped (**Plugins**, **Themes**) with a count on each group title, and AdminKit itself shows as a locked **System** row (always on, not removable here). The registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
@@ -55,9 +59,9 @@ Optional adapters live in `inc/integrations/plugins/{slug}/` (plugin adapters) a
 The **Bricks** adapter, when active:
 
 - Enqueues the Bricks-generated tokens (`/uploads/bricks/css/style-manager.min.css`) so a color changed in the Bricks builder propagates to wp-admin on the next page load.
-- Leaves the Bricks Builder UI native by default; an opt-in **Bricks builder** toggle (Settings tab) restyles the builder chrome with your tokens, and falls back to AdminKit's shipped baseline if you clear Bricks's own colours — so the builder never loses its look.
+- Leaves the Bricks Builder UI native by default; an opt-in **Bricks builder** toggle (Features tab) restyles the builder chrome with your tokens, and falls back to AdminKit's shipped baseline if you clear Bricks's own colours — so the builder never loses its look.
 
-The **Gutenberg** adapter ships token-mapped header / sidebar / publish-button polish for the block, site, widgets, and navigation editors via the `enqueue_block_editor_assets` hook (NOT `admin_enqueue_scripts`) so the CSS only enters editor surfaces. The **Gutenberg** toggle (Settings tab, on by default) additionally themes the iframed editor canvas — content + native blocks — in light and dark; turn it off to keep the canvas matching your live site exactly.
+The **Gutenberg** adapter ships token-mapped header / sidebar / publish-button polish for the block, site, widgets, and navigation editors via the `enqueue_block_editor_assets` hook (NOT `admin_enqueue_scripts`) so the CSS only enters editor surfaces. The **Gutenberg** toggle (Features tab, on by default) additionally themes the iframed editor canvas — content + native blocks — in light and dark; turn it off to keep the canvas matching your live site exactly.
 
 AdminKit also ships adapters for **WooCommerce**, **ACF**, the **Fluent** suite (CRM, Forms, SMTP, Booking, Cart), **Slim SEO**, **HappyFiles**, **FlyingPress**, **WP Migrate**, and **Admin Menu Editor**. Each self-detects its host and stays dormant when the host isn't installed. They split into two flavors: *Tier A* adapters remap the host's own CSS variables (zero `!important`, dark mode for free); *Tier B* adapters override the host's selectors because it hardcodes its colors — run `php dev/adapter-audit.php` to see each adapter's override budget.
 

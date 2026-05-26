@@ -767,6 +767,10 @@ msgstr "Modifier"
 msgid "Generate a random avatar"
 msgstr "Générer un avatar aléatoire"
 
+#: inc/wp-core/class-local-avatars.php:497
+msgid "Reset to default"
+msgstr "Réinitialiser"
+
 #: inc/wp-core/class-local-avatars.php:498
 msgid "Upload an image to use as this user's avatar everywhere. Leave empty to use Gravatar — or a generated avatar when that option is on."
 msgstr "Envoyez une image à utiliser comme avatar de cet utilisateur partout. Laissez vide pour utiliser Gravatar — ou un avatar généré lorsque cette option est activée."

@@ -84,15 +84,16 @@ class AdminKit_Settings {
 		) );
 
 		// Login-screen mark — its OWN choice, independent of the admin bar: `logo`
-		// (rectangular wordmark) / `favicon` (square site icon) / `hide`, or '' =
-		// inherit (follow wp_logo). Read by AdminKit_Core_Login::login_mode(). Default
-		// '' so the login keeps following the admin-bar choice until set explicitly.
+		// (rectangular wordmark) or `favicon` (square site icon). Read by
+		// AdminKit_Core_Login::login_mode(). Defaults to `favicon`. (A legacy '' =
+		// "inherit wp_logo" is still honoured by login_mode() for back-compat, but the
+		// UI no longer offers it — kept simple: just Logo / Favicon.)
 		self::register( 'login_logo', array(
 			'type'     => 'select',
 			'group'    => 'branding',
-			'default'  => '',
+			'default'  => 'favicon',
 			'sanitize' => static function ( $v ) {
-				return in_array( $v, array( '', 'logo', 'favicon', 'hide' ), true ) ? $v : '';
+				return in_array( $v, array( 'logo', 'favicon' ), true ) ? $v : 'favicon';
 			},
 		) );
 	}

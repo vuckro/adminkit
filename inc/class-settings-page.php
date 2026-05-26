@@ -250,7 +250,7 @@ class AdminKit_Settings_Page {
 			'i18n'         => array(
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
 				'design'            => __( 'Design', 'adminkit' ),
-				'features'          => __( 'Settings', 'adminkit' ),
+				'features'          => __( 'Features', 'adminkit' ),
 				'soon'              => __( 'Coming soon', 'adminkit' ),
 				'own'               => __( 'AdminKit', 'adminkit' ),
 				'ownHint'           => __( 'AdminKit-defined role (no provider equivalent).', 'adminkit' ),
