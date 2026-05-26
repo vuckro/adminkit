@@ -185,13 +185,15 @@ individually switch-off-able:
   `adminkit/toolbar_icons`; non-destructive — only stock dashicons),
   and `custom_avatars_enabled` (`inc/wp-core/class-local-avatars.php`) registers
   "AdminKit Portraits (Generated)" in *Settings → Discussion → Default Avatar*
-  via the core `avatar_defaults` filter, and intercepts `pre_get_avatar_data` to
-  set `$args['url']` directly to a unique DiceBear portrait — but only when the
-  call's requested default is AdminKit's own key. Setting `url` (rather than
-  `default`) is deliberate: Gravatar's Photon proxy strips query strings from
-  the `d=` fallback, which would erase the per-user seed. Non-PII seed (md5 of
-  the login) + pastel gradient backdrop so users look obviously distinct. See
-  [EXTENDING.md → Avatars](EXTENDING.md#avatars).
+  via the core `avatar_defaults` filter, and intercepts `pre_get_avatar_data`
+  with a three-step cascade — bail if another filter already set `$args['url']`,
+  bail if the user has a real Gravatar (`d=404` HEAD probe cached in
+  `adminkit_has_gravatar` user meta, invalidated on `profile_update`), otherwise
+  set `$args['url']` directly to a unique DiceBear portrait. Setting `url`
+  (rather than `default`) is deliberate: Gravatar's Photon proxy strips query
+  strings from the `d=` fallback, which would erase the per-user seed. Non-PII
+  seed (md5 of the login) + solid pastel backdrop per user so a fresh users
+  list reads as distinct cards. See [EXTENDING.md → Avatars](EXTENDING.md#avatars).
 - **Off by default** (opt-in): `bricks_builder_enabled` (restyles a third-party
   builder's own UI, so it stays inert until asked for; only shown when Bricks is
   active).

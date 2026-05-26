@@ -127,23 +127,26 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   fully-featured on activation. Each stays individually switch-off-able; only
   `bricks_builder_enabled` is opt-in (it restyles a third-party builder's own
   UI). Keep the on-by-default posture — don't quietly flip these back to opt-in.
-- **Avatars are an explicit Discussion-dropdown choice** — `custom_avatars_enabled`
-  ON registers "AdminKit Portraits (Generated)" in core
-  *Settings → Discussion → Default Avatar* (via `avatar_defaults`). The
-  `pre_get_avatar_data` filter only acts when `$args['default']` is our own key —
-  any other choice (Mystery / Wavatar / Identicon / Retro / MonsterID / Blank)
-  is left untouched. Critically, the filter checks `$args['default']` (what
-  THIS call asked for), **not** `get_option('avatar_default')` — the Discussion
-  preview list iterates through every option, so reading the stored option
-  would clobber every preview with our portrait.
+- **Avatars cascade in `filter_avatar_data`, in this order** — (a) bail if
+  another filter already set `$args['url']` (an upload plugin, OAuth profile
+  pic); (b) bail if `$args['default']` isn't our own key (don't touch Wavatar /
+  Identicon / Mystery / Blank — and DON'T check `get_option('avatar_default')`:
+  the Discussion preview list iterates through every option, so the stored
+  option would clobber every preview with our portrait); (c) bail if the user
+  has a real Gravatar (`d=404` HEAD probe, cached in `adminkit_has_gravatar`
+  user meta `1`/`0`, invalidated on `profile_update`); (d) otherwise serve a
+  DiceBear URL.
 - **Avatar URL is set on `$args['url']`, NOT `$args['default']`** — Gravatar's
   Photon proxy (`i2.wp.com`) **strips every query string** from the `d=`
   fallback URL, including our per-user `seed=`, which would land every user on
   the same DiceBear default. Setting `$args['url']` directly short-circuits
-  Gravatar and serves our URL as-is. Trade-off baked in: picking AdminKit
-  Portraits overrides real Gravatars too — that's the explicit-opt-in semantic.
-  Don't try to "improve" this by going back to `d=` without rethinking the
-  Photon strip (a Gravatar-existence check per email + cache, in theory).
+  Gravatar and serves our URL as-is. Don't try to "improve" this by going back
+  to `d=` — the Photon strip is the constraint.
+- **Real-photo respect is layered, not a single check** — Gravatar (sha256
+  HEAD probe per email, cached), other filters (`$args['url']` already
+  populated), and AdminKit's own option are three distinct fallbacks. Don't
+  fold them into one "if user has any photo" gate: each layer has a different
+  signal (HTTP / filter chain / explicit option).
 - **Do NOT re-add an upload field / Media Library picker / profile UI** —
   Gravatar (or a dedicated upload plugin) owns user-supplied pictures.
 - **Generated portraits call an external service (DiceBear, `api.dicebear.com`)** —

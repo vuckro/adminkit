@@ -2,30 +2,32 @@
 /**
  * AdminKit portraits — registers a native WordPress default-avatar option.
  *
- * What it does, end to end:
+ * Flow:
  *   1. Adds **AdminKit Portraits (Generated)** to *Settings → Discussion →
- *      Default Avatar* via the core `avatar_defaults` filter. Lives next to
- *      Wavatar / Identicon / Retro / MonsterID — the dropdown every WordPress
+ *      Default Avatar* via the core `avatar_defaults` filter. Sits next to
+ *      Wavatar / Identicon / Retro / MonsterID, the dropdown every WordPress
  *      user knows.
- *   2. When the avatar pipeline is asked for our option (and ONLY ours — we
- *      never override other choices), serves a unique DiceBear portrait keyed
- *      by `md5( user_login )`. Pastel-gradient backdrop so every user reads as
- *      a visibly distinct card.
+ *   2. When the avatar pipeline asks for our option AND the user has no real
+ *      photo from any source, serves a unique DiceBear portrait keyed by
+ *      `md5( user_login )`, on a solid-pastel backdrop picked deterministically
+ *      from a 10-colour palette so every user reads as a distinct card.
  *
- * Critical detail: we set `$args['url']` directly to short-circuit Gravatar.
- * Setting `$args['default']` (the `d=` fallback URL) does NOT work — Gravatar
- * proxies the redirect through `i2.wp.com` (Photon), which **strips every
- * query parameter**, including our per-user `seed=`. The result is that every
- * user lands on DiceBear's default image. Bypassing Gravatar by populating
- * `url` ourselves preserves the seed and gives each user a unique portrait.
+ * "No real photo from any source" is checked in this order:
+ *   a. `$args['url']` already populated → another filter handled it (Simple
+ *      Local Avatars, WP User Avatar, an OAuth login plugin saving a remote
+ *      URL, …). We bail.
+ *   b. The user has a real Gravatar (HEAD `gravatar.com/avatar/HASH?d=404`
+ *      returns 200). Result cached in `adminkit_has_gravatar` user meta —
+ *      invalidated on `profile_update` so an email change re-checks. We bail.
+ *   c. Neither → we set `$args['url']` directly to our DiceBear URL.
  *
- * Semantic: picking AdminKit Portraits means "give every user a generated
- * portrait, including users who have a real Gravatar." If you want real
- * Gravatars + a generated fallback, pick Wavatar / Identicon / etc. — those
- * are Gravatar-side generators that honour real Gravatars natively.
+ * Setting `$args['url']` (not `$args['default']`) is deliberate: Gravatar
+ * proxies the `d=` fallback through Photon (`i2.wp.com`), which strips every
+ * query string — including our per-user `seed=`. Bypassing Gravatar by
+ * populating `url` ourselves preserves the seed.
  *
- * Gated by `custom_avatars_enabled` (default ON). Off = AdminKit is invisible
- * to the avatar pipeline.
+ * Gated by `custom_avatars_enabled` (default ON). Off = AdminKit invisible to
+ * the avatar pipeline.
  *
  * External service: DiceBear (`api.dicebear.com`). Disclosed in `readme.txt`.
  * Seed is NON-PII (md5 of the login, never the raw email).
@@ -40,11 +42,17 @@ class AdminKit_Local_Avatars {
 	/** Slug stored by WP in the `avatar_default` option to pick our option. */
 	const AVATAR_KEY = 'adminkit_portraits';
 
-	/** DiceBear style. Notion-style portraits — modern, varied, professional. */
-	const STYLE = 'notionists';
+	/** DiceBear style. avataaars — cartoon Memoji-style portraits, very varied per seed. */
+	const STYLE = 'avataaars';
 
-	/** Pastel palette DiceBear draws gradient backdrops from (deterministic per seed). */
+	/**
+	 * Pastel palette DiceBear picks ONE colour from (deterministic per seed) for the
+	 * solid backdrop. Hex without `#` — DiceBear's URL format.
+	 */
 	const BACKGROUND = 'b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf,cbd5e8,f4cae4,e6f5c9,fff2ae,fdcdac';
+
+	/** User-meta key caching whether the user has a real Gravatar (`1` | `0`). */
+	const GRAVATAR_META = 'adminkit_has_gravatar';
 
 	public static function init() {
 		if ( ! AdminKit_Settings::get( 'custom_avatars_enabled' ) ) {
@@ -52,6 +60,8 @@ class AdminKit_Local_Avatars {
 		}
 		add_filter( 'avatar_defaults', array( __CLASS__, 'register_default' ) );
 		add_filter( 'pre_get_avatar_data', array( __CLASS__, 'filter_avatar_data' ), 10, 2 );
+		// Email or login change → drop the cached Gravatar check so it re-runs next render.
+		add_action( 'profile_update', array( __CLASS__, 'invalidate_cache' ) );
 	}
 
 	public static function register_default( $defaults ) {
@@ -59,13 +69,12 @@ class AdminKit_Local_Avatars {
 		return $defaults;
 	}
 
-	/**
-	 * Replace the avatar URL with our DiceBear portrait when THIS call's default
-	 * is our option. Setting `$args['url']` directly tells WP "use this URL,
-	 * don't go through Gravatar" — necessary because Gravatar proxies the d=
-	 * fallback through Photon, which strips query strings (and so our seed).
-	 */
 	public static function filter_avatar_data( $args, $id_or_email ) {
+		// (a) Another filter already supplied a real URL — never override.
+		if ( ! empty( $args['url'] ) ) {
+			return $args;
+		}
+
 		$requested = isset( $args['default'] ) ? (string) $args['default'] : '';
 		if ( self::AVATAR_KEY !== $requested ) {
 			return $args;
@@ -80,6 +89,13 @@ class AdminKit_Local_Avatars {
 			return $args;
 		}
 
+		// (b) Real Gravatar wins. Cached check avoids HTTP on every render.
+		if ( self::has_real_gravatar( $user ) ) {
+			return $args;
+		}
+
+		// (c) Generated portrait. Setting $args['url'] bypasses Gravatar entirely so
+		//     the seed survives (Gravatar's Photon proxy would otherwise strip it).
 		$seed = md5( strtolower( $user->user_login ) );
 		$size = isset( $args['size'] ) ? max( 1, min( 256, (int) $args['size'] ) ) : 96;
 
@@ -88,10 +104,51 @@ class AdminKit_Local_Avatars {
 			. '?seed=' . rawurlencode( $seed )
 			. '&size=' . $size
 			. '&backgroundColor=' . self::BACKGROUND
-			. '&backgroundType=gradientLinear'
 		);
 		$args['found_avatar'] = true;
 		return $args;
+	}
+
+	/**
+	 * Does this user have a real Gravatar? Cached forever in user meta (`1` or `0`);
+	 * `profile_update` invalidates it so an email change re-checks on the next render.
+	 *
+	 * Cache miss → one HEAD to `gravatar.com/avatar/HASH?d=404` with a 2-second
+	 * timeout. `d=404` makes Gravatar return 404 when no real avatar exists, 200
+	 * when one does. A timeout / network error is treated as "no" (we serve our
+	 * portrait) so a flaky Gravatar can't block the page.
+	 */
+	private static function has_real_gravatar( $user ) {
+		$cached = (string) get_user_meta( $user->ID, self::GRAVATAR_META, true );
+		if ( '1' === $cached ) {
+			return true;
+		}
+		if ( '0' === $cached ) {
+			return false;
+		}
+
+		$email = trim( $user->user_email );
+		if ( '' === $email || ! is_email( $email ) ) {
+			update_user_meta( $user->ID, self::GRAVATAR_META, '0' );
+			return false;
+		}
+
+		$hash     = hash( 'sha256', strtolower( $email ) );
+		$response = wp_remote_head(
+			"https://www.gravatar.com/avatar/{$hash}?d=404",
+			array(
+				'timeout'     => 2,
+				'redirection' => 0,
+			)
+		);
+
+		$has = ! is_wp_error( $response ) && 200 === (int) wp_remote_retrieve_response_code( $response );
+		update_user_meta( $user->ID, self::GRAVATAR_META, $has ? '1' : '0' );
+		return $has;
+	}
+
+	public static function invalidate_cache( $user_id ) {
+		delete_user_meta( (int) $user_id, self::GRAVATAR_META );
 	}
 
 	private static function resolve_user_id( $id_or_email ) {
