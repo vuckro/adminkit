@@ -918,3 +918,27 @@ msgstr "Choisissez la police et l'échelle de l'admin."
 #: inc/class-settings-page.php
 msgid "Pick the admin font family and base size from sensible presets so the whole admin matches your brand's type."
 msgstr "Choisir la police et la taille de base de l'admin parmi des préréglages soignés, pour que toute l'admin s'accorde à la typo de votre marque."
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Profile picture"
+msgstr "Photo de profil"
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Generated portrait"
+msgstr "Portrait généré"
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Try another"
+msgstr "En essayer un autre"
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Try another portrait"
+msgstr "Essayer un autre portrait"
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Don't like this portrait? Click to roll a new one."
+msgstr "Ce portrait ne vous plaît pas ? Cliquez pour en générer un autre."
+
+#: inc/wp-core/class-local-avatars.php
+msgid "You are not allowed to do that."
+msgstr "Vous n'êtes pas autorisé·e à faire cela."

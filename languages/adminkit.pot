@@ -914,3 +914,27 @@ msgstr ""
 #: inc/class-settings-page.php
 msgid "Pick the admin font family and base size from sensible presets so the whole admin matches your brand's type."
 msgstr ""
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Profile picture"
+msgstr ""
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Generated portrait"
+msgstr ""
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Try another"
+msgstr ""
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Try another portrait"
+msgstr ""
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Don't like this portrait? Click to roll a new one."
+msgstr ""
+
+#: inc/wp-core/class-local-avatars.php
+msgid "You are not allowed to do that."
+msgstr ""

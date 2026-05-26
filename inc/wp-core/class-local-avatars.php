@@ -53,24 +53,30 @@ class AdminKit_Local_Avatars {
 
 	/**
 	 * Avataaars feature filters — narrow the per-seed roll to a clean, standardised
-	 * European look: smiling or neutral expression, natural-but-not-fantasy hair
-	 * colour, light/pale skin. Keeps things consistent across a users list while
-	 * preserving the per-seed variation that comes from hair style, facial hair,
-	 * accessories and clothing. Defaults exclude weird/fantasy variants entirely
-	 * (no hearts eyes, no big "surprised" eyes, no red/pink hair, no eyepatch …).
+	 * look that still feels diverse across a users list: positive-or-neutral
+	 * expression, the FULL natural skin-tone range (pale through to dark), natural
+	 * hair colours, and only realistic accessories (no fantasy variants like
+	 * eyepatch / heart eyes / pink hair).
 	 *
-	 * MOUTH and EYES take DiceBear's named variants. SKIN_COLOR and HAIR_COLOR
-	 * take raw hex values — DiceBear's API rejects the preset names for these
-	 * (the regex is `^(transparent|[a-fA-F0-9]{6})$`). The hexes below match the
+	 * MOUTH, EYES and ACCESSORIES take DiceBear's named variants. SKIN_COLOR and
+	 * HAIR_COLOR take raw hex values — DiceBear's API rejects the preset names
+	 * for these (regex `^(transparent|[a-fA-F0-9]{6})$`). The hexes match the
 	 * original avataaars project's named presets:
-	 *   - skin: `edb98a` (light caucasian), `ffdbb4` (pale)
+	 *   - skin: `ffdbb4` (pale), `edb98a` (light), `d08b5b` (brown),
+	 *           `ae5d29` (dark brown), `614335` (black) — full diversity.
 	 *   - hair: `2c1b18` (black), `b58143` (blonde), `d6b370` (blonde golden),
-	 *           `724133` (brown), `4a312c` (dark brown)
+	 *           `724133` (brown), `4a312c` (dark brown).
+	 *
+	 * ACCESSORIES_PROBABILITY: percentage chance a user gets glasses on this seed.
+	 * DiceBear default is 10; we bump to 30 so the accessory variety actually
+	 * shows up in a list of a handful of users without being on every face.
 	 */
-	const MOUTH      = 'smile,default,twinkle';
-	const EYES       = 'default,happy';
-	const SKIN_COLOR = 'edb98a,ffdbb4';
-	const HAIR_COLOR = '2c1b18,b58143,d6b370,724133,4a312c';
+	const MOUTH                   = 'smile,default,twinkle,serious';
+	const EYES                    = 'default,happy';
+	const SKIN_COLOR              = 'ffdbb4,edb98a,d08b5b,ae5d29,614335';
+	const HAIR_COLOR              = '2c1b18,b58143,d6b370,724133,4a312c';
+	const ACCESSORIES             = 'prescription01,prescription02,round,sunglasses,wayfarers';
+	const ACCESSORIES_PROBABILITY = 30;
 
 	/** User-meta key caching whether the user has a real Gravatar (`1` | `0`). */
 	const GRAVATAR_META = 'adminkit_has_gravatar';
@@ -186,6 +192,8 @@ class AdminKit_Local_Avatars {
 			. '&eyes=' . self::EYES
 			. '&skinColor=' . self::SKIN_COLOR
 			. '&hairColor=' . self::HAIR_COLOR
+			. '&accessories=' . self::ACCESSORIES
+			. '&accessoriesProbability=' . self::ACCESSORIES_PROBABILITY
 		);
 		$args['found_avatar'] = true;
 		return $args;
@@ -323,7 +331,7 @@ class AdminKit_Local_Avatars {
 						<?php echo get_avatar( $user->ID, 96 ); ?>
 					</span>
 					<p style="margin-top:1em">
-						<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Shuffle', 'adminkit' ); ?></a>
+						<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Try another', 'adminkit' ); ?></a>
 						<span class="description" style="margin-left:8px"><?php esc_html_e( "Don't like this portrait? Click to roll a new one.", 'adminkit' ); ?></span>
 					</p>
 				</td>
@@ -357,7 +365,7 @@ class AdminKit_Local_Avatars {
 			),
 			self::SHUFFLE_NONCE
 		);
-		$actions['adminkit_shuffle'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Shuffle avatar', 'adminkit' ) . '</a>';
+		$actions['adminkit_shuffle'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Try another portrait', 'adminkit' ) . '</a>';
 		return $actions;
 	}
 
