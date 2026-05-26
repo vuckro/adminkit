@@ -234,10 +234,26 @@
 	flex-wrap: wrap;
 }
 
-/* Design-token table — one column-aligned grid per group (static reference) -- */
+/* Design-token reference — three deterministic rows of cards instead of seven
+   stacked groups, so the whole Design tab fits roughly within a viewport.
+   The Status row is full-width with two internal columns so its 8 tokens pair
+   each base with its -subtle variant. */
+.adminkit-app .ak-design__row {
+	display: grid;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	gap: 16px;
+	margin-bottom: 16px;
+}
+.adminkit-app .ak-design__row > .ak-group { margin-bottom: 0; }
+.adminkit-app .ak-design__row--full { grid-template-columns: 1fr; }
+.adminkit-app .ak-design__row--full .ak-tbl {
+	grid-template-columns: 28px minmax( 110px, 1fr ) minmax( 160px, 1.4fr ) 28px minmax( 110px, 1fr ) minmax( 160px, 1.4fr );
+}
+
+/* Design-token table — one column-aligned grid per group (static reference). */
 .adminkit-app .ak-tbl {
 	display: grid;
-	grid-template-columns: 52px minmax( 140px, 1fr ) minmax( 200px, 2fr );
+	grid-template-columns: 28px minmax( 110px, 1fr ) minmax( 160px, 1.4fr );
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	background: var(--ak-surface);
@@ -245,27 +261,28 @@
 }
 /* Every cell shares padding + a top divider; stretch (default) keeps the
    dividers continuous across the row, and flex centres each cell's content.
-   The first row (first 3 cells) has no divider. */
+   The first row of cells has no divider. */
 .adminkit-app .ak-tbl > * {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 9px 12px;
+	gap: 6px;
+	padding: 6px 10px;
 	min-width: 0;
 	border-top: 1px solid var(--ak-border);
 }
 .adminkit-app .ak-tbl > :nth-child(-n+3) { border-top: 0; }
+.adminkit-app .ak-design__row--full .ak-tbl > :nth-child(-n+6) { border-top: 0; }
 /* Swatch cell — centre a fixed square so the colour reads at a glance. */
 .adminkit-app .ak-tbl__swc {
 	justify-content: center;
-	padding-left: 8px;
-	padding-right: 8px;
+	padding-left: 6px;
+	padding-right: 4px;
 }
 .adminkit-app .ak-tbl__sw {
 	flex: 0 0 auto;
 	display: block;
-	width: 26px;
-	height: 26px;
+	width: 18px;
+	height: 18px;
 	border: 1px solid var(--ak-border-strong);
 	border-radius: var(--ak-radius-s);
 	/* Colour layer over a faint checker, so translucent tokens (overlay, hover,
@@ -273,7 +290,7 @@
 	background-image:
 		linear-gradient( var(--sw, transparent), var(--sw, transparent) ),
 		repeating-conic-gradient( var(--ak-border) 0% 25%, var(--ak-bg) 0% 50% );
-	background-size: auto, 10px 10px;
+	background-size: auto, 8px 8px;
 	background-position: center;
 	background-clip: padding-box;
 }
@@ -287,26 +304,50 @@
 }
 .adminkit-app .ak-tbl__badge {
 	flex: 0 0 auto;
-	font-size: 10px;
+	font-size: 9px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	padding: 2px 6px;
+	padding: 1px 5px;
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-elevated);
 	color: var(--ak-text-muted);
 }
-.adminkit-app .ak-tbl__map { flex-wrap: wrap; }
+/* Live hex code — pushed to the right of the role cell, muted so the name
+   still leads. The text is refreshed on dark-mode flip via the MutationObserver
+   in settings.js (look up by [data-ak-token]). */
+.adminkit-app .ak-tbl__hex {
+	margin-left: auto;
+	flex: 0 0 auto;
+	color: var(--ak-text-muted);
+}
+/* The map cell holds the source → bricks → ak chain on a single line; if the
+   card is too narrow we clip rather than wrap (mobile reverts to wrap below). */
+.adminkit-app .ak-tbl__map {
+	flex-wrap: nowrap;
+	overflow: hidden;
+	gap: 4px;
+}
+.adminkit-app .ak-tbl__arr {
+	flex: 0 0 auto;
+	color: var(--ak-text-muted);
+	font-size: 10px;
+	line-height: 1;
+}
 /* Reset wp-admin's default <code> styling (grey pill, padding, 13px Consolas) so
-   the mono cells read as plain 11px monospace text. No `color` here — that would
-   out-specify the per-cell colours below. */
+   the mono cells read as plain text. No `color` here — that would out-specify
+   the per-cell colours below. */
 .adminkit-app .ak-tbl code {
 	margin: 0;
 	padding: 0;
 	background: none;
 	border: 0;
 	font-family: monospace;
-	font-size: 11px;
+	font-size: 10px;
+	white-space: nowrap;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .adminkit-app .ak-tbl__tok { color: var(--ak-text); }
 .adminkit-app .ak-tbl__from,
@@ -799,10 +840,29 @@
      left-auto push so it reads left-aligned under the label rather than stranded
      on the right.
    • let the header wrap so a long title never squashes the Save action. */
+/* At narrow widths (tablet split, sidebar tablets) the 3-up grid stacks
+   gracefully: the cards collapse to one column, and the Status row's two
+   internal columns also stack so its 8 tokens read as a normal list. */
+@media screen and (max-width: 960px) {
+	.adminkit-app .ak-design__row { grid-template-columns: 1fr; }
+	.adminkit-app .ak-design__row--full .ak-tbl {
+		grid-template-columns: 28px minmax( 0, 1fr ) minmax( 0, 1.4fr );
+	}
+	.adminkit-app .ak-design__row--full .ak-tbl > :nth-child(-n+6) {
+		border-top: 1px solid var(--ak-border);
+	}
+	.adminkit-app .ak-design__row--full .ak-tbl > :nth-child(-n+3) {
+		border-top: 0;
+	}
+}
+
 @media screen and (max-width: 782px) {
 	.adminkit-app .ak-tbl {
-		grid-template-columns: 52px minmax( 0, 1fr ) minmax( 0, 1.6fr );
+		grid-template-columns: 28px minmax( 0, 1fr ) minmax( 0, 1.6fr );
 	}
+	/* On phones, accept that the chain wraps rather than getting clipped — better
+	   to read all three names on two lines than to lose the last one to ellipsis. */
+	.adminkit-app .ak-tbl__map { flex-wrap: wrap; }
 	.adminkit-app .ak-field--inline .ak-seg { margin-left: 0; }
 	.adminkit-app .ak-head { flex-wrap: wrap; }
 }

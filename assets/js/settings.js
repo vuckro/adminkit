@@ -64,6 +64,50 @@
 		return n;
 	}
 
+	// --- color resolver -------------------------------------------------------
+	// Resolve a CSS custom property to its CONCRETE value (rgb/rgba or hex). Used
+	// by the Design tab's token reference so each row shows the actual painted
+	// colour next to its name — handy when the token cascades through several
+	// fallback layers (provider → baseline → built-in default).
+	//
+	// getComputedStyle() on a var name returns the variable's *source* (e.g.
+	// "var(--neutral-l-1)"), so we paint a hidden probe and read back its
+	// resolved background-color, then convert opaque rgb() to a short hex.
+	function resolveColor( cssVar ) {
+		var probe = document.createElement( 'span' );
+		probe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;background:var(' + cssVar + ')';
+		document.body.appendChild( probe );
+		var rgb = getComputedStyle( probe ).backgroundColor;
+		document.body.removeChild( probe );
+		return rgbToHex( rgb );
+	}
+
+	function rgbToHex( s ) {
+		// Keep rgba() (alpha < 1) as-is — hex notation hides the alpha.
+		var m = s.match( /^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)\s*(?:[,/]\s*([\d.]+))?\s*\)$/ );
+		if ( ! m ) { return s; }
+		if ( m[4] != null && parseFloat( m[4] ) < 1 ) { return s; }
+		function h( n ) { return ( '0' + parseInt( n, 10 ).toString( 16 ) ).slice( -2 ); }
+		return '#' + h( m[1] ) + h( m[2] ) + h( m[3] );
+	}
+
+	// When the dark-mode flip happens (class-theme-toggle flips
+	// [data-adminkit-theme] on <html>), re-resolve every token swatch's hex so the
+	// reference stays accurate. Idempotent: walks any [data-ak-token] in the DOM
+	// (the Design tab may not be mounted yet — that's fine, the observer is cheap).
+	function refreshHexes() {
+		var nodes = document.querySelectorAll( '[data-ak-token]' );
+		for ( var i = 0; i < nodes.length; i++ ) {
+			nodes[ i ].textContent = resolveColor( nodes[ i ].getAttribute( 'data-ak-token' ) );
+		}
+	}
+	if ( window.MutationObserver ) {
+		new MutationObserver( refreshHexes ).observe(
+			document.documentElement,
+			{ attributes: true, attributeFilter: [ 'data-adminkit-theme' ] }
+		);
+	}
+
 	// --- header chrome -------------------------------------------------------
 	var statusEl = el( 'span', { 'class': 'ak-status', 'aria-live': 'polite' } );
 	var saveBtn = el( 'button', { 'class': 'ak-btn ak-btn--primary', type: 'button', text: I.save, onclick: save } );
@@ -487,20 +531,40 @@
 			] )
 		] ) );
 
-		// Legend — explains the read-only mapping notation up front.
-		p.appendChild( el( 'div', { 'class': 'ak-cascade' }, [
-			el( 'strong', { text: I.designLegendTitle || 'Live colour reference' } ),
-			el( 'span', { text: ' ' + ( I.designLegend || 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.' ) } )
-		] ) );
-		( D.colors || [] ).forEach( function ( g ) {
+		// Token reference — three deterministic rows of cards instead of seven
+		// stacked groups, so the whole Design tab fits roughly within a viewport.
+		// Row 1 (neutrals)     — Surfaces · Borders · Text
+		// Row 2 (interactives) — Accent · State · Overlay
+		// Row 3 (notifications) — Status (full width, two internal columns of pairs).
+		// Ordering is intentional: a maintainer changing a baseline token expects
+		// to see related colours side by side, not lost in a long scroll.
+		var bySlug = {};
+		( D.colors || [] ).forEach( function ( g ) { if ( g.group ) { bySlug[ g.group ] = g; } } );
+
+		function renderGroup( g ) {
+			if ( ! g ) { return null; }
 			var tbl = el( 'div', { 'class': 'ak-tbl' } );
 			( g.tokens || [] ).forEach( function ( t ) { roleRow( tbl, t ); } );
-			p.appendChild( el( 'div', { 'class': 'ak-group' }, [
+			return el( 'div', { 'class': 'ak-group' }, [
 				el( 'h2', { 'class': 'ak-group__title', text: g.label } ),
 				g.desc ? el( 'p', { 'class': 'ak-group__desc', text: g.desc } ) : null,
 				tbl
-			] ) );
-		} );
+			] );
+		}
+
+		function renderRow( slugs, full ) {
+			var row = el( 'div', { 'class': 'ak-design__row' + ( full ? ' ak-design__row--full' : '' ) } );
+			slugs.forEach( function ( s ) {
+				var card = renderGroup( bySlug[ s ] );
+				if ( card ) { row.appendChild( card ); }
+			} );
+			return row;
+		}
+
+		p.appendChild( renderRow( [ 'surface', 'border', 'text' ] ) );
+		p.appendChild( renderRow( [ 'accent', 'state', 'overlay' ] ) );
+		p.appendChild( renderRow( [ 'status' ], true ) );
+
 		p.appendChild( typeSection() );
 		return p;
 	}
@@ -533,19 +597,32 @@
 
 	// Append one row (three aligned grid cells) to a group table. Cells are
 	// direct grid children so columns line up across rows; CSS draws the dividers.
+	//
+	// Layout: [swatch] · [name + AK badge + live hex] · [source → bricks → ak-token]
+	// The chain reads left-to-right as a *flow* (primitive feeds into the provider
+	// semantic, which feeds into the AdminKit token) — same direction the cascade
+	// resolves in CSS. The hex carries a data-ak-token so refreshHexes() can keep
+	// it in sync with the dark-mode flip.
 	function roleRow( tbl, t ) {
 		tbl.appendChild( el( 'span', { 'class': 'ak-tbl__swc' }, [
 			el( 'span', { 'class': 'ak-tbl__sw', style: '--sw: var(' + t.token + ')', title: t.token } )
 		] ) );
 		tbl.appendChild( el( 'span', { 'class': 'ak-tbl__role' }, [
 			el( 'span', { 'class': 'ak-tbl__name', text: t.label } ),
-			t.own ? el( 'span', { 'class': 'ak-tbl__badge', title: I.ownHint || '', text: I.own } ) : null
+			t.own ? el( 'span', { 'class': 'ak-tbl__badge', title: I.ownHint || '', text: I.own } ) : null,
+			el( 'code', { 'class': 'ak-tbl__hex', 'data-ak-token': t.token, text: resolveColor( t.token ) } )
 		] ) );
-		tbl.appendChild( el( 'span', { 'class': 'ak-tbl__map' }, [
-			el( 'code', { 'class': 'ak-tbl__tok', text: t.token } ),
-			t.bricks ? el( 'code', { 'class': 'ak-tbl__from', text: '← ' + t.bricks } ) : null,
-			t.source ? el( 'code', { 'class': 'ak-tbl__prim', text: ( t.bricks ? '· ' : '← ' ) + t.source } ) : null
-		] ) );
+		var chain = el( 'span', { 'class': 'ak-tbl__map' } );
+		if ( t.source ) {
+			chain.appendChild( el( 'code', { 'class': 'ak-tbl__prim', text: t.source } ) );
+			chain.appendChild( el( 'span', { 'class': 'ak-tbl__arr', 'aria-hidden': 'true', text: '→' } ) );
+		}
+		if ( t.bricks ) {
+			chain.appendChild( el( 'code', { 'class': 'ak-tbl__from', text: t.bricks } ) );
+			chain.appendChild( el( 'span', { 'class': 'ak-tbl__arr', 'aria-hidden': 'true', text: '→' } ) );
+		}
+		chain.appendChild( el( 'code', { 'class': 'ak-tbl__tok', text: t.token } ) );
+		tbl.appendChild( chain );
 	}
 
 	function buildFeatures() {
