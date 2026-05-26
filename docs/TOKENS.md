@@ -28,6 +28,15 @@ picked by role. Inverse text isn't a token — it's a `.scheme-*` scope class.
 3. --ak-* layer       assets/css/tokens.css                   consumed by all CSS; owns dark
 ```
 
+**Layer 2 is optional and self-healing.** When the provider hasn't produced its
+file yet (e.g. Bricks is installed but Style Manager has never been saved →
+`uploads/bricks/css/style-manager.min.css` doesn't exist), the integration
+falls back to AdminKit's own baseline — it enqueues `adminkit-waaskit` and
+returns that handle from `provide_tokens()` so `adminkit-tokens` chains onto a
+real stylesheet. The cascade stays whole; nothing breaks. The moment the
+provider's file appears, the integration switches to it (Bricks depends on the
+baseline and wins by load order). No reload of AdminKit required.
+
 AdminKit ships the full WaasKit layer (every primitive + the 23 semantics) as the
 **generated** `assets/css/waaskit-tokens.css`, enqueued before `tokens.css`, so a
 fresh install is fully on-brand with no provider. Each `--ak-*` still ends in a

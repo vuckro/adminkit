@@ -176,6 +176,27 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   restyle (`builder.css`). Builder chrome **scrollbar theming is abandoned** —
   Bricks's panels use a non-native scrollbar `::-webkit-scrollbar` can't reach
   (unlike the Gutenberg native iframe scrollbar). Don't re-add it.
+- **Bricks has TWO mirror fallback chains — keep them aligned.** Tokens and the
+  toolbar logo both degrade gracefully when Bricks is installed but unconfigured.
+  Tokens: `bricks-style-manager` (when the user has saved Style Manager colours
+  → `wp-content/uploads/bricks/css/style-manager.min.css` exists) → AdminKit's
+  shipped WaasKit baseline (`adminkit-waaskit`, `assets/css/waaskit-tokens.css`).
+  The fallback fires in both `provide_tokens()` (admin/frontend) and
+  `enqueue_builder_fallback_tokens()` (builder chrome) — same logic, two contexts.
+  Logo (Bricks builder toolbar): the SITE Icon (favicon, square chip, transparent
+  backdrop) → the WordPress logo SVG (`wp-admin/images/wordpress-logo.svg`, on the
+  accent chip). **Never re-introduce the "first letter of site name" mark** as a
+  toolbar fallback — that produced the stray-`A` hover bug; the WP logo is the
+  recognisable, language-agnostic equivalent of WP's own admin-bar fallback.
+- **`bricks_builder_enabled` defaults ON when Bricks is the active theme.** The
+  schema default is `false` (opt-in semantics) but
+  `AdminKit_Integration_Bricks::default_on_when_active()` filters
+  `adminkit/setting/bricks_builder_enabled` to return `true` whenever Bricks is
+  active AND the toggle has never been explicitly saved
+  (`array_key_exists( 'bricks_builder_enabled', $stored )` is false). User
+  choices — explicit on or off — are never overwritten. Don't move this logic
+  into the schema default: that would flip non-Bricks sites too, where the
+  Features row isn't even surfaced.
 - **`options.js` tabs the six built-in Settings screens** — it splits each screen
   at its `<h2>` sections into tabs, and "explodes" the Discussion
   `.form-table.indent-children` table (the one core screen that packs its groups
