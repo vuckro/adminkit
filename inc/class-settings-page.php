@@ -564,7 +564,7 @@ class AdminKit_Settings_Page {
 			array( 'key' => 'module_login_enabled',  'group' => $appearance, 'label' => __( 'Login screen', 'adminkit' ),              'desc' => __( 'Style the wp-login.php screen.', 'adminkit' ) ),
 			array( 'key' => 'editor_content_theme',   'group' => $appearance, 'label' => __( 'Gutenberg', 'adminkit' ),     'desc' => __( 'Theme the Gutenberg block-editor canvas (content + native blocks) in light and dark. Turn off to keep the canvas matching your live site exactly.', 'adminkit' ) ),
 			array( 'key' => 'replace_icons_enabled',  'group' => $appearance, 'label' => __( 'AdminKit icons', 'adminkit' ), 'desc' => __( 'Replace WordPress\'s native menu and toolbar icons with AdminKit\'s set. Non-destructive: icons already customised (e.g. via Admin Menu Editor) are left untouched.', 'adminkit' ) ),
-			array( 'key' => 'custom_avatars_enabled', 'group' => $appearance, 'label' => __( 'Custom avatars', 'adminkit' ), 'desc' => __( 'Adds "AdminKit Portraits (Generated)" to Settings → Discussion → Default Avatar, and silently replaces Mystery Person so every user gets a unique generated portrait. A real Gravatar always wins. Off = Gravatar everywhere, unchanged.', 'adminkit' ) ),
+			array( 'key' => 'custom_avatars_enabled', 'group' => $appearance, 'label' => __( 'Custom avatars', 'adminkit' ), 'desc' => __( 'Adds "AdminKit Portraits (Generated)" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait (overrides Gravatar — explicit opt-in).', 'adminkit' ) ),
 		);
 
 		// Bricks builder restyle — only meaningful when the Bricks theme is active.

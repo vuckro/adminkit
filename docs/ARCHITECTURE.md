@@ -186,11 +186,12 @@ individually switch-off-able:
   and `custom_avatars_enabled` (`inc/wp-core/class-local-avatars.php`) registers
   "AdminKit Portraits (Generated)" in *Settings → Discussion → Default Avatar*
   via the core `avatar_defaults` filter, and intercepts `pre_get_avatar_data` to
-  substitute a unique DiceBear portrait whenever WP's stored default is
-  AdminKit's option or *Mystery Person* (the WP factory default). Any other
-  choice — Wavatar, Identicon, Retro, MonsterID, Blank — is left alone. Non-PII
-  seed (md5 of the login) + pastel gradient backdrop so users look obviously
-  distinct. See [EXTENDING.md → Avatars](EXTENDING.md#avatars).
+  set `$args['url']` directly to a unique DiceBear portrait — but only when the
+  call's requested default is AdminKit's own key. Setting `url` (rather than
+  `default`) is deliberate: Gravatar's Photon proxy strips query strings from
+  the `d=` fallback, which would erase the per-user seed. Non-PII seed (md5 of
+  the login) + pastel gradient backdrop so users look obviously distinct. See
+  [EXTENDING.md → Avatars](EXTENDING.md#avatars).
 - **Off by default** (opt-in): `bricks_builder_enabled` (restyles a third-party
   builder's own UI, so it stays inert until asked for; only shown when Bricks is
   active).

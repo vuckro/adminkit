@@ -22,20 +22,20 @@ It ships fully-featured: Gutenberg canvas theming, AdminKit's icon set, and loca
 * A light + dark mode with a sun/moon toggle in the admin bar (and `prefers-color-scheme` on first visit).
 * CSS custom properties (`--ak-*`) any other admin-side stylesheet can consume.
 * Conditional, per-screen CSS loading — pages only load the styles they need.
-* Custom avatars: a unique generated portrait per user on a pastel-gradient backdrop, woven into WordPress's native Settings → Discussion → Default Avatar (next to Wavatar, Identicon, etc.). Silently replaces Mystery Person so every user in the list reads as distinct, without any second settings UI.
+* Custom avatars: adds "AdminKit Portraits (Generated)" to WordPress's native Settings → Discussion → Default Avatar (next to Wavatar, Identicon, etc.). Pick it there to give every user a unique generated portrait on a pastel-gradient backdrop.
 * Tabbed Settings screens and an interactive dashboard roadmap.
 * Optional adapters that skin popular plugins/themes (Bricks, WooCommerce, ACF, the Fluent suite, and more).
 
 == External services ==
 
-This plugin connects to **api.dicebear.com** to generate avatars when the **Custom avatars** feature is enabled (it is on by default; turn it off in the AdminKit settings page to stop all external avatar requests).
+This plugin connects to **api.dicebear.com** to generate avatars when the **Custom avatars** feature is enabled AND you select **AdminKit Portraits (Generated)** in WordPress's *Settings → Discussion → Default Avatar* dropdown.
 
-* What it is: DiceBear is a free, key-less HTTP avatar service. AdminKit uses its hosted API to render a friendly portrait for a user who has no real Gravatar.
-* When it is used: only when **Custom avatars** is on AND WordPress's *Settings → Discussion → Default Avatar* is set to **AdminKit Portraits (Generated)** OR to *Mystery Person* (the WordPress factory default, which AdminKit silently upgrades). Picking any other option in that dropdown (Wavatar, Identicon, Retro, MonsterID, Blank, Gravatar Logo) makes no AdminKit request. A real Gravatar always takes priority.
+* What it is: DiceBear is a free, key-less HTTP avatar service. AdminKit uses its hosted API to render a unique portrait per user.
+* When it is used: only when **Custom avatars** is on AND **AdminKit Portraits (Generated)** is the selected Default Avatar. Picking any other option in that dropdown (Mystery Person, Wavatar, Identicon, Retro, MonsterID, Blank, Gravatar Logo) makes no AdminKit request — Gravatar's native pipeline runs untouched. Note that picking AdminKit Portraits gives every user a generated portrait, including users who have a real Gravatar — it's an explicit opt-in.
 * What data is sent: no personal data. The avatar is requested with a non-reversible seed — the md5 hash of the user's login name. The raw email address is never sent.
 * Service provider: DiceBear. Terms of use: https://www.dicebear.com/licenses/ — Privacy policy: https://www.dicebear.com/legal/privacy-policy/
 
-Turn **Custom avatars** off (or pick a non-AdminKit option in Settings → Discussion) and AdminKit makes no external calls for avatars.
+Turn **Custom avatars** off (or pick any other option in Settings → Discussion) and AdminKit makes no external calls for avatars.
 
 == Installation ==
 
@@ -55,7 +55,7 @@ No — only the admin bar shown to logged-in users is restyled. Your site's publ
 
 = Where do generated avatars come from, and is any personal data sent? =
 
-They are rendered by the hosted DiceBear service (api.dicebear.com), and only when Custom avatars is on AND Settings → Discussion → Default Avatar is set to "AdminKit Portraits (Generated)" or to "Mystery Person" (which AdminKit silently upgrades). No personal data is sent — the request is seeded with a non-reversible hash, never the raw email. See the "External services" section above.
+They are rendered by the hosted DiceBear service (api.dicebear.com), and only when Custom avatars is on AND Settings → Discussion → Default Avatar is set to "AdminKit Portraits (Generated)". Picking any other option (Mystery Person, Wavatar, etc.) makes no AdminKit request. No personal data is sent — the request is seeded with a non-reversible hash, never the raw email. See the "External services" section above.
 
 = Can I turn features off? =
 
@@ -67,7 +67,7 @@ Yes. Every feature is an individual toggle on the AdminKit settings page, even t
 * Initial release.
 * A flat, modern restyle of wp-admin, wp-login.php and the frontend admin bar, built entirely on CSS custom properties (`--ak-*` tokens).
 * Light + dark mode with a sun/moon toggle in the admin bar (and `prefers-color-scheme` on first visit).
-* Custom avatars: registers "AdminKit Portraits (Generated)" in Settings → Discussion → Default Avatar (next to Wavatar / Identicon / Retro / MonsterID) and silently upgrades Mystery Person so every user without a Gravatar gets a unique generated portrait on a pastel-gradient backdrop. Via DiceBear, opt-out, non-PII seed.
+* Custom avatars: registers "AdminKit Portraits (Generated)" in Settings → Discussion → Default Avatar (next to Wavatar / Identicon / Retro / MonsterID). Selecting it gives every user a unique generated portrait on a pastel-gradient backdrop. Via DiceBear, explicit opt-in, non-PII seed.
 * Gutenberg canvas theming and AdminKit's own icon set, both on by default and individually switch-off-able.
 * Tabbed Settings screens (including Discussion, Reading and Writing) and an interactive dashboard roadmap with status badges and detail modals.
 * Login-screen branding with a centred logo and a light/dark toggle; plus a brand mark at the site title — your logo, the site favicon, or none — with the top-left WordPress logo hidden.

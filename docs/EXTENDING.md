@@ -117,32 +117,38 @@ capture and updates it in place. All hooks are in
 
 ## Avatars
 
-One setting (`custom_avatars_enabled`, on by default). With it on, AdminKit:
+One setting (`custom_avatars_enabled`, on by default). With it on, AdminKit
+registers **AdminKit Portraits (Generated)** in *Settings → Discussion → Default
+Avatar* — the same dropdown WordPress already uses for Wavatar / Identicon /
+Retro / MonsterID. Pick it there to give every user a unique generated portrait.
 
-1. Registers **AdminKit Portraits (Generated)** in *Settings → Discussion → Default
-   Avatar* — the same dropdown WordPress already uses for Wavatar / Identicon /
-   Retro / MonsterID. Lives where every WordPress user knows to look.
-2. Silently substitutes its portraits whenever WordPress's stored default is
-   *Mystery Person* (the factory default `mystery` / `mm` / `mp` nobody changes)
-   or *AdminKit Portraits* itself. Any other choice — Wavatar, Identicon, etc. —
-   is left alone, so AdminKit never overrides a user's explicit pick.
+AdminKit only acts when its option is the one being requested for a given
+avatar call. Pick Wavatar / Identicon / Mystery Person / anything else and
+AdminKit is invisible — Gravatar's native pipeline runs untouched. There is no
+profile-picture upload field, no Media Library plumbing: user-supplied pictures
+remain Gravatar's job (or any dedicated upload plugin).
 
-AdminKit does **not** add a profile-picture upload field. User-supplied pictures
-are Gravatar's job (or any plugin that does local uploads); AdminKit owns the
-*generated fallback* slot only. With `custom_avatars_enabled` off, AdminKit is
-invisible to the avatar pipeline and Gravatar behaviour is 100% unchanged.
+The portrait URL bypasses Gravatar entirely (`$args['url']` is set directly).
+Why: Gravatar proxies the `d=` fallback through Photon (`i2.wp.com`), which
+strips every query string — including our per-user `seed=`. Passing through
+Gravatar would erase the seed and give every user the same image. Setting `url`
+ourselves preserves the seed and gives each user a unique portrait. The
+trade-off, accepted as the simplest semantic: picking AdminKit Portraits means
+"give EVERY user a generated portrait, including users who have a real
+Gravatar." If you want real Gravatars where they exist + a generated fallback
+otherwise, pick Wavatar / Identicon / etc. (those are Gravatar-side generators
+that honour real Gravatars natively).
 
 The generator is [DiceBear](https://www.dicebear.com)'s hosted, key-less HTTP API
-(`https://api.dicebear.com`). Each request carries a non-PII seed (md5 of the
-user_login — never the raw email), the style slug, a pastel palette via
-`backgroundColor=` and `backgroundType=gradientLinear`. That gradient backdrop
-is what makes a users list scan as "obviously different people" at a glance,
-on top of DiceBear's per-seed feature variation.
+(`https://api.dicebear.com`, style `notionists`). Each request carries a non-PII
+seed (md5 of the user_login — never the raw email) and a pastel palette via
+`backgroundColor=` + `backgroundType=gradientLinear`. The gradient backdrop is
+what makes a users list scan as "obviously different people" at a glance, on top
+of DiceBear's per-seed feature variation.
 
-| Hook | Type | Signature | Purpose |
-| --- | --- | --- | --- |
-| `adminkit/generated_avatar_style` | filter | `(string $style, int $user_id)` | The DiceBear style slug (default `avataaars` — varied cartoon humans with explicit skin tones + accessories). Return another slug to change the look (e.g. `personas`, `notionists`, `lorelei`, `micah`, `open-peeps`, `fun-emoji`). |
-| `adminkit/generated_avatar_url` | filter | `(string $url, int $user_id, int $size)` | The final generated-avatar URL — override to self-host or swap the service entirely. |
+To swap the style or self-host the generator, override the whole class via a
+must-use plugin or extend it — there are no hooks for either yet (kept the
+surface minimal; the constants are inlined). Open one when a real need surfaces.
 
 Example — self-host the generated avatars instead of calling DiceBear:
 

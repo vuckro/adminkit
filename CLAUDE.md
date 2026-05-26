@@ -127,24 +127,34 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   fully-featured on activation. Each stays individually switch-off-able; only
   `bricks_builder_enabled` is opt-in (it restyles a third-party builder's own
   UI). Keep the on-by-default posture — don't quietly flip these back to opt-in.
-- **Avatars live in WordPress's native pipeline only** — `custom_avatars_enabled`
-  ON registers "AdminKit Portraits (Generated)" in the core
-  *Settings → Discussion → Default Avatar* dropdown (via `avatar_defaults`) and
-  intercepts `pre_get_avatar_data` to substitute a unique DiceBear portrait
-  when WP's stored default is AdminKit's option or *Mystery Person* / `mm` /
-  `mp` (the factory default, the source of the "all users look identical"
-  collision). Any other explicit choice (Wavatar, Identicon, Retro, MonsterID,
-  Blank) is left alone. **Do NOT re-add an upload field / Media Library picker
-  / profile UI** — Gravatar (or a dedicated upload plugin) is the user-supplied
-  picture slot; AdminKit owns the *generated fallback* slot only.
+- **Avatars are an explicit Discussion-dropdown choice** — `custom_avatars_enabled`
+  ON registers "AdminKit Portraits (Generated)" in core
+  *Settings → Discussion → Default Avatar* (via `avatar_defaults`). The
+  `pre_get_avatar_data` filter only acts when `$args['default']` is our own key —
+  any other choice (Mystery / Wavatar / Identicon / Retro / MonsterID / Blank)
+  is left untouched. Critically, the filter checks `$args['default']` (what
+  THIS call asked for), **not** `get_option('avatar_default')` — the Discussion
+  preview list iterates through every option, so reading the stored option
+  would clobber every preview with our portrait.
+- **Avatar URL is set on `$args['url']`, NOT `$args['default']`** — Gravatar's
+  Photon proxy (`i2.wp.com`) **strips every query string** from the `d=`
+  fallback URL, including our per-user `seed=`, which would land every user on
+  the same DiceBear default. Setting `$args['url']` directly short-circuits
+  Gravatar and serves our URL as-is. Trade-off baked in: picking AdminKit
+  Portraits overrides real Gravatars too — that's the explicit-opt-in semantic.
+  Don't try to "improve" this by going back to `d=` without rethinking the
+  Photon strip (a Gravatar-existence check per email + cache, in theory).
+- **Do NOT re-add an upload field / Media Library picker / profile UI** —
+  Gravatar (or a dedicated upload plugin) owns user-supplied pictures.
 - **Generated portraits call an external service (DiceBear, `api.dicebear.com`)** —
-  served as the Gravatar `d=` fallback for users with no real Gravatar, only
-  when `custom_avatars_enabled` is on AND the WP default is one we intercept.
-  Disclosed in `readme.txt` (the .org "External services" section). Seed is
-  NON-PII (md5 of the login) — **never send the raw email.** The URL also
-  carries a pastel `backgroundColor` palette + `backgroundType=gradientLinear`
-  so each user reads as a distinct card. If you change the service or what's
-  sent, update that disclosure in the same change.
+  served only when AdminKit Portraits is the selected default in Settings →
+  Discussion. Disclosed in `readme.txt` (the .org "External services" section).
+  Seed is NON-PII (md5 of the login) — **never send the raw email.** The URL
+  also carries a pastel `backgroundColor` palette + `backgroundType=gradientLinear`
+  so each user reads as a distinct card. Style + palette are inlined constants
+  (no filters yet — keep the surface minimal; add hooks when a real need surfaces).
+  If you change the service or what's sent, update that disclosure in the
+  same change.
 - **`content:url()` on a pseudo-element renders at the image's intrinsic size** —
   browsers ignore `width`/`height` on a pseudo-element's `content` image. For a
   *sized* icon/logo use a `background-image` on a sized box, or a real `<img>` (a
