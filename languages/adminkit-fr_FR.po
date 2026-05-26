@@ -1119,3 +1119,7 @@ msgstr "Auto"
 #: inc/class-settings-page.php
 msgid "Font & sizes"
 msgstr "Police et tailles"
+
+#: inc/class-settings-page.php
+msgid "Remove"
+msgstr "Supprimer"

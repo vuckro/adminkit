@@ -959,7 +959,11 @@
 	gap: 8px;
 	align-items: center;
 }
-.adminkit-app .ak-brand-slot__upload {
+/* One button per slot — label + action toggle between "↑ Upload" (empty) and
+   "Remove" (filled). The .is-remove state shifts the colour to the muted text
+   token so a destructive click reads slightly different from the neutral
+   upload action, without being a screaming red. */
+.adminkit-app .ak-brand-slot__btn {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
@@ -971,51 +975,30 @@
 	font-size: 11px;
 	cursor: pointer;
 }
-.adminkit-app .ak-brand-slot__upload:hover { border-color: var(--ak-border-strong); background: var(--ak-hover-bg); }
-.adminkit-app .ak-brand-slot__media {
-	background: none;
-	border: 0;
-	padding: 4px;
-	color: var(--ak-text-muted);
-	font-size: 11px;
-	cursor: pointer;
-	text-decoration: underline;
-	text-underline-offset: 2px;
+.adminkit-app .ak-brand-slot__btn:hover {
+	border-color: var(--ak-border-strong);
+	background: var(--ak-hover-bg);
 }
-.adminkit-app .ak-brand-slot__media:hover { color: var(--ak-text); }
-.adminkit-app .ak-brand-slot__clear {
-	background: none;
-	border: 0;
-	padding: 4px;
+.adminkit-app .ak-brand-slot__btn.is-remove {
 	color: var(--ak-text-muted);
-	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
-	font-size: 14px;
-	line-height: 1;
 }
-.adminkit-app .ak-brand-slot__clear:hover { color: var(--ak-error, #d63638); }
+.adminkit-app .ak-brand-slot__btn.is-remove:hover {
+	color: var(--ak-error, #d63638);
+	border-color: var(--ak-error, #d63638);
+}
 
-/* Accent picker row — a single inline row inside the brand card. The hex input
-   is the source of truth; the swatch button triggers the native colour input
-   (hidden) for an OS-native picker. A small "palette" icon button opens the
-   same picker as an alternative entry. */
-.adminkit-app .ak-accent-row {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 12px 0;
-	border-top: 1px solid var(--ak-border);
+/* Inline Accent picker — sits on the same row as the Display segmented
+   controls, right-anchored via `margin-left: auto`. The swatch is a clickable
+   button that forwards to the hidden native colour picker; the hex input is
+   the canonical source of truth (also accepts paste). Both stay tiny so the
+   Display row stays on one line on desktop. */
+.adminkit-app .ak-accent-inline {
+	margin-left: auto;
+	gap: 6px;
 }
-.adminkit-app .ak-accent-row__lbl {
-	font-size: 12px;
-	font-weight: 600;
-	color: var(--ak-heading);
-	min-width: 64px;
-}
-.adminkit-app .ak-accent-row__sw {
-	width: 28px;
-	height: 28px;
+.adminkit-app .ak-accent-inline__sw {
+	width: 22px;
+	height: 22px;
 	border-radius: var(--ak-radius-s, 6px);
 	border: 1px solid var(--ak-border-strong);
 	background: var(--ak-primary);
@@ -1023,80 +1006,33 @@
 	padding: 0;
 	flex: 0 0 auto;
 }
-.adminkit-app .ak-accent-row__hex {
-	width: 110px;
+.adminkit-app .ak-accent-inline__hex {
+	width: 92px;
 	font-family: monospace;
-	font-size: 12px;
-	padding: 6px 10px;
+	font-size: 11px;
+	padding: 4px 8px;
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s, 6px);
 	background: var(--ak-input-bg, var(--ak-bg));
 	color: var(--ak-text);
 }
-.adminkit-app .ak-accent-row__hex:focus {
+.adminkit-app .ak-accent-inline__hex:focus {
 	outline: none;
 	border-color: var(--ak-primary);
 	box-shadow: var(--ak-focus-ring);
 }
-/* The native input is positioned but visually hidden — clicking the swatch
-   forwards through to it for the OS picker. */
-.adminkit-app .ak-accent-row__native {
+/* Native input is anchored off-screen — clicking the swatch forwards to it
+   so the OS picker opens at the right spot. */
+.adminkit-app .ak-accent-inline__native {
 	position: absolute;
 	opacity: 0;
 	pointer-events: none;
 	width: 0;
 	height: 0;
 }
-.adminkit-app .ak-accent-row__hint {
-	font-size: 11px;
-	color: var(--ak-text-muted);
-	margin: 0 0 0 4px;
-}
-.adminkit-app .ak-accent-row__disclose { margin-left: auto; }
 
-/* Derived strip (collapsible) — 4 chips computed from --ak-primary. */
-.adminkit-app .ak-derived {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	gap: 8px;
-	margin: 4px 0 12px;
-	padding: 8px 0;
-	border-top: 1px solid var(--ak-border);
-}
-.adminkit-app .ak-derived__chip {
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s, 6px);
-	padding: 8px 10px;
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	background: var(--ak-elevated);
-}
-.adminkit-app .ak-derived__sw {
-	width: 24px;
-	height: 24px;
-	border-radius: var(--ak-radius-s, 6px);
-	border: 1px solid var(--ak-border);
-	flex: 0 0 auto;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 11px;
-	font-weight: 700;
-}
-.adminkit-app .ak-derived__body { min-width: 0; }
-.adminkit-app .ak-derived__lbl {
-	font-size: 11px;
-	font-weight: 500;
-	color: var(--ak-heading);
-}
-.adminkit-app .ak-derived__val {
-	font-size: 10px;
-	font-family: monospace;
-	color: var(--ak-text-muted);
-}
-
-/* Display row — segmented controls inline under the accent. */
+/* Display row — Admin bar + Login screen segmented controls + inline Accent
+   picker on the right, all on a single line. */
 .adminkit-app .ak-display-row {
 	display: flex;
 	align-items: center;
@@ -1351,8 +1287,10 @@
    internal columns also stack so its 8 tokens read as a normal list. */
 @media screen and (max-width: 960px) {
 	.adminkit-app .ak-brand-slots { grid-template-columns: 1fr; }
-	.adminkit-app .ak-derived { grid-template-columns: repeat(2, 1fr); }
 	.adminkit-app .ak-display-row { gap: 12px; }
+	/* Accent picker stops anchoring right and wraps naturally with the other
+	   inline fields when the row no longer fits on one line. */
+	.adminkit-app .ak-accent-inline { margin-left: 0; }
 	.adminkit-app .ak-design__row { grid-template-columns: 1fr; }
 	.adminkit-app .ak-design__row--full .ak-tbl {
 		grid-template-columns: 28px minmax( 0, 1fr ) minmax( 0, 1.4fr );

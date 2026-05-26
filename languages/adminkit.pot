@@ -1115,3 +1115,7 @@ msgstr ""
 #: inc/class-settings-page.php
 msgid "Font & sizes"
 msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Remove"
+msgstr ""

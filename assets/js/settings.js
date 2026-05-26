@@ -520,18 +520,13 @@
 			var dropTxt = el( 'span', { 'class': 'ak-brand-slot__drop', text: I.slotDrop || 'Drop' } );
 			var zone = el( 'div', { 'class': 'ak-brand-slot__zone' }, [ preview, dropTxt ] );
 
-			var upload = el( 'button', {
-				type: 'button', 'class': 'ak-brand-slot__upload',
-				text: '↑ ' + ( I.slotUpload || 'Upload' )
-			} );
-			var media = el( 'button', {
-				type: 'button', 'class': 'ak-brand-slot__media',
-				text: I.slotMediaLib || 'Media library'
-			} );
-			var clear = el( 'button', {
-				type: 'button', 'class': 'ak-brand-slot__clear',
-				'aria-label': I.logoRemove || 'Remove logo', title: I.logoRemove || 'Remove logo',
-				text: '×'
+			// One button per slot, label + action toggle on filled state:
+			//   empty   → "↑ Upload"  → opens the WP media frame
+			//   filled  → "Remove"    → clears the slot (sets it to empty)
+			// Clicking the drop zone is a separate shortcut that ALWAYS opens
+			// the media frame (to replace whatever is there).
+			var actionBtn = el( 'button', {
+				type: 'button', 'class': 'ak-brand-slot__btn'
 			} );
 
 			function currentUrl() {
@@ -543,12 +538,14 @@
 					preview.src = url;
 					preview.style.display = '';
 					dropTxt.style.display = 'none';
-					clear.style.display = '';
+					actionBtn.textContent = I.slotRemove || 'Remove';
+					actionBtn.classList.add( 'is-remove' );
 				} else {
 					preview.removeAttribute( 'src' );
 					preview.style.display = 'none';
 					dropTxt.style.display = '';
-					clear.style.display = 'none';
+					actionBtn.textContent = '↑ ' + ( I.slotUpload || 'Upload' );
+					actionBtn.classList.remove( 'is-remove' );
 				}
 			}
 			function setLogo( url, att ) {
@@ -562,13 +559,17 @@
 				markDirty();
 			}
 
-			// Both buttons open the same media frame — and clicking the zone is a
-			// shortcut for the same. We don't wire native drag-and-drop yet; the
-			// media library covers the same use with one extra click.
-			upload.addEventListener( 'click', function () { openMedia( setLogo ); } );
-			media.addEventListener( 'click', function () { openMedia( setLogo ); } );
+			// Drop zone is always a "pick / replace" shortcut. The action button
+			// branches on current state — clears when filled, picks when empty.
 			zone.addEventListener( 'click', function () { openMedia( setLogo ); } );
-			clear.addEventListener( 'click', function ( e ) { e.stopPropagation(); setLogo( '', null ); } );
+			actionBtn.addEventListener( 'click', function ( e ) {
+				e.stopPropagation();
+				if ( currentUrl() ) {
+					setLogo( '', null );
+				} else {
+					openMedia( setLogo );
+				}
+			} );
 
 			syncPreview();
 
@@ -577,7 +578,7 @@
 				el( 'div', { 'class': 'ak-brand-slot__body' }, [
 					el( 'div', { 'class': 'ak-brand-slot__label', text: label } ),
 					sub ? el( 'div', { 'class': 'ak-brand-slot__sub', text: sub } ) : null,
-					el( 'div', { 'class': 'ak-brand-slot__btns' }, [ upload, media, clear ] )
+					el( 'div', { 'class': 'ak-brand-slot__btns' }, [ actionBtn ] )
 				] )
 			] );
 		}
@@ -616,30 +617,33 @@
 			] );
 		}
 
-		// Accent picker — three controls bound to the same state.brandAccent:
-		// the coloured swatch button (triggers the OS-native colour picker), the
-		// hex `<input type="text">` (canonical source of truth), and a palette
-		// icon button (alternative entry to the native picker). Live preview is
-		// applied by writing :root{--ak-primary:<hex>} to a temporary <style>
-		// node — cleared when the form is saved or the hex emptied.
+		// Accent picker — minimal inline cluster meant to sit on the same row as
+		// the Display segmented controls (everything on one line, no separate
+		// accent row, no derived-colours strip). Two bound controls: the swatch
+		// (triggers the OS-native colour picker) and the hex `<input type="text">`
+		// (canonical source of truth, also accepts paste). The OS picker is a
+		// hidden `<input type="color">` that the swatch's click forwards to.
+		//
+		// Live preview: write :root{--ak-primary:<hex>} to a temporary <style>
+		// node so every accent-derived surface (buttons, focus rings, hover
+		// tints…) updates as the user types. The node is removed when the hex
+		// empties; the server-side `inject_brand_accent()` hook takes over after
+		// save.
 		function accentPicker() {
 			var swatch = el( 'button', {
-				type: 'button', 'class': 'ak-accent-row__sw',
+				type: 'button', 'class': 'ak-accent-inline__sw',
 				'aria-label': I.accentLabel || 'Accent'
 			} );
 			var hexInput = el( 'input', {
-				type: 'text', 'class': 'ak-accent-row__hex',
+				type: 'text', 'class': 'ak-accent-inline__hex',
 				placeholder: '#fed53e', spellcheck: 'false',
 				maxlength: '7'
 			} );
 			hexInput.value = state.brandAccent || '';
-			var native = el( 'input', { type: 'color', 'class': 'ak-accent-row__native' } );
+			var native = el( 'input', { type: 'color', 'class': 'ak-accent-inline__native' } );
 			native.value = isValidHex( state.brandAccent ) ? state.brandAccent : '#fed53e';
 
 			function applyPreview() {
-				// Write a tiny inline override on <head> so the LIVE colour matches
-				// what the server will paint after save. Removing the node (when
-				// the hex empties) drops the override and the cascade takes back over.
 				var id = 'ak-accent-preview';
 				var existing = document.getElementById( id );
 				if ( isValidHex( state.brandAccent ) ) {
@@ -652,11 +656,8 @@
 				} else if ( existing ) {
 					existing.parentNode.removeChild( existing );
 				}
-				// Reflect on the swatch + native picker.
 				swatch.style.background = state.brandAccent || 'var(--ak-primary)';
 				if ( isValidHex( state.brandAccent ) ) { native.value = state.brandAccent; }
-				// And on the derived strip's hex chips (their values come from
-				// var(--ak-primary-hover) etc., resolved live by refreshHexes()).
 				refreshHexes();
 			}
 
@@ -673,13 +674,10 @@
 			swatch.addEventListener( 'click', function () { native.click(); } );
 			native.addEventListener( 'input', function () { setAccent( native.value ); } );
 
-			// Seed initial visual state.
 			applyPreview();
 
-			// The "Show derived colours" disclosure sits at the right of the same
-			// row — built outside this helper and appended by the caller.
-			return el( 'div', { 'class': 'ak-accent-row' }, [
-				el( 'span', { 'class': 'ak-accent-row__lbl', text: I.accentLabel || 'Accent' } ),
+			return el( 'div', { 'class': 'ak-display-row__field ak-accent-inline' }, [
+				el( 'span', { 'class': 'ak-display-row__field-lbl', text: I.accentLabel || 'Accent' } ),
 				swatch, hexInput, native
 			] );
 		}
@@ -688,40 +686,6 @@
 		// #abc or #aabbcc only, no rgba / hsl.
 		function isValidHex( v ) {
 			return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test( ( v || '' ).trim() );
-		}
-
-		// 4 derived-colour chips (Hover / Subtle / On-accent / Focus) — their
-		// values are read live from --ak-primary-hover etc., kept in sync by the
-		// MutationObserver on <html data-adminkit-theme> via `data-ak-token`.
-		function derivedStrip() {
-			function chip( cssVar, label, subOverride, decorate ) {
-				var sw = el( 'span', { 'class': 'ak-derived__sw', style: 'background: var(' + cssVar + ')' } );
-				if ( decorate ) { decorate( sw ); }
-				var val = el( 'div', {
-					'class': 'ak-derived__val',
-					'data-ak-token': cssVar,
-					text: resolveColor( cssVar )
-				} );
-				return el( 'div', { 'class': 'ak-derived__chip' }, [
-					sw,
-					el( 'div', { 'class': 'ak-derived__body' }, [
-						el( 'div', { 'class': 'ak-derived__lbl', text: label } ),
-						subOverride ? el( 'div', { 'class': 'ak-derived__val', text: subOverride } ) : val
-					] )
-				] );
-			}
-			return el( 'div', { 'class': 'ak-derived' }, [
-				chip( '--ak-primary-hover', I.derivedHover || 'Hover' ),
-				chip( '--ak-primary-subtle', I.derivedSubtle || 'Subtle' ),
-				// "On accent" — show an Aa sample on the accent surface, so the
-				// readability check reads at a glance (sub copy is "readable").
-				chip( '--ak-primary', I.derivedOnAccent || 'On accent', I.derivedOnAccentSub || 'readable', function ( sw ) {
-					sw.style.color = 'var(--ak-on-accent)';
-					sw.textContent = 'Aa';
-				} ),
-				// Focus is the ring (--ak-primary @ ~50%), no clean hex — show "@ 50%".
-				chip( '--ak-primary', I.derivedFocus || 'Focus', I.derivedFocusSub || '@ 50%' )
-			] );
 		}
 
 		// --- Brand card ----------------------------------------------------------
@@ -771,18 +735,14 @@
 			brandSlot( 'favicon', I.slotFavicon || 'Favicon', I.slotFaviconSub || 'SVG · or 32×32 PNG' )
 		] );
 
-		// Accent row + derived strip (collapsible).
-		var derivedDisc = disclosure(
-			I.accentShowDerived || 'Show derived colours',
-			I.accentHideDerived || 'Hide derived colours',
-			function ( panel ) { panel.appendChild( derivedStrip() ); }
-		);
-		var accentRow = accentPicker();
-		// Push the disclosure to the right of the accent row.
-		derivedDisc.btn.className += ' ak-accent-row__disclose';
-		accentRow.appendChild( derivedDisc.btn );
-
-		// Display row — segmented controls for Admin bar and Login screen.
+		// Display row — segmented controls for Admin bar + Login screen, and
+		// the compact inline Accent picker all on the same line. Everything
+		// the user can configure post-upload lives here, in one row, after
+		// the brand slots. The derived-colours strip is intentionally gone —
+		// the cascade derives Hover / Subtle / On-accent / Focus from --ak-primary
+		// automatically through color-mix(), so showing those values added clutter
+		// without a control. The Accent column anchors the right of the row so
+		// the colour is always close to the controls it tints.
 		var wpField = logoSeg( 'wpLogo', 'ak-wp-logo-label', I.wpLogoLabel || 'Admin bar', [
 			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
 			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' },
@@ -795,16 +755,12 @@
 		] );
 		var displayRow = el( 'div', { 'class': 'ak-display-row' }, [
 			el( 'span', { 'class': 'ak-display-row__lbl', text: I.displayLabel || 'Display' } ),
-			wpField, loginField
+			wpField, loginField, accentPicker()
 		] );
 
-		// Card stack order: identity (slots) → palette (accent + derived strip
-		// together as a sub-block) → placement (display). The derived disclosure
-		// sits right under the accent so both pieces of the palette decision
-		// stay grouped; Display closes the card with the "where does the mark
-		// appear" choice — a discrete config below the visual identity.
+		// Card stack: identity (slots) → placement + accent (one row).
 		var card = el( 'section', { 'class': 'ak-card' }, [
-			cardHead, slotsRow, accentRow, derivedDisc.panel, displayRow
+			cardHead, slotsRow, displayRow
 		] );
 
 		// Intro text above the card.

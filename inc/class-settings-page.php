@@ -401,6 +401,7 @@ class AdminKit_Settings_Page {
 				'slotFaviconSub'      => __( 'SVG · or 32×32 PNG', 'adminkit' ),
 				'slotDrop'            => __( 'Drop', 'adminkit' ),
 				'slotUpload'          => __( 'Upload', 'adminkit' ),
+				'slotRemove'          => __( 'Remove', 'adminkit' ),
 				'slotMediaLib'        => __( 'Media library', 'adminkit' ),
 				'faviconHint'         => __( 'Inherits the Site Icon when empty (Settings → General).', 'adminkit' ),
 				'accentLabel'         => __( 'Accent', 'adminkit' ),
