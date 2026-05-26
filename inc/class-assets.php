@@ -65,6 +65,13 @@ class AdminKit_Assets {
 	const WAASKIT_HANDLE = 'adminkit-waaskit';
 	const WAASKIT_SRC    = 'assets/css/waaskit-tokens.css';
 
+	// WordPress-mapped baseline — AdminKit's own palette identity (Modern WP).
+	// Loaded only when accent_source resolves to 'adminkit' or 'custom'; sits in
+	// the cascade between any Bricks provider stylesheet and tokens.css so the
+	// chosen identity wins. Static file — change `wp-baseline.css` to retune.
+	const WP_BASELINE_HANDLE = 'adminkit-wp-baseline';
+	const WP_BASELINE_SRC    = 'assets/css/wp-baseline.css';
+
 	/**
 	 * Registered asset entries.
 	 *
@@ -109,54 +116,42 @@ class AdminKit_Assets {
 	}
 
 	/**
-	 * Inline-style the effective `--ak-primary` AND `--ak-on-accent` on top of
-	 * the tokens stylesheet. Switches on `accent_source`:
+	 * Inline-style the effective `--ak-primary` / derivatives on the tokens
+	 * stylesheet — ONLY when accent_source is 'custom'. The 'adminkit' case is
+	 * fully covered by wp-baseline.css (which is conditionally enqueued in
+	 * enqueue_tokens()), and 'bricks' is the natural cascade.
 	 *
-	 *   • 'adminkit' (default) → emit AdminKit's WP-Blue + computed on-accent.
-	 *     Forced over Bricks: picking AdminKit explicitly means "I want this
-	 *     colour, even if Bricks is loaded".
-	 *   • 'bricks' → no inline rule emitted. Bricks's stylesheet (loaded as a
-	 *     dep of TOKENS_HANDLE via `adminkit/extra_tokens_handle`) wins via the
-	 *     normal cascade — including its own `--accent-on` for text contrast.
-	 *   • 'custom' → emit the user's hex from `brand_accent` + a computed
-	 *     on-accent picked from the accent's luminance. No-op if the hex fails
-	 *     `sanitize_hex_color()`.
+	 * For 'custom' we re-declare the whole accent family because wp-baseline.css
+	 * defined them with the WP-Blue (#3858E9) hardcoded — we need to swap to the
+	 * user's hex AND its derivatives:
+	 *   • --ak-primary           → the user hex
+	 *   • --ak-primary-hover     → user hex × 82 % darken
+	 *   • --ak-primary-subtle    → user hex × 12 % over --ak-surface
+	 *   • --ak-on-accent         → white or dark ink based on the hex's luminance
+	 *                              (`contrast_text_for()` — the accessibility lift)
 	 *
-	 * Why we ALSO emit `--ak-on-accent`: the WaasKit baseline ties it to
-	 * `--primary-d-9` (the deepest accent shade), but a user-picked accent has
-	 * no precomputed ramp. A black accent with white text is unreadable inverted;
-	 * a yellow accent with white text fails contrast. So we compute the right
-	 * foreground (white vs deep ink) from the WCAG relative-luminance of the
-	 * accent itself. Same logic runs JS-side in `applyPreview()` for live preview.
-	 *
-	 * Runs for every context (admin / login / frontend / editor / customize)
-	 * since the accent should be consistent everywhere AdminKit paints.
+	 * Same logic runs JS-side in `applyPreview()` so the live preview matches
+	 * what we emit here after save.
 	 *
 	 * @param string $context  admin | login | frontend | editor | customize
 	 * @return void
 	 */
 	public static function inject_brand_accent( $context ) {
-		$source = AdminKit_Settings::accent_source();
-
-		if ( 'bricks' === $source ) {
-			return; // Let the Bricks --accent / --accent-on ride the cascade.
+		if ( 'custom' !== AdminKit_Settings::accent_source() ) {
+			return;
 		}
-
-		$hex = '';
-		if ( 'custom' === $source ) {
-			$hex = (string) sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) );
-			if ( '' === $hex ) {
-				return;
-			}
-		} else {
-			$hex = self::ADMINKIT_BLUE;
+		$hex = (string) sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) );
+		if ( '' === $hex ) {
+			return;
 		}
-
 		$on = self::contrast_text_for( $hex );
-		wp_add_inline_style(
-			self::TOKENS_HANDLE,
-			':root{--ak-primary:' . $hex . ';--ak-on-accent:' . $on . '}'
-		);
+		$css = ':root{'
+			. '--ak-primary:' . $hex . ';'
+			. '--ak-primary-hover:color-mix(in srgb, ' . $hex . ' 82%, #000);'
+			. '--ak-primary-subtle:color-mix(in srgb, ' . $hex . ' 12%, var(--ak-surface));'
+			. '--ak-on-accent:' . $on
+			. '}';
+		wp_add_inline_style( self::TOKENS_HANDLE, $css );
 	}
 
 	/**
@@ -416,13 +411,42 @@ class AdminKit_Assets {
 		}
 
 		$extra = apply_filters( 'adminkit/extra_tokens_handle', null, $context );
+
+		// AdminKit's own WP-mapped baseline — loaded when the user picked
+		// 'adminkit' as the accent source (default), or 'custom' (custom uses
+		// the same neutrals + their picked accent on top). Bricks source skips
+		// this so the Bricks provider stays canonical.
+		//
+		// Depends on `$baseline` (WaasKit) AND `$extra` (Bricks if present), so
+		// it loads AFTER both in the cascade — whatever a provider declared gets
+		// overridden by AdminKit's intentional choice. The deps array passed to
+		// tokens.css below ALSO lists `$wp_baseline` last, for explicit ordering
+		// alongside its own dep chain.
+		$wp_baseline = null;
+		$wp_path     = ADMINKIT_PATH . self::WP_BASELINE_SRC;
+		if ( file_exists( $wp_path ) && in_array( AdminKit_Settings::accent_source(), array( 'adminkit', 'custom' ), true ) ) {
+			$wp_deps = array_filter(
+				array( $baseline, $extra ),
+				static function ( $dep ) {
+					return $dep && wp_style_is( $dep, 'registered' );
+				}
+			);
+			wp_enqueue_style(
+				self::WP_BASELINE_HANDLE,
+				ADMINKIT_URL . self::WP_BASELINE_SRC,
+				$wp_deps,
+				(string) filemtime( $wp_path )
+			);
+			$wp_baseline = self::WP_BASELINE_HANDLE;
+		}
+
 		// Only depend on handles that are actually registered. WP 6.9.1+ DROPS a
 		// stylesheet — and everything that transitively depends on it — if it lists
 		// a missing dependency. The baseline is skipped on the frontend, and a
 		// provider could return a handle it didn't enqueue; either would otherwise
 		// take the whole --ak-* layer (and the admin bar) down with it.
 		$deps = array_filter(
-			array_merge( $core_deps, array( $baseline, $extra ) ),
+			array_merge( $core_deps, array( $baseline, $extra, $wp_baseline ) ),
 			static function ( $dep ) {
 				return $dep && wp_style_is( $dep, 'registered' );
 			}

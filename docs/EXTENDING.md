@@ -72,31 +72,62 @@ nothing is set; `inc/wp-core/class-branding.php`. The login screen has its own
 `wp_logo`), so it can show a square favicon while the bar shows a wide logo, or
 vice versa; resolved in `inc/wp-core/class-login.php`.
 
-### Accent
+### Accent — and the WordPress palette baseline
 
-The Design tab's accent picker switches between **three sources** for
-`--ak-primary` via the `accent_source` setting:
+The Design tab's source picker switches between **three personalities** for the
+admin UI via the `accent_source` setting:
 
-| Source | Behaviour |
-| --- | --- |
-| `'adminkit'` (default) | Force-emits `:root{--ak-primary:#3858E9}` — WordPress Blue, the Block Editor primary. Overrides Bricks even when active. |
-| `'bricks'` | No inline rule. Bricks's `--accent` rides the normal cascade via `adminkit/extra_tokens_handle`. |
-| `'custom'` | Emits the user's `brand_accent` hex (sanitised by `sanitize_hex_color()`). |
+| Source | What's loaded | Result |
+| --- | --- | --- |
+| `'adminkit'` (default when Bricks is not active) | `wp-baseline.css` | Full Modern WordPress palette — surfaces (`#ffffff`/`#f6f7f7`), borders, inks, accent `#3858E9`, status (`#00a32a`/`#dba617`/`#d63638`/`#72aee6`). |
+| `'bricks'` (default when Bricks is active) | Bricks's stylesheet via `adminkit/extra_tokens_handle` | Bricks neutrals + Bricks `--accent` + Bricks status. No AdminKit override. |
+| `'custom'` | `wp-baseline.css` + inline `--ak-primary…` override | AdminKit's WP palette underneath, the user's `brand_accent` hex on top — "AdminKit with my colour". |
 
 A `''` stored value resolves to "auto" at read time — `'bricks'` if Bricks is
 active, `'adminkit'` otherwise — via `AdminKit_Settings::accent_source()`. Use
 that helper everywhere; never read the raw setting directly.
 
-All derived accent tokens (`--ak-primary-hover`, `--ak-primary-subtle`,
-`--ak-on-accent`, the focus ring) recalculate automatically through CSS
-`color-mix()` chains once `--ak-primary` flips — one knob, whole family. Tokens
-that follow the accent are flagged `accent_family: true` in `color_map()` so
-the Design tab's token-reference table can colour their Source pill accordingly.
+#### Cascade order
 
-The override is emitted by `AdminKit_Assets::inject_brand_accent()` hooked on
-`adminkit/tokens_enqueued`. The constant `AdminKit_Assets::ADMINKIT_BLUE` holds
-the WP-Blue default — change it there if you ever need to ship a different
-out-of-the-box accent.
+Set in `AdminKit_Assets::enqueue_tokens()` via the `deps` array of each handle:
+
+1. `assets/css/waaskit-tokens.css` (`adminkit-waaskit`, always loaded) — neutral safety net.
+2. Provider tokens (Bricks's stylesheet) — only when source = `'bricks'` AND Bricks is detected.
+3. `assets/css/wp-baseline.css` (`adminkit-wp-baseline`) — only when source ∈ {`'adminkit'`, `'custom'`}. Overrides every meaningful `--ak-*` (surfaces, borders, text, accent, status) with WordPress values, plus a `[data-adminkit-theme="dark"]` block for dark mode.
+4. `assets/css/tokens.css` (`adminkit-tokens`) — the AdminKit token layer that the admin shell consumes.
+5. Inline `<style id="ak-accent-preview">` — emitted by `AdminKit_Assets::inject_brand_accent()` ONLY when source = `'custom'`. Re-declares `--ak-primary`, `--ak-primary-hover`, `--ak-primary-subtle`, and `--ak-on-accent` to swap the user hex in for `wp-baseline.css`'s `#3858E9` hardcode.
+
+Because step 3 overrides `--ak-*` DIRECTLY (not WaasKit primitives like
+`--neutral-l-1`), the file is self-contained — it doesn't assume anything about
+which baseline ran before it, and it short-circuits cascade traps where derived
+tokens like `--ak-primary-hover` would otherwise resolve through provider
+fallback chains.
+
+#### Why `inject_brand_accent()` is custom-only
+
+For `'adminkit'`, the full palette already lives in `wp-baseline.css` — no
+inline rule needed. For `'bricks'`, the Bricks cascade IS the answer. So the
+inline override only fires for `'custom'`, and it re-declares the whole accent
+family (not just `--ak-primary`) because `wp-baseline.css` hardcodes derivatives
+with `#3858E9`. Mirror this on the client in `assets/js/settings.js`
+(`applyPreview()`) so the live preview agrees with the post-save state.
+
+#### `--ak-on-accent` is NOT `color-mix()`
+
+Hover/subtle/focus derivatives follow `--ak-primary` via CSS `color-mix()`
+chains automatically — flip one knob, the family follows. But `--ak-on-accent`
+(the foreground colour for text/icons on the accent fill) is computed from the
+accent's WCAG relative luminance — `AdminKit_Assets::contrast_text_for()` PHP
+side, `bestOnAccent()` JS side, byte-for-byte the same algorithm. Without this,
+a black custom accent would leave white-on-black text invisible.
+
+Tokens that follow the accent are flagged `accent_family: true` in
+`color_map()` so the Design tab's token-reference table can colour their Source
+pill accordingly.
+
+The constant `AdminKit_Assets::ADMINKIT_BLUE` holds the WP-Blue default —
+change it there (and the hardcodes in `wp-baseline.css`) if you ever need to
+ship a different out-of-the-box accent.
 
 ## Icons
 
@@ -200,6 +231,7 @@ add_filter( 'adminkit/generated_avatar_url', function ( $url, $user_id, $size ) 
 | Hook | Type | Purpose |
 | --- | --- | --- |
 | `adminkit/loaded` | action | Fires after all modules + integrations init (`inc/class-plugin.php`). Late setup. |
+| `adminkit/username_changed` | action | Fires after the **Username changer** feature renames `user_login`. Args: `(int $user_id, string $old_login, string $new_login)`. Use to log the rename in an audit / activity log, or to sync external systems that key on `user_login`. |
 
 ## The integration contract
 

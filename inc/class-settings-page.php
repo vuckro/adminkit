@@ -415,7 +415,7 @@ class AdminKit_Settings_Page {
 				'slotRemove'          => __( 'Remove', 'adminkit' ),
 				'slotMediaLib'        => __( 'Media library', 'adminkit' ),
 				'faviconHint'         => __( 'Inherits the Site Icon when empty (Settings → General).', 'adminkit' ),
-				'accentLabel'         => __( 'Accent', 'adminkit' ),
+				'accentLabel'         => __( 'Color', 'adminkit' ),
 				'accentInherit'       => __( 'Inheriting from provider / baseline', 'adminkit' ),
 				'accentClear'         => __( 'Clear accent', 'adminkit' ),
 				'accentSrcAdminKit'   => __( 'AdminKit', 'adminkit' ),
@@ -712,6 +712,7 @@ class AdminKit_Settings_Page {
 			array( 'key' => 'replace_icons_enabled',  'group' => $appearance, 'label' => __( 'AdminKit icons', 'adminkit' ), 'desc' => __( 'Replace WordPress\'s native menu and toolbar icons with AdminKit\'s set. Non-destructive: icons already customised (e.g. via Admin Menu Editor) are left untouched.', 'adminkit' ) ),
 			array( 'key' => 'custom_avatars_enabled', 'group' => $appearance, 'label' => __( 'Custom avatars', 'adminkit' ), 'desc' => __( 'Adds "AdminKit Portraits (Generated)" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait (overrides Gravatar — explicit opt-in).', 'adminkit' ) ),
 			array( 'key' => 'quick_edit_users_enabled', 'group' => $content, 'label' => __( 'Users quick edit', 'adminkit' ), 'desc' => __( 'Adds a Quick Edit affordance to the users list — edit first name, last name, email and role inline without opening the full profile.', 'adminkit' ) ),
+			array( 'key' => 'username_changer_enabled', 'group' => $content, 'label' => __( 'Username changer', 'adminkit' ), 'desc' => __( 'Lets an admin rename a user\'s login on profile.php / user-edit.php — WordPress disables that field by default. Sensitive: it invalidates the user\'s active sessions on every device, who then must sign in again with the new name. Single-site only.', 'adminkit' ) ),
 		);
 
 		// Bricks builder restyle — only meaningful when the Bricks theme is active.

@@ -990,16 +990,17 @@
 /* Inline Accent picker — sits on the same row as the Display segmented
    controls, right-anchored via `margin-left: auto`. Three controls:
      • segmented [AdminKit|Bricks|Custom]   — switches the source
-     • swatch                                — shows the resolved colour
+     • swatch (only when source = Custom)   — opens the OS picker
      • hex input (only when source = Custom) — editable value
-   The hex input is `[hidden]` for non-custom sources; the swatch always
-   reflects the live `--ak-primary` via `var(--ak-primary)` background. */
+   Swatch + hex are `[hidden]` outside Custom (the segmented alone is the
+   affordance for AdminKit / Bricks — no per-pixel choice to make). */
 .adminkit-app .ak-accent-inline {
 	margin-left: auto;
 	gap: 6px;
 }
 .adminkit-app .ak-accent-inline .ak-seg { margin-left: 0; }
-.adminkit-app .ak-accent-inline__hex[hidden] { display: none; }
+.adminkit-app .ak-accent-inline__hex[hidden],
+.adminkit-app .ak-accent-inline__sw[hidden] { display: none; }
 .adminkit-app .ak-accent-inline__sw {
 	width: 22px;
 	height: 22px;

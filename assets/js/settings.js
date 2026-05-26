@@ -680,48 +680,58 @@
 				maxlength: '7'
 			} );
 			hexInput.value = state.brandAccent || '';
-			if ( state.accentSource !== 'custom' ) { hexInput.setAttribute( 'hidden', '' ); }
+			// Both swatch and hex hide outside Custom mode — the segmented alone
+			// is the affordance for AdminKit / Bricks (no per-pixel choice to make).
+			if ( state.accentSource !== 'custom' ) {
+				hexInput.setAttribute( 'hidden', '' );
+				swatch.setAttribute( 'hidden', '' );
+			}
 			var native = el( 'input', { type: 'color', 'class': 'ak-accent-inline__native' } );
 			native.value = isValidHex( state.brandAccent ) ? state.brandAccent : ( D.adminkitBlue || '#3858E9' );
 
-			// Update the inline <style id="ak-accent-preview"> to match the active
-			// source. Removing the node lets the cascade fall through to Bricks /
-			// baseline — that's the behaviour we want for 'bricks' and for empty
-			// 'custom' input.
+			// Update the inline <style id="ak-accent-preview"> for live preview.
+			// Mirrors AdminKit_Assets::inject_brand_accent() in PHP, so what the
+			// browser shows BEFORE save == what the server emits AFTER save.
 			//
-			// IMPORTANT: we also emit `--ak-on-accent` (the text colour on top of
-			// the accent) computed from the accent's luminance. Without this, a
-			// dark custom accent would leave its white default text invisible.
-			// PHP mirrors the same logic in `AdminKit_Assets::contrast_text_for()`
-			// for the persisted-after-save case.
+			//   • 'adminkit' → no inline rule needed (wp-baseline.css does it all)
+			//   • 'bricks'   → no inline rule (Bricks's stylesheet cascades)
+			//   • 'custom'   → emit primary + hover + subtle + on-accent (re-declares
+			//                  the whole accent family because wp-baseline.css set
+			//                  them with #3858E9 hardcoded — we have to swap for
+			//                  the user's hex, not just --ak-primary)
+			//
+			// IMPORTANT live-preview limitation: switching between 'bricks' and
+			// {'adminkit','custom'} doesn't load/unload wp-baseline.css client-side.
+			// So if the user is on 'bricks' and clicks 'adminkit', the surfaces
+			// stay Bricks-coloured until save+reload. The Source pills update
+			// immediately (refreshAllPills) and the accent updates immediately for
+			// custom, but surface-level palette swaps require the round-trip.
 			function applyPreview() {
 				var id = 'ak-accent-preview';
 				var existing = document.getElementById( id );
-				var override = '';
 
-				if ( state.accentSource === 'adminkit' ) {
-					override = D.adminkitBlue || '#3858E9';
-				} else if ( state.accentSource === 'custom' && isValidHex( state.brandAccent ) ) {
-					override = state.brandAccent;
-				}
-				// 'bricks' OR custom-with-invalid-hex → fall through (no override).
-
-				if ( override ) {
+				if ( state.accentSource === 'custom' && isValidHex( state.brandAccent ) ) {
+					var hex = state.brandAccent;
+					var on  = bestOnAccent( hex );
+					var css = ':root{'
+						+ '--ak-primary:' + hex + ';'
+						+ '--ak-primary-hover:color-mix(in srgb, ' + hex + ' 82%, #000);'
+						+ '--ak-primary-subtle:color-mix(in srgb, ' + hex + ' 12%, var(--ak-surface));'
+						+ '--ak-on-accent:' + on
+						+ '}';
 					if ( ! existing ) {
 						existing = document.createElement( 'style' );
 						existing.id = id;
 						document.head.appendChild( existing );
 					}
-					var onAccent = bestOnAccent( override );
-					existing.textContent = ':root{--ak-primary:' + override + ';--ak-on-accent:' + onAccent + '}';
+					existing.textContent = css;
 				} else if ( existing ) {
+					// adminkit / bricks / empty-custom → no inline override needed.
 					existing.parentNode.removeChild( existing );
 				}
-				// Swatch reflects whatever the cascade resolves to — let the
-				// browser tell us via getComputedStyle (resolveColor reads it).
 				swatch.style.background = 'var(--ak-primary)';
 				refreshHexes();
-				refreshAccentPills();
+				refreshAllPills();
 			}
 
 			function syncSeg() {
@@ -732,8 +742,10 @@
 				} );
 				if ( state.accentSource === 'custom' ) {
 					hexInput.removeAttribute( 'hidden' );
+					swatch.removeAttribute( 'hidden' );
 				} else {
 					hexInput.setAttribute( 'hidden', '' );
+					swatch.setAttribute( 'hidden', '' );
 				}
 			}
 
@@ -917,6 +929,10 @@
 	// kept in the DOM after that (the MutationObserver picks up dark-mode flips
 	// even while hidden).
 	function tokensReference() {
+		// Reset the pill-cell registry on each build so refreshAllPills only
+		// walks the cells that are currently in the DOM.
+		pillCells.length = 0;
+
 		var thead = el( 'thead', {}, [ el( 'tr', {}, [
 			el( 'th', { text: I.colToken || 'Token' } ),
 			el( 'th', { text: I.colCascade || 'Cascade' } ),
@@ -949,21 +965,19 @@
 	}
 
 	// Source pill for a single token row. The pill describes what's ACTUALLY
-	// feeding the token at runtime, not just what's mapped in the color_map:
+	// feeding the token at runtime, taking the current `accent_source` into
+	// account (which decides which baseline is on the cascade):
 	//
-	//   • own (AdminKit-defined, no provider equivalent) → ADMINKIT pill (yellow)
+	//   • own (AdminKit-defined token, e.g. --ak-secondary) → ADMINKIT pill
+	//     regardless of source.
 	//   • accent-family (--ak-primary*, --ak-on-accent, --ak-focus) → follows
-	//     `state.accentSource`: ADMINKIT / BRICKS / CUSTOM depending on the user's
-	//     choice in the Brand card. These tokens are tinted live by the inline
-	//     <style id="ak-accent-preview"> rule, so the pill must reflect that.
-	//   • mapped to a Bricks var AND Bricks is actually detected → BRICKS pill
-	//   • everything else (no provider, or Bricks not active) → AUTO pill (muted)
-	//     — the token resolves through the WaasKit baseline cascade.
-	//
-	// The Bricks gate matters because `t.bricks` is set in color_map() regardless
-	// of host state. Without `D.bricksDetected`, the pill would lie when Bricks
-	// isn't installed (it'd claim "Bricks" while the value actually comes from
-	// the baseline).
+	//     `accentState.source`: CUSTOM (when source=custom), BRICKS (when
+	//     source=bricks AND Bricks is actually detected), else ADMINKIT.
+	//   • non-accent, source=bricks AND token has a `bricks` mapping AND
+	//     Bricks detected → BRICKS pill (Bricks's stylesheet is providing it).
+	//   • non-accent, source IN {adminkit, custom} → ADMINKIT pill (the
+	//     wp-baseline.css file is providing it).
+	//   • else → AUTO pill (cascade safety net, shouldn't normally show).
 	function sourcePill( t ) {
 		if ( t.own ) {
 			return el( 'span', { 'class': 'ak-pill ak-pill--adminkit', text: I.sourceAdminKit || 'AdminKit' } );
@@ -975,11 +989,14 @@
 			if ( accentState.source === 'bricks' && D.bricksDetected ) {
 				return el( 'span', { 'class': 'ak-pill ak-pill--bricks', text: I.sourceBricks || 'Bricks' } );
 			}
-			// 'adminkit' (or 'bricks' fallback when Bricks isn't actually active)
 			return el( 'span', { 'class': 'ak-pill ak-pill--adminkit', text: I.sourceAdminKit || 'AdminKit' } );
 		}
-		if ( t.bricks && D.bricksDetected ) {
+		// Non-accent tokens — which baseline is currently providing them.
+		if ( accentState.source === 'bricks' && t.bricks && D.bricksDetected ) {
 			return el( 'span', { 'class': 'ak-pill ak-pill--bricks', text: I.sourceBricks || 'Bricks' } );
+		}
+		if ( accentState.source === 'adminkit' || accentState.source === 'custom' ) {
+			return el( 'span', { 'class': 'ak-pill ak-pill--adminkit', text: I.sourceAdminKit || 'AdminKit' } );
 		}
 		return el( 'span', { 'class': 'ak-pill ak-pill--auto', text: I.sourceAuto || 'Auto' } );
 	}
@@ -990,34 +1007,37 @@
 	// Initialised from the bootstrap, kept in sync by accentPicker's setSource().
 	var accentState = { source: ( D.accentSource || 'adminkit' ) };
 
-	// Refresh every Source pill marked as accent-family in the token map. Called
-	// by accentPicker.applyPreview() right after the inline <style> is rewritten,
-	// so the pill colours/labels mirror the new source choice in real time.
-	function refreshAccentPills() {
-		var cells = document.querySelectorAll( '[data-accent-pill]' );
-		for ( var i = 0; i < cells.length; i++ ) {
-			var cell = cells[ i ];
-			var token = cell.getAttribute( 'data-accent-pill' );
-			// Synthesize the minimal `t` the sourcePill needs.
-			var fresh = sourcePill( { accent_family: true, bricks: token } );
-			cell.innerHTML = '';
-			cell.appendChild( fresh );
+	// Registry of every Source <td> in the token-map table along with its
+	// original token object. Populated by refRow() each time the disclosure
+	// builds the table; refreshAllPills() walks it after any source change.
+	// Cheaper + cleaner than data-attributes since we keep the full token in scope.
+	var pillCells = [];
+
+	// Re-render every Source pill in the token map to reflect the current
+	// accent source. Called by accentPicker.applyPreview() — covers BOTH
+	// accent-family tokens (the obvious case) AND the rest (because they may
+	// also flip baseline when source changes between bricks ↔ adminkit/custom).
+	function refreshAllPills() {
+		for ( var i = 0; i < pillCells.length; i++ ) {
+			var ref = pillCells[ i ];
+			ref.td.innerHTML = '';
+			ref.td.appendChild( sourcePill( ref.token ) );
 		}
 	}
 
 	// One token row in the read-only reference table. Cascade reads source →
 	// bricks-semantic → token (the same flow direction we render elsewhere).
-	// Accent-family tokens carry `data-accent-pill` on their Source cell so
-	// refreshAccentPills() can re-render the pill in place when the user flips
-	// the accent source in the Brand card (no full table rebuild needed).
+	// The Source <td> is registered in `pillCells` so refreshAllPills() can
+	// re-render it in place when the accent source flips — no full table
+	// rebuild required, no data-attribute juggling.
 	function refRow( t ) {
 		var cascadeBits = [];
 		if ( t.source ) { cascadeBits.push( t.source ); }
 		if ( t.bricks ) { cascadeBits.push( t.bricks ); }
 		var cascade = cascadeBits.length ? cascadeBits.join( ' → ' ) : '—';
 
-		var pillCellAttrs = {};
-		if ( t.accent_family ) { pillCellAttrs[ 'data-accent-pill' ] = t.bricks || t.token; }
+		var pillCell = el( 'td', {}, [ sourcePill( t ) ] );
+		pillCells.push( { td: pillCell, token: t } );
 
 		return el( 'tr', {}, [
 			el( 'td', {}, [
@@ -1026,7 +1046,7 @@
 			] ),
 			el( 'td', {}, [ el( 'code', { 'class': 'ak-tokens-ref__cascade', text: cascade } ) ] ),
 			el( 'td', {}, [ el( 'code', { 'class': 'ak-tokens-ref__value', 'data-ak-token': t.token, text: resolveColor( t.token ) } ) ] ),
-			el( 'td', pillCellAttrs, [ sourcePill( t ) ] )
+			pillCell
 		] );
 	}
 

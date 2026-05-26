@@ -1131,3 +1131,7 @@ msgstr "Personnalisé"
 #: inc/class-settings-page.php
 msgid "Bricks not detected"
 msgstr "Bricks non détecté"
+
+#: inc/class-settings-page.php
+msgid "Color"
+msgstr "Couleur"

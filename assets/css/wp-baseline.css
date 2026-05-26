@@ -1,0 +1,85 @@
+/* AdminKit — WordPress baseline palette
+   ======================================================================
+   Loaded by AdminKit_Assets::enqueue_tokens() when accent_source resolves
+   to 'adminkit' or 'custom'. Sits in the cascade BETWEEN the optional
+   Bricks provider stylesheet and tokens.css, so AdminKit's chosen identity
+   (Modern WordPress) wins over any provider while tokens.css reads these
+   overridden values to derive every --ak-* downstream token.
+
+   Three reasons we override `--ak-*` directly (not the WaasKit primitives
+   like `--neutral-l-1`):
+
+   1. self-contained — this file makes no assumption about which baseline
+      loaded before it.
+   2. avoids cascade traps — some --ak-* tokens in tokens.css resolve
+      through `var(--accent-hover, var(--primary-d-1, …))`; if WaasKit
+      provided --primary-d-1, that yellow shade would beat any --primary
+      override here. Overriding the final --ak-* short-circuits that.
+   3. one clear "what does AdminKit emit" surface — read this file and you
+      know the entire WP-mapped palette.
+
+   Hex values track the WordPress 6.x "Modern" admin scheme + the Gutenberg
+   Block Editor blue (#3858E9). Dark mode is AdminKit's [data-adminkit-theme]
+   flip — WP doesn't ship an official dark admin, so the dark block here is
+   a harmonised set (deep neutrals + same accent, contrast verified). */
+
+:root {
+	/* ── Surfaces ─────────────────────────────────────────────────────── */
+	--ak-bg: #ffffff;
+	--ak-surface: #f6f7f7;
+	--ak-elevated: #f0f0f1;
+	--ak-input-bg: #ffffff;
+
+	/* ── Borders ──────────────────────────────────────────────────────── */
+	--ak-border: #dcdcde;
+	--ak-border-strong: #c3c4c7;
+
+	/* ── Text inks ────────────────────────────────────────────────────── */
+	--ak-heading: #1d2327;
+	--ak-text: #1d2327;
+	--ak-text-muted: #757575;
+
+	/* ── Accent — WP Block Editor blue (modern) + derivatives ─────────── */
+	--ak-primary: #3858E9;
+	--ak-primary-hover: color-mix(in srgb, #3858E9 82%, #000);
+	--ak-primary-subtle: color-mix(in srgb, #3858E9 12%, #f6f7f7);
+	--ak-on-accent: #ffffff;
+	--ak-secondary: #50575e;
+
+	/* ── Status (WP admin standards: success / warning / error / info) ── */
+	--ak-info: #72aee6;
+	--ak-info-subtle: color-mix(in srgb, #72aee6 14%, #f6f7f7);
+	--ak-success: #00a32a;
+	--ak-success-subtle: color-mix(in srgb, #00a32a 14%, #f6f7f7);
+	--ak-warning: #dba617;
+	--ak-warning-subtle: color-mix(in srgb, #dba617 14%, #f6f7f7);
+	--ak-error: #d63638;
+	--ak-error-subtle: color-mix(in srgb, #d63638 14%, #f6f7f7);
+}
+
+:root[data-adminkit-theme="dark"] {
+	/* Surfaces flip — WP admin doesn't have an official dark, so this is a
+	   curated set that keeps the WP aesthetic in inversion. */
+	--ak-bg: #1e1e1e;
+	--ak-surface: #2c2c2c;
+	--ak-elevated: #3c3c3c;
+	--ak-input-bg: #2c2c2c;
+
+	--ak-border: #50575e;
+	--ak-border-strong: #757575;
+
+	--ak-heading: #ffffff;
+	--ak-text: #f0f0f1;
+	--ak-text-muted: #a7aaad;
+
+	/* Accent stays the same — WP-blue still ≥ 4.5:1 on dark surfaces.
+	   Only the SUBTLE flips (more saturated dark surface) so a pale tint
+	   reads on the dark backdrop. */
+	--ak-primary-subtle: color-mix(in srgb, #3858E9 22%, #2c2c2c);
+	--ak-secondary: #a7aaad;
+
+	--ak-info-subtle: color-mix(in srgb, #72aee6 22%, #2c2c2c);
+	--ak-success-subtle: color-mix(in srgb, #00a32a 22%, #2c2c2c);
+	--ak-warning-subtle: color-mix(in srgb, #dba617 22%, #2c2c2c);
+	--ak-error-subtle: color-mix(in srgb, #d63638 22%, #2c2c2c);
+}

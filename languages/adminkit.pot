@@ -1127,3 +1127,7 @@ msgstr ""
 #: inc/class-settings-page.php
 msgid "Bricks not detected"
 msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Color"
+msgstr ""

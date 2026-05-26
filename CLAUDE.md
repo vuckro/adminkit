@@ -106,25 +106,44 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   Don't "tokenize" these — it'd break the fixed behaviour. (3) the Bricks-brand pill
   (`.ak-pill--bricks`) in the Design-tab token reference, `#ff983e` — it's the
   Bricks brand colour, same fixed-by-design exception logic.
-- **`accent_source` is the single source of truth for `--ak-primary`** — read it
+- **`accent_source` drives the WHOLE palette, not just `--ak-primary`** — read it
   via `AdminKit_Settings::accent_source()` (never `get('accent_source')` directly:
   the helper applies the "auto" default at read time, returning `'bricks'` when
-  Bricks is active and `'adminkit'` otherwise). `AdminKit_Assets::inject_brand_accent()`
-  hooks `adminkit/tokens_enqueued` and emits a SINGLE inline rule:
-  `:root{--ak-primary:<hex>;--ak-on-accent:<computed>}` based on the source.
-  `adminkit` → WordPress Blue (`ADMINKIT_BLUE` constant `#3858E9`, force-overrides
-  Bricks too); `bricks` → no rule (Bricks's `--accent` + `--accent-on` ride the
-  cascade); `custom` → the `brand_accent` hex. Don't duplicate this injection
-  anywhere else. Two notes on the derived tokens:
-    (a) Hover, subtle, and focus ring follow `--ak-primary` automatically via
-        CSS `color-mix()` chains — flipping one variable cascades through.
+  Bricks is active and `'adminkit'` otherwise). The cascade is:
+    1. `assets/css/waaskit-tokens.css` — neutral safety net (always loaded).
+    2. Provider tokens (Bricks's stylesheet) — only when source = `'bricks'` AND
+       Bricks is detected, via the `adminkit/extra_tokens_handle` filter.
+    3. `assets/css/wp-baseline.css` — the full WordPress palette (surfaces,
+       borders, text inks, accent, status). Conditionally enqueued by
+       `AdminKit_Assets::enqueue_tokens()` when source ∈ {`'adminkit'`, `'custom'`}.
+       Overrides `--ak-*` DIRECTLY (not the WaasKit primitives) to short-circuit
+       cascade traps where derived tokens would resolve through provider vars.
+    4. `assets/css/tokens.css` — the AdminKit token layer that consumes the
+       above and emits the final `--ak-*` family for the admin shell.
+    5. Inline `<style id="ak-accent-preview">` — ONLY when source = `'custom'`,
+       emitted by `AdminKit_Assets::inject_brand_accent()`. Re-declares the
+       accent family (`--ak-primary`, `--ak-primary-hover`, `--ak-primary-subtle`,
+       `--ak-on-accent`) so the user hex takes over from wp-baseline's `#3858E9`
+       hardcode + computed derivatives.
+  `inject_brand_accent()` is custom-only. For `'adminkit'` the whole palette
+  comes from wp-baseline.css; for `'bricks'` the cascade IS the answer (no
+  override needed). Don't add new sources without updating both PHP enqueue +
+  JS `applyPreview()`. Two notes on derived tokens:
+    (a) Hover, subtle and focus follow `--ak-primary` via CSS `color-mix()` —
+        flipping one variable cascades through.
     (b) **`--ak-on-accent` is NOT via color-mix** — `AdminKit_Assets::contrast_text_for()`
-        computes white vs deep ink from the accent's WCAG relative luminance,
-        and ships the chosen hex in the same inline rule. Without this, a black
-        custom accent would leave white-on-black text invisible. JS mirrors the
-        same algorithm in `bestOnAccent()` for live preview.
+        computes white vs deep ink from the accent's WCAG relative luminance.
+        Without it, a black custom accent leaves white-on-black text invisible.
+        JS mirrors the same algorithm in `bestOnAccent()` for live preview.
   Accent-family tokens are flagged `accent_family: true` in `color_map()` so
   the SPA's `sourcePill()` can label them correctly in the token reference.
+- **`wp-baseline.css` is the AdminKit identity** — when a user picks "AdminKit"
+  or "Custom" in the source picker, they get the full Modern WordPress palette
+  (Block Editor blue `#3858E9`, status colours, neutrals), not just an accent
+  swap. The file overrides `--ak-*` directly (not WaasKit primitives like
+  `--neutral-l-1`) — this is intentional, three reasons documented in its
+  header comment. Don't refactor it to read from WaasKit primitives or you'll
+  re-introduce the cascade traps it was written to dodge.
 - **Integration discovery is `glob( inc/integrations/*/*/class-*.php )`** — two
   levels deep (`{plugins,themes}/{slug}/`). The class name derives from the file
   basename (`AdminKit_Integration_{Studly_Slug}`). Don't rename a class without
@@ -144,11 +163,24 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 - **The token layers are each optional** (provider → baseline → neutral). Don't
   hard-require any one of them. See ARCHITECTURE.
 - **Default feature toggles ship ON** — Gutenberg canvas theming
-  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`) and custom
-  avatars (`custom_avatars_enabled`) all default ON, so the plugin presents
-  fully-featured on activation. Each stays individually switch-off-able; only
-  `bricks_builder_enabled` is opt-in (it restyles a third-party builder's own
-  UI). Keep the on-by-default posture — don't quietly flip these back to opt-in.
+  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`), custom
+  avatars (`custom_avatars_enabled`) and users-list Quick Edit
+  (`quick_edit_users_enabled`) all default ON, so the plugin presents
+  fully-featured on activation. Each stays individually switch-off-able. Two
+  features default OFF because they either restyle a third-party UI or have
+  destructive side effects: `bricks_builder_enabled` (restyles the Bricks
+  builder) and `username_changer_enabled` (renaming `user_login` invalidates
+  active sessions). Keep the on-by-default posture for the four above — don't
+  quietly flip them to opt-in.
+- **Username changer is destructive** — `class-username-changer.php` writes
+  `user_login` directly via `$wpdb->update()` (wp_update_user() refuses that
+  column by design), busts the user cache, and either re-issues our own auth
+  cookie (self-edit) or `WP_Session_Tokens::destroy_all()`s the target. Don't
+  remove those steps: skipping the session destroy leaves the renamed user
+  signed in under the OLD login on other devices, which is the whole reason
+  the feature is opt-in. Multisite is intentionally skipped at `init()` and
+  re-checked in the AJAX handler — cross-site `user_login` mappings need a
+  network-admin-level path this module doesn't implement.
 - **Avatars cascade in `filter_avatar_data`, in this order** — (a) bail if
   another filter already set `$args['url']` (an upload plugin, OAuth profile
   pic); (b) bail if `$args['default']` isn't our own key (don't touch Wavatar /
