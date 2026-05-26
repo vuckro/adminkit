@@ -798,12 +798,13 @@
 			wpField, loginField
 		] );
 
-		// Card stack order: identity (slots) → placement (display) → palette
-		// (accent + derived). Display sits above Accent so the layout reads
-		// top-down as a hierarchy: WHAT the brand is (logos / favicon), WHERE
-		// the mark goes (admin bar / login), HOW the accent looks (hex + derived).
+		// Card stack order: identity (slots) → palette (accent + derived strip
+		// together as a sub-block) → placement (display). The derived disclosure
+		// sits right under the accent so both pieces of the palette decision
+		// stay grouped; Display closes the card with the "where does the mark
+		// appear" choice — a discrete config below the visual identity.
 		var card = el( 'section', { 'class': 'ak-card' }, [
-			cardHead, slotsRow, displayRow, accentRow, derivedDisc.panel
+			cardHead, slotsRow, accentRow, derivedDisc.panel, displayRow
 		] );
 
 		// Intro text above the card.
@@ -864,28 +865,40 @@
 			( g.tokens || [] ).forEach( function ( t ) { tbody.appendChild( refRow( t ) ); } );
 		} );
 
-		return el( 'section', { 'class': 'ak-tokens-ref' }, [
-			el( 'div', { 'class': 'ak-tokens-ref__head' }, [
-				el( 'div', { 'class': 'ak-tokens-ref__head-main' }, [
+		// Same .ak-card shell as the Brand + Typography cards above — identical
+		// padding / border / radius so the three read as a coherent family.
+		// Uses h2 (not h3) so the heading style matches the others byte-for-byte
+		// without depending on UA defaults.
+		return el( 'section', { 'class': 'ak-card ak-tokens-ref' }, [
+			el( 'div', { 'class': 'ak-card__head' }, [
+				el( 'div', { 'class': 'ak-card__head-main' }, [
 					el( 'div', { 'class': 'ak-card__eyebrow', text: I.tokensRefEyebrow || 'Reference' } ),
-					el( 'h3', { 'class': 'ak-card__title', text: I.tokensRefTitle || 'Token map' } ),
-					el( 'p', { 'class': 'ak-tokens-cta__sub', text: I.tokensRefSub || '' } )
+					el( 'h2', { 'class': 'ak-card__title', text: I.tokensRefTitle || 'Token map' } ),
+					el( 'p', { 'class': 'ak-card__sub', text: I.tokensRefSub || '' } )
 				] )
 			] ),
-			el( 'table', {}, [ thead, tbody ] )
+			el( 'table', { 'class': 'ak-tokens-ref__table' }, [ thead, tbody ] )
 		] );
 	}
 
-	// Source pill for a single token row. Bricks-mapped tokens (a `bricks` field
-	// is set on the data) show the orange BRICKS pill; AdminKit-own tokens (no
-	// `bricks`, `own === true` from color_map()) show the accent ADMINKIT pill;
-	// the rest fall back to the muted AUTO pill (auto-inherited from the cascade).
+	// Source pill for a single token row. The pill describes what's ACTUALLY
+	// feeding the token at runtime, not just what's mapped in the color_map:
+	//
+	//   • own (AdminKit-defined, no provider equivalent) → ADMINKIT pill (yellow)
+	//   • mapped to a Bricks var AND Bricks is actually detected → BRICKS pill (orange)
+	//   • everything else (no provider, or Bricks not active) → AUTO pill (muted)
+	//     — the token resolves through the WaasKit baseline cascade.
+	//
+	// The Bricks gate matters because `t.bricks` is set in color_map() regardless
+	// of host state. Without `D.bricksDetected`, the pill would lie when Bricks
+	// isn't installed (it'd claim "Bricks" while the value actually comes from
+	// the baseline).
 	function sourcePill( t ) {
-		if ( t.bricks ) {
-			return el( 'span', { 'class': 'ak-pill ak-pill--bricks', text: I.sourceBricks || 'Bricks' } );
-		}
 		if ( t.own ) {
 			return el( 'span', { 'class': 'ak-pill ak-pill--adminkit', text: I.sourceAdminKit || 'AdminKit' } );
+		}
+		if ( t.bricks && D.bricksDetected ) {
+			return el( 'span', { 'class': 'ak-pill ak-pill--bricks', text: I.sourceBricks || 'Bricks' } );
 		}
 		return el( 'span', { 'class': 'ak-pill ak-pill--auto', text: I.sourceAuto || 'Auto' } );
 	}
@@ -984,7 +997,7 @@
 				el( 'div', { 'class': 'ak-card__head-main' }, [
 					el( 'div', { 'class': 'ak-card__eyebrow', text: I.typography || 'Typography' } ),
 					el( 'h2', { 'class': 'ak-card__title', text: I.typeTitle || 'Font & sizes' } ),
-					el( 'p', { 'class': 'ak-tokens-cta__sub', text: I.typographyDesc || 'Body font follows Bricks (--font-base) when set, otherwise Inter.' } )
+					el( 'p', { 'class': 'ak-card__sub', text: I.typographyDesc || 'Body font follows Bricks (--font-base) when set, otherwise Inter.' } )
 				] )
 			] ),
 			hero,
