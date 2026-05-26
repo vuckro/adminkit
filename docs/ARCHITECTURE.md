@@ -90,7 +90,7 @@ assets/
 │   └── settings.css               # AdminKit settings page
 └── js/
     ├── settings.js                # settings SPA
-    ├── wp-core/                   # footer bricks: profile-account, local-avatars, post-previews, list-table-chrome
+    ├── wp-core/                   # footer bricks: profile-account, local-avatars, post-previews, list-table-chrome, user-quick-edit, username-changer
     └── wp-screens/                # per-screen footer bricks: options (Settings-screen tabs)
 inc/integrations/{plugins|themes}/{slug}/css/   # integration CSS, registered by each class
 ```
@@ -194,9 +194,36 @@ individually switch-off-able:
   strings from the `d=` fallback, which would erase the per-user seed. Non-PII
   seed (md5 of the login) + solid pastel backdrop per user so a fresh users
   list reads as distinct cards. See [EXTENDING.md → Avatars](EXTENDING.md#avatars).
+  And `quick_edit_users_enabled` (`inc/wp-core/class-user-quick-edit.php`) hooks
+  `user_row_actions` to inject a "Quick Edit" affordance into each users.php
+  row, opens an inline `<template>`-cloned editor below the row with first
+  name / last name / email / role, and POSTs the changes to a dedicated AJAX
+  endpoint that runs `wp_update_user()` and returns the new field values —
+  the JS repaints the row's visible cells in place, no page reload. Per-row
+  nonce + `edit_user` capability gate both the entry point and the save; role
+  changes additionally need `promote_users` and reject the current user (no
+  self-demote). Display name is intentionally not exposed here — that's a
+  per-user preference that belongs on user-edit.php. Off = no Quick Edit
+  link; the native "Edit" link to user-edit.php still works.
 - **Off by default** (opt-in): `bricks_builder_enabled` (restyles a third-party
   builder's own UI, so it stays inert until asked for; only shown when Bricks is
-  active).
+  active). And `username_changer_enabled`
+  (`inc/wp-core/class-username-changer.php`) — turns the natively-disabled
+  Username field on profile.php / user-edit.php into a *locked* readonly input
+  that surfaces a `window.confirm()` warning on click before unlocking. The
+  rename then rides WordPress's native "Update User" submit: we hook
+  `user_profile_update_errors` to validate (`sanitize_user( $raw, true )`
+  round-trip equality + `username_exists()` deduplication), and
+  `profile_update` to apply (`$wpdb->update( $wpdb->users, ... )` since
+  `wp_update_user()` refuses that column, plus `clean_user_cache()`).
+  Sensitive: changing `user_login` invalidates the affected user's auth
+  cookies on every device. Self-edit destroys our other sessions
+  (`destroy_others( wp_get_session_token() )`) and re-issues our current
+  cookie under the new login so the post-save redirect lands authenticated;
+  other-user edits destroy ALL of the target's sessions. Multisite is
+  skipped at `init()` level (cross-site `user_login` mappings are out of
+  scope). Fires `adminkit/username_changed` ($user_id, $old, $new) for audit
+  logs.
 - **Asset gate**: the `adminkit/should_load` filter wraps *every* context, so any
   veto (an integration bypassing a host's full-screen UI, say) pauses AdminKit's
   styling there while the plugin stays active.
@@ -206,13 +233,17 @@ individually switch-off-able:
   `AdminKit_Settings::brand_logo()` / `AdminKit_Core_Branding`. `login_logo`
   (`logo` | `favicon` | `hide`, default `favicon`) independently drives the wp-login.php mark
   via `AdminKit_Core_Login` (a legacy `''` = inherit `wp_logo` is still honoured, but
-  the UI no longer offers it). `brand_accent` (sanitised hex, default `''`) is the
-  user's accent override: when set, `AdminKit_Assets::inject_brand_accent()` hooks
-  into `adminkit/tokens_enqueued` and emits a single inline `:root{--ak-primary:…}`
-  rule on the tokens stylesheet — the derived tokens (`--ak-primary-hover`,
-  `--ak-primary-subtle`, `--ak-on-accent`, focus ring) recalculate automatically
-  through their CSS `color-mix()` fallbacks. Empty = the cascade wins (Bricks
-  provider → WaasKit baseline → neutral default), no inline style emitted.
+  the UI no longer offers it). `accent_source` (`adminkit` | `bricks` | `custom`,
+  empty resolves to "auto") + `brand_accent` (sanitised hex, for custom mode)
+  drive the accent palette via `AdminKit_Assets::inject_accent_family()` hooked
+  on `adminkit/tokens_enqueued` — emits a dual-block `:root{}` + `:root[data-adminkit-theme="dark"]{}`
+  inline rule covering `--ak-primary`, `--ak-primary-hover`, `--ak-primary-subtle`,
+  `--ak-on-accent`, `--ak-focus`. The inline-style cascade position (after
+  tokens.css) is what makes the override actually win in dark mode where
+  tokens.css's `[data-adminkit-theme="dark"]` block would otherwise leak
+  WaasKit yellow through `var(--accent, …)`. Bricks source = no inline rule
+  (Bricks's stylesheet rides the cascade). See `docs/EXTENDING.md#accent` for
+  the full per-mode formula table.
 - **Integration gates**: one `integration_{slug}_enabled` per discovered adapter
   (default ON), bound to `adminkit/integration_enabled` and driven by the Plugins
   tab.

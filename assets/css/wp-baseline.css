@@ -2,26 +2,36 @@
    ======================================================================
    Loaded by AdminKit_Assets::enqueue_tokens() when accent_source resolves
    to 'adminkit' or 'custom'. Sits in the cascade BETWEEN the optional
-   Bricks provider stylesheet and tokens.css, so AdminKit's chosen identity
-   (Modern WordPress) wins over any provider while tokens.css reads these
-   overridden values to derive every --ak-* downstream token.
+   Bricks provider stylesheet and tokens.css.
 
-   Three reasons we override `--ak-*` directly (not the WaasKit primitives
-   like `--neutral-l-1`):
+   Cascade caveat — what this file CAN and CANNOT do
+   -------------------------------------------------
+   tokens.css depends on this file (via wp_register_style deps), so
+   tokens.css loads AFTER us. On equal :root specificity the LATER load
+   wins — meaning every --ak-* token we set here is REDECLARED in
+   tokens.css and overridden by its `var(--<waaskit-primitive>, …)` chain.
 
-   1. self-contained — this file makes no assumption about which baseline
-      loaded before it.
-   2. avoids cascade traps — some --ak-* tokens in tokens.css resolve
-      through `var(--accent-hover, var(--primary-d-1, …))`; if WaasKit
-      provided --primary-d-1, that yellow shade would beat any --primary
-      override here. Overriding the final --ak-* short-circuits that.
-   3. one clear "what does AdminKit emit" surface — read this file and you
-      know the entire WP-mapped palette.
+   Why keep the file then?
+     • Documents WordPress 6.x "Modern" admin scheme as the AdminKit
+       identity (intent-as-code).
+     • The visual diff between WaasKit's neutrals (hsl(0,0%,96%) ≈ #f5f5f5)
+       and WP's (#f6f7f7) is imperceptible, so the leak is fine in practice.
+     • A future refactor can flip the dep direction or move these into
+       inline styles to make them actually win — keeping the source of
+       truth in one CSS file makes that easy.
 
-   Hex values track the WordPress 6.x "Modern" admin scheme + the Gutenberg
-   Block Editor blue (#3858E9). Dark mode is AdminKit's [data-adminkit-theme]
-   flip — WP doesn't ship an official dark admin, so the dark block here is
-   a harmonised set (deep neutrals + same accent, contrast verified). */
+   The ACCENT FAMILY (--ak-primary, --ak-primary-hover, --ak-primary-subtle,
+   --ak-on-accent, --ak-focus) is INTENTIONALLY OMITTED here. It's emitted
+   by AdminKit_Assets::inject_accent_family() as an inline <style> attached
+   to the tokens handle — that's the only layer that loads AFTER tokens.css
+   AND its :root[data-adminkit-theme="dark"]{} 0,2,0-specificity block.
+   Don't re-add accent declarations here — they'd be dead-code shadows
+   that confuse the cascade story without any runtime effect.
+
+   Hex values track the WordPress 6.x "Modern" admin scheme. Dark mode is
+   AdminKit's [data-adminkit-theme] flip — WP doesn't ship an official
+   dark admin, so the dark block here is a harmonised set (deep neutrals,
+   contrast verified). */
 
 :root {
 	/* ── Surfaces ─────────────────────────────────────────────────────── */
@@ -39,11 +49,9 @@
 	--ak-text: #1d2327;
 	--ak-text-muted: #757575;
 
-	/* ── Accent — WP Block Editor blue (modern) + derivatives ─────────── */
-	--ak-primary: #3858E9;
-	--ak-primary-hover: color-mix(in srgb, #3858E9 82%, #000);
-	--ak-primary-subtle: color-mix(in srgb, #3858E9 12%, #f6f7f7);
-	--ak-on-accent: #ffffff;
+	/* Neutral text/icons grey — NOT part of the accent family. WordPress
+	   uses the same slate regardless of the chosen colour scheme; we match
+	   that convention so a custom accent doesn't repaint structural text. */
 	--ak-secondary: #50575e;
 
 	/* ── Status (WP admin standards: success / warning / error / info) ── */
@@ -72,10 +80,6 @@
 	--ak-text: #f0f0f1;
 	--ak-text-muted: #a7aaad;
 
-	/* Accent stays the same — WP-blue still ≥ 4.5:1 on dark surfaces.
-	   Only the SUBTLE flips (more saturated dark surface) so a pale tint
-	   reads on the dark backdrop. */
-	--ak-primary-subtle: color-mix(in srgb, #3858E9 22%, #2c2c2c);
 	--ak-secondary: #a7aaad;
 
 	--ak-info-subtle: color-mix(in srgb, #72aee6 22%, #2c2c2c);

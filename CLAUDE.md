@@ -106,44 +106,47 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   Don't "tokenize" these — it'd break the fixed behaviour. (3) the Bricks-brand pill
   (`.ak-pill--bricks`) in the Design-tab token reference, `#ff983e` — it's the
   Bricks brand colour, same fixed-by-design exception logic.
-- **`accent_source` drives the WHOLE palette, not just `--ak-primary`** — read it
-  via `AdminKit_Settings::accent_source()` (never `get('accent_source')` directly:
+- **`accent_source` and the accent-family cascade** — read source via
+  `AdminKit_Settings::accent_source()` (never `get('accent_source')` directly:
   the helper applies the "auto" default at read time, returning `'bricks'` when
-  Bricks is active and `'adminkit'` otherwise). The cascade is:
+  Bricks is active and `'adminkit'` otherwise). Load order:
     1. `assets/css/waaskit-tokens.css` — neutral safety net (always loaded).
     2. Provider tokens (Bricks's stylesheet) — only when source = `'bricks'` AND
        Bricks is detected, via the `adminkit/extra_tokens_handle` filter.
-    3. `assets/css/wp-baseline.css` — the full WordPress palette (surfaces,
-       borders, text inks, accent, status). Conditionally enqueued by
-       `AdminKit_Assets::enqueue_tokens()` when source ∈ {`'adminkit'`, `'custom'`}.
-       Overrides `--ak-*` DIRECTLY (not the WaasKit primitives) to short-circuit
-       cascade traps where derived tokens would resolve through provider vars.
-    4. `assets/css/tokens.css` — the AdminKit token layer that consumes the
-       above and emits the final `--ak-*` family for the admin shell.
-    5. Inline `<style id="ak-accent-preview">` — ONLY when source = `'custom'`,
-       emitted by `AdminKit_Assets::inject_brand_accent()`. Re-declares the
-       accent family (`--ak-primary`, `--ak-primary-hover`, `--ak-primary-subtle`,
-       `--ak-on-accent`) so the user hex takes over from wp-baseline's `#3858E9`
-       hardcode + computed derivatives.
-  `inject_brand_accent()` is custom-only. For `'adminkit'` the whole palette
-  comes from wp-baseline.css; for `'bricks'` the cascade IS the answer (no
-  override needed). Don't add new sources without updating both PHP enqueue +
-  JS `applyPreview()`. Two notes on derived tokens:
-    (a) Hover, subtle and focus follow `--ak-primary` via CSS `color-mix()` —
-        flipping one variable cascades through.
-    (b) **`--ak-on-accent` is NOT via color-mix** — `AdminKit_Assets::contrast_text_for()`
-        computes white vs deep ink from the accent's WCAG relative luminance.
-        Without it, a black custom accent leaves white-on-black text invisible.
-        JS mirrors the same algorithm in `bestOnAccent()` for live preview.
-  Accent-family tokens are flagged `accent_family: true` in `color_map()` so
-  the SPA's `sourcePill()` can label them correctly in the token reference.
-- **`wp-baseline.css` is the AdminKit identity** — when a user picks "AdminKit"
-  or "Custom" in the source picker, they get the full Modern WordPress palette
-  (Block Editor blue `#3858E9`, status colours, neutrals), not just an accent
-  swap. The file overrides `--ak-*` directly (not WaasKit primitives like
-  `--neutral-l-1`) — this is intentional, three reasons documented in its
-  header comment. Don't refactor it to read from WaasKit primitives or you'll
-  re-introduce the cascade traps it was written to dodge.
+    3. `assets/css/wp-baseline.css` — conditionally enqueued when source ∈
+       {`'adminkit'`, `'custom'`}. Declares WP surfaces / borders / text inks /
+       status hexes, NO accent family.
+    4. `assets/css/tokens.css` — the consumer layer. Redeclares `--ak-*` from
+       WaasKit primitives in BOTH `:root{}` AND `:root[data-adminkit-theme="dark"]{}`,
+       which means it shadows wp-baseline's surface declarations and would
+       leak WaasKit yellow into the accent if nothing came after it.
+    5. Inline `<style id="ak-accent-preview">` from
+       `AdminKit_Assets::inject_accent_family()`. Always emitted for source ∈
+       {`'adminkit'`, `'custom'`}. Dual-block — `:root{}` for light AND
+       `:root[data-adminkit-theme="dark"]{}` for dark — so the `(0,2,0)` dark
+       selector wins over tokens.css's dark block (tied specificity, later
+       load wins). Bricks source = no inline rule.
+  This is the SoT for the accent family: `--ak-primary`, `--ak-primary-hover`
+  (darkens in light, lightens in dark), `--ak-primary-subtle` (12% mix in
+  light, 22% in dark), `--ak-on-accent` (WCAG-luminance pick), `--ak-focus`.
+  Don't add accent declarations elsewhere — they'd be dead shadows.
+    (a) Hover / subtle / focus follow `--ak-primary` via `color-mix()` — they
+        ride along whenever the override changes the primary hex.
+    (b) **`--ak-on-accent` is NOT via color-mix** — `contrast_text_for()` PHP
+        and `bestOnAccent()` JS compute white vs deep ink from WCAG luminance.
+        Without it, a near-black accent leaves white-on-black text invisible.
+  Mirror PHP and JS byte-for-byte: live preview must match the post-save
+  inline style. Accent-family tokens are flagged `accent_family: true` in
+  `color_map()` so the SPA's `sourcePill()` labels them correctly.
+- **`wp-baseline.css` is documenting intent**, not actually winning the cascade
+  for most of its declarations. tokens.css depends on it (so wp-baseline loads
+  BEFORE tokens.css) and tokens.css redeclares all `--ak-*` from WaasKit
+  primitives — wp-baseline's hexes are shadowed. The visual diff is small
+  (WP `#f6f7f7` vs WaasKit `hsl(0,0%,96%)` ≈ `#f5f5f5`) so it's accepted.
+  Don't re-add accent-family declarations to wp-baseline.css (the inline
+  override is the SoT and would dead-shadow them). If you ever want
+  wp-baseline's surfaces to actually take effect, either flip the dep
+  direction or move them into the inline emission too.
 - **Integration discovery is `glob( inc/integrations/*/*/class-*.php )`** — two
   levels deep (`{plugins,themes}/{slug}/`). The class name derives from the file
   basename (`AdminKit_Integration_{Studly_Slug}`). Don't rename a class without
@@ -172,15 +175,19 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   builder) and `username_changer_enabled` (renaming `user_login` invalidates
   active sessions). Keep the on-by-default posture for the four above — don't
   quietly flip them to opt-in.
-- **Username changer is destructive** — `class-username-changer.php` writes
-  `user_login` directly via `$wpdb->update()` (wp_update_user() refuses that
-  column by design), busts the user cache, and either re-issues our own auth
-  cookie (self-edit) or `WP_Session_Tokens::destroy_all()`s the target. Don't
-  remove those steps: skipping the session destroy leaves the renamed user
-  signed in under the OLD login on other devices, which is the whole reason
-  the feature is opt-in. Multisite is intentionally skipped at `init()` and
-  re-checked in the AJAX handler — cross-site `user_login` mappings need a
-  network-admin-level path this module doesn't implement.
+- **Username changer is destructive** — `class-username-changer.php` rides the
+  native user-edit.php submit (no AJAX endpoint, no separate Save button):
+  `user_profile_update_errors` validates, `profile_update` writes `user_login`
+  directly via `$wpdb->update()` (wp_update_user() refuses that column by
+  design), busts the user cache, and handles sessions. Don't remove the
+  session steps: self-edit must `destroy_others( wp_get_session_token() )`
+  AND re-issue our own auth cookie (otherwise the post-save redirect bounces
+  to wp-login because the cookie still hashes the OLD login); other-user
+  edits must `destroy_all()` (otherwise the renamed user stays signed in on
+  every other device under their old login — the whole reason the feature is
+  opt-in). Multisite is intentionally skipped at `init()` — cross-site
+  `user_login` mappings need a network-admin-level path this module doesn't
+  implement.
 - **Avatars cascade in `filter_avatar_data`, in this order** — (a) bail if
   another filter already set `$args['url']` (an upload plugin, OAuth profile
   pic); (b) bail if `$args['default']` isn't our own key (don't touch Wavatar /

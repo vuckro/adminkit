@@ -55,6 +55,20 @@
 		if ( i.supported && i.slug ) { state.integrations[ i.slug ] = !! i.enabled; }
 	} );
 
+	// Shared read of the current accent source. sourcePill() lives at module
+	// scope (outside buildDesign() where the `state` closure is defined), so it
+	// reads the source via this tiny accessor that the picker writes into.
+	// Initialised from the bootstrap, kept in sync by accentPicker's setSource().
+	// MUST be declared before buildDesign() runs (it's called during tab build).
+	var accentState = { source: ( D.accentSource || 'adminkit' ) };
+
+	// Registry of every Source <td> in the token-map table along with its
+	// original token object. Populated by refRow() each time the disclosure
+	// builds the table; refreshAllPills() walks it after any source change.
+	// Cheaper + cleaner than data-attributes since we keep the full token in scope.
+	// MUST be declared before buildDesign() runs (refRow / refreshAllPills read it).
+	var pillCells = [];
+
 	// --- tiny DOM helper -----------------------------------------------------
 	function el( tag, attrs, kids ) {
 		var n = document.createElement( tag );
@@ -690,34 +704,54 @@
 			native.value = isValidHex( state.brandAccent ) ? state.brandAccent : ( D.adminkitBlue || '#3858E9' );
 
 			// Update the inline <style id="ak-accent-preview"> for live preview.
-			// Mirrors AdminKit_Assets::inject_brand_accent() in PHP, so what the
+			// Mirrors AdminKit_Assets::inject_accent_family() in PHP, so what the
 			// browser shows BEFORE save == what the server emits AFTER save.
 			//
-			//   • 'adminkit' → no inline rule needed (wp-baseline.css does it all)
-			//   • 'bricks'   → no inline rule (Bricks's stylesheet cascades)
-			//   • 'custom'   → emit primary + hover + subtle + on-accent (re-declares
-			//                  the whole accent family because wp-baseline.css set
-			//                  them with #3858E9 hardcoded — we have to swap for
-			//                  the user's hex, not just --ak-primary)
+			//   • 'adminkit' → emit dual block with D.adminkitBlue (#3858E9). The
+			//                  cascade in tokens.css would otherwise leak WaasKit
+			//                  yellow via var(--accent, …) — this inline override
+			//                  loads after tokens.css and wins on cascade ties
+			//                  (light) AND on specificity (dark, :root[data-…]).
+			//   • 'custom'   → same dual block, with user hex.
+			//   • 'bricks'   → no inline rule. Bricks's stylesheet handles its own
+			//                  --accent + dark mode via the cascade.
 			//
-			// IMPORTANT live-preview limitation: switching between 'bricks' and
-			// {'adminkit','custom'} doesn't load/unload wp-baseline.css client-side.
-			// So if the user is on 'bricks' and clicks 'adminkit', the surfaces
-			// stay Bricks-coloured until save+reload. The Source pills update
-			// immediately (refreshAllPills) and the accent updates immediately for
-			// custom, but surface-level palette swaps require the round-trip.
+			// Dark-mode tweaks vs light: hover lightens (mix with #fff) so it's
+			// readable on #2c2c2c surfaces, and subtle bumps to 22% mix so the
+			// pale tint reads against the darker substrate (same proportions as
+			// wp-baseline.css's dark surface scheme).
+			//
+			// Live-preview limitation: switching between source ∈ {adminkit,
+			// custom} ↔ bricks doesn't load/unload wp-baseline.css client-side
+			// (that's a server-side enqueue decision). Surface-level palette
+			// swaps still require save+reload. The accent itself updates
+			// immediately in both modes thanks to this dual-block emission.
 			function applyPreview() {
 				var id = 'ak-accent-preview';
 				var existing = document.getElementById( id );
 
-				if ( state.accentSource === 'custom' && isValidHex( state.brandAccent ) ) {
-					var hex = state.brandAccent;
-					var on  = bestOnAccent( hex );
+				var hex = null;
+				if ( state.accentSource === 'adminkit' ) {
+					hex = D.adminkitBlue || '#3858E9';
+				} else if ( state.accentSource === 'custom' && isValidHex( state.brandAccent ) ) {
+					hex = state.brandAccent;
+				}
+
+				if ( hex ) {
+					var on = bestOnAccent( hex );
 					var css = ':root{'
 						+ '--ak-primary:' + hex + ';'
-						+ '--ak-primary-hover:color-mix(in srgb, ' + hex + ' 82%, #000);'
-						+ '--ak-primary-subtle:color-mix(in srgb, ' + hex + ' 12%, var(--ak-surface));'
-						+ '--ak-on-accent:' + on
+						+ '--ak-primary-hover:color-mix(in srgb,' + hex + ' 82%,#000);'
+						+ '--ak-primary-subtle:color-mix(in srgb,' + hex + ' 12%,var(--ak-surface));'
+						+ '--ak-on-accent:' + on + ';'
+						+ '--ak-focus:color-mix(in srgb,' + hex + ' 27%,transparent)'
+						+ '}'
+						+ ':root[data-adminkit-theme="dark"]{'
+						+ '--ak-primary:' + hex + ';'
+						+ '--ak-primary-hover:color-mix(in srgb,' + hex + ' 82%,#fff);'
+						+ '--ak-primary-subtle:color-mix(in srgb,' + hex + ' 22%,var(--ak-surface));'
+						+ '--ak-on-accent:' + on + ';'
+						+ '--ak-focus:color-mix(in srgb,' + hex + ' 27%,transparent)'
 						+ '}';
 					if ( ! existing ) {
 						existing = document.createElement( 'style' );
@@ -726,7 +760,7 @@
 					}
 					existing.textContent = css;
 				} else if ( existing ) {
-					// adminkit / bricks / empty-custom → no inline override needed.
+					// bricks (or empty/invalid custom) → no inline override needed.
 					existing.parentNode.removeChild( existing );
 				}
 				swatch.style.background = 'var(--ak-primary)';
@@ -1001,17 +1035,9 @@
 		return el( 'span', { 'class': 'ak-pill ak-pill--auto', text: I.sourceAuto || 'Auto' } );
 	}
 
-	// Shared read of the current accent source. sourcePill() lives at module
-	// scope (outside buildDesign() where the `state` closure is defined), so it
-	// reads the source via this tiny accessor that the picker writes into.
-	// Initialised from the bootstrap, kept in sync by accentPicker's setSource().
-	var accentState = { source: ( D.accentSource || 'adminkit' ) };
-
-	// Registry of every Source <td> in the token-map table along with its
-	// original token object. Populated by refRow() each time the disclosure
-	// builds the table; refreshAllPills() walks it after any source change.
-	// Cheaper + cleaner than data-attributes since we keep the full token in scope.
-	var pillCells = [];
+	// `accentState` + `pillCells` declared up top with the rest of module state
+	// (sourcePill / refRow / refreshAllPills all read them at first-render time,
+	// so they have to exist before buildDesign() runs).
 
 	// Re-render every Source pill in the token map to reflect the current
 	// accent source. Called by accentPicker.applyPreview() — covers BOTH
