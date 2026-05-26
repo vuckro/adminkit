@@ -120,9 +120,18 @@ class AdminKit_User_Quick_Edit {
 		if ( ! current_user_can( 'list_users' ) ) {
 			return;
 		}
-		$screen  = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		$colspan = ( $screen && method_exists( $screen, 'get_columns' ) ) ? count( $screen->get_columns() ) : 6;
-		$colspan = max( 1, (int) $colspan );
+		// Use the canonical screen-column getter when available — it returns
+		// an array of `column_id => label`. `WP_Screen::get_columns()` exists
+		// but can return non-array values depending on context, which is what
+		// hit us in production (count(int) fatal). The `get_column_headers()`
+		// helper always returns an array, with the same data, so it's safer.
+		$colspan = 6; // 6 native users.php columns (cb, username, name, email, role, posts).
+		if ( function_exists( 'get_column_headers' ) ) {
+			$cols = get_column_headers( get_current_screen() );
+			if ( is_array( $cols ) && $cols ) {
+				$colspan = count( $cols );
+			}
+		}
 
 		$can_promote = current_user_can( 'promote_users' );
 		$roles       = wp_roles()->get_names();
