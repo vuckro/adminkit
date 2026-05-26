@@ -879,10 +879,11 @@
 
 		// --- Tokens CTA + revealed reference (lazy build) ------------------------
 		// One disclosure ("Want to dig in? · View all N tokens") gates the entire
-		// read-only reference area. Typography card first (humans read top-down,
-		// type before colours), then the token map table below it. Both are built
-		// lazily on first open and live in the same panel so a single click reveals
-		// the whole reference, single click hides it.
+		// read-only reference area. Token map first (it's what the CTA copy
+		// promises — "Browse every token AdminKit exposes"), then the
+		// typography card below as a smaller secondary reference. Both are
+		// built lazily on first open and live in the same panel so a single
+		// click reveals the whole reference, single click hides it.
 		var totalTokens = ( D.colors || [] ).reduce( function ( n, g ) {
 			return n + ( ( g.tokens || [] ).length );
 		}, 0 );
@@ -891,8 +892,8 @@
 			ctaLabel,
 			I.tokensRefHide || 'Hide',
 			function ( panel ) {
-				panel.appendChild( typeSection() );
 				panel.appendChild( tokensReference() );
+				panel.appendChild( typeSection() );
 			},
 			{ btnClass: 'ak-tokens-cta__btn' }
 		);
