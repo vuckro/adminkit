@@ -458,6 +458,25 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 
+		// ── Theme bridge ─────────────────────────────────────────────────────
+		// Mirror the canvas iframe's data-brx-theme onto the chrome's <html>
+		// so Bricks's dark-mode CSS variables apply to the builder chrome too.
+		// Bricks writes the attribute only to the canvas iframe — see the
+		// `$_state.mode` watcher in main.min.js — so without this bridge the
+		// toolbar / panels / structure tree stay light when the user toggles
+		// dark mode in the Style Manager.
+		$bridge_rel = $base . 'js/builder-theme-bridge.js';
+		$bridge_abs = ADMINKIT_PATH . $bridge_rel;
+		if ( file_exists( $bridge_abs ) ) {
+			wp_enqueue_script(
+				'adminkit-bricks-builder-theme-bridge',
+				ADMINKIT_URL . $bridge_rel,
+				array(),
+				(string) filemtime( $bridge_abs ),
+				true
+			);
+		}
+
 		// Two distinct brand assets, two distinct intents:
 		//
 		//   --preloader-logo  → the splash overlay, big and centred. Wants the
