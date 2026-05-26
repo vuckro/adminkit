@@ -350,111 +350,73 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function enqueue_builder() {
-		// Respect the global asset gate (adminkit/should_load).
 		if ( ! apply_filters( 'adminkit/should_load', true, 'builder' ) ) {
 			return;
 		}
-		$restyle = (bool) AdminKit_Settings::get( 'bricks_builder_enabled' );
-		$base    = 'inc/integrations/themes/bricks/css/';
-
-		// Canvas IFRAME first. It renders the real page, so it gets ONLY the canvas
-		// sheet (no variable remaps) — and ONLY under the opt-in restyle (it recolours
-		// the rendered page). MUST be tested before the main-frame check: the iframe
-		// request also satisfies ?bricks=run / bricks_is_builder_main(), so testing
-		// "main" first would leak the chrome's :root { --bricks-* } remap into the page.
-		if ( function_exists( 'bricks_is_builder_iframe' ) && bricks_is_builder_iframe() ) {
-			if ( $restyle ) {
-				self::enqueue_style_file( 'adminkit-bricks-builder-canvas', $base . 'builder-canvas.css' );
-			}
+		if ( ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
 			return;
 		}
 
-		// Builder MAIN frame.
+		$base = 'inc/integrations/themes/bricks/css/';
+
+		// Canvas iframe — only the canvas tweaks (no variable remaps). MUST be
+		// tested first: the iframe also satisfies ?bricks=run / bricks_is_builder_main(),
+		// so checking the main frame first would leak the chrome's :root remap
+		// into the rendered page.
+		if ( function_exists( 'bricks_is_builder_iframe' ) && bricks_is_builder_iframe() ) {
+			self::enqueue_style_file( 'adminkit-bricks-builder-canvas', $base . 'builder-canvas.css' );
+			return;
+		}
+
+		// Main builder frame — load the single builder restyle sheet + inject the
+		// resolved logo URL as a CSS variable so the toolbar and preloader pick it up.
 		$is_main = ( isset( $_GET['bricks'] ) && 'run' === $_GET['bricks'] )
 			|| ( function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main() );
 		if ( ! $is_main ) {
 			return;
 		}
 
-		// 1) Essentials — ALWAYS, independent of the restyle toggle: dark scrollbars +
-		//    the brand logo (toolbar favicon + preloader). Carried on a REAL stylesheet
-		//    (builder-essentials.css) — a real file reliably prints in the builder,
-		//    whereas a src=false inline-only handle may be dropped. The dynamic logo
-		//    CSS attaches to it as inline. The WaasKit provider vars these read are
-		//    present in the builder via Bricks's style-manager, so it works toggle-off.
-		if ( self::enqueue_style_file( 'adminkit-bricks-essentials', $base . 'builder-essentials.css' ) ) {
-			$logo_css = self::builder_logo_css();
-			if ( '' !== $logo_css ) {
-				wp_add_inline_style( 'adminkit-bricks-essentials', $logo_css );
-			}
+		if ( ! self::enqueue_style_file( 'adminkit-bricks-builder', $base . 'builder.css' ) ) {
+			return;
 		}
 
-		// Preloader logo → injected as a real <img> by JS (hugs the logo's natural
-		// aspect, no gutters). Smart fallback for the dark splash: the DARK brand logo
-		// → the site favicon → WordPress's own logo (the last one is inverted in CSS so
-		// the dark WP mark reads on the dark splash). So a logo always shows.
-		$logo = AdminKit_Settings::brand_logo( 'dark' );
-		$wp   = false;
-		if ( '' === $logo ) {
-			$logo = (string) get_site_icon_url( 192 );
-		}
-		if ( '' === $logo ) {
-			$wp_logo = ABSPATH . 'wp-admin/images/wordpress-logo.svg';
-			if ( file_exists( $wp_logo ) ) {
-				$logo = admin_url( 'images/wordpress-logo.svg' );
-				$wp   = true;
+		$logo_dark  = self::resolve_builder_logo_url( 'dark' );
+		$logo_light = self::resolve_builder_logo_url( 'light' );
+		if ( '' !== $logo_dark ) {
+			$css  = ':root{';
+			$css .= '--preloader-logo:url("' . esc_url_raw( $logo_dark ) . '");';
+			$css .= '--logo-url:url("' . esc_url_raw( $logo_dark ) . '");';
+			if ( '' !== $logo_light && $logo_light !== $logo_dark ) {
+				$css .= '--logo-url-light:url("' . esc_url_raw( $logo_light ) . '");';
 			}
-		}
-		if ( '' !== $logo ) {
-			$js_rel  = 'inc/integrations/themes/bricks/js/preloader-logo.js';
-			$js_path = ADMINKIT_PATH . $js_rel;
-			if ( file_exists( $js_path ) ) {
-				wp_enqueue_script( 'adminkit-bricks-preloader', ADMINKIT_URL . $js_rel, array(), (string) filemtime( $js_path ), true );
-				wp_add_inline_script( 'adminkit-bricks-preloader', 'window.AdminKitBricksPreloader=' . wp_json_encode( array( 'logo' => $logo, 'wp' => $wp ) ) . ';', 'before' );
-			}
-		}
-
-		// 2) Chrome restyle — opt-in (panels, code editor, variable remaps).
-		if ( $restyle ) {
-			self::enqueue_builder_fallback_tokens();
-			self::enqueue_style_file( 'adminkit-bricks-builder', $base . 'builder.css' );
+			$css .= '}';
+			wp_add_inline_style( 'adminkit-bricks-builder', $css );
 		}
 	}
 
 	/**
-	 * Load AdminKit's shipped WaasKit baseline as a FALLBACK palette in the builder.
+	 * Resolve the URL of the brand mark to use in the builder for a given mode.
+	 * Falls back to the site icon (favicon) and finally to wp-admin's own logo
+	 * SVG when nothing is configured — mirrors the chain used elsewhere so the
+	 * builder never opens with a missing logo.
 	 *
-	 * builder.css maps Bricks's --builder-* variables onto WaasKit provider
-	 * variables (--surface, --background, --neutral-l-*, …). Those normally come
-	 * from Bricks's saved colours (bricks-style-manager). If the user clears every
-	 * colour in Bricks, those variables vanish and the builder would lose its look.
-	 *
-	 * So we enqueue the baseline (which defines all of them) and make Bricks's
-	 * style-manager DEPEND on it — Bricks therefore loads AFTER and wins whenever
-	 * colours exist, while the baseline stays as the fallback when they don't.
-	 * AdminKit transparently takes over; nothing breaks.
-	 *
-	 * @return void
+	 * @param string $mode 'light' | 'dark'.
+	 * @return string
 	 */
-	private static function enqueue_builder_fallback_tokens() {
-		$path = ADMINKIT_PATH . AdminKit_Assets::WAASKIT_SRC;
-		if ( ! file_exists( $path ) ) {
-			return;
+	private static function resolve_builder_logo_url( $mode = 'dark' ) {
+		$logo = AdminKit_Settings::brand_logo( $mode );
+		if ( '' !== $logo ) {
+			return $logo;
 		}
-		wp_enqueue_style(
-			AdminKit_Assets::WAASKIT_HANDLE,
-			ADMINKIT_URL . AdminKit_Assets::WAASKIT_SRC,
-			array(),
-			(string) filemtime( $path )
-		);
-
-		// Print Bricks's live colours after the baseline so they override it.
-		$styles = wp_styles();
-		if ( isset( $styles->registered['bricks-style-manager'] )
-			&& ! in_array( AdminKit_Assets::WAASKIT_HANDLE, $styles->registered['bricks-style-manager']->deps, true )
-		) {
-			$styles->registered['bricks-style-manager']->deps[] = AdminKit_Assets::WAASKIT_HANDLE;
+		$favicon = get_site_icon_url( 192 );
+		if ( '' !== $favicon ) {
+			return $favicon;
 		}
+		$wp_logo = ABSPATH . 'wp-admin/images/wordpress-logo.svg';
+		if ( file_exists( $wp_logo ) ) {
+			return admin_url( 'images/wordpress-logo.svg' );
+		}
+		return '';
 	}
 
 	/**
@@ -472,75 +434,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		}
 		wp_enqueue_style( $handle, ADMINKIT_URL . $rel, array(), (string) filemtime( $path ) );
 		return true;
-	}
-
-	/**
-	 * Build the inline CSS that brands the builder TOOLBAR (the favicon chip).
-	 *
-	 * The site FAVICON as a fixed rounded SQUARE (centred, cover) so the radius reads
-	 * on the chip; first-letter mark when no Site Icon is set.
-	 *
-	 * The PRELOADER logo is a separate concern: a real <img> injected by
-	 * js/preloader-logo.js (so it hugs the logo's natural aspect — no gutters), styled
-	 * by builder-essentials.css. Enqueued in enqueue_builder().
-	 *
-	 * @return string Inline CSS.
-	 */
-	private static function builder_logo_css() {
-		$css = '';
-
-		// Toolbar → favicon on the accent chip, rounded. `content:url()` on the real
-		// <img> scales reliably; the accent background covers transparent icons.
-		$favicon = get_site_icon_url( 192 );
-		if ( '' !== $favicon ) {
-			$url  = self::css_url( $favicon );
-			// Favicon as a FIXED 34px rounded SQUARE, CENTRED in the wide-short slot so
-			// the radius reads on the chip itself (contain floated it small, leaving the
-			// radius in empty space). `cover` fills the 34px box — the site icon is
-			// square so nothing is cropped. No chip colour — Bricks's yellow is
-			// overridden to transparent so nothing shows behind/around it.
-			$css .= '#bricks-toolbar .logo{background-color:transparent!important;display:flex;align-items:center;justify-content:center}';
-			$css .= '#bricks-toolbar .logo a{display:flex;align-items:center;justify-content:center;width:100%;height:100%}';
-			$css .= '#bricks-toolbar .logo img{content:' . $url . ';display:block;width:34px;height:34px;'
-				. 'box-sizing:border-box;padding:0;object-fit:cover;border-radius:6px}';
-		} else {
-			$css .= self::builder_toolbar_letter_css();
-		}
-
-		return $css;
-	}
-
-	/**
-	 * The toolbar logo as a first-letter text mark on the accent chip. '' when the
-	 * site title has no usable letter.
-	 *
-	 * @return string
-	 */
-	private static function builder_toolbar_letter_css() {
-		$name   = wp_strip_all_tags( get_bloginfo( 'name' ) );
-		$letter = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 1 ) : substr( $name, 0, 1 );
-		$letter = preg_replace( '/[^\p{L}\p{N}]/u', '', (string) $letter ); // CSS-safe: letters/digits only
-		$letter = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $letter ) : strtoupper( $letter );
-		if ( '' === $letter ) {
-			return '';
-		}
-		return '#bricks-toolbar li.logo{background-color:var(--accent,#ffd64f);'
-			. 'display:flex;align-items:center;justify-content:center;min-width:34px}'
-			. '#bricks-toolbar li.logo img{display:none}'
-			. '#bricks-toolbar li.logo::after{content:"' . $letter . '";'
-			. 'color:var(--accent-on,#18181b);font-weight:700;font-size:15px;line-height:1}';
-	}
-
-	/**
-	 * Wrap a URL for safe use inside a CSS url() (esc_url_raw keeps query-string
-	 * ampersands intact, unlike esc_url which entity-encodes them and breaks CSS).
-	 *
-	 * @param string $url
-	 * @return string url("…") or ''.
-	 */
-	private static function css_url( $url ) {
-		$url = esc_url_raw( (string) $url );
-		return ( '' === $url ) ? '' : 'url("' . $url . '")';
 	}
 
 	/**
