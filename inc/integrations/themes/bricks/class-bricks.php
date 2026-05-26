@@ -419,7 +419,23 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 
-		if ( ! self::enqueue_style_file( 'adminkit-bricks-builder', $base . 'builder.css' ) ) {
+		// Make sure the WaasKit baseline (309 tokens — `--background`, `--surface`,
+		// the colour ramps, etc.) is available inside the builder. AdminKit's
+		// normal frontend flow skips the baseline (a live provider owns the page
+		// there), but the builder is a different surface: when the user hasn't
+		// imported a palette via Bricks → Style manager, none of the semantic
+		// tokens the restyle reads are defined, and the builder paints blank.
+		// Enqueued with no deps; Bricks's own style-manager.min.css (when
+		// present) loads via provide_tokens() AFTER and overrides cleanly.
+		$wk_handle = AdminKit_Assets::WAASKIT_HANDLE;
+		$wk_path   = ADMINKIT_PATH . AdminKit_Assets::WAASKIT_SRC;
+		$deps      = array();
+		if ( file_exists( $wk_path ) ) {
+			wp_enqueue_style( $wk_handle, ADMINKIT_URL . AdminKit_Assets::WAASKIT_SRC, array(), (string) filemtime( $wk_path ) );
+			$deps[] = $wk_handle;
+		}
+
+		if ( ! self::enqueue_style_file( 'adminkit-bricks-builder', $base . 'builder.css', $deps ) ) {
 			return;
 		}
 
@@ -466,16 +482,17 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 * Enqueue one of the integration's stylesheets by repo-relative path, with a
 	 * filemtime cache-bust. Returns false if the file is missing.
 	 *
-	 * @param string $handle
-	 * @param string $rel    Path relative to the plugin root.
+	 * @param string   $handle
+	 * @param string   $rel    Path relative to the plugin root.
+	 * @param string[] $deps   Optional handles to depend on (must already be registered).
 	 * @return bool
 	 */
-	private static function enqueue_style_file( $handle, $rel ) {
+	private static function enqueue_style_file( $handle, $rel, array $deps = array() ) {
 		$path = ADMINKIT_PATH . $rel;
 		if ( ! file_exists( $path ) ) {
 			return false;
 		}
-		wp_enqueue_style( $handle, ADMINKIT_URL . $rel, array(), (string) filemtime( $path ) );
+		wp_enqueue_style( $handle, ADMINKIT_URL . $rel, $deps, (string) filemtime( $path ) );
 		return true;
 	}
 

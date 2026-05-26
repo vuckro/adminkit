@@ -14,7 +14,12 @@
  * `--preloader-logo` and `--logo-url` are CSS variables injected from PHP
  * (the resolved brand logo URL, with sensible WP-side fallbacks). All other
  * vars come from Bricks's saved tokens (`bricks-style-manager`) when Style
- * Manager is configured, or AdminKit's shipped WaasKit baseline otherwise.
+ * Manager is configured, or AdminKit's shipped WaasKit baseline otherwise
+ * — the integration enqueues the baseline as a dep so the builder still
+ * paints correctly on a Bricks install that hasn't imported a palette yet.
+ * Geometry tokens (`--radius-s`, `--transition-s`) come from Bricks's
+ * Variables panel, which isn't part of the baseline; the `var(--token, …)`
+ * fallback below catches those.
  *
  * IMPORTANT — the `[data-builder-mode="custom"]` block below ONLY applies
  * when the Bricks "Builder mode" setting (Bricks → Settings → Builder) is
@@ -96,14 +101,20 @@ body:has(.mode [data-name="sun"]) #bricks-toolbar {
 
 	/* Borders & radius */
 	--builder-border-color:          var(--border);
-	--builder-border-radius:         var(--radius-s);
+	--builder-border-radius:         var(--radius-s, var(--ak-radius-s, 6px));
 	--builder-color-knob:            var(--neutral-l-7);
 	--builder-placeholder-opacity:   .32;
+
+	/* Shadow — Bricks uses --builder-box-shadow for popups, notifications,
+	   the "Save" toast, etc. Bricks ships both names; map both so we don't
+	   miss surfaces that only consume the alias. */
+	--builder-box-shadow:            var(--ak-shadow-elevated, 0 8px 24px -10px rgba(0, 0, 0, .3));
+	--builder-shadow:                var(--ak-shadow-elevated, 0 8px 24px -10px rgba(0, 0, 0, .3));
 
 	/* Accent / selection / highlight */
 	--builder-bg-accent:             var(--surface);
 	--builder-color-accent:          var(--accent);
-	--builder-color-accent-inverse:  var(--on-accent);
+	--builder-color-accent-inverse:  var(--accent-on);
 	--builder-color-highlight:       var(--accent);
 	--builder-bg-highlight:          var(--focus);
 
@@ -145,8 +156,8 @@ body:has(.mode [data-name="sun"]) #bricks-toolbar {
    ============================================================ */
 :root {
 	--bricks-vh:              1vh;
-	--bricks-transition:      var(--transition-s);
-	--bricks-border-radius:   var(--radius-s);
+	--bricks-transition:      var(--transition-s, .15s ease);
+	--bricks-border-radius:   var(--radius-s, var(--ak-radius-s, 6px));
 
 	--bricks-color-primary:   var(--primary);
 	--bricks-color-secondary: var(--secondary);
