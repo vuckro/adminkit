@@ -1119,3 +1119,11 @@ msgstr ""
 #: inc/class-settings-page.php
 msgid "Remove"
 msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Custom"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Bricks not detected"
+msgstr ""

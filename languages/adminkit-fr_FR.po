@@ -1123,3 +1123,11 @@ msgstr "Police et tailles"
 #: inc/class-settings-page.php
 msgid "Remove"
 msgstr "Supprimer"
+
+#: inc/class-settings-page.php
+msgid "Custom"
+msgstr "Personnalisé"
+
+#: inc/class-settings-page.php
+msgid "Bricks not detected"
+msgstr "Bricks non détecté"

@@ -106,12 +106,20 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   Don't "tokenize" these — it'd break the fixed behaviour. (3) the Bricks-brand pill
   (`.ak-pill--bricks`) in the Design-tab token reference, `#ff983e` — it's the
   Bricks brand colour, same fixed-by-design exception logic.
-- **`brand_accent` overrides `--ak-primary` via ONE inline rule injected on
-  `adminkit/tokens_enqueued`** (see `AdminKit_Assets::inject_brand_accent()`).
-  Don't duplicate this injection anywhere else — the derived accent tokens
-  (`--ak-primary-hover`, `--ak-primary-subtle`, `--ak-on-accent`, focus ring) all
-  recalculate automatically through their CSS `color-mix()` fallbacks once
-  `--ak-primary` flips, so one knob covers the whole accent family.
+- **`accent_source` is the single source of truth for `--ak-primary`** — read it
+  via `AdminKit_Settings::accent_source()` (never `get('accent_source')` directly:
+  the helper applies the "auto" default at read time, returning `'bricks'` when
+  Bricks is active and `'adminkit'` otherwise). `AdminKit_Assets::inject_brand_accent()`
+  hooks `adminkit/tokens_enqueued` and emits ONE inline rule based on the source:
+  `adminkit` → `:root{--ak-primary:#3858E9}` (WordPress Blue, `ADMINKIT_BLUE`
+  constant — force-overrides Bricks too); `bricks` → no rule (let the cascade
+  pick Bricks's `--accent`); `custom` → the `brand_accent` hex. Don't duplicate
+  this injection anywhere else — the derived accent tokens (`--ak-primary-hover`,
+  `--ak-primary-subtle`, `--ak-on-accent`, focus ring) all recalculate automatically
+  through their CSS `color-mix()` fallbacks once `--ak-primary` flips, so one
+  knob covers the whole accent family. Accent-family tokens are flagged
+  `accent_family: true` in `color_map()` so the SPA's `sourcePill()` can label
+  them correctly in the token reference.
 - **Integration discovery is `glob( inc/integrations/*/*/class-*.php )`** — two
   levels deep (`{plugins,themes}/{slug}/`). The class name derives from the file
   basename (`AdminKit_Integration_{Studly_Slug}`). Don't rename a class without

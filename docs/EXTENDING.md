@@ -72,6 +72,32 @@ nothing is set; `inc/wp-core/class-branding.php`. The login screen has its own
 `wp_logo`), so it can show a square favicon while the bar shows a wide logo, or
 vice versa; resolved in `inc/wp-core/class-login.php`.
 
+### Accent
+
+The Design tab's accent picker switches between **three sources** for
+`--ak-primary` via the `accent_source` setting:
+
+| Source | Behaviour |
+| --- | --- |
+| `'adminkit'` (default) | Force-emits `:root{--ak-primary:#3858E9}` — WordPress Blue, the Block Editor primary. Overrides Bricks even when active. |
+| `'bricks'` | No inline rule. Bricks's `--accent` rides the normal cascade via `adminkit/extra_tokens_handle`. |
+| `'custom'` | Emits the user's `brand_accent` hex (sanitised by `sanitize_hex_color()`). |
+
+A `''` stored value resolves to "auto" at read time — `'bricks'` if Bricks is
+active, `'adminkit'` otherwise — via `AdminKit_Settings::accent_source()`. Use
+that helper everywhere; never read the raw setting directly.
+
+All derived accent tokens (`--ak-primary-hover`, `--ak-primary-subtle`,
+`--ak-on-accent`, the focus ring) recalculate automatically through CSS
+`color-mix()` chains once `--ak-primary` flips — one knob, whole family. Tokens
+that follow the accent are flagged `accent_family: true` in `color_map()` so
+the Design tab's token-reference table can colour their Source pill accordingly.
+
+The override is emitted by `AdminKit_Assets::inject_brand_accent()` hooked on
+`adminkit/tokens_enqueued`. The constant `AdminKit_Assets::ADMINKIT_BLUE` holds
+the WP-Blue default — change it there if you ever need to ship a different
+out-of-the-box accent.
+
 ## Icons
 
 The "AdminKit icons" feature (`replace_icons_enabled`, on by default) swaps

@@ -96,20 +96,54 @@ class AdminKit_Settings {
 			},
 		) );
 
-		// Brand accent — a user-chosen hex that overrides `--ak-primary` everywhere.
-		// Empty (default) = the cascade wins (Bricks provider → WaasKit baseline →
-		// neutral fallback), so the site behaves exactly as before. When set, an
-		// inline style block on `adminkit/tokens_enqueued` injects this colour as
+		// Brand accent — the hex used when `accent_source` === 'custom'. Ignored
+		// for the other two sources (AdminKit / Bricks). When valid, an inline
+		// style block on `adminkit/tokens_enqueued` injects it as
 		// `:root{--ak-primary: <hex>}`, and the derived tokens (hover / subtle /
 		// focus ring / on-accent) recalculate automatically through their CSS
-		// `color-mix()` fallbacks — one knob, whole accent family follows.
-		// `sanitize_hex_color()` returns `null` for junk → drop → empty → no override.
+		// `color-mix()` fallbacks. `sanitize_hex_color()` returns null for junk
+		// → drop → empty → no override.
 		self::register( 'brand_accent', array(
 			'type'     => 'text',
 			'group'    => 'branding',
 			'default'  => '',
 			'sanitize' => 'sanitize_hex_color',
 		) );
+
+		// Accent source — which of the three feeds `--ak-primary`:
+		//   • 'adminkit' (default WordPress Blue #3858E9, forced over Bricks)
+		//   • 'bricks'   (use the Bricks-provided --accent, no override)
+		//   • 'custom'   (use the `brand_accent` hex)
+		// Empty default = "auto" — resolved at READ time by accent_source() so the
+		// effective source flips with Bricks (de)activation without burning a value
+		// into the option. Once the user picks explicitly, that choice sticks.
+		self::register( 'accent_source', array(
+			'type'     => 'select',
+			'group'    => 'branding',
+			'default'  => '',
+			'sanitize' => static function ( $v ) {
+				return in_array( $v, array( 'adminkit', 'bricks', 'custom' ), true ) ? $v : '';
+			},
+		) );
+	}
+
+	/**
+	 * Resolve the effective accent source — applies the "auto" default at read
+	 * time. Use this everywhere instead of `get('accent_source')` so the cascade
+	 * (Bricks active → 'bricks', else 'adminkit') stays correct even when the
+	 * Bricks integration toggles after install.
+	 *
+	 * @return string 'adminkit' | 'bricks' | 'custom'
+	 */
+	public static function accent_source() {
+		$raw = (string) self::get( 'accent_source' );
+		if ( '' !== $raw ) {
+			return $raw;
+		}
+		if ( class_exists( 'AdminKit_Integration_Bricks' ) && AdminKit_Integration_Bricks::is_active() ) {
+			return 'bricks';
+		}
+		return 'adminkit';
 	}
 
 	/**
@@ -174,15 +208,15 @@ class AdminKit_Settings {
 				array( 'token' => '--ak-text-muted', 'bricks' => '--text-muted', 'source' => '--neutral-l-7', 'label' => __( 'Muted text', 'adminkit' ) ),
 			) ),
 			array( 'group' => 'accent', 'label' => __( 'Accent', 'adminkit' ), 'desc' => __( 'Brand — buttons, links, highlights. Hover, subtle and focus derive from it automatically.', 'adminkit' ), 'tokens' => array(
-				array( 'token' => '--ak-primary',        'bricks' => '--accent',        'source' => '--primary',     'label' => __( 'Accent', 'adminkit' ) ),
-				array( 'token' => '--ak-primary-hover',  'bricks' => '--accent-hover',  'source' => '--primary-d-1', 'label' => __( 'Accent hover', 'adminkit' ) ),
-				array( 'token' => '--ak-primary-subtle', 'bricks' => '--accent-subtle', 'source' => '--primary-l-9', 'label' => __( 'Accent subtle', 'adminkit' ) ),
-				array( 'token' => '--ak-on-accent',      'bricks' => '--accent-on',     'source' => '--primary-d-9', 'label' => __( 'On accent', 'adminkit' ) ),
+				array( 'token' => '--ak-primary',        'bricks' => '--accent',        'source' => '--primary',     'label' => __( 'Accent', 'adminkit' ),       'accent_family' => true ),
+				array( 'token' => '--ak-primary-hover',  'bricks' => '--accent-hover',  'source' => '--primary-d-1', 'label' => __( 'Accent hover', 'adminkit' ), 'accent_family' => true ),
+				array( 'token' => '--ak-primary-subtle', 'bricks' => '--accent-subtle', 'source' => '--primary-l-9', 'label' => __( 'Accent subtle', 'adminkit' ), 'accent_family' => true ),
+				array( 'token' => '--ak-on-accent',      'bricks' => '--accent-on',     'source' => '--primary-d-9', 'label' => __( 'On accent', 'adminkit' ),    'accent_family' => true ),
 				array( 'token' => '--ak-secondary',      'bricks' => '',                'source' => '--secondary',   'label' => __( 'Secondary', 'adminkit' ), 'own' => true ),
 			) ),
 			array( 'group' => 'state', 'label' => __( 'State', 'adminkit' ), 'desc' => __( 'Hover and focus feedback.', 'adminkit' ), 'tokens' => array(
 				array( 'token' => '--ak-hover-bg', 'bricks' => '',        'source' => '--neutral-t-2', 'label' => __( 'Hover', 'adminkit' ), 'own' => true ),
-				array( 'token' => '--ak-focus',    'bricks' => '--focus', 'source' => '--primary', 'label' => __( 'Focus ring', 'adminkit' ) ),
+				array( 'token' => '--ak-focus',    'bricks' => '--focus', 'source' => '--primary', 'label' => __( 'Focus ring', 'adminkit' ), 'accent_family' => true ),
 			) ),
 			array( 'group' => 'overlay', 'label' => __( 'Overlay', 'adminkit' ), 'desc' => __( 'Scrim behind modals and drawers.', 'adminkit' ), 'tokens' => array(
 				array( 'token' => '--ak-overlay', 'bricks' => '--overlay', 'source' => '--black-t-7', 'label' => __( 'Overlay', 'adminkit' ) ),

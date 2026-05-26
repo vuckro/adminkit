@@ -34,7 +34,9 @@
 		},
 		wpLogo: D.wpLogo || 'favicon',       // admin-bar / site-name mark: logo | favicon | hide
 		loginLogo: D.loginLogo || 'favicon', // login screen mark: logo | favicon | hide (legacy '' inherit → favicon)
-		brandAccent: D.brandAccent || '',    // user hex override of --ak-primary; empty = inherit cascade
+		brandAccent: D.brandAccent || '',    // user hex (only meaningful when accentSource === 'custom')
+		// 'adminkit' = WP Blue (#3858E9), 'bricks' = Bricks provider --accent, 'custom' = brandAccent hex
+		accentSource: D.accentSource || 'adminkit',
 		// Bidirectional binding to WP's native `site_icon` option — see PHP
 		// bootstrap. The favicon slot in the Brand card reads + writes through
 		// THIS, not state.logos, so a change here propagates to Settings →
@@ -617,51 +619,126 @@
 			] );
 		}
 
-		// Accent picker — minimal inline cluster meant to sit on the same row as
-		// the Display segmented controls (everything on one line, no separate
-		// accent row, no derived-colours strip). Two bound controls: the swatch
-		// (triggers the OS-native colour picker) and the hex `<input type="text">`
-		// (canonical source of truth, also accepts paste). The OS picker is a
-		// hidden `<input type="color">` that the swatch's click forwards to.
+		// Accent picker — a segmented control that switches between three sources
+		// feeding `--ak-primary`:
 		//
-		// Live preview: write :root{--ak-primary:<hex>} to a temporary <style>
-		// node so every accent-derived surface (buttons, focus rings, hover
-		// tints…) updates as the user types. The node is removed when the hex
-		// empties; the server-side `inject_brand_accent()` hook takes over after
-		// save.
+		//   • AdminKit (default) — D.adminkitBlue (#3858E9, WordPress Blue)
+		//   • Bricks              — the Bricks provider --accent (no override)
+		//   • Custom              — the user's `brand_accent` hex
+		//
+		// The hex input only appears when source = 'custom'. The swatch always
+		// shows the resolved colour (clicking it pops the OS-native picker, which
+		// also auto-switches the source to 'custom').
+		//
+		// Live preview writes / removes a `<style id="ak-accent-preview">` node
+		// so the whole accent family (hover, subtle, on-accent, focus ring) and
+		// the token-map pills update without a reload. The node is REMOVED for
+		// 'bricks' so the cascade picks the provider's --accent naturally;
+		// REMOVED for 'custom' with an invalid/empty hex so the cascade takes back;
+		// otherwise WRITTEN with the right value.
 		function accentPicker() {
+			var bricksAvailable = !! D.bricksDetected;
+			var sources = [
+				{ v: 'adminkit', label: I.accentSrcAdminKit || 'AdminKit' },
+				{ v: 'bricks',   label: I.accentSrcBricks   || 'Bricks',
+				  disabled: ! bricksAvailable,
+				  title: bricksAvailable ? null : ( I.accentSrcBricksHint || 'Bricks not detected' ) },
+				{ v: 'custom',   label: I.accentSrcCustom   || 'Custom' }
+			];
+
+			var btns = [];
+			var seg = el( 'div', { 'class': 'ak-seg', role: 'radiogroup', 'aria-label': I.accentLabel || 'Accent' } );
+			sources.forEach( function ( o ) {
+				var active = state.accentSource === o.v;
+				var attrs = {
+					type: 'button',
+					'class': 'ak-seg__opt' + ( active ? ' is-active' : '' ),
+					role: 'radio', 'aria-checked': active ? 'true' : 'false',
+					text: o.label
+				};
+				if ( o.title ) { attrs.title = o.title; }
+				if ( o.disabled ) { attrs.disabled = ''; attrs[ 'aria-disabled' ] = 'true'; }
+				var b = el( 'button', attrs );
+				b._v = o.v;
+				if ( ! o.disabled ) {
+					b.addEventListener( 'click', function () {
+						if ( state.accentSource === o.v ) { return; }
+						setSource( o.v );
+					} );
+				}
+				btns.push( b );
+				seg.appendChild( b );
+			} );
+
 			var swatch = el( 'button', {
 				type: 'button', 'class': 'ak-accent-inline__sw',
 				'aria-label': I.accentLabel || 'Accent'
 			} );
 			var hexInput = el( 'input', {
 				type: 'text', 'class': 'ak-accent-inline__hex',
-				placeholder: '#fed53e', spellcheck: 'false',
+				placeholder: '#3858E9', spellcheck: 'false',
 				maxlength: '7'
 			} );
 			hexInput.value = state.brandAccent || '';
+			if ( state.accentSource !== 'custom' ) { hexInput.setAttribute( 'hidden', '' ); }
 			var native = el( 'input', { type: 'color', 'class': 'ak-accent-inline__native' } );
-			native.value = isValidHex( state.brandAccent ) ? state.brandAccent : '#fed53e';
+			native.value = isValidHex( state.brandAccent ) ? state.brandAccent : ( D.adminkitBlue || '#3858E9' );
 
+			// Update the inline <style id="ak-accent-preview"> to match the active
+			// source. Removing the node lets the cascade fall through to Bricks /
+			// baseline — that's the behaviour we want for 'bricks' and for empty
+			// 'custom' input.
 			function applyPreview() {
 				var id = 'ak-accent-preview';
 				var existing = document.getElementById( id );
-				if ( isValidHex( state.brandAccent ) ) {
+				var override = '';
+
+				if ( state.accentSource === 'adminkit' ) {
+					override = D.adminkitBlue || '#3858E9';
+				} else if ( state.accentSource === 'custom' && isValidHex( state.brandAccent ) ) {
+					override = state.brandAccent;
+				}
+				// 'bricks' OR custom-with-invalid-hex → fall through (no override).
+
+				if ( override ) {
 					if ( ! existing ) {
 						existing = document.createElement( 'style' );
 						existing.id = id;
 						document.head.appendChild( existing );
 					}
-					existing.textContent = ':root{--ak-primary:' + state.brandAccent + '}';
+					existing.textContent = ':root{--ak-primary:' + override + '}';
 				} else if ( existing ) {
 					existing.parentNode.removeChild( existing );
 				}
-				swatch.style.background = state.brandAccent || 'var(--ak-primary)';
-				if ( isValidHex( state.brandAccent ) ) { native.value = state.brandAccent; }
+				// Swatch reflects whatever the cascade resolves to — let the
+				// browser tell us via getComputedStyle (resolveColor reads it).
+				swatch.style.background = 'var(--ak-primary)';
 				refreshHexes();
+				refreshAccentPills();
 			}
 
-			function setAccent( raw ) {
+			function syncSeg() {
+				btns.forEach( function ( b ) {
+					var on = b._v === state.accentSource;
+					b.classList.toggle( 'is-active', on );
+					b.setAttribute( 'aria-checked', on ? 'true' : 'false' );
+				} );
+				if ( state.accentSource === 'custom' ) {
+					hexInput.removeAttribute( 'hidden' );
+				} else {
+					hexInput.setAttribute( 'hidden', '' );
+				}
+			}
+
+			function setSource( newSrc ) {
+				state.accentSource = newSrc;
+				accentState.source = newSrc; // mirror into module-scope for sourcePill()
+				syncSeg();
+				applyPreview();
+				markDirty();
+			}
+
+			function setHex( raw ) {
 				var v = ( raw || '' ).trim().toLowerCase();
 				if ( v && v.charAt( 0 ) !== '#' ) { v = '#' + v; }
 				state.brandAccent = v;
@@ -670,15 +747,20 @@
 				markDirty();
 			}
 
-			hexInput.addEventListener( 'input', function () { setAccent( hexInput.value ); } );
-			swatch.addEventListener( 'click', function () { native.click(); } );
-			native.addEventListener( 'input', function () { setAccent( native.value ); } );
+			hexInput.addEventListener( 'input', function () { setHex( hexInput.value ); } );
+			// Clicking the swatch ALWAYS opens the native picker AND auto-switches
+			// the source to Custom — the picker only makes sense in custom mode.
+			swatch.addEventListener( 'click', function () {
+				if ( state.accentSource !== 'custom' ) { setSource( 'custom' ); }
+				native.click();
+			} );
+			native.addEventListener( 'input', function () { setHex( native.value ); } );
 
 			applyPreview();
 
 			return el( 'div', { 'class': 'ak-display-row__field ak-accent-inline' }, [
 				el( 'span', { 'class': 'ak-display-row__field-lbl', text: I.accentLabel || 'Accent' } ),
-				swatch, hexInput, native
+				seg, swatch, hexInput, native
 			] );
 		}
 
@@ -841,7 +923,11 @@
 	// feeding the token at runtime, not just what's mapped in the color_map:
 	//
 	//   • own (AdminKit-defined, no provider equivalent) → ADMINKIT pill (yellow)
-	//   • mapped to a Bricks var AND Bricks is actually detected → BRICKS pill (orange)
+	//   • accent-family (--ak-primary*, --ak-on-accent, --ak-focus) → follows
+	//     `state.accentSource`: ADMINKIT / BRICKS / CUSTOM depending on the user's
+	//     choice in the Brand card. These tokens are tinted live by the inline
+	//     <style id="ak-accent-preview"> rule, so the pill must reflect that.
+	//   • mapped to a Bricks var AND Bricks is actually detected → BRICKS pill
 	//   • everything else (no provider, or Bricks not active) → AUTO pill (muted)
 	//     — the token resolves through the WaasKit baseline cascade.
 	//
@@ -853,19 +939,56 @@
 		if ( t.own ) {
 			return el( 'span', { 'class': 'ak-pill ak-pill--adminkit', text: I.sourceAdminKit || 'AdminKit' } );
 		}
+		if ( t.accent_family ) {
+			if ( accentState.source === 'custom' ) {
+				return el( 'span', { 'class': 'ak-pill ak-pill--custom', text: I.sourceCustom || 'Custom' } );
+			}
+			if ( accentState.source === 'bricks' && D.bricksDetected ) {
+				return el( 'span', { 'class': 'ak-pill ak-pill--bricks', text: I.sourceBricks || 'Bricks' } );
+			}
+			// 'adminkit' (or 'bricks' fallback when Bricks isn't actually active)
+			return el( 'span', { 'class': 'ak-pill ak-pill--adminkit', text: I.sourceAdminKit || 'AdminKit' } );
+		}
 		if ( t.bricks && D.bricksDetected ) {
 			return el( 'span', { 'class': 'ak-pill ak-pill--bricks', text: I.sourceBricks || 'Bricks' } );
 		}
 		return el( 'span', { 'class': 'ak-pill ak-pill--auto', text: I.sourceAuto || 'Auto' } );
 	}
 
+	// Shared read of the current accent source. sourcePill() lives at module
+	// scope (outside buildDesign() where the `state` closure is defined), so it
+	// reads the source via this tiny accessor that the picker writes into.
+	// Initialised from the bootstrap, kept in sync by accentPicker's setSource().
+	var accentState = { source: ( D.accentSource || 'adminkit' ) };
+
+	// Refresh every Source pill marked as accent-family in the token map. Called
+	// by accentPicker.applyPreview() right after the inline <style> is rewritten,
+	// so the pill colours/labels mirror the new source choice in real time.
+	function refreshAccentPills() {
+		var cells = document.querySelectorAll( '[data-accent-pill]' );
+		for ( var i = 0; i < cells.length; i++ ) {
+			var cell = cells[ i ];
+			var token = cell.getAttribute( 'data-accent-pill' );
+			// Synthesize the minimal `t` the sourcePill needs.
+			var fresh = sourcePill( { accent_family: true, bricks: token } );
+			cell.innerHTML = '';
+			cell.appendChild( fresh );
+		}
+	}
+
 	// One token row in the read-only reference table. Cascade reads source →
 	// bricks-semantic → token (the same flow direction we render elsewhere).
+	// Accent-family tokens carry `data-accent-pill` on their Source cell so
+	// refreshAccentPills() can re-render the pill in place when the user flips
+	// the accent source in the Brand card (no full table rebuild needed).
 	function refRow( t ) {
 		var cascadeBits = [];
 		if ( t.source ) { cascadeBits.push( t.source ); }
 		if ( t.bricks ) { cascadeBits.push( t.bricks ); }
 		var cascade = cascadeBits.length ? cascadeBits.join( ' → ' ) : '—';
+
+		var pillCellAttrs = {};
+		if ( t.accent_family ) { pillCellAttrs[ 'data-accent-pill' ] = t.bricks || t.token; }
 
 		return el( 'tr', {}, [
 			el( 'td', {}, [
@@ -874,7 +997,7 @@
 			] ),
 			el( 'td', {}, [ el( 'code', { 'class': 'ak-tokens-ref__cascade', text: cascade } ) ] ),
 			el( 'td', {}, [ el( 'code', { 'class': 'ak-tokens-ref__value', 'data-ak-token': t.token, text: resolveColor( t.token ) } ) ] ),
-			el( 'td', {}, [ sourcePill( t ) ] )
+			el( 'td', pillCellAttrs, [ sourcePill( t ) ] )
 		] );
 	}
 
@@ -1191,6 +1314,7 @@
 		v.wp_logo      = state.wpLogo;
 		v.login_logo   = state.loginLogo;
 		v.brand_accent = state.brandAccent;
+		v.accent_source = state.accentSource;
 		// WP-native option proxy — see PHP rest_save() for the round-trip.
 		v.site_icon_id = state.siteIcon.id;
 		return v;

@@ -47,6 +47,18 @@ class AdminKit_Assets {
 	const TOKENS_HANDLE = 'adminkit-tokens';
 	const TOKENS_SRC    = 'assets/css/tokens.css';
 
+	/**
+	 * AdminKit's default accent — WordPress Blue (the Block Editor primary, the
+	 * modern admin blue used in Gutenberg / FSE). Emitted as the inline override
+	 * for `--ak-primary` when `accent_source` resolves to 'adminkit', so it wins
+	 * over any Bricks provider --accent. The derived accent tokens (hover,
+	 * subtle, on-accent, focus ring) recalculate automatically via color-mix()
+	 * in tokens.css — one knob, whole family follows.
+	 *
+	 * If you change this, update the [[reference-wp-blue-3858e9]] memo too.
+	 */
+	const ADMINKIT_BLUE = '#3858E9';
+
 	// Built-in WaasKit token baseline (generated from tokens/palettes/*
 	// by the adminkit-tokens-build skill). Shipped so AdminKit is brand-complete with
 	// no provider; a live provider (Bricks) loads AFTER it and overrides it.
@@ -97,23 +109,42 @@ class AdminKit_Assets {
 	}
 
 	/**
-	 * Inline-style the user's brand accent on top of the tokens stylesheet. Runs
-	 * for every context (admin / login / frontend / editor / customize) since the
-	 * accent should be consistent everywhere AdminKit paints.
+	 * Inline-style the effective `--ak-primary` on top of the tokens stylesheet.
+	 * Switches on `accent_source` (AdminKit / Bricks / Custom):
+	 *
+	 *   • 'adminkit' (default) → emit `:root{--ak-primary:#3858E9}` so AdminKit's
+	 *     WordPress-blue beats any Bricks provider --accent. Forced override
+	 *     because picking AdminKit explicitly means "I want this colour, even
+	 *     if Bricks is loaded".
+	 *   • 'bricks' → no inline rule emitted. The Bricks integration's stylesheet
+	 *     (loaded as a dep of TOKENS_HANDLE via `adminkit/extra_tokens_handle`)
+	 *     wins via the normal cascade.
+	 *   • 'custom' → emit the user's hex from `brand_accent`. No-op if the value
+	 *     fails `sanitize_hex_color()`.
+	 *
+	 * Runs for every context (admin / login / frontend / editor / customize)
+	 * since the accent should be consistent everywhere AdminKit paints.
 	 *
 	 * @param string $context  admin | login | frontend | editor | customize
 	 * @return void
 	 */
 	public static function inject_brand_accent( $context ) {
-		$hex = (string) AdminKit_Settings::get( 'brand_accent' );
-		if ( '' === $hex ) {
+		$source = AdminKit_Settings::accent_source();
+
+		if ( 'bricks' === $source ) {
+			return; // Let the Bricks --accent ride the cascade as-is.
+		}
+
+		if ( 'custom' === $source ) {
+			$hex = sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) );
+			if ( $hex ) {
+				wp_add_inline_style( self::TOKENS_HANDLE, ':root{--ak-primary:' . $hex . '}' );
+			}
 			return;
 		}
-		$hex = sanitize_hex_color( $hex );
-		if ( ! $hex ) {
-			return;
-		}
-		wp_add_inline_style( self::TOKENS_HANDLE, ':root{--ak-primary:' . $hex . '}' );
+
+		// 'adminkit' (default) — WP Block Editor blue, forced over Bricks.
+		wp_add_inline_style( self::TOKENS_HANDLE, ':root{--ak-primary:' . self::ADMINKIT_BLUE . '}' );
 	}
 
 	/**

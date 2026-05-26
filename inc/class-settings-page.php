@@ -257,11 +257,15 @@ class AdminKit_Settings_Page {
 			$tokens = array();
 			foreach ( $group['tokens'] as $t ) {
 				$tokens[] = array(
-					'token'  => $t['token'],
-					'label'  => $t['label'],
-					'bricks' => isset( $t['bricks'] ) ? $t['bricks'] : '',
-					'source' => isset( $t['source'] ) ? $t['source'] : '',
-					'own'    => ! empty( $t['own'] ),
+					'token'         => $t['token'],
+					'label'         => $t['label'],
+					'bricks'        => isset( $t['bricks'] ) ? $t['bricks'] : '',
+					'source'        => isset( $t['source'] ) ? $t['source'] : '',
+					'own'           => ! empty( $t['own'] ),
+					// Accent-family tokens (--ak-primary*, --ak-on-accent, --ak-focus)
+					// follow `accent_source` rather than the static `bricks` field.
+					// Read by sourcePill() in the SPA to colour the Source pill.
+					'accent_family' => ! empty( $t['accent_family'] ),
 				);
 			}
 			$colors[] = array(
@@ -307,6 +311,13 @@ class AdminKit_Settings_Page {
 			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
 			'loginLogo'    => (string) AdminKit_Settings::get( 'login_logo' ),
 			'brandAccent'  => (string) AdminKit_Settings::get( 'brand_accent' ),
+			// Effective accent source (resolved at read time — see accent_source()).
+			// One of 'adminkit' | 'bricks' | 'custom'. Drives the segmented picker
+			// in the Brand card and the Source pill colour for accent-family tokens.
+			'accentSource' => AdminKit_Settings::accent_source(),
+			// Default AdminKit accent (WordPress Blue). The SPA seeds the swatch
+			// with this when source = 'adminkit' before getComputedStyle resolves.
+			'adminkitBlue' => AdminKit_Assets::ADMINKIT_BLUE,
 			'hasSiteIcon'  => '' !== (string) get_site_icon_url(),
 			// Bidirectional binding for the Favicon slot in the Design tab: we read
 			// AND write WordPress's native `site_icon` option, so the slot stays in
@@ -407,6 +418,11 @@ class AdminKit_Settings_Page {
 				'accentLabel'         => __( 'Accent', 'adminkit' ),
 				'accentInherit'       => __( 'Inheriting from provider / baseline', 'adminkit' ),
 				'accentClear'         => __( 'Clear accent', 'adminkit' ),
+				'accentSrcAdminKit'   => __( 'AdminKit', 'adminkit' ),
+				'accentSrcBricks'     => __( 'Bricks', 'adminkit' ),
+				'accentSrcCustom'     => __( 'Custom', 'adminkit' ),
+				'accentSrcBricksHint' => __( 'Bricks not detected', 'adminkit' ),
+				'sourceCustom'        => __( 'Custom', 'adminkit' ),
 				'accentShowDerived'   => __( 'Show derived colours', 'adminkit' ),
 				'accentHideDerived'   => __( 'Hide derived colours', 'adminkit' ),
 				'derivedHover'        => __( 'Hover', 'adminkit' ),
