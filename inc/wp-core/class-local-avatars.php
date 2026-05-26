@@ -55,6 +55,13 @@ class AdminKit_Local_Avatars {
 	const GRAVATAR_META = 'adminkit_has_gravatar';
 
 	public static function init() {
+		// Wire the safety net ALWAYS (independent of the toggle): if AdminKit
+		// Portraits is the stored WP default and the feature gets disabled
+		// (toggle off, or plugin deactivated), reset to Mystery Person so users
+		// don't end up with a broken `?d=adminkit_portraits` flying to Gravatar.
+		add_action( 'update_option_' . AdminKit_Settings::OPTION_KEY, array( __CLASS__, 'on_settings_update' ), 10, 2 );
+		register_deactivation_hook( ADMINKIT_FILE, array( __CLASS__, 'cleanup_avatar_default' ) );
+
 		if ( ! AdminKit_Settings::get( 'custom_avatars_enabled' ) ) {
 			return;
 		}
@@ -62,6 +69,31 @@ class AdminKit_Local_Avatars {
 		add_filter( 'pre_get_avatar_data', array( __CLASS__, 'filter_avatar_data' ), 10, 2 );
 		// Email or login change → drop the cached Gravatar check so it re-runs next render.
 		add_action( 'profile_update', array( __CLASS__, 'invalidate_cache' ) );
+	}
+
+	/**
+	 * When the AdminKit settings option is updated, detect a custom_avatars
+	 * on → off transition and clean up the stored WordPress avatar_default if
+	 * it was pointing at our key. Otherwise WP would keep passing
+	 * `?d=adminkit_portraits` to Gravatar after we stopped handling it.
+	 */
+	public static function on_settings_update( $old, $new ) {
+		$was_on = ! empty( $old['custom_avatars_enabled'] );
+		$now_on = ! empty( $new['custom_avatars_enabled'] );
+		if ( $was_on && ! $now_on ) {
+			self::cleanup_avatar_default();
+		}
+	}
+
+	/**
+	 * Reset the WordPress `avatar_default` option to Mystery Person if (and only
+	 * if) it currently holds our key. Idempotent — safe to call from any "AdminKit
+	 * is going inactive" path (toggle off, plugin deactivation).
+	 */
+	public static function cleanup_avatar_default() {
+		if ( self::AVATAR_KEY === get_option( 'avatar_default' ) ) {
+			update_option( 'avatar_default', 'mystery' );
+		}
 	}
 
 	public static function register_default( $defaults ) {
