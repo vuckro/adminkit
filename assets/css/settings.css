@@ -1025,19 +1025,8 @@
 	border-color: var(--ak-primary);
 	box-shadow: var(--ak-focus-ring);
 }
-.adminkit-app .ak-accent-row__pal {
-	background: none;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s, 6px);
-	padding: 5px 8px;
-	color: var(--ak-text-muted);
-	cursor: pointer;
-	font-size: 13px;
-	line-height: 1;
-}
-.adminkit-app .ak-accent-row__pal:hover { color: var(--ak-text); border-color: var(--ak-border-strong); }
-/* The native input is positioned but visually hidden — clicks on the swatch
-   button or palette button forward through to it for the OS picker. */
+/* The native input is positioned but visually hidden — clicking the swatch
+   forwards through to it for the OS picker. */
 .adminkit-app .ak-accent-row__native {
 	position: absolute;
 	opacity: 0;

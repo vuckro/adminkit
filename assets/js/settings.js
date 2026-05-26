@@ -633,10 +633,6 @@
 				maxlength: '7'
 			} );
 			hexInput.value = state.brandAccent || '';
-			var palette = el( 'button', {
-				type: 'button', 'class': 'ak-accent-row__pal',
-				'aria-label': I.accentLabel || 'Accent', text: '🎨'
-			} );
 			var native = el( 'input', { type: 'color', 'class': 'ak-accent-row__native' } );
 			native.value = isValidHex( state.brandAccent ) ? state.brandAccent : '#fed53e';
 
@@ -675,7 +671,6 @@
 
 			hexInput.addEventListener( 'input', function () { setAccent( hexInput.value ); } );
 			swatch.addEventListener( 'click', function () { native.click(); } );
-			palette.addEventListener( 'click', function () { native.click(); } );
 			native.addEventListener( 'input', function () { setAccent( native.value ); } );
 
 			// Seed initial visual state.
@@ -685,7 +680,7 @@
 			// row — built outside this helper and appended by the caller.
 			return el( 'div', { 'class': 'ak-accent-row' }, [
 				el( 'span', { 'class': 'ak-accent-row__lbl', text: I.accentLabel || 'Accent' } ),
-				swatch, hexInput, palette, native
+				swatch, hexInput, native
 			] );
 		}
 
@@ -803,15 +798,24 @@
 			wpField, loginField
 		] );
 
+		// Card stack order: identity (slots) → placement (display) → palette
+		// (accent + derived). Display sits above Accent so the layout reads
+		// top-down as a hierarchy: WHAT the brand is (logos / favicon), WHERE
+		// the mark goes (admin bar / login), HOW the accent looks (hex + derived).
 		var card = el( 'section', { 'class': 'ak-card' }, [
-			cardHead, slotsRow, accentRow, derivedDisc.panel, displayRow
+			cardHead, slotsRow, displayRow, accentRow, derivedDisc.panel
 		] );
 
 		// Intro text above the card.
 		p.appendChild( el( 'p', { 'class': 'ak-design-intro', text: I.designIntro || '' } ) );
 		p.appendChild( card );
 
-		// --- Tokens CTA + revealed reference table (lazy build) ------------------
+		// --- Tokens CTA + revealed reference (lazy build) ------------------------
+		// One disclosure ("Want to dig in? · View all N tokens") gates the entire
+		// read-only reference area — typography card first (humans read top-down,
+		// type before colours), then the token map table below it. Both are built
+		// lazily on first open and live in the same panel so a single click reveals
+		// the whole reference, single click hides it.
 		var totalTokens = ( D.colors || [] ).reduce( function ( n, g ) {
 			return n + ( ( g.tokens || [] ).length );
 		}, 0 );
@@ -819,7 +823,10 @@
 		var refDisc = disclosure(
 			ctaLabel,
 			I.tokensRefHide || 'Hide',
-			function ( panel ) { panel.appendChild( tokensReference() ); },
+			function ( panel ) {
+				panel.appendChild( typeSection() );
+				panel.appendChild( tokensReference() );
+			},
 			{ btnClass: 'ak-tokens-cta__btn' }
 		);
 
@@ -833,7 +840,6 @@
 		p.appendChild( cta );
 		p.appendChild( refDisc.panel );
 
-		p.appendChild( typeSection() );
 		return p;
 	}
 
