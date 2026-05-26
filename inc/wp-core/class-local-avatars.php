@@ -92,12 +92,17 @@ class AdminKit_Local_Avatars {
 	const SHUFFLE_NONCE = 'adminkit_shuffle_avatar';
 
 	public static function init() {
-		// Wire the safety net ALWAYS (independent of the toggle): if AdminKit
-		// Portraits is the stored WP default and the feature gets disabled
-		// (toggle off, or plugin deactivated), reset to Mystery Person so users
-		// don't end up with a broken `?d=adminkit_portraits` flying to Gravatar.
+		// Wire the safety net ALWAYS (independent of the toggle), symmetrically:
+		//   - disable / deactivate → reset `avatar_default` to Mystery Person
+		//     if it was AdminKit's key (otherwise WP keeps passing
+		//     `?d=adminkit_portraits` to Gravatar and breaks the rendering).
+		//   - enable / activate     → upgrade `avatar_default` from Mystery
+		//     Person to AdminKit Portraits if Custom avatars is on, so the
+		//     feature is actually visible without a manual trip to Discussion.
+		// Together these make the off / on cycle round-trip cleanly.
 		add_action( 'update_option_' . AdminKit_Settings::OPTION_KEY, array( __CLASS__, 'on_settings_update' ), 10, 2 );
 		register_deactivation_hook( ADMINKIT_FILE, array( __CLASS__, 'cleanup_avatar_default' ) );
+		register_activation_hook( ADMINKIT_FILE, array( __CLASS__, 'restore_avatar_default' ) );
 
 		if ( ! AdminKit_Settings::get( 'custom_avatars_enabled' ) ) {
 			return;
@@ -120,16 +125,23 @@ class AdminKit_Local_Avatars {
 	}
 
 	/**
-	 * When the AdminKit settings option is updated, detect a custom_avatars
-	 * on → off transition and clean up the stored WordPress avatar_default if
-	 * it was pointing at our key. Otherwise WP would keep passing
-	 * `?d=adminkit_portraits` to Gravatar after we stopped handling it.
+	 * When the AdminKit settings option is updated, mirror the Custom avatars
+	 * toggle into the WordPress `avatar_default` option:
+	 *   - on → off  : reset `adminkit_portraits` to `mystery` (otherwise WP
+	 *                 keeps passing `?d=adminkit_portraits` to Gravatar after
+	 *                 we stopped handling it).
+	 *   - off → on  : upgrade `mystery` to `adminkit_portraits` so the feature
+	 *                 visibly comes back on without a manual trip to
+	 *                 Settings → Discussion.
+	 * No transition = no action; the WP default isn't touched.
 	 */
 	public static function on_settings_update( $old, $new ) {
 		$was_on = ! empty( $old['custom_avatars_enabled'] );
 		$now_on = ! empty( $new['custom_avatars_enabled'] );
 		if ( $was_on && ! $now_on ) {
 			self::cleanup_avatar_default();
+		} elseif ( ! $was_on && $now_on ) {
+			self::restore_avatar_default();
 		}
 	}
 
@@ -141,6 +153,25 @@ class AdminKit_Local_Avatars {
 	public static function cleanup_avatar_default() {
 		if ( self::AVATAR_KEY === get_option( 'avatar_default' ) ) {
 			update_option( 'avatar_default', 'mystery' );
+		}
+	}
+
+	/**
+	 * Upgrade the WordPress `avatar_default` option to AdminKit Portraits when
+	 * Custom avatars is on AND the current default is Mystery Person (or its
+	 * `mm` / `mp` aliases — the factory defaults). Any other explicit choice
+	 * (Wavatar / Identicon / Retro / MonsterID / Blank) is left untouched.
+	 *
+	 * Called on plugin activation and on the off → on settings transition.
+	 * Idempotent; safe to call repeatedly.
+	 */
+	public static function restore_avatar_default() {
+		if ( ! AdminKit_Settings::get( 'custom_avatars_enabled' ) ) {
+			return;
+		}
+		$current = get_option( 'avatar_default', 'mystery' );
+		if ( in_array( $current, array( 'mystery', 'mm', 'mp' ), true ) ) {
+			update_option( 'avatar_default', self::AVATAR_KEY );
 		}
 	}
 
