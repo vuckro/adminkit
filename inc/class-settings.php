@@ -268,6 +268,18 @@ class AdminKit_Settings {
 			'default'  => true,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
+
+		// User quick edit — ON by default. Mirrors the post Quick Edit pattern
+		// for the users list: inline form to update first name / last name /
+		// email / role from users.php without opening user-edit.php. Read by
+		// AdminKit_User_Quick_Edit. Off = no Quick Edit affordance; the Edit
+		// link to user-edit.php still works as native WP.
+		self::register( 'quick_edit_users_enabled', array(
+			'type'     => 'toggle',
+			'group'    => 'features',
+			'default'  => true,
+			'sanitize' => 'rest_sanitize_boolean',
+		) );
 	}
 
 	/**

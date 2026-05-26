@@ -34,6 +34,7 @@ class AdminKit_Plugin {
 		AdminKit_Core_List_Table_Chrome::init();
 		AdminKit_Post_Previews::init();
 		AdminKit_Auto_Theme::init();
+		AdminKit_User_Quick_Edit::init();
 
 		self::boot_integrations();
 

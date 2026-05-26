@@ -38,5 +38,6 @@ require_once ADMINKIT_PATH . 'inc/wp-core/class-local-avatars.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-list-table-chrome.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-post-previews.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-auto-theme.php';
+require_once ADMINKIT_PATH . 'inc/wp-core/class-user-quick-edit.php';
 
 AdminKit_Plugin::init();
