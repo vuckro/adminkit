@@ -444,3 +444,59 @@ body.adminkit #bricks-font-metabox .bricks-font-variant {
 	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 }
+
+
+/* ----- 13. Multiselect value chips + dropdown selection ----- */
+/* The chips inside #bricks-settings multiselects ship with a hardcoded
+   #f0f0f1 background + #2271b1 (classic WP blue) text. Neither flips in
+   dark mode — chips end up as light boxes with bright-blue text on the
+   dark page. Route the chip surface to --ak-elevated (a step up from the
+   row surface, so the chip reads as picked) and the text to --ak-primary
+   (so it follows the user's brand accent). */
+body.adminkit #bricks-settings .bricks-multiselect[data-control="select"].multiple .input .value {
+	background: var(--ak-elevated);
+	color: var(--ak-primary);
+	border-radius: var(--ak-radius-s);
+}
+
+/* Search field focus border + dropdown's currently-selected row colour both
+   default to the same #2271b1; route to --ak-primary so they match the
+   chips above and follow the accent. */
+body.adminkit #bricks-settings .bricks-multiselect[data-control="select"] .searchable-wrapper input:focus {
+	border-color: var(--ak-primary);
+}
+
+body.adminkit #bricks-settings .bricks-multiselect[data-control="select"] .dropdown li.selected {
+	color: var(--ak-primary);
+}
+
+
+/* ----- 14. Capability modal (Settings → Permissions → "Add capability") ----- */
+/* Bricks renders the popup with hardcoded #fff body + #f8f8f8 footer + #666
+   muted text in the save-reminder. All three stay light in dark mode so the
+   modal pops as a white card on a dark page; route to AdminKit tokens. */
+body.adminkit .bricks-capability-modal {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .bricks-capability-modal .bricks-capability-modal-footer {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .bricks-capability-modal .save-reminder {
+	color: var(--ak-text-muted);
+}
+
+
+/* ----- 15. Element manager status pills — hidden-builder text ----- */
+/* `tr[data-status=hidden_builder] td.element-title` paints its text in a
+   hardcoded #ff8c00 (warning orange) — fine on light surfaces, but reads
+   too saturated next to our --ak-warning dark-mode value. Route to the
+   warning token so the colour follows the same ramp as the rest of the
+   semantic states (success / warning / error / info). */
+body.adminkit #bricks-element-manager tr[data-status="hidden_builder"] td.element-title {
+	color: var(--ak-warning);
+}
