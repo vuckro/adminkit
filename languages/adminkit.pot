@@ -924,8 +924,19 @@ msgid "Avatar"
 msgstr ""
 
 #: inc/wp-core/class-local-avatars.php
-msgid "Regenerate"
+msgid "Refresh"
 msgstr ""
+
+#: inc/wp-core/class-local-avatars.php
+msgid "Refresh avatar"
+msgstr ""
+
+#. translators: %d: number of users whose avatars were refreshed.
+#: inc/wp-core/class-local-avatars.php
+msgid "%d avatar refreshed."
+msgid_plural "%d avatars refreshed."
+msgstr[0] ""
+msgstr[1] ""
 
 #: inc/wp-core/class-local-avatars.php
 msgid "You are not allowed to do that."

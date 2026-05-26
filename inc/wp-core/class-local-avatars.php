@@ -107,14 +107,16 @@ class AdminKit_Local_Avatars {
 		// Email or login change → drop the cached Gravatar check so it re-runs next render.
 		add_action( 'profile_update', array( __CLASS__, 'invalidate_cache' ) );
 
-		// "Don't like my portrait?" — Shuffle affordance on the profile page + as
-		// a user-row action on users.php. A plain GET link with a nonce; the
-		// `admin_init` handler rolls a new seed and redirects to the clean URL
-		// so a browser refresh doesn't keep shuffling.
+		// "Refresh" affordances — a per-user button on profile.php /
+		// user-edit.php, a row action on users.php, and a bulk action in the
+		// users-list dropdown for refreshing many users at once.
 		add_action( 'admin_init', array( __CLASS__, 'maybe_shuffle' ) );
 		add_action( 'show_user_profile', array( __CLASS__, 'render_profile_section' ) );
 		add_action( 'edit_user_profile', array( __CLASS__, 'render_profile_section' ) );
 		add_filter( 'user_row_actions', array( __CLASS__, 'add_row_action' ), 10, 2 );
+		add_filter( 'bulk_actions-users', array( __CLASS__, 'add_bulk_action' ) );
+		add_filter( 'handle_bulk_actions-users', array( __CLASS__, 'handle_bulk_action' ), 10, 3 );
+		add_action( 'admin_notices', array( __CLASS__, 'maybe_show_bulk_notice' ) );
 	}
 
 	/**
@@ -335,10 +337,10 @@ class AdminKit_Local_Avatars {
 			<tr>
 				<th><?php esc_html_e( 'Avatar', 'adminkit' ); ?></th>
 				<td>
-					<span style="display:inline-block;border-radius:50%;overflow:hidden;line-height:0;vertical-align:middle;margin-right:1em">
+					<div style="border-radius:50%;overflow:hidden;width:96px;height:96px;line-height:0;margin-bottom:1em">
 						<?php echo get_avatar( $user->ID, 96 ); ?>
-					</span>
-					<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Regenerate', 'adminkit' ); ?></a>
+					</div>
+					<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Refresh', 'adminkit' ); ?></a>
 				</td>
 			</tr>
 		</table>
@@ -370,8 +372,68 @@ class AdminKit_Local_Avatars {
 			),
 			self::SHUFFLE_NONCE
 		);
-		$actions['adminkit_shuffle'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Regenerate', 'adminkit' ) . '</a>';
+		$actions['adminkit_shuffle'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Refresh', 'adminkit' ) . '</a>';
 		return $actions;
+	}
+
+	/**
+	 * Add a "Refresh avatar" entry to the users-list Bulk actions dropdown so
+	 * admins can re-roll seeds for many users at once. Only registered when
+	 * AdminKit Portraits is the active default (the action wouldn't change
+	 * anything visible otherwise).
+	 */
+	public static function add_bulk_action( $actions ) {
+		if ( self::AVATAR_KEY !== get_option( 'avatar_default' ) ) {
+			return $actions;
+		}
+		$actions['adminkit_refresh'] = __( 'Refresh avatar', 'adminkit' );
+		return $actions;
+	}
+
+	/**
+	 * Handle the bulk Refresh action — roll a fresh seed for each selected user
+	 * the current admin may edit, then redirect with a count param so the
+	 * admin notice can confirm how many were refreshed.
+	 */
+	public static function handle_bulk_action( $sendback, $action, $user_ids ) {
+		if ( 'adminkit_refresh' !== $action ) {
+			return $sendback;
+		}
+		$count = 0;
+		foreach ( (array) $user_ids as $uid ) {
+			$uid = (int) $uid;
+			if ( $uid > 0 && current_user_can( 'edit_user', $uid ) ) {
+				update_user_meta( $uid, self::SEED_META, md5( wp_generate_uuid4() ) );
+				++$count;
+			}
+		}
+		return add_query_arg( 'adminkit_refreshed', $count, $sendback );
+	}
+
+	/**
+	 * After a bulk Refresh, render a success notice on the next users.php load.
+	 */
+	public static function maybe_show_bulk_notice() {
+		if ( ! isset( $_GET['adminkit_refreshed'] ) ) {
+			return;
+		}
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || 'users' !== $screen->id ) {
+			return;
+		}
+		$count = (int) $_GET['adminkit_refreshed'];
+		if ( $count <= 0 ) {
+			return;
+		}
+		$msg = sprintf(
+			/* translators: %d: number of users whose avatars were refreshed. */
+			_n( '%d avatar refreshed.', '%d avatars refreshed.', $count, 'adminkit' ),
+			$count
+		);
+		printf(
+			'<div class="notice notice-success is-dismissible"><p>%s</p></div>',
+			esc_html( $msg )
+		);
 	}
 
 	private static function resolve_user_id( $id_or_email ) {
