@@ -763,10 +763,6 @@ msgstr "Photo de profil"
 msgid "Change"
 msgstr "Modifier"
 
-#: inc/wp-core/class-local-avatars.php:428
-msgid "Reset to default"
-msgstr "Réinitialiser"
-
 #: inc/wp-core/class-local-avatars.php:432
 msgid "Upload an image to use as this user's avatar everywhere. Leave empty to fall back to Gravatar — or, when Gravatar has no image, a generated portrait unique to this user."
 msgstr "Envoyez une image à utiliser comme avatar de cet utilisateur partout. Laissez vide pour utiliser Gravatar — ou, si Gravatar n’a pas d’image, un portrait généré unique pour cet utilisateur."

@@ -243,15 +243,23 @@ class AdminKit_Settings {
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// Local avatars — ON by default. Lets users set a profile picture (a Media
-		// Library image) that replaces Gravatar. Read by AdminKit_Local_Avatars;
-		// non-destructive — with nothing set, Gravatar behaviour is 100% unchanged.
-		// Generated avatars ride along automatically (no separate toggle): when this
-		// is on, a user with an EMPTY avatar (no upload AND no real Gravatar) gets a
-		// friendly auto-generated face as the Gravatar `d=` default via a hosted
-		// generator (external service, disclosed in readme.txt; seed is NON-PII). A
-		// real Gravatar always wins, so existing avatars are never auto-replaced.
-		self::register( 'local_avatars_enabled', array(
+		// Custom avatars — ON by default. Lets users set a profile picture (a Media
+		// Library image) that replaces Gravatar. Read by AdminKit_Local_Avatars to
+		// gate the whole module; non-destructive — with nothing set, Gravatar
+		// behaviour is 100% unchanged.
+		self::register( 'custom_avatars_enabled', array(
+			'type'     => 'toggle',
+			'group'    => 'features',
+			'default'  => true,
+			'sanitize' => 'rest_sanitize_boolean',
+		) );
+
+		// Generated portrait fallback — ON by default. Sub-feature of Custom avatars:
+		// when a user has no upload AND no real Gravatar, AdminKit hands WordPress an
+		// auto-generated portrait as the Gravatar `d=` default via a hosted generator
+		// (external service, disclosed in readme.txt; seed is NON-PII). A real Gravatar
+		// always wins. Off = the existing user gets Gravatar's mystery person.
+		self::register( 'generated_avatars_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
 			'default'  => true,

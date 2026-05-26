@@ -1,12 +1,12 @@
 /* Local avatars — the clickable profile-picture bubble.
    A single crisp circular avatar that doubles as the upload target: clicking it
    opens the media picker. With an image set it shows the picture, clipped to the
-   circle; empty, it shows a faint person glyph on a muted surface. A "Reset to
-   default" button sits below (only when there's an upload to clear), then the
-   help text. Scoped to .adminkit-local-avatar so it never leaks; every colour
-   reads --ak-* tokens (with literal fallbacks) so dark mode + provider theming
-   carry for free. Split into its own file so it can be disabled via the
-   `adminkit/enqueue_local-avatars` filter. */
+   circle; empty, it shows a faint person glyph on a muted surface. Below sits
+   only the help text — no Reset / Generate buttons (admin-side removal handles
+   the rare "go back to Gravatar" case). Scoped to .adminkit-local-avatar so it
+   never leaks; every colour reads --ak-* tokens (with literal fallbacks) so dark
+   mode + provider theming carry for free. Split into its own file so it can be
+   disabled via the `adminkit/enqueue_local-avatars` filter. */
 
 .adminkit-local-avatar {
 	display: block;
@@ -110,32 +110,6 @@ button.adminkit-local-avatar__media:hover {
 button.adminkit-local-avatar__media:hover .adminkit-local-avatar__overlay,
 button.adminkit-local-avatar__media:focus-visible .adminkit-local-avatar__overlay {
 	opacity: 1;
-}
-
-/* Actions row beneath the avatar. It's a <p> inside a form-table <td>, so WP's
-   `.form-table td p` margin (0,2,1) out-specifies a lone class and ate the gap —
-   scope through the container (0,3,0) so our breathing room above the button wins. */
-body.adminkit .adminkit-local-avatar .adminkit-local-avatar__actions {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: var(--ak-space-s, 8px);
-	margin: calc(var(--ak-space-l, 16px) + var(--ak-space-s, 8px)) 0 var(--ak-space-2xs, 4px);
-}
-
-/* "Reset to default" — a normal .button with an icon. The icon is `display:block`
-   so its baseline doesn't drift against the button's text-line; 16px keeps it
-   on the same visual rhythm as core WP toolbar icons. */
-.adminkit-local-avatar__action {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-}
-.adminkit-local-avatar__action-icon {
-	display: block;
-	width: 16px;
-	height: 16px;
-	flex: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

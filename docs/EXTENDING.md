@@ -117,26 +117,32 @@ capture and updates it in place. All hooks are in
 
 ## Avatars
 
-The **Local avatars** feature (`local_avatars_enabled`, on by default) lets users
-upload a profile picture that replaces Gravatar. With it on, any user with no
-upload *and* no real Gravatar automatically gets a friendly auto-generated portrait —
-served as the Gravatar `d=` fallback, so a real Gravatar always wins. This is
-folded into the local-avatars toggle: there is **no separate generated-avatars
-setting**. The generator is [DiceBear](https://www.dicebear.com)'s hosted,
-key-less HTTP API (`https://api.dicebear.com`), seeded with a non-PII value (the
-md5 of the user_login) — so each user reliably gets the same unique face, and any
-two users get visibly distinct portraits.
+Two settings, the second a sub-feature of the first:
+
+- **Custom avatars** (`custom_avatars_enabled`, on by default) — gates the whole
+  feature. Lets users upload a profile picture that replaces Gravatar. Off =
+  Gravatar everywhere, AdminKit's avatar module never wires its hooks.
+- **Generated portrait fallback** (`generated_avatars_enabled`, on by default,
+  child of Custom avatars in the UI) — when on, a user with no upload AND no
+  real Gravatar automatically gets a friendly auto-generated portrait served as
+  the Gravatar `d=` default. A real Gravatar always wins. Off = Gravatar's own
+  mystery-person default for those users (no external request).
+
+The generator is [DiceBear](https://www.dicebear.com)'s hosted, key-less HTTP API
+(`https://api.dicebear.com`). Each request carries a non-PII seed (the md5 of
+the user_login — never the raw email), the style slug, a pastel palette via
+`backgroundColor=` and `backgroundType=gradientLinear`. That gradient backdrop
+is what makes a fresh users.php list scan as "obviously different people" at a
+glance, on top of DiceBear's per-seed feature variation.
 
 The profile field is intentionally minimal: the **avatar bubble** opens the media
-frame (upload trigger), and a **Reset to default** button clears any upload, reverting
-to the real Gravatar / the generated face. The button is shown only when there's an
-upload to clear. There is no re-roll affordance — each user already gets a unique
-deterministic face from their login; to change it, upload one. Both hooks are in
-`inc/wp-core/class-local-avatars.php`:
+frame (upload trigger). No Reset, no re-roll. To revert a user to Gravatar / the
+generated portrait, an admin removes the attachment from the Media Library — the
+existing `on_delete_attachment` cleanup clears the user-meta reference.
 
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
-| `adminkit/generated_avatar_style` | filter | `(string $style, int $user_id)` | The DiceBear style slug (default `personas` — illustrated human portraits with high variety). Return another slug to change the look (e.g. `notionists`, `avataaars`, `lorelei`, `micah`, `open-peeps`, `fun-emoji`). |
+| `adminkit/generated_avatar_style` | filter | `(string $style, int $user_id)` | The DiceBear style slug (default `avataaars` — varied cartoon humans with explicit skin tones + accessories). Return another slug to change the look (e.g. `personas`, `notionists`, `lorelei`, `micah`, `open-peeps`, `fun-emoji`). |
 | `adminkit/generated_avatar_url` | filter | `(string $url, int $user_id, int $size)` | The final generated-avatar URL — override to self-host or swap the service entirely. |
 
 Example — self-host the generated avatars instead of calling DiceBear:

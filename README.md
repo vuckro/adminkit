@@ -13,7 +13,7 @@ A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone �
 - Exposes its design as **CSS custom properties** (`--ak-*`) that any other admin-side stylesheet can consume.
 - **Doesn't require any builder.** A site with no theme provider lands on neutral fallbacks. A site with Bricks gets its brand colors automatically.
 - Loads CSS **conditionally per screen** — the themes page CSS doesn't run on the dashboard, plugin-editor CSS doesn't run on profile, etc.
-- **Local avatars** (on by default) — let users set a profile picture that replaces Gravatar; leave it unset and Gravatar behaves exactly as before. When it's on, any user with no upload *and* no real Gravatar gets a friendly auto-generated face instead of a blank silhouette (a real Gravatar always wins) — served via a hosted generator ([DiceBear](https://www.dicebear.com)) with a non-PII seed, opt-out per user. No separate toggle. See [`docs/EXTENDING.md`](docs/EXTENDING.md#avatars) and the disclosure in `readme.txt`.
+- **Custom avatars** (on by default) — let users set a profile picture that replaces Gravatar; leave it unset and Gravatar behaves exactly as before. **Generated portrait fallback** (sub-toggle, on by default) — when both are on, any user with no upload *and* no real Gravatar gets a friendly auto-generated portrait instead of the mystery silhouette (a real Gravatar always wins) — served via a hosted generator ([DiceBear](https://www.dicebear.com)) with a non-PII seed + a pastel-gradient backdrop so every user reads as a distinct card. Turn the sub-toggle off to keep Gravatar's own default for users without a picture (no external request). See [`docs/EXTENDING.md`](docs/EXTENDING.md#avatars) and the disclosure in `readme.txt`.
 
 ---
 
@@ -116,7 +116,7 @@ add_action( 'adminkit/enqueued_admin', function () {
 | `adminkit/brand_logo` | `('' \| string \| array)` | Brand-logo fallback when the Branding settings are empty. |
 | `adminkit/menu_icons` / `adminkit/toolbar_icons` | `(array)` | Override the native-icon replacement maps (dashicon-class / node-id ⇒ SVG). |
 | `adminkit/toolbar_icon_ab_item_nodes` | `(array)` | Mark toolbar nodes (node-id ⇒ bool) whose icon paints on `> .ab-item::before` instead of an `.ab-icon` child — for text/dashicon-font nodes. |
-| `adminkit/generated_avatar_style` | `(string $style, int $user_id)` | The DiceBear style slug for generated avatars (default `personas` — human portraits). |
+| `adminkit/generated_avatar_style` | `(string $style, int $user_id)` | The DiceBear style slug for generated avatars (default `avataaars` — varied cartoon humans). |
 | `adminkit/generated_avatar_url` | `(string $url, int $user_id, int $size)` | The final generated-avatar URL — override to self-host or swap the service. |
 | `adminkit/setting/{$key}` | `(mixed)` | Override a registered setting at read time. |
 | `adminkit/theme_attribute` | `(string)` | Override the dark/light HTML attribute name. |

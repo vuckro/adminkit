@@ -4,14 +4,16 @@
  * The avatar bubble itself is the upload target: clicking it (a focusable
  * <button> wrapping the image) opens the WordPress media frame; picking an image
  * stores its attachment id in the hidden field, swaps the preview in, and flips
- * the field to its "filled" state. "Reset to default" clears the upload and
- * reverts the preview to the default (Gravatar / generated face). It shows only
- * when there's an upload to clear. Filled / empty is carried by an `is-filled` /
+ * the field to its "filled" state. Filled / empty is carried by an `is-filled` /
  * `is-empty` class on the root (CSS owns the visuals).
+ *
+ * Intentionally minimal: no Reset, no Generate. To go back to Gravatar / the
+ * generated portrait, an admin removes the attachment from the Media Library
+ * (which `on_delete_attachment` mops up in the PHP side).
  *
  * The page-title avatar (the "hero", built by profile-account.js) is wired here
  * too as a SECOND trigger that shares the one hidden input + state — no media
- * frame logic is duplicated. Picking / resetting syncs BOTH previews.
+ * frame logic is duplicated.
  *
  * i18n labels arrive via `window.AdminKitLocalAvatars` (set by an inline
  * bootstrap). No-op when the field or `wp.media` isn't present. Footer script,
@@ -28,8 +30,6 @@
 	var preview = document.getElementById('adminkit-local-avatar-preview');
 	var placeholder = document.getElementById('adminkit-local-avatar-placeholder');
 	var mediaBtn = document.getElementById('adminkit-local-avatar-btn');
-	var resetBtn = document.getElementById('adminkit-local-avatar-reset');
-	var resetInput = document.getElementById('adminkit-local-avatar-reset-input');
 	if (!input || !preview || !mediaBtn) { return; }
 
 	var frame = null;
@@ -46,10 +46,10 @@
 		}
 	}
 
-	// Reflect state into the UI. is-filled / is-empty track whether there's an
-	// UPLOAD (drives Reset visibility + aria label). The preview always shows the
-	// EFFECTIVE avatar (upload OR the Gravatar/generated fallback), so it's only
-	// swapped for the glyph when there's genuinely no image URL at all.
+	// Reflect state into the UI. is-filled / is-empty + the aria label track
+	// whether there's an UPLOAD. The preview always shows the EFFECTIVE avatar
+	// (upload OR the Gravatar/generated fallback), so it's only swapped for the
+	// glyph when there's genuinely no image URL at all.
 	function sync() {
 		var hasUpload  = !!input.value;
 		var hasPreview = !!preview.getAttribute('src');
@@ -62,10 +62,6 @@
 		} else {
 			preview.setAttribute('hidden', '');
 			if (placeholder) { placeholder.removeAttribute('hidden'); }
-		}
-		if (resetBtn) {
-			if (hasUpload) { resetBtn.removeAttribute('hidden'); }
-			else { resetBtn.setAttribute('hidden', ''); }
 		}
 		mediaBtn.setAttribute('aria-label', hasUpload ? (L.ariaFill || '') : (L.ariaEmpty || ''));
 	}
@@ -88,8 +84,6 @@
 				var attachment = frame.state().get('selection').first().toJSON();
 				if (!attachment || !attachment.id) { return; }
 				input.value = attachment.id;
-				// An explicit upload supersedes any pending reset intent.
-				if (resetInput) { resetInput.value = ''; }
 				var size = pickSize(attachment.sizes);
 				setPreviewSrc(size ? size.url : (attachment.url || ''));
 				sync();
@@ -100,23 +94,6 @@
 
 	// The preview/overlay button is the primary upload target.
 	mediaBtn.addEventListener('click', openFrame);
-
-	if (resetBtn) {
-		resetBtn.addEventListener('click', function (e) {
-			e.preventDefault();
-			// Reset to default: clear the upload AND flag the reset so save() clears
-			// the user meta server-side — reverting to the real Gravatar /
-			// deterministic generated face.
-			input.value = '';
-			if (resetInput) { resetInput.value = '1'; }
-			// Preview the default so the bubble is never left blank.
-			setPreviewSrc(L.defaultUrl || '');
-			sync();
-			// Move focus back to the picker so keyboard users aren't stranded on the
-			// now-hidden Reset control.
-			mediaBtn.focus();
-		});
-	}
 
 	// --- page-title "hero" as a second picker trigger -------------------------
 

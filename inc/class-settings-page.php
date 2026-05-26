@@ -564,7 +564,8 @@ class AdminKit_Settings_Page {
 			array( 'key' => 'module_login_enabled',  'group' => $appearance, 'label' => __( 'Login screen', 'adminkit' ),              'desc' => __( 'Style the wp-login.php screen.', 'adminkit' ) ),
 			array( 'key' => 'editor_content_theme',   'group' => $appearance, 'label' => __( 'Gutenberg', 'adminkit' ),     'desc' => __( 'Theme the Gutenberg block-editor canvas (content + native blocks) in light and dark. Turn off to keep the canvas matching your live site exactly.', 'adminkit' ) ),
 			array( 'key' => 'replace_icons_enabled',  'group' => $appearance, 'label' => __( 'AdminKit icons', 'adminkit' ), 'desc' => __( 'Replace WordPress\'s native menu and toolbar icons with AdminKit\'s set. Non-destructive: icons already customised (e.g. via Admin Menu Editor) are left untouched.', 'adminkit' ) ),
-			array( 'key' => 'local_avatars_enabled',  'group' => $appearance, 'label' => __( 'Local avatars', 'adminkit' ), 'desc' => __( 'Let users upload a profile picture that replaces Gravatar; anyone with no photo gets a friendly auto-generated face (via a hosted generator, disclosed in the readme). Off = Gravatar everywhere.', 'adminkit' ) ),
+			array( 'key' => 'custom_avatars_enabled', 'group' => $appearance, 'label' => __( 'Custom avatars', 'adminkit' ), 'desc' => __( 'Let users upload a profile picture that replaces Gravatar. Off = Gravatar everywhere.', 'adminkit' ) ),
+			array( 'key' => 'generated_avatars_enabled', 'group' => $appearance, 'label' => __( 'Generated portrait fallback', 'adminkit' ), 'desc' => __( 'When a user has no upload AND no Gravatar, show a friendly auto-generated portrait (via a hosted generator, disclosed in the readme). A real Gravatar always wins.', 'adminkit' ), 'parent' => 'custom_avatars_enabled' ),
 		);
 
 		// Bricks builder restyle — only meaningful when the Bricks theme is active.

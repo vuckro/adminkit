@@ -759,10 +759,6 @@ msgstr ""
 msgid "Change"
 msgstr ""
 
-#: inc/wp-core/class-local-avatars.php:428
-msgid "Reset to default"
-msgstr ""
-
 #: inc/wp-core/class-local-avatars.php:432
 msgid "Upload an image to use as this user's avatar everywhere. Leave empty to fall back to Gravatar — or, when Gravatar has no image, a generated portrait unique to this user."
 msgstr ""

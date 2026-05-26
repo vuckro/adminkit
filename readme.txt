@@ -22,21 +22,21 @@ It ships fully-featured: Gutenberg canvas theming, AdminKit's icon set, and loca
 * A light + dark mode with a sun/moon toggle in the admin bar (and `prefers-color-scheme` on first visit).
 * CSS custom properties (`--ak-*`) any other admin-side stylesheet can consume.
 * Conditional, per-screen CSS loading — pages only load the styles they need.
-* Local avatars: let users upload a profile picture that replaces Gravatar.
-* Generated avatars: a friendly auto-generated face for users with no photo, instead of a blank silhouette.
+* Custom avatars: let users upload a profile picture that replaces Gravatar.
+* Generated portrait fallback (sub-toggle): a friendly auto-generated face on a pastel-gradient backdrop for users with no photo, so every user in the list reads as distinct.
 * Tabbed Settings screens and an interactive dashboard roadmap.
 * Optional adapters that skin popular plugins/themes (Bricks, WooCommerce, ACF, the Fluent suite, and more).
 
 == External services ==
 
-This plugin connects to **api.dicebear.com** to generate avatars when the **Local avatars** feature is enabled (it is on by default and includes the auto-generated faces).
+This plugin connects to **api.dicebear.com** to generate avatars when the **Generated portrait fallback** feature is enabled (it is on by default; turn it off in the AdminKit settings page to stop all external avatar requests).
 
-* What it is: DiceBear is a free, key-less HTTP avatar service. AdminKit uses its hosted API to render a friendly avatar for a user who has neither an uploaded profile picture nor a real Gravatar.
-* When it is used: only when the **Local avatars** feature is enabled (it is opt-out — it can be turned off from the AdminKit settings page), and only for a user who has neither an uploaded picture nor a real Gravatar. A request is made to api.dicebear.com to fetch the avatar image; a real Gravatar always takes priority.
-* What data is sent: no personal data. The avatar is requested with a non-reversible seed — the md5 hash of the user's login name, or a random value the user explicitly generates. The raw email address is never sent.
+* What it is: DiceBear is a free, key-less HTTP avatar service. AdminKit uses its hosted API to render a friendly portrait for a user who has neither an uploaded profile picture nor a real Gravatar.
+* When it is used: only when both **Custom avatars** AND **Generated portrait fallback** are on (both opt-out from the AdminKit settings page), and only for a user who has neither an uploaded picture nor a real Gravatar. A request is made to api.dicebear.com to fetch the avatar image; a real Gravatar always takes priority.
+* What data is sent: no personal data. The avatar is requested with a non-reversible seed — the md5 hash of the user's login name. The raw email address is never sent.
 * Service provider: DiceBear. Terms of use: https://www.dicebear.com/licenses/ — Privacy policy: https://www.dicebear.com/legal/privacy-policy/
 
-When Local avatars is off, AdminKit makes no external calls for avatars and Gravatar behaves exactly as it does without the plugin.
+When Generated portrait fallback is off (or Custom avatars is off entirely), AdminKit makes no external calls for avatars and Gravatar behaves exactly as it does without the plugin.
 
 == Installation ==
 
@@ -56,7 +56,7 @@ No — only the admin bar shown to logged-in users is restyled. Your site's publ
 
 = Where do generated avatars come from, and is any personal data sent? =
 
-They are rendered by the hosted DiceBear service (api.dicebear.com), and only when the Local avatars feature is enabled (for a user with no uploaded picture and no Gravatar). No personal data is sent — the request is seeded with a non-reversible hash, never the raw email. See the "External services" section above. Turn Local avatars off and no external avatar requests are made.
+They are rendered by the hosted DiceBear service (api.dicebear.com), and only when both Custom avatars and the Generated portrait fallback sub-toggle are on (for a user with no uploaded picture and no Gravatar). No personal data is sent — the request is seeded with a non-reversible hash, never the raw email. See the "External services" section above. Turn the Generated portrait fallback off and no external avatar requests are made.
 
 = Can I turn features off? =
 
@@ -68,7 +68,7 @@ Yes. Every feature is an individual toggle on the AdminKit settings page, even t
 * Initial release.
 * A flat, modern restyle of wp-admin, wp-login.php and the frontend admin bar, built entirely on CSS custom properties (`--ak-*` tokens).
 * Light + dark mode with a sun/moon toggle in the admin bar (and `prefers-color-scheme` on first visit).
-* Local avatars (upload a profile picture that replaces Gravatar) and generated avatars (a friendly auto-generated face, via DiceBear, for users with no photo — opt-out, non-PII seed).
+* Custom avatars (upload a profile picture that replaces Gravatar) with an optional generated-portrait fallback sub-toggle (a friendly auto-generated face on a pastel-gradient backdrop, via DiceBear, for users with no photo — opt-out, non-PII seed).
 * Gutenberg canvas theming and AdminKit's own icon set, both on by default and individually switch-off-able.
 * Tabbed Settings screens (including Discussion, Reading and Writing) and an interactive dashboard roadmap with status badges and detail modals.
 * Login-screen branding with a centred logo and a light/dark toggle; plus a brand mark at the site title — your logo, the site favicon, or none — with the top-left WordPress logo hidden.
