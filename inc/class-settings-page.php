@@ -117,6 +117,47 @@ class AdminKit_Settings_Page {
 				},
 			)
 		);
+
+		// Action endpoints — operations that aren't a settings save. Keep them in
+		// the same namespace so the SPA's wp-api-fetch wires the nonce uniformly.
+		register_rest_route(
+			self::REST_NS,
+			'/actions/resync',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( __CLASS__, 'rest_resync' ),
+				'permission_callback' => static function () {
+					return current_user_can( 'manage_options' );
+				},
+			)
+		);
+	}
+
+	/**
+	 * "Re-sync from Bricks" action — explicit user request to re-pull a provider's
+	 * tokens. AdminKit itself caches nothing here (the Bricks adapter loads its
+	 * tokens straight from the generated CSS file, mtime-busted), so the work is
+	 * a single hook that integrations can react to. The SPA reloads the page on
+	 * success, which is what re-enqueues the provider stylesheet via the
+	 * `adminkit/extra_tokens_handle` filter.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
+	public static function rest_resync( $request ) {
+		$slug = sanitize_key( (string) $request->get_param( 'provider' ) );
+		if ( '' === $slug ) {
+			$slug = 'bricks';
+		}
+		/**
+		 * Fires when the user explicitly asks AdminKit to re-pull a provider's
+		 * tokens. Integrations clear their cached values here so the next page
+		 * paints fresh.
+		 *
+		 * @param string $slug Provider id (currently only 'bricks').
+		 */
+		do_action( 'adminkit/provider/resync', $slug );
+		return rest_ensure_response( array( 'ok' => true, 'provider' => $slug ) );
 	}
 
 	/**
@@ -246,7 +287,13 @@ class AdminKit_Settings_Page {
 			),
 			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
 			'loginLogo'    => (string) AdminKit_Settings::get( 'login_logo' ),
+			'brandAccent'  => (string) AdminKit_Settings::get( 'brand_accent' ),
 			'hasSiteIcon'  => '' !== (string) get_site_icon_url(),
+			// Bricks detection is also in `providers`, but a dedicated flag is
+			// cleaner for the Design tab (gates the "Tokens synced…" status row + the
+			// Bricks-only Actions items).
+			'bricksDetected' => class_exists( 'AdminKit_Integration_Bricks' ) && AdminKit_Integration_Bricks::is_active(),
+			'resyncRoute'  => self::REST_NS . '/actions/resync',
 			'i18n'         => array(
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
 				'design'            => __( 'Design', 'adminkit' ),
@@ -310,6 +357,58 @@ class AdminKit_Settings_Page {
 				'typeCaption'       => __( 'Caption', 'adminkit' ),
 				/* translators: pangram used as a font preview sample — translate to a sentence that exercises your language's letters. */
 				'pangram'           => __( 'The quick brown fox jumps over the lazy dog', 'adminkit' ),
+
+				// --- Design tab — Brand card (final layout, Phase A) -------------
+				'designIntro'         => __( 'Customise your WordPress admin\'s design and branding.', 'adminkit' ),
+				'brandEyebrow'        => __( 'Brand', 'adminkit' ),
+				'brandTitle'          => __( 'Logo, favicon & accent', 'adminkit' ),
+				'brandSyncStatus'     => __( 'Tokens synced with Bricks Builder', 'adminkit' ),
+				'slotLight'           => __( 'Light-mode logo', 'adminkit' ),
+				'slotLightSub'        => __( 'Shown on light surfaces', 'adminkit' ),
+				'slotDark'            => __( 'Dark-mode logo', 'adminkit' ),
+				'slotDarkSub'         => __( 'Shown on dark surfaces', 'adminkit' ),
+				'slotFavicon'         => __( 'Favicon', 'adminkit' ),
+				'slotFaviconSub'      => __( 'SVG · or 32×32 PNG', 'adminkit' ),
+				'slotDrop'            => __( 'Drop', 'adminkit' ),
+				'slotUpload'          => __( 'Upload', 'adminkit' ),
+				'slotMediaLib'        => __( 'Media library', 'adminkit' ),
+				'faviconHint'         => __( 'Inherits the Site Icon when empty (Settings → General).', 'adminkit' ),
+				'accentLabel'         => __( 'Accent', 'adminkit' ),
+				'accentInherit'       => __( 'Inheriting from provider / baseline', 'adminkit' ),
+				'accentClear'         => __( 'Clear accent', 'adminkit' ),
+				'accentShowDerived'   => __( 'Show derived colours', 'adminkit' ),
+				'accentHideDerived'   => __( 'Hide derived colours', 'adminkit' ),
+				'derivedHover'        => __( 'Hover', 'adminkit' ),
+				'derivedSubtle'       => __( 'Subtle', 'adminkit' ),
+				'derivedOnAccent'     => __( 'On accent', 'adminkit' ),
+				'derivedOnAccentSub'  => __( 'readable', 'adminkit' ),
+				'derivedFocus'        => __( 'Focus', 'adminkit' ),
+				'derivedFocusSub'     => __( '@ 50%', 'adminkit' ),
+				'displayLabel'        => __( 'Display', 'adminkit' ),
+				'actionsLabel'        => __( 'Actions', 'adminkit' ),
+				'actionResync'        => __( 'Re-sync from Bricks Builder', 'adminkit' ),
+				'actionAutogen'       => __( 'Auto-generate appearance', 'adminkit' ),
+				'actionExport'        => __( 'Export to Bricks', 'adminkit' ),
+				'actionReset'         => __( 'Reset to AdminKit defaults', 'adminkit' ),
+				'comingSoon'          => __( 'Coming soon', 'adminkit' ),
+				'confirmReset'        => __( 'Reset all AdminKit settings to defaults? This cannot be undone.', 'adminkit' ),
+				'statusReset'         => __( 'Defaults restored', 'adminkit' ),
+				'statusResync'        => __( 'Bricks tokens re-synced', 'adminkit' ),
+				'tokensCtaTitle'      => __( 'Want to dig in?', 'adminkit' ),
+				'tokensCtaSub'        => __( 'Browse every token AdminKit exposes — read-only reference.', 'adminkit' ),
+				/* translators: %d is the total number of design tokens (resolved at render time). */
+				'tokensCtaBtnFmt'     => __( 'View all %d tokens', 'adminkit' ),
+				'tokensRefEyebrow'    => __( 'Reference', 'adminkit' ),
+				'tokensRefTitle'      => __( 'Token map', 'adminkit' ),
+				'tokensRefSub'        => __( 'Read-only. AdminKit derives every token from the provider/baseline cascade.', 'adminkit' ),
+				'tokensRefHide'       => __( 'Hide', 'adminkit' ),
+				'colToken'            => __( 'Token', 'adminkit' ),
+				'colCascade'          => __( 'Cascade', 'adminkit' ),
+				'colValue'            => __( 'Value', 'adminkit' ),
+				'colSource'           => __( 'Source', 'adminkit' ),
+				'sourceBricks'        => __( 'Bricks', 'adminkit' ),
+				'sourceAuto'          => __( 'Auto', 'adminkit' ),
+				'sourceAdminKit'      => __( 'AdminKit', 'adminkit' ),
 			),
 		);
 	}

@@ -87,6 +87,33 @@ class AdminKit_Assets {
 		add_filter( 'login_body_class', array( __CLASS__, 'add_login_body_class' ) );
 
 		add_filter( 'wp_resource_hints', array( __CLASS__, 'resource_hints' ), 10, 2 );
+
+		// Brand accent override — one inline rule on the tokens stylesheet sets
+		// `--ak-primary` to the user's chosen hex, and the CSS `color-mix()` chains
+		// for hover / subtle / focus / on-accent all follow automatically (no need
+		// to redefine them). Skipped silently when the setting is empty or invalid
+		// so the cascade (Bricks → baseline → fallback) keeps working as before.
+		add_action( 'adminkit/tokens_enqueued', array( __CLASS__, 'inject_brand_accent' ) );
+	}
+
+	/**
+	 * Inline-style the user's brand accent on top of the tokens stylesheet. Runs
+	 * for every context (admin / login / frontend / editor / customize) since the
+	 * accent should be consistent everywhere AdminKit paints.
+	 *
+	 * @param string $context  admin | login | frontend | editor | customize
+	 * @return void
+	 */
+	public static function inject_brand_accent( $context ) {
+		$hex = (string) AdminKit_Settings::get( 'brand_accent' );
+		if ( '' === $hex ) {
+			return;
+		}
+		$hex = sanitize_hex_color( $hex );
+		if ( ! $hex ) {
+			return;
+		}
+		wp_add_inline_style( self::TOKENS_HANDLE, ':root{--ak-primary:' . $hex . '}' );
 	}
 
 	/**

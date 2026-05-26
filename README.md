@@ -85,6 +85,7 @@ All hooks are namespaced `adminkit/*`.
 | `adminkit/enqueued_login` | After our login stylesheet is enqueued. |
 | `adminkit/enqueued_frontend` | After our frontend admin-bar stylesheet is enqueued. |
 | `adminkit/enqueued_editor` | After our block editor stylesheets are enqueued. |
+| `adminkit/provider/resync` | Fires when the user clicks Re-sync from Bricks Builder in the Design tab Actions menu, with the provider slug as arg (currently only `bricks`). Integrations clear cached values here so the next page paints fresh. |
 
 Use `adminkit/enqueued_admin` and declare `adminkit-tokens` as a dependency to inherit the design tokens in your own stylesheet:
 

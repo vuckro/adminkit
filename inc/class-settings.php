@@ -84,17 +84,31 @@ class AdminKit_Settings {
 		) );
 
 		// Login-screen mark — its OWN choice, independent of the admin bar: `logo`
-		// (rectangular wordmark) or `favicon` (square site icon). Read by
-		// AdminKit_Core_Login::login_mode(). Defaults to `favicon`. (A legacy '' =
-		// "inherit wp_logo" is still honoured by login_mode() for back-compat, but the
-		// UI no longer offers it — kept simple: just Logo / Favicon.)
+		// (rectangular wordmark), `favicon` (square site icon), or `hide` (no mark).
+		// Read by AdminKit_Core_Login::login_mode(). Defaults to `favicon`. (A legacy
+		// '' = "inherit wp_logo" is still honoured by login_mode() for back-compat.)
 		self::register( 'login_logo', array(
 			'type'     => 'select',
 			'group'    => 'branding',
 			'default'  => 'favicon',
 			'sanitize' => static function ( $v ) {
-				return in_array( $v, array( 'logo', 'favicon' ), true ) ? $v : 'favicon';
+				return in_array( $v, array( 'logo', 'favicon', 'hide' ), true ) ? $v : 'favicon';
 			},
+		) );
+
+		// Brand accent — a user-chosen hex that overrides `--ak-primary` everywhere.
+		// Empty (default) = the cascade wins (Bricks provider → WaasKit baseline →
+		// neutral fallback), so the site behaves exactly as before. When set, an
+		// inline style block on `adminkit/tokens_enqueued` injects this colour as
+		// `:root{--ak-primary: <hex>}`, and the derived tokens (hover / subtle /
+		// focus ring / on-accent) recalculate automatically through their CSS
+		// `color-mix()` fallbacks — one knob, whole accent family follows.
+		// `sanitize_hex_color()` returns `null` for junk → drop → empty → no override.
+		self::register( 'brand_accent', array(
+			'type'     => 'text',
+			'group'    => 'branding',
+			'default'  => '',
+			'sanitize' => 'sanitize_hex_color',
 		) );
 	}
 

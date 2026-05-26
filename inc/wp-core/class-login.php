@@ -176,13 +176,18 @@ class AdminKit_Core_Login {
 
 	/**
 	 * Which mark the login screen will show: 'logo' (a configured brand wordmark,
-	 * when the effective mode is "logo"), else 'favicon' (the site icon), else ''
-	 * (none). Mirrors the resolution order in print_login_logo_style().
+	 * when the effective mode is "logo"), 'hide' (explicit no-mark), else 'favicon'
+	 * (the site icon), else '' (none). Mirrors the resolution order in
+	 * print_login_logo_style().
 	 *
-	 * @return string 'logo' | 'favicon' | ''
+	 * @return string 'logo' | 'favicon' | 'hide' | ''
 	 */
 	private static function login_mark_type() {
-		if ( 'logo' === self::login_mode() ) {
+		$mode = self::login_mode();
+		if ( 'hide' === $mode ) {
+			return 'hide';
+		}
+		if ( 'logo' === $mode ) {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 			if ( '' === $logo ) {
 				$logo = AdminKit_Settings::brand_logo( 'dark' );
@@ -216,13 +221,21 @@ class AdminKit_Core_Login {
 			return;
 		}
 
+		$mark = self::login_mark_type();
+
 		// `logo` mode renders a real <img> (filter_header_text); no background here.
-		if ( 'logo' === self::login_mark_type() ) {
+		if ( 'logo' === $mark ) {
 			return;
 		}
 
-		// favicon / hide / legacy, or `logo` with no brand logo → the site icon as a
-		// single square background (same image in both themes).
+		// `hide` mode → collapse the login logo entirely. `!important` matches WP
+		// core's own background-image rule on `#login h1 a` (no other way to defeat it).
+		if ( 'hide' === $mark ) {
+			echo '<style id="adminkit-login-logo">#login h1 a{display:none !important}</style>' . "\n";
+			return;
+		}
+
+		// favicon (legacy or default) → the site icon as a single square background.
 		$icon = self::css_url( get_site_icon_url( 200 ) );
 		if ( '' === $icon ) {
 			return;

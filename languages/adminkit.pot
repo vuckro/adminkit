@@ -938,3 +938,173 @@ msgstr ""
 #: inc/wp-core/class-local-avatars.php
 msgid "You are not allowed to do that."
 msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Customise your WordPress admin's design and branding."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Brand"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Logo, favicon & accent"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Tokens synced with Bricks Builder"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Light-mode logo"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Shown on light surfaces"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Dark-mode logo"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Shown on dark surfaces"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "SVG · or 32×32 PNG"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Drop"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Upload"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Media library"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Inherits the Site Icon when empty (Settings → General)."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Inheriting from provider / baseline"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Clear accent"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Show derived colours"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Hide derived colours"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Subtle"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "readable"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Focus"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "@ 50%"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Display"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Actions"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Re-sync from Bricks Builder"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Auto-generate appearance"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Export to Bricks"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Reset to AdminKit defaults"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Reset all AdminKit settings to defaults? This cannot be undone."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Defaults restored"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Bricks tokens re-synced"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Want to dig in?"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Browse every token AdminKit exposes — read-only reference."
+msgstr ""
+
+#. translators: %d is the total number of design tokens (resolved at render time).
+#: inc/class-settings-page.php
+#, php-format
+msgid "View all %d tokens"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Reference"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Token map"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Read-only. AdminKit derives every token from the provider/baseline cascade."
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Token"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Cascade"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Value"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Source"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Bricks"
+msgstr ""
+
+#: inc/class-settings-page.php
+msgid "Auto"
+msgstr ""

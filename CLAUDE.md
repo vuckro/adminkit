@@ -100,9 +100,18 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   (1) `integrations/themes/bricks/css/builder.css` — the Bricks builder is a
   live-WaasKit surface where `--ak-*` isn't loaded but the WaasKit provider vars
   are, so it maps to those directly (see its header); (2) the `.ak-logo-pick--light`
-  / `--dark` logo-preview backdrops in `settings.css` — fixed light/dark on purpose
-  (they show each brand logo on the surface it's built for, like a swatch, and must
-  NOT flip with the admin theme). Don't "tokenize" these — it'd break the fixed behaviour.
+  / `--dark` (and the newer `.ak-brand-slot--light` / `--dark`) logo-preview backdrops
+  in `settings.css` — fixed light/dark on purpose (they show each brand logo on the
+  surface it's built for, like a swatch, and must NOT flip with the admin theme).
+  Don't "tokenize" these — it'd break the fixed behaviour. (3) the Bricks-brand pill
+  (`.ak-pill--bricks`) in the Design-tab token reference, `#ff983e` — it's the
+  Bricks brand colour, same fixed-by-design exception logic.
+- **`brand_accent` overrides `--ak-primary` via ONE inline rule injected on
+  `adminkit/tokens_enqueued`** (see `AdminKit_Assets::inject_brand_accent()`).
+  Don't duplicate this injection anywhere else — the derived accent tokens
+  (`--ak-primary-hover`, `--ak-primary-subtle`, `--ak-on-accent`, focus ring) all
+  recalculate automatically through their CSS `color-mix()` fallbacks once
+  `--ak-primary` flips, so one knob covers the whole accent family.
 - **Integration discovery is `glob( inc/integrations/*/*/class-*.php )`** — two
   levels deep (`{plugins,themes}/{slug}/`). The class name derives from the file
   basename (`AdminKit_Integration_{Studly_Slug}`). Don't rename a class without

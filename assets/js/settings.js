@@ -33,7 +33,8 @@
 			dark:  ( D.logos && D.logos.dark ) || ''
 		},
 		wpLogo: D.wpLogo || 'favicon',       // admin-bar / site-name mark: logo | favicon | hide
-		loginLogo: D.loginLogo || 'favicon'  // login screen mark: logo | favicon (legacy '' inherit → favicon)
+		loginLogo: D.loginLogo || 'favicon', // login screen mark: logo | favicon | hide (legacy '' inherit → favicon)
+		brandAccent: D.brandAccent || ''     // user hex override of --ak-primary; empty = inherit cascade
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
@@ -106,6 +107,105 @@
 			document.documentElement,
 			{ attributes: true, attributeFilter: [ 'data-adminkit-theme' ] }
 		);
+	}
+
+	// --- disclosure (expand/collapse) ----------------------------------------
+	// One button (caret rotates on open) + a hidden content panel. The content is
+	// built LAZILY on first open via the supplied builder — handy for big chunks
+	// like the 25-row tokens reference table that shouldn't churn the DOM until
+	// asked for. Returns { btn, panel } so the caller can place them where they
+	// want (some live inline with their label, others on a separate row).
+	function disclosure( labelClosed, labelOpen, build, options ) {
+		options = options || {};
+		var isOpen = false;
+		var panel = el( 'div', { 'class': 'ak-disclose__panel' + ( options.panelClass ? ' ' + options.panelClass : '' ) } );
+		panel.setAttribute( 'hidden', '' );
+		var label = el( 'span', { 'class': 'ak-disclose__lbl', text: labelClosed } );
+		var caret = el( 'span', { 'class': 'ak-disclose__caret', 'aria-hidden': 'true', text: '▾' } );
+		var btn = el( 'button', {
+			type: 'button',
+			'class': 'ak-disclose__btn' + ( options.btnClass ? ' ' + options.btnClass : '' ),
+			'aria-expanded': 'false'
+		}, [ label, caret ] );
+		btn.addEventListener( 'click', function () {
+			isOpen = ! isOpen;
+			if ( isOpen ) {
+				if ( ! panel.dataset.built ) {
+					build( panel );
+					panel.dataset.built = '1';
+				}
+				panel.removeAttribute( 'hidden' );
+				btn.classList.add( 'is-open' );
+				btn.setAttribute( 'aria-expanded', 'true' );
+				label.textContent = labelOpen;
+			} else {
+				panel.setAttribute( 'hidden', '' );
+				btn.classList.remove( 'is-open' );
+				btn.setAttribute( 'aria-expanded', 'false' );
+				label.textContent = labelClosed;
+			}
+		} );
+		return { btn: btn, panel: panel };
+	}
+
+	// --- Actions menu (dropdown) ---------------------------------------------
+	// Items: [{ label, onClick, disabled?, separator?, danger? }]. Outside-click
+	// and Escape close it; the menu's z-index keeps it above the sticky header.
+	function actionsMenu( items ) {
+		var open = false;
+		var btn = el( 'button', {
+			type: 'button', 'class': 'ak-actions__btn',
+			'aria-haspopup': 'menu', 'aria-expanded': 'false'
+		}, [
+			el( 'span', { text: I.actionsLabel || 'Actions' } ),
+			el( 'span', { 'class': 'ak-actions__caret', 'aria-hidden': 'true', text: '▾' } )
+		] );
+		var menu = el( 'div', { 'class': 'ak-actions__menu', role: 'menu' } );
+		menu.setAttribute( 'hidden', '' );
+		items.forEach( function ( it ) {
+			if ( it.separator ) {
+				menu.appendChild( el( 'hr', { 'class': 'ak-actions__sep' } ) );
+				return;
+			}
+			var attrs = {
+				type: 'button',
+				'class': 'ak-actions__item' + ( it.danger ? ' is-danger' : '' ),
+				role: 'menuitem',
+				text: it.label
+			};
+			if ( it.disabled ) {
+				attrs.disabled = '';
+				attrs.title = it.disabledHint || ( I.comingSoon || 'Coming soon' );
+			}
+			var mi = el( 'button', attrs );
+			if ( ! it.disabled ) {
+				mi.addEventListener( 'click', function () { close(); it.onClick(); } );
+			}
+			menu.appendChild( mi );
+		} );
+		function close() {
+			open = false;
+			menu.setAttribute( 'hidden', '' );
+			btn.classList.remove( 'is-open' );
+			btn.setAttribute( 'aria-expanded', 'false' );
+		}
+		function show() {
+			open = true;
+			menu.removeAttribute( 'hidden' );
+			btn.classList.add( 'is-open' );
+			btn.setAttribute( 'aria-expanded', 'true' );
+		}
+		btn.addEventListener( 'click', function ( e ) {
+			e.stopPropagation();
+			if ( open ) { close(); } else { show(); }
+		} );
+		document.addEventListener( 'click', function ( e ) {
+			if ( open && ! menu.contains( e.target ) && e.target !== btn ) { close(); }
+		} );
+		document.addEventListener( 'keydown', function ( e ) {
+			if ( open && e.key === 'Escape' ) { e.preventDefault(); close(); btn.focus(); }
+		} );
+		return el( 'div', { 'class': 'ak-actions' }, [ btn, menu ] );
 	}
 
 	// --- header chrome -------------------------------------------------------
@@ -369,18 +469,20 @@
 		return p;
 	}
 
-	// Design tab. Leads with the interactive brand controls — the light/dark logo
-	// upload (Branding) and where/how the mark shows (Logo display) — then the
-	// STATIC reference below: one table per colour group (swatch · role + AdminKit
-	// badge · the --ak token and the provider var / primitive it maps to) + the type scale.
+	// Design tab — final layout (Phase A). Leads with one interactive Brand card
+	// (logo / favicon slots · accent picker · derived strip · display segmented
+	// controls · Actions menu), then a "View all N tokens" CTA that reveals the
+	// read-only token reference table inline. Branding controls live HERE — not
+	// on Features — so the design surface is the one obvious place to brand.
 	function buildDesign() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' } );
 
-		// --- Branding (top) — light/dark logo. The PREVIEW itself is the picker:
-		// clicking it opens the WP media frame; a small × clears the logo. A hidden
-		// URL field stays in sync so a logo can also be typed/pasted. The label is the
-		// localized text only ("Light Mode" / "Dark Mode"), no leading icon.
-		function openMedia( slot, onChange ) {
+		// --- Common helpers used inside the Design tab ---------------------------
+
+		// Open the WP media frame and call back with the chosen attachment URL +
+		// id. Used by every brand slot uploader and (re-used from logoSeg below)
+		// by the segmented controls.
+		function openMedia( onPick ) {
 			if ( ! window.wp || ! wp.media ) { return; }
 			var frame = wp.media( {
 				title: I.mediaTitle || 'Select a logo',
@@ -391,77 +493,83 @@
 			frame.on( 'select', function () {
 				var att = frame.state().get( 'selection' ).first().toJSON();
 				var url = ( att && att.url ) || '';
-				state.logos[ slot ] = url;
-				if ( onChange ) { onChange(); }
-				markDirty();
+				onPick( url, att );
 			} );
 			frame.open();
 		}
-		function logoField( slot, label, textLabel ) {
-			var id = 'ak-logo-' + slot;
-			var preview = el( 'img', { 'class': 'ak-logo-pick__img', alt: '' } );
-			// Empty-state placeholder shown inside the picker when no logo is set.
-			var ph = el( 'span', { 'class': 'ak-logo-pick__ph', text: I.logoPick || 'Choose a logo' } );
-			var input = el( 'input', {
-				id: id, type: 'url', 'class': 'ak-field__input', value: state.logos[ slot ],
-				placeholder: I.logoPlaceholder || '', spellcheck: 'false'
+
+		// One brand slot — a dashed card with a fixed-backdrop drop zone (preview
+		// or "DROP" placeholder) + label + sub + Upload / Media library buttons.
+		// `slotKey` is one of 'light' | 'dark' | 'favicon' and drives both the
+		// class modifier (fixed backdrop) and which `state` field the URL persists
+		// to. Favicon inherits the Site Icon at the PHP side when empty, so an
+		// empty preview here just means "use Site Icon".
+		function brandSlot( slotKey, label, sub ) {
+			var key = slotKey === 'favicon' ? 'favicon' : slotKey;
+			var current = ( state.logos && state.logos[ key ] ) || '';
+			var preview = el( 'img', { 'class': 'ak-brand-slot__preview', alt: '' } );
+			var dropTxt = el( 'span', { 'class': 'ak-brand-slot__drop', text: I.slotDrop || 'Drop' } );
+			var zone = el( 'div', { 'class': 'ak-brand-slot__zone' }, [ preview, dropTxt ] );
+
+			var upload = el( 'button', {
+				type: 'button', 'class': 'ak-brand-slot__upload',
+				text: '↑ ' + ( I.slotUpload || 'Upload' )
+			} );
+			var media = el( 'button', {
+				type: 'button', 'class': 'ak-brand-slot__media',
+				text: I.slotMediaLib || 'Media library'
 			} );
 			var clear = el( 'button', {
-				type: 'button', 'class': 'ak-logo-pick__clear',
-				'aria-label': I.logoRemove || 'Remove logo', title: I.logoRemove || 'Remove logo'
+				type: 'button', 'class': 'ak-brand-slot__clear',
+				'aria-label': I.logoRemove || 'Remove logo', title: I.logoRemove || 'Remove logo',
+				text: '×'
 			} );
-			clear.innerHTML = ICONS.close;
-			var pick = el( 'button', {
-				// Slot modifier (--light / --dark) gives each preview a FIXED backdrop
-				// matching the surface that logo is designed for (see settings.css).
-				type: 'button', 'class': 'ak-logo-pick ak-logo-pick--' + slot,
-				'aria-label': I.logoChange || 'Change logo'
-			}, [ preview, ph ] );
+
 			function syncPreview() {
-				var url = state.logos[ slot ];
-				pick.classList.toggle( 'is-set', !! url );
-				pick.setAttribute( 'title', url ? ( I.logoChange || 'Change logo' ) : ( I.logoPick || 'Choose a logo' ) );
-				clear.hidden = ! url;
+				var url = state.logos[ key ] || '';
 				if ( url ) {
 					preview.src = url;
 					preview.style.display = '';
+					dropTxt.style.display = 'none';
+					clear.style.display = '';
 				} else {
 					preview.removeAttribute( 'src' );
 					preview.style.display = 'none';
+					dropTxt.style.display = '';
+					clear.style.display = 'none';
 				}
 			}
-			input.addEventListener( 'input', function () {
-				state.logos[ slot ] = input.value.trim();
+			function setLogo( url ) {
+				state.logos[ key ] = url || '';
 				syncPreview();
 				markDirty();
-			} );
-			pick.addEventListener( 'click', function () {
-				openMedia( slot, function () { input.value = state.logos[ slot ]; syncPreview(); } );
-			} );
-			clear.addEventListener( 'click', function () {
-				state.logos[ slot ] = '';
-				input.value = '';
-				syncPreview();
-				markDirty();
-			} );
+			}
+
+			// Both buttons open the same media frame — and clicking the zone is a
+			// shortcut for the same. We don't wire native drag-and-drop yet; the
+			// media library covers the same use with one extra click.
+			upload.addEventListener( 'click', function () { openMedia( function ( url ) { setLogo( url ); } ); } );
+			media.addEventListener( 'click', function () { openMedia( function ( url ) { setLogo( url ); } ); } );
+			zone.addEventListener( 'click', function () { openMedia( function ( url ) { setLogo( url ); } ); } );
+			clear.addEventListener( 'click', function ( e ) { e.stopPropagation(); setLogo( '' ); } );
+
+			// Seed initial preview.
+			if ( current ) { preview.src = current; }
 			syncPreview();
-			// Label = the localized TEXT only ("Light Mode" / "Dark Mode"); no leading
-			// icon. The full label stays the title for assistive tech.
-			var lbl = el( 'label', { 'class': 'ak-field__label', 'for': id, title: label }, [
-				el( 'span', { 'class': 'ak-field__label-tx', text: textLabel || label } )
-			] );
-			return el( 'div', { 'class': 'ak-field' }, [
-				lbl,
-				el( 'div', { 'class': 'ak-field__control' }, [
-					el( 'div', { 'class': 'ak-logo-pick__wrap' }, [ pick, clear ] ),
-					input
+
+			return el( 'div', { 'class': 'ak-brand-slot ak-brand-slot--' + slotKey }, [
+				zone,
+				el( 'div', { 'class': 'ak-brand-slot__body' }, [
+					el( 'div', { 'class': 'ak-brand-slot__label', text: label } ),
+					sub ? el( 'div', { 'class': 'ak-brand-slot__sub', text: sub } ) : null,
+					el( 'div', { 'class': 'ak-brand-slot__btns' }, [ upload, media, clear ] )
 				] )
 			] );
 		}
-		// Per-location brand-mark controls — one segmented control each for the admin
-		// bar and the login screen (favicon = square, logo = rectangle). Bricks reads
-		// brand_logo directly, so it has no control. Reusable builder so both stay
-		// visually identical.
+
+		// Segmented control reused for the Display row (Admin bar + Login screen).
+		// Same DOM as the rest of the SPA (.ak-seg / .ak-seg__opt) so the existing
+		// styling kicks in.
 		function logoSeg( stateKey, labelId, label, opts ) {
 			var btns = [];
 			var seg = el( 'div', { 'class': 'ak-seg', role: 'radiogroup', 'aria-labelledby': labelId } );
@@ -487,86 +595,337 @@
 				btns.push( b );
 				seg.appendChild( b );
 			} );
-			return el( 'div', { 'class': 'ak-field ak-field--inline' }, [
-				el( 'label', { 'class': 'ak-field__label', id: labelId, text: label } ),
+			return el( 'div', { 'class': 'ak-display-row__field' }, [
+				el( 'span', { 'class': 'ak-display-row__field-lbl', id: labelId, text: label } ),
 				seg
 			] );
 		}
 
+		// Accent picker — three controls bound to the same state.brandAccent:
+		// the coloured swatch button (triggers the OS-native colour picker), the
+		// hex `<input type="text">` (canonical source of truth), and a palette
+		// icon button (alternative entry to the native picker). Live preview is
+		// applied by writing :root{--ak-primary:<hex>} to a temporary <style>
+		// node — cleared when the form is saved or the hex emptied.
+		function accentPicker() {
+			var swatch = el( 'button', {
+				type: 'button', 'class': 'ak-accent-row__sw',
+				'aria-label': I.accentLabel || 'Accent'
+			} );
+			var hexInput = el( 'input', {
+				type: 'text', 'class': 'ak-accent-row__hex',
+				placeholder: '#fed53e', spellcheck: 'false',
+				maxlength: '7'
+			} );
+			hexInput.value = state.brandAccent || '';
+			var palette = el( 'button', {
+				type: 'button', 'class': 'ak-accent-row__pal',
+				'aria-label': I.accentLabel || 'Accent', text: '🎨'
+			} );
+			var native = el( 'input', { type: 'color', 'class': 'ak-accent-row__native' } );
+			native.value = isValidHex( state.brandAccent ) ? state.brandAccent : '#fed53e';
+
+			function applyPreview() {
+				// Write a tiny inline override on <head> so the LIVE colour matches
+				// what the server will paint after save. Removing the node (when
+				// the hex empties) drops the override and the cascade takes back over.
+				var id = 'ak-accent-preview';
+				var existing = document.getElementById( id );
+				if ( isValidHex( state.brandAccent ) ) {
+					if ( ! existing ) {
+						existing = document.createElement( 'style' );
+						existing.id = id;
+						document.head.appendChild( existing );
+					}
+					existing.textContent = ':root{--ak-primary:' + state.brandAccent + '}';
+				} else if ( existing ) {
+					existing.parentNode.removeChild( existing );
+				}
+				// Reflect on the swatch + native picker.
+				swatch.style.background = state.brandAccent || 'var(--ak-primary)';
+				if ( isValidHex( state.brandAccent ) ) { native.value = state.brandAccent; }
+				// And on the derived strip's hex chips (their values come from
+				// var(--ak-primary-hover) etc., resolved live by refreshHexes()).
+				refreshHexes();
+			}
+
+			function setAccent( raw ) {
+				var v = ( raw || '' ).trim().toLowerCase();
+				if ( v && v.charAt( 0 ) !== '#' ) { v = '#' + v; }
+				state.brandAccent = v;
+				if ( hexInput.value !== v ) { hexInput.value = v; }
+				applyPreview();
+				markDirty();
+			}
+
+			hexInput.addEventListener( 'input', function () { setAccent( hexInput.value ); } );
+			swatch.addEventListener( 'click', function () { native.click(); } );
+			palette.addEventListener( 'click', function () { native.click(); } );
+			native.addEventListener( 'input', function () { setAccent( native.value ); } );
+
+			// Seed initial visual state.
+			applyPreview();
+
+			// The "Show derived colours" disclosure sits at the right of the same
+			// row — built outside this helper and appended by the caller.
+			return el( 'div', { 'class': 'ak-accent-row' }, [
+				el( 'span', { 'class': 'ak-accent-row__lbl', text: I.accentLabel || 'Accent' } ),
+				swatch, hexInput, palette, native
+			] );
+		}
+
+		// Compact hex validator — same shape as `sanitize_hex_color` PHP-side:
+		// #abc or #aabbcc only, no rgba / hsl.
+		function isValidHex( v ) {
+			return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test( ( v || '' ).trim() );
+		}
+
+		// 4 derived-colour chips (Hover / Subtle / On-accent / Focus) — their
+		// values are read live from --ak-primary-hover etc., kept in sync by the
+		// MutationObserver on <html data-adminkit-theme> via `data-ak-token`.
+		function derivedStrip() {
+			function chip( cssVar, label, subOverride, decorate ) {
+				var sw = el( 'span', { 'class': 'ak-derived__sw', style: 'background: var(' + cssVar + ')' } );
+				if ( decorate ) { decorate( sw ); }
+				var val = el( 'div', {
+					'class': 'ak-derived__val',
+					'data-ak-token': cssVar,
+					text: resolveColor( cssVar )
+				} );
+				return el( 'div', { 'class': 'ak-derived__chip' }, [
+					sw,
+					el( 'div', { 'class': 'ak-derived__body' }, [
+						el( 'div', { 'class': 'ak-derived__lbl', text: label } ),
+						subOverride ? el( 'div', { 'class': 'ak-derived__val', text: subOverride } ) : val
+					] )
+				] );
+			}
+			return el( 'div', { 'class': 'ak-derived' }, [
+				chip( '--ak-primary-hover', I.derivedHover || 'Hover' ),
+				chip( '--ak-primary-subtle', I.derivedSubtle || 'Subtle' ),
+				// "On accent" — show an Aa sample on the accent surface, so the
+				// readability check reads at a glance (sub copy is "readable").
+				chip( '--ak-primary', I.derivedOnAccent || 'On accent', I.derivedOnAccentSub || 'readable', function ( sw ) {
+					sw.style.color = 'var(--ak-on-accent)';
+					sw.textContent = 'Aa';
+				} ),
+				// Focus is the ring (--ak-primary @ ~50%), no clean hex — show "@ 50%".
+				chip( '--ak-primary', I.derivedFocus || 'Focus', I.derivedFocusSub || '@ 50%' )
+			] );
+		}
+
+		// --- Brand card ----------------------------------------------------------
+		var cardHead = el( 'div', { 'class': 'ak-card__head' } );
+		var headMain = el( 'div', { 'class': 'ak-card__head-main' }, [
+			el( 'div', { 'class': 'ak-card__eyebrow', text: I.brandEyebrow || 'Brand' } ),
+			el( 'h2', { 'class': 'ak-card__title', text: I.brandTitle || 'Logo, favicon & accent' } )
+		] );
+		if ( D.bricksDetected ) {
+			headMain.appendChild( el( 'div', { 'class': 'ak-card__status', text: I.brandSyncStatus || 'Tokens synced with Bricks Builder' } ) );
+		}
+		cardHead.appendChild( headMain );
+
+		// Actions menu — Reset + Re-sync wired; Export + Auto-generate present
+		// but disabled (Phase A — see plan).
+		var menuItems = [];
+		if ( D.bricksDetected ) {
+			menuItems.push( {
+				label: I.actionResync || 'Re-sync from Bricks Builder',
+				onClick: function () { doResync(); }
+			} );
+		}
+		menuItems.push( {
+			label: I.actionAutogen || 'Auto-generate appearance',
+			disabled: true
+		} );
+		if ( D.bricksDetected ) {
+			menuItems.push( {
+				label: I.actionExport || 'Export to Bricks',
+				disabled: true
+			} );
+		}
+		menuItems.push( { separator: true } );
+		menuItems.push( {
+			label: I.actionReset || 'Reset to AdminKit defaults',
+			danger: true,
+			onClick: function () { doReset(); }
+		} );
+		cardHead.appendChild( actionsMenu( menuItems ) );
+
+		// Brand slots row — light / dark / favicon. Each slot persists its URL
+		// in state.logos[key]; favicon falls back to the WP Site Icon server-side
+		// when empty.
+		if ( ! state.logos.favicon ) { state.logos.favicon = ''; } // ensure key exists
+		var slotsRow = el( 'div', { 'class': 'ak-brand-slots' }, [
+			brandSlot( 'light', I.slotLight || 'Light-mode logo', I.slotLightSub || 'Shown on light surfaces' ),
+			brandSlot( 'dark', I.slotDark || 'Dark-mode logo', I.slotDarkSub || 'Shown on dark surfaces' ),
+			brandSlot( 'favicon', I.slotFavicon || 'Favicon', I.slotFaviconSub || 'SVG · or 32×32 PNG' )
+		] );
+
+		// Accent row + derived strip (collapsible).
+		var derivedDisc = disclosure(
+			I.accentShowDerived || 'Show derived colours',
+			I.accentHideDerived || 'Hide derived colours',
+			function ( panel ) { panel.appendChild( derivedStrip() ); }
+		);
+		var accentRow = accentPicker();
+		// Push the disclosure to the right of the accent row.
+		derivedDisc.btn.className += ' ak-accent-row__disclose';
+		accentRow.appendChild( derivedDisc.btn );
+
+		// Display row — segmented controls for Admin bar and Login screen.
 		var wpField = logoSeg( 'wpLogo', 'ak-wp-logo-label', I.wpLogoLabel || 'Admin bar', [
 			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
 			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' },
 			{ v: 'hide',    label: I.wpLogoHide || 'Hide' }
 		] );
-		// When no Site Icon is set, the favicon option can't show anything — note it.
-		if ( ! D.hasSiteIcon && I.wpLogoNoIcon ) {
-			wpField.appendChild( el( 'p', { 'class': 'ak-field__hint', text: I.wpLogoNoIcon } ) );
-		}
-		// Login screen — its own choice: Logo or Favicon (no "Inherit"; defaults to
-		// favicon server-side, kept simple).
 		var loginField = logoSeg( 'loginLogo', 'ak-login-logo-label', I.loginLogoLabel || 'Login screen', [
 			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
-			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' }
+			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' },
+			{ v: 'hide',    label: I.wpLogoHide || 'Hide' }
+		] );
+		var displayRow = el( 'div', { 'class': 'ak-display-row' }, [
+			el( 'span', { 'class': 'ak-display-row__lbl', text: I.displayLabel || 'Display' } ),
+			wpField, loginField
 		] );
 
-		// Block 1 — Logo (upload): the light + dark brand-logo images, with the
-		// ideal-proportions hint. Block 2 below controls where/how it's shown.
-		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
-			el( 'h2', { 'class': 'ak-group__title', text: I.branding } ),
-			I.logoHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoHint } ) : null,
-			el( 'div', { 'class': 'ak-rows' }, [
-				logoField( 'light', I.logoLight, I.logoLightMode ),
-				logoField( 'dark', I.logoDark, I.logoDarkMode )
-			] )
-		] ) );
+		var card = el( 'section', { 'class': 'ak-card' }, [
+			cardHead, slotsRow, accentRow, derivedDisc.panel, displayRow
+		] );
 
-		// Block 2 — Logo display: how the uploaded logo appears in each location
-		// (the admin bar + the login screen). Bricks reads the logo directly.
-		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
-			el( 'h2', { 'class': 'ak-group__title', text: I.logoDisplay || 'Logo display' } ),
-			I.logoDisplayHint ? el( 'p', { 'class': 'ak-group__desc', text: I.logoDisplayHint } ) : null,
-			el( 'div', { 'class': 'ak-rows' }, [
-				wpField,
-				loginField
-			] )
-		] ) );
+		// Intro text above the card.
+		p.appendChild( el( 'p', { 'class': 'ak-design-intro', text: I.designIntro || '' } ) );
+		p.appendChild( card );
 
-		// Token reference — three deterministic rows of cards instead of seven
-		// stacked groups, so the whole Design tab fits roughly within a viewport.
-		// Row 1 (neutrals)     — Surfaces · Borders · Text
-		// Row 2 (interactives) — Accent · State · Overlay
-		// Row 3 (notifications) — Status (full width, two internal columns of pairs).
-		// Ordering is intentional: a maintainer changing a baseline token expects
-		// to see related colours side by side, not lost in a long scroll.
-		var bySlug = {};
-		( D.colors || [] ).forEach( function ( g ) { if ( g.group ) { bySlug[ g.group ] = g; } } );
+		// --- Tokens CTA + revealed reference table (lazy build) ------------------
+		var totalTokens = ( D.colors || [] ).reduce( function ( n, g ) {
+			return n + ( ( g.tokens || [] ).length );
+		}, 0 );
+		var ctaLabel = ( I.tokensCtaBtnFmt || 'View all %d tokens' ).replace( '%d', totalTokens );
+		var refDisc = disclosure(
+			ctaLabel,
+			I.tokensRefHide || 'Hide',
+			function ( panel ) { panel.appendChild( tokensReference() ); },
+			{ btnClass: 'ak-tokens-cta__btn' }
+		);
 
-		function renderGroup( g ) {
-			if ( ! g ) { return null; }
-			var tbl = el( 'div', { 'class': 'ak-tbl' } );
-			( g.tokens || [] ).forEach( function ( t ) { roleRow( tbl, t ); } );
-			return el( 'div', { 'class': 'ak-group' }, [
-				el( 'h2', { 'class': 'ak-group__title', text: g.label } ),
-				g.desc ? el( 'p', { 'class': 'ak-group__desc', text: g.desc } ) : null,
-				tbl
-			] );
-		}
-
-		function renderRow( slugs, full ) {
-			var row = el( 'div', { 'class': 'ak-design__row' + ( full ? ' ak-design__row--full' : '' ) } );
-			slugs.forEach( function ( s ) {
-				var card = renderGroup( bySlug[ s ] );
-				if ( card ) { row.appendChild( card ); }
-			} );
-			return row;
-		}
-
-		p.appendChild( renderRow( [ 'surface', 'border', 'text' ] ) );
-		p.appendChild( renderRow( [ 'accent', 'state', 'overlay' ] ) );
-		p.appendChild( renderRow( [ 'status' ], true ) );
+		var cta = el( 'div', { 'class': 'ak-tokens-cta' }, [
+			el( 'div', {}, [
+				el( 'div', { 'class': 'ak-tokens-cta__title', text: I.tokensCtaTitle || 'Want to dig in?' } ),
+				el( 'div', { 'class': 'ak-tokens-cta__sub', text: I.tokensCtaSub || 'Browse every token AdminKit exposes — read-only reference.' } )
+			] ),
+			refDisc.btn
+		] );
+		p.appendChild( cta );
+		p.appendChild( refDisc.panel );
 
 		p.appendChild( typeSection() );
 		return p;
+	}
+
+	// Read-only token reference — a 4-column table (Token / Cascade / Value /
+	// Source pill). Section headers (SURFACES / BORDERS / …) are full-width
+	// rows with a single colspan'd cell. Built once per disclosure-open and
+	// kept in the DOM after that (the MutationObserver picks up dark-mode flips
+	// even while hidden).
+	function tokensReference() {
+		var thead = el( 'thead', {}, [ el( 'tr', {}, [
+			el( 'th', { text: I.colToken || 'Token' } ),
+			el( 'th', { text: I.colCascade || 'Cascade' } ),
+			el( 'th', { text: I.colValue || 'Value' } ),
+			el( 'th', { text: I.colSource || 'Source' } )
+		] ) ] );
+		var tbody = el( 'tbody' );
+		( D.colors || [] ).forEach( function ( g ) {
+			// Section header row.
+			tbody.appendChild( el( 'tr', { 'class': 'ak-tokens-ref__section' }, [
+				el( 'td', { colspan: '4', text: ( g.label || '' ).toUpperCase() } )
+			] ) );
+			( g.tokens || [] ).forEach( function ( t ) { tbody.appendChild( refRow( t ) ); } );
+		} );
+
+		return el( 'section', { 'class': 'ak-tokens-ref' }, [
+			el( 'div', { 'class': 'ak-tokens-ref__head' }, [
+				el( 'div', { 'class': 'ak-tokens-ref__head-main' }, [
+					el( 'div', { 'class': 'ak-card__eyebrow', text: I.tokensRefEyebrow || 'Reference' } ),
+					el( 'h3', { 'class': 'ak-card__title', text: I.tokensRefTitle || 'Token map' } ),
+					el( 'p', { 'class': 'ak-tokens-cta__sub', text: I.tokensRefSub || '' } )
+				] )
+			] ),
+			el( 'table', {}, [ thead, tbody ] )
+		] );
+	}
+
+	// Source pill for a single token row. Bricks-mapped tokens (a `bricks` field
+	// is set on the data) show the orange BRICKS pill; AdminKit-own tokens (no
+	// `bricks`, `own === true` from color_map()) show the accent ADMINKIT pill;
+	// the rest fall back to the muted AUTO pill (auto-inherited from the cascade).
+	function sourcePill( t ) {
+		if ( t.bricks ) {
+			return el( 'span', { 'class': 'ak-pill ak-pill--bricks', text: I.sourceBricks || 'Bricks' } );
+		}
+		if ( t.own ) {
+			return el( 'span', { 'class': 'ak-pill ak-pill--adminkit', text: I.sourceAdminKit || 'AdminKit' } );
+		}
+		return el( 'span', { 'class': 'ak-pill ak-pill--auto', text: I.sourceAuto || 'Auto' } );
+	}
+
+	// One token row in the read-only reference table. Cascade reads source →
+	// bricks-semantic → token (the same flow direction we render elsewhere).
+	function refRow( t ) {
+		var cascadeBits = [];
+		if ( t.source ) { cascadeBits.push( t.source ); }
+		if ( t.bricks ) { cascadeBits.push( t.bricks ); }
+		var cascade = cascadeBits.length ? cascadeBits.join( ' → ' ) : '—';
+
+		return el( 'tr', {}, [
+			el( 'td', {}, [
+				el( 'span', { 'class': 'ak-tokens-ref__sw', style: 'background: var(' + t.token + ')' } ),
+				el( 'code', { 'class': 'ak-tokens-ref__token', text: t.token } )
+			] ),
+			el( 'td', {}, [ el( 'code', { 'class': 'ak-tokens-ref__cascade', text: cascade } ) ] ),
+			el( 'td', {}, [ el( 'code', { 'class': 'ak-tokens-ref__value', 'data-ak-token': t.token, text: resolveColor( t.token ) } ) ] ),
+			el( 'td', {}, [ sourcePill( t ) ] )
+		] );
+	}
+
+	// --- Actions handlers (Reset / Re-sync) ------------------------------------
+	// Both are tied to the same state model: the SPA reloads the page on success
+	// so server-side gating + asset cache-busting picks up the change.
+
+	function doReset() {
+		if ( ! window.confirm( I.confirmReset || 'Reset all settings?' ) ) { return; }
+		if ( ! apiFetch ) { setStatus( 'is-error', I.error ); return; }
+		state.saving = true;
+		updateBar();
+		var path = D.route.charAt( 0 ) === '/' ? D.route : '/' + D.route;
+		apiFetch( { path: path, method: 'POST', data: { reset: true } } )
+			.then( function () {
+				setStatus( 'is-saved', I.statusReset || 'Defaults restored' );
+				setTimeout( function () { location.reload(); }, 600 );
+			} )
+			.catch( function () {
+				state.saving = false;
+				updateBar();
+				setStatus( 'is-error', I.error );
+			} );
+	}
+
+	function doResync() {
+		if ( ! apiFetch ) { setStatus( 'is-error', I.error ); return; }
+		var path = D.resyncRoute && D.resyncRoute.charAt( 0 ) === '/' ? D.resyncRoute : '/' + ( D.resyncRoute || 'adminkit/v1/actions/resync' );
+		state.saving = true;
+		updateBar();
+		apiFetch( { path: path, method: 'POST', data: { provider: 'bricks' } } )
+			.then( function () {
+				setStatus( 'is-saved', I.statusResync || 'Bricks tokens re-synced' );
+				setTimeout( function () { location.reload(); }, 600 );
+			} )
+			.catch( function () {
+				state.saving = false;
+				updateBar();
+				setStatus( 'is-error', I.error );
+			} );
 	}
 
 	// Typography — static reference. The body font follows the provider (Bricks
@@ -593,36 +952,6 @@
 			] ),
 			scale
 		] );
-	}
-
-	// Append one row (three aligned grid cells) to a group table. Cells are
-	// direct grid children so columns line up across rows; CSS draws the dividers.
-	//
-	// Layout: [swatch] · [name + AK badge + live hex] · [source → bricks → ak-token]
-	// The chain reads left-to-right as a *flow* (primitive feeds into the provider
-	// semantic, which feeds into the AdminKit token) — same direction the cascade
-	// resolves in CSS. The hex carries a data-ak-token so refreshHexes() can keep
-	// it in sync with the dark-mode flip.
-	function roleRow( tbl, t ) {
-		tbl.appendChild( el( 'span', { 'class': 'ak-tbl__swc' }, [
-			el( 'span', { 'class': 'ak-tbl__sw', style: '--sw: var(' + t.token + ')', title: t.token } )
-		] ) );
-		tbl.appendChild( el( 'span', { 'class': 'ak-tbl__role' }, [
-			el( 'span', { 'class': 'ak-tbl__name', text: t.label } ),
-			t.own ? el( 'span', { 'class': 'ak-tbl__badge', title: I.ownHint || '', text: I.own } ) : null,
-			el( 'code', { 'class': 'ak-tbl__hex', 'data-ak-token': t.token, text: resolveColor( t.token ) } )
-		] ) );
-		var chain = el( 'span', { 'class': 'ak-tbl__map' } );
-		if ( t.source ) {
-			chain.appendChild( el( 'code', { 'class': 'ak-tbl__prim', text: t.source } ) );
-			chain.appendChild( el( 'span', { 'class': 'ak-tbl__arr', 'aria-hidden': 'true', text: '→' } ) );
-		}
-		if ( t.bricks ) {
-			chain.appendChild( el( 'code', { 'class': 'ak-tbl__from', text: t.bricks } ) );
-			chain.appendChild( el( 'span', { 'class': 'ak-tbl__arr', 'aria-hidden': 'true', text: '→' } ) );
-		}
-		chain.appendChild( el( 'code', { 'class': 'ak-tbl__tok', text: t.token } ) );
-		tbl.appendChild( chain );
 	}
 
 	function buildFeatures() {
@@ -850,10 +1179,11 @@
 		Object.keys( state.integrations ).forEach( function ( slug ) {
 			v[ 'integration_' + slug + '_enabled' ] = !! state.integrations[ slug ];
 		} );
-		v.logo_light  = state.logos.light;
-		v.logo_dark   = state.logos.dark;
-		v.wp_logo     = state.wpLogo;
-		v.login_logo  = state.loginLogo;
+		v.logo_light   = state.logos.light;
+		v.logo_dark    = state.logos.dark;
+		v.wp_logo      = state.wpLogo;
+		v.login_logo   = state.loginLogo;
+		v.brand_accent = state.brandAccent;
 		return v;
 	}
 

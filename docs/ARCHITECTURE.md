@@ -204,9 +204,15 @@ individually switch-off-able:
   — the brand mark at the site-name node; the top-left WordPress logo is always
   hidden) and `logo_size` (px, 16–32) — resolved by
   `AdminKit_Settings::brand_logo()` / `AdminKit_Core_Branding`. `login_logo`
-  (`logo` | `favicon`, default `favicon`) independently drives the wp-login.php mark
+  (`logo` | `favicon` | `hide`, default `favicon`) independently drives the wp-login.php mark
   via `AdminKit_Core_Login` (a legacy `''` = inherit `wp_logo` is still honoured, but
-  the UI no longer offers it).
+  the UI no longer offers it). `brand_accent` (sanitised hex, default `''`) is the
+  user's accent override: when set, `AdminKit_Assets::inject_brand_accent()` hooks
+  into `adminkit/tokens_enqueued` and emits a single inline `:root{--ak-primary:…}`
+  rule on the tokens stylesheet — the derived tokens (`--ak-primary-hover`,
+  `--ak-primary-subtle`, `--ak-on-accent`, focus ring) recalculate automatically
+  through their CSS `color-mix()` fallbacks. Empty = the cascade wins (Bricks
+  provider → WaasKit baseline → neutral default), no inline style emitted.
 - **Integration gates**: one `integration_{slug}_enabled` per discovered adapter
   (default ON), bound to `adminkit/integration_enabled` and driven by the Plugins
   tab.

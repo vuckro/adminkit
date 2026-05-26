@@ -942,3 +942,173 @@ msgstr "Ce portrait ne vous plaît pas ? Cliquez pour en générer un autre."
 #: inc/wp-core/class-local-avatars.php
 msgid "You are not allowed to do that."
 msgstr "Vous n'êtes pas autorisé·e à faire cela."
+
+#: inc/class-settings-page.php
+msgid "Customise your WordPress admin's design and branding."
+msgstr "Personnalisez le design et l'image de marque de votre administration WordPress."
+
+#: inc/class-settings-page.php
+msgid "Brand"
+msgstr "Marque"
+
+#: inc/class-settings-page.php
+msgid "Logo, favicon & accent"
+msgstr "Logo, favicon et accent"
+
+#: inc/class-settings-page.php
+msgid "Tokens synced with Bricks Builder"
+msgstr "Tokens synchronisés avec Bricks Builder"
+
+#: inc/class-settings-page.php
+msgid "Light-mode logo"
+msgstr "Logo — mode clair"
+
+#: inc/class-settings-page.php
+msgid "Shown on light surfaces"
+msgstr "Affiché sur fonds clairs"
+
+#: inc/class-settings-page.php
+msgid "Dark-mode logo"
+msgstr "Logo — mode sombre"
+
+#: inc/class-settings-page.php
+msgid "Shown on dark surfaces"
+msgstr "Affiché sur fonds sombres"
+
+#: inc/class-settings-page.php
+msgid "SVG · or 32×32 PNG"
+msgstr "SVG · ou PNG 32×32"
+
+#: inc/class-settings-page.php
+msgid "Drop"
+msgstr "Déposer"
+
+#: inc/class-settings-page.php
+msgid "Upload"
+msgstr "Téléverser"
+
+#: inc/class-settings-page.php
+msgid "Media library"
+msgstr "Médiathèque"
+
+#: inc/class-settings-page.php
+msgid "Inherits the Site Icon when empty (Settings → General)."
+msgstr "Hérite de l'icône du site quand vide (Réglages → Général)."
+
+#: inc/class-settings-page.php
+msgid "Inheriting from provider / baseline"
+msgstr "Hérité du fournisseur / de la base"
+
+#: inc/class-settings-page.php
+msgid "Clear accent"
+msgstr "Effacer l'accent"
+
+#: inc/class-settings-page.php
+msgid "Show derived colours"
+msgstr "Afficher les couleurs dérivées"
+
+#: inc/class-settings-page.php
+msgid "Hide derived colours"
+msgstr "Masquer les couleurs dérivées"
+
+#: inc/class-settings-page.php
+msgid "Subtle"
+msgstr "Subtil"
+
+#: inc/class-settings-page.php
+msgid "readable"
+msgstr "lisible"
+
+#: inc/class-settings-page.php
+msgid "Focus"
+msgstr "Focus"
+
+#: inc/class-settings-page.php
+msgid "@ 50%"
+msgstr "@ 50 %"
+
+#: inc/class-settings-page.php
+msgid "Display"
+msgstr "Affichage"
+
+#: inc/class-settings-page.php
+msgid "Actions"
+msgstr "Actions"
+
+#: inc/class-settings-page.php
+msgid "Re-sync from Bricks Builder"
+msgstr "Resynchroniser depuis Bricks Builder"
+
+#: inc/class-settings-page.php
+msgid "Auto-generate appearance"
+msgstr "Générer l'apparence automatiquement"
+
+#: inc/class-settings-page.php
+msgid "Export to Bricks"
+msgstr "Exporter vers Bricks"
+
+#: inc/class-settings-page.php
+msgid "Reset to AdminKit defaults"
+msgstr "Réinitialiser aux valeurs par défaut d'AdminKit"
+
+#: inc/class-settings-page.php
+msgid "Reset all AdminKit settings to defaults? This cannot be undone."
+msgstr "Réinitialiser tous les réglages AdminKit aux valeurs par défaut ? Cette action est irréversible."
+
+#: inc/class-settings-page.php
+msgid "Defaults restored"
+msgstr "Valeurs par défaut restaurées"
+
+#: inc/class-settings-page.php
+msgid "Bricks tokens re-synced"
+msgstr "Tokens Bricks resynchronisés"
+
+#: inc/class-settings-page.php
+msgid "Want to dig in?"
+msgstr "Envie d'aller plus loin ?"
+
+#: inc/class-settings-page.php
+msgid "Browse every token AdminKit exposes — read-only reference."
+msgstr "Parcourez tous les tokens exposés par AdminKit — référence en lecture seule."
+
+#. translators: %d is the total number of design tokens (resolved at render time).
+#: inc/class-settings-page.php
+#, php-format
+msgid "View all %d tokens"
+msgstr "Voir les %d tokens"
+
+#: inc/class-settings-page.php
+msgid "Reference"
+msgstr "Référence"
+
+#: inc/class-settings-page.php
+msgid "Token map"
+msgstr "Carte des tokens"
+
+#: inc/class-settings-page.php
+msgid "Read-only. AdminKit derives every token from the provider/baseline cascade."
+msgstr "Lecture seule. AdminKit dérive chaque token depuis la cascade fournisseur/baseline."
+
+#: inc/class-settings-page.php
+msgid "Token"
+msgstr "Token"
+
+#: inc/class-settings-page.php
+msgid "Cascade"
+msgstr "Cascade"
+
+#: inc/class-settings-page.php
+msgid "Value"
+msgstr "Valeur"
+
+#: inc/class-settings-page.php
+msgid "Source"
+msgstr "Source"
+
+#: inc/class-settings-page.php
+msgid "Bricks"
+msgstr "Bricks"
+
+#: inc/class-settings-page.php
+msgid "Auto"
+msgstr "Auto"
