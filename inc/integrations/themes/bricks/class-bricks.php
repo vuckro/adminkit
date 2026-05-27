@@ -451,57 +451,22 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 
-		// Two distinct brand assets, two distinct intents:
-		//
-		//   --preloader-logo  → the splash overlay, big and centred. Wants the
-		//                       full brand mark (typically a wordmark). Falls
-		//                       back to favicon, then the WP-admin logo SVG.
-		//   --logo-url        → the toolbar logo, a 22px square next to the
-		//                       hamburger menu. Wants the FAVICON (square,
-		//                       recognisable at small size). Falls back to the
-		//                       brand mark, then the WP-admin logo SVG.
-		//
-		// Two intents because a wordmark is illegible in a 22px square and a
-		// favicon looks lost in the preloader. We resolve each separately and
-		// only emit the variables that have a value.
-		$preloader_logo = self::resolve_builder_asset( 'logo' );
-		$toolbar_mark   = self::resolve_builder_asset( 'mark' );
-		$lines          = array();
-		if ( '' !== $preloader_logo ) {
-			$lines[] = '--preloader-logo:url("' . esc_url_raw( $preloader_logo ) . '");';
+		// Brand logo injection — preloader splash + toolbar mark both use the
+		// SAME asset (the user's AdminKit brand logo). If none is set, neither
+		// var is emitted: the preloader paints a clean dark splash and the
+		// toolbar img keeps its native Bricks src. We deliberately don't fall
+		// back to the favicon — favicons are typically colour-locked and look
+		// wrong themed, and at 15rem the splash sizes them up grotesquely.
+		// "Set a brand logo if you want one" is a cleaner contract than
+		// guessing fallbacks.
+		$brand_logo = AdminKit_Settings::brand_logo( 'dark' );
+		if ( '' !== $brand_logo ) {
+			$url = 'url("' . esc_url_raw( $brand_logo ) . '")';
+			wp_add_inline_style(
+				'adminkit-bricks-builder',
+				':root{--preloader-logo:' . $url . ';--logo-url:' . $url . '}'
+			);
 		}
-		if ( '' !== $toolbar_mark ) {
-			$lines[] = '--logo-url:url("' . esc_url_raw( $toolbar_mark ) . '");';
-		}
-		if ( $lines ) {
-			wp_add_inline_style( 'adminkit-bricks-builder', ':root{' . implode( '', $lines ) . '}' );
-		}
-	}
-
-	/**
-	 * Resolve the URL of a brand asset for the builder. The fallback chain
-	 * depends on the intent: a wordmark logo for the preloader splash, a
-	 * favicon-shaped mark for the toolbar's small square.
-	 *
-	 * @param string $intent 'logo' (preloader: brand → favicon → WP)
-	 *                       | 'mark'  (toolbar:  favicon → brand → WP).
-	 * @return string
-	 */
-	private static function resolve_builder_asset( $intent = 'logo' ) {
-		$brand   = AdminKit_Settings::brand_logo( 'dark' );
-		$favicon = get_site_icon_url( 192 );
-		$wp_logo = file_exists( ABSPATH . 'wp-admin/images/wordpress-logo.svg' )
-			? admin_url( 'images/wordpress-logo.svg' )
-			: '';
-		$chain   = ( 'mark' === $intent )
-			? array( $favicon, $brand, $wp_logo )   // toolbar: square mark first
-			: array( $brand, $favicon, $wp_logo );  // preloader: wordmark first
-		foreach ( $chain as $url ) {
-			if ( '' !== $url ) {
-				return $url;
-			}
-		}
-		return '';
 	}
 
 	/**
