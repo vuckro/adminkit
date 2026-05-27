@@ -855,33 +855,45 @@ body.adminkit .media-modal-content {
 	overflow: hidden;
 }
 
-/* WP nav-tab strips (Settings → Permalinks, plugin settings pages like Bricks,
-   Yoast, Rank Math, …). Replace WP's underline tabs with the same bordered
-   container + pill children we use for `.subsubsub` and the AdminKit/profile
-   tabs — one visual language across every navigation strip in the admin.
-   Markup variants we cover: `<div class="nav-tab-wrapper">…<a class="nav-tab">…`
-   (Settings → Permalinks) and `<ul class="nav-tab-wrapper"><li><a class="nav-tab">`
-   (Bricks, ACF, …). */
-body.adminkit .nav-tab-wrapper {
+/* ───────── Navigation strips ─────────
+   ONE visual language across every nav strip in the admin: a bordered pill
+   container with pill children. Three markup variants share the same shape:
+   - `.subsubsub`        WP list-table status filter strips (posts, plugins, …)
+   - `.nav-tab-wrapper`  WP settings tabs (Permalinks, plugin pages — Bricks,
+                         ACF, Yoast, …). Markup variants: `<div>…<a class="nav-tab">`
+                         and `<ul><li><a class="nav-tab">`.
+   - `.ak-tabs`          AdminKit-built strips (profile cards, options-general
+                         + discussion, AdminKit SPA). Real <button>s. */
+
+/* 1 — Container shape. */
+body.adminkit .subsubsub,
+body.adminkit .nav-tab-wrapper,
+body.adminkit .ak-tabs {
 	display: inline-flex;
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 2px;
-	margin: 0 0 16px;
+	margin: 16px 0;
 	padding: 4px;
-	border: 1px solid var(--ak-border);   /* shorthand also resets WP's `border-bottom: 1px solid #c3c4c7` */
+	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	list-style: none;
-	/* Inline-flex already sizes to content, but a few plugin stylesheets (and
-	   WP's own `<h2 class="nav-tab-wrapper">` selector) try to stretch the
-	   strip to 100% — pin it explicitly so it stays content-sized like the
-	   `.ak-tabs` and `.subsubsub` strips. */
 	width: max-content;
 	max-width: 100%;
 }
 
-/* When the wrapper is a <ul>, its <li> children need flex-friendly defaults
-   (WP doesn't add a class on them, so we target them here). */
+/* `.ak-tabs` scrolls sideways on overflow (long profile tab lists) instead
+   of wrapping — single-row strip with a hidden scrollbar. */
+body.adminkit .ak-tabs {
+	flex-wrap: nowrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: none;
+}
+body.adminkit .ak-tabs::-webkit-scrollbar { display: none; }
+
+/* `.nav-tab-wrapper` variant: WP wraps each <a> in <li>. Strip default list
+   margin/padding so the pill child renders cleanly. */
 body.adminkit ul.nav-tab-wrapper > li {
 	margin: 0;
 	padding: 0;
@@ -889,79 +901,101 @@ body.adminkit ul.nav-tab-wrapper > li {
 	display: inline-flex;
 }
 
-body.adminkit .nav-tab {
+/* `.subsubsub` variant: WP joins <li>s with " |</li>\n" — a text-node " |"
+   sits inside each <li> between </a> and </li>. CSS can't target text nodes
+   by name, but `font-size: 0` collapses any anonymous text of the <li>; the
+   child <a> explicitly restores readable size. The pipe is hidden the moment
+   the page paints — no JS dependency, no flash. */
+body.adminkit .subsubsub li {
+	margin: 0;
+	font-size: 0;
+}
+
+/* 2 — Pill children (the link / button inside the container). */
+body.adminkit .subsubsub a,
+body.adminkit .nav-tab,
+body.adminkit .ak-tabs button {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	float: none;     /* WP default is float:left — kills our flex layout */
 	margin: 0;
 	padding: 4px 10px;
-	background: transparent;
 	border: 0;
 	border-radius: var(--ak-radius-s);
+	background: transparent;
 	box-shadow: none;
 	color: var(--ak-text-muted);
+	font: inherit;
 	font-size: 13px;
 	font-weight: 500;
 	line-height: 1.3;
 	text-decoration: none;
 	white-space: nowrap;
+	float: none;      /* WP's `.nav-tab` defaults to float:left, breaks flex. */
+	cursor: pointer;
 }
 
+/* 3 — Hover / focus: neutral wash, heading colour. */
+body.adminkit .subsubsub a:hover,
+body.adminkit .subsubsub a:focus,
 body.adminkit .nav-tab:hover,
-body.adminkit .nav-tab:focus {
+body.adminkit .nav-tab:focus,
+body.adminkit .ak-tabs button:hover {
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
-	border-color: transparent;
-	box-shadow: none;
 }
 
+/* 4 — Active: elevated pill, heading colour, bold. Status-specific tints
+   (publish → green, trash → red, …) override the neutral background below. */
+body.adminkit .subsubsub a.current,
+body.adminkit .subsubsub a.current:hover,
+body.adminkit .subsubsub a.current:focus,
 body.adminkit .nav-tab-active,
 body.adminkit .nav-tab-active:hover,
-body.adminkit .nav-tab-active:focus {
+body.adminkit .nav-tab-active:focus,
+body.adminkit .ak-tabs button.on {
 	background: var(--ak-elevated);
 	color: var(--ak-heading);
-	border-color: transparent;
 	font-weight: 600;
 }
 
-/* Icon glyph injected into `.nav-tab[data-tab-id]` by list-table-chrome.js
-   (Bricks settings tabs, primarily). Inherits the link's current colour so
-   the icon follows the muted → heading transition without an extra rule. */
-body.adminkit .nav-tab .ak-nav-tab-ic {
+/* Focus ring on AdminKit's real <button>s. */
+body.adminkit .ak-tabs button:focus-visible {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: -2px;
+}
+
+/* 5 — Icons. `.ak-subsubsub-ic` + `.ak-nav-tab-ic` are injected by
+   list-table-chrome.js; `.ic` is rendered by the AdminKit panel builders.
+   All three inherit `currentColor` so they track the muted → heading
+   transition automatically. translateY(-1px) is an optical lift: Lucide-style
+   icons centre their visual mass slightly below the 24×24 viewBox geometric
+   centre (e.g. the trash icon's bulk sits below the handle), so a
+   geometrically-centred icon reads LOW next to text cap-height. 1px matches
+   what icon libraries recommend (`vertical-align: -0.125em` ≈ 1-2px @ 13px). */
+body.adminkit .subsubsub .ak-subsubsub-ic,
+body.adminkit .nav-tab .ak-nav-tab-ic,
+body.adminkit .ak-tabs button .ic {
 	display: inline-flex;
 	align-items: center;
 	color: currentColor;
+	transform: translateY(-1px);
 }
-body.adminkit .nav-tab .ak-nav-tab-ic svg {
+
+body.adminkit .subsubsub .ak-subsubsub-ic svg,
+body.adminkit .nav-tab .ak-nav-tab-ic svg,
+body.adminkit .ak-tabs button .ic svg {
 	display: block;
 	width: 14px;
 	height: 14px;
 }
 
-/* Optical alignment for inline label-icons. Lucide-style icons centre their
-   visual mass slightly below the geometric centre of the 24×24 viewBox
-   (e.g. the trash icon's bulk sits below the handle), so even though the
-   flex container's `align-items: center` aligns the geometric centres, the
-   eye reads the icon as sitting LOW next to the text cap-height. A 1px lift
-   matches what icon libraries themselves recommend (`vertical-align: -0.125em`
-   ≈ 1-2px at 13px text). Applied to every label-icon pair we ship so the
-   alignment is consistent across .subsubsub filter pills, the .nav-tab
-   strip, and the .ak-tabs profile / options tabs. */
-body.adminkit .subsubsub .ak-subsubsub-ic,
-body.adminkit .nav-tab .ak-nav-tab-ic,
-body.adminkit .ak-tabs button .ic {
-	transform: translateY(-1px);
-}
-
 /* Bricks settings (admin.php?page=bricks-settings) — small polish on top of
-   Bricks' own admin.min.css.
-
-   `tr.code-note` rows ("Custom CSS and JavaScript added below…") otherwise
-   paint as their own card because Bricks rings every `tr` with a 1px shadow.
-   They're advisory hints, not stand-alone fields, so drop the ring + tighten
-   spacing so they read as a caption above the following field row instead of
-   an empty block between cards. */
+   Bricks' own admin.min.css. `tr.code-note` rows ("Custom CSS and JavaScript
+   added below…") otherwise paint as their own card because Bricks rings every
+   `tr` with a 1px shadow. They're advisory hints, not stand-alone fields, so
+   drop the ring + tighten spacing so they read as a caption above the
+   following field row instead of an empty block between cards. */
 body.adminkit #bricks-settings #tab-custom-code tr.code-note {
 	box-shadow: none;
 	margin-bottom: 0;
@@ -971,147 +1005,6 @@ body.adminkit #bricks-settings #tab-custom-code tr.code-note td {
 	background: transparent;
 	color: var(--ak-text-muted);
 	font-size: 13px;
-}
-
-/* `.ak-tabs` — the AdminKit-owned tab strip used wherever we build our own
-   tab navigation (profile / user-edit cards, the AdminKit settings SPA, the
-   options-general grouping, etc.). Same bordered-container + pill shape as
-   `.nav-tab-wrapper` and `.subsubsub` above — one visual language for every
-   nav strip in the admin. Buttons (not <a>) so a missing `href` doesn't
-   bounce the page on click. */
-body.adminkit .ak-tabs {
-	display: flex;
-	flex-wrap: nowrap;
-	gap: 2px;
-	padding: 4px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
-	margin: 0 0 22px;
-	overflow-x: auto;
-	overflow-y: hidden;
-	scrollbar-width: none;
-	width: max-content;
-	max-width: 100%;
-}
-
-body.adminkit .ak-tabs::-webkit-scrollbar {
-	display: none;
-}
-
-body.adminkit .ak-tabs button {
-	display: inline-flex;
-	align-items: center;
-	gap: 7px;
-	padding: 5px 11px;
-	font: inherit;
-	font-size: var(--ak-text-s);
-	font-weight: 500;
-	line-height: 1.3;
-	color: var(--ak-text-muted);
-	background: transparent;
-	border: 0;
-	border-radius: var(--ak-radius-s);
-	cursor: pointer;
-	white-space: nowrap;
-}
-
-body.adminkit .ak-tabs button .ic {
-	display: inline-flex;
-	color: var(--ak-text-muted);
-}
-
-body.adminkit .ak-tabs button:hover {
-	background: var(--ak-hover-bg);
-	color: var(--ak-heading);
-}
-
-body.adminkit .ak-tabs button:hover .ic,
-body.adminkit .ak-tabs button.on .ic {
-	color: var(--ak-heading);
-}
-
-body.adminkit .ak-tabs button.on {
-	background: var(--ak-elevated);
-	color: var(--ak-heading);
-	font-weight: 600;
-}
-
-body.adminkit .ak-tabs button:focus-visible {
-	outline: 2px solid var(--ak-primary);
-	outline-offset: -2px;
-}
-
-/* Subsubsub filter rows above tables (All | Active | Inactive …). Wrapped in a
-   thin bordered tab bar so the filters read as one UI element instead of stray
-   links, with each filter pill prefixed by a status glyph (check / pencil /
-   trash / …). The literal " |" separators and the count's parentheses are
-   stripped in JS (list-table-chrome.js); icons are injected in the same pass,
-   keyed by the WP <li> class. */
-body.adminkit .subsubsub {
-	display: inline-flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 2px;
-	margin: 24px 0;
-	padding: 4px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
-}
-
-body.adminkit .subsubsub li {
-	margin: 0;
-	/* Pre-paint hide for WP's literal " |" separators between adjacent <li>s
-	   — they live as text nodes DIRECTLY inside <li>, between </a> and </li>,
-	   and CSS can't target text nodes by name. `font-size: 0` collapses any
-	   anonymous text content of the <li>; the rule below explicitly restores
-	   readable size on the link + its children, so the pipe is hidden the
-	   moment the page paints (no JS dependency, no flash). */
-	font-size: 0;
-}
-
-body.adminkit .subsubsub li > a {
-	font-size: 13px;
-}
-
-body.adminkit .subsubsub a {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	color: var(--ak-text-muted);
-	padding: 4px 6px 4px 8px;
-	border-radius: var(--ak-radius-s);
-	text-decoration: none;
-	line-height: 1.3;
-}
-
-/* Status glyph prepended by list-table-chrome.js — inherits the link colour so
-   it follows the muted → heading transition on hover/current without extra
-   per-state rules. */
-body.adminkit .subsubsub .ak-subsubsub-ic {
-	display: inline-flex;
-	align-items: center;
-	color: currentColor;
-}
-
-body.adminkit .subsubsub .ak-subsubsub-ic svg {
-	display: block;
-	width: 14px;
-	height: 14px;
-}
-
-body.adminkit .subsubsub a:hover,
-body.adminkit .subsubsub a:focus {
-	background: var(--ak-hover-bg);
-	color: var(--ak-heading);
-	box-shadow: none;
-}
-
-body.adminkit .subsubsub a.current,
-body.adminkit .subsubsub a.current:hover,
-body.adminkit .subsubsub a.current:focus {
-	background: var(--ak-elevated);
-	color: var(--ak-heading);
-	font-weight: 600;
 }
 
 /* Selected pill takes its filter's semantic tint — the same color as that

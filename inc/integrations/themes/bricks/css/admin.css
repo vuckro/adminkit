@@ -186,16 +186,14 @@ body.adminkit #bricks-settings .bricks-custom-capabilities-wrapper .capability-i
 
 /* ----- 5b. Bricks settings tabs (#bricks-settings-tabs-wrapper) ------------
    The strip is `<ul class="nav-tab-wrapper"><li><a class="nav-tab">…` — exactly
-   the markup AdminKit's `wp-core/chrome.css` already paints as a bordered
-   pill container (same shape as `.subsubsub`, `.ak-tabs`). Bricks' own
-   `#bricks-settings-tabs-wrapper{margin:15px 0 30px}` only nudges the strip's
-   margin; everything else (display, padding, border, radius) is ours to set
-   via the generic `.nav-tab-wrapper` rule — no Bricks-specific overrides
-   needed here. Just give the strip breathing room from the title bar above
-   and the first card below; 16px top + 20px bottom matches the rhythm of
-   the cards in the panel. */
+   the markup chrome.css already paints as a bordered pill container (shared
+   shape with `.subsubsub` and `.ak-tabs`). All we need here is to override
+   Bricks' own `#bricks-settings-tabs-wrapper{margin:15px 0 30px}` so the
+   strip sits at the same 16px rhythm as every other AdminKit nav strip;
+   everything else (display, padding, border, radius, pills) inherits from
+   the generic `.nav-tab-wrapper` rule. */
 body.adminkit #bricks-settings-tabs-wrapper {
-	margin: 16px 0 20px;
+	margin: 16px 0;
 }
 
 /* `tr.sep` rows inside the Custom Code tab carry Bricks's own

@@ -1,22 +1,22 @@
 /**
  * AdminKit — options-discussion.php two-tab regrouping.
  *
- * Splits WP's seven `<h2>` settings sections (Default post settings, Other
- * comment settings, Email me whenever, Before a comment appears, Comment
- * Moderation, Disallowed Comment Keys, Avatars) into two coherent tabs:
+ * Wraps every top-level `<table class="form-table">` in a `.ak-options-card`
+ * (with the preceding `<h2>`, if any, as the card title) and routes each card
+ * into one of two tabs:
  *
- *   • Comment settings — everything that governs comments + moderation
- *   • Avatars          — the Avatars block on its own
+ *   • Avatars          — the avatars form-table on its own
+ *   • Comment settings — every other form-table (default post settings, other
+ *                        comment settings, pagination, email, moderation,
+ *                        disallowed keys — WP renders all of those as <tr>s
+ *                        in ONE giant form-table on this page)
  *
- * Avatar detection is locale-proof: we don't match the heading text (which is
- * translated), we look at the inputs inside (`show_avatars` / `avatar_rating`
- * / `avatar_default`). Everything else falls into the Comment settings tab.
+ * Routing is locale-proof: we don't match heading text, we check whether a
+ * form-table contains the avatar-block inputs (`show_avatars` /
+ * `avatar_rating` / `avatar_default`).
  *
- * Each section becomes its own `.ak-options-card` (heading + form-table), so a
- * tab with multiple sections stacks them as separate cards — the existing
- * card chrome from options.css carries over. Active tab → panel visible; the
- * others are `[hidden]` but stay inside the form so submit still posts every
- * field on every tab.
+ * Active tab → panel visible; the others are `[hidden]` but stay inside the
+ * form so submit still posts every field on every tab.
  *
  * Strings ride along via `window.AdminKitOptionsDiscussion` (inline bootstrap
  * printed by AdminKit_Core_Options_Discussion::enqueue).
@@ -60,48 +60,50 @@
 	};
 
 	// Clean fragment-friendly ids so `options-discussion.php#avatars` deep-links
-	// straight into the Avatars tab.
+	// straight into the Avatars tab. Avatars is listed FIRST — it's a focused,
+	// single-purpose tab that opens directly to one card; Comment settings is
+	// the long, multi-section tab that benefits from being click-to-reveal.
 	var TABS = [
-		{ id: 'comments', title: S.comments || 'Comment settings', icon: 'message' },
-		{ id: 'avatars',  title: S.avatars  || 'Avatars',          icon: 'user' }
+		{ id: 'avatars',  title: S.avatars  || 'Avatars',          icon: 'user' },
+		{ id: 'comments', title: S.comments || 'Comment settings', icon: 'message' }
 	];
 
-	// Identify the routing target for each top-level form-table + h2 + leading
-	// note before we touch the DOM. We need a reference to the FIRST node we'll
-	// move so we know where to insert the tab box. Children list is captured up
-	// front so the live re-parenting later doesn't trip us up.
-	var nodes = Array.prototype.slice.call(form.children);
-	var routes = []; // [{ node, target: 'comments'|'avatars' }]
-	var seenAvatar = false;
-	nodes.forEach(function (node) {
-		if (!node.classList) { return; }
-		// Submit row + WP-printed nonces stay in the form, outside any panel,
-		// so they keep working as the form's footer.
-		if (node.classList.contains('submit')) { return; }
-		if (node.tagName === 'INPUT' || node.tagName === 'SCRIPT') { return; }
-		// .form-table — route by content.
-		if (node.classList.contains('form-table')) {
-			var to = tableHasAvatarInputs(node) ? 'avatars' : 'comments';
-			if (to === 'avatars') { seenAvatar = true; }
-			routes.push({ node: node, target: to });
-			return;
+	// Walk every top-level `<table class="form-table">` in the form. Each table
+	// becomes a `.ak-options-card`; the immediately-preceding `<h2>` (if any)
+	// rides along as the card title. Routing is by content (input names, not
+	// heading text) so translation doesn't break detection.
+	var tablesInForm = form.querySelectorAll(':scope > table.form-table');
+	if (!tablesInForm.length) { reveal(); return; }
+	var cards = []; // [{ card: <section>, target: 'avatars'|'comments' }]
+	Array.prototype.forEach.call(tablesInForm, function (table) {
+		var target = tableHasAvatarInputs(table) ? 'avatars' : 'comments';
+
+		// Optional title — the closest preceding <h2> sibling, if there's nothing
+		// table-shaped in between. WP only ships one (`<h2>Avatars</h2>` before
+		// the avatars table); the rest of the form-tables have no preceding h2.
+		var prev = table.previousElementSibling;
+		var h2 = null;
+		while (prev) {
+			if (prev.tagName === 'H2') { h2 = prev; break; }
+			if (prev.tagName === 'TABLE' || prev.tagName === 'INPUT' ||
+				(prev.classList && prev.classList.contains('submit'))) { break; }
+			prev = prev.previousElementSibling;
 		}
-		// <h2>Avatars</h2> — route to Avatars panel. Any prior h2 (rare,
-		// plugin-injected) routes to Comments.
-		if (node.tagName === 'H2') {
-			routes.push({ node: node, target: seenAvatar ? 'avatars' : 'comments' });
-			return;
+
+		var card = document.createElement('section');
+		card.className = 'ak-options-card';
+		if (h2) {
+			h2.classList.add('ak-options-card__title');
+			card.appendChild(h2);
 		}
-		// Anything else (intro <p>, etc.) routes with the LAST decided target,
-		// falling back to comments. Treats stray nodes as content of the
-		// nearest section.
-		routes.push({ node: node, target: seenAvatar ? 'avatars' : 'comments' });
+		card.appendChild(table);
+		cards.push({ card: card, target: target });
 	});
 
-	if (!routes.length) { reveal(); return; }
-
-	// Build the strip + panels and insert ABOVE the first node we're about to
-	// move (so the tab strip sits where the first section used to be).
+	// Build the strip + panels above the first thing we're about to move (so
+	// the tab strip sits where the first section used to be — anything WP
+	// printed before that, e.g. hidden settings_fields inputs, stays in place).
+	var anchor = cards[0].card.querySelector('.ak-options-card__title') || tablesInForm[0];
 	var box = document.createElement('div');
 	box.className = 'ak-options-grouped';
 	var tabs = document.createElement('div');
@@ -111,7 +113,7 @@
 	panelsEl.className = 'ak-options-panels';
 	box.appendChild(tabs);
 	box.appendChild(panelsEl);
-	routes[0].node.parentNode.insertBefore(box, routes[0].node);
+	anchor.parentNode.insertBefore(box, anchor);
 
 	TABS.forEach(function (t) {
 		var panel = document.createElement('div');
@@ -122,14 +124,9 @@
 		t.panel = panel;
 	});
 
-	var TAB_INDEX = { comments: 0, avatars: 1 };
-	routes.forEach(function (r) {
-		// h2 gets the card-title class so options.css can style it as a card
-		// heading (matches the General-page card titles).
-		if (r.node.tagName === 'H2') {
-			r.node.classList.add('ak-options-card__title');
-		}
-		TABS[ TAB_INDEX[ r.target ] ].panel.appendChild(r.node);
+	var TAB_INDEX = { avatars: 0, comments: 1 };
+	cards.forEach(function (c) {
+		TABS[ TAB_INDEX[ c.target ] ].panel.appendChild(c.card);
 	});
 
 	// Drop empty panels (e.g. a site whose theme/plugins removed every Avatars
