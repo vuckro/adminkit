@@ -102,10 +102,16 @@ class AdminKit_Core_Options_General {
 		}
 
 		$strings = array(
+			// Native WP General sections (built from existing form rows).
 			'identity' => __( 'Site identity', 'adminkit' ),
 			'siteIcon' => __( 'Site Icon', 'adminkit' ),
 			'account'  => __( 'Account & registration', 'adminkit' ),
 			'locale'   => __( 'Language, date & time', 'adminkit' ),
+			// AdminKit SPA sections — empty panels are built here; settings.js
+			// fills them with content. Each id matches a tab in settings.js.
+			'dashboard' => __( 'Dashboard', 'adminkit' ),
+			'features'  => __( 'Settings', 'adminkit' ),
+			'plugins'   => __( 'Plugins', 'adminkit' ),
 		);
 
 		AdminKit_Assets::enqueue_script(

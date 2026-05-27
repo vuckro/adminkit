@@ -1,17 +1,17 @@
 /**
  * AdminKit — options-general.php section grouping + tab navigation.
  *
- * WP ships one long .form-table that mixes site identity, account/registration,
- * and date/time settings. This footer script:
+ * Hosts a SIX-tab merged page. The first three tabs are native WP General
+ * sections (Site identity / Account & registration / Language, date & time):
+ * we move the matching `<tr>`s out of WP's one big .form-table into
+ * per-section sub-tables and keep them inside the form so submission still
+ * posts every field. The last three tabs are AdminKit's SPA tabs (Dashboard
+ * / Settings / Plugins): we build empty `<section data-adminkit-panel="…">`
+ * placeholders here; `settings.js` finds them and renders content into them.
  *
- *   1. Splits those rows into three labelled section cards (Identity / Account
- *      / Language, date & time) by MOVING the matching <tr>s into per-section
- *      sub-tables. Site Icon (its own settings-section TR on WP 6.5+) gets
- *      folded into Identity so it isn't a stranded card at the bottom.
- *   2. Builds an `.ak-tabs` strip above the cards (one tab per section, same
- *      bordered-container + pill shape used everywhere else in AdminKit).
- *      Active tab → visible card; the others are `hidden`. All cards remain
- *      inside the form, so submission still posts every field on every tab.
+ * The WP `<p class="submit">` row is hidden when an AdminKit tab is active
+ * (settings.js owns saving for those panels via REST) and shown when a
+ * native tab is active (the form's own POST handles it).
  *
  * Strings ride along via `window.AdminKitOptionsGeneral` (inline bootstrap
  * printed by AdminKit_Core_Options_General::enqueue).
@@ -37,10 +37,15 @@
 	// Inline stroke icons (currentColor) — same Lucide-style set used by the
 	// profile tab strip. Sized via the `.ak-tabs button .ic` rule in chrome.css.
 	var I = {
-		globe:   '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
-		image:   '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
-		users:   '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0M16 11a3 3 0 0 0 0-6M22 21a6 6 0 0 0-4-5.6"/></svg>',
-		clock:   '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>'
+		globe:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
+		image:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+		users:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0M16 11a3 3 0 0 0 0-6M22 21a6 6 0 0 0-4-5.6"/></svg>',
+		clock:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>',
+		// AdminKit tabs — match what settings.js used in standalone mode so the
+		// strip reads consistently before / after the merge.
+		gauge:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>',
+		sliders:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
+		plug:     '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>'
 	};
 
 	// Field ids per section, in display order. Each section title + icon comes
@@ -57,6 +62,7 @@
 	// `tabId`), not its own tab — keeps the strip short and lets the visitor
 	// see the icon next to the title/tagline it belongs with.
 	var GROUPS = [
+		// ── Native WP General sections — built from existing form rows. ──
 		{
 			id:    'site-identity',
 			tabId: 'site-identity',
@@ -87,8 +93,39 @@
 			icon:  'clock',
 			showInTabs: true,
 			rows:  ['WPLANG', 'timezone_string', 'date_format', 'time_format', 'start_of_week']
+		},
+		// ── AdminKit SPA sections — empty placeholders, filled by settings.js.
+		// `adminkit: true` flags them for the build loop (no row scoop, no
+		// inner form-table) AND the activate() hook below (hide WP submit). ──
+		{
+			id:    'dashboard',
+			tabId: 'dashboard',
+			title: S.dashboard || 'Dashboard',
+			icon:  'gauge',
+			showInTabs: true,
+			adminkit: true
+		},
+		{
+			id:    'settings',
+			tabId: 'settings',
+			title: S.features || 'Settings',
+			icon:  'sliders',
+			showInTabs: true,
+			adminkit: true
+		},
+		{
+			id:    'plugins',
+			tabId: 'plugins',
+			title: S.plugins || 'Plugins',
+			icon:  'plug',
+			showInTabs: true,
+			adminkit: true
 		}
 	];
+
+	// Set of AdminKit tab ids — checked by activate() to flip WP's submit row
+	// off (settings.js owns saving via REST for these panels).
+	var ADMINKIT_TABS = { dashboard: 1, settings: 1, plugins: 1 };
 
 	// Page-level wrapper: holds the tabs above and the per-section cards below.
 	// Inserted before the original .form-table so existing nonce + submit rows
@@ -128,6 +165,8 @@
 	// multiple cards can share a tabId so they show together (Site identity +
 	// Site Icon). `showInTabs` controls whether the group contributes a tab
 	// BUTTON; secondary cards (Site Icon) ride along with their primary tab.
+	// `adminkit: true` builds an empty <section> with `data-adminkit-panel`
+	// — settings.js finds it by that attribute and renders content into it.
 	var made = [];
 	var seenTabs = {};
 	GROUPS.forEach(function (g) {
@@ -136,6 +175,20 @@
 		card.id = g.id;
 		card.dataset.tab = g.tabId;
 		card.setAttribute('role', 'tabpanel');
+
+		if (g.adminkit) {
+			// Empty placeholder for settings.js. No title or inner form-table
+			// — the SPA renders its own card chrome inside this container.
+			card.dataset.adminkitPanel = g.id;
+			panels.appendChild(card);
+			if (g.showInTabs && !seenTabs[g.tabId]) {
+				seenTabs[g.tabId] = true;
+				made.push({ id: g.tabId, title: g.title, icon: g.icon });
+			}
+			return;
+		}
+
+		// Native WP section — scoop matching <tr>s into a per-section table.
 		var h = document.createElement('h2');
 		h.className = 'ak-options-card__title';
 		h.textContent = g.title;
@@ -145,7 +198,7 @@
 		t.setAttribute('role', 'presentation');
 		var tb = document.createElement('tbody');
 		t.appendChild(tb);
-		g.rows.forEach(function (id) {
+		(g.rows || []).forEach(function (id) {
 			var input = form.querySelector('#' + id) ||
 			            form.querySelector('[name="' + id + '"]');
 			var tr = input && input.closest('tr');
@@ -190,6 +243,12 @@
 		tabs.appendChild(b);
 	});
 
+	// WP's submit row (`<p class="submit">`) — hidden when an AdminKit tab is
+	// active (settings.js owns saving for those via REST + its own button);
+	// shown when a native tab is active so the form's POST handler is the
+	// obvious affordance. Cached once here; toggled by activate() below.
+	var submitRow = form.querySelector('.submit');
+
 	function activate(id) {
 		Array.prototype.forEach.call(tabs.children, function (b) {
 			var on = b.dataset.target === id;
@@ -202,9 +261,15 @@
 		Array.prototype.forEach.call(panels.children, function (p) {
 			p.hidden = (p.dataset.tab !== id);
 		});
+		// Hide WP's submit on AdminKit tabs — settings.js renders its own save
+		// affordance inside those panels and saves via REST.
+		if (submitRow) {
+			submitRow.hidden = !!ADMINKIT_TABS[id];
+		}
 		// Reflect the active tab in the URL so the page can be deep-linked
-		// (e.g. `options-general.php#site-identity`). `replaceState` keeps the
-		// browser history clean — clicking tabs doesn't pile up entries.
+		// (e.g. `options-general.php#site-identity`, `#dashboard`, …).
+		// `replaceState` keeps the browser history clean — clicking tabs
+		// doesn't pile up entries.
 		if (location.hash.slice(1) !== id) {
 			if (history.replaceState) {
 				history.replaceState(null, '', '#' + id);

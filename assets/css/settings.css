@@ -13,6 +13,23 @@
 	color: var(--ak-text);
 }
 
+/* Embedded mode (Settings → General) — the save bar lives above the panels
+   container as a direct child of `.ak-options-grouped`. The wrapper carries
+   the `.adminkit-app` class so the descendant `.ak-status` + `.ak-btn`
+   rules below apply to its children. Reset the base `.adminkit-app` margins
+   (the wrapper is not the SPA shell — it's a thin floating bar) and lay it
+   out flush-right above the panels. Hidden when on a native WP tab; the
+   page's own `<p class="submit">` handles save there. */
+.adminkit-app.ak-spa-actions {
+	max-width: none;
+	margin: 0 0 12px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 14px;
+}
+.adminkit-app.ak-spa-actions[hidden] { display: none; }
+
 /* Header ------------------------------------------------------------------ */
 .adminkit-app .ak-head {
 	display: flex;

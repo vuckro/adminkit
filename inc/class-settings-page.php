@@ -2,11 +2,15 @@
 /**
  * Settings page — the admin UI for AdminKit.
  *
- * A top-level "AdminKit" menu that mounts a small, build-free single-page app
- * (vanilla JS in `assets/js/settings.js`). The PHP side only:
- *   - registers the menu + screen,
- *   - enqueues the SPA assets and hands it its data via `window.AdminKitData`,
- *   - exposes one REST route (`adminkit/v1/settings`) the SPA POSTs to.
+ * AdminKit's SPA tabs (Dashboard / Settings / Plugins) are hosted INSIDE
+ * Settings → General — same `options-general.php` URL that WP's own General
+ * tabs use, just three extra tabs in the merged tab strip. No separate
+ * AdminKit menu entry. The PHP side here only:
+ *   - enqueues the SPA assets on the options-general screen + hands the app
+ *     its data via `window.AdminKitData`,
+ *   - exposes one REST route (`adminkit/v1/settings`) the SPA POSTs to,
+ *   - redirects the legacy `?page=adminkit` URL to the merged page for
+ *     back-compat with any bookmark / pre-merge upgrader.
  *
  * The data is built from the settings registry: the semantic token taxonomy
  * (rendered read-only on the Design tab), the feature toggles, and the detected
@@ -20,10 +24,11 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Settings_Page {
 
-	/** Settings submenu + settings-page slug (screen hook: settings_page_adminkit).
-	 *  Lives under Settings → AdminKit so AdminKit reads as "site config" alongside
-	 *  the WordPress core options screens, instead of competing with content menus
-	 *  for top-level real estate. */
+	/** Legacy ?page= slug kept ONLY for the back-compat redirect. The SPA now
+	 *  lives on the bare `options-general.php` URL — there's no `Settings →
+	 *  AdminKit` submenu, no `settings_page_adminkit` screen hook. The
+	 *  constant value matches what older bookmarks / external links may carry
+	 *  (e.g. `options-general.php?page=adminkit`); see legacy_redirect(). */
 	const SLUG = 'adminkit';
 
 	/** Asset handle shared by the SPA's script + style. */
@@ -40,9 +45,12 @@ class AdminKit_Settings_Page {
 	 * @return void
 	 */
 	public static function init() {
-		add_action( 'admin_menu', array( __CLASS__, 'add_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
+		// Back-compat: `?page=adminkit` was the previous home of the SPA before
+		// the merge. Redirect any visit there to the merged page so old
+		// bookmarks + upgrade paths land on the right tab.
+		add_action( 'admin_init', array( __CLASS__, 'legacy_redirect' ) );
 		// "Settings" link in the plugin row action area (next to Deactivate). The
 		// filter name is keyed on the plugin's basename so it only attaches to
 		// our row, not every plugin's.
@@ -57,31 +65,33 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Register the AdminKit settings page as a Settings → submenu.
+	 * Redirect the legacy `options-general.php?page=adminkit` URL to the
+	 * merged page. Pre-merge, the SPA lived under that `page` param; any old
+	 * bookmark / dashboard quick-link / upgrade-path call lands there and now
+	 * needs to be sent to the Dashboard tab of the unified page. The hash
+	 * triggers `options-general.js`'s URL-fragment routing so the user lands
+	 * directly on the right tab instead of the default Site identity.
 	 *
-	 * WP appends submenu items in registration order — AdminKit lands at the
-	 * bottom of the Settings list, after Permalinks / Privacy / etc. That's
-	 * the native default and reads as "extra settings provided by this
-	 * plugin"; we don't fight WP's order with `$submenu` manipulation.
-	 *
-	 * Screen hook: `settings_page_adminkit`.
+	 * Capability gate matches the SPA's REST permission (manage_options) so
+	 * an unauthorised visitor doesn't reveal the page even via redirect.
 	 *
 	 * @return void
 	 */
-	public static function add_menu() {
-		add_submenu_page(
-			'options-general.php',
-			__( 'AdminKit', 'adminkit' ),
-			__( 'AdminKit', 'adminkit' ),
-			'manage_options',
-			self::SLUG,
-			array( __CLASS__, 'render' )
-		);
+	public static function legacy_redirect() {
+		if ( empty( $_GET['page'] ) || self::SLUG !== $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		wp_safe_redirect( admin_url( 'options-general.php#dashboard' ) );
+		exit;
 	}
 
 	/**
 	 * Prepend a "Settings" link to the plugin row actions on plugins.php so the
-	 * admin doesn't have to walk Settings → AdminKit to reach the SPA.
+	 * admin can jump straight to AdminKit's Dashboard tab from the Plugins
+	 * screen — no detour via the Settings menu.
 	 *
 	 * @param string[] $links
 	 * @return string[]
@@ -89,7 +99,7 @@ class AdminKit_Settings_Page {
 	public static function plugin_action_links( $links ) {
 		$settings = sprintf(
 			'<a href="%s">%s</a>',
-			esc_url( admin_url( 'options-general.php?page=' . self::SLUG ) ),
+			esc_url( admin_url( 'options-general.php#dashboard' ) ),
 			esc_html__( 'Settings', 'adminkit' )
 		);
 		array_unshift( $links, $settings );
@@ -97,32 +107,18 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * The SPA mount point. Everything else is rendered client-side.
-	 *
-	 * @return void
-	 */
-	public static function render() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-		echo '<div class="wrap">'
-			. '<h1 class="screen-reader-text">' . esc_html__( 'AdminKit', 'adminkit' ) . '</h1>'
-			. '<hr class="wp-header-end">'
-			. '<div id="adminkit-app" class="adminkit-app" aria-busy="true">'
-			. '<noscript><p>' . esc_html__( 'AdminKit settings require JavaScript.', 'adminkit' ) . '</p></noscript>'
-			. '</div></div>';
-	}
-
-	/**
-	 * Enqueue the SPA assets (only on our screen) and hand the app its data.
-	 * The style depends on `adminkit-tokens` so `var(--ak-*)` resolves; the
-	 * script depends on `wp-api-fetch` (which also wires the REST nonce).
+	 * Enqueue the SPA assets on the merged `options-general` screen and hand
+	 * the app its data. The style depends on `adminkit-tokens` so
+	 * `var(--ak-*)` resolves; the script depends on `wp-api-fetch` (which
+	 * also wires the REST nonce). `wp_enqueue_media()` powers the
+	 * brand-logo picker on the Dashboard tab — loaded on every General
+	 * visit (simpler than lazy-loading; cost paid once per page view).
 	 *
 	 * @param string $hook Current admin page hook suffix.
 	 * @return void
 	 */
 	public static function enqueue( $hook ) {
-		if ( 'settings_page_' . self::SLUG !== $hook ) {
+		if ( 'options-general.php' !== $hook ) {
 			return;
 		}
 

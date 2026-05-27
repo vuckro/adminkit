@@ -100,9 +100,6 @@ class AdminKit_Auto_Theme {
 		if ( '' === $id || false === strpos( $id, '_page_' ) ) {
 			return;
 		}
-		if ( 'settings_page_' . AdminKit_Settings_Page::SLUG === $id ) {
-			return;
-		}
 
 		$css_src  = 'assets/css/wp-core/auto-theme.css';
 		$js_src   = 'assets/js/wp-core/auto-theme.js';

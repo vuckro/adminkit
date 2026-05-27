@@ -144,21 +144,26 @@ list, the `adminkit/setting/{key}` filter, and the REST save.
 ## Settings
 
 `AdminKit_Settings` is the registry; `AdminKit_Settings_Page` mounts a small
-vanilla-JS SPA (`assets/js/settings.js`) on the **Settings → AdminKit** submenu
-(screen hook `settings_page_adminkit`) and persists via one REST route
-(`adminkit/v1/settings`). Four tabs: **Dashboard**;
-**Design** (leads with the interactive Branding block — the brand logo plus the
-`wp_logo` / `login_logo` modes for the site-name and login brand marks — then a
-read-only reference of the semantic token map; the `design` i18n key, formerly
-"Tokens"); **Features** (the module toggles — the `features` key, formerly
-"Settings"); and **Plugins** (every installed plugin
-plus AdminKit's active theme adapter, each carrying a **Native** badge when
-AdminKit ships a tuned adapter for it — a per-host enable toggle plus dark mode —
-while everything else inherits AdminKit's **generic** base token styling
-automatically. Rows are grouped (Plugins, Themes) with a count pill per group
-title, and AdminKit itself appears as a locked **System** row (always on, not
-toggleable here). The Native badge tracks whether an adapter exists, not whether
-the plugin is currently active).
+vanilla-JS SPA (`assets/js/settings.js`) directly on **Settings → General**
+(no separate AdminKit menu entry — the SPA's three tabs sit alongside WP's
+own native sections in one merged six-tab strip on `options-general.php`).
+Saving runs through one REST route (`adminkit/v1/settings`). The three SPA
+tabs are: **Dashboard** (the interactive Branding block — brand logo plus
+the `wp_logo` / `login_logo` modes for the site-name and login brand
+marks — then a read-only reference of the semantic token map, plus the
+roadmap card grid); **Settings** (the module toggles); and **Plugins**
+(every installed plugin plus AdminKit's active theme adapter, each
+carrying a **Native** badge when AdminKit ships a tuned adapter for it —
+a per-host enable toggle plus dark mode — while everything else inherits
+AdminKit's **generic** base token styling automatically. Rows are grouped
+(Plugins, Themes) with a count pill per group title, and AdminKit itself
+appears as a locked **System** row, always on, not toggleable here. The
+Native badge tracks whether an adapter exists, not whether the plugin is
+currently active).
+
+The legacy `?page=adminkit` URL still works: an `admin_init` hook in
+`AdminKit_Settings_Page` redirects it to `options-general.php#dashboard`
+so old bookmarks and pre-merge upgrade paths land on the right tab.
 
 ```php
 AdminKit_Settings::register( $key, array $args );  // declare a setting (idempotent)

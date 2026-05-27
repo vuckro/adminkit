@@ -1,14 +1,21 @@
 /**
  * AdminKit settings — a small, build-free single-page app.
  *
- * Renders four tabs (Dashboard / Design / Features / Plugins) into
- * #adminkit-app from the data PHP hands over in window.AdminKitData. Tabs are
- * pill buttons driven by the URL hash (#design / #settings / …).
+ * Two mounting modes:
+ *   • EMBEDDED (default): Settings → General hosts the SPA. options-general.js
+ *     builds empty placeholder `<section data-adminkit-panel="{id}">` cards
+ *     inside the merged tab strip; we find each one by attribute and render
+ *     content into it. The page's own tab strip + URL-fragment routing owns
+ *     activation; we contribute only a `.ak-spa-actions` save bar above the
+ *     panels container.
+ *   • STANDALONE: a host `<div id="adminkit-app">` exists (legacy / third-party
+ *     mount). We build our own outer chrome (.ak-head with title + save bar,
+ *     `.ak-tabs` strip, `.ak-panels` wrapper) and own hash routing.
  *
- * The Design tab leads with the interactive brand controls (light/dark logo
- * upload + where the mark shows), then a STATIC colour/type reference: every
- * semantic colour role (swatch + the --ak token and the provider var / primitive
- * it maps to), read-only. Features holds the module on/off toggles. Both save via REST.
+ * Tabs are the same three in both modes (Dashboard / Settings / Plugins).
+ * Dashboard renders the brand controls + roadmap; Settings holds the module
+ * toggles; Plugins lists the per-host adapters + per-plugin opt-outs. All
+ * save via the same `adminkit/v1/settings` REST route.
  *
  * No framework, no build step — vanilla DOM.
  */
@@ -16,8 +23,16 @@
 	'use strict';
 
 	var D = window.AdminKitData;
+	if ( ! D ) {
+		return;
+	}
+	// Mode detection — Embedded mode wins when the merged page is in the DOM.
+	// Standalone mode only fires when a host `#adminkit-app` element exists
+	// AND no embedded panels were built (legacy bookmark / third-party mount).
 	var app = document.getElementById( 'adminkit-app' );
-	if ( ! D || ! app ) {
+	var EMBEDDED_PANELS = document.querySelectorAll( '[data-adminkit-panel]' );
+	var EMBEDDED = EMBEDDED_PANELS.length > 0;
+	if ( ! EMBEDDED && ! app ) {
 		return;
 	}
 	var I = D.i18n || {};
@@ -202,13 +217,18 @@
 	function markDirty() { state.dirty = true; updateBar(); }
 
 	// --- build ---------------------------------------------------------------
-	app.removeAttribute( 'aria-busy' );
-	app.textContent = '';
-
-	app.appendChild( el( 'div', { 'class': 'ak-head' }, [
-		el( 'h1', { 'class': 'ak-title', text: 'AdminKit' } ),
-		el( 'div', { 'class': 'ak-actions' }, [ statusEl, saveBtn ] )
-	] ) );
+	// Standalone mode prints its own .ak-head (page title + save bar). In
+	// embedded mode the page already has an `<h1>` ("Réglages généraux"), so
+	// the title would duplicate; we mount the save bar separately further
+	// down, scoped to the merged page's `.ak-options-grouped`.
+	if ( ! EMBEDDED ) {
+		app.removeAttribute( 'aria-busy' );
+		app.textContent = '';
+		app.appendChild( el( 'div', { 'class': 'ak-head' }, [
+			el( 'h1', { 'class': 'ak-title', text: 'AdminKit' } ),
+			el( 'div', { 'class': 'ak-actions' }, [ statusEl, saveBtn ] )
+		] ) );
+	}
 
 	var ICONS = {
 		dashboard: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>',
@@ -233,6 +253,45 @@
 	];
 	var activeId = tabs[ 0 ].id;
 	var panels = {};
+
+	// Build each tab's content once. In both modes we get a DOM element back
+	// from t.build() that we'll then mount in mode-specific places.
+	tabs.forEach( function ( t ) {
+		panels[ t.id ] = t.build();
+	} );
+
+	if ( EMBEDDED ) {
+		// Embedded mode: drop each panel content into the placeholder card
+		// `options-general.js` built. The page's own tab strip + URL-fragment
+		// routing owns activation — we do not build a nav, do not register
+		// hashchange. The placeholder card has `.ak-options-card` + its own
+		// `data-tab` attribute; adding `.adminkit-app` lets settings.css
+		// rules (scoped to `.adminkit-app`) apply inside it.
+		tabs.forEach( function ( t ) {
+			var host = document.querySelector( '[data-adminkit-panel="' + t.id + '"]' );
+			if ( ! host ) { return; }
+			host.classList.add( 'adminkit-app' );
+			host.setAttribute( 'aria-labelledby', 'ak-tab-' + t.id );
+			host.appendChild( panels[ t.id ] );
+		} );
+		// Save bar — sits above the panels container, always visible. State
+		// stays neutral when no changes pending; lights up + enables Save the
+		// moment something dirties. The wrapper carries both `.adminkit-app`
+		// (so settings.css's `.adminkit-app .ak-status` + `.adminkit-app .ak-btn`
+		// descendant rules apply to the status pill + Save button) AND
+		// `.ak-spa-actions` (for the embedded-mode layout rule in settings.css).
+		var grouped = document.querySelector( '.ak-options-grouped' );
+		if ( grouped ) {
+			var panelsBlock = grouped.querySelector( '.ak-options-panels' );
+			var actions = el( 'div', { 'class': 'adminkit-app ak-spa-actions' }, [ statusEl, saveBtn ] );
+			grouped.insertBefore( actions, panelsBlock );
+		}
+		updateBar();
+		// Done — skip the standalone nav/hash plumbing below.
+		return;
+	}
+
+	// ── Standalone mode (legacy host `<div id="adminkit-app">`) ──
 	var nav = el( 'div', { 'class': 'ak-tabs', role: 'tablist', 'aria-label': 'AdminKit' } );
 	var panelWrap = el( 'div', { 'class': 'ak-panels' } );
 
@@ -248,7 +307,6 @@
 			onclick: function () { go( t.id ); }
 		}, [ ic, el( 'span', { 'class': 'tx', text: t.label } ) ] );
 		nav.appendChild( t.btn );
-		panels[ t.id ] = t.build();
 		panels[ t.id ].setAttribute( 'aria-labelledby', 'ak-tab-' + t.id );
 		panelWrap.appendChild( panels[ t.id ] );
 	} );

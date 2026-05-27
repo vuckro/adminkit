@@ -22,9 +22,10 @@ In WordPress:
 
 1. **Plugins → Add New → Upload Plugin** → choose the `adminkit-X.Y.Z.zip` file → **Install Now**.
 2. **Activate Plugin.**
-3. A **Settings → AdminKit** submenu appears in wp-admin. The tabs cover the
-   dashboard, feature toggles, brand options, and an inventory of installed
-   plugins + theme adapters.
+3. Open **Settings → General** in wp-admin. The page now hosts six tabs in
+   one strip: Site identity, Account & registration, Language/date/time
+   (native WP) + Dashboard, Settings, Plugins (AdminKit). No separate
+   AdminKit menu entry — everything lives on the same page.
 
 That's it — there's no setup wizard, no DB migration, no required configuration.
 Defaults are sensible: Gutenberg canvas theming, AdminKit icons, and local
