@@ -61,6 +61,18 @@ body.adminkit {
 }
 
 
+/* ----- 2b. Page wrapper margin --------------------------------------------
+   Bricks ships `.bricks-admin-wrapper { margin: 40px 20px }`, which stacks a
+   second layer of padding on top of WP's own `.wrap` (already 0 20px 10px).
+   Result: the title sits 40px below the top chrome and 20px in from the
+   sidebar — too much breathing room compared to the rest of the admin.
+   Drop the margin so the wrapper sits flush with .wrap's padding; Bricks'
+   `max-width: 960px` stays in effect via the original rule. */
+body.adminkit .bricks-admin-wrapper {
+	margin: 0;
+}
+
+
 /* ----- 3. Card surfaces (.bricks-admin-inner) ----- */
 /* Getting Started / License / Sidebars / System Information all wrap
    content in `.bricks-admin-inner` with hardcoded `background: #fff`. */
