@@ -39,8 +39,6 @@ class AdminKit_Plugin {
 
 		self::boot_integrations();
 
-		AdminKit_Dashboard::init();
-
 		/**
 		 * Fires once every AdminKit module has registered its hooks.
 		 *

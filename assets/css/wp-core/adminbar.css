@@ -273,16 +273,6 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 }
 
 
-/* WooCommerce "Store coming soon" site-visibility badge — WC paints the pill
-   #F6F7F7; recolor to a raised surface so it reads on the token admin bar. The
-   badge text already inherits --ak-text from the .ab-item rule above. Renders
-   only when WooCommerce is active; harmless otherwise. !important matches this
-   file's convention for the stubborn admin bar. */
-#wpadminbar #wp-admin-bar-woocommerce-site-visibility-badge a.ab-item {
-	background-color: var(--ak-elevated) !important;
-}
-
-
 /* Admin-bar SEARCH (front-end, far right in #wp-admin-bar-top-secondary). WP's
    node is `#wp-admin-bar-search` → form-wrapper `#adminbarsearch` → an
    `input.adminbar-input`; the magnifying glass is a dashicon FONT glyph painted

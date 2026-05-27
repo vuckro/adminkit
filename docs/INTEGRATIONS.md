@@ -234,12 +234,6 @@ and inject it as a `<link>` into the host's `shadowRoot` from a small JS bridge
 host's own theme attribute (one-way) for `color-scheme`. The
 [query-monitor adapter](../inc/integrations/plugins/query-monitor/) is the reference.
 
-### Register a dashboard widget
-
-`AdminKit_Dashboard::register_widget( $id, $title, $cb )` in `boot()`. The registry
-only mounts `wp_dashboard_setup` if a widget is registered, so a vanilla site pays
-nothing.
-
 ---
 
 ## Anti-patterns

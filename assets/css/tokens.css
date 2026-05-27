@@ -164,10 +164,8 @@
 	   --space-* scale is fluid (rem/clamp) and sized for frontend layout, far too
 	   large for admin chrome. A tight, fixed admin scale so component spacing reads
 	   from one source instead of scattered magic numbers. + AdminKit addition. */
-	--ak-space-2xs: 2px;
 	--ak-space-xs: 4px;
 	--ak-space-s: 8px;
-	--ak-space-m: 12px;
 	--ak-space-l: 16px;
 
 	--ak-font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;

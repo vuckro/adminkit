@@ -75,20 +75,6 @@
 		}
 	} );
 
-	// Shared read of the current accent source. sourcePill() lives at module
-	// scope (outside buildDesign() where the `state` closure is defined), so it
-	// reads the source via this tiny accessor that the picker writes into.
-	// Initialised from the bootstrap, kept in sync by accentPicker's setSource().
-	// MUST be declared before buildDesign() runs (it's called during tab build).
-	var accentState = { source: ( D.accentSource || 'adminkit' ) };
-
-	// Registry of every Source <td> in the token-map table along with its
-	// original token object. Populated by refRow() each time the disclosure
-	// builds the table; refreshAllPills() walks it after any source change.
-	// Cheaper + cleaner than data-attributes since we keep the full token in scope.
-	// MUST be declared before buildDesign() runs (refRow / refreshAllPills read it).
-	var pillCells = [];
-
 	// --- tiny DOM helper -----------------------------------------------------
 	function el( tag, attrs, kids ) {
 		var n = document.createElement( tag );
@@ -107,89 +93,6 @@
 			n.appendChild( typeof c === 'string' ? document.createTextNode( c ) : c );
 		} );
 		return n;
-	}
-
-	// --- color resolver -------------------------------------------------------
-	// Resolve a CSS custom property to its CONCRETE value (rgb/rgba or hex). Used
-	// by the Design tab's token reference so each row shows the actual painted
-	// colour next to its name — handy when the token cascades through several
-	// fallback layers (provider → baseline → built-in default).
-	//
-	// getComputedStyle() on a var name returns the variable's *source* (e.g.
-	// "var(--neutral-l-1)"), so we paint a hidden probe and read back its
-	// resolved background-color, then convert opaque rgb() to a short hex.
-	function resolveColor( cssVar ) {
-		var probe = document.createElement( 'span' );
-		probe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;background:var(' + cssVar + ')';
-		document.body.appendChild( probe );
-		var rgb = getComputedStyle( probe ).backgroundColor;
-		document.body.removeChild( probe );
-		return rgbToHex( rgb );
-	}
-
-	function rgbToHex( s ) {
-		// Keep rgba() (alpha < 1) as-is — hex notation hides the alpha.
-		var m = s.match( /^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)\s*(?:[,/]\s*([\d.]+))?\s*\)$/ );
-		if ( ! m ) { return s; }
-		if ( m[4] != null && parseFloat( m[4] ) < 1 ) { return s; }
-		function h( n ) { return ( '0' + parseInt( n, 10 ).toString( 16 ) ).slice( -2 ); }
-		return '#' + h( m[1] ) + h( m[2] ) + h( m[3] );
-	}
-
-	// When the dark-mode flip happens (class-theme-toggle flips
-	// [data-adminkit-theme] on <html>), re-resolve every token swatch's hex so the
-	// reference stays accurate. Idempotent: walks any [data-ak-token] in the DOM
-	// (the Design tab may not be mounted yet — that's fine, the observer is cheap).
-	function refreshHexes() {
-		var nodes = document.querySelectorAll( '[data-ak-token]' );
-		for ( var i = 0; i < nodes.length; i++ ) {
-			nodes[ i ].textContent = resolveColor( nodes[ i ].getAttribute( 'data-ak-token' ) );
-		}
-	}
-	if ( window.MutationObserver ) {
-		new MutationObserver( refreshHexes ).observe(
-			document.documentElement,
-			{ attributes: true, attributeFilter: [ 'data-adminkit-theme' ] }
-		);
-	}
-
-	// --- disclosure (expand/collapse) ----------------------------------------
-	// One button (caret rotates on open) + a hidden content panel. The content is
-	// built LAZILY on first open via the supplied builder — handy for big chunks
-	// like the 25-row tokens reference table that shouldn't churn the DOM until
-	// asked for. Returns { btn, panel } so the caller can place them where they
-	// want (some live inline with their label, others on a separate row).
-	function disclosure( labelClosed, labelOpen, build, options ) {
-		options = options || {};
-		var isOpen = false;
-		var panel = el( 'div', { 'class': 'ak-disclose__panel' + ( options.panelClass ? ' ' + options.panelClass : '' ) } );
-		panel.setAttribute( 'hidden', '' );
-		var label = el( 'span', { 'class': 'ak-disclose__lbl', text: labelClosed } );
-		var caret = el( 'span', { 'class': 'ak-disclose__caret', 'aria-hidden': 'true', text: '▾' } );
-		var btn = el( 'button', {
-			type: 'button',
-			'class': 'ak-disclose__btn' + ( options.btnClass ? ' ' + options.btnClass : '' ),
-			'aria-expanded': 'false'
-		}, [ label, caret ] );
-		btn.addEventListener( 'click', function () {
-			isOpen = ! isOpen;
-			if ( isOpen ) {
-				if ( ! panel.dataset.built ) {
-					build( panel );
-					panel.dataset.built = '1';
-				}
-				panel.removeAttribute( 'hidden' );
-				btn.classList.add( 'is-open' );
-				btn.setAttribute( 'aria-expanded', 'true' );
-				label.textContent = labelOpen;
-			} else {
-				panel.setAttribute( 'hidden', '' );
-				btn.classList.remove( 'is-open' );
-				btn.setAttribute( 'aria-expanded', 'false' );
-				label.textContent = labelClosed;
-			}
-		} );
-		return { btn: btn, panel: panel };
 	}
 
 	// --- header chrome -------------------------------------------------------
@@ -311,25 +214,20 @@
 	// --- panels --------------------------------------------------------------
 	function intro( text ) { return el( 'p', { 'class': 'ak-intro', text: text } ); }
 
-	// Dashboard "tab" — built once, mounted as a SECONDARY card on the Site
-	// identity tab (no own tab button, no own routing). The card contains the
-	// branding UI (Brand card with slots + accent picker + display row) and,
-	// inside it, a disclosure that reveals the read-only token reference.
-	// The roadmap that used to live below the Brand card was removed — the
-	// README's Roadmap section is the single source now.
+	// Dashboard tab — currently just the Brand card (logos, favicons, accent
+	// picker, display row). Thin wrapper so the tab registry stays uniform.
 	function buildDashboard() {
 		return buildDesign();
 	}
 
-	// Design tab — final layout (Phase A). Leads with one interactive Brand card
-	// (logo / favicon slots · accent picker · derived strip · display segmented
-	// controls · Actions menu), then a "View all N tokens" CTA that reveals the
-	// read-only token reference table inline. Branding controls live HERE — not
-	// on Features — so the design surface is the one obvious place to brand.
+	// Brand card builder. Lays out one .ak-card with the four media slots
+	// (Favicon Light · Logo Light · Favicon Dark · Logo Dark), the accent
+	// picker and the Display segmented controls. The "Export to Bricks"
+	// button in the card head opens the bundled JSON-templates modal.
 	function buildDesign() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' } );
 
-		// --- Common helpers used inside the Design tab ---------------------------
+		// --- Common helpers used inside buildDesign() ---------------------------
 
 		// Open the WP media frame and call back with the chosen attachment URL +
 		// the full attachment object (so callers can grab `id` for site_icon-style
@@ -707,8 +605,6 @@
 					existing.parentNode.removeChild( existing );
 				}
 				swatch.style.background = 'var(--ak-primary)';
-				refreshHexes();
-				refreshAllPills();
 			}
 
 			function syncSeg() {
@@ -728,7 +624,6 @@
 
 			function setSource( newSrc ) {
 				state.accentSource = newSrc;
-				accentState.source = newSrc; // mirror into module-scope for sourcePill()
 				syncSeg();
 				applyPreview();
 				markDirty();
@@ -879,164 +774,14 @@
 		] );
 
 		// Card stack: identity (slots) → display row → color row. Mounted
-		// directly under the panel — no wrapping intro text, the eyebrow +
-		// title on the card head already explain what this is.
+		// directly under the panel — no wrapping intro text, the title on
+		// the card head already explains what this is.
 		var card = el( 'section', { 'class': 'ak-card' }, [
 			cardHead, slotsRow, displayRow, colorRow
 		] );
 		p.appendChild( card );
 
-		// --- Tokens CTA + revealed reference (lazy build) ------------------------
-		// One disclosure ("Want to dig in? · View all N tokens") gates the entire
-		// read-only reference area. Token map first (it's what the CTA copy
-		// promises — "Browse every token AdminKit exposes"), then the
-		// typography card below as a smaller secondary reference. Both are
-		// built lazily on first open and live in the same panel so a single
-		// click reveals the whole reference, single click hides it.
-		var totalTokens = ( D.colors || [] ).reduce( function ( n, g ) {
-			return n + ( ( g.tokens || [] ).length );
-		}, 0 );
-		var ctaLabel = ( I.tokensCtaBtnFmt || 'View all %d tokens' ).replace( '%d', totalTokens );
-		var refDisc = disclosure(
-			ctaLabel,
-			I.tokensRefHide || 'Hide',
-			function ( panel ) {
-				panel.appendChild( tokensReference() );
-				panel.appendChild( typeSection() );
-			},
-			{ btnClass: 'ak-tokens-cta__btn' }
-		);
-
-		var cta = el( 'div', { 'class': 'ak-tokens-cta' }, [
-			el( 'div', {}, [
-				el( 'div', { 'class': 'ak-tokens-cta__title', text: I.tokensCtaTitle || 'Want to dig in?' } ),
-				el( 'div', { 'class': 'ak-tokens-cta__sub', text: I.tokensCtaSub || 'Browse every token AdminKit exposes — read-only reference.' } )
-			] ),
-			refDisc.btn
-		] );
-		p.appendChild( cta );
-		p.appendChild( refDisc.panel );
-
 		return p;
-	}
-
-	// Read-only token reference — a 4-column table (Token / Cascade / Value /
-	// Source pill). Section headers (SURFACES / BORDERS / …) are full-width
-	// rows with a single colspan'd cell. Built once per disclosure-open and
-	// kept in the DOM after that (the MutationObserver picks up dark-mode flips
-	// even while hidden).
-	function tokensReference() {
-		// Reset the pill-cell registry on each build so refreshAllPills only
-		// walks the cells that are currently in the DOM.
-		pillCells.length = 0;
-
-		var thead = el( 'thead', {}, [ el( 'tr', {}, [
-			el( 'th', { text: I.colToken || 'Token' } ),
-			el( 'th', { text: I.colCascade || 'Cascade' } ),
-			el( 'th', { text: I.colValue || 'Value' } ),
-			el( 'th', { text: I.colSource || 'Source' } )
-		] ) ] );
-		var tbody = el( 'tbody' );
-		( D.colors || [] ).forEach( function ( g ) {
-			// Section header row.
-			tbody.appendChild( el( 'tr', { 'class': 'ak-tokens-ref__section' }, [
-				el( 'td', { colspan: '4', text: ( g.label || '' ).toUpperCase() } )
-			] ) );
-			( g.tokens || [] ).forEach( function ( t ) { tbody.appendChild( refRow( t ) ); } );
-		} );
-
-		// Same .ak-card shell as the Brand + Typography cards above — identical
-		// padding / border / radius so the three read as a coherent family.
-		// Uses h2 (not h3) so the heading style matches the others byte-for-byte
-		// without depending on UA defaults.
-		return el( 'section', { 'class': 'ak-card ak-tokens-ref' }, [
-			el( 'div', { 'class': 'ak-card__head' }, [
-				el( 'div', { 'class': 'ak-card__head-main' }, [
-					el( 'div', { 'class': 'ak-card__eyebrow', text: I.tokensRefEyebrow || 'Reference' } ),
-					el( 'h2', { 'class': 'ak-card__title', text: I.tokensRefTitle || 'Token map' } ),
-					el( 'p', { 'class': 'ak-card__sub', text: I.tokensRefSub || '' } )
-				] )
-			] ),
-			el( 'table', { 'class': 'ak-tokens-ref__table' }, [ thead, tbody ] )
-		] );
-	}
-
-	// Source pill for a single token row. The pill describes what's ACTUALLY
-	// feeding the token at runtime, taking the current `accent_source` into
-	// account (which decides which baseline is on the cascade):
-	//
-	//   • own (AdminKit-defined token, e.g. --ak-secondary) → ADMINKIT pill
-	//     regardless of source.
-	//   • accent-family (--ak-primary*, --ak-on-accent, --ak-focus) → follows
-	//     `accentState.source`: CUSTOM (when source=custom), BRICKS (when
-	//     source=bricks AND Bricks is actually detected), else ADMINKIT.
-	//   • non-accent, source=bricks AND token has a `bricks` mapping AND
-	//     Bricks detected → BRICKS pill (Bricks's stylesheet is providing it).
-	//   • non-accent, source IN {adminkit, custom} → ADMINKIT pill (the
-	//     wp-baseline.css file is providing it).
-	//   • else → AUTO pill (cascade safety net, shouldn't normally show).
-	function sourcePill( t ) {
-		if ( t.own ) {
-			return el( 'span', { 'class': 'ak-pill ak-pill--adminkit', text: I.sourceAdminKit || 'AdminKit' } );
-		}
-		if ( t.accent_family ) {
-			if ( accentState.source === 'custom' ) {
-				return el( 'span', { 'class': 'ak-pill ak-pill--custom', text: I.sourceCustom || 'Custom' } );
-			}
-			if ( accentState.source === 'bricks' && D.bricksDetected ) {
-				return el( 'span', { 'class': 'ak-pill ak-pill--bricks', text: I.sourceBricks || 'Bricks' } );
-			}
-			return el( 'span', { 'class': 'ak-pill ak-pill--adminkit', text: I.sourceAdminKit || 'AdminKit' } );
-		}
-		// Non-accent tokens — which baseline is currently providing them.
-		if ( accentState.source === 'bricks' && t.bricks && D.bricksDetected ) {
-			return el( 'span', { 'class': 'ak-pill ak-pill--bricks', text: I.sourceBricks || 'Bricks' } );
-		}
-		if ( accentState.source === 'adminkit' || accentState.source === 'custom' ) {
-			return el( 'span', { 'class': 'ak-pill ak-pill--adminkit', text: I.sourceAdminKit || 'AdminKit' } );
-		}
-		return el( 'span', { 'class': 'ak-pill ak-pill--auto', text: I.sourceAuto || 'Auto' } );
-	}
-
-	// `accentState` + `pillCells` declared up top with the rest of module state
-	// (sourcePill / refRow / refreshAllPills all read them at first-render time,
-	// so they have to exist before buildDesign() runs).
-
-	// Re-render every Source pill in the token map to reflect the current
-	// accent source. Called by accentPicker.applyPreview() — covers BOTH
-	// accent-family tokens (the obvious case) AND the rest (because they may
-	// also flip baseline when source changes between bricks ↔ adminkit/custom).
-	function refreshAllPills() {
-		for ( var i = 0; i < pillCells.length; i++ ) {
-			var ref = pillCells[ i ];
-			ref.td.innerHTML = '';
-			ref.td.appendChild( sourcePill( ref.token ) );
-		}
-	}
-
-	// One token row in the read-only reference table. Cascade reads source →
-	// bricks-semantic → token (the same flow direction we render elsewhere).
-	// The Source <td> is registered in `pillCells` so refreshAllPills() can
-	// re-render it in place when the accent source flips — no full table
-	// rebuild required, no data-attribute juggling.
-	function refRow( t ) {
-		var cascadeBits = [];
-		if ( t.source ) { cascadeBits.push( t.source ); }
-		if ( t.bricks ) { cascadeBits.push( t.bricks ); }
-		var cascade = cascadeBits.length ? cascadeBits.join( ' → ' ) : '—';
-
-		var pillCell = el( 'td', {}, [ sourcePill( t ) ] );
-		pillCells.push( { td: pillCell, token: t } );
-
-		return el( 'tr', {}, [
-			el( 'td', {}, [
-				el( 'span', { 'class': 'ak-tokens-ref__sw', style: 'background: var(' + t.token + ')' } ),
-				el( 'code', { 'class': 'ak-tokens-ref__token', text: t.token } )
-			] ),
-			el( 'td', {}, [ el( 'code', { 'class': 'ak-tokens-ref__cascade', text: cascade } ) ] ),
-			el( 'td', {}, [ el( 'code', { 'class': 'ak-tokens-ref__value', 'data-ak-token': t.token, text: resolveColor( t.token ) } ) ] ),
-			pillCell
-		] );
 	}
 
 	// --- Export to Bricks modal ------------------------------------------------
@@ -1176,50 +921,6 @@
 		overlay.appendChild( body );
 		document.body.appendChild( overlay );
 		closeBtn.focus();
-	}
-
-	// Typography — static reference, laid out in the same card pattern as the
-	// Brand card up top (eyebrow + title + sub, then rows). The body font
-	// follows the provider (Bricks --font-base) when set, else Inter; the scale
-	// is AdminKit's px admin sizes. Each row reads sample-left, token-right
-	// with a `justify-content: space-between` flex layout — same rhythm as the
-	// derived strip chips in the Brand card.
-	function typeSection() {
-		// Hero row — the "Ag" sample sits big at the top, paired with the
-		// body-font token. Same span/code shape as the scale rows so it lines up.
-		var hero = el( 'div', { 'class': 'ak-type-row ak-type-row--hero' }, [
-			el( 'span', { 'class': 'ak-type-row__sample ak-type-row__sample--hero', text: 'Ag' } ),
-			el( 'code', { 'class': 'ak-type-row__token', text: '--ak-font-body' } )
-		] );
-
-		var scale = el( 'div', { 'class': 'ak-type-scale' } );
-		[
-			{ token: '--ak-text-m', label: I.typeBody || 'Body' },
-			{ token: '--ak-text-s', label: I.typeSmall || 'Small' },
-			{ token: '--ak-text-xs', label: I.typeCaption || 'Caption' }
-		].forEach( function ( s ) {
-			scale.appendChild( el( 'div', { 'class': 'ak-type-row' }, [
-				el( 'span', { 'class': 'ak-type-row__lbl', text: s.label } ),
-				el( 'span', {
-					'class': 'ak-type-row__sample',
-					style: 'font-size:var(' + s.token + ')',
-					text: I.pangram || 'The quick brown fox jumps over the lazy dog'
-				} ),
-				el( 'code', { 'class': 'ak-type-row__token', text: s.token } )
-			] ) );
-		} );
-
-		return el( 'section', { 'class': 'ak-card' }, [
-			el( 'div', { 'class': 'ak-card__head' }, [
-				el( 'div', { 'class': 'ak-card__head-main' }, [
-					el( 'div', { 'class': 'ak-card__eyebrow', text: I.typography || 'Typography' } ),
-					el( 'h2', { 'class': 'ak-card__title', text: I.typeTitle || 'Font & sizes' } ),
-					el( 'p', { 'class': 'ak-card__sub', text: I.typographyDesc || 'Body font follows Bricks (--font-base) when set, otherwise Inter.' } )
-				] )
-			] ),
-			hero,
-			scale
-		] );
 	}
 
 	function buildFeatures() {

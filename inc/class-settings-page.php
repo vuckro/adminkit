@@ -237,30 +237,6 @@ class AdminKit_Settings_Page {
 			$stored = array();
 		}
 
-		$colors = array();
-		foreach ( AdminKit_Settings::color_map() as $group ) {
-			$tokens = array();
-			foreach ( $group['tokens'] as $t ) {
-				$tokens[] = array(
-					'token'         => $t['token'],
-					'label'         => $t['label'],
-					'bricks'        => isset( $t['bricks'] ) ? $t['bricks'] : '',
-					'source'        => isset( $t['source'] ) ? $t['source'] : '',
-					'own'           => ! empty( $t['own'] ),
-					// Accent-family tokens (--ak-primary*, --ak-on-accent, --ak-focus)
-					// follow `accent_source` rather than the static `bricks` field.
-					// Read by sourcePill() in the SPA to colour the Source pill.
-					'accent_family' => ! empty( $t['accent_family'] ),
-				);
-			}
-			$colors[] = array(
-				'group'  => $group['group'],
-				'label'  => $group['label'],
-				'desc'   => isset( $group['desc'] ) ? $group['desc'] : '',
-				'tokens' => $tokens,
-			);
-		}
-
 		$schema   = AdminKit_Settings::schema();
 		$features = array();
 		foreach ( self::feature_descriptors() as $f ) {
@@ -293,8 +269,6 @@ class AdminKit_Settings_Page {
 
 		return array(
 			'route'        => self::REST_NS . self::REST_ROUTE,
-			'colors'       => $colors,
-			'providers'    => self::providers(),
 			'features'     => $features,
 			'integrations' => $integrations,
 			'logos'        => array(
@@ -339,38 +313,18 @@ class AdminKit_Settings_Page {
 			// 4 sections). The SPA renders these in the Export to Bricks modal.
 			'bricksExports'  => self::load_bricks_exports(),
 			'i18n'         => array(
+				// Tab labels (the only three the SPA strip prints).
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
-				'design'            => __( 'Design', 'adminkit' ),
-				// "Preferences" rather than "Settings" / "Features" so the AdminKit
-				// tab label reads distinctly from WordPress's own Settings (Réglages)
-				// menu — same string is used by both the embedded and standalone modes.
+				// "Preferences" reads distinctly from WordPress's own Settings
+				// (Réglages) menu, where the AdminKit submenu sits.
 				'features'          => __( 'Preferences', 'adminkit' ),
-				'soon'              => __( 'Coming soon', 'adminkit' ),
-				'own'               => __( 'AdminKit', 'adminkit' ),
-				'ownHint'           => __( 'AdminKit-defined role (no provider equivalent).', 'adminkit' ),
+				'plugins'           => __( 'Plugins', 'adminkit' ),
+
+				// Preferences tab — intro + bulk row + per-plugin descriptors.
 				'featuresIntro'     => __( 'Turn AdminKit modules on or off.', 'adminkit' ),
 				'enableAll'         => __( 'Enable all', 'adminkit' ),
 				'disableAll'        => __( 'Disable all', 'adminkit' ),
-				'branding'          => __( 'Branding', 'adminkit' ),
-				'logoHint'          => __( 'Your brand logo, light and dark. Ideally a horizontal SVG (crisp at any size), or a PNG at least ~320×80px (≈ 4:1), on a transparent background. Used for the site-title mark, the login screen and the Bricks builder.', 'adminkit' ),
-				'logoDisplay'       => __( 'Logo display', 'adminkit' ),
-				'logoDisplayHint'   => __( 'Choose how the logo shows in each location.', 'adminkit' ),
-				'logoLight'         => __( 'Logo — light mode', 'adminkit' ),
-				'logoDark'          => __( 'Logo — dark mode', 'adminkit' ),
-				'logoLightMode'     => __( 'Light Mode', 'adminkit' ),
-				'logoDarkMode'      => __( 'Dark Mode', 'adminkit' ),
-				'logoPlaceholder'   => __( 'https://…/logo.svg', 'adminkit' ),
-				'logoPick'          => __( 'Choose a logo', 'adminkit' ),
-				'logoChange'        => __( 'Change logo', 'adminkit' ),
-				'logoRemove'        => __( 'Remove logo', 'adminkit' ),
-				'mediaTitle'        => __( 'Select a logo', 'adminkit' ),
-				'mediaButton'       => __( 'Use this image', 'adminkit' ),
-				// Cropper modal — used by BOTH favicon slots (light = WP-native
-				// site_icon, dark = AdminKit-owned). Labels stay generic so the
-				// modal reads as a favicon-picker rather than a Site Icon flow.
-				'mediaSiteIconTitle'  => __( 'Choose a favicon', 'adminkit' ),
-				'mediaSiteIconButton' => __( 'Use this image', 'adminkit' ),
-				'plugins'           => __( 'Plugins', 'adminkit' ),
+				'resetDefaults'     => __( 'Reset to defaults', 'adminkit' ),
 				'pluginsIntro'      => __( 'Every plugin installed on your site, plus AdminKit\'s active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit\'s base styling automatically.', 'adminkit' ),
 				'native'            => __( 'Native', 'adminkit' ),
 				'nativeHint'        => __( 'AdminKit ships a tuned adapter for this plugin — light and dark.', 'adminkit' ),
@@ -379,49 +333,31 @@ class AdminKit_Settings_Page {
 				'generic'           => __( 'Generic', 'adminkit' ),
 				'genericHint'       => __( 'No dedicated adapter — themed automatically by AdminKit\'s base layer.', 'adminkit' ),
 				'themesLabel'       => __( 'Themes', 'adminkit' ),
-				// Display row — short location labels so the segmented controls feel
-				// like "where does the brand mark show up?" rather than reciting WP
-				// internals. "WordPress" covers the admin bar (top toolbar in wp-admin
-				// AND the front-end logged-in toolbar — same DOM); "Login" is the
-				// wp-login.php screen.
-				'wpLogoLabel'       => __( 'WordPress', 'adminkit' ),
-				'loginLogoLabel'    => __( 'Login', 'adminkit' ),
-				'wpLogoBrand'       => __( 'Logo', 'adminkit' ),
-				'wpLogoFavicon'     => __( 'Favicon', 'adminkit' ),
-				'wpLogoInherit'     => __( 'Inherit', 'adminkit' ),
+
+				// Media frames.
+				'mediaTitle'        => __( 'Select a logo', 'adminkit' ),
+				'mediaButton'       => __( 'Use this image', 'adminkit' ),
+				// Cropper modal — used by BOTH favicon slots (light = WP-native
+				// site_icon, dark = AdminKit-owned). Labels stay generic so the
+				// modal reads as a favicon-picker rather than a Site Icon flow.
+				'mediaSiteIconTitle'  => __( 'Choose a favicon', 'adminkit' ),
+				'mediaSiteIconButton' => __( 'Use this image', 'adminkit' ),
+
+				// Save bar.
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),
 				'error'             => __( 'Could not save', 'adminkit' ),
-				'light'             => __( 'Light', 'adminkit' ),
-				'dark'              => __( 'Dark', 'adminkit' ),
-				'mode'              => __( 'Mode', 'adminkit' ),
 				'unsaved'           => __( 'Unsaved changes', 'adminkit' ),
-				'close'             => __( 'Close', 'adminkit' ),
-				'designLegendTitle' => __( 'Live colour reference', 'adminkit' ),
-				'designLegend'      => __( 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.', 'adminkit' ),
-				'typography'        => __( 'Typography', 'adminkit' ),
-				'typographyDesc'    => __( 'Body font follows Bricks (--font-base) when set, otherwise Inter.', 'adminkit' ),
-				'typeTitle'         => __( 'Font & sizes', 'adminkit' ),
-				'typeBody'          => __( 'Body', 'adminkit' ),
-				'typeSmall'         => __( 'Small', 'adminkit' ),
-				'typeCaption'       => __( 'Caption', 'adminkit' ),
-				/* translators: pangram used as a font preview sample — translate to a sentence that exercises your language's letters. */
-				'pangram'           => __( 'The quick brown fox jumps over the lazy dog', 'adminkit' ),
 
-				// --- Brand card (Dashboard tab on the AdminKit submenu page) ---
-				// Single-word title; the uppercase eyebrow above used to repeat
-				// the same word ("BRAND > Brand identity"), so the eyebrow is
-				// gone — the title alone names the card.
+				// --- Brand card -------------------------------------------------
 				'brandTitle'          => __( 'Logo', 'adminkit' ),
 				'brandSyncStatus'     => __( 'Tokens synced with Bricks Builder', 'adminkit' ),
 				/* translators: %d: number of CSS custom properties exposed by Bricks. */
 				'brandSyncStatusCount' => __( '%d tokens', 'adminkit' ),
-				// Slot titles read as a coherent set — "<Kind> <Mode>" — with
-				// the mode word following the kind so the eye scans the kind
-				// first. The LIGHT favicon slot proxies WP's native `site_icon`
-				// option (WP's own Site Icon row on Settings → General edits the
-				// same value; the two surfaces stay in sync on next page load).
+				// Slot titles — "<Kind> <Mode>"; mode follows kind so the eye
+				// scans the kind first. The LIGHT favicon proxies WP's native
+				// `site_icon`; WP's own Site Icon row edits the same value.
 				'slotFavicon'         => __( 'Favicon Light Mode', 'adminkit' ),
 				'slotFaviconSub'      => __( 'PNG · 512×512 · cropped', 'adminkit' ),
 				'slotLight'           => __( 'Logo Light Mode', 'adminkit' ),
@@ -432,83 +368,32 @@ class AdminKit_Settings_Page {
 				'slotDarkSub'         => __( 'SVG · PNG ≥ 400×100', 'adminkit' ),
 				'slotUpload'          => __( 'Upload', 'adminkit' ),
 				'slotRemove'          => __( 'Remove', 'adminkit' ),
-				'slotMediaLib'        => __( 'Media library', 'adminkit' ),
+
+				// Accent picker — 3 sources (WordPress / Bricks / Custom). The
+				// Bricks option only renders when the integration is connected.
 				'accentLabel'         => __( 'Brand color', 'adminkit' ),
-				'accentInherit'       => __( 'Inheriting from provider / baseline', 'adminkit' ),
-				'accentClear'         => __( 'Clear accent', 'adminkit' ),
-				// Accent picker — first option is labelled "WordPress" rather than
-				// "AdminKit" because it represents the standard WordPress accent
-				// (WP block-editor blue) when no provider supplies one. The Bricks
-				// option is rendered ONLY when the integration is connected (see
-				// `bricksConnected` in boot data).
 				'accentSrcAdminKit'   => __( 'WordPress', 'adminkit' ),
 				'accentSrcBricks'     => __( 'Bricks', 'adminkit' ),
 				'accentSrcCustom'     => __( 'Custom', 'adminkit' ),
-				'accentSrcBricksHint' => __( 'Bricks not detected', 'adminkit' ),
-				'sourceCustom'        => __( 'Custom', 'adminkit' ),
-				'accentShowDerived'   => __( 'Show derived colours', 'adminkit' ),
-				'accentHideDerived'   => __( 'Hide derived colours', 'adminkit' ),
-				'derivedHover'        => __( 'Hover', 'adminkit' ),
-				'derivedSubtle'       => __( 'Subtle', 'adminkit' ),
-				'derivedOnAccent'     => __( 'On accent', 'adminkit' ),
-				'derivedOnAccentSub'  => __( 'readable', 'adminkit' ),
-				'derivedFocus'        => __( 'Focus', 'adminkit' ),
-				'derivedFocusSub'     => __( '@ 50%', 'adminkit' ),
 				'displayLabel'        => __( 'Display', 'adminkit' ),
-				// Brand-card Action — the only one left after the Phase A cleanup.
-				// Opens the Bricks-export modal (4 sections of JSON templates).
+
+				// "Display" row — segmented controls for Admin bar + Login screen.
+				'wpLogoLabel'       => __( 'WordPress', 'adminkit' ),
+				'loginLogoLabel'    => __( 'Login', 'adminkit' ),
+				'wpLogoBrand'       => __( 'Logo', 'adminkit' ),
+				'wpLogoFavicon'     => __( 'Favicon', 'adminkit' ),
+
+				// Brand-card Action — opens the Bricks-export modal.
 				'actionExport'        => __( 'Export to Bricks', 'adminkit' ),
-				// Export modal (Design tab).
+				// Export modal.
 				'exportTitle'         => __( 'Export to Bricks', 'adminkit' ),
 				'exportIntro'         => __( 'Follow the steps in order — open each one, copy or download the file, then import it where indicated.', 'adminkit' ),
 				'exportCopy'          => __( 'Copy', 'adminkit' ),
 				'exportCopied'        => __( 'Copied', 'adminkit' ),
 				'exportDownload'      => __( 'Download .json', 'adminkit' ),
 				'exportClose'         => __( 'Close', 'adminkit' ),
-				// Bulk action shared by the Features tab and the Plugins tab —
-				// reverts every row to its registered schema default.
-				'resetDefaults'       => __( 'Reset to defaults', 'adminkit' ),
-				'tokensCtaTitle'      => __( 'Want to dig in?', 'adminkit' ),
-				'tokensCtaSub'        => __( 'Browse every token AdminKit exposes — read-only reference.', 'adminkit' ),
-				/* translators: %d is the total number of design tokens (resolved at render time). */
-				'tokensCtaBtnFmt'     => __( 'View all %d tokens', 'adminkit' ),
-				'tokensRefEyebrow'    => __( 'Reference', 'adminkit' ),
-				'tokensRefTitle'      => __( 'Token map', 'adminkit' ),
-				'tokensRefSub'        => __( 'Read-only. AdminKit derives every token from the provider/baseline cascade.', 'adminkit' ),
-				'tokensRefHide'       => __( 'Hide', 'adminkit' ),
-				'colToken'            => __( 'Token', 'adminkit' ),
-				'colCascade'          => __( 'Cascade', 'adminkit' ),
-				'colValue'            => __( 'Value', 'adminkit' ),
-				'colSource'           => __( 'Source', 'adminkit' ),
-				'sourceBricks'        => __( 'Bricks', 'adminkit' ),
-				'sourceAuto'          => __( 'Auto', 'adminkit' ),
-				'sourceAdminKit'      => __( 'AdminKit', 'adminkit' ),
 			),
 		);
-	}
-
-	/**
-	 * Colour providers AdminKit can inherit its palette from. Data-driven +
-	 * filterable (`adminkit/providers`) so new token providers slot in without
-	 * touching the UI. Each: `id`, `label`, `status` ('available' | 'soon'),
-	 * `detected` (host present). Only Bricks ships today; the rest are
-	 * placeholders ("coming soon"). `custom` = map every colour by hand.
-	 *
-	 * @return array
-	 */
-	private static function providers() {
-		// "Connected" means the host is present AND the integration is enabled —
-		// so disabling Bricks in the Integrations tab reflects everywhere.
-		$bricks = class_exists( 'AdminKit_Integration_Bricks' )
-			&& AdminKit_Integration_Bricks::is_active()
-			&& (bool) apply_filters( 'adminkit/integration_enabled', true, 'bricks' );
-		return apply_filters( 'adminkit/providers', array(
-			array( 'id' => 'bricks',          'label' => 'Bricks Vanilla',                           'status' => 'available', 'detected' => $bricks ),
-			array( 'id' => 'acss',            'label' => 'Automatic.css',                    'status' => 'soon',      'detected' => false ),
-			array( 'id' => 'core-framework',  'label' => 'Core Framework',                   'status' => 'soon',      'detected' => false ),
-			array( 'id' => 'advanced-themer', 'label' => 'Advanced Themer',                  'status' => 'soon',      'detected' => false ),
-			array( 'id' => 'frames',          'label' => 'Frames',                           'status' => 'soon',      'detected' => false ),
-		) );
 	}
 
 	/**

@@ -40,7 +40,7 @@ $BUDGET = array(
 	'wp-migrate-db-pro' => 6,
 	'fluentform'        => 2,
 	'acf'               => 17, // ACF forces !important on btn labels, postbox titles, open-field handle links, field-type picker option states, options-page dropdown border + file-selector-button label (hex col = #acf-* id selectors, not colors)
-	'woocommerce'       => 2, // WC pins !important on the disabled list-reorder arrows (admin.css .wc-move-disabled) and on an analytics table border (wc-admin.css) — both must match !important to win
+	'woocommerce'       => 3, // WC pins !important on the disabled list-reorder arrows (admin.css .wc-move-disabled), an analytics table border (wc-admin.css), and the admin-bar "Coming soon" badge (admin.css #wp-admin-bar-woocommerce-site-visibility-badge — moved here from wp-core/adminbar.css to keep WC-specific selectors in the WC adapter) — all three must match !important to win
 );
 
 $root = ak_find_root() . '/inc/integrations';

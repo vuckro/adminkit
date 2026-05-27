@@ -5,15 +5,13 @@
  * Exposes a typed getter and the schema of declared settings. The admin UI
  * lives in `AdminKit_Settings_Page`; values land in the option
  * `adminkit_settings` (written by that UI) or via the `adminkit/setting/{key}`
- * filter. `color_map()` is the semantic token taxonomy the Design tab renders
- * read-only.
+ * filter.
  *
  * Public API:
  *   AdminKit_Settings::init()                   // wire defaults + hooks (call once)
  *   AdminKit_Settings::register( $key, $args )  // declare a setting
  *   AdminKit_Settings::get( $key )              // read (option → default → filter)
  *   AdminKit_Settings::schema()                 // the registered schema
- *   AdminKit_Settings::color_map()              // semantic token taxonomy (display)
  *
  * Filters:
  *   adminkit/setting/{$key}    final value passes through this filter
@@ -192,65 +190,6 @@ class AdminKit_Settings {
 		return '';
 	}
 
-	/**
-	 * The semantic colour taxonomy — mirrors WaasKit's locked 23-token SEMANTIC
-	 * layer 1:1 (surface / border / text / accent / input / focus / overlay +
-	 * the notification set with each -subtle) so a user moving between Bricks and
-	 * AdminKit sees the same roles. The few roles WaasKit doesn't expose as a
-	 * token — secondary text and the hover tint — AdminKit defines itself, flagged
-	 * `own` so the UI can badge it. (Inverse text is done with a .scheme-* scope
-	 * class, not a token, so it's not listed.) See docs/WAASKIT-DESIGN-SYSTEM.md.
-	 *
-	 * Per token: `token` (--ak-* var), `bricks` (provider semantic it bridges, ''
-	 * when AdminKit-own), `source` (the primitive it ultimately resolves from),
-	 * `label`, and optional `own`. Consumed by the settings SPA (Design tab) as a
-	 * read-only reference. Runs on display so `__()` resolves.
-	 *
-	 * @return array
-	 */
-	public static function color_map() {
-		return array(
-			array( 'group' => 'surface', 'label' => __( 'Surfaces', 'adminkit' ), 'desc' => __( 'Page and panel backgrounds — behind everything.', 'adminkit' ), 'tokens' => array(
-				array( 'token' => '--ak-bg',       'bricks' => '--background', 'source' => '--neutral-l-1', 'label' => __( 'Background', 'adminkit' ) ),
-				array( 'token' => '--ak-surface',  'bricks' => '--surface',    'source' => '--neutral-l-2', 'label' => __( 'Surface', 'adminkit' ) ),
-				array( 'token' => '--ak-elevated', 'bricks' => '--elevated',   'source' => '--neutral-l-3', 'label' => __( 'Elevated', 'adminkit' ) ),
-				array( 'token' => '--ak-input-bg', 'bricks' => '--input',      'source' => '--neutral-l-1', 'label' => __( 'Input field', 'adminkit' ) ),
-			) ),
-			array( 'group' => 'border', 'label' => __( 'Borders', 'adminkit' ), 'desc' => __( 'Outlines and dividers.', 'adminkit' ), 'tokens' => array(
-				array( 'token' => '--ak-border',        'bricks' => '--border',        'source' => '--neutral-l-4', 'label' => __( 'Border', 'adminkit' ) ),
-				array( 'token' => '--ak-border-strong', 'bricks' => '--border-strong', 'source' => '--neutral-l-5', 'label' => __( 'Border strong', 'adminkit' ) ),
-			) ),
-			array( 'group' => 'text', 'label' => __( 'Text', 'adminkit' ), 'desc' => __( 'Headings, body copy and captions.', 'adminkit' ), 'tokens' => array(
-				array( 'token' => '--ak-heading',    'bricks' => '--heading',    'source' => '--neutral-l-9', 'label' => __( 'Heading', 'adminkit' ) ),
-				array( 'token' => '--ak-text',       'bricks' => '--text',       'source' => '--neutral-l-8', 'label' => __( 'Body text', 'adminkit' ) ),
-				array( 'token' => '--ak-text-muted', 'bricks' => '--text-muted', 'source' => '--neutral-l-7', 'label' => __( 'Muted text', 'adminkit' ) ),
-			) ),
-			array( 'group' => 'accent', 'label' => __( 'Accent', 'adminkit' ), 'desc' => __( 'Brand — buttons, links, highlights. Hover, subtle and focus derive from it automatically.', 'adminkit' ), 'tokens' => array(
-				array( 'token' => '--ak-primary',        'bricks' => '--accent',        'source' => '--primary',     'label' => __( 'Accent', 'adminkit' ),       'accent_family' => true ),
-				array( 'token' => '--ak-primary-hover',  'bricks' => '--accent-hover',  'source' => '--primary-d-1', 'label' => __( 'Accent hover', 'adminkit' ), 'accent_family' => true ),
-				array( 'token' => '--ak-primary-subtle', 'bricks' => '--accent-subtle', 'source' => '--primary-l-9', 'label' => __( 'Accent subtle', 'adminkit' ), 'accent_family' => true ),
-				array( 'token' => '--ak-on-accent',      'bricks' => '--accent-on',     'source' => '--primary-d-9', 'label' => __( 'On accent', 'adminkit' ),    'accent_family' => true ),
-				array( 'token' => '--ak-secondary',      'bricks' => '',                'source' => '--secondary',   'label' => __( 'Secondary', 'adminkit' ), 'own' => true ),
-			) ),
-			array( 'group' => 'state', 'label' => __( 'State', 'adminkit' ), 'desc' => __( 'Hover and focus feedback.', 'adminkit' ), 'tokens' => array(
-				array( 'token' => '--ak-hover-bg', 'bricks' => '',        'source' => '--neutral-t-2', 'label' => __( 'Hover', 'adminkit' ), 'own' => true ),
-				array( 'token' => '--ak-focus',    'bricks' => '--focus', 'source' => '--primary', 'label' => __( 'Focus ring', 'adminkit' ), 'accent_family' => true ),
-			) ),
-			array( 'group' => 'overlay', 'label' => __( 'Overlay', 'adminkit' ), 'desc' => __( 'Scrim behind modals and drawers.', 'adminkit' ), 'tokens' => array(
-				array( 'token' => '--ak-overlay', 'bricks' => '--overlay', 'source' => '--black-t-7', 'label' => __( 'Overlay', 'adminkit' ) ),
-			) ),
-			array( 'group' => 'status', 'label' => __( 'Status', 'adminkit' ), 'desc' => __( 'Info, success, warning and error — and their subtle fills — from the framework\'s notification roles.', 'adminkit' ), 'tokens' => array(
-				array( 'token' => '--ak-info',           'bricks' => '--info',           'source' => '--info',        'label' => __( 'Info', 'adminkit' ) ),
-				array( 'token' => '--ak-info-subtle',    'bricks' => '--info-subtle',    'source' => '--info-l-9',    'label' => __( 'Info subtle', 'adminkit' ) ),
-				array( 'token' => '--ak-success',        'bricks' => '--success',        'source' => '--success',     'label' => __( 'Success', 'adminkit' ) ),
-				array( 'token' => '--ak-success-subtle', 'bricks' => '--success-subtle', 'source' => '--success-l-9', 'label' => __( 'Success subtle', 'adminkit' ) ),
-				array( 'token' => '--ak-warning',        'bricks' => '--warning',        'source' => '--warning',     'label' => __( 'Warning', 'adminkit' ) ),
-				array( 'token' => '--ak-warning-subtle', 'bricks' => '--warning-subtle', 'source' => '--warning-l-9', 'label' => __( 'Warning subtle', 'adminkit' ) ),
-				array( 'token' => '--ak-error',          'bricks' => '--error',          'source' => '--error',       'label' => __( 'Error', 'adminkit' ) ),
-				array( 'token' => '--ak-error-subtle',   'bricks' => '--error-subtle',   'source' => '--error-l-9',   'label' => __( 'Error subtle', 'adminkit' ) ),
-			) ),
-		);
-	}
 
 	/**
 	 * Declare the feature / module toggles (all boolean, default ON). They

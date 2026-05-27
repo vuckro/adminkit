@@ -432,9 +432,7 @@
 .adminkit-app .ak-hero__sub { font-size: var(--ak-text-xs); color: var(--ak-text-muted); }
 
 /* Badge chips — shared by the Plugins tab (Native / System / Generic) and
-   the group count chips. The roadmap-detail surfaces that used to consume
-   .ak-modal* + .ak-roadmap* + .ak-dash__ver have been removed; only the
-   pieces still used by other surfaces remain here. */
+   the group count chips. */
 .adminkit-app .ak-badge {
 	display: inline-flex;
 	align-items: center;
@@ -951,26 +949,6 @@
 	margin-right: 2px;
 }
 
-/* Disclosure (expand/collapse) — used by the tokens CTA. */
-.adminkit-app .ak-disclose__btn {
-	background: none;
-	border: 0;
-	color: var(--ak-text-muted);
-	cursor: pointer;
-	font-size: var(--ak-text-xs);
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-	padding: 6px 8px;
-}
-.adminkit-app .ak-disclose__btn:hover { color: var(--ak-text); }
-.adminkit-app .ak-disclose__btn.is-open .ak-disclose__caret { transform: rotate(180deg); }
-.adminkit-app .ak-disclose__caret {
-	transition: transform .15s ease;
-	display: inline-block;
-	font-size: 10px;
-}
-
 /* Export to Bricks modal — overlay that hosts the bundled JSON templates so
    the user can copy or download each one and paste them into Bricks.
    `.ak-export-modal` lives outside `.adminkit-app` (it's appended to <body>),
@@ -1146,169 +1124,8 @@
 	tab-size: 2;
 }
 
-/* "View all N tokens" CTA + revealed reference table -------------------- */
-.adminkit-app .ak-tokens-cta {
-	border: 1px dashed var(--ak-border);
-	border-radius: var(--ak-radius-m, 10px);
-	padding: 14px 20px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-	margin-bottom: 16px;
-}
-.adminkit-app .ak-tokens-cta__title {
-	font-size: var(--ak-text-s);
-	font-weight: 600;
-	color: var(--ak-heading);
-}
-.adminkit-app .ak-tokens-cta__sub {
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
-	margin-top: 2px;
-}
-.adminkit-app .ak-tokens-cta__btn {
-	border: 1px solid var(--ak-border);
-	background: var(--ak-elevated);
-	padding: 6px 14px;
-	border-radius: var(--ak-radius-s, 6px);
-	color: var(--ak-text);
-	cursor: pointer;
-	font-size: var(--ak-text-xs);
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-}
-.adminkit-app .ak-tokens-cta__btn:hover { border-color: var(--ak-border-strong); background: var(--ak-hover-bg); }
-
-/* The Token map reuses .ak-card for its shell (so the three Design-tab cards
-   share identical padding / border / radius). Only the table-specific bits
-   live under .ak-tokens-ref now. */
-.adminkit-app .ak-tokens-ref__table { width: 100%; border-collapse: collapse; }
-.adminkit-app .ak-tokens-ref th {
-	font-size: 10px;
-	text-transform: uppercase;
-	letter-spacing: .06em;
-	color: var(--ak-text-muted);
-	padding: 8px 10px;
-	text-align: left;
-	font-weight: 600;
-	border-bottom: 1px solid var(--ak-border);
-}
-.adminkit-app .ak-tokens-ref td {
-	padding: 8px 10px;
-	border-bottom: 1px solid var(--ak-border);
-	font-size: var(--ak-text-xs);
-	vertical-align: middle;
-}
-.adminkit-app .ak-tokens-ref tr:last-child td { border-bottom: 0; }
-.adminkit-app .ak-tokens-ref__section td {
-	padding-top: 16px;
-	padding-bottom: 4px;
-	font-size: 10px;
-	text-transform: uppercase;
-	letter-spacing: .06em;
-	color: var(--ak-text-muted);
-	font-weight: 600;
-	border-bottom: 0;
-}
-.adminkit-app .ak-tokens-ref__sw {
-	display: inline-block;
-	width: 16px;
-	height: 16px;
-	border-radius: var(--ak-radius-s, 6px);
-	border: 1px solid var(--ak-border-strong);
-	vertical-align: middle;
-	margin-right: 6px;
-}
-.adminkit-app .ak-tokens-ref__token { font-family: monospace; font-size: 11px; color: var(--ak-text); }
-.adminkit-app .ak-tokens-ref__cascade { font-family: monospace; font-size: 10px; color: var(--ak-text-muted); }
-.adminkit-app .ak-tokens-ref__value { font-family: monospace; font-size: 11px; color: var(--ak-text); }
-
-/* Typography card — same .ak-card shell as the Brand card; each row pairs a
-   sample (left) with its token (right) via flex justify-between. The hero row
-   carries the big "Ag" sample at --ak-text-2xl-ish (controlled by an explicit
-   size on the sample, not a token, so it stays oversized regardless of the
-   body-font scale). Dividers between rows match the tokens-ref table. */
-.adminkit-app .ak-type-row {
-	display: flex;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: 16px;
-	padding: 10px 0;
-	border-top: 1px solid var(--ak-border);
-}
-.adminkit-app .ak-type-scale > .ak-type-row:first-child { border-top: 0; }
-.adminkit-app .ak-type-row--hero {
-	padding: 16px 0;
-	margin-bottom: 4px;
-	border-top: 0;
-	border-bottom: 1px solid var(--ak-border);
-}
-.adminkit-app .ak-type-row__lbl {
-	font-size: var(--ak-text-xs);
-	font-weight: 500;
-	color: var(--ak-text-muted);
-	min-width: 60px;
-	flex: 0 0 60px;
-}
-.adminkit-app .ak-type-row__sample {
-	flex: 1 1 auto;
-	min-width: 0;
-	color: var(--ak-text);
-	line-height: 1.4;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-.adminkit-app .ak-type-row__sample--hero {
-	font-size: 48px;
-	font-weight: 700;
-	line-height: 1;
-	color: var(--ak-heading);
-	letter-spacing: -0.02em;
-}
-.adminkit-app .ak-type-row__token {
-	flex: 0 0 auto;
-	font-family: monospace;
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
-	white-space: nowrap;
-}
-
-/* Source pills — each pill carries the BRAND COLOUR of the source it names,
-   regardless of which source is currently active. That way the AdminKit pill
-   always reads as AdminKit (blue), the Bricks pill always as Bricks (orange) —
-   even when the active accent is the other one. Custom is the exception: it
-   has no fixed identity, so it tracks the live --ak-primary (= the swatch
-   right next to it). */
-.adminkit-app .ak-pill {
-	display: inline-block;
-	padding: 2px 8px;
-	border-radius: var(--ak-radius-s, 6px);
-	font-size: 10px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: .04em;
-}
-.adminkit-app .ak-pill--adminkit { background: rgba(56, 88, 233, .15); color: #3858e9; }
-.adminkit-app .ak-pill--bricks   { background: rgba(254, 213, 62, .15); color: #fed53e; }
-.adminkit-app .ak-pill--custom   { background: var(--ak-primary-subtle); color: var(--ak-primary); }
-.adminkit-app .ak-pill--auto     { background: var(--ak-elevated); color: var(--ak-text-muted); }
-
-
-/* Mobile (≤782px) — narrow-viewport polish for AdminKit's own surfaces. The tab
-   strip already scrolls sideways; the hero + roadmap already collapse. Here:
-   • the Design token table's fixed first two tracks (52px + 140px + 200px ≈ 392px)
-     would clip inside its overflow-hidden card below ~392px, so let the name and
-     mapping tracks shrink to 0 — the name ellipsises and the mapping chips wrap.
-   • inline fields wrap their segmented control onto its own line; drop the
-     left-auto push so it reads left-aligned under the label rather than stranded
-     on the right.
-   • let the header wrap so a long title never squashes the Save action. */
-/* At narrow widths (tablet split, sidebar tablets) the 3-up grid stacks
-   gracefully: the cards collapse to one column, and the Status row's two
-   internal columns also stack so its 8 tokens read as a normal list. */
+/* Narrow viewports — Brand-card slots collapse to one column, the display
+   row tightens its gap so the segmented controls don't crowd. */
 @media screen and (max-width: 960px) {
 	.adminkit-app .ak-brand-slots { grid-template-columns: 1fr; }
 	.adminkit-app .ak-display-row { gap: 12px; }

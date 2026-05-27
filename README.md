@@ -2,7 +2,7 @@
 
 A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone — optional adapters layer in token providers (Bricks today, more later).
 
-> Status: **v1.0.0** — ships fully-featured out of the box (Gutenberg canvas theming, AdminKit icons and local avatars all on by default), with tabbed Settings screens and an interactive dashboard roadmap on top of the registry-based assets, per-screen conditional loading and host-drift detection.
+> Status: **v1.0.0** — ships fully-featured out of the box (Gutenberg canvas theming, AdminKit icons and local avatars all on by default), with its own `Settings → AdminKit` submenu page on top of the registry-based assets, per-screen conditional loading and host-drift detection.
 
 ---
 
@@ -164,7 +164,6 @@ adminkit/
 │   ├── class-screen.php                 get_current_screen() helpers
 │   ├── class-settings.php               Settings registry + color map
 │   ├── class-settings-page.php          SPA bootstrap (Settings → AdminKit submenu — Dashboard / Preferences / Plugins tabs) + REST save
-│   ├── class-dashboard.php              Dashboard widget registry (dormant until used)
 │   ├── class-theme-toggle.php           Dark / light toggle + login logo
 │   ├── wp-core/                         AdminKit's restyle of WP-core surfaces
 │   │   ├── class-chrome.php             Registers every admin/frontend CSS file
@@ -200,8 +199,7 @@ adminkit/
     │   └── login.css                    wp-login.php
     └── js/
         ├── settings.js                  Settings SPA
-        ├── wp-core/                     Footer behaviour bricks (profile, previews, list-table, user-quick-edit, username-changer, auto-theme)
-        └── wp-screens/                  Per-screen behaviour (options-general, options-discussion)
+        └── wp-core/                     Footer behaviour bricks (profile, previews, list-table, user-quick-edit, username-changer, auto-theme)
 ```
 
 Each integration folder may also carry `css/` and a `baseline.json` (its host CSS
@@ -234,8 +232,9 @@ That's it — the boot orchestrator picks the folder up automatically on `after_
 
 ## Roadmap
 
-This mirrors the **in-app roadmap** (Dashboard tab) — the single source lives in
-`AdminKit_Settings_Page::dashboard()`. Keep the two in sync (see [`CLAUDE.md`](CLAUDE.md)).
+This README is the single source. (The in-app dashboard widget that used to
+mirror it has been removed — the maintenance overhead of keeping two surfaces
+in sync wasn't worth the duplication.)
 
 - **In progress** — universal plugin compatibility; custom dashboard page.
 - **Next** — more native screens styled; in-app palette editor; colour sync; more provider adapters; accessibility / contrast checks; import / export settings; per-role visibility; admin-bar polish.
