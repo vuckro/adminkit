@@ -57,19 +57,32 @@ body.adminkit.options-permalink-php .wrap > form > .form-table {
 
 /* ──── 4. options-general.php — themed blocks (Site identity / Account /
    Locale). The JS (assets/js/wp-screens/options-general.js) wraps each
-   group in `<section class="ak-options-block">` with its own `<h2>` and
-   inner `.form-table`. The inner table reuses rule (3)'s card chrome; we
-   just style the block heading + spacing here so groups read distinctly. */
+   group in `<section class="ak-options-block">` with its own `<h2>`, an
+   optional one-line description, and an inner `.form-table`. Title +
+   description sit above the card; the card itself reuses rule (3)'s
+   chrome so groups read as a coherent stack. */
 body.adminkit.options-general-php .ak-options-block {
-	margin: 0 0 20px;
+	margin: 0 0 28px;
 }
 body.adminkit.options-general-php .ak-options-block__title {
-	margin: 0 0 6px;
+	margin: 0 0 4px;
 	padding: 0;
 	border: 0;
-	font-size: 14px;
+	font-size: 15px;
 	font-weight: 600;
 	color: var(--ak-heading);
+}
+body.adminkit.options-general-php .ak-options-block__desc {
+	margin: 0 0 12px;
+	font-size: 13px;
+	color: var(--ak-text-muted);
+	line-height: 1.5;
+	max-width: 64ch;
+}
+/* When the description is missing, the title alone needs a fuller gap to
+   the card below — give the adjacent `.form-table` a top margin. */
+body.adminkit.options-general-php .ak-options-block__title + .form-table {
+	margin-top: 8px;
 }
 /* Each block's nested .form-table gets the card chrome from rule (3) — but
    the selector there matches `.wrap > form > .form-table` (direct child).

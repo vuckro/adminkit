@@ -30,11 +30,13 @@
 	// Field NAMES per block, in display order. Match by `input[name="…"]` so
 	// translation-of-labels doesn't break detection. Anything not on the page
 	// (e.g. WPLANG on a site without translations, users_can_register on
-	// multisite) is silently skipped.
+	// multisite) is silently skipped. `desc` is the short caption rendered
+	// between the heading and the card — gives the title breathing room
+	// against the card and clarifies the bucket's scope in one line.
 	var BLOCKS = [
-		{ id: 'site-identity', title: S.identity || 'Site identity',          rows: [ 'blogname', 'blogdescription', 'siteurl', 'home' ] },
-		{ id: 'account',       title: S.account  || 'Account & registration', rows: [ 'admin_email', 'new_admin_email', 'users_can_register', 'default_role' ] },
-		{ id: 'locale',        title: S.locale   || 'Language, date & time',  rows: [ 'WPLANG', 'timezone_string', 'date_format', 'time_format', 'start_of_week' ] }
+		{ id: 'site-identity', title: S.identity || 'Site identity',          desc: S.identityDesc || '', rows: [ 'blogname', 'blogdescription', 'siteurl', 'home' ] },
+		{ id: 'account',       title: S.account  || 'Account & registration', desc: S.accountDesc  || '', rows: [ 'admin_email', 'new_admin_email', 'users_can_register', 'default_role' ] },
+		{ id: 'locale',        title: S.locale   || 'Language, date & time',  desc: S.localeDesc   || '', rows: [ 'WPLANG', 'timezone_string', 'date_format', 'time_format', 'start_of_week' ] }
 	];
 
 	// Find the first .form-table (WP renders all rows in one) as the anchor.
@@ -52,6 +54,16 @@
 		heading.className = 'ak-options-block__title';
 		heading.textContent = b.title;
 		section.appendChild( heading );
+
+		// Optional one-line caption under the heading — gives the title
+		// visual breathing room against the card and clarifies the block's
+		// scope. Skipped when no description string was passed.
+		if ( b.desc ) {
+			var desc = document.createElement( 'p' );
+			desc.className = 'ak-options-block__desc';
+			desc.textContent = b.desc;
+			section.appendChild( desc );
+		}
 
 		var table = document.createElement( 'table' );
 		table.className = 'form-table';

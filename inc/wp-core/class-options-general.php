@@ -48,9 +48,12 @@ class AdminKit_Core_Options_General {
 		}
 
 		$strings = array(
-			'identity' => __( 'Site identity', 'adminkit' ),
-			'account'  => __( 'Account & registration', 'adminkit' ),
-			'locale'   => __( 'Language, date & time', 'adminkit' ),
+			'identity'     => __( 'Site identity', 'adminkit' ),
+			'identityDesc' => __( 'How your site presents itself — name, tagline and addresses.', 'adminkit' ),
+			'account'      => __( 'Account & registration', 'adminkit' ),
+			'accountDesc'  => __( 'Admin email, who can sign up, and the default role assigned to new users.', 'adminkit' ),
+			'locale'       => __( 'Language, date & time', 'adminkit' ),
+			'localeDesc'   => __( 'Site language plus the timezone and formats used wherever dates appear.', 'adminkit' ),
 		);
 
 		AdminKit_Assets::enqueue_script(

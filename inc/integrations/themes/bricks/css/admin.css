@@ -61,6 +61,18 @@ body.adminkit {
 }
 
 
+/* ----- 2c. Wrapper horizontal centering ----------------------------------
+   Bricks ships `.bricks-admin-wrapper { margin: 40px 20px; max-width: 960px }`
+   — left-aligned with a 20px gutter. On wide monitors the card-bound content
+   sits stranded against the sidebar with empty space to the right. Swap the
+   left/right margins for `auto` so the 960px-max wrapper centres in the
+   content area; vertical breathing (40px) is preserved. */
+body.adminkit .bricks-admin-wrapper {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+
 /* ----- 3. Card surfaces (.bricks-admin-inner) ----- */
 /* Getting Started / License / Sidebars / System Information all wrap
    content in `.bricks-admin-inner` with hardcoded `background: #fff`. */
