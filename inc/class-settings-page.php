@@ -2,20 +2,18 @@
 /**
  * Settings page — the admin UI for AdminKit.
  *
- * AdminKit's SPA tabs (Dashboard / Settings / Plugins) are hosted INSIDE
- * Settings → General — same `options-general.php` URL that WP's own General
- * tabs use, just three extra tabs in the merged tab strip. No separate
- * AdminKit menu entry. The PHP side here only:
- *   - enqueues the SPA assets on the options-general screen + hands the app
- *     its data via `window.AdminKitData`,
- *   - exposes one REST route (`adminkit/v1/settings`) the SPA POSTs to,
- *   - redirects the legacy `?page=adminkit` URL to the merged page for
- *     back-compat with any bookmark / pre-merge upgrader.
+ * Mounts a `Settings → AdminKit` submenu page that hosts the SPA. The PHP
+ * side here only:
+ *   - registers the submenu + renders an empty `<div id="adminkit-app">`
+ *     host that `settings.js` builds into,
+ *   - enqueues the SPA assets on that screen + hands the app its data via
+ *     `window.AdminKitData`,
+ *   - exposes one REST route (`adminkit/v1/settings`) the SPA POSTs to.
  *
  * The data is built from the settings registry: the semantic token taxonomy
- * (rendered read-only on the Design tab), the feature toggles, and the detected
- * integrations. Saving runs each known field through its registered `sanitize`
- * callback and persists only registered keys.
+ * (rendered read-only on the Brand card), the feature toggles, and the
+ * detected integrations. Saving runs each known field through its registered
+ * `sanitize` callback and persists only registered keys.
  *
  * @package AdminKit
  */
@@ -24,11 +22,7 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Settings_Page {
 
-	/** Legacy ?page= slug kept ONLY for the back-compat redirect. The SPA now
-	 *  lives on the bare `options-general.php` URL — there's no `Settings →
-	 *  AdminKit` submenu, no `settings_page_adminkit` screen hook. The
-	 *  constant value matches what older bookmarks / external links may carry
-	 *  (e.g. `options-general.php?page=adminkit`); see legacy_redirect(). */
+	/** `?page=` slug for the submenu + the `settings_page_{slug}` screen id. */
 	const SLUG = 'adminkit';
 
 	/** Asset handle shared by the SPA's script + style. */
@@ -45,12 +39,9 @@ class AdminKit_Settings_Page {
 	 * @return void
 	 */
 	public static function init() {
+		add_action( 'admin_menu', array( __CLASS__, 'add_submenu' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
-		// Back-compat: `?page=adminkit` was the previous home of the SPA before
-		// the merge. Redirect any visit there to the merged page so old
-		// bookmarks + upgrade paths land on the right tab.
-		add_action( 'admin_init', array( __CLASS__, 'legacy_redirect' ) );
 		// "Settings" link in the plugin row action area (next to Deactivate). The
 		// filter name is keyed on the plugin's basename so it only attaches to
 		// our row, not every plugin's.
@@ -65,33 +56,45 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Redirect the legacy `options-general.php?page=adminkit` URL to the
-	 * merged page. Pre-merge, the SPA lived under that `page` param; any old
-	 * bookmark / dashboard quick-link / upgrade-path call lands there and now
-	 * needs to be sent to the Dashboard tab of the unified page. The hash
-	 * triggers `options-general.js`'s URL-fragment routing so the user lands
-	 * directly on the right tab instead of the default Site identity.
-	 *
-	 * Capability gate matches the SPA's REST permission (manage_options) so
-	 * an unauthorised visitor doesn't reveal the page even via redirect.
+	 * Register the submenu page under Settings. Parent slug `options-general.php`
+	 * is what WordPress expects to nest under the "Settings" menu group. Screen
+	 * hook ends up as `settings_page_adminkit` — that's what the enqueue gate
+	 * matches below.
 	 *
 	 * @return void
 	 */
-	public static function legacy_redirect() {
-		if ( empty( $_GET['page'] ) || self::SLUG !== $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return;
-		}
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-		wp_safe_redirect( admin_url( 'options-general.php#dashboard' ) );
-		exit;
+	public static function add_submenu() {
+		add_submenu_page(
+			'options-general.php',
+			'AdminKit',
+			'AdminKit',
+			'manage_options',
+			self::SLUG,
+			array( __CLASS__, 'render_page' )
+		);
+	}
+
+	/**
+	 * Render the page shell. The SPA owns the inside — we just print a host
+	 * element (`<div id="adminkit-app">`) plus a heading WP screen-reader users
+	 * expect on every admin page. `aria-busy` flips to `false` once the JS
+	 * finishes its first paint.
+	 *
+	 * @return void
+	 */
+	public static function render_page() {
+		?>
+		<div class="wrap">
+			<h1 class="screen-reader-text">AdminKit</h1>
+			<div id="adminkit-app" class="adminkit-app" aria-busy="true"></div>
+		</div>
+		<?php
 	}
 
 	/**
 	 * Prepend a "Settings" link to the plugin row actions on plugins.php so the
-	 * admin can jump straight to AdminKit's Dashboard tab from the Plugins
-	 * screen — no detour via the Settings menu.
+	 * admin can jump straight to AdminKit from the Plugins screen — no detour
+	 * via the Settings menu.
 	 *
 	 * @param string[] $links
 	 * @return string[]
@@ -99,7 +102,7 @@ class AdminKit_Settings_Page {
 	public static function plugin_action_links( $links ) {
 		$settings = sprintf(
 			'<a href="%s">%s</a>',
-			esc_url( admin_url( 'options-general.php#dashboard' ) ),
+			esc_url( admin_url( 'options-general.php?page=' . self::SLUG ) ),
 			esc_html__( 'Settings', 'adminkit' )
 		);
 		array_unshift( $links, $settings );
@@ -107,33 +110,26 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Enqueue the SPA assets on the merged `options-general` screen and hand
+	 * Enqueue the SPA assets on the AdminKit submenu screen only, and hand
 	 * the app its data. The style depends on `adminkit-tokens` so
 	 * `var(--ak-*)` resolves; the script depends on `wp-api-fetch` (which
-	 * also wires the REST nonce). `wp_enqueue_media()` powers the
-	 * brand-logo picker on the Dashboard tab — loaded on every General
-	 * visit (simpler than lazy-loading; cost paid once per page view).
+	 * also wires the REST nonce). `wp_enqueue_media()` powers the brand-logo
+	 * + favicon pickers on the Brand card.
 	 *
 	 * @param string $hook Current admin page hook suffix.
 	 * @return void
 	 */
 	public static function enqueue( $hook ) {
-		if ( 'options-general.php' !== $hook ) {
+		if ( 'settings_page_' . self::SLUG !== $hook ) {
 			return;
 		}
 
 		$css = 'assets/css/settings.css';
 		$js  = 'assets/js/settings.js';
 
-		wp_enqueue_media(); // WordPress media frame, for the Branding logo pickers.
+		wp_enqueue_media(); // WordPress media frame, for the Brand-card pickers.
 		wp_enqueue_style( self::HANDLE, ADMINKIT_URL . $css, array( AdminKit_Assets::TOKENS_HANDLE ), self::ver( $css ) );
-		// `adminkit-options-general` is the handle the merged tab strip script
-		// registers under (see AdminKit_Core_Options_General::enqueue). Declaring it
-		// as a dep forces WordPress to print + execute it BEFORE settings.js, so the
-		// `<section data-adminkit-panel="…">` placeholders the SPA mounts into already
-		// exist in the DOM when this script runs. Without it the SPA bails (no panels
-		// to render into) and the AdminKit tabs come up empty.
-		wp_enqueue_script( self::HANDLE, ADMINKIT_URL . $js, array( 'wp-api-fetch', 'adminkit-options-general' ), self::ver( $js ), true );
+		wp_enqueue_script( self::HANDLE, ADMINKIT_URL . $js, array( 'wp-api-fetch' ), self::ver( $js ), true );
 		wp_add_inline_script( self::HANDLE, 'window.AdminKitData=' . wp_json_encode( self::boot_data() ) . ';', 'before' );
 	}
 
@@ -171,10 +167,10 @@ class AdminKit_Settings_Page {
 		$values = is_array( $values ) ? $values : array();
 
 		// LIGHT favicon — proxies WP's native `site_icon` option. The Brand
-		// card on the Site identity tab is the SOLE editor for it (the WP-native
-		// row is suppressed by options-general.js to avoid duplicate UI), so the
-		// SPA posts the attachment id through this REST route and we update the
-		// WP option directly. 0 / empty means "no icon" — same convention as core.
+		// card lets the user pick a favicon from here; WP's own Site Icon row
+		// on Settings → General edits the same option. Both surfaces stay in
+		// sync — the SPA posts `site_icon_id` and we update the WP option
+		// directly. 0 / empty means "no icon" — same convention as core.
 		if ( array_key_exists( 'site_icon_id', $values ) ) {
 			$icon_id = absint( $values['site_icon_id'] );
 			if ( $icon_id > 0 && wp_attachment_is_image( $icon_id ) ) {
@@ -311,11 +307,11 @@ class AdminKit_Settings_Page {
 			// dark)"` so the browser swaps automatically.
 			'faviconDark'  => (string) AdminKit_Settings::get( 'favicon_dark' ),
 			// Bidirectional binding for the LIGHT favicon slot in the Brand card:
-			// the SPA reads from `siteIcon.id` AND writes the value back through
+			// the SPA reads from `siteIcon.id` and writes the value back through
 			// the `site_icon_id` REST proxy (see rest_save()). One source of
-			// truth — the WP option `site_icon`. The native Site Icon row on
-			// the form is removed by options-general.js so the slot here is the
-			// sole UI for it (the chip-and-duplicate UX from before is gone).
+			// truth — the WP option `site_icon`. WordPress's own Site Icon row
+			// on Settings → General edits the same option, so the two surfaces
+			// stay in sync on the next page load.
 			'siteIcon'     => array(
 				'id'  => (int) get_option( 'site_icon', 0 ),
 				'url' => (string) get_site_icon_url(),
@@ -413,20 +409,19 @@ class AdminKit_Settings_Page {
 				/* translators: pangram used as a font preview sample — translate to a sentence that exercises your language's letters. */
 				'pangram'           => __( 'The quick brown fox jumps over the lazy dog', 'adminkit' ),
 
-				// --- Brand card (the Dashboard card on the Site identity tab) ----
-				'brandEyebrow'        => __( 'Brand', 'adminkit' ),
-				// One descriptive title, no commas (a previous comma-separated
-				// "Logo, favicon & accent" read as a laundry list — "Logos & accent"
-				// folds favicons under "logos" so the title stays short).
-				'brandTitle'          => __( 'Logos & accent', 'adminkit' ),
+				// --- Brand card (Dashboard tab on the AdminKit submenu page) ---
+				// Single-word title; the uppercase eyebrow above used to repeat
+				// the same word ("BRAND > Brand identity"), so the eyebrow is
+				// gone — the title alone names the card.
+				'brandTitle'          => __( 'Marque', 'adminkit' ),
 				'brandSyncStatus'     => __( 'Tokens synced with Bricks Builder', 'adminkit' ),
 				/* translators: %d: number of CSS custom properties exposed by Bricks. */
 				'brandSyncStatusCount' => __( '%d tokens', 'adminkit' ),
-				// Slot titles read as a coherent set — "<Kind> <Mode>" — with the
-				// mode word following the kind so the eye scans the kind first.
-				// The LIGHT favicon slot here proxies WP's native `site_icon`
-				// option (the WP-native Site Icon row on the form is suppressed
-				// by options-general.js so the Brand card is the sole UI).
+				// Slot titles read as a coherent set — "<Kind> <Mode>" — with
+				// the mode word following the kind so the eye scans the kind
+				// first. The LIGHT favicon slot proxies WP's native `site_icon`
+				// option (WP's own Site Icon row on Settings → General edits the
+				// same value; the two surfaces stay in sync on next page load).
 				'slotFavicon'         => __( 'Favicon Light Mode', 'adminkit' ),
 				'slotFaviconSub'      => __( 'PNG · 512×512 · cropped', 'adminkit' ),
 				'slotLight'           => __( 'Logo Light Mode', 'adminkit' ),

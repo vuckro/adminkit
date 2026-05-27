@@ -1,24 +1,15 @@
 /**
  * AdminKit settings — a small, build-free single-page app.
  *
- * Two mounting modes:
- *   • EMBEDDED (default): Settings → General hosts the SPA. options-general.js
- *     builds empty placeholder `<section data-adminkit-panel="{id}">` cards
- *     inside the merged tab strip; we find each one by attribute and render
- *     content into it. The page's own tab strip + URL-fragment routing owns
- *     activation; we contribute only a `.ak-spa-actions` save bar above the
- *     panels container.
- *   • STANDALONE: a host `<div id="adminkit-app">` exists (legacy / third-party
- *     mount). We build our own outer chrome (.ak-head with title + save bar,
- *     `.ak-tabs` strip, `.ak-panels` wrapper) and own hash routing.
- *
- * Three internal tabs in both modes (Dashboard / Preferences / Plugins).
- * In EMBEDDED mode the Dashboard tab is mounted as a SECONDARY card on
- * the merged page's Site identity tab (no separate strip button), so the
- * brand controls sit next to the WP site-name and tagline they belong with.
- * Dashboard renders the brand controls + token reference; Preferences holds
- * the module toggles; Plugins lists the per-host adapters + per-plugin
- * opt-outs. All save via the same `adminkit/v1/settings` REST route.
+ * Mounts inside `<div id="adminkit-app">` which the AdminKit submenu page
+ * (Settings → AdminKit) prints as its host. The SPA builds its own outer
+ * chrome (`.ak-head` with title + save bar, `.ak-tabs` strip, `.ak-panels`
+ * wrapper) and owns hash routing across three internal tabs:
+ *   - Dashboard  — Brand card (logos + favicons + accent picker) + token
+ *                  reference (read-only)
+ *   - Preferences — feature toggles (dark mode, post previews, …)
+ *   - Plugins    — per-host adapter list + per-plugin opt-outs
+ * All three persist through the same `adminkit/v1/settings` REST route.
  *
  * No framework, no build step — vanilla DOM.
  */
@@ -29,13 +20,8 @@
 	if ( ! D ) {
 		return;
 	}
-	// Mode detection — Embedded mode wins when the merged page is in the DOM.
-	// Standalone mode only fires when a host `#adminkit-app` element exists
-	// AND no embedded panels were built (legacy bookmark / third-party mount).
 	var app = document.getElementById( 'adminkit-app' );
-	var EMBEDDED_PANELS = document.querySelectorAll( '[data-adminkit-panel]' );
-	var EMBEDDED = EMBEDDED_PANELS.length > 0;
-	if ( ! EMBEDDED && ! app ) {
+	if ( ! app ) {
 		return;
 	}
 	var I = D.i18n || {};
@@ -58,8 +44,9 @@
 		// LIGHT favicon — bidirectional binding to WP's native `site_icon` option.
 		// The light-favicon slot in the Brand card reads + writes through THIS;
 		// changes propagate to every WP surface that consumes site_icon (browser
-		// tab, login fallback, Open Graph). WP's native Site Icon row on the form
-		// is suppressed by options-general.js so the slot here is the sole UI.
+		// tab, login fallback, Open Graph). WP's own Site Icon row on Settings →
+		// General edits the same option, so the two surfaces stay in sync on
+		// next page load.
 		siteIcon: {
 			id:  ( D.siteIcon && D.siteIcon.id ) || 0,
 			url: ( D.siteIcon && D.siteIcon.url ) || ''
@@ -221,18 +208,14 @@
 	function markDirty() { state.dirty = true; updateBar(); }
 
 	// --- build ---------------------------------------------------------------
-	// Standalone mode prints its own .ak-head (page title + save bar). In
-	// embedded mode the page already has an `<h1>` ("Réglages généraux"), so
-	// the title would duplicate; we mount the save bar separately further
-	// down, scoped to the merged page's `.ak-options-grouped`.
-	if ( ! EMBEDDED ) {
-		app.removeAttribute( 'aria-busy' );
-		app.textContent = '';
-		app.appendChild( el( 'div', { 'class': 'ak-head' }, [
-			el( 'h1', { 'class': 'ak-title', text: 'AdminKit' } ),
-			el( 'div', { 'class': 'ak-actions' }, [ statusEl, saveBtn ] )
-		] ) );
-	}
+	// Print the page head (title + save bar) into the host. The submenu page's
+	// `<h1>` is `screen-reader-text` so this visible H1 is the only one users see.
+	app.removeAttribute( 'aria-busy' );
+	app.textContent = '';
+	app.appendChild( el( 'div', { 'class': 'ak-head' }, [
+		el( 'h1', { 'class': 'ak-title', text: 'AdminKit' } ),
+		el( 'div', { 'class': 'ak-actions' }, [ statusEl, saveBtn ] )
+	] ) );
 
 	var ICONS = {
 		dashboard: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>',
@@ -257,44 +240,12 @@
 	var activeId = tabs[ 0 ].id;
 	var panels = {};
 
-	// Build each tab's content once. In both modes we get a DOM element back
-	// from t.build() that we'll then mount in mode-specific places.
+	// Build each tab's content once. t.build() returns a DOM element we mount
+	// into our own panel wrap below.
 	tabs.forEach( function ( t ) {
 		panels[ t.id ] = t.build();
 	} );
 
-	if ( EMBEDDED ) {
-		// Embedded mode: drop each panel content into the placeholder card
-		// `options-general.js` built. The page's own tab strip + URL-fragment
-		// routing owns activation — we do not build a nav, do not register
-		// hashchange. The placeholder card has `.ak-options-card` + its own
-		// `data-tab` attribute; adding `.adminkit-app` lets settings.css
-		// rules (scoped to `.adminkit-app`) apply inside it.
-		tabs.forEach( function ( t ) {
-			var host = document.querySelector( '[data-adminkit-panel="' + t.id + '"]' );
-			if ( ! host ) { return; }
-			host.classList.add( 'adminkit-app' );
-			host.setAttribute( 'aria-labelledby', 'ak-tab-' + t.id );
-			host.appendChild( panels[ t.id ] );
-		} );
-		// Save bar — sits above the panels container, always visible. State
-		// stays neutral when no changes pending; lights up + enables Save the
-		// moment something dirties. The wrapper carries both `.adminkit-app`
-		// (so settings.css's `.adminkit-app .ak-status` + `.adminkit-app .ak-btn`
-		// descendant rules apply to the status pill + Save button) AND
-		// `.ak-spa-actions` (for the embedded-mode layout rule in settings.css).
-		var grouped = document.querySelector( '.ak-options-grouped' );
-		if ( grouped ) {
-			var panelsBlock = grouped.querySelector( '.ak-options-panels' );
-			var actions = el( 'div', { 'class': 'adminkit-app ak-spa-actions' }, [ statusEl, saveBtn ] );
-			grouped.insertBefore( actions, panelsBlock );
-		}
-		updateBar();
-		// Done — skip the standalone nav/hash plumbing below.
-		return;
-	}
-
-	// ── Standalone mode (legacy host `<div id="adminkit-app">`) ──
 	var nav = el( 'div', { 'class': 'ak-tabs', role: 'tablist', 'aria-label': 'AdminKit' } );
 	var panelWrap = el( 'div', { 'class': 'ak-panels' } );
 
@@ -838,10 +789,12 @@
 		}
 
 		// --- Brand card ----------------------------------------------------------
+		// The card head used to carry an uppercase eyebrow above the title
+		// (e.g. "BRAND" + "Logo, favicon & accent"). With the title now reading
+		// simply "Marque", the eyebrow just duplicates it — removed.
 		var cardHead = el( 'div', { 'class': 'ak-card__head' } );
 		var headMain = el( 'div', { 'class': 'ak-card__head-main' }, [
-			el( 'div', { 'class': 'ak-card__eyebrow', text: I.brandEyebrow || 'Brand' } ),
-			el( 'h2', { 'class': 'ak-card__title', text: I.brandTitle || 'Logo, favicon & accent' } )
+			el( 'h2', { 'class': 'ak-card__title', text: I.brandTitle || 'Marque' } )
 		] );
 		// Bricks-sync status — visible ONLY when the integration is connected
 		// (theme active AND toggle on). Green dot + label + (N tokens) when
@@ -876,12 +829,12 @@
 			] ) );
 		}
 
-		// Brand slots row — 4 slots paired by MODE (light, then dark):
-		//   Favicon Light · Logo Light · Favicon Dark · Logo Dark
-		// The light favicon proxies WP's native `site_icon` (no separate UI for
-		// it — the native Site Icon row on the form is suppressed by
-		// options-general.js), so the four slots together are the single source
-		// of truth for the site's visual identity.
+		// Brand slots — 4 slots laid out as a 2×2 grid (paired by mode):
+		//   Row 1:  Favicon Light · Logo Light
+		//   Row 2:  Favicon Dark  · Logo Dark
+		// The light favicon proxies WP's native `site_icon` (WP's own Site
+		// Icon row on Settings → General edits the same option; both surfaces
+		// stay in sync on next page load).
 		var slotsRow = el( 'div', { 'class': 'ak-brand-slots' }, [
 			brandSlot( 'favicon', I.slotFavicon || 'Favicon Light Mode', I.slotFaviconSub || 'PNG · 512×512 · cropped' ),
 			brandSlot( 'light', I.slotLight || 'Logo Light Mode', I.slotLightSub || 'SVG · PNG ≥ 400×100' ),

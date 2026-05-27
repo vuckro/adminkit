@@ -144,28 +144,31 @@ list, the `adminkit/setting/{key}` filter, and the REST save.
 ## Settings
 
 `AdminKit_Settings` is the registry; `AdminKit_Settings_Page` mounts a small
-vanilla-JS SPA (`assets/js/settings.js`) directly on **Settings → General**
-(no separate AdminKit menu entry — the SPA contributes two tabs plus a
-Dashboard card that rides on the Site identity tab, so the merged page
-has a five-tab strip on `options-general.php`). Saving runs through one
-REST route (`adminkit/v1/settings`). The AdminKit content is: **Dashboard**
-(secondary card on the Site identity tab — the interactive Branding
-block, brand logo plus the `wp_logo` / `login_logo` modes for the
-site-name and login brand marks, then a read-only reference of the
-semantic token map, plus the roadmap card grid); **Preferences** (its
-own tab — the module toggles); and **Plugins** (its own tab — every
-installed plugin plus AdminKit's active theme adapter, each carrying a
-**Native** badge when AdminKit ships a tuned adapter for it —
-a per-host enable toggle plus dark mode — while everything else inherits
-AdminKit's **generic** base token styling automatically. Rows are grouped
-(Plugins, Themes) with a count pill per group title, and AdminKit itself
-appears as a locked **System** row, always on, not toggleable here. The
-Native badge tracks whether an adapter exists, not whether the plugin is
-currently active).
+vanilla-JS SPA (`assets/js/settings.js`) under its own submenu page at
+**Settings → AdminKit**. The page prints a single host element
+(`<div id="adminkit-app">`) and `settings.js` builds the chrome (title +
+save bar + 3-tab strip) inside it. Saving runs through one REST route
+(`adminkit/v1/settings`). The three tabs are: **Dashboard** (the
+interactive Brand card — light + dark logos and light + dark favicons
+in a 2×2 grid, accent picker, plus the `wp_logo` / `login_logo` modes
+for the site-name and login brand marks, then a read-only reference of
+the semantic token map); **Preferences** (the module toggles); and
+**Plugins** (every installed plugin plus AdminKit's active theme
+adapter, each carrying a **Native** badge when AdminKit ships a tuned
+adapter for it — a per-host enable toggle plus dark mode — while
+everything else inherits AdminKit's **generic** base token styling
+automatically. Rows are grouped (Plugins, Themes) with a count pill per
+group title, and AdminKit itself appears as a locked **System** row,
+always on, not toggleable here. The Native badge tracks whether an
+adapter exists, not whether the plugin is currently active).
 
-The legacy `?page=adminkit` URL still works: an `admin_init` hook in
-`AdminKit_Settings_Page` redirects it to `options-general.php#dashboard`
-so old bookmarks and pre-merge upgrade paths land on the right tab.
+The light favicon slot in the Brand card bidirectionally binds to WP's
+native `site_icon` option — WordPress's own Site Icon row on
+Settings → General edits the same value, so the two surfaces stay in
+sync on next page load. The native WP Settings pages (General, Writing,
+Reading, Discussion, Media, Permalinks) keep their stock WordPress UI;
+AdminKit only contributes CSS polish on top (form-table card chrome,
+width cap), no JS rebuild.
 
 ```php
 AdminKit_Settings::register( $key, array $args );  // declare a setting (idempotent)

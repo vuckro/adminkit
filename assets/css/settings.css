@@ -13,23 +13,6 @@
 	color: var(--ak-text);
 }
 
-/* Embedded mode (Settings → General) — the save bar lives above the panels
-   container as a direct child of `.ak-options-grouped`. The wrapper carries
-   the `.adminkit-app` class so the descendant `.ak-status` + `.ak-btn`
-   rules below apply to its children. Reset the base `.adminkit-app` margins
-   (the wrapper is not the SPA shell — it's a thin floating bar) and lay it
-   out flush-right above the panels. Hidden when on a native WP tab; the
-   page's own `<p class="submit">` handles save there. */
-.adminkit-app.ak-spa-actions {
-	max-width: none;
-	margin: 0 0 12px;
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-	gap: 14px;
-}
-.adminkit-app.ak-spa-actions[hidden] { display: none; }
-
 /* Header ------------------------------------------------------------------ */
 .adminkit-app .ak-head {
 	display: flex;
@@ -740,27 +723,27 @@
 	font-size: 11px;
 }
 
-/* Brand slots row — four cards on a single line, paired by MODE:
-   favicon (light) · logo (light) · favicon (dark) · logo (dark). The light
-   favicon proxies WP's native `site_icon` (the WP-native Site Icon row is
-   suppressed by options-general.js so the slot here is the only UI).
-   Each slot is a HORIZONTAL strip — small preview zone on the left, label /
-   sub / Upload button stacked on the right — so the card stays short in
-   height (a tall vertical layout dominates the page when all four are
-   empty). The fixed light/dark backdrops MUST NOT flip with the admin
-   theme; they show each image on the surface it's built for, like a swatch
-   (same logic as the existing .ak-logo-pick--light/--dark per the
-   CLAUDE.md guardrail). */
+/* Brand slots — four cards laid out as a 2×2 grid (paired by mode):
+     Row 1:  favicon (light) · logo (light)
+     Row 2:  favicon (dark)  · logo (dark)
+   The light favicon proxies WP's native `site_icon` (WP's own Site Icon row
+   on Settings → General edits the same option; both stay in sync on next
+   page load). Each slot is a HORIZONTAL strip — small preview zone on the
+   left, label / sub / Upload button stacked on the right — so each cell
+   stays short in height. The fixed light/dark backdrops MUST NOT flip with
+   the admin theme; they show each image on the surface it's built for,
+   like a swatch (same logic as the existing .ak-logo-pick--light/--dark
+   per the CLAUDE.md guardrail). */
 .adminkit-app .ak-brand-slots {
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	gap: 10px;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 12px;
 	margin-bottom: 16px;
 }
 /* Horizontal slot layout — zone on the LEFT, body (label + sub + button) on
-   the RIGHT. Keeps each card short in height; the 4-up grid gives each card
-   enough width to fit a small zone (40-72px) plus a tight body without
-   wrapping the button under the text. */
+   the RIGHT. Keeps each card short in height; the 2-up grid gives each cell
+   roughly half the card width — plenty of room for the preview zone plus a
+   tight body without wrapping the button under the text. */
 .adminkit-app .ak-brand-slot {
 	border: 1px dashed var(--ak-border);
 	border-radius: var(--ak-radius-m, 10px);

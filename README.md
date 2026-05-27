@@ -28,7 +28,7 @@ See [`docs/INSTALL.md`](docs/INSTALL.md) for the full install guide — release 
 developer clone-and-symlink, and the `dev/package.php` packager that cuts a clean
 release zip from any branch or tag.
 
-That's it — AdminKit works with zero configuration. The settings UI lives directly on **Settings → General** as two extra tabs (**Preferences**, **Plugins**) plus a **Dashboard** card that rides on the **Site identity** tab — alongside the WP site name and tagline it belongs with. Single five-tab strip, no separate AdminKit menu entry. The **Dashboard** card hosts the brand controls (brand logo + site-name brand-mark mode + read-only semantic token reference) and a roadmap card grid. The **Preferences** tab holds the module on/off toggles. The **Plugins** tab lists *every installed* plugin plus AdminKit's active theme adapter, with a **Native** badge on rows that have a tuned AdminKit adapter (per-host enable toggle + dark mode; the badge tracks adapter existence, not whether the plugin is currently active); everything else inherits AdminKit's **generic** base token layer automatically. Rows are grouped (**Plugins**, **Themes**) with a count on each group title, and AdminKit itself appears as a locked **System** row (always on, not removable here). The registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+That's it — AdminKit works with zero configuration. The settings UI lives on its own page at **Settings → AdminKit**, a small vanilla-JS SPA with three tabs. The **Dashboard** tab hosts the brand controls (light + dark logos, light + dark favicons paired as a 2×2 grid, accent picker) and a read-only semantic token reference. The **Preferences** tab holds the module on/off toggles. The **Plugins** tab lists *every installed* plugin plus AdminKit's active theme adapter, with a **Native** badge on rows that have a tuned AdminKit adapter (per-host enable toggle + dark mode; the badge tracks adapter existence, not whether the plugin is currently active); everything else inherits AdminKit's **generic** base token layer automatically. Rows are grouped (**Plugins**, **Themes**) with a count on each group title, and AdminKit itself appears as a locked **System** row (always on, not removable here). The native WP Settings pages (General, Writing, Reading, Discussion, Media, Permalinks) stay as WordPress renders them, with light CSS polish but no JS rebuild. The registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
@@ -163,7 +163,7 @@ adminkit/
 │   ├── class-assets.php                 Asset registry + dispatcher + token cascade
 │   ├── class-screen.php                 get_current_screen() helpers
 │   ├── class-settings.php               Settings registry + color map
-│   ├── class-settings-page.php          SPA bootstrap (Dashboard card on Site identity + Preferences / Plugins tabs on Settings → General) + REST save
+│   ├── class-settings-page.php          SPA bootstrap (Settings → AdminKit submenu — Dashboard / Preferences / Plugins tabs) + REST save
 │   ├── class-dashboard.php              Dashboard widget registry (dormant until used)
 │   ├── class-theme-toggle.php           Dark / light toggle + login logo
 │   ├── wp-core/                         AdminKit's restyle of WP-core surfaces
@@ -174,8 +174,6 @@ adminkit/
 │   │   ├── class-profile-account.php    Profile / user-edit / user-new tabbed layout
 │   │   ├── class-local-avatars.php      Per-user avatar that replaces Gravatar + generated-avatar fallback (DiceBear)
 │   │   ├── class-auto-theme.php         Runtime dark-mode tag-and-paint for unsupported plugin admin screens
-│   │   ├── class-options-general.php    Settings → General tab-rebuild (Site identity / Account / Locale)
-│   │   ├── class-options-discussion.php Settings → Discussion two-tab (Comments / Avatars)
 │   │   ├── class-post-previews.php      List-table screenshot thumbnails
 │   │   ├── class-list-table-chrome.php  List-table toolbar polish + .subsubsub icons + nav-tab icons
 │   │   ├── class-user-quick-edit.php    Inline Quick Edit on users.php (first/last/email/role + avatar refresh)
