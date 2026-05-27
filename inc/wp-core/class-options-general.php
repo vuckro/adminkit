@@ -48,6 +48,9 @@ class AdminKit_Core_Options_General {
 		}
 
 		$strings = array(
+			// Top-level tabs — General groups everything that's not locale.
+			'tabGeneral'   => __( 'General', 'adminkit' ),
+			// Block titles + one-line lede shown above each card.
 			'identity'     => __( 'Site identity', 'adminkit' ),
 			'identityDesc' => __( 'How your site presents itself — name, tagline and addresses.', 'adminkit' ),
 			'siteIcon'     => __( 'Site Icon', 'adminkit' ),

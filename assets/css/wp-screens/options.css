@@ -96,27 +96,25 @@ body.adminkit.options-general-php .ak-options-block > .form-table {
 }
 
 
-/* ──── 5. options-discussion.php — 2-tab split (Avatars / Comment settings).
-   The JS (assets/js/wp-screens/options-discussion.js) inserts a
-   `<nav class="nav-tab-wrapper">` at the top of the form and tags each
-   `<h2>` + `.form-table` pair with `data-ak-tab="avatars"` or
-   `data-ak-tab="comments"`. Switching tabs just flips `hidden` on the
-   tagged elements — nothing moves out of `<form>`, so rule (3)'s
-   `.form-table` card chrome keeps applying.
+/* ──── 5. Tab strip placement (General + Discussion).
+   Both pages enqueue a small JS that inserts a `<nav class="nav-tab-wrapper">`
+   at the top of `<form>` and tags content with `data-ak-tab`. Switching
+   tabs flips `hidden` on the tagged elements — nothing moves out of
+   `<form>` so the card chrome from rule (3) keeps applying.
 
-   The nav strip itself inherits its pill styling from `chrome.css`
+   The nav strip itself inherits its pill styling from chrome.css
    (`.nav-tab-wrapper` / `.nav-tab` / `.nav-tab-active`) — same visual
-   as the Profile page tabs. Only the placement + the Avatars-h2 polish
-   live here. */
+   as the Profile page tabs and the AdminKit SPA strip. Only the
+   placement + the headings-inside-panels polish live here. */
+body.adminkit.options-general-php .wrap > form > .nav-tab-wrapper,
 body.adminkit.options-discussion-php .wrap > form > .nav-tab-wrapper {
 	margin: 4px 0 16px;
 }
-/* The heading + lede pair sits right above each tab's card. WP renders
-   the Avatars one natively (`<h2>Avatars</h2>` + `<p>An avatar is…</p>`)
-   and the JS synthesizes the same pair for the Comments tab. Strip WP's
-   default h2 underline and tighten the spacing so the pair reads as a
-   card label rather than a divider — same look as the themed-block
-   titles on options-general.php. */
+/* Headings + ledes that ride into the form via `data-ak-tab` (Avatars is
+   WP-native, Comment settings is JS-synthesized — same shape both ways).
+   Drop WP's default h2 underline and tighten the spacing so the pair
+   reads as a card label rather than a divider. Same look as the
+   themed-block titles on options-general.php. */
 body.adminkit.options-discussion-php .wrap > form > h2[data-ak-tab] {
 	border-bottom: 0;
 	margin: 4px 0 0;
