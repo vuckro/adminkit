@@ -871,7 +871,17 @@ body.adminkit .media-modal-content {
    In a flex layout those `\n\t` text nodes become anonymous flex items with
    their own width, which otherwise paint as a visible 3-5px gap (cumulative
    over 6 pills → ~30px of phantom space). Child <a>/<button>/.count rules
-   below restore readable font-size. */
+   below restore readable font-size.
+
+   `line-height: 0` is the second leg of the same defence: with `font-size: 0`
+   the container's `normal` line-height could still resolve to a non-zero px
+   value via the inherited line-height multiplier (some UAs floor `normal`
+   at the parent's font-metric height, not zero), which surfaces as a phantom
+   band of empty space ABOVE / BELOW the pill row inside the rounded frame
+   — visible most clearly on plugins.php / edit.php / edit-comments.php as
+   a strip of dead pixels under the active filter. Zero line-height on the
+   container kills that floor; the pills (own line-height: 1, height: 26px
+   below) drive the container's used height by themselves. */
 body.adminkit .subsubsub,
 body.adminkit .nav-tab-wrapper,
 body.adminkit .ak-tabs {
@@ -880,13 +890,14 @@ body.adminkit .ak-tabs {
 	align-items: center;
 	gap: 2px;
 	margin: 16px 0;
-	padding: 4px;
+	padding: 3px;
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
 	list-style: none;
 	width: max-content;
 	max-width: 100%;
 	font-size: 0;
+	line-height: 0;
 }
 
 /* `.ak-tabs` scrolls sideways on overflow (long profile tab lists) instead
@@ -914,7 +925,13 @@ body.adminkit .subsubsub li {
 	margin: 0;
 }
 
-/* 2 — Pill children (the link / button inside the container). */
+/* 2 — Pill children (the link / button inside the container). Explicit
+   `height: 26px` + `line-height: 1` removes every source of pill-height
+   drift: no `line-height: 1.3` fractional half-leading, no vertical padding
+   adding to the line box, no descender slack. The pill is exactly 26px tall,
+   the container (3px padding × 2 + 1px border × 2 + 26px pill) lands at
+   exactly 34px — the strip's used height becomes a constant the user can
+   reason about. */
 body.adminkit .subsubsub a,
 body.adminkit .nav-tab,
 body.adminkit .ak-tabs button {
@@ -922,7 +939,8 @@ body.adminkit .ak-tabs button {
 	align-items: center;
 	gap: 6px;
 	margin: 0;
-	padding: 4px 10px;
+	padding: 0 10px;
+	height: 26px;
 	border: 0;
 	border-radius: var(--ak-radius-s);
 	background: transparent;
@@ -931,11 +949,12 @@ body.adminkit .ak-tabs button {
 	font: inherit;
 	font-size: 13px;
 	font-weight: 500;
-	line-height: 1.3;
+	line-height: 1;
 	text-decoration: none;
 	white-space: nowrap;
 	float: none;      /* WP's `.nav-tab` defaults to float:left, breaks flex. */
 	cursor: pointer;
+	box-sizing: border-box;
 }
 
 /* 3 — Hover / focus: neutral wash, heading colour. */
