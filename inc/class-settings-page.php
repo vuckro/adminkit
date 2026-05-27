@@ -413,7 +413,7 @@ class AdminKit_Settings_Page {
 				// Single-word title; the uppercase eyebrow above used to repeat
 				// the same word ("BRAND > Brand identity"), so the eyebrow is
 				// gone — the title alone names the card.
-				'brandTitle'          => __( 'Marque', 'adminkit' ),
+				'brandTitle'          => __( 'Logo', 'adminkit' ),
 				'brandSyncStatus'     => __( 'Tokens synced with Bricks Builder', 'adminkit' ),
 				/* translators: %d: number of CSS custom properties exposed by Bricks. */
 				'brandSyncStatusCount' => __( '%d tokens', 'adminkit' ),
@@ -433,7 +433,7 @@ class AdminKit_Settings_Page {
 				'slotUpload'          => __( 'Upload', 'adminkit' ),
 				'slotRemove'          => __( 'Remove', 'adminkit' ),
 				'slotMediaLib'        => __( 'Media library', 'adminkit' ),
-				'accentLabel'         => __( 'Color', 'adminkit' ),
+				'accentLabel'         => __( 'Brand color', 'adminkit' ),
 				'accentInherit'       => __( 'Inheriting from provider / baseline', 'adminkit' ),
 				'accentClear'         => __( 'Clear accent', 'adminkit' ),
 				// Accent picker — first option is labelled "WordPress" rather than
