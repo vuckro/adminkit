@@ -88,6 +88,19 @@ body.adminkit.options-discussion-php .ak-options-card {
 	margin: 4px 0 16px;
 }
 
+/* AdminKit panels (Dashboard / Preferences / Plugins, marked by the SPA
+   with `data-adminkit-panel`) render their own internal cards — Brand,
+   Token map, Roadmap, etc. — and would otherwise produce card-in-card
+   nesting against the rule above. Strip the outer chrome on those panels
+   so the SPA content sits flush on the page background, full width. */
+body.adminkit.options-general-php .ak-options-card[data-adminkit-panel] {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	padding: 0;
+	margin: 0;
+}
+
 /* On General the card itself toggles. On Discussion the wrapping panel
    toggles (each panel holds multiple cards). Cover both. */
 body.adminkit.options-general-php .ak-options-card[hidden],

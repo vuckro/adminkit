@@ -55,17 +55,11 @@
 		brandAccent: D.brandAccent || '',    // user hex (only meaningful when accentSource === 'custom')
 		// 'adminkit' = WP Blue (#3858E9), 'bricks' = Bricks provider --accent, 'custom' = brandAccent hex
 		accentSource: D.accentSource || 'adminkit',
-		// Bidirectional binding to WP's native `site_icon` option — see PHP
-		// bootstrap. The light-favicon slot in the Brand card reads + writes
-		// through THIS, not state.logos, so a change here propagates to
-		// Settings → General and vice-versa (page reload pulls the latest).
-		siteIcon: {
-			id:  ( D.siteIcon && D.siteIcon.id ) || 0,
-			url: ( D.siteIcon && D.siteIcon.url ) || ''
-		},
 		// Dark-mode favicon — AdminKit-owned (WP has no equivalent). Stored as
 		// a URL string and printed in `<head>` with `media="(prefers-color-scheme:
 		// dark)"` so browsers swap automatically (incl. the Bricks editor tab).
+		// The LIGHT favicon is WordPress's native `site_icon` — managed by WP's
+		// own Site Icon row on the Site identity tab, NOT by the Brand card here.
 		faviconDark: D.faviconDark || ''
 	};
 	( D.features || [] ).forEach( function ( f ) {
@@ -601,26 +595,20 @@
 		}
 
 		// One brand slot — a dashed card with a fixed-backdrop drop zone (preview
-		// or "DROP" placeholder) + label + sub + Upload / Media library buttons.
+		// or upload-arrow placeholder) + label + sub + Upload / Remove button.
 		// `slotKey` is one of:
 		//   'light' / 'dark'  → brand wordmark URLs in `state.logos[key]`
-		//   'favicon'         → light favicon, proxies WP's native `site_icon`
-		//                       (an attachment ID). Reading + writing routes
-		//                       through `state.siteIcon`, so a change here
-		//                       propagates to Settings → General and back.
 		//   'favicon-dark'    → AdminKit-owned dark-mode favicon URL in
 		//                       `state.faviconDark`. Printed in <head> with
 		//                       `media="(prefers-color-scheme: dark)"` so the
-		//                       browser swaps it automatically.
-		// Both favicon variants share the SiteIconCropper UX (square 512×512);
+		//                       browser swaps it automatically. The light
+		//                       favicon is WP's native `site_icon` — managed
+		//                       by WP's own Site Icon row on the same tab,
+		//                       so we don't expose a slot for it here.
+		// The dark favicon routes through SiteIconCropper (square 512×512);
 		// logo slots use the plain media frame (free-form aspect, no crop).
-		// `opts` can carry a `badge` ({label, hint}) for the small Native chip
-		// shown next to the light favicon label.
-		function brandSlot( slotKey, label, sub, opts ) {
-			opts = opts || {};
-			var isSiteIcon    = ( slotKey === 'favicon' );
+		function brandSlot( slotKey, label, sub ) {
 			var isFaviconDark = ( slotKey === 'favicon-dark' );
-			var isFavicon     = isSiteIcon || isFaviconDark;
 			var preview = el( 'img', { 'class': 'ak-brand-slot__preview', alt: '' } );
 			// Empty-state placeholder is an upload-arrow icon (the zone is a
 			// click-to-upload shortcut alongside the Upload button below).
@@ -638,7 +626,6 @@
 			} );
 
 			function currentUrl() {
-				if ( isSiteIcon )    { return state.siteIcon.url || ''; }
 				if ( isFaviconDark ) { return state.faviconDark || ''; }
 				return state.logos[ slotKey ] || '';
 			}
@@ -658,11 +645,8 @@
 					actionBtn.classList.remove( 'is-remove' );
 				}
 			}
-			function setLogo( url, att ) {
-				if ( isSiteIcon ) {
-					state.siteIcon.url = url || '';
-					state.siteIcon.id  = ( att && att.id ) ? parseInt( att.id, 10 ) : 0;
-				} else if ( isFaviconDark ) {
+			function setLogo( url ) {
+				if ( isFaviconDark ) {
 					state.faviconDark = url || '';
 				} else {
 					state.logos[ slotKey ] = url || '';
@@ -671,11 +655,12 @@
 				markDirty();
 			}
 
-			// Favicon slots route through WP's Site Icon picker (Library + Cropper)
-			// so non-square uploads get cropped to a square 512×512 before save —
-			// same UX as Settings → General → Site Icon for the light one, and the
-			// same cropper for the dark one even though we store its URL ourselves.
-			var pick = isFavicon ? openSiteIcon : openMedia;
+			// The dark favicon routes through WP's Site Icon picker (Library +
+			// Cropper) so non-square uploads get cropped to a square 512×512
+			// before save — same UX as Settings → General → Site Icon, even
+			// though we store the cropped URL in our own option rather than
+			// `site_icon`. Wordmark logos use the plain media frame (no crop).
+			var pick = isFaviconDark ? openSiteIcon : openMedia;
 
 			// Drop zone is always a "pick / replace" shortcut. The action button
 			// branches on current state — clears when filled, picks when empty.
@@ -692,21 +677,10 @@
 			syncPreview();
 
 			// Label row (always present) + optional badge chip next to it.
-			var labelRow = el( 'div', { 'class': 'ak-brand-slot__label-row' }, [
-				el( 'div', { 'class': 'ak-brand-slot__label', text: label } )
-			] );
-			if ( opts.badge && opts.badge.label ) {
-				labelRow.appendChild( el( 'span', {
-					'class': 'ak-badge ak-brand-slot__badge',
-					title: opts.badge.hint || '',
-					text: opts.badge.label
-				} ) );
-			}
-
 			return el( 'div', { 'class': 'ak-brand-slot ak-brand-slot--' + slotKey }, [
 				zone,
 				el( 'div', { 'class': 'ak-brand-slot__body' }, [
-					labelRow,
+					el( 'div', { 'class': 'ak-brand-slot__label', text: label } ),
 					sub ? el( 'div', { 'class': 'ak-brand-slot__sub', text: sub } ) : null,
 					el( 'div', { 'class': 'ak-brand-slot__btns' }, [ actionBtn ] )
 				] )
@@ -1000,15 +974,13 @@
 			] ) );
 		}
 
-		// Brand slots row — 4 slots: light + dark wordmarks, then light + dark
-		// favicons. Light favicon = WP native `site_icon` (carries a "Native"
-		// chip so the user knows the dark slot is the AdminKit-owned companion).
+		// Brand slots row — 3 slots: light + dark wordmarks, then the dark-mode
+		// favicon. The LIGHT favicon is WordPress's native `site_icon` and is
+		// edited via WP's own Site Icon row on the same tab (Site identity),
+		// so duplicating it here would just stack the same picker thrice.
 		var slotsRow = el( 'div', { 'class': 'ak-brand-slots' }, [
 			brandSlot( 'light', I.slotLight || 'Light mode', I.slotLightSub || 'Shown on light surfaces' ),
 			brandSlot( 'dark', I.slotDark || 'Dark mode', I.slotDarkSub || 'Shown on dark surfaces' ),
-			brandSlot( 'favicon', I.slotFavicon || 'Favicon — light', I.slotFaviconSub || 'Recommended: 512×512 square (cropped on upload)', {
-				badge: { label: I.slotFaviconNative || 'Native', hint: I.slotFaviconNativeHint || '' }
-			} ),
 			brandSlot( 'favicon-dark', I.slotFaviconDark || 'Favicon — dark', I.slotFaviconDarkSub || 'Shown via prefers-color-scheme: dark' )
 		] );
 
@@ -1048,13 +1020,12 @@
 			accentPicker()
 		] );
 
-		// Card stack: identity (slots) → display row → color row.
+		// Card stack: identity (slots) → display row → color row. Mounted
+		// directly under the panel — no wrapping intro text, the eyebrow +
+		// title on the card head already explain what this is.
 		var card = el( 'section', { 'class': 'ak-card' }, [
 			cardHead, slotsRow, displayRow, colorRow
 		] );
-
-		// Intro text above the card.
-		p.appendChild( el( 'p', { 'class': 'ak-design-intro', text: I.designIntro || '' } ) );
 		p.appendChild( card );
 
 		// --- Tokens CTA + revealed reference (lazy build) ------------------------
@@ -1699,9 +1670,9 @@
 		v.login_logo    = state.loginLogo;
 		v.brand_accent  = state.brandAccent;
 		v.accent_source = state.accentSource;
-		// WP-native option proxy — see PHP rest_save() for the round-trip.
-		v.site_icon_id  = state.siteIcon.id;
-		// AdminKit-owned dark favicon URL (no WP equivalent).
+		// AdminKit-owned dark favicon URL (no WP equivalent — the light favicon
+		// is WP's native `site_icon`, edited via the Site Icon row on the same
+		// tab, not posted here).
 		v.favicon_dark  = state.faviconDark;
 		return v;
 	}

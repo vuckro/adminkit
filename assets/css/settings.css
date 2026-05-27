@@ -817,12 +817,6 @@
 
 /* Design tab — Brand card + Tokens disclosure (final layout, Phase A) ------ */
 
-.adminkit-app .ak-design-intro {
-	color: var(--ak-text-muted);
-	font-size: var(--ak-text-s, 13px);
-	margin: 0 0 16px;
-}
-
 /* The Brand card wraps everything interactive at the top of the Design tab:
    slots row, accent picker, derived strip, display selectors. One bordered
    container with a small head (eyebrow + title + status + Actions menu). */
@@ -901,17 +895,19 @@
 	font-size: 11px;
 }
 
-/* Brand slots row — four cards on a single line: logo (light) · logo (dark) ·
-   favicon (light) · favicon (dark). Each slot is a HORIZONTAL strip — small
-   preview zone on the left, label / sub / Upload button stacked on the right
-   — so the card stays short in height (a tall vertical layout dominates the
-   page when all four are empty). The fixed light/dark backdrops MUST NOT
-   flip with the admin theme; they show each image on the surface it's built
-   for, like a swatch (same logic as the existing .ak-logo-pick--light/--dark
-   per the CLAUDE.md guardrail). */
+/* Brand slots row — three cards on a single line: logo (light) · logo (dark)
+   · favicon (dark). The LIGHT favicon is WP's native `site_icon`, edited via
+   WP's own Site Icon row on the same tab (Site identity), so it's not
+   duplicated here. Each slot is a HORIZONTAL strip — small preview zone on
+   the left, label / sub / Upload button stacked on the right — so the card
+   stays short in height (a tall vertical layout dominates the page when all
+   slots are empty). The fixed light/dark backdrops MUST NOT flip with the
+   admin theme; they show each image on the surface it's built for, like a
+   swatch (same logic as the existing .ak-logo-pick--light/--dark per the
+   CLAUDE.md guardrail). */
 .adminkit-app .ak-brand-slots {
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(3, 1fr);
 	gap: 10px;
 	margin-bottom: 16px;
 }
@@ -977,8 +973,10 @@
 /* Fixed light/dark backdrops — same guarded exception as .ak-logo-pick--light/--dark.
    Both wordmark slots AND both favicon slots get the light/dark backdrops so
    the user previews each image on the surface it's built for. */
-.adminkit-app .ak-brand-slot--light .ak-brand-slot__zone,
-.adminkit-app .ak-brand-slot--favicon .ak-brand-slot__zone { background: #ffffff; color: #888; }
+/* Fixed backdrops by slot kind — light wordmark sits on white, dark wordmark
+   and the dark favicon sit on near-black. The light favicon lives in WP's
+   native Site Icon row (not here), so no `--favicon` rule is needed. */
+.adminkit-app .ak-brand-slot--light .ak-brand-slot__zone { background: #ffffff; color: #888; }
 .adminkit-app .ak-brand-slot--dark .ak-brand-slot__zone,
 .adminkit-app .ak-brand-slot--favicon-dark .ak-brand-slot__zone { background: #0a0a0a; color: #888; }
 /* Body sits to the right of the zone — left-aligned column that fills the
@@ -991,26 +989,6 @@
 	align-items: flex-start;
 	gap: 2px;
 	min-width: 0;
-}
-/* Label row — label text + optional badge chip ("Native" on the light
-   favicon). Wraps on narrow widths so the chip drops under instead of
-   pushing the label to ellipsis. */
-.adminkit-app .ak-brand-slot__label-row {
-	display: inline-flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 5px;
-	line-height: 1.2;
-}
-.adminkit-app .ak-brand-slot__badge {
-	padding: 1px 5px;
-	font-size: 9px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: .04em;
-	border-radius: var(--ak-radius-s, 6px);
-	background: var(--ak-elevated);
-	color: var(--ak-text-muted);
 }
 .adminkit-app .ak-brand-slot__label {
 	font-size: 13px;

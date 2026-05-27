@@ -170,20 +170,10 @@ class AdminKit_Settings_Page {
 		$values = $request->get_param( 'values' );
 		$values = is_array( $values ) ? $values : array();
 
-		// Favicon slot in the Design tab proxies WP's native `site_icon` option —
-		// not an AdminKit setting. Handle it BEFORE the schema sanitiser (which
-		// would drop the unknown key) and update the WP option directly so every
-		// surface that reads `site_icon` (browser tabs, login fallback, OG tags)
-		// stays in lockstep. 0 / empty means "no icon" — same convention as core.
-		if ( array_key_exists( 'site_icon_id', $values ) ) {
-			$icon_id = absint( $values['site_icon_id'] );
-			if ( $icon_id > 0 && wp_attachment_is_image( $icon_id ) ) {
-				update_option( 'site_icon', $icon_id );
-			} else {
-				delete_option( 'site_icon' );
-			}
-			unset( $values['site_icon_id'] );
-		}
+		// Note: the LIGHT favicon (WP's native `site_icon`) is no longer
+		// posted through this route. WordPress's own Site Icon row on the
+		// Site identity tab handles it via the standard options.php POST;
+		// the AdminKit Brand card only owns the dark-mode companion.
 
 		$clean = self::sanitize( $values );
 
@@ -319,17 +309,6 @@ class AdminKit_Settings_Page {
 			// Default AdminKit accent (WordPress Blue). The SPA seeds the swatch
 			// with this when source = 'adminkit' before getComputedStyle resolves.
 			'adminkitBlue' => AdminKit_Assets::ADMINKIT_BLUE,
-			'hasSiteIcon'  => '' !== (string) get_site_icon_url(),
-			// Bidirectional binding for the Favicon slot in the Design tab: we read
-			// AND write WordPress's native `site_icon` option, so the slot stays in
-			// lockstep with Settings → General. Changing it here propagates to every
-			// surface WP already uses the site icon for (browser tab, login screen
-			// fallback, Open Graph). No separate AdminKit storage — the WP option
-			// is the single source of truth.
-			'siteIcon'     => array(
-				'id'  => (int) get_option( 'site_icon', 0 ),
-				'url' => (string) get_site_icon_url(),
-			),
 			// Bricks detection — true when the Bricks theme is the active theme.
 			// `bricksConnected` adds the Bricks integration toggle to the equation
 			// (so a user who disables the integration in the Plugins tab also
@@ -369,8 +348,11 @@ class AdminKit_Settings_Page {
 				'logoRemove'        => __( 'Remove logo', 'adminkit' ),
 				'mediaTitle'        => __( 'Select a logo', 'adminkit' ),
 				'mediaButton'       => __( 'Use this image', 'adminkit' ),
-				'mediaSiteIconTitle'  => __( 'Choose a Site Icon', 'adminkit' ),
-				'mediaSiteIconButton' => __( 'Set as Site Icon', 'adminkit' ),
+				// Cropper modal — used only by the dark favicon slot (light favicon
+				// is WP's native Site Icon, edited outside the SPA). Labels stay
+				// generic so they read naturally in the cropping flow.
+				'mediaSiteIconTitle'  => __( 'Choose a favicon', 'adminkit' ),
+				'mediaSiteIconButton' => __( 'Use this image', 'adminkit' ),
 				'plugins'           => __( 'Plugins', 'adminkit' ),
 				'pluginsIntro'      => __( 'Every plugin installed on your site, plus AdminKit\'s active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit\'s base styling automatically.', 'adminkit' ),
 				'native'            => __( 'Native', 'adminkit' ),
@@ -390,7 +372,6 @@ class AdminKit_Settings_Page {
 				'wpLogoBrand'       => __( 'Logo', 'adminkit' ),
 				'wpLogoFavicon'     => __( 'Favicon', 'adminkit' ),
 				'wpLogoInherit'     => __( 'Inherit', 'adminkit' ),
-				'wpLogoNoIcon'      => __( 'No Site Icon set — the mark stays empty until you add one (Settings → General).', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),
@@ -416,38 +397,26 @@ class AdminKit_Settings_Page {
 				/* translators: pangram used as a font preview sample — translate to a sentence that exercises your language's letters. */
 				'pangram'           => __( 'The quick brown fox jumps over the lazy dog', 'adminkit' ),
 
-				// --- Design tab — Brand card (final layout, Phase A) -------------
-				'designIntro'         => __( 'Customise your WordPress admin\'s design and branding.', 'adminkit' ),
+				// --- Brand card (Dashboard secondary card on Site identity) ------
 				'brandEyebrow'        => __( 'Brand', 'adminkit' ),
 				'brandTitle'          => __( 'Logo, favicon & accent', 'adminkit' ),
 				'brandSyncStatus'     => __( 'Tokens synced with Bricks Builder', 'adminkit' ),
 				/* translators: %d: number of CSS custom properties exposed by Bricks. */
 				'brandSyncStatusCount' => __( '%d tokens', 'adminkit' ),
-				// Slot titles read as a coherent set — "<Kind> <Mode>" with no dash,
-				// so the four labels align (Logo Light Mode / Logo Dark Mode / Favicon
-				// Light Mode / Favicon Dark Mode). The mode word follows the kind so
-				// the eye scans the kind first.
-				// Sub-labels stay terse so they sit on a single line within the
-				// narrow 4-up cards. Full guidance moves to the tooltip on the
-				// dotted card border (mediaSiteIconTitle / Bricks docs) rather
-				// than wrapping into a wall of muted text under each label.
+				// Slot titles read as a coherent set — "<Kind> <Mode>" — with the
+				// mode word following the kind so the eye scans the kind first.
+				// The LIGHT favicon is intentionally absent: it's WP's native
+				// `site_icon`, edited via the Site Icon row sitting alongside on
+				// the same tab. Duplicating it here just stacked the same picker.
 				'slotLight'           => __( 'Logo Light Mode', 'adminkit' ),
 				'slotLightSub'        => __( 'SVG · PNG ≥ 400×100', 'adminkit' ),
 				'slotDark'            => __( 'Logo Dark Mode', 'adminkit' ),
 				'slotDarkSub'         => __( 'SVG · PNG ≥ 400×100', 'adminkit' ),
-				'slotFavicon'         => __( 'Favicon Light Mode', 'adminkit' ),
-				'slotFaviconSub'      => __( 'PNG · 512×512 · cropped', 'adminkit' ),
 				'slotFaviconDark'     => __( 'Favicon Dark Mode', 'adminkit' ),
 				'slotFaviconDarkSub'  => __( 'Auto-swap via prefers-color-scheme', 'adminkit' ),
-				// Chip next to the light favicon — flags it as the WordPress-native
-				// site_icon (Settings → General), so the user knows the dark slot is
-				// the new AdminKit-owned counterpart.
-				'slotFaviconNative'   => __( 'Native', 'adminkit' ),
-				'slotFaviconNativeHint' => __( 'WordPress\'s built-in Site Icon (Settings → General).', 'adminkit' ),
 				'slotUpload'          => __( 'Upload', 'adminkit' ),
 				'slotRemove'          => __( 'Remove', 'adminkit' ),
 				'slotMediaLib'        => __( 'Media library', 'adminkit' ),
-				'faviconHint'         => __( 'Inherits the Site Icon when empty (Settings → General).', 'adminkit' ),
 				'accentLabel'         => __( 'Color', 'adminkit' ),
 				'accentInherit'       => __( 'Inheriting from provider / baseline', 'adminkit' ),
 				'accentClear'         => __( 'Clear accent', 'adminkit' ),
