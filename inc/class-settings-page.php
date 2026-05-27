@@ -41,6 +41,9 @@ class AdminKit_Settings_Page {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 		add_filter( 'adminkit/integration_enabled', array( __CLASS__, 'gate_integration' ), 10, 2 );
+		// Gate the admin restyle on plugin pages that have no AdminKit adapter
+		// when the user has disabled generic theming (Plugins tab toggle).
+		add_filter( 'adminkit/should_load', array( __CLASS__, 'gate_generic_theming' ), 10, 2 );
 	}
 
 	/**
@@ -311,6 +314,10 @@ class AdminKit_Settings_Page {
 			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
 			'loginLogo'    => (string) AdminKit_Settings::get( 'login_logo' ),
 			'brandAccent'  => (string) AdminKit_Settings::get( 'brand_accent' ),
+			// Global switch on the Plugins tab — when off, AdminKit's admin
+			// restyle is suppressed on plugin pages without a dedicated
+			// adapter (see `gate_generic_theming()`).
+			'genericThemingEnabled' => (bool) AdminKit_Settings::get( 'generic_theming_enabled' ),
 			// Effective accent source (resolved at read time — see accent_source()).
 			// One of 'adminkit' | 'bricks' | 'custom'. Drives the segmented picker
 			// in the Brand card and the Source pill colour for accent-family tokens.
@@ -364,6 +371,10 @@ class AdminKit_Settings_Page {
 				'nativeHint'        => __( 'AdminKit ships a tuned adapter for this plugin — light and dark.', 'adminkit' ),
 				'system'            => __( 'System', 'adminkit' ),
 				'systemHint'        => __( 'AdminKit itself — always on and not removable here.', 'adminkit' ),
+				'inactive'          => __( 'Inactive', 'adminkit' ),
+				'inactiveHint'      => __( 'Plugin is installed but not active.', 'adminkit' ),
+				'genericThemingLabel' => __( 'Theme generic plugins', 'adminkit' ),
+				'genericThemingDesc'  => __( 'Apply AdminKit\'s base styling (dark mode + tokens) to plugin admin pages that don\'t have a dedicated adapter. Turn off to leave those pages with WordPress\'s native interface.', 'adminkit' ),
 				'generic'           => __( 'Generic', 'adminkit' ),
 				'genericHint'       => __( 'No dedicated adapter — themed automatically by AdminKit\'s base layer.', 'adminkit' ),
 				'themesLabel'       => __( 'Themes', 'adminkit' ),
@@ -862,7 +873,7 @@ class AdminKit_Settings_Page {
 		// 1) EVERY installed plugin — the tab mirrors the site's plugins. Unknown
 		// (no adapter) ones carry no badge; they're themed automatically by
 		// AdminKit's generic layer (base component CSS + WP-var remap) when active.
-		if ( ! function_exists( 'get_plugins' ) ) {
+		if ( ! function_exists( 'get_plugins' ) || ! function_exists( 'is_plugin_active' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 		$self = plugin_basename( ADMINKIT_FILE );
@@ -878,6 +889,7 @@ class AdminKit_Settings_Page {
 					'supported' => false,
 					'system'    => true,
 					'enabled'   => true,
+					'active'    => true,
 				);
 				continue;
 			}
@@ -890,6 +902,10 @@ class AdminKit_Settings_Page {
 				'type'      => 'plugin',
 				'supported' => $supported,
 				'enabled'   => $supported ? (bool) AdminKit_Settings::get( 'integration_' . $slug . '_enabled' ) : false,
+				// Installed-but-inactive plugins are listed too (mirrors WP's own
+				// Plugins screen) — the UI mutes their row so the eye reads the
+				// active ones first.
+				'active'    => is_plugin_active( $file ),
 			);
 		}
 
@@ -905,6 +921,7 @@ class AdminKit_Settings_Page {
 				'type'      => 'theme',
 				'supported' => true,
 				'enabled'   => (bool) AdminKit_Settings::get( 'integration_' . $s['slug'] . '_enabled' ),
+				'active'    => true,
 			);
 		}
 
@@ -929,6 +946,12 @@ class AdminKit_Settings_Page {
 	 * case of a conflict. Idempotent; called where the schema is needed (UI +
 	 * save). Default ON.
 	 *
+	 * Also registers `generic_theming_enabled` — a single switch that gates
+	 * AdminKit's auto-theming on admin pages belonging to plugins WITHOUT a
+	 * dedicated AdminKit adapter (the "Generic" rows on the Plugins tab).
+	 * Default ON; flipping it OFF makes those pages fall back to WordPress's
+	 * native styling (see `gate_generic_theming()` below).
+	 *
 	 * @return void
 	 */
 	public static function register_integration_toggles() {
@@ -940,6 +963,58 @@ class AdminKit_Settings_Page {
 				'sanitize' => 'rest_sanitize_boolean',
 			) );
 		}
+		AdminKit_Settings::register( 'generic_theming_enabled', array(
+			'type'     => 'toggle',
+			'group'    => 'integrations',
+			'default'  => true,
+			'sanitize' => 'rest_sanitize_boolean',
+		) );
+	}
+
+	/**
+	 * Gate AdminKit's admin restyle on "generic" plugin pages — admin screens
+	 * that belong to a plugin WITHOUT a dedicated AdminKit adapter — when the
+	 * user has turned off `generic_theming_enabled`. Hooked on
+	 * `adminkit/should_load`, which `AdminKit_Assets::add_admin_body_class()`
+	 * consults before adding the `adminkit` body class. With no body class,
+	 * the scoped `body.adminkit …` CSS rules don't match → WordPress paints
+	 * with its native styling, exactly what "disable for generics" promises.
+	 *
+	 * @param bool   $should_load
+	 * @param string $context admin | login | frontend | editor.
+	 * @return bool
+	 */
+	public static function gate_generic_theming( $should_load, $context ) {
+		if ( 'admin' !== $context || ! $should_load ) {
+			return $should_load;
+		}
+		if ( AdminKit_Settings::get( 'generic_theming_enabled' ) ) {
+			return $should_load;
+		}
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen ) {
+			return $should_load;
+		}
+		// "Generic plugin page" heuristic: plugin admin pages get IDs prefixed
+		// `toplevel_page_` or containing `_page_`; WP core screens never do.
+		// If neither pattern matches, it's a core page — leave it themed.
+		$id  = (string) $screen->id;
+		$top = ( 0 === strpos( $id, 'toplevel_page_' ) );
+		$sub = ( false !== strpos( $id, '_page_' ) ) && ! $top;
+		if ( ! $top && ! $sub ) {
+			return $should_load;
+		}
+		// Native adapter page? Let the integration's own owns_screen() vote.
+		// Anything that claims this screen is "native" and stays themed.
+		foreach ( self::integration_specs() as $s ) {
+			if ( ! method_exists( $s['class'], 'owns_screen' ) ) {
+				continue;
+			}
+			if ( call_user_func( array( $s['class'], 'owns_screen' ), $screen ) ) {
+				return $should_load;
+			}
+		}
+		return false; // generic plugin page + toggle off → strip AdminKit theming
 	}
 
 	/**

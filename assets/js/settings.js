@@ -28,6 +28,10 @@
 		saving: false,
 		features: {},      // setting key -> bool
 		integrations: {},  // integration slug -> bool (adapter enabled)
+		// Plugins tab — global switch that gates AdminKit's auto-theming on
+		// admin pages belonging to plugins without a dedicated adapter (see
+		// PHP gate_generic_theming()). Off → those pages keep WP native UI.
+		genericThemingEnabled: D.genericThemingEnabled !== false,
 		logos: {           // setting key -> url string
 			light: ( D.logos && D.logos.light ) || '',
 			dark:  ( D.logos && D.logos.dark ) || ''
@@ -1285,18 +1289,32 @@
 			} );
 		}
 
+		// Neutral "Inactive" chip for installed-but-not-active plugins. Pairs
+		// with `.is-muted` on the row for an across-the-board dim treatment.
+		function inactiveBadge() {
+			return el( 'span', {
+				'class': 'ak-badge',
+				title: I.inactiveHint || '',
+				text: I.inactive || 'Inactive'
+			} );
+		}
+
 		function pluginRow( i ) {
 			// Badge + name hug the left together (.ak-row__head), badge first; the
 			// switch (native only) is pushed right by .ak-row__main's flex:1.
 			// System (AdminKit itself) → neutral System; supported → brand Native;
 			// any other installed plugin → neutral Generic (no dedicated adapter).
 			var badge = i.system ? systemBadge() : ( i.supported ? nativeBadge() : genericBadge() );
+			var head  = [ badge, el( 'span', { 'class': 'ak-row__label', text: i.label } ) ];
+			// Installed but not active → add an "Inactive" chip after the name.
+			if ( ! i.system && i.active === false ) {
+				head.push( inactiveBadge() );
+			}
 			var main = el( 'div', { 'class': 'ak-row__main' }, [
-				el( 'div', { 'class': 'ak-row__head' }, [
-					badge,
-					el( 'span', { 'class': 'ak-row__label', text: i.label } )
-				] )
+				el( 'div', { 'class': 'ak-row__head' }, head )
 			] );
+			// Class hook for the muted/dim treatment when the plugin is inactive.
+			var rowClass = ( ! i.system && i.active === false ) ? 'ak-row is-muted' : 'ak-row';
 
 			// System row (AdminKit itself) → greyed + locked: a switch that reads ON
 			// but can't be operated (.is-locked dims it and kills pointer events).
@@ -1316,7 +1334,7 @@
 
 			// Generic plugin → no adapter to switch (Generic badge, no toggle).
 			if ( ! i.supported || ! i.slug ) {
-				return el( 'div', { 'class': 'ak-row' }, [ main ] );
+				return el( 'div', { 'class': rowClass }, [ main ] );
 			}
 
 			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
@@ -1326,8 +1344,34 @@
 				markDirty();
 			} );
 			inputs.push( { slug: i.slug, input: input } );
-			return el( 'div', { 'class': 'ak-row' }, [
+			return el( 'div', { 'class': rowClass }, [
 				main,
+				el( 'label', { 'class': 'ak-switch' }, [
+					input,
+					el( 'span', { 'class': 'ak-switch__track' } ),
+					el( 'span', { 'class': 'ak-switch__knob' } )
+				] )
+			] );
+		}
+
+		// Global "Theme generic plugins" toggle row — sits above the lists.
+		// When off, the PHP `gate_generic_theming` filter suppresses the
+		// adminkit body class on non-native plugin admin pages, so they fall
+		// back to WordPress's native UI.
+		function genericThemingRow() {
+			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
+			input.checked = !! state.genericThemingEnabled;
+			input.addEventListener( 'change', function () {
+				state.genericThemingEnabled = input.checked;
+				markDirty();
+			} );
+			return el( 'div', { 'class': 'ak-row' }, [
+				el( 'div', { 'class': 'ak-row__main' }, [
+					el( 'div', { 'class': 'ak-row__head' }, [
+						el( 'span', { 'class': 'ak-row__label', text: I.genericThemingLabel || 'Theme generic plugins' } )
+					] ),
+					el( 'p', { 'class': 'ak-row__desc', text: I.genericThemingDesc || '' } )
+				] ),
 				el( 'label', { 'class': 'ak-switch' }, [
 					input,
 					el( 'span', { 'class': 'ak-switch__track' } ),
@@ -1364,6 +1408,13 @@
 			] ) );
 		} );
 
+		// Global generic-theming switch sits in its own group at the top —
+		// affects every Generic row below, so the header position reads as
+		// "this is the master switch for what's listed".
+		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
+			el( 'div', { 'class': 'ak-rows' }, [ genericThemingRow() ] )
+		] ) );
+
 		// Bulk controls — only when there's at least one active integration to flip.
 		if ( inputs.length ) {
 			p.appendChild( el( 'div', { 'class': 'ak-actions ak-bulk' }, [
@@ -1390,6 +1441,7 @@
 		v.login_logo   = state.loginLogo;
 		v.brand_accent = state.brandAccent;
 		v.accent_source = state.accentSource;
+		v.generic_theming_enabled = !! state.genericThemingEnabled;
 		// WP-native option proxy — see PHP rest_save() for the round-trip.
 		v.site_icon_id = state.siteIcon.id;
 		return v;
