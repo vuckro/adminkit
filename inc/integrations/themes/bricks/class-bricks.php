@@ -458,9 +458,17 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		//
 		//   • TOOLBAR LOGO → favicon if set, otherwise Bricks's native
 		//     toolbar img sits in the accent frame (CSS-static rule).
+		//
+		// Favicon detection: get_site_icon_url() only returns a URL when the
+		// user has formally set a Site Icon in Settings → General. Lots of
+		// sites have a /favicon.ico at the root without ever doing that, so
+		// fall back to it when present — same icon either way.
 		$brand_logo = AdminKit_Settings::brand_logo( 'dark' );
 		$favicon    = get_site_icon_url( 192 );
-		$css        = '';
+		if ( '' === $favicon && file_exists( ABSPATH . 'favicon.ico' ) ) {
+			$favicon = home_url( '/favicon.ico' );
+		}
+		$css = '';
 
 		if ( '' !== $brand_logo ) {
 			$url  = 'url("' . esc_url_raw( $brand_logo ) . '")';
