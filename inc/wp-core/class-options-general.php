@@ -50,6 +50,8 @@ class AdminKit_Core_Options_General {
 		$strings = array(
 			'identity'     => __( 'Site identity', 'adminkit' ),
 			'identityDesc' => __( 'How your site presents itself — name, tagline and addresses.', 'adminkit' ),
+			'siteIcon'     => __( 'Site Icon', 'adminkit' ),
+			'siteIconDesc' => __( 'Shown in browser tabs, bookmark lists and the app icon when visitors save your site to a phone home screen.', 'adminkit' ),
 			'account'      => __( 'Account & registration', 'adminkit' ),
 			'accountDesc'  => __( 'Admin email, who can sign up, and the default role assigned to new users.', 'adminkit' ),
 			'locale'       => __( 'Language, date & time', 'adminkit' ),

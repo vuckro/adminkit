@@ -33,8 +33,14 @@
 	// multisite) is silently skipped. `desc` is the short caption rendered
 	// between the heading and the card — gives the title breathing room
 	// against the card and clarifies the bucket's scope in one line.
+	//
+	// `site-icon` is its own block between Site identity and Account because
+	// the row is a complex media-picker widget (not a flat field), and
+	// placing it inside Site identity made that card very tall. Standalone
+	// reads as a focused single-control card.
 	var BLOCKS = [
 		{ id: 'site-identity', title: S.identity || 'Site identity',          desc: S.identityDesc || '', rows: [ 'blogname', 'blogdescription', 'siteurl', 'home' ] },
+		{ id: 'site-icon',     title: S.siteIcon || 'Site Icon',              desc: S.siteIconDesc || '', rows: [ 'site_icon' ] },
 		{ id: 'account',       title: S.account  || 'Account & registration', desc: S.accountDesc  || '', rows: [ 'admin_email', 'new_admin_email', 'users_can_register', 'default_role' ] },
 		{ id: 'locale',        title: S.locale   || 'Language, date & time',  desc: S.localeDesc   || '', rows: [ 'WPLANG', 'timezone_string', 'date_format', 'time_format', 'start_of_week' ] }
 	];

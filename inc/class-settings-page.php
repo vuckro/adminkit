@@ -2,16 +2,15 @@
 /**
  * Settings page — the admin UI for AdminKit.
  *
- * Mounts a `Settings → AdminKit` submenu page that hosts the SPA. The PHP
- * side here only:
- *   - registers the submenu + renders an empty `<div id="adminkit-app">`
+ * Mounts AdminKit as a TOP-LEVEL admin menu entry (sibling of Plugins /
+ * Users / Tools / Settings) that hosts the SPA. The PHP side here only:
+ *   - registers the menu + renders an empty `<div id="adminkit-app">`
  *     host that `settings.js` builds into,
  *   - enqueues the SPA assets on that screen + hands the app its data via
  *     `window.AdminKitData`,
  *   - exposes one REST route (`adminkit/v1/settings`) the SPA POSTs to.
  *
- * The data is built from the settings registry: the semantic token taxonomy
- * (rendered read-only on the Brand card), the feature toggles, and the
+ * The data is built from the settings registry: the feature toggles and the
  * detected integrations. Saving runs each known field through its registered
  * `sanitize` callback and persists only registered keys.
  *
@@ -22,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Settings_Page {
 
-	/** `?page=` slug for the submenu + the `settings_page_{slug}` screen id. */
+	/** `?page=` slug for the top-level menu + the `toplevel_page_{slug}` screen id. */
 	const SLUG = 'adminkit';
 
 	/** Asset handle shared by the SPA's script + style. */
@@ -56,21 +55,25 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Register the submenu page under Settings. Parent slug `options-general.php`
-	 * is what WordPress expects to nest under the "Settings" menu group. Screen
-	 * hook ends up as `settings_page_adminkit` — that's what the enqueue gate
-	 * matches below.
+	 * Register AdminKit as a TOP-LEVEL admin menu entry — same level as
+	 * Plugins / Users / Tools / Settings, not nested under Settings. The
+	 * screen hook ends up as `toplevel_page_adminkit`; the enqueue gate
+	 * below matches that.
+	 *
+	 * Position 81 = right after Settings (which sits at 80). Icon is the
+	 * built-in dashicons palette-and-brush so no asset to ship.
 	 *
 	 * @return void
 	 */
 	public static function add_submenu() {
-		add_submenu_page(
-			'options-general.php',
+		add_menu_page(
 			'AdminKit',
 			'AdminKit',
 			'manage_options',
 			self::SLUG,
-			array( __CLASS__, 'render_page' )
+			array( __CLASS__, 'render_page' ),
+			'dashicons-admin-customizer',
+			81
 		);
 	}
 
@@ -102,7 +105,7 @@ class AdminKit_Settings_Page {
 	public static function plugin_action_links( $links ) {
 		$settings = sprintf(
 			'<a href="%s">%s</a>',
-			esc_url( admin_url( 'options-general.php?page=' . self::SLUG ) ),
+			esc_url( admin_url( 'admin.php?page=' . self::SLUG ) ),
 			esc_html__( 'Settings', 'adminkit' )
 		);
 		array_unshift( $links, $settings );
@@ -120,7 +123,7 @@ class AdminKit_Settings_Page {
 	 * @return void
 	 */
 	public static function enqueue( $hook ) {
-		if ( 'settings_page_' . self::SLUG !== $hook ) {
+		if ( 'toplevel_page_' . self::SLUG !== $hook ) {
 			return;
 		}
 

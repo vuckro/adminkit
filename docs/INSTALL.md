@@ -22,13 +22,15 @@ In WordPress:
 
 1. **Plugins → Add New → Upload Plugin** → choose the `adminkit-X.Y.Z.zip` file → **Install Now**.
 2. **Activate Plugin.**
-3. Open **Settings → AdminKit** in wp-admin. The page hosts a three-tab
-   SPA: **Dashboard** (brand controls — light + dark logos, light + dark
-   favicons in a 2×2 grid, accent picker — plus a read-only token
-   reference), **Preferences** (module on/off toggles), **Plugins**
-   (per-host adapter list). The native WP Settings pages (General,
-   Writing, Reading, Discussion, Media, Permalinks) keep their stock
-   WordPress UI, with light CSS polish but no JS rebuild.
+3. Open the **AdminKit** entry in the wp-admin sidebar (top-level
+   menu, just after Settings). The page hosts a three-tab SPA:
+   **Dashboard** (brand controls — light + dark logos, light + dark
+   favicons in a 2×2 grid, accent picker), **Preferences** (module
+   on/off toggles), **Plugins** (per-host adapter list). The native
+   WP Settings pages (General, Writing, Reading, Discussion, Media,
+   Permalinks) keep their stock WordPress UI, with light CSS polish
+   and small JS enhancements (themed blocks on General, 2-tab strip
+   on Discussion).
 
 That's it — there's no setup wizard, no DB migration, no required configuration.
 Defaults are sensible: Gutenberg canvas theming, AdminKit icons, and local

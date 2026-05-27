@@ -144,8 +144,9 @@ list, the `adminkit/setting/{key}` filter, and the REST save.
 ## Settings
 
 `AdminKit_Settings` is the registry; `AdminKit_Settings_Page` mounts a small
-vanilla-JS SPA (`assets/js/settings.js`) under its own submenu page at
-**Settings → AdminKit**. The page prints a single host element
+vanilla-JS SPA (`assets/js/settings.js`) at its own top-level admin menu
+entry (**AdminKit**, sibling of Plugins / Users / Tools / Settings,
+position 81). The page prints a single host element
 (`<div id="adminkit-app">`) and `settings.js` builds the chrome (title +
 save bar + 3-tab strip) inside it. Saving runs through one REST route
 (`adminkit/v1/settings`). The three tabs are: **Dashboard** (the

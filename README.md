@@ -2,7 +2,7 @@
 
 A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone — optional adapters layer in token providers (Bricks today, more later).
 
-> Status: **v1.0.0** — ships fully-featured out of the box (Gutenberg canvas theming, AdminKit icons and local avatars all on by default), with its own `Settings → AdminKit` submenu page on top of the registry-based assets, per-screen conditional loading and host-drift detection.
+> Status: **v1.0.0** — ships fully-featured out of the box (Gutenberg canvas theming, AdminKit icons and local avatars all on by default), with its own top-level admin menu on top of the registry-based assets, per-screen conditional loading and host-drift detection.
 
 ---
 
@@ -28,7 +28,7 @@ See [`docs/INSTALL.md`](docs/INSTALL.md) for the full install guide — release 
 developer clone-and-symlink, and the `dev/package.php` packager that cuts a clean
 release zip from any branch or tag.
 
-That's it — AdminKit works with zero configuration. The settings UI lives on its own page at **Settings → AdminKit**, a small vanilla-JS SPA with three tabs. The **Dashboard** tab hosts the brand controls (light + dark logos, light + dark favicons paired as a 2×2 grid, accent picker) and a read-only semantic token reference. The **Preferences** tab holds the module on/off toggles. The **Plugins** tab lists *every installed* plugin plus AdminKit's active theme adapter, with a **Native** badge on rows that have a tuned AdminKit adapter (per-host enable toggle + dark mode; the badge tracks adapter existence, not whether the plugin is currently active); everything else inherits AdminKit's **generic** base token layer automatically. Rows are grouped (**Plugins**, **Themes**) with a count on each group title, and AdminKit itself appears as a locked **System** row (always on, not removable here). The native WP Settings pages (General, Writing, Reading, Discussion, Media, Permalinks) stay as WordPress renders them, with light CSS polish but no JS rebuild. The registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+That's it — AdminKit works with zero configuration. The settings UI lives at its own **AdminKit** top-level menu entry (sibling of Plugins / Users / Tools / Settings, position 81), a small vanilla-JS SPA with three tabs. The **Dashboard** tab hosts the brand controls (light + dark logos, light + dark favicons paired as a 2×2 grid, accent picker) and a read-only semantic token reference. The **Preferences** tab holds the module on/off toggles. The **Plugins** tab lists *every installed* plugin plus AdminKit's active theme adapter, with a **Native** badge on rows that have a tuned AdminKit adapter (per-host enable toggle + dark mode; the badge tracks adapter existence, not whether the plugin is currently active); everything else inherits AdminKit's **generic** base token layer automatically. Rows are grouped (**Plugins**, **Themes**) with a count on each group title, and AdminKit itself appears as a locked **System** row (always on, not removable here). The native WP Settings pages (General, Writing, Reading, Discussion, Media, Permalinks) stay as WordPress renders them, with light CSS polish but no JS rebuild. The registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
@@ -163,7 +163,7 @@ adminkit/
 │   ├── class-assets.php                 Asset registry + dispatcher + token cascade
 │   ├── class-screen.php                 get_current_screen() helpers
 │   ├── class-settings.php               Settings registry + color map
-│   ├── class-settings-page.php          SPA bootstrap (Settings → AdminKit submenu — Dashboard / Preferences / Plugins tabs) + REST save
+│   ├── class-settings-page.php          SPA bootstrap (top-level AdminKit menu — Dashboard / Preferences / Plugins tabs) + REST save
 │   ├── class-theme-toggle.php           Dark / light toggle + login logo
 │   ├── wp-core/                         AdminKit's restyle of WP-core surfaces
 │   │   ├── class-chrome.php             Registers every admin/frontend CSS file
