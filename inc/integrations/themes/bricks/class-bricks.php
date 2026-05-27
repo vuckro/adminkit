@@ -2,37 +2,27 @@
 /**
  * Bricks integration — optional adapter.
  *
- * AdminKit doesn't depend on Bricks. This file is the bridge that
- * makes both systems play nicely when the Bricks theme is active:
+ * AdminKit doesn't depend on Bricks. This file is the bridge that makes both
+ * systems play nicely when the Bricks theme is active:
  *
- *  - **Token inheritance.** Bricks writes its global design variables
- *    to /uploads/bricks/css/style-manager.min.css whenever the user
- *    saves a token in the builder. We enqueue that file and pin it as
- *    a dep of `adminkit-tokens`, so a green changed to red in the
- *    Bricks builder flows through to every wp-admin button.
+ *  - **Token inheritance.** Bricks writes its global design variables to
+ *    /uploads/bricks/css/style-manager.min.css whenever the user saves a token
+ *    in the builder. We enqueue that file and pin it as a dep of
+ *    `adminkit-tokens`, so a green changed to red in Bricks flows through to
+ *    every wp-admin button. See `provide_tokens()`.
  *
- *  - **Builder bypass.** When the user is inside the Bricks Builder
- *    (?bricks=run, builder iframe, etc.) we skip every restyle so the
- *    builder UI stays pristine.
+ *  - **Builder chrome restyle (opt-in).** When the "Bricks builder" feature is
+ *    on (Settings → Features) the builder's panels / toolbar / structure tree
+ *    get AdminKit-themed chrome via `builder.css`. The general AdminKit admin
+ *    restyle is suppressed in the builder context so the two don't fight.
+ *    See `enqueue_builder()` + `bypass_builder()`.
  *
- *  - **Frontend theme sync.** Bricks owns the site's light/dark mode on
- *    the frontend via `data-brx-theme` + `brx_mode`. Left alone, AdminKit's
- *    admin-bar mode runs on its own `data-adminkit-theme` and drifts out of
- *    sync (it falls back to `prefers-color-scheme` while Bricks uses the
- *    project's default mode, so the bar can read inverted). print_theme_bridge()
- *    keeps them in step on the frontend — but AdminKit's own toggle stays
- *    AUTHORITATIVE: its inline handler always flips `data-adminkit-theme` (so the
- *    bar switches with or without Bricks), and this bridge is purely additive. It
- *    adopts Bricks's mode on load, mirrors `data-brx-theme` -> `data-adminkit-theme`
- *    going forward, and pushes AdminKit's own flips back into Bricks
- *    (`data-brx-theme` + `brx_mode`) so the site repaints too. A reentrancy guard
- *    stops the mirrors looping. The bridge no longer intercepts the toggle click —
- *    that interception was the bug (when Bricks didn't repaint, e.g. on the
- *    responsive bar, the bar never flipped). In wp-admin (where Bricks doesn't
- *    theme anything) AdminKit's own toggle is untouched.
+ *  - **Frontend admin-bar theme sync.** On the front end the admin bar follows
+ *    Bricks's site mode (`data-brx-theme`) and pushes AdminKit's own toggle
+ *    flips back into Bricks. See `print_theme_bridge()` for the full rationale.
  *
- * Removing this folder removes Bricks support entirely; nothing else
- * in the plugin references Bricks.
+ * Removing this folder removes Bricks support entirely; nothing else in the
+ * plugin references Bricks.
  *
  * @package AdminKit
  */
@@ -43,6 +33,14 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 
 	const TOKENS_HANDLE = 'adminkit-bricks-tokens';
 	const TOKENS_REL    = '/bricks/css/style-manager.min.css';
+
+	/**
+	 * Heroicons solid `squares-2x2`. Shared between the toolbar `editor_mode`
+	 * node, the admin-menu icon replacement, and any future Bricks UI surface
+	 * we want to align with the AdminKit icon set. The fill colour is
+	 * irrelevant — both consumers use the SVG as a CSS mask.
+	 */
+	const LAYOUT_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M3 6a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3V6ZM3 15.75a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2.25Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3v-2.25Z" clip-rule="evenodd"/></svg>';
 
 	/**
 	 * @return string
@@ -61,21 +59,31 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Whether the current request is rendering the Bricks Builder UI.
+	 * The Bricks builder is two documents — the chrome (main frame) and the
+	 * canvas (iframe). Most callers want "either", a few need to distinguish
+	 * (e.g. enqueue_builder loads different sheets per frame).
 	 *
 	 * @return bool
 	 */
 	public static function is_builder() {
+		return self::is_builder_main() || self::is_builder_iframe();
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function is_builder_main() {
 		if ( isset( $_GET['bricks'] ) && 'run' === $_GET['bricks'] ) {
 			return true;
 		}
-		if ( function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main() ) {
-			return true;
-		}
-		if ( function_exists( 'bricks_is_builder_iframe' ) && bricks_is_builder_iframe() ) {
-			return true;
-		}
-		return false;
+		return function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main();
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function is_builder_iframe() {
+		return function_exists( 'bricks_is_builder_iframe' ) && bricks_is_builder_iframe();
 	}
 
 	/**
@@ -163,8 +171,8 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Wire the two AdminKit filters that integrate Bricks. The token
-	 * piping + builder bypass; CSS overrides come from register_assets().
+	 * Wire the AdminKit filters + actions that integrate Bricks. Static
+	 * stylesheet registrations live in register_assets().
 	 *
 	 * @return void
 	 */
@@ -251,12 +259,11 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 * @return array<string,string>
 	 */
 	public static function toolbar_icons( $map ) {
-		// Paintbrush (Heroicons solid `paint-brush`): "design/build with Bricks", and
+		// Paintbrush (Heroicons solid `paint-brush`): "design/build with Bricks",
 		// distinct from the layout grid used by `editor_mode` below.
-		$brush  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path d="M20.6 1.5c-.38 0-.74.11-1.06.32l-5.08 3.39a18.75 18.75 0 0 0-3.47 2.98 10.04 10.04 0 0 1 4.82 4.82 18.75 18.75 0 0 0 2.98-3.47l3.39-5.08A1.9 1.9 0 0 0 20.6 1.5Zm-8.3 14.03a18.76 18.76 0 0 0 1.9-1.21 8.03 8.03 0 0 0-4.52-4.51 18.75 18.75 0 0 0-1.2 1.9l-.28.5a5.26 5.26 0 0 1 3.6 3.6l.5-.28ZM6.75 13.5A3.75 3.75 0 0 0 3 17.25a1.5 1.5 0 0 1-1.6 1.5.75.75 0 0 0-.7 1.12 5.25 5.25 0 0 0 9.8-2.62 3.75 3.75 0 0 0-3.75-3.75Z"/></svg>';
-		$layout = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M3 6a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3V6ZM3 15.75a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2.25Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3v-2.25Z" clip-rule="evenodd"/></svg>';
+		$brush = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path d="M20.6 1.5c-.38 0-.74.11-1.06.32l-5.08 3.39a18.75 18.75 0 0 0-3.47 2.98 10.04 10.04 0 0 1 4.82 4.82 18.75 18.75 0 0 0 2.98-3.47l3.39-5.08A1.9 1.9 0 0 0 20.6 1.5Zm-8.3 14.03a18.76 18.76 0 0 0 1.9-1.21 8.03 8.03 0 0 0-4.52-4.51 18.75 18.75 0 0 0-1.2 1.9l-.28.5a5.26 5.26 0 0 1 3.6 3.6l.5-.28ZM6.75 13.5A3.75 3.75 0 0 0 3 17.25a1.5 1.5 0 0 1-1.6 1.5.75.75 0 0 0-.7 1.12 5.25 5.25 0 0 0 9.8-2.62 3.75 3.75 0 0 0-3.75-3.75Z"/></svg>';
 		$map['wp-admin-bar-edit_with_bricks'] = $brush;
-		$map['wp-admin-bar-editor_mode']      = $layout;
+		$map['wp-admin-bar-editor_mode']      = self::LAYOUT_SVG;
 		return $map;
 	}
 
@@ -288,8 +295,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return;
 		}
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M3 6a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3v2.25a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3V6ZM3 15.75a3 3 0 0 1 3-3h2.25a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2.25Zm9.75 0a3 3 0 0 1 3-3H18a3 3 0 0 1 3 3V18a3 3 0 0 1-3 3h-2.25a3 3 0 0 1-3-3v-2.25Z" clip-rule="evenodd"/></svg>';
-		$uri = 'url("data:image/svg+xml,' . rawurlencode( $svg ) . '")';
+		$uri = 'url("data:image/svg+xml,' . rawurlencode( self::LAYOUT_SVG ) . '")';
 		echo '<style id="adminkit-bricks-menu-icon">'
 			. '#adminmenu #toplevel_page_bricks .wp-menu-image{background-image:none!important;'
 			. 'box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}'
@@ -412,16 +418,14 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		// tested first: the iframe also satisfies ?bricks=run / bricks_is_builder_main(),
 		// so checking the main frame first would leak the chrome's :root remap
 		// into the rendered page.
-		if ( function_exists( 'bricks_is_builder_iframe' ) && bricks_is_builder_iframe() ) {
+		if ( self::is_builder_iframe() ) {
 			self::enqueue_style_file( 'adminkit-bricks-builder-canvas', $base . 'builder-canvas.css' );
 			return;
 		}
 
 		// Main builder frame — load the single builder restyle sheet + inject the
 		// resolved logo URL as a CSS variable so the toolbar and preloader pick it up.
-		$is_main = ( isset( $_GET['bricks'] ) && 'run' === $_GET['bricks'] )
-			|| ( function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main() );
-		if ( ! $is_main ) {
+		if ( ! self::is_builder_main() ) {
 			return;
 		}
 
