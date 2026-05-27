@@ -177,6 +177,31 @@
 
 	mountProfilePictureHero();
 
+	// Lift the AdminKit avatar "Refresh" button out of the Informations card
+	// and place it next to the page title as a `.page-title-action` (same
+	// chrome as the native "Add User" button on user-edit.php). The Avatar
+	// row was visually redundant with the hero avatar above it and pulled
+	// the eye to the bottom of the card — moving the only action up to the
+	// page header lets the Informations card stay focused on identity data.
+	(function liftAvatarRefresh() {
+		var row = form.querySelector('#adminkit-profile-picture');
+		if (!row) return;
+		var btn = row.querySelector('a.button[href]');
+		if (!btn) { row.remove(); return; }
+		var title = document.querySelector('.wrap h1');
+		if (!title || !title.parentNode) return;
+		// Re-style as a page-title action (drops the .button chrome so it
+		// blends with the native action; keeps the href + nonce intact).
+		btn.classList.remove('button');
+		btn.classList.add('page-title-action');
+		// Append AFTER any existing .page-title-action (e.g. "Add User"), or
+		// straight after the title when there's none.
+		var existing = title.parentNode.querySelectorAll('.page-title-action');
+		var anchor = existing.length ? existing[existing.length - 1] : title;
+		anchor.parentNode.insertBefore(btn, anchor.nextSibling);
+		row.remove();
+	})();
+
 	// Application Passwords is the one heading WP nests in a <div>; lift the
 	// heading out (the wrapper keeps its id + classes for WP's own JS) so
 	// absorb() can find it as a top-level section.
@@ -275,12 +300,14 @@
 		  // group fields visually: names side-by-side, email + nickname together,
 		  // display name + role together, then login standalone (full width to give
 		  // the "click to enable" affordance room), bio (textarea, full width), and
-		  // a 3-up footer: avatar + new password + reset.
+		  // a 2-up footer: new password + reset. The AdminKit avatar Refresh row
+		  // is intentionally NOT pulled here — liftAvatarRefresh() above moves
+		  // it to the page header (next to "Add User") so the card stays focused
+		  // on identity data.
 		  // `.user-url-wrap` is intentionally NOT pulled here — it stays in Contact
 		  // Info and gets absorbed by the Settings card.
-		  rows: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', ['.user-user-login-wrap', '.user-login-wrap'], '.user-description-wrap', '#adminkit-profile-picture', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
-		  half: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap' ],
-		  third: [ '#adminkit-profile-picture', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
+		  rows: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', ['.user-user-login-wrap', '.user-login-wrap'], '.user-description-wrap', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
+		  half: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
 		  absorb: [ S.sections.name ] },
 		{ id: 'ak-settings', icon: 'sliders', t: S.cards.settings, order: 30,
 		  rows: [ '.user-language-wrap', '.user-syntax-highlighting-wrap', '.user-comment-shortcuts-wrap', ['.user-admin-bar-front-wrap', '.show-admin-bar'], '.user-pass2-wrap', '.pw-weak' ],

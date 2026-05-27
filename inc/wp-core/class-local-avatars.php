@@ -436,13 +436,20 @@ class AdminKit_Local_Avatars {
 			),
 			self::SHUFFLE_NONCE
 		);
+		// Throwaway table wrapper — the `show_user_profile` / `edit_user_profile`
+		// hooks fire OUTSIDE any form table, so we need our own scaffold for the
+		// row. AdminKit's profile JS (profile-account.js → liftAvatarRefresh)
+		// extracts the anchor below and re-mounts it as a `.page-title-action`
+		// next to the page H1 — right of "Add User" on user-edit.php — then
+		// drops the empty wrapper. The label-less <th><td> shape is intentional:
+		// the row exists only to carry the button until the JS picks it up.
 		?>
 		<table class="form-table adminkit-profile-picture-wrap" role="presentation">
 			<tbody>
 				<tr id="adminkit-profile-picture" class="adminkit-profile-picture-row">
-					<th><?php esc_html_e( 'Avatar', 'adminkit' ); ?></th>
+					<th></th>
 					<td>
-						<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Refresh', 'adminkit' ); ?></a>
+						<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Refresh avatar', 'adminkit' ); ?></a>
 					</td>
 				</tr>
 			</tbody>
