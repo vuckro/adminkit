@@ -341,8 +341,6 @@ class AdminKit_Settings_Page {
 				'systemHint'        => __( 'AdminKit itself — always on and not removable here.', 'adminkit' ),
 				'generic'           => __( 'Generic', 'adminkit' ),
 				'genericHint'       => __( 'No dedicated adapter — themed automatically by AdminKit\'s base layer.', 'adminkit' ),
-				'inactive'          => __( 'Inactive', 'adminkit' ),
-				'inactiveHint'      => __( 'Plugin is installed but not active.', 'adminkit' ),
 				'themesLabel'       => __( 'Themes', 'adminkit' ),
 				// Display row — short location labels so the segmented controls feel
 				// like "where does the brand mark show up?" rather than reciting WP
@@ -867,12 +865,9 @@ class AdminKit_Settings_Page {
 				'type'      => 'plugin',
 				'supported' => $supported,
 				'enabled'   => $enabled,
-				// Schema default for `integration_{slug}_enabled` is always true
-				// (see register_integration_toggles()) — what Reset to defaults restores to.
-				'default'   => true,
 				// Installed-but-inactive plugins are listed too (mirrors WP's own
-				// Plugins screen) — the UI mutes their row so the eye reads the
-				// active ones first.
+				// Plugins screen). The JS renders them muted and without a switch
+				// — AdminKit can't act on a plugin that isn't loaded anyway.
 				'active'    => is_plugin_active( $file ),
 			);
 		}
@@ -890,7 +885,6 @@ class AdminKit_Settings_Page {
 				'type'      => 'theme',
 				'supported' => true,
 				'enabled'   => (bool) AdminKit_Settings::get( 'integration_' . $s['slug'] . '_enabled' ),
-				'default'   => true,
 				'active'    => true,
 			);
 		}

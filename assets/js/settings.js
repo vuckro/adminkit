@@ -1460,7 +1460,7 @@
 		var list = D.integrations || [];
 		if ( ! list.length ) { return p; }
 
-		var inputs = []; // native-integration toggles, for the bulk controls
+		var inputs = []; // every toggle (native + generic), for the Reset button
 
 		// Brand "Native" chip, left of the plugin name — supported plugins only.
 		function nativeBadge() {
@@ -1490,16 +1490,6 @@
 			} );
 		}
 
-		// Neutral "Inactive" chip for installed-but-not-active plugins. Pairs
-		// with `.is-muted` on the row for an across-the-board dim treatment.
-		function inactiveBadge() {
-			return el( 'span', {
-				'class': 'ak-badge',
-				title: I.inactiveHint || '',
-				text: I.inactive || 'Inactive'
-			} );
-		}
-
 		// Keep the row's `.is-off` class in sync with the switch state so
 		// every disabled row (native OR generic) reads as greyed-out, the
 		// same treatment AdminKit's own System row gets.
@@ -1512,22 +1502,18 @@
 		}
 
 		function pluginRow( i ) {
-			// Badge + name hug the left together (.ak-row__head), badge first; the
-			// switch (native + generic) is pushed right by .ak-row__main's flex:1.
-			// System (AdminKit itself) → neutral System; supported → brand Native;
-			// any other installed plugin → neutral Generic (no dedicated adapter).
+			// Badge + name hug the left together. System (AdminKit itself) →
+			// neutral System; supported → brand Native; any other installed
+			// plugin → neutral Generic (no dedicated adapter).
 			var badge = i.system ? systemBadge() : ( i.supported ? nativeBadge() : genericBadge() );
-			var head  = [ badge, el( 'span', { 'class': 'ak-row__label', text: i.label } ) ];
-			// Installed but not active → "Inactive" chip after the name.
-			if ( ! i.system && i.active === false ) {
-				head.push( inactiveBadge() );
-			}
-			var main = el( 'div', { 'class': 'ak-row__main' }, [
-				el( 'div', { 'class': 'ak-row__head' }, head )
+			var main  = el( 'div', { 'class': 'ak-row__main' }, [
+				el( 'div', { 'class': 'ak-row__head' }, [
+					badge,
+					el( 'span', { 'class': 'ak-row__label', text: i.label } )
+				] )
 			] );
 
-			// System row (AdminKit itself) → greyed + locked: a switch that reads ON
-			// but can't be operated (.is-locked dims it and kills pointer events).
+			// System (AdminKit itself) → locked row, switch reads ON but is dead.
 			if ( i.system ) {
 				var lock = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
 				lock.checked = true;
@@ -1542,16 +1528,18 @@
 				] );
 			}
 
-			// Build the switch — native + generic both get one now. Initial
-			// state reads from the row's `enabled` field; `.is-off` from the
-			// start paints the row dim with no flash.
+			// Installed but not active in WP → muted row, no switch. AdminKit
+			// can't act on a plugin that isn't loaded, so the toggle would be
+			// noise — the dim treatment alone reads as "not actionable here".
+			if ( false === i.active ) {
+				return el( 'div', { 'class': 'ak-row is-muted' }, [ main ] );
+			}
+
+			// Active plugin (native or generic) → user-facing toggle.
+			// `.is-off` from the start paints the row dim with no flash.
 			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
 			input.checked = !! i.enabled;
-
-			var rowClasses = [ 'ak-row' ];
-			if ( ! i.enabled ) { rowClasses.push( 'is-off' ); }
-			if ( ! i.system && i.active === false ) { rowClasses.push( 'is-muted' ); }
-			var row = el( 'div', { 'class': rowClasses.join( ' ' ) }, [
+			var row = el( 'div', { 'class': 'ak-row' + ( i.enabled ? '' : ' is-off' ) }, [
 				main,
 				el( 'label', { 'class': 'ak-switch' }, [
 					input,
@@ -1567,9 +1555,7 @@
 					syncOffClass( row, input.checked );
 					markDirty();
 				} );
-				// `default` captured for the Reset bulk button (always true for
-				// native integrations — see register_integration_toggles()).
-				inputs.push( { slug: i.slug, input: input, row: row, def: !! i.default } );
+				inputs.push( { kind: 'native', slug: i.slug, input: input, row: row } );
 			} else if ( i.file ) {
 				// Generic plugin → file path tracked in the off-list.
 				input.addEventListener( 'change', function () {
@@ -1581,30 +1567,24 @@
 					syncOffClass( row, input.checked );
 					markDirty();
 				} );
+				inputs.push( { kind: 'generic', file: i.file, input: input, row: row } );
 			}
 			return row;
 		}
 
-		// Flip every native integration in one click (generic rows have their
-		// own per-plugin opt-out and aren't covered by Enable/Disable all).
-		// Each row's `.is-off` class is synced too so the dim matches.
-		function setAll( on ) {
-			inputs.forEach( function ( r ) {
-				r.input.checked = on;
-				state.integrations[ r.slug ] = on;
-				syncOffClass( r.row, on );
-			} );
-			markDirty();
-		}
-
-		// Reset every native integration to its registered schema default
-		// (currently always true — see register_integration_toggles()).
-		// markDirty so the user can still walk away without committing.
+		// Reset every toggle to its "AdminKit handles this plugin" default,
+		// which is ON across the board (native integrations' schema default,
+		// generic plugins not in the opt-out list). markDirty so the user
+		// can still walk away without committing.
 		function resetAll() {
 			inputs.forEach( function ( r ) {
-				r.input.checked = r.def;
-				state.integrations[ r.slug ] = r.def;
-				syncOffClass( r.row, r.def );
+				r.input.checked = true;
+				if ( 'native' === r.kind ) {
+					state.integrations[ r.slug ] = true;
+				} else {
+					delete state.genericThemingOff[ r.file ];
+				}
+				syncOffClass( r.row, true );
 			} );
 			markDirty();
 		}
@@ -1628,11 +1608,11 @@
 			] ) );
 		} );
 
-		// Bulk controls — only when there's at least one active integration to flip.
+		// Single bulk control — Reset puts every toggle back to ON (the
+		// "AdminKit handles this plugin" default for both native + generic).
+		// Skipped when no row carries a toggle (e.g. every plugin inactive).
 		if ( inputs.length ) {
 			p.appendChild( el( 'div', { 'class': 'ak-actions ak-bulk' }, [
-				el( 'button', { type: 'button', 'class': 'ak-btn', text: I.enableAll, onclick: function () { setAll( true ); } } ),
-				el( 'button', { type: 'button', 'class': 'ak-btn', text: I.disableAll, onclick: function () { setAll( false ); } } ),
 				el( 'button', { type: 'button', 'class': 'ak-btn', text: I.resetDefaults || 'Reset to defaults', onclick: resetAll } )
 			] ) );
 		}
