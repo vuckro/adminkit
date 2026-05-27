@@ -45,7 +45,7 @@
 }
 #bricks-preloader .bricks-loading-inner::before {
 	content: "";
-	width: var(--preloader-logo-size, 15rem);
+	width: 15rem;
 	aspect-ratio: 1;
 	background: var(--preloader-logo) center / contain no-repeat;
 	animation: adminkit-bricks-preloader-pulse 1.4s ease-in-out infinite;
