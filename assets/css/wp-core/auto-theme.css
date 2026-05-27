@@ -60,7 +60,10 @@ html[data-adminkit-theme="dark"] .ak-auto-bd-strong {
 	border-color: var(--ak-border-strong) !important;
 }
 
-/* ── Light box-shadows (halos in dark) on darkened surfaces → removed ── */
+/* ── Box-shadows on darkened surfaces → removed (any colour, any lightness). In
+   dark mode a light drop reads as a halo and a colored / dark drop is invisible
+   on the new low-lightness panel anyway; real elevation goes through --ak-shadow-
+   elevated where AdminKit applies it (e.g. on .ak-auto-modal below). ── */
 html[data-adminkit-theme="dark"] .ak-auto-noshadow {
 	box-shadow: none !important;
 }
@@ -81,4 +84,47 @@ html[data-adminkit-theme="dark"] .ak-auto-noshadow {
 }
 .ak-auto-brand-bd {
 	border-color: var(--ak-primary) !important;
+}
+
+/* ── Modal-like containers ([role=dialog], <dialog>, .modal, .swal2-container,
+   .popover, .tippy-box, …) — root takes an elevated surface + neutral border so
+   the panel reads as floated above the dark page; a lift shadow keeps elevation
+   legible. The .ak-auto-noshadow tag would have stripped any plugin shadow on
+   this container — this rule reinstates the AdminKit elevation explicitly. ── */
+html[data-adminkit-theme="dark"] .ak-auto-modal {
+	background-color: var(--ak-elevated) !important;
+	border-color: var(--ak-border) !important;
+	box-shadow: var(--ak-shadow-elevated) !important;
+}
+/* Backdrops / overlays — common class-name patterns get a dim scrim in dark. */
+html[data-adminkit-theme="dark"] [class*="modal-overlay"],
+html[data-adminkit-theme="dark"] [class*="modal-backdrop"] {
+	background-color: var(--ak-overlay) !important;
+}
+
+/* ── Hover / focus on tagged surfaces — universal fallback scoped to AdminKit's
+   own auto-themed surfaces. Catches the common interactive structures (rows,
+   list items, ARIA-rolled buttons) without scanning stylesheets. The stylesheet
+   scan below (.ak-auto-hoverable-light) catches arbitrary plugin selectors. ── */
+html[data-adminkit-theme="dark"] .ak-auto-surface tr:hover,
+html[data-adminkit-theme="dark"] .ak-auto-elevated tr:hover,
+html[data-adminkit-theme="dark"] .ak-auto-surface li:hover,
+html[data-adminkit-theme="dark"] .ak-auto-surface [role="menuitem"]:hover,
+html[data-adminkit-theme="dark"] .ak-auto-surface [role="option"]:hover,
+html[data-adminkit-theme="dark"] .ak-auto-surface [role="tab"]:hover {
+	background-color: var(--ak-hover-bg) !important;
+}
+html[data-adminkit-theme="dark"] .ak-auto-surface :focus-visible,
+html[data-adminkit-theme="dark"] .ak-auto-elevated :focus-visible {
+	outline-color: var(--ak-focus) !important;
+}
+
+/* ── Stylesheet-discovered hovers — auto-theme.js walks document.styleSheets and
+   tags any element whose :hover / :focus / :active rule paints a LIGHT bg. In
+   dark mode we override those interaction states to the neutral hover tint, so a
+   plugin's arbitrary .foo:hover{background:#f0f0ff} no longer flashes light. ── */
+html[data-adminkit-theme="dark"] .ak-auto-hoverable-light:hover,
+html[data-adminkit-theme="dark"] .ak-auto-hoverable-light:focus-visible,
+html[data-adminkit-theme="dark"] .ak-auto-hoverable-light:active {
+	background-color: var(--ak-hover-bg) !important;
 }

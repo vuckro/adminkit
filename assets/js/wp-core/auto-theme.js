@@ -18,8 +18,12 @@
  *   background  light neutral → --ak-surface (nested → --ak-elevated)
  *               pale tinted   → --ak-{info|success|warning|error|primary}-subtle (hue)
  *   border      light → --ak-border · medium/strong → --ak-border-strong
+ *               (pale hued + medium-diluted hued borders demote to these tokens)
  *   text        near-black → --ak-heading · dark → --ak-text · grey → --ak-text-muted
+ *               (heading-semantic tags — H1-H6, TH, LEGEND, … — also force --ak-heading)
  *   brand       the host's detected primary colour → --ak-primary (see detectBrand)
+ *   modal       [role=dialog] / <dialog> / .modal / .popover root → --ak-elevated + lift
+ *   hover       arbitrary :hover/:focus light bg → --ak-hover-bg (see scanHoverRules)
  *
  * SAFETY — only true BUTTONS (and special inputs) keep their surface untouched
  * (so a CTA can't be washed out); their brand colour is still unified. Form
@@ -40,7 +44,8 @@
 		info: 'ak-auto-info', success: 'ak-auto-success', warning: 'ak-auto-warning', error: 'ak-auto-error',
 		heading: 'ak-auto-heading', text: 'ak-auto-text', muted: 'ak-auto-muted',
 		bd: 'ak-auto-bd', bdStrong: 'ak-auto-bd-strong', noshadow: 'ak-auto-noshadow',
-		brandBg: 'ak-auto-brand-bg', brandFg: 'ak-auto-brand-fg', brandBd: 'ak-auto-brand-bd'
+		brandBg: 'ak-auto-brand-bg', brandFg: 'ak-auto-brand-fg', brandBd: 'ak-auto-brand-bd',
+		modal: 'ak-auto-modal', hoverable: 'ak-auto-hoverable-light'
 	};
 	var NEST_SELECTOR = '.' + C.surface + ',.' + C.elevated;
 	var MIN_W = 24, MIN_H = 16; // a childless light leaf this small = swatch/dot → leave
@@ -56,6 +61,15 @@
 		'input[type="submit"], input[type="button"], input[type="reset"]';
 	// Tiny native controls — never touch their box colours (browser-rendered).
 	var SPECIAL_TYPES = /^(checkbox|radio|range|color|file)$/;
+	// Heading-semantic tags — promoted to --ak-heading even when their text colour
+	// would otherwise classify as body/muted by lightness alone. A grey-painted <h2>
+	// is still a heading.
+	var HEADING_TAGS = /^(H1|H2|H3|H4|H5|H6|TH|LEGEND|DT|SUMMARY|CAPTION|STRONG)$/;
+	// Modal-like containers — their root gets `ak-auto-modal` for surface + lift
+	// treatment, and the alpha guard is relaxed inside (so semi-opaque white panels
+	// like MUI / SweetAlert / Tippy get themed). Covers role-based, native <dialog>,
+	// and the most common library class names.
+	var MODAL_SEL = '[role="dialog"],[aria-modal="true"],dialog,.modal,.ui-dialog,.modal-content,.swal2-container,.popover,.tippy-box';
 
 	function parse( c ) {
 		if ( ! c ) { return null; }
@@ -85,8 +99,14 @@
 	// prop = 'bg' | 'border' | 'text'. Returns a class name or null.
 	function classify( c, prop, el ) {
 		if ( ! c || c.a <= 0 ) { return null; }
-		if ( c.a < 0.95 ) {                       // translucent
-			return prop === 'border' ? C.bd : null; // subtle border; leave overlays/backdrops
+		// Translucent: a subtle border, or — only for backgrounds — a near-white
+		// semi-opaque panel (modal / popover / tooltip wash) the original alpha
+		// guard otherwise misses. ≥0.5 alpha + clearly light L still needs darkening.
+		if ( c.a < 0.95 ) {
+			if ( prop === 'border' ) { return C.bd; }
+			if ( prop !== 'bg' ) { return null; }
+			if ( c.a < 0.5 || hslL( c ) < 88 ) { return null; }
+			// Fall through and classify like an opaque surface.
 		}
 		var L = hslL( c ), ch = chroma( c );
 		var neutral = ch <= 12 || ( ch <= 24 && L < 90 );
@@ -95,6 +115,10 @@
 			if ( prop === 'text' ) {
 				if ( L >= 88 ) { return null; }   // light text (on a fill) → leave
 				if ( L < 28 ) { return C.heading; }
+				// Heading-semantic tag → heading even when its painted colour would
+				// classify as body/muted by lightness alone (a grey-painted <h2> is still
+				// a heading).
+				if ( el && ( HEADING_TAGS.test( el.tagName ) || ( el.getAttribute && el.getAttribute( 'role' ) === 'heading' ) ) ) { return C.heading; }
 				if ( L < 46 ) { return C.text; }
 				return C.muted;
 			}
@@ -110,8 +134,16 @@
 			return null;                          // medium/dark fill → leave
 		}
 
-		// hued
-		if ( prop !== 'bg' ) { return null; }     // hued text/border = link/status/brand → leave
+		// hued — coloured borders that are PALE (close to white-ish) or MEDIUM and
+		// only mildly saturated demote to neutral border tones — they'd read as out
+		// of place on a dark surface. Vivid hued borders (focus rings, intentional
+		// accents at chroma ≥ 50) keep their colour.
+		if ( prop === 'border' ) {
+			if ( L >= 75 ) { return C.bd; }
+			if ( L >= 50 && ch < 50 ) { return C.bdStrong; }
+			return null;
+		}
+		if ( prop !== 'bg' ) { return null; }     // hued text = link/status/brand → leave
 		if ( tinyLeaf( el ) ) { return null; }
 		if ( L >= 86 ) {                          // pale tint → subtle by hue
 			var h = hue( c );
@@ -138,12 +170,6 @@
 		}
 		return res;
 	}
-	function lightShadow( sh ) {
-		if ( ! sh || sh === 'none' ) { return false; }
-		var c = parse( sh );
-		return !! c && hslL( c ) >= 70;
-	}
-
 	// ── Brand detection — the colour that recurs across the host's buttons (links
 	// second). Exclude colours already equal to --ak-primary; take the clear
 	// plurality, else null (never guess). ──────────────────────────────────────
@@ -176,6 +202,11 @@
 			};
 			var btns = root.querySelectorAll( 'button, [type="submit"], .button-primary, a.button-primary, .MuiButton-contained, .MuiButton-containedPrimary, .components-button.is-primary, [class*="-primary"], [class*="-brand"]' );
 			for ( var i = 0; i < btns.length; i++ ) { vote( parse( window.getComputedStyle( btns[ i ] ).backgroundColor ), 2 ); }
+			// Coloured badges / pills / CTA-named elements often paint with the host's
+			// primary brand — soft vote (weight 1) on their background. Capped at 200
+			// to stay cheap on dense lists (e.g. WooCommerce product tables).
+			var badges = root.querySelectorAll( '.badge, .tag, .label, .pill, [class*="-badge"], [class*="-cta"], [class*="-action"]' );
+			for ( var b = 0; b < badges.length && b < 200; b++ ) { vote( parse( window.getComputedStyle( badges[ b ] ).backgroundColor ), 1 ); }
 			var links = root.querySelectorAll( 'a' );
 			for ( var j = 0; j < links.length && j < 400; j++ ) { vote( parse( window.getComputedStyle( links[ j ] ).color ), 1 ); }
 			var bestK = null, best = 0;
@@ -210,6 +241,10 @@
 		try {
 			var s = window.getComputedStyle( el );
 			var add = [];
+			// Modal-like container root — additive tag for the elevated surface + lift
+			// treatment in dark mode (see .ak-auto-modal in auto-theme.css). Descendants
+			// still get classified normally by the rest of this function.
+			if ( el.matches && el.matches( MODAL_SEL ) ) { add.push( C.modal ); }
 			var bgCls = null;
 			var btn = el.closest && el.closest( ACTION_BTN );
 			var special = el.tagName === 'INPUT' && SPECIAL_TYPES.test( el.type || '' );
@@ -230,8 +265,10 @@
 			// Borders (neutral/light only — coloured borders are left by classify).
 			var bd = classifyBorders( s );
 			if ( bd ) { add.push( bd ); }
-			// Light shadow on a darkened surface → drop the halo.
-			if ( ( bgCls === C.surface || bgCls === C.elevated ) && lightShadow( s.boxShadow ) ) { add.push( C.noshadow ); }
+			// Any shadow on a darkened surface → drop the halo. In dark mode a light,
+			// dark, or coloured drop all read wrong on the new low-lightness panel;
+			// real elevation is signalled via --ak-shadow-elevated where we apply it.
+			if ( ( bgCls === C.surface || bgCls === C.elevated ) && s.boxShadow && s.boxShadow !== 'none' ) { add.push( C.noshadow ); }
 			// Brand unification (all elements, incl. buttons).
 			if ( BRAND ) { brandClasses( s, add ); el.__akBrand = 1; }
 
@@ -256,6 +293,41 @@
 		applyBrand( root );
 		var els = root.querySelectorAll( '*' );
 		for ( var i = 0; i < els.length; i++ ) { applyBrand( els[ i ] ); }
+	}
+
+	// Hover / focus discovery — pseudo-classes can't be read from a resting-state
+	// scan (getComputedStyle ignores :hover etc.), so we walk the loaded stylesheets
+	// once and find rules whose selector carries :hover/:focus/:active AND declares
+	// a LIGHT background. Elements those rules match get tagged .ak-auto-hoverable-light;
+	// the dark companion sheet overrides their interaction-state bg to --ak-hover-bg.
+	// CORS-blocked sheets (cross-origin without CORS headers) silently skip. Invalid
+	// selectors silently skip. One-shot at boot — ~50ms on a typical plugin page.
+	function scanHoverRules() {
+		try {
+			for ( var i = 0; i < document.styleSheets.length; i++ ) {
+				var rules = null;
+				try { rules = document.styleSheets[ i ].cssRules; } catch ( e ) { continue; }
+				if ( ! rules ) { continue; }
+				for ( var j = 0; j < rules.length; j++ ) {
+					var r = rules[ j ];
+					if ( r.type !== 1 ) { continue; } // STYLE_RULE only
+					var sel = r.selectorText || '';
+					if ( ! /:hover|:focus|:focus-visible|:active/.test( sel ) ) { continue; }
+					var bg = r.style && ( r.style.backgroundColor || r.style.background );
+					if ( ! bg ) { continue; }
+					var c = parse( bg );
+					if ( ! c || c.a < 0.5 || hslL( c ) < 80 ) { continue; }
+					var base = sel.replace( /:hover|:focus-visible|:focus|:active/g, '' ).trim();
+					if ( ! base ) { continue; }
+					try {
+						var matches = document.querySelectorAll( base );
+						for ( var k = 0; k < matches.length; k++ ) {
+							matches[ k ].classList.add( C.hoverable );
+						}
+					} catch ( e2 ) { /* invalid selector — skip */ }
+				}
+			}
+		} catch ( e ) { /* never block on this */ }
 	}
 
 	function scan( node ) {
@@ -329,6 +401,7 @@
 			BRAND = detectBrand( scope );
 		}
 		scanChunked( scope );
+		scanHoverRules();
 		if ( ! window.MutationObserver ) { return; }
 		new MutationObserver( function ( muts ) {
 			for ( var i = 0; i < muts.length; i++ ) {
