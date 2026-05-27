@@ -110,6 +110,18 @@ body.adminkit.options-general-php .wrap > form > .nav-tab-wrapper,
 body.adminkit.options-discussion-php .wrap > form > .nav-tab-wrapper {
 	margin: 4px 0 16px;
 }
+
+/* Belt-and-suspenders hide for tab-switched content. The JS sets both the
+   `[hidden]` attribute (semantic / a11y) AND this class on every tagged
+   element when its tab isn't active. The `[hidden]` UA rule's
+   `display: none` can lose to author rules higher up the cascade
+   (anything that sets display on the same element); this class is an
+   author rule we control, so its `display: none` is always respected on
+   pages we own. Scoped to the two options pages so it can't bleed. */
+body.adminkit.options-general-php .ak-tab-hidden,
+body.adminkit.options-discussion-php .ak-tab-hidden {
+	display: none;
+}
 /* Headings + ledes that ride into the form via `data-ak-tab` (Avatars is
    WP-native, Comment settings is JS-synthesized — same shape both ways).
    Drop WP's default h2 underline and tighten the spacing so the pair

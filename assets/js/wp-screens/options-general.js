@@ -135,8 +135,13 @@
 			t.btn.classList.toggle( 'nav-tab-active', on );
 			t.btn.setAttribute( 'aria-selected', on ? 'true' : 'false' );
 		} );
+		// Toggle both `[hidden]` and the class (see the matching note in
+		// options-discussion.js — `[hidden]` alone is fragile against
+		// author rules that set `display` elsewhere up the cascade).
 		madeBlocks.forEach( function ( b ) {
-			b.el.hidden = ( b.tab !== id );
+			var hide = b.tab !== id;
+			b.el.hidden = hide;
+			b.el.classList.toggle( 'ak-tab-hidden', hide );
 		} );
 		// Only touch the URL hash on user-initiated activations — never on
 		// the initial mount with a bare URL (would auto-scroll).

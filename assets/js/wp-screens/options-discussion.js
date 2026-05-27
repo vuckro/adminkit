@@ -134,8 +134,16 @@
 			t.btn.classList.toggle( 'nav-tab-active', on );
 			t.btn.setAttribute( 'aria-selected', on ? 'true' : 'false' );
 		} );
+		// Toggle BOTH the `[hidden]` attribute (a11y + semantic) AND a CSS
+		// class (visual hide). [hidden]'s `display: none` only wins when no
+		// author rule sets `display` higher up the cascade — paranoid sites
+		// with global `h2 { display: block }` overrides won't respect it.
+		// The class is a defensive belt-and-suspenders that paints
+		// `display: none` from our own author CSS, immune to that issue.
 		marked.forEach( function ( m ) {
-			m.el.hidden = ( m.tab !== id );
+			var hide = m.tab !== id;
+			m.el.hidden = hide;
+			m.el.classList.toggle( 'ak-tab-hidden', hide );
 		} );
 		// Only touch the URL hash on user-initiated activations — never on
 		// the initial mount with a bare URL, otherwise the browser would
