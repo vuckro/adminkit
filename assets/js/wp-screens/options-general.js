@@ -55,21 +55,19 @@
 		plug:     '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>'
 	};
 
-	// Field ids per section, in display order. Each section title + icon comes
-	// alongside. Site Icon is its own card (between Identity and Account) so it
-	// sits in the natural Settings → General reading order, not buried at the
-	// bottom. Anything that isn't on the page (e.g. WPLANG only when
-	// translations are installed, users_can_register only on single-site) is
-	// silently skipped — the card just renders shorter, or doesn't render at all.
-	// IDs are clean fragment-friendly slugs so the URL serves as a deep link.
-	// Example: a support reply can point at `options-general.php#site-identity`
-	// and the user lands directly on that tab.
-	//
-	// Site Icon is a SECONDARY card living on the Site identity tab (same
-	// `tabId`), not its own tab — keeps the strip short and lets the visitor
-	// see the icon next to the title/tagline it belongs with.
+	// Field ids per section, in display order. Each section title + icon
+	// comes alongside. Anything that isn't on the page (e.g. WPLANG only
+	// when translations are installed, users_can_register only on single-
+	// site) is silently skipped — the card just renders shorter, or doesn't
+	// render at all. IDs are clean fragment-friendly slugs so the URL serves
+	// as a deep link. Example: `options-general.php#site-identity` lands the
+	// user directly on that tab.
 	var GROUPS = [
 		// ── Native WP General sections — built from existing form rows. ──
+		// Note: there is NO `site-icon` group. WP's native Site Icon row is
+		// removed from the form below (see `dropSiteIconRow`) — the SPA's
+		// Brand card on the Site identity tab owns the favicon UI now, and
+		// rendering the WP-native widget alongside it duplicated the picker.
 		{
 			id:    'site-identity',
 			tabId: 'site-identity',
@@ -77,13 +75,6 @@
 			icon:  'globe',
 			showInTabs: true,
 			rows:  ['blogname', 'blogdescription', 'siteurl', 'home']
-		},
-		{
-			id:    'site-icon',
-			tabId: 'site-identity',
-			title: S.siteIcon || 'Site Icon',
-			showInTabs: false,
-			rows:  ['site_icon']
 		},
 		{
 			id:    'account-registration',
@@ -157,24 +148,27 @@
 	box.appendChild(panels);
 	table.parentNode.insertBefore(box, table);
 
-	// Site Icon is rendered by WP via a Settings API section, not as a row
-	// inside the same .form-table. Its actual <tr> sits in a sibling
-	// .form-table (or under an h2 heading). When we sweep rows by input id
-	// we'd miss it — try to find it by name on the *form* (not the table)
-	// and pre-move its parent <tr> into the original table so the row-scoop
-	// below picks it up. Best-effort: silently skipped if absent.
-	(function moveSiteIconRow() {
-		var siteIcon = form.querySelector('#site_icon-hidden') ||
-		               form.querySelector('input[name="site_icon"]') ||
-		               form.querySelector('#site-icon-img-input') ||
-		               form.querySelector('.site-icon-section');
-		if (!siteIcon) { return; }
-		var tr = siteIcon.closest('tr');
-		if (!tr || tr.closest('.form-table') === table) { return; }
-		// Append to the original table's tbody so the matching loop below moves
-		// it into Identity.
-		var tbody = table.querySelector('tbody') || table;
-		tbody.appendChild(tr);
+	// Site Icon — WP renders it in its own .form-table sibling (or under an
+	// h2 heading) outside the main .form-table. The SPA's Brand card on the
+	// Site identity tab owns the favicon UI (light + dark slots), so we drop
+	// the WP-native widget entirely to avoid duplicate pickers on the same
+	// tab. Saving still works: the Brand card posts site_icon_id through the
+	// REST route, which calls update_option('site_icon', ...) directly.
+	(function dropSiteIconRow() {
+		var probe = form.querySelector('#site_icon-hidden') ||
+		            form.querySelector('input[name="site_icon"]') ||
+		            form.querySelector('#site-icon-img-input') ||
+		            form.querySelector('.site-icon-section');
+		if (!probe) { return; }
+		var row = probe.closest('tr');
+		var section = probe.closest('.form-table, h2, .site-icon-section');
+		// Prefer dropping the surrounding <tr> (when WP renders the row inside
+		// the main form-table) but also drop any standalone sibling section
+		// (some WP versions split site_icon into its own table + heading).
+		if (row && row.parentNode) { row.parentNode.removeChild(row); }
+		if (section && section !== table && section.parentNode) {
+			section.parentNode.removeChild(section);
+		}
 	})();
 
 	// Build each card. The card's `data-tab` attribute names its owning tab —
@@ -272,16 +266,21 @@
 			b.setAttribute('aria-selected', on ? 'true' : 'false');
 			b.tabIndex = on ? 0 : -1;
 		});
-		// Toggle by `data-tab` so secondary cards (e.g. Site Icon under Site
-		// identity) show with their primary, not on their own.
+		// Toggle by `data-tab` so secondary cards (e.g. the Dashboard card
+		// under Site identity) show with their primary, not on their own.
 		Array.prototype.forEach.call(panels.children, function (p) {
 			p.hidden = (p.dataset.tab !== id);
 		});
-		// Hide WP's submit on AdminKit tabs — settings.js renders its own save
-		// affordance inside those panels and saves via REST.
+		// Hide WP's submit on PURE-AdminKit tabs — settings.js renders its own
+		// save affordance inside those panels and saves via REST. We toggle
+		// BOTH the [hidden] attribute (primary mechanism) and a data attribute
+		// on the wrapper (consumed by a CSS sibling-selector belt-and-suspenders
+		// rule in options.css, in case the .submit row sits outside the form
+		// scope the JS query expected).
 		if (submitRow) {
 			submitRow.hidden = !!ADMINKIT_TABS[id];
 		}
+		box.dataset.activeTab = id;
 		// Reflect the active tab in the URL so the page can be deep-linked
 		// (e.g. `options-general.php#site-identity`, `#dashboard`, …).
 		// `replaceState` keeps the browser history clean — clicking tabs

@@ -170,10 +170,20 @@ class AdminKit_Settings_Page {
 		$values = $request->get_param( 'values' );
 		$values = is_array( $values ) ? $values : array();
 
-		// Note: the LIGHT favicon (WP's native `site_icon`) is no longer
-		// posted through this route. WordPress's own Site Icon row on the
-		// Site identity tab handles it via the standard options.php POST;
-		// the AdminKit Brand card only owns the dark-mode companion.
+		// LIGHT favicon — proxies WP's native `site_icon` option. The Brand
+		// card on the Site identity tab is the SOLE editor for it (the WP-native
+		// row is suppressed by options-general.js to avoid duplicate UI), so the
+		// SPA posts the attachment id through this REST route and we update the
+		// WP option directly. 0 / empty means "no icon" — same convention as core.
+		if ( array_key_exists( 'site_icon_id', $values ) ) {
+			$icon_id = absint( $values['site_icon_id'] );
+			if ( $icon_id > 0 && wp_attachment_is_image( $icon_id ) ) {
+				update_option( 'site_icon', $icon_id );
+			} else {
+				delete_option( 'site_icon' );
+			}
+			unset( $values['site_icon_id'] );
+		}
 
 		$clean = self::sanitize( $values );
 
@@ -287,7 +297,6 @@ class AdminKit_Settings_Page {
 
 		return array(
 			'route'        => self::REST_NS . self::REST_ROUTE,
-			'dashboard'    => self::dashboard(),
 			'colors'       => $colors,
 			'providers'    => self::providers(),
 			'features'     => $features,
@@ -296,9 +305,21 @@ class AdminKit_Settings_Page {
 				'light' => (string) AdminKit_Settings::get( 'logo_light' ),
 				'dark'  => (string) AdminKit_Settings::get( 'logo_dark' ),
 			),
-			// Dark-mode favicon — light one comes from WP's native `site_icon`
-			// (see `siteIcon` below), this is AdminKit's own paired storage.
+			// Dark-mode favicon — light one is WP's native `site_icon` (see
+			// `siteIcon` below); this is AdminKit's own paired storage with no
+			// WP equivalent. Printed in <head> with `media="(prefers-color-scheme:
+			// dark)"` so the browser swaps automatically.
 			'faviconDark'  => (string) AdminKit_Settings::get( 'favicon_dark' ),
+			// Bidirectional binding for the LIGHT favicon slot in the Brand card:
+			// the SPA reads from `siteIcon.id` AND writes the value back through
+			// the `site_icon_id` REST proxy (see rest_save()). One source of
+			// truth — the WP option `site_icon`. The native Site Icon row on
+			// the form is removed by options-general.js so the slot here is the
+			// sole UI for it (the chip-and-duplicate UX from before is gone).
+			'siteIcon'     => array(
+				'id'  => (int) get_option( 'site_icon', 0 ),
+				'url' => (string) get_site_icon_url(),
+			),
 			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
 			'loginLogo'    => (string) AdminKit_Settings::get( 'login_logo' ),
 			'brandAccent'  => (string) AdminKit_Settings::get( 'brand_accent' ),
@@ -348,9 +369,9 @@ class AdminKit_Settings_Page {
 				'logoRemove'        => __( 'Remove logo', 'adminkit' ),
 				'mediaTitle'        => __( 'Select a logo', 'adminkit' ),
 				'mediaButton'       => __( 'Use this image', 'adminkit' ),
-				// Cropper modal — used only by the dark favicon slot (light favicon
-				// is WP's native Site Icon, edited outside the SPA). Labels stay
-				// generic so they read naturally in the cropping flow.
+				// Cropper modal — used by BOTH favicon slots (light = WP-native
+				// site_icon, dark = AdminKit-owned). Labels stay generic so the
+				// modal reads as a favicon-picker rather than a Site Icon flow.
 				'mediaSiteIconTitle'  => __( 'Choose a favicon', 'adminkit' ),
 				'mediaSiteIconButton' => __( 'Use this image', 'adminkit' ),
 				'plugins'           => __( 'Plugins', 'adminkit' ),
@@ -381,11 +402,6 @@ class AdminKit_Settings_Page {
 				'mode'              => __( 'Mode', 'adminkit' ),
 				'unsaved'           => __( 'Unsaved changes', 'adminkit' ),
 				'close'             => __( 'Close', 'adminkit' ),
-				'details'           => __( 'Details', 'adminkit' ),
-				'roadmapHint'       => __( 'Click a card for details.', 'adminkit' ),
-				'roadmapVerifyLabel' => __( 'To verify', 'adminkit' ),
-				'roadmapVerifyHint'  => __( 'Done — confirm so it can be removed from the roadmap.', 'adminkit' ),
-				'roadmapStarHint'    => __( 'Game-changer', 'adminkit' ),
 				'designLegendTitle' => __( 'Live colour reference', 'adminkit' ),
 				'designLegend'      => __( 'Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens.', 'adminkit' ),
 				'typography'        => __( 'Typography', 'adminkit' ),
@@ -397,23 +413,28 @@ class AdminKit_Settings_Page {
 				/* translators: pangram used as a font preview sample — translate to a sentence that exercises your language's letters. */
 				'pangram'           => __( 'The quick brown fox jumps over the lazy dog', 'adminkit' ),
 
-				// --- Brand card (Dashboard secondary card on Site identity) ------
+				// --- Brand card (the Dashboard card on the Site identity tab) ----
 				'brandEyebrow'        => __( 'Brand', 'adminkit' ),
-				'brandTitle'          => __( 'Logo, favicon & accent', 'adminkit' ),
+				// One descriptive title, no commas (a previous comma-separated
+				// "Logo, favicon & accent" read as a laundry list — "Logos & accent"
+				// folds favicons under "logos" so the title stays short).
+				'brandTitle'          => __( 'Logos & accent', 'adminkit' ),
 				'brandSyncStatus'     => __( 'Tokens synced with Bricks Builder', 'adminkit' ),
 				/* translators: %d: number of CSS custom properties exposed by Bricks. */
 				'brandSyncStatusCount' => __( '%d tokens', 'adminkit' ),
 				// Slot titles read as a coherent set — "<Kind> <Mode>" — with the
 				// mode word following the kind so the eye scans the kind first.
-				// The LIGHT favicon is intentionally absent: it's WP's native
-				// `site_icon`, edited via the Site Icon row sitting alongside on
-				// the same tab. Duplicating it here just stacked the same picker.
+				// The LIGHT favicon slot here proxies WP's native `site_icon`
+				// option (the WP-native Site Icon row on the form is suppressed
+				// by options-general.js so the Brand card is the sole UI).
+				'slotFavicon'         => __( 'Favicon Light Mode', 'adminkit' ),
+				'slotFaviconSub'      => __( 'PNG · 512×512 · cropped', 'adminkit' ),
 				'slotLight'           => __( 'Logo Light Mode', 'adminkit' ),
 				'slotLightSub'        => __( 'SVG · PNG ≥ 400×100', 'adminkit' ),
-				'slotDark'            => __( 'Logo Dark Mode', 'adminkit' ),
-				'slotDarkSub'         => __( 'SVG · PNG ≥ 400×100', 'adminkit' ),
 				'slotFaviconDark'     => __( 'Favicon Dark Mode', 'adminkit' ),
 				'slotFaviconDarkSub'  => __( 'Auto-swap via prefers-color-scheme', 'adminkit' ),
+				'slotDark'            => __( 'Logo Dark Mode', 'adminkit' ),
+				'slotDarkSub'         => __( 'SVG · PNG ≥ 400×100', 'adminkit' ),
 				'slotUpload'          => __( 'Upload', 'adminkit' ),
 				'slotRemove'          => __( 'Remove', 'adminkit' ),
 				'slotMediaLib'        => __( 'Media library', 'adminkit' ),
@@ -469,167 +490,6 @@ class AdminKit_Settings_Page {
 				'sourceAdminKit'      => __( 'AdminKit', 'adminkit' ),
 			),
 		);
-	}
-
-	/**
-	 * Dashboard tab meta — version chip, last-updated badge, roadmap columns.
-	 * The Brand card + tokens reference take the main slot (rendered client-side
-	 * by buildDesign()), so this only ships the data the roadmap section needs.
-	 *
-	 * @return array
-	 */
-	private static function dashboard() {
-		/**
-		 * Filter the AdminKit dashboard data. Add roadmap items via
-		 * `$data['roadmap'][N]['items']`. The legacy `cards[]` + `overviewLabel`
-		 * keys are gone — the SPA no longer renders an Overview hero strip
-		 * (the Brand card from the former Design tab took its place).
-		 *
-		 * @param array $data { version, updated, updatedLabel, roadmapLabel, roadmap[] }
-		 */
-		// "Last updated" badge — the main plugin file's mtime (changes on every
-		// release / deploy), localised to the site's date format. Dynamic, so it stays
-		// truthful without manual upkeep.
-		$updated = @filemtime( ADMINKIT_FILE );
-		return apply_filters( 'adminkit/dashboard', array(
-			'version'       => 'v' . ADMINKIT_VERSION,
-			'updated'       => $updated ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $updated ) : '',
-			/* translators: %s = a date. */
-			'updatedLabel'  => __( 'Updated', 'adminkit' ),
-			'roadmapLabel'  => __( 'Roadmap', 'adminkit' ),
-			// AdminKit's roadmap — THE single source. Keep it coherent with what's
-			// actually being built, and mirror it in README.md's Roadmap section when
-			// it changes (see CLAUDE.md → "Keep the docs alive").
-			// Columns render left→right in this order: In progress · Next · Planned.
-			// Each item: label (card title), desc (one-line on the card), detail
-			// (paragraph shown in the click-through modal) and optional bullets[].
-			'roadmap'       => array(
-				array(
-					'title' => __( 'In progress', 'adminkit' ),
-					'items' => array(
-						array(
-							'label'  => __( 'Universal plugin compatibility', 'adminkit' ),
-							'desc'   => __( 'Any plugin looks right, even without an adapter.', 'adminkit' ),
-							'detail' => __( 'Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common form controls — so a plugin with no dedicated adapter still looks coherent in light and dark out of the box. The stronger this layer, the less per-plugin work is ever needed.', 'adminkit' ),
-							'star'   => true,
-						),
-						array(
-							'label'  => __( 'Custom dashboard page', 'adminkit' ),
-							'desc'   => __( 'A redesigned WordPress home screen that\'s actually useful.', 'adminkit' ),
-							'detail' => __( 'Replace the default WordPress dashboard with a polished home screen built on native data — site health, content snapshots, recent activity, quick actions — without new database tables or heavy machinery. Useful first, decorative second.', 'adminkit' ),
-							'star'   => true,
-						),
-					),
-				),
-				array(
-					'title' => __( 'Next', 'adminkit' ),
-					'items' => array(
-						array(
-							'label'  => __( 'More native screens styled', 'adminkit' ),
-							'desc'   => __( 'Taxonomies, custom post types and the rest.', 'adminkit' ),
-							'detail' => __( 'Extend AdminKit\'s per-screen polish to the pages still wearing default WordPress styling: the category and tag editors, custom-post-type lists, and the few remaining core screens — so the whole admin feels like one product.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'In-app palette editor', 'adminkit' ),
-							'desc'   => __( 'Pick accent, surface and text colours directly.', 'adminkit' ),
-							'detail' => __( 'Turn today\'s read-only token map into a real editor: choose your accent, surfaces and text, preview the change live across wp-admin, and export the palette to a provider like Bricks.', 'adminkit' ),
-							'star'   => true,
-						),
-						array(
-							'label'  => __( 'Colour sync', 'adminkit' ),
-							'desc'   => __( 'Pull colours from your provider or theme.', 'adminkit' ),
-							'detail' => __( 'Read the active provider or theme palette and keep AdminKit in sync automatically, so the admin always matches the brand without manual edits.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'More provider adapters', 'adminkit' ),
-							'desc'   => __( 'Beyond Bricks — ACSS, Core Framework, Oxygen, Elementor…', 'adminkit' ),
-							'detail' => __( 'Inherit brand colours from more page builders and frameworks (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress), the same way the Bricks adapter works today.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Accessibility checks', 'adminkit' ),
-							'desc'   => __( 'Warn when a colour fails contrast.', 'adminkit' ),
-							'detail' => __( 'Flag colour choices that fall below contrast and legibility thresholds, right where you pick them.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Import / export settings', 'adminkit' ),
-							'desc'   => __( 'Clone an AdminKit setup across sites.', 'adminkit' ),
-							'detail' => __( 'Save a whole AdminKit configuration to a file and import it on another site in one step — ideal for agencies.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Per-role visibility', 'adminkit' ),
-							'desc'   => __( 'Choose which roles get the skin and who may edit it.', 'adminkit' ),
-							'detail' => __( 'Decide which user roles see the AdminKit skin and which may change its settings — handy for client sites.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Admin-bar polish', 'adminkit' ),
-							'desc'   => __( 'Front and back admin bar, refined.', 'adminkit' ),
-							'detail' => __( 'Finish the admin bar end to end — the same on the front end and back end, with tidy submenus, clear keyboard focus, and a clean responsive layout on mobile.', 'adminkit' ),
-						),
-					),
-				),
-				array(
-					'title' => __( 'Planned', 'adminkit' ),
-					'items' => array(
-						array(
-							'label'  => __( 'Command palette', 'adminkit' ),
-							'desc'   => __( 'Jump anywhere with a keystroke.', 'adminkit' ),
-							'detail' => __( 'A ⌘K / Ctrl-K launcher to jump straight to any admin page, setting or post — no more hunting through menus.', 'adminkit' ),
-							'star'   => true,
-						),
-						array(
-							'label'  => __( 'Theme variants', 'adminkit' ),
-							'desc'   => __( 'Beyond light and dark — sepia, high-contrast.', 'adminkit' ),
-							'detail' => __( 'Ship additional admin themes on top of light and dark, including an accessibility-minded high-contrast variant.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Per-user theme preference', 'adminkit' ),
-							'desc'   => __( 'Each user picks their own mode.', 'adminkit' ),
-							'detail' => __( 'Let every user choose their own light/dark mode and accent, saved per account, so the admin feels personal without changing it for anyone else.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Admin notices manager', 'adminkit' ),
-							'desc'   => __( 'Tame the notice clutter.', 'adminkit' ),
-							'detail' => __( 'Gather WordPress\'s scattered admin notices into one tidy, collapsible area so update nags and plugin messages stop shoving your content down the page.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Native menu editor', 'adminkit' ),
-							'desc'   => __( 'Reorder, rename and hide menu items.', 'adminkit' ),
-							'detail' => __( 'A lightweight, native way to reorder, rename or hide admin-menu items per role — the essentials, without a separate plugin.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'White-label & admin footer', 'adminkit' ),
-							'desc'   => __( 'Hide WordPress branding, add an agency credit.', 'adminkit' ),
-							'detail' => __( 'Remove WordPress branding across the admin and add your own footer credit and version line.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Custom admin CSS', 'adminkit' ),
-							'desc'   => __( 'Drop in your own admin tweaks.', 'adminkit' ),
-							'detail' => __( 'A small sanitised field for your own admin CSS on top of AdminKit\'s tokens — for the one-off tweak without a child plugin.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Density / compact mode', 'adminkit' ),
-							'desc'   => __( 'Comfortable or compact spacing.', 'adminkit' ),
-							'detail' => __( 'An optional denser layout that tightens spacing across wp-admin for power users, while keeping the comfortable default.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Typography controls', 'adminkit' ),
-							'desc'   => __( 'Choose the admin font and scale.', 'adminkit' ),
-							'detail' => __( 'Pick the admin font family and base size from sensible presets so the whole admin matches your brand\'s type.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'Bricks dynamic logo tag', 'adminkit' ),
-							'desc'   => __( 'Use your AdminKit logo anywhere in Bricks.', 'adminkit' ),
-							'detail' => __( 'Expose the configured brand logo as a Bricks dynamic-data tag, so it can be dropped into any Bricks design and stays in sync.', 'adminkit' ),
-						),
-						array(
-							'label'  => __( 'WordPress Playground demo', 'adminkit' ),
-							'desc'   => __( 'Try AdminKit live in the browser.', 'adminkit' ),
-							'detail' => __( 'A one-click WordPress Playground link so anyone can try AdminKit in the browser with no install — great for the README and the .org listing.', 'adminkit' ),
-						),
-					),
-				),
-			),
-		) );
 	}
 
 	/**

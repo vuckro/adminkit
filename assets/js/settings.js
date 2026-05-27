@@ -16,9 +16,9 @@
  * In EMBEDDED mode the Dashboard tab is mounted as a SECONDARY card on
  * the merged page's Site identity tab (no separate strip button), so the
  * brand controls sit next to the WP site-name and tagline they belong with.
- * Dashboard renders the brand controls + roadmap; Preferences holds the
- * module toggles; Plugins lists the per-host adapters + per-plugin opt-outs.
- * All save via the same `adminkit/v1/settings` REST route.
+ * Dashboard renders the brand controls + token reference; Preferences holds
+ * the module toggles; Plugins lists the per-host adapters + per-plugin
+ * opt-outs. All save via the same `adminkit/v1/settings` REST route.
  *
  * No framework, no build step — vanilla DOM.
  */
@@ -55,11 +55,18 @@
 		brandAccent: D.brandAccent || '',    // user hex (only meaningful when accentSource === 'custom')
 		// 'adminkit' = WP Blue (#3858E9), 'bricks' = Bricks provider --accent, 'custom' = brandAccent hex
 		accentSource: D.accentSource || 'adminkit',
-		// Dark-mode favicon — AdminKit-owned (WP has no equivalent). Stored as
+		// LIGHT favicon — bidirectional binding to WP's native `site_icon` option.
+		// The light-favicon slot in the Brand card reads + writes through THIS;
+		// changes propagate to every WP surface that consumes site_icon (browser
+		// tab, login fallback, Open Graph). WP's native Site Icon row on the form
+		// is suppressed by options-general.js so the slot here is the sole UI.
+		siteIcon: {
+			id:  ( D.siteIcon && D.siteIcon.id ) || 0,
+			url: ( D.siteIcon && D.siteIcon.url ) || ''
+		},
+		// DARK-mode favicon — AdminKit-owned (WP has no equivalent). Stored as
 		// a URL string and printed in `<head>` with `media="(prefers-color-scheme:
 		// dark)"` so browsers swap automatically (incl. the Bricks editor tab).
-		// The LIGHT favicon is WordPress's native `site_icon` — managed by WP's
-		// own Site Icon row on the Site identity tab, NOT by the Brand card here.
 		faviconDark: D.faviconDark || ''
 	};
 	( D.features || [] ).forEach( function ( f ) {
@@ -239,10 +246,9 @@
 		upload: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>'
 	};
 
-	// The Dashboard tab now hosts the full branding UI (Brand card + tokens
-	// reference) plus the roadmap below — the standalone Design tab and the
-	// "Overview" stat strip are gone. Old `#design` hashes fall back to the
-	// dashboard via applyHash().
+	// The Dashboard tab hosts the full branding UI (Brand card + tokens
+	// reference). Old `#design` hashes fall back to the dashboard via
+	// applyHash().
 	var tabs = [
 		{ id: 'dashboard', label: I.dashboard, icon: ICONS.dashboard, build: buildDashboard },
 		{ id: 'settings', label: I.features, icon: ICONS.features, build: buildFeatures },
@@ -354,125 +360,14 @@
 	// --- panels --------------------------------------------------------------
 	function intro( text ) { return el( 'p', { 'class': 'ak-intro', text: text } ); }
 
-	// --- roadmap detail modal ------------------------------------------------
-	// One reusable, accessible dialog (built lazily). A roadmap card click opens
-	// it with that item's title / lede / detail / bullets; ESC, the close button
-	// and a backdrop click dismiss it, and focus returns to the card.
-	var roadmapModal = null;
-	var roadmapTrigger = null;
-
-	function buildRoadmapModal() {
-		var closeBtn = el( 'button', { 'class': 'ak-modal__close', type: 'button', 'aria-label': I.close || 'Close', onclick: closeRoadmapModal, text: '×' } );
-		var chip   = el( 'span', { 'class': 'ak-modal__chip' } );
-		var title  = el( 'h2', { 'class': 'ak-modal__title', id: 'ak-roadmap-modal-title' } );
-		var lede   = el( 'p', { 'class': 'ak-modal__lede' } );
-		var detail = el( 'p', { 'class': 'ak-modal__detail' } );
-		var list   = el( 'ul', { 'class': 'ak-modal__list' } );
-		var dialog = el( 'div', { 'class': 'ak-modal__dialog', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'ak-roadmap-modal-title' }, [ closeBtn, chip, title, lede, detail, list ] );
-		var root   = el( 'div', { 'class': 'ak-modal', hidden: 'hidden' }, [ dialog ] );
-		root.addEventListener( 'click', function ( e ) { if ( e.target === root ) { closeRoadmapModal(); } } );
-		document.body.appendChild( root );
-		roadmapModal = { root: root, dialog: dialog, chip: chip, title: title, lede: lede, detail: detail, list: list, close: closeBtn };
-		return roadmapModal;
-	}
-
-	function openRoadmapModal( item, status ) {
-		var m = roadmapModal || buildRoadmapModal();
-		roadmapTrigger = document.activeElement;
-		m.chip.textContent = status || '';
-		m.chip.style.display = status ? '' : 'none';
-		m.title.textContent = item.label || '';
-		m.lede.textContent = item.desc || '';
-		m.lede.style.display = item.desc ? '' : 'none';
-		m.detail.textContent = item.detail || '';
-		m.detail.style.display = item.detail ? '' : 'none';
-		m.list.textContent = '';
-		( item.bullets || [] ).forEach( function ( b ) { m.list.appendChild( el( 'li', { text: b } ) ); } );
-		m.list.style.display = ( item.bullets && item.bullets.length ) ? '' : 'none';
-		m.root.removeAttribute( 'hidden' );
-		requestAnimationFrame( function () { m.root.classList.add( 'is-open' ); } );
-		document.addEventListener( 'keydown', onModalKey );
-		m.close.focus();
-	}
-
-	function closeRoadmapModal() {
-		if ( ! roadmapModal ) { return; }
-		roadmapModal.root.classList.remove( 'is-open' );
-		roadmapModal.root.setAttribute( 'hidden', 'hidden' );
-		document.removeEventListener( 'keydown', onModalKey );
-		if ( roadmapTrigger && roadmapTrigger.focus ) { roadmapTrigger.focus(); }
-		roadmapTrigger = null;
-	}
-
-	function onModalKey( e ) {
-		if ( e.key === 'Escape' ) { e.preventDefault(); closeRoadmapModal(); return; }
-		if ( e.key === 'Tab' && roadmapModal ) {
-			var f = roadmapModal.dialog.querySelectorAll( 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])' );
-			if ( ! f.length ) { return; }
-			var first = f[ 0 ], last = f[ f.length - 1 ];
-			if ( e.shiftKey && document.activeElement === first ) { e.preventDefault(); last.focus(); }
-			else if ( ! e.shiftKey && document.activeElement === last ) { e.preventDefault(); first.focus(); }
-		}
-	}
-
-	// Dashboard tab — single landing surface that hosts the full branding UI
-	// (Brand card + tokens reference, formerly the standalone Design tab),
-	// followed by the roadmap below. The old "Overview" hero strip with
-	// provider / features / mode cells is gone — the user wanted customisation
-	// up-front, not stats.
+	// Dashboard "tab" — built once, mounted as a SECONDARY card on the Site
+	// identity tab (no own tab button, no own routing). The card contains the
+	// branding UI (Brand card with slots + accent picker + display row) and,
+	// inside it, a disclosure that reveals the read-only token reference.
+	// The roadmap that used to live below the Brand card was removed — the
+	// README's Roadmap section is the single source now.
 	function buildDashboard() {
-		// Start from the Design tab's panel as-is (intro + Brand card + tokens
-		// reference) and append the roadmap meta-info underneath.
-		var p = buildDesign();
-		var dd = D.dashboard || {};
-
-		// Roadmap — three columns (Planned / Next / In progress), Bricks-style cards.
-		// Data-driven from dd.roadmap (the single source in class-settings-page.php).
-		if ( dd.roadmap && dd.roadmap.length ) {
-			var board = el( 'div', { 'class': 'ak-roadmap' } );
-			dd.roadmap.forEach( function ( col ) {
-				var kids = [ el( 'h3', { 'class': 'ak-roadmap__head', text: col.title } ) ];
-				( col.items || [] ).forEach( function ( it ) {
-					// A card with a detail / bullets becomes a focusable button that
-					// opens the detail modal; otherwise it stays a plain div. A card
-					// flagged `verify` (done, awaiting confirmation before removal)
-					// gets an accent modifier + a small "To verify" badge.
-					var hasDetail = !! ( it.detail || ( it.bullets && it.bullets.length ) );
-					kids.push( el( hasDetail ? 'button' : 'div', {
-						type: hasDetail ? 'button' : null,
-						'class': 'ak-roadmap__card' + ( hasDetail ? ' ak-roadmap__card--link' : '' ) + ( it.verify ? ' ak-roadmap__card--verify' : '' ),
-						onclick: hasDetail ? function () { openRoadmapModal( it, col.title ); } : null
-					}, [
-						it.verify ? el( 'span', { 'class': 'ak-roadmap__flag', title: I.roadmapVerifyHint || '', text: I.roadmapVerifyLabel || 'To verify' } ) : null,
-						el( 'span', { 'class': 'ak-roadmap__titlerow' }, [
-							el( 'span', { 'class': 'ak-roadmap__title', text: it.label } ),
-							it.star ? el( 'span', { 'class': 'ak-roadmap__star', title: I.roadmapStarHint || '', text: '★', 'aria-label': I.roadmapStarHint || 'Game-changer' } ) : null
-						] ),
-						it.desc ? el( 'span', { 'class': 'ak-roadmap__desc', text: it.desc } ) : null
-					] ) );
-				} );
-				board.appendChild( el( 'div', { 'class': 'ak-roadmap__col' }, kids ) );
-			} );
-			// Heading row: the "Roadmap" title with status badges on the right —
-			// the version + the last-updated date, so the plan reads as current.
-			var badges = el( 'div', { 'class': 'ak-roadmap__meta' }, [
-				dd.version ? el( 'span', { 'class': 'ak-badge ak-badge--brand', text: dd.version } ) : null,
-				dd.updated ? el( 'span', { 'class': 'ak-badge', text: ( dd.updatedLabel || 'Updated' ) + ' ' + dd.updated } ) : null
-			] );
-			p.appendChild( el( 'div', { 'class': 'ak-group' }, [
-				el( 'div', { 'class': 'ak-roadmap__head-row' }, [
-					dd.roadmapLabel ? el( 'h2', { 'class': 'ak-group__title', text: dd.roadmapLabel } ) : null,
-					( dd.version || dd.updated ) ? badges : null
-				] ),
-				I.roadmapHint ? el( 'p', { 'class': 'ak-roadmap__hint', text: I.roadmapHint } ) : null,
-				board
-			] ) );
-		}
-
-		if ( dd.version ) {
-			p.appendChild( el( 'p', { 'class': 'ak-dash__ver', text: 'AdminKit ' + dd.version } ) );
-		}
-		return p;
+		return buildDesign();
 	}
 
 	// Design tab — final layout (Phase A). Leads with one interactive Brand card
@@ -598,17 +493,20 @@
 		// or upload-arrow placeholder) + label + sub + Upload / Remove button.
 		// `slotKey` is one of:
 		//   'light' / 'dark'  → brand wordmark URLs in `state.logos[key]`
+		//   'favicon'         → LIGHT favicon, proxies WP's native `site_icon`
+		//                       (an attachment ID). Reading + writing routes
+		//                       through `state.siteIcon`; the REST save converts
+		//                       the id back to a `site_icon` update_option().
 		//   'favicon-dark'    → AdminKit-owned dark-mode favicon URL in
 		//                       `state.faviconDark`. Printed in <head> with
 		//                       `media="(prefers-color-scheme: dark)"` so the
-		//                       browser swaps it automatically. The light
-		//                       favicon is WP's native `site_icon` — managed
-		//                       by WP's own Site Icon row on the same tab,
-		//                       so we don't expose a slot for it here.
-		// The dark favicon routes through SiteIconCropper (square 512×512);
+		//                       browser swaps it automatically.
+		// Both favicon variants share the SiteIconCropper UX (square 512×512);
 		// logo slots use the plain media frame (free-form aspect, no crop).
 		function brandSlot( slotKey, label, sub ) {
+			var isSiteIcon    = ( slotKey === 'favicon' );
 			var isFaviconDark = ( slotKey === 'favicon-dark' );
+			var isFavicon     = isSiteIcon || isFaviconDark;
 			var preview = el( 'img', { 'class': 'ak-brand-slot__preview', alt: '' } );
 			// Empty-state placeholder is an upload-arrow icon (the zone is a
 			// click-to-upload shortcut alongside the Upload button below).
@@ -626,6 +524,7 @@
 			} );
 
 			function currentUrl() {
+				if ( isSiteIcon )    { return state.siteIcon.url || ''; }
 				if ( isFaviconDark ) { return state.faviconDark || ''; }
 				return state.logos[ slotKey ] || '';
 			}
@@ -645,8 +544,11 @@
 					actionBtn.classList.remove( 'is-remove' );
 				}
 			}
-			function setLogo( url ) {
-				if ( isFaviconDark ) {
+			function setLogo( url, att ) {
+				if ( isSiteIcon ) {
+					state.siteIcon.url = url || '';
+					state.siteIcon.id  = ( att && att.id ) ? parseInt( att.id, 10 ) : 0;
+				} else if ( isFaviconDark ) {
 					state.faviconDark = url || '';
 				} else {
 					state.logos[ slotKey ] = url || '';
@@ -655,12 +557,12 @@
 				markDirty();
 			}
 
-			// The dark favicon routes through WP's Site Icon picker (Library +
+			// Both favicon slots route through WP's Site Icon picker (Library +
 			// Cropper) so non-square uploads get cropped to a square 512×512
-			// before save — same UX as Settings → General → Site Icon, even
-			// though we store the cropped URL in our own option rather than
-			// `site_icon`. Wordmark logos use the plain media frame (no crop).
-			var pick = isFaviconDark ? openSiteIcon : openMedia;
+			// before save — same UX as the legacy Settings → General → Site Icon
+			// for the light one; same cropper for the dark one even though we
+			// store its URL ourselves. Wordmark logos use the plain media frame.
+			var pick = isFavicon ? openSiteIcon : openMedia;
 
 			// Drop zone is always a "pick / replace" shortcut. The action button
 			// branches on current state — clears when filled, picks when empty.
@@ -974,14 +876,17 @@
 			] ) );
 		}
 
-		// Brand slots row — 3 slots: light + dark wordmarks, then the dark-mode
-		// favicon. The LIGHT favicon is WordPress's native `site_icon` and is
-		// edited via WP's own Site Icon row on the same tab (Site identity),
-		// so duplicating it here would just stack the same picker thrice.
+		// Brand slots row — 4 slots paired by MODE (light, then dark):
+		//   Favicon Light · Logo Light · Favicon Dark · Logo Dark
+		// The light favicon proxies WP's native `site_icon` (no separate UI for
+		// it — the native Site Icon row on the form is suppressed by
+		// options-general.js), so the four slots together are the single source
+		// of truth for the site's visual identity.
 		var slotsRow = el( 'div', { 'class': 'ak-brand-slots' }, [
-			brandSlot( 'light', I.slotLight || 'Light mode', I.slotLightSub || 'Shown on light surfaces' ),
-			brandSlot( 'dark', I.slotDark || 'Dark mode', I.slotDarkSub || 'Shown on dark surfaces' ),
-			brandSlot( 'favicon-dark', I.slotFaviconDark || 'Favicon — dark', I.slotFaviconDarkSub || 'Shown via prefers-color-scheme: dark' )
+			brandSlot( 'favicon', I.slotFavicon || 'Favicon Light Mode', I.slotFaviconSub || 'PNG · 512×512 · cropped' ),
+			brandSlot( 'light', I.slotLight || 'Logo Light Mode', I.slotLightSub || 'SVG · PNG ≥ 400×100' ),
+			brandSlot( 'favicon-dark', I.slotFaviconDark || 'Favicon Dark Mode', I.slotFaviconDarkSub || 'Auto-swap via prefers-color-scheme' ),
+			brandSlot( 'dark', I.slotDark || 'Logo Dark Mode', I.slotDarkSub || 'SVG · PNG ≥ 400×100' )
 		] );
 
 		// Display row — segmented controls for Admin bar + Login screen, and
@@ -1670,9 +1575,12 @@
 		v.login_logo    = state.loginLogo;
 		v.brand_accent  = state.brandAccent;
 		v.accent_source = state.accentSource;
-		// AdminKit-owned dark favicon URL (no WP equivalent — the light favicon
-		// is WP's native `site_icon`, edited via the Site Icon row on the same
-		// tab, not posted here).
+		// LIGHT favicon — proxies WP's native `site_icon` option through the
+		// REST route (PHP rest_save() consumes site_icon_id and calls
+		// update_option('site_icon', $id)). One source of truth for the WP
+		// option, edited through the Brand card's first slot.
+		v.site_icon_id  = state.siteIcon.id;
+		// AdminKit-owned DARK favicon URL (no WP equivalent).
 		v.favicon_dark  = state.faviconDark;
 		return v;
 	}
