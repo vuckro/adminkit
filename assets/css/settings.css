@@ -918,40 +918,43 @@
 }
 
 /* Brand slots row — four cards on a single line: logo (light) · logo (dark) ·
-   favicon (light) · favicon (dark). Each slot stacks its zone on top of a
-   compact body (label + sub + button). Tight padding and a small gap keep
-   the cards visually balanced and stop the empty-state zone from dominating.
-   The fixed light/dark backdrops MUST NOT flip with the admin theme; they
-   show each image on the surface it's built for, like a swatch (same logic
-   as the existing .ak-logo-pick--light/--dark per the CLAUDE.md guardrail). */
+   favicon (light) · favicon (dark). Each slot is a HORIZONTAL strip — small
+   preview zone on the left, label / sub / Upload button stacked on the right
+   — so the card stays short in height (a tall vertical layout dominates the
+   page when all four are empty). The fixed light/dark backdrops MUST NOT
+   flip with the admin theme; they show each image on the surface it's built
+   for, like a swatch (same logic as the existing .ak-logo-pick--light/--dark
+   per the CLAUDE.md guardrail). */
 .adminkit-app .ak-brand-slots {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	gap: 10px;
 	margin-bottom: 16px;
 }
+/* Horizontal slot layout — zone on the LEFT, body (label + sub + button) on
+   the RIGHT. Keeps each card short in height; the 4-up grid gives each card
+   enough width to fit a small zone (40-72px) plus a tight body without
+   wrapping the button under the text. */
 .adminkit-app .ak-brand-slot {
 	border: 1px dashed var(--ak-border);
 	border-radius: var(--ak-radius-m, 10px);
-	padding: 10px 10px 12px;
+	padding: 10px;
 	display: flex;
-	flex-direction: column;
 	align-items: center;
-	text-align: center;
-	gap: 8px;
+	gap: 10px;
 }
 /* Default zone shape — square (favicons). Logos override below to a wider
    rectangle so wordmarks read at their natural landscape aspect rather than
    squashed into a square. Inner padding keeps the image off the rounded
    corners. */
 .adminkit-app .ak-brand-slot__zone {
-	width: 52px;
-	height: 52px;
+	width: 44px;
+	height: 44px;
 	border-radius: var(--ak-radius-s, 6px);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 5px;
+	padding: 4px;
 	color: var(--ak-text-muted);
 	flex: 0 0 auto;
 	overflow: hidden;
@@ -961,8 +964,8 @@
 /* Logo slots — rectangular zone matches a wordmark's natural aspect (~2:1). */
 .adminkit-app .ak-brand-slot--light .ak-brand-slot__zone,
 .adminkit-app .ak-brand-slot--dark .ak-brand-slot__zone {
-	width: 92px;
-	height: 48px;
+	width: 72px;
+	height: 44px;
 }
 /* Zone is a click-to-replace shortcut alongside the Upload / Remove button.
    Hover reveals the affordance: an inset accent ring around the zone, plus a
@@ -994,15 +997,16 @@
 .adminkit-app .ak-brand-slot--favicon .ak-brand-slot__zone { background: #ffffff; color: #888; }
 .adminkit-app .ak-brand-slot--dark .ak-brand-slot__zone,
 .adminkit-app .ak-brand-slot--favicon-dark .ak-brand-slot__zone { background: #0a0a0a; color: #888; }
-/* Body wraps tight under the zone — no flex-grow so the card height stays
-   determined by content (rather than stretching to a uniform tall block). */
+/* Body sits to the right of the zone — left-aligned column that fills the
+   remaining horizontal space. Tight vertical gap so label / sub / button
+   stack within the zone's height; long sub-labels wrap to a second line. */
 .adminkit-app .ak-brand-slot__body {
+	flex: 1 1 auto;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: flex-start;
 	gap: 2px;
 	min-width: 0;
-	width: 100%;
 }
 /* Label row — label text + optional badge chip ("Native" on the light
    favicon). Wraps on narrow widths so the chip drops under instead of
@@ -1011,7 +1015,6 @@
 	display: inline-flex;
 	align-items: center;
 	flex-wrap: wrap;
-	justify-content: center;
 	gap: 5px;
 	line-height: 1.2;
 }
