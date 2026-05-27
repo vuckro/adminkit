@@ -56,53 +56,6 @@
 
 
 /* ============================================================
-   DARK MODE
-   ============================================================
-   Piloted by AdminKit's own attribute — class-theme-toggle.php's
-   print_script() hooks wp_head with no builder guard, so it runs here
-   too and sets data-adminkit-theme on <html> from localStorage (or
-   prefers-color-scheme as a fallback) before the first paint.
-
-   Bricks's Style Manager light/dark toggle stays independent — it flips
-   the CANVAS iframe only (Bricks writes data-brx-theme there via its
-   $_state.mode watcher in main.min.js), never the chrome. That's the
-   right separation: canvas = the page being designed, chrome = AdminKit
-   UI surface.
-
-   The block below re-points Bricks's semantic tokens (--background,
-   --surface, --heading, …) to the matching --ak-* dark values, so every
-   var(--background) reference further down picks up the dark tone with
-   no per-rule rewrite. AdminKit's --ak-bg etc. resolve through the
-   WaasKit baseline's --neutral-d-N ramp (enqueued by enqueue_token_stack
-   in class-bricks.php), so this works with OR without any Bricks Style
-   Manager palette imported. */
-:root[data-adminkit-theme="dark"] {
-	--background:     var(--ak-bg);
-	--surface:        var(--ak-surface);
-	--elevated:       var(--ak-elevated);
-	--input:          var(--ak-input-bg);
-	--border:         var(--ak-border);
-	--border-strong:  var(--ak-border-strong);
-	--heading:        var(--ak-heading);
-	--text:           var(--ak-text);
-	--text-muted:     var(--ak-text-muted);
-	--accent:         var(--ak-primary);
-	--accent-hover:   var(--ak-primary-hover);
-	--accent-on:      var(--ak-on-accent);
-	--accent-subtle:  var(--ak-primary-subtle);
-	--focus:          var(--ak-focus);
-	--success:        var(--ak-success);
-	--success-subtle: var(--ak-success-subtle);
-	--warning:        var(--ak-warning);
-	--warning-subtle: var(--ak-warning-subtle);
-	--error:          var(--ak-error);
-	--error-subtle:   var(--ak-error-subtle);
-	--info:           var(--ak-info);
-	--info-subtle:    var(--ak-info-subtle);
-}
-
-
-/* ============================================================
    TOOLBAR
    ============================================================ */
 #bricks-toolbar {
@@ -138,15 +91,9 @@
 
 	/* Borders & radius */
 	--builder-border-color:          var(--border);
-	--builder-border-radius:         var(--radius-s, var(--ak-radius-s, 6px));
+	--builder-border-radius:         var(--radius-s, 6px);
 	--builder-color-knob:            var(--neutral-l-7);
 	--builder-placeholder-opacity:   .32;
-
-	/* Shadow — Bricks uses --builder-box-shadow for popups, notifications,
-	   the "Save" toast, etc. Bricks ships both names; map both so we don't
-	   miss surfaces that only consume the alias. */
-	--builder-box-shadow:            var(--ak-shadow-elevated, 0 8px 24px -10px rgba(0, 0, 0, .3));
-	--builder-shadow:                var(--ak-shadow-elevated, 0 8px 24px -10px rgba(0, 0, 0, .3));
 
 	/* Accent / selection / highlight */
 	--builder-bg-accent:             var(--surface);
@@ -194,7 +141,7 @@
 :root {
 	--bricks-vh:              1vh;
 	--bricks-transition:      var(--transition-s, .15s ease);
-	--bricks-border-radius:   var(--radius-s, var(--ak-radius-s, 6px));
+	--bricks-border-radius:   var(--radius-s, 6px);
 
 	--bricks-color-primary:   var(--primary);
 	--bricks-color-secondary: var(--secondary);
