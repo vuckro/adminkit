@@ -1,0 +1,35 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"meta": {
+		"title": "AdminKit",
+		"description": "Try AdminKit — a clean, modern restyle of the WordPress admin built on CSS tokens. Light + dark mode, generated avatars, top-level menu, 15 plugin adapters.",
+		"author": "vuckro",
+		"categories": [ "design", "developer-tools" ]
+	},
+	"landingPage": "/wp-admin/admin.php?page=adminkit",
+	"preferredVersions": {
+		"php": "8.2",
+		"wp": "latest"
+	},
+	"phpExtensionBundles": [ "kitchen-sink" ],
+	"features": {
+		"networking": true
+	},
+	"steps": [
+		{
+			"step": "login",
+			"username": "admin",
+			"password": "password"
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "url",
+				"url": "https://github.com/vuckro/adminkit/releases/download/v1.0.0/adminkit-1.0.0.zip"
+			},
+			"options": {
+				"activate": true
+			}
+		}
+	]
+}

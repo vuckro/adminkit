@@ -14,6 +14,10 @@
 .claude
 CLAUDE.md
 
+# GitHub-only metadata (Playground blueprints, repo configuration)
+.wordpress-org
+.github
+
 # Dev tooling + build sources (regenerated assets are committed and DO ship)
 dev
 tokens
