@@ -153,7 +153,7 @@ save bar + 3-tab strip) inside it. Saving runs through one REST route
 interactive Brand card — light + dark logos and light + dark favicons
 in a 2×2 grid, accent picker, plus the `wp_logo` / `login_logo` modes
 for the site-name and login brand marks, then a read-only reference of
-the semantic token map); **Preferences** (the module toggles); and
+the semantic token map); **Features** (the module toggles); and
 **Plugins** (every installed plugin plus AdminKit's active theme
 adapter, each carrying a **Native** badge when AdminKit ships a tuned
 adapter for it — a per-host enable toggle plus dark mode — while

@@ -296,12 +296,12 @@ class AdminKit_Settings_Page {
 			'i18n'         => array(
 				// Tab labels (the only three the SPA strip prints).
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
-				// "Preferences" reads distinctly from WordPress's own Settings
-				// (Réglages) menu, where the AdminKit submenu sits.
-				'features'          => __( 'Preferences', 'adminkit' ),
+				// "Features" matches the tab content (feature toggles like
+				// dark mode, post previews, login screen restyle, etc.).
+				'features'          => __( 'Features', 'adminkit' ),
 				'plugins'           => __( 'Plugins', 'adminkit' ),
 
-				// Preferences tab — intro + bulk row + per-plugin descriptors.
+				// Features tab — intro + bulk row + per-plugin descriptors.
 				'featuresIntro'     => __( 'Turn AdminKit modules on or off.', 'adminkit' ),
 				'enableAll'         => __( 'Enable all', 'adminkit' ),
 				'disableAll'        => __( 'Disable all', 'adminkit' ),

@@ -25,7 +25,7 @@ In WordPress:
 3. Open the **AdminKit** entry in the wp-admin sidebar (top-level
    menu, just after Settings). The page hosts a three-tab SPA:
    **Dashboard** (brand controls — light + dark logos, light + dark
-   favicons in a 2×2 grid, accent picker), **Preferences** (module
+   favicons in a 2×2 grid, accent picker), **Features** (module
    on/off toggles), **Plugins** (per-host adapter list). The native
    WP Settings pages (General, Writing, Reading, Discussion, Media,
    Permalinks) keep their stock WordPress UI, with light CSS polish

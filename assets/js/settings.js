@@ -7,7 +7,7 @@
  * wrapper) and owns hash routing across three internal tabs:
  *   - Dashboard  — Brand card (logos + favicons + accent picker) + token
  *                  reference (read-only)
- *   - Preferences — feature toggles (dark mode, post previews, …)
+ *   - Features    — feature toggles (dark mode, post previews, …)
  *   - Plugins    — per-host adapter list + per-plugin opt-outs
  * All three persist through the same `adminkit/v1/settings` REST route.
  *
@@ -137,7 +137,7 @@
 	// applyHash().
 	var tabs = [
 		{ id: 'dashboard', label: I.dashboard, icon: ICONS.dashboard, build: buildDashboard },
-		{ id: 'settings', label: I.features, icon: ICONS.features, build: buildFeatures },
+		{ id: 'features', label: I.features, icon: ICONS.features, build: buildFeatures },
 		{ id: 'plugins', label: I.plugins, icon: ICONS.plugins, build: buildPlugins }
 	];
 	var activeId = tabs[ 0 ].id;
@@ -197,7 +197,7 @@
 		} );
 	}
 
-	// URL hash reflects the active tab (#design / #settings).
+	// URL hash reflects the active tab (#dashboard / #features / #plugins).
 	function go( id ) {
 		if ( '#' + id === location.hash ) { selectTab( id ); }
 		else { location.hash = id; } // triggers hashchange → applyHash
