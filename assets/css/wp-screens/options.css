@@ -120,8 +120,9 @@ body.adminkit.options-reading-php .ak-options-tabs,
 body.adminkit.options-discussion-php .ak-options-tabs,
 body.adminkit.options-media-php .ak-options-tabs,
 body.adminkit.options-permalink-php .ak-options-tabs {
-	/* Width unlocked by native-pages.css (T4 template) so the strip spans the
-	   full canvas. Padding/breathing-room stays. */
+	max-width: 920px;
+	/* A touch more room under the strip than the accounts page (these panels are
+	   full cards, not flat surfaces). */
 	margin-bottom: var(--ak-space-l);
 }
 
@@ -159,7 +160,7 @@ body.adminkit.options-media-php .ak-options-panel > .form-table,
 body.adminkit.options-permalink-php .ak-options-panel > .form-table {
 	display: block;
 	width: 100%;
-	/* Width unlocked by native-pages.css (T4 template) — was max-width: 920px. */
+	max-width: 920px;
 	box-sizing: border-box;
 	/* Clear, consistent gap BELOW each card so stacked tables within a panel read
 	   as distinct, scannable blocks. 24px = space-l + space-s (no XL token); a
@@ -303,8 +304,7 @@ body.adminkit.options-discussion-php .ak-options-panel > .form-table > tbody > t
 body.adminkit.options-media-php .ak-options-panel > .form-table > tbody > tr,
 body.adminkit.options-permalink-php .ak-options-panel > .form-table > tbody > tr {
 	display: grid;
-	/* 260px label column matches the T4 native-pages template. */
-	grid-template-columns: 260px minmax(0, 1fr);
+	grid-template-columns: 220px minmax(0, 1fr);
 	gap: var(--ak-space-l);
 	align-items: start;
 	padding: var(--ak-space-m) 0;

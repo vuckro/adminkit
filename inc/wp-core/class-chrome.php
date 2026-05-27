@@ -41,29 +41,6 @@ class AdminKit_Core_Chrome {
 	);
 
 	/**
-	 * Screens that wear the T4 native-pages template
-	 * (assets/css/wp-screens/native-pages.css + a tiny a11y JS). Adds a
-	 * shared `adminkit-native-page` body class (see
-	 * AdminKit_Assets::add_admin_body_class()) plus the edge-to-edge card
-	 * styling. Extension: append a screen id here AND in the body-class
-	 * list — that's the entire surface.
-	 *
-	 * @var string[]
-	 */
-	const NATIVE_PAGES_SCREENS = array(
-		'options-general',
-		'options-writing',
-		'options-reading',
-		'options-discussion',
-		'options-media',
-		'options-permalink',
-		'profile',
-		'user-edit',
-		'user',
-		'user-new',
-	);
-
-	/**
 	 * Register every asset. Called once from the plugin orchestrator
 	 * after `AdminKit_Assets::init()`.
 	 *
@@ -199,18 +176,6 @@ class AdminKit_Core_Chrome {
 		self::register_screen( 'site-health',     array( 'site-health', 'site-health-info', 'options-privacy', 'privacy-policy-guide' ) );
 		self::register_screen( 'about',           array( 'about', 'credits', 'freedoms', 'privacy', 'contribute' ) );
 
-		// Native-pages T4 template — the FULL-WIDTH shared chrome for WP's
-		// built-in Settings + Users edit screens. Registered LAST among the
-		// per-screen CSS so its rules win on cascade ties (no `!important`
-		// needed). Loads on NATIVE_PAGES_SCREENS = OPTIONS_SCREENS ∪ profile/
-		// user-edit/user/user-new. Matches the body class
-		// AdminKit_Assets::add_admin_body_class() puts on the same nine
-		// screens (`adminkit-native-page`). The companion JS adds ARIA roles
-		// to WP's `.nav-tab-wrapper` so the pill restyling has matching a11y
-		// semantics; behaviour stays WP-native (server-side `?tab=` switch).
-		self::register_screen( 'native-pages', self::NATIVE_PAGES_SCREENS );
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_native_pages_js' ) );
-
 		// --- Frontend admin bar (when bar is showing on the frontend) ---
 		AdminKit_Assets::register( array(
 			'handle'  => 'adminkit-adminbar',
@@ -251,29 +216,6 @@ class AdminKit_Core_Chrome {
 				// Accessible label for the tablist (aria-label).
 				'nav'     => __( 'Settings sections', 'adminkit' ),
 			) ) . ';'
-		);
-	}
-
-	/**
-	 * Enqueue the native-pages a11y script on every screen that wears the
-	 * T4 template. The script only ANNOTATES WordPress's native
-	 * `.nav-tab-wrapper` with `role="tablist"` / `role="tab"` /
-	 * `aria-selected` so the pill restyling has matching ARIA semantics.
-	 * Behaviour stays WP-native (server-side `?tab=` switch). Mirrors
-	 * `enqueue_options_js()` but gated to NATIVE_PAGES_SCREENS.
-	 *
-	 * @return void
-	 */
-	public static function enqueue_native_pages_js() {
-		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
-			return;
-		}
-		if ( ! AdminKit_Screen::is_one_of( self::NATIVE_PAGES_SCREENS ) ) {
-			return;
-		}
-		AdminKit_Assets::enqueue_script(
-			'adminkit-native-pages',
-			'assets/js/wp-screens/native-pages.js'
 		);
 	}
 

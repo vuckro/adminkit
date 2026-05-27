@@ -138,64 +138,6 @@ The constant `AdminKit_Assets::ADMINKIT_BLUE` holds the WP-Blue default —
 change it there if you ever need to ship a different out-of-the-box accent.
 The JS bootstrap exposes the same value as `D.adminkitBlue`.
 
-## Native wp-admin pages — the T4 template
-
-AdminKit wraps WordPress's built-in Settings + Users edit screens in a
-single full-width "T4" template: edge-to-edge card, 260 px label / 1 fr
-control rows, pill-styled tab strip when WP emits one, save-bar pinned to
-the card bottom.
-
-The template ships in `assets/css/wp-screens/native-pages.css` and a tiny
-ARIA-polish JS at `assets/js/wp-screens/native-pages.js`. Both load on
-the screens listed in `AdminKit_Core_Chrome::NATIVE_PAGES_SCREENS`:
-
-```
-options-general · options-writing · options-reading
-options-discussion · options-media · options-permalink
-profile · user-edit · user · user-new
-```
-
-The same list is mirrored in `AdminKit_Assets::add_admin_body_class()` so
-the body picks up an `adminkit-native-page` class. The CSS is scoped under
-`body.adminkit.adminkit-native-page` — two classes — to tie or beat the
-specificity of the older per-page sheets (`options.css`, `profile.css`)
-that scope as `body.adminkit.{page}-php`. `native-pages.css` is also
-registered LAST in `class-chrome.php::register()` so cascade ties resolve
-in its favour without `!important`.
-
-### To bring a new screen under the template
-
-1. Append its `$screen->id` to **both** `NATIVE_PAGES_SCREENS` in
-   `class-chrome.php` **and** the inline screen-id list in
-   `AdminKit_Assets::add_admin_body_class()`.
-2. The CSS + JS now load there; the body class gets posted.
-3. If the screen needs a page-specific tweak (e.g. an oversized number
-   input), add a section near the bottom of `native-pages.css` scoped by
-   the natural per-page body class:
-   `body.adminkit.adminkit-native-page.{my-screen-id}-php …`.
-
-### What's intentionally NOT in the template
-
-- **Output buffering / markup rewrites**: zero. The Settings API form, IDs,
-  nonces, capability checks, and `submit_button()` are untouched. Only CSS
-  + 20 lines of ARIA-annotation JS.
-- **Panel-mode detection** uses CSS `:has(.ak-tabs)` to know when AdminKit's
-  own tab-builder (`options.js` or `profile-account.js`) has split the page
-  into per-section cards — the outer `<form>` then renders transparent so
-  we don't get card-in-card, and `<p class="submit">` gets its own
-  free-standing save bar instead of being pinned to the form border.
-- **T3 postbox** (a 340 px right-sidebar on user-edit) — deferred. Would
-  need a new DB option to gate the toggle; out of scope for the
-  current iteration.
-
-### Tab semantics
-
-WordPress emits `.nav-tab-wrapper` as plain `<a>` links — server-side
-`?tab=foo` switches. `native-pages.js` annotates them with
-`role="tablist"` / `role="tab"` / `aria-selected` on DOMContentLoaded so
-the visual pill restyling has matching a11y. It does NOT hijack click
-behaviour — WP-native server-side switching stays the source of truth.
-
 ## Icons
 
 The "AdminKit icons" feature (`replace_icons_enabled`, on by default) swaps

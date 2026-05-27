@@ -559,23 +559,7 @@ class AdminKit_Assets {
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return $classes;
 		}
-		$classes .= ' adminkit';
-
-		// Mark the native WP Settings + Users pages with a single shared class so
-		// the T4 full-width template (assets/css/wp-screens/native-pages.css)
-		// targets all of them with one selector tree. Extend the list when you
-		// want a future page to inherit the template — that's the entire
-		// extension surface. The matching CSS lives in `native-pages.css`; the
-		// matching JS (ARIA on the WP nav-tab-wrapper) lives in
-		// `native-pages.js`. Both are registered via class-chrome.php.
-		if ( class_exists( 'AdminKit_Screen' ) && AdminKit_Screen::is_one_of( array(
-			'options-general', 'options-writing', 'options-reading',
-			'options-discussion', 'options-media', 'options-permalink',
-			'profile', 'user-edit', 'user', 'user-new',
-		) ) ) {
-			$classes .= ' adminkit-native-page';
-		}
-		return $classes;
+		return $classes . ' adminkit';
 	}
 
 	/**
