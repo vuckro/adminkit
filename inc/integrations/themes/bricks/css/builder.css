@@ -29,15 +29,20 @@
 
 
 /* ============================================================
-   TOOLBAR  (logo slot is conditional — see class-bricks.php)
+   TOOLBAR
    ============================================================
-   The toolbar bar always gets the AdminKit token bg. The logo slot
-   (.logo + .logo img) AND the preloader splash are styled via inline
-   CSS that enqueue_builder() injects only when an asset is set
-   (brand logo or favicon). Without either asset, Bricks's native
-   preloader + toolbar logo paint untouched. */
+   Bar gets the AdminKit token bg. `.logo` is the small square that
+   holds the brand mark — always painted in the user's accent colour
+   so Bricks's native logo sits in a coloured frame by default. If
+   the user has a site favicon set, enqueue_builder() injects an
+   inline override that swaps Bricks's native img for the favicon
+   AND strips the accent frame (favicon stands flat with its own
+   shape + rounded corners). */
 #bricks-toolbar {
 	background-color: var(--background);
+}
+#bricks-toolbar .logo {
+	background-color: var(--accent);
 }
 
 

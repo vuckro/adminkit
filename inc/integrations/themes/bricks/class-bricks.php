@@ -451,52 +451,40 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 
-		// Brand asset injection — drives both the preloader splash and the
-		// toolbar logo slot. Resolution: AdminKit brand logo wins, else the
-		// site favicon. If NEITHER is set, no inline CSS is emitted at all
-		// → Bricks's native preloader (animated logo + title) and native
-		// toolbar logo paint through untouched, which is what the user
-		// expects for the "no asset configured" case.
+		// Two independent surfaces, each with one asset and one fallback:
 		//
-		// Sizing + framing differs per asset:
-		//   • Brand logo (typically a wordmark): 15rem in the preloader, in
-		//     the toolbar it keeps Bricks's yellow `.logo` accent frame as
-		//     a deliberate "badge" treatment.
-		//   • Favicon (square mark): 5rem in the preloader (close to
-		//     natural size, no cartoonish scale-up), in the toolbar it
-		//     drops the yellow frame and rounds the corners — sits flat.
+		//   • PRELOADER → brand logo if set, otherwise Bricks's native
+		//     preloader paints untouched (animated logo + title visible).
+		//
+		//   • TOOLBAR LOGO → favicon if set, otherwise Bricks's native
+		//     toolbar img sits in the accent frame (CSS-static rule).
 		$brand_logo = AdminKit_Settings::brand_logo( 'dark' );
 		$favicon    = get_site_icon_url( 192 );
-		$asset      = '' !== $brand_logo ? $brand_logo : $favicon;
-		if ( '' === $asset ) {
-			return;
+		$css        = '';
+
+		if ( '' !== $brand_logo ) {
+			$url  = 'url("' . esc_url_raw( $brand_logo ) . '")';
+			$css .= '#bricks-preloader{background:#171717}'
+				. '#bricks-preloader .bricks-logo-animated,'
+				. '#bricks-preloader .title,'
+				. '#bricks-preloader .sub-title{display:none}'
+				. '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}'
+				. '#bricks-preloader .bricks-loading-inner::before{'
+				. 'content:"";width:15rem;aspect-ratio:1;'
+				. 'background:' . $url . ' center/contain no-repeat;'
+				. 'animation:adminkit-bricks-preloader-pulse 1.4s ease-in-out infinite}'
+				. '@keyframes adminkit-bricks-preloader-pulse{50%{transform:scale(1.1)}}';
 		}
-		$is_brand = '' !== $brand_logo;
-		$url      = 'url("' . esc_url_raw( $asset ) . '")';
-		$size     = $is_brand ? '15rem' : '5rem';
 
-		$css = '#bricks-preloader{background:#171717}'
-			. '#bricks-preloader .bricks-logo-animated,'
-			. '#bricks-preloader .title,'
-			. '#bricks-preloader .sub-title{display:none}'
-			. '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}'
-			. '#bricks-preloader .bricks-loading-inner::before{'
-			. 'content:"";width:' . $size . ';aspect-ratio:1;'
-			. 'background:' . $url . ' center/contain no-repeat;'
-			. 'animation:adminkit-bricks-preloader-pulse 1.4s ease-in-out infinite}'
-			. '@keyframes adminkit-bricks-preloader-pulse{50%{transform:scale(1.1)}}';
-
-		if ( $is_brand ) {
-			// Wordmark in the yellow `.logo` accent frame, height-fit.
-			$css .= '#bricks-toolbar .logo{background-color:var(--accent)}'
-				. '#bricks-toolbar .logo img{content:' . $url . ';height:22px;width:auto}';
-		} else {
-			// Favicon as a flat 22px square mark, rounded, no yellow frame.
+		if ( '' !== $favicon ) {
+			$url  = 'url("' . esc_url_raw( $favicon ) . '")';
 			$css .= '#bricks-toolbar .logo{background-color:transparent;padding:0}'
 				. '#bricks-toolbar .logo img{content:' . $url . ';height:22px;width:22px;border-radius:4px}';
 		}
 
-		wp_add_inline_style( 'adminkit-bricks-builder', $css );
+		if ( '' !== $css ) {
+			wp_add_inline_style( 'adminkit-bricks-builder', $css );
+		}
 	}
 
 	/**
