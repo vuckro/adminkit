@@ -451,20 +451,23 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 
-		// Brand logo injection — preloader splash + toolbar mark both use the
-		// SAME asset (the user's AdminKit brand logo). If none is set, neither
-		// var is emitted: the preloader paints a clean dark splash and the
-		// toolbar img keeps its native Bricks src. We deliberately don't fall
-		// back to the favicon — favicons are typically colour-locked and look
-		// wrong themed, and at 15rem the splash sizes them up grotesquely.
-		// "Set a brand logo if you want one" is a cleaner contract than
-		// guessing fallbacks.
-		$brand_logo = AdminKit_Settings::brand_logo( 'dark' );
-		if ( '' !== $brand_logo ) {
-			$url = 'url("' . esc_url_raw( $brand_logo ) . '")';
+		// Brand logo injection — preloader splash + toolbar mark share one
+		// asset. Resolve order: AdminKit brand logo, then the site favicon as
+		// a fallback. The preloader scales differently based on which one we
+		// got: a brand wordmark wants the full 15rem so its width reads, a
+		// favicon at 15rem looks like a cartoon (192px source blown up 25 %)
+		// and gets 5rem (~80px) instead — close to natural display size. If
+		// neither is set nothing is emitted: clean dark splash + Bricks's
+		// native toolbar src.
+		$brand   = AdminKit_Settings::brand_logo( 'dark' );
+		$favicon = get_site_icon_url( 192 );
+		$url     = '' !== $brand ? $brand : $favicon;
+		if ( '' !== $url ) {
+			$size = '' !== $brand ? '15rem' : '5rem';
+			$src  = 'url("' . esc_url_raw( $url ) . '")';
 			wp_add_inline_style(
 				'adminkit-bricks-builder',
-				':root{--preloader-logo:' . $url . ';--logo-url:' . $url . '}'
+				':root{--preloader-logo:' . $src . ';--preloader-logo-size:' . $size . ';--logo-url:' . $src . '}'
 			);
 		}
 	}
