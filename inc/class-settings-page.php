@@ -396,10 +396,7 @@ class AdminKit_Settings_Page {
 		$rows = array(
 			// Content & lists
 			array( 'key' => 'post_previews_enabled', 'group' => $content,    'label' => __( 'Post previews', 'adminkit' ),
-				'desc' => __( 'Adds a thumbnail column to post-type list tables, using the featured image first.', 'adminkit' ) ),
-			array( 'key' => 'post_previews_mshots',  'group' => $content,    'label' => __( 'Live screenshots', 'adminkit' ),
-				'desc' => __( 'When no featured image is set, fetch a live screenshot via WordPress.com mShots. Off keeps the column featured-image only (no external calls).', 'adminkit' ),
-				'parent' => 'post_previews_enabled' ),
+				'desc' => __( 'Adds a thumbnail column to post-type list tables — the featured image first, with a live WordPress.com mShots screenshot as fallback on production sites (skipped on localhost where mShots can\'t reach the page anyway).', 'adminkit' ) ),
 
 			// Appearance
 			array( 'key' => 'theme_toggle_enabled',  'group' => $appearance, 'label' => __( 'Dark mode', 'adminkit' ),

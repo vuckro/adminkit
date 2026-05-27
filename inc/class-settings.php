@@ -205,7 +205,6 @@ class AdminKit_Settings {
 		$toggles = array(
 			'module_login_enabled',
 			'theme_toggle_enabled',
-			'post_previews_mshots',
 		);
 		foreach ( $toggles as $key ) {
 			self::register( $key, array(
@@ -302,11 +301,6 @@ class AdminKit_Settings {
 				return $enabled && (bool) self::get( $key );
 			} );
 		}
-
-		// "Live screenshots (mShots)" off → force the featured-image provider.
-		add_filter( 'adminkit/post_previews/provider', static function ( $provider ) {
-			return self::get( 'post_previews_mshots' ) ? $provider : 'featured';
-		} );
 	}
 
 	/**
