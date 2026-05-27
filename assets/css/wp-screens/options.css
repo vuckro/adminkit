@@ -111,14 +111,24 @@ body.adminkit.options-general-php .ak-options-block > .form-table {
 body.adminkit.options-discussion-php .wrap > form > .nav-tab-wrapper {
 	margin: 4px 0 16px;
 }
-/* The Avatars heading sits right above its card on the Avatars tab. WP
-   ships `<h2>` with form-table.css's border-bottom; drop that and tighten
-   the spacing so the heading reads as a card label rather than a divider. */
+/* The heading + lede pair sits right above each tab's card. WP renders
+   the Avatars one natively (`<h2>Avatars</h2>` + `<p>An avatar is…</p>`)
+   and the JS synthesizes the same pair for the Comments tab. Strip WP's
+   default h2 underline and tighten the spacing so the pair reads as a
+   card label rather than a divider — same look as the themed-block
+   titles on options-general.php. */
 body.adminkit.options-discussion-php .wrap > form > h2[data-ak-tab] {
 	border-bottom: 0;
-	margin: 4px 0 4px;
+	margin: 4px 0 0;
 	padding: 0;
 	font-size: 15px;
 	font-weight: 600;
 	color: var(--ak-heading);
+}
+body.adminkit.options-discussion-php .wrap > form > p[data-ak-tab] {
+	margin: 4px 0 12px;
+	font-size: 13px;
+	color: var(--ak-text-muted);
+	line-height: 1.5;
+	max-width: 64ch;
 }

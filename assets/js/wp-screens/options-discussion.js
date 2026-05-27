@@ -43,20 +43,53 @@
 	var tablesInForm = form.querySelectorAll( ':scope > table.form-table' );
 	if ( ! tablesInForm.length ) { return; }
 
-	// Tag each form-table (and its preceding `<h2>`, when present) with the
-	// tab it belongs to. The marked elements stay in their original DOM
-	// position — we never move anything.
+	// Tag each form-table — plus every content sibling that precedes it
+	// (h2 heading, descriptive <p>, etc.) — with the tab the section
+	// belongs to. The walker stops at a hard boundary: another table
+	// (the previous section starts there) or a hidden <input> (WP's
+	// settings_fields nonce block — shared, leave untagged so it stays
+	// in every form). Tags only — nothing moves.
 	var marked = []; // { el, tab }
+	function isBoundary( el ) {
+		if ( el.tagName === 'TABLE' ) { return true; }
+		if ( el.tagName === 'INPUT' && el.getAttribute( 'type' ) === 'hidden' ) { return true; }
+		// `[data-ak-tab]` already tagged on an earlier pass — its OWN section
+		// owns it, don't re-claim.
+		if ( el.hasAttribute( 'data-ak-tab' ) ) { return true; }
+		return false;
+	}
 	Array.prototype.forEach.call( tablesInForm, function ( table ) {
 		var tab = hasAvatarInputs( table ) ? 'avatars' : 'comments';
 		table.dataset.akTab = tab;
 		marked.push( { el: table, tab: tab } );
 		var prev = table.previousElementSibling;
-		if ( prev && prev.tagName === 'H2' ) {
+		while ( prev && ! isBoundary( prev ) ) {
 			prev.dataset.akTab = tab;
-			marked.push( { el: prev, tab: tab } );
+			marked.unshift( { el: prev, tab: tab } );
+			prev = prev.previousElementSibling;
 		}
 	} );
+
+	// Comments tab synth heading — WP renders the comments form-table with
+	// NO preceding `<h2>` or description (unlike Avatars), so the user
+	// landing on Comment settings would see an unexplained wall of fields.
+	// Synthesize a heading + lede that mirror the Avatars section's shape.
+	var firstCommentsTable = form.querySelector( ':scope > table.form-table[data-ak-tab="comments"]' );
+	if ( firstCommentsTable && S.commentsTitle ) {
+		var commentsHeading = document.createElement( 'h2' );
+		commentsHeading.dataset.akTab = 'comments';
+		commentsHeading.textContent = S.commentsTitle;
+		firstCommentsTable.parentNode.insertBefore( commentsHeading, firstCommentsTable );
+		marked.unshift( { el: commentsHeading, tab: 'comments' } );
+
+		if ( S.commentsDesc ) {
+			var commentsLede = document.createElement( 'p' );
+			commentsLede.dataset.akTab = 'comments';
+			commentsLede.textContent = S.commentsDesc;
+			firstCommentsTable.parentNode.insertBefore( commentsLede, firstCommentsTable );
+			marked.unshift( { el: commentsLede, tab: 'comments' } );
+		}
+	}
 
 	// Avatars FIRST per UX request — focused single-purpose tab, opens
 	// directly on the small avatar card. Comment settings is the long bucket.
@@ -88,10 +121,12 @@
 		t.btn = btn;
 	} );
 
-	// Place the strip right before the first tagged element (so it sits at
-	// the top of the form's visible content, just after WP's hidden nonce
-	// inputs). The strip itself isn't tagged — it stays visible on every tab.
-	form.insertBefore( strip, marked[ 0 ].el );
+	// Place the strip right before the FIRST tagged element in DOM order
+	// (a query, not marked[0] — the marked array's insertion order doesn't
+	// guarantee DOM order after the synthesized-heading unshifts above).
+	// The strip itself isn't tagged so it stays visible on every tab.
+	var firstTagged = form.querySelector( '[data-ak-tab]' );
+	if ( firstTagged ) { form.insertBefore( strip, firstTagged ); }
 
 	function activate( id, opts ) {
 		made.forEach( function ( t ) {

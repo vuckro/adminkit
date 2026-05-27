@@ -48,8 +48,13 @@ class AdminKit_Core_Options_Discussion {
 		}
 
 		$strings = array(
-			'avatars'  => __( 'Avatars', 'adminkit' ),
-			'comments' => __( 'Comment settings', 'adminkit' ),
+			'avatars'       => __( 'Avatars', 'adminkit' ),
+			'comments'      => __( 'Comment settings', 'adminkit' ),
+			// Synthesized heading + lede inserted before the Comments form-table
+			// (WP renders that table without any preceding heading, so the tab
+			// lands on an unexplained wall of fields otherwise).
+			'commentsTitle' => __( 'Comment settings', 'adminkit' ),
+			'commentsDesc'  => __( 'How comments work on your site — who can post, what they see when they do, when they get moderated, and the email you receive about them.', 'adminkit' ),
 		);
 
 		AdminKit_Assets::enqueue_script(

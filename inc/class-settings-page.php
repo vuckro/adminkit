@@ -41,10 +41,6 @@ class AdminKit_Settings_Page {
 		add_action( 'admin_menu', array( __CLASS__, 'add_submenu' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
-		// "Settings" link in the plugin row action area (next to Deactivate). The
-		// filter name is keyed on the plugin's basename so it only attaches to
-		// our row, not every plugin's.
-		add_filter( 'plugin_action_links_' . plugin_basename( ADMINKIT_FILE ), array( __CLASS__, 'plugin_action_links' ) );
 		add_filter( 'adminkit/integration_enabled', array( __CLASS__, 'gate_integration' ), 10, 2 );
 		// Gate the admin restyle on plugin pages opted out individually in the
 		// Plugins tab (see `gate_generic_theming()` + `plugin_file_for_screen()`).
@@ -92,24 +88,6 @@ class AdminKit_Settings_Page {
 			<div id="adminkit-app" class="adminkit-app" aria-busy="true"></div>
 		</div>
 		<?php
-	}
-
-	/**
-	 * Prepend a "Settings" link to the plugin row actions on plugins.php so the
-	 * admin can jump straight to AdminKit from the Plugins screen — no detour
-	 * via the Settings menu.
-	 *
-	 * @param string[] $links
-	 * @return string[]
-	 */
-	public static function plugin_action_links( $links ) {
-		$settings = sprintf(
-			'<a href="%s">%s</a>',
-			esc_url( admin_url( 'admin.php?page=' . self::SLUG ) ),
-			esc_html__( 'Settings', 'adminkit' )
-		);
-		array_unshift( $links, $settings );
-		return $links;
 	}
 
 	/**
