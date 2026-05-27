@@ -68,6 +68,13 @@
 	   dark uses the provider's elevated ramp (see the dark block). */
 	--ak-input-bg: var(--input, hsl(0, 0%, 100%)); /* bridges WaasKit --input (→ --neutral-l-1) */
 
+	/* Muted surface — for disabled / readonly / "gated" form controls. Needs
+	   to read as clearly different from BOTH --ak-input-bg (white) AND
+	   --ak-surface (card panels), otherwise a disabled field inside a card
+	   looks identical to an editable one. ~90% lightness in light, slightly
+	   darker than --ak-surface in dark. */
+	--ak-surface-muted: var(--surface-muted, hsl(0, 0%, 90%));
+
 	/* ── Borders ───────────────────────────────────────────────────────── */
 	--ak-border: var(--border, hsl(0, 0%, 89%));
 	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
@@ -90,7 +97,7 @@
 	   text on the light/yellow brand. Standalone falls to off-white for the
 	   no-provider mid-gray accent. */
 	--ak-on-accent: var(--accent-on, hsl(0, 0%, 98%));
-	--ak-secondary: var(--secondary, var(--neutral-l-7, hsl(0, 0%, 50%))); /* + AdminKit addition (consumes the --secondary primitive) */
+	--ak-secondary: var(--ak-primary); /* aliased to --ak-primary — single brand colour, no separate secondary concept */
 
 	/* ── State ─────────────────────────────────────────────────────────────
 	   --ak-hover-bg is the hover tint for FLOATING / any-surface targets — dropdown
@@ -222,6 +229,14 @@ body.wp-customizer[class*="admin-color-"] {
 	   ramp, --neutral-d-3) so it detaches, mirroring the white field in light. */
 	--ak-input-bg: var(--neutral-d-3, hsl(0, 0%, 14%));
 
+	/* Muted surface (dark) — LIGHTER than --ak-surface (11%) and --ak-input-bg
+	   (14%), inverting the light-mode direction. On near-black surfaces, a
+	   "darker disabled" reads as a void cut into the card and produces font
+	   antialiasing artefacts that look like text shadowing. A slightly raised
+	   neutral grey gives the field a clear identity without prominence, and
+	   keeps text legible. */
+	--ak-surface-muted: var(--surface-muted, hsl(0, 0%, 18%));
+
 	--ak-border: var(--neutral-d-4, hsl(0, 0%, 18%));
 	--ak-border-strong: var(--neutral-d-5, hsl(0, 0%, 24%));
 
@@ -233,7 +248,7 @@ body.wp-customizer[class*="admin-color-"] {
 	   standalone falls to a mid-gray for ~4.5:1 contrast with white text. */
 	--ak-primary: var(--accent, var(--primary, var(--neutral-d-6, hsl(0, 0%, 38%))));
 	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, color-mix(in srgb, var(--ak-primary) 82%, #fff)));
-	--ak-secondary: var(--secondary, var(--neutral-d-7, hsl(0, 0%, 56%)));
+	--ak-secondary: var(--ak-primary); /* aliased — see light-mode rule above */
 
 	/* Subtle fills — WaasKit's -subtle roles carry an explicit dark value (the
 	   d-9/d-10 ramp). The provider's own dark mode never fires in wp-admin, so we

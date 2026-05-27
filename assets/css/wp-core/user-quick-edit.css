@@ -12,17 +12,18 @@
 
 .adminkit-qe-wrap {
 	max-width: 640px;
-	padding: 8px 0 4px;
+	padding: 4px 0;
 }
 
-/* Header — avatar + display name + email, the "who am I editing" cue. */
+/* Header — avatar + display name + email, the "who am I editing" cue.
+   No bottom border, no padding-bottom — the avatar + name visually anchor
+   the block on their own; an explicit separator made the editor feel
+   over-segmented. */
 .adminkit-qe-header {
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	padding-bottom: 12px;
-	margin-bottom: 16px;
-	border-bottom: 1px solid var(--ak-border, #dcdcde);
+	margin-bottom: 12px;
 }
 .adminkit-qe-avatar {
 	display: block;
@@ -79,15 +80,16 @@
 	max-width: 100%;
 }
 
-/* Actions — Cancel left, error message inline, Update User right. */
+/* Actions — Cancel left, error message inline, Update User right.
+   Borderless + tight margin: the Cancel / Update buttons read as the
+   end of the form on their own; an explicit top separator added visual
+   weight without information. */
 .adminkit-qe-actions {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	flex-wrap: wrap;
-	margin-top: 16px;
-	padding-top: 12px;
-	border-top: 1px solid var(--ak-border, #dcdcde);
+	margin-top: 12px;
 }
 .adminkit-qe-actions .adminkit-qe-save {
 	margin-left: auto;

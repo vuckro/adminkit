@@ -167,7 +167,7 @@ class AdminKit_Core_Login {
 	 * vice versa. A legacy empty value ("inherit `wp_logo`") is still honoured for
 	 * back-compat, though the UI no longer offers it.
 	 *
-	 * @return string 'logo' | 'favicon' | 'hide'
+	 * @return string 'logo' | 'favicon'
 	 */
 	private static function login_mode() {
 		$mode = AdminKit_Settings::get( 'login_logo' );
@@ -176,18 +176,16 @@ class AdminKit_Core_Login {
 
 	/**
 	 * Which mark the login screen will show: 'logo' (a configured brand wordmark,
-	 * when the effective mode is "logo"), 'hide' (explicit no-mark), else 'favicon'
-	 * (the site icon), else '' (none). Mirrors the resolution order in
-	 * print_login_logo_style().
+	 * when the effective mode is "logo"), 'favicon' (the site icon), or '' (none —
+	 * neither a brand logo nor a Site Icon is configured). The '' case is the
+	 * implicit "hide" path: print_login_logo_style() collapses the WP login logo
+	 * in that case, matching the admin bar's "favicon when none set = bare title"
+	 * behaviour.
 	 *
-	 * @return string 'logo' | 'favicon' | 'hide' | ''
+	 * @return string 'logo' | 'favicon' | ''
 	 */
 	private static function login_mark_type() {
-		$mode = self::login_mode();
-		if ( 'hide' === $mode ) {
-			return 'hide';
-		}
-		if ( 'logo' === $mode ) {
+		if ( 'logo' === self::login_mode() ) {
 			$logo = AdminKit_Settings::brand_logo( 'light' );
 			if ( '' === $logo ) {
 				$logo = AdminKit_Settings::brand_logo( 'dark' );
@@ -206,13 +204,13 @@ class AdminKit_Core_Login {
 	 * it renders a real <img> inside the link (see filter_header_text /
 	 * brand_logo_img) so a wide wordmark auto-sizes tight with no extra "box".
 	 *
-	 * Resolution mirrors login_mark_type(): `logo` with a configured brand logo →
-	 * handled as an <img> (no background printed here); anything else (`favicon`,
-	 * `hide`, legacy, or `logo` with nothing set) → the site icon as a background.
-	 * Note `hide` falls back to the favicon here ON PURPOSE: it declutters the
-	 * toolbar but the login screen reads better WITH a brand mark — and this
-	 * preserves the long-standing "favicon on the login screen" behaviour. No-ops
-	 * when neither a brand logo nor a site icon is configured (WP's own logo stays).
+	 * Resolution mirrors login_mark_type():
+	 *   - `logo` with a configured brand logo → handled as an <img> (we no-op here).
+	 *   - `favicon` (or `logo` with nothing set) → the site icon as a background.
+	 *   - Neither a brand logo NOR a Site Icon → collapse the WP login logo (the
+	 *     implicit "hide" path: matches the admin bar's bare-title behaviour when
+	 *     no Site Icon is set, so the login screen reads clean without an explicit
+	 *     hide setting).
 	 *
 	 * @return void
 	 */
@@ -228,23 +226,18 @@ class AdminKit_Core_Login {
 			return;
 		}
 
-		// `hide` mode → collapse the login logo entirely. `!important` matches WP
-		// core's own background-image rule on `#login h1 a` (no other way to defeat it).
-		if ( 'hide' === $mark ) {
-			echo '<style id="adminkit-login-logo">#login h1 a{display:none !important}</style>' . "\n";
+		if ( 'favicon' === $mark ) {
+			// `!important` mirrors WP core's own login-logo rule (it ships a
+			// background-image on #login h1 a we have to beat).
+			$icon = self::css_url( get_site_icon_url( 200 ) );
+			$css  = '#login h1 a{background-image:' . $icon . ' !important}';
+			echo '<style id="adminkit-login-logo">' . $css . "</style>\n";
 			return;
 		}
 
-		// favicon (legacy or default) → the site icon as a single square background.
-		$icon = self::css_url( get_site_icon_url( 200 ) );
-		if ( '' === $icon ) {
-			return;
-		}
-
-		// `!important` mirrors WP core's own login-logo rule (it ships a background-image
-		// on #login h1 a we have to beat).
-		$css = '#login h1 a{background-image:' . $icon . ' !important}';
-		echo '<style id="adminkit-login-logo">' . $css . "</style>\n";
+		// Neither a brand logo nor a Site Icon → collapse the WP login logo entirely.
+		// `!important` defeats WP core's hardcoded background-image on #login h1 a.
+		echo '<style id="adminkit-login-logo">#login h1 a{display:none !important}</style>' . "\n";
 	}
 
 	/**

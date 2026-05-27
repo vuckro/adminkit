@@ -198,8 +198,7 @@ adminkit/
     │   └── login.css                    wp-login.php
     └── js/
         ├── settings.js                  Settings SPA
-        ├── wp-core/                     Footer behaviour bricks (profile, previews, list-table, user-quick-edit, username-changer)
-        └── wp-screens/                  Per-screen footer bricks (options — Settings-screen tabs)
+        └── wp-core/                     Footer behaviour bricks (profile, previews, list-table, user-quick-edit, username-changer)
 ```
 
 Each integration folder may also carry `css/` and a `baseline.json` (its host CSS

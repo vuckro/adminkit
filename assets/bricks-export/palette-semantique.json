@@ -1,0 +1,153 @@
+{
+  "id": "obfxvl",
+  "name": " 🏷️ Sémantique",
+  "colors": [
+    {
+      "id": "section_surface",
+      "raw": "↳ SURFACE",
+      "light": "Arrière-plans des éléments"
+    },
+    {
+      "id": "bgapp01",
+      "raw": "var(--background)",
+      "light": "var(--neutral-l-1)"
+    },
+    {
+      "id": "bgsrf02",
+      "raw": "var(--surface)",
+      "light": "var(--neutral-l-2)"
+    },
+    {
+      "id": "bgelv03",
+      "raw": "var(--elevated)",
+      "light": "var(--neutral-l-3)"
+    },
+    {
+      "id": "bgovl04",
+      "raw": "var(--overlay)",
+      "light": "var(--black-t-7)"
+    },
+    {
+      "id": "gmhcgn",
+      "raw": "var(--input)",
+      "light": "var(--neutral-l-1)"
+    },
+    {
+      "id": "section_border",
+      "raw": "↳ BORDURE",
+      "light": "Contours des éléments"
+    },
+    {
+      "id": "brdsb05",
+      "raw": "var(--border)",
+      "light": "var(--neutral-l-4)"
+    },
+    {
+      "id": "brdst07",
+      "raw": "var(--border-strong)",
+      "light": "var(--neutral-l-5)"
+    },
+    {
+      "id": "section_accent",
+      "raw": "↳ ACCENT",
+      "light": "Éléments à mettre en valeur"
+    },
+    {
+      "id": "accnt15",
+      "raw": "var(--accent)",
+      "light": "var(--primary)"
+    },
+    {
+      "id": "acchv16",
+      "raw": "var(--accent-hover)",
+      "light": "var(--primary-d-1)"
+    },
+    {
+      "id": "dgzllh",
+      "raw": "var(--accent-on)",
+      "light": "var(--primary-d-9)",
+      "darkModeEnabled": true,
+      "dark": "var(--primary-l-9)"
+    },
+    {
+      "id": "accsb17",
+      "raw": "var(--accent-subtle)",
+      "light": "var(--primary-l-10)",
+      "darkModeEnabled": true,
+      "dark": "var(--primary-d-10)"
+    },
+    {
+      "id": "section_text",
+      "raw": "↳ TEXTE",
+      "light": "Titres et paragraphes"
+    },
+    {
+      "id": "cjshyw",
+      "raw": "var(--heading)",
+      "light": "var(--neutral-l-9)"
+    },
+    {
+      "id": "txtpr08",
+      "raw": "var(--text)",
+      "light": "var(--neutral-l-8)"
+    },
+    {
+      "id": "avhfpd",
+      "raw": "var(--text-muted)",
+      "light": "var(--neutral-l-7)"
+    },
+    {
+      "id": "section_notification",
+      "raw": "↳ NOTIFICATION",
+      "light": "Notifications par défaut"
+    },
+    {
+      "id": "ntfc01",
+      "raw": "var(--success)",
+      "light": "var(--success)"
+    },
+    {
+      "id": "ntfc02",
+      "raw": "var(--success-subtle)",
+      "light": "var(--success-l-9)",
+      "darkModeEnabled": true,
+      "dark": "var(--success-d-9)"
+    },
+    {
+      "id": "ntfc03",
+      "raw": "var(--warning)",
+      "light": "var(--warning)"
+    },
+    {
+      "id": "ntfc04",
+      "raw": "var(--warning-subtle)",
+      "light": "var(--warning-l-9)",
+      "darkModeEnabled": true,
+      "dark": "var(--warning-d-9)"
+    },
+    {
+      "id": "ntfc05",
+      "raw": "var(--error)",
+      "light": "var(--error)"
+    },
+    {
+      "id": "ntfc06",
+      "raw": "var(--error-subtle)",
+      "light": "var(--error-l-9)",
+      "darkModeEnabled": true,
+      "dark": "var(--error-d-9)"
+    },
+    {
+      "id": "ntfc07",
+      "raw": "var(--info)",
+      "light": "var(--info)"
+    },
+    {
+      "id": "ntfc08",
+      "raw": "var(--info-subtle)",
+      "light": "var(--info-l-9)",
+      "darkModeEnabled": true,
+      "dark": "var(--info-d-9)"
+    }
+  ]
+}

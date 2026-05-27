@@ -20,7 +20,10 @@ body.adminkit input[type="color"],
 body.adminkit textarea,
 body.adminkit select,
 body.adminkit .wp-core-ui select {
-	background: var(--ak-input-bg);
+	/* background-color (not the shorthand) so a `background-image` declared
+	   for selects below survives. The shorthand would clear WP's arrow SVG
+	   AND ours. */
+	background-color: var(--ak-input-bg);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
@@ -30,6 +33,41 @@ body.adminkit .wp-core-ui select {
 	padding: 0 10px;
 	min-height: 30px;
 	box-shadow: none;
+}
+
+/* Dropdown arrow — WP's forms.css ships one, but our base rule above used
+   to use the `background` shorthand which cleared it. Restore an AdminKit
+   arrow with per-mode fills (data-URI SVG can't use `currentColor`, so we
+   ship two SVGs). The `appearance: none` is defensive — WP sets it for
+   `.wp-core-ui select` but not for plain `<select>`, and we want the same
+   look regardless. The extra right-padding makes room for the chevron.
+
+   `!important` on repeat / position / size is intentional: WP and various
+   integrations sometimes redeclare `background-image` later in the cascade
+   without re-declaring the other background-* props. CSS evaluates each
+   property independently, so a `background-image` override paired with our
+   `background-repeat: no-repeat` from a lower-specificity rule SHOULD
+   persist — but in practice WP's `:focus` / `:disabled` states can lose
+   that thread (background shorthand resets, or specificity ties). Pinning
+   these three with `!important` keeps exactly one chevron, right-aligned,
+   in every state. */
+body.adminkit select,
+body.adminkit .wp-core-ui select {
+	-webkit-appearance: none;
+	appearance: none;
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='14' height='14'><path fill='%23646970' d='M5 7l5 6 5-6z'/></svg>");
+	background-repeat: no-repeat !important;
+	background-position: right 8px center !important;
+	background-size: 12px 12px !important;
+	padding-right: 28px;
+}
+
+/* Dark mode chevron — fill bumped to the muted-text colour so it reads
+   on the light-muted surface (#2e2e2e) without going so bright that it
+   competes with the option text rendered just to its left. */
+:root[data-adminkit-theme="dark"] body.adminkit select,
+:root[data-adminkit-theme="dark"] body.adminkit .wp-core-ui select {
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='14' height='14'><path fill='%23a7aaad' d='M5 7l5 6 5-6z'/></svg>");
 }
 
 /* Textarea — restore vertical padding since it can wrap */
@@ -50,7 +88,12 @@ body.adminkit input[type="date"]:focus,
 body.adminkit textarea:focus,
 body.adminkit select:focus {
 	border-color: var(--ak-primary);
-	background: var(--ak-primary-subtle);
+	/* `background-color` (not `background` shorthand) so the chevron
+	   `background-image` declared on selects below survives focus.
+	   The shorthand would reset `background-image` to `none` AND
+	   `background-repeat` to its default `repeat`, which tiles the
+	   chevron across the field whenever a select is focused. */
+	background-color: var(--ak-primary-subtle);
 	/* WP's `.wp-core-ui select:focus` hardcodes `color: #1e1e1e`, which stays
 	   near-black (invisible) on the dark focus tint — pin it to the token. */
 	color: var(--ak-text);
@@ -68,6 +111,60 @@ body.adminkit .wp-core-ui select:hover,
 body.adminkit select:hover {
 	color: var(--ak-heading);
 	border-color: var(--ak-border-strong);
+}
+
+/* Disabled form controls — WP's native disabled styling hardcodes
+   greys (e.g. `select[disabled] { color: rgba(44,51,56,.5) }`) that
+   look broken against our dark surfaces (and produce a striped /
+   stacked-text rendering glitch in dark mode on `wp_dropdown_pages()`
+   selects, used on Reading settings until "Une page statique" is
+   picked). Pin every disabled control to the muted tokens so they
+   read as intentionally inactive in both light + dark, and so hover
+   doesn't pull them back to the accent.
+
+   IMPORTANT — use `background-color` (not the `background` shorthand):
+   on `<select>`, the shorthand clears the chevron `background-image`
+   declared above, so the disabled state would render without its
+   dropdown indicator. The muted color tokens are enough on their own
+   to convey "inactive" — no opacity, which would also fade the
+   chevron below contrast threshold. */
+body.adminkit input:disabled,
+body.adminkit textarea:disabled,
+body.adminkit select:disabled,
+body.adminkit .wp-core-ui select:disabled {
+	background-color: var(--ak-surface-muted, #f0f0f1);
+	color: var(--ak-text-muted, #8c8f94);
+	border-color: var(--ak-border);
+	cursor: not-allowed;
+	/* WP forms.css hardcodes `text-shadow: 0 1px 0 #fff` on disabled
+	   selects — invisible on light surfaces but renders as a clear white
+	   halo under each glyph in dark mode (the "ombre superposée" effect). */
+	text-shadow: none;
+}
+
+/* Selects need ALL background props re-declared on the disabled state.
+   WP's `.wp-core-ui select:disabled` rule sets its own `background-image`
+   without re-declaring `background-repeat` — when our enabled rule's
+   `no-repeat` loses the cascade on background-image, the chevron tiles
+   across the field. Pinning every background prop here keeps one chevron
+   right-aligned, regardless of WP cascading. */
+body.adminkit select:disabled,
+body.adminkit .wp-core-ui select:disabled {
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='14' height='14'><path fill='%23a0a5aa' d='M5 7l5 6 5-6z'/></svg>");
+	background-repeat: no-repeat;
+	background-position: right 8px center;
+	background-size: 12px 12px;
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit select:disabled,
+:root[data-adminkit-theme="dark"] body.adminkit .wp-core-ui select:disabled {
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='14' height='14'><path fill='%23a7aaad' d='M5 7l5 6 5-6z'/></svg>");
+}
+
+body.adminkit select:disabled:hover,
+body.adminkit .wp-core-ui select:disabled:hover {
+	color: var(--ak-text-muted, #8c8f94);
+	border-color: var(--ak-border);
 }
 
 /* Radios — 16px round, neutral fill + a brand dot when checked. */

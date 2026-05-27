@@ -254,8 +254,13 @@ body.adminkit .tablenav {
 	overflow-x: auto;
 	/* Horizontal scroll only when narrow. Without an explicit overflow-y the
 	   browser computes it to `auto` (visible+auto coupling), and a sub-pixel
-	   height overflow then shows a phantom vertical scrollbar — clip it. */
+	   height overflow then shows a phantom vertical scrollbar — clip it.
+	   Padding-block keeps the pagination chips (border + icon) from being
+	   sliced at their top/bottom edges by that vertical clip — without it,
+	   a button whose natural height matches the row's exactly loses its
+	   top border to the overflow:hidden. */
 	overflow-y: hidden;
+	padding: 4px 0;
 	margin: var(--ak-tablenav-gap, 24px) 0;
 }
 
@@ -474,6 +479,13 @@ body.adminkit .ak-table-scroll {
 	border-radius: var(--ak-radius-s);
 	overflow-x: auto;
 	overflow-y: hidden;
+}
+/* Plugin-install page wraps its featured / popular / etc. tab content in
+   .ak-table-scroll for shared scroll behaviour, but the page already paints
+   its own card chrome (the .wp-filter strip, the plugin-card grid). Stacking
+   our wrapper border on top doubles the chrome — drop it there. */
+body.adminkit.plugin-install-php .ak-table-scroll {
+	border: 0;
 }
 
 /* Anti-squish: every column sizes to its content (nowrap), so a table wider than

@@ -62,11 +62,8 @@ skips it: `adminkit/enqueue_{section}` (per-section bail), `adminkit/enqueue_{ha
 file (edit CSS/JS → no version bump). All bail filters are in [EXTENDING.md](EXTENDING.md).
 
 **JS bricks.** Feature behaviour (profile tabs, post-preview hover + click-to-recapture,
-list-table polish, local avatars) ships as `assets/js/wp-core/*.js`; per-screen
-behaviour lives in `assets/js/wp-screens/*.js` (`options.js`, which tabs the
-six built-in Settings screens — splitting each at its `<h2>` section and
-"exploding" the Discussion `indent-children` table into one tab per `<th>` row,
-while every field stays in the one submitting form). All are enqueued in the footer via
+list-table polish, local avatars) ships as `assets/js/wp-core/*.js`. All are
+enqueued in the footer via
 `AdminKit_Assets::enqueue_script( $handle, $src, $deps, $data )` — same
 `filemtime` cache-bust as CSS, with PHP data passed as a `before` inline
 bootstrap (`window.AdminKit*`). The one exception is the **theme pre-paint
@@ -90,8 +87,7 @@ assets/
 │   └── settings.css               # AdminKit settings page
 └── js/
     ├── settings.js                # settings SPA
-    ├── wp-core/                   # footer bricks: profile-account, post-previews, list-table-chrome, user-quick-edit, username-changer
-    └── wp-screens/                # per-screen footer bricks: options (Settings-screen tabs)
+    └── wp-core/                   # footer bricks: profile-account, post-previews, list-table-chrome, user-quick-edit, username-changer
 inc/integrations/{plugins|themes}/{slug}/css/   # integration CSS, registered by each class
 ```
 

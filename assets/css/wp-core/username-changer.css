@@ -1,30 +1,42 @@
 /**
  * AdminKit — Username Changer (profile.php / user-edit.php).
  *
- * The Username field carries one of two visual states once our JS is on the
- * page: `.adminkit-uc-locked` (looks disabled — the user hasn't acknowledged
- * the warning yet) or no class (normally editable — they confirmed).
- * Tokenised through `--ak-*` so light + dark inherit AdminKit's palette.
+ * The Username input carries one of two visual states once our JS is on the
+ * page: `.adminkit-uc-locked` (looks deliberately different from a regular
+ * field — dashed border, grayed fill, pointer cursor — to signal "you can't
+ * just type here") or no class (normally editable — they confirmed).
+ *
+ * Selectors are prefixed with `body.adminkit` so they match the specificity
+ * of the form-table input rules in `wp-screens/profile.css`; `!important`
+ * on the contested properties (background, border-style, border-color)
+ * makes the locked look survive cascading regardless of asset load order.
  */
 
-/* Locked: the field is `readonly`, but visually we copy WordPress's own
-   disabled-input look (gray fill, muted text) so the affordance reads as
-   "off" without us inventing a new state. Cursor stays pointer so the
-   "click to enable" hint matches reality. */
-.adminkit-uc-locked {
-	background: var(--ak-surface-muted, #f0f0f1);
-	color: var(--ak-text-muted, #50575e);
+/* Locked: dashed border + muted fill + pointer cursor. The dashed edge is
+   the strongest "not a regular field" signal — universal across UIs. The
+   transition lines up with the unlock: when JS removes the class, the
+   input animates back to its normal style instead of snapping. */
+body.adminkit .adminkit-uc-locked {
+	background-color: var(--ak-surface-muted, #f0f0f1) !important;
+	color: var(--ak-text-muted, #646970) !important;
+	border-style: dashed !important;
 	cursor: pointer;
-}
-.adminkit-uc-locked:focus {
-	/* Match the regular focus outline so keyboard users see the focus state
-	   even before unlock. The confirm() dialog fires on focus / click. */
-	box-shadow: 0 0 0 1px var(--ak-primary, #2271b1);
-	outline: 2px solid transparent;
+	transition: background-color .12s ease, border-color .12s ease, color .12s ease;
 }
 
-/* Hint that appears under the field once it's unlocked. Locked state is
-   intentionally silent — the grayed field + pointer cursor carry the cue. */
+/* Hover / focus while locked: invite the click that fires the danger
+   confirm. Bump to the surface colour + accent border, keep the dashed
+   edge so the affordance still reads as "gated, not a normal input". */
+body.adminkit .adminkit-uc-locked:hover,
+body.adminkit .adminkit-uc-locked:focus {
+	background-color: var(--ak-surface, #fff) !important;
+	border-color: var(--ak-primary, #2271b1) !important;
+	color: var(--ak-text, #2c3338) !important;
+	outline: none;
+}
+
+/* Hint that appears under the input once it's unlocked. Locked state is
+   intentionally silent — the dashed input + pointer cursor carry the cue. */
 .adminkit-uc-active {
 	color: var(--ak-warning, #b45309);
 	font-weight: 500;

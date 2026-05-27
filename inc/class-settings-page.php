@@ -41,9 +41,6 @@ class AdminKit_Settings_Page {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 		add_filter( 'adminkit/integration_enabled', array( __CLASS__, 'gate_integration' ), 10, 2 );
-		// Gate the admin restyle on plugin pages that have no AdminKit adapter
-		// when the user has disabled generic theming (Plugins tab toggle).
-		add_filter( 'adminkit/should_load', array( __CLASS__, 'gate_generic_theming' ), 10, 2 );
 	}
 
 	/**
@@ -120,47 +117,6 @@ class AdminKit_Settings_Page {
 				},
 			)
 		);
-
-		// Action endpoints — operations that aren't a settings save. Keep them in
-		// the same namespace so the SPA's wp-api-fetch wires the nonce uniformly.
-		register_rest_route(
-			self::REST_NS,
-			'/actions/resync',
-			array(
-				'methods'             => 'POST',
-				'callback'            => array( __CLASS__, 'rest_resync' ),
-				'permission_callback' => static function () {
-					return current_user_can( 'manage_options' );
-				},
-			)
-		);
-	}
-
-	/**
-	 * "Re-sync from Bricks" action — explicit user request to re-pull a provider's
-	 * tokens. AdminKit itself caches nothing here (the Bricks adapter loads its
-	 * tokens straight from the generated CSS file, mtime-busted), so the work is
-	 * a single hook that integrations can react to. The SPA reloads the page on
-	 * success, which is what re-enqueues the provider stylesheet via the
-	 * `adminkit/extra_tokens_handle` filter.
-	 *
-	 * @param WP_REST_Request $request
-	 * @return WP_REST_Response
-	 */
-	public static function rest_resync( $request ) {
-		$slug = sanitize_key( (string) $request->get_param( 'provider' ) );
-		if ( '' === $slug ) {
-			$slug = 'bricks';
-		}
-		/**
-		 * Fires when the user explicitly asks AdminKit to re-pull a provider's
-		 * tokens. Integrations clear their cached values here so the next page
-		 * paints fresh.
-		 *
-		 * @param string $slug Provider id (currently only 'bricks').
-		 */
-		do_action( 'adminkit/provider/resync', $slug );
-		return rest_ensure_response( array( 'ok' => true, 'provider' => $slug ) );
 	}
 
 	/**
@@ -172,14 +128,6 @@ class AdminKit_Settings_Page {
 	 * @return WP_REST_Response
 	 */
 	public static function rest_save( $request ) {
-		// Reset to defaults: drop the whole option so every setting falls back
-		// to its registered default (colours inherit, toggles on). The native
-		// `site_icon` option is intentionally NOT touched here — a "Reset
-		// AdminKit defaults" shouldn't blow away the WP-wide Site Icon.
-		if ( $request->get_param( 'reset' ) ) {
-			delete_option( AdminKit_Settings::OPTION_KEY );
-			return rest_ensure_response( array( 'ok' => true, 'reset' => true ) );
-		}
 		self::register_integration_toggles(); // so per-integration keys persist
 		$values = $request->get_param( 'values' );
 		$values = is_array( $values ) ? $values : array();
@@ -279,18 +227,27 @@ class AdminKit_Settings_Page {
 			);
 		}
 
+		$schema   = AdminKit_Settings::schema();
 		$features = array();
 		foreach ( self::feature_descriptors() as $f ) {
 			$features[] = array(
-				'key'    => $f['key'],
-				'group'  => isset( $f['group'] ) ? $f['group'] : '',
-				'label'  => $f['label'],
-				'desc'   => $f['desc'],
-				'parent' => isset( $f['parent'] ) ? $f['parent'] : '',
-				'value'  => (bool) AdminKit_Settings::get( $f['key'] ),
+				'key'     => $f['key'],
+				'group'   => isset( $f['group'] ) ? $f['group'] : '',
+				'label'   => $f['label'],
+				'desc'    => $f['desc'],
+				'parent'  => isset( $f['parent'] ) ? $f['parent'] : '',
+				'value'   => (bool) AdminKit_Settings::get( $f['key'] ),
+				// Schema default — what the "Reset to defaults" bulk button restores to.
+				// Falls back to false for keys not in the schema (defensive).
+				'default' => isset( $schema[ $f['key'] ]['default'] ) ? (bool) $schema[ $f['key'] ]['default'] : false,
 				// `bulk => false` keeps a row out of the Enable all / Disable all sweep
 				// (for an override that shouldn't be toggled in bulk).
-				'bulk'   => ! isset( $f['bulk'] ) || (bool) $f['bulk'],
+				'bulk'    => ! isset( $f['bulk'] ) || (bool) $f['bulk'],
+				// `available => false` renders the row as locked + dimmed (toggle
+				// disabled, optional hint tooltip). Used when a feature's prerequisite
+				// isn't met (e.g. Bricks builder when the Bricks theme isn't active).
+				'available'       => ! isset( $f['available'] ) || (bool) $f['available'],
+				'unavailableHint' => isset( $f['unavailableHint'] ) ? $f['unavailableHint'] : '',
 			);
 		}
 
@@ -302,7 +259,7 @@ class AdminKit_Settings_Page {
 
 		return array(
 			'route'        => self::REST_NS . self::REST_ROUTE,
-			'dashboard'    => self::dashboard( $features, $stored ),
+			'dashboard'    => self::dashboard(),
 			'colors'       => $colors,
 			'providers'    => self::providers(),
 			'features'     => $features,
@@ -311,13 +268,12 @@ class AdminKit_Settings_Page {
 				'light' => (string) AdminKit_Settings::get( 'logo_light' ),
 				'dark'  => (string) AdminKit_Settings::get( 'logo_dark' ),
 			),
+			// Dark-mode favicon — light one comes from WP's native `site_icon`
+			// (see `siteIcon` below), this is AdminKit's own paired storage.
+			'faviconDark'  => (string) AdminKit_Settings::get( 'favicon_dark' ),
 			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
 			'loginLogo'    => (string) AdminKit_Settings::get( 'login_logo' ),
 			'brandAccent'  => (string) AdminKit_Settings::get( 'brand_accent' ),
-			// Global switch on the Plugins tab — when off, AdminKit's admin
-			// restyle is suppressed on plugin pages without a dedicated
-			// adapter (see `gate_generic_theming()`).
-			'genericThemingEnabled' => (bool) AdminKit_Settings::get( 'generic_theming_enabled' ),
 			// Effective accent source (resolved at read time — see accent_source()).
 			// One of 'adminkit' | 'bricks' | 'custom'. Drives the segmented picker
 			// in the Brand card and the Source pill colour for accent-family tokens.
@@ -336,11 +292,18 @@ class AdminKit_Settings_Page {
 				'id'  => (int) get_option( 'site_icon', 0 ),
 				'url' => (string) get_site_icon_url(),
 			),
-			// Bricks detection is also in `providers`, but a dedicated flag is
-			// cleaner for the Design tab (gates the "Tokens synced…" status row + the
-			// Bricks-only Actions items).
-			'bricksDetected' => class_exists( 'AdminKit_Integration_Bricks' ) && AdminKit_Integration_Bricks::is_active(),
-			'resyncRoute'  => self::REST_NS . '/actions/resync',
+			// Bricks detection — true when the Bricks theme is the active theme.
+			// `bricksConnected` adds the Bricks integration toggle to the equation
+			// (so a user who disables the integration in the Plugins tab also
+			// disconnects the Design-tab UI bits that depend on Bricks tokens).
+			// Token count is parsed from style-manager.min.css when connected, so
+			// the status row can show how many tokens are actually flowing.
+			'bricksDetected'   => self::bricks_detected(),
+			'bricksConnected'  => self::bricks_connected(),
+			'bricksTokenCount' => self::bricks_connected() ? self::bricks_token_count() : 0,
+			// Bricks-export templates loaded from disk (6 JSON files grouped into
+			// 4 sections). The SPA renders these in the Export to Bricks modal.
+			'bricksExports'  => self::load_bricks_exports(),
 			'i18n'         => array(
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
 				'design'            => __( 'Design', 'adminkit' ),
@@ -365,24 +328,26 @@ class AdminKit_Settings_Page {
 				'logoRemove'        => __( 'Remove logo', 'adminkit' ),
 				'mediaTitle'        => __( 'Select a logo', 'adminkit' ),
 				'mediaButton'       => __( 'Use this image', 'adminkit' ),
+				'mediaSiteIconTitle'  => __( 'Choose a Site Icon', 'adminkit' ),
+				'mediaSiteIconButton' => __( 'Set as Site Icon', 'adminkit' ),
 				'plugins'           => __( 'Plugins', 'adminkit' ),
 				'pluginsIntro'      => __( 'Every plugin installed on your site, plus AdminKit\'s active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit\'s base styling automatically.', 'adminkit' ),
 				'native'            => __( 'Native', 'adminkit' ),
 				'nativeHint'        => __( 'AdminKit ships a tuned adapter for this plugin — light and dark.', 'adminkit' ),
 				'system'            => __( 'System', 'adminkit' ),
 				'systemHint'        => __( 'AdminKit itself — always on and not removable here.', 'adminkit' ),
-				'inactive'          => __( 'Inactive', 'adminkit' ),
-				'inactiveHint'      => __( 'Plugin is installed but not active.', 'adminkit' ),
-				'genericThemingLabel' => __( 'Theme generic plugins', 'adminkit' ),
-				'genericThemingDesc'  => __( 'Apply AdminKit\'s base styling (dark mode + tokens) to plugin admin pages that don\'t have a dedicated adapter. Turn off to leave those pages with WordPress\'s native interface.', 'adminkit' ),
 				'generic'           => __( 'Generic', 'adminkit' ),
 				'genericHint'       => __( 'No dedicated adapter — themed automatically by AdminKit\'s base layer.', 'adminkit' ),
 				'themesLabel'       => __( 'Themes', 'adminkit' ),
-				'wpLogoLabel'       => __( 'Admin bar', 'adminkit' ),
-				'loginLogoLabel'    => __( 'Login screen', 'adminkit' ),
+				// Display row — short location labels so the segmented controls feel
+				// like "where does the brand mark show up?" rather than reciting WP
+				// internals. "WordPress" covers the admin bar (top toolbar in wp-admin
+				// AND the front-end logged-in toolbar — same DOM); "Login" is the
+				// wp-login.php screen.
+				'wpLogoLabel'       => __( 'WordPress', 'adminkit' ),
+				'loginLogoLabel'    => __( 'Login', 'adminkit' ),
 				'wpLogoBrand'       => __( 'Logo', 'adminkit' ),
 				'wpLogoFavicon'     => __( 'Favicon', 'adminkit' ),
-				'wpLogoHide'        => __( 'Hide', 'adminkit' ),
 				'wpLogoInherit'     => __( 'Inherit', 'adminkit' ),
 				'wpLogoNoIcon'      => __( 'No Site Icon set — the mark stays empty until you add one (Settings → General).', 'adminkit' ),
 				'save'              => __( 'Save changes', 'adminkit' ),
@@ -415,13 +380,29 @@ class AdminKit_Settings_Page {
 				'brandEyebrow'        => __( 'Brand', 'adminkit' ),
 				'brandTitle'          => __( 'Logo, favicon & accent', 'adminkit' ),
 				'brandSyncStatus'     => __( 'Tokens synced with Bricks Builder', 'adminkit' ),
-				'slotLight'           => __( 'Light-mode logo', 'adminkit' ),
-				'slotLightSub'        => __( 'Shown on light surfaces', 'adminkit' ),
-				'slotDark'            => __( 'Dark-mode logo', 'adminkit' ),
-				'slotDarkSub'         => __( 'Shown on dark surfaces', 'adminkit' ),
-				'slotFavicon'         => __( 'Favicon', 'adminkit' ),
-				'slotFaviconSub'      => __( 'SVG · or 32×32 PNG', 'adminkit' ),
-				'slotDrop'            => __( 'Drop', 'adminkit' ),
+				/* translators: %d: number of CSS custom properties exposed by Bricks. */
+				'brandSyncStatusCount' => __( '%d tokens', 'adminkit' ),
+				// Slot titles read as a coherent set — "<Kind> <Mode>" with no dash,
+				// so the four labels align (Logo Light Mode / Logo Dark Mode / Favicon
+				// Light Mode / Favicon Dark Mode). The mode word follows the kind so
+				// the eye scans the kind first.
+				// Sub-labels stay terse so they sit on a single line within the
+				// narrow 4-up cards. Full guidance moves to the tooltip on the
+				// dotted card border (mediaSiteIconTitle / Bricks docs) rather
+				// than wrapping into a wall of muted text under each label.
+				'slotLight'           => __( 'Logo Light Mode', 'adminkit' ),
+				'slotLightSub'        => __( 'SVG · PNG ≥ 400×100', 'adminkit' ),
+				'slotDark'            => __( 'Logo Dark Mode', 'adminkit' ),
+				'slotDarkSub'         => __( 'SVG · PNG ≥ 400×100', 'adminkit' ),
+				'slotFavicon'         => __( 'Favicon Light Mode', 'adminkit' ),
+				'slotFaviconSub'      => __( 'PNG · 512×512 · cropped', 'adminkit' ),
+				'slotFaviconDark'     => __( 'Favicon Dark Mode', 'adminkit' ),
+				'slotFaviconDarkSub'  => __( 'Auto-swap via prefers-color-scheme', 'adminkit' ),
+				// Chip next to the light favicon — flags it as the WordPress-native
+				// site_icon (Settings → General), so the user knows the dark slot is
+				// the new AdminKit-owned counterpart.
+				'slotFaviconNative'   => __( 'Native', 'adminkit' ),
+				'slotFaviconNativeHint' => __( 'WordPress\'s built-in Site Icon (Settings → General).', 'adminkit' ),
 				'slotUpload'          => __( 'Upload', 'adminkit' ),
 				'slotRemove'          => __( 'Remove', 'adminkit' ),
 				'slotMediaLib'        => __( 'Media library', 'adminkit' ),
@@ -429,7 +410,12 @@ class AdminKit_Settings_Page {
 				'accentLabel'         => __( 'Color', 'adminkit' ),
 				'accentInherit'       => __( 'Inheriting from provider / baseline', 'adminkit' ),
 				'accentClear'         => __( 'Clear accent', 'adminkit' ),
-				'accentSrcAdminKit'   => __( 'AdminKit', 'adminkit' ),
+				// Accent picker — first option is labelled "WordPress" rather than
+				// "AdminKit" because it represents the standard WordPress accent
+				// (WP block-editor blue) when no provider supplies one. The Bricks
+				// option is rendered ONLY when the integration is connected (see
+				// `bricksConnected` in boot data).
+				'accentSrcAdminKit'   => __( 'WordPress', 'adminkit' ),
 				'accentSrcBricks'     => __( 'Bricks', 'adminkit' ),
 				'accentSrcCustom'     => __( 'Custom', 'adminkit' ),
 				'accentSrcBricksHint' => __( 'Bricks not detected', 'adminkit' ),
@@ -443,15 +429,19 @@ class AdminKit_Settings_Page {
 				'derivedFocus'        => __( 'Focus', 'adminkit' ),
 				'derivedFocusSub'     => __( '@ 50%', 'adminkit' ),
 				'displayLabel'        => __( 'Display', 'adminkit' ),
-				'actionsLabel'        => __( 'Actions', 'adminkit' ),
-				'actionResync'        => __( 'Re-sync from Bricks Builder', 'adminkit' ),
-				'actionAutogen'       => __( 'Auto-generate appearance', 'adminkit' ),
+				// Brand-card Action — the only one left after the Phase A cleanup.
+				// Opens the Bricks-export modal (4 sections of JSON templates).
 				'actionExport'        => __( 'Export to Bricks', 'adminkit' ),
-				'actionReset'         => __( 'Reset to AdminKit defaults', 'adminkit' ),
-				'comingSoon'          => __( 'Coming soon', 'adminkit' ),
-				'confirmReset'        => __( 'Reset all AdminKit settings to defaults? This cannot be undone.', 'adminkit' ),
-				'statusReset'         => __( 'Defaults restored', 'adminkit' ),
-				'statusResync'        => __( 'Bricks tokens re-synced', 'adminkit' ),
+				// Export modal (Design tab).
+				'exportTitle'         => __( 'Export to Bricks', 'adminkit' ),
+				'exportIntro'         => __( 'Follow the steps in order — open each one, copy or download the file, then import it where indicated.', 'adminkit' ),
+				'exportCopy'          => __( 'Copy', 'adminkit' ),
+				'exportCopied'        => __( 'Copied', 'adminkit' ),
+				'exportDownload'      => __( 'Download .json', 'adminkit' ),
+				'exportClose'         => __( 'Close', 'adminkit' ),
+				// Bulk action shared by the Features tab and the Plugins tab —
+				// reverts every row to its registered schema default.
+				'resetDefaults'       => __( 'Reset to defaults', 'adminkit' ),
 				'tokensCtaTitle'      => __( 'Want to dig in?', 'adminkit' ),
 				'tokensCtaSub'        => __( 'Browse every token AdminKit exposes — read-only reference.', 'adminkit' ),
 				/* translators: %d is the total number of design tokens (resolved at render time). */
@@ -472,62 +462,30 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Overview shown on the Dashboard tab. Data-driven + filterable so cards can
-	 * be added as the plugin grows (the whole point: easy to iterate on). Each
-	 * card: `label`, `value`, optional `hint`, optional `swatch` (an `--ak-*`
-	 * token to preview) and optional `tab` (turns the card into a shortcut).
+	 * Dashboard tab meta — version chip, last-updated badge, roadmap columns.
+	 * The Brand card + tokens reference take the main slot (rendered client-side
+	 * by buildDesign()), so this only ships the data the roadmap section needs.
 	 *
-	 * @param array $features Built feature rows (each with a bool `value`).
-	 * @param array $stored   Raw stored options.
 	 * @return array
 	 */
-	private static function dashboard( $features, $stored ) {
-		$features_on = 0;
-		foreach ( $features as $f ) {
-			if ( ! empty( $f['value'] ) ) {
-				$features_on++;
-			}
-		}
-		$primary = ( isset( $stored['primary_color'] ) && $stored['primary_color'] ) ? (string) $stored['primary_color'] : '';
-		$total   = count( $features );
-
-		$cards = array(
-			array(
-				'label'  => __( 'Tokens', 'adminkit' ),
-				'value'  => self::active_provider_label(),
-				/* translators: %s: the selected accent colour value (e.g. #2563eb). */
-				'hint'   => $primary ? sprintf( __( 'accent %s', 'adminkit' ), $primary ) : __( 'accent inherited', 'adminkit' ),
-				'swatch' => '--ak-primary',
-				'tab'    => 'design',
-			),
-			array(
-				'label' => __( 'Features', 'adminkit' ),
-				'value' => (string) $features_on,
-				/* translators: %d: total number of feature modules. */
-				'hint'  => sprintf( _n( 'of %d module on', 'of %d modules on', $total, 'adminkit' ), $total ),
-				'icon'  => 'features',
-				'tab'   => 'settings',
-			),
-		);
-
+	private static function dashboard() {
 		/**
-		 * Filter the AdminKit dashboard overview. Add overview cards via
-		 * `$data['cards']`, or roadmap items via `$data['roadmap'][N]['items']`.
+		 * Filter the AdminKit dashboard data. Add roadmap items via
+		 * `$data['roadmap'][N]['items']`. The legacy `cards[]` + `overviewLabel`
+		 * keys are gone — the SPA no longer renders an Overview hero strip
+		 * (the Brand card from the former Design tab took its place).
 		 *
-		 * @param array $data { intro, version, cards[], roadmap[] }
+		 * @param array $data { version, updated, updatedLabel, roadmapLabel, roadmap[] }
 		 */
 		// "Last updated" badge — the main plugin file's mtime (changes on every
 		// release / deploy), localised to the site's date format. Dynamic, so it stays
 		// truthful without manual upkeep.
 		$updated = @filemtime( ADMINKIT_FILE );
 		return apply_filters( 'adminkit/dashboard', array(
-			'intro'         => __( 'A quick overview of your AdminKit setup.', 'adminkit' ),
 			'version'       => 'v' . ADMINKIT_VERSION,
 			'updated'       => $updated ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $updated ) : '',
 			/* translators: %s = a date. */
 			'updatedLabel'  => __( 'Updated', 'adminkit' ),
-			'overviewLabel' => __( 'Overview', 'adminkit' ),
-			'cards'         => $cards,
 			'roadmapLabel'  => __( 'Roadmap', 'adminkit' ),
 			// AdminKit's roadmap — THE single source. Keep it coherent with what's
 			// actually being built, and mirror it in README.md's Roadmap section when
@@ -688,21 +646,6 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Label of the active provider (a detected, available one), else "Default".
-	 * Names where an un-overridden colour comes from, on the dashboard.
-	 *
-	 * @return string
-	 */
-	private static function active_provider_label() {
-		foreach ( self::providers() as $p ) {
-			if ( 'available' === $p['status'] && ! empty( $p['detected'] ) ) {
-				return $p['label'];
-			}
-		}
-		return __( 'Default', 'adminkit' );
-	}
-
-	/**
 	 * Feature toggles shown on the Settings tab, in display order. Keys match
 	 * settings registered in AdminKit_Settings / AdminKit_Post_Previews.
 	 *
@@ -745,11 +688,17 @@ class AdminKit_Settings_Page {
 				'desc' => __( 'Adds "AdminKit Portraits (Generated)" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait.', 'adminkit' ) ),
 		);
 
-		// Bricks builder restyle — only meaningful when the Bricks theme is active.
-		if ( class_exists( 'AdminKit_Integration_Bricks' ) && AdminKit_Integration_Bricks::is_active() ) {
-			$rows[] = array( 'key' => 'bricks_builder_enabled', 'group' => $appearance, 'label' => __( 'Bricks builder', 'adminkit' ),
-				'desc' => __( 'Restyle the Bricks builder UI with your tokens. Automatically sets Bricks → Settings → Builder mode to "Custom".', 'adminkit' ) );
-		}
+		// Bricks builder restyle — always listed, but greyed out via `available`
+		// when the Bricks theme isn't the active theme (the feature has nothing
+		// to restyle in that case). On a Bricks site the row reads as a normal
+		// ON-by-default toggle; elsewhere it's a locked, dimmed "Bricks theme
+		// not active" row so users can see the option exists.
+		$rows[] = array(
+			'key' => 'bricks_builder_enabled', 'group' => $appearance, 'label' => __( 'Bricks builder', 'adminkit' ),
+			'desc' => __( 'Restyle the Bricks builder UI with your tokens. Automatically sets Bricks → Settings → Builder mode to "Custom".', 'adminkit' ),
+			'available' => self::bricks_detected(),
+			'unavailableHint' => __( 'Activate the Bricks theme to use this.', 'adminkit' ),
+		);
 
 		return $rows;
 	}
@@ -902,6 +851,9 @@ class AdminKit_Settings_Page {
 				'type'      => 'plugin',
 				'supported' => $supported,
 				'enabled'   => $supported ? (bool) AdminKit_Settings::get( 'integration_' . $slug . '_enabled' ) : false,
+				// Schema default for `integration_{slug}_enabled` is always true
+				// (see register_integration_toggles()) — what Reset to defaults restores to.
+				'default'   => true,
 				// Installed-but-inactive plugins are listed too (mirrors WP's own
 				// Plugins screen) — the UI mutes their row so the eye reads the
 				// active ones first.
@@ -921,6 +873,7 @@ class AdminKit_Settings_Page {
 				'type'      => 'theme',
 				'supported' => true,
 				'enabled'   => (bool) AdminKit_Settings::get( 'integration_' . $s['slug'] . '_enabled' ),
+				'default'   => true,
 				'active'    => true,
 			);
 		}
@@ -939,6 +892,105 @@ class AdminKit_Settings_Page {
 		} );
 
 		return $rows;
+	}
+
+	/**
+	 * Bricks theme is the currently-active theme. Doesn't consult the
+	 * AdminKit integration toggle — for that, see bricks_connected().
+	 *
+	 * @return bool
+	 */
+	private static function bricks_detected() {
+		return class_exists( 'AdminKit_Integration_Bricks' )
+			&& AdminKit_Integration_Bricks::is_active();
+	}
+
+	/**
+	 * Bricks tokens are actually flowing into AdminKit — the theme is active
+	 * AND the integration toggle (Plugins tab) is on. When false, the Design
+	 * tab hides the sync status and the Bricks accent source.
+	 *
+	 * @return bool
+	 */
+	private static function bricks_connected() {
+		if ( ! self::bricks_detected() ) {
+			return false;
+		}
+		self::register_integration_toggles(); // ensure schema default applies
+		return (bool) AdminKit_Settings::get( 'integration_bricks_enabled' );
+	}
+
+	/**
+	 * Count of CSS custom properties currently exposed by Bricks's generated
+	 * style-manager.min.css (the source of every --bricks-* / --primary / etc.
+	 * we cascade into --ak-*). A regex over `--name:` declarations — minified
+	 * file (~10KB), so the parse is trivial. 0 when the file doesn't exist or
+	 * isn't readable.
+	 *
+	 * @return int
+	 */
+	private static function bricks_token_count() {
+		if ( ! class_exists( 'AdminKit_Integration_Bricks' ) ) {
+			return 0;
+		}
+		$upload = wp_upload_dir();
+		$path   = $upload['basedir'] . AdminKit_Integration_Bricks::TOKENS_REL;
+		if ( ! is_readable( $path ) ) {
+			return 0;
+		}
+		$css = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		if ( false === $css || '' === $css ) {
+			return 0;
+		}
+		// Count distinct custom-property declarations. `--name:` is the universal
+		// signature; duplicates across selectors are rare in a generated palette.
+		return preg_match_all( '/--[a-z0-9_-]+\s*:/i', $css );
+	}
+
+	/**
+	 * Load the Bricks-export JSON templates bundled with the plugin (under
+	 * `assets/bricks-export/`) as an ORDERED step-by-step import guide. Each
+	 * step is one accordion in the SPA modal: Theme Style → Variables → then
+	 * the four palettes in dependency order (Semantic first because the rest
+	 * reference its variables, then Brand, then Neutral, finally Notifications).
+	 *
+	 * Each step's `content` is the raw JSON string so the SPA can pretty-print
+	 * it on the client (and so copy/download stays byte-stable). Missing files
+	 * are skipped silently — the modal will simply show fewer steps rather
+	 * than 500.
+	 *
+	 * @return array
+	 */
+	private static function load_bricks_exports() {
+		$dir   = ADMINKIT_PATH . 'assets/bricks-export/';
+		$theme = __( 'Bricks → Settings → Theme Styles', 'adminkit' );
+		$vars  = __( 'Bricks → Settings → Variables', 'adminkit' );
+		$pal   = __( 'Bricks → Settings → Color Palettes', 'adminkit' );
+
+		$step = static function ( $key, $title, $hint, $filename, $download ) use ( $dir ) {
+			$path = $dir . $filename;
+			if ( ! is_readable( $path ) ) {
+				return null;
+			}
+			return array(
+				'key'      => $key,
+				'title'    => $title,
+				'hint'     => $hint,
+				'filename' => $download,
+				'content'  => file_get_contents( $path ), // phpcs:ignore WordPress.WP.AlternativeFunctions
+			);
+		};
+
+		$steps = array(
+			$step( 'theme-style',           __( 'Theme Style', 'adminkit' ),                       $theme, 'theme-style-waaskit.json', 'waaskit-theme-style.json' ),
+			$step( 'variables',             __( 'Variables', 'adminkit' ),                         $vars,  'variables-categories.json', 'waaskit-variables.json' ),
+			$step( 'palette-semantic',      __( 'Color palette — Semantic', 'adminkit' ),          $pal,   'palette-semantique.json',   'waaskit-palette-semantic.json' ),
+			$step( 'palette-brand',         __( 'Color palette — Brand', 'adminkit' ),             $pal,   'palette-marque.json',       'waaskit-palette-brand.json' ),
+			$step( 'palette-neutral',       __( 'Color palette — Neutral', 'adminkit' ),           $pal,   'palette-neutre.json',       'waaskit-palette-neutral.json' ),
+			$step( 'palette-notifications', __( 'Color palette — Notifications', 'adminkit' ),     $pal,   'palette-notifications.json','waaskit-palette-notifications.json' ),
+		);
+
+		return array_values( array_filter( $steps ) );
 	}
 
 	/**

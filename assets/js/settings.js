@@ -28,10 +28,6 @@
 		saving: false,
 		features: {},      // setting key -> bool
 		integrations: {},  // integration slug -> bool (adapter enabled)
-		// Plugins tab — global switch that gates AdminKit's auto-theming on
-		// admin pages belonging to plugins without a dedicated adapter (see
-		// PHP gate_generic_theming()). Off → those pages keep WP native UI.
-		genericThemingEnabled: D.genericThemingEnabled !== false,
 		logos: {           // setting key -> url string
 			light: ( D.logos && D.logos.light ) || '',
 			dark:  ( D.logos && D.logos.dark ) || ''
@@ -42,13 +38,17 @@
 		// 'adminkit' = WP Blue (#3858E9), 'bricks' = Bricks provider --accent, 'custom' = brandAccent hex
 		accentSource: D.accentSource || 'adminkit',
 		// Bidirectional binding to WP's native `site_icon` option — see PHP
-		// bootstrap. The favicon slot in the Brand card reads + writes through
-		// THIS, not state.logos, so a change here propagates to Settings →
-		// General and vice-versa (page reload pulls the latest).
+		// bootstrap. The light-favicon slot in the Brand card reads + writes
+		// through THIS, not state.logos, so a change here propagates to
+		// Settings → General and vice-versa (page reload pulls the latest).
 		siteIcon: {
 			id:  ( D.siteIcon && D.siteIcon.id ) || 0,
 			url: ( D.siteIcon && D.siteIcon.url ) || ''
-		}
+		},
+		// Dark-mode favicon — AdminKit-owned (WP has no equivalent). Stored as
+		// a URL string and printed in `<head>` with `media="(prefers-color-scheme:
+		// dark)"` so browsers swap automatically (incl. the Bricks editor tab).
+		faviconDark: D.faviconDark || ''
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
@@ -176,66 +176,6 @@
 		return { btn: btn, panel: panel };
 	}
 
-	// --- Actions menu (dropdown) ---------------------------------------------
-	// Items: [{ label, onClick, disabled?, separator?, danger? }]. Outside-click
-	// and Escape close it; the menu's z-index keeps it above the sticky header.
-	function actionsMenu( items ) {
-		var open = false;
-		var btn = el( 'button', {
-			type: 'button', 'class': 'ak-actions__btn',
-			'aria-haspopup': 'menu', 'aria-expanded': 'false'
-		}, [
-			el( 'span', { text: I.actionsLabel || 'Actions' } ),
-			el( 'span', { 'class': 'ak-actions__caret', 'aria-hidden': 'true', text: '▾' } )
-		] );
-		var menu = el( 'div', { 'class': 'ak-actions__menu', role: 'menu' } );
-		menu.setAttribute( 'hidden', '' );
-		items.forEach( function ( it ) {
-			if ( it.separator ) {
-				menu.appendChild( el( 'hr', { 'class': 'ak-actions__sep' } ) );
-				return;
-			}
-			var attrs = {
-				type: 'button',
-				'class': 'ak-actions__item' + ( it.danger ? ' is-danger' : '' ),
-				role: 'menuitem',
-				text: it.label
-			};
-			if ( it.disabled ) {
-				attrs.disabled = '';
-				attrs.title = it.disabledHint || ( I.comingSoon || 'Coming soon' );
-			}
-			var mi = el( 'button', attrs );
-			if ( ! it.disabled ) {
-				mi.addEventListener( 'click', function () { close(); it.onClick(); } );
-			}
-			menu.appendChild( mi );
-		} );
-		function close() {
-			open = false;
-			menu.setAttribute( 'hidden', '' );
-			btn.classList.remove( 'is-open' );
-			btn.setAttribute( 'aria-expanded', 'false' );
-		}
-		function show() {
-			open = true;
-			menu.removeAttribute( 'hidden' );
-			btn.classList.add( 'is-open' );
-			btn.setAttribute( 'aria-expanded', 'true' );
-		}
-		btn.addEventListener( 'click', function ( e ) {
-			e.stopPropagation();
-			if ( open ) { close(); } else { show(); }
-		} );
-		document.addEventListener( 'click', function ( e ) {
-			if ( open && ! menu.contains( e.target ) && e.target !== btn ) { close(); }
-		} );
-		document.addEventListener( 'keydown', function ( e ) {
-			if ( open && e.key === 'Escape' ) { e.preventDefault(); close(); btn.focus(); }
-		} );
-		return el( 'div', { 'class': 'ak-actions' }, [ btn, menu ] );
-	}
-
 	// --- header chrome -------------------------------------------------------
 	var statusEl = el( 'span', { 'class': 'ak-status', 'aria-live': 'polite' } );
 	var saveBtn = el( 'button', { 'class': 'ak-btn ak-btn--primary', type: 'button', text: I.save, onclick: save } );
@@ -267,12 +207,17 @@
 		plugins: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>',
 		sun: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
 		moon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
-		close: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'
+		close: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+		// Upload arrow-up-tray — shown in empty brand-slot zones in lieu of a "Drop" text.
+		upload: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>'
 	};
 
+	// The Dashboard tab now hosts the full branding UI (Brand card + tokens
+	// reference) plus the roadmap below — the standalone Design tab and the
+	// "Overview" stat strip are gone. Old `#design` hashes fall back to the
+	// dashboard via applyHash().
 	var tabs = [
 		{ id: 'dashboard', label: I.dashboard, icon: ICONS.dashboard, build: buildDashboard },
-		{ id: 'design', label: I.design, icon: ICONS.colours, build: buildDesign },
 		{ id: 'settings', label: I.features, icon: ICONS.features, build: buildFeatures },
 		{ id: 'plugins', label: I.plugins, icon: ICONS.plugins, build: buildPlugins }
 	];
@@ -405,48 +350,16 @@
 		}
 	}
 
-	// Overview tab. Renders the data-driven card list from D.dashboard; a card
-	// with a `tab` becomes a shortcut button to that tab.
+	// Dashboard tab — single landing surface that hosts the full branding UI
+	// (Brand card + tokens reference, formerly the standalone Design tab),
+	// followed by the roadmap below. The old "Overview" hero strip with
+	// provider / features / mode cells is gone — the user wanted customisation
+	// up-front, not stats.
 	function buildDashboard() {
+		// Start from the Design tab's panel as-is (intro + Brand card + tokens
+		// reference) and append the roadmap meta-info underneath.
+		var p = buildDesign();
 		var dd = D.dashboard || {};
-		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' }, [ intro( dd.intro || '' ) ] );
-		// Overview — a tight strip of bordered cells (provider / modules / mode).
-		// Data-driven from dd.cards; a card with a `tab` becomes a shortcut. The
-		// provider card carries a `swatch` rendered inline before its value.
-		var hero = el( 'div', { 'class': 'ak-hero' } );
-		( dd.cards || [] ).forEach( function ( c ) {
-			hero.appendChild( el( c.tab ? 'button' : 'div', {
-				type: c.tab ? 'button' : null,
-				'class': 'ak-hero__cell' + ( c.tab ? ' ak-hero__cell--link' : '' ),
-				onclick: c.tab ? function () { go( c.tab ); } : null
-			}, [
-				el( 'span', { 'class': 'ak-hero__k', text: c.label } ),
-				el( 'span', { 'class': 'ak-hero__v' }, [
-					c.swatch ? el( 'span', { 'class': 'ak-hero__swatch', style: 'background:var(' + c.swatch + ')' } ) : null,
-					c.value
-				] ),
-				c.hint ? el( 'span', { 'class': 'ak-hero__sub', text: c.hint } ) : null
-			] ) );
-		} );
-
-		// Mode cell — reflects the live theme and updates when the admin-bar
-		// toggle flips it (reads the attribute, never writes it).
-		var modeV = el( 'span', { 'class': 'ak-hero__v' } );
-		function paintMode() {
-			var dark = document.documentElement.getAttribute( 'data-adminkit-theme' ) === 'dark';
-			modeV.textContent = dark ? ( I.dark || 'Dark' ) : ( I.light || 'Light' );
-		}
-		paintMode();
-		new MutationObserver( paintMode ).observe( document.documentElement, { attributes: true, attributeFilter: [ 'data-adminkit-theme' ] } );
-		hero.appendChild( el( 'div', { 'class': 'ak-hero__cell' }, [
-			el( 'span', { 'class': 'ak-hero__k', text: I.mode || 'Mode' } ),
-			modeV
-		] ) );
-
-		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
-			dd.overviewLabel ? el( 'h2', { 'class': 'ak-group__title', text: dd.overviewLabel } ) : null,
-			hero
-		] ) );
 
 		// Roadmap — three columns (Planned / Next / In progress), Bricks-style cards.
 		// Data-driven from dd.roadmap (the single source in class-settings-page.php).
@@ -526,18 +439,122 @@
 			frame.open();
 		}
 
+		// Open WP's Site Icon picker (Library + SiteIconCropper) — same UX as
+		// Settings → General → Site Icon: pick an image, then if it isn't
+		// already 512×512 square, WP shows its native cropper dialog
+		// ("Recadrer l'image") so we end up with a clean square favicon.
+		//
+		// Mirrors the flow in wp-admin/js/site-icon.js (WP 6.5+): the cropper
+		// transition is MANUAL — we listen for `select`, compare the picked
+		// attachment's dimensions to the target size, and call `setState('cropper')`
+		// when it doesn't match. `cropped` fires with the NEW cropped attachment;
+		// `skippedcrop` fires when the source was already square.
+		//
+		// SiteIconCropper lives in media-views.js (loaded by wp_enqueue_media() —
+		// no extra script needed). Older WP / missing controller → openMedia()
+		// fallback, which preserves the previous (uncropped) behaviour.
+		function openSiteIcon( onPick ) {
+			if ( ! window.wp || ! wp.media || ! wp.media.controller || ! wp.media.controller.SiteIconCropper ) {
+				openMedia( onPick );
+				return;
+			}
+			var size = 512;
+
+			// Initial crop selection — copied from wp-admin/js/site-icon.js so the
+			// dialog opens with the largest square that fits the source, centred.
+			function imgSelectOptions( attachment ) {
+				var w = attachment.get( 'width' ),
+					h = attachment.get( 'height' ),
+					xInit = size,
+					yInit = size,
+					ratio = xInit / yInit,
+					x1, y1;
+				if ( w / h > ratio ) { yInit = h; xInit = yInit * ratio; }
+				else                 { xInit = w; yInit = xInit / ratio; }
+				x1 = ( w - xInit ) / 2;
+				y1 = ( h - yInit ) / 2;
+				return {
+					aspectRatio: xInit + ':' + yInit,
+					handles: true, keys: true, instance: true, persistent: true,
+					imageWidth: w, imageHeight: h,
+					minWidth:  size > xInit ? xInit : size,
+					minHeight: size > yInit ? yInit : size,
+					x1: x1, y1: y1, x2: xInit + x1, y2: yInit + y1
+				};
+			}
+
+			var frame = wp.media( {
+				button: { text: I.mediaSiteIconButton || 'Set as Site Icon', close: false },
+				states: [
+					new wp.media.controller.Library( {
+						title:           I.mediaSiteIconTitle || 'Choose a Site Icon',
+						library:         wp.media.query( { type: 'image' } ),
+						multiple:        false,
+						date:            false,
+						suggestedWidth:  size,
+						suggestedHeight: size
+					} ),
+					new wp.media.controller.SiteIconCropper( {
+						control: { params: { width: size, height: size } },
+						imgSelectOptions: imgSelectOptions
+					} )
+				]
+			} );
+
+			// User picked an image. Square at the target size? Use it as-is.
+			// Otherwise transition to the cropper state — same dance as WP core.
+			frame.on( 'select', function () {
+				var att = frame.state().get( 'selection' ).first().attributes;
+				if ( att.width === size && att.height === size ) {
+					onPick( att.url || '', att );
+					frame.close();
+				} else {
+					frame.setState( 'cropper' );
+				}
+			} );
+
+			// Cropped → WP saved a NEW cropped attachment.
+			frame.on( 'cropped', function ( att ) {
+				onPick( ( att && att.url ) || '', att );
+				frame.close();
+			} );
+
+			// User clicked "Skip cropping" → use the source as-is.
+			frame.on( 'skippedcrop', function ( att ) {
+				var data = ( att && att.attributes ) || att || {};
+				onPick( data.url || '', data );
+				frame.close();
+			} );
+
+			frame.open();
+		}
+
 		// One brand slot — a dashed card with a fixed-backdrop drop zone (preview
 		// or "DROP" placeholder) + label + sub + Upload / Media library buttons.
-		// `slotKey` is one of 'light' | 'dark' | 'favicon'. The first two store
-		// URLs in `state.logos[key]`; favicon is special — it proxies WP's native
-		// `site_icon` option (an attachment ID), so reading + writing routes
-		// through `state.siteIcon` instead. Picking an image here updates the WP
-		// Site Icon on save, and a change in Settings → General shows up here on
-		// next reload — one source of truth, in lockstep both ways.
-		function brandSlot( slotKey, label, sub ) {
-			var isSiteIcon = ( slotKey === 'favicon' );
+		// `slotKey` is one of:
+		//   'light' / 'dark'  → brand wordmark URLs in `state.logos[key]`
+		//   'favicon'         → light favicon, proxies WP's native `site_icon`
+		//                       (an attachment ID). Reading + writing routes
+		//                       through `state.siteIcon`, so a change here
+		//                       propagates to Settings → General and back.
+		//   'favicon-dark'    → AdminKit-owned dark-mode favicon URL in
+		//                       `state.faviconDark`. Printed in <head> with
+		//                       `media="(prefers-color-scheme: dark)"` so the
+		//                       browser swaps it automatically.
+		// Both favicon variants share the SiteIconCropper UX (square 512×512);
+		// logo slots use the plain media frame (free-form aspect, no crop).
+		// `opts` can carry a `badge` ({label, hint}) for the small Native chip
+		// shown next to the light favicon label.
+		function brandSlot( slotKey, label, sub, opts ) {
+			opts = opts || {};
+			var isSiteIcon    = ( slotKey === 'favicon' );
+			var isFaviconDark = ( slotKey === 'favicon-dark' );
+			var isFavicon     = isSiteIcon || isFaviconDark;
 			var preview = el( 'img', { 'class': 'ak-brand-slot__preview', alt: '' } );
-			var dropTxt = el( 'span', { 'class': 'ak-brand-slot__drop', text: I.slotDrop || 'Drop' } );
+			// Empty-state placeholder is an upload-arrow icon (the zone is a
+			// click-to-upload shortcut alongside the Upload button below).
+			var dropTxt = el( 'span', { 'class': 'ak-brand-slot__drop', 'aria-hidden': 'true' } );
+			dropTxt.innerHTML = ICONS.upload;
 			var zone = el( 'div', { 'class': 'ak-brand-slot__zone' }, [ preview, dropTxt ] );
 
 			// One button per slot, label + action toggle on filled state:
@@ -550,7 +567,9 @@
 			} );
 
 			function currentUrl() {
-				return isSiteIcon ? ( state.siteIcon.url || '' ) : ( state.logos[ slotKey ] || '' );
+				if ( isSiteIcon )    { return state.siteIcon.url || ''; }
+				if ( isFaviconDark ) { return state.faviconDark || ''; }
+				return state.logos[ slotKey ] || '';
 			}
 			function syncPreview() {
 				var url = currentUrl();
@@ -572,6 +591,8 @@
 				if ( isSiteIcon ) {
 					state.siteIcon.url = url || '';
 					state.siteIcon.id  = ( att && att.id ) ? parseInt( att.id, 10 ) : 0;
+				} else if ( isFaviconDark ) {
+					state.faviconDark = url || '';
 				} else {
 					state.logos[ slotKey ] = url || '';
 				}
@@ -579,24 +600,42 @@
 				markDirty();
 			}
 
+			// Favicon slots route through WP's Site Icon picker (Library + Cropper)
+			// so non-square uploads get cropped to a square 512×512 before save —
+			// same UX as Settings → General → Site Icon for the light one, and the
+			// same cropper for the dark one even though we store its URL ourselves.
+			var pick = isFavicon ? openSiteIcon : openMedia;
+
 			// Drop zone is always a "pick / replace" shortcut. The action button
 			// branches on current state — clears when filled, picks when empty.
-			zone.addEventListener( 'click', function () { openMedia( setLogo ); } );
+			zone.addEventListener( 'click', function () { pick( setLogo ); } );
 			actionBtn.addEventListener( 'click', function ( e ) {
 				e.stopPropagation();
 				if ( currentUrl() ) {
 					setLogo( '', null );
 				} else {
-					openMedia( setLogo );
+					pick( setLogo );
 				}
 			} );
 
 			syncPreview();
 
+			// Label row (always present) + optional badge chip next to it.
+			var labelRow = el( 'div', { 'class': 'ak-brand-slot__label-row' }, [
+				el( 'div', { 'class': 'ak-brand-slot__label', text: label } )
+			] );
+			if ( opts.badge && opts.badge.label ) {
+				labelRow.appendChild( el( 'span', {
+					'class': 'ak-badge ak-brand-slot__badge',
+					title: opts.badge.hint || '',
+					text: opts.badge.label
+				} ) );
+			}
+
 			return el( 'div', { 'class': 'ak-brand-slot ak-brand-slot--' + slotKey }, [
 				zone,
 				el( 'div', { 'class': 'ak-brand-slot__body' }, [
-					el( 'div', { 'class': 'ak-brand-slot__label', text: label } ),
+					labelRow,
 					sub ? el( 'div', { 'class': 'ak-brand-slot__sub', text: sub } ) : null,
 					el( 'div', { 'class': 'ak-brand-slot__btns' }, [ actionBtn ] )
 				] )
@@ -655,14 +694,16 @@
 		// REMOVED for 'custom' with an invalid/empty hex so the cascade takes back;
 		// otherwise WRITTEN with the right value.
 		function accentPicker() {
-			var bricksAvailable = !! D.bricksDetected;
-			var sources = [
-				{ v: 'adminkit', label: I.accentSrcAdminKit || 'AdminKit' },
-				{ v: 'bricks',   label: I.accentSrcBricks   || 'Bricks',
-				  disabled: ! bricksAvailable,
-				  title: bricksAvailable ? null : ( I.accentSrcBricksHint || 'Bricks not detected' ) },
-				{ v: 'custom',   label: I.accentSrcCustom   || 'Custom' }
-			];
+			// Bricks only appears in the segmented when the integration is connected
+			// (theme active AND toggle on). If the user disables the integration the
+			// pill silently drops; their stored `accentSource === 'bricks'` still
+			// resolves server-side via accent_source(), but the UI no longer offers a
+			// dead button. Hide rather than grey: a dead pill was confusing.
+			var sources = [ { v: 'adminkit', label: I.accentSrcAdminKit || 'WordPress' } ];
+			if ( D.bricksConnected ) {
+				sources.push( { v: 'bricks', label: I.accentSrcBricks || 'Bricks' } );
+			}
+			sources.push( { v: 'custom', label: I.accentSrcCustom || 'Custom' } );
 
 			var btns = [];
 			var seg = el( 'div', { 'class': 'ak-seg', role: 'radiogroup', 'aria-label': I.accentLabel || 'Accent' } );
@@ -815,8 +856,9 @@
 
 			applyPreview();
 
+			// No inner "Accent" sub-label — the parent row already carries the
+			// "Color" label on the left (same treatment as the Display row).
 			return el( 'div', { 'class': 'ak-display-row__field ak-accent-inline' }, [
-				el( 'span', { 'class': 'ak-display-row__field-lbl', text: I.accentLabel || 'Accent' } ),
 				seg, swatch, hexInput, native
 			] );
 		}
@@ -854,45 +896,49 @@
 			el( 'div', { 'class': 'ak-card__eyebrow', text: I.brandEyebrow || 'Brand' } ),
 			el( 'h2', { 'class': 'ak-card__title', text: I.brandTitle || 'Logo, favicon & accent' } )
 		] );
-		if ( D.bricksDetected ) {
-			headMain.appendChild( el( 'div', { 'class': 'ak-card__status', text: I.brandSyncStatus || 'Tokens synced with Bricks Builder' } ) );
+		// Bricks-sync status — visible ONLY when the integration is connected
+		// (theme active AND toggle on). Green dot + label + (N tokens) when
+		// available. Hidden entirely when disconnected — keeps the card clean
+		// rather than showing a dead "Bricks not connected" sentence on every
+		// site that doesn't use Bricks.
+		if ( D.bricksConnected ) {
+			var status = el( 'div', { 'class': 'ak-card__status is-connected' }, [
+				el( 'span', { 'class': 'ak-card__status-dot', 'aria-hidden': 'true' } ),
+				el( 'span', { 'class': 'ak-card__status-label', text: I.brandSyncStatus || 'Tokens synced with Bricks Builder' } )
+			] );
+			var n = parseInt( D.bricksTokenCount, 10 );
+			if ( n > 0 ) {
+				var fmt = I.brandSyncStatusCount || '%d tokens';
+				status.appendChild( el( 'span', { 'class': 'ak-card__status-count', text: fmt.replace( '%d', String( n ) ) } ) );
+			}
+			headMain.appendChild( status );
 		}
 		cardHead.appendChild( headMain );
 
-		// Actions menu — Reset + Re-sync wired; Export + Auto-generate present
-		// but disabled (Phase A — see plan).
-		var menuItems = [];
-		if ( D.bricksDetected ) {
-			menuItems.push( {
-				label: I.actionResync || 'Re-sync from Bricks Builder',
-				onClick: function () { doResync(); }
-			} );
+		// Brand-card action — the only one left after the Phase A cleanup: a
+		// single "Export to Bricks" button that opens the modal with the
+		// bundled JSON templates (Theme Style + Variables + 4 palettes). No
+		// dropdown anymore since there's nothing else to choose between.
+		if ( ( D.bricksExports || [] ).length ) {
+			cardHead.appendChild( el( 'div', { 'class': 'ak-actions' }, [
+				el( 'button', {
+					type: 'button', 'class': 'ak-btn',
+					text: I.actionExport || 'Export to Bricks',
+					onclick: openExportModal
+				} )
+			] ) );
 		}
-		menuItems.push( {
-			label: I.actionAutogen || 'Auto-generate appearance',
-			disabled: true
-		} );
-		if ( D.bricksDetected ) {
-			menuItems.push( {
-				label: I.actionExport || 'Export to Bricks',
-				disabled: true
-			} );
-		}
-		menuItems.push( { separator: true } );
-		menuItems.push( {
-			label: I.actionReset || 'Reset to AdminKit defaults',
-			danger: true,
-			onClick: function () { doReset(); }
-		} );
-		cardHead.appendChild( actionsMenu( menuItems ) );
 
-		// Brand slots row — light / dark / favicon. Light + dark persist URLs in
-		// state.logos[key]; favicon proxies WP's native `site_icon` option
-		// through state.siteIcon (see brandSlot for the routing detail).
+		// Brand slots row — 4 slots: light + dark wordmarks, then light + dark
+		// favicons. Light favicon = WP native `site_icon` (carries a "Native"
+		// chip so the user knows the dark slot is the AdminKit-owned companion).
 		var slotsRow = el( 'div', { 'class': 'ak-brand-slots' }, [
-			brandSlot( 'light', I.slotLight || 'Light-mode logo', I.slotLightSub || 'Shown on light surfaces' ),
-			brandSlot( 'dark', I.slotDark || 'Dark-mode logo', I.slotDarkSub || 'Shown on dark surfaces' ),
-			brandSlot( 'favicon', I.slotFavicon || 'Favicon', I.slotFaviconSub || 'SVG · or 32×32 PNG' )
+			brandSlot( 'light', I.slotLight || 'Light mode', I.slotLightSub || 'Shown on light surfaces' ),
+			brandSlot( 'dark', I.slotDark || 'Dark mode', I.slotDarkSub || 'Shown on dark surfaces' ),
+			brandSlot( 'favicon', I.slotFavicon || 'Favicon — light', I.slotFaviconSub || 'Recommended: 512×512 square (cropped on upload)', {
+				badge: { label: I.slotFaviconNative || 'Native', hint: I.slotFaviconNativeHint || '' }
+			} ),
+			brandSlot( 'favicon-dark', I.slotFaviconDark || 'Favicon — dark', I.slotFaviconDarkSub || 'Shown via prefers-color-scheme: dark' )
 		] );
 
 		// Display row — segmented controls for Admin bar + Login screen, and
@@ -903,24 +949,37 @@
 		// automatically through color-mix(), so showing those values added clutter
 		// without a control. The Accent column anchors the right of the row so
 		// the colour is always close to the controls it tints.
-		var wpField = logoSeg( 'wpLogo', 'ak-wp-logo-label', I.wpLogoLabel || 'Admin bar', [
-			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
+		// Admin bar: no `hide` option — picking Favicon when no Site Icon is set
+		// already yields a bare title (favicon_chip_css returns ''), so the third
+		// choice was redundant. Login screen keeps its `hide` (separate control).
+		// Order: Favicon first (it's the schema default — see register_branding),
+		// Logo second (the customisation step). Reads left-to-right as "starts
+		// here, swap in your logo if you have one".
+		var wpField = logoSeg( 'wpLogo', 'ak-wp-logo-label', I.wpLogoLabel || 'WordPress', [
 			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' },
-			{ v: 'hide',    label: I.wpLogoHide || 'Hide' }
+			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' }
 		] );
-		var loginField = logoSeg( 'loginLogo', 'ak-login-logo-label', I.loginLogoLabel || 'Login screen', [
-			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' },
+		// Login screen mirrors the admin bar: no `hide` option. Favicon with no
+		// Site Icon set collapses the WP login logo entirely (see class-login.php).
+		var loginField = logoSeg( 'loginLogo', 'ak-login-logo-label', I.loginLogoLabel || 'Login', [
 			{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' },
-			{ v: 'hide',    label: I.wpLogoHide || 'Hide' }
+			{ v: 'logo',    label: I.wpLogoBrand || 'Logo' }
 		] );
+		// Two rows of identical chrome — same .ak-display-row, same row label
+		// treatment — so Display and Color read as siblings, not as a row + a
+		// pushed-right inline picker.
 		var displayRow = el( 'div', { 'class': 'ak-display-row' }, [
 			el( 'span', { 'class': 'ak-display-row__lbl', text: I.displayLabel || 'Display' } ),
-			wpField, loginField, accentPicker()
+			wpField, loginField
+		] );
+		var colorRow = el( 'div', { 'class': 'ak-display-row' }, [
+			el( 'span', { 'class': 'ak-display-row__lbl', text: I.accentLabel || 'Color' } ),
+			accentPicker()
 		] );
 
-		// Card stack: identity (slots) → placement + accent (one row).
+		// Card stack: identity (slots) → display row → color row.
 		var card = el( 'section', { 'class': 'ak-card' }, [
-			cardHead, slotsRow, displayRow
+			cardHead, slotsRow, displayRow, colorRow
 		] );
 
 		// Intro text above the card.
@@ -1080,43 +1139,143 @@
 		] );
 	}
 
-	// --- Actions handlers (Reset / Re-sync) ------------------------------------
-	// Both are tied to the same state model: the SPA reloads the page on success
-	// so server-side gating + asset cache-busting picks up the change.
+	// --- Export to Bricks modal ------------------------------------------------
+	// Step-by-step import guide rendered as an accordion. Each step (Theme Style,
+	// Variables, then the four palettes in dependency order — Semantic first
+	// since the others reference its variables) is one collapsible card with:
+	// a numbered title, the import location, a pretty-printed JSON preview,
+	// and Copy / Download buttons. All collapsed by default so the first paint
+	// is a clean ordered list.
+	function openExportModal() {
+		var steps = D.bricksExports || [];
+		if ( ! steps.length ) { return; }
 
-	function doReset() {
-		if ( ! window.confirm( I.confirmReset || 'Reset all settings?' ) ) { return; }
-		if ( ! apiFetch ) { setStatus( 'is-error', I.error ); return; }
-		state.saving = true;
-		updateBar();
-		var path = D.route.charAt( 0 ) === '/' ? D.route : '/' + D.route;
-		apiFetch( { path: path, method: 'POST', data: { reset: true } } )
-			.then( function () {
-				setStatus( 'is-saved', I.statusReset || 'Defaults restored' );
-				setTimeout( function () { location.reload(); }, 600 );
-			} )
-			.catch( function () {
-				state.saving = false;
-				updateBar();
-				setStatus( 'is-error', I.error );
-			} );
-	}
+		var overlay = el( 'div', { 'class': 'ak-export-modal', role: 'dialog', 'aria-modal': 'true', 'aria-label': I.exportTitle || 'Export to Bricks' } );
+		var body    = el( 'div', { 'class': 'ak-export-modal__body' } );
+		body.addEventListener( 'click', function ( e ) { e.stopPropagation(); } );
 
-	function doResync() {
-		if ( ! apiFetch ) { setStatus( 'is-error', I.error ); return; }
-		var path = D.resyncRoute && D.resyncRoute.charAt( 0 ) === '/' ? D.resyncRoute : '/' + ( D.resyncRoute || 'adminkit/v1/actions/resync' );
-		state.saving = true;
-		updateBar();
-		apiFetch( { path: path, method: 'POST', data: { provider: 'bricks' } } )
-			.then( function () {
-				setStatus( 'is-saved', I.statusResync || 'Bricks tokens re-synced' );
-				setTimeout( function () { location.reload(); }, 600 );
-			} )
-			.catch( function () {
-				state.saving = false;
-				updateBar();
-				setStatus( 'is-error', I.error );
+		var closeBtn = el( 'button', {
+			type: 'button', 'class': 'ak-export-modal__close',
+			'aria-label': I.exportClose || 'Close'
+		} );
+		closeBtn.innerHTML = ICONS.close;
+
+		body.appendChild( el( 'div', { 'class': 'ak-export-modal__head' }, [
+			el( 'h2', { 'class': 'ak-export-modal__title', text: I.exportTitle || 'Export to Bricks' } ),
+			closeBtn
+		] ) );
+		body.appendChild( el( 'p', { 'class': 'ak-export-modal__intro', text: I.exportIntro || '' } ) );
+
+		var stepsWrap = el( 'div', { 'class': 'ak-export-steps' } );
+
+		// Caret SVG injected into each accordion trigger — rotates 90° via CSS
+		// on `.is-open`. Inline so it inherits currentColor + sits well in flex.
+		var caret = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+
+		steps.forEach( function ( step, idx ) {
+			// Pretty-print on the client so the preview is readable even if the
+			// source file is minified. Fall back to the raw content on parse error.
+			var pretty;
+			try { pretty = JSON.stringify( JSON.parse( step.content ), null, 2 ); }
+			catch ( err ) { pretty = step.content; }
+
+			// Accordion trigger — always-visible header with index, title, and caret.
+			var trigger = el( 'button', {
+				type: 'button',
+				'class': 'ak-export-step__trigger',
+				'aria-expanded': 'false'
 			} );
+			trigger.innerHTML =
+				'<span class="ak-export-step__index">' + ( idx + 1 ) + '</span>' +
+				'<span class="ak-export-step__title"></span>' +
+				'<span class="ak-export-step__caret">' + caret + '</span>';
+			// Title text via textContent (escapes safely) — avoids HTML injection
+			// even though the PHP source is a controlled __() string.
+			trigger.querySelector( '.ak-export-step__title' ).textContent = step.title || step.key;
+
+			// Copy + Download buttons — only built for THIS step's single file.
+			var copyBtn = el( 'button', { type: 'button', 'class': 'ak-btn', text: I.exportCopy || 'Copy' } );
+			copyBtn.addEventListener( 'click', function ( e ) {
+				e.stopPropagation();
+				var done = function () {
+					var prev = copyBtn.textContent;
+					copyBtn.textContent = I.exportCopied || 'Copied';
+					copyBtn.disabled = true;
+					setTimeout( function () { copyBtn.textContent = prev; copyBtn.disabled = false; }, 1600 );
+				};
+				if ( navigator.clipboard && navigator.clipboard.writeText ) {
+					navigator.clipboard.writeText( pretty ).then( done, function () { /* silently ignore */ } );
+				} else {
+					// Fallback for very old browsers.
+					var ta = document.createElement( 'textarea' );
+					ta.value = pretty;
+					document.body.appendChild( ta );
+					ta.select();
+					try { document.execCommand( 'copy' ); done(); } catch ( err2 ) { /* noop */ }
+					document.body.removeChild( ta );
+				}
+			} );
+
+			// Download is the primary action — that's what most users want here
+			// (Copy is a fallback for power users who want to paste straight into
+			// Bricks). Visual hierarchy reflects that with the accent fill.
+			var dlBtn = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--primary', text: I.exportDownload || 'Download .json' } );
+			dlBtn.addEventListener( 'click', function ( e ) {
+				e.stopPropagation();
+				var blob = new Blob( [ pretty ], { type: 'application/json' } );
+				var url  = URL.createObjectURL( blob );
+				var a    = document.createElement( 'a' );
+				a.href = url;
+				a.download = step.filename;
+				document.body.appendChild( a );
+				a.click();
+				document.body.removeChild( a );
+				setTimeout( function () { URL.revokeObjectURL( url ); }, 1000 );
+			} );
+
+			// Accordion panel — collapsed by default via [hidden]; trigger toggles it.
+			var panel = el( 'div', { 'class': 'ak-export-step__panel' } );
+			panel.setAttribute( 'hidden', '' );
+			panel.appendChild( el( 'div', { 'class': 'ak-export-step__hint', text: step.hint || '' } ) );
+			panel.appendChild( el( 'pre', { 'class': 'ak-export-code', text: pretty } ) );
+			panel.appendChild( el( 'div', { 'class': 'ak-export-step__actions' }, [
+				el( 'code', { 'class': 'ak-export-step__filename', text: step.filename } ),
+				copyBtn,
+				dlBtn
+			] ) );
+
+			trigger.addEventListener( 'click', function () {
+				var open = trigger.getAttribute( 'aria-expanded' ) === 'true';
+				if ( open ) {
+					trigger.setAttribute( 'aria-expanded', 'false' );
+					trigger.classList.remove( 'is-open' );
+					panel.setAttribute( 'hidden', '' );
+				} else {
+					trigger.setAttribute( 'aria-expanded', 'true' );
+					trigger.classList.add( 'is-open' );
+					panel.removeAttribute( 'hidden' );
+				}
+			} );
+
+			stepsWrap.appendChild( el( 'div', { 'class': 'ak-export-step' }, [ trigger, panel ] ) );
+		} );
+
+		body.appendChild( stepsWrap );
+
+		function close() {
+			overlay.parentNode && overlay.parentNode.removeChild( overlay );
+			document.removeEventListener( 'keydown', onKey );
+		}
+		function onKey( e ) {
+			if ( e.key === 'Escape' ) { e.preventDefault(); close(); }
+		}
+		overlay.addEventListener( 'click', close );  // click outside body closes
+		closeBtn.addEventListener( 'click', close );
+		document.addEventListener( 'keydown', onKey );
+
+		overlay.appendChild( body );
+		document.body.appendChild( overlay );
+		closeBtn.focus();
 	}
 
 	// Typography — static reference, laid out in the same card pattern as the
@@ -1181,13 +1340,21 @@
 
 		// Reflect a feature's state on its row: dim it ("is-off") when switched off
 		// — the switch stays clickable so it can be turned back on — and, for a
-		// child (e.g. mShots under Post previews), lock it ("is-locked": dimmed +
-		// the switch made non-operable, both via CSS and the disabled input) while
-		// its parent is off, snapping back the moment the parent is on again.
+		// child (e.g. mShots under Post previews) OR an unavailable feature (e.g.
+		// Bricks builder without the Bricks theme), lock it ("is-locked": dimmed
+		// + the switch made non-operable, both via CSS and the disabled input).
+		// `available: false` is permanent for the session; `parent` locks/unlocks
+		// live as the parent toggles.
 		function refreshRow( f ) {
 			var r = refs[ f.key ];
 			if ( ! r ) { return; }
 			r.row.classList.toggle( 'is-off', ! state.features[ f.key ] );
+			if ( f.available === false ) {
+				// Hard lock — prerequisite isn't met. Disabled + dimmed; ignores parent.
+				r.input.disabled = true;
+				r.row.classList.add( 'is-locked' );
+				return;
+			}
 			if ( f.parent ) {
 				var parentOn = !! state.features[ f.parent ];
 				r.input.disabled = ! parentOn;
@@ -1196,13 +1363,28 @@
 		}
 
 		// Flip every feature at once (the "enable / disable all" controls).
-		// Rows flagged `bulk: false` (e.g. the WordPress-default master pause) are
-		// left untouched — sweeping them would be nonsensical.
+		// Rows flagged `bulk: false` OR `available: false` (prerequisite missing)
+		// are left untouched — sweeping them would be nonsensical.
 		function setAll( on ) {
 			( D.features || [] ).forEach( function ( f ) {
-				if ( f.bulk === false ) { return; }
+				if ( f.bulk === false || f.available === false ) { return; }
 				state.features[ f.key ] = on;
 				if ( refs[ f.key ] ) { refs[ f.key ].input.checked = on; }
+			} );
+			( D.features || [] ).forEach( refreshRow );
+			markDirty();
+		}
+
+		// Restore every feature to its registered schema default (passed in
+		// `f.default` from boot_data). No confirm prompt — markDirty puts the
+		// page in "unsaved" state so the user can still walk away without
+		// committing by reloading or navigating off. Same skip rules as setAll.
+		function resetAll() {
+			( D.features || [] ).forEach( function ( f ) {
+				if ( f.bulk === false || f.available === false ) { return; }
+				var def = !! f.default;
+				state.features[ f.key ] = def;
+				if ( refs[ f.key ] ) { refs[ f.key ].input.checked = def; }
 			} );
 			( D.features || [] ).forEach( refreshRow );
 			markDirty();
@@ -1216,7 +1398,14 @@
 				( D.features || [] ).forEach( refreshRow );
 				markDirty();
 			} );
-			var row = el( 'div', { 'class': 'ak-row' + ( f.parent ? ' ak-row--child' : '' ) }, [
+			var rowAttrs = { 'class': 'ak-row' + ( f.parent ? ' ak-row--child' : '' ) };
+			// Show the prereq hint on hover when the feature can't run (e.g.
+			// Bricks builder without the Bricks theme). refreshRow() applies the
+			// is-locked + disabled styling; this just explains why.
+			if ( f.available === false && f.unavailableHint ) {
+				rowAttrs.title = f.unavailableHint;
+			}
+			var row = el( 'div', rowAttrs, [
 				el( 'div', { 'class': 'ak-row__main' }, [
 					el( 'span', { 'class': 'ak-row__label', text: f.label } ),
 					el( 'span', { 'class': 'ak-row__desc', text: f.desc } )
@@ -1233,11 +1422,13 @@
 
 		( D.features || [] ).forEach( refreshRow ); // initial dim + dependency state
 
-		// Bulk controls — flip every feature on/off in one click (reuses the
-		// header's flex row + secondary buttons; no new layout CSS).
+		// Bulk controls — flip every feature on/off, or restore the registered
+		// schema defaults (reuses the header's flex row + secondary buttons;
+		// no new layout CSS).
 		p.appendChild( el( 'div', { 'class': 'ak-actions ak-bulk' }, [
 			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.enableAll, onclick: function () { setAll( true ); } } ),
-			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.disableAll, onclick: function () { setAll( false ); } } )
+			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.disableAll, onclick: function () { setAll( false ); } } ),
+			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.resetDefaults || 'Reset to defaults', onclick: resetAll } )
 		] ) );
 
 		// One titled .ak-rows block per group label (order = first-seen).
@@ -1289,32 +1480,18 @@
 			} );
 		}
 
-		// Neutral "Inactive" chip for installed-but-not-active plugins. Pairs
-		// with `.is-muted` on the row for an across-the-board dim treatment.
-		function inactiveBadge() {
-			return el( 'span', {
-				'class': 'ak-badge',
-				title: I.inactiveHint || '',
-				text: I.inactive || 'Inactive'
-			} );
-		}
-
 		function pluginRow( i ) {
 			// Badge + name hug the left together (.ak-row__head), badge first; the
 			// switch (native only) is pushed right by .ak-row__main's flex:1.
 			// System (AdminKit itself) → neutral System; supported → brand Native;
 			// any other installed plugin → neutral Generic (no dedicated adapter).
 			var badge = i.system ? systemBadge() : ( i.supported ? nativeBadge() : genericBadge() );
-			var head  = [ badge, el( 'span', { 'class': 'ak-row__label', text: i.label } ) ];
-			// Installed but not active → add an "Inactive" chip after the name.
-			if ( ! i.system && i.active === false ) {
-				head.push( inactiveBadge() );
-			}
 			var main = el( 'div', { 'class': 'ak-row__main' }, [
-				el( 'div', { 'class': 'ak-row__head' }, head )
+				el( 'div', { 'class': 'ak-row__head' }, [
+					badge,
+					el( 'span', { 'class': 'ak-row__label', text: i.label } )
+				] )
 			] );
-			// Class hook for the muted/dim treatment when the plugin is inactive.
-			var rowClass = ( ! i.system && i.active === false ) ? 'ak-row is-muted' : 'ak-row';
 
 			// System row (AdminKit itself) → greyed + locked: a switch that reads ON
 			// but can't be operated (.is-locked dims it and kills pointer events).
@@ -1334,7 +1511,7 @@
 
 			// Generic plugin → no adapter to switch (Generic badge, no toggle).
 			if ( ! i.supported || ! i.slug ) {
-				return el( 'div', { 'class': rowClass }, [ main ] );
+				return el( 'div', { 'class': 'ak-row' }, [ main ] );
 			}
 
 			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
@@ -1343,35 +1520,12 @@
 				state.integrations[ i.slug ] = input.checked;
 				markDirty();
 			} );
-			inputs.push( { slug: i.slug, input: input } );
-			return el( 'div', { 'class': rowClass }, [
-				main,
-				el( 'label', { 'class': 'ak-switch' }, [
-					input,
-					el( 'span', { 'class': 'ak-switch__track' } ),
-					el( 'span', { 'class': 'ak-switch__knob' } )
-				] )
-			] );
-		}
-
-		// Global "Theme generic plugins" toggle row — sits above the lists.
-		// When off, the PHP `gate_generic_theming` filter suppresses the
-		// adminkit body class on non-native plugin admin pages, so they fall
-		// back to WordPress's native UI.
-		function genericThemingRow() {
-			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
-			input.checked = !! state.genericThemingEnabled;
-			input.addEventListener( 'change', function () {
-				state.genericThemingEnabled = input.checked;
-				markDirty();
-			} );
+			// `default` is captured here so the Reset bulk button can flip each
+			// row back to its registered value (always true for supported
+			// integrations — see register_integration_toggles()).
+			inputs.push( { slug: i.slug, input: input, def: !! i.default } );
 			return el( 'div', { 'class': 'ak-row' }, [
-				el( 'div', { 'class': 'ak-row__main' }, [
-					el( 'div', { 'class': 'ak-row__head' }, [
-						el( 'span', { 'class': 'ak-row__label', text: I.genericThemingLabel || 'Theme generic plugins' } )
-					] ),
-					el( 'p', { 'class': 'ak-row__desc', text: I.genericThemingDesc || '' } )
-				] ),
+				main,
 				el( 'label', { 'class': 'ak-switch' }, [
 					input,
 					el( 'span', { 'class': 'ak-switch__track' } ),
@@ -1385,6 +1539,17 @@
 			inputs.forEach( function ( r ) {
 				r.input.checked = on;
 				state.integrations[ r.slug ] = on;
+			} );
+			markDirty();
+		}
+
+		// Reset every native integration to its registered schema default
+		// (currently always true — see register_integration_toggles()).
+		// markDirty so the user can still walk away without committing.
+		function resetAll() {
+			inputs.forEach( function ( r ) {
+				r.input.checked = r.def;
+				state.integrations[ r.slug ] = r.def;
 			} );
 			markDirty();
 		}
@@ -1408,18 +1573,12 @@
 			] ) );
 		} );
 
-		// Global generic-theming switch sits in its own group at the top —
-		// affects every Generic row below, so the header position reads as
-		// "this is the master switch for what's listed".
-		p.appendChild( el( 'div', { 'class': 'ak-group' }, [
-			el( 'div', { 'class': 'ak-rows' }, [ genericThemingRow() ] )
-		] ) );
-
 		// Bulk controls — only when there's at least one active integration to flip.
 		if ( inputs.length ) {
 			p.appendChild( el( 'div', { 'class': 'ak-actions ak-bulk' }, [
 				el( 'button', { type: 'button', 'class': 'ak-btn', text: I.enableAll, onclick: function () { setAll( true ); } } ),
-				el( 'button', { type: 'button', 'class': 'ak-btn', text: I.disableAll, onclick: function () { setAll( false ); } } )
+				el( 'button', { type: 'button', 'class': 'ak-btn', text: I.disableAll, onclick: function () { setAll( false ); } } ),
+				el( 'button', { type: 'button', 'class': 'ak-btn', text: I.resetDefaults || 'Reset to defaults', onclick: resetAll } )
 			] ) );
 		}
 		sections.forEach( function ( s ) { p.appendChild( s ); } );
@@ -1435,15 +1594,16 @@
 		Object.keys( state.integrations ).forEach( function ( slug ) {
 			v[ 'integration_' + slug + '_enabled' ] = !! state.integrations[ slug ];
 		} );
-		v.logo_light   = state.logos.light;
-		v.logo_dark    = state.logos.dark;
-		v.wp_logo      = state.wpLogo;
-		v.login_logo   = state.loginLogo;
-		v.brand_accent = state.brandAccent;
+		v.logo_light    = state.logos.light;
+		v.logo_dark     = state.logos.dark;
+		v.wp_logo       = state.wpLogo;
+		v.login_logo    = state.loginLogo;
+		v.brand_accent  = state.brandAccent;
 		v.accent_source = state.accentSource;
-		v.generic_theming_enabled = !! state.genericThemingEnabled;
 		// WP-native option proxy — see PHP rest_save() for the round-trip.
-		v.site_icon_id = state.siteIcon.id;
+		v.site_icon_id  = state.siteIcon.id;
+		// AdminKit-owned dark favicon URL (no WP equivalent).
+		v.favicon_dark  = state.faviconDark;
 		return v;
 	}
 

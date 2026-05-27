@@ -271,8 +271,15 @@
 	// other plugin section (40, sorted alphabetically), then loose (90).
 	var CARDS = [
 		{ id: 'ak-info', icon: 'users', t: S.cards.info, grid: true, order: 0,
-		  rows: [ ['.user-user-login-wrap', '.user-login-wrap'], '.user-nickname-wrap', '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-url-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', '.user-description-wrap', '#adminkit-profile-picture', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
-		  half: [ ['.user-user-login-wrap', '.user-login-wrap'], '.user-nickname-wrap', '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-url-wrap', '.user-display-name-wrap', '.user-role-wrap' ],
+		  // Display order top→bottom. Pairings (.ak-half = 1/2, .ak-third = 1/3)
+		  // group fields visually: names side-by-side, email + nickname together,
+		  // display name + role together, then login standalone (full width to give
+		  // the "click to enable" affordance room), bio (textarea, full width), and
+		  // a 3-up footer: avatar + new password + reset.
+		  // `.user-url-wrap` is intentionally NOT pulled here — it stays in Contact
+		  // Info and gets absorbed by the Settings card.
+		  rows: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', ['.user-user-login-wrap', '.user-login-wrap'], '.user-description-wrap', '#adminkit-profile-picture', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
+		  half: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap' ],
 		  third: [ '#adminkit-profile-picture', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
 		  absorb: [ S.sections.name ] },
 		{ id: 'ak-settings', icon: 'sliders', t: S.cards.settings, order: 30,

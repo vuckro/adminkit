@@ -49,10 +49,10 @@
 	--ak-text: #1d2327;
 	--ak-text-muted: #757575;
 
-	/* Neutral text/icons grey — NOT part of the accent family. WordPress
-	   uses the same slate regardless of the chosen colour scheme; we match
-	   that convention so a custom accent doesn't repaint structural text. */
-	--ak-secondary: #50575e;
+	/* Aliased to --ak-primary — AdminKit no longer keeps a separate "secondary"
+	   concept. Badges, awareness bubbles and the few surfaces that consumed
+	   --ak-secondary now pick up the brand accent. */
+	--ak-secondary: var(--ak-primary);
 
 	/* ── Status (WP admin standards: success / warning / error / info) ── */
 	--ak-info: #72aee6;
@@ -80,7 +80,7 @@
 	--ak-text: #f0f0f1;
 	--ak-text-muted: #a7aaad;
 
-	--ak-secondary: #a7aaad;
+	--ak-secondary: var(--ak-primary); /* aliased — see light-mode rule above */
 
 	--ak-info-subtle: color-mix(in srgb, #72aee6 22%, #2c2c2c);
 	--ak-success-subtle: color-mix(in srgb, #00a32a 22%, #2c2c2c);

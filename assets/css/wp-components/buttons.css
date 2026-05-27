@@ -139,7 +139,12 @@ body.adminkit .button.disabled,
 body.adminkit .button:disabled,
 body.adminkit .button[disabled] {
 	background: var(--ak-surface) !important;
-	border-color: var(--ak-border) !important;
+	/* WP ships `border-color: #d8d8d8 !important` AND a separate later rule that
+	   may reset border-width/style on the "Active"-state button of plugin-install
+	   pages. Force the full shorthand so the chip always reads as a bordered
+	   button — without this the "Active" pill on installed plugins drops its
+	   border in some contexts. */
+	border: 1px solid var(--ak-border) !important;
 	color: var(--ak-text-muted) !important;
 	cursor: not-allowed;
 }

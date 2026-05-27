@@ -69,6 +69,17 @@ class AdminKit_Settings {
 			) );
 		}
 
+		// Dark-mode favicon — paired with WP's native `site_icon` (which acts as
+		// the LIGHT-mode favicon). Stored as a URL; printed in `<head>` with a
+		// `prefers-color-scheme: dark` media query so the browser swaps
+		// automatically. No equivalent on the WP side, so we own this end-to-end.
+		self::register( 'favicon_dark', array(
+			'type'     => 'text',
+			'group'    => 'branding',
+			'default'  => '',
+			'sanitize' => 'esc_url_raw',
+		) );
+
 		// The site-name brand mark (next to the site title; the top-left WordPress
 		// logo is always hidden): the brand logo, the site icon (favicon), or hidden.
 		// `logo` falls back to `favicon`, then to the bare site title, when no brand
@@ -78,21 +89,28 @@ class AdminKit_Settings {
 			'type'     => 'select',
 			'group'    => 'branding',
 			'default'  => 'favicon',
+			// Admin bar has no `hide` — picking `favicon` when no Site Icon is set
+			// already yields a bare title (favicon_chip_css() returns ''). Legacy
+			// stored `'hide'` values degrade to `favicon` here. Login screen keeps
+			// its `hide` (separate setting `login_logo`).
 			'sanitize' => static function ( $v ) {
-				return in_array( $v, array( 'logo', 'favicon', 'hide' ), true ) ? $v : 'favicon';
+				return in_array( $v, array( 'logo', 'favicon' ), true ) ? $v : 'favicon';
 			},
 		) );
 
 		// Login-screen mark — its OWN choice, independent of the admin bar: `logo`
-		// (rectangular wordmark), `favicon` (square site icon), or `hide` (no mark).
-		// Read by AdminKit_Core_Login::login_mode(). Defaults to `favicon`. (A legacy
-		// '' = "inherit wp_logo" is still honoured by login_mode() for back-compat.)
+		// (rectangular wordmark) or `favicon` (square site icon). Read by
+		// AdminKit_Core_Login::login_mode(). Defaults to `favicon` — picking it
+		// with no Site Icon set collapses the WP login logo entirely, so no
+		// explicit `hide` mode is needed. Legacy stored `'hide'` degrades to
+		// `favicon` here. (A legacy '' = "inherit wp_logo" is still honoured by
+		// login_mode() for back-compat.)
 		self::register( 'login_logo', array(
 			'type'     => 'select',
 			'group'    => 'branding',
 			'default'  => 'favicon',
 			'sanitize' => static function ( $v ) {
-				return in_array( $v, array( 'logo', 'favicon', 'hide' ), true ) ? $v : 'favicon';
+				return in_array( $v, array( 'logo', 'favicon' ), true ) ? $v : 'favicon';
 			},
 		) );
 
@@ -270,14 +288,14 @@ class AdminKit_Settings {
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// Bricks builder restyle — OFF by default (opt-in). Restyles a third-party
-		// builder's own UI, so it stays inert until asked for. Read by
-		// AdminKit_Integration_Bricks::enqueue_builder(); the Features row only
-		// shows when Bricks is active.
+		// Bricks builder restyle — ON by default (when the Bricks theme is the
+		// active theme; the Features row is greyed-out otherwise via the
+		// `available` flag, so a non-Bricks site still sees the option but can't
+		// flip it). Read by AdminKit_Integration_Bricks::enqueue_builder().
 		self::register( 'bricks_builder_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => false,
+			'default'  => true,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 

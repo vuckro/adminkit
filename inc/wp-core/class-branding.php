@@ -53,6 +53,31 @@ class AdminKit_Core_Branding {
 		add_action( 'admin_bar_menu', array( __CLASS__, 'inject_brand_logo' ), 80 );
 		add_action( 'admin_head', array( __CLASS__, 'print_admin' ), 20 );
 		add_action( 'wp_head', array( __CLASS__, 'print_frontend' ), 20 );
+		// Dark-mode favicon — printed late so it sits AFTER WP's own
+		// `wp_site_icon()` link tags. Browsers honour the media query so the
+		// dark variant wins on dark-system tabs (incl. the Bricks editor).
+		add_action( 'admin_head', array( __CLASS__, 'print_dark_favicon' ), 99 );
+		add_action( 'wp_head', array( __CLASS__, 'print_dark_favicon' ), 99 );
+		add_action( 'login_head', array( __CLASS__, 'print_dark_favicon' ), 99 );
+	}
+
+	/**
+	 * Print a `<link rel="icon" media="(prefers-color-scheme: dark)">` paired
+	 * with WP's native site_icon. Browsers pick the matching media-query
+	 * candidate at load — the dark URL wins on dark systems, the WP site_icon
+	 * keeps its place on light systems. No-op when no dark URL is configured.
+	 *
+	 * @return void
+	 */
+	public static function print_dark_favicon() {
+		$url = (string) AdminKit_Settings::get( 'favicon_dark' );
+		if ( '' === $url ) {
+			return;
+		}
+		printf(
+			'<link id="adminkit-favicon-dark" rel="icon" media="(prefers-color-scheme: dark)" href="%s" />' . "\n",
+			esc_url( $url )
+		);
 	}
 
 	/**
@@ -178,7 +203,8 @@ class AdminKit_Core_Branding {
 	 * toolbar. Always hides the top-left wp-logo node; then, per `wp_logo`, paints
 	 * the mark at the site-name node: `logo` shows the configured brand logo (or
 	 * falls back to the favicon chip when nothing is configured), `favicon` shows
-	 * the Site Icon chip, `hide` shows no mark (just the wp-logo hide).
+	 * the Site Icon chip (or nothing when no Site Icon is set — that's the
+	 * implicit "hide" path; no explicit `hide` mode exists for the admin bar).
 	 *
 	 * @return string
 	 */
@@ -196,33 +222,34 @@ class AdminKit_Core_Branding {
 	 * The mark at the site-name node, per `wp_logo`:
 	 *   - `logo`    → size the brand <img> injected by inject_brand_logo() and hide
 	 *                 the title text (the wordmark replaces it). Falls back to the
-	 *                 favicon chip when no logo is configured (the <img> wasn't
-	 *                 injected, so the marker class is absent).
-	 *   - `favicon` → the Site Icon as a rounded chip before the title.
-	 *   - `hide`    → nothing.
+	 *                 favicon chip when no logo is configured.
+	 *   - `favicon` → the Site Icon as a rounded chip before the title — or the
+	 *                 WordPress logomark glyph when no Site Icon is configured.
+	 * Any other value (incl. legacy stored `'hide'`) degrades to `favicon`.
+	 *
+	 * The WordPress logomark is the final fallback: rather than leaving WP's
+	 * default house dashicon (\f102), we swap to the WP "W" mark (\f120). An
+	 * unbranded install still feels owned, and the bar reads as WordPress
+	 * rather than "Home of a generic site".
 	 *
 	 * @return string
 	 */
 	private static function site_name_mark_css() {
-		$mode = AdminKit_Settings::get( 'wp_logo' );
-
-		if ( 'hide' === $mode ) {
-			return '';
-		}
-
-		if ( 'logo' === $mode ) {
+		if ( 'logo' === AdminKit_Settings::get( 'wp_logo' ) ) {
 			$css = self::brand_logo_css();
 			if ( '' !== $css ) {
 				return $css;
 			}
-			$mode = 'favicon'; // no brand logo configured → fall back to the site icon chip.
+			// No brand logo configured → fall through to the favicon chip.
 		}
 
-		if ( 'favicon' === $mode ) {
-			return self::favicon_chip_css();
+		$css = self::favicon_chip_css();
+		if ( '' !== $css ) {
+			return $css;
 		}
 
-		return '';
+		// Nothing configured anywhere → WP logomark fallback.
+		return self::wp_logomark_css();
 	}
 
 	/**
@@ -317,6 +344,24 @@ class AdminKit_Core_Branding {
 			. 'border-radius:var(--ak-radius-s,5px)}';
 		return self::hide_site_name_glyph()
 			. '.wp-admin #wpadminbar #wp-admin-bar-site-name > .ab-item.ab-item::before' . $decl
+			. '#wpadminbar #wp-admin-bar-site-name > .ab-item.ab-item::before' . $decl;
+	}
+
+	/**
+	 * Fallback site-name mark — swap WP's default house dashicon (\f102) for the
+	 * WordPress logomark (\f120). Used when nothing is configured (no brand logo,
+	 * no Site Icon), so the bar still feels like WordPress rather than a generic
+	 * "home". The Dashicons font is already loaded with the admin bar in both
+	 * wp-admin and the front-end, so no extra enqueue is needed.
+	 *
+	 * Doubled `.ab-item` for specificity, mirroring favicon_chip_css() — beats
+	 * WP core's own .ab-item:before content rule in both contexts.
+	 *
+	 * @return string
+	 */
+	private static function wp_logomark_css() {
+		$decl = '{content:"\\f120" !important}';
+		return '.wp-admin #wpadminbar #wp-admin-bar-site-name > .ab-item.ab-item::before' . $decl
 			. '#wpadminbar #wp-admin-bar-site-name > .ab-item.ab-item::before' . $decl;
 	}
 
