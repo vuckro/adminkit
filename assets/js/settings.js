@@ -939,23 +939,30 @@
 			return byGroup[ label ].rows;
 		}
 
-		// Reflect a feature's state on its row: dim it ("is-off") when switched off
-		// — the switch stays clickable so it can be turned back on — and, for a
-		// child (e.g. mShots under Post previews) OR an unavailable feature (e.g.
-		// Bricks builder without the Bricks theme), lock it ("is-locked": dimmed
-		// + the switch made non-operable, both via CSS and the disabled input).
-		// `available: false` is permanent for the session; `parent` locks/unlocks
-		// live as the parent toggles.
+		// Reflect a feature's state on its row: dim it ("is-off") when switched
+		// off — the switch stays clickable so it can be turned back on — and,
+		// for a child OR an unavailable feature (e.g. Bricks builder without
+		// the Bricks theme), lock it ("is-locked": dimmed + the switch made
+		// non-operable, both via CSS and the disabled input).
+		// `available: false` is permanent for the session; `parent` locks/
+		// unlocks live as the parent toggles.
 		function refreshRow( f ) {
 			var r = refs[ f.key ];
 			if ( ! r ) { return; }
-			r.row.classList.toggle( 'is-off', ! state.features[ f.key ] );
 			if ( f.available === false ) {
-				// Hard lock — prerequisite isn't met. Disabled + dimmed; ignores parent.
+				// Hard lock — prerequisite isn't met. Force the visual state to
+				// OFF so it doesn't read as "on but blocked" (confusing — looks
+				// like the feature is somehow half-active). The saved value in
+				// state.features stays untouched: when the prerequisite returns,
+				// the row re-renders with the user's last actual choice.
 				r.input.disabled = true;
+				r.input.checked  = false;
 				r.row.classList.add( 'is-locked' );
+				r.row.classList.add( 'is-off' );
 				return;
 			}
+			r.row.classList.toggle( 'is-off', ! state.features[ f.key ] );
+			r.input.checked = !! state.features[ f.key ];
 			if ( f.parent ) {
 				var parentOn = !! state.features[ f.parent ];
 				r.input.disabled = ! parentOn;
