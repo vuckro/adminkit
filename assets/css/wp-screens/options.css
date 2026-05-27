@@ -11,7 +11,10 @@
    Self-scoped under `body.adminkit` + a per-page body class so the rules
    never leak onto plugin settings screens that reuse `.form-table`. */
 
-/* ──── 1. Width — cap the form to a readable measure ──── */
+/* ──── 1. Width + breathing room — cap the form to a readable measure
+   and push it down from the page H1 (WP's stock gap between the heading
+   and the first card was tight enough that the card felt glued to the
+   title). 20px reads as "settled in" without feeling drifted. ──── */
 body.adminkit.options-general-php .wrap > form,
 body.adminkit.options-writing-php .wrap > form,
 body.adminkit.options-reading-php .wrap > form,
@@ -19,6 +22,7 @@ body.adminkit.options-discussion-php .wrap > form,
 body.adminkit.options-media-php .wrap > form,
 body.adminkit.options-permalink-php .wrap > form {
 	max-width: 960px;
+	margin-top: 20px;
 }
 
 /* ──── 2. Section heading — drop the underline form-table.css ships ────
