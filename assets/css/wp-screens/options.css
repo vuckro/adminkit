@@ -96,51 +96,29 @@ body.adminkit.options-general-php .ak-options-block > .form-table {
 }
 
 
-/* ──── 5. options-discussion.php — 2-tab strip (Avatars / Comment settings).
-   The JS (assets/js/wp-screens/options-discussion.js) wraps the page in
-   `<div class="ak-options-tabs">` with a tab strip + panels container.
-   Active panel visible; the other carries `[hidden]` so submit still posts
-   every field on every tab. */
-body.adminkit.options-discussion-php .ak-options-tabs {
-	margin: 0 0 12px;
+/* ──── 5. options-discussion.php — 2-tab split (Avatars / Comment settings).
+   The JS (assets/js/wp-screens/options-discussion.js) inserts a
+   `<nav class="nav-tab-wrapper">` at the top of the form and tags each
+   `<h2>` + `.form-table` pair with `data-ak-tab="avatars"` or
+   `data-ak-tab="comments"`. Switching tabs just flips `hidden` on the
+   tagged elements — nothing moves out of `<form>`, so rule (3)'s
+   `.form-table` card chrome keeps applying.
+
+   The nav strip itself inherits its pill styling from `chrome.css`
+   (`.nav-tab-wrapper` / `.nav-tab` / `.nav-tab-active`) — same visual
+   as the Profile page tabs. Only the placement + the Avatars-h2 polish
+   live here. */
+body.adminkit.options-discussion-php .wrap > form > .nav-tab-wrapper {
+	margin: 4px 0 16px;
 }
-body.adminkit.options-discussion-php .ak-options-tabs__strip {
-	display: flex;
-	gap: 4px;
-	margin-bottom: 12px;
-	border-bottom: 1px solid var(--ak-border);
-}
-body.adminkit.options-discussion-php .ak-options-tabs__btn {
-	background: transparent;
-	border: 0;
-	border-bottom: 2px solid transparent;
-	margin-bottom: -1px;
-	padding: 8px 14px;
-	font: inherit;
-	font-weight: 500;
-	color: var(--ak-text-muted);
-	cursor: pointer;
-}
-body.adminkit.options-discussion-php .ak-options-tabs__btn:hover {
-	color: var(--ak-text);
-}
-body.adminkit.options-discussion-php .ak-options-tabs__btn.is-active {
-	color: var(--ak-primary);
-	border-bottom-color: var(--ak-primary);
-}
-body.adminkit.options-discussion-php .ak-options-tabs__btn:focus-visible {
-	outline: none;
-	box-shadow: var(--ak-focus-ring);
-	border-radius: var(--ak-radius-s);
-}
-body.adminkit.options-discussion-php .ak-options-tabs__panel[hidden] {
-	display: none;
-}
-/* The Avatars `<h2>` WP printed gets moved INTO the Avatars panel by the
-   JS — strip its underline since the panel + tab already provide
-   structure. */
-body.adminkit.options-discussion-php .ak-options-tabs__panel > h2 {
+/* The Avatars heading sits right above its card on the Avatars tab. WP
+   ships `<h2>` with form-table.css's border-bottom; drop that and tighten
+   the spacing so the heading reads as a card label rather than a divider. */
+body.adminkit.options-discussion-php .wrap > form > h2[data-ak-tab] {
 	border-bottom: 0;
-	margin: 0 0 4px;
+	margin: 4px 0 4px;
 	padding: 0;
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--ak-heading);
 }
