@@ -5,7 +5,7 @@
 body.adminkit.user-edit-php #your-profile,
 body.adminkit.profile-php #your-profile,
 body.adminkit.user-new-php #createuser {
-	max-width: 960px;
+	/* Width unlocked by native-pages.css (T4 template) — was max-width: 960px. */
 }
 
 /* Hide the legacy WP color-scheme picker on profile pages — AdminKit
@@ -41,7 +41,7 @@ body.adminkit.profile-php .ak-profile-header {
 	align-items: center;
 	gap: 12px;
 	width: 100%;
-	max-width: 960px;
+	/* Width unlocked by native-pages.css (T4 template) — was max-width: 960px. */
 	margin: 2px 0 10px;
 }
 
@@ -312,7 +312,7 @@ html.ak-account-ready #createuser {
 /* Whole block aligns to the page-title / hero width so the tabs, the panel and
    the "Add New User" button all share the same left + right edges. */
 body.adminkit .ak-account {
-	max-width: 960px;
+	/* Width unlocked by native-pages.css (T4 template) — was max-width: 960px. */
 }
 
 /* Tab strip styled like WP's .subsubsub filters (All | Administrator | …) so

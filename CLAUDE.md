@@ -147,6 +147,20 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   override is the SoT and would dead-shadow them). If you ever want
   wp-baseline's surfaces to actually take effect, either flip the dep
   direction or move them into the inline emission too.
+- **Native wp-admin pages wear ONE T4 template** (full-width edge-to-edge
+  card, 260 px label / 1 fr control rows, save-bar at the bottom). The
+  template lives in `assets/css/wp-screens/native-pages.css` and is gated
+  via TWO matching lists — the body class added by
+  `AdminKit_Assets::add_admin_body_class()` (`adminkit-native-page`) AND
+  `AdminKit_Core_Chrome::NATIVE_PAGES_SCREENS` (which decides where the
+  CSS + a11y JS enqueue). To bring a new screen under the template, add
+  its `$screen->id` to BOTH lists. Selectors use `body.adminkit.adminkit-native-page`
+  (two classes) so they tie or beat the existing `body.adminkit.{page}-php`
+  per-page rules in `options.css` / `profile.css`; native-pages.css is
+  registered LAST so cascade ties resolve in its favour without
+  `!important`. Page-specific quirks (Permalinks structure cards,
+  Discussion avatars grid, Media numeric inputs) stay inside
+  `native-pages.css` scoped by the natural per-page body class.
 - **Integration discovery is `glob( inc/integrations/*/*/class-*.php )`** — two
   levels deep (`{plugins,themes}/{slug}/`). The class name derives from the file
   basename (`AdminKit_Integration_{Studly_Slug}`). Don't rename a class without
