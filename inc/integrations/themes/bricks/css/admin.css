@@ -587,18 +587,22 @@ body.adminkit #bricks-element-manager tr[data-status="hidden_builder"] td.elemen
 
 
 /* ----- 16. Settings → Custom Code: `tr.code-note` hint rows ----- */
-/* "Custom CSS and JavaScript added below…" hints otherwise paint as their
-   own card because Bricks rings every `tr` with a 1px shadow. They're
-   advisory captions, not stand-alone fields — drop the ring + tighten the
-   spacing so they read as a lead-in to the following field row instead of
-   an empty block between cards. */
+/* "Custom CSS and JavaScript added below…" hints. Bricks renders them as
+   block-level rows (`all: unset` on the <tr>) with a hardcoded
+   `margin: 20px 0 0`, a 1px border-top and `padding: 20px 0` on the td —
+   the whole thing reads as a heavy divider between fields and shows the
+   raw page background through the transparent td.
+   Zero the margins (no air around the note), tokenize the border to the
+   AdminKit ramp, and paint the td with `--ak-surface` so it lands on the
+   same surface as the surrounding section instead of bleeding through. */
 body.adminkit #bricks-settings #tab-custom-code tr.code-note {
+	margin: 0;
 	box-shadow: none;
-	margin-bottom: 0;
+	border-top-color: var(--ak-border);
 }
 body.adminkit #bricks-settings #tab-custom-code tr.code-note td {
-	padding: 12px 20px 4px;
-	background: transparent;
+	padding: 12px 20px;
+	background-color: var(--ak-surface);
 	color: var(--ak-text-muted);
 	font-size: 13px;
 }
