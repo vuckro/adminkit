@@ -376,15 +376,29 @@ body.adminkit .ak-card.ak-grid .form-table textarea {
 	max-width: none;
 }
 
-/* WP core scopes .form-table textarea/select widths with #profile-page /
-   #your-profile (ID specificity), which otherwise beats the class rule above
-   and leaves selects + textareas content-width. Match the ID specificity so
-   the display-name select and the biography textarea fill their cell too. */
+/* WP core uses ID-prefixed selectors that out-specify our class rule above:
+   - `#profile-page .form-table textarea` / `#profile-page .form-table #rich_editing`
+     leave selects + textareas content-width on user-edit / profile.
+   - `#createuser .form-field input { width: 25em }` clamps EVERY text input on
+     user-new.php to 25em (~325px) — pairs of half-width fields end up with a
+     fat band of empty space to the right of each, instead of filling the cell.
+   Match the ID specificity (1,1,1) here so width: 100% wins for inputs, selects
+   and textareas alike, and the half/full grid cells drive the field width. */
+body.adminkit #your-profile .ak-card.ak-grid .form-table input[type="text"],
+body.adminkit #your-profile .ak-card.ak-grid .form-table input[type="email"],
+body.adminkit #your-profile .ak-card.ak-grid .form-table input[type="url"],
+body.adminkit #your-profile .ak-card.ak-grid .form-table input[type="password"],
 body.adminkit #your-profile .ak-card.ak-grid .form-table select,
 body.adminkit #your-profile .ak-card.ak-grid .form-table textarea,
+body.adminkit #createuser .ak-card.ak-grid .form-table input[type="text"],
+body.adminkit #createuser .ak-card.ak-grid .form-table input[type="email"],
+body.adminkit #createuser .ak-card.ak-grid .form-table input[type="url"],
+body.adminkit #createuser .ak-card.ak-grid .form-table input[type="password"],
 body.adminkit #createuser .ak-card.ak-grid .form-table select,
 body.adminkit #createuser .ak-card.ak-grid .form-table textarea {
+	min-width: 0;
 	width: 100%;
+	max-width: none;
 }
 
 /* Sub-heading for a secondary section folded into a panel (e.g. Application
