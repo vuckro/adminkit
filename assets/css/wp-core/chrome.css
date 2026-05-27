@@ -1012,23 +1012,6 @@ body.adminkit .ak-tabs button .ic svg {
 	height: 14px;
 }
 
-/* Bricks settings (admin.php?page=bricks-settings) — small polish on top of
-   Bricks' own admin.min.css. `tr.code-note` rows ("Custom CSS and JavaScript
-   added below…") otherwise paint as their own card because Bricks rings every
-   `tr` with a 1px shadow. They're advisory hints, not stand-alone fields, so
-   drop the ring + tighten spacing so they read as a caption above the
-   following field row instead of an empty block between cards. */
-body.adminkit #bricks-settings #tab-custom-code tr.code-note {
-	box-shadow: none;
-	margin-bottom: 0;
-}
-body.adminkit #bricks-settings #tab-custom-code tr.code-note td {
-	padding: 12px 20px 4px;
-	background: transparent;
-	color: var(--ak-text-muted);
-	font-size: 13px;
-}
-
 /* Selected pill takes its filter's semantic tint — the same color as that
    filter's count badge — so the active state reads as "this status". The
    count badge then blends into the pill, leaving its colored number. Unmapped
