@@ -865,7 +865,13 @@ body.adminkit .media-modal-content {
    - `.ak-tabs`          AdminKit-built strips (profile cards, options-general
                          + discussion, AdminKit SPA). Real <button>s. */
 
-/* 1 — Container shape. */
+/* 1 — Container shape. `font-size: 0` collapses every anonymous text node
+   inside the container — both the " |" separator WP prints inside each <li>
+   AND the whitespace text nodes WP leaves between <li>s (`</li>\n\t<li>`).
+   In a flex layout those `\n\t` text nodes become anonymous flex items with
+   their own width, which otherwise paint as a visible 3-5px gap (cumulative
+   over 6 pills → ~30px of phantom space). Child <a>/<button>/.count rules
+   below restore readable font-size. */
 body.adminkit .subsubsub,
 body.adminkit .nav-tab-wrapper,
 body.adminkit .ak-tabs {
@@ -880,6 +886,7 @@ body.adminkit .ak-tabs {
 	list-style: none;
 	width: max-content;
 	max-width: 100%;
+	font-size: 0;
 }
 
 /* `.ak-tabs` scrolls sideways on overflow (long profile tab lists) instead
@@ -901,14 +908,10 @@ body.adminkit ul.nav-tab-wrapper > li {
 	display: inline-flex;
 }
 
-/* `.subsubsub` variant: WP joins <li>s with " |</li>\n" — a text-node " |"
-   sits inside each <li> between </a> and </li>. CSS can't target text nodes
-   by name, but `font-size: 0` collapses any anonymous text of the <li>; the
-   child <a> explicitly restores readable size. The pipe is hidden the moment
-   the page paints — no JS dependency, no flash. */
+/* `.subsubsub` variant: <li>s get no list margin. The pipe + inter-<li>
+   whitespace are already hidden via the container's font-size: 0 above. */
 body.adminkit .subsubsub li {
 	margin: 0;
-	font-size: 0;
 }
 
 /* 2 — Pill children (the link / button inside the container). */
