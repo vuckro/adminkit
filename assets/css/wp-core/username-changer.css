@@ -1,0 +1,31 @@
+/**
+ * AdminKit — Username Changer (profile.php / user-edit.php).
+ *
+ * The Username field carries one of two visual states once our JS is on the
+ * page: `.adminkit-uc-locked` (looks disabled — the user hasn't acknowledged
+ * the warning yet) or no class (normally editable — they confirmed).
+ * Tokenised through `--ak-*` so light + dark inherit AdminKit's palette.
+ */
+
+/* Locked: the field is `readonly`, but visually we copy WordPress's own
+   disabled-input look (gray fill, muted text) so the affordance reads as
+   "off" without us inventing a new state. Cursor stays pointer so the
+   "click to enable" hint matches reality. */
+.adminkit-uc-locked {
+	background: var(--ak-surface-muted, #f0f0f1);
+	color: var(--ak-text-muted, #50575e);
+	cursor: pointer;
+}
+.adminkit-uc-locked:focus {
+	/* Match the regular focus outline so keyboard users see the focus state
+	   even before unlock. The confirm() dialog fires on focus / click. */
+	box-shadow: 0 0 0 1px var(--ak-primary, #2271b1);
+	outline: 2px solid transparent;
+}
+
+/* Hint that appears under the field once it's unlocked. Locked state is
+   intentionally silent — the grayed field + pointer cursor carry the cue. */
+.adminkit-uc-active {
+	color: var(--ak-warning, #b45309);
+	font-weight: 500;
+}

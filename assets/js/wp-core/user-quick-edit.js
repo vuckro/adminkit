@@ -3,8 +3,24 @@
  *
  * Wires each row's "Quick Edit" button to a hidden <template> form that opens
  * inline, mirroring the post Quick Edit pattern. Saves via admin-ajax.php; on
- * success the JS repaints the row's visible cells (name / email / role)
- * without a full page reload.
+ * success the JS repaints the row's visible cells (name / email / role) and
+ * refreshes the data-* attrs on the trigger button so a subsequent Quick Edit
+ * opens with the new values — no full page reload.
+ *
+ * The editor's header also surfaces a "Refresh avatar" button when the row
+ * carries `data-can-regenerate="1"`. That POSTs to the
+ * `adminkit_shuffle_avatar` endpoint (owned by class-local-avatars.php) which
+ * rolls a fresh DiceBear seed and returns the new portrait URL. We swap the
+ * header preview AND the row's username-cell avatar in place.
+ *
+ * Data-attrs read from the trigger button (set server-side in
+ * `AdminKit_User_Quick_Edit::add_row_action()`):
+ *   - data-user-id, data-nonce          — save target + save nonce
+ *   - data-first-name, data-last-name,
+ *     data-email, data-role             — form field prefills
+ *   - data-avatar-url, data-display-name — editor header ("who am I editing")
+ *   - data-shuffle-nonce                 — nonce for the avatar-refresh endpoint
+ *   - data-can-regenerate (1 | 0)        — whether to show the Refresh button
  *
  * Implementation notes:
  *   - Event delegation on document. Robust against any order in which the
@@ -14,8 +30,6 @@
  *     ready in practice, but the gate keeps it safe under unusual loaders.
  *   - One editor open at a time; opening a second one closes the first. Escape
  *     closes the editor.
- *   - Server-supplied data-* attrs on the trigger button mean opening the form
- *     needs no extra request — current values are already on the page.
  *
  * Disable the whole feature via AdminKit → Features → Users quick edit; the
  * PHP side then never enqueues this script and never renders the template.
@@ -69,6 +83,14 @@
 			var editor = template.content.cloneNode(true).firstElementChild;
 			if (!editor) { return; }
 
+			// Header — visual "who am I editing" cue (avatar + display name + email).
+			var avatarEl = editor.querySelector('.adminkit-qe-avatar');
+			if (avatarEl && btn.dataset.avatarUrl) { avatarEl.src = btn.dataset.avatarUrl; }
+			setText(editor, '.adminkit-qe-display-name', btn.dataset.displayName || '');
+			setText(editor, '.adminkit-qe-email-display', btn.dataset.email || '');
+
+			// Form fields — prefilled from the data-attrs the server emits on
+			// each row's trigger button.
 			fill(editor, '.adminkit-qe-first-name', btn.dataset.firstName || '');
 			fill(editor, '.adminkit-qe-last-name', btn.dataset.lastName || '');
 			fill(editor, '.adminkit-qe-email', btn.dataset.email || '');
@@ -79,6 +101,12 @@
 
 			var save = editor.querySelector('.adminkit-qe-save');
 			if (save) { save.addEventListener('click', function () { saveEditor(btn, editor, row); }); }
+
+			var regen = editor.querySelector('.adminkit-qe-regenerate');
+			if (regen && btn.dataset.canRegenerate === '1' && btn.dataset.shuffleNonce) {
+				regen.hidden = false;
+				regen.addEventListener('click', function () { refreshAvatar(btn, editor, row); });
+			}
 
 			row.parentNode.insertBefore(editor, row.nextSibling);
 			row.style.display = 'none';
@@ -91,6 +119,11 @@
 			var first = editor.querySelector('input, select');
 			if (first) { first.focus(); }
 			document.addEventListener('keydown', onEscape);
+		}
+
+		function setText(scope, sel, value) {
+			var el = scope.querySelector(sel);
+			if (el) { el.textContent = value; }
 		}
 
 		function fill(scope, sel, value) {
@@ -141,6 +174,52 @@
 				});
 		}
 
+		// Roll a fresh DiceBear seed via the AdminKit_Local_Avatars AJAX endpoint
+		// and swap the new portrait in two places: the editor's header preview
+		// (so the user sees the change in-context) and the row's username-cell
+		// avatar (so closing the editor doesn't leave stale art on the list).
+		// We re-use one URL at size 80 — the browser scales it cleanly down to
+		// the 32/40 px renders both targets use.
+		function refreshAvatar(btn, editor, row) {
+			var regenBtn = editor.querySelector('.adminkit-qe-regenerate');
+			var errEl = editor.querySelector('.adminkit-qe-error');
+			var avatarEl = editor.querySelector('.adminkit-qe-avatar');
+			if (errEl) { errEl.textContent = ''; }
+			if (regenBtn) { regenBtn.disabled = true; }
+
+			var fd = new FormData();
+			fd.append('action', 'adminkit_shuffle_avatar');
+			fd.append('user_id', btn.dataset.userId);
+			fd.append('_wpnonce', btn.dataset.shuffleNonce);
+
+			fetch(L.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
+				.then(function (r) { return r.json().catch(function () { return null; }); })
+				.then(function (json) {
+					if (regenBtn) { regenBtn.disabled = false; }
+					if (!json || !json.success) {
+						if (errEl) {
+							errEl.textContent = (json && json.data && json.data.message) || L.genericErr || 'Error';
+						}
+						return;
+					}
+					var url = json.data && json.data.avatar_url;
+					if (!url) { return; }
+					if (avatarEl) { avatarEl.src = url; }
+					btn.dataset.avatarUrl = url;
+					var rowAvatar = row.querySelector('.column-username img.avatar');
+					if (rowAvatar) {
+						// Clear srcset first — the 2x retina source still points at
+						// the OLD URL and would win on retina screens otherwise.
+						rowAvatar.srcset = url + ' 2x';
+						rowAvatar.src = url;
+					}
+				})
+				.catch(function () {
+					if (regenBtn) { regenBtn.disabled = false; }
+					if (errEl) { errEl.textContent = L.genericErr || 'Error'; }
+				});
+		}
+
 		// Repaint the row's visible cells + refresh data-* on the trigger button
 		// so the next Quick Edit opens with the fresh values. Best-effort — if a
 		// plugin renamed a WP-list-table column class, the cell stays as-is.
@@ -171,6 +250,7 @@
 				cell.textContent = email;
 			}
 		}
+
 	}
 
 	if (document.readyState === 'loading') {

@@ -113,16 +113,18 @@ class AdminKit_Local_Avatars {
 		add_action( 'profile_update', array( __CLASS__, 'invalidate_cache' ) );
 
 		// "Refresh" affordances — a per-user button on profile.php /
-		// user-edit.php, and a bulk action in the users-list dropdown for
-		// refreshing many users at once. The users.php per-row action was
-		// dropped to keep the hover menu uncluttered; bulk + profile cover
-		// the same use case without the visual noise.
+		// user-edit.php, a bulk action in the users-list dropdown, and an AJAX
+		// endpoint the Quick Edit inline editor calls (so refreshing a single
+		// user from users.php doesn't need a full page reload). The users.php
+		// per-row action was dropped to keep the hover menu uncluttered; the
+		// three remaining entry points cover the same use cases without it.
 		add_action( 'admin_init', array( __CLASS__, 'maybe_shuffle' ) );
 		add_action( 'show_user_profile', array( __CLASS__, 'render_profile_section' ) );
 		add_action( 'edit_user_profile', array( __CLASS__, 'render_profile_section' ) );
 		add_filter( 'bulk_actions-users', array( __CLASS__, 'add_bulk_action' ) );
 		add_filter( 'handle_bulk_actions-users', array( __CLASS__, 'handle_bulk_action' ), 10, 3 );
 		add_action( 'admin_notices', array( __CLASS__, 'maybe_show_bulk_notice' ) );
+		add_action( 'wp_ajax_adminkit_shuffle_avatar', array( __CLASS__, 'handle_shuffle_ajax' ) );
 	}
 
 	/**
@@ -336,21 +338,92 @@ class AdminKit_Local_Avatars {
 	}
 
 	/**
-	 * Show a "Profile picture" section on profile.php / user-edit.php — current
-	 * portrait + Shuffle link. Hidden when:
-	 *   - The viewer lacks edit_user capability for this target.
-	 *   - AdminKit Portraits isn't the active WP default (our DiceBear isn't
-	 *     even rendering for this user).
-	 *   - The user has a real Gravatar (Shuffle wouldn't visibly change anything).
+	 * AJAX twin of `maybe_shuffle()` — same effect (roll a new seed for the
+	 * target user), but returns the fresh avatar URL as JSON instead of
+	 * redirecting. Called from the users-list Quick Edit inline editor so the
+	 * portrait can update in place without a full page reload.
+	 *
+	 * Security parity with the GET handler: identical nonce action
+	 * (`SHUFFLE_NONCE`) and `edit_user` capability gate.
+	 */
+	public static function handle_shuffle_ajax() {
+		$user_id = isset( $_POST['user_id'] ) ? (int) $_POST['user_id'] : 0;
+		if ( ! $user_id ) {
+			wp_send_json_error( array( 'message' => __( 'Missing user id.', 'adminkit' ) ), 400 );
+		}
+		check_ajax_referer( self::SHUFFLE_NONCE );
+		if ( ! current_user_can( 'edit_user', $user_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to do that.', 'adminkit' ) ), 403 );
+		}
+
+		update_user_meta( $user_id, self::SEED_META, md5( wp_generate_uuid4() ) );
+
+		// Return the fresh URL at size 80 — covers the editor header's 40×40
+		// render at 2x retina, and the JS reuses it for the list-table cell
+		// (which renders at 32 nominal; the browser scales the larger source
+		// cleanly enough for a click-and-see flow). One URL keeps the response
+		// + the JS swap path simple.
+		wp_send_json_success(
+			array(
+				'avatar_url' => get_avatar_url( $user_id, array( 'size' => 80 ) ),
+			)
+		);
+	}
+
+	/**
+	 * Whether a per-user "Refresh avatar" affordance is meaningful for this
+	 * user *right now*: feature on, AdminKit Portraits is the active default,
+	 * and the user isn't being served a real Gravatar (a re-roll wouldn't
+	 * visibly change anything if Gravatar overrides our portrait).
+	 *
+	 * `$allow_probe` controls the Gravatar check:
+	 *   - false (default): cache-only — reads the `GRAVATAR_META` value and
+	 *     never triggers a fresh HEAD. Right for row-rendering contexts (the
+	 *     users.php Quick Edit button) where N callers per page would each
+	 *     pay a network probe.
+	 *   - true: full `has_real_gravatar()` check — single-user contexts
+	 *     (profile.php / user-edit.php) where one HEAD probe is acceptable
+	 *     and gives the right answer on the *first* visit too.
+	 */
+	public static function can_regenerate( $user, $allow_probe = false ) {
+		if ( ! ( $user instanceof WP_User ) ) {
+			return false;
+		}
+		if ( ! AdminKit_Settings::get( 'custom_avatars_enabled' ) ) {
+			return false;
+		}
+		if ( self::AVATAR_KEY !== get_option( 'avatar_default' ) ) {
+			return false;
+		}
+		if ( $allow_probe ) {
+			return ! self::has_real_gravatar( $user );
+		}
+		// Cached '1' = real Gravatar → regenerating wouldn't visibly change the
+		// rendered avatar. Cached '0' or uncached → assume the generated
+		// portrait is in use; the next render will populate the cache anyway.
+		$cached = (string) get_user_meta( $user->ID, self::GRAVATAR_META, true );
+		return '1' !== $cached;
+	}
+
+	/**
+	 * Render a single "Avatar" row — just a label and a "Refresh" button.
+	 * No avatar image: the admin-bar profile dropdown already surfaces the
+	 * portrait, and the only action this row offers is the seed re-roll.
+	 *
+	 * The `show_user_profile` / `edit_user_profile` hooks fire OUTSIDE any
+	 * table, so we render the row inside a throwaway wrapper. The profile
+	 * account-screen brick (`assets/js/wp-core/profile-account.js`) picks
+	 * the row up by id and places it in the Informations panel, three-up
+	 * with the password + reset rows. The wrapper is then dropped.
+	 *
+	 * Only renders when `can_regenerate()` agrees — without a meaningful
+	 * Refresh action, the row would be an empty label.
 	 */
 	public static function render_profile_section( $user ) {
 		if ( ! ( $user instanceof WP_User ) || ! current_user_can( 'edit_user', $user->ID ) ) {
 			return;
 		}
-		if ( self::AVATAR_KEY !== get_option( 'avatar_default' ) ) {
-			return;
-		}
-		if ( self::has_real_gravatar( $user ) ) {
+		if ( ! self::can_regenerate( $user, true ) ) {
 			return;
 		}
 
@@ -364,17 +437,15 @@ class AdminKit_Local_Avatars {
 			self::SHUFFLE_NONCE
 		);
 		?>
-		<h2 id="adminkit-profile-picture"><?php esc_html_e( 'Profile picture', 'adminkit' ); ?></h2>
-		<table class="form-table" role="presentation">
-			<tr>
-				<th><?php esc_html_e( 'Avatar', 'adminkit' ); ?></th>
-				<td>
-					<div style="border-radius:50%;overflow:hidden;width:96px;height:96px;line-height:0;margin-bottom:1em">
-						<?php echo get_avatar( $user->ID, 96 ); ?>
-					</div>
-					<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Refresh', 'adminkit' ); ?></a>
-				</td>
-			</tr>
+		<table class="form-table adminkit-profile-picture-wrap" role="presentation">
+			<tbody>
+				<tr id="adminkit-profile-picture" class="adminkit-profile-picture-row">
+					<th><?php esc_html_e( 'Avatar', 'adminkit' ); ?></th>
+					<td>
+						<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Refresh', 'adminkit' ); ?></a>
+					</td>
+				</tr>
+			</tbody>
 		</table>
 		<?php
 	}
@@ -420,7 +491,7 @@ class AdminKit_Local_Avatars {
 		if ( ! isset( $_GET['adminkit_refreshed'] ) ) {
 			return;
 		}
-		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		$screen = get_current_screen();
 		if ( ! $screen || 'users' !== $screen->id ) {
 			return;
 		}

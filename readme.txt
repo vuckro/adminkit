@@ -23,6 +23,8 @@ It ships fully-featured: Gutenberg canvas theming, AdminKit's icon set, and loca
 * CSS custom properties (`--ak-*`) any other admin-side stylesheet can consume.
 * Conditional, per-screen CSS loading — pages only load the styles they need.
 * Custom avatars: adds "AdminKit Portraits (Generated)" to WordPress's native Settings → Discussion → Default Avatar (next to Wavatar, Identicon, etc.). Pick it there to give every user a unique generated portrait on a pastel-gradient backdrop.
+* Users-list Quick Edit: a "Quick Edit" link on each row of Users → All Users opens an inline editor for first / last name, email and role — same pattern WordPress ships for posts. Saves via AJAX, no full page reload.
+* Username changer (opt-in): turns the natively-disabled Username field into an editable one on Users → Edit. Validates the new login, dedupes against existing users, and destroys the affected user's sessions so the old name can't keep an old device signed in. Single-site only.
 * Tabbed Settings screens and an interactive dashboard roadmap.
 * Optional adapters that skin popular plugins/themes (Bricks, WooCommerce, ACF, the Fluent suite, and more).
 

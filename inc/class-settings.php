@@ -314,6 +314,19 @@ class AdminKit_Settings {
 			'default'  => true,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
+
+		// Username changer — OFF by default. Lets an admin rename
+		// `user_login` from profile.php / user-edit.php, a column WordPress
+		// disables in its own UI. Sensitive (it invalidates auth cookies and
+		// kicks the affected user out of every active session), so it ships
+		// opt-in. Read by AdminKit_Username_Changer. Off = the Username field
+		// stays the native read-only state.
+		self::register( 'username_changer_enabled', array(
+			'type'     => 'toggle',
+			'group'    => 'features',
+			'default'  => false,
+			'sanitize' => 'rest_sanitize_boolean',
+		) );
 	}
 
 	/**

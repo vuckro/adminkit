@@ -1,0 +1,98 @@
+/**
+ * AdminKit — user Quick Edit on users.php (inline editor for basic user fields).
+ *
+ * Renders as a single <tr> inserted below the row being edited. We deliberately
+ * do NOT put WordPress's `.inline-edit-row` class on that <tr> — the post
+ * Quick Edit CSS that ships with core sets `fieldset { float: left }` and
+ * `label .title { width: 5em }` on its descendants, which would float our
+ * action buttons to the side of the form and wrap the "Display name publicly
+ * as" label one word per line. Our wrapper uses `.adminkit-quick-edit-row`
+ * instead and all selectors below are scoped to our own classes.
+ */
+
+.adminkit-qe-wrap {
+	max-width: 640px;
+	padding: 8px 0 4px;
+}
+
+/* Header — avatar + display name + email, the "who am I editing" cue. */
+.adminkit-qe-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding-bottom: 12px;
+	margin-bottom: 16px;
+	border-bottom: 1px solid var(--ak-border, #dcdcde);
+}
+.adminkit-qe-avatar {
+	display: block;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	flex: none;
+}
+.adminkit-qe-identity {
+	line-height: 1.3;
+	min-width: 0;
+}
+.adminkit-qe-display-name {
+	display: block;
+	font-weight: 600;
+	font-size: 14px;
+	color: var(--ak-heading, #1d2327);
+}
+.adminkit-qe-email-display {
+	display: block;
+	color: var(--ak-text-muted, #646970);
+	font-size: 13px;
+	word-break: break-all;
+}
+
+/* "Refresh avatar" sits at the far right of the header, anchored to the
+   avatar visually. Rendered with [hidden] when the row can't regenerate
+   (custom avatars off, not the active default, real Gravatar in use). */
+.adminkit-qe-regenerate {
+	margin-left: auto;
+	flex: none;
+}
+
+/* Form fields — one label per row, title text above the control. */
+.adminkit-qe-fields {
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+.adminkit-qe-fields > label {
+	display: block;
+	margin: 0 0 12px;
+}
+.adminkit-qe-fields .title {
+	display: block;
+	font-weight: 500;
+	margin-bottom: 4px;
+	color: var(--ak-text, #3c434a);
+}
+.adminkit-qe-fields input,
+.adminkit-qe-fields select {
+	width: 100%;
+	box-sizing: border-box;
+	max-width: 100%;
+}
+
+/* Actions — Cancel left, error message inline, Update User right. */
+.adminkit-qe-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-top: 16px;
+	padding-top: 12px;
+	border-top: 1px solid var(--ak-border, #dcdcde);
+}
+.adminkit-qe-actions .adminkit-qe-save {
+	margin-left: auto;
+}
+.adminkit-qe-error {
+	color: var(--ak-error, #d63638);
+	font-size: 13px;
+}

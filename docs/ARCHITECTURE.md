@@ -90,7 +90,7 @@ assets/
 │   └── settings.css               # AdminKit settings page
 └── js/
     ├── settings.js                # settings SPA
-    ├── wp-core/                   # footer bricks: profile-account, local-avatars, post-previews, list-table-chrome, user-quick-edit, username-changer
+    ├── wp-core/                   # footer bricks: profile-account, post-previews, list-table-chrome, user-quick-edit, username-changer
     └── wp-screens/                # per-screen footer bricks: options (Settings-screen tabs)
 inc/integrations/{plugins|themes}/{slug}/css/   # integration CSS, registered by each class
 ```

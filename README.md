@@ -14,6 +14,8 @@ A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone �
 - **Doesn't require any builder.** A site with no theme provider lands on neutral fallbacks. A site with Bricks gets its brand colors automatically.
 - Loads CSS **conditionally per screen** — the themes page CSS doesn't run on the dashboard, plugin-editor CSS doesn't run on profile, etc.
 - **Custom avatars** (on by default) — adds **AdminKit Portraits (Generated)** to *Settings → Discussion → Default Avatar*, the same dropdown that ships Wavatar / Identicon / Retro / MonsterID. Pick it there: users with no real photo get a unique cartoon-Memoji portrait on a solid-pastel backdrop (via [DiceBear](https://www.dicebear.com), non-PII seed). Users **with** a real photo — Gravatar, an OAuth login plugin, a local-upload plugin — keep theirs untouched: AdminKit checks Gravatar once per user (cached, ~1s first time) and respects any URL another filter has already supplied. AdminKit is invisible when you pick any other Default Avatar option. See [`docs/EXTENDING.md`](docs/EXTENDING.md#avatars) and the disclosure in `readme.txt`.
+- **Users-list Quick Edit** (on by default) — a *Quick Edit* link on every row of *Users → All Users* opens an inline editor below the row for first name, last name, email and role. Saves via AJAX (`wp_update_user()`), repaints the visible cells in place — no full page reload. Same security model as the native Edit link: per-row nonce + `edit_user` capability gate, plus `promote_users` for role changes. Switch off in *AdminKit → Features → Users quick edit*; the native Edit link to user-edit.php still works.
+- **Username changer** (off by default) — WordPress disables the Username field in *Users → Edit*; toggle this on and the field becomes a *locked* control: click it once, a confirmation dialog spells out the consequence (every active sign-in for that user is invalidated), then the field unlocks and you save through the native "Update User" button — no separate save UI. Server-side: validates with `sanitize_user(strict)` + `username_exists()`, writes `user_login` directly (the only column `wp_update_user()` won't), and *destroys every active session for that user* so the old name can't keep an attacker (or a forgotten device) signed in. Self-edits also re-issue the editor's auth cookie so the post-save redirect lands authenticated. Single-site only — multisite cross-site mappings are out of scope. Fires `adminkit/username_changed` for audit-log plugins.
 
 ---
 
@@ -172,7 +174,9 @@ adminkit/
 │   │   ├── class-profile-account.php    Profile / user-edit screen layout
 │   │   ├── class-local-avatars.php      Per-user avatar that replaces Gravatar + generated-avatar fallback (DiceBear)
 │   │   ├── class-post-previews.php      List-table screenshot thumbnails
-│   │   └── class-list-table-chrome.php  List-table toolbar / pagination polish
+│   │   ├── class-list-table-chrome.php  List-table toolbar / pagination polish
+│   │   ├── class-user-quick-edit.php    Inline Quick Edit on users.php (first/last/email/role)
+│   │   └── class-username-changer.php   Opt-in rename of user_login from profile / user-edit (off by default)
 │   └── integrations/                    Host adapters — auto-discovered, drop a folder
 │       ├── abstract-integration.php     AdminKit_Integration_Base
 │       ├── themes/
@@ -194,7 +198,7 @@ adminkit/
     │   └── login.css                    wp-login.php
     └── js/
         ├── settings.js                  Settings SPA
-        ├── wp-core/                     Footer behaviour bricks (profile, avatars, previews, list-table)
+        ├── wp-core/                     Footer behaviour bricks (profile, previews, list-table, user-quick-edit, username-changer)
         └── wp-screens/                  Per-screen footer bricks (options — Settings-screen tabs)
 ```
 

@@ -425,7 +425,9 @@ body.adminkit .ak-card.ak-grid .form-table > tbody {
 
 body.adminkit .ak-card.ak-grid .form-table > tbody {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	/* 6 columns = LCM(2, 3): supports both .ak-half (span 3 → 1/2) and
+	   .ak-third (span 2 → 1/3) without changing the rest of the grid. */
+	grid-template-columns: repeat(6, minmax(0, 1fr));
 	gap: 16px 20px;
 }
 
@@ -436,7 +438,11 @@ body.adminkit .ak-card.ak-grid .form-table > tbody > tr {
 }
 
 body.adminkit .ak-card.ak-grid .form-table > tbody > tr.ak-half {
-	grid-column: span 1;
+	grid-column: span 3;
+}
+
+body.adminkit .ak-card.ak-grid .form-table > tbody > tr.ak-third {
+	grid-column: span 2;
 }
 
 body.adminkit .ak-card.ak-grid .form-table > tbody > tr > th,

@@ -700,24 +700,44 @@ class AdminKit_Settings_Page {
 	private static function feature_descriptors() {
 		// `group` is the section heading the Settings tab buckets a row under
 		// (identical strings = same group; order = first-seen). A child inherits
-		// its parent's group by carrying the same label.
+		// its parent's group by carrying the same label. Three buckets:
+		//   • Content & lists — list tables and the post screens
+		//   • Appearance      — visual chrome (admin, login, editor, icons)
+		//   • Users & access  — anything that touches user identity / accounts
 		$content    = __( 'Content & lists', 'adminkit' );
-		$appearance = __( 'Appearance & access', 'adminkit' );
+		$appearance = __( 'Appearance', 'adminkit' );
+		$users      = __( 'Users & access', 'adminkit' );
 		$rows = array(
-			array( 'key' => 'post_previews_enabled', 'group' => $content,    'label' => __( 'Post previews', 'adminkit' ),             'desc' => __( 'Screenshot thumbnail column in post-type list tables.', 'adminkit' ) ),
-			array( 'key' => 'post_previews_mshots',  'group' => $content,    'label' => __( 'Live screenshots (mShots)', 'adminkit' ), 'desc' => __( 'Use WordPress.com mShots. Off = featured image only (no external calls).', 'adminkit' ), 'parent' => 'post_previews_enabled' ),
-			array( 'key' => 'theme_toggle_enabled',  'group' => $appearance, 'label' => __( 'Dark mode', 'adminkit' ),       'desc' => __( 'Enable dark mode with a toggle in the admin bar. Off forces light mode everywhere.', 'adminkit' ) ),
-			array( 'key' => 'module_login_enabled',  'group' => $appearance, 'label' => __( 'Login screen', 'adminkit' ),              'desc' => __( 'Style the wp-login.php screen.', 'adminkit' ) ),
-			array( 'key' => 'editor_content_theme',   'group' => $appearance, 'label' => __( 'Gutenberg', 'adminkit' ),     'desc' => __( 'Theme the Gutenberg block-editor canvas (content + native blocks) in light and dark. Turn off to keep the canvas matching your live site exactly.', 'adminkit' ) ),
-			array( 'key' => 'replace_icons_enabled',  'group' => $appearance, 'label' => __( 'AdminKit icons', 'adminkit' ), 'desc' => __( 'Replace WordPress\'s native menu and toolbar icons with AdminKit\'s set. Non-destructive: icons already customised (e.g. via Admin Menu Editor) are left untouched.', 'adminkit' ) ),
-			array( 'key' => 'custom_avatars_enabled', 'group' => $appearance, 'label' => __( 'Custom avatars', 'adminkit' ), 'desc' => __( 'Adds "AdminKit Portraits (Generated)" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait (overrides Gravatar — explicit opt-in).', 'adminkit' ) ),
-			array( 'key' => 'quick_edit_users_enabled', 'group' => $content, 'label' => __( 'Users quick edit', 'adminkit' ), 'desc' => __( 'Adds a Quick Edit affordance to the users list — edit first name, last name, email and role inline without opening the full profile.', 'adminkit' ) ),
-			array( 'key' => 'username_changer_enabled', 'group' => $content, 'label' => __( 'Username changer', 'adminkit' ), 'desc' => __( 'Lets an admin rename a user\'s login on profile.php / user-edit.php — WordPress disables that field by default. Sensitive: it invalidates the user\'s active sessions on every device, who then must sign in again with the new name. Single-site only.', 'adminkit' ) ),
+			// Content & lists
+			array( 'key' => 'post_previews_enabled', 'group' => $content,    'label' => __( 'Post previews', 'adminkit' ),
+				'desc' => __( 'Adds a thumbnail column to post-type list tables, using the featured image first.', 'adminkit' ) ),
+			array( 'key' => 'post_previews_mshots',  'group' => $content,    'label' => __( 'Live screenshots', 'adminkit' ),
+				'desc' => __( 'When no featured image is set, fetch a live screenshot via WordPress.com mShots. Off keeps the column featured-image only (no external calls).', 'adminkit' ),
+				'parent' => 'post_previews_enabled' ),
+
+			// Appearance
+			array( 'key' => 'theme_toggle_enabled',  'group' => $appearance, 'label' => __( 'Dark mode', 'adminkit' ),
+				'desc' => __( 'Adds a light/dark toggle to the admin bar. Off forces light mode site-wide.', 'adminkit' ) ),
+			array( 'key' => 'module_login_enabled',  'group' => $appearance, 'label' => __( 'Login screen', 'adminkit' ),
+				'desc' => __( 'Restyle wp-login.php to match the admin (logo, dark mode, focus states).', 'adminkit' ) ),
+			array( 'key' => 'editor_content_theme',  'group' => $appearance, 'label' => __( 'Block editor', 'adminkit' ),
+				'desc' => __( 'Theme the Gutenberg canvas in light and dark. Off keeps the canvas matching your live site exactly.', 'adminkit' ) ),
+			array( 'key' => 'replace_icons_enabled', 'group' => $appearance, 'label' => __( 'AdminKit icons', 'adminkit' ),
+				'desc' => __( 'Swap WordPress\'s menu and toolbar icons for AdminKit\'s set. Icons customised elsewhere (e.g. Admin Menu Editor) are left alone.', 'adminkit' ) ),
+
+			// Users & access
+			array( 'key' => 'quick_edit_users_enabled', 'group' => $users,   'label' => __( 'Users quick edit', 'adminkit' ),
+				'desc' => __( 'Edit first name, last name, email and role inline from the users list — no need to open the full profile.', 'adminkit' ) ),
+			array( 'key' => 'username_changer_enabled', 'group' => $users,   'label' => __( 'Username changer', 'adminkit' ),
+				'desc' => __( 'Lets admins rename a user\'s login on Users → Edit (WordPress disables this by default). Sensitive — invalidates the user\'s active sessions; they must sign in again. Single-site only.', 'adminkit' ) ),
+			array( 'key' => 'custom_avatars_enabled',   'group' => $users,   'label' => __( 'Custom avatars', 'adminkit' ),
+				'desc' => __( 'Adds "AdminKit Portraits (Generated)" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait.', 'adminkit' ) ),
 		);
 
 		// Bricks builder restyle — only meaningful when the Bricks theme is active.
 		if ( class_exists( 'AdminKit_Integration_Bricks' ) && AdminKit_Integration_Bricks::is_active() ) {
-			$rows[] = array( 'key' => 'bricks_builder_enabled', 'group' => $appearance, 'label' => __( 'Bricks builder', 'adminkit' ), 'desc' => __( 'Restyle the Bricks builder UI with your tokens. Automatically sets Bricks → Settings → Builder mode to "Custom" (the prerequisite for the restyle to apply).', 'adminkit' ) );
+			$rows[] = array( 'key' => 'bricks_builder_enabled', 'group' => $appearance, 'label' => __( 'Bricks builder', 'adminkit' ),
+				'desc' => __( 'Restyle the Bricks builder UI with your tokens. Automatically sets Bricks → Settings → Builder mode to "Custom".', 'adminkit' ) );
 		}
 
 		return $rows;

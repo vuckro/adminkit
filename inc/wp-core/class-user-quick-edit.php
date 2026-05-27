@@ -4,18 +4,31 @@
  * mirroring the Quick Edit pattern WordPress ships for posts/pages.
  *
  * On the users list, each row picks up a "Quick Edit" action. Clicking it
- * collapses the row and reveals an inline form (in the same table row, like
+ * hides the row and reveals an inline form (in the same table position, like
  * the post Quick Edit) with first name, last name, email, and role. Saving
- * posts to admin-ajax.php which runs `wp_update_user()` and returns the
- * re-rendered table row HTML so the JS can swap it in without a page reload.
+ * POSTs to admin-ajax.php which runs `wp_update_user()` and returns the new
+ * field values; the JS repaints the row's visible cells (name / email / role)
+ * and refreshes the data-attributes on the trigger button so the next Quick
+ * Edit opens with the saved values. Display name is intentionally NOT here —
+ * it's a per-user preference that belongs on user-edit.php where the full
+ * dropdown of name combinations lives.
  *
  * Why this is small enough to live here:
- *  - 4 fields only (the basic identity info — anything else stays on user-edit.php).
+ *  - Only the basic identity fields — anything richer stays on user-edit.php.
  *  - The role field only renders when the current user can `promote_users`.
- *  - Each row's current values ship as data-attributes on its action button,
+ *  - Each row's current values ship as data-attributes on its trigger button,
  *    so the JS opens an editor with no extra round-trip.
- *  - WordPress's own table-row renderer (`WP_Users_List_Table::single_row()`)
- *    re-paints the row after save — no client-side HTML rebuilding.
+ *  - The editor markup does NOT carry `.inline-edit-row` — that class would
+ *    drag in post-Quick-Edit CSS rules (floated fieldset, narrow `.title`
+ *    span) that fight our layout. We ship our own styles instead, scoped
+ *    to `.adminkit-qe-*` classes.
+ *
+ * The header also surfaces a "Refresh avatar" button — visible only when
+ * `AdminKit_Local_Avatars::can_regenerate()` says the user actually renders
+ * with our DiceBear portrait (feature on, AdminKit Portraits picked in
+ * Settings → Discussion, no real Gravatar). The button POSTs to the
+ * `adminkit_shuffle_avatar` AJAX endpoint owned by `class-local-avatars.php`
+ * — Quick Edit doesn't re-implement the seed roll, it just consumes it.
  *
  * Security:
  *  - One nonce per row, bound to the user-id action key.
@@ -23,8 +36,13 @@
  *    and the AJAX save.
  *  - Role changes additionally require `current_user_can( 'promote_users' )`
  *    AND the requested role must exist in the WP roles registry.
+ *  - Admins can't demote themselves via the role field — same guard wp-admin's
+ *    own user-edit applies.
  *  - `wp_update_user()` handles email validation, sanitisation and the
  *    capability checks for editing super-admins, network admins, etc.
+ *
+ * Disable the whole feature via AdminKit → Features → Users quick edit; the
+ * PHP `init()` then returns early and no hooks bind.
  *
  * @package AdminKit
  */
@@ -60,18 +78,36 @@ class AdminKit_User_Quick_Edit {
 		$roles = (array) $user->roles;
 		$role  = $roles ? $roles[0] : '';
 
+		// Avatar + display name ride along so the inline editor's header can
+		// show "who am I editing" without a second request. Size 80 covers the
+		// 40×40 render at 2x for retina screens.
+		$avatar_url   = get_avatar_url( $user->ID, array( 'size' => 80 ) );
+		$display_name = $user->display_name ? $user->display_name : $user->user_login;
+
+		// "Refresh avatar" data ride-along: a separate nonce (bound to the
+		// avatar-shuffle action key in AdminKit_Local_Avatars) plus a 1/0
+		// flag the JS reads to know whether to render the button.
+		$can_regen     = AdminKit_Local_Avatars::can_regenerate( $user );
+		$shuffle_nonce = $can_regen ? wp_create_nonce( AdminKit_Local_Avatars::SHUFFLE_NONCE ) : '';
+
 		$btn = sprintf(
 			'<button type="button" class="button-link adminkit-qe-open"'
 			. ' data-user-id="%1$d" data-nonce="%2$s"'
 			. ' data-first-name="%3$s" data-last-name="%4$s"'
 			. ' data-email="%5$s" data-role="%6$s"'
-			. ' aria-expanded="false">%7$s</button>',
+			. ' data-avatar-url="%7$s" data-display-name="%8$s"'
+			. ' data-shuffle-nonce="%9$s" data-can-regenerate="%10$d"'
+			. ' aria-expanded="false">%11$s</button>',
 			(int) $user->ID,
 			esc_attr( $nonce ),
 			esc_attr( (string) $user->first_name ),
 			esc_attr( (string) $user->last_name ),
 			esc_attr( (string) $user->user_email ),
 			esc_attr( $role ),
+			esc_attr( (string) $avatar_url ),
+			esc_attr( (string) $display_name ),
+			esc_attr( $shuffle_nonce ),
+			$can_regen ? 1 : 0,
 			esc_html__( 'Quick Edit', 'adminkit' )
 		);
 
@@ -90,6 +126,13 @@ class AdminKit_User_Quick_Edit {
 		return $new;
 	}
 
+	/**
+	 * Enqueue the Quick Edit CSS + JS on users.php only, gated by `list_users`
+	 * so we never paint the script for users who can't see the list anyway.
+	 * The CSS depends on the AdminKit tokens stylesheet because every colour
+	 * in [user-quick-edit.css](../../assets/css/wp-core/user-quick-edit.css)
+	 * references a `--ak-*` token.
+	 */
 	public static function enqueue( $hook ) {
 		if ( 'users.php' !== $hook ) {
 			return;
@@ -97,6 +140,16 @@ class AdminKit_User_Quick_Edit {
 		if ( ! current_user_can( 'list_users' ) ) {
 			return;
 		}
+
+		$css_src  = 'assets/css/wp-core/user-quick-edit.css';
+		$css_path = ADMINKIT_PATH . $css_src;
+		wp_enqueue_style(
+			'adminkit-user-quick-edit',
+			ADMINKIT_URL . $css_src,
+			array( AdminKit_Assets::TOKENS_HANDLE ),
+			file_exists( $css_path ) ? (string) filemtime( $css_path ) : ADMINKIT_VERSION
+		);
+
 		AdminKit_Assets::enqueue_script(
 			'adminkit-user-quick-edit',
 			'assets/js/wp-core/user-quick-edit.js',
@@ -120,39 +173,46 @@ class AdminKit_User_Quick_Edit {
 		if ( ! current_user_can( 'list_users' ) ) {
 			return;
 		}
-		// Use the canonical screen-column getter when available — it returns
-		// an array of `column_id => label`. `WP_Screen::get_columns()` exists
-		// but can return non-array values depending on context, which is what
-		// hit us in production (count(int) fatal). The `get_column_headers()`
-		// helper always returns an array, with the same data, so it's safer.
+		// `get_column_headers()` always returns an array of `column_id => label`.
+		// `WP_Screen::get_columns()` exists too but can return non-array values
+		// depending on context — that's what hit us in production (count(int)
+		// fatal). The is_array() guard below is the fix's load-bearing part.
 		$colspan = 6; // 6 native users.php columns (cb, username, name, email, role, posts).
-		if ( function_exists( 'get_column_headers' ) ) {
-			$cols = get_column_headers( get_current_screen() );
-			if ( is_array( $cols ) && $cols ) {
-				$colspan = count( $cols );
-			}
+		$cols    = get_column_headers( get_current_screen() );
+		if ( is_array( $cols ) && $cols ) {
+			$colspan = count( $cols );
 		}
 
 		$can_promote = current_user_can( 'promote_users' );
 		$roles       = wp_roles()->get_names();
 		?>
 		<template id="adminkit-quick-edit-template">
-			<tr class="inline-edit-row inline-edit-row-user adminkit-quick-edit-row">
+			<tr class="adminkit-quick-edit-row">
 				<td colspan="<?php echo (int) $colspan; ?>" class="colspanchange">
-					<fieldset class="inline-edit-col-left">
-						<legend class="inline-edit-legend"><?php esc_html_e( 'Quick Edit', 'adminkit' ); ?></legend>
-						<div class="inline-edit-col">
+					<div class="adminkit-qe-wrap">
+
+						<header class="adminkit-qe-header">
+							<img class="adminkit-qe-avatar" alt="" width="40" height="40">
+							<div class="adminkit-qe-identity">
+								<strong class="adminkit-qe-display-name"></strong>
+								<span class="adminkit-qe-email-display"></span>
+							</div>
+							<button type="button" class="button adminkit-qe-regenerate" hidden><?php esc_html_e( 'Refresh avatar', 'adminkit' ); ?></button>
+						</header>
+
+						<fieldset class="adminkit-qe-fields">
+							<legend class="screen-reader-text"><?php esc_html_e( 'Quick Edit', 'adminkit' ); ?></legend>
 							<label>
 								<span class="title"><?php esc_html_e( 'First name', 'adminkit' ); ?></span>
-								<span class="input-text-wrap"><input type="text" name="first_name" class="ptitle adminkit-qe-first-name"></span>
+								<input type="text" name="first_name" class="adminkit-qe-first-name">
 							</label>
 							<label>
 								<span class="title"><?php esc_html_e( 'Last name', 'adminkit' ); ?></span>
-								<span class="input-text-wrap"><input type="text" name="last_name" class="ptitle adminkit-qe-last-name"></span>
+								<input type="text" name="last_name" class="adminkit-qe-last-name">
 							</label>
 							<label>
 								<span class="title"><?php esc_html_e( 'Email', 'adminkit' ); ?></span>
-								<span class="input-text-wrap"><input type="email" name="user_email" class="ptitle adminkit-qe-email"></span>
+								<input type="email" name="user_email" class="adminkit-qe-email">
 							</label>
 							<?php if ( $can_promote ) : ?>
 								<label>
@@ -164,13 +224,14 @@ class AdminKit_User_Quick_Edit {
 									</select>
 								</label>
 							<?php endif; ?>
-						</div>
-					</fieldset>
-					<div class="submit inline-edit-save">
-						<button type="button" class="button cancel adminkit-qe-cancel"><?php esc_html_e( 'Cancel', 'adminkit' ); ?></button>
-						<button type="button" class="button button-primary save adminkit-qe-save"><?php esc_html_e( 'Update User', 'adminkit' ); ?></button>
-						<span class="spinner"></span>
-						<span class="adminkit-qe-error error" role="alert" aria-live="polite"></span>
+						</fieldset>
+
+						<footer class="adminkit-qe-actions">
+							<button type="button" class="button adminkit-qe-cancel"><?php esc_html_e( 'Cancel', 'adminkit' ); ?></button>
+							<span class="adminkit-qe-error" role="alert" aria-live="polite"></span>
+							<button type="button" class="button button-primary adminkit-qe-save"><?php esc_html_e( 'Update User', 'adminkit' ); ?></button>
+						</footer>
+
 					</div>
 				</td>
 			</tr>
@@ -179,10 +240,13 @@ class AdminKit_User_Quick_Edit {
 	}
 
 	/**
-	 * AJAX save handler. Returns JSON with the re-rendered row HTML on success
-	 * so the JS can swap it in without a page reload. Capability checks are
-	 * defence-in-depth — the row action filter already hides the entry point
-	 * for users who can't edit, but the AJAX endpoint can be hit directly.
+	 * AJAX save handler. Sanitises the posted fields, runs `wp_update_user()`,
+	 * then returns the post-save field values as JSON so the JS can repaint the
+	 * row's visible cells (no full re-render of the WP_Users_List_Table row).
+	 *
+	 * Capability checks are defence-in-depth: the row action filter already
+	 * hides the entry point for users who can't edit, but the AJAX endpoint can
+	 * be hit directly so we re-check here.
 	 */
 	public static function handle_save() {
 		$user_id = isset( $_POST['user_id'] ) ? (int) $_POST['user_id'] : 0;
@@ -224,9 +288,10 @@ class AdminKit_User_Quick_Edit {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ), 400 );
 		}
 
-		// Return the new field values so the JS can repaint the cells it owns
-		// (name / email / role) without us having to load the WP_List_Table
-		// machinery on an AJAX request — keeps the server side dependency-free.
+		// Read the user back so the response carries authoritative values
+		// (wp_update_user() may have rewritten what we sent — e.g. an email
+		// normalisation) — these feed both the visible-cell repaint and the
+		// data-attrs refresh on the trigger button.
 		$user = get_userdata( $user_id );
 		if ( ! $user ) {
 			wp_send_json_success( array() );

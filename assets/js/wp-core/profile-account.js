@@ -254,6 +254,13 @@
 			if (row) row.classList.add('ak-half');
 		});
 	}
+	// Three-up: tag rows so the CSS grid lines them up at 1/3 width each.
+	function markThird(card, selectors) {
+		(selectors || []).forEach(function (sel) {
+			var row = firstMatch(card, sel);
+			if (row) row.classList.add('ak-third');
+		});
+	}
 
 	// --- curated tabs -----------------------------------------------------
 	// `rows` fix the display order (moved in phase 1, before any whole-section
@@ -264,8 +271,9 @@
 	// other plugin section (40, sorted alphabetically), then loose (90).
 	var CARDS = [
 		{ id: 'ak-info', icon: 'users', t: S.cards.info, grid: true, order: 0,
-		  rows: [ ['.user-user-login-wrap', '.user-login-wrap'], '.user-nickname-wrap', '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-url-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', '.user-description-wrap', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
-		  half: [ ['.user-user-login-wrap', '.user-login-wrap'], '.user-nickname-wrap', '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-url-wrap', '.user-display-name-wrap', '.user-role-wrap', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
+		  rows: [ ['.user-user-login-wrap', '.user-login-wrap'], '.user-nickname-wrap', '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-url-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', '.user-description-wrap', '#adminkit-profile-picture', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
+		  half: [ ['.user-user-login-wrap', '.user-login-wrap'], '.user-nickname-wrap', '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-url-wrap', '.user-display-name-wrap', '.user-role-wrap' ],
+		  third: [ '#adminkit-profile-picture', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
 		  absorb: [ S.sections.name ] },
 		{ id: 'ak-settings', icon: 'sliders', t: S.cards.settings, order: 30,
 		  rows: [ '.user-language-wrap', '.user-syntax-highlighting-wrap', '.user-comment-shortcuts-wrap', ['.user-admin-bar-front-wrap', '.show-admin-bar'], '.user-pass2-wrap', '.pw-weak' ],
@@ -286,6 +294,7 @@
 			if (b.def.grid) {
 				b.c.card.classList.add('ak-grid');
 				markHalf(b.c.card, b.def.half);
+				markThird(b.c.card, b.def.third);
 			}
 			panels.appendChild(b.c.card);
 			addTab(b.def.id, b.def.icon, b.def.t.label, b.def.order);
@@ -293,6 +302,15 @@
 			delete used[b.def.id];
 		}
 	});
+
+	// Drop the now-empty wrapper that PHP rendered around #adminkit-profile-picture
+	// at the bottom of the form. The row has been moved into the ak-info card; the
+	// outer <table> is just markup scaffolding for the show_user_profile hook (which
+	// fires outside any table) and serves no purpose once the row is gone.
+	var avatarWrap = form.querySelector('.adminkit-profile-picture-wrap');
+	if (avatarWrap && !avatarWrap.querySelector('tr')) {
+		avatarWrap.remove();
+	}
 
 	// Group WooCommerce customer addresses (billing + shipping) into one tidy
 	// "Adresses" tab. Each address is a collapsible <details> so the panel

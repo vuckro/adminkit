@@ -35,6 +35,7 @@ class AdminKit_Plugin {
 		AdminKit_Post_Previews::init();
 		AdminKit_Auto_Theme::init();
 		AdminKit_User_Quick_Edit::init();
+		AdminKit_Username_Changer::init();
 
 		self::boot_integrations();
 
