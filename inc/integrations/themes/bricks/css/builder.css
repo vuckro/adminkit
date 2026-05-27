@@ -29,17 +29,45 @@
 
 
 /* ============================================================
+   PRELOADER  (splash before the builder paints)
+   ============================================================ */
+#bricks-preloader {
+	background: #171717;
+}
+#bricks-preloader .bricks-logo-animated,
+#bricks-preloader .title,
+#bricks-preloader .sub-title {
+	display: none;
+}
+#bricks-preloader .bricks-loading-inner {
+	display: grid;
+	place-items: center;
+}
+#bricks-preloader .bricks-loading-inner::before {
+	content: "";
+	width: 15rem;
+	aspect-ratio: 1;
+	background: var(--preloader-logo) center / contain no-repeat;
+	animation: adminkit-bricks-preloader-pulse 1.4s ease-in-out infinite;
+}
+@keyframes adminkit-bricks-preloader-pulse {
+	50% { transform: scale(1.1); }
+}
+
+
+/* ============================================================
    TOOLBAR
-   ============================================================
-   The toolbar bar gets the AdminKit token bg always. The logo SLOT
-   (.logo + .logo img) is left to Bricks's native styling unless the
-   user has a favicon set — in which case class-bricks.php's
-   enqueue_builder() injects an inline override that swaps in the
-   favicon and removes the yellow accent frame behind it. Same for the
-   preloader: if a brand logo is set, an inline block replaces Bricks's
-   native splash; otherwise Bricks's stock preloader paints untouched. */
+   ============================================================ */
 #bricks-toolbar {
 	background-color: var(--background);
+}
+#bricks-toolbar .logo {
+	background-color: var(--accent);
+}
+#bricks-toolbar .logo img {
+	content: var(--logo-url);
+	height: 22px;
+	width: auto;
 }
 
 

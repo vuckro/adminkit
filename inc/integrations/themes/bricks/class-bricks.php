@@ -451,45 +451,19 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 
-		// Two distinct brand surfaces, each with its own asset + fallback path:
-		//
-		//   • PRELOADER splash → AdminKit brand logo (a wordmark, big and
-		//     centred). No brand logo set ⇒ Bricks's native preloader (its
-		//     animated logo + title) paints untouched.
-		//
-		//   • TOOLBAR slot → site favicon (small, square, naturally sized).
-		//     No favicon set ⇒ Bricks's native toolbar logo + its yellow
-		//     accent frame paint untouched.
-		//
-		// Both blocks are emitted as inline CSS so that "asset unset"
-		// genuinely means "AdminKit doesn't touch that surface". No fallback
-		// chain, no half-applied state.
+		// Brand logo injection — preloader splash + toolbar mark both use the
+		// user's AdminKit brand logo. If none is set, no var is emitted and
+		// the builder paints Bricks's native preloader + toolbar logo
+		// untouched. No favicon / WP-logo fallback chain on purpose — those
+		// were causing more problems than they solved (favicons are colour-
+		// locked and look wrong sized up; the WP logo isn't brand-aligned).
 		$brand_logo = AdminKit_Settings::brand_logo( 'dark' );
-		$favicon    = get_site_icon_url( 192 );
-		$css        = '';
-
 		if ( '' !== $brand_logo ) {
-			$url  = 'url("' . esc_url_raw( $brand_logo ) . '")';
-			$css .= '#bricks-preloader{background:#171717}'
-				. '#bricks-preloader .bricks-logo-animated,'
-				. '#bricks-preloader .title,'
-				. '#bricks-preloader .sub-title{display:none}'
-				. '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}'
-				. '#bricks-preloader .bricks-loading-inner::before{'
-				. 'content:"";width:15rem;aspect-ratio:1;'
-				. 'background:' . $url . ' center/contain no-repeat;'
-				. 'animation:adminkit-bricks-preloader-pulse 1.4s ease-in-out infinite}'
-				. '@keyframes adminkit-bricks-preloader-pulse{50%{transform:scale(1.1)}}';
-		}
-
-		if ( '' !== $favicon ) {
-			$url  = 'url("' . esc_url_raw( $favicon ) . '")';
-			$css .= '#bricks-toolbar .logo{background-color:transparent}'
-				. '#bricks-toolbar .logo img{content:' . $url . ';height:22px;width:auto}';
-		}
-
-		if ( '' !== $css ) {
-			wp_add_inline_style( 'adminkit-bricks-builder', $css );
+			$url = 'url("' . esc_url_raw( $brand_logo ) . '")';
+			wp_add_inline_style(
+				'adminkit-bricks-builder',
+				':root{--preloader-logo:' . $url . ';--logo-url:' . $url . '}'
+			);
 		}
 	}
 
