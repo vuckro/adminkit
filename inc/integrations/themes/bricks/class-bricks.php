@@ -485,9 +485,13 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		}
 
 		if ( '' !== $favicon ) {
+			// Size the `.logo` container AND the inner img — Bricks's own CSS
+			// pins `.logo img { width: 100% }` (so the img tracks whatever
+			// width the parent gives it). Setting just the img isn't enough;
+			// the parent has to know to be 32px wide for the img to follow.
 			$url  = 'url("' . esc_url_raw( $favicon ) . '")';
-			$css .= '#bricks-toolbar .logo{background-color:transparent;padding:0}'
-				. '#bricks-toolbar .logo img{content:' . $url . ';height:32px;width:32px;border-radius:6px}';
+			$css .= '#bricks-toolbar .logo{background-color:transparent;padding:0;width:32px;height:32px}'
+				. '#bricks-toolbar .logo img{content:' . $url . ';width:32px;height:32px;border-radius:6px}';
 		}
 
 		if ( '' !== $css ) {
