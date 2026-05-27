@@ -59,15 +59,17 @@ body.adminkit .widefat tbody tr:first-child th {
    - overflow:visible lets the table overflow the wrapper (→ scroll) AND defeats
      the .widefat `overflow:hidden` on .wp-list-table.widefat (which would clip
      the overflowing cells).
-   The frame (border + radius + clipping) lives on the wrapper, not here, so the
-   scroll happens inside a fixed bordered box. */
+   Before JS fires the wrapper doesn't exist, so the frame (border + radius) lives
+   on the table itself using overflow:clip — which visually clips the radius corners
+   without creating a scroll container. Once JS injects .ak-table-scroll the more
+   specific rule below hands the frame to the wrapper and resets the table. */
 body.adminkit .wp-list-table {
 	background: var(--ak-surface);
-	border: 0;
-	border-radius: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
 	border-collapse: separate;
 	border-spacing: 0;
-	overflow: visible;
+	overflow: clip;
 	width: 100%;
 	table-layout: auto;
 }
@@ -480,6 +482,15 @@ body.adminkit .ak-table-scroll {
 	overflow-x: auto;
 	overflow-y: hidden;
 }
+/* Once JS wraps the table: delegate border + radius to the wrapper, reset the
+   table to borderless so it scrolls freely inside the bounded wrapper.
+   overflow:visible lets the table exceed the wrapper width → horizontal scroll. */
+body.adminkit .ak-table-scroll .wp-list-table {
+	border: 0;
+	border-radius: 0;
+	overflow: visible;
+}
+
 /* Plugin-install page wraps its featured / popular / etc. tab content in
    .ak-table-scroll for shared scroll behaviour, but the page already paints
    its own card chrome (the .wp-filter strip, the plugin-card grid). Stacking

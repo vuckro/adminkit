@@ -1,0 +1,31 @@
+/* Query Monitor — admin-bar toolbar tokens.
+ *
+ * QM's panel chrome is themed via css/admin.css injected into the shadow root.
+ * The TOOLBAR (the entry in #wpadminbar) lives in the main document, so
+ * custom-property remaps have to ship as a regular admin-loaded stylesheet —
+ * that's this file. QM declares its toolbar palette as `--qm-menu-*` vars on
+ * `#wpadminbar` itself; we override them here so the doing-it-wrong / strict /
+ * deprecated / notice rows pick up AdminKit's warning + error families instead
+ * of QM's hardcoded #740 / #c00.
+ *
+ * The "notice" family (alert + notice + expensive) maps to --ak-warning,
+ * matching the update-pending palette we use on `.subsubsub li.upgrade`.
+ * The "warning" family (the hardest QM severity, paints red by default) maps
+ * to --ak-error. Hover variants are a stronger mix of the same tone.
+ */
+
+body.adminkit #wpadminbar {
+	/* Notice family — yellow/orange in QM's defaults. Tracks --ak-warning so
+	   the toolbar reads consistently with AdminKit's "update available" badge
+	   and the .subsubsub li.upgrade pill background. */
+	--qm-menu-notice-bg:       color-mix(in srgb, var(--ak-warning) 32%, transparent);
+	--qm-menu-notice-bg-hover: color-mix(in srgb, var(--ak-warning) 50%, transparent);
+	--qm-menu-alert-bg:        color-mix(in srgb, var(--ak-warning) 40%, transparent);
+	--qm-menu-expensive-bg:    color-mix(in srgb, var(--ak-warning) 28%, transparent);
+
+	/* Warning family — red in QM's defaults (the most severe). Tracks
+	   --ak-error so it reads as "something is broken", same hue as the trash /
+	   inactive states on the .subsubsub. */
+	--qm-menu-warning-bg:       color-mix(in srgb, var(--ak-error) 40%, transparent);
+	--qm-menu-warning-bg-hover: color-mix(in srgb, var(--ak-error) 55%, transparent);
+}

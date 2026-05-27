@@ -39,7 +39,7 @@ class AdminKit_Profile_Account {
 	 *
 	 * @var string[]
 	 */
-	const SCREENS = array( 'profile', 'user-edit', 'user-new' );
+	const SCREENS = array( 'profile', 'user-edit', 'user-new', 'user' );
 
 	/**
 	 * Marker class added to <html> while the tab layout is being built, so the

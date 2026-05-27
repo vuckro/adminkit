@@ -32,8 +32,8 @@
 			light: ( D.logos && D.logos.light ) || '',
 			dark:  ( D.logos && D.logos.dark ) || ''
 		},
-		wpLogo: D.wpLogo || 'favicon',       // admin-bar / site-name mark: logo | favicon | hide
-		loginLogo: D.loginLogo || 'favicon', // login screen mark: logo | favicon | hide (legacy '' inherit → favicon)
+		wpLogo: ( D.wpLogo === 'logo' ) ? 'logo' : 'favicon',       // admin-bar / site-name mark: logo | favicon
+		loginLogo: ( D.loginLogo === 'logo' ) ? 'logo' : 'favicon', // login screen mark: logo | favicon
 		brandAccent: D.brandAccent || '',    // user hex (only meaningful when accentSource === 'custom')
 		// 'adminkit' = WP Blue (#3858E9), 'bricks' = Bricks provider --accent, 'custom' = brandAccent hex
 		accentSource: D.accentSource || 'adminkit',

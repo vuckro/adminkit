@@ -419,6 +419,18 @@ class AdminKit_Settings {
 			$value = $default;
 		}
 
+		// SELECT settings: re-run the sanitiser at read time so legacy stored
+		// values that are no longer in the valid set (e.g. the old 'hide' mode
+		// for wp_logo / login_logo) degrade gracefully to the declared default
+		// rather than leaking through as-is to every consumer. Sanitisers for
+		// select fields return the default when the value is unknown, so this
+		// is always safe to apply.
+		if ( 'select' === ( isset( self::$schema[ $key ]['type'] ) ? self::$schema[ $key ]['type'] : '' )
+			&& isset( self::$schema[ $key ]['sanitize'] )
+			&& is_callable( self::$schema[ $key ]['sanitize'] ) ) {
+			$value = call_user_func( self::$schema[ $key ]['sanitize'], $value );
+		}
+
 		return apply_filters( "adminkit/setting/{$key}", $value );
 	}
 

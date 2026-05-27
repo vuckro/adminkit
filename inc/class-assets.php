@@ -333,6 +333,7 @@ class AdminKit_Assets {
 		self::enqueue_tokens( $context, $core_deps );
 
 		$screen = AdminKit_Screen::get();
+
 		foreach ( self::$registry as $entry ) {
 			if ( $entry['context'] !== $context ) {
 				continue;
@@ -349,7 +350,7 @@ class AdminKit_Assets {
 	/**
 	 * Decide whether to enqueue a registry entry — three gates:
 	 *   1. `adminkit/enqueue_{section}` (back-compat per-section filter)
-	 *   2. `adminkit/enqueue_{handle}`  (new in 1.1, per-asset filter)
+	 *   2. `adminkit/enqueue_{handle}`  (per-asset filter, added in 1.1)
 	 *   3. The entry's own `condition` closure (or always-on if null)
 	 *
 	 * @param array            $entry

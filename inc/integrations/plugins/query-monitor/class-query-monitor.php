@@ -53,6 +53,11 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 	public static function register_assets() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_shadow_bridge' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_shadow_bridge' ) );
+		// Toolbar (main-document) token remap — separate stylesheet because
+		// the admin bar lives outside QM's shadow root, so the panel CSS
+		// injected by the shadow bridge can't reach it.
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_toolbar_tokens' ) );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_toolbar_tokens' ) );
 	}
 
 	/**
@@ -122,6 +127,27 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 			. 'mask:' . $uri . ' center/20px 20px no-repeat}';
 
 		echo '<style id="adminkit-qm-icon">' . $css . "</style>\n"; // SVG is URL-encoded.
+	}
+
+	/**
+	 * Enqueue the toolbar token remap (admin-bar #wpadminbar QM rows). Gated
+	 * the same way the shadow bridge is: in the admin, always; on the front
+	 * end, only when the admin bar is showing.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_toolbar_tokens() {
+		if ( ! is_admin() && ! is_admin_bar_showing() ) {
+			return;
+		}
+		$css_rel  = 'inc/integrations/plugins/query-monitor/css/toolbar.css';
+		$css_path = ADMINKIT_PATH . $css_rel;
+		wp_enqueue_style(
+			'adminkit-query-monitor-toolbar',
+			ADMINKIT_URL . $css_rel,
+			array(),
+			file_exists( $css_path ) ? (string) filemtime( $css_path ) : ADMINKIT_VERSION
+		);
 	}
 
 	/**

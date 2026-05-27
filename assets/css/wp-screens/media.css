@@ -9,6 +9,13 @@ body.adminkit .attachments-browser .attachment .attachment-preview {
 	overflow: hidden;
 }
 
+/* WP hardcodes #f0f0f1 (light grey) as the attachment thumbnail's empty/loading
+   surface. Map to --ak-elevated so it reads correctly in dark mode (and any
+   themed surface) instead of staying as a pale grey block. */
+body.adminkit .wp-core-ui .attachment-preview {
+	background: var(--ak-elevated);
+}
+
 /* Round the .attachment wrapper so the thumbnail corners match the chrome. */
 body.adminkit .media-frame.mode-grid .attachment,
 body.adminkit .attachments-browser .attachment {
@@ -108,6 +115,18 @@ body.adminkit.upload-php .wp-filter .search-form input[type="search"] {
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
+}
+
+/* Focus state — match the standard `input:focus` treatment (primary border +
+   subtle tint background). The `.wp-filter .search-form` ancestor selector
+   gives this rule higher specificity than `body.adminkit input[type="search"]:focus`
+   in inputs.css, which otherwise loses to the WP media-modal hardcodes. */
+body.adminkit.upload-php .wp-filter .search-form input[type="search"]:focus {
+	border-color: var(--ak-primary);
+	background-color: var(--ak-primary-subtle);
+	color: var(--ak-text);
+	outline: 0;
+	box-shadow: none;
 }
 
 body.adminkit.upload-php .media-sidebar {

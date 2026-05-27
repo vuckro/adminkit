@@ -28,7 +28,7 @@ See [`docs/INSTALL.md`](docs/INSTALL.md) for the full install guide — release 
 developer clone-and-symlink, and the `dev/package.php` packager that cuts a clean
 release zip from any branch or tag.
 
-That's it — AdminKit works with zero configuration. A settings page (top-level **AdminKit** menu) has a **Design** tab (your brand logo and the site-name brand-mark mode, then a read-only token reference), a **Features** tab (module toggles), and a **Plugins** tab listing *every installed* plugin (plus AdminKit's active theme adapter). Each row carries a **Native** badge when AdminKit ships a tuned adapter for it (a per-host enable toggle plus dark mode; the badge tracks whether an adapter exists, not whether the plugin is currently active); everything else is themed automatically by AdminKit's **generic** base token layer. Rows are grouped (**Plugins**, **Themes**) with a count on each group title, and AdminKit itself shows as a locked **System** row (always on, not removable here). The registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+That's it — AdminKit works with zero configuration. A settings page (**Settings → AdminKit** submenu) has a **Design** tab (your brand logo and the site-name brand-mark mode, then a read-only token reference), a **Features** tab (module toggles), and a **Plugins** tab listing *every installed* plugin (plus AdminKit's active theme adapter). Each row carries a **Native** badge when AdminKit ships a tuned adapter for it (a per-host enable toggle plus dark mode; the badge tracks whether an adapter exists, not whether the plugin is currently active); everything else is themed automatically by AdminKit's **generic** base token layer. Rows are grouped (**Plugins**, **Themes**) with a count on each group title, and AdminKit itself shows as a locked **System** row (always on, not removable here). The registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
@@ -163,7 +163,7 @@ adminkit/
 │   ├── class-assets.php                 Asset registry + dispatcher + token cascade
 │   ├── class-screen.php                 get_current_screen() helpers
 │   ├── class-settings.php               Settings registry + color map
-│   ├── class-settings-page.php          Settings SPA (admin menu) + REST save
+│   ├── class-settings-page.php          Settings SPA (Settings → AdminKit submenu) + REST save
 │   ├── class-dashboard.php              Dashboard widget registry (dormant until used)
 │   ├── class-theme-toggle.php           Dark / light toggle + login logo
 │   ├── wp-core/                         AdminKit's restyle of WP-core surfaces
@@ -171,19 +171,23 @@ adminkit/
 │   │   ├── class-login.php              Registers login.css
 │   │   ├── class-branding.php           Site-name brand mark: brand logo / favicon / hide (wp_logo)
 │   │   ├── class-menu-icons.php         Opt-in native-icon replacement (menu + toolbar), filterable
-│   │   ├── class-profile-account.php    Profile / user-edit screen layout
+│   │   ├── class-profile-account.php    Profile / user-edit / user-new tabbed layout
 │   │   ├── class-local-avatars.php      Per-user avatar that replaces Gravatar + generated-avatar fallback (DiceBear)
+│   │   ├── class-auto-theme.php         Runtime dark-mode tag-and-paint for unsupported plugin admin screens
+│   │   ├── class-options-general.php    Settings → General tab-rebuild (Site identity / Account / Locale)
+│   │   ├── class-options-discussion.php Settings → Discussion two-tab (Comments / Avatars)
 │   │   ├── class-post-previews.php      List-table screenshot thumbnails
-│   │   ├── class-list-table-chrome.php  List-table toolbar / pagination polish
-│   │   ├── class-user-quick-edit.php    Inline Quick Edit on users.php (first/last/email/role)
+│   │   ├── class-list-table-chrome.php  List-table toolbar polish + .subsubsub icons + nav-tab icons
+│   │   ├── class-user-quick-edit.php    Inline Quick Edit on users.php (first/last/email/role + avatar refresh)
 │   │   └── class-username-changer.php   Opt-in rename of user_login from profile / user-edit (off by default)
 │   └── integrations/                    Host adapters — auto-discovered, drop a folder
 │       ├── abstract-integration.php     AdminKit_Integration_Base
 │       ├── themes/
 │       │   └── bricks/                  Token provider + opt-in Bricks builder theming (with baseline fallback)
 │       └── plugins/
-│           ├── gutenberg/ · woocommerce/ · acf/
+│           ├── gutenberg/ · woocommerce/ · acf/ · elementor/
 │           ├── fluent-smtp/ · fluentform/ · fluent-booking/
+│           ├── wpforms/ · wpcode/ · query-monitor/
 │           ├── slim-seo/ · happyfiles/ · flying-press/ · wp-migrate-db-pro/
 │           └── admin-menu-editor/       Admin Menu Editor (Choices, settings, search, CPE metabox)
 └── assets/
@@ -198,7 +202,8 @@ adminkit/
     │   └── login.css                    wp-login.php
     └── js/
         ├── settings.js                  Settings SPA
-        └── wp-core/                     Footer behaviour bricks (profile, previews, list-table, user-quick-edit, username-changer)
+        ├── wp-core/                     Footer behaviour bricks (profile, previews, list-table, user-quick-edit, username-changer, auto-theme)
+        └── wp-screens/                  Per-screen behaviour (options-general, options-discussion)
 ```
 
 Each integration folder may also carry `css/` and a `baseline.json` (its host CSS
@@ -234,9 +239,9 @@ That's it — the boot orchestrator picks the folder up automatically on `after_
 This mirrors the **in-app roadmap** (Dashboard tab) — the single source lives in
 `AdminKit_Settings_Page::dashboard()`. Keep the two in sync (see [`CLAUDE.md`](CLAUDE.md)).
 
-- **In progress** — _nothing in flight right now._
-- **Next** — more native plugin support; universal plugin compatibility; more native screens styled; in-app palette editor; colour sync; more provider adapters; accessibility / contrast checks; import / export settings; per-role visibility; admin-bar polish.
-- **Planned** — command palette (⌘K); custom dashboard widgets; theme variants; per-user theme preference; admin notices manager; native menu editor; white-label & admin footer; custom admin CSS; density / compact mode; typography controls; Bricks dynamic logo tag; WordPress Playground demo.
+- **In progress** — universal plugin compatibility; custom dashboard page.
+- **Next** — more native screens styled; in-app palette editor; colour sync; more provider adapters; accessibility / contrast checks; import / export settings; per-role visibility; admin-bar polish.
+- **Planned** — command palette (⌘K); theme variants; per-user theme preference; admin notices manager; native menu editor; white-label & admin footer; custom admin CSS; density / compact mode; typography controls; Bricks dynamic logo tag; WordPress Playground demo.
 
 ---
 

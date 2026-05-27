@@ -1,3 +1,15 @@
+/* Anti-FOUC for the tab-rebuilt options pages (General + Discussion). The
+   raw form — every section visible at once — paints first, then `options-*.js`
+   tears it down and rebuilds it as tabs. Without this hide, the user sees
+   the un-rebuilt stack flash before the tabs settle. The PHP side adds
+   `ak-options-pending` to <html> pre-paint; the matching JS removes it when
+   the build is done. JS also force-reveals on `load` + a 3s backstop so a
+   thrown script can never trap the form invisible. */
+html.ak-options-pending body.adminkit.options-general-php .wrap > form[action="options.php"],
+html.ak-options-pending body.adminkit.options-discussion-php .wrap > form[action="options.php"] {
+	visibility: hidden;
+}
+
 /* Core Settings screens — options-general, options-writing, options-reading,
    options-discussion, options-media, options-permalink.
 
@@ -11,7 +23,7 @@
    Self-scoped under `body.adminkit` + a per-page body class so the rules
    never leak onto plugin settings screens that reuse `.form-table`. */
 
-/* ──── 1. Width — cap the form for readable card width ──── */
+/* ──── 1. Width + top gap — cap the form and breathe below the page h1 ──── */
 body.adminkit.options-general-php .wrap > form,
 body.adminkit.options-writing-php .wrap > form,
 body.adminkit.options-reading-php .wrap > form,
@@ -19,6 +31,7 @@ body.adminkit.options-discussion-php .wrap > form,
 body.adminkit.options-media-php .wrap > form,
 body.adminkit.options-permalink-php .wrap > form {
 	max-width: 960px;
+	margin-top: 20px;
 }
 
 /* ──── 2. Section heading — drop the underline form-table.css ships ────
@@ -48,4 +61,56 @@ body.adminkit.options-permalink-php .wrap > form > .form-table {
 	border-radius: var(--ak-radius-m);
 	padding: 4px 20px;
 	margin: 4px 0 20px;
+}
+
+/* ──── 4. Settings tabbed pages (General + Discussion) ────
+   `options-general.js` and `options-discussion.js` build an `.ak-tabs` strip
+   above the form and route the original sections into `.ak-options-card`
+   nodes. On General each tab maps to a single card; on Discussion a tab maps
+   to an `.ak-options-panel` that holds multiple cards (one per source `<h2>`
+   section). Active panel/card → visible; the others carry `[hidden]` but
+   stay inside the form so submit still posts every field on every tab.
+
+   The cards are nested under `.ak-options-grouped`, which deep-stops rule
+   (3) above from matching them as `> form > .form-table`. Restate the card
+   visual on each `.ak-options-card` and reset the inner table to a
+   borderless transparent layout. */
+body.adminkit.options-general-php .ak-options-grouped,
+body.adminkit.options-discussion-php .ak-options-grouped {
+	margin-top: 4px;
+}
+
+body.adminkit.options-general-php .ak-options-card,
+body.adminkit.options-discussion-php .ak-options-card {
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	padding: 6px 20px 4px;
+	margin: 4px 0 16px;
+}
+
+/* On General the card itself toggles. On Discussion the wrapping panel
+   toggles (each panel holds multiple cards). Cover both. */
+body.adminkit.options-general-php .ak-options-card[hidden],
+body.adminkit.options-discussion-php .ak-options-panel[hidden] {
+	display: none;
+}
+
+body.adminkit.options-general-php .ak-options-card__title,
+body.adminkit.options-discussion-php .ak-options-card__title {
+	margin: 8px 0 0;
+	padding: 0;
+	border: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--ak-heading);
+}
+
+body.adminkit.options-general-php .ak-options-card > .form-table,
+body.adminkit.options-discussion-php .ak-options-card > .form-table {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	padding: 0;
+	margin: 0;
 }

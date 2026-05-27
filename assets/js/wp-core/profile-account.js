@@ -29,6 +29,31 @@
 	if (!form || form.dataset.akAccount) { reveal(); return; }
 	form.dataset.akAccount = '1';
 
+	// user-new.php ships its rows as bare `tr.form-field` (no `.user-X-wrap`
+	// hooks the curated CARDS below match against). Tag them up front by walking
+	// from each input id back to its <tr>, so the rest of this script — built for
+	// profile.php / user-edit.php — works unchanged on the Add New User screen.
+	if (form.id === 'createuser') {
+		var TAGS = {
+			user_login:  'user-user-login-wrap',
+			email:       'user-email-wrap',
+			first_name:  'user-first-name-wrap',
+			last_name:   'user-last-name-wrap',
+			url:         'user-url-wrap',
+			pass1:       'user-pass1-wrap',
+			pass2:       'user-pass2-wrap',
+			role:        'user-role-wrap',
+			locale:      'user-language-wrap',
+			send_user_notification: 'user-send-notification-wrap',
+			noconfirmation:         'user-noconfirmation-wrap'
+		};
+		Object.keys(TAGS).forEach(function (name) {
+			var input = form.querySelector('#' + name);
+			var tr = input && input.closest('tr');
+			if (tr) { tr.classList.add(TAGS[name]); }
+		});
+	}
+
 	// Inline stroke icons (currentColor). One per curated tab + a set keyed to
 	// the kind of fields a plugin section carries.
 	var I = {
@@ -167,6 +192,47 @@
 			wrap.insertBefore(header, title);
 			header.appendChild(hero);
 			header.appendChild(title);
+			// Order: avatar → title → "Refresh avatar" (AJAX, when PHP supplied
+			// the endpoint data) → native "Add User" action. Refresh sits to the
+			// LEFT of Add User because it's about the user being edited; Add User
+			// is the global navigation action and stays the rightmost CTA.
+			//
+			// The refresh button does an AJAX POST to `adminkit_shuffle_avatar`
+			// (the same endpoint the users.php Quick Edit inline editor uses) and
+			// swaps the hero img src on success. No page reload, no URL
+			// round-trip — the only state that needs updating is the seed +
+			// the visible <img>.
+			if (S.refreshAvatarAjaxUrl && S.refreshAvatarNonce && S.refreshAvatarUserId) {
+				var refresh = document.createElement('button');
+				refresh.type = 'button';
+				refresh.className = 'page-title-action';
+				refresh.textContent = S.refreshAvatarLabel || 'Refresh avatar';
+				refresh.addEventListener('click', function () {
+					if (refresh.disabled) { return; }
+					refresh.disabled = true;
+					var fd = new FormData();
+					fd.append('action', 'adminkit_shuffle_avatar');
+					fd.append('user_id', S.refreshAvatarUserId);
+					fd.append('_wpnonce', S.refreshAvatarNonce);
+					fetch(S.refreshAvatarAjaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
+						.then(function (r) { return r.json().catch(function () { return null; }); })
+						.then(function (json) {
+							refresh.disabled = false;
+							var url = json && json.success && json.data && json.data.avatar_url;
+							if (url && heroImg) {
+								heroImg.srcset = '';
+								heroImg.src = url;
+							} else {
+								window.alert(S.refreshAvatarError || 'Could not refresh the avatar.');
+							}
+						})
+						.catch(function () {
+							refresh.disabled = false;
+							window.alert(S.refreshAvatarError || 'Could not refresh the avatar.');
+						});
+				});
+				header.appendChild(refresh);
+			}
 			if (action) {
 				header.appendChild(action);
 			}
@@ -176,31 +242,6 @@
 	}
 
 	mountProfilePictureHero();
-
-	// Lift the AdminKit avatar "Refresh" button out of the Informations card
-	// and place it next to the page title as a `.page-title-action` (same
-	// chrome as the native "Add User" button on user-edit.php). The Avatar
-	// row was visually redundant with the hero avatar above it and pulled
-	// the eye to the bottom of the card — moving the only action up to the
-	// page header lets the Informations card stay focused on identity data.
-	(function liftAvatarRefresh() {
-		var row = form.querySelector('#adminkit-profile-picture');
-		if (!row) return;
-		var btn = row.querySelector('a.button[href]');
-		if (!btn) { row.remove(); return; }
-		var title = document.querySelector('.wrap h1');
-		if (!title || !title.parentNode) return;
-		// Re-style as a page-title action (drops the .button chrome so it
-		// blends with the native action; keeps the href + nonce intact).
-		btn.classList.remove('button');
-		btn.classList.add('page-title-action');
-		// Append AFTER any existing .page-title-action (e.g. "Add User"), or
-		// straight after the title when there's none.
-		var existing = title.parentNode.querySelectorAll('.page-title-action');
-		var anchor = existing.length ? existing[existing.length - 1] : title;
-		anchor.parentNode.insertBefore(btn, anchor.nextSibling);
-		row.remove();
-	})();
 
 	// Application Passwords is the one heading WP nests in a <div>; lift the
 	// heading out (the wrapper keeps its id + classes for WP's own JS) so
@@ -243,6 +284,7 @@
 		var card = document.createElement('section');
 		card.className = 'ak-card';
 		card.id = id;
+		card.dataset.tab = id;
 		card.setAttribute('role', 'tabpanel');
 		card.setAttribute('aria-labelledby', 'tab-' + id);
 		var head = document.createElement('div'); head.className = 'ak-card-head';
@@ -286,6 +328,34 @@
 			if (row) row.classList.add('ak-third');
 		});
 	}
+	// Walk a tbody and demote orphan .ak-half / .ak-third rows to full width.
+	// Halves pair in 2s, thirds in 3s — if a run of consecutive same-class rows
+	// has odd / non-multiple length, the trailing rows would sit in a half / third
+	// grid slot with empty space next to them. Stripping the class lets them span
+	// the full row instead, which fills the panel cleanly.
+	function pairFractions(tbody) {
+		if (!tbody) { return; }
+		['ak-half', 'ak-third'].forEach(function (cls) {
+			var span = (cls === 'ak-half') ? 2 : 3;
+			var rows = Array.prototype.slice.call(tbody.children);
+			var run = [];
+			function flush() {
+				var extras = run.length % span;
+				for (var k = 0; k < extras; k++) {
+					run[run.length - 1 - k].classList.remove(cls);
+				}
+				run = [];
+			}
+			rows.forEach(function (r) {
+				if (r.classList && r.classList.contains(cls)) {
+					run.push(r);
+				} else {
+					flush();
+				}
+			});
+			flush();
+		});
+	}
 
 	// --- curated tabs -----------------------------------------------------
 	// `rows` fix the display order (moved in phase 1, before any whole-section
@@ -295,22 +365,27 @@
 	// customer addresses (10/20, assigned at sweep), Réglages (30), then any
 	// other plugin section (40, sorted alphabetically), then loose (90).
 	var CARDS = [
-		{ id: 'ak-info', icon: 'users', t: S.cards.info, grid: true, order: 0,
+		{ id: 'information', icon: 'users', t: S.cards.info, grid: true, order: 0,
 		  // Display order top→bottom. Pairings (.ak-half = 1/2, .ak-third = 1/3)
 		  // group fields visually: names side-by-side, email + nickname together,
 		  // display name + role together, then login standalone (full width to give
-		  // the "click to enable" affordance room), bio (textarea, full width), and
-		  // a 2-up footer: new password + reset. The AdminKit avatar Refresh row
-		  // is intentionally NOT pulled here — liftAvatarRefresh() above moves
-		  // it to the page header (next to "Add User") so the card stays focused
-		  // on identity data.
-		  // `.user-url-wrap` is intentionally NOT pulled here — it stays in Contact
-		  // Info and gets absorbed by the Settings card.
-		  rows: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', ['.user-user-login-wrap', '.user-login-wrap'], '.user-description-wrap', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
+		  // the "click to enable" affordance room), and a 2-up footer: new password
+		  // + reset. The "Refresh avatar" button is NOT pulled here —
+		  // mountProfilePictureHero() places it in the page header so this card
+		  // stays focused on identity data. Website (`.user-url-wrap`) and
+		  // biographical info (`.user-description-wrap`) live on the Settings tab
+		  // — the user-facing copy / locale set, not the identity set.
+		  rows: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', ['.user-user-login-wrap', '.user-login-wrap'], ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
 		  half: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
 		  absorb: [ S.sections.name ] },
-		{ id: 'ak-settings', icon: 'sliders', t: S.cards.settings, order: 30,
-		  rows: [ '.user-language-wrap', '.user-syntax-highlighting-wrap', '.user-comment-shortcuts-wrap', ['.user-admin-bar-front-wrap', '.show-admin-bar'], '.user-pass2-wrap', '.pw-weak' ],
+		{ id: 'settings', icon: 'sliders', t: S.cards.settings, order: 30,
+		  // Curated triad first (language / website / bio), then per-user prefs
+		  // (syntax highlighting, comment shortcuts, admin bar) and pw confirm.
+		  // Anything else WP exposes (Personal Options, App Passwords, About
+		  // Yourself leftover, Account Management, Capabilities) folds in via
+		  // absorb — the section heading text comes from WP core so it survives
+		  // translation.
+		  rows: [ '.user-language-wrap', '.user-url-wrap', '.user-description-wrap', '.user-syntax-highlighting-wrap', '.user-comment-shortcuts-wrap', ['.user-admin-bar-front-wrap', '.show-admin-bar'], '.user-pass2-wrap', '.pw-weak' ],
 		  absorb: [ S.sections.app_passwords, S.sections.personal, S.sections.contact, S.sections.about, S.sections.account, S.sections.capabilities ] }
 	];
 
@@ -329,6 +404,14 @@
 				b.c.card.classList.add('ak-grid');
 				markHalf(b.c.card, b.def.half);
 				markThird(b.c.card, b.def.third);
+				// Demote orphan half/third rows to full-width — a single .ak-half
+				// in a row otherwise sits in a 3/6 slot with empty space on the
+				// other side (user-new.php has no nickname/display_name, so the
+				// pairs the curated list assumes don't form). Walk the tbody,
+				// detect runs of consecutive same-class rows, and if a run has
+				// odd length (.ak-half: groups of 2; .ak-third: groups of 3),
+				// strip the class from the tail row so it spans full width.
+				pairFractions(b.c.tbody);
 			}
 			panels.appendChild(b.c.card);
 			addTab(b.def.id, b.def.icon, b.def.t.label, b.def.order);
@@ -336,15 +419,6 @@
 			delete used[b.def.id];
 		}
 	});
-
-	// Drop the now-empty wrapper that PHP rendered around #adminkit-profile-picture
-	// at the bottom of the form. The row has been moved into the ak-info card; the
-	// outer <table> is just markup scaffolding for the show_user_profile hook (which
-	// fires outside any table) and serves no purpose once the row is gone.
-	var avatarWrap = form.querySelector('.adminkit-profile-picture-wrap');
-	if (avatarWrap && !avatarWrap.querySelector('tr')) {
-		avatarWrap.remove();
-	}
 
 	// Group WooCommerce customer addresses (billing + shipping) into one tidy
 	// "Adresses" tab. Each address is a collapsible <details> so the panel
@@ -355,7 +429,7 @@
 			.map(function (sel) { return sectionByField(sel); })
 			.filter(Boolean);
 		if (!sections.length) return;
-		var c = makePanel(uid('ak-addresses'), S.addresses, '');
+		var c = makePanel(uid('addresses'), S.addresses, '');
 		c.card.classList.add('ak-grid'); // fields render label-above, paired two-up
 		if (c.tbody.parentNode) c.tbody.parentNode.remove(); // drop the empty default table
 		sections.forEach(function (h2, idx) {
@@ -386,7 +460,7 @@
 	Array.prototype.forEach.call(form.querySelectorAll(':scope > h2'), function (h2) {
 		var label = h2.textContent.trim();
 		var slug = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'section';
-		var id = uid('ak-' + slug);
+		var id = uid(slug);
 		var c = makePanel(id, label, '');
 		consume(c.card, c.tbody, sectionNodes(h2), null);
 		if (h2.parentNode) h2.parentNode.removeChild(h2);
@@ -401,15 +475,38 @@
 		return ch.classList && ch.classList.contains('form-table') && ch.querySelector('tr');
 	});
 	if (loose.length) {
-		var moreId = uid('ak-more');
-		var more = makePanel(moreId, S.more, '');
-		loose.forEach(function (t) {
-			Array.prototype.forEach.call(t.querySelectorAll('tr'), function (tr) { more.tbody.appendChild(tr); });
-			if (t.parentNode) t.parentNode.removeChild(t);
-		});
-		if (more.tbody.children.length) {
-			panels.appendChild(more.card);
-			addTab(moreId, pluginIcon(more.card), S.more, 90);
+		// Prefer attaching loose rows (e.g. user-new.php's send_user_notification)
+		// as a SECONDARY .ak-card on the Settings tab — both cards share the same
+		// `data-tab` and toggle together, so one tab shows two cards instead of
+		// us shipping a thin "Other settings" tab with a single row in it. Falls
+		// back to its own tab when Settings isn't on the page (Settings bailed,
+		// or another screen shape).
+		var settingsCard = used['settings'] ? document.getElementById('settings') : null;
+		if (settingsCard) {
+			var secondary = document.createElement('section');
+			secondary.className = 'ak-card';
+			secondary.dataset.tab = 'settings';
+			var head = document.createElement('div'); head.className = 'ak-card-head';
+			var hh = document.createElement('h2'); hh.textContent = S.more; head.appendChild(hh);
+			secondary.appendChild(head);
+			var stable = document.createElement('table'); stable.className = 'form-table'; stable.setAttribute('role', 'presentation');
+			var stbody = document.createElement('tbody'); stable.appendChild(stbody); secondary.appendChild(stable);
+			loose.forEach(function (t) {
+				Array.prototype.forEach.call(t.querySelectorAll('tr'), function (tr) { stbody.appendChild(tr); });
+				if (t.parentNode) t.parentNode.removeChild(t);
+			});
+			if (stbody.children.length) { panels.appendChild(secondary); }
+		} else {
+			var moreId = uid('more');
+			var more = makePanel(moreId, S.more, '');
+			loose.forEach(function (t) {
+				Array.prototype.forEach.call(t.querySelectorAll('tr'), function (tr) { more.tbody.appendChild(tr); });
+				if (t.parentNode) t.parentNode.removeChild(t);
+			});
+			if (more.tbody.children.length) {
+				panels.appendChild(more.card);
+				addTab(moreId, pluginIcon(more.card), S.more, 90);
+			}
 		}
 	}
 
@@ -426,6 +523,18 @@
 			if (panel) panels.appendChild(panel);
 		});
 
+	// Anchor any secondary cards (cards whose `data-tab` doesn't match their own
+	// id) right after their primary so each tab's content stays grouped after
+	// the sort+re-append above moved the primaries around.
+	Array.prototype.slice.call(panels.children).forEach(function (p) {
+		var owner = p.dataset.tab;
+		if (!owner || owner === p.id) { return; }
+		var primary = document.getElementById(owner);
+		if (primary && primary !== p) {
+			primary.insertAdjacentElement('afterend', p);
+		}
+	});
+
 	// --- tabs: show one panel at a time -----------------------------------
 	var buttons = tabs.querySelectorAll('button');
 	if (!buttons.length) {
@@ -441,11 +550,35 @@
 			b.setAttribute('aria-selected', on ? 'true' : 'false');
 			b.tabIndex = on ? 0 : -1;
 		});
-		Array.prototype.forEach.call(panels.children, function (p) { p.hidden = (p.id !== id); });
+		// Toggle by `data-tab` (not `id`) so secondary cards sharing a tab with
+		// their primary show/hide together — see the loose-rows attach above.
+		Array.prototype.forEach.call(panels.children, function (p) { p.hidden = (p.dataset.tab !== id); });
+		// Reflect the active tab in the URL so the page can be deep-linked
+		// (e.g. `profile.php#settings`). `replaceState` keeps history clean
+		// — clicking tabs doesn't pile up entries.
+		if (location.hash.slice(1) !== id) {
+			if (history.replaceState) {
+				history.replaceState(null, '', '#' + id);
+			} else {
+				location.hash = id;
+			}
+		}
+	}
+	function tabFor(slug) {
+		for (var i = 0; i < buttons.length; i++) {
+			if (buttons[i].dataset.target === slug) { return slug; }
+		}
+		return null;
 	}
 	tabs.addEventListener('click', function (e) {
 		var b = e.target.closest('button');
 		if (b) activate(b.dataset.target);
+	});
+	// Respond to manual URL edits / back-forward / same-page anchor clicks so
+	// the tab follows the address bar.
+	window.addEventListener('hashchange', function () {
+		var id = tabFor(location.hash.slice(1));
+		if (id) { activate(id); }
 	});
 	// Roving arrow-key nav across the tab strip.
 	tabs.addEventListener('keydown', function (e) {
@@ -458,23 +591,26 @@
 		activate(next.dataset.target);
 		e.preventDefault();
 	});
-	activate(buttons[0].dataset.target);
+	// Initial activation: URL hash wins (deep link from support / docs), then
+	// first tab as fallback.
+	activate(tabFor(location.hash.slice(1)) || buttons[0].dataset.target);
 
-	// On narrow screens, move the page's primary action ("Add New User") below
-	// the tabs + panels — it shouldn't sit above the content on mobile. The
-	// button lives in the title header (a different container), so a media-query
-	// listener relocates it rather than CSS order. Restored to the header on
+	// On narrow screens, move all page-title-action buttons (native "Add New User"
+	// + any added by AdminKit, e.g. "Refresh avatar") below the tabs + panels —
+	// they shouldn't sit above the content on mobile. Restored to the header on
 	// wide screens.
-	var pageAction = document.querySelector('.page-title-action');
-	if (pageAction) {
-		var actionHome = pageAction.parentNode;
+	var pageActions = Array.prototype.slice.call(document.querySelectorAll('.page-title-action'));
+	if (pageActions.length) {
+		var actionHome = pageActions[0].parentNode;
 		var narrow = window.matchMedia('(max-width: 782px)');
 		var placeAction = function () {
-			if (narrow.matches) {
-				box.appendChild(pageAction);
-			} else if (pageAction.parentNode !== actionHome) {
-				actionHome.appendChild(pageAction);
-			}
+			pageActions.forEach(function (a) {
+				if (narrow.matches) {
+					box.appendChild(a);
+				} else if (a.parentNode !== actionHome) {
+					actionHome.appendChild(a);
+				}
+			});
 		};
 		placeAction();
 		if (narrow.addEventListener) narrow.addEventListener('change', placeAction);

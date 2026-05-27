@@ -144,8 +144,9 @@ list, the `adminkit/setting/{key}` filter, and the REST save.
 ## Settings
 
 `AdminKit_Settings` is the registry; `AdminKit_Settings_Page` mounts a small
-vanilla-JS SPA (`assets/js/settings.js`) on the top-level **AdminKit** menu and
-persists via one REST route (`adminkit/v1/settings`). Four tabs: **Dashboard**;
+vanilla-JS SPA (`assets/js/settings.js`) on the **Settings → AdminKit** submenu
+(screen hook `settings_page_adminkit`) and persists via one REST route
+(`adminkit/v1/settings`). Four tabs: **Dashboard**;
 **Design** (leads with the interactive Branding block — the brand logo plus the
 `wp_logo` / `login_logo` modes for the site-name and login brand marks — then a
 read-only reference of the semantic token map; the `design` i18n key, formerly

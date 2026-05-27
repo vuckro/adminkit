@@ -22,9 +22,9 @@ In WordPress:
 
 1. **Plugins → Add New → Upload Plugin** → choose the `adminkit-X.Y.Z.zip` file → **Install Now**.
 2. **Activate Plugin.**
-3. A top-level **AdminKit** menu appears in wp-admin. The three tabs cover the
-   feature toggles, brand options, and an inventory of installed plugins +
-   theme adapters.
+3. A **Settings → AdminKit** submenu appears in wp-admin. The tabs cover the
+   dashboard, feature toggles, brand options, and an inventory of installed
+   plugins + theme adapters.
 
 That's it — there's no setup wizard, no DB migration, no required configuration.
 Defaults are sensible: Gutenberg canvas theming, AdminKit icons, and local

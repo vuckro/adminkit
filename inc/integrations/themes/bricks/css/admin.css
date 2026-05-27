@@ -143,7 +143,10 @@ body.adminkit #bricks-settings input[type="checkbox"] {
 	   and the knob's `left: 12px` (below) can't reach flush right. */
 	width: 26px;
 	min-width: 26px;
-	background-color: var(--ak-elevated);
+	/* Off-state track — same `--ak-border-strong` as AdminKit's global toggle
+	   (components/inputs.css), so a Bricks toggle and a generic admin toggle
+	   read as the same component. */
+	background-color: var(--ak-border-strong);
 }
 
 body.adminkit #bricks-settings input[type="checkbox"]:checked {
@@ -181,50 +184,26 @@ body.adminkit #bricks-settings .bricks-custom-capabilities-wrapper .capability-i
 }
 
 
-/* ----- 5b. Settings page tabs as pills (#bricks-settings-tabs-wrapper) -----
-   Bricks renders the settings nav as a WP `.nav-tab-wrapper` <ul> of
-   <li><a.nav-tab>. AdminKit's global chrome skins .nav-tab as underline tabs;
-   here we mirror the account / Loco pill strip (profile.css `.ak-tabs`,
-   loco-translate/admin.css): a flex row of transparent muted pills, a neutral
-   wash on hover, and an elevated (not primary) fill on the active pill, with no
-   bottom border. Unlike Loco's bare <a>, Bricks wraps each tab in an <li>, so
-   the <a> isn't a direct flex item — WP's `float:left` on .nav-tab must be
-   cleared (else the pill collapses to zero height inside the flex item). */
+/* ----- 5b. Bricks settings tabs (#bricks-settings-tabs-wrapper) ------------
+   The strip is `<ul class="nav-tab-wrapper"><li><a class="nav-tab">…` — exactly
+   the markup AdminKit's `wp-core/chrome.css` already paints as a bordered
+   pill container (same shape as `.subsubsub`, `.ak-tabs`). Bricks' own
+   `#bricks-settings-tabs-wrapper{margin:15px 0 30px}` only nudges the strip's
+   margin; everything else (display, padding, border, radius) is ours to set
+   via the generic `.nav-tab-wrapper` rule — no Bricks-specific overrides
+   needed here. Just give the strip breathing room from the title bar above
+   and the first card below; 16px top + 20px bottom matches the rhythm of
+   the cards in the panel. */
 body.adminkit #bricks-settings-tabs-wrapper {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 4px;
-	border-bottom: none;
+	margin: 16px 0 20px;
 }
 
-body.adminkit #bricks-settings-tabs-wrapper .nav-tab {
-	float: none;
-	display: inline-flex;
-	align-items: center;
-	background: transparent;
-	border: 0;
-	border-radius: var(--ak-radius-s);
-	color: var(--ak-text-muted);
-	font-weight: 500;
-	padding: 5px 11px;
-	margin: 0;
-	line-height: 1.3;
-}
-
-body.adminkit #bricks-settings-tabs-wrapper .nav-tab:hover,
-body.adminkit #bricks-settings-tabs-wrapper .nav-tab:focus {
-	background: var(--ak-hover-bg);
-	color: var(--ak-heading);
-}
-
-/* Active pill — a quiet "selected" state, not a CTA: elevated neutral surface
-   with a heading-weight label, no primary fill. */
-body.adminkit #bricks-settings-tabs-wrapper .nav-tab-active,
-body.adminkit #bricks-settings-tabs-wrapper .nav-tab-active:hover,
-body.adminkit #bricks-settings-tabs-wrapper .nav-tab-active:focus {
-	background: var(--ak-elevated);
-	color: var(--ak-heading);
-	font-weight: 600;
+/* `tr.sep` rows inside the Custom Code tab carry Bricks's own
+   `margin-bottom: 20px`. With our `tr.code-note` ring-removal (chrome.css)
+   they no longer read as standalone cards, so the 20px gap below each one is
+   just dead space between the note and the field. Reset it. */
+body.adminkit #bricks-settings #tab-custom-code tr.sep {
+	margin-bottom: 0;
 }
 
 

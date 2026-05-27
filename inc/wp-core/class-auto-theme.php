@@ -82,11 +82,25 @@ class AdminKit_Auto_Theme {
 		// so the detector would be pure wasted work there. AdminKit's own page is
 		// themed too. (The native-adapter skip is layered on top later.)
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		$id     = $screen ? (string) $screen->id : '';
+
+		/**
+		 * Whether to suppress auto-theme for the current admin screen.
+		 * Return true on screens owned by a native adapter — the adapter's CSS
+		 * handles all theming, and auto-theme scanning already-correct dark-mode
+		 * computed colours causes a flash (re-tags `--ak-heading` as "muted").
+		 *
+		 * @param bool             $suppress False by default.
+		 * @param \WP_Screen|null  $screen   Current admin screen, or null.
+		 */
+		if ( apply_filters( 'adminkit/suppress_auto_theme', false, $screen ) ) {
+			return;
+		}
+
+		$id = $screen ? (string) $screen->id : '';
 		if ( '' === $id || false === strpos( $id, '_page_' ) ) {
 			return;
 		}
-		if ( 'toplevel_page_' . AdminKit_Settings_Page::SLUG === $id ) {
+		if ( 'settings_page_' . AdminKit_Settings_Page::SLUG === $id ) {
 			return;
 		}
 

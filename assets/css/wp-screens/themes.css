@@ -221,6 +221,14 @@ body.adminkit .theme-overlay .theme-description {
 	color: var(--ak-text);
 }
 
+/* Theme tags row at the bottom of the modal (".Tags: blog, news, …"). WP
+   paints a 3px #f0f0f1 divider above + #646970 text. Route both through
+   tokens so the divider tracks --ak-border and the label reads as muted. */
+body.adminkit .theme-overlay .theme-tags {
+	border-top-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
 /* Delete-theme link — keep semantic red via --ak-error */
 body.adminkit .broken-themes a.delete-theme,
 body.adminkit .theme-overlay .theme-actions .delete-theme {

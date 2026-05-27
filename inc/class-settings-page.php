@@ -20,7 +20,10 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Settings_Page {
 
-	/** Top-level menu + settings-page slug (screen hook: toplevel_page_adminkit). */
+	/** Settings submenu + settings-page slug (screen hook: settings_page_adminkit).
+	 *  Lives under Settings → AdminKit so AdminKit reads as "site config" alongside
+	 *  the WordPress core options screens, instead of competing with content menus
+	 *  for top-level real estate. */
 	const SLUG = 'adminkit';
 
 	/** Asset handle shared by the SPA's script + style. */
@@ -40,27 +43,57 @@ class AdminKit_Settings_Page {
 		add_action( 'admin_menu', array( __CLASS__, 'add_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
+		// "Settings" link in the plugin row action area (next to Deactivate). The
+		// filter name is keyed on the plugin's basename so it only attaches to
+		// our row, not every plugin's.
+		add_filter( 'plugin_action_links_' . plugin_basename( ADMINKIT_FILE ), array( __CLASS__, 'plugin_action_links' ) );
 		add_filter( 'adminkit/integration_enabled', array( __CLASS__, 'gate_integration' ), 10, 2 );
 		// Gate the admin restyle on plugin pages opted out individually in the
 		// Plugins tab (see `gate_generic_theming()` + `plugin_file_for_screen()`).
 		add_filter( 'adminkit/should_load', array( __CLASS__, 'gate_generic_theming' ), 10, 2 );
+		// On screens owned by a native adapter, suppress auto-theme so the adapter's
+		// own CSS handles theming without auto-theme re-tagging correctly-themed elements.
+		add_filter( 'adminkit/suppress_auto_theme', array( __CLASS__, 'suppress_auto_theme_for_adapters' ), 10, 2 );
 	}
 
 	/**
-	 * Register the top-level AdminKit menu.
+	 * Register the AdminKit settings page as a Settings → submenu.
+	 *
+	 * WP appends submenu items in registration order — AdminKit lands at the
+	 * bottom of the Settings list, after Permalinks / Privacy / etc. That's
+	 * the native default and reads as "extra settings provided by this
+	 * plugin"; we don't fight WP's order with `$submenu` manipulation.
+	 *
+	 * Screen hook: `settings_page_adminkit`.
 	 *
 	 * @return void
 	 */
 	public static function add_menu() {
-		add_menu_page(
+		add_submenu_page(
+			'options-general.php',
 			__( 'AdminKit', 'adminkit' ),
 			__( 'AdminKit', 'adminkit' ),
 			'manage_options',
 			self::SLUG,
-			array( __CLASS__, 'render' ),
-			'dashicons-admin-customizer',
-			81
+			array( __CLASS__, 'render' )
 		);
+	}
+
+	/**
+	 * Prepend a "Settings" link to the plugin row actions on plugins.php so the
+	 * admin doesn't have to walk Settings → AdminKit to reach the SPA.
+	 *
+	 * @param string[] $links
+	 * @return string[]
+	 */
+	public static function plugin_action_links( $links ) {
+		$settings = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( admin_url( 'options-general.php?page=' . self::SLUG ) ),
+			esc_html__( 'Settings', 'adminkit' )
+		);
+		array_unshift( $links, $settings );
+		return $links;
 	}
 
 	/**
@@ -89,7 +122,7 @@ class AdminKit_Settings_Page {
 	 * @return void
 	 */
 	public static function enqueue( $hook ) {
-		if ( 'toplevel_page_' . self::SLUG !== $hook ) {
+		if ( 'settings_page_' . self::SLUG !== $hook ) {
 			return;
 		}
 
@@ -506,6 +539,12 @@ class AdminKit_Settings_Page {
 							'detail' => __( 'Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common form controls — so a plugin with no dedicated adapter still looks coherent in light and dark out of the box. The stronger this layer, the less per-plugin work is ever needed.', 'adminkit' ),
 							'star'   => true,
 						),
+						array(
+							'label'  => __( 'Custom dashboard page', 'adminkit' ),
+							'desc'   => __( 'A redesigned WordPress home screen that\'s actually useful.', 'adminkit' ),
+							'detail' => __( 'Replace the default WordPress dashboard with a polished home screen built on native data — site health, content snapshots, recent activity, quick actions — without new database tables or heavy machinery. Useful first, decorative second.', 'adminkit' ),
+							'star'   => true,
+						),
 					),
 				),
 				array(
@@ -562,11 +601,6 @@ class AdminKit_Settings_Page {
 							'desc'   => __( 'Jump anywhere with a keystroke.', 'adminkit' ),
 							'detail' => __( 'A ⌘K / Ctrl-K launcher to jump straight to any admin page, setting or post — no more hunting through menus.', 'adminkit' ),
 							'star'   => true,
-						),
-						array(
-							'label'  => __( 'Custom dashboard widgets', 'adminkit' ),
-							'desc'   => __( 'Replace the WP home screen.', 'adminkit' ),
-							'detail' => __( 'Swap the default dashboard for quick actions, site status and recent activity that are actually useful.', 'adminkit' ),
 						),
 						array(
 							'label'  => __( 'Theme variants', 'adminkit' ),
@@ -1048,18 +1082,21 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Gate AdminKit's admin restyle on a "generic" plugin page when the user
-	 * has flipped OFF that plugin's individual switch in the Plugins tab.
-	 * Hooked on `adminkit/should_load` — the same filter that gates the
-	 * `adminkit` body class in `AdminKit_Assets::add_admin_body_class()`.
-	 * With no body class, every `body.adminkit …` rule misses → WordPress
-	 * paints natively, which is what "disable for this plugin" promises.
+	 * Gate AdminKit's admin restyle depending on which plugin owns the current
+	 * screen. Hooked on `adminkit/should_load` — the same filter that gates the
+	 * `adminkit` body class in `AdminKit_Assets::add_admin_body_class()`. When
+	 * this returns false, no CSS loads and `body.adminkit` is never added.
 	 *
-	 * Screen → plugin mapping is a heuristic (see `plugin_file_for_screen()`):
-	 * matches the slug embedded in the screen ID against installed plugin
-	 * dirname / basename. Works for plugins whose menu slug follows the
-	 * usual dirname conventions (the vast majority); plugins with exotic
-	 * slugs won't be opt-out-able but the toggle is still harmless.
+	 * Two paths:
+	 *
+	 *   Native adapter screen (owns_screen() returns true for some integration):
+	 *     → integration toggle OFF → return false (nothing loads; WP native UI)
+	 *     → integration toggle ON  → return true  (tokens + chrome + generic + adapter
+	 *       all load; auto-theme suppressed separately via `adminkit/suppress_auto_theme`)
+	 *
+	 *   Generic plugin screen (no adapter):
+	 *     → plugin in `generic_theming_off` → return false
+	 *     → otherwise → return true (tokens + chrome + generic + auto-theme load)
 	 *
 	 * @param bool   $should_load
 	 * @param string $context admin | login | frontend | editor.
@@ -1069,27 +1106,63 @@ class AdminKit_Settings_Page {
 		if ( 'admin' !== $context || ! $should_load ) {
 			return $should_load;
 		}
-		$off = (array) AdminKit_Settings::get( 'generic_theming_off' );
-		if ( ! $off ) {
-			return $should_load; // nothing's been opted out — short-circuit
-		}
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 		if ( ! $screen ) {
 			return $should_load;
 		}
-		// Native adapter screens stay themed regardless — the per-plugin
-		// switch in the Plugins tab is the adapter's own toggle there.
+		// Check native adapters first: if any adapter owns this screen, the
+		// user's integration toggle is the sole gate — ON keeps AdminKit loading
+		// (auto-theme suppressed separately via suppress_auto_theme_for_adapters()),
+		// OFF removes AdminKit entirely from those pages.
 		foreach ( self::integration_specs() as $s ) {
-			if ( method_exists( $s['class'], 'owns_screen' )
-				&& call_user_func( array( $s['class'], 'owns_screen' ), $screen ) ) {
-				return $should_load;
+			if ( ! method_exists( $s['class'], 'owns_screen' ) ) {
+				continue;
 			}
+			if ( ! call_user_func( array( $s['class'], 'owns_screen' ), $screen ) ) {
+				continue;
+			}
+			// Screen is owned by this adapter — respect its toggle.
+			return (bool) apply_filters( 'adminkit/integration_enabled', true, $s['slug'] );
+		}
+		// Generic plugin: check the per-plugin opt-out list.
+		$off = (array) AdminKit_Settings::get( 'generic_theming_off' );
+		if ( ! $off ) {
+			return true; // nothing opted out — short-circuit before get_plugins()
 		}
 		$file = self::plugin_file_for_screen( $screen );
-		if ( $file && in_array( $file, $off, true ) ) {
-			return false; // user opted this plugin out → WP native UI
+		return ! ( $file && in_array( $file, $off, true ) );
+	}
+
+	/**
+	 * Suppress AdminKit's auto-theme on screens owned by a native adapter.
+	 * Hooked on `adminkit/suppress_auto_theme` (fired in `AdminKit_Auto_Theme::enqueue()`).
+	 * The adapter's own CSS handles all theming — auto-theme scanning correctly-themed
+	 * elements in dark mode re-tags their already-correct computed colours as "muted",
+	 * causing a visible flash when auto-theme.css overrides the adapter's rules.
+	 *
+	 * `integration_specs()` is already memoised (static $specs), so the loop is
+	 * cheap — one array walk per auto-theme enqueue on plugin pages.
+	 *
+	 * @param bool             $suppress False by default.
+	 * @param \WP_Screen|null  $screen
+	 * @return bool
+	 */
+	public static function suppress_auto_theme_for_adapters( $suppress, $screen ) {
+		if ( $suppress || ! $screen ) {
+			return $suppress;
 		}
-		return $should_load;
+		foreach ( self::integration_specs() as $s ) {
+			if ( ! method_exists( $s['class'], 'owns_screen' ) ) {
+				continue;
+			}
+			if ( ! apply_filters( 'adminkit/integration_enabled', true, $s['slug'] ) ) {
+				continue; // disabled integration — auto-theme suppression not needed
+			}
+			if ( call_user_func( array( $s['class'], 'owns_screen' ), $screen ) ) {
+				return true; // adapter active + owns screen → suppress auto-theme
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -1098,14 +1171,22 @@ class AdminKit_Settings_Page {
 	 * matches it against installed plugins' dirname / basename. Returns
 	 * null on a WP core screen or when no plugin matches.
 	 *
+	 * Result is memoised per screen ID: the filter fires at least twice per
+	 * request (body class + dispatch) and `get_plugins()` reads all plugin
+	 * headers from disk on every call — the cache keeps it at one parse.
+	 *
 	 * @param \WP_Screen|null $screen
 	 * @return string|null Plugin file path (`acf/acf.php`), or null.
 	 */
 	private static function plugin_file_for_screen( $screen ) {
+		static $cache = array();
 		if ( ! $screen ) {
 			return null;
 		}
-		$id   = (string) $screen->id;
+		$id = (string) $screen->id;
+		if ( array_key_exists( $id, $cache ) ) {
+			return $cache[ $id ];
+		}
 		$slug = '';
 		if ( 0 === strpos( $id, 'toplevel_page_' ) ) {
 			$slug = substr( $id, strlen( 'toplevel_page_' ) );
@@ -1113,7 +1194,7 @@ class AdminKit_Settings_Page {
 			$slug = substr( $id, strpos( $id, '_page_' ) + strlen( '_page_' ) );
 		}
 		if ( '' === $slug ) {
-			return null;
+			return ( $cache[ $id ] = null );
 		}
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -1126,10 +1207,10 @@ class AdminKit_Settings_Page {
 			}
 			if ( $slug === $dir || $slug === $base
 				|| 0 === strpos( $slug, $dir . '-' ) || 0 === strpos( $slug, $dir . '_' ) ) {
-				return $file;
+				return ( $cache[ $id ] = $file );
 			}
 		}
-		return null;
+		return ( $cache[ $id ] = null );
 	}
 
 	/**

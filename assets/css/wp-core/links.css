@@ -7,15 +7,19 @@ body.adminkit a {
 	color: var(--ak-text);
 }
 
-/* Link hover/focus — a READABLE link colour (--ak-info), never the brand accent:
-   --ak-primary is yellow → poor as link text, and inconsistent with the canvas,
-   which already uses --ak-info for links. No underline, no background fill. No
-   !important — kept low so structural link groups with their own (more specific)
-   hovers — subsubsub filters, row actions, admin menu, help tabs — win naturally. */
+/* Link hover/focus — uses the brand accent (--ak-primary). Default tokens
+   ship a blue --ak-primary (WP Block Editor blue, #3858E9) so the link reads
+   correctly out of the box; if a site sets a custom brand colour it should
+   already be picked for contrast as a button/link colour. We deliberately
+   moved off --ak-info: it overlapped with notification counts + status badges,
+   making hover links read as "info pill" rather than "accent". No underline,
+   no background fill. No !important — kept low so structural link groups
+   with their own (more specific) hovers — subsubsub filters, row actions,
+   admin menu, help tabs — win naturally. */
 body.adminkit a:hover,
 body.adminkit a:focus {
-	border-color: var(--ak-info);
-	color: var(--ak-info);
+	border-color: var(--ak-primary);
+	color: var(--ak-primary);
 	text-decoration: none;
 }
 

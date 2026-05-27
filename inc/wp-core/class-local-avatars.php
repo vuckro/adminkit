@@ -88,7 +88,10 @@ class AdminKit_Local_Avatars {
 	 */
 	const SEED_META = 'adminkit_avatar_seed';
 
-	/** Nonce action used by the shuffle link (profile button + users-list row action). */
+	/** Nonce action shared by every AdminKit avatar-refresh affordance:
+	 *  the page-title button on profile.php / user-edit.php, the inline
+	 *  Quick Edit refresh on users.php, and the users-list bulk action. All
+	 *  three POST to `wp_ajax_adminkit_shuffle_avatar` with this nonce. */
 	const SHUFFLE_NONCE = 'adminkit_shuffle_avatar';
 
 	public static function init() {
@@ -112,15 +115,12 @@ class AdminKit_Local_Avatars {
 		// Email or login change → drop the cached Gravatar check so it re-runs next render.
 		add_action( 'profile_update', array( __CLASS__, 'invalidate_cache' ) );
 
-		// "Refresh" affordances — a per-user button on profile.php /
-		// user-edit.php, a bulk action in the users-list dropdown, and an AJAX
-		// endpoint the Quick Edit inline editor calls (so refreshing a single
-		// user from users.php doesn't need a full page reload). The users.php
-		// per-row action was dropped to keep the hover menu uncluttered; the
-		// three remaining entry points cover the same use cases without it.
-		add_action( 'admin_init', array( __CLASS__, 'maybe_shuffle' ) );
-		add_action( 'show_user_profile', array( __CLASS__, 'render_profile_section' ) );
-		add_action( 'edit_user_profile', array( __CLASS__, 'render_profile_section' ) );
+		// "Refresh" affordances — a single AJAX endpoint used by BOTH the
+		// page-title button on profile.php / user-edit.php (data passed through
+		// the profile script's localized object so the click handler does the
+		// POST) AND the users.php Quick Edit inline button. Plus a bulk action
+		// in the users-list dropdown for re-rolling many users at once.
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'maybe_add_refresh_data' ) );
 		add_filter( 'bulk_actions-users', array( __CLASS__, 'add_bulk_action' ) );
 		add_filter( 'handle_bulk_actions-users', array( __CLASS__, 'handle_bulk_action' ), 10, 3 );
 		add_action( 'admin_notices', array( __CLASS__, 'maybe_show_bulk_notice' ) );
@@ -292,59 +292,13 @@ class AdminKit_Local_Avatars {
 	}
 
 	/**
-	 * Handle a Shuffle GET request — roll a new seed for the target user, then
-	 * redirect back to the page the click came from.
+	 * Roll a new seed for the target user and return the fresh avatar URL as
+	 * JSON. The page-title "Refresh avatar" button on profile.php /
+	 * user-edit.php AND the users.php Quick Edit refresh button both call
+	 * this endpoint — one server-side path, two UI surfaces.
 	 *
-	 * We redirect to `wp_get_referer()` (NOT the current URL minus our params).
-	 * Why: when the click was on user-edit.php?user_id=X, the current URL also
-	 * carries that `user_id=X`, and stripping it (it overlaps with our own
-	 * `user_id` shuffle param) would land WP on user-edit.php without an id →
-	 * "Invalid user ID". The referer is whichever page held the link
-	 * (user-edit.php?user_id=X, users.php, profile.php) and is the right place
-	 * to come back to.
-	 *
-	 * Hooked on `admin_init`. No-op for any request that doesn't carry our
-	 * `?adminkit_shuffle=1` flag.
-	 */
-	public static function maybe_shuffle() {
-		if ( empty( $_GET['adminkit_shuffle'] ) ) {
-			return;
-		}
-		$user_id = isset( $_GET['user_id'] ) ? (int) $_GET['user_id'] : 0;
-		if ( ! $user_id || ! current_user_can( 'edit_user', $user_id ) ) {
-			wp_die( esc_html__( 'You are not allowed to do that.', 'adminkit' ), '', array( 'response' => 403 ) );
-		}
-		check_admin_referer( self::SHUFFLE_NONCE );
-
-		update_user_meta( $user_id, self::SEED_META, md5( wp_generate_uuid4() ) );
-
-		$referer = wp_get_referer();
-		if ( $referer ) {
-			// Defensively strip our params in case they got into the referer too.
-			$referer = remove_query_arg( array( 'adminkit_shuffle', '_wpnonce' ), $referer );
-		} else {
-			$referer = admin_url( 'profile.php' );
-		}
-		// When the click came from profile.php / user-edit.php, anchor the
-		// redirect to our section so the page lands on the Profile picture row
-		// instead of scrolling back to the top. The anchor is harmless elsewhere
-		// (e.g. users.php where no matching id exists — browser just doesn't scroll).
-		$basename = basename( (string) wp_parse_url( $referer, PHP_URL_PATH ) );
-		if ( in_array( $basename, array( 'profile.php', 'user-edit.php' ), true ) ) {
-			$referer .= '#adminkit-profile-picture';
-		}
-		wp_safe_redirect( $referer );
-		exit;
-	}
-
-	/**
-	 * AJAX twin of `maybe_shuffle()` — same effect (roll a new seed for the
-	 * target user), but returns the fresh avatar URL as JSON instead of
-	 * redirecting. Called from the users-list Quick Edit inline editor so the
-	 * portrait can update in place without a full page reload.
-	 *
-	 * Security parity with the GET handler: identical nonce action
-	 * (`SHUFFLE_NONCE`) and `edit_user` capability gate.
+	 * Capability gate + nonce: an admin (or the user themselves) editing
+	 * their own profile.
 	 */
 	public static function handle_shuffle_ajax() {
 		$user_id = isset( $_POST['user_id'] ) ? (int) $_POST['user_id'] : 0;
@@ -406,55 +360,54 @@ class AdminKit_Local_Avatars {
 	}
 
 	/**
-	 * Render a single "Avatar" row — just a label and a "Refresh" button.
-	 * No avatar image: the admin-bar profile dropdown already surfaces the
-	 * portrait, and the only action this row offers is the seed re-roll.
+	 * Inject the AJAX endpoint + nonce + target user id into the profile
+	 * script's localized data object so `profile-account.js` can wire the
+	 * "Refresh avatar" page-title button to `handle_shuffle_ajax()` directly
+	 * — no GET round-trip, no `wp_safe_redirect` dance, no URL params.
 	 *
-	 * The `show_user_profile` / `edit_user_profile` hooks fire OUTSIDE any
-	 * table, so we render the row inside a throwaway wrapper. The profile
-	 * account-screen brick (`assets/js/wp-core/profile-account.js`) picks
-	 * the row up by id and places it in the Informations panel, three-up
-	 * with the password + reset rows. The wrapper is then dropped.
-	 *
-	 * Only renders when `can_regenerate()` agrees — without a meaningful
-	 * Refresh action, the row would be an empty label.
+	 * Fires on `admin_enqueue_scripts`. If the profile script isn't registered
+	 * (wrong screen, feature off, …) or the avatar cannot be regenerated for
+	 * this user, returns silently and the button JS never sees the keys it
+	 * needs to render itself.
 	 */
-	public static function render_profile_section( $user ) {
-		if ( ! ( $user instanceof WP_User ) || ! current_user_can( 'edit_user', $user->ID ) ) {
+	public static function maybe_add_refresh_data() {
+		if ( ! wp_script_is( 'adminkit-profile-account', 'registered' ) ) {
+			return;
+		}
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+		$user_id = 0;
+		if ( 'user-edit' === $screen->id ) {
+			$user_id = isset( $_GET['user_id'] ) ? (int) $_GET['user_id'] : 0; // phpcs:ignore WordPress.Security.NonceVerification
+		} elseif ( 'profile' === $screen->id ) {
+			$user_id = get_current_user_id();
+		}
+		if ( ! $user_id ) {
+			return;
+		}
+		$user = get_userdata( $user_id );
+		if ( ! $user || ! current_user_can( 'edit_user', $user_id ) ) {
 			return;
 		}
 		if ( ! self::can_regenerate( $user, true ) ) {
 			return;
 		}
-
-		$shuffle_url = wp_nonce_url(
-			add_query_arg(
-				array(
-					'adminkit_shuffle' => '1',
-					'user_id'          => $user->ID,
-				)
-			),
-			self::SHUFFLE_NONCE
+		wp_add_inline_script(
+			'adminkit-profile-account',
+			'window.AdminKitProfileAccount=Object.assign(window.AdminKitProfileAccount||{},'
+				. wp_json_encode(
+					array(
+						'refreshAvatarLabel'   => __( 'Refresh avatar', 'adminkit' ),
+						'refreshAvatarError'   => __( 'Could not refresh the avatar — please try again.', 'adminkit' ),
+						'refreshAvatarAjaxUrl' => admin_url( 'admin-ajax.php' ),
+						'refreshAvatarNonce'   => wp_create_nonce( self::SHUFFLE_NONCE ),
+						'refreshAvatarUserId'  => $user_id,
+					)
+				) . ');',
+			'before'
 		);
-		// Throwaway table wrapper — the `show_user_profile` / `edit_user_profile`
-		// hooks fire OUTSIDE any form table, so we need our own scaffold for the
-		// row. AdminKit's profile JS (profile-account.js → liftAvatarRefresh)
-		// extracts the anchor below and re-mounts it as a `.page-title-action`
-		// next to the page H1 — right of "Add User" on user-edit.php — then
-		// drops the empty wrapper. The label-less <th><td> shape is intentional:
-		// the row exists only to carry the button until the JS picks it up.
-		?>
-		<table class="form-table adminkit-profile-picture-wrap" role="presentation">
-			<tbody>
-				<tr id="adminkit-profile-picture" class="adminkit-profile-picture-row">
-					<th></th>
-					<td>
-						<a href="<?php echo esc_url( $shuffle_url ); ?>" class="button"><?php esc_html_e( 'Refresh avatar', 'adminkit' ); ?></a>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<?php
 	}
 
 	/**

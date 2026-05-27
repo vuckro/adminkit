@@ -34,6 +34,51 @@ class AdminKit_Core_List_Table_Chrome {
 	public static function init() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_filter( 'user_row_actions', array( __CLASS__, 'trim_row_actions' ), 99 );
+		// Strip the parenthesised counts ("(24)" → "24") server-side, BEFORE
+		// first paint, so the user never sees them flash to the cleaned value
+		// when list-table-chrome.js runs in the footer. The JS still strips
+		// them as a defensive fallback for plugins that bypass `views_*`.
+		add_action( 'current_screen', array( __CLASS__, 'register_views_filter' ) );
+	}
+
+	/**
+	 * Hook the `views_{screen}` filter for whatever list-table screen we're on,
+	 * so it fires when WP_List_Table::views() runs. One filter, every screen.
+	 *
+	 * @return void
+	 */
+	public static function register_views_filter() {
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+		add_filter( "views_{$screen->id}", array( __CLASS__, 'strip_views_decorations' ) );
+	}
+
+	/**
+	 * Strip "(N)" from every `<span class="count">` inside the filtered views
+	 * array. WP renders each `.subsubsub` link with a `.count` span carrying
+	 * the parenthesised total (e.g. `<span class="count">(24)</span>`); the
+	 * regex peels the parens out leaving the bare number, which our CSS pill
+	 * styling then renders as a notification badge.
+	 *
+	 * Locale-safe: matches the markup pattern, not the language. Idempotent —
+	 * re-running on already-stripped output is a no-op.
+	 *
+	 * @param string[]|mixed $views Filtered views (associative or indexed).
+	 * @return mixed
+	 */
+	public static function strip_views_decorations( $views ) {
+		if ( ! is_array( $views ) ) {
+			return $views;
+		}
+		$pattern = '/(<span\b[^>]*\bclass\s*=\s*"[^"]*\bcount\b[^"]*"[^>]*>)\s*\(\s*([\d,.\xc2\xa0\s]+?)\s*\)\s*(<\/span>)/i';
+		foreach ( $views as $key => $link ) {
+			if ( is_string( $link ) ) {
+				$views[ $key ] = preg_replace( $pattern, '$1$2$3', $link );
+			}
+		}
+		return $views;
 	}
 
 	/**
