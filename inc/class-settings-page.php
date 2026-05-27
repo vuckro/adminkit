@@ -127,7 +127,13 @@ class AdminKit_Settings_Page {
 
 		wp_enqueue_media(); // WordPress media frame, for the Branding logo pickers.
 		wp_enqueue_style( self::HANDLE, ADMINKIT_URL . $css, array( AdminKit_Assets::TOKENS_HANDLE ), self::ver( $css ) );
-		wp_enqueue_script( self::HANDLE, ADMINKIT_URL . $js, array( 'wp-api-fetch' ), self::ver( $js ), true );
+		// `adminkit-options-general` is the handle the merged tab strip script
+		// registers under (see AdminKit_Core_Options_General::enqueue). Declaring it
+		// as a dep forces WordPress to print + execute it BEFORE settings.js, so the
+		// `<section data-adminkit-panel="…">` placeholders the SPA mounts into already
+		// exist in the DOM when this script runs. Without it the SPA bails (no panels
+		// to render into) and the AdminKit tabs come up empty.
+		wp_enqueue_script( self::HANDLE, ADMINKIT_URL . $js, array( 'wp-api-fetch', 'adminkit-options-general' ), self::ver( $js ), true );
 		wp_add_inline_script( self::HANDLE, 'window.AdminKitData=' . wp_json_encode( self::boot_data() ) . ';', 'before' );
 	}
 
@@ -339,7 +345,10 @@ class AdminKit_Settings_Page {
 			'i18n'         => array(
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
 				'design'            => __( 'Design', 'adminkit' ),
-				'features'          => __( 'Features', 'adminkit' ),
+				// "Preferences" rather than "Settings" / "Features" so the AdminKit
+				// tab label reads distinctly from WordPress's own Settings (Réglages)
+				// menu — same string is used by both the embedded and standalone modes.
+				'features'          => __( 'Preferences', 'adminkit' ),
 				'soon'              => __( 'Coming soon', 'adminkit' ),
 				'own'               => __( 'AdminKit', 'adminkit' ),
 				'ownHint'           => __( 'AdminKit-defined role (no provider equivalent).', 'adminkit' ),

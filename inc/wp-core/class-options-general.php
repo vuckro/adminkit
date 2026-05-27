@@ -108,9 +108,12 @@ class AdminKit_Core_Options_General {
 			'account'  => __( 'Account & registration', 'adminkit' ),
 			'locale'   => __( 'Language, date & time', 'adminkit' ),
 			// AdminKit SPA sections — empty panels are built here; settings.js
-			// fills them with content. Each id matches a tab in settings.js.
+			// fills them with content. `dashboard` lives as a secondary card on
+			// the Site identity tab (no tab button); `features` and `plugins`
+			// each own their own tab. "Preferences" rather than "Settings" so
+			// the AdminKit tab reads distinctly from WP's own Settings menu.
 			'dashboard' => __( 'Dashboard', 'adminkit' ),
-			'features'  => __( 'Settings', 'adminkit' ),
+			'features'  => __( 'Preferences', 'adminkit' ),
 			'plugins'   => __( 'Plugins', 'adminkit' ),
 		);
 

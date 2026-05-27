@@ -1,17 +1,24 @@
 /**
  * AdminKit — options-general.php section grouping + tab navigation.
  *
- * Hosts a SIX-tab merged page. The first three tabs are native WP General
- * sections (Site identity / Account & registration / Language, date & time):
- * we move the matching `<tr>`s out of WP's one big .form-table into
- * per-section sub-tables and keep them inside the form so submission still
- * posts every field. The last three tabs are AdminKit's SPA tabs (Dashboard
- * / Settings / Plugins): we build empty `<section data-adminkit-panel="…">`
- * placeholders here; `settings.js` finds them and renders content into them.
+ * Hosts a FIVE-tab merged page:
+ *   1. Site identity     — native WP rows + Site Icon card + Dashboard card
+ *                          (brand / accent / tokens / roadmap, mounted by SPA)
+ *   2. Account & registration  — native WP rows
+ *   3. Language, date & time   — native WP rows
+ *   4. Preferences       — AdminKit feature toggles (mounted by SPA)
+ *   5. Plugins           — AdminKit per-plugin adapters (mounted by SPA)
  *
- * The WP `<p class="submit">` row is hidden when an AdminKit tab is active
- * (settings.js owns saving for those panels via REST) and shown when a
- * native tab is active (the form's own POST handles it).
+ * Native sections: we move the matching `<tr>`s out of WP's one big
+ * .form-table into per-section sub-tables and keep them inside the form so
+ * submission still posts every field. AdminKit sections: we build empty
+ * `<section data-adminkit-panel="…">` placeholders here; `settings.js`
+ * finds them and renders content into them.
+ *
+ * The WP `<p class="submit">` row is hidden on PURE-AdminKit tabs
+ * (Preferences / Plugins) where saving goes through REST. It stays visible
+ * on Site identity (mixed — native fields still POST to options.php while
+ * the AdminKit save bar handles the brand controls separately).
  *
  * Strings ride along via `window.AdminKitOptionsGeneral` (inline bootstrap
  * printed by AdminKit_Core_Options_General::enqueue).
@@ -41,9 +48,9 @@
 		image:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
 		users:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0M16 11a3 3 0 0 0 0-6M22 21a6 6 0 0 0-4-5.6"/></svg>',
 		clock:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>',
-		// AdminKit tabs — match what settings.js used in standalone mode so the
-		// strip reads consistently before / after the merge.
-		gauge:    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>',
+		// AdminKit tabs — sliders for Preferences, plug for Plugins. Dashboard
+		// no longer has its own tab (its card lives on Site identity), so no
+		// gauge icon here.
 		sliders:  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
 		plug:     '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>'
 	};
@@ -96,19 +103,25 @@
 		},
 		// ── AdminKit SPA sections — empty placeholders, filled by settings.js.
 		// `adminkit: true` flags them for the build loop (no row scoop, no
-		// inner form-table) AND the activate() hook below (hide WP submit). ──
+		// inner form-table) AND the activate() hook below (hide WP submit when
+		// the tab is PURE AdminKit). ──
+		//
+		// Dashboard rides as a SECONDARY card on the Site identity tab — the
+		// brand controls, accent picker and roadmap belong with what the site
+		// is called. `showInTabs:false` keeps the strip short; the card's id
+		// stays `dashboard` so `options-general.php#dashboard` still works as
+		// a deep link (tabFor() resolves a card id → its owning tab below).
 		{
 			id:    'dashboard',
-			tabId: 'dashboard',
+			tabId: 'site-identity',
 			title: S.dashboard || 'Dashboard',
-			icon:  'gauge',
-			showInTabs: true,
+			showInTabs: false,
 			adminkit: true
 		},
 		{
 			id:    'settings',
 			tabId: 'settings',
-			title: S.features || 'Settings',
+			title: S.features || 'Preferences',
 			icon:  'sliders',
 			showInTabs: true,
 			adminkit: true
@@ -123,9 +136,12 @@
 		}
 	];
 
-	// Set of AdminKit tab ids — checked by activate() to flip WP's submit row
-	// off (settings.js owns saving via REST for these panels).
-	var ADMINKIT_TABS = { dashboard: 1, settings: 1, plugins: 1 };
+	// Set of PURE-AdminKit tab ids — checked by activate() to hide WP's submit
+	// row (settings.js owns saving via REST for these panels). Site identity is
+	// mixed (native fields + Dashboard card), so it stays out of this set: WP's
+	// submit row still saves the native fields, and the AdminKit save bar above
+	// the panels saves the brand controls — two complementary saves on one tab.
+	var ADMINKIT_TABS = { settings: 1, plugins: 1 };
 
 	// Page-level wrapper: holds the tabs above and the per-section cards below.
 	// Inserted before the original .form-table so existing nonce + submit rows
@@ -285,20 +301,42 @@
 	});
 
 	// Initial activation: URL hash wins (deep link from support / docs), else
-	// the first tab.
+	// the first tab. `tabFor()` resolves either:
+	//   • a tab id directly (e.g. `#site-identity` → 'site-identity'), OR
+	//   • a CARD id that lives under a tab (e.g. `#site-icon` or `#dashboard`
+	//     → 'site-identity', because both cards carry data-tab="site-identity")
+	// so legacy URLs like `?page=adminkit` → `#dashboard` still land on the
+	// right tab after Dashboard's merge into Site identity.
 	function tabFor(slug) {
+		if (!slug) { return null; }
 		for (var i = 0; i < made.length; i++) {
 			if (made[i].id === slug) { return slug; }
 		}
+		var card = document.getElementById(slug);
+		if (card && card.dataset.tab) { return card.dataset.tab; }
 		return null;
 	}
-	activate(tabFor(location.hash.slice(1)) || made[0].id);
+	// Scroll a secondary card (one whose id is NOT its own tab) into view after
+	// the tab containing it activates. Lets `#dashboard` jump straight to the
+	// brand controls instead of stopping at the top of Site identity.
+	function scrollCardIfSecondary(slug, tabId) {
+		if (!slug || slug === tabId) { return; }
+		var card = document.getElementById(slug);
+		if (card && !card.hidden) { card.scrollIntoView({ block: 'start' }); }
+	}
+	var initialHash = location.hash.slice(1);
+	var initialTab  = tabFor(initialHash) || made[0].id;
+	activate(initialTab);
+	scrollCardIfSecondary(initialHash, initialTab);
 
 	// Respond to hash changes — manual URL edits, back/forward, anchor clicks
 	// from the same page (e.g. a "jump to Site Icon" link).
 	window.addEventListener('hashchange', function () {
-		var id = tabFor(location.hash.slice(1));
-		if (id) { activate(id); }
+		var slug = location.hash.slice(1);
+		var id = tabFor(slug);
+		if (!id) { return; }
+		activate(id);
+		scrollCardIfSecondary(slug, id);
 	});
 
 	// Build fully done — reveal the rebuilt form (clears the pre-paint hide).

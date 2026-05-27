@@ -28,7 +28,7 @@ See [`docs/INSTALL.md`](docs/INSTALL.md) for the full install guide — release 
 developer clone-and-symlink, and the `dev/package.php` packager that cuts a clean
 release zip from any branch or tag.
 
-That's it — AdminKit works with zero configuration. Three AdminKit tabs (**Dashboard**, **Settings**, **Plugins**) live directly on **Settings → General**, sharing a single six-tab strip with WP's native Site identity / Account / Language sections — no separate AdminKit menu entry. The **Dashboard** tab hosts the brand controls (brand logo + site-name brand-mark mode + read-only semantic token reference) and a roadmap card grid. The **Settings** tab holds the module on/off toggles. The **Plugins** tab lists *every installed* plugin plus AdminKit's active theme adapter, with a **Native** badge on rows that have a tuned AdminKit adapter (per-host enable toggle + dark mode; the badge tracks adapter existence, not whether the plugin is currently active); everything else inherits AdminKit's **generic** base token layer automatically. Rows are grouped (**Plugins**, **Themes**) with a count on each group title, and AdminKit itself appears as a locked **System** row (always on, not removable here). The registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+That's it — AdminKit works with zero configuration. The settings UI lives directly on **Settings → General** as two extra tabs (**Preferences**, **Plugins**) plus a **Dashboard** card that rides on the **Site identity** tab — alongside the WP site name and tagline it belongs with. Single five-tab strip, no separate AdminKit menu entry. The **Dashboard** card hosts the brand controls (brand logo + site-name brand-mark mode + read-only semantic token reference) and a roadmap card grid. The **Preferences** tab holds the module on/off toggles. The **Plugins** tab lists *every installed* plugin plus AdminKit's active theme adapter, with a **Native** badge on rows that have a tuned AdminKit adapter (per-host enable toggle + dark mode; the badge tracks adapter existence, not whether the plugin is currently active); everything else inherits AdminKit's **generic** base token layer automatically. Rows are grouped (**Plugins**, **Themes**) with a count on each group title, and AdminKit itself appears as a locked **System** row (always on, not removable here). The registry behind it is documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
@@ -163,7 +163,7 @@ adminkit/
 │   ├── class-assets.php                 Asset registry + dispatcher + token cascade
 │   ├── class-screen.php                 get_current_screen() helpers
 │   ├── class-settings.php               Settings registry + color map
-│   ├── class-settings-page.php          SPA bootstrap (Dashboard / Settings / Plugins tabs hosted on Settings → General) + REST save
+│   ├── class-settings-page.php          SPA bootstrap (Dashboard card on Site identity + Preferences / Plugins tabs on Settings → General) + REST save
 │   ├── class-dashboard.php              Dashboard widget registry (dormant until used)
 │   ├── class-theme-toggle.php           Dark / light toggle + login logo
 │   ├── wp-core/                         AdminKit's restyle of WP-core surfaces

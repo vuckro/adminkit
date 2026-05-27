@@ -145,15 +145,17 @@ list, the `adminkit/setting/{key}` filter, and the REST save.
 
 `AdminKit_Settings` is the registry; `AdminKit_Settings_Page` mounts a small
 vanilla-JS SPA (`assets/js/settings.js`) directly on **Settings → General**
-(no separate AdminKit menu entry — the SPA's three tabs sit alongside WP's
-own native sections in one merged six-tab strip on `options-general.php`).
-Saving runs through one REST route (`adminkit/v1/settings`). The three SPA
-tabs are: **Dashboard** (the interactive Branding block — brand logo plus
-the `wp_logo` / `login_logo` modes for the site-name and login brand
-marks — then a read-only reference of the semantic token map, plus the
-roadmap card grid); **Settings** (the module toggles); and **Plugins**
-(every installed plugin plus AdminKit's active theme adapter, each
-carrying a **Native** badge when AdminKit ships a tuned adapter for it —
+(no separate AdminKit menu entry — the SPA contributes two tabs plus a
+Dashboard card that rides on the Site identity tab, so the merged page
+has a five-tab strip on `options-general.php`). Saving runs through one
+REST route (`adminkit/v1/settings`). The AdminKit content is: **Dashboard**
+(secondary card on the Site identity tab — the interactive Branding
+block, brand logo plus the `wp_logo` / `login_logo` modes for the
+site-name and login brand marks, then a read-only reference of the
+semantic token map, plus the roadmap card grid); **Preferences** (its
+own tab — the module toggles); and **Plugins** (its own tab — every
+installed plugin plus AdminKit's active theme adapter, each carrying a
+**Native** badge when AdminKit ships a tuned adapter for it —
 a per-host enable toggle plus dark mode — while everything else inherits
 AdminKit's **generic** base token styling automatically. Rows are grouped
 (Plugins, Themes) with a count pill per group title, and AdminKit itself

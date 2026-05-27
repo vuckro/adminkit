@@ -12,10 +12,13 @@
  *     mount). We build our own outer chrome (.ak-head with title + save bar,
  *     `.ak-tabs` strip, `.ak-panels` wrapper) and own hash routing.
  *
- * Tabs are the same three in both modes (Dashboard / Settings / Plugins).
- * Dashboard renders the brand controls + roadmap; Settings holds the module
- * toggles; Plugins lists the per-host adapters + per-plugin opt-outs. All
- * save via the same `adminkit/v1/settings` REST route.
+ * Three internal tabs in both modes (Dashboard / Preferences / Plugins).
+ * In EMBEDDED mode the Dashboard tab is mounted as a SECONDARY card on
+ * the merged page's Site identity tab (no separate strip button), so the
+ * brand controls sit next to the WP site-name and tagline they belong with.
+ * Dashboard renders the brand controls + roadmap; Preferences holds the
+ * module toggles; Plugins lists the per-host adapters + per-plugin opt-outs.
+ * All save via the same `adminkit/v1/settings` REST route.
  *
  * No framework, no build step — vanilla DOM.
  */
