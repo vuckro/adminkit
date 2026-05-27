@@ -487,7 +487,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		if ( '' !== $favicon ) {
 			$url  = 'url("' . esc_url_raw( $favicon ) . '")';
 			$css .= '#bricks-toolbar .logo{background-color:transparent;padding:0}'
-				. '#bricks-toolbar .logo img{content:' . $url . ';height:22px;width:22px;border-radius:4px}';
+				. '#bricks-toolbar .logo img{content:' . $url . ';height:32px;width:32px;border-radius:6px}';
 		}
 
 		if ( '' !== $css ) {
