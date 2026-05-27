@@ -41,6 +41,9 @@ class AdminKit_Settings_Page {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 		add_filter( 'adminkit/integration_enabled', array( __CLASS__, 'gate_integration' ), 10, 2 );
+		// Gate the admin restyle on plugin pages opted out individually in the
+		// Plugins tab (see `gate_generic_theming()` + `plugin_file_for_screen()`).
+		add_filter( 'adminkit/should_load', array( __CLASS__, 'gate_generic_theming' ), 10, 2 );
 	}
 
 	/**
@@ -828,7 +831,7 @@ class AdminKit_Settings_Page {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 		// Per-plugin opt-out list for generic plugins — file paths the user has
-		// flipped OFF in the Plugins tab. Read once so each row can reflect it.
+		// flipped OFF in the Plugins tab. Read once so each row reflects it.
 		$generic_off = (array) AdminKit_Settings::get( 'generic_theming_off' );
 
 		$self = plugin_basename( ADMINKIT_FILE );
@@ -1059,8 +1062,8 @@ class AdminKit_Settings_Page {
 	 * paints natively, which is what "disable for this plugin" promises.
 	 *
 	 * Screen → plugin mapping is a heuristic (see `plugin_file_for_screen()`):
-	 * matches the slug Embed in the screen ID against installed plugin
-	 * directory / basename. Works for plugins whose menu slug follows the
+	 * matches the slug embedded in the screen ID against installed plugin
+	 * dirname / basename. Works for plugins whose menu slug follows the
 	 * usual dirname conventions (the vast majority); plugins with exotic
 	 * slugs won't be opt-out-able but the toggle is still harmless.
 	 *
@@ -1081,7 +1084,7 @@ class AdminKit_Settings_Page {
 			return $should_load;
 		}
 		// Native adapter screens stay themed regardless — the per-plugin
-		// switch in the Plugins tab is the adapter's toggle there.
+		// switch in the Plugins tab is the adapter's own toggle there.
 		foreach ( self::integration_specs() as $s ) {
 			if ( method_exists( $s['class'], 'owns_screen' )
 				&& call_user_func( array( $s['class'], 'owns_screen' ), $screen ) ) {
@@ -1100,12 +1103,6 @@ class AdminKit_Settings_Page {
 	 * screen ID (`toplevel_page_<slug>` or `<parent>_page_<slug>`) and
 	 * matches it against installed plugins' dirname / basename. Returns
 	 * null on a WP core screen or when no plugin matches.
-	 *
-	 * Heuristic — works when a plugin's menu slug matches its dirname (e.g.
-	 * `acf/acf.php` registers `toplevel_page_acf`) or starts with it (e.g.
-	 * `wp-rocket/wp-rocket.php` registers `settings_page_wprocket` does
-	 * NOT match — accepted limitation; rare and the toggle is a no-op
-	 * rather than wrong).
 	 *
 	 * @param \WP_Screen|null $screen
 	 * @return string|null Plugin file path (`acf/acf.php`), or null.

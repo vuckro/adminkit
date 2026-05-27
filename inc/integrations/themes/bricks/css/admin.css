@@ -9,11 +9,12 @@
         with the theme toggle automatically.
      2. Patch the selectors that bypass the variables with hardcoded hex. */
 
-/* ----- 1. Variable remap ----- */
+/* ----- 1. Variable remap — surfaces + message boxes (light + dark) ----- */
+/* These pin Bricks surface and message-box semantics to AdminKit tokens.
+   Background / border / status overrides need to fire in BOTH modes:
+   Bricks hardcodes a #fff surface that breaks the visual cohesion with
+   wp-admin in light AND becomes a glaring white slab in dark. */
 body.adminkit {
-	--bricks-text-dark: var(--ak-heading);
-	--bricks-text-medium: var(--ak-text);
-	--bricks-text-light: var(--ak-text-muted);
 	--bricks-bg-light: var(--ak-surface);
 	--bricks-bg-dark: var(--ak-surface);
 	--bricks-border-color: var(--ak-border);
@@ -34,15 +35,28 @@ body.adminkit {
 	--bricks-text-danger: var(--ak-error);
 }
 
+/* Text-colour remaps (dark only).
+   Bricks's hardcoded text colours (`#1d2327` etc.) are perfectly fine on
+   light surfaces — replacing them with the slightly-different `--ak-heading`
+   in light mode just produced a visible "shift to muted" after every paint
+   (FOUC). In dark mode they're invisible on dark surfaces and MUST be
+   re-pointed. Scope the remap to dark only: no FOUC in light, readable in
+   dark, no extra runtime cost. */
+:root[data-adminkit-theme="dark"] body.adminkit {
+	--bricks-text-dark:   var(--ak-heading);
+	--bricks-text-medium: var(--ak-text);
+	--bricks-text-light:  var(--ak-text-muted);
+}
 
-/* ----- 2. Title + lead text ----- */
-body.adminkit .bricks-admin-wrapper h1,
-body.adminkit .bricks-admin-wrapper h2,
-body.adminkit .bricks-admin-wrapper h3 {
+
+/* ----- 2. Title + lead text (dark only — same FOUC reason as above) ----- */
+:root[data-adminkit-theme="dark"] body.adminkit .bricks-admin-wrapper h1,
+:root[data-adminkit-theme="dark"] body.adminkit .bricks-admin-wrapper h2,
+:root[data-adminkit-theme="dark"] body.adminkit .bricks-admin-wrapper h3 {
 	color: var(--ak-heading);
 }
 
-body.adminkit .bricks-admin-wrapper .bricks-admin-lead {
+:root[data-adminkit-theme="dark"] body.adminkit .bricks-admin-wrapper .bricks-admin-lead {
 	color: var(--ak-text);
 }
 
