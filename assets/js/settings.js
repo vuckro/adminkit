@@ -53,10 +53,23 @@
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
 	} );
+	// Plugins tab — generic plugins (no AdminKit adapter) get a per-plugin
+	// opt-out tracked as a set of plugin file paths. Default = themed; user
+	// toggles a row OFF → file added to the set, posted as
+	// `generic_theming_off` array (see PHP gate_generic_theming()).
+	state.genericThemingOff = {};
 	( D.integrations || [] ).forEach( function ( i ) {
-		// Only native integrations carry a per-host toggle; generic plugins have
-		// no adapter to switch, so they stay out of the saved state.
-		if ( i.supported && i.slug ) { state.integrations[ i.slug ] = !! i.enabled; }
+		// Only native integrations carry a per-host toggle stored as a single
+		// schema key; generic ones share the `generic_theming_off` array.
+		if ( i.supported && i.slug ) {
+			state.integrations[ i.slug ] = !! i.enabled;
+			return;
+		}
+		// Generic plugin: a file path is required to track its opt-out state.
+		// System / theme rows without a file fall through (no toggle for them).
+		if ( ! i.system && i.file && i.enabled === false ) {
+			state.genericThemingOff[ i.file ] = true;
+		}
 	} );
 
 	// Shared read of the current accent source. sourcePill() lives at module
@@ -1480,17 +1493,40 @@
 			} );
 		}
 
+		// Neutral "Inactive" chip for installed-but-not-active plugins. Pairs
+		// with `.is-muted` on the row for an across-the-board dim treatment.
+		function inactiveBadge() {
+			return el( 'span', {
+				'class': 'ak-badge',
+				title: I.inactiveHint || '',
+				text: I.inactive || 'Inactive'
+			} );
+		}
+
+		// Toggle helper — keeps the row's `.is-off` class in sync with the
+		// switch state so every disabled row (native OR generic) reads as
+		// greyed-out, the same treatment AdminKit's own System row gets.
+		function syncOffClass( row, on ) {
+			if ( on ) {
+				row.classList.remove( 'is-off' );
+			} else {
+				row.classList.add( 'is-off' );
+			}
+		}
+
 		function pluginRow( i ) {
 			// Badge + name hug the left together (.ak-row__head), badge first; the
 			// switch (native only) is pushed right by .ak-row__main's flex:1.
 			// System (AdminKit itself) → neutral System; supported → brand Native;
 			// any other installed plugin → neutral Generic (no dedicated adapter).
 			var badge = i.system ? systemBadge() : ( i.supported ? nativeBadge() : genericBadge() );
+			var head  = [ badge, el( 'span', { 'class': 'ak-row__label', text: i.label } ) ];
+			// Installed but not active → add an "Inactive" chip after the name.
+			if ( ! i.system && i.active === false ) {
+				head.push( inactiveBadge() );
+			}
 			var main = el( 'div', { 'class': 'ak-row__main' }, [
-				el( 'div', { 'class': 'ak-row__head' }, [
-					badge,
-					el( 'span', { 'class': 'ak-row__label', text: i.label } )
-				] )
+				el( 'div', { 'class': 'ak-row__head' }, head )
 			] );
 
 			// System row (AdminKit itself) → greyed + locked: a switch that reads ON
@@ -1509,22 +1545,19 @@
 				] );
 			}
 
-			// Generic plugin → no adapter to switch (Generic badge, no toggle).
-			if ( ! i.supported || ! i.slug ) {
-				return el( 'div', { 'class': 'ak-row' }, [ main ] );
-			}
-
+			// Build the switch — native + generic now both get one. Initial
+			// state reads from the row's `enabled` field (true → switch ON,
+			// row painted normally; false → switch OFF, `.is-off` dims it).
 			var input = el( 'input', { type: 'checkbox', 'class': 'ak-switch__input' } );
-			input.checked = !! state.integrations[ i.slug ];
-			input.addEventListener( 'change', function () {
-				state.integrations[ i.slug ] = input.checked;
-				markDirty();
-			} );
-			// `default` is captured here so the Reset bulk button can flip each
-			// row back to its registered value (always true for supported
-			// integrations — see register_integration_toggles()).
-			inputs.push( { slug: i.slug, input: input, def: !! i.default } );
-			return el( 'div', { 'class': 'ak-row' }, [
+			input.checked = !! i.enabled;
+
+			// Compose the row class up front so the initial paint matches the
+			// switch state (no flash). `.is-muted` for inactive plugins is
+			// additive on top of `.is-off` — both dim, both still operable.
+			var rowClasses = [ 'ak-row' ];
+			if ( ! i.enabled ) { rowClasses.push( 'is-off' ); }
+			if ( ! i.system && i.active === false ) { rowClasses.push( 'is-muted' ); }
+			var row = el( 'div', { 'class': rowClasses.join( ' ' ) }, [
 				main,
 				el( 'label', { 'class': 'ak-switch' }, [
 					input,
@@ -1532,13 +1565,38 @@
 					el( 'span', { 'class': 'ak-switch__knob' } )
 				] )
 			] );
+
+			if ( i.supported && i.slug ) {
+				// Native adapter → tracks its integration_{slug}_enabled key.
+				input.addEventListener( 'change', function () {
+					state.integrations[ i.slug ] = input.checked;
+					syncOffClass( row, input.checked );
+					markDirty();
+				} );
+				inputs.push( { slug: i.slug, input: input, row: row, def: !! i.default } );
+			} else if ( i.file ) {
+				// Generic plugin → tracks its file path in genericThemingOff.
+				input.addEventListener( 'change', function () {
+					if ( input.checked ) {
+						delete state.genericThemingOff[ i.file ];
+					} else {
+						state.genericThemingOff[ i.file ] = true;
+					}
+					syncOffClass( row, input.checked );
+					markDirty();
+				} );
+			}
+			return row;
 		}
 
-		// Flip every native integration in one click (generic rows have no toggle).
+		// Flip every native integration in one click (generic rows have their
+		// own per-plugin opt-out and aren't covered by Enable/Disable all).
+		// Each row's `.is-off` class is synced too so the dim treatment matches.
 		function setAll( on ) {
 			inputs.forEach( function ( r ) {
 				r.input.checked = on;
 				state.integrations[ r.slug ] = on;
+				syncOffClass( r.row, on );
 			} );
 			markDirty();
 		}
@@ -1550,6 +1608,7 @@
 			inputs.forEach( function ( r ) {
 				r.input.checked = r.def;
 				state.integrations[ r.slug ] = r.def;
+				syncOffClass( r.row, r.def );
 			} );
 			markDirty();
 		}
@@ -1594,6 +1653,9 @@
 		Object.keys( state.integrations ).forEach( function ( slug ) {
 			v[ 'integration_' + slug + '_enabled' ] = !! state.integrations[ slug ];
 		} );
+		// Per-plugin opt-out list for generic plugins (no native adapter) — POST
+		// as a flat array of plugin file paths the user has turned theming off for.
+		v.generic_theming_off = Object.keys( state.genericThemingOff );
 		v.logo_light    = state.logos.light;
 		v.logo_dark     = state.logos.dark;
 		v.wp_logo       = state.wpLogo;

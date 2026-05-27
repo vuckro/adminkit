@@ -212,7 +212,8 @@
 .adminkit-app .ak-row.is-off .ak-row__main,
 .adminkit-app .ak-row.is-off .ak-switch,
 .adminkit-app .ak-row.is-locked .ak-row__main,
-.adminkit-app .ak-row.is-locked .ak-switch { opacity: .5; }
+.adminkit-app .ak-row.is-locked .ak-switch,
+.adminkit-app .ak-row.is-muted .ak-row__main { opacity: .5; }
 .adminkit-app .ak-row.is-locked .ak-switch { pointer-events: none; }
 .adminkit-app .ak-row__main {
 	flex: 1;

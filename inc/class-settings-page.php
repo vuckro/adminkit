@@ -338,6 +338,8 @@ class AdminKit_Settings_Page {
 				'systemHint'        => __( 'AdminKit itself — always on and not removable here.', 'adminkit' ),
 				'generic'           => __( 'Generic', 'adminkit' ),
 				'genericHint'       => __( 'No dedicated adapter — themed automatically by AdminKit\'s base layer.', 'adminkit' ),
+				'inactive'          => __( 'Inactive', 'adminkit' ),
+				'inactiveHint'      => __( 'Plugin is installed but not active.', 'adminkit' ),
 				'themesLabel'       => __( 'Themes', 'adminkit' ),
 				// Display row — short location labels so the segmented controls feel
 				// like "where does the brand mark show up?" rather than reciting WP
@@ -825,6 +827,10 @@ class AdminKit_Settings_Page {
 		if ( ! function_exists( 'get_plugins' ) || ! function_exists( 'is_plugin_active' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
+		// Per-plugin opt-out list for generic plugins — file paths the user has
+		// flipped OFF in the Plugins tab. Read once so each row can reflect it.
+		$generic_off = (array) AdminKit_Settings::get( 'generic_theming_off' );
+
 		$self = plugin_basename( ADMINKIT_FILE );
 		foreach ( get_plugins() as $file => $data ) {
 			if ( $file === $self ) {
@@ -833,6 +839,7 @@ class AdminKit_Settings_Page {
 				// disable its own host from this tab.
 				$rows[] = array(
 					'slug'      => '',
+					'file'      => $file,
 					'label'     => '' !== (string) $data['Name'] ? $data['Name'] : 'AdminKit',
 					'type'      => 'plugin',
 					'supported' => false,
@@ -845,12 +852,18 @@ class AdminKit_Settings_Page {
 			$slug      = isset( $by_file[ $file ] ) ? $by_file[ $file ] : '';
 			$supported = ( '' !== $slug );
 			$name      = '' !== (string) $data['Name'] ? $data['Name'] : $file;
+			// Native rows read their integration_{slug}_enabled toggle.
+			// Generic rows: ON by default, OFF if file appears in generic_theming_off.
+			$enabled   = $supported
+				? (bool) AdminKit_Settings::get( 'integration_' . $slug . '_enabled' )
+				: ! in_array( $file, $generic_off, true );
 			$rows[]    = array(
 				'slug'      => $slug,
+				'file'      => $file,
 				'label'     => $name,
 				'type'      => 'plugin',
 				'supported' => $supported,
-				'enabled'   => $supported ? (bool) AdminKit_Settings::get( 'integration_' . $slug . '_enabled' ) : false,
+				'enabled'   => $enabled,
 				// Schema default for `integration_{slug}_enabled` is always true
 				// (see register_integration_toggles()) — what Reset to defaults restores to.
 				'default'   => true,
@@ -869,6 +882,7 @@ class AdminKit_Settings_Page {
 			}
 			$rows[] = array(
 				'slug'      => $s['slug'],
+				'file'      => '',
 				'label'     => $s['label'],
 				'type'      => 'theme',
 				'supported' => true,
@@ -998,11 +1012,11 @@ class AdminKit_Settings_Page {
 	 * case of a conflict. Idempotent; called where the schema is needed (UI +
 	 * save). Default ON.
 	 *
-	 * Also registers `generic_theming_enabled` — a single switch that gates
-	 * AdminKit's auto-theming on admin pages belonging to plugins WITHOUT a
-	 * dedicated AdminKit adapter (the "Generic" rows on the Plugins tab).
-	 * Default ON; flipping it OFF makes those pages fall back to WordPress's
-	 * native styling (see `gate_generic_theming()` below).
+	 * Also registers `generic_theming_off` — the per-plugin opt-out list used
+	 * by `gate_generic_theming()`. Stored as an array of plugin file paths
+	 * (the user has turned theming OFF for these). Default empty — every
+	 * generic plugin is themed unless the user opts it out individually
+	 * (one row, one switch in the Plugins tab).
 	 *
 	 * @return void
 	 */
@@ -1015,22 +1029,40 @@ class AdminKit_Settings_Page {
 				'sanitize' => 'rest_sanitize_boolean',
 			) );
 		}
-		AdminKit_Settings::register( 'generic_theming_enabled', array(
-			'type'     => 'toggle',
+		AdminKit_Settings::register( 'generic_theming_off', array(
+			'type'     => 'array',
 			'group'    => 'integrations',
-			'default'  => true,
-			'sanitize' => 'rest_sanitize_boolean',
+			'default'  => array(),
+			'sanitize' => static function ( $v ) {
+				if ( ! is_array( $v ) ) {
+					return array();
+				}
+				// Plugin file paths look like `acf/acf.php` — keep slashes + dots.
+				$clean = array();
+				foreach ( $v as $file ) {
+					$file = sanitize_text_field( (string) $file );
+					if ( '' !== $file ) {
+						$clean[] = $file;
+					}
+				}
+				return array_values( array_unique( $clean ) );
+			},
 		) );
 	}
 
 	/**
-	 * Gate AdminKit's admin restyle on "generic" plugin pages — admin screens
-	 * that belong to a plugin WITHOUT a dedicated AdminKit adapter — when the
-	 * user has turned off `generic_theming_enabled`. Hooked on
-	 * `adminkit/should_load`, which `AdminKit_Assets::add_admin_body_class()`
-	 * consults before adding the `adminkit` body class. With no body class,
-	 * the scoped `body.adminkit …` CSS rules don't match → WordPress paints
-	 * with its native styling, exactly what "disable for generics" promises.
+	 * Gate AdminKit's admin restyle on a "generic" plugin page when the user
+	 * has flipped OFF that plugin's individual switch in the Plugins tab.
+	 * Hooked on `adminkit/should_load` — the same filter that gates the
+	 * `adminkit` body class in `AdminKit_Assets::add_admin_body_class()`.
+	 * With no body class, every `body.adminkit …` rule misses → WordPress
+	 * paints natively, which is what "disable for this plugin" promises.
+	 *
+	 * Screen → plugin mapping is a heuristic (see `plugin_file_for_screen()`):
+	 * matches the slug Embed in the screen ID against installed plugin
+	 * directory / basename. Works for plugins whose menu slug follows the
+	 * usual dirname conventions (the vast majority); plugins with exotic
+	 * slugs won't be opt-out-able but the toggle is still harmless.
 	 *
 	 * @param bool   $should_load
 	 * @param string $context admin | login | frontend | editor.
@@ -1040,33 +1072,73 @@ class AdminKit_Settings_Page {
 		if ( 'admin' !== $context || ! $should_load ) {
 			return $should_load;
 		}
-		if ( AdminKit_Settings::get( 'generic_theming_enabled' ) ) {
-			return $should_load;
+		$off = (array) AdminKit_Settings::get( 'generic_theming_off' );
+		if ( ! $off ) {
+			return $should_load; // nothing's been opted out — short-circuit
 		}
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 		if ( ! $screen ) {
 			return $should_load;
 		}
-		// "Generic plugin page" heuristic: plugin admin pages get IDs prefixed
-		// `toplevel_page_` or containing `_page_`; WP core screens never do.
-		// If neither pattern matches, it's a core page — leave it themed.
-		$id  = (string) $screen->id;
-		$top = ( 0 === strpos( $id, 'toplevel_page_' ) );
-		$sub = ( false !== strpos( $id, '_page_' ) ) && ! $top;
-		if ( ! $top && ! $sub ) {
-			return $should_load;
-		}
-		// Native adapter page? Let the integration's own owns_screen() vote.
-		// Anything that claims this screen is "native" and stays themed.
+		// Native adapter screens stay themed regardless — the per-plugin
+		// switch in the Plugins tab is the adapter's toggle there.
 		foreach ( self::integration_specs() as $s ) {
-			if ( ! method_exists( $s['class'], 'owns_screen' ) ) {
-				continue;
-			}
-			if ( call_user_func( array( $s['class'], 'owns_screen' ), $screen ) ) {
+			if ( method_exists( $s['class'], 'owns_screen' )
+				&& call_user_func( array( $s['class'], 'owns_screen' ), $screen ) ) {
 				return $should_load;
 			}
 		}
-		return false; // generic plugin page + toggle off → strip AdminKit theming
+		$file = self::plugin_file_for_screen( $screen );
+		if ( $file && in_array( $file, $off, true ) ) {
+			return false; // user opted this plugin out → WP native UI
+		}
+		return $should_load;
+	}
+
+	/**
+	 * Best-effort screen → plugin file mapping. Pulls the slug out of the
+	 * screen ID (`toplevel_page_<slug>` or `<parent>_page_<slug>`) and
+	 * matches it against installed plugins' dirname / basename. Returns
+	 * null on a WP core screen or when no plugin matches.
+	 *
+	 * Heuristic — works when a plugin's menu slug matches its dirname (e.g.
+	 * `acf/acf.php` registers `toplevel_page_acf`) or starts with it (e.g.
+	 * `wp-rocket/wp-rocket.php` registers `settings_page_wprocket` does
+	 * NOT match — accepted limitation; rare and the toggle is a no-op
+	 * rather than wrong).
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return string|null Plugin file path (`acf/acf.php`), or null.
+	 */
+	private static function plugin_file_for_screen( $screen ) {
+		if ( ! $screen ) {
+			return null;
+		}
+		$id   = (string) $screen->id;
+		$slug = '';
+		if ( 0 === strpos( $id, 'toplevel_page_' ) ) {
+			$slug = substr( $id, strlen( 'toplevel_page_' ) );
+		} elseif ( false !== strpos( $id, '_page_' ) ) {
+			$slug = substr( $id, strpos( $id, '_page_' ) + strlen( '_page_' ) );
+		}
+		if ( '' === $slug ) {
+			return null;
+		}
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		foreach ( get_plugins() as $file => $_data ) {
+			$dir  = dirname( $file );
+			$base = basename( $file, '.php' );
+			if ( '.' === $dir ) {
+				$dir = $base;
+			}
+			if ( $slug === $dir || $slug === $base
+				|| 0 === strpos( $slug, $dir . '-' ) || 0 === strpos( $slug, $dir . '_' ) ) {
+				return $file;
+			}
+		}
+		return null;
 	}
 
 	/**
