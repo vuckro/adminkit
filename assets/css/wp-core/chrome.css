@@ -174,18 +174,22 @@ body.adminkit #adminmenu li.wp-menu-open > a.menu-top::before {
    the neutral popup border defined below, like every other fly-out — submenus
    carry no accent border. */
 
-/* RIGHT-SIDE arrow on the active/open top-level item → ACCENT. WP draws no
-   `wp-menu-arrow` element; the indicator is a pure CSS border-triangle on
-   `a.wp-has-current-submenu:after` / `li.current > a.current:after` (admin-menu.css
-   ~L339): a `border:solid 8px transparent` box whose `border-right-color` is set
-   to #f0f0f1 (the near-white that reads as a white wedge on our light sidebar)
-   pointing left, off the item's right edge toward the submenu. Recolor JUST that
-   visible edge to --ak-primary so the wedge matches the left marker + accent icon.
-   `!important` beats WP's hardcoded hex (no theme var there); the geometry/position
-   is left to WP. */
+/* RIGHT-SIDE border-triangle on menu items with a fly-out submenu.
+   WP draws no `wp-menu-arrow` element — the indicator is a pure CSS border-
+   triangle on `::after` (admin-menu.css ~L339): `border:solid 8px transparent`
+   whose `border-right-color` is hardcoded to #f0f0f1 (near-white). Two states:
+     • Active/current item → ACCENT (matches the left marker + accent icon).
+     • Hovered non-current item (opensub) → BORDER (neutral; matches the fly-out
+       popup's own border so the wedge reads as a callout notch, not an accent).
+   `!important` beats WP's hardcoded hex (no theme var there). */
 body.adminkit #adminmenu a.wp-has-current-submenu:after,
 body.adminkit #adminmenu > li.current > a.current:after {
 	border-right-color: var(--ak-primary) !important;
+}
+
+body.adminkit #adminmenu li.wp-has-submenu.wp-not-current-submenu.opensub:hover:after,
+body.adminkit #adminmenu li.wp-has-submenu.wp-not-current-submenu:focus-within:after {
+	border-right-color: var(--ak-border) !important;
 }
 
 /* Sidebar submenu — elevated surface. Inline (expanded sidebar, current

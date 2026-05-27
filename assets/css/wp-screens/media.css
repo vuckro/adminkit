@@ -43,17 +43,15 @@ body.adminkit .attachments-browser .attachment .check:hover {
 
 /* Filename badge on attachments without a `.filename` element —
    WP renders the aria-label as a `::after` pseudo with an 80% white
-   overlay + #1d2327 text. Route the color through --ak-heading
-   (light mode keeps the white overlay) and flip to a 75% black
-   overlay + white text in dark mode so the badge stays readable on
-   dark thumbnails. */
+   overlay + #1d2327 text. Route the text through --ak-heading (which
+   flips on its own in dark mode) and swap the overlay to 75% black in
+   dark mode so the badge stays readable on dark thumbnails. */
 body.adminkit .wp-core-ui .attachment:not(:has(.filename))::after {
 	color: var(--ak-heading);
 }
 
 :root[data-adminkit-theme="dark"] body.adminkit .wp-core-ui .attachment:not(:has(.filename))::after {
 	background-color: rgba(0, 0, 0, 0.75);
-	color: #ffffff;
 }
 
 body.adminkit .uploader-inline {
@@ -83,8 +81,14 @@ body.adminkit .wp-editor-wrap .uploader-editor.droppable {
 	background-color: rgba(40, 149, 212, 0.85) !important;
 }
 
-/* #drag-drop-area border on drag-over (plupload-based uploader) —
-   was hardcoded #9ec2e6 (soft blue) by WP. Route to --ak-info. */
+/* #drag-drop-area (plupload-based uploader on media-new.php) — WP
+   hardcodes a 4px #c3c4c7 dashed border at rest and #9ec2e6 on
+   drag-over. Route both through tokens. */
+body.adminkit .drag-drop #drag-drop-area {
+	border-color: var(--ak-border-strong);
+	border-radius: var(--ak-radius-m);
+}
+
 body.adminkit .drag-drop.drag-over #drag-drop-area {
 	border-color: var(--ak-info);
 }
