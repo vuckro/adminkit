@@ -17,7 +17,6 @@ class AdminKit_Settings_Gate {
 	public static function init() {
 		add_filter( 'adminkit/integration_enabled', array( __CLASS__, 'gate_integration' ), 10, 2 );
 		add_filter( 'adminkit/should_load', array( __CLASS__, 'gate_generic_theming' ), 10, 2 );
-		add_filter( 'adminkit/suppress_auto_theme', array( __CLASS__, 'suppress_auto_theme_for_adapters' ), 10, 2 );
 	}
 
 	/**
@@ -50,31 +49,6 @@ class AdminKit_Settings_Gate {
 		}
 		$file = self::plugin_file_for_screen( $screen );
 		return ! ( $file && in_array( $file, $off, true ) );
-	}
-
-	/**
-	 * Suppress auto-theme on screens owned by enabled native adapters.
-	 *
-	 * @param bool            $suppress
-	 * @param WP_Screen|null $screen
-	 * @return bool
-	 */
-	public static function suppress_auto_theme_for_adapters( $suppress, $screen ) {
-		if ( $suppress || ! $screen ) {
-			return $suppress;
-		}
-		foreach ( AdminKit_Settings_Catalog::integration_specs() as $s ) {
-			if ( ! method_exists( $s['class'], 'owns_screen' ) ) {
-				continue;
-			}
-			if ( ! apply_filters( 'adminkit/integration_enabled', true, $s['slug'] ) ) {
-				continue;
-			}
-			if ( call_user_func( array( $s['class'], 'owns_screen' ), $screen ) ) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

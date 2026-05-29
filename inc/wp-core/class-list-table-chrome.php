@@ -53,14 +53,16 @@ class AdminKit_Core_List_Table_Chrome {
 	}
 
 	/**
-	 * Strip "(N)" from every `<span class="count">` inside the filtered views
-	 * array. WP renders each `.subsubsub` link with a `.count` span carrying
-	 * the parenthesised total (e.g. `<span class="count">(24)</span>`); the
-	 * regex peels the parens out leaving the bare number, which our CSS pill
-	 * styling then renders as a notification badge.
+	 * Strip the "( )" wrapper from every `<span class="count">` inside the
+	 * filtered views array, leaving whatever is inside. WP wraps the count two
+	 * different ways: plain digits on posts/pages/users —
+	 * `<span class="count">(24)</span>` — and a NESTED count span on comments —
+	 * `<span class="count">(<span class="approved-count">5</span>)</span>`. The
+	 * regex peels only the parens (inner content is kept verbatim), so both
+	 * shapes are cleaned and our CSS renders the result as a notification badge.
 	 *
 	 * Locale-safe: matches the markup pattern, not the language. Idempotent —
-	 * re-running on already-stripped output is a no-op.
+	 * re-running on already-stripped output is a no-op (no parens left to match).
 	 *
 	 * @param string[]|mixed $views Filtered views (associative or indexed).
 	 * @return mixed
@@ -69,7 +71,7 @@ class AdminKit_Core_List_Table_Chrome {
 		if ( ! is_array( $views ) ) {
 			return $views;
 		}
-		$pattern = '/(<span\b[^>]*\bclass\s*=\s*"[^"]*\bcount\b[^"]*"[^>]*>)\s*\(\s*([\d,.\xc2\xa0\s]+?)\s*\)\s*(<\/span>)/i';
+		$pattern = '/(<span\b[^>]*\bclass\s*=\s*"[^"]*\bcount\b[^"]*"[^>]*>)\s*\(\s*(.*?)\s*\)\s*(<\/span>)/is';
 		foreach ( $views as $key => $link ) {
 			if ( is_string( $link ) ) {
 				$views[ $key ] = preg_replace( $pattern, '$1$2$3', $link );
