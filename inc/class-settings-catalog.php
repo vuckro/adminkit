@@ -265,43 +265,6 @@ class AdminKit_Settings_Catalog {
 	}
 
 	/**
-	 * Load the Bricks-export JSON templates bundled with the plugin.
-	 *
-	 * @return array
-	 */
-	public static function load_bricks_exports() {
-		$dir   = ADMINKIT_PATH . 'assets/bricks-export/';
-		$theme = __( 'Bricks → Settings → Theme Styles', 'adminkit' );
-		$vars  = __( 'Bricks → Settings → Variables', 'adminkit' );
-		$pal   = __( 'Bricks → Settings → Color Palettes', 'adminkit' );
-
-		$step = static function ( $key, $title, $hint, $filename, $download ) use ( $dir ) {
-			$path = $dir . $filename;
-			if ( ! is_readable( $path ) ) {
-				return null;
-			}
-			return array(
-				'key'      => $key,
-				'title'    => $title,
-				'hint'     => $hint,
-				'filename' => $download,
-				'content'  => file_get_contents( $path ), // phpcs:ignore WordPress.WP.AlternativeFunctions
-			);
-		};
-
-		$steps = array(
-			$step( 'theme-style', __( 'Theme Style', 'adminkit' ), $theme, 'theme-style-waaskit.json', 'waaskit-theme-style.json' ),
-			$step( 'variables', __( 'Variables', 'adminkit' ), $vars, 'variables-categories.json', 'waaskit-variables.json' ),
-			$step( 'palette-semantic', __( 'Color palette — Semantic', 'adminkit' ), $pal, 'palette-semantique.json', 'waaskit-palette-semantic.json' ),
-			$step( 'palette-brand', __( 'Color palette — Brand', 'adminkit' ), $pal, 'palette-marque.json', 'waaskit-palette-brand.json' ),
-			$step( 'palette-neutral', __( 'Color palette — Neutral', 'adminkit' ), $pal, 'palette-neutre.json', 'waaskit-palette-neutral.json' ),
-			$step( 'palette-notifications', __( 'Color palette — Notifications', 'adminkit' ), $pal, 'palette-notifications.json', 'waaskit-palette-notifications.json' ),
-		);
-
-		return array_values( array_filter( $steps ) );
-	}
-
-	/**
 	 * Register integration toggles and the generic plugin opt-out list.
 	 *
 	 * @return void

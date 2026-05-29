@@ -284,9 +284,6 @@ class AdminKit_Settings_Page {
 			'bricksDetected'   => AdminKit_Settings_Catalog::bricks_detected(),
 			'bricksConnected'  => AdminKit_Settings_Catalog::bricks_connected(),
 			'bricksTokenCount' => AdminKit_Settings_Catalog::bricks_connected() ? AdminKit_Settings_Catalog::bricks_token_count() : 0,
-			// Bricks-export templates loaded from disk (6 JSON files grouped into
-			// 4 sections). The SPA renders these in the Export to Bricks modal.
-			'bricksExports'  => AdminKit_Settings_Catalog::load_bricks_exports(),
 			'i18n'         => array(
 				// Tab labels (the only three the SPA strip prints).
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
@@ -358,15 +355,6 @@ class AdminKit_Settings_Page {
 				'wpLogoBrand'       => __( 'Logo', 'adminkit' ),
 				'wpLogoFavicon'     => __( 'Favicon', 'adminkit' ),
 
-				// Brand-card Action — opens the Bricks-export modal.
-				'actionExport'        => __( 'Export to Bricks', 'adminkit' ),
-				// Export modal.
-				'exportTitle'         => __( 'Export to Bricks', 'adminkit' ),
-				'exportIntro'         => __( 'Follow the steps in order — open each one, copy or download the file, then import it where indicated.', 'adminkit' ),
-				'exportCopy'          => __( 'Copy', 'adminkit' ),
-				'exportCopied'        => __( 'Copied', 'adminkit' ),
-				'exportDownload'      => __( 'Download .json', 'adminkit' ),
-				'exportClose'         => __( 'Close', 'adminkit' ),
 			),
 		);
 	}

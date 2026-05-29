@@ -222,8 +222,7 @@
 
 	// Brand card builder. Lays out one .ak-card with the four media slots
 	// (Favicon Light · Logo Light · Favicon Dark · Logo Dark), the accent
-	// picker and the Display segmented controls. The "Export to Bricks"
-	// button in the card head opens the bundled JSON-templates modal.
+	// picker and the Display segmented controls.
 	function buildDesign() {
 		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' } );
 
@@ -710,20 +709,6 @@
 		}
 		cardHead.appendChild( headMain );
 
-		// Brand-card action — the only one left after the Phase A cleanup: a
-		// single "Export to Bricks" button that opens the modal with the
-		// bundled JSON templates (Theme Style + Variables + 4 palettes). No
-		// dropdown anymore since there's nothing else to choose between.
-		if ( ( D.bricksExports || [] ).length ) {
-			cardHead.appendChild( el( 'div', { 'class': 'ak-actions' }, [
-				el( 'button', {
-					type: 'button', 'class': 'ak-btn',
-					text: I.actionExport || 'Export to Bricks',
-					onclick: openExportModal
-				} )
-			] ) );
-		}
-
 		// Brand slots — 4 slots laid out as a 2×2 grid (paired by mode):
 		//   Row 1:  Favicon Light · Logo Light
 		//   Row 2:  Favicon Dark  · Logo Dark
@@ -782,145 +767,6 @@
 		p.appendChild( card );
 
 		return p;
-	}
-
-	// --- Export to Bricks modal ------------------------------------------------
-	// Step-by-step import guide rendered as an accordion. Each step (Theme Style,
-	// Variables, then the four palettes in dependency order — Semantic first
-	// since the others reference its variables) is one collapsible card with:
-	// a numbered title, the import location, a pretty-printed JSON preview,
-	// and Copy / Download buttons. All collapsed by default so the first paint
-	// is a clean ordered list.
-	function openExportModal() {
-		var steps = D.bricksExports || [];
-		if ( ! steps.length ) { return; }
-
-		var overlay = el( 'div', { 'class': 'ak-export-modal', role: 'dialog', 'aria-modal': 'true', 'aria-label': I.exportTitle || 'Export to Bricks' } );
-		var body    = el( 'div', { 'class': 'ak-export-modal__body' } );
-		body.addEventListener( 'click', function ( e ) { e.stopPropagation(); } );
-
-		var closeBtn = el( 'button', {
-			type: 'button', 'class': 'ak-export-modal__close',
-			'aria-label': I.exportClose || 'Close'
-		} );
-		closeBtn.innerHTML = ICONS.close;
-
-		body.appendChild( el( 'div', { 'class': 'ak-export-modal__head' }, [
-			el( 'h2', { 'class': 'ak-export-modal__title', text: I.exportTitle || 'Export to Bricks' } ),
-			closeBtn
-		] ) );
-		body.appendChild( el( 'p', { 'class': 'ak-export-modal__intro', text: I.exportIntro || '' } ) );
-
-		var stepsWrap = el( 'div', { 'class': 'ak-export-steps' } );
-
-		// Caret SVG injected into each accordion trigger — rotates 90° via CSS
-		// on `.is-open`. Inline so it inherits currentColor + sits well in flex.
-		var caret = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
-
-		steps.forEach( function ( step, idx ) {
-			// Pretty-print on the client so the preview is readable even if the
-			// source file is minified. Fall back to the raw content on parse error.
-			var pretty;
-			try { pretty = JSON.stringify( JSON.parse( step.content ), null, 2 ); }
-			catch ( err ) { pretty = step.content; }
-
-			// Accordion trigger — always-visible header with index, title, and caret.
-			var trigger = el( 'button', {
-				type: 'button',
-				'class': 'ak-export-step__trigger',
-				'aria-expanded': 'false'
-			} );
-			trigger.innerHTML =
-				'<span class="ak-export-step__index">' + ( idx + 1 ) + '</span>' +
-				'<span class="ak-export-step__title"></span>' +
-				'<span class="ak-export-step__caret">' + caret + '</span>';
-			// Title text via textContent (escapes safely) — avoids HTML injection
-			// even though the PHP source is a controlled __() string.
-			trigger.querySelector( '.ak-export-step__title' ).textContent = step.title || step.key;
-
-			// Copy + Download buttons — only built for THIS step's single file.
-			var copyBtn = el( 'button', { type: 'button', 'class': 'ak-btn', text: I.exportCopy || 'Copy' } );
-			copyBtn.addEventListener( 'click', function ( e ) {
-				e.stopPropagation();
-				var done = function () {
-					var prev = copyBtn.textContent;
-					copyBtn.textContent = I.exportCopied || 'Copied';
-					copyBtn.disabled = true;
-					setTimeout( function () { copyBtn.textContent = prev; copyBtn.disabled = false; }, 1600 );
-				};
-				if ( navigator.clipboard && navigator.clipboard.writeText ) {
-					navigator.clipboard.writeText( pretty ).then( done, function () { /* silently ignore */ } );
-				} else {
-					// Fallback for very old browsers.
-					var ta = document.createElement( 'textarea' );
-					ta.value = pretty;
-					document.body.appendChild( ta );
-					ta.select();
-					try { document.execCommand( 'copy' ); done(); } catch ( err2 ) { /* noop */ }
-					document.body.removeChild( ta );
-				}
-			} );
-
-			// Download is the primary action — that's what most users want here
-			// (Copy is a fallback for power users who want to paste straight into
-			// Bricks). Visual hierarchy reflects that with the accent fill.
-			var dlBtn = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--primary', text: I.exportDownload || 'Download .json' } );
-			dlBtn.addEventListener( 'click', function ( e ) {
-				e.stopPropagation();
-				var blob = new Blob( [ pretty ], { type: 'application/json' } );
-				var url  = URL.createObjectURL( blob );
-				var a    = document.createElement( 'a' );
-				a.href = url;
-				a.download = step.filename;
-				document.body.appendChild( a );
-				a.click();
-				document.body.removeChild( a );
-				setTimeout( function () { URL.revokeObjectURL( url ); }, 1000 );
-			} );
-
-			// Accordion panel — collapsed by default via [hidden]; trigger toggles it.
-			var panel = el( 'div', { 'class': 'ak-export-step__panel' } );
-			panel.setAttribute( 'hidden', '' );
-			panel.appendChild( el( 'div', { 'class': 'ak-export-step__hint', text: step.hint || '' } ) );
-			panel.appendChild( el( 'pre', { 'class': 'ak-export-code', text: pretty } ) );
-			panel.appendChild( el( 'div', { 'class': 'ak-export-step__actions' }, [
-				el( 'code', { 'class': 'ak-export-step__filename', text: step.filename } ),
-				copyBtn,
-				dlBtn
-			] ) );
-
-			trigger.addEventListener( 'click', function () {
-				var open = trigger.getAttribute( 'aria-expanded' ) === 'true';
-				if ( open ) {
-					trigger.setAttribute( 'aria-expanded', 'false' );
-					trigger.classList.remove( 'is-open' );
-					panel.setAttribute( 'hidden', '' );
-				} else {
-					trigger.setAttribute( 'aria-expanded', 'true' );
-					trigger.classList.add( 'is-open' );
-					panel.removeAttribute( 'hidden' );
-				}
-			} );
-
-			stepsWrap.appendChild( el( 'div', { 'class': 'ak-export-step' }, [ trigger, panel ] ) );
-		} );
-
-		body.appendChild( stepsWrap );
-
-		function close() {
-			overlay.parentNode && overlay.parentNode.removeChild( overlay );
-			document.removeEventListener( 'keydown', onKey );
-		}
-		function onKey( e ) {
-			if ( e.key === 'Escape' ) { e.preventDefault(); close(); }
-		}
-		overlay.addEventListener( 'click', close );  // click outside body closes
-		closeBtn.addEventListener( 'click', close );
-		document.addEventListener( 'keydown', onKey );
-
-		overlay.appendChild( body );
-		document.body.appendChild( overlay );
-		closeBtn.focus();
 	}
 
 	function buildFeatures() {
