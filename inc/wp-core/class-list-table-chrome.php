@@ -36,6 +36,11 @@ class AdminKit_Core_List_Table_Chrome {
 		// when list-table-chrome.js runs in the footer. The JS still strips
 		// them as a defensive fallback for plugins that bypass `views_*`.
 		add_action( 'current_screen', array( __CLASS__, 'register_views_filter' ) );
+		// edit-comments.php returns its status links through `comment_status_links`
+		// (applied inside WP_Comments_List_Table::get_views()), which the generic
+		// `views_{screen}` hook above doesn't catch — so the counts flashed there.
+		// Strip on this filter too; strip_views_decorations is idempotent.
+		add_filter( 'comment_status_links', array( __CLASS__, 'strip_views_decorations' ) );
 	}
 
 	/**
