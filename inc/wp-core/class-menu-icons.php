@@ -116,7 +116,9 @@ class AdminKit_Core_Menu_Icons {
 			'dashicons-admin-tools'      => self::svg( 'wrench' ),
 			'dashicons-admin-settings'   => self::svg( 'cog' ),
 			'dashicons-admin-customizer' => self::svg( 'swatch' ),
-			'dashicons-admin-generic'    => self::svg( 'cog' ),
+			// NOTE: `dashicons-admin-generic` (the default gear a plugin gets when it
+			// sets no icon) is intentionally NOT mapped — those generic plugins keep
+			// their native gear rather than all collapsing to one AdminKit glyph.
 			'dashicons-admin-network'    => self::svg( 'globe' ),
 			'dashicons-admin-site'       => self::svg( 'globe' ),
 			'dashicons-admin-site-alt3'  => self::svg( 'globe' ),
@@ -257,31 +259,11 @@ class AdminKit_Core_Menu_Icons {
 				. 'vertical-align:middle;position:relative;top:-2px;' . self::mask( $svg ) . '}';
 		}
 
-		// GENERIC FALLBACK — give a cohesive neutral glyph (an "app/squares" grid) to
-		// ANY top-level plugin menu item still rendered as a dashicon FONT glyph that
-		// isn't specifically mapped above, instead of leaving a stray native dashicon.
-		//
-		// Specificity (must stay BELOW every per-class rule so mapped icons always win):
-		//   fallback ::before  `#adminmenu .dashicons-before::before`
-		//        = 1 id + 1 class + 1 pseudo-element            → (1,1,1)
-		//   per-class ::before `#adminmenu .wp-menu-image.dashicons-<x>::before`
-		//        = 1 id + 2 classes + 1 pseudo-element          → (1,2,1)
-		//   (1,2,1) > (1,1,1) on the class column, so a MAPPED item's rule always
-		//   outranks the fallback regardless of source order — the mapped glyph wins.
-		//
-		// Targeting `.dashicons-before` (the class WP puts on dashicon-FONT icons)
-		// naturally EXCLUDES:
-		//   - custom-image items  — their `.wp-menu-image` carries an inline
-		//     background-image / <img>, NOT `.dashicons-before`, so this never hits them;
-		//   - `.wp-menu-separator` — has no `.dashicons-before` either.
-		// The container box is set at an even lower specificity ((1,1,0) < the per-class
-		// (1,2,0)) so mapped items keep their own box rule untouched.
-		$fb       = self::svg( 'app' );
-		$fallback = '#adminmenu .dashicons-before';
-		$css     .= $fallback . '{box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
-		$css     .= $fallback . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
-			. 'vertical-align:middle;position:relative;top:-2px;' . self::mask( $fb ) . '}';
-
+		// No generic fallback: a top-level item whose stock dashicon ISN'T in the map
+		// keeps its native dashicon. Only the entries above (core menus + the common
+		// plugin dashicons + whatever integrations register via `adminkit/menu_icons`)
+		// are ever replaced — so unsupported plugins look like themselves, and an
+		// Admin-Menu-Editor / custom-image icon (no `.dashicons-before`) stays untouched.
 		return $css;
 	}
 
