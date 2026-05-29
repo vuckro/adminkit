@@ -2,14 +2,11 @@
 /**
  * List-table chrome polish.
  *
- * The status-filter row (`.subsubsub`: All | Active | Inactive …) ships two
- * bits of markup that fight a modern presentation: literal " |" separators as
- * text nodes between the links, and counts wrapped in parentheses, e.g. "(12)".
- * CSS can hide the pipes but can't strip the parentheses, so a small footer
- * script removes both — leaving clean links + numeric counts that
- * wp-core/chrome.css styles into inline pills with round notification badges. It
- * also wraps each list table in a horizontal-scroll container and sizes Quick
- * Edit to the visible width.
+ * The status-filter row (`.subsubsub`: All | Active | Inactive …) ships counts
+ * wrapped in parentheses, e.g. "(12)". We strip those server-side before first
+ * paint so chrome.css can style clean numeric badges. CSS hides WordPress's
+ * literal pipe separators. The footer script only handles table scrolling,
+ * Quick Edit sizing, and fallback count cleanup for plugin-owned strips.
  *
  * On users.php we also drop the native "Send password reset" row action: the
  * full password-reset affordance still lives on the user-edit screen

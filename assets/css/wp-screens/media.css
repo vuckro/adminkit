@@ -103,9 +103,9 @@ body.adminkit .drag-drop.drag-over #drag-drop-area {
 /* upload.php chrome (toolbar, filters, sidebar) */
 body.adminkit.upload-php .wp-filter,
 body.adminkit.upload-php .media-toolbar {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
+	background: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	padding: 12px 16px;
 }
 

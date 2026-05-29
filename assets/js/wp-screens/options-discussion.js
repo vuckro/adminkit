@@ -17,17 +17,24 @@
  * tab styling from `assets/css/wp-core/chrome.css` automatically — same
  * visual as the Profile page tabs.
  *
- * Defensive: no anti-FOUC hide (the page renders WP-default first, then
- * we tag + insert the strip). The URL hash is only updated on user-
- * initiated activations, so landing on a bare URL never auto-scrolls.
+ * The PHP module adds a pre-paint `.ak-options-pending` marker so the raw
+ * stacked form does not flash before this footer script tags + activates the
+ * tabbed view. The URL hash is only updated on user-initiated activations, so
+ * landing on a bare URL never auto-scrolls.
  *
  * Strings ride via `window.AdminKitOptionsDiscussion`.
  */
 (function () {
 	'use strict';
 
+	var root = document.documentElement;
+	function reveal() {
+		root.classList.remove( 'ak-options-pending' );
+		root.classList.add( 'ak-options-ready' );
+	}
+
 	var form = document.querySelector( '.wrap > form[action="options.php"]' );
-	if ( ! form || form.dataset.akTabbed ) { return; }
+	if ( ! form || form.dataset.akTabbed ) { reveal(); return; }
 	form.dataset.akTabbed = '1';
 
 	var S = window.AdminKitOptionsDiscussion || {};
@@ -41,7 +48,7 @@
 	}
 
 	var tablesInForm = form.querySelectorAll( ':scope > table.form-table' );
-	if ( ! tablesInForm.length ) { return; }
+	if ( ! tablesInForm.length ) { reveal(); return; }
 
 	// Tag each form-table — plus every content sibling that precedes it
 	// (h2 heading, descriptive <p>, etc.) — with the tab the section
@@ -103,7 +110,7 @@
 	var made = TABS.filter( function ( t ) {
 		return marked.some( function ( m ) { return m.tab === t.id; } );
 	} );
-	if ( ! made.length ) { return; }
+	if ( ! made.length ) { reveal(); return; }
 
 	// Tab strip — WP-native classes inherit chrome.css's nav-tab styling.
 	var strip = document.createElement( 'nav' );
@@ -178,4 +185,5 @@
 		var id = tabFor( location.hash.slice( 1 ) );
 		if ( id ) { activate( id, { updateHash: false } ); }
 	} );
+	reveal();
 })();

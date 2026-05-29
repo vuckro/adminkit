@@ -24,6 +24,8 @@ define( 'ADMINKIT_URL', plugin_dir_url( __FILE__ ) );
 
 require_once ADMINKIT_PATH . 'inc/class-screen.php';
 require_once ADMINKIT_PATH . 'inc/class-settings.php';
+require_once ADMINKIT_PATH . 'inc/class-settings-catalog.php';
+require_once ADMINKIT_PATH . 'inc/class-settings-gate.php';
 require_once ADMINKIT_PATH . 'inc/class-settings-page.php';
 require_once ADMINKIT_PATH . 'inc/class-plugin.php';
 require_once ADMINKIT_PATH . 'inc/class-assets.php';

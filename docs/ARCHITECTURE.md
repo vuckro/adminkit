@@ -133,13 +133,14 @@ A provider is just an integration that supplies tokens at runtime. Bricks
 (`inc/integrations/themes/bricks/class-bricks.php`) is the reference:
 `provide_tokens()` (on `adminkit/extra_tokens_handle`) enqueues the host's live
 token sheet **as a dependency of the baseline**, so it loads after and wins;
-returns `null` when the host hasn't generated one (AdminKit falls back to the
-baseline). The settings page lists providers via `providers()`.
+returns the existing handle when the host hasn't generated one, leaving
+AdminKit's baseline as the visible fallback. The settings page exposes connected
+provider state through `AdminKit_Settings_Catalog`.
 
 **To add a provider:** create an integration that returns its token handle from
-`adminkit/extra_tokens_handle`. No core changes. A future palette-sync feature
-plugs into the same seams — `adminkit/extra_tokens_handle`, the `providers()`
-list, the `adminkit/setting/{key}` filter, and the REST save.
+`adminkit/extra_tokens_handle`. No core changes. Future palette-sync work should
+plug into the same seams — `adminkit/extra_tokens_handle`,
+`AdminKit_Settings_Catalog`, the `adminkit/setting/{key}` filter, and REST save.
 
 ## Settings
 
@@ -175,7 +176,6 @@ width cap), no JS rebuild.
 AdminKit_Settings::register( $key, array $args );  // declare a setting (idempotent)
 AdminKit_Settings::get( $key );                    // option → default → adminkit/setting/{key} filter
 AdminKit_Settings::schema();                        // registered schema (UI render + save sanitising)
-AdminKit_Settings::color_map();                     // semantic token taxonomy the Design tab renders
 ```
 
 What's registered today. AdminKit ships **fully-featured** — every feature toggle
@@ -184,7 +184,7 @@ individually switch-off-able:
 
 - **On by default** (bound to existing enqueue filters / providers in
   `bind_modules()`): `module_login_enabled`, `theme_toggle_enabled`,
-  `post_previews_enabled`, `post_previews_mshots`.
+  `post_previews_enabled`.
 - **On by default** (feature modules, each individually disable-able):
   `editor_content_theme` (themes the Gutenberg block-editor canvas — content +
   native blocks — in light/dark; off keeps the canvas matching the live site),
@@ -213,9 +213,10 @@ individually switch-off-able:
   self-demote). Display name is intentionally not exposed here — that's a
   per-user preference that belongs on user-edit.php. Off = no Quick Edit
   link; the native "Edit" link to user-edit.php still works.
-- **Off by default** (opt-in): `bricks_builder_enabled` (restyles a third-party
-  builder's own UI, so it stays inert until asked for; only shown when Bricks is
-  active). And `username_changer_enabled`
+- **Availability-gated, default ON**: `bricks_builder_enabled` restyles the
+  Bricks builder UI when the Bricks theme is active; the Features row is locked
+  on non-Bricks sites.
+- **Off by default** (opt-in): `username_changer_enabled`
   (`inc/wp-core/class-username-changer.php`) — turns the natively-disabled
   Username field on profile.php / user-edit.php into a *locked* readonly input
   that surfaces a `window.confirm()` warning on click before unlocking. The
@@ -235,11 +236,11 @@ individually switch-off-able:
 - **Asset gate**: the `adminkit/should_load` filter wraps *every* context, so any
   veto (an integration bypassing a host's full-screen UI, say) pauses AdminKit's
   styling there while the plugin stays active.
-- **Branding**: `logo_light`, `logo_dark`, `wp_logo` (`logo` | `favicon` | `hide`
+- **Branding**: `logo_light`, `logo_dark`, `wp_logo` (`logo` | `favicon`
   — the brand mark at the site-name node; the top-left WordPress logo is always
-  hidden) and `logo_size` (px, 16–32) — resolved by
+  hidden) — resolved by
   `AdminKit_Settings::brand_logo()` / `AdminKit_Core_Branding`. `login_logo`
-  (`logo` | `favicon` | `hide`, default `favicon`) independently drives the wp-login.php mark
+  (`logo` | `favicon`, default `favicon`) independently drives the wp-login.php mark
   via `AdminKit_Core_Login` (a legacy `''` = inherit `wp_logo` is still honoured, but
   the UI no longer offers it). `accent_source` (`adminkit` | `bricks` | `custom`,
   empty resolves to "auto") + `brand_accent` (sanitised hex, for custom mode)

@@ -158,11 +158,11 @@ body.adminkit .wp-filter .favorites-form {
 }
 
 body.adminkit .filter-group {
-	background: var(--ak-surface);
-	border-color: var(--ak-border);
+	background: var(--ak-card-bg);
+	border-color: var(--ak-card-border);
 	box-shadow: none;
 	color: var(--ak-text);
-	border-radius: var(--ak-radius-s);
+	border-radius: var(--ak-card-radius);
 }
 
 body.adminkit.show-filters .wp-filter .button.drawer-toggle {
@@ -186,9 +186,9 @@ body.adminkit .filtered-by .tag {
 
 body.adminkit .upload-theme .wp-upload-form,
 body.adminkit .upload-plugin .wp-upload-form {
-	background: var(--ak-surface);
-	border-color: var(--ak-border);
-	border-radius: var(--ak-radius-s);
+	background: var(--ak-card-bg);
+	border-color: var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 }
 
 body.adminkit .upload-theme .install-help,

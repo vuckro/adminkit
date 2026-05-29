@@ -5,8 +5,9 @@
    `.form-table` becomes a self-contained card; the preceding `<h2>` stays as
    a regular section heading floating above. No joining tricks — that breaks
    on options-permalink, where an intermediate `<p>` sits between the h2 and
-   its table. No tabs, no JS, no width restrictions beyond a sensible cap so
-   the cards don't stretch edge-to-edge on wide monitors.
+   its table. General + Discussion add lightweight JS tabs, but keep fields
+   inside the native `<form>`. Width is capped so cards don't stretch
+   edge-to-edge on wide monitors.
 
    Self-scoped under `body.adminkit` + a per-page body class so the rules
    never leak onto plugin settings screens that reuse `.form-table`. */
@@ -15,42 +16,80 @@
    and push it down from the page H1 (WP's stock gap between the heading
    and the first card was tight enough that the card felt glued to the
    title). 20px reads as "settled in" without feeling drifted. ──── */
-body.adminkit.options-general-php .wrap > form,
-body.adminkit.options-writing-php .wrap > form,
-body.adminkit.options-reading-php .wrap > form,
-body.adminkit.options-discussion-php .wrap > form,
-body.adminkit.options-media-php .wrap > form,
-body.adminkit.options-permalink-php .wrap > form {
+body.adminkit:is(
+	.options-general-php,
+	.options-writing-php,
+	.options-reading-php,
+	.options-discussion-php,
+	.options-media-php,
+	.options-permalink-php
+) .wrap > form {
 	max-width: 960px;
 	margin-top: 20px;
+}
+
+/* General + Discussion build tabbed/carded structure in footer JS. Their PHP
+   head bootstrap adds `.ak-options-pending` before first paint, then the JS
+   flips to `.ak-options-ready` after the native form has been organised. With
+   JS blocked the class is never present, so the native page remains visible. */
+html.ak-options-pending body.adminkit:is(.options-general-php, .options-discussion-php) .wrap > form {
+	visibility: hidden;
+	opacity: 0;
+}
+
+html.ak-options-ready body.adminkit:is(.options-general-php, .options-discussion-php) .wrap > form {
+	visibility: visible;
+	opacity: 1;
+	transition: opacity .12s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html.ak-options-ready body.adminkit:is(.options-general-php, .options-discussion-php) .wrap > form {
+		transition: none;
+	}
 }
 
 /* ──── 2. Section heading — drop the underline form-table.css ships ────
    form-table.css adds `border-bottom: 1px solid` to every `.wrap > form > h2`.
    On options pages the card below the h2 already provides a visual edge, so
    the underline doubles up and looks heavy. Override only here. */
-body.adminkit.options-general-php .wrap > form > h2,
-body.adminkit.options-writing-php .wrap > form > h2,
-body.adminkit.options-reading-php .wrap > form > h2,
-body.adminkit.options-discussion-php .wrap > form > h2,
-body.adminkit.options-media-php .wrap > form > h2,
-body.adminkit.options-permalink-php .wrap > form > h2 {
+body.adminkit:is(
+	.options-general-php,
+	.options-writing-php,
+	.options-reading-php,
+	.options-discussion-php,
+	.options-media-php,
+	.options-permalink-php
+) .wrap > form > h2 {
 	border-bottom: none;
 	padding-bottom: 0;
 	margin-bottom: 4px;
 }
 
 /* ──── 3. .form-table — self-contained card ──── */
-body.adminkit.options-general-php .wrap > form > .form-table,
-body.adminkit.options-writing-php .wrap > form > .form-table,
-body.adminkit.options-reading-php .wrap > form > .form-table,
-body.adminkit.options-discussion-php .wrap > form > .form-table,
-body.adminkit.options-media-php .wrap > form > .form-table,
-body.adminkit.options-permalink-php .wrap > form > .form-table {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
+body.adminkit:is(
+	.options-general-php,
+	.options-writing-php,
+	.options-reading-php,
+	.options-discussion-php,
+	.options-media-php,
+	.options-permalink-php
+) .wrap > form > .form-table,
+body.adminkit.options-general-php .ak-options-block > .form-table {
+	background: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	padding: 4px 20px;
+}
+
+body.adminkit:is(
+	.options-general-php,
+	.options-writing-php,
+	.options-reading-php,
+	.options-discussion-php,
+	.options-media-php,
+	.options-permalink-php
+) .wrap > form > .form-table {
 	margin: 4px 0 20px;
 }
 
@@ -84,14 +123,9 @@ body.adminkit.options-general-php .ak-options-block__desc {
 body.adminkit.options-general-php .ak-options-block__title + .form-table {
 	margin-top: 8px;
 }
-/* Each block's nested .form-table gets the card chrome from rule (3) — but
-   the selector there matches `.wrap > form > .form-table` (direct child).
-   Restate for the nested case. */
+/* Nested cards inherit the shared card chrome from rule (3); only their stack
+   margin differs because the surrounding block owns the vertical rhythm. */
 body.adminkit.options-general-php .ak-options-block > .form-table {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
-	padding: 4px 20px;
 	margin: 0;
 }
 

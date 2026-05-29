@@ -4,9 +4,9 @@
    whole editor through tokens so dark mode is usable. */
 
 body.adminkit.nav-menus-php .manage-menus {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
+	background: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 }
 
 body.adminkit.nav-menus-php #post-body {
@@ -40,14 +40,14 @@ body.adminkit input#menu-name {
    lifts it to --ak-border-strong). */
 body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle {
 	background: var(--ak-elevated);
-	border: 1px solid var(--ak-border);
+	border: 1px solid var(--ak-card-border);
 	color: var(--ak-text);
 }
 
 /* Expanded item settings drawer. */
 body.adminkit.nav-menus-php .menu-item-settings {
 	background: var(--ak-elevated);
-	border-color: var(--ak-border);
+	border-color: var(--ak-card-border);
 	box-shadow: none;
 	color: var(--ak-text);
 }
@@ -105,16 +105,16 @@ body.adminkit.nav-menus-php #nav-menu-meta h2 {
 }
 
 body.adminkit.nav-menus-php .accordion-container .outer-border {
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	overflow: hidden;
 }
 
 body.adminkit.nav-menus-php .accordion-section,
 body.adminkit.nav-menus-php .accordion-section.control-section {
 	background: var(--ak-surface);
-	border-color: var(--ak-border);
-	border-bottom: 1px solid var(--ak-border);
+	border-color: var(--ak-card-border);
+	border-bottom: 1px solid var(--ak-card-border);
 }
 
 body.adminkit .accordion-section-content {
@@ -181,7 +181,7 @@ body.adminkit.nav-menus-php .taxonomydiv div.tabs-panel,
 body.adminkit.nav-menus-php .customlinkdiv div.tabs-panel,
 body.adminkit.nav-menus-php .wp-tab-panel {
 	background-color: var(--ak-surface);
-	border-color: var(--ak-border);
+	border-color: var(--ak-card-border);
 	border-radius: 0 var(--ak-radius-s) var(--ak-radius-s) var(--ak-radius-s);
 	color: var(--ak-text);
 }
@@ -208,8 +208,8 @@ body.adminkit.nav-menus-php .accordion-section-content .inside > p {
 /* Menu-edit wrapper (the "Menu structure" right column) — bordered rounded
    card so the whole panel reads as one surface. */
 body.adminkit.nav-menus-php .menu-edit {
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	overflow: hidden;
 }
 

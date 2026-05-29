@@ -52,10 +52,8 @@
    • One declaration per token. Derived tints use color-mix off --ak-primary as
      the no-provider FALLBACK only — the provider's --accent-hover / --accent-subtle /
      --focus win when present (so no duplicate static line is needed anymore).
-   • Branded palette: when the user picks "Branded", surfaces + borders are
-     remapped onto the provider PRIMARY ramp (--primary-l-N / --primary-d-N) via an inline
-     override (AdminKit_Settings::branded_surface_map); Neutral = this file's
-     defaults. Text stays neutral for legibility. */
+   • Surfaces and borders stay neutral by default; the accent family is the only
+     dynamic brand override emitted by PHP. Text stays neutral for legibility. */
 
 :root {
 	/* ── Surfaces ──────────────────────────────────────────────────────── */

@@ -245,13 +245,13 @@ body.adminkit .ak-account {
    settings SPA and the options-general grouping) — nothing tab-specific
    remains on this screen. */
 
-/* Panel — surface card with a thin border so it reads as the same UI element
-   as the options-page cards and the new nav-tab strip. Hidden panels keep
+/* Panel — surface card with the same softened edge as native options cards.
+   Hidden panels keep
    their inputs in the form so submission still posts every field. */
 body.adminkit .ak-card {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
+	background: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	padding: 22px 24px;
 }
 

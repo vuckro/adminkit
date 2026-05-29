@@ -1,8 +1,7 @@
 <?php
 /**
  * Menu & toolbar icons — swap WordPress's native dashicons for a cohesive AdminKit
- * icon set (Heroicons). Opt-in via the `replace_icons_enabled` setting (OFF by
- * default).
+ * icon set (Heroicons). On by default via the `replace_icons_enabled` setting.
  *
  * Designed to be NON-DESTRUCTIVE and fully overridable — never a brute override:
  *   - The menu map is keyed by dashicon CLASS (`dashicons-admin-post` …), so it
@@ -42,7 +41,7 @@ class AdminKit_Core_Menu_Icons {
 	}
 
 	/**
-	 * wp-admin printer: menu + toolbar icon CSS — gated by the opt-in toggle and
+	 * wp-admin printer: menu + toolbar icon CSS — gated by the icon toggle and
 	 * the should_load pause.
 	 *
 	 * @return void
@@ -57,7 +56,7 @@ class AdminKit_Core_Menu_Icons {
 	/**
 	 * Front-end printer: TOOLBAR icon CSS only (no #adminmenu on the front end).
 	 * Runs only when the admin bar is actually showing for this request, gated by
-	 * the opt-in toggle and the frontend should_load pause.
+	 * the icon toggle and the frontend should_load pause.
 	 *
 	 * @return void
 	 */
@@ -72,7 +71,7 @@ class AdminKit_Core_Menu_Icons {
 	}
 
 	/**
-	 * Whether the icon feature should print for this context: the opt-in toggle is
+	 * Whether the icon feature should print for this context: the icon toggle is
 	 * on AND the global should_load pause hasn't disabled AdminKit here.
 	 *
 	 * @param string $context 'admin' | 'frontend'

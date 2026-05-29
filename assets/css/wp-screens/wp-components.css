@@ -59,9 +59,13 @@ body.adminkit .components-button.is-pressed:hover:not(:disabled, [aria-disabled=
 /* Cards + panels (the main surface containers) */
 body.adminkit .components-card,
 body.adminkit .components-panel {
-	background: var(--ak-surface);
-	border-color: var(--ak-border);
+	background: var(--ak-card-bg);
+	border-color: var(--ak-card-border);
 	color: var(--ak-text);
+}
+
+body.adminkit .components-card {
+	border-radius: var(--ak-card-radius);
 }
 
 body.adminkit .components-card-header,

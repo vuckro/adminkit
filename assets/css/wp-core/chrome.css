@@ -26,12 +26,15 @@ body.adminkit #wpbody-content {
 
 body.adminkit {
 	font-size: var(--ak-text-m);
+	/* Cards + tables: two independent families on the same base tokens — identical
+	   today, free to diverge later (e.g. a different table radius) without one
+	   dragging the other. */
 	--ak-card-bg: var(--ak-surface);
 	--ak-card-border: color-mix(in srgb, var(--ak-border) 72%, transparent);
 	--ak-card-radius: var(--ak-radius-m);
 	--ak-table-bg: var(--ak-surface);
-	--ak-table-border: var(--ak-card-border);
-	--ak-table-radius: var(--ak-card-radius);
+	--ak-table-border: color-mix(in srgb, var(--ak-border) 72%, transparent);
+	--ak-table-radius: var(--ak-radius-m);
 	--ak-nav-gap: 6px;
 	--ak-nav-pill-gap: 6px;
 	--ak-nav-pill-height: 28px;
@@ -984,8 +987,8 @@ body.adminkit .ak-tabs button:hover {
 	color: var(--ak-heading);
 }
 
-/* 4 — Active: elevated pill, heading colour, bold. Status-specific tints
-   (publish → green, trash → red, …) override the neutral background below. */
+/* 4 — Active: elevated pill, heading colour, bold. Every current pill is neutral —
+   the filter's status colour is carried by the count badge, not the pill. */
 body.adminkit .subsubsub a.current,
 body.adminkit .subsubsub a.current:hover,
 body.adminkit .subsubsub a.current:focus,
@@ -1026,57 +1029,33 @@ body.adminkit .ak-tabs button .ic svg {
 	height: 14px;
 }
 
-/* Selected pill takes its filter's semantic tint so the active state reads as
-   "this status". The count is text-only: the pill owns the whole rounded shape,
-   so first/last tabs and tabs with counters all keep the same corners. */
-body.adminkit .subsubsub li.publish a.current,
-body.adminkit .subsubsub li.approved a.current {
-	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface));
-}
-
-body.adminkit .subsubsub li.draft a.current,
-body.adminkit .subsubsub li.moderated a.current,
-body.adminkit .subsubsub li.upgrade a.current {
-	background: color-mix(in srgb, var(--ak-warning) 16%, var(--ak-surface));
-}
-
-body.adminkit .subsubsub li.trash a.current,
-body.adminkit .subsubsub li.inactive a.current {
-	background: var(--ak-error-subtle);
-}
-
-body.adminkit .subsubsub li.active a.current {
-	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface));
-}
-
-/* Count marker (parens stripped before paint in PHP, with a JS fallback for
-   plugin-owned strips). It is deliberately not a badge: an inner rounded shape
-   makes the last status look like it has a different right edge. The flex gap on
-   the parent handles label→count spacing; the parent padding handles the right
-   breathing room. */
+/* Count badge — a soft notification bubble. Its fill is a tint of the count's OWN
+   text colour (currentColor), so the per-status colours below tint the bubble for
+   free — no extra per-status background rules. Flex-centred at a fixed height, so
+   it lines up with the label with no baseline nudge. Parens are stripped before
+   paint in PHP (JS fallback for plugin-owned strips). */
 body.adminkit .subsubsub .count {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-width: 0;
-	min-height: 0;
-	margin: 0;
-	padding: 0;
-	border-radius: 0;
-	background: transparent;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 6px;
+	border-radius: var(--ak-radius-full);
+	background: color-mix(in srgb, currentColor 18%, transparent);
 	color: var(--ak-text-muted);
-	box-sizing: border-box;
-	font-size: 12px;
-	font-weight: 700;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
 	line-height: 1;
-	transform: translateY(-0.5px);
+	box-sizing: border-box;
 }
 
-/* Color-code each filter's count by status — applies whether the filter is
-   active or not (the active state is shown by the pill, not the badge).
-   Filters without a mapping keep the neutral count colour above. */
+/* Colour-code each filter's count by status — the badge carries the status, the
+   pill stays neutral. Approved folds into publish (green), Pending into draft
+   (orange), Spam into trash (red). Unmapped filters keep the neutral colour. */
 body.adminkit .subsubsub li.publish .count,
-body.adminkit .subsubsub li.approved .count {
+body.adminkit .subsubsub li.approved .count,
+body.adminkit .subsubsub li.active .count {
 	color: var(--ak-success);
 }
 
@@ -1087,19 +1066,9 @@ body.adminkit .subsubsub li.upgrade .count {
 }
 
 body.adminkit .subsubsub li.trash .count,
-body.adminkit .subsubsub li.inactive .count {
+body.adminkit .subsubsub li.inactive .count,
+body.adminkit .subsubsub li.spam .count {
 	color: var(--ak-error);
-}
-
-body.adminkit .subsubsub li.active .count {
-	color: var(--ak-success);
-}
-
-/* Comment statuses (edit-comments.php): Approved folds into the green
-   (publish) rules above, Pending (moderated) into the orange (draft) ones.
-   "Mine" is the one new color here — --ak-info (blue). */
-body.adminkit .subsubsub li.mine a.current {
-	background: color-mix(in srgb, var(--ak-info) 16%, var(--ak-surface));
 }
 
 body.adminkit .subsubsub li.mine .count {

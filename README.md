@@ -270,19 +270,21 @@ adminkit/
 │   ├── class-plugin.php                  Boot orchestrator + integration auto-discovery
 │   ├── class-assets.php                  Asset registry + dispatcher + token cascade
 │   ├── class-screen.php                  get_current_screen() helpers
-│   ├── class-settings.php                Settings registry + colour map
+│   ├── class-settings.php                Settings registry + defaults
+│   ├── class-settings-catalog.php        Settings SPA catalogs (features, integrations, Bricks exports)
+│   ├── class-settings-gate.php           Integration + generic-plugin theming gates
 │   ├── class-settings-page.php           SPA bootstrap (top-level AdminKit menu — Dashboard / Features / Plugins tabs) + REST save
 │   ├── class-theme-toggle.php            Dark / light toggle + login logo
 │   ├── wp-core/                          AdminKit's restyle of WP-core surfaces
 │   │   ├── class-chrome.php              Registers every admin/frontend CSS file
 │   │   ├── class-login.php               Registers login.css
-│   │   ├── class-branding.php            Site-name brand mark: brand logo / favicon / hide (wp_logo)
-│   │   ├── class-menu-icons.php          Opt-in native-icon replacement (menu + toolbar), filterable
+│   │   ├── class-branding.php            Site-name brand mark: brand logo / favicon (wp_logo)
+│   │   ├── class-menu-icons.php          Native-icon replacement (menu + toolbar), filterable
 │   │   ├── class-profile-account.php     Profile / user-edit / user-new tabbed layout
 │   │   ├── class-local-avatars.php       Per-user avatar that replaces Gravatar + generated-avatar fallback (DiceBear)
 │   │   ├── class-auto-theme.php          Runtime dark-mode tag-and-paint for unsupported plugin admin screens
 │   │   ├── class-post-previews.php       List-table screenshot thumbnails
-│   │   ├── class-list-table-chrome.php   List-table toolbar polish + .subsubsub icons + nav-tab icons
+│   │   ├── class-list-table-chrome.php   List-table toolbar polish + scroll/Quick Edit sizing
 │   │   ├── class-user-quick-edit.php     Inline Quick Edit on users.php (first/last/email/role + avatar refresh)
 │   │   ├── class-username-changer.php    Opt-in rename of user_login from profile / user-edit (off by default)
 │   │   ├── class-options-general.php     Light polish on Settings → General

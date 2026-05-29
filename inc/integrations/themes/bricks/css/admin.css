@@ -199,8 +199,8 @@ body.adminkit #bricks-settings .bricks-custom-capabilities-wrapper .capability-i
 
 /* ----- 5b. Bricks settings tabs (#bricks-settings-tabs-wrapper) ------------
    The strip is `<ul class="nav-tab-wrapper"><li><a class="nav-tab">…` — exactly
-   the markup chrome.css already paints as a bordered pill container (shared
-   shape with `.subsubsub` and `.ak-tabs`). The pill chrome (display, padding,
+   the markup chrome.css already paints as a flat pill strip (shared shape
+   with `.subsubsub` and `.ak-tabs`). The pill chrome (display, padding,
    border, radius, hover/active states) inherits from the generic
    `.nav-tab-wrapper` rule in chrome.css; here we override Bricks' own
    `#bricks-settings-tabs-wrapper{margin:15px 0 30px}` to land on the same

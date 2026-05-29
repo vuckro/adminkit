@@ -17,9 +17,9 @@ body.adminkit .widefat li {
    hardcoded. The .wp-list-table rules above only kick in when both
    classes are present, so the bare-widefat case needs its own block. */
 body.adminkit .widefat {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
+	background: var(--ak-table-bg);
+	border: 1px solid var(--ak-table-border);
+	border-radius: var(--ak-table-radius);
 	border-collapse: separate;
 	border-spacing: 0;
 	overflow: hidden;
@@ -32,14 +32,14 @@ body.adminkit .widefat tfoot td {
 	background: var(--ak-surface);
 	color: var(--ak-heading);
 	font-weight: 600;
-	border-bottom: 1px solid var(--ak-border);
+	border-bottom: 1px solid var(--ak-table-border);
 	border-top: none;
 }
 
 body.adminkit .widefat tbody td,
 body.adminkit .widefat tbody th {
 	color: var(--ak-text);
-	border-top: 1px solid var(--ak-border);
+	border-top: 1px solid var(--ak-table-border);
 }
 
 body.adminkit .widefat tbody tr:first-child td,
@@ -59,14 +59,13 @@ body.adminkit .widefat tbody tr:first-child th {
    - overflow:visible lets the table overflow the wrapper (→ scroll) AND defeats
      the .widefat `overflow:hidden` on .wp-list-table.widefat (which would clip
      the overflowing cells).
-   Before JS fires the wrapper doesn't exist, so the frame (border + radius) lives
-   on the table itself using overflow:clip — which visually clips the radius corners
-   without creating a scroll container. Once JS injects .ak-table-scroll the more
-   specific rule below hands the frame to the wrapper and resets the table. */
+   Keep the outer frame off both the pre-wrap table and the JS wrapper. The
+   wrapper is added late for horizontal scrolling, so moving a visible border
+   between table and wrapper creates a first-paint flash on post lists. */
 body.adminkit .wp-list-table {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
+	background: var(--ak-table-bg);
+	border: 0;
+	border-radius: var(--ak-table-radius);
 	border-collapse: separate;
 	border-spacing: 0;
 	overflow: clip;
@@ -84,7 +83,7 @@ body.adminkit .wp-list-table tfoot th.check-column {
 	color: var(--ak-heading);
 	font-weight: 600;
 	font-size: var(--ak-text-s);
-	border-bottom: 1px solid var(--ak-border);
+	border-bottom: 1px solid var(--ak-table-border);
 	border-top: none;
 	padding: 10px;
 }
@@ -100,7 +99,7 @@ body.adminkit .wp-list-table thead th.sortable:hover .sorting-indicator {
 body.adminkit .wp-list-table tbody td,
 body.adminkit .wp-list-table tbody th {
 	padding: 10px;
-	border-top: 1px solid var(--ak-border);
+	border-top: 1px solid var(--ak-table-border);
 	color: var(--ak-text);
 	font-size: var(--ak-text-s);
 }
@@ -420,7 +419,7 @@ body.adminkit .inline-edit-row fieldset select:focus {
 body.adminkit .inline-edit-row .inline-edit-save {
 	background: transparent;
 	padding-top: 12px;
-	border-top: 1px solid var(--ak-border);
+	border-top: 1px solid var(--ak-table-border);
 	margin-top: 12px;
 }
 
@@ -469,12 +468,11 @@ body.adminkit .check-column label:hover {
 /* --- Wide-table horizontal scroll ----------------------------------------
    A list table wider than the content area scrolls horizontally as a unit
    (header + rows together) instead of squashing its columns or — below 782px —
-   collapsing into WP's stacked pile. The wrapper carries the frame (border +
-   radius + surface) and the scroll; the table inside is border-less width:100%,
+   collapsing into WP's stacked pile. The wrapper carries the scroll; the table
+   inside is border-less width:100%,
    so it FILLS the wrapper when it fits (no dead space, Quick Edit spans full
    width) and overflows → scrolls when wide. overflow-x:auto scrolls horizontally;
-   overflow-y:hidden clips the table's square corners to the wrapper's radius (and
-   suppresses any vertical scrollbar). class-list-table-chrome.php injects this
+   overflow-y:hidden suppresses any vertical scrollbar. class-list-table-chrome.php injects this
    <div> around each table.
 
    clear:both is essential: overflow-x:auto makes this wrapper a block formatting
@@ -485,14 +483,13 @@ body.adminkit .check-column label:hover {
    ~118px sliver wedged to the right.) Clearing the floats keeps it full-width. */
 body.adminkit .ak-table-scroll {
 	clear: both;
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
+	background: var(--ak-table-bg);
+	border: 0;
+	border-radius: var(--ak-table-radius);
 	overflow-x: auto;
 	overflow-y: hidden;
 }
-/* Once JS wraps the table: delegate border + radius to the wrapper, reset the
-   table to borderless so it scrolls freely inside the bounded wrapper.
+/* Once JS wraps the table: keep the table borderless so it scrolls freely.
    overflow:visible lets the table exceed the wrapper width → horizontal scroll. */
 body.adminkit .ak-table-scroll .wp-list-table {
 	border: 0;
@@ -515,12 +512,8 @@ body.adminkit.plugin-install-php .ak-table-scroll {
    to fit. Exceptions: free-text columns are capped + wrapped (below), and on
    phones the primary column wraps (media query) so a long title doesn't force a
    wide horizontal scroll on a narrow screen. */
-body.adminkit .wp-list-table thead th,
-body.adminkit .wp-list-table thead td,
-body.adminkit .wp-list-table tfoot th,
-body.adminkit .wp-list-table tfoot td,
-body.adminkit .wp-list-table tbody th,
-body.adminkit .wp-list-table tbody td {
+body.adminkit .wp-list-table th,
+body.adminkit .wp-list-table td {
 	white-space: nowrap;
 }
 

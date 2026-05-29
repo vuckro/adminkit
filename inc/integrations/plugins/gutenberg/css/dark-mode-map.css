@@ -313,6 +313,13 @@ body.block-editor-page.adminkit .components-modal__header-heading {
 	color: var(--ak-heading);
 }
 
+/* Start-page options modal footer (post-new.php?post_type=page) — Gutenberg
+   hardcodes a #fff action bar with a #ddd top divider. */
+body.block-editor-page.adminkit .editor-start-page-options__modal .editor-start-page-options__modal__actions {
+	background-color: var(--ak-surface);
+	border-top-color: var(--ak-border);
+}
+
 
 /* ========== 12. Block inserter (the "+" panel) ========== */
 body.block-editor-page.adminkit .block-editor-inserter__menu,

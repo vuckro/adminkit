@@ -91,7 +91,7 @@ body.adminkit:is(.post-php, .post-new-php) #misc-publishing-actions a.edit-times
 /* ----- Bricks classic-editor fallback wrapper ----- */
 body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container {
 	background-color: var(--ak-surface);
-	border-radius: var(--ak-radius-m);
+	border-radius: var(--ak-card-radius);
 }
 
 

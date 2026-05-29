@@ -10,16 +10,18 @@
    0.1-alpha-black border (which survives dark mode, no need to override
    the border alone). */
 body.adminkit .card {
-	background: var(--ak-surface);
-	border-color: var(--ak-border);
+	background: var(--ak-card-bg);
+	border-color: var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	color: var(--ak-text);
 }
 
 /* `.welcome-panel` — WP's dashboard welcome panel, reused by some plugins as a
    highlight box. Same hardcoded white surface. */
 body.adminkit .welcome-panel {
-	background: var(--ak-surface);
-	border-color: var(--ak-border);
+	background: var(--ak-card-bg);
+	border-color: var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	color: var(--ak-text);
 }
 

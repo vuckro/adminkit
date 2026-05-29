@@ -53,17 +53,19 @@ body.adminkit.site-health-info-php hr {
 
 body.adminkit .privacy-settings-accordion,
 body.adminkit .health-check-accordion {
-	border-color: var(--ak-border);
+	border-color: var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	overflow: hidden;
 }
 
 body.adminkit .privacy-settings-accordion-heading,
 body.adminkit .health-check-accordion-heading {
-	border-top-color: var(--ak-border);
+	border-top-color: var(--ak-card-border);
 }
 
 body.adminkit .privacy-settings-accordion-trigger,
 body.adminkit .health-check-accordion-trigger {
-	background: var(--ak-surface);
+	background: var(--ak-card-bg);
 	color: var(--ak-text);
 }
 
@@ -78,7 +80,7 @@ body.adminkit .health-check-accordion-trigger:active {
 body.adminkit .privacy-settings-accordion-trigger:focus,
 body.adminkit .health-check-accordion-trigger:focus {
 	color: var(--ak-heading);
-	background-color: var(--ak-surface);
+	background-color: var(--ak-card-bg);
 	outline-color: var(--ak-primary);
 }
 
@@ -126,7 +128,7 @@ body.adminkit .health-check-accordion-trigger .badge.gray {
 /* Panel (the body of an opened accordion item) */
 body.adminkit .privacy-settings-accordion-panel,
 body.adminkit .health-check-accordion-panel {
-	background: var(--ak-surface);
+	background: var(--ak-card-bg);
 	color: var(--ak-text);
 }
 
@@ -158,15 +160,16 @@ body.adminkit .health-check-body .hr-separator {
    paints `border: 1px solid #c3c4c7`; rows + cells inherit
    #50575e text and a #fff bg from common.css. */
 body.adminkit .health-check-table {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
+	background: var(--ak-table-bg);
+	border: 1px solid var(--ak-table-border);
+	border-radius: var(--ak-table-radius);
 }
 
 body.adminkit .health-check-table th,
 body.adminkit .health-check-table td {
 	color: var(--ak-text);
-	border-bottom-color: var(--ak-border);
-	border-top-color: var(--ak-border);
+	border-bottom-color: var(--ak-table-border);
+	border-top-color: var(--ak-table-border);
 }
 
 body.adminkit .health-check-table thead th,

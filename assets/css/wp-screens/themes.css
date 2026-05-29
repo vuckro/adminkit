@@ -4,17 +4,18 @@
    hover action strip through tokens. */
 
 body.adminkit .theme-browser .theme {
-	background: var(--ak-surface);
-	border-color: var(--ak-border);
+	background: var(--ak-card-bg);
+	border-color: var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 }
 
 body.adminkit .theme-id-container {
-	background: var(--ak-surface);
-	border-top-color: var(--ak-border);
+	background: var(--ak-card-bg);
+	border-top-color: var(--ak-card-border);
 }
 
 body.adminkit .theme-browser .theme .theme-name {
-	background: var(--ak-surface);
+	background: var(--ak-card-bg);
 	color: var(--ak-heading);
 }
 
@@ -22,8 +23,8 @@ body.adminkit .theme-browser .theme .theme-name {
    it with semi-transparent black; route to a token surface so the buttons sit
    on a themed strip in both modes, and tokenize the divider. */
 body.adminkit .theme-browser .theme .theme-actions {
-	background: var(--ak-surface);
-	border-left-color: var(--ak-border);
+	background: var(--ak-card-bg);
+	border-left-color: var(--ak-card-border);
 }
 
 /* Active theme primary button (e.g. "Customize") — WP's active-card rules
@@ -84,11 +85,11 @@ body.adminkit .theme-browser .theme.active .theme-name {
 /* Theme screenshot — round the thumbnail so cards read as soft rounded tiles.
    The container clips (overflow:hidden) so the <img> corners follow the radius. */
 body.adminkit .theme-browser .theme .theme-screenshot {
-	border-radius: var(--ak-radius-m);
+	border-radius: var(--ak-card-radius);
 	overflow: hidden;
 }
 body.adminkit .theme-browser .theme .theme-screenshot img {
-	border-radius: var(--ak-radius-m);
+	border-radius: var(--ak-card-radius);
 }
 
 /* "Add New Theme" tile at the end of the themes grid — hide it.
@@ -115,7 +116,7 @@ body.adminkit .theme-overlay .theme-backdrop {
 body.adminkit .theme-overlay .theme-wrap {
 	background: var(--ak-bg);
 	color: var(--ak-text);
-	border-radius: var(--ak-radius-m);
+	border-radius: var(--ak-card-radius);
 }
 
 /* Top header strip with prev / next / close buttons */
@@ -167,23 +168,23 @@ body.adminkit .theme-overlay .theme-header .right.disabled:hover {
    own bottom corners to match .theme-wrap (no overflow:hidden on the wrap,
    since WP's prev/next nav buttons sit outside the modal edges). */
 body.adminkit .theme-overlay .theme-actions {
-	background: var(--ak-surface);
-	border-top-color: var(--ak-border);
-	border-bottom-left-radius: var(--ak-radius-m);
-	border-bottom-right-radius: var(--ak-radius-m);
+	background: var(--ak-card-bg);
+	border-top-color: var(--ak-card-border);
+	border-bottom-left-radius: var(--ak-card-radius);
+	border-bottom-right-radius: var(--ak-card-radius);
 }
 
 /* Big screenshot frame on the left — round it (overflow clips the <img>
    inside to the rounded corners). */
 body.adminkit .theme-overlay .screenshot {
-	border-color: var(--ak-border);
-	border-radius: var(--ak-radius-m);
+	border-color: var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	overflow: hidden;
 }
 
 body.adminkit .theme-overlay .screenshot.thumb {
-	background: var(--ak-surface);
-	border-color: var(--ak-border);
+	background: var(--ak-card-bg);
+	border-color: var(--ak-card-border);
 }
 
 body.adminkit .theme-overlay .screenshot.selected {

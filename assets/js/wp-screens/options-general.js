@@ -17,19 +17,26 @@
  * the Discussion page + Profile tabs) just flips `hidden` to switch
  * panels — same mark-and-toggle pattern as options-discussion.js.
  *
- * Defensive: no anti-FOUC hide (the page renders WP-default first, then
- * we reorganise). URL hash updates only on user-initiated clicks, so a
- * bare URL never auto-scrolls. If the page renders only one tab's worth
- * of content (e.g. WPLANG missing → locale empty), the tab strip is
- * skipped entirely and blocks render flat.
+ * The PHP module adds a pre-paint `.ak-options-pending` marker so the raw
+ * one-table layout does not flash before this footer script reorganises it.
+ * URL hash updates only on user-initiated clicks, so a bare URL never
+ * auto-scrolls. If the page renders only one tab's worth of content (e.g.
+ * WPLANG missing → locale empty), the tab strip is skipped and blocks render
+ * flat.
  *
  * Strings ride via `window.AdminKitOptionsGeneral`.
  */
 (function () {
 	'use strict';
 
+	var root = document.documentElement;
+	function reveal() {
+		root.classList.remove( 'ak-options-pending' );
+		root.classList.add( 'ak-options-ready' );
+	}
+
 	var form = document.querySelector( '.wrap > form[action="options.php"]' );
-	if ( ! form || form.dataset.akGrouped ) { return; }
+	if ( ! form || form.dataset.akGrouped ) { reveal(); return; }
 	form.dataset.akGrouped = '1';
 
 	var S = window.AdminKitOptionsGeneral || {};
@@ -51,7 +58,7 @@
 	];
 
 	var sourceTable = form.querySelector( ':scope > .form-table' );
-	if ( ! sourceTable ) { return; }
+	if ( ! sourceTable ) { reveal(); return; }
 
 	// Build each block: heading + optional description + nested form-table
 	// + scoop matching <tr>s. Track which blocks ended up populated so the
@@ -108,7 +115,7 @@
 	var made = TABS.filter( function ( t ) {
 		return madeBlocks.some( function ( b ) { return b.tab === t.id; } );
 	} );
-	if ( made.length < 2 ) { return; }
+	if ( made.length < 2 ) { reveal(); return; }
 
 	var strip = document.createElement( 'nav' );
 	strip.className = 'nav-tab-wrapper';
@@ -174,4 +181,5 @@
 		var id = tabFor( location.hash.slice( 1 ) );
 		if ( id ) { activate( id, { updateHash: false } ); }
 	} );
+	reveal();
 })();

@@ -15,10 +15,11 @@ inc/
   class-assets.php       Asset registry + dispatcher + the token cascade (enqueue_tokens);
                          enqueue_script() for the JS bricks.
   class-screen.php       WP_Screen helpers.
-  class-settings.php     Settings registry (register/get/schema) + color_map() (display taxonomy).
-  class-settings-page.php Settings SPA (admin menu) + REST save + providers() list.
+  class-settings.php     Settings registry (register/get/schema) + defaults.
+  class-settings-catalog.php Settings SPA catalogs (features, integrations, Bricks exports).
+  class-settings-gate.php Per-integration + generic-plugin theming gates.
+  class-settings-page.php Settings SPA shell (admin menu) + REST save.
   class-theme-toggle.php  Dark/light toggle + login logo. Owns the pre-paint inline script.
-  class-dashboard.php     Dashboard widget registry (dormant until an integration registers one).
   wp-core/                AdminKit's restyle of WP-core surfaces (chrome, login, profile…).
   integrations/
     abstract-integration.php   AdminKit_Integration_Base.
@@ -46,7 +47,7 @@ docs/                   Deep-dive guides (see "More docs" below).
 | Add a JS behaviour | New `assets/js/wp-core/{name}.js`, enqueue via `AdminKit_Assets::enqueue_script()` | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 | Change a baseline token | Edit `tokens/palettes/*.json`, run `php tokens/build.php`, commit JSON + regenerated CSS | [docs/TOKENS.md](docs/TOKENS.md) |
 | Detect host / WP-core CSS changes | `php dev/adapter-drift.php` (per adapter) or `--wp-core` | [docs/TOKENS.md](docs/TOKENS.md#drift-detection-keeping-adapters-alive) |
-| Add a setting / feature toggle | `AdminKit_Settings::register()` (+ a `feature_descriptors()` row for the UI), then update the Settings inventory | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#settings) |
+| Add a setting / feature toggle | `AdminKit_Settings::register()` (+ an `AdminKit_Settings_Catalog::features()` row for the UI), then update the Settings inventory | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#settings) |
 | Add a hook (filter / action) | namespace it `adminkit/…`, then document it | [docs/EXTENDING.md](docs/EXTENDING.md) |
 | Add a branding / logo option | `inc/wp-core/class-branding.php` + the `brand_logo()` resolver | [docs/EXTENDING.md](docs/EXTENDING.md) |
 | Install / refresh on a WP site (no symlink) | `php dev/package.php --target=/path/to/wp-content/plugins` | [docs/INSTALL.md](docs/INSTALL.md) |
@@ -135,8 +136,7 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
         and `bestOnAccent()` JS compute white vs deep ink from WCAG luminance.
         Without it, a near-black accent leaves white-on-black text invisible.
   Mirror PHP and JS byte-for-byte: live preview must match the post-save
-  inline style. Accent-family tokens are flagged `accent_family: true` in
-  `color_map()` so the SPA's `sourcePill()` labels them correctly.
+  inline style.
 - **`wp-baseline.css` is documenting intent**, not actually winning the cascade
   for most of its declarations. tokens.css depends on it (so wp-baseline loads
   BEFORE tokens.css) and tokens.css redeclares all `--ak-*` from WaasKit
@@ -168,12 +168,11 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`), custom
   avatars (`custom_avatars_enabled`) and users-list Quick Edit
   (`quick_edit_users_enabled`) all default ON, so the plugin presents
-  fully-featured on activation. Each stays individually switch-off-able. Two
-  features default OFF because they either restyle a third-party UI or have
-  destructive side effects: `bricks_builder_enabled` (restyles the Bricks
-  builder) and `username_changer_enabled` (renaming `user_login` invalidates
-  active sessions). Keep the on-by-default posture for the four above — don't
-  quietly flip them to opt-in.
+  fully-featured on activation. `bricks_builder_enabled` also defaults ON, but
+  the UI locks that row unless the Bricks theme is active. Each stays
+  individually switch-off-able. `username_changer_enabled` defaults OFF because
+  renaming `user_login` invalidates active sessions. Keep this posture — don't
+  quietly flip defaults while refactoring.
 - **Username changer is destructive** — `class-username-changer.php` rides the
   native user-edit.php submit (no AJAX endpoint, no separate Save button):
   `user_profile_update_errors` validates, `profile_update` writes `user_login`
@@ -248,15 +247,10 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   accent chip). **Never re-introduce the "first letter of site name" mark** as a
   toolbar fallback — that produced the stray-`A` hover bug; the WP logo is the
   recognisable, language-agnostic equivalent of WP's own admin-bar fallback.
-- **`bricks_builder_enabled` defaults ON when Bricks is the active theme.** The
-  schema default is `false` (opt-in semantics) but
-  `AdminKit_Integration_Bricks::default_on_when_active()` filters
-  `adminkit/setting/bricks_builder_enabled` to return `true` whenever Bricks is
-  active AND the toggle has never been explicitly saved
-  (`array_key_exists( 'bricks_builder_enabled', $stored )` is false). User
-  choices — explicit on or off — are never overwritten. Don't move this logic
-  into the schema default: that would flip non-Bricks sites too, where the
-  Features row isn't even surfaced.
+- **`bricks_builder_enabled` defaults ON but is availability-gated.** The schema
+  default is `true`; `AdminKit_Settings_Catalog::features()` marks the UI row
+  unavailable unless the Bricks theme is active, and the Bricks integration still
+  checks the setting before loading the heavy builder chrome.
 - **Class names are stable public-ish API** (`AdminKit_*`). Folder reorg keeps them.
 - **All user-facing strings stay translatable** — wrap them in `__()` / `esc_html__()`
   with the `adminkit` text domain; pass JS copy from PHP via `wp_localize_script` /

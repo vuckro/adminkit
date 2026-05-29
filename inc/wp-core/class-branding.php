@@ -9,15 +9,15 @@
  * now drives the SITE-NAME mark:
  *   - `favicon` → the Site Icon as a small rounded chip before the site title,
  *                 KEEPING the title text (a background box on the ::before);
- *   - `logo`    → the configured brand logo (Settings → Features → Branding,
+ *   - `logo`    → the configured brand logo (AdminKit Dashboard branding card,
  *                 light + dark) injected as a real <img> that REPLACES the title
  *                 text (the wordmark IS the name, so logo + "SiteName" would be
  *                 redundant) — a wide wordmark auto-sizes to its aspect ratio
  *                 (tight, no empty box) and border-radius rounds the actual image;
- *   - `hide`    → no mark at all (just the bare site title).
- * `logo` falls back to `favicon` when no brand logo is configured; either branded
- * mode hides the site-name "house" glyph so the mark replaces it. Applied in
- * wp-admin AND on the front-end toolbar (logged-in users see it there too).
+ * `logo` falls back to `favicon` when no brand logo is configured. Either branded
+ * mode hides the site-name "house" glyph so the mark replaces it; legacy `hide`
+ * values degrade to `favicon`. Applied in wp-admin AND on the front-end toolbar
+ * (logged-in users see it there too).
  *
  * The Bricks builder reads the SAME source (AdminKit_Settings::brand_logo()), so
  * one configuration drives the brand everywhere. The whole output is gated by the

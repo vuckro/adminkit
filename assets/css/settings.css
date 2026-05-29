@@ -130,9 +130,9 @@
 
 /* Rows -------------------------------------------------------------------- */
 .adminkit-app .ak-rows {
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
-	background: var(--ak-surface);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	background: var(--ak-card-bg);
 	overflow: hidden;
 }
 .adminkit-app .ak-row {
@@ -221,9 +221,9 @@
 .adminkit-app .ak-tbl {
 	display: grid;
 	grid-template-columns: 28px minmax( 110px, 1fr ) minmax( 160px, 1.4fr );
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
-	background: var(--ak-surface);
+	border: 1px solid var(--ak-table-border);
+	border-radius: var(--ak-table-radius);
+	background: var(--ak-table-bg);
 	overflow: hidden;
 }
 /* Every cell shares padding + a top divider; stretch (default) keeps the
@@ -235,7 +235,7 @@
 	gap: 6px;
 	padding: 6px 10px;
 	min-width: 0;
-	border-top: 1px solid var(--ak-border);
+	border-top: 1px solid var(--ak-table-border);
 }
 .adminkit-app .ak-tbl > :nth-child(-n+3) { border-top: 0; }
 .adminkit-app .ak-design__row--full .ak-tbl > :nth-child(-n+6) { border-top: 0; }
@@ -388,9 +388,9 @@
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 180px, 1fr ) );
 	gap: 1px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
-	background: var(--ak-border);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	background: var(--ak-card-border);
 	overflow: hidden;
 }
 .adminkit-app .ak-hero__cell {
@@ -647,9 +647,9 @@
    slots row, accent picker, derived strip, display selectors. One bordered
    container with a small head (eyebrow + title + status + Actions menu). */
 .adminkit-app .ak-card {
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-l, 14px);
-	background: var(--ak-surface);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	background: var(--ak-card-bg);
 	padding: 20px 24px;
 	margin-bottom: 16px;
 }
@@ -743,8 +743,8 @@
    roughly half the card width — plenty of room for the preview zone plus a
    tight body without wrapping the button under the text. */
 .adminkit-app .ak-brand-slot {
-	border: 1px dashed var(--ak-border);
-	border-radius: var(--ak-radius-m, 10px);
+	border: 1px dashed var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	padding: 10px;
 	display: flex;
 	align-items: center;
@@ -972,9 +972,9 @@
 	max-width: 760px;
 	max-height: 85vh;
 	overflow-y: auto;
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-l, 14px);
+	background: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	padding: 24px 28px;
 	box-shadow: 0 20px 60px -10px rgba(0, 0, 0, .35);
 }
@@ -1024,8 +1024,8 @@
 	gap: 8px;
 }
 .ak-export-step {
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m, 10px);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	background: var(--ak-bg);
 	overflow: hidden;
 }

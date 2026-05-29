@@ -22,8 +22,8 @@
  *                        popovers, modals, inserter, list view, form controls,
  *                        block toolbar) so the whole chrome flips with the toggle.
  *                        Always on; the canvas (.editor-styles-wrapper) is left alone here.
- *   canvas.css         — OPT-IN theming of the iframed canvas (content + native blocks),
- *                        gated by the "Gutenberg" feature (editor_content_theme, OFF by
+ *   canvas.css         — theming of the iframed canvas (content + native blocks),
+ *                        gated by the "Gutenberg" feature (editor_content_theme, ON by
  *                        default). Injected INTO the editor iframe by canvas-theme.js.
  *   js/theme-toggle.js — sun/moon toggle injected into the editor header
  *   js/canvas-theme.js — injects the token CSS + canvas.css into the editor iframe and
@@ -112,9 +112,9 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * OPT-IN: theme the editor's iframed canvas (content + native blocks) in light
-	 * + dark. Gated by the "Gutenberg" feature (editor_content_theme, OFF by
-	 * default) so a client's page layout is never altered unless asked.
+	 * Theme the editor's iframed canvas (content + native blocks) in light + dark.
+	 * Gated by the "Gutenberg" feature (editor_content_theme, ON by default) so a
+	 * site can still opt out when the editor canvas must match the front end.
 	 *
 	 * The block-editor canvas is a separate <iframe> document that neither the
 	 * editor-chrome CSS nor the page's data-adminkit-theme attribute reach. So we

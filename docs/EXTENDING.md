@@ -63,13 +63,13 @@ toggle over to the host.
 | `adminkit/brand_logo` | filter | `('' \| string \| array)` | Brand logo fallback when the Branding settings are empty. Return a URL string, or `array( 'light' => …, 'dark' => …, 'preloader' => … )`. Drives the brand mark at the site-name node **and** the Bricks builder; the settings win over the filter. |
 
 Resolved by `AdminKit_Settings::brand_logo( $mode )`. Logos are normally set
-no-code in the AdminKit **Design** tab → Branding, alongside the `wp_logo` mode for the
+no-code on the AdminKit Dashboard branding card, alongside the `wp_logo` mode for the
 brand mark rendered at the site-name node (next to the site title; the top-left
 WordPress logo is always hidden): `logo` (the brand logo), `favicon` (the site
-icon), or `hide`. `logo` falls back to `favicon`, then to a bare site title when
+icon). `logo` falls back to `favicon`, then to a bare site title when
 nothing is set; `inc/wp-core/class-branding.php`. The login screen has its own
-`login_logo` setting (the same `logo` | `favicon` | `hide`, or empty to inherit
-`wp_logo`), so it can show a square favicon while the bar shows a wide logo, or
+`login_logo` setting (`logo` | `favicon`), so it can show a square favicon while
+the bar shows a wide logo, or
 vice versa; resolved in `inc/wp-core/class-login.php`.
 
 ### Accent — and the WordPress palette baseline
@@ -129,10 +129,6 @@ foreground colour for text/icons on the accent fill) is computed from the
 accent's WCAG relative luminance — `AdminKit_Assets::contrast_text_for()`
 PHP side, `bestOnAccent()` JS side, byte-for-byte the same algorithm. Without
 this, a near-black custom accent would leave white-on-black text invisible.
-
-Tokens that follow the accent are flagged `accent_family: true` in
-`color_map()` so the Design tab's token-reference table can colour their
-Source pill accordingly.
 
 The constant `AdminKit_Assets::ADMINKIT_BLUE` holds the WP-Blue default —
 change it there if you ever need to ship a different out-of-the-box accent.
