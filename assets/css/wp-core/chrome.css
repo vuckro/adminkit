@@ -26,6 +26,17 @@ body.adminkit #wpbody-content {
 
 body.adminkit {
 	font-size: var(--ak-text-m);
+	--ak-card-bg: var(--ak-surface);
+	--ak-card-border: color-mix(in srgb, var(--ak-border) 72%, transparent);
+	--ak-card-radius: var(--ak-radius-m);
+	--ak-table-bg: var(--ak-surface);
+	--ak-table-border: var(--ak-card-border);
+	--ak-table-radius: var(--ak-card-radius);
+	--ak-nav-gap: 6px;
+	--ak-nav-pill-gap: 6px;
+	--ak-nav-pill-height: 28px;
+	--ak-nav-pill-padding-x: 10px;
+	--ak-nav-pill-radius: 8px;
 }
 
 /* Dark-mode scrollbars. The browser paints native scrollbars from the page's
@@ -222,15 +233,17 @@ body.adminkit #adminmenu .opensub .wp-submenu {
 
 /* Fly-out submenu (hovering a non-current item, or any submenu when the sidebar is
    folded): detach it into a FLOATING popup — a small gap off the rail, rounded
-   corners and an elevated shadow. The inline current submenu stays flush — so we
-   EXCLUDE `.wp-has-current-submenu`: WP also adds `.opensub` to the current item
-   when you hover it, and without this exclusion its inline submenu would jump right
-   by the 6px gap (the reported shift). Folded/auto-fold submenus are always pop-outs. */
+   corners and an elevated shadow. The current item's submenu stays FLUSH (never a
+   detached card) — so we EXCLUDE `.wp-has-current-submenu` from BOTH the
+   expanded-hover branch AND the auto-fold branch. (WP also adds `.opensub` to the
+   current item on hover, which without the exclusion would jump it right by the 6px
+   gap — the reported shift.) Only a TRULY folded rail (icons-only, no room to sit
+   flush) still pops the current submenu out as a card. */
 body.adminkit #adminmenu li.opensub:not( .wp-has-current-submenu ) > .wp-submenu,
 body.adminkit.folded #adminmenu .wp-submenu,
-body.adminkit.auto-fold #adminmenu .wp-submenu {
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
+body.adminkit.auto-fold #adminmenu li:not( .wp-has-current-submenu ) > .wp-submenu {
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	box-shadow: var(--ak-shadow-elevated, 0 8px 24px rgba(0, 0, 0, 0.18));
 	margin-left: 6px;
 }
@@ -314,16 +327,16 @@ body.adminkit #collapse-button:focus {
 
 /* Postboxes / metaboxes */
 body.adminkit .postbox {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
+	background: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	margin-bottom: 16px;
 	overflow: hidden;
 }
 
 body.adminkit .postbox-header {
-	background: var(--ak-surface);
-	border-bottom: 1px solid var(--ak-border);
+	background: var(--ak-card-bg);
+	border-bottom: 1px solid var(--ak-card-border);
 }
 
 /* Widget / postbox titles — make them visible in both modes */
@@ -461,9 +474,9 @@ body.adminkit table.widefat {
    border + radius. Used on comment edit, link edit, text widgets, classic
    excerpt, and any plugin that calls wp_editor(). */
 body.adminkit .stuffbox {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
+	background: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	overflow: hidden;
 }
 
@@ -501,8 +514,8 @@ body.adminkit #major-publishing-actions #publishing-action {
 }
 
 body.adminkit .wp-editor-container {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
+	background: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
 	border-radius: var(--ak-radius-s);
 	overflow: hidden;
 }
@@ -624,8 +637,8 @@ body.adminkit #wp-content-editor-tools {
    #c3c4c7 frame commented out; restore them as tokens so the bar reads as a
    themed strip in dark mode. */
 body.adminkit #post-status-info {
-	background-color: var(--ak-surface);
-	border: 1px solid var(--ak-border);
+	background-color: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
 }
 
 /* Link / permalink helper text (comment edit link box, post slug box) —
@@ -645,8 +658,8 @@ body.adminkit .accordion-section-content {
    paints `bg: #fff; border: 1px solid #c3c4c7`. The dark hero header
    above stays as-is (#151515 is a design-intent contrast). */
 body.adminkit .welcome-panel .welcome-panel-column-container {
-	background: var(--ak-surface);
-	border-color: var(--ak-border);
+	background: var(--ak-card-bg);
+	border-color: var(--ak-card-border);
 }
 
 /* `.howto` help labels (legend / fieldset hints used by nav-menus,
@@ -746,8 +759,8 @@ body.adminkit .notice-dismiss:hover::before {
 
 /* Screen Options + Help — top-right collapsible panels */
 body.adminkit #screen-meta {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
+	background: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
 	border-top: none;
 	color: var(--ak-text);
 }
@@ -856,8 +869,8 @@ body.adminkit .media-modal-content {
 }
 
 /* ───────── Navigation strips ─────────
-   ONE visual language across every nav strip in the admin: a bordered pill
-   container with pill children. Three markup variants share the same shape:
+   ONE visual language across every nav strip in the admin: a flat strip with
+   pill children. Three markup variants share the same shape:
    - `.subsubsub`        WP list-table status filter strips (posts, plugins, …)
    - `.nav-tab-wrapper`  WP settings tabs (Permalinks, plugin pages — Bricks,
                          ACF, Yoast, …). Markup variants: `<div>…<a class="nav-tab">`
@@ -877,22 +890,28 @@ body.adminkit .media-modal-content {
    the container's `normal` line-height could still resolve to a non-zero px
    value via the inherited line-height multiplier (some UAs floor `normal`
    at the parent's font-metric height, not zero), which surfaces as a phantom
-   band of empty space ABOVE / BELOW the pill row inside the rounded frame
-   — visible most clearly on plugins.php / edit.php / edit-comments.php as
-   a strip of dead pixels under the active filter. Zero line-height on the
-   container kills that floor; the pills (own line-height: 1, height: 26px
-   below) drive the container's used height by themselves. */
+   band of empty space ABOVE / BELOW the pill row. Zero line-height on the
+   container kills that floor; the pills drive the row's used height by
+   themselves.
+
+   Keep the strip itself flat. The interactive pill carries hover/current state,
+   which avoids a hard first-paint frame on native list and settings screens. */
 body.adminkit .subsubsub,
 body.adminkit .nav-tab-wrapper,
 body.adminkit .ak-tabs {
 	display: inline-flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 2px;
+	gap: var(--ak-nav-gap);
 	margin: 16px 0;
-	padding: 3px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
+	padding: 0;
+	border: 0;
+	/* No radius on the container. ul.subsubsub clips overflow and .ak-tabs
+	   scrolls (both round the clip box to border-radius), so a rounded
+	   container would shave the FIRST pill's left corners and the LAST pill's
+	   right corners down to the container radius instead of the pill's own
+	   --ak-nav-pill-radius. The strip is transparent + flat anyway. */
+	background: transparent;
 	list-style: none;
 	width: max-content;
 	max-width: 100%;
@@ -926,24 +945,22 @@ body.adminkit .subsubsub li {
 }
 
 /* 2 — Pill children (the link / button inside the container). Explicit
-   `height: 26px` + `line-height: 1` removes every source of pill-height
+   height + `line-height: 1` removes every source of pill-height
    drift: no `line-height: 1.3` fractional half-leading, no vertical padding
-   adding to the line box, no descender slack. The pill is exactly 26px tall,
-   the container (3px padding × 2 + 1px border × 2 + 26px pill) lands at
-   exactly 34px — the strip's used height becomes a constant the user can
-   reason about. */
+   adding to the line box, no descender slack. */
 body.adminkit .subsubsub a,
 body.adminkit .nav-tab,
 body.adminkit .ak-tabs button {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
+	gap: var(--ak-nav-pill-gap);
 	margin: 0;
-	padding: 0 10px;
-	height: 26px;
+	padding: 0 var(--ak-nav-pill-padding-x);
+	height: var(--ak-nav-pill-height);
 	border: 0;
-	border-radius: var(--ak-radius-s);
+	border-radius: var(--ak-nav-pill-radius);
 	background: transparent;
+	overflow: hidden;
 	box-shadow: none;
 	color: var(--ak-text-muted);
 	font: inherit;
@@ -987,15 +1004,13 @@ body.adminkit .ak-tabs button:focus-visible {
 	outline-offset: -2px;
 }
 
-/* 5 — Icons. `.ak-subsubsub-ic` + `.ak-nav-tab-ic` are injected by
-   list-table-chrome.js; `.ic` is rendered by the AdminKit panel builders.
-   All three inherit `currentColor` so they track the muted → heading
+/* 5 — Icons. `.ak-nav-tab-ic` is injected by list-table-chrome.js; `.ic` is
+   rendered by the AdminKit panel builders. Both inherit `currentColor` so they track the muted → heading
    transition automatically. translateY(-1px) is an optical lift: Lucide-style
    icons centre their visual mass slightly below the 24×24 viewBox geometric
    centre (e.g. the trash icon's bulk sits below the handle), so a
    geometrically-centred icon reads LOW next to text cap-height. 1px matches
    what icon libraries recommend (`vertical-align: -0.125em` ≈ 1-2px @ 13px). */
-body.adminkit .subsubsub .ak-subsubsub-ic,
 body.adminkit .nav-tab .ak-nav-tab-ic,
 body.adminkit .ak-tabs button .ic {
 	display: inline-flex;
@@ -1004,7 +1019,6 @@ body.adminkit .ak-tabs button .ic {
 	transform: translateY(-1px);
 }
 
-body.adminkit .subsubsub .ak-subsubsub-ic svg,
 body.adminkit .nav-tab .ak-nav-tab-ic svg,
 body.adminkit .ak-tabs button .ic svg {
 	display: block;
@@ -1012,10 +1026,9 @@ body.adminkit .ak-tabs button .ic svg {
 	height: 14px;
 }
 
-/* Selected pill takes its filter's semantic tint — the same color as that
-   filter's count badge — so the active state reads as "this status". The
-   count badge then blends into the pill, leaving its colored number. Unmapped
-   filters keep the neutral --ak-elevated above. */
+/* Selected pill takes its filter's semantic tint so the active state reads as
+   "this status". The count is text-only: the pill owns the whole rounded shape,
+   so first/last tabs and tabs with counters all keep the same corners. */
 body.adminkit .subsubsub li.publish a.current,
 body.adminkit .subsubsub li.approved a.current {
 	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface));
@@ -1036,46 +1049,49 @@ body.adminkit .subsubsub li.active a.current {
 	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface));
 }
 
-/* Round notification badge for the count (parens stripped in JS). Padding +
-   line-height size it (no fixed height) so it never clips, single digits stay
-   round via min-width. */
+/* Count marker (parens stripped before paint in PHP, with a JS fallback for
+   plugin-owned strips). It is deliberately not a badge: an inner rounded shape
+   makes the last status look like it has a different right edge. The flex gap on
+   the parent handles label→count spacing; the parent padding handles the right
+   breathing room. */
 body.adminkit .subsubsub .count {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-width: 20px;
-	border-radius: var(--ak-radius-full);
-	background: var(--ak-elevated);
+	min-width: 0;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border-radius: 0;
+	background: transparent;
 	color: var(--ak-text-muted);
-	font-size: 11px;
-	font-weight: 600;
-	line-height: 1.5;
+	box-sizing: border-box;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+	transform: translateY(-0.5px);
 }
 
 /* Color-code each filter's count by status — applies whether the filter is
    active or not (the active state is shown by the pill, not the badge).
-   Filters without a mapping keep the neutral badge above. */
+   Filters without a mapping keep the neutral count colour above. */
 body.adminkit .subsubsub li.publish .count,
 body.adminkit .subsubsub li.approved .count {
-	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface));
 	color: var(--ak-success);
 }
 
 body.adminkit .subsubsub li.draft .count,
 body.adminkit .subsubsub li.moderated .count,
 body.adminkit .subsubsub li.upgrade .count {
-	background: color-mix(in srgb, var(--ak-warning) 16%, var(--ak-surface));
 	color: var(--ak-warning);
 }
 
 body.adminkit .subsubsub li.trash .count,
 body.adminkit .subsubsub li.inactive .count {
-	background: var(--ak-error-subtle);
 	color: var(--ak-error);
 }
 
 body.adminkit .subsubsub li.active .count {
-	background: color-mix(in srgb, var(--ak-success) 16%, var(--ak-surface));
 	color: var(--ak-success);
 }
 
@@ -1087,6 +1103,5 @@ body.adminkit .subsubsub li.mine a.current {
 }
 
 body.adminkit .subsubsub li.mine .count {
-	background: color-mix(in srgb, var(--ak-info) 16%, var(--ak-surface));
 	color: var(--ak-info);
 }
