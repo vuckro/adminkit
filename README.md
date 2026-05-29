@@ -2,7 +2,6 @@
 
 A clean, modern restyle of the WordPress admin built on CSS tokens. **Standalone** — works on any WordPress site, with no theme or builder required. Ships a polished light + dark mode out of the box.
 
-[![Try AdminKit in WordPress Playground](https://img.shields.io/badge/Try%20it%20live%20in-WordPress%20Playground-3858E9?style=for-the-badge&logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/vuckro/adminkit/main/.wordpress-org/blueprints/blueprint.json)
 [![Latest release](https://img.shields.io/github/v/release/vuckro/adminkit?label=Latest%20release&style=for-the-badge&color=3858E9)](https://github.com/vuckro/adminkit/releases/latest)
 [![License](https://img.shields.io/badge/License-GPL%202.0%2B-brightgreen?style=for-the-badge)](LICENSE)
 
@@ -50,18 +49,10 @@ AdminKit is a regular WordPress plugin. Once activated, it gives `wp-admin` (the
 - **One-click light / dark mode** — a sun/moon button in the top-right of the admin bar. Your choice is remembered per browser, and the first visit follows your operating system's preference.
 - **Generated avatars for users with no photo** — instead of the default "mystery man" silhouette, anyone without a Gravatar gets a unique cartoon face (via [DiceBear](https://www.dicebear.com)) on a pastel background. You can switch this off in *Settings → Discussion → Default Avatar*.
 - **Inline Quick Edit on the Users screen** — edit first name, last name, email and role straight from the user list, the way WordPress already lets you edit posts inline.
-- **Hand-tuned dark-mode support for 15 popular plugins** — WooCommerce, ACF, Elementor, the Fluent suite, WPCode, Slim SEO, Gutenberg, and more. Anything else gets dark-mode coverage automatically through AdminKit's "safety net" engine.
+- **Hand-tuned dark-mode support for popular plugins** — WooCommerce, ACF, Elementor, the Fluent suite, WPCode, Slim SEO, Gutenberg, and more.
 - **Automatic brand-color pickup** — set the accent color in AdminKit, and every native plugin adapter follows it.
 
 It changes **nothing on the public side of your site**. Your theme, your pages, your shop pages — untouched. AdminKit lives entirely inside `wp-admin`.
-
-## Try it in 60 seconds — no install
-
-**[→ Open AdminKit in a free WordPress sandbox](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/vuckro/adminkit/main/.wordpress-org/blueprints/blueprint.json)**
-
-That link uses [WordPress Playground](https://wordpress.org/playground/) — a free, in-browser WordPress that runs entirely on your computer (no server, no account, no data sent anywhere). The sandbox boots in about 30 seconds with AdminKit pre-installed and logged in as admin. Click around, flip dark mode, break stuff — when you close the tab, everything is gone.
-
-If you like what you see, install it on your own site (next section).
 
 ## Install it on your own site
 
