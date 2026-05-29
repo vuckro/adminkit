@@ -74,7 +74,7 @@ Click the **AdminKit** entry in the left menu. You'll see a three-tab interface:
 
 - **Dashboard** — set your brand. Upload light and dark variants of your logo and favicon (paired in a 2×2 grid so the right one shows up in the right context). Pick your accent colour (defaults to the WordPress block-editor blue, `#3858E9`). Below that, a read-only reference of every design token AdminKit uses — useful when you want a plugin's admin CSS to match.
 - **Features** — every optional module has a toggle here. Don't want generated avatars? Off. Don't want the inline Quick Edit on users? Off. Each toggle has a one-line explanation.
-- **Plugins** — every plugin installed on your site is listed here, grouped by type. The ones with a **Native** badge have a hand-tuned AdminKit adapter (full pixel-precise dark mode + brand-color pickup). The rest inherit the "generic" auto-theme layer for dark mode. You can disable AdminKit on any individual plugin's screens here.
+- **Plugins** — every plugin installed on your site is listed here, grouped by type. The ones with a **Native** badge have a hand-tuned AdminKit adapter (full pixel-precise dark mode + brand-color pickup). The rest inherit AdminKit's base styling (no dedicated dark-mode adapter). You can disable AdminKit on any individual plugin's screens here.
 
 The native WordPress *Settings* pages (*General*, *Writing*, *Reading*, …) stay as WordPress renders them — AdminKit only adds light CSS polish and small visual fixes, never a redesigned screen.
 
@@ -82,7 +82,7 @@ The native WordPress *Settings* pages (*General*, *Writing*, *Reading*, …) sta
 
 Click the **sun / moon icon** in the top-right of the admin bar. The whole interface flips. Your choice is stored in your browser (`localStorage`), so it persists across page loads. If you've never picked one, AdminKit honours your operating system's "dark mode" setting.
 
-Dark mode is the headline feature — it works on AdminKit itself, on every native plugin adapter (15 plugins covered hand-by-hand), and on **any other plugin's admin pages** via a runtime "safety net" that scans the page and remaps light surfaces to dark ones automatically. If you find a plugin AdminKit doesn't handle well in dark mode, open an issue — we want to know.
+Dark mode is the headline feature — it works on AdminKit itself and on every supported plugin adapter (15 plugins covered hand-by-hand). Plugins without a dedicated adapter are styled in light mode; automatic dark-mode coverage for the long tail is on the roadmap. If you find a plugin AdminKit doesn't handle well in dark mode, open an issue — we want to know.
 
 ## Frequently asked questions
 
@@ -93,10 +93,10 @@ No. AdminKit only loads CSS and a small amount of JavaScript inside `wp-admin`. 
 Yes — AdminKit doesn't touch your theme. The frontend looks exactly the same after you install AdminKit. The only frontend addition is a small polish on the WordPress admin bar (the toolbar at the top, visible only when you're logged in).
 
 **My plugin's admin page looks weird in dark mode. Is that a bug?**
-Maybe. AdminKit ships hand-tuned adapters for the 15 most common plugins. Everything else gets dark mode through an automatic "safety net". If you spot an issue on a non-native plugin, you can disable AdminKit on that plugin's screens from **AdminKit → Plugins**, or open an [issue](https://github.com/vuckro/adminkit/issues).
+Maybe. AdminKit ships hand-tuned dark-mode adapters for the 15 most common plugins; other plugins aren't adapted for dark mode yet. You can disable AdminKit on that plugin's screens from **AdminKit → Plugins**, or open an [issue](https://github.com/vuckro/adminkit/issues).
 
 **Will it slow my admin down?**
-No. AdminKit loads its CSS conditionally per screen (the user-edit page doesn't load CSS for the themes page, etc.). The runtime "safety net" only runs on plugin pages, never on core WordPress screens, and is rate-limited via `requestIdleCallback`.
+No. AdminKit loads its CSS conditionally per screen (the user-edit page doesn't load CSS for the themes page, etc.), and ships no runtime theming engine — dark mode is plain static CSS.
 
 **Does it support multisite?**
 Single-site is fully tested. The plugin works on multisite too, but a few features that touch user sessions (the optional username changer) are intentionally single-site-only.
@@ -146,7 +146,7 @@ Dark-mode coverage is layered:
 
 - **WordPress core screens** — hand-styled by AdminKit's `wp-core/*.css`.
 - **Native plugin integrations** (the 15 adapters) — each one ships its own CSS so dark mode is pixel-precise on those screens.
-- **Everything else** — covered automatically by `assets/js/wp-core/auto-theme.js`, a runtime "safety net" that scans the rendered DOM, classifies elements by HSL lightness / chroma + a few semantic hints (modal containers, heading tags, hovered selectors discovered from the loaded stylesheets), tags them with `.ak-auto-*` classes, and remaps the tags via a dark-only companion sheet. See [`docs/AUTO-THEME.md`](docs/AUTO-THEME.md) for the full classification rules.
+- **Everything else** — inherits AdminKit's base token layer (light). Plugins without a dedicated adapter aren't specially remapped for dark mode; an automatic fallback for the long tail is on the roadmap.
 
 ## Asset registry
 
@@ -220,7 +220,6 @@ add_action( 'adminkit/enqueued_admin', function () {
 | `adminkit/setting/{$key}` | `(mixed)` | Override a registered setting at read time. |
 | `adminkit/theme_attribute` | `(string)` | Override the dark/light HTML attribute name. |
 | `adminkit/theme_storage_key` | `(string)` | Override the localStorage key. |
-| `adminkit/suppress_auto_theme` | `(bool, WP_Screen)` | Suppress the runtime dark-mode safety net on a specific screen — native adapters use this to claim their own screens. |
 
 Example — disable AdminKit on a specific plugin's screens:
 
@@ -254,7 +253,6 @@ adminkit/
 │   ├── adapter-scan.php                  Scaffold a new integration from a host's CSS
 │   ├── adapter-audit.php                 Integration !important-debt ratchet
 │   ├── adapter-drift.php                 Host / WP-core CSS drift detector
-│   ├── auto-theme-calibrate.php          Calibration loop for the auto-theme classifier
 │   ├── package.php                       Release zip / install builder (honours .distignore)
 │   └── baselines/                        WP-core drift baseline
 ├── inc/
@@ -262,7 +260,7 @@ adminkit/
 │   ├── class-assets.php                  Asset registry + dispatcher + token cascade
 │   ├── class-screen.php                  get_current_screen() helpers
 │   ├── class-settings.php                Settings registry + defaults
-│   ├── class-settings-catalog.php        Settings SPA catalogs (features, integrations, Bricks exports)
+│   ├── class-settings-catalog.php        Settings SPA catalogs (features, integrations)
 │   ├── class-settings-gate.php           Integration + generic-plugin theming gates
 │   ├── class-settings-page.php           SPA bootstrap (top-level AdminKit menu — Dashboard / Features / Plugins tabs) + REST save
 │   ├── class-theme-toggle.php            Dark / light toggle + login logo
@@ -273,7 +271,6 @@ adminkit/
 │   │   ├── class-menu-icons.php          Native-icon replacement (menu + toolbar), filterable
 │   │   ├── class-profile-account.php     Profile / user-edit / user-new tabbed layout
 │   │   ├── class-local-avatars.php       Per-user avatar that replaces Gravatar + generated-avatar fallback (DiceBear)
-│   │   ├── class-auto-theme.php          Runtime dark-mode tag-and-paint for unsupported plugin admin screens
 │   │   ├── class-post-previews.php       List-table screenshot thumbnails
 │   │   ├── class-list-table-chrome.php   List-table toolbar polish + scroll/Quick Edit sizing
 │   │   ├── class-user-quick-edit.php     Inline Quick Edit on users.php (first/last/email/role + avatar refresh)
@@ -302,7 +299,7 @@ adminkit/
     │   └── login.css                     wp-login.php
     └── js/
         ├── settings.js                   Settings SPA
-        └── wp-core/                      Footer behaviour bricks (profile, previews, list-table, user-quick-edit, username-changer, auto-theme)
+        └── wp-core/                      Footer behaviour bricks (profile, previews, list-table, user-quick-edit, username-changer)
 ```
 
 Each integration folder may also carry `css/` and a `baseline.json` (its host CSS snapshot for drift detection).
@@ -325,7 +322,6 @@ That's it — the boot orchestrator picks the folder up automatically on `after_
 | [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md) | Writing a host adapter — the contract, the build walkthrough, and the patterns. |
 | [`docs/TOKENS.md`](docs/TOKENS.md) | The token system: mapping, build, drift detection, WaasKit alignment. |
 | [`docs/EXTENDING.md`](docs/EXTENDING.md) | Every hook + the integration contract — change behaviour without editing core. |
-| [`docs/AUTO-THEME.md`](docs/AUTO-THEME.md) | The runtime dark-mode safety net — classification rules, gate logic, perf model. |
 | [`docs/WAASKIT-DESIGN-SYSTEM.md`](docs/WAASKIT-DESIGN-SYSTEM.md) | The locked WaasKit colour-system spec that AdminKit's tokens mirror. |
 
 ## Roadmap

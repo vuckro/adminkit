@@ -16,7 +16,7 @@ inc/
                          enqueue_script() for the JS bricks.
   class-screen.php       WP_Screen helpers.
   class-settings.php     Settings registry (register/get/schema) + defaults.
-  class-settings-catalog.php Settings SPA catalogs (features, integrations, Bricks exports).
+  class-settings-catalog.php Settings SPA catalogs (features, integrations).
   class-settings-gate.php Per-integration + generic-plugin theming gates.
   class-settings-page.php Settings SPA shell (admin menu) + REST save.
   class-theme-toggle.php  Dark/light toggle + login logo. Owns the pre-paint inline script.
