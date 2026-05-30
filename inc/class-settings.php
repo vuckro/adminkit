@@ -67,17 +67,6 @@ class AdminKit_Settings {
 			) );
 		}
 
-		// Dark-mode favicon — paired with WP's native `site_icon` (which acts as
-		// the LIGHT-mode favicon). Stored as a URL; printed in `<head>` with a
-		// `prefers-color-scheme: dark` media query so the browser swaps
-		// automatically. No equivalent on the WP side, so we own this end-to-end.
-		self::register( 'favicon_dark', array(
-			'type'     => 'text',
-			'group'    => 'branding',
-			'default'  => '',
-			'sanitize' => 'esc_url_raw',
-		) );
-
 		// The site-name brand mark (next to the site title; the top-left WordPress
 		// logo is always hidden): the brand logo, the site icon (favicon), or hidden.
 		// `logo` falls back to `favicon`, then to the bare site title, when no brand

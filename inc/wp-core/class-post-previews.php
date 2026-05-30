@@ -241,26 +241,44 @@ class AdminKit_Post_Previews {
 			return '<span class="ak-preview ak-preview--empty" aria-hidden="true"></span>';
 		}
 
-		// Only a live mShots screenshot can be re-captured on demand — a featured
-		// image is the post's own media, nothing to refresh. Tag those cells so the
-		// CSS shows the refresh affordance and the JS wires the click (see
-		// post-previews.js → it rotates the `v` cache key to force a fresh capture).
-		$is_shot = ( $permalink && 'mshots' === $provider );
-		$class   = 'ak-preview' . ( $is_shot ? ' ak-preview--shot' : '' );
-		$title   = $is_shot
-			? ' title="' . esc_attr__( 'Click to refresh this screenshot', 'adminkit' ) . '"'
-			: '';
-
+		// A larger screenshot shows on hover (post-previews.js); store its URL on
+		// the cell. The thumbnail itself is non-interactive — screenshots refresh
+		// automatically once per window via the `v` bucket in mshots_url().
 		return sprintf(
-			'<span class="%1$s" data-ak-full="%2$s"%3$s>'
-				. '<img class="ak-preview__thumb" src="%4$s" '
+			'<span class="ak-preview" data-ak-full="%1$s">'
+				. '<img class="ak-preview__thumb" src="%2$s" '
 				. 'width="56" height="42" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="" />'
 				. '</span>',
-			esc_attr( $class ),
 			esc_url( $full ),
-			$title, // already escaped via esc_attr__ above
 			esc_url( $thumb )
 		);
+	}
+
+	/**
+	 * Best preview-thumbnail URL for a post, reusing this feature's provider logic
+	 * so it matches the list-table previews: an mShots screenshot of the permalink on
+	 * a public site, the featured image on a local host (mShots can't reach it) or for
+	 * non-published posts, and '' when neither is available. Public so other surfaces
+	 * (e.g. the dashboard's recent-activity list) can show the very same thumbnail.
+	 *
+	 * @param int|\WP_Post $post
+	 * @param int          $w
+	 * @param int          $h
+	 * @return string
+	 */
+	public static function preview_url( $post, $w = 160, $h = 120 ) {
+		$post = get_post( $post );
+		if ( ! $post ) {
+			return '';
+		}
+		$permalink = get_permalink( $post );
+		$provider  = apply_filters( 'adminkit/post_previews/provider', self::is_local_site() ? 'featured' : 'mshots' );
+		if ( $permalink && 'mshots' === $provider && 'publish' === get_post_status( $post ) ) {
+			$url = self::mshots_url( $permalink, $w, $h );
+		} else {
+			$url = (string) get_the_post_thumbnail_url( $post, 'medium' );
+		}
+		return (string) apply_filters( 'adminkit/post_previews/thumb_url', $url, $post, $w, $h );
 	}
 
 	/**
@@ -344,13 +362,15 @@ class AdminKit_Post_Previews {
 	}
 
 	/**
-	 * Hover preview request size [w, h]. 3:2, filterable.
+	 * Hover preview request size [w, h]. 3:2, filterable. Public so other surfaces
+	 * (the dashboard's recent-activity hover) request the SAME size — one source of
+	 * truth. Sized ~2× the on-screen panel so it stays crisp on HiDPI screens.
 	 *
 	 * @return int[]
 	 */
-	private static function full_size() {
-		$s = (array) apply_filters( 'adminkit/post_previews/full_size', array( 900, 600 ) );
-		return array( max( 1, (int) ( $s[0] ?? 900 ) ), max( 1, (int) ( $s[1] ?? 600 ) ) );
+	public static function full_size() {
+		$s = (array) apply_filters( 'adminkit/post_previews/full_size', array( 1200, 800 ) );
+		return array( max( 1, (int) ( $s[0] ?? 1200 ) ), max( 1, (int) ( $s[1] ?? 800 ) ) );
 	}
 
 	/**

@@ -4,11 +4,12 @@
  * Wires the screenshot thumbnails rendered into the preview column: a shared
  * floating panel shows a larger screenshot on hover, with graceful broken-image
  * handling. i18n labels arrive via `window.AdminKitPostPreviews` (set by an
- * inline bootstrap). No-op when no `.ak-preview` cell is present. Footer script,
- * loaded only on targeted list-table screens.
+ * inline bootstrap). Binds to ANY element carrying `data-ak-full` (the list-table
+ * `.ak-preview` cells AND the dashboard's recent-activity thumbnails), so it no-ops
+ * unless such an element is present. Footer script.
  */
 (function () {
-	if (!document.querySelector('.ak-preview')) { return; }
+	if (!document.querySelector('[data-ak-full]')) { return; }
 	var DATA = window.AdminKitPostPreviews || {};
 	var LOADING_LABEL = DATA.loading || 'Loading preview…';
 	var BROKEN_LABEL = DATA.broken || 'Preview unavailable';
@@ -81,59 +82,22 @@
 		return !!span && !span.classList.contains('ak-preview--empty');
 	}
 
-	// ── Click to refresh ──────────────────────────────────────────────────────
-	// Only a live mShots screenshot (`.ak-preview--shot`, set in PHP) can be
-	// re-captured. Clicking the thumbnail rotates the `v` cache key so mShots
-	// renders a fresh shot instead of serving the cached one. The first response
-	// can briefly be mShots' own "generating" placeholder until the new capture
-	// lands — clicking again requests another fresh one.
-	function bustShot(url) {
-		try {
-			var u = new URL(url, window.location.href);
-			u.searchParams.set('v', String(Date.now()));
-			return u.toString();
-		} catch (e) { return url; }
+	// Preload the larger hover images on idle so the first hover is instant — the
+	// browser then serves them from cache. Bounded to this page's thumbs (admin
+	// lists are paginated); skipped on very long pages to avoid a fetch storm.
+	function preloadFulls() {
+		var spans = document.querySelectorAll('[data-ak-full]');
+		if (!spans.length || spans.length > 40) { return; }
+		Array.prototype.forEach.call(spans, function (span) {
+			var full = span.getAttribute('data-ak-full');
+			if (full) { var im = new Image(); im.decoding = 'async'; im.src = full; }
+		});
 	}
-
-	function refresh(span) {
-		var img = span.querySelector('.ak-preview__thumb');
-		if (!img || span.classList.contains('ak-preview--refreshing')) { return; }
-		span.classList.remove('ak-preview--broken', 'ak-preview--done');
-		span.classList.add('ak-preview--refreshing');
-
-		// Rotate the larger hover-panel URL too, so an open panel reloads fresh.
-		var full = span.getAttribute('data-ak-full');
-		if (full) { span.setAttribute('data-ak-full', bustShot(full)); }
-
-		var cleanup = function () {
-			img.removeEventListener('load', onLoad);
-			img.removeEventListener('error', onErr);
-			span.classList.remove('ak-preview--refreshing');
-		};
-		var onLoad = function () {
-			// The fresh capture is in place (no page reload) — flash a translucent
-			// "done" overlay with a tick over the thumbnail, then let it settle.
-			cleanup();
-			span.classList.add('ak-preview--done');
-			window.setTimeout(function () { span.classList.remove('ak-preview--done'); }, 1100);
-		};
-		var onErr = cleanup; // the thumb's own error handler flags it broken
-		img.addEventListener('load', onLoad);
-		img.addEventListener('error', onErr);
-		img.src = bustShot(img.src);
-
-		if (current === span) { show(span); } // keep an open panel in sync
-	}
-
-	document.addEventListener('click', function (e) {
-		var span = e.target.closest ? e.target.closest('.ak-preview--shot') : null;
-		if (!span) { return; }
-		e.preventDefault();
-		refresh(span);
-	});
+	if (window.requestIdleCallback) { window.requestIdleCallback(preloadFulls); }
+	else { window.setTimeout(preloadFulls, 1200); }
 
 	document.addEventListener('mouseover', function (e) {
-		var span = e.target.closest ? e.target.closest('.ak-preview') : null;
+		var span = e.target.closest ? e.target.closest('[data-ak-full]') : null;
 		if (span && span !== current && previewable(span)) { show(span); }
 	});
 	// Hide the instant the pointer leaves the active thumb. The panel is
@@ -143,7 +107,7 @@
 	document.addEventListener('mouseout', function (e) {
 		if (!current) { return; }
 		var to = e.relatedTarget;
-		var next = (to && to.closest) ? to.closest('.ak-preview') : null;
+		var next = (to && to.closest) ? to.closest('[data-ak-full]') : null;
 		if (previewable(next)) { return; }
 		hide();
 	});

@@ -141,21 +141,6 @@ class AdminKit_Settings_Page {
 		$values = $request->get_param( 'values' );
 		$values = is_array( $values ) ? $values : array();
 
-		// LIGHT favicon — proxies WP's native `site_icon` option. The Brand
-		// card lets the user pick a favicon from here; WP's own Site Icon row
-		// on Settings → General edits the same option. Both surfaces stay in
-		// sync — the SPA posts `site_icon_id` and we update the WP option
-		// directly. 0 / empty means "no icon" — same convention as core.
-		if ( array_key_exists( 'site_icon_id', $values ) ) {
-			$icon_id = absint( $values['site_icon_id'] );
-			if ( $icon_id > 0 && wp_attachment_is_image( $icon_id ) ) {
-				update_option( 'site_icon', $icon_id );
-			} else {
-				delete_option( 'site_icon' );
-			}
-			unset( $values['site_icon_id'] );
-		}
-
 		$clean = self::sanitize( $values );
 
 		$existing = get_option( AdminKit_Settings::OPTION_KEY, array() );
@@ -250,21 +235,6 @@ class AdminKit_Settings_Page {
 				'light' => (string) AdminKit_Settings::get( 'logo_light' ),
 				'dark'  => (string) AdminKit_Settings::get( 'logo_dark' ),
 			),
-			// Dark-mode favicon — light one is WP's native `site_icon` (see
-			// `siteIcon` below); this is AdminKit's own paired storage with no
-			// WP equivalent. Printed in <head> with `media="(prefers-color-scheme:
-			// dark)"` so the browser swaps automatically.
-			'faviconDark'  => (string) AdminKit_Settings::get( 'favicon_dark' ),
-			// Bidirectional binding for the LIGHT favicon slot in the Brand card:
-			// the SPA reads from `siteIcon.id` and writes the value back through
-			// the `site_icon_id` REST proxy (see rest_save()). One source of
-			// truth — the WP option `site_icon`. WordPress's own Site Icon row
-			// on Settings → General edits the same option, so the two surfaces
-			// stay in sync on the next page load.
-			'siteIcon'     => array(
-				'id'  => (int) get_option( 'site_icon', 0 ),
-				'url' => (string) get_site_icon_url(),
-			),
 			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
 			'loginLogo'    => (string) AdminKit_Settings::get( 'login_logo' ),
 			'brandAccent'  => (string) AdminKit_Settings::get( 'brand_accent' ),
@@ -309,11 +279,6 @@ class AdminKit_Settings_Page {
 				// Media frames.
 				'mediaTitle'        => __( 'Select a logo', 'adminkit' ),
 				'mediaButton'       => __( 'Use this image', 'adminkit' ),
-				// Cropper modal — used by BOTH favicon slots (light = WP-native
-				// site_icon, dark = AdminKit-owned). Labels stay generic so the
-				// modal reads as a favicon-picker rather than a Site Icon flow.
-				'mediaSiteIconTitle'  => __( 'Choose a favicon', 'adminkit' ),
-				'mediaSiteIconButton' => __( 'Use this image', 'adminkit' ),
 
 				// Save bar.
 				'save'              => __( 'Save changes', 'adminkit' ),
@@ -323,19 +288,13 @@ class AdminKit_Settings_Page {
 				'unsaved'           => __( 'Unsaved changes', 'adminkit' ),
 
 				// --- Brand card -------------------------------------------------
-				'brandTitle'          => __( 'Logo', 'adminkit' ),
+				'brandTitle'          => __( 'Marque', 'adminkit' ),
 				'brandSyncStatus'     => __( 'Tokens synced with Bricks Builder', 'adminkit' ),
 				/* translators: %d: number of CSS custom properties exposed by Bricks. */
 				'brandSyncStatusCount' => __( '%d tokens', 'adminkit' ),
-				// Slot titles — "<Kind> <Mode>"; mode follows kind so the eye
-				// scans the kind first. The LIGHT favicon proxies WP's native
-				// `site_icon`; WP's own Site Icon row edits the same value.
-				'slotFavicon'         => __( 'Favicon Light Mode', 'adminkit' ),
-				'slotFaviconSub'      => __( 'PNG · 512×512 · cropped', 'adminkit' ),
+				// Slot titles — the two logo slots (light / dark mode).
 				'slotLight'           => __( 'Logo Light Mode', 'adminkit' ),
 				'slotLightSub'        => __( 'SVG · PNG ≥ 400×100', 'adminkit' ),
-				'slotFaviconDark'     => __( 'Favicon Dark Mode', 'adminkit' ),
-				'slotFaviconDarkSub'  => __( 'Auto-swap via prefers-color-scheme', 'adminkit' ),
 				'slotDark'            => __( 'Logo Dark Mode', 'adminkit' ),
 				'slotDarkSub'         => __( 'SVG · PNG ≥ 400×100', 'adminkit' ),
 				'slotUpload'          => __( 'Upload', 'adminkit' ),

@@ -18,7 +18,7 @@
 .adminkit .ak-preview {
 	display: inline-block;
 	line-height: 0;
-	cursor: zoom-in;
+	cursor: zoom-in; /* hovering opens the larger preview panel */
 }
 .adminkit .ak-preview__thumb {
 	display: block;
@@ -48,82 +48,6 @@
 	object-fit: none; /* hide the browser's broken-image glyph */
 }
 
-/* ── Click to refresh (live mShots screenshots only) ───────────────────────
-   A live screenshot can be re-captured on demand: clicking the thumbnail
-   rotates the mShots cache key (post-previews.js). Surface that with a small
-   refresh chip on hover and a spinner while the fresh capture loads. Featured-
-   image previews carry no `--shot` class, so they keep the plain hover-zoom. */
-.adminkit .ak-preview__thumb { transition: opacity .15s ease, border-color .2s ease; }
-.adminkit .ak-preview--shot {
-	position: relative;
-	cursor: pointer;
-}
-.adminkit .ak-preview--shot::after {
-	content: "";
-	position: absolute;
-	top: 3px;
-	right: 3px;
-	width: 17px;
-	height: 17px;
-	border-radius: var(--ak-radius-s);
-	background:
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='23 4 23 10 17 10'/%3E%3Cpolyline points='1 20 1 14 7 14'/%3E%3Cpath d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15'/%3E%3C/svg%3E") center / 11px 11px no-repeat,
-		var(--ak-overlay);
-	opacity: 0;
-	pointer-events: none;
-	transition: opacity .12s ease;
-}
-.adminkit .ak-preview--shot:hover::after { opacity: 1; }
-
-/* Busy state — dim the thumb, hide the hint chip, spin a ring over it. */
-.adminkit .ak-preview--refreshing { cursor: progress; }
-.adminkit .ak-preview--refreshing::after { opacity: 0; }
-.adminkit .ak-preview--refreshing .ak-preview__thumb { opacity: .4; }
-.adminkit .ak-preview--refreshing::before {
-	content: "";
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 16px;
-	height: 16px;
-	margin: -8px 0 0 -8px;
-	border: 2px solid var(--ak-border-strong);
-	border-top-color: var(--ak-primary);
-	border-radius: 50%;
-	animation: ak-preview-spin .7s linear infinite;
-	pointer-events: none;
-}
-@keyframes ak-preview-spin { to { transform: rotate(360deg); } }
-
-/* Confirmation — the fresh capture is in place (no page reload): a translucent
-   overlay with a tick fades in over the thumbnail, holds, then fades out. Drawn on
-   ::before (the spinner is gone by now); the hover chip (::after) is hidden for the
-   flash so only the tick shows. */
-.adminkit .ak-preview--done::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-overlay)
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")
-		center / 18px 18px no-repeat;
-	pointer-events: none;
-	animation: ak-preview-done 1.1s ease forwards;
-}
-.adminkit .ak-preview--done::after { opacity: 0; }
-@keyframes ak-preview-done {
-	0% { opacity: 0; }
-	18% { opacity: 1; }
-	70% { opacity: 1; }
-	100% { opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.adminkit .ak-preview--refreshing::before { animation: none; }
-	.adminkit .ak-preview--done::before { animation: none; }
-	.adminkit .ak-preview__thumb { transition: none; }
-}
-
 /* ── Hover preview panel (appended to <body>) ──────────────────────────── */
 .adminkit #ak-preview-pop {
 	position: fixed;
@@ -140,7 +64,7 @@
 }
 .adminkit #ak-preview-pop img {
 	display: block;
-	width: 480px;
+	width: 560px;
 	max-width: 70vw;
 	height: auto;
 	border-radius: var(--ak-radius-s);
@@ -148,9 +72,9 @@
 
 /* While the screenshot loads, hold a fixed box so the panel doesn't jump. */
 .adminkit #ak-preview-pop.is-loading {
-	width: 480px;
+	width: 560px;
 	max-width: 70vw;
-	height: 320px;
+	aspect-ratio: 3 / 2;
 }
 .adminkit #ak-preview-pop.is-loading img {
 	visibility: hidden;

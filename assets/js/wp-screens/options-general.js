@@ -57,6 +57,13 @@
 		{ id: 'locale',  title: S.locale     || 'Language, date & time' }
 	];
 
+	// Leading tab icons (Lucide-style, currentColor) so this strip reads like the
+	// AdminKit settings tabs. Styled via `.nav-tab .ak-nav-tab-ic` in chrome.css.
+	var ICONS = {
+		general: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+		locale:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
+	};
+
 	var sourceTable = form.querySelector( ':scope > .form-table' );
 	if ( ! sourceTable ) { reveal(); return; }
 
@@ -126,7 +133,14 @@
 		btn.dataset.target = t.id;
 		btn.className = 'nav-tab';
 		btn.setAttribute( 'role', 'tab' );
-		btn.textContent = t.title;
+		if ( ICONS[ t.id ] ) {
+			var ic = document.createElement( 'span' );
+			ic.className = 'ak-nav-tab-ic';
+			ic.setAttribute( 'aria-hidden', 'true' );
+			ic.innerHTML = ICONS[ t.id ];
+			btn.appendChild( ic );
+		}
+		btn.appendChild( document.createTextNode( t.title ) );
 		strip.appendChild( btn );
 		t.btn = btn;
 	} );

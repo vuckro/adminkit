@@ -40,21 +40,7 @@
 		loginLogo: ( D.loginLogo === 'logo' ) ? 'logo' : 'favicon', // login screen mark: logo | favicon
 		brandAccent: D.brandAccent || '',    // user hex (only meaningful when accentSource === 'custom')
 		// 'adminkit' = WP Blue (#3858E9), 'bricks' = Bricks provider --accent, 'custom' = brandAccent hex
-		accentSource: D.accentSource || 'adminkit',
-		// LIGHT favicon — bidirectional binding to WP's native `site_icon` option.
-		// The light-favicon slot in the Brand card reads + writes through THIS;
-		// changes propagate to every WP surface that consumes site_icon (browser
-		// tab, login fallback, Open Graph). WP's own Site Icon row on Settings →
-		// General edits the same option, so the two surfaces stay in sync on
-		// next page load.
-		siteIcon: {
-			id:  ( D.siteIcon && D.siteIcon.id ) || 0,
-			url: ( D.siteIcon && D.siteIcon.url ) || ''
-		},
-		// DARK-mode favicon — AdminKit-owned (WP has no equivalent). Stored as
-		// a URL string and printed in `<head>` with `media="(prefers-color-scheme:
-		// dark)"` so browsers swap automatically (incl. the Bricks editor tab).
-		faviconDark: D.faviconDark || ''
+		accentSource: D.accentSource || 'adminkit'
 	};
 	( D.features || [] ).forEach( function ( f ) {
 		state.features[ f.key ] = !! f.value;
@@ -243,114 +229,10 @@
 			frame.open();
 		}
 
-		// Open WP's Site Icon picker (Library + SiteIconCropper) — same UX as
-		// Settings → General → Site Icon: pick an image, then if it isn't
-		// already 512×512 square, WP shows its native cropper dialog
-		// ("Recadrer l'image") so we end up with a clean square favicon.
-		//
-		// Mirrors the flow in wp-admin/js/site-icon.js (WP 6.5+): the cropper
-		// transition is MANUAL — we listen for `select`, compare the picked
-		// attachment's dimensions to the target size, and call `setState('cropper')`
-		// when it doesn't match. `cropped` fires with the NEW cropped attachment;
-		// `skippedcrop` fires when the source was already square.
-		//
-		// SiteIconCropper lives in media-views.js (loaded by wp_enqueue_media() —
-		// no extra script needed). Older WP / missing controller → openMedia()
-		// fallback, which preserves the previous (uncropped) behaviour.
-		function openSiteIcon( onPick ) {
-			if ( ! window.wp || ! wp.media || ! wp.media.controller || ! wp.media.controller.SiteIconCropper ) {
-				openMedia( onPick );
-				return;
-			}
-			var size = 512;
-
-			// Initial crop selection — copied from wp-admin/js/site-icon.js so the
-			// dialog opens with the largest square that fits the source, centred.
-			function imgSelectOptions( attachment ) {
-				var w = attachment.get( 'width' ),
-					h = attachment.get( 'height' ),
-					xInit = size,
-					yInit = size,
-					ratio = xInit / yInit,
-					x1, y1;
-				if ( w / h > ratio ) { yInit = h; xInit = yInit * ratio; }
-				else                 { xInit = w; yInit = xInit / ratio; }
-				x1 = ( w - xInit ) / 2;
-				y1 = ( h - yInit ) / 2;
-				return {
-					aspectRatio: xInit + ':' + yInit,
-					handles: true, keys: true, instance: true, persistent: true,
-					imageWidth: w, imageHeight: h,
-					minWidth:  size > xInit ? xInit : size,
-					minHeight: size > yInit ? yInit : size,
-					x1: x1, y1: y1, x2: xInit + x1, y2: yInit + y1
-				};
-			}
-
-			var frame = wp.media( {
-				button: { text: I.mediaSiteIconButton || 'Set as Site Icon', close: false },
-				states: [
-					new wp.media.controller.Library( {
-						title:           I.mediaSiteIconTitle || 'Choose a Site Icon',
-						library:         wp.media.query( { type: 'image' } ),
-						multiple:        false,
-						date:            false,
-						suggestedWidth:  size,
-						suggestedHeight: size
-					} ),
-					new wp.media.controller.SiteIconCropper( {
-						control: { params: { width: size, height: size } },
-						imgSelectOptions: imgSelectOptions
-					} )
-				]
-			} );
-
-			// User picked an image. Square at the target size? Use it as-is.
-			// Otherwise transition to the cropper state — same dance as WP core.
-			frame.on( 'select', function () {
-				var att = frame.state().get( 'selection' ).first().attributes;
-				if ( att.width === size && att.height === size ) {
-					onPick( att.url || '', att );
-					frame.close();
-				} else {
-					frame.setState( 'cropper' );
-				}
-			} );
-
-			// Cropped → WP saved a NEW cropped attachment.
-			frame.on( 'cropped', function ( att ) {
-				onPick( ( att && att.url ) || '', att );
-				frame.close();
-			} );
-
-			// User clicked "Skip cropping" → use the source as-is.
-			frame.on( 'skippedcrop', function ( att ) {
-				var data = ( att && att.attributes ) || att || {};
-				onPick( data.url || '', data );
-				frame.close();
-			} );
-
-			frame.open();
-		}
-
 		// One brand slot — a dashed card with a fixed-backdrop drop zone (preview
 		// or upload-arrow placeholder) + label + sub + Upload / Remove button.
-		// `slotKey` is one of:
-		//   'light' / 'dark'  → brand wordmark URLs in `state.logos[key]`
-		//   'favicon'         → LIGHT favicon, proxies WP's native `site_icon`
-		//                       (an attachment ID). Reading + writing routes
-		//                       through `state.siteIcon`; the REST save converts
-		//                       the id back to a `site_icon` update_option().
-		//   'favicon-dark'    → AdminKit-owned dark-mode favicon URL in
-		//                       `state.faviconDark`. Printed in <head> with
-		//                       `media="(prefers-color-scheme: dark)"` so the
-		//                       browser swaps it automatically.
-		// Both favicon variants share the SiteIconCropper UX (square 512×512);
-		// logo slots use the plain media frame (free-form aspect, no crop).
+		// `slotKey` is 'light' or 'dark' → the brand wordmark URL in `state.logos[key]`.
 		function brandSlot( slotKey, label, sub ) {
-			var isSiteIcon    = ( slotKey === 'favicon' );
-			var isFaviconDark = ( slotKey === 'favicon-dark' );
-			var isFavicon     = isSiteIcon || isFaviconDark;
 			var preview = el( 'img', { 'class': 'ak-brand-slot__preview', alt: '' } );
 			// Empty-state placeholder is an upload-arrow icon (the zone is a
 			// click-to-upload shortcut alongside the Upload button below).
@@ -368,8 +250,6 @@
 			} );
 
 			function currentUrl() {
-				if ( isSiteIcon )    { return state.siteIcon.url || ''; }
-				if ( isFaviconDark ) { return state.faviconDark || ''; }
 				return state.logos[ slotKey ] || '';
 			}
 			function syncPreview() {
@@ -388,25 +268,14 @@
 					actionBtn.classList.remove( 'is-remove' );
 				}
 			}
-			function setLogo( url, att ) {
-				if ( isSiteIcon ) {
-					state.siteIcon.url = url || '';
-					state.siteIcon.id  = ( att && att.id ) ? parseInt( att.id, 10 ) : 0;
-				} else if ( isFaviconDark ) {
-					state.faviconDark = url || '';
-				} else {
-					state.logos[ slotKey ] = url || '';
-				}
+			function setLogo( url ) {
+				state.logos[ slotKey ] = url || '';
 				syncPreview();
 				markDirty();
 			}
 
-			// Both favicon slots route through WP's Site Icon picker (Library +
-			// Cropper) so non-square uploads get cropped to a square 512×512
-			// before save — same UX as the legacy Settings → General → Site Icon
-			// for the light one; same cropper for the dark one even though we
-			// store its URL ourselves. Wordmark logos use the plain media frame.
-			var pick = isFavicon ? openSiteIcon : openMedia;
+			// Logos use the plain media frame (free-form aspect, no crop).
+			var pick = openMedia;
 
 			// Drop zone is always a "pick / replace" shortcut. The action button
 			// branches on current state — clears when filled, picks when empty.
@@ -705,16 +574,8 @@
 		}
 		cardHead.appendChild( headMain );
 
-		// Brand slots — 4 slots laid out as a 2×2 grid (paired by mode):
-		//   Row 1:  Favicon Light · Logo Light
-		//   Row 2:  Favicon Dark  · Logo Dark
-		// The light favicon proxies WP's native `site_icon` (WP's own Site
-		// Icon row on Settings → General edits the same option; both surfaces
-		// stay in sync on next page load).
 		var slotsRow = el( 'div', { 'class': 'ak-brand-slots' }, [
-			brandSlot( 'favicon', I.slotFavicon || 'Favicon Light Mode', I.slotFaviconSub || 'PNG · 512×512 · cropped' ),
 			brandSlot( 'light', I.slotLight || 'Logo Light Mode', I.slotLightSub || 'SVG · PNG ≥ 400×100' ),
-			brandSlot( 'favicon-dark', I.slotFaviconDark || 'Favicon Dark Mode', I.slotFaviconDarkSub || 'Auto-swap via prefers-color-scheme' ),
 			brandSlot( 'dark', I.slotDark || 'Logo Dark Mode', I.slotDarkSub || 'SVG · PNG ≥ 400×100' )
 		] );
 
@@ -1078,13 +939,6 @@
 		v.login_logo    = state.loginLogo;
 		v.brand_accent  = state.brandAccent;
 		v.accent_source = state.accentSource;
-		// LIGHT favicon — proxies WP's native `site_icon` option through the
-		// REST route (PHP rest_save() consumes site_icon_id and calls
-		// update_option('site_icon', $id)). One source of truth for the WP
-		// option, edited through the Brand card's first slot.
-		v.site_icon_id  = state.siteIcon.id;
-		// AdminKit-owned DARK favicon URL (no WP equivalent).
-		v.favicon_dark  = state.faviconDark;
 		return v;
 	}
 

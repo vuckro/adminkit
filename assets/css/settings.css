@@ -5,10 +5,10 @@
    scoped under .adminkit-app so they outrank wp-admin's own input styling. */
 
 .adminkit-app {
-	/* Full width of the admin content area; Save sits flush top-right. */
+	/* Full width; the page inset (top breathing room + side gutters) now comes
+	   from `.wrap` in chrome.css — shared with every admin screen — so the
+	   settings page doesn't double up its own margins on top. */
 	max-width: none;
-	margin-top: 10px;
-	margin-right: 20px;
 	font-family: var(--ak-font-body);
 	color: var(--ak-text);
 }
@@ -19,16 +19,22 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 16px;
-	padding: 0 0 20px;
+	/* padding-top: 9px mirrors a native wp-admin h1's own `padding: 9px 0 4px`
+	   (common.css) so the title gets the same breathing room above it as every
+	   other admin page — the .wrap margin alone left it 9px too high.
+	   padding-bottom + .ak-tabs' 16px top margin (chrome.css) ≈ a native h1→nav-tab gap. */
+	padding: 9px 0 12px;
 }
 .adminkit-app .ak-title {
 	margin: 0;
 	padding: 0;
-	font-family: "Bricolage Grotesque", var(--ak-font-body);
-	font-size: 25px;
-	font-weight: 600;
-	letter-spacing: -.015em;
-	line-height: 1.15;
+	/* Read like a native wp-admin page title (WP h1 = 23px / 400, recoloured in
+	   chrome.css) rather than a bespoke wordmark, so this page matches the rest
+	   of admin. */
+	font-family: var(--ak-font-body);
+	font-size: 23px;
+	font-weight: 400;
+	line-height: 1.3;
 	color: var(--ak-heading);
 }
 .adminkit-app .ak-actions {
@@ -721,17 +727,13 @@
 	font-size: 11px;
 }
 
-/* Brand slots — four cards laid out as a 2×2 grid (paired by mode):
-     Row 1:  favicon (light) · logo (light)
-     Row 2:  favicon (dark)  · logo (dark)
-   The light favicon proxies WP's native `site_icon` (WP's own Site Icon row
-   on Settings → General edits the same option; both stay in sync on next
-   page load). Each slot is a HORIZONTAL strip — small preview zone on the
-   left, label / sub / Upload button stacked on the right — so each cell
-   stays short in height. The fixed light/dark backdrops MUST NOT flip with
-   the admin theme; they show each image on the surface it's built for,
-   like a swatch (same logic as the existing .ak-logo-pick--light/--dark
-   per the CLAUDE.md guardrail). */
+/* Brand slots — two cards (light- and dark-mode logo) side by side. The favicon
+   is managed by WordPress's native Site Icon (Settings → General). Each slot is a
+   HORIZONTAL strip — small preview zone on the left, label / sub / Upload button
+   stacked on the right — so each cell stays short in height. The fixed light/dark
+   backdrops MUST NOT flip with the admin theme; they show each image on the
+   surface it's built for, like a swatch (same logic as the existing
+   .ak-logo-pick--light/--dark per the CLAUDE.md guardrail). */
 .adminkit-app .ak-brand-slots {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
@@ -750,10 +752,10 @@
 	align-items: center;
 	gap: 10px;
 }
-/* Default zone shape — square (favicons). Logos override below to a wider
-   rectangle so wordmarks read at their natural landscape aspect rather than
-   squashed into a square. Inner padding keeps the image off the rounded
-   corners. */
+/* Zone shape — base 44px square (shared radius / padding / centring); the
+   light/dark logo slots override width/height below to a wider rectangle so
+   wordmarks read at their natural landscape aspect rather than squashed into a
+   square. Inner padding keeps the image off the rounded corners. */
 .adminkit-app .ak-brand-slot__zone {
 	width: 44px;
 	height: 44px;
@@ -798,15 +800,10 @@
 	justify-content: center;
 }
 /* Fixed light/dark backdrops — same guarded exception as .ak-logo-pick--light/--dark.
-   Both wordmark slots AND both favicon slots get the light/dark backdrops so
-   the user previews each image on the surface it's built for. */
-/* Fixed backdrops by slot kind — light slots sit on white, dark slots on
-   near-black. The pair "favicon" / "light" share the same white backdrop,
-   "favicon-dark" / "dark" share the same near-black. */
-.adminkit-app .ak-brand-slot--light .ak-brand-slot__zone,
-.adminkit-app .ak-brand-slot--favicon .ak-brand-slot__zone { background: #ffffff; color: #888; }
-.adminkit-app .ak-brand-slot--dark .ak-brand-slot__zone,
-.adminkit-app .ak-brand-slot--favicon-dark .ak-brand-slot__zone { background: #0a0a0a; color: #888; }
+   The light slot sits on white, the dark slot on near-black, so each wordmark
+   previews on the surface it's built for. These MUST NOT flip with the admin theme. */
+.adminkit-app .ak-brand-slot--light .ak-brand-slot__zone { background: #ffffff; color: #888; }
+.adminkit-app .ak-brand-slot--dark .ak-brand-slot__zone { background: #0a0a0a; color: #888; }
 /* Body sits to the right of the zone — left-aligned column that fills the
    remaining horizontal space. Tight vertical gap so label / sub / button
    stack within the zone's height; long sub-labels wrap to a second line. */
