@@ -177,6 +177,38 @@ capture and updates it in place. All hooks are in
 | `adminkit/post_previews/refresh_interval` | `(int $seconds)` | Screenshot cache window (0 = pin). |
 | `adminkit/post_previews/thumb_url` / `full_url` | `(string, WP_Post, $w, $h)` | Override the screenshot URL. |
 
+## Custom dashboard
+
+A server-rendered replacement for the wp-admin dashboard (greeting + quick actions
++ stat tiles + recent activity + site-health + storage). Toggle off ⇒ the native
+dashboard returns. Hooks in `inc/wp-core/class-custom-dashboard.php`:
+
+| Hook | Signature | Purpose |
+| --- | --- | --- |
+| `adminkit/dashboard/enabled` | `(bool)` | Master on/off (mirrors the feature toggle). |
+| `adminkit/dashboard/greetings` | `(string[], int $hour)` | Greeting templates (`%s` = the styled name span); a fresh one is picked per load. |
+| `adminkit/dashboard/quotes` | `(string[])` | The rotating intro line under the greeting. |
+| `adminkit/dashboard/quick_actions` | `(array)` | The quick-action buttons. |
+| `adminkit/dashboard/stats` | `(array)` | The four stat tiles. |
+| `adminkit/dashboard/activity` | `(array)` | Recent-activity rows. |
+| `adminkit/dashboard/priorities` | `(array)` | The "priorities" / next-up list. |
+| `adminkit/dashboard/site_health` | `(array)` | Site-health card (score, badge, checks). |
+| `adminkit/dashboard/storage` | `(array)` | Storage segments — a host can add e.g. a backups row. |
+| `adminkit/dashboard/storage_total` | `(int $bytes)` | Total quota in bytes (0 = no quota → no bar / percent). |
+
+## Notifications
+
+A toolbar bell that collects promotional notice "nags" into a right-side drawer,
+leaving genuine notices (success, errors, interactive) inline. Client-side
+categorization; toggle off ⇒ every notice renders inline. Hooks in
+`inc/wp-core/class-notification-center.php`:
+
+| Hook | Signature | Purpose |
+| --- | --- | --- |
+| `adminkit/notifications/enabled` | `(bool)` | Master on/off (mirrors the feature toggle). |
+| `adminkit/notifications/js_allow` | `(string[])` | CSS selectors forced INTO the drawer. |
+| `adminkit/notifications/js_deny` | `(string[])` | CSS selectors forced to stay inline. |
+
 ## Avatars
 
 One setting (`custom_avatars_enabled`, on by default). With it on, AdminKit
