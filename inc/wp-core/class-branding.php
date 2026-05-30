@@ -53,31 +53,6 @@ class AdminKit_Core_Branding {
 		add_action( 'admin_bar_menu', array( __CLASS__, 'inject_brand_logo' ), 80 );
 		add_action( 'admin_head', array( __CLASS__, 'print_admin' ), 20 );
 		add_action( 'wp_head', array( __CLASS__, 'print_frontend' ), 20 );
-		// Dark-mode favicon — printed late so it sits AFTER WP's own
-		// `wp_site_icon()` link tags. Browsers honour the media query so the
-		// dark variant wins on dark-system tabs (incl. the Bricks editor).
-		add_action( 'admin_head', array( __CLASS__, 'print_dark_favicon' ), 99 );
-		add_action( 'wp_head', array( __CLASS__, 'print_dark_favicon' ), 99 );
-		add_action( 'login_head', array( __CLASS__, 'print_dark_favicon' ), 99 );
-	}
-
-	/**
-	 * Print a `<link rel="icon" media="(prefers-color-scheme: dark)">` paired
-	 * with WP's native site_icon. Browsers pick the matching media-query
-	 * candidate at load — the dark URL wins on dark systems, the WP site_icon
-	 * keeps its place on light systems. No-op when no dark URL is configured.
-	 *
-	 * @return void
-	 */
-	public static function print_dark_favicon() {
-		$url = (string) AdminKit_Settings::get( 'favicon_dark' );
-		if ( '' === $url ) {
-			return;
-		}
-		printf(
-			'<link id="adminkit-favicon-dark" rel="icon" media="(prefers-color-scheme: dark)" href="%s" />' . "\n",
-			esc_url( $url )
-		);
 	}
 
 	/**
@@ -342,9 +317,21 @@ class AdminKit_Core_Branding {
 			. 'float:left;width:18px;height:18px;padding:0;margin:7px 6px 7px 0;top:0;'
 			. 'background-image:' . $favicon . ' !important;background-position:center;background-repeat:no-repeat;background-size:cover;'
 			. 'border-radius:var(--ak-radius-s,5px)}';
+		// Mobile (≤782px): WP turns the site-name node into a 52px-wide, position:relative
+		// cell with the title text hidden (text-indent:100%). The desktop chip (an 18px
+		// float pinned left, tuned to the 32px bar) then reads tiny + off-centre — the
+		// reported "favicon tout petit cassé". Re-centre it as a 26px chip, absolutely
+		// placed in the cell, so the favicon reads as the site icon on the 46px touch bar.
+		$mobile =
+			'{float:none;position:absolute;top:50%;left:50%;width:26px;height:26px;margin:0;'
+			. 'transform:translate(-50%,-50%)}';
 		return self::hide_site_name_glyph()
 			. '.wp-admin #wpadminbar #wp-admin-bar-site-name > .ab-item.ab-item::before' . $decl
-			. '#wpadminbar #wp-admin-bar-site-name > .ab-item.ab-item::before' . $decl;
+			. '#wpadminbar #wp-admin-bar-site-name > .ab-item.ab-item::before' . $decl
+			. '@media screen and (max-width:782px){'
+			. '.wp-admin #wpadminbar #wp-admin-bar-site-name > .ab-item.ab-item::before' . $mobile
+			. '#wpadminbar #wp-admin-bar-site-name > .ab-item.ab-item::before' . $mobile
+			. '}';
 	}
 
 	/**

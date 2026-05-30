@@ -27,7 +27,7 @@
 	/* Never exceed the visible viewport. The sticky td.colspanchange is as wide as
 	   the full table; without this cap the form overflows on narrow screens.
 	   32px = 2 × 16px padding from the sticky cell above. */
-	max-width: min(640px, calc(100vw - 32px));
+	max-width: min(640px, calc(var(--ak-qe-w, 100vw) - 32px));
 	padding: 4px 0;
 }
 

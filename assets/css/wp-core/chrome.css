@@ -24,6 +24,77 @@ body.adminkit #wpbody-content {
 	background: var(--ak-bg);
 }
 
+/* Modern WP-style content panel. The chrome (toolbar + admin menu) is FLUSH /
+   borderless — its own separators are removed (see adminbar.css + the #adminmenu
+   rule below) — and the content PANEL carries the hairline instead: a top + left
+   border that rounds into the top-left corner, so the panel reads as a card
+   tucked into the chrome. The border alone defines the curve (reads in light AND
+   dark) — no pseudo-element patch (an earlier one flashed as a square on load).
+   For the border to land on the chrome junction the panel must REACH it: WP insets
+   content via `#wpcontent { padding-left: 20px }`, so on desktop we zero that and
+   move the inset onto `.wrap` (margin). box-sizing:border-box keeps the 1px border
+   INSIDE WP's `#wpbody-content { float:left; width:100% }` so it can't push a
+   horizontal scrollbar. Flat below 783px. */
+@media screen and (min-width: 783px) {
+	body.adminkit #wpcontent {
+		padding-left: 0;
+	}
+	body.adminkit .wrap {
+		/* Content inset — EQUAL left and right so the page sits balanced in the panel.
+		   (An earlier right-bias meant to "compensate" for the menu actually read as
+		   the content stuck to the left on wide screens like the dashboard, so it's
+		   evened out.) Global (every .wrap admin page). Phones get their own gutters in
+		   the max-width block below. No !important needed: body.adminkit .wrap (0,2,1)
+		   beats WP's .wrap (0,1,0). */
+		margin: 30px 40px 30px 40px;
+	}
+	/* The panel's rounded corner reveals #wpbody behind it. Fill ONLY that top-left
+	   corner with the CHROME tone via a small background patch, so the notch matches
+	   the toolbar/menu while the REST of #wpbody stays --ak-bg — identical to the
+	   panel, so no two-tone seam shows below short content (the Articles bug) and
+	   nothing forces a scrollbar (an earlier min-height push did — that was the
+	   "grande barre à droite"). It's a background (not a pseudo-element) so it paints
+	   with the element — no load-time flash. The 24px patch sits entirely under the
+	   panel except the rounded notch. Desktop only — the corner is flat <783px. */
+	body.adminkit #wpbody {
+		background-color: var(--ak-bg);
+		background-image: linear-gradient( var(--ak-surface), var(--ak-surface) );
+		background-repeat: no-repeat;
+		background-position: top left;
+		background-size: 24px 24px;
+	}
+}
+body.adminkit #wpbody-content {
+	box-sizing: border-box; /* keep the border inside width:100% → no h-scroll */
+	border-top: 1px solid var(--ak-border);
+	border-left: 1px solid var(--ak-border);
+	border-top-left-radius: 18px;
+}
+@media screen and (max-width: 782px) {
+	body.adminkit #wpbody-content {
+		border-top: 0;
+		border-left: 0;
+		border-top-left-radius: 0;
+	}
+	/* WP's native `.wrap { margin: 10px 20px 0 2px }` is 2px left / 20px right — so
+	   content sits flush left with a gap on the right ("collé à gauche"). Even the
+	   side gutters out on phones. Applies to every .wrap admin screen, not just the
+	   dashboard. (0,2,1) beats WP's (0,1,0). */
+	body.adminkit .wrap {
+		margin: 10px 12px 0;
+	}
+}
+
+/* WP 7.0 "boot layout" pages (Connectors, …) are self-contained React apps that
+   take over the content area — their own design system + dark well, legacy admin
+   chrome hidden. Step AdminKit's content-panel border + rounded corner aside
+   there so they don't fight the app's layout. */
+body.adminkit.options-connectors-php #wpbody-content {
+	border-top: 0;
+	border-left: 0;
+	border-top-left-radius: 0;
+}
+
 body.adminkit {
 	font-size: var(--ak-text-m);
 	/* Cards + tables: two independent families on the same base tokens — identical
@@ -36,10 +107,10 @@ body.adminkit {
 	--ak-table-border: color-mix(in srgb, var(--ak-border) 72%, transparent);
 	--ak-table-radius: var(--ak-radius-m);
 	--ak-nav-gap: 6px;
-	--ak-nav-pill-gap: 6px;
-	--ak-nav-pill-height: 28px;
-	--ak-nav-pill-padding-x: 10px;
-	--ak-nav-pill-radius: 8px;
+	--ak-nav-pill-gap: 7px;
+	--ak-nav-pill-height: 34px;
+	--ak-nav-pill-padding-x: 14px;
+	--ak-nav-pill-radius: 9px;
 }
 
 /* Dark-mode scrollbars. The browser paints native scrollbars from the page's
@@ -83,7 +154,8 @@ body.adminkit #adminmenuback,
 body.adminkit #adminmenuwrap,
 body.adminkit #adminmenu {
 	background: var(--ak-surface);
-	border-right: 1px solid var(--ak-border);
+	/* Chrome is flush/borderless — the separator hairline lives on the content
+	   panel (#wpbody-content border-top/left), so it can round into the corner. */
 }
 
 body.adminkit #adminmenu a {
@@ -326,7 +398,6 @@ body.adminkit #collapse-button:hover,
 body.adminkit #collapse-button:focus {
 	color: var(--ak-heading);
 }
-
 
 /* Postboxes / metaboxes */
 body.adminkit .postbox {
@@ -760,11 +831,16 @@ body.adminkit .notice-dismiss:hover::before {
 	opacity: 1;
 }
 
-/* Screen Options + Help — top-right collapsible panels */
+/* Screen Options + Help — top-right collapsible panels. Full-width banner that
+   rounds into the content panel's top-left corner when open; without the radius +
+   overflow clip, its square corner covers the panel's rounded corner (it sits at
+   the very top-left of #wpbody-content). */
 body.adminkit #screen-meta {
 	background: var(--ak-card-bg);
-	border: 1px solid var(--ak-card-border);
-	border-top: none;
+	border: none;
+	border-bottom: 1px solid var(--ak-card-border);
+	border-top-left-radius: 18px;
+	overflow: hidden;
 	color: var(--ak-text);
 }
 
@@ -967,7 +1043,7 @@ body.adminkit .ak-tabs button {
 	box-shadow: none;
 	color: var(--ak-text-muted);
 	font: inherit;
-	font-size: 13px;
+	font-size: 14px;
 	font-weight: 500;
 	line-height: 1;
 	text-decoration: none;
@@ -1025,8 +1101,8 @@ body.adminkit .ak-tabs button .ic {
 body.adminkit .nav-tab .ak-nav-tab-ic svg,
 body.adminkit .ak-tabs button .ic svg {
 	display: block;
-	width: 14px;
-	height: 14px;
+	width: 16px;
+	height: 16px;
 }
 
 /* Count badge — a soft notification bubble. Its fill is a tint of the count's OWN

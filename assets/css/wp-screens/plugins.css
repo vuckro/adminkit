@@ -203,6 +203,24 @@ body.adminkit.plugin-install-php .plugins-popular-tags-wrapper {
 	display: none;
 }
 
+/* Header row — the title (h1.wp-heading-inline) and the "Upload Plugin" toggle
+   (.upload-view-toggle.page-title-action) are siblings in .wrap. Pin them to a
+   clean inline-flow row, baseline-aligned with a real gap, and neutralise any
+   stray float / absolute on the toggle so it can never ride over the title. */
+body.adminkit.plugin-install-php .wrap > h1.wp-heading-inline {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 8px;
+}
+body.adminkit.plugin-install-php .wrap > .page-title-action {
+	position: static;
+	float: none;
+	clear: none;
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0;
+}
+
 
 /* ===== "More details" Thickbox modal contents (`#plugin-information`) =====
    Every panel uses #fff / #f6f7f7 / #dcdcde combos. */

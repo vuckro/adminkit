@@ -102,6 +102,10 @@ body.adminkit .wp-list-table tbody th {
 	border-top: 1px solid var(--ak-table-border);
 	color: var(--ak-text);
 	font-size: var(--ak-text-s);
+	/* Middle-align cell content so short cells (author / date / status) line up
+	   against the taller title cell (title + row-actions block) — a tidy, centred
+	   row rather than WP's top-baseline. .check-column already uses middle. */
+	vertical-align: middle;
 }
 
 body.adminkit .wp-list-table tbody tr:first-child td,
@@ -548,24 +552,21 @@ body.adminkit .wp-list-table .inline-edit-row th {
 	white-space: normal;
 }
 
-/* --- Phones (≤782px) ------------------------------------------------------
-   WP collapses list tables into a stacked one-column layout below 783px, which
-   reads as a broken pile under AdminKit. We keep the SAME table as wider screens
-   (it scrolls inside its .ak-table-scroll wrapper), so this block's whole job is
-   to undo WP's stacked-mode styling: re-show every column at its natural width,
-   reset the stacked padding, drop the per-cell labels + the expand toggle, and —
-   since touch has no hover — reveal the row actions inline. Selectors mirror WP's
-   own (+ the body.adminkit prefix) so they out-specify and reverse them. */
+/* --- Phones (≤782px): horizontal-scroll list tables --------------------------
+   Maintainer choice (2026-05-30): keep the SAME table as wider screens and let it
+   slide sideways inside its .ak-table-scroll wrapper — ONE consistent presentation
+   across every list table (Articles, Pages, Comptes…), not WP's stacked pile nor
+   per-row cards. This block UNDOES WP's stacked mode: re-show every column as a
+   normal cell, drop the per-cell labels + the expand toggle, reveal the row actions
+   inline. (A sticky/frozen first column was tried but `position:sticky` on a cell
+   inside a horizontally-scrolling table renders unreliably across browsers — it
+   clipped the title — so we keep a plain, robust slide instead.) */
 @media (max-width: 782px) {
-	/* Re-show every NON-hidden, non-checkbox column — header AND body — at its
-	   natural width, and reset WP's stacked-mode padding (it parks non-primary
-	   cells at `padding-left: 35%` for the per-cell label, which here just reads as
-	   a big gap). Header and body MUST list the SAME columns or cells slide under
-	   the wrong header: WooCommerce hides the product thumbnail column on mobile,
-	   and our body rule re-shows the thumb cell — without re-showing its header too
-	   (it sits before the primary, outside the old `~` selector), every product
-	   cell shifted one column left. This also overrides WP's primary-header
-	   width:100%. :not(.hidden) keeps Screen Options' column toggles working. */
+	/* Re-show every non-hidden, non-checkbox column at its natural width — header AND
+	   body must list the SAME columns or cells slide under the wrong header. Reset WP's
+	   stacked-mode padding (it parks non-primary cells at padding-left:35% for the
+	   per-cell label). :not(.hidden) keeps Screen Options' column toggles working.
+	   (0,6,3) out-specifies WP's `td.column-primary ~ td{display:none}` (0,5,3).) */
 	body.adminkit .wp-list-table thead th:not(.check-column):not(.hidden),
 	body.adminkit .wp-list-table tfoot th:not(.check-column):not(.hidden),
 	body.adminkit .wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.check-column):not(.hidden) {
@@ -575,21 +576,61 @@ body.adminkit .wp-list-table .inline-edit-row th {
 		padding: 10px;
 	}
 
-	/* Drop the stacked-mode per-cell labels and the expand toggle — every column
-	   is already visible, so neither is needed. */
+	/* Drop the stacked-mode per-cell labels + the expand toggle. */
 	body.adminkit .wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.column-primary)::before {
 		content: none;
 	}
-
 	body.adminkit .wp-list-table .column-primary .toggle-row {
 		display: none;
 	}
 
-	/* Touch has no hover, so reveal the row actions inline (under the title). WP
-	   parks them at left:-9999em and only un-parks on tr:hover — which never fires
-	   on touch — so force them on-screen here. */
+	/* Touch has no hover → reveal the row actions inline (WP parks them off-screen and
+	   un-parks only on tr:hover). Keep the chips compact (they sit under the title). */
 	body.adminkit .wp-list-table .row-actions {
 		position: static;
 		left: auto;
+	}
+	body.adminkit .wp-list-table .row-actions a,
+	body.adminkit .wp-list-table .row-actions button.button-link {
+		min-height: 0;
+		padding: 4px 8px;
+	}
+
+	/* Bulk-actions + pagination row: let it WRAP (stack) rather than slide sideways —
+	   a horizontal scrollbar on the controls reads as a bug on phones. */
+	body.adminkit .tablenav {
+		flex-wrap: wrap;
+		overflow-x: visible;
+	}
+
+	/* Pagination — comfortable touch target + flex-centred « ‹ › » glyph. */
+	body.adminkit .tablenav .tablenav-pages a,
+	body.adminkit .tablenav .tablenav-pages-navspan {
+		min-height: 40px;
+		padding: 8px 12px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	/* Wide-table mitigation: the plain-scroll table keeps every column, so a wide
+	   table (Plugins, Comments — they carry a free-text Description/Comment column)
+	   scrolls a long way on a phone. Tighten the two width drivers so the table is
+	   far narrower while still readable. Same selectors as the base rules (~530-533
+	   and ~539-548) but inside this media query → they win by source order; no new
+	   !important. Cells stay white-space:normal, so content wraps (slightly taller),
+	   never truncates. Desktop keeps the 240 / 240–420 values. */
+	body.adminkit .wp-list-table td.column-primary,
+	body.adminkit .wp-list-table th.column-primary {
+		min-width: 140px;
+	}
+	body.adminkit .wp-list-table td.column-description,
+	body.adminkit .wp-list-table td.column-excerpt,
+	body.adminkit .wp-list-table td.comment,
+	body.adminkit .wp-list-table td.column-comment,
+	body.adminkit .wp-list-table td[class*="seo"],
+	body.adminkit .wp-list-table td[class*="description"] {
+		min-width: 160px;
+		max-width: 200px;
 	}
 }

@@ -13,7 +13,8 @@
 
 	background: var(--ak-surface) !important;
 	color: var(--ak-text) !important;
-	border-bottom: 1px solid var(--ak-border);
+	/* Flush/borderless — the toolbar↔content separator hairline lives on the
+	   content panel (#wpbody-content border-top in chrome.css). */
 }
 
 /* Default text — items + labels */
@@ -149,23 +150,28 @@
    reads at a glance, while still clearing the 32px bar. WP sizes it via
    `#wpadminbar #wp-admin-bar-my-account.with-avatar > a img` (2,3,0) with a
    `-4px` top margin tuned to 16px; mirror that chain at equal specificity (we
-   load after core) and re-tune the top margin so the taller chip stays
-   centred. Width auto keeps any non-square avatar's ratio. Theme-agnostic
-   (pure geometry) — the radius above already covers both modes. */
-#wpadminbar #wp-admin-bar-my-account.with-avatar > .ab-empty-item img,
-#wpadminbar #wp-admin-bar-my-account.with-avatar > a img {
-	width: auto;
-	height: 20px;
-	margin-top: -4px;
-	/* WP core paints `border:1px solid #8c8f94; background:#f0f0f1` on this exact
-	   selector (2,1,2). The radius rule above is only (1,1,2), so core's frame won
-	   — kill it here at matching specificity (we load after core). */
-	border: 0;
-	background: none;
-	/* This top-bar avatar is only 20px tall, so the shared --ak-radius-m (10px =
-	   half its height) renders a full circle. Use the small radius here so it reads
-	   as a rounded SQUARE, matching the other profile photos. */
-	border-radius: var(--ak-radius-s);
+   load after core) and re-tune the top margin so the taller chip stays centred.
+   Width auto keeps any non-square avatar's ratio. Theme-agnostic (pure geometry).
+
+   DESKTOP ONLY (≥783px): the -6px top margin is tuned to the 32px desktop bar; on
+   WP's 46px mobile/touch bar it would float the avatar too high. Below 783px we
+   leave WP's own native mobile avatar sizing + centring in place (the radius/no-
+   frame rule above is unscoped, so the face still reads rounded on both bars). */
+@media screen and (min-width: 783px) {
+	#wpadminbar #wp-admin-bar-my-account.with-avatar > .ab-empty-item img,
+	#wpadminbar #wp-admin-bar-my-account.with-avatar > a img {
+		width: auto;
+		height: 24px;
+		margin-top: -6px;
+		/* WP core paints `border:1px solid #8c8f94; background:#f0f0f1` on this exact
+		   selector (2,1,2). The radius rule above is only (1,1,2), so core's frame won
+		   — kill it here at matching specificity (we load after core). */
+		border: 0;
+		background: none;
+		/* Small radius so the 24px chip reads as a rounded SQUARE, matching the other
+		   profile photos (the shared --ak-radius-m would render a full circle). */
+		border-radius: var(--ak-radius-s);
+	}
 }
 
 #wp-admin-bar-user-info .display-name {
@@ -263,8 +269,8 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 		text-align: center;
 	}
 
-	/* Larger glyph on the 46px touch bar so the sun/moon + house read clearly
-	   next to WP's own 32px+ dashicons (the bare 18px reads small here). */
+	/* Sun/moon + house SVGs sized up for the 46px touch bar (the bare 18px desktop
+	   size reads small here). */
 	#wpadminbar li#wp-admin-bar-ak-theme-toggle .ak-theme-icon,
 	#wpadminbar li#wp-admin-bar-ak-view-site .ak-theme-icon {
 		width: 22px;

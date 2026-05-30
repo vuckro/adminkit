@@ -88,6 +88,21 @@ body.adminkit:is(.post-php, .post-new-php) #misc-publishing-actions a.edit-times
 }
 
 
+/* ----- Featured image actions (block editor) -----
+   The Replace / Remove chips sit ON TOP of the featured-image thumbnail, so WP
+   gives them a translucent-WHITE backdrop — `rgba(255,255,255,.75)` plus a
+   `backdrop-filter` blur — to stay legible over the image. That white never
+   flips, so on a dark theme the chips glow bright. Map ONLY the backdrop to a
+   translucent --ak-surface (same ~75% alpha) so it frosts light OR dark with the
+   theme; WP's blur is kept (we don't redeclare it) and the label/icon already
+   read through `.components-button → --ak-text` (wp-components.css). Mirrors WP's
+   own selector — only the with-image state has a backdrop to map; the
+   missing-image placeholder has no image to sit on. */
+body.adminkit:is(.post-php, .post-new-php) .editor-post-featured-image__actions:not(.editor-post-featured-image__actions-missing-image) .editor-post-featured-image__action {
+	background: color-mix(in srgb, var(--ak-surface) 75%, transparent);
+}
+
+
 /* ----- Bricks classic-editor fallback wrapper ----- */
 body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container {
 	background-color: var(--ak-surface);

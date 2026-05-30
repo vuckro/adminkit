@@ -61,16 +61,25 @@ body.adminkit {
 }
 
 
-/* ----- 2c. Wrapper margin reset ------------------------------------------
-   Bricks ships `.bricks-admin-wrapper { margin: 40px 20px }` — a 40px
-   vertical gutter and a 20px horizontal one. The vertical inset stacks
-   under WP's own `.wrap` top padding and the horizontal inset doesn't
-   match the rhythm of any other admin page. Reset to `margin: 0` so the
-   wrapper sits flush with `.wrap`'s padding, top-left aligned like every
-   other plugin page. The `max-width: 960px` from Bricks's own rule stays
-   in effect — the wrapper just doesn't auto-centre. */
-body.adminkit .bricks-admin-wrapper {
-	margin: 0;
+/* ----- 2c. Wrapper layout — fill the width, same inset as every page -------
+   Bricks ships `.bricks-admin-wrapper { margin: 40px 20px; max-width: 960px }`.
+   The page screens (Get Started / License / System Info / Sidebars) carry
+   class="wrap bricks-admin-wrapper" — they ARE the `.wrap`, so they already pick
+   up AdminKit's standard `.wrap` inset (chrome.css). The OLD `margin: 0` reset
+   here CANCELLED that inset (content flush to the menu) and Bricks' own 960px cap
+   left a narrow column hugging the left with dead space on the right. Fix both:
+     • page screens — keep the `.wrap` inset, just drop the 960px cap so they fill
+       the content area like every other admin page;
+     • the Settings form is a `.bricks-admin-wrapper` INSIDE a separate `.wrap` —
+       KEEP Bricks' default 960px cap (full width spread each row's label and
+       control too far apart) and CENTER it in the `.wrap` so it doesn't hug the
+       menu. */
+body.adminkit .wrap.bricks-admin-wrapper {
+	max-width: none;
+}
+body.adminkit .bricks-admin-wrapper:not(.wrap) {
+	max-width: 960px;
+	margin: 0 auto;
 }
 
 
@@ -210,11 +219,12 @@ body.adminkit #bricks-settings-tabs-wrapper {
 	margin: 16px 0;
 }
 
-/* Icon slot — a 15×15 mask-image painted with currentColor so it tracks the
-   muted/heading text color automatically. flex-shrink: 0 keeps the icon at
-   full size when long labels would otherwise compress it. */
+/* Icon slot — DISABLED. Bricks now ships its own icon in front of each settings
+   tab label, so our injected ::before doubled every one up. `content: none` stops
+   the pseudo-element from generating, which also makes the per-tab mask-image rules
+   below inert (kept for now; prune in a cleanup pass). */
 body.adminkit #bricks-settings-tabs-wrapper .nav-tab::before {
-	content: "";
+	content: none;
 	display: inline-block;
 	width: 15px;
 	height: 15px;
