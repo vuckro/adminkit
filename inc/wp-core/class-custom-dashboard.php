@@ -2,9 +2,10 @@
 /**
  * Custom dashboard — replaces the native wp-admin dashboard (index.php) with a
  * self-contained, server-rendered AdminKit dashboard: a greeting, quick-action
- * buttons, four stat tiles, and a 2-column area (Recent activity / Site health +
- * Storage). It renders its OWN markup inside one full-width dashboard widget (the
- * Settings SPA owns its markup the same way) — NOT a fragile repaint of native DOM.
+ * buttons and a 2-column area — recent content (left, preview cards) and a right
+ * rail (overview counters, site health + to-dos, storage). It renders its OWN
+ * markup inside one full-width dashboard widget (the Settings SPA owns its markup
+ * the same way) — NOT a fragile repaint of native DOM.
  *
  * Reversible: when the feature toggle is OFF, init() returns early and the native
  * dashboard renders untouched.
@@ -46,28 +47,6 @@ class AdminKit_Custom_Dashboard {
 		// Fires only on the dashboard, after core + plugins have registered their
 		// widgets (default priority 10) — priority 20 lets us clear them.
 		add_action( 'wp_dashboard_setup', array( __CLASS__, 'replace_widgets' ), 20 );
-
-		// Recent-activity thumbnails reuse the post-previews hover panel (the script
-		// binds to any [data-ak-full]); load it on the dashboard. Its panel CSS is
-		// registered for this screen in class-chrome.php.
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
-	}
-
-	/**
-	 * Load the shared post-previews hover-panel script on the dashboard so the
-	 * recent-activity thumbnails get the same on-hover page preview as the list
-	 * tables. No-op on any other screen.
-	 *
-	 * @param string $hook
-	 * @return void
-	 */
-	public static function enqueue_assets( $hook ) {
-		if ( 'index.php' !== $hook ) {
-			return;
-		}
-		if ( class_exists( 'AdminKit_Post_Previews' ) && method_exists( 'AdminKit_Post_Previews', 'enqueue' ) ) {
-			AdminKit_Post_Previews::enqueue();
-		}
 	}
 
 	/**
@@ -113,14 +92,14 @@ class AdminKit_Custom_Dashboard {
 		echo '<div class="ak-dash">';
 		self::render_header();
 		self::render_actions();
-		self::render_stats();
-		self::render_priorities();
 		echo '<div class="ak-dash__grid">';
 		echo '<div class="ak-dash__col ak-dash__col--main">';
-		self::render_activity();
+		self::render_health();
+		self::render_todos();
+		self::render_content();
 		echo '</div>';
 		echo '<div class="ak-dash__col">';
-		self::render_health();
+		self::render_stats();
 		self::render_storage();
 		echo '</div>';
 		echo '</div>'; // .ak-dash__grid
@@ -151,18 +130,18 @@ class AdminKit_Custom_Dashboard {
 	 */
 	private static function subtitle() {
 		$quotes = array(
-			__( '« La simplicité est la sophistication suprême. » — Léonard de Vinci', 'adminkit' ),
-			__( '« La perfection, c’est quand il n’y a plus rien à retirer. » — Antoine de Saint-Exupéry', 'adminkit' ),
-			__( '« Le bon design, c’est le moins de design possible. » — Dieter Rams', 'adminkit' ),
-			__( 'Bien fait vaut mieux que parfait — publiez, puis affinez.', 'adminkit' ),
-			__( 'La régularité l’emporte sur l’intensité : une bonne décision à la fois.', 'adminkit' ),
-			__( 'Créez aujourd’hui ce dont vous serez fier demain.', 'adminkit' ),
-			__( 'La clarté est la politesse de celui qui crée.', 'adminkit' ),
-			__( 'Chaque détail compte — c’est leur somme qui fait la différence.', 'adminkit' ),
-			__( 'Un grand site se construit page après page.', 'adminkit' ),
-			__( 'Un contenu frais garde vos visiteurs engagés.', 'adminkit' ),
-			__( 'Pensez à sauvegarder avant les grandes modifications.', 'adminkit' ),
-			__( 'Aperçu de votre site en un coup d’œil.', 'adminkit' ),
+			__( 'Simplicity is the ultimate sophistication. — Leonardo da Vinci', 'adminkit' ),
+			__( 'Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away. — Antoine de Saint-Exupéry', 'adminkit' ),
+			__( 'Good design is as little design as possible. — Dieter Rams', 'adminkit' ),
+			__( 'Done is better than perfect — publish, then refine.', 'adminkit' ),
+			__( 'Consistency beats intensity: one good decision at a time.', 'adminkit' ),
+			__( 'Build today what you will be proud of tomorrow.', 'adminkit' ),
+			__( 'Clarity is the courtesy of the maker.', 'adminkit' ),
+			__( 'Every detail counts — it is their sum that makes the difference.', 'adminkit' ),
+			__( 'A great site is built one page at a time.', 'adminkit' ),
+			__( 'Fresh content keeps your visitors engaged.', 'adminkit' ),
+			__( 'Remember to back up before big changes.', 'adminkit' ),
+			__( 'Your site at a glance.', 'adminkit' ),
 		);
 		$quotes = array_values( (array) apply_filters( 'adminkit/dashboard/quotes', $quotes ) );
 		if ( ! $quotes ) {
@@ -185,39 +164,39 @@ class AdminKit_Custom_Dashboard {
 		if ( $h >= 5 && $h < 12 ) {
 			// translators: %s in each line below is the user's name.
 			$slot = array(
-				__( 'Bonjour, %s', 'adminkit' ),
-				__( 'Bonne matinée, %s', 'adminkit' ),
-				__( 'Prêt pour aujourd’hui, %s ?', 'adminkit' ),
-				__( 'Une bonne journée commence', 'adminkit' ),
+				__( 'Hello, %s', 'adminkit' ),
+				__( 'Good morning, %s', 'adminkit' ),
+				__( 'Ready for today, %s?', 'adminkit' ),
+				__( 'A good day begins', 'adminkit' ),
 			);
 		} elseif ( $h >= 12 && $h < 18 ) {
 			// translators: %s in each line below is the user's name.
 			$slot = array(
-				__( 'Bon après-midi, %s', 'adminkit' ),
-				__( 'Bonjour, %s', 'adminkit' ),
-				__( 'L’après-midi est à vous', 'adminkit' ),
+				__( 'Good afternoon, %s', 'adminkit' ),
+				__( 'Hello, %s', 'adminkit' ),
+				__( 'The afternoon is yours', 'adminkit' ),
 			);
 		} elseif ( $h >= 18 && $h < 22 ) {
 			// translators: %s in each line below is the user's name.
 			$slot = array(
-				__( 'Bonsoir, %s', 'adminkit' ),
-				__( 'Bonne soirée, %s', 'adminkit' ),
-				__( 'La soirée est calme pour avancer', 'adminkit' ),
+				__( 'Good evening, %s', 'adminkit' ),
+				__( 'Have a good evening, %s', 'adminkit' ),
+				__( 'A quiet evening to get ahead', 'adminkit' ),
 			);
 		} else {
 			// translators: %s in each line below is the user's name.
 			$slot = array(
-				__( 'Il est tard, %s', 'adminkit' ),
-				__( 'Encore debout, %s ?', 'adminkit' ),
-				__( 'Bonsoir, %s', 'adminkit' ),
+				__( 'Working late, %s', 'adminkit' ),
+				__( 'Still up, %s?', 'adminkit' ),
+				__( 'Good evening, %s', 'adminkit' ),
 			);
 		}
 		// translators: %s in each line below is the user's name.
 		$generic = array(
-			__( 'Ravi de vous revoir, %s', 'adminkit' ),
-			__( '%s est de retour !', 'adminkit' ),
-			__( 'Content de vous voir, %s', 'adminkit' ),
-			__( 'On reprend où on s’était arrêté ?', 'adminkit' ),
+			__( 'Great to see you again, %s', 'adminkit' ),
+			__( '%s is back!', 'adminkit' ),
+			__( 'Glad to see you, %s', 'adminkit' ),
+			__( 'Pick up where you left off?', 'adminkit' ),
 		);
 		$pool = array_values( (array) apply_filters( 'adminkit/dashboard/greetings', array_merge( $slot, $generic ), $h ) );
 		if ( ! $pool ) {
@@ -235,18 +214,18 @@ class AdminKit_Custom_Dashboard {
 	private static function render_actions() {
 		$actions = array();
 		if ( current_user_can( 'edit_posts' ) ) {
-			$actions[] = array( 'label' => __( 'Écrire un article', 'adminkit' ), 'url' => admin_url( 'post-new.php' ), 'icon' => 'edit', 'primary' => true );
+			$actions[] = array( 'label' => __( 'Write a post', 'adminkit' ), 'url' => admin_url( 'post-new.php' ), 'icon' => 'edit', 'primary' => true );
 		}
 		if ( current_user_can( 'edit_pages' ) ) {
-			$actions[] = array( 'label' => __( 'Nouvelle page', 'adminkit' ), 'url' => admin_url( 'post-new.php?post_type=page' ), 'icon' => 'page' );
+			$actions[] = array( 'label' => __( 'New page', 'adminkit' ), 'url' => admin_url( 'post-new.php?post_type=page' ), 'icon' => 'page' );
 		}
 		if ( current_user_can( 'upload_files' ) ) {
-			$actions[] = array( 'label' => __( 'Ajouter un média', 'adminkit' ), 'url' => admin_url( 'media-new.php' ), 'icon' => 'image' );
+			$actions[] = array( 'label' => __( 'Add media', 'adminkit' ), 'url' => admin_url( 'media-new.php' ), 'icon' => 'image' );
 		}
 		if ( current_user_can( 'create_users' ) ) {
-			$actions[] = array( 'label' => __( 'Créer un compte', 'adminkit' ), 'url' => admin_url( 'user-new.php' ), 'icon' => 'user-plus' );
+			$actions[] = array( 'label' => __( 'Add user', 'adminkit' ), 'url' => admin_url( 'user-new.php' ), 'icon' => 'user-plus' );
 		}
-		$actions[] = array( 'label' => __( 'Voir le site', 'adminkit' ), 'url' => home_url( '/' ), 'icon' => 'external', 'blank' => true );
+		$actions[] = array( 'label' => __( 'View site', 'adminkit' ), 'url' => home_url( '/' ), 'icon' => 'external', 'blank' => true );
 
 		$actions = apply_filters( 'adminkit/dashboard/quick_actions', $actions );
 		if ( ! $actions ) {
@@ -273,7 +252,7 @@ class AdminKit_Custom_Dashboard {
 		$tiles = array();
 
 		// Built-in content first.
-		$tiles[] = array( 'n' => (int) ( wp_count_posts( 'post' )->publish ?? 0 ), 'label' => __( 'Articles', 'adminkit' ), 'url' => admin_url( 'edit.php' ),                'icon' => 'post' );
+		$tiles[] = array( 'n' => (int) ( wp_count_posts( 'post' )->publish ?? 0 ), 'label' => __( 'Posts', 'adminkit' ), 'url' => admin_url( 'edit.php' ),                'icon' => 'post' );
 		$tiles[] = array( 'n' => (int) ( wp_count_posts( 'page' )->publish ?? 0 ), 'label' => __( 'Pages', 'adminkit' ),    'url' => admin_url( 'edit.php?post_type=page' ), 'icon' => 'page' );
 
 		// Custom post types the user actually manages. show_ui catches types that
@@ -294,70 +273,92 @@ class AdminKit_Custom_Dashboard {
 		// Media, comments, accounts.
 		$comments = wp_count_comments();
 		$users    = count_users();
-		$tiles[]  = array( 'n' => (int) ( wp_count_posts( 'attachment' )->inherit ?? 0 ), 'label' => __( 'Médias', 'adminkit' ),       'url' => admin_url( 'upload.php' ),        'icon' => 'image' );
-		$tiles[]  = array( 'n' => (int) ( $comments->approved ?? 0 ),                     'label' => __( 'Commentaires', 'adminkit' ), 'url' => admin_url( 'edit-comments.php' ), 'icon' => 'comment' );
-		$tiles[]  = array( 'n' => (int) ( $users['total_users'] ?? 0 ),                   'label' => __( 'Comptes', 'adminkit' ),      'url' => admin_url( 'users.php' ),         'icon' => 'users' );
+		$tiles[]  = array( 'n' => (int) ( wp_count_posts( 'attachment' )->inherit ?? 0 ), 'label' => __( 'Media', 'adminkit' ),       'url' => admin_url( 'upload.php' ),        'icon' => 'image' );
+		$tiles[]  = array( 'n' => (int) ( $comments->approved ?? 0 ),                     'label' => __( 'Comments', 'adminkit' ), 'url' => admin_url( 'edit-comments.php' ), 'icon' => 'comment' );
+		$tiles[]  = array( 'n' => (int) ( $users['total_users'] ?? 0 ),                   'label' => __( 'Users', 'adminkit' ),      'url' => admin_url( 'users.php' ),         'icon' => 'users' );
 
 		$tiles = array_values( (array) apply_filters( 'adminkit/dashboard/stats', $tiles ) );
 
-		echo '<div class="ak-dash__stats">';
+		echo '<section class="ak-card ak-dash__card ak-dash__counter">';
+		printf(
+			'<div class="ak-card__head"><h2 class="ak-card__title">%s</h2></div>',
+			esc_html__( 'Overview', 'adminkit' )
+		);
+		echo '<ul class="ak-dash__counter-list">';
 		foreach ( $tiles as $t ) {
 			printf(
-				'<a class="ak-card ak-dash__stat" href="%1$s"><span class="ak-dash__stat-ic">%2$s</span>'
-					. '<span class="ak-dash__stat-body"><span class="ak-dash__stat-n">%3$s</span>'
-					. '<span class="ak-dash__stat-l">%4$s</span></span></a>',
+				'<li><a class="ak-dash__counter-row" href="%1$s"><span class="ak-dash__counter-ic">%2$s</span>'
+					. '<span class="ak-dash__counter-l">%3$s</span>'
+					. '<span class="ak-dash__counter-n">%4$s</span></a></li>',
 				esc_url( $t['url'] ),
 				self::icon( isset( $t['icon'] ) ? $t['icon'] : 'post' ),
-				esc_html( number_format_i18n( (int) ( $t['n'] ?? 0 ) ) ),
-				esc_html( $t['label'] )
+				esc_html( $t['label'] ),
+				esc_html( number_format_i18n( (int) ( $t['n'] ?? 0 ) ) )
+			);
+		}
+		echo '</ul>';
+		echo '</section>';
+	}
+
+	/** Recent-content card — the latest-modified posts/pages/CPTs as a grid of preview cards. */
+	private static function render_content() {
+		$rows = self::recent_content();
+
+		echo '<section class="ak-card ak-dash__card ak-dash__recent">';
+		printf(
+			'<div class="ak-card__head"><h2 class="ak-card__title">%s</h2></div>',
+			esc_html__( 'Recent changes', 'adminkit' )
+		);
+
+		if ( ! $rows ) {
+			printf( '<p class="ak-dash__empty">%s</p>', esc_html__( 'Nothing recent yet.', 'adminkit' ) );
+			echo '</section>';
+			return;
+		}
+
+		echo '<div class="ak-dash__recent-grid">';
+		foreach ( $rows as $r ) {
+			$has_thumb = ! empty( $r['thumb'] );
+			$media     = $has_thumb
+				? '<img class="ak-dash__post-img" src="' . esc_url( $r['thumb'] ) . '" alt="" loading="lazy" />'
+				: '<span class="ak-dash__post-ph">' . self::icon( ! empty( $r['icon'] ) ? $r['icon'] : 'page' ) . '</span>';
+
+			$edit_url = $r['link'] ? $r['link'] : '#';
+			$view_url = ! empty( $r['view'] ) ? $r['view'] : $edit_url;
+
+			// On hover: a pen (edit) and an eye (open the live page in a new tab).
+			$actions = sprintf(
+				'<span class="ak-dash__post-actions">'
+					. '<a class="ak-dash__post-act" href="%1$s" aria-label="%2$s" title="%2$s">%3$s</a>'
+					. '<a class="ak-dash__post-act" href="%4$s" target="_blank" rel="noopener" aria-label="%5$s" title="%5$s">%6$s</a>'
+					. '</span>',
+				esc_url( $edit_url ),
+				esc_attr__( 'Edit', 'adminkit' ),
+				self::icon( 'edit' ),
+				esc_url( $view_url ),
+				esc_attr__( 'View site', 'adminkit' ),
+				self::icon( 'eye' )
+			);
+
+			printf(
+				'<div class="ak-dash__post">'
+					. '<span class="ak-dash__post-media"><span class="ak-dash__post-type">%2$s</span>%3$s%4$s</span>'
+					. '<a class="ak-dash__post-body" href="%1$s"><span class="ak-dash__post-title">%5$s</span>'
+					. '<span class="ak-dash__post-excerpt">%6$s</span></a>'
+					. '<div class="ak-dash__post-foot"><span class="ak-badge ak-badge--%7$s">%8$s</span>'
+					. '<span class="ak-dash__post-time">%9$s</span></div></div>',
+				esc_url( $edit_url ),
+				esc_html( $r['type'] ),
+				$media,   // safe: esc_url'd <img> or author-controlled SVG
+				$actions, // safe: built above with escaped URLs + author SVGs
+				esc_html( $r['title'] ),
+				esc_html( $r['excerpt'] ),
+				esc_attr( $r['state'] ),
+				esc_html( $r['status'] ),
+				esc_html( $r['time'] )
 			);
 		}
 		echo '</div>';
-	}
-
-	/** Recent activity card — recent posts, drafts and comments, merged by date. */
-	private static function render_activity() {
-		$rows = self::recent_activity();
-
-		echo '<section class="ak-card ak-dash__card ak-dash__activity">';
-		printf(
-			'<div class="ak-card__head"><h2 class="ak-card__title">%1$s</h2></div>',
-			esc_html__( 'Activité récente', 'adminkit' )
-		);
-		if ( $rows ) {
-			echo '<ul class="ak-dash__list">';
-			foreach ( $rows as $r ) {
-				$has_thumb = ! empty( $r['thumb'] );
-				$media     = $has_thumb
-					? '<img class="ak-dash__item-thumb" src="' . esc_url( $r['thumb'] ) . '" alt="" loading="lazy" />'
-					: self::icon( isset( $r['icon'] ) ? $r['icon'] : 'post' );
-				$type      = ! empty( $r['label'] )
-					? '<span class="ak-dash__item-type">' . esc_html( $r['label'] ) . '</span>'
-					: '';
-				// Larger page preview on hover — reuses the post-previews hover panel
-				// (the JS binds to any [data-ak-full]). Only when there's a real image.
-				$hover     = ( $has_thumb && ! empty( $r['full'] ) )
-					? ' data-ak-full="' . esc_url( $r['full'] ) . '"'
-					: '';
-				printf(
-					'<li class="ak-dash__item"><span class="ak-dash__item-ic ak-dash__item-ic--%1$s%6$s"%8$s>%2$s</span>'
-						. '<span class="ak-dash__item-main"><span class="ak-dash__item-title">%3$s%7$s</span>'
-						. '<span class="ak-dash__item-sub">%4$s</span></span>'
-						. '<span class="ak-dash__item-time">%5$s</span></li>',
-					esc_attr( $r['type'] ),
-					$media, // safe: esc_url'd <img> or author-controlled SVG
-					$r['link'] ? '<a href="' . esc_url( $r['link'] ) . '">' . esc_html( $r['title'] ) . '</a>' : esc_html( $r['title'] ),
-					esc_html( $r['sub'] ),
-					esc_html( $r['time'] ),
-					$has_thumb ? ' ak-dash__item-ic--img' : '',
-					$type,
-					$hover // safe: esc_url'd data attribute
-				);
-			}
-			echo '</ul>';
-		} else {
-			printf( '<p class="ak-dash__empty">%s</p>', esc_html__( 'Rien de récent pour l’instant.', 'adminkit' ) );
-		}
 		echo '</section>';
 	}
 
@@ -374,8 +375,8 @@ class AdminKit_Custom_Dashboard {
 		// CRITICAL issues. Recommended items do NOT downgrade it — native Site Health
 		// still reads "Bien" with recommendations — so only criticals turn it amber.
 		$badge = $critical > 0
-			? array( 'warn', __( 'À améliorer', 'adminkit' ) )
-			: array( 'ok', __( 'Bon', 'adminkit' ) );
+			? array( 'warn', __( 'Needs attention', 'adminkit' ) )
+			: array( 'ok', __( 'Good', 'adminkit' ) );
 
 		// Ring geometry: r=26, circumference ≈ 163.36; offset = (1 - score/100) * C.
 		$dash = 163.36;
@@ -383,29 +384,29 @@ class AdminKit_Custom_Dashboard {
 
 		// Headline = overall verdict; sub = passed / critical / recommended breakdown.
 		$headline = 0 === $issues
-			? __( 'Tout fonctionne', 'adminkit' )
+			? __( 'Everything\'s running', 'adminkit' )
 			/* translators: %d: number of Site Health items to address. */
-			: sprintf( _n( '%d élément à améliorer', '%d éléments à améliorer', $issues, 'adminkit' ), $issues );
+			: sprintf( _n( '%d item to address', '%d items to address', $issues, 'adminkit' ), $issues );
 
 		$parts = array();
 		if ( $good > 0 ) {
 			/* translators: %d: number of passed Site Health checks. */
-			$parts[] = sprintf( _n( '%d réussi', '%d réussis', $good, 'adminkit' ), $good );
+			$parts[] = sprintf( _n( '%d passed', '%d passed', $good, 'adminkit' ), $good );
 		}
 		if ( $critical > 0 ) {
 			/* translators: %d: number of critical issues. */
-			$parts[] = sprintf( _n( '%d critique', '%d critiques', $critical, 'adminkit' ), $critical );
+			$parts[] = sprintf( _n( '%d critical', '%d critical', $critical, 'adminkit' ), $critical );
 		}
 		if ( $recommended > 0 ) {
 			/* translators: %d: number of recommended improvements. */
-			$parts[] = sprintf( _n( '%d recommandée', '%d recommandées', $recommended, 'adminkit' ), $recommended );
+			$parts[] = sprintf( _n( '%d recommended', '%d recommended', $recommended, 'adminkit' ), $recommended );
 		}
-		$sub = $parts ? implode( ' · ', $parts ) : __( 'Analyse indisponible', 'adminkit' );
+		$sub = $parts ? implode( ' · ', $parts ) : __( 'Analysis unavailable', 'adminkit' );
 
 		echo '<section class="ak-card ak-dash__card ak-dash__health">';
 		printf(
 			'<div class="ak-card__head"><h2 class="ak-card__title">%1$s</h2><span class="ak-badge ak-badge--%2$s">%3$s</span></div>',
-			esc_html__( 'Santé du site', 'adminkit' ),
+			esc_html__( 'Site health', 'adminkit' ),
 			esc_attr( $badge[0] ),
 			esc_html( $badge[1] )
 		);
@@ -428,7 +429,7 @@ class AdminKit_Custom_Dashboard {
 		printf(
 			'<a class="ak-dash__more" href="%1$s">%2$s</a>',
 			esc_url( admin_url( 'site-health.php' ) ),
-			esc_html__( 'Voir le rapport complet', 'adminkit' )
+			esc_html__( 'View full report', 'adminkit' )
 		);
 		echo '</section>';
 	}
@@ -443,7 +444,7 @@ class AdminKit_Custom_Dashboard {
 		echo '<section class="ak-card ak-dash__card ak-dash__storage">';
 		printf(
 			'<div class="ak-card__head"><h2 class="ak-card__title">%1$s</h2></div>',
-			esc_html__( 'Stockage', 'adminkit' )
+			esc_html__( 'Storage', 'adminkit' )
 		);
 
 		// Headline: the space that REMAINS (prominent) + the site's footprint as muted
@@ -452,15 +453,15 @@ class AdminKit_Custom_Dashboard {
 			printf(
 				'<p class="ak-dash__store-head"><strong>%1$s</strong> %2$s<span class="ak-dash__store-used"> · %3$s %4$s</span></p>',
 				esc_html( size_format( $free, 1 ) ),
-				esc_html__( 'disponibles', 'adminkit' ),
+				esc_html__( 'available', 'adminkit' ),
 				esc_html( size_format( $total, 1 ) ),
-				esc_html__( 'utilisés', 'adminkit' )
+				esc_html__( 'used', 'adminkit' )
 			);
 		} else {
 			printf(
 				'<p class="ak-dash__store-head"><strong>%1$s</strong> %2$s</p>',
 				esc_html( size_format( $total, 1 ) ),
-				esc_html__( 'utilisés par votre site', 'adminkit' )
+				esc_html__( 'used by your site', 'adminkit' )
 			);
 		}
 
@@ -532,20 +533,20 @@ class AdminKit_Custom_Dashboard {
 		// --- Site-health alerts (warn) ---
 		$https = is_ssl() || 'https' === wp_parse_url( home_url(), PHP_URL_SCHEME );
 		if ( ! $https ) {
-			$items[] = array( 'sev' => 'warn', 'icon' => 'shield', 'title' => __( 'HTTPS inactif', 'adminkit' ), 'desc' => __( 'Sécurité et référencement', 'adminkit' ), 'url' => admin_url( 'site-health.php' ), 'cta' => __( 'Détails', 'adminkit' ) );
+			$items[] = array( 'sev' => 'bad', 'icon' => 'shield', 'title' => __( 'HTTPS off', 'adminkit' ), 'desc' => __( 'Security and SEO', 'adminkit' ), 'url' => admin_url( 'site-health.php' ), 'cta' => __( 'Details', 'adminkit' ) );
 		}
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG && ! ( defined( 'WP_DEBUG_DISPLAY' ) && ! WP_DEBUG_DISPLAY ) ) {
-			$items[] = array( 'sev' => 'warn', 'icon' => 'alert', 'title' => __( 'Mode débogage actif', 'adminkit' ), 'desc' => __( 'À désactiver en production', 'adminkit' ), 'url' => admin_url( 'site-health.php' ), 'cta' => __( 'Détails', 'adminkit' ) );
+			$items[] = array( 'sev' => 'bad', 'icon' => 'alert', 'title' => __( 'Debug mode on', 'adminkit' ), 'desc' => __( 'Turn off in production', 'adminkit' ), 'url' => admin_url( 'site-health.php' ), 'cta' => __( 'Details', 'adminkit' ) );
 		}
 		if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 			/* translators: %s: current PHP version. */
-			$items[] = array( 'sev' => 'warn', 'icon' => 'alert', 'title' => sprintf( __( 'PHP %s à mettre à jour', 'adminkit' ), PHP_VERSION ), 'desc' => __( 'Version trop ancienne', 'adminkit' ), 'url' => admin_url( 'site-health.php' ), 'cta' => __( 'Détails', 'adminkit' ) );
+			$items[] = array( 'sev' => 'warn', 'icon' => 'alert', 'title' => sprintf( __( 'Update PHP %s', 'adminkit' ), PHP_VERSION ), 'desc' => __( 'Version too old', 'adminkit' ), 'url' => admin_url( 'site-health.php' ), 'cta' => __( 'Details', 'adminkit' ) );
 		}
 		if ( current_user_can( 'update_core' ) ) {
 			$ups = function_exists( 'wp_get_update_data' ) ? (int) ( wp_get_update_data()['counts']['total'] ?? 0 ) : 0;
 			if ( $ups > 0 ) {
 				/* translators: %d: number of available updates. */
-				$items[] = array( 'sev' => 'warn', 'icon' => 'download', 'title' => sprintf( _n( '%d mise à jour disponible', '%d mises à jour disponibles', $ups, 'adminkit' ), $ups ), 'desc' => __( 'Cœur, extensions, thèmes', 'adminkit' ), 'url' => admin_url( 'update-core.php' ), 'cta' => __( 'Mettre à jour', 'adminkit' ) );
+				$items[] = array( 'sev' => 'warn', 'icon' => 'download', 'title' => sprintf( _n( '%d update available', '%d updates available', $ups, 'adminkit' ), $ups ), 'desc' => __( 'Core, plugins, themes', 'adminkit' ), 'url' => admin_url( 'update-core.php' ), 'cta' => __( 'Update', 'adminkit' ) );
 			}
 		}
 
@@ -554,11 +555,11 @@ class AdminKit_Custom_Dashboard {
 			$m = self::maintenance_counts();
 			if ( $m['plugins_off'] > 0 ) {
 				/* translators: %s: number of inactive plugins. */
-				$items[] = array( 'sev' => 'info', 'icon' => 'plugin', 'title' => sprintf( _n( '%s extension inactive', '%s extensions inactives', $m['plugins_off'], 'adminkit' ), number_format_i18n( $m['plugins_off'] ) ), 'desc' => __( 'À supprimer si inutile', 'adminkit' ), 'url' => admin_url( 'plugins.php' ), 'cta' => __( 'Gérer', 'adminkit' ) );
+				$items[] = array( 'sev' => 'warn', 'icon' => 'plugin', 'title' => sprintf( _n( '%s inactive plugin', '%s inactive plugins', $m['plugins_off'], 'adminkit' ), number_format_i18n( $m['plugins_off'] ) ), 'desc' => __( 'Remove if unused', 'adminkit' ), 'url' => admin_url( 'plugins.php' ), 'cta' => __( 'Manage', 'adminkit' ) );
 			}
 			if ( $m['themes_off'] > 0 ) {
 				/* translators: %s: number of inactive themes. */
-				$items[] = array( 'sev' => 'info', 'icon' => 'appearance', 'title' => sprintf( _n( '%s thème inactif', '%s thèmes inactifs', $m['themes_off'], 'adminkit' ), number_format_i18n( $m['themes_off'] ) ), 'desc' => __( 'À supprimer si inutile', 'adminkit' ), 'url' => admin_url( 'themes.php' ), 'cta' => __( 'Gérer', 'adminkit' ) );
+				$items[] = array( 'sev' => 'warn', 'icon' => 'appearance', 'title' => sprintf( _n( '%s inactive theme', '%s inactive themes', $m['themes_off'], 'adminkit' ), number_format_i18n( $m['themes_off'] ) ), 'desc' => __( 'Remove if unused', 'adminkit' ), 'url' => admin_url( 'themes.php' ), 'cta' => __( 'Manage', 'adminkit' ) );
 			}
 		}
 
@@ -569,47 +570,57 @@ class AdminKit_Custom_Dashboard {
 		$drafts   = (int) ( $posts->draft ?? 0 ) + (int) ( $pages->draft ?? 0 );
 		if ( $drafts > 0 && current_user_can( 'edit_posts' ) ) {
 			/* translators: %s: number of draft posts/pages. */
-			$items[] = array( 'sev' => 'todo', 'icon' => 'edit', 'title' => sprintf( _n( '%s brouillon à finir', '%s brouillons à finir', $drafts, 'adminkit' ), number_format_i18n( $drafts ) ), 'desc' => '', 'url' => admin_url( 'edit.php?post_status=draft' ), 'cta' => __( 'Ouvrir', 'adminkit' ) );
+			$items[] = array( 'sev' => 'todo', 'icon' => 'edit', 'title' => sprintf( _n( '%s draft to finish', '%s drafts to finish', $drafts, 'adminkit' ), number_format_i18n( $drafts ) ), 'desc' => '', 'url' => admin_url( 'edit.php?post_status=draft' ), 'cta' => __( 'Open', 'adminkit' ) );
 		}
 		$pending = (int) ( $posts->pending ?? 0 );
 		if ( $pending > 0 && current_user_can( 'edit_posts' ) ) {
 			/* translators: %s: number of posts pending review. */
-			$items[] = array( 'sev' => 'todo', 'icon' => 'page', 'title' => sprintf( _n( '%s article en attente', '%s articles en attente', $pending, 'adminkit' ), number_format_i18n( $pending ) ), 'desc' => __( 'En attente de relecture', 'adminkit' ), 'url' => admin_url( 'edit.php?post_status=pending' ), 'cta' => __( 'Ouvrir', 'adminkit' ) );
+			$items[] = array( 'sev' => 'todo', 'icon' => 'page', 'title' => sprintf( _n( '%s post pending', '%s posts pending', $pending, 'adminkit' ), number_format_i18n( $pending ) ), 'desc' => __( 'Awaiting review', 'adminkit' ), 'url' => admin_url( 'edit.php?post_status=pending' ), 'cta' => __( 'Open', 'adminkit' ) );
 		}
 		$moderate = (int) ( $comments->moderated ?? 0 );
 		if ( $moderate > 0 && current_user_can( 'moderate_comments' ) ) {
 			/* translators: %s: number of comments awaiting moderation. */
-			$items[] = array( 'sev' => 'todo', 'icon' => 'comment', 'title' => sprintf( _n( '%s commentaire à modérer', '%s commentaires à modérer', $moderate, 'adminkit' ), number_format_i18n( $moderate ) ), 'desc' => '', 'url' => admin_url( 'edit-comments.php?comment_status=moderated' ), 'cta' => __( 'Modérer', 'adminkit' ) );
+			$items[] = array( 'sev' => 'todo', 'icon' => 'comment', 'title' => sprintf( _n( '%s comment to moderate', '%s comments to moderate', $moderate, 'adminkit' ), number_format_i18n( $moderate ) ), 'desc' => '', 'url' => admin_url( 'edit-comments.php?comment_status=moderated' ), 'cta' => __( 'Moderate', 'adminkit' ) );
 		}
 		$future = (int) ( $posts->future ?? 0 );
 		if ( $future > 0 && current_user_can( 'edit_posts' ) ) {
 			/* translators: %s: number of scheduled publications. */
-			$items[] = array( 'sev' => 'todo', 'icon' => 'clock', 'title' => sprintf( _n( '%s publication planifiée', '%s publications planifiées', $future, 'adminkit' ), number_format_i18n( $future ) ), 'desc' => '', 'url' => admin_url( 'edit.php?post_status=future' ), 'cta' => __( 'Voir', 'adminkit' ) );
+			$items[] = array( 'sev' => 'todo', 'icon' => 'clock', 'title' => sprintf( _n( '%s scheduled post', '%s scheduled posts', $future, 'adminkit' ), number_format_i18n( $future ) ), 'desc' => '', 'url' => admin_url( 'edit.php?post_status=future' ), 'cta' => __( 'View', 'adminkit' ) );
 		}
 
 		return array_values( (array) apply_filters( 'adminkit/dashboard/priorities', $items ) );
 	}
 
-	/** "Priorités" — the single "what needs my attention" block (merges the old maintenance + to-do widgets). */
-	private static function render_priorities() {
-		$items = self::priority_items();
+	/** "Actions à faire" card — the to-do list (site-health alerts, maintenance,
+	    content tasks), its own block placed above Modifications récentes. */
+	private static function render_todos() {
+		echo '<section class="ak-card ak-dash__card ak-dash__todos">';
+		printf( '<div class="ak-card__head"><h2 class="ak-card__title">%s</h2></div>', esc_html__( 'To-do', 'adminkit' ) );
+		self::render_action_list( self::priority_items() );
+		echo '</section>';
+	}
 
-		echo '<section class="ak-card ak-dash__card ak-dash__prio">';
-		printf( '<div class="ak-card__head"><h2 class="ak-card__title">%s</h2></div>', esc_html__( 'Tâches prioritaires', 'adminkit' ) );
-
+	/**
+	 * Render the actionable to-do list — site-health alerts, maintenance suggestions
+	 * and content tasks. Shown inside the Actions à faire card; empty → a compact
+	 * all-clear state.
+	 *
+	 * @param array<int,array> $items
+	 * @return void
+	 */
+	private static function render_action_list( $items ) {
 		if ( ! $items ) {
 			printf(
 				'<p class="ak-dash__prio-empty">%1$s<span>%2$s</span></p>',
 				self::icon( 'check' ),
-				esc_html__( 'Tout est en ordre — rien ne requiert votre attention aujourd’hui.', 'adminkit' )
+				esc_html__( 'All clear — nothing to do today.', 'adminkit' )
 			);
-			echo '</section>';
 			return;
 		}
 
 		echo '<ul class="ak-dash__prio-list">';
 		foreach ( $items as $it ) {
-			$sev = isset( $it['sev'] ) && in_array( $it['sev'], array( 'warn', 'info', 'todo' ), true ) ? $it['sev'] : 'info';
+			$sev = isset( $it['sev'] ) && in_array( $it['sev'], array( 'bad', 'warn', 'todo' ), true ) ? $it['sev'] : 'todo';
 			printf(
 				'<li class="ak-dash__prio-row ak-dash__prio-row--%1$s"><span class="ak-dash__prio-ic">%2$s</span>'
 					. '<span class="ak-dash__prio-txt"><span class="ak-dash__prio-title">%3$s</span>%4$s</span>'
@@ -619,82 +630,85 @@ class AdminKit_Custom_Dashboard {
 				esc_html( isset( $it['title'] ) ? $it['title'] : '' ),
 				! empty( $it['desc'] ) ? '<span class="ak-dash__prio-desc">' . esc_html( $it['desc'] ) . '</span>' : '',
 				esc_url( isset( $it['url'] ) ? $it['url'] : '#' ),
-				esc_html( isset( $it['cta'] ) ? $it['cta'] : __( 'Voir', 'adminkit' ) )
+				esc_html( isset( $it['cta'] ) ? $it['cta'] : __( 'View', 'adminkit' ) )
 			);
 		}
 		echo '</ul>';
-		echo '</section>';
 	}
 
 	/* ───────────────────────── data ───────────────────────── */
 
 	/**
-	 * Recent posts + drafts + comments, merged and sorted by time (newest first).
+	 * The 4 most recently-modified items the user manages — posts, pages and every
+	 * auto-detected custom post type — newest first, for the recent-modifications grid.
 	 *
 	 * @return array<int,array>
 	 */
-	private static function recent_activity() {
-		$rows = array();
-
+	private static function recent_content() {
 		$has_pp = class_exists( 'AdminKit_Post_Previews' );
-		$full   = $has_pp ? AdminKit_Post_Previews::full_size() : array( 1200, 800 ); // same size as the list-table hover
+
+		// post + page + every CPT the user manages (auto-detected, same set as the counters).
+		$types = array( 'post', 'page' );
+		foreach ( get_post_types( array( '_builtin' => false, 'show_ui' => true ), 'objects' ) as $pt ) {
+			if ( ! empty( $pt->show_in_menu ) ) {
+				$types[] = $pt->name;
+			}
+		}
 
 		$posts = get_posts( array(
-			'numberposts' => 9,
+			'numberposts' => 4,
+			'orderby'     => 'modified',
 			'post_status' => array( 'publish', 'draft', 'pending' ),
-			'post_type'   => array( 'post', 'page' ),
+			'post_type'   => $types,
 		) );
+
+		$rows = array();
 		foreach ( $posts as $p ) {
-			$draft     = 'publish' !== $p->post_status;
-			$pt_obj    = get_post_type_object( $p->post_type );
-			$editor_id = (int) get_post_meta( $p->ID, '_edit_last', true ); // last user who edited
-			$author    = get_the_author_meta( 'display_name', $editor_id > 0 ? $editor_id : (int) $p->post_author );
-			$status    = $draft ? __( 'Brouillon enregistré', 'adminkit' ) : __( 'Publié', 'adminkit' );
-			$rows[]    = array(
-				'ts'    => (int) get_post_time( 'U', true, $p ),
-				'type'  => 'post',
-				'icon'  => 'page' === $p->post_type ? 'page' : 'post',
-				'thumb' => $has_pp ? AdminKit_Post_Previews::preview_url( $p ) : '',
-				'full'  => $has_pp ? AdminKit_Post_Previews::preview_url( $p, $full[0], $full[1] ) : '',
-				'label' => ( $pt_obj && ! empty( $pt_obj->labels->singular_name ) ) ? $pt_obj->labels->singular_name : __( 'Contenu', 'adminkit' ),
-				'title' => $p->post_title ? $p->post_title : __( '(sans titre)', 'adminkit' ),
-				/* translators: 1: author/editor name, 2: status (e.g. Published). */
-				'sub'   => $author ? sprintf( __( '%1$s · %2$s', 'adminkit' ), $author, $status ) : $status,
-				'link'  => get_edit_post_link( $p->ID, 'raw' ),
-			);
+			$rows[] = self::content_row( $p, $has_pp );
 		}
 
-		$comments = get_comments( array( 'number' => 9, 'status' => 'all' ) );
-		foreach ( $comments as $c ) {
-			$pending = '0' === (string) $c->comment_approved;
-			$rows[]  = array(
-				'ts'    => (int) strtotime( $c->comment_date_gmt . ' UTC' ),
-				'type'  => 'comment',
-				'icon'  => 'comment',
-				'thumb' => get_avatar_url( $c, array( 'size' => 96 ) ),
-				'label' => __( 'Commentaire', 'adminkit' ),
-				'title' => $c->comment_author ? $c->comment_author : __( 'Commentaire', 'adminkit' ),
-				'sub'   => $pending ? __( 'Nouveau commentaire en attente', 'adminkit' ) : __( 'Nouveau commentaire', 'adminkit' ),
-				'link'  => admin_url( 'comment.php?action=editcomment&c=' . (int) $c->comment_ID ),
-			);
+		return apply_filters( 'adminkit/dashboard/content', $rows );
+	}
+
+	/**
+	 * Build one recent-content card row from a post.
+	 *
+	 * @param WP_Post $p
+	 * @param bool    $has_pp Whether the post-previews helper is available.
+	 * @return array
+	 */
+	private static function content_row( $p, $has_pp ) {
+		$pt_obj = get_post_type_object( $p->post_type );
+		$raw    = has_excerpt( $p ) ? $p->post_excerpt : strip_shortcodes( (string) $p->post_content );
+		$ts     = (int) get_post_modified_time( 'U', true, $p );
+
+		if ( 'publish' === $p->post_status ) {
+			$status = __( 'Published', 'adminkit' );
+			$state  = 'ok';
+		} elseif ( 'pending' === $p->post_status ) {
+			$status = __( 'Pending', 'adminkit' );
+			$state  = 'warn';
+		} else {
+			$status = __( 'Draft', 'adminkit' );
+			$state  = 'muted';
 		}
 
-		usort( $rows, static function ( $a, $b ) {
-			return $b['ts'] <=> $a['ts'];
-		} );
-		$rows = array_slice( $rows, 0, 9 );
-
-		$now = time();
-		foreach ( $rows as &$r ) {
-			$r['time'] = $r['ts'] ? sprintf(
+		return array(
+			'type'    => ( $pt_obj && ! empty( $pt_obj->labels->singular_name ) ) ? $pt_obj->labels->singular_name : __( 'Content', 'adminkit' ),
+			'icon'    => 'page' === $p->post_type ? 'page' : ( 'post' === $p->post_type ? 'post' : 'layers' ),
+			'thumb'   => $has_pp ? AdminKit_Post_Previews::preview_url( $p, 600, 400 ) : '',
+			'title'   => $p->post_title ? $p->post_title : __( '(no title)', 'adminkit' ),
+			'excerpt' => wp_trim_words( wp_strip_all_tags( $raw ), 16, '…' ),
+			'status'  => $status,
+			'state'   => $state,
+			'time'    => $ts ? sprintf(
 				/* translators: %s: human time difference, e.g. "2 hours". */
-				__( 'Il y a %s', 'adminkit' ),
-				human_time_diff( $r['ts'], $now )
-			) : '';
-		}
-		unset( $r );
-
-		return apply_filters( 'adminkit/dashboard/activity', $rows );
+				__( '%s ago', 'adminkit' ),
+				human_time_diff( $ts, time() )
+			) : '',
+			'link'    => get_edit_post_link( $p->ID, 'raw' ),
+			'view'    => 'publish' === $p->post_status ? get_permalink( $p ) : get_preview_post_link( $p ),
+		);
 	}
 
 	/**
@@ -719,20 +733,20 @@ class AdminKit_Custom_Dashboard {
 		$debug = ! ( defined( 'WP_DEBUG' ) && WP_DEBUG && ! ( defined( 'WP_DEBUG_DISPLAY' ) && ! WP_DEBUG_DISPLAY ) );
 
 		$checks = array(
-			array( 'ok' => $https, 'label' => $https ? __( 'HTTPS actif', 'adminkit' ) : __( 'HTTPS inactif', 'adminkit' ) ),
+			array( 'ok' => $https, 'label' => $https ? __( 'HTTPS on', 'adminkit' ) : __( 'HTTPS off', 'adminkit' ) ),
 			array(
 				'ok'    => $php,
 				/* translators: %s: PHP version number. */
-				'label' => sprintf( __( 'PHP %s', 'adminkit' ), PHP_VERSION ) . ( $php ? ' — ' . __( 'recommandé', 'adminkit' ) : '' ),
+				'label' => sprintf( __( 'PHP %s', 'adminkit' ), PHP_VERSION ) . ( $php ? ' — ' . __( 'recommended', 'adminkit' ) : '' ),
 			),
 			array(
 				'ok'    => 0 === $ups,
 				'label' => 0 === $ups
-					? __( 'Tout est à jour', 'adminkit' )
+					? __( 'Everything\'s up to date', 'adminkit' )
 					/* translators: %d: number of available updates. */
-					: sprintf( _n( '%d mise à jour disponible', '%d mises à jour disponibles', $ups, 'adminkit' ), $ups ),
+					: sprintf( _n( '%d update available', '%d updates available', $ups, 'adminkit' ), $ups ),
 			),
-			array( 'ok' => $debug, 'label' => $debug ? __( 'Débogage désactivé', 'adminkit' ) : __( 'Mode débogage actif', 'adminkit' ) ),
+			array( 'ok' => $debug, 'label' => $debug ? __( 'Debug mode off', 'adminkit' ) : __( 'Debug mode on', 'adminkit' ) ),
 		);
 
 		// Score + issue counts from WordPress's NATIVE Site Health (curated cheap
@@ -852,10 +866,10 @@ class AdminKit_Custom_Dashboard {
 		}
 
 		$segments = array(
-			array( 'key' => 'media',   'label' => __( 'Médias', 'adminkit' ),          'bytes' => (int) $cached['media'],   'color' => 'var(--ak-primary)' ),
-			array( 'key' => 'db',      'label' => __( 'Base de données', 'adminkit' ), 'bytes' => (int) $cached['db'],      'color' => 'var(--ak-warning)' ),
-			array( 'key' => 'plugins', 'label' => __( 'Extensions', 'adminkit' ),      'bytes' => (int) $cached['plugins'], 'color' => 'var(--ak-success)' ),
-			array( 'key' => 'themes',  'label' => __( 'Thèmes', 'adminkit' ),          'bytes' => (int) $cached['themes'],  'color' => 'var(--ak-info)' ),
+			array( 'key' => 'media',   'label' => __( 'Media', 'adminkit' ),          'bytes' => (int) $cached['media'],   'color' => 'var(--ak-primary)' ),
+			array( 'key' => 'db',      'label' => __( 'Database', 'adminkit' ), 'bytes' => (int) $cached['db'],      'color' => 'var(--ak-warning)' ),
+			array( 'key' => 'plugins', 'label' => __( 'Plugins', 'adminkit' ),      'bytes' => (int) $cached['plugins'], 'color' => 'var(--ak-success)' ),
+			array( 'key' => 'themes',  'label' => __( 'Themes', 'adminkit' ),          'bytes' => (int) $cached['themes'],  'color' => 'var(--ak-info)' ),
 			array( 'key' => 'core',    'label' => __( 'WordPress', 'adminkit' ),       'bytes' => (int) $cached['core'],    'color' => 'color-mix(in srgb, var(--ak-primary) 55%, var(--ak-error) 45%)' ),
 		);
 		// Hosts / backup plugins can append a {key,label,bytes,color} segment.
@@ -945,6 +959,7 @@ class AdminKit_Custom_Dashboard {
 			'page'     => '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M5 3h9l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/>',
 			'image'    => '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>',
 			'external' => '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/>',
+			'eye'      => '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
 			'post'     => '<path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
 			'comment'  => '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/>',
 			'users'    => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>',

@@ -313,14 +313,22 @@ body.adminkit #adminmenu .opensub .wp-submenu {
    expanded-hover branch AND the auto-fold branch. (WP also adds `.opensub` to the
    current item on hover, which without the exclusion would jump it right by the 6px
    gap — the reported shift.) Only a TRULY folded rail (icons-only, no room to sit
-   flush) still pops the current submenu out as a card. */
-body.adminkit #adminmenu li.opensub:not( .wp-has-current-submenu ) > .wp-submenu,
-body.adminkit.folded #adminmenu .wp-submenu,
-body.adminkit.auto-fold #adminmenu li:not( .wp-has-current-submenu ) > .wp-submenu {
-	border: 1px solid var(--ak-card-border);
-	border-radius: var(--ak-card-radius);
-	box-shadow: var(--ak-shadow-elevated, 0 8px 24px rgba(0, 0, 0, 0.18));
-	margin-left: 6px;
+   flush) still pops the current submenu out as a card.
+
+   Gated to ≥783px: below that, WP swaps the rail for the full-width mobile menu but
+   <body> KEEPS its `auto-fold` class — so the auto-fold branch would otherwise pop a
+   non-current submenu (e.g. Extensions while on Comptes) into a bordered, shadowed,
+   6px-shifted card INSIDE the expanded mobile menu, where it must sit flush + inline.
+   The base rule above (surface background + top border) is all the mobile submenu needs. */
+@media screen and (min-width: 783px) {
+	body.adminkit #adminmenu li.opensub:not( .wp-has-current-submenu ) > .wp-submenu,
+	body.adminkit.folded #adminmenu .wp-submenu,
+	body.adminkit.auto-fold #adminmenu li:not( .wp-has-current-submenu ) > .wp-submenu {
+		border: 1px solid var(--ak-card-border);
+		border-radius: var(--ak-card-radius);
+		box-shadow: var(--ak-shadow-elevated, 0 8px 24px rgba(0, 0, 0, 0.18));
+		margin-left: 6px;
+	}
 }
 
 /* Submenu link colors — WP color schemes ship (0,3,3)-specificity rules

@@ -9,23 +9,17 @@
  * opening it — no need to leave wp-admin to remember what a page looks like.
  *
  * ── Thumbnail source ────────────────────────────────────────────────────────
- * A WordPress.com mShots screenshot of the post's own permalink — the actual
- * rendered page. mShots only reaches PUBLIC URLs, so on a local dev host
- * (localhost, *.local, *.test) — where it would only ever return its
- * "generating" placeholder — we fall back to the post's featured image for a
- * cleaner view. When there's neither a usable screenshot nor a featured image,
- * a flat placeholder shows instead of a broken image.
+ * The post's featured image (the product image, for WooCommerce products) — a
+ * predictable, instant thumbnail with no external dependency. When there's no
+ * featured image, a clean icon placeholder shows instead of a broken image.
  *
- *   ⚠ On a public site a just-published page can briefly show mShots' own
- *   "generating" placeholder until the screenshot is ready (it lands on the next
- *   view). That transient state is left as-is — kept deliberately simple.
- *
- * ── Refresh ─────────────────────────────────────────────────────────────────
- * Screenshots aren't frozen: the mShots request URL carries a coarse time bucket
- * (default weekly — `adminkit/post_previews/refresh_interval`, in seconds), so it
- * regenerates once per window. The URL is stable WITHIN a window, so the browser
- * and mShots keep serving the cached image — it refreshes regularly without
- * re-fetching on every page load. Set the interval to 0 to pin screenshots.
+ * A live WordPress.com mShots screenshot of the post's own rendered page is
+ * available as an alternative, but OFF by default: it only reaches public URLs
+ * and can briefly show mShots' own "generating" placeholder until the screenshot
+ * is ready. Opt in per-site via the provider filter:
+ *     add_filter( 'adminkit/post_previews/provider', static function () { return 'mshots'; } );
+ * mShots screenshots refresh once per `refresh_interval` window (a coarse cache
+ * key in the request URL; set the interval to 0 to pin them).
  *
  * ── Modularity / the future settings ("CBI") page ───────────────────────────
  * The whole feature is gated by is_enabled(), which reads the
@@ -90,6 +84,14 @@ class AdminKit_Post_Previews {
 		) );
 
 		add_action( 'current_screen', array( __CLASS__, 'maybe_hook_screen' ) );
+
+		// Quick Edit saves a single row over admin-ajax.php ('inline-save'), where
+		// `current_screen` never fires — so maybe_hook_screen() is skipped and the
+		// row WP regenerates would drop our column, leaving it one cell short of the
+		// header and shifting every value one column to the left. Re-attach the
+		// column for that one request; priority 0 runs before core's inline-save
+		// handler renders the row.
+		add_action( 'wp_ajax_inline-save', array( __CLASS__, 'hook_inline_save' ), 0 );
 	}
 
 	/**
@@ -144,6 +146,40 @@ class AdminKit_Post_Previews {
 		add_action( "manage_{$pt}_posts_custom_column", array( __CLASS__, 'render_column' ), 10, 2 );
 
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
+	}
+
+	/**
+	 * Re-attach the preview column during a Quick Edit inline-save.
+	 *
+	 * Quick Edit posts to admin-ajax.php, which never fires `current_screen`, so
+	 * maybe_hook_screen() doesn't run and the row WP regenerates omits our column —
+	 * leaving it one cell short of the header and shifting every value one column
+	 * to the left. Wire the same column filter + render action as maybe_hook_screen(),
+	 * scoped to the request's own (sanitized) screen + post type. The save and its
+	 * nonce / capability checks stay core's job — this only adds a display filter —
+	 * so reading $_POST to route it is safe. No-op for a non-targeted post type.
+	 *
+	 * @return void
+	 */
+	public static function hook_inline_save() {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- core verifies the inline-save nonce; these are read only to wire a display filter.
+		$post_type   = isset( $_POST['post_type'] ) ? sanitize_key( wp_unslash( $_POST['post_type'] ) ) : '';
+		$screen_name = isset( $_POST['screen'] ) ? sanitize_text_field( wp_unslash( $_POST['screen'] ) ) : '';
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		if ( ! self::is_target( $post_type ) ) {
+			return;
+		}
+		self::$screen_pt = $post_type;
+
+		// Resolve the screen exactly as core's inline-save handler does
+		// (_get_list_table → convert_to_screen) so our `manage_{id}_columns` filter
+		// name matches the one WP_Posts_List_Table runs for the regenerated row.
+		$screen = $screen_name ? convert_to_screen( $screen_name ) : null;
+		if ( $screen && ! empty( $screen->id ) ) {
+			add_filter( "manage_{$screen->id}_columns", array( __CLASS__, 'add_column' ), 99 );
+		}
+		add_action( "manage_{$post_type}_posts_custom_column", array( __CLASS__, 'render_column' ), 10, 2 );
 	}
 
 	/**
@@ -220,10 +256,9 @@ class AdminKit_Post_Previews {
 
 		$permalink = get_permalink( $post );
 
-		// mShots on a public site; the featured image on a local host (mShots can't
-		// reach it) or when the user turns "Live screenshots" off — AdminKit_Settings
-		// forces 'featured' on that toggle via adminkit/post_previews/provider.
-		$provider = apply_filters( 'adminkit/post_previews/provider', self::is_local_site() ? 'featured' : 'mshots' );
+		// Featured image by default (predictable, instant, no external service). A
+		// live mShots screenshot is opt-in per-site via the provider filter.
+		$provider = apply_filters( 'adminkit/post_previews/provider', 'featured' );
 
 		if ( $permalink && 'mshots' === $provider ) {
 			$thumb = self::mshots_url( $permalink, $tw, $th );
@@ -271,12 +306,15 @@ class AdminKit_Post_Previews {
 		if ( ! $post ) {
 			return '';
 		}
-		$permalink = get_permalink( $post );
-		$provider  = apply_filters( 'adminkit/post_previews/provider', self::is_local_site() ? 'featured' : 'mshots' );
-		if ( $permalink && 'mshots' === $provider && 'publish' === get_post_status( $post ) ) {
-			$url = self::mshots_url( $permalink, $w, $h );
+		$provider = apply_filters( 'adminkit/post_previews/provider', 'featured' );
+		if ( 'mshots' === $provider && 'publish' === get_post_status( $post ) ) {
+			$permalink = get_permalink( $post );
+			$url       = $permalink ? self::mshots_url( $permalink, $w, $h ) : '';
 		} else {
-			$url = (string) get_the_post_thumbnail_url( $post, 'medium' );
+			// Featured image — pick a registered size that covers the requested width
+			// crisply (the dashboard cards ask for a big one; the list column a small).
+			$size = $w >= 768 ? 'large' : ( $w >= 384 ? 'medium_large' : 'medium' );
+			$url  = (string) get_the_post_thumbnail_url( $post, $size );
 		}
 		return (string) apply_filters( 'adminkit/post_previews/thumb_url', $url, $post, $w, $h );
 	}
@@ -302,22 +340,6 @@ class AdminKit_Post_Previews {
 		}
 
 		return add_query_arg( $args, self::MSHOTS_BASE . rawurlencode( $url ) );
-	}
-
-	/**
-	 * Whether this is a local/dev host mShots can't screenshot. Kept simple —
-	 * covers the common local cases; a public site always resolves to false.
-	 *
-	 * @return bool
-	 */
-	private static function is_local_site() {
-		static $local = null;
-		if ( null === $local ) {
-			$host  = strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
-			$local = in_array( $host, array( 'localhost', '127.0.0.1', '::1' ), true )
-				|| (bool) preg_match( '/\.(local|test|localhost)$/', $host );
-		}
-		return $local;
 	}
 
 	/**

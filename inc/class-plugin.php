@@ -40,6 +40,9 @@ class AdminKit_Plugin {
 		AdminKit_Custom_Dashboard::init();
 		AdminKit_Notification_Center::init();
 		AdminKit_Footer::init();
+		AdminKit_Help_Button::init();
+		AdminKit_Plugins_List::init();
+		AdminKit_Menu_Manager::init();
 
 		self::boot_integrations();
 

@@ -43,6 +43,18 @@ class AdminKit_Settings_Catalog {
 				'desc'  => __( 'Adds a thumbnail column to post-type list tables — the featured image first, with a live WordPress.com mShots screenshot as fallback on production sites (skipped on localhost where mShots can\'t reach the page anyway).', 'adminkit' ),
 			),
 			array(
+				'key'   => 'plugins_active_first_enabled',
+				'group' => $content,
+				'label' => __( 'Active plugins first', 'adminkit' ),
+				'desc'  => __( 'Sort active plugins to the top of the plugins list so what\'s running is always in view. Off keeps WordPress\'s alphabetical order.', 'adminkit' ),
+			),
+			array(
+				'key'   => 'plugins_default_active_filter_enabled',
+				'group' => $content,
+				'label' => __( 'Open plugins on "Active"', 'adminkit' ),
+				'desc'  => __( 'Land on the "Active" filter when you open the plugins list, instead of "All". Falls back to "All" when no plugins are active. Off keeps the default "All" view.', 'adminkit' ),
+			),
+			array(
 				'key'   => 'theme_toggle_enabled',
 				'group' => $appearance,
 				'label' => __( 'Dark mode', 'adminkit' ),
@@ -67,10 +79,22 @@ class AdminKit_Settings_Catalog {
 				'desc'  => __( 'Swap WordPress\'s menu and toolbar icons for AdminKit\'s set. Icons customised elsewhere (e.g. Admin Menu Editor) are left alone.', 'adminkit' ),
 			),
 			array(
+				'key'   => 'menu_manager_enabled',
+				'group' => $appearance,
+				'label' => __( 'Menu manager', 'adminkit' ),
+				'desc'  => __( 'Reorder the admin menu and submenus, change menu icons, and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept).', 'adminkit' ),
+			),
+			array(
 				'key'   => 'hide_footer_enabled',
 				'group' => $appearance,
 				'label' => __( 'Hide admin footer', 'adminkit' ),
 				'desc'  => __( 'Hide the admin footer bar — the "Thank you for creating with WordPress" line and the version number — on every screen, for a cleaner app-like look. Off restores it.', 'adminkit' ),
+			),
+			array(
+				'key'   => 'hide_help_button_enabled',
+				'group' => $appearance,
+				'label' => __( 'Hide the Help button', 'adminkit' ),
+				'desc'  => __( 'Hide the contextual "Help" tab at the top-right of admin screens, for cleaner chrome. "Screen Options" is left in place. Off restores it.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'quick_edit_users_enabled',

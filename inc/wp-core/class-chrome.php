@@ -164,22 +164,6 @@ class AdminKit_Core_Chrome {
 					&& AdminKit_Custom_Dashboard::is_enabled();
 			},
 		) );
-		// Hover-preview panel CSS (#ak-preview-pop) for the recent-activity
-		// thumbnails — the same stylesheet the list-table previews use. Loaded here
-		// (the post-previews feature only loads it on list screens) so the dashboard
-		// hover panel is styled; the script is enqueued by the dashboard module.
-		AdminKit_Assets::register( array(
-			'handle'    => 'adminkit-dashboard-preview',
-			'src'       => self::ASSETS_BASE . 'wp-components/post-previews.css',
-			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
-			'context'   => 'admin',
-			'section'   => 'pages',
-			'condition' => static function ( $screen ) {
-				return $screen && 'dashboard' === $screen->id
-					&& class_exists( 'AdminKit_Custom_Dashboard' )
-					&& AdminKit_Custom_Dashboard::is_enabled();
-			},
-		) );
 		self::register_screen( 'themes',          array( 'themes', 'theme-install' ) );
 		self::register_screen( 'theme-install',   array( 'themes', 'theme-install' ) );
 		// user-new.php reports screen id 'user' (WP strips '-new'); the CSS

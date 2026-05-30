@@ -5,10 +5,11 @@
    scoped under .adminkit-app so they outrank wp-admin's own input styling. */
 
 .adminkit-app {
-	/* Full width; the page inset (top breathing room + side gutters) now comes
-	   from `.wrap` in chrome.css — shared with every admin screen — so the
-	   settings page doesn't double up its own margins on top. */
-	max-width: none;
+	/* Cap the whole settings UI (header, tabs and every panel) to a comfortable
+	   column so toggle rows aren't stretched full-width — each switch stays close
+	   to its label. Left-aligned: the side gutter comes from `.wrap` (chrome.css),
+	   so the column sits under the page's left edge like every other admin screen. */
+	max-width: 720px;
 	font-family: var(--ak-font-body);
 	color: var(--ak-text);
 }
@@ -972,4 +973,266 @@
 	.adminkit-app .ak-tbl__map { flex-wrap: wrap; }
 	.adminkit-app .ak-field--inline .ak-seg { margin-left: 0; }
 	.adminkit-app .ak-head { flex-wrap: wrap; }
+}
+
+/* === Menu manager tab ===================================================== */
+.adminkit-app .ak-menu-tree {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-top: 8px;
+}
+.adminkit-app .ak-menu-group {
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-radius-m);
+	background: var(--ak-card-bg);
+}
+.adminkit-app .ak-menu-row {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 10px;
+}
+.adminkit-app .ak-menu-row--top { font-weight: 600; }
+.adminkit-app .ak-menu-row--child {
+	padding-left: 22px;
+	font-weight: 400;
+	border-top: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-menu-row.is-hidden { opacity: 0.5; }
+.adminkit-app .ak-menu-row.is-dragging { opacity: 0.4; }
+.adminkit-app .ak-menu-row.is-drop { box-shadow: inset 0 2px 0 0 var(--ak-primary); }
+.adminkit-app .ak-menu-handle {
+	display: inline-flex;
+	align-items: center;
+	color: var(--ak-muted);
+	cursor: grab;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-row__title {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--ak-text);
+}
+.adminkit-app .ak-menu-row__expand {
+	border: 0;
+	background: transparent;
+	color: var(--ak-muted);
+	font-size: var(--ak-text-xs);
+	cursor: pointer;
+	padding: 2px 6px;
+	border-radius: var(--ak-radius-s);
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-row__expand:hover,
+.adminkit-app .ak-menu-row__expand.on { color: var(--ak-text); }
+
+.adminkit-app .ak-menu-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	cursor: pointer;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-icon:hover { border-color: var(--ak-primary); }
+.adminkit-app .ak-menu-icon__g { display: inline-flex; width: 18px; height: 18px; }
+.adminkit-app .ak-menu-icon__g svg { width: 18px; height: 18px; }
+.adminkit-app .ak-menu-icon .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	line-height: 18px;
+}
+
+.adminkit-app .ak-menu-move { display: inline-flex; gap: 2px; flex: 0 0 auto; }
+.adminkit-app .ak-menu-move__btn {
+	width: 24px;
+	height: 24px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	cursor: pointer;
+	line-height: 1;
+}
+.adminkit-app .ak-menu-move__btn:disabled { opacity: 0.4; cursor: default; }
+
+.adminkit-app .ak-menu-hide {
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-muted);
+	cursor: pointer;
+	padding: 3px 10px;
+	font-size: var(--ak-text-xs);
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-hide[aria-pressed="true"] {
+	color: var(--ak-text);
+	border-color: var(--ak-primary);
+}
+
+.adminkit-app .ak-icon-pop {
+	position: absolute;
+	z-index: 20;
+	top: 44px;
+	left: 10px;
+	width: 264px;
+	padding: 8px;
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-radius-m);
+	background: var(--ak-elevated);
+	box-shadow: 0 8px 30px rgba( 0, 0, 0, 0.18 );
+}
+.adminkit-app .ak-icon-pop__def {
+	display: block;
+	width: 100%;
+	text-align: left;
+	border: 0;
+	background: transparent;
+	color: var(--ak-text);
+	cursor: pointer;
+	padding: 4px 6px;
+	border-radius: var(--ak-radius-s);
+	margin-bottom: 6px;
+}
+.adminkit-app .ak-icon-pop__def:hover { background: var(--ak-surface); }
+.adminkit-app .ak-icon-pop__grid {
+	display: grid;
+	grid-template-columns: repeat( 7, 1fr );
+	gap: 4px;
+	max-height: 220px;
+	overflow-y: auto;
+}
+.adminkit-app .ak-icon-pop__sw {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	border: 1px solid transparent;
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	cursor: pointer;
+}
+.adminkit-app .ak-icon-pop__sw:hover { border-color: var(--ak-primary); }
+.adminkit-app .ak-icon-pop__sw.on {
+	border-color: var(--ak-primary);
+	background: var(--ak-primary-subtle);
+}
+.adminkit-app .ak-icon-pop__sw svg { width: 18px; height: 18px; }
+.adminkit-app .ak-menu-icon__mask {
+	background-color: currentColor;
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+}
+.adminkit-app .ak-icon-pop__custom {
+	display: flex;
+	gap: 6px;
+	align-items: flex-start;
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-icon-pop__ta {
+	flex: 1 1 auto;
+	min-width: 0;
+	font-family: monospace;
+	font-size: var(--ak-text-xs);
+	resize: vertical;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	padding: 4px 6px;
+}
+.adminkit-app .ak-btn--small { padding: 4px 10px; font-size: var(--ak-text-xs); }
+
+/* Toolbar (Add link / Add separator / Reset) + custom rows */
+.adminkit-app .ak-menu-toolbar { gap: 8px; margin: 0 0 10px; }
+.adminkit-app .ak-btn--ghost {
+	background: transparent;
+	border-color: var(--ak-border);
+	color: var(--ak-muted);
+}
+.adminkit-app .ak-btn--ghost:hover {
+	color: var(--ak-text);
+	border-color: var(--ak-border-strong);
+}
+.adminkit-app .ak-menu-row--sep { padding-top: 6px; padding-bottom: 6px; }
+.adminkit-app .ak-menu-seplabel {
+	color: var(--ak-muted);
+	font-style: italic;
+	font-weight: 400;
+	letter-spacing: 0.04em;
+}
+.adminkit-app .ak-menu-input {
+	flex: 0 1 auto;
+	min-width: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	padding: 5px 8px;
+	font-size: var(--ak-text-s);
+}
+.adminkit-app .ak-menu-input:focus {
+	outline: none;
+	border-color: var(--ak-primary);
+}
+.adminkit-app .ak-menu-input--url {
+	flex: 1 1 auto;
+	font-family: monospace;
+	font-size: var(--ak-text-xs);
+}
+.adminkit-app .ak-menu-remove {
+	width: 24px;
+	height: 24px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-muted);
+	cursor: pointer;
+	line-height: 1;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-remove:hover {
+	color: var(--ak-error);
+	border-color: var(--ak-error);
+}
+
+/* Inline-editable label: looks like text until hover/focus */
+.adminkit-app .ak-menu-title {
+	flex: 1 1 auto;
+	font: inherit;
+	border-color: transparent;
+	background: transparent;
+	padding: 4px 6px;
+}
+.adminkit-app .ak-menu-title:hover { border-color: var(--ak-border); }
+.adminkit-app .ak-menu-title:focus {
+	outline: none;
+	border-color: var(--ak-primary);
+	background: var(--ak-surface);
+}
+/* Cross-section drop affordance on a parent's open children area */
+.adminkit-app .ak-menu-children.is-drop {
+	box-shadow: inset 0 0 0 2px var(--ak-primary);
+	border-radius: var(--ak-radius-s);
 }

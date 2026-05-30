@@ -254,6 +254,9 @@ class AdminKit_Settings_Page {
 			'bricksDetected'   => AdminKit_Settings_Catalog::bricks_detected(),
 			'bricksConnected'  => AdminKit_Settings_Catalog::bricks_connected(),
 			'bricksTokenCount' => AdminKit_Settings_Catalog::bricks_connected() ? AdminKit_Settings_Catalog::bricks_token_count() : 0,
+			// Menu manager — the captured menu tree, the saved layout, the icon
+			// picker set and the save route (read by the Menu tab).
+			'menuManager'  => AdminKit_Menu_Manager::editor_data(),
 			'i18n'         => array(
 				// Tab labels (the only three the SPA strip prints).
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
@@ -261,6 +264,30 @@ class AdminKit_Settings_Page {
 				// dark mode, post previews, login screen restyle, etc.).
 				'features'          => __( 'Features', 'adminkit' ),
 				'plugins'           => __( 'Plugins', 'adminkit' ),
+				'menu'              => __( 'Menu', 'adminkit' ),
+
+				// Menu manager tab.
+				'menuIntro'         => __( 'Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access.', 'adminkit' ),
+				'menuReset'         => __( 'Reset menu', 'adminkit' ),
+				'menuIconLabel'     => __( 'Icon', 'adminkit' ),
+				'menuIconPick'      => __( 'Choose an icon', 'adminkit' ),
+				'menuIconNone'      => __( 'Default', 'adminkit' ),
+				'menuHide'          => __( 'Hide', 'adminkit' ),
+				'menuHidden'        => __( 'Hidden', 'adminkit' ),
+				'menuShow'          => __( 'Show', 'adminkit' ),
+				'menuSubmenus'      => __( 'submenus', 'adminkit' ),
+				'menuDragHint'      => __( 'Drag to reorder', 'adminkit' ),
+				'menuMoveUp'        => __( 'Move up', 'adminkit' ),
+				'menuMoveDown'      => __( 'Move down', 'adminkit' ),
+				'menuIconCustom'    => __( 'Paste SVG or a data:image/svg+xml URI…', 'adminkit' ),
+				'menuIconApply'     => __( 'Apply', 'adminkit' ),
+				'menuAddLink'       => __( 'Add link', 'adminkit' ),
+				'menuAddSeparator'  => __( 'Add separator', 'adminkit' ),
+				'menuSeparator'     => __( 'Separator', 'adminkit' ),
+				'menuLinkTitle'     => __( 'Label', 'adminkit' ),
+				'menuLinkUrl'       => __( 'https://…', 'adminkit' ),
+				'menuRemove'        => __( 'Remove', 'adminkit' ),
+				'menuRename'        => __( 'Rename — clear to restore the original', 'adminkit' ),
 
 				// Features tab — intro + bulk row + per-plugin descriptors.
 				'featuresIntro'     => __( 'Turn AdminKit modules on or off.', 'adminkit' ),
@@ -288,7 +315,7 @@ class AdminKit_Settings_Page {
 				'unsaved'           => __( 'Unsaved changes', 'adminkit' ),
 
 				// --- Brand card -------------------------------------------------
-				'brandTitle'          => __( 'Marque', 'adminkit' ),
+				'brandTitle'          => __( 'Brand', 'adminkit' ),
 				'brandSyncStatus'     => __( 'Tokens synced with Bricks Builder', 'adminkit' ),
 				/* translators: %d: number of CSS custom properties exposed by Bricks. */
 				'brandSyncStatusCount' => __( '%d tokens', 'adminkit' ),

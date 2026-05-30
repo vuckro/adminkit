@@ -188,55 +188,58 @@ body.adminkit .ak-dash .ak-badge--bad {
 	background: var(--ak-error-subtle);
 	color: var(--ak-error);
 }
-
-/* ── Stat tiles ──────────────────────────────────────────────────────────── */
-body.adminkit .ak-dash__stats {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-	gap: 14px;
+body.adminkit .ak-dash .ak-badge--muted {
+	background: var(--ak-elevated);
+	color: var(--ak-text-muted);
 }
-body.adminkit .ak-dash__stat {
+
+/* ── Aperçu (counters) — a compact list of clickable content counts ──────── */
+body.adminkit .ak-dash__counter-list {
+	list-style: none;
+	margin: 0;
+	padding: 6px;
+}
+body.adminkit .ak-dash__counter-row {
 	display: flex;
-	flex-direction: row;
 	align-items: center;
 	gap: 12px;
-	padding: 12px 14px;
+	padding: 8px 10px;
+	border-radius: var(--ak-radius-s);
 	text-decoration: none;
-	transition: background .15s ease, border-color .15s ease;
+	transition: background .15s ease;
 }
-body.adminkit .ak-dash__stat:hover {
+body.adminkit .ak-dash__counter-row:hover {
 	background: var(--ak-elevated);
-	border-color: var(--ak-border-strong);
 }
-body.adminkit .ak-dash__stat-ic {
+body.adminkit .ak-dash__counter-ic {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 36px;
-	height: 36px;
+	width: 32px;
+	height: 32px;
 	flex: none;
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-primary-subtle);
 	color: var(--ak-primary);
 }
-body.adminkit .ak-dash__stat-ic .ak-dash-ic {
-	width: 19px;
-	height: 19px;
+body.adminkit .ak-dash__counter-ic .ak-dash-ic {
+	width: 17px;
+	height: 17px;
 }
-body.adminkit .ak-dash__stat-body {
-	display: flex;
-	flex-direction: column;
+body.adminkit .ak-dash__counter-l {
+	flex: 1;
 	min-width: 0;
-}
-body.adminkit .ak-dash__stat-n {
-	font-size: 20px;
-	font-weight: 700;
-	line-height: 1.15;
+	font-size: var(--ak-text-s);
 	color: var(--ak-heading);
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
-body.adminkit .ak-dash__stat-l {
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
+body.adminkit .ak-dash__counter-n {
+	flex: none;
+	font-size: 17px;
+	font-weight: 700;
+	color: var(--ak-heading);
 }
 
 /* ── Lower grid: activity | (health + storage) ───────────────────────────── */
@@ -253,102 +256,147 @@ body.adminkit .ak-dash__col {
 	min-width: 0;
 }
 
-/* Recent activity */
-body.adminkit .ak-dash__list {
-	list-style: none;
-	margin: 0;
-	padding: 6px;
+/* ── Recent content — a grid of preview cards (left column) ──────────────── */
+body.adminkit .ak-dash__head-link {
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	color: var(--ak-primary);
+	text-decoration: none;
 }
-body.adminkit .ak-dash__item {
+body.adminkit .ak-dash__head-link:hover {
+	text-decoration: underline;
+}
+body.adminkit .ak-dash__recent-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+	padding: 12px;
+}
+body.adminkit .ak-dash__post {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	overflow: hidden;
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	text-decoration: none;
+	transition: border-color .15s ease;
+}
+body.adminkit .ak-dash__post:hover {
+	border-color: var(--ak-border-strong);
+}
+/* Preview area — featured/mShots image, or a centered placeholder icon. */
+body.adminkit .ak-dash__post-media {
+	position: relative;
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	padding: 9px 12px;
-}
-body.adminkit .ak-dash__item + .ak-dash__item {
-	border-top: 1px solid var(--ak-border);
-}
-body.adminkit .ak-dash__item-ic {
-	display: inline-flex;
-	align-items: center;
 	justify-content: center;
-	width: 40px;
-	height: 40px;
-	flex: none;
-	overflow: hidden;
-	border-radius: var(--ak-radius-s);
+	aspect-ratio: 16 / 9;
 	background: var(--ak-elevated);
 	color: var(--ak-text-muted);
+	overflow: hidden;
 }
-body.adminkit .ak-dash__item-ic .ak-dash-ic {
-	width: 18px;
-	height: 18px;
-}
-/* Featured-image / avatar preview filling the slot (replaces the icon). */
-body.adminkit .ak-dash__item-ic--img {
-	background: transparent;
-}
-body.adminkit .ak-dash__item-thumb {
-	display: block;
+body.adminkit .ak-dash__post-img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 }
-/* Hint the on-hover page preview (the post-previews panel binds to [data-ak-full]). */
-body.adminkit .ak-dash__item-ic[data-ak-full] {
-	cursor: zoom-in;
+body.adminkit .ak-dash__post-ph .ak-dash-ic {
+	width: 30px;
+	height: 30px;
+	opacity: .5;
 }
-body.adminkit .ak-dash__item-ic--post {
-	background: var(--ak-success-subtle);
-	color: var(--ak-success);
-}
-body.adminkit .ak-dash__item-ic--comment {
-	background: var(--ak-warning-subtle);
-	color: var(--ak-warning);
-}
-body.adminkit .ak-dash__item-main {
-	display: flex;
-	flex-direction: column;
-	gap: 1px;
-	min-width: 0;
-	flex: 1;
-}
-body.adminkit .ak-dash__item-title {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	min-width: 0;
-	font-size: var(--ak-text-s);
-	font-weight: 600;
-	color: var(--ak-heading);
-}
-body.adminkit .ak-dash__item-title a {
-	min-width: 0;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	color: inherit;
-	text-decoration: none;
-}
-body.adminkit .ak-dash__item-title a:hover {
-	color: var(--ak-primary);
-}
-/* Post-type / "Commentaire" tag shown next to the title. */
-body.adminkit .ak-dash__item-type {
-	flex: none;
-	padding: 1px 7px;
+/* Type pill — top-left over the preview. */
+body.adminkit .ak-dash__post-type {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	padding: 2px 9px;
 	border-radius: var(--ak-radius-full);
-	background: var(--ak-elevated);
+	background: var(--ak-surface);
 	color: var(--ak-text-muted);
 	font-size: var(--ak-text-xs);
 	font-weight: 500;
 }
-body.adminkit .ak-dash__item-sub {
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
+/* Hover actions — pen (edit) + eye (open the live page, new tab), top-right. */
+body.adminkit .ak-dash__post-actions {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	display: flex;
+	gap: 6px;
+	opacity: 0;
+	transition: opacity .15s ease;
 }
-body.adminkit .ak-dash__item-time {
+body.adminkit .ak-dash__post:hover .ak-dash__post-actions,
+body.adminkit .ak-dash__post-actions:focus-within {
+	opacity: 1;
+}
+body.adminkit .ak-dash__post-act {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
 	flex: none;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+	transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+body.adminkit .ak-dash__post-act:hover {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent, #fff);
+}
+body.adminkit .ak-dash__post-act .ak-dash-ic {
+	width: 15px;
+	height: 15px;
+}
+body.adminkit .ak-dash__post-body {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding: 12px 14px 10px;
+	flex: 1;
+	text-decoration: none;
+	color: inherit;
+}
+body.adminkit .ak-dash__post-title {
+	font-size: var(--ak-text-s);
+	font-weight: 600;
+	line-height: 1.35;
+	color: var(--ak-heading);
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+body.adminkit .ak-dash__post:hover .ak-dash__post-title {
+	color: var(--ak-primary);
+}
+body.adminkit .ak-dash__post-excerpt {
+	font-size: var(--ak-text-xs);
+	line-height: 1.45;
+	color: var(--ak-text-muted);
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+body.adminkit .ak-dash__post-excerpt:empty {
+	display: none;
+}
+body.adminkit .ak-dash__post-foot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 0 14px 12px;
+}
+body.adminkit .ak-dash__post-time {
 	font-size: var(--ak-text-xs);
 	color: var(--ak-text-muted);
 	white-space: nowrap;
@@ -513,11 +561,15 @@ body.adminkit .ak-dash__prio-ic .ak-dash-ic {
 	width: 17px;
 	height: 17px;
 }
+body.adminkit .ak-dash__prio-row--bad .ak-dash__prio-ic {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
+}
 body.adminkit .ak-dash__prio-row--warn .ak-dash__prio-ic {
 	background: var(--ak-warning-subtle);
 	color: var(--ak-warning);
 }
-body.adminkit .ak-dash__prio-row--info .ak-dash__prio-ic {
+body.adminkit .ak-dash__prio-row--todo .ak-dash__prio-ic {
 	background: var(--ak-primary-subtle);
 	color: var(--ak-primary);
 }
@@ -576,5 +628,15 @@ body.adminkit .ak-dash__prio-empty .ak-dash-ic {
 		grid-template-columns: 1fr;
 	}
 }
-/* The stat tiles flow on their own via auto-fit (minmax 150px) — 2-up on phones,
-   more as the width grows — so no explicit per-breakpoint column counts needed. */
+/* Recent-content cards: 2-up by default, 4-up on a wide screen, 1-up on phones.
+   With 4 items that lands a clean 2×2 or a single row of 4 — never an orphan card. */
+@media (min-width: 1650px) {
+	body.adminkit .ak-dash__recent-grid {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+@media (max-width: 600px) {
+	body.adminkit .ak-dash__recent-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}

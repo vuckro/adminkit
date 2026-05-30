@@ -94,8 +94,15 @@ msgid "Branding"
 msgstr "Image de marque"
 
 #: inc/class-settings-page.php:276
-msgid "Your brand logo, light and dark. Ideally a horizontal SVG (crisp at any size), or a PNG at least ~320×80px (≈ 4:1), on a transparent background. Used for the site-title mark, the login screen and the Bricks builder."
-msgstr "Votre logo de marque, clair et sombre. Idéalement un SVG horizontal (net à toute taille), ou un PNG d’au moins ~320×80 px (≈ 4:1), sur fond transparent. Utilisé pour la marque à côté du titre du site, l’écran de connexion et le constructeur Bricks."
+msgid ""
+"Your brand logo, light and dark. Ideally a horizontal SVG (crisp at any "
+"size), or a PNG at least ~320×80px (≈ 4:1), on a transparent background. "
+"Used for the site-title mark, the login screen and the Bricks builder."
+msgstr ""
+"Votre logo de marque, clair et sombre. Idéalement un SVG horizontal (net à "
+"toute taille), ou un PNG d’au moins ~320×80 px (≈ 4:1), sur fond "
+"transparent. Utilisé pour la marque à côté du titre du site, l’écran de "
+"connexion et le constructeur Bricks."
 
 #: inc/class-settings-page.php:277
 msgid "Logo display"
@@ -150,8 +157,15 @@ msgid "Plugins"
 msgstr "Extensions"
 
 #: inc/class-settings-page.php:274
-msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
-msgstr "Toutes les extensions installées sur votre site, ainsi que les adaptateurs de thème actifs d’AdminKit. Les natifs ont un adaptateur dédié, activable par hôte ; les autres portent un badge Générique et héritent automatiquement du style de base d’AdminKit."
+msgid ""
+"Every plugin installed on your site, plus AdminKit's active theme adapters. "
+"Native ones have a tuned adapter you can switch per host; the rest carry a "
+"Generic badge and inherit AdminKit's base styling automatically."
+msgstr ""
+"Toutes les extensions installées sur votre site, ainsi que les adaptateurs "
+"de thème actifs d’AdminKit. Les natifs ont un adaptateur dédié, activable "
+"par hôte ; les autres portent un badge Générique et héritent automatiquement "
+"du style de base d’AdminKit."
 
 #: inc/class-settings-page.php:275
 msgid "Native"
@@ -159,7 +173,8 @@ msgstr "Natif"
 
 #: inc/class-settings-page.php:277
 msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
-msgstr "AdminKit fournit un adaptateur dédié pour cette extension — clair et sombre."
+msgstr ""
+"AdminKit fournit un adaptateur dédié pour cette extension — clair et sombre."
 
 #: inc/class-settings-page.php:278
 msgid "System"
@@ -175,7 +190,9 @@ msgstr "Générique"
 
 #: inc/class-settings-page.php:281
 msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
-msgstr "Aucun adaptateur dédié — thémé automatiquement par la couche de base d'AdminKit."
+msgstr ""
+"Aucun adaptateur dédié — thémé automatiquement par la couche de base "
+"d'AdminKit."
 
 #: inc/class-settings-page.php:282
 msgid "Themes"
@@ -194,8 +211,12 @@ msgid "Hide"
 msgstr "Masquer"
 
 #: inc/class-settings-page.php:294
-msgid "No Site Icon set — the mark stays empty until you add one (Settings → General)."
-msgstr "Aucune icône de site définie — la marque reste vide jusqu’à ce que vous en ajoutiez une (Réglages → Général)."
+msgid ""
+"No Site Icon set — the mark stays empty until you add one (Settings → "
+"General)."
+msgstr ""
+"Aucune icône de site définie — la marque reste vide jusqu’à ce que vous en "
+"ajoutiez une (Réglages → Général)."
 
 #: inc/class-settings-page.php:295
 msgid "Save changes"
@@ -247,7 +268,8 @@ msgstr "À vérifier"
 
 #: inc/class-settings-page.php:300
 msgid "Done — confirm so it can be removed from the roadmap."
-msgstr "Terminé — confirme pour qu'elle puisse être retirée de la feuille de route."
+msgstr ""
+"Terminé — confirme pour qu'elle puisse être retirée de la feuille de route."
 
 #: inc/class-settings-page.php:301
 msgid "Game-changer"
@@ -258,8 +280,14 @@ msgid "Live colour reference"
 msgstr "Référence des couleurs en direct"
 
 #: inc/class-settings-page.php:307
-msgid "Each row shows a live colour preview, the role, then its AdminKit token ← the WaasKit semantic it reads · the primitive it resolves from. Read-only — the palette is driven by your tokens."
-msgstr "Chaque ligne affiche un aperçu de couleur en direct, le rôle, puis son token AdminKit ← la sémantique WaasKit qu’il lit · la primitive dont il dérive. En lecture seule — la palette est pilotée par vos tokens."
+msgid ""
+"Each row shows a live colour preview, the role, then its AdminKit token ← "
+"the WaasKit semantic it reads · the primitive it resolves from. Read-only — "
+"the palette is driven by your tokens."
+msgstr ""
+"Chaque ligne affiche un aperçu de couleur en direct, le rôle, puis son token "
+"AdminKit ← la sémantique WaasKit qu’il lit · la primitive dont il dérive. En "
+"lecture seule — la palette est pilotée par vos tokens."
 
 #: inc/class-settings-page.php:308
 msgid "Typography"
@@ -267,7 +295,8 @@ msgstr "Typographie"
 
 #: inc/class-settings-page.php:309
 msgid "Body font follows Bricks (--font-base) when set, otherwise Inter."
-msgstr "La police du corps de texte suit Bricks (--font-base) si défini, sinon Inter."
+msgstr ""
+"La police du corps de texte suit Bricks (--font-base) si défini, sinon Inter."
 
 #: inc/class-settings-page.php:310
 msgid "Body"
@@ -346,8 +375,16 @@ msgid "Taxonomies, custom post types and the rest."
 msgstr "Taxonomies, types de publication personnalisés et le reste."
 
 #: inc/class-settings-page.php:421
-msgid "Extend AdminKit's per-screen polish to the pages still wearing default WordPress styling: the category and tag editors, custom-post-type lists, and the few remaining core screens — so the whole admin feels like one product."
-msgstr "Étendez le soin apporté par AdminKit à chaque écran aux pages encore habillées du style WordPress par défaut : les éditeurs de catégories et d’étiquettes, les listes de types de publication personnalisés et les quelques écrans natifs restants — pour que toute l’administration paraisse d’un seul tenant."
+msgid ""
+"Extend AdminKit's per-screen polish to the pages still wearing default "
+"WordPress styling: the category and tag editors, custom-post-type lists, and "
+"the few remaining core screens — so the whole admin feels like one product."
+msgstr ""
+"Étendez le soin apporté par AdminKit à chaque écran aux pages encore "
+"habillées du style WordPress par défaut : les éditeurs de catégories et "
+"d’étiquettes, les listes de types de publication personnalisés et les "
+"quelques écrans natifs restants — pour que toute l’administration paraisse "
+"d’un seul tenant."
 
 #: inc/class-settings-page.php:420
 msgid "Universal plugin compatibility"
@@ -358,8 +395,16 @@ msgid "Any plugin looks right, even without an adapter."
 msgstr "N'importe quelle extension s'affiche bien, même sans adaptateur."
 
 #: inc/class-settings-page.php:422
-msgid "Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common form controls — so a plugin with no dedicated adapter still looks coherent in light and dark out of the box. The stronger this layer, the less per-plugin work is ever needed."
-msgstr "Renforcer la couche de base partagée — notices, métaboxes, onglets, fenêtres modales, contrôles de formulaire courants — pour qu'une extension sans adaptateur dédié reste cohérente en clair et en sombre d'emblée. Plus cette couche est solide, moins il faut de travail par extension."
+msgid ""
+"Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common "
+"form controls — so a plugin with no dedicated adapter still looks coherent "
+"in light and dark out of the box. The stronger this layer, the less per-"
+"plugin work is ever needed."
+msgstr ""
+"Renforcer la couche de base partagée — notices, métaboxes, onglets, fenêtres "
+"modales, contrôles de formulaire courants — pour qu'une extension sans "
+"adaptateur dédié reste cohérente en clair et en sombre d'emblée. Plus cette "
+"couche est solide, moins il faut de travail par extension."
 
 #: inc/class-settings-page.php:424
 msgid "In-app palette editor"
@@ -370,8 +415,15 @@ msgid "Pick accent, surface and text colours directly."
 msgstr "Choisissez directement les couleurs d’accent, de surface et de texte."
 
 #: inc/class-settings-page.php:426
-msgid "Turn today's read-only token map into a real editor: choose your accent, surfaces and text, preview the change live across wp-admin, and export the palette to a provider like Bricks."
-msgstr "Transformez l’actuelle carte de jetons en lecture seule en un véritable éditeur : choisissez votre accent, vos surfaces et votre texte, prévisualisez le changement en direct dans tout wp-admin, et exportez la palette vers un fournisseur comme Bricks."
+msgid ""
+"Turn today's read-only token map into a real editor: choose your accent, "
+"surfaces and text, preview the change live across wp-admin, and export the "
+"palette to a provider like Bricks."
+msgstr ""
+"Transformez l’actuelle carte de jetons en lecture seule en un véritable "
+"éditeur : choisissez votre accent, vos surfaces et votre texte, "
+"prévisualisez le changement en direct dans tout wp-admin, et exportez la "
+"palette vers un fournisseur comme Bricks."
 
 #: inc/class-settings-page.php:431
 msgid "Planned"
@@ -386,8 +438,13 @@ msgid "Pull colours from your provider or theme."
 msgstr "Récupérez les couleurs de votre fournisseur ou de votre thème."
 
 #: inc/class-settings-page.php:436
-msgid "Read the active provider or theme palette and keep AdminKit in sync automatically, so the admin always matches the brand without manual edits."
-msgstr "Lit la palette du fournisseur ou du thème actif et garde AdminKit synchronisé automatiquement, pour que l’administration corresponde toujours à la marque sans modification manuelle."
+msgid ""
+"Read the active provider or theme palette and keep AdminKit in sync "
+"automatically, so the admin always matches the brand without manual edits."
+msgstr ""
+"Lit la palette du fournisseur ou du thème actif et garde AdminKit "
+"synchronisé automatiquement, pour que l’administration corresponde toujours "
+"à la marque sans modification manuelle."
 
 #: inc/class-settings-page.php:439
 msgid "More provider adapters"
@@ -402,8 +459,14 @@ msgid "Inherit"
 msgstr "Hériter"
 
 #: inc/class-settings-page.php:441
-msgid "Inherit brand colours from more page builders and frameworks (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress), the same way the Bricks adapter works today."
-msgstr "Héritez des couleurs de marque depuis davantage de constructeurs de pages et de frameworks (Automatic.css, Core Framework, Oxygen, Elementor, GeneratePress), comme le fait aujourd’hui l’adaptateur Bricks."
+msgid ""
+"Inherit brand colours from more page builders and frameworks (Automatic.css, "
+"Core Framework, Oxygen, Elementor, GeneratePress), the same way the Bricks "
+"adapter works today."
+msgstr ""
+"Héritez des couleurs de marque depuis davantage de constructeurs de pages et "
+"de frameworks (Automatic.css, Core Framework, Oxygen, Elementor, "
+"GeneratePress), comme le fait aujourd’hui l’adaptateur Bricks."
 
 #: inc/class-settings-page.php:444
 msgid "Theme variants"
@@ -414,8 +477,12 @@ msgid "Beyond light and dark — sepia, high-contrast."
 msgstr "Au-delà du clair et du sombre — sépia, contraste élevé."
 
 #: inc/class-settings-page.php:446
-msgid "Ship additional admin themes on top of light and dark, including an accessibility-minded high-contrast variant."
-msgstr "Proposez des thèmes d’administration supplémentaires en plus du clair et du sombre, dont une variante à contraste élevé pensée pour l’accessibilité."
+msgid ""
+"Ship additional admin themes on top of light and dark, including an "
+"accessibility-minded high-contrast variant."
+msgstr ""
+"Proposez des thèmes d’administration supplémentaires en plus du clair et du "
+"sombre, dont une variante à contraste élevé pensée pour l’accessibilité."
 
 #: inc/class-settings-page.php:449
 msgid "Per-role visibility"
@@ -426,8 +493,12 @@ msgid "Choose which roles get the skin and who may edit it."
 msgstr "Choisir quels rôles voient le thème et qui peut le modifier."
 
 #: inc/class-settings-page.php:451
-msgid "Decide which user roles see the AdminKit skin and which may change its settings — handy for client sites."
-msgstr "Décidez quels rôles utilisateurs voient l’habillage AdminKit et lesquels peuvent en modifier les réglages — pratique pour les sites clients."
+msgid ""
+"Decide which user roles see the AdminKit skin and which may change its "
+"settings — handy for client sites."
+msgstr ""
+"Décidez quels rôles utilisateurs voient l’habillage AdminKit et lesquels "
+"peuvent en modifier les réglages — pratique pour les sites clients."
 
 #: inc/class-settings-page.php:454
 msgid "Accessibility checks"
@@ -438,8 +509,12 @@ msgid "Warn when a colour fails contrast."
 msgstr "Alerte lorsqu’une couleur échoue au contraste."
 
 #: inc/class-settings-page.php:456
-msgid "Flag colour choices that fall below contrast and legibility thresholds, right where you pick them."
-msgstr "Signale les choix de couleurs qui passent sous les seuils de contraste et de lisibilité, là où vous les choisissez."
+msgid ""
+"Flag colour choices that fall below contrast and legibility thresholds, "
+"right where you pick them."
+msgstr ""
+"Signale les choix de couleurs qui passent sous les seuils de contraste et de "
+"lisibilité, là où vous les choisissez."
 
 #: inc/class-settings-page.php:459
 msgid "Custom dashboard widgets"
@@ -450,8 +525,12 @@ msgid "Replace the WP home screen."
 msgstr "Remplacez l’écran d’accueil de WordPress."
 
 #: inc/class-settings-page.php:461
-msgid "Swap the default dashboard for quick actions, site status and recent activity that are actually useful."
-msgstr "Remplacez le tableau de bord par défaut par des actions rapides, l’état du site et l’activité récente réellement utiles."
+msgid ""
+"Swap the default dashboard for quick actions, site status and recent "
+"activity that are actually useful."
+msgstr ""
+"Remplacez le tableau de bord par défaut par des actions rapides, l’état du "
+"site et l’activité récente réellement utiles."
 
 #: inc/class-settings-page.php:464
 msgid "Import / export settings"
@@ -462,8 +541,12 @@ msgid "Clone an AdminKit setup across sites."
 msgstr "Clonez une configuration AdminKit d’un site à l’autre."
 
 #: inc/class-settings-page.php:466
-msgid "Save a whole AdminKit configuration to a file and import it on another site in one step — ideal for agencies."
-msgstr "Enregistrez toute une configuration AdminKit dans un fichier et importez-la sur un autre site en une étape — idéal pour les agences."
+msgid ""
+"Save a whole AdminKit configuration to a file and import it on another site "
+"in one step — ideal for agencies."
+msgstr ""
+"Enregistrez toute une configuration AdminKit dans un fichier et importez-la "
+"sur un autre site en une étape — idéal pour les agences."
 
 #: inc/class-settings-page.php:469
 msgid "Bricks dynamic logo tag"
@@ -474,8 +557,13 @@ msgid "Use your AdminKit logo anywhere in Bricks."
 msgstr "Utilisez votre logo AdminKit n’importe où dans Bricks."
 
 #: inc/class-settings-page.php:471
-msgid "Expose the configured brand logo as a Bricks dynamic-data tag, so it can be dropped into any Bricks design and stays in sync."
-msgstr "Expose le logo de marque configuré sous forme de balise de données dynamiques Bricks, pour pouvoir l’insérer dans n’importe quelle conception Bricks tout en restant synchronisé."
+msgid ""
+"Expose the configured brand logo as a Bricks dynamic-data tag, so it can be "
+"dropped into any Bricks design and stays in sync."
+msgstr ""
+"Expose le logo de marque configuré sous forme de balise de données "
+"dynamiques Bricks, pour pouvoir l’insérer dans n’importe quelle conception "
+"Bricks tout en restant synchronisé."
 
 #: inc/class-settings-page.php:474
 msgid "WordPress Playground demo"
@@ -486,8 +574,13 @@ msgid "Try AdminKit live in the browser."
 msgstr "Essayez AdminKit en direct dans le navigateur."
 
 #: inc/class-settings-page.php:476
-msgid "A one-click WordPress Playground link so anyone can try AdminKit in the browser with no install — great for the README and the .org listing."
-msgstr "Un lien WordPress Playground en un clic pour que chacun puisse essayer AdminKit dans le navigateur sans installation — parfait pour le README et la fiche .org."
+msgid ""
+"A one-click WordPress Playground link so anyone can try AdminKit in the "
+"browser with no install — great for the README and the .org listing."
+msgstr ""
+"Un lien WordPress Playground en un clic pour que chacun puisse essayer "
+"AdminKit dans le navigateur sans installation — parfait pour le README et la "
+"fiche .org."
 
 #: inc/class-settings-page.php:479
 msgid "White-label & admin footer"
@@ -498,8 +591,12 @@ msgid "Hide WordPress branding, add an agency credit."
 msgstr "Masquez la marque WordPress, ajoutez un crédit d’agence."
 
 #: inc/class-settings-page.php:481
-msgid "Remove WordPress branding across the admin and add your own footer credit and version line."
-msgstr "Supprimez la marque WordPress dans toute l’administration et ajoutez votre propre crédit de pied de page et votre ligne de version."
+msgid ""
+"Remove WordPress branding across the admin and add your own footer credit "
+"and version line."
+msgstr ""
+"Supprimez la marque WordPress dans toute l’administration et ajoutez votre "
+"propre crédit de pied de page et votre ligne de version."
 
 #: inc/class-settings-page.php:525
 msgid "Default"
@@ -519,23 +616,32 @@ msgstr "Aperçus des publications"
 
 #: inc/class-settings-page.php:541
 msgid "Screenshot thumbnail column in post-type list tables."
-msgstr "Colonne de vignettes (captures d’écran) dans les tableaux de liste des types de publication."
+msgstr ""
+"Colonne de vignettes (captures d’écran) dans les tableaux de liste des types "
+"de publication."
 
 #: inc/class-settings-page.php:542
 msgid "Live screenshots (mShots)"
 msgstr "Captures d’écran en direct (mShots)"
 
 #: inc/class-settings-page.php:542
-msgid "Use WordPress.com mShots. Off = featured image only (no external calls)."
-msgstr "Utiliser mShots de WordPress.com. Désactivé = image mise en avant uniquement (aucun appel externe)."
+msgid ""
+"Use WordPress.com mShots. Off = featured image only (no external calls)."
+msgstr ""
+"Utiliser mShots de WordPress.com. Désactivé = image mise en avant uniquement "
+"(aucun appel externe)."
 
 #: inc/class-settings-page.php:543
 msgid "Dark mode"
 msgstr "Mode sombre"
 
 #: inc/class-settings-page.php:543
-msgid "Enable dark mode with a toggle in the admin bar. Off forces light mode everywhere."
-msgstr "Activer le mode sombre avec un interrupteur dans la barre d’administration. Désactivé force le mode clair partout."
+msgid ""
+"Enable dark mode with a toggle in the admin bar. Off forces light mode "
+"everywhere."
+msgstr ""
+"Activer le mode sombre avec un interrupteur dans la barre d’administration. "
+"Désactivé force le mode clair partout."
 
 #: inc/class-settings-page.php:544
 msgid "Login screen"
@@ -550,24 +656,43 @@ msgid "Gutenberg"
 msgstr "Gutenberg"
 
 #: inc/class-settings-page.php:545
-msgid "Theme the Gutenberg block-editor canvas (content + native blocks) in light and dark. Turn off to keep the canvas matching your live site exactly."
-msgstr "Thématise le canevas de l’éditeur de blocs Gutenberg (contenu + blocs natifs) en clair et sombre. Désactivez pour que le canevas reste exactement fidèle à votre site en ligne."
+msgid ""
+"Theme the Gutenberg block-editor canvas (content + native blocks) in light "
+"and dark. Turn off to keep the canvas matching your live site exactly."
+msgstr ""
+"Thématise le canevas de l’éditeur de blocs Gutenberg (contenu + blocs "
+"natifs) en clair et sombre. Désactivez pour que le canevas reste exactement "
+"fidèle à votre site en ligne."
 
 #: inc/class-settings-page.php:546
 msgid "AdminKit icons"
 msgstr "Icônes AdminKit"
 
 #: inc/class-settings-page.php:546
-msgid "Replace WordPress's native menu and toolbar icons with AdminKit's set. Non-destructive: icons already customised (e.g. via Admin Menu Editor) are left untouched."
-msgstr "Remplacer les icônes natives du menu et de la barre d’outils de WordPress par le jeu d’AdminKit. Non destructif : les icônes déjà personnalisées (ex. via Admin Menu Editor) sont laissées intactes."
+msgid ""
+"Replace WordPress's native menu and toolbar icons with AdminKit's set. Non-"
+"destructive: icons already customised (e.g. via Admin Menu Editor) are left "
+"untouched."
+msgstr ""
+"Remplacer les icônes natives du menu et de la barre d’outils de WordPress "
+"par le jeu d’AdminKit. Non destructif : les icônes déjà personnalisées (ex. "
+"via Admin Menu Editor) sont laissées intactes."
 
 #: inc/class-settings-page.php:547
 msgid "Custom avatars"
 msgstr "Avatars personnalisés"
 
 #: inc/class-settings-page.php:539
-msgid "Adds \"AdminKit Portraits (Generated)\" to Settings → Discussion → Default Avatar, and silently replaces Mystery Person so every user gets a unique generated portrait. A real Gravatar always wins. Off = Gravatar everywhere, unchanged."
-msgstr "Ajoute « AdminKit Portraits (Generated) » dans Réglages → Discussion → Avatar par défaut, et remplace silencieusement Mystère Personne pour que chaque utilisateur reçoive un portrait généré unique. Un vrai Gravatar gagne toujours. Désactivé = Gravatar partout, inchangé."
+msgid ""
+"Adds \"AdminKit Portraits (Generated)\" to Settings → Discussion → Default "
+"Avatar, and silently replaces Mystery Person so every user gets a unique "
+"generated portrait. A real Gravatar always wins. Off = Gravatar everywhere, "
+"unchanged."
+msgstr ""
+"Ajoute « AdminKit Portraits (Generated) » dans Réglages → Discussion → "
+"Avatar par défaut, et remplace silencieusement Mystère Personne pour que "
+"chaque utilisateur reçoive un portrait généré unique. Un vrai Gravatar gagne "
+"toujours. Désactivé = Gravatar partout, inchangé."
 
 #: inc/wp-core/class-local-avatars.php
 msgid "AdminKit Portraits (Generated)"
@@ -578,8 +703,12 @@ msgid "Bricks builder"
 msgstr "Constructeur Bricks"
 
 #: inc/class-settings-page.php:553
-msgid "Restyle the Bricks builder UI with your tokens. Needs Bricks builder mode set to \"Custom\"."
-msgstr "Restyle l'interface du constructeur Bricks avec vos tokens. Nécessite le mode constructeur Bricks réglé sur « Custom »."
+msgid ""
+"Restyle the Bricks builder UI with your tokens. Needs Bricks builder mode "
+"set to \"Custom\"."
+msgstr ""
+"Restyle l'interface du constructeur Bricks avec vos tokens. Nécessite le "
+"mode constructeur Bricks réglé sur « Custom »."
 
 #: inc/class-settings.php:132
 msgid "Surfaces"
@@ -646,8 +775,12 @@ msgid "Accent"
 msgstr "Accent"
 
 #: inc/class-settings.php:147
-msgid "Brand — buttons, links, highlights. Hover, subtle and focus derive from it automatically."
-msgstr "Marque — boutons, liens, surbrillances. Le survol, le subtil et le focus en dérivent automatiquement."
+msgid ""
+"Brand — buttons, links, highlights. Hover, subtle and focus derive from it "
+"automatically."
+msgstr ""
+"Marque — boutons, liens, surbrillances. Le survol, le subtil et le focus en "
+"dérivent automatiquement."
 
 #: inc/class-settings.php:149
 msgid "Accent hover"
@@ -694,8 +827,12 @@ msgid "Status"
 msgstr "Statut"
 
 #: inc/class-settings.php:161
-msgid "Info, success, warning and error — and their subtle fills — from the framework's notification roles."
-msgstr "Info, succès, avertissement et erreur — et leurs remplissages subtils — issus des rôles de notification du framework."
+msgid ""
+"Info, success, warning and error — and their subtle fills — from the "
+"framework's notification roles."
+msgstr ""
+"Info, succès, avertissement et erreur — et leurs remplissages subtils — "
+"issus des rôles de notification du framework."
 
 #: inc/class-settings.php:162
 msgid "Info"
@@ -832,8 +969,14 @@ msgid "Front and back admin bar, refined."
 msgstr "La barre d'admin, peaufinée à l'avant comme à l'arrière."
 
 #: inc/class-settings-page.php
-msgid "Finish the admin bar end to end — the same on the front end and back end, with tidy submenus, clear keyboard focus, and a clean responsive layout on mobile."
-msgstr "Finaliser la barre d'administration de bout en bout — identique côté site et côté admin, avec des sous-menus soignés, un focus clavier net et une mise en page responsive propre sur mobile."
+msgid ""
+"Finish the admin bar end to end — the same on the front end and back end, "
+"with tidy submenus, clear keyboard focus, and a clean responsive layout on "
+"mobile."
+msgstr ""
+"Finaliser la barre d'administration de bout en bout — identique côté site et "
+"côté admin, avec des sous-menus soignés, un focus clavier net et une mise en "
+"page responsive propre sur mobile."
 
 #: inc/class-settings-page.php
 msgid "Command palette"
@@ -844,8 +987,12 @@ msgid "Jump anywhere with a keystroke."
 msgstr "Accédez partout en une frappe."
 
 #: inc/class-settings-page.php
-msgid "A ⌘K / Ctrl-K launcher to jump straight to any admin page, setting or post — no more hunting through menus."
-msgstr "Un lanceur ⌘K / Ctrl-K pour sauter directement vers n'importe quelle page, réglage ou article de l'admin — fini la chasse dans les menus."
+msgid ""
+"A ⌘K / Ctrl-K launcher to jump straight to any admin page, setting or post — "
+"no more hunting through menus."
+msgstr ""
+"Un lanceur ⌘K / Ctrl-K pour sauter directement vers n'importe quelle page, "
+"réglage ou article de l'admin — fini la chasse dans les menus."
 
 #: inc/class-settings-page.php
 msgid "Per-user theme preference"
@@ -856,8 +1003,13 @@ msgid "Each user picks their own mode."
 msgstr "Chaque utilisateur choisit son propre mode."
 
 #: inc/class-settings-page.php
-msgid "Let every user choose their own light/dark mode and accent, saved per account, so the admin feels personal without changing it for anyone else."
-msgstr "Permettre à chaque utilisateur de choisir son mode clair/sombre et son accent, enregistrés par compte, pour une admin personnelle sans impacter les autres."
+msgid ""
+"Let every user choose their own light/dark mode and accent, saved per "
+"account, so the admin feels personal without changing it for anyone else."
+msgstr ""
+"Permettre à chaque utilisateur de choisir son mode clair/sombre et son "
+"accent, enregistrés par compte, pour une admin personnelle sans impacter les "
+"autres."
 
 #: inc/class-settings-page.php
 msgid "Admin notices manager"
@@ -868,8 +1020,13 @@ msgid "Tame the notice clutter."
 msgstr "Domptez le fouillis des notifications."
 
 #: inc/class-settings-page.php
-msgid "Gather WordPress's scattered admin notices into one tidy, collapsible area so update nags and plugin messages stop shoving your content down the page."
-msgstr "Regrouper les notifications d'admin éparpillées de WordPress dans une zone unique et repliable, pour que les rappels de mise à jour et messages d'extensions cessent de repousser votre contenu vers le bas."
+msgid ""
+"Gather WordPress's scattered admin notices into one tidy, collapsible area "
+"so update nags and plugin messages stop shoving your content down the page."
+msgstr ""
+"Regrouper les notifications d'admin éparpillées de WordPress dans une zone "
+"unique et repliable, pour que les rappels de mise à jour et messages "
+"d'extensions cessent de repousser votre contenu vers le bas."
 
 #: inc/class-settings-page.php
 msgid "Native menu editor"
@@ -880,8 +1037,12 @@ msgid "Reorder, rename and hide menu items."
 msgstr "Réordonner, renommer et masquer les entrées de menu."
 
 #: inc/class-settings-page.php
-msgid "A lightweight, native way to reorder, rename or hide admin-menu items per role — the essentials, without a separate plugin."
-msgstr "Une façon native et légère de réordonner, renommer ou masquer les entrées du menu d'admin par rôle — l'essentiel, sans extension dédiée."
+msgid ""
+"A lightweight, native way to reorder, rename or hide admin-menu items per "
+"role — the essentials, without a separate plugin."
+msgstr ""
+"Une façon native et légère de réordonner, renommer ou masquer les entrées du "
+"menu d'admin par rôle — l'essentiel, sans extension dédiée."
 
 #: inc/class-settings-page.php
 msgid "Custom admin CSS"
@@ -892,8 +1053,12 @@ msgid "Drop in your own admin tweaks."
 msgstr "Ajoutez vos propres retouches admin."
 
 #: inc/class-settings-page.php
-msgid "A small sanitised field for your own admin CSS on top of AdminKit's tokens — for the one-off tweak without a child plugin."
-msgstr "Un petit champ assaini pour votre propre CSS d'admin par-dessus les tokens d'AdminKit — pour la retouche ponctuelle sans extension enfant."
+msgid ""
+"A small sanitised field for your own admin CSS on top of AdminKit's tokens — "
+"for the one-off tweak without a child plugin."
+msgstr ""
+"Un petit champ assaini pour votre propre CSS d'admin par-dessus les tokens "
+"d'AdminKit — pour la retouche ponctuelle sans extension enfant."
 
 #: inc/class-settings-page.php
 msgid "Density / compact mode"
@@ -904,8 +1069,12 @@ msgid "Comfortable or compact spacing."
 msgstr "Espacement confortable ou compact."
 
 #: inc/class-settings-page.php
-msgid "An optional denser layout that tightens spacing across wp-admin for power users, while keeping the comfortable default."
-msgstr "Une mise en page plus dense optionnelle qui resserre les espacements dans wp-admin pour les utilisateurs avancés, tout en gardant le confort par défaut."
+msgid ""
+"An optional denser layout that tightens spacing across wp-admin for power "
+"users, while keeping the comfortable default."
+msgstr ""
+"Une mise en page plus dense optionnelle qui resserre les espacements dans wp-"
+"admin pour les utilisateurs avancés, tout en gardant le confort par défaut."
 
 #: inc/class-settings-page.php
 msgid "Typography controls"
@@ -916,8 +1085,12 @@ msgid "Choose the admin font and scale."
 msgstr "Choisissez la police et l'échelle de l'admin."
 
 #: inc/class-settings-page.php
-msgid "Pick the admin font family and base size from sensible presets so the whole admin matches your brand's type."
-msgstr "Choisir la police et la taille de base de l'admin parmi des préréglages soignés, pour que toute l'admin s'accorde à la typo de votre marque."
+msgid ""
+"Pick the admin font family and base size from sensible presets so the whole "
+"admin matches your brand's type."
+msgstr ""
+"Choisir la police et la taille de base de l'admin parmi des préréglages "
+"soignés, pour que toute l'admin s'accorde à la typo de votre marque."
 
 #: inc/wp-core/class-local-avatars.php
 msgid "Profile picture"
@@ -948,7 +1121,9 @@ msgstr "Vous n'êtes pas autorisé·e à faire cela."
 
 #: inc/class-settings-page.php
 msgid "Customise your WordPress admin's design and branding."
-msgstr "Personnalisez le design et l'image de marque de votre administration WordPress."
+msgstr ""
+"Personnalisez le design et l'image de marque de votre administration "
+"WordPress."
 
 #: inc/class-settings-page.php
 msgid "Brand"
@@ -1056,7 +1231,9 @@ msgstr "Réinitialiser aux valeurs par défaut d'AdminKit"
 
 #: inc/class-settings-page.php
 msgid "Reset all AdminKit settings to defaults? This cannot be undone."
-msgstr "Réinitialiser tous les réglages AdminKit aux valeurs par défaut ? Cette action est irréversible."
+msgstr ""
+"Réinitialiser tous les réglages AdminKit aux valeurs par défaut ? Cette "
+"action est irréversible."
 
 #: inc/class-settings-page.php
 msgid "Defaults restored"
@@ -1072,7 +1249,8 @@ msgstr "Envie d'aller plus loin ?"
 
 #: inc/class-settings-page.php
 msgid "Browse every token AdminKit exposes — read-only reference."
-msgstr "Parcourez tous les tokens exposés par AdminKit — référence en lecture seule."
+msgstr ""
+"Parcourez tous les tokens exposés par AdminKit — référence en lecture seule."
 
 #. translators: %d is the total number of design tokens (resolved at render time).
 #: inc/class-settings-page.php
@@ -1089,8 +1267,11 @@ msgid "Token map"
 msgstr "Carte des tokens"
 
 #: inc/class-settings-page.php
-msgid "Read-only. AdminKit derives every token from the provider/baseline cascade."
-msgstr "Lecture seule. AdminKit dérive chaque token depuis la cascade fournisseur/baseline."
+msgid ""
+"Read-only. AdminKit derives every token from the provider/baseline cascade."
+msgstr ""
+"Lecture seule. AdminKit dérive chaque token depuis la cascade fournisseur/"
+"baseline."
 
 #: inc/class-settings-page.php
 msgid "Token"
@@ -1135,3 +1316,288 @@ msgstr "Bricks non détecté"
 #: inc/class-settings-page.php
 msgid "Color"
 msgstr "Couleur"
+
+msgid "Simplicity is the ultimate sophistication. — Leonardo da Vinci"
+msgstr "« La simplicité est la sophistication suprême. » — Léonard de Vinci"
+
+msgid ""
+"Perfection is achieved not when there is nothing more to add, but when there "
+"is nothing left to take away. — Antoine de Saint-Exupéry"
+msgstr ""
+"« La perfection, c’est quand il n’y a plus rien à retirer. » — Antoine de "
+"Saint-Exupéry"
+
+msgid "Good design is as little design as possible. — Dieter Rams"
+msgstr "« Le bon design, c’est le moins de design possible. » — Dieter Rams"
+
+msgid "Done is better than perfect — publish, then refine."
+msgstr "Bien fait vaut mieux que parfait — publiez, puis affinez."
+
+msgid "Consistency beats intensity: one good decision at a time."
+msgstr ""
+"La régularité l’emporte sur l’intensité : une bonne décision à la fois."
+
+msgid "Build today what you will be proud of tomorrow."
+msgstr "Créez aujourd’hui ce dont vous serez fier demain."
+
+msgid "Clarity is the courtesy of the maker."
+msgstr "La clarté est la politesse de celui qui crée."
+
+msgid "Every detail counts — it is their sum that makes the difference."
+msgstr "Chaque détail compte — c’est leur somme qui fait la différence."
+
+msgid "A great site is built one page at a time."
+msgstr "Un grand site se construit page après page."
+
+msgid "Fresh content keeps your visitors engaged."
+msgstr "Un contenu frais garde vos visiteurs engagés."
+
+msgid "Remember to back up before big changes."
+msgstr "Pensez à sauvegarder avant les grandes modifications."
+
+msgid "Your site at a glance."
+msgstr "Aperçu de votre site en un coup d’œil."
+
+msgid "Hello, %s"
+msgstr "Bonjour, %s"
+
+msgid "Good morning, %s"
+msgstr "Bonne matinée, %s"
+
+msgid "Ready for today, %s?"
+msgstr "Prêt pour aujourd’hui, %s ?"
+
+msgid "A good day begins"
+msgstr "Une bonne journée commence"
+
+msgid "Good afternoon, %s"
+msgstr "Bon après-midi, %s"
+
+msgid "The afternoon is yours"
+msgstr "L’après-midi est à vous"
+
+msgid "Good evening, %s"
+msgstr "Bonsoir, %s"
+
+msgid "Have a good evening, %s"
+msgstr "Bonne soirée, %s"
+
+msgid "A quiet evening to get ahead"
+msgstr "La soirée est calme pour avancer"
+
+msgid "Working late, %s"
+msgstr "Il est tard, %s"
+
+msgid "Still up, %s?"
+msgstr "Encore debout, %s ?"
+
+msgid "Great to see you again, %s"
+msgstr "Ravi de vous revoir, %s"
+
+msgid "%s is back!"
+msgstr "%s est de retour !"
+
+msgid "Glad to see you, %s"
+msgstr "Content de vous voir, %s"
+
+msgid "Pick up where you left off?"
+msgstr "On reprend où on s’était arrêté ?"
+
+msgid "Write a post"
+msgstr "Écrire un article"
+
+msgid "New page"
+msgstr "Nouvelle page"
+
+msgid "Add media"
+msgstr "Ajouter un média"
+
+msgid "Add user"
+msgstr "Créer un compte"
+
+msgid "Posts"
+msgstr "Articles"
+
+msgid "Media"
+msgstr "Médias"
+
+msgid "Comments"
+msgstr "Commentaires"
+
+msgid "Users"
+msgstr "Comptes"
+
+msgid "Recent changes"
+msgstr "Modifications récentes"
+
+msgid "Nothing recent yet."
+msgstr "Rien de récent pour l’instant."
+
+msgid "Edit"
+msgstr "Modifier"
+
+msgid "Needs attention"
+msgstr "À améliorer"
+
+msgid "Good"
+msgstr "Bon"
+
+msgid "Everything's running"
+msgstr "Tout fonctionne"
+
+msgid "Analysis unavailable"
+msgstr "Analyse indisponible"
+
+msgid "Site health"
+msgstr "Santé du site"
+
+msgid "View full report"
+msgstr "Voir le rapport complet"
+
+msgid "Storage"
+msgstr "Stockage"
+
+msgid "available"
+msgstr "disponibles"
+
+msgid "used"
+msgstr "utilisés"
+
+msgid "used by your site"
+msgstr "utilisés par votre site"
+
+msgid "Database"
+msgstr "Base de données"
+
+msgid "HTTPS off"
+msgstr "HTTPS inactif"
+
+msgid "Security and SEO"
+msgstr "Sécurité et référencement"
+
+msgid "Debug mode on"
+msgstr "Mode débogage actif"
+
+msgid "Turn off in production"
+msgstr "À désactiver en production"
+
+msgid "Update PHP %s"
+msgstr "PHP %s à mettre à jour"
+
+msgid "Version too old"
+msgstr "Version trop ancienne"
+
+msgid "Core, plugins, themes"
+msgstr "Cœur, extensions, thèmes"
+
+msgid "Update"
+msgstr "Mettre à jour"
+
+msgid "Remove if unused"
+msgstr "À supprimer si inutile"
+
+msgid "Manage"
+msgstr "Gérer"
+
+msgid "Awaiting review"
+msgstr "En attente de relecture"
+
+msgid "Open"
+msgstr "Ouvrir"
+
+msgid "Moderate"
+msgstr "Modérer"
+
+msgid "View"
+msgstr "Voir"
+
+msgid "To-do"
+msgstr "Actions à faire"
+
+msgid "All clear — nothing to do today."
+msgstr "Tout est en ordre — rien à faire aujourd’hui."
+
+msgid "Published"
+msgstr "Publié"
+
+msgid "Pending"
+msgstr "En attente"
+
+msgid "Draft"
+msgstr "Brouillon"
+
+msgid "Content"
+msgstr "Contenu"
+
+msgid "(no title)"
+msgstr "(sans titre)"
+
+msgid "%s ago"
+msgstr "Il y a %s"
+
+msgid "HTTPS on"
+msgstr "HTTPS actif"
+
+msgid "recommended"
+msgstr "recommandé"
+
+msgid "Everything's up to date"
+msgstr "Tout est à jour"
+
+msgid "Debug mode off"
+msgstr "Débogage désactivé"
+
+msgid "%d item to address"
+msgid_plural "%d items to address"
+msgstr[0] "%d élément à améliorer"
+msgstr[1] "%d éléments à améliorer"
+
+msgid "%d passed"
+msgid_plural "%d passed"
+msgstr[0] "%d réussi"
+msgstr[1] "%d réussis"
+
+msgid "%d critical"
+msgid_plural "%d critical"
+msgstr[0] "%d critique"
+msgstr[1] "%d critiques"
+
+msgid "%d recommended"
+msgid_plural "%d recommended"
+msgstr[0] "%d recommandée"
+msgstr[1] "%d recommandées"
+
+msgid "%d update available"
+msgid_plural "%d updates available"
+msgstr[0] "%d mise à jour disponible"
+msgstr[1] "%d mises à jour disponibles"
+
+msgid "%s inactive plugin"
+msgid_plural "%s inactive plugins"
+msgstr[0] "%s extension inactive"
+msgstr[1] "%s extensions inactives"
+
+msgid "%s inactive theme"
+msgid_plural "%s inactive themes"
+msgstr[0] "%s thème inactif"
+msgstr[1] "%s thèmes inactifs"
+
+msgid "%s draft to finish"
+msgid_plural "%s drafts to finish"
+msgstr[0] "%s brouillon à finir"
+msgstr[1] "%s brouillons à finir"
+
+msgid "%s post pending"
+msgid_plural "%s posts pending"
+msgstr[0] "%s article en attente"
+msgstr[1] "%s articles en attente"
+
+msgid "%s comment to moderate"
+msgid_plural "%s comments to moderate"
+msgstr[0] "%s commentaire à modérer"
+msgstr[1] "%s commentaires à modérer"
+
+msgid "%s scheduled post"
+msgid_plural "%s scheduled posts"
+msgstr[0] "%s publication planifiée"
+msgstr[1] "%s publications planifiées"

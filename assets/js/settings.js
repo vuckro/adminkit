@@ -61,6 +61,14 @@
 		}
 	} );
 
+	// Menu manager — module state + the working model built from the captured tree
+	// and the saved layout. buildMenuModel() is hoisted from the menu-tab section.
+	var MM = D.menuManager || { menu: [], config: { top: [], sub: {} }, icons: {} };
+	var dragState = null;
+	var openPicker = null;
+	state.menu = ( MM.menu && MM.menu.length ) ? buildMenuModel( MM.menu, MM.config || { top: [], sub: {} } ) : [];
+	state.menuDirty = false;
+
 	// --- tiny DOM helper -----------------------------------------------------
 	function el( tag, attrs, kids ) {
 		var n = document.createElement( tag );
@@ -110,16 +118,17 @@
 		dashboard: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>',
 		features: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
 		plugins: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>',
+		menu: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>',
 		// Upload arrow-up-tray — shown in empty brand-slot zones in lieu of a "Drop" text.
 		upload: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>'
 	};
 
-	// The Dashboard tab hosts the full branding UI (Brand card + tokens
-	// reference). Old `#design` hashes fall back to the dashboard via
-	// applyHash().
+	// Two tabs: "Tableau de bord" (the Brand card + every feature toggle) and
+	// "Plugins". Old `#design` / `#features` hashes fall back to the dashboard
+	// via applyHash().
 	var tabs = [
 		{ id: 'dashboard', label: I.dashboard, icon: ICONS.dashboard, build: buildDashboard },
-		{ id: 'features', label: I.features, icon: ICONS.features, build: buildFeatures },
+		{ id: 'menu', label: I.menu, icon: ICONS.menu, build: buildMenu },
 		{ id: 'plugins', label: I.plugins, icon: ICONS.plugins, build: buildPlugins }
 	];
 	var activeId = tabs[ 0 ].id;
@@ -179,7 +188,7 @@
 		} );
 	}
 
-	// URL hash reflects the active tab (#dashboard / #features / #plugins).
+	// URL hash reflects the active tab (#dashboard / #plugins).
 	function go( id ) {
 		if ( '#' + id === location.hash ) { selectTab( id ); }
 		else { location.hash = id; } // triggers hashchange → applyHash
@@ -196,10 +205,18 @@
 	// --- panels --------------------------------------------------------------
 	function intro( text ) { return el( 'p', { 'class': 'ak-intro', text: text } ); }
 
-	// Dashboard tab — currently just the Brand card (logos, favicons, accent
-	// picker, display row). Thin wrapper so the tab registry stays uniform.
+	// Dashboard tab — the Brand card (logos, favicons, accent picker, display row)
+	// on top, then every feature toggle below. buildDesign() and buildFeatures()
+	// each return a full .ak-panel; we keep the Brand panel and move the Features
+	// content into it so both live under one tab. The moved nodes keep their
+	// listeners, and the feature bulk / reset / row logic addresses elements
+	// through its own `refs` closure (never by querying the panel), so relocating
+	// them is safe.
 	function buildDashboard() {
-		return buildDesign();
+		var panel = buildDesign();
+		var features = buildFeatures();
+		while ( features.firstChild ) { panel.appendChild( features.firstChild ); }
+		return panel;
 	}
 
 	// Brand card builder. Lays out one .ak-card with the four media slots
@@ -921,6 +938,430 @@
 		return p;
 	}
 
+	// --- menu manager tab ----------------------------------------------------
+	// A drag-and-drop editor over the captured menu tree: reorder top items and
+	// submenus, swap a top item's icon (AdminKit set), or hide entries. Edits mutate
+	// state.menu; the single Save button posts the layout to its own route.
+
+	// Working model: configured items first (saved order), then snapshot items the
+	// saved layout doesn't have yet (new menus), appended in their natural order.
+	function buildMenuModel( snapshot, config ) {
+		// Global lookups so a submenu can be rebuilt under ANY parent (cross-section):
+		// childTitle = every submenu slug -> its original title; claimed = every slug
+		// any saved parent lists (so it leaves its origin and shows under its new parent).
+		var snapBySlug = {}, childTitle = {};
+		( snapshot || [] ).forEach( function ( m ) {
+			snapBySlug[ m.slug ] = m;
+			( m.children || [] ).forEach( function ( c ) { childTitle[ c.slug ] = c.title; } );
+		} );
+		var subCfg = ( config && config.sub ) || {};
+		var claimed = {};
+		Object.keys( subCfg ).forEach( function ( p ) {
+			( subCfg[ p ] || [] ).forEach( function ( s ) { claimed[ s.slug ] = true; } );
+		} );
+		var seen = {}, model = [];
+		( ( config && config.top ) || [] ).forEach( function ( t ) {
+			var m = snapBySlug[ t.slug ];
+			if ( m && m.type === 'separator' ) {
+				seen[ t.slug ] = true;
+				model.push( { type: 'separator', slug: t.slug, hidden: !! t.hidden } );
+			} else if ( m ) {
+				seen[ t.slug ] = true;
+				model.push( makeTop( m, t, subCfg, childTitle, claimed ) );
+			} else if ( t.type === 'link' || t.type === 'separator' ) {
+				model.push( makeCustom( t ) );
+			}
+			// else: a real menu that no longer exists → drop it.
+		} );
+		// Insert unseen snapshot items (native separators, plus any menu added since the
+		// layout was saved) at their NATURAL spot — right after the previous snapshot item
+		// already in the model — rather than dumping them all at the bottom.
+		var indexOfSlug = function ( slug ) {
+			for ( var i = 0; i < model.length; i++ ) { if ( model[ i ].slug === slug ) { return i; } }
+			return -1;
+		};
+		var prevSlug = null;
+		( snapshot || [] ).forEach( function ( m ) {
+			if ( seen[ m.slug ] ) { prevSlug = m.slug; return; }
+			var node = ( m.type === 'separator' )
+				? { type: 'separator', slug: m.slug, hidden: false }
+				: makeTop( m, null, subCfg, childTitle, claimed );
+			var at = ( prevSlug !== null ) ? indexOfSlug( prevSlug ) : -1;
+			var pos = ( at >= 0 ) ? at + 1 : ( null === prevSlug ? 0 : model.length );
+			model.splice( pos, 0, node );
+			prevSlug = m.slug;
+		} );
+		return model;
+	}
+
+	function makeTop( m, topCfg, subCfg, childTitle, claimed ) {
+		topCfg = topCfg || {};
+		var children = [], seenC = {};
+		// Configured children for this parent (may include children moved in from elsewhere).
+		( subCfg[ m.slug ] || [] ).forEach( function ( s ) {
+			if ( ! childTitle.hasOwnProperty( s.slug ) ) { return; } // child no longer exists → drop
+			seenC[ s.slug ] = true;
+			var ot = childTitle[ s.slug ];
+			children.push( { slug: s.slug, otitle: ot, title: ( s.title && s.title !== '' ) ? s.title : ot, hidden: !! s.hidden } );
+		} );
+		// This parent's own snapshot children not claimed elsewhere (new / unmoved).
+		( m.children || [] ).forEach( function ( c ) {
+			if ( seenC[ c.slug ] || claimed[ c.slug ] ) { return; }
+			children.push( { slug: c.slug, otitle: c.title, title: c.title, hidden: false } );
+		} );
+		return {
+			type: 'item', slug: m.slug, otitle: m.title,
+			title: ( topCfg.title && topCfg.title !== '' ) ? topCfg.title : m.title,
+			dashicon: m.dashicon || '', icon: topCfg.icon || '', hidden: !! topCfg.hidden,
+			open: false, children: children
+		};
+	}
+
+	// A custom (link / separator) working item rebuilt from its saved row.
+	function makeCustom( t ) {
+		if ( t.type === 'separator' ) {
+			return { type: 'separator', slug: t.slug, hidden: !! t.hidden };
+		}
+		// Links store their destination URL as the slug.
+		return { type: 'link', slug: t.slug, url: t.slug, title: t.title || '', icon: t.icon || '', hidden: !! t.hidden };
+	}
+
+	// Flatten the model into rows for the POST (position = array index).
+	function gatherMenu() {
+		var items = [];
+		state.menu.forEach( function ( top, ti ) {
+			var type = top.type || 'item';
+			if ( type === 'link' ) {
+				var url = ( top.url || '' ).replace( /^\s+|\s+$/g, '' );
+				if ( ! url ) { return; } // a link with no URL yet is dropped
+				items.push( { parent: '', slug: url, position: ti, icon: top.icon || '', hidden: !! top.hidden, type: 'link', title: top.title || '' } );
+				return;
+			}
+			if ( type === 'separator' ) {
+				items.push( { parent: '', slug: top.slug, position: ti, hidden: !! top.hidden, type: 'separator', title: '' } );
+				return;
+			}
+			items.push( { parent: '', slug: top.slug, position: ti, icon: top.icon || '', hidden: !! top.hidden, type: 'item', title: titleOverride( top ) } );
+			( top.children || [] ).forEach( function ( child, ci ) {
+				items.push( { parent: top.slug, slug: child.slug, position: ci, hidden: !! child.hidden, title: titleOverride( child ) } );
+			} );
+		} );
+		return items;
+	}
+
+	// A rename override is stored only when the label differs from the original; an
+	// empty field or a value equal to the original = no override (WP's label returns).
+	function titleOverride( it ) {
+		var t = it.title || '';
+		return ( '' !== t && t !== ( it.otitle || '' ) ) ? t : '';
+	}
+
+	function markMenuDirty() { state.menuDirty = true; markDirty(); }
+
+	function buildMenu() {
+		var p = el( 'section', { 'class': 'ak-panel ak-panel--menu', role: 'tabpanel' } );
+		p.appendChild( intro( I.menuIntro ) );
+		if ( ! MM.menu || ! MM.menu.length ) { return p; }
+		var tree = el( 'div', { 'class': 'ak-menu-tree' } );
+		p.appendChild( el( 'div', { 'class': 'ak-actions ak-menu-toolbar' }, [
+			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.menuAddLink, onclick: function () { addCustom( 'link', tree ); } } ),
+			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.menuAddSeparator, onclick: function () { addCustom( 'separator', tree ); } } ),
+			el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--ghost', text: I.menuReset, onclick: function () {
+				state.menu = buildMenuModel( MM.menu, { top: [], sub: {} } );
+				renderTree( tree );
+				markMenuDirty();
+			} } )
+		] ) );
+		renderTree( tree );
+		p.appendChild( tree );
+		return p;
+	}
+
+	// Append a new custom row (a separator, or a blank link to fill in).
+	function addCustom( type, tree ) {
+		var item = ( type === 'separator' )
+			? { type: 'separator', slug: 'ak-sep-' + Date.now() + '-' + Math.floor( Math.random() * 1e6 ), hidden: false }
+			: { type: 'link', slug: '', url: '', title: '', icon: '', hidden: false };
+		state.menu.push( item );
+		renderTree( tree );
+		markMenuDirty();
+	}
+
+	function renderTree( tree ) {
+		tree.textContent = '';
+		state.menu.forEach( function ( top, ti ) {
+			var t = top.type || 'item';
+			if ( 'separator' === t ) { tree.appendChild( separatorRow( top, ti, tree ) ); }
+			else if ( 'link' === t ) { tree.appendChild( linkRow( top, ti, tree ) ); }
+			else { tree.appendChild( topGroup( top, ti, tree ) ); }
+		} );
+	}
+
+	function separatorRow( item, ti, tree ) {
+		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--sep' + ( item.hidden ? ' is-hidden' : '' ) } );
+		var h = handle();
+		row.appendChild( h );
+		row.appendChild( el( 'span', { 'class': 'ak-menu-row__title ak-menu-seplabel', text: '— ' + I.menuSeparator + ' —' } ) );
+		row.appendChild( moveBtns( state.menu, ti, tree ) );
+		row.appendChild( hideBtn( item, tree ) );
+		row.appendChild( removeBtn( ti, tree ) );
+		dragSource( h, row, { kind: 'top', ti: ti } );
+		dropZone( row, function ( ds ) { return ds.kind === 'top'; }, function ( ds ) {
+			moveTop( ds.ti, ti ); renderTree( tree ); markMenuDirty();
+		} );
+		return el( 'div', { 'class': 'ak-menu-group' }, [ row ] );
+	}
+
+	function linkRow( item, ti, tree ) {
+		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--link' + ( item.hidden ? ' is-hidden' : '' ) } );
+		var h = handle();
+		row.appendChild( h );
+		row.appendChild( iconBtn( item, tree ) );
+		var titleIn = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: item.title || '', placeholder: I.menuLinkTitle } );
+		titleIn.addEventListener( 'input', function () { item.title = titleIn.value; markMenuDirty(); } );
+		var urlIn = el( 'input', { type: 'text', 'class': 'ak-menu-input ak-menu-input--url', value: item.url || '', placeholder: I.menuLinkUrl } );
+		urlIn.addEventListener( 'input', function () { item.url = urlIn.value; markMenuDirty(); } );
+		row.appendChild( titleIn );
+		row.appendChild( urlIn );
+		row.appendChild( moveBtns( state.menu, ti, tree ) );
+		row.appendChild( hideBtn( item, tree ) );
+		row.appendChild( removeBtn( ti, tree ) );
+		// Drag from the handle only, so the URL/title inputs stay text-selectable.
+		dragSource( h, row, { kind: 'top', ti: ti } );
+		dropZone( row, function ( ds ) { return ds.kind === 'top'; }, function ( ds ) {
+			moveTop( ds.ti, ti ); renderTree( tree ); markMenuDirty();
+		} );
+		return el( 'div', { 'class': 'ak-menu-group' }, [ row ] );
+	}
+
+	function removeBtn( ti, tree ) {
+		return el( 'button', { type: 'button', 'class': 'ak-menu-remove', title: I.menuRemove, 'aria-label': I.menuRemove, text: '×', onclick: function () {
+			state.menu.splice( ti, 1 );
+			renderTree( tree );
+			markMenuDirty();
+		} } );
+	}
+
+	function topGroup( top, ti, tree ) {
+		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--top' + ( top.hidden ? ' is-hidden' : '' ) } );
+		var h = handle();
+		row.appendChild( h );
+		row.appendChild( iconBtn( top, tree ) );
+		row.appendChild( titleInput( top ) );
+		if ( top.children.length ) {
+			row.appendChild( el( 'button', {
+				type: 'button',
+				'class': 'ak-menu-row__expand' + ( top.open ? ' on' : '' ),
+				text: top.children.length + ' ' + I.menuSubmenus,
+				onclick: function () { top.open = ! top.open; renderTree( tree ); }
+			} ) );
+		}
+		row.appendChild( moveBtns( state.menu, ti, tree ) );
+		if ( top.slug !== MM.self ) {
+			row.appendChild( hideBtn( top, tree ) );
+		}
+		dragSource( h, row, { kind: 'top', ti: ti } );
+		// Reorder tops, and accept a submenu dragged from any section (nest it here).
+		dropZone( row, function () { return true; }, function ( ds ) {
+			if ( ds.kind === 'top' ) { moveTop( ds.ti, ti ); }
+			else { moveChildToTop( ds.ti, ds.ci, ti ); }
+			renderTree( tree ); markMenuDirty();
+		} );
+
+		var group = el( 'div', { 'class': 'ak-menu-group' }, [ row ] );
+		if ( top.children.length && top.open ) {
+			var kids = el( 'div', { 'class': 'ak-menu-children' } );
+			top.children.forEach( function ( child, ci ) { kids.appendChild( childRow( ti, child, ci, tree ) ); } );
+			// Dropping into the open children area (not onto a row) appends here.
+			dropZone( kids, function ( ds ) { return ds.kind === 'sub'; }, function ( ds ) {
+				moveChildToTop( ds.ti, ds.ci, ti ); renderTree( tree ); markMenuDirty();
+			} );
+			group.appendChild( kids );
+		}
+		return group;
+	}
+
+	function childRow( ti, child, ci, tree ) {
+		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--child' + ( child.hidden ? ' is-hidden' : '' ) } );
+		var h = handle();
+		row.appendChild( h );
+		row.appendChild( titleInput( child ) );
+		row.appendChild( moveBtns( state.menu[ ti ].children, ci, tree ) );
+		row.appendChild( hideBtn( child, tree ) );
+		dragSource( h, row, { kind: 'sub', ti: ti, ci: ci } );
+		dropZone( row, function ( ds ) { return ds.kind === 'sub'; }, function ( ds ) {
+			moveChild( ds.ti, ds.ci, ti, ci ); renderTree( tree ); markMenuDirty();
+		} );
+		return row;
+	}
+
+	function handle() {
+		var h = el( 'span', { 'class': 'ak-menu-handle', title: I.menuDragHint, 'aria-hidden': 'true' } );
+		h.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.6"/><circle cx="15" cy="5" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="19" r="1.6"/><circle cx="15" cy="19" r="1.6"/></svg>';
+		return h;
+	}
+
+	function moveBtns( list, i, tree ) {
+		var wrap = el( 'span', { 'class': 'ak-menu-move' } );
+		var up = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveUp, 'aria-label': I.menuMoveUp, text: '↑', onclick: function () {
+			if ( i > 0 ) { moveItem( list, i, i - 1 ); renderTree( tree ); markMenuDirty(); }
+		} } );
+		if ( i === 0 ) { up.disabled = true; }
+		var down = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveDown, 'aria-label': I.menuMoveDown, text: '↓', onclick: function () {
+			if ( i < list.length - 1 ) { moveItem( list, i, i + 1 ); renderTree( tree ); markMenuDirty(); }
+		} } );
+		if ( i === list.length - 1 ) { down.disabled = true; }
+		wrap.appendChild( up );
+		wrap.appendChild( down );
+		return wrap;
+	}
+
+	function hideBtn( item, tree ) {
+		return el( 'button', {
+			type: 'button',
+			'class': 'ak-menu-hide',
+			'aria-pressed': item.hidden ? 'true' : 'false',
+			text: item.hidden ? I.menuShow : I.menuHide,
+			onclick: function () { item.hidden = ! item.hidden; renderTree( tree ); markMenuDirty(); }
+		} );
+	}
+
+	function moveItem( list, from, to ) {
+		var m = list.splice( from, 1 )[ 0 ];
+		list.splice( to, 0, m );
+	}
+
+	// Icon button + popover picker (top-level only — WordPress submenus have no icon).
+	function iconBtn( top, tree ) {
+		var btn = el( 'button', { type: 'button', 'class': 'ak-menu-icon', title: I.menuIconPick, 'aria-label': I.menuIconPick } );
+		paintIcon( btn, top );
+		btn.addEventListener( 'click', function ( e ) { e.stopPropagation(); openIconPicker( btn, top, tree ); } );
+		return btn;
+	}
+
+	function paintIcon( btn, top ) {
+		btn.textContent = '';
+		var g;
+		if ( top.icon && top.icon.indexOf( 'data:' ) === 0 ) {
+			g = el( 'span', { 'class': 'ak-menu-icon__g ak-menu-icon__mask' } );
+			g.style.webkitMaskImage = 'url("' + top.icon + '")';
+			g.style.maskImage = 'url("' + top.icon + '")';
+		} else if ( top.icon && MM.icons[ top.icon ] ) {
+			g = el( 'span', { 'class': 'ak-menu-icon__g' } );
+			g.innerHTML = MM.icons[ top.icon ];
+		} else if ( top.dashicon ) {
+			g = el( 'span', { 'class': 'dashicons ' + top.dashicon } );
+		} else {
+			g = el( 'span', { 'class': 'ak-menu-icon__g' } );
+			g.innerHTML = MM.icons.app || '';
+		}
+		btn.appendChild( g );
+	}
+
+	function openIconPicker( anchor, top, tree ) {
+		closeIconPicker();
+		var pop = el( 'div', { 'class': 'ak-icon-pop' } );
+		pop.appendChild( el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconNone, onclick: function () {
+			top.icon = ''; renderTree( tree ); markMenuDirty(); closeIconPicker();
+		} } ) );
+		var grid = el( 'div', { 'class': 'ak-icon-pop__grid' } );
+		Object.keys( MM.icons || {} ).forEach( function ( name ) {
+			var sw = el( 'button', { type: 'button', 'class': 'ak-icon-pop__sw' + ( top.icon === name ? ' on' : '' ), title: name, 'aria-label': name, onclick: function () {
+				top.icon = name; renderTree( tree ); markMenuDirty(); closeIconPicker();
+			} } );
+			sw.innerHTML = MM.icons[ name ];
+			grid.appendChild( sw );
+		} );
+		pop.appendChild( grid );
+		// Custom icon — raw <svg> markup or a data:image/svg+xml URI (base64 or encoded).
+		var ta = el( 'textarea', { 'class': 'ak-icon-pop__ta', rows: '2', placeholder: I.menuIconCustom } );
+		var applyBtn = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--small', text: I.menuIconApply, onclick: function () {
+			var v = ( ta.value || '' ).replace( /^\s+|\s+$/g, '' );
+			if ( ! v ) { return; }
+			if ( v.indexOf( '<svg' ) === 0 ) { v = 'data:image/svg+xml,' + encodeURIComponent( v ); }
+			if ( v.indexOf( 'data:image/svg+xml' ) !== 0 ) { return; }
+			top.icon = v; renderTree( tree ); markMenuDirty(); closeIconPicker();
+		} } );
+		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom' }, [ ta, applyBtn ] ) );
+		anchor.parentNode.appendChild( pop );
+		openPicker = pop;
+		setTimeout( function () { document.addEventListener( 'mousedown', onDocDown, true ); }, 0 );
+	}
+
+	function onDocDown( e ) {
+		if ( openPicker && ! openPicker.contains( e.target ) ) { closeIconPicker(); }
+	}
+
+	function closeIconPicker() {
+		if ( openPicker && openPicker.parentNode ) { openPicker.parentNode.removeChild( openPicker ); }
+		openPicker = null;
+		document.removeEventListener( 'mousedown', onDocDown, true );
+	}
+
+	// Tree drag-and-drop. A drag carries { kind:'top', ti } or { kind:'sub', ti, ci }.
+	// dragSource makes a handle draggable; dropZone accepts a drag (by kind) and runs the
+	// move. Top rows accept tops (reorder) AND subs (nest, cross-section); child rows accept
+	// subs (insert here, from any section); a parent's open children area accepts subs (append).
+	function dragSource( handle, row, info ) {
+		handle.setAttribute( 'draggable', 'true' );
+		handle.addEventListener( 'dragstart', function ( e ) {
+			e.stopPropagation();
+			dragState = info;
+			e.dataTransfer.effectAllowed = 'move';
+			try { e.dataTransfer.setData( 'text/plain', '1' ); } catch ( err ) {}
+			row.classList.add( 'is-dragging' );
+		} );
+		handle.addEventListener( 'dragend', function () { row.classList.remove( 'is-dragging' ); } );
+	}
+
+	function dropZone( zone, accepts, onDrop ) {
+		zone.addEventListener( 'dragover', function ( e ) {
+			if ( ! dragState || ! accepts( dragState ) ) { return; }
+			e.preventDefault();
+			e.stopPropagation();
+			e.dataTransfer.dropEffect = 'move';
+			zone.classList.add( 'is-drop' );
+		} );
+		zone.addEventListener( 'dragleave', function () { zone.classList.remove( 'is-drop' ); } );
+		zone.addEventListener( 'drop', function ( e ) {
+			if ( ! dragState || ! accepts( dragState ) ) { return; }
+			e.preventDefault();
+			e.stopPropagation();
+			zone.classList.remove( 'is-drop' );
+			var ds = dragState;
+			dragState = null;
+			onDrop( ds );
+		} );
+	}
+
+	function moveTop( from, to ) {
+		var m = state.menu.splice( from, 1 )[ 0 ];
+		state.menu.splice( to, 0, m );
+	}
+
+	function moveChild( fromTi, fromCi, toTi, toCi ) {
+		var c = state.menu[ fromTi ].children.splice( fromCi, 1 )[ 0 ];
+		if ( fromTi === toTi && fromCi < toCi ) { toCi--; }
+		if ( ! state.menu[ toTi ].children ) { state.menu[ toTi ].children = []; }
+		state.menu[ toTi ].children.splice( toCi, 0, c );
+		state.menu[ toTi ].open = true;
+	}
+
+	function moveChildToTop( fromTi, fromCi, toTi ) {
+		var c = state.menu[ fromTi ].children.splice( fromCi, 1 )[ 0 ];
+		if ( ! state.menu[ toTi ].children ) { state.menu[ toTi ].children = []; }
+		state.menu[ toTi ].children.push( c );
+		state.menu[ toTi ].open = true;
+	}
+
+	// A label that looks like plain text until focused; editing it renames the entry.
+	// Empty (or back to the original) = no override (WP's own label returns).
+	function titleInput( item ) {
+		var inp = el( 'input', { type: 'text', 'class': 'ak-menu-input ak-menu-title', value: item.title || '', placeholder: item.otitle || item.slug || '', title: I.menuRename, 'aria-label': I.menuRename } );
+		inp.addEventListener( 'input', function () { item.title = inp.value; markMenuDirty(); } );
+		return inp;
+	}
+
 	// --- save ----------------------------------------------------------------
 	// Interactive controls (Features toggles, Plugins toggles, Branding logos)
 	// post to REST; the Tokens tab is a read-only reference.
@@ -948,10 +1389,17 @@
 		state.saving = true;
 		updateBar();
 		var path = D.route.charAt( 0 ) === '/' ? D.route : '/' + D.route;
-		apiFetch( { path: path, method: 'POST', data: { values: gather() } } )
+		var jobs = [ apiFetch( { path: path, method: 'POST', data: { values: gather() } } ) ];
+		// The menu layout posts to its own route, only when the Menu tab changed.
+		if ( state.menuDirty && D.menuManager && D.menuManager.route ) {
+			var mpath = D.menuManager.route.charAt( 0 ) === '/' ? D.menuManager.route : '/' + D.menuManager.route;
+			jobs.push( apiFetch( { path: mpath, method: 'POST', data: { items: gatherMenu() } } ) );
+		}
+		Promise.all( jobs )
 			.then( function () {
 				state.saving = false;
 				state.dirty = false;
+				state.menuDirty = false;
 				updateBar();
 				setStatus( 'is-saved', I.saved );
 				// The toggles gate asset loading SERVER-side, so reflecting them
