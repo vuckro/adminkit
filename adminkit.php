@@ -42,5 +42,8 @@ require_once ADMINKIT_PATH . 'inc/wp-core/class-options-discussion.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-post-previews.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-user-quick-edit.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-username-changer.php';
+require_once ADMINKIT_PATH . 'inc/wp-core/class-custom-dashboard.php';
+require_once ADMINKIT_PATH . 'inc/wp-core/class-notification-center.php';
+require_once ADMINKIT_PATH . 'inc/wp-core/class-footer.php';
 
 AdminKit_Plugin::init();

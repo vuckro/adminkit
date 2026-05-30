@@ -1,0 +1,580 @@
+/* AdminKit custom dashboard (index.php) — loaded only on the dashboard screen.
+   SELF-CONTAINED: settings.css (where .ak-card / .ak-btn / .ak-badge live) is not
+   loaded here, so this file defines its own components from --ak-* tokens. Flat by
+   design; everything scoped under .ak-dash so nothing leaks. */
+
+/* ── Replace the native dashboard chrome ─────────────────────────────────── */
+/* Hide the stock "Dashboard" H1 — the greeting is the heading now. */
+body.adminkit.index-php .wrap > h1 {
+	display: none;
+}
+/* The custom dashboard owns the whole screen — hide WP's Screen Options + Help
+   (their toggles and panels); there's nothing here for them to configure. */
+body.adminkit.index-php #screen-meta-links,
+body.adminkit.index-php #screen-meta {
+	display: none;
+}
+/* Collapse WP's multi-column widget layout to one full-width column and strip the
+   postbox chrome from our single widget. */
+body.adminkit #dashboard-widgets-wrap {
+	overflow: visible;
+}
+/* WP sizes the dashboard columns with TWO-id (`#wpbody-content
+   #dashboard-widgets.columns-N .postbox-container`) and THREE-id (`…
+   #postbox-container-2 { float:right; width:50.5% }`) selectors, which out-specify
+   a plain `body.adminkit #dashboard-widgets …` rule. Left as-is, our single widget
+   sat in a ~49.5% column with the empty 2nd column reserving the right half — the
+   "collé à gauche / espace à droite" bug, most visible on phones (WP keeps the
+   stored column count there; its ≤782px block doesn't reset these widths). Match
+   WP's id depth (#wpbody-content + the numbered containers) so full-width wins and
+   the empty side columns collapse. */
+body.adminkit #wpbody-content #dashboard-widgets .postbox-container,
+body.adminkit #wpbody-content #dashboard-widgets #postbox-container-1,
+body.adminkit #wpbody-content #dashboard-widgets #postbox-container-2,
+body.adminkit #wpbody-content #dashboard-widgets #postbox-container-3,
+body.adminkit #wpbody-content #dashboard-widgets #postbox-container-4 {
+	width: 100%;
+	min-width: 0;
+	float: none;
+}
+body.adminkit #adminkit_dashboard.postbox {
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	margin: 0;
+}
+body.adminkit #adminkit_dashboard > .postbox-header {
+	display: none;
+}
+body.adminkit #adminkit_dashboard > .inside {
+	margin: 0;
+	padding: 0;
+}
+/* Belt-and-suspenders full width: defeat any leftover column cap / gutter so the
+   dashboard truly spans the content area (no empty gap on the right). */
+body.adminkit #dashboard-widgets-wrap,
+body.adminkit #dashboard-widgets,
+body.adminkit #adminkit_dashboard,
+body.adminkit #adminkit_dashboard > .inside {
+	width: 100%;
+	max-width: none;
+	min-width: 0;
+}
+/* NB: keep WordPress's `.meta-box-sortables { margin: 0 8px }` — its 8px sides
+   cancel `#dashboard-widgets-wrap { margin: 0 -8px }`, landing the widget exactly
+   on the .wrap content edge (the 40px gutter), same inset as every other page.
+   Zeroing it earlier made the dashboard sit 8px wider than the rest. */
+
+/* ── Shell ───────────────────────────────────────────────────────────────── */
+body.adminkit .ak-dash {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+body.adminkit .ak-dash-ic {
+	width: 18px;
+	height: 18px;
+	flex: none;
+}
+
+/* Greeting */
+body.adminkit .ak-dash__greet {
+	margin: 0;
+	padding: 0;
+	font-size: 30px;
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: -0.01em;
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__greet-name {
+	color: var(--ak-primary);
+}
+/* Description — a refined, rotating quote; a touch more presence than a caption. */
+body.adminkit .ak-dash__sub {
+	max-width: 64ch;
+	margin: 8px 0 0;
+	color: var(--ak-text-muted);
+	font-size: 15px;
+	line-height: 1.5;
+}
+
+/* ── Quick-action buttons ────────────────────────────────────────────────── */
+body.adminkit .ak-dash__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+body.adminkit .ak-dash .ak-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 16px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background .15s ease, border-color .15s ease;
+}
+body.adminkit .ak-dash .ak-btn:hover {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border-strong);
+}
+body.adminkit .ak-dash .ak-btn:focus-visible {
+	outline: none;
+	box-shadow: var(--ak-focus-ring);
+}
+body.adminkit .ak-dash .ak-btn .ak-dash-ic {
+	width: 16px;
+	height: 16px;
+}
+body.adminkit .ak-dash .ak-btn--primary {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent, #fff);
+}
+body.adminkit .ak-dash .ak-btn--primary:hover {
+	background: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
+}
+
+/* ── Card base (dashboard-local) ─────────────────────────────────────────── */
+body.adminkit .ak-dash .ak-card {
+	background: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+}
+body.adminkit .ak-dash .ak-card__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--ak-card-border);
+}
+body.adminkit .ak-dash .ak-card__title {
+	margin: 0;
+	padding: 0;
+	font-size: var(--ak-text-m);
+	font-weight: 600;
+	color: var(--ak-heading);
+}
+
+/* Badge (Bon / À améliorer / Critique) */
+body.adminkit .ak-dash .ak-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 3px 10px;
+	border-radius: var(--ak-radius-full);
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	line-height: 1.4;
+}
+body.adminkit .ak-dash .ak-badge--ok {
+	background: var(--ak-success-subtle);
+	color: var(--ak-success);
+}
+body.adminkit .ak-dash .ak-badge--warn {
+	background: var(--ak-warning-subtle);
+	color: var(--ak-warning);
+}
+body.adminkit .ak-dash .ak-badge--bad {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
+}
+
+/* ── Stat tiles ──────────────────────────────────────────────────────────── */
+body.adminkit .ak-dash__stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 14px;
+}
+body.adminkit .ak-dash__stat {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 14px;
+	text-decoration: none;
+	transition: background .15s ease, border-color .15s ease;
+}
+body.adminkit .ak-dash__stat:hover {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border-strong);
+}
+body.adminkit .ak-dash__stat-ic {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	flex: none;
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+}
+body.adminkit .ak-dash__stat-ic .ak-dash-ic {
+	width: 19px;
+	height: 19px;
+}
+body.adminkit .ak-dash__stat-body {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+body.adminkit .ak-dash__stat-n {
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1.15;
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__stat-l {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+
+/* ── Lower grid: activity | (health + storage) ───────────────────────────── */
+body.adminkit .ak-dash__grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 380px;
+	gap: 14px;
+	align-items: start;
+}
+body.adminkit .ak-dash__col {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	min-width: 0;
+}
+
+/* Recent activity */
+body.adminkit .ak-dash__list {
+	list-style: none;
+	margin: 0;
+	padding: 6px;
+}
+body.adminkit .ak-dash__item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 9px 12px;
+}
+body.adminkit .ak-dash__item + .ak-dash__item {
+	border-top: 1px solid var(--ak-border);
+}
+body.adminkit .ak-dash__item-ic {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	flex: none;
+	overflow: hidden;
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__item-ic .ak-dash-ic {
+	width: 18px;
+	height: 18px;
+}
+/* Featured-image / avatar preview filling the slot (replaces the icon). */
+body.adminkit .ak-dash__item-ic--img {
+	background: transparent;
+}
+body.adminkit .ak-dash__item-thumb {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+/* Hint the on-hover page preview (the post-previews panel binds to [data-ak-full]). */
+body.adminkit .ak-dash__item-ic[data-ak-full] {
+	cursor: zoom-in;
+}
+body.adminkit .ak-dash__item-ic--post {
+	background: var(--ak-success-subtle);
+	color: var(--ak-success);
+}
+body.adminkit .ak-dash__item-ic--comment {
+	background: var(--ak-warning-subtle);
+	color: var(--ak-warning);
+}
+body.adminkit .ak-dash__item-main {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	min-width: 0;
+	flex: 1;
+}
+body.adminkit .ak-dash__item-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	font-size: var(--ak-text-s);
+	font-weight: 600;
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__item-title a {
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	color: inherit;
+	text-decoration: none;
+}
+body.adminkit .ak-dash__item-title a:hover {
+	color: var(--ak-primary);
+}
+/* Post-type / "Commentaire" tag shown next to the title. */
+body.adminkit .ak-dash__item-type {
+	flex: none;
+	padding: 1px 7px;
+	border-radius: var(--ak-radius-full);
+	background: var(--ak-elevated);
+	color: var(--ak-text-muted);
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+}
+body.adminkit .ak-dash__item-sub {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__item-time {
+	flex: none;
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+	white-space: nowrap;
+}
+body.adminkit .ak-dash__empty {
+	margin: 0;
+	padding: 24px 18px;
+	color: var(--ak-text-muted);
+	text-align: center;
+	font-size: var(--ak-text-s);
+}
+
+/* Site health */
+body.adminkit .ak-dash__health-top {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 14px;
+}
+body.adminkit .ak-dash__ring {
+	position: relative;
+	width: 64px;
+	height: 64px;
+	flex: none;
+}
+body.adminkit .ak-dash__ring svg {
+	width: 64px;
+	height: 64px;
+	transform: rotate(-90deg);
+}
+body.adminkit .ak-dash__ring-bg {
+	fill: none;
+	stroke: var(--ak-border);
+	stroke-width: 5;
+}
+body.adminkit .ak-dash__ring-fg {
+	fill: none;
+	stroke: var(--ak-success);
+	stroke-width: 5;
+	stroke-linecap: round;
+	transition: stroke-dashoffset .6s ease;
+}
+body.adminkit .ak-dash__ring--warn .ak-dash__ring-fg {
+	stroke: var(--ak-warning);
+}
+body.adminkit .ak-dash__ring--bad .ak-dash__ring-fg {
+	stroke: var(--ak-error);
+}
+body.adminkit .ak-dash__ring-n {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 18px;
+	font-weight: 700;
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__health-h {
+	display: block;
+	font-weight: 600;
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__health-s {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__more {
+	display: inline-block;
+	margin: 16px 18px 18px;
+	font-size: var(--ak-text-s);
+	color: var(--ak-primary);
+	text-decoration: none;
+}
+body.adminkit .ak-dash__more:hover {
+	text-decoration: underline;
+}
+
+/* Storage */
+body.adminkit .ak-dash__store-head {
+	margin: 0;
+	padding: 16px 18px 0;
+	font-size: var(--ak-text-m);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__store-head strong {
+	font-size: 22px;
+	font-weight: 700;
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__store-used {
+	font-size: var(--ak-text-s);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__bar {
+	display: flex;
+	gap: 2px;
+	height: 8px;
+	margin: 14px 18px;
+	border-radius: var(--ak-radius-full);
+	overflow: hidden;
+	background: var(--ak-elevated);
+}
+body.adminkit .ak-dash__bar-seg {
+	height: 100%;
+	border-radius: var(--ak-radius-full);
+}
+body.adminkit .ak-dash__legend {
+	list-style: none;
+	margin: 0;
+	padding: 0 18px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 9px;
+}
+body.adminkit .ak-dash__legend li {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	font-size: var(--ak-text-s);
+	color: var(--ak-text);
+}
+body.adminkit .ak-dash__dot {
+	width: 10px;
+	height: 10px;
+	flex: none;
+	border-radius: 50%;
+}
+body.adminkit .ak-dash__legend-v {
+	margin-left: auto;
+	color: var(--ak-text-muted);
+}
+
+/* Priorités — actionable list: site-health alerts + maintenance + content to-dos. */
+body.adminkit .ak-dash__prio-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+body.adminkit .ak-dash__prio-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	border-top: 1px solid var(--ak-card-border);
+}
+body.adminkit .ak-dash__prio-list li:first-child .ak-dash__prio-row {
+	border-top: 0;
+}
+body.adminkit .ak-dash__prio-ic {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	flex: none;
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__prio-ic .ak-dash-ic {
+	width: 17px;
+	height: 17px;
+}
+body.adminkit .ak-dash__prio-row--warn .ak-dash__prio-ic {
+	background: var(--ak-warning-subtle);
+	color: var(--ak-warning);
+}
+body.adminkit .ak-dash__prio-row--info .ak-dash__prio-ic {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+}
+body.adminkit .ak-dash__prio-txt {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	flex: 1;
+	min-width: 0;
+}
+body.adminkit .ak-dash__prio-title {
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__prio-desc {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__prio-cta {
+	flex: none;
+	padding: 5px 12px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+	text-decoration: none;
+	transition: background .15s ease, border-color .15s ease;
+}
+body.adminkit .ak-dash__prio-cta:hover {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border-strong);
+}
+/* Empty (all-clear) state */
+body.adminkit .ak-dash__prio-empty {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	padding: 16px 18px;
+	font-size: var(--ak-text-s);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__prio-empty .ak-dash-ic {
+	width: 18px;
+	height: 18px;
+	flex: none;
+	color: var(--ak-success);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+	body.adminkit .ak-dash__grid {
+		grid-template-columns: 1fr;
+	}
+}
+/* The stat tiles flow on their own via auto-fit (minmax 150px) — 2-up on phones,
+   more as the width grows — so no explicit per-breakpoint column counts needed. */

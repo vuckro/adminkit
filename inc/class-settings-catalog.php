@@ -25,6 +25,18 @@ class AdminKit_Settings_Catalog {
 		$users      = __( 'Users & access', 'adminkit' );
 		$rows       = array(
 			array(
+				'key'   => 'custom_dashboard_enabled',
+				'group' => $content,
+				'label' => __( 'Custom dashboard', 'adminkit' ),
+				'desc'  => __( 'Replace the WordPress dashboard with a custom one: greeting, quick actions, stat tiles, recent activity, site health and storage. Off restores the native dashboard.', 'adminkit' ),
+			),
+			array(
+				'key'   => 'notification_center_enabled',
+				'group' => $content,
+				'label' => __( 'Notification center', 'adminkit' ),
+				'desc'  => __( 'Adds a bell to the toolbar that collects admin notices into a side drawer, keeping success confirmations inline. Off restores every notice to its normal place.', 'adminkit' ),
+			),
+			array(
 				'key'   => 'post_previews_enabled',
 				'group' => $content,
 				'label' => __( 'Post previews', 'adminkit' ),
@@ -53,6 +65,12 @@ class AdminKit_Settings_Catalog {
 				'group' => $appearance,
 				'label' => __( 'AdminKit icons', 'adminkit' ),
 				'desc'  => __( 'Swap WordPress\'s menu and toolbar icons for AdminKit\'s set. Icons customised elsewhere (e.g. Admin Menu Editor) are left alone.', 'adminkit' ),
+			),
+			array(
+				'key'   => 'hide_footer_enabled',
+				'group' => $appearance,
+				'label' => __( 'Hide admin footer', 'adminkit' ),
+				'desc'  => __( 'Hide the admin footer bar — the "Thank you for creating with WordPress" line and the version number — on every screen, for a cleaner app-like look. Off restores it.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'quick_edit_users_enabled',

@@ -1,0 +1,275 @@
+/* AdminKit — Notification Center: toolbar bell badge + right-side drawer.
+   The grouped notices are the LIVE WP notice nodes moved into the drawer, so they
+   inherit the notice card styling from chrome.css — we only add the chrome around
+   them (bell, badge, backdrop, drawer) plus the anti-flash gate. All token-driven;
+   no !important. */
+
+/* ───────── Anti-flash ─────────
+   The footer JS sorts notices on DOMContentLoaded. Until then, hide them so they
+   don't flash before relocation. `display:none` (not `visibility:hidden`) so the
+   notice reserves NO space — otherwise an empty placeholder box flashes at the top
+   of the page and then collapses. The JS removes .ak-nc-pending once sorted, and a
+   server-side safety timeout removes it even if the JS never loads. */
+html.ak-nc-pending #wpbody-content .notice,
+html.ak-nc-pending #wpbody-content .updated,
+html.ak-nc-pending #wpbody-content .update-nag,
+html.ak-nc-pending #wpbody-content div.error,
+html.ak-nc-pending .ak-nc-origin > * {
+	display: none;
+}
+
+/* The server wraps captured notice-hook output in this marker. display:contents
+   keeps it layout-transparent, so notices that stay inline (success) sit exactly
+   where they would natively. */
+.ak-nc-origin {
+	display: contents;
+}
+
+/* ───────── Bell node ─────────
+   Rendered server-side but kept hidden until the JS marks the page active — so a
+   no-JS visitor never sees an inert bell, and there's no flicker before the drawer
+   is wired. Showing it just restores WP's default display. */
+#wpadminbar #wp-admin-bar-ak-notifications {
+	display: none;
+	/* A little breathing room on the badge side so the count doesn't crowd the
+	   neighbouring toolbar icon (view-site). */
+	margin-inline-end: 7px;
+}
+html.ak-nc-active #wpadminbar #wp-admin-bar-ak-notifications {
+	display: block;
+}
+
+/* Centre the glyph in the cell like the theme-toggle / view-site buttons. */
+#wpadminbar #wp-admin-bar-ak-notifications > .ab-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+#wpadminbar #wp-admin-bar-ak-notifications:hover > .ab-item,
+#wpadminbar #wp-admin-bar-ak-notifications > .ab-item:focus {
+	background: var(--ak-hover-bg, var(--ak-elevated));
+}
+
+/* The bell wrapper anchors the count badge. */
+#wpadminbar #wp-admin-bar-ak-notifications .ak-nc-bell {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+}
+
+/* Count badge — discreet, brand-coloured (per maintainer choice). */
+#wpadminbar #wp-admin-bar-ak-notifications .ak-nc-badge {
+	position: absolute;
+	top: -4px;
+	inset-inline-end: -7px;
+	box-sizing: border-box;
+	min-width: 16px;
+	height: 16px;
+	padding: 0 4px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--ak-radius-full);
+	background: var(--ak-primary);
+	color: var(--ak-on-accent, #fff);
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 1;
+}
+
+/* The hidden state must beat the display rule above — a CSS `display` value
+   overrides the `[hidden]` attribute, otherwise an empty bubble shows at count 0. */
+#wpadminbar #wp-admin-bar-ak-notifications .ak-nc-badge[hidden] {
+	display: none;
+}
+
+/* ───────── Backdrop ─────────
+   Sits BELOW #wpadminbar (z 99999) so the bar — and the bell — stay clickable
+   while the drawer is open (click the bell again to close). */
+.ak-nc-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 99990;
+	background: var(--ak-overlay);
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+.ak-nc-backdrop.is-open {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* ───────── Drawer ─────────
+   Right slide-in, under the admin bar (padding-top clears the fixed 32px bar).
+   Logical properties so RTL mirrors to the left. visibility:hidden when closed
+   keeps it out of the tab order. */
+.ak-nc-drawer {
+	position: fixed;
+	inset-block: 0;
+	inset-inline-end: 0;
+	z-index: 99991;
+	display: flex;
+	flex-direction: column;
+	/* Flexible width — sizes to content, capped at 40% of the viewport on desktop,
+	   with a floor so it never gets cramped. (Bump max-width to 50% for a roomier
+	   panel.) The responsive block below relaxes it to 80% on phones. */
+	width: auto;
+	min-width: 360px;
+	max-width: 40%;
+	padding-top: 32px;
+	box-sizing: border-box;
+	background: var(--ak-bg);
+	color: var(--ak-text);
+	border-inline-start: 1px solid var(--ak-border);
+	box-shadow: var(--ak-shadow-elevated);
+	font-family: var(--ak-font-body);
+	transform: translateX(100%);
+	visibility: hidden;
+	transition: transform 0.22s ease, visibility 0.22s ease;
+}
+.ak-nc-drawer.is-open {
+	transform: translateX(0);
+	visibility: visible;
+}
+[dir="rtl"] .ak-nc-drawer {
+	transform: translateX(-100%);
+}
+[dir="rtl"] .ak-nc-drawer.is-open {
+	transform: translateX(0);
+}
+
+/* Header */
+.ak-nc-head {
+	flex: none;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 16px 20px;
+	border-bottom: 1px solid var(--ak-border);
+}
+.ak-nc-head__text {
+	min-width: 0;
+}
+.ak-nc-title {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.3;
+	color: var(--ak-heading);
+}
+.ak-nc-subtitle {
+	margin: 2px 0 0;
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+.ak-nc-close {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-btn-bg, var(--ak-elevated));
+	color: var(--ak-text-muted);
+	cursor: pointer;
+	transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.ak-nc-close:hover {
+	background: var(--ak-btn-hover-bg, var(--ak-elevated));
+	color: var(--ak-heading);
+	border-color: var(--ak-border-strong);
+}
+.ak-nc-close:focus-visible {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: 1px;
+}
+
+/* Body + list of relocated notices */
+.ak-nc-body {
+	flex: 1 1 auto;
+	overflow-y: auto;
+	padding: 16px;
+}
+.ak-nc-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+/* `[hidden]` must beat the display rules above (display overrides the attribute). */
+.ak-nc-list[hidden],
+.ak-nc-empty[hidden] {
+	display: none;
+}
+/* The moved nodes are real WP notices — they already carry AdminKit's notice card
+   styling from chrome.css. Just neutralise WP's page-context margins in the narrow
+   panel and let the list gap handle spacing. */
+.ak-nc-list .notice,
+.ak-nc-list .updated,
+.ak-nc-list .update-nag,
+.ak-nc-list div.error {
+	margin: 0;
+}
+
+/* Empty state */
+.ak-nc-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	padding: 48px 24px;
+	text-align: center;
+	color: var(--ak-text-muted);
+}
+.ak-nc-empty svg {
+	color: var(--ak-border-strong);
+	margin-bottom: 8px;
+}
+.ak-nc-empty__title {
+	margin: 0;
+	font-weight: 600;
+	color: var(--ak-text);
+}
+.ak-nc-empty__desc {
+	margin: 0;
+	font-size: var(--ak-text-s);
+}
+
+/* ───────── Responsive ─────────
+   Mobile bar is 46px and WP hides non-whitelisted toolbar items; re-show the bell
+   (when active) and give it a proper tap target, matching the theme-toggle block. */
+@media screen and (max-width: 782px) {
+	.ak-nc-drawer {
+		width: auto;
+		min-width: 0;
+		max-width: 80%;
+		padding-top: 46px;
+	}
+	html.ak-nc-active #wpadminbar li#wp-admin-bar-ak-notifications {
+		display: block;
+	}
+	#wpadminbar li#wp-admin-bar-ak-notifications > .ab-item {
+		width: 52px;
+		height: 46px;
+		padding: 0;
+	}
+	/* Match the other AdminKit toolbar SVGs (theme-toggle / view-site) at 22px on the
+	   46px touch bar — the base 18px left the bell out of step with its neighbours. */
+	#wpadminbar li#wp-admin-bar-ak-notifications .ak-theme-icon {
+		width: 22px;
+		height: 22px;
+	}
+}
+
+/* Respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+	.ak-nc-backdrop,
+	.ak-nc-drawer {
+		transition: none;
+	}
+}
