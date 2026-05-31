@@ -32,7 +32,7 @@ Two tiers under `inc/`: **wp-core/** restyles surfaces WordPress already renders
 focused admin subpage. The AdminKit menu has three subpages — **Settings** (tabbed: Brand ·
 Features · Plugins), **Menu**, **Statistics** (read-only) — all driven by one build-free
 vanilla-DOM engine (`assets/js/settings.js`) mounted per-screen via a `data-screen` host
-attribute; `inc/class-settings-page.php` exposes the shared `render_host()` / `enqueue_app()` /
+attribute; `inc/settings/class-settings-page.php` exposes the shared `render_host()` / `enqueue_app()` /
 `boot_data($screen)` helpers each subpage calls. Dark mode is design-time CSS only — no runtime
 auto-theme engine.
 
