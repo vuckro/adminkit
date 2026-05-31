@@ -59,6 +59,7 @@ class AdminKit_Plugin {
 
 		// features — AdminKit tools that add their own surface.
 		'features/online-users/class-online-users.php'         => 'AdminKit_Online_Users::init',
+		'features/dashboard/class-dashboard-cards.php'         => null, // presentation half, used by Custom_Dashboard
 		'features/dashboard/class-custom-dashboard.php'        => 'AdminKit_Custom_Dashboard::init',
 		'features/notifications/class-notification-center.php' => 'AdminKit_Notification_Center::init',
 		'wp-core/class-footer.php'                             => 'AdminKit_Footer::init',
