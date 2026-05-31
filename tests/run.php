@@ -134,21 +134,30 @@ if ( ! $has_wp ) {
 	// restore
 	AdminKit_Menu_Store::save_config( isset( $before['top'] ) || isset( $before['sub'] ) ? array() : array(), $blog );
 
-	ak_group( 'Stats store — record → summary_range aggregation' );
+	ak_group( 'Stats store — record → aggregation' );
 	AdminKit_Stats_Store::ensure_schema();
-	// Assert on the range TOTAL over a 2-day window [yesterday, today], not the
-	// exact-date day bucket: record() always stamps current_time('Y-m-d'), and a
-	// 2-day window stays correct even if the clock rolls past midnight mid-test.
-	$today  = current_time( 'Y-m-d' );
-	$yday   = gmdate( 'Y-m-d', strtotime( '-1 day', current_time( 'timestamp' ) ) );
-	$base   = (int) AdminKit_Stats_Store::summary_range( $yday, $today )['totals']['pageviews'];
+	$today = current_time( 'Y-m-d' );
+	// Assert through query_summary_range() — the UNCACHED aggregator. summary_range()
+	// wraps it in a 5-minute transient, so a write-then-read in the same window would
+	// see stale data (correct in production, useless for asserting the increment).
+	// We test the SQL aggregation deterministically here; the cached public wrapper's
+	// contract (shape) is checked separately below.
+	$q = new ReflectionMethod( 'AdminKit_Stats_Store', 'query_summary_range' );
+	$q->setAccessible( true );
+	$base = (int) ( $q->invoke( null, $today, $today, 50 )['days'][ $today ]['pageviews'] ?? 0 );
 	AdminKit_Stats_Store::record( '/ak-test-page/', true, 'example.com' );   // a visit + pageview
 	AdminKit_Stats_Store::record( '/ak-test-page/', false, '' );             // a pageview, not a visit
-	$after  = AdminKit_Stats_Store::summary_range( $yday, $today );
-	ak_eq( $base + 2, (int) $after['totals']['pageviews'], 'two records add two pageviews to the running total' );
+	$after = $q->invoke( null, $today, $today, 50 );
+	ak_eq( $base + 2, (int) ( $after['days'][ $today ]['pageviews'] ?? 0 ), 'two records add two pageviews for today' );
 	$paths = array();
 	foreach ( (array) ( $after['top_pages'] ?? array() ) as $r ) { $paths[ $r['name'] ] = (int) $r['pageviews']; }
 	ak_ok( ( $paths['/ak-test-page/'] ?? 0 ) >= 2, 'the test path shows in top_pages' );
+
+	ak_group( 'Stats store — public summary_range() contract' );
+	$sum = AdminKit_Stats_Store::summary_range( $today, $today );
+	foreach ( array( 'start', 'end', 'days', 'top_pages', 'top_sources' ) as $k ) {
+		ak_ok( array_key_exists( $k, $sum ), "summary_range() returns a '$k' key" );
+	}
 
 	ak_group( 'Stats store — mark_active → recent_activity' );
 	$ts = time();
