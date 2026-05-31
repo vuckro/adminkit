@@ -207,6 +207,27 @@ class AdminKit_Custom_Dashboard {
 	}
 
 	/**
+	 * The canonical default layout — the column + order a fresh install shows,
+	 * BEFORE the user drags anything. This is the single source of truth for
+	 * default placement: it positions filter-added cards too (e.g. 'stats',
+	 * which the Statistics module appends via the cards filter and which would
+	 * otherwise fall to the end), and it can place a card in a different column
+	 * than its registry `col` fallback (e.g. 'glance' shows in the side rail).
+	 *
+	 * A card present in grid_cards() but NOT listed here (a third-party addition)
+	 * falls back to its registry `col`, appended after the canonical ones.
+	 * Filterable so an integration can re-curate the first-run arrangement.
+	 *
+	 * @return array{main:string[],side:string[]}
+	 */
+	private static function default_order() {
+		return (array) apply_filters( 'adminkit/dashboard/default_order', array(
+			'main' => array( 'stats', 'health', 'content', 'storage' ),
+			'side' => array( 'preview', 'glance', 'adminkit', 'online' ),
+		) );
+	}
+
+	/**
 	 * The card order per column for the current user — the saved arrangement
 	 * reconciled with the live card set: unknown keys dropped, any card not yet
 	 * placed appended to its default column (so a card added in an update still
@@ -217,9 +238,27 @@ class AdminKit_Custom_Dashboard {
 	private static function layout() {
 		$cards = self::grid_cards();
 
-		// Default column + order, straight from the registry.
+		// Default column + order: the canonical layout first (it also positions
+		// filter-added cards like 'stats'), then any card not listed there falls
+		// back to its registry `col`, appended after.
+		$canon   = self::default_order();
 		$default = array( 'main' => array(), 'side' => array() );
+		$seen    = array();
+		foreach ( array( 'main', 'side' ) as $col ) {
+			if ( empty( $canon[ $col ] ) || ! is_array( $canon[ $col ] ) ) {
+				continue;
+			}
+			foreach ( $canon[ $col ] as $key ) {
+				if ( isset( $cards[ $key ] ) && empty( $seen[ $key ] ) ) {
+					$default[ $col ][] = $key;
+					$seen[ $key ]      = true;
+				}
+			}
+		}
 		foreach ( $cards as $key => $def ) {
+			if ( ! empty( $seen[ $key ] ) ) {
+				continue;
+			}
 			$col               = ( isset( $def['col'] ) && 'side' === $def['col'] ) ? 'side' : 'main';
 			$default[ $col ][] = $key;
 		}
@@ -470,6 +509,15 @@ class AdminKit_Custom_Dashboard {
 	 * @return string
 	 */
 	private static function card_default_col( $key ) {
+		// Honour the canonical layout first (so a re-shown card returns to the
+		// same column it ships in), then the registry `col` fallback.
+		$canon = self::default_order();
+		if ( in_array( $key, isset( $canon['side'] ) ? $canon['side'] : array(), true ) ) {
+			return 'side';
+		}
+		if ( in_array( $key, isset( $canon['main'] ) ? $canon['main'] : array(), true ) ) {
+			return 'main';
+		}
 		$cards = self::grid_cards();
 		return ( isset( $cards[ $key ]['col'] ) && 'side' === $cards[ $key ]['col'] ) ? 'side' : 'main';
 	}
