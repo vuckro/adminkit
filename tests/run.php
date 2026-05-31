@@ -136,14 +136,16 @@ if ( ! $has_wp ) {
 
 	ak_group( 'Stats store — record → summary_range aggregation' );
 	AdminKit_Stats_Store::ensure_schema();
-	$today = current_time( 'Y-m-d' );
-	$before = AdminKit_Stats_Store::summary_range( $today, $today );
-	$base_pv = isset( $before['days'][ $today ]['pageviews'] ) ? (int) $before['days'][ $today ]['pageviews'] : 0;
-	AdminKit_Stats_Store::record( '/ak-test-page/', true, 'example.com' );   // a visit
+	// Assert on the range TOTAL over a 2-day window [yesterday, today], not the
+	// exact-date day bucket: record() always stamps current_time('Y-m-d'), and a
+	// 2-day window stays correct even if the clock rolls past midnight mid-test.
+	$today  = current_time( 'Y-m-d' );
+	$yday   = gmdate( 'Y-m-d', strtotime( '-1 day', current_time( 'timestamp' ) ) );
+	$base   = (int) AdminKit_Stats_Store::summary_range( $yday, $today )['totals']['pageviews'];
+	AdminKit_Stats_Store::record( '/ak-test-page/', true, 'example.com' );   // a visit + pageview
 	AdminKit_Stats_Store::record( '/ak-test-page/', false, '' );             // a pageview, not a visit
-	$after = AdminKit_Stats_Store::summary_range( $today, $today );
-	$now_pv = isset( $after['days'][ $today ]['pageviews'] ) ? (int) $after['days'][ $today ]['pageviews'] : 0;
-	ak_eq( $base_pv + 2, $now_pv, 'two records add two pageviews to today' );
+	$after  = AdminKit_Stats_Store::summary_range( $yday, $today );
+	ak_eq( $base + 2, (int) $after['totals']['pageviews'], 'two records add two pageviews to the running total' );
 	$paths = array();
 	foreach ( (array) ( $after['top_pages'] ?? array() ) as $r ) { $paths[ $r['name'] ] = (int) $r['pageviews']; }
 	ak_ok( ( $paths['/ak-test-page/'] ?? 0 ) >= 2, 'the test path shows in top_pages' );
