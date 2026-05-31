@@ -24,13 +24,15 @@ define( 'ADMINKIT_URL', plugin_dir_url( __FILE__ ) );
 
 require_once ADMINKIT_PATH . 'inc/class-screen.php';
 require_once ADMINKIT_PATH . 'inc/class-icons.php';
-require_once ADMINKIT_PATH . 'inc/class-settings.php';
-require_once ADMINKIT_PATH . 'inc/class-settings-catalog.php';
-require_once ADMINKIT_PATH . 'inc/class-settings-gate.php';
-require_once ADMINKIT_PATH . 'inc/class-settings-page.php';
 require_once ADMINKIT_PATH . 'inc/class-plugin.php';
 require_once ADMINKIT_PATH . 'inc/class-assets.php';
 require_once ADMINKIT_PATH . 'inc/class-theme-toggle.php';
+
+// Settings — the registry, catalog, access gate + the SPA page host.
+require_once ADMINKIT_PATH . 'inc/settings/class-settings.php';
+require_once ADMINKIT_PATH . 'inc/settings/class-settings-catalog.php';
+require_once ADMINKIT_PATH . 'inc/settings/class-settings-gate.php';
+require_once ADMINKIT_PATH . 'inc/settings/class-settings-page.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-chrome.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-admin-bar.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-login.php';
@@ -44,16 +46,17 @@ require_once ADMINKIT_PATH . 'inc/wp-core/class-options-discussion.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-post-previews.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-user-quick-edit.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-username-changer.php';
-require_once ADMINKIT_PATH . 'inc/wp-core/class-online-users.php';
-require_once ADMINKIT_PATH . 'inc/wp-core/class-custom-dashboard.php';
-require_once ADMINKIT_PATH . 'inc/wp-core/class-notification-center.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-footer.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-help-button.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-plugins-list.php';
 
-// AdminKit features — self-contained tools with their own admin pages (each in its
-// own folder under inc/features/). Distinct from the wp-core/ modules (which restyle
-// existing WordPress screens) and from integrations/ (per-plugin adapters).
+// AdminKit features — self-contained tools that ADD a surface (their own admin page,
+// a dashboard, a data store), as opposed to wp-core/ which restyles existing
+// WordPress screens, and integrations/ which adapts third-party plugins. One folder
+// per feature under inc/features/.
+require_once ADMINKIT_PATH . 'inc/features/dashboard/class-custom-dashboard.php';
+require_once ADMINKIT_PATH . 'inc/features/online-users/class-online-users.php';
+require_once ADMINKIT_PATH . 'inc/features/notifications/class-notification-center.php';
 require_once ADMINKIT_PATH . 'inc/features/menu/class-menu-store.php';
 require_once ADMINKIT_PATH . 'inc/features/menu/class-menu-manager.php';
 require_once ADMINKIT_PATH . 'inc/features/stats/class-stats-store.php';
