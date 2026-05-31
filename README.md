@@ -7,6 +7,12 @@ A clean, modern restyle of the WordPress admin built on CSS tokens. **Standalone
 
 > Status: **v1.0.0** — first stable release.
 
+[**▶ Try AdminKit live in your browser**](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/vuckro/adminkit/main/.wordpress-org/blueprints/blueprint.json)
+— a throwaway WordPress (nothing installed, nothing saved) running the **latest `main`**
+and dropping you straight on the AdminKit screen. Powered by
+[WordPress Playground](https://wordpress.github.io/wordpress-playground/); it loads the
+plugin fresh from this repo each time, so you always see the current code.
+
 ---
 
 ## Table of contents
@@ -16,7 +22,7 @@ This README is split in two on purpose. **Part 1** is for everyone — even if y
 ### Part 1 — For users (start here if you just want to use the plugin)
 
 - [What AdminKit does](#what-adminkit-does)
-- [Try it in 60 seconds — no install](#try-it-in-60-seconds--no-install)
+- [Try it live — no install](#try-it-live--no-install)
 - [Install it on your own site](#install-it-on-your-own-site)
 - [Your first five minutes](#your-first-five-minutes)
 - [Light + dark mode](#light--dark-mode)
@@ -53,6 +59,10 @@ AdminKit is a regular WordPress plugin. Once activated, it gives `wp-admin` (the
 - **Automatic brand-color pickup** — set the accent color in AdminKit, and every native plugin adapter follows it.
 
 It changes **nothing on the public side of your site**. Your theme, your pages, your shop pages — untouched. AdminKit lives entirely inside `wp-admin`.
+
+## Try it live — no install
+
+Want to see it before installing anything? [**Launch the live demo**](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/vuckro/adminkit/main/.wordpress-org/blueprints/blueprint.json). It spins up a private, throwaway WordPress in your browser — running the **latest version straight from this repo** — and drops you on the AdminKit screen, already signed in as admin. Nothing is installed on your machine and nothing is saved; close the tab and it's gone. (First load takes a few seconds while it boots WordPress in-browser.)
 
 ## Install it on your own site
 
@@ -329,7 +339,7 @@ That's it — the boot orchestrator picks the folder up automatically on `after_
 This README is the single source. (The in-app dashboard widget that used to mirror it has been removed — the maintenance overhead of keeping two surfaces in sync wasn't worth the duplication.)
 
 - **Recently shipped** — custom dashboard (greeting · quick actions · stat tiles · recent activity · site-health · storage); notification center (a toolbar bell that collects promotional notice nags into a side drawer); hide admin footer; a mobile-responsive pass over the chrome + list tables.
-- **In progress** — universal plugin compatibility (broaden the runtime dark-mode coverage so per-plugin adapters become optional polish, not gap-fillers).
+- **In progress** — broader plugin coverage: more hand-tuned dark-mode adapters so the long tail of plugins looks right out of the box.
 - **Next** — more native screens styled; in-app palette editor; colour sync; more provider adapters; accessibility / contrast checks; import / export settings; per-role visibility; admin-bar polish.
 - **Planned** — command palette (⌘K); theme variants; per-user theme preference; native menu editor; white-label; custom admin CSS; density / compact mode; typography controls; Bricks dynamic logo tag.
 
@@ -343,7 +353,7 @@ Bug reports and pull requests are welcome on the [issues page](https://github.co
 - For host CSS drift, run `php dev/adapter-drift.php`.
 - For token changes, run `php tokens/build.php --check` before committing.
 
-The active integration branch is `docs/overhaul`; `main` is promoted to it at clean checkpoints. Releases are tagged on `main`.
+`main` is the single source of truth — all work lands there directly, and releases are tagged on `main`. (Spin a short-lived branch only for risky work, then fast-forward it back.)
 
 ## License
 
