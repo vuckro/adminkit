@@ -2,7 +2,9 @@
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
 	"meta": {
 		"title": "AdminKit — live demo",
-		"description": "Try AdminKit on a throwaway WordPress, installed straight from the main branch."
+		"description": "Try AdminKit on a throwaway WordPress, installed straight from the main branch.",
+		"author": "waaskit",
+		"categories": ["Plugins"]
 	},
 	"landingPage": "/wp-admin/admin.php?page=adminkit",
 	"preferredVersions": {
@@ -20,8 +22,7 @@
 				"resource": "git:directory",
 				"url": "https://github.com/vuckro/adminkit",
 				"ref": "main",
-				"refType": "branch",
-				"path": "/"
+				"refType": "branch"
 			},
 			"options": {
 				"activate": true
