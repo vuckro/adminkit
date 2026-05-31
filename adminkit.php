@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       AdminKit
  * Plugin URI:        https://github.com/vuckro/adminkit
- * Description:       Clean, modern restyle of wp-admin built on CSS tokens. Standalone — optional adapters layer in token providers (Bricks today, more later).
+ * Description:       Give your WordPress admin a clean, modern look — one-click dark mode, a refreshed dashboard, a menu editor, cookieless stats and polished plugin screens. Standalone, no setup.
  * Version:           1.0.0
  * Requires at least: 6.0
  * Requires PHP:      7.4

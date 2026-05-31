@@ -8,13 +8,21 @@ Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A clean, modern restyle of the WordPress admin built on CSS tokens. Standalone, with a light/dark mode and optional brand-colour providers.
+Give your WordPress admin a clean, modern look — one-click dark mode, a refreshed dashboard, a menu editor and private stats. No setup needed.
 
 == Description ==
 
-AdminKit restyles wp-admin, wp-login.php and the frontend admin bar into a flat, modern interface built entirely on CSS custom properties (`--ak-*` tokens). It is **standalone** — it ships a complete look with no dependencies — and can optionally inherit brand colours from a provider (Bricks today, more later).
+AdminKit gives the whole WordPress back office — the dashboard, every settings screen, the login page and the toolbar — a clean, calm, modern look, with a proper **light and dark mode** you toggle from the admin bar. Activate it and your admin is restyled; there is nothing to configure.
 
-It ships fully-featured: Gutenberg canvas theming, AdminKit's icon set, and local avatars — with an auto-generated face for users who have none — are all on by default, each switchable from the settings page.
+It also adds a handful of quality-of-life tools, each an individual on/off toggle:
+
+* a **redesigned dashboard** (greeting, quick actions, at-a-glance counts, site health, storage, recent activity — drag the cards to taste),
+* an **admin-menu editor** (reorder, rename, re-icon, hide entries),
+* **cookieless visitor stats** (visits + page views, with a live view — no cookies, no IP storage, no consent banner),
+* a **notifications drawer** that tidies admin notices off the top of every screen,
+* **generated avatars** for users with no photo, and inline **Quick Edit** on the users list.
+
+It is **standalone** — no theme or page builder required, and **nothing changes on the public side of your site**; AdminKit lives entirely inside wp-admin. Under the hood it's built on CSS variables, so it can optionally pick up your brand colours from a provider like Bricks.
 
 = Highlights =
 
