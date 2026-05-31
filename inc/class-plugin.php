@@ -15,39 +15,82 @@ defined( 'ABSPATH' ) || exit;
 class AdminKit_Plugin {
 
 	/**
+	 * The module registry — the SINGLE place to edit when adding/removing a module.
+	 *
+	 * Keys are paths relative to `inc/`; values are the boot callable run in this
+	 * exact order, or `null` for a file that only needs loading (helpers, the
+	 * settings catalog/gate which Settings_Page boots itself, and the data stores).
+	 * `init()` loads every file first, then boots the non-null ones in array order,
+	 * so boot order is explicit and require order can't trip anything up.
+	 *
+	 * Adding a module: drop `inc/<folder>/class-<name>.php`, add one line here.
+	 * (`wp-core/` restyles existing WP screens; `features/` adds new surfaces;
+	 * `inc/integrations/` is separate and auto-discovered — no entry needed.)
+	 *
+	 * @var array<string, string|null>
+	 */
+	const MODULES = array(
+		// Helpers — loaded for everyone, nothing to boot.
+		'class-screen.php'                                     => null,
+		'class-icons.php'                                      => null,
+
+		// Core services + the settings system, in boot order.
+		'class-assets.php'                                     => 'AdminKit_Assets::init',
+		'wp-core/class-chrome.php'                             => 'AdminKit_Core_Chrome::register',
+		'wp-core/class-login.php'                              => 'AdminKit_Core_Login::register',
+		'wp-core/class-branding.php'                           => 'AdminKit_Core_Branding::init',
+		'wp-core/class-menu-icons.php'                         => 'AdminKit_Core_Menu_Icons::init',
+		'settings/class-settings.php'                          => 'AdminKit_Settings::init',
+		'settings/class-settings-catalog.php'                 => null, // booted by Settings_Page
+		'settings/class-settings-gate.php'                    => null, // booted by Settings_Page
+		'settings/class-settings-page.php'                     => 'AdminKit_Settings_Page::init',
+		'class-theme-toggle.php'                               => 'AdminKit_Theme_Toggle::init',
+
+		// wp-core — restyle of existing WordPress screens.
+		'wp-core/class-profile-account.php'                    => 'AdminKit_Profile_Account::init',
+		'wp-core/class-local-avatars.php'                      => 'AdminKit_Local_Avatars::init',
+		'wp-core/class-list-table-chrome.php'                  => 'AdminKit_Core_List_Table_Chrome::init',
+		'wp-core/class-admin-bar.php'                          => 'AdminKit_Core_Admin_Bar::init',
+		'wp-core/class-options-general.php'                    => 'AdminKit_Core_Options_General::init',
+		'wp-core/class-options-discussion.php'                 => 'AdminKit_Core_Options_Discussion::init',
+		'wp-core/class-post-previews.php'                      => 'AdminKit_Post_Previews::init',
+		'wp-core/class-user-quick-edit.php'                    => 'AdminKit_User_Quick_Edit::init',
+		'wp-core/class-username-changer.php'                   => 'AdminKit_Username_Changer::init',
+
+		// features — AdminKit tools that add their own surface.
+		'features/online-users/class-online-users.php'         => 'AdminKit_Online_Users::init',
+		'features/dashboard/class-custom-dashboard.php'        => 'AdminKit_Custom_Dashboard::init',
+		'features/notifications/class-notification-center.php' => 'AdminKit_Notification_Center::init',
+		'wp-core/class-footer.php'                             => 'AdminKit_Footer::init',
+		'wp-core/class-help-button.php'                        => 'AdminKit_Help_Button::init',
+		'wp-core/class-plugins-list.php'                       => 'AdminKit_Plugins_List::init',
+		'features/menu/class-menu-store.php'                   => null, // schema only
+		'features/menu/class-menu-manager.php'                 => 'AdminKit_Menu_Manager::init',
+		'features/stats/class-stats-store.php'                 => null, // schema only
+		'features/stats/class-stats-tracker.php'               => 'AdminKit_Stats_Tracker::init',
+		'features/stats/class-stats-dashboard.php'             => 'AdminKit_Stats_Dashboard::init',
+		'features/stats/class-stats-page.php'                  => 'AdminKit_Stats_Page::init',
+	);
+
+	/**
 	 * Boot the plugin. Called once from the loader.
 	 *
 	 * @return void
 	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'load_textdomain' ) );
-		AdminKit_Assets::init();
-		AdminKit_Core_Chrome::register();
-		AdminKit_Core_Login::register();
-		AdminKit_Core_Branding::init();
-		AdminKit_Core_Menu_Icons::init();
-		AdminKit_Settings::init();
-		AdminKit_Settings_Page::init();
-		AdminKit_Theme_Toggle::init();
-		AdminKit_Profile_Account::init();
-		AdminKit_Local_Avatars::init();
-		AdminKit_Core_List_Table_Chrome::init();
-		AdminKit_Core_Admin_Bar::init();
-		AdminKit_Core_Options_General::init();
-		AdminKit_Core_Options_Discussion::init();
-		AdminKit_Post_Previews::init();
-		AdminKit_User_Quick_Edit::init();
-		AdminKit_Username_Changer::init();
-		AdminKit_Online_Users::init();
-		AdminKit_Custom_Dashboard::init();
-		AdminKit_Notification_Center::init();
-		AdminKit_Footer::init();
-		AdminKit_Help_Button::init();
-		AdminKit_Plugins_List::init();
-		AdminKit_Menu_Manager::init();
-		AdminKit_Stats_Tracker::init();
-		AdminKit_Stats_Dashboard::init();
-		AdminKit_Stats_Page::init();
+
+		// Pass 1: load every module file. Pass 2: boot the ones with an entry
+		// point, in registry order. Splitting the passes means a module's boot
+		// can safely reference any other module's class (all are loaded first).
+		foreach ( self::MODULES as $path => $boot ) {
+			require_once ADMINKIT_PATH . 'inc/' . $path;
+		}
+		foreach ( self::MODULES as $boot ) {
+			if ( null !== $boot ) {
+				call_user_func( $boot );
+			}
+		}
 
 		self::boot_integrations();
 
