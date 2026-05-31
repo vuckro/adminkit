@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The plugin requires PHP 7.4; check the floor and a current version.
+        php: [ '7.4', '8.2' ]
+    name: PHP ${{ matrix.php }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Lint every PHP file
+        run: |
+          set -e
+          find adminkit.php inc dev tokens tests -name '*.php' -print0 \
+            | xargs -0 -n1 -P4 php -l > /dev/null
+          echo "All PHP files parse."
+
+      - name: Token catalog is in sync (waaskit-tokens.css)
+        run: php tokens/build.php --check
+
+      - name: Run the test suite (pure-logic; DB tests skip without WordPress)
+        run: php tests/run.php
