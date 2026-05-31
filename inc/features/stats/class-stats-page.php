@@ -1,0 +1,364 @@
+<?php
+/**
+ * Stats page — the full drill-in, on its own AdminKit submenu page
+ * (admin.php?page=adminkit-stats). The dashboard card is the at-a-glance;
+ * THIS is "see everything" with longer top-N lists and a free date range picker.
+ *
+ * Reads through AdminKit_Stats_Store::summary_range() — the single data seam.
+ * Admin-only; never touches the front end.
+ *
+ * @package AdminKit
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+class AdminKit_Stats_Page {
+
+	const REST_NS    = 'adminkit/v1';
+	const REST_ROUTE = '/stats';
+
+	/** Top-N list length for the page (the card asks 10; the page asks more). */
+	const LIST_SIZE = 50;
+
+	/** Submenu page hook suffix (set when the page registers); gates enqueue. */
+	private static $hook = '';
+
+	/**
+	 * Wire the REST route. Gated on the same toggle as collection — no tab/data
+	 * when tracking is off (the SPA hides the tab via boot_data()).
+	 *
+	 * @return void
+	 */
+	public static function init() {
+		if ( ! AdminKit_Stats_Tracker::is_enabled() ) {
+			return;
+		}
+		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
+		// Self-register the focused "Statistics" submenu page (priority 11 so the
+		// AdminKit parent menu, added at the default priority, exists first).
+		add_action( 'admin_menu', array( __CLASS__, 'add_page' ), 11 );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
+	}
+
+	/** Capability required to view stats (shared with the dashboard card). */
+	private static function capability() {
+		return apply_filters( 'adminkit/stats/dashboard_capability', 'edit_posts' );
+	}
+
+	/**
+	 * Register the Statistics page as an AdminKit submenu. Capability is
+	 * `manage_options` to match the parent menu's reach (the at-a-glance dashboard
+	 * card already serves lower-capability roles). The page mounts the shared SPA
+	 * engine on the 'stats' screen.
+	 *
+	 * @return void
+	 */
+	public static function add_page() {
+		self::$hook = (string) add_submenu_page(
+			AdminKit_Settings_Page::SLUG,
+			__( 'Statistics', 'adminkit' ),
+			__( 'Statistics', 'adminkit' ),
+			'manage_options',
+			AdminKit_Settings_Page::SLUG_STATS,
+			array( __CLASS__, 'render' )
+		);
+	}
+
+	/**
+	 * Render the page host on the 'stats' screen — the shared engine builds the UI.
+	 *
+	 * @return void
+	 */
+	public static function render() {
+		AdminKit_Settings_Page::render_host( 'stats' );
+	}
+
+	/**
+	 * Enqueue the shared admin app with the stats-screen boot payload, on this page
+	 * only (gated on the hook suffix captured at registration).
+	 *
+	 * @param string $hook Current admin page hook suffix.
+	 * @return void
+	 */
+	public static function enqueue( $hook ) {
+		if ( '' === self::$hook || $hook !== self::$hook ) {
+			return;
+		}
+		AdminKit_Settings_Page::enqueue_app( AdminKit_Settings_Page::boot_data( 'stats' ) );
+	}
+
+	/**
+	 * Boot payload merged into window.AdminKitData by the settings page. The SPA
+	 * uses `enabled` to decide whether to render the Statistics tab, and `default`
+	 * to seed the date picker on first load (when no preference is saved).
+	 *
+	 * @return array
+	 */
+	public static function boot_data() {
+		$enabled = AdminKit_Stats_Tracker::is_enabled() && current_user_can( self::capability() );
+		$state   = AdminKit_Stats_Dashboard::get_user_state();
+
+		// Server-localised preset list so the SPA just paints labels.
+		$labels  = AdminKit_Stats_Dashboard::preset_labels();
+		$presets = array();
+		foreach ( AdminKit_Stats_Dashboard::PRESETS as $id ) {
+			$presets[] = array(
+				'id'    => $id,
+				'label' => isset( $labels[ $id ] ) ? (string) $labels[ $id ] : $id,
+			);
+		}
+
+		return array(
+			'enabled'     => (bool) $enabled,
+			'route'       => self::REST_NS . self::REST_ROUTE,
+			'today'       => current_time( 'Y-m-d' ),
+			'presets'     => $presets,
+			'liveRefresh' => (int) AdminKit_Stats_Dashboard::LIVE_REFRESH_MS,
+			'state'       => array(
+				'preset' => $state['preset'],
+				'start'  => $state['start'],
+				'end'    => $state['end'],
+			),
+		);
+	}
+
+	/**
+	 * i18n strings for the Statistics tab (merged into the SPA's i18n map).
+	 *
+	 * @return array<string,string>
+	 */
+	public static function i18n() {
+		return array(
+			'statsTab'             => __( 'Statistics', 'adminkit' ),
+			'statsIntro'           => __( 'Traffic from the built-in, cookieless tracker. Pick any date range to see visits, page views, your most-viewed pages and where visitors come from.', 'adminkit' ),
+			'statsVisits'          => __( 'Visits', 'adminkit' ),
+			'statsPageviews'       => __( 'Page views', 'adminkit' ),
+			'statsActive'          => __( 'active now', 'adminkit' ),
+			'statsTopPages'        => __( 'Top pages', 'adminkit' ),
+			'statsTopSources'      => __( 'Top sources', 'adminkit' ),
+			'statsDirect'          => __( 'Direct', 'adminkit' ),
+			'statsNoData'          => __( 'No traffic data yet — views will appear here as visitors arrive.', 'adminkit' ),
+			'statsNone'            => __( 'No data', 'adminkit' ),
+			'statsLoading'         => __( 'Loading…', 'adminkit' ),
+			'statsRangeFrom'       => __( 'From', 'adminkit' ),
+			'statsRangeTo'         => __( 'To', 'adminkit' ),
+			'statsRangeLabel'      => __( 'Date range', 'adminkit' ),
+			'statsColPage'         => __( 'Page', 'adminkit' ),
+			'statsColSource'       => __( 'Source', 'adminkit' ),
+			'statsColViews'        => __( 'Views', 'adminkit' ),
+			'statsColVisits'       => __( 'Visits', 'adminkit' ),
+			'statsLiveHeadOne'     => __( 'visitor active right now', 'adminkit' ),
+			'statsLiveHeadMany'    => __( 'visitors active right now', 'adminkit' ),
+			'statsLiveViewing'     => __( 'Currently viewing', 'adminkit' ),
+			'statsLiveFrom'        => __( 'Coming from', 'adminkit' ),
+			'statsLiveEmpty'       => __( 'Nobody is on the site right now — this view refreshes automatically.', 'adminkit' ),
+			'statsLiveColViewers'  => __( 'Viewers', 'adminkit' ),
+		);
+	}
+
+	/**
+	 * Register the read endpoint: GET adminkit/v1/stats?start=Y-m-d&end=Y-m-d.
+	 *
+	 * @return void
+	 */
+	public static function register_routes() {
+		register_rest_route(
+			self::REST_NS,
+			self::REST_ROUTE,
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( __CLASS__, 'rest_get' ),
+				'permission_callback' => static function () {
+					return current_user_can( self::capability() );
+				},
+				'args'                => array(
+					'preset' => array(
+						'type'              => 'string',
+						'required'          => false,
+						'sanitize_callback' => 'sanitize_key',
+					),
+					'start'  => array(
+						'type'              => 'string',
+						'required'          => false,
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'end'    => array(
+						'type'              => 'string',
+						'required'          => false,
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Return the full payload for a date range: resolved start/end, window totals,
+	 * the day series (for a chart), top pages with titles, top sources, plus the
+	 * live active count. Invalid dates degrade to the user's default range — no
+	 * fatal possible.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
+	public static function rest_get( $request ) {
+		$preset    = (string) $request->get_param( 'preset' );
+		$raw_start = (string) $request->get_param( 'start' );
+		$raw_end   = (string) $request->get_param( 'end' );
+
+		// A blank/unknown preset with explicit dates → custom; otherwise a rolling
+		// preset id. set_user_state() persists + returns the resolved state.
+		if ( '' === $preset && ( '' !== $raw_start || '' !== $raw_end ) ) {
+			$preset = 'custom';
+		}
+		if ( '' === $preset && '' === $raw_start && '' === $raw_end ) {
+			$state = AdminKit_Stats_Dashboard::get_user_state();
+		} else {
+			$state = AdminKit_Stats_Dashboard::set_user_state( $preset, $raw_start, $raw_end );
+		}
+		$start = $state['start'];
+		$end   = $state['end'];
+
+		// Live mode is a different shape: no series / no totals, just the active
+		// count grouped by page + source from the recent_activity buckets. The
+		// SPA branches on `preset === 'live'` to render the live view.
+		if ( 'live' === $state['preset'] ) {
+			return rest_ensure_response( self::live_payload( $state ) );
+		}
+
+		$sum = AdminKit_Stats_Store::summary_range( $start, $end, self::LIST_SIZE );
+
+		$series   = array();
+		$tpv      = 0;
+		$tv       = 0;
+		$start_ts = strtotime( $start );
+		$end_ts   = strtotime( $end );
+		for ( $ts = $start_ts; $ts <= $end_ts; $ts += DAY_IN_SECONDS ) {
+			$d  = gmdate( 'Y-m-d', $ts );
+			$pv = isset( $sum['days'][ $d ]['pageviews'] ) ? (int) $sum['days'][ $d ]['pageviews'] : 0;
+			$v  = isset( $sum['days'][ $d ]['visits'] ) ? (int) $sum['days'][ $d ]['visits'] : 0;
+			$series[] = array( 'date' => $d, 'pageviews' => $pv, 'visits' => $v );
+			$tpv += $pv;
+			$tv  += $v;
+		}
+
+		$pages = array();
+		foreach ( (array) ( isset( $sum['top_pages'] ) ? $sum['top_pages'] : array() ) as $row ) {
+			$path    = isset( $row['name'] ) ? (string) $row['name'] : '';
+			$pages[] = array(
+				'path'      => $path,
+				'title'     => self::page_title( $path ),
+				'url'       => esc_url_raw( home_url( $path ) ),
+				'pageviews' => isset( $row['pageviews'] ) ? (int) $row['pageviews'] : 0,
+			);
+		}
+
+		$sources = array();
+		foreach ( (array) ( isset( $sum['top_sources'] ) ? $sum['top_sources'] : array() ) as $row ) {
+			$name      = isset( $row['name'] ) ? (string) $row['name'] : '';
+			$sources[] = array(
+				'name'   => '' === $name ? 'direct' : $name,
+				'visits' => isset( $row['visits'] ) ? (int) $row['visits'] : 0,
+			);
+		}
+
+		return rest_ensure_response( array(
+			'preset'  => $state['preset'],
+			'start'   => $start,
+			'end'     => $end,
+			'totals'  => array( 'visits' => $tv, 'pageviews' => $tpv ),
+			'active'  => (int) AdminKit_Stats_Store::active_visitors( time() ),
+			'series'  => $series,
+			'pages'   => $pages,
+			'sources' => $sources,
+		) );
+	}
+
+	/**
+	 * Live-mode payload: ignore start/end (Live is "right now"). Reads the active
+	 * buckets, counts distinct tokens, and groups by their LATEST page + source.
+	 *
+	 * Returned shape diverges intentionally from the period payload — `viewers`
+	 * instead of `pageviews/visits`, no `series`/`totals` — so the SPA renders a
+	 * different layout without misreading per-day fields.
+	 *
+	 * @param array $state Current resolved user state.
+	 * @return array
+	 */
+	private static function live_payload( array $state ) {
+		$now    = time();
+		$active = AdminKit_Stats_Store::recent_activity( $now );
+
+		$pages_h   = array();
+		$sources_h = array();
+		foreach ( $active as $entry ) {
+			$p = isset( $entry['p'] ) ? (string) $entry['p'] : '';
+			$s = isset( $entry['s'] ) ? (string) $entry['s'] : '';
+			if ( '' !== $p ) {
+				$pages_h[ $p ] = isset( $pages_h[ $p ] ) ? $pages_h[ $p ] + 1 : 1;
+			}
+			if ( '' !== $s ) {
+				$sources_h[ $s ] = isset( $sources_h[ $s ] ) ? $sources_h[ $s ] + 1 : 1;
+			}
+		}
+		arsort( $pages_h );
+		arsort( $sources_h );
+
+		$pages = array();
+		foreach ( array_slice( $pages_h, 0, self::LIST_SIZE, true ) as $path => $n ) {
+			$pages[] = array(
+				'path'    => $path,
+				'title'   => self::page_title( $path ),
+				'url'     => esc_url_raw( home_url( $path ) ),
+				'viewers' => (int) $n,
+			);
+		}
+		$sources = array();
+		foreach ( array_slice( $sources_h, 0, self::LIST_SIZE, true ) as $name => $n ) {
+			$sources[] = array(
+				'name'    => '' === $name ? 'direct' : $name,
+				'viewers' => (int) $n,
+			);
+		}
+
+		return array(
+			'preset'  => $state['preset'],
+			'start'   => $state['start'],
+			'end'     => $state['end'],
+			'active'  => count( $active ),
+			'pages'   => $pages,
+			'sources' => $sources,
+		);
+	}
+
+	/**
+	 * Resolve a stored path to a human page title. url_to_postid (cheap rewrite
+	 * match) → get_the_title fallback → the path itself. Memoised per request.
+	 *
+	 * @param string $path
+	 * @return string
+	 */
+	private static function page_title( $path ) {
+		static $cache = array();
+		if ( isset( $cache[ $path ] ) ) {
+			return $cache[ $path ];
+		}
+		$title = '';
+		if ( '/' === $path ) {
+			$title = get_bloginfo( 'name' );
+		} else {
+			$id = url_to_postid( home_url( $path ) );
+			if ( $id ) {
+				$t = get_the_title( $id );
+				if ( '' !== $t ) {
+					$title = $t;
+				}
+			}
+		}
+		if ( '' === $title ) {
+			$title = '' !== trim( $path, '/' ) ? trim( $path, '/' ) : $path;
+		}
+		$cache[ $path ] = $title;
+		return $title;
+	}
+}
