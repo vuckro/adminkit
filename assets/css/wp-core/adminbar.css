@@ -364,3 +364,145 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 #wpadminbar li #adminbarsearch.adminbar-focused:before {
 	color: var(--ak-primary);
 }
+
+
+/* ============================================================================
+   RESPONSIVE BAR — one horizontal-scroll row with an edge "fondu" (≤782px)
+   ----------------------------------------------------------------------------
+   On WP's 46px touch bar the top-level items (a dozen-plus once AdminKit adds
+   its notifications / theme-toggle / view-site nodes) outgrow a phone's width.
+   WP's default lets the two item groups WRAP onto a second line, which spills
+   below the bar and overlaps the page. Instead we lay #wp-toolbar out as a
+   single horizontal-scroll row so every item stays reachable by swiping left↔
+   right, and fade the content into the bar surface at each edge to hint there's
+   more.
+
+   Why this is safe for the submenu dropdowns: at ≤782px WP itself sets every
+   top-level item to `position:static` (its "Experimental fix for touch toolbar
+   dropdown positioning"), so each open submenu's `.ab-sub-wrapper` resolves its
+   containing block to #wpadminbar — the fixed bar, an ANCESTOR of this scroller
+   — and therefore is NOT clipped by the scroller's overflow. And we paint the
+   fade with pinned pseudo-element overlays on #wpadminbar (NOT a mask on the
+   scroller), so an open dropdown — a descendant of #wp-toolbar — is never
+   faded along with the bar. */
+@media screen and (max-width: 782px) {
+	#wpadminbar > #wp-toolbar {
+		display: flex;
+		flex-wrap: nowrap;
+		max-width: 100%;
+		overflow-x: auto;
+		overflow-y: hidden;
+		-webkit-overflow-scrolling: touch; /* iOS momentum scroll */
+		scrollbar-width: none;             /* Firefox */
+		-ms-overflow-style: none;          /* legacy Edge */
+	}
+	/* No scrollbar gutter — the bar is only 46px tall, and the edge fade is the
+	   scrollability cue. */
+	#wpadminbar > #wp-toolbar::-webkit-scrollbar {
+		width: 0;
+		height: 0;
+	}
+
+	/* Both groups (root-default + top-secondary) and their items flow inline on
+	   one line at their natural width — no shrinking (which would squash the
+	   icons rather than scroll) and no float (ignored inside the flex row). */
+	#wpadminbar > #wp-toolbar > ul {
+		display: flex;
+		flex: 0 0 auto;
+		flex-wrap: nowrap;
+		float: none;
+	}
+	#wpadminbar > #wp-toolbar > ul > li {
+		flex: 0 0 auto;
+	}
+	/* Hold the account/tools group hard against the right while the bar still
+	   fits; once it overflows this auto-margin collapses to 0 and everything
+	   packs tight to scroll as one strip. */
+	#wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary {
+		margin-left: auto;
+	}
+
+	/* Edge "fondu" — two gradient overlays pinned to the bar's visible left/right
+	   edges (anchored on the non-scrolling #wpadminbar), fading icons into the
+	   surface as they slide under an edge. Both show by default, so even with no
+	   JS the bar gets a symmetric fade; admin-bar.js then hides whichever edge
+	   has nothing more to scroll (and both when the bar isn't overflowing).
+	   pointer-events:none keeps the faded edge icons tappable. */
+	#wpadminbar::before,
+	#wpadminbar::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		z-index: 100000; /* above the items — WP gives #wpadminbar li z-index:99999 */
+		width: 2rem;
+		height: 46px;
+		pointer-events: none;
+		opacity: 1;
+		transition: opacity 150ms ease;
+	}
+	#wpadminbar::before {
+		left: 0;
+		background: linear-gradient(to right, var(--ak-surface), transparent);
+	}
+	#wpadminbar::after {
+		right: 0;
+		background: linear-gradient(to left, var(--ak-surface), transparent);
+	}
+	/* Script-toggled state: drop the fade on an exhausted edge — and both edges
+	   when the whole bar fits without scrolling. */
+	#wpadminbar.ak-bar-at-start::before,
+	#wpadminbar.ak-bar-at-end::after,
+	#wpadminbar.ak-bar-no-scroll::before,
+	#wpadminbar.ak-bar-no-scroll::after {
+		opacity: 0;
+	}
+}
+
+@media screen and (max-width: 782px) and (prefers-reduced-motion: reduce) {
+	#wpadminbar::before,
+	#wpadminbar::after {
+		transition: none;
+	}
+}
+
+/* =====================================================================
+   Dropdowns multi-groupes — "colles" en un seul panneau continu.
+   Quand un menu de la barre tient plusieurs sous-groupes (ex. le menu
+   Site-name : Dashboard/Plugins puis le groupe Apparence : Themes…), WP
+   empile plusieurs <ul.ab-submenu> dans le meme .ab-sub-wrapper. Par
+   defaut chacun est une carte separee (gap flex + bordure + radius +
+   ombre par <ul>). Ici : on supprime l'espace entre eux, et a partir du
+   2e groupe on enleve la marge, la bordure haute (-> un seul filet de
+   separation, pas une double bordure) et les coins hauts arrondis. Seuls
+   les coins externes du panneau global restent arrondis.
+   Les menus a UN seul groupe (cas courant) sont intacts : ils sont a la
+   fois :first-child ET :last-child, donc aucune de ces regles ne mord.
+   Desktop only (>=783px) — la barre responsive garde ses panneaux natifs.
+   ===================================================================== */
+@media screen and (min-width: 783px) {
+	/* 1. Plus d'espace entre les groupes empiles (annule le gap flex,
+	   y compris le gap plus large du menu Site-name). */
+	#wpadminbar li.hover > .ab-sub-wrapper,
+	#wpadminbar.nojs li:hover > .ab-sub-wrapper,
+	#wpadminbar #wp-admin-bar-site-name.hover > .ab-sub-wrapper,
+	#wpadminbar.nojs #wp-admin-bar-site-name:hover > .ab-sub-wrapper {
+		gap: 0;
+	}
+
+	/* 2. A partir du 2e groupe : colle au precedent (pas de marge), pas de
+	   bordure haute (le bord bas du groupe precedent fait le seul filet),
+	   coins hauts droits. */
+	#wpadminbar .menupop .ab-sub-wrapper > ul:not(:first-child) {
+		margin-top: 0;
+		border-top: 0 !important;
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
+
+	/* 3. Tous sauf le dernier groupe : coins bas droits, pour que seuls le
+	   tout premier (en haut) et le tout dernier (en bas) soient arrondis. */
+	#wpadminbar .menupop .ab-sub-wrapper > ul:not(:last-child) {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+}

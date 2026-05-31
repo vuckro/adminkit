@@ -25,17 +25,6 @@ class AdminKit_Screen {
 	}
 
 	/**
-	 * Parent base of the current screen (e.g. `woocommerce`, `fluent-crm`).
-	 * Useful to match all sub-pages of an integration menu.
-	 *
-	 * @return string
-	 */
-	public static function parent_base() {
-		$screen = self::get();
-		return $screen ? (string) $screen->parent_base : '';
-	}
-
-	/**
 	 * Whether the current screen id matches one of the given ids.
 	 *
 	 * @param string[] $ids

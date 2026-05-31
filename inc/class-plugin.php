@@ -32,17 +32,22 @@ class AdminKit_Plugin {
 		AdminKit_Profile_Account::init();
 		AdminKit_Local_Avatars::init();
 		AdminKit_Core_List_Table_Chrome::init();
+		AdminKit_Core_Admin_Bar::init();
 		AdminKit_Core_Options_General::init();
 		AdminKit_Core_Options_Discussion::init();
 		AdminKit_Post_Previews::init();
 		AdminKit_User_Quick_Edit::init();
 		AdminKit_Username_Changer::init();
+		AdminKit_Online_Users::init();
 		AdminKit_Custom_Dashboard::init();
 		AdminKit_Notification_Center::init();
 		AdminKit_Footer::init();
 		AdminKit_Help_Button::init();
 		AdminKit_Plugins_List::init();
 		AdminKit_Menu_Manager::init();
+		AdminKit_Stats_Tracker::init();
+		AdminKit_Stats_Dashboard::init();
+		AdminKit_Stats_Page::init();
 
 		self::boot_integrations();
 

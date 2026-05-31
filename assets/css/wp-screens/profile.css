@@ -257,8 +257,16 @@ body.adminkit .ak-card {
 
 /* Two cards on the same tab (e.g. Settings → curated card + the "Other
    settings" secondary card on user-new.php) — give them a 16px gap so they
-   read as distinct sections instead of touching at the border. */
-body.adminkit .ak-card + .ak-card {
+   read as distinct sections instead of touching at the border.
+
+   `:not([hidden])` on the FIRST card is load-bearing. Every tab's panel is a
+   sibling .ak-card and the inactive ones are [hidden] (display:none) — but the
+   `+` combinator still matches ACROSS a display:none sibling (it's only removed
+   from layout, not the DOM). So without the guard the 2nd tab's card (preceded
+   by the hidden 1st-tab card) picked up this margin and sat 16px lower than the
+   1st tab's card — the gap differed per tab. Gating on a VISIBLE predecessor
+   keeps the 16px only between two cards genuinely shown together. */
+body.adminkit .ak-card:not([hidden]) + .ak-card {
 	margin-top: 16px;
 }
 

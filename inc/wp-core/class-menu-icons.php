@@ -190,6 +190,10 @@ class AdminKit_Core_Menu_Icons {
 			'wp-admin-bar-comments'    => AdminKit_Icons::svg( 'chat' ),
 			'wp-admin-bar-new-content' => AdminKit_Icons::svg( 'plus' ),
 			'wp-admin-bar-updates'     => AdminKit_Icons::svg( 'update' ),
+			// WP's command-palette (⌘K) node — a search/magnifier (`.ab-icon` with a
+			// dashicons `\f179` glyph), in the default group, shown on the mobile bar
+			// too. Map it onto the same `search` glyph so it matches the rest.
+			'wp-admin-bar-command-palette' => AdminKit_Icons::svg( 'search' ),
 			// Front-end / edit-screen core nodes. These paint via `> .ab-item::before`.
 			// `edit` (edit this page/post) → a document-with-pencil, a more telling
 			// "edit page" mark; it stays distinct from Articles (newspaper) and Pages
@@ -274,18 +278,33 @@ class AdminKit_Core_Menu_Icons {
 	 * @return string
 	 */
 	private static function toolbar_css() {
-		$css     = '';
+		$desktop = '';
+		$mobile  = '';
 		$ab_item = self::ab_item_nodes();
 		foreach ( self::toolbar_icon_map() as $id => $svg ) {
 			if ( '' === $svg || ! is_string( $svg ) ) {
 				continue;
 			}
-			$css .= isset( $ab_item[ $id ] )
-				? self::toolbar_ab_item_css( $id, $svg )
-				: self::toolbar_ab_icon_css( $id, $svg );
+			if ( isset( $ab_item[ $id ] ) ) {
+				$desktop .= self::toolbar_ab_item_css( $id, $svg );
+				$mobile  .= self::toolbar_ab_item_mobile_css( $id, $svg );
+			} else {
+				$desktop .= self::toolbar_ab_icon_css( $id, $svg );
+				$mobile  .= self::toolbar_ab_icon_mobile_css( $id, $svg );
+			}
 		}
-		if ( '' !== $css ) {
-			$css = '@media screen and (min-width:783px){' . $css . '}';
+		$css = '';
+		// Desktop: WP's compact 32px bar — the 20px masks already used there.
+		if ( '' !== $desktop ) {
+			$css .= '@media screen and (min-width:783px){' . $desktop . '}';
+		}
+		// Mobile (≤782px): WP's 46px touch bar — without this the mapped nodes fall
+		// back to stock dashicons at WP's 40px mobile glyph size, jarring next to
+		// AdminKit's own 22px SVG nodes (theme-toggle / view-site / notifications).
+		// The mobile variants centre a 22px mask in WP's native 52×46 cell so the
+		// whole bar reads as one cohesive set.
+		if ( '' !== $mobile ) {
+			$css .= '@media screen and (max-width:782px){' . $mobile . '}';
 		}
 		return $css;
 	}
@@ -337,6 +356,50 @@ class AdminKit_Core_Menu_Icons {
 		return $sel . '{content:"";box-sizing:border-box;float:left;height:32px;width:20px;'
 			. 'padding:6px 0;margin-right:6px;position:static;top:auto;' . AdminKit_Icons::mask( $svg )
 			. '}';
+	}
+
+	/**
+	 * Mobile (≤782px) icon CSS for an `.ab-icon`-span node. WP's touch bar renders
+	 * these as 52×46 cells with a 40px dashicon glyph; here we normalise the cell to
+	 * that size, drop the glyph (`content:""`) and centre a 22px mask in it — the
+	 * same 22px AdminKit uses for its own mobile toolbar SVGs, so the set stays
+	 * cohesive. `mask()` bakes 20px (the desktop size); we override the mask-size to
+	 * 22px while reusing its data-URI. Out-specifies WP's mobile per-node rules
+	 * (e.g. comments / new-content `.ab-icon:before`) via the #wp-toolbar id chain +
+	 * doubled class; the lone `height:46px !important` WP forces on new-content lands
+	 * on our 46px cell anyway, so it's harmless.
+	 *
+	 * @param string $id
+	 * @param string $svg
+	 * @return string
+	 */
+	private static function toolbar_ab_icon_mobile_css( $id, $svg ) {
+		$sel  = '#wpadminbar #wp-toolbar #' . $id . ' .ab-icon.ab-icon';
+		$css  = $sel . '{box-sizing:border-box;width:52px;height:46px;margin:0;padding:0}';
+		$css .= $sel . '::before{content:"";display:block;width:52px;height:46px;margin:0;'
+			. 'position:static;top:auto;' . AdminKit_Icons::mask( $svg )
+			. '-webkit-mask-size:22px 22px;mask-size:22px 22px}';
+		return $css;
+	}
+
+	/**
+	 * Mobile (≤782px) icon CSS for a node that paints on its link's own
+	 * `> .ab-item::before` (edit, customize, …). The `> .ab-item` keeps WP's mobile
+	 * treatment (52px wide, text indented away, overflow hidden) so the label stays
+	 * hidden; we only fill that cell with the masked `::before` and reset the
+	 * inherited text-indent / desktop float. 22px mask, centred — matching the
+	 * `.ab-icon` variant above.
+	 *
+	 * @param string $id
+	 * @param string $svg
+	 * @return string
+	 */
+	private static function toolbar_ab_item_mobile_css( $id, $svg ) {
+		$sel = '#wpadminbar #wp-toolbar #' . $id . ' > .ab-item.ab-item::before';
+		return $sel . '{content:"";box-sizing:border-box;display:block;float:none;'
+			. 'width:52px;height:46px;margin:0;text-indent:0;position:static;top:auto;'
+			. AdminKit_Icons::mask( $svg )
+			. '-webkit-mask-size:22px 22px;mask-size:22px 22px}';
 	}
 
 }

@@ -26,15 +26,18 @@ body.adminkit #wpbody-content {
 
 /* Modern WP-style content panel. The chrome (toolbar + admin menu) is FLUSH /
    borderless — its own separators are removed (see adminbar.css + the #adminmenu
-   rule below) — and the content PANEL carries the hairline instead: a top + left
-   border that rounds into the top-left corner, so the panel reads as a card
-   tucked into the chrome. The border alone defines the curve (reads in light AND
-   dark) — no pseudo-element patch (an earlier one flashed as a square on load).
-   For the border to land on the chrome junction the panel must REACH it: WP insets
-   content via `#wpcontent { padding-left: 20px }`, so on desktop we zero that and
-   move the inset onto `.wrap` (margin). box-sizing:border-box keeps the 1px border
-   INSIDE WP's `#wpbody-content { float:left; width:100% }` so it can't push a
-   horizontal scrollbar. Flat below 783px. */
+   rule below) — and the content PANEL carries the hairline instead, so it reads
+   as a card tucked into the chrome. The LEFT hairline lives here on the panel: a
+   full-height vertical line that stays on screen at any scroll position. The TOP
+   hairline + the rounded top-left CORNER are chrome, not content — drawn as a
+   position:fixed overlay (see "Fixed content-panel corner" below) so they stay
+   pinned while the page scrolls under them, and render on EVERY admin page,
+   full-bleed plugin screens included. For the left border to land on the chrome
+   junction the panel must REACH it: WP insets content via
+   `#wpcontent { padding-left: 20px }`, so on desktop we zero that and move the
+   inset onto `.wrap` (margin). box-sizing:border-box keeps the 1px border INSIDE
+   WP's `#wpbody-content { float:left; width:100% }` so it can't push a horizontal
+   scrollbar. Flat below 783px. */
 @media screen and (min-width: 783px) {
 	body.adminkit #wpcontent {
 		padding-left: 0;
@@ -48,27 +51,10 @@ body.adminkit #wpbody-content {
 		   beats WP's .wrap (0,1,0). */
 		margin: 30px 40px 30px 40px;
 	}
-	/* The panel's rounded corner reveals #wpbody behind it. Fill ONLY that top-left
-	   corner with the CHROME tone via a small background patch, so the notch matches
-	   the toolbar/menu while the REST of #wpbody stays --ak-bg — identical to the
-	   panel, so no two-tone seam shows below short content (the Articles bug) and
-	   nothing forces a scrollbar (an earlier min-height push did — that was the
-	   "grande barre à droite"). It's a background (not a pseudo-element) so it paints
-	   with the element — no load-time flash. The 24px patch sits entirely under the
-	   panel except the rounded notch. Desktop only — the corner is flat <783px. */
-	body.adminkit #wpbody {
-		background-color: var(--ak-bg);
-		background-image: linear-gradient( var(--ak-surface), var(--ak-surface) );
-		background-repeat: no-repeat;
-		background-position: top left;
-		background-size: 24px 24px;
-	}
 }
 body.adminkit #wpbody-content {
-	box-sizing: border-box; /* keep the border inside width:100% → no h-scroll */
-	border-top: 1px solid var(--ak-border);
+	box-sizing: border-box; /* keep the 1px left border inside width:100% → no h-scroll */
 	border-left: 1px solid var(--ak-border);
-	border-top-left-radius: 18px;
 }
 @media screen and (max-width: 782px) {
 	body.adminkit #wpbody-content {
@@ -93,6 +79,63 @@ body.adminkit.options-connectors-php #wpbody-content {
 	border-top: 0;
 	border-left: 0;
 	border-top-left-radius: 0;
+}
+
+/* Fixed content-panel corner. The TOP hairline + rounded top-left corner are
+   CHROME, not content: drawn as a position:fixed overlay pinned to the
+   toolbar/menu junction, so they stay put while the page scrolls underneath and
+   render identically on EVERY admin page (full-bleed plugin screens included),
+   whatever their markup. The LEFT hairline stays on #wpbody-content above — a
+   full-height vertical line is always visible at any scroll position, so it needs
+   no pinning. Host: #wpwrap (always present; no transform/filter/contain ancestor,
+   so fixed resolves to the viewport). Desktop only — flat <783px.
+   ::before = top line + corner arc;  ::after = concave chrome-toned notch fill (a
+   radial-gradient sliver, concentric with the arc). pointer-events:none, z-ordered
+   above content but below the fly-out submenu / admin bar / modals. */
+@media screen and (min-width: 783px) {
+	body.adminkit #wpwrap::before,
+	body.adminkit #wpwrap::after {
+		content: "";
+		position: fixed;
+		top: 32px;            /* under the 32px admin bar */
+		left: 160px;          /* expanded sidebar width */
+		pointer-events: none;
+	}
+	body.adminkit #wpwrap::before {        /* top hairline + rounded corner arc */
+		right: 0;
+		height: 18px;
+		box-sizing: border-box;
+		border-top: 1px solid var(--ak-border);
+		border-left: 1px solid var(--ak-border);
+		border-top-left-radius: 18px;
+		z-index: 101;
+	}
+	body.adminkit #wpwrap::after {         /* concave chrome-toned notch fill */
+		width: 18px;
+		height: 18px;
+		background: radial-gradient( circle 18px at bottom right,
+			transparent 0 17.5px, var(--ak-surface) 18px );
+		z-index: 100;
+	}
+	body.adminkit.folded #wpwrap::before,  /* menu folded by hand → 36px edge */
+	body.adminkit.folded #wpwrap::after {
+		left: 36px;
+	}
+}
+/* Auto-fold band: WP collapses the menu to 36px between 783–960px. */
+@media screen and (min-width: 783px) and (max-width: 960px) {
+	body.adminkit #wpwrap::before,
+	body.adminkit #wpwrap::after {
+		left: 36px;
+	}
+}
+/* Step the fixed frame aside on full-takeover screens (React boot pages, block
+   editor) — same intent as the options-connectors-php rule above. */
+body.adminkit.options-connectors-php #wpwrap::before,
+body.adminkit.options-connectors-php #wpwrap::after,
+body.adminkit.block-editor-page #wpwrap::before,
+body.adminkit.block-editor-page #wpwrap::after {
+	display: none;
 }
 
 body.adminkit {
@@ -204,15 +247,21 @@ body.adminkit #adminmenu .wp-menu-image::before {
 	color: var(--ak-text-muted);
 }
 
-/* Current item — dedicated active surface + heading color. Background and
-   color cover the whole <li> (incl. wp-menu-open / current.menu-top) so the
-   active row is fully painted. Dark mode keeps the same contrast via tokens. */
+/* Current item — the active row carries a subtle ACCENT fill: a 12% brand tint
+   mixed into the surface (so it stays mode- AND provider-aware) — NOT a hardcoded
+   `#3858e91a` alpha. We mix explicitly rather than reuse --ak-primary-subtle here
+   because that token's DARK value is bumped to 22% (so pale chips/badges read on
+   dark), which is a touch heavy as a full-row menu fill: a fixed 12% keeps the row
+   equally quiet in light AND dark. Brand HUE (not a neutral lift) so the active row
+   stays distinct from the neutral --ak-elevated hover; it reads "selected in the
+   brand colour" with the accent icon + 3px accent left marker below. --ak-heading
+   label stays legible. Covers the whole <li> (incl. wp-menu-open / current.menu-top). */
 body.adminkit #adminmenu li.current a.menu-top,
 body.adminkit #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
 body.adminkit #adminmenu li.wp-menu-open,
 body.adminkit #adminmenu li.current.menu-top {
-	background: var(--ak-elevated, var(--ak-elevated)) !important;
+	background: color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface)) !important;
 	color: var(--ak-heading) !important;
 }
 

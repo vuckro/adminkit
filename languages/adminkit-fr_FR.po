@@ -888,10 +888,6 @@ msgstr "Sections de réglages"
 msgid "Preview"
 msgstr "Aperçu"
 
-#: inc/wp-core/class-post-previews.php:251
-msgid "Click to refresh this screenshot"
-msgstr "Cliquer pour rafraîchir cette capture d’écran"
-
 #: inc/wp-core/class-post-previews.php:361
 msgid "Loading preview…"
 msgstr "Chargement de l’aperçu…"
@@ -1601,3 +1597,131 @@ msgid "%s scheduled post"
 msgid_plural "%s scheduled posts"
 msgstr[0] "%s publication planifiée"
 msgstr[1] "%s publications planifiées"
+
+msgid "Online users"
+msgstr "Utilisateurs en ligne"
+
+msgid ""
+"Track who is signed in (read from existing WordPress sessions, no extra "
+"tracking) and show them on the dashboard, plus an \"Online\" filter and a "
+"\"Last login\" column on the Users screen. Off hides all of it."
+msgstr ""
+"Identifie qui est connecté (lu depuis les sessions WordPress existantes, "
+"sans suivi supplémentaire) et l'affiche sur le tableau de bord, avec un "
+"filtre « En ligne » et une colonne « Dernière connexion » sur l'écran "
+"Utilisateurs. Désactivé masque le tout."
+
+msgid "Online now"
+msgstr "En ligne"
+
+msgid "Recent logins"
+msgstr "Connexions récentes"
+
+msgid "No recent sign-ins yet."
+msgstr "Aucune connexion récente."
+
+msgid "Last login"
+msgstr "Dernière connexion"
+
+msgid "Never"
+msgstr "Jamais"
+
+msgid "Online"
+msgstr "En ligne"
+
+msgid "Site preview"
+msgstr "Aperçu du site"
+
+msgid "Score"
+msgstr "Score"
+
+msgid "Passed"
+msgstr "Réussis"
+
+msgid "Recommended"
+msgstr "Recommandés"
+
+msgid "To address"
+msgstr "À traiter"
+
+msgid "No drafts"
+msgstr "Aucun brouillon"
+
+msgid "%s draft"
+msgid_plural "%s drafts"
+msgstr[0] "%s brouillon"
+msgstr[1] "%s brouillons"
+
+msgid "%s pending review"
+msgstr "%s en attente de relecture"
+
+msgid "All published"
+msgstr "Tout est publié"
+
+msgid "%s in moderation"
+msgstr "%s en modération"
+
+msgid "%s on disk"
+msgstr "%s sur le disque"
+
+msgid "%s online now"
+msgid_plural "%s online now"
+msgstr[0] "%s en ligne"
+msgstr[1] "%s en ligne"
+
+msgid "None online"
+msgstr "Personne en ligne"
+
+msgid "Edit my profile"
+msgstr "Modifier mon profil"
+
+msgid "All tasks"
+msgstr "Toutes les tâches"
+
+msgid "View all accounts"
+msgstr "Voir tous les comptes"
+
+msgid "Images"
+msgstr "Images"
+
+msgid "Videos"
+msgstr "Vidéos"
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Documents"
+msgstr "Documents"
+
+msgid "Other"
+msgstr "Autres"
+
+msgid "Your media library is empty."
+msgstr "Votre médiathèque est vide."
+
+msgid "Edit menu"
+msgstr "Modifier le menu"
+
+msgid "Collapse menu"
+msgstr "Réduire le menu"
+
+msgid "Expand menu"
+msgstr "Déployer le menu"
+
+msgid "Menu tools"
+msgstr "Outils du menu"
+
+msgid "Menu quick tools"
+msgstr "Outils rapides du menu"
+
+msgid ""
+"Add a slim toolbar to the top of the admin menu: a collapse/expand toggle "
+"(WordPress's own sits at the very bottom) and a quick \"Edit menu\" link to "
+"the Menu tab. Off removes it."
+msgstr ""
+"Ajoute une barre d'outils en haut du menu d'administration : un bouton "
+"réduire/déployer (celui de WordPress est tout en bas) et un lien rapide "
+"« Modifier le menu » vers l'onglet Menu. Désactivé, elle est retirée."
+
+msgid "View all online accounts"
+msgstr "Voir tous les comptes en ligne"

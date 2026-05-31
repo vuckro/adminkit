@@ -29,6 +29,15 @@
 	if (!form || form.dataset.akAccount) { reveal(); return; }
 	form.dataset.akAccount = '1';
 
+	// Stash + strip any boot hash before we build the panels: the cards take
+	// id=<slug>, so a #slug in the URL would make the browser jump down to that
+	// card. We re-apply it as state-only (replaceState in activate) once the tab
+	// is set, so the hash still deep-links the tab without scrolling the page.
+	var bootHash = location.hash.slice(1);
+	if (bootHash && history.replaceState) {
+		history.replaceState(null, '', location.pathname + location.search);
+	}
+
 	// user-new.php ships its rows as bare `tr.form-field` (no `.user-X-wrap`
 	// hooks the curated CARDS below match against). Tag them up front by walking
 	// from each input id back to its <tr>, so the rest of this script — built for
@@ -593,7 +602,16 @@
 	});
 	// Initial activation: URL hash wins (deep link from support / docs), then
 	// first tab as fallback.
-	activate(tabFor(location.hash.slice(1)) || buttons[0].dataset.target);
+	activate(tabFor(bootHash) || buttons[0].dataset.target);
+
+	// Tab-state page: the hash selects a tab, never a scroll position, and WP can
+	// nudge the scroll on arrival (auto-focus on user-new.php, late scripts). Pin
+	// to the top on load — now (still hidden by the pre-paint, so no flash) and
+	// once next frame to beat a late focus.
+	window.scrollTo(0, 0);
+	if (window.requestAnimationFrame) {
+		window.requestAnimationFrame(function () { window.scrollTo(0, 0); });
+	}
 
 	// On narrow screens, move all page-title-action buttons (native "Add New User"
 	// + any added by AdminKit, e.g. "Refresh avatar") below the tabs + panels —

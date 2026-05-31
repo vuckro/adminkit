@@ -129,4 +129,28 @@ class AdminKit_Integration_Admin_Menu_Editor extends AdminKit_Integration_Base {
 			},
 		) );
 	}
+
+	/**
+	 * @return void
+	 */
+	protected static function boot() {
+		// AME Pro's "Quick Search" admin-bar button (#wp-admin-bar-ame-quick-search-tb)
+		// paints a stock dashicon magnifier on its `.ab-icon::before`, so it stands
+		// out next to AdminKit's own toolbar glyphs. Map it onto the shared search
+		// icon — AdminKit_Core_Menu_Icons then masks it (desktop + mobile) exactly
+		// like the core nodes, but only when the icons feature is on.
+		add_filter( 'adminkit/toolbar_icons', array( __CLASS__, 'toolbar_icons' ) );
+	}
+
+	/**
+	 * Register AME's quick-search toolbar node for icon replacement. It renders an
+	 * `.ab-icon` span (not a text-only node), so it needs no `ab_item_nodes` entry.
+	 *
+	 * @param array<string,string> $map
+	 * @return array<string,string>
+	 */
+	public static function toolbar_icons( $map ) {
+		$map['wp-admin-bar-ame-quick-search-tb'] = AdminKit_Icons::svg( 'search' );
+		return $map;
+	}
 }

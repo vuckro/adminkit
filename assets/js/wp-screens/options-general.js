@@ -74,7 +74,9 @@
 	BLOCKS.forEach( function ( b ) {
 		var section = document.createElement( 'section' );
 		section.className = 'ak-options-block';
-		section.id = b.id;
+		// Namespace the panel id so a tab #hash (e.g. #locale) has no element to
+		// scroll to — the hash drives the tab, it must not jump the page.
+		section.id = 'ak-opt-' + b.id;
 		section.dataset.akTab = b.tab;
 
 		var heading = document.createElement( 'h2' );
@@ -195,5 +197,17 @@
 		var id = tabFor( location.hash.slice( 1 ) );
 		if ( id ) { activate( id, { updateHash: false } ); }
 	} );
+
+	// Stay on the same tab after Save. The #hash never reaches the server, so WP
+	// would redirect to the bare page (first tab). Carry the active hash on the
+	// referer field; options.php re-appends it (add_query_arg keeps the fragment),
+	// landing back on the same tab.
+	form.addEventListener( 'submit', function () {
+		var ref = form.querySelector( 'input[name="_wp_http_referer"]' );
+		if ( ref && location.hash ) {
+			ref.value = ref.value.split( '#' )[ 0 ] + location.hash;
+		}
+	} );
+
 	reveal();
 })();

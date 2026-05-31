@@ -32,6 +32,7 @@ require_once ADMINKIT_PATH . 'inc/class-plugin.php';
 require_once ADMINKIT_PATH . 'inc/class-assets.php';
 require_once ADMINKIT_PATH . 'inc/class-theme-toggle.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-chrome.php';
+require_once ADMINKIT_PATH . 'inc/wp-core/class-admin-bar.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-login.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-branding.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-menu-icons.php';
@@ -43,14 +44,24 @@ require_once ADMINKIT_PATH . 'inc/wp-core/class-options-discussion.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-post-previews.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-user-quick-edit.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-username-changer.php';
+require_once ADMINKIT_PATH . 'inc/wp-core/class-online-users.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-custom-dashboard.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-notification-center.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-footer.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-help-button.php';
 require_once ADMINKIT_PATH . 'inc/wp-core/class-plugins-list.php';
-require_once ADMINKIT_PATH . 'inc/wp-core/class-menu-store.php';
-require_once ADMINKIT_PATH . 'inc/wp-core/class-menu-manager.php';
+
+// AdminKit features — self-contained tools with their own admin pages (each in its
+// own folder under inc/features/). Distinct from the wp-core/ modules (which restyle
+// existing WordPress screens) and from integrations/ (per-plugin adapters).
+require_once ADMINKIT_PATH . 'inc/features/menu/class-menu-store.php';
+require_once ADMINKIT_PATH . 'inc/features/menu/class-menu-manager.php';
+require_once ADMINKIT_PATH . 'inc/features/stats/class-stats-store.php';
+require_once ADMINKIT_PATH . 'inc/features/stats/class-stats-tracker.php';
+require_once ADMINKIT_PATH . 'inc/features/stats/class-stats-dashboard.php';
+require_once ADMINKIT_PATH . 'inc/features/stats/class-stats-page.php';
 
 register_activation_hook( ADMINKIT_FILE, array( 'AdminKit_Menu_Store', 'ensure_schema' ) );
+register_activation_hook( ADMINKIT_FILE, array( 'AdminKit_Stats_Store', 'ensure_schema' ) );
 
 AdminKit_Plugin::init();
