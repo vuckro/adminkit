@@ -1,24 +1,31 @@
 <?php
 /**
- * Plugins list tweaks — two opt-out behaviors on the plugins screen (plugins.php):
+ * Plugins list — one opt-out behavior that keeps the plugins screen (plugins.php)
+ * leading with what's actually running. Three mechanics, one promise:
  *
- *   1. Active plugins first — sort active plugins to the top of the list so what's
- *      actually running is always in view. WordPress's list table re-sorts its rows
- *      by Name on every load (WP_Plugins_List_Table::prepare_items() forces
- *      `$orderby = 'Name'` when none is given), so filtering `all_plugins` upstream
- *      is futile. We reorder the table's already-prepared `items` on
- *      `pre_current_active_plugins`, which fires AFTER that sort and right before the
- *      rows render — so our order is the one displayed.
- *   2. Open on "Active" — land on the "Active" status filter instead of "All" when
- *      you open the plugins list from outside the screen. Via a guarded redirect on
- *      `load-plugins.php`; in-page navigation (the "All" tab) is preserved.
+ *   1. Open on "Active" — land on the "Active" status filter instead of "All" when
+ *      you arrive at the plugins list from outside the screen, so what's running is
+ *      the first thing you see. Falls back to "All" when nothing is active (an empty
+ *      "Active" tab would be worse). In-page navigation — clicking the "All" tab — is
+ *      respected.
+ *   2. Active plugins first — on the "All" view, sort active plugins to the top.
+ *      WordPress's list table re-sorts its rows by Name on every load
+ *      (WP_Plugins_List_Table::prepare_items() forces `$orderby = 'Name'` when none
+ *      is given), so filtering `all_plugins` upstream is futile. We reorder the
+ *      table's already-prepared `items` on `pre_current_active_plugins`, which fires
+ *      AFTER that sort and right before the rows render — so our order is displayed.
+ *   3. Follow the plugin you just toggled — activating or deactivating a plugin from
+ *      a filtered view would make it vanish from that view (its status no longer
+ *      matches). Instead we follow it: activating jumps to "Active" so you see it
+ *      among what's now running; deactivating drops to "All", where the active set is
+ *      still on top and the row you just switched off sits right below it — so you see
+ *      the result of your action and can undo it, rather than watching it disappear.
  *
- * Both are gated to the plugins screen (hooked from `load-plugins.php`) and each
- * carries its own setting (default ON) + filter, so they toggle independently.
+ * All three are gated to the plugins screen (hooked from `load-plugins.php`) behind a
+ * single setting (default ON) so they travel together as one coherent feature.
  *
- * Filters:
- *   adminkit/plugins_active_first/enabled           (bool)  master on/off
- *   adminkit/plugins_default_active_filter/enabled  (bool)  master on/off
+ * Filter:
+ *   adminkit/plugins_active_first/enabled  (bool)  master on/off
  *
  * @package AdminKit
  */
@@ -28,51 +35,44 @@ defined( 'ABSPATH' ) || exit;
 class AdminKit_Plugins_List {
 
 	/**
-	 * Register both settings (default ON) + wire the plugins-screen entry point. The
-	 * settings register unconditionally so the Settings page can discover them while off.
+	 * Register the setting (default ON) + wire the plugins-screen entry point. The
+	 * setting registers unconditionally so the Settings page can discover it while off.
 	 *
 	 * @return void
 	 */
 	public static function init() {
 		AdminKit_Settings::register( 'plugins_active_first_enabled', array( 'default' => true ) );
-		AdminKit_Settings::register( 'plugins_default_active_filter_enabled', array( 'default' => true ) );
 
 		add_action( 'load-plugins.php', array( __CLASS__, 'on_plugins_screen' ) );
 	}
 
 	/**
-	 * Runs when the plugins screen loads. The default-filter redirect goes first (it
-	 * may exit the request); the active-first reorder is attached to
-	 * `pre_current_active_plugins`, which fires after the list table has sorted its
-	 * rows by Name and just before they render.
+	 * Runs when the plugins screen loads. The two redirects may exit the request, so
+	 * they go first; the post-action hop (to "Active" after an activate, "All" after a
+	 * deactivate) is checked before the open-on-"Active" landing (they never both apply
+	 * to one load — a post-action reload carries an `activate*`/`deactivate*` flag that
+	 * the landing redirect skips — but the ordering keeps that explicit). The
+	 * active-first reorder is attached to `pre_current_active_plugins`, which fires
+	 * after the list table has sorted its rows by Name and just before they render.
 	 *
 	 * @return void
 	 */
 	public static function on_plugins_screen() {
-		if ( self::default_active_filter_enabled() ) {
-			self::maybe_redirect_to_active();
+		if ( ! self::enabled() ) {
+			return;
 		}
-		if ( self::active_first_enabled() ) {
-			add_action( 'pre_current_active_plugins', array( __CLASS__, 'sort_active_first' ) );
-		}
+		self::maybe_redirect_after_action();
+		self::maybe_redirect_to_active();
+		add_action( 'pre_current_active_plugins', array( __CLASS__, 'sort_active_first' ) );
 	}
 
 	/**
-	 * Master switch — sort active plugins to the top.
+	 * Master switch — lead the plugins screen with active plugins.
 	 *
 	 * @return bool
 	 */
-	public static function active_first_enabled() {
+	public static function enabled() {
 		return (bool) apply_filters( 'adminkit/plugins_active_first/enabled', AdminKit_Settings::get( 'plugins_active_first_enabled' ) );
-	}
-
-	/**
-	 * Master switch — default to the "Active" status filter.
-	 *
-	 * @return bool
-	 */
-	public static function default_active_filter_enabled() {
-		return (bool) apply_filters( 'adminkit/plugins_default_active_filter/enabled', AdminKit_Settings::get( 'plugins_default_active_filter_enabled' ) );
 	}
 
 	/**
@@ -142,6 +142,62 @@ class AdminKit_Plugins_List {
 			return;
 		}
 		wp_safe_redirect( add_query_arg( 'plugin_status', 'active', self_admin_url( 'plugins.php' ) ) );
+		exit;
+	}
+
+	/**
+	 * After a plugin is activated or deactivated, jump to the status view where the
+	 * changed plugin is actually visible, rather than leaving you on a filter it just
+	 * dropped out of:
+	 *
+	 *   - activate*   → "Active": the plugin is now running, so land on the active set
+	 *                   (it would have vanished from the "Inactive" / search view you
+	 *                   toggled it from).
+	 *   - deactivate* → "All":    the plugin is now inactive, and "All" keeps it in
+	 *                   sight just below the still-active rows (it would have vanished
+	 *                   from "Active"), so you can see the result and undo it.
+	 *
+	 * Fires on the post-action reload — WordPress redirects back with the matching
+	 * `activate` / `activate-multi` / `deactivate` / `deactivate-multi` flag set — and
+	 * only when you're not already on the target view (an empty status is the "all"
+	 * view). The flag is carried through so WordPress still prints its confirmation
+	 * notice, and the search term / page number ride along so context is preserved.
+	 *
+	 * @return void
+	 */
+	public static function maybe_redirect_after_action() {
+		$targets = array(
+			'activate'         => 'active',
+			'activate-multi'   => 'active',
+			'deactivate'       => 'all',
+			'deactivate-multi' => 'all',
+		);
+		$flag = '';
+		foreach ( array_keys( $targets ) as $key ) {
+			if ( isset( $_GET[ $key ] ) ) {
+				$flag = $key;
+				break;
+			}
+		}
+		if ( '' === $flag ) {
+			return;
+		}
+		$status  = isset( $_GET['plugin_status'] ) ? sanitize_key( wp_unslash( $_GET['plugin_status'] ) ) : '';
+		$current = ( '' === $status ) ? 'all' : $status;
+		if ( $current === $targets[ $flag ] ) {
+			return;
+		}
+		$args = array(
+			'plugin_status' => $targets[ $flag ],
+			$flag           => 'true',
+		);
+		if ( isset( $_GET['s'] ) ) {
+			$args['s'] = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+		}
+		if ( isset( $_GET['paged'] ) ) {
+			$args['paged'] = absint( wp_unslash( $_GET['paged'] ) );
+		}
+		wp_safe_redirect( add_query_arg( $args, self_admin_url( 'plugins.php' ) ) );
 		exit;
 	}
 

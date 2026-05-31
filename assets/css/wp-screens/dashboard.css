@@ -77,6 +77,103 @@ body.adminkit .ak-dash-ic {
 	flex: none;
 }
 
+/* Header — greeting (left) + a date/clock (right). */
+body.adminkit .ak-dash__head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px 24px;
+	flex-wrap: wrap;
+}
+body.adminkit .ak-dash__greeting {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	min-width: 0;
+}
+body.adminkit .ak-dash__avatar {
+	flex: none;
+	width: 56px;
+	height: 56px;
+	border-radius: var(--ak-radius-m);
+	overflow: hidden;
+	border: 1px solid var(--ak-card-border);
+	line-height: 0;
+}
+body.adminkit .ak-dash__avatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+/* The avatar links to the profile — a quiet hover/focus cue that it's clickable. */
+body.adminkit a.ak-dash__avatar {
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+body.adminkit a.ak-dash__avatar:hover {
+	border-color: var(--ak-border-strong);
+}
+body.adminkit a.ak-dash__avatar:focus-visible {
+	outline: none;
+	border-color: var(--ak-border-strong);
+	box-shadow: var(--ak-focus-ring);
+}
+body.adminkit .ak-dash__head-text {
+	min-width: 0;
+}
+body.adminkit .ak-dash__head-online {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: var(--ak-text-s);
+	color: var(--ak-text-muted);
+	text-decoration: none;
+}
+body.adminkit .ak-dash__head-online:hover {
+	color: var(--ak-text-muted);
+	text-decoration: underline;
+}
+body.adminkit .ak-dash__head-online-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--ak-success);
+}
+body.adminkit .ak-dash__head-aside {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 8px;
+}
+body.adminkit .ak-dash__clock {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 2px;
+	padding-top: 6px;
+	text-align: right;
+	line-height: 1.25;
+	white-space: nowrap;
+	text-decoration: none;
+	transition: opacity .15s ease;
+}
+body.adminkit a.ak-dash__clock:hover {
+	opacity: .75;
+}
+body.adminkit .ak-dash__clock-time {
+	font-size: 22px;
+	font-weight: 600;
+	color: var(--ak-heading);
+	font-variant-numeric: tabular-nums;
+}
+body.adminkit .ak-dash__clock-date {
+	font-size: 13px;
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__clock-date::first-letter {
+	text-transform: uppercase;
+}
+
 /* Greeting */
 body.adminkit .ak-dash__greet {
 	margin: 0;
@@ -193,13 +290,45 @@ body.adminkit .ak-dash .ak-badge--muted {
 	color: var(--ak-text-muted);
 }
 
-/* ── Aperçu (counters) — a compact list of clickable content counts ──────── */
-body.adminkit .ak-dash__counter-list {
+/* ── Site preview — a scaled, non-interactive thumbnail of the home page ──────── */
+body.adminkit .ak-dash__preview {
+	display: block;
+	position: relative;
+	overflow: hidden;
+	margin: 12px;
+	aspect-ratio: 16 / 10;
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-elevated);
+	transition: border-color .15s ease;
+}
+body.adminkit .ak-dash__preview:hover {
+	border-color: var(--ak-primary);
+}
+body.adminkit .ak-dash__preview-frame {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 400%;
+	height: 400%;
+	border: 0;
+	transform: scale(0.25);
+	transform-origin: top left;
+	pointer-events: none;
+}
+body.adminkit .ak-dash .ak-dash__preview-btn {
+	display: flex;
+	justify-content: center;
+	margin: 0 12px 12px;
+}
+
+/* ── AdminKit quick access — shortcut rows to the settings sections ───────── */
+body.adminkit .ak-dash__adminkit-list {
 	list-style: none;
 	margin: 0;
 	padding: 6px;
 }
-body.adminkit .ak-dash__counter-row {
+body.adminkit .ak-dash__adminkit-row {
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -208,10 +337,10 @@ body.adminkit .ak-dash__counter-row {
 	text-decoration: none;
 	transition: background .15s ease;
 }
-body.adminkit .ak-dash__counter-row:hover {
+body.adminkit .ak-dash__adminkit-row:hover {
 	background: var(--ak-elevated);
 }
-body.adminkit .ak-dash__counter-ic {
+body.adminkit .ak-dash__adminkit-ic {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -222,11 +351,69 @@ body.adminkit .ak-dash__counter-ic {
 	background: var(--ak-primary-subtle);
 	color: var(--ak-primary);
 }
-body.adminkit .ak-dash__counter-ic .ak-dash-ic {
+body.adminkit .ak-dash__adminkit-ic svg {
 	width: 17px;
 	height: 17px;
 }
-body.adminkit .ak-dash__counter-l {
+body.adminkit .ak-dash__adminkit-l {
+	flex: 1;
+	min-width: 0;
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__adminkit-go {
+	flex: none;
+	display: inline-flex;
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__adminkit-go svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* ── Online now — avatar list (right rail, between Aperçu and Stockage) ───── */
+body.adminkit .ak-dash__online-list {
+	list-style: none;
+	margin: 0;
+	padding: 6px;
+}
+body.adminkit .ak-dash__online-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 10px;
+	border-radius: var(--ak-radius-s);
+	text-decoration: none;
+	transition: background .15s ease;
+}
+body.adminkit .ak-dash__online-row:hover {
+	background: var(--ak-elevated);
+}
+body.adminkit .ak-dash__online-av {
+	position: relative;
+	width: 32px;
+	height: 32px;
+	flex: none;
+}
+body.adminkit .ak-dash__online-av img {
+	display: block;
+	width: 32px;
+	height: 32px;
+	border-radius: var(--ak-radius-full);
+}
+/* Green presence dot, bottom-right of the avatar. */
+body.adminkit .ak-dash__online-dot {
+	position: absolute;
+	right: -1px;
+	bottom: -1px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--ak-success);
+	border: 2px solid var(--ak-card-bg);
+}
+body.adminkit .ak-dash__online-name {
 	flex: 1;
 	min-width: 0;
 	font-size: var(--ak-text-s);
@@ -235,11 +422,89 @@ body.adminkit .ak-dash__counter-l {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
-body.adminkit .ak-dash__counter-n {
+body.adminkit .ak-dash__online-meta {
 	flex: none;
-	font-size: 17px;
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+
+/* ── At-a-glance — a draggable card of live content counters (borderless tiles) ── */
+/* The card is a query container so its tiles switch grid → list by the card's OWN
+   width (narrow = right column or small screens), not the viewport width. */
+body.adminkit .ak-dash__glance-section {
+	container-type: inline-size;
+}
+body.adminkit .ak-dash__glance {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: 4px;
+	padding: 8px 10px 10px;
+}
+body.adminkit .ak-dash__glance-card {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 11px;
+	padding: 10px 12px;
+	background: transparent;
+	border: 0;
+	border-radius: var(--ak-radius-s);
+	text-decoration: none;
+	transition: background .15s ease;
+}
+body.adminkit .ak-dash__glance-card:hover {
+	background: var(--ak-elevated);
+}
+body.adminkit .ak-dash__glance-ic {
+	display: inline-flex;
+	flex: none;
+	width: 34px;
+	height: 34px;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+}
+body.adminkit .ak-dash__glance-ic .ak-dash-ic {
+	width: 17px;
+	height: 17px;
+}
+body.adminkit .ak-dash__glance-n {
+	flex: none;
+	font-size: 22px;
 	font-weight: 700;
+	line-height: 1.15;
 	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__glance-l {
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__glance-sub {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__glance-text {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 1px;
+	min-width: 0;
+}
+
+/* Narrow card (right column / phone) → one stat per row, and the counter slides to
+   the right edge (icon · label/sub … value), like the AdminKit list rows. */
+@container (max-width: 400px) {
+	body.adminkit .ak-dash__glance {
+		grid-template-columns: 1fr;
+	}
+	body.adminkit .ak-dash__glance-n {
+		order: 1;
+		margin-left: auto;
+		font-size: 16px;
+	}
 }
 
 /* ── Lower grid: activity | (health + storage) ───────────────────────────── */
@@ -256,84 +521,120 @@ body.adminkit .ak-dash__col {
 	min-width: 0;
 }
 
-/* ── Recent content — a grid of preview cards (left column) ──────────────── */
-body.adminkit .ak-dash__head-link {
-	font-size: var(--ak-text-s);
-	font-weight: 500;
-	color: var(--ak-primary);
-	text-decoration: none;
+/* ── Recent changes — a compact list (left column) ───────────────────────── */
+body.adminkit .ak-dash__recent-list {
+	list-style: none;
+	margin: 0;
+	padding: 6px;
 }
-body.adminkit .ak-dash__head-link:hover {
-	text-decoration: underline;
-}
-body.adminkit .ak-dash__recent-grid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 12px;
-	padding: 12px;
-}
-body.adminkit .ak-dash__post {
-	display: flex;
-	flex-direction: column;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
-	overflow: hidden;
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	text-decoration: none;
-	transition: border-color .15s ease;
-}
-body.adminkit .ak-dash__post:hover {
-	border-color: var(--ak-border-strong);
-}
-/* Preview area — featured/mShots image, or a centered placeholder icon. */
-body.adminkit .ak-dash__post-media {
-	position: relative;
+body.adminkit .ak-dash__rc-row {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	aspect-ratio: 16 / 9;
-	background: var(--ak-elevated);
-	color: var(--ak-text-muted);
-	overflow: hidden;
+	gap: 12px;
+	padding: 8px 10px;
+	border-radius: var(--ak-radius-s);
+	transition: background .15s ease;
+	position: relative;
 }
-body.adminkit .ak-dash__post-img {
+body.adminkit .ak-dash__rc-row:hover {
+	background: var(--ak-elevated);
+}
+body.adminkit .ak-dash__rc-zoom {
+	position: absolute;
+	top: 4px;
+	left: 10px;
+	width: 220px;
+	height: 147px;
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
+	border: 1px solid var(--ak-card-border);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+	background: var(--ak-elevated);
+	opacity: 0;
+	transform: scale(0.92);
+	transform-origin: top left;
+	pointer-events: none;
+	transition: opacity .12s ease, transform .12s ease;
+	z-index: 20;
+}
+body.adminkit .ak-dash__rc-zoom img {
+	display: block;
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 }
-body.adminkit .ak-dash__post-ph .ak-dash-ic {
-	width: 30px;
-	height: 30px;
-	opacity: .5;
+body.adminkit .ak-dash__rc-thumb:hover ~ .ak-dash__rc-zoom {
+	opacity: 1;
+	transform: scale(1);
 }
-/* Type pill — top-left over the preview. */
-body.adminkit .ak-dash__post-type {
-	position: absolute;
-	top: 8px;
-	left: 8px;
-	padding: 2px 9px;
-	border-radius: var(--ak-radius-full);
-	background: var(--ak-surface);
-	color: var(--ak-text-muted);
-	font-size: var(--ak-text-xs);
-	font-weight: 500;
-}
-/* Hover actions — pen (edit) + eye (open the live page, new tab), top-right. */
-body.adminkit .ak-dash__post-actions {
-	position: absolute;
-	top: 8px;
-	right: 8px;
+body.adminkit .ak-dash__rc-thumb {
+	flex: none;
 	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 40px;
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
+	background: var(--ak-elevated);
+	border: 1px solid var(--ak-border);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__rc-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+body.adminkit .ak-dash__rc-thumb .ak-dash-ic {
+	width: 18px;
+	height: 18px;
+	opacity: .6;
+}
+body.adminkit .ak-dash__rc-main {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	text-decoration: none;
+	color: inherit;
+}
+body.adminkit .ak-dash__rc-title {
+	font-size: var(--ak-text-s);
+	font-weight: 600;
+	line-height: 1.3;
+	color: var(--ak-heading);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+/* Status badge sits in the row (not the title line) so it centers with the
+   hover action buttons on the right. */
+body.adminkit .ak-dash__rc-badge {
+	flex: none;
+}
+body.adminkit .ak-dash__rc-meta {
+	display: flex;
+	align-items: center;
 	gap: 6px;
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+body.adminkit .ak-dash__rc-actions {
+	flex: none;
+	display: flex;
+	gap: 4px;
 	opacity: 0;
 	transition: opacity .15s ease;
 }
-body.adminkit .ak-dash__post:hover .ak-dash__post-actions,
-body.adminkit .ak-dash__post-actions:focus-within {
+body.adminkit .ak-dash__rc-row:hover .ak-dash__rc-actions,
+body.adminkit .ak-dash__rc-actions:focus-within {
 	opacity: 1;
 }
-body.adminkit .ak-dash__post-act {
+body.adminkit .ak-dash__rc-act {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -346,60 +647,14 @@ body.adminkit .ak-dash__post-act {
 	color: var(--ak-heading);
 	transition: background .15s ease, border-color .15s ease, color .15s ease;
 }
-body.adminkit .ak-dash__post-act:hover {
+body.adminkit .ak-dash__rc-act:hover {
 	background: var(--ak-primary);
 	border-color: var(--ak-primary);
 	color: var(--ak-on-accent, #fff);
 }
-body.adminkit .ak-dash__post-act .ak-dash-ic {
+body.adminkit .ak-dash__rc-act .ak-dash-ic {
 	width: 15px;
 	height: 15px;
-}
-body.adminkit .ak-dash__post-body {
-	display: flex;
-	flex-direction: column;
-	gap: 3px;
-	padding: 12px 14px 10px;
-	flex: 1;
-	text-decoration: none;
-	color: inherit;
-}
-body.adminkit .ak-dash__post-title {
-	font-size: var(--ak-text-s);
-	font-weight: 600;
-	line-height: 1.35;
-	color: var(--ak-heading);
-	display: -webkit-box;
-	-webkit-line-clamp: 1;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-}
-body.adminkit .ak-dash__post:hover .ak-dash__post-title {
-	color: var(--ak-primary);
-}
-body.adminkit .ak-dash__post-excerpt {
-	font-size: var(--ak-text-xs);
-	line-height: 1.45;
-	color: var(--ak-text-muted);
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-}
-body.adminkit .ak-dash__post-excerpt:empty {
-	display: none;
-}
-body.adminkit .ak-dash__post-foot {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 8px;
-	padding: 0 14px 12px;
-}
-body.adminkit .ak-dash__post-time {
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
-	white-space: nowrap;
 }
 body.adminkit .ak-dash__empty {
 	margin: 0;
@@ -449,29 +704,78 @@ body.adminkit .ak-dash__ring-n {
 	position: absolute;
 	inset: 0;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	font-size: 18px;
+	line-height: 1;
+	font-size: 17px;
 	font-weight: 700;
 	color: var(--ak-heading);
 }
-body.adminkit .ak-dash__health-h {
-	display: block;
+body.adminkit .ak-dash__ring-l {
+	margin-top: 2px;
+	font-size: 7px;
 	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__health-stats {
+	display: flex;
+	gap: 10px;
+	flex: 1;
+	min-width: 0;
+}
+body.adminkit .ak-dash__health-stat {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 10px 12px;
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-elevated);
+}
+body.adminkit .ak-dash__health-stat-n {
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1;
 	color: var(--ak-heading);
 }
-body.adminkit .ak-dash__health-s {
+body.adminkit .ak-dash__health-stat-l {
 	font-size: var(--ak-text-xs);
 	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__health-stat--ok .ak-dash__health-stat-n {
+	color: var(--ak-success);
+}
+body.adminkit .ak-dash__health-stat--warn .ak-dash__health-stat-n {
+	color: var(--ak-warning);
+}
+body.adminkit .ak-dash__health-stat--bad .ak-dash__health-stat-n {
+	color: var(--ak-error);
+}
+body.adminkit .ak-dash__head-link {
+	flex: none;
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	color: var(--ak-text-muted);
+	text-decoration: none;
+	white-space: nowrap;
+}
+body.adminkit .ak-dash__head-link:hover {
+	color: var(--ak-text-muted);
+	text-decoration: underline;
 }
 body.adminkit .ak-dash__more {
 	display: inline-block;
 	margin: 16px 18px 18px;
 	font-size: var(--ak-text-s);
-	color: var(--ak-primary);
+	color: var(--ak-text-muted);
 	text-decoration: none;
 }
 body.adminkit .ak-dash__more:hover {
+	color: var(--ak-text-muted);
 	text-decoration: underline;
 }
 
@@ -509,13 +813,13 @@ body.adminkit .ak-dash__legend {
 	margin: 0;
 	padding: 0 18px 16px;
 	display: flex;
-	flex-direction: column;
-	gap: 9px;
+	flex-wrap: wrap;
+	gap: 9px 22px;
 }
 body.adminkit .ak-dash__legend li {
 	display: flex;
 	align-items: center;
-	gap: 9px;
+	gap: 8px;
 	font-size: var(--ak-text-s);
 	color: var(--ak-text);
 }
@@ -526,11 +830,20 @@ body.adminkit .ak-dash__dot {
 	border-radius: 50%;
 }
 body.adminkit .ak-dash__legend-v {
-	margin-left: auto;
 	color: var(--ak-text-muted);
 }
 
 /* Priorités — actionable list: site-health alerts + maintenance + content to-dos. */
+body.adminkit .ak-dash__prio-h {
+	margin: 0;
+	padding: 14px 18px 6px;
+	border-top: 1px solid var(--ak-card-border);
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--ak-text-muted);
+}
 body.adminkit .ak-dash__prio-list {
 	list-style: none;
 	margin: 0;
@@ -601,9 +914,11 @@ body.adminkit .ak-dash__prio-cta {
 	text-decoration: none;
 	transition: background .15s ease, border-color .15s ease;
 }
-body.adminkit .ak-dash__prio-cta:hover {
+body.adminkit .ak-dash__prio-cta:hover,
+body.adminkit .ak-dash__prio-cta:focus {
 	background: var(--ak-elevated);
 	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
 }
 /* Empty (all-clear) state */
 body.adminkit .ak-dash__prio-empty {
@@ -628,15 +943,495 @@ body.adminkit .ak-dash__prio-empty .ak-dash-ic {
 		grid-template-columns: 1fr;
 	}
 }
-/* Recent-content cards: 2-up by default, 4-up on a wide screen, 1-up on phones.
-   With 4 items that lands a clean 2×2 or a single row of 4 — never an orphan card. */
-@media (min-width: 1650px) {
-	body.adminkit .ak-dash__recent-grid {
-		grid-template-columns: repeat(4, minmax(0, 1fr));
+/* Phone polish — smaller greeting, left-aligned clock, even 2-up action buttons. */
+@media (max-width: 600px) {
+	body.adminkit .ak-dash__greet {
+		font-size: 24px;
+	}
+	body.adminkit .ak-dash__head-aside,
+	body.adminkit .ak-dash__clock {
+		align-items: flex-start;
+		text-align: left;
+	}
+	body.adminkit .ak-dash__clock {
+		padding-top: 0;
+	}
+	body.adminkit .ak-dash__clock-time {
+		font-size: 18px;
+	}
+	body.adminkit .ak-dash__actions .ak-btn {
+		flex: 1 1 calc(50% - 5px);
+		justify-content: center;
 	}
 }
-@media (max-width: 600px) {
-	body.adminkit .ak-dash__recent-grid {
-		grid-template-columns: minmax(0, 1fr);
+
+/* ── Drag-to-arrange — per-user card layout (dashboard.js) ────────────────────
+   Each card header gets a grip (added by JS); a card can be dragged within or
+   across the two columns and the order is saved per user. JS off ⇒ static grid. */
+body.adminkit .ak-dash .ak-card__head--grip {
+	position: relative;
+	padding-left: 46px;
+}
+body.adminkit .ak-dash__grip {
+	position: absolute;
+	left: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--ak-radius-s);
+	background: none;
+	color: var(--ak-text-muted);
+	cursor: grab;
+	opacity: .5;
+	touch-action: none;
+	appearance: none;
+	transition: opacity .15s ease, background .15s ease, color .15s ease;
+}
+body.adminkit .ak-card__head--grip:hover .ak-dash__grip,
+body.adminkit .ak-dash__grip:focus-visible {
+	opacity: 1;
+}
+body.adminkit .ak-dash__grip:hover {
+	background: var(--ak-elevated);
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__grip:focus-visible {
+	outline: none;
+	box-shadow: var(--ak-focus-ring);
+}
+body.adminkit .ak-dash__grip:active {
+	cursor: grabbing;
+}
+body.adminkit .ak-dash__grip svg {
+	width: 16px;
+	height: 16px;
+}
+/* The card lifted under the cursor. */
+body.adminkit .ak-dash__card-wrap.is-dragging {
+	position: fixed;
+	z-index: 1000;
+	width: var(--ak-drag-w, auto);
+	margin: 0;
+	cursor: grabbing;
+	border-radius: var(--ak-card-radius);
+	box-shadow: 0 14px 36px rgba(0, 0, 0, .22);
+}
+/* The drop-slot placeholder. */
+body.adminkit .ak-dash__card-ph {
+	border: 1px dashed var(--ak-border-strong);
+	border-radius: var(--ak-card-radius);
+	background: var(--ak-primary-subtle);
+}
+/* While sorting: keep both columns targetable (even an emptied one) + grabbing cursor. */
+body.adminkit .ak-dash__grid.is-sorting {
+	cursor: grabbing;
+	user-select: none;
+}
+body.adminkit .ak-dash__grid.is-sorting .ak-dash__col {
+	min-height: 64px;
+}
+/* Collapse to a single full-width track when a column is left empty. */
+body.adminkit .ak-dash__grid[data-ak-fill="main"],
+body.adminkit .ak-dash__grid[data-ak-fill="side"] {
+	grid-template-columns: minmax(0, 1fr);
+}
+body.adminkit .ak-dash__col.is-empty {
+	display: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Customize tools — the "Customize" button rides the quick-actions row
+   (right-aligned, sharing the .ak-btn shape) + its card-visibility panel.
+   ───────────────────────────────────────────────────────────────────────── */
+body.adminkit .ak-dash__tools {
+	position: relative;
+	margin-left: auto; /* push to the right end of the .ak-dash__actions flex row */
+}
+/* The button is a plain .ak-btn; only the open state needs an accent edge. */
+body.adminkit .ak-dash__customize[aria-expanded="true"] {
+	border-color: var(--ak-primary);
+	color: var(--ak-heading);
+}
+
+/* Dropdown panel — a floating card (the one sanctioned elevation exception). */
+body.adminkit .ak-dash__panel {
+	position: absolute;
+	top: calc(100% + 6px);
+	right: 0;
+	z-index: 20;
+	min-width: 240px;
+	max-height: 70vh;
+	overflow-y: auto;
+	padding: 8px;
+	background: var(--ak-elevated);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	box-shadow: var(--ak-shadow-elevated);
+}
+body.adminkit .ak-dash__panel[hidden] {
+	display: none;
+}
+body.adminkit .ak-dash__panel-h {
+	margin: 4px 8px 8px;
+	padding: 0;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__panel-row {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	padding: 7px 8px;
+	border-radius: var(--ak-radius-s);
+	font-size: var(--ak-text-s);
+	color: var(--ak-text);
+	cursor: pointer;
+}
+body.adminkit .ak-dash__panel-row:hover {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__panel-row input {
+	flex: none;
+	margin: 0;
+	cursor: pointer;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Statistics card (cookieless traffic tracker) — rendered by
+   AdminKit_Stats_Dashboard. Token-driven → light + dark for free.
+   ───────────────────────────────────────────────────────────────────────── */
+/* Card head: title · active pulse (pushed right) · range selector. */
+body.adminkit .ak-dash__stats-head {
+	flex-wrap: wrap;
+	gap: 8px 12px;
+}
+body.adminkit .ak-dash__stats-head .ak-card__title {
+	margin-right: auto; /* push the pill + selector to the right */
+}
+
+/* Active-visitors pill — live presence, distinct from logged-in accounts. */
+body.adminkit .ak-dash__stats-active {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 9px;
+	border-radius: var(--ak-radius-full);
+	background: var(--ak-success-subtle);
+	color: var(--ak-success);
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	white-space: nowrap;
+}
+body.adminkit .ak-dash__stats-active-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--ak-success);
+	animation: ak-stats-pulse 2s ease-in-out infinite;
+}
+@keyframes ak-stats-pulse {
+	0%, 100% { opacity: 1; transform: scale(1); }
+	50%      { opacity: .4; transform: scale(.7); }
+}
+@media (prefers-reduced-motion: reduce) {
+	body.adminkit .ak-dash__stats-active-dot { animation: none; }
+}
+
+/* Range picker — a row of preset chips, and (when Custom is active) two
+   native date inputs. The whole picker wraps gracefully on narrow heads. */
+body.adminkit .ak-dash__stats-range {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+/* Segmented control of preset chips. */
+body.adminkit .ak-dash__stats-presets {
+	display: inline-flex;
+	gap: 2px;
+	padding: 2px;
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+body.adminkit .ak-dash__stats-preset {
+	padding: 3px 9px;
+	border: 0;
+	border-radius: calc(var(--ak-radius-s) - 2px);
+	background: transparent;
+	color: var(--ak-text-muted);
+	font: inherit;
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color .12s ease, color .12s ease;
+}
+body.adminkit .ak-dash__stats-preset:hover {
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__stats-preset.is-active {
+	background: var(--ak-elevated);
+	color: var(--ak-heading);
+}
+
+/* Custom date inputs (revealed when Custom is active). */
+body.adminkit .ak-dash__stats-custom {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+body.adminkit .ak-dash__stats-custom[hidden] {
+	display: none;
+}
+body.adminkit .ak-dash__stats-date {
+	/* color-scheme tells the browser to render its native calendar widget
+	   (including the inline icon) in the matching light/dark variant. */
+	color-scheme: light;
+	padding: 4px 8px;
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	font: inherit;
+	font-size: var(--ak-text-xs);
+	line-height: 1.2;
+	cursor: pointer;
+}
+body.adminkit .ak-dash__stats-date:focus-visible {
+	outline: none;
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+}
+[data-adminkit-theme="dark"] body.adminkit .ak-dash__stats-date {
+	color-scheme: dark;
+}
+body.adminkit .ak-dash__stats-range-sep {
+	color: var(--ak-text-muted);
+	font-size: var(--ak-text-xs);
+}
+
+/* Subtle fade while a window re-renders over AJAX. */
+body.adminkit .ak-dash__stats.is-loading {
+	opacity: .55;
+	transition: opacity .12s ease;
+	pointer-events: none;
+}
+
+/* Headline metrics row. */
+body.adminkit .ak-dash__stats-top {
+	display: flex;
+	gap: 28px;
+	padding: 14px 16px 4px;
+}
+body.adminkit .ak-dash__stats-metric {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+body.adminkit .ak-dash__stats-num {
+	font-size: 26px;
+	font-weight: 700;
+	line-height: 1.1;
+	color: var(--ak-heading);
+}
+body.adminkit .ak-dash__stats-lbl {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+
+/* Sparkline — stretches full width; stroke kept crisp despite the non-uniform
+   scale via non-scaling-stroke. */
+body.adminkit .ak-dash__stats-spark {
+	padding: 4px 12px 10px;
+}
+body.adminkit .ak-spark {
+	display: block;
+	width: 100%;
+	height: 56px;
+	overflow: visible;
+}
+body.adminkit .ak-spark__line {
+	fill: none;
+	stroke: var(--ak-primary);
+	stroke-width: 2;
+	stroke-linejoin: round;
+	stroke-linecap: round;
+	vector-effect: non-scaling-stroke;
+}
+body.adminkit .ak-spark__area {
+	fill: var(--ak-primary-subtle);
+	stroke: none;
+	opacity: .6;
+}
+
+/* Two compact lists (top pages / top sources). */
+body.adminkit .ak-dash__stats-cols {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 6px 18px;
+	padding: 6px 16px 14px;
+}
+body.adminkit .ak-dash__stats-h {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__stats-none {
+	margin: 0;
+	font-size: var(--ak-text-s);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__stats-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+body.adminkit .ak-dash__stats-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 4px 0;
+	font-size: var(--ak-text-s);
+	border-top: 1px solid var(--ak-border);
+}
+body.adminkit .ak-dash__stats-row:first-child {
+	border-top: 0;
+}
+body.adminkit .ak-dash__stats-row-name {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	color: var(--ak-text);
+	text-decoration: none;
+}
+body.adminkit a.ak-dash__stats-row-name:hover {
+	color: var(--ak-primary);
+}
+body.adminkit .ak-dash__stats-row-val {
+	flex: none;
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
+	color: var(--ak-heading);
+}
+
+/* Top-pages rows show the page TITLE with the path as a quiet second line. */
+body.adminkit .ak-dash__stats-row-name--page {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	min-width: 0;
+	line-height: 1.3;
+}
+body.adminkit .ak-dash__stats-row-title {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	color: var(--ak-text);
+}
+body.adminkit a.ak-dash__stats-row-name--page:hover .ak-dash__stats-row-title {
+	color: var(--ak-primary);
+}
+body.adminkit .ak-dash__stats-row-sub {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+
+/* Subtle re-render fade applied to the stats card on range change. */
+body.adminkit .ak-dash__stats.is-loading {
+	opacity: .55;
+	transition: opacity .12s ease;
+	pointer-events: none;
+}
+body.adminkit .ak-dash__stats .ak-dash__empty {
+	padding: 10px 16px 14px;
+	margin: 0;
+}
+
+@media screen and (max-width: 600px) {
+	body.adminkit .ak-dash__stats-cols {
+		grid-template-columns: 1fr;
 	}
+}
+
+/* ── Live view (preset: 'live') ─────────────────────────────────────────────
+   The Live chip carries a pulse dot — calm when idle (just a green dot),
+   animating when active. Its body shows a big active-now headline + the
+   currently-viewing pages / inbound sources, reusing the period view's
+   list shape so the card height stays steady when you toggle in and out. */
+body.adminkit .ak-dash__stats-preset--live {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+body.adminkit .ak-dash__stats-pulse {
+	display: inline-block;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--ak-success);
+	flex: none;
+	/* idle: solid dot. */
+}
+/* Active: the dot pulses so it reads as "live, watching now". */
+body.adminkit .ak-dash__stats-preset--live.is-active .ak-dash__stats-pulse {
+	animation: ak-stats-pulse 1.4s ease-in-out infinite;
+	box-shadow: 0 0 0 0 var(--ak-success);
+}
+@media (prefers-reduced-motion: reduce) {
+	body.adminkit .ak-dash__stats-preset--live.is-active .ak-dash__stats-pulse {
+		animation: none;
+	}
+}
+
+/* Live body container. */
+body.adminkit .ak-dash__stats-live {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+/* Big headline: visitor count + tagline. */
+body.adminkit .ak-dash__stats-live-headline {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	padding: 14px 16px 6px;
+}
+body.adminkit .ak-dash__stats-live-num {
+	font-size: 44px;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--ak-heading);
+	font-variant-numeric: tabular-nums;
+}
+body.adminkit .ak-dash__stats-live-lbl {
+	font-size: var(--ak-text-s);
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__stats-live-empty {
+	margin: 0;
+	padding: 6px 16px 16px;
+	font-size: var(--ak-text-s);
+	color: var(--ak-text-muted);
 }

@@ -1,0 +1,13 @@
+/* AdminKit "Online users" — the green presence dot shown in the users.php
+   "Last login" column. Loaded only on users.php (gated in PHP). Tokens only,
+   no !important (a unique class with no core competitor). */
+
+.adminkit-online-dot {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--ak-success, #1a7f37);
+	vertical-align: middle;
+	margin-right: 2px;
+}
