@@ -117,9 +117,19 @@
 	app.textContent = '';
 	// Statistics is read-only — no save bar. (Menu + Settings both save.)
 	var showSave = ( SCREEN !== 'stats' );
+	// Import / Export live only on the main Settings screen (where the values are).
+	var actions = showSave ? [ statusEl ] : [];
+	if ( SCREEN === 'main' ) {
+		actions.push(
+			el( 'button', { 'class': 'ak-btn', type: 'button', text: I.settingsExport || 'Export', title: I.settingsExportHint || 'Download these settings as a JSON file', onclick: exportSettings } ),
+			el( 'button', { 'class': 'ak-btn', type: 'button', text: I.settingsImport || 'Import', title: I.settingsImportHint || 'Load settings from a JSON file', onclick: function () { importInput.click(); } } )
+		);
+	}
+	if ( showSave ) { actions.push( saveBtn ); }
+	var importInput = el( 'input', { type: 'file', accept: 'application/json,.json', hidden: 'hidden', onchange: function ( e ) { if ( e.target.files && e.target.files[0] ) { importSettings( e.target.files[0] ); } e.target.value = ''; } } );
 	app.appendChild( el( 'div', { 'class': 'ak-head' }, [
 		el( 'h1', { 'class': 'ak-title', text: 'AdminKit' } ),
-		el( 'div', { 'class': 'ak-actions' }, showSave ? [ statusEl, saveBtn ] : [] )
+		el( 'div', { 'class': 'ak-actions' }, actions.concat( SCREEN === 'main' ? [ importInput ] : [] ) )
 	] ) );
 
 	var ICONS = {
@@ -1865,6 +1875,43 @@
 	// --- save ----------------------------------------------------------------
 	// Interactive controls (Features toggles, Plugins toggles, Branding logos)
 	// post to REST; the Tokens tab is a read-only reference.
+	// Export the current settings as a downloaded JSON file. Wrapped with a small
+	// header (signature + timestamp) for humans; only `values` matters on import.
+	function exportSettings() {
+		var payload = { _adminkit: 'settings', version: ( D.version || '1' ), exported: new Date().toISOString(), values: gather() };
+		var blob = new Blob( [ JSON.stringify( payload, null, '\t' ) ], { type: 'application/json' } );
+		var url  = URL.createObjectURL( blob );
+		var a    = el( 'a', { href: url, download: 'adminkit-settings.json' } );
+		document.body.appendChild( a );
+		a.click();
+		a.remove();
+		URL.revokeObjectURL( url );
+	}
+
+	// Import settings from a JSON file. Accepts either our export wrapper (with a
+	// `values` object) or a bare values object. The file is POSTed through the SAME
+	// save route, so the server's sanitize() keeps only known keys — an import can
+	// never inject anything. On success we reload so every control reflects the
+	// imported state from fresh boot data.
+	function importSettings( file ) {
+		var reader = new FileReader();
+		reader.onload = function () {
+			var data, values;
+			try { data = JSON.parse( reader.result ); } catch ( e ) { data = null; }
+			values = ( data && typeof data === 'object' && data.values && typeof data.values === 'object' ) ? data.values
+				: ( data && typeof data === 'object' ? data : null );
+			if ( ! values || ! apiFetch ) {
+				setStatus( 'is-error', I.settingsImportError || 'That file isn’t a valid AdminKit settings export.' );
+				return;
+			}
+			state.saving = true; updateBar();
+			apiFetch( { path: D.route, method: 'POST', data: { values: values } } )
+				.then( function () { window.location.reload(); } )
+				.catch( function () { state.saving = false; setStatus( 'is-error', I.error ); updateBar(); } );
+		};
+		reader.readAsText( file );
+	}
+
 	function gather() {
 		var v = {};
 		Object.keys( state.features ).forEach( function ( k ) { v[ k ] = !! state.features[ k ]; } );
