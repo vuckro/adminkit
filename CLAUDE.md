@@ -290,40 +290,26 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 
 ## Git & GitHub workflow
 
-`main` is the *eventual* source of truth: always clean, always deployable. **But today
-the live, active integration branch is `docs/overhaul`** — read the box below before you
-branch. The pain we hit before all came from drifting off the right branch — read the
-**anti-patterns**.
+**`main` is the single source of truth: always clean, always deployable — and you
+work on it directly.** AdminKit is a solo-maintained, stable plugin; the simplest
+workflow that stays safe wins. No long-lived integration branch.
 
-### ⚠️ Current working branch — `docs/overhaul` (read before you start)
+### The loop (MAIN-ONLY)
 
-`main` is the trunk — what people clone / download — and we keep it current by
-**promoting `docs/overhaul` → `main` at each verified checkpoint** (it's a fast-forward,
-since `main` stays an ancestor of `docs/overhaul`). Between promotions, active work lands
-on **`docs/overhaul`** first. So:
+1. **Pull first:** `git fetch origin && git checkout main && git pull --ff-only`.
+2. **Edit + commit on `main` in logical units**, running the relevant checks first
+   (see Verify below; the pre-commit hook also gates PHP/JS/CSS validity).
+   **Conventional commits, one concern each** (`feat:`, `fix:`, `refactor:`, `docs:`,
+   `chore:`, scoped: `fix(buttons): …`). **Stage explicit paths — never `git add -A`**
+   (the tree may hold a sub-agent's other work).
+3. **`git push`** when a unit is coherent. No PR, no promotion step.
+4. **Only for genuinely risky / experimental work**, branch off `main`
+   (`feat/…` | `fix/…`), prove it, merge back **fast-forward**, delete the branch.
+   Never force-push or rewrite `main`.
 
-- **Work on `docs/overhaul`** (the orchestrator commits + pushes here). Get the live code
-  with `git fetch origin && git checkout docs/overhaul && git pull --ff-only`. Never start
-  from a downloaded release / ZIP — it's a snapshot, not a git checkout.
-- **Pull before you start, re-sync often.** After anything merges into `docs/overhaul`,
-  `git fetch && git rebase origin/docs/overhaul` so nothing drifts (also how two changes
-  to the same file stay mergeable — rebase the second).
-- **Promote to `main` at clean checkpoints** so `main` never lags far behind the live
-  site — that gap is exactly what makes a fresh download look "wrong". Fast-forward only;
-  never force-push or rewrite `main`.
-- The clean `main`-based loop below is the long-term target (once `docs/overhaul` retires);
-  until then, read each "`main`" in it as "`docs/overhaul`".
-
-### The loop (one topic at a time)
-
-1. Branch **off a freshly-pulled `docs/overhaul`** (the current integration branch — it's
-   `main` only once we've promoted): `feat/…`, `fix/…`, `refactor/…`, `docs/…`,
-   `chore/…` — one topic, short-lived. Direct pushes to `main` are blocked.
-2. **Conventional commits, one concern each** (`feat:`, `fix:`, `refactor:`,
-   `docs:`, `style:`, `chore:`, scoped: `fix(buttons): …`). **Stage explicit
-   paths — never `git add -A`** (the tree may hold a second agent's work). Push often.
-3. Open a PR **into `docs/overhaul`**, run the pre-merge checks, **squash-merge** (one
-   clean commit on the integration branch), then **delete the branch immediately**.
+> History: a two-branch model (`main` + a long-lived `docs/overhaul` integration
+> branch) was retired on 2026-05-31 — all work fast-forwarded into `main`, the extra
+> branches deleted. Old references to `docs/overhaul` below mean `main` now.
 
 ### Anti-patterns (these bit us — don't repeat)
 
@@ -347,9 +333,10 @@ Development is **centralised in the main Claude conversation** (the orchestrator
 in the single tree on the live site. When a task needs parallel hands, the orchestrator
 spawns **non-isolated sub-agents** (the Agent tool) that **edit + verify in this same tree
 and leave everything uncommitted** — the orchestrator does ALL git (stage explicit paths,
-commit, push, PR, promote). Why non-isolated: the Agent tool's `isolation:"worktree"`
-branches off the DEFAULT branch (`main`), not `docs/overhaul`, so an isolated worktree is
-missing the branch's work and is unusable here.
+commit, push). Why non-isolated: the orchestrator holds uncommitted work in the one
+tree on the live site, so sub-agents share it. (Now that `main` is the trunk, the Agent
+tool's `isolation:"worktree"` — which branches off `main` — is also viable for
+self-contained tasks.)
 
 (We earlier ran agents on separate clones/sites; that's retired in favour of this
 centralised model. The two notes below still apply if you ever do run a second checkout.)
