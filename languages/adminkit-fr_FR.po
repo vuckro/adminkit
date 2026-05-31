@@ -24,897 +24,139 @@ msgstr "Outils disponibles"
 msgid "Import"
 msgstr "Importer"
 
-#: inc/wp-core/class-chrome.php:244
-msgid "Export"
-msgstr "Exporter"
-
-#: inc/wp-core/class-chrome.php:245
-msgid "Site Health"
-msgstr "Santé du site"
-
-#: inc/wp-core/class-chrome.php:246
-msgid "Export Personal Data"
-msgstr "Exporter les données personnelles"
-
-#: inc/wp-core/class-chrome.php:247
-msgid "Erase Personal Data"
-msgstr "Effacer les données personnelles"
-
-#: inc/wp-core/class-chrome.php:256
-msgid "Tools"
-msgstr "Outils"
-
-#: inc/class-settings-page.php:291
-msgid "Admin bar"
-msgstr "Barre d’administration"
-
-#: inc/class-settings-page.php:53 inc/class-settings-page.php:54
-#: inc/class-settings-page.php:73 inc/class-settings-page.php:269
-msgid "AdminKit"
-msgstr "AdminKit"
-
-#: inc/class-settings-page.php:76
-msgid "AdminKit settings require JavaScript."
-msgstr "Les réglages d’AdminKit nécessitent JavaScript."
-
-#: inc/class-settings-page.php:265 inc/class-theme-toggle.php:185
-msgid "Dashboard"
-msgstr "Tableau de bord"
-
-#: inc/class-settings-page.php:266
-msgid "Design"
-msgstr "Design"
-
-#: inc/class-settings-page.php:267 inc/wp-core/class-profile-account.php:170
-msgid "Settings"
-msgstr "Réglages"
-
-#: inc/class-settings-page.php:268
-msgid "Coming soon"
-msgstr "Bientôt disponible"
-
-#: inc/class-settings-page.php:270
-msgid "AdminKit-defined role (no provider equivalent)."
-msgstr "Rôle défini par AdminKit (sans équivalent fournisseur)."
-
-#: inc/class-settings-page.php:271
-msgid "Turn AdminKit modules on or off."
-msgstr "Activez ou désactivez les modules AdminKit."
-
-#: inc/class-settings-page.php:272
-msgid "Enable all"
-msgstr "Tout activer"
-
-#: inc/class-settings-page.php:273
-msgid "Disable all"
-msgstr "Tout désactiver"
-
-#: inc/class-settings-page.php:274
-msgid "Branding"
-msgstr "Image de marque"
-
-#: inc/class-settings-page.php:276
-msgid ""
-"Your brand logo, light and dark. Ideally a horizontal SVG (crisp at any "
-"size), or a PNG at least ~320×80px (≈ 4:1), on a transparent background. "
-"Used for the site-title mark, the login screen and the Bricks builder."
-msgstr ""
-"Votre logo de marque, clair et sombre. Idéalement un SVG horizontal (net à "
-"toute taille), ou un PNG d’au moins ~320×80 px (≈ 4:1), sur fond "
-"transparent. Utilisé pour la marque à côté du titre du site, l’écran de "
-"connexion et le constructeur Bricks."
-
-#: inc/class-settings-page.php:277
-msgid "Logo display"
-msgstr "Affichage du logo"
-
-#: inc/class-settings-page.php:278
-msgid "Choose how the logo shows in each location."
-msgstr "Choisissez comment le logo s’affiche à chaque emplacement."
-
-#: inc/class-settings-page.php:276
-msgid "Logo — light mode"
-msgstr "Logo — mode clair"
-
-#: inc/class-settings-page.php:277
-msgid "Logo — dark mode"
-msgstr "Logo — mode sombre"
-
-#: inc/class-settings-page.php:278
-msgid "Light Mode"
-msgstr "Mode clair"
-
-#: inc/class-settings-page.php:279
-msgid "Dark Mode"
-msgstr "Mode sombre"
-
-#: inc/class-settings-page.php:280
-msgid "https://…/logo.svg"
-msgstr "https://…/logo.svg"
-
-#: inc/class-settings-page.php:281
-msgid "Choose a logo"
-msgstr "Choisir un logo"
-
-#: inc/class-settings-page.php:282
-msgid "Change logo"
-msgstr "Changer le logo"
-
-#: inc/class-settings-page.php:283
-msgid "Remove logo"
-msgstr "Retirer le logo"
-
-#: inc/class-settings-page.php:284
-msgid "Select a logo"
-msgstr "Sélectionner un logo"
-
-#: inc/class-settings-page.php:285 inc/wp-core/class-local-avatars.php:715
-msgid "Use this image"
-msgstr "Utiliser cette image"
-
-#: inc/class-settings-page.php:286
-msgid "Plugins"
-msgstr "Extensions"
-
-#: inc/class-settings-page.php:274
-msgid ""
-"Every plugin installed on your site, plus AdminKit's active theme adapters. "
-"Native ones have a tuned adapter you can switch per host; the rest carry a "
-"Generic badge and inherit AdminKit's base styling automatically."
-msgstr ""
-"Toutes les extensions installées sur votre site, ainsi que les adaptateurs "
-"de thème actifs d’AdminKit. Les natifs ont un adaptateur dédié, activable "
-"par hôte ; les autres portent un badge Générique et héritent automatiquement "
-"du style de base d’AdminKit."
-
-#: inc/class-settings-page.php:275
-msgid "Native"
-msgstr "Natif"
-
-#: inc/class-settings-page.php:277
-msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
-msgstr ""
-"AdminKit fournit un adaptateur dédié pour cette extension — clair et sombre."
-
-#: inc/class-settings-page.php:278
-msgid "System"
-msgstr "Système"
-
-#: inc/class-settings-page.php:279
-msgid "AdminKit itself — always on and not removable here."
-msgstr "AdminKit lui-même — toujours actif, non désactivable ici."
-
-#: inc/class-settings-page.php:280
-msgid "Generic"
-msgstr "Générique"
-
-#: inc/class-settings-page.php:281
-msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
-msgstr ""
-"Aucun adaptateur dédié — thémé automatiquement par la couche de base "
-"d'AdminKit."
-
-#: inc/class-settings-page.php:282
-msgid "Themes"
-msgstr "Thèmes"
-
-#: inc/class-settings-page.php:291
-msgid "Logo"
-msgstr "Logo"
-
-#: inc/class-settings-page.php:292
-msgid "Favicon"
-msgstr "Favicon"
-
-#: inc/class-settings-page.php:293
-msgid "Hide"
-msgstr "Masquer"
-
-#: inc/class-settings-page.php:294
-msgid ""
-"No Site Icon set — the mark stays empty until you add one (Settings → "
-"General)."
-msgstr ""
-"Aucune icône de site définie — la marque reste vide jusqu’à ce que vous en "
-"ajoutiez une (Réglages → Général)."
-
-#: inc/class-settings-page.php:295
-msgid "Save changes"
-msgstr "Enregistrer les modifications"
-
-#: inc/class-settings-page.php:296
-msgid "Saving…"
-msgstr "Enregistrement…"
-
-#: inc/class-settings-page.php:297
-msgid "Saved"
-msgstr "Enregistré"
-
-#: inc/class-settings-page.php:298
-msgid "Could not save"
-msgstr "Échec de l’enregistrement"
-
-#: inc/class-settings-page.php:299
-msgid "Light"
-msgstr "Clair"
-
-#: inc/class-settings-page.php:300
-msgid "Dark"
-msgstr "Sombre"
-
-#: inc/class-settings-page.php:301
-msgid "Mode"
-msgstr "Mode"
-
-#: inc/class-settings-page.php:302
-msgid "Unsaved changes"
-msgstr "Modifications non enregistrées"
-
-#: inc/class-settings-page.php:303
-msgid "Close"
-msgstr "Fermer"
-
-#: inc/class-settings-page.php:304
-msgid "Details"
-msgstr "Détails"
-
-#: inc/class-settings-page.php:305
-msgid "Click a card for details."
-msgstr "Cliquez sur une carte pour les détails."
-
-#: inc/class-settings-page.php:299
-msgid "To verify"
-msgstr "À vérifier"
-
-#: inc/class-settings-page.php:300
-msgid "Done — confirm so it can be removed from the roadmap."
-msgstr ""
-"Terminé — confirme pour qu'elle puisse être retirée de la feuille de route."
-
-#: inc/class-settings-page.php:301
-msgid "Game-changer"
-msgstr "Change la donne"
-
-#: inc/class-settings-page.php:306
-msgid "Live colour reference"
-msgstr "Référence des couleurs en direct"
-
-#: inc/class-settings-page.php:307
-msgid ""
-"Each row shows a live colour preview, the role, then its AdminKit token ← "
-"the WaasKit semantic it reads · the primitive it resolves from. Read-only — "
-"the palette is driven by your tokens."
-msgstr ""
-"Chaque ligne affiche un aperçu de couleur en direct, le rôle, puis son token "
-"AdminKit ← la sémantique WaasKit qu’il lit · la primitive dont il dérive. En "
-"lecture seule — la palette est pilotée par vos tokens."
-
-#: inc/class-settings-page.php:308
-msgid "Typography"
-msgstr "Typographie"
-
-#: inc/class-settings-page.php:309
-msgid "Body font follows Bricks (--font-base) when set, otherwise Inter."
-msgstr ""
-"La police du corps de texte suit Bricks (--font-base) si défini, sinon Inter."
-
-#: inc/class-settings-page.php:310
-msgid "Body"
-msgstr "Corps"
-
-#: inc/class-settings-page.php:311
-msgid "Small"
-msgstr "Petit"
-
-#: inc/class-settings-page.php:312
-msgid "Caption"
-msgstr "Légende"
-
-#. translators: pangram used as a font preview sample — translate to a sentence that exercises your language's letters.
-#: inc/class-settings-page.php:314
-msgid "The quick brown fox jumps over the lazy dog"
-msgstr "Portez ce vieux whisky au juge blond qui fume"
-
-#: inc/class-settings-page.php:341
-msgid "Tokens"
-msgstr "Tokens"
-
-#. translators: %s: the selected accent colour value (e.g. #2563eb).
-#: inc/class-settings-page.php:344
-#, php-format
-msgid "accent %s"
-msgstr "accent %s"
-
-#: inc/class-settings-page.php:344
-msgid "accent inherited"
-msgstr "accent hérité"
-
-#: inc/class-settings-page.php:349
-msgid "Features"
-msgstr "Fonctionnalités"
-
-#. translators: %d: total number of feature modules.
-#: inc/class-settings-page.php:352
-#, php-format
-msgid "of %d module on"
-msgid_plural "of %d modules on"
-msgstr[0] "sur %d module"
-msgstr[1] "sur %d modules"
-
-#: inc/class-settings-page.php:369
-msgid "A quick overview of your AdminKit setup."
-msgstr "Un aperçu rapide de votre configuration AdminKit."
-
-#. translators: %s = a date.
-#: inc/class-settings-page.php:373
-msgid "Updated"
-msgstr "Mis à jour"
-
-#: inc/class-settings-page.php:374
-msgid "Overview"
-msgstr "Aperçu"
-
-#: inc/class-settings-page.php:376
-msgid "Roadmap"
-msgstr "Feuille de route"
-
-#: inc/class-settings-page.php:385
-msgid "In progress"
-msgstr "En cours"
-
-#: inc/class-settings-page.php:411
-msgid "Next"
-msgstr "Prochainement"
-
-#: inc/class-settings-page.php:419
-msgid "More native screens styled"
-msgstr "Davantage d’écrans natifs stylés"
-
-#: inc/class-settings-page.php:420
-msgid "Taxonomies, custom post types and the rest."
-msgstr "Taxonomies, types de publication personnalisés et le reste."
-
-#: inc/class-settings-page.php:421
-msgid ""
-"Extend AdminKit's per-screen polish to the pages still wearing default "
-"WordPress styling: the category and tag editors, custom-post-type lists, and "
-"the few remaining core screens — so the whole admin feels like one product."
-msgstr ""
-"Étendez le soin apporté par AdminKit à chaque écran aux pages encore "
-"habillées du style WordPress par défaut : les éditeurs de catégories et "
-"d’étiquettes, les listes de types de publication personnalisés et les "
-"quelques écrans natifs restants — pour que toute l’administration paraisse "
-"d’un seul tenant."
-
-#: inc/class-settings-page.php:420
-msgid "Universal plugin compatibility"
-msgstr "Compatibilité universelle des extensions"
-
-#: inc/class-settings-page.php:421
-msgid "Any plugin looks right, even without an adapter."
-msgstr "N'importe quelle extension s'affiche bien, même sans adaptateur."
-
-#: inc/class-settings-page.php:422
-msgid ""
-"Strengthen the shared base layer — notices, meta-boxes, tabs, modals, common "
-"form controls — so a plugin with no dedicated adapter still looks coherent "
-"in light and dark out of the box. The stronger this layer, the less per-"
-"plugin work is ever needed."
-msgstr ""
-"Renforcer la couche de base partagée — notices, métaboxes, onglets, fenêtres "
-"modales, contrôles de formulaire courants — pour qu'une extension sans "
-"adaptateur dédié reste cohérente en clair et en sombre d'emblée. Plus cette "
-"couche est solide, moins il faut de travail par extension."
-
-#: inc/class-settings-page.php:424
-msgid "In-app palette editor"
-msgstr "Éditeur de palette intégré"
-
-#: inc/class-settings-page.php:425
-msgid "Pick accent, surface and text colours directly."
-msgstr "Choisissez directement les couleurs d’accent, de surface et de texte."
-
-#: inc/class-settings-page.php:426
-msgid ""
-"Turn today's read-only token map into a real editor: choose your accent, "
-"surfaces and text, preview the change live across wp-admin, and export the "
-"palette to a provider like Bricks."
-msgstr ""
-"Transformez l’actuelle carte de jetons en lecture seule en un véritable "
-"éditeur : choisissez votre accent, vos surfaces et votre texte, "
-"prévisualisez le changement en direct dans tout wp-admin, et exportez la "
-"palette vers un fournisseur comme Bricks."
-
-#: inc/class-settings-page.php:431
-msgid "Planned"
-msgstr "Planifié"
-
-#: inc/class-settings-page.php:434
-msgid "Colour sync"
-msgstr "Synchronisation des couleurs"
-
-#: inc/class-settings-page.php:435
-msgid "Pull colours from your provider or theme."
-msgstr "Récupérez les couleurs de votre fournisseur ou de votre thème."
-
-#: inc/class-settings-page.php:436
-msgid ""
-"Read the active provider or theme palette and keep AdminKit in sync "
-"automatically, so the admin always matches the brand without manual edits."
-msgstr ""
-"Lit la palette du fournisseur ou du thème actif et garde AdminKit "
-"synchronisé automatiquement, pour que l’administration corresponde toujours "
-"à la marque sans modification manuelle."
-
-#: inc/class-settings-page.php:439
-msgid "More provider adapters"
-msgstr "Plus d’adaptateurs de fournisseurs"
-
-#: inc/class-settings-page.php:440
-msgid "Beyond Bricks — ACSS, Core Framework, Oxygen, Elementor…"
-msgstr "Au-delà de Bricks — ACSS, Core Framework, Oxygen, Elementor…"
-
-#: inc/class-settings-page.php:296
-msgid "Inherit"
-msgstr "Hériter"
-
-#: inc/class-settings-page.php:441
-msgid ""
-"Inherit brand colours from more page builders and frameworks (Automatic.css, "
-"Core Framework, Oxygen, Elementor, GeneratePress), the same way the Bricks "
-"adapter works today."
-msgstr ""
-"Héritez des couleurs de marque depuis davantage de constructeurs de pages et "
-"de frameworks (Automatic.css, Core Framework, Oxygen, Elementor, "
-"GeneratePress), comme le fait aujourd’hui l’adaptateur Bricks."
-
-#: inc/class-settings-page.php:444
-msgid "Theme variants"
-msgstr "Variantes de thème"
-
-#: inc/class-settings-page.php:445
-msgid "Beyond light and dark — sepia, high-contrast."
-msgstr "Au-delà du clair et du sombre — sépia, contraste élevé."
-
-#: inc/class-settings-page.php:446
-msgid ""
-"Ship additional admin themes on top of light and dark, including an "
-"accessibility-minded high-contrast variant."
-msgstr ""
-"Proposez des thèmes d’administration supplémentaires en plus du clair et du "
-"sombre, dont une variante à contraste élevé pensée pour l’accessibilité."
-
-#: inc/class-settings-page.php:449
-msgid "Per-role visibility"
-msgstr "Visibilité par rôle"
-
-#: inc/class-settings-page.php:450
-msgid "Choose which roles get the skin and who may edit it."
-msgstr "Choisir quels rôles voient le thème et qui peut le modifier."
-
-#: inc/class-settings-page.php:451
-msgid ""
-"Decide which user roles see the AdminKit skin and which may change its "
-"settings — handy for client sites."
-msgstr ""
-"Décidez quels rôles utilisateurs voient l’habillage AdminKit et lesquels "
-"peuvent en modifier les réglages — pratique pour les sites clients."
-
-#: inc/class-settings-page.php:454
-msgid "Accessibility checks"
-msgstr "Contrôles d’accessibilité"
-
-#: inc/class-settings-page.php:455
-msgid "Warn when a colour fails contrast."
-msgstr "Alerte lorsqu’une couleur échoue au contraste."
-
-#: inc/class-settings-page.php:456
-msgid ""
-"Flag colour choices that fall below contrast and legibility thresholds, "
-"right where you pick them."
-msgstr ""
-"Signale les choix de couleurs qui passent sous les seuils de contraste et de "
-"lisibilité, là où vous les choisissez."
-
-#: inc/class-settings-page.php:459
-msgid "Custom dashboard widgets"
-msgstr "Widgets de tableau de bord personnalisés"
-
-#: inc/class-settings-page.php:460
-msgid "Replace the WP home screen."
-msgstr "Remplacez l’écran d’accueil de WordPress."
-
-#: inc/class-settings-page.php:461
-msgid ""
-"Swap the default dashboard for quick actions, site status and recent "
-"activity that are actually useful."
-msgstr ""
-"Remplacez le tableau de bord par défaut par des actions rapides, l’état du "
-"site et l’activité récente réellement utiles."
-
-#: inc/class-settings-page.php:464
-msgid "Import / export settings"
-msgstr "Importer / exporter les réglages"
-
-#: inc/class-settings-page.php:465
-msgid "Clone an AdminKit setup across sites."
-msgstr "Clonez une configuration AdminKit d’un site à l’autre."
-
-#: inc/class-settings-page.php:466
-msgid ""
-"Save a whole AdminKit configuration to a file and import it on another site "
-"in one step — ideal for agencies."
-msgstr ""
-"Enregistrez toute une configuration AdminKit dans un fichier et importez-la "
-"sur un autre site en une étape — idéal pour les agences."
-
-#: inc/class-settings-page.php:469
-msgid "Bricks dynamic logo tag"
-msgstr "Balise de logo dynamique Bricks"
-
-#: inc/class-settings-page.php:470
-msgid "Use your AdminKit logo anywhere in Bricks."
-msgstr "Utilisez votre logo AdminKit n’importe où dans Bricks."
-
-#: inc/class-settings-page.php:471
-msgid ""
-"Expose the configured brand logo as a Bricks dynamic-data tag, so it can be "
-"dropped into any Bricks design and stays in sync."
-msgstr ""
-"Expose le logo de marque configuré sous forme de balise de données "
-"dynamiques Bricks, pour pouvoir l’insérer dans n’importe quelle conception "
-"Bricks tout en restant synchronisé."
-
-#: inc/class-settings-page.php:474
-msgid "WordPress Playground demo"
-msgstr "Démo WordPress Playground"
-
-#: inc/class-settings-page.php:475
-msgid "Try AdminKit live in the browser."
-msgstr "Essayez AdminKit en direct dans le navigateur."
-
-#: inc/class-settings-page.php:476
-msgid ""
-"A one-click WordPress Playground link so anyone can try AdminKit in the "
-"browser with no install — great for the README and the .org listing."
-msgstr ""
-"Un lien WordPress Playground en un clic pour que chacun puisse essayer "
-"AdminKit dans le navigateur sans installation — parfait pour le README et la "
-"fiche .org."
-
-#: inc/class-settings-page.php:479
-msgid "White-label & admin footer"
-msgstr "Marque blanche et pied de page admin"
-
-#: inc/class-settings-page.php:480
-msgid "Hide WordPress branding, add an agency credit."
-msgstr "Masquez la marque WordPress, ajoutez un crédit d’agence."
-
-#: inc/class-settings-page.php:481
-msgid ""
-"Remove WordPress branding across the admin and add your own footer credit "
-"and version line."
-msgstr ""
-"Supprimez la marque WordPress dans toute l’administration et ajoutez votre "
-"propre crédit de pied de page et votre ligne de version."
-
-#: inc/class-settings-page.php:525
-msgid "Default"
-msgstr "Par défaut"
-
-#: inc/class-settings-page.php:538
-msgid "Content & lists"
-msgstr "Contenu et listes"
-
-#: inc/class-settings-page.php:539
-msgid "Appearance & access"
-msgstr "Apparence et accès"
-
-#: inc/class-settings-page.php:541
-msgid "Post previews"
-msgstr "Aperçus des publications"
-
-#: inc/class-settings-page.php:541
-msgid "Screenshot thumbnail column in post-type list tables."
-msgstr ""
-"Colonne de vignettes (captures d’écran) dans les tableaux de liste des types "
-"de publication."
-
-#: inc/class-settings-page.php:542
-msgid "Live screenshots (mShots)"
-msgstr "Captures d’écran en direct (mShots)"
-
-#: inc/class-settings-page.php:542
-msgid ""
-"Use WordPress.com mShots. Off = featured image only (no external calls)."
-msgstr ""
-"Utiliser mShots de WordPress.com. Désactivé = image mise en avant uniquement "
-"(aucun appel externe)."
-
-#: inc/class-settings-page.php:543
-msgid "Dark mode"
-msgstr "Mode sombre"
-
-#: inc/class-settings-page.php:543
-msgid ""
-"Enable dark mode with a toggle in the admin bar. Off forces light mode "
-"everywhere."
-msgstr ""
-"Activer le mode sombre avec un interrupteur dans la barre d’administration. "
-"Désactivé force le mode clair partout."
-
-#: inc/class-settings-page.php:544
-msgid "Login screen"
-msgstr "Écran de connexion"
-
-#: inc/class-settings-page.php:544
-msgid "Style the wp-login.php screen."
-msgstr "Styliser l’écran wp-login.php."
-
-#: inc/class-settings-page.php:545
-msgid "Gutenberg"
-msgstr "Gutenberg"
-
-#: inc/class-settings-page.php:545
-msgid ""
-"Theme the Gutenberg block-editor canvas (content + native blocks) in light "
-"and dark. Turn off to keep the canvas matching your live site exactly."
-msgstr ""
-"Thématise le canevas de l’éditeur de blocs Gutenberg (contenu + blocs "
-"natifs) en clair et sombre. Désactivez pour que le canevas reste exactement "
-"fidèle à votre site en ligne."
-
-#: inc/class-settings-page.php:546
-msgid "AdminKit icons"
-msgstr "Icônes AdminKit"
-
-#: inc/class-settings-page.php:546
-msgid ""
-"Replace WordPress's native menu and toolbar icons with AdminKit's set. Non-"
-"destructive: icons already customised (e.g. via Admin Menu Editor) are left "
-"untouched."
-msgstr ""
-"Remplacer les icônes natives du menu et de la barre d’outils de WordPress "
-"par le jeu d’AdminKit. Non destructif : les icônes déjà personnalisées (ex. "
-"via Admin Menu Editor) sont laissées intactes."
-
-#: inc/class-settings-page.php:547
-msgid "Custom avatars"
-msgstr "Avatars personnalisés"
-
-#: inc/class-settings-page.php:539
-msgid ""
-"Adds \"AdminKit Portraits (Generated)\" to Settings → Discussion → Default "
-"Avatar, and silently replaces Mystery Person so every user gets a unique "
-"generated portrait. A real Gravatar always wins. Off = Gravatar everywhere, "
-"unchanged."
-msgstr ""
-"Ajoute « AdminKit Portraits (Generated) » dans Réglages → Discussion → "
-"Avatar par défaut, et remplace silencieusement Mystère Personne pour que "
-"chaque utilisateur reçoive un portrait généré unique. Un vrai Gravatar gagne "
-"toujours. Désactivé = Gravatar partout, inchangé."
-
-#: inc/wp-core/class-local-avatars.php
-msgid "AdminKit Portraits (Generated)"
-msgstr "Portraits AdminKit (Générés)"
-
-#: inc/class-settings-page.php:553
-msgid "Bricks builder"
-msgstr "Constructeur Bricks"
-
-#: inc/class-settings-page.php:553
-msgid ""
-"Restyle the Bricks builder UI with your tokens. Needs Bricks builder mode "
-"set to \"Custom\"."
-msgstr ""
-"Restyle l'interface du constructeur Bricks avec vos tokens. Nécessite le "
-"mode constructeur Bricks réglé sur « Custom »."
-
-#: inc/class-settings.php:132
-msgid "Surfaces"
-msgstr "Surfaces"
-
-#: inc/class-settings.php:132
-msgid "Page and panel backgrounds — behind everything."
-msgstr "Arrière-plans des pages et des panneaux — derrière tout le reste."
-
-#: inc/class-settings.php:133
-msgid "Background"
-msgstr "Arrière-plan"
-
-#: inc/class-settings.php:134
-msgid "Surface"
-msgstr "Surface"
-
-#: inc/class-settings.php:135
-msgid "Elevated"
-msgstr "Surélevé"
-
-#: inc/class-settings.php:136
-msgid "Input field"
-msgstr "Champ de saisie"
-
-#: inc/class-settings.php:138
-msgid "Borders"
-msgstr "Bordures"
-
-#: inc/class-settings.php:138
-msgid "Outlines and dividers."
-msgstr "Contours et séparateurs."
-
-#: inc/class-settings.php:139
-msgid "Border"
-msgstr "Bordure"
-
-#: inc/class-settings.php:140
-msgid "Border strong"
-msgstr "Bordure forte"
-
-#: inc/class-settings.php:142
-msgid "Text"
-msgstr "Texte"
-
-#: inc/class-settings.php:142
-msgid "Headings, body copy and captions."
-msgstr "Titres, corps de texte et légendes."
-
-#: inc/class-settings.php:143
-msgid "Heading"
-msgstr "Titre"
-
-#: inc/class-settings.php:144
-msgid "Body text"
-msgstr "Corps de texte"
-
-#: inc/class-settings.php:145
-msgid "Muted text"
-msgstr "Texte atténué"
-
-#: inc/class-settings.php:147 inc/class-settings.php:148
-msgid "Accent"
-msgstr "Accent"
-
-#: inc/class-settings.php:147
-msgid ""
-"Brand — buttons, links, highlights. Hover, subtle and focus derive from it "
-"automatically."
-msgstr ""
-"Marque — boutons, liens, surbrillances. Le survol, le subtil et le focus en "
-"dérivent automatiquement."
-
-#: inc/class-settings.php:149
-msgid "Accent hover"
-msgstr "Accent survol"
-
-#: inc/class-settings.php:150
-msgid "Accent subtle"
-msgstr "Accent subtil"
-
-#: inc/class-settings.php:151
-msgid "On accent"
-msgstr "Sur accent"
-
-#: inc/class-settings.php:152
-msgid "Secondary"
-msgstr "Secondaire"
-
-#: inc/class-settings.php:154
-msgid "State"
-msgstr "État"
-
-#: inc/class-settings.php:154
-msgid "Hover and focus feedback."
-msgstr "Retour visuel au survol et au focus."
-
-#: inc/class-settings.php:155
-msgid "Hover"
-msgstr "Survol"
-
-#: inc/class-settings.php:156
-msgid "Focus ring"
-msgstr "Anneau de focus"
-
-#: inc/class-settings.php:158 inc/class-settings.php:159
-msgid "Overlay"
-msgstr "Superposition"
-
-#: inc/class-settings.php:158
-msgid "Scrim behind modals and drawers."
-msgstr "Voile derrière les fenêtres modales et les tiroirs."
-
-#: inc/class-settings.php:161
-msgid "Status"
-msgstr "Statut"
-
-#: inc/class-settings.php:161
-msgid ""
-"Info, success, warning and error — and their subtle fills — from the "
-"framework's notification roles."
-msgstr ""
-"Info, succès, avertissement et erreur — et leurs remplissages subtils — "
-"issus des rôles de notification du framework."
-
-#: inc/class-settings.php:162
-msgid "Info"
-msgstr "Info"
-
-#: inc/class-settings.php:163
-msgid "Info subtle"
-msgstr "Info subtile"
-
-#: inc/class-settings.php:164
-msgid "Success"
-msgstr "Succès"
-
-#: inc/class-settings.php:165
-msgid "Success subtle"
-msgstr "Succès subtil"
-
-#: inc/class-settings.php:166
-msgid "Warning"
-msgstr "Avertissement"
-
-#: inc/class-settings.php:167
-msgid "Warning subtle"
-msgstr "Avertissement subtil"
-
-#: inc/class-settings.php:168
-msgid "Error"
-msgstr "Erreur"
-
-#: inc/class-settings.php:169
-msgid "Error subtle"
-msgstr "Erreur subtile"
-
-#: inc/class-theme-toggle.php:154
-#: inc/integrations/plugins/gutenberg/class-gutenberg.php:109
-#: inc/wp-core/class-login.php:245
-msgid "Toggle light / dark mode"
-msgstr "Basculer entre le mode clair et sombre"
-
-#: inc/class-theme-toggle.php:185
-msgid "View site"
-msgstr "Voir le site"
-
-#: inc/wp-core/class-chrome.php:191
-msgid "General"
-msgstr "Général"
-
-#: inc/wp-core/class-chrome.php:193
-msgid "Settings sections"
-msgstr "Sections de réglages"
-
-#: inc/wp-core/class-post-previews.php:165
-msgid "Preview"
-msgstr "Aperçu"
-
-#: inc/wp-core/class-post-previews.php:361
-msgid "Loading preview…"
-msgstr "Chargement de l’aperçu…"
-
-#: inc/wp-core/class-post-previews.php:362
-msgid "Preview unavailable"
-msgstr "Aperçu indisponible"
-
-#: inc/wp-core/class-profile-account.php:160
-msgid "Name"
-msgstr "Nom"
-
-#: inc/wp-core/class-profile-account.php:161
-msgid "Contact Info"
-msgstr "Coordonnées"
-
-#: inc/wp-core/class-profile-account.php:162
-msgid "Personal Options"
-msgstr "Options personnelles"
-
-#: inc/wp-core/class-profile-account.php:163
-msgid "Account Management"
-msgstr "Gestion du compte"
-
-#: inc/wp-core/class-profile-account.php:164
-msgid "Application Passwords"
-msgstr "Mots de passe d'application"
+#: inc/wp-core/class-local-avatars.php:464
+msgid "%d avatar refreshed."
+msgid_plural "%d avatars refreshed."
+msgstr[0] "%d avatar actualisé."
+msgstr[1] "%d avatars actualisés."
+
+#: inc/settings/class-settings-page.php:401
+msgid "%d tokens"
+msgstr "%d tokens"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1250 inc/features/dashboard/class-custom-dashboard.php:1439
+msgid "%d update available"
+msgid_plural "%d updates available"
+msgstr[0] "%d mise à jour disponible"
+msgstr[1] "%d mises à jour disponibles"
+
+#: inc/features/stats/class-stats-dashboard.php:439
+msgid "%s active now"
+msgid_plural "%s active now"
+msgstr[0] "%s actif maintenant"
+msgstr[1] "%s actifs maintenant"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1117 inc/features/dashboard/class-custom-dashboard.php:1398 inc/features/online-users/class-online-users.php:232
+msgid "%s ago"
+msgstr "Il y a %s"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1284
+msgid "%s comment to moderate"
+msgid_plural "%s comments to moderate"
+msgstr[0] "%s commentaire à modérer"
+msgstr[1] "%s commentaires à modérer"
+
+#: inc/features/dashboard/class-custom-dashboard.php:759 inc/features/dashboard/class-custom-dashboard.php:782
+msgid "%s draft"
+msgid_plural "%s drafts"
+msgstr[0] "%s brouillon"
+msgstr[1] "%s brouillons"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1274
+msgid "%s draft to finish"
+msgid_plural "%s drafts to finish"
+msgstr[0] "%s brouillon à finir"
+msgstr[1] "%s brouillons à finir"
+
+#: inc/features/dashboard/class-custom-dashboard.php:790
+msgid "%s in moderation"
+msgstr "%s en modération"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1259
+msgid "%s inactive plugin"
+msgid_plural "%s inactive plugins"
+msgstr[0] "%s extension inactive"
+msgstr[1] "%s extensions inactives"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1263
+msgid "%s inactive theme"
+msgid_plural "%s inactive themes"
+msgstr[0] "%s thème inactif"
+msgstr[1] "%s thèmes inactifs"
+
+#: inc/features/dashboard/class-custom-dashboard.php:674
+msgid "%s is back!"
+msgstr "%s est de retour !"
+
+#: inc/features/dashboard/class-custom-dashboard.php:796
+msgid "%s on disk"
+msgstr "%s sur le disque"
+
+#: inc/features/dashboard/class-custom-dashboard.php:493 inc/features/dashboard/class-custom-dashboard.php:802
+msgid "%s online now"
+msgid_plural "%s online now"
+msgstr[0] "%s en ligne"
+msgstr[1] "%s en ligne"
+
+#: inc/features/dashboard/class-custom-dashboard.php:765
+msgid "%s pending review"
+msgstr "%s en attente de relecture"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1279
+msgid "%s post pending"
+msgid_plural "%s posts pending"
+msgstr[0] "%s article en attente"
+msgstr[1] "%s articles en attente"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1289
+msgid "%s scheduled post"
+msgid_plural "%s scheduled posts"
+msgstr[0] "%s publication planifiée"
+msgstr[1] "%s publications planifiées"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1392
+msgid "(no title)"
+msgstr "(sans titre)"
+
+#: inc/features/stats/class-stats-dashboard.php:453
+msgid "30 days"
+msgstr "30 jours"
+
+#: inc/features/stats/class-stats-dashboard.php:454
+msgid "90 days"
+msgstr "90 jours"
+
+#: inc/wp-core/class-username-changer.php:180
+msgid "<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or any of . - _ @ — and nothing else."
+msgstr "<strong>Erreur :</strong> nom d’utilisateur invalide. Utilisez des lettres, des chiffres, des espaces ou l’un de . - _ @ — et rien d’autre."
+
+#: inc/wp-core/class-username-changer.php:188
+msgid "<strong>Error:</strong> That username is already taken."
+msgstr "<strong>Erreur :</strong> ce nom d’utilisateur est déjà pris."
+
+#: inc/features/dashboard/class-custom-dashboard.php:603
+msgid "A clear menu helps visitors find what matters."
+msgstr "Un menu clair aide les visiteurs à trouver l’essentiel."
+
+#: inc/features/dashboard/class-custom-dashboard.php:607
+msgid "A fast site is a friendly site — mind your page weight."
+msgstr "Un site rapide est un site accueillant — surveillez le poids des pages."
+
+#: inc/features/dashboard/class-custom-dashboard.php:572
+msgid "A fresh start — pick one thing to ship today."
+msgstr "Un nouveau départ — choisissez une chose à livrer aujourd’hui."
+
+#: inc/features/dashboard/class-custom-dashboard.php:579
+msgid "A good afternoon to refine and improve."
+msgstr "Un bel après-midi pour peaufiner et améliorer."
+
+#: inc/features/dashboard/class-custom-dashboard.php:641
+msgid "A good day begins"
+msgstr "Une bonne journée commence"
+
+#: inc/features/dashboard/class-custom-dashboard.php:659
+msgid "A quiet evening to get ahead"
+msgstr "La soirée est calme pour avancer"
 
 #: inc/wp-core/class-profile-account.php:165
 msgid "About Yourself"
@@ -924,804 +166,1176 @@ msgstr "À propos de vous"
 msgid "About the user"
 msgstr "À propos de l'utilisateur"
 
-#: inc/wp-core/class-profile-account.php:166
-msgid "Additional Capabilities"
-msgstr "Capacités supplémentaires"
+#: inc/wp-core/class-options-general.php:108
+msgid "Account & registration"
+msgstr "Compte et inscription"
 
-#: inc/wp-core/class-profile-account.php:169
-msgid "Information"
-msgstr "Informations"
-
-#: inc/wp-core/class-profile-account.php:169
-msgid "Identity, contact and password."
-msgstr "Identité, contact et mot de passe."
-
-#: inc/wp-core/class-profile-account.php:170
-msgid "Roles, language and preferences."
-msgstr "Rôles, langue et préférences."
-
-#: inc/wp-core/class-profile-account.php:172
-msgid "Addresses"
-msgstr "Adresses"
-
-#: inc/wp-core/class-profile-account.php:173
-msgid "Other settings"
-msgstr "Autres réglages"
+#: inc/wp-core/class-profile-account.php:163
+msgid "Account Management"
+msgstr "Gestion du compte"
 
 #: inc/wp-core/class-profile-account.php:174
 msgid "Account sections"
 msgstr "Sections du compte"
 
+#: inc/settings/class-settings-catalog.php:131
+msgid "Activate the Bricks theme to use this."
+msgstr "Activez le thème Bricks pour utiliser ceci."
+
+#: inc/settings/class-settings-catalog.php:48
+msgid "Active plugins first"
+msgstr "Extensions actives en premier"
+
+#: inc/features/dashboard/class-custom-dashboard.php:599
+msgid "Add alt text to images — better SEO and accessibility."
+msgstr "Ajoutez un texte alternatif aux images — meilleur référencement et accessibilité."
+
+#: inc/settings/class-settings-page.php:359
+msgid "Add link"
+msgstr "Ajouter un lien"
+
+#: inc/features/dashboard/class-custom-dashboard.php:702
+msgid "Add media"
+msgstr "Ajouter un média"
+
+#: inc/settings/class-settings-page.php:360
+msgid "Add separator"
+msgstr "Ajouter un séparateur"
+
+#: inc/features/dashboard/class-custom-dashboard.php:705
+msgid "Add user"
+msgstr "Créer un compte"
+
+#: inc/wp-core/class-profile-account.php:166
+msgid "Additional Capabilities"
+msgstr "Capacités supplémentaires"
+
+#: inc/wp-core/class-profile-account.php:172
+msgid "Addresses"
+msgstr "Adresses"
+
+#: inc/settings/class-settings-catalog.php:109
+msgid "Adds \"AdminKit Portraits (Generated)\" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait."
+msgstr "Ajoute « AdminKit Portraits (générés) » dans Réglages → Discussion → Avatar par défaut. Choisissez-le pour donner à chaque utilisateur un portrait généré unique."
+
+#: inc/settings/class-settings-catalog.php:37
+msgid "Adds a bell to the toolbar that collects admin notices into a side drawer, keeping success confirmations inline. Off restores every notice to its normal place."
+msgstr "Ajoute une cloche à la barre d’outils qui regroupe les notices d’administration dans un tiroir latéral, tout en gardant les confirmations en ligne. Désactivé, chaque notice retrouve sa place habituelle."
+
+#: inc/settings/class-settings-catalog.php:55
+msgid "Adds a light/dark toggle to the admin bar. Off forces light mode site-wide."
+msgstr "Ajoute un bouton clair/sombre à la barre d’administration. Désactivé, le mode clair est forcé sur tout le site."
+
+#: inc/settings/class-settings-catalog.php:43
+msgid "Adds a thumbnail column to post-type list tables — the featured image first, with a live WordPress.com mShots screenshot as fallback on production sites (skipped on localhost where mShots can't reach the page anyway)."
+msgstr "Ajoute une colonne de vignettes aux tableaux de types de contenu — l’image mise en avant d’abord, avec une capture mShots de WordPress.com en secours sur les sites en production (ignorée en local, où mShots ne peut de toute façon pas accéder à la page)."
+
+#: inc/wp-core/class-options-general.php:109
+msgid "Admin email, who can sign up, and the default role assigned to new users."
+msgstr "E-mail d’administration, qui peut s’inscrire et le rôle par défaut attribué aux nouveaux utilisateurs."
+
+#: inc/features/dashboard/class-custom-dashboard.php:203 inc/features/dashboard/class-custom-dashboard.php:904
+msgid "AdminKit"
+msgstr "AdminKit"
+
+#: inc/wp-core/class-local-avatars.php:182
+msgid "AdminKit Portraits (Generated)"
+msgstr "Portraits AdminKit (Générés)"
+
+#: inc/settings/class-settings-catalog.php:72
+msgid "AdminKit icons"
+msgstr "Icônes AdminKit"
+
+#: inc/settings/class-settings-page.php:381
+msgid "AdminKit itself — always on and not removable here."
+msgstr "AdminKit lui-même — toujours actif, non désactivable ici."
+
+#: inc/settings/class-settings-page.php:379
+msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
+msgstr "AdminKit fournit un adaptateur dédié pour cette extension — clair et sombre."
+
+#: inc/features/dashboard/class-custom-dashboard.php:1308
+msgid "All clear — nothing to do today."
+msgstr "Tout est en ordre — rien à faire aujourd’hui."
+
+#: inc/features/dashboard/class-custom-dashboard.php:765
+msgid "All published"
+msgstr "Tout est publié"
+
+#: inc/settings/class-settings-catalog.php:24
+msgid "Appearance"
+msgstr "Apparence"
+
+#: inc/wp-core/class-profile-account.php:164
+msgid "Application Passwords"
+msgstr "Mots de passe d'application"
+
+#: inc/settings/class-settings-page.php:358
+msgid "Apply"
+msgstr "Appliquer"
+
+#: inc/features/dashboard/class-custom-dashboard.php:198 inc/features/dashboard/class-custom-dashboard.php:812
+msgid "At a glance"
+msgstr "En un coup d’œil"
+
+#: inc/wp-core/class-options-discussion.php:101
+msgid "Avatars"
+msgstr "Avatars"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1279
+msgid "Awaiting review"
+msgstr "En attente de relecture"
+
+#: inc/features/dashboard/class-custom-dashboard.php:595
+msgid "Back up before big changes — future you will thank you."
+msgstr "Sauvegardez avant les gros changements — vous vous remercierez plus tard."
+
+#: inc/settings/class-settings-catalog.php:66
+msgid "Block editor"
+msgstr "Éditeur de blocs"
+
+#: inc/features/dashboard/class-custom-dashboard.php:890 inc/settings/class-settings-page.php:398
+msgid "Brand"
+msgstr "Marque"
+
+#: inc/settings/class-settings-page.php:412
+msgid "Brand color"
+msgstr "Couleur de marque"
+
+#: inc/settings/class-settings-page.php:414
+msgid "Bricks"
+msgstr "Bricks"
+
+#: inc/settings/class-settings-catalog.php:128
+msgid "Bricks builder"
+msgstr "Constructeur Bricks"
+
+#: inc/features/dashboard/class-custom-dashboard.php:668
+msgid "Burning the midnight oil, %s?"
+msgstr "Tard le soir, %s ?"
+
+#: inc/wp-core/class-user-quick-edit.php:230
+msgid "Cancel"
+msgstr "Annuler"
+
+#: inc/features/dashboard/class-custom-dashboard.php:165
+msgid "Cards to display"
+msgstr "Cartes à afficher"
+
+#: inc/settings/class-settings-page.php:349
+msgid "Choose an icon"
+msgstr "Choisir une icône"
+
+#: inc/features/dashboard/class-custom-dashboard.php:614
+msgid "Clarity is the courtesy of the maker."
+msgstr "La clarté est la politesse de celui qui crée."
+
+#: inc/settings/class-settings-page.php:369
+msgid "Clear"
+msgstr "Effacer"
+
+#: inc/features/notifications/class-notification-center.php:185
+msgid "Close"
+msgstr "Fermer"
+
+#: inc/features/dashboard/class-custom-dashboard.php:574
+msgid "Coffee first, then a quick win."
+msgstr "Un café d’abord, puis une victoire rapide."
+
+#: inc/features/stats/class-stats-dashboard.php:417 inc/features/stats/class-stats-page.php:153
+msgid "Coming from"
+msgstr "Provenance"
+
+#: inc/wp-core/class-options-discussion.php:102 inc/wp-core/class-options-discussion.php:106
+msgid "Comment settings"
+msgstr "Réglages des commentaires"
+
+#: inc/features/dashboard/class-custom-dashboard.php:787
+msgid "Comments"
+msgstr "Commentaires"
+
+#: inc/features/dashboard/class-custom-dashboard.php:598
+msgid "Compress images before upload for faster pages."
+msgstr "Compressez les images avant l’envoi pour des pages plus rapides."
+
+#: inc/features/dashboard/class-custom-dashboard.php:613
+msgid "Consistency beats intensity: one good decision at a time."
+msgstr "La régularité l’emporte sur l’intensité : une bonne décision à la fois."
+
+#: inc/wp-core/class-profile-account.php:161
+msgid "Contact Info"
+msgstr "Coordonnées"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1389
+msgid "Content"
+msgstr "Contenu"
+
+#: inc/settings/class-settings-catalog.php:23
+msgid "Content & lists"
+msgstr "Contenu et listes"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1250
+msgid "Core, plugins, themes"
+msgstr "Cœur, extensions, thèmes"
+
+#: inc/wp-core/class-local-avatars.php:403
+msgid "Could not refresh the avatar — please try again."
+msgstr "Impossible d’actualiser l’avatar — veuillez réessayer."
+
+#: inc/settings/class-settings-page.php:394
+msgid "Could not save"
+msgstr "Échec de l’enregistrement"
+
+#: inc/settings/class-settings-catalog.php:121
+msgid "Count page views and visits with a tiny cookieless beacon — no cookies, no IP storage, no consent banner, and almost no database footprint (pre-summed daily totals). Signed-in staff and bots are excluded. Off disables tracking entirely."
+msgstr "Comptez les pages vues et les visites avec une balise légère sans cookie — aucun cookie, aucune adresse IP stockée, aucun bandeau de consentement, et une empreinte base de données minime (totaux journaliers pré-agrégés). Le personnel connecté et les robots sont exclus. Désactivé, le suivi est entièrement coupé."
+
+#: inc/features/stats/class-stats-dashboard.php:416 inc/features/stats/class-stats-page.php:152
+msgid "Currently viewing"
+msgstr "Pages consultées"
+
+#: inc/features/stats/class-stats-dashboard.php:456 inc/settings/class-settings-page.php:415
+msgid "Custom"
+msgstr "Personnalisé"
+
+#: inc/settings/class-settings-catalog.php:108
+msgid "Custom avatars"
+msgstr "Avatars personnalisés"
+
+#: inc/settings/class-settings-catalog.php:30
+msgid "Custom dashboard"
+msgstr "Tableau de bord personnalisé"
+
+#: inc/settings/class-settings-page.php:367
+msgid "Custom link"
+msgstr "Lien personnalisé"
+
+#: inc/features/dashboard/class-custom-dashboard.php:161
+msgid "Customize"
+msgstr "Personnaliser"
+
+#: inc/settings/class-settings-catalog.php:54
+msgid "Dark mode"
+msgstr "Mode sombre"
+
+#: inc/class-theme-toggle.php:189 inc/features/dashboard/class-custom-dashboard.php:104 inc/settings/class-settings-page.php:339
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1562
+msgid "Database"
+msgstr "Base de données"
+
+#: inc/features/stats/class-stats-dashboard.php:479 inc/features/stats/class-stats-page.php:145
+msgid "Date range"
+msgstr "Plage de dates"
+
+#: inc/features/dashboard/class-custom-dashboard.php:608
+msgid "Deactivate and delete plugins you no longer use."
+msgstr "Désactivez et supprimez les extensions que vous n’utilisez plus."
+
+#: inc/features/dashboard/class-custom-dashboard.php:1441
+msgid "Debug mode off"
+msgstr "Débogage désactivé"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1240 inc/features/dashboard/class-custom-dashboard.php:1441
+msgid "Debug mode on"
+msgstr "Mode débogage actif"
+
+#: inc/settings/class-settings-page.php:350
+msgid "Default"
+msgstr "Par défaut"
+
+#: inc/features/dashboard/class-custom-dashboard.php:604
+msgid "Descriptive titles win clicks and rankings."
+msgstr "Des titres descriptifs gagnent des clics et un meilleur classement."
+
+#: inc/features/dashboard/class-custom-dashboard.php:1237 inc/features/dashboard/class-custom-dashboard.php:1240 inc/features/dashboard/class-custom-dashboard.php:1244
+msgid "Details"
+msgstr "Détails"
+
+#: inc/features/stats/class-stats-dashboard.php:550 inc/features/stats/class-stats-page.php:139
+msgid "Direct"
+msgstr "Direct"
+
+#: inc/settings/class-settings-page.php:374
+msgid "Disable all"
+msgstr "Tout désactiver"
+
+#: inc/settings/class-settings-page.php:416
+msgid "Display"
+msgstr "Affichage"
+
+#: inc/features/dashboard/class-custom-dashboard.php:612
+msgid "Done is better than perfect — publish, then refine."
+msgstr "Bien fait vaut mieux que parfait — publiez, puis affinez."
+
+#: inc/features/dashboard/class-custom-dashboard.php:1384
+msgid "Draft"
+msgstr "Brouillon"
+
+#: inc/settings/class-settings-page.php:356
+msgid "Drag to reorder"
+msgstr "Glissez pour réorganiser"
+
+#: inc/features/dashboard/class-custom-dashboard.php:330
+msgid "Drag to reorder this card"
+msgstr "Glissez pour réorganiser cette carte"
+
+#: inc/features/dashboard/class-custom-dashboard.php:960
+msgid "Edit"
+msgstr "Modifier"
+
+#: inc/settings/class-settings-catalog.php:97
+msgid "Edit first name, last name, email and role inline from the users list — no need to open the full profile."
+msgstr "Modifiez prénom, nom, e-mail et rôle directement depuis la liste des utilisateurs — sans ouvrir le profil complet."
+
+#: inc/features/dashboard/class-custom-dashboard.php:509
+msgid "Edit my profile"
+msgstr "Modifier mon profil"
+
+#: inc/wp-core/class-user-quick-edit.php:214
+msgid "Email"
+msgstr "E-mail"
+
+#: inc/settings/class-settings-page.php:373
+msgid "Enable all"
+msgstr "Tout activer"
+
+#: inc/features/stats/class-stats-dashboard.php:506
+msgid "End date"
+msgstr "Date de fin"
+
+#: inc/features/dashboard/class-custom-dashboard.php:584
+msgid "Evening is a good time for a calm review."
+msgstr "Le soir est un bon moment pour une revue tranquille."
+
+#: inc/settings/class-settings-page.php:377
+msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
+msgstr "Toutes les extensions installées sur votre site, ainsi que les adaptateurs de thème actifs d’AdminKit. Les natifs ont un adaptateur dédié, activable par hôte ; les autres portent un badge Générique et héritent automatiquement du style de base d’AdminKit."
+
+#: inc/features/dashboard/class-custom-dashboard.php:1437
+msgid "Everything's up to date"
+msgstr "Tout est à jour"
+
+#: inc/settings/class-settings-page.php:422
+msgid "Favicon"
+msgstr "Favicon"
+
+#: inc/features/dashboard/class-custom-dashboard.php:891 inc/settings/class-settings-page.php:342
+msgid "Features"
+msgstr "Fonctionnalités"
+
+#: inc/features/dashboard/class-custom-dashboard.php:600
+msgid "Fewer plugins, fewer surprises — keep only what you use."
+msgstr "Moins d’extensions, moins de surprises — ne gardez que ce que vous utilisez."
+
+#: inc/wp-core/class-user-quick-edit.php:206
+msgid "First name"
+msgstr "Prénom"
+
+#: inc/features/dashboard/class-custom-dashboard.php:606
+msgid "Fresh content keeps your visitors coming back."
+msgstr "Un contenu frais fait revenir vos visiteurs."
+
+#: inc/features/dashboard/class-custom-dashboard.php:643
+msgid "Fresh start, %s"
+msgstr "Nouveau départ, %s"
+
+#: inc/features/stats/class-stats-page.php:143
+msgid "From"
+msgstr "De"
+
+#: inc/wp-core/class-options-general.php:102
+msgid "General"
+msgstr "Général"
+
+#: inc/settings/class-settings-page.php:382
+msgid "Generic"
+msgstr "Générique"
+
+#: inc/features/dashboard/class-custom-dashboard.php:675
+msgid "Glad to see you, %s"
+msgstr "Content de vous voir, %s"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1004
+msgid "Good"
+msgstr "Bon"
+
+#: inc/features/dashboard/class-custom-dashboard.php:648
+msgid "Good afternoon, %s"
+msgstr "Bon après-midi, %s"
+
+#: inc/features/dashboard/class-custom-dashboard.php:611
+msgid "Good design is as little design as possible. — Dieter Rams"
+msgstr "« Le bon design, c’est le moins de design possible. » — Dieter Rams"
+
+#: inc/features/dashboard/class-custom-dashboard.php:657 inc/features/dashboard/class-custom-dashboard.php:667
+msgid "Good evening, %s"
+msgstr "Bonsoir, %s"
+
+#: inc/features/dashboard/class-custom-dashboard.php:639
+msgid "Good morning, %s"
+msgstr "Bonne matinée, %s"
+
+#: inc/features/dashboard/class-custom-dashboard.php:673
+msgid "Great to see you again, %s"
+msgstr "Ravi de vous revoir, %s"
+
+#: inc/features/notifications/class-notification-center.php:182
+msgid "Grouped notices"
+msgstr "Notices groupées"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1237 inc/features/dashboard/class-custom-dashboard.php:1428
+msgid "HTTPS off"
+msgstr "HTTPS inactif"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1428
+msgid "HTTPS on"
+msgstr "HTTPS actif"
+
+#: inc/features/dashboard/class-custom-dashboard.php:658
+msgid "Have a good evening, %s"
+msgstr "Bonne soirée, %s"
+
+#: inc/features/dashboard/class-custom-dashboard.php:638 inc/features/dashboard/class-custom-dashboard.php:649
+msgid "Hello, %s"
+msgstr "Bonjour, %s"
+
+#: inc/settings/class-settings-page.php:352
+msgid "Hide"
+msgstr "Masquer"
+
+#: inc/settings/class-settings-catalog.php:84
+msgid "Hide admin footer"
+msgstr "Masquer le pied de page admin"
+
+#: inc/settings/class-settings-catalog.php:90
+msgid "Hide the Help button"
+msgstr "Masquer le bouton d’aide"
+
+#: inc/settings/class-settings-catalog.php:85
+msgid "Hide the admin footer bar — the \"Thank you for creating with WordPress\" line and the version number — on every screen, for a cleaner app-like look. Off restores it."
+msgstr "Masque la barre de pied de page admin — la ligne « Merci de créer avec WordPress » et le numéro de version — sur chaque écran, pour une allure plus épurée. Désactivé, elle réapparaît."
+
+#: inc/settings/class-settings-catalog.php:91
+msgid "Hide the contextual \"Help\" tab at the top-right of admin screens, for cleaner chrome. \"Screen Options\" is left in place. Off restores it."
+msgstr "Masque l’onglet contextuel « Aide » en haut à droite des écrans d’administration, pour une interface plus nette. « Options de l’écran » reste en place. Désactivé, il réapparaît."
+
+#: inc/wp-core/class-options-discussion.php:107
+msgid "How comments work on your site — who can post, what they see when they do, when they get moderated, and the email you receive about them."
+msgstr "Le fonctionnement des commentaires sur votre site — qui peut publier, ce qu’ils voient en le faisant, quand ils sont modérés et l’e-mail que vous recevez à leur sujet."
+
+#: inc/wp-core/class-options-general.php:105
+msgid "How your site presents itself — name, tagline and addresses."
+msgstr "La façon dont votre site se présente — nom, slogan et adresses."
+
+#: inc/wp-core/class-profile-account.php:169
+msgid "Identity, contact and password."
+msgstr "Identité, contact et mot de passe."
+
+#: inc/wp-core/class-profile-account.php:169
+msgid "Information"
+msgstr "Informations"
+
+#: inc/features/dashboard/class-custom-dashboard.php:602
+msgid "Internal links help readers and search engines explore."
+msgstr "Les liens internes aident les lecteurs et les moteurs de recherche à explorer."
+
+#: inc/settings/class-settings-catalog.php:49
+msgid "Keep active plugins front and center: open the plugins list on the \"Active\" filter and sort active plugins to the top of the \"All\" view. After you toggle a plugin it follows the change — activating jumps to \"Active\", deactivating drops to \"All\" — so it never vanishes from the filter you were on. Falls back to \"All\" when nothing is active. Off restores WordPress's default — the \"All\" view in alphabetical order."
+msgstr "Gardez les extensions actives en avant : ouvre la liste sur le filtre « Activé » et place les extensions actives en haut de la vue « Tout ». Après une bascule, l’extension suit le changement — l’activation saute vers « Activé », la désactivation retombe sur « Tout » — pour ne jamais disparaître du filtre où vous étiez. Revient à « Tout » quand rien n’est actif. Désactivé, c’est le comportement par défaut de WordPress — la vue « Tout » par ordre alphabétique."
+
+#: inc/features/dashboard/class-custom-dashboard.php:651
+msgid "Keep it going, %s"
+msgstr "Continuez comme ça, %s"
+
+#: inc/features/dashboard/class-custom-dashboard.php:597
+msgid "Keep plugins and themes updated to stay secure and fast."
+msgstr "Gardez extensions et thèmes à jour pour rester sûr et rapide."
+
+#: inc/features/dashboard/class-custom-dashboard.php:578
+msgid "Keep the momentum — small steps add up."
+msgstr "Gardez l’élan — les petits pas comptent."
+
+#: inc/settings/class-settings-page.php:362
+msgid "Label"
+msgstr "Libellé"
+
+#: inc/wp-core/class-options-general.php:110
+msgid "Language, date & time"
+msgstr "Langue, date et heure"
+
+#: inc/features/dashboard/class-custom-dashboard.php:538
+msgid "Language, date & time settings"
+msgstr "Réglages de langue, date et heure"
+
+#: inc/features/online-users/class-online-users.php:208
+msgid "Last login"
+msgstr "Dernière connexion"
+
+#: inc/wp-core/class-user-quick-edit.php:210
+msgid "Last name"
+msgstr "Nom"
+
+#: inc/features/dashboard/class-custom-dashboard.php:588
+msgid "Late-night focus — remember to save often."
+msgstr "Concentration nocturne — pensez à enregistrer souvent."
+
+#: inc/features/dashboard/class-custom-dashboard.php:678
+msgid "Let's make something great, %s"
+msgstr "Créons quelque chose de génial, %s"
+
+#: inc/settings/class-settings-catalog.php:103
+msgid "Lets admins rename a user's login on Users → Edit (WordPress disables this by default). Sensitive — invalidates the user's active sessions; they must sign in again. Single-site only."
+msgstr "Permet aux administrateurs de renommer l’identifiant d’un utilisateur dans Comptes → Modifier (WordPress le désactive par défaut). Sensible — invalide les sessions actives de l’utilisateur ; il devra se reconnecter. Site unique uniquement."
+
+#: inc/features/stats/class-stats-dashboard.php:451
+msgid "Live"
+msgstr "En direct"
+
+#: inc/wp-core/class-post-previews.php:415
+msgid "Loading preview…"
+msgstr "Chargement de l’aperçu…"
+
+#: inc/features/stats/class-stats-page.php:142
+msgid "Loading…"
+msgstr "Chargement…"
+
+#: inc/settings/class-settings-page.php:420
+msgid "Login"
+msgstr "Connexion"
+
+#: inc/settings/class-settings-catalog.php:60
+msgid "Login screen"
+msgstr "Écran de connexion"
+
+#: inc/settings/class-settings-page.php:421
+msgid "Logo"
+msgstr "Logo"
+
+#: inc/settings/class-settings-page.php:405
+msgid "Logo Dark Mode"
+msgstr "Logo mode sombre"
+
+#: inc/settings/class-settings-page.php:403
+msgid "Logo Light Mode"
+msgstr "Logo mode clair"
+
+#: inc/features/dashboard/class-custom-dashboard.php:652
+msgid "Making progress, %s?"
+msgstr "Ça avance, %s ?"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1259 inc/features/dashboard/class-custom-dashboard.php:1263
+msgid "Manage"
+msgstr "Gérer"
+
+#: inc/features/dashboard/class-custom-dashboard.php:793 inc/features/dashboard/class-custom-dashboard.php:1561
+msgid "Media"
+msgstr "Médias"
+
+#: inc/features/dashboard/class-custom-dashboard.php:894 inc/features/menu/class-menu-manager.php:129 inc/features/menu/class-menu-manager.php:130 inc/settings/class-settings-page.php:344
+msgid "Menu"
+msgstr "Menu"
+
+#: inc/settings/class-settings-catalog.php:78
+msgid "Menu manager"
+msgstr "Gestionnaire de menu"
+
+#: inc/wp-core/class-local-avatars.php:306 inc/wp-core/class-user-quick-edit.php:254
+msgid "Missing user id."
+msgstr "Identifiant d’utilisateur manquant."
+
+#: inc/features/dashboard/class-custom-dashboard.php:1284
+msgid "Moderate"
+msgstr "Modérer"
+
+#: inc/features/dashboard/class-custom-dashboard.php:573
+msgid "Morning is a great time to plan and publish."
+msgstr "Le matin est idéal pour planifier et publier."
+
+#: inc/features/dashboard/class-custom-dashboard.php:601
+msgid "Most visitors are on mobile — preview your pages there."
+msgstr "La plupart des visiteurs sont sur mobile — prévisualisez-y vos pages."
+
+#: inc/wp-core/class-profile-account.php:160
+msgid "Name"
+msgstr "Nom"
+
+#: inc/settings/class-settings-page.php:378
+msgid "Native"
+msgstr "Natif"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1003
+msgid "Needs attention"
+msgstr "À améliorer"
+
+#: inc/features/online-users/class-online-users.php:233
+msgid "Never"
+msgstr "Jamais"
+
+#: inc/features/dashboard/class-custom-dashboard.php:699
+msgid "New page"
+msgstr "Nouvelle page"
+
+#: inc/features/stats/class-stats-dashboard.php:531 inc/features/stats/class-stats-page.php:141
+msgid "No data"
+msgstr "Aucune donnée"
+
+#: inc/settings/class-settings-page.php:383
+msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
+msgstr "Aucun adaptateur dédié — thémé automatiquement par la couche de base d'AdminKit."
+
+#: inc/features/dashboard/class-custom-dashboard.php:759 inc/features/dashboard/class-custom-dashboard.php:782
+msgid "No drafts"
+msgstr "Aucun brouillon"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1101
+msgid "No recent sign-ins yet."
+msgstr "Aucune connexion récente."
+
+#: inc/features/stats/class-stats-dashboard.php:324 inc/features/stats/class-stats-page.php:140
+msgid "No traffic data yet — views will appear here as visitors arrive."
+msgstr "Pas encore de données de trafic — les vues apparaîtront ici à mesure que les visiteurs arrivent."
+
+#: inc/features/stats/class-stats-dashboard.php:385 inc/features/stats/class-stats-page.php:154
+msgid "Nobody is on the site right now — this view refreshes automatically."
+msgstr "Personne n’est sur le site pour le moment — cette vue se rafraîchit automatiquement."
+
+#: inc/features/dashboard/class-custom-dashboard.php:802
+msgid "None online"
+msgstr "Personne en ligne"
+
+#: inc/features/dashboard/class-custom-dashboard.php:934
+msgid "Nothing recent yet."
+msgstr "Rien de récent pour l’instant."
+
+#: inc/features/notifications/class-notification-center.php:184
+msgid "Notices from plugins and WordPress collect here, out of your way."
+msgstr "Les notices des extensions et de WordPress se regroupent ici, sans vous gêner."
+
+#: inc/settings/class-settings-catalog.php:36
+msgid "Notification center"
+msgstr "Centre de notifications"
+
+#: inc/features/notifications/class-notification-center.php:135 inc/features/notifications/class-notification-center.php:181 inc/features/notifications/class-notification-center.php:186
+msgid "Notifications"
+msgstr "Notifications"
+
+#: inc/features/dashboard/class-custom-dashboard.php:204 inc/features/dashboard/class-custom-dashboard.php:1114 inc/features/online-users/class-online-users.php:227 inc/features/online-users/class-online-users.php:227
+msgid "Online"
+msgstr "En ligne"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1096
+msgid "Online now"
+msgstr "En ligne"
+
+#: inc/settings/class-settings-catalog.php:114
+msgid "Online users"
+msgstr "Utilisateurs en ligne"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1274 inc/features/dashboard/class-custom-dashboard.php:1279
+msgid "Open"
+msgstr "Ouvrir"
+
+#: inc/settings/class-settings-page.php:364
+msgid "Open in a new tab"
+msgstr "Ouvrir dans un nouvel onglet"
+
+#: inc/wp-core/class-profile-account.php:173
+msgid "Other settings"
+msgstr "Autres réglages"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1432
+msgid "PHP %s"
+msgstr "PHP %s"
+
+#: inc/features/stats/class-stats-page.php:146
+msgid "Page"
+msgstr "Page"
+
+#: inc/features/stats/class-stats-dashboard.php:335 inc/features/stats/class-stats-page.php:135
+msgid "Page views"
+msgstr "Pages vues"
+
+#: inc/features/dashboard/class-custom-dashboard.php:762
+msgid "Pages"
+msgstr "Pages"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1036
+msgid "Passed"
+msgstr "Réussis"
+
+#: inc/settings/class-settings-page.php:357
+msgid "Paste an SVG or a data:image/svg+xml URI…"
+msgstr "Collez un SVG ou une URI data:image/svg+xml…"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1381
+msgid "Pending"
+msgstr "En attente"
+
+#: inc/wp-core/class-profile-account.php:162
+msgid "Personal Options"
+msgstr "Options personnelles"
+
+#: inc/features/dashboard/class-custom-dashboard.php:676
+msgid "Pick up where you left off?"
+msgstr "On reprend où on s’était arrêté ?"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1563 inc/settings/class-settings-page.php:343
+msgid "Plugins"
+msgstr "Extensions"
+
+#: inc/settings/class-settings-page.php:368
+msgid "Point this item at a custom URL (internal or external). Its submenu still works."
+msgstr "Pointez cet élément vers une URL personnalisée (interne ou externe). Son sous-menu reste fonctionnel."
+
+#: inc/settings/class-settings-catalog.php:42
+msgid "Post previews"
+msgstr "Aperçus des publications"
+
+#: inc/features/dashboard/class-custom-dashboard.php:756
+msgid "Posts"
+msgstr "Articles"
+
+#: inc/wp-core/class-post-previews.php:201
+msgid "Preview"
+msgstr "Aperçu"
+
+#: inc/wp-core/class-post-previews.php:416
+msgid "Preview unavailable"
+msgstr "Aperçu indisponible"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1378
+msgid "Published"
+msgstr "Publié"
+
+#: inc/wp-core/class-user-quick-edit.php:111 inc/wp-core/class-user-quick-edit.php:204
+msgid "Quick Edit"
+msgstr "Modification rapide"
+
+#: inc/features/dashboard/class-custom-dashboard.php:589
+msgid "Quiet hours are good for deep work."
+msgstr "Les heures calmes sont propices au travail en profondeur."
+
+#: inc/features/dashboard/class-custom-dashboard.php:640
+msgid "Ready for today, %s?"
+msgstr "Prêt pour aujourd’hui, %s ?"
+
+#: inc/features/dashboard/class-custom-dashboard.php:200 inc/features/dashboard/class-custom-dashboard.php:930
+msgid "Recent changes"
+msgstr "Modifications récentes"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1096
+msgid "Recent logins"
+msgstr "Connexions récentes"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1038
+msgid "Recommended"
+msgstr "Recommandés"
+
+#: inc/wp-core/class-local-avatars.php:402 inc/wp-core/class-local-avatars.php:423 inc/wp-core/class-user-quick-edit.php:200
+msgid "Refresh avatar"
+msgstr "Actualiser l'avatar"
+
+#: inc/settings/class-settings-page.php:365 inc/settings/class-settings-page.php:408
+msgid "Remove"
+msgstr "Supprimer"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1259 inc/features/dashboard/class-custom-dashboard.php:1263
+msgid "Remove if unused"
+msgstr "À supprimer si inutile"
+
+#: inc/settings/class-settings-page.php:366
+msgid "Rename — clear to restore the original"
+msgstr "Renommer — videz pour restaurer l’original"
+
+#: inc/wp-core/class-username-changer.php:131
+msgid "Renaming a user invalidates every active sign-in they have. They must use the new username from now on. Continue?"
+msgstr "Renommer un utilisateur invalide toutes ses connexions actives. Il devra utiliser le nouveau nom d’utilisateur désormais. Continuer ?"
+
+#: inc/settings/class-settings-page.php:347
+msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access."
+msgstr "Réorganisez le menu d’administration et ses sous-menus, changez les icônes et masquez des entrées. Glissez pour réorganiser ; les changements s’appliquent après enregistrement. Masquer retire un élément du menu uniquement — cela ne bloque pas l’accès direct."
+
+#: inc/settings/class-settings-catalog.php:79
+msgid "Reorder the admin menu and submenus, change menu icons, and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
+msgstr "Réorganisez le menu d’administration et ses sous-menus, changez les icônes et masquez des entrées — configuré dans l’onglet Menu. Désactivé, le menu natif de WordPress est restauré (votre disposition enregistrée est conservée)."
+
+#: inc/settings/class-settings-catalog.php:31
+msgid "Replace the WordPress dashboard with a custom one: greeting, quick actions, stat tiles, recent activity, site health and storage. Off restores the native dashboard."
+msgstr "Remplace le tableau de bord WordPress par un tableau personnalisé : accueil, actions rapides, tuiles de statistiques, activité récente, santé du site et stockage. Désactivé, le tableau de bord natif est restauré."
+
+#: inc/settings/class-settings-page.php:348
+msgid "Reset menu"
+msgstr "Réinitialiser le menu"
+
+#: inc/settings/class-settings-page.php:375
+msgid "Reset to defaults"
+msgstr "Réinitialiser aux valeurs par défaut"
+
+#: inc/settings/class-settings-catalog.php:129
+msgid "Restyle the Bricks builder UI with your tokens. Automatically sets Bricks → Settings → Builder mode to \"Custom\"."
+msgstr "Restyle l’interface du constructeur Bricks avec vos tokens. Règle automatiquement Bricks → Réglages → Mode constructeur sur « Personnalisé »."
+
+#: inc/settings/class-settings-catalog.php:61
+msgid "Restyle wp-login.php to match the admin (logo, dark mode, focus states)."
+msgstr "Restyle wp-login.php pour s’accorder à l’administration (logo, mode sombre, états de focus)."
+
+#: inc/features/dashboard/class-custom-dashboard.php:642
+msgid "Rise and shine, %s"
+msgstr "Debout, %s"
+
+#: inc/wp-core/class-user-quick-edit.php:219
+msgid "Role"
+msgstr "Rôle"
+
+#: inc/wp-core/class-profile-account.php:170
+msgid "Roles, language and preferences."
+msgstr "Rôles, langue et préférences."
+
+#: inc/settings/class-settings-page.php:404 inc/settings/class-settings-page.php:406
+msgid "SVG · PNG ≥ 400×100"
+msgstr "SVG · PNG ≥ 400×100"
+
+#: inc/settings/class-settings-page.php:391
+msgid "Save changes"
+msgstr "Enregistrer les modifications"
+
+#: inc/wp-core/class-user-quick-edit.php:159
+msgid "Save failed."
+msgstr "Échec de l’enregistrement."
+
+#: inc/settings/class-settings-page.php:393
+msgid "Saved"
+msgstr "Enregistré"
+
+#: inc/settings/class-settings-page.php:392
+msgid "Saving…"
+msgstr "Enregistrement…"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1033
+msgid "Score"
+msgstr "Score"
+
+#: inc/settings/class-settings-page.php:376
+msgid "Search features…"
+msgstr "Rechercher des fonctionnalités…"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1237
+msgid "Security and SEO"
+msgstr "Sécurité et référencement"
+
+#: inc/settings/class-settings-page.php:387
+msgid "Select a logo"
+msgstr "Sélectionner un logo"
+
+#: inc/settings/class-settings-page.php:361
+msgid "Separator"
+msgstr "Séparateur"
+
+#: inc/features/dashboard/class-custom-dashboard.php:609
+msgid "Set a featured image — it shapes how posts are shared."
+msgstr "Définissez une image mise en avant — elle façonne le partage des articles."
+
+#: inc/features/dashboard/class-custom-dashboard.php:843 inc/features/dashboard/class-custom-dashboard.php:906 inc/settings/class-settings-page.php:93 inc/wp-core/class-profile-account.php:170
+msgid "Settings"
+msgstr "Réglages"
+
+#: inc/settings/class-settings-page.php:353
+msgid "Show"
+msgstr "Afficher"
+
+#: inc/settings/class-settings-page.php:355
+msgid "Show / hide submenus"
+msgstr "Afficher / masquer les sous-menus"
+
+#: inc/wp-core/class-options-general.php:107
+msgid "Shown in browser tabs, bookmark lists and the app icon when visitors save your site to a phone home screen."
+msgstr "Affiché dans les onglets du navigateur, les favoris et l’icône d’application quand les visiteurs ajoutent votre site à l’écran d’accueil de leur téléphone."
+
+#: inc/features/dashboard/class-custom-dashboard.php:610
+msgid "Simplicity is the ultimate sophistication. — Leonardo da Vinci"
+msgstr "« La simplicité est la sophistication suprême. » — Léonard de Vinci"
+
+#: inc/wp-core/class-options-general.php:106
+msgid "Site Icon"
+msgstr "Icône du site"
+
+#: inc/features/dashboard/class-custom-dashboard.php:199 inc/features/dashboard/class-custom-dashboard.php:1015
+msgid "Site health"
+msgstr "Santé du site"
+
+#: inc/wp-core/class-options-general.php:104
+msgid "Site identity"
+msgstr "Identité du site"
+
+#: inc/wp-core/class-options-general.php:111
+msgid "Site language plus the timezone and formats used wherever dates appear."
+msgstr "La langue du site ainsi que le fuseau horaire et les formats utilisés partout où des dates apparaissent."
+
+#: inc/features/dashboard/class-custom-dashboard.php:202 inc/features/dashboard/class-custom-dashboard.php:841
+msgid "Site preview"
+msgstr "Aperçu du site"
+
+#: inc/features/stats/class-stats-page.php:147
+msgid "Source"
+msgstr "Source"
+
+#: inc/features/stats/class-stats-dashboard.php:504
+msgid "Start date"
+msgstr "Date de début"
+
+#: inc/features/dashboard/class-custom-dashboard.php:897 inc/features/stats/class-stats-dashboard.php:76 inc/features/stats/class-stats-dashboard.php:319 inc/features/stats/class-stats-dashboard.php:370 inc/features/stats/class-stats-page.php:59 inc/features/stats/class-stats-page.php:60 inc/features/stats/class-stats-page.php:132
+msgid "Statistics"
+msgstr "Statistiques"
+
+#: inc/features/dashboard/class-custom-dashboard.php:666
+msgid "Still up, %s?"
+msgstr "Encore debout, %s ?"
+
+#: inc/features/dashboard/class-custom-dashboard.php:201 inc/features/dashboard/class-custom-dashboard.php:1149
+msgid "Storage"
+msgstr "Stockage"
+
+#: inc/features/dashboard/class-custom-dashboard.php:596
+msgid "Strong passwords and two-factor auth keep your account safe."
+msgstr "Un mot de passe fort et l’authentification à deux facteurs protègent votre compte."
+
+#: inc/settings/class-settings-catalog.php:73
+msgid "Swap WordPress's menu and toolbar icons for AdminKit's set. Icons customised elsewhere (e.g. Admin Menu Editor) are left alone."
+msgstr "Remplace les icônes du menu et de la barre d’outils de WordPress par le jeu d’AdminKit. Les icônes personnalisées ailleurs (par ex. Admin Menu Editor) sont laissées intactes."
+
+#: inc/settings/class-settings-page.php:380
+msgid "System"
+msgstr "Système"
+
+#: inc/features/dashboard/class-custom-dashboard.php:605
+msgid "Test your contact form now and then."
+msgstr "Testez votre formulaire de contact de temps en temps."
+
+#: inc/features/dashboard/class-custom-dashboard.php:650
+msgid "The afternoon is yours"
+msgstr "L’après-midi est à vous"
+
+#: inc/settings/class-settings-catalog.php:67
+msgid "Theme the Gutenberg canvas in light and dark. Off keeps the canvas matching your live site exactly."
+msgstr "Thématise le canevas Gutenberg en clair et sombre. Désactivé, le canevas reste identique à votre site en ligne."
+
+#: inc/features/dashboard/class-custom-dashboard.php:1564 inc/settings/class-settings-page.php:384
+msgid "Themes"
+msgstr "Thèmes"
+
 #: inc/wp-core/class-profile-account.php:175
 msgid "This username cannot be changed."
 msgstr "Ce nom d’utilisateur ne peut pas être modifié."
 
-#: inc/class-settings-page.php
-msgid "Admin-bar polish"
-msgstr "Finitions de la barre d'admin"
-
-#: inc/class-settings-page.php
-msgid "Front and back admin bar, refined."
-msgstr "La barre d'admin, peaufinée à l'avant comme à l'arrière."
-
-#: inc/class-settings-page.php
-msgid ""
-"Finish the admin bar end to end — the same on the front end and back end, "
-"with tidy submenus, clear keyboard focus, and a clean responsive layout on "
-"mobile."
-msgstr ""
-"Finaliser la barre d'administration de bout en bout — identique côté site et "
-"côté admin, avec des sous-menus soignés, un focus clavier net et une mise en "
-"page responsive propre sur mobile."
-
-#: inc/class-settings-page.php
-msgid "Command palette"
-msgstr "Palette de commandes"
-
-#: inc/class-settings-page.php
-msgid "Jump anywhere with a keystroke."
-msgstr "Accédez partout en une frappe."
-
-#: inc/class-settings-page.php
-msgid ""
-"A ⌘K / Ctrl-K launcher to jump straight to any admin page, setting or post — "
-"no more hunting through menus."
-msgstr ""
-"Un lanceur ⌘K / Ctrl-K pour sauter directement vers n'importe quelle page, "
-"réglage ou article de l'admin — fini la chasse dans les menus."
-
-#: inc/class-settings-page.php
-msgid "Per-user theme preference"
-msgstr "Préférence de thème par utilisateur"
-
-#: inc/class-settings-page.php
-msgid "Each user picks their own mode."
-msgstr "Chaque utilisateur choisit son propre mode."
-
-#: inc/class-settings-page.php
-msgid ""
-"Let every user choose their own light/dark mode and accent, saved per "
-"account, so the admin feels personal without changing it for anyone else."
-msgstr ""
-"Permettre à chaque utilisateur de choisir son mode clair/sombre et son "
-"accent, enregistrés par compte, pour une admin personnelle sans impacter les "
-"autres."
-
-#: inc/class-settings-page.php
-msgid "Admin notices manager"
-msgstr "Gestionnaire de notifications admin"
-
-#: inc/class-settings-page.php
-msgid "Tame the notice clutter."
-msgstr "Domptez le fouillis des notifications."
-
-#: inc/class-settings-page.php
-msgid ""
-"Gather WordPress's scattered admin notices into one tidy, collapsible area "
-"so update nags and plugin messages stop shoving your content down the page."
-msgstr ""
-"Regrouper les notifications d'admin éparpillées de WordPress dans une zone "
-"unique et repliable, pour que les rappels de mise à jour et messages "
-"d'extensions cessent de repousser votre contenu vers le bas."
-
-#: inc/class-settings-page.php
-msgid "Native menu editor"
-msgstr "Éditeur de menu natif"
-
-#: inc/class-settings-page.php
-msgid "Reorder, rename and hide menu items."
-msgstr "Réordonner, renommer et masquer les entrées de menu."
-
-#: inc/class-settings-page.php
-msgid ""
-"A lightweight, native way to reorder, rename or hide admin-menu items per "
-"role — the essentials, without a separate plugin."
-msgstr ""
-"Une façon native et légère de réordonner, renommer ou masquer les entrées du "
-"menu d'admin par rôle — l'essentiel, sans extension dédiée."
-
-#: inc/class-settings-page.php
-msgid "Custom admin CSS"
-msgstr "CSS admin personnalisé"
-
-#: inc/class-settings-page.php
-msgid "Drop in your own admin tweaks."
-msgstr "Ajoutez vos propres retouches admin."
-
-#: inc/class-settings-page.php
-msgid ""
-"A small sanitised field for your own admin CSS on top of AdminKit's tokens — "
-"for the one-off tweak without a child plugin."
-msgstr ""
-"Un petit champ assaini pour votre propre CSS d'admin par-dessus les tokens "
-"d'AdminKit — pour la retouche ponctuelle sans extension enfant."
-
-#: inc/class-settings-page.php
-msgid "Density / compact mode"
-msgstr "Mode densité / compact"
-
-#: inc/class-settings-page.php
-msgid "Comfortable or compact spacing."
-msgstr "Espacement confortable ou compact."
-
-#: inc/class-settings-page.php
-msgid ""
-"An optional denser layout that tightens spacing across wp-admin for power "
-"users, while keeping the comfortable default."
-msgstr ""
-"Une mise en page plus dense optionnelle qui resserre les espacements dans wp-"
-"admin pour les utilisateurs avancés, tout en gardant le confort par défaut."
-
-#: inc/class-settings-page.php
-msgid "Typography controls"
-msgstr "Contrôles de typographie"
-
-#: inc/class-settings-page.php
-msgid "Choose the admin font and scale."
-msgstr "Choisissez la police et l'échelle de l'admin."
-
-#: inc/class-settings-page.php
-msgid ""
-"Pick the admin font family and base size from sensible presets so the whole "
-"admin matches your brand's type."
-msgstr ""
-"Choisir la police et la taille de base de l'admin parmi des préréglages "
-"soignés, pour que toute l'admin s'accorde à la typo de votre marque."
-
-#: inc/wp-core/class-local-avatars.php
-msgid "Profile picture"
-msgstr "Photo de profil"
-
-#: inc/wp-core/class-local-avatars.php
-msgid "Avatar"
-msgstr "Avatar"
-
-#: inc/wp-core/class-local-avatars.php
-msgid "Refresh"
-msgstr "Actualiser"
-
-#: inc/wp-core/class-local-avatars.php
-msgid "Refresh avatar"
-msgstr "Actualiser l'avatar"
-
-#. translators: %d: number of users whose avatars were refreshed.
-#: inc/wp-core/class-local-avatars.php
-msgid "%d avatar refreshed."
-msgid_plural "%d avatars refreshed."
-msgstr[0] "%d avatar actualisé."
-msgstr[1] "%d avatars actualisés."
-
-#: inc/wp-core/class-local-avatars.php
-msgid "You are not allowed to do that."
-msgstr "Vous n'êtes pas autorisé·e à faire cela."
-
-#: inc/class-settings-page.php
-msgid "Customise your WordPress admin's design and branding."
-msgstr ""
-"Personnalisez le design et l'image de marque de votre administration "
-"WordPress."
-
-#: inc/class-settings-page.php
-msgid "Brand"
-msgstr "Marque"
-
-#: inc/class-settings-page.php
-msgid "Logo, favicon & accent"
-msgstr "Logo, favicon et accent"
-
-#: inc/class-settings-page.php
-msgid "Tokens synced with Bricks Builder"
-msgstr "Tokens synchronisés avec Bricks Builder"
-
-#: inc/class-settings-page.php
-msgid "Light-mode logo"
-msgstr "Logo — mode clair"
-
-#: inc/class-settings-page.php
-msgid "Shown on light surfaces"
-msgstr "Affiché sur fonds clairs"
-
-#: inc/class-settings-page.php
-msgid "Dark-mode logo"
-msgstr "Logo — mode sombre"
-
-#: inc/class-settings-page.php
-msgid "Shown on dark surfaces"
-msgstr "Affiché sur fonds sombres"
-
-#: inc/class-settings-page.php
-msgid "SVG · or 32×32 PNG"
-msgstr "SVG · ou PNG 32×32"
-
-#: inc/class-settings-page.php
-msgid "Drop"
-msgstr "Déposer"
-
-#: inc/class-settings-page.php
-msgid "Upload"
-msgstr "Téléverser"
-
-#: inc/class-settings-page.php
-msgid "Media library"
-msgstr "Médiathèque"
-
-#: inc/class-settings-page.php
-msgid "Inherits the Site Icon when empty (Settings → General)."
-msgstr "Hérite de l'icône du site quand vide (Réglages → Général)."
-
-#: inc/class-settings-page.php
-msgid "Inheriting from provider / baseline"
-msgstr "Hérité du fournisseur / de la base"
-
-#: inc/class-settings-page.php
-msgid "Clear accent"
-msgstr "Effacer l'accent"
-
-#: inc/class-settings-page.php
-msgid "Show derived colours"
-msgstr "Afficher les couleurs dérivées"
-
-#: inc/class-settings-page.php
-msgid "Hide derived colours"
-msgstr "Masquer les couleurs dérivées"
-
-#: inc/class-settings-page.php
-msgid "Subtle"
-msgstr "Subtil"
-
-#: inc/class-settings-page.php
-msgid "readable"
-msgstr "lisible"
-
-#: inc/class-settings-page.php
-msgid "Focus"
-msgstr "Focus"
-
-#: inc/class-settings-page.php
-msgid "@ 50%"
-msgstr "@ 50 %"
-
-#: inc/class-settings-page.php
-msgid "Display"
-msgstr "Affichage"
-
-#: inc/class-settings-page.php
-msgid "Actions"
-msgstr "Actions"
-
-#: inc/class-settings-page.php
-msgid "Re-sync from Bricks Builder"
-msgstr "Resynchroniser depuis Bricks Builder"
-
-#: inc/class-settings-page.php
-msgid "Auto-generate appearance"
-msgstr "Générer l'apparence automatiquement"
-
-#: inc/class-settings-page.php
-msgid "Export to Bricks"
-msgstr "Exporter vers Bricks"
-
-#: inc/class-settings-page.php
-msgid "Reset to AdminKit defaults"
-msgstr "Réinitialiser aux valeurs par défaut d'AdminKit"
-
-#: inc/class-settings-page.php
-msgid "Reset all AdminKit settings to defaults? This cannot be undone."
-msgstr ""
-"Réinitialiser tous les réglages AdminKit aux valeurs par défaut ? Cette "
-"action est irréversible."
-
-#: inc/class-settings-page.php
-msgid "Defaults restored"
-msgstr "Valeurs par défaut restaurées"
-
-#: inc/class-settings-page.php
-msgid "Bricks tokens re-synced"
-msgstr "Tokens Bricks resynchronisés"
-
-#: inc/class-settings-page.php
-msgid "Want to dig in?"
-msgstr "Envie d'aller plus loin ?"
-
-#: inc/class-settings-page.php
-msgid "Browse every token AdminKit exposes — read-only reference."
-msgstr ""
-"Parcourez tous les tokens exposés par AdminKit — référence en lecture seule."
-
-#. translators: %d is the total number of design tokens (resolved at render time).
-#: inc/class-settings-page.php
-#, php-format
-msgid "View all %d tokens"
-msgstr "Voir les %d tokens"
-
-#: inc/class-settings-page.php
-msgid "Reference"
-msgstr "Référence"
-
-#: inc/class-settings-page.php
-msgid "Token map"
-msgstr "Carte des tokens"
-
-#: inc/class-settings-page.php
-msgid ""
-"Read-only. AdminKit derives every token from the provider/baseline cascade."
-msgstr ""
-"Lecture seule. AdminKit dérive chaque token depuis la cascade fournisseur/"
-"baseline."
-
-#: inc/class-settings-page.php
-msgid "Token"
-msgstr "Token"
-
-#: inc/class-settings-page.php
-msgid "Cascade"
-msgstr "Cascade"
-
-#: inc/class-settings-page.php
-msgid "Value"
-msgstr "Valeur"
-
-#: inc/class-settings-page.php
-msgid "Source"
-msgstr "Source"
-
-#: inc/class-settings-page.php
-msgid "Bricks"
-msgstr "Bricks"
-
-#: inc/class-settings-page.php
-msgid "Auto"
-msgstr "Auto"
-
-#: inc/class-settings-page.php
-msgid "Font & sizes"
-msgstr "Police et tailles"
-
-#: inc/class-settings-page.php
-msgid "Remove"
-msgstr "Supprimer"
-
-#: inc/class-settings-page.php
-msgid "Custom"
-msgstr "Personnalisé"
-
-#: inc/class-settings-page.php
-msgid "Bricks not detected"
-msgstr "Bricks non détecté"
-
-#: inc/class-settings-page.php
-msgid "Color"
-msgstr "Couleur"
-
-msgid "Simplicity is the ultimate sophistication. — Leonardo da Vinci"
-msgstr "« La simplicité est la sophistication suprême. » — Léonard de Vinci"
-
-msgid ""
-"Perfection is achieved not when there is nothing more to add, but when there "
-"is nothing left to take away. — Antoine de Saint-Exupéry"
-msgstr ""
-"« La perfection, c’est quand il n’y a plus rien à retirer. » — Antoine de "
-"Saint-Exupéry"
-
-msgid "Good design is as little design as possible. — Dieter Rams"
-msgstr "« Le bon design, c’est le moins de design possible. » — Dieter Rams"
-
-msgid "Done is better than perfect — publish, then refine."
-msgstr "Bien fait vaut mieux que parfait — publiez, puis affinez."
-
-msgid "Consistency beats intensity: one good decision at a time."
-msgstr ""
-"La régularité l’emporte sur l’intensité : une bonne décision à la fois."
-
-msgid "Build today what you will be proud of tomorrow."
-msgstr "Créez aujourd’hui ce dont vous serez fier demain."
-
-msgid "Clarity is the courtesy of the maker."
-msgstr "La clarté est la politesse de celui qui crée."
-
-msgid "Every detail counts — it is their sum that makes the difference."
-msgstr "Chaque détail compte — c’est leur somme qui fait la différence."
-
-msgid "A great site is built one page at a time."
-msgstr "Un grand site se construit page après page."
-
-msgid "Fresh content keeps your visitors engaged."
-msgstr "Un contenu frais garde vos visiteurs engagés."
-
-msgid "Remember to back up before big changes."
-msgstr "Pensez à sauvegarder avant les grandes modifications."
-
-msgid "Your site at a glance."
-msgstr "Aperçu de votre site en un coup d’œil."
-
-msgid "Hello, %s"
-msgstr "Bonjour, %s"
-
-msgid "Good morning, %s"
-msgstr "Bonne matinée, %s"
-
-msgid "Ready for today, %s?"
-msgstr "Prêt pour aujourd’hui, %s ?"
-
-msgid "A good day begins"
-msgstr "Une bonne journée commence"
-
-msgid "Good afternoon, %s"
-msgstr "Bon après-midi, %s"
-
-msgid "The afternoon is yours"
-msgstr "L’après-midi est à vous"
-
-msgid "Good evening, %s"
-msgstr "Bonsoir, %s"
-
-msgid "Have a good evening, %s"
-msgstr "Bonne soirée, %s"
-
-msgid "A quiet evening to get ahead"
-msgstr "La soirée est calme pour avancer"
-
-msgid "Working late, %s"
-msgstr "Il est tard, %s"
-
-msgid "Still up, %s?"
-msgstr "Encore debout, %s ?"
-
-msgid "Great to see you again, %s"
-msgstr "Ravi de vous revoir, %s"
-
-msgid "%s is back!"
-msgstr "%s est de retour !"
-
-msgid "Glad to see you, %s"
-msgstr "Content de vous voir, %s"
-
-msgid "Pick up where you left off?"
-msgstr "On reprend où on s’était arrêté ?"
-
-msgid "Write a post"
-msgstr "Écrire un article"
-
-msgid "New page"
-msgstr "Nouvelle page"
-
-msgid "Add media"
-msgstr "Ajouter un média"
-
-msgid "Add user"
-msgstr "Créer un compte"
-
-msgid "Posts"
-msgstr "Articles"
-
-msgid "Media"
-msgstr "Médias"
-
-msgid "Comments"
-msgstr "Commentaires"
-
-msgid "Users"
-msgstr "Comptes"
-
-msgid "Recent changes"
-msgstr "Modifications récentes"
-
-msgid "Nothing recent yet."
-msgstr "Rien de récent pour l’instant."
-
-msgid "Edit"
-msgstr "Modifier"
-
-msgid "Needs attention"
-msgstr "À améliorer"
-
-msgid "Good"
-msgstr "Bon"
-
-msgid "Everything's running"
-msgstr "Tout fonctionne"
-
-msgid "Analysis unavailable"
-msgstr "Analyse indisponible"
-
-msgid "Site health"
-msgstr "Santé du site"
-
-msgid "View full report"
-msgstr "Voir le rapport complet"
-
-msgid "Storage"
-msgstr "Stockage"
-
-msgid "available"
-msgstr "disponibles"
-
-msgid "used"
-msgstr "utilisés"
-
-msgid "used by your site"
-msgstr "utilisés par votre site"
-
-msgid "Database"
-msgstr "Base de données"
-
-msgid "HTTPS off"
-msgstr "HTTPS inactif"
-
-msgid "Security and SEO"
-msgstr "Sécurité et référencement"
-
-msgid "Debug mode on"
-msgstr "Mode débogage actif"
-
-msgid "Turn off in production"
-msgstr "À désactiver en production"
-
-msgid "Update PHP %s"
-msgstr "PHP %s à mettre à jour"
-
-msgid "Version too old"
-msgstr "Version trop ancienne"
-
-msgid "Core, plugins, themes"
-msgstr "Cœur, extensions, thèmes"
-
-msgid "Update"
-msgstr "Mettre à jour"
-
-msgid "Remove if unused"
-msgstr "À supprimer si inutile"
-
-msgid "Manage"
-msgstr "Gérer"
-
-msgid "Awaiting review"
-msgstr "En attente de relecture"
-
-msgid "Open"
-msgstr "Ouvrir"
-
-msgid "Moderate"
-msgstr "Modérer"
-
-msgid "View"
-msgstr "Voir"
-
-msgid "To-do"
-msgstr "Actions à faire"
-
-msgid "All clear — nothing to do today."
-msgstr "Tout est en ordre — rien à faire aujourd’hui."
-
-msgid "Published"
-msgstr "Publié"
-
-msgid "Pending"
-msgstr "En attente"
-
-msgid "Draft"
-msgstr "Brouillon"
-
-msgid "Content"
-msgstr "Contenu"
-
-msgid "(no title)"
-msgstr "(sans titre)"
-
-msgid "%s ago"
-msgstr "Il y a %s"
-
-msgid "HTTPS on"
-msgstr "HTTPS actif"
-
-msgid "recommended"
-msgstr "recommandé"
-
-msgid "Everything's up to date"
-msgstr "Tout est à jour"
-
-msgid "Debug mode off"
-msgstr "Débogage désactivé"
-
-msgid "%d item to address"
-msgid_plural "%d items to address"
-msgstr[0] "%d élément à améliorer"
-msgstr[1] "%d éléments à améliorer"
-
-msgid "%d passed"
-msgid_plural "%d passed"
-msgstr[0] "%d réussi"
-msgstr[1] "%d réussis"
-
-msgid "%d critical"
-msgid_plural "%d critical"
-msgstr[0] "%d critique"
-msgstr[1] "%d critiques"
-
-msgid "%d recommended"
-msgid_plural "%d recommended"
-msgstr[0] "%d recommandée"
-msgstr[1] "%d recommandées"
-
-msgid "%d update available"
-msgid_plural "%d updates available"
-msgstr[0] "%d mise à jour disponible"
-msgstr[1] "%d mises à jour disponibles"
-
-msgid "%s inactive plugin"
-msgid_plural "%s inactive plugins"
-msgstr[0] "%s extension inactive"
-msgstr[1] "%s extensions inactives"
-
-msgid "%s inactive theme"
-msgid_plural "%s inactive themes"
-msgstr[0] "%s thème inactif"
-msgstr[1] "%s thèmes inactifs"
-
-msgid "%s draft to finish"
-msgid_plural "%s drafts to finish"
-msgstr[0] "%s brouillon à finir"
-msgstr[1] "%s brouillons à finir"
-
-msgid "%s post pending"
-msgid_plural "%s posts pending"
-msgstr[0] "%s article en attente"
-msgstr[1] "%s articles en attente"
-
-msgid "%s comment to moderate"
-msgid_plural "%s comments to moderate"
-msgstr[0] "%s commentaire à modérer"
-msgstr[1] "%s commentaires à modérer"
-
-msgid "%s scheduled post"
-msgid_plural "%s scheduled posts"
-msgstr[0] "%s publication planifiée"
-msgstr[1] "%s publications planifiées"
-
-msgid "Online users"
-msgstr "Utilisateurs en ligne"
-
-msgid ""
-"Track who is signed in (read from existing WordPress sessions, no extra "
-"tracking) and show them on the dashboard, plus an \"Online\" filter and a "
-"\"Last login\" column on the Users screen. Off hides all of it."
-msgstr ""
-"Identifie qui est connecté (lu depuis les sessions WordPress existantes, "
-"sans suivi supplémentaire) et l'affiche sur le tableau de bord, avec un "
-"filtre « En ligne » et une colonne « Dernière connexion » sur l'écran "
-"Utilisateurs. Désactivé masque le tout."
-
-msgid "Online now"
-msgstr "En ligne"
-
-msgid "Recent logins"
-msgstr "Connexions récentes"
-
-msgid "No recent sign-ins yet."
-msgstr "Aucune connexion récente."
-
-msgid "Last login"
-msgstr "Dernière connexion"
-
-msgid "Never"
-msgstr "Jamais"
-
-msgid "Online"
-msgstr "En ligne"
-
-msgid "Site preview"
-msgstr "Aperçu du site"
-
-msgid "Score"
-msgstr "Score"
-
-msgid "Passed"
-msgstr "Réussis"
-
-msgid "Recommended"
-msgstr "Recommandés"
-
+#: inc/features/stats/class-stats-page.php:144
+msgid "To"
+msgstr "À"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1040
 msgid "To address"
 msgstr "À traiter"
 
-msgid "No drafts"
-msgstr "Aucun brouillon"
+#: inc/features/dashboard/class-custom-dashboard.php:1053
+msgid "To-do"
+msgstr "Actions à faire"
 
-msgid "%s draft"
-msgid_plural "%s drafts"
-msgstr[0] "%s brouillon"
-msgstr[1] "%s brouillons"
+#: inc/features/stats/class-stats-dashboard.php:452
+msgid "Today"
+msgstr "Aujourd’hui"
 
-msgid "%s pending review"
-msgstr "%s en attente de relecture"
+#: inc/class-theme-toggle.php:158 inc/integrations/plugins/gutenberg/class-gutenberg.php:109 inc/wp-core/class-login.php:265
+msgid "Toggle light / dark mode"
+msgstr "Basculer entre le mode clair et sombre"
 
-msgid "All published"
-msgstr "Tout est publié"
+#: inc/settings/class-settings-page.php:399
+msgid "Tokens synced with Bricks Builder"
+msgstr "Tokens synchronisés avec Bricks Builder"
 
-msgid "%s in moderation"
-msgstr "%s en modération"
+#: inc/features/stats/class-stats-dashboard.php:343 inc/features/stats/class-stats-page.php:137
+msgid "Top pages"
+msgstr "Pages les plus vues"
 
-msgid "%s on disk"
-msgstr "%s sur le disque"
+#: inc/features/stats/class-stats-dashboard.php:344 inc/features/stats/class-stats-page.php:138
+msgid "Top sources"
+msgstr "Sources principales"
 
-msgid "%s online now"
-msgid_plural "%s online now"
-msgstr[0] "%s en ligne"
-msgstr[1] "%s en ligne"
+#: inc/settings/class-settings-catalog.php:115
+msgid "Track who is signed in (read from existing WordPress sessions, no extra tracking) and show them on the dashboard, plus an \"Online\" filter and a \"Last login\" column on the Users screen. Off hides all of it."
+msgstr "Identifie qui est connecté (lu depuis les sessions WordPress existantes, sans suivi supplémentaire) et l'affiche sur le tableau de bord, avec un filtre « En ligne » et une colonne « Dernière connexion » sur l'écran Utilisateurs. Désactivé masque le tout."
 
-msgid "None online"
-msgstr "Personne en ligne"
+#: inc/features/stats/class-stats-page.php:133
+msgid "Traffic from the built-in, cookieless tracker. Pick any date range to see visits, page views, your most-viewed pages and where visitors come from."
+msgstr "Trafic issu du traqueur intégré sans cookie. Choisissez une plage de dates pour voir les visites, les pages vues, vos pages les plus consultées et la provenance des visiteurs."
 
-msgid "Edit my profile"
-msgstr "Modifier mon profil"
+#: inc/settings/class-settings-catalog.php:120
+msgid "Traffic stats"
+msgstr "Statistiques de trafic"
 
-msgid "All tasks"
-msgstr "Toutes les tâches"
+#: inc/settings/class-settings-page.php:372
+msgid "Turn AdminKit modules on or off."
+msgstr "Activez ou désactivez les modules AdminKit."
 
-msgid "View all accounts"
-msgstr "Voir tous les comptes"
+#: inc/features/dashboard/class-custom-dashboard.php:1240
+msgid "Turn off in production"
+msgstr "À désactiver en production"
 
-msgid "Images"
-msgstr "Images"
+#: inc/wp-core/class-username-changer.php:130
+msgid "Type the new username, then click \"Update User\" below to save."
+msgstr "Saisissez le nouveau nom d’utilisateur, puis cliquez sur « Mettre à jour l’utilisateur » ci-dessous pour enregistrer."
 
-msgid "Videos"
-msgstr "Vidéos"
+#: inc/settings/class-settings-page.php:395
+msgid "Unsaved changes"
+msgstr "Modifications non enregistrées"
 
-msgid "Audio"
-msgstr "Audio"
+#: inc/features/dashboard/class-custom-dashboard.php:1250
+msgid "Update"
+msgstr "Mettre à jour"
 
-msgid "Documents"
-msgstr "Documents"
+#: inc/features/dashboard/class-custom-dashboard.php:1244
+msgid "Update PHP %s"
+msgstr "PHP %s à mettre à jour"
 
-msgid "Other"
-msgstr "Autres"
+#: inc/wp-core/class-user-quick-edit.php:232
+msgid "Update User"
+msgstr "Mettre à jour l’utilisateur"
 
-msgid "Your media library is empty."
-msgstr "Votre médiathèque est vide."
+#: inc/settings/class-settings-page.php:407
+msgid "Upload"
+msgstr "Téléverser"
 
-msgid "Edit menu"
-msgstr "Modifier le menu"
+#: inc/settings/class-settings-page.php:388
+msgid "Use this image"
+msgstr "Utiliser cette image"
 
-msgid "Collapse menu"
-msgstr "Réduire le menu"
+#: inc/settings/class-settings-catalog.php:102
+msgid "Username changer"
+msgstr "Changeur de nom d’utilisateur"
 
-msgid "Expand menu"
-msgstr "Déployer le menu"
+#: inc/features/dashboard/class-custom-dashboard.php:799
+msgid "Users"
+msgstr "Comptes"
 
-msgid "Menu tools"
-msgstr "Outils du menu"
+#: inc/settings/class-settings-catalog.php:25
+msgid "Users & access"
+msgstr "Utilisateurs et accès"
 
-msgid "Menu quick tools"
-msgstr "Outils rapides du menu"
+#: inc/settings/class-settings-catalog.php:96
+msgid "Users quick edit"
+msgstr "Modification rapide des utilisateurs"
 
-msgid ""
-"Add a slim toolbar to the top of the admin menu: a collapse/expand toggle "
-"(WordPress's own sits at the very bottom) and a quick \"Edit menu\" link to "
-"the Menu tab. Off removes it."
-msgstr ""
-"Ajoute une barre d'outils en haut du menu d'administration : un bouton "
-"réduire/déployer (celui de WordPress est tout en bas) et un lien rapide "
-"« Modifier le menu » vers l'onglet Menu. Désactivé, elle est retirée."
+#: inc/features/dashboard/class-custom-dashboard.php:1244
+msgid "Version too old"
+msgstr "Version trop ancienne"
 
+#: inc/features/dashboard/class-custom-dashboard.php:1289 inc/features/dashboard/class-custom-dashboard.php:1325
+msgid "View"
+msgstr "Voir"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1134
 msgid "View all online accounts"
 msgstr "Voir tous les comptes en ligne"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1059
+msgid "View full report"
+msgstr "Voir le rapport complet"
+
+#: inc/class-theme-toggle.php:189 inc/features/dashboard/class-custom-dashboard.php:850 inc/features/dashboard/class-custom-dashboard.php:857 inc/features/dashboard/class-custom-dashboard.php:963
+msgid "View site"
+msgstr "Voir le site"
+
+#: inc/features/stats/class-stats-page.php:155
+msgid "Viewers"
+msgstr "Visiteurs"
+
+#: inc/features/stats/class-stats-page.php:148
+msgid "Views"
+msgstr "Vues"
+
+#: inc/features/stats/class-stats-dashboard.php:437
+msgid "Visitors active on the site in the last few minutes"
+msgstr "Visiteurs actifs sur le site ces dernières minutes"
+
+#: inc/features/stats/class-stats-dashboard.php:332 inc/features/stats/class-stats-page.php:134 inc/features/stats/class-stats-page.php:149
+msgid "Visits"
+msgstr "Visites"
+
+#: inc/features/dashboard/class-custom-dashboard.php:677
+msgid "Welcome back, %s"
+msgstr "Bon retour, %s"
+
+#: inc/features/dashboard/class-custom-dashboard.php:660
+msgid "Winding down, %s?"
+msgstr "Fin de journée, %s ?"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1565 inc/settings/class-settings-page.php:413 inc/settings/class-settings-page.php:419
+msgid "WordPress"
+msgstr "WordPress"
+
+#: inc/settings/class-settings-page.php:351
+msgid "WordPress icon"
+msgstr "Icône WordPress"
+
+#: inc/features/dashboard/class-custom-dashboard.php:665
+msgid "Working late, %s"
+msgstr "Il est tard, %s"
+
+#: inc/features/dashboard/class-custom-dashboard.php:583
+msgid "Wrapping up? A quick backup is a good habit."
+msgstr "Vous terminez ? Une sauvegarde rapide est une bonne habitude."
+
+#: inc/features/dashboard/class-custom-dashboard.php:696
+msgid "Write a post"
+msgstr "Écrire un article"
+
+#: inc/features/stats/class-stats-dashboard.php:455
+msgid "Year to date"
+msgstr "Année en cours"
+
+#: inc/wp-core/class-local-avatars.php:310 inc/wp-core/class-user-quick-edit.php:259
+msgid "You are not allowed to do that."
+msgstr "Vous n'êtes pas autorisé·e à faire cela."
+
+#: inc/features/notifications/class-notification-center.php:183
+msgid "You’re all caught up."
+msgstr "Vous êtes à jour."
+
+#: inc/features/stats/class-stats-page.php:136
+msgid "active now"
+msgstr "actifs maintenant"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1159
+msgid "available"
+msgstr "disponibles"
+
+#: inc/settings/class-settings-page.php:363
+msgid "https://…"
+msgstr "https://…"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1432
+msgid "recommended"
+msgstr "recommandé"
+
+#: inc/settings/class-settings-page.php:354
+msgid "submenus"
+msgstr "sous-menus"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1157
+msgid "used"
+msgstr "utilisés"
+
+#: inc/features/dashboard/class-custom-dashboard.php:1165
+msgid "used by your site"
+msgstr "utilisés par votre site"
+
+#: inc/features/stats/class-stats-dashboard.php:381 inc/features/stats/class-stats-page.php:150
+msgid "visitor active right now"
+msgid_plural "visitors active right now"
+msgstr[0] "visiteur actif en ce moment"
+msgstr[1] "visiteurs actifs en ce moment"
+
+#: inc/features/stats/class-stats-page.php:151
+msgid "visitors active right now"
+msgstr "visiteurs actifs en ce moment"

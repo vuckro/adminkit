@@ -1,1307 +1,1323 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the AdminKit package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
+# AdminKit — translation template.
+# Copyright (C) 2026 Waaskit
 msgid ""
 msgstr ""
-"Project-Id-Version: AdminKit\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-30 22:39+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
-"MIME-Version: 1.0\n"
+"Project-Id-Version: AdminKit 1.0.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Domain: adminkit\n"
 
-#: ../inc/class-settings-catalog.php:23
-msgid "Content & lists"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:24
-msgid "Appearance"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:25
-msgid "Users & access"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:30
-msgid "Custom dashboard"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:31
-msgid ""
-"Replace the WordPress dashboard with a custom one: greeting, quick actions, "
-"stat tiles, recent activity, site health and storage. Off restores the "
-"native dashboard."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:36
-msgid "Notification center"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:37
-msgid ""
-"Adds a bell to the toolbar that collects admin notices into a side drawer, "
-"keeping success confirmations inline. Off restores every notice to its "
-"normal place."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:42
-msgid "Post previews"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:43
-msgid ""
-"Adds a thumbnail column to post-type list tables — the featured image first, "
-"with a live WordPress.com mShots screenshot as fallback on production sites "
-"(skipped on localhost where mShots can't reach the page anyway)."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:48
-msgid "Active plugins first"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:49
-msgid ""
-"Keep active plugins front and center: open the plugins list on the "
-"\"Active\" filter and sort active plugins to the top of the \"All\" view. "
-"After you toggle a plugin it follows the change — activating jumps to "
-"\"Active\", deactivating drops to \"All\" — so it never vanishes from the "
-"filter you were on. Falls back to \"All\" when nothing is active. Off "
-"restores WordPress's default — the \"All\" view in alphabetical order."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:54
-msgid "Dark mode"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:55
-msgid ""
-"Adds a light/dark toggle to the admin bar. Off forces light mode site-wide."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:60
-msgid "Login screen"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:61
-msgid ""
-"Restyle wp-login.php to match the admin (logo, dark mode, focus states)."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:66
-msgid "Block editor"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:67
-msgid ""
-"Theme the Gutenberg canvas in light and dark. Off keeps the canvas matching "
-"your live site exactly."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:72
-msgid "AdminKit icons"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:73
-msgid ""
-"Swap WordPress's menu and toolbar icons for AdminKit's set. Icons customised "
-"elsewhere (e.g. Admin Menu Editor) are left alone."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:78
-msgid "Menu manager"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:79
-msgid ""
-"Reorder the admin menu and submenus, change menu icons, and hide entries — "
-"configured in the Menu tab. Off restores the native WordPress menu (your "
-"saved layout is kept)."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:84
-msgid "Hide admin footer"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:85
-msgid ""
-"Hide the admin footer bar — the \"Thank you for creating with WordPress\" "
-"line and the version number — on every screen, for a cleaner app-like look. "
-"Off restores it."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:90
-msgid "Hide the Help button"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:91
-msgid ""
-"Hide the contextual \"Help\" tab at the top-right of admin screens, for "
-"cleaner chrome. \"Screen Options\" is left in place. Off restores it."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:96
-msgid "Users quick edit"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:97
-msgid ""
-"Edit first name, last name, email and role inline from the users list — no "
-"need to open the full profile."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:102
-msgid "Username changer"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:103
-msgid ""
-"Lets admins rename a user's login on Users → Edit (WordPress disables this "
-"by default). Sensitive — invalidates the user's active sessions; they must "
-"sign in again. Single-site only."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:108
-msgid "Custom avatars"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:109
-msgid ""
-"Adds \"AdminKit Portraits (Generated)\" to Settings → Discussion → Default "
-"Avatar. Pick it there to give every user a unique generated portrait."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:114
-msgid "Online users"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:115
-msgid ""
-"Track who is signed in (read from existing WordPress sessions, no extra "
-"tracking) and show them on the dashboard, plus an \"Online\" filter and a "
-"\"Last login\" column on the Users screen. Off hides all of it."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:122
-msgid "Bricks builder"
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:123
-msgid ""
-"Restyle the Bricks builder UI with your tokens. Automatically sets Bricks → "
-"Settings → Builder mode to \"Custom\"."
-msgstr ""
-
-#: ../inc/class-settings-catalog.php:125
-msgid "Activate the Bricks theme to use this."
-msgstr ""
-
-#: ../inc/class-settings-page.php:262 ../inc/class-theme-toggle.php:189
-#: ../inc/wp-core/class-custom-dashboard.php:82
-msgid "Dashboard"
-msgstr ""
-
-#: ../inc/class-settings-page.php:265
-#: ../inc/wp-core/class-custom-dashboard.php:498
-msgid "Features"
-msgstr ""
-
-#: ../inc/class-settings-page.php:266
-#: ../inc/wp-core/class-custom-dashboard.php:1176
-msgid "Plugins"
-msgstr ""
-
-#: ../inc/class-settings-page.php:267
-#: ../inc/wp-core/class-custom-dashboard.php:499
-msgid "Menu"
-msgstr ""
-
-#: ../inc/class-settings-page.php:270
-msgid ""
-"Reorder the admin menu and submenus, change icons, and hide entries. Drag to "
-"reorder; changes apply after you save. Hiding removes an item from the menu "
-"only — it does not block direct access."
-msgstr ""
-
-#: ../inc/class-settings-page.php:271
-msgid "Reset menu"
-msgstr ""
-
-#: ../inc/class-settings-page.php:272
-msgid "Choose an icon"
-msgstr ""
-
-#: ../inc/class-settings-page.php:273
-msgid "Default"
-msgstr ""
-
-#: ../inc/class-settings-page.php:274
-msgid "Hide"
-msgstr ""
-
-#: ../inc/class-settings-page.php:275
-msgid "Show"
-msgstr ""
-
-#: ../inc/class-settings-page.php:276
-msgid "submenus"
-msgstr ""
-
-#: ../inc/class-settings-page.php:277
-msgid "Show / hide submenus"
-msgstr ""
-
-#: ../inc/class-settings-page.php:278
-msgid "Drag to reorder"
-msgstr ""
-
-#: ../inc/class-settings-page.php:279
-msgid "Paste an SVG or a data:image/svg+xml URI…"
-msgstr ""
-
-#: ../inc/class-settings-page.php:280
-msgid "Apply"
-msgstr ""
-
-#: ../inc/class-settings-page.php:281
-msgid "Add link"
-msgstr ""
-
-#: ../inc/class-settings-page.php:282
-msgid "Add separator"
-msgstr ""
-
-#: ../inc/class-settings-page.php:283
-msgid "Separator"
-msgstr ""
-
-#: ../inc/class-settings-page.php:284
-msgid "Label"
-msgstr ""
-
-#: ../inc/class-settings-page.php:285
-msgid "https://…"
-msgstr ""
-
-#: ../inc/class-settings-page.php:286
-msgid "Open in a new tab"
-msgstr ""
-
-#: ../inc/class-settings-page.php:287 ../inc/class-settings-page.php:329
-msgid "Remove"
-msgstr ""
-
-#: ../inc/class-settings-page.php:288
-msgid "Rename — clear to restore the original"
-msgstr ""
-
-#: ../inc/class-settings-page.php:289
-msgid "Custom link"
-msgstr ""
-
-#: ../inc/class-settings-page.php:290
-msgid ""
-"Point this item at a custom URL (internal or external). Its submenu still "
-"works."
-msgstr ""
-
-#: ../inc/class-settings-page.php:291
-msgid "Clear"
-msgstr ""
-
-#: ../inc/class-settings-page.php:294
-msgid "Turn AdminKit modules on or off."
-msgstr ""
-
-#: ../inc/class-settings-page.php:295
-msgid "Enable all"
-msgstr ""
-
-#: ../inc/class-settings-page.php:296
-msgid "Disable all"
-msgstr ""
-
-#: ../inc/class-settings-page.php:297
-msgid "Reset to defaults"
-msgstr ""
-
-#: ../inc/class-settings-page.php:298
-msgid ""
-"Every plugin installed on your site, plus AdminKit's active theme adapters. "
-"Native ones have a tuned adapter you can switch per host; the rest carry a "
-"Generic badge and inherit AdminKit's base styling automatically."
-msgstr ""
-
-#: ../inc/class-settings-page.php:299
-msgid "Native"
-msgstr ""
-
-#: ../inc/class-settings-page.php:300
-msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
-msgstr ""
-
-#: ../inc/class-settings-page.php:301
-msgid "System"
-msgstr ""
-
-#: ../inc/class-settings-page.php:302
-msgid "AdminKit itself — always on and not removable here."
-msgstr ""
-
-#: ../inc/class-settings-page.php:303
-msgid "Generic"
-msgstr ""
-
-#: ../inc/class-settings-page.php:304
-msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
-msgstr ""
-
-#: ../inc/class-settings-page.php:305
-#: ../inc/wp-core/class-custom-dashboard.php:1177
-msgid "Themes"
-msgstr ""
-
-#: ../inc/class-settings-page.php:308
-msgid "Select a logo"
-msgstr ""
-
-#: ../inc/class-settings-page.php:309
-msgid "Use this image"
-msgstr ""
-
-#: ../inc/class-settings-page.php:312
-msgid "Save changes"
-msgstr ""
-
-#: ../inc/class-settings-page.php:313
-msgid "Saving…"
-msgstr ""
-
-#: ../inc/class-settings-page.php:314
-msgid "Saved"
-msgstr ""
-
-#: ../inc/class-settings-page.php:315
-msgid "Could not save"
-msgstr ""
-
-#: ../inc/class-settings-page.php:316
-msgid "Unsaved changes"
-msgstr ""
-
-#: ../inc/class-settings-page.php:319
-#: ../inc/wp-core/class-custom-dashboard.php:497
-msgid "Brand"
-msgstr ""
-
-#: ../inc/class-settings-page.php:320
-msgid "Tokens synced with Bricks Builder"
-msgstr ""
-
-#: ../inc/class-settings-page.php:322
-#, php-format
-msgid "%d tokens"
-msgstr ""
-
-#: ../inc/class-settings-page.php:324
-msgid "Logo Light Mode"
-msgstr ""
-
-#: ../inc/class-settings-page.php:325 ../inc/class-settings-page.php:327
-msgid "SVG · PNG ≥ 400×100"
-msgstr ""
-
-#: ../inc/class-settings-page.php:326
-msgid "Logo Dark Mode"
-msgstr ""
-
-#: ../inc/class-settings-page.php:328
-msgid "Upload"
-msgstr ""
-
-#: ../inc/class-settings-page.php:333
-msgid "Brand color"
-msgstr ""
-
-#: ../inc/class-settings-page.php:334 ../inc/class-settings-page.php:340
-#: ../inc/wp-core/class-custom-dashboard.php:1178
-msgid "WordPress"
-msgstr ""
-
-#: ../inc/class-settings-page.php:335
-msgid "Bricks"
-msgstr ""
-
-#: ../inc/class-settings-page.php:336
-msgid "Custom"
-msgstr ""
-
-#: ../inc/class-settings-page.php:337
-msgid "Display"
-msgstr ""
-
-#: ../inc/class-settings-page.php:341
-msgid "Login"
-msgstr ""
-
-#: ../inc/class-settings-page.php:342
-msgid "Logo"
-msgstr ""
-
-#: ../inc/class-settings-page.php:343
-msgid "Favicon"
-msgstr ""
-
-#: ../inc/class-theme-toggle.php:158
-#: ../inc/integrations/plugins/gutenberg/class-gutenberg.php:109
-#: ../inc/wp-core/class-login.php:265
-msgid "Toggle light / dark mode"
-msgstr ""
-
-#: ../inc/class-theme-toggle.php:189
-#: ../inc/wp-core/class-custom-dashboard.php:460
-#: ../inc/wp-core/class-custom-dashboard.php:467
-#: ../inc/wp-core/class-custom-dashboard.php:565
-msgid "View site"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:132
-#: ../inc/wp-core/class-custom-dashboard.php:418
-#, php-format
-msgid "%s online now"
-msgid_plural "%s online now"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:175
-msgid "Language, date & time settings"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:209
-msgid "A fresh start — pick one thing to ship today."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:210
-msgid "Morning is a great time to plan and publish."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:211
-msgid "Coffee first, then a quick win."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:215
-msgid "Keep the momentum — small steps add up."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:216
-msgid "A good afternoon to refine and improve."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:220
-msgid "Wrapping up? A quick backup is a good habit."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:221
-msgid "Evening is a good time for a calm review."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:225
-msgid "Late-night focus — remember to save often."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:226
-msgid "Quiet hours are good for deep work."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:232
-msgid "Back up before big changes — future you will thank you."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:233
-msgid "Strong passwords and two-factor auth keep your account safe."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:234
-msgid "Keep plugins and themes updated to stay secure and fast."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:235
-msgid "Compress images before upload for faster pages."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:236
-msgid "Add alt text to images — better SEO and accessibility."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:237
-msgid "Fewer plugins, fewer surprises — keep only what you use."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:238
-msgid "Most visitors are on mobile — preview your pages there."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:239
-msgid "Internal links help readers and search engines explore."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:240
-msgid "A clear menu helps visitors find what matters."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:241
-msgid "Descriptive titles win clicks and rankings."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:242
-msgid "Test your contact form now and then."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:243
-msgid "Fresh content keeps your visitors coming back."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:244
-msgid "A fast site is a friendly site — mind your page weight."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:245
-msgid "Deactivate and delete plugins you no longer use."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:246
-msgid "Set a featured image — it shapes how posts are shared."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:247
-msgid "Simplicity is the ultimate sophistication. — Leonardo da Vinci"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:248
-msgid "Good design is as little design as possible. — Dieter Rams"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:249
-msgid "Done is better than perfect — publish, then refine."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:250
-msgid "Consistency beats intensity: one good decision at a time."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:251
-msgid "Clarity is the courtesy of the maker."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:275
-#: ../inc/wp-core/class-custom-dashboard.php:286
-#, php-format
-msgid "Hello, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:276
-#, php-format
-msgid "Good morning, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:277
-#, php-format
-msgid "Ready for today, %s?"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:278
-msgid "A good day begins"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:279
-#, php-format
-msgid "Rise and shine, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:280
-#, php-format
-msgid "Fresh start, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:285
-#, php-format
-msgid "Good afternoon, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:287
-msgid "The afternoon is yours"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:288
-#, php-format
-msgid "Keep it going, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:289
-#, php-format
-msgid "Making progress, %s?"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:294
-#: ../inc/wp-core/class-custom-dashboard.php:304
-#, php-format
-msgid "Good evening, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:295
-#, php-format
-msgid "Have a good evening, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:296
-msgid "A quiet evening to get ahead"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:297
-#, php-format
-msgid "Winding down, %s?"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:302
-#, php-format
-msgid "Working late, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:303
-#, php-format
-msgid "Still up, %s?"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:305
-#, php-format
-msgid "Burning the midnight oil, %s?"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:310
-#, php-format
-msgid "Great to see you again, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:311
-#, php-format
-msgid "%s is back!"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:312
-#, php-format
-msgid "Glad to see you, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:313
-msgid "Pick up where you left off?"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:314
-#, php-format
-msgid "Welcome back, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:315
-#, php-format
-msgid "Let's make something great, %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:333
-msgid "Write a post"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:336
-msgid "New page"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:339
-msgid "Add media"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:342
-msgid "Add user"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:344
-msgid "Edit my profile"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:391
-msgid "Posts"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:394
-#, php-format
-msgid "%s draft"
-msgid_plural "%s drafts"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:394
-msgid "No drafts"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:397
-msgid "Pages"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:400
-#, php-format
-msgid "%s pending review"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:400
-msgid "All published"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:403
-msgid "Comments"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:406
-#, php-format
-msgid "%s in moderation"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:409
-#: ../inc/wp-core/class-custom-dashboard.php:1174
-msgid "Media"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:412
-#, php-format
-msgid "%s on disk"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:415
-msgid "Users"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:418
-msgid "None online"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:451
-msgid "Site preview"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:453
-#: ../inc/wp-core/class-custom-dashboard.php:508
-#: ../inc/wp-core/class-profile-account.php:170
-msgid "Settings"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:506
-msgid "AdminKit"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:532
-msgid "Recent changes"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:536
-msgid "Nothing recent yet."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:562
-msgid "Edit"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:603
-msgid "Needs attention"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:604
-msgid "Good"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:615
-msgid "Site health"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:633
-msgid "Score"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:636
-msgid "Passed"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:638
-msgid "Recommended"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:640
-msgid "To address"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:656
-msgid "View full report"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:693
-msgid "Online now"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:693
-msgid "Recent logins"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:698
-msgid "No recent sign-ins yet."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:711
-#: ../inc/wp-core/class-online-users.php:227
-msgid "Online"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:714
-#: ../inc/wp-core/class-custom-dashboard.php:1011
-#: ../inc/wp-core/class-online-users.php:232
-#, php-format
-msgid "%s ago"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:731
-msgid "View all accounts"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:746
-msgid "Storage"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:755
-msgid "available"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:757
-msgid "used"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:763
-msgid "used by your site"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:835
-#: ../inc/wp-core/class-custom-dashboard.php:1041
-msgid "HTTPS off"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:835
-msgid "Security and SEO"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:835
-#: ../inc/wp-core/class-custom-dashboard.php:838
-#: ../inc/wp-core/class-custom-dashboard.php:842
-msgid "Details"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:838
-#: ../inc/wp-core/class-custom-dashboard.php:1054
-msgid "Debug mode on"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:838
-msgid "Turn off in production"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:842
-#, php-format
-msgid "Update PHP %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:842
-msgid "Version too old"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:848
-#: ../inc/wp-core/class-custom-dashboard.php:1052
-#, php-format
-msgid "%d update available"
-msgid_plural "%d updates available"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:848
-msgid "Core, plugins, themes"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:848
-msgid "Update"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:857
-#, php-format
-msgid "%s inactive plugin"
-msgid_plural "%s inactive plugins"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:857
-#: ../inc/wp-core/class-custom-dashboard.php:861
-msgid "Remove if unused"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:857
-#: ../inc/wp-core/class-custom-dashboard.php:861
-msgid "Manage"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:861
-#, php-format
-msgid "%s inactive theme"
-msgid_plural "%s inactive themes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:872
-#, php-format
-msgid "%s draft to finish"
-msgid_plural "%s drafts to finish"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:872
-#: ../inc/wp-core/class-custom-dashboard.php:877
-msgid "Open"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:877
-#, php-format
-msgid "%s post pending"
-msgid_plural "%s posts pending"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:877
-msgid "Awaiting review"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:882
-#, php-format
-msgid "%s comment to moderate"
-msgid_plural "%s comments to moderate"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:882
-msgid "Moderate"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:887
-#, php-format
-msgid "%s scheduled post"
-msgid_plural "%s scheduled posts"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:887
-#: ../inc/wp-core/class-custom-dashboard.php:938
-msgid "View"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:900
-msgid "To-do"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:902
-msgid "All tasks"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:921
-msgid "All clear — nothing to do today."
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:991
-msgid "Published"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:994
-msgid "Pending"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:997
-msgid "Draft"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:1002
-msgid "Content"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:1005
-msgid "(no title)"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:1041
-msgid "HTTPS on"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:1045
-#, php-format
-msgid "PHP %s"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:1045
-msgid "recommended"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:1050
-msgid "Everything's up to date"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:1054
-msgid "Debug mode off"
-msgstr ""
-
-#: ../inc/wp-core/class-custom-dashboard.php:1175
-msgid "Database"
-msgstr ""
-
-#: ../inc/wp-core/class-local-avatars.php:182
-msgid "AdminKit Portraits (Generated)"
-msgstr ""
-
-#: ../inc/wp-core/class-local-avatars.php:306
-#: ../inc/wp-core/class-user-quick-edit.php:254
-msgid "Missing user id."
-msgstr ""
-
-#: ../inc/wp-core/class-local-avatars.php:310
-#: ../inc/wp-core/class-user-quick-edit.php:259
-msgid "You are not allowed to do that."
-msgstr ""
-
-#: ../inc/wp-core/class-local-avatars.php:402
-#: ../inc/wp-core/class-local-avatars.php:423
-#: ../inc/wp-core/class-user-quick-edit.php:200
-msgid "Refresh avatar"
-msgstr ""
-
-#: ../inc/wp-core/class-local-avatars.php:403
-msgid "Could not refresh the avatar — please try again."
-msgstr ""
-
-#: ../inc/wp-core/class-local-avatars.php:464
-#, php-format
+#: inc/wp-core/class-local-avatars.php:464
 msgid "%d avatar refreshed."
 msgid_plural "%d avatars refreshed."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../inc/wp-core/class-notification-center.php:135
-#: ../inc/wp-core/class-notification-center.php:181
-#: ../inc/wp-core/class-notification-center.php:186
-msgid "Notifications"
+#: inc/settings/class-settings-page.php:401
+msgid "%d tokens"
 msgstr ""
 
-#: ../inc/wp-core/class-notification-center.php:182
-msgid "Grouped notices"
+#: inc/features/dashboard/class-custom-dashboard.php:1250 inc/features/dashboard/class-custom-dashboard.php:1439
+msgid "%d update available"
+msgid_plural "%d updates available"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/features/stats/class-stats-dashboard.php:439
+msgid "%s active now"
+msgid_plural "%s active now"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1117 inc/features/dashboard/class-custom-dashboard.php:1398 inc/features/online-users/class-online-users.php:232
+msgid "%s ago"
 msgstr ""
 
-#: ../inc/wp-core/class-notification-center.php:183
-msgid "You’re all caught up."
+#: inc/features/dashboard/class-custom-dashboard.php:1284
+msgid "%s comment to moderate"
+msgid_plural "%s comments to moderate"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:759 inc/features/dashboard/class-custom-dashboard.php:782
+msgid "%s draft"
+msgid_plural "%s drafts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1274
+msgid "%s draft to finish"
+msgid_plural "%s drafts to finish"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:790
+msgid "%s in moderation"
 msgstr ""
 
-#: ../inc/wp-core/class-notification-center.php:184
-msgid "Notices from plugins and WordPress collect here, out of your way."
+#: inc/features/dashboard/class-custom-dashboard.php:1259
+msgid "%s inactive plugin"
+msgid_plural "%s inactive plugins"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1263
+msgid "%s inactive theme"
+msgid_plural "%s inactive themes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:674
+msgid "%s is back!"
 msgstr ""
 
-#: ../inc/wp-core/class-notification-center.php:185
-msgid "Close"
+#: inc/features/dashboard/class-custom-dashboard.php:796
+msgid "%s on disk"
 msgstr ""
 
-#: ../inc/wp-core/class-online-users.php:208
-msgid "Last login"
+#: inc/features/dashboard/class-custom-dashboard.php:493 inc/features/dashboard/class-custom-dashboard.php:802
+msgid "%s online now"
+msgid_plural "%s online now"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:765
+msgid "%s pending review"
 msgstr ""
 
-#: ../inc/wp-core/class-online-users.php:233
-msgid "Never"
+#: inc/features/dashboard/class-custom-dashboard.php:1279
+msgid "%s post pending"
+msgid_plural "%s posts pending"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1289
+msgid "%s scheduled post"
+msgid_plural "%s scheduled posts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1392
+msgid "(no title)"
 msgstr ""
 
-#: ../inc/wp-core/class-options-discussion.php:101
-msgid "Avatars"
+#: inc/features/stats/class-stats-dashboard.php:453
+msgid "30 days"
 msgstr ""
 
-#: ../inc/wp-core/class-options-discussion.php:102
-#: ../inc/wp-core/class-options-discussion.php:106
-msgid "Comment settings"
+#: inc/features/stats/class-stats-dashboard.php:454
+msgid "90 days"
 msgstr ""
 
-#: ../inc/wp-core/class-options-discussion.php:107
-msgid ""
-"How comments work on your site — who can post, what they see when they do, "
-"when they get moderated, and the email you receive about them."
+#: inc/wp-core/class-username-changer.php:180
+msgid "<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or any of . - _ @ — and nothing else."
 msgstr ""
 
-#: ../inc/wp-core/class-options-general.php:102
-msgid "General"
+#: inc/wp-core/class-username-changer.php:188
+msgid "<strong>Error:</strong> That username is already taken."
 msgstr ""
 
-#: ../inc/wp-core/class-options-general.php:104
-msgid "Site identity"
+#: inc/features/dashboard/class-custom-dashboard.php:603
+msgid "A clear menu helps visitors find what matters."
 msgstr ""
 
-#: ../inc/wp-core/class-options-general.php:105
-msgid "How your site presents itself — name, tagline and addresses."
+#: inc/features/dashboard/class-custom-dashboard.php:607
+msgid "A fast site is a friendly site — mind your page weight."
 msgstr ""
 
-#: ../inc/wp-core/class-options-general.php:106
-msgid "Site Icon"
+#: inc/features/dashboard/class-custom-dashboard.php:572
+msgid "A fresh start — pick one thing to ship today."
 msgstr ""
 
-#: ../inc/wp-core/class-options-general.php:107
-msgid ""
-"Shown in browser tabs, bookmark lists and the app icon when visitors save "
-"your site to a phone home screen."
+#: inc/features/dashboard/class-custom-dashboard.php:579
+msgid "A good afternoon to refine and improve."
 msgstr ""
 
-#: ../inc/wp-core/class-options-general.php:108
-msgid "Account & registration"
+#: inc/features/dashboard/class-custom-dashboard.php:641
+msgid "A good day begins"
 msgstr ""
 
-#: ../inc/wp-core/class-options-general.php:109
-msgid ""
-"Admin email, who can sign up, and the default role assigned to new users."
+#: inc/features/dashboard/class-custom-dashboard.php:659
+msgid "A quiet evening to get ahead"
 msgstr ""
 
-#: ../inc/wp-core/class-options-general.php:110
-msgid "Language, date & time"
-msgstr ""
-
-#: ../inc/wp-core/class-options-general.php:111
-msgid "Site language plus the timezone and formats used wherever dates appear."
-msgstr ""
-
-#: ../inc/wp-core/class-post-previews.php:201
-msgid "Preview"
-msgstr ""
-
-#: ../inc/wp-core/class-post-previews.php:415
-msgid "Loading preview…"
-msgstr ""
-
-#: ../inc/wp-core/class-post-previews.php:416
-msgid "Preview unavailable"
-msgstr ""
-
-#: ../inc/wp-core/class-profile-account.php:160
-msgid "Name"
-msgstr ""
-
-#: ../inc/wp-core/class-profile-account.php:161
-msgid "Contact Info"
-msgstr ""
-
-#: ../inc/wp-core/class-profile-account.php:162
-msgid "Personal Options"
-msgstr ""
-
-#: ../inc/wp-core/class-profile-account.php:163
-msgid "Account Management"
-msgstr ""
-
-#: ../inc/wp-core/class-profile-account.php:164
-msgid "Application Passwords"
-msgstr ""
-
-#: ../inc/wp-core/class-profile-account.php:165
+#: inc/wp-core/class-profile-account.php:165
 msgid "About Yourself"
 msgstr ""
 
-#: ../inc/wp-core/class-profile-account.php:165
+#: inc/wp-core/class-profile-account.php:165
 msgid "About the user"
 msgstr ""
 
-#: ../inc/wp-core/class-profile-account.php:166
-msgid "Additional Capabilities"
+#: inc/wp-core/class-options-general.php:108
+msgid "Account & registration"
 msgstr ""
 
-#: ../inc/wp-core/class-profile-account.php:169
-msgid "Information"
+#: inc/wp-core/class-profile-account.php:163
+msgid "Account Management"
 msgstr ""
 
-#: ../inc/wp-core/class-profile-account.php:169
-msgid "Identity, contact and password."
-msgstr ""
-
-#: ../inc/wp-core/class-profile-account.php:170
-msgid "Roles, language and preferences."
-msgstr ""
-
-#: ../inc/wp-core/class-profile-account.php:172
-msgid "Addresses"
-msgstr ""
-
-#: ../inc/wp-core/class-profile-account.php:173
-msgid "Other settings"
-msgstr ""
-
-#: ../inc/wp-core/class-profile-account.php:174
+#: inc/wp-core/class-profile-account.php:174
 msgid "Account sections"
 msgstr ""
 
-#: ../inc/wp-core/class-profile-account.php:175
-msgid "This username cannot be changed."
+#: inc/settings/class-settings-catalog.php:131
+msgid "Activate the Bricks theme to use this."
 msgstr ""
 
-#: ../inc/wp-core/class-user-quick-edit.php:111
-#: ../inc/wp-core/class-user-quick-edit.php:204
-msgid "Quick Edit"
+#: inc/settings/class-settings-catalog.php:48
+msgid "Active plugins first"
 msgstr ""
 
-#: ../inc/wp-core/class-user-quick-edit.php:159
-msgid "Save failed."
+#: inc/features/dashboard/class-custom-dashboard.php:599
+msgid "Add alt text to images — better SEO and accessibility."
 msgstr ""
 
-#: ../inc/wp-core/class-user-quick-edit.php:206
-msgid "First name"
+#: inc/settings/class-settings-page.php:359
+msgid "Add link"
 msgstr ""
 
-#: ../inc/wp-core/class-user-quick-edit.php:210
-msgid "Last name"
+#: inc/features/dashboard/class-custom-dashboard.php:702
+msgid "Add media"
 msgstr ""
 
-#: ../inc/wp-core/class-user-quick-edit.php:214
-msgid "Email"
+#: inc/settings/class-settings-page.php:360
+msgid "Add separator"
 msgstr ""
 
-#: ../inc/wp-core/class-user-quick-edit.php:219
-msgid "Role"
+#: inc/features/dashboard/class-custom-dashboard.php:705
+msgid "Add user"
 msgstr ""
 
-#: ../inc/wp-core/class-user-quick-edit.php:230
+#: inc/wp-core/class-profile-account.php:166
+msgid "Additional Capabilities"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php:172
+msgid "Addresses"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:109
+msgid "Adds \"AdminKit Portraits (Generated)\" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:37
+msgid "Adds a bell to the toolbar that collects admin notices into a side drawer, keeping success confirmations inline. Off restores every notice to its normal place."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:55
+msgid "Adds a light/dark toggle to the admin bar. Off forces light mode site-wide."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:43
+msgid "Adds a thumbnail column to post-type list tables — the featured image first, with a live WordPress.com mShots screenshot as fallback on production sites (skipped on localhost where mShots can't reach the page anyway)."
+msgstr ""
+
+#: inc/wp-core/class-options-general.php:109
+msgid "Admin email, who can sign up, and the default role assigned to new users."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:203 inc/features/dashboard/class-custom-dashboard.php:904
+msgid "AdminKit"
+msgstr ""
+
+#: inc/wp-core/class-local-avatars.php:182
+msgid "AdminKit Portraits (Generated)"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:72
+msgid "AdminKit icons"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:381
+msgid "AdminKit itself — always on and not removable here."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:379
+msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1308
+msgid "All clear — nothing to do today."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:765
+msgid "All published"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:24
+msgid "Appearance"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php:164
+msgid "Application Passwords"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:358
+msgid "Apply"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:198 inc/features/dashboard/class-custom-dashboard.php:812
+msgid "At a glance"
+msgstr ""
+
+#: inc/wp-core/class-options-discussion.php:101
+msgid "Avatars"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1279
+msgid "Awaiting review"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:595
+msgid "Back up before big changes — future you will thank you."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:66
+msgid "Block editor"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:890 inc/settings/class-settings-page.php:398
+msgid "Brand"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:412
+msgid "Brand color"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:414
+msgid "Bricks"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:128
+msgid "Bricks builder"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:668
+msgid "Burning the midnight oil, %s?"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php:230
 msgid "Cancel"
 msgstr ""
 
-#: ../inc/wp-core/class-user-quick-edit.php:232
-msgid "Update User"
+#: inc/features/dashboard/class-custom-dashboard.php:165
+msgid "Cards to display"
 msgstr ""
 
-#: ../inc/wp-core/class-username-changer.php:130
+#: inc/settings/class-settings-page.php:349
+msgid "Choose an icon"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:614
+msgid "Clarity is the courtesy of the maker."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:369
+msgid "Clear"
+msgstr ""
+
+#: inc/features/notifications/class-notification-center.php:185
+msgid "Close"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:574
+msgid "Coffee first, then a quick win."
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:417 inc/features/stats/class-stats-page.php:153
+msgid "Coming from"
+msgstr ""
+
+#: inc/wp-core/class-options-discussion.php:102 inc/wp-core/class-options-discussion.php:106
+msgid "Comment settings"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:787
+msgid "Comments"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:598
+msgid "Compress images before upload for faster pages."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:613
+msgid "Consistency beats intensity: one good decision at a time."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php:161
+msgid "Contact Info"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1389
+msgid "Content"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:23
+msgid "Content & lists"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1250
+msgid "Core, plugins, themes"
+msgstr ""
+
+#: inc/wp-core/class-local-avatars.php:403
+msgid "Could not refresh the avatar — please try again."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:394
+msgid "Could not save"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:121
+msgid "Count page views and visits with a tiny cookieless beacon — no cookies, no IP storage, no consent banner, and almost no database footprint (pre-summed daily totals). Signed-in staff and bots are excluded. Off disables tracking entirely."
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:416 inc/features/stats/class-stats-page.php:152
+msgid "Currently viewing"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:456 inc/settings/class-settings-page.php:415
+msgid "Custom"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:108
+msgid "Custom avatars"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:30
+msgid "Custom dashboard"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:367
+msgid "Custom link"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:161
+msgid "Customize"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:54
+msgid "Dark mode"
+msgstr ""
+
+#: inc/class-theme-toggle.php:189 inc/features/dashboard/class-custom-dashboard.php:104 inc/settings/class-settings-page.php:339
+msgid "Dashboard"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1562
+msgid "Database"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:479 inc/features/stats/class-stats-page.php:145
+msgid "Date range"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:608
+msgid "Deactivate and delete plugins you no longer use."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1441
+msgid "Debug mode off"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1240 inc/features/dashboard/class-custom-dashboard.php:1441
+msgid "Debug mode on"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:350
+msgid "Default"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:604
+msgid "Descriptive titles win clicks and rankings."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1237 inc/features/dashboard/class-custom-dashboard.php:1240 inc/features/dashboard/class-custom-dashboard.php:1244
+msgid "Details"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:550 inc/features/stats/class-stats-page.php:139
+msgid "Direct"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:374
+msgid "Disable all"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:416
+msgid "Display"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:612
+msgid "Done is better than perfect — publish, then refine."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1384
+msgid "Draft"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:356
+msgid "Drag to reorder"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:330
+msgid "Drag to reorder this card"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:960
+msgid "Edit"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:97
+msgid "Edit first name, last name, email and role inline from the users list — no need to open the full profile."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:509
+msgid "Edit my profile"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php:214
+msgid "Email"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:373
+msgid "Enable all"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:506
+msgid "End date"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:584
+msgid "Evening is a good time for a calm review."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:377
+msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1437
+msgid "Everything's up to date"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:422
+msgid "Favicon"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:891 inc/settings/class-settings-page.php:342
+msgid "Features"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:600
+msgid "Fewer plugins, fewer surprises — keep only what you use."
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php:206
+msgid "First name"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:606
+msgid "Fresh content keeps your visitors coming back."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:643
+msgid "Fresh start, %s"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:143
+msgid "From"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php:102
+msgid "General"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:382
+msgid "Generic"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:675
+msgid "Glad to see you, %s"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1004
+msgid "Good"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:648
+msgid "Good afternoon, %s"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:611
+msgid "Good design is as little design as possible. — Dieter Rams"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:657 inc/features/dashboard/class-custom-dashboard.php:667
+msgid "Good evening, %s"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:639
+msgid "Good morning, %s"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:673
+msgid "Great to see you again, %s"
+msgstr ""
+
+#: inc/features/notifications/class-notification-center.php:182
+msgid "Grouped notices"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1237 inc/features/dashboard/class-custom-dashboard.php:1428
+msgid "HTTPS off"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1428
+msgid "HTTPS on"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:658
+msgid "Have a good evening, %s"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:638 inc/features/dashboard/class-custom-dashboard.php:649
+msgid "Hello, %s"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:352
+msgid "Hide"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:84
+msgid "Hide admin footer"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:90
+msgid "Hide the Help button"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:85
+msgid "Hide the admin footer bar — the \"Thank you for creating with WordPress\" line and the version number — on every screen, for a cleaner app-like look. Off restores it."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:91
+msgid "Hide the contextual \"Help\" tab at the top-right of admin screens, for cleaner chrome. \"Screen Options\" is left in place. Off restores it."
+msgstr ""
+
+#: inc/wp-core/class-options-discussion.php:107
+msgid "How comments work on your site — who can post, what they see when they do, when they get moderated, and the email you receive about them."
+msgstr ""
+
+#: inc/wp-core/class-options-general.php:105
+msgid "How your site presents itself — name, tagline and addresses."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php:169
+msgid "Identity, contact and password."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php:169
+msgid "Information"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:602
+msgid "Internal links help readers and search engines explore."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:49
+msgid "Keep active plugins front and center: open the plugins list on the \"Active\" filter and sort active plugins to the top of the \"All\" view. After you toggle a plugin it follows the change — activating jumps to \"Active\", deactivating drops to \"All\" — so it never vanishes from the filter you were on. Falls back to \"All\" when nothing is active. Off restores WordPress's default — the \"All\" view in alphabetical order."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:651
+msgid "Keep it going, %s"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:597
+msgid "Keep plugins and themes updated to stay secure and fast."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:578
+msgid "Keep the momentum — small steps add up."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:362
+msgid "Label"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php:110
+msgid "Language, date & time"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:538
+msgid "Language, date & time settings"
+msgstr ""
+
+#: inc/features/online-users/class-online-users.php:208
+msgid "Last login"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php:210
+msgid "Last name"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:588
+msgid "Late-night focus — remember to save often."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:678
+msgid "Let's make something great, %s"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:103
+msgid "Lets admins rename a user's login on Users → Edit (WordPress disables this by default). Sensitive — invalidates the user's active sessions; they must sign in again. Single-site only."
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:451
+msgid "Live"
+msgstr ""
+
+#: inc/wp-core/class-post-previews.php:415
+msgid "Loading preview…"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:142
+msgid "Loading…"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:420
+msgid "Login"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:60
+msgid "Login screen"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:421
+msgid "Logo"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:405
+msgid "Logo Dark Mode"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:403
+msgid "Logo Light Mode"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:652
+msgid "Making progress, %s?"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1259 inc/features/dashboard/class-custom-dashboard.php:1263
+msgid "Manage"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:793 inc/features/dashboard/class-custom-dashboard.php:1561
+msgid "Media"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:894 inc/features/menu/class-menu-manager.php:129 inc/features/menu/class-menu-manager.php:130 inc/settings/class-settings-page.php:344
+msgid "Menu"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:78
+msgid "Menu manager"
+msgstr ""
+
+#: inc/wp-core/class-local-avatars.php:306 inc/wp-core/class-user-quick-edit.php:254
+msgid "Missing user id."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1284
+msgid "Moderate"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:573
+msgid "Morning is a great time to plan and publish."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:601
+msgid "Most visitors are on mobile — preview your pages there."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php:160
+msgid "Name"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:378
+msgid "Native"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1003
+msgid "Needs attention"
+msgstr ""
+
+#: inc/features/online-users/class-online-users.php:233
+msgid "Never"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:699
+msgid "New page"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:531 inc/features/stats/class-stats-page.php:141
+msgid "No data"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:383
+msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:759 inc/features/dashboard/class-custom-dashboard.php:782
+msgid "No drafts"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1101
+msgid "No recent sign-ins yet."
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:324 inc/features/stats/class-stats-page.php:140
+msgid "No traffic data yet — views will appear here as visitors arrive."
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:385 inc/features/stats/class-stats-page.php:154
+msgid "Nobody is on the site right now — this view refreshes automatically."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:802
+msgid "None online"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:934
+msgid "Nothing recent yet."
+msgstr ""
+
+#: inc/features/notifications/class-notification-center.php:184
+msgid "Notices from plugins and WordPress collect here, out of your way."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:36
+msgid "Notification center"
+msgstr ""
+
+#: inc/features/notifications/class-notification-center.php:135 inc/features/notifications/class-notification-center.php:181 inc/features/notifications/class-notification-center.php:186
+msgid "Notifications"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:204 inc/features/dashboard/class-custom-dashboard.php:1114 inc/features/online-users/class-online-users.php:227 inc/features/online-users/class-online-users.php:227
+msgid "Online"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1096
+msgid "Online now"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:114
+msgid "Online users"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1274 inc/features/dashboard/class-custom-dashboard.php:1279
+msgid "Open"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:364
+msgid "Open in a new tab"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php:173
+msgid "Other settings"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1432
+msgid "PHP %s"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:146
+msgid "Page"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:335 inc/features/stats/class-stats-page.php:135
+msgid "Page views"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:762
+msgid "Pages"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1036
+msgid "Passed"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:357
+msgid "Paste an SVG or a data:image/svg+xml URI…"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1381
+msgid "Pending"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php:162
+msgid "Personal Options"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:676
+msgid "Pick up where you left off?"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1563 inc/settings/class-settings-page.php:343
+msgid "Plugins"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:368
+msgid "Point this item at a custom URL (internal or external). Its submenu still works."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:42
+msgid "Post previews"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:756
+msgid "Posts"
+msgstr ""
+
+#: inc/wp-core/class-post-previews.php:201
+msgid "Preview"
+msgstr ""
+
+#: inc/wp-core/class-post-previews.php:416
+msgid "Preview unavailable"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1378
+msgid "Published"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php:111 inc/wp-core/class-user-quick-edit.php:204
+msgid "Quick Edit"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:589
+msgid "Quiet hours are good for deep work."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:640
+msgid "Ready for today, %s?"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:200 inc/features/dashboard/class-custom-dashboard.php:930
+msgid "Recent changes"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1096
+msgid "Recent logins"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1038
+msgid "Recommended"
+msgstr ""
+
+#: inc/wp-core/class-local-avatars.php:402 inc/wp-core/class-local-avatars.php:423 inc/wp-core/class-user-quick-edit.php:200
+msgid "Refresh avatar"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:365 inc/settings/class-settings-page.php:408
+msgid "Remove"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1259 inc/features/dashboard/class-custom-dashboard.php:1263
+msgid "Remove if unused"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:366
+msgid "Rename — clear to restore the original"
+msgstr ""
+
+#: inc/wp-core/class-username-changer.php:131
+msgid "Renaming a user invalidates every active sign-in they have. They must use the new username from now on. Continue?"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:347
+msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:79
+msgid "Reorder the admin menu and submenus, change menu icons, and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:31
+msgid "Replace the WordPress dashboard with a custom one: greeting, quick actions, stat tiles, recent activity, site health and storage. Off restores the native dashboard."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:348
+msgid "Reset menu"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:375
+msgid "Reset to defaults"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:129
+msgid "Restyle the Bricks builder UI with your tokens. Automatically sets Bricks → Settings → Builder mode to \"Custom\"."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:61
+msgid "Restyle wp-login.php to match the admin (logo, dark mode, focus states)."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:642
+msgid "Rise and shine, %s"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php:219
+msgid "Role"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php:170
+msgid "Roles, language and preferences."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:404 inc/settings/class-settings-page.php:406
+msgid "SVG · PNG ≥ 400×100"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:391
+msgid "Save changes"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php:159
+msgid "Save failed."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:393
+msgid "Saved"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:392
+msgid "Saving…"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1033
+msgid "Score"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:376
+msgid "Search features…"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1237
+msgid "Security and SEO"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:387
+msgid "Select a logo"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:361
+msgid "Separator"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:609
+msgid "Set a featured image — it shapes how posts are shared."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:843 inc/features/dashboard/class-custom-dashboard.php:906 inc/settings/class-settings-page.php:93 inc/wp-core/class-profile-account.php:170
+msgid "Settings"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:353
+msgid "Show"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:355
+msgid "Show / hide submenus"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php:107
+msgid "Shown in browser tabs, bookmark lists and the app icon when visitors save your site to a phone home screen."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:610
+msgid "Simplicity is the ultimate sophistication. — Leonardo da Vinci"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php:106
+msgid "Site Icon"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:199 inc/features/dashboard/class-custom-dashboard.php:1015
+msgid "Site health"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php:104
+msgid "Site identity"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php:111
+msgid "Site language plus the timezone and formats used wherever dates appear."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:202 inc/features/dashboard/class-custom-dashboard.php:841
+msgid "Site preview"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:147
+msgid "Source"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:504
+msgid "Start date"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:897 inc/features/stats/class-stats-dashboard.php:76 inc/features/stats/class-stats-dashboard.php:319 inc/features/stats/class-stats-dashboard.php:370 inc/features/stats/class-stats-page.php:59 inc/features/stats/class-stats-page.php:60 inc/features/stats/class-stats-page.php:132
+msgid "Statistics"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:666
+msgid "Still up, %s?"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:201 inc/features/dashboard/class-custom-dashboard.php:1149
+msgid "Storage"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:596
+msgid "Strong passwords and two-factor auth keep your account safe."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:73
+msgid "Swap WordPress's menu and toolbar icons for AdminKit's set. Icons customised elsewhere (e.g. Admin Menu Editor) are left alone."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:380
+msgid "System"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:605
+msgid "Test your contact form now and then."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:650
+msgid "The afternoon is yours"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:67
+msgid "Theme the Gutenberg canvas in light and dark. Off keeps the canvas matching your live site exactly."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1564 inc/settings/class-settings-page.php:384
+msgid "Themes"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php:175
+msgid "This username cannot be changed."
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:144
+msgid "To"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1040
+msgid "To address"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1053
+msgid "To-do"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:452
+msgid "Today"
+msgstr ""
+
+#: inc/class-theme-toggle.php:158 inc/integrations/plugins/gutenberg/class-gutenberg.php:109 inc/wp-core/class-login.php:265
+msgid "Toggle light / dark mode"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:399
+msgid "Tokens synced with Bricks Builder"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:343 inc/features/stats/class-stats-page.php:137
+msgid "Top pages"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:344 inc/features/stats/class-stats-page.php:138
+msgid "Top sources"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:115
+msgid "Track who is signed in (read from existing WordPress sessions, no extra tracking) and show them on the dashboard, plus an \"Online\" filter and a \"Last login\" column on the Users screen. Off hides all of it."
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:133
+msgid "Traffic from the built-in, cookieless tracker. Pick any date range to see visits, page views, your most-viewed pages and where visitors come from."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:120
+msgid "Traffic stats"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:372
+msgid "Turn AdminKit modules on or off."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1240
+msgid "Turn off in production"
+msgstr ""
+
+#: inc/wp-core/class-username-changer.php:130
 msgid "Type the new username, then click \"Update User\" below to save."
 msgstr ""
 
-#: ../inc/wp-core/class-username-changer.php:131
-msgid ""
-"Renaming a user invalidates every active sign-in they have. They must use "
-"the new username from now on. Continue?"
+#: inc/settings/class-settings-page.php:395
+msgid "Unsaved changes"
 msgstr ""
 
-#: ../inc/wp-core/class-username-changer.php:180
-msgid ""
-"<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or "
-"any of . - _ @ — and nothing else."
+#: inc/features/dashboard/class-custom-dashboard.php:1250
+msgid "Update"
 msgstr ""
 
-#: ../inc/wp-core/class-username-changer.php:188
-msgid "<strong>Error:</strong> That username is already taken."
+#: inc/features/dashboard/class-custom-dashboard.php:1244
+msgid "Update PHP %s"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php:232
+msgid "Update User"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:407
+msgid "Upload"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:388
+msgid "Use this image"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:102
+msgid "Username changer"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:799
+msgid "Users"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:25
+msgid "Users & access"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:96
+msgid "Users quick edit"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1244
+msgid "Version too old"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1289 inc/features/dashboard/class-custom-dashboard.php:1325
+msgid "View"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1134
+msgid "View all online accounts"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1059
+msgid "View full report"
+msgstr ""
+
+#: inc/class-theme-toggle.php:189 inc/features/dashboard/class-custom-dashboard.php:850 inc/features/dashboard/class-custom-dashboard.php:857 inc/features/dashboard/class-custom-dashboard.php:963
+msgid "View site"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:155
+msgid "Viewers"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:148
+msgid "Views"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:437
+msgid "Visitors active on the site in the last few minutes"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:332 inc/features/stats/class-stats-page.php:134 inc/features/stats/class-stats-page.php:149
+msgid "Visits"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:677
+msgid "Welcome back, %s"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:660
+msgid "Winding down, %s?"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1565 inc/settings/class-settings-page.php:413 inc/settings/class-settings-page.php:419
+msgid "WordPress"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:351
+msgid "WordPress icon"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:665
+msgid "Working late, %s"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:583
+msgid "Wrapping up? A quick backup is a good habit."
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:696
+msgid "Write a post"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:455
+msgid "Year to date"
+msgstr ""
+
+#: inc/wp-core/class-local-avatars.php:310 inc/wp-core/class-user-quick-edit.php:259
+msgid "You are not allowed to do that."
+msgstr ""
+
+#: inc/features/notifications/class-notification-center.php:183
+msgid "You’re all caught up."
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:136
+msgid "active now"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1159
+msgid "available"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:363
+msgid "https://…"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1432
+msgid "recommended"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:354
+msgid "submenus"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1157
+msgid "used"
+msgstr ""
+
+#: inc/features/dashboard/class-custom-dashboard.php:1165
+msgid "used by your site"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php:381 inc/features/stats/class-stats-page.php:150
+msgid "visitor active right now"
+msgid_plural "visitors active right now"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/features/stats/class-stats-page.php:151
+msgid "visitors active right now"
 msgstr ""
