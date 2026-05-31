@@ -39,8 +39,8 @@ is in [ARCHITECTURE.md](ARCHITECTURE.md#asset-registry-css--js).
 | `adminkit/integration_enabled` | filter | `(bool, string $slug)` | Gate a specific integration (e.g. `'bricks'`). |
 | `adminkit/dashboard` | filter | `(array)` | The settings Dashboard tab payload (cards / next-up). |
 
-`adminkit/setting/{key}` is in `inc/class-settings.php`; the rest in
-`inc/class-settings-page.php`.
+`adminkit/setting/{key}` is in `inc/settings/class-settings.php`; the rest in
+`inc/settings/class-settings-page.php`.
 
 ## Theme / dark mode
 
