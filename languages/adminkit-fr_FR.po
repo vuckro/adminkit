@@ -1339,3 +1339,19 @@ msgstr[1] "visiteurs actifs en ce moment"
 #: inc/features/stats/class-stats-page.php:151
 msgid "visitors active right now"
 msgstr "visiteurs actifs en ce moment"
+
+#: inc/settings/class-settings-page.php
+msgid "Export"
+msgstr "Exporter"
+
+#: inc/settings/class-settings-page.php
+msgid "Download these settings as a JSON file"
+msgstr "Télécharger ces réglages dans un fichier JSON"
+
+#: inc/settings/class-settings-page.php
+msgid "Load settings from a JSON file"
+msgstr "Charger des réglages depuis un fichier JSON"
+
+#: inc/settings/class-settings-page.php
+msgid "That file isn’t a valid AdminKit settings export."
+msgstr "Ce fichier n’est pas un export de réglages AdminKit valide."
