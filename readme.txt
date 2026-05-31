@@ -25,7 +25,12 @@ It ships fully-featured: Gutenberg canvas theming, AdminKit's icon set, and loca
 * Custom avatars: adds "AdminKit Portraits (Generated)" to WordPress's native Settings → Discussion → Default Avatar (next to Wavatar, Identicon, etc.). Pick it there to give every user a unique generated portrait on a pastel-gradient backdrop.
 * Users-list Quick Edit: a "Quick Edit" link on each row of Users → All Users opens an inline editor for first / last name, email and role — same pattern WordPress ships for posts. Saves via AJAX, no full page reload.
 * Username changer (opt-in): turns the natively-disabled Username field into an editable one on Users → Edit. Validates the new login, dedupes against existing users, and destroys the affected user's sessions so the old name can't keep an old device signed in. Single-site only.
-* Tabbed Settings screens and an interactive dashboard roadmap.
+* A custom dashboard that replaces the stock one: a greeting, quick actions, at-a-glance counts, site-health and storage, recent activity — drag the cards to rearrange them per user.
+* A built-in Menu editor: reorder the admin menu and submenus, swap icons and hide entries, on its own AdminKit screen.
+* Cookieless Statistics: a tiny no-cookie beacon counts visits and page views (no IP storage, no consent banner), shown on a dashboard card and a dedicated Statistics screen with a live view.
+* A Notification Center: a toolbar bell that gathers admin notices into a side drawer so the top of every screen stays calm.
+* Online users: see who's signed in right now (read from existing WordPress sessions, no extra tracking), with an "Online" filter and a "Last login" column on the Users screen.
+* Tabbed Settings, plus dedicated Menu and Statistics screens under the AdminKit menu.
 * Optional adapters that skin popular plugins/themes (Bricks, WooCommerce, ACF, the Fluent suite, and more).
 
 == External services ==
@@ -71,7 +76,9 @@ Yes. Every feature is an individual toggle on the AdminKit settings page, even t
 * Light + dark mode with a sun/moon toggle in the admin bar (and `prefers-color-scheme` on first visit).
 * Custom avatars: registers "AdminKit Portraits (Generated)" in Settings → Discussion → Default Avatar (next to Wavatar / Identicon / Retro / MonsterID). Selecting it gives every user a unique generated portrait on a pastel-gradient backdrop. Via DiceBear, explicit opt-in, non-PII seed.
 * Gutenberg canvas theming and AdminKit's own icon set, both on by default and individually switch-off-able.
-* Tabbed Settings screens (including Discussion, Reading and Writing) and an interactive dashboard roadmap with status badges and detail modals.
+* A custom dashboard (greeting, quick actions, at-a-glance counts, site health, storage, recent activity) with per-user drag-to-rearrange cards.
+* A built-in admin Menu editor, a cookieless Statistics screen (visits + page views, no cookies / no IP storage, with a live view), a Notification Center drawer, and an Online-users view — each an individual toggle.
+* Tabbed Settings screens (including Discussion, Reading and Writing), plus dedicated Menu and Statistics screens under the AdminKit menu.
 * Login-screen branding with a centred logo and a light/dark toggle; plus a brand mark at the site title — your logo, the site favicon, or none — with the top-left WordPress logo hidden.
 * Registry-based assets with per-screen conditional loading, integration scaffolding and host-drift detection.
 * Optional adapters that skin popular plugins/themes (Bricks, WooCommerce, ACF, the Fluent suite, and more).
