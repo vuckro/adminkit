@@ -16,13 +16,25 @@ indirection drives both dark mode and provider theming.
 adminkit.php
   └─ AdminKit_Plugin::init()
        ├─ AdminKit_Assets::init()          wire the 4 dispatch hooks
-       ├─ wp-core modules ::init()         chrome, login, profile, admin bar,
-       │                                   list-table, post-previews (CSS + JS bricks)
+       ├─ wp-core modules ::init()         chrome, login, profile, admin bar, list-table,
+       │                                   post-previews + custom-dashboard, online-users,
+       │                                   notification-center, footer, help-button, plugins-list
+       ├─ feature modules ::init()         inc/features/{menu,stats}/ — self-contained tools,
+       │                                   each self-registers its own AdminKit subpage
        ├─ Settings + Theme toggle init
        ├─ boot_integrations()              glob inc/integrations/*/*/class-*.php,
        │                                   queue each maybe_init() on after_setup_theme
        └─ do_action( 'adminkit/loaded' )
 ```
+
+Two tiers under `inc/`: **wp-core/** restyles surfaces WordPress already renders;
+**features/** adds NEW AdminKit surfaces (the menu editor, the analytics pages), each its own
+focused admin subpage. The AdminKit menu has three subpages — **Settings** (tabbed: Brand ·
+Features · Plugins), **Menu**, **Statistics** (read-only) — all driven by one build-free
+vanilla-DOM engine (`assets/js/settings.js`) mounted per-screen via a `data-screen` host
+attribute; `inc/class-settings-page.php` exposes the shared `render_host()` / `enqueue_app()` /
+`boot_data($screen)` helpers each subpage calls. Dark mode is design-time CSS only — no runtime
+auto-theme engine.
 
 `after_setup_theme` runs after the active theme loads, so host constants
 (`BRICKS_VERSION`, `WC_VERSION`, …) are reliable when an integration checks
