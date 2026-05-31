@@ -31,3 +31,6 @@ vendor
 *.log
 .DS_Store
 Thumbs.db
+
+# Test suite (dev-only)
+tests
