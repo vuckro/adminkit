@@ -125,15 +125,6 @@
 	text-transform: none;
 	letter-spacing: normal;
 }
-.adminkit-app .ak-group__title + .ak-group__desc { margin-top: -6px; }
-.adminkit-app .ak-group__desc {
-	margin: 0 0 12px;
-	padding-left: 2px;
-	max-width: 60ch;
-	font-size: var(--ak-text-xs);
-	line-height: 1.5;
-	color: var(--ak-text-muted);
-}
 
 /* Rows -------------------------------------------------------------------- */
 .adminkit-app .ak-rows {
@@ -197,8 +188,6 @@
 }
 .adminkit-app .ak-row__label { font-size: var(--ak-text-s); font-weight: 500; color: var(--ak-heading); }
 .adminkit-app .ak-row__desc { font-size: var(--ak-text-xs); line-height: 1.5; color: var(--ak-text-muted); max-width: 54ch; }
-/* Integration rows: status pill (left) + name + enable toggle (right). */
-.adminkit-app .ak-row--int .ak-row__label { flex: 1; min-width: 0; }
 /* Plugin name + its native/generic badge, hugging the left together. The label
    keeps its natural width (no flex-grow) so the badge sits right next to it. */
 .adminkit-app .ak-row__head {
@@ -207,140 +196,6 @@
 	gap: 8px;
 	flex-wrap: wrap;
 }
-
-/* Design-token reference — three deterministic rows of cards instead of seven
-   stacked groups, so the whole Design tab fits roughly within a viewport.
-   The Status row is full-width with two internal columns so its 8 tokens pair
-   each base with its -subtle variant. */
-.adminkit-app .ak-design__row {
-	display: grid;
-	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
-	gap: 16px;
-	margin-bottom: 16px;
-}
-.adminkit-app .ak-design__row > .ak-group { margin-bottom: 0; }
-.adminkit-app .ak-design__row--full { grid-template-columns: 1fr; }
-.adminkit-app .ak-design__row--full .ak-tbl {
-	grid-template-columns: 28px minmax( 110px, 1fr ) minmax( 160px, 1.4fr ) 28px minmax( 110px, 1fr ) minmax( 160px, 1.4fr );
-}
-
-/* Design-token table — one column-aligned grid per group (static reference). */
-.adminkit-app .ak-tbl {
-	display: grid;
-	grid-template-columns: 28px minmax( 110px, 1fr ) minmax( 160px, 1.4fr );
-	border: 1px solid var(--ak-table-border);
-	border-radius: var(--ak-table-radius);
-	background: var(--ak-table-bg);
-	overflow: hidden;
-}
-/* Every cell shares padding + a top divider; stretch (default) keeps the
-   dividers continuous across the row, and flex centres each cell's content.
-   The first row of cells has no divider. */
-.adminkit-app .ak-tbl > * {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	padding: 6px 10px;
-	min-width: 0;
-	border-top: 1px solid var(--ak-table-border);
-}
-.adminkit-app .ak-tbl > :nth-child(-n+3) { border-top: 0; }
-.adminkit-app .ak-design__row--full .ak-tbl > :nth-child(-n+6) { border-top: 0; }
-/* Swatch cell — centre a fixed square so the colour reads at a glance. */
-.adminkit-app .ak-tbl__swc {
-	justify-content: center;
-	padding-left: 6px;
-	padding-right: 4px;
-}
-.adminkit-app .ak-tbl__sw {
-	flex: 0 0 auto;
-	display: block;
-	width: 18px;
-	height: 18px;
-	border: 1px solid var(--ak-border-strong);
-	border-radius: var(--ak-radius-s);
-	/* Colour layer over a faint checker, so translucent tokens (overlay, hover,
-	   focus) still read; opaque tokens fully cover the checker beneath. */
-	background-image:
-		linear-gradient( var(--sw, transparent), var(--sw, transparent) ),
-		repeating-conic-gradient( var(--ak-border) 0% 25%, var(--ak-bg) 0% 50% );
-	background-size: auto, 8px 8px;
-	background-position: center;
-	background-clip: padding-box;
-}
-.adminkit-app .ak-tbl__name {
-	font-size: var(--ak-text-s);
-	font-weight: 500;
-	color: var(--ak-heading);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-.adminkit-app .ak-tbl__badge {
-	flex: 0 0 auto;
-	font-size: 9px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: .04em;
-	padding: 1px 5px;
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-elevated);
-	color: var(--ak-text-muted);
-}
-/* Live hex code — pushed to the right of the role cell, muted so the name
-   still leads. The text is refreshed on dark-mode flip via the MutationObserver
-   in settings.js (look up by [data-ak-token]). */
-.adminkit-app .ak-tbl__hex {
-	margin-left: auto;
-	flex: 0 0 auto;
-	color: var(--ak-text-muted);
-}
-/* The map cell holds the source → bricks → ak chain on a single line; if the
-   card is too narrow we clip rather than wrap (mobile reverts to wrap below). */
-.adminkit-app .ak-tbl__map {
-	flex-wrap: nowrap;
-	overflow: hidden;
-	gap: 4px;
-}
-.adminkit-app .ak-tbl__arr {
-	flex: 0 0 auto;
-	color: var(--ak-text-muted);
-	font-size: 10px;
-	line-height: 1;
-}
-/* Reset wp-admin's default <code> styling (grey pill, padding, 13px Consolas) so
-   the mono cells read as plain text. No `color` here — that would out-specify
-   the per-cell colours below. */
-.adminkit-app .ak-tbl code {
-	margin: 0;
-	padding: 0;
-	background: none;
-	border: 0;
-	font-family: monospace;
-	font-size: 10px;
-	white-space: nowrap;
-	min-width: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-.adminkit-app .ak-tbl__tok { color: var(--ak-text); }
-.adminkit-app .ak-tbl__from,
-.adminkit-app .ak-tbl__prim { color: var(--ak-text-muted); }
-
-/* Cascade explainer ------------------------------------------------------- */
-.adminkit-app .ak-cascade {
-	margin: -8px 0 18px;
-	max-width: 72ch;
-	padding: 10px 12px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-bg);
-	font-size: var(--ak-text-xs);
-	line-height: 1.6;
-	color: var(--ak-text-muted);
-}
-
-.adminkit-app .ak-muted { font-size: var(--ak-text-xs); color: var(--ak-text-muted); }
 
 /* Toggle switch (flat, no transition) ------------------------------------- */
 .adminkit-app .ak-switch {
@@ -385,9 +240,6 @@
 .adminkit-app .ak-switch__input:checked ~ .ak-switch__knob { left: 21px; }
 .adminkit-app .ak-switch__input:focus-visible ~ .ak-switch__track { outline: 2px solid var(--ak-primary); outline-offset: 2px; }
 
-/* Integration rows — name + native/generic badge (left), enable toggle (right). */
-.adminkit-app .ak-row--int { gap: 12px; }
-
 /* Dashboard — overview hero strip ----------------------------------------- */
 /* Bordered cells sharing a 1px grid gap (the --ak-border shows through), so the
    overview reads as one tidy panel split into provider / modules / mode. */
@@ -400,43 +252,6 @@
 	background: var(--ak-card-border);
 	overflow: hidden;
 }
-.adminkit-app .ak-hero__cell {
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
-	padding: 16px 18px;
-	background: var(--ak-surface);
-	text-align: left;
-}
-.adminkit-app button.ak-hero__cell { font: inherit; border: 0; cursor: pointer; }
-.adminkit-app .ak-hero__cell--link:hover { background: var(--ak-elevated); }
-.adminkit-app .ak-hero__cell--link:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
-.adminkit-app .ak-hero__k {
-	font-size: var(--ak-text-xs);
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: .05em;
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-hero__v {
-	display: inline-flex;
-	align-items: center;
-	gap: 9px;
-	min-width: 0;
-	font-family: "Bricolage Grotesque", var(--ak-font-body);
-	font-size: 20px;
-	font-weight: 600;
-	line-height: 1.2;
-	color: var(--ak-heading);
-}
-.adminkit-app .ak-hero__swatch {
-	flex: 0 0 auto;
-	width: 16px;
-	height: 16px;
-	border-radius: var(--ak-radius-s);
-	border: 1px solid var(--ak-border-strong);
-}
-.adminkit-app .ak-hero__sub { font-size: var(--ak-text-xs); color: var(--ak-text-muted); }
 
 /* Badge chips — shared by the Plugins tab (Native / System / Generic) and
    the group count chips. */
@@ -458,164 +273,7 @@
 	border-color: transparent;
 }
 
-
-/* Branding logo URL fields (Features tab) -------------------------------- */
-.adminkit-app .ak-field {
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
-	padding: 12px 16px;
-	border-top: 1px solid var(--ak-border);
-}
-.adminkit-app .ak-field:first-child { border-top: 0; }
-.adminkit-app .ak-field__label { font-size: var(--ak-text-s); font-weight: 500; color: var(--ak-heading); }
-.adminkit-app .ak-field__control { display: flex; gap: 8px; align-items: center; }
-.adminkit-app .ak-field__input {
-	flex: 1;
-	min-width: 0;
-	font: inherit;
-	font-size: var(--ak-text-s);
-	color: var(--ak-text);
-	background: var(--ak-input-bg);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	padding: 7px 10px;
-}
-.adminkit-app .ak-field__input:focus {
-	outline: none;
-	border-color: var(--ak-primary);
-	box-shadow: var(--ak-focus-ring);
-}
-.adminkit-app .ak-field__btn { flex: none; white-space: nowrap; }
-.adminkit-app .ak-field__preview {
-	flex: none;
-	width: 32px;
-	height: 32px;
-	object-fit: contain;
-	padding: 3px;
-	background: var(--ak-input-bg);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-}
-.adminkit-app .ak-field__hint { margin: 6px 0 0; font-size: var(--ak-text-s); color: var(--ak-text-muted); }
-
-/* Icon + text field label (Branding light/dark logos) — sun/moon glyph then
-   the localized "Light Mode" / "Dark Mode" text, laid out horizontally. */
-.adminkit-app .ak-field__label--icon {
-	display: inline-flex;
-	align-items: center;
-	gap: 7px;
-}
-.adminkit-app .ak-field__label-ic {
-	display: inline-flex;
-	flex: 0 0 auto;
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-field__label-tx { line-height: 1.2; }
-
-/* Logo media picker (Branding) — the PREVIEW itself is the click target that
-   opens the WP media frame; a small × clears it. The wrap holds the picker + the
-   clear button side by side; a hidden URL <input> stays in sync below. */
-.adminkit-app .ak-logo-pick__wrap {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-}
-/* The picker: a small fixed-height box (never huge) with a token border. Holds
-   either the contained preview image or the empty-state placeholder text. */
-.adminkit-app .ak-logo-pick {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	box-sizing: border-box;
-	height: 44px;
-	min-width: 64px;
-	max-width: 120px;
-	padding: 4px 8px;
-	margin: 0;
-	font: inherit;
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
-	background: var(--ak-input-bg);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	cursor: pointer;
-}
-.adminkit-app .ak-logo-pick:hover { border-color: var(--ak-border-strong); }
-.adminkit-app .ak-logo-pick:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
-/* Per-mode FIXED backdrop: the light-mode logo always previews on a light surface,
-   the dark-mode logo always on a dark one — so each logo is shown on the background
-   it's built for (a white logo isn't invisible on a light field) and the two read as
-   distinct. Deliberately raw colours, NOT --ak-* tokens: these must NOT flip with the
-   admin theme — they represent the logo's target surface, like a swatch. */
-.adminkit-app .ak-logo-pick--light {
-	background: #ffffff;
-	color: #50575e;
-	border-color: transparent;
-}
-.adminkit-app .ak-logo-pick--dark {
-	background: #1d1d1d;
-	color: #c3c4c7;
-	border-color: transparent;
-}
-/* Borderless preview — the backdrop alone frames the logo. Override hover too, or
-   the base .ak-logo-pick:hover would re-show a token border. Focus ring stays. */
-.adminkit-app .ak-logo-pick--light:hover,
-.adminkit-app .ak-logo-pick--dark:hover { border-color: transparent; }
-/* Preview image — constrained to the small box so a large source NEVER blows up
-   the layout; shown in full (contain), not cropped. */
-.adminkit-app .ak-logo-pick__img {
-	display: block;
-	max-width: 100%;
-	max-height: 36px;
-	width: auto;
-	height: auto;
-	object-fit: contain;
-	border-radius: var(--ak-radius-s);
-}
-.adminkit-app .ak-logo-pick__ph {
-	display: block;
-	text-align: center;
-	line-height: 1.2;
-}
-/* When a logo is set, hide the placeholder text and let the image fill the box. */
-.adminkit-app .ak-logo-pick.is-set { padding: 3px; }
-.adminkit-app .ak-logo-pick.is-set .ak-logo-pick__ph { display: none; }
-/* Clear (×) button — small neutral icon button next to the picker. */
-.adminkit-app .ak-logo-pick__clear {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	flex: 0 0 auto;
-	box-sizing: border-box;
-	width: 26px;
-	height: 26px;
-	padding: 0;
-	color: var(--ak-text-muted);
-	background: var(--ak-btn-bg);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	cursor: pointer;
-}
-.adminkit-app .ak-logo-pick__clear:hover {
-	color: var(--ak-text);
-	background: var(--ak-btn-hover-bg);
-	border-color: var(--ak-btn-hover-border);
-}
-.adminkit-app .ak-logo-pick__clear:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
-.adminkit-app .ak-logo-pick__clear[hidden] { display: none; }
-
-/* Inline field (label left, control right) + segmented control ----------- */
-.adminkit-app .ak-field--inline {
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 8px 16px;
-}
-.adminkit-app .ak-field--inline > .ak-field__label { flex: none; }
-.adminkit-app .ak-field--inline > .ak-field__hint { flex-basis: 100%; margin-top: 0; }
-/* Compact number input (e.g. the logo size), right-aligned in an inline field. */
-.adminkit-app .ak-field__num { flex: none; max-width: 96px; margin-left: auto; }
+/* Segmented control (Display row toggles + accent source picker) --------- */
 .adminkit-app .ak-seg {
 	display: inline-flex;
 	margin-left: auto;            /* push the options to the right */
@@ -647,7 +305,6 @@
 	background: var(--ak-primary);
 }
 
-
 /* Design tab — Brand card + Tokens disclosure (final layout, Phase A) ------ */
 
 /* The Brand card wraps everything interactive at the top of the Design tab:
@@ -667,13 +324,6 @@
 	margin-bottom: 16px;
 }
 .adminkit-app .ak-card__head-main { flex: 1; min-width: 0; }
-.adminkit-app .ak-card__eyebrow {
-	font-size: 10px;
-	font-weight: 700;
-	letter-spacing: .08em;
-	text-transform: uppercase;
-	color: var(--ak-text-muted);
-}
 /* Same fixed sizing for every card title regardless of underlying h2/h3 — UA
    defaults differ between h levels (margins, line-height), so we pin every
    value explicitly here to keep the three Design-tab cards (Brand, Typography,
@@ -685,13 +335,6 @@
 	font-weight: 600;
 	line-height: 1.3;
 	color: var(--ak-heading);
-}
-.adminkit-app .ak-card__sub {
-	margin: 6px 0 0;
-	font-size: var(--ak-text-xs);
-	line-height: 1.5;
-	color: var(--ak-text-muted);
-	max-width: 72ch;
 }
 /* Sync status row in the Brand card head — connection state + token count.
    The dot is an explicit element so we can colour-key it per state (green
@@ -952,26 +595,9 @@
 @media screen and (max-width: 960px) {
 	.adminkit-app .ak-brand-slots { grid-template-columns: 1fr; }
 	.adminkit-app .ak-display-row { gap: 12px; }
-	.adminkit-app .ak-design__row { grid-template-columns: 1fr; }
-	.adminkit-app .ak-design__row--full .ak-tbl {
-		grid-template-columns: 28px minmax( 0, 1fr ) minmax( 0, 1.4fr );
-	}
-	.adminkit-app .ak-design__row--full .ak-tbl > :nth-child(-n+6) {
-		border-top: 1px solid var(--ak-border);
-	}
-	.adminkit-app .ak-design__row--full .ak-tbl > :nth-child(-n+3) {
-		border-top: 0;
-	}
 }
 
 @media screen and (max-width: 782px) {
-	.adminkit-app .ak-tbl {
-		grid-template-columns: 28px minmax( 0, 1fr ) minmax( 0, 1.6fr );
-	}
-	/* On phones, accept that the chain wraps rather than getting clipped — better
-	   to read all three names on two lines than to lose the last one to ellipsis. */
-	.adminkit-app .ak-tbl__map { flex-wrap: wrap; }
-	.adminkit-app .ak-field--inline .ak-seg { margin-left: 0; }
 	.adminkit-app .ak-head { flex-wrap: wrap; }
 }
 
@@ -1019,6 +645,9 @@
 	color: var(--ak-text);
 }
 .adminkit-app .ak-menu-row__expand {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
 	border: 0;
 	background: transparent;
 	color: var(--ak-muted);
@@ -1030,6 +659,9 @@
 }
 .adminkit-app .ak-menu-row__expand:hover,
 .adminkit-app .ak-menu-row__expand.on { color: var(--ak-text); }
+.adminkit-app .ak-menu-row__caret { display: inline-flex; transition: transform 0.15s ease; }
+.adminkit-app .ak-menu-row__caret svg { width: 10px; height: 10px; display: block; }
+.adminkit-app .ak-menu-row__expand.on .ak-menu-row__caret { transform: rotate( 90deg ); }
 
 .adminkit-app .ak-menu-icon {
 	display: inline-flex;
@@ -1054,19 +686,6 @@
 	height: 18px;
 	line-height: 18px;
 }
-
-.adminkit-app .ak-menu-move { display: inline-flex; gap: 2px; flex: 0 0 auto; }
-.adminkit-app .ak-menu-move__btn {
-	width: 24px;
-	height: 24px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	cursor: pointer;
-	line-height: 1;
-}
-.adminkit-app .ak-menu-move__btn:disabled { opacity: 0.4; cursor: default; }
 
 .adminkit-app .ak-menu-hide {
 	border: 1px solid var(--ak-border);
@@ -1095,19 +714,25 @@
 	background: var(--ak-elevated);
 	box-shadow: 0 8px 30px rgba( 0, 0, 0, 0.18 );
 }
+.adminkit-app .ak-icon-pop__defbar {
+	display: flex;
+	gap: 4px;
+	margin-bottom: 6px;
+}
 .adminkit-app .ak-icon-pop__def {
+	flex: 1;
 	display: block;
-	width: 100%;
-	text-align: left;
-	border: 0;
+	text-align: center;
+	border: 1px solid var(--ak-card-border);
 	background: transparent;
 	color: var(--ak-text);
 	cursor: pointer;
 	padding: 4px 6px;
 	border-radius: var(--ak-radius-s);
-	margin-bottom: 6px;
+	font-size: var(--ak-text-xs);
 }
-.adminkit-app .ak-icon-pop__def:hover { background: var(--ak-surface); }
+.adminkit-app .ak-icon-pop__def:hover,
+.adminkit-app .ak-icon-pop__def.on { background: var(--ak-elevated); border-color: var(--ak-border-strong); }
 .adminkit-app .ak-icon-pop__grid {
 	display: grid;
 	grid-template-columns: repeat( 7, 1fr );
@@ -1145,17 +770,17 @@
 .adminkit-app .ak-icon-pop__custom {
 	display: flex;
 	gap: 6px;
-	align-items: flex-start;
+	align-items: center;
 	margin-top: 8px;
 	padding-top: 8px;
 	border-top: 1px solid var(--ak-border);
 }
+.adminkit-app .ak-icon-pop__customic { flex: 0 0 auto; display: inline-flex; color: var(--ak-muted); }
 .adminkit-app .ak-icon-pop__ta {
 	flex: 1 1 auto;
 	min-width: 0;
 	font-family: monospace;
 	font-size: var(--ak-text-xs);
-	resize: vertical;
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
@@ -1163,6 +788,53 @@
 	padding: 4px 6px;
 }
 .adminkit-app .ak-btn--small { padding: 4px 10px; font-size: var(--ak-text-xs); }
+
+/* Custom-section label (icon picker + custom-URL popover). */
+.adminkit-app .ak-icon-pop__customlbl {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-muted);
+	margin: 0 0 6px;
+	line-height: 1.4;
+}
+
+/* Custom-URL button (mirrors the icon button) + its popover. */
+.adminkit-app .ak-menu-url {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-muted);
+	cursor: pointer;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-url:hover { border-color: var(--ak-primary); color: var(--ak-text); }
+.adminkit-app .ak-menu-url.on { border-color: var(--ak-primary); color: var(--ak-primary); background: var(--ak-primary-subtle); }
+.adminkit-app .ak-menu-url svg { width: 15px; height: 15px; }
+.adminkit-app .ak-url-pop { width: 300px; }
+.adminkit-app .ak-url-pop__row { align-items: center; }
+.adminkit-app .ak-url-pop__row .ak-menu-input { flex: 1 1 auto; min-width: 0; }
+.adminkit-app .ak-menu-newtab {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-muted);
+	cursor: pointer;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-newtab:hover { border-color: var(--ak-primary); color: var(--ak-text); }
+.adminkit-app .ak-menu-newtab.on { border-color: var(--ak-primary); color: var(--ak-primary); background: var(--ak-primary-subtle); }
+.adminkit-app .ak-menu-newtab svg { width: 14px; height: 14px; }
 
 /* Toolbar (Add link / Add separator / Reset) + custom rows */
 .adminkit-app .ak-menu-toolbar { gap: 8px; margin: 0 0 10px; }
@@ -1235,4 +907,290 @@
 .adminkit-app .ak-menu-children.is-drop {
 	box-shadow: inset 0 0 0 2px var(--ak-primary);
 	border-radius: var(--ak-radius-s);
+}
+
+/* ── Features tab — search + collapsible groups (enhancement) ─────────────── */
+.adminkit-app .ak-search-wrap { margin-bottom: 14px; }
+.adminkit-app .ak-search-wrap .ak-search {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 8px 12px;
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	font-size: var(--ak-text-s);
+}
+.adminkit-app .ak-search-wrap .ak-search:focus {
+	outline: none;
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+}
+/* ── Statistics tab — full drill-in for the cookieless tracker ───────────── */
+.adminkit-app .ak-stats__head {
+	display: flex;
+	align-items: center;
+	gap: 10px 14px;
+	flex-wrap: wrap;
+	margin-bottom: 16px;
+}
+.adminkit-app .ak-stats__active {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 10px;
+	border-radius: var(--ak-radius-full);
+	background: var(--ak-success-subtle);
+	color: var(--ak-success);
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+}
+.adminkit-app .ak-stats__active[hidden] { display: none; }
+.adminkit-app .ak-stats__active-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--ak-success);
+	animation: ak-stats-pulse 2s ease-in-out infinite;
+}
+@keyframes ak-stats-pulse {
+	0%, 100% { opacity: 1; transform: scale(1); }
+	50%      { opacity: .4; transform: scale(.7); }
+}
+@media ( prefers-reduced-motion: reduce ) {
+	.adminkit-app .ak-stats__active-dot { animation: none; }
+}
+/* Range picker — presets segmented control + (revealed) custom inputs. Sits
+   flush-left with the rest of the panel content. */
+.adminkit-app .ak-stats__range {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+.adminkit-app .ak-stats__presets {
+	display: inline-flex;
+	gap: 2px;
+	padding: 2px;
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+.adminkit-app .ak-stats__preset {
+	padding: 4px 12px;
+	border: 0;
+	border-radius: calc(var(--ak-radius-s) - 2px);
+	background: transparent;
+	color: var(--ak-text-muted);
+	font: inherit;
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color .12s ease, color .12s ease;
+}
+.adminkit-app .ak-stats__preset:hover { color: var(--ak-heading); }
+.adminkit-app .ak-stats__preset.is-active {
+	background: var(--ak-elevated);
+	color: var(--ak-heading);
+}
+.adminkit-app .ak-stats__custom {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+.adminkit-app .ak-stats__custom[hidden] { display: none; }
+.adminkit-app .ak-stats__range-lbl {
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+	color: var(--ak-text-muted);
+	text-transform: uppercase;
+	letter-spacing: .04em;
+}
+.adminkit-app .ak-stats__date {
+	/* color-scheme tells the browser to render its native calendar widget
+	   (icon included) in the matching light/dark variant. */
+	color-scheme: light;
+	padding: 5px 10px;
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	font: inherit;
+	font-size: var(--ak-text-s);
+	line-height: 1.2;
+	cursor: pointer;
+}
+.adminkit-app .ak-stats__date:focus-visible {
+	outline: none;
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+}
+[data-adminkit-theme="dark"] .adminkit-app .ak-stats__date {
+	color-scheme: dark;
+}
+.adminkit-app .ak-stats.is-loading .ak-stats__body { opacity: .5; transition: opacity .12s ease; }
+
+.adminkit-app .ak-stats__empty,
+.adminkit-app .ak-stats__none {
+	margin: 8px 0 0;
+	color: var(--ak-text-muted);
+	font-size: var(--ak-text-s);
+}
+
+/* Metrics */
+.adminkit-app .ak-stats__metrics {
+	display: flex;
+	gap: 36px;
+	margin-bottom: 18px;
+}
+.adminkit-app .ak-stats__metric { display: flex; flex-direction: column; gap: 2px; }
+.adminkit-app .ak-stats__metric-num {
+	font-size: 30px;
+	font-weight: 700;
+	line-height: 1.1;
+	color: var(--ak-heading);
+}
+.adminkit-app .ak-stats__metric-lbl {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+
+/* Bar chart */
+.adminkit-app .ak-stats__chart {
+	margin-bottom: 22px;
+	padding: 14px;
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	background: var(--ak-card-bg);
+}
+.adminkit-app .ak-stats__chart-svg {
+	display: block;
+	width: 100%;
+	height: 120px;
+}
+.adminkit-app .ak-stats__bar {
+	fill: var(--ak-primary);
+	opacity: .85;
+	transition: opacity .1s ease;
+}
+.adminkit-app .ak-stats__bar:hover { opacity: 1; }
+
+/* Two lists side by side */
+.adminkit-app .ak-stats__cols {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 22px;
+}
+@media screen and (max-width: 782px) {
+	.adminkit-app .ak-stats__cols { grid-template-columns: 1fr; }
+}
+.adminkit-app .ak-stats__list {
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	background: var(--ak-card-bg);
+	overflow: hidden;
+}
+.adminkit-app .ak-stats__list-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 14px;
+	border-bottom: 1px solid var(--ak-card-border);
+}
+.adminkit-app .ak-stats__list-h,
+.adminkit-app .ak-stats__list-hv {
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-stats__rows { margin: 0; padding: 0; list-style: none; }
+.adminkit-app .ak-stats__row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 8px 14px;
+	border-top: 1px solid var(--ak-border);
+	font-size: var(--ak-text-s);
+}
+.adminkit-app .ak-stats__row:first-child { border-top: 0; }
+.adminkit-app .ak-stats__row-name {
+	min-width: 0;
+	overflow: hidden;
+	color: var(--ak-text);
+	text-decoration: none;
+}
+.adminkit-app a.ak-stats__row-name {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	line-height: 1.3;
+}
+.adminkit-app a.ak-stats__row-name:hover .ak-stats__row-title { color: var(--ak-primary); }
+.adminkit-app .ak-stats__row-title,
+.adminkit-app .ak-stats__row-sub {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.adminkit-app .ak-stats__row-sub {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-stats__row-val {
+	flex: none;
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
+	color: var(--ak-heading);
+}
+
+/* ── Live preset chip + Live view body ─────────────────────────────────────
+   The Live chip carries a small green dot (calm by default; CSS animates it
+   only when active so the chip reads as "watching now"). The body switches
+   to a big "active right now" headline with the page/source breakdown of the
+   visitors currently on the site — same list shell as the period view. */
+.adminkit-app .ak-stats__preset--live {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+.adminkit-app .ak-stats__pulse {
+	display: inline-block;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--ak-success);
+	flex: none;
+}
+.adminkit-app .ak-stats__preset--live.is-active .ak-stats__pulse {
+	animation: ak-stats-pulse 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+	.adminkit-app .ak-stats__preset--live.is-active .ak-stats__pulse { animation: none; }
+}
+
+.adminkit-app .ak-stats__live-headline {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	margin: 14px 0 6px;
+}
+.adminkit-app .ak-stats__live-num {
+	font-size: 52px;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--ak-heading);
+	font-variant-numeric: tabular-nums;
+}
+.adminkit-app .ak-stats__live-lbl {
+	font-size: var(--ak-text-s);
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-stats__live-empty {
+	margin: 6px 0 0;
+	font-size: var(--ak-text-s);
+	color: var(--ak-text-muted);
 }

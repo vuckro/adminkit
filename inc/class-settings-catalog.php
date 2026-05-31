@@ -46,13 +46,7 @@ class AdminKit_Settings_Catalog {
 				'key'   => 'plugins_active_first_enabled',
 				'group' => $content,
 				'label' => __( 'Active plugins first', 'adminkit' ),
-				'desc'  => __( 'Sort active plugins to the top of the plugins list so what\'s running is always in view. Off keeps WordPress\'s alphabetical order.', 'adminkit' ),
-			),
-			array(
-				'key'   => 'plugins_default_active_filter_enabled',
-				'group' => $content,
-				'label' => __( 'Open plugins on "Active"', 'adminkit' ),
-				'desc'  => __( 'Land on the "Active" filter when you open the plugins list, instead of "All". Falls back to "All" when no plugins are active. Off keeps the default "All" view.', 'adminkit' ),
+				'desc'  => __( 'Keep active plugins front and center: open the plugins list on the "Active" filter and sort active plugins to the top of the "All" view. After you toggle a plugin it follows the change — activating jumps to "Active", deactivating drops to "All" — so it never vanishes from the filter you were on. Falls back to "All" when nothing is active. Off restores WordPress\'s default — the "All" view in alphabetical order.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'theme_toggle_enabled',
@@ -113,6 +107,18 @@ class AdminKit_Settings_Catalog {
 				'group' => $users,
 				'label' => __( 'Custom avatars', 'adminkit' ),
 				'desc'  => __( 'Adds "AdminKit Portraits (Generated)" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait.', 'adminkit' ),
+			),
+			array(
+				'key'   => 'online_users_enabled',
+				'group' => $users,
+				'label' => __( 'Online users', 'adminkit' ),
+				'desc'  => __( 'Track who is signed in (read from existing WordPress sessions, no extra tracking) and show them on the dashboard, plus an "Online" filter and a "Last login" column on the Users screen. Off hides all of it.', 'adminkit' ),
+			),
+			array(
+				'key'   => 'stats_enabled',
+				'group' => $content,
+				'label' => __( 'Traffic stats', 'adminkit' ),
+				'desc'  => __( 'Count page views and visits with a tiny cookieless beacon — no cookies, no IP storage, no consent banner, and almost no database footprint (pre-summed daily totals). Signed-in staff and bots are excluded. Off disables tracking entirely.', 'adminkit' ),
 			),
 		);
 

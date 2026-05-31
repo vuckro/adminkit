@@ -26,6 +26,10 @@
 	}
 	var I = D.i18n || {};
 	var apiFetch = window.wp && window.wp.apiFetch;
+	// Which surface this page mounts: 'main' (Settings SPA), 'menu' or 'stats'. The
+	// PHP host sets it via data-screen; each focused page builds just its one panel
+	// (no tab strip). Defaults to 'main' so the SPA still works standalone.
+	var SCREEN = ( app.getAttribute && app.getAttribute( 'data-screen' ) ) || D.screen || 'main';
 
 	var state = {
 		dirty: false,
@@ -66,7 +70,9 @@
 	var MM = D.menuManager || { menu: [], config: { top: [], sub: {} }, icons: {} };
 	var dragState = null;
 	var openPicker = null;
-	state.menu = ( MM.menu && MM.menu.length ) ? buildMenuModel( MM.menu, MM.config || { top: [], sub: {} } ) : [];
+	// The menu working-model is only needed on the Menu screen; skip the (non-trivial)
+	// build elsewhere — other screens never ship a menu tree anyway.
+	state.menu = ( SCREEN === 'menu' && MM.menu && MM.menu.length ) ? buildMenuModel( MM.menu, MM.config || { top: [], sub: {} } ) : [];
 	state.menuDirty = false;
 
 	// --- tiny DOM helper -----------------------------------------------------
@@ -109,28 +115,40 @@
 	// `<h1>` is `screen-reader-text` so this visible H1 is the only one users see.
 	app.removeAttribute( 'aria-busy' );
 	app.textContent = '';
+	// Statistics is read-only — no save bar. (Menu + Settings both save.)
+	var showSave = ( SCREEN !== 'stats' );
 	app.appendChild( el( 'div', { 'class': 'ak-head' }, [
 		el( 'h1', { 'class': 'ak-title', text: 'AdminKit' } ),
-		el( 'div', { 'class': 'ak-actions' }, [ statusEl, saveBtn ] )
+		el( 'div', { 'class': 'ak-actions' }, showSave ? [ statusEl, saveBtn ] : [] )
 	] ) );
 
 	var ICONS = {
+		brand: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="10.5" r=".9" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".9" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12.5" r=".9" fill="currentColor" stroke="none"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>',
 		dashboard: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>',
 		features: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
 		plugins: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>',
 		menu: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>',
+		stats: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6" rx=".5"/><rect x="12.5" y="8" width="3" height="10" rx=".5"/><rect x="18" y="5" width="3" height="13" rx=".5"/></svg>',
 		// Upload arrow-up-tray — shown in empty brand-slot zones in lieu of a "Drop" text.
 		upload: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>'
 	};
 
-	// Two tabs: "Tableau de bord" (the Brand card + every feature toggle) and
-	// "Plugins". Old `#design` / `#features` hashes fall back to the dashboard
-	// via applyHash().
-	var tabs = [
-		{ id: 'dashboard', label: I.dashboard, icon: ICONS.dashboard, build: buildDashboard },
-		{ id: 'menu', label: I.menu, icon: ICONS.menu, build: buildMenu },
-		{ id: 'plugins', label: I.plugins, icon: ICONS.plugins, build: buildPlugins }
-	];
+	// Tabs are assembled PER SCREEN. The Settings ("main") screen keeps the tabbed
+	// SPA — Brand · Features · Plugins (they save together, so tabs belong here).
+	// The Menu and Statistics screens are focused single-panel pages (the tab strip
+	// is hidden below); each owns its own AdminKit submenu page.
+	var tabs;
+	if ( SCREEN === 'menu' ) {
+		tabs = [ { id: 'menu', label: I.menu, icon: ICONS.menu, build: buildMenu } ];
+	} else if ( SCREEN === 'stats' ) {
+		tabs = [ { id: 'stats', label: I.statsTab || 'Statistics', icon: ICONS.stats, build: buildStats } ];
+	} else {
+		tabs = [
+			{ id: 'brand', label: I.brandTitle, icon: ICONS.brand, build: buildDesign },
+			{ id: 'features', label: I.features, icon: ICONS.features, build: buildFeatures },
+			{ id: 'plugins', label: I.plugins, icon: ICONS.plugins, build: buildPlugins }
+		];
+	}
 	var activeId = tabs[ 0 ].id;
 	var panels = {};
 
@@ -174,7 +192,11 @@
 		tabs[ i ].btn.focus();
 	} );
 
-	app.appendChild( nav );
+	// Focused single-panel screens (Menu, Statistics) drop the tab strip entirely —
+	// there's nothing to switch between, and the page reads cleaner without it.
+	if ( tabs.length > 1 ) {
+		app.appendChild( nav );
+	}
 	app.appendChild( panelWrap );
 
 	function selectTab( id ) {
@@ -195,6 +217,12 @@
 	}
 	function applyHash() {
 		var h = ( location.hash || '' ).replace( /^#/, '' );
+		// Menu + Statistics moved to their own AdminKit submenu pages. Redirect any
+		// lingering #menu / #stats deep-link on the Settings screen to the new page.
+		if ( SCREEN === 'main' && ( h === 'menu' || h === 'stats' ) ) {
+			window.location.href = 'admin.php?page=adminkit-' + h;
+			return;
+		}
 		var valid = tabs.some( function ( t ) { return t.id === h; } );
 		selectTab( valid ? h : tabs[ 0 ].id );
 	}
@@ -204,20 +232,6 @@
 
 	// --- panels --------------------------------------------------------------
 	function intro( text ) { return el( 'p', { 'class': 'ak-intro', text: text } ); }
-
-	// Dashboard tab — the Brand card (logos, favicons, accent picker, display row)
-	// on top, then every feature toggle below. buildDesign() and buildFeatures()
-	// each return a full .ak-panel; we keep the Brand panel and move the Features
-	// content into it so both live under one tab. The moved nodes keep their
-	// listeners, and the feature bulk / reset / row logic addresses elements
-	// through its own `refs` closure (never by querying the panel), so relocating
-	// them is safe.
-	function buildDashboard() {
-		var panel = buildDesign();
-		var features = buildFeatures();
-		while ( features.firstChild ) { panel.appendChild( features.firstChild ); }
-		return panel;
-	}
 
 	// Brand card builder. Lays out one .ak-card with the four media slots
 	// (Favicon Light · Logo Light · Favicon Dark · Logo Dark), the accent
@@ -653,7 +667,7 @@
 		// a block); keeps a child in the same group as its parent.
 		function rowsFor( label ) {
 			if ( ! byGroup[ label ] ) {
-				byGroup[ label ] = { label: label, rows: el( 'div', { 'class': 'ak-rows' } ) };
+				byGroup[ label ] = { label: label, rows: el( 'div', { 'class': 'ak-rows' } ), keys: [], wrapEl: null };
 				groups.push( byGroup[ label ] );
 			}
 			return byGroup[ label ].rows;
@@ -746,9 +760,37 @@
 			] );
 			refs[ f.key ] = { input: input, row: row };
 			rowsFor( f.group || '' ).appendChild( row );
+			byGroup[ f.group || '' ].keys.push( f.key );
 		} );
 
 		( D.features || [] ).forEach( refreshRow ); // initial dim + dependency state
+
+		// Search/filter — narrows the visible rows by label + description as you
+		// type, hides groups left with nothing, and expands all while searching.
+		var search = el( 'input', {
+			type: 'search',
+			'class': 'ak-search',
+			placeholder: I.searchFeatures || 'Search features…',
+			'aria-label': I.searchFeatures || 'Search features…'
+		} );
+		function filter() {
+			var q = ( search.value || '' ).trim().toLowerCase();
+			( D.features || [] ).forEach( function ( f ) {
+				var r = refs[ f.key ];
+				if ( ! r ) { return; }
+				var hay = ( ( f.label || '' ) + ' ' + ( f.desc || '' ) ).toLowerCase();
+				r.row.style.display = ( ! q || hay.indexOf( q ) !== -1 ) ? '' : 'none';
+			} );
+			groups.forEach( function ( g ) {
+				if ( ! g.wrapEl ) { return; }
+				var anyVisible = g.keys.some( function ( k ) {
+					return refs[ k ] && refs[ k ].row.style.display !== 'none';
+				} );
+				g.wrapEl.style.display = anyVisible ? '' : 'none';
+			} );
+		}
+		search.addEventListener( 'input', filter );
+		p.appendChild( el( 'div', { 'class': 'ak-search-wrap' }, [ search ] ) );
 
 		// Bulk controls — flip every feature on/off, or restore the registered
 		// schema defaults (reuses the header's flex row + secondary buttons;
@@ -759,13 +801,417 @@
 			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.resetDefaults || 'Reset to defaults', onclick: resetAll } )
 		] ) );
 
-		// One titled .ak-rows block per group label (order = first-seen).
+		// One titled block per group label (order = first-seen). Static heading —
+		// the search field handles discovery; folding groups was visual noise.
 		groups.forEach( function ( g ) {
-			p.appendChild( el( 'div', { 'class': 'ak-group' }, [
+			var wrap = el( 'div', { 'class': 'ak-group' }, [
 				g.label ? el( 'h2', { 'class': 'ak-group__title', text: g.label } ) : null,
 				g.rows
-			] ) );
+			] );
+			g.wrapEl = wrap;
+			p.appendChild( wrap );
 		} );
+
+		return p;
+	}
+
+	// Statistics tab — full drill-in for the cookieless tracker. Read only (no save
+	// bar): two native date inputs (start + end) fetch the full payload over REST
+	// and render metrics + a bar chart + the complete top-pages / top-sources lists.
+	// Lazy: loads on first reveal, refetches when either date changes (debounced).
+	function buildStats() {
+		var st = ( D.stats || {} );
+		var initial = st.state || {};
+		var today   = st.today || '';
+		var presets = ( st.presets && st.presets.length )
+			? st.presets
+			: [ { id: '30d', label: '30 days' }, { id: 'custom', label: 'Custom' } ];
+		var current = {
+			preset: initial.preset || '30d',
+			start:  initial.start  || today,
+			end:    initial.end    || today
+		};
+		var loaded = false;
+		var pendingDates = null;
+		// Live-view auto-refresh state. Cadence comes from PHP (LIVE_REFRESH_MS),
+		// clamped to a sane floor. Timer is set up only when preset === 'live'.
+		var liveTimer    = null;
+		var liveInterval = ( st.liveRefresh && st.liveRefresh >= 2000 ) ? st.liveRefresh : 10000;
+
+		var p = el( 'section', { 'class': 'ak-panel ak-stats', role: 'tabpanel' }, [ intro( I.statsIntro ) ] );
+
+		// Header: active pill + preset chips + (revealed when Custom) date inputs.
+		var active = el( 'span', { 'class': 'ak-stats__active', hidden: 'hidden' } );
+
+		var presetsWrap = el( 'div', { 'class': 'ak-stats__presets', role: 'group' } );
+		var presetBtns = {};
+		presets.forEach( function ( per ) {
+			var on   = per.id === current.preset;
+			var live = ( per.id === 'live' );
+			var cls  = 'ak-stats__preset' + ( on ? ' is-active' : '' ) + ( live ? ' ak-stats__preset--live' : '' );
+			var attrs = {
+				type: 'button',
+				'class': cls,
+				'aria-pressed': on ? 'true' : 'false',
+				onclick: function () { onPresetClick( per.id ); }
+			};
+			// Live carries a pulse dot (calm by default; CSS only animates when active).
+			var b = live
+				? el( 'button', attrs, [
+					el( 'span', { 'class': 'ak-stats__pulse', 'aria-hidden': 'true' } ),
+					document.createTextNode( per.label )
+				] )
+				: el( 'button', ( attrs.text = per.label, attrs ) );
+			presetBtns[ per.id ] = b;
+			presetsWrap.appendChild( b );
+		} );
+
+		var startIn = el( 'input', {
+			type: 'date',
+			'class': 'ak-stats__date',
+			value: current.start,
+			max: today,
+			'aria-label': I.statsRangeFrom || 'From'
+		} );
+		var endIn = el( 'input', {
+			type: 'date',
+			'class': 'ak-stats__date',
+			value: current.end,
+			max: today,
+			'aria-label': I.statsRangeTo || 'To'
+		} );
+		startIn.addEventListener( 'change', scheduleDates );
+		endIn.addEventListener( 'change', scheduleDates );
+
+		var customWrap = el( 'div', { 'class': 'ak-stats__custom' }, [
+			el( 'span', { 'class': 'ak-stats__range-lbl', text: I.statsRangeFrom || 'From' } ),
+			startIn,
+			el( 'span', { 'class': 'ak-stats__range-lbl', text: I.statsRangeTo || 'To' } ),
+			endIn
+		] );
+		if ( current.preset !== 'custom' ) { customWrap.hidden = true; }
+
+		var rangeWrap = el( 'div', {
+			'class': 'ak-stats__range',
+			role: 'group',
+			'aria-label': I.statsRangeLabel || 'Date range',
+			'data-ak-range-mode': current.preset === 'live'
+				? 'live'
+				: ( current.preset === 'custom' ? 'custom' : 'preset' )
+		}, [ presetsWrap, customWrap ] );
+		p.appendChild( el( 'div', { 'class': 'ak-stats__head' }, [ active, rangeWrap ] ) );
+
+		// Body (swapped on each load).
+		var body = el( 'div', { 'class': 'ak-stats__body' } );
+		p.appendChild( body );
+
+		function setPresetActive( id ) {
+			Object.keys( presetBtns ).forEach( function ( key ) {
+				var on = key === id;
+				presetBtns[ key ].classList.toggle( 'is-active', on );
+				presetBtns[ key ].setAttribute( 'aria-pressed', on ? 'true' : 'false' );
+			} );
+			var isCustom = ( id === 'custom' );
+			var isLive   = ( id === 'live' );
+			customWrap.hidden = ! isCustom;
+			rangeWrap.setAttribute( 'data-ak-range-mode', isLive ? 'live' : ( isCustom ? 'custom' : 'preset' ) );
+		}
+
+		function onPresetClick( id ) {
+			// Leaving Live → kill the timer before doing anything else.
+			if ( id !== 'live' ) { stopLive(); }
+			if ( id === 'custom' ) {
+				// Local reveal only; load() fires when dates actually change.
+				setPresetActive( 'custom' );
+				if ( startIn ) { startIn.focus(); }
+				return;
+			}
+			current.preset = id;
+			setPresetActive( id );
+			load();
+		}
+
+		function scheduleDates() {
+			if ( pendingDates ) { clearTimeout( pendingDates ); }
+			pendingDates = setTimeout( function () {
+				pendingDates = null;
+				current.preset = 'custom';
+				current.start  = startIn.value;
+				current.end    = endIn.value;
+				load();
+			}, 200 );
+		}
+
+		function load( silent ) {
+			if ( ! apiFetch || ! st.route ) {
+				body.textContent = I.statsNone || 'No data';
+				return;
+			}
+			if ( ! silent ) { p.classList.add( 'is-loading' ); }
+			var base = st.route.charAt( 0 ) === '/' ? st.route : '/' + st.route;
+			var path = base + '?preset=' + encodeURIComponent( current.preset );
+			if ( current.preset === 'custom' ) {
+				path += '&start=' + encodeURIComponent( current.start )
+				     +  '&end='   + encodeURIComponent( current.end );
+			}
+			apiFetch( { path: path } )
+				.then( function ( res ) {
+					if ( res && res.start && res.end ) {
+						// Server may clamp/swap — resync local state and the inputs.
+						current.preset = res.preset || current.preset;
+						current.start  = res.start;
+						current.end    = res.end;
+						startIn.value  = res.start;
+						endIn.value    = res.end;
+						setPresetActive( current.preset );
+					}
+					render( res || {} );
+				} )
+				.catch( function () { if ( ! silent ) { body.textContent = I.statsNone || 'No data'; } } )
+				.then( function () {
+					if ( ! silent ) { p.classList.remove( 'is-loading' ); loaded = true; }
+					syncLivePolling();
+				} );
+		}
+
+		// Polling lifecycle for Live mode. Three gates: preset, panel visibility,
+		// tab visibility — drop any one and we stop the timer; re-meet them all
+		// and a single scheduleLive() rearms us.
+		function stopLive() {
+			if ( liveTimer ) { clearTimeout( liveTimer ); liveTimer = null; }
+		}
+		function scheduleLive( delay ) {
+			stopLive();
+			liveTimer = setTimeout( tickLive, delay );
+		}
+		function syncLivePolling() {
+			if ( current.preset !== 'live' || p.hidden || document.hidden ) {
+				stopLive();
+				return;
+			}
+			if ( liveTimer ) { return; }
+			scheduleLive( liveInterval );
+		}
+		function tickLive() {
+			liveTimer = null;
+			if ( current.preset !== 'live' || p.hidden || document.hidden ) { return; }
+			load( true );
+		}
+		document.addEventListener( 'visibilitychange', syncLivePolling );
+
+		function num( n ) {
+			try { return Number( n || 0 ).toLocaleString(); } catch ( e ) { return String( n || 0 ); }
+		}
+
+		function render( res ) {
+			body.innerHTML = '';
+
+			// Live mode has its own shape (no totals, no series). Show the active
+			// pill only on the live tab; always hide it on period presets.
+			if ( res.preset === 'live' ) {
+				var a = res.active | 0;
+				if ( a > 0 ) {
+					active.hidden = false;
+					active.innerHTML = '';
+					active.appendChild( el( 'span', { 'class': 'ak-stats__active-dot' } ) );
+					active.appendChild( document.createTextNode( num( a ) + ' ' + ( I.statsActive || 'active now' ) ) );
+				} else {
+					active.hidden = true;
+				}
+				renderLive( res );
+				return;
+			}
+
+			// Period presets — never show the active-now pill here.
+			active.hidden = true;
+
+			var totals = res.totals || { visits: 0, pageviews: 0 };
+			if ( ! ( totals.pageviews > 0 ) ) {
+				body.appendChild( el( 'p', { 'class': 'ak-stats__empty', text: I.statsNoData || 'No traffic data yet.' } ) );
+				return;
+			}
+
+			// Metrics.
+			body.appendChild( el( 'div', { 'class': 'ak-stats__metrics' }, [
+				metric( num( totals.visits ), I.statsVisits || 'Visits' ),
+				metric( num( totals.pageviews ), I.statsPageviews || 'Page views' )
+			] ) );
+
+			// Bar chart (page views per day).
+			body.appendChild( chart( res.series || [] ) );
+
+			// Two full lists.
+			body.appendChild( el( 'div', { 'class': 'ak-stats__cols' }, [
+				pageList( res.pages || [] ),
+				sourceList( res.sources || [] )
+			] ) );
+		}
+
+		// Live-mode body: oversized active-now count, then "Currently viewing"
+		// (pages) and "Coming from" (sources) lists scoped to the active visitors
+		// in the last few minutes. Same list shell as the period view so the
+		// visual rhythm is preserved.
+		function renderLive( res ) {
+			var count = res.active | 0;
+			body.appendChild( el( 'div', { 'class': 'ak-stats__live-headline' }, [
+				el( 'span', { 'class': 'ak-stats__live-num', text: num( count ) } ),
+				el( 'span', {
+					'class': 'ak-stats__live-lbl',
+					text: count === 1
+						? ( I.statsLiveHeadOne  || 'visitor active right now' )
+						: ( I.statsLiveHeadMany || 'visitors active right now' )
+				} )
+			] ) );
+			if ( 0 === count ) {
+				body.appendChild( el( 'p', { 'class': 'ak-stats__live-empty', text: I.statsLiveEmpty || 'Nobody is on the site right now.' } ) );
+				return;
+			}
+			body.appendChild( el( 'div', { 'class': 'ak-stats__cols' }, [
+				liveList( I.statsLiveViewing || 'Currently viewing', res.pages || [], true ),
+				liveList( I.statsLiveFrom    || 'Coming from',       res.sources || [], false )
+			] ) );
+		}
+
+		function liveList( heading, rows, isPages ) {
+			var box = listShell(
+				heading,
+				isPages ? ( I.statsColPage || 'Page' ) : ( I.statsColSource || 'Source' ),
+				I.statsLiveColViewers || 'Viewers'
+			);
+			if ( ! rows.length ) {
+				box.appendChild( el( 'p', { 'class': 'ak-stats__none', text: I.statsNone || 'No data' } ) );
+				return box;
+			}
+			var ul = el( 'ul', { 'class': 'ak-stats__rows' } );
+			rows.forEach( function ( r ) {
+				var nameEl;
+				if ( isPages ) {
+					nameEl = el( 'a', { 'class': 'ak-stats__row-name', href: r.url || '#', target: '_blank', rel: 'noopener', title: r.path || '' }, [
+						el( 'span', { 'class': 'ak-stats__row-title', text: r.title || r.path || '' } ),
+						el( 'span', { 'class': 'ak-stats__row-sub',   text: r.path || '' } )
+					] );
+				} else {
+					var label = ( r.name === 'direct' ) ? ( I.statsDirect || 'Direct' ) : ( r.name || '' );
+					nameEl = el( 'span', { 'class': 'ak-stats__row-name', title: label, text: label } );
+				}
+				ul.appendChild( el( 'li', { 'class': 'ak-stats__row' }, [
+					nameEl,
+					el( 'span', { 'class': 'ak-stats__row-val', text: num( r.viewers ) } )
+				] ) );
+			} );
+			box.appendChild( ul );
+			return box;
+		}
+
+		function metric( value, label ) {
+			return el( 'div', { 'class': 'ak-stats__metric' }, [
+				el( 'span', { 'class': 'ak-stats__metric-num', text: value } ),
+				el( 'span', { 'class': 'ak-stats__metric-lbl', text: label } )
+			] );
+		}
+
+		// A lightweight SVG bar chart — one bar per day, page views. Built with the
+		// DOM (createElementNS) so values are plain numbers, no markup injection.
+		function chart( series ) {
+			var wrap = el( 'div', { 'class': 'ak-stats__chart' } );
+			if ( ! series.length ) { return wrap; }
+			var max = 1;
+			series.forEach( function ( d ) { if ( ( d.pageviews | 0 ) > max ) { max = d.pageviews | 0; } } );
+
+			var NS = 'http://www.w3.org/2000/svg';
+			var W = 600, H = 120, gap = 2;
+			var bw = ( W - gap * ( series.length - 1 ) ) / series.length;
+			var svg = document.createElementNS( NS, 'svg' );
+			svg.setAttribute( 'class', 'ak-stats__chart-svg' );
+			svg.setAttribute( 'viewBox', '0 0 ' + W + ' ' + H );
+			svg.setAttribute( 'preserveAspectRatio', 'none' );
+			series.forEach( function ( d, i ) {
+				var pv = d.pageviews | 0;
+				var h = Math.max( 1, Math.round( ( pv / max ) * ( H - 2 ) ) );
+				var r = document.createElementNS( NS, 'rect' );
+				r.setAttribute( 'class', 'ak-stats__bar' );
+				r.setAttribute( 'x', ( i * ( bw + gap ) ).toFixed( 2 ) );
+				r.setAttribute( 'y', ( H - h ).toFixed( 2 ) );
+				r.setAttribute( 'width', bw.toFixed( 2 ) );
+				r.setAttribute( 'height', h.toFixed( 2 ) );
+				var title = document.createElementNS( NS, 'title' );
+				title.textContent = ( d.date || '' ) + ' · ' + num( pv ) + ' ' + ( I.statsColViews || 'views' );
+				r.appendChild( title );
+				svg.appendChild( r );
+			} );
+			wrap.appendChild( svg );
+			return wrap;
+		}
+
+		function listShell( heading, colName, colVal ) {
+			return el( 'div', { 'class': 'ak-stats__list' }, [
+				el( 'div', { 'class': 'ak-stats__list-head' }, [
+					el( 'span', { 'class': 'ak-stats__list-h', text: heading } ),
+					el( 'span', { 'class': 'ak-stats__list-hv', text: colVal } )
+				] )
+			] );
+		}
+
+		function pageList( rows ) {
+			var box = listShell( I.statsTopPages || 'Top pages', I.statsColPage, I.statsColViews || 'Views' );
+			if ( ! rows.length ) {
+				box.appendChild( el( 'p', { 'class': 'ak-stats__none', text: I.statsNone || 'No data' } ) );
+				return box;
+			}
+			var ul = el( 'ul', { 'class': 'ak-stats__rows' } );
+			rows.forEach( function ( r ) {
+				var link = el( 'a', { 'class': 'ak-stats__row-name', href: r.url || '#', target: '_blank', rel: 'noopener', title: r.path || '' }, [
+					el( 'span', { 'class': 'ak-stats__row-title', text: r.title || r.path || '' } ),
+					el( 'span', { 'class': 'ak-stats__row-sub', text: r.path || '' } )
+				] );
+				ul.appendChild( el( 'li', { 'class': 'ak-stats__row' }, [
+					link,
+					el( 'span', { 'class': 'ak-stats__row-val', text: num( r.pageviews ) } )
+				] ) );
+			} );
+			box.appendChild( ul );
+			return box;
+		}
+
+		function sourceList( rows ) {
+			var box = listShell( I.statsTopSources || 'Top sources', I.statsColSource, I.statsColVisits || 'Visits' );
+			if ( ! rows.length ) {
+				box.appendChild( el( 'p', { 'class': 'ak-stats__none', text: I.statsNone || 'No data' } ) );
+				return box;
+			}
+			var ul = el( 'ul', { 'class': 'ak-stats__rows' } );
+			rows.forEach( function ( r ) {
+				var label = ( r.name === 'direct' ) ? ( I.statsDirect || 'Direct' ) : ( r.name || '' );
+				ul.appendChild( el( 'li', { 'class': 'ak-stats__row' }, [
+					el( 'span', { 'class': 'ak-stats__row-name', title: label, text: label } ),
+					el( 'span', { 'class': 'ak-stats__row-val', text: num( r.visits ) } )
+				] ) );
+			} );
+			box.appendChild( ul );
+			return box;
+		}
+
+		// Kick off the first fetch. On the dedicated Statistics page (SCREEN===stats)
+		// the panel IS the page — load immediately, no lazy-load gymnastics needed.
+		// In the multi-tab SPA (SCREEN===main), defer until the Stats tab is shown:
+		// a MutationObserver on the panel's `hidden` attribute triggers the first
+		// load, and on every subsequent show, restarts the Live polling if active.
+		if ( SCREEN === 'stats' ) {
+			load();
+		} else {
+			function onPanelVisibility() {
+				if ( p.hidden ) { stopLive(); return; }
+				if ( ! loaded ) { load(); return; }
+				syncLivePolling();
+			}
+			if ( window.MutationObserver ) {
+				var mo = new MutationObserver( onPanelVisibility );
+				mo.observe( p, { attributes: true, attributeFilter: [ 'hidden' ] } );
+			}
+			if ( ( location.hash || '' ).replace( /^#/, '' ) === 'stats' ) {
+				load();
+			}
+		}
 
 		return p;
 	}
@@ -973,24 +1419,44 @@
 			}
 			// else: a real menu that no longer exists → drop it.
 		} );
-		// Insert unseen snapshot items (native separators, plus any menu added since the
-		// layout was saved) at their NATURAL spot — right after the previous snapshot item
-		// already in the model — rather than dumping them all at the bottom.
+		// Place the snapshot items the saved layout didn't already position. Each is set
+		// at its NATURAL snapshot spot (right after the previous placed item) so the
+		// menu reproduces WordPress's default order — separators interspersed, not
+		// clustered. EXCEPTION: when a saved layout EXISTS, a real menu it doesn't list
+		// is a genuinely new plugin → defer it to the very bottom (ordered by first-seen
+		// below). With NO saved layout (a reset / pristine view) nothing is "new", so
+		// everything — separators AND menus — is placed naturally.
+		var hasConfig = ( ( config && config.top ) || [] ).length > 0;
 		var indexOfSlug = function ( slug ) {
 			for ( var i = 0; i < model.length; i++ ) { if ( model[ i ].slug === slug ) { return i; } }
 			return -1;
 		};
+		var pending = [];
 		var prevSlug = null;
 		( snapshot || [] ).forEach( function ( m ) {
 			if ( seen[ m.slug ] ) { prevSlug = m.slug; return; }
+			if ( hasConfig && m.type !== 'separator' ) {
+				pending.push( m ); // new plugin (layout exists but omits it) → bottom; does NOT advance prevSlug
+				return;
+			}
 			var node = ( m.type === 'separator' )
 				? { type: 'separator', slug: m.slug, hidden: false }
 				: makeTop( m, null, subCfg, childTitle, claimed );
-			var at = ( prevSlug !== null ) ? indexOfSlug( prevSlug ) : -1;
+			var at  = ( prevSlug !== null ) ? indexOfSlug( prevSlug ) : -1;
 			var pos = ( at >= 0 ) ? at + 1 : ( null === prevSlug ? 0 : model.length );
 			model.splice( pos, 0, node );
 			prevSlug = m.slug;
 		} );
+		// New plugins (only when a layout exists) → appended at the very bottom, ordered
+		// by the order AdminKit first saw them (newest last), mirroring order_top_level().
+		var seenRank = {};
+		( MM.seen || [] ).forEach( function ( slug, i ) { seenRank[ slug ] = i; } );
+		pending.sort( function ( a, b ) {
+			var ra = ( null != seenRank[ a.slug ] ) ? seenRank[ a.slug ] : 1e9;
+			var rb = ( null != seenRank[ b.slug ] ) ? seenRank[ b.slug ] : 1e9;
+			return ra - rb;
+		} );
+		pending.forEach( function ( m ) { model.push( makeTop( m, null, subCfg, childTitle, claimed ) ); } );
 		return model;
 	}
 
@@ -1012,7 +1478,7 @@
 		return {
 			type: 'item', slug: m.slug, otitle: m.title,
 			title: ( topCfg.title && topCfg.title !== '' ) ? topCfg.title : m.title,
-			dashicon: m.dashicon || '', icon: topCfg.icon || '', hidden: !! topCfg.hidden,
+			dashicon: m.dashicon || '', icon: topCfg.icon || '', url: topCfg.url || '', hidden: !! topCfg.hidden,
 			open: false, children: children
 		};
 	}
@@ -1023,7 +1489,7 @@
 			return { type: 'separator', slug: t.slug, hidden: !! t.hidden };
 		}
 		// Links store their destination URL as the slug.
-		return { type: 'link', slug: t.slug, url: t.slug, title: t.title || '', icon: t.icon || '', hidden: !! t.hidden };
+		return { type: 'link', slug: t.slug, url: t.slug, title: t.title || '', icon: t.icon || '', hidden: !! t.hidden, newTab: !! t.new_tab };
 	}
 
 	// Flatten the model into rows for the POST (position = array index).
@@ -1034,14 +1500,14 @@
 			if ( type === 'link' ) {
 				var url = ( top.url || '' ).replace( /^\s+|\s+$/g, '' );
 				if ( ! url ) { return; } // a link with no URL yet is dropped
-				items.push( { parent: '', slug: url, position: ti, icon: top.icon || '', hidden: !! top.hidden, type: 'link', title: top.title || '' } );
+				items.push( { parent: '', slug: url, position: ti, icon: top.icon || '', hidden: !! top.hidden, type: 'link', title: top.title || '', newTab: !! top.newTab } );
 				return;
 			}
 			if ( type === 'separator' ) {
 				items.push( { parent: '', slug: top.slug, position: ti, hidden: !! top.hidden, type: 'separator', title: '' } );
 				return;
 			}
-			items.push( { parent: '', slug: top.slug, position: ti, icon: top.icon || '', hidden: !! top.hidden, type: 'item', title: titleOverride( top ) } );
+			items.push( { parent: '', slug: top.slug, position: ti, icon: top.icon || '', url: top.url || '', hidden: !! top.hidden, type: 'item', title: titleOverride( top ) } );
 			( top.children || [] ).forEach( function ( child, ci ) {
 				items.push( { parent: top.slug, slug: child.slug, position: ci, hidden: !! child.hidden, title: titleOverride( child ) } );
 			} );
@@ -1102,7 +1568,6 @@
 		var h = handle();
 		row.appendChild( h );
 		row.appendChild( el( 'span', { 'class': 'ak-menu-row__title ak-menu-seplabel', text: '— ' + I.menuSeparator + ' —' } ) );
-		row.appendChild( moveBtns( state.menu, ti, tree ) );
 		row.appendChild( hideBtn( item, tree ) );
 		row.appendChild( removeBtn( ti, tree ) );
 		dragSource( h, row, { kind: 'top', ti: ti } );
@@ -1123,7 +1588,7 @@
 		urlIn.addEventListener( 'input', function () { item.url = urlIn.value; markMenuDirty(); } );
 		row.appendChild( titleIn );
 		row.appendChild( urlIn );
-		row.appendChild( moveBtns( state.menu, ti, tree ) );
+		row.appendChild( newTabBtn( item, tree ) );
 		row.appendChild( hideBtn( item, tree ) );
 		row.appendChild( removeBtn( ti, tree ) );
 		// Drag from the handle only, so the URL/title inputs stay text-selectable.
@@ -1149,14 +1614,17 @@
 		row.appendChild( iconBtn( top, tree ) );
 		row.appendChild( titleInput( top ) );
 		if ( top.children.length ) {
+			var caret = el( 'span', { 'class': 'ak-menu-row__caret', 'aria-hidden': 'true' } );
+			caret.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
 			row.appendChild( el( 'button', {
 				type: 'button',
 				'class': 'ak-menu-row__expand' + ( top.open ? ' on' : '' ),
-				text: top.children.length + ' ' + I.menuSubmenus,
+				'aria-expanded': top.open ? 'true' : 'false',
+				title: I.menuSubmenusToggle,
 				onclick: function () { top.open = ! top.open; renderTree( tree ); }
-			} ) );
+			}, [ caret, el( 'span', { text: top.children.length + ' ' + I.menuSubmenus } ) ] ) );
 		}
-		row.appendChild( moveBtns( state.menu, ti, tree ) );
+		row.appendChild( urlBtn( top, tree ) );
 		if ( top.slug !== MM.self ) {
 			row.appendChild( hideBtn( top, tree ) );
 		}
@@ -1186,7 +1654,6 @@
 		var h = handle();
 		row.appendChild( h );
 		row.appendChild( titleInput( child ) );
-		row.appendChild( moveBtns( state.menu[ ti ].children, ci, tree ) );
 		row.appendChild( hideBtn( child, tree ) );
 		dragSource( h, row, { kind: 'sub', ti: ti, ci: ci } );
 		dropZone( row, function ( ds ) { return ds.kind === 'sub'; }, function ( ds ) {
@@ -1201,21 +1668,6 @@
 		return h;
 	}
 
-	function moveBtns( list, i, tree ) {
-		var wrap = el( 'span', { 'class': 'ak-menu-move' } );
-		var up = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveUp, 'aria-label': I.menuMoveUp, text: '↑', onclick: function () {
-			if ( i > 0 ) { moveItem( list, i, i - 1 ); renderTree( tree ); markMenuDirty(); }
-		} } );
-		if ( i === 0 ) { up.disabled = true; }
-		var down = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveDown, 'aria-label': I.menuMoveDown, text: '↓', onclick: function () {
-			if ( i < list.length - 1 ) { moveItem( list, i, i + 1 ); renderTree( tree ); markMenuDirty(); }
-		} } );
-		if ( i === list.length - 1 ) { down.disabled = true; }
-		wrap.appendChild( up );
-		wrap.appendChild( down );
-		return wrap;
-	}
-
 	function hideBtn( item, tree ) {
 		return el( 'button', {
 			type: 'button',
@@ -1224,11 +1676,6 @@
 			text: item.hidden ? I.menuShow : I.menuHide,
 			onclick: function () { item.hidden = ! item.hidden; renderTree( tree ); markMenuDirty(); }
 		} );
-	}
-
-	function moveItem( list, from, to ) {
-		var m = list.splice( from, 1 )[ 0 ];
-		list.splice( to, 0, m );
 	}
 
 	// Icon button + popover picker (top-level only — WordPress submenus have no icon).
@@ -1242,7 +1689,10 @@
 	function paintIcon( btn, top ) {
 		btn.textContent = '';
 		var g;
-		if ( top.icon && top.icon.indexOf( 'data:' ) === 0 ) {
+		if ( top.icon === 'wp-default' ) {
+			// Show the item's original WordPress dashicon in the picker button.
+			g = el( 'span', { 'class': 'dashicons ' + ( top.dashicon || 'dashicons-admin-settings' ) } );
+		} else if ( top.icon && top.icon.indexOf( 'data:' ) === 0 ) {
 			g = el( 'span', { 'class': 'ak-menu-icon__g ak-menu-icon__mask' } );
 			g.style.webkitMaskImage = 'url("' + top.icon + '")';
 			g.style.maskImage = 'url("' + top.icon + '")';
@@ -1261,9 +1711,14 @@
 	function openIconPicker( anchor, top, tree ) {
 		closeIconPicker();
 		var pop = el( 'div', { 'class': 'ak-icon-pop' } );
-		pop.appendChild( el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconNone, onclick: function () {
+		var defBar = el( 'div', { 'class': 'ak-icon-pop__defbar' } );
+		defBar.appendChild( el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconNone, onclick: function () {
 			top.icon = ''; renderTree( tree ); markMenuDirty(); closeIconPicker();
 		} } ) );
+		defBar.appendChild( el( 'button', { type: 'button', 'class': 'ak-icon-pop__def' + ( top.icon === 'wp-default' ? ' on' : '' ), text: I.menuIconWp || 'WordPress icon', onclick: function () {
+			top.icon = 'wp-default'; renderTree( tree ); markMenuDirty(); closeIconPicker();
+		} } ) );
+		pop.appendChild( defBar );
 		var grid = el( 'div', { 'class': 'ak-icon-pop__grid' } );
 		Object.keys( MM.icons || {} ).forEach( function ( name ) {
 			var sw = el( 'button', { type: 'button', 'class': 'ak-icon-pop__sw' + ( top.icon === name ? ' on' : '' ), title: name, 'aria-label': name, onclick: function () {
@@ -1273,8 +1728,11 @@
 			grid.appendChild( sw );
 		} );
 		pop.appendChild( grid );
-		// Custom icon — raw <svg> markup or a data:image/svg+xml URI (base64 or encoded).
-		var ta = el( 'textarea', { 'class': 'ak-icon-pop__ta', rows: '2', placeholder: I.menuIconCustom } );
+		// Custom icon — one line: a leading image glyph (the affordance) + a field to
+		// paste raw <svg> markup or a data:image/svg+xml URI (base64 or encoded) + Apply.
+		var customIc = el( 'span', { 'class': 'ak-icon-pop__customic', 'aria-hidden': 'true' } );
+		customIc.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg>';
+		var ta = el( 'input', { type: 'text', 'class': 'ak-icon-pop__ta', placeholder: I.menuIconCustom } );
 		var applyBtn = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--small', text: I.menuIconApply, onclick: function () {
 			var v = ( ta.value || '' ).replace( /^\s+|\s+$/g, '' );
 			if ( ! v ) { return; }
@@ -1282,7 +1740,8 @@
 			if ( v.indexOf( 'data:image/svg+xml' ) !== 0 ) { return; }
 			top.icon = v; renderTree( tree ); markMenuDirty(); closeIconPicker();
 		} } );
-		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom' }, [ ta, applyBtn ] ) );
+		ta.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Enter' ) { e.preventDefault(); applyBtn.click(); } } );
+		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom' }, [ customIc, ta, applyBtn ] ) );
 		anchor.parentNode.appendChild( pop );
 		openPicker = pop;
 		setTimeout( function () { document.addEventListener( 'mousedown', onDocDown, true ); }, 0 );
@@ -1296,6 +1755,47 @@
 		if ( openPicker && openPicker.parentNode ) { openPicker.parentNode.removeChild( openPicker ); }
 		openPicker = null;
 		document.removeEventListener( 'mousedown', onDocDown, true );
+	}
+
+	// "Open in new tab" toggle for custom links — adds target="_blank" at apply time.
+	function newTabBtn( item, tree ) {
+		var btn = el( 'button', {
+			type: 'button',
+			'class': 'ak-menu-newtab' + ( item.newTab ? ' on' : '' ),
+			'aria-pressed': item.newTab ? 'true' : 'false',
+			title: I.menuNewTab, 'aria-label': I.menuNewTab,
+			onclick: function () { item.newTab = ! item.newTab; renderTree( tree ); markMenuDirty(); }
+		} );
+		btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M10 14L20 4"/><path d="M19 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/></svg>';
+		return btn;
+	}
+
+	// Custom-URL button + popover (top-level items). A set URL repoints the top item;
+	// its submenu keeps working. Reuses the icon picker's open/close machinery.
+	function urlBtn( top, tree ) {
+		var on = !! ( top.url && top.url !== '' );
+		var btn = el( 'button', { type: 'button', 'class': 'ak-menu-url' + ( on ? ' on' : '' ), title: I.menuUrlTitle, 'aria-label': I.menuUrlTitle } );
+		btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+		btn.addEventListener( 'click', function ( e ) { e.stopPropagation(); openUrlPicker( btn, top, tree ); } );
+		return btn;
+	}
+
+	function openUrlPicker( anchor, top, tree ) {
+		closeIconPicker();
+		var pop = el( 'div', { 'class': 'ak-icon-pop ak-url-pop' } );
+		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__customlbl', text: I.menuUrlLabel } ) );
+		var inp = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: top.url || '', placeholder: I.menuLinkUrl } );
+		var apply = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--small', text: I.menuIconApply, onclick: function () {
+			top.url = ( inp.value || '' ).replace( /^\s+|\s+$/g, '' );
+			renderTree( tree ); markMenuDirty(); closeIconPicker();
+		} } );
+		var clear = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--small ak-btn--ghost', text: I.menuUrlClear, onclick: function () {
+			top.url = ''; renderTree( tree ); markMenuDirty(); closeIconPicker();
+		} } );
+		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom ak-url-pop__row' }, [ inp, apply, clear ] ) );
+		anchor.parentNode.appendChild( pop );
+		openPicker = pop;
+		setTimeout( function () { document.addEventListener( 'mousedown', onDocDown, true ); }, 0 );
 	}
 
 	// Tree drag-and-drop. A drag carries { kind:'top', ti } or { kind:'sub', ti, ci }.
@@ -1388,13 +1888,21 @@
 		if ( ! apiFetch ) { setStatus( 'is-error', I.error ); return; }
 		state.saving = true;
 		updateBar();
-		var path = D.route.charAt( 0 ) === '/' ? D.route : '/' + D.route;
-		var jobs = [ apiFetch( { path: path, method: 'POST', data: { values: gather() } } ) ];
-		// The menu layout posts to its own route, only when the Menu tab changed.
+		// Each screen posts ONLY its own data: the Settings screen posts the settings
+		// values; the Menu screen posts the layout to its own route. (Never POST the
+		// settings values from the Menu screen — gather() there is empty and would
+		// clear stored settings.)
+		var jobs = [];
+		if ( SCREEN === 'main' ) {
+			var path = D.route.charAt( 0 ) === '/' ? D.route : '/' + D.route;
+			jobs.push( apiFetch( { path: path, method: 'POST', data: { values: gather() } } ) );
+		}
+		// The menu layout posts to its own route, only when it changed.
 		if ( state.menuDirty && D.menuManager && D.menuManager.route ) {
 			var mpath = D.menuManager.route.charAt( 0 ) === '/' ? D.menuManager.route : '/' + D.menuManager.route;
 			jobs.push( apiFetch( { path: mpath, method: 'POST', data: { items: gatherMenu() } } ) );
 		}
+		if ( ! jobs.length ) { state.saving = false; state.dirty = false; updateBar(); return; }
 		Promise.all( jobs )
 			.then( function () {
 				state.saving = false;
