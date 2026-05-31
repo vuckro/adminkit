@@ -15,25 +15,26 @@ inc/
   class-assets.php       Asset registry + dispatcher + the token cascade (enqueue_tokens);
                          enqueue_script() for the JS bricks.
   class-screen.php       WP_Screen helpers.
-  class-settings.php     Settings registry (register/get/schema) + defaults.
-  class-settings-catalog.php Settings SPA catalogs (features, integrations).
-  class-settings-gate.php Per-integration + generic-plugin theming gates.
-  class-settings-page.php Admin menu + REST save; mounts the shared SPA engine per-screen
+  class-icons.php        Inline SVG icon set shared across modules.
+  class-theme-toggle.php  Dark/light toggle + login logo. Owns the pre-paint inline script.
+  settings/               The settings system (registry + SPA host):
+    class-settings.php       Registry (register/get/schema) + defaults.
+    class-settings-catalog.php  SPA catalogs (features, integrations).
+    class-settings-gate.php  Per-integration + generic-plugin theming gates.
+    class-settings-page.php  Admin menu + REST save; mounts the shared SPA engine per-screen
                          (data-screen = main|menu|stats) via render_host/enqueue_app/boot_data.
                          Three subpages: Settings (tabbed: Brand·Features·Plugins), Menu,
                          Statistics (read-only). One build-free vanilla-DOM engine; dark mode is
                          design-time CSS only (no runtime auto-theme engine).
-  class-theme-toggle.php  Dark/light toggle + login logo. Owns the pre-paint inline script.
-  class-icons.php         Inline SVG icon set shared across modules.
-  wp-core/                AdminKit's restyle of WP-core surfaces, one concern per file: chrome,
+  wp-core/                Restyle of EXISTING WordPress screens, one concern per file: chrome,
                          login, branding, menu-icons, profile, local-avatars, list-table,
                          options-*, post-previews, user-quick-edit, username-changer, admin-bar,
-                         custom-dashboard, online-users, notification-center, footer, help-button,
-                         plugins-list.
-  features/               Self-contained AdminKit tools, each its OWN focused admin subpage (vs
-                         wp-core, which restyles existing WP screens). Self-register via
-                         add_submenu_page on the AdminKit menu. menu/ = admin-menu editor;
-                         stats/ = cookieless analytics.
+                         footer, help-button, plugins-list.
+  features/               AdminKit tools that ADD a surface (a page, a dashboard, a data store) —
+                         NOT restyling. One folder each: dashboard/ (custom dashboard),
+                         online-users/, notifications/ (notification center), menu/ (admin-menu
+                         editor), stats/ (cookieless analytics). Each self-registers its hooks;
+                         menu/ + stats/ add their own AdminKit subpage.
   integrations/
     abstract-integration.php   AdminKit_Integration_Base.
     plugins/{slug}/            Plugin adapters (acf, woocommerce, …) — class + css/ + baseline.json.
