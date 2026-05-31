@@ -50,8 +50,7 @@ Use this when you want to read, modify, or contribute to AdminKit.
 ```bash
 # 1. Clone the repo somewhere convenient (NOT inside wp-content/plugins/).
 git clone https://github.com/vuckro/adminkit.git ~/code/adminkit
-cd ~/code/adminkit
-git checkout docs/overhaul         # active integration branch — see CLAUDE.md
+cd ~/code/adminkit                 # main is the only branch — see CLAUDE.md
 
 # 2. Symlink (or copy) into your WP install.
 ln -s ~/code/adminkit /path/to/wp-content/plugins/adminkit
@@ -89,9 +88,10 @@ files (`dev/`, `tokens/`, `.claude/`, `CLAUDE.md`, …) never leak into a releas
 php dev/package.php \
   --target="/path/to/your/wp-content/plugins"
 
-# To package a specific branch / tag instead of origin/docs/overhaul:
-php dev/package.php --ref=main --target=...
+# package.php defaults to origin/main. To package a specific tag instead:
 php dev/package.php --ref=v1.0.0 --target=...
+# ...or the local uncommitted working tree:
+php dev/package.php --working-tree --target=...
 
 # To install the local working tree (incl. uncommitted changes):
 php dev/package.php --working-tree --target=...
@@ -130,7 +130,7 @@ Lists every file that would land in the install. Use this when you change
    - `readme.txt` → `Stable tag:`
 3. Add a `== Changelog ==` entry in `readme.txt`.
 4. Run the four pre-merge gates above.
-5. Promote `docs/overhaul` → `main` (fast-forward only, never force-push).
+5. Commit to `main` and `git push` (main is the trunk — no promotion step).
 6. Tag: `git tag vX.Y.Z && git push --tags`.
 7. Cut the zip: `php dev/package.php --ref=vX.Y.Z --zip=adminkit-X.Y.Z.zip`.
 8. Upload the zip to GitHub Releases for tag `vX.Y.Z`.
@@ -150,7 +150,7 @@ instead of `adminkit/`. WordPress wants the directory to match the main PHP
 file's slug. Rename it to `adminkit/` and try again — or use the release zip
 from `dev/package.php`, which gets the folder name right by construction.
 
-**`git archive` fails: "unknown revision 'origin/docs/overhaul'".**
+**`git archive` fails: "unknown revision 'origin/main'".**
 You haven't fetched the remote. `git fetch origin && php dev/package.php …`.
 
 **`dev/package.php` complains about a forbidden path.**
