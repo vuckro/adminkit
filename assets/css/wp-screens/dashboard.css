@@ -1432,28 +1432,75 @@ body.adminkit .ak-dash__stats-live {
 	gap: 4px;
 }
 
-/* Big headline: visitor count + tagline. */
+/* Big headline: visitor count + tagline — mirrors the Statistics page Live hero
+   (centred accent count, soft circular halo, ripple ring), scaled for the card. */
 body.adminkit .ak-dash__stats-live-headline {
+	position: relative;
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
-	gap: 2px;
-	padding: 14px 16px 6px;
+	align-items: center;
+	text-align: center;
+	gap: 8px;
+	padding: 26px 16px 18px;
+}
+body.adminkit .ak-dash__stats-live-headline::before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 42%;
+	width: 200px;
+	height: 200px;
+	transform: translate( -50%, -50% );
+	background: radial-gradient( circle, var(--ak-primary) 0%, transparent 66% );
+	opacity: .1;
+	pointer-events: none;
+	z-index: 0;
 }
 body.adminkit .ak-dash__stats-live-num {
-	font-size: 44px;
-	font-weight: 700;
+	position: relative;
+	z-index: 1;
+	font-size: 60px;
+	font-weight: 800;
 	line-height: 1;
-	color: var(--ak-heading);
+	letter-spacing: -.03em;
+	color: var(--ak-primary);
 	font-variant-numeric: tabular-nums;
 }
+body.adminkit .ak-dash__stats-live-num::before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 1.5em;
+	height: 1.5em;
+	transform: translate( -50%, -50% );
+	border-radius: 50%;
+	border: 2px solid var(--ak-primary);
+	opacity: .4;
+	z-index: -1;
+	animation: ak-live-ring 2.1s ease-out infinite;
+}
+@keyframes ak-live-ring {
+	0%   { transform: translate( -50%, -50% ) scale( .7 );  opacity: .5; }
+	70%  { opacity: 0; }
+	100% { transform: translate( -50%, -50% ) scale( 2.3 ); opacity: 0; }
+}
+@media ( prefers-reduced-motion: reduce ) {
+	body.adminkit .ak-dash__stats-live-num::before { animation: none; }
+}
 body.adminkit .ak-dash__stats-live-lbl {
-	font-size: var(--ak-text-s);
+	position: relative;
+	z-index: 1;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
 	color: var(--ak-text-muted);
+	text-transform: uppercase;
+	letter-spacing: .1em;
 }
 body.adminkit .ak-dash__stats-live-empty {
 	margin: 0;
-	padding: 6px 16px 16px;
+	padding: 4px 16px 18px;
+	text-align: center;
 	font-size: var(--ak-text-s);
 	color: var(--ak-text-muted);
 }

@@ -25,11 +25,10 @@
 }
 
 /* ── Main Settings: full-width responsive layout ─────────────────────────────
-   Utility bars stay readable (not stretched); the Brand tab is a form, so it
-   keeps a comfortable column; Features + Plugins reflow into a 2 → 3 column card
-   grid on wider viewports, collapsing back to the stacked card list on narrow. */
+   Everything runs full width. The search bar stays readable (not stretched);
+   the Brand studio spans the full width (controls | live preview); Features +
+   Plugins reflow into a 2 → 3 column card grid, collapsing on narrow. */
 .adminkit-app[data-screen="main"] .ak-search-wrap { max-width: 460px; }
-.adminkit-app[data-screen="main"] .ak-panel--brand { max-width: 940px; }
 
 @media screen and (min-width: 900px) {
 	.adminkit-app[data-screen="main"] .ak-rows {
@@ -1388,64 +1387,79 @@
 	.adminkit-app .ak-stats__preset--live.is-active .ak-stats__pulse { animation: none; }
 }
 
-/* Live view — a real-time hero. The active count is the centrepiece, wrapped in a
-   soft accent glow with a "breathing" ring so the view reads as alive at a glance.
-   Pure CSS (transform/opacity only), reduced-motion aware — no JS, no perf cost. */
+/* Live view — a real-time hero. The active count is the centrepiece: a soft
+   CIRCULAR accent halo (no boxy backdrop) plus a thin ring that ripples outward,
+   so it reads as alive and elegant. Pure CSS (transform/opacity), reduced-motion
+   aware — no JS, no perf cost. Mirrored on the dashboard card (wp-screens). */
 .adminkit-app .ak-stats__live-headline {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
-	gap: 6px;
-	margin: 8px auto 22px;
-	padding: 38px 16px 30px;
-	max-width: 540px;
-	background: radial-gradient( 70% 120% at 50% 34%, var(--ak-primary-subtle), transparent 72% );
-	border-radius: var(--ak-card-radius);
+	gap: 10px;
+	margin: 40px auto 30px;
+	padding: 16px;
+}
+/* Soft circular halo behind the number — truly radial, fades to nothing. */
+.adminkit-app .ak-stats__live-headline::before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 44%;
+	width: 300px;
+	height: 300px;
+	transform: translate( -50%, -50% );
+	background: radial-gradient( circle, var(--ak-primary) 0%, transparent 66% );
+	opacity: .1;
+	pointer-events: none;
+	z-index: 0;
 }
 .adminkit-app .ak-stats__live-num {
 	position: relative;
-	z-index: 0;
-	font-size: 84px;
+	z-index: 1;
+	font-size: 92px;
 	font-weight: 800;
 	line-height: 1;
-	letter-spacing: -.02em;
+	letter-spacing: -.03em;
 	color: var(--ak-primary);
 	font-variant-numeric: tabular-nums;
 }
-/* The breathing ring — an accent disc that expands + fades behind the number. */
+/* Ripple ring — a thin accent ring that expands + fades outward (a live pulse). */
 .adminkit-app .ak-stats__live-num::before {
 	content: "";
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	width: 1.6em;
-	height: 1.6em;
+	width: 1.5em;
+	height: 1.5em;
 	transform: translate( -50%, -50% );
 	border-radius: 50%;
-	background: var(--ak-primary);
-	opacity: .16;
+	border: 2px solid var(--ak-primary);
+	opacity: .4;
 	z-index: -1;
-	animation: ak-live-ring 1.9s ease-out infinite;
+	animation: ak-live-ring 2.1s ease-out infinite;
 }
 @keyframes ak-live-ring {
-	0%   { transform: translate( -50%, -50% ) scale( .55 ); opacity: .32; }
+	0%   { transform: translate( -50%, -50% ) scale( .7 );  opacity: .5; }
 	70%  { opacity: 0; }
-	100% { transform: translate( -50%, -50% ) scale( 1.9 ); opacity: 0; }
+	100% { transform: translate( -50%, -50% ) scale( 2.3 ); opacity: 0; }
 }
 @media ( prefers-reduced-motion: reduce ) {
 	.adminkit-app .ak-stats__live-num::before { animation: none; }
 }
 .adminkit-app .ak-stats__live-lbl {
-	font-size: var(--ak-text-s);
-	font-weight: 500;
+	position: relative;
+	z-index: 1;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
 	color: var(--ak-text-muted);
 	text-transform: uppercase;
-	letter-spacing: .06em;
+	letter-spacing: .1em;
 }
 .adminkit-app .ak-stats__live-empty {
-	margin: 2px auto 0;
-	max-width: 540px;
+	margin: 4px auto 0;
+	max-width: 460px;
 	text-align: center;
 	font-size: var(--ak-text-s);
 	color: var(--ak-text-muted);
