@@ -73,14 +73,20 @@ $plugin = dirname( __DIR__ );
 
 ak_group( 'Dashboard default card order (pure)' );
 if ( ! $has_wp ) {
-	// Minimal stubs so the class file loads and default_order()/layout() run.
-	foreach ( array( 'apply_filters', '__', 'esc_html__', 'esc_attr__' ) as $fn ) {
+	// Minimal stubs so the class files load and default_order()/preset_range() run.
+	// The translation helpers echo their source string (arg 0); apply_filters must
+	// echo the FILTERED VALUE (arg 1) — WP returns it unchanged when no filter is
+	// attached — not the hook name, or default_order() returns the hook string.
+	foreach ( array( '__', 'esc_html__', 'esc_attr__' ) as $fn ) {
 		if ( ! function_exists( $fn ) ) { eval( "function $fn(){ return func_num_args() ? func_get_arg(0) : null; }" ); }
 	}
+	if ( ! function_exists( 'apply_filters' ) ) { eval( 'function apply_filters(){ return func_num_args() > 1 ? func_get_arg(1) : null; }' ); }
 	if ( ! function_exists( 'add_filter' ) ) { eval( 'function add_filter(){}' ); }
 	if ( ! function_exists( 'add_action' ) ) { eval( 'function add_action(){}' ); }
+	if ( ! function_exists( 'current_time' ) ) { eval( 'function current_time( $f = "Y-m-d" ){ return gmdate( $f ); }' ); }
 	if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', '/tmp/' ); }
 	require_once "$plugin/inc/features/dashboard/class-custom-dashboard.php";
+	require_once "$plugin/inc/features/stats/class-stats-dashboard.php";
 }
 $m = new ReflectionMethod( 'AdminKit_Custom_Dashboard', 'default_order' );
 $m->setAccessible( true );
@@ -90,9 +96,10 @@ ak_ok( in_array( 'glance', $order['side'] ?? array(), true ), '“At a glance”
 ak_ok( ! in_array( 'glance', $order['main'] ?? array(), true ), '“At a glance” is not in the main column' );
 
 ak_group( 'Stats preset ranges (pure)' );
-$pr = new ReflectionMethod( 'AdminKit_Stats_Dashboard', 'preset_range' );
-// preset_range is only loaded with WP; guard.
+// Build the reflection only after confirming the class loaded — otherwise the
+// ReflectionMethod constructor throws before the guard can skip.
 if ( class_exists( 'AdminKit_Stats_Dashboard' ) ) {
+	$pr = new ReflectionMethod( 'AdminKit_Stats_Dashboard', 'preset_range' );
 	$pr->setAccessible( true );
 	list( $s, $e ) = $pr->invoke( null, 'ytd' );
 	ak_ok( preg_match( '/^\d{4}-01-01$/', $s ), 'Year-to-date starts on Jan 1' );
