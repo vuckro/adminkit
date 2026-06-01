@@ -95,8 +95,8 @@ msgstr "%s sur le disque"
 #: inc/features/dashboard/class-custom-dashboard.php:493 inc/features/dashboard/class-custom-dashboard.php:802
 msgid "%s online now"
 msgid_plural "%s online now"
-msgstr[0] "%s en ligne"
-msgstr[1] "%s en ligne"
+msgstr[0] "%s connecté"
+msgstr[1] "%s connectés"
 
 #: inc/features/dashboard/class-custom-dashboard.php:765
 msgid "%s pending review"
