@@ -1796,6 +1796,7 @@
 		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--sep' + ( item.hidden ? ' is-hidden' : '' ) } );
 		var h = handle();
 		row.appendChild( h );
+		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
 		row.appendChild( el( 'span', { 'class': 'ak-menu-row__title ak-menu-seplabel', text: '— ' + I.menuSeparator + ' —' } ) );
 		row.appendChild( hideBtn( item, tree ) );
 		row.appendChild( removeBtn( ti, tree ) );
@@ -1810,6 +1811,7 @@
 		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--link' + ( item.hidden ? ' is-hidden' : '' ) } );
 		var h = handle();
 		row.appendChild( h );
+		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
 		row.appendChild( iconBtn( item, tree ) );
 		var titleIn = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: item.title || '', placeholder: I.menuLinkTitle } );
 		titleIn.addEventListener( 'input', function () { item.title = titleIn.value; markMenuDirty(); } );
@@ -1840,6 +1842,7 @@
 		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--top' + ( top.hidden ? ' is-hidden' : '' ) } );
 		var h = handle();
 		row.appendChild( h );
+		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
 		row.appendChild( iconBtn( top, tree ) );
 		row.appendChild( titleInput( top ) );
 		if ( top.children.length ) {
@@ -1882,6 +1885,7 @@
 		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--child' + ( child.hidden ? ' is-hidden' : '' ) } );
 		var h = handle();
 		row.appendChild( h );
+		row.appendChild( moveControl( moveChildBy( ti, ci, tree ) ) );
 		row.appendChild( titleInput( child ) );
 		row.appendChild( hideBtn( child, tree ) );
 		dragSource( h, row, { kind: 'sub', ti: ti, ci: ci } );
@@ -1895,6 +1899,37 @@
 		var h = el( 'span', { 'class': 'ak-menu-handle', title: I.menuDragHint, 'aria-hidden': 'true' } );
 		h.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.6"/><circle cx="15" cy="5" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="19" r="1.6"/><circle cx="15" cy="19" r="1.6"/></svg>';
 		return h;
+	}
+
+	// Up/down reorder control next to the drag handle — a keyboard/click-accessible
+	// alternative to dragging (drag-and-drop alone isn't accessible). `move(-1)` =
+	// up, `move(+1)` = down; a no-op at the list edges.
+	function moveControl( move ) {
+		var up = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveUp || 'Move up', 'aria-label': I.menuMoveUp || 'Move up', onclick: function () { move( -1 ); } } );
+		up.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>';
+		var down = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveDown || 'Move down', 'aria-label': I.menuMoveDown || 'Move down', onclick: function () { move( 1 ); } } );
+		down.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+		return el( 'span', { 'class': 'ak-menu-move' }, [ up, down ] );
+	}
+
+	// Swap a top-level item by ±1 (the move() callback for moveControl).
+	function moveTopBy( ti, tree ) {
+		return function ( dir ) {
+			var to = ti + dir, m = state.menu;
+			if ( to < 0 || to >= m.length ) { return; }
+			var tmp = m[ ti ]; m[ ti ] = m[ to ]; m[ to ] = tmp;
+			renderTree( tree ); markMenuDirty();
+		};
+	}
+
+	// Swap a child within its parent's list by ±1.
+	function moveChildBy( ti, ci, tree ) {
+		return function ( dir ) {
+			var kids = state.menu[ ti ].children, to = ci + dir;
+			if ( to < 0 || to >= kids.length ) { return; }
+			var tmp = kids[ ci ]; kids[ ci ] = kids[ to ]; kids[ to ] = tmp;
+			renderTree( tree ); markMenuDirty();
+		};
 	}
 
 	// Hide/Show toggle, a compact eye icon (saves the room the old text button took).

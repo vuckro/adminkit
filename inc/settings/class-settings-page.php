@@ -389,6 +389,8 @@ class AdminKit_Settings_Page {
 				'menuSubmenus'      => __( 'submenus', 'adminkit' ),
 				'menuSubmenusToggle' => __( 'Show / hide submenus', 'adminkit' ),
 				'menuDragHint'      => __( 'Drag to reorder', 'adminkit' ),
+				'menuMoveUp'        => __( 'Move up', 'adminkit' ),
+				'menuMoveDown'      => __( 'Move down', 'adminkit' ),
 				'menuIconCustom'    => __( 'Paste an SVG or a data:image/svg+xml URI…', 'adminkit' ),
 				'menuIconApply'     => __( 'Apply', 'adminkit' ),
 				'menuAddLink'       => __( 'Add link', 'adminkit' ),

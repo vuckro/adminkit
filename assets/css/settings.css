@@ -828,6 +828,32 @@
 	cursor: grab;
 	flex: 0 0 auto;
 }
+/* Up/down reorder control — a compact spinner beside the drag handle (accessible
+   click/keyboard alternative to dragging). */
+.adminkit-app .ak-menu-move {
+	display: inline-flex;
+	flex-direction: column;
+	flex: 0 0 auto;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
+}
+.adminkit-app .ak-menu-move__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 15px;
+	padding: 0;
+	border: 0;
+	background: var(--ak-surface);
+	color: var(--ak-muted);
+	cursor: pointer;
+}
+.adminkit-app .ak-menu-move__btn:first-child { border-bottom: 1px solid var(--ak-border); }
+.adminkit-app .ak-menu-move__btn:hover { color: var(--ak-text); background: var(--ak-elevated); }
+.adminkit-app .ak-menu-move__btn:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); color: var(--ak-text); }
+.adminkit-app .ak-menu-move__btn svg { width: 11px; height: 11px; display: block; }
 .adminkit-app .ak-menu-row__title {
 	flex: 1 1 auto;
 	min-width: 0;

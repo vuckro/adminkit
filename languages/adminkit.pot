@@ -1385,3 +1385,11 @@ msgstr ""
 #: inc/settings/class-settings-page.php
 msgid "Button"
 msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Move up"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Move down"
+msgstr ""

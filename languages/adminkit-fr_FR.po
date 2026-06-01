@@ -1399,3 +1399,11 @@ msgstr "Se connecter"
 #: inc/settings/class-settings-page.php
 msgid "Button"
 msgstr "Bouton"
+
+#: inc/settings/class-settings-page.php
+msgid "Move up"
+msgstr "Monter"
+
+#: inc/settings/class-settings-page.php
+msgid "Move down"
+msgstr "Descendre"
