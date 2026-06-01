@@ -168,11 +168,13 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 	border-color: var( --ak-border ) !important;
 }
 
-/* Round the content panel's top-left corner to match AdminKit's other pages —
-   FC's full-bleed top bar otherwise squares it off (18px = AdminKit's corner). */
-body.adminkit.toplevel_page_fluent-cart #fct_admin_app_wrapper,
+/* Frame the top bar like AdminKit's content panel. FC's bar is position:fixed
+   z-index:2000, so it COVERS AdminKit's native corner overlay (z-index 101) —
+   the bar must carry the frame itself: a top hairline + an 18px rounded
+   top-left (matching the chrome corner), through which the native arc shows. */
 body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
-	border-top-left-radius: 18px;
+	border-top: 1px solid var( --ak-border ) !important;
+	border-top-left-radius: 18px !important;
 }
 
 /* Logo → text wordmark. */
@@ -589,4 +591,10 @@ body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-cond
 body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-advanced-filters {
 	background-color: var( --ak-elevated ) !important;
 	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Body text default (no !important — coloured spans/labels keep their own rule). */
+body.adminkit.toplevel_page_fluent-cart p,
+body.adminkit.toplevel_page_fluent-cart span {
+	color: var( --ak-text );
 }
