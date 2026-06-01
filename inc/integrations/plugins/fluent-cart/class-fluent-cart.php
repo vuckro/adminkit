@@ -192,15 +192,15 @@ class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Swap FluentCart's custom menu icon for AdminKit's `cart` glyph.
+	 * Swap FluentCart's menu icon for a shopping-bag glyph.
 	 *
-	 * FluentCart registers its top-level menu with a base64 data-URI icon (a grey
-	 * shopping bag), so its `.wp-menu-image` carries no dashicon class — the
-	 * AdminKit_Core_Menu_Icons map (keyed by dashicon) never reaches it, leaving
-	 * FC's mark out of step with the rest of the AdminKit-themed menu. Drop FC's
-	 * background-image and mask AdminKit's `cart` Heroicon into the icon box, the
-	 * same technique AdminKit_Core_Menu_Icons::menu_css() uses for dashicon items
-	 * (so it tracks the menu foreground colour in light, dark, hover and current).
+	 * FC registers its top-level menu with a base64 data-URI icon, so its
+	 * `.wp-menu-image` carries no dashicon class and AdminKit_Core_Menu_Icons
+	 * (keyed by dashicon) never reaches it. Drop FC's background-image and mask a
+	 * shopping-bag Heroicon into the icon box — the same technique menu_css()
+	 * uses, so it tracks the menu foreground colour in light/dark/hover/current.
+	 * A bag reads more "store" than a bare cart for a full e-commerce plugin; it's
+	 * inlined here (not in AdminKit_Icons) so the adapter owns its own mark.
 	 *
 	 * Gated exactly like that feature + the Query Monitor adapter: only when the
 	 * icon toggle is on AND the global should_load pause hasn't disabled AdminKit
@@ -218,10 +218,9 @@ class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
 		if ( ! class_exists( 'AdminKit_Icons' ) ) {
 			return;
 		}
-		$svg = AdminKit_Icons::svg( 'cart' );
-		if ( '' === $svg ) {
-			return;
-		}
+		// Heroicons (solid) shopping-bag — fill is irrelevant (it's painted as a
+		// mask; the visible colour is currentColor).
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 0 0 4.25 22.5h15.5a1.875 1.875 0 0 0 1.865-2.071l-1.263-12a1.875 1.875 0 0 0-1.865-1.679H16.5V6a4.5 4.5 0 1 0-9 0ZM12 3a3 3 0 0 0-3 3v.75h6V6a3 3 0 0 0-3-3Zm-3 8.25a3 3 0 1 0 6 0v-.75a.75.75 0 0 1 1.5 0v.75a4.5 4.5 0 1 1-9 0v-.75a.75.75 0 0 1 1.5 0v.75Z" clip-rule="evenodd"/></svg>';
 		// Kill FC's inline background-image (an !important is needed to beat the
 		// inline style WP prints), set the 36×34 icon box explicitly, then centre a
 		// 20px masked ::before in it — mirrors AdminKit_Core_Menu_Icons::menu_css().
