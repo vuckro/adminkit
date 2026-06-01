@@ -131,6 +131,92 @@ class AdminKit_Stats_Dashboard {
 		);
 	}
 
+	/* ──────────────── Trend / comparison (shared: page + card) ──────────────── */
+
+	/**
+	 * The window immediately before [start, end], of the SAME number of days —
+	 * uniform across presets AND custom ranges, so the trend baseline is always
+	 * "the previous equal-length period".
+	 *
+	 * @param string $start Y-m-d
+	 * @param string $end   Y-m-d
+	 * @return array{0:string,1:string} [prev_start, prev_end]
+	 */
+	public static function previous_range( $start, $end ) {
+		$s = strtotime( $start );
+		$e = strtotime( $end );
+		if ( false === $s || false === $e ) {
+			return array( $start, $end );
+		}
+		$span_days  = (int) floor( ( $e - $s ) / DAY_IN_SECONDS ) + 1;
+		$prev_end   = $s - DAY_IN_SECONDS;
+		$prev_start = $prev_end - ( $span_days - 1 ) * DAY_IN_SECONDS;
+		return array( gmdate( 'Y-m-d', $prev_start ), gmdate( 'Y-m-d', $prev_end ) );
+	}
+
+	/**
+	 * Sum site visits + page views over a window via the cached summary primitive.
+	 * Asks limit 1 so no top-N rows are pulled (day totals are independent of the
+	 * list limit) — a cheap, cached read.
+	 *
+	 * @param string $start Y-m-d
+	 * @param string $end   Y-m-d
+	 * @return array{visits:int,pageviews:int}
+	 */
+	public static function range_totals( $start, $end ) {
+		$sum = AdminKit_Stats_Store::summary_range( $start, $end, 1 );
+		$v   = 0;
+		$pv  = 0;
+		foreach ( (array) ( isset( $sum['days'] ) ? $sum['days'] : array() ) as $d ) {
+			$pv += isset( $d['pageviews'] ) ? (int) $d['pageviews'] : 0;
+			$v  += isset( $d['visits'] ) ? (int) $d['visits'] : 0;
+		}
+		return array( 'visits' => $v, 'pageviews' => $pv );
+	}
+
+	/**
+	 * Trend descriptor for current vs previous totals — the single source of truth
+	 * that the SPA's trendFrom() mirrors byte-for-byte. With a baseline it's a
+	 * signed percentage; with NO baseline, new traffic is a plain ▲ (up vs nothing)
+	 * and a flat 0 is null (nothing to show).
+	 *
+	 * @param int $cur
+	 * @param int $prev
+	 * @return array{dir:string,text:string}|null
+	 */
+	public static function trend( $cur, $prev ) {
+		$cur  = (int) $cur;
+		$prev = (int) $prev;
+		if ( $prev <= 0 ) {
+			return $cur > 0 ? array( 'dir' => 'up', 'text' => '' ) : null;
+		}
+		$pct = (int) round( ( ( $cur - $prev ) / $prev ) * 100 );
+		return array(
+			'dir'  => $pct > 0 ? 'up' : ( $pct < 0 ? 'down' : 'flat' ),
+			'text' => ( $pct > 0 ? '+' : '' ) . $pct . '%',
+		);
+	}
+
+	/**
+	 * Render the ▲/▼ trend badge for the dashboard card (PHP twin of the SPA's
+	 * trendBadge()). '' when there's no trend to show.
+	 *
+	 * @param int $cur
+	 * @param int $prev
+	 * @return string Safe HTML.
+	 */
+	public static function trend_badge( $cur, $prev ) {
+		$t = self::trend( $cur, $prev );
+		if ( null === $t ) {
+			return '';
+		}
+		$arrow = 'up' === $t['dir'] ? '▲' : ( 'down' === $t['dir'] ? '▼' : '→' );
+		$label = '' !== $t['text'] ? ( $arrow . ' ' . $t['text'] ) : $arrow;
+		return '<span class="ak-dash__stats-trend ak-dash__stats-trend--' . esc_attr( $t['dir'] )
+			. '" title="' . esc_attr__( 'vs previous period', 'adminkit' ) . '">'
+			. esc_html( $label ) . '</span>';
+	}
+
 	/**
 	 * Read the current user's state. ROLLING presets (today/30d/90d/1y) are
 	 * stored as just `{preset: id}` and re-resolved on every render — so "30 days"
@@ -318,6 +404,10 @@ class AdminKit_Stats_Dashboard {
 			$total_v    += $v;
 		}
 
+		// Trend baseline — the previous equal-length window (shared helper, cached).
+		list( $ps, $pe ) = self::previous_range( $start, $end );
+		$prev = self::range_totals( $ps, $pe );
+
 		// Head: title + the "active now" pill (shown on period views as live
 		// context — hidden on Live, where the big count already is it) + the picker.
 		// Synced with the SPA stats page, which does the same.
@@ -327,14 +417,17 @@ class AdminKit_Stats_Dashboard {
 		$out .= self::range_picker( $start, $end, $preset );
 		$out .= '</div>';
 
-		// Headline metrics — ALWAYS shown. A clear "0 / 0" beats a blank panel when
-		// a short window (e.g. Today, early in the day) has no views recorded yet.
+		// Headline metrics — ALWAYS shown (a clear "0 / 0" beats a blank panel when a
+		// short window like Today has no views yet), each with a ▲/▼ trend vs the
+		// previous period (same logic + look as the SPA stats page).
 		$out .= '<div class="ak-dash__stats-top">';
-		$out .= '<div class="ak-dash__stats-metric"><span class="ak-dash__stats-num">'
-			. esc_html( number_format_i18n( $total_v ) )
+		$out .= '<div class="ak-dash__stats-metric"><span class="ak-dash__stats-num-row">'
+			. '<span class="ak-dash__stats-num">' . esc_html( number_format_i18n( $total_v ) ) . '</span>'
+			. self::trend_badge( $total_v, $prev['visits'] )
 			. '</span><span class="ak-dash__stats-lbl">' . esc_html__( 'Visits', 'adminkit' ) . '</span></div>';
-		$out .= '<div class="ak-dash__stats-metric"><span class="ak-dash__stats-num">'
-			. esc_html( number_format_i18n( $total_pv ) )
+		$out .= '<div class="ak-dash__stats-metric"><span class="ak-dash__stats-num-row">'
+			. '<span class="ak-dash__stats-num">' . esc_html( number_format_i18n( $total_pv ) ) . '</span>'
+			. self::trend_badge( $total_pv, $prev['pageviews'] )
 			. '</span><span class="ak-dash__stats-lbl">' . esc_html__( 'Page views', 'adminkit' ) . '</span></div>';
 		$out .= '</div>';
 
@@ -343,8 +436,11 @@ class AdminKit_Stats_Dashboard {
 			return $out;
 		}
 
-		// Sparkline (page views/day).
-		$out .= '<div class="ak-dash__stats-spark">' . self::sparkline( $series_pv ) . '</div>';
+		// Sparkline (page views/day) — needs ≥2 days; a single day (Today) shows just
+		// the metrics + lists, no flat one-point line.
+		if ( count( $series_pv ) > 1 ) {
+			$out .= '<div class="ak-dash__stats-spark">' . self::sparkline( $series_pv ) . '</div>';
+		}
 
 		// Two compact lists side by side.
 		$out .= '<div class="ak-dash__stats-cols">';

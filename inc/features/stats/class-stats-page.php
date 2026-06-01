@@ -267,8 +267,8 @@ class AdminKit_Stats_Page {
 		// Trend baseline: the immediately-preceding window of the SAME length, read
 		// through the SAME cached primitive (limit 1 → no top-N rows pulled). Uniform
 		// for every preset and custom range; the SPA derives the ▲/▼ % from it.
-		list( $pstart, $pend ) = self::previous_range( $start, $end );
-		$previous = self::range_totals( $pstart, $pend );
+		list( $pstart, $pend ) = AdminKit_Stats_Dashboard::previous_range( $start, $end );
+		$previous = AdminKit_Stats_Dashboard::range_totals( $pstart, $pend );
 
 		return rest_ensure_response( array(
 			'preset'   => $state['preset'],
@@ -284,47 +284,6 @@ class AdminKit_Stats_Page {
 			// (WooCommerce revenue, FluentCart conversions…). Empty natively.
 			'cards'    => self::extra_cards( $start, $end, $state['preset'] ),
 		) );
-	}
-
-	/**
-	 * The window immediately before [start, end], of the SAME number of days.
-	 * Uniform across presets AND custom ranges, so the trend baseline is always
-	 * "the previous equal-length period".
-	 *
-	 * @param string $start Y-m-d
-	 * @param string $end   Y-m-d
-	 * @return array{0:string,1:string} [prev_start, prev_end]
-	 */
-	private static function previous_range( $start, $end ) {
-		$s = strtotime( $start );
-		$e = strtotime( $end );
-		if ( false === $s || false === $e ) {
-			return array( $start, $end );
-		}
-		$span_days  = (int) floor( ( $e - $s ) / DAY_IN_SECONDS ) + 1;
-		$prev_end   = $s - DAY_IN_SECONDS;
-		$prev_start = $prev_end - ( $span_days - 1 ) * DAY_IN_SECONDS;
-		return array( gmdate( 'Y-m-d', $prev_start ), gmdate( 'Y-m-d', $prev_end ) );
-	}
-
-	/**
-	 * Sum site visits + page views over a window via the cached summary primitive.
-	 * Asks limit 1 so no top-pages / top-sources rows are pulled (the day totals
-	 * are independent of the list limit) — a cheap second cached read.
-	 *
-	 * @param string $start Y-m-d
-	 * @param string $end   Y-m-d
-	 * @return array{visits:int,pageviews:int}
-	 */
-	private static function range_totals( $start, $end ) {
-		$sum = AdminKit_Stats_Store::summary_range( $start, $end, 1 );
-		$v   = 0;
-		$pv  = 0;
-		foreach ( (array) ( isset( $sum['days'] ) ? $sum['days'] : array() ) as $d ) {
-			$pv += isset( $d['pageviews'] ) ? (int) $d['pageviews'] : 0;
-			$v  += isset( $d['visits'] ) ? (int) $d['visits'] : 0;
-		}
-		return array( 'visits' => $v, 'pageviews' => $pv );
 	}
 
 	/**

@@ -1254,12 +1254,33 @@ body.adminkit .ak-dash__stats-metric {
 	flex-direction: column;
 	gap: 2px;
 }
+/* Number + its ▲/▼ trend on one baseline-aligned row, label below. */
+body.adminkit .ak-dash__stats-num-row {
+	display: flex;
+	align-items: baseline;
+	gap: 7px;
+	flex-wrap: wrap;
+}
 body.adminkit .ak-dash__stats-num {
 	font-size: 26px;
 	font-weight: 700;
 	line-height: 1.1;
 	color: var(--ak-heading);
 }
+/* Trend badge — twin of the SPA stats page's .ak-stats__trend (up = success,
+   down = error, flat = muted). */
+body.adminkit .ak-dash__stats-trend {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+body.adminkit .ak-dash__stats-trend--up   { color: var(--ak-success); }
+body.adminkit .ak-dash__stats-trend--down { color: var(--ak-error); }
+body.adminkit .ak-dash__stats-trend--flat { color: var(--ak-text-muted); }
 body.adminkit .ak-dash__stats-lbl {
 	font-size: var(--ak-text-xs);
 	color: var(--ak-text-muted);
@@ -1435,8 +1456,8 @@ body.adminkit .ak-dash__stats-live {
 /* Big headline: visitor count + tagline — mirrors the Statistics page Live hero
    (centred accent count, soft circular halo, ripple ring), scaled for the card. */
 /* The dashboard card Live view is LEFT-aligned + compact (it's a widget, not the
-   full page). The count carries a small "radar" dot that emits an expanding ring
-   — a calmer live cue than the page's big centred hero. */
+   full page). Just the count + label — no dot/pulse (the "right now" label and the
+   header's "active now" state already carry the live cue). */
 body.adminkit .ak-dash__stats-live-headline {
 	display: flex;
 	flex-direction: column;
@@ -1445,8 +1466,6 @@ body.adminkit .ak-dash__stats-live-headline {
 	padding: 20px 16px 14px;
 }
 body.adminkit .ak-dash__stats-live-num {
-	position: relative;
-	padding-left: 28px;
 	font-size: 42px;
 	font-weight: 700;
 	line-height: 1;
@@ -1454,29 +1473,7 @@ body.adminkit .ak-dash__stats-live-num {
 	color: var(--ak-primary);
 	font-variant-numeric: tabular-nums;
 }
-/* Live dot — solid, with a ring that pings outward via box-shadow. */
-body.adminkit .ak-dash__stats-live-num::before {
-	content: "";
-	position: absolute;
-	left: 4px;
-	top: 50%;
-	width: 11px;
-	height: 11px;
-	margin-top: -6px;
-	border-radius: 50%;
-	background: var(--ak-primary);
-	animation: ak-live-ping 1.8s ease-out infinite;
-}
-@keyframes ak-live-ping {
-	0%   { box-shadow: 0 0 0 0 color-mix( in srgb, var(--ak-primary) 45%, transparent ); }
-	70%  { box-shadow: 0 0 0 9px transparent; }
-	100% { box-shadow: 0 0 0 0 transparent; }
-}
-@media ( prefers-reduced-motion: reduce ) {
-	body.adminkit .ak-dash__stats-live-num::before { animation: none; }
-}
 body.adminkit .ak-dash__stats-live-lbl {
-	padding-left: 28px;
 	font-size: var(--ak-text-xs);
 	font-weight: 600;
 	color: var(--ak-text-muted);
@@ -1485,17 +1482,11 @@ body.adminkit .ak-dash__stats-live-lbl {
 }
 body.adminkit .ak-dash__stats-live-empty {
 	margin: 0;
-	padding: 4px 16px 18px 28px;
+	padding: 4px 16px 18px;
 	font-size: var(--ak-text-s);
 	color: var(--ak-text-muted);
 }
-/* Nobody on the site → calm: no pulsing dot, the count goes muted, and both the
-   tagline and the "nobody here" line drop the dot gutter so nothing sits over the
-   message. */
+/* Nobody on the site → the count goes muted (calm). */
 body.adminkit .ak-dash__stats-live.is-quiet .ak-dash__stats-live-num {
-	padding-left: 0;
 	color: var(--ak-text-muted);
 }
-body.adminkit .ak-dash__stats-live.is-quiet .ak-dash__stats-live-num::before { display: none; }
-body.adminkit .ak-dash__stats-live.is-quiet .ak-dash__stats-live-lbl { padding-left: 0; }
-body.adminkit .ak-dash__stats-live.is-quiet .ak-dash__stats-live-empty { padding-left: 16px; }

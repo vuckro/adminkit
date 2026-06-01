@@ -1163,9 +1163,10 @@
 				return;
 			}
 
-			// Line/area chart (page views per day). Skipped for a single day (no
-			// line to draw) — chart() guards that.
-			body.appendChild( chart( res.series || [] ) );
+			// Line/area chart (page views per day). null for a single day (no line to
+			// draw) — append only when present.
+			var c = chart( res.series || [] );
+			if ( c ) { body.appendChild( c ); }
 
 			// Two full lists.
 			body.appendChild( el( 'div', { 'class': 'ak-stats__cols' }, [
@@ -1285,10 +1286,10 @@
 		// markup injection; the line uses non-scaling-stroke (CSS) so it stays crisp
 		// when the viewBox stretches to the container width.
 		function chart( series ) {
-			var wrap = el( 'div', { 'class': 'ak-stats__chart' } );
 			// Need ≥2 points for a line — a single day (Today) shows just the metrics
-			// + lists, no chart.
-			if ( series.length < 2 ) { return wrap; }
+			// + lists, no chart card at all (null → caller skips it).
+			if ( series.length < 2 ) { return null; }
+			var wrap = el( 'div', { 'class': 'ak-stats__chart' } );
 			var max = 1;
 			series.forEach( function ( d ) { if ( ( d.pageviews | 0 ) > max ) { max = d.pageviews | 0; } } );
 
