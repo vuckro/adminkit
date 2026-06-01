@@ -1341,3 +1341,23 @@ msgstr ""
 #: inc/settings/class-settings-page.php
 msgid "That file isn’t a valid AdminKit settings export."
 msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php
+msgid "7 days"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php
+msgid "vs previous period"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Download this menu layout as a JSON file"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Load a menu layout from a JSON file"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "That file isn’t a valid AdminKit menu export."
+msgstr ""

@@ -14,6 +14,14 @@
 	color: var(--ak-text);
 }
 
+/* Focused single-panel surfaces (Menu editor, Statistics page) run the FULL
+   content width — they're data-dense (a menu tree, charts, side-by-side lists),
+   unlike the toggle-row Settings SPA which stays in a comfortable reading column. */
+.adminkit-app[data-screen="menu"],
+.adminkit-app[data-screen="stats"] {
+	max-width: none;
+}
+
 /* Header ------------------------------------------------------------------ */
 .adminkit-app .ak-head {
 	display: flex;
@@ -687,19 +695,27 @@
 	line-height: 18px;
 }
 
+/* Hide/Show toggle — a compact eye icon (mirrors the other 30×30 row buttons).
+   Pressed = item hidden (eye-off shown). */
 .adminkit-app .ak-menu-hide {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 0;
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-muted);
 	cursor: pointer;
-	padding: 3px 10px;
-	font-size: var(--ak-text-xs);
 	flex: 0 0 auto;
 }
+.adminkit-app .ak-menu-hide:hover { border-color: var(--ak-primary); color: var(--ak-text); }
+.adminkit-app .ak-menu-hide svg { width: 16px; height: 16px; }
 .adminkit-app .ak-menu-hide[aria-pressed="true"] {
 	color: var(--ak-text);
-	border-color: var(--ak-primary);
+	border-color: var(--ak-border-strong);
 }
 
 .adminkit-app .ak-icon-pop {
@@ -836,8 +852,13 @@
 .adminkit-app .ak-menu-newtab.on { border-color: var(--ak-primary); color: var(--ak-primary); background: var(--ak-primary-subtle); }
 .adminkit-app .ak-menu-newtab svg { width: 14px; height: 14px; }
 
-/* Toolbar (Add link / Add separator / Reset) + custom rows */
-.adminkit-app .ak-menu-toolbar { gap: 8px; margin: 0 0 10px; }
+/* Toolbar (Add link / Add separator / Reset · Export / Import) + custom rows */
+.adminkit-app .ak-menu-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 10px; }
+/* Push Export/Import to the trailing edge, away from the create/reset actions. */
+.adminkit-app .ak-menu-toolbar__spacer { margin-left: auto; }
+@media screen and (max-width: 600px) {
+	.adminkit-app .ak-menu-toolbar__spacer { margin-left: 0; }
+}
 .adminkit-app .ak-btn--ghost {
 	background: transparent;
 	border-color: var(--ak-border);
@@ -1044,6 +1065,7 @@
 	margin-bottom: 18px;
 }
 .adminkit-app .ak-stats__metric { display: flex; flex-direction: column; gap: 2px; }
+.adminkit-app .ak-stats__metric-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .adminkit-app .ak-stats__metric-num {
 	font-size: 30px;
 	font-weight: 700;
@@ -1054,6 +1076,24 @@
 	font-size: var(--ak-text-xs);
 	color: var(--ak-text-muted);
 }
+.adminkit-app .ak-stats__metric-sub {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+/* Trend badge — up = success, down = error, flat = muted. Tabular so the % keeps
+   the number baseline steady as the period changes. */
+.adminkit-app .ak-stats__trend {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+.adminkit-app .ak-stats__trend--up   { color: var(--ak-success); }
+.adminkit-app .ak-stats__trend--down { color: var(--ak-error); }
+.adminkit-app .ak-stats__trend--flat { color: var(--ak-text-muted); }
 
 /* Bar chart */
 .adminkit-app .ak-stats__chart {

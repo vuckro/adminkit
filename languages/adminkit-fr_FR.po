@@ -1355,3 +1355,23 @@ msgstr "Charger des réglages depuis un fichier JSON"
 #: inc/settings/class-settings-page.php
 msgid "That file isn’t a valid AdminKit settings export."
 msgstr "Ce fichier n’est pas un export de réglages AdminKit valide."
+
+#: inc/features/stats/class-stats-dashboard.php
+msgid "7 days"
+msgstr "7 jours"
+
+#: inc/features/stats/class-stats-page.php
+msgid "vs previous period"
+msgstr "vs période précédente"
+
+#: inc/settings/class-settings-page.php
+msgid "Download this menu layout as a JSON file"
+msgstr "Télécharger cette disposition de menu dans un fichier JSON"
+
+#: inc/settings/class-settings-page.php
+msgid "Load a menu layout from a JSON file"
+msgstr "Charger une disposition de menu depuis un fichier JSON"
+
+#: inc/settings/class-settings-page.php
+msgid "That file isn’t a valid AdminKit menu export."
+msgstr "Ce fichier n’est pas un export de menu AdminKit valide."

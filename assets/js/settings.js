@@ -1041,11 +1041,14 @@
 				return;
 			}
 
-			// Metrics.
-			body.appendChild( el( 'div', { 'class': 'ak-stats__metrics' }, [
-				metric( num( totals.visits ), I.statsVisits || 'Visits' ),
-				metric( num( totals.pageviews ), I.statsPageviews || 'Page views' )
-			] ) );
+			// Metrics — Visits / Page views, each with a ▲/▼ trend vs the previous
+			// equal-length period, then any extension-contributed tiles (res.cards).
+			var prev = res.previous || null;
+			var tiles = [
+				metric( num( totals.visits ), I.statsVisits || 'Visits', prev ? trendFrom( totals.visits, prev.visits ) : null ),
+				metric( num( totals.pageviews ), I.statsPageviews || 'Page views', prev ? trendFrom( totals.pageviews, prev.pageviews ) : null )
+			].concat( extraCards( res.cards || [] ) );
+			body.appendChild( el( 'div', { 'class': 'ak-stats__metrics' }, tiles ) );
 
 			// Bar chart (page views per day).
 			body.appendChild( chart( res.series || [] ) );
@@ -1113,11 +1116,47 @@
 			return box;
 		}
 
-		function metric( value, label ) {
+		function metric( value, label, trend ) {
+			var top = [ el( 'span', { 'class': 'ak-stats__metric-num', text: value } ) ];
+			if ( trend ) { top.push( trendBadge( trend ) ); }
 			return el( 'div', { 'class': 'ak-stats__metric' }, [
-				el( 'span', { 'class': 'ak-stats__metric-num', text: value } ),
+				el( 'div', { 'class': 'ak-stats__metric-row' }, top ),
 				el( 'span', { 'class': 'ak-stats__metric-lbl', text: label } )
 			] );
+		}
+
+		// Build a trend descriptor from current vs previous totals. No baseline
+		// (previous is zero) → null, so the first-ever period shows no misleading
+		// "+100%". Returns { dir: 'up'|'down'|'flat', text: '+12%' }.
+		function trendFrom( cur, prev ) {
+			cur = cur | 0; prev = prev | 0;
+			if ( prev <= 0 ) { return null; }
+			var pct = Math.round( ( ( cur - prev ) / prev ) * 100 );
+			return {
+				dir:  pct > 0 ? 'up' : ( pct < 0 ? 'down' : 'flat' ),
+				text: ( pct > 0 ? '+' : '' ) + pct + '%'
+			};
+		}
+
+		function trendBadge( trend ) {
+			var arrow = trend.dir === 'up' ? '▲' : ( trend.dir === 'down' ? '▼' : '→' );
+			return el( 'span', {
+				'class': 'ak-stats__trend ak-stats__trend--' + trend.dir,
+				title: I.statsVsPrev || 'vs previous period',
+				text: arrow + ' ' + ( trend.text || '' )
+			} );
+		}
+
+		// Extension tiles (res.cards) — same visual shell as a native metric, with an
+		// optional secondary line and the integration's own trend badge.
+		function extraCards( cards ) {
+			return ( cards || [] ).map( function ( c ) {
+				var tile = metric( c.value || '', c.label || '', c.trend || null );
+				if ( c.sub ) {
+					tile.appendChild( el( 'span', { 'class': 'ak-stats__metric-sub', text: c.sub } ) );
+				}
+				return tile;
+			} );
 		}
 
 		// A lightweight SVG bar chart — one bar per day, page views. Built with the
@@ -1539,6 +1578,14 @@
 		p.appendChild( intro( I.menuIntro ) );
 		if ( ! MM.menu || ! MM.menu.length ) { return p; }
 		var tree = el( 'div', { 'class': 'ak-menu-tree' } );
+
+		// Import loads a layout into the editor and marks it dirty — the user reviews
+		// it, then Saves (consistent with every other menu edit; no silent write).
+		var importInput = el( 'input', { type: 'file', accept: 'application/json,.json', hidden: 'hidden', onchange: function ( e ) {
+			if ( e.target.files && e.target.files[0] ) { importMenu( e.target.files[0], tree ); }
+			e.target.value = '';
+		} } );
+
 		p.appendChild( el( 'div', { 'class': 'ak-actions ak-menu-toolbar' }, [
 			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.menuAddLink, onclick: function () { addCustom( 'link', tree ); } } ),
 			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.menuAddSeparator, onclick: function () { addCustom( 'separator', tree ); } } ),
@@ -1546,11 +1593,62 @@
 				state.menu = buildMenuModel( MM.menu, { top: [], sub: {} } );
 				renderTree( tree );
 				markMenuDirty();
-			} } )
+			} } ),
+			el( 'button', { type: 'button', 'class': 'ak-btn ak-menu-toolbar__spacer', text: I.menuExport || 'Export', title: I.menuExportHint || '', onclick: exportMenu } ),
+			el( 'button', { type: 'button', 'class': 'ak-btn', text: I.menuImport || 'Import', title: I.menuImportHint || '', onclick: function () { importInput.click(); } } ),
+			importInput
 		] ) );
 		renderTree( tree );
 		p.appendChild( tree );
 		return p;
+	}
+
+	// Serialise the current layout (the same flat rows the Save button POSTs) into a
+	// downloaded JSON file, wrapped with a small human-readable header.
+	function exportMenu() {
+		var payload = { _adminkit: 'menu', version: ( D.version || '1' ), exported: new Date().toISOString(), items: gatherMenu() };
+		var blob = new Blob( [ JSON.stringify( payload, null, '\t' ) ], { type: 'application/json' } );
+		var url  = URL.createObjectURL( blob );
+		var a    = el( 'a', { href: url, download: 'adminkit-menu.json' } );
+		document.body.appendChild( a );
+		a.click();
+		a.remove();
+		URL.revokeObjectURL( url );
+	}
+
+	// Reshape exported flat rows ([{parent, slug, …}]) back into the {top, sub} config
+	// shape buildMenuModel() consumes — the mirror of the server's own reshaping.
+	function configFromItems( items ) {
+		var top = [], sub = {};
+		( items || [] ).forEach( function ( it ) {
+			if ( it && it.parent ) {
+				( sub[ it.parent ] = sub[ it.parent ] || [] ).push( { slug: it.slug, position: it.position, hidden: !! it.hidden, title: it.title || '' } );
+			} else if ( it ) {
+				top.push( { slug: it.slug, position: it.position, icon: it.icon || '', url: it.url || '', new_tab: !! it.newTab, hidden: !! it.hidden, type: it.type || 'item', title: it.title || '' } );
+			}
+		} );
+		return { top: top, sub: sub };
+	}
+
+	// Import a menu layout from a JSON file: accept our export wrapper ({items:[…]})
+	// or a bare items array, rebuild the working model against the LIVE snapshot (so
+	// menus that no longer exist drop out and new ones still appear), then mark dirty.
+	function importMenu( file, tree ) {
+		var reader = new FileReader();
+		reader.onload = function () {
+			var data, items;
+			try { data = JSON.parse( reader.result ); } catch ( e ) { data = null; }
+			items = ( data && typeof data === 'object' && Array.isArray( data.items ) ) ? data.items
+				: ( Array.isArray( data ) ? data : null );
+			if ( ! items ) {
+				setStatus( 'is-error', I.menuImportError || 'That file isn’t a valid AdminKit menu export.' );
+				return;
+			}
+			state.menu = buildMenuModel( MM.menu, configFromItems( items ) );
+			renderTree( tree );
+			markMenuDirty(); // shows "Unsaved changes" — the user reviews, then Saves.
+		};
+		reader.readAsText( file );
 	}
 
 	// Append a new custom row (a separator, or a blank link to fill in).
@@ -1678,21 +1776,45 @@
 		return h;
 	}
 
-	function hideBtn( item, tree ) {
-		return el( 'button', {
-			type: 'button',
-			'class': 'ak-menu-hide',
-			'aria-pressed': item.hidden ? 'true' : 'false',
-			text: item.hidden ? I.menuShow : I.menuHide,
-			onclick: function () { item.hidden = ! item.hidden; renderTree( tree ); markMenuDirty(); }
+	// Hide/Show toggle, a compact eye icon (saves the room the old text button took).
+	// Flips the item's `hidden` flag and reflects it on the row in place — no full
+	// tree rebuild (cheaper, and no scroll jump / flicker).
+	function hideBtn( item ) {
+		var btn = el( 'button', { type: 'button', 'class': 'ak-menu-hide' } );
+		paintHide( btn, item );
+		btn.addEventListener( 'click', function () {
+			item.hidden = ! item.hidden;
+			paintHide( btn, item );
+			var row = btn.closest && btn.closest( '.ak-menu-row' );
+			if ( row ) { row.classList.toggle( 'is-hidden', !! item.hidden ); }
+			markMenuDirty();
 		} );
+		return btn;
+	}
+
+	// Eye / eye-off glyphs, inlined like the other row buttons (handle, new-tab, url)
+	// so they're always in scope — a module-level `var` would be `undefined` at the
+	// first menu render, which paints the literal string "undefined" in the button.
+	function paintHide( btn, item ) {
+		var eye    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S5.5 5.5 12 5.5 21.5 12 21.5 12 18.5 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+		var eyeOff = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.6 9.6 0 0 1 12 6c6.5 0 9.5 6 9.5 6a16.2 16.2 0 0 1-2.3 3.1M6.6 6.6A16 16 0 0 0 2.5 12s3 6 9.5 6a9.3 9.3 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+		var lbl = item.hidden ? ( I.menuShow || 'Show' ) : ( I.menuHide || 'Hide' );
+		btn.innerHTML = item.hidden ? eyeOff : eye;
+		btn.setAttribute( 'aria-pressed', item.hidden ? 'true' : 'false' );
+		btn.setAttribute( 'title', lbl );
+		btn.setAttribute( 'aria-label', lbl );
 	}
 
 	// Icon button + popover picker (top-level only — WordPress submenus have no icon).
 	function iconBtn( top, tree ) {
 		var btn = el( 'button', { type: 'button', 'class': 'ak-menu-icon', title: I.menuIconPick, 'aria-label': I.menuIconPick } );
 		paintIcon( btn, top );
-		btn.addEventListener( 'click', function ( e ) { e.stopPropagation(); openIconPicker( btn, top, tree ); } );
+		btn.addEventListener( 'click', function ( e ) {
+			e.stopPropagation();
+			// Clicking the same icon button while its picker is open closes it (toggle).
+			if ( openPicker && openPicker.__akAnchor === btn ) { closeIconPicker(); return; }
+			openIconPicker( btn, top, tree );
+		} );
 		return btn;
 	}
 
@@ -1718,26 +1840,43 @@
 		btn.appendChild( g );
 	}
 
+	// The icon picker stays OPEN as you browse: selecting an icon repaints just the
+	// anchor button (live preview) and moves the highlight, instead of rebuilding the
+	// whole menu tree — which used to destroy the anchor the popup hangs off, slamming
+	// it shut on every click. Close happens on an outside click or a re-click of the
+	// icon button (toggle).
 	function openIconPicker( anchor, top, tree ) {
 		closeIconPicker();
 		var pop = el( 'div', { 'class': 'ak-icon-pop' } );
+		var choices = []; // { el, val } — every selectable swatch, for the highlight sweep.
+
+		// Repaint highlight + the anchor button. `commit` also flags the menu dirty;
+		// the initial paint (on open) must NOT, or merely opening the picker would
+		// mark unsaved changes.
+		function paint() {
+			choices.forEach( function ( c ) { c.el.classList.toggle( 'on', top.icon === c.val ); } );
+			paintIcon( anchor, top );
+		}
+		function choose( val ) { top.icon = val; paint(); markMenuDirty(); }
+
+		// "Default" = the item's own original WordPress dashicon (icon = ''). The
+		// separate "WordPress icon" choice was removed — it resolved to the same glyph
+		// and only confused the choice. Pick Default, an AdminKit icon, or paste one.
 		var defBar = el( 'div', { 'class': 'ak-icon-pop__defbar' } );
-		defBar.appendChild( el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconNone, onclick: function () {
-			top.icon = ''; renderTree( tree ); markMenuDirty(); closeIconPicker();
-		} } ) );
-		defBar.appendChild( el( 'button', { type: 'button', 'class': 'ak-icon-pop__def' + ( top.icon === 'wp-default' ? ' on' : '' ), text: I.menuIconWp || 'WordPress icon', onclick: function () {
-			top.icon = 'wp-default'; renderTree( tree ); markMenuDirty(); closeIconPicker();
-		} } ) );
+		var noneBtn = el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconNone, onclick: function () { choose( '' ); } } );
+		choices.push( { el: noneBtn, val: '' } );
+		defBar.appendChild( noneBtn );
 		pop.appendChild( defBar );
+
 		var grid = el( 'div', { 'class': 'ak-icon-pop__grid' } );
 		Object.keys( MM.icons || {} ).forEach( function ( name ) {
-			var sw = el( 'button', { type: 'button', 'class': 'ak-icon-pop__sw' + ( top.icon === name ? ' on' : '' ), title: name, 'aria-label': name, onclick: function () {
-				top.icon = name; renderTree( tree ); markMenuDirty(); closeIconPicker();
-			} } );
+			var sw = el( 'button', { type: 'button', 'class': 'ak-icon-pop__sw', title: name, 'aria-label': name, onclick: function () { choose( name ); } } );
 			sw.innerHTML = MM.icons[ name ];
+			choices.push( { el: sw, val: name } );
 			grid.appendChild( sw );
 		} );
 		pop.appendChild( grid );
+
 		// Custom icon — one line: a leading image glyph (the affordance) + a field to
 		// paste raw <svg> markup or a data:image/svg+xml URI (base64 or encoded) + Apply.
 		var customIc = el( 'span', { 'class': 'ak-icon-pop__customic', 'aria-hidden': 'true' } );
@@ -1748,12 +1887,15 @@
 			if ( ! v ) { return; }
 			if ( v.indexOf( '<svg' ) === 0 ) { v = 'data:image/svg+xml,' + encodeURIComponent( v ); }
 			if ( v.indexOf( 'data:image/svg+xml' ) !== 0 ) { return; }
-			top.icon = v; renderTree( tree ); markMenuDirty(); closeIconPicker();
+			choose( v ); ta.value = '';
 		} } );
 		ta.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Enter' ) { e.preventDefault(); applyBtn.click(); } } );
 		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom' }, [ customIc, ta, applyBtn ] ) );
+
 		anchor.parentNode.appendChild( pop );
+		pop.__akAnchor = anchor;
 		openPicker = pop;
+		paint(); // seed the highlight (no dirty flag).
 		setTimeout( function () { document.addEventListener( 'mousedown', onDocDown, true ); }, 0 );
 	}
 
@@ -1795,12 +1937,16 @@
 		var pop = el( 'div', { 'class': 'ak-icon-pop ak-url-pop' } );
 		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__customlbl', text: I.menuUrlLabel } ) );
 		var inp = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: top.url || '', placeholder: I.menuLinkUrl } );
+		// Apply / Clear reflect the URL state on the anchor button in place (its `on`
+		// class) and close — no full tree rebuild (which would destroy the anchor the
+		// popover hangs off, same trap the icon picker had).
 		var apply = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--small', text: I.menuIconApply, onclick: function () {
 			top.url = ( inp.value || '' ).replace( /^\s+|\s+$/g, '' );
-			renderTree( tree ); markMenuDirty(); closeIconPicker();
+			anchor.classList.toggle( 'on', !! top.url );
+			markMenuDirty(); closeIconPicker();
 		} } );
 		var clear = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--small ak-btn--ghost', text: I.menuUrlClear, onclick: function () {
-			top.url = ''; renderTree( tree ); markMenuDirty(); closeIconPicker();
+			top.url = ''; anchor.classList.remove( 'on' ); markMenuDirty(); closeIconPicker();
 		} } );
 		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom ak-url-pop__row' }, [ inp, apply, clear ] ) );
 		anchor.parentNode.appendChild( pop );
