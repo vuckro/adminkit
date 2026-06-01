@@ -1239,12 +1239,17 @@
 			] );
 		}
 
-		// Build a trend descriptor from current vs previous totals. No baseline
-		// (previous is zero) → null, so the first-ever period shows no misleading
-		// "+100%". Returns { dir: 'up'|'down'|'flat', text: '+12%' }.
+		// Build a trend descriptor from current vs previous totals. With a baseline,
+		// it's a signed percentage. With NO baseline (previous = 0) we can't show a
+		// percentage (÷0), so: new traffic → a plain ▲ (it IS up, vs nothing); still
+		// nothing → no badge. This way the indicator shows on every range, not just
+		// the ones whose prior window happens to have data.
+		// Returns { dir: 'up'|'down'|'flat', text } or null.
 		function trendFrom( cur, prev ) {
 			cur = cur | 0; prev = prev | 0;
-			if ( prev <= 0 ) { return null; }
+			if ( prev <= 0 ) {
+				return cur > 0 ? { dir: 'up', text: '' } : null;
+			}
 			var pct = Math.round( ( ( cur - prev ) / prev ) * 100 );
 			return {
 				dir:  pct > 0 ? 'up' : ( pct < 0 ? 'down' : 'flat' ),
@@ -1257,7 +1262,7 @@
 			return el( 'span', {
 				'class': 'ak-stats__trend ak-stats__trend--' + trend.dir,
 				title: I.statsVsPrev || 'vs previous period',
-				text: arrow + ' ' + ( trend.text || '' )
+				text: trend.text ? ( arrow + ' ' + trend.text ) : arrow
 			} );
 		}
 

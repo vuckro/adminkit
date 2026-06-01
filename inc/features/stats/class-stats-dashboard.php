@@ -381,7 +381,10 @@ class AdminKit_Stats_Dashboard {
 		$out .= self::range_picker( $today, $today, 'live' );
 		$out .= '</div>';
 
-		$out .= '<div class="ak-dash__stats-live" data-ak-stats-live data-ak-stats-live-interval="' . esc_attr( (string) self::LIVE_REFRESH_MS ) . '">';
+		// `is-quiet` when nobody's on the site — the live dot stops pulsing and the
+		// count goes muted, so the "nobody here" message reads clean (no animated dot
+		// sitting over it).
+		$out .= '<div class="ak-dash__stats-live' . ( 0 === $count ? ' is-quiet' : '' ) . '" data-ak-stats-live data-ak-stats-live-interval="' . esc_attr( (string) self::LIVE_REFRESH_MS ) . '">';
 
 		// Headline: huge active-now count + tagline.
 		$out .= '<div class="ak-dash__stats-live-headline">';

@@ -1489,3 +1489,13 @@ body.adminkit .ak-dash__stats-live-empty {
 	font-size: var(--ak-text-s);
 	color: var(--ak-text-muted);
 }
+/* Nobody on the site → calm: no pulsing dot, the count goes muted, and both the
+   tagline and the "nobody here" line drop the dot gutter so nothing sits over the
+   message. */
+body.adminkit .ak-dash__stats-live.is-quiet .ak-dash__stats-live-num {
+	padding-left: 0;
+	color: var(--ak-text-muted);
+}
+body.adminkit .ak-dash__stats-live.is-quiet .ak-dash__stats-live-num::before { display: none; }
+body.adminkit .ak-dash__stats-live.is-quiet .ak-dash__stats-live-lbl { padding-left: 0; }
+body.adminkit .ak-dash__stats-live.is-quiet .ak-dash__stats-live-empty { padding-left: 16px; }
