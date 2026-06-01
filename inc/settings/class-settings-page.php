@@ -47,8 +47,9 @@ class AdminKit_Settings_Page {
 	public static function init() {
 		add_action( 'admin_menu', array( __CLASS__, 'add_submenu' ) );
 		// Relabel the auto first submenu AFTER the Menu/Statistics modules add their
-		// pages (priority 11), so the submenu reads Settings · Menu · Statistics.
+		// pages (priority 11). Then (priority 13) reorder to Statistics · Menu · Settings.
 		add_action( 'admin_menu', array( __CLASS__, 'relabel_first_submenu' ), 12 );
+		add_action( 'admin_menu', array( __CLASS__, 'reorder_submenu' ), 13 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 		AdminKit_Settings_Gate::init();
@@ -92,6 +93,35 @@ class AdminKit_Settings_Page {
 		if ( isset( $submenu[ self::SLUG ][0][2] ) && self::SLUG === $submenu[ self::SLUG ][0][2] ) {
 			$submenu[ self::SLUG ][0][0] = __( 'Settings', 'adminkit' );
 		}
+	}
+
+	/**
+	 * Reorder the AdminKit submenu to Statistics · Menu · Settings — the daily
+	 * surfaces (analytics, then menu) on top, configuration last. Runs at
+	 * admin_menu priority 13 (after relabel at 12). Slugs not in the rank map keep
+	 * their relative order at the end. Cosmetic only — clicking the parent still
+	 * opens Settings (its own slug callback).
+	 *
+	 * @return void
+	 */
+	public static function reorder_submenu() {
+		global $submenu;
+		if ( empty( $submenu[ self::SLUG ] ) || ! is_array( $submenu[ self::SLUG ] ) ) {
+			return;
+		}
+		$rank = array(
+			self::SLUG_STATS => 0, // Statistics
+			self::SLUG_MENU  => 1, // Menu
+			self::SLUG       => 2, // Settings (the parent self-link)
+		);
+		usort(
+			$submenu[ self::SLUG ],
+			static function ( $a, $b ) use ( $rank ) {
+				$ra = isset( $a[2], $rank[ $a[2] ] ) ? $rank[ $a[2] ] : 99;
+				$rb = isset( $b[2], $rank[ $b[2] ] ) ? $rank[ $b[2] ] : 99;
+				return $ra - $rb;
+			}
+		);
 	}
 
 	/**
