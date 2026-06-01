@@ -2014,10 +2014,25 @@
 		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom' }, [ customIc, ta, applyBtn ] ) );
 
 		anchor.parentNode.appendChild( pop );
+		positionPopover( pop, anchor );
 		pop.__akAnchor = anchor;
 		openPicker = pop;
 		paint(); // seed the highlight (no dirty flag).
 		setTimeout( function () { document.addEventListener( 'mousedown', onDocDown, true ); }, 0 );
+	}
+
+	// Place a popover directly under its anchor button, clamped to the row so it
+	// never spills past the right edge — fixes the picker opening at the row's far
+	// left for right-hand buttons (URL / hide). Row is position:relative.
+	function positionPopover( pop, anchor ) {
+		var row  = anchor.parentNode;
+		var rowW = row.offsetWidth;
+		var popW = pop.offsetWidth || 264;
+		var left = anchor.offsetLeft;
+		if ( left + popW > rowW ) { left = Math.max( 0, rowW - popW ); }
+		pop.style.left  = left + 'px';
+		pop.style.right = 'auto';
+		pop.style.top   = ( anchor.offsetTop + anchor.offsetHeight + 4 ) + 'px';
 	}
 
 	function onDocDown( e ) {
@@ -2071,6 +2086,8 @@
 		} } );
 		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom ak-url-pop__row' }, [ inp, apply, clear ] ) );
 		anchor.parentNode.appendChild( pop );
+		positionPopover( pop, anchor );
+		pop.__akAnchor = anchor;
 		openPicker = pop;
 		setTimeout( function () { document.addEventListener( 'mousedown', onDocDown, true ); }, 0 );
 	}
