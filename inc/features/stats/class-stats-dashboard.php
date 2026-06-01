@@ -26,9 +26,9 @@ class AdminKit_Stats_Dashboard {
 	 *  `{preset: 'custom', start: Y-m-d, end: Y-m-d}` for free ranges. */
 	const RANGE_META = 'adminkit_stats_range';
 
-	/** Default preset on first render — the live (real-time) view. Users who
-	 *  have saved a preset keep it; only those with no stored choice land here. */
-	const DEFAULT_PRESET = 'live';
+	/** Default preset on first render. Users who have saved a preset keep it;
+	 *  only those with no stored choice land here. */
+	const DEFAULT_PRESET = '30d';
 
 	/** Available presets, in selector order. 'live' is a special UI state — the
 	 *  body renders real-time data and auto-refreshes client-side. 'custom'
@@ -249,11 +249,10 @@ class AdminKit_Stats_Dashboard {
 		if ( ! current_user_can( self::capability() ) ) {
 			return;
 		}
-		// Land on Live every time (the dashboard's at-a-glance pulse). Period
-		// presets remain one click away via the in-card picker.
+		// Open on the user's saved/default preset (no forced Live landing).
 		$state = self::get_user_state();
 		echo '<section class="ak-card ak-dash__card ak-dash__stats" data-ak-stats>';
-		echo self::body( $state['start'], $state['end'], 'live' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped within.
+		echo self::body( $state['start'], $state['end'], $state['preset'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped within.
 		echo '</section>';
 	}
 
