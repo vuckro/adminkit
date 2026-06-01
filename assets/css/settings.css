@@ -1042,6 +1042,26 @@
 .adminkit-app .ak-menu-url.on { border-color: var(--ak-primary); color: var(--ak-primary); background: var(--ak-primary-subtle); }
 .adminkit-app .ak-menu-url svg { width: 15px; height: 15px; }
 .adminkit-app .ak-url-pop { width: 300px; }
+/* "Current : <destination>" line above the URL field — shows where the item
+   points before you change it. */
+.adminkit-app .ak-url-pop__current {
+	display: flex;
+	align-items: baseline;
+	gap: 4px;
+	min-width: 0;
+	margin: 0 0 8px;
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-url-pop__current-lbl { flex: 0 0 auto; }
+.adminkit-app .ak-url-pop__current-val {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: monospace;
+	color: var(--ak-text);
+}
 .adminkit-app .ak-url-pop__row { align-items: center; }
 .adminkit-app .ak-url-pop__row .ak-menu-input { flex: 1 1 auto; min-width: 0; }
 .adminkit-app .ak-menu-newtab {

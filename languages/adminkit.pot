@@ -1401,3 +1401,7 @@ msgstr ""
 #: inc/settings/class-settings-page.php
 msgid "Search plugins…"
 msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Current"
+msgstr ""

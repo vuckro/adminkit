@@ -2180,7 +2180,21 @@
 		closeIconPicker();
 		var pop = el( 'div', { 'class': 'ak-icon-pop ak-url-pop' } );
 		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__customlbl', text: I.menuUrlLabel } ) );
-		var inp = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: top.url || '', placeholder: I.menuLinkUrl } );
+
+		// Show where this item points right now — the custom override if set, else
+		// its native WordPress destination (the slug). Read-only, so you SEE the link
+		// before changing it.
+		var current = top.url || top.slug || '';
+		if ( current ) {
+			pop.appendChild( el( 'div', { 'class': 'ak-url-pop__current' }, [
+				el( 'span', { 'class': 'ak-url-pop__current-lbl', text: ( I.menuUrlCurrent || 'Current' ) + ' : ' } ),
+				el( 'code', { 'class': 'ak-url-pop__current-val', title: current, text: current } )
+			] ) );
+		}
+
+		// Pre-fill with the custom override; the placeholder is the native slug so an
+		// empty field still hints the current destination.
+		var inp = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: top.url || '', placeholder: top.slug || I.menuLinkUrl } );
 		// Apply / Clear reflect the URL state on the anchor button in place (its `on`
 		// class) and close — no full tree rebuild (which would destroy the anchor the
 		// popover hangs off, same trap the icon picker had).

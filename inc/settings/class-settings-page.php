@@ -408,6 +408,7 @@ class AdminKit_Settings_Page {
 				'menuRename'        => __( 'Rename — clear to restore the original', 'adminkit' ),
 				'menuUrlTitle'      => __( 'Custom link', 'adminkit' ),
 				'menuUrlLabel'      => __( 'Point this item at a custom URL (internal or external). Its submenu still works.', 'adminkit' ),
+				'menuUrlCurrent'    => __( 'Current', 'adminkit' ),
 				'menuUrlClear'      => __( 'Clear', 'adminkit' ),
 
 				// Features tab — intro + bulk row + per-plugin descriptors.
