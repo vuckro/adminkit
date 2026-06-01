@@ -794,6 +794,13 @@
 }
 
 /* === Menu manager tab ===================================================== */
+/* The editor reads best as a tidy LEFT-hand column. At full screen width each
+   row's controls (icons, "N submenus", URL, hide) drift to the far right, away
+   from the item name; cap the panel so items + their controls stay grouped on the
+   left (the page itself stays full-width — only this editor column is bounded). */
+.adminkit-app[data-screen="menu"] .ak-panel--menu {
+	max-width: 1040px;
+}
 .adminkit-app .ak-menu-tree {
 	display: flex;
 	flex-direction: column;
