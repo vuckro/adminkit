@@ -112,13 +112,17 @@ class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
 	 * would double-border its widgets (a native border inside the
 	 * `.el-input__wrapper` that already has one). admin.css themes the Element
 	 * Plus surfaces directly instead. Also slave FC's light/dark toggle to
-	 * AdminKit's mode.
+	 * AdminKit's mode, and swap FC's custom menu icon for an AdminKit glyph.
 	 *
 	 * @return void
 	 */
 	protected static function boot() {
 		add_filter( 'adminkit/enqueue_forms', array( __CLASS__, 'bail_forms_on_fc' ) );
 		add_action( 'admin_head', array( __CLASS__, 'sync_theme' ) );
+		// Menu icon swap runs on EVERY admin page (the menu shows everywhere),
+		// not just the FC screen — so it hooks admin_head globally, like
+		// AdminKit_Core_Menu_Icons and the Query Monitor adapter.
+		add_action( 'admin_head', array( __CLASS__, 'print_menu_icon' ), 21 );
 	}
 
 	/**
@@ -185,5 +189,46 @@ class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
 })();
 </script>
 		<?php
+	}
+
+	/**
+	 * Swap FluentCart's custom menu icon for AdminKit's `cart` glyph.
+	 *
+	 * FluentCart registers its top-level menu with a base64 data-URI icon (a grey
+	 * shopping bag), so its `.wp-menu-image` carries no dashicon class — the
+	 * AdminKit_Core_Menu_Icons map (keyed by dashicon) never reaches it, leaving
+	 * FC's mark out of step with the rest of the AdminKit-themed menu. Drop FC's
+	 * background-image and mask AdminKit's `cart` Heroicon into the icon box, the
+	 * same technique AdminKit_Core_Menu_Icons::menu_css() uses for dashicon items
+	 * (so it tracks the menu foreground colour in light, dark, hover and current).
+	 *
+	 * Gated exactly like that feature + the Query Monitor adapter: only when the
+	 * icon toggle is on AND the global should_load pause hasn't disabled AdminKit
+	 * here. The menu shows on every admin page, so there is no screen gate.
+	 *
+	 * @return void
+	 */
+	public static function print_menu_icon() {
+		if ( ! class_exists( 'AdminKit_Settings' ) || ! AdminKit_Settings::get( 'replace_icons_enabled' ) ) {
+			return;
+		}
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return;
+		}
+		if ( ! class_exists( 'AdminKit_Icons' ) ) {
+			return;
+		}
+		$svg = AdminKit_Icons::svg( 'cart' );
+		if ( '' === $svg ) {
+			return;
+		}
+		// Kill FC's inline background-image (an !important is needed to beat the
+		// inline style WP prints), set the 36×34 icon box explicitly, then centre a
+		// 20px masked ::before in it — mirrors AdminKit_Core_Menu_Icons::menu_css().
+		$box  = '#adminmenu #toplevel_page_fluent-cart .wp-menu-image';
+		$css  = $box . '{background-image:none !important;box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
+		$css .= $box . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
+			. 'vertical-align:middle;position:relative;top:-2px;' . AdminKit_Icons::mask( $svg ) . '}';
+		echo '<style id="adminkit-fluent-cart-menu-icon">' . $css . "</style>\n"; // SVG is URL-encoded in mask().
 	}
 }
