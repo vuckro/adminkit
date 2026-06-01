@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Dashboard_Cards {
 
-	private static function render_header() {
+	public static function render_header() {
 		$user      = wp_get_current_user();
 		$name      = $user->first_name ? $user->first_name : $user->display_name;
 		$name_html = '<span class="ak-dash__greet-name">' . esc_html( $name ) . '</span>';
@@ -229,7 +229,7 @@ class AdminKit_Dashboard_Cards {
 	}
 
 	/** Quick actions — capability-gated buttons; the first is the primary CTA. */
-	private static function render_actions() {
+	public static function render_actions() {
 		$actions = array();
 		if ( current_user_can( 'edit_posts' ) ) {
 			$actions[] = array( 'label' => __( 'Write a post', 'adminkit' ), 'url' => admin_url( 'post-new.php' ), 'icon' => 'edit', 'primary' => true );
@@ -270,7 +270,7 @@ class AdminKit_Dashboard_Cards {
 
 	/** "At a glance" band — five live content counters, each with a one-line micro-stat.
 	    Real WordPress numbers (read-only); fills the top strip of the dashboard. Filterable. */
-	private static function render_glance() {
+	public static function render_glance() {
 		$posts    = wp_count_posts( 'post' );
 		$pages    = wp_count_posts( 'page' );
 		$comments = wp_count_comments();
@@ -370,7 +370,7 @@ class AdminKit_Dashboard_Cards {
 
 	/** Site preview — a scaled, non-interactive thumbnail of the live home page. It
 	    replaces the old counters, which duplicated the admin menu. Click opens the site. */
-	private static function render_preview() {
+	public static function render_preview() {
 		$home = home_url( '/' );
 
 		echo '<section class="ak-card ak-dash__card ak-dash__preview-card">';
@@ -400,7 +400,7 @@ class AdminKit_Dashboard_Cards {
 
 	/** AdminKit quick access — jump straight from the dashboard to the settings
 	    sections (Brand · Features · Menu). Same cap as the settings page itself. */
-	private static function render_adminkit() {
+	public static function render_adminkit() {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
@@ -448,7 +448,7 @@ class AdminKit_Dashboard_Cards {
 	}
 
 	/** Recent-content card — the latest-modified posts/pages/CPTs as a grid of preview cards. */
-	private static function render_content() {
+	public static function render_content() {
 		$rows = self::recent_content();
 
 		echo '<section class="ak-card ak-dash__card ak-dash__recent">';
@@ -516,7 +516,7 @@ class AdminKit_Dashboard_Cards {
 	}
 
 	/** Site-health card — a composite score ring + badge + the real checks. */
-	private static function render_health() {
+	public static function render_health() {
 		$h           = self::site_health();
 		$score       = (int) $h['score'];
 		$critical    = (int) ( $h['critical'] ?? 0 );
@@ -589,7 +589,7 @@ class AdminKit_Dashboard_Cards {
 	}
 
 	/** Online-users card — who is signed in now (from AdminKit_Online_Users), or the most recent logins if nobody is online. Soft-depends on the module: absent/off ⇒ no card. */
-	private static function render_online() {
+	public static function render_online() {
 		if ( ! class_exists( 'AdminKit_Online_Users' ) || ! AdminKit_Online_Users::is_enabled() || ! current_user_can( 'list_users' ) ) {
 			return;
 		}
@@ -664,7 +664,7 @@ class AdminKit_Dashboard_Cards {
 	}
 
 	/** Storage card — the site's install footprint (uploads / db / plugins / themes / core), with server space left as context. */
-	private static function render_storage() {
+	public static function render_storage() {
 		$s     = self::storage();
 		$total = (int) $s['total'];
 		$free  = (int) ( $s['disk_free'] ?? 0 );

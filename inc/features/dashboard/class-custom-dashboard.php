@@ -131,7 +131,7 @@ class AdminKit_Custom_Dashboard {
 	 *
 	 * @return string Safe HTML — escaped leaves + author-controlled inline SVG.
 	 */
-	private static function tools_html() {
+	public static function tools_html() {
 		$cards  = self::grid_cards();
 		$layout = self::layout();
 		$hidden = self::hidden_cards();
