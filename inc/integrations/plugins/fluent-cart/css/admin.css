@@ -455,3 +455,42 @@ body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > butto
 body.adminkit.toplevel_page_fluent-cart .fc_dashboard_onboarding_item__title {
 	color: var( --ak-text ) !important;
 }
+
+
+/* ============================================================
+   10. MORE COMPONENT MAPPINGS
+   ============================================================ */
+
+/* Primary-button label (FC pins slate on the span inside the brand fill). */
+body.adminkit.toplevel_page_fluent-cart .el-button--primary span {
+	color: var( --ak-on-accent ) !important;
+}
+
+/* Panel titles + active fluid-tab text → heading. */
+body.adminkit.toplevel_page_fluent-cart .fct-dashboard-recent-activities__header_title,
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab.classic-tab-style .fct-fluid-tab-item.active {
+	color: var( --ak-heading ) !important;
+}
+
+/* Active fluid-tab underline bar. */
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab.classic-tab-style .fct-fluid-tab-active-bar {
+	background-color: var( --ak-border-strong ) !important;
+}
+
+/* Links → brand on hover / focus. */
+body.adminkit.toplevel_page_fluent-cart a:hover,
+body.adminkit.toplevel_page_fluent-cart a:focus {
+	color: var( --ak-primary );
+	text-decoration: none;
+}
+
+/* Empty-state illustration — retint so it reads on dark surfaces (filled shapes
+   muted, lines visible) without flattening to a single tone. */
+body.adminkit.toplevel_page_fluent-cart .empty-state svg path[fill]:not([fill="none"]),
+body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[fill]:not([fill="none"]) {
+	fill: var( --ak-surface-muted ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .empty-state svg path[stroke]:not([stroke="none"]),
+body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[stroke]:not([stroke="none"]) {
+	stroke: var( --ak-border-strong ) !important;
+}
