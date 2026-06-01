@@ -1455,3 +1455,85 @@ body.adminkit.toplevel_page_fluent-cart .fct_menu_item .fct_menu_child {
 body.adminkit.toplevel_page_fluent-cart .fct-settings-menu-overlay {
 	background-color: var( --ak-overlay ) !important;
 }
+
+
+/* ============================================================
+   18. UTILITY SURFACES + MISSED COMPONENT CLASSES
+   FC styles many surfaces with raw Tailwind utilities (bg-white +
+   dark:bg-dark-700) OR with component classes that set the colour directly
+   (e.g. .fct-report-filter-wrap, .fct-card-header/body/footer) — both of which
+   the §10 sweep missed. (a) Override the dark surface/border UTILITIES so every
+   utility-painted surface flips in dark; (b) pair bg-white+dark for light; (c)
+   the component classes §10 missed. AdminKit !important beats FC's non-important
+   utility rules regardless of the #fct_admin_app_wrapper ID scope.
+   ============================================================ */
+
+/* (a) Dark surface/border utilities — catch-all for dark mode */
+body.adminkit.toplevel_page_fluent-cart .dark\:bg-dark-700:where(.fluent_theme_dark,.fluent_theme_dark *) { background-color: var( --ak-surface ) !important; }
+body.adminkit.toplevel_page_fluent-cart .dark\:bg-dark-800:where(.fluent_theme_dark,.fluent_theme_dark *) { background-color: var( --ak-bg ) !important; }
+body.adminkit.toplevel_page_fluent-cart .dark\:bg-dark-500:where(.fluent_theme_dark,.fluent_theme_dark *) { background-color: var( --ak-elevated ) !important; }
+body.adminkit.toplevel_page_fluent-cart .dark\:border-dark-400:where(.fluent_theme_dark,.fluent_theme_dark *) { border-color: var( --ak-border-strong ) !important; }
+body.adminkit.toplevel_page_fluent-cart .dark\:border-dark-500:where(.fluent_theme_dark,.fluent_theme_dark *) { border-color: var( --ak-border ) !important; }
+
+/* (b) Paired light+dark surface containers (bg-white + dark:bg-dark-700) — safe, both modes */
+body.adminkit.toplevel_page_fluent-cart .bg-white.dark\:bg-dark-700 { background-color: var( --ak-surface ) !important; }
+
+/* (c) Component classes the §10 sweep missed — backgrounds */
+/* missed surface -> --ak-elevated */
+body.adminkit.toplevel_page_fluent-cart .fct-advanced-filters,
+body.adminkit.toplevel_page_fluent-cart .fct-congrats-dialog-content-inner,
+body.adminkit.toplevel_page_fluent-cart .fct-copy-btn,
+body.adminkit.toplevel_page_fluent-cart .fct-custom-legend-controls,
+body.adminkit.toplevel_page_fluent-cart .fct-inventory-child-row,
+body.adminkit.toplevel_page_fluent-cart .fct-inventory-stats-icon,
+body.adminkit.toplevel_page_fluent-cart .fct-offcanvas-menu-children,
+body.adminkit.toplevel_page_fluent-cart .fct-offcanvas-menu-close,
+body.adminkit.toplevel_page_fluent-cart .fct-package-type-card,
+body.adminkit.toplevel_page_fluent-cart .fct-report-result,
+body.adminkit.toplevel_page_fluent-cart .fct-settings-menu-child-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-child-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-classes-more,
+body.adminkit.toplevel_page_fluent-cart .fct-variant-badge {
+	background-color: var( --ak-elevated ) !important;
+}
+
+/* missed surface -> --ak-surface */
+body.adminkit.toplevel_page_fluent-cart .fct-card-body,
+body.adminkit.toplevel_page_fluent-cart .fct-card-header,
+body.adminkit.toplevel_page_fluent-cart .fct-report-filter-wrap {
+	background-color: var( --ak-surface ) !important;
+}
+
+
+/* (c) Component classes the §10 sweep missed — borders */
+/* missed border -> --ak-border-strong */
+body.adminkit.toplevel_page_fluent-cart .fct-advanced-filters,
+body.adminkit.toplevel_page_fluent-cart .fct-card-footer,
+body.adminkit.toplevel_page_fluent-cart .fct-copy-btn,
+body.adminkit.toplevel_page_fluent-cart .fct-custom-legend-controls,
+body.adminkit.toplevel_page_fluent-cart .fct-license-box-content-details,
+body.adminkit.toplevel_page_fluent-cart .fct-package-type-card,
+body.adminkit.toplevel_page_fluent-cart .fct-product-pricing-table-mobile-row {
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* missed border -> --ak-border */
+body.adminkit.toplevel_page_fluent-cart .fc_dashboard_onboarding_wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-card-header,
+body.adminkit.toplevel_page_fluent-cart .fct-customer-table-mobile-row,
+body.adminkit.toplevel_page_fluent-cart .fct-mobile-header-actions,
+body.adminkit.toplevel_page_fluent-cart .fct-node-dot,
+body.adminkit.toplevel_page_fluent-cart .fct-orders-table-mobile-row,
+body.adminkit.toplevel_page_fluent-cart .fct-product-table-mobile-row,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-placeholder,
+body.adminkit.toplevel_page_fluent-cart .fct-table-mobile-row,
+body.adminkit.toplevel_page_fluent-cart .fct-variant-badge {
+	border-color: var( --ak-border ) !important;
+}
+
+
+/* (d) Settings-nav tree connector line (:before) — light #EAECF0 / dark #253241 */
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav .fct-settings-nav-child-wrap:before,
+body.adminkit.toplevel_page_fluent-cart .fct-settings-menu-child-wrap:before {
+	background-color: var( --ak-border ) !important;
+}
