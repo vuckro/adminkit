@@ -1055,6 +1055,22 @@ body.adminkit .ak-tabs {
 	line-height: 0;
 }
 
+/* Segmented-control treatment for list-table status filters (All · Published ·
+   Drafts · …): wrap the pills in a bordered group so the strip reads as ONE
+   control — matching the AdminKit stats period selector (.ak-stats__presets).
+   The 2px inset keeps each pill's rounded corners clear of the container's
+   rounded border (same trick as the stats presets), so ul.subsubsub's
+   overflow:clip (tables.css) doesn't shave the first/last pill. `ul.subsubsub`
+   (0,2,2) out-specifies the flat shared strip rule above (0,2,1). Only the
+   list-table filter strip gets the box — nav-tab + .ak-tabs stay flat for now. */
+body.adminkit ul.subsubsub {
+	gap: 2px;
+	padding: 2px;
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+
 /* `.ak-tabs` scrolls sideways on overflow (long profile tab lists) instead
    of wrapping — single-row strip with a hidden scrollbar. */
 body.adminkit .ak-tabs {
