@@ -78,6 +78,13 @@ body.adminkit {
 body.adminkit .wrap.bricks-admin-wrapper {
 	max-width: none;
 }
+/* The Bricks Home screen (License / Get Started) reads as a single panel — center
+   it in a comfortable column instead of letting the card span the full width. */
+body.adminkit.toplevel_page_bricks .wrap.bricks-admin-wrapper {
+	max-width: 1040px;
+	margin-left: auto;
+	margin-right: auto;
+}
 body.adminkit .bricks-admin-wrapper:not(.wrap) {
 	max-width: 720px;
 	margin: 0;
