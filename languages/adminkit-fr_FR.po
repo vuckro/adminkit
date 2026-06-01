@@ -1375,3 +1375,27 @@ msgstr "Charger une disposition de menu depuis un fichier JSON"
 #: inc/settings/class-settings-page.php
 msgid "That file isn’t a valid AdminKit menu export."
 msgstr "Ce fichier n’est pas un export de menu AdminKit valide."
+
+#: inc/settings/class-settings-page.php
+msgid "Live preview"
+msgstr "Aperçu en direct"
+
+#: inc/settings/class-settings-page.php
+msgid "Light"
+msgstr "Clair"
+
+#: inc/settings/class-settings-page.php
+msgid "Dark"
+msgstr "Sombre"
+
+#: inc/settings/class-settings-page.php
+msgid "Your logo"
+msgstr "Votre logo"
+
+#: inc/settings/class-settings-page.php
+msgid "Sign in"
+msgstr "Se connecter"
+
+#: inc/settings/class-settings-page.php
+msgid "Button"
+msgstr "Bouton"

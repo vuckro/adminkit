@@ -312,6 +312,11 @@ class AdminKit_Settings_Page {
 				'light' => (string) AdminKit_Settings::get( 'logo_light' ),
 				'dark'  => (string) AdminKit_Settings::get( 'logo_dark' ),
 			),
+			// Site identity for the Brand-studio live preview (mock admin bar +
+			// login). Name + the WP Site Icon URL so the "Favicon" display mode
+			// previews accurately. Cheap; only meaningful on the Brand tab.
+			'siteName'     => (string) get_bloginfo( 'name' ),
+			'siteIcon'     => (string) get_site_icon_url( 64 ),
 			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
 			'loginLogo'    => (string) AdminKit_Settings::get( 'login_logo' ),
 			'brandAccent'  => (string) AdminKit_Settings::get( 'brand_accent' ),
@@ -425,6 +430,14 @@ class AdminKit_Settings_Page {
 				'loginLogoLabel'    => __( 'Login', 'adminkit' ),
 				'wpLogoBrand'       => __( 'Logo', 'adminkit' ),
 				'wpLogoFavicon'     => __( 'Favicon', 'adminkit' ),
+
+				// Brand studio — the live preview pane.
+				'brandPreviewTitle' => __( 'Live preview', 'adminkit' ),
+				'brandPreviewLight' => __( 'Light', 'adminkit' ),
+				'brandPreviewDark'  => __( 'Dark', 'adminkit' ),
+				'brandPreviewLogo'  => __( 'Your logo', 'adminkit' ),
+				'brandPreviewSignIn' => __( 'Sign in', 'adminkit' ),
+				'brandPreviewButton' => __( 'Button', 'adminkit' ),
 
 			) + $stats_i18n, // Statistics-tab strings, merged from the stats-page module.
 		);

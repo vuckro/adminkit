@@ -1361,3 +1361,27 @@ msgstr ""
 #: inc/settings/class-settings-page.php
 msgid "That file isn’t a valid AdminKit menu export."
 msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Live preview"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Light"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Dark"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Your logo"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Sign in"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Button"
+msgstr ""

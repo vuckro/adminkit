@@ -651,6 +651,137 @@
 	.adminkit-app .ak-display-row { gap: 12px; }
 }
 
+/* ── Brand studio: controls + live preview ───────────────────────────────────
+   Two columns on wide screens (controls | preview); stacks on narrow. The
+   preview is a self-contained mock with its OWN fixed light/dark backdrop (like
+   a swatch) so the brand shows in both themes whatever the admin theme is. */
+.adminkit-app .ak-brand-studio {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1.05fr );
+	gap: 26px;
+	align-items: start;
+}
+.adminkit-app .ak-brand-studio__controls {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	min-width: 0;
+}
+@media screen and (max-width: 1080px) {
+	.adminkit-app .ak-brand-studio { grid-template-columns: 1fr; gap: 22px; }
+}
+
+.adminkit-app .ak-brand-preview { position: sticky; top: 20px; min-width: 0; }
+.adminkit-app .ak-bp__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+.adminkit-app .ak-bp__title {
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .06em;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-bp__themes {
+	display: inline-flex;
+	gap: 2px;
+	padding: 2px;
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+.adminkit-app .ak-bp__theme {
+	padding: 3px 11px;
+	border: 0;
+	border-radius: calc( var(--ak-radius-s) - 2px );
+	background: transparent;
+	color: var(--ak-text-muted);
+	font: inherit;
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+	cursor: pointer;
+}
+.adminkit-app .ak-bp__theme.is-active { background: var(--ak-elevated); color: var(--ak-heading); }
+
+/* The mock frame carries its own palette via --p-* (fixed light/dark swatch). */
+.adminkit-app .ak-bp__frame {
+	--p-bg: #ffffff; --p-surface: #f6f7f7; --p-border: #dcdcde;
+	--p-text: #1d2327; --p-muted: #6c7177;
+	--p-rail: #1d2327; --p-rail-text: #e8eaed;
+	overflow: hidden;
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	background: var(--p-bg);
+	box-shadow: 0 1px 3px rgba( 0, 0, 0, .08 );
+}
+.adminkit-app .ak-bp__frame[data-preview-theme="dark"] {
+	--p-bg: #1d2327; --p-surface: #2c3338; --p-border: #3c434a;
+	--p-text: #f0f0f1; --p-muted: #9aa0a6;
+	--p-rail: #101317; --p-rail-text: #e8eaed;
+}
+.adminkit-app .ak-bp__bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 42px;
+	padding: 0 14px;
+	background: var(--p-rail);
+}
+.adminkit-app .ak-bp__mark { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.adminkit-app .ak-bp__logo { height: 20px; width: auto; max-width: 160px; object-fit: contain; display: block; }
+.adminkit-app .ak-bp__logo-ph { font-size: 12px; color: var(--p-rail-text); opacity: .65; }
+.adminkit-app .ak-bp__favicon { width: 18px; height: 18px; border-radius: 4px; object-fit: cover; display: block; flex: none; }
+.adminkit-app .ak-bp__favicon--empty { background: var(--ak-primary); }
+.adminkit-app .ak-bp__site { font-size: 12px; font-weight: 600; color: var(--p-rail-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adminkit-app .ak-bp__dots { display: inline-flex; gap: 6px; flex: none; }
+.adminkit-app .ak-bp__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--p-rail-text); opacity: .4; }
+.adminkit-app .ak-bp__layout { display: grid; grid-template-columns: 76px 1fr; min-height: 240px; }
+.adminkit-app .ak-bp__menu { background: var(--p-rail); padding: 10px 0; display: flex; flex-direction: column; gap: 2px; }
+.adminkit-app .ak-bp__nav { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
+.adminkit-app .ak-bp__nav-ic { width: 14px; height: 14px; border-radius: 4px; background: var(--p-rail-text); opacity: .45; flex: none; }
+.adminkit-app .ak-bp__nav-bar { height: 6px; border-radius: 3px; background: var(--p-rail-text); opacity: .3; flex: 1; }
+.adminkit-app .ak-bp__nav.is-active { background: var(--ak-primary); }
+.adminkit-app .ak-bp__nav.is-active .ak-bp__nav-ic,
+.adminkit-app .ak-bp__nav.is-active .ak-bp__nav-bar { background: var(--ak-on-accent); opacity: .95; }
+.adminkit-app .ak-bp__content { padding: 16px; background: var(--p-bg); display: flex; flex-direction: column; gap: 11px; }
+.adminkit-app .ak-bp__h { height: 14px; width: 44%; border-radius: 5px; background: var(--p-text); opacity: .82; }
+.adminkit-app .ak-bp__line { height: 8px; border-radius: 4px; background: var(--p-muted); opacity: .5; }
+.adminkit-app .ak-bp__line--short { width: 68%; }
+.adminkit-app .ak-bp__btn {
+	align-self: flex-start;
+	margin-top: 2px;
+	padding: 7px 15px;
+	border: 0;
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-primary);
+	color: var(--ak-on-accent);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: default;
+}
+.adminkit-app .ak-bp__login {
+	margin-top: 6px;
+	padding: 16px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 9px;
+	border: 1px solid var(--p-border);
+	border-radius: var(--ak-card-radius);
+	background: var(--p-surface);
+}
+.adminkit-app .ak-bp__login-mark { display: inline-flex; align-items: center; gap: 6px; height: 26px; margin-bottom: 2px; }
+.adminkit-app .ak-bp__login-mark .ak-bp__logo { height: 26px; }
+.adminkit-app .ak-bp__login-mark .ak-bp__site,
+.adminkit-app .ak-bp__login-mark .ak-bp__logo-ph { color: var(--p-text); }
+.adminkit-app .ak-bp__field { width: 100%; height: 26px; border-radius: var(--ak-radius-s); background: var(--p-bg); border: 1px solid var(--p-border); }
+.adminkit-app .ak-bp__btn--block { width: 100%; align-self: stretch; text-align: center; margin-top: 2px; }
+
 @media screen and (max-width: 782px) {
 	.adminkit-app .ak-head { flex-wrap: wrap; }
 }

@@ -249,6 +249,13 @@
 	function buildDesign() {
 		var p = el( 'section', { 'class': 'ak-panel ak-panel--brand', role: 'tabpanel' } );
 
+		// Assigned once the live-preview pane is built (below). Logo + display-mode
+		// controls call it to re-skin the mock in real time. (Accent rides the
+		// global --ak-primary the accent picker already updates, so it needs no
+		// explicit refresh here.) Closures capture the var, so the stub is safe
+		// until the real updater lands.
+		var previewUpdate = function () {};
+
 		// --- Common helpers used inside buildDesign() ---------------------------
 
 		// Open the WP media frame and call back with the chosen attachment URL +
@@ -313,6 +320,7 @@
 				state.logos[ slotKey ] = url || '';
 				syncPreview();
 				markDirty();
+				previewUpdate();
 			}
 
 			// Logos use the plain media frame (free-form aspect, no crop).
@@ -367,6 +375,7 @@
 						x.setAttribute( 'aria-checked', on ? 'true' : 'false' );
 					} );
 					markDirty();
+					previewUpdate();
 				} );
 				btns.push( b );
 				seg.appendChild( b );
@@ -656,11 +665,111 @@
 			accentPicker()
 		] );
 
-		// Card stack: identity (slots) → display row → color row. Mounted
-		// directly under the panel — no wrapping intro text, the title on
-		// the card head already explains what this is.
-		var card = el( 'section', { 'class': 'ak-card' }, [
-			cardHead, slotsRow, displayRow, colorRow
+		// --- Live preview pane ---------------------------------------------------
+		// A self-contained mock of the admin chrome + login screen that re-skins as
+		// you edit: the logo (light/dark variant), the favicon-vs-logo display mode,
+		// and the accent (which rides the global --ak-primary the accent picker
+		// already updates live). Its OWN light/dark toggle uses fixed backdrops —
+		// like a swatch — so you see the brand in both themes regardless of the
+		// admin's current theme. Decorative throughout: aria-hidden, buttons inert.
+		function brandPreview() {
+			var theme = ( document.documentElement.getAttribute( 'data-adminkit-theme' ) === 'dark' ) ? 'dark' : 'light';
+
+			var barMark   = el( 'span', { 'class': 'ak-bp__mark' } );
+			var loginMark = el( 'span', { 'class': 'ak-bp__login-mark' } );
+
+			// Paint a brand mark (admin bar or login) for the current mode + theme:
+			//   logo mode    → the logo image for the active preview theme
+			//   favicon mode → the Site Icon (or an accent chip) + the site name
+			//   no asset     → a "Your logo" placeholder
+			function paintMark( markEl, mode ) {
+				markEl.textContent = '';
+				var logo = ( theme === 'dark' ? state.logos.dark : state.logos.light ) || state.logos.light || state.logos.dark || '';
+				if ( 'favicon' === mode ) {
+					if ( D.siteIcon ) {
+						markEl.appendChild( el( 'img', { 'class': 'ak-bp__favicon', src: D.siteIcon, alt: '' } ) );
+					} else {
+						markEl.appendChild( el( 'span', { 'class': 'ak-bp__favicon ak-bp__favicon--empty' } ) );
+					}
+					markEl.appendChild( el( 'span', { 'class': 'ak-bp__site', text: D.siteName || '' } ) );
+				} else if ( logo ) {
+					markEl.appendChild( el( 'img', { 'class': 'ak-bp__logo', src: logo, alt: '' } ) );
+				} else {
+					markEl.appendChild( el( 'span', { 'class': 'ak-bp__logo-ph', text: I.brandPreviewLogo || 'Your logo' } ) );
+				}
+			}
+
+			var bar = el( 'div', { 'class': 'ak-bp__bar' }, [
+				barMark,
+				el( 'span', { 'class': 'ak-bp__dots' }, [
+					el( 'span', { 'class': 'ak-bp__dot' } ),
+					el( 'span', { 'class': 'ak-bp__dot' } ),
+					el( 'span', { 'class': 'ak-bp__dot' } )
+				] )
+			] );
+
+			// Menu rail — five rows, the second active (painted in the accent).
+			var menu = el( 'div', { 'class': 'ak-bp__menu' } );
+			for ( var i = 0; i < 5; i++ ) {
+				menu.appendChild( el( 'div', { 'class': 'ak-bp__nav' + ( 1 === i ? ' is-active' : '' ) }, [
+					el( 'span', { 'class': 'ak-bp__nav-ic' } ),
+					el( 'span', { 'class': 'ak-bp__nav-bar' } )
+				] ) );
+			}
+
+			var content = el( 'div', { 'class': 'ak-bp__content' }, [
+				el( 'div', { 'class': 'ak-bp__h' } ),
+				el( 'div', { 'class': 'ak-bp__line' } ),
+				el( 'div', { 'class': 'ak-bp__line ak-bp__line--short' } ),
+				el( 'button', { type: 'button', tabindex: '-1', 'class': 'ak-bp__btn', text: I.brandPreviewButton || 'Button' } ),
+				el( 'div', { 'class': 'ak-bp__login' }, [
+					loginMark,
+					el( 'div', { 'class': 'ak-bp__field' } ),
+					el( 'div', { 'class': 'ak-bp__field' } ),
+					el( 'button', { type: 'button', tabindex: '-1', 'class': 'ak-bp__btn ak-bp__btn--block', text: I.brandPreviewSignIn || 'Sign in' } )
+				] )
+			] );
+
+			var frame = el( 'div', { 'class': 'ak-bp__frame', 'data-preview-theme': theme }, [
+				bar,
+				el( 'div', { 'class': 'ak-bp__layout' }, [ menu, content ] )
+			] );
+
+			function update() {
+				frame.setAttribute( 'data-preview-theme', theme );
+				paintMark( barMark, state.wpLogo );
+				paintMark( loginMark, state.loginLogo );
+			}
+
+			var lightBtn = el( 'button', { type: 'button', 'class': 'ak-bp__theme' + ( 'light' === theme ? ' is-active' : '' ), text: I.brandPreviewLight || 'Light' } );
+			var darkBtn  = el( 'button', { type: 'button', 'class': 'ak-bp__theme' + ( 'dark' === theme ? ' is-active' : '' ), text: I.brandPreviewDark || 'Dark' } );
+			function setTheme( t ) {
+				theme = t;
+				lightBtn.classList.toggle( 'is-active', 'light' === t );
+				darkBtn.classList.toggle( 'is-active', 'dark' === t );
+				update();
+			}
+			lightBtn.addEventListener( 'click', function () { setTheme( 'light' ); } );
+			darkBtn.addEventListener( 'click', function () { setTheme( 'dark' ); } );
+
+			var head = el( 'div', { 'class': 'ak-bp__head' }, [
+				el( 'span', { 'class': 'ak-bp__title', text: I.brandPreviewTitle || 'Live preview' } ),
+				el( 'div', { 'class': 'ak-bp__themes', role: 'group' }, [ lightBtn, darkBtn ] )
+			] );
+
+			var root = el( 'div', { 'class': 'ak-brand-preview' }, [ head, frame ] );
+			update();
+			return { el: root, update: update };
+		}
+
+		// Studio: identity + controls on the left, the live preview on the right.
+		var controls = el( 'div', { 'class': 'ak-brand-studio__controls' }, [ slotsRow, displayRow, colorRow ] );
+		var preview  = brandPreview();
+		previewUpdate = preview.update;
+
+		var card = el( 'section', { 'class': 'ak-card ak-card--studio' }, [
+			cardHead,
+			el( 'div', { 'class': 'ak-brand-studio' }, [ controls, preview.el ] )
 		] );
 		p.appendChild( card );
 
