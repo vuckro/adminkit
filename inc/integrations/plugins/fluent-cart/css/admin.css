@@ -1163,3 +1163,295 @@ body.adminkit.toplevel_page_fluent-cart .status-danger .fct-activity-content,
 body.adminkit.toplevel_page_fluent-cart .status-error .fct-activity-content {
 	color: var( --ak-error ) !important;
 }
+
+
+/* ============================================================
+   17. AUDIT COMPLETENESS PASS — tables, forms, overlays, dashboard,
+   settings/leftovers. Hard literals / El-Plus internals the §1-16 sweeps
+   could not reach (verified absent from the file). Tables are the bulk.
+   ============================================================ */
+
+/* =====================================================================
+   FluentCart audit — consolidated fixes for MY_CSS (admin.css)
+   Append after section 16. Scope/`!important` match the existing file.
+   Grouped by area, priority order: tables → forms → overlays → dashboard
+   → settings/leftovers. Each group is one comment + its rules.
+   ===================================================================== */
+
+
+/* ============================================================
+   A. EL-TABLE — direct literals bypassing the --el-table-* remap
+   The 4 data tables (Orders/Products/Customers/Subscriptions) paint
+   FC's grey/slate ramp directly; route every literal to --ak-*.
+   ============================================================ */
+
+/* Fixed-column scroll shadows (invisible rgba(0,0,0,.15) on dark) */
+body.adminkit.toplevel_page_fluent-cart .el-table {
+	--el-table-fixed-left-column:  inset 10px 0 10px -10px var( --ak-border-strong );
+	--el-table-fixed-right-column: inset -10px 0 10px -10px var( --ak-border-strong );
+}
+
+/* Sticky right-edge fixed-column patch — hard #fff sliver */
+body.adminkit.toplevel_page_fluent-cart .el-table__body-wrapper tr td.el-table__fixed-right-patch,
+body.adminkit.toplevel_page_fluent-cart .el-table__body-wrapper tr th.el-table__fixed-right-patch,
+body.adminkit.toplevel_page_fluent-cart .el-table__footer-wrapper tr td.el-table__fixed-right-patch,
+body.adminkit.toplevel_page_fluent-cart .el-table__footer-wrapper tr th.el-table__fixed-right-patch,
+body.adminkit.toplevel_page_fluent-cart .el-table__header-wrapper tr td.el-table__fixed-right-patch,
+body.adminkit.toplevel_page_fluent-cart .el-table__header-wrapper tr th.el-table__fixed-right-patch {
+	background: var( --ak-surface ) !important;
+}
+
+/* Header row background (Tailwind literal overrides --el-table-header-bg-color) */
+body.adminkit.toplevel_page_fluent-cart .el-table thead tr th.el-table__cell,
+body.adminkit.toplevel_page_fluent-cart .el-table .el-table__header thead tr th,
+body.adminkit.toplevel_page_fluent-cart .el-table th.el-table__cell {
+	background-color: var( --ak-elevated ) !important;
+}
+
+/* Outer frame + row-divider / cell borders (bypass --el-table-border-color) */
+body.adminkit.toplevel_page_fluent-cart .el-table,
+body.adminkit.toplevel_page_fluent-cart .el-table td.el-table__cell,
+body.adminkit.toplevel_page_fluent-cart .el-table th.el-table__cell.is-leaf,
+body.adminkit.toplevel_page_fluent-cart .el-table .el-table__body tbody tr td,
+body.adminkit.toplevel_page_fluent-cart .el-table__row:first-child td {
+	border-color: var( --ak-border ) !important;
+}
+
+/* Row hover bg (literal re-declared after the token, so it wins) */
+body.adminkit.toplevel_page_fluent-cart .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell,
+body.adminkit.toplevel_page_fluent-cart .el-table--striped .el-table__body tr:hover > td.el-table__cell,
+body.adminkit.toplevel_page_fluent-cart .el-table__body tr.hover-row > td.el-table__cell {
+	background-color: var( --ak-hover-bg ) !important;
+}
+
+/* Zebra / striped rows */
+body.adminkit.toplevel_page_fluent-cart .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+	background-color: var( --ak-surface-muted ) !important;
+}
+
+/* Dark-only body / wrapper / empty-block bg (FC near-black rgb(21 29 38)) */
+body.adminkit.toplevel_page_fluent-cart .el-table,
+body.adminkit.toplevel_page_fluent-cart .el-table__inner-wrapper,
+body.adminkit.toplevel_page_fluent-cart .el-table tr,
+body.adminkit.toplevel_page_fluent-cart .el-table__body-wrapper tr td.el-table-fixed-column--right,
+body.adminkit.toplevel_page_fluent-cart .el-table__empty-block {
+	background-color: var( --ak-surface ) !important;
+}
+
+/* In-table links (#-order, customer, product) — pinned slate !important, use '.link' */
+body.adminkit.toplevel_page_fluent-cart .el-table .link {
+	color: var( --ak-primary ) !important;
+}
+
+/* Body + header cell text + level-0 title (direct slate literals) */
+body.adminkit.toplevel_page_fluent-cart .el-table tr td .cell,
+body.adminkit.toplevel_page_fluent-cart .el-table__row.el-table__row--level-0 .title {
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-table thead th.el-table__cell .cell {
+	color: var( --ak-heading ) !important;
+}
+
+/* Responsive / stacked (mobile) table row separators */
+body.adminkit.toplevel_page_fluent-cart .el-table.responsive,
+body.adminkit.toplevel_page_fluent-cart .el-table.responsive .el-table__body-wrapper .el-table__body tr {
+	border-color: var( --ak-border ) !important;
+}
+
+
+/* ============================================================
+   B. EL-PLUS FORMS — native color-picker / date-picker / inputs
+   El-Plus internals (often teleported) that the --el-* remap and the
+   .fct-color-picker-* sweep never reach.
+   ============================================================ */
+
+/* Native color-picker popover panel + value readout + caret + swatch */
+body.adminkit.toplevel_page_fluent-cart .el-color-picker__panel {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-color-dropdown__value {
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-color-picker__color {
+	background-color: var( --ak-input-bg ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-color-picker .el-color-picker__icon {
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Date-range time sub-panel (hard #fff floating over dark picker) */
+body.adminkit.toplevel_page_fluent-cart .el-date-range-picker__time-picker-wrap .el-picker-panel {
+	background: var( --ak-surface ) !important;
+}
+
+/* Checkbox hover border (slate vanishes on dark face) */
+body.adminkit.toplevel_page_fluent-cart .el-checkbox__inner:hover {
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Error-input border (#f04438 !important bypasses --el-color-danger) */
+body.adminkit.toplevel_page_fluent-cart .el-form-item.is-error .el-input__wrapper,
+body.adminkit.toplevel_page_fluent-cart .el-form-item.is-error .el-select__wrapper,
+body.adminkit.toplevel_page_fluent-cart .el-form-item.is-error .el-input input {
+	border-color: var( --ak-error ) !important;
+}
+
+/* Required-field asterisk on form labels */
+body.adminkit.toplevel_page_fluent-cart .el-form-item__label:before {
+	color: var( --ak-error ) !important;
+}
+
+/* Select dropdown caret arrow (hard #8d9095 stroke) */
+body.adminkit.toplevel_page_fluent-cart .el-select .el-input__wrapper .el-icon svg path,
+body.adminkit.toplevel_page_fluent-cart .el-pagination .el-select__wrapper .el-icon svg path {
+	stroke: var( --ak-text-muted ) !important;
+}
+
+
+/* ============================================================
+   C. OVERLAYS — drawer, dropdown destructive, notification, messagebox
+   El-Plus drawer/notification absent from MY_CSS; chips/items paint
+   semantic literals directly.
+   ============================================================ */
+
+/* Drawer footer surface + header divider (drawer untouched by MY_CSS) */
+body.adminkit.toplevel_page_fluent-cart .el-drawer__footer {
+	background-color: var( --ak-surface-muted ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-drawer__header {
+	border-color: var( --ak-border ) !important;
+}
+
+/* Destructive ('Delete') dropdown item text — baked brand-red */
+body.adminkit.toplevel_page_fluent-cart .el-dropdown-menu__item.item-destructive,
+body.adminkit.toplevel_page_fluent-cart .el-dropdown__popper.fct-dropdown .el-dropdown-menu__item.item-destructive {
+	color: var( --ak-error ) !important;
+}
+
+/* Toast notification surface + border (dark literal #1C2732 wins by order) */
+body.adminkit.toplevel_page_fluent-cart .el-notification {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border ) !important;
+}
+
+/* Message-box status icon chips (confirm / delete dialogs) */
+body.adminkit.toplevel_page_fluent-cart .el-message-box__status.el-message-box-icon--warning {
+	background-color: var( --ak-warning-subtle ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-message-box__status.el-message-box-icon--error {
+	background-color: var( --ak-error-subtle ) !important;
+}
+
+
+/* ============================================================
+   D. DASHBOARD — KPI cards, change pills, legend, onboarding
+   Inner surfaces/chips below the .fct-dashboard-stat-widgets wrapper.
+   ============================================================ */
+
+/* Stat-card inner surface + order-stats icon tile + legend rows */
+body.adminkit.toplevel_page_fluent-cart .fct-dashboard-stat-widgets .fct-dashboard-stat-widget__inner,
+body.adminkit.toplevel_page_fluent-cart .fct-order-stats-card-head .icon-button,
+body.adminkit.toplevel_page_fluent-cart .fct-custom-legend .legend-item {
+	background-color: var( --ak-surface ) !important;
+}
+
+/* KPI icon chips — map the FC blue/orange/pink/violet set to brand-subtle */
+body.adminkit.toplevel_page_fluent-cart .fct-dashboard-stat-widgets .fct-dashboard-stat-widget__icon {
+	background-color: var( --ak-primary-subtle ) !important;
+	color: var( --ak-primary ) !important;
+}
+
+/* Trend / change delta pills (no dark variant) */
+body.adminkit.toplevel_page_fluent-cart .change-wrap .change.success {
+	color: var( --ak-success ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .change-wrap .change.danger {
+	color: var( --ak-error ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .change-wrap .change.warning {
+	color: var( --ak-warning ) !important;
+}
+
+/* Onboarding completed/active step marker → brand (deduped: dashboard + settings + el-steps) */
+body.adminkit.toplevel_page_fluent-cart .fc_dashboard_onboarding_lists .fc_dashboard_onboarding_item.active .circle-shape,
+body.adminkit.toplevel_page_fluent-cart .fct-steps-wrap .el-steps--simple .el-step.is-simple .el-step__head.is-success .el-step__icon {
+	background-color: var( --ak-primary ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+
+
+/* ============================================================
+   E. SETTINGS + LEFTOVERS — semantic chips, links, borders, muted text
+   Hard literals with no dark variant, not in the .fct-* maps.
+   ============================================================ */
+
+/* Semantic icon chips (bg) — tax / pro-feature / tax-filing success */
+body.adminkit.toplevel_page_fluent-cart .fct-tax-rates-wrap .el-collapse .el-collapse-item__wrap .el-collapse-item__content .fct-tax-rates-countries .fct-tax-rates-country-rate {
+	background-color: var( --ak-info-subtle ) !important;
+	color: var( --ak-info ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-tax-filing-success-wrap .fct-tax-filling-success-icon {
+	background-color: var( --ak-success-subtle ) !important;
+	color: var( --ak-success ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-pro-feature-content .fct-pro-feature-icon {
+	background-color: var( --ak-warning-subtle ) !important;
+	color: var( --ak-warning ) !important;
+}
+
+/* Semantic text / glyph literals — errors (red) */
+body.adminkit.toplevel_page_fluent-cart .fct-setting-form-row .fct-inline-error,
+body.adminkit.toplevel_page_fluent-cart .coupon-delete-btn,
+body.adminkit.toplevel_page_fluent-cart .fct-license-activation-limit-actions .icon-button .cross,
+body.adminkit.toplevel_page_fluent-cart .fct-module-disabled-notice .fct-disabled-notice-icon {
+	color: var( --ak-error ) !important;
+}
+
+/* Semantic glyph — success (green) */
+body.adminkit.toplevel_page_fluent-cart .fct-license-activation-limit-actions .icon-button {
+	color: var( --ak-success ) !important;
+}
+
+/* Brand links + brand glyph (hard FC blue/purple !important) */
+body.adminkit.toplevel_page_fluent-cart .fct-pro-feature-content .fct-pro-feature-text a,
+body.adminkit.toplevel_page_fluent-cart .fct-module-disabled-notice a,
+body.adminkit.toplevel_page_fluent-cart .fct-add-new-package-option,
+body.adminkit.toplevel_page_fluent-cart .licenses-stats-card.license-product .licenses-stats-card-head .licenses-icon .icon {
+	color: var( --ak-primary ) !important;
+}
+
+/* Borders not in the map — EU-VAT radio item + license separator dot */
+body.adminkit.toplevel_page_fluent-cart .fct-eu-vat-collection-settings .fct-eu-vat-collection-radios .fct-eu-vat-collection-item {
+	border-color: var( --ak-border ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-license-inline-action-wrap .separator {
+	background-color: var( --ak-border-strong ) !important;
+}
+
+/* Muted text — settings sub-label hint + onboarding WP footer */
+body.adminkit.toplevel_page_fluent-cart .setting-label span,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-body #wpfooter {
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Beta label link (olive-yellow !important) → warning */
+body.adminkit.toplevel_page_fluent-cart a.fluent_cart_beta {
+	color: var( --ak-warning ) !important;
+}
+
+/* Shared-variant status-dot white halo ring → the surface it sits on */
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav__item-dot {
+	border-color: var( --ak-surface ) !important;
+}
+
+/* Floating top-bar submenu dropdown shadow (light glow persists on dark) */
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item .fct_menu_child {
+	box-shadow: var( --ak-shadow-elevated ) !important;
+}
+
+/* Settings off-canvas backdrop scrim (deduped: settings + leftovers) */
+body.adminkit.toplevel_page_fluent-cart .fct-settings-menu-overlay {
+	background-color: var( --ak-overlay ) !important;
+}
