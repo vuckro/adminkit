@@ -9,9 +9,10 @@
  *   WP_LOAD=/path/to/wp-load.php php tests/run.php   # + the DB-backed seam tests
  *
  * It auto-detects WordPress: if WP_LOAD points at a wp-load.php (or one is found
- * by walking up from here), the DB-backed tests run too; otherwise they SKIP
- * cleanly (clearly reported) and only the pure tests run — so CI can run this
- * without a database. Exits non-zero if any test fails (CI gate).
+ * by walking up from here) AND its database is reachable, the DB-backed tests run
+ * too. Otherwise they SKIP cleanly (clearly reported) and only the pure tests run
+ * — so CI can run this without a database. An explicit WP_LOAD with an unreachable
+ * database fails fast with a clear error. Exits non-zero if any test fails (CI gate).
  *
  * See tests/README.md.
  *
@@ -46,23 +47,196 @@ function ak_eq( $expected, $actual, $msg ) {
 function ak_group( $name ) { echo "\n\033[1m$name\033[0m\n"; }
 function ak_skip( $name, $why ) { $GLOBALS['ak_skip']++; echo "\n\033[33m⊘ $name — SKIPPED ($why)\033[0m\n"; }
 
+/**
+ * Minimal WordPress function/constant shims for the pure test path.
+ *
+ * Keep these deliberately small: they only cover the pure methods exercised
+ * below. Anything that needs real WordPress belongs in the DB-backed block.
+ *
+ * @return void
+ */
+function ak_boot_pure_wp_stubs() {
+	if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', '/tmp/' ); }
+	if ( ! defined( 'DAY_IN_SECONDS' ) ) { define( 'DAY_IN_SECONDS', 86400 ); }
+	if ( ! defined( 'MINUTE_IN_SECONDS' ) ) { define( 'MINUTE_IN_SECONDS', 60 ); }
+
+	if ( ! function_exists( 'apply_filters' ) ) {
+		function apply_filters( $hook_name, $value = null ) {
+			return $value;
+		}
+	}
+	if ( ! function_exists( '__' ) ) {
+		function __( $text, $domain = 'default' ) {
+			return $text;
+		}
+	}
+	if ( ! function_exists( 'esc_html__' ) ) {
+		function esc_html__( $text, $domain = 'default' ) {
+			return $text;
+		}
+	}
+	if ( ! function_exists( 'esc_attr__' ) ) {
+		function esc_attr__( $text, $domain = 'default' ) {
+			return $text;
+		}
+	}
+	if ( ! function_exists( 'add_filter' ) ) {
+		function add_filter() {
+			return true;
+		}
+	}
+	if ( ! function_exists( 'add_action' ) ) {
+		function add_action() {
+			return true;
+		}
+	}
+	if ( ! function_exists( 'current_time' ) ) {
+		function current_time( $type, $gmt = 0 ) {
+			if ( 'timestamp' === $type || 'U' === $type ) {
+				return time();
+			}
+			if ( 'mysql' === $type ) {
+				return gmdate( 'Y-m-d H:i:s' );
+			}
+			return gmdate( (string) $type );
+		}
+	}
+}
+
+/**
+ * Find wp-config.php next to, or one level above, wp-load.php.
+ *
+ * @param string $wp_load Absolute path to wp-load.php.
+ * @return string
+ */
+function ak_wp_config_for_load( $wp_load ) {
+	$root = dirname( (string) realpath( $wp_load ) );
+	foreach ( array( $root . '/wp-config.php', dirname( $root ) . '/wp-config.php' ) as $candidate ) {
+		if ( is_file( $candidate ) ) {
+			return $candidate;
+		}
+	}
+	return '';
+}
+
+/**
+ * Read simple define( 'DB_*', '...' ) values from wp-config.php.
+ *
+ * @param string $wp_config Absolute path to wp-config.php.
+ * @return array<string,string>
+ */
+function ak_wp_db_config( $wp_config ) {
+	$contents = file_get_contents( $wp_config ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	if ( false === $contents ) {
+		return array();
+	}
+	$out = array();
+	foreach ( array( 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_HOST' ) as $key ) {
+		if ( preg_match( '/define\s*\(\s*[\'"]' . preg_quote( $key, '/' ) . '[\'"]\s*,\s*([\'"])(.*?)\1\s*\)/s', $contents, $m ) ) {
+			$out[ $key ] = stripcslashes( $m[2] );
+		}
+	}
+	return $out;
+}
+
+/**
+ * Preflight the WordPress database before requiring wp-load.php. Without this,
+ * a LocalWP checkout with MySQL stopped exits through WordPress' HTML DB error
+ * before the pure tests can run.
+ *
+ * Returns ok=true when the config cannot be inspected; in that case the runner
+ * falls back to WordPress' normal bootstrap behaviour.
+ *
+ * @param string $wp_load Absolute path to wp-load.php.
+ * @return array{ok:bool,reason:string}
+ */
+function ak_wp_db_preflight( $wp_load ) {
+	if ( ! function_exists( 'mysqli_init' ) ) {
+		return array( 'ok' => true, 'reason' => '' );
+	}
+	$wp_config = ak_wp_config_for_load( $wp_load );
+	if ( '' === $wp_config ) {
+		return array( 'ok' => true, 'reason' => '' );
+	}
+	$db = ak_wp_db_config( $wp_config );
+	foreach ( array( 'DB_NAME', 'DB_USER', 'DB_HOST' ) as $required ) {
+		if ( ! array_key_exists( $required, $db ) ) {
+			return array( 'ok' => true, 'reason' => '' );
+		}
+	}
+
+	$host   = '' !== $db['DB_HOST'] ? $db['DB_HOST'] : 'localhost';
+	$port   = null;
+	$socket = null;
+	if ( preg_match( '/^([^:]+):(\d+)$/', $host, $m ) ) {
+		$host = $m[1];
+		$port = (int) $m[2];
+	} elseif ( preg_match( '/^([^:]+):(.+)$/', $host, $m ) ) {
+		$host   = $m[1];
+		$socket = $m[2];
+	}
+
+	$mysqli = mysqli_init();
+	if ( ! $mysqli ) {
+		return array( 'ok' => true, 'reason' => '' );
+	}
+	$driver     = new mysqli_driver();
+	$old_report = $driver->report_mode;
+	mysqli_report( MYSQLI_REPORT_OFF );
+	$ok         = @$mysqli->real_connect(
+		$host,
+		$db['DB_USER'],
+		isset( $db['DB_PASSWORD'] ) ? $db['DB_PASSWORD'] : '',
+		$db['DB_NAME'],
+		$port,
+		$socket
+	);
+	$error      = $ok ? '' : mysqli_connect_error();
+	if ( $ok ) {
+		$mysqli->close();
+	}
+	mysqli_report( $old_report );
+
+	return array(
+		'ok'     => (bool) $ok,
+		'reason' => $ok ? '' : sprintf( 'database unavailable for %s@%s (%s)', $db['DB_USER'], $db['DB_HOST'], $error ),
+	);
+}
+
 /* ── locate WordPress (optional) ───────────────────────────────────────── */
-$wp_load = getenv( 'WP_LOAD' ) ?: '';
+$wp_load_env = getenv( 'WP_LOAD' );
+$wp_load     = $wp_load_env ?: '';
+$wp_reason   = 'no WordPress (set WP_LOAD=...)';
+$auto_wp     = false;
 if ( '' === $wp_load ) {
 	// Walk up from this plugin looking for wp-load.php (works inside a WP install).
 	$dir = __DIR__;
 	for ( $i = 0; $i < 8 && $dir !== dirname( $dir ); $i++ ) {
-		if ( is_file( "$dir/wp-load.php" ) ) { $wp_load = "$dir/wp-load.php"; break; }
+		if ( is_file( "$dir/wp-load.php" ) ) { $wp_load = "$dir/wp-load.php"; $auto_wp = true; break; }
 		$dir = dirname( $dir );
 	}
 }
 $has_wp = false;
 if ( $wp_load && is_file( $wp_load ) ) {
-	$_SERVER['HTTP_HOST']   = $_SERVER['HTTP_HOST']   ?? 'localhost';
-	$_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '/';
-	if ( ! defined( 'WP_USE_THEMES' ) ) { define( 'WP_USE_THEMES', false ); }
-	require $wp_load;
-	$has_wp = class_exists( 'AdminKit_Plugin' );
+	$preflight = ak_wp_db_preflight( $wp_load );
+	if ( ! $preflight['ok'] ) {
+		$wp_reason = ( $auto_wp ? 'auto-detected WordPress skipped: ' : 'WordPress skipped: ' ) . $preflight['reason'];
+		if ( ! $auto_wp && $wp_load_env ) {
+			fwrite( STDERR, "error: WP_LOAD cannot bootstrap WordPress: {$preflight['reason']}\n" );
+			exit( 1 );
+		}
+	} else {
+		$_SERVER['HTTP_HOST']   = $_SERVER['HTTP_HOST']   ?? 'localhost';
+		$_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '/';
+		if ( ! defined( 'WP_USE_THEMES' ) ) { define( 'WP_USE_THEMES', false ); }
+		require $wp_load;
+		$has_wp = class_exists( 'AdminKit_Plugin' );
+		if ( ! $has_wp ) {
+			$wp_reason = 'WordPress loaded, but AdminKit is not active';
+		}
+	}
+} elseif ( $wp_load_env ) {
+	$wp_reason = 'WP_LOAD does not point to a readable wp-load.php';
 }
 
 $plugin = dirname( __DIR__ );
@@ -73,14 +247,9 @@ $plugin = dirname( __DIR__ );
 
 ak_group( 'Dashboard default card order (pure)' );
 if ( ! $has_wp ) {
-	// Minimal stubs so the class file loads and default_order()/layout() run.
-	foreach ( array( 'apply_filters', '__', 'esc_html__', 'esc_attr__' ) as $fn ) {
-		if ( ! function_exists( $fn ) ) { eval( "function $fn(){ return func_num_args() ? func_get_arg(0) : null; }" ); }
-	}
-	if ( ! function_exists( 'add_filter' ) ) { eval( 'function add_filter(){}' ); }
-	if ( ! function_exists( 'add_action' ) ) { eval( 'function add_action(){}' ); }
-	if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', '/tmp/' ); }
+	ak_boot_pure_wp_stubs();
 	require_once "$plugin/inc/features/dashboard/class-custom-dashboard.php";
+	require_once "$plugin/inc/features/stats/class-stats-dashboard.php";
 }
 $m = new ReflectionMethod( 'AdminKit_Custom_Dashboard', 'default_order' );
 $m->setAccessible( true );
@@ -90,9 +259,8 @@ ak_ok( in_array( 'glance', $order['side'] ?? array(), true ), '“At a glance”
 ak_ok( ! in_array( 'glance', $order['main'] ?? array(), true ), '“At a glance” is not in the main column' );
 
 ak_group( 'Stats preset ranges (pure)' );
-$pr = new ReflectionMethod( 'AdminKit_Stats_Dashboard', 'preset_range' );
-// preset_range is only loaded with WP; guard.
 if ( class_exists( 'AdminKit_Stats_Dashboard' ) ) {
+	$pr = new ReflectionMethod( 'AdminKit_Stats_Dashboard', 'preset_range' );
 	$pr->setAccessible( true );
 	list( $s, $e ) = $pr->invoke( null, 'ytd' );
 	ak_ok( preg_match( '/^\d{4}-01-01$/', $s ), 'Year-to-date starts on Jan 1' );
@@ -106,7 +274,7 @@ if ( class_exists( 'AdminKit_Stats_Dashboard' ) ) {
  * ════════════════════════════════════════════════════════════════════════ */
 
 if ( ! $has_wp ) {
-	ak_skip( 'Stats store / Menu store / Settings sanitize', 'no WordPress (set WP_LOAD=…)' );
+	ak_skip( 'Stats store / Menu store / Settings sanitize', $wp_reason );
 } else {
 	global $wpdb;
 
