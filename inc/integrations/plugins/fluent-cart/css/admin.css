@@ -222,11 +222,12 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a {
 	box-shadow: none;
 }
 body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a::after {
-	content: "Cart";
+	content: "FluentCart";
 	color: var( --ak-heading );
 	font-size: 18px;
 	font-weight: 700;
 	letter-spacing: 0.01em;
+	white-space: nowrap;
 }
 
 /* Top-bar nav items — neutral text, brand on hover / active. */
