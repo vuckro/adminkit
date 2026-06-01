@@ -392,6 +392,7 @@ class AdminKit_Settings_Page {
 				'menuMoveUp'        => __( 'Move up', 'adminkit' ),
 				'menuMoveDown'      => __( 'Move down', 'adminkit' ),
 				'menuIconCustom'    => __( 'Paste an SVG or a data:image/svg+xml URI…', 'adminkit' ),
+				'menuIconHint'      => __( 'Need an icon? Copy an SVG from', 'adminkit' ),
 				'menuIconApply'     => __( 'Apply', 'adminkit' ),
 				'menuAddLink'       => __( 'Add link', 'adminkit' ),
 				'menuAddSeparator'  => __( 'Add separator', 'adminkit' ),

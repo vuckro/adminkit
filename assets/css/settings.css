@@ -1009,6 +1009,15 @@
 	border-top: 1px solid var(--ak-border);
 }
 .adminkit-app .ak-icon-pop__customic { flex: 0 0 auto; display: inline-flex; color: var(--ak-muted); }
+/* Quick "grab an SVG from Icon Bolt" tip under the paste field. */
+.adminkit-app .ak-icon-pop__hint {
+	margin-top: 6px;
+	font-size: var(--ak-text-xs);
+	line-height: 1.4;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-icon-pop__hint a { color: var(--ak-primary); text-decoration: none; }
+.adminkit-app .ak-icon-pop__hint a:hover { text-decoration: underline; }
 .adminkit-app .ak-icon-pop__ta {
 	flex: 1 1 auto;
 	min-width: 0;

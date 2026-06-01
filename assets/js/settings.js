@@ -2148,6 +2148,13 @@
 		ta.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Enter' ) { e.preventDefault(); applyBtn.click(); } } );
 		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom' }, [ customIc, ta, applyBtn ] ) );
 
+		// Quick tip: where to grab a pasteable SVG icon.
+		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__hint' }, [
+			document.createTextNode( ( I.menuIconHint || 'Need an icon? Copy an SVG from' ) + ' ' ),
+			el( 'a', { href: 'https://www.iconbolt.com/', target: '_blank', rel: 'noopener', text: 'Icon Bolt' } ),
+			document.createTextNode( '.' )
+		] ) );
+
 		anchor.parentNode.appendChild( pop );
 		positionPopover( pop, anchor );
 		pop.__akAnchor = anchor;

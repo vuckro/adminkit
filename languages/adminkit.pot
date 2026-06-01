@@ -1409,3 +1409,7 @@ msgstr ""
 #: inc/features/stats/class-stats-page.php inc/features/stats/class-stats-dashboard.php
 msgid "New"
 msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Need an icon? Copy an SVG from"
+msgstr ""
