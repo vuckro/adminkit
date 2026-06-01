@@ -608,3 +608,29 @@ body.adminkit.toplevel_page_fluent-cart p,
 body.adminkit.toplevel_page_fluent-cart span {
 	color: var( --ak-text );
 }
+
+/* Select-dropdown hovered item + cascader node hover/focus → hover bg. */
+body.adminkit.toplevel_page_fluent-cart .el-select-dropdown__list .el-select-dropdown__item.is-hovering {
+	background-color: var( --ak-hover-bg ) !important;
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-cascader-node:not(.is-disabled):focus,
+body.adminkit.toplevel_page_fluent-cart .el-cascader-node:not(.is-disabled):hover {
+	background-color: var( --ak-hover-bg ) !important;
+}
+
+/* Active pagination — neutral pill (the ::before) + heading number (FC's design). */
+body.adminkit.toplevel_page_fluent-cart .el-pagination.is-background .el-pager li.number.is-active::before {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-pagination.is-background .el-pager li.number.is-active {
+	color: var( --ak-heading ) !important;
+}
+
+/* Warning alert → AdminKit warning (subtle tint + token border/text). */
+body.adminkit.toplevel_page_fluent-cart .fct-alert-warning {
+	background-color: var( --ak-warning-subtle ) !important;
+	border-color: var( --ak-warning ) !important;
+	color: var( --ak-warning ) !important;
+}
