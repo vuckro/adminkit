@@ -26,14 +26,15 @@ class AdminKit_Stats_Dashboard {
 	 *  `{preset: 'custom', start: Y-m-d, end: Y-m-d}` for free ranges. */
 	const RANGE_META = 'adminkit_stats_range';
 
-	/** Default preset on first render. */
-	const DEFAULT_PRESET = '30d';
+	/** Default preset on first render — the live (real-time) view. Users who
+	 *  have saved a preset keep it; only those with no stored choice land here. */
+	const DEFAULT_PRESET = 'live';
 
 	/** Available presets, in selector order. 'live' is a special UI state — the
 	 *  body renders real-time data and auto-refreshes client-side. 'custom'
 	 *  reveals the two date inputs and stores dates verbatim. Everything else is
 	 *  a rolling range computed from "today" at render time. */
-	const PRESETS = array( 'live', 'today', '30d', '90d', 'ytd', 'custom' );
+	const PRESETS = array( 'live', 'today', '7d', '30d', '90d', 'ytd', 'custom' );
 
 	/** Old preset ids that map to a current one, for in-place migration of saved
 	 *  user_meta — so removing/renaming a preset never costs anyone their saved
@@ -101,6 +102,8 @@ class AdminKit_Stats_Dashboard {
 				return array( $today, $today );
 			case 'today':
 				return array( $today, $today );
+			case '7d':
+				return array( gmdate( 'Y-m-d', strtotime( $today . ' -6 days' ) ), $today );
 			case '90d':
 				return array( gmdate( 'Y-m-d', strtotime( $today . ' -89 days' ) ), $today );
 			case 'ytd':
@@ -450,6 +453,7 @@ class AdminKit_Stats_Dashboard {
 		return array(
 			'live'   => __( 'Live', 'adminkit' ),
 			'today'  => __( 'Today', 'adminkit' ),
+			'7d'     => __( '7 days', 'adminkit' ),
 			'30d'    => __( '30 days', 'adminkit' ),
 			'90d'    => __( '90 days', 'adminkit' ),
 			'ytd'    => __( 'Year to date', 'adminkit' ),

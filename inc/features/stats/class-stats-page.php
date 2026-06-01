@@ -133,6 +133,7 @@ class AdminKit_Stats_Page {
 			'statsIntro'           => __( 'Traffic from the built-in, cookieless tracker. Pick any date range to see visits, page views, your most-viewed pages and where visitors come from.', 'adminkit' ),
 			'statsVisits'          => __( 'Visits', 'adminkit' ),
 			'statsPageviews'       => __( 'Page views', 'adminkit' ),
+			'statsVsPrev'          => __( 'vs previous period', 'adminkit' ),
 			'statsActive'          => __( 'active now', 'adminkit' ),
 			'statsTopPages'        => __( 'Top pages', 'adminkit' ),
 			'statsTopSources'      => __( 'Top sources', 'adminkit' ),
@@ -262,16 +263,127 @@ class AdminKit_Stats_Page {
 			);
 		}
 
+		// Trend baseline: the immediately-preceding window of the SAME length, read
+		// through the SAME cached primitive (limit 1 → no top-N rows pulled). Uniform
+		// for every preset and custom range; the SPA derives the ▲/▼ % from it.
+		list( $pstart, $pend ) = self::previous_range( $start, $end );
+		$previous = self::range_totals( $pstart, $pend );
+
 		return rest_ensure_response( array(
-			'preset'  => $state['preset'],
-			'start'   => $start,
-			'end'     => $end,
-			'totals'  => array( 'visits' => $tv, 'pageviews' => $tpv ),
-			'active'  => (int) AdminKit_Stats_Store::active_visitors( time() ),
-			'series'  => $series,
-			'pages'   => $pages,
-			'sources' => $sources,
+			'preset'   => $state['preset'],
+			'start'    => $start,
+			'end'      => $end,
+			'totals'   => array( 'visits' => $tv, 'pageviews' => $tpv ),
+			'previous' => array( 'visits' => (int) $previous['visits'], 'pageviews' => (int) $previous['pageviews'] ),
+			'active'   => (int) AdminKit_Stats_Store::active_visitors( time() ),
+			'series'   => $series,
+			'pages'    => $pages,
+			'sources'  => $sources,
+			// Extension seam: extra metric tiles contributed by other plugins
+			// (WooCommerce revenue, FluentCart conversions…). Empty natively.
+			'cards'    => self::extra_cards( $start, $end, $state['preset'] ),
 		) );
+	}
+
+	/**
+	 * The window immediately before [start, end], of the SAME number of days.
+	 * Uniform across presets AND custom ranges, so the trend baseline is always
+	 * "the previous equal-length period".
+	 *
+	 * @param string $start Y-m-d
+	 * @param string $end   Y-m-d
+	 * @return array{0:string,1:string} [prev_start, prev_end]
+	 */
+	private static function previous_range( $start, $end ) {
+		$s = strtotime( $start );
+		$e = strtotime( $end );
+		if ( false === $s || false === $e ) {
+			return array( $start, $end );
+		}
+		$span_days  = (int) floor( ( $e - $s ) / DAY_IN_SECONDS ) + 1;
+		$prev_end   = $s - DAY_IN_SECONDS;
+		$prev_start = $prev_end - ( $span_days - 1 ) * DAY_IN_SECONDS;
+		return array( gmdate( 'Y-m-d', $prev_start ), gmdate( 'Y-m-d', $prev_end ) );
+	}
+
+	/**
+	 * Sum site visits + page views over a window via the cached summary primitive.
+	 * Asks limit 1 so no top-pages / top-sources rows are pulled (the day totals
+	 * are independent of the list limit) — a cheap second cached read.
+	 *
+	 * @param string $start Y-m-d
+	 * @param string $end   Y-m-d
+	 * @return array{visits:int,pageviews:int}
+	 */
+	private static function range_totals( $start, $end ) {
+		$sum = AdminKit_Stats_Store::summary_range( $start, $end, 1 );
+		$v   = 0;
+		$pv  = 0;
+		foreach ( (array) ( isset( $sum['days'] ) ? $sum['days'] : array() ) as $d ) {
+			$pv += isset( $d['pageviews'] ) ? (int) $d['pageviews'] : 0;
+			$v  += isset( $d['visits'] ) ? (int) $d['visits'] : 0;
+		}
+		return array( 'visits' => $v, 'pageviews' => $pv );
+	}
+
+	/**
+	 * Collect + normalise extra stat tiles contributed by integrations. The filter
+	 * lets a plugin (e.g. WooCommerce) return its own metric cards for the period;
+	 * each is sanitised to a fixed display shape the SPA paints alongside the
+	 * native Visits / Page-views tiles. Natively returns an empty list.
+	 *
+	 * Card shape (each entry): array(
+	 *   'id'    => string,                 // stable key (sanitised)
+	 *   'label' => string,                 // tile caption, already translated
+	 *   'value' => string,                 // display value, already formatted ("1 240 €")
+	 *   'sub'   => string (optional),      // small secondary line
+	 *   'trend' => array(                  // optional ▲/▼ badge
+	 *       'dir'  => 'up' | 'down' | 'flat',
+	 *       'text' => string,              // e.g. "+12%"
+	 *   ),
+	 * )
+	 *
+	 * @param string $start  Y-m-d
+	 * @param string $end    Y-m-d
+	 * @param string $preset Resolved preset id.
+	 * @return array<int,array<string,mixed>>
+	 */
+	private static function extra_cards( $start, $end, $preset ) {
+		/**
+		 * Contribute extra metric tiles to the Statistics period view.
+		 *
+		 * @param array  $cards  Accumulator (start empty).
+		 * @param string $start  Y-m-d window start.
+		 * @param string $end    Y-m-d window end.
+		 * @param string $preset Resolved preset id.
+		 */
+		$cards = apply_filters( 'adminkit/stats/cards', array(), $start, $end, $preset );
+		if ( ! is_array( $cards ) ) {
+			return array();
+		}
+		$out = array();
+		foreach ( $cards as $c ) {
+			if ( ! is_array( $c ) || ! isset( $c['label'] ) ) {
+				continue;
+			}
+			$card = array(
+				'id'    => isset( $c['id'] ) ? sanitize_key( $c['id'] ) : '',
+				'label' => (string) $c['label'],
+				'value' => isset( $c['value'] ) ? (string) $c['value'] : '',
+			);
+			if ( isset( $c['sub'] ) ) {
+				$card['sub'] = (string) $c['sub'];
+			}
+			if ( isset( $c['trend'] ) && is_array( $c['trend'] ) ) {
+				$dir           = isset( $c['trend']['dir'] ) ? (string) $c['trend']['dir'] : 'flat';
+				$card['trend'] = array(
+					'dir'  => in_array( $dir, array( 'up', 'down', 'flat' ), true ) ? $dir : 'flat',
+					'text' => isset( $c['trend']['text'] ) ? (string) $c['trend']['text'] : '',
+				);
+			}
+			$out[] = $card;
+		}
+		return $out;
 	}
 
 	/**

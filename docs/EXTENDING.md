@@ -209,6 +209,48 @@ categorization; toggle off ⇒ every notice renders inline. Hooks in
 | `adminkit/notifications/js_allow` | `(string[])` | CSS selectors forced INTO the drawer. |
 | `adminkit/notifications/js_deny` | `(string[])` | CSS selectors forced to stay inline. |
 
+## Statistics
+
+The built-in cookieless tracker (`inc/features/stats/`) renders a period view
+(Visits · Page views · trend vs the previous equal-length period · chart · top
+pages / sources) and a real-time Live view. Hooks:
+
+| Hook | Signature | Purpose |
+| --- | --- | --- |
+| `adminkit/stats/enabled` | `(bool)` | Master on/off (mirrors the feature toggle + gates collection). |
+| `adminkit/stats/dashboard_capability` | `(string)` | Capability required to view stats (default `edit_posts`). |
+| `adminkit/stats/default_range` | `(array{0,1})` | `[start, end]` Y-m-d when no preference is saved. |
+| `adminkit/stats/summary_ttl` | `(int)` | Cache TTL (seconds) for a summary read. |
+| `adminkit/stats/summary_range` | `(array, $start, $end, $limit)` | Final read seam — swap in a GA4 / Plausible source. |
+| `adminkit/stats/bot_needles` | `(string[])` | UA substrings dropped at the collector. |
+| `adminkit/stats/is_bot` | `(?bool, $ua)` | Short-circuit bot detection per request. |
+| `adminkit/stats/cards` | `(array, $start, $end, $preset)` | **Contribute extra metric tiles** (e.g. WooCommerce revenue, FluentCart conversions). |
+
+**`adminkit/stats/cards`** is the seam for future commerce integrations. Return a
+list of cards; each is sanitised server-side and painted beside the native
+Visits / Page-views tiles on the Statistics page. Card shape:
+
+```php
+add_filter( 'adminkit/stats/cards', function ( $cards, $start, $end, $preset ) {
+    $cards[] = array(
+        'id'    => 'woo_revenue',                 // stable key (sanitised)
+        'label' => __( 'Revenue', 'my-plugin' ),  // already translated
+        'value' => '1 240 €',                     // already formatted for display
+        'sub'   => __( '38 orders', 'my-plugin' ),// optional secondary line
+        'trend' => array(                          // optional ▲/▼ badge
+            'dir'  => 'up',                        // 'up' | 'down' | 'flat'
+            'text' => '+12%',
+        ),
+    );
+    return $cards;
+}, 10, 4 );
+```
+
+The window is `[$start, $end]` (Y-m-d, the resolved range for `$preset`). Compute
+your own delta against the previous period if you want a trend badge — AdminKit
+passes the value through verbatim. Keep queries cheap and cached: the stats UI is
+meant to stay light on the database.
+
 ## Avatars
 
 One setting (`custom_avatars_enabled`, on by default). With it on, AdminKit
