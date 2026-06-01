@@ -179,14 +179,16 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 - **The token layers are each optional** (provider → baseline → neutral). Don't
   hard-require any one of them. See ARCHITECTURE.
 - **Default feature toggles ship ON** — Gutenberg canvas theming
-  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`), custom
-  avatars (`custom_avatars_enabled`) and users-list Quick Edit
-  (`quick_edit_users_enabled`) all default ON, so the plugin presents
-  fully-featured on activation. `bricks_builder_enabled` also defaults ON, but
-  the UI locks that row unless the Bricks theme is active. Each stays
-  individually switch-off-able. `username_changer_enabled` defaults OFF because
-  renaming `user_login` invalidates active sessions. Keep this posture — don't
-  quietly flip defaults while refactoring.
+  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`) and
+  users-list Quick Edit (`quick_edit_users_enabled`) default ON, so the plugin
+  presents fully-featured on activation. `bricks_builder_enabled` also defaults
+  ON, but the UI locks that row unless the Bricks theme is active. Each stays
+  individually switch-off-able. Two are **OFF by default** on purpose:
+  `username_changer_enabled` (renaming `user_login` invalidates active sessions)
+  and `custom_avatars_enabled` (generating portraits calls an EXTERNAL service —
+  DiceBear — and those images can load on the front end, so it's opt-in to keep
+  activation front-end-neutral). Keep this posture — don't quietly flip defaults
+  while refactoring.
 - **Username changer is destructive** — `class-username-changer.php` rides the
   native user-edit.php submit (no AJAX endpoint, no separate Save button):
   `user_profile_update_errors` validates, `profile_update` writes `user_login`

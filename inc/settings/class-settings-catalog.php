@@ -70,13 +70,13 @@ class AdminKit_Settings_Catalog {
 				'key'   => 'replace_icons_enabled',
 				'group' => $appearance,
 				'label' => __( 'AdminKit icons', 'adminkit' ),
-				'desc'  => __( 'Swap WordPress\'s menu and toolbar icons for AdminKit\'s set. Icons customised elsewhere (e.g. Admin Menu Editor) are left alone.', 'adminkit' ),
+				'desc'  => __( 'The DEFAULT icon set for the whole admin menu + toolbar (AdminKit\'s glyphs instead of WordPress\'s dashicons). Per-item icons you pick in the Menu manager override this; icons set by other plugins are left alone.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'menu_manager_enabled',
 				'group' => $appearance,
 				'label' => __( 'Menu manager', 'adminkit' ),
-				'desc'  => __( 'Reorder the admin menu and submenus, change menu icons, and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept).', 'adminkit' ),
+				'desc'  => __( 'Reorder the admin menu and submenus, set a PER-ITEM icon (overriding the AdminKit set above), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept).', 'adminkit' ),
 			),
 			array(
 				'key'   => 'hide_footer_enabled',

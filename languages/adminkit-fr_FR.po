@@ -959,8 +959,8 @@ msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag
 msgstr "Réorganisez le menu d’administration et ses sous-menus, changez les icônes et masquez des entrées. Glissez pour réorganiser ; les changements s’appliquent après enregistrement. Masquer retire un élément du menu uniquement — cela ne bloque pas l’accès direct."
 
 #: inc/settings/class-settings-catalog.php:79
-msgid "Reorder the admin menu and submenus, change menu icons, and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
-msgstr "Réorganisez le menu d’administration et ses sous-menus, changez les icônes et masquez des entrées — configuré dans l’onglet Menu. Désactivé, le menu natif de WordPress est restauré (votre disposition enregistrée est conservée)."
+msgid "Reorder the admin menu and submenus, set a PER-ITEM icon (overriding the AdminKit set above), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
+msgstr "Réorganisez le menu d’administration et ses sous-menus, définissez une icône PAR ÉLÉMENT (qui prime sur le jeu AdminKit ci-dessus) et masquez des entrées — configuré dans l’onglet Menu. Désactivé, le menu natif de WordPress est restauré (votre disposition enregistrée est conservée)."
 
 #: inc/settings/class-settings-catalog.php:31
 msgid "Replace the WordPress dashboard with a custom one: greeting, quick actions, stat tiles, recent activity, site health and storage. Off restores the native dashboard."
@@ -1103,8 +1103,8 @@ msgid "Strong passwords and two-factor auth keep your account safe."
 msgstr "Un mot de passe fort et l’authentification à deux facteurs protègent votre compte."
 
 #: inc/settings/class-settings-catalog.php:73
-msgid "Swap WordPress's menu and toolbar icons for AdminKit's set. Icons customised elsewhere (e.g. Admin Menu Editor) are left alone."
-msgstr "Remplace les icônes du menu et de la barre d’outils de WordPress par le jeu d’AdminKit. Les icônes personnalisées ailleurs (par ex. Admin Menu Editor) sont laissées intactes."
+msgid "The DEFAULT icon set for the whole admin menu + toolbar (AdminKit's glyphs instead of WordPress's dashicons). Per-item icons you pick in the Menu manager override this; icons set by other plugins are left alone."
+msgstr "Le jeu d’icônes par DÉFAUT pour tout le menu d’administration et la barre d’outils (les glyphes d’AdminKit à la place des dashicons de WordPress). Les icônes par élément que vous choisissez dans le gestionnaire de menu priment ; les icônes définies par d’autres extensions ne sont pas touchées."
 
 #: inc/settings/class-settings-page.php:380
 msgid "System"
