@@ -4,9 +4,10 @@
  * Fires once per page view, after load, with the lowest possible cost:
  * navigator.sendBeacon when available (a non-blocking, background POST the browser
  * flushes even as the page unloads), falling back to a keepalive fetch. Sends only
- * the path + whether the referrer is off-site — no cookies, no IDs, no PII. The
- * server (AdminKit_Stats_Tracker) derives visit/source and folds it into daily
- * totals. Bails silently if anything is missing.
+ * the path + referrer — no cookies, no IDs, no client token, no PII. The server
+ * (AdminKit_Stats_Tracker) derives visit/source AND the cookieless unique-visitor
+ * identity (a salted, daily hash of IP+UA — computed and kept server-side), then
+ * folds it into daily totals. Bails silently if anything is missing.
  *
  * @package AdminKit
  */
@@ -16,24 +17,6 @@
 	var cfg = window.AdminKitTrack;
 	if ( ! cfg || ! cfg.url ) {
 		return;
-	}
-
-	// An opaque, per-tab token so the "active visitors" count is distinct-by-tab
-	// without cookies or any server-side identity. Lives in sessionStorage (cleared
-	// when the tab closes); a fresh random hex string when unavailable. Never stored
-	// server-side beyond a 5-minute presence window.
-	function token() {
-		try {
-			var k = 'akv';
-			var v = sessionStorage.getItem( k );
-			if ( ! v ) {
-				v = ( Date.now().toString( 16 ) + Math.random().toString( 16 ).slice( 2 ) ).slice( 0, 32 );
-				sessionStorage.setItem( k, v );
-			}
-			return v;
-		} catch ( e ) {
-			return ( Date.now().toString( 16 ) + Math.random().toString( 16 ).slice( 2 ) ).slice( 0, 32 );
-		}
 	}
 
 	function send() {
@@ -48,8 +31,7 @@
 
 		var payload = {
 			path: location.pathname + location.search,
-			ref: ref,
-			t: token()
+			ref: ref
 		};
 
 		// Prefer sendBeacon: queued by the browser and sent in the background,

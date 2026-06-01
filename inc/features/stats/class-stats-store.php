@@ -3,10 +3,16 @@
  * Stats storage — the custom table behind the cookieless traffic tracker.
  *
  * DESIGN: aggregate-on-write, never a raw event log. Every page view folds into
- * a tiny set of pre-summed daily rows via ONE `INSERT … ON DUPLICATE KEY UPDATE`,
- * so the table grows by at most (1 site row + 1 row per distinct page + 1 row per
- * distinct referrer) PER DAY. There are no per-visitor rows, no IPs, no cookies:
- * a "visit" (session) is inferred from the Referer at write time.
+ * a tiny set of pre-summed daily rows (1 site row + 1 row per distinct page + 1
+ * row per distinct referrer, PER DAY) via an `INSERT … ON DUPLICATE KEY UPDATE`.
+ *
+ * Three metrics per day: page views (every hit), visits (sessions — inferred from
+ * the Referer at write time) and UNIQUE VISITORS. Uniques are exact, deduped via
+ * an ephemeral, self-pruning set of `kind='uniq'` rows keyed by a salted,
+ * DAILY-ROTATING hash of IP + User-Agent (see AdminKit_Stats_Tracker::visitor_hash).
+ * The raw IP is never stored, the hash can't be reversed or linked across days,
+ * and the dedup rows are pruned to the last couple of days — so the only lasting
+ * record is the per-day `uniques` counter on the site row. No cookies anywhere.
  *
  * The schema is version-gated so it survives plugin updates without data loss;
  * the table is the persistent source of truth. Reads go through summary_range()
@@ -20,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
 class AdminKit_Stats_Store {
 
 	/** Bump when the schema changes so ensure_schema() re-runs dbDelta. */
-	const DB_VERSION     = '1.0';
+	const DB_VERSION     = '1.1';
 	const DB_VERSION_KEY = 'adminkit_stats_db_version';
 
 	/** Short-TTL cache key prefix for summary_range() reads. */
@@ -66,6 +72,7 @@ class AdminKit_Stats_Store {
   name varchar(190) NOT NULL default '',
   pageviews bigint(20) unsigned NOT NULL default 0,
   visits bigint(20) unsigned NOT NULL default 0,
+  uniques bigint(20) unsigned NOT NULL default 0,
   PRIMARY KEY  (stat_date,kind,name),
   KEY kind_date (kind,stat_date)
 ) {$collate};";
@@ -79,45 +86,86 @@ class AdminKit_Stats_Store {
 	 *
 	 * Always bumps the site total + the per-page row by one page view. On a new
 	 * VISIT it also bumps their `visits` and (when a source is known) the per-source
-	 * row. All in a single multi-row upsert → one indexed query per hit.
+	 * row. When a visitor hash is supplied and it's that visitor's FIRST hit today,
+	 * the site row's `uniques` counter is bumped too. At most two indexed writes per
+	 * hit (the uniq-dedup INSERT IGNORE + the multi-row aggregate upsert).
 	 *
-	 * @param string $path     Normalised request path (no query/fragment), e.g. `/blog/`.
-	 * @param bool   $is_visit Whether this hit starts a new (cookieless) session.
-	 * @param string $source   Referrer host, or 'direct' — recorded only on a visit.
+	 * @param string $path         Normalised request path (no query/fragment), e.g. `/blog/`.
+	 * @param bool   $is_visit     Whether this hit starts a new (cookieless) session.
+	 * @param string $source       Referrer host, or 'direct' — recorded only on a visit.
+	 * @param string $visitor_hash Salted daily IP+UA hash for unique dedup; '' to skip.
 	 * @return void
 	 */
-	public static function record( $path, $is_visit, $source ) {
+	public static function record( $path, $is_visit, $source, $visitor_hash = '' ) {
 		global $wpdb;
 
 		$table = self::table();
 		$date  = current_time( 'Y-m-d' ); // Site-local "today".
 		$visit = $is_visit ? 1 : 0;
 
+		// Unique-visitor dedup: a per-day `uniq` row keyed by the salted IP+UA hash.
+		// INSERT IGNORE collides on the PK for a visitor already seen today, so
+		// rows_affected === 1 means "first hit today" → count this as a new unique.
+		// Only the one-way hash is stored (never the IP); prune_old_uniques() drops
+		// these rows after a couple of days, leaving just the `uniques` counter.
+		$is_unique = 0;
+		if ( '' !== $visitor_hash ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->query(
+				$wpdb->prepare(
+					"INSERT IGNORE INTO {$table} (stat_date, kind, name, pageviews, visits, uniques) VALUES (%s,'uniq',%s,0,0,0)",
+					$date,
+					$visitor_hash
+				)
+			);
+			$is_unique = ( 1 === (int) $wpdb->rows_affected ) ? 1 : 0;
+		}
+
 		$rows   = array();
 		$values = array();
 
-		// Site total (name = '') and the per-page row always get a page view.
-		$rows[]   = '(%s,%s,%s,%d,%d)';
-		$values[] = $date; $values[] = 'site'; $values[] = ''; $values[] = 1; $values[] = $visit;
+		// Site total (name = '') — page view, the visit flag, and the unique flag
+		// (the per-day uniques counter lives on this row).
+		$rows[]   = '(%s,%s,%s,%d,%d,%d)';
+		$values[] = $date; $values[] = 'site'; $values[] = ''; $values[] = 1; $values[] = $visit; $values[] = $is_unique;
 
-		$rows[]   = '(%s,%s,%s,%d,%d)';
-		$values[] = $date; $values[] = 'page'; $values[] = $path; $values[] = 1; $values[] = $visit;
+		// Per-page row — page views + visits (uniques are a site-level metric → 0).
+		$rows[]   = '(%s,%s,%s,%d,%d,%d)';
+		$values[] = $date; $values[] = 'page'; $values[] = $path; $values[] = 1; $values[] = $visit; $values[] = 0;
 
 		// Per-source row only on a new visit with a known source (pageviews n/a → 0).
 		if ( $is_visit && '' !== $source ) {
-			$rows[]   = '(%s,%s,%s,%d,%d)';
-			$values[] = $date; $values[] = 'ref'; $values[] = $source; $values[] = 0; $values[] = 1;
+			$rows[]   = '(%s,%s,%s,%d,%d,%d)';
+			$values[] = $date; $values[] = 'ref'; $values[] = $source; $values[] = 0; $values[] = 1; $values[] = 0;
 		}
 
 		// VALUES() in ON DUPLICATE KEY UPDATE is the cross-version (MySQL + MariaDB)
 		// way to reference the would-be-inserted value per row. $wpdb->prepare fills
 		// the %s/%d placeholders from the flat $values array.
-		$sql = "INSERT INTO {$table} (stat_date, kind, name, pageviews, visits) VALUES "
+		$sql = "INSERT INTO {$table} (stat_date, kind, name, pageviews, visits, uniques) VALUES "
 			. implode( ',', $rows )
-			. ' ON DUPLICATE KEY UPDATE pageviews = pageviews + VALUES(pageviews), visits = visits + VALUES(visits)';
+			. ' ON DUPLICATE KEY UPDATE pageviews = pageviews + VALUES(pageviews), visits = visits + VALUES(visits), uniques = uniques + VALUES(uniques)';
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( $wpdb->prepare( $sql, $values ) );
+	}
+
+	/**
+	 * Drop the ephemeral `kind='uniq'` dedup rows older than yesterday — they only
+	 * exist to dedup TODAY's unique visitors, so anything before yesterday (kept as
+	 * a timezone buffer) is dead weight. The per-day `uniques` counters on the
+	 * `site` rows are permanent and untouched. Cheap, indexed, admin-side only.
+	 *
+	 * @return void
+	 */
+	public static function prune_old_uniques() {
+		global $wpdb;
+		$table  = self::table();
+		$cutoff = gmdate( 'Y-m-d', time() - DAY_IN_SECONDS ); // keep today + yesterday.
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query(
+			$wpdb->prepare( "DELETE FROM {$table} WHERE kind = 'uniq' AND stat_date < %s", $cutoff )
+		);
 	}
 
 	/* ─────────────────────────── Active visitors ─────────────────────────── */
@@ -247,7 +295,7 @@ class AdminKit_Stats_Store {
 	 * @param string $start_date Inclusive start (Y-m-d).
 	 * @param string $end_date   Inclusive end   (Y-m-d).
 	 * @param int    $limit      Top-N list length.
-	 * @return array{start:string,end:string,days:array<string,array{pageviews:int,visits:int}>,top_pages:array,top_sources:array}
+	 * @return array{start:string,end:string,days:array<string,array{pageviews:int,visits:int,uniques:int}>,top_pages:array,top_sources:array}
 	 */
 	public static function summary_range( $start_date, $end_date, $limit = 10 ) {
 		$start_date = self::normalise_date( $start_date );
@@ -322,7 +370,7 @@ class AdminKit_Stats_Store {
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$day_rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT stat_date, pageviews, visits FROM {$table} WHERE kind = 'site' AND stat_date BETWEEN %s AND %s ORDER BY stat_date ASC",
+				"SELECT stat_date, pageviews, visits, uniques FROM {$table} WHERE kind = 'site' AND stat_date BETWEEN %s AND %s ORDER BY stat_date ASC",
 				$start_date,
 				$end_date
 			),
@@ -332,6 +380,7 @@ class AdminKit_Stats_Store {
 			$out['days'][ $r['stat_date'] ] = array(
 				'pageviews' => (int) $r['pageviews'],
 				'visits'    => (int) $r['visits'],
+				'uniques'   => (int) $r['uniques'],
 			);
 		}
 

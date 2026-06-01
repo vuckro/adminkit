@@ -212,8 +212,11 @@ categorization; toggle off ⇒ every notice renders inline. Hooks in
 ## Statistics
 
 The built-in cookieless tracker (`inc/features/stats/`) renders a period view
-(Visits · Page views · trend vs the previous equal-length period · chart · top
-pages / sources) and a real-time Live view. Hooks:
+(Unique visitors · Page views · trend vs the previous equal-length period · chart
+· top pages / sources) and a real-time Live view. Unique visitors are deduped by a
+salted, **daily-rotating** hash of IP + User-Agent computed server-side (see
+`AdminKit_Stats_Tracker::visitor_hash`) — cookieless, consent-free, the raw IP is
+never stored, and the hash can't be linked across days. Hooks:
 
 | Hook | Signature | Purpose |
 | --- | --- | --- |
@@ -224,6 +227,7 @@ pages / sources) and a real-time Live view. Hooks:
 | `adminkit/stats/summary_range` | `(array, $start, $end, $limit)` | Final read seam — swap in a GA4 / Plausible source. |
 | `adminkit/stats/bot_needles` | `(string[])` | UA substrings dropped at the collector. |
 | `adminkit/stats/is_bot` | `(?bool, $ua)` | Short-circuit bot detection per request. |
+| `adminkit/stats/client_ip` | `(string)` | Override the resolved client IP (proxies/CDN) feeding the unique-visitor hash; only hashed, never stored. |
 | `adminkit/stats/cards` | `(array, $start, $end, $preset)` | **Contribute extra metric tiles** (e.g. WooCommerce revenue, FluentCart conversions). |
 
 **`adminkit/stats/cards`** is the seam for future commerce integrations. Return a
