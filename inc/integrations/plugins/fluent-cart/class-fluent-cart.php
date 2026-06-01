@@ -182,10 +182,12 @@ class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
 		if(document.body){document.body.classList.toggle('fluent_theme_dark',dark);}
 	}
 	sync();
-	document.addEventListener('DOMContentLoaded',function(){
-		sync();
-		new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['data-adminkit-theme']});
-	});
+	// Attach the observer NOW, not on DOMContentLoaded: documentElement already
+	// exists in <head>, so the live toggle fires immediately and never depends on
+	// when (or whether) DOMContentLoaded runs relative to this script. A second
+	// sync on ready just catches <body>.
+	new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['data-adminkit-theme']});
+	document.addEventListener('DOMContentLoaded',sync);
 })();
 </script>
 		<?php
