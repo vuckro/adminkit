@@ -399,3 +399,49 @@ body.adminkit.toplevel_page_fluent-cart .apexcharts-tooltip-title {
 	background: var( --ak-elevated ) !important;
 	border-bottom-color: var( --ak-border ) !important;
 }
+
+
+/* ============================================================
+   9. FLUENTCART COMPONENT SURFACES / TEXT / BORDERS
+   FC paints these on the class itself (not via the §3 utilities), so the
+   catch-all misses them — route the main containers + chrome to --ak-* tokens,
+   grouped by the value FC uses (#151D26 surface, #1C2732/#253241 raised, slate
+   borders, F5F6F7 heading / C1C7D1 text).
+   ============================================================ */
+
+/* Card / panel surfaces. */
+body.adminkit.toplevel_page_fluent-cart .fct-card,
+body.adminkit.toplevel_page_fluent-cart .fct-report-card,
+body.adminkit.toplevel_page_fluent-cart .fct-dashboard-stat-widget__inner {
+	background-color: var( --ak-surface ) !important;
+}
+
+/* Raised / active chrome — current nav item, focused search, pager select. */
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > button,
+body.adminkit.toplevel_page_fluent-cart .search-bar.is-transparent .el-input__wrapper.is-focus,
+body.adminkit.toplevel_page_fluent-cart .el-pagination .el-select .el-input__wrapper,
+body.adminkit.toplevel_page_fluent-cart .el-pagination .el-select__wrapper {
+	background-color: var( --ak-elevated ) !important;
+}
+
+/* Borders. */
+body.adminkit.toplevel_page_fluent-cart .fc_dashboard_onboarding_wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-card .fct-card-header.border-bottom {
+	border-color: var( --ak-border ) !important;
+}
+
+/* Headings + raised-item text. */
+body.adminkit.toplevel_page_fluent-cart h1,
+body.adminkit.toplevel_page_fluent-cart h2,
+body.adminkit.toplevel_page_fluent-cart h3,
+body.adminkit.toplevel_page_fluent-cart .fct-current-user-info-content .content h4,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > button {
+	color: var( --ak-heading ) !important;
+}
+
+/* Body text. */
+body.adminkit.toplevel_page_fluent-cart .fc_dashboard_onboarding_item__title {
+	color: var( --ak-text ) !important;
+}
