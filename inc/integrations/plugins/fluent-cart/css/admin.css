@@ -494,3 +494,36 @@ body.adminkit.toplevel_page_fluent-cart .empty-state svg path[stroke]:not([strok
 body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[stroke]:not([stroke="none"]) {
 	stroke: var( --ak-border-strong ) !important;
 }
+
+/* Default + icon buttons (FC paints its own slate over the El Plus tokens).
+   Variant buttons (--primary etc.) are excluded so they keep their brand/semantic fill. */
+body.adminkit.toplevel_page_fluent-cart .el-button:not([class*="el-button--"]),
+body.adminkit.toplevel_page_fluent-cart .icon-button {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+	color: var( --ak-text ) !important;
+}
+
+/* Popovers / dropdowns — FC overrides the overlay token directly. */
+body.adminkit.toplevel_page_fluent-cart .el-popover.el-popper,
+body.adminkit.toplevel_page_fluent-cart .el-popper.is-light,
+body.adminkit.toplevel_page_fluent-cart .el-dropdown-menu {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-popper.is-light .el-popper__arrow::before {
+	background: var( --ak-elevated ) !important;
+	border-color: var( --ak-border ) !important;
+}
+
+/* Transparent search input. */
+body.adminkit.toplevel_page_fluent-cart .search-bar.is-transparent .el-input__wrapper {
+	background-color: var( --ak-elevated ) !important;
+}
+
+/* Settings page header — surface + strong border. */
+body.adminkit.toplevel_page_fluent-cart .fct-setting-header {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
