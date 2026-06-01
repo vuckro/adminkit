@@ -1419,3 +1419,7 @@ msgstr "Rechercher une extension…"
 #: inc/settings/class-settings-page.php
 msgid "Current"
 msgstr "Actuel"
+
+#: inc/features/stats/class-stats-page.php inc/features/stats/class-stats-dashboard.php
+msgid "New"
+msgstr "Nouveau"

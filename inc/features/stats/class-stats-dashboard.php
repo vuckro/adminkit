@@ -211,7 +211,8 @@ class AdminKit_Stats_Dashboard {
 			return '';
 		}
 		$arrow = 'up' === $t['dir'] ? '▲' : ( 'down' === $t['dir'] ? '▼' : '→' );
-		$label = '' !== $t['text'] ? ( $arrow . ' ' . $t['text'] ) : $arrow;
+		// No baseline (empty text) → "New" instead of a bare arrow (matches the SPA).
+		$label = $arrow . ' ' . ( '' !== $t['text'] ? $t['text'] : __( 'New', 'adminkit' ) );
 		return '<span class="ak-dash__stats-trend ak-dash__stats-trend--' . esc_attr( $t['dir'] )
 			. '" title="' . esc_attr__( 'vs previous period', 'adminkit' ) . '">'
 			. esc_html( $label ) . '</span>';

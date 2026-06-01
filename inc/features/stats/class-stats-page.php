@@ -135,6 +135,7 @@ class AdminKit_Stats_Page {
 			'statsVisits'          => __( 'Visits', 'adminkit' ),
 			'statsPageviews'       => __( 'Page views', 'adminkit' ),
 			'statsVsPrev'          => __( 'vs previous period', 'adminkit' ),
+			'statsTrendNew'        => __( 'New', 'adminkit' ),
 			'statsActive'          => __( 'active now', 'adminkit' ),
 			'statsTopPages'        => __( 'Top pages', 'adminkit' ),
 			'statsTopSources'      => __( 'Top sources', 'adminkit' ),

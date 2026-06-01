@@ -1284,10 +1284,12 @@
 
 		function trendBadge( trend ) {
 			var arrow = trend.dir === 'up' ? '▲' : ( trend.dir === 'down' ? '▼' : '→' );
+			// No baseline (text empty) → "New" instead of a bare arrow, so the badge
+			// always reads as a labelled value (a % or "New").
 			return el( 'span', {
 				'class': 'ak-stats__trend ak-stats__trend--' + trend.dir,
 				title: I.statsVsPrev || 'vs previous period',
-				text: trend.text ? ( arrow + ' ' + trend.text ) : arrow
+				text: arrow + ' ' + ( trend.text || ( I.statsTrendNew || 'New' ) )
 			} );
 		}
 
