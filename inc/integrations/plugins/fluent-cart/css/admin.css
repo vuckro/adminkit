@@ -579,3 +579,14 @@ body.adminkit.toplevel_page_fluent-cart .fct_menu_item .fct_menu_child,
 body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab {
 	background-color: var( --ak-elevated ) !important;
 }
+
+/* More component borders (FC sets the strong slate directly). */
+body.adminkit.toplevel_page_fluent-cart .fct-integration-table-footer,
+body.adminkit.toplevel_page_fluent-cart .el-cascader-panel.is-bordered,
+body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-condition-or-wrap {
+	border-color: var( --ak-border-strong ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-advanced-filters {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
