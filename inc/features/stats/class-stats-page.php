@@ -114,8 +114,12 @@ class AdminKit_Stats_Page {
 			'today'       => current_time( 'Y-m-d' ),
 			'presets'     => $presets,
 			'liveRefresh' => (int) AdminKit_Stats_Dashboard::LIVE_REFRESH_MS,
+			// Always LAND on the Live view — the real-time "who's on the site now"
+			// view is the page's hook. Period presets stay one click away (and a
+			// chosen range is still persisted within the session), but every fresh
+			// open of Statistics starts on Live, not the last-viewed period.
 			'state'       => array(
-				'preset' => $state['preset'],
+				'preset' => 'live',
 				'start'  => $state['start'],
 				'end'    => $state['end'],
 			),

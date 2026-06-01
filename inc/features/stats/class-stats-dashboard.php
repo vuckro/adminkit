@@ -249,9 +249,11 @@ class AdminKit_Stats_Dashboard {
 		if ( ! current_user_can( self::capability() ) ) {
 			return;
 		}
+		// Land on Live every time (the dashboard's at-a-glance pulse). Period
+		// presets remain one click away via the in-card picker.
 		$state = self::get_user_state();
 		echo '<section class="ak-card ak-dash__card ak-dash__stats" data-ak-stats>';
-		echo self::body( $state['start'], $state['end'], $state['preset'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped within.
+		echo self::body( $state['start'], $state['end'], 'live' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped within.
 		echo '</section>';
 	}
 

@@ -1257,26 +1257,65 @@
 	.adminkit-app .ak-stats__preset--live.is-active .ak-stats__pulse { animation: none; }
 }
 
+/* Live view — a real-time hero. The active count is the centrepiece, wrapped in a
+   soft accent glow with a "breathing" ring so the view reads as alive at a glance.
+   Pure CSS (transform/opacity only), reduced-motion aware — no JS, no perf cost. */
 .adminkit-app .ak-stats__live-headline {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
-	gap: 2px;
-	margin: 14px 0 6px;
+	align-items: center;
+	text-align: center;
+	gap: 6px;
+	margin: 8px auto 22px;
+	padding: 38px 16px 30px;
+	max-width: 540px;
+	background: radial-gradient( 70% 120% at 50% 34%, var(--ak-primary-subtle), transparent 72% );
+	border-radius: var(--ak-card-radius);
 }
 .adminkit-app .ak-stats__live-num {
-	font-size: 52px;
-	font-weight: 700;
+	position: relative;
+	z-index: 0;
+	font-size: 84px;
+	font-weight: 800;
 	line-height: 1;
-	color: var(--ak-heading);
+	letter-spacing: -.02em;
+	color: var(--ak-primary);
 	font-variant-numeric: tabular-nums;
+}
+/* The breathing ring — an accent disc that expands + fades behind the number. */
+.adminkit-app .ak-stats__live-num::before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 1.6em;
+	height: 1.6em;
+	transform: translate( -50%, -50% );
+	border-radius: 50%;
+	background: var(--ak-primary);
+	opacity: .16;
+	z-index: -1;
+	animation: ak-live-ring 1.9s ease-out infinite;
+}
+@keyframes ak-live-ring {
+	0%   { transform: translate( -50%, -50% ) scale( .55 ); opacity: .32; }
+	70%  { opacity: 0; }
+	100% { transform: translate( -50%, -50% ) scale( 1.9 ); opacity: 0; }
+}
+@media ( prefers-reduced-motion: reduce ) {
+	.adminkit-app .ak-stats__live-num::before { animation: none; }
 }
 .adminkit-app .ak-stats__live-lbl {
 	font-size: var(--ak-text-s);
+	font-weight: 500;
 	color: var(--ak-text-muted);
+	text-transform: uppercase;
+	letter-spacing: .06em;
 }
 .adminkit-app .ak-stats__live-empty {
-	margin: 6px 0 0;
+	margin: 2px auto 0;
+	max-width: 540px;
+	text-align: center;
 	font-size: var(--ak-text-s);
 	color: var(--ak-text-muted);
 }
