@@ -128,11 +128,14 @@ body.adminkit.toplevel_page_fluent-cart {
 	--el-mask-color:            color-mix( in srgb, var( --ak-surface ) 80%, transparent );
 	--el-mask-color-extra-light: color-mix( in srgb, var( --ak-surface ) 50%, transparent );
 
-	/* ── Flat — AdminKit is shadow-free; borders carry separation ─ */
-	--el-box-shadow:         none;
-	--el-box-shadow-light:   none;
+	/* ── Shadows — AdminKit is flat on surfaces, but ships --ak-shadow-elevated
+	   for true FLOATING layers (dropdowns, dialogs, poppers) so the lift reads
+	   in both modes. Element Plus uses these tokens on its floating layers, so
+	   route them to the elevated shadow; the lighter step stays flat. ─ */
+	--el-box-shadow:         var( --ak-shadow-elevated );
+	--el-box-shadow-light:   var( --ak-shadow-elevated );
 	--el-box-shadow-lighter: none;
-	--el-box-shadow-dark:    none;
+	--el-box-shadow-dark:    var( --ak-shadow-elevated );
 }
 
 
@@ -998,3 +1001,165 @@ body.adminkit.toplevel_page_fluent-cart .fct-query-builder-sidebar-heading {
 }
 
 
+
+/* ============================================================
+   13. FLUENTCART LITERAL BOX-SHADOWS
+   FC bakes dark shadow literals (#0a0d14 / #0e121b / #1b2533 + alpha) straight
+   into components, bypassing the El Plus tokens — glaring on dark surfaces.
+   Floating layers (dropdowns, popovers, pickers) → --ak-shadow-elevated (the
+   lift reads in both modes); flat surfaces (cards, bars, tabs) → none.
+   ============================================================ */
+
+/* Floating layers → elevated */
+body.adminkit.toplevel_page_fluent-cart .el-dropdown__popper.fct-dropdown,
+body.adminkit.toplevel_page_fluent-cart .el-picker__popper.el-popper,
+body.adminkit.toplevel_page_fluent-cart .el-popover.el-popper,
+body.adminkit.toplevel_page_fluent-cart .el-popper.fct-color-picker-popover,
+body.adminkit.toplevel_page_fluent-cart .fct-filter-dropdown,
+body.adminkit.toplevel_page_fluent-cart .fct-select-gray .el-select__wrapper {
+	box-shadow: var( --ak-shadow-elevated ) !important;
+}
+
+/* Flat surfaces → no shadow (AdminKit flat; borders carry separation) */
+body.adminkit.toplevel_page_fluent-cart .fct-driver-tabs .el-tabs__item.is-active,
+body.adminkit.toplevel_page_fluent-cart .fct-filter-nav-active-bar,
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab-active-bar,
+body.adminkit.toplevel_page_fluent-cart .fct-inventory-stats-card,
+body.adminkit.toplevel_page_fluent-cart .fct-report-avg-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-report-card,
+body.adminkit.toplevel_page_fluent-cart .fct-report-order-summary,
+body.adminkit.toplevel_page_fluent-cart .fct-save-bar,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav__item-shell.is-active,
+body.adminkit.toplevel_page_fluent-cart .fct-timeline-node,
+body.adminkit.toplevel_page_fluent-cart .licenses-stats-card {
+	box-shadow: none !important;
+}
+
+
+/* ============================================================
+   14. BULK INLINE EDITOR (.bulk-*)
+   The product/inventory bulk-edit grid ships its OWN palette (not --el-/--fct-,
+   so the earlier sweeps missed it): near-black text, blue "active" accent, and
+   green/red status states. Map to AdminKit role + semantic tokens.
+   ============================================================ */
+
+/* Text / inputs */
+body.adminkit.toplevel_page_fluent-cart .bulk-cell-input,
+body.adminkit.toplevel_page_fluent-cart .bulk-editor-preview,
+body.adminkit.toplevel_page_fluent-cart .bulk-price-input .el-input__inner {
+	color: var( --ak-heading ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .bulk-cell-input:focus,
+body.adminkit.toplevel_page_fluent-cart .bulk-price-input .el-input__wrapper.is-focus {
+	background-color: var( --ak-input-bg ) !important;
+}
+
+/* Error input state */
+body.adminkit.toplevel_page_fluent-cart .bulk-cell-input.is-error {
+	border-color: var( --ak-error ) !important;
+	background-color: var( --ak-error-subtle ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .bulk-cell-input.is-error::placeholder,
+body.adminkit.toplevel_page_fluent-cart .bulk-cell-input.is-error::-moz-placeholder,
+body.adminkit.toplevel_page_fluent-cart .bulk-status-icon.is-error {
+	color: var( --ak-error ) !important;
+}
+
+/* Save / status icons */
+body.adminkit.toplevel_page_fluent-cart .bulk-inline-save,
+body.adminkit.toplevel_page_fluent-cart .bulk-inline-save:hover,
+body.adminkit.toplevel_page_fluent-cart .bulk-status-icon.is-saved {
+	color: var( --ak-success ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .bulk-inline-save:disabled,
+body.adminkit.toplevel_page_fluent-cart .bulk-status-icon.is-syncing,
+body.adminkit.toplevel_page_fluent-cart .bulk-setup-fee {
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Setup-fee badge */
+body.adminkit.toplevel_page_fluent-cart .bulk-setup-fee-badge {
+	background: var( --ak-surface-muted ) !important;
+	color: var( --ak-text ) !important;
+}
+
+/* Link buttons */
+body.adminkit.toplevel_page_fluent-cart .bulk-link-btn {
+	background: var( --ak-surface ) !important;
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .bulk-link-btn:hover:not(:disabled) {
+	border-color: var( --ak-border-strong ) !important;
+	background: var( --ak-hover-bg ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .bulk-link-btn.is-active {
+	background: var( --ak-primary-subtle ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-primary ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .bulk-link-btn.is-danger:not(:disabled),
+body.adminkit.toplevel_page_fluent-cart .bulk-link-btn.is-danger:not(:disabled):hover {
+	color: var( --ak-error ) !important;
+	border-color: var( --ak-error ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .bulk-link-btn.is-danger:not(:disabled):hover {
+	background: var( --ak-error-subtle ) !important;
+}
+
+
+/* ============================================================
+   15. OVERLAYS + STRAY SEMANTIC LITERALS
+   ============================================================ */
+
+/* Modal / offcanvas backdrops baked to #020d17 → AdminKit overlay token. */
+body.adminkit.toplevel_page_fluent-cart .el-overlay,
+body.adminkit.toplevel_page_fluent-cart .fct-offcanvas-menu-overlay {
+	background-color: var( --ak-overlay ) !important;
+}
+
+/* Required-field asterisk marker (#ff4d51) → error token. */
+body.adminkit.toplevel_page_fluent-cart .el-table th.el-table__cell.required > div::before {
+	background: var( --ak-error ) !important;
+}
+
+/* Media-picker "add" hover border (#7f56d9 violet) → brand. */
+body.adminkit.toplevel_page_fluent-cart .fmp-add-full:hover {
+	border-color: var( --ak-primary ) !important;
+}
+
+/* ============================================================
+   16. STATUS BADGES (.fct-status) + ACTIVITY-LOG STATUS TEXT
+   FC's fulfillment/active status pills ship pale literal fills with NO dark
+   variant, so they glare on dark surfaces. Route the neutral base to a muted
+   surface and the semantic states to --ak-*-subtle (which flip). El Plus status
+   tags (.el-tag--*) are already handled by the --el-color-* remap.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-cart .fct-status {
+	background-color: var( --ak-surface-muted ) !important;
+	color: var( --ak-heading ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-status .icon {
+	background-color: var( --ak-text-muted ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-status.active {
+	background-color: var( --ak-success-subtle ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-status.active .icon {
+	background-color: var( --ak-success ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-status.fulfillment {
+	background-color: var( --ak-warning-subtle ) !important;
+}
+
+/* Activity-log row status text (hard-coded amber/green/red). */
+body.adminkit.toplevel_page_fluent-cart .status-success .fct-activity-content {
+	color: var( --ak-success ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .status-warning .fct-activity-content {
+	color: var( --ak-warning ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .status-danger .fct-activity-content,
+body.adminkit.toplevel_page_fluent-cart .status-error .fct-activity-content {
+	color: var( --ak-error ) !important;
+}
