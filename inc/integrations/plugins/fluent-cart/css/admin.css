@@ -552,3 +552,18 @@ body.adminkit.toplevel_page_fluent-cart .fct-global-search-input-wrap .fct-setti
 	background-color: var( --ak-elevated ) !important;
 	color: var( --ak-text ) !important;
 }
+
+/* Input + select wrappers — FC overrides the El Plus tokens directly in dark.
+   (The .is-focus brand border in §5 is more specific, so it still wins.) */
+body.adminkit.toplevel_page_fluent-cart .el-input__wrapper,
+body.adminkit.toplevel_page_fluent-cart .el-select__wrapper {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Inline media-uploader dropzone. */
+body.adminkit.toplevel_page_fluent-cart .uploader-inline {
+	background: var( --ak-surface ) !important;
+	border: 2px dashed var( --ak-border-strong ) !important;
+	border-radius: var( --ak-radius-m ) !important;
+}
