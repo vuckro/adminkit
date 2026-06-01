@@ -527,3 +527,28 @@ body.adminkit.toplevel_page_fluent-cart .fct-setting-header {
 	background-color: var( --ak-surface ) !important;
 	border-color: var( --ak-border-strong ) !important;
 }
+
+/* Active settings-nav link. */
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav .fct-settings-nav-item-active .fct-settings-nav-link {
+	background-color: var( --ak-elevated ) !important;
+	color: var( --ak-heading ) !important;
+}
+
+/* Report order-summary panel + row hover. */
+body.adminkit.toplevel_page_fluent-cart .fct-report-order-summary {
+	background-color: var( --ak-surface ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-report-order-summary .summary-item:hover {
+	background-color: var( --ak-hover-bg ) !important;
+}
+
+/* Fluid-tab active bar (all variants). */
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab-active-bar {
+	background-color: var( --ak-border-strong ) !important;
+}
+
+/* Global-search button. */
+body.adminkit.toplevel_page_fluent-cart .fct-global-search-input-wrap .fct-setting-search-button {
+	background-color: var( --ak-elevated ) !important;
+	color: var( --ak-text ) !important;
+}
