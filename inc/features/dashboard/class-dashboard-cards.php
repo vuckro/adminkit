@@ -1139,7 +1139,7 @@ class AdminKit_Dashboard_Cards {
 
 		return array(
 			'media'     => self::dir_bytes( $up_dir ),
-			'db'        => (int) $wpdb->get_var( 'SELECT SUM(data_length + index_length) FROM information_schema.TABLES WHERE table_schema = DATABASE()' ),
+			'db'        => (int) $wpdb->get_var( $wpdb->prepare( 'SELECT SUM(data_length + index_length) FROM information_schema.TABLES WHERE table_schema = %s', DB_NAME ) ),
 			'plugins'   => self::dir_bytes( $plug_dir ),
 			'themes'    => self::dir_bytes( $theme_dir ),
 			'core'      => self::dir_bytes( ABSPATH, $exclude ),
