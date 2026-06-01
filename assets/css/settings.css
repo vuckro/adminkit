@@ -1284,12 +1284,22 @@
 	width: 100%;
 	height: 120px;
 }
-.adminkit-app .ak-stats__bar {
+/* Line/area chart. The area is a soft accent fill; the line keeps a constant
+   2px stroke via non-scaling-stroke despite the stretched (preserveAspectRatio
+   none) viewBox. */
+.adminkit-app .ak-stats__area {
 	fill: var(--ak-primary);
-	opacity: .85;
-	transition: opacity .1s ease;
+	opacity: .12;
+	stroke: none;
 }
-.adminkit-app .ak-stats__bar:hover { opacity: 1; }
+.adminkit-app .ak-stats__line {
+	fill: none;
+	stroke: var(--ak-primary);
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	vector-effect: non-scaling-stroke;
+}
 
 /* Two lists side by side */
 .adminkit-app .ak-stats__cols {

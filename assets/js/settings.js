@@ -1268,8 +1268,12 @@
 			} );
 		}
 
-		// A lightweight SVG bar chart — one bar per day, page views. Built with the
-		// DOM (createElementNS) so values are plain numbers, no markup injection.
+		// A lightweight SVG line/area chart — page views over the period, drawn as a
+		// single line with a soft accent fill beneath (same idiom as the dashboard
+		// sparkline). Linear, not bars, so a long sparse range still reads as a
+		// trend instead of empty blocks. DOM-built — values are plain numbers, no
+		// markup injection; the line uses non-scaling-stroke (CSS) so it stays crisp
+		// when the viewBox stretches to the container width.
 		function chart( series ) {
 			var wrap = el( 'div', { 'class': 'ak-stats__chart' } );
 			if ( ! series.length ) { return wrap; }
@@ -1277,26 +1281,32 @@
 			series.forEach( function ( d ) { if ( ( d.pageviews | 0 ) > max ) { max = d.pageviews | 0; } } );
 
 			var NS = 'http://www.w3.org/2000/svg';
-			var W = 600, H = 120, gap = 2;
-			var bw = ( W - gap * ( series.length - 1 ) ) / series.length;
+			var W = 600, H = 120, px = 1, py = 8;
+			var iw = W - 2 * px, ih = H - 2 * py, base = H - py, n = series.length;
+			function xAt( i ) { return ( n === 1 ) ? ( px + iw / 2 ) : ( px + i * iw / ( n - 1 ) ); }
+			function yAt( v ) { return py + ih * ( 1 - ( ( v | 0 ) / max ) ); }
+
+			var line = '';
+			var area = 'M' + xAt( 0 ).toFixed( 2 ) + ' ' + base.toFixed( 2 ) + ' ';
+			series.forEach( function ( d, i ) {
+				var x = xAt( i ).toFixed( 2 ), y = yAt( d.pageviews ).toFixed( 2 );
+				line += ( i === 0 ? 'M' : 'L' ) + x + ' ' + y + ' ';
+				area += 'L' + x + ' ' + y + ' ';
+			} );
+			area += 'L' + xAt( n - 1 ).toFixed( 2 ) + ' ' + base.toFixed( 2 ) + ' Z';
+
 			var svg = document.createElementNS( NS, 'svg' );
 			svg.setAttribute( 'class', 'ak-stats__chart-svg' );
 			svg.setAttribute( 'viewBox', '0 0 ' + W + ' ' + H );
 			svg.setAttribute( 'preserveAspectRatio', 'none' );
-			series.forEach( function ( d, i ) {
-				var pv = d.pageviews | 0;
-				var h = Math.max( 1, Math.round( ( pv / max ) * ( H - 2 ) ) );
-				var r = document.createElementNS( NS, 'rect' );
-				r.setAttribute( 'class', 'ak-stats__bar' );
-				r.setAttribute( 'x', ( i * ( bw + gap ) ).toFixed( 2 ) );
-				r.setAttribute( 'y', ( H - h ).toFixed( 2 ) );
-				r.setAttribute( 'width', bw.toFixed( 2 ) );
-				r.setAttribute( 'height', h.toFixed( 2 ) );
-				var title = document.createElementNS( NS, 'title' );
-				title.textContent = ( d.date || '' ) + ' · ' + num( pv ) + ' ' + ( I.statsColViews || 'views' );
-				r.appendChild( title );
-				svg.appendChild( r );
-			} );
+			var a = document.createElementNS( NS, 'path' );
+			a.setAttribute( 'class', 'ak-stats__area' );
+			a.setAttribute( 'd', area.replace( /\s+$/, '' ) );
+			var l = document.createElementNS( NS, 'path' );
+			l.setAttribute( 'class', 'ak-stats__line' );
+			l.setAttribute( 'd', line.replace( /\s+$/, '' ) );
+			svg.appendChild( a );
+			svg.appendChild( l );
 			wrap.appendChild( svg );
 			return wrap;
 		}
