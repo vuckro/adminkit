@@ -387,6 +387,29 @@
 		var liveCard     = null;
 		var liveInterval = 10000;
 
+		// Tick the live count from its old value to the new one after a refresh
+		// (the poll already happens — this is just the in-place tween). Reads/writes
+		// the displayed number; reduced-motion + no-rAF fall back to a snap.
+		function parseCount( txt ) {
+			var n = parseInt( ( txt || '' ).replace( /[^\d-]/g, '' ), 10 );
+			return isNaN( n ) ? null : n;
+		}
+		function tickCount( elNum, from, to ) {
+			if ( ! elNum || null === to ) { return; }
+			var reduce = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+			if ( null === from || from === to || reduce || ! window.requestAnimationFrame ) { return; }
+			var start = null, dur = 600;
+			function step( ts ) {
+				if ( null === start ) { start = ts; }
+				var p = Math.min( 1, ( ts - start ) / dur );
+				var e = 1 - Math.pow( 1 - p, 3 );
+				var v = Math.round( from + ( to - from ) * e );
+				try { elNum.textContent = Number( v ).toLocaleString(); } catch ( err ) { elNum.textContent = String( v ); }
+				if ( p < 1 ) { requestAnimationFrame( step ); }
+			}
+			requestAnimationFrame( step );
+		}
+
 		// Whether `card` is currently rendered in Live mode (server marker).
 		function isLiveBody( card ) {
 			return !! ( card && card.querySelector( '[data-ak-stats-live]' ) );
@@ -437,7 +460,12 @@
 				.then( function ( r ) { return r.json(); } )
 				.then( function ( res ) {
 					if ( liveCard && isLiveBody( liveCard ) && res && res.success && res.data && typeof res.data.html === 'string' ) {
+						// Capture the old count, swap the HTML, then tick to the new one.
+						var prevEl = liveCard.querySelector( '.ak-dash__stats-live-num' );
+						var prev   = prevEl ? parseCount( prevEl.textContent ) : null;
 						liveCard.innerHTML = res.data.html;
+						var nextEl = liveCard.querySelector( '.ak-dash__stats-live-num' );
+						if ( nextEl ) { tickCount( nextEl, prev, parseCount( nextEl.textContent ) ); }
 					}
 					if ( liveCard && isLiveBody( liveCard ) ) {
 						scheduleLive( liveInterval );

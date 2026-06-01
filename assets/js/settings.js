@@ -1122,6 +1122,26 @@
 			try { return Number( n || 0 ).toLocaleString(); } catch ( e ) { return String( n || 0 ); }
 		}
 
+		// Last live count rendered, so each refresh can TICK from the old value to the
+		// new one instead of snapping (the polling already happens — this is just the
+		// in-place tween, no extra requests).
+		var lastLiveCount = null;
+		function animateCount( elNum, from, to ) {
+			if ( ! elNum ) { return; }
+			from = from | 0; to = to | 0;
+			var reduce = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+			if ( from === to || reduce || ! window.requestAnimationFrame ) { elNum.textContent = num( to ); return; }
+			var start = null, dur = 600;
+			function step( ts ) {
+				if ( null === start ) { start = ts; }
+				var p = Math.min( 1, ( ts - start ) / dur );
+				var e = 1 - Math.pow( 1 - p, 3 ); // easeOutCubic
+				elNum.textContent = num( Math.round( from + ( to - from ) * e ) );
+				if ( p < 1 ) { requestAnimationFrame( step ); }
+			}
+			requestAnimationFrame( step );
+		}
+
 		function render( res ) {
 			body.innerHTML = '';
 
@@ -1181,8 +1201,9 @@
 		// visual rhythm is preserved.
 		function renderLive( res ) {
 			var count = res.active | 0;
+			var numEl = el( 'span', { 'class': 'ak-stats__live-num' } );
 			body.appendChild( el( 'div', { 'class': 'ak-stats__live-headline' }, [
-				el( 'span', { 'class': 'ak-stats__live-num', text: num( count ) } ),
+				numEl,
 				el( 'span', {
 					'class': 'ak-stats__live-lbl',
 					text: count === 1
@@ -1190,6 +1211,9 @@
 						: ( I.statsLiveHeadMany || 'visitors active right now' )
 				} )
 			] ) );
+			// Tick from the previous count → the new one (count up from 0 on first load).
+			animateCount( numEl, ( null === lastLiveCount ? 0 : lastLiveCount ), count );
+			lastLiveCount = count;
 			if ( 0 === count ) {
 				body.appendChild( el( 'p', { 'class': 'ak-stats__live-empty', text: I.statsLiveEmpty || 'Nobody is on the site right now.' } ) );
 				return;
