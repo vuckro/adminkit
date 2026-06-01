@@ -168,6 +168,13 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 	border-color: var( --ak-border ) !important;
 }
 
+/* Round the content panel's top-left corner to match AdminKit's other pages —
+   FC's full-bleed top bar otherwise squares it off (18px = AdminKit's corner). */
+body.adminkit.toplevel_page_fluent-cart #fct_admin_app_wrapper,
+body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
+	border-top-left-radius: 18px;
+}
+
 /* Logo → text wordmark. */
 body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a img {
 	display: none !important;
@@ -429,6 +436,9 @@ body.adminkit.toplevel_page_fluent-cart .el-pagination .el-select__wrapper {
 body.adminkit.toplevel_page_fluent-cart .fc_dashboard_onboarding_wrap,
 body.adminkit.toplevel_page_fluent-cart .fct-card .fct-card-header.border-bottom {
 	border-color: var( --ak-border ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-collapse-button-wrapper {
+	border-color: var( --ak-border-strong ) !important;
 }
 
 /* Headings + raised-item text. */
