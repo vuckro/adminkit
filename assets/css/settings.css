@@ -1485,70 +1485,26 @@
 	.adminkit-app .ak-stats__preset--live.is-active .ak-stats__pulse { animation: none; }
 }
 
-/* Live view — a real-time hero. The active count is the centrepiece: a soft
-   CIRCULAR accent halo (no boxy backdrop) plus a thin ring that ripples outward,
-   so it reads as alive and elegant. Pure CSS (transform/opacity), reduced-motion
-   aware — no JS, no perf cost. Mirrored on the dashboard card (wp-screens). */
+/* Live view hero — LEFT-aligned + clean, homogenised with the dashboard card:
+   just the big accent count + label. The "right now" label, the auto-refresh and
+   the pulsing "En direct" chip carry the live cue, so no halo/ring here. */
 .adminkit-app .ak-stats__live-headline {
-	position: relative;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	text-align: center;
-	gap: 8px;
-	margin: 28px auto 24px;
-	padding: 12px;
-}
-/* Soft circular halo behind the number — truly radial, fades to nothing. */
-.adminkit-app .ak-stats__live-headline::before {
-	content: "";
-	position: absolute;
-	left: 50%;
-	top: 46%;
-	width: 190px;
-	height: 190px;
-	transform: translate( -50%, -50% );
-	background: radial-gradient( circle, var(--ak-primary) 0%, transparent 68% );
-	opacity: .06;
-	pointer-events: none;
-	z-index: 0;
+	align-items: flex-start;
+	gap: 6px;
+	margin: 8px 0 24px;
+	padding: 8px 0;
 }
 .adminkit-app .ak-stats__live-num {
-	position: relative;
-	z-index: 1;
-	font-size: 58px;
+	font-size: 64px;
 	font-weight: 700;
 	line-height: 1;
 	letter-spacing: -.02em;
 	color: var(--ak-primary);
 	font-variant-numeric: tabular-nums;
 }
-/* Ripple ring — a thin accent ring that expands + fades outward (a live pulse). */
-.adminkit-app .ak-stats__live-num::before {
-	content: "";
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	width: 1.5em;
-	height: 1.5em;
-	transform: translate( -50%, -50% );
-	border-radius: 50%;
-	border: 1.5px solid var(--ak-primary);
-	opacity: .28;
-	z-index: -1;
-	animation: ak-live-ring 2.4s ease-out infinite;
-}
-@keyframes ak-live-ring {
-	0%   { transform: translate( -50%, -50% ) scale( .75 ); opacity: .32; }
-	70%  { opacity: 0; }
-	100% { transform: translate( -50%, -50% ) scale( 1.85 ); opacity: 0; }
-}
-@media ( prefers-reduced-motion: reduce ) {
-	.adminkit-app .ak-stats__live-num::before { animation: none; }
-}
 .adminkit-app .ak-stats__live-lbl {
-	position: relative;
-	z-index: 1;
 	font-size: var(--ak-text-xs);
 	font-weight: 600;
 	color: var(--ak-text-muted);
@@ -1556,9 +1512,8 @@
 	letter-spacing: .1em;
 }
 .adminkit-app .ak-stats__live-empty {
-	margin: 4px auto 0;
+	margin: 4px 0 0;
 	max-width: 460px;
-	text-align: center;
 	font-size: var(--ak-text-s);
 	color: var(--ak-text-muted);
 }
