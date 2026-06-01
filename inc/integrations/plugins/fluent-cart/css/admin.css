@@ -1,0 +1,448 @@
+/* FluentCart — toplevel_page_fluent-cart.
+
+   FluentCart is a Vue 3 SPA on Tailwind CSS + Element Plus. Its colour comes
+   from two layers, themed two different ways (see class-fluent-cart.php for the
+   full rationale):
+
+     • Tailwind utilities — FC ships a COMPLETE dark variant for every one
+       (`:where(.fluent_theme_dark,…)`). The PHP sync turns that class on from
+       AdminKit's switch, so the app shell / top bar / nav / cards flip
+       natively. We don't re-skin those; we only bridge a few FC design tokens
+       and unify the brand.
+
+     • Element Plus `--el-*` — FC ships the STOCK light defaults and only
+       patches five components in dark mode, so its native dark mode leaves
+       almost all of Element Plus on light values (white inputs/dialogs on a
+       dark page). This file remaps the `--el-*` layer to AdminKit `--ak-*`
+       tokens, which flip with AdminKit's mode — so Element Plus is correct in
+       BOTH modes. This is the bulk of the file.
+
+   Specificity. FC declares `--el-*` on `:root` (0,1,0) and, in a couple of
+   places, re-declares them in dark mode on component selectors (e.g.
+   `.fluent_theme_dark .el-select__popper`, 0,2,0). Our token block targets
+   `:root, body.adminkit.toplevel_page_fluent-cart` (0,2,1) which outranks the
+   `:root` blocks; section 2 adds matching component-scoped rules to outrank
+   FC's five dark-mode patches. Element Plus teleports dialogs / poppers /
+   dropdowns to <body>, so the body-scoped selectors reach them too.
+
+   Brand. FC keeps its purple in `--color-primary` and parks a dark slate in
+   `--el-color-primary` (neutral chrome). AdminKit has one brand, so both route
+   to `--ak-primary`; filled controls get `--ak-on-accent` text so they stay
+   legible whatever the brand's lightness (it can be a pale colour). Because
+   `--ak-*` flip with AdminKit's dark mode, one set of rules covers both modes. */
+
+
+/* ============================================================
+   1. TOKEN REMAP — Element Plus + FC's own tokens → AdminKit
+   ============================================================ */
+
+:root,
+body.adminkit.toplevel_page_fluent-cart {
+
+	/* ── FC's own design tokens ──────────────────────────────
+	   FC defines these on :root and drives surfaces / brand / semantics
+	   through them. Bridging here is high-leverage — it catches every place
+	   FC reads the token (incl. the body background and table fills). */
+	--color-primary:   var( --ak-primary );
+	--color-secondary: var( --ak-secondary );
+	--color-neutral:   var( --ak-text );        /* FC's --text-color resolves to this */
+	--color-success:   var( --ak-success );
+	--color-warning:   var( --ak-warning );
+	--body-bg:         var( --ak-bg );          /* page canvas (light) */
+	--body-bg-dark:    var( --ak-bg );          /* page canvas (dark) — --ak-bg already flips */
+	--table-header-bg:        var( --ak-elevated );  /* El table header row */
+	--table-cell-bg-lighter:  var( --ak-surface );   /* zebra / lighter cell */
+
+	/* ── Element Plus brand ──────────────────────────────────
+	   Both FC's slate --el-color-primary and the stock blue route to brand. */
+	--el-color-primary: var( --ak-primary );
+
+	/* Primary ramp — filled-button hover (light-3), pale fills / current row
+	   / menu hover bg (light-7/8/9), pressed (dark-2). Keep them all on brand. */
+	--el-color-primary-dark-2:  var( --ak-primary-hover );
+	--el-color-primary-light-3: var( --ak-primary-hover );
+	--el-color-primary-light-5: var( --ak-primary-subtle );
+	--el-color-primary-light-7: var( --ak-primary-subtle );
+	--el-color-primary-light-8: var( --ak-primary-subtle );
+	--el-color-primary-light-9: var( --ak-primary-subtle );
+
+	/* ── Semantic ────────────────────────────────────────────
+	   NOTE: Element Plus "info" is a NEUTRAL grey (#909399) FC leans on for
+	   muted chrome (dialog close ×, input-group append, disabled text) — do
+	   NOT route it to --ak-info (which is blue). Send it to muted text + a
+	   neutral ramp instead. */
+	--el-color-success: var( --ak-success );
+	--el-color-warning: var( --ak-warning );
+	--el-color-danger:  var( --ak-error );
+	--el-color-error:   var( --ak-error );
+	--el-color-info:         var( --ak-text-muted );
+	--el-color-info-light-3: var( --ak-text-muted );
+	--el-color-info-light-5: var( --ak-border-strong );
+	--el-color-info-light-8: var( --ak-surface );
+	--el-color-info-light-9: var( --ak-surface );
+	--el-color-info-dark-2:  var( --ak-heading );
+
+	/* Star rating fill (was a gold literal) → warning token. */
+	--el-rate-fill-color: var( --ak-warning );
+
+	/* ── Text ────────────────────────────────────────────── */
+	--el-text-color-primary:     var( --ak-heading );
+	--el-text-color-regular:     var( --ak-text );
+	--el-text-color-secondary:   var( --ak-text-muted );
+	--el-text-color-placeholder: var( --ak-text-muted );
+	--el-text-color-disabled:    var( --ak-text-muted );
+
+	/* ── Backgrounds ─────────────────────────────────────── */
+	--el-bg-color:         var( --ak-surface );
+	--el-bg-color-page:    var( --ak-bg );
+	--el-bg-color-overlay: var( --ak-surface );  /* poppers, dropdowns, tooltips */
+
+	/* ── Borders ─────────────────────────────────────────── */
+	--el-border-color:             var( --ak-border );
+	--el-border-color-light:       var( --ak-border );
+	--el-border-color-lighter:     var( --ak-border );
+	--el-border-color-extra-light: var( --ak-border );
+	--el-border-color-dark:        var( --ak-border-strong );
+	--el-border-color-darker:      var( --ak-border-strong );
+
+	/* ── Fills — hover bgs, zebra rows, disabled, blank canvas ─ */
+	--el-fill-color:             var( --ak-surface );
+	--el-fill-color-light:       var( --ak-surface );
+	--el-fill-color-lighter:     var( --ak-surface );
+	--el-fill-color-extra-light: var( --ak-surface );
+	--el-fill-color-dark:        var( --ak-elevated );
+	--el-fill-color-darker:      var( --ak-elevated );
+	--el-fill-color-blank:       var( --ak-surface );
+
+	/* ── Disabled ────────────────────────────────────────── */
+	--el-disabled-bg-color:     var( --ak-surface-muted );
+	--el-disabled-text-color:   var( --ak-text-muted );
+	--el-disabled-border-color: var( --ak-border );
+
+	/* ── Overlays + loading mask ─────────────────────────────
+	   Dialog backdrop → AdminKit overlay; the El loading mask is a translucent
+	   wash over content while data loads → a soft surface tint that flips. */
+	--el-overlay-color:         var( --ak-overlay );
+	--el-overlay-color-light:   var( --ak-overlay );
+	--el-overlay-color-lighter: var( --ak-overlay );
+	--el-mask-color:            color-mix( in srgb, var( --ak-surface ) 80%, transparent );
+	--el-mask-color-extra-light: color-mix( in srgb, var( --ak-surface ) 50%, transparent );
+
+	/* ── Flat — AdminKit is shadow-free; borders carry separation ─ */
+	--el-box-shadow:         none;
+	--el-box-shadow-light:   none;
+	--el-box-shadow-lighter: none;
+	--el-box-shadow-dark:    none;
+}
+
+
+/* ============================================================
+   2. BEAT FluentCart's FIVE dark-mode --el-* PATCHES
+   FC re-declares a handful of --el-* tokens in dark mode on component
+   selectors (0,2,0 / 0,4,0) with its own greys. Setting the SAME token on the
+   SAME element at higher specificity keeps AdminKit's tokens authoritative, so
+   these components match the rest of Element Plus in dark mode instead of
+   drifting to FC's palette.
+   ============================================================ */
+
+/* Select dropdown popper (FC: bg #808B9C, text #DADDE7, fill #758195, border #808B9C) */
+body.adminkit.toplevel_page_fluent-cart .el-select__popper {
+	--el-bg-color-overlay:  var( --ak-surface );
+	--el-text-color-regular: var( --ak-text );
+	--el-fill-color-light:  var( --ak-surface );
+	--el-border-color-light: var( --ak-border );
+}
+
+/* Table header cell (FC: #808B9C) */
+body.adminkit.toplevel_page_fluent-cart .el-table tr th {
+	--el-table-header-bg-color: var( --ak-elevated );
+}
+
+/* Search-bar input (FC pins border to #11171D in dark) */
+body.adminkit.toplevel_page_fluent-cart .table-filters .search-bar .el-input__wrapper {
+	--el-input-border-color:       var( --ak-border );
+	--el-input-hover-border-color: var( --ak-border-strong );
+	--el-input-focus-border-color: var( --ak-primary );
+}
+
+/* Skeleton loaders + loading mask (FC: #1C2732 / #283643) */
+body.adminkit.toplevel_page_fluent-cart .el-skeleton.is-animated .el-skeleton__item {
+	--el-skeleton-color:    var( --ak-surface-muted );
+	--el-skeleton-to-color: var( --ak-elevated );
+}
+body.adminkit.toplevel_page_fluent-cart .el-loading-mask {
+	--el-mask-color: color-mix( in srgb, var( --ak-surface ) 80%, transparent );
+}
+
+
+/* ============================================================
+   3. PAGE CANVAS
+   AdminKit's chrome.css themes #wpbody but not #wpcontent, and FC paints the
+   app shell with its own Tailwind palette. Give the content strip + the app
+   mount point the page token so the area behind the SPA flips with the theme
+   and meets AdminKit's chrome seamlessly.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-cart #wpcontent,
+body.adminkit.toplevel_page_fluent-cart #fct_admin_app_wrapper,
+body.adminkit.toplevel_page_fluent-cart #fluent_cart_plugin_app {
+	background-color: var( --ak-bg );
+}
+
+
+/* ============================================================
+   4. TOP BAR + LOGO  (.fct_admin_menu_wrap — top-left of the screen)
+   The FC top bar is white (light) / #151D26 (dark) with a bottom border
+   (#EAECF0 / #2C3C4E). Route the surface + that border to AdminKit tokens so
+   the bar and its top-left edge follow the theme. Then replace the FC logo
+   (two <img>: light/dark) with a plain text wordmark — same approach as the
+   FluentBooking / FluentSMTP adapters.
+   ============================================================ */
+
+/* Bar surface + border (the "bordure en haut à gauche" of the content). */
+body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
+	background-color: var( --ak-surface ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart #wpbody-content #fct_admin_menu_holder .fct_admin_menu_wrap.border-bottom,
+body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
+	border-color: var( --ak-border ) !important;
+}
+
+/* Hide both logo images, drop a text wordmark in their place. The anchor
+   carries the two <img> directly — reset any cropping then inject text. */
+body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a img {
+	display: none !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a {
+	display: inline-flex;
+	align-items: center;
+	line-height: normal;
+	overflow: visible;
+	text-decoration: none;
+	box-shadow: none;
+}
+body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a::after {
+	content: "Cart";
+	color: var( --ak-heading );
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+}
+
+/* Top-bar nav items — neutral text, brand on hover / active. */
+body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > button {
+	color: var( --ak-text );
+}
+body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > a:hover,
+body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item.active > a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > button:hover {
+	color: var( --ak-primary );
+}
+
+
+/* ============================================================
+   5. BRAND OVERRIDES — filled / accented Element Plus states
+   The remap routes --el-color-primary to the brand, but Element Plus hard-pins
+   WHITE text on filled primary controls — unreadable on a pale brand. Pin
+   --ak-on-accent on filled controls, and route the brand-coloured text / border
+   states explicitly so they speak the brand in both modes.
+   ============================================================ */
+
+/* 5a. Filled primary — solid brand fill, auto-contrasting text. */
+body.adminkit.toplevel_page_fluent-cart .el-button--primary,
+body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-plain:hover,
+body.adminkit.toplevel_page_fluent-cart .el-switch.is-checked .el-switch__core,
+body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-checked .el-checkbox__inner,
+body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-indeterminate .el-checkbox__inner,
+body.adminkit.toplevel_page_fluent-cart .el-radio__input.is-checked .el-radio__inner,
+body.adminkit.toplevel_page_fluent-cart .el-radio-button.is-active .el-radio-button__inner,
+body.adminkit.toplevel_page_fluent-cart .el-tag--primary,
+body.adminkit.toplevel_page_fluent-cart .el-pagination.is-background .el-pager li.is-active {
+	background-color: var( --ak-primary ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+
+/* Glyphs inside filled controls → on-accent so the tick / dot read. */
+body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-checked .el-checkbox__inner::after {
+	border-color: var( --ak-on-accent ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-radio__input.is-checked .el-radio__inner::after {
+	background: var( --ak-on-accent ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-switch.is-checked .el-switch__action {
+	background-color: var( --ak-on-accent ) !important;
+}
+
+/* 5b. Filled primary — hover / active deepen the fill. */
+body.adminkit.toplevel_page_fluent-cart .el-button--primary:hover,
+body.adminkit.toplevel_page_fluent-cart .el-button--primary:focus,
+body.adminkit.toplevel_page_fluent-cart .el-button--primary:active {
+	background-color: var( --ak-primary-hover ) !important;
+	border-color: var( --ak-primary-hover ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+
+/* 5c. Disabled primary → neutral muted (not a washed brand). */
+body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-disabled,
+body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-disabled:hover {
+	background-color: var( --ak-surface-muted ) !important;
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* 5d. Brand TEXT — links, checked labels, active tabs, pagination, menu. */
+body.adminkit.toplevel_page_fluent-cart .el-link--primary,
+body.adminkit.toplevel_page_fluent-cart .el-link--primary .el-link__inner,
+body.adminkit.toplevel_page_fluent-cart .el-checkbox.is-checked .el-checkbox__label,
+body.adminkit.toplevel_page_fluent-cart .el-radio.is-checked .el-radio__label,
+body.adminkit.toplevel_page_fluent-cart .el-tabs__item:hover,
+body.adminkit.toplevel_page_fluent-cart .el-tabs__item.is-active,
+body.adminkit.toplevel_page_fluent-cart .el-pagination .el-pager li.is-active,
+body.adminkit.toplevel_page_fluent-cart .el-pagination button:hover,
+body.adminkit.toplevel_page_fluent-cart .el-menu-item.is-active,
+body.adminkit.toplevel_page_fluent-cart .el-select-dropdown__item.is-selected,
+body.adminkit.toplevel_page_fluent-cart .el-link:not(.el-link--danger):not(.el-link--success):not(.el-link--warning):not(.el-link--info) {
+	color: var( --ak-primary ) !important;
+}
+
+/* 5e. Brand BORDERS — focused fields, active tab underline, active menu. */
+body.adminkit.toplevel_page_fluent-cart .el-input__wrapper.is-focus,
+body.adminkit.toplevel_page_fluent-cart .el-textarea__inner:focus,
+body.adminkit.toplevel_page_fluent-cart .el-tabs__active-bar,
+body.adminkit.toplevel_page_fluent-cart .el-menu-item.is-active,
+body.adminkit.toplevel_page_fluent-cart .el-select .el-input.is-focus .el-input__wrapper {
+	border-color: var( --ak-primary ) !important;
+}
+
+/* 5f. Focus ring → AdminKit focus token (was an Element-blue glow). */
+body.adminkit.toplevel_page_fluent-cart .el-input__wrapper.is-focus,
+body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-focus .el-checkbox__inner,
+body.adminkit.toplevel_page_fluent-cart .el-radio__input.is-focus .el-radio__inner {
+	box-shadow: 0 0 0 1px var( --ak-primary ) inset !important;
+}
+
+/* 5g. Default / text buttons on hover — brand text, no forced border. */
+body.adminkit.toplevel_page_fluent-cart .el-button:not([class*="el-button--"]):hover,
+body.adminkit.toplevel_page_fluent-cart .el-button.is-text:hover,
+body.adminkit.toplevel_page_fluent-cart .el-button.is-link:hover {
+	color: var( --ak-primary ) !important;
+	border-color: var( --ak-primary ) !important;
+}
+
+/* 5h. Date picker — selected / today / in-range. */
+body.adminkit.toplevel_page_fluent-cart .el-date-table td.current:not(.disabled) .el-date-table-cell__text,
+body.adminkit.toplevel_page_fluent-cart .el-date-table td.start-date .el-date-table-cell__text,
+body.adminkit.toplevel_page_fluent-cart .el-date-table td.end-date .el-date-table-cell__text {
+	background-color: var( --ak-primary ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-date-table td.today .el-date-table-cell__text,
+body.adminkit.toplevel_page_fluent-cart .el-date-table td.available:hover .el-date-table-cell__text {
+	color: var( --ak-primary ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-date-table td.in-range .el-date-table-cell {
+	background-color: var( --ak-primary-subtle ) !important;
+}
+
+
+/* ============================================================
+   6. DIALOG / POPPER CHROME
+   Element Plus teleports these to <body>; theme their frame + close affordance.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-cart .el-dialog,
+body.adminkit.toplevel_page_fluent-cart .el-message-box,
+body.adminkit.toplevel_page_fluent-cart .el-popper,
+body.adminkit.toplevel_page_fluent-cart .el-dropdown-menu {
+	border-color: var( --ak-border ) !important;
+}
+
+/* Close (×) — neutral, → heading on hover (it's just a close affordance). */
+body.adminkit.toplevel_page_fluent-cart .el-dialog__headerbtn .el-dialog__close,
+body.adminkit.toplevel_page_fluent-cart .el-message-box__headerbtn .el-message-box__close {
+	color: var( --ak-text-muted ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-dialog__headerbtn:hover .el-dialog__close,
+body.adminkit.toplevel_page_fluent-cart .el-message-box__headerbtn:hover .el-message-box__close {
+	color: var( --ak-heading ) !important;
+}
+
+/* Input prefix/suffix icons — neutral so they don't inherit a brand colour. */
+body.adminkit.toplevel_page_fluent-cart .el-input__prefix,
+body.adminkit.toplevel_page_fluent-cart .el-input__suffix,
+body.adminkit.toplevel_page_fluent-cart .el-input__icon {
+	color: var( --ak-text-muted );
+}
+
+/* Element Plus icons given an inline `--color: black` by some Vue components
+   go invisible in dark mode; route to a token that flips with the mode. */
+body.adminkit.toplevel_page_fluent-cart .el-icon[style*="--color: black"],
+body.adminkit.toplevel_page_fluent-cart .el-icon[style*="--color:black"] {
+	--color: var( --ak-heading ) !important;
+}
+
+
+/* ============================================================
+   7. HIDE FC'S OWN DARK-MODE TOGGLE
+   AdminKit's switch is the single source of truth (the PHP mirrors it onto
+   FC's native mode), so the in-app control is redundant and could desync.
+   Covers the known toggle hooks; harmless if a given build lacks one.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-cart [data-fct-theme-toggle],
+body.adminkit.toplevel_page_fluent-cart .fct_theme_toggle,
+body.adminkit.toplevel_page_fluent-cart .fct-theme-toggle,
+body.adminkit.toplevel_page_fluent-cart .fct_color_mode_switcher,
+body.adminkit.toplevel_page_fluent-cart .fct_dark_mode_toggle {
+	display: none !important;
+}
+
+
+/* ============================================================
+   8. SKELETON / LOADING DOT — hard-coded brand purple (#4f66f5).
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-cart .fct-ebs__dot {
+	background: var( --ak-primary ) !important;
+}
+
+
+/* ============================================================
+   9. APEXCHARTS — chart text / grid / tooltip in dark mode
+   ApexCharts paints its light-theme palette into the SVG (axis/legend text,
+   grid lines) which glares or vanishes on dark surfaces. Route text + grid +
+   tooltip to tokens. Series colours stay (they distinguish the data and live
+   in JS config, not reachable from CSS).
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-cart .apexcharts-text,
+body.adminkit.toplevel_page_fluent-cart .apexcharts-yaxis-label,
+body.adminkit.toplevel_page_fluent-cart .apexcharts-xaxis-label,
+body.adminkit.toplevel_page_fluent-cart .apexcharts-datalabel {
+	fill: var( --ak-text-muted );
+}
+
+body.adminkit.toplevel_page_fluent-cart .apexcharts-legend-text {
+	color: var( --ak-text ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-cart .apexcharts-gridline,
+body.adminkit.toplevel_page_fluent-cart .apexcharts-xaxis-tick,
+body.adminkit.toplevel_page_fluent-cart .apexcharts-grid-borders line {
+	stroke: var( --ak-border );
+}
+
+body.adminkit.toplevel_page_fluent-cart .apexcharts-tooltip.apexcharts-theme-light,
+body.adminkit.toplevel_page_fluent-cart .apexcharts-xaxistooltip,
+body.adminkit.toplevel_page_fluent-cart .apexcharts-yaxistooltip {
+	background: var( --ak-surface ) !important;
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-text ) !important;
+}
+
+body.adminkit.toplevel_page_fluent-cart .apexcharts-tooltip-title {
+	background: var( --ak-elevated ) !important;
+	border-bottom-color: var( --ak-border ) !important;
+}

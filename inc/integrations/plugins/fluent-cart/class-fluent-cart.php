@@ -1,0 +1,189 @@
+<?php
+/**
+ * FluentCart integration — Tier B adapter (Vue 3 SPA on Tailwind + Element Plus).
+ *
+ * FluentCart renders its admin as a Vue 3 SPA. Its palette comes from TWO
+ * places, themed in TWO different ways — which is the whole reason this adapter
+ * is shaped the way it is:
+ *
+ *   • Tailwind utility classes — FC compiles its own light/dark palette into
+ *     them and ships a COMPLETE dark variant for every one (the
+ *     `:where(.fluent_theme_dark,.fluent_theme_dark *)` rules). So the app
+ *     shell, top bar, nav and cards already flip correctly — IF the
+ *     `fluent_theme_dark` class is on <html>. That is what sync_theme() drives.
+ *
+ *   • Element Plus `--el-*` tokens — every data table, form, dialog, select,
+ *     date picker, tab and pagination is Element Plus. FC ships the STOCK
+ *     light `--el-*` defaults and only patches FIVE component selectors in
+ *     dark mode (select popper, table header, search input, skeleton, loading
+ *     mask). So FC's native dark mode leaves almost all of Element Plus on its
+ *     light values — white inputs and dialogs on a dark page. FC's dark mode
+ *     alone is therefore NOT enough; admin.css remaps the `--el-*` layer to
+ *     AdminKit `--ak-*` tokens, which DO flip with AdminKit's mode, so Element
+ *     Plus is correct in both light and dark.
+ *
+ * Net: sync_theme() turns ON FluentCart's native dark mode from AdminKit's
+ * switch (so the Tailwind chrome flips natively, as the user expects), and
+ * admin.css fills the Element-Plus dark gap + unifies the brand. Together they
+ * cover the whole screen.
+ *
+ * Loaded only on toplevel_page_fluent-cart (the SPA owns every sub-route via
+ * hash routing under that one WP page).
+ *
+ * Tier B → version-gated on the major: FC bakes the stock Element Plus values
+ * and its own brand literals into compiled CSS, which a new major may
+ * reshuffle, so past the tested major the skin drops to FC's native UI.
+ *
+ * @package AdminKit
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
+
+	/**
+	 * @return string
+	 */
+	public static function slug() {
+		return 'fluent-cart';
+	}
+
+	/**
+	 * FluentCart defines `FLUENTCART_VERSION` in its bootstrap.
+	 *
+	 * @return bool
+	 */
+	public static function is_active() {
+		return defined( 'FLUENTCART_VERSION' );
+	}
+
+	/**
+	 * @return string|null
+	 */
+	protected static function host_version() {
+		return defined( 'FLUENTCART_VERSION' ) ? FLUENTCART_VERSION : null;
+	}
+
+	/**
+	 * Verified against FluentCart 1.x. A new major may reshuffle the Element
+	 * Plus token names / brand literals this adapter targets, so gate on the
+	 * major — register_assets() falls back to FC's native UI past it.
+	 *
+	 * @return string|null
+	 */
+	protected static function max_tested_host_version() {
+		return '1.3.28';
+	}
+
+	/**
+	 * FluentCart registers a top-level menu with slug `fluent-cart` via
+	 * `add_menu_page()`, giving the screen id `toplevel_page_fluent-cart`.
+	 * Every sub-page is a hash route under the same screen, so one id covers
+	 * the entire SPA.
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return bool
+	 */
+	public static function owns_screen( $screen ) {
+		return $screen && 'toplevel_page_fluent-cart' === $screen->id;
+	}
+
+	/**
+	 * @return void
+	 */
+	public static function register_assets() {
+		// Tier B: past the tested major, drop the skin so FluentCart's native
+		// UI shows instead of a half-broken one (see host_within_tested_range).
+		if ( ! static::host_within_tested_range() ) {
+			return;
+		}
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-fluent-cart-admin',
+			'src'       => 'inc/integrations/plugins/fluent-cart/css/admin.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_screen' ),
+		) );
+	}
+
+	/**
+	 * Opt out of AdminKit's form primitives on the FluentCart screen — Element
+	 * Plus ships its own input/select/textarea styling, so our components/*.css
+	 * would double-border its widgets (a native border inside the
+	 * `.el-input__wrapper` that already has one). admin.css themes the Element
+	 * Plus surfaces directly instead. Also slave FC's light/dark toggle to
+	 * AdminKit's mode.
+	 *
+	 * @return void
+	 */
+	protected static function boot() {
+		add_filter( 'adminkit/enqueue_forms', array( __CLASS__, 'bail_forms_on_fc' ) );
+		add_action( 'admin_head', array( __CLASS__, 'sync_theme' ) );
+	}
+
+	/**
+	 * @param bool $enqueue
+	 * @return bool
+	 */
+	public static function bail_forms_on_fc( $enqueue ) {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		return self::owns_screen( $screen ) ? false : $enqueue;
+	}
+
+	/**
+	 * Slave FluentCart's NATIVE dark mode to AdminKit's switch.
+	 *
+	 * FluentCart's own theming (AdminTheme.php) reads
+	 * `localStorage.fluent_theme_mode`, treats it dark when
+	 * `value.split(':').pop() === 'dark'`, and adds the `fluent_theme_dark`
+	 * class to <html>. Every FC Tailwind utility has a
+	 * `:where(.fluent_theme_dark,…)` dark variant, so once that class is on
+	 * <html> the whole Tailwind chrome flips by itself — natively, no CSS
+	 * override needed. We make AdminKit's switch the single source of truth:
+	 *
+	 *   1. write `localStorage.fluent_theme_mode` = AdminKit's mode (plain
+	 *      'dark'/'light' — `split(':').pop()` parses both), and
+	 *   2. add/remove `fluent_theme_dark` on <html> ourselves,
+	 *
+	 * both in <head> BEFORE FC's app bundle (footer) boots, so the SPA starts
+	 * in the right mode with no flash. A one-way MutationObserver on
+	 * `data-adminkit-theme` keeps them in step on every toggle — it only READS
+	 * that attribute and WRITES FC's class + storage, never the reverse, so
+	 * there is no sync loop. admin.css then hides FC's own in-app toggle so the
+	 * two can't desync.
+	 *
+	 * Writing the class directly (not just the storage key) means we win even
+	 * if FC's own <head> script already ran against a stale storage value.
+	 *
+	 * @return void
+	 */
+	public static function sync_theme() {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! self::owns_screen( $screen ) ) {
+			return;
+		}
+		?>
+<script id="adminkit-fluent-cart-theme-sync">
+(function(){
+	function akMode(){
+		var a=document.documentElement.getAttribute('data-adminkit-theme');
+		if(a){return a==='dark'?'dark':'light';}
+		try{var s=localStorage.getItem('adminkit-theme');if(s){return s==='dark'?'dark':'light';}}catch(e){}
+		return (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
+	}
+	function sync(){
+		var dark=akMode()==='dark';
+		try{localStorage.setItem('fluent_theme_mode',dark?'dark':'light');}catch(e){}
+		document.documentElement.classList.toggle('fluent_theme_dark',dark);
+		if(document.body){document.body.classList.toggle('fluent_theme_dark',dark);}
+	}
+	sync();
+	document.addEventListener('DOMContentLoaded',function(){
+		sync();
+		new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['data-adminkit-theme']});
+	});
+})();
+</script>
+		<?php
+	}
+}
