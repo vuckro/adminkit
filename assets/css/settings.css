@@ -1334,6 +1334,40 @@
 	stroke-linejoin: round;
 	vector-effect: non-scaling-stroke;
 }
+/* Hairline y-reference lines (max / mid / 0). */
+.adminkit-app .ak-stats__grid {
+	stroke: var(--ak-border);
+	stroke-width: 1;
+	vector-effect: non-scaling-stroke;
+	opacity: .55;
+}
+/* Axes layout: value scale (left) · plot + date scale (bottom). */
+.adminkit-app .ak-stats__chart-axes {
+	display: grid;
+	grid-template-columns: auto minmax( 0, 1fr );
+	gap: 10px;
+}
+.adminkit-app .ak-stats__chart-y {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 120px;
+	padding: 8px 0;
+	text-align: right;
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+	font-variant-numeric: tabular-nums;
+}
+.adminkit-app .ak-stats__chart-plot { min-width: 0; }
+.adminkit-app .ak-stats__chart-x {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 6px;
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+	font-variant-numeric: tabular-nums;
+}
 
 /* Two lists side by side */
 .adminkit-app .ak-stats__cols {

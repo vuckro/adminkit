@@ -1301,6 +1301,14 @@
 			svg.setAttribute( 'class', 'ak-stats__chart-svg' );
 			svg.setAttribute( 'viewBox', '0 0 ' + W + ' ' + H );
 			svg.setAttribute( 'preserveAspectRatio', 'none' );
+			// Hairline y-reference gridlines (top = max, middle, bottom = 0).
+			[ py, py + ih / 2, base ].forEach( function ( gy ) {
+				var g = document.createElementNS( NS, 'line' );
+				g.setAttribute( 'class', 'ak-stats__grid' );
+				g.setAttribute( 'x1', '0' ); g.setAttribute( 'x2', String( W ) );
+				g.setAttribute( 'y1', gy.toFixed( 2 ) ); g.setAttribute( 'y2', gy.toFixed( 2 ) );
+				svg.appendChild( g );
+			} );
 			var a = document.createElementNS( NS, 'path' );
 			a.setAttribute( 'class', 'ak-stats__area' );
 			a.setAttribute( 'd', area.replace( /\s+$/, '' ) );
@@ -1309,7 +1317,26 @@
 			l.setAttribute( 'd', line.replace( /\s+$/, '' ) );
 			svg.appendChild( a );
 			svg.appendChild( l );
-			wrap.appendChild( svg );
+
+			// Y axis (left): max / mid / 0, aligned to the three gridlines.
+			var yax = el( 'div', { 'class': 'ak-stats__chart-y', 'aria-hidden': 'true' }, [
+				el( 'span', { text: num( max ) } ),
+				el( 'span', { text: num( Math.round( max / 2 ) ) } ),
+				el( 'span', { text: '0' } )
+			] );
+
+			// X axis (bottom): first / middle / last day. 'Y-m-d' → 'DD/MM' by string
+			// split (no Date object — cheap, no timezone surprises).
+			function dm( d ) { var p = ( d || '' ).split( '-' ); return p.length === 3 ? ( p[ 2 ] + '/' + p[ 1 ] ) : ( d || '' ); }
+			var xLabels = [ el( 'span', { text: dm( series[ 0 ].date ) } ) ];
+			if ( n > 2 ) { xLabels.push( el( 'span', { text: dm( series[ Math.floor( ( n - 1 ) / 2 ) ].date ) } ) ); }
+			if ( n > 1 ) { xLabels.push( el( 'span', { text: dm( series[ n - 1 ].date ) } ) ); }
+			var xax = el( 'div', { 'class': 'ak-stats__chart-x', 'aria-hidden': 'true' }, xLabels );
+
+			wrap.appendChild( el( 'div', { 'class': 'ak-stats__chart-axes' }, [
+				yax,
+				el( 'div', { 'class': 'ak-stats__chart-plot' }, [ svg, xax ] )
+			] ) );
 			return wrap;
 		}
 
