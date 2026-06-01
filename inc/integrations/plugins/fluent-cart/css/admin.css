@@ -389,14 +389,14 @@ body.adminkit.toplevel_page_fluent-cart .el-icon[style*="--color:black"] {
    7. HIDE FC'S OWN DARK-MODE TOGGLE
    AdminKit's switch is the single source of truth (the PHP mirrors it onto
    FC's native mode), so the in-app control is redundant and could desync.
-   Covers the known toggle hooks; harmless if a given build lacks one.
+   The toggle is the JS-rendered `.theme-selected-button` inside the top-bar
+   `#theme-button-container` / `.fct-theme-button-container`; hide the whole
+   holder so no empty box is left behind.
    ============================================================ */
 
-body.adminkit.toplevel_page_fluent-cart [data-fct-theme-toggle],
-body.adminkit.toplevel_page_fluent-cart .fct_theme_toggle,
-body.adminkit.toplevel_page_fluent-cart .fct-theme-toggle,
-body.adminkit.toplevel_page_fluent-cart .fct_color_mode_switcher,
-body.adminkit.toplevel_page_fluent-cart .fct_dark_mode_toggle {
+body.adminkit.toplevel_page_fluent-cart #theme-button-container,
+body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container,
+body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container .theme-selected-button {
 	display: none !important;
 }
 
@@ -446,4 +446,374 @@ body.adminkit.toplevel_page_fluent-cart .apexcharts-yaxistooltip {
 body.adminkit.toplevel_page_fluent-cart .apexcharts-tooltip-title {
 	background: var( --ak-elevated ) !important;
 	border-bottom-color: var( --ak-border ) !important;
+}
+
+/* ============================================================
+   10. FLUENTCART TAILWIND SURFACES → AdminKit tokens
+   FC's own component classes carry its compiled light/dark palette as Tailwind
+   literals (e.g. .fct-card → #fff light / #151D26 dark). The theme sync turns
+   FC's native dark on, but those literals are FC's greys, not AdminKit's — so a
+   card reads #151D26 instead of --ak-surface. Override the base class with the
+   matching --ak-* token: it carries BOTH modes (the token flips), and the
+   `body.adminkit.toplevel_page_fluent-cart` scope (0,3,1) outranks FC's base
+   (0,1,0) and its zero-specificity `:where(.fluent_theme_dark,…)` dark rule.
+   Generated from the FC dark-mode surface map; grouped by role:
+     #151D26 → --ak-surface   (cards / panels / primary containers)
+     #1C2732 / #253241 / #2C3C4E → --ak-elevated (raised: dropdowns, poppers,
+                                    inputs, nested, hover, active)
+     borders → --ak-border / --ak-border-strong
+   Text stays on FC's native dark (synced) — it's already light-on-dark there.
+   ============================================================ */
+
+/* BG: cards / panels / primary containers (22) */
+body.adminkit.toplevel_page_fluent-cart .fct-accordion,
+body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container,
+body.adminkit.toplevel_page_fluent-cart .fct-bucket-list,
+body.adminkit.toplevel_page_fluent-cart .fct-bulk-product-title-cell,
+body.adminkit.toplevel_page_fluent-cart .fct-card,
+body.adminkit.toplevel_page_fluent-cart .fct-dashboard-stat-widgets,
+body.adminkit.toplevel_page_fluent-cart .fct-duplicate-product-modal,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-body,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-bottom,
+body.adminkit.toplevel_page_fluent-cart .fct-report-avg-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-report-body,
+body.adminkit.toplevel_page_fluent-cart .fct-report-card,
+body.adminkit.toplevel_page_fluent-cart .fct-report-global-filter-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-report-header,
+body.adminkit.toplevel_page_fluent-cart .fct-report-monthly-list,
+body.adminkit.toplevel_page_fluent-cart .fct-report-order-summary,
+body.adminkit.toplevel_page_fluent-cart .fct-setting-header,
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container,
+body.adminkit.toplevel_page_fluent-cart .fct-storage-activated-card,
+body.adminkit.toplevel_page_fluent-cart .fct-tab-item-wrapper,
+body.adminkit.toplevel_page_fluent-cart .fct-table-draggable,
+body.adminkit.toplevel_page_fluent-cart .fct-table-wrapper-mobile {
+	background-color: var( --ak-surface ) !important;
+}
+
+/* BG: raised — dropdowns, poppers, inputs, nested, hover (135) */
+body.adminkit.toplevel_page_fluent-cart .fct-add-coupon-input-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-admin-product-info,
+body.adminkit.toplevel_page_fluent-cart .fct-admin-summary-item-select,
+body.adminkit.toplevel_page_fluent-cart .fct-advanced-inventory-table,
+body.adminkit.toplevel_page_fluent-cart .fct-applied-filter-list,
+body.adminkit.toplevel_page_fluent-cart .fct-applied-filter-popover-content,
+body.adminkit.toplevel_page_fluent-cart .fct-attachments-list,
+body.adminkit.toplevel_page_fluent-cart .fct-bucket-list-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-bulk-actions,
+body.adminkit.toplevel_page_fluent-cart .fct-color-picker-action-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-color-picker-box,
+body.adminkit.toplevel_page_fluent-cart .fct-condition-builder-options,
+body.adminkit.toplevel_page_fluent-cart .fct-condition-builder-options-container,
+body.adminkit.toplevel_page_fluent-cart .fct-congrats-modal,
+body.adminkit.toplevel_page_fluent-cart .fct-content-card-header,
+body.adminkit.toplevel_page_fluent-cart .fct-content-card-list-icon,
+body.adminkit.toplevel_page_fluent-cart .fct-copy-advanced,
+body.adminkit.toplevel_page_fluent-cart .fct-copy-basic,
+body.adminkit.toplevel_page_fluent-cart .fct-custom-legend,
+body.adminkit.toplevel_page_fluent-cart .fct-custom-long-desc-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-custom-reason-section,
+body.adminkit.toplevel_page_fluent-cart .fct-custom-tooltip-content,
+body.adminkit.toplevel_page_fluent-cart .fct-customer-autocomplete-dropdown,
+body.adminkit.toplevel_page_fluent-cart .fct-dashboard-recent-activities__header_filter,
+body.adminkit.toplevel_page_fluent-cart .fct-dashboard-recent-activities__item,
+body.adminkit.toplevel_page_fluent-cart .fct-delete-activity-content,
+body.adminkit.toplevel_page_fluent-cart .fct-delete-test-orders-stat-row,
+body.adminkit.toplevel_page_fluent-cart .fct-device-btn,
+body.adminkit.toplevel_page_fluent-cart .fct-driver-tabs,
+body.adminkit.toplevel_page_fluent-cart .fct-dropdown,
+body.adminkit.toplevel_page_fluent-cart .fct-eu-union-countries,
+body.adminkit.toplevel_page_fluent-cart .fct-eu-union-country,
+body.adminkit.toplevel_page_fluent-cart .fct-file-upload-list,
+body.adminkit.toplevel_page_fluent-cart .fct-file-upload-progress,
+body.adminkit.toplevel_page_fluent-cart .fct-filter-dropdown,
+body.adminkit.toplevel_page_fluent-cart .fct-filter-dropdown-header,
+body.adminkit.toplevel_page_fluent-cart .fct-filter-nav,
+body.adminkit.toplevel_page_fluent-cart .fct-filter-nav-active-bar,
+body.adminkit.toplevel_page_fluent-cart .fct-filter-tabs-mobile,
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab,
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab-active-bar,
+body.adminkit.toplevel_page_fluent-cart .fct-gallery-drag-area,
+body.adminkit.toplevel_page_fluent-cart .fct-global-search-container,
+body.adminkit.toplevel_page_fluent-cart .fct-global-search-input-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-global-search-result-list,
+body.adminkit.toplevel_page_fluent-cart .fct-global-searching-suggestion,
+body.adminkit.toplevel_page_fluent-cart .fct-input-dropdown-popover-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-input-gray,
+body.adminkit.toplevel_page_fluent-cart .fct-integration-setting-body-inner,
+body.adminkit.toplevel_page_fluent-cart .fct-inventory-selected-item-header,
+body.adminkit.toplevel_page_fluent-cart .fct-inventory-stats-card,
+body.adminkit.toplevel_page_fluent-cart .fct-license-activation-limit-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-license-info-form-show-on-mobile,
+body.adminkit.toplevel_page_fluent-cart .fct-license-key-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-license-site-url-table,
+body.adminkit.toplevel_page_fluent-cart .fct-license-statistics-popover,
+body.adminkit.toplevel_page_fluent-cart .fct-licensed-product-table-mobile,
+body.adminkit.toplevel_page_fluent-cart .fct-manage-address-block,
+body.adminkit.toplevel_page_fluent-cart .fct-media-button,
+body.adminkit.toplevel_page_fluent-cart .fct-module-disabled-notice,
+body.adminkit.toplevel_page_fluent-cart .fct-multiple-select-group,
+body.adminkit.toplevel_page_fluent-cart .fct-number-input,
+body.adminkit.toplevel_page_fluent-cart .fct-offcanvas-menu,
+body.adminkit.toplevel_page_fluent-cart .fct-offcanvas-menu-list,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-card-body,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-card-head-top,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-form-header,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-form-page-setup,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-step-completed-button,
+body.adminkit.toplevel_page_fluent-cart .fct-order-stats-card,
+body.adminkit.toplevel_page_fluent-cart .fct-order-stats-card-head,
+body.adminkit.toplevel_page_fluent-cart .fct-package-type-selector,
+body.adminkit.toplevel_page_fluent-cart .fct-packages-cards,
+body.adminkit.toplevel_page_fluent-cart .fct-pdf-template-overlay,
+body.adminkit.toplevel_page_fluent-cart .fct-pdf-template-preview,
+body.adminkit.toplevel_page_fluent-cart .fct-popover-box-action,
+body.adminkit.toplevel_page_fluent-cart .fct-popover-content,
+body.adminkit.toplevel_page_fluent-cart .fct-preview-device-toggle,
+body.adminkit.toplevel_page_fluent-cart .fct-product-download-action-buttons,
+body.adminkit.toplevel_page_fluent-cart .fct-product-download-form-box,
+body.adminkit.toplevel_page_fluent-cart .fct-product-item-selector,
+body.adminkit.toplevel_page_fluent-cart .fct-product-pricing-table-mobile-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-query-builder-draggable-list,
+body.adminkit.toplevel_page_fluent-cart .fct-query-builder-sidebar,
+body.adminkit.toplevel_page_fluent-cart .fct-query-builder-sidebar-heading,
+body.adminkit.toplevel_page_fluent-cart .fct-query-preview-title,
+body.adminkit.toplevel_page_fluent-cart .fct-report-failed-order-list,
+body.adminkit.toplevel_page_fluent-cart .fct-report-sold-product-list,
+body.adminkit.toplevel_page_fluent-cart .fct-save-bar,
+body.adminkit.toplevel_page_fluent-cart .fct-search-commands,
+body.adminkit.toplevel_page_fluent-cart .fct-search-guide-example-item,
+body.adminkit.toplevel_page_fluent-cart .fct-search-guide-list,
+body.adminkit.toplevel_page_fluent-cart .fct-search-tags,
+body.adminkit.toplevel_page_fluent-cart .fct-select-gray,
+body.adminkit.toplevel_page_fluent-cart .fct-select-payment-type-block,
+body.adminkit.toplevel_page_fluent-cart .fct-setting-container,
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-drawer__form,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav-mobile,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav-mobile__item,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav__item-shell,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav__menu-trigger,
+body.adminkit.toplevel_page_fluent-cart .fct-single-order-wrapper,
+body.adminkit.toplevel_page_fluent-cart .fct-specific-country-box,
+body.adminkit.toplevel_page_fluent-cart .fct-step-indicator,
+body.adminkit.toplevel_page_fluent-cart .fct-steps-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-stock-box-total-content,
+body.adminkit.toplevel_page_fluent-cart .fct-tab-item,
+body.adminkit.toplevel_page_fluent-cart .fct-tab-item-active,
+body.adminkit.toplevel_page_fluent-cart .fct-tab-link,
+body.adminkit.toplevel_page_fluent-cart .fct-table-border,
+body.adminkit.toplevel_page_fluent-cart .fct-tabs,
+body.adminkit.toplevel_page_fluent-cart .fct-tabs-button,
+body.adminkit.toplevel_page_fluent-cart .fct-tag-group,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-classes-content,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-collection-method,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-rates-country-view,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-selection-sum-box,
+body.adminkit.toplevel_page_fluent-cart .fct-term-label,
+body.adminkit.toplevel_page_fluent-cart .fct-term-list-header-button-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-term-list-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-term-search-result,
+body.adminkit.toplevel_page_fluent-cart .fct-term-search-result-button-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-term-search-result-list,
+body.adminkit.toplevel_page_fluent-cart .fct-term-selected,
+body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container,
+body.adminkit.toplevel_page_fluent-cart .fct-timeline-item,
+body.adminkit.toplevel_page_fluent-cart .fct-timeline-node,
+body.adminkit.toplevel_page_fluent-cart .fct-timeline-reason-badge,
+body.adminkit.toplevel_page_fluent-cart .fct-tooltip,
+body.adminkit.toplevel_page_fluent-cart .fct-upload-btn,
+body.adminkit.toplevel_page_fluent-cart .fct-variant-drawer,
+body.adminkit.toplevel_page_fluent-cart .fct-variant-stock-box,
+body.adminkit.toplevel_page_fluent-cart .fct-variation-select {
+	background-color: var( --ak-elevated ) !important;
+}
+
+/* BORDER: default hairline (23) */
+body.adminkit.toplevel_page_fluent-cart .fct-card,
+body.adminkit.toplevel_page_fluent-cart .fct-card-border,
+body.adminkit.toplevel_page_fluent-cart .fct-content-card-list-item,
+body.adminkit.toplevel_page_fluent-cart .fct-customer-table-mobile-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-dashboard-recent-activities__item,
+body.adminkit.toplevel_page_fluent-cart .fct-dropdown,
+body.adminkit.toplevel_page_fluent-cart .fct-integration-filter,
+body.adminkit.toplevel_page_fluent-cart .fct-number-input,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-bottom,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-form-body,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-form-page-setup,
+body.adminkit.toplevel_page_fluent-cart .fct-orders-table-mobile-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-popover-content,
+body.adminkit.toplevel_page_fluent-cart .fct-product-table-mobile-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-report-header,
+body.adminkit.toplevel_page_fluent-cart .fct-search-tags,
+body.adminkit.toplevel_page_fluent-cart .fct-select-gray,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav__item-image,
+body.adminkit.toplevel_page_fluent-cart .fct-storage-activated-card,
+body.adminkit.toplevel_page_fluent-cart .fct-table-draggable,
+body.adminkit.toplevel_page_fluent-cart .fct-table-mobile-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-table-wrapper,
+body.adminkit.toplevel_page_fluent-cart .fct-timeline-node {
+	border-color: var( --ak-border ) !important;
+}
+
+/* BORDER: strong / dividers (128) */
+body.adminkit.toplevel_page_fluent-cart .fct-accordion,
+body.adminkit.toplevel_page_fluent-cart .fct-add-coupon-input-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-admin-product-menu,
+body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container,
+body.adminkit.toplevel_page_fluent-cart .fct-advanced-inventory-table,
+body.adminkit.toplevel_page_fluent-cart .fct-applied-filter-list,
+body.adminkit.toplevel_page_fluent-cart .fct-attachments-list,
+body.adminkit.toplevel_page_fluent-cart .fct-bucket-list,
+body.adminkit.toplevel_page_fluent-cart .fct-bucket-list-header,
+body.adminkit.toplevel_page_fluent-cart .fct-bucket-list-search,
+body.adminkit.toplevel_page_fluent-cart .fct-bucket-list-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-bulk-actions,
+body.adminkit.toplevel_page_fluent-cart .fct-bulk-sub-footer,
+body.adminkit.toplevel_page_fluent-cart .fct-bulk-sub-section,
+body.adminkit.toplevel_page_fluent-cart .fct-cascader-option,
+body.adminkit.toplevel_page_fluent-cart .fct-checkout-field,
+body.adminkit.toplevel_page_fluent-cart .fct-checkout-fields,
+body.adminkit.toplevel_page_fluent-cart .fct-collapsible-list,
+body.adminkit.toplevel_page_fluent-cart .fct-compare-to-filter,
+body.adminkit.toplevel_page_fluent-cart .fct-condition-builder-options,
+body.adminkit.toplevel_page_fluent-cart .fct-condition-builder-options-container,
+body.adminkit.toplevel_page_fluent-cart .fct-congrats-modal,
+body.adminkit.toplevel_page_fluent-cart .fct-content-card,
+body.adminkit.toplevel_page_fluent-cart .fct-content-card-header,
+body.adminkit.toplevel_page_fluent-cart .fct-content-card-list-icon,
+body.adminkit.toplevel_page_fluent-cart .fct-copy-advanced,
+body.adminkit.toplevel_page_fluent-cart .fct-coverage-selector,
+body.adminkit.toplevel_page_fluent-cart .fct-coverage-selector-dot,
+body.adminkit.toplevel_page_fluent-cart .fct-create-customer-button-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-custom-long-desc-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-customer-orders-items,
+body.adminkit.toplevel_page_fluent-cart .fct-eu-union-countries,
+body.adminkit.toplevel_page_fluent-cart .fct-eu-union-country,
+body.adminkit.toplevel_page_fluent-cart .fct-feature-list-footer,
+body.adminkit.toplevel_page_fluent-cart .fct-file-upload-list,
+body.adminkit.toplevel_page_fluent-cart .fct-file-upload-progress,
+body.adminkit.toplevel_page_fluent-cart .fct-file-upload-rename,
+body.adminkit.toplevel_page_fluent-cart .fct-filter-dropdown-header,
+body.adminkit.toplevel_page_fluent-cart .fct-gallery-drag-area,
+body.adminkit.toplevel_page_fluent-cart .fct-global-search-order-status-wrapper,
+body.adminkit.toplevel_page_fluent-cart .fct-global-searching-for,
+body.adminkit.toplevel_page_fluent-cart .fct-import-map-table,
+body.adminkit.toplevel_page_fluent-cart .fct-input-dropdown-popover-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-integration-card,
+body.adminkit.toplevel_page_fluent-cart .fct-integration-card-logo,
+body.adminkit.toplevel_page_fluent-cart .fct-integration-table-footer,
+body.adminkit.toplevel_page_fluent-cart .fct-inventory-selected-item-header,
+body.adminkit.toplevel_page_fluent-cart .fct-inventory-selected-item-list,
+body.adminkit.toplevel_page_fluent-cart .fct-inventory-selected-items-preview,
+body.adminkit.toplevel_page_fluent-cart .fct-inventory-toolbar-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-license-activation-limit-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-license-box-content,
+body.adminkit.toplevel_page_fluent-cart .fct-license-related-orders-show-on-mobile,
+body.adminkit.toplevel_page_fluent-cart .fct-license-site-url-table,
+body.adminkit.toplevel_page_fluent-cart .fct-license-statistics-popover,
+body.adminkit.toplevel_page_fluent-cart .fct-licensed-product-table,
+body.adminkit.toplevel_page_fluent-cart .fct-licensed-product-table-mobile-row,
+body.adminkit.toplevel_page_fluent-cart .fct-manage-address-block,
+body.adminkit.toplevel_page_fluent-cart .fct-media-button,
+body.adminkit.toplevel_page_fluent-cart .fct-media-content-list-header,
+body.adminkit.toplevel_page_fluent-cart .fct-media-content-list-item,
+body.adminkit.toplevel_page_fluent-cart .fct-media-content-list-wrapper,
+body.adminkit.toplevel_page_fluent-cart .fct-media-with-content,
+body.adminkit.toplevel_page_fluent-cart .fct-mode-radio-group,
+body.adminkit.toplevel_page_fluent-cart .fct-multiple-select-group,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-form-header,
+body.adminkit.toplevel_page_fluent-cart .fct-onboarding-step-completed-button,
+body.adminkit.toplevel_page_fluent-cart .fct-order-bump-price-box,
+body.adminkit.toplevel_page_fluent-cart .fct-order-bump-price-box-image,
+body.adminkit.toplevel_page_fluent-cart .fct-package-card,
+body.adminkit.toplevel_page_fluent-cart .fct-package-type-selector,
+body.adminkit.toplevel_page_fluent-cart .fct-packages-cards,
+body.adminkit.toplevel_page_fluent-cart .fct-pdf-template-card,
+body.adminkit.toplevel_page_fluent-cart .fct-powered-by-email-footer-checkbox,
+body.adminkit.toplevel_page_fluent-cart .fct-product-add-more-price-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-product-download-actions,
+body.adminkit.toplevel_page_fluent-cart .fct-product-inventory-mobile-row,
+body.adminkit.toplevel_page_fluent-cart .fct-product-item-selector,
+body.adminkit.toplevel_page_fluent-cart .fct-product-item-selector-dot,
+body.adminkit.toplevel_page_fluent-cart .fct-product-orders-items,
+body.adminkit.toplevel_page_fluent-cart .fct-product-pricing-table-mobile-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-query-builder-draggable-list,
+body.adminkit.toplevel_page_fluent-cart .fct-query-builder-sidebar,
+body.adminkit.toplevel_page_fluent-cart .fct-report-card-header,
+body.adminkit.toplevel_page_fluent-cart .fct-report-conversion-rate-list,
+body.adminkit.toplevel_page_fluent-cart .fct-save-bar,
+body.adminkit.toplevel_page_fluent-cart .fct-search-commands,
+body.adminkit.toplevel_page_fluent-cart .fct-search-guide-example-item,
+body.adminkit.toplevel_page_fluent-cart .fct-setting-container,
+body.adminkit.toplevel_page_fluent-cart .fct-setting-form-row,
+body.adminkit.toplevel_page_fluent-cart .fct-setting-header,
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-collapse-button-wrapper,
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-item-box,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav-mobile,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav-mobile__item,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav__summary,
+body.adminkit.toplevel_page_fluent-cart .fct-show-more-button,
+body.adminkit.toplevel_page_fluent-cart .fct-simple-product-actions,
+body.adminkit.toplevel_page_fluent-cart .fct-single-order-wrapper,
+body.adminkit.toplevel_page_fluent-cart .fct-single-subscription-orders-mobile,
+body.adminkit.toplevel_page_fluent-cart .fct-single-subscription-pricing-table-trial,
+body.adminkit.toplevel_page_fluent-cart .fct-specific-country-box,
+body.adminkit.toplevel_page_fluent-cart .fct-status-group,
+body.adminkit.toplevel_page_fluent-cart .fct-steps-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-subscriptions-table-mobile-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-table-border,
+body.adminkit.toplevel_page_fluent-cart .fct-tabs-button,
+body.adminkit.toplevel_page_fluent-cart .fct-tag-group,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-active-country-collapse,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-classes,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-classes-content,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-classes-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-collection-method,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-filing,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-override-item,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-overrides,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-rates-country-view,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-rates-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-tax-selection-sum-box,
+body.adminkit.toplevel_page_fluent-cart .fct-term-search-result,
+body.adminkit.toplevel_page_fluent-cart .fct-tooltip,
+body.adminkit.toplevel_page_fluent-cart .fct-upgrade-paths-mobile-row,
+body.adminkit.toplevel_page_fluent-cart .fct-variant-drawer,
+body.adminkit.toplevel_page_fluent-cart .fct-variant-item-collapse,
+body.adminkit.toplevel_page_fluent-cart .fct-variant-pricing-add-button-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-vendor-ids {
+	border-color: var( --ak-border-strong ) !important;
+}
+
+
+/* ============================================================
+   11. SEMANTIC ALERTS — pale-tint AdminKit style
+   FC paints alert backgrounds with saturated semantic fills (green/red/amber/
+   blue) that clash with AdminKit's subtle-tint convention. Route each variant
+   to its --ak-*-subtle background + solid token border/text.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-cart .fct-alert-success {
+	background-color: var( --ak-success-subtle ) !important;
+	border-color: var( --ak-success ) !important;
+	color: var( --ak-success ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-alert-error {
+	background-color: var( --ak-error-subtle ) !important;
+	border-color: var( --ak-error ) !important;
+	color: var( --ak-error ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-alert-warning {
+	background-color: var( --ak-warning-subtle ) !important;
+	border-color: var( --ak-warning ) !important;
+	color: var( --ak-warning ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-alert-info {
+	background-color: var( --ak-info-subtle ) !important;
+	border-color: var( --ak-info ) !important;
+	color: var( --ak-info ) !important;
 }
