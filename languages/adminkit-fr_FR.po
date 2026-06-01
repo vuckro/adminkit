@@ -1407,3 +1407,7 @@ msgstr "Monter"
 #: inc/settings/class-settings-page.php
 msgid "Move down"
 msgstr "Descendre"
+
+#: inc/features/stats/class-stats-dashboard.php
+msgid "No views in this period yet."
+msgstr "Aucune vue sur cette période pour l’instant."

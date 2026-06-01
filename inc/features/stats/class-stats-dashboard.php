@@ -318,18 +318,17 @@ class AdminKit_Stats_Dashboard {
 			$total_v    += $v;
 		}
 
-		// Head: title + preset selector (active pill only on the Live tab).
+		// Head: title + the "active now" pill (shown on period views as live
+		// context — hidden on Live, where the big count already is it) + the picker.
+		// Synced with the SPA stats page, which does the same.
 		$out  = '<div class="ak-card__head ak-dash__stats-head">';
 		$out .= '<h2 class="ak-card__title">' . esc_html__( 'Statistics', 'adminkit' ) . '</h2>';
+		$out .= self::active_pill();
 		$out .= self::range_picker( $start, $end, $preset );
 		$out .= '</div>';
 
-		if ( $total_pv <= 0 ) {
-			$out .= '<p class="ak-dash__empty">' . esc_html__( 'No traffic data yet — views will appear here as visitors arrive.', 'adminkit' ) . '</p>';
-			return $out;
-		}
-
-		// Headline metrics.
+		// Headline metrics — ALWAYS shown. A clear "0 / 0" beats a blank panel when
+		// a short window (e.g. Today, early in the day) has no views recorded yet.
 		$out .= '<div class="ak-dash__stats-top">';
 		$out .= '<div class="ak-dash__stats-metric"><span class="ak-dash__stats-num">'
 			. esc_html( number_format_i18n( $total_v ) )
@@ -338,6 +337,11 @@ class AdminKit_Stats_Dashboard {
 			. esc_html( number_format_i18n( $total_pv ) )
 			. '</span><span class="ak-dash__stats-lbl">' . esc_html__( 'Page views', 'adminkit' ) . '</span></div>';
 		$out .= '</div>';
+
+		if ( $total_pv <= 0 ) {
+			$out .= '<p class="ak-dash__empty">' . esc_html__( 'No views in this period yet.', 'adminkit' ) . '</p>';
+			return $out;
+		}
 
 		// Sparkline (page views/day).
 		$out .= '<div class="ak-dash__stats-spark">' . self::sparkline( $series_pv ) . '</div>';
@@ -370,9 +374,10 @@ class AdminKit_Stats_Dashboard {
 		$active = AdminKit_Stats_Store::recent_activity( $now );
 		$count  = count( $active );
 
+		// No "active now" pill here — on Live the big count IS the active number
+		// (matches the SPA stats page).
 		$out  = '<div class="ak-card__head ak-dash__stats-head">';
 		$out .= '<h2 class="ak-card__title">' . esc_html__( 'Statistics', 'adminkit' ) . '</h2>';
-		$out .= self::active_pill();
 		$out .= self::range_picker( $today, $today, 'live' );
 		$out .= '</div>';
 

@@ -1147,13 +1147,10 @@
 			}
 
 			var totals = res.totals || { visits: 0, pageviews: 0 };
-			if ( ! ( totals.pageviews > 0 ) ) {
-				body.appendChild( el( 'p', { 'class': 'ak-stats__empty', text: I.statsNoData || 'No traffic data yet.' } ) );
-				return;
-			}
 
-			// Metrics — Visits / Page views, each with a ▲/▼ trend vs the previous
-			// equal-length period, then any extension-contributed tiles (res.cards).
+			// Metrics — ALWAYS shown (a clear "0 / 0" beats a blank panel when a short
+			// window like Today has no views yet). Visits / Page views, each with a
+			// ▲/▼ trend vs the previous equal-length period, then extension tiles.
 			var prev = res.previous || null;
 			var tiles = [
 				metric( num( totals.visits ), I.statsVisits || 'Visits', prev ? trendFrom( totals.visits, prev.visits ) : null ),
@@ -1161,7 +1158,13 @@
 			].concat( extraCards( res.cards || [] ) );
 			body.appendChild( el( 'div', { 'class': 'ak-stats__metrics' }, tiles ) );
 
-			// Bar chart (page views per day).
+			if ( ! ( totals.pageviews > 0 ) ) {
+				body.appendChild( el( 'p', { 'class': 'ak-stats__empty', text: I.statsNoData || 'No traffic data yet.' } ) );
+				return;
+			}
+
+			// Line/area chart (page views per day). Skipped for a single day (no
+			// line to draw) — chart() guards that.
 			body.appendChild( chart( res.series || [] ) );
 
 			// Two full lists.
@@ -1278,7 +1281,9 @@
 		// when the viewBox stretches to the container width.
 		function chart( series ) {
 			var wrap = el( 'div', { 'class': 'ak-stats__chart' } );
-			if ( ! series.length ) { return wrap; }
+			// Need ≥2 points for a line — a single day (Today) shows just the metrics
+			// + lists, no chart.
+			if ( series.length < 2 ) { return wrap; }
 			var max = 1;
 			series.forEach( function ( d ) { if ( ( d.pageviews | 0 ) > max ) { max = d.pageviews | 0; } } );
 

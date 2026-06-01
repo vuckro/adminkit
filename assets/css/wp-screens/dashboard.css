@@ -1434,73 +1434,58 @@ body.adminkit .ak-dash__stats-live {
 
 /* Big headline: visitor count + tagline — mirrors the Statistics page Live hero
    (centred accent count, soft circular halo, ripple ring), scaled for the card. */
+/* The dashboard card Live view is LEFT-aligned + compact (it's a widget, not the
+   full page). The count carries a small "radar" dot that emits an expanding ring
+   — a calmer live cue than the page's big centred hero. */
 body.adminkit .ak-dash__stats-live-headline {
-	position: relative;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	text-align: center;
-	gap: 7px;
-	padding: 22px 16px 16px;
-}
-body.adminkit .ak-dash__stats-live-headline::before {
-	content: "";
-	position: absolute;
-	left: 50%;
-	top: 44%;
-	width: 150px;
-	height: 150px;
-	transform: translate( -50%, -50% );
-	background: radial-gradient( circle, var(--ak-primary) 0%, transparent 68% );
-	opacity: .06;
-	pointer-events: none;
-	z-index: 0;
+	align-items: flex-start;
+	gap: 4px;
+	padding: 20px 16px 14px;
 }
 body.adminkit .ak-dash__stats-live-num {
 	position: relative;
-	z-index: 1;
-	font-size: 44px;
+	padding-left: 28px;
+	font-size: 42px;
 	font-weight: 700;
 	line-height: 1;
 	letter-spacing: -.02em;
 	color: var(--ak-primary);
 	font-variant-numeric: tabular-nums;
 }
+/* Live dot — solid, with a ring that pings outward via box-shadow. */
 body.adminkit .ak-dash__stats-live-num::before {
 	content: "";
 	position: absolute;
-	left: 50%;
+	left: 4px;
 	top: 50%;
-	width: 1.5em;
-	height: 1.5em;
-	transform: translate( -50%, -50% );
+	width: 11px;
+	height: 11px;
+	margin-top: -6px;
 	border-radius: 50%;
-	border: 1.5px solid var(--ak-primary);
-	opacity: .28;
-	z-index: -1;
-	animation: ak-live-ring 2.4s ease-out infinite;
+	background: var(--ak-primary);
+	animation: ak-live-ping 1.8s ease-out infinite;
 }
-@keyframes ak-live-ring {
-	0%   { transform: translate( -50%, -50% ) scale( .75 ); opacity: .32; }
-	70%  { opacity: 0; }
-	100% { transform: translate( -50%, -50% ) scale( 1.85 ); opacity: 0; }
+@keyframes ak-live-ping {
+	0%   { box-shadow: 0 0 0 0 color-mix( in srgb, var(--ak-primary) 45%, transparent ); }
+	70%  { box-shadow: 0 0 0 9px transparent; }
+	100% { box-shadow: 0 0 0 0 transparent; }
 }
 @media ( prefers-reduced-motion: reduce ) {
 	body.adminkit .ak-dash__stats-live-num::before { animation: none; }
 }
 body.adminkit .ak-dash__stats-live-lbl {
-	position: relative;
-	z-index: 1;
+	padding-left: 28px;
 	font-size: var(--ak-text-xs);
 	font-weight: 600;
 	color: var(--ak-text-muted);
 	text-transform: uppercase;
-	letter-spacing: .1em;
+	letter-spacing: .08em;
 }
 body.adminkit .ak-dash__stats-live-empty {
 	margin: 0;
-	padding: 4px 16px 18px;
-	text-align: center;
+	padding: 4px 16px 18px 28px;
 	font-size: var(--ak-text-s);
 	color: var(--ak-text-muted);
 }
