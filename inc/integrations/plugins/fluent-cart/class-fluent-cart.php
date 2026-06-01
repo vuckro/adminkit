@@ -89,6 +89,33 @@ class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * The CLASSIC (non-SPA) FluentCart screens: the `fluent-products` CPT list /
+	 * editor and its taxonomy term screens (Categories, Brands) — `edit.php`,
+	 * `post.php`, `post-new.php`, `edit-tags.php` all carry
+	 * `$screen->post_type === 'fluent-products'`. FluentCart injects its own top
+	 * bar (`.fct_admin_menu_wrap`) on these too, so they need the theme sync (to
+	 * flip FC's native dark) + admin.css (to skin the bar and FC's classic
+	 * overrides).
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return bool
+	 */
+	public static function is_product_screen( $screen ) {
+		return $screen && isset( $screen->post_type ) && 'fluent-products' === $screen->post_type;
+	}
+
+	/**
+	 * Screens that carry FluentCart chrome (the SPA OR the classic product
+	 * screens) — drives both the admin.css load and the theme sync.
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return bool
+	 */
+	public static function owns_chrome( $screen ) {
+		return self::owns_screen( $screen ) || self::is_product_screen( $screen );
+	}
+
+	/**
 	 * @return void
 	 */
 	public static function register_assets() {
@@ -102,7 +129,7 @@ class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
 			'src'       => 'inc/integrations/plugins/fluent-cart/css/admin.css',
 			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context'   => 'admin',
-			'condition' => array( __CLASS__, 'owns_screen' ),
+			'condition' => array( __CLASS__, 'owns_chrome' ),
 		) );
 	}
 
@@ -163,7 +190,7 @@ class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
 	 */
 	public static function sync_theme() {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( ! self::owns_screen( $screen ) ) {
+		if ( ! self::owns_chrome( $screen ) ) {
 			return;
 		}
 		?>

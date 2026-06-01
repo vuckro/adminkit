@@ -634,3 +634,47 @@ body.adminkit.toplevel_page_fluent-cart .fct-alert-warning {
 	border-color: var( --ak-warning ) !important;
 	color: var( --ak-warning ) !important;
 }
+
+
+/* ============================================================
+   11. CLASSIC FLUENT-PRODUCTS SCREENS — Categories, Brands, product list/editor
+   FC injects its (here position:relative) top bar on these classic WP screens
+   too; sync_theme + this CSS now load there (see owns_chrome). Skin the bar and
+   the WP overrides FC layers on (slate links, white form column, light table
+   borders). The native AdminKit corner overlay frames the panel by itself here
+   (the bar isn't the SPA's fixed z-2000 one). Scoped to the CPT body class.
+   ============================================================ */
+
+body.adminkit.post-type-fluent-products .fct_admin_menu_wrap {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border ) !important;
+}
+body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a img {
+	display: none !important;
+}
+body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a::after {
+	content: "FluentCart";
+	color: var( --ak-heading );
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+}
+body.adminkit.post-type-fluent-products .fct_menu > .fct_menu_item > a,
+body.adminkit.post-type-fluent-products .fct_menu > .fct_menu_item > button {
+	color: var( --ak-text );
+}
+
+/* FC's classic WP overrides → AdminKit tokens. */
+body.adminkit.post-type-fluent-products #col-container a {
+	color: var( --ak-text ) !important;
+}
+body.adminkit.post-type-fluent-products #col-left .col-wrap {
+	background-color: var( --ak-surface ) !important;
+	box-shadow: none !important;
+}
+body.adminkit.post-type-fluent-products #col-container .widefat thead td,
+body.adminkit.post-type-fluent-products #col-container .widefat thead th,
+body.adminkit.post-type-fluent-products #col-container .widefat tfoot td,
+body.adminkit.post-type-fluent-products #col-container .widefat tfoot th {
+	border-color: var( --ak-border ) !important;
+}
