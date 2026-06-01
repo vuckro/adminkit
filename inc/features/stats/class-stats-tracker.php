@@ -39,10 +39,16 @@ class AdminKit_Stats_Tracker {
 	 * @return void
 	 */
 	public static function init() {
+		// OFF by default: this is the ONE feature with an inherent front-end cost —
+		// a beacon POST per page view that boots WordPress. Keeping it opt-in means
+		// activating AdminKit fires NOTHING on the front end (no beacon, no stats
+		// page, no dashboard card) until you turn it on in Settings → Features. The
+		// beacon (vs server-side counting) is deliberate: it survives full-page
+		// caches and JS-gates out most bots, so the data stays honest once enabled.
 		AdminKit_Settings::register( 'stats_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => true,
+			'default'  => false,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
