@@ -1125,24 +1125,26 @@
 		function render( res ) {
 			body.innerHTML = '';
 
-			// Live mode has its own shape (no totals, no series). Show the active
-			// pill only on the live tab; always hide it on period presets.
+			// Live mode has its own shape (no totals, no series) — the big count IS
+			// the active number, so the header pill would be redundant. Hide it here;
+			// it shows on the PERIOD views instead, as live context.
 			if ( res.preset === 'live' ) {
-				var a = res.active | 0;
-				if ( a > 0 ) {
-					active.hidden = false;
-					active.innerHTML = '';
-					active.appendChild( el( 'span', { 'class': 'ak-stats__active-dot' } ) );
-					active.appendChild( document.createTextNode( num( a ) + ' ' + ( I.statsActive || 'active now' ) ) );
-				} else {
-					active.hidden = true;
-				}
+				active.hidden = true;
 				renderLive( res );
 				return;
 			}
 
-			// Period presets — never show the active-now pill here.
-			active.hidden = true;
+			// Period presets — surface the "active now" pill (live context next to
+			// the historical totals).
+			var a = res.active | 0;
+			if ( a > 0 ) {
+				active.hidden = false;
+				active.innerHTML = '';
+				active.appendChild( el( 'span', { 'class': 'ak-stats__active-dot' } ) );
+				active.appendChild( document.createTextNode( num( a ) + ' ' + ( I.statsActive || 'active now' ) ) );
+			} else {
+				active.hidden = true;
+			}
 
 			var totals = res.totals || { visits: 0, pageviews: 0 };
 			if ( ! ( totals.pageviews > 0 ) ) {
