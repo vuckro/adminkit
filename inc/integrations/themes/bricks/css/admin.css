@@ -117,6 +117,20 @@ body.adminkit #bricks-settings tr {
 	background: transparent;
 }
 
+/* Each settings TAB is its own `<table id="tab-…">`, auto-sized to its content —
+   so switching tabs (General · Builder access · Performance …) made the form jump
+   to a different width every time. Pin every tab table to the full wrapper width
+   so all tabs read at the SAME, consistent size. A steady label column keeps the
+   field edge aligned across tabs too. (Plain auto layout — no table-layout:fixed,
+   which would clip Bricks's wider cells / code editors.) */
+body.adminkit #bricks-settings > table[id^="tab-"] {
+	width: 100%;
+	box-sizing: border-box;
+}
+body.adminkit #bricks-settings > table[id^="tab-"] > tbody > tr > th {
+	width: 260px;
+}
+
 body.adminkit #bricks-settings th,
 body.adminkit #bricks-settings td {
 	background-color: var(--ak-surface);
