@@ -20,11 +20,9 @@ WP_LOAD="/Users/you/Local Sites/adminkit/app/public/wp-load.php" \
 ```
 
 The runner **auto-detects WordPress**: if `WP_LOAD` is set (or a `wp-load.php`
-is found by walking up from the plugin) and the database is reachable, the
-DB-backed tests run. If WordPress is only auto-detected and its local database is
-off, those tests skip cleanly and the pure tests still run; an explicit `WP_LOAD`
-with an unreachable database fails fast with a clear error. It exits non-zero if
-anything fails, so it doubles as a CI gate.
+is found by walking up from the plugin), the DB-backed tests run; otherwise they
+skip cleanly and only the pure tests run. It exits non-zero if anything fails,
+so it doubles as a CI gate.
 
 ## What's covered
 
