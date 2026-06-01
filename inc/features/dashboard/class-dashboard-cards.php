@@ -358,7 +358,7 @@ class AdminKit_Dashboard_Cards {
 					. '<span class="ak-dash__glance-text"><span class="ak-dash__glance-l">%4$s</span>'
 					. '<span class="ak-dash__glance-sub">%5$s</span></span></a>',
 				esc_url( isset( $t['url'] ) ? $t['url'] : '#' ),
-				self::icon( isset( $t['icon'] ) ? $t['icon'] : 'post' ),
+				self::glance_icon( isset( $t['icon'] ) ? $t['icon'] : 'post', isset( $t['url'] ) ? $t['url'] : '' ),
 				esc_html( number_format_i18n( (int) ( $t['n'] ?? 0 ) ) ),
 				esc_html( isset( $t['label'] ) ? $t['label'] : '' ),
 				esc_html( isset( $t['sub'] ) ? $t['sub'] : '' )
@@ -366,6 +366,59 @@ class AdminKit_Dashboard_Cards {
 		}
 		echo '</div>';
 		echo '</section>';
+	}
+
+	/**
+	 * Resolve a glance tile's icon, honouring the admin-menu icon override. When the
+	 * menu editor holds a saved icon for the tile's admin-page slug, that wins — so
+	 * re-iconing a menu item also re-skins its dashboard tile. Falls back to the
+	 * tile's built-in stroke glyph otherwise.
+	 *
+	 * @param string $default Built-in dashboard icon name (see icon()).
+	 * @param string $url     The tile's admin URL; its slug keys the override map.
+	 * @return string Safe HTML — an <svg> (named icon) or a masked <span> (custom SVG).
+	 */
+	private static function glance_icon( $default, $url ) {
+		$slug      = is_string( $url ) ? str_replace( admin_url(), '', $url ) : '';
+		$overrides = self::menu_icon_overrides();
+		if ( '' !== $slug && isset( $overrides[ $slug ] ) ) {
+			$ov = $overrides[ $slug ];
+			if ( 0 === strpos( $ov, 'data:image/svg+xml' ) ) {
+				$style = '-webkit-mask-image:url("' . $ov . '");mask-image:url("' . $ov . '")';
+				return '<span class="ak-dash__glance-ic-mask" aria-hidden="true" style="' . esc_attr( $style ) . '"></span>';
+			}
+			if ( class_exists( 'AdminKit_Icons' ) && AdminKit_Icons::has( $ov ) ) {
+				return AdminKit_Icons::display_svg( $ov );
+			}
+		}
+		return self::icon( $default );
+	}
+
+	/**
+	 * Admin-page slug → saved menu icon override (an AdminKit icon name or a
+	 * data:image/svg+xml URI), for top-level items the user re-iconed in the menu
+	 * editor. Empty / 'wp-default' overrides are skipped (nothing to change).
+	 * Cached per request; empty when the menu feature isn't present.
+	 *
+	 * @return array<string,string>
+	 */
+	private static function menu_icon_overrides() {
+		static $map = null;
+		if ( null !== $map ) {
+			return $map;
+		}
+		$map = array();
+		if ( class_exists( 'AdminKit_Menu_Store' ) ) {
+			$cfg = AdminKit_Menu_Store::get_config();
+			foreach ( (array) ( isset( $cfg['top'] ) ? $cfg['top'] : array() ) as $item ) {
+				$slug = isset( $item['slug'] ) ? (string) $item['slug'] : '';
+				$icon = isset( $item['icon'] ) ? (string) $item['icon'] : '';
+				if ( '' !== $slug && '' !== $icon && 'wp-default' !== $icon ) {
+					$map[ $slug ] = $icon;
+				}
+			}
+		}
+		return $map;
 	}
 
 	/** Site preview — a scaled, non-interactive thumbnail of the live home page. It

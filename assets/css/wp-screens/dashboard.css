@@ -470,6 +470,20 @@ body.adminkit .ak-dash__glance-ic .ak-dash-ic {
 	width: 17px;
 	height: 17px;
 }
+/* Menu-synced icons: a named AdminKit glyph (solid-fill <svg>) or a custom pasted
+   SVG painted as a currentColor mask — both sized to match the default glyph. */
+body.adminkit .ak-dash__glance-ic > svg { width: 17px; height: 17px; }
+body.adminkit .ak-dash__glance-ic-mask {
+	width: 17px;
+	height: 17px;
+	background-color: currentColor;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	-webkit-mask-size: contain;
+	mask-size: contain;
+}
 body.adminkit .ak-dash__glance-n {
 	flex: none;
 	font-size: 22px;
@@ -1280,8 +1294,16 @@ body.adminkit .ak-spark__area {
 body.adminkit .ak-dash__stats-cols {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 6px 18px;
-	padding: 6px 16px 14px;
+	gap: 12px;
+	padding: 6px 16px 16px;
+}
+/* Each list (Top pages / Top sources) sits on its own surface so the two read as
+   distinct panels rather than blurring into the card body. */
+body.adminkit .ak-dash__stats-col {
+	padding: 12px 14px;
+	background: var(--ak-card-bg, var(--ak-surface));
+	border: 1px solid var(--ak-card-border, var(--ak-border));
+	border-radius: var(--ak-card-radius, var(--ak-radius-m));
 }
 body.adminkit .ak-dash__stats-h {
 	margin: 0 0 6px;
