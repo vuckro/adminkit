@@ -14,12 +14,58 @@
 	color: var(--ak-text);
 }
 
-/* Focused single-panel surfaces (Menu editor, Statistics page) run the FULL
-   content width — they're data-dense (a menu tree, charts, side-by-side lists),
-   unlike the toggle-row Settings SPA which stays in a comfortable reading column. */
+/* Every AdminKit surface runs the FULL content width now. The focused Menu/Stats
+   pages are data-dense (a menu tree, charts, side-by-side lists); the tabbed
+   Settings SPA lays Features + Plugins out as a responsive card grid (below) so
+   the width is used, not just stretched. */
 .adminkit-app[data-screen="menu"],
-.adminkit-app[data-screen="stats"] {
+.adminkit-app[data-screen="stats"],
+.adminkit-app[data-screen="main"] {
 	max-width: none;
+}
+
+/* ── Main Settings: full-width responsive layout ─────────────────────────────
+   Utility bars stay readable (not stretched); the Brand tab is a form, so it
+   keeps a comfortable column; Features + Plugins reflow into a 2 → 3 column card
+   grid on wider viewports, collapsing back to the stacked card list on narrow. */
+.adminkit-app[data-screen="main"] .ak-search-wrap { max-width: 460px; }
+.adminkit-app[data-screen="main"] .ak-panel--brand { max-width: 940px; }
+
+@media screen and (min-width: 900px) {
+	.adminkit-app[data-screen="main"] .ak-rows {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 10px;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+		overflow: visible;
+	}
+	/* Each row is now its own card (the stacked-list border-collapse is undone). */
+	.adminkit-app[data-screen="main"] .ak-rows .ak-row {
+		align-items: flex-start;
+		border: 1px solid var(--ak-card-border);
+		border-radius: var(--ak-card-radius);
+		background: var(--ak-card-bg);
+	}
+	.adminkit-app[data-screen="main"] .ak-rows .ak-row:first-child {
+		border-top: 1px solid var(--ak-card-border);
+	}
+	.adminkit-app[data-screen="main"] .ak-rows .ak-row:hover { background: var(--ak-elevated); }
+	/* Child feature rows take a full grid row, right under their group, and swap the
+	   absolute connector rail (which assumed a vertical list) for a left accent +
+	   indent that reads as "sub-setting" wherever the grid places it. */
+	.adminkit-app[data-screen="main"] .ak-rows .ak-row--child {
+		grid-column: 1 / -1;
+		padding-left: 16px;
+		border-left: 3px solid var(--ak-primary);
+	}
+	.adminkit-app[data-screen="main"] .ak-rows .ak-row--child::before { content: none; }
+}
+@media screen and (min-width: 1360px) {
+	.adminkit-app[data-screen="main"] .ak-rows {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
 }
 
 /* Header ------------------------------------------------------------------ */

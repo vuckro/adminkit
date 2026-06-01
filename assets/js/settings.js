@@ -247,7 +247,7 @@
 	// (Favicon Light · Logo Light · Favicon Dark · Logo Dark), the accent
 	// picker and the Display segmented controls.
 	function buildDesign() {
-		var p = el( 'section', { 'class': 'ak-panel', role: 'tabpanel' } );
+		var p = el( 'section', { 'class': 'ak-panel ak-panel--brand', role: 'tabpanel' } );
 
 		// --- Common helpers used inside buildDesign() ---------------------------
 
