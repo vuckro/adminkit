@@ -1427,6 +1427,8 @@
 		if ( ! list.length ) { return p; }
 
 		var inputs = []; // every toggle (native + generic), for the Reset button
+		var rowsRef = []; // { row, text } per plugin row, for the search filter
+		var groupsRef = []; // { wrap, rows[] } per section, to hide an emptied group
 
 		// Brand "Native" chip, left of the plugin name — supported plugins only.
 		function nativeBadge() {
@@ -1555,7 +1557,8 @@
 			markDirty();
 		}
 
-		// Build the sections first (this fills `inputs`), then prepend the bulk bar.
+		// Build the sections first (this fills `inputs` + the search refs), then the
+		// search field + bulk bar above them.
 		var sections = [];
 		[
 			{ type: 'theme',  label: I.themesLabel || 'Themes' },
@@ -1564,15 +1567,48 @@
 			var items = list.filter( function ( i ) { return i.type === sec.type; } );
 			if ( ! items.length ) { return; }
 			var rows = el( 'div', { 'class': 'ak-rows' } );
-			items.forEach( function ( i ) { rows.appendChild( pluginRow( i ) ); } );
-			sections.push( el( 'div', { 'class': 'ak-group' }, [
+			var groupRows = [];
+			items.forEach( function ( i ) {
+				var r = pluginRow( i );
+				// Searchable by plugin name + its badge word (so "native" / "generic"
+				// narrow to that kind). The badge tracks the adapter status.
+				var badge = i.system ? ( I.system || 'System' ) : ( i.supported ? ( I.native || 'Native' ) : ( I.generic || 'Generic' ) );
+				var ref = { row: r, text: ( ( i.label || '' ) + ' ' + badge ).toLowerCase() };
+				rowsRef.push( ref );
+				groupRows.push( ref );
+				rows.appendChild( r );
+			} );
+			var wrap = el( 'div', { 'class': 'ak-group' }, [
 				el( 'h2', { 'class': 'ak-group__title' }, [
 					el( 'span', { text: sec.label } ),
 					el( 'span', { 'class': 'ak-badge ak-group__count', text: String( items.length ) } )
 				] ),
 				rows
-			] ) );
+			] );
+			groupsRef.push( { wrap: wrap, rows: groupRows } );
+			sections.push( wrap );
 		} );
+
+		// Search — filters plugin rows by name / badge as you type, hiding groups
+		// left with nothing (same idiom as the Features tab).
+		var search = el( 'input', {
+			type: 'search',
+			'class': 'ak-search',
+			placeholder: I.searchPlugins || 'Search plugins…',
+			'aria-label': I.searchPlugins || 'Search plugins…'
+		} );
+		function filterPlugins() {
+			var q = ( search.value || '' ).trim().toLowerCase();
+			rowsRef.forEach( function ( r ) {
+				r.row.style.display = ( ! q || r.text.indexOf( q ) !== -1 ) ? '' : 'none';
+			} );
+			groupsRef.forEach( function ( g ) {
+				var any = g.rows.some( function ( r ) { return r.row.style.display !== 'none'; } );
+				g.wrap.style.display = any ? '' : 'none';
+			} );
+		}
+		search.addEventListener( 'input', filterPlugins );
+		p.appendChild( el( 'div', { 'class': 'ak-search-wrap' }, [ search ] ) );
 
 		// Single bulk control — Reset puts every toggle back to ON (the
 		// "AdminKit handles this plugin" default for both native + generic).

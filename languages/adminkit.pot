@@ -1397,3 +1397,7 @@ msgstr ""
 #: inc/features/stats/class-stats-dashboard.php
 msgid "No views in this period yet."
 msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Search plugins…"
+msgstr ""

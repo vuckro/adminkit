@@ -1411,3 +1411,7 @@ msgstr "Descendre"
 #: inc/features/stats/class-stats-dashboard.php
 msgid "No views in this period yet."
 msgstr "Aucune vue sur cette période pour l’instant."
+
+#: inc/settings/class-settings-page.php
+msgid "Search plugins…"
+msgstr "Rechercher une extension…"

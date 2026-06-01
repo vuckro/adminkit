@@ -416,6 +416,7 @@ class AdminKit_Settings_Page {
 				'disableAll'        => __( 'Disable all', 'adminkit' ),
 				'resetDefaults'     => __( 'Reset to defaults', 'adminkit' ),
 				'searchFeatures'    => __( 'Search features…', 'adminkit' ),
+				'searchPlugins'     => __( 'Search plugins…', 'adminkit' ),
 				'pluginsIntro'      => __( 'Every plugin installed on your site, plus AdminKit\'s active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit\'s base styling automatically.', 'adminkit' ),
 				'native'            => __( 'Native', 'adminkit' ),
 				'nativeHint'        => __( 'AdminKit ships a tuned adapter for this plugin — light and dark.', 'adminkit' ),
