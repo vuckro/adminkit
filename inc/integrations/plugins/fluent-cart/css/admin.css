@@ -567,3 +567,15 @@ body.adminkit.toplevel_page_fluent-cart .uploader-inline {
 	border: 2px dashed var( --ak-border-strong ) !important;
 	border-radius: var( --ak-radius-m ) !important;
 }
+
+/* Top-bar focus ring → brand (FC draws a blue Tailwind ring on nav items). */
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item button {
+	--tw-ring-color: var( --ak-primary ) !important;
+}
+
+/* "More" dropdown submenu + fluid-tab container → raised surface. */
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item .fct_menu_child,
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab {
+	background-color: var( --ak-elevated ) !important;
+}
