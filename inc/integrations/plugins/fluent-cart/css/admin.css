@@ -164,9 +164,14 @@ body.adminkit.toplevel_page_fluent-cart #fluent_cart_plugin_app {
    — but AdminKit already zeroes that padding, so the pair over-pulled the content
    OVER AdminKit's left panel border (hiding it). Reset BOTH: margin 0 aligns it
    flush so the border shows, width 100% drops the +20px so there's no h-scroll. */
-body.adminkit.toplevel_page_fluent-cart #fct_admin_app_wrapper {
-	margin-left: 0 !important;
-	width: 100% !important;
+/* Desktop only — AdminKit zeroes #wpcontent's padding-left only at ≥783px, so
+   FC's -20px/+20px pair is only over-pulling there. Below 783px WP's padding
+   exists, so leave FC's default (and AdminKit's chrome is flat on mobile too). */
+@media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluent-cart #fct_admin_app_wrapper {
+		margin-left: 0 !important;
+		width: 100% !important;
+	}
 }
 
 /* Top bar surface + border (meets AdminKit's rounded content corner). */
@@ -184,10 +189,14 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
    from #wpbody-content (full height); the right side extends to the edge like
    every other admin page (no right content border). FC's `width: calc(100% -
    161px)` already leaves the 1px gap for the left border, so the bar sits flush
-   after it without covering it. */
-body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
-	border-top: 1px solid var( --ak-border ) !important;
-	border-top-left-radius: 18px !important;
+   after it without covering it. Desktop-only (≥783px) to mirror AdminKit, which
+   draws the rounded corner only there and is flat on mobile. */
+@media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
+		border-top: 1px solid var( --ak-border ) !important;
+		border-left: 1px solid var( --ak-border ) !important;
+		border-top-left-radius: 18px !important;
+	}
 }
 
 /* Logo → text wordmark. */
@@ -352,9 +361,10 @@ body.adminkit.toplevel_page_fluent-cart .el-table--striped .el-table__body tr.el
 	background-color: var( --ak-surface-muted ) !important;
 }
 
-/* In-table links + cell / header text. */
-body.adminkit.toplevel_page_fluent-cart .el-table .link {
-	color: var( --ak-primary ) !important;
+/* In-table links — body text colour, no hover change (they read as plain cells). */
+body.adminkit.toplevel_page_fluent-cart .el-table .link,
+body.adminkit.toplevel_page_fluent-cart .el-table .link:hover {
+	color: var( --ak-text ) !important;
 }
 body.adminkit.toplevel_page_fluent-cart .el-table tr td .cell {
 	color: var( --ak-text ) !important;
