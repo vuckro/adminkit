@@ -544,16 +544,9 @@ body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab.classic-tab-style .fct-fl
 
 /* a:hover/focus handled by AdminKit's global body.adminkit a rule — no override needed. */
 
-/* Empty-state illustration — retint so it reads on dark surfaces (filled shapes
-   muted, lines visible) without flattening to a single tone. */
-body.adminkit.toplevel_page_fluent-cart .empty-state svg path[fill]:not([fill="none"]),
-body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[fill]:not([fill="none"]) {
-	fill: var( --ak-surface-muted ) !important;
-}
-body.adminkit.toplevel_page_fluent-cart .empty-state svg path[stroke]:not([stroke="none"]),
-body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[stroke]:not([stroke="none"]) {
-	stroke: var( --ak-border-strong ) !important;
-}
+/* NB: the dashboard's composed multi-tone SVG illustrations (empty cart, top-sold,
+   heat map) are left NATIVE — recolouring them cleanly in dark isn't worth the
+   fragility (maintainer's call). Only monochrome chrome icons are themed elsewhere. */
 
 /* Default + icon buttons. Exclude only the COLOUR variants (primary/success/…)
    and text/link buttons — NOT the size variants (--small/--large/--default),
