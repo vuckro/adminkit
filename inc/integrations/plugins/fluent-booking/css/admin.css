@@ -186,6 +186,12 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
 	}
 }
 
+/* Header bottom rule — sync with the other Fluent adapters' headers (the host
+   ships no bottom border on this top bar). */
+body.adminkit.toplevel_page_fluent-booking .fframe_main-menu-items {
+	border-bottom: 1px solid var( --ak-border );
+}
+
 
 /* ============================================================
    3. HARD-CODED BLUE OVERRIDES (#306ae0)

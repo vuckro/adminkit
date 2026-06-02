@@ -2353,20 +2353,29 @@
 		}
 		function choose( val ) { top.icon = val; paint(); markMenuDirty(); }
 
-		// Reset bar — two clear resets: the AdminKit default for this item (icon = ''),
-		// and the item's ORIGINAL WordPress dashicon ('wp-default'). Below you pick a
-		// specific AdminKit glyph, a WordPress dashicon, or paste your own.
-		var defBar = el( 'div', { 'class': 'ak-icon-pop__defbar' } );
+		// Tabbed picker: an "AdminKit" pane (the curated glyph set) and a "WordPress"
+		// pane (native dashicons). Only one shows at a time — the two palettes no longer
+		// stack in one jumbled column. AdminKit is the default view; each pane carries
+		// its own reset action, and the WordPress pane leads with its search.
+		var akTab  = el( 'button', { type: 'button', 'class': 'ak-icon-pop__tab on', text: I.menuIconAkSet || 'AdminKit icons' } );
+		var wpTab  = el( 'button', { type: 'button', 'class': 'ak-icon-pop__tab', text: I.menuIconWpSet || 'WordPress icons' } );
+		var akPane = el( 'div', { 'class': 'ak-icon-pop__pane' } );
+		var wpPane = el( 'div', { 'class': 'ak-icon-pop__pane' } );
+		wpPane.style.display = 'none';
+		function showPane( ak ) {
+			akPane.style.display = ak ? '' : 'none';
+			wpPane.style.display = ak ? 'none' : '';
+			akTab.classList.toggle( 'on', ak );
+			wpTab.classList.toggle( 'on', ! ak );
+		}
+		akTab.addEventListener( 'click', function () { showPane( true ); } );
+		wpTab.addEventListener( 'click', function () { showPane( false ); } );
+		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__tabs' }, [ akTab, wpTab ] ) );
+
+		// --- AdminKit pane: the "default (auto) icon" reset + the glyph grid.
 		var noneBtn = el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconNone, onclick: function () { choose( '' ); } } );
 		choices.push( { el: noneBtn, val: '' } );
-		defBar.appendChild( noneBtn );
-		var wpBtn = el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconWp || 'WordPress icon', onclick: function () { choose( 'wp-default' ); } } );
-		choices.push( { el: wpBtn, val: 'wp-default' } );
-		defBar.appendChild( wpBtn );
-		pop.appendChild( defBar );
-
-		// AdminKit glyphs.
-		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__h', text: I.menuIconAkSet || 'AdminKit icons' } ) );
+		akPane.appendChild( el( 'div', { 'class': 'ak-icon-pop__defbar' }, [ noneBtn ] ) );
 		var grid = el( 'div', { 'class': 'ak-icon-pop__grid' } );
 		Object.keys( MM.icons || {} ).forEach( function ( name ) {
 			var sw = el( 'button', { type: 'button', 'class': 'ak-icon-pop__sw', title: name, 'aria-label': name, onclick: function () { choose( name ); } } );
@@ -2374,31 +2383,33 @@
 			choices.push( { el: sw, val: name } );
 			grid.appendChild( sw );
 		} );
-		pop.appendChild( grid );
+		akPane.appendChild( grid );
+		pop.appendChild( akPane );
 
-		// WordPress dashicons — a searchable grid. The dashicons font is already loaded
-		// in wp-admin, so each swatch renders with no extra assets; PHP only offers the
-		// dashicons AdminKit doesn't remap, so picking one paints the NATIVE dashicon.
-		var dashList = MM.dashicons || [];
-		if ( dashList.length ) {
-			pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__h', text: I.menuIconWpSet || 'WordPress icons' } ) );
-			var wpSearch = el( 'input', { type: 'search', 'class': 'ak-icon-pop__search', placeholder: I.menuIconSearch || 'Search…', 'aria-label': I.menuIconWpSet || 'WordPress icons' } );
-			var wpGrid = el( 'div', { 'class': 'ak-icon-pop__grid ak-icon-pop__grid--dash' } );
-			var dashSw = [];
-			dashList.forEach( function ( cls ) {
-				var sw = el( 'button', { type: 'button', 'class': 'ak-icon-pop__sw', title: cls, 'aria-label': cls, onclick: function () { choose( cls ); } } );
-				sw.appendChild( el( 'span', { 'class': 'dashicons ' + cls } ) );
-				choices.push( { el: sw, val: cls } );
-				dashSw.push( { el: sw, key: cls.replace( 'dashicons-', '' ) } );
-				wpGrid.appendChild( sw );
-			} );
-			wpSearch.addEventListener( 'input', function () {
-				var q = wpSearch.value.trim().toLowerCase().replace( /^dashicons-/, '' );
-				dashSw.forEach( function ( d ) { d.el.style.display = ( ! q || d.key.indexOf( q ) !== -1 ) ? '' : 'none'; } );
-			} );
-			pop.appendChild( wpSearch );
-			pop.appendChild( wpGrid );
-		}
+		// --- WordPress pane: search (at the top) + a "restore the item's original
+		// WordPress icon" reset + the native-dashicon grid. The dashicons font is already
+		// loaded in wp-admin, so each swatch renders with no extra assets; PHP only offers
+		// the dashicons AdminKit doesn't remap, so picking one paints the NATIVE dashicon.
+		var wpSearch = el( 'input', { type: 'search', 'class': 'ak-icon-pop__search', placeholder: I.menuIconSearch || 'Search…', 'aria-label': I.menuIconWpSet || 'WordPress icons' } );
+		wpPane.appendChild( wpSearch );
+		var wpBtn = el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconWp || 'WordPress icon', onclick: function () { choose( 'wp-default' ); } } );
+		choices.push( { el: wpBtn, val: 'wp-default' } );
+		wpPane.appendChild( el( 'div', { 'class': 'ak-icon-pop__defbar' }, [ wpBtn ] ) );
+		var wpGrid = el( 'div', { 'class': 'ak-icon-pop__grid ak-icon-pop__grid--dash' } );
+		var dashSw = [];
+		( MM.dashicons || [] ).forEach( function ( cls ) {
+			var sw = el( 'button', { type: 'button', 'class': 'ak-icon-pop__sw', title: cls, 'aria-label': cls, onclick: function () { choose( cls ); } } );
+			sw.appendChild( el( 'span', { 'class': 'dashicons ' + cls } ) );
+			choices.push( { el: sw, val: cls } );
+			dashSw.push( { el: sw, key: cls.replace( 'dashicons-', '' ) } );
+			wpGrid.appendChild( sw );
+		} );
+		wpSearch.addEventListener( 'input', function () {
+			var q = wpSearch.value.trim().toLowerCase().replace( /^dashicons-/, '' );
+			dashSw.forEach( function ( d ) { d.el.style.display = ( ! q || d.key.indexOf( q ) !== -1 ) ? '' : 'none'; } );
+		} );
+		wpPane.appendChild( wpGrid );
+		pop.appendChild( wpPane );
 
 		// Custom icon — one line: a leading image glyph (the affordance) + a field to
 		// paste raw <svg> markup or a data:image/svg+xml URI (base64 or encoded) + Apply.

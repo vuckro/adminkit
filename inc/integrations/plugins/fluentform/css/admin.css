@@ -787,8 +787,17 @@ body.adminkit .form-stats-section .stats-card:hover {
 	box-shadow: none;
 }
 
-/* NB: .stats-card .stats-icon keeps the host's pale #ebf1ff chip — it holds a
-   multi-tone glyph that needs a light backdrop; a dark subtle tint hid it. */
+/* Stat-card icon chip — host pins a pale #ebf1ff bg with a monochrome SVG that
+   stays black, so in dark the black glyph vanished. Route the chip to the brand
+   subtle tint and recolour the SVG to the brand so it reads in both modes. */
+body.adminkit .form-stats-section .stats-card .stats-icon {
+	background: var(--ak-primary-subtle);
+}
+body.adminkit .form-stats-section .stats-card .stats-icon span > svg,
+body.adminkit .form-stats-section .stats-card .stats-icon span > svg path {
+	fill: var(--ak-primary);
+	color: var(--ak-primary);
+}
 
 body.adminkit .form-stats-section .stats-card .stats-content .stats-title {
 	color: var(--ak-text-muted);
