@@ -235,3 +235,13 @@ body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__logo a::after {
 	font-weight: 700;
 	letter-spacing: 0.01em;
 }
+
+/* Checked checkbox + radio labels — neutral, never brand (general rule across the
+   Fluent suite; the filled control already signals state). Beats EP's stock brand
+   label on specificity, no !important. */
+body.adminkit.toplevel_page_fluent-affiliate .el-checkbox__input.is-checked + .el-checkbox__label,
+body.adminkit.toplevel_page_fluent-affiliate .el-checkbox.is-checked .el-checkbox__label,
+body.adminkit.toplevel_page_fluent-affiliate .el-radio__input.is-checked + .el-radio__label,
+body.adminkit.toplevel_page_fluent-affiliate .el-radio.is-checked .el-radio__label {
+	color: var( --ak-text );
+}

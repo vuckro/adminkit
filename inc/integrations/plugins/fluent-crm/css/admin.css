@@ -423,3 +423,13 @@ body.adminkit.toplevel_page_fluentcrm-admin .block_cond_holder.block_cond_no,
 body.adminkit.toplevel_page_fluentcrm-admin .fc_dom_path.fc_dom_path_left {
 	border-color: var( --ak-error ) !important;
 }
+
+/* Checked checkbox + radio labels — neutral, never brand (general rule across the
+   Fluent suite; the filled control already signals state). Beats EP's stock brand
+   label on specificity, no !important. */
+body.adminkit.toplevel_page_fluentcrm-admin .el-checkbox__input.is-checked + .el-checkbox__label,
+body.adminkit.toplevel_page_fluentcrm-admin .el-checkbox.is-checked .el-checkbox__label,
+body.adminkit.toplevel_page_fluentcrm-admin .el-radio__input.is-checked + .el-radio__label,
+body.adminkit.toplevel_page_fluentcrm-admin .el-radio.is-checked .el-radio__label {
+	color: var( --ak-text );
+}
