@@ -310,12 +310,17 @@ body.adminkit.toplevel_page_fluent-cart .el-link:not(.el-link--danger):not(.el-l
 	color: var( --ak-primary ) !important;
 }
 
-/* Brand borders — focused fields, active tab underline. */
+/* Brand borders — focused fields. */
 body.adminkit.toplevel_page_fluent-cart .el-input__wrapper.is-focus,
 body.adminkit.toplevel_page_fluent-cart .el-textarea__inner:focus,
-body.adminkit.toplevel_page_fluent-cart .el-tabs__active-bar,
 body.adminkit.toplevel_page_fluent-cart .el-select .el-input.is-focus .el-input__wrapper {
 	border-color: var( --ak-primary ) !important;
+}
+
+/* Active-tab underline bar — a filled <div>, so its colour is the background
+   (FC pins a grey rgb(141 144 149)); route to brand. */
+body.adminkit.toplevel_page_fluent-cart .el-tabs__active-bar {
+	background-color: var( --ak-primary ) !important;
 }
 
 /* Default / text buttons on hover. */
