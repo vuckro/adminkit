@@ -549,7 +549,8 @@ body.adminkit.toplevel_page_fluent-cart .icon-button {
 /* Popovers / dropdowns — FC overrides the overlay token directly. */
 body.adminkit.toplevel_page_fluent-cart .el-popover.el-popper,
 body.adminkit.toplevel_page_fluent-cart .el-popper.is-light,
-body.adminkit.toplevel_page_fluent-cart .el-dropdown-menu {
+body.adminkit.toplevel_page_fluent-cart .el-dropdown-menu,
+body.adminkit.toplevel_page_fluent-cart .fct-filter-dropdown {
 	background-color: var( --ak-elevated ) !important;
 	border-color: var( --ak-border ) !important;
 	color: var( --ak-text ) !important;
