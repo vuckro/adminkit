@@ -192,6 +192,13 @@ body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
 		border-left: 1px solid var( --ak-border );
 		border-top-left-radius: 18px;
 	}
+	/* Content gutter — the topbar (a sibling of #fluentcrm_app) stays full-width
+	   and framed; pad the app body so the content (header rows, tables, cards)
+	   breathes left + right inside the panel. */
+	body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
 }
 
 

@@ -176,6 +176,13 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
 @media screen and (min-width: 783px) {
 	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
 		margin-left: 0;
+		padding-right: 20px; /* right gutter for the body (host pads only the left) */
+	}
+	/* Keep the menu bar full-bleed: cancel the app's right padding on it (it
+	   already cancels the left via its own -20px) so the header spans the panel
+	   while the body sits inset left + right. */
+	body.adminkit.toplevel_page_fluent-booking .fframe_main-menu-items {
+		margin-right: -20px;
 	}
 }
 
