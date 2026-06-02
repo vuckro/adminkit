@@ -1956,8 +1956,8 @@
 		row.appendChild( h );
 		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
 		row.appendChild( hideBtn( item, tree ) );
-		row.appendChild( removeBtn( ti, tree ) );
 		row.appendChild( el( 'span', { 'class': 'ak-menu-row__title ak-menu-seplabel', text: '— ' + I.menuSeparator + ' —' } ) );
+		row.appendChild( removeBtn( ti, tree ) );
 		dragSource( h, row, { kind: 'top', ti: ti } );
 		dropZone( row, function ( ds ) { return ds.kind === 'top'; }, function ( ds ) {
 			moveTop( ds.ti, ti ); renderTree( tree ); markMenuDirty();
@@ -1970,18 +1970,19 @@
 		var h = handle();
 		row.appendChild( h );
 		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
+		row.appendChild( hideBtn( item, tree ) );
 		row.appendChild( iconBtn( item, tree ) );
 		var titleIn = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: item.title || '', placeholder: I.menuLinkTitle } );
 		titleIn.addEventListener( 'input', function () { item.title = titleIn.value; markMenuDirty(); } );
 		var urlIn = el( 'input', { type: 'text', 'class': 'ak-menu-input ak-menu-input--url', value: item.url || '', placeholder: I.menuLinkUrl } );
 		urlIn.addEventListener( 'input', function () { item.url = urlIn.value; markMenuDirty(); } );
-		// Action buttons on the LEFT (new-tab · hide · remove); the title + URL fields
-		// are the editable content and fill the rest of the row.
-		row.appendChild( newTabBtn( item, tree ) );
-		row.appendChild( hideBtn( item, tree ) );
-		row.appendChild( removeBtn( ti, tree ) );
+		// Order: handle · move · hide · icon · [title + URL fields] · new-tab · remove.
+		// The title + URL inputs are the editable content; new-tab and the remove (×)
+		// sit at the far right.
 		row.appendChild( titleIn );
 		row.appendChild( urlIn );
+		row.appendChild( newTabBtn( item, tree ) );
+		row.appendChild( removeBtn( ti, tree ) );
 		// Drag from the handle only, so the URL/title inputs stay text-selectable.
 		dragSource( h, row, { kind: 'top', ti: ti } );
 		dropZone( row, function ( ds ) { return ds.kind === 'top'; }, function ( ds ) {
@@ -2003,15 +2004,13 @@
 		var h = handle();
 		row.appendChild( h );
 		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
-		row.appendChild( iconBtn( top, tree ) );
-		// All action controls cluster on the LEFT (handle · move · icon · URL · hide)
-		// for a consistent, accessible order; the title then fills the rest. The
-		// "N submenus" disclosure stays at the row end (it reveals the children below).
-		row.appendChild( urlBtn( top, tree ) );
+		// Order: handle · move(↑↓) · hide(eye) · icon · [title fills] · URL · submenus.
 		if ( top.slug !== MM.self ) {
 			row.appendChild( hideBtn( top, tree ) );
 		}
+		row.appendChild( iconBtn( top, tree ) );
 		row.appendChild( titleInput( top ) );
+		row.appendChild( urlBtn( top, tree ) );
 		if ( top.children.length ) {
 			var caret = el( 'span', { 'class': 'ak-menu-row__caret', 'aria-hidden': 'true' } );
 			caret.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
