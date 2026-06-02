@@ -346,7 +346,7 @@ body.adminkit .el-radio__label {
    bundled Element UI cores the checked label to its stock blue, so the
    checkbox override needs !important to beat it. */
 body.adminkit .el-radio__input.is-checked + .el-radio__label {
-	color: var(--ak-primary);
+	color: var(--ak-text);
 }
 
 body.adminkit .el-checkbox__input.is-checked + .el-checkbox__label,
@@ -1306,4 +1306,37 @@ body.adminkit .el-table__row:hover > td:first-child {
 body.adminkit .el-table__row:hover > td:last-child {
 	border-top-right-radius: var(--ak-radius-s);
 	border-bottom-right-radius: var(--ak-radius-s);
+}
+
+
+/* ========== 29. More surfaces — tabs, settings intro, file input, fixed cols ========== */
+
+/* FF's own .ff_tab strip border (#ececec). */
+body.adminkit .ff_tab {
+	border-bottom-color: var(--ak-border);
+}
+
+/* Settings intro / "enable module" well (#f1f1f1 rounded panel). */
+body.adminkit .ff_pre_settings_wrapper {
+	background: var(--ak-surface);
+}
+
+/* Native file inputs (#fff + #ececec + #606266). */
+body.adminkit .file-input {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+/* Fixed / pinned table columns (#fff) — match the table surface so they don't
+   flash white over a scrolled dark table. */
+body.adminkit .el-table__fixed,
+body.adminkit .el-table__fixed-right {
+	background-color: var(--ak-surface);
+}
+
+/* Settings submenu connector — a fixed light-on-light curve-line.svg that reads
+   wrong on the dark rail; hide it (the active pill already marks the item). */
+body.adminkit .ff_list_submenu li:after {
+	background-image: none;
 }
