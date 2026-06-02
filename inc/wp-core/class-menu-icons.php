@@ -174,6 +174,19 @@ class AdminKit_Core_Menu_Icons {
 	}
 
 	/**
+	 * The dashicon classes AdminKit remaps to its own glyphs — exposed so the Menu
+	 * manager can EXCLUDE them from its "WordPress icons" picker. The mask is keyed
+	 * by dashicon class, so picking one as a per-item override would still render the
+	 * AdminKit glyph (not the WP dashicon); offering only the UNmapped ones lets the
+	 * manager set `$menu[$pos][6]` and have WordPress paint the dashicon natively.
+	 *
+	 * @return string[]
+	 */
+	public static function mapped_classes() {
+		return array_keys( self::menu_icon_map() );
+	}
+
+	/**
 	 * Admin-bar icons, keyed by node id. Filter `adminkit/toolbar_icons`.
 	 *
 	 * Covers both wp-admin AND the front-end admin bar (logged-in users):

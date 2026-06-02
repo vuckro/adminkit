@@ -946,7 +946,30 @@
 	border-radius: var(--ak-radius-m);
 	background: var(--ak-elevated);
 	box-shadow: 0 8px 30px rgba( 0, 0, 0, 0.18 );
+	max-height: 86vh;
+	overflow-y: auto;
 }
+/* Section heading inside the picker (AdminKit icons / WordPress icons). */
+.adminkit-app .ak-icon-pop__h {
+	margin: 8px 2px 4px;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-icon-pop__search {
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0 0 6px;
+	padding: 5px 8px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	font-size: var(--ak-text-xs);
+}
+.adminkit-app .ak-icon-pop__search:focus { border-color: var(--ak-primary); outline: none; }
 .adminkit-app .ak-icon-pop__defbar {
 	display: flex;
 	gap: 4px;
@@ -970,8 +993,6 @@
 	display: grid;
 	grid-template-columns: repeat( 7, 1fr );
 	gap: 4px;
-	max-height: 220px;
-	overflow-y: auto;
 }
 .adminkit-app .ak-icon-pop__sw {
 	display: inline-flex;
@@ -991,6 +1012,12 @@
 	background: var(--ak-primary-subtle);
 }
 .adminkit-app .ak-icon-pop__sw svg { width: 18px; height: 18px; }
+.adminkit-app .ak-icon-pop__sw .dashicons {
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+	line-height: 18px;
+}
 .adminkit-app .ak-menu-icon__mask {
 	background-color: currentColor;
 	-webkit-mask-size: contain;

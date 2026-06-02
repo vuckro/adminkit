@@ -2143,6 +2143,9 @@
 		if ( top.icon === 'wp-default' ) {
 			// Show the item's original WordPress dashicon in the picker button.
 			g = el( 'span', { 'class': 'dashicons ' + ( top.dashicon || 'dashicons-admin-settings' ) } );
+		} else if ( top.icon && top.icon.indexOf( 'dashicons-' ) === 0 ) {
+			// A chosen WordPress dashicon.
+			g = el( 'span', { 'class': 'dashicons ' + top.icon } );
 		} else if ( top.icon && top.icon.indexOf( 'data:' ) === 0 ) {
 			g = el( 'span', { 'class': 'ak-menu-icon__g ak-menu-icon__mask' } );
 			g.style.webkitMaskImage = 'url("' + top.icon + '")';
@@ -2178,15 +2181,20 @@
 		}
 		function choose( val ) { top.icon = val; paint(); markMenuDirty(); }
 
-		// "Default" = the item's own original WordPress dashicon (icon = ''). The
-		// separate "WordPress icon" choice was removed — it resolved to the same glyph
-		// and only confused the choice. Pick Default, an AdminKit icon, or paste one.
+		// Reset bar — two clear resets: the AdminKit default for this item (icon = ''),
+		// and the item's ORIGINAL WordPress dashicon ('wp-default'). Below you pick a
+		// specific AdminKit glyph, a WordPress dashicon, or paste your own.
 		var defBar = el( 'div', { 'class': 'ak-icon-pop__defbar' } );
 		var noneBtn = el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconNone, onclick: function () { choose( '' ); } } );
 		choices.push( { el: noneBtn, val: '' } );
 		defBar.appendChild( noneBtn );
+		var wpBtn = el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconWp || 'WordPress icon', onclick: function () { choose( 'wp-default' ); } } );
+		choices.push( { el: wpBtn, val: 'wp-default' } );
+		defBar.appendChild( wpBtn );
 		pop.appendChild( defBar );
 
+		// AdminKit glyphs.
+		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__h', text: I.menuIconAkSet || 'AdminKit icons' } ) );
 		var grid = el( 'div', { 'class': 'ak-icon-pop__grid' } );
 		Object.keys( MM.icons || {} ).forEach( function ( name ) {
 			var sw = el( 'button', { type: 'button', 'class': 'ak-icon-pop__sw', title: name, 'aria-label': name, onclick: function () { choose( name ); } } );
@@ -2195,6 +2203,30 @@
 			grid.appendChild( sw );
 		} );
 		pop.appendChild( grid );
+
+		// WordPress dashicons — a searchable grid. The dashicons font is already loaded
+		// in wp-admin, so each swatch renders with no extra assets; PHP only offers the
+		// dashicons AdminKit doesn't remap, so picking one paints the NATIVE dashicon.
+		var dashList = MM.dashicons || [];
+		if ( dashList.length ) {
+			pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__h', text: I.menuIconWpSet || 'WordPress icons' } ) );
+			var wpSearch = el( 'input', { type: 'search', 'class': 'ak-icon-pop__search', placeholder: I.menuIconSearch || 'Search…', 'aria-label': I.menuIconWpSet || 'WordPress icons' } );
+			var wpGrid = el( 'div', { 'class': 'ak-icon-pop__grid ak-icon-pop__grid--dash' } );
+			var dashSw = [];
+			dashList.forEach( function ( cls ) {
+				var sw = el( 'button', { type: 'button', 'class': 'ak-icon-pop__sw', title: cls, 'aria-label': cls, onclick: function () { choose( cls ); } } );
+				sw.appendChild( el( 'span', { 'class': 'dashicons ' + cls } ) );
+				choices.push( { el: sw, val: cls } );
+				dashSw.push( { el: sw, key: cls.replace( 'dashicons-', '' ) } );
+				wpGrid.appendChild( sw );
+			} );
+			wpSearch.addEventListener( 'input', function () {
+				var q = wpSearch.value.trim().toLowerCase().replace( /^dashicons-/, '' );
+				dashSw.forEach( function ( d ) { d.el.style.display = ( ! q || d.key.indexOf( q ) !== -1 ) ? '' : 'none'; } );
+			} );
+			pop.appendChild( wpSearch );
+			pop.appendChild( wpGrid );
+		}
 
 		// Custom icon — one line: a leading image glyph (the affordance) + a field to
 		// paste raw <svg> markup or a data:image/svg+xml URI (base64 or encoded) + Apply.

@@ -1280,6 +1280,10 @@ msgstr ""
 msgid "WordPress icon"
 msgstr ""
 
+#: inc/settings/class-settings-page.php:389
+msgid "WordPress icons"
+msgstr ""
+
 #: inc/features/dashboard/class-custom-dashboard.php:665
 msgid "Working late, %s"
 msgstr ""
