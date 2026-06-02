@@ -1220,3 +1220,69 @@ body.adminkit .ff_header .global-search-menu-button {
 body.adminkit .ff_header .global-search-menu-button:hover {
 	color: var(--ak-heading);
 }
+
+
+/* ========== 28. Pre-loaders, dividers, reports header, row-hover radius ========== */
+
+/* Skeleton / pre-loaders — FF hardcodes #f2f2f2 / #e6e6e6 (light greys that read
+   as WHITE bars on the dark page). Route the fills + the shimmer gradient + the
+   placeholder-image glyph to neutral surfaces so they're grey in both modes. */
+body.adminkit .el-skeleton__item,
+body.adminkit .el-skeleton__paragraph {
+	background: var(--ak-surface-muted);
+}
+body.adminkit .el-skeleton.is-animated .el-skeleton__item {
+	background: linear-gradient( 90deg, var(--ak-surface-muted) 25%, var(--ak-elevated) 37%, var(--ak-surface-muted) 63% );
+	background-size: 400% 100%;
+}
+body.adminkit .el-skeleton__image svg {
+	fill: var(--ak-border-strong);
+}
+
+/* Empty-state illustrations ("No Data" / "No Submission Data Available") — the
+   icon SVGs are monochrome; a CSS fill overrides the SVG attribute, so route them
+   to a muted token instead of staying a fixed light grey. */
+body.adminkit .no-data-icon svg,
+body.adminkit .no-data-icon svg path,
+body.adminkit .no-data-state svg path {
+	fill: var(--ak-border-strong);
+}
+
+/* Dividers — FF uses #efefef (dashed) + #000 (solid); → border token. */
+body.adminkit .divider {
+	border-top-color: var(--ak-border);
+}
+body.adminkit .divider:before {
+	border-bottom-color: var(--ak-border);
+}
+
+/* Reports header — title/subtitle/date-range controls hardcode #0e121b / #525866
+   / #f3f4f6 / #e1e4ea / #1a7efb. */
+body.adminkit .reports-header .reports-title {
+	color: var(--ak-heading);
+}
+body.adminkit .reports-header .reports-description {
+	color: var(--ak-text-muted);
+}
+body.adminkit .reports-header .reports-controls .date-range-display {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text-muted);
+}
+body.adminkit .reports-header .reports-controls .reports-date-range-controls .el-select .el-input__inner,
+body.adminkit .reports-header .reports-controls .reports-date-range-controls .el-date-editor {
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+body.adminkit .reports-header .reports-controls .reports-date-range-controls .el-date-editor:hover {
+	border-color: var(--ak-primary);
+}
+
+/* Table rows — round the hovered row's ends (user request). */
+body.adminkit .el-table__row:hover > td:first-child {
+	border-top-left-radius: var(--ak-radius-s);
+	border-bottom-left-radius: var(--ak-radius-s);
+}
+body.adminkit .el-table__row:hover > td:last-child {
+	border-top-right-radius: var(--ak-radius-s);
+	border-bottom-right-radius: var(--ak-radius-s);
+}
