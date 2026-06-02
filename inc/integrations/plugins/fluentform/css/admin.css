@@ -996,10 +996,31 @@ body.adminkit .ff_tab_link:after {
    dark page otherwise shows unthemed white panels here. Map by role.
    ============================================================ */
 
-/* Canvas well — the centre drop zone (#fff, full-height scroll). */
+/* Canvas well — the centre drop zone (#fff, full-height scroll) + the inner
+   content area + each draggable field block (.field-options, the white card the
+   form preview is built from). Match the host's own selector structure so it
+   wins (the earlier #js-form-editor--body id-scope didn't always match). */
 body.adminkit .form-editor--body,
-body.adminkit div#js-form-editor--body .form-editor__body-content {
+body.adminkit .form-editor--body .form-editor__body-content {
 	background-color: var(--ak-surface);
+}
+body.adminkit .form-editor--body .field-options {
+	background-color: var(--ak-surface);
+	border-radius: var(--ak-radius-m);
+}
+body.adminkit .form-editor--body .field-options:hover {
+	background-color: var(--ak-elevated);
+}
+
+/* Preview & Design view — the framed "browser" form preview (#fff + shadow,
+   #f8f9fa title bar with the traffic-light dots). */
+body.adminkit .ff_form_preview_wrapper {
+	background: var(--ak-surface);
+	box-shadow: none;
+	border: 1px solid var(--ak-border);
+}
+body.adminkit .ff_form_preview_header {
+	background-color: var(--ak-elevated);
 }
 
 /* Conversational-form editor wells (#fafafa) → page bg. */
