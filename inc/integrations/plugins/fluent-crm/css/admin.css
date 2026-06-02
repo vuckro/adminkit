@@ -164,6 +164,21 @@ body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
 	background-color: var( --ak-bg );
 }
 
+/* Sticky topbar — its border already themes via --fc-primary-border (→ --ak-border);
+   round the top-left corner to nest into AdminKit's content panel (same 18px as
+   the FluentCart adapter). The Reports inner sidebar fills --fc-primary-bg flush
+   to the left, painting over #wpbody-content's native left edge — restore it with
+   a left border (mirrors FluentCart's .fct-settings-nav-container fix). Desktop
+   only, where AdminKit draws the corner / panel edge. */
+@media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar {
+		border-top-left-radius: 18px;
+	}
+	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_reports_sidebar {
+		border-left: 1px solid var( --ak-border );
+	}
+}
+
 
 /* ============================================================
    3. HARD-CODED LITERALS the var remap can't reach

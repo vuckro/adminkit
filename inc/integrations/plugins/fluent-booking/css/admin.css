@@ -162,6 +162,19 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
 	background-color: var( --ak-bg );
 }
 
+/* Top menu bar — frame it like AdminKit's content panel (same as the FluentCart
+   adapter): the bar's --fcal-primary-bg surface paints over #wpbody-content's
+   native left edge + rounded corner, so recreate them on the bar — left + top
+   border and an 18px top-left radius. Desktop only (≥783px), where AdminKit
+   draws the rounded corner; flat on mobile. */
+@media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluent-booking .fframe_main-menu-items {
+		border-top: 1px solid var( --ak-border );
+		border-left: 1px solid var( --ak-border );
+		border-top-left-radius: 18px;
+	}
+}
+
 
 /* ============================================================
    3. HARD-CODED BLUE OVERRIDES (#306ae0)
