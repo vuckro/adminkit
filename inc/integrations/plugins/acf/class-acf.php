@@ -111,4 +111,57 @@ class AdminKit_Integration_Acf extends AdminKit_Integration_Base {
 			'condition' => array( __CLASS__, 'owns_screen' ),
 		) );
 	}
+
+	/**
+	 * Wire the admin-menu icon swap. The menu shows on EVERY admin page, so the
+	 * swap runs on `admin_head` (no screen gate) at priority 21 — exactly like the
+	 * FluentAffiliate / FluentCRM adapters and AdminKit_Core_Menu_Icons.
+	 *
+	 * @return void
+	 */
+	protected static function boot() {
+		add_action( 'admin_head', array( __CLASS__, 'print_menu_icon' ), 21 );
+	}
+
+	/**
+	 * Swap ACF's admin-menu icon for an AdminKit "id" glyph (a field-record card —
+	 * ACF is custom fields).
+	 *
+	 * ACF registers its top-level menu with the stock dashicon
+	 * `dashicons-welcome-widgets-menus` (admin.php → add_menu_page), which is NOT in
+	 * AdminKit_Core_Menu_Icons' dashicon map, so its `.wp-menu-image` keeps ACF's
+	 * native glyph. Override it the same way menu_css() does: mask an AdminKit SVG
+	 * into the icon box and blank the dashicon font on `::before` so it tracks the
+	 * menu foreground colour in light/dark/hover/current. Inlined here so the
+	 * adapter owns its own mark, gated exactly like the FluentAffiliate adapter
+	 * (icon toggle on AND the global should_load pause hasn't disabled AdminKit).
+	 *
+	 * The box id: ACF's menu slug is the CPT list URL `edit.php?post_type=acf-field-group`,
+	 * so the menu hookname is `toplevel_page_edit?post_type=acf-field-group` and WP
+	 * (menu-header.php) sanitises every char outside [A-Za-z0-9_:.] to a dash for the
+	 * DOM id → `#toplevel_page_edit-post_type-acf-field-group`. The two ids in the
+	 * selector (#adminmenu + #toplevel_…) out-specify WP's dashicon `::before` rules
+	 * (`#adminmenu div.wp-menu-image:before`, even the current/hover variants), so the
+	 * `content:""` blanks ACF's glyph without `!important`.
+	 *
+	 * @return void
+	 */
+	public static function print_menu_icon() {
+		if ( ! class_exists( 'AdminKit_Settings' ) || ! AdminKit_Settings::get( 'replace_icons_enabled' ) ) {
+			return;
+		}
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return;
+		}
+		if ( ! class_exists( 'AdminKit_Icons' ) ) {
+			return;
+		}
+		// AdminKit icon set — "id" (a field-record card; ACF = custom fields).
+		$svg = AdminKit_Icons::svg( 'id' );
+		$box  = '#adminmenu #toplevel_page_edit-post_type-acf-field-group .wp-menu-image';
+		$css  = $box . '{background-image:none !important;box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
+		$css .= $box . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
+			. 'vertical-align:middle;position:relative;top:-2px;' . AdminKit_Icons::mask( $svg ) . '}';
+		echo '<style id="adminkit-acf-menu-icon">' . $css . "</style>\n"; // SVG is URL-encoded in mask().
+	}
 }

@@ -52,6 +52,31 @@ body.adminkit.acf-admin-page .acf-headerbar-title-field {
 	color: var(--ak-heading);
 }
 
+/* Left over-pull neutralization (restore AdminKit's panel left border).
+   ACF pulls its top toolbar + the sticky headerbar 20px LEFT (`margin-left:-20px`)
+   to cancel WP's `#wpcontent{padding-left:20px}` and run them edge-to-edge. AdminKit
+   already zeroes that padding (chrome.css, ≥783px) and carries the panel's left
+   frame on `#wpbody-content{border-left}`, so the -20px now drags those bars 20px
+   PAST the panel's left edge — overlapping/hiding the left border (what reads as the
+   "missing left border"). Zero the horizontal pulls so the bars sit flush INSIDE the
+   panel and the frame shows. `.acf-admin-toolbar` carries ACF's pull on an id rule
+   (`#wpcontent .acf-admin-toolbar`, 1,1,0), so match the id to win; `margin-right:0`
+   covers ACF's RTL variant (`.rtl …{margin-right:-20px}`). The field-editor headerbar
+   also overshoots its width (`calc(100% + 20px)`) — reset it to 100%. Desktop only:
+   below 783px AdminKit drops the frame and ACF's own mobile rules already zero the
+   pull. */
+@media screen and (min-width: 783px) {
+	body.adminkit.acf-admin-page #wpcontent .acf-admin-toolbar,
+	body.adminkit.acf-admin-page .acf-headerbar,
+	body.adminkit.acf-admin-page .acf-headerbar-field-editor {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	body.adminkit.acf-admin-page .acf-headerbar-field-editor {
+		width: 100%;
+	}
+}
+
 /* ----- 2. Buttons (.acf-btn primary fill, .acf-btn-secondary outline) -----
    ACF primary: #0783be fill + white label (label color is !important, so the
    override has to be too). Pale brand label matches the Bricks theme button. */
