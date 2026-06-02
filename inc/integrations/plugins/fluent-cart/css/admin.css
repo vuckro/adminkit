@@ -793,3 +793,8 @@ body.adminkit.post-type-fluent-products #col-container .widefat tfoot td,
 body.adminkit.post-type-fluent-products #col-container .widefat tfoot th {
 	border-color: var( --ak-border ) !important;
 }
+
+/* Settings-nav tree connector line (:before). */
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav .fct-settings-nav-child-wrap::before {
+	background-color: var( --ak-border-strong ) !important;
+}
