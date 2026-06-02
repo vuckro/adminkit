@@ -434,14 +434,14 @@ body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-wi
 	background: var( --ak-error ) !important;
 }
 
-/* Trend "stat" pill inside the overview card — token surface, brand-green
-   accent for "up" (the plugin's #16896b → our brand green) and red for "down".
-   The border is softened to a 35% tint so it frames the pill without shouting;
-   the text keeps the full accent. */
+/* Trend "stat" pill inside the overview card — it's a directional indicator, so
+   it must read SEMANTIC, not brand: "up" → success GREEN, "down" → error RED
+   (the plugin's own #16896b green confirms up = green). Token surface, border
+   softened to a 35% tint so it frames the pill without shouting; text full accent. */
 body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget .stat {
 	background: var( --ak-surface ) !important;
-	border-color: color-mix( in srgb, var( --ak-primary ) 35%, transparent ) !important;
-	color: var( --ak-primary ) !important;
+	border-color: color-mix( in srgb, var( --ak-success ) 35%, transparent ) !important;
+	color: var( --ak-success ) !important;
 }
 
 body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget .stat.down {
@@ -449,10 +449,10 @@ body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-wi
 	color: var( --ak-error ) !important;
 }
 
-/* Same green (#16896b) used for paid/active status accents → brand green. */
+/* Paid / active are SUCCESS statuses (host green #16896b) → success green, not brand. */
 body.adminkit.toplevel_page_fluent-booking .fcal_spot_payment_status.paid,
 body.adminkit.toplevel_page_fluent-booking .fcal_badge.active {
-	color: var( --ak-primary ) !important;
+	color: var( --ak-success ) !important;
 }
 
 /* Near-neutral blue-greys → plain surface / border. */

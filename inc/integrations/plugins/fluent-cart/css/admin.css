@@ -810,6 +810,23 @@ body.adminkit.toplevel_page_fluent-cart .badge.info {
 	color: var( --ak-text-muted ) !important;
 }
 
+/* Status badges — FC ships a soft tint+text in light and a SOLID fill in dark
+   (success #116a53, warning #ac6305, danger #9b2406). Route to AdminKit's soft
+   badge (subtle tint bg + semantic text); the --ak-*-subtle tokens flip with the
+   theme, so one rule covers both modes. */
+body.adminkit.toplevel_page_fluent-cart .badge.success {
+	background-color: var( --ak-success-subtle ) !important;
+	color: var( --ak-success ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .badge.warning {
+	background-color: var( --ak-warning-subtle ) !important;
+	color: var( --ak-warning ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .badge.danger {
+	background-color: var( --ak-error-subtle ) !important;
+	color: var( --ak-error ) !important;
+}
+
 /* Monthly-report list rows. */
 body.adminkit.toplevel_page_fluent-cart .fct-report-monthly-list li {
 	background-color: var( --ak-surface ) !important;
