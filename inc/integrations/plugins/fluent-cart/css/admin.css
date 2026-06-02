@@ -778,9 +778,9 @@ body.adminkit.toplevel_page_fluent-cart .fct-report-body .fct-report-filter-wrap
 	background-color: var( --ak-surface ) !important;
 }
 
-/* Applied-filter pill (tag) → elevated bg / strong border / heading text. */
+/* Applied-filter pill (tag) → surface bg / strong border / heading text. */
 body.adminkit.toplevel_page_fluent-cart .fct-applied-filter-list .fct-applied-filter {
-	background-color: var( --ak-elevated ) !important;
+	background-color: var( --ak-surface ) !important;
 	border-color: var( --ak-border-strong ) !important;
 	color: var( --ak-heading ) !important;
 }
