@@ -144,8 +144,9 @@ class AdminKit_Integration_Fluentform extends AdminKit_Integration_Base {
 		if ( ! class_exists( 'AdminKit_Icons' ) ) {
 			return;
 		}
-		// AdminKit icon set — the dedicated "forms" glyph.
-		$svg = AdminKit_Icons::svg( 'forms' );
+		// AdminKit icon set — "document" (a form is a fillable document; the
+		// "forms" glyph is actually a person, so it read wrong here).
+		$svg = AdminKit_Icons::svg( 'document' );
 		$box  = '#adminmenu #toplevel_page_fluent_forms .wp-menu-image';
 		$css  = $box . '{background-image:none !important;box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
 		$css .= $box . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
