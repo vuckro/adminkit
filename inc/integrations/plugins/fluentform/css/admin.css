@@ -552,6 +552,7 @@ body.adminkit .ff_layout_section_sidebar li.active > a,
 body.adminkit .ff_layout_section_sidebar .el-menu-item.is-active {
 	background: var(--ak-elevated);
 	color: var(--ak-heading);
+	border-radius: var(--ak-radius-s);
 }
 
 /* Settings list buttons (.ff_list_button_link) — dark #4b4c4d slab
@@ -574,17 +575,12 @@ body.adminkit .ff_settings_wrapper {
 	color: var(--ak-text);
 }
 
-/* Generic FF content sections used across Reports / Transfer. Only the head +
-   widgets read as raised; the card BODY stays on the base surface. */
+/* Generic FF content sections used across Reports / Transfer — all on the base
+   surface (raised elevated tone read wrong against the page). */
 body.adminkit .ff_card_head,
+body.adminkit .ff_card_body,
 body.adminkit .ff_report_widget,
 body.adminkit .ff_chart_wrapper {
-	background: var(--ak-elevated);
-	border-color: var(--ak-border);
-	color: var(--ak-text);
-}
-
-body.adminkit .ff_card_body {
 	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
@@ -1411,7 +1407,7 @@ body.adminkit .completion-rates-gauge-section .stats-bar-horizontal,
 body.adminkit .completion-stats .stat-row .stats-bar-vertical {
 	background-color: var(--ak-surface-muted);
 }
-body.adminkit .gauge-center .gauge-percentage,
+body.adminkit .completion-rates-gauge-section .gauge-container .gauge-wrapper .gauge-center .gauge-percentage,
 body.adminkit .completion-stats .stat-item .stat-details .stat-value {
 	color: var(--ak-heading);
 }
@@ -1462,15 +1458,45 @@ body.adminkit .suggested_plugins_view .ff_card_horizontal:hover {
 	border-color: var(--ak-border-strong);
 }
 
-/* Field-type icon chips in the editor: a #ebf1ff rounded square drawn as an
-   inline SVG <path fill="#ebf1ff">. A CSS fill beats the presentation attribute. */
-body.adminkit svg path[fill="#ebf1ff"] {
-	fill: var(--ak-primary-subtle);
-}
+/* NB: field-type icon chips keep the host's pale #ebf1ff badge (like .stats-icon),
+   it backs a multi-tone glyph that needs a light chip — a token tint hid it. */
 
 /* Drop FF's .mb-4 utility (margin-bottom:24px!important) on its admin screens —
    the extra gap looked wrong under our tighter layout. The host !important
    forces a matching one; this stylesheet only loads on FluentForm screens. */
 body.adminkit .mb-4 {
 	margin-bottom: 0 !important;
+}
+
+
+/* ========== 31. Heatmap header, form internal menu, radio base, table cells ========== */
+
+/* Heatmap header row (#e5e7eb top/bottom rules) + its labels (#374151 / #4b5563). */
+body.adminkit .submission-heatmap-section .heatmap-header {
+	border-top-color: var(--ak-border);
+	border-bottom-color: var(--ak-border);
+}
+body.adminkit #ff_reports .header-label {
+	color: var(--ak-text);
+}
+body.adminkit .week-dates {
+	color: var(--ak-text-muted);
+}
+
+/* Per-form internal menu bar (#fff slab + #ececec bottom rule). */
+body.adminkit .form_internal_menu {
+	background: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+/* Radio base label colour (#606266) — unchecked rows (checked is neutralised in §9). */
+body.adminkit .el-radio {
+	color: var(--ak-text);
+}
+
+/* General Element UI table cell bottom rules (#ececec) — covers tables that
+   aren't wrapped in .ff_table (Entries, settings grids). */
+body.adminkit .el-table td.el-table__cell,
+body.adminkit .el-table th.el-table__cell.is-leaf {
+	border-bottom-color: var(--ak-border);
 }
