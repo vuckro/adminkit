@@ -2334,18 +2334,16 @@
 		// Pre-fill with the custom override; the placeholder is the native slug so an
 		// empty field still hints the current destination.
 		var inp = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: top.url || '', placeholder: top.slug || I.menuLinkUrl } );
-		// Apply / Clear reflect the URL state on the anchor button in place (its `on`
-		// class) and close — no full tree rebuild (which would destroy the anchor the
-		// popover hangs off, same trap the icon picker had).
+		// Apply reflects the URL state on the anchor button in place (its `on` class)
+		// and closes — no full tree rebuild (which would destroy the anchor the popover
+		// hangs off, same trap the icon picker had). To clear: empty the field + Apply
+		// (an empty value resets the item to its native destination).
 		var apply = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--small', text: I.menuIconApply, onclick: function () {
 			top.url = ( inp.value || '' ).replace( /^\s+|\s+$/g, '' );
 			anchor.classList.toggle( 'on', !! top.url );
 			markMenuDirty(); closeIconPicker();
 		} } );
-		var clear = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--small ak-btn--ghost', text: I.menuUrlClear, onclick: function () {
-			top.url = ''; anchor.classList.remove( 'on' ); markMenuDirty(); closeIconPicker();
-		} } );
-		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom ak-url-pop__row' }, [ inp, apply, clear ] ) );
+		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom ak-url-pop__row' }, [ inp, apply ] ) );
 		anchor.parentNode.appendChild( pop );
 		positionPopover( pop, anchor );
 		pop.__akAnchor = anchor;
