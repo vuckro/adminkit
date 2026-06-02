@@ -1,0 +1,402 @@
+/* FluentSnippets — toplevel_page_fluent-snippets (plugin folder easy-code-manager).
+
+   SCOPE. FluentSnippets is a Vue 3 SPA — a code-snippets manager — mounted into
+   #fluent_snippets_app, with a CodeMirror 6 editor as its centrepiece. Its admin
+   ships ONE asset: dist/app.js, which injects all CSS from JS (there is no
+   stylesheet). EVERY rule here is scoped to
+   `body.adminkit.toplevel_page_fluent-snippets`; the SPA owns every sub-route via
+   hash routing under that one WP page, so the single screen id covers the lot.
+
+   TWO surfaces, like the FluentCommunity / FluentAffiliate adapters:
+
+     1. Element Plus --el-* tokens, shipped STOCK. The bundle declares the EP
+        `:root` layer at its compiled defaults (--el-color-primary:#409eff blue,
+        #fff surfaces, #dcdfe6 / #ebeef5 borders, #909399 info-grey, the
+        -rgb channels) and NO --fsnip-* layer of its own. So §1 is the canonical
+        Element-Plus remap (same block as the FluentCommunity / FluentAffiliate
+        adapters): point the --el-* tokens at AdminKit --ak-* and the app's EP
+        widgets (el-table, el-button, el-input, el-checkbox, el-switch, el-dialog)
+        follow, dark mode included. Almost every EP widget reads its colour through
+        an --el-* var (e.g. .el-button → var(--el-button-bg-color) →
+        var(--el-fill-color-blank); .el-switch on-color → var(--el-color-primary)),
+        so the remap carries the bulk with no per-widget !important.
+
+     2. its own .fsnip_* / .fls_* classes paint a handful of literals PAST the EP
+        vars — a #fff navbar + dropdown, a #9d95d8 lavender brand underline on the
+        active nav link, near-black #000 / #909399 / #697386 nav text, a
+        #f7fafc / #e3e8ee secondary-menu strip, a neutral #606266 icon button, and
+        hard yellow status callouts (#fff06f / #ffff8e / #fff6a2 / #ff0). §3–§5
+        catch those.
+
+   THE BRAND. FluentSnippets leaves Element Plus at STOCK blue
+   (--el-color-primary:#409eff) and writes its real accent — a lavender #9d95d8 —
+   only into the active-nav underline. AdminKit has one brand, so §1 routes
+   --el-color-primary to --ak-primary and §3 routes the lavender underline there
+   too; filled surfaces pin white via --ak-on-accent.
+
+   THE CODE EDITOR. The product is a CODE editor, so a CodeMirror 6 instance
+   dominates the screen. Its syntax-highlight theme is JS-driven (EditorView.theme
+   objects + the dynamically-injected `ͼ…` classes + separate light/dark gutter
+   themes) — OUT of pure-CSS reach, like Chart.js / ApexCharts colours. §4 themes
+   only the editor CONTAINER/chrome (the .fsnip_code* wrapper + the .cm-editor
+   frame) and leaves the syntax tokens to CodeMirror's own theme.
+
+   NO host dark class to fight. FluentSnippets ships NO dark mode of its own (no
+   html.dark / data-theme in the bundle), so the --ak-* flip is what gives this
+   screen one; there is no host dark class to neutralise, hence no theme-sync JS in
+   the PHP.
+
+   Why these win. The bundle declares the EP layer in :root (0,1,0). Our §1 block
+   targets :root, body.adminkit.toplevel_page_fluent-snippets (0,2,1 for the body
+   arm), which outranks it. Element Plus teleports dialogs / poppers / dropdowns to
+   <body>, so the body-scoped selectors reach them too. --ak-* tokens ONLY,
+   never raw hex. */
+
+
+/* ============================================================
+   1. TOKEN REMAP — Element Plus --el-* → AdminKit tokens
+   The bundle ships the stock EP layer in :root and no --fsnip-* layer, so this is
+   the only variable surface to remap (same canonical block as the FluentCommunity
+   / FluentAffiliate / FluentBooking adapters).
+   ============================================================ */
+
+:root,
+body.adminkit.toplevel_page_fluent-snippets {
+	/* Brand. FluentSnippets leaves --el-color-primary at EP's stock #409eff blue
+	   and parks its real accent (the lavender #9d95d8) only in the active-nav
+	   underline (§3). Route the EP primary to the AdminKit brand so any EP default
+	   that reads it (switch on-color, checked checkbox/radio fill, plain/text
+	   button hover) is on-brand. */
+	--el-color-primary: var( --ak-primary );
+
+	/* The blue source EP exposes as a raw channel: every
+	   `rgba(var(--el-color-primary-rgb), a)` focus ring / selection fill reads
+	   #409eff because the bundle hard-codes --el-color-primary-rgb:64,158,255 in
+	   :root. Pin it to the brand rgb (same literal as tokens.css
+	   --wp-admin-theme-color--rgb) so alpha tints read on any surface in both
+	   modes. */
+	--el-color-primary-rgb: 117, 163, 59;
+
+	/* Primary ramp — the bundle compiles the EP blue ramp (#79bbff … #337ecc) into
+	   :root; keep filled / hover / plain-bg primary states on brand instead. */
+	--el-color-primary-dark-2: var( --ak-primary-hover );    /* active / pressed */
+	--el-color-primary-light-3: var( --ak-primary-hover );   /* filled-button hover */
+	--el-color-primary-light-5: var( --ak-primary-subtle );
+	--el-color-primary-light-7: var( --ak-primary-subtle );
+	--el-color-primary-light-8: var( --ak-primary-subtle );
+	--el-color-primary-light-9: var( --ak-primary-subtle );  /* plain bg / current row */
+
+	/* Semantic. EP "info" is a NEUTRAL grey (#909399), not a colour — route it to
+	   the muted text token + a neutral ramp so it never reads as a hue. */
+	--el-color-success: var( --ak-success );
+	--el-color-warning: var( --ak-warning );
+	--el-color-danger: var( --ak-error );
+	--el-color-error: var( --ak-error );
+	/* Danger ramp — plain/text danger buttons read light-9 (bg) + light-5 (border);
+	   EP leaves them at stock pink, so pin them to error tokens. */
+	--el-color-danger-light-3: var( --ak-error );
+	--el-color-danger-light-5: var( --ak-error );
+	--el-color-danger-light-9: var( --ak-error-subtle );
+	--el-color-info: var( --ak-text-muted );
+	--el-color-info-light-3: var( --ak-text-muted );
+	--el-color-info-light-5: var( --ak-border-strong );
+	--el-color-info-light-9: var( --ak-surface );
+	--el-color-info-dark-2: var( --ak-heading );
+
+	/* Text */
+	--el-text-color-primary: var( --ak-heading );
+	--el-text-color-regular: var( --ak-text );
+	--el-text-color-secondary: var( --ak-text-muted );
+	--el-text-color-placeholder: var( --ak-text-muted );
+	--el-text-color-disabled: var( --ak-text-muted );
+
+	/* Backgrounds */
+	--el-bg-color: var( --ak-surface );
+	--el-bg-color-page: var( --ak-bg );
+	--el-bg-color-overlay: var( --ak-surface );
+
+	/* Borders */
+	--el-border-color: var( --ak-border );
+	--el-border-color-light: var( --ak-border );
+	--el-border-color-lighter: var( --ak-border );
+	--el-border-color-extra-light: var( --ak-border );
+	--el-border-color-hover: var( --ak-border-strong );
+	--el-border-color-dark: var( --ak-border-strong );
+	--el-border-color-darker: var( --ak-border-strong );
+
+	/* Fills — hover bgs, zebra rows, disabled, blank canvas. EP greys leak on dark
+	   surfaces if left unset; pin the whole set to neutral surfaces. */
+	--el-fill-color: var( --ak-surface );
+	--el-fill-color-light: var( --ak-surface );
+	--el-fill-color-lighter: var( --ak-surface );
+	--el-fill-color-extra-light: var( --ak-surface );
+	--el-fill-color-dark: var( --ak-elevated );
+	--el-fill-color-darker: var( --ak-elevated );
+	--el-fill-color-blank: var( --ak-surface );
+
+	/* Disabled — consumed but never (re)defined by FluentSnippets, so EP's stock
+	   greys leak in dark. */
+	--el-disabled-bg-color: var( --ak-surface );
+	--el-disabled-text-color: var( --ak-text-muted );
+	--el-disabled-border-color: var( --ak-border );
+
+	/* Overlay behind a dialog — pin to AdminKit's scrim. */
+	--el-overlay-color-lighter: var( --ak-overlay );
+
+	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
+	--el-box-shadow: none;
+	--el-box-shadow-light: none;
+	--el-box-shadow-lighter: none;
+	--el-box-shadow-dark: none;
+}
+
+
+/* ============================================================
+   2. PAGE CANVAS
+   AdminKit's chrome.css themes #wpbody but not #wpcontent; give the content strip
+   and the SPA mount the page token so the area behind the app flips with the
+   theme. The navbar (.fsnip_main-menu-items) and the app body (.fsnip_body /
+   .route_wrapper) over-pull left/right by 20px to sit flush; §3 neutralises the
+   navbar's pull where it would expose an unthemed gutter.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-snippets #wpcontent,
+body.adminkit.toplevel_page_fluent-snippets #fluent_snippets_app {
+	background-color: var( --ak-bg );
+}
+
+
+/* ============================================================
+   3. NAVBAR + .fsnip_* LITERALS the var remap can't reach
+   The app's own .fsnip_* classes bypass the --el-* layer.
+   ============================================================ */
+
+/* 3a. Top navbar. `.fsnip_main-menu-items` hard-codes `background:#fff` and
+   over-pulls itself `margin-left:-20px` to sit flush with the WP frame. Theme the
+   surface, add a bottom border so the strip reads as a header, and neutralise the
+   over-pull + add a left gutter so the logo isn't glued to the corner (same
+   approach as the FluentSMTP top bar). */
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items {
+	background: var( --ak-surface );
+	border-bottom: 1px solid var( --ak-border );
+	margin-left: 0;
+	padding-left: 20px;
+}
+
+/* 3b. Active nav link. The router-link-active item paints the lone brand literal —
+   `border-bottom:2px solid #9d95d8` (lavender) + `color:#000`. Route the underline
+   to the brand and the text to the heading ink. */
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items ul.fsnip_menu li a.router-link-active {
+	border-bottom-color: var( --ak-primary );
+	color: var( --ak-heading );
+}
+
+/* 3c. Primary nav labels — `.fsnip_menu_primary` is #909399 muted, hover #000.
+   Route to muted body text + heading on hover. */
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items ul.fsnip_menu li .fsnip_menu_primary {
+	color: var( --ak-text-muted );
+}
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items ul.fsnip_menu li .fsnip_menu_primary:hover {
+	color: var( --ak-heading );
+}
+
+/* 3d. The has-sub-items dropdown. Hard-codes `background:#fff`,
+   `border:1px solid rgba(0,0,0,.15)`, `color:#909399`, hover `#f8f9fa`. Route to
+   an elevated surface (it floats above the navbar) with a token border + neutral
+   text + hover step. */
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items ul.fsnip_menu li.fsnip_has_sub_items:hover > .fsnip_submenu_items {
+	background-color: var( --ak-elevated );
+	border-color: var( --ak-border );
+	color: var( --ak-text-muted );
+}
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items ul.fsnip_menu li.fsnip_has_sub_items:hover > .fsnip_submenu_items a {
+	color: var( --ak-text-muted );
+}
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items ul.fsnip_menu li.fsnip_has_sub_items:hover > .fsnip_submenu_items a:hover {
+	background-color: var( --ak-hover-bg );
+	color: var( --ak-heading );
+}
+
+/* 3e. Secondary menu strip + the generic .box_header (same #f7fafc/#e3e8ee/#697386
+   recipe). Route the strip to an elevated surface with a token bottom border +
+   muted heading text; its links are #697386 (muted) and hover to #409eff blue →
+   the brand. */
+body.adminkit.toplevel_page_fluent-snippets .fsnip_secondary_menu,
+body.adminkit.toplevel_page_fluent-snippets .box_wrapper .box_header {
+	background-color: var( --ak-elevated );
+	border-bottom-color: var( --ak-border );
+	color: var( --ak-text-muted );
+}
+body.adminkit.toplevel_page_fluent-snippets .fsnip_secondary_menu .fsnip_menu li a {
+	color: var( --ak-text-muted );
+}
+body.adminkit.toplevel_page_fluent-snippets .fsnip_secondary_menu .fsnip_menu li a:hover {
+	color: var( --ak-primary );
+}
+
+/* 3f. The generic content box. `.box_wrapper .box_body` + `.log_filters` hard-code
+   `background:#fff` → surface card. */
+body.adminkit.toplevel_page_fluent-snippets .box_wrapper .box_body,
+body.adminkit.toplevel_page_fluent-snippets .log_filters {
+	background: var( --ak-surface );
+}
+
+/* 3g. Neutral icon-buttons / group toggles — `.fsnip_delete` is #606266, hover
+   #409eff blue; the `.fsnip_group .group_name` toggle hovers to #409eff too. Route
+   the rest state to body text and the hover to the brand. */
+body.adminkit.toplevel_page_fluent-snippets .fsnip_delete {
+	color: var( --ak-text );
+}
+body.adminkit.toplevel_page_fluent-snippets .fsnip_delete:hover,
+body.adminkit.toplevel_page_fluent-snippets .fsnip_group .group_name > span:hover,
+body.adminkit.toplevel_page_fluent-snippets .fsnip_group .group_name i:hover {
+	color: var( --ak-primary );
+}
+
+/* 3h. The .el-form-item label hard-codes #000 → heading ink (the bundle's own
+   override past EP's --el-text-color). */
+body.adminkit.toplevel_page_fluent-snippets .el-form-item > .el-form-item__label {
+	color: var( --ak-heading );
+}
+
+/* 3i. The .fsnip_highlight callout — #f0f0f1 fill + a faint drop-shadow (AdminKit
+   is flat). Route to a recessed surface with a token border, drop the shadow. */
+body.adminkit.toplevel_page_fluent-snippets .fsnip_highlight {
+	background: var( --ak-surface-muted );
+	border: 1px solid var( --ak-border );
+	box-shadow: none;
+}
+
+
+/* ============================================================
+   4. THE CODE-EDITOR CONTAINER / CHROME
+   The product is a code editor, so a CodeMirror 6 instance dominates the screen.
+   Its syntax-highlight theme is JS-driven (EditorView.theme objects + the
+   dynamically-injected `ͼ…` classes + separate light/dark gutter themes), so the
+   token colours are OUT of pure-CSS reach — theme only the CONTAINER/chrome and
+   leave the syntax tokens to CodeMirror's own theme.
+   ============================================================ */
+
+/* The editor wrapper + the .cm-editor frame → surface bg + token border, so the
+   editor sits on a themed panel that flips with the mode. The CodeMirror gutter +
+   syntax tokens keep their own (JS-driven) theme inside this frame. */
+body.adminkit.toplevel_page_fluent-snippets .fsnip_code,
+body.adminkit.toplevel_page_fluent-snippets .fsnip_code .cm-editor,
+body.adminkit.toplevel_page_fluent-snippets .code_editor_wrap .cm-editor {
+	background-color: var( --ak-surface );
+	border-color: var( --ak-border );
+}
+
+/* The per-language label bars `.fsnip_code_*` render via the .cm-editor :after
+   (`</style>`, `</script>`, `-- end content --`) in a muted grey #6b6b6b, and the
+   .fsnip_code_PHP gutter prefix `<?php` in #999 — route both to the muted text
+   token so the chrome labels read in either mode. (The syntax tokens inside the
+   editor are untouched.) */
+body.adminkit.toplevel_page_fluent-snippets .fsnip_code_php_content .cm-editor:after,
+body.adminkit.toplevel_page_fluent-snippets .fsnip_code_css .cm-editor:after,
+body.adminkit.toplevel_page_fluent-snippets .fsnip_code_js .cm-editor:after,
+body.adminkit.toplevel_page_fluent-snippets .fsnip_code_PHP .cm-scroller:before {
+	color: var( --ak-text-muted );
+}
+
+
+/* ============================================================
+   5. .fls_* DATA LISTS, STATUS CALLOUTS, EP TABLE, CHECKED LABELS
+   ============================================================ */
+
+/* 5a. Listed-data rows (.fls_listed_data) — `border-bottom:#ebeef5`, hover
+   `background:#f7fafc`, the .fls_value is the right-aligned value. Route the
+   divider to the token border, hover to the hover surface, and lift the value to
+   the heading ink so the data reads first. */
+body.adminkit.toplevel_page_fluent-snippets ul.fls_listed_data li {
+	border-bottom-color: var( --ak-border );
+}
+body.adminkit.toplevel_page_fluent-snippets ul.fls_listed_data li:hover {
+	background-color: var( --ak-hover-bg );
+}
+body.adminkit.toplevel_page_fluent-snippets ul.fls_listed_data li span.fls_value {
+	color: var( --ak-heading );
+}
+
+/* 5b. Status / warning / error callouts. The app paints a cluster of HARD YELLOW
+   notices past every var — `.fls_errors` #fff06f, `.fsnip_status_error` #ffff8e,
+   `.fsnip_safe .fsnip_warn` #fff6a2, `.fsnip_error_hooks` #ff0. Route them to the
+   warning tokens so they flip with the theme and read on a dark surface. They
+   carry no host !important, so the scoped selector wins on its own. */
+body.adminkit.toplevel_page_fluent-snippets .fls_errors,
+body.adminkit.toplevel_page_fluent-snippets .fsnip_status_error,
+body.adminkit.toplevel_page_fluent-snippets .fsnip_safe .fsnip_warn,
+body.adminkit.toplevel_page_fluent-snippets .fsnip_error_hooks {
+	background: var( --ak-warning-subtle );
+	color: var( --ak-text );
+}
+
+/* 5c. Element Plus table. EP reads the table surface through --el-fill-color-blank
+   (§1 = --ak-surface) and the header through --el-table-header-bg-color, but
+   pins a few cell defaults past the vars — point the header to an elevated step,
+   frame + row dividers to the token border, and row hover to the hover surface.
+   (Header bg is a per-table EP var, so set it on the cells directly.) */
+body.adminkit.toplevel_page_fluent-snippets .el-table tr th.el-table__cell {
+	--el-table-header-bg-color: var( --ak-elevated );
+	background-color: var( --ak-elevated );
+}
+body.adminkit.toplevel_page_fluent-snippets .el-table,
+body.adminkit.toplevel_page_fluent-snippets .el-table td.el-table__cell,
+body.adminkit.toplevel_page_fluent-snippets .el-table th.el-table__cell.is-leaf {
+	border-color: var( --ak-border );
+}
+body.adminkit.toplevel_page_fluent-snippets .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
+	background-color: var( --ak-hover-bg );
+}
+body.adminkit.toplevel_page_fluent-snippets .el-table thead th.el-table__cell .cell {
+	color: var( --ak-heading );
+}
+
+/* 5d. Checked checkbox + radio LABELS — neutral, never brand (general rule across
+   the Fluent suite; the filled control already signals state). EP cores them to
+   --el-color-primary. Beats EP's stock brand label on specificity, no !important. */
+body.adminkit.toplevel_page_fluent-snippets .el-checkbox__input.is-checked + .el-checkbox__label,
+body.adminkit.toplevel_page_fluent-snippets .el-checkbox.is-checked .el-checkbox__label,
+body.adminkit.toplevel_page_fluent-snippets .el-radio__input.is-checked + .el-radio__label,
+body.adminkit.toplevel_page_fluent-snippets .el-radio.is-checked .el-radio__label {
+	color: var( --ak-text );
+}
+
+/* The EP switch active label cores to --el-color-primary too — keep it neutral. */
+body.adminkit.toplevel_page_fluent-snippets .el-switch__label.is-active {
+	color: var( --ak-heading );
+}
+
+
+/* ============================================================
+   6. WHITE-LABEL THE NAVBAR LOGO AS "FluentSnippets"
+   The top navbar renders FluentSnippets' brand mark as
+   `<img src=…/dist/images/logo.png>` inside `.menu_logo_holder a` — a fixed mark
+   that vanishes once AdminKit goes dark. Hide it and drop a plain text wordmark in
+   its place, sourced from the live menu title via --ak-wordmark (PHP
+   print_menu_wordmark), with a literal fallback — same approach as the
+   FluentAffiliate / FluentCommunity adapters. The host's img rule
+   (`.menu_logo_holder a img`, 0,3,1) carries no !important, so our deeper
+   screen-scoped selector (0,5,1) hides it without one — keeping this a clean
+   Tier-A adapter (0 !important).
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items .menu_logo_holder a img {
+	display: none;
+}
+
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items .menu_logo_holder a,
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items .menu_logo_holder a:hover,
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items .menu_logo_holder a:focus {
+	text-decoration: none;
+	box-shadow: none;
+	color: var( --ak-heading );
+}
+
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items .menu_logo_holder a::after {
+	content: var( --ak-wordmark, "FluentSnippets" );
+	color: var( --ak-heading );
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+}
