@@ -73,6 +73,11 @@ body.adminkit.toplevel_page_fluent-affiliate {
 	   route it to the brand so any EP default that reads it is on-brand. */
 	--el-color-primary: var( --ak-primary );
 
+	/* The ink EP pins on filled/brand surfaces (button labels, the switch knob,
+	   radio dot, checkbox tick, solid-tag text) — route to the accent-contrast
+	   token so those stay legible on the brand fill in both modes. */
+	--el-color-white: var( --ak-on-accent );
+
 	/* The blue source EP never exposes as a token: every
 	   `rgba(var(--el-color-primary-rgb), a)` focus ring / selection fill falls
 	   back to EP's stock #409eff when unset (FluentAffiliate leaves it unset in
@@ -143,6 +148,13 @@ body.adminkit.toplevel_page_fluent-affiliate {
 	--el-disabled-bg-color: var( --ak-surface );
 	--el-disabled-text-color: var( --ak-text-muted );
 	--el-disabled-border-color: var( --ak-border );
+
+	/* Loading-mask veil. EP ships --el-mask-color: rgba(0,0,0,.8) (a near-opaque
+	   black) consumed by .el-loading-mask; left raw it slabs black over the panel
+	   in BOTH modes. Tint the surface token instead so the veil reads as a light
+	   scrim in light and a dark one in dark, and the brand spinner stays legible. */
+	--el-mask-color: color-mix( in srgb, var( --ak-surface ) 85%, transparent );
+	--el-mask-color-extra-light: color-mix( in srgb, var( --ak-surface ) 50%, transparent );
 
 	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. EP's dark
 	   block ships heavy black drop-shadows, so neutralise the whole set. */
@@ -244,4 +256,240 @@ body.adminkit.toplevel_page_fluent-affiliate .el-checkbox.is-checked .el-checkbo
 body.adminkit.toplevel_page_fluent-affiliate .el-radio__input.is-checked + .el-radio__label,
 body.adminkit.toplevel_page_fluent-affiliate .el-radio.is-checked .el-radio__label {
 	color: var( --ak-text );
+}
+
+
+/* ============================================================
+   5. RAW-LITERAL LEAKS the var remap can't reach
+   Every rule below paints a hardcoded colour that is NOT a var(--fla-* / --el-*)
+   fallback, so the §1 remap never touches it and it would fire in both modes.
+   The host scopes some of these under its `#fluent-affiliate-app` SPA root (an
+   ID); those overrides repeat that id so they out-rank the host on specificity
+   WITHOUT !important (body chain + the id beats the host's id + fewer classes).
+   ============================================================ */
+
+/* Checked switch track. EP fills .el-switch__core from --el-color-primary, but
+   FluentAffiliate overrides the checked core to a flat raw #000 (not the brand
+   var) — so it stays black in both modes past the remap. Route to the brand. The
+   host rule is `#fluent-affiliate-app .el-switch.is-checked .el-switch__core`
+   (1,3,1); repeating the id makes ours (1,6,1) — wins, no !important. */
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .el-switch.is-checked .el-switch__core {
+	background-color: var( --ak-primary );
+}
+
+/* Status badges (.fa_badge.*) — host pairs a soft tint bg + a saturated text ink,
+   all raw hex under `#fluent-affiliate-app`. Map each family to the matching
+   --ak-*-subtle fill + --ak-* ink (these flip with the theme, so the chip stays a
+   readable tint in dark too). The plain/neutral and the .woo (WooCommerce brand
+   purple) chips drop to a neutral muted surface. id repeated → (1,5,0) wins. */
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.active,
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.paid,
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.success {
+	background: var( --ak-success-subtle );
+	color: var( --ak-success );
+}
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.cancelled,
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.danger,
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.expired,
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.failed,
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.rejected {
+	background: var( --ak-error-subtle );
+	color: var( --ak-error );
+}
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.pending,
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.warning,
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.processing {
+	background: var( --ak-warning-subtle );
+	color: var( --ak-warning );
+}
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.inactive,
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.unpaid,
+body.adminkit.toplevel_page_fluent-affiliate #fluent-affiliate-app .fa_badge.woo {
+	background: var( --ak-surface-muted );
+	color: var( --ak-text );
+}
+
+/* el-tag "white" variant — raw #fff bg + #fff border + #000 text, plus a grey
+   (#909399) close glyph that inverts to white-on-grey on hover. Repaint as a
+   neutral chip on AdminKit surfaces so it isn't a white slab in dark. */
+body.adminkit.toplevel_page_fluent-affiliate .el-tag--white {
+	background: var( --ak-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-heading );
+}
+body.adminkit.toplevel_page_fluent-affiliate .el-tag--white .el-tag__close {
+	color: var( --ak-text-muted );
+}
+body.adminkit.toplevel_page_fluent-affiliate .el-tag--white .el-tag__close:hover {
+	background-color: var( --ak-text-muted );
+	color: var( --ak-on-accent );
+}
+
+
+/* ============================================================
+   6. DASHBOARD WIDGETS
+   The dashboard cards hardcode an indigo accent (#4f46e5 on #ebf1ff), a
+   green/grey paid·unpaid status pair, and raw light dividers. Route the accent to
+   the brand, the paid/unpaid to success/muted, dividers to the border token.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-affiliate .fa_dashboard__detail-icon {
+	background-color: var( --ak-primary-subtle );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa_dashboard__detail-icon--affiliates,
+body.adminkit.toplevel_page_fluent-affiliate .fa_dashboard__detail-icon--referrals {
+	color: var( --ak-primary );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa_dashboard__status--paid {
+	color: var( --ak-success );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa_dashboard__status--paid .fa_dashboard__status-icon {
+	background-color: var( --ak-success );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa_dashboard__status--unpaid {
+	color: var( --ak-text-muted );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa_dashboard__status--unpaid .fa_dashboard__status-icon {
+	background-color: var( --ak-text-muted );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa_dashboard__divider {
+	border-top-color: var( --ak-border );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa_dashboard__divider-vertical {
+	background-color: var( --ak-border );
+}
+
+
+/* ============================================================
+   7. SEGMENTED TOGGLE (.fa-affiliate-body-action-left)
+   A view-switch pill group: a raw #f5f6f7 track with a #d6dae1 border, inactive
+   labels #9d9fac, the active pill on white (--fla-primary-bg, remapped) with a
+   #0a0a0a label. Track → muted surface, active label → heading, inactive → muted
+   — the active pill bg already follows the surface token. Neutral active state,
+   matching the suite's "active = neutral, not brand" rule for nav/segmented UI.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-affiliate .fa-affiliate-body-actions-bar .fa-affiliate-body-action-left {
+	background-color: var( --ak-surface-muted );
+	border: 1px solid var( --ak-border );
+}
+/* Active/inactive labels: repeat the host's full ancestor chain so we out-weight
+   its (0,8,0)/(0,7,0) selectors on class count, no !important. */
+body.adminkit.toplevel_page_fluent-affiliate .fa-affiliate-wrap .fa-affiliate-body .fa-affiliate-body-actions-bar .fa-affiliate-body-action-left .el-radio-group .el-radio-button.is-active .el-radio-button__inner {
+	color: var( --ak-heading );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa-affiliate-wrap .fa-affiliate-body .fa-affiliate-body-actions-bar .fa-affiliate-body-action-left .el-radio-group .el-radio-button .el-radio-button__inner {
+	color: var( --ak-text-muted );
+}
+
+
+/* ============================================================
+   8. SURFACES & BORDERS hardcoded past the vars
+   Panels / popovers / dialog chrome / the rich-text editor that bake raw white,
+   raw light greys (#e1e4ea / #ebebeb / #dcdfe6 / #f0f0f0 / #f5f5f5) or a raw
+   toolbar fill instead of reading --fla-* / --el-* — re-point at surface/border.
+   ============================================================ */
+
+/* Navbar submenu dropdown — raw #fff panel. */
+body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__dropdown {
+	background: var( --ak-surface );
+}
+
+/* Element Plus select popover + the customer-detail card header border. */
+body.adminkit.toplevel_page_fluent-affiliate .el-popper.fa-select-popover {
+	border-color: var( --ak-border );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa-referral-customer-details .fa-referral-customer-details__header {
+	border-bottom-color: var( --ak-border );
+}
+
+/* Migration dialog chrome — header/footer rules + the inner table border/zebra. */
+body.adminkit.toplevel_page_fluent-affiliate .el-dialog.fa_migration_dialog .el-dialog__header,
+body.adminkit.toplevel_page_fluent-affiliate .el-dialog.fa_migration_dialog .el-dialog__footer {
+	border-color: var( --ak-border );
+}
+body.adminkit.toplevel_page_fluent-affiliate .el-dialog.fa_migration_dialog .el-dialog__body .el-table,
+body.adminkit.toplevel_page_fluent-affiliate .el-dialog.fa_migration_dialog .el-dialog__body .el-table .el-table__header thead tr th {
+	border-color: var( --ak-border );
+}
+body.adminkit.toplevel_page_fluent-affiliate .el-dialog.fa_migration_dialog .el-dialog__body .el-table .el-table__header thead tr th {
+	background: var( --ak-surface-muted );
+}
+
+/* QR-code preview card — raw #fff inner panel (full host chain to out-weight). */
+body.adminkit.toplevel_page_fluent-affiliate .fa_app_widget .widget_body .widget_item .item_description.qr_code_section .fa_preview_qrcode {
+	background: var( --ak-surface );
+}
+
+/* Rich-text (TinyMCE/quicktags) editor shell — raw white body, raw light border,
+   raw toolbar/button fills + a near-black button ink. Route to surfaces/borders
+   and the heading ink so the editor flips with the theme. */
+body.adminkit.toplevel_page_fluent-affiliate .wp_vue_editor_wrapper {
+	background-color: var( --ak-surface );
+	border-color: var( --ak-border );
+}
+body.adminkit.toplevel_page_fluent-affiliate .wp_vue_editor_wrapper .quicktags-toolbar,
+body.adminkit.toplevel_page_fluent-affiliate .wp_vue_editor_wrapper div.mce-toolbar-grp {
+	background: var( --ak-surface-muted );
+}
+body.adminkit.toplevel_page_fluent-affiliate .wp_vue_editor_wrapper .editor-add-shortcode,
+body.adminkit.toplevel_page_fluent-affiliate .wp_vue_editor_wrapper .html-active .switch-html,
+body.adminkit.toplevel_page_fluent-affiliate .wp_vue_editor_wrapper .tmce-active .switch-tmce {
+	background-color: var( --ak-surface-muted );
+	border-color: var( --ak-border );
+	color: var( --ak-heading );
+}
+
+/* Filter-popover rule + the bare .bg-white utility (used as a panel fill). */
+body.adminkit.toplevel_page_fluent-affiliate .filter-popover .filter-popover-item hr {
+	border-top-color: var( --ak-border );
+}
+body.adminkit.toplevel_page_fluent-affiliate .bg-white {
+	background-color: var( --ak-surface );
+}
+
+
+/* ============================================================
+   9. STANDALONE TEXT / NOTICE LITERALS
+   The beta tag, validation error, warning notice, migration "completed" tick,
+   pager label, highlight chip and EP's legacy .text-* helpers all hardcode a
+   colour with no var indirection. Route each to the matching --ak-* token.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__beta-tag {
+	color: var( --ak-text-muted );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa_validation_error {
+	color: var( --ak-error );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa_notice.fa_notice_warnning {
+	background-color: var( --ak-warning-subtle );
+}
+body.adminkit.toplevel_page_fluent-affiliate .fa_migration_card .migrating_state_body .status_content .status_icon.completed {
+	color: var( --ak-success );
+}
+body.adminkit.toplevel_page_fluent-affiliate .pager-wrap .text {
+	color: var( --ak-text-muted );
+}
+body.adminkit.toplevel_page_fluent-affiliate .text-bg-highlight {
+	background: var( --ak-surface-muted );
+}
+
+/* Element Plus legacy colour helpers — stock-blue primary/info, plus green/amber/
+   red. Route to the brand + AdminKit status tokens so a `.text-primary` link is
+   on-brand and `.text-info` is neutral, not a stray blue. */
+body.adminkit.toplevel_page_fluent-affiliate .text-primary {
+	color: var( --ak-primary );
+}
+body.adminkit.toplevel_page_fluent-affiliate .text-success {
+	color: var( --ak-success );
+}
+body.adminkit.toplevel_page_fluent-affiliate .text-warning {
+	color: var( --ak-warning );
+}
+body.adminkit.toplevel_page_fluent-affiliate .text-danger {
+	color: var( --ak-error );
+}
+body.adminkit.toplevel_page_fluent-affiliate .text-info {
+	color: var( --ak-text-muted );
 }
