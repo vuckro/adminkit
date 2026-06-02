@@ -238,12 +238,12 @@ body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > button {
 	color: var( --ak-text );
 }
 
-/* Hide FC's own dark-mode toggle ONLY when AdminKit is dark — in dark the page
-   is already dark (via sync + remap), so a "switch theme" control reads as
-   redundant/confusing; in light it's left available. */
-:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluent-cart #theme-button-container,
-:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container,
-:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container .theme-selected-button {
+/* Hide FC's own theme toggle in BOTH modes — AdminKit owns the theme (sync +
+   remap), so the control is redundant; and its presence in light but not dark
+   shifted the header layout between modes (the toggle box only rendered in light). */
+body.adminkit.toplevel_page_fluent-cart #theme-button-container,
+body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container,
+body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container .theme-selected-button {
 	display: none !important;
 }
 
