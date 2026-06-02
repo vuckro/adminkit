@@ -574,12 +574,18 @@ body.adminkit .ff_settings_wrapper {
 	color: var(--ak-text);
 }
 
-/* Generic FF content sections used across Reports / Transfer */
+/* Generic FF content sections used across Reports / Transfer. Only the head +
+   widgets read as raised; the card BODY stays on the base surface. */
 body.adminkit .ff_card_head,
-body.adminkit .ff_card_body,
 body.adminkit .ff_report_widget,
 body.adminkit .ff_chart_wrapper {
 	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .ff_card_body {
+	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -1447,6 +1453,11 @@ body.adminkit .suggested_plugins_view .ff_card_horizontal .plugin_actions .plugi
 	background: var(--ak-primary-subtle);
 	color: var(--ak-primary);
 }
+/* The "Learn More" ghost button next to it (#e2e8f0 border, #64748b slate). */
+body.adminkit .suggested_plugins_view .ff_card_horizontal .plugin_actions .plugin_learn_more_btn {
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
 body.adminkit .suggested_plugins_view .ff_card_horizontal:hover {
 	border-color: var(--ak-border-strong);
 }
@@ -1455,4 +1466,11 @@ body.adminkit .suggested_plugins_view .ff_card_horizontal:hover {
    inline SVG <path fill="#ebf1ff">. A CSS fill beats the presentation attribute. */
 body.adminkit svg path[fill="#ebf1ff"] {
 	fill: var(--ak-primary-subtle);
+}
+
+/* Drop FF's .mb-4 utility (margin-bottom:24px!important) on its admin screens —
+   the extra gap looked wrong under our tighter layout. The host !important
+   forces a matching one; this stylesheet only loads on FluentForm screens. */
+body.adminkit .mb-4 {
+	margin-bottom: 0 !important;
 }
