@@ -2269,7 +2269,17 @@
 		if ( left + popW > rowW ) { left = Math.max( 0, rowW - popW ); }
 		pop.style.left  = left + 'px';
 		pop.style.right = 'auto';
-		pop.style.top   = ( anchor.offsetTop + anchor.offsetHeight + 4 ) + 'px';
+		// Open below the button by default, but flip ABOVE it when below would spill
+		// past the viewport bottom and there's more room above — so the picker stays
+		// fully reachable from rows low on the page.
+		var popH  = pop.offsetHeight || 0;
+		var aRect = anchor.getBoundingClientRect();
+		var vh    = window.innerHeight || document.documentElement.clientHeight;
+		if ( aRect.bottom + 4 + popH > vh && aRect.top - 4 - popH > 0 ) {
+			pop.style.top = ( anchor.offsetTop - popH - 4 ) + 'px';
+		} else {
+			pop.style.top = ( anchor.offsetTop + anchor.offsetHeight + 4 ) + 'px';
+		}
 	}
 
 	function onDocDown( e ) {

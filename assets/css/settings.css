@@ -946,8 +946,9 @@
 	border-radius: var(--ak-radius-m);
 	background: var(--ak-elevated);
 	box-shadow: 0 8px 30px rgba( 0, 0, 0, 0.18 );
-	max-height: 86vh;
+	max-height: min( 440px, 78vh );
 	overflow-y: auto;
+	overscroll-behavior: contain;
 }
 /* Section heading inside the picker (AdminKit icons / WordPress icons). */
 .adminkit-app .ak-icon-pop__h {
