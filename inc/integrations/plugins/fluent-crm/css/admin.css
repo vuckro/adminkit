@@ -257,7 +257,7 @@ body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a:focus {
 }
 
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a::after {
-	content: "CRM";
+	content: var( --ak-wordmark, "CRM" );
 	color: var( --ak-heading );
 	font-size: 18px;
 	font-weight: 700;

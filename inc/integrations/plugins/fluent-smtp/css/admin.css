@@ -804,7 +804,7 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .logo img {
 }
 
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .logo::after {
-	content: "SMTP";
+	content: var( --ak-wordmark, "SMTP" );
 	color: var(--ak-heading);
 	font-size: 18px;
 	font-weight: 700;

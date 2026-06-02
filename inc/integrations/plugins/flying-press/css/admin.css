@@ -270,7 +270,7 @@ body.adminkit.toplevel_page_flying-press svg[viewBox="0 0 1299 235"] {
 }
 
 body.adminkit.toplevel_page_flying-press :has(> svg[viewBox="0 0 1299 235"])::before {
-	content: "FlyingPress";
+	content: var( --ak-wordmark, "FlyingPress" );
 	color: var(--ak-heading);
 	font-size: 22px;
 	font-weight: 700;

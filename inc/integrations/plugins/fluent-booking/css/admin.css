@@ -561,7 +561,7 @@ body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a:focus {
 }
 
 body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a::after {
-	content: "Booking";
+	content: var( --ak-wordmark, "Booking" );
 	color: var( --ak-heading );
 	font-size: 18px;
 	font-weight: 700;

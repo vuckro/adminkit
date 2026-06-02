@@ -224,7 +224,7 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a {
 	box-shadow: none;
 }
 body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a::after {
-	content: "FluentCart";
+	content: var( --ak-wordmark, "FluentCart" );
 	color: var( --ak-heading );
 	font-size: 18px;
 	font-weight: 700;
@@ -858,7 +858,7 @@ body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a img {
 	display: none !important;
 }
 body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a::after {
-	content: "FluentCart";
+	content: var( --ak-wordmark, "FluentCart" );
 	color: var( --ak-heading );
 	font-size: 18px;
 	font-weight: 700;

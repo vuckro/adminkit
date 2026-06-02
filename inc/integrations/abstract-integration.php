@@ -124,6 +124,82 @@ abstract class AdminKit_Integration_Base {
 	protected static function boot() {}
 
 	/**
+	 * The top-level admin-menu slug whose TITLE feeds the white-label wordmark.
+	 * Defaults to slug(); override when the host registers its menu under a
+	 * different slug (e.g. FluentCRM uses `fluentcrm-admin`, FluentSMTP the
+	 * submenu `fluent-mail`, ACF the CPT `edit.php?post_type=acf-field-group`).
+	 *
+	 * @return string
+	 */
+	protected static function wordmark_menu_slug() {
+		return static::slug();
+	}
+
+	/**
+	 * Expose the plugin's WP admin-menu TITLE as a CSS custom property
+	 * (`--ak-wordmark`), scoped to the current screen body.
+	 *
+	 * Adapters that white-label a host's in-app logo render a text wordmark via
+	 * `::after { content: var( --ak-wordmark, "Fallback" ) }`. By sourcing that
+	 * text from the live menu title (here) instead of hard-coding it, the wordmark
+	 * automatically tracks the menu name — so if the user later renames the menu
+	 * item (a menu editor, another plugin, a translation), the in-app logo follows.
+	 * The CSS fallback keeps it working when the title can't be resolved.
+	 *
+	 * Auto-hooked on `admin_head` by maybe_init() for every integration; it no-ops
+	 * off the owned screen, so it costs nothing where there's no wordmark. Looks in
+	 * both the top-level `$menu` and the `$submenu` map so submenu- and CPT-rooted
+	 * hosts resolve too.
+	 *
+	 * @return void
+	 */
+	public static function print_menu_wordmark() {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || ! static::owns_screen( $screen ) ) {
+			return;
+		}
+		$slug  = static::wordmark_menu_slug();
+		$title = '';
+		// Top-level items: [ menu_title, cap, menu_slug, ... ].
+		if ( ! empty( $GLOBALS['menu'] ) && is_array( $GLOBALS['menu'] ) ) {
+			foreach ( $GLOBALS['menu'] as $item ) {
+				if ( isset( $item[2], $item[0] ) && $item[2] === $slug ) {
+					$title = (string) $item[0];
+					break;
+				}
+			}
+		}
+		// Submenu items: $submenu[ parent_slug ] = [ [ menu_title, cap, menu_slug ], … ].
+		if ( '' === $title && ! empty( $GLOBALS['submenu'] ) && is_array( $GLOBALS['submenu'] ) ) {
+			foreach ( $GLOBALS['submenu'] as $children ) {
+				foreach ( (array) $children as $item ) {
+					if ( isset( $item[2], $item[0] ) && $item[2] === $slug ) {
+						$title = (string) $item[0];
+						break 2;
+					}
+				}
+			}
+		}
+		// Drop update-count bubbles / any markup, collapse whitespace.
+		$title = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $title ) ) );
+		if ( '' === $title ) {
+			return;
+		}
+		// CSS string escape (backslash + double-quote). wp_strip_all_tags already
+		// removed every "<", so a </style> break-out is impossible.
+		$value = str_replace( array( '\\', '"' ), array( '\\\\', '\\"' ), $title );
+		// Set the var on body.adminkit (no screen class needed): the <style> is
+		// printed ONLY on the owned screen (gated above), so it's already scoped,
+		// and CSS custom properties inherit down to each adapter's logo ::after
+		// regardless of how that rule is scoped.
+		printf(
+			'<style id="adminkit-%1$s-wordmark">body.adminkit{--ak-wordmark:"%2$s"}</style>' . "\n",
+			esc_attr( static::slug() ),
+			$value // CSS-string-escaped above; no markup possible.
+		);
+	}
+
+	/**
 	 * Entry point — orchestrates the lifecycle. Called on `after_setup_theme` by
 	 * the plugin orchestrator. Runs only when the host is active AND the
 	 * integration is enabled — the latter via `adminkit/integration_enabled`
@@ -141,5 +217,8 @@ abstract class AdminKit_Integration_Base {
 		}
 		static::register_assets();
 		static::boot();
+		// Expose the menu title as --ak-wordmark on the owned screen, so any
+		// white-label logo (content: var(--ak-wordmark, …)) tracks the menu name.
+		add_action( 'admin_head', array( static::class, 'print_menu_wordmark' ) );
 	}
 }

@@ -27,6 +27,15 @@ class AdminKit_Integration_Fluentform extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * FluentForm registers its top-level menu under `fluent_forms`.
+	 *
+	 * @return string
+	 */
+	protected static function wordmark_menu_slug() {
+		return 'fluent_forms';
+	}
+
+	/**
 	 * FluentForm defines FLUENTFORM_VERSION in its bootstrap.
 	 *
 	 * @return bool

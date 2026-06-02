@@ -23,6 +23,16 @@ class AdminKit_Integration_Fluent_Smtp extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * FluentSMTP registers its screen as the `fluent-mail` submenu (under
+	 * Settings), so point the wordmark at that submenu title.
+	 *
+	 * @return string
+	 */
+	protected static function wordmark_menu_slug() {
+		return 'fluent-mail';
+	}
+
+	/**
 	 * Fluent SMTP defines `FLUENTMAIL_PLUGIN_FILE` in its bootstrap.
 	 *
 	 * @return bool

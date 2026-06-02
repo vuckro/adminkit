@@ -202,6 +202,25 @@ The cheapest adapter never touches the host's selectors. Reach for these in orde
 
 Always scope to the screen (`body.adminkit.{screen-id}`).
 
+### White-label a host's in-app logo
+
+Many hosts paint their own brand logo into an in-app top bar (a dark mark that
+vanishes once AdminKit goes dark). Hide it and drop a **text wordmark** in its
+place — but source the text from the host's **WP admin-menu title**, not a
+hard-coded string, so the wordmark tracks the menu name (and any later rename of
+the menu item). The base class does the PHP: `maybe_init()` auto-hooks
+`print_menu_wordmark()` on `admin_head`, which resolves the menu title (top-level
+`$menu` + `$submenu`) and emits `body.adminkit{ --ak-wordmark: "Title" }` on the
+owned screen. The adapter only needs:
+
+```css
+.host-logo a::after { content: var( --ak-wordmark, "Fallback" ); /* + color/size */ }
+```
+
+Override `wordmark_menu_slug()` when the host's menu slug differs from `slug()`
+(FluentCRM `fluentcrm-admin`, FluentSMTP `fluent-mail`, ACF the CPT URL). The CSS
+fallback shows if the title can't be resolved, so it degrades cleanly.
+
 ### Version-gate selector overrides (Tier B)
 
 A Tier B adapter breaks **silently** when the host renames a selector. Declare the

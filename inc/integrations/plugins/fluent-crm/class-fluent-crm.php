@@ -42,6 +42,16 @@ class AdminKit_Integration_Fluent_Crm extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * FluentCRM registers its top-level menu under `fluentcrm-admin` (not the
+	 * slug), so point the wordmark at that menu title.
+	 *
+	 * @return string
+	 */
+	protected static function wordmark_menu_slug() {
+		return 'fluentcrm-admin';
+	}
+
+	/**
 	 * FluentCRM defines `FLUENTCRM_PLUGIN_VERSION` in its bootstrap.
 	 *
 	 * @return bool
