@@ -174,12 +174,9 @@ body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
    like AdminKit's content panel — left+top border + 18px top-left radius — and
    restore the Reports sidebar's left edge it paints over. Desktop only. */
 @media screen and (min-width: 783px) {
-	/* Neutralise the -20px full-bleed over-pull (it dragged content past the
-	   panel edge), THEN add a gutter so it isn't glued. FluentCRM's normal-mode
-	   app has NO horizontal padding (the max-width:1200px centred container only
-	   exists in fluentcrm_go_full mode), so without this the content sits flush on
-	   the panel edge. Pad the wrapper; AdminKit's native left border + rounded
-	   corner frame the panel edge with the content inset — no manual border. */
+	/* Neutralise the -20px full-bleed over-pull so content sits flush inside
+	   AdminKit's panel (matching the FluentCart adapter — no added wrapper gutter;
+	   the host's own internal padding + the panel frame handle spacing). */
 	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar,
 	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_page_header_top_nav_wrapper,
 	body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm-view-wrapper,
@@ -187,9 +184,13 @@ body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
 		margin-left: 0;
 		margin-right: 0;
 	}
-	body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_app_wrapper {
-		padding-left: 20px;
-		padding-right: 20px;
+	/* The topbar is z-2000 — it paints OVER AdminKit's z-101 corner overlay, so it
+	   carries the panel frame itself (left + top border + 18px top-left radius),
+	   exactly like FluentCart's fixed top bar. */
+	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar {
+		border-top: 1px solid var( --ak-border );
+		border-left: 1px solid var( --ak-border );
+		border-top-left-radius: 18px;
 	}
 }
 
@@ -312,6 +313,15 @@ body.adminkit.toplevel_page_fluentcrm-admin ul.fcrm_menu.fcrm_menu_open .fcrm_me
    indistinct on the surface-coloured dropdown. */
 body.adminkit.toplevel_page_fluentcrm-admin ul.fcrm_menu li .fcrm_submenu_items a:hover,
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_icon_menu .fcrm_submenu_items a:hover {
+	background: var( --ak-elevated );
+}
+
+/* Topbar icon button (search / settings) — keep the rounded corners + lift to an
+   elevated surface in its active / focused state (so it reads as a soft chip, not
+   a hard square). The base .fcrm_icon_btn is border-radius:8px; mirror it. */
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_icon_menu.fcrm_active .fcrm_icon_btn,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_icon_btn:focus {
+	border-radius: var( --ak-radius-s );
 	background: var( --ak-elevated );
 }
 

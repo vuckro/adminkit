@@ -162,33 +162,21 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
 	background-color: var( --ak-bg );
 }
 
-/* Un-glue the app from the panel edge. FluentBooking pulls its whole app wrapper
-   left 20px (`#fluent-booking-app{margin-left:-20px;padding-left:20px}`) and its
-   menu bar another -20px to cancel WP's #wpcontent padding for full-bleed. AdminKit
-   zeroes that padding (≥783px), so the pulls drag the app's surface 20px PAST the
-   panel's left edge, hiding AdminKit's content-panel left border + rounded corner
-   behind it. Reset both margins to 0 (same fix the FluentCart adapter does on its
-   app wrapper): the app's own padding-left:20px then gives a clean gutter, content
-   (bar + body) sits flush inside the panel, and AdminKit's NATIVE border + corner
-   frame the whole thing coherently. No manual border needed (this content is z-auto,
-   below AdminKit's z-101 corner overlay — unlike the z-2000 FluentCart/CRM bars).
-   Desktop only; flat on mobile. */
+/* Un-glue the app, FluentCart-style. FluentBooking pulls its whole app wrapper
+   left (`#fluent-booking-app{margin-left:-20px;padding-left:20px}`) and its menu
+   bar another -20px to run full-bleed against WP's #wpcontent padding. AdminKit
+   zeroes that padding (≥783px), so the app over-pulls 20px PAST the panel edge,
+   hiding AdminKit's left border + rounded corner. Reset ONLY the app wrapper's
+   margin (the exact analog of the FluentCart adapter's app-wrapper reset). The
+   host's own margin/padding pair then lands the MENU BAR flush at the panel edge
+   (a full-bleed header, like FluentCart's top bar) and the BODY inset by the app's
+   padding-left (content gutter). AdminKit's NATIVE border + rounded corner frame
+   the flush header — no manual border, because the bar is z-auto (below the z-101
+   corner overlay), unlike the z-2000 FluentCart/FluentCRM bars. Desktop only. */
 @media screen and (min-width: 783px) {
-	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app,
-	body.adminkit.toplevel_page_fluent-booking .fframe_main-menu-items {
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
 		margin-left: 0;
 	}
-	/* The app pads only its left (padding-left:20px); add the right so the
-	   content isn't glued to the panel's right edge — a symmetric gutter. */
-	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
-		padding-right: 20px;
-	}
-}
-
-/* Round the bottom of the top menu bar so it reads as a distinct card-bar. */
-body.adminkit.toplevel_page_fluent-booking .fframe_main-menu-items {
-	border-bottom-left-radius: var( --ak-radius-xl );
-	border-bottom-right-radius: var( --ak-radius-xl );
 }
 
 
