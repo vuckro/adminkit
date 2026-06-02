@@ -256,6 +256,30 @@ body.adminkit #adminmenu .wp-menu-image::before {
 	color: var(--ak-text-muted);
 }
 
+/* Plugin menu icons drawn as a data-URI SVG or an <img> on `.wp-menu-image`
+   (`.wp-menu-image.svg` / `… img`) bake a FIXED fill — usually light, for WP's default
+   DARK menu — so they go invisible on AdminKit's themed (light-in-light) sidebar.
+   AdminKit's own glyphs mask currentColor and follow the theme; these can't. Force them
+   monochrome + theme-matched with a filter (menu icons are monochrome by convention):
+   dark on a light menu, light on a dark menu, brighter on hover/current via --ak-mic.
+   Adapter-masked icons (e.g. FluentCRM) already track currentColor, so the filter only
+   nudges them — no regression. Dashicon glyphs + AdminKit's own masked icons aren't
+   `.svg`/`img`, so they're untouched. */
+body.adminkit #adminmenu .wp-menu-image.svg,
+body.adminkit #adminmenu .wp-menu-image img {
+	filter: brightness(0) opacity(var(--ak-mic, 0.6));
+}
+:root[data-adminkit-theme="dark"] body.adminkit #adminmenu .wp-menu-image.svg,
+:root[data-adminkit-theme="dark"] body.adminkit #adminmenu .wp-menu-image img {
+	filter: brightness(0) invert(1) opacity(var(--ak-mic, 0.66));
+}
+body.adminkit #adminmenu li.menu-top:hover,
+body.adminkit #adminmenu li.menu-top:focus-within,
+body.adminkit #adminmenu li.current.menu-top,
+body.adminkit #adminmenu li.wp-has-current-submenu {
+	--ak-mic: 0.95;
+}
+
 /* Current item — the active row carries a subtle ACCENT fill: a 12% brand tint
    mixed into the surface (so it stays mode- AND provider-aware) — NOT a hardcoded
    `#3858e91a` alpha. We mix explicitly rather than reuse --ak-primary-subtle here
