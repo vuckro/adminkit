@@ -354,12 +354,15 @@ body.adminkit.toplevel_page_fluentcrm-admin .ff_funnel_badge {
 	color: var( --ak-on-accent ) !important;
 }
 
-/* Segmented control active button — same trap: host fills the active segment
-   with --fc-primary-text (flips light in dark). Solid brand + white instead. */
+/* Segmented control active item — FluentCRM styles these as TAB-style controls
+   (underline, not a filled pill). The host fills the active segment with
+   --fc-primary-text, which flips to a near-white block in dark ("gros carré
+   blanc"). Don't fill it: brand the TEXT, keep only the brand bottom-border as
+   the active-tab underline, transparent background. */
 body.adminkit.toplevel_page_fluentcrm-admin .el-radio-group .el-radio-button.is-active .el-radio-button__original-radio:not(:disabled) + .el-radio-button__inner {
-	background-color: var( --ak-primary ) !important;
+	background-color: transparent !important;
 	border-color: var( --ak-primary ) !important;
-	color: var( --ak-on-accent ) !important;
+	color: var( --ak-primary ) !important;
 }
 
 /* Automation-funnel block types — host hard-codes pastel fills (amber trigger,
