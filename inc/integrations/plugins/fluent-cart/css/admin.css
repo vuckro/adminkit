@@ -516,10 +516,11 @@ body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[stroke]:not([s
 	stroke: var( --ak-border-strong ) !important;
 }
 
-/* Default + icon buttons. Variant buttons (--primary etc.) are excluded so they
-   keep their brand/semantic fill; our !important beats FC's non-important dark
+/* Default + icon buttons. Exclude only the COLOUR variants (primary/success/…)
+   and text/link buttons — NOT the size variants (--small/--large/--default),
+   which still need the neutral skin. Our !important beats FC's non-important dark
    rule regardless of its #fct_admin_app_wrapper scope. */
-body.adminkit.toplevel_page_fluent-cart .el-button:not([class*="el-button--"]),
+body.adminkit.toplevel_page_fluent-cart .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--error):not(.el-button--info):not(.is-text):not(.is-link),
 body.adminkit.toplevel_page_fluent-cart .icon-button {
 	background-color: var( --ak-elevated ) !important;
 	border-color: var( --ak-border-strong ) !important;
