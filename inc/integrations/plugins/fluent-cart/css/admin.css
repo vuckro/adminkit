@@ -1,35 +1,19 @@
 /* FluentCart — toplevel_page_fluent-cart.
 
-   FluentCart is a Vue 3 SPA on Tailwind CSS + Element Plus. Its colour comes
-   from two layers, themed two different ways (see class-fluent-cart.php for the
-   full rationale):
+   Vue 3 SPA on Tailwind CSS + Element Plus, themed in light AND dark:
 
-     • Tailwind utilities — FC ships a COMPLETE dark variant for every one
-       (`:where(.fluent_theme_dark,…)`). The PHP sync turns that class on from
-       AdminKit's switch, so the app shell / top bar / nav / cards flip
-       natively. We don't re-skin those; we only bridge a few FC design tokens
-       and unify the brand.
+   - sync_theme() (PHP) drives FluentCart's NATIVE dark mode from AdminKit's
+     switch, so FC's Tailwind chrome (shell, top bar, nav, cards) flips on its
+     own — no flash, no CSS needed for it.
+   - This file re-skins the layer FC barely dark-themes: the Element Plus
+     `--el-*` tokens → AdminKit `--ak-*`, plus a handful of FC Tailwind surface
+     utilities, the brand, the chrome (canvas, top bar, logo), tables and
+     charts. `--ak-*` flip with AdminKit's mode, so one rule covers both.
 
-     • Element Plus `--el-*` — FC ships the STOCK light defaults and only
-       patches five components in dark mode, so its native dark mode leaves
-       almost all of Element Plus on light values (white inputs/dialogs on a
-       dark page). This file remaps the `--el-*` layer to AdminKit `--ak-*`
-       tokens, which flip with AdminKit's mode — so Element Plus is correct in
-       BOTH modes. This is the bulk of the file.
-
-   Specificity. FC declares `--el-*` on `:root` (0,1,0) and, in a couple of
-   places, re-declares them in dark mode on component selectors (e.g.
-   `.fluent_theme_dark .el-select__popper`, 0,2,0). Our token block targets
-   `:root, body.adminkit.toplevel_page_fluent-cart` (0,2,1) which outranks the
-   `:root` blocks; section 2 adds matching component-scoped rules to outrank
-   FC's five dark-mode patches. Element Plus teleports dialogs / poppers /
-   dropdowns to <body>, so the body-scoped selectors reach them too.
-
-   Brand. FC keeps its purple in `--color-primary` and parks a dark slate in
-   `--el-color-primary` (neutral chrome). AdminKit has one brand, so both route
-   to `--ak-primary`; filled controls get `--ak-on-accent` text so they stay
-   legible whatever the brand's lightness (it can be a pale colour). Because
-   `--ak-*` flip with AdminKit's dark mode, one set of rules covers both modes. */
+   Scope `body.adminkit.toplevel_page_fluent-cart` (0,2,1) + `!important` beats
+   FC's `:root` tokens and its non-important Tailwind utilities (even the ones
+   scoped under `#fct_admin_app_wrapper`). Element Plus teleports dialogs /
+   poppers to <body>, reached by the body scope. */
 
 
 /* ============================================================
@@ -39,26 +23,19 @@
 :root,
 body.adminkit.toplevel_page_fluent-cart {
 
-	/* ── FC's own design tokens ──────────────────────────────
-	   FC defines these on :root and drives surfaces / brand / semantics
-	   through them. Bridging here is high-leverage — it catches every place
-	   FC reads the token (incl. the body background and table fills). */
+	/* FC's own design tokens */
 	--color-primary:   var( --ak-primary );
 	--color-secondary: var( --ak-secondary );
-	--color-neutral:   var( --ak-text );        /* FC's --text-color resolves to this */
+	--color-neutral:   var( --ak-text );
 	--color-success:   var( --ak-success );
 	--color-warning:   var( --ak-warning );
-	--body-bg:         var( --ak-bg );          /* page canvas (light) */
-	--body-bg-dark:    var( --ak-bg );          /* page canvas (dark) — --ak-bg already flips */
-	--table-header-bg:        var( --ak-elevated );  /* El table header row */
-	--table-cell-bg-lighter:  var( --ak-surface );   /* zebra / lighter cell */
+	--body-bg:         var( --ak-bg );
+	--body-bg-dark:    var( --ak-bg );
+	--table-header-bg:       var( --ak-elevated );
+	--table-cell-bg-lighter: var( --ak-surface );
 
-	/* ── Element Plus brand ──────────────────────────────────
-	   Both FC's slate --el-color-primary and the stock blue route to brand. */
-	--el-color-primary: var( --ak-primary );
-
-	/* Primary ramp — filled-button hover (light-3), pale fills / current row
-	   / menu hover bg (light-7/8/9), pressed (dark-2). Keep them all on brand. */
+	/* Element Plus brand ramp */
+	--el-color-primary:         var( --ak-primary );
 	--el-color-primary-dark-2:  var( --ak-primary-hover );
 	--el-color-primary-light-3: var( --ak-primary-hover );
 	--el-color-primary-light-5: var( --ak-primary-subtle );
@@ -66,11 +43,7 @@ body.adminkit.toplevel_page_fluent-cart {
 	--el-color-primary-light-8: var( --ak-primary-subtle );
 	--el-color-primary-light-9: var( --ak-primary-subtle );
 
-	/* ── Semantic ────────────────────────────────────────────
-	   NOTE: Element Plus "info" is a NEUTRAL grey (#909399) FC leans on for
-	   muted chrome (dialog close ×, input-group append, disabled text) — do
-	   NOT route it to --ak-info (which is blue). Send it to muted text + a
-	   neutral ramp instead. */
+	/* Semantic — NOTE El Plus "info" is a neutral grey, not blue */
 	--el-color-success: var( --ak-success );
 	--el-color-warning: var( --ak-warning );
 	--el-color-danger:  var( --ak-error );
@@ -81,23 +54,21 @@ body.adminkit.toplevel_page_fluent-cart {
 	--el-color-info-light-8: var( --ak-surface );
 	--el-color-info-light-9: var( --ak-surface );
 	--el-color-info-dark-2:  var( --ak-heading );
+	--el-rate-fill-color:    var( --ak-warning );
 
-	/* Star rating fill (was a gold literal) → warning token. */
-	--el-rate-fill-color: var( --ak-warning );
-
-	/* ── Text ────────────────────────────────────────────── */
+	/* Text */
 	--el-text-color-primary:     var( --ak-heading );
 	--el-text-color-regular:     var( --ak-text );
 	--el-text-color-secondary:   var( --ak-text-muted );
 	--el-text-color-placeholder: var( --ak-text-muted );
 	--el-text-color-disabled:    var( --ak-text-muted );
 
-	/* ── Backgrounds ─────────────────────────────────────── */
+	/* Backgrounds */
 	--el-bg-color:         var( --ak-surface );
 	--el-bg-color-page:    var( --ak-bg );
-	--el-bg-color-overlay: var( --ak-surface );  /* poppers, dropdowns, tooltips */
+	--el-bg-color-overlay: var( --ak-surface );
 
-	/* ── Borders ─────────────────────────────────────────── */
+	/* Borders */
 	--el-border-color:             var( --ak-border );
 	--el-border-color-light:       var( --ak-border );
 	--el-border-color-lighter:     var( --ak-border );
@@ -105,7 +76,7 @@ body.adminkit.toplevel_page_fluent-cart {
 	--el-border-color-dark:        var( --ak-border-strong );
 	--el-border-color-darker:      var( --ak-border-strong );
 
-	/* ── Fills — hover bgs, zebra rows, disabled, blank canvas ─ */
+	/* Fills */
 	--el-fill-color:             var( --ak-surface );
 	--el-fill-color-light:       var( --ak-surface );
 	--el-fill-color-lighter:     var( --ak-surface );
@@ -114,58 +85,46 @@ body.adminkit.toplevel_page_fluent-cart {
 	--el-fill-color-darker:      var( --ak-elevated );
 	--el-fill-color-blank:       var( --ak-surface );
 
-	/* ── Disabled ────────────────────────────────────────── */
+	/* Disabled */
 	--el-disabled-bg-color:     var( --ak-surface-muted );
 	--el-disabled-text-color:   var( --ak-text-muted );
 	--el-disabled-border-color: var( --ak-border );
 
-	/* ── Overlays + loading mask ─────────────────────────────
-	   Dialog backdrop → AdminKit overlay; the El loading mask is a translucent
-	   wash over content while data loads → a soft surface tint that flips. */
+	/* Overlays + loading mask */
 	--el-overlay-color:         var( --ak-overlay );
 	--el-overlay-color-light:   var( --ak-overlay );
 	--el-overlay-color-lighter: var( --ak-overlay );
-	--el-mask-color:            color-mix( in srgb, var( --ak-surface ) 80%, transparent );
+	--el-mask-color:             color-mix( in srgb, var( --ak-surface ) 80%, transparent );
 	--el-mask-color-extra-light: color-mix( in srgb, var( --ak-surface ) 50%, transparent );
 
-	/* ── Flat — AdminKit is shadow-free; borders carry separation ─ */
-	--el-box-shadow:         none;
-	--el-box-shadow-light:   none;
+	/* Shadows — floating layers get the elevated token, everything else flat */
+	--el-box-shadow:         var( --ak-shadow-elevated );
+	--el-box-shadow-light:   var( --ak-shadow-elevated );
 	--el-box-shadow-lighter: none;
-	--el-box-shadow-dark:    none;
+	--el-box-shadow-dark:    var( --ak-shadow-elevated );
 }
 
 
 /* ============================================================
-   2. BEAT FluentCart's FIVE dark-mode --el-* PATCHES
-   FC re-declares a handful of --el-* tokens in dark mode on component
-   selectors (0,2,0 / 0,4,0) with its own greys. Setting the SAME token on the
-   SAME element at higher specificity keeps AdminKit's tokens authoritative, so
-   these components match the rest of Element Plus in dark mode instead of
-   drifting to FC's palette.
+   2. BEAT FluentCart's dark-mode --el-* PATCHES
+   FC re-declares a few --el-* tokens in dark on component selectors; match them
+   at higher specificity so AdminKit's tokens stay authoritative.
    ============================================================ */
 
-/* Select dropdown popper (FC: bg #808B9C, text #DADDE7, fill #758195, border #808B9C) */
 body.adminkit.toplevel_page_fluent-cart .el-select__popper {
-	--el-bg-color-overlay:  var( --ak-surface );
+	--el-bg-color-overlay:   var( --ak-surface );
 	--el-text-color-regular: var( --ak-text );
-	--el-fill-color-light:  var( --ak-surface );
+	--el-fill-color-light:   var( --ak-surface );
 	--el-border-color-light: var( --ak-border );
 }
-
-/* Table header cell (FC: #808B9C) */
 body.adminkit.toplevel_page_fluent-cart .el-table tr th {
 	--el-table-header-bg-color: var( --ak-elevated );
 }
-
-/* Search-bar input (FC pins border to #11171D in dark) */
 body.adminkit.toplevel_page_fluent-cart .table-filters .search-bar .el-input__wrapper {
 	--el-input-border-color:       var( --ak-border );
 	--el-input-hover-border-color: var( --ak-border-strong );
 	--el-input-focus-border-color: var( --ak-primary );
 }
-
-/* Skeleton loaders + loading mask (FC: #1C2732 / #283643) */
 body.adminkit.toplevel_page_fluent-cart .el-skeleton.is-animated .el-skeleton__item {
 	--el-skeleton-color:    var( --ak-surface-muted );
 	--el-skeleton-to-color: var( --ak-elevated );
@@ -176,11 +135,22 @@ body.adminkit.toplevel_page_fluent-cart .el-loading-mask {
 
 
 /* ============================================================
-   3. PAGE CANVAS
-   AdminKit's chrome.css themes #wpbody but not #wpcontent, and FC paints the
-   app shell with its own Tailwind palette. Give the content strip + the app
-   mount point the page token so the area behind the SPA flips with the theme
-   and meets AdminKit's chrome seamlessly.
+   3. FLUENTCART TAILWIND SURFACE UTILITIES → AdminKit
+   FC paints surfaces with raw Tailwind utilities (bg-white + dark:bg-dark-700).
+   Override the dark surface/border utilities (catch-all for dark) and pair
+   bg-white for light. !important beats FC's non-important utility rules.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-cart .dark\:bg-dark-700:where(.fluent_theme_dark,.fluent_theme_dark *) { background-color: var( --ak-surface ) !important; }
+body.adminkit.toplevel_page_fluent-cart .dark\:bg-dark-800:where(.fluent_theme_dark,.fluent_theme_dark *) { background-color: var( --ak-bg ) !important; }
+body.adminkit.toplevel_page_fluent-cart .dark\:bg-dark-500:where(.fluent_theme_dark,.fluent_theme_dark *) { background-color: var( --ak-elevated ) !important; }
+body.adminkit.toplevel_page_fluent-cart .dark\:border-dark-400:where(.fluent_theme_dark,.fluent_theme_dark *) { border-color: var( --ak-border-strong ) !important; }
+body.adminkit.toplevel_page_fluent-cart .dark\:border-dark-500:where(.fluent_theme_dark,.fluent_theme_dark *) { border-color: var( --ak-border ) !important; }
+body.adminkit.toplevel_page_fluent-cart .bg-white.dark\:bg-dark-700 { background-color: var( --ak-surface ) !important; }
+
+
+/* ============================================================
+   4. CHROME — page canvas, top bar, logo, native toggle
    ============================================================ */
 
 body.adminkit.toplevel_page_fluent-cart #wpcontent,
@@ -189,27 +159,59 @@ body.adminkit.toplevel_page_fluent-cart #fluent_cart_plugin_app {
 	background-color: var( --ak-bg );
 }
 
+/* Neutralise FC's left-pull on the app wrapper. FC pairs `margin-left: -20px`
+   with `width: calc(100% + 20px)` to cancel WP's `#wpcontent { padding-left: 20px }`
+   — but AdminKit already zeroes that padding, so the pair over-pulled the content
+   OVER AdminKit's left panel border (hiding it). Reset BOTH: margin 0 aligns it
+   flush so the border shows, width 100% drops the +20px so there's no h-scroll. */
+/* Desktop only — AdminKit zeroes #wpcontent's padding-left only at ≥783px, so
+   FC's -20px/+20px pair is only over-pulling there. Below 783px WP's padding
+   exists, so leave FC's default (and AdminKit's chrome is flat on mobile too). */
+@media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluent-cart #fct_admin_app_wrapper {
+		margin-left: 0 !important;
+		width: 100% !important;
+	}
+}
 
-/* ============================================================
-   4. TOP BAR + LOGO  (.fct_admin_menu_wrap — top-left of the screen)
-   The FC top bar is white (light) / #151D26 (dark) with a bottom border
-   (#EAECF0 / #2C3C4E). Route the surface + that border to AdminKit tokens so
-   the bar and its top-left edge follow the theme. Then replace the FC logo
-   (two <img>: light/dark) with a plain text wordmark — same approach as the
-   FluentBooking / FluentSMTP adapters.
-   ============================================================ */
-
-/* Bar surface + border (the "bordure en haut à gauche" of the content). */
+/* Top bar surface + border (meets AdminKit's rounded content corner). FC adds a
+   soft drop-shadow around the fixed bar — AdminKit is flat, so drop it for a
+   crisp hairline instead. The bottom hairline closes the panel under the bar on
+   every view (FC only adds its own .border-bottom class on some), and being
+   z-2000 it sits above the absolute report/settings nav. */
 body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 	background-color: var( --ak-surface ) !important;
+	box-shadow: none !important;
+	border-bottom: 1px solid var( --ak-border ) !important;
 }
 body.adminkit.toplevel_page_fluent-cart #wpbody-content #fct_admin_menu_holder .fct_admin_menu_wrap.border-bottom,
 body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 	border-color: var( --ak-border ) !important;
 }
 
-/* Hide both logo images, drop a text wordmark in their place. The anchor
-   carries the two <img> directly — reset any cropping then inject text. */
+/* Frame the top bar like AdminKit's content panel. FC's bar is position:fixed
+   z-index:2000 covering the native corner overlay (z-index 101), so the bar
+   carries the top hairline + 18px rounded top-left itself. The LEFT border comes
+   from #wpbody-content (full height); the right side extends to the edge like
+   every other admin page (no right content border). FC's `width: calc(100% -
+   161px)` already leaves the 1px gap for the left border, so the bar sits flush
+   after it without covering it. Desktop-only (≥783px) to mirror AdminKit, which
+   draws the rounded corner only there and is flat on mobile. */
+@media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
+		border-top: 1px solid var( --ak-border ) !important;
+		border-left: 1px solid var( --ak-border ) !important;
+		border-top-left-radius: 18px !important;
+	}
+	/* Reports/Settings hang a position:absolute secondary nav at left:160px with
+	   an --ak-surface fill, which paints over #wpbody-content's native left
+	   border. Restore the panel's left edge by bordering that nav's own left. */
+	body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container {
+		border-left: 1px solid var( --ak-border ) !important;
+	}
+}
+
+/* Logo → text wordmark. */
 body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a img {
 	display: none !important;
 }
@@ -230,62 +232,63 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a::after {
 	white-space: nowrap;
 }
 
-/* Top-bar nav items — neutral text, brand on hover / active. */
+/* Top-bar nav — neutral text. Hover bg is handled in §10; no color change. */
 body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > a,
 body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > button {
 	color: var( --ak-text );
 }
-body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > a:hover,
-body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item.active > a,
-body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > button:hover {
-	color: var( --ak-primary );
+
+/* Hide FC's own dark-mode toggle — AdminKit's switch is the single source. */
+body.adminkit.toplevel_page_fluent-cart #theme-button-container,
+body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container,
+body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container .theme-selected-button {
+	display: none !important;
 }
 
 
 /* ============================================================
-   5. BRAND OVERRIDES — filled / accented Element Plus states
-   The remap routes --el-color-primary to the brand, but Element Plus hard-pins
-   WHITE text on filled primary controls — unreadable on a pale brand. Pin
-   --ak-on-accent on filled controls, and route the brand-coloured text / border
-   states explicitly so they speak the brand in both modes.
+   5. BRAND — filled controls, links, focus, dates
+   Element Plus pins white text on filled primary controls; route to
+   --ak-on-accent so they stay legible whatever the brand's lightness.
    ============================================================ */
 
-/* 5a. Filled primary — solid brand fill, auto-contrasting text. */
 body.adminkit.toplevel_page_fluent-cart .el-button--primary,
-body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-plain:hover,
 body.adminkit.toplevel_page_fluent-cart .el-switch.is-checked .el-switch__core,
 body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-checked .el-checkbox__inner,
 body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-indeterminate .el-checkbox__inner,
 body.adminkit.toplevel_page_fluent-cart .el-radio__input.is-checked .el-radio__inner,
-body.adminkit.toplevel_page_fluent-cart .el-radio-button.is-active .el-radio-button__inner,
-body.adminkit.toplevel_page_fluent-cart .el-tag--primary,
-body.adminkit.toplevel_page_fluent-cart .el-pagination.is-background .el-pager li.is-active {
+body.adminkit.toplevel_page_fluent-cart .el-radio-button.is-active .el-radio-button__inner {
 	background-color: var( --ak-primary ) !important;
 	border-color: var( --ak-primary ) !important;
 	color: var( --ak-on-accent ) !important;
 }
-
-/* Glyphs inside filled controls → on-accent so the tick / dot read. */
-body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-checked .el-checkbox__inner::after {
-	border-color: var( --ak-on-accent ) !important;
-}
-body.adminkit.toplevel_page_fluent-cart .el-radio__input.is-checked .el-radio__inner::after {
-	background: var( --ak-on-accent ) !important;
-}
-body.adminkit.toplevel_page_fluent-cart .el-switch.is-checked .el-switch__action {
-	background-color: var( --ak-on-accent ) !important;
+/* Pagination active pill — brand bg, no border (avoids a stray ring). */
+body.adminkit.toplevel_page_fluent-cart .el-pagination.is-background .el-pager li.is-active {
+	background-color: var( --ak-primary ) !important;
+	border-color: transparent !important;
+	color: var( --ak-on-accent ) !important;
 }
 
-/* 5b. Filled primary — hover / active deepen the fill. */
+/* Unchecked checkbox / radio / switch track — input surface + strong border. */
+body.adminkit.toplevel_page_fluent-cart .el-checkbox__inner,
+body.adminkit.toplevel_page_fluent-cart .el-radio__inner,
+body.adminkit.toplevel_page_fluent-cart .el-switch__core {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Glyphs inside filled controls. */
+body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-checked .el-checkbox__inner::after { border-color: var( --ak-on-accent ) !important; }
+body.adminkit.toplevel_page_fluent-cart .el-radio__input.is-checked .el-radio__inner::after { background: var( --ak-on-accent ) !important; }
+body.adminkit.toplevel_page_fluent-cart .el-switch.is-checked .el-switch__action { background-color: var( --ak-on-accent ) !important; }
+
+/* Hover / disabled. */
 body.adminkit.toplevel_page_fluent-cart .el-button--primary:hover,
-body.adminkit.toplevel_page_fluent-cart .el-button--primary:focus,
-body.adminkit.toplevel_page_fluent-cart .el-button--primary:active {
+body.adminkit.toplevel_page_fluent-cart .el-button--primary:focus {
 	background-color: var( --ak-primary-hover ) !important;
 	border-color: var( --ak-primary-hover ) !important;
 	color: var( --ak-on-accent ) !important;
 }
-
-/* 5c. Disabled primary → neutral muted (not a washed brand). */
 body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-disabled,
 body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-disabled:hover {
 	background-color: var( --ak-surface-muted ) !important;
@@ -293,7 +296,7 @@ body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-disabled:hover {
 	color: var( --ak-text-muted ) !important;
 }
 
-/* 5d. Brand TEXT — links, checked labels, active tabs, pagination, menu. */
+/* Brand text — links, checked labels, active tabs, pagination, selected option. */
 body.adminkit.toplevel_page_fluent-cart .el-link--primary,
 body.adminkit.toplevel_page_fluent-cart .el-link--primary .el-link__inner,
 body.adminkit.toplevel_page_fluent-cart .el-checkbox.is-checked .el-checkbox__label,
@@ -302,37 +305,26 @@ body.adminkit.toplevel_page_fluent-cart .el-tabs__item:hover,
 body.adminkit.toplevel_page_fluent-cart .el-tabs__item.is-active,
 body.adminkit.toplevel_page_fluent-cart .el-pagination .el-pager li.is-active,
 body.adminkit.toplevel_page_fluent-cart .el-pagination button:hover,
-body.adminkit.toplevel_page_fluent-cart .el-menu-item.is-active,
 body.adminkit.toplevel_page_fluent-cart .el-select-dropdown__item.is-selected,
 body.adminkit.toplevel_page_fluent-cart .el-link:not(.el-link--danger):not(.el-link--success):not(.el-link--warning):not(.el-link--info) {
 	color: var( --ak-primary ) !important;
 }
 
-/* 5e. Brand BORDERS — focused fields, active tab underline, active menu. */
+/* Brand borders — focused fields, active tab underline. */
 body.adminkit.toplevel_page_fluent-cart .el-input__wrapper.is-focus,
 body.adminkit.toplevel_page_fluent-cart .el-textarea__inner:focus,
 body.adminkit.toplevel_page_fluent-cart .el-tabs__active-bar,
-body.adminkit.toplevel_page_fluent-cart .el-menu-item.is-active,
 body.adminkit.toplevel_page_fluent-cart .el-select .el-input.is-focus .el-input__wrapper {
 	border-color: var( --ak-primary ) !important;
 }
 
-/* 5f. Focus ring → AdminKit focus token (was an Element-blue glow). */
-body.adminkit.toplevel_page_fluent-cart .el-input__wrapper.is-focus,
-body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-focus .el-checkbox__inner,
-body.adminkit.toplevel_page_fluent-cart .el-radio__input.is-focus .el-radio__inner {
-	box-shadow: 0 0 0 1px var( --ak-primary ) inset !important;
-}
-
-/* 5g. Default / text buttons on hover — brand text, no forced border. */
+/* Default / text buttons on hover. */
 body.adminkit.toplevel_page_fluent-cart .el-button:not([class*="el-button--"]):hover,
-body.adminkit.toplevel_page_fluent-cart .el-button.is-text:hover,
-body.adminkit.toplevel_page_fluent-cart .el-button.is-link:hover {
+body.adminkit.toplevel_page_fluent-cart .el-button.is-text:hover {
 	color: var( --ak-primary ) !important;
-	border-color: var( --ak-primary ) !important;
 }
 
-/* 5h. Date picker — selected / today / in-range. */
+/* Date picker selection. */
 body.adminkit.toplevel_page_fluent-cart .el-date-table td.current:not(.disabled) .el-date-table-cell__text,
 body.adminkit.toplevel_page_fluent-cart .el-date-table td.start-date .el-date-table-cell__text,
 body.adminkit.toplevel_page_fluent-cart .el-date-table td.end-date .el-date-table-cell__text {
@@ -349,18 +341,70 @@ body.adminkit.toplevel_page_fluent-cart .el-date-table td.in-range .el-date-tabl
 
 
 /* ============================================================
-   6. DIALOG / POPPER CHROME
-   Element Plus teleports these to <body>; theme their frame + close affordance.
+   6. ELEMENT PLUS TABLES — the four data screens
+   FC paints the table with its own grey/slate ramp directly; route every part
+   to --ak-* so Orders / Products / Customers / Subscriptions match in both modes.
+   ============================================================ */
+
+/* Fixed-column scroll shadows. */
+body.adminkit.toplevel_page_fluent-cart .el-table {
+	--el-table-fixed-left-column:  inset 10px 0 10px -10px var( --ak-border-strong );
+	--el-table-fixed-right-column: inset -10px 0 10px -10px var( --ak-border-strong );
+}
+
+/* Body / wrapper / empty-block surface. */
+body.adminkit.toplevel_page_fluent-cart .el-table,
+body.adminkit.toplevel_page_fluent-cart .el-table__inner-wrapper,
+body.adminkit.toplevel_page_fluent-cart .el-table tr,
+body.adminkit.toplevel_page_fluent-cart .el-table__empty-block {
+	background-color: var( --ak-surface ) !important;
+}
+
+/* Header row. */
+body.adminkit.toplevel_page_fluent-cart .el-table thead tr th.el-table__cell,
+body.adminkit.toplevel_page_fluent-cart .el-table th.el-table__cell {
+	background-color: var( --ak-elevated ) !important;
+}
+
+/* Frame + row dividers. */
+body.adminkit.toplevel_page_fluent-cart .el-table,
+body.adminkit.toplevel_page_fluent-cart .el-table td.el-table__cell,
+body.adminkit.toplevel_page_fluent-cart .el-table th.el-table__cell.is-leaf {
+	border-color: var( --ak-border ) !important;
+}
+
+/* Row hover + zebra. */
+body.adminkit.toplevel_page_fluent-cart .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
+	background-color: var( --ak-hover-bg ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+	background-color: var( --ak-surface-muted ) !important;
+}
+
+/* In-table links — body text colour, no hover change (they read as plain cells). */
+body.adminkit.toplevel_page_fluent-cart .el-table .link,
+body.adminkit.toplevel_page_fluent-cart .el-table .link:hover {
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-table tr td .cell {
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-table thead th.el-table__cell .cell {
+	color: var( --ak-heading ) !important;
+}
+
+
+/* ============================================================
+   7. DIALOGS / POPPERS / OVERLAY
    ============================================================ */
 
 body.adminkit.toplevel_page_fluent-cart .el-dialog,
 body.adminkit.toplevel_page_fluent-cart .el-message-box,
 body.adminkit.toplevel_page_fluent-cart .el-popper,
-body.adminkit.toplevel_page_fluent-cart .el-dropdown-menu {
+body.adminkit.toplevel_page_fluent-cart .el-dropdown-menu,
+body.adminkit.toplevel_page_fluent-cart .el-drawer__header {
 	border-color: var( --ak-border ) !important;
 }
-
-/* Close (×) — neutral, → heading on hover (it's just a close affordance). */
 body.adminkit.toplevel_page_fluent-cart .el-dialog__headerbtn .el-dialog__close,
 body.adminkit.toplevel_page_fluent-cart .el-message-box__headerbtn .el-message-box__close {
 	color: var( --ak-text-muted ) !important;
@@ -369,72 +413,33 @@ body.adminkit.toplevel_page_fluent-cart .el-dialog__headerbtn:hover .el-dialog__
 body.adminkit.toplevel_page_fluent-cart .el-message-box__headerbtn:hover .el-message-box__close {
 	color: var( --ak-heading ) !important;
 }
-
-/* Input prefix/suffix icons — neutral so they don't inherit a brand colour. */
 body.adminkit.toplevel_page_fluent-cart .el-input__prefix,
 body.adminkit.toplevel_page_fluent-cart .el-input__suffix,
 body.adminkit.toplevel_page_fluent-cart .el-input__icon {
 	color: var( --ak-text-muted );
 }
-
-/* Element Plus icons given an inline `--color: black` by some Vue components
-   go invisible in dark mode; route to a token that flips with the mode. */
-body.adminkit.toplevel_page_fluent-cart .el-icon[style*="--color: black"],
-body.adminkit.toplevel_page_fluent-cart .el-icon[style*="--color:black"] {
-	--color: var( --ak-heading ) !important;
+body.adminkit.toplevel_page_fluent-cart .el-overlay {
+	background-color: var( --ak-overlay ) !important;
 }
 
 
 /* ============================================================
-   7. HIDE FC'S OWN DARK-MODE TOGGLE
-   AdminKit's switch is the single source of truth (the PHP mirrors it onto
-   FC's native mode), so the in-app control is redundant and could desync.
-   The toggle is the JS-rendered `.theme-selected-button` inside the top-bar
-   `#theme-button-container` / `.fct-theme-button-container`; hide the whole
-   holder so no empty box is left behind.
-   ============================================================ */
-
-body.adminkit.toplevel_page_fluent-cart #theme-button-container,
-body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container,
-body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container .theme-selected-button {
-	display: none !important;
-}
-
-
-/* ============================================================
-   8. SKELETON / LOADING DOT — hard-coded brand purple (#4f66f5).
-   ============================================================ */
-
-body.adminkit.toplevel_page_fluent-cart .fct-ebs__dot {
-	background: var( --ak-primary ) !important;
-}
-
-
-/* ============================================================
-   9. APEXCHARTS — chart text / grid / tooltip in dark mode
-   ApexCharts paints its light-theme palette into the SVG (axis/legend text,
-   grid lines) which glares or vanishes on dark surfaces. Route text + grid +
-   tooltip to tokens. Series colours stay (they distinguish the data and live
-   in JS config, not reachable from CSS).
+   8. APEXCHARTS — readable in dark
    ============================================================ */
 
 body.adminkit.toplevel_page_fluent-cart .apexcharts-text,
 body.adminkit.toplevel_page_fluent-cart .apexcharts-yaxis-label,
-body.adminkit.toplevel_page_fluent-cart .apexcharts-xaxis-label,
-body.adminkit.toplevel_page_fluent-cart .apexcharts-datalabel {
+body.adminkit.toplevel_page_fluent-cart .apexcharts-xaxis-label {
 	fill: var( --ak-text-muted );
 }
-
 body.adminkit.toplevel_page_fluent-cart .apexcharts-legend-text {
 	color: var( --ak-text ) !important;
 }
-
 body.adminkit.toplevel_page_fluent-cart .apexcharts-gridline,
 body.adminkit.toplevel_page_fluent-cart .apexcharts-xaxis-tick,
 body.adminkit.toplevel_page_fluent-cart .apexcharts-grid-borders line {
 	stroke: var( --ak-border );
 }
-
 body.adminkit.toplevel_page_fluent-cart .apexcharts-tooltip.apexcharts-theme-light,
 body.adminkit.toplevel_page_fluent-cart .apexcharts-xaxistooltip,
 body.adminkit.toplevel_page_fluent-cart .apexcharts-yaxistooltip {
@@ -442,378 +447,436 @@ body.adminkit.toplevel_page_fluent-cart .apexcharts-yaxistooltip {
 	border-color: var( --ak-border ) !important;
 	color: var( --ak-text ) !important;
 }
-
 body.adminkit.toplevel_page_fluent-cart .apexcharts-tooltip-title {
 	background: var( --ak-elevated ) !important;
 	border-bottom-color: var( --ak-border ) !important;
 }
 
+
 /* ============================================================
-   10. FLUENTCART TAILWIND SURFACES → AdminKit tokens
-   FC's own component classes carry its compiled light/dark palette as Tailwind
-   literals (e.g. .fct-card → #fff light / #151D26 dark). The theme sync turns
-   FC's native dark on, but those literals are FC's greys, not AdminKit's — so a
-   card reads #151D26 instead of --ak-surface. Override the base class with the
-   matching --ak-* token: it carries BOTH modes (the token flips), and the
-   `body.adminkit.toplevel_page_fluent-cart` scope (0,3,1) outranks FC's base
-   (0,1,0) and its zero-specificity `:where(.fluent_theme_dark,…)` dark rule.
-   Generated from the FC dark-mode surface map; grouped by role:
-     #151D26 → --ak-surface   (cards / panels / primary containers)
-     #1C2732 / #253241 / #2C3C4E → --ak-elevated (raised: dropdowns, poppers,
-                                    inputs, nested, hover, active)
-     borders → --ak-border / --ak-border-strong
-   Text stays on FC's native dark (synced) — it's already light-on-dark there.
+   9. FLUENTCART COMPONENT SURFACES / TEXT / BORDERS
+   FC paints these on the class itself (not via the §3 utilities), so the
+   catch-all misses them — route the main containers + chrome to --ak-* tokens,
+   grouped by the value FC uses (#151D26 surface, #1C2732/#253241 raised, slate
+   borders, F5F6F7 heading / C1C7D1 text).
    ============================================================ */
 
-/* BG: cards / panels / primary containers (22) */
-body.adminkit.toplevel_page_fluent-cart .fct-accordion,
-body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container,
-body.adminkit.toplevel_page_fluent-cart .fct-bucket-list,
-body.adminkit.toplevel_page_fluent-cart .fct-bulk-product-title-cell,
+/* Card / panel surfaces. */
 body.adminkit.toplevel_page_fluent-cart .fct-card,
-body.adminkit.toplevel_page_fluent-cart .fct-dashboard-stat-widgets,
-body.adminkit.toplevel_page_fluent-cart .fct-duplicate-product-modal,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-body,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-bottom,
-body.adminkit.toplevel_page_fluent-cart .fct-report-avg-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-report-body,
 body.adminkit.toplevel_page_fluent-cart .fct-report-card,
-body.adminkit.toplevel_page_fluent-cart .fct-report-global-filter-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-report-header,
-body.adminkit.toplevel_page_fluent-cart .fct-report-monthly-list,
-body.adminkit.toplevel_page_fluent-cart .fct-report-order-summary,
-body.adminkit.toplevel_page_fluent-cart .fct-setting-header,
-body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container,
-body.adminkit.toplevel_page_fluent-cart .fct-storage-activated-card,
-body.adminkit.toplevel_page_fluent-cart .fct-tab-item-wrapper,
-body.adminkit.toplevel_page_fluent-cart .fct-table-draggable,
-body.adminkit.toplevel_page_fluent-cart .fct-table-wrapper-mobile {
+body.adminkit.toplevel_page_fluent-cart .fct-dashboard-stat-widget__inner {
 	background-color: var( --ak-surface ) !important;
 }
 
-/* BG: raised — dropdowns, poppers, inputs, nested, hover (135) */
-body.adminkit.toplevel_page_fluent-cart .fct-add-coupon-input-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-admin-product-info,
-body.adminkit.toplevel_page_fluent-cart .fct-admin-summary-item-select,
-body.adminkit.toplevel_page_fluent-cart .fct-advanced-inventory-table,
-body.adminkit.toplevel_page_fluent-cart .fct-applied-filter-list,
-body.adminkit.toplevel_page_fluent-cart .fct-applied-filter-popover-content,
-body.adminkit.toplevel_page_fluent-cart .fct-attachments-list,
-body.adminkit.toplevel_page_fluent-cart .fct-bucket-list-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-bulk-actions,
-body.adminkit.toplevel_page_fluent-cart .fct-color-picker-action-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-color-picker-box,
-body.adminkit.toplevel_page_fluent-cart .fct-condition-builder-options,
-body.adminkit.toplevel_page_fluent-cart .fct-condition-builder-options-container,
-body.adminkit.toplevel_page_fluent-cart .fct-congrats-modal,
-body.adminkit.toplevel_page_fluent-cart .fct-content-card-header,
-body.adminkit.toplevel_page_fluent-cart .fct-content-card-list-icon,
-body.adminkit.toplevel_page_fluent-cart .fct-copy-advanced,
-body.adminkit.toplevel_page_fluent-cart .fct-copy-basic,
-body.adminkit.toplevel_page_fluent-cart .fct-custom-legend,
-body.adminkit.toplevel_page_fluent-cart .fct-custom-long-desc-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-custom-reason-section,
-body.adminkit.toplevel_page_fluent-cart .fct-custom-tooltip-content,
-body.adminkit.toplevel_page_fluent-cart .fct-customer-autocomplete-dropdown,
-body.adminkit.toplevel_page_fluent-cart .fct-dashboard-recent-activities__header_filter,
-body.adminkit.toplevel_page_fluent-cart .fct-dashboard-recent-activities__item,
-body.adminkit.toplevel_page_fluent-cart .fct-delete-activity-content,
-body.adminkit.toplevel_page_fluent-cart .fct-delete-test-orders-stat-row,
-body.adminkit.toplevel_page_fluent-cart .fct-device-btn,
-body.adminkit.toplevel_page_fluent-cart .fct-driver-tabs,
-body.adminkit.toplevel_page_fluent-cart .fct-dropdown,
-body.adminkit.toplevel_page_fluent-cart .fct-eu-union-countries,
-body.adminkit.toplevel_page_fluent-cart .fct-eu-union-country,
-body.adminkit.toplevel_page_fluent-cart .fct-file-upload-list,
-body.adminkit.toplevel_page_fluent-cart .fct-file-upload-progress,
-body.adminkit.toplevel_page_fluent-cart .fct-filter-dropdown,
-body.adminkit.toplevel_page_fluent-cart .fct-filter-dropdown-header,
-body.adminkit.toplevel_page_fluent-cart .fct-filter-nav,
-body.adminkit.toplevel_page_fluent-cart .fct-filter-nav-active-bar,
-body.adminkit.toplevel_page_fluent-cart .fct-filter-tabs-mobile,
-body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab,
-body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab-active-bar,
-body.adminkit.toplevel_page_fluent-cart .fct-gallery-drag-area,
-body.adminkit.toplevel_page_fluent-cart .fct-global-search-container,
-body.adminkit.toplevel_page_fluent-cart .fct-global-search-input-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-global-search-result-list,
-body.adminkit.toplevel_page_fluent-cart .fct-global-searching-suggestion,
-body.adminkit.toplevel_page_fluent-cart .fct-input-dropdown-popover-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-input-gray,
-body.adminkit.toplevel_page_fluent-cart .fct-integration-setting-body-inner,
-body.adminkit.toplevel_page_fluent-cart .fct-inventory-selected-item-header,
-body.adminkit.toplevel_page_fluent-cart .fct-inventory-stats-card,
-body.adminkit.toplevel_page_fluent-cart .fct-license-activation-limit-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-license-info-form-show-on-mobile,
-body.adminkit.toplevel_page_fluent-cart .fct-license-key-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-license-site-url-table,
-body.adminkit.toplevel_page_fluent-cart .fct-license-statistics-popover,
-body.adminkit.toplevel_page_fluent-cart .fct-licensed-product-table-mobile,
-body.adminkit.toplevel_page_fluent-cart .fct-manage-address-block,
-body.adminkit.toplevel_page_fluent-cart .fct-media-button,
-body.adminkit.toplevel_page_fluent-cart .fct-module-disabled-notice,
-body.adminkit.toplevel_page_fluent-cart .fct-multiple-select-group,
-body.adminkit.toplevel_page_fluent-cart .fct-number-input,
-body.adminkit.toplevel_page_fluent-cart .fct-offcanvas-menu,
-body.adminkit.toplevel_page_fluent-cart .fct-offcanvas-menu-list,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-card-body,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-card-head-top,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-form-header,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-form-page-setup,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-step-completed-button,
-body.adminkit.toplevel_page_fluent-cart .fct-order-stats-card,
-body.adminkit.toplevel_page_fluent-cart .fct-order-stats-card-head,
-body.adminkit.toplevel_page_fluent-cart .fct-package-type-selector,
-body.adminkit.toplevel_page_fluent-cart .fct-packages-cards,
-body.adminkit.toplevel_page_fluent-cart .fct-pdf-template-overlay,
-body.adminkit.toplevel_page_fluent-cart .fct-pdf-template-preview,
-body.adminkit.toplevel_page_fluent-cart .fct-popover-box-action,
-body.adminkit.toplevel_page_fluent-cart .fct-popover-content,
-body.adminkit.toplevel_page_fluent-cart .fct-preview-device-toggle,
-body.adminkit.toplevel_page_fluent-cart .fct-product-download-action-buttons,
-body.adminkit.toplevel_page_fluent-cart .fct-product-download-form-box,
-body.adminkit.toplevel_page_fluent-cart .fct-product-item-selector,
-body.adminkit.toplevel_page_fluent-cart .fct-product-pricing-table-mobile-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-query-builder-draggable-list,
-body.adminkit.toplevel_page_fluent-cart .fct-query-builder-sidebar,
-body.adminkit.toplevel_page_fluent-cart .fct-query-builder-sidebar-heading,
-body.adminkit.toplevel_page_fluent-cart .fct-query-preview-title,
-body.adminkit.toplevel_page_fluent-cart .fct-report-failed-order-list,
-body.adminkit.toplevel_page_fluent-cart .fct-report-sold-product-list,
-body.adminkit.toplevel_page_fluent-cart .fct-save-bar,
-body.adminkit.toplevel_page_fluent-cart .fct-search-commands,
-body.adminkit.toplevel_page_fluent-cart .fct-search-guide-example-item,
-body.adminkit.toplevel_page_fluent-cart .fct-search-guide-list,
-body.adminkit.toplevel_page_fluent-cart .fct-search-tags,
-body.adminkit.toplevel_page_fluent-cart .fct-select-gray,
-body.adminkit.toplevel_page_fluent-cart .fct-select-payment-type-block,
-body.adminkit.toplevel_page_fluent-cart .fct-setting-container,
-body.adminkit.toplevel_page_fluent-cart .fct-settings-nav,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-drawer__form,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav-mobile,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav-mobile__item,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav__item-shell,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav__menu-trigger,
-body.adminkit.toplevel_page_fluent-cart .fct-single-order-wrapper,
-body.adminkit.toplevel_page_fluent-cart .fct-specific-country-box,
-body.adminkit.toplevel_page_fluent-cart .fct-step-indicator,
-body.adminkit.toplevel_page_fluent-cart .fct-steps-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-stock-box-total-content,
-body.adminkit.toplevel_page_fluent-cart .fct-tab-item,
-body.adminkit.toplevel_page_fluent-cart .fct-tab-item-active,
-body.adminkit.toplevel_page_fluent-cart .fct-tab-link,
-body.adminkit.toplevel_page_fluent-cart .fct-table-border,
-body.adminkit.toplevel_page_fluent-cart .fct-tabs,
-body.adminkit.toplevel_page_fluent-cart .fct-tabs-button,
-body.adminkit.toplevel_page_fluent-cart .fct-tag-group,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-classes-content,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-collection-method,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-rates-country-view,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-selection-sum-box,
-body.adminkit.toplevel_page_fluent-cart .fct-term-label,
-body.adminkit.toplevel_page_fluent-cart .fct-term-list-header-button-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-term-list-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-term-search-result,
-body.adminkit.toplevel_page_fluent-cart .fct-term-search-result-button-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-term-search-result-list,
-body.adminkit.toplevel_page_fluent-cart .fct-term-selected,
-body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container,
-body.adminkit.toplevel_page_fluent-cart .fct-timeline-item,
-body.adminkit.toplevel_page_fluent-cart .fct-timeline-node,
-body.adminkit.toplevel_page_fluent-cart .fct-timeline-reason-badge,
-body.adminkit.toplevel_page_fluent-cart .fct-tooltip,
-body.adminkit.toplevel_page_fluent-cart .fct-upload-btn,
-body.adminkit.toplevel_page_fluent-cart .fct-variant-drawer,
-body.adminkit.toplevel_page_fluent-cart .fct-variant-stock-box,
-body.adminkit.toplevel_page_fluent-cart .fct-variation-select {
+/* Raised / active chrome — current nav item, focused search, pager select. */
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > button,
+body.adminkit.toplevel_page_fluent-cart .search-bar.is-transparent .el-input__wrapper.is-focus,
+body.adminkit.toplevel_page_fluent-cart .el-pagination .el-select .el-input__wrapper,
+body.adminkit.toplevel_page_fluent-cart .el-pagination .el-select__wrapper {
 	background-color: var( --ak-elevated ) !important;
 }
 
-/* BORDER: default hairline (23) */
-body.adminkit.toplevel_page_fluent-cart .fct-card,
-body.adminkit.toplevel_page_fluent-cart .fct-card-border,
-body.adminkit.toplevel_page_fluent-cart .fct-content-card-list-item,
-body.adminkit.toplevel_page_fluent-cart .fct-customer-table-mobile-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-dashboard-recent-activities__item,
-body.adminkit.toplevel_page_fluent-cart .fct-dropdown,
-body.adminkit.toplevel_page_fluent-cart .fct-integration-filter,
-body.adminkit.toplevel_page_fluent-cart .fct-number-input,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-bottom,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-form-body,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-form-page-setup,
-body.adminkit.toplevel_page_fluent-cart .fct-orders-table-mobile-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-popover-content,
-body.adminkit.toplevel_page_fluent-cart .fct-product-table-mobile-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-report-header,
-body.adminkit.toplevel_page_fluent-cart .fct-search-tags,
-body.adminkit.toplevel_page_fluent-cart .fct-select-gray,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav__item-image,
-body.adminkit.toplevel_page_fluent-cart .fct-storage-activated-card,
-body.adminkit.toplevel_page_fluent-cart .fct-table-draggable,
-body.adminkit.toplevel_page_fluent-cart .fct-table-mobile-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-table-wrapper,
-body.adminkit.toplevel_page_fluent-cart .fct-timeline-node {
+/* Borders. */
+body.adminkit.toplevel_page_fluent-cart .fc_dashboard_onboarding_wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-card .fct-card-header.border-bottom {
 	border-color: var( --ak-border ) !important;
 }
-
-/* BORDER: strong / dividers (128) */
-body.adminkit.toplevel_page_fluent-cart .fct-accordion,
-body.adminkit.toplevel_page_fluent-cart .fct-add-coupon-input-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-admin-product-menu,
-body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container,
-body.adminkit.toplevel_page_fluent-cart .fct-advanced-inventory-table,
-body.adminkit.toplevel_page_fluent-cart .fct-applied-filter-list,
-body.adminkit.toplevel_page_fluent-cart .fct-attachments-list,
-body.adminkit.toplevel_page_fluent-cart .fct-bucket-list,
-body.adminkit.toplevel_page_fluent-cart .fct-bucket-list-header,
-body.adminkit.toplevel_page_fluent-cart .fct-bucket-list-search,
-body.adminkit.toplevel_page_fluent-cart .fct-bucket-list-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-bulk-actions,
-body.adminkit.toplevel_page_fluent-cart .fct-bulk-sub-footer,
-body.adminkit.toplevel_page_fluent-cart .fct-bulk-sub-section,
-body.adminkit.toplevel_page_fluent-cart .fct-cascader-option,
-body.adminkit.toplevel_page_fluent-cart .fct-checkout-field,
-body.adminkit.toplevel_page_fluent-cart .fct-checkout-fields,
-body.adminkit.toplevel_page_fluent-cart .fct-collapsible-list,
-body.adminkit.toplevel_page_fluent-cart .fct-compare-to-filter,
-body.adminkit.toplevel_page_fluent-cart .fct-condition-builder-options,
-body.adminkit.toplevel_page_fluent-cart .fct-condition-builder-options-container,
-body.adminkit.toplevel_page_fluent-cart .fct-congrats-modal,
-body.adminkit.toplevel_page_fluent-cart .fct-content-card,
-body.adminkit.toplevel_page_fluent-cart .fct-content-card-header,
-body.adminkit.toplevel_page_fluent-cart .fct-content-card-list-icon,
-body.adminkit.toplevel_page_fluent-cart .fct-copy-advanced,
-body.adminkit.toplevel_page_fluent-cart .fct-coverage-selector,
-body.adminkit.toplevel_page_fluent-cart .fct-coverage-selector-dot,
-body.adminkit.toplevel_page_fluent-cart .fct-create-customer-button-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-custom-long-desc-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-customer-orders-items,
-body.adminkit.toplevel_page_fluent-cart .fct-eu-union-countries,
-body.adminkit.toplevel_page_fluent-cart .fct-eu-union-country,
-body.adminkit.toplevel_page_fluent-cart .fct-feature-list-footer,
-body.adminkit.toplevel_page_fluent-cart .fct-file-upload-list,
-body.adminkit.toplevel_page_fluent-cart .fct-file-upload-progress,
-body.adminkit.toplevel_page_fluent-cart .fct-file-upload-rename,
-body.adminkit.toplevel_page_fluent-cart .fct-filter-dropdown-header,
-body.adminkit.toplevel_page_fluent-cart .fct-gallery-drag-area,
-body.adminkit.toplevel_page_fluent-cart .fct-global-search-order-status-wrapper,
-body.adminkit.toplevel_page_fluent-cart .fct-global-searching-for,
-body.adminkit.toplevel_page_fluent-cart .fct-import-map-table,
-body.adminkit.toplevel_page_fluent-cart .fct-input-dropdown-popover-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-integration-card,
-body.adminkit.toplevel_page_fluent-cart .fct-integration-card-logo,
-body.adminkit.toplevel_page_fluent-cart .fct-integration-table-footer,
-body.adminkit.toplevel_page_fluent-cart .fct-inventory-selected-item-header,
-body.adminkit.toplevel_page_fluent-cart .fct-inventory-selected-item-list,
-body.adminkit.toplevel_page_fluent-cart .fct-inventory-selected-items-preview,
-body.adminkit.toplevel_page_fluent-cart .fct-inventory-toolbar-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-license-activation-limit-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-license-box-content,
-body.adminkit.toplevel_page_fluent-cart .fct-license-related-orders-show-on-mobile,
-body.adminkit.toplevel_page_fluent-cart .fct-license-site-url-table,
-body.adminkit.toplevel_page_fluent-cart .fct-license-statistics-popover,
-body.adminkit.toplevel_page_fluent-cart .fct-licensed-product-table,
-body.adminkit.toplevel_page_fluent-cart .fct-licensed-product-table-mobile-row,
-body.adminkit.toplevel_page_fluent-cart .fct-manage-address-block,
-body.adminkit.toplevel_page_fluent-cart .fct-media-button,
-body.adminkit.toplevel_page_fluent-cart .fct-media-content-list-header,
-body.adminkit.toplevel_page_fluent-cart .fct-media-content-list-item,
-body.adminkit.toplevel_page_fluent-cart .fct-media-content-list-wrapper,
-body.adminkit.toplevel_page_fluent-cart .fct-media-with-content,
-body.adminkit.toplevel_page_fluent-cart .fct-mode-radio-group,
-body.adminkit.toplevel_page_fluent-cart .fct-multiple-select-group,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-form-header,
-body.adminkit.toplevel_page_fluent-cart .fct-onboarding-step-completed-button,
-body.adminkit.toplevel_page_fluent-cart .fct-order-bump-price-box,
-body.adminkit.toplevel_page_fluent-cart .fct-order-bump-price-box-image,
-body.adminkit.toplevel_page_fluent-cart .fct-package-card,
-body.adminkit.toplevel_page_fluent-cart .fct-package-type-selector,
-body.adminkit.toplevel_page_fluent-cart .fct-packages-cards,
-body.adminkit.toplevel_page_fluent-cart .fct-pdf-template-card,
-body.adminkit.toplevel_page_fluent-cart .fct-powered-by-email-footer-checkbox,
-body.adminkit.toplevel_page_fluent-cart .fct-product-add-more-price-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-product-download-actions,
-body.adminkit.toplevel_page_fluent-cart .fct-product-inventory-mobile-row,
-body.adminkit.toplevel_page_fluent-cart .fct-product-item-selector,
-body.adminkit.toplevel_page_fluent-cart .fct-product-item-selector-dot,
-body.adminkit.toplevel_page_fluent-cart .fct-product-orders-items,
-body.adminkit.toplevel_page_fluent-cart .fct-product-pricing-table-mobile-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-query-builder-draggable-list,
-body.adminkit.toplevel_page_fluent-cart .fct-query-builder-sidebar,
-body.adminkit.toplevel_page_fluent-cart .fct-report-card-header,
-body.adminkit.toplevel_page_fluent-cart .fct-report-conversion-rate-list,
-body.adminkit.toplevel_page_fluent-cart .fct-save-bar,
-body.adminkit.toplevel_page_fluent-cart .fct-search-commands,
-body.adminkit.toplevel_page_fluent-cart .fct-search-guide-example-item,
-body.adminkit.toplevel_page_fluent-cart .fct-setting-container,
-body.adminkit.toplevel_page_fluent-cart .fct-setting-form-row,
-body.adminkit.toplevel_page_fluent-cart .fct-setting-header,
-body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-collapse-button-wrapper,
-body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-item-box,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav-mobile,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav-mobile__item,
-body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-nav__summary,
-body.adminkit.toplevel_page_fluent-cart .fct-show-more-button,
-body.adminkit.toplevel_page_fluent-cart .fct-simple-product-actions,
-body.adminkit.toplevel_page_fluent-cart .fct-single-order-wrapper,
-body.adminkit.toplevel_page_fluent-cart .fct-single-subscription-orders-mobile,
-body.adminkit.toplevel_page_fluent-cart .fct-single-subscription-pricing-table-trial,
-body.adminkit.toplevel_page_fluent-cart .fct-specific-country-box,
-body.adminkit.toplevel_page_fluent-cart .fct-status-group,
-body.adminkit.toplevel_page_fluent-cart .fct-steps-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-subscriptions-table-mobile-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-table-border,
-body.adminkit.toplevel_page_fluent-cart .fct-tabs-button,
-body.adminkit.toplevel_page_fluent-cart .fct-tag-group,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-active-country-collapse,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-classes,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-classes-content,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-classes-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-collection-method,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-filing,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-override-item,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-overrides,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-rates-country-view,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-rates-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-tax-selection-sum-box,
-body.adminkit.toplevel_page_fluent-cart .fct-term-search-result,
-body.adminkit.toplevel_page_fluent-cart .fct-tooltip,
-body.adminkit.toplevel_page_fluent-cart .fct-upgrade-paths-mobile-row,
-body.adminkit.toplevel_page_fluent-cart .fct-variant-drawer,
-body.adminkit.toplevel_page_fluent-cart .fct-variant-item-collapse,
-body.adminkit.toplevel_page_fluent-cart .fct-variant-pricing-add-button-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-vendor-ids {
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-collapse-button-wrapper {
 	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Headings + raised-item text. */
+body.adminkit.toplevel_page_fluent-cart h1,
+body.adminkit.toplevel_page_fluent-cart h2,
+body.adminkit.toplevel_page_fluent-cart h3,
+body.adminkit.toplevel_page_fluent-cart .fct-current-user-info-content .content h4,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > button {
+	color: var( --ak-heading ) !important;
+}
+
+/* Body text. */
+body.adminkit.toplevel_page_fluent-cart .fc_dashboard_onboarding_item__title {
+	color: var( --ak-text ) !important;
 }
 
 
 /* ============================================================
-   11. SEMANTIC ALERTS — pale-tint AdminKit style
-   FC paints alert backgrounds with saturated semantic fills (green/red/amber/
-   blue) that clash with AdminKit's subtle-tint convention. Route each variant
-   to its --ak-*-subtle background + solid token border/text.
+   10. MORE COMPONENT MAPPINGS
    ============================================================ */
 
-body.adminkit.toplevel_page_fluent-cart .fct-alert-success {
-	background-color: var( --ak-success-subtle ) !important;
-	border-color: var( --ak-success ) !important;
-	color: var( --ak-success ) !important;
+/* Primary-button label (FC pins slate on the span inside the brand fill). */
+body.adminkit.toplevel_page_fluent-cart .el-button--primary span {
+	color: var( --ak-on-accent ) !important;
 }
-body.adminkit.toplevel_page_fluent-cart .fct-alert-error {
-	background-color: var( --ak-error-subtle ) !important;
-	border-color: var( --ak-error ) !important;
-	color: var( --ak-error ) !important;
+
+/* Panel titles + active fluid-tab text → heading. */
+body.adminkit.toplevel_page_fluent-cart .fct-dashboard-recent-activities__header_title,
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab.classic-tab-style .fct-fluid-tab-item.active {
+	color: var( --ak-heading ) !important;
 }
+
+/* Active fluid-tab underline bar. */
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab.classic-tab-style .fct-fluid-tab-active-bar {
+	background-color: var( --ak-border-strong ) !important;
+}
+
+/* a:hover/focus handled by AdminKit's global body.adminkit a rule — no override needed. */
+
+/* Empty-state illustration — retint so it reads on dark surfaces (filled shapes
+   muted, lines visible) without flattening to a single tone. */
+body.adminkit.toplevel_page_fluent-cart .empty-state svg path[fill]:not([fill="none"]),
+body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[fill]:not([fill="none"]) {
+	fill: var( --ak-surface-muted ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .empty-state svg path[stroke]:not([stroke="none"]),
+body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[stroke]:not([stroke="none"]) {
+	stroke: var( --ak-border-strong ) !important;
+}
+
+/* Default + icon buttons. Exclude only the COLOUR variants (primary/success/…)
+   and text/link buttons — NOT the size variants (--small/--large/--default),
+   which still need the neutral skin. Our !important beats FC's non-important dark
+   rule regardless of its #fct_admin_app_wrapper scope. */
+body.adminkit.toplevel_page_fluent-cart .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--error):not(.el-button--info):not(.is-text):not(.is-link),
+body.adminkit.toplevel_page_fluent-cart .icon-button {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border-strong ) !important;
+	color: var( --ak-text ) !important;
+}
+
+/* Popovers / dropdowns — FC overrides the overlay token directly. */
+body.adminkit.toplevel_page_fluent-cart .el-popover.el-popper,
+body.adminkit.toplevel_page_fluent-cart .el-popper.is-light,
+body.adminkit.toplevel_page_fluent-cart .el-dropdown-menu,
+body.adminkit.toplevel_page_fluent-cart .fct-filter-dropdown {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-popper.is-light .el-popper__arrow::before {
+	background: var( --ak-elevated ) !important;
+	border-color: var( --ak-border ) !important;
+}
+
+/* Transparent search input. */
+body.adminkit.toplevel_page_fluent-cart .search-bar.is-transparent .el-input__wrapper {
+	background-color: var( --ak-elevated ) !important;
+}
+
+/* Settings page header — surface + strong border. */
+body.adminkit.toplevel_page_fluent-cart .fct-setting-header {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Active settings-nav link. */
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav .fct-settings-nav-item-active .fct-settings-nav-link {
+	background-color: var( --ak-elevated ) !important;
+	color: var( --ak-heading ) !important;
+}
+
+/* Report order-summary panel + row hover. */
+body.adminkit.toplevel_page_fluent-cart .fct-report-order-summary {
+	background-color: var( --ak-surface ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-report-order-summary .summary-item:hover {
+	background-color: var( --ak-hover-bg ) !important;
+}
+
+/* Fluid-tab active bar (all variants). */
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab-active-bar {
+	background-color: var( --ak-border-strong ) !important;
+}
+
+/* Global-search button. */
+body.adminkit.toplevel_page_fluent-cart .fct-global-search-input-wrap .fct-setting-search-button {
+	background-color: var( --ak-elevated ) !important;
+	color: var( --ak-text ) !important;
+}
+
+/* Input + select wrappers — FC overrides the El Plus tokens directly in dark.
+   (The .is-focus brand border in §5 is more specific, so it still wins.) */
+body.adminkit.toplevel_page_fluent-cart .el-input__wrapper,
+body.adminkit.toplevel_page_fluent-cart .el-select__wrapper {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Date-range editor value text — FC paints it muted slate; use body text. */
+body.adminkit.toplevel_page_fluent-cart .el-range-editor .el-range-input {
+	color: var( --ak-text ) !important;
+}
+
+/* Inline media-uploader dropzone. */
+body.adminkit.toplevel_page_fluent-cart .uploader-inline {
+	background: var( --ak-surface ) !important;
+	border: 2px dashed var( --ak-border-strong ) !important;
+	border-radius: var( --ak-radius-m ) !important;
+}
+
+/* Top-bar nav — clean states, no stray borders or rings.
+   FC's active item has a visible border; drop it and use bg-only. The browser
+   focus outline is suppressed (AdminKit's global a:focus handles accessibility).
+   Hover = subtle tint; active = elevated pill (no border); text handled in §4/§9. */
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item button {
+	outline: none !important;
+	box-shadow: none !important;
+	border-color: transparent !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item > a:hover,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item > button:hover {
+	background-color: var( --ak-hover-bg ) !important;
+}
+
+/* "More" dropdown submenu + fluid-tab container → raised surface. */
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item .fct_menu_child,
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab {
+	background-color: var( --ak-elevated ) !important;
+}
+
+/* More component borders (FC sets the strong slate directly). */
+body.adminkit.toplevel_page_fluent-cart .fct-integration-table-footer,
+body.adminkit.toplevel_page_fluent-cart .el-cascader-panel.is-bordered,
+body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-condition-or-wrap,
+body.adminkit.toplevel_page_fluent-cart .fct-report-card-header {
+	border-color: var( --ak-border-strong ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-advanced-filters {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Body text default (no !important — coloured spans/labels keep their own rule). */
+body.adminkit.toplevel_page_fluent-cart p,
+body.adminkit.toplevel_page_fluent-cart span {
+	color: var( --ak-text );
+}
+
+/* Select-dropdown hovered item + cascader node hover/focus → hover bg. */
+body.adminkit.toplevel_page_fluent-cart .el-select-dropdown__list .el-select-dropdown__item.is-hovering {
+	background-color: var( --ak-hover-bg ) !important;
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-cascader-node:not(.is-disabled):focus,
+body.adminkit.toplevel_page_fluent-cart .el-cascader-node:not(.is-disabled):hover {
+	background-color: var( --ak-hover-bg ) !important;
+}
+
+/* Active pagination — brand fill, no border (FC's ::before adds a border-ring
+   on top of the active li, conflicts with the brand bg; reset it). */
+body.adminkit.toplevel_page_fluent-cart .el-pagination.is-background .el-pager li.number.is-active::before {
+	display: none !important;
+}
+
+/* Dialog — FC overrides bg + header border directly in dark. */
+body.adminkit.toplevel_page_fluent-cart .el-overlay .el-dialog {
+	background-color: var( --ak-elevated ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-overlay .el-dialog__header {
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Disabled checkbox → muted surface, strong border (no brand tint). */
+body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-disabled .el-checkbox__inner {
+	background-color: var( --ak-surface-muted ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Info badge (generic neutral chip) → muted, not a solid slate fill. */
+body.adminkit.toplevel_page_fluent-cart .badge.info {
+	background-color: var( --ak-surface-muted ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Tertiary button text (FC pins slate inside the transparent container). */
+body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-tertiary,
+body.adminkit.toplevel_page_fluent-cart .el-button.is-tertiary {
+	color: var( --ak-text ) !important;
+}
+
+/* Textarea — border + text (bg stays transparent, fine). */
+body.adminkit.toplevel_page_fluent-cart .el-textarea__inner {
+	border-color: var( --ak-border-strong ) !important;
+	color: var( --ak-text ) !important;
+}
+
+/* WP classic editor wrapper (Long Description block). */
+body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .wp-editor-tools .wp-editor-container {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Tag-group items + internal label badge. */
+body.adminkit.toplevel_page_fluent-cart .fct-tag-group .fct-tag-item {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-tag-group .fct-tags-internal {
+	background-color: var( --ak-surface-muted ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Media "add image" dashed zone — token border instead of #EAECF0 literal. */
+body.adminkit.toplevel_page_fluent-cart .fmp-add-full {
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Save bar (product edit sticky footer). */
+body.adminkit.toplevel_page_fluent-cart .fct-save-bar {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Dropdown item / link focused → hover bg. */
+body.adminkit.toplevel_page_fluent-cart .el-dropdown__popper.fct-dropdown .el-dropdown-menu__item:focus,
+body.adminkit.toplevel_page_fluent-cart .el-dropdown__popper.fct-dropdown .el-dropdown-menu__item.item-link a:focus {
+	background-color: var( --ak-hover-bg ) !important;
+	color: var( --ak-heading ) !important;
+}
+
+/* Off-canvas / "More" menu panel → elevated surface. */
+body.adminkit.toplevel_page_fluent-cart .fct-offcanvas-menu {
+	background-color: var( --ak-elevated ) !important;
+}
+
+/* Product sub-nav (Upgrade Paths / Integrations tabs under product title). */
+body.adminkit.toplevel_page_fluent-cart .fct-admin-product-menu li.active-menu a {
+	color: var( --ak-heading ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-admin-product-menu li a::after {
+	background-color: var( --ak-heading ) !important;
+}
+
+/* .badge.info (solid dark in FC) → muted chip — the `!important` from FC's dark
+   rule beats our earlier non-important one; match the specificity. */
+body.adminkit.toplevel_page_fluent-cart .badge.info {
+	background-color: var( --ak-surface-muted ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Monthly-report list rows. */
+body.adminkit.toplevel_page_fluent-cart .fct-report-monthly-list li {
+	background-color: var( --ak-surface ) !important;
+}
+
+/* Settings-nav link hover → elevated bg / heading text. */
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav .fct-settings-nav-link:hover {
+	background-color: var( --ak-elevated ) !important;
+	color: var( --ak-heading ) !important;
+}
+
+/* Report filter bar (within .fct-report-body) → surface. */
+body.adminkit.toplevel_page_fluent-cart .fct-report-body .fct-report-filter-wrap {
+	background-color: var( --ak-surface ) !important;
+}
+
+/* Applied-filter pill (tag) → surface bg / strong border / heading text. */
+body.adminkit.toplevel_page_fluent-cart .fct-applied-filter-list .fct-applied-filter {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border-strong ) !important;
+	color: var( --ak-heading ) !important;
+}
+
+/* Warning alert → AdminKit warning (subtle tint + token text, no border). */
 body.adminkit.toplevel_page_fluent-cart .fct-alert-warning {
 	background-color: var( --ak-warning-subtle ) !important;
-	border-color: var( --ak-warning ) !important;
+	border: none !important;
 	color: var( --ak-warning ) !important;
 }
-body.adminkit.toplevel_page_fluent-cart .fct-alert-info {
-	background-color: var( --ak-info-subtle ) !important;
-	border-color: var( --ak-info ) !important;
-	color: var( --ak-info ) !important;
+
+
+/* ============================================================
+   11. CLASSIC FLUENT-PRODUCTS SCREENS — Categories, Brands, product list/editor
+   FC injects its (here position:relative) top bar on these classic WP screens
+   too; sync_theme + this CSS now load there (see owns_chrome). Skin the bar and
+   the WP overrides FC layers on (slate links, white form column, light table
+   borders). The native AdminKit corner overlay frames the panel by itself here
+   (the bar isn't the SPA's fixed z-2000 one). Scoped to the CPT body class.
+   ============================================================ */
+
+body.adminkit.post-type-fluent-products .fct_admin_menu_wrap {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border ) !important;
+}
+body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a img {
+	display: none !important;
+}
+body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a::after {
+	content: "FluentCart";
+	color: var( --ak-heading );
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+}
+body.adminkit.post-type-fluent-products .fct_menu > .fct_menu_item > a,
+body.adminkit.post-type-fluent-products .fct_menu > .fct_menu_item > button {
+	color: var( --ak-text );
+}
+
+/* FC's classic WP overrides → AdminKit tokens. */
+body.adminkit.post-type-fluent-products #col-container a {
+	color: var( --ak-text ) !important;
+}
+body.adminkit.post-type-fluent-products #col-left .col-wrap {
+	background-color: var( --ak-surface ) !important;
+	box-shadow: none !important;
+}
+body.adminkit.post-type-fluent-products #col-container .widefat thead td,
+body.adminkit.post-type-fluent-products #col-container .widefat thead th,
+body.adminkit.post-type-fluent-products #col-container .widefat tfoot td,
+body.adminkit.post-type-fluent-products #col-container .widefat tfoot th {
+	border-color: var( --ak-border ) !important;
+}
+
+/* Settings-nav tree connector line (:before). */
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav .fct-settings-nav-child-wrap::before {
+	background-color: var( --ak-border-strong ) !important;
+}
+
+/* Pagination wrapper border. */
+body.adminkit.toplevel_page_fluent-cart .pagination-wrap {
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* El Plus dark tooltip (e.g. "Toggle reports") — FC sets its bg to
+   --el-text-color-primary (= our heading), giving a washed light pill. Re-skin to
+   a clear raised AdminKit bubble (elevated + border; shadow from the token block). */
+body.adminkit.toplevel_page_fluent-cart .el-popper.is-dark,
+body.adminkit.toplevel_page_fluent-cart .el-popper.is-dark > .el-popper__arrow::before {
+	background: var( --ak-elevated ) !important;
+	border-color: var( --ak-border ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-popper.is-dark {
+	color: var( --ak-heading ) !important;
+}
+
+/* "More" header dropdown items — drop FC's blue ring/border; neutral text,
+   subtle hover, brand for the active route. */
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child_item a {
+	outline: none !important;
+	box-shadow: none !important;
+	border-color: transparent !important;
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child a:hover,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child a:focus,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child_item a:hover,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child_item a:focus {
+	background-color: var( --ak-hover-bg ) !important;
+	color: var( --ak-heading ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child a.router-link-active,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child_item a.router-link-active,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child .active a {
+	color: var( --ak-primary ) !important;
 }
