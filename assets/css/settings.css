@@ -996,14 +996,31 @@
 	overflow-y: auto;
 	overscroll-behavior: contain;
 }
-/* Section heading inside the picker (AdminKit icons / WordPress icons). */
-.adminkit-app .ak-icon-pop__h {
-	margin: 8px 2px 4px;
+/* Tabs at the top of the picker — switch between the AdminKit glyph set and the
+   native WordPress dashicons (only one pane shows at a time). */
+.adminkit-app .ak-icon-pop__tabs {
+	display: flex;
+	gap: 4px;
+	margin: 0 0 8px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-icon-pop__tab {
+	flex: 1;
+	border: 1px solid var(--ak-border);
+	background: transparent;
+	color: var(--ak-text-muted);
+	cursor: pointer;
+	padding: 5px 8px;
+	border-radius: var(--ak-radius-s);
 	font-size: var(--ak-text-xs);
 	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: .04em;
-	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-icon-pop__tab:hover { color: var(--ak-heading); }
+.adminkit-app .ak-icon-pop__tab.on {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
 }
 .adminkit-app .ak-icon-pop__search {
 	width: 100%;
