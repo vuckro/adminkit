@@ -159,6 +159,14 @@ body.adminkit.toplevel_page_fluent-cart #fluent_cart_plugin_app {
 	background-color: var( --ak-bg );
 }
 
+/* Neutralise FC's -20px left pull on the app wrapper. It existed to cancel WP's
+   `#wpcontent { padding-left: 20px }` — but AdminKit already zeroes that padding,
+   so the -20px over-pulled the content OVER AdminKit's left panel border, hiding
+   it. 0 aligns the content flush inside the panel so the left border shows. */
+body.adminkit.toplevel_page_fluent-cart #fct_admin_app_wrapper {
+	margin-left: 0 !important;
+}
+
 /* Top bar surface + border (meets AdminKit's rounded content corner). */
 body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 	background-color: var( --ak-surface ) !important;
