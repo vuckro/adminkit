@@ -182,17 +182,23 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 - **Default feature toggles ship ON** — Gutenberg canvas theming
   (`editor_content_theme`) and users-list Quick Edit (`quick_edit_users_enabled`)
   default ON, so the plugin presents fully-featured on activation.
+  `custom_avatars_enabled` ALSO defaults ON (maintainer's UX call — a unique
+  generated portrait reads far better than an empty silhouette) **with a deliberate
+  trade-off**: it calls an EXTERNAL service (DiceBear) and loads those images on the
+  front end, so activation is NOT front-end-neutral (the only default-ON feature
+  that isn't). It discloses in readme.txt, sends only a non-PII seed (md5 of login),
+  and respects real Gravatars; off resets the Default Avatar to Mystery Person. This
+  **reverses the earlier opt-in posture** — a deliberate maintainer decision (keep it
+  ON unless told otherwise); mind .org's external-service expectations when shipping.
   `bricks_builder_enabled` also defaults ON, but the UI locks that row unless the
   Bricks theme is active. Each stays individually switch-off-able. AdminKit icons
   (`replace_icons_enabled`) is **always on, with no UI toggle** — a global on/off
   duplicated the Menu manager (now THE place to override / reset icons per item:
   AdminKit glyph, WordPress dashicon, or your own), so the toggle was removed; the
-  setting stays registered (default true) so a filter can still disable it. Three
+  setting stays registered (default true) so a filter can still disable it. Two
   are **OFF by default** on purpose:
-  `username_changer_enabled` (renaming `user_login` invalidates active sessions),
-  `custom_avatars_enabled` (generating portraits calls an EXTERNAL service —
-  DiceBear — and those images can load on the front end, so it's opt-in to keep
-  activation front-end-neutral), and `stats_enabled` (Traffic Stats fires a
+  `username_changer_enabled` (renaming `user_login` invalidates active sessions)
+  and `stats_enabled` (Traffic Stats fires a
   front-end beacon POST per page view — the ONE feature with an inherent front
   cost — so it's opt-in too: activating AdminKit then fires nothing on the front
   end, registers no stats page and no dashboard card until you enable it). Keep

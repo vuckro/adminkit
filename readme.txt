@@ -30,7 +30,7 @@ It is **standalone** — no theme or page builder required, and **nothing change
 * A light + dark mode with a sun/moon toggle in the admin bar (and `prefers-color-scheme` on first visit).
 * CSS custom properties (`--ak-*`) any other admin-side stylesheet can consume.
 * Conditional, per-screen CSS loading — pages only load the styles they need.
-* Custom avatars: adds "AdminKit Portraits (Generated)" to WordPress's native Settings → Discussion → Default Avatar (next to Wavatar, Identicon, etc.). Pick it there to give every user a unique generated portrait on a pastel-gradient backdrop.
+* Custom avatars (on by default): gives every user without a real photo a unique generated portrait on a pastel backdrop, instead of the empty Mystery-Person silhouette — via "AdminKit Portraits (Generated)" in WordPress's native Settings → Discussion → Default Avatar. Uses an external service (DiceBear, disclosed below); turn it off in Features to restore Mystery Person.
 * Users-list Quick Edit: a "Quick Edit" link on each row of Users → All Users opens an inline editor for first / last name, email and role — same pattern WordPress ships for posts. Saves via AJAX, no full page reload.
 * Username changer (opt-in): turns the natively-disabled Username field into an editable one on Users → Edit. Validates the new login, dedupes against existing users, and destroys the affected user's sessions so the old name can't keep an old device signed in. Single-site only.
 * A custom dashboard that replaces the stock one: a greeting, quick actions, at-a-glance counts, site-health and storage, recent activity — drag the cards to rearrange them per user.
@@ -43,10 +43,10 @@ It is **standalone** — no theme or page builder required, and **nothing change
 
 == External services ==
 
-This plugin connects to **api.dicebear.com** to generate avatars when the **Custom avatars** feature is enabled AND you select **AdminKit Portraits (Generated)** in WordPress's *Settings → Discussion → Default Avatar* dropdown.
+This plugin connects to **api.dicebear.com** to generate user avatars. The **Custom avatars** feature is **enabled by default**, which sets **AdminKit Portraits (Generated)** as your *Settings → Discussion → Default Avatar* — so out of the box, DiceBear portraits are requested for users who have no other photo. You can turn this off (see below).
 
 * What it is: DiceBear is a free, key-less HTTP avatar service. AdminKit uses its hosted API to render a unique portrait per user.
-* When it is used: only when **Custom avatars** is on AND **AdminKit Portraits (Generated)** is the selected Default Avatar. Picking any other option in that dropdown (Mystery Person, Wavatar, Identicon, Retro, MonsterID, Blank, Gravatar Logo) makes no AdminKit request — Gravatar's native pipeline runs untouched. Note that picking AdminKit Portraits gives every user a generated portrait, including users who have a real Gravatar — it's an explicit opt-in.
+* When it is used: whenever **Custom avatars** is on (the default) AND **AdminKit Portraits (Generated)** is the selected Default Avatar — and then only for users with **no real photo**: a portrait is requested solely when the user has no avatar from another plugin and no Gravatar (checked with a cached `d=404` probe), so real Gravatars are left untouched. To stop all DiceBear requests, switch **Custom avatars** off in *AdminKit → Settings → Features* (this resets the Default Avatar to Mystery Person), or pick any other option in the Discussion dropdown (Mystery Person, Wavatar, Identicon, Retro, MonsterID, Blank, Gravatar Logo).
 * What data is sent: no personal data. The avatar is requested with a non-reversible seed — the md5 hash of the user's login name. The raw email address is never sent.
 * Service provider: DiceBear. Terms of use: https://www.dicebear.com/licenses/ — Privacy policy: https://www.dicebear.com/legal/privacy-policy/
 

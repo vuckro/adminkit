@@ -243,13 +243,16 @@ class AdminKit_Settings {
 		// a unique generated portrait for users with no real Gravatar. Read by
 		// AdminKit_Local_Avatars. Non-destructive — when off, AdminKit does nothing
 		// to avatars and Gravatar behaviour is 100% unchanged.
-		// OFF by default: generating portraits calls an EXTERNAL service (DiceBear)
-		// and those images can load on the front end, so it's opt-in — activating
-		// AdminKit stays front-end-neutral. Flip on in Settings → Features.
+		// ON by default (maintainer's UX call): a unique generated portrait reads far
+		// better than an empty Mystery-Person silhouette. TRADE-OFF, kept honest: it
+		// calls an EXTERNAL service (DiceBear) and those images can load on the front
+		// end, so activation is NOT front-end-neutral. Non-PII seed (md5 of login, never
+		// the email); real Gravatars are respected; disclosed in readme.txt. Switch off
+		// in Settings → Features (which resets the Default Avatar back to Mystery Person).
 		self::register( 'custom_avatars_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => false,
+			'default'  => true,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 

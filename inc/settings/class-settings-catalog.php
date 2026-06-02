@@ -106,7 +106,7 @@ class AdminKit_Settings_Catalog {
 				'key'   => 'custom_avatars_enabled',
 				'group' => $users,
 				'label' => __( 'Custom avatars', 'adminkit' ),
-				'desc'  => __( 'Adds "AdminKit Portraits (Generated)" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait.', 'adminkit' ),
+				'desc'  => __( 'On by default: every user without a real Gravatar gets a unique generated portrait instead of an empty silhouette (sets "AdminKit Portraits" as your Default Avatar in Settings → Discussion). Portraits come from an external service (DiceBear); turn off to restore Mystery Person.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'online_users_enabled',

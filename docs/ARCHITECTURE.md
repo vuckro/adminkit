@@ -227,7 +227,8 @@ individually switch-off-able:
 - **Availability-gated, default ON**: `bricks_builder_enabled` restyles the
   Bricks builder UI when the Bricks theme is active; the Features row is locked
   on non-Bricks sites.
-- **Off by default** (opt-in — calls an external service): `custom_avatars_enabled`
+- **On by default** (external service — the one non-front-end-neutral default):
+  `custom_avatars_enabled`
   (`inc/wp-core/class-local-avatars.php`) registers "AdminKit Portraits (Generated)"
   in *Settings → Discussion → Default Avatar* via the core `avatar_defaults` filter,
   and intercepts `pre_get_avatar_data` with a three-step cascade — bail if another
@@ -237,9 +238,12 @@ individually switch-off-able:
   portrait. Setting `url` (rather than `default`) is deliberate: Gravatar's Photon
   proxy strips query strings from the `d=` fallback, which would erase the per-user
   seed. Non-PII seed (md5 of the login) + solid pastel backdrop per user so a fresh
-  users list reads as distinct cards. **OFF by default** because those portraits call
-  DiceBear (`api.dicebear.com`) and can render on the front end — opt-in keeps
-  activating AdminKit front-end-neutral. See [EXTENDING.md → Avatars](EXTENDING.md#avatars).
+  users list reads as distinct cards. **ON by default** (maintainer's UX call — a generated portrait beats an
+  empty silhouette); the trade-off is that it calls DiceBear (`api.dicebear.com`) and
+  can render on the front end, so it's the one default that isn't front-end-neutral.
+  Enabling (plugin activation / the off→on transition, plus a one-time `admin_init`
+  catch-up for installs updating into the new default) sets the WP Default Avatar to
+  our key; switching off resets it to Mystery Person. See [EXTENDING.md → Avatars](EXTENDING.md#avatars).
 - **Off by default** (opt-in — destructive): `username_changer_enabled`
   (`inc/wp-core/class-username-changer.php`) — turns the natively-disabled
   Username field on profile.php / user-edit.php into a *locked* readonly input
