@@ -1,0 +1,198 @@
+/* FluentCRM — toplevel_page_fluentcrm-admin.
+
+   FluentCRM is a Vue 3 SPA on Element Plus, and it is VARIABLE-DRIVEN: it
+   declares its own --fc-* design tokens in :root and aliases the Element Plus
+   --el-* layer onto them. So this adapter is mostly a Tier-A token remap (§1) —
+   point the roots at AdminKit --ak-* and the whole UI (surfaces, text, borders,
+   every Element Plus component) follows, dark mode included. FluentCRM ships NO
+   dark mode of its own, so the --ak-* flip is what gives it one; there is no host
+   dark class to fight, hence no theme-sync JS in the PHP.
+
+   FluentCRM splits its brand in two — a brand blue #335CFF it parks in
+   --fc-text-link (links, accents) and a near-black #222530 in --fc-deep-bg /
+   --fc-primary-button (filled buttons). AdminKit has one brand, so BOTH route to
+   --ak-primary: filled controls and links all speak the brand, white pinned on
+   filled surfaces via --ak-on-accent.
+
+   The aliasing trap: FluentCRM reuses --fc-secondary-text BOTH as body text AND
+   as --el-color-primary-light-3 (the filled-button hover bg). We can't satisfy
+   both through that one var, so §1 sets the --el-color-primary-* ramp to brand
+   tokens DIRECTLY (our body-scoped rule out-specifies FluentCRM's :root alias),
+   decoupling button-hover from body text.
+
+   §3 mops up the literals FluentCRM hard-codes past its vars — near-black
+   #0e121b funnel-block text (invisible in dark) and 10%-tinted #222530
+   hover/badge fills.
+
+   Why these win. FluentCRM declares its tokens in :root (0,1,0). Our block
+   targets :root, body.adminkit.toplevel_page_fluentcrm-admin (0,2,1 for the
+   body arm), which outranks it. Element Plus teleports dialogs / poppers /
+   drawers to <body>, so the body-scoped selectors reach them too. */
+
+
+/* ============================================================
+   1. TOKEN REMAP — --fc-* and --el-* → AdminKit tokens
+   ============================================================ */
+
+:root,
+body.adminkit.toplevel_page_fluentcrm-admin {
+	/* --- FluentCRM's own --fc-* layer --- */
+
+	/* Surfaces */
+	--fc-primary-bg: var( --ak-surface );        /* cards, inputs, panels, dialogs */
+	--fc-secondary-bg: var( --ak-bg );           /* app page background */
+	--fc-light-bg: var( --ak-surface-muted );    /* light fill / recessed */
+	--fc-weak-bg-25: var( --ak-bg );             /* #F9FAFB very light → page */
+	--fc-deep-bg: var( --ak-primary );           /* filled buttons → brand */
+
+	/* Text */
+	--fc-primary-text: var( --ak-heading );      /* #0E121B titles, values */
+	--fc-secondary-text: var( --ak-text );       /* #525866 body copy */
+	--fc-text-muted: var( --ak-text-muted );     /* #99A0AE meta */
+	--fc-text-inverse: var( --ak-on-accent );    /* text on filled controls */
+
+	/* Borders */
+	--fc-primary-border: var( --ak-border );
+	--fc-secondary-border: var( --ak-border-strong );
+
+	/* Brand — link blue + filled-button color both → one AdminKit brand. */
+	--fc-primary-button: var( --ak-primary );
+	--fc-text-link: var( --ak-primary );
+	--fc-text-link-bg: var( --ak-primary-subtle );
+
+	/* Semantic + their pale tints. */
+	--fc-success: var( --ak-success );
+	--fc-success-bg: var( --ak-success-subtle );
+	--fc-error: var( --ak-error );
+	--fc-error-bg: var( --ak-error-subtle );
+	--fc-warning: var( --ak-warning );
+	--fc-warning-bg: var( --ak-warning-subtle );
+
+	/* --- Element Plus --el-* layer --- */
+
+	/* Brand. Set --el-color-primary directly (FluentCRM aliases it to the
+	   near-black --fc-deep-bg, already remapped, but pin it for any EP default
+	   that reads it before the alias resolves). */
+	--el-color-primary: var( --ak-primary );
+
+	/* The blue source EP never exposes as a token: every
+	   `rgba(var(--el-color-primary-rgb), a)` focus ring / selection fill falls
+	   back to EP's stock #409eff when unset. Pin it to the brand rgb (same
+	   literal as tokens.css --wp-admin-theme-color--rgb) so alpha tints read on
+	   any surface in both modes. */
+	--el-color-primary-rgb: 117, 163, 59;
+
+	/* Primary ramp — keep filled / hover / plain-bg primary states on brand,
+	   DECOUPLED from FluentCRM's --fc-secondary-text alias (the trap above). */
+	--el-color-primary-dark-2: var( --ak-primary-hover );    /* active / pressed */
+	--el-color-primary-light-3: var( --ak-primary-hover );   /* filled-button hover */
+	--el-color-primary-light-5: var( --ak-primary-subtle );
+	--el-color-primary-light-7: var( --ak-primary-subtle );
+	--el-color-primary-light-8: var( --ak-primary-subtle );
+	--el-color-primary-light-9: var( --ak-primary-subtle );  /* plain bg / current row */
+
+	/* Semantic. EP "info" is a NEUTRAL grey, and FluentCRM aliases it to its
+	   near-black primary-text — route info to the muted text token + a neutral
+	   ramp so it never reads as a colour. */
+	--el-color-success: var( --ak-success );
+	--el-color-warning: var( --ak-warning );
+	--el-color-danger: var( --ak-error );
+	--el-color-error: var( --ak-error );
+	--el-color-info: var( --ak-text-muted );
+	--el-color-info-light-3: var( --ak-text-muted );
+	--el-color-info-light-5: var( --ak-border-strong );
+	--el-color-info-light-9: var( --ak-surface );
+	--el-color-info-dark-2: var( --ak-heading );
+
+	/* Text */
+	--el-text-color-primary: var( --ak-heading );
+	--el-text-color-regular: var( --ak-text );
+	--el-text-color-secondary: var( --ak-text-muted );
+	--el-text-color-placeholder: var( --ak-text-muted );
+	--el-text-color-disabled: var( --ak-text-muted );
+
+	/* Backgrounds */
+	--el-bg-color: var( --ak-surface );
+	--el-bg-color-page: var( --ak-bg );
+	--el-bg-color-overlay: var( --ak-surface );
+
+	/* Borders */
+	--el-border-color: var( --ak-border );
+	--el-border-color-light: var( --ak-border );
+	--el-border-color-lighter: var( --ak-border );
+	--el-border-color-extra-light: var( --ak-border );
+	--el-border-color-dark: var( --ak-border-strong );
+	--el-border-color-darker: var( --ak-border-strong );
+
+	/* Fills — hover bgs, zebra rows, disabled, blank canvas. EP greys leak on
+	   dark surfaces if left unset; pin the whole set to neutral surfaces. */
+	--el-fill-color: var( --ak-surface );
+	--el-fill-color-light: var( --ak-surface );
+	--el-fill-color-lighter: var( --ak-surface );
+	--el-fill-color-extra-light: var( --ak-surface );
+	--el-fill-color-dark: var( --ak-elevated );
+	--el-fill-color-darker: var( --ak-elevated );
+	--el-fill-color-blank: var( --ak-surface );
+
+	/* Disabled — consumed but never (re)defined by FluentCRM, so EP's stock
+	   greys leak in dark. */
+	--el-disabled-bg-color: var( --ak-surface );
+	--el-disabled-text-color: var( --ak-text-muted );
+	--el-disabled-border-color: var( --ak-border );
+
+	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
+	--el-box-shadow: none;
+	--el-box-shadow-light: none;
+	--el-box-shadow-lighter: none;
+	--el-box-shadow-dark: none;
+}
+
+
+/* ============================================================
+   2. PAGE CANVAS
+   AdminKit's chrome.css themes #wpbody but not #wpcontent; give the content
+   strip and the app shell the page token so the area behind the SPA flips.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluentcrm-admin #wpcontent,
+body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
+	background-color: var( --ak-bg );
+}
+
+
+/* ============================================================
+   3. HARD-CODED LITERALS the var remap can't reach
+   ============================================================ */
+
+/* Automation-funnel block text — FluentCRM hard-codes the near-black #0E121B on
+   block titles/descriptions (invisible on a dark surface). Route titles to the
+   heading token, descriptions to body text. */
+body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_block .fluentcrm_block_title,
+body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_blocks_wrapper .fluentcrm_blockin .fluentcrm_block_title {
+	color: var( --ak-heading ) !important;
+}
+body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_block .fluentcrm_block_desc,
+body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_blocks_wrapper .fluentcrm_blockin .fluentcrm_block_desc {
+	color: var( --ak-text ) !important;
+}
+
+/* 10%-tinted near-black (#2225301a) hover / active / badge fills → neutral
+   hover-bg so they read as a subtle step on any surface, not a near-invisible
+   black wash on dark. */
+body.adminkit.toplevel_page_fluentcrm-admin .el-menu-item.is-active,
+body.adminkit.toplevel_page_fluentcrm-admin .el-input-group .el-input-group__append:hover,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_inline_action_btn:hover,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_drag_handle:hover,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_drag_over td,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_sms_campaign_view--sms-bubble {
+	background-color: var( --ak-hover-bg ) !important;
+}
+
+/* Neutral count/status badges that used the same 10% tint → muted surface. */
+body.adminkit.toplevel_page_fluentcrm-admin .stats_badges > span,
+body.adminkit.toplevel_page_fluentcrm-admin span.stats_badge_inline,
+body.adminkit.toplevel_page_fluentcrm-admin .fc_purchase_badge,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_contact_companies .fcrm_company_card_primary_badge {
+	background-color: var( --ak-surface-muted ) !important;
+	color: var( --ak-text ) !important;
+}
