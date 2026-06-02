@@ -305,10 +305,9 @@ body.adminkit.toplevel_page_fluent-cart .el-checkbox.is-checked .el-checkbox__la
 	color: var( --ak-text ) !important;
 }
 
-/* Brand text — links, checked radio labels, active tabs, pagination, selected option. */
+/* Brand text — links, active tabs, pagination, selected option. */
 body.adminkit.toplevel_page_fluent-cart .el-link--primary,
 body.adminkit.toplevel_page_fluent-cart .el-link--primary .el-link__inner,
-body.adminkit.toplevel_page_fluent-cart .el-radio.is-checked .el-radio__label,
 body.adminkit.toplevel_page_fluent-cart .el-tabs__item:hover,
 body.adminkit.toplevel_page_fluent-cart .el-tabs__item.is-active,
 body.adminkit.toplevel_page_fluent-cart .el-pagination .el-pager li.is-active,
@@ -316,6 +315,12 @@ body.adminkit.toplevel_page_fluent-cart .el-pagination button:hover,
 body.adminkit.toplevel_page_fluent-cart .el-select-dropdown__item.is-selected,
 body.adminkit.toplevel_page_fluent-cart .el-link:not(.el-link--danger):not(.el-link--success):not(.el-link--warning):not(.el-link--info) {
 	color: var( --ak-primary ) !important;
+}
+
+/* Checked radio label — neutral, NOT brand (the filled dot already signals the
+   state; out-specifies Element Plus's stock brand label, no !important needed). */
+body.adminkit.toplevel_page_fluent-cart .el-radio.is-checked .el-radio__label {
+	color: var( --ak-text );
 }
 
 /* Brand borders — focused fields. */
@@ -519,10 +524,10 @@ body.adminkit.toplevel_page_fluent-cart .fc_dashboard_onboarding_item__title {
    10. MORE COMPONENT MAPPINGS
    ============================================================ */
 
-/* Primary-button label — neutral body text (FC pins slate on the span; we keep
-   it on the body-text ink rather than the accent-contrast ink). */
+/* Primary-button label — the accent-contrast ink (the button has the brand fill,
+   so body text was illegible on it). */
 body.adminkit.toplevel_page_fluent-cart .el-button--primary span {
-	color: var( --ak-text ) !important;
+	color: var( --ak-on-accent ) !important;
 }
 
 /* Panel titles + active fluid-tab text → heading. */
@@ -971,4 +976,64 @@ body.adminkit.toplevel_page_fluent-cart .fct_menu_child a.router-link-active,
 body.adminkit.toplevel_page_fluent-cart .fct_menu_child_item a.router-link-active,
 body.adminkit.toplevel_page_fluent-cart .fct_menu_child .active a {
 	color: var( --ak-primary ) !important;
+}
+
+
+/* ============================================================
+   12. MORE DARK-MODE OVERRIDES + LITERALS
+   FC's `:where(.fluent_theme_dark)` rules + a few base literals hardcode rgb()
+   past the token remap. All out-specify the host (0,3,0+ vs the :where's 0), so
+   no !important is needed.
+   ============================================================ */
+
+/* Shared-variant item label (dark text literal). */
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-item-box .fct-shared-variant-item-box__label {
+	color: var( --ak-text );
+}
+
+/* Warning-alert icon — match the alert's warning ink. */
+body.adminkit.toplevel_page_fluent-cart .fct-alert-warning .icon {
+	color: var( --ak-warning );
+}
+
+/* Save-bar title (dark text literal). */
+body.adminkit.toplevel_page_fluent-cart .fct-save-bar-left .title {
+	color: var( --ak-heading );
+}
+
+/* TinyMCE toolbar listbox (the "Paragraph" dropdown) — #fff / #dcdcde. */
+body.adminkit.toplevel_page_fluent-cart .mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
+	background: var( --ak-elevated );
+	border-color: var( --ak-border );
+	color: var( --ak-text );
+}
+
+/* Back-arrow hover (light grey bg literal). */
+body.adminkit.toplevel_page_fluent-cart .fct-admin-product-info .back-arrow:hover {
+	background-color: var( --ak-hover-bg );
+}
+
+/* Active product-item-selector — neutral emphasis (border-strong + elevated +
+   heading), not the brand near-black. */
+body.adminkit.toplevel_page_fluent-cart .fct-product-item-selector li.active {
+	border-color: var( --ak-border-strong );
+	background-color: var( --ak-elevated );
+	color: var( --ak-heading );
+}
+
+/* Settings form-row divider (dark border literal). */
+body.adminkit.toplevel_page_fluent-cart .fct-setting-form-row {
+	border-color: var( --ak-border );
+}
+
+/* Inline <code> (dark bg + text literals). */
+body.adminkit.toplevel_page_fluent-cart code {
+	background-color: var( --ak-surface-muted );
+	color: var( --ak-text );
+}
+
+/* Advanced-filter "OR" badge (#fff bg + dark text). */
+body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-condition-or-wrap .fct-condition-or {
+	background-color: var( --ak-surface );
+	color: var( --ak-text );
 }
