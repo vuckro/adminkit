@@ -204,7 +204,8 @@ body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm-app {
 	margin-right: 0;
 }
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_page_header,
-body.adminkit.toplevel_page_fluentcrm-admin .fcrm_company_contacts_wrap {
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_company_contacts_wrap,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_edit_campaign_steps_wrapper {
 	padding-left: 20px;
 	padding-right: 20px;
 }
@@ -213,6 +214,15 @@ body.adminkit.toplevel_page_fluentcrm-admin .fcrm_company_contacts_wrap {
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_company_contacts_wrap .fcrm_rich_container .fcrm_rich_wrap {
 	padding-left: 0;
 	padding-right: 0;
+}
+
+/* Skeleton / pre-loading shimmer — FluentCRM tints it blue-slate (#1C2732 →
+   #283643) in its own .fcrm-dark class; route to NEUTRAL surfaces so the loading
+   bars are grey, not blue, in both modes. Set the vars on the item itself so this
+   beats the host's `.fcrm-dark .el-skeleton .el-skeleton__item` (0,3,0) rule. */
+body.adminkit.toplevel_page_fluentcrm-admin .el-skeleton__item {
+	--el-skeleton-color: var( --ak-surface-muted );
+	--el-skeleton-to-color: var( --ak-elevated );
 }
 
 
