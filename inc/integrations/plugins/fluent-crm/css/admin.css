@@ -177,8 +177,6 @@ body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
 	/* Neutralise the -20px full-bleed over-pull so content sits flush inside
 	   AdminKit's panel (matching the FluentCart adapter — no added wrapper gutter;
 	   the host's own internal padding + the panel frame handle spacing). */
-	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar,
-	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_page_header_top_nav_wrapper,
 	body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm-view-wrapper,
 	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_reports_layout {
 		margin-left: 0;
@@ -198,6 +196,16 @@ body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
 	body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
 		padding-left: 20px;
 		padding-right: 20px;
+	}
+	/* …but the page sub-nav bar (All Contacts · Lists · Tags · Segments, and the
+	   .fcrm_page_header variant) stays FULL-BLEED: pull it back out by the app's
+	   gutter so its surface + bottom border span edge-to-edge like the header,
+	   while the content below stays inset. Its own padding:0 20px keeps the links
+	   aligned with the inset content. */
+	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_page_header_top_nav_wrapper,
+	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_page_header {
+		margin-left: -20px;
+		margin-right: -20px;
 	}
 }
 
