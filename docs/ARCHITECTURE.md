@@ -202,19 +202,11 @@ individually switch-off-able:
   native blocks — in light/dark; off keeps the canvas matching the live site),
   `replace_icons_enabled` (swaps native menu/toolbar dashicons for AdminKit's set
   — `inc/wp-core/class-menu-icons.php`, filterable via `adminkit/menu_icons` /
-  `adminkit/toolbar_icons`; non-destructive — only stock dashicons),
-  and `custom_avatars_enabled` (`inc/wp-core/class-local-avatars.php`) registers
-  "AdminKit Portraits (Generated)" in *Settings → Discussion → Default Avatar*
-  via the core `avatar_defaults` filter, and intercepts `pre_get_avatar_data`
-  with a three-step cascade — bail if another filter already set `$args['url']`,
-  bail if the user has a real Gravatar (`d=404` HEAD probe cached in
-  `adminkit_has_gravatar` user meta, invalidated on `profile_update`), otherwise
-  set `$args['url']` directly to a unique DiceBear portrait. Setting `url`
-  (rather than `default`) is deliberate: Gravatar's Photon proxy strips query
-  strings from the `d=` fallback, which would erase the per-user seed. Non-PII
-  seed (md5 of the login) + solid pastel backdrop per user so a fresh users
-  list reads as distinct cards. See [EXTENDING.md → Avatars](EXTENDING.md#avatars).
-  And `quick_edit_users_enabled` (`inc/wp-core/class-user-quick-edit.php`) hooks
+  `adminkit/toolbar_icons`; non-destructive — only stock dashicons. **Always on,
+  no UI toggle**: a global on/off duplicated the Menu manager, which now owns
+  per-item icon control — AdminKit glyph / WordPress dashicon / reset-to-original;
+  the setting stays registered so a filter can still disable it),
+  and `quick_edit_users_enabled` (`inc/wp-core/class-user-quick-edit.php`) hooks
   `user_row_actions` to inject a "Quick Edit" affordance into each users.php
   row, opens an inline `<template>`-cloned editor below the row with first
   name / last name / email / role, and POSTs the changes to a dedicated AJAX
@@ -225,10 +217,34 @@ individually switch-off-able:
   self-demote). Display name is intentionally not exposed here — that's a
   per-user preference that belongs on user-edit.php. Off = no Quick Edit
   link; the native "Edit" link to user-edit.php still works.
+- **On by default** (structural editors, each with its own AdminKit subpage):
+  `menu_manager_enabled` (Menu tab — reorder the admin menu + submenus, per-item
+  icons, hide entries) and `toolbar_manager_enabled` (Toolbar tab — reorder + hide
+  the top-level admin-bar nodes, split into the bar's left / right sides). Both
+  apply late over the LIVE structure (`admin_menu` / `admin_bar_menu`); the toolbar
+  editor fetches its nodes over REST (the bar renders too late to ship in boot data).
+  Toggling either off restores the native structure and keeps your saved layout.
 - **Availability-gated, default ON**: `bricks_builder_enabled` restyles the
   Bricks builder UI when the Bricks theme is active; the Features row is locked
   on non-Bricks sites.
-- **Off by default** (opt-in): `username_changer_enabled`
+- **On by default** (external service — the one non-front-end-neutral default):
+  `custom_avatars_enabled`
+  (`inc/wp-core/class-local-avatars.php`) registers "AdminKit Portraits (Generated)"
+  in *Settings → Discussion → Default Avatar* via the core `avatar_defaults` filter,
+  and intercepts `pre_get_avatar_data` with a three-step cascade — bail if another
+  filter already set `$args['url']`, bail if the user has a real Gravatar (`d=404`
+  HEAD probe cached in `adminkit_has_gravatar` user meta, invalidated on
+  `profile_update`), otherwise set `$args['url']` directly to a unique DiceBear
+  portrait. Setting `url` (rather than `default`) is deliberate: Gravatar's Photon
+  proxy strips query strings from the `d=` fallback, which would erase the per-user
+  seed. Non-PII seed (md5 of the login) + solid pastel backdrop per user so a fresh
+  users list reads as distinct cards. **ON by default** (maintainer's UX call — a generated portrait beats an
+  empty silhouette); the trade-off is that it calls DiceBear (`api.dicebear.com`) and
+  can render on the front end, so it's the one default that isn't front-end-neutral.
+  Enabling (plugin activation / the off→on transition, plus a one-time `admin_init`
+  catch-up for installs updating into the new default) sets the WP Default Avatar to
+  our key; switching off resets it to Mystery Person. See [EXTENDING.md → Avatars](EXTENDING.md#avatars).
+- **Off by default** (opt-in — destructive): `username_changer_enabled`
   (`inc/wp-core/class-username-changer.php`) — turns the natively-disabled
   Username field on profile.php / user-edit.php into a *locked* readonly input
   that surfaces a `window.confirm()` warning on click before unlocking. The

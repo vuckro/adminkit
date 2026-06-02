@@ -71,10 +71,11 @@ body.adminkit {
      • page screens — keep the `.wrap` inset, just drop the 960px cap so they fill
        the content area like every other admin page;
      • the Settings form is a `.bricks-admin-wrapper` INSIDE a separate `.wrap`.
-       Its `th` label column is 30% / 400px, so a wide form spreads each row's
-       label and control far apart. Cap it to a tight column and LEFT-align it —
-       matching AdminKit's own settings page — so label + control stay close and
-       the form sits under the page's left edge instead of floating centered. */
+       Let it FILL the content width like every other admin page (so long fields
+       — API keys, license strings — aren't cramped and every tab reads at the
+       same size); the `th` label column is pinned to 260px below, so only the
+       field column takes the extra width and label + control stay close. Keep
+       it LEFT-aligned (margin:0) under the page edge, not floating centered. */
 body.adminkit .wrap.bricks-admin-wrapper {
 	max-width: none;
 }
@@ -86,7 +87,7 @@ body.adminkit.toplevel_page_bricks .wrap.bricks-admin-wrapper {
 	margin-right: auto;
 }
 body.adminkit .bricks-admin-wrapper:not(.wrap) {
-	max-width: 720px;
+	max-width: none;
 	margin: 0;
 }
 
@@ -115,6 +116,23 @@ body.adminkit .bricks-admin-wrapper.getting-started .box-wrapper {
 body.adminkit #bricks-settings table,
 body.adminkit #bricks-settings tr {
 	background: transparent;
+}
+
+/* Each settings TAB is its own `<table id="tab-…">`, auto-sized to its content —
+   so switching tabs (General · Builder access · Performance …) made the form jump
+   to a different width every time. Fill the wrapper so every tab reads at the SAME
+   size, but cap it at a comfortable 1200px so long-field tabs (API keys, Custom
+   Code) get plenty of room without the form stretching edge-to-edge on a wide
+   monitor. A steady label column keeps the field edge aligned across tabs too.
+   (Plain auto layout — no table-layout:fixed, which would clip Bricks's wider
+   cells / code editors.) */
+body.adminkit #bricks-settings > table[id^="tab-"] {
+	width: 100%;
+	max-width: 1200px;
+	box-sizing: border-box;
+}
+body.adminkit #bricks-settings > table[id^="tab-"] > tbody > tr > th {
+	width: 260px;
 }
 
 body.adminkit #bricks-settings th,

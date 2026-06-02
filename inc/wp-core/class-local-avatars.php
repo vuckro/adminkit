@@ -106,6 +106,13 @@ class AdminKit_Local_Avatars {
 		add_action( 'update_option_' . AdminKit_Settings::OPTION_KEY, array( __CLASS__, 'on_settings_update' ), 10, 2 );
 		register_deactivation_hook( ADMINKIT_FILE, array( __CLASS__, 'cleanup_avatar_default' ) );
 		register_activation_hook( ADMINKIT_FILE, array( __CLASS__, 'restore_avatar_default' ) );
+		// One-time catch-up: Custom avatars now ships ON by default, but an EXISTING
+		// install updating INTO that default fires neither the activation hook nor an
+		// off→on transition — so its `avatar_default` would stay Mystery and the feature
+		// would read "on" yet render nothing. Reconcile once (flagged), still respecting
+		// an explicit choice: restore_avatar_default() no-ops unless the toggle is on AND
+		// the Default Avatar is still Mystery.
+		add_action( 'admin_init', array( __CLASS__, 'maybe_sync_default' ) );
 
 		if ( ! AdminKit_Settings::get( 'custom_avatars_enabled' ) ) {
 			return;
@@ -176,6 +183,23 @@ class AdminKit_Local_Avatars {
 		if ( in_array( $current, array( 'mystery', 'mm', 'mp' ), true ) ) {
 			update_option( 'avatar_default', self::AVATAR_KEY );
 		}
+	}
+
+	/**
+	 * Run restore_avatar_default() exactly once over an install's lifetime, to catch up
+	 * EXISTING sites when the ON-by-default value shipped (a plugin update fires no
+	 * activation hook). The flag is autoloaded, so after the first admin_init the check
+	 * is a free in-memory read. Idempotent and choice-respecting (restore_avatar_default
+	 * self-gates on the toggle + a Mystery default).
+	 *
+	 * @return void
+	 */
+	public static function maybe_sync_default() {
+		if ( get_option( 'adminkit_avatars_default_synced' ) ) {
+			return;
+		}
+		update_option( 'adminkit_avatars_default_synced', 1, true );
+		self::restore_avatar_default();
 	}
 
 	public static function register_default( $defaults ) {

@@ -387,6 +387,29 @@
 		var liveCard     = null;
 		var liveInterval = 10000;
 
+		// Tick the live count from its old value to the new one after a refresh
+		// (the poll already happens — this is just the in-place tween). Reads/writes
+		// the displayed number; reduced-motion + no-rAF fall back to a snap.
+		function parseCount( txt ) {
+			var n = parseInt( ( txt || '' ).replace( /[^\d-]/g, '' ), 10 );
+			return isNaN( n ) ? null : n;
+		}
+		function tickCount( elNum, from, to ) {
+			if ( ! elNum || null === to ) { return; }
+			var reduce = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+			if ( null === from || from === to || reduce || ! window.requestAnimationFrame ) { return; }
+			var start = null, dur = 600;
+			function step( ts ) {
+				if ( null === start ) { start = ts; }
+				var p = Math.min( 1, ( ts - start ) / dur );
+				var e = 1 - Math.pow( 1 - p, 3 );
+				var v = Math.round( from + ( to - from ) * e );
+				try { elNum.textContent = Number( v ).toLocaleString(); } catch ( err ) { elNum.textContent = String( v ); }
+				if ( p < 1 ) { requestAnimationFrame( step ); }
+			}
+			requestAnimationFrame( step );
+		}
+
 		// Whether `card` is currently rendered in Live mode (server marker).
 		function isLiveBody( card ) {
 			return !! ( card && card.querySelector( '[data-ak-stats-live]' ) );
@@ -437,7 +460,12 @@
 				.then( function ( r ) { return r.json(); } )
 				.then( function ( res ) {
 					if ( liveCard && isLiveBody( liveCard ) && res && res.success && res.data && typeof res.data.html === 'string' ) {
+						// Capture the old count, swap the HTML, then tick to the new one.
+						var prevEl = liveCard.querySelector( '.ak-dash__stats-live-num' );
+						var prev   = prevEl ? parseCount( prevEl.textContent ) : null;
 						liveCard.innerHTML = res.data.html;
+						var nextEl = liveCard.querySelector( '.ak-dash__stats-live-num' );
+						if ( nextEl ) { tickCount( nextEl, prev, parseCount( nextEl.textContent ) ); }
 					}
 					if ( liveCard && isLiveBody( liveCard ) ) {
 						scheduleLive( liveInterval );
@@ -451,10 +479,58 @@
 				} );
 		}
 
-		document.addEventListener( 'visibilitychange', function () {
-			if ( ! document.hidden && liveCard && isLiveBody( liveCard ) ) {
-				scheduleLive( 0 );
+		/* Active-now pill: keep the "N active now" count LIVE on the PERIOD views too
+		   (not just inside the Live preset). Polls a tiny ping that returns ONLY the
+		   pill HTML — no full-card re-render, no saved-state write. Same visibility
+		   gating as the Live loop; idle in Live mode (there the big count already
+		   ticks and the period pill isn't rendered). */
+		var activeTimer = null, activeCard = null, activeInterval = 10000;
+		function activeWrap( card ) { return card ? card.querySelector( '[data-ak-stats-active]' ) : null; }
+		function stopActive() { if ( activeTimer ) { clearTimeout( activeTimer ); activeTimer = null; } }
+		function scheduleActive( delay ) { stopActive(); activeTimer = setTimeout( tickActive, delay ); }
+		function syncActive( card ) {
+			var wrap = activeWrap( card );
+			if ( wrap && ! isLiveBody( card ) ) {
+				var attr = parseInt( wrap.getAttribute( 'data-ak-stats-active-interval' ), 10 );
+				activeInterval = ( attr && attr >= 2000 ) ? attr : 10000;
+				activeCard = card;
+				scheduleActive( activeInterval );
+			} else if ( activeCard === card ) {
+				stopActive();
+				activeCard = null;
 			}
+		}
+		function tickActive() {
+			activeTimer = null;
+			if ( ! activeCard || ! document.body.contains( activeCard ) || isLiveBody( activeCard ) || ! activeWrap( activeCard ) ) {
+				return;
+			}
+			if ( document.hidden ) { return; } // visibilitychange re-arms us.
+			if ( ! cfg.ajaxUrl || ! cfg.statsAction ) { return; }
+			var body = new URLSearchParams();
+			body.set( 'ping', '1' );
+			body.set( 'action', cfg.statsAction );
+			body.set( '_ajax_nonce', cfg.statsNonce || '' );
+			fetch( cfg.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: body } )
+				.then( function ( r ) { return r.json(); } )
+				.then( function ( res ) {
+					var w = activeWrap( activeCard );
+					if ( w && res && res.success && res.data && typeof res.data.active_html === 'string' ) {
+						w.innerHTML = res.data.active_html;
+					}
+					if ( activeWrap( activeCard ) && ! isLiveBody( activeCard ) ) {
+						scheduleActive( activeInterval );
+					}
+				} )
+				.catch( function () {
+					if ( activeWrap( activeCard ) ) { scheduleActive( activeInterval * 2 ); }
+				} );
+		}
+
+		document.addEventListener( 'visibilitychange', function () {
+			if ( document.hidden ) { return; }
+			if ( liveCard && isLiveBody( liveCard ) ) { scheduleLive( 0 ); }
+			if ( activeCard && activeWrap( activeCard ) ) { scheduleActive( 0 ); }
 		} );
 
 		// Shared POST → swap card body. User-driven (chip click, date change),
@@ -472,13 +548,14 @@
 					}
 					card.classList.remove( 'is-loading' );
 					syncLive( card );
+					syncActive( card );
 				} )
 				.catch( function () { card.classList.remove( 'is-loading' ); } );
 		}
 
 		// Boot: a server-rendered Live card needs the polling loop kicked off.
 		var initial = document.querySelector( '[data-ak-stats]' );
-		if ( initial ) { syncLive( initial ); }
+		if ( initial ) { syncLive( initial ); syncActive( initial ); }
 
 		// Preset click: rolling preset / live → AJAX; "custom" → just reveal the
 		// inputs (no AJAX yet, the dates haven't changed).

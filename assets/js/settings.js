@@ -75,6 +75,12 @@
 	state.menu = ( SCREEN === 'menu' && MM.menu && MM.menu.length ) ? buildMenuModel( MM.menu, MM.config || { top: [], sub: {} } ) : [];
 	state.menuDirty = false;
 
+	// Toolbar working-model — { left, right } sides of the admin bar, filled async from
+	// REST on the Toolbar screen. Like the menu, it does NOT own a Save button: edits
+	// flag state.toolbarDirty and ride the shared "Save changes" bar (see save()).
+	state.toolbar = { left: [], right: [] };
+	state.toolbarDirty = false;
+
 	// --- tiny DOM helper -----------------------------------------------------
 	function el( tag, attrs, kids ) {
 		var n = document.createElement( tag );
@@ -152,6 +158,8 @@
 		tabs = [ { id: 'menu', label: I.menu, icon: ICONS.menu, build: buildMenu } ];
 	} else if ( SCREEN === 'stats' ) {
 		tabs = [ { id: 'stats', label: I.statsTab || 'Statistics', icon: ICONS.stats, build: buildStats } ];
+	} else if ( SCREEN === 'toolbar' ) {
+		tabs = [ { id: 'toolbar', label: I.toolbarTab || 'Toolbar', icon: ICONS.menu, build: buildToolbar } ];
 	} else {
 		tabs = [
 			{ id: 'brand', label: I.brandTitle, icon: ICONS.brand, build: buildDesign },
@@ -249,6 +257,13 @@
 	function buildDesign() {
 		var p = el( 'section', { 'class': 'ak-panel ak-panel--brand', role: 'tabpanel' } );
 
+		// Assigned once the live-preview pane is built (below). Logo + display-mode
+		// controls call it to re-skin the mock in real time. (Accent rides the
+		// global --ak-primary the accent picker already updates, so it needs no
+		// explicit refresh here.) Closures capture the var, so the stub is safe
+		// until the real updater lands.
+		var previewUpdate = function () {};
+
 		// --- Common helpers used inside buildDesign() ---------------------------
 
 		// Open the WP media frame and call back with the chosen attachment URL +
@@ -313,6 +328,7 @@
 				state.logos[ slotKey ] = url || '';
 				syncPreview();
 				markDirty();
+				previewUpdate();
 			}
 
 			// Logos use the plain media frame (free-form aspect, no crop).
@@ -367,6 +383,7 @@
 						x.setAttribute( 'aria-checked', on ? 'true' : 'false' );
 					} );
 					markDirty();
+					previewUpdate();
 				} );
 				btns.push( b );
 				seg.appendChild( b );
@@ -656,11 +673,111 @@
 			accentPicker()
 		] );
 
-		// Card stack: identity (slots) → display row → color row. Mounted
-		// directly under the panel — no wrapping intro text, the title on
-		// the card head already explains what this is.
-		var card = el( 'section', { 'class': 'ak-card' }, [
-			cardHead, slotsRow, displayRow, colorRow
+		// --- Live preview pane ---------------------------------------------------
+		// A self-contained mock of the admin chrome + login screen that re-skins as
+		// you edit: the logo (light/dark variant), the favicon-vs-logo display mode,
+		// and the accent (which rides the global --ak-primary the accent picker
+		// already updates live). Its OWN light/dark toggle uses fixed backdrops —
+		// like a swatch — so you see the brand in both themes regardless of the
+		// admin's current theme. Decorative throughout: aria-hidden, buttons inert.
+		function brandPreview() {
+			var theme = ( document.documentElement.getAttribute( 'data-adminkit-theme' ) === 'dark' ) ? 'dark' : 'light';
+
+			var barMark   = el( 'span', { 'class': 'ak-bp__mark' } );
+			var loginMark = el( 'span', { 'class': 'ak-bp__login-mark' } );
+
+			// Paint a brand mark (admin bar or login) for the current mode + theme:
+			//   logo mode    → the logo image for the active preview theme
+			//   favicon mode → the Site Icon (or an accent chip) + the site name
+			//   no asset     → a "Your logo" placeholder
+			function paintMark( markEl, mode ) {
+				markEl.textContent = '';
+				var logo = ( theme === 'dark' ? state.logos.dark : state.logos.light ) || state.logos.light || state.logos.dark || '';
+				if ( 'favicon' === mode ) {
+					if ( D.siteIcon ) {
+						markEl.appendChild( el( 'img', { 'class': 'ak-bp__favicon', src: D.siteIcon, alt: '' } ) );
+					} else {
+						markEl.appendChild( el( 'span', { 'class': 'ak-bp__favicon ak-bp__favicon--empty' } ) );
+					}
+					markEl.appendChild( el( 'span', { 'class': 'ak-bp__site', text: D.siteName || '' } ) );
+				} else if ( logo ) {
+					markEl.appendChild( el( 'img', { 'class': 'ak-bp__logo', src: logo, alt: '' } ) );
+				} else {
+					markEl.appendChild( el( 'span', { 'class': 'ak-bp__logo-ph', text: I.brandPreviewLogo || 'Your logo' } ) );
+				}
+			}
+
+			var bar = el( 'div', { 'class': 'ak-bp__bar' }, [
+				barMark,
+				el( 'span', { 'class': 'ak-bp__dots' }, [
+					el( 'span', { 'class': 'ak-bp__dot' } ),
+					el( 'span', { 'class': 'ak-bp__dot' } ),
+					el( 'span', { 'class': 'ak-bp__dot' } )
+				] )
+			] );
+
+			// Menu rail — five rows, the second active (painted in the accent).
+			var menu = el( 'div', { 'class': 'ak-bp__menu' } );
+			for ( var i = 0; i < 5; i++ ) {
+				menu.appendChild( el( 'div', { 'class': 'ak-bp__nav' + ( 1 === i ? ' is-active' : '' ) }, [
+					el( 'span', { 'class': 'ak-bp__nav-ic' } ),
+					el( 'span', { 'class': 'ak-bp__nav-bar' } )
+				] ) );
+			}
+
+			var content = el( 'div', { 'class': 'ak-bp__content' }, [
+				el( 'div', { 'class': 'ak-bp__h' } ),
+				el( 'div', { 'class': 'ak-bp__line' } ),
+				el( 'div', { 'class': 'ak-bp__line ak-bp__line--short' } ),
+				el( 'button', { type: 'button', tabindex: '-1', 'class': 'ak-bp__btn', text: I.brandPreviewButton || 'Button' } ),
+				el( 'div', { 'class': 'ak-bp__login' }, [
+					loginMark,
+					el( 'div', { 'class': 'ak-bp__field' } ),
+					el( 'div', { 'class': 'ak-bp__field' } ),
+					el( 'button', { type: 'button', tabindex: '-1', 'class': 'ak-bp__btn ak-bp__btn--block', text: I.brandPreviewSignIn || 'Sign in' } )
+				] )
+			] );
+
+			var frame = el( 'div', { 'class': 'ak-bp__frame', 'data-preview-theme': theme }, [
+				bar,
+				el( 'div', { 'class': 'ak-bp__layout' }, [ menu, content ] )
+			] );
+
+			function update() {
+				frame.setAttribute( 'data-preview-theme', theme );
+				paintMark( barMark, state.wpLogo );
+				paintMark( loginMark, state.loginLogo );
+			}
+
+			var lightBtn = el( 'button', { type: 'button', 'class': 'ak-bp__theme' + ( 'light' === theme ? ' is-active' : '' ), text: I.brandPreviewLight || 'Light' } );
+			var darkBtn  = el( 'button', { type: 'button', 'class': 'ak-bp__theme' + ( 'dark' === theme ? ' is-active' : '' ), text: I.brandPreviewDark || 'Dark' } );
+			function setTheme( t ) {
+				theme = t;
+				lightBtn.classList.toggle( 'is-active', 'light' === t );
+				darkBtn.classList.toggle( 'is-active', 'dark' === t );
+				update();
+			}
+			lightBtn.addEventListener( 'click', function () { setTheme( 'light' ); } );
+			darkBtn.addEventListener( 'click', function () { setTheme( 'dark' ); } );
+
+			var head = el( 'div', { 'class': 'ak-bp__head' }, [
+				el( 'span', { 'class': 'ak-bp__title', text: I.brandPreviewTitle || 'Live preview' } ),
+				el( 'div', { 'class': 'ak-bp__themes', role: 'group' }, [ lightBtn, darkBtn ] )
+			] );
+
+			var root = el( 'div', { 'class': 'ak-brand-preview' }, [ head, frame ] );
+			update();
+			return { el: root, update: update };
+		}
+
+		// Studio: identity + controls on the left, the live preview on the right.
+		var controls = el( 'div', { 'class': 'ak-brand-studio__controls' }, [ slotsRow, displayRow, colorRow ] );
+		var preview  = brandPreview();
+		previewUpdate = preview.update;
+
+		var card = el( 'section', { 'class': 'ak-card ak-card--studio' }, [
+			cardHead,
+			el( 'div', { 'class': 'ak-brand-studio' }, [ controls, preview.el ] )
 		] );
 		p.appendChild( card );
 
@@ -1013,45 +1130,71 @@
 			try { return Number( n || 0 ).toLocaleString(); } catch ( e ) { return String( n || 0 ); }
 		}
 
+		// Last live count rendered, so each refresh can TICK from the old value to the
+		// new one instead of snapping (the polling already happens — this is just the
+		// in-place tween, no extra requests).
+		var lastLiveCount = null;
+		function animateCount( elNum, from, to ) {
+			if ( ! elNum ) { return; }
+			from = from | 0; to = to | 0;
+			var reduce = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+			if ( from === to || reduce || ! window.requestAnimationFrame ) { elNum.textContent = num( to ); return; }
+			var start = null, dur = 600;
+			function step( ts ) {
+				if ( null === start ) { start = ts; }
+				var p = Math.min( 1, ( ts - start ) / dur );
+				var e = 1 - Math.pow( 1 - p, 3 ); // easeOutCubic
+				elNum.textContent = num( Math.round( from + ( to - from ) * e ) );
+				if ( p < 1 ) { requestAnimationFrame( step ); }
+			}
+			requestAnimationFrame( step );
+		}
+
 		function render( res ) {
 			body.innerHTML = '';
 
-			// Live mode has its own shape (no totals, no series). Show the active
-			// pill only on the live tab; always hide it on period presets.
+			// Live mode has its own shape (no totals, no series) — the big count IS
+			// the active number, so the header pill would be redundant. Hide it here;
+			// it shows on the PERIOD views instead, as live context.
 			if ( res.preset === 'live' ) {
-				var a = res.active | 0;
-				if ( a > 0 ) {
-					active.hidden = false;
-					active.innerHTML = '';
-					active.appendChild( el( 'span', { 'class': 'ak-stats__active-dot' } ) );
-					active.appendChild( document.createTextNode( num( a ) + ' ' + ( I.statsActive || 'active now' ) ) );
-				} else {
-					active.hidden = true;
-				}
+				active.hidden = true;
 				renderLive( res );
 				return;
 			}
 
-			// Period presets — never show the active-now pill here.
-			active.hidden = true;
+			// Period presets — surface the "active now" pill (live context next to
+			// the historical totals).
+			var a = res.active | 0;
+			if ( a > 0 ) {
+				active.hidden = false;
+				active.innerHTML = '';
+				active.appendChild( el( 'span', { 'class': 'ak-stats__active-dot' } ) );
+				active.appendChild( document.createTextNode( num( a ) + ' ' + ( I.statsActive || 'active now' ) ) );
+			} else {
+				active.hidden = true;
+			}
 
-			var totals = res.totals || { visits: 0, pageviews: 0 };
+			var totals = res.totals || { uniques: 0, pageviews: 0 };
+
+			// Metrics — ALWAYS shown (a clear "0 / 0" beats a blank panel when a short
+			// window like Today has no views yet). Unique visitors / Page views, each
+			// with a ▲/▼ trend vs the previous equal-length period, then extension tiles.
+			var prev = res.previous || null;
+			var tiles = [
+				metric( num( totals.uniques ), I.statsUniques || 'Unique visitors', prev ? trendFrom( totals.uniques, prev.uniques ) : null ),
+				metric( num( totals.pageviews ), I.statsPageviews || 'Page views', prev ? trendFrom( totals.pageviews, prev.pageviews ) : null )
+			].concat( extraCards( res.cards || [] ) );
+			body.appendChild( el( 'div', { 'class': 'ak-stats__metrics' }, tiles ) );
+
 			if ( ! ( totals.pageviews > 0 ) ) {
 				body.appendChild( el( 'p', { 'class': 'ak-stats__empty', text: I.statsNoData || 'No traffic data yet.' } ) );
 				return;
 			}
 
-			// Metrics — Visits / Page views, each with a ▲/▼ trend vs the previous
-			// equal-length period, then any extension-contributed tiles (res.cards).
-			var prev = res.previous || null;
-			var tiles = [
-				metric( num( totals.visits ), I.statsVisits || 'Visits', prev ? trendFrom( totals.visits, prev.visits ) : null ),
-				metric( num( totals.pageviews ), I.statsPageviews || 'Page views', prev ? trendFrom( totals.pageviews, prev.pageviews ) : null )
-			].concat( extraCards( res.cards || [] ) );
-			body.appendChild( el( 'div', { 'class': 'ak-stats__metrics' }, tiles ) );
-
-			// Bar chart (page views per day).
-			body.appendChild( chart( res.series || [] ) );
+			// Line/area chart (page views per day). null for a single day (no line to
+			// draw) — append only when present.
+			var c = chart( res.series || [] );
+			if ( c ) { body.appendChild( c ); }
 
 			// Two full lists.
 			body.appendChild( el( 'div', { 'class': 'ak-stats__cols' }, [
@@ -1066,8 +1209,9 @@
 		// visual rhythm is preserved.
 		function renderLive( res ) {
 			var count = res.active | 0;
+			var numEl = el( 'span', { 'class': 'ak-stats__live-num' } );
 			body.appendChild( el( 'div', { 'class': 'ak-stats__live-headline' }, [
-				el( 'span', { 'class': 'ak-stats__live-num', text: num( count ) } ),
+				numEl,
 				el( 'span', {
 					'class': 'ak-stats__live-lbl',
 					text: count === 1
@@ -1075,6 +1219,9 @@
 						: ( I.statsLiveHeadMany || 'visitors active right now' )
 				} )
 			] ) );
+			// Tick from the previous count → the new one (count up from 0 on first load).
+			animateCount( numEl, ( null === lastLiveCount ? 0 : lastLiveCount ), count );
+			lastLiveCount = count;
 			if ( 0 === count ) {
 				body.appendChild( el( 'p', { 'class': 'ak-stats__live-empty', text: I.statsLiveEmpty || 'Nobody is on the site right now.' } ) );
 				return;
@@ -1125,12 +1272,17 @@
 			] );
 		}
 
-		// Build a trend descriptor from current vs previous totals. No baseline
-		// (previous is zero) → null, so the first-ever period shows no misleading
-		// "+100%". Returns { dir: 'up'|'down'|'flat', text: '+12%' }.
+		// Build a trend descriptor from current vs previous totals. With a baseline,
+		// it's a signed percentage. With NO baseline (previous = 0) we can't show a
+		// percentage (÷0), so: new traffic → a plain ▲ (it IS up, vs nothing); still
+		// nothing → no badge. This way the indicator shows on every range, not just
+		// the ones whose prior window happens to have data.
+		// Returns { dir: 'up'|'down'|'flat', text } or null.
 		function trendFrom( cur, prev ) {
 			cur = cur | 0; prev = prev | 0;
-			if ( prev <= 0 ) { return null; }
+			if ( prev <= 0 ) {
+				return cur > 0 ? { dir: 'up', text: '' } : null;
+			}
 			var pct = Math.round( ( ( cur - prev ) / prev ) * 100 );
 			return {
 				dir:  pct > 0 ? 'up' : ( pct < 0 ? 'down' : 'flat' ),
@@ -1140,10 +1292,12 @@
 
 		function trendBadge( trend ) {
 			var arrow = trend.dir === 'up' ? '▲' : ( trend.dir === 'down' ? '▼' : '→' );
+			// No baseline (text empty) → "New" instead of a bare arrow, so the badge
+			// always reads as a labelled value (a % or "New").
 			return el( 'span', {
 				'class': 'ak-stats__trend ak-stats__trend--' + trend.dir,
 				title: I.statsVsPrev || 'vs previous period',
-				text: arrow + ' ' + ( trend.text || '' )
+				text: arrow + ' ' + ( trend.text || ( I.statsTrendNew || 'New' ) )
 			} );
 		}
 
@@ -1159,36 +1313,75 @@
 			} );
 		}
 
-		// A lightweight SVG bar chart — one bar per day, page views. Built with the
-		// DOM (createElementNS) so values are plain numbers, no markup injection.
+		// A lightweight SVG line/area chart — page views over the period, drawn as a
+		// single line with a soft accent fill beneath (same idiom as the dashboard
+		// sparkline). Linear, not bars, so a long sparse range still reads as a
+		// trend instead of empty blocks. DOM-built — values are plain numbers, no
+		// markup injection; the line uses non-scaling-stroke (CSS) so it stays crisp
+		// when the viewBox stretches to the container width.
 		function chart( series ) {
+			// Need ≥2 points for a line — a single day (Today) shows just the metrics
+			// + lists, no chart card at all (null → caller skips it).
+			if ( series.length < 2 ) { return null; }
 			var wrap = el( 'div', { 'class': 'ak-stats__chart' } );
-			if ( ! series.length ) { return wrap; }
 			var max = 1;
 			series.forEach( function ( d ) { if ( ( d.pageviews | 0 ) > max ) { max = d.pageviews | 0; } } );
 
 			var NS = 'http://www.w3.org/2000/svg';
-			var W = 600, H = 120, gap = 2;
-			var bw = ( W - gap * ( series.length - 1 ) ) / series.length;
+			var W = 600, H = 120, px = 1, py = 8;
+			var iw = W - 2 * px, ih = H - 2 * py, base = H - py, n = series.length;
+			function xAt( i ) { return ( n === 1 ) ? ( px + iw / 2 ) : ( px + i * iw / ( n - 1 ) ); }
+			function yAt( v ) { return py + ih * ( 1 - ( ( v | 0 ) / max ) ); }
+
+			var line = '';
+			var area = 'M' + xAt( 0 ).toFixed( 2 ) + ' ' + base.toFixed( 2 ) + ' ';
+			series.forEach( function ( d, i ) {
+				var x = xAt( i ).toFixed( 2 ), y = yAt( d.pageviews ).toFixed( 2 );
+				line += ( i === 0 ? 'M' : 'L' ) + x + ' ' + y + ' ';
+				area += 'L' + x + ' ' + y + ' ';
+			} );
+			area += 'L' + xAt( n - 1 ).toFixed( 2 ) + ' ' + base.toFixed( 2 ) + ' Z';
+
 			var svg = document.createElementNS( NS, 'svg' );
 			svg.setAttribute( 'class', 'ak-stats__chart-svg' );
 			svg.setAttribute( 'viewBox', '0 0 ' + W + ' ' + H );
 			svg.setAttribute( 'preserveAspectRatio', 'none' );
-			series.forEach( function ( d, i ) {
-				var pv = d.pageviews | 0;
-				var h = Math.max( 1, Math.round( ( pv / max ) * ( H - 2 ) ) );
-				var r = document.createElementNS( NS, 'rect' );
-				r.setAttribute( 'class', 'ak-stats__bar' );
-				r.setAttribute( 'x', ( i * ( bw + gap ) ).toFixed( 2 ) );
-				r.setAttribute( 'y', ( H - h ).toFixed( 2 ) );
-				r.setAttribute( 'width', bw.toFixed( 2 ) );
-				r.setAttribute( 'height', h.toFixed( 2 ) );
-				var title = document.createElementNS( NS, 'title' );
-				title.textContent = ( d.date || '' ) + ' · ' + num( pv ) + ' ' + ( I.statsColViews || 'views' );
-				r.appendChild( title );
-				svg.appendChild( r );
+			// Hairline y-reference gridlines (top = max, middle, bottom = 0).
+			[ py, py + ih / 2, base ].forEach( function ( gy ) {
+				var g = document.createElementNS( NS, 'line' );
+				g.setAttribute( 'class', 'ak-stats__grid' );
+				g.setAttribute( 'x1', '0' ); g.setAttribute( 'x2', String( W ) );
+				g.setAttribute( 'y1', gy.toFixed( 2 ) ); g.setAttribute( 'y2', gy.toFixed( 2 ) );
+				svg.appendChild( g );
 			} );
-			wrap.appendChild( svg );
+			var a = document.createElementNS( NS, 'path' );
+			a.setAttribute( 'class', 'ak-stats__area' );
+			a.setAttribute( 'd', area.replace( /\s+$/, '' ) );
+			var l = document.createElementNS( NS, 'path' );
+			l.setAttribute( 'class', 'ak-stats__line' );
+			l.setAttribute( 'd', line.replace( /\s+$/, '' ) );
+			svg.appendChild( a );
+			svg.appendChild( l );
+
+			// Y axis (left): max / mid / 0, aligned to the three gridlines.
+			var yax = el( 'div', { 'class': 'ak-stats__chart-y', 'aria-hidden': 'true' }, [
+				el( 'span', { text: num( max ) } ),
+				el( 'span', { text: num( Math.round( max / 2 ) ) } ),
+				el( 'span', { text: '0' } )
+			] );
+
+			// X axis (bottom): first / middle / last day. 'Y-m-d' → 'DD/MM' by string
+			// split (no Date object — cheap, no timezone surprises).
+			function dm( d ) { var p = ( d || '' ).split( '-' ); return p.length === 3 ? ( p[ 2 ] + '/' + p[ 1 ] ) : ( d || '' ); }
+			var xLabels = [ el( 'span', { text: dm( series[ 0 ].date ) } ) ];
+			if ( n > 2 ) { xLabels.push( el( 'span', { text: dm( series[ Math.floor( ( n - 1 ) / 2 ) ].date ) } ) ); }
+			if ( n > 1 ) { xLabels.push( el( 'span', { text: dm( series[ n - 1 ].date ) } ) ); }
+			var xax = el( 'div', { 'class': 'ak-stats__chart-x', 'aria-hidden': 'true' }, xLabels );
+
+			wrap.appendChild( el( 'div', { 'class': 'ak-stats__chart-axes' }, [
+				yax,
+				el( 'div', { 'class': 'ak-stats__chart-plot' }, [ svg, xax ] )
+			] ) );
 			return wrap;
 		}
 
@@ -1201,43 +1394,101 @@
 			] );
 		}
 
-		function pageList( rows ) {
-			var box = listShell( I.statsTopPages || 'Top pages', I.statsColPage, I.statsColViews || 'Views' );
+		// A searchable + paginated list — the full Statistics page can hold dozens of
+		// top pages / sources, so a search box + a 10-per-row pager keeps it scannable
+		// (the dashboard card stays a 5-row glance). All client-side over the rows we
+		// already fetched — no extra requests. `rowText(r)` returns the searchable
+		// string; `rowEl(r)` builds the <li>. Both pure.
+		function searchableList( heading, colName, colVal, rows, rowText, rowEl ) {
+			var box = listShell( heading, colName, colVal );
 			if ( ! rows.length ) {
 				box.appendChild( el( 'p', { 'class': 'ak-stats__none', text: I.statsNone || 'No data' } ) );
 				return box;
 			}
-			var ul = el( 'ul', { 'class': 'ak-stats__rows' } );
-			rows.forEach( function ( r ) {
-				var link = el( 'a', { 'class': 'ak-stats__row-name', href: r.url || '#', target: '_blank', rel: 'noopener', title: r.path || '' }, [
-					el( 'span', { 'class': 'ak-stats__row-title', text: r.title || r.path || '' } ),
-					el( 'span', { 'class': 'ak-stats__row-sub', text: r.path || '' } )
-				] );
-				ul.appendChild( el( 'li', { 'class': 'ak-stats__row' }, [
-					link,
-					el( 'span', { 'class': 'ak-stats__row-val', text: num( r.pageviews ) } )
-				] ) );
-			} );
+			var PAGE = 10;
+			var view = rows.slice(); // current (filtered) view
+			var page = 0;
+			var ul   = el( 'ul', { 'class': 'ak-stats__rows' } );
+
+			// Search — only worth showing once there's more than a page of rows.
+			if ( rows.length > PAGE ) {
+				var search = el( 'input', {
+					type: 'search',
+					'class': 'ak-stats__search',
+					placeholder: I.statsSearch || 'Search…',
+					'aria-label': ( I.statsSearch || 'Search' ) + ' — ' + heading
+				} );
+				search.addEventListener( 'input', function () {
+					var q = search.value.trim().toLowerCase();
+					view = q
+						? rows.filter( function ( r ) { return rowText( r ).toLowerCase().indexOf( q ) !== -1; } )
+						: rows.slice();
+					page = 0;
+					paint();
+				} );
+				box.appendChild( el( 'div', { 'class': 'ak-stats__list-tools' }, [ search ] ) );
+			}
+
 			box.appendChild( ul );
+
+			var prev = el( 'button', { type: 'button', 'class': 'ak-stats__pager-btn', 'aria-label': I.statsPagerPrev || 'Previous', text: '‹',
+				onclick: function () { if ( page > 0 ) { page--; paint(); } } } );
+			var info = el( 'span', { 'class': 'ak-stats__pager-info' } );
+			var next = el( 'button', { type: 'button', 'class': 'ak-stats__pager-btn', 'aria-label': I.statsPagerNext || 'Next', text: '›',
+				onclick: function () { if ( ( page + 1 ) * PAGE < view.length ) { page++; paint(); } } } );
+			var pager = el( 'div', { 'class': 'ak-stats__pager' }, [ prev, info, next ] );
+			box.appendChild( pager );
+
+			function paint() {
+				ul.innerHTML = '';
+				if ( ! view.length ) {
+					ul.appendChild( el( 'li', { 'class': 'ak-stats__row ak-stats__row--empty' }, [
+						el( 'span', { 'class': 'ak-stats__row-name', text: I.statsNoMatch || 'No match' } )
+					] ) );
+				} else {
+					view.slice( page * PAGE, page * PAGE + PAGE ).forEach( function ( r ) { ul.appendChild( rowEl( r ) ); } );
+				}
+				var total = view.length;
+				var from  = total ? page * PAGE + 1 : 0;
+				var to    = Math.min( total, page * PAGE + PAGE );
+				info.textContent = total ? ( from + '–' + to + ' / ' + total ) : '';
+				prev.disabled = page === 0;
+				next.disabled = ( page + 1 ) * PAGE >= total;
+				pager.hidden  = total <= PAGE; // single page → no pager chrome
+			}
+			paint();
 			return box;
 		}
 
+		function pageList( rows ) {
+			return searchableList(
+				I.statsTopPages || 'Top pages', I.statsColPage, I.statsColViews || 'Views', rows,
+				function ( r ) { return ( r.title || '' ) + ' ' + ( r.path || '' ); },
+				function ( r ) {
+					var link = el( 'a', { 'class': 'ak-stats__row-name', href: r.url || '#', target: '_blank', rel: 'noopener', title: r.path || '' }, [
+						el( 'span', { 'class': 'ak-stats__row-title', text: r.title || r.path || '' } ),
+						el( 'span', { 'class': 'ak-stats__row-sub', text: r.path || '' } )
+					] );
+					return el( 'li', { 'class': 'ak-stats__row' }, [
+						link,
+						el( 'span', { 'class': 'ak-stats__row-val', text: num( r.pageviews ) } )
+					] );
+				}
+			);
+		}
+
 		function sourceList( rows ) {
-			var box = listShell( I.statsTopSources || 'Top sources', I.statsColSource, I.statsColVisits || 'Visits' );
-			if ( ! rows.length ) {
-				box.appendChild( el( 'p', { 'class': 'ak-stats__none', text: I.statsNone || 'No data' } ) );
-				return box;
-			}
-			var ul = el( 'ul', { 'class': 'ak-stats__rows' } );
-			rows.forEach( function ( r ) {
-				var label = ( r.name === 'direct' ) ? ( I.statsDirect || 'Direct' ) : ( r.name || '' );
-				ul.appendChild( el( 'li', { 'class': 'ak-stats__row' }, [
-					el( 'span', { 'class': 'ak-stats__row-name', title: label, text: label } ),
-					el( 'span', { 'class': 'ak-stats__row-val', text: num( r.visits ) } )
-				] ) );
-			} );
-			box.appendChild( ul );
-			return box;
+			return searchableList(
+				I.statsTopSources || 'Top sources', I.statsColSource, I.statsColVisits || 'Visits', rows,
+				function ( r ) { return ( r.name === 'direct' ) ? ( I.statsDirect || 'Direct' ) : ( r.name || '' ); },
+				function ( r ) {
+					var label = ( r.name === 'direct' ) ? ( I.statsDirect || 'Direct' ) : ( r.name || '' );
+					return el( 'li', { 'class': 'ak-stats__row' }, [
+						el( 'span', { 'class': 'ak-stats__row-name', title: label, text: label } ),
+						el( 'span', { 'class': 'ak-stats__row-val', text: num( r.visits ) } )
+					] );
+				}
+			);
 		}
 
 		// Kick off the first fetch. On the dedicated Statistics page (SCREEN===stats)
@@ -1274,6 +1525,8 @@
 		if ( ! list.length ) { return p; }
 
 		var inputs = []; // every toggle (native + generic), for the Reset button
+		var rowsRef = []; // { row, text } per plugin row, for the search filter
+		var groupsRef = []; // { wrap, rows[] } per section, to hide an emptied group
 
 		// Brand "Native" chip, left of the plugin name — supported plugins only.
 		function nativeBadge() {
@@ -1402,7 +1655,8 @@
 			markDirty();
 		}
 
-		// Build the sections first (this fills `inputs`), then prepend the bulk bar.
+		// Build the sections first (this fills `inputs` + the search refs), then the
+		// search field + bulk bar above them.
 		var sections = [];
 		[
 			{ type: 'theme',  label: I.themesLabel || 'Themes' },
@@ -1411,15 +1665,48 @@
 			var items = list.filter( function ( i ) { return i.type === sec.type; } );
 			if ( ! items.length ) { return; }
 			var rows = el( 'div', { 'class': 'ak-rows' } );
-			items.forEach( function ( i ) { rows.appendChild( pluginRow( i ) ); } );
-			sections.push( el( 'div', { 'class': 'ak-group' }, [
+			var groupRows = [];
+			items.forEach( function ( i ) {
+				var r = pluginRow( i );
+				// Searchable by plugin name + its badge word (so "native" / "generic"
+				// narrow to that kind). The badge tracks the adapter status.
+				var badge = i.system ? ( I.system || 'System' ) : ( i.supported ? ( I.native || 'Native' ) : ( I.generic || 'Generic' ) );
+				var ref = { row: r, text: ( ( i.label || '' ) + ' ' + badge ).toLowerCase() };
+				rowsRef.push( ref );
+				groupRows.push( ref );
+				rows.appendChild( r );
+			} );
+			var wrap = el( 'div', { 'class': 'ak-group' }, [
 				el( 'h2', { 'class': 'ak-group__title' }, [
 					el( 'span', { text: sec.label } ),
 					el( 'span', { 'class': 'ak-badge ak-group__count', text: String( items.length ) } )
 				] ),
 				rows
-			] ) );
+			] );
+			groupsRef.push( { wrap: wrap, rows: groupRows } );
+			sections.push( wrap );
 		} );
+
+		// Search — filters plugin rows by name / badge as you type, hiding groups
+		// left with nothing (same idiom as the Features tab).
+		var search = el( 'input', {
+			type: 'search',
+			'class': 'ak-search',
+			placeholder: I.searchPlugins || 'Search plugins…',
+			'aria-label': I.searchPlugins || 'Search plugins…'
+		} );
+		function filterPlugins() {
+			var q = ( search.value || '' ).trim().toLowerCase();
+			rowsRef.forEach( function ( r ) {
+				r.row.style.display = ( ! q || r.text.indexOf( q ) !== -1 ) ? '' : 'none';
+			} );
+			groupsRef.forEach( function ( g ) {
+				var any = g.rows.some( function ( r ) { return r.row.style.display !== 'none'; } );
+				g.wrap.style.display = any ? '' : 'none';
+			} );
+		}
+		search.addEventListener( 'input', filterPlugins );
+		p.appendChild( el( 'div', { 'class': 'ak-search-wrap' }, [ search ] ) );
 
 		// Single bulk control — Reset puts every toggle back to ON (the
 		// "AdminKit handles this plugin" default for both native + generic).
@@ -1573,6 +1860,155 @@
 
 	function markMenuDirty() { state.menuDirty = true; markDirty(); }
 
+	// Toolbar editor — reorder + hide the TOP-LEVEL admin-bar nodes, split into the bar's
+	// two native sides (the left default group vs the right `top-secondary` / account
+	// cluster) so reordering never fights WP's group boundary — dragging stays within a
+	// side. Live nodes are fetched over REST (the bar renders too late to ship in boot
+	// data); reorder via the drag handle or ↑↓; hide via the eye; Reset returns to the
+	// native layout. No standalone Save — edits ride the shared "Save changes" bar.
+	// Top level only; no rename / custom items / icons (kept deliberately simple).
+	function buildToolbar() {
+		var TB = D.toolbar || {};
+		var p  = el( 'section', { 'class': 'ak-panel ak-panel--menu', role: 'tabpanel' }, [ intro( I.toolbarIntro ) ] );
+		var listWrap = el( 'div', { 'class': 'ak-menu-tree' } );
+		var nodesRaw = []; // the pristine fetched nodes, kept so Reset can rebuild
+
+		p.appendChild( el( 'div', { 'class': 'ak-actions ak-menu-toolbar' }, [
+			el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--ghost', text: I.toolbarReset || 'Reset', onclick: reset } )
+		] ) );
+		p.appendChild( listWrap );
+
+		function load() {
+			if ( ! apiFetch || ! TB.route ) { listWrap.textContent = I.statsNone || '—'; return; }
+			apiFetch( { path: tbPath() } )
+				.then( function ( res ) {
+					nodesRaw = ( res && res.nodes ) || [];
+					state.toolbar = toSides( nodesRaw, ( res && res.config ) || {} );
+					render();
+				} )
+				.catch( function () { listWrap.textContent = I.statsNone || '—'; } );
+		}
+
+		// Build { left, right } from the live nodes + a saved layout: honour the saved
+		// order WITHIN each side, append any new/unseen node in native order, carry hidden.
+		function toSides( nodes, config ) {
+			var hidden = {};
+			( config.hidden || [] ).forEach( function ( id ) { hidden[ id ] = true; } );
+			var byId = {};
+			nodes.forEach( function ( n ) { byId[ n.id ] = { id: n.id, label: n.label, group: n.group, hidden: !! hidden[ n.id ] }; } );
+			var sides = { left: [], right: [] }, seen = {};
+			function place( it ) { sides[ it.group === 'secondary' ? 'right' : 'left' ].push( it ); }
+			( config.order || [] ).forEach( function ( id ) { if ( byId[ id ] && ! seen[ id ] ) { seen[ id ] = 1; place( byId[ id ] ); } } );
+			nodes.forEach( function ( n ) { if ( ! seen[ n.id ] ) { seen[ n.id ] = 1; place( byId[ n.id ] ); } } );
+			return sides;
+		}
+
+		function reset() {
+			state.toolbar = toSides( nodesRaw, {} ); // native order, nothing hidden
+			render();
+			markToolbarDirty();
+		}
+
+		// Swap a row with its neighbour (↑↓), within its own side only.
+		function move( side, i, dir ) {
+			var list = state.toolbar[ side ], to = i + dir;
+			if ( to < 0 || to >= list.length ) { return; }
+			var tmp = list[ i ]; list[ i ] = list[ to ]; list[ to ] = tmp;
+			render(); markToolbarDirty();
+		}
+		// Splice a dragged row out and back in at a new index, same side.
+		function moveTo( side, from, to ) {
+			var list = state.toolbar[ side ];
+			if ( from === to || from < 0 || from >= list.length ) { return; }
+			list.splice( to, 0, list.splice( from, 1 )[ 0 ] );
+		}
+
+		function render() {
+			listWrap.textContent = '';
+			if ( ! ( state.toolbar.left.length + state.toolbar.right.length ) ) {
+				listWrap.appendChild( el( 'p', { 'class': 'ak-stats__empty', text: I.toolbarEmpty || 'No toolbar items found.' } ) );
+				return;
+			}
+			section( 'left', I.toolbarLeft || 'Left' );
+			section( 'right', I.toolbarRight || 'Right' );
+		}
+
+		// One side: a small heading + its draggable rows. Drag is scoped to the side via
+		// the drop predicate (ds.side === side), so a row can't cross the boundary.
+		function section( side, heading ) {
+			var list = state.toolbar[ side ];
+			if ( ! list.length ) { return; }
+			listWrap.appendChild( el( 'div', { 'class': 'ak-toolbar__side' }, [ el( 'span', { text: heading } ) ] ) );
+			list.forEach( function ( item, i ) {
+				var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--top' + ( item.hidden ? ' is-hidden' : '' ) } );
+				var h   = handle();
+				row.appendChild( h );
+				row.appendChild( moveCtl( side, i ) );
+				row.appendChild( el( 'span', { 'class': 'ak-menu-row__title', text: item.label } ) );
+				row.appendChild( hideCtl( item ) );
+				dragSource( h, row, { kind: 'tb', side: side, i: i } );
+				dropZone( row, function ( ds ) { return ds.kind === 'tb' && ds.side === side; }, function ( ds ) {
+					moveTo( side, ds.i, i ); render(); markToolbarDirty();
+				} );
+				listWrap.appendChild( el( 'div', { 'class': 'ak-menu-group' }, [ row ] ) );
+			} );
+		}
+
+		function moveCtl( side, i ) {
+			var up = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveUp || 'Move up', 'aria-label': I.menuMoveUp || 'Move up', onclick: function () { move( side, i, -1 ); } } );
+			up.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>';
+			var down = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveDown || 'Move down', 'aria-label': I.menuMoveDown || 'Move down', onclick: function () { move( side, i, 1 ); } } );
+			down.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+			return el( 'span', { 'class': 'ak-menu-move' }, [ up, down ] );
+		}
+
+		function hideCtl( item ) {
+			var btn = el( 'button', { type: 'button', 'class': 'ak-menu-hide' } );
+			paint( btn, item );
+			btn.addEventListener( 'click', function () {
+				item.hidden = ! item.hidden;
+				paint( btn, item );
+				var row = btn.closest && btn.closest( '.ak-menu-row' );
+				if ( row ) { row.classList.toggle( 'is-hidden', !! item.hidden ); }
+				markToolbarDirty();
+			} );
+			return btn;
+		}
+		function paint( btn, item ) {
+			var eye    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S5.5 5.5 12 5.5 21.5 12 21.5 12 18.5 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+			var eyeOff = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.6 9.6 0 0 1 12 6c6.5 0 9.5 6 9.5 6a16.2 16.2 0 0 1-2.3 3.1M6.6 6.6A16 16 0 0 0 2.5 12s3 6 9.5 6a9.3 9.3 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+			var lbl = item.hidden ? ( I.menuShow || 'Show' ) : ( I.menuHide || 'Hide' );
+			btn.innerHTML = item.hidden ? eyeOff : eye;
+			btn.setAttribute( 'aria-pressed', item.hidden ? 'true' : 'false' );
+			btn.setAttribute( 'title', lbl );
+			btn.setAttribute( 'aria-label', lbl );
+		}
+
+		load();
+		return p;
+	}
+
+	// Normalise the toolbar REST route to a leading-slash path (apiFetch wants that).
+	function tbPath() {
+		var r = ( D.toolbar && D.toolbar.route ) || '';
+		return r.charAt( 0 ) === '/' ? r : '/' + r;
+	}
+
+	// Flag the toolbar layout dirty and light up the shared Save bar (mirrors the menu).
+	function markToolbarDirty() { state.toolbarDirty = true; markDirty(); }
+
+	// Flatten { left, right } into the persisted shape: a single ordered id list (left
+	// then right — the server reorders WITHIN each WP group, so the concatenation is safe)
+	// plus the hidden id set. Read by the shared save() when state.toolbarDirty.
+	function gatherToolbar() {
+		var t   = state.toolbar || { left: [], right: [] };
+		var all = ( t.left || [] ).concat( t.right || [] );
+		return {
+			order:  all.map( function ( m ) { return m.id; } ),
+			hidden: all.filter( function ( m ) { return m.hidden; } ).map( function ( m ) { return m.id; } )
+		};
+	}
+
 	function buildMenu() {
 		var p = el( 'section', { 'class': 'ak-panel ak-panel--menu', role: 'tabpanel' } );
 		p.appendChild( intro( I.menuIntro ) );
@@ -1675,6 +2111,7 @@
 		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--sep' + ( item.hidden ? ' is-hidden' : '' ) } );
 		var h = handle();
 		row.appendChild( h );
+		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
 		row.appendChild( el( 'span', { 'class': 'ak-menu-row__title ak-menu-seplabel', text: '— ' + I.menuSeparator + ' —' } ) );
 		row.appendChild( hideBtn( item, tree ) );
 		row.appendChild( removeBtn( ti, tree ) );
@@ -1689,11 +2126,15 @@
 		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--link' + ( item.hidden ? ' is-hidden' : '' ) } );
 		var h = handle();
 		row.appendChild( h );
+		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
 		row.appendChild( iconBtn( item, tree ) );
 		var titleIn = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: item.title || '', placeholder: I.menuLinkTitle } );
 		titleIn.addEventListener( 'input', function () { item.title = titleIn.value; markMenuDirty(); } );
 		var urlIn = el( 'input', { type: 'text', 'class': 'ak-menu-input ak-menu-input--url', value: item.url || '', placeholder: I.menuLinkUrl } );
 		urlIn.addEventListener( 'input', function () { item.url = urlIn.value; markMenuDirty(); } );
+		// Order: handle · move · icon · [title + URL fields] · new-tab · hide · remove.
+		// The title + URL inputs are the editable content; new-tab, hide (eye) and the
+		// remove (×) sit at the far right.
 		row.appendChild( titleIn );
 		row.appendChild( urlIn );
 		row.appendChild( newTabBtn( item, tree ) );
@@ -1719,8 +2160,11 @@
 		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--top' + ( top.hidden ? ' is-hidden' : '' ) } );
 		var h = handle();
 		row.appendChild( h );
+		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
+		// Order: handle · move(↑↓) · icon · [title fills] · link(URL) · submenus · hide(eye).
 		row.appendChild( iconBtn( top, tree ) );
 		row.appendChild( titleInput( top ) );
+		row.appendChild( urlBtn( top, tree ) );
 		if ( top.children.length ) {
 			var caret = el( 'span', { 'class': 'ak-menu-row__caret', 'aria-hidden': 'true' } );
 			caret.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
@@ -1732,7 +2176,7 @@
 				onclick: function () { top.open = ! top.open; renderTree( tree ); }
 			}, [ caret, el( 'span', { text: top.children.length + ' ' + I.menuSubmenus } ) ] ) );
 		}
-		row.appendChild( urlBtn( top, tree ) );
+		// Hide (eye) sits at the row's far right (never AdminKit's own menu).
 		if ( top.slug !== MM.self ) {
 			row.appendChild( hideBtn( top, tree ) );
 		}
@@ -1761,6 +2205,7 @@
 		var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--child' + ( child.hidden ? ' is-hidden' : '' ) } );
 		var h = handle();
 		row.appendChild( h );
+		row.appendChild( moveControl( moveChildBy( ti, ci, tree ) ) );
 		row.appendChild( titleInput( child ) );
 		row.appendChild( hideBtn( child, tree ) );
 		dragSource( h, row, { kind: 'sub', ti: ti, ci: ci } );
@@ -1774,6 +2219,37 @@
 		var h = el( 'span', { 'class': 'ak-menu-handle', title: I.menuDragHint, 'aria-hidden': 'true' } );
 		h.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.6"/><circle cx="15" cy="5" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="19" r="1.6"/><circle cx="15" cy="19" r="1.6"/></svg>';
 		return h;
+	}
+
+	// Up/down reorder control next to the drag handle — a keyboard/click-accessible
+	// alternative to dragging (drag-and-drop alone isn't accessible). `move(-1)` =
+	// up, `move(+1)` = down; a no-op at the list edges.
+	function moveControl( move ) {
+		var up = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveUp || 'Move up', 'aria-label': I.menuMoveUp || 'Move up', onclick: function () { move( -1 ); } } );
+		up.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>';
+		var down = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveDown || 'Move down', 'aria-label': I.menuMoveDown || 'Move down', onclick: function () { move( 1 ); } } );
+		down.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+		return el( 'span', { 'class': 'ak-menu-move' }, [ up, down ] );
+	}
+
+	// Swap a top-level item by ±1 (the move() callback for moveControl).
+	function moveTopBy( ti, tree ) {
+		return function ( dir ) {
+			var to = ti + dir, m = state.menu;
+			if ( to < 0 || to >= m.length ) { return; }
+			var tmp = m[ ti ]; m[ ti ] = m[ to ]; m[ to ] = tmp;
+			renderTree( tree ); markMenuDirty();
+		};
+	}
+
+	// Swap a child within its parent's list by ±1.
+	function moveChildBy( ti, ci, tree ) {
+		return function ( dir ) {
+			var kids = state.menu[ ti ].children, to = ci + dir;
+			if ( to < 0 || to >= kids.length ) { return; }
+			var tmp = kids[ ci ]; kids[ ci ] = kids[ to ]; kids[ to ] = tmp;
+			renderTree( tree ); markMenuDirty();
+		};
 	}
 
 	// Hide/Show toggle, a compact eye icon (saves the room the old text button took).
@@ -1824,6 +2300,9 @@
 		if ( top.icon === 'wp-default' ) {
 			// Show the item's original WordPress dashicon in the picker button.
 			g = el( 'span', { 'class': 'dashicons ' + ( top.dashicon || 'dashicons-admin-settings' ) } );
+		} else if ( top.icon && top.icon.indexOf( 'dashicons-' ) === 0 ) {
+			// A chosen WordPress dashicon.
+			g = el( 'span', { 'class': 'dashicons ' + top.icon } );
 		} else if ( top.icon && top.icon.indexOf( 'data:' ) === 0 ) {
 			g = el( 'span', { 'class': 'ak-menu-icon__g ak-menu-icon__mask' } );
 			g.style.webkitMaskImage = 'url("' + top.icon + '")';
@@ -1859,15 +2338,20 @@
 		}
 		function choose( val ) { top.icon = val; paint(); markMenuDirty(); }
 
-		// "Default" = the item's own original WordPress dashicon (icon = ''). The
-		// separate "WordPress icon" choice was removed — it resolved to the same glyph
-		// and only confused the choice. Pick Default, an AdminKit icon, or paste one.
+		// Reset bar — two clear resets: the AdminKit default for this item (icon = ''),
+		// and the item's ORIGINAL WordPress dashicon ('wp-default'). Below you pick a
+		// specific AdminKit glyph, a WordPress dashicon, or paste your own.
 		var defBar = el( 'div', { 'class': 'ak-icon-pop__defbar' } );
 		var noneBtn = el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconNone, onclick: function () { choose( '' ); } } );
 		choices.push( { el: noneBtn, val: '' } );
 		defBar.appendChild( noneBtn );
+		var wpBtn = el( 'button', { type: 'button', 'class': 'ak-icon-pop__def', text: I.menuIconWp || 'WordPress icon', onclick: function () { choose( 'wp-default' ); } } );
+		choices.push( { el: wpBtn, val: 'wp-default' } );
+		defBar.appendChild( wpBtn );
 		pop.appendChild( defBar );
 
+		// AdminKit glyphs.
+		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__h', text: I.menuIconAkSet || 'AdminKit icons' } ) );
 		var grid = el( 'div', { 'class': 'ak-icon-pop__grid' } );
 		Object.keys( MM.icons || {} ).forEach( function ( name ) {
 			var sw = el( 'button', { type: 'button', 'class': 'ak-icon-pop__sw', title: name, 'aria-label': name, onclick: function () { choose( name ); } } );
@@ -1876,6 +2360,30 @@
 			grid.appendChild( sw );
 		} );
 		pop.appendChild( grid );
+
+		// WordPress dashicons — a searchable grid. The dashicons font is already loaded
+		// in wp-admin, so each swatch renders with no extra assets; PHP only offers the
+		// dashicons AdminKit doesn't remap, so picking one paints the NATIVE dashicon.
+		var dashList = MM.dashicons || [];
+		if ( dashList.length ) {
+			pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__h', text: I.menuIconWpSet || 'WordPress icons' } ) );
+			var wpSearch = el( 'input', { type: 'search', 'class': 'ak-icon-pop__search', placeholder: I.menuIconSearch || 'Search…', 'aria-label': I.menuIconWpSet || 'WordPress icons' } );
+			var wpGrid = el( 'div', { 'class': 'ak-icon-pop__grid ak-icon-pop__grid--dash' } );
+			var dashSw = [];
+			dashList.forEach( function ( cls ) {
+				var sw = el( 'button', { type: 'button', 'class': 'ak-icon-pop__sw', title: cls, 'aria-label': cls, onclick: function () { choose( cls ); } } );
+				sw.appendChild( el( 'span', { 'class': 'dashicons ' + cls } ) );
+				choices.push( { el: sw, val: cls } );
+				dashSw.push( { el: sw, key: cls.replace( 'dashicons-', '' ) } );
+				wpGrid.appendChild( sw );
+			} );
+			wpSearch.addEventListener( 'input', function () {
+				var q = wpSearch.value.trim().toLowerCase().replace( /^dashicons-/, '' );
+				dashSw.forEach( function ( d ) { d.el.style.display = ( ! q || d.key.indexOf( q ) !== -1 ) ? '' : 'none'; } );
+			} );
+			pop.appendChild( wpSearch );
+			pop.appendChild( wpGrid );
+		}
 
 		// Custom icon — one line: a leading image glyph (the affordance) + a field to
 		// paste raw <svg> markup or a data:image/svg+xml URI (base64 or encoded) + Apply.
@@ -1892,11 +2400,45 @@
 		ta.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Enter' ) { e.preventDefault(); applyBtn.click(); } } );
 		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom' }, [ customIc, ta, applyBtn ] ) );
 
+		// Quick tip: where to grab a pasteable SVG icon.
+		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__hint' }, [
+			document.createTextNode( ( I.menuIconHint || 'Need an icon? Copy an SVG from' ) + ' ' ),
+			el( 'a', { href: 'https://www.iconbolt.com/', target: '_blank', rel: 'noopener', text: 'Icon Bolt' } ),
+			document.createTextNode( '.' )
+		] ) );
+
 		anchor.parentNode.appendChild( pop );
+		positionPopover( pop, anchor );
 		pop.__akAnchor = anchor;
 		openPicker = pop;
 		paint(); // seed the highlight (no dirty flag).
 		setTimeout( function () { document.addEventListener( 'mousedown', onDocDown, true ); }, 0 );
+	}
+
+	// Place a popover directly under its anchor button, clamped to the row so it
+	// never spills past the right edge — fixes the picker opening at the row's far
+	// left for right-hand buttons (URL / hide). Row is position:relative.
+	function positionPopover( pop, anchor ) {
+		var row  = anchor.parentNode;
+		var rowW = row.offsetWidth;
+		var popW = pop.offsetWidth || 264;
+		var left = anchor.offsetLeft;
+		if ( left + popW > rowW ) { left = Math.max( 0, rowW - popW ); }
+		pop.style.left  = left + 'px';
+		pop.style.right = 'auto';
+		// Open below the button by default, but flip ABOVE it when below would spill
+		// past the viewport bottom and there's more room above — so the picker stays
+		// fully reachable from rows low on the page.
+		var popH  = pop.offsetHeight || 0;
+		var aRect = anchor.getBoundingClientRect();
+		var vh    = window.innerHeight || document.documentElement.clientHeight;
+		if ( aRect.bottom + 4 + popH > vh && aRect.top - 4 - popH > 0 ) {
+			// Flip above. Clamp to 0 (row-relative) so a tall picker in a scrolled tree
+			// never pins with a negative top above the row box.
+			pop.style.top = Math.max( 0, anchor.offsetTop - popH - 4 ) + 'px';
+		} else {
+			pop.style.top = ( anchor.offsetTop + anchor.offsetHeight + 4 ) + 'px';
+		}
 	}
 
 	function onDocDown( e ) {
@@ -1936,20 +2478,34 @@
 		closeIconPicker();
 		var pop = el( 'div', { 'class': 'ak-icon-pop ak-url-pop' } );
 		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__customlbl', text: I.menuUrlLabel } ) );
-		var inp = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: top.url || '', placeholder: I.menuLinkUrl } );
-		// Apply / Clear reflect the URL state on the anchor button in place (its `on`
-		// class) and close — no full tree rebuild (which would destroy the anchor the
-		// popover hangs off, same trap the icon picker had).
+
+		// Show where this item points right now — the custom override if set, else
+		// its native WordPress destination (the slug). Read-only, so you SEE the link
+		// before changing it.
+		var current = top.url || top.slug || '';
+		if ( current ) {
+			pop.appendChild( el( 'div', { 'class': 'ak-url-pop__current' }, [
+				el( 'span', { 'class': 'ak-url-pop__current-lbl', text: ( I.menuUrlCurrent || 'Current' ) + ' : ' } ),
+				el( 'code', { 'class': 'ak-url-pop__current-val', title: current, text: current } )
+			] ) );
+		}
+
+		// Pre-fill with the custom override; the placeholder is the native slug so an
+		// empty field still hints the current destination.
+		var inp = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: top.url || '', placeholder: top.slug || I.menuLinkUrl } );
+		// Apply reflects the URL state on the anchor button in place (its `on` class)
+		// and closes — no full tree rebuild (which would destroy the anchor the popover
+		// hangs off, same trap the icon picker had). To clear: empty the field + Apply
+		// (an empty value resets the item to its native destination).
 		var apply = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--small', text: I.menuIconApply, onclick: function () {
 			top.url = ( inp.value || '' ).replace( /^\s+|\s+$/g, '' );
 			anchor.classList.toggle( 'on', !! top.url );
 			markMenuDirty(); closeIconPicker();
 		} } );
-		var clear = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--small ak-btn--ghost', text: I.menuUrlClear, onclick: function () {
-			top.url = ''; anchor.classList.remove( 'on' ); markMenuDirty(); closeIconPicker();
-		} } );
-		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom ak-url-pop__row' }, [ inp, apply, clear ] ) );
+		pop.appendChild( el( 'div', { 'class': 'ak-icon-pop__custom ak-url-pop__row' }, [ inp, apply ] ) );
 		anchor.parentNode.appendChild( pop );
+		positionPopover( pop, anchor );
+		pop.__akAnchor = anchor;
 		openPicker = pop;
 		setTimeout( function () { document.addEventListener( 'mousedown', onDocDown, true ); }, 0 );
 	}
@@ -2095,12 +2651,17 @@
 			var mpath = D.menuManager.route.charAt( 0 ) === '/' ? D.menuManager.route : '/' + D.menuManager.route;
 			jobs.push( apiFetch( { path: mpath, method: 'POST', data: { items: gatherMenu() } } ) );
 		}
+		// The toolbar layout posts to its own route, only when it changed.
+		if ( state.toolbarDirty && D.toolbar && D.toolbar.route ) {
+			jobs.push( apiFetch( { path: tbPath(), method: 'POST', data: gatherToolbar() } ) );
+		}
 		if ( ! jobs.length ) { state.saving = false; state.dirty = false; updateBar(); return; }
 		Promise.all( jobs )
 			.then( function () {
 				state.saving = false;
 				state.dirty = false;
 				state.menuDirty = false;
+				state.toolbarDirty = false;
 				updateBar();
 				setStatus( 'is-saved', I.saved );
 				// The toggles gate asset loading SERVER-side, so reflecting them

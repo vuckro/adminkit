@@ -17,8 +17,9 @@ class AdminKit_Stats_Page {
 	const REST_NS    = 'adminkit/v1';
 	const REST_ROUTE = '/stats';
 
-	/** Top-N list length for the page (the card asks 10; the page asks more). */
-	const LIST_SIZE = 50;
+	/** Top-N list length for the page (the card asks 10; the page asks more). The
+	 *  SPA paginates + searches this set client-side, so it's the searchable depth. */
+	const LIST_SIZE = 100;
 
 	/** Submenu page hook suffix (set when the page registers); gates enqueue. */
 	private static $hook = '';
@@ -114,6 +115,7 @@ class AdminKit_Stats_Page {
 			'today'       => current_time( 'Y-m-d' ),
 			'presets'     => $presets,
 			'liveRefresh' => (int) AdminKit_Stats_Dashboard::LIVE_REFRESH_MS,
+			// Open on the user's saved/default preset (no forced Live landing).
 			'state'       => array(
 				'preset' => $state['preset'],
 				'start'  => $state['start'],
@@ -130,16 +132,21 @@ class AdminKit_Stats_Page {
 	public static function i18n() {
 		return array(
 			'statsTab'             => __( 'Statistics', 'adminkit' ),
-			'statsIntro'           => __( 'Traffic from the built-in, cookieless tracker. Pick any date range to see visits, page views, your most-viewed pages and where visitors come from.', 'adminkit' ),
-			'statsVisits'          => __( 'Visits', 'adminkit' ),
+			'statsIntro'           => __( 'Traffic from the built-in, cookieless tracker. Pick any date range to see unique visitors, page views, your most-viewed pages and where visitors come from.', 'adminkit' ),
+			'statsUniques'         => __( 'Unique visitors', 'adminkit' ),
 			'statsPageviews'       => __( 'Page views', 'adminkit' ),
 			'statsVsPrev'          => __( 'vs previous period', 'adminkit' ),
+			'statsTrendNew'        => __( 'New', 'adminkit' ),
 			'statsActive'          => __( 'active now', 'adminkit' ),
 			'statsTopPages'        => __( 'Top pages', 'adminkit' ),
 			'statsTopSources'      => __( 'Top sources', 'adminkit' ),
 			'statsDirect'          => __( 'Direct', 'adminkit' ),
 			'statsNoData'          => __( 'No traffic data yet — views will appear here as visitors arrive.', 'adminkit' ),
 			'statsNone'            => __( 'No data', 'adminkit' ),
+			'statsNoMatch'         => __( 'No match', 'adminkit' ),
+			'statsSearch'          => __( 'Search…', 'adminkit' ),
+			'statsPagerPrev'       => __( 'Previous', 'adminkit' ),
+			'statsPagerNext'       => __( 'Next', 'adminkit' ),
 			'statsLoading'         => __( 'Loading…', 'adminkit' ),
 			'statsRangeFrom'       => __( 'From', 'adminkit' ),
 			'statsRangeTo'         => __( 'To', 'adminkit' ),
@@ -232,15 +239,18 @@ class AdminKit_Stats_Page {
 		$series   = array();
 		$tpv      = 0;
 		$tv       = 0;
+		$tu       = 0;
 		$start_ts = strtotime( $start );
 		$end_ts   = strtotime( $end );
 		for ( $ts = $start_ts; $ts <= $end_ts; $ts += DAY_IN_SECONDS ) {
 			$d  = gmdate( 'Y-m-d', $ts );
 			$pv = isset( $sum['days'][ $d ]['pageviews'] ) ? (int) $sum['days'][ $d ]['pageviews'] : 0;
 			$v  = isset( $sum['days'][ $d ]['visits'] ) ? (int) $sum['days'][ $d ]['visits'] : 0;
-			$series[] = array( 'date' => $d, 'pageviews' => $pv, 'visits' => $v );
+			$u  = isset( $sum['days'][ $d ]['uniques'] ) ? (int) $sum['days'][ $d ]['uniques'] : 0;
+			$series[] = array( 'date' => $d, 'pageviews' => $pv, 'visits' => $v, 'uniques' => $u );
 			$tpv += $pv;
 			$tv  += $v;
+			$tu  += $u;
 		}
 
 		$pages = array();
@@ -266,15 +276,15 @@ class AdminKit_Stats_Page {
 		// Trend baseline: the immediately-preceding window of the SAME length, read
 		// through the SAME cached primitive (limit 1 → no top-N rows pulled). Uniform
 		// for every preset and custom range; the SPA derives the ▲/▼ % from it.
-		list( $pstart, $pend ) = self::previous_range( $start, $end );
-		$previous = self::range_totals( $pstart, $pend );
+		list( $pstart, $pend ) = AdminKit_Stats_Dashboard::previous_range( $start, $end );
+		$previous = AdminKit_Stats_Dashboard::range_totals( $pstart, $pend );
 
 		return rest_ensure_response( array(
 			'preset'   => $state['preset'],
 			'start'    => $start,
 			'end'      => $end,
-			'totals'   => array( 'visits' => $tv, 'pageviews' => $tpv ),
-			'previous' => array( 'visits' => (int) $previous['visits'], 'pageviews' => (int) $previous['pageviews'] ),
+			'totals'   => array( 'visits' => $tv, 'pageviews' => $tpv, 'uniques' => $tu ),
+			'previous' => array( 'visits' => (int) $previous['visits'], 'pageviews' => (int) $previous['pageviews'], 'uniques' => (int) $previous['uniques'] ),
 			'active'   => (int) AdminKit_Stats_Store::active_visitors( time() ),
 			'series'   => $series,
 			'pages'    => $pages,
@@ -283,47 +293,6 @@ class AdminKit_Stats_Page {
 			// (WooCommerce revenue, FluentCart conversions…). Empty natively.
 			'cards'    => self::extra_cards( $start, $end, $state['preset'] ),
 		) );
-	}
-
-	/**
-	 * The window immediately before [start, end], of the SAME number of days.
-	 * Uniform across presets AND custom ranges, so the trend baseline is always
-	 * "the previous equal-length period".
-	 *
-	 * @param string $start Y-m-d
-	 * @param string $end   Y-m-d
-	 * @return array{0:string,1:string} [prev_start, prev_end]
-	 */
-	private static function previous_range( $start, $end ) {
-		$s = strtotime( $start );
-		$e = strtotime( $end );
-		if ( false === $s || false === $e ) {
-			return array( $start, $end );
-		}
-		$span_days  = (int) floor( ( $e - $s ) / DAY_IN_SECONDS ) + 1;
-		$prev_end   = $s - DAY_IN_SECONDS;
-		$prev_start = $prev_end - ( $span_days - 1 ) * DAY_IN_SECONDS;
-		return array( gmdate( 'Y-m-d', $prev_start ), gmdate( 'Y-m-d', $prev_end ) );
-	}
-
-	/**
-	 * Sum site visits + page views over a window via the cached summary primitive.
-	 * Asks limit 1 so no top-pages / top-sources rows are pulled (the day totals
-	 * are independent of the list limit) — a cheap second cached read.
-	 *
-	 * @param string $start Y-m-d
-	 * @param string $end   Y-m-d
-	 * @return array{visits:int,pageviews:int}
-	 */
-	private static function range_totals( $start, $end ) {
-		$sum = AdminKit_Stats_Store::summary_range( $start, $end, 1 );
-		$v   = 0;
-		$pv  = 0;
-		foreach ( (array) ( isset( $sum['days'] ) ? $sum['days'] : array() ) as $d ) {
-			$pv += isset( $d['pageviews'] ) ? (int) $d['pageviews'] : 0;
-			$v  += isset( $d['visits'] ) ? (int) $d['visits'] : 0;
-		}
-		return array( 'visits' => $v, 'pageviews' => $pv );
 	}
 
 	/**

@@ -95,8 +95,8 @@ msgstr "%s sur le disque"
 #: inc/features/dashboard/class-custom-dashboard.php:493 inc/features/dashboard/class-custom-dashboard.php:802
 msgid "%s online now"
 msgid_plural "%s online now"
-msgstr[0] "%s en ligne"
-msgstr[1] "%s en ligne"
+msgstr[0] "%s connecté"
+msgstr[1] "%s connectés"
 
 #: inc/features/dashboard/class-custom-dashboard.php:765
 msgid "%s pending review"
@@ -215,8 +215,8 @@ msgid "Addresses"
 msgstr "Adresses"
 
 #: inc/settings/class-settings-catalog.php:109
-msgid "Adds \"AdminKit Portraits (Generated)\" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait."
-msgstr "Ajoute « AdminKit Portraits (générés) » dans Réglages → Discussion → Avatar par défaut. Choisissez-le pour donner à chaque utilisateur un portrait généré unique."
+msgid "On by default: every user without a real Gravatar gets a unique generated portrait instead of an empty silhouette (sets \"AdminKit Portraits\" as your Default Avatar in Settings → Discussion). Portraits come from an external service (DiceBear); turn off to restore Mystery Person."
+msgstr "Activé par défaut : chaque utilisateur sans vrai Gravatar reçoit un portrait généré unique au lieu d’une silhouette vide (définit « AdminKit Portraits » comme avatar par défaut dans Réglages → Discussion). Les portraits proviennent d’un service externe (DiceBear) ; désactivez pour rétablir « Personne mystère »."
 
 #: inc/settings/class-settings-catalog.php:37
 msgid "Adds a bell to the toolbar that collects admin notices into a side drawer, keeping success confirmations inline. Off restores every notice to its normal place."
@@ -742,6 +742,14 @@ msgstr "Menu"
 msgid "Menu manager"
 msgstr "Gestionnaire de menu"
 
+#: inc/settings/class-settings-catalog.php:84
+msgid "Toolbar manager"
+msgstr "Gestionnaire de barre d’outils"
+
+#: inc/settings/class-settings-catalog.php:85
+msgid "Reorder and hide the top-level items in the admin toolbar (the bar across the top of the screen) — configured in the Toolbar tab. Off restores the native toolbar (your saved layout is kept)."
+msgstr "Réorganisez et masquez les éléments de premier niveau de la barre d’outils d’administration (la barre en haut de l’écran) — configuré dans l’onglet Barre d’outils. Désactivé rétablit la barre native (votre disposition est conservée)."
+
 #: inc/wp-core/class-local-avatars.php:306 inc/wp-core/class-user-quick-edit.php:254
 msgid "Missing user id."
 msgstr "Identifiant d’utilisateur manquant."
@@ -959,8 +967,8 @@ msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag
 msgstr "Réorganisez le menu d’administration et ses sous-menus, changez les icônes et masquez des entrées. Glissez pour réorganiser ; les changements s’appliquent après enregistrement. Masquer retire un élément du menu uniquement — cela ne bloque pas l’accès direct."
 
 #: inc/settings/class-settings-catalog.php:79
-msgid "Reorder the admin menu and submenus, change menu icons, and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
-msgstr "Réorganisez le menu d’administration et ses sous-menus, changez les icônes et masquez des entrées — configuré dans l’onglet Menu. Désactivé, le menu natif de WordPress est restauré (votre disposition enregistrée est conservée)."
+msgid "Reorder the admin menu and submenus, set a per-item icon (an AdminKit glyph, a WordPress dashicon, or your own), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
+msgstr "Réorganisez le menu d’administration et ses sous-menus, définissez une icône par élément (un glyphe AdminKit, un dashicon WordPress ou la vôtre) et masquez des entrées — configuré dans l’onglet Menu. Désactivé, le menu natif de WordPress est restauré (votre disposition enregistrée est conservée)."
 
 #: inc/settings/class-settings-catalog.php:31
 msgid "Replace the WordPress dashboard with a custom one: greeting, quick actions, stat tiles, recent activity, site health and storage. Off restores the native dashboard."
@@ -1103,8 +1111,8 @@ msgid "Strong passwords and two-factor auth keep your account safe."
 msgstr "Un mot de passe fort et l’authentification à deux facteurs protègent votre compte."
 
 #: inc/settings/class-settings-catalog.php:73
-msgid "Swap WordPress's menu and toolbar icons for AdminKit's set. Icons customised elsewhere (e.g. Admin Menu Editor) are left alone."
-msgstr "Remplace les icônes du menu et de la barre d’outils de WordPress par le jeu d’AdminKit. Les icônes personnalisées ailleurs (par ex. Admin Menu Editor) sont laissées intactes."
+msgid "The DEFAULT icon set for the whole admin menu + toolbar (AdminKit's glyphs instead of WordPress's dashicons). Per-item icons you pick in the Menu manager override this; icons set by other plugins are left alone."
+msgstr "Le jeu d’icônes par DÉFAUT pour tout le menu d’administration et la barre d’outils (les glyphes d’AdminKit à la place des dashicons de WordPress). Les icônes par élément que vous choisissez dans le gestionnaire de menu priment ; les icônes définies par d’autres extensions ne sont pas touchées."
 
 #: inc/settings/class-settings-page.php:380
 msgid "System"
@@ -1167,8 +1175,28 @@ msgid "Track who is signed in (read from existing WordPress sessions, no extra t
 msgstr "Identifie qui est connecté (lu depuis les sessions WordPress existantes, sans suivi supplémentaire) et l'affiche sur le tableau de bord, avec un filtre « En ligne » et une colonne « Dernière connexion » sur l'écran Utilisateurs. Désactivé masque le tout."
 
 #: inc/features/stats/class-stats-page.php:133
-msgid "Traffic from the built-in, cookieless tracker. Pick any date range to see visits, page views, your most-viewed pages and where visitors come from."
-msgstr "Trafic issu du traqueur intégré sans cookie. Choisissez une plage de dates pour voir les visites, les pages vues, vos pages les plus consultées et la provenance des visiteurs."
+msgid "Traffic from the built-in, cookieless tracker. Pick any date range to see unique visitors, page views, your most-viewed pages and where visitors come from."
+msgstr "Trafic issu du traqueur intégré sans cookie. Choisissez une plage de dates pour voir les visiteurs uniques, les pages vues, vos pages les plus consultées et la provenance des visiteurs."
+
+#: inc/features/stats/class-stats-page.php:134
+msgid "Unique visitors"
+msgstr "Visiteurs uniques"
+
+#: inc/features/stats/class-stats-page.php:145
+msgid "No match"
+msgstr "Aucun résultat"
+
+#: inc/features/stats/class-stats-page.php:146
+msgid "Search…"
+msgstr "Rechercher…"
+
+#: inc/features/stats/class-stats-page.php:147
+msgid "Previous"
+msgstr "Précédent"
+
+#: inc/features/stats/class-stats-page.php:148
+msgid "Next"
+msgstr "Suivant"
 
 #: inc/settings/class-settings-catalog.php:120
 msgid "Traffic stats"
@@ -1278,6 +1306,34 @@ msgstr "WordPress"
 msgid "WordPress icon"
 msgstr "Icône WordPress"
 
+#: inc/settings/class-settings-page.php:389
+msgid "WordPress icons"
+msgstr "Icônes WordPress"
+
+#: inc/settings/class-settings-page.php:393
+msgid "Toolbar"
+msgstr "Barre d’outils"
+
+#: inc/settings/class-settings-page.php:394
+msgid "Reorder and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn't block access. Reset restores the native layout. Changes apply after you save."
+msgstr "Réorganisez et masquez les éléments de votre barre d’outils d’administration. Glissez la poignée (ou utilisez les flèches) pour réordonner au sein de chaque côté ; l’œil retire un élément de la barre uniquement — il ne bloque pas l’accès. Réinitialiser rétablit la disposition native. Les changements s’appliquent après enregistrement."
+
+#: inc/settings/class-settings-page.php:395
+msgid "Reset toolbar"
+msgstr "Réinitialiser la barre"
+
+#: inc/settings/class-settings-page.php:397
+msgid "No toolbar items found."
+msgstr "Aucun élément de barre d’outils trouvé."
+
+#: inc/settings/class-settings-page.php:398
+msgid "Left"
+msgstr "Gauche"
+
+#: inc/settings/class-settings-page.php:399
+msgid "Right"
+msgstr "Droite"
+
 #: inc/features/dashboard/class-custom-dashboard.php:665
 msgid "Working late, %s"
 msgstr "Il est tard, %s"
@@ -1375,3 +1431,55 @@ msgstr "Charger une disposition de menu depuis un fichier JSON"
 #: inc/settings/class-settings-page.php
 msgid "That file isn’t a valid AdminKit menu export."
 msgstr "Ce fichier n’est pas un export de menu AdminKit valide."
+
+#: inc/settings/class-settings-page.php
+msgid "Live preview"
+msgstr "Aperçu en direct"
+
+#: inc/settings/class-settings-page.php
+msgid "Light"
+msgstr "Clair"
+
+#: inc/settings/class-settings-page.php
+msgid "Dark"
+msgstr "Sombre"
+
+#: inc/settings/class-settings-page.php
+msgid "Your logo"
+msgstr "Votre logo"
+
+#: inc/settings/class-settings-page.php
+msgid "Sign in"
+msgstr "Se connecter"
+
+#: inc/settings/class-settings-page.php
+msgid "Button"
+msgstr "Bouton"
+
+#: inc/settings/class-settings-page.php
+msgid "Move up"
+msgstr "Monter"
+
+#: inc/settings/class-settings-page.php
+msgid "Move down"
+msgstr "Descendre"
+
+#: inc/features/stats/class-stats-dashboard.php
+msgid "No views in this period yet."
+msgstr "Aucune vue sur cette période pour l’instant."
+
+#: inc/settings/class-settings-page.php
+msgid "Search plugins…"
+msgstr "Rechercher une extension…"
+
+#: inc/settings/class-settings-page.php
+msgid "Current"
+msgstr "Actuel"
+
+#: inc/features/stats/class-stats-page.php inc/features/stats/class-stats-dashboard.php
+msgid "New"
+msgstr "Nouveau"
+
+#: inc/settings/class-settings-page.php
+msgid "Need an icon? Copy an SVG from"
+msgstr "Besoin d’une icône ? Copiez un SVG depuis"

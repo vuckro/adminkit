@@ -9,17 +9,22 @@
  * would under-count — the beacon still fires from the browser. Nothing blocks the
  * page: the script is deferred and uses navigator.sendBeacon.
  *
- * Privacy: no cookies, no IP storage, no per-visitor rows. A "visit" (session) is
- * inferred from the Referer at write time (empty or off-site → new visit), the
- * same heuristic privacy-first analytics use. So it counts visits/sessions, not
- * unique visitors — honest by construction and consent-free.
+ * Privacy: no cookies, the raw IP is never stored, and there is no lasting
+ * per-visitor record. Three daily metrics — page views, visits (a "visit"/session
+ * is inferred from the Referer: empty or off-site → new visit) and UNIQUE VISITORS.
+ * Uniques are deduped by a salted, DAILY-ROTATING hash of IP + User-Agent
+ * (visitor_hash) computed in memory: never reversible to an IP, never linkable
+ * across days, and the dedup rows are pruned after a day — the same consent-free
+ * model privacy-first analytics (Plausible, Fathom) use. Nothing here needs a
+ * cookie banner.
  *
  * Footprint: the beacon loads only on the public front end, never in wp-admin, and
  * never for signed-in staff (they'd skew their own stats). Bots are dropped at the
  * endpoint by User-Agent.
  *
- * Filter:
- *   adminkit/stats/enabled  (bool)  master on/off
+ * Filters:
+ *   adminkit/stats/enabled    (bool)    master on/off
+ *   adminkit/stats/client_ip  (string)  override the resolved client IP (proxies/CDN)
  *
  * @package AdminKit
  */
@@ -39,10 +44,16 @@ class AdminKit_Stats_Tracker {
 	 * @return void
 	 */
 	public static function init() {
+		// OFF by default: this is the ONE feature with an inherent front-end cost —
+		// a beacon POST per page view that boots WordPress. Keeping it opt-in means
+		// activating AdminKit fires NOTHING on the front end (no beacon, no stats
+		// page, no dashboard card) until you turn it on in Settings → Features. The
+		// beacon (vs server-side counting) is deliberate: it survives full-page
+		// caches and JS-gates out most bots, so the data stays honest once enabled.
 		AdminKit_Settings::register( 'stats_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => true,
+			'default'  => false,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
@@ -50,20 +61,45 @@ class AdminKit_Stats_Tracker {
 			return;
 		}
 
-		// Keep the schema current without a front-end DB hit (admin-only).
+		// Keep the schema current. Admin requests via admin_init; the REST collector via
+		// rest_api_init too, so a front-end beacon never writes to a not-yet-migrated
+		// column (e.g. right after a plugin UPDATE — activation hooks don't fire on update
+		// — before any admin page loads, which used to silently drop hits). ensure_schema
+		// early-returns on a version match, so it's a cheap (autoloaded) option compare on
+		// the hot path; dbDelta only runs the once when the version actually moves.
 		add_action( 'admin_init', array( 'AdminKit_Stats_Store', 'ensure_schema' ) );
+		add_action( 'rest_api_init', array( 'AdminKit_Stats_Store', 'ensure_schema' ) );
+		// Prune yesterday's unique-dedup rows once a day, admin-side (off the hot path).
+		add_action( 'admin_init', array( __CLASS__, 'maybe_prune' ) );
 
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 	}
 
 	/**
-	 * Master switch — registered setting (default ON) through a filter.
+	 * Master switch — the registered setting (default OFF; see init()) behind a
+	 * filter so integrations can force it on/off.
 	 *
 	 * @return bool
 	 */
 	public static function is_enabled() {
 		return (bool) apply_filters( 'adminkit/stats/enabled', AdminKit_Settings::get( 'stats_enabled' ) );
+	}
+
+	/**
+	 * Prune the ephemeral unique-dedup rows at most once per calendar day. Guarded
+	 * by an option so a busy admin area doesn't re-run the DELETE on every request.
+	 * Admin-only (hooked on admin_init) → never on the front-end hot path.
+	 *
+	 * @return void
+	 */
+	public static function maybe_prune() {
+		$today = current_time( 'Y-m-d' );
+		if ( get_option( 'adminkit_stats_pruned' ) === $today ) {
+			return;
+		}
+		AdminKit_Stats_Store::prune_old_uniques();
+		update_option( 'adminkit_stats_pruned', $today, false );
 	}
 
 	/**
@@ -135,22 +171,14 @@ class AdminKit_Stats_Tracker {
 							return is_string( $v ) ? $v : '';
 						},
 					),
-					't'    => array(
-						'type'              => 'string',
-						'required'          => false,
-						'sanitize_callback' => static function ( $v ) {
-							return is_string( $v ) ? $v : '';
-						},
-					),
 				),
 			)
 		);
 	}
 
 	/** Defensive input caps applied BEFORE any expensive parsing or DB work. */
-	const MAX_PATH_BYTES  = 2048;
-	const MAX_REF_BYTES   = 2048;
-	const MAX_TOKEN_BYTES = 64;
+	const MAX_PATH_BYTES = 2048;
+	const MAX_REF_BYTES  = 2048;
 
 	/**
 	 * Build the always-204 response with explicit no-cache headers — the beacon
@@ -184,17 +212,12 @@ class AdminKit_Stats_Tracker {
 			return self::ack();
 		}
 
-		$raw_path  = (string) $request->get_param( 'path' );
-		$raw_ref   = (string) $request->get_param( 'ref' );
-		$raw_token = (string) $request->get_param( 't' );
+		$raw_path = (string) $request->get_param( 'path' );
+		$raw_ref  = (string) $request->get_param( 'ref' );
 
 		// 2. Hard input caps BEFORE expensive regex/parse. A 1 MB junk payload is
 		//    rejected at the door without touching the DB or the URL parser.
-		if (
-			strlen( $raw_path )  > self::MAX_PATH_BYTES  ||
-			strlen( $raw_ref )   > self::MAX_REF_BYTES   ||
-			strlen( $raw_token ) > self::MAX_TOKEN_BYTES
-		) {
+		if ( strlen( $raw_path ) > self::MAX_PATH_BYTES || strlen( $raw_ref ) > self::MAX_REF_BYTES ) {
 			return self::ack();
 		}
 
@@ -206,20 +229,80 @@ class AdminKit_Stats_Tracker {
 		$source   = self::referrer_source( $raw_ref );
 		$is_visit = ( 'internal' !== $source ); // empty/off-site referer → new visit
 		$src_name = ( 'direct' === $source ) ? 'direct' : ( 'internal' === $source ? '' : $source );
-		AdminKit_Stats_Store::record( $path, $is_visit, $src_name );
 
-		// 3. Presence: mark this anonymous tab active for the realtime count + Live
-		//    view. The client token is opaque; we hash it with a server salt so the
-		//    stored value reveals nothing even if the option table leaked. The path
-		//    and source attached here are what the Live view groups by — same data
-		//    already accepted above, no new caller input.
-		if ( '' !== $raw_token ) {
-			$token       = substr( hash( 'md5', wp_salt() . preg_replace( '/[^A-Za-z0-9]/', '', $raw_token ) ), 0, 32 );
+		// Server-derived identity: a salted, daily-rotating hash of IP + User-Agent,
+		// used for BOTH unique-visitor dedup (daily) and live presence (5-min). No
+		// cookie, no client token — and the raw IP never leaves visitor_hash().
+		$visitor_hash = self::visitor_hash();
+
+		AdminKit_Stats_Store::record( $path, $is_visit, $src_name, $visitor_hash );
+
+		// 3. Presence: mark this visitor active for the realtime count + Live view.
+		//    The path + source attached here are what the Live view groups by.
+		if ( '' !== $visitor_hash ) {
 			$live_source = ( 'internal' === $source ) ? 'direct' : $src_name;
-			AdminKit_Stats_Store::mark_active( $token, time(), $path, $live_source );
+			AdminKit_Stats_Store::mark_active( $visitor_hash, time(), $path, $live_source );
 		}
 
 		return self::ack();
+	}
+
+	/**
+	 * The cookieless visitor identity — a 32-char hex hash of a server secret + the
+	 * site-local DAY + client IP + User-Agent. Consent-free by construction:
+	 *   • salted with wp_salt() → not reversible to an IP without the secret;
+	 *   • the day is part of the input → the SAME visitor hashes DIFFERENTLY each
+	 *     day, so it can never link someone across days;
+	 *   • computed in memory; only ever persisted as this hash, never the IP.
+	 * Returns '' when no IP resolves (uniques + presence then skip this hit).
+	 *
+	 * @return string
+	 */
+	private static function visitor_hash() {
+		$ip = self::client_ip();
+		if ( '' === $ip ) {
+			return '';
+		}
+		$ua  = isset( $_SERVER['HTTP_USER_AGENT'] ) ? (string) wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) : '';
+		$day = current_time( 'Y-m-d' ); // site-local — rotates the hash every day.
+		return substr( hash( 'sha256', wp_salt( 'auth' ) . '|' . $day . '|' . $ip . '|' . $ua ), 0, 32 );
+	}
+
+	/**
+	 * Resolve the client IP. REMOTE_ADDR (the beacon's direct peer) by DEFAULT — the
+	 * safe choice on a normal host. Forwarded headers (X-Forwarded-For /
+	 * CF-Connecting-IP) are CLIENT-SPOOFABLE on a host that isn't actually behind a
+	 * trusted proxy, and since uniques are keyed on the IP hash, a spoofed header on
+	 * the PUBLIC /hit endpoint could mint unlimited fake "unique visitors" (+ dedup
+	 * rows). So they're consulted ONLY when a site opts in via `adminkit/stats/trust_proxy`
+	 * (genuinely behind a proxy/CDN). `adminkit/stats/client_ip` still allows a bespoke
+	 * override. The value only ever feeds visitor_hash() and is never stored.
+	 *
+	 * @return string
+	 */
+	private static function client_ip() {
+		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
+		if ( apply_filters( 'adminkit/stats/trust_proxy', false ) ) {
+			foreach ( array( 'HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR' ) as $key ) {
+				if ( empty( $_SERVER[ $key ] ) ) {
+					continue;
+				}
+				$candidate = (string) wp_unslash( $_SERVER[ $key ] );
+				// X-Forwarded-For can be "client, proxy1, proxy2" — the client is first.
+				if ( false !== strpos( $candidate, ',' ) ) {
+					$parts     = explode( ',', $candidate );
+					$candidate = trim( $parts[0] );
+				}
+				if ( filter_var( $candidate, FILTER_VALIDATE_IP ) ) {
+					$ip = $candidate;
+					break;
+				}
+			}
+		}
+		/** Override the resolved client IP (proxies/CDN, or to force a specific value). */
+		$ip    = (string) apply_filters( 'adminkit/stats/client_ip', $ip );
+		$valid = filter_var( $ip, FILTER_VALIDATE_IP );
+		return $valid ? $valid : '';
 	}
 
 	/**
@@ -242,6 +325,9 @@ class AdminKit_Stats_Tracker {
 		$path = '/' . ltrim( $path, '/' );
 		$path = preg_replace( '#/+#', '/', $path );
 		$path = rawurldecode( $path );
+		// Decoding can re-introduce a query/fragment (e.g. %3F → ?); drop it so the same
+		// page can't split into two rows (and to bound junk-encoded path-row bloat).
+		$path = preg_replace( '/[?#].*$/', '', $path );
 		// Never store control chars; cap to the 190-char column.
 		$path = preg_replace( '/[\x00-\x1F\x7F]/', '', $path );
 		if ( strlen( $path ) > 190 ) {
@@ -270,7 +356,9 @@ class AdminKit_Stats_Tracker {
 		}
 		$host = strtolower( $host );
 		$self = strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
-		if ( $host === $self || 'www.' . $self === $host || $host === 'www.' . $self ) {
+		// Compare with a leading www. stripped from BOTH sides, so example.com and
+		// www.example.com count as the same (own) host whichever way round it is.
+		if ( preg_replace( '/^www\./', '', $host ) === preg_replace( '/^www\./', '', $self ) ) {
 			return 'internal';
 		}
 		$host = preg_replace( '/^www\./', '', $host );

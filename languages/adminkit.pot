@@ -197,7 +197,7 @@ msgid "Addresses"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:109
-msgid "Adds \"AdminKit Portraits (Generated)\" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait."
+msgid "On by default: every user without a real Gravatar gets a unique generated portrait instead of an empty silhouette (sets \"AdminKit Portraits\" as your Default Avatar in Settings → Discussion). Portraits come from an external service (DiceBear); turn off to restore Mystery Person."
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:37
@@ -724,6 +724,14 @@ msgstr ""
 msgid "Menu manager"
 msgstr ""
 
+#: inc/settings/class-settings-catalog.php:84
+msgid "Toolbar manager"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php:85
+msgid "Reorder and hide the top-level items in the admin toolbar (the bar across the top of the screen) — configured in the Toolbar tab. Off restores the native toolbar (your saved layout is kept)."
+msgstr ""
+
 #: inc/wp-core/class-local-avatars.php:306 inc/wp-core/class-user-quick-edit.php:254
 msgid "Missing user id."
 msgstr ""
@@ -941,7 +949,7 @@ msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:79
-msgid "Reorder the admin menu and submenus, change menu icons, and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
+msgid "Reorder the admin menu and submenus, set a per-item icon (an AdminKit glyph, a WordPress dashicon, or your own), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:31
@@ -1085,7 +1093,7 @@ msgid "Strong passwords and two-factor auth keep your account safe."
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:73
-msgid "Swap WordPress's menu and toolbar icons for AdminKit's set. Icons customised elsewhere (e.g. Admin Menu Editor) are left alone."
+msgid "The DEFAULT icon set for the whole admin menu + toolbar (AdminKit's glyphs instead of WordPress's dashicons). Per-item icons you pick in the Menu manager override this; icons set by other plugins are left alone."
 msgstr ""
 
 #: inc/settings/class-settings-page.php:380
@@ -1149,7 +1157,27 @@ msgid "Track who is signed in (read from existing WordPress sessions, no extra t
 msgstr ""
 
 #: inc/features/stats/class-stats-page.php:133
-msgid "Traffic from the built-in, cookieless tracker. Pick any date range to see visits, page views, your most-viewed pages and where visitors come from."
+msgid "Traffic from the built-in, cookieless tracker. Pick any date range to see unique visitors, page views, your most-viewed pages and where visitors come from."
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:134
+msgid "Unique visitors"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:145
+msgid "No match"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:146
+msgid "Search…"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:147
+msgid "Previous"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:148
+msgid "Next"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:120
@@ -1260,6 +1288,34 @@ msgstr ""
 msgid "WordPress icon"
 msgstr ""
 
+#: inc/settings/class-settings-page.php:389
+msgid "WordPress icons"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:393
+msgid "Toolbar"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:394
+msgid "Reorder and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn't block access. Reset restores the native layout. Changes apply after you save."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:395
+msgid "Reset toolbar"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:397
+msgid "No toolbar items found."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:398
+msgid "Left"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:399
+msgid "Right"
+msgstr ""
+
 #: inc/features/dashboard/class-custom-dashboard.php:665
 msgid "Working late, %s"
 msgstr ""
@@ -1360,4 +1416,56 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "That file isn’t a valid AdminKit menu export."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Live preview"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Light"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Dark"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Your logo"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Sign in"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Button"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Move up"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Move down"
+msgstr ""
+
+#: inc/features/stats/class-stats-dashboard.php
+msgid "No views in this period yet."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Search plugins…"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Current"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php inc/features/stats/class-stats-dashboard.php
+msgid "New"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Need an icon? Copy an SVG from"
 msgstr ""

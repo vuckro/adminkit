@@ -1,8 +1,8 @@
 <?php
 /**
  * Stats dashboard card — ONE focused card for the cookieless tracker:
- * active-visitors pulse, headline metrics (visits + page views), a sparkline,
- * and the top pages / top sources lists for a user-chosen date range.
+ * active-visitors pulse, headline metrics (unique visitors + page views), a
+ * sparkline, and the top pages / top sources lists for a user-chosen date range.
  *
  * The user picks the range via two native date inputs (start + end). Their
  * choice is persisted in `user_meta['adminkit_stats_range']` and consumed on
@@ -26,9 +26,9 @@ class AdminKit_Stats_Dashboard {
 	 *  `{preset: 'custom', start: Y-m-d, end: Y-m-d}` for free ranges. */
 	const RANGE_META = 'adminkit_stats_range';
 
-	/** Default preset on first render — the live (real-time) view. Users who
-	 *  have saved a preset keep it; only those with no stored choice land here. */
-	const DEFAULT_PRESET = 'live';
+	/** Default preset on first render. Users who have saved a preset keep it;
+	 *  only those with no stored choice land here. */
+	const DEFAULT_PRESET = '30d';
 
 	/** Available presets, in selector order. 'live' is a special UI state — the
 	 *  body renders real-time data and auto-refreshes client-side. 'custom'
@@ -129,6 +129,95 @@ class AdminKit_Stats_Dashboard {
 			self::clamp_date( isset( $out[0] ) ? $out[0] : '' ),
 			self::clamp_date( isset( $out[1] ) ? $out[1] : '' ),
 		);
+	}
+
+	/* ──────────────── Trend / comparison (shared: page + card) ──────────────── */
+
+	/**
+	 * The window immediately before [start, end], of the SAME number of days —
+	 * uniform across presets AND custom ranges, so the trend baseline is always
+	 * "the previous equal-length period".
+	 *
+	 * @param string $start Y-m-d
+	 * @param string $end   Y-m-d
+	 * @return array{0:string,1:string} [prev_start, prev_end]
+	 */
+	public static function previous_range( $start, $end ) {
+		$s = strtotime( $start );
+		$e = strtotime( $end );
+		if ( false === $s || false === $e ) {
+			return array( $start, $end );
+		}
+		$span_days  = (int) floor( ( $e - $s ) / DAY_IN_SECONDS ) + 1;
+		$prev_end   = $s - DAY_IN_SECONDS;
+		$prev_start = $prev_end - ( $span_days - 1 ) * DAY_IN_SECONDS;
+		return array( gmdate( 'Y-m-d', $prev_start ), gmdate( 'Y-m-d', $prev_end ) );
+	}
+
+	/**
+	 * Sum site unique visitors + visits + page views over a window via the cached
+	 * summary primitive. Asks limit 1 so no top-N rows are pulled (day totals are
+	 * independent of the list limit) — a cheap, cached read.
+	 *
+	 * @param string $start Y-m-d
+	 * @param string $end   Y-m-d
+	 * @return array{visits:int,pageviews:int,uniques:int}
+	 */
+	public static function range_totals( $start, $end ) {
+		$sum = AdminKit_Stats_Store::summary_range( $start, $end, 1 );
+		$v   = 0;
+		$pv  = 0;
+		$u   = 0;
+		foreach ( (array) ( isset( $sum['days'] ) ? $sum['days'] : array() ) as $d ) {
+			$pv += isset( $d['pageviews'] ) ? (int) $d['pageviews'] : 0;
+			$v  += isset( $d['visits'] ) ? (int) $d['visits'] : 0;
+			$u  += isset( $d['uniques'] ) ? (int) $d['uniques'] : 0;
+		}
+		return array( 'visits' => $v, 'pageviews' => $pv, 'uniques' => $u );
+	}
+
+	/**
+	 * Trend descriptor for current vs previous totals — the single source of truth
+	 * that the SPA's trendFrom() mirrors byte-for-byte. With a baseline it's a
+	 * signed percentage; with NO baseline, new traffic is a plain ▲ (up vs nothing)
+	 * and a flat 0 is null (nothing to show).
+	 *
+	 * @param int $cur
+	 * @param int $prev
+	 * @return array{dir:string,text:string}|null
+	 */
+	public static function trend( $cur, $prev ) {
+		$cur  = (int) $cur;
+		$prev = (int) $prev;
+		if ( $prev <= 0 ) {
+			return $cur > 0 ? array( 'dir' => 'up', 'text' => '' ) : null;
+		}
+		$pct = (int) round( ( ( $cur - $prev ) / $prev ) * 100 );
+		return array(
+			'dir'  => $pct > 0 ? 'up' : ( $pct < 0 ? 'down' : 'flat' ),
+			'text' => ( $pct > 0 ? '+' : '' ) . $pct . '%',
+		);
+	}
+
+	/**
+	 * Render the ▲/▼ trend badge for the dashboard card (PHP twin of the SPA's
+	 * trendBadge()). '' when there's no trend to show.
+	 *
+	 * @param int $cur
+	 * @param int $prev
+	 * @return string Safe HTML.
+	 */
+	public static function trend_badge( $cur, $prev ) {
+		$t = self::trend( $cur, $prev );
+		if ( null === $t ) {
+			return '';
+		}
+		$arrow = 'up' === $t['dir'] ? '▲' : ( 'down' === $t['dir'] ? '▼' : '→' );
+		// No baseline (empty text) → "New" instead of a bare arrow (matches the SPA).
+		$label = $arrow . ' ' . ( '' !== $t['text'] ? $t['text'] : __( 'New', 'adminkit' ) );
+		return '<span class="ak-dash__stats-trend ak-dash__stats-trend--' . esc_attr( $t['dir'] )
+			. '" title="' . esc_attr__( 'vs previous period', 'adminkit' ) . '">'
+			. esc_html( $label ) . '</span>';
 	}
 
 	/**
@@ -249,6 +338,7 @@ class AdminKit_Stats_Dashboard {
 		if ( ! current_user_can( self::capability() ) ) {
 			return;
 		}
+		// Open on the user's saved/default preset (no forced Live landing).
 		$state = self::get_user_state();
 		echo '<section class="ak-card ak-dash__card ak-dash__stats" data-ak-stats>';
 		echo self::body( $state['start'], $state['end'], $state['preset'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped within.
@@ -266,6 +356,14 @@ class AdminKit_Stats_Dashboard {
 		if ( ! current_user_can( self::capability() ) ) {
 			wp_send_json_error( 'forbidden', 403 );
 		}
+
+		// Lightweight "ping": return ONLY the active-now pill — for the live counter
+		// on the dashboard period views. No state write, no summary read; cheap to
+		// poll every few seconds.
+		if ( ! empty( $_POST['ping'] ) ) {
+			wp_send_json_success( array( 'active_html' => self::active_pill() ) );
+		}
+
 		$preset = isset( $_POST['preset'] ) ? sanitize_key( wp_unslash( $_POST['preset'] ) ) : '';
 		$start  = isset( $_POST['start'] ) ? sanitize_text_field( wp_unslash( $_POST['start'] ) ) : '';
 		$end    = isset( $_POST['end'] ) ? sanitize_text_field( wp_unslash( $_POST['end'] ) ) : '';
@@ -305,41 +403,59 @@ class AdminKit_Stats_Dashboard {
 		// Continuous oldest→newest day series (no gaps) + window totals.
 		$series_pv = array();
 		$total_pv  = 0;
-		$total_v   = 0;
+		$total_u   = 0;
 		$start_ts  = strtotime( $start );
 		$end_ts    = strtotime( $end );
 		for ( $ts = $start_ts; $ts <= $end_ts; $ts += DAY_IN_SECONDS ) {
 			$d  = gmdate( 'Y-m-d', $ts );
 			$pv = isset( $sum['days'][ $d ]['pageviews'] ) ? (int) $sum['days'][ $d ]['pageviews'] : 0;
-			$v  = isset( $sum['days'][ $d ]['visits'] ) ? (int) $sum['days'][ $d ]['visits'] : 0;
+			$u  = isset( $sum['days'][ $d ]['uniques'] ) ? (int) $sum['days'][ $d ]['uniques'] : 0;
 			$series_pv[] = $pv;
 			$total_pv   += $pv;
-			$total_v    += $v;
+			$total_u    += $u;
 		}
 
-		// Head: title + preset selector (active pill only on the Live tab).
+		// Trend baseline — the previous equal-length window (shared helper, cached).
+		list( $ps, $pe ) = self::previous_range( $start, $end );
+		$prev = self::range_totals( $ps, $pe );
+
+		// Head: title + the "active now" pill (shown on period views as live
+		// context — hidden on Live, where the big count already is it) + the picker.
+		// Synced with the SPA stats page, which does the same.
 		$out  = '<div class="ak-card__head ak-dash__stats-head">';
 		$out .= '<h2 class="ak-card__title">' . esc_html__( 'Statistics', 'adminkit' ) . '</h2>';
+		// Wrap the active-now pill so the dashboard JS can keep it LIVE on period
+		// views too — polling JUST this count (cheap: no full-card re-render, no
+		// saved-state write). Kept present even when empty (0 active) so the poller
+		// has a stable target to fill / clear.
+		$out .= '<span class="ak-dash__stats-active-wrap" data-ak-stats-active data-ak-stats-active-interval="' . esc_attr( (string) self::LIVE_REFRESH_MS ) . '">' . self::active_pill() . '</span>';
 		$out .= self::range_picker( $start, $end, $preset );
 		$out .= '</div>';
 
-		if ( $total_pv <= 0 ) {
-			$out .= '<p class="ak-dash__empty">' . esc_html__( 'No traffic data yet — views will appear here as visitors arrive.', 'adminkit' ) . '</p>';
-			return $out;
-		}
-
-		// Headline metrics.
+		// Headline metrics — ALWAYS shown (a clear "0 / 0" beats a blank panel when a
+		// short window like Today has no views yet), each with a ▲/▼ trend vs the
+		// previous period (same logic + look as the SPA stats page).
 		$out .= '<div class="ak-dash__stats-top">';
-		$out .= '<div class="ak-dash__stats-metric"><span class="ak-dash__stats-num">'
-			. esc_html( number_format_i18n( $total_v ) )
-			. '</span><span class="ak-dash__stats-lbl">' . esc_html__( 'Visits', 'adminkit' ) . '</span></div>';
-		$out .= '<div class="ak-dash__stats-metric"><span class="ak-dash__stats-num">'
-			. esc_html( number_format_i18n( $total_pv ) )
+		$out .= '<div class="ak-dash__stats-metric"><span class="ak-dash__stats-num-row">'
+			. '<span class="ak-dash__stats-num">' . esc_html( number_format_i18n( $total_u ) ) . '</span>'
+			. self::trend_badge( $total_u, $prev['uniques'] )
+			. '</span><span class="ak-dash__stats-lbl">' . esc_html__( 'Unique visitors', 'adminkit' ) . '</span></div>';
+		$out .= '<div class="ak-dash__stats-metric"><span class="ak-dash__stats-num-row">'
+			. '<span class="ak-dash__stats-num">' . esc_html( number_format_i18n( $total_pv ) ) . '</span>'
+			. self::trend_badge( $total_pv, $prev['pageviews'] )
 			. '</span><span class="ak-dash__stats-lbl">' . esc_html__( 'Page views', 'adminkit' ) . '</span></div>';
 		$out .= '</div>';
 
-		// Sparkline (page views/day).
-		$out .= '<div class="ak-dash__stats-spark">' . self::sparkline( $series_pv ) . '</div>';
+		if ( $total_pv <= 0 ) {
+			$out .= '<p class="ak-dash__empty">' . esc_html__( 'No views in this period yet.', 'adminkit' ) . '</p>';
+			return $out;
+		}
+
+		// Sparkline (page views/day) — needs ≥2 days; a single day (Today) shows just
+		// the metrics + lists, no flat one-point line.
+		if ( count( $series_pv ) > 1 ) {
+			$out .= '<div class="ak-dash__stats-spark">' . self::sparkline( $series_pv ) . '</div>';
+		}
 
 		// Two compact lists side by side.
 		$out .= '<div class="ak-dash__stats-cols">';
@@ -369,13 +485,17 @@ class AdminKit_Stats_Dashboard {
 		$active = AdminKit_Stats_Store::recent_activity( $now );
 		$count  = count( $active );
 
+		// No "active now" pill here — on Live the big count IS the active number
+		// (matches the SPA stats page).
 		$out  = '<div class="ak-card__head ak-dash__stats-head">';
 		$out .= '<h2 class="ak-card__title">' . esc_html__( 'Statistics', 'adminkit' ) . '</h2>';
-		$out .= self::active_pill();
 		$out .= self::range_picker( $today, $today, 'live' );
 		$out .= '</div>';
 
-		$out .= '<div class="ak-dash__stats-live" data-ak-stats-live data-ak-stats-live-interval="' . esc_attr( (string) self::LIVE_REFRESH_MS ) . '">';
+		// `is-quiet` when nobody's on the site — the live dot stops pulsing and the
+		// count goes muted, so the "nobody here" message reads clean (no animated dot
+		// sitting over it).
+		$out .= '<div class="ak-dash__stats-live' . ( 0 === $count ? ' is-quiet' : '' ) . '" data-ak-stats-live data-ak-stats-live-interval="' . esc_attr( (string) self::LIVE_REFRESH_MS ) . '">';
 
 		// Headline: huge active-now count + tagline.
 		$out .= '<div class="ak-dash__stats-live-headline">';

@@ -138,6 +138,10 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 		}
 		$styles = array_values( array_filter( array(
 			self::asset_url( AdminKit_Assets::WAASKIT_SRC ),              // token primitives (baseline)
+			// Provider palette (e.g. Bricks Style Manager) — loads BETWEEN the
+			// baseline and the --ak-* layer so tokens.css's var(--accent) resolves to
+			// the provider's accent inside the canvas, mirroring the page cascade.
+			(string) apply_filters( 'adminkit/editor_canvas_provider_css', '', 'editor' ),
 			self::asset_url( AdminKit_Assets::TOKENS_SRC ),               // --ak-* (light + dark) + --wp-* accent remap
 			self::asset_url( 'assets/css/wp-screens/wp-components.css' ), // @wordpress/components UI (placeholders, buttons, inputs)
 			self::asset_url( self::BASE . 'canvas.css' ),                 // native-block content mapping
@@ -149,6 +153,11 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 			'window.AdminKitCanvas=' . wp_json_encode( array(
 				'attr'   => AdminKit_Theme_Toggle::attribute(),
 				'styles' => $styles,
+				// The brand-accent --ak-primary family is emitted INLINE on the page
+				// (computed per brand), so it isn't one of the stylesheet URLs above;
+				// the canvas JS injects it as a <style> AFTER them so brand buttons in
+				// the canvas take the accent, not the WaasKit-yellow default.
+				'accent' => AdminKit_Assets::accent_family_css(),
 			) ) . ';'
 		);
 	}

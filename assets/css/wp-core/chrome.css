@@ -153,7 +153,11 @@ body.adminkit {
 	--ak-nav-pill-gap: 7px;
 	--ak-nav-pill-height: 34px;
 	--ak-nav-pill-padding-x: 14px;
-	--ak-nav-pill-radius: 9px;
+	/* Inner segment radius — concentric with the segmented container: its
+	   --ak-radius-s (6px) corner MINUS the 2px inset, so the active pill's rounded
+	   corners nest exactly inside the group's border instead of bulging past it
+	   (matches .ak-stats__preset / .ak-dash__stats-preset, which use the same calc). */
+	--ak-nav-pill-radius: calc(var(--ak-radius-s) - 2px);
 }
 
 /* Dark-mode scrollbars. The browser paints native scrollbars from the page's
@@ -1038,16 +1042,18 @@ body.adminkit .ak-tabs {
 	display: inline-flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--ak-nav-gap);
+	gap: 2px;
 	margin: 16px 0;
-	padding: 0;
-	border: 0;
-	/* No radius on the container. ul.subsubsub clips overflow and .ak-tabs
-	   scrolls (both round the clip box to border-radius), so a rounded
-	   container would shave the FIRST pill's left corners and the LAST pill's
-	   right corners down to the container radius instead of the pill's own
-	   --ak-nav-pill-radius. The strip is transparent + flat anyway. */
-	background: transparent;
+	/* Segmented control — ONE bordered group for EVERY admin nav strip: list-table
+	   filters (.subsubsub), settings tabs (.nav-tab-wrapper — Bricks / ACF /
+	   Permalinks) and AdminKit's own strips (.ak-tabs — profile, settings SPA). The
+	   2px inset keeps each pill's rounded corners clear of the container's rounded
+	   border, so the overflow clip (ul.subsubsub) / sideways scroll (.ak-tabs) never
+	   shaves the first or last pill — that inset is what makes rounding safe here. */
+	padding: 2px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
 	list-style: none;
 	width: max-content;
 	max-width: 100%;
@@ -1120,8 +1126,11 @@ body.adminkit .ak-tabs button:hover {
 	color: var(--ak-heading);
 }
 
-/* 4 — Active: elevated pill, heading colour, bold. Every current pill is neutral —
-   the filter's status colour is carried by the count badge, not the pill. */
+/* 4 — Active: a clearly-raised pill, heading colour, bold. Every current pill is
+   neutral — the filter's status colour is carried by the count badge, not the pill.
+   Fill is --ak-surface-muted: a CLEARER neutral step off the track than --ak-elevated
+   in BOTH modes (lighter in dark, a touch darker in light), so the selected segment
+   reads at a glance — a clean fill, no inner border. */
 body.adminkit .subsubsub a.current,
 body.adminkit .subsubsub a.current:hover,
 body.adminkit .subsubsub a.current:focus,
@@ -1129,7 +1138,7 @@ body.adminkit .nav-tab-active,
 body.adminkit .nav-tab-active:hover,
 body.adminkit .nav-tab-active:focus,
 body.adminkit .ak-tabs button.on {
-	background: var(--ak-elevated);
+	background: var(--ak-surface-muted);
 	color: var(--ak-heading);
 	font-weight: 600;
 }

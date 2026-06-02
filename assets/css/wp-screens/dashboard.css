@@ -1133,6 +1133,12 @@ body.adminkit .ak-dash__stats-head .ak-card__title {
 	margin-right: auto; /* push the pill + selector to the right */
 }
 
+/* The pill's live-poll wrapper is layout-transparent — the pill (or nothing,
+   when 0 active) is the real flex child of the head. */
+body.adminkit .ak-dash__stats-active-wrap {
+	display: contents;
+}
+
 /* Active-visitors pill — live presence, distinct from logged-in accounts. */
 body.adminkit .ak-dash__stats-active {
 	display: inline-flex;
@@ -1196,7 +1202,7 @@ body.adminkit .ak-dash__stats-preset:hover {
 	color: var(--ak-heading);
 }
 body.adminkit .ak-dash__stats-preset.is-active {
-	background: var(--ak-elevated);
+	background: var(--ak-surface-muted);
 	color: var(--ak-heading);
 }
 
@@ -1254,12 +1260,33 @@ body.adminkit .ak-dash__stats-metric {
 	flex-direction: column;
 	gap: 2px;
 }
+/* Number + its ▲/▼ trend on one baseline-aligned row, label below. */
+body.adminkit .ak-dash__stats-num-row {
+	display: flex;
+	align-items: baseline;
+	gap: 7px;
+	flex-wrap: wrap;
+}
 body.adminkit .ak-dash__stats-num {
 	font-size: 26px;
 	font-weight: 700;
 	line-height: 1.1;
 	color: var(--ak-heading);
 }
+/* Trend badge — twin of the SPA stats page's .ak-stats__trend (up = success,
+   down = error, flat = muted). */
+body.adminkit .ak-dash__stats-trend {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+body.adminkit .ak-dash__stats-trend--up   { color: var(--ak-success); }
+body.adminkit .ak-dash__stats-trend--down { color: var(--ak-error); }
+body.adminkit .ak-dash__stats-trend--flat { color: var(--ak-text-muted); }
 body.adminkit .ak-dash__stats-lbl {
 	font-size: var(--ak-text-xs);
 	color: var(--ak-text-muted);
@@ -1432,28 +1459,40 @@ body.adminkit .ak-dash__stats-live {
 	gap: 4px;
 }
 
-/* Big headline: visitor count + tagline. */
+/* Big headline: visitor count + tagline — mirrors the Statistics page Live hero
+   (centred accent count, soft circular halo, ripple ring), scaled for the card. */
+/* The dashboard card Live view is LEFT-aligned + compact (it's a widget, not the
+   full page). Just the count + label — no dot/pulse (the "right now" label and the
+   header's "active now" state already carry the live cue). */
 body.adminkit .ak-dash__stats-live-headline {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 2px;
-	padding: 14px 16px 6px;
+	gap: 4px;
+	padding: 20px 16px 14px;
 }
 body.adminkit .ak-dash__stats-live-num {
-	font-size: 44px;
+	font-size: 42px;
 	font-weight: 700;
 	line-height: 1;
-	color: var(--ak-heading);
+	letter-spacing: -.02em;
+	color: var(--ak-primary);
 	font-variant-numeric: tabular-nums;
 }
 body.adminkit .ak-dash__stats-live-lbl {
-	font-size: var(--ak-text-s);
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
 	color: var(--ak-text-muted);
+	text-transform: uppercase;
+	letter-spacing: .08em;
 }
 body.adminkit .ak-dash__stats-live-empty {
 	margin: 0;
-	padding: 6px 16px 16px;
+	padding: 4px 16px 18px;
 	font-size: var(--ak-text-s);
+	color: var(--ak-text-muted);
+}
+/* Nobody on the site → the count goes muted (calm). */
+body.adminkit .ak-dash__stats-live.is-quiet .ak-dash__stats-live-num {
 	color: var(--ak-text-muted);
 }

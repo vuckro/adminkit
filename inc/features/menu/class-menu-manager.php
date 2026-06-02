@@ -63,6 +63,46 @@ class AdminKit_Menu_Manager {
 		'dashicons-admin-site-alt3'  => '\\f524',
 	);
 
+	/**
+	 * Curated WordPress dashicons offered in the Menu manager's "WordPress icons"
+	 * picker. We DON'T need codepoints here: picking one stores its class as the
+	 * item's icon, the editor sets `$menu[$pos][6]` to it, and WordPress paints the
+	 * dashicon natively (the dashicons FONT does the work in the browser too, so the
+	 * picker swatches render with no extra assets). Classes AdminKit already remaps
+	 * (AdminKit_Core_Menu_Icons::mapped_classes) are filtered OUT in editor_data() —
+	 * those would show the AdminKit glyph via the class-keyed mask, not the dashicon.
+	 *
+	 * @var string[]
+	 */
+	const WP_DASHICONS = array(
+		'dashicons-admin-generic', 'dashicons-admin-links', 'dashicons-admin-multisite',
+		'dashicons-menu', 'dashicons-wordpress', 'dashicons-pressthis', 'dashicons-update', 'dashicons-info',
+		'dashicons-welcome-write-blog', 'dashicons-welcome-add-page', 'dashicons-welcome-view-site',
+		'dashicons-welcome-widgets-menus', 'dashicons-welcome-comments', 'dashicons-welcome-learn-more',
+		'dashicons-format-aside', 'dashicons-format-image', 'dashicons-format-video', 'dashicons-format-status',
+		'dashicons-format-quote', 'dashicons-format-chat', 'dashicons-format-audio',
+		'dashicons-camera', 'dashicons-images-alt', 'dashicons-video-alt3',
+		'dashicons-media-document', 'dashicons-media-spreadsheet', 'dashicons-media-interactive',
+		'dashicons-media-text', 'dashicons-media-archive', 'dashicons-media-code', 'dashicons-media-audio',
+		'dashicons-media-video', 'dashicons-media-default',
+		'dashicons-edit', 'dashicons-trash', 'dashicons-sticky', 'dashicons-external',
+		'dashicons-visibility', 'dashicons-hidden', 'dashicons-post-status',
+		'dashicons-arrow-up-alt', 'dashicons-arrow-down-alt', 'dashicons-arrow-left-alt', 'dashicons-arrow-right-alt',
+		'dashicons-leftright', 'dashicons-sort', 'dashicons-randomize',
+		'dashicons-excerpt-view', 'dashicons-grid-view', 'dashicons-move',
+		'dashicons-hammer', 'dashicons-migrate', 'dashicons-universal-access', 'dashicons-tickets',
+		'dashicons-nametag', 'dashicons-clipboard', 'dashicons-heart', 'dashicons-schedule',
+		'dashicons-businesswoman', 'dashicons-testimonial', 'dashicons-portfolio', 'dashicons-awards',
+		'dashicons-archive', 'dashicons-tagcloud', 'dashicons-category', 'dashicons-bell',
+		'dashicons-yes', 'dashicons-yes-alt', 'dashicons-no', 'dashicons-no-alt',
+		'dashicons-plus', 'dashicons-plus-alt', 'dashicons-minus', 'dashicons-dismiss', 'dashicons-marker', 'dashicons-flag',
+		'dashicons-star-filled', 'dashicons-star-half', 'dashicons-star-empty',
+		'dashicons-location-alt', 'dashicons-vault', 'dashicons-sos', 'dashicons-slides',
+		'dashicons-download', 'dashicons-upload', 'dashicons-backup', 'dashicons-clock', 'dashicons-lightbulb', 'dashicons-microphone',
+		'dashicons-desktop', 'dashicons-laptop', 'dashicons-tablet', 'dashicons-smartphone', 'dashicons-phone', 'dashicons-smiley',
+		'dashicons-palmtree', 'dashicons-album', 'dashicons-index-card', 'dashicons-carrot', 'dashicons-building',
+	);
+
 	/** @var array<string,string> Per-request map of injected class => custom URL (top-level link override). */
 	private static $url_overrides = array();
 
@@ -320,13 +360,17 @@ class AdminKit_Menu_Manager {
 	 * @return array
 	 */
 	public static function editor_data() {
+		// WordPress dashicons offered in the picker — minus the ones AdminKit remaps
+		// (those would render the AdminKit glyph, not the dashicon; see WP_DASHICONS).
+		$dashicons = array_values( array_diff( self::WP_DASHICONS, AdminKit_Core_Menu_Icons::mapped_classes() ) );
 		return array(
-			'menu'   => self::$snapshot,
-			'config' => AdminKit_Menu_Store::get_config(),
-			'icons'  => AdminKit_Icons::set(),
-			'route'  => '/adminkit/v1/menu',
-			'self'   => AdminKit_Settings_Page::SLUG,
-			'seen'   => get_option( 'adminkit_menu_seen', array() ),
+			'menu'      => self::$snapshot,
+			'config'    => AdminKit_Menu_Store::get_config(),
+			'icons'     => AdminKit_Icons::set(),
+			'dashicons' => $dashicons,
+			'route'     => '/adminkit/v1/menu',
+			'self'      => AdminKit_Settings_Page::SLUG,
+			'seen'      => get_option( 'adminkit_menu_seen', array() ),
 		);
 	}
 
@@ -372,11 +416,19 @@ class AdminKit_Menu_Manager {
 				}
 				continue;
 			}
-			if ( ! empty( $cfg['icon'] ) && self::is_icon( $cfg['icon'] ) ) {
+			$icon = isset( $cfg['icon'] ) ? (string) $cfg['icon'] : '';
+			if ( 0 === strpos( $icon, 'dashicons-' ) ) {
+				// A chosen WordPress dashicon — point WP's own icon slot at it. The
+				// image's class becomes this dashicon (not its original), so AdminKit's
+				// class-keyed mask no longer matches → WordPress paints it NATIVELY. Only
+				// dashicons AdminKit does NOT remap are offered, so there's no clash and
+				// no mask-cancel rule / codepoint is needed.
+				$menu[ $pos ][6] = $icon;
+			} elseif ( '' !== $icon && self::is_icon( $icon ) ) {
 				$cls = 'ak-mi-' . ( ++$n );
 				$menu[ $pos ][4] = trim( ( isset( $menu[ $pos ][4] ) ? $menu[ $pos ][4] : '' ) . ' ' . $cls );
 
-				if ( 'wp-default' === $cfg['icon'] ) {
+				if ( 'wp-default' === $icon ) {
 					// Keep [6] untouched so WP renders the original dashicon. The
 					// dashicon class name is stored so print_css() can emit a
 					// higher-specificity cancel rule for AdminKit's mask.
@@ -384,7 +436,7 @@ class AdminKit_Menu_Manager {
 					self::$icon_overrides[ $cls ]  = 'wp-default' . ( $dashicon_class ? ':' . $dashicon_class : '' );
 				} else {
 					$menu[ $pos ][6]              = 'none';
-					self::$icon_overrides[ $cls ] = (string) $cfg['icon'];
+					self::$icon_overrides[ $cls ] = $icon;
 				}
 			}
 			// Custom URL: tag the row so a tiny admin_footer script repoints its
@@ -739,14 +791,20 @@ class AdminKit_Menu_Manager {
 	}
 
 	/**
-	 * Whether a stored icon value is usable: a known AdminKit icon name, or a custom
-	 * SVG supplied as a data:image/svg+xml URI.
+	 * Whether a stored icon value is usable: the `wp-default` sentinel (original WP
+	 * dashicon), a curated WordPress dashicon class, a known AdminKit icon name, or a
+	 * custom SVG supplied as a data:image/svg+xml URI.
 	 *
 	 * @param mixed $icon
 	 * @return bool
 	 */
 	private static function is_icon( $icon ) {
-		return is_string( $icon ) && ( 'wp-default' === $icon || AdminKit_Icons::has( $icon ) || 0 === strpos( $icon, 'data:image/svg+xml' ) );
+		return is_string( $icon ) && (
+			'wp-default' === $icon
+			|| ( 0 === strpos( $icon, 'dashicons-' ) && in_array( $icon, self::WP_DASHICONS, true ) )
+			|| AdminKit_Icons::has( $icon )
+			|| 0 === strpos( $icon, 'data:image/svg+xml' )
+		);
 	}
 
 	/**
@@ -866,6 +924,15 @@ class AdminKit_Menu_Manager {
 		if ( ! is_string( $icon ) || '' === $icon ) {
 			return '';
 		}
+		// Reset-to-original sentinel.
+		if ( 'wp-default' === $icon ) {
+			return 'wp-default';
+		}
+		// A chosen WordPress dashicon — accept ONLY the curated, AdminKit-safe set, so
+		// a stored value is always one we can render natively (no codepoint, no clash).
+		if ( 0 === strpos( $icon, 'dashicons-' ) ) {
+			return in_array( $icon, self::WP_DASHICONS, true ) ? $icon : '';
+		}
 		if ( AdminKit_Icons::has( $icon ) ) {
 			return $icon;
 		}
@@ -874,6 +941,12 @@ class AdminKit_Menu_Manager {
 			$icon = 'data:image/svg+xml,' . rawurlencode( $icon );
 		}
 		if ( 0 !== stripos( $icon, 'data:image/svg+xml' ) || strlen( $icon ) > 16384 ) {
+			return '';
+		}
+		// A valid (percent-encoded) data-URI never contains a literal '<'. Rejecting it
+		// here blocks a `</style>` breakout from the inline <style> block print_css() emits
+		// the mask into (the `"`-strip below alone wouldn't stop a `</style>` injection).
+		if ( false !== strpos( $icon, '<' ) ) {
 			return '';
 		}
 		return str_replace( '"', '', $icon );

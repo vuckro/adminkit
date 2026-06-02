@@ -28,8 +28,9 @@ class AdminKit_Settings_Page {
 	 *  Each is registered by its OWN module (AdminKit_Menu_Manager,
 	 *  AdminKit_Stats_Page) — these consts are the shared source of truth so the
 	 *  shell, the modules and the dashboard quick-links all agree on the slugs. */
-	const SLUG_MENU  = 'adminkit-menu';
-	const SLUG_STATS = 'adminkit-stats';
+	const SLUG_MENU    = 'adminkit-menu';
+	const SLUG_STATS   = 'adminkit-stats';
+	const SLUG_TOOLBAR = 'adminkit-toolbar';
 
 	/** Asset handle shared by the SPA's script + style. */
 	const HANDLE = 'adminkit-settings';
@@ -47,8 +48,9 @@ class AdminKit_Settings_Page {
 	public static function init() {
 		add_action( 'admin_menu', array( __CLASS__, 'add_submenu' ) );
 		// Relabel the auto first submenu AFTER the Menu/Statistics modules add their
-		// pages (priority 11), so the submenu reads Settings · Menu · Statistics.
+		// pages (priority 11). Then (priority 13) reorder to Statistics · Menu · Settings.
 		add_action( 'admin_menu', array( __CLASS__, 'relabel_first_submenu' ), 12 );
+		add_action( 'admin_menu', array( __CLASS__, 'reorder_submenu' ), 13 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 		AdminKit_Settings_Gate::init();
@@ -92,6 +94,36 @@ class AdminKit_Settings_Page {
 		if ( isset( $submenu[ self::SLUG ][0][2] ) && self::SLUG === $submenu[ self::SLUG ][0][2] ) {
 			$submenu[ self::SLUG ][0][0] = __( 'Settings', 'adminkit' );
 		}
+	}
+
+	/**
+	 * Reorder the AdminKit submenu to Statistics · Menu · Settings — the daily
+	 * surfaces (analytics, then menu) on top, configuration last. Runs at
+	 * admin_menu priority 13 (after relabel at 12). Slugs not in the rank map keep
+	 * their relative order at the end. Cosmetic only — clicking the parent still
+	 * opens Settings (its own slug callback).
+	 *
+	 * @return void
+	 */
+	public static function reorder_submenu() {
+		global $submenu;
+		if ( empty( $submenu[ self::SLUG ] ) || ! is_array( $submenu[ self::SLUG ] ) ) {
+			return;
+		}
+		$rank = array(
+			self::SLUG_STATS   => 0, // Statistics
+			self::SLUG_MENU    => 1, // Menu
+			self::SLUG_TOOLBAR => 2, // Toolbar
+			self::SLUG         => 3, // Settings (the parent self-link)
+		);
+		usort(
+			$submenu[ self::SLUG ],
+			static function ( $a, $b ) use ( $rank ) {
+				$ra = isset( $a[2], $rank[ $a[2] ] ) ? $rank[ $a[2] ] : 99;
+				$rb = isset( $b[2], $rank[ $b[2] ] ) ? $rank[ $b[2] ] : 99;
+				return $ra - $rb;
+			}
+		);
 	}
 
 	/**
@@ -253,9 +285,10 @@ class AdminKit_Settings_Page {
 	 * @return array
 	 */
 	public static function boot_data( $screen = 'main' ) {
-		$is_main  = ( 'main' === $screen );
-		$is_menu  = ( 'menu' === $screen );
-		$is_stats = ( 'stats' === $screen );
+		$is_main    = ( 'main' === $screen );
+		$is_menu    = ( 'menu' === $screen );
+		$is_stats   = ( 'stats' === $screen );
+		$is_toolbar = ( 'toolbar' === $screen );
 
 		// Brand / Features / Plugins data — only the Settings ("main") screen needs
 		// the feature list + the (relatively costly) installed-plugins scan. Other
@@ -302,16 +335,29 @@ class AdminKit_Settings_Page {
 		// only built on the Menu screen; empty elsewhere.
 		$menu_manager = $is_menu ? AdminKit_Menu_Manager::editor_data() : array();
 
+		// Toolbar editor — lightweight boot (just the REST route + enabled); the live
+		// admin-bar nodes are fetched over REST on the Toolbar screen, not here (the
+		// bar renders too late in the page to snapshot before this payload is built).
+		$toolbar = ( $is_toolbar && class_exists( 'AdminKit_Toolbar_Manager' ) )
+			? AdminKit_Toolbar_Manager::boot_data()
+			: array( 'enabled' => false );
+
 		return array(
 			'screen'       => $screen,
 			'route'        => self::REST_NS . self::REST_ROUTE,
 			'features'     => $features,
 			'integrations' => $integrations,
 			'stats'        => $stats,
+			'toolbar'      => $toolbar,
 			'logos'        => array(
 				'light' => (string) AdminKit_Settings::get( 'logo_light' ),
 				'dark'  => (string) AdminKit_Settings::get( 'logo_dark' ),
 			),
+			// Site identity for the Brand-studio live preview (mock admin bar +
+			// login). Name + the WP Site Icon URL so the "Favicon" display mode
+			// previews accurately. Cheap; only meaningful on the Brand tab.
+			'siteName'     => (string) get_bloginfo( 'name' ),
+			'siteIcon'     => (string) get_site_icon_url( 64 ),
 			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
 			'loginLogo'    => (string) AdminKit_Settings::get( 'login_logo' ),
 			'brandAccent'  => (string) AdminKit_Settings::get( 'brand_accent' ),
@@ -343,18 +389,32 @@ class AdminKit_Settings_Page {
 				'plugins'           => __( 'Plugins', 'adminkit' ),
 				'menu'              => __( 'Menu', 'adminkit' ),
 
+				// Toolbar manager tab.
+				'toolbarTab'        => __( 'Toolbar', 'adminkit' ),
+				'toolbarIntro'      => __( 'Reorder and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn\'t block access. Reset restores the native layout. Changes apply after you save.', 'adminkit' ),
+				'toolbarReset'      => __( 'Reset toolbar', 'adminkit' ),
+				'toolbarEmpty'      => __( 'No toolbar items found.', 'adminkit' ),
+				'toolbarLeft'       => __( 'Left', 'adminkit' ),
+				'toolbarRight'      => __( 'Right', 'adminkit' ),
+
 				// Menu manager tab.
 				'menuIntro'         => __( 'Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access.', 'adminkit' ),
 				'menuReset'         => __( 'Reset menu', 'adminkit' ),
 				'menuIconPick'      => __( 'Choose an icon', 'adminkit' ),
 				'menuIconNone'      => __( 'Default', 'adminkit' ),
 				'menuIconWp'        => __( 'WordPress icon', 'adminkit' ),
+				'menuIconAkSet'     => __( 'AdminKit icons', 'adminkit' ),
+				'menuIconWpSet'     => __( 'WordPress icons', 'adminkit' ),
+				'menuIconSearch'    => __( 'Search…', 'adminkit' ),
 				'menuHide'          => __( 'Hide', 'adminkit' ),
 				'menuShow'          => __( 'Show', 'adminkit' ),
 				'menuSubmenus'      => __( 'submenus', 'adminkit' ),
 				'menuSubmenusToggle' => __( 'Show / hide submenus', 'adminkit' ),
 				'menuDragHint'      => __( 'Drag to reorder', 'adminkit' ),
+				'menuMoveUp'        => __( 'Move up', 'adminkit' ),
+				'menuMoveDown'      => __( 'Move down', 'adminkit' ),
 				'menuIconCustom'    => __( 'Paste an SVG or a data:image/svg+xml URI…', 'adminkit' ),
+				'menuIconHint'      => __( 'Need an icon? Copy an SVG from', 'adminkit' ),
 				'menuIconApply'     => __( 'Apply', 'adminkit' ),
 				'menuAddLink'       => __( 'Add link', 'adminkit' ),
 				'menuAddSeparator'  => __( 'Add separator', 'adminkit' ),
@@ -371,6 +431,7 @@ class AdminKit_Settings_Page {
 				'menuRename'        => __( 'Rename — clear to restore the original', 'adminkit' ),
 				'menuUrlTitle'      => __( 'Custom link', 'adminkit' ),
 				'menuUrlLabel'      => __( 'Point this item at a custom URL (internal or external). Its submenu still works.', 'adminkit' ),
+				'menuUrlCurrent'    => __( 'Current', 'adminkit' ),
 				'menuUrlClear'      => __( 'Clear', 'adminkit' ),
 
 				// Features tab — intro + bulk row + per-plugin descriptors.
@@ -379,6 +440,7 @@ class AdminKit_Settings_Page {
 				'disableAll'        => __( 'Disable all', 'adminkit' ),
 				'resetDefaults'     => __( 'Reset to defaults', 'adminkit' ),
 				'searchFeatures'    => __( 'Search features…', 'adminkit' ),
+				'searchPlugins'     => __( 'Search plugins…', 'adminkit' ),
 				'pluginsIntro'      => __( 'Every plugin installed on your site, plus AdminKit\'s active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit\'s base styling automatically.', 'adminkit' ),
 				'native'            => __( 'Native', 'adminkit' ),
 				'nativeHint'        => __( 'AdminKit ships a tuned adapter for this plugin — light and dark.', 'adminkit' ),
@@ -425,6 +487,14 @@ class AdminKit_Settings_Page {
 				'loginLogoLabel'    => __( 'Login', 'adminkit' ),
 				'wpLogoBrand'       => __( 'Logo', 'adminkit' ),
 				'wpLogoFavicon'     => __( 'Favicon', 'adminkit' ),
+
+				// Brand studio — the live preview pane.
+				'brandPreviewTitle' => __( 'Live preview', 'adminkit' ),
+				'brandPreviewLight' => __( 'Light', 'adminkit' ),
+				'brandPreviewDark'  => __( 'Dark', 'adminkit' ),
+				'brandPreviewLogo'  => __( 'Your logo', 'adminkit' ),
+				'brandPreviewSignIn' => __( 'Sign in', 'adminkit' ),
+				'brandPreviewButton' => __( 'Button', 'adminkit' ),
 
 			) + $stats_i18n, // Statistics-tab strings, merged from the stats-page module.
 		);

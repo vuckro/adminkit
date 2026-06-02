@@ -67,16 +67,16 @@ class AdminKit_Settings_Catalog {
 				'desc'  => __( 'Theme the Gutenberg canvas in light and dark. Off keeps the canvas matching your live site exactly.', 'adminkit' ),
 			),
 			array(
-				'key'   => 'replace_icons_enabled',
-				'group' => $appearance,
-				'label' => __( 'AdminKit icons', 'adminkit' ),
-				'desc'  => __( 'Swap WordPress\'s menu and toolbar icons for AdminKit\'s set. Icons customised elsewhere (e.g. Admin Menu Editor) are left alone.', 'adminkit' ),
-			),
-			array(
 				'key'   => 'menu_manager_enabled',
 				'group' => $appearance,
 				'label' => __( 'Menu manager', 'adminkit' ),
-				'desc'  => __( 'Reorder the admin menu and submenus, change menu icons, and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept).', 'adminkit' ),
+				'desc'  => __( 'Reorder the admin menu and submenus, set a per-item icon (an AdminKit glyph, a WordPress dashicon, or your own), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept).', 'adminkit' ),
+			),
+			array(
+				'key'   => 'toolbar_manager_enabled',
+				'group' => $appearance,
+				'label' => __( 'Toolbar manager', 'adminkit' ),
+				'desc'  => __( 'Reorder and hide the top-level items in the admin toolbar (the bar across the top of the screen) — configured in the Toolbar tab. Off restores the native toolbar (your saved layout is kept).', 'adminkit' ),
 			),
 			array(
 				'key'   => 'hide_footer_enabled',
@@ -106,7 +106,7 @@ class AdminKit_Settings_Catalog {
 				'key'   => 'custom_avatars_enabled',
 				'group' => $users,
 				'label' => __( 'Custom avatars', 'adminkit' ),
-				'desc'  => __( 'Adds "AdminKit Portraits (Generated)" to Settings → Discussion → Default Avatar. Pick it there to give every user a unique generated portrait.', 'adminkit' ),
+				'desc'  => __( 'On by default: every user without a real Gravatar gets a unique generated portrait instead of an empty silhouette (sets "AdminKit Portraits" as your Default Avatar in Settings → Discussion). Portraits come from an external service (DiceBear); turn off to restore Mystery Person.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'online_users_enabled',

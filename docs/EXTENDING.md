@@ -28,6 +28,7 @@ is in [ARCHITECTURE.md](ARCHITECTURE.md#asset-registry-css--js).
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
 | `adminkit/extra_tokens_handle` | filter | `(string\|null, string $context)` | Return a stylesheet handle to inject as a dependency of `adminkit-tokens` — how a **provider** feeds its live palette (Bricks). |
+| `adminkit/editor_canvas_provider_css` | filter | `(string, string $context)` | Return a stylesheet URL to inject into the Gutenberg canvas iframe, before `tokens.css` — the canvas-iframe equivalent of `extra_tokens_handle`, so a **provider** (Bricks) feeds its palette into the block-editor content frame. |
 | `adminkit/tokens_enqueued` | action | `(string $context)` | Fires right after `adminkit-tokens` is enqueued. Hook with `wp_add_inline_style( AdminKit_Assets::TOKENS_HANDLE, $css )` to inject runtime token overrides. |
 
 ## Settings
@@ -212,8 +213,11 @@ categorization; toggle off ⇒ every notice renders inline. Hooks in
 ## Statistics
 
 The built-in cookieless tracker (`inc/features/stats/`) renders a period view
-(Visits · Page views · trend vs the previous equal-length period · chart · top
-pages / sources) and a real-time Live view. Hooks:
+(Unique visitors · Page views · trend vs the previous equal-length period · chart
+· top pages / sources) and a real-time Live view. Unique visitors are deduped by a
+salted, **daily-rotating** hash of IP + User-Agent computed server-side (see
+`AdminKit_Stats_Tracker::visitor_hash`) — cookieless, consent-free, the raw IP is
+never stored, and the hash can't be linked across days. Hooks:
 
 | Hook | Signature | Purpose |
 | --- | --- | --- |
@@ -224,6 +228,8 @@ pages / sources) and a real-time Live view. Hooks:
 | `adminkit/stats/summary_range` | `(array, $start, $end, $limit)` | Final read seam — swap in a GA4 / Plausible source. |
 | `adminkit/stats/bot_needles` | `(string[])` | UA substrings dropped at the collector. |
 | `adminkit/stats/is_bot` | `(?bool, $ua)` | Short-circuit bot detection per request. |
+| `adminkit/stats/trust_proxy` | `(bool)` | Return true ONLY when the site is genuinely behind a trusted proxy/CDN, to honour `CF-Connecting-IP` / `X-Forwarded-For` for the visitor IP. **Off by default** — those headers are client-spoofable on a direct host and would let anyone inflate unique-visitor counts via the public beacon. |
+| `adminkit/stats/client_ip` | `(string)` | Override the resolved client IP (proxies/CDN) feeding the unique-visitor hash; only hashed, never stored. |
 | `adminkit/stats/cards` | `(array, $start, $end, $preset)` | **Contribute extra metric tiles** (e.g. WooCommerce revenue, FluentCart conversions). |
 
 **`adminkit/stats/cards`** is the seam for future commerce integrations. Return a

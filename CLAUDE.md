@@ -22,7 +22,7 @@ inc/
     class-settings-catalog.php  SPA catalogs (features, integrations).
     class-settings-gate.php  Per-integration + generic-plugin theming gates.
     class-settings-page.php  Admin menu + REST save; mounts the shared SPA engine per-screen
-                         (data-screen = main|menu|stats) via render_host/enqueue_app/boot_data.
+                         (data-screen = main|menu|stats|toolbar) via render_host/enqueue_app/boot_data.
                          Three subpages: Settings (tabbed: Brand·Features·Plugins), Menu,
                          Statistics (read-only). One build-free vanilla-DOM engine; dark mode is
                          design-time CSS only (no runtime auto-theme engine).
@@ -33,8 +33,9 @@ inc/
   features/               AdminKit tools that ADD a surface (a page, a dashboard, a data store) —
                          NOT restyling. One folder each: dashboard/ (custom dashboard),
                          online-users/, notifications/ (notification center), menu/ (admin-menu
-                         editor), stats/ (cookieless analytics). Each self-registers its hooks;
-                         menu/ + stats/ add their own AdminKit subpage.
+                         editor), toolbar/ (admin-bar editor — reorder + hide top-level nodes;
+                         fetches the live nodes over REST), stats/ (cookieless analytics). Each
+                         self-registers its hooks; menu/ + stats/ + toolbar/ add their own subpage.
   integrations/
     abstract-integration.php   AdminKit_Integration_Base.
     plugins/{slug}/            Plugin adapters (acf, woocommerce, …) — class + css/ + baseline.json.
@@ -179,14 +180,29 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 - **The token layers are each optional** (provider → baseline → neutral). Don't
   hard-require any one of them. See ARCHITECTURE.
 - **Default feature toggles ship ON** — Gutenberg canvas theming
-  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`), custom
-  avatars (`custom_avatars_enabled`) and users-list Quick Edit
-  (`quick_edit_users_enabled`) all default ON, so the plugin presents
-  fully-featured on activation. `bricks_builder_enabled` also defaults ON, but
-  the UI locks that row unless the Bricks theme is active. Each stays
-  individually switch-off-able. `username_changer_enabled` defaults OFF because
-  renaming `user_login` invalidates active sessions. Keep this posture — don't
-  quietly flip defaults while refactoring.
+  (`editor_content_theme`) and users-list Quick Edit (`quick_edit_users_enabled`)
+  default ON, so the plugin presents fully-featured on activation.
+  `custom_avatars_enabled` ALSO defaults ON (maintainer's UX call — a unique
+  generated portrait reads far better than an empty silhouette) **with a deliberate
+  trade-off**: it calls an EXTERNAL service (DiceBear) and loads those images on the
+  front end, so activation is NOT front-end-neutral (the only default-ON feature
+  that isn't). It discloses in readme.txt, sends only a non-PII seed (md5 of login),
+  and respects real Gravatars; off resets the Default Avatar to Mystery Person. This
+  **reverses the earlier opt-in posture** — a deliberate maintainer decision (keep it
+  ON unless told otherwise); mind .org's external-service expectations when shipping.
+  `bricks_builder_enabled` also defaults ON, but the UI locks that row unless the
+  Bricks theme is active. Each stays individually switch-off-able. AdminKit icons
+  (`replace_icons_enabled`) is **always on, with no UI toggle** — a global on/off
+  duplicated the Menu manager (now THE place to override / reset icons per item:
+  AdminKit glyph, WordPress dashicon, or your own), so the toggle was removed; the
+  setting stays registered (default true) so a filter can still disable it. Two
+  are **OFF by default** on purpose:
+  `username_changer_enabled` (renaming `user_login` invalidates active sessions)
+  and `stats_enabled` (Traffic Stats fires a
+  front-end beacon POST per page view — the ONE feature with an inherent front
+  cost — so it's opt-in too: activating AdminKit then fires nothing on the front
+  end, registers no stats page and no dashboard card until you enable it). Keep
+  this posture — don't quietly flip defaults while refactoring.
 - **Username changer is destructive** — `class-username-changer.php` rides the
   native user-edit.php submit (no AJAX endpoint, no separate Save button):
   `user_profile_update_errors` validates, `profile_update` writes `user_login`
