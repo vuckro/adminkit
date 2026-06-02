@@ -121,14 +121,14 @@ body.adminkit #bricks-settings tr {
 /* Each settings TAB is its own `<table id="tab-…">`, auto-sized to its content —
    so switching tabs (General · Builder access · Performance …) made the form jump
    to a different width every time. Fill the wrapper so every tab reads at the SAME
-   size, but cap it at a comfortable 1440px so long-field tabs (API keys, Custom
+   size, but cap it at a comfortable 1200px so long-field tabs (API keys, Custom
    Code) get plenty of room without the form stretching edge-to-edge on a wide
    monitor. A steady label column keeps the field edge aligned across tabs too.
    (Plain auto layout — no table-layout:fixed, which would clip Bricks's wider
    cells / code editors.) */
 body.adminkit #bricks-settings > table[id^="tab-"] {
 	width: 100%;
-	max-width: 1440px;
+	max-width: 1200px;
 	box-sizing: border-box;
 }
 body.adminkit #bricks-settings > table[id^="tab-"] > tbody > tr > th {
