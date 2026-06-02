@@ -1133,6 +1133,12 @@ body.adminkit .ak-dash__stats-head .ak-card__title {
 	margin-right: auto; /* push the pill + selector to the right */
 }
 
+/* The pill's live-poll wrapper is layout-transparent — the pill (or nothing,
+   when 0 active) is the real flex child of the head. */
+body.adminkit .ak-dash__stats-active-wrap {
+	display: contents;
+}
+
 /* Active-visitors pill — live presence, distinct from logged-in accounts. */
 body.adminkit .ak-dash__stats-active {
 	display: inline-flex;

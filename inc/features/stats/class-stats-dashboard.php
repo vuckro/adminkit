@@ -356,6 +356,14 @@ class AdminKit_Stats_Dashboard {
 		if ( ! current_user_can( self::capability() ) ) {
 			wp_send_json_error( 'forbidden', 403 );
 		}
+
+		// Lightweight "ping": return ONLY the active-now pill — for the live counter
+		// on the dashboard period views. No state write, no summary read; cheap to
+		// poll every few seconds.
+		if ( ! empty( $_POST['ping'] ) ) {
+			wp_send_json_success( array( 'active_html' => self::active_pill() ) );
+		}
+
 		$preset = isset( $_POST['preset'] ) ? sanitize_key( wp_unslash( $_POST['preset'] ) ) : '';
 		$start  = isset( $_POST['start'] ) ? sanitize_text_field( wp_unslash( $_POST['start'] ) ) : '';
 		$end    = isset( $_POST['end'] ) ? sanitize_text_field( wp_unslash( $_POST['end'] ) ) : '';
@@ -416,7 +424,11 @@ class AdminKit_Stats_Dashboard {
 		// Synced with the SPA stats page, which does the same.
 		$out  = '<div class="ak-card__head ak-dash__stats-head">';
 		$out .= '<h2 class="ak-card__title">' . esc_html__( 'Statistics', 'adminkit' ) . '</h2>';
-		$out .= self::active_pill();
+		// Wrap the active-now pill so the dashboard JS can keep it LIVE on period
+		// views too — polling JUST this count (cheap: no full-card re-render, no
+		// saved-state write). Kept present even when empty (0 active) so the poller
+		// has a stable target to fill / clear.
+		$out .= '<span class="ak-dash__stats-active-wrap" data-ak-stats-active data-ak-stats-active-interval="' . esc_attr( (string) self::LIVE_REFRESH_MS ) . '">' . self::active_pill() . '</span>';
 		$out .= self::range_picker( $start, $end, $preset );
 		$out .= '</div>';
 
