@@ -1,0 +1,346 @@
+/* FluentSupport — toplevel_page_fluent-support.
+
+   FluentSupport is a Vue 3 SPA on Element Plus, and it is VARIABLE-DRIVEN: it
+   declares its own --fs-* design tokens in :root, ships a full dark mode of its
+   own (body.fs-dark-mode redeclares those --fs-* tokens AND aliases the Element
+   Plus --el-* layer onto them), and paints almost everything through that layer.
+   So this adapter is mostly a token remap (§1) — point the --fs-* roots and the
+   --el-* layer at AdminKit --ak-* and the whole UI (surfaces, text, borders,
+   every Element Plus component) follows, dark mode included. There is no
+   theme-sync JS in the PHP: the --ak-* flip already carries AdminKit dark, and
+   our block out-specifies the host's own dark class (see "Why these win").
+
+   FluentSupport splits its brand in two — exactly like FluentCRM: a near-black
+   #0E121B it parks in --fs-bg-strong / --fs-btn-primary-bg / --fs-stroke-strong
+   (filled buttons + their borders + the "upgrade" pill) and a green #089360 it
+   parks in --fs-text-link (links, accents); it also leans on an info-blue #335CFF
+   in --fs-text-info. AdminKit has one brand, so the near-black AND the green BOTH
+   route to --ak-primary: filled controls and links all speak the brand, white
+   pinned on filled surfaces via --ak-on-accent. The info-blue stays informational
+   (--ak-info).
+
+   §3 mops up the literals FluentSupport hard-codes past its vars — the leftover
+   stock Element Plus blue #409eff on a handful of buttons/links the --fs-* brand
+   never reached (a ghost timesheet button, a link preview, an attachment chip, an
+   active inner-sidebar item, a shortcode-button hover).
+
+   Why these win. FluentSupport declares its tokens in :root (0,1,0) and in
+   body.fs-dark-mode (0,1,1). Our block targets
+   :root, body.adminkit.toplevel_page_fluent-support (0,2,1 for the body arm),
+   which outranks BOTH — so our values hold whether or not the host's dark class
+   is on (no need to fight or sync it). Element Plus teleports dialogs / poppers /
+   drawers to <body>, so the body-scoped selectors reach them too. */
+
+
+/* ============================================================
+   1. TOKEN REMAP — --fs-* and --el-* → AdminKit tokens
+   ============================================================ */
+
+:root,
+body.adminkit.toplevel_page_fluent-support {
+	/* --- FluentSupport's own --fs-* layer --- */
+
+	/* Surfaces. 3-surface split confirmed by role:
+	   --fs-global-component-bg (#F3F5FA / dark #05070B) = the app page canvas;
+	   --fs-bg-primary (#FFFFFF / #0E121B) = cards, inputs, panels, dialogs;
+	   --fs-bg-subtle (#F5F7FA / #222530) = recessed fill / the content body /
+	   hover / zebra; --fs-bg-muted (#2B303B) = the next step up (elevated). */
+	--fs-global-component-bg: var( --ak-bg );
+	--fs-bg-primary: var( --ak-surface );
+	--fs-bg-white: var( --ak-surface );
+	--fs-bg-secondary: var( --ak-surface );
+	--fs-bg-soft: var( --ak-surface-muted );
+	--fs-bg-soft-100: var( --ak-surface-muted );
+	--fs-bg-subtle: var( --ak-surface-muted );
+	--fs-bg-weak: var( --ak-surface-muted );
+	--fs-bg-weak-50: var( --ak-surface-muted );
+	--fs-bg-neutral: var( --ak-surface-muted );
+	--fs-bg-muted: var( --ak-elevated );
+	--fs-table-header-bg: var( --ak-surface-muted );
+	--fs-table-hover-bg: var( --ak-hover-bg );
+
+	/* Text */
+	--fs-text-primary: var( --ak-heading );      /* #0E121B titles, values */
+	--fs-text-strong: var( --ak-heading );
+	--fs-text-base: var( --ak-heading );
+	--fs-text-black: var( --ak-heading );
+	--fs-text-secondary: var( --ak-text );       /* #525866 body copy */
+	--fs-text-sub: var( --ak-text );
+	--fs-text-tertiary: var( --ak-text-muted );
+	--fs-text-muted: var( --ak-text-muted );     /* #99A0AE meta */
+	--fs-text-gray: var( --ak-text-muted );
+	--fs-gray-600: var( --ak-text-muted );
+	--fs-text-light: var( --ak-text-muted );
+	--fs-text-white: var( --ak-on-accent );      /* text on filled controls */
+
+	/* Borders */
+	--fs-border-default: var( --ak-border );
+	--fs-border-lighter: var( --ak-border );
+	--fs-border-hover: var( --ak-border-strong );
+	--fs-border-strong: var( --ak-border-strong );
+	--fs-stroke-soft: var( --ak-border );
+	--fs-stroke-soft-100: var( --ak-border );
+	--fs-stroke-medium: var( --ak-border );
+
+	/* Brand — near-black filled controls + their borders + the green link/accent
+	   ALL collapse to one AdminKit brand. --fs-bg-strong / --fs-btn-primary-bg are
+	   the filled-button surface (#0E121B); --fs-stroke-strong / --fs-btn-border-black
+	   are the matching border; --fs-text-link / --fs-primary / --fs-color-primary /
+	   --fs-link-color are the green accent. White rides on filled controls. */
+	--fs-bg-strong: var( --ak-primary );
+	--fs-btn-primary-bg: var( --ak-primary );
+	--fs-stroke-strong: var( --ak-primary );
+	--fs-btn-border-black: var( --ak-primary );
+	--fs-primary: var( --ak-primary );
+	--fs-primary-500: var( --ak-primary );
+	--fs-color-primary: var( --ak-primary );
+	--fs-primary-text-color: var( --ak-primary );
+	--fs-text-link: var( --ak-primary );
+	--fs-link-color: var( --ak-primary );
+	--fs-link-hover-color: var( --ak-primary-hover );
+	--fs-btn-hover-bg: var( --ak-hover-bg );
+
+	/* Subtle / plain controls → neutral surfaces + body text. */
+	--fs-subtle-btn-bg: var( --ak-surface-muted );
+	--fs-subtle-btn-text: var( --ak-text );
+	--fs-plain-button-text: var( --ak-text );
+	--fs-btn-disabled: var( --ak-text-muted );
+
+	/* Info-blue (#335CFF) stays informational, not the brand. */
+	--fs-text-info: var( --ak-info );
+	--fs-status-info-text: var( --ak-info );
+	--fs-state-information-dark: var( --ak-info );
+	--fs-stat-icon-info-color: var( --ak-info );
+
+	/* Semantic + their pale tints / dark variants. FluentSupport's red is its
+	   error (#FB3748), green its success (#1FC16B / #15BE7C), amber its warning. */
+	--fs-text-green: var( --ak-success );
+	--fs-state-success-dark: var( --ak-success );
+	--fs-badge-success-text: var( --ak-success );
+	--fs-state-success-light: var( --ak-success-subtle );
+	--fs-status-active: var( --ak-success );
+	--fs-status-active-text: var( --ak-success );
+	--fs-status-active-dot: var( --ak-success );
+	--fs-status-active-bg: var( --ak-success-subtle );
+	--fs-badge-success-bg: var( --ak-success-subtle );
+	--fs-text-red: var( --ak-error );
+	--fs-text-error: var( --ak-error );
+	--fs-state-error-dark: var( --ak-error );
+	--fs-btn-border-red: var( --ak-error );
+	--fs-stat-icon-danger-color: var( --ak-error );
+	--fs-state-information-light: var( --ak-error-subtle );
+	--fs-stat-icon-danger-bg: var( --ak-error-subtle );
+	--fs-status-pending: var( --ak-warning );
+	--fs-status-pending-dot: var( --ak-warning );
+	--fs-status-waiting-color: var( --ak-warning );
+	--fs-status-pending-bg: var( --ak-warning-subtle );
+	--fs-status-waiting-bg: var( --ak-warning-subtle );
+
+	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
+	--fs-shadow-soft: none;
+	--fs-shadow-light: none;
+	--fs-shadow-sm: none;
+	--fs-shadow-toggle: none;
+
+	/* --- Element Plus --el-* layer (the canonical remap) --- */
+
+	/* Brand. --el-color-primary is stock EP blue; route it to the brand so any
+	   EP default that still reads it is on-brand. */
+	--el-color-primary: var( --ak-primary );
+
+	/* The blue source EP never exposes as a token: every
+	   `rgba(var(--el-color-primary-rgb), a)` focus ring / selection fill / hover
+	   tint falls back to EP's stock #409eff when this is unset. Pin it to the
+	   brand rgb (same literal as tokens.css --wp-admin-theme-color--rgb) — alpha
+	   tints read correctly over any surface in both modes. */
+	--el-color-primary-rgb: 117, 163, 59;
+
+	/* Primary ramp — keep filled/hover/disabled/plain-bg primary states on brand
+	   instead of EP's blue-derived steps. */
+	--el-color-primary-dark-2: var( --ak-primary-hover );    /* active / pressed */
+	--el-color-primary-light-3: var( --ak-primary-hover );   /* filled-button hover */
+	--el-color-primary-light-5: var( --ak-primary-subtle );
+	--el-color-primary-light-7: var( --ak-primary-subtle );
+	--el-color-primary-light-8: var( --ak-primary-subtle );
+	--el-color-primary-light-9: var( --ak-primary-subtle );  /* plain bg / current row */
+
+	/* Semantic. NOTE: Element Plus "info" is a NEUTRAL grey (#909399), not a
+	   blue — route it to the muted text token + a neutral ramp so it never reads
+	   as a colour. (FluentSupport's OWN info-blue is --fs-text-info, handled
+	   above and pointed at --ak-info.) */
+	--el-color-success: var( --ak-success );
+	--el-color-warning: var( --ak-warning );
+	--el-color-danger: var( --ak-error );
+	--el-color-error: var( --ak-error );
+	--el-color-info: var( --ak-text-muted );
+	--el-color-info-light-3: var( --ak-text-muted );
+	--el-color-info-light-5: var( --ak-border-strong );
+	--el-color-info-light-9: var( --ak-surface );
+	--el-color-info-dark-2: var( --ak-heading );
+
+	/* Text */
+	--el-text-color-primary: var( --ak-heading );
+	--el-text-color-regular: var( --ak-text );
+	--el-text-color-secondary: var( --ak-text-muted );
+	--el-text-color-placeholder: var( --ak-text-muted );
+	--el-text-color-disabled: var( --ak-text-muted );
+
+	/* Backgrounds */
+	--el-bg-color: var( --ak-surface );
+	--el-bg-color-page: var( --ak-bg );
+	--el-bg-color-overlay: var( --ak-surface );
+
+	/* Borders */
+	--el-border-color: var( --ak-border );
+	--el-border-color-light: var( --ak-border );
+	--el-border-color-lighter: var( --ak-border );
+	--el-border-color-extra-light: var( --ak-border );
+	--el-border-color-dark: var( --ak-border-strong );
+	--el-border-color-darker: var( --ak-border-strong );
+
+	/* Fills — hover bgs, zebra rows, disabled, blank canvas. EP greys leak on
+	   dark surfaces if left unset; pin the whole set to neutral surfaces. */
+	--el-fill-color: var( --ak-surface );
+	--el-fill-color-light: var( --ak-surface );
+	--el-fill-color-lighter: var( --ak-surface );
+	--el-fill-color-extra-light: var( --ak-surface );
+	--el-fill-color-dark: var( --ak-elevated );
+	--el-fill-color-darker: var( --ak-elevated );
+	--el-fill-color-blank: var( --ak-surface );
+
+	/* Disabled — consumed but never (re)defined by FluentSupport in light, so
+	   EP's stock greys leak in dark. */
+	--el-disabled-bg-color: var( --ak-surface );
+	--el-disabled-text-color: var( --ak-text-muted );
+	--el-disabled-border-color: var( --ak-border );
+
+	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
+	--el-box-shadow: none;
+	--el-box-shadow-light: none;
+	--el-box-shadow-lighter: none;
+	--el-box-shadow-dark: none;
+}
+
+
+/* ============================================================
+   2. PAGE CANVAS
+   AdminKit's chrome.css themes #wpbody but not #wpcontent; give the content
+   strip and the app shell the page token so the area behind the SPA flips.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-support #wpcontent,
+body.adminkit.toplevel_page_fluent-support #alpha_app {
+	background-color: var( --ak-bg );
+}
+
+/* Layout / chrome. FluentSupport pulls its whole app wrapper left
+   (`#alpha_app{margin-left:-20px}`) to run full-bleed against WP's #wpcontent
+   20px padding. AdminKit zeroes that padding (≥783px), so the app OVER-pulls
+   20px PAST the panel's left edge, hiding AdminKit's left border + rounded
+   corner. Neutralise it so the app sits flush inside AdminKit's panel (same
+   reset the FluentCart / FluentCRM adapters do). Then frame the fixed topbar
+   like AdminKit's content panel, and pad the content body so it breathes left
+   + right inside the panel. Desktop only. */
+@media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluent-support #alpha_app {
+		margin-left: 0;
+	}
+	/* The top navbar is position:fixed at z-2000 — it paints OVER AdminKit's
+	   z-101 corner overlay, so it carries the panel frame itself (left + top
+	   border + 18px top-left radius), exactly like FluentCRM's z-2000 topbar. */
+	body.adminkit.toplevel_page_fluent-support .fs_main_navbar {
+		border-top: 1px solid var( --ak-border );
+		border-left: 1px solid var( --ak-border );
+		border-top-left-radius: 18px;
+	}
+	/* Content gutter — the fixed navbar stays full-width and framed; pad the
+	   content body (the actual flowing container, a sibling of .fframe_app) so
+	   the content breathes left + right inside the panel. */
+	body.adminkit.toplevel_page_fluent-support .fframe_body {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+}
+
+
+/* ============================================================
+   3. HARD-CODED LITERALS the var remap can't reach (#409eff)
+   The leftover stock Element Plus blue on a handful of controls the --fs-*
+   brand never reached. All → --ak-primary (the one brand).
+   ============================================================ */
+
+/* Brand text — link preview, shortcode-button hover. */
+body.adminkit.toplevel_page_fluent-support .fs_ticket_link_preview,
+body.adminkit.toplevel_page_fluent-support .fs_subject_shortcode_dropdown .fs_shortcode_icon_btn:hover {
+	color: var( --ak-primary ) !important;
+}
+
+/* Timesheet ghost button — bg surface, brand text + border; hover fills brand. */
+body.adminkit.toplevel_page_fluent-support .fs_time_sheet_export el-button {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-primary ) !important;
+}
+body.adminkit.toplevel_page_fluent-support .fs_time_sheet_export el-button:hover {
+	background-color: var( --ak-primary ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+
+/* Attachment-count chip — solid blue fill + white text → solid brand. */
+body.adminkit.toplevel_page_fluent-support .fs_attachment_count {
+	background-color: var( --ak-primary ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+
+/* Active inner-sidebar item — host paints a pale blue (#ecf5ff) bg + #e3e6ef
+   border + blue text + a box-shadow. Route to a neutral elevated surface with
+   heading text (matching the FluentCart / FluentCRM / FluentBooking nav, which
+   keep the active item neutral, not a brand tint); drop the shadow (flat). */
+body.adminkit.toplevel_page_fluent-support .fframe_body .inner_sidebar ul li a.router-link-exact-active {
+	background: var( --ak-elevated ) !important;
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-heading ) !important;
+	box-shadow: none !important;
+}
+
+
+/* ============================================================
+   4. IN-APP DARK TOGGLE + WHITE-LABEL LOGO
+   ============================================================ */
+
+/* FluentSupport ships its OWN in-app dark toggle (the <color-mode> element,
+   `.fs_color_mode`) that flips its body.fs-dark-mode class. AdminKit drives dark
+   via the token remap, so in AdminKit-dark that control is redundant/confusing —
+   hide it (dark only; left available in light). */
+:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluent-support .fs_item_color_mode,
+:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluent-support .fs_color_mode {
+	display: none !important;
+}
+
+/* White-label the in-app navbar logo. FluentSupport's top navbar renders its
+   brand <img> logo (a dark mark) inside `.menu_logo_holder a` — dark-on-dark and
+   invisible once AdminKit goes dark. Hide the img and drop a plain text wordmark
+   in its place, sourced from the WP menu title via --ak-wordmark (same approach
+   as the FluentCRM / FluentBooking adapters). */
+body.adminkit.toplevel_page_fluent-support .menu_logo_holder a img {
+	display: none !important;
+}
+
+body.adminkit.toplevel_page_fluent-support .menu_logo_holder a,
+body.adminkit.toplevel_page_fluent-support .menu_logo_holder a:hover,
+body.adminkit.toplevel_page_fluent-support .menu_logo_holder a:focus {
+	line-height: normal;
+	overflow: visible;
+	text-decoration: none;
+	box-shadow: none;
+}
+
+body.adminkit.toplevel_page_fluent-support .menu_logo_holder a::after {
+	content: var( --ak-wordmark, "FluentSupport" );
+	color: var( --ak-heading );
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+}

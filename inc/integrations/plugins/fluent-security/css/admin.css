@@ -1,0 +1,165 @@
+/* FluentSecurity / FluentAuth — toplevel_page_fluent-auth.
+
+   FluentAuth is a Vue 3 SPA on Element Plus, and its component styles are
+   bundled INSIDE dist/admin/app.js using the stock Element Plus `--el-*` token
+   layer (there is no separate admin CSS file, and FluentAuth declares no
+   private `--fa-*`/`--fls-*` design tokens of its own on the admin side — the
+   `--fls-*` layer lives in the FRONTEND login_customizer.css, out of scope).
+
+   So this adapter is almost entirely a Tier-A-style token remap (§1): point the
+   Element Plus `--el-*` layer at AdminKit `--ak-*` and the whole UI — surfaces,
+   text, borders, every Element Plus component — follows, dark mode included.
+   FluentAuth ships NO dark mode of its own, so the `--ak-*` flip is what gives
+   it one; there is no host dark class to fight, hence no theme-sync JS in the
+   PHP. This is a SMALL plugin, so the file is deliberately modest: the `--el-*`
+   remap, the page canvas, and a neutral-active-nav touch — that's the surface.
+
+   Brand. FluentAuth's mark is a near-black #2b2e33; Element Plus's default
+   accent is the stock blue #409eff. AdminKit has one brand, so the whole
+   `--el-color-primary-*` ramp routes to --ak-primary: filled controls, links,
+   checked switches/checkboxes all speak the brand, white pinned on filled
+   surfaces via --ak-on-accent.
+
+   Why these win. Element Plus declares its tokens in :root (0,1,0). Our block
+   targets :root, body.adminkit.toplevel_page_fluent-auth (0,2,1 for the body
+   arm), which outranks it. Element Plus teleports dialogs / poppers / drawers
+   to <body>, so the body-scoped selectors reach them too. */
+
+
+/* ============================================================
+   1. TOKEN REMAP — Element Plus --el-* → AdminKit tokens
+   (Canonical Element Plus remap, mirroring the FluentBooking / FluentCRM
+   adapters — FluentAuth uses the stock --el-* layer with no host alias.)
+   ============================================================ */
+
+:root,
+body.adminkit.toplevel_page_fluent-auth {
+	/* Brand. Route --el-color-primary (EP's blue) to the AdminKit brand so any
+	   EP default that reads it is on-brand. */
+	--el-color-primary: var( --ak-primary );
+
+	/* The blue source EP never exposes as a token: every
+	   `rgba(var(--el-color-primary-rgb), a)` focus ring / selection fill / hover
+	   tint falls back to EP's stock #409eff when this is unset. Pin it to the
+	   brand rgb (same literal as tokens.css --wp-admin-theme-color--rgb) so alpha
+	   tints read correctly over any surface in both modes. */
+	--el-color-primary-rgb: 117, 163, 59;
+
+	/* Primary ramp — keep filled / hover / disabled / plain-bg primary states on
+	   brand instead of EP's blue-derived steps. */
+	--el-color-primary-dark-2: var( --ak-primary-hover );    /* active / pressed */
+	--el-color-primary-light-3: var( --ak-primary-hover );   /* filled-button hover */
+	--el-color-primary-light-5: var( --ak-primary-subtle );
+	--el-color-primary-light-7: var( --ak-primary-subtle );
+	--el-color-primary-light-8: var( --ak-primary-subtle );
+	--el-color-primary-light-9: var( --ak-primary-subtle );  /* plain bg / current row */
+
+	/* Semantic. NOTE: Element Plus "info" is a NEUTRAL grey (#909399), not a
+	   blue — route info to the muted text token + a neutral ramp so it never
+	   reads as a colour. */
+	--el-color-success: var( --ak-success );
+	--el-color-warning: var( --ak-warning );
+	--el-color-danger: var( --ak-error );
+	--el-color-error: var( --ak-error );
+	/* Danger ramp — plain/text/link danger buttons read light-9 (bg) + light-5
+	   (border); EP leaves them at stock pink, so pin them to error tokens. */
+	--el-color-danger-light-3: var( --ak-error );
+	--el-color-danger-light-5: var( --ak-error );
+	--el-color-danger-light-9: var( --ak-error-subtle );
+	--el-color-info: var( --ak-text-muted );
+	--el-color-info-light-3: var( --ak-text-muted );
+	--el-color-info-light-5: var( --ak-border-strong );
+	--el-color-info-light-9: var( --ak-surface );
+	--el-color-info-dark-2: var( --ak-heading );
+
+	/* Text */
+	--el-text-color-primary: var( --ak-heading );
+	--el-text-color-regular: var( --ak-text );
+	--el-text-color-secondary: var( --ak-text-muted );
+	--el-text-color-placeholder: var( --ak-text-muted );
+	--el-text-color-disabled: var( --ak-text-muted );
+
+	/* Backgrounds */
+	--el-bg-color: var( --ak-surface );
+	--el-bg-color-page: var( --ak-bg );
+	--el-bg-color-overlay: var( --ak-surface );
+
+	/* Borders */
+	--el-border-color: var( --ak-border );
+	--el-border-color-light: var( --ak-border );
+	--el-border-color-lighter: var( --ak-border );
+	--el-border-color-extra-light: var( --ak-border );
+	--el-border-color-dark: var( --ak-border-strong );
+	--el-border-color-darker: var( --ak-border-strong );
+
+	/* Fills — hover bgs, zebra rows, disabled, blank canvas. EP greys leak on
+	   dark surfaces if left unset; pin the whole set to neutral surfaces. */
+	--el-fill-color: var( --ak-surface );
+	--el-fill-color-light: var( --ak-surface );
+	--el-fill-color-lighter: var( --ak-surface );
+	--el-fill-color-extra-light: var( --ak-surface );
+	--el-fill-color-dark: var( --ak-elevated );
+	--el-fill-color-darker: var( --ak-elevated );
+	--el-fill-color-blank: var( --ak-surface );
+
+	/* Disabled — consumed but never (re)defined by FluentAuth, so EP's stock
+	   greys leak in dark. */
+	--el-disabled-bg-color: var( --ak-surface );
+	--el-disabled-text-color: var( --ak-text-muted );
+	--el-disabled-border-color: var( --ak-border );
+
+	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
+	--el-box-shadow: none;
+	--el-box-shadow-light: none;
+	--el-box-shadow-lighter: none;
+	--el-box-shadow-dark: none;
+}
+
+
+/* ============================================================
+   2. PAGE CANVAS
+   AdminKit's chrome.css themes #wpbody but not #wpcontent; give the content
+   strip and the app shell the page token so the area behind the SPA flips.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-auth #wpcontent,
+body.adminkit.toplevel_page_fluent-auth #fluent_auth_app {
+	background-color: var( --ak-bg );
+}
+
+/* Content gutter. The SPA mounts directly inside WP's #wpcontent, which AdminKit
+   zeroes the 20px padding on (≥783px). Re-add a symmetric inset so the app's
+   cards / tables / header rows breathe inside AdminKit's panel rather than
+   running flush to the rounded edge. Desktop only. */
+@media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluent-auth #fluent_auth_app {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+}
+
+
+/* ============================================================
+   3. PRIMARY-BUTTON INK + NEUTRAL ACTIVE NAV
+   The two touches the var remap can't fully carry on its own.
+   ============================================================ */
+
+/* Primary button label → --ak-on-accent (the contrast-correct ink for the brand
+   fill). Element Plus ties the label to --el-button-text-color: white; pin it to
+   the token so it stays legible on the brand fill in BOTH modes. */
+body.adminkit.toplevel_page_fluent-auth .el-button--primary {
+	--el-button-text-color: var( --ak-on-accent );
+	--el-button-hover-text-color: var( --ak-on-accent );
+}
+
+/* Side/menu nav active + hover item → neutral elevated surface with heading
+   text (matching the FluentCart / FluentCRM / FluentBooking nav convention — an
+   elevated step, not a brand wash). The host paints the active EP menu item with
+   a pale brand tint (--el-color-primary-light-9, already remapped to
+   --ak-primary-subtle); lift it to a clear neutral step instead. */
+body.adminkit.toplevel_page_fluent-auth .el-menu-item.is-active,
+body.adminkit.toplevel_page_fluent-auth .el-menu-item:hover,
+body.adminkit.toplevel_page_fluent-auth .el-sub-menu__title:hover {
+	background-color: var( --ak-elevated ) !important;
+	color: var( --ak-heading ) !important;
+}

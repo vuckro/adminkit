@@ -1,0 +1,237 @@
+/* FluentAffiliate — toplevel_page_fluent-affiliate.
+
+   FluentAffiliate is a Vue 3 SPA on Element Plus, and like FluentBooking it
+   themes itself through TWO INDEPENDENT custom-property layers:
+
+     1. its own --fla-* tokens — declared on `body` (light) and `html.dark body`
+        (dark): surfaces (--fla-primary-bg = card/white, --fla-secondary-bg =
+        page, --fla-active-bg = hover/zebra), text (--fla-primary-text = heading,
+        --fla-secondary-text = body), borders (--fla-primary-border,
+        --fla-secondary-border), a filled-control colour (--fla-primary-button =
+        the near-black brand) and a neutral badge fill (--fla-badge-color);
+
+     2. Element Plus --el-* tokens — and these are NOT aliased to --fla-*.
+        FluentAffiliate sets ONLY `--el-color-primary:#19283a` on `body`; the rest
+        of the EP ramp (light-3/5/7/8/9, dark-2, the -rgb channel) stays at EP's
+        stock blue, and `html.dark` reshuffles the entire EP layer to dark
+        stock-blue. So each layer is remapped on its own (§1 does both).
+
+   Why a plain variable remap IS enough here (no big literal sweep, unlike
+   FluentBooking). FluentAffiliate writes its brand into the CSS almost entirely
+   as `var(--fla-*, #hex)` FALLBACKS — e.g. `var(--fla-primary-text, #19283a)`,
+   `var(--fla-primary-button, #2b2e33)`. Once §1 remaps the var, the literal never
+   fires. The only escapees are two stock-blue input focus borders (#3f9eff /
+   #409eff) and the unset --el-color-primary-rgb focus ring; §3 catches those.
+
+   One brand. FluentAffiliate parks a near-black #19283a / #2b2e33 in
+   --fla-primary-button + --el-color-primary (filled buttons, checked controls).
+   AdminKit has one brand, so it routes to --ak-primary with white pinned on
+   filled surfaces via --ak-on-accent.
+
+   NO host dark class to fight. FluentAffiliate DOES ship a dark mode (an
+   `html.dark` class flipped by its in-app moon/sun toggle), but we never add that
+   class — the --fla-* / --el-* remap alone carries both light and dark, so the
+   host's own `html.dark body { --fla-*: <dark hex> }` block never needs to fire.
+
+   Why these selectors win. FluentAffiliate declares its tokens on `body` (light)
+   and `html.dark body` / `html.dark` (dark). Our token block targets
+   `:root, body.adminkit.toplevel_page_fluent-affiliate` (0,2,1) which outranks
+   all three. Element Plus teleports dialogs / poppers / drawers to <body>, so the
+   body-scoped selectors reach them too. */
+
+
+/* ============================================================
+   1. TOKEN REMAP — --fla-* and --el-* → AdminKit tokens
+   ============================================================ */
+
+:root,
+body.adminkit.toplevel_page_fluent-affiliate {
+	/* --- FluentAffiliate's own --fla-* layer --- */
+
+	/* Surfaces */
+	--fla-primary-bg: var( --ak-surface );        /* #fff cards, inputs, panels, navbar */
+	--fla-secondary-bg: var( --ak-bg );           /* #f0f2f5 app page background */
+	--fla-active-bg: var( --ak-hover-bg );        /* #f0f3f5 hover / zebra / active row */
+
+	/* Text */
+	--fla-primary-text: var( --ak-heading );      /* #19283a titles, labels, values */
+	--fla-secondary-text: var( --ak-text );       /* #525866 body copy / table links */
+
+	/* Borders */
+	--fla-primary-border: var( --ak-border );     /* #d3d8de */
+	--fla-secondary-border: var( --ak-border-strong ); /* #9ca3af */
+
+	/* Brand — the near-black filled-control colour → one AdminKit brand. */
+	--fla-primary-button: var( --ak-primary );    /* #2b2e33 filled buttons, checked controls */
+
+	/* Neutral count/status badge fill. */
+	--fla-badge-color: var( --ak-surface-muted ); /* #e1e4ea */
+
+	/* --- Element Plus --el-* layer (independent — must be set directly) --- */
+
+	/* Brand. FluentAffiliate sets --el-color-primary to its near-black on `body`;
+	   route it to the brand so any EP default that reads it is on-brand. */
+	--el-color-primary: var( --ak-primary );
+
+	/* The blue source EP never exposes as a token: every
+	   `rgba(var(--el-color-primary-rgb), a)` focus ring / selection fill falls
+	   back to EP's stock #409eff when unset (FluentAffiliate leaves it unset in
+	   light). Pin it to the brand's rgb (#19283a) so alpha tints read on any
+	   surface in both modes. */
+	--el-color-primary-rgb: 25, 40, 58;
+
+	/* Primary ramp — keep filled / hover / plain-bg primary states on brand,
+	   DECOUPLED from EP's blue-derived steps (FluentAffiliate leaves these unset
+	   in light → EP's compiled blue; html.dark sets them to dark stock-blue). */
+	--el-color-primary-dark-2: var( --ak-primary-hover );    /* active / pressed */
+	--el-color-primary-light-3: var( --ak-primary-hover );   /* filled-button hover */
+	--el-color-primary-light-5: var( --ak-primary-subtle );
+	--el-color-primary-light-7: var( --ak-primary-subtle );
+	--el-color-primary-light-8: var( --ak-primary-subtle );
+	--el-color-primary-light-9: var( --ak-primary-subtle );  /* plain bg / current row */
+
+	/* Semantic. Element Plus "info" is a NEUTRAL grey (#909399), not a blue —
+	   route info to the muted text token + a neutral ramp so it never reads as a
+	   colour. */
+	--el-color-success: var( --ak-success );
+	--el-color-warning: var( --ak-warning );
+	--el-color-danger: var( --ak-error );
+	--el-color-error: var( --ak-error );
+	/* Danger ramp — plain/text danger buttons read light-9 (bg) + light-5
+	   (border); EP leaves them at stock pink, so pin them to error tokens. */
+	--el-color-danger-light-3: var( --ak-error );
+	--el-color-danger-light-5: var( --ak-error );
+	--el-color-danger-light-9: var( --ak-error-subtle );
+	--el-color-info: var( --ak-text-muted );
+	--el-color-info-light-3: var( --ak-text-muted );
+	--el-color-info-light-5: var( --ak-border-strong );
+	--el-color-info-light-9: var( --ak-surface );
+	--el-color-info-dark-2: var( --ak-heading );
+
+	/* Text */
+	--el-text-color-primary: var( --ak-heading );
+	--el-text-color-regular: var( --ak-text );
+	--el-text-color-secondary: var( --ak-text-muted );
+	--el-text-color-placeholder: var( --ak-text-muted );
+	--el-text-color-disabled: var( --ak-text-muted );
+
+	/* Backgrounds */
+	--el-bg-color: var( --ak-surface );
+	--el-bg-color-page: var( --ak-bg );
+	--el-bg-color-overlay: var( --ak-surface );
+
+	/* Borders */
+	--el-border-color: var( --ak-border );
+	--el-border-color-light: var( --ak-border );
+	--el-border-color-lighter: var( --ak-border );
+	--el-border-color-extra-light: var( --ak-border );
+	--el-border-color-dark: var( --ak-border-strong );
+	--el-border-color-darker: var( --ak-border-strong );
+
+	/* Fills — hover bgs, zebra rows, disabled, blank canvas. EP greys leak on
+	   dark surfaces if left unset; pin the whole set to neutral surfaces. */
+	--el-fill-color: var( --ak-surface );
+	--el-fill-color-light: var( --ak-surface );
+	--el-fill-color-lighter: var( --ak-surface );
+	--el-fill-color-extra-light: var( --ak-surface );
+	--el-fill-color-dark: var( --ak-elevated );
+	--el-fill-color-darker: var( --ak-elevated );
+	--el-fill-color-blank: var( --ak-surface );
+
+	/* Disabled — consumed but never (re)defined by FluentAffiliate in light, so
+	   EP's stock greys leak in dark. */
+	--el-disabled-bg-color: var( --ak-surface );
+	--el-disabled-text-color: var( --ak-text-muted );
+	--el-disabled-border-color: var( --ak-border );
+
+	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. EP's dark
+	   block ships heavy black drop-shadows, so neutralise the whole set. */
+	--el-box-shadow: none;
+	--el-box-shadow-light: none;
+	--el-box-shadow-lighter: none;
+	--el-box-shadow-dark: none;
+}
+
+
+/* ============================================================
+   2. PAGE CANVAS
+   AdminKit's chrome.css themes #wpbody but not #wpcontent, and FluentAffiliate
+   only paints #wpcontent inside a `:has(.dark)` rule (which AdminKit's mode never
+   triggers — we don't add `.dark`). Give the content strip and the SPA root the
+   page token directly so the area behind the app flips with the theme.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-affiliate #wpcontent,
+body.adminkit.toplevel_page_fluent-affiliate #fluent-framework-app {
+	background-color: var( --ak-bg );
+}
+
+/* The sticky navbar (.fa-navbar) and the app body (.fframe_body) carry their own
+   12-20px internal padding and the navbar is z-index:99 — BELOW AdminKit's z-101
+   corner overlay — so unlike the FluentCRM/FluentCart top bars it needs no manual
+   frame, and unlike FluentBooking it uses no negative full-bleed margins to
+   neutralise. AdminKit's native border + rounded corner frame the panel; the
+   host's own padding is the content gutter. Nothing to un-glue here. */
+
+
+/* ============================================================
+   3. LITERAL OVERRIDES the var remap can't reach + chrome
+   ============================================================ */
+
+/* Two stock-blue focus borders FluentAffiliate hard-codes past its vars: the bare
+   input and the select input both get `border-color:#3f9eff/#409eff` on focus
+   (EP's default, not routed through --fla-* / --el-color-primary). Route to the
+   brand so a focused field reads on-brand in both modes. */
+body.adminkit.toplevel_page_fluent-affiliate .el-input input:focus,
+body.adminkit.toplevel_page_fluent-affiliate .el-select .el-input.is-focus input:focus {
+	border-color: var( --ak-primary );
+}
+
+/* FluentAffiliate ships its OWN light/dark toggle (.fa_color_mode — the moon/sun
+   icon in the navbar, onclick=toggleColorMode()) that flips its `html.dark`
+   class. AdminKit drives dark via the token remap, so in AdminKit-dark that
+   control is redundant/confusing — hide it (dark only; left available in light).
+   Same approach as the FluentBooking / FluentCRM in-app toggles. */
+:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__link.fa_color_mode {
+	display: none !important;
+}
+
+/* Active / current top-nav item — neutral, like the FluentCart / FluentCRM /
+   FluentBooking top nav: an elevated surface behind heading-coloured text, not a
+   brand tint. The host paints it with --fla-active-bg (= our hover-bg) +
+   --fla-primary-text; lift it to a clear elevated step for consistency. */
+body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__link--active {
+	background-color: var( --ak-elevated );
+	color: var( --ak-heading );
+}
+
+
+/* ============================================================
+   4. WHITE-LABEL THE NAVBAR LOGO AS "FluentAffiliate"
+   The in-app navbar renders two <img> (.fa_light_logo / .fa_dark_logo) inside
+   `.fa-navbar__logo a`. Hide both and drop a plain text wordmark in their place,
+   sourced from the live menu title via --ak-wordmark (PHP print_menu_wordmark),
+   with a literal fallback — same approach as the FluentBooking / FluentCRM
+   adapters.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__logo a .fa_light_logo,
+body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__logo a .fa_dark_logo {
+	display: none !important;
+}
+
+body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__logo a,
+body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__logo a:hover,
+body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__logo a:focus {
+	text-decoration: none;
+	box-shadow: none;
+	color: var( --ak-heading );
+}
+
+body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__logo a::after {
+	content: var( --ak-wordmark, "FluentAffiliate" );
+	color: var( --ak-heading );
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+}
