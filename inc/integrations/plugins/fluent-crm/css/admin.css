@@ -98,6 +98,11 @@ body.adminkit.toplevel_page_fluentcrm-admin {
 	--el-color-warning: var( --ak-warning );
 	--el-color-danger: var( --ak-error );
 	--el-color-error: var( --ak-error );
+	/* Danger ramp — plain/text/link danger buttons read light-9 (bg) + light-5
+	   (border); EP leaves them at stock pink, so pin them to error tokens. */
+	--el-color-danger-light-3: var( --ak-error );
+	--el-color-danger-light-5: var( --ak-error );
+	--el-color-danger-light-9: var( --ak-error-subtle );
 	--el-color-info: var( --ak-text-muted );
 	--el-color-info-light-3: var( --ak-text-muted );
 	--el-color-info-light-5: var( --ak-border-strong );
@@ -227,4 +232,79 @@ body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a::after {
 	font-size: 18px;
 	font-weight: 700;
 	letter-spacing: 0.01em;
+}
+
+
+/* ============================================================
+   5. MORE FIXES — toggle, brand pills, danger, funnel blocks, condition lines
+   ============================================================ */
+
+/* FluentCRM ships its OWN theme toggle (.fcrm_theme_mode, the moon icon) that
+   flips its `.fcrm-dark` class. AdminKit drives dark via the token remap, so in
+   AdminKit-dark that control is redundant/confusing — hide it (dark only; left
+   available in light). */
+:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluentcrm-admin .fcrm_theme_mode {
+	display: none !important;
+}
+
+/* Disabled primary button — FluentCRM derives its disabled bg from
+   --el-color-primary-light-5 (a pale brand tint) but keeps white text → poor
+   contrast. Route to a neutral muted control instead. */
+body.adminkit.toplevel_page_fluentcrm-admin .el-button--primary.is-disabled,
+body.adminkit.toplevel_page_fluentcrm-admin .el-button--primary.is-disabled:hover,
+body.adminkit.toplevel_page_fluentcrm-admin .el-button--primary.is-disabled:focus {
+	background-color: var( --ak-surface-muted ) !important;
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Funnel badge — host paints bg with --fc-primary-text (near-black) + white
+   text. --fc-primary-text → --ak-heading, which FLIPS light in dark → an
+   invisible white-on-white pill. Route to a solid brand pill instead. */
+body.adminkit.toplevel_page_fluentcrm-admin .ff_funnel_badge {
+	background: var( --ak-primary ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+
+/* Segmented control active button — same trap: host fills the active segment
+   with --fc-primary-text (flips light in dark). Solid brand + white instead. */
+body.adminkit.toplevel_page_fluentcrm-admin .el-radio-group .el-radio-button.is-active .el-radio-button__original-radio:not(:disabled) + .el-radio-button__inner {
+	background-color: var( --ak-primary ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+
+/* Automation-funnel block types — host hard-codes pastel fills (amber trigger,
+   cyan action, red conditional) that don't flip. Route to the matching semantic
+   subtle tint + a coloured edge so each type stays distinguishable in both
+   modes and the token text on it stays legible. */
+body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_block.fluentcrm_block_trigger .fluentcrm_blockin {
+	background-color: var( --ak-warning-subtle ) !important;
+	border-color: var( --ak-warning ) !important;
+}
+body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_blocks_wrapper .fluentcrm_block_send_custom_email .fluentcrm_blockin {
+	background-color: var( --ak-info-subtle ) !important;
+	border-color: var( --ak-info ) !important;
+}
+body.adminkit.toplevel_page_fluentcrm-admin .fc_block_type_conditional .fluentcrm_blockin {
+	background-color: var( --ak-error-subtle ) !important;
+	border-color: var( --ak-error ) !important;
+}
+
+/* Funnel conditional connector — the U-bracket below a condition node ships a
+   2px solid black border (invisible/wrong in dark). Structural line → border
+   token (out-specifies the host, no !important needed). */
+body.adminkit.toplevel_page_fluentcrm-admin .fc_cond_border_no_top {
+	border-color: var( --ak-border );
+}
+
+/* Condition / A-B-test "no/false" path connectors — host paints a soft red
+   (#f2a0ae) edge in its own dark class. Keep the semantic red but as the error
+   token so it flips with AdminKit; scoped to the screen so it wins whether or
+   not FluentCRM's own dark class is on. */
+body.adminkit.toplevel_page_fluentcrm-admin .fc_dom_path.fc_ab_test > span,
+body.adminkit.toplevel_page_fluentcrm-admin .fc_condition_node_point:not(.fc_dom_path_right) span,
+body.adminkit.toplevel_page_fluentcrm-admin .block_cond_holder.block_cond_no,
+body.adminkit.toplevel_page_fluentcrm-admin .fc_dom_path.fc_dom_path_left {
+	border-color: var( --ak-error ) !important;
 }
