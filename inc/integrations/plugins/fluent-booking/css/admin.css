@@ -943,3 +943,24 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_settings_av
 	padding: 0;
 	border-radius: var( --ak-radius-s );
 }
+
+/* Empty-state + white boxes — normal (m) radius, with a subtle elevated lift on
+   hover (the box sits on --ak-surface; --ak-elevated is the next step up). */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-empty.fcal_empty,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_white_box {
+	border-radius: var( --ak-radius-m );
+}
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-empty.fcal_empty:hover,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_white_box:hover {
+	background-color: var( --ak-elevated );
+}
+
+/* Select-dropdown selected / hovered item → a distinct hover surface. The host
+   tints it with --fcal-active-bg, which we map to --ak-surface (= the dropdown's
+   own bg), so it would be invisible — route to --ak-hover-bg instead. */
+body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_select ul .el-dropdown-menu__item.selected,
+body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_select ul .el-dropdown-menu__item:hover,
+body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_select ul .el-select-dropdown__item.selected,
+body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_select ul .el-select-dropdown__item:hover {
+	background: var( --ak-hover-bg );
+}

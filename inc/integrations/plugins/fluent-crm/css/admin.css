@@ -307,6 +307,14 @@ body.adminkit.toplevel_page_fluentcrm-admin ul.fcrm_menu.fcrm_menu_open .fcrm_me
 	color: var( --ak-heading ) !important;
 }
 
+/* Topbar dropdown submenu item (the Contacts/Emails/Reports fly-outs) → elevated
+   on hover. The host tints with --fc-secondary-bg (= the page token), which is
+   indistinct on the surface-coloured dropdown. */
+body.adminkit.toplevel_page_fluentcrm-admin ul.fcrm_menu li .fcrm_submenu_items a:hover,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_icon_menu .fcrm_submenu_items a:hover {
+	background: var( --ak-elevated );
+}
+
 /* Funnel badge — host paints bg with --fc-primary-text (near-black) + white
    text. --fc-primary-text → --ak-heading, which FLIPS light in dark → an
    invisible white-on-white pill. Route to a solid brand pill instead. */
