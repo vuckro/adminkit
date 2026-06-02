@@ -174,9 +174,11 @@ body.adminkit.toplevel_page_fluent-cart #fluent_cart_plugin_app {
 	}
 }
 
-/* Top bar surface + border (meets AdminKit's rounded content corner). */
+/* Top bar surface + border (meets AdminKit's rounded content corner). FC adds a
+   soft drop-shadow around the fixed bar — AdminKit is flat, so drop it. */
 body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 	background-color: var( --ak-surface ) !important;
+	box-shadow: none !important;
 }
 body.adminkit.toplevel_page_fluent-cart #wpbody-content #fct_admin_menu_holder .fct_admin_menu_wrap.border-bottom,
 body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
@@ -194,7 +196,6 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 @media screen and (min-width: 783px) {
 	body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 		border-top: 1px solid var( --ak-border ) !important;
-		border-left: 1px solid var( --ak-border ) !important;
 		border-top-left-radius: 18px !important;
 	}
 }
