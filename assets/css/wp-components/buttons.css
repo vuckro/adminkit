@@ -122,19 +122,25 @@ body.adminkit .wp-core-ui .button-primary.disabled {
 	opacity: 0.7;
 }
 
-/* Generic / secondary disabled button. WP ships its disabled rule
-   with !important on every property:
-     `color: #8a8a8a; border-color: #d8d8d8; background: 0 0`
-   …meaning my override has to use !important too AND match WP's
-   exact selector list (every form of disabled: class, attribute,
-   pseudo). */
-body.adminkit .wp-core-ui .button-disabled,
-body.adminkit .wp-core-ui .button-secondary.disabled,
-body.adminkit .wp-core-ui .button-secondary:disabled,
-body.adminkit .wp-core-ui .button-secondary[disabled],
-body.adminkit .wp-core-ui .button.disabled,
-body.adminkit .wp-core-ui .button:disabled,
-body.adminkit .wp-core-ui .button[disabled],
+/* Generic / secondary disabled buttons — incl. the plugin-install "Installed!" /
+   "Active" chips, which carry `.button-disabled` (added by WP's updates.js). WP ships
+   its disabled rule with !important on every property
+   (`color:#8a8a8a; border-color:#d8d8d8; background:0 0`), so we override with
+   !important too AND match its full selector list.
+   GOTCHA (this was the bug): `.wp-core-ui` lives on the <body> itself
+   (`body.wp-core-ui.adminkit`), so a `body.adminkit .wp-core-ui …` DESCENDANT
+   selector matches nothing — there is no nested `.wp-core-ui`. It has to be COMPOUND
+   (`body.adminkit.wp-core-ui …`). With the old descendant form, `.button-disabled`
+   (which had no plain fallback) fell through and WP's grey leaked onto those chips in
+   dark mode. */
+body.adminkit.wp-core-ui .button-disabled,
+body.adminkit.wp-core-ui .button-secondary.disabled,
+body.adminkit.wp-core-ui .button-secondary:disabled,
+body.adminkit.wp-core-ui .button-secondary[disabled],
+body.adminkit.wp-core-ui .button.disabled,
+body.adminkit.wp-core-ui .button:disabled,
+body.adminkit.wp-core-ui .button[disabled],
+body.adminkit .button-disabled,
 body.adminkit .button.disabled,
 body.adminkit .button:disabled,
 body.adminkit .button[disabled] {
