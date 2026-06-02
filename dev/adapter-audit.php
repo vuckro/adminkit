@@ -33,7 +33,7 @@ require_once __DIR__ . '/css-scan.php';
 // fault — they are the baseline as of the last review.
 $BUDGET = array(
 	'fluent-cart'       => 177, // FC compiles its palette into Tailwind utilities + stock Element Plus literals; every host literal mapped to a token needs !important to beat them
-	'fluent-booking'    => 103, // ApexCharts chart text/grid/tooltip + Element Plus (host inline styles) + #306ae0 hardcoded across ~126 component states
+	'fluent-booking'    => 105, // ApexCharts chart text/grid/tooltip + Element Plus (host inline styles) + #306ae0 hardcoded across ~126 component states + Vue editor surfaces
 	'fluent-crm'        => 24,  // FluentCRM is variable-driven (Tier A remap); the !important are literals it hard-codes past its vars (funnel block types/badges/connectors, brand pills, disabled-primary contrast, neutral active-nav) + logo white-label + dark-only toggle hide
 	'flying-press'      => 41,
 	'gutenberg'         => 8,

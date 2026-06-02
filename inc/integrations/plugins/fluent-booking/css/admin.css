@@ -178,6 +178,11 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
 	body.adminkit.toplevel_page_fluent-booking .fframe_main-menu-items {
 		margin-left: 0;
 	}
+	/* The app pads only its left (padding-left:20px); add the right so the
+	   content isn't glued to the panel's right edge — a symmetric gutter. */
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
+		padding-right: 20px;
+	}
 }
 
 
@@ -247,11 +252,11 @@ body.adminkit.toplevel_page_fluent-booking .fcal_feature_module span.fcal_addon_
 	color: var( --ak-primary ) !important;
 }
 
-/* Settings sidebar active item — tint + brand text, NO border (the host paints
-   only `background:rgba(...,.1) + color`; a border here reads as a stray ring). */
+/* Settings sidebar active item — neutral (like the main nav + cart/crm): an
+   elevated surface behind heading text, no border, no brand tint. */
 body.adminkit.toplevel_page_fluent-booking .fcal_settings_sidebar li a.router-link-exact-active {
-	background-color: var( --ak-primary-subtle ) !important;
-	color: var( --ak-primary ) !important;
+	background-color: var( --ak-elevated ) !important;
+	color: var( --ak-heading ) !important;
 }
 
 /* 3c. Calendar / date-picker selection — selected day, today marker, range
@@ -700,6 +705,17 @@ body.adminkit.toplevel_page_fluent-booking .mce-edit-area iframe {
 	background-color: var( --ak-surface ) !important;
 }
 
+/* Vue WP editor wrapper (event description, notifications). The wrapper +
+   TinyMCE chrome theme via --fcal-* / the .mce-* rules above; pin the editable
+   surfaces (the "Text"-mode textarea + the visual edit area) to a token bg +
+   text so the field isn't transparent/black on the dark page. */
+body.adminkit.toplevel_page_fluent-booking .wp_vue_editor_wrapper,
+body.adminkit.toplevel_page_fluent-booking .wp_vue_editor_wrapper .wp-editor-area,
+body.adminkit.toplevel_page_fluent-booking .wp_vue_editor_wrapper textarea {
+	background-color: var( --ak-surface ) !important;
+	color: var( --ak-text ) !important;
+}
+
 body.adminkit.toplevel_page_fluent-booking .mce-btn button,
 body.adminkit.toplevel_page_fluent-booking .mce-ico {
 	color: var( --ak-text ) !important;
@@ -803,6 +819,7 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_notificatio
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_questions_wrapper,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-form-item.fcal_availability_header,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_weekly_schedules,
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-form-item.fcal_event_timezone,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_override_date .fcal_override_date_inner {
 	background-color: var( --ak-surface ) !important;
 }
