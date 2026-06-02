@@ -169,11 +169,12 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 }
 
 /* Frame the top bar like AdminKit's content panel. FC's bar is position:fixed
-   z-index:2000, so it COVERS AdminKit's native corner overlay (z-index 101) —
-   the bar must carry the frame itself: a top hairline + an 18px rounded
-   top-left (matching the chrome corner), through which the native arc shows. */
+   z-index:2000 covering the native corner overlay (z-index 101) — the bar
+   carries the frame: top hairline + 18px rounded top-left + right border so
+   the content panel is fully framed (top / left from #wpbody-content / right). */
 body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 	border-top: 1px solid var( --ak-border ) !important;
+	border-right: 1px solid var( --ak-border ) !important;
 	border-top-left-radius: 18px !important;
 }
 
@@ -228,10 +229,15 @@ body.adminkit.toplevel_page_fluent-cart .el-switch.is-checked .el-switch__core,
 body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-checked .el-checkbox__inner,
 body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-indeterminate .el-checkbox__inner,
 body.adminkit.toplevel_page_fluent-cart .el-radio__input.is-checked .el-radio__inner,
-body.adminkit.toplevel_page_fluent-cart .el-radio-button.is-active .el-radio-button__inner,
-body.adminkit.toplevel_page_fluent-cart .el-pagination.is-background .el-pager li.is-active {
+body.adminkit.toplevel_page_fluent-cart .el-radio-button.is-active .el-radio-button__inner {
 	background-color: var( --ak-primary ) !important;
 	border-color: var( --ak-primary ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+/* Pagination active pill — brand bg, no border (avoids a stray ring). */
+body.adminkit.toplevel_page_fluent-cart .el-pagination.is-background .el-pager li.is-active {
+	background-color: var( --ak-primary ) !important;
+	border-color: transparent !important;
 	color: var( --ak-on-accent ) !important;
 }
 
@@ -570,15 +576,22 @@ body.adminkit.toplevel_page_fluent-cart .uploader-inline {
 	border-radius: var( --ak-radius-m ) !important;
 }
 
-/* Top-bar nav states — drop FC's blue Tailwind focus ring (it reads as a stray
-   border); use a subtle bg highlight on hover / focus instead. Active item keeps
-   its raised pill (§9); hover keeps brand text (§4). */
-body.adminkit.toplevel_page_fluent-cart .fct_menu_item a:focus,
-body.adminkit.toplevel_page_fluent-cart .fct_menu_item button:focus,
+/* Top-bar nav — clean states, no stray borders or rings.
+   FC's active item has a visible border; drop it and use bg-only. The browser
+   focus outline is suppressed (AdminKit's global a:focus handles accessibility).
+   Hover = subtle tint; active = elevated pill (no border); text handled in §4/§9. */
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item button {
+	outline: none !important;
+	box-shadow: none !important;
+}
 body.adminkit.toplevel_page_fluent-cart .fct_menu_item > a:hover,
 body.adminkit.toplevel_page_fluent-cart .fct_menu_item > button:hover {
-	box-shadow: none !important;
 	background-color: var( --ak-hover-bg ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > button {
+	border: none !important;
 }
 
 /* "More" dropdown submenu + fluid-tab container → raised surface. */
@@ -619,12 +632,53 @@ body.adminkit.toplevel_page_fluent-cart .el-cascader-node:not(.is-disabled):hove
 	background-color: var( --ak-hover-bg ) !important;
 }
 
-/* Active pagination — neutral pill (the ::before) + heading number (FC's design). */
+/* Active pagination — brand fill, no border (FC's ::before adds a border-ring
+   on top of the active li, conflicts with the brand bg; reset it). */
 body.adminkit.toplevel_page_fluent-cart .el-pagination.is-background .el-pager li.number.is-active::before {
-	background-color: var( --ak-elevated ) !important;
-	border-color: var( --ak-border ) !important;
+	display: none !important;
 }
-body.adminkit.toplevel_page_fluent-cart .el-pagination.is-background .el-pager li.number.is-active {
+
+/* Dialog — FC overrides bg + header border directly in dark. */
+body.adminkit.toplevel_page_fluent-cart .el-overlay .el-dialog {
+	background-color: var( --ak-elevated ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-overlay .el-dialog__header {
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Disabled checkbox → muted surface, strong border (no brand tint). */
+body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-disabled .el-checkbox__inner {
+	background-color: var( --ak-surface-muted ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Info badge (generic neutral chip) → muted, not a solid slate fill. */
+body.adminkit.toplevel_page_fluent-cart .badge.info {
+	background-color: var( --ak-surface-muted ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Tertiary button text (FC pins slate inside the transparent container). */
+body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-tertiary,
+body.adminkit.toplevel_page_fluent-cart .el-button.is-tertiary {
+	color: var( --ak-text ) !important;
+}
+
+/* Settings-nav link hover → elevated bg / heading text. */
+body.adminkit.toplevel_page_fluent-cart .fct-settings-nav .fct-settings-nav-link:hover {
+	background-color: var( --ak-elevated ) !important;
+	color: var( --ak-heading ) !important;
+}
+
+/* Report filter bar (within .fct-report-body) → surface. */
+body.adminkit.toplevel_page_fluent-cart .fct-report-body .fct-report-filter-wrap {
+	background-color: var( --ak-surface ) !important;
+}
+
+/* Applied-filter pill (tag) → elevated bg / strong border / heading text. */
+body.adminkit.toplevel_page_fluent-cart .fct-applied-filter-list .fct-applied-filter {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
 	color: var( --ak-heading ) !important;
 }
 
