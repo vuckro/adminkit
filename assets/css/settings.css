@@ -1476,6 +1476,69 @@
 	color: var(--ak-heading);
 }
 
+/* Search + pager — full Statistics page lists only (the dashboard card stays a
+   5-row glance, no chrome). Client-side over the already-fetched rows. */
+.adminkit-app .ak-stats__list-tools {
+	padding: 8px 10px;
+	border-bottom: 1px solid var(--ak-card-border);
+}
+.adminkit-app .ak-stats__search {
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 5px 10px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	font-size: var(--ak-text-s);
+}
+.adminkit-app .ak-stats__search:focus {
+	border-color: var(--ak-primary);
+	outline: none;
+}
+.adminkit-app .ak-stats__row--empty {
+	justify-content: center;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-stats__pager {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	padding: 8px 14px;
+	border-top: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-stats__pager[hidden] { display: none; }
+.adminkit-app .ak-stats__pager-info {
+	font-size: var(--ak-text-xs);
+	font-variant-numeric: tabular-nums;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-stats__pager-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	padding: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	font-size: 16px;
+	line-height: 1;
+	cursor: pointer;
+}
+.adminkit-app .ak-stats__pager-btn:hover:not(:disabled) {
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+.adminkit-app .ak-stats__pager-btn:disabled {
+	opacity: .4;
+	cursor: default;
+}
+
 /* ── Live preset chip + Live view body ─────────────────────────────────────
    The Live chip carries a small green dot (calm by default; CSS animates it
    only when active so the chip reads as "watching now"). The body switches

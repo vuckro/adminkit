@@ -17,8 +17,9 @@ class AdminKit_Stats_Page {
 	const REST_NS    = 'adminkit/v1';
 	const REST_ROUTE = '/stats';
 
-	/** Top-N list length for the page (the card asks 10; the page asks more). */
-	const LIST_SIZE = 50;
+	/** Top-N list length for the page (the card asks 10; the page asks more). The
+	 *  SPA paginates + searches this set client-side, so it's the searchable depth. */
+	const LIST_SIZE = 100;
 
 	/** Submenu page hook suffix (set when the page registers); gates enqueue. */
 	private static $hook = '';
@@ -142,6 +143,10 @@ class AdminKit_Stats_Page {
 			'statsDirect'          => __( 'Direct', 'adminkit' ),
 			'statsNoData'          => __( 'No traffic data yet — views will appear here as visitors arrive.', 'adminkit' ),
 			'statsNone'            => __( 'No data', 'adminkit' ),
+			'statsNoMatch'         => __( 'No match', 'adminkit' ),
+			'statsSearch'          => __( 'Search…', 'adminkit' ),
+			'statsPagerPrev'       => __( 'Previous', 'adminkit' ),
+			'statsPagerNext'       => __( 'Next', 'adminkit' ),
 			'statsLoading'         => __( 'Loading…', 'adminkit' ),
 			'statsRangeFrom'       => __( 'From', 'adminkit' ),
 			'statsRangeTo'         => __( 'To', 'adminkit' ),

@@ -1386,43 +1386,101 @@
 			] );
 		}
 
-		function pageList( rows ) {
-			var box = listShell( I.statsTopPages || 'Top pages', I.statsColPage, I.statsColViews || 'Views' );
+		// A searchable + paginated list — the full Statistics page can hold dozens of
+		// top pages / sources, so a search box + a 10-per-row pager keeps it scannable
+		// (the dashboard card stays a 5-row glance). All client-side over the rows we
+		// already fetched — no extra requests. `rowText(r)` returns the searchable
+		// string; `rowEl(r)` builds the <li>. Both pure.
+		function searchableList( heading, colName, colVal, rows, rowText, rowEl ) {
+			var box = listShell( heading, colName, colVal );
 			if ( ! rows.length ) {
 				box.appendChild( el( 'p', { 'class': 'ak-stats__none', text: I.statsNone || 'No data' } ) );
 				return box;
 			}
-			var ul = el( 'ul', { 'class': 'ak-stats__rows' } );
-			rows.forEach( function ( r ) {
-				var link = el( 'a', { 'class': 'ak-stats__row-name', href: r.url || '#', target: '_blank', rel: 'noopener', title: r.path || '' }, [
-					el( 'span', { 'class': 'ak-stats__row-title', text: r.title || r.path || '' } ),
-					el( 'span', { 'class': 'ak-stats__row-sub', text: r.path || '' } )
-				] );
-				ul.appendChild( el( 'li', { 'class': 'ak-stats__row' }, [
-					link,
-					el( 'span', { 'class': 'ak-stats__row-val', text: num( r.pageviews ) } )
-				] ) );
-			} );
+			var PAGE = 10;
+			var view = rows.slice(); // current (filtered) view
+			var page = 0;
+			var ul   = el( 'ul', { 'class': 'ak-stats__rows' } );
+
+			// Search — only worth showing once there's more than a page of rows.
+			if ( rows.length > PAGE ) {
+				var search = el( 'input', {
+					type: 'search',
+					'class': 'ak-stats__search',
+					placeholder: I.statsSearch || 'Search…',
+					'aria-label': ( I.statsSearch || 'Search' ) + ' — ' + heading
+				} );
+				search.addEventListener( 'input', function () {
+					var q = search.value.trim().toLowerCase();
+					view = q
+						? rows.filter( function ( r ) { return rowText( r ).toLowerCase().indexOf( q ) !== -1; } )
+						: rows.slice();
+					page = 0;
+					paint();
+				} );
+				box.appendChild( el( 'div', { 'class': 'ak-stats__list-tools' }, [ search ] ) );
+			}
+
 			box.appendChild( ul );
+
+			var prev = el( 'button', { type: 'button', 'class': 'ak-stats__pager-btn', 'aria-label': I.statsPagerPrev || 'Previous', text: '‹',
+				onclick: function () { if ( page > 0 ) { page--; paint(); } } } );
+			var info = el( 'span', { 'class': 'ak-stats__pager-info' } );
+			var next = el( 'button', { type: 'button', 'class': 'ak-stats__pager-btn', 'aria-label': I.statsPagerNext || 'Next', text: '›',
+				onclick: function () { if ( ( page + 1 ) * PAGE < view.length ) { page++; paint(); } } } );
+			var pager = el( 'div', { 'class': 'ak-stats__pager' }, [ prev, info, next ] );
+			box.appendChild( pager );
+
+			function paint() {
+				ul.innerHTML = '';
+				if ( ! view.length ) {
+					ul.appendChild( el( 'li', { 'class': 'ak-stats__row ak-stats__row--empty' }, [
+						el( 'span', { 'class': 'ak-stats__row-name', text: I.statsNoMatch || 'No match' } )
+					] ) );
+				} else {
+					view.slice( page * PAGE, page * PAGE + PAGE ).forEach( function ( r ) { ul.appendChild( rowEl( r ) ); } );
+				}
+				var total = view.length;
+				var from  = total ? page * PAGE + 1 : 0;
+				var to    = Math.min( total, page * PAGE + PAGE );
+				info.textContent = total ? ( from + '–' + to + ' / ' + total ) : '';
+				prev.disabled = page === 0;
+				next.disabled = ( page + 1 ) * PAGE >= total;
+				pager.hidden  = total <= PAGE; // single page → no pager chrome
+			}
+			paint();
 			return box;
 		}
 
+		function pageList( rows ) {
+			return searchableList(
+				I.statsTopPages || 'Top pages', I.statsColPage, I.statsColViews || 'Views', rows,
+				function ( r ) { return ( r.title || '' ) + ' ' + ( r.path || '' ); },
+				function ( r ) {
+					var link = el( 'a', { 'class': 'ak-stats__row-name', href: r.url || '#', target: '_blank', rel: 'noopener', title: r.path || '' }, [
+						el( 'span', { 'class': 'ak-stats__row-title', text: r.title || r.path || '' } ),
+						el( 'span', { 'class': 'ak-stats__row-sub', text: r.path || '' } )
+					] );
+					return el( 'li', { 'class': 'ak-stats__row' }, [
+						link,
+						el( 'span', { 'class': 'ak-stats__row-val', text: num( r.pageviews ) } )
+					] );
+				}
+			);
+		}
+
 		function sourceList( rows ) {
-			var box = listShell( I.statsTopSources || 'Top sources', I.statsColSource, I.statsColVisits || 'Visits' );
-			if ( ! rows.length ) {
-				box.appendChild( el( 'p', { 'class': 'ak-stats__none', text: I.statsNone || 'No data' } ) );
-				return box;
-			}
-			var ul = el( 'ul', { 'class': 'ak-stats__rows' } );
-			rows.forEach( function ( r ) {
-				var label = ( r.name === 'direct' ) ? ( I.statsDirect || 'Direct' ) : ( r.name || '' );
-				ul.appendChild( el( 'li', { 'class': 'ak-stats__row' }, [
-					el( 'span', { 'class': 'ak-stats__row-name', title: label, text: label } ),
-					el( 'span', { 'class': 'ak-stats__row-val', text: num( r.visits ) } )
-				] ) );
-			} );
-			box.appendChild( ul );
-			return box;
+			return searchableList(
+				I.statsTopSources || 'Top sources', I.statsColSource, I.statsColVisits || 'Visits', rows,
+				function ( r ) { return ( r.name === 'direct' ) ? ( I.statsDirect || 'Direct' ) : ( r.name || '' ); },
+				function ( r ) {
+					var label = ( r.name === 'direct' ) ? ( I.statsDirect || 'Direct' ) : ( r.name || '' );
+					return el( 'li', { 'class': 'ak-stats__row' }, [
+						el( 'span', { 'class': 'ak-stats__row-name', title: label, text: label } ),
+						el( 'span', { 'class': 'ak-stats__row-val', text: num( r.visits ) } )
+					] );
+				}
+			);
 		}
 
 		// Kick off the first fetch. On the dedicated Statistics page (SCREEN===stats)

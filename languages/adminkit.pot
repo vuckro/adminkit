@@ -1156,6 +1156,22 @@ msgstr ""
 msgid "Unique visitors"
 msgstr ""
 
+#: inc/features/stats/class-stats-page.php:145
+msgid "No match"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:146
+msgid "Search…"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:147
+msgid "Previous"
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:148
+msgid "Next"
+msgstr ""
+
 #: inc/settings/class-settings-catalog.php:120
 msgid "Traffic stats"
 msgstr ""
