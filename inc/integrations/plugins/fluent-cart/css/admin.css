@@ -199,6 +199,12 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 		border-left: 1px solid var( --ak-border ) !important;
 		border-top-left-radius: 18px !important;
 	}
+	/* Reports/Settings hang a position:absolute secondary nav at left:160px with
+	   an --ak-surface fill, which paints over #wpbody-content's native left
+	   border. Restore the panel's left edge by bordering that nav's own left. */
+	body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container {
+		border-left: 1px solid var( --ak-border ) !important;
+	}
 }
 
 /* Logo → text wordmark. */
