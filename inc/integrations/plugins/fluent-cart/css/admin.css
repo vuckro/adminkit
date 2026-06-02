@@ -697,9 +697,21 @@ body.adminkit.toplevel_page_fluent-cart .badge.info {
 	color: var( --ak-text-muted ) !important;
 }
 
-/* Tertiary button text (FC pins slate inside the transparent container). */
+/* Tertiary buttons (inline toggles: Status, URL Slug, …) — text only, no brand
+   fill or ring. They ARE .el-button--primary, so the brand-fill rule (§5) would
+   otherwise paint them; reset bg + border to neutral and keep a subtle hover. */
 body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-tertiary,
 body.adminkit.toplevel_page_fluent-cart .el-button.is-tertiary {
+	background-color: transparent !important;
+	border-color: transparent !important;
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-tertiary:hover,
+body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-tertiary:focus,
+body.adminkit.toplevel_page_fluent-cart .el-button.is-tertiary:hover,
+body.adminkit.toplevel_page_fluent-cart .el-button.is-tertiary:focus {
+	background-color: var( --ak-hover-bg ) !important;
+	border-color: transparent !important;
 	color: var( --ak-text ) !important;
 }
 
