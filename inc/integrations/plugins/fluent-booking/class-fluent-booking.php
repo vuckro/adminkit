@@ -106,6 +106,9 @@ class AdminKit_Integration_Fluent_Booking extends AdminKit_Integration_Base {
 	protected static function boot() {
 		add_filter( 'adminkit/enqueue_forms', array( __CLASS__, 'bail_forms_on_fb' ) );
 		add_action( 'admin_head', array( __CLASS__, 'sync_theme' ) );
+		// Menu icon swap runs on EVERY admin page (the menu shows everywhere),
+		// like AdminKit_Core_Menu_Icons and the FluentCart adapter.
+		add_action( 'admin_head', array( __CLASS__, 'print_menu_icon' ), 21 );
 	}
 
 	/**
@@ -115,6 +118,41 @@ class AdminKit_Integration_Fluent_Booking extends AdminKit_Integration_Base {
 	public static function bail_forms_on_fb( $enqueue ) {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 		return self::owns_screen( $screen ) ? false : $enqueue;
+	}
+
+	/**
+	 * Swap FluentBooking's menu icon for a calendar glyph.
+	 *
+	 * FluentBooking registers its top-level menu with a base64 data-URI icon, so
+	 * its `.wp-menu-image` carries no dashicon class and AdminKit_Core_Menu_Icons
+	 * (keyed by dashicon) never reaches it. Drop the inline background-image and
+	 * mask a calendar Heroicon into the icon box — same technique menu_css() uses,
+	 * so it tracks the menu foreground colour in light/dark/hover/current. Inlined
+	 * here (not in AdminKit_Icons) so the adapter owns its own mark. Gated exactly
+	 * like the FluentCart adapter: only when the icon toggle is on AND the global
+	 * should_load pause hasn't disabled AdminKit. The menu shows on every admin
+	 * page, so there is no screen gate.
+	 *
+	 * @return void
+	 */
+	public static function print_menu_icon() {
+		if ( ! class_exists( 'AdminKit_Settings' ) || ! AdminKit_Settings::get( 'replace_icons_enabled' ) ) {
+			return;
+		}
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return;
+		}
+		if ( ! class_exists( 'AdminKit_Icons' ) ) {
+			return;
+		}
+		// Heroicons (solid) calendar — fill is irrelevant (painted as a mask; the
+		// visible colour is currentColor).
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3a.75.75 0 0 1 1.5 0v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z" clip-rule="evenodd"/></svg>';
+		$box  = '#adminmenu #toplevel_page_fluent-booking .wp-menu-image';
+		$css  = $box . '{background-image:none !important;box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
+		$css .= $box . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
+			. 'vertical-align:middle;position:relative;top:-2px;' . AdminKit_Icons::mask( $svg ) . '}';
+		echo '<style id="adminkit-fluent-booking-menu-icon">' . $css . "</style>\n"; // SVG is URL-encoded in mask().
 	}
 
 	/**

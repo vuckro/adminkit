@@ -196,3 +196,35 @@ body.adminkit.toplevel_page_fluentcrm-admin .fcrm_contact_companies .fcrm_compan
 	background-color: var( --ak-surface-muted ) !important;
 	color: var( --ak-text ) !important;
 }
+
+
+/* ============================================================
+   4. WHITE-LABEL THE TOPBAR LOGO AS "CRM"
+   FluentCRM's in-app topbar renders its brand <img> logo (a dark mark) inside
+   `.fcrm_topbar_left a` — dark-on-dark and invisible once AdminKit goes dark.
+   Hide the img + the "Pro" badge and drop a plain text wordmark in their place
+   (same approach as the FluentBooking / Fluent SMTP adapters). The anchor ships
+   line-height:0 to crop the img, so reset it before injecting the text.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a img,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a span {
+	display: none !important;
+}
+
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a:hover,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a:focus {
+	line-height: normal;
+	overflow: visible;
+	text-decoration: none;
+	box-shadow: none;
+}
+
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a::after {
+	content: "CRM";
+	color: var( --ak-heading );
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+}
