@@ -346,3 +346,40 @@ body.adminkit.toplevel_page_fluent-community .fcom_feature {
 body.adminkit.toplevel_page_fluent-community .fcom_template_group .el-radio.is-checked {
 	background: var( --ak-surface ) !important;
 }
+
+/* Cards (.fcom_card / the .fcom_cards a card link) — `background:white` + #e2e4ea
+   border + a faint shadow → surface card. (Host has no !important on these, so the
+   scoped selector wins on its own.) */
+body.adminkit.toplevel_page_fluent-community .fcom_card {
+	background: var( --ak-surface );
+	border-color: var( --ak-border );
+	box-shadow: none;
+}
+
+/* Portal "secondary" button (#000 text, currentColor 1px border, #f4f4f5 hover).
+   Route to neutral tokens; pin border-color so it stops following the text colour. */
+body.adminkit.toplevel_page_fluent-community .fcom_portal_btn_secondary {
+	color: var( --ak-text );
+	border-color: var( --ak-border );
+}
+body.adminkit.toplevel_page_fluent-community .fcom_portal_btn_secondary:hover {
+	background: var( --ak-hover-bg );
+	color: var( --ak-heading );
+}
+
+/* Portal section paragraph (#646970). */
+body.adminkit.toplevel_page_fluent-community .fcom_portal_section p {
+	color: var( --ak-text-muted );
+}
+
+/* "Pen underline" decorative marker — a hard #FFD700 gold gradient that's off the
+   AdminKit palette; rebuild it from the brand so the highlight reads on-brand. */
+body.adminkit.toplevel_page_fluent-community .pen-underline:after {
+	background-image: linear-gradient( to right,
+		var( --ak-primary ) 0%,
+		var( --ak-primary ) 20%,
+		color-mix( in srgb, var( --ak-primary ) 80%, transparent ) 40%,
+		color-mix( in srgb, var( --ak-primary ) 40%, transparent ) 60%,
+		color-mix( in srgb, var( --ak-primary ) 20%, transparent ) 80%,
+		transparent 100% );
+}
