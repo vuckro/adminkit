@@ -269,6 +269,14 @@ body.adminkit.toplevel_page_fluent-cart .el-pagination.is-background .el-pager l
 	color: var( --ak-on-accent ) !important;
 }
 
+/* Unchecked checkbox / radio / switch track — input surface + strong border. */
+body.adminkit.toplevel_page_fluent-cart .el-checkbox__inner,
+body.adminkit.toplevel_page_fluent-cart .el-radio__inner,
+body.adminkit.toplevel_page_fluent-cart .el-switch__core {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
 /* Glyphs inside filled controls. */
 body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-checked .el-checkbox__inner::after { border-color: var( --ak-on-accent ) !important; }
 body.adminkit.toplevel_page_fluent-cart .el-radio__input.is-checked .el-radio__inner::after { background: var( --ak-on-accent ) !important; }
@@ -727,10 +735,16 @@ body.adminkit.toplevel_page_fluent-cart .fct-save-bar {
 	border-color: var( --ak-border-strong ) !important;
 }
 
-/* Dropdown link item focused → hover bg. */
+/* Dropdown item / link focused → hover bg. */
+body.adminkit.toplevel_page_fluent-cart .el-dropdown__popper.fct-dropdown .el-dropdown-menu__item:focus,
 body.adminkit.toplevel_page_fluent-cart .el-dropdown__popper.fct-dropdown .el-dropdown-menu__item.item-link a:focus {
 	background-color: var( --ak-hover-bg ) !important;
 	color: var( --ak-heading ) !important;
+}
+
+/* Off-canvas / "More" menu panel → elevated surface. */
+body.adminkit.toplevel_page_fluent-cart .fct-offcanvas-menu {
+	background-color: var( --ak-elevated ) !important;
 }
 
 /* Product sub-nav (Upgrade Paths / Integrations tabs under product title). */
