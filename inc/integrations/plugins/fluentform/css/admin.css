@@ -339,9 +339,19 @@ body.adminkit .el-radio__label {
 	color: var(--ak-text);
 }
 
-body.adminkit .el-checkbox__input.is-checked + .el-checkbox__label,
+/* Checked RADIO label keeps the brand tint (it reinforces the single
+   active choice). A checked CHECKBOX label, by contrast, stays NEUTRAL:
+   the filled box already signals state, and a brand-coloured label on a
+   multi-select list reads odd (matches the FluentCart adapter). The
+   bundled Element UI cores the checked label to its stock blue, so the
+   checkbox override needs !important to beat it. */
 body.adminkit .el-radio__input.is-checked + .el-radio__label {
 	color: var(--ak-primary);
+}
+
+body.adminkit .el-checkbox__input.is-checked + .el-checkbox__label,
+body.adminkit .el-checkbox.is-checked .el-checkbox__label {
+	color: var(--ak-text) !important;
 }
 
 /* Radio-button group (segmented control) */
@@ -608,4 +618,605 @@ body.adminkit .el-collapse-item__wrap {
 	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
+}
+
+/* Collapse internals — the body wrap, content text and header dividers
+   FF cores to #ebeef5 / #303133. The header on hover/focus turns #1a7efb;
+   keep the brand only on the focused header text. */
+body.adminkit .el-collapse-item__content {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+}
+
+body.adminkit .el-collapse-item__header {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .el-collapse-item__header.is-active {
+	border-bottom-color: transparent;
+}
+
+body.adminkit .el-collapse-item__header.focusing:focus:not(:hover) {
+	color: var(--ak-primary);
+}
+
+
+/* ========== 17. Forms-list table cells (.ff_table) ========== */
+/* FF's forms list wraps the Element UI table in .ff_table and repaints the
+   cells: th/td borders #e4e4e4, bold .cell strong #1e1f21, header .cell
+   #1e1f21. The body rows are forced transparent (!important), so the
+   wrapper surface (§14) shows through. Restate the borders + ink on tokens;
+   the .ff_table prefix already out-specifies Element UI's base cell rule
+   (no !important needed for the border). */
+body.adminkit .ff_table td.el-table__cell,
+body.adminkit .ff_table th.el-table__cell.is-leaf {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .ff_table .cell strong,
+body.adminkit .ff_table tbody .cell {
+	color: var(--ak-text);
+}
+
+body.adminkit .ff_table th.el-table__cell > .cell,
+body.adminkit .ff_table thead .cell {
+	color: var(--ak-heading);
+}
+
+/* FF forces row/header/striped/hover backgrounds to transparent with
+   !important — so the wrapper surface shows. Add a real hover tint that
+   beats that transparent rule (otherwise rows have no hover feedback). */
+body.adminkit .ff_table .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
+	background-color: var(--ak-hover-bg) !important;
+}
+
+
+/* ========== 18. Pagination meta text ========== */
+/* The "Total N" / "Go to" labels FF cores to #606266 — meta, so muted. */
+body.adminkit .el-pagination__total,
+body.adminkit .el-pagination__jump {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .el-pagination__editor .el-input__inner {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+
+/* ========== 19. Segmented radio group (.ff_radio_group_s2) ========== */
+/* The entries-detail toggle: a #fff pill with a #edeae9 hairline frame and
+   #edeae9 inter-segment dividers (set as a 4-side border on the inner). */
+body.adminkit .ff_radio_group_s2 {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .ff_radio_group_s2 .el-radio-button__inner {
+	border-color: transparent var(--ak-border) transparent transparent;
+}
+
+
+/* ========== 20. Number input +/- steppers ========== */
+/* Element UI's .el-input-number decrease/increase buttons fill #f2f2f2 — a
+   raised affordance → --ak-elevated. */
+body.adminkit .el-input-number__decrease,
+body.adminkit .el-input-number__increase {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .el-input-number__decrease:hover,
+body.adminkit .el-input-number__increase:hover {
+	color: var(--ak-primary);
+}
+
+
+/* ========== 21. Date / range pickers ========== */
+/* The range editor's value text FF paints muted slate; route to body text.
+   (The picker PANEL surface is already covered by .el-picker-panel in §7.) */
+body.adminkit .el-date-editor .el-range-input,
+body.adminkit .el-range-editor .el-range-input {
+	background: transparent;
+	color: var(--ak-text);
+}
+
+body.adminkit .el-date-editor .el-range-separator {
+	color: var(--ak-text-muted);
+}
+
+/* Selected / today / in-range cells → brand, matching the FluentCart skin. */
+body.adminkit .el-date-table td.current:not(.disabled) span,
+body.adminkit .el-date-table td.start-date span,
+body.adminkit .el-date-table td.end-date span {
+	background-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+
+body.adminkit .el-date-table td.today span,
+body.adminkit .el-date-table td.available:hover {
+	color: var(--ak-primary);
+}
+
+body.adminkit .el-date-table td.in-range div,
+body.adminkit .el-date-table td.in-range div:hover {
+	background-color: var(--ak-primary-subtle);
+}
+
+
+/* ========== 22. Reports — cards, stat cards, tabs header ========== */
+/* FF's generic report/report-stat card. .ff_card cores #fff + a soft drop
+   shadow (and a transparent 1px border that goes brand on .highlight-border);
+   AdminKit is flat, so surface + token border, no shadow. The .ff_card.primary
+   brand-fill variant is intentional emphasis — leave it. */
+body.adminkit .ff_card {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+/* Stat cards (.form-stats-section .stats-card) — #fff + shadow → flat surface;
+   the icon chip is a soft #ebf1ff tint → primary-subtle; titles #525866 muted,
+   values #1f2937 heading. The up/down deltas keep their semantic colours. */
+body.adminkit .form-stats-section .stats-card {
+	background: var(--ak-surface);
+	box-shadow: none;
+}
+
+body.adminkit .form-stats-section .stats-card:hover {
+	box-shadow: none;
+}
+
+body.adminkit .form-stats-section .stats-card .stats-icon {
+	background: var(--ak-primary-subtle);
+}
+
+body.adminkit .form-stats-section .stats-card .stats-content .stats-title {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .form-stats-section .stats-card .stats-content .stats-value {
+	color: var(--ak-heading);
+}
+
+/* Report card heads (.ff_card_head) — #1f2937 titles + #e5e7eb bottom rule. */
+body.adminkit .fluentform-reports .ff_card .ff_card_head {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .fluentform-reports .ff_card .ff_card_head h3,
+body.adminkit .fluentform-reports .ff_card .ff_card_head h4 {
+	color: var(--ak-heading);
+}
+
+/* Reports main-tabs header — #fff bar with a #ececec bottom rule; the active
+   tab underlines + inks #0e121b (near-black), idle #525866. Route the bar to
+   surface, idle tabs to muted, active/hover + underline to heading (the host
+   uses neutral ink here, not brand — keep it neutral). */
+body.adminkit .fluentform-reports .reports-tabs-section .reports-main-tabs .el-tabs__header {
+	background: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .fluentform-reports .reports-tabs-section .reports-main-tabs .el-tabs__item {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .fluentform-reports .reports-tabs-section .reports-main-tabs .el-tabs__item:hover,
+body.adminkit .fluentform-reports .reports-tabs-section .reports-main-tabs .el-tabs__item.is-active {
+	color: var(--ak-heading);
+	border-bottom-color: var(--ak-heading);
+}
+
+/* Conversion-chart + advanced-filter section heads / rules / wells. */
+body.adminkit .conversion-chart-section .chart-header {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .conversion-chart-section .chart-header h3 {
+	color: var(--ak-heading);
+}
+
+body.adminkit .conversion-chart-section .chart-legend {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .conversion-chart-section .chart-nav {
+	border-top-color: var(--ak-border);
+}
+
+body.adminkit .fluentform-reports .advanced-filter-section {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .fluentform-reports .advanced-filter-section .filter-group .filter-label,
+body.adminkit .fluentform-reports .form-title,
+body.adminkit .fluentform-reports .no-data-state h4 {
+	color: var(--ak-text);
+}
+
+body.adminkit .fluentform-reports .form-id,
+body.adminkit .fluentform-reports .no-data-state {
+	color: var(--ak-text-muted);
+}
+
+/* Form-selector field (#fff + #e5e7eb, near-black focus border #0e121b). */
+body.adminkit .fluentform-reports .form-selector .el-select .el-input__inner {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .fluentform-reports .form-selector .el-select .el-input__inner:focus,
+body.adminkit .fluentform-reports .form-selector .el-select .el-input__inner:hover {
+	border-color: var(--ak-border-strong) !important;
+}
+
+/* Date-range display pill (#f3f4f6 chip, #6b7280 text). */
+body.adminkit .fluentform-reports .reports-header .reports-controls .date-range-display {
+	background: var(--ak-elevated);
+	color: var(--ak-text-muted);
+}
+
+
+/* ========== 23. Country heatmap CONTAINER ========== */
+/* Only the CONTAINER bg + the summary well + its labels — the JS-rendered
+   map fills (country shades) are set in chart config, out of CSS reach. */
+body.adminkit .country-heatmap-section .submission-country-heatmap .chart-container {
+	background: var(--ak-surface);
+}
+
+body.adminkit .country-heatmap-section .submission-country-heatmap .stats-summary {
+	background: var(--ak-elevated);
+}
+
+body.adminkit .country-heatmap-section .submission-country-heatmap .stats-summary .stat-item .stat-label {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .country-heatmap-section .submission-country-heatmap .stats-summary .stat-item .stat-value {
+	color: var(--ak-heading);
+}
+
+body.adminkit .country-heatmap-section .submission-country-heatmap .chart-container .no-data {
+	color: var(--ak-text-muted);
+}
+
+
+/* ========== 24. Settings sidebar — toggle, submenu, cards ========== */
+/* Collapse toggle at the rail foot: #fff slab, #edf0f2 top rule, #646970 ink;
+   #f6f7f7 hover → heading ink. (Its :focus-visible 2px #2271b1 ring is the WP
+   focus blue — left as a clear a11y affordance.) */
+body.adminkit .ff_settings_wrapper .ff_sidebar_toggle {
+	background: var(--ak-surface);
+	border-top-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .ff_settings_wrapper .ff_sidebar_toggle:hover,
+body.adminkit .ff_settings_wrapper .ff_sidebar_toggle:focus {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+/* Round floating collapse handle (#fff circle, #ddd ring) → surface + border. */
+body.adminkit .ff_sidebar_toggle {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+/* Nested settings submenu (#fff column with a #e4e2df guide rail and #606266
+   links; active/hover #efefef pill, active text #1e1f21). Route to neutral
+   tokens — the active pill is elevated, not brand. */
+body.adminkit .ff_list_submenu {
+	background: var(--ak-surface);
+}
+
+body.adminkit .ff_list_submenu:after {
+	background-color: var(--ak-border);
+}
+
+body.adminkit .ff_list_submenu li:last-child:before {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit .ff_list_submenu li a {
+	color: var(--ak-text);
+}
+
+body.adminkit .ff_list_submenu li a:hover {
+	background-color: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+body.adminkit .ff_list_submenu li.active a {
+	background-color: var(--ak-elevated);
+	color: var(--ak-heading);
+}
+
+/* ff_card_s2 (settings detail card) — #e4e4e4 frame + #e4e4e4 footer rule;
+   the :hover drop-shadow is flattened (the border carries the edge). */
+body.adminkit .ff_card_s2 {
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit .ff_card_s2:hover {
+	box-shadow: none;
+}
+
+body.adminkit .ff_card_s2 .ff_card_footer {
+	border-top-color: var(--ak-border);
+}
+
+/* Generic FF tables used in settings/entries (.editor_table, .ff-table,
+   .ff_entry_table_field) — #f5f5f5 header, #e4e4e4 grid. */
+body.adminkit .ff-table th,
+body.adminkit .ff_entry_table_field th,
+body.adminkit table.editor_table th {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.adminkit .ff-table td,
+body.adminkit .ff_entry_table_field td,
+body.adminkit table.editor_table td {
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+
+/* ========== 25. Section tabs (.ff_tab) ========== */
+/* FF's own tab strip (not Element UI's): #1e1f21 idle links, a #1a7efb active
+   link + a 2px #1a7efb underline bar (an ::after). Idle → muted, active +
+   bar → brand. */
+body.adminkit .ff_tab_link {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .ff_tab_item.active .ff_tab_link {
+	color: var(--ak-primary);
+}
+
+body.adminkit .ff_tab_link:after {
+	background-color: var(--ak-primary);
+}
+
+
+/* ============================================================
+   26. FORM EDITOR / BUILDER  (?page=fluent_forms&route=editor)
+   The drag-drop canvas + the right-hand field/settings panels. FF cores
+   every surface to #fff / #f2f2f2 / #fafafa with #ececec borders; the
+   dark page otherwise shows unthemed white panels here. Map by role.
+   ============================================================ */
+
+/* Canvas well — the centre drop zone (#fff, full-height scroll). */
+body.adminkit .form-editor--body,
+body.adminkit div#js-form-editor--body .form-editor__body-content {
+	background-color: var(--ak-surface);
+}
+
+/* Conversational-form editor wells (#fafafa) → page bg. */
+body.adminkit .ff_conversion_editor .form-editor--body,
+body.adminkit .ff_conversion_editor .form-editor__body-content,
+body.adminkit .ff_conversion_editor .panel__body--list {
+	background-color: var(--ak-bg) !important;
+}
+
+/* Right-hand settings panel — outer well #f2f2f2 + #ececec left rule, the
+   inner nav-tab list #fff, idle tab ink #1e1f21 (active/hover #1a7efb). */
+body.adminkit .form-editor--sidebar-content {
+	background-color: var(--ak-bg);
+	border-left-color: var(--ak-border);
+}
+
+body.adminkit .form-editor--sidebar-content .nav-tab-list {
+	background-color: var(--ak-surface);
+}
+
+body.adminkit .form-editor--sidebar-content .nav-tab-list li a {
+	color: var(--ak-text);
+}
+
+body.adminkit .form-editor--sidebar-content .nav-tab-list li a:hover {
+	color: var(--ak-primary);
+}
+
+body.adminkit .form-editor--sidebar-content .nav-tab-list li.active a {
+	color: var(--ak-primary);
+	border-bottom-color: var(--ak-primary);
+}
+
+/* Sidebar editor fields' labels (#606266) and group titles (#1e1f21). */
+body.adminkit .form-editor .post-form-settings label.el-form-item__label {
+	color: var(--ak-text);
+}
+
+body.adminkit .option-fields-section--content .el-form-item__label,
+body.adminkit .option-fields-section--content strong {
+	color: var(--ak-heading);
+}
+
+body.adminkit .ff_predefined_main .ff_form_group_title {
+	border-bottom-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+/* Sortable option-group cards (the choices builder): a #fff card with a
+   #dfe6f1 border, #edf2f7 inner rows, a #dbe7f5 rail and a dashed "+ add"
+   tile. Route surfaces/borders/rails to tokens; the soft drop shadow flat. */
+body.adminkit .form-editor--sidebar .ff_option_group {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	box-shadow: none;
+}
+
+body.adminkit .form-editor--sidebar .ff_option_group__head {
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit .form-editor--sidebar .ff_option_group__row {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .form-editor--sidebar .ff_option_group__rail {
+	background: var(--ak-border-strong);
+}
+
+body.adminkit .form-editor--sidebar .ff_option_groups_wrap__add {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .form-editor--sidebar .ff_option_groups_wrap__add:hover {
+	background: var(--ak-hover-bg);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-text);
+}
+
+body.adminkit .form-editor--sidebar .ff_option_group__handle:hover,
+body.adminkit .form-editor--sidebar .ff_option_group__icon-btn:hover,
+body.adminkit .form-editor--sidebar .ff_option_group__toggle:hover {
+	background: var(--ak-hover-bg);
+	color: var(--ak-text);
+}
+
+/* Dynamic-filter / conditional builder wells + dashed dividers (#ececec). */
+body.adminkit .form-editor--sidebar .ff-dynamic-filter-groups {
+	border-color: var(--ak-border);
+}
+
+body.adminkit .form-editor--sidebar .ff-dynamic-filter-condition span.condition-border,
+body.adminkit .form-editor--sidebar .ff-dynamic-warp {
+	border-color: var(--ak-border);
+}
+
+/* Conditional-logic preview block + the surrounding #f5f7fa group well
+   (.group-container) with its #e4e7ed frame and dashed #dcdfe6 preview box. */
+body.adminkit .ff_conditions_warp .group-container {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .ff_conditions_warp .group-container .group-preview {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+body.adminkit .ff_conditions_warp .group-container .group-preview .preview-field,
+body.adminkit .ff_conditions_warp .group-container .group-preview .preview-value {
+	color: var(--ak-text);
+}
+
+body.adminkit .ff_conditions_warp .group-container .group-preview .preview-label {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .ff_conditions_warp .group-container .group-preview .preview-operator {
+	color: var(--ak-heading);
+}
+
+/* Field-settings accordion (.el-collapse-settings) — the General / Advanced
+   / Container / Payment section heads FF fills #f5f5f3 → elevated pills. */
+body.adminkit .el-collapse-settings .el-collapse-item__header {
+	background: var(--ak-elevated);
+	color: var(--ak-heading);
+}
+
+body.adminkit .el-collapse-settings .el-collapse-item__wrap {
+	background-color: transparent;
+}
+
+/* The WP rich-text editor block embedded in the builder (.wp_vue_editor_wrapper):
+   #fff body + #dadbdd frame, #f1f1f0 toolbar, the html/visual switch tabs
+   (#ededed active, #dadbdd border, #1e1f21 ink), and the "Add Media" button
+   (#e8f2ff tint, #1a7efb text — a brand affordance → primary-subtle/primary). */
+body.adminkit .wp_vue_editor_wrapper {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+
+body.adminkit .wp_vue_editor_wrapper .quicktags-toolbar,
+body.adminkit .wp_vue_editor_wrapper div.mce-toolbar-grp {
+	background: var(--ak-elevated);
+}
+
+body.adminkit .wp_vue_editor_wrapper .html-active .switch-html,
+body.adminkit .wp_vue_editor_wrapper .tmce-active .switch-tmce {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+
+body.adminkit .wp_vue_editor_wrapper .wp-media-buttons .insert-media {
+	background-color: var(--ak-primary-subtle);
+	border-color: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+}
+
+body.adminkit .wp_vue_editor_wrapper .wp-media-buttons .insert-media:hover {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+
+/* Editor "back" crumb + its right divider (#353537 ink, #ececec rule). */
+body.adminkit .ff_screen_editor .ff_menu_back {
+	border-right-color: var(--ak-border);
+}
+
+body.adminkit .ff_screen_editor .ff_menu_back .ff_menu_link {
+	color: var(--ak-text);
+}
+
+
+/* ============================================================
+   27. GLOBAL SEARCH PALETTE (Cmd/Ctrl-K overlay)
+   FF's command palette: a #f6f6f7 panel of #fff result cards (#606266 ink),
+   a #197efb active row, a #fff command footer. Route to tokens; keep the
+   active row on brand. The shortcut hint pill (header trigger) goes brand on
+   hover in FF — fine, left as-is via the §11 .shortcut rule.
+   ============================================================ */
+
+body.adminkit .global-search-wrapper .global-search-container {
+	background: var(--ak-bg);
+}
+
+body.adminkit .global-search-wrapper .global-search-container ul.search-result li {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+body.adminkit .global-search-wrapper .global-search-container ul.search-result li.active-search-link {
+	background-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+
+body.adminkit .global-search-wrapper .search-commands {
+	background: var(--ak-surface);
+	box-shadow: none;
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .global-search-wrapper {
+	background: var(--ak-overlay);
+}
+
+/* Header search trigger — neutral text (FF tints it grey rgba(60,60,60,.7)). */
+body.adminkit .ff_header .global-search-menu-button {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit .ff_header .global-search-menu-button:hover {
+	color: var(--ak-heading);
 }
