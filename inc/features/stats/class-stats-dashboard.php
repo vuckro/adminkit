@@ -448,7 +448,7 @@ class AdminKit_Stats_Dashboard {
 
 		if ( $total_pv <= 0 ) {
 			$out .= '<p class="ak-dash__empty">' . esc_html__( 'No views in this period yet.', 'adminkit' ) . '</p>';
-			return $out;
+			return $out . self::more_link();
 		}
 
 		// Sparkline (page views/day) — needs ≥2 days; a single day (Today) shows just
@@ -463,7 +463,25 @@ class AdminKit_Stats_Dashboard {
 		$out .= self::render_list( __( 'Top sources', 'adminkit' ), isset( $sum['top_sources'] ) ? (array) $sum['top_sources'] : array(), 'visits', false );
 		$out .= '</div>';
 
-		return $out;
+		return $out . self::more_link();
+	}
+
+	/**
+	 * Footer link from the dashboard widget to the full Statistics page. Appended INSIDE
+	 * each body so it survives the AJAX period-swap (which replaces the card's innerHTML
+	 * with the body HTML). Empty when the Stats page isn't registered.
+	 *
+	 * @return string Safe HTML.
+	 */
+	private static function more_link() {
+		if ( ! class_exists( 'AdminKit_Settings_Page' ) ) {
+			return '';
+		}
+		return sprintf(
+			'<a class="ak-dash__more ak-dash__stats-more" href="%1$s">%2$s</a>',
+			esc_url( admin_url( 'admin.php?page=' . AdminKit_Settings_Page::SLUG_STATS ) ),
+			esc_html__( 'View all statistics', 'adminkit' )
+		);
 	}
 
 	/**
@@ -507,7 +525,7 @@ class AdminKit_Stats_Dashboard {
 		if ( 0 === $count ) {
 			$out .= '<p class="ak-dash__stats-live-empty">' . esc_html__( 'Nobody is on the site right now — this view refreshes automatically.', 'adminkit' ) . '</p>';
 			$out .= '</div>';
-			return $out;
+			return $out . self::more_link();
 		}
 
 		// Aggregate the per-token latest seen into page + source histograms.
@@ -541,7 +559,7 @@ class AdminKit_Stats_Dashboard {
 		$out .= '</div>';
 
 		$out .= '</div>';
-		return $out;
+		return $out . self::more_link();
 	}
 
 	/**

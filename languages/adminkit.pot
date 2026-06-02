@@ -1252,6 +1252,10 @@ msgstr ""
 msgid "View full report"
 msgstr ""
 
+#: inc/features/stats/class-stats-dashboard.php:475
+msgid "View all statistics"
+msgstr ""
+
 #: inc/class-theme-toggle.php:189 inc/features/dashboard/class-custom-dashboard.php:850 inc/features/dashboard/class-custom-dashboard.php:857 inc/features/dashboard/class-custom-dashboard.php:963
 msgid "View site"
 msgstr ""

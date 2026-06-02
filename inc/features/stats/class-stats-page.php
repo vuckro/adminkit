@@ -99,6 +99,19 @@ class AdminKit_Stats_Page {
 		$enabled = AdminKit_Stats_Tracker::is_enabled() && current_user_can( self::capability() );
 		$state   = AdminKit_Stats_Dashboard::get_user_state();
 
+		// The Statistics PAGE is an analysis view, not a real-time glance: never LAND on
+		// Live (that's the dashboard widget's default). If the saved preset is 'live',
+		// open on the default range instead — without rewriting the saved preset, so the
+		// dashboard widget keeps its own Live default. The user can still pick Live here.
+		if ( 'live' === $state['preset'] ) {
+			list( $cs, $ce ) = AdminKit_Stats_Dashboard::preset_range( AdminKit_Stats_Dashboard::DEFAULT_PRESET );
+			$state = array(
+				'preset' => AdminKit_Stats_Dashboard::DEFAULT_PRESET,
+				'start'  => $cs,
+				'end'    => $ce,
+			);
+		}
+
 		// Server-localised preset list so the SPA just paints labels.
 		$labels  = AdminKit_Stats_Dashboard::preset_labels();
 		$presets = array();

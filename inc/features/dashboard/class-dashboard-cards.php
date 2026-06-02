@@ -811,24 +811,22 @@ class AdminKit_Dashboard_Cards {
 	private static function priority_items() {
 		$items = array();
 
-		// --- Site-health alerts (warn) ---
-		$https = is_ssl() || 'https' === wp_parse_url( home_url(), PHP_URL_SCHEME );
-		if ( ! $https ) {
-			$items[] = array( 'sev' => 'bad', 'icon' => 'shield', 'title' => __( 'HTTPS off', 'adminkit' ), 'desc' => __( 'Security and SEO', 'adminkit' ), 'url' => admin_url( 'site-health.php' ), 'cta' => __( 'Details', 'adminkit' ) );
-		}
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG && ! ( defined( 'WP_DEBUG_DISPLAY' ) && ! WP_DEBUG_DISPLAY ) ) {
-			$items[] = array( 'sev' => 'bad', 'icon' => 'alert', 'title' => __( 'Debug mode on', 'adminkit' ), 'desc' => __( 'Turn off in production', 'adminkit' ), 'url' => admin_url( 'site-health.php' ), 'cta' => __( 'Details', 'adminkit' ) );
-		}
-		if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
-			/* translators: %s: current PHP version. */
-			$items[] = array( 'sev' => 'warn', 'icon' => 'alert', 'title' => sprintf( __( 'Update PHP %s', 'adminkit' ), PHP_VERSION ), 'desc' => __( 'Version too old', 'adminkit' ), 'url' => admin_url( 'site-health.php' ), 'cta' => __( 'Details', 'adminkit' ) );
-		}
-		if ( current_user_can( 'update_core' ) ) {
-			$ups = function_exists( 'wp_get_update_data' ) ? (int) ( wp_get_update_data()['counts']['total'] ?? 0 ) : 0;
-			if ( $ups > 0 ) {
-				/* translators: %d: number of available updates. */
-				$items[] = array( 'sev' => 'warn', 'icon' => 'download', 'title' => sprintf( _n( '%d update available', '%d updates available', $ups, 'adminkit' ), $ups ), 'desc' => __( 'Core, plugins, themes', 'adminkit' ), 'url' => admin_url( 'update-core.php' ), 'cta' => __( 'Update', 'adminkit' ) );
-			}
+		// --- Site-health issues — the REAL recommended/critical results that the score
+		// counts (see site_health() / native_health()), so the to-do list and the badge
+		// ALWAYS agree: the "à traiter" / recommended items now show up here, with
+		// WordPress's own label + category, linking to the full report to act on. Pre-
+		// sorted criticals-first. (Async-only tests stay behind "View full report".) ---
+		$health = self::site_health();
+		foreach ( ( isset( $health['issues'] ) ? (array) $health['issues'] : array() ) as $iss ) {
+			$crit    = ( 'critical' === ( $iss['status'] ?? '' ) );
+			$items[] = array(
+				'sev'   => $crit ? 'bad' : 'warn',
+				'icon'  => $crit ? 'alert' : 'shield',
+				'title' => (string) ( $iss['label'] ?? '' ),
+				'desc'  => (string) ( $iss['badge'] ?? '' ),
+				'url'   => admin_url( 'site-health.php' ),
+				'cta'   => __( 'Details', 'adminkit' ),
+			);
 		}
 
 		// --- Maintenance suggestions (info) ---
@@ -992,7 +990,7 @@ class AdminKit_Dashboard_Cards {
 	 * @return array{score:int,checks:array<int,array{ok:bool,label:string}>}
 	 */
 	private static function site_health() {
-		$cached = get_transient( 'adminkit_dash_health_v4' );
+		$cached = get_transient( 'adminkit_dash_health_v5' );
 		if ( is_array( $cached ) ) {
 			return apply_filters( 'adminkit/dashboard/site_health', $cached );
 		}
@@ -1029,11 +1027,20 @@ class AdminKit_Dashboard_Cards {
 			$critical    = $native['critical'];
 			$recommended = $native['recommended'];
 			$good        = $native['good'];
+			$issues      = $native['issues'];
 		} else {
-			$pass        = count( array_filter( wp_list_pluck( $checks, 'ok' ) ) );
+			// No native Site Health → derive from the quick checks above: each failing
+			// one becomes a recommended to-do, so the list still mirrors the counts.
+			$issues = array();
+			foreach ( $checks as $c ) {
+				if ( empty( $c['ok'] ) ) {
+					$issues[] = array( 'status' => 'recommended', 'label' => $c['label'], 'badge' => '' );
+				}
+			}
+			$pass        = count( $checks ) - count( $issues );
 			$score       = (int) round( $pass / max( 1, count( $checks ) ) * 100 );
 			$critical    = 0;
-			$recommended = count( $checks ) - $pass;
+			$recommended = count( $issues );
 			$good        = $pass;
 		}
 
@@ -1043,8 +1050,9 @@ class AdminKit_Dashboard_Cards {
 			'recommended' => $recommended,
 			'good'        => $good,
 			'checks'      => $checks,
+			'issues'      => $issues,
 		);
-		set_transient( 'adminkit_dash_health_v4', $data, 6 * HOUR_IN_SECONDS );
+		set_transient( 'adminkit_dash_health_v5', $data, 6 * HOUR_IN_SECONDS );
 
 		return apply_filters( 'adminkit/dashboard/site_health', $data );
 	}
@@ -1058,28 +1066,6 @@ class AdminKit_Dashboard_Cards {
 	 * @return array{score:int,critical:int,recommended:int,good:int}|null
 	 */
 	private static function native_health() {
-		// Prefer WordPress's OWN stored Site Health result so the dashboard matches
-		// the Site Health screen exactly (its JS writes this transient after the full
-		// async run, incl. checks we don't run inline). Falls through when absent.
-		$stored = get_transient( 'health-check-site-status-result' );
-		if ( $stored ) {
-			$r = json_decode( $stored, true );
-			if ( is_array( $r ) && isset( $r['good'], $r['recommended'], $r['critical'] ) ) {
-				$g     = (int) $r['good'];
-				$rec   = (int) $r['recommended'];
-				$crit  = (int) $r['critical'];
-				$total = $g + $rec + $crit;
-				if ( $total ) {
-					return array(
-						'score'       => (int) round( ( $g + $rec * 0.5 ) / $total * 100 ),
-						'critical'    => $crit,
-						'recommended' => $rec,
-						'good'        => $g,
-					);
-				}
-			}
-		}
-
 		if ( ! class_exists( 'WP_Site_Health' ) ) {
 			$file = ABSPATH . 'wp-admin/includes/class-wp-site-health.php';
 			if ( is_readable( $file ) ) {
@@ -1092,6 +1078,11 @@ class AdminKit_Dashboard_Cards {
 
 		$sh     = WP_Site_Health::get_instance();
 		$counts = array( 'good' => 0, 'recommended' => 0, 'critical' => 0 );
+		$issues = array();
+		// Curated cheap DIRECT tests (no HTTP / loopback), run inline so the to-do list
+		// and the score counts share ONE source — they always agree (the "à traiter" /
+		// recommended items the badge counts are exactly the ones listed below). The
+		// async-only tests stay behind the card's "View full report" link.
 		$tests  = array(
 			'wordpress_version', 'php_version', 'sql_server', 'utf8mb4_support',
 			'https_status', 'ssl_support', 'is_in_debug_mode', 'plugin_version',
@@ -1103,8 +1094,17 @@ class AdminKit_Dashboard_Cards {
 				continue;
 			}
 			$res = $sh->$fn();
-			if ( is_array( $res ) && isset( $res['status'], $counts[ $res['status'] ] ) ) {
-				++$counts[ $res['status'] ];
+			if ( ! is_array( $res ) || ! isset( $res['status'], $counts[ $res['status'] ] ) ) {
+				continue;
+			}
+			++$counts[ $res['status'] ];
+			// Keep each non-good result as an actionable to-do — WP's own label + category.
+			if ( 'good' !== $res['status'] && ! empty( $res['label'] ) ) {
+				$issues[] = array(
+					'status' => $res['status'],
+					'label'  => trim( wp_strip_all_tags( (string) $res['label'] ) ),
+					'badge'  => isset( $res['badge']['label'] ) ? trim( wp_strip_all_tags( (string) $res['badge']['label'] ) ) : '',
+				);
 			}
 		}
 
@@ -1112,11 +1112,19 @@ class AdminKit_Dashboard_Cards {
 		if ( ! $total ) {
 			return null;
 		}
+		// Criticals first, then recommended — most urgent at the top of the to-do list.
+		usort( $issues, static function ( $a, $b ) {
+			$rank = array( 'critical' => 0, 'recommended' => 1 );
+			$ra   = isset( $rank[ $a['status'] ] ) ? $rank[ $a['status'] ] : 2;
+			$rb   = isset( $rank[ $b['status'] ] ) ? $rank[ $b['status'] ] : 2;
+			return $ra - $rb;
+		} );
 		return array(
 			'score'       => (int) round( ( $counts['good'] + $counts['recommended'] * 0.5 ) / $total * 100 ),
 			'critical'    => $counts['critical'],
 			'recommended' => $counts['recommended'],
 			'good'        => $counts['good'],
+			'issues'      => $issues,
 		);
 	}
 
