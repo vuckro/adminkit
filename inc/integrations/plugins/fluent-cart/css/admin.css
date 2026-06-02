@@ -493,8 +493,9 @@ body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[stroke]:not([s
 	stroke: var( --ak-border-strong ) !important;
 }
 
-/* Default + icon buttons (FC paints its own slate over the El Plus tokens).
-   Variant buttons (--primary etc.) are excluded so they keep their brand/semantic fill. */
+/* Default + icon buttons. Variant buttons (--primary etc.) are excluded so they
+   keep their brand/semantic fill; our !important beats FC's non-important dark
+   rule regardless of its #fct_admin_app_wrapper scope. */
 body.adminkit.toplevel_page_fluent-cart .el-button:not([class*="el-button--"]),
 body.adminkit.toplevel_page_fluent-cart .icon-button {
 	background-color: var( --ak-elevated ) !important;
@@ -733,10 +734,10 @@ body.adminkit.toplevel_page_fluent-cart .fct-applied-filter-list .fct-applied-fi
 	color: var( --ak-heading ) !important;
 }
 
-/* Warning alert → AdminKit warning (subtle tint + token border/text). */
+/* Warning alert → AdminKit warning (subtle tint + token text, no border). */
 body.adminkit.toplevel_page_fluent-cart .fct-alert-warning {
 	background-color: var( --ak-warning-subtle ) !important;
-	border-color: var( --ak-warning ) !important;
+	border: none !important;
 	color: var( --ak-warning ) !important;
 }
 
