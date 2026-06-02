@@ -173,7 +173,7 @@ The **Bricks** adapter, when active:
 
 The **Gutenberg** adapter ships token-mapped header / sidebar / publish-button polish for the block, site, widgets, and navigation editors via the `enqueue_block_editor_assets` hook (NOT `admin_enqueue_scripts`) so the CSS only enters editor surfaces. The **Gutenberg** toggle (Features tab, on by default) additionally themes the iframed editor canvas — content + native blocks — in light and dark; turn it off to keep the canvas matching your live site exactly.
 
-AdminKit also ships adapters for **WooCommerce**, **ACF**, **Elementor**, the **Fluent** suite (Forms, SMTP, Booking, Cart, CRM, Boards, Community, Support, Affiliate, Security/Auth), **WPForms**, **WPCode**, **Query Monitor**, **Slim SEO**, **HappyFiles**, **FlyingPress**, **WP Migrate**, and **Admin Menu Editor**. Each self-detects its host and stays dormant when the host isn't installed. They split into two flavours: *Tier A* adapters remap the host's own CSS variables (zero `!important`, dark mode for free); *Tier B* adapters override the host's selectors because it hardcodes its colours — run `php dev/adapter-audit.php` to see each adapter's override budget.
+AdminKit also ships adapters for **WooCommerce**, **ACF**, **Elementor**, the **Fluent** suite (Forms, SMTP, Booking, Cart, CRM, Community, Affiliate), **WPCode**, **Query Monitor**, **Slim SEO**, **HappyFiles**, **FlyingPress**, **WP Migrate**, and **Admin Menu Editor**. Each self-detects its host and stays dormant when the host isn't installed. They split into two flavours: *Tier A* adapters remap the host's own CSS variables (zero `!important`, dark mode for free); *Tier B* adapters override the host's selectors because it hardcodes its colours — run `php dev/adapter-audit.php` to see each adapter's override budget.
 
 AdminKit's theme toggle is authoritative and self-contained: it always flips its own attribute (`data-adminkit-theme`) and storage key (`adminkit-theme`), so dark mode works standalone with no provider. When Bricks is present, its adapter adds a bridge on top — it adopts Bricks's mode on load and then mirrors AdminKit's mode into Bricks (`data-brx-theme` + `brx_mode`, guarded against loops) so the front end repaints too. You can repoint or rename the attribute / storage key via the `adminkit/theme_attribute` / `adminkit/theme_storage_key` filters.
 
@@ -223,7 +223,7 @@ add_action( 'adminkit/enqueued_admin', function () {
 | `adminkit/extra_tokens_handle` | `(string\|null, string $context)` | Integrations return a style handle that becomes a dependency of `adminkit-tokens`. |
 | `adminkit/integration_enabled` | `(bool, string $slug)` | Enable/disable one integration — drives the Plugins tab. |
 | `adminkit/brand_logo` | `('' \| string \| array)` | Brand-logo fallback when the Branding settings are empty. |
-| `adminkit/menu_icons` / `adminkit/toolbar_icons` | `(array)` | Override the native-icon replacement maps (dashicon-class / node-id ⇒ SVG). |
+| `adminkit/menu_icons` / `adminkit/menu_slug_icons` / `adminkit/toolbar_icons` | `(array)` | Override the native-icon replacement maps (dashicon-class / menu-slug / node-id ⇒ SVG). |
 | `adminkit/toolbar_icon_ab_item_nodes` | `(array)` | Mark toolbar nodes (node-id ⇒ bool) whose icon paints on `> .ab-item::before` instead of an `.ab-icon` child — for text/dashicon-font nodes. |
 | `adminkit/generated_avatar_style` | `(string $style, int $user_id)` | The DiceBear style slug for generated avatars (default `avataaars` — varied cartoon humans). |
 | `adminkit/generated_avatar_url` | `(string $url, int $user_id, int $size)` | The final generated-avatar URL — override to self-host or swap the service. |
@@ -294,7 +294,7 @@ adminkit/
 │       └── plugins/
 │           ├── gutenberg/ · woocommerce/ · acf/ · elementor/
 │           ├── fluent-smtp/ · fluentform/ · fluent-booking/
-│           ├── wpforms/ · wpcode/ · query-monitor/
+│           ├── wpcode/ · query-monitor/
 │           ├── slim-seo/ · happyfiles/ · flying-press/ · wp-migrate-db-pro/
 │           └── admin-menu-editor/        Admin Menu Editor (Choices, settings, search, CPE metabox)
 └── assets/

@@ -216,6 +216,20 @@ body.adminkit.toplevel_page_fluentcrm-admin .fcrm_company_contacts_wrap .fcrm_ri
 	padding-right: 0;
 }
 
+/* Subscriber profile isn't in the gutter group above, so it ran flush to the
+   panel's left edge — add the same left gutter so it lines up with the rest. */
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_profile_wrapper {
+	padding-left: 20px;
+}
+
+/* "Additional Information" sidebar card — its empty-state box ships a hard light
+   inline background (reads white in dark); route it to a muted surface. The
+   inline style needs !important to beat. */
+body.adminkit.toplevel_page_fluentcrm-admin .fc_sidebar_card_content,
+body.adminkit.toplevel_page_fluentcrm-admin .fc_sidebar_card_content .fc_content {
+	background-color: var(--ak-surface-muted) !important;
+}
+
 /* Skeleton / pre-loading shimmer — FluentCRM tints it blue-slate (#1C2732 →
    #283643) in its own .fcrm-dark class; route to NEUTRAL surfaces so the loading
    bars are grey, not blue, in both modes. Set the vars on the item itself so this

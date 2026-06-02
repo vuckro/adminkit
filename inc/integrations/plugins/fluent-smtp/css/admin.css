@@ -16,6 +16,19 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app {
 	color: var(--ak-text);
 }
 
+/* Top nav bar (FluentSMTP wordmark + tabs). Host makes it #fff and over-pulls it
+   left (-20px on the bar + -20px on the inner nav) to sit flush; theme the
+   surface, neutralise the over-pull, and add a left gutter so the wordmark isn't
+   glued to the corner. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-main-menu-items {
+	background: var(--ak-surface);
+	margin-left: 0;
+	padding-left: 20px;
+}
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-main-menu-items .fluent-mail-navigation {
+	margin-left: 0;
+}
+
 /* Header strip + body wrapper */
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-header,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_header {
@@ -25,9 +38,18 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_header {
 	color: var(--ak-heading);
 }
 
-body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-body,
-body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_content {
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-body {
 	background: transparent;
+	color: var(--ak-text);
+	margin-left: 20px; /* host pins only margin-right:20px — even the gutter */
+}
+
+/* The page content card (welcome / connection wizard). Host paints it #fff with
+   no border, so the left edge vanished in dark — give it a real surface + border. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_content {
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 }
 
@@ -56,7 +78,7 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_dash_lists li:last
 }
 
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_dash_lists li:hover {
-	background: var(--primary-t-1, var(--ak-hover-bg));
+	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
 }
 
@@ -89,22 +111,22 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour.fss_w
 
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_level_1,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour.fss_wid_level_1 {
-	background: var(--primary-t-1, var(--ak-hover-bg));
+	background: color-mix(in srgb, var(--ak-primary) 18%, var(--ak-surface));
 }
 
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_level_2,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour.fss_wid_level_2 {
-	background: var(--primary-t-2, var(--ak-hover-bg));
+	background: color-mix(in srgb, var(--ak-primary) 38%, var(--ak-surface));
 }
 
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_level_3,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour.fss_wid_level_3 {
-	background: var(--primary-t-3, var(--ak-primary));
+	background: color-mix(in srgb, var(--ak-primary) 58%, var(--ak-surface));
 }
 
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_level_4,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour.fss_wid_level_4 {
-	background: var(--primary-t-4, var(--ak-primary));
+	background: color-mix(in srgb, var(--ak-primary) 78%, var(--ak-surface));
 }
 
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_level_5,
@@ -152,7 +174,7 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-mailer-ima
 
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .email-stat:hover,
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-mailer-image:hover {
-	background: var(--primary-t-1, var(--ak-hover-bg));
+	background: var(--ak-hover-bg);
 	border-color: var(--ak-border-strong);
 	box-shadow: none;
 }
@@ -171,7 +193,7 @@ body.adminkit.settings_page_fluent-mail .fss_connection_intro {
    it; the token border carries the edge. */
 body.adminkit.settings_page_fluent-mail .fss_connection_intro .fss_config_section,
 body.adminkit.settings_page_fluent-mail .fss_config_section {
-	background: var(--ak-surface);
+	background: var(--ak-elevated);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	box-shadow: none;
@@ -208,7 +230,7 @@ body.adminkit.settings_page_fluent-mail .fss_connection_wizard .fss_connections 
 body.adminkit.settings_page_fluent-mail .fss_connection_wizard .fss_connections .el-radio-button.is-active.con_gmail .el-radio-button__inner,
 body.adminkit.settings_page_fluent-mail .fss_connection_wizard .fss_connections .el-radio-button.is-active.con_outlook .el-radio-button__inner,
 body.adminkit.settings_page_fluent-mail .fss_connection_wizard .fss_connections .el-radio-button.is-active.con_postmark .el-radio-button__inner {
-	background: var(--primary-t-1, var(--ak-hover-bg)) !important;
+	background: var(--ak-primary-subtle) !important;
 	border-color: var(--ak-primary) !important;
 	box-shadow: -1px 0 0 0 var(--ak-primary) !important;
 }
@@ -417,7 +439,7 @@ body.adminkit.settings_page_fluent-mail .el-table thead th {
 }
 
 body.adminkit.settings_page_fluent-mail .el-table--enable-row-hover .el-table__body tr:hover > td {
-	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	background-color: var(--ak-hover-bg);
 }
 
 body.adminkit.settings_page_fluent-mail .el-table__row--striped td {
@@ -644,8 +666,8 @@ body.adminkit.settings_page_fluent-mail .el-alert--success {
 }
 
 body.adminkit.settings_page_fluent-mail .el-alert--warning {
-	background-color: var(--ak-warning);
-	color: #ffffff;
+	background-color: var(--ak-warning-subtle);
+	color: var(--ak-warning);
 }
 
 body.adminkit.settings_page_fluent-mail .el-alert--error {
@@ -700,7 +722,7 @@ body.adminkit.settings_page_fluent-mail .el-dropdown-menu__item {
 body.adminkit.settings_page_fluent-mail .el-menu-item.is-active,
 body.adminkit.settings_page_fluent-mail .el-menu-item:hover,
 body.adminkit.settings_page_fluent-mail .el-dropdown-menu__item:hover {
-	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	background-color: var(--ak-hover-bg);
 	color: var(--ak-primary);
 }
 
@@ -712,7 +734,7 @@ body.adminkit.settings_page_fluent-mail .el-menu--horizontal > .el-menu-item.is-
 }
 
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fluent-mail-navigation.el-menu--horizontal.el-menu .el-menu-item.is-active {
-	background: var(--primary-t-1, var(--ak-hover-bg));
+	background: var(--ak-elevated);
 }
 
 
@@ -729,7 +751,7 @@ body.adminkit.settings_page_fluent-mail .el-select-dropdown__item {
 
 body.adminkit.settings_page_fluent-mail .el-select-dropdown__item.hover,
 body.adminkit.settings_page_fluent-mail .el-select-dropdown__item:hover {
-	background-color: var(--primary-t-1, var(--ak-hover-bg));
+	background-color: var(--ak-hover-bg);
 	color: var(--ak-primary);
 }
 
@@ -836,4 +858,51 @@ body.adminkit.settings_page_fluent-mail .el-tag--danger {
 	background-color: var(--ak-error);
 	color: #ffffff;
 	border-color: var(--ak-error);
+}
+
+
+/* ===== More host literals → tokens ===== */
+
+/* Section intro divider (#e3e8ed bottom rule under "Welcome to FluentSMTP"). */
+body.adminkit.settings_page_fluent-mail .fss_intro {
+	border-bottom-color: var(--ak-border);
+}
+
+/* Input group add-ons (#f5f7fa bg / #dcdfe6 border / #909399 text). */
+body.adminkit.settings_page_fluent-mail .el-input-group__append,
+body.adminkit.settings_page_fluent-mail .el-input-group__prepend {
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
+/* Element UI loading overlay — the white hsla(0,0%,100%,.9) veil that flashes
+   over panels/buttons while they fetch (Email Logs skeleton, the loading "Save"
+   button). Theme the veil + recolour the #409eff spinner to the accent. */
+body.adminkit.settings_page_fluent-mail .el-loading-mask {
+	background-color: color-mix(in srgb, var(--ak-surface) 85%, transparent);
+}
+body.adminkit.settings_page_fluent-mail .el-loading-spinner .path {
+	stroke: var(--ak-primary);
+}
+body.adminkit.settings_page_fluent-mail .el-loading-spinner i,
+body.adminkit.settings_page_fluent-mail .el-loading-spinner .el-loading-text {
+	color: var(--ak-primary);
+}
+
+/* Element UI toast notification (teleported to <body>) — #fff card + #ebeef5
+   border. The intent icons keep their semantic colours. */
+body.adminkit.settings_page_fluent-mail .el-notification {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit.settings_page_fluent-mail .el-notification__title {
+	color: var(--ak-heading);
+}
+body.adminkit.settings_page_fluent-mail .el-notification__content {
+	color: var(--ak-text);
+}
+body.adminkit.settings_page_fluent-mail .el-notification__closeBtn {
+	color: var(--ak-text-muted);
 }

@@ -276,7 +276,7 @@ body.adminkit.toplevel_page_fluent-cart .el-checkbox__inner,
 body.adminkit.toplevel_page_fluent-cart .el-radio__inner,
 body.adminkit.toplevel_page_fluent-cart .el-switch__core {
 	background-color: var( --ak-elevated ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* Glyphs inside filled controls. */
@@ -519,9 +519,10 @@ body.adminkit.toplevel_page_fluent-cart .fc_dashboard_onboarding_item__title {
    10. MORE COMPONENT MAPPINGS
    ============================================================ */
 
-/* Primary-button label (FC pins slate on the span inside the brand fill). */
+/* Primary-button label — neutral body text (FC pins slate on the span; we keep
+   it on the body-text ink rather than the accent-contrast ink). */
 body.adminkit.toplevel_page_fluent-cart .el-button--primary span {
-	color: var( --ak-on-accent ) !important;
+	color: var( --ak-text ) !important;
 }
 
 /* Panel titles + active fluid-tab text → heading. */
@@ -557,7 +558,7 @@ body.adminkit.toplevel_page_fluent-cart .el-button:not(.el-button--primary):not(
 body.adminkit.toplevel_page_fluent-cart .el-button--info.is-plain,
 body.adminkit.toplevel_page_fluent-cart .icon-button {
 	background-color: var( --ak-surface ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 	color: var( --ak-text ) !important;
 }
 
@@ -616,7 +617,7 @@ body.adminkit.toplevel_page_fluent-cart .fct-global-search-input-wrap .fct-setti
 body.adminkit.toplevel_page_fluent-cart .el-input__wrapper,
 body.adminkit.toplevel_page_fluent-cart .el-select__wrapper {
 	background-color: var( --ak-elevated ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* Date-range editor value text — FC paints it muted slate; use body text. */
@@ -652,7 +653,8 @@ body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab {
 	background-color: var( --ak-elevated ) !important;
 }
 
-/* More component borders (FC sets the strong slate directly). */
+/* More component borders — the soft border (these read better without the
+   strong slate). */
 body.adminkit.toplevel_page_fluent-cart .fct-integration-table-footer,
 body.adminkit.toplevel_page_fluent-cart .el-cascader-panel.is-bordered,
 body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-condition-or-wrap,
@@ -660,7 +662,7 @@ body.adminkit.toplevel_page_fluent-cart .fct-report-card-header,
 body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-item-box,
 body.adminkit.toplevel_page_fluent-cart .fct-simple-product-actions,
 body.adminkit.toplevel_page_fluent-cart .dialog-footer {
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container {
 	background-color: var( --ak-surface ) !important;
@@ -668,7 +670,7 @@ body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container {
 }
 body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-advanced-filters {
 	background-color: var( --ak-elevated ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* Body text default (no !important — coloured spans/labels keep their own rule). */
@@ -698,7 +700,7 @@ body.adminkit.toplevel_page_fluent-cart .el-overlay .el-dialog {
 	background-color: var( --ak-elevated ) !important;
 }
 body.adminkit.toplevel_page_fluent-cart .el-overlay .el-dialog__header {
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* Drawer — same overlay-panel family as the dialog (FC hard-pins the bg in dark). */
@@ -709,7 +711,7 @@ body.adminkit.toplevel_page_fluent-cart .el-drawer {
 /* Disabled checkbox → muted surface, strong border (no brand tint). */
 body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-disabled .el-checkbox__inner {
 	background-color: var( --ak-surface-muted ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* Info badge (generic neutral chip) → muted, not a solid slate fill. */
@@ -736,16 +738,27 @@ body.adminkit.toplevel_page_fluent-cart .el-button.is-tertiary:focus {
 	color: var( --ak-text ) !important;
 }
 
-/* Textarea — border + text (bg stays transparent, fine). */
+/* Textarea — input background + soft border + body text (FC leaves the bg
+   transparent in dark, which let the page show through). */
 body.adminkit.toplevel_page_fluent-cart .el-textarea__inner {
-	border-color: var( --ak-border-strong ) !important;
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border ) !important;
 	color: var( --ak-text ) !important;
 }
 
 /* WP classic editor wrapper (Long Description block). */
 body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .wp-editor-tools .wp-editor-container {
 	background-color: var( --ak-surface ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
+}
+
+/* TinyMCE editor surfaces — FC paints the stack body #f5f6f7 (light) /
+   rgb(21 29 38) (dark) and leaves the edit area #fff; route both to surface so
+   the whole editor reads as one themed panel (the toolbar .mce-panel is already
+   handled by AdminKit core at higher specificity). */
+body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .mce-container-body.mce-stack-layout,
+body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .mce-edit-area {
+	background-color: var( --ak-surface ) !important;
 }
 
 /* Editor iframe loading scrim — 80% surface (was a hard #1c2732cc). */
@@ -757,7 +770,7 @@ body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .iframe-contro
 /* Tag-group items + internal label badge. */
 body.adminkit.toplevel_page_fluent-cart .fct-tag-group .fct-tag-item {
 	background-color: var( --ak-elevated ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 	color: var( --ak-text ) !important;
 }
 body.adminkit.toplevel_page_fluent-cart .fct-tag-group .fct-tags-internal {
@@ -774,14 +787,14 @@ body.adminkit.toplevel_page_fluent-cart .fmp-add-full {
 /* Media button — bordered neutral control (FC pins slate bg + light text). */
 body.adminkit.toplevel_page_fluent-cart .fct-media-button {
 	background-color: var( --ak-elevated ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 	color: var( --ak-text ) !important;
 }
 
 /* Save bar (product edit sticky footer). */
 body.adminkit.toplevel_page_fluent-cart .fct-save-bar {
 	background-color: var( --ak-elevated ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* Product download form box (FC pins dark-500). */
@@ -861,7 +874,7 @@ body.adminkit.toplevel_page_fluent-cart .fct-report-body .fct-report-filter-wrap
 /* Applied-filter pill (tag) → surface bg / strong border / heading text. */
 body.adminkit.toplevel_page_fluent-cart .fct-applied-filter-list .fct-applied-filter {
 	background-color: var( --ak-surface ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 	color: var( --ak-heading ) !important;
 }
 
@@ -923,7 +936,7 @@ body.adminkit.toplevel_page_fluent-cart .fct-settings-nav .fct-settings-nav-chil
 
 /* Pagination wrapper border. */
 body.adminkit.toplevel_page_fluent-cart .pagination-wrap {
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* El Plus dark tooltip (e.g. "Toggle reports") — FC sets its bg to
