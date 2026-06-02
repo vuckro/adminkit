@@ -179,12 +179,14 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 }
 
 /* Frame the top bar like AdminKit's content panel. FC's bar is position:fixed
-   z-index:2000 covering the native corner overlay (z-index 101) — the bar
-   carries the frame: top hairline + 18px rounded top-left + right border so
-   the content panel is fully framed (top / left from #wpbody-content / right). */
+   z-index:2000 covering the native corner overlay (z-index 101), so the bar
+   carries the top hairline + 18px rounded top-left itself. The LEFT border comes
+   from #wpbody-content (full height); the right side extends to the edge like
+   every other admin page (no right content border). FC's `width: calc(100% -
+   161px)` already leaves the 1px gap for the left border, so the bar sits flush
+   after it without covering it. */
 body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 	border-top: 1px solid var( --ak-border ) !important;
-	border-right: 1px solid var( --ak-border ) !important;
 	border-top-left-radius: 18px !important;
 }
 
@@ -585,14 +587,11 @@ body.adminkit.toplevel_page_fluent-cart .fct_menu_item a,
 body.adminkit.toplevel_page_fluent-cart .fct_menu_item button {
 	outline: none !important;
 	box-shadow: none !important;
+	border-color: transparent !important;
 }
 body.adminkit.toplevel_page_fluent-cart .fct_menu_item > a:hover,
 body.adminkit.toplevel_page_fluent-cart .fct_menu_item > button:hover {
 	background-color: var( --ak-hover-bg ) !important;
-}
-body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > a,
-body.adminkit.toplevel_page_fluent-cart .fct_menu_item.active_admin_menu > button {
-	border: none !important;
 }
 
 /* "More" dropdown submenu + fluid-tab container → raised surface. */
