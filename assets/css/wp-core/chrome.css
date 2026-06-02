@@ -153,7 +153,11 @@ body.adminkit {
 	--ak-nav-pill-gap: 7px;
 	--ak-nav-pill-height: 34px;
 	--ak-nav-pill-padding-x: 14px;
-	--ak-nav-pill-radius: 9px;
+	/* Inner segment radius — concentric with the segmented container: its
+	   --ak-radius-s (6px) corner MINUS the 2px inset, so the active pill's rounded
+	   corners nest exactly inside the group's border instead of bulging past it
+	   (matches .ak-stats__preset / .ak-dash__stats-preset, which use the same calc). */
+	--ak-nav-pill-radius: calc(var(--ak-radius-s) - 2px);
 }
 
 /* Dark-mode scrollbars. The browser paints native scrollbars from the page's
