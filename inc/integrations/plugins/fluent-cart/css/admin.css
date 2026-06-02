@@ -714,6 +714,12 @@ body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .wp-editor-too
 	border-color: var( --ak-border-strong ) !important;
 }
 
+/* Editor iframe loading scrim — 80% surface (was a hard #1c2732cc). */
+body.adminkit.toplevel_page_fluent-cart .fct-custom-gutenberg-editor-wrap .iframe-loader,
+body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .iframe-controls {
+	background: color-mix( in srgb, var( --ak-surface ) 80%, transparent ) !important;
+}
+
 /* Tag-group items + internal label badge. */
 body.adminkit.toplevel_page_fluent-cart .fct-tag-group .fct-tag-item {
 	background-color: var( --ak-elevated ) !important;
