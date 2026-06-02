@@ -226,9 +226,11 @@ class AdminKit_Settings {
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// AdminKit icons — ON by default. Replaces WordPress's native menu + toolbar
-		// dashicons with AdminKit's icon set. Read by AdminKit_Core_Menu_Icons;
-		// non-destructive (only stock dashicons, no override).
+		// AdminKit icons — ALWAYS ON (no UI toggle: it's part of the standard restyle,
+		// and a global on/off duplicated the Menu manager, which is now THE place to
+		// override / reset icons per item — AdminKit glyph, WordPress dashicon, or your
+		// own). Stays a registered setting (default true) so power users can still flip
+		// it off via code/filter. Read by AdminKit_Core_Menu_Icons; non-destructive.
 		self::register( 'replace_icons_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',

@@ -83,7 +83,7 @@ Yes. Every feature is an individual toggle on the AdminKit settings page, even t
 * A flat, modern restyle of wp-admin, wp-login.php and the frontend admin bar, built entirely on CSS custom properties (`--ak-*` tokens).
 * Light + dark mode with a sun/moon toggle in the admin bar (and `prefers-color-scheme` on first visit).
 * Custom avatars: registers "AdminKit Portraits (Generated)" in Settings → Discussion → Default Avatar (next to Wavatar / Identicon / Retro / MonsterID). Selecting it gives every user a unique generated portrait on a pastel-gradient backdrop. Via DiceBear, explicit opt-in, non-PII seed.
-* Gutenberg canvas theming and AdminKit's own icon set, both on by default and individually switch-off-able.
+* Gutenberg canvas theming (on by default, switch-off-able) and AdminKit's own icon set (always on — pick a per-item icon, or reset to the WordPress one, in the Menu manager).
 * A custom dashboard (greeting, quick actions, at-a-glance counts, site health, storage, recent activity) with per-user drag-to-rearrange cards.
 * A built-in admin Menu editor, a cookieless Statistics screen (unique visitors + page views, no cookies / no IP stored, with a live view), a Notification Center drawer, and an Online-users view — each an individual toggle.
 * Tabbed Settings screens (including Discussion, Reading and Writing), plus dedicated Menu and Statistics screens under the AdminKit menu.

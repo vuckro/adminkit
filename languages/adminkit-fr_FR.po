@@ -959,8 +959,8 @@ msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag
 msgstr "Réorganisez le menu d’administration et ses sous-menus, changez les icônes et masquez des entrées. Glissez pour réorganiser ; les changements s’appliquent après enregistrement. Masquer retire un élément du menu uniquement — cela ne bloque pas l’accès direct."
 
 #: inc/settings/class-settings-catalog.php:79
-msgid "Reorder the admin menu and submenus, set a PER-ITEM icon (overriding the AdminKit set above), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
-msgstr "Réorganisez le menu d’administration et ses sous-menus, définissez une icône PAR ÉLÉMENT (qui prime sur le jeu AdminKit ci-dessus) et masquez des entrées — configuré dans l’onglet Menu. Désactivé, le menu natif de WordPress est restauré (votre disposition enregistrée est conservée)."
+msgid "Reorder the admin menu and submenus, set a per-item icon (an AdminKit glyph, a WordPress dashicon, or your own), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
+msgstr "Réorganisez le menu d’administration et ses sous-menus, définissez une icône par élément (un glyphe AdminKit, un dashicon WordPress ou la vôtre) et masquez des entrées — configuré dans l’onglet Menu. Désactivé, le menu natif de WordPress est restauré (votre disposition enregistrée est conservée)."
 
 #: inc/settings/class-settings-catalog.php:31
 msgid "Replace the WordPress dashboard with a custom one: greeting, quick actions, stat tiles, recent activity, site health and storage. Off restores the native dashboard."

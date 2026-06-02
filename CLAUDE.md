@@ -179,11 +179,15 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
 - **The token layers are each optional** (provider → baseline → neutral). Don't
   hard-require any one of them. See ARCHITECTURE.
 - **Default feature toggles ship ON** — Gutenberg canvas theming
-  (`editor_content_theme`), AdminKit icons (`replace_icons_enabled`) and
-  users-list Quick Edit (`quick_edit_users_enabled`) default ON, so the plugin
-  presents fully-featured on activation. `bricks_builder_enabled` also defaults
-  ON, but the UI locks that row unless the Bricks theme is active. Each stays
-  individually switch-off-able. Three are **OFF by default** on purpose:
+  (`editor_content_theme`) and users-list Quick Edit (`quick_edit_users_enabled`)
+  default ON, so the plugin presents fully-featured on activation.
+  `bricks_builder_enabled` also defaults ON, but the UI locks that row unless the
+  Bricks theme is active. Each stays individually switch-off-able. AdminKit icons
+  (`replace_icons_enabled`) is **always on, with no UI toggle** — a global on/off
+  duplicated the Menu manager (now THE place to override / reset icons per item:
+  AdminKit glyph, WordPress dashicon, or your own), so the toggle was removed; the
+  setting stays registered (default true) so a filter can still disable it. Three
+  are **OFF by default** on purpose:
   `username_changer_enabled` (renaming `user_login` invalidates active sessions),
   `custom_avatars_enabled` (generating portraits calls an EXTERNAL service —
   DiceBear — and those images can load on the front end, so it's opt-in to keep

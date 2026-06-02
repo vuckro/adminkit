@@ -202,7 +202,10 @@ individually switch-off-able:
   native blocks — in light/dark; off keeps the canvas matching the live site),
   `replace_icons_enabled` (swaps native menu/toolbar dashicons for AdminKit's set
   — `inc/wp-core/class-menu-icons.php`, filterable via `adminkit/menu_icons` /
-  `adminkit/toolbar_icons`; non-destructive — only stock dashicons),
+  `adminkit/toolbar_icons`; non-destructive — only stock dashicons. **Always on,
+  no UI toggle**: a global on/off duplicated the Menu manager, which now owns
+  per-item icon control — AdminKit glyph / WordPress dashicon / reset-to-original;
+  the setting stays registered so a filter can still disable it),
   and `quick_edit_users_enabled` (`inc/wp-core/class-user-quick-edit.php`) hooks
   `user_row_actions` to inject a "Quick Edit" affordance into each users.php
   row, opens an inline `<template>`-cloned editor below the row with first

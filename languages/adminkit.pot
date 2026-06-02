@@ -941,7 +941,7 @@ msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:79
-msgid "Reorder the admin menu and submenus, set a PER-ITEM icon (overriding the AdminKit set above), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
+msgid "Reorder the admin menu and submenus, set a per-item icon (an AdminKit glyph, a WordPress dashicon, or your own), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:31
