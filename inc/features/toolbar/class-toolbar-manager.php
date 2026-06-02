@@ -37,6 +37,14 @@ class AdminKit_Toolbar_Manager {
 	const REST_NS    = 'adminkit/v1';
 	const REST_ROUTE = '/toolbar';
 
+	/**
+	 * Transient holding the PRISTINE top-level nodes, captured during a real Toolbar-page
+	 * render (admin context). The REST reader prefers it over an in-request rebuild: some
+	 * nodes are `is_admin()`-gated (the command palette, for one) and never appear in the
+	 * REST context, so a REST-only snapshot would silently miss them.
+	 */
+	const SNAPSHOT_KEY = 'adminkit_toolbar_nodes';
+
 	/** Submenu page hook suffix (set when the page registers); gates enqueue. */
 	private static $page_hook = '';
 
@@ -139,6 +147,13 @@ class AdminKit_Toolbar_Manager {
 			return;
 		}
 		AdminKit_Settings_Page::enqueue_app( AdminKit_Settings_Page::boot_data( 'toolbar' ) );
+
+		// Capture the PRISTINE bar from THIS page's own render (admin context → the full
+		// node set, incl. is_admin()-gated nodes the REST context can't see), just before
+		// apply() @ 99999. Written server-side now; read by the SPA's REST GET a moment
+		// later in the same page load. Hooked here (not in init) so it costs nothing off
+		// the Toolbar page — enqueue() already runs only there.
+		add_action( 'admin_bar_menu', array( __CLASS__, 'capture' ), 99998 );
 	}
 
 	/**
@@ -200,23 +215,43 @@ class AdminKit_Toolbar_Manager {
 	}
 
 	/**
-	 * Build the admin bar in THIS request (without our own apply()) and return the
-	 * pristine top-level nodes, in native order, each with a plain-text label and its
-	 * group (so the SPA can keep the left/right clusters apart). Plus the saved layout.
+	 * GET payload — the pristine top-level nodes (admin-context capture preferred, an
+	 * in-request rebuild as fallback) + the saved layout.
 	 *
 	 * @return WP_REST_Response
 	 */
 	public static function rest_get() {
+		$nodes = get_transient( self::SNAPSHOT_KEY );
+		if ( ! is_array( $nodes ) || ! $nodes ) {
+			// No admin-context capture yet (the SPA fetched before any Toolbar-page render,
+			// or it expired) — rebuild in-request. Degraded: misses is_admin()-gated nodes,
+			// but beats an empty editor.
+			$nodes = self::snapshot_nodes();
+		}
 		return rest_ensure_response( array(
-			'nodes'  => self::snapshot_nodes(),
+			'nodes'  => $nodes,
 			'config' => self::get_config(),
 		) );
 	}
 
 	/**
-	 * Snapshot the live top-level admin-bar nodes by constructing a throwaway bar and
-	 * firing the same `admin_bar_menu` everyone adds to — but with OUR apply() detached,
-	 * so the editor sees every node in native order regardless of the saved layout.
+	 * Capture the live top-level nodes from a REAL admin-bar render (admin context) into a
+	 * transient, BEFORE apply() reorders/hides. Hooked only on the Toolbar page (via
+	 * enqueue()), so it's free everywhere else.
+	 *
+	 * @param WP_Admin_Bar $bar
+	 * @return void
+	 */
+	public static function capture( $bar ) {
+		if ( is_object( $bar ) ) {
+			set_transient( self::SNAPSHOT_KEY, self::extract_nodes( $bar ), HOUR_IN_SECONDS );
+		}
+	}
+
+	/**
+	 * In-request FALLBACK snapshot: build a throwaway bar (our apply() detached) and
+	 * extract its top-level nodes. Runs in the CALLER's context (REST = not is_admin()),
+	 * so it can miss `is_admin()`-gated nodes — exactly why capture() is preferred.
 	 *
 	 * @return array<int,array{id:string,label:string,group:string}>
 	 */
@@ -232,6 +267,17 @@ class AdminKit_Toolbar_Manager {
 		do_action( 'admin_bar_menu', $bar );
 		add_action( 'admin_bar_menu', array( __CLASS__, 'apply' ), 99999 );
 
+		return self::extract_nodes( $bar );
+	}
+
+	/**
+	 * Extract + classify the TOP-LEVEL items from a built admin bar into the editor's
+	 * shape. Shared by capture() (real bar) and snapshot_nodes() (throwaway bar).
+	 *
+	 * @param WP_Admin_Bar $bar
+	 * @return array<int,array{id:string,label:string,group:string}>
+	 */
+	private static function extract_nodes( $bar ) {
 		$nodes = $bar->get_nodes();
 		if ( ! is_array( $nodes ) ) {
 			return array();
@@ -271,22 +317,33 @@ class AdminKit_Toolbar_Manager {
 	}
 
 	/**
-	 * A readable, plain-text label for a node: its title with tags stripped + whitespace
-	 * collapsed, falling back to a tidied id. Some nodes carry only an icon (no text) —
-	 * those fall back to the id so the editor still shows something selectable.
+	 * A readable, plain-text label for a node, in three falls:
+	 *   1. the visible title — but with `aria-hidden="true"` spans dropped first, so a
+	 *      node like Comments reads "0 awaiting moderation", not "00 …" (the decorative
+	 *      count bubble duplicates the screen-reader count);
+	 *   2. for icon-only nodes (no visible text — `ak-view-site`, `ak-theme-toggle`, …)
+	 *      the accessible tooltip `meta['title']` ("View site"), never the raw id;
+	 *   3. a humanized id as the last resort (`ak-foo-bar` → "Foo bar").
 	 *
 	 * @param object $node
 	 * @return string
 	 */
 	private static function node_label( $node ) {
-		$title = isset( $node->title ) ? (string) $node->title : '';
-		$title = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $title ) ) );
+		$raw = isset( $node->title ) ? (string) $node->title : '';
+		// Drop decorative, aria-hidden spans (count bubbles, icon glyphs) before stripping.
+		$raw   = preg_replace( '/<span[^>]*aria-hidden=["\']true["\'][^>]*>.*?<\/span>/is', ' ', $raw );
+		$title = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $raw ) ) );
 		if ( '' !== $title ) {
 			return $title;
 		}
-		// No text (icon-only node) → a tidied id: drop the wp-admin-bar- prefix.
+		// Icon-only node → the accessible tooltip (meta['title']) if any.
+		if ( isset( $node->meta['title'] ) && '' !== trim( (string) $node->meta['title'] ) ) {
+			return trim( wp_strip_all_tags( (string) $node->meta['title'] ) );
+		}
+		// Last resort: humanize the id (drop the wp-admin-bar- / ak- prefix, dashes → spaces).
 		$id = isset( $node->id ) ? (string) $node->id : '';
-		return preg_replace( '/^wp-admin-bar-/', '', $id );
+		$id = preg_replace( '/^(wp-admin-bar-|ak-)/', '', $id );
+		return ucfirst( trim( str_replace( array( '-', '_' ), ' ', $id ) ) );
 	}
 
 	/**
