@@ -1202,7 +1202,7 @@ body.adminkit .ak-dash__stats-preset:hover {
 	color: var(--ak-heading);
 }
 body.adminkit .ak-dash__stats-preset.is-active {
-	background: var(--ak-elevated);
+	background: var(--ak-surface-muted);
 	color: var(--ak-heading);
 }
 

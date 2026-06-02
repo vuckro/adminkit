@@ -1257,7 +1257,7 @@
 }
 .adminkit-app .ak-stats__preset:hover { color: var(--ak-heading); }
 .adminkit-app .ak-stats__preset.is-active {
-	background: var(--ak-elevated);
+	background: var(--ak-surface-muted);
 	color: var(--ak-heading);
 }
 .adminkit-app .ak-stats__custom {
