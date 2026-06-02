@@ -756,6 +756,13 @@ body.adminkit.toplevel_page_fluent-cart .fmp-add-full {
 	color: var( --ak-text-muted ) !important;
 }
 
+/* Media button — bordered neutral control (FC pins slate bg + light text). */
+body.adminkit.toplevel_page_fluent-cart .fct-media-button {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+	color: var( --ak-text ) !important;
+}
+
 /* Save bar (product edit sticky footer). */
 body.adminkit.toplevel_page_fluent-cart .fct-save-bar {
 	background-color: var( --ak-elevated ) !important;
