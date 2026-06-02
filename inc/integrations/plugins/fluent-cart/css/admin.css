@@ -199,15 +199,10 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a::after {
 	white-space: nowrap;
 }
 
-/* Top-bar nav — neutral text, brand on hover / active. */
+/* Top-bar nav — neutral text. Hover bg is handled in §10; no color change. */
 body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > a,
 body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > button {
 	color: var( --ak-text );
-}
-body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > a:hover,
-body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item.active > a,
-body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > button:hover {
-	color: var( --ak-primary );
 }
 
 /* Hide FC's own dark-mode toggle — AdminKit's switch is the single source. */
@@ -485,12 +480,7 @@ body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab.classic-tab-style .fct-fl
 	background-color: var( --ak-border-strong ) !important;
 }
 
-/* Links → brand on hover / focus. */
-body.adminkit.toplevel_page_fluent-cart a:hover,
-body.adminkit.toplevel_page_fluent-cart a:focus {
-	color: var( --ak-primary );
-	text-decoration: none;
-}
+/* a:hover/focus handled by AdminKit's global body.adminkit a rule — no override needed. */
 
 /* Empty-state illustration — retint so it reads on dark surfaces (filled shapes
    muted, lines visible) without flattening to a single tone. */
