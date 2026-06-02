@@ -149,6 +149,11 @@ body.adminkit {
 	--ak-table-bg: var(--ak-surface);
 	--ak-table-border: color-mix(in srgb, var(--ak-border) 72%, transparent);
 	--ak-table-radius: var(--ak-radius-m);
+	/* Header/footer band — a SOFT accentuation: a gentle step between the table body
+	   (--ak-surface) and the full --ak-elevated header tone, so the column row stands
+	   out a touch without the heavy band --ak-elevated gave. Mode-aware (both inputs
+	   flip with the theme); nudge the 60% to taste. */
+	--ak-table-header-bg: color-mix(in srgb, var(--ak-elevated) 60%, var(--ak-surface));
 	--ak-nav-gap: 6px;
 	--ak-nav-pill-gap: 7px;
 	--ak-nav-pill-height: 34px;

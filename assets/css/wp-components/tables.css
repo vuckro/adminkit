@@ -18,7 +18,7 @@ body.adminkit .widefat li {
    classes are present, so the bare-widefat case needs its own block. */
 body.adminkit .widefat {
 	background: var(--ak-table-bg);
-	border: 1px solid var(--ak-table-border);
+	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-table-radius);
 	border-collapse: separate;
 	border-spacing: 0;
@@ -29,17 +29,17 @@ body.adminkit .widefat thead th,
 body.adminkit .widefat thead td,
 body.adminkit .widefat tfoot th,
 body.adminkit .widefat tfoot td {
-	background: var(--ak-surface);
+	background: var(--ak-table-header-bg);
 	color: var(--ak-heading);
 	font-weight: 600;
-	border-bottom: 1px solid var(--ak-table-border);
+	border-bottom: 1px solid var(--ak-border);
 	border-top: none;
 }
 
 body.adminkit .widefat tbody td,
 body.adminkit .widefat tbody th {
 	color: var(--ak-text);
-	border-top: 1px solid var(--ak-table-border);
+	border-top: 1px solid var(--ak-border);
 }
 
 body.adminkit .widefat tbody tr:first-child td,
@@ -59,9 +59,12 @@ body.adminkit .widefat tbody tr:first-child th {
    - overflow:visible lets the table overflow the wrapper (→ scroll) AND defeats
      the .widefat `overflow:hidden` on .wp-list-table.widefat (which would clip
      the overflowing cells).
-   Keep the outer frame off both the pre-wrap table and the JS wrapper. The
-   wrapper is added late for horizontal scrolling, so moving a visible border
-   between table and wrapper creates a first-paint flash on post lists. */
+   NO outer frame border on the table OR the JS wrapper: .ak-table-scroll is injected
+   by a FOOTER script, so a border living on it paints a beat after first paint (the
+   flicker the maintainer caught). The "less flat" lift comes instead from the distinct
+   header/footer band + the row separators below — both on the table, so they paint
+   render-blocking with no late wrapper to wait for. (A true card frame would need the
+   wrapper rendered server-side; deliberately out of scope to keep this simple.) */
 body.adminkit .wp-list-table {
 	background: var(--ak-table-bg);
 	border: 0;
@@ -79,13 +82,25 @@ body.adminkit .wp-list-table tfoot th,
 body.adminkit .wp-list-table tfoot td,
 body.adminkit .wp-list-table thead th.check-column,
 body.adminkit .wp-list-table tfoot th.check-column {
-	background: var(--ak-surface);
+	/* Softly-accentuated header/footer band: --ak-table-header-bg is a gentle step
+	   between the body (--ak-surface) and --ak-elevated — distinct enough to read as a
+	   header, without the heavy band --ak-elevated gave. The bottom hairline + bold
+	   labels reinforce it. */
+	background: var(--ak-table-header-bg);
 	color: var(--ak-heading);
 	font-weight: 600;
 	font-size: var(--ak-text-s);
-	border-bottom: 1px solid var(--ak-table-border);
+	border-bottom: 1px solid var(--ak-border);
 	border-top: none;
 	padding: 10px;
+}
+
+/* Footer band — separate it from the LAST row with a top hairline (and drop the
+   shared bottom border, which would double up against the card's bottom edge). */
+body.adminkit .wp-list-table tfoot th,
+body.adminkit .wp-list-table tfoot td {
+	border-top: 1px solid var(--ak-border);
+	border-bottom: none;
 }
 
 /* Sort indicators + header links — all heading color */
@@ -99,7 +114,7 @@ body.adminkit .wp-list-table thead th.sortable:hover .sorting-indicator {
 body.adminkit .wp-list-table tbody td,
 body.adminkit .wp-list-table tbody th {
 	padding: 10px;
-	border-top: 1px solid var(--ak-table-border);
+	border-top: 1px solid var(--ak-border);
 	color: var(--ak-text);
 	font-size: var(--ak-text-s);
 	/* Middle-align cell content so short cells (author / date / status) line up
@@ -113,13 +128,13 @@ body.adminkit .wp-list-table tbody tr:first-child th {
 	border-top: none;
 }
 
-/* Row hover lifts to --ak-elevated — a crisp step (rows sit on the --ak-surface
-   table), matching the settings rows + the admin menu. Floating / any-surface
-   hovers use the translucent --ak-hover-bg, which stays visible on elevated. */
-body.adminkit .wp-list-table tbody tr:hover,
+/* Row hover — the SOFT translucent tint (--ak-hover-bg), not the crisp opaque
+   --ak-elevated step, so the hover stays gentle on the table surface. Applied to the
+   CELLS only (not the <tr> as well): a translucent tint on both composites twice and
+   reads darker than intended — the cells already cover the whole row. */
 body.adminkit .wp-list-table tbody tr:hover td,
 body.adminkit .wp-list-table tbody tr:hover th {
-	background: var(--ak-elevated);
+	background: var(--ak-hover-bg);
 }
 
 /* Primary-column title links — post/page `.row-title` and the users.php
@@ -488,7 +503,7 @@ body.adminkit .check-column label:hover {
 body.adminkit .ak-table-scroll {
 	clear: both;
 	background: var(--ak-table-bg);
-	border: 0;
+	border: 0; /* frameless — see the .wp-list-table note above (no late wrapper border) */
 	border-radius: var(--ak-table-radius);
 	overflow-x: auto;
 	overflow-y: hidden;
