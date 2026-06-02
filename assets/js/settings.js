@@ -683,8 +683,7 @@
 		function brandPreview() {
 			var theme = ( document.documentElement.getAttribute( 'data-adminkit-theme' ) === 'dark' ) ? 'dark' : 'light';
 
-			var barMark   = el( 'span', { 'class': 'ak-bp__mark' } );
-			var loginMark = el( 'span', { 'class': 'ak-bp__login-mark' } );
+			var barMark = el( 'span', { 'class': 'ak-bp__mark' } );
 
 			// Paint a brand mark (admin bar or login) for the current mode + theme:
 			//   logo mode    → the logo image for the active preview theme
@@ -725,17 +724,34 @@
 				] ) );
 			}
 
+			// A small dashboard widget (postbox): a title line + a couple of body lines.
+			function bpCard() {
+				return el( 'div', { 'class': 'ak-bp__card' }, [
+					el( 'div', { 'class': 'ak-bp__card-h' } ),
+					el( 'div', { 'class': 'ak-bp__line' } ),
+					el( 'div', { 'class': 'ak-bp__line ak-bp__line--short' } )
+				] );
+			}
+			// A list-table row — three skeleton cells (the header variant reads a touch stronger).
+			function bpRow( head ) {
+				return el( 'div', { 'class': 'ak-bp__trow' + ( head ? ' ak-bp__trow--head' : '' ) }, [
+					el( 'span', { 'class': 'ak-bp__tcell' } ),
+					el( 'span', { 'class': 'ak-bp__tcell' } ),
+					el( 'span', { 'class': 'ak-bp__tcell' } )
+				] );
+			}
+
 			var content = el( 'div', { 'class': 'ak-bp__content' }, [
-				el( 'div', { 'class': 'ak-bp__h' } ),
-				el( 'div', { 'class': 'ak-bp__line' } ),
-				el( 'div', { 'class': 'ak-bp__line ak-bp__line--short' } ),
-				el( 'button', { type: 'button', tabindex: '-1', 'class': 'ak-bp__btn', text: I.brandPreviewButton || 'Button' } ),
-				el( 'div', { 'class': 'ak-bp__login' }, [
-					loginMark,
-					el( 'div', { 'class': 'ak-bp__field' } ),
-					el( 'div', { 'class': 'ak-bp__field' } ),
-					el( 'button', { type: 'button', tabindex: '-1', 'class': 'ak-bp__btn ak-bp__btn--block', text: I.brandPreviewSignIn || 'Sign in' } )
-				] )
+				// Header row — page title + a primary action (the accent button), like the
+				// dashboard greeting + its quick actions.
+				el( 'div', { 'class': 'ak-bp__chead' }, [
+					el( 'div', { 'class': 'ak-bp__h' } ),
+					el( 'button', { type: 'button', tabindex: '-1', 'class': 'ak-bp__btn', text: I.brandPreviewButton || 'Button' } )
+				] ),
+				// Dashboard widgets — two postbox cards on the canvas.
+				el( 'div', { 'class': 'ak-bp__cards' }, [ bpCard(), bpCard() ] ),
+				// List-table view — a loading skeleton (no fake data): a header band + rows.
+				el( 'div', { 'class': 'ak-bp__table' }, [ bpRow( true ), bpRow(), bpRow(), bpRow() ] )
 			] );
 
 			var frame = el( 'div', { 'class': 'ak-bp__frame', 'data-preview-theme': theme }, [
@@ -746,7 +762,6 @@
 			function update() {
 				frame.setAttribute( 'data-preview-theme', theme );
 				paintMark( barMark, state.wpLogo );
-				paintMark( loginMark, state.loginLogo );
 			}
 
 			var lightBtn = el( 'button', { type: 'button', 'class': 'ak-bp__theme' + ( 'light' === theme ? ' is-active' : '' ), text: I.brandPreviewLight || 'Light' } );
