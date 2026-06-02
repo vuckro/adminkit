@@ -238,8 +238,13 @@ class AdminKit_Settings_Catalog {
 				'label'     => '' !== (string) $data['Name'] ? $data['Name'] : $file,
 				'type'      => 'plugin',
 				'supported' => $supported,
+				// Mirror the gate's effective default: a supported integration runs
+				// UNLESS explicitly turned off (AdminKit_Settings_Gate::gate_integration
+				// treats a null setting as ON). Reading the raw setting here showed
+				// never-toggled natives as OFF — greyed-out, reading as "not native"
+				// — even though they were actually theming.
 				'enabled'   => $supported
-					? (bool) AdminKit_Settings::get( 'integration_' . $slug . '_enabled' )
+					? ( null === ( $ie = AdminKit_Settings::get( 'integration_' . $slug . '_enabled' ) ) ? true : (bool) $ie )
 					: ! in_array( $file, $generic_off, true ),
 				'active'    => is_plugin_active( $file ),
 			);
