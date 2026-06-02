@@ -1,0 +1,416 @@
+{
+    "slug": "funnelkit-automation",
+    "host_dir": "wp-marketing-automations",
+    "host_version": "3.8.1.1",
+    "captured_at": "2026-06-02",
+    "files": 70,
+    "brand": "dedfea@1.00",
+    "variables": {
+        "--current-checkbox-color": "#0073aa",
+        "--wp-admin-theme-color": "#0085ba",
+        "--wp-admin-theme-color-darker-10": "rgb(0, 114.7661290323, 160.5)",
+        "--wp-admin-theme-color-darker-20": "rgb(0, 96.5322580645, 135)"
+    },
+    "colors": {
+        "ffffff@1.00": {
+            "count": 773,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "dedfea@1.00": {
+            "count": 470,
+            "cat": "border",
+            "token": "--ak-primary"
+        },
+        "353030@1.00": {
+            "count": 388,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "0073aa@1.00": {
+            "count": 373,
+            "cat": "text",
+            "token": "--ak-info"
+        },
+        "82838e@1.00": {
+            "count": 282,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "e15334@1.00": {
+            "count": 170,
+            "cat": "border",
+            "token": "--ak-error"
+        },
+        "f1f2f9@1.00": {
+            "count": 103,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "dddddd@1.00": {
+            "count": 63,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "000000@1.00": {
+            "count": 60,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "ebf2f6@1.00": {
+            "count": 60,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "000000@0.15": {
+            "count": 55,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "f0f0f0@1.00": {
+            "count": 51,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "006799@1.00": {
+            "count": 51,
+            "cat": "shadow",
+            "token": "--ak-info"
+        },
+        "cccccc@1.00": {
+            "count": 49,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "757575@1.00": {
+            "count": 39,
+            "cat": "text",
+            "token": "--ak-text"
+        },
+        "f6f6f6@1.00": {
+            "count": 36,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "666666@1.00": {
+            "count": 32,
+            "cat": "text",
+            "token": "--ak-text"
+        },
+        "b68f40@1.00": {
+            "count": 31,
+            "cat": "text",
+            "token": "--ak-warning"
+        },
+        "eeeeee@1.00": {
+            "count": 30,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "007cba@1.00": {
+            "count": 29,
+            "cat": "border",
+            "token": "--ak-info"
+        },
+        "fef7e8@1.00": {
+            "count": 28,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "999999@1.00": {
+            "count": 28,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "000000@0.10": {
+            "count": 26,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "f1f1f1@1.00": {
+            "count": 26,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "eaecfb@1.00": {
+            "count": 26,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "000000@0.50": {
+            "count": 26,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "09b29c@1.00": {
+            "count": 25,
+            "cat": "text",
+            "token": "--ak-info"
+        },
+        "444444@1.00": {
+            "count": 24,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "fafafa@1.00": {
+            "count": 22,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "ffc65c@1.00": {
+            "count": 21,
+            "cat": "bg",
+            "token": "--ak-warning"
+        },
+        "aaaaaa@1.00": {
+            "count": 21,
+            "cat": "border",
+            "token": "--ak-border-strong"
+        },
+        "000000@0.30": {
+            "count": 20,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "dedede@1.00": {
+            "count": 20,
+            "cat": "bg",
+            "token": "--ak-border"
+        },
+        "d5d5d5@1.00": {
+            "count": 19,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "ffffff@0.70": {
+            "count": 19,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "d3d3d3@1.00": {
+            "count": 19,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "333333@1.00": {
+            "count": 18,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "00a699@1.00": {
+            "count": 18,
+            "cat": "border",
+            "token": "--ak-info"
+        },
+        "484848@1.00": {
+            "count": 18,
+            "cat": "text",
+            "token": "--ak-text"
+        },
+        "000000@0.04": {
+            "count": 17,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "000000@0.05": {
+            "count": 17,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "555555@1.00": {
+            "count": 17,
+            "cat": "text",
+            "token": "--ak-text"
+        },
+        "dbdbdb@1.00": {
+            "count": 16,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "cacccd@1.00": {
+            "count": 16,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "e5e5e5@1.00": {
+            "count": 16,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "3875d7@1.00": {
+            "count": 16,
+            "cat": "bg",
+            "token": "--ak-primary"
+        },
+        "0085ba@1.00": {
+            "count": 15,
+            "cat": "bg",
+            "token": "--ak-info"
+        },
+        "454545@1.00": {
+            "count": 15,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "ffe9e9@1.00": {
+            "count": 14,
+            "cat": "bg",
+            "token": "--ak-error-subtle"
+        },
+        "82888a@1.00": {
+            "count": 14,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "ffffff@0.05": {
+            "count": 14,
+            "cat": "text",
+            "token": "--ak-hover-bg"
+        },
+        "e7e7e7@1.00": {
+            "count": 13,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "000000@0.35": {
+            "count": 13,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "f2f2f2@1.00": {
+            "count": 12,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "6dbe45@1.00": {
+            "count": 12,
+            "cat": "bg",
+            "token": "--ak-success"
+        },
+        "000000@0.20": {
+            "count": 12,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "e4e7e7@1.00": {
+            "count": 12,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "f5f5f5@1.00": {
+            "count": 12,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "222222@1.00": {
+            "count": 12,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "000000@0.07": {
+            "count": 11,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "5897fb@1.00": {
+            "count": 11,
+            "cat": "border",
+            "token": "--ak-primary"
+        },
+        "fefaf1@1.00": {
+            "count": 10,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "dcf2ed@1.00": {
+            "count": 10,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "23282d@1.00": {
+            "count": 10,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "888888@1.00": {
+            "count": 10,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "e2dede@1.00": {
+            "count": 10,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "d8b6b6@1.00": {
+            "count": 10,
+            "cat": "border",
+            "token": "--ak-error"
+        },
+        "f1f3f5@1.00": {
+            "count": 10,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "2a62bc@1.00": {
+            "count": 10,
+            "cat": "bg",
+            "token": "--ak-primary"
+        },
+        "135e96@1.00": {
+            "count": 9,
+            "cat": "bg",
+            "token": "--ak-primary"
+        },
+        "ebeff1@1.00": {
+            "count": 9,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "f9f9f9@1.00": {
+            "count": 9,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "fff0f0@1.00": {
+            "count": 9,
+            "cat": "bg",
+            "token": "--ak-error-subtle"
+        },
+        "ffffff@0.15": {
+            "count": 9,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "777777@1.00": {
+            "count": 9,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "f8f1e1@1.00": {
+            "count": 8,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "000000@0.08": {
+            "count": 8,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "008489@1.00": {
+            "count": 8,
+            "cat": "border",
+            "token": "--ak-info"
+        },
+        "f27474@1.00": {
+            "count": 7,
+            "cat": "text",
+            "token": "--ak-error"
+        },
+        "1e1e1e@1.00": {
+            "count": 7,
+            "cat": "text",
+            "token": "--ak-heading"
+        }
+    }
+}
