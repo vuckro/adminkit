@@ -28,8 +28,9 @@ class AdminKit_Settings_Page {
 	 *  Each is registered by its OWN module (AdminKit_Menu_Manager,
 	 *  AdminKit_Stats_Page) — these consts are the shared source of truth so the
 	 *  shell, the modules and the dashboard quick-links all agree on the slugs. */
-	const SLUG_MENU  = 'adminkit-menu';
-	const SLUG_STATS = 'adminkit-stats';
+	const SLUG_MENU    = 'adminkit-menu';
+	const SLUG_STATS   = 'adminkit-stats';
+	const SLUG_TOOLBAR = 'adminkit-toolbar';
 
 	/** Asset handle shared by the SPA's script + style. */
 	const HANDLE = 'adminkit-settings';
@@ -110,9 +111,10 @@ class AdminKit_Settings_Page {
 			return;
 		}
 		$rank = array(
-			self::SLUG_STATS => 0, // Statistics
-			self::SLUG_MENU  => 1, // Menu
-			self::SLUG       => 2, // Settings (the parent self-link)
+			self::SLUG_STATS   => 0, // Statistics
+			self::SLUG_MENU    => 1, // Menu
+			self::SLUG_TOOLBAR => 2, // Toolbar
+			self::SLUG         => 3, // Settings (the parent self-link)
 		);
 		usort(
 			$submenu[ self::SLUG ],
@@ -283,9 +285,10 @@ class AdminKit_Settings_Page {
 	 * @return array
 	 */
 	public static function boot_data( $screen = 'main' ) {
-		$is_main  = ( 'main' === $screen );
-		$is_menu  = ( 'menu' === $screen );
-		$is_stats = ( 'stats' === $screen );
+		$is_main    = ( 'main' === $screen );
+		$is_menu    = ( 'menu' === $screen );
+		$is_stats   = ( 'stats' === $screen );
+		$is_toolbar = ( 'toolbar' === $screen );
 
 		// Brand / Features / Plugins data — only the Settings ("main") screen needs
 		// the feature list + the (relatively costly) installed-plugins scan. Other
@@ -332,12 +335,20 @@ class AdminKit_Settings_Page {
 		// only built on the Menu screen; empty elsewhere.
 		$menu_manager = $is_menu ? AdminKit_Menu_Manager::editor_data() : array();
 
+		// Toolbar editor — lightweight boot (just the REST route + enabled); the live
+		// admin-bar nodes are fetched over REST on the Toolbar screen, not here (the
+		// bar renders too late in the page to snapshot before this payload is built).
+		$toolbar = ( $is_toolbar && class_exists( 'AdminKit_Toolbar_Manager' ) )
+			? AdminKit_Toolbar_Manager::boot_data()
+			: array( 'enabled' => false );
+
 		return array(
 			'screen'       => $screen,
 			'route'        => self::REST_NS . self::REST_ROUTE,
 			'features'     => $features,
 			'integrations' => $integrations,
 			'stats'        => $stats,
+			'toolbar'      => $toolbar,
 			'logos'        => array(
 				'light' => (string) AdminKit_Settings::get( 'logo_light' ),
 				'dark'  => (string) AdminKit_Settings::get( 'logo_dark' ),
@@ -377,6 +388,15 @@ class AdminKit_Settings_Page {
 				'features'          => __( 'Features', 'adminkit' ),
 				'plugins'           => __( 'Plugins', 'adminkit' ),
 				'menu'              => __( 'Menu', 'adminkit' ),
+
+				// Toolbar manager tab.
+				'toolbarTab'        => __( 'Toolbar', 'adminkit' ),
+				'toolbarIntro'      => __( 'Reorder and hide the top-level items in the admin toolbar. Use the arrows to reorder; the eye to hide. Hidden items are removed from the bar only — they don\'t block access. Changes apply after you save.', 'adminkit' ),
+				'toolbarSave'       => __( 'Save changes', 'adminkit' ),
+				'toolbarSaved'      => __( 'Saved', 'adminkit' ),
+				'toolbarEmpty'      => __( 'No toolbar items found.', 'adminkit' ),
+				'toolbarRight'      => __( 'Right', 'adminkit' ),
+				'toolbarRightHint'  => __( 'Shown on the right side of the bar (e.g. your account).', 'adminkit' ),
 
 				// Menu manager tab.
 				'menuIntro'         => __( 'Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access.', 'adminkit' ),

@@ -152,6 +152,8 @@
 		tabs = [ { id: 'menu', label: I.menu, icon: ICONS.menu, build: buildMenu } ];
 	} else if ( SCREEN === 'stats' ) {
 		tabs = [ { id: 'stats', label: I.statsTab || 'Statistics', icon: ICONS.stats, build: buildStats } ];
+	} else if ( SCREEN === 'toolbar' ) {
+		tabs = [ { id: 'toolbar', label: I.toolbarTab || 'Toolbar', icon: ICONS.menu, build: buildToolbar } ];
 	} else {
 		tabs = [
 			{ id: 'brand', label: I.brandTitle, icon: ICONS.brand, build: buildDesign },
@@ -1851,6 +1853,119 @@
 	}
 
 	function markMenuDirty() { state.menuDirty = true; markDirty(); }
+
+	// Toolbar editor — reorder + hide the TOP-LEVEL admin-bar nodes. The live nodes are
+	// fetched over REST (the bar renders too late to ship in boot data), reordered with
+	// the ↑↓ controls (accessible), hidden with the eye, and saved back to the same route.
+	// Top level only; no rename / custom items / icons (kept deliberately simple).
+	function buildToolbar() {
+		var TB = D.toolbar || {};
+		var p  = el( 'section', { 'class': 'ak-panel ak-panel--menu', role: 'tabpanel' }, [ intro( I.toolbarIntro ) ] );
+		var listWrap = el( 'div', { 'class': 'ak-menu-tree' } );
+		var status   = el( 'span', { 'class': 'ak-toolbar__status', hidden: 'hidden', role: 'status' } );
+		var model    = []; // [{ id, label, group, hidden }]
+
+		var saveBtn = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--primary', text: I.toolbarSave || 'Save changes', disabled: 'disabled', onclick: save } );
+		p.appendChild( el( 'div', { 'class': 'ak-actions ak-menu-toolbar' }, [ saveBtn, status ] ) );
+		p.appendChild( listWrap );
+
+		function markDirty() { saveBtn.disabled = false; status.hidden = true; }
+
+		function load() {
+			if ( ! apiFetch || ! TB.route ) { listWrap.textContent = I.statsNone || '—'; return; }
+			var base = TB.route.charAt( 0 ) === '/' ? TB.route : '/' + TB.route;
+			apiFetch( { path: base } )
+				.then( function ( res ) { model = toModel( ( res && res.nodes ) || [], ( res && res.config ) || {} ); render(); } )
+				.catch( function () { listWrap.textContent = I.statsNone || '—'; } );
+		}
+
+		// Order the live nodes by the saved order (new/unseen nodes appended in native
+		// order), and carry the hidden flag.
+		function toModel( nodes, config ) {
+			var hidden = {};
+			( config.hidden || [] ).forEach( function ( id ) { hidden[ id ] = true; } );
+			var byId = {};
+			nodes.forEach( function ( n ) { byId[ n.id ] = { id: n.id, label: n.label, group: n.group, hidden: !! hidden[ n.id ] }; } );
+			var out = [];
+			( config.order || [] ).forEach( function ( id ) { if ( byId[ id ] ) { out.push( byId[ id ] ); delete byId[ id ]; } } );
+			nodes.forEach( function ( n ) { if ( byId[ n.id ] ) { out.push( byId[ n.id ] ); delete byId[ n.id ]; } } );
+			return out;
+		}
+
+		function move( i, dir ) {
+			var to = i + dir;
+			if ( to < 0 || to >= model.length ) { return; }
+			var tmp = model[ i ]; model[ i ] = model[ to ]; model[ to ] = tmp;
+			render(); markDirty();
+		}
+
+		function render() {
+			listWrap.textContent = '';
+			if ( ! model.length ) {
+				listWrap.appendChild( el( 'p', { 'class': 'ak-stats__empty', text: I.toolbarEmpty || 'No toolbar items found.' } ) );
+				return;
+			}
+			model.forEach( function ( item, i ) {
+				var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--top' + ( item.hidden ? ' is-hidden' : '' ) } );
+				row.appendChild( moveCtl( i ) );
+				row.appendChild( el( 'span', { 'class': 'ak-menu-row__title', text: item.label } ) );
+				if ( item.group === 'secondary' ) {
+					row.appendChild( el( 'span', { 'class': 'ak-badge', title: I.toolbarRightHint || '', text: I.toolbarRight || 'Right' } ) );
+				}
+				row.appendChild( hideCtl( item ) );
+				listWrap.appendChild( el( 'div', { 'class': 'ak-menu-group' }, [ row ] ) );
+			} );
+		}
+
+		function moveCtl( i ) {
+			var up = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveUp || 'Move up', 'aria-label': I.menuMoveUp || 'Move up', onclick: function () { move( i, -1 ); } } );
+			up.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>';
+			var down = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveDown || 'Move down', 'aria-label': I.menuMoveDown || 'Move down', onclick: function () { move( i, 1 ); } } );
+			down.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+			return el( 'span', { 'class': 'ak-menu-move' }, [ up, down ] );
+		}
+
+		function hideCtl( item ) {
+			var btn = el( 'button', { type: 'button', 'class': 'ak-menu-hide' } );
+			paint( btn, item );
+			btn.addEventListener( 'click', function () {
+				item.hidden = ! item.hidden;
+				paint( btn, item );
+				var row = btn.closest && btn.closest( '.ak-menu-row' );
+				if ( row ) { row.classList.toggle( 'is-hidden', !! item.hidden ); }
+				markDirty();
+			} );
+			return btn;
+		}
+		function paint( btn, item ) {
+			var eye    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S5.5 5.5 12 5.5 21.5 12 21.5 12 18.5 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+			var eyeOff = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.6 9.6 0 0 1 12 6c6.5 0 9.5 6 9.5 6a16.2 16.2 0 0 1-2.3 3.1M6.6 6.6A16 16 0 0 0 2.5 12s3 6 9.5 6a9.3 9.3 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+			var lbl = item.hidden ? ( I.menuShow || 'Show' ) : ( I.menuHide || 'Hide' );
+			btn.innerHTML = item.hidden ? eyeOff : eye;
+			btn.setAttribute( 'aria-pressed', item.hidden ? 'true' : 'false' );
+			btn.setAttribute( 'title', lbl );
+			btn.setAttribute( 'aria-label', lbl );
+		}
+
+		function save() {
+			if ( ! apiFetch || ! TB.route ) { return; }
+			var base = TB.route.charAt( 0 ) === '/' ? TB.route : '/' + TB.route;
+			saveBtn.disabled = true;
+			apiFetch( {
+				path: base,
+				method: 'POST',
+				data: {
+					order:  model.map( function ( m ) { return m.id; } ),
+					hidden: model.filter( function ( m ) { return m.hidden; } ).map( function ( m ) { return m.id; } )
+				}
+			} )
+				.then( function () { status.textContent = I.toolbarSaved || 'Saved'; status.hidden = false; } )
+				.catch( function () { saveBtn.disabled = false; } );
+		}
+
+		load();
+		return p;
+	}
 
 	function buildMenu() {
 		var p = el( 'section', { 'class': 'ak-panel ak-panel--menu', role: 'tabpanel' } );

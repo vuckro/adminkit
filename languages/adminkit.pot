@@ -1284,6 +1284,26 @@ msgstr ""
 msgid "WordPress icons"
 msgstr ""
 
+#: inc/settings/class-settings-page.php:393
+msgid "Toolbar"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:394
+msgid "Reorder and hide the top-level items in the admin toolbar. Use the arrows to reorder; the eye to hide. Hidden items are removed from the bar only — they don't block access. Changes apply after you save."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:398
+msgid "No toolbar items found."
+msgstr ""
+
+#: inc/settings/class-settings-page.php:399
+msgid "Right"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:400
+msgid "Shown on the right side of the bar (e.g. your account)."
+msgstr ""
+
 #: inc/features/dashboard/class-custom-dashboard.php:665
 msgid "Working late, %s"
 msgstr ""

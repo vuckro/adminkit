@@ -1302,6 +1302,26 @@ msgstr "Icône WordPress"
 msgid "WordPress icons"
 msgstr "Icônes WordPress"
 
+#: inc/settings/class-settings-page.php:393
+msgid "Toolbar"
+msgstr "Barre d’outils"
+
+#: inc/settings/class-settings-page.php:394
+msgid "Reorder and hide the top-level items in the admin toolbar. Use the arrows to reorder; the eye to hide. Hidden items are removed from the bar only — they don't block access. Changes apply after you save."
+msgstr "Réorganisez et masquez les éléments de premier niveau de la barre d’outils d’administration. Les flèches pour réordonner ; l’œil pour masquer. Les éléments masqués sont seulement retirés de la barre — ils ne bloquent pas l’accès. Les changements s’appliquent après enregistrement."
+
+#: inc/settings/class-settings-page.php:398
+msgid "No toolbar items found."
+msgstr "Aucun élément de barre d’outils trouvé."
+
+#: inc/settings/class-settings-page.php:399
+msgid "Right"
+msgstr "Droite"
+
+#: inc/settings/class-settings-page.php:400
+msgid "Shown on the right side of the bar (e.g. your account)."
+msgstr "Affiché à droite de la barre (ex. votre compte)."
+
 #: inc/features/dashboard/class-custom-dashboard.php:665
 msgid "Working late, %s"
 msgstr "Il est tard, %s"

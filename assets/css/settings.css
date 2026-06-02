@@ -1130,6 +1130,14 @@
 .adminkit-app .ak-menu-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 10px; }
 /* Push Export/Import to the trailing edge, away from the create/reset actions. */
 .adminkit-app .ak-menu-toolbar__spacer { margin-left: auto; }
+/* Toolbar editor: the "Saved" confirmation beside the Save button. */
+.adminkit-app .ak-toolbar__status {
+	align-self: center;
+	font-size: var(--ak-text-s);
+	font-weight: 600;
+	color: var(--ak-success);
+}
+.adminkit-app .ak-toolbar__status[hidden] { display: none; }
 @media screen and (max-width: 600px) {
 	.adminkit-app .ak-menu-toolbar__spacer { margin-left: 0; }
 }

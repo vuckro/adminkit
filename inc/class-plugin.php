@@ -71,6 +71,7 @@ class AdminKit_Plugin {
 		'features/stats/class-stats-tracker.php'               => 'AdminKit_Stats_Tracker::init',
 		'features/stats/class-stats-dashboard.php'             => 'AdminKit_Stats_Dashboard::init',
 		'features/stats/class-stats-page.php'                  => 'AdminKit_Stats_Page::init',
+		'features/toolbar/class-toolbar-manager.php'           => 'AdminKit_Toolbar_Manager::init',
 	);
 
 	/**

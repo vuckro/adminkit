@@ -22,7 +22,7 @@ inc/
     class-settings-catalog.php  SPA catalogs (features, integrations).
     class-settings-gate.php  Per-integration + generic-plugin theming gates.
     class-settings-page.php  Admin menu + REST save; mounts the shared SPA engine per-screen
-                         (data-screen = main|menu|stats) via render_host/enqueue_app/boot_data.
+                         (data-screen = main|menu|stats|toolbar) via render_host/enqueue_app/boot_data.
                          Three subpages: Settings (tabbed: Brand·Features·Plugins), Menu,
                          Statistics (read-only). One build-free vanilla-DOM engine; dark mode is
                          design-time CSS only (no runtime auto-theme engine).
@@ -33,8 +33,9 @@ inc/
   features/               AdminKit tools that ADD a surface (a page, a dashboard, a data store) —
                          NOT restyling. One folder each: dashboard/ (custom dashboard),
                          online-users/, notifications/ (notification center), menu/ (admin-menu
-                         editor), stats/ (cookieless analytics). Each self-registers its hooks;
-                         menu/ + stats/ add their own AdminKit subpage.
+                         editor), toolbar/ (admin-bar editor — reorder + hide top-level nodes;
+                         fetches the live nodes over REST), stats/ (cookieless analytics). Each
+                         self-registers its hooks; menu/ + stats/ + toolbar/ add their own subpage.
   integrations/
     abstract-integration.php   AdminKit_Integration_Base.
     plugins/{slug}/            Plugin adapters (acf, woocommerce, …) — class + css/ + baseline.json.
