@@ -546,6 +546,7 @@ body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[stroke]:not([s
    which still need the neutral skin. Our !important beats FC's non-important dark
    rule regardless of its #fct_admin_app_wrapper scope. */
 body.adminkit.toplevel_page_fluent-cart .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--error):not(.el-button--info):not(.is-text):not(.is-link),
+body.adminkit.toplevel_page_fluent-cart .el-button--info.is-plain,
 body.adminkit.toplevel_page_fluent-cart .icon-button {
 	background-color: var( --ak-surface ) !important;
 	border-color: var( --ak-border-strong ) !important;
@@ -692,6 +693,11 @@ body.adminkit.toplevel_page_fluent-cart .el-overlay .el-dialog__header {
 	border-color: var( --ak-border-strong ) !important;
 }
 
+/* Drawer — same overlay-panel family as the dialog (FC hard-pins the bg in dark). */
+body.adminkit.toplevel_page_fluent-cart .el-drawer {
+	background-color: var( --ak-elevated ) !important;
+}
+
 /* Disabled checkbox → muted surface, strong border (no brand tint). */
 body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-disabled .el-checkbox__inner {
 	background-color: var( --ak-surface-muted ) !important;
@@ -768,6 +774,11 @@ body.adminkit.toplevel_page_fluent-cart .fct-media-button {
 body.adminkit.toplevel_page_fluent-cart .fct-save-bar {
 	background-color: var( --ak-elevated ) !important;
 	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Product download form box (FC pins dark-500). */
+body.adminkit.toplevel_page_fluent-cart .fct-product-download-form-box {
+	background-color: var( --ak-elevated ) !important;
 }
 
 /* Dropdown item / link focused → hover bg. */
