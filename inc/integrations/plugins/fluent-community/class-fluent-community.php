@@ -174,9 +174,9 @@ class AdminKit_Integration_Fluent_Community extends AdminKit_Integration_Base {
 		if ( ! class_exists( 'AdminKit_Icons' ) ) {
 			return;
 		}
-		// AdminKit icon set — "globe" (a social/community network; "chat" duplicated
-		// the Comments menu icon, so route to a distinct glyph).
-		$svg = AdminKit_Icons::svg( 'globe' );
+		// AdminKit icon set — "book" (community spaces / forum / content; distinct
+		// from every other menu glyph — chat=Comments, users=WP Users, globe rejected).
+		$svg = AdminKit_Icons::svg( 'book' );
 		$box  = '#adminmenu #toplevel_page_fluent-community .wp-menu-image';
 		$css  = $box . '{background-image:none !important;box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
 		$css .= $box . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
