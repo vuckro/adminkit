@@ -50,7 +50,7 @@ class AdminKit_Core_Menu_Icons {
 		if ( ! self::enabled( 'admin' ) ) {
 			return;
 		}
-		self::emit( self::menu_css() . self::toolbar_css() );
+		self::emit( self::menu_css() . self::slug_css() . self::toolbar_css() );
 	}
 
 	/**
@@ -281,6 +281,44 @@ class AdminKit_Core_Menu_Icons {
 		// plugin dashicons + whatever integrations register via `adminkit/menu_icons`)
 		// are ever replaced — so unsupported plugins look like themselves, and an
 		// Admin-Menu-Editor / custom-image icon (no `.dashicons-before`) stays untouched.
+		return $css;
+	}
+
+	/**
+	 * Top-level menu icons keyed by the menu SLUG (the `toplevel_page_<slug>` id),
+	 * for plugins that ship a base64 / custom-image icon WordPress paints as a
+	 * `background-image` — those carry no dashicon class, so menu_icon_map() (keyed
+	 * by dashicon) can't reach them. Themed plugins set their own icon from their
+	 * adapter (print_menu_icon); this map is for plugins AdminKit doesn't theme but
+	 * still wants on-brand in the menu. Filter `adminkit/menu_slug_icons`.
+	 *
+	 * @return array<string,string> menu-slug => SVG markup ('' = skip)
+	 */
+	private static function slug_icon_map() {
+		return apply_filters( 'adminkit/menu_slug_icons', array(
+			// FluentSnippets (easy-code-manager) — ships a base64 data-URI icon.
+			'fluent-snippets' => AdminKit_Icons::svg( 'bolt' ),
+		) );
+	}
+
+	/**
+	 * Build the slug-keyed menu CSS: drop the plugin's background-image icon and
+	 * mask our SVG into the same 36×34 box (same technique the adapters' own
+	 * print_menu_icon uses), so it tracks the menu foreground colour.
+	 *
+	 * @return string
+	 */
+	private static function slug_css() {
+		$css = '';
+		foreach ( self::slug_icon_map() as $slug => $svg ) {
+			if ( '' === $svg || ! is_string( $svg ) ) {
+				continue;
+			}
+			$box  = '#adminmenu #toplevel_page_' . $slug . ' .wp-menu-image';
+			$css .= $box . '{background-image:none !important;box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
+			$css .= $box . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
+				. 'vertical-align:middle;position:relative;top:-2px;' . AdminKit_Icons::mask( $svg ) . '}';
+		}
 		return $css;
 	}
 

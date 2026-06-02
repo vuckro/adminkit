@@ -144,6 +144,7 @@ how an integration ships its plugin's icon, or how you override/remove any entry
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
 | `adminkit/menu_icons` | filter | `(array)` | Admin-menu map, **dashicon-class ⇒ SVG markup** (e.g. `'dashicons-admin-post' => '<svg…>'`). Return `''` for a key to skip it. |
+| `adminkit/menu_slug_icons` | filter | `(array)` | Admin-menu map, **menu-slug ⇒ SVG markup** (e.g. `'fluent-snippets' => '<svg…>'`), for plugins that paint a base64 / custom-image icon (no dashicon class, so `adminkit/menu_icons` can't reach them). Targets `#toplevel_page_<slug>`. Return `''` to skip. |
 | `adminkit/toolbar_icons` | filter | `(array)` | Admin-bar map, **node-id ⇒ SVG markup** (e.g. `'wp-admin-bar-comments' => '<svg…>'`). |
 | `adminkit/toolbar_icon_ab_item_nodes` | filter | `(array)` | Map of **node-id ⇒ bool** marking toolbar nodes whose icon must be painted on `> .ab-item::before` instead of a child `.ab-icon` span. Set this for a node that renders a dashicon-font glyph or plain text rather than an `.ab-icon` child (core `edit`/`customize`, Bricks `edit_with_bricks`/`editor_mode`). A node not listed is assumed to carry an `.ab-icon`. |
 
