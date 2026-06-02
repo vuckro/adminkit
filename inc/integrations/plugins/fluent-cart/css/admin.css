@@ -798,3 +798,8 @@ body.adminkit.post-type-fluent-products #col-container .widefat tfoot th {
 body.adminkit.toplevel_page_fluent-cart .fct-settings-nav .fct-settings-nav-child-wrap::before {
 	background-color: var( --ak-border-strong ) !important;
 }
+
+/* Pagination wrapper border. */
+body.adminkit.toplevel_page_fluent-cart .pagination-wrap {
+	border-color: var( --ak-border-strong ) !important;
+}
