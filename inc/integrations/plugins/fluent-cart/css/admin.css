@@ -591,6 +591,11 @@ body.adminkit.toplevel_page_fluent-cart .el-select__wrapper {
 	border-color: var( --ak-border-strong ) !important;
 }
 
+/* Date-range editor value text — FC paints it muted slate; use body text. */
+body.adminkit.toplevel_page_fluent-cart .el-range-editor .el-range-input {
+	color: var( --ak-text ) !important;
+}
+
 /* Inline media-uploader dropzone. */
 body.adminkit.toplevel_page_fluent-cart .uploader-inline {
 	background: var( --ak-surface ) !important;
