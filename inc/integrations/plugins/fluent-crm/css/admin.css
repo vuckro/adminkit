@@ -164,14 +164,26 @@ body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
 	background-color: var( --ak-bg );
 }
 
-/* Sticky topbar — its border already themes via --fc-primary-border (→ --ak-border);
-   round the top-left corner to nest into AdminKit's content panel (same 18px as
-   the FluentCart adapter). The Reports inner sidebar fills --fc-primary-bg flush
-   to the left, painting over #wpbody-content's native left edge — restore it with
-   a left border (mirrors FluentCart's .fct-settings-nav-container fix). Desktop
-   only, where AdminKit draws the corner / panel edge. */
+/* Layout / chrome. FluentCRM cancels WP's #wpcontent 20px padding with -20px
+   margins on its full-bleed wrappers (topbar, page-header, view-wrapper, reports
+   layout) to run edge-to-edge. AdminKit zeroes that padding (≥783px), so those
+   margins OVER-pull — dragging content 20px PAST the panel's left edge, which
+   reads as "glued/clipped to the edge". Neutralise the horizontal pulls so the
+   content sits flush inside AdminKit's panel (same reset the FluentCart adapter
+   does on its app wrapper); the -15px top pulls are kept. Then frame the topbar
+   like AdminKit's content panel — left+top border + 18px top-left radius — and
+   restore the Reports sidebar's left edge it paints over. Desktop only. */
 @media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar,
+	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_page_header_top_nav_wrapper,
+	body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm-view-wrapper,
+	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_reports_layout {
+		margin-left: 0;
+		margin-right: 0;
+	}
 	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar {
+		border-top: 1px solid var( --ak-border );
+		border-left: 1px solid var( --ak-border );
 		border-top-left-radius: 18px;
 	}
 	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_reports_sidebar {
