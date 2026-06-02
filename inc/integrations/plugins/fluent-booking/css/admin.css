@@ -141,6 +141,14 @@ body.adminkit.toplevel_page_fluent-booking {
 	--el-disabled-text-color: var( --ak-text-muted );
 	--el-disabled-border-color: var( --ak-border );
 
+	/* Default-button hover + dropdown-item hover/focus — EP leaves these at a
+	   stock blue tint that doesn't flip; pin to neutral surfaces. */
+	--el-button-hover-bg-color: var( --ak-hover-bg );
+	--el-button-hover-border-color: var( --ak-border-strong );
+	--el-button-hover-text-color: var( --ak-heading );
+	--el-dropdown-menuItem-hover-fill: var( --ak-hover-bg );
+	--el-dropdown-menuItem-hover-color: var( --ak-text );
+
 	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
 	--el-box-shadow: none;
 	--el-box-shadow-light: none;
@@ -290,12 +298,22 @@ body.adminkit.toplevel_page_fluent-booking .fcal_time .fcal_selected_time_icon {
 	color: var(--ak-on-accent) !important;
 }
 
+/* Date-range in-range cells — soft brand tint between the start/end dates. */
+body.adminkit.toplevel_page_fluent-booking .el-date-table td.in-range .el-date-table-cell {
+	background-color: var( --ak-primary-subtle );
+}
+
+/* Checked checkbox label — neutral, not brand (the box already signals state;
+   matches the radios). Out-specifies Element Plus's stock brand label. */
+body.adminkit.toplevel_page_fluent-booking .el-checkbox.is-checked .el-checkbox__label,
+body.adminkit.toplevel_page_fluent-booking .el-checkbox__input.is-checked + .el-checkbox__label {
+	color: var( --ak-text );
+}
+
 /* 3d. Brand text — links, active nav, checked labels, active/hover tabs,
    pagination, finished steps, calendar today text, dropdown hover, badges. */
 body.adminkit.toplevel_page_fluent-booking .el-link--primary,
 body.adminkit.toplevel_page_fluent-booking .el-link--primary .el-link__inner,
-body.adminkit.toplevel_page_fluent-booking .el-checkbox.is-checked .el-checkbox__label,
-body.adminkit.toplevel_page_fluent-booking .el-checkbox__input.is-checked + .el-checkbox__label,
 body.adminkit.toplevel_page_fluent-booking .el-switch.is-checked .el-switch__label.is-active,
 body.adminkit.toplevel_page_fluent-booking .el-tabs__item:hover,
 body.adminkit.toplevel_page_fluent-booking .el-tabs__item.is-active:hover,
