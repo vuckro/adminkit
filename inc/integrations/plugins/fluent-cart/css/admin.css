@@ -897,6 +897,9 @@ body.adminkit.post-type-fluent-products .fct_admin_menu_wrap {
 	background-color: var( --ak-surface ) !important;
 	border-color: var( --ak-border ) !important;
 }
+body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a {
+	text-decoration: none; /* classic screens (edit-tags) underlined the wordmark link */
+}
 body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a img {
 	display: none !important;
 }
