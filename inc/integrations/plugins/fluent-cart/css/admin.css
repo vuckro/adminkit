@@ -224,7 +224,7 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a {
 	box-shadow: none;
 }
 body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a::after {
-	content: "FluentCart";
+	content: var( --ak-wordmark, "FluentCart" );
 	color: var( --ak-heading );
 	font-size: 18px;
 	font-weight: 700;
@@ -238,10 +238,12 @@ body.adminkit.toplevel_page_fluent-cart .fct_menu > .fct_menu_item > button {
 	color: var( --ak-text );
 }
 
-/* Hide FC's own dark-mode toggle — AdminKit's switch is the single source. */
-body.adminkit.toplevel_page_fluent-cart #theme-button-container,
-body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container,
-body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container .theme-selected-button {
+/* Hide FC's own dark-mode toggle ONLY when AdminKit is dark — in dark the page
+   is already dark (via sync + remap), so a "switch theme" control reads as
+   redundant/confusing; in light it's left available. */
+:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluent-cart #theme-button-container,
+:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container,
+:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluent-cart .fct-theme-button-container .theme-selected-button {
 	display: none !important;
 }
 
@@ -296,10 +298,16 @@ body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-disabled:hover {
 	color: var( --ak-text-muted ) !important;
 }
 
-/* Brand text — links, checked labels, active tabs, pagination, selected option. */
+/* Checked checkbox LABEL — neutral, not brand (a checked box already signals
+   state via its fill; a coloured label reads odd). Override explicitly so it
+   doesn't fall back to Element Plus's stock blue checked-label colour. */
+body.adminkit.toplevel_page_fluent-cart .el-checkbox.is-checked .el-checkbox__label {
+	color: var( --ak-text ) !important;
+}
+
+/* Brand text — links, checked radio labels, active tabs, pagination, selected option. */
 body.adminkit.toplevel_page_fluent-cart .el-link--primary,
 body.adminkit.toplevel_page_fluent-cart .el-link--primary .el-link__inner,
-body.adminkit.toplevel_page_fluent-cart .el-checkbox.is-checked .el-checkbox__label,
 body.adminkit.toplevel_page_fluent-cart .el-radio.is-checked .el-radio__label,
 body.adminkit.toplevel_page_fluent-cart .el-tabs__item:hover,
 body.adminkit.toplevel_page_fluent-cart .el-tabs__item.is-active,
@@ -310,12 +318,17 @@ body.adminkit.toplevel_page_fluent-cart .el-link:not(.el-link--danger):not(.el-l
 	color: var( --ak-primary ) !important;
 }
 
-/* Brand borders — focused fields, active tab underline. */
+/* Brand borders — focused fields. */
 body.adminkit.toplevel_page_fluent-cart .el-input__wrapper.is-focus,
 body.adminkit.toplevel_page_fluent-cart .el-textarea__inner:focus,
-body.adminkit.toplevel_page_fluent-cart .el-tabs__active-bar,
 body.adminkit.toplevel_page_fluent-cart .el-select .el-input.is-focus .el-input__wrapper {
 	border-color: var( --ak-primary ) !important;
+}
+
+/* Active-tab underline bar — a filled <div>, so its colour is the background
+   (FC pins a grey rgb(141 144 149)); route to brand. */
+body.adminkit.toplevel_page_fluent-cart .el-tabs__active-bar {
+	background-color: var( --ak-primary ) !important;
 }
 
 /* Default / text buttons on hover. */
@@ -483,7 +496,7 @@ body.adminkit.toplevel_page_fluent-cart .fct-card .fct-card-header.border-bottom
 	border-color: var( --ak-border ) !important;
 }
 body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-collapse-button-wrapper {
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* Headings + raised-item text. */
@@ -513,7 +526,8 @@ body.adminkit.toplevel_page_fluent-cart .el-button--primary span {
 
 /* Panel titles + active fluid-tab text → heading. */
 body.adminkit.toplevel_page_fluent-cart .fct-dashboard-recent-activities__header_title,
-body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab.classic-tab-style .fct-fluid-tab-item.active {
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab.classic-tab-style .fct-fluid-tab-item.active,
+body.adminkit.toplevel_page_fluent-cart .fct-admin-sidebar .sidebar-title {
 	color: var( --ak-heading ) !important;
 }
 
@@ -540,6 +554,7 @@ body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[stroke]:not([s
    which still need the neutral skin. Our !important beats FC's non-important dark
    rule regardless of its #fct_admin_app_wrapper scope. */
 body.adminkit.toplevel_page_fluent-cart .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--error):not(.el-button--info):not(.is-text):not(.is-link),
+body.adminkit.toplevel_page_fluent-cart .el-button--info.is-plain,
 body.adminkit.toplevel_page_fluent-cart .icon-button {
 	background-color: var( --ak-surface ) !important;
 	border-color: var( --ak-border-strong ) !important;
@@ -568,7 +583,7 @@ body.adminkit.toplevel_page_fluent-cart .search-bar.is-transparent .el-input__wr
 /* Settings page header — surface + strong border. */
 body.adminkit.toplevel_page_fluent-cart .fct-setting-header {
 	background-color: var( --ak-surface ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* Active settings-nav link. */
@@ -641,12 +656,15 @@ body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab {
 body.adminkit.toplevel_page_fluent-cart .fct-integration-table-footer,
 body.adminkit.toplevel_page_fluent-cart .el-cascader-panel.is-bordered,
 body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-condition-or-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-report-card-header {
+body.adminkit.toplevel_page_fluent-cart .fct-report-card-header,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-item-box,
+body.adminkit.toplevel_page_fluent-cart .fct-simple-product-actions,
+body.adminkit.toplevel_page_fluent-cart .dialog-footer {
 	border-color: var( --ak-border-strong ) !important;
 }
 body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container {
 	background-color: var( --ak-surface ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-advanced-filters {
 	background-color: var( --ak-elevated ) !important;
@@ -683,6 +701,11 @@ body.adminkit.toplevel_page_fluent-cart .el-overlay .el-dialog__header {
 	border-color: var( --ak-border-strong ) !important;
 }
 
+/* Drawer — same overlay-panel family as the dialog (FC hard-pins the bg in dark). */
+body.adminkit.toplevel_page_fluent-cart .el-drawer {
+	background-color: var( --ak-elevated ) !important;
+}
+
 /* Disabled checkbox → muted surface, strong border (no brand tint). */
 body.adminkit.toplevel_page_fluent-cart .el-checkbox__input.is-disabled .el-checkbox__inner {
 	background-color: var( --ak-surface-muted ) !important;
@@ -695,9 +718,21 @@ body.adminkit.toplevel_page_fluent-cart .badge.info {
 	color: var( --ak-text-muted ) !important;
 }
 
-/* Tertiary button text (FC pins slate inside the transparent container). */
+/* Tertiary buttons (inline toggles: Status, URL Slug, …) — text only, no brand
+   fill or ring. They ARE .el-button--primary, so the brand-fill rule (§5) would
+   otherwise paint them; reset bg + border to neutral and keep a subtle hover. */
 body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-tertiary,
 body.adminkit.toplevel_page_fluent-cart .el-button.is-tertiary {
+	background-color: transparent !important;
+	border-color: transparent !important;
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-tertiary:hover,
+body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-tertiary:focus,
+body.adminkit.toplevel_page_fluent-cart .el-button.is-tertiary:hover,
+body.adminkit.toplevel_page_fluent-cart .el-button.is-tertiary:focus {
+	background-color: var( --ak-hover-bg ) !important;
+	border-color: transparent !important;
 	color: var( --ak-text ) !important;
 }
 
@@ -711,6 +746,12 @@ body.adminkit.toplevel_page_fluent-cart .el-textarea__inner {
 body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .wp-editor-tools .wp-editor-container {
 	background-color: var( --ak-surface ) !important;
 	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Editor iframe loading scrim — 80% surface (was a hard #1c2732cc). */
+body.adminkit.toplevel_page_fluent-cart .fct-custom-gutenberg-editor-wrap .iframe-loader,
+body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .iframe-controls {
+	background: color-mix( in srgb, var( --ak-surface ) 80%, transparent ) !important;
 }
 
 /* Tag-group items + internal label badge. */
@@ -730,10 +771,22 @@ body.adminkit.toplevel_page_fluent-cart .fmp-add-full {
 	color: var( --ak-text-muted ) !important;
 }
 
+/* Media button — bordered neutral control (FC pins slate bg + light text). */
+body.adminkit.toplevel_page_fluent-cart .fct-media-button {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+	color: var( --ak-text ) !important;
+}
+
 /* Save bar (product edit sticky footer). */
 body.adminkit.toplevel_page_fluent-cart .fct-save-bar {
 	background-color: var( --ak-elevated ) !important;
 	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Product download form box (FC pins dark-500). */
+body.adminkit.toplevel_page_fluent-cart .fct-product-download-form-box {
+	background-color: var( --ak-elevated ) !important;
 }
 
 /* Dropdown item / link focused → hover bg. */
@@ -761,6 +814,32 @@ body.adminkit.toplevel_page_fluent-cart .fct-admin-product-menu li a::after {
 body.adminkit.toplevel_page_fluent-cart .badge.info {
 	background-color: var( --ak-surface-muted ) !important;
 	color: var( --ak-text-muted ) !important;
+}
+
+/* Status badges — FC ships a soft tint+text in light and a SOLID fill in dark
+   (success #116a53, warning #ac6305, danger #9b2406). Route to AdminKit's soft
+   badge (subtle tint bg + semantic text); the --ak-*-subtle tokens flip with the
+   theme, so one rule covers both modes. */
+body.adminkit.toplevel_page_fluent-cart .badge.success {
+	background-color: var( --ak-success-subtle ) !important;
+	color: var( --ak-success ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .badge.warning {
+	background-color: var( --ak-warning-subtle ) !important;
+	color: var( --ak-warning ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .badge.danger {
+	background-color: var( --ak-error-subtle ) !important;
+	color: var( --ak-error ) !important;
+}
+
+/* Empty-state illustrations ("no data" cards) — FC's SVGs are MONOCHROME (every
+   path fill="#2C3C4E", its dark-400 slate). A CSS `fill` overrides the SVG
+   presentation attribute, so route the paths to --ak-border-strong (the token
+   #2C3C4E maps to) — the icon stays a muted slate but flips with the theme
+   instead of staying FluentCart-blue. */
+body.adminkit.toplevel_page_fluent-cart .fct-empty-text svg path {
+	fill: var( --ak-border-strong );
 }
 
 /* Monthly-report list rows. */
@@ -811,7 +890,7 @@ body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a img {
 	display: none !important;
 }
 body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a::after {
-	content: "FluentCart";
+	content: var( --ak-wordmark, "FluentCart" );
 	color: var( --ak-heading );
 	font-size: 18px;
 	font-weight: 700;

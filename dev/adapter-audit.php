@@ -32,13 +32,20 @@ require_once __DIR__ . '/css-scan.php';
 // (Tier A). Entries below carry debt FORCED by the host, not a code-quality
 // fault — they are the baseline as of the last review.
 $BUDGET = array(
-	'fluent-booking'    => 101, // ApexCharts chart text/grid/tooltip + Element Plus (host inline styles)
+	'fluent-cart'       => 184, // FC compiles its palette into Tailwind utilities + stock Element Plus literals; every host literal mapped to a token needs !important to beat them (incl. status badges success/warning/danger, neutral checked-checkbox label)
+	'fluent-booking'    => 108, // ApexCharts chart text/grid/tooltip + Element Plus (host inline styles) + #306ae0 hardcoded across ~126 component states + Vue editor surfaces + neutral settings-sidebar hover
+	'fluent-crm'        => 24,  // FluentCRM is variable-driven (Tier A remap); the !important are literals it hard-codes past its vars (funnel block types/badges/connectors, brand pills, disabled-primary contrast, neutral active-nav) + logo white-label + dark-only toggle hide
+	'fluent-community'  => 36,  // onboarding wizard (stock Element Plus + own .fcom_* literals): panel/card surfaces, brand button, near-black text/borders, error notice, logo white-label — all past the EP vars
+	'fluent-boards'     => 19,  // Element Plus + --gantt-* remap (Tier A core); the !important are the hardcoded brand purple/indigo (#6b3ceb/#6268f1) across buttons/tabs/borders + neutral active-nav + body over-pull reset
+	'fluent-support'    => 16,  // variable-driven (--fs-* + --el-* remap); !important are literals past the vars + the z-2000 topbar frame + dark-only toggle hide + neutral nav
+	'fluent-affiliate'  => 2,   // near-pure Tier-A (--fla-* + --el-* remap, 2 stock-EP focus literals routed without !important); the 2 !important are chrome hides (logo img + dark-only toggle)
+	'fluent-security'   => 2,   // stock Element Plus remap only (FluentAuth, small); the 2 !important are the neutral active-nav (beats EP's deep .el-menu-item.is-active)
 	'flying-press'      => 41,
 	'gutenberg'         => 8,
 	'fluent-smtp'       => 6,
 	'happyfiles'        => 6,
 	'wp-migrate-db-pro' => 6,
-	'fluentform'        => 2,
+	'fluentform'        => 7,   // bundled OLD Element UI hardcodes hex everywhere (Tier B by selector); the !important beat host `!important` literals (checked-checkbox label, table row-hover transparent, form-selector focus #0e121b, conversational-editor well #fafafa, .mb-4 margin-utility reset)
 	'acf'               => 17, // ACF forces !important on btn labels, postbox titles, open-field handle links, field-type picker option states, options-page dropdown border + file-selector-button label (hex col = #acf-* id selectors, not colors)
 	'woocommerce'       => 3, // WC pins !important on the disabled list-reorder arrows (admin.css .wc-move-disabled), an analytics table border (wc-admin.css), and the admin-bar "Coming soon" badge (admin.css #wp-admin-bar-woocommerce-site-visibility-badge — moved here from wp-core/adminbar.css to keep WC-specific selectors in the WC adapter) — all three must match !important to win
 );

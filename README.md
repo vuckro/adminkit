@@ -155,7 +155,7 @@ The admin bar carries a sun/moon button. Clicking it flips `<html data-adminkit-
 Dark-mode coverage is layered:
 
 - **WordPress core screens** — hand-styled by AdminKit's `wp-core/*.css`.
-- **Native plugin integrations** (the 15 adapters) — each one ships its own CSS so dark mode is pixel-precise on those screens.
+- **Native plugin integrations** (22 plugin adapters) — each one ships its own CSS so dark mode is pixel-precise on those screens.
 - **Everything else** — inherits AdminKit's base token layer (light). Plugins without a dedicated adapter aren't specially remapped for dark mode; an automatic fallback for the long tail is on the roadmap.
 
 ## Asset registry
@@ -173,7 +173,7 @@ The **Bricks** adapter, when active:
 
 The **Gutenberg** adapter ships token-mapped header / sidebar / publish-button polish for the block, site, widgets, and navigation editors via the `enqueue_block_editor_assets` hook (NOT `admin_enqueue_scripts`) so the CSS only enters editor surfaces. The **Gutenberg** toggle (Features tab, on by default) additionally themes the iframed editor canvas — content + native blocks — in light and dark; turn it off to keep the canvas matching your live site exactly.
 
-AdminKit also ships adapters for **WooCommerce**, **ACF**, **Elementor**, the **Fluent** suite (Forms, SMTP, Booking), **WPForms**, **WPCode**, **Query Monitor**, **Slim SEO**, **HappyFiles**, **FlyingPress**, **WP Migrate**, and **Admin Menu Editor**. Each self-detects its host and stays dormant when the host isn't installed. They split into two flavours: *Tier A* adapters remap the host's own CSS variables (zero `!important`, dark mode for free); *Tier B* adapters override the host's selectors because it hardcodes its colours — run `php dev/adapter-audit.php` to see each adapter's override budget.
+AdminKit also ships adapters for **WooCommerce**, **ACF**, **Elementor**, the **Fluent** suite (Forms, SMTP, Booking, Cart, CRM, Boards, Community, Support, Affiliate, Security/Auth), **WPForms**, **WPCode**, **Query Monitor**, **Slim SEO**, **HappyFiles**, **FlyingPress**, **WP Migrate**, and **Admin Menu Editor**. Each self-detects its host and stays dormant when the host isn't installed. They split into two flavours: *Tier A* adapters remap the host's own CSS variables (zero `!important`, dark mode for free); *Tier B* adapters override the host's selectors because it hardcodes its colours — run `php dev/adapter-audit.php` to see each adapter's override budget.
 
 AdminKit's theme toggle is authoritative and self-contained: it always flips its own attribute (`data-adminkit-theme`) and storage key (`adminkit-theme`), so dark mode works standalone with no provider. When Bricks is present, its adapter adds a bridge on top — it adopts Bricks's mode on load and then mirrors AdminKit's mode into Bricks (`data-brx-theme` + `brx_mode`, guarded against loops) so the front end repaints too. You can repoint or rename the attribute / storage key via the `adminkit/theme_attribute` / `adminkit/theme_storage_key` filters.
 

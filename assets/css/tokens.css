@@ -156,6 +156,8 @@
 	/* ── Geometry + type (px on purpose — see header) ───────────────────── */
 	--ak-radius-s: 6px;
 	--ak-radius-m: 10px;
+	--ak-radius-l: 14px;
+	--ak-radius-xl: 18px;   /* matches the content-panel corner */
 	--ak-radius-full: 9999px;
 
 	/* Spacing — px on purpose, same rationale as radii/type: the provider's

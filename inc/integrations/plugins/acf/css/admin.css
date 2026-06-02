@@ -160,7 +160,7 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-logo {
 }
 
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-logo::after {
-	content: "ACF";
+	content: var( --ak-wordmark, "ACF" );
 	color: var(--ak-heading);
 	font-size: 18px;
 	font-weight: 700;

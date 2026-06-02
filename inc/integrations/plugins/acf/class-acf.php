@@ -35,6 +35,17 @@ class AdminKit_Integration_Acf extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * ACF roots its admin under the field-group CPT, so its top-level menu slug
+	 * is the CPT list URL. Point the wordmark at that menu title (falls back to
+	 * the CSS literal if ACF's menu layout differs).
+	 *
+	 * @return string
+	 */
+	protected static function wordmark_menu_slug() {
+		return 'edit.php?post_type=acf-field-group';
+	}
+
+	/**
 	 * Both ACF (free) and ACF Pro define ACF_VERSION in their bootstrap.
 	 *
 	 * @return bool

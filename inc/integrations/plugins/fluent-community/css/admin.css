@@ -1,0 +1,288 @@
+/* FluentCommunity — toplevel_page_fluent-community (the onboarding/settings wizard).
+
+   SCOPE. This file themes ONLY FluentCommunity's wp-admin screen — a small Vue
+   onboarding/settings wizard mounted into #fcom_onboarding_app. FluentCommunity's
+   real product is a FRONTEND community portal (rendered headless at /portal); that
+   is NOT a wp-admin screen and AdminKit doesn't theme it, so EVERY rule here is
+   scoped to `body.adminkit.toplevel_page_fluent-community` and nothing can leak to
+   the portal.
+
+   The admin screen loads its OWN bundle, assets/onboarding.css (NOT the frontend
+   admin_app.css). onboarding.css ships the STOCK Element Plus --el-* token layer in
+   :root (unmodified EP defaults — #409eff primary, #303133 text, #dcdfe6 border, …)
+   and declares NO --fcom-* layer of its own. So §1 is the canonical Element-Plus
+   remap: point the --el-* tokens at AdminKit --ak-* and the wizard's EP widgets
+   (inputs, selects, checks, radios, buttons, dialogs) follow, dark mode included.
+   onboarding.css has NO dark mode of its own (no html.dark / data-color-mode — those
+   live in the out-of-scope frontend bundle), so the --ak-* flip is what gives this
+   screen one; there is no host dark class to fight, hence no theme-sync JS in the PHP.
+
+   The wizard then paints a handful of literals PAST the EP vars — its own .fcom_*
+   classes hard-code a #f4f4f5 panel, a solid #000/#2B2E33 brand primary button,
+   near-black #0e121b / #020817 / #525866 text, #646970 muted, #E1E4EA borders, and a
+   #f8d7da error notice. §2 (canvas) + §3 (surfaces/brand/text/borders) catch those.
+   §4 white-labels the in-app logo.
+
+   Why these win. onboarding.css declares its tokens in :root (0,1,0). Our §1 block
+   targets :root, body.adminkit.toplevel_page_fluent-community (0,2,1 for the body
+   arm), which outranks it. Element Plus teleports dialogs / poppers / dropdowns to
+   <body>, so the body-scoped selectors reach them too. */
+
+
+/* ============================================================
+   1. TOKEN REMAP — Element Plus --el-* → AdminKit tokens
+   onboarding.css ships the stock EP layer in :root and no --fcom-* layer, so this
+   is the only variable surface to remap (same canonical block as the FluentBooking
+   / FluentCRM adapters).
+   ============================================================ */
+
+:root,
+body.adminkit.toplevel_page_fluent-community {
+	/* Brand. FluentCommunity's brand is the near-black #2B2E33 (its primary button
+	   fill / hover); route --el-color-primary to the AdminKit brand so any EP
+	   default that reads it is on-brand. The literal copies are §3. */
+	--el-color-primary: var( --ak-primary );
+
+	/* The blue source EP never exposes as a token: every
+	   `rgba(var(--el-color-primary-rgb), a)` focus ring / selection fill falls back
+	   to EP's stock #409eff when unset. Pin it to the brand rgb (same literal as
+	   tokens.css --wp-admin-theme-color--rgb) so alpha tints read on any surface in
+	   both modes. */
+	--el-color-primary-rgb: 117, 163, 59;
+
+	/* Primary ramp — keep filled / hover / plain-bg primary states on brand. */
+	--el-color-primary-dark-2: var( --ak-primary-hover );    /* active / pressed */
+	--el-color-primary-light-3: var( --ak-primary-hover );   /* filled-button hover */
+	--el-color-primary-light-5: var( --ak-primary-subtle );
+	--el-color-primary-light-7: var( --ak-primary-subtle );
+	--el-color-primary-light-8: var( --ak-primary-subtle );
+	--el-color-primary-light-9: var( --ak-primary-subtle );  /* plain bg / current row */
+
+	/* Semantic. EP "info" is a NEUTRAL grey (#909399), not a colour — route it to
+	   the muted text token + a neutral ramp so it never reads as a hue. */
+	--el-color-success: var( --ak-success );
+	--el-color-warning: var( --ak-warning );
+	--el-color-danger: var( --ak-error );
+	--el-color-error: var( --ak-error );
+	--el-color-info: var( --ak-text-muted );
+	--el-color-info-light-3: var( --ak-text-muted );
+	--el-color-info-light-5: var( --ak-border-strong );
+	--el-color-info-light-9: var( --ak-surface );
+	--el-color-info-dark-2: var( --ak-heading );
+
+	/* Text */
+	--el-text-color-primary: var( --ak-heading );
+	--el-text-color-regular: var( --ak-text );
+	--el-text-color-secondary: var( --ak-text-muted );
+	--el-text-color-placeholder: var( --ak-text-muted );
+	--el-text-color-disabled: var( --ak-text-muted );
+
+	/* Backgrounds */
+	--el-bg-color: var( --ak-surface );
+	--el-bg-color-page: var( --ak-bg );
+	--el-bg-color-overlay: var( --ak-surface );
+
+	/* Borders */
+	--el-border-color: var( --ak-border );
+	--el-border-color-light: var( --ak-border );
+	--el-border-color-lighter: var( --ak-border );
+	--el-border-color-extra-light: var( --ak-border );
+	--el-border-color-hover: var( --ak-border-strong );
+	--el-border-color-dark: var( --ak-border-strong );
+	--el-border-color-darker: var( --ak-border-strong );
+
+	/* Fills — hover bgs, zebra rows, disabled, blank canvas. EP greys leak on dark
+	   surfaces if left unset; pin the whole set to neutral surfaces. */
+	--el-fill-color: var( --ak-surface );
+	--el-fill-color-light: var( --ak-surface );
+	--el-fill-color-lighter: var( --ak-surface );
+	--el-fill-color-extra-light: var( --ak-surface );
+	--el-fill-color-dark: var( --ak-elevated );
+	--el-fill-color-darker: var( --ak-elevated );
+	--el-fill-color-blank: var( --ak-surface );
+
+	/* Disabled — consumed but never (re)defined by FluentCommunity, so EP's stock
+	   greys leak in dark. */
+	--el-disabled-bg-color: var( --ak-surface );
+	--el-disabled-text-color: var( --ak-text-muted );
+	--el-disabled-border-color: var( --ak-border );
+
+	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
+	--el-box-shadow: none;
+	--el-box-shadow-light: none;
+	--el-box-shadow-lighter: none;
+	--el-box-shadow-dark: none;
+}
+
+
+/* ============================================================
+   2. PAGE CANVAS
+   AdminKit's chrome.css themes #wpbody but not #wpcontent; give the content strip
+   and the wizard mount the page token so the area behind the app flips with the
+   theme. The wizard does NOT pull itself full-bleed with negative margins (its
+   .fcom_onboarding_wrapper is a centred max-width:640px card with `margin:40px
+   auto`), so — unlike the FluentCRM / FluentBooking SPAs — there is no over-pull to
+   neutralise and no gutter to add.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-community #wpcontent,
+body.adminkit.toplevel_page_fluent-community #fcom_onboarding_app {
+	background-color: var( --ak-bg );
+}
+
+
+/* ============================================================
+   3. HARD-CODED LITERALS the var remap can't reach
+   The wizard's own .fcom_* classes bypass both --el-* and any --fcom-* layer.
+   ============================================================ */
+
+/* 3a. Surfaces. The wizard panel hard-codes a #f4f4f5 fill (+ a flat #f4f4f5
+   gradient + a light box-shadow + an rgb(229,231,235) border) → route the panel to
+   the surface token, drop the gradient + shadow, border to the token. The inner
+   content card ships `background:white` → elevated (it sits raised on the panel).
+   The #f6faff input-prefix tint → recessed surface. */
+body.adminkit.toplevel_page_fluent-community .fcom_onboarding_wrapper {
+	background: var( --ak-surface ) !important;
+	background-image: none !important;
+	border-color: var( --ak-border ) !important;
+	box-shadow: none !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_content_wrapper {
+	background: var( --ak-elevated ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_input_prefix {
+	background: var( --ak-surface-muted ) !important;
+}
+
+/* 3b. Brand primary button. The wizard ships `.fcom_button_primary` as a solid
+   #000 fill + #2B2E33 border with white text, hover → #2B2E33. Route to a solid
+   --ak-primary fill with --ak-on-accent text (matches the other Fluent adapters'
+   primary-button convention), hover → --ak-primary-hover. */
+body.adminkit.toplevel_page_fluent-community .fcom_button_primary,
+body.adminkit.toplevel_page_fluent-community .fcom_button_primary:focus {
+	background: var( --ak-primary ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_button_primary:hover {
+	background: var( --ak-primary-hover ) !important;
+	border-color: var( --ak-primary-hover ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+
+/* 3c. Secondary / plain buttons. `.fcom_button_secondary` is a #0e121b-text,
+   #E1E4EA-border ghost (hover bg #E1E4EA); `.fcom_plain_button` is #646970 text.
+   Route the ghost to neutral surface tokens, hover → a subtle step. */
+body.adminkit.toplevel_page_fluent-community .fcom_button_secondary {
+	color: var( --ak-text ) !important;
+	border-color: var( --ak-border ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_button_secondary:hover {
+	background: var( --ak-hover-bg ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_plain_button {
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_plain_button:hover {
+	color: var( --ak-heading ) !important;
+}
+
+/* 3d. Text literals. Headings/titles hard-code #525866 (header title, feature/card
+   h3) and labels #0e121b → heading token; card links #020817 and useful-links /
+   subtitle / help / muted greys #646970 → body / muted text. */
+body.adminkit.toplevel_page_fluent-community .header_title,
+body.adminkit.toplevel_page_fluent-community .fcom_feature h3,
+body.adminkit.toplevel_page_fluent-community .fcom_card h3,
+body.adminkit.toplevel_page_fluent-community .fcom_content_wrapper .fcom_form_group label {
+	color: var( --ak-heading ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_cards a {
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .header_subtitle,
+body.adminkit.toplevel_page_fluent-community .fcom_input_help,
+body.adminkit.toplevel_page_fluent-community .fcom_input.input_logo,
+body.adminkit.toplevel_page_fluent-community .fcom_link,
+body.adminkit.toplevel_page_fluent-community .fcom_useful_links ul li a,
+body.adminkit.toplevel_page_fluent-community .fcom_useful_links ul li:before {
+	color: var( --ak-text-muted ) !important;
+}
+
+/* 3e. Borders + focus rings. The wizard hard-codes #E1E4EA on its inputs, input
+   groups, radio options, the step-header divider and the logo field; and a #0e121b
+   focus ring on inputs / logo-remove hover. Route the structural borders to the
+   token and the focus ring to the brand focus token. */
+body.adminkit.toplevel_page_fluent-community .fcom_step_header,
+body.adminkit.toplevel_page_fluent-community .fcom_content_wrapper .fcom_form_group .fcom_input,
+body.adminkit.toplevel_page_fluent-community .fcom_content_wrapper .fcom_form_group .fcom_input.input_logo,
+body.adminkit.toplevel_page_fluent-community .fcom_content_wrapper .fcom_form_group .fcom_input_group,
+body.adminkit.toplevel_page_fluent-community .fcom_content_wrapper .fcom_form_group .fcom_input_group .fcom_input_text,
+body.adminkit.toplevel_page_fluent-community .fcom_radio_group .fcom_radio_option label,
+body.adminkit.toplevel_page_fluent-community .fcom_logo_remove {
+	border-color: var( --ak-border ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_content_wrapper .fcom_form_group .fcom_input:focus {
+	box-shadow: var( --ak-focus-ring ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_logo_remove:hover,
+body.adminkit.toplevel_page_fluent-community .fcom_card:hover {
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* The logo-remove chip + logo-preview hover ring ship `background:white` /
+   #0e121b — keep them legible on the dark panel. */
+body.adminkit.toplevel_page_fluent-community .fcom_logo_remove {
+	background: var( --ak-surface ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Card hover ships a box-shadow (AdminKit is flat) — drop it; the border shift
+   above carries the hover affordance. */
+body.adminkit.toplevel_page_fluent-community .fcom_card:hover {
+	box-shadow: none !important;
+}
+
+/* 3f. Error notice. `.fcom_notice` hard-codes a pink callout (#f8d7da bg, #f5c6cb
+   border, #721c24 text + its inner button/link). Route to the error tokens so it
+   flips with the theme and reads on a dark surface. */
+body.adminkit.toplevel_page_fluent-community .fcom_notice {
+	background: var( --ak-error-subtle ) !important;
+	border-color: var( --ak-error ) !important;
+	color: var( --ak-error ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_notice a {
+	background: var( --ak-surface ) !important;
+	border-color: var( --ak-error ) !important;
+	color: var( --ak-error ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_notice a:hover {
+	background: var( --ak-error-subtle ) !important;
+	border-color: var( --ak-error ) !important;
+	color: var( --ak-error ) !important;
+}
+
+
+/* ============================================================
+   4. WHITE-LABEL THE WIZARD LOGO
+   Every wizard step's header (.fcom_step_header) renders FluentCommunity's brand
+   mark as `<img class="fcom_onboarding_logo" src=…/logo.png>` above the step title
+   — a fixed dark mark that vanishes once AdminKit goes dark. Hide it and drop a
+   plain text wordmark in its place (same approach as the FluentCRM / FluentBooking
+   adapters). The header is a centred flex column, so a ::before block lands
+   centred where the logo was. The wordmark comes from the WP menu title (the base
+   class emits --ak-wordmark on this screen); the literal is the fallback.
+   ============================================================ */
+
+body.adminkit.toplevel_page_fluent-community .fcom_onboarding_logo {
+	display: none !important;
+}
+
+body.adminkit.toplevel_page_fluent-community .fcom_step_header::before {
+	content: var( --ak-wordmark, "FluentCommunity" );
+	display: block;
+	margin: 0 auto 8px;
+	color: var( --ak-heading );
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+}
