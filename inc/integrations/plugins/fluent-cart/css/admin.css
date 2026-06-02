@@ -747,7 +747,7 @@ body.adminkit.toplevel_page_fluent-cart .el-textarea__inner {
 /* WP classic editor wrapper (Long Description block). */
 body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .wp-editor-tools .wp-editor-container {
 	background-color: var( --ak-surface ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* Editor iframe loading scrim — 80% surface (was a hard #1c2732cc). */
