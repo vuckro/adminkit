@@ -194,6 +194,27 @@ body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
 	}
 }
 
+/* Content gutter — TARGETED. The full-width bars (topbar, the sub-nav) keep their
+   edge-to-edge span; only the actual content blocks get a horizontal gutter so
+   they aren't glued to the panel edge. FluentCRM also pins an ASYMMETRIC
+   margin-right:20px on .fluentcrm-app (20px right, 0 left) — drop it so the gutter
+   is even. The page header (`.fcrm_page_header`, "All Contacts …") ships only
+   vertical padding, and the contacts table area runs full width — pad both. */
+body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm-app {
+	margin-right: 0;
+}
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_page_header,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_company_contacts_wrap {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+/* The contacts rich area already pads 0 20px — zero it so the parent gutter above
+   doesn't double up to 40px. */
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_company_contacts_wrap .fcrm_rich_container .fcrm_rich_wrap {
+	padding-left: 0;
+	padding-right: 0;
+}
+
 
 /* ============================================================
    3. HARD-CODED LITERALS the var remap can't reach
