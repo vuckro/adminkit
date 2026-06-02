@@ -37,6 +37,7 @@
 body.adminkit.acf-admin-page .acf-headerbar {
 	background-color: var(--ak-surface);
 	border-bottom: 1px solid var(--ak-border);
+	border-left: 1px solid var(--ak-border);
 	box-shadow: none;
 }
 
@@ -134,6 +135,11 @@ body.adminkit.acf-admin-page .button:focus {
 body.adminkit.acf-admin-page .acf-admin-toolbar {
 	background: var(--ak-elevated);
 	color: var(--ak-text-muted);
+	/* Top bar sits over the fixed panel frame (#wpwrap::before) + over-pull is
+	   neutralised, so draw the panel's top-left corner on the bar itself. */
+	border-top: 1px solid var(--ak-border);
+	border-left: 1px solid var(--ak-border);
+	border-top-left-radius: 18px;
 }
 
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab {
