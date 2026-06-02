@@ -38,7 +38,6 @@ $BUDGET = array(
 	'fluent-community'  => 39,  // onboarding wizard (stock Element Plus + own .fcom_* literals): panel/card surfaces, brand button, near-black text/borders, error notice, logo white-label — all past the EP vars; +3 for the feature-card / template-radio `background:white` literals from the non-onboarding bundle that also loads here (native WP inputs themed without !important)
 	'fluent-affiliate'  => 2,   // near-pure Tier-A (--fla-* + --el-* remap, 2 stock-EP focus literals routed without !important); the 2 !important are chrome hides (logo img + dark-only toggle)
 	'flying-press'      => 41,
-	'funnelkit-automation' => 155, // React app whose ~57 webpack route chunks lazy-inject CSS AFTER AdminKit on navigation, so the `.bwf-*` overrides they reassert all need !important (Tier B). Covers: the hidden promo attention-bar + its sticky-offset reset, app shell/header, cards/tables/split-path badges, solid-primary + semantic buttons, inputs/dropdowns/modals, neutral checked labels, semantic tags + readable-filter pills, CRM side panel, React Flow nodes/handles/edges/controls + node-type icon chips, and the (themed, not hidden) upgrade-pro upsell surfaces; +12 in adminbar.css for pro's #wpadminbar contact-search widget. §1 --wp-admin-theme-color remap is the one Tier-A lever (0 important). Minimap JS node colours + chart fills left native.
 	'gutenberg'         => 8,
 	'fluent-smtp'       => 6,
 	'happyfiles'        => 6,
