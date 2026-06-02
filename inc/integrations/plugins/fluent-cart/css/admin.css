@@ -664,6 +664,67 @@ body.adminkit.toplevel_page_fluent-cart .el-button.is-tertiary {
 	color: var( --ak-text ) !important;
 }
 
+/* Textarea — border + text (bg stays transparent, fine). */
+body.adminkit.toplevel_page_fluent-cart .el-textarea__inner {
+	border-color: var( --ak-border-strong ) !important;
+	color: var( --ak-text ) !important;
+}
+
+/* WP classic editor wrapper (Long Description block). */
+body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .wp-editor-tools .wp-editor-container {
+	background-color: var( --ak-surface ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Tag-group items + internal label badge. */
+body.adminkit.toplevel_page_fluent-cart .fct-tag-group .fct-tag-item {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-tag-group .fct-tags-internal {
+	background-color: var( --ak-surface-muted ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Media "add image" dashed zone — token border instead of #EAECF0 literal. */
+body.adminkit.toplevel_page_fluent-cart .fmp-add-full {
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Save bar (product edit sticky footer). */
+body.adminkit.toplevel_page_fluent-cart .fct-save-bar {
+	background-color: var( --ak-elevated ) !important;
+	border-color: var( --ak-border-strong ) !important;
+}
+
+/* Dropdown link item focused → hover bg. */
+body.adminkit.toplevel_page_fluent-cart .el-dropdown__popper.fct-dropdown .el-dropdown-menu__item.item-link a:focus {
+	background-color: var( --ak-hover-bg ) !important;
+	color: var( --ak-heading ) !important;
+}
+
+/* Product sub-nav (Upgrade Paths / Integrations tabs under product title). */
+body.adminkit.toplevel_page_fluent-cart .fct-admin-product-menu li.active-menu a {
+	color: var( --ak-heading ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-admin-product-menu li a::after {
+	background-color: var( --ak-heading ) !important;
+}
+
+/* .badge.info (solid dark in FC) → muted chip — the `!important` from FC's dark
+   rule beats our earlier non-important one; match the specificity. */
+body.adminkit.toplevel_page_fluent-cart .badge.info {
+	background-color: var( --ak-surface-muted ) !important;
+	color: var( --ak-text-muted ) !important;
+}
+
+/* Monthly-report list rows. */
+body.adminkit.toplevel_page_fluent-cart .fct-report-monthly-list li {
+	background-color: var( --ak-surface ) !important;
+}
+
 /* Settings-nav link hover → elevated bg / heading text. */
 body.adminkit.toplevel_page_fluent-cart .fct-settings-nav .fct-settings-nav-link:hover {
 	background-color: var( --ak-elevated ) !important;
