@@ -185,6 +185,12 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
 	}
 }
 
+/* Round the bottom of the top menu bar so it reads as a distinct card-bar. */
+body.adminkit.toplevel_page_fluent-booking .fframe_main-menu-items {
+	border-bottom-left-radius: var( --ak-radius-xl );
+	border-bottom-right-radius: var( --ak-radius-xl );
+}
+
 
 /* ============================================================
    3. HARD-CODED BLUE OVERRIDES (#306ae0)
