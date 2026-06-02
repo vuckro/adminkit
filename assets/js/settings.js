@@ -1955,9 +1955,9 @@
 		var h = handle();
 		row.appendChild( h );
 		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
-		row.appendChild( el( 'span', { 'class': 'ak-menu-row__title ak-menu-seplabel', text: '— ' + I.menuSeparator + ' —' } ) );
 		row.appendChild( hideBtn( item, tree ) );
 		row.appendChild( removeBtn( ti, tree ) );
+		row.appendChild( el( 'span', { 'class': 'ak-menu-row__title ak-menu-seplabel', text: '— ' + I.menuSeparator + ' —' } ) );
 		dragSource( h, row, { kind: 'top', ti: ti } );
 		dropZone( row, function ( ds ) { return ds.kind === 'top'; }, function ( ds ) {
 			moveTop( ds.ti, ti ); renderTree( tree ); markMenuDirty();
@@ -1975,11 +1975,13 @@
 		titleIn.addEventListener( 'input', function () { item.title = titleIn.value; markMenuDirty(); } );
 		var urlIn = el( 'input', { type: 'text', 'class': 'ak-menu-input ak-menu-input--url', value: item.url || '', placeholder: I.menuLinkUrl } );
 		urlIn.addEventListener( 'input', function () { item.url = urlIn.value; markMenuDirty(); } );
-		row.appendChild( titleIn );
-		row.appendChild( urlIn );
+		// Action buttons on the LEFT (new-tab · hide · remove); the title + URL fields
+		// are the editable content and fill the rest of the row.
 		row.appendChild( newTabBtn( item, tree ) );
 		row.appendChild( hideBtn( item, tree ) );
 		row.appendChild( removeBtn( ti, tree ) );
+		row.appendChild( titleIn );
+		row.appendChild( urlIn );
 		// Drag from the handle only, so the URL/title inputs stay text-selectable.
 		dragSource( h, row, { kind: 'top', ti: ti } );
 		dropZone( row, function ( ds ) { return ds.kind === 'top'; }, function ( ds ) {
@@ -2002,6 +2004,13 @@
 		row.appendChild( h );
 		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
 		row.appendChild( iconBtn( top, tree ) );
+		// All action controls cluster on the LEFT (handle · move · icon · URL · hide)
+		// for a consistent, accessible order; the title then fills the rest. The
+		// "N submenus" disclosure stays at the row end (it reveals the children below).
+		row.appendChild( urlBtn( top, tree ) );
+		if ( top.slug !== MM.self ) {
+			row.appendChild( hideBtn( top, tree ) );
+		}
 		row.appendChild( titleInput( top ) );
 		if ( top.children.length ) {
 			var caret = el( 'span', { 'class': 'ak-menu-row__caret', 'aria-hidden': 'true' } );
@@ -2013,10 +2022,6 @@
 				title: I.menuSubmenusToggle,
 				onclick: function () { top.open = ! top.open; renderTree( tree ); }
 			}, [ caret, el( 'span', { text: top.children.length + ' ' + I.menuSubmenus } ) ] ) );
-		}
-		row.appendChild( urlBtn( top, tree ) );
-		if ( top.slug !== MM.self ) {
-			row.appendChild( hideBtn( top, tree ) );
 		}
 		dragSource( h, row, { kind: 'top', ti: ti } );
 		// Reorder tops, and accept a submenu dragged from any section (nest it here).
@@ -2044,8 +2049,8 @@
 		var h = handle();
 		row.appendChild( h );
 		row.appendChild( moveControl( moveChildBy( ti, ci, tree ) ) );
-		row.appendChild( titleInput( child ) );
 		row.appendChild( hideBtn( child, tree ) );
+		row.appendChild( titleInput( child ) );
 		dragSource( h, row, { kind: 'sub', ti: ti, ci: ci } );
 		dropZone( row, function ( ds ) { return ds.kind === 'sub'; }, function ( ds ) {
 			moveChild( ds.ti, ds.ci, ti, ci ); renderTree( tree ); markMenuDirty();
