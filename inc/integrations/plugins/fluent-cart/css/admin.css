@@ -803,3 +803,37 @@ body.adminkit.toplevel_page_fluent-cart .fct-settings-nav .fct-settings-nav-chil
 body.adminkit.toplevel_page_fluent-cart .pagination-wrap {
 	border-color: var( --ak-border-strong ) !important;
 }
+
+/* El Plus dark tooltip (e.g. "Toggle reports") — FC sets its bg to
+   --el-text-color-primary (= our heading), giving a washed light pill. Re-skin to
+   a clear raised AdminKit bubble (elevated + border; shadow from the token block). */
+body.adminkit.toplevel_page_fluent-cart .el-popper.is-dark,
+body.adminkit.toplevel_page_fluent-cart .el-popper.is-dark > .el-popper__arrow::before {
+	background: var( --ak-elevated ) !important;
+	border-color: var( --ak-border ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .el-popper.is-dark {
+	color: var( --ak-heading ) !important;
+}
+
+/* "More" header dropdown items — drop FC's blue ring/border; neutral text,
+   subtle hover, brand for the active route. */
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child a,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child_item a {
+	outline: none !important;
+	box-shadow: none !important;
+	border-color: transparent !important;
+	color: var( --ak-text ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child a:hover,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child a:focus,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child_item a:hover,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child_item a:focus {
+	background-color: var( --ak-hover-bg ) !important;
+	color: var( --ak-heading ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child a.router-link-active,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child_item a.router-link-active,
+body.adminkit.toplevel_page_fluent-cart .fct_menu_child .active a {
+	color: var( --ak-primary ) !important;
+}
