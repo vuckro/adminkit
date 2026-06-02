@@ -170,11 +170,11 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
    FluentBooking's deep component rules. Everything → --ak-primary.
    ============================================================ */
 
-/* 3a. Soft brand controls — "soft coordinated" style: pale tint background +
-   brand border + brand-colored content. Primary buttons read as ghost
-   buttons; checked states are tinted. The visible glyphs (check tick, radio
-   dot, switch knob) are pinned to the brand color just below so they stay
-   legible on the pale fill. */
+/* 3a. Brand controls — SOLID fill. FluentBooking ships its primary buttons as
+   a solid #306ae0 with white text (`.fcal_primary_btn{background:#306ae0;color:#fff}`)
+   and fills its checked switch/checkbox/radio the same way; this matches the
+   FluentCart adapter's convention too. So route them to a solid --ak-primary
+   fill with white (--ak-on-accent) text/glyphs — NOT the earlier ghost style. */
 body.adminkit.toplevel_page_fluent-booking .el-button--primary,
 body.adminkit.toplevel_page_fluent-booking .el-button.fcal_primary_btn,
 body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn,
@@ -183,24 +183,27 @@ body.adminkit.toplevel_page_fluent-booking .fcal_switch.is-checked .el-switch__c
 body.adminkit.toplevel_page_fluent-booking .el-checkbox__input.is-checked .el-checkbox__inner,
 body.adminkit.toplevel_page_fluent-booking .fcal_checkbox.is-checked .el-checkbox__inner,
 body.adminkit.toplevel_page_fluent-booking .el-radio__input.is-checked .el-radio__inner,
-body.adminkit.toplevel_page_fluent-booking .el-radio-button.is-active .el-radio-button__inner,
+body.adminkit.toplevel_page_fluent-booking .el-radio-button.is-active .el-radio-button__inner {
+	background-color: var( --ak-primary ) !important;
+	border-color: var( --ak-primary ) !important;
+	color: var( --ak-on-accent ) !important;
+}
+
+/* Active tab — brand text + underline (not a fill). */
 body.adminkit.toplevel_page_fluent-booking .fcal_tabs > .el-tabs__header .el-tabs__nav .el-tabs__item.is-active {
-	background-color: var( --ak-primary-subtle ) !important;
-	border-color: var( --ak-border-strong ) !important;
 	color: var( --ak-primary ) !important;
 }
 
-/* Control glyphs on the pale fill → brand color so they stay visible. */
+/* Control glyphs on the solid fill → white so they read. */
 body.adminkit.toplevel_page_fluent-booking .el-checkbox__input.is-checked .el-checkbox__inner:after {
-	border-color: var( --ak-primary ) !important;        /* check tick */
+	border-color: var( --ak-on-accent ) !important;      /* check tick */
 }
-body.adminkit.toplevel_page_fluent-booking .el-radio__input.is-checked .el-radio__inner:after,
-body.adminkit.toplevel_page_fluent-booking .el-radio__input .el-radio__inner:after {
-	background: var( --ak-primary ) !important;           /* radio dot */
+body.adminkit.toplevel_page_fluent-booking .el-radio__input.is-checked .el-radio__inner:after {
+	background: var( --ak-on-accent ) !important;         /* radio dot */
 }
 body.adminkit.toplevel_page_fluent-booking .el-switch.is-checked .el-switch__action,
 body.adminkit.toplevel_page_fluent-booking .fcal_switch.is-checked .el-switch__action {
-	background-color: var( --ak-primary ) !important;     /* switch knob → clearly "on" */
+	background-color: var( --ak-on-accent ) !important;   /* switch knob → clearly "on" */
 }
 
 /* 3b. Status indicators that carry WHITE content — timeline current-markers
@@ -214,16 +217,22 @@ body.adminkit.toplevel_page_fluent-booking .fcal_steps .el-step__head.is-finish 
 	color: var(--ak-on-accent) !important;
 }
 
-/* Soft brand surfaces / buttons / badges / pills — pale tint + brand text
-   (the "soft coordinated" style: ghost buttons, tinted active states). */
+/* Soft brand surfaces / buttons / badges / pills — pale tint + brand border +
+   brand text (badge/button-like affordances). */
 body.adminkit.toplevel_page_fluent-booking .fcal_schedule_header_bar,
-body.adminkit.toplevel_page_fluent-booking .fcal_settings_sidebar li a.router-link-exact-active,
 body.adminkit.toplevel_page_fluent-booking .fcal_photo_card .fcal_upload_btn,
 body.adminkit.toplevel_page_fluent-booking .el-table.fcal_table .fcal_action.edit_btn,
 body.adminkit.toplevel_page_fluent-booking .fframe_menu li.fframe_item_buy .fframe_menu_primary,
 body.adminkit.toplevel_page_fluent-booking .fcal_feature_module span.fcal_addon_installed {
 	background-color: var( --ak-primary-subtle ) !important;
 	border-color: var( --ak-primary ) !important;
+	color: var( --ak-primary ) !important;
+}
+
+/* Settings sidebar active item — tint + brand text, NO border (the host paints
+   only `background:rgba(...,.1) + color`; a border here reads as a stray ring). */
+body.adminkit.toplevel_page_fluent-booking .fcal_settings_sidebar li a.router-link-exact-active {
+	background-color: var( --ak-primary-subtle ) !important;
 	color: var( --ak-primary ) !important;
 }
 
@@ -323,20 +332,18 @@ body.adminkit.toplevel_page_fluent-booking .fcal_appearance_theme .el-radio.is-c
 
 
 /* ============================================================
-   4. HOVER / PRESSED / DISABLED for the soft brand controls
-   (the plugin's darker-blue #416ddd variant). Ghost buttons deepen their
-   tint on hover rather than flipping to a solid fill.
+   4. HOVER / PRESSED / DISABLED for the solid brand controls
    ============================================================ */
 
-/* Ghost primary buttons — hover/focus deepens the tint. */
+/* Primary buttons — hover/focus darkens the fill (white text stays). */
 body.adminkit.toplevel_page_fluent-booking .el-button--primary:hover,
 body.adminkit.toplevel_page_fluent-booking .el-button--primary:focus,
 body.adminkit.toplevel_page_fluent-booking .el-button.fcal_primary_btn:hover,
 body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn:hover,
 body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn:focus {
-	background-color: var( --ak-primary-subtle ) !important;
-	border-color: var( --ak-primary ) !important;
-	color: var( --ak-primary-hover ) !important;
+	background-color: var( --ak-primary-hover ) !important;
+	border-color: var( --ak-primary-hover ) !important;
+	color: var( --ak-on-accent ) !important;
 }
 
 /* Disabled primary → neutral muted (not a blue). */
@@ -347,9 +354,9 @@ body.adminkit.toplevel_page_fluent-booking .el-button--primary.is-disabled:hover
 	color: var( --ak-text-muted ) !important;
 }
 
-/* Filter-popover checked radio → soft tint like the other checked controls. */
+/* Filter-popover checked radio → solid brand like the other checked controls. */
 body.adminkit.toplevel_page_fluent-booking .fcal_filter_popover .el-radio__input.is-checked .el-radio__inner {
-	background-color: var( --ak-primary-subtle ) !important;
+	background-color: var( --ak-primary ) !important;
 	border-color: var( --ak-primary ) !important;
 }
 
@@ -455,21 +462,21 @@ body.adminkit.toplevel_page_fluent-booking .el-input__wrapper.is-focus {
 	border-color: var( --ak-primary ) !important;
 }
 
-/* New-booking dialog footer primary button — ghost style (matches 3a). */
+/* New-booking dialog footer primary button — solid (matches 3a). */
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn,
 body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__footer .dialog-footer .fcal_primary_btn,
 body.adminkit.toplevel_page_fluent-booking .el-dialog__footer .dialog-footer .fcal_primary_btn {
-	background: var( --ak-primary-subtle ) !important;
+	background: var( --ak-primary ) !important;
 	border-color: var( --ak-primary ) !important;
-	color: var( --ak-primary ) !important;
+	color: var( --ak-on-accent ) !important;
 }
 
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn:hover,
 body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__footer .dialog-footer .fcal_primary_btn:hover,
 body.adminkit.toplevel_page_fluent-booking .el-dialog__footer .dialog-footer .fcal_primary_btn:hover {
-	background: var( --ak-primary-subtle ) !important;
-	border-color: var( --ak-primary ) !important;
-	color: var( --ak-primary-hover ) !important;
+	background: var( --ak-primary-hover ) !important;
+	border-color: var( --ak-primary-hover ) !important;
+	color: var( --ak-on-accent ) !important;
 }
 
 /* Deep calendar / date selection. */
