@@ -1166,14 +1166,14 @@
 				active.hidden = true;
 			}
 
-			var totals = res.totals || { visits: 0, pageviews: 0 };
+			var totals = res.totals || { uniques: 0, pageviews: 0 };
 
 			// Metrics — ALWAYS shown (a clear "0 / 0" beats a blank panel when a short
-			// window like Today has no views yet). Visits / Page views, each with a
-			// ▲/▼ trend vs the previous equal-length period, then extension tiles.
+			// window like Today has no views yet). Unique visitors / Page views, each
+			// with a ▲/▼ trend vs the previous equal-length period, then extension tiles.
 			var prev = res.previous || null;
 			var tiles = [
-				metric( num( totals.visits ), I.statsVisits || 'Visits', prev ? trendFrom( totals.visits, prev.visits ) : null ),
+				metric( num( totals.uniques ), I.statsUniques || 'Unique visitors', prev ? trendFrom( totals.uniques, prev.uniques ) : null ),
 				metric( num( totals.pageviews ), I.statsPageviews || 'Page views', prev ? trendFrom( totals.pageviews, prev.pageviews ) : null )
 			].concat( extraCards( res.cards || [] ) );
 			body.appendChild( el( 'div', { 'class': 'ak-stats__metrics' }, tiles ) );

@@ -1167,8 +1167,12 @@ msgid "Track who is signed in (read from existing WordPress sessions, no extra t
 msgstr "Identifie qui est connecté (lu depuis les sessions WordPress existantes, sans suivi supplémentaire) et l'affiche sur le tableau de bord, avec un filtre « En ligne » et une colonne « Dernière connexion » sur l'écran Utilisateurs. Désactivé masque le tout."
 
 #: inc/features/stats/class-stats-page.php:133
-msgid "Traffic from the built-in, cookieless tracker. Pick any date range to see visits, page views, your most-viewed pages and where visitors come from."
-msgstr "Trafic issu du traqueur intégré sans cookie. Choisissez une plage de dates pour voir les visites, les pages vues, vos pages les plus consultées et la provenance des visiteurs."
+msgid "Traffic from the built-in, cookieless tracker. Pick any date range to see unique visitors, page views, your most-viewed pages and where visitors come from."
+msgstr "Trafic issu du traqueur intégré sans cookie. Choisissez une plage de dates pour voir les visiteurs uniques, les pages vues, vos pages les plus consultées et la provenance des visiteurs."
+
+#: inc/features/stats/class-stats-page.php:134
+msgid "Unique visitors"
+msgstr "Visiteurs uniques"
 
 #: inc/settings/class-settings-catalog.php:120
 msgid "Traffic stats"

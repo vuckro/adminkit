@@ -1149,7 +1149,11 @@ msgid "Track who is signed in (read from existing WordPress sessions, no extra t
 msgstr ""
 
 #: inc/features/stats/class-stats-page.php:133
-msgid "Traffic from the built-in, cookieless tracker. Pick any date range to see visits, page views, your most-viewed pages and where visitors come from."
+msgid "Traffic from the built-in, cookieless tracker. Pick any date range to see unique visitors, page views, your most-viewed pages and where visitors come from."
+msgstr ""
+
+#: inc/features/stats/class-stats-page.php:134
+msgid "Unique visitors"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:120

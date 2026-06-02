@@ -131,8 +131,8 @@ class AdminKit_Stats_Page {
 	public static function i18n() {
 		return array(
 			'statsTab'             => __( 'Statistics', 'adminkit' ),
-			'statsIntro'           => __( 'Traffic from the built-in, cookieless tracker. Pick any date range to see visits, page views, your most-viewed pages and where visitors come from.', 'adminkit' ),
-			'statsVisits'          => __( 'Visits', 'adminkit' ),
+			'statsIntro'           => __( 'Traffic from the built-in, cookieless tracker. Pick any date range to see unique visitors, page views, your most-viewed pages and where visitors come from.', 'adminkit' ),
+			'statsUniques'         => __( 'Unique visitors', 'adminkit' ),
 			'statsPageviews'       => __( 'Page views', 'adminkit' ),
 			'statsVsPrev'          => __( 'vs previous period', 'adminkit' ),
 			'statsTrendNew'        => __( 'New', 'adminkit' ),
@@ -234,15 +234,18 @@ class AdminKit_Stats_Page {
 		$series   = array();
 		$tpv      = 0;
 		$tv       = 0;
+		$tu       = 0;
 		$start_ts = strtotime( $start );
 		$end_ts   = strtotime( $end );
 		for ( $ts = $start_ts; $ts <= $end_ts; $ts += DAY_IN_SECONDS ) {
 			$d  = gmdate( 'Y-m-d', $ts );
 			$pv = isset( $sum['days'][ $d ]['pageviews'] ) ? (int) $sum['days'][ $d ]['pageviews'] : 0;
 			$v  = isset( $sum['days'][ $d ]['visits'] ) ? (int) $sum['days'][ $d ]['visits'] : 0;
-			$series[] = array( 'date' => $d, 'pageviews' => $pv, 'visits' => $v );
+			$u  = isset( $sum['days'][ $d ]['uniques'] ) ? (int) $sum['days'][ $d ]['uniques'] : 0;
+			$series[] = array( 'date' => $d, 'pageviews' => $pv, 'visits' => $v, 'uniques' => $u );
 			$tpv += $pv;
 			$tv  += $v;
+			$tu  += $u;
 		}
 
 		$pages = array();
@@ -275,8 +278,8 @@ class AdminKit_Stats_Page {
 			'preset'   => $state['preset'],
 			'start'    => $start,
 			'end'      => $end,
-			'totals'   => array( 'visits' => $tv, 'pageviews' => $tpv ),
-			'previous' => array( 'visits' => (int) $previous['visits'], 'pageviews' => (int) $previous['pageviews'] ),
+			'totals'   => array( 'visits' => $tv, 'pageviews' => $tpv, 'uniques' => $tu ),
+			'previous' => array( 'visits' => (int) $previous['visits'], 'pageviews' => (int) $previous['pageviews'], 'uniques' => (int) $previous['uniques'] ),
 			'active'   => (int) AdminKit_Stats_Store::active_visitors( time() ),
 			'series'   => $series,
 			'pages'    => $pages,

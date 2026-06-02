@@ -1,8 +1,8 @@
 <?php
 /**
  * Stats dashboard card — ONE focused card for the cookieless tracker:
- * active-visitors pulse, headline metrics (visits + page views), a sparkline,
- * and the top pages / top sources lists for a user-chosen date range.
+ * active-visitors pulse, headline metrics (unique visitors + page views), a
+ * sparkline, and the top pages / top sources lists for a user-chosen date range.
  *
  * The user picks the range via two native date inputs (start + end). Their
  * choice is persisted in `user_meta['adminkit_stats_range']` and consumed on
@@ -155,23 +155,25 @@ class AdminKit_Stats_Dashboard {
 	}
 
 	/**
-	 * Sum site visits + page views over a window via the cached summary primitive.
-	 * Asks limit 1 so no top-N rows are pulled (day totals are independent of the
-	 * list limit) — a cheap, cached read.
+	 * Sum site unique visitors + visits + page views over a window via the cached
+	 * summary primitive. Asks limit 1 so no top-N rows are pulled (day totals are
+	 * independent of the list limit) — a cheap, cached read.
 	 *
 	 * @param string $start Y-m-d
 	 * @param string $end   Y-m-d
-	 * @return array{visits:int,pageviews:int}
+	 * @return array{visits:int,pageviews:int,uniques:int}
 	 */
 	public static function range_totals( $start, $end ) {
 		$sum = AdminKit_Stats_Store::summary_range( $start, $end, 1 );
 		$v   = 0;
 		$pv  = 0;
+		$u   = 0;
 		foreach ( (array) ( isset( $sum['days'] ) ? $sum['days'] : array() ) as $d ) {
 			$pv += isset( $d['pageviews'] ) ? (int) $d['pageviews'] : 0;
 			$v  += isset( $d['visits'] ) ? (int) $d['visits'] : 0;
+			$u  += isset( $d['uniques'] ) ? (int) $d['uniques'] : 0;
 		}
-		return array( 'visits' => $v, 'pageviews' => $pv );
+		return array( 'visits' => $v, 'pageviews' => $pv, 'uniques' => $u );
 	}
 
 	/**
@@ -393,16 +395,16 @@ class AdminKit_Stats_Dashboard {
 		// Continuous oldest→newest day series (no gaps) + window totals.
 		$series_pv = array();
 		$total_pv  = 0;
-		$total_v   = 0;
+		$total_u   = 0;
 		$start_ts  = strtotime( $start );
 		$end_ts    = strtotime( $end );
 		for ( $ts = $start_ts; $ts <= $end_ts; $ts += DAY_IN_SECONDS ) {
 			$d  = gmdate( 'Y-m-d', $ts );
 			$pv = isset( $sum['days'][ $d ]['pageviews'] ) ? (int) $sum['days'][ $d ]['pageviews'] : 0;
-			$v  = isset( $sum['days'][ $d ]['visits'] ) ? (int) $sum['days'][ $d ]['visits'] : 0;
+			$u  = isset( $sum['days'][ $d ]['uniques'] ) ? (int) $sum['days'][ $d ]['uniques'] : 0;
 			$series_pv[] = $pv;
 			$total_pv   += $pv;
-			$total_v    += $v;
+			$total_u    += $u;
 		}
 
 		// Trend baseline — the previous equal-length window (shared helper, cached).
@@ -423,9 +425,9 @@ class AdminKit_Stats_Dashboard {
 		// previous period (same logic + look as the SPA stats page).
 		$out .= '<div class="ak-dash__stats-top">';
 		$out .= '<div class="ak-dash__stats-metric"><span class="ak-dash__stats-num-row">'
-			. '<span class="ak-dash__stats-num">' . esc_html( number_format_i18n( $total_v ) ) . '</span>'
-			. self::trend_badge( $total_v, $prev['visits'] )
-			. '</span><span class="ak-dash__stats-lbl">' . esc_html__( 'Visits', 'adminkit' ) . '</span></div>';
+			. '<span class="ak-dash__stats-num">' . esc_html( number_format_i18n( $total_u ) ) . '</span>'
+			. self::trend_badge( $total_u, $prev['uniques'] )
+			. '</span><span class="ak-dash__stats-lbl">' . esc_html__( 'Unique visitors', 'adminkit' ) . '</span></div>';
 		$out .= '<div class="ak-dash__stats-metric"><span class="ak-dash__stats-num-row">'
 			. '<span class="ak-dash__stats-num">' . esc_html( number_format_i18n( $total_pv ) ) . '</span>'
 			. self::trend_badge( $total_pv, $prev['pageviews'] )
