@@ -220,7 +220,7 @@ body.adminkit .el-input__inner,
 body.adminkit .el-textarea__inner,
 body.adminkit .el-input-group__append,
 body.adminkit .el-input-group__prepend {
-	background: var(--ak-surface);
+	background: var(--ak-input-bg);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -243,7 +243,7 @@ body.adminkit .el-input.is-disabled .el-input__inner {
 
 /* Select + its label/value */
 body.adminkit .el-select .el-input__inner {
-	background: var(--ak-surface);
+	background: var(--ak-input-bg);
 }
 
 body.adminkit .el-form-item__label {
@@ -411,11 +411,13 @@ body.adminkit .lead-text {
 	color: var(--ak-primary);
 }
 
+/* Secondary controls — a selected filter chip + the shortcut hint pill.
+   Neutral, not brand (the brand tint read as a primary action). */
 body.adminkit .ff_filter_selected,
 body.adminkit .shortcut {
-	background: var(--ak-primary-subtle);
-	border-color: var(--ak-primary);
-	color: var(--ak-primary);
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
 }
 
 body.adminkit .ff_badge {
@@ -487,6 +489,11 @@ body.adminkit .row-actions-item.trash a {
 	color: var(--ak-error);
 }
 
+/* The 1px separator (#ddd) drawn between row-action items. */
+body.adminkit .row-actions-item:after {
+	background-color: var(--ak-border);
+}
+
 /* Shortcode pill ([fluentform id="…"]) */
 body.adminkit .ff_shortcode_wrap code,
 body.adminkit .ff_shortcode_btn {
@@ -506,7 +513,7 @@ body.adminkit .el-switch__label {
 }
 
 body.adminkit .el-switch__label.is-active {
-	color: var(--ak-primary);
+	color: var(--ak-text);
 }
 
 /* Sortable column header carets — neutral at rest, primary when the
@@ -572,7 +579,7 @@ body.adminkit .ff_card_head,
 body.adminkit .ff_card_body,
 body.adminkit .ff_report_widget,
 body.adminkit .ff_chart_wrapper {
-	background: var(--ak-surface);
+	background: var(--ak-elevated);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -769,9 +776,8 @@ body.adminkit .form-stats-section .stats-card:hover {
 	box-shadow: none;
 }
 
-body.adminkit .form-stats-section .stats-card .stats-icon {
-	background: var(--ak-primary-subtle);
-}
+/* NB: .stats-card .stats-icon keeps the host's pale #ebf1ff chip — it holds a
+   multi-tone glyph that needs a light backdrop; a dark subtle tint hid it. */
 
 body.adminkit .form-stats-section .stats-card .stats-content .stats-title {
 	color: var(--ak-text-muted);
@@ -845,7 +851,7 @@ body.adminkit .fluentform-reports .no-data-state {
 
 /* Form-selector field (#fff + #e5e7eb, near-black focus border #0e121b). */
 body.adminkit .fluentform-reports .form-selector .el-select .el-input__inner {
-	background: var(--ak-surface);
+	background: var(--ak-input-bg);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
 }
@@ -1339,4 +1345,114 @@ body.adminkit .el-table__fixed-right {
    wrong on the dark rail; hide it (the active pill already marks the item). */
 body.adminkit .ff_list_submenu li:after {
 	background-image: none;
+}
+
+
+/* ========== 30. Submission heatmap + completion gauge + loading + popovers ========== */
+
+/* Submission Timeline heatmap (Reports). The host paints cells on a fixed blue
+   ramp (#e6f0ff → #0056e0) via .level-N classes — too many to map one by one.
+   Rebuild it as a single-hue intensity ramp mixed from --ak-primary so it flips
+   with the theme automatically. level-0 = no data → neutral muted surface. */
+body.adminkit .data-cell.level-0,
+body.adminkit .heatmap-color-scale-item.level-0 {
+	background-color: var(--ak-surface-muted);
+}
+body.adminkit .data-cell.level-1,
+body.adminkit .heatmap-color-scale-item.level-1 {
+	background-color: color-mix(in srgb, var(--ak-primary) 16%, var(--ak-surface));
+}
+body.adminkit .data-cell.level-2,
+body.adminkit .heatmap-color-scale-item.level-2 {
+	background-color: color-mix(in srgb, var(--ak-primary) 34%, var(--ak-surface));
+}
+body.adminkit .data-cell.level-3,
+body.adminkit .heatmap-color-scale-item.level-3 {
+	background-color: color-mix(in srgb, var(--ak-primary) 54%, var(--ak-surface));
+}
+body.adminkit .data-cell.level-4,
+body.adminkit .heatmap-color-scale-item.level-4 {
+	background-color: color-mix(in srgb, var(--ak-primary) 75%, var(--ak-surface));
+}
+body.adminkit .data-cell.level-5,
+body.adminkit .heatmap-color-scale-item.level-5 {
+	background-color: var(--ak-primary);
+}
+
+/* Heatmap grid frame + axis labels (#e5e7eb rules; #6b7280/#374151/#303133 ink). */
+body.adminkit .heatmap-grid {
+	border-bottom-color: var(--ak-border);
+}
+body.adminkit .heatmap-grid .date-cell {
+	color: var(--ak-text);
+}
+body.adminkit .heatmap-grid .date-cell:first-child {
+	border-color: var(--ak-border);
+}
+body.adminkit .heatmap-grid .date-cell .date-day {
+	color: var(--ak-text-muted);
+}
+body.adminkit .heatmap-container .time-header {
+	color: var(--ak-text-muted);
+}
+body.adminkit .heatmap-container .time-header > .el-icon-arrow-right {
+	color: var(--ak-text);
+}
+
+/* Completion-rate gauge + bars. Tracks (#f2f2f2 / #e1e4ea) → muted surface; the
+   centred % (#1f2937) + values → heading; labels (#6b7280) → muted. */
+body.adminkit .completion-rates-gauge-section .stats-bar-horizontal,
+body.adminkit .completion-stats .stat-row .stats-bar-vertical {
+	background-color: var(--ak-surface-muted);
+}
+body.adminkit .gauge-center .gauge-percentage,
+body.adminkit .completion-stats .stat-item .stat-details .stat-value {
+	color: var(--ak-heading);
+}
+body.adminkit .gauge-center .gauge-label,
+body.adminkit .completion-stats .stat-item .stat-details .stat-label {
+	color: var(--ak-text-muted);
+}
+/* Completion status chips — host uses violet "incomplete" / green "complete";
+   route to semantic warning / success soft chips. */
+body.adminkit .completion-stats .stat-item .stat-icon.complete {
+	background-color: var(--ak-success-subtle);
+	color: var(--ak-success);
+}
+body.adminkit .completion-stats .stat-item .stat-icon.incomplete {
+	background-color: var(--ak-warning-subtle);
+	color: var(--ak-warning);
+}
+
+/* Element UI loading overlay — the white hsla(0,0%,100%,.9) veil that flashes
+   over a panel while it fetches (the white bar on Entries). Theme veil + spinner. */
+body.adminkit .el-loading-mask {
+	background-color: color-mix(in srgb, var(--ak-surface) 90%, transparent);
+}
+body.adminkit .el-loading-spinner .path {
+	stroke: var(--ak-primary);
+}
+
+/* Advanced-search popover (#fff card + #ececec inner date-range well). */
+body.adminkit .ff_advanced_search {
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+}
+body.adminkit .ff_advanced_search_date_range {
+	background-color: var(--ak-surface-muted);
+}
+
+/* Suggested-plugins cards: the "Configure" CTA (#e8f2ff/#1a7efb) + hover border. */
+body.adminkit .suggested_plugins_view .ff_card_horizontal .plugin_actions .plugin_configure_btn {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+}
+body.adminkit .suggested_plugins_view .ff_card_horizontal:hover {
+	border-color: var(--ak-border-strong);
+}
+
+/* Field-type icon chips in the editor: a #ebf1ff rounded square drawn as an
+   inline SVG <path fill="#ebf1ff">. A CSS fill beats the presentation attribute. */
+body.adminkit svg path[fill="#ebf1ff"] {
+	fill: var(--ak-primary-subtle);
 }
