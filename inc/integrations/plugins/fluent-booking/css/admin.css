@@ -260,6 +260,15 @@ body.adminkit.toplevel_page_fluent-booking .fcal_settings_sidebar li a.router-li
 	color: var( --ak-heading ) !important;
 }
 
+/* Settings sidebar link HOVER — neutral too (a subtle hover surface), not the
+   generic brand `body.adminkit a:hover`. No brand border/text. */
+body.adminkit.toplevel_page_fluent-booking .fcal_settings_sidebar li a:hover,
+body.adminkit.toplevel_page_fluent-booking .fcal_settings_sidebar li a:focus {
+	background-color: var( --ak-hover-bg ) !important;
+	border-color: transparent !important;
+	color: var( --ak-heading ) !important;
+}
+
 /* 3c. Calendar / date-picker selection — selected day, today marker, range
    endpoints, hover. Filled with brand, text white. */
 body.adminkit.toplevel_page_fluent-booking .el-calendar-table td.is-selected .el-calendar-day p.is-selected,

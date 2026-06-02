@@ -298,10 +298,16 @@ body.adminkit.toplevel_page_fluent-cart .el-button--primary.is-disabled:hover {
 	color: var( --ak-text-muted ) !important;
 }
 
-/* Brand text — links, checked labels, active tabs, pagination, selected option. */
+/* Checked checkbox LABEL — neutral, not brand (a checked box already signals
+   state via its fill; a coloured label reads odd). Override explicitly so it
+   doesn't fall back to Element Plus's stock blue checked-label colour. */
+body.adminkit.toplevel_page_fluent-cart .el-checkbox.is-checked .el-checkbox__label {
+	color: var( --ak-text ) !important;
+}
+
+/* Brand text — links, checked radio labels, active tabs, pagination, selected option. */
 body.adminkit.toplevel_page_fluent-cart .el-link--primary,
 body.adminkit.toplevel_page_fluent-cart .el-link--primary .el-link__inner,
-body.adminkit.toplevel_page_fluent-cart .el-checkbox.is-checked .el-checkbox__label,
 body.adminkit.toplevel_page_fluent-cart .el-radio.is-checked .el-radio__label,
 body.adminkit.toplevel_page_fluent-cart .el-tabs__item:hover,
 body.adminkit.toplevel_page_fluent-cart .el-tabs__item.is-active,
