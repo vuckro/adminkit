@@ -43,6 +43,12 @@ body.adminkit.toplevel_page_fluent-community {
 	   default that reads it is on-brand. The literal copies are §3. */
 	--el-color-primary: var( --ak-primary );
 
+	/* FluentCommunity's own brand var — UNSET on this screen, so every
+	   `var(--fcom-primary-button, #2B2E33)` (e.g. the checked bordered radio's
+	   border) falls back to the near-black literal. Define it on-brand so those
+	   resolve to --ak-primary instead. */
+	--fcom-primary-button: var( --ak-primary );
+
 	/* The blue source EP never exposes as a token: every
 	   `rgba(var(--el-color-primary-rgb), a)` focus ring / selection fill falls back
 	   to EP's stock #409eff when unset. Pin it to the brand rgb (same literal as
@@ -285,4 +291,43 @@ body.adminkit.toplevel_page_fluent-community .fcom_step_header::before {
 	font-size: 18px;
 	font-weight: 700;
 	letter-spacing: 0.01em;
+}
+
+
+/* ============================================================
+   5. NATIVE WP INPUTS + extra hard-coded literals
+   This adapter BAILS AdminKit's form primitives (the wizard is Element Plus), but
+   the screen also carries plain WP `input[type=*]` / select / textarea styled by
+   WP core forms.css (#fff / #949494 / #1e1e1e) — unthemed in dark. Theme them
+   here. Scoped (0,3,1) beats WP core (0,1,1), so no !important.
+   ============================================================ */
+body.adminkit.toplevel_page_fluent-community input[type="text"],
+body.adminkit.toplevel_page_fluent-community input[type="email"],
+body.adminkit.toplevel_page_fluent-community input[type="url"],
+body.adminkit.toplevel_page_fluent-community input[type="password"],
+body.adminkit.toplevel_page_fluent-community input[type="search"],
+body.adminkit.toplevel_page_fluent-community input[type="number"],
+body.adminkit.toplevel_page_fluent-community input[type="tel"],
+body.adminkit.toplevel_page_fluent-community input[type="date"],
+body.adminkit.toplevel_page_fluent-community input[type="datetime-local"],
+body.adminkit.toplevel_page_fluent-community input[type="month"],
+body.adminkit.toplevel_page_fluent-community input[type="week"],
+body.adminkit.toplevel_page_fluent-community input[type="time"],
+body.adminkit.toplevel_page_fluent-community input[type="color"],
+body.adminkit.toplevel_page_fluent-community select,
+body.adminkit.toplevel_page_fluent-community textarea {
+	background-color: var( --ak-input-bg );
+	border-color: var( --ak-border );
+	color: var( --ak-text );
+}
+
+/* Feature cards + the checked template radio hard-code `background:white` (+ a
+   #e2e4ea border on .fcom_feature) from a non-onboarding bundle that also loads
+   here — stubborn .fcom_* literals, so !important like the §3 group. */
+body.adminkit.toplevel_page_fluent-community .fcom_feature {
+	background: var( --ak-surface ) !important;
+	border-color: var( --ak-border ) !important;
+}
+body.adminkit.toplevel_page_fluent-community .fcom_template_group .el-radio.is-checked {
+	background: var( --ak-surface ) !important;
 }
