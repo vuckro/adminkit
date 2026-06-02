@@ -237,29 +237,34 @@ class AdminKit_Toolbar_Manager {
 			return array();
 		}
 
-		// Top-level = a NON-group node whose parent is a root group (parent === false),
-		// i.e. the items actually shown in the bar. Record which group (the default left
-		// cluster vs the right `top-secondary`) so the editor can keep them apart.
+		// Classify each node against WP's verified admin-bar structure (see
+		// wp-includes/admin-bar.php): the ONLY top-level group is `top-secondary`
+		// (the right cluster — account, search…), added with no parent; every other
+		// group is a dropdown sub-group (parent = an item). get_nodes() returns the
+		// raw, UNBOUND nodes, so a top-level item's parent is still false/'' (it is
+		// rebound to 'root' only later in _bind, during render):
+		//   • parent false / '' / 'root' → left cluster
+		//   • parent 'top-secondary'     → right cluster
+		//   • anything else              → a dropdown child (skip)
 		$out = array();
 		foreach ( $nodes as $id => $node ) {
-			if ( ! empty( $node->group ) ) {
-				continue; // skip the group containers themselves
+			$id = (string) $id;
+			if ( 'root' === $id || ! empty( $node->group ) ) {
+				continue; // the root container + group wrappers aren't items
 			}
-			$parent = isset( $node->parent ) ? (string) $node->parent : '';
-			$group  = '';
-			if ( '' === $parent || false === $node->parent ) {
-				$group = 'root';
-			} elseif ( isset( $nodes[ $parent ] ) && ! empty( $nodes[ $parent ]->group ) && empty( $nodes[ $parent ]->parent ) ) {
-				// child of a top-level group (e.g. `top-secondary`) → still a top-level item
-				$group = ( 'top-secondary' === $parent ) ? 'secondary' : 'root';
+			$parent = isset( $node->parent ) ? $node->parent : false;
+			if ( false === $parent || '' === $parent || 'root' === $parent ) {
+				$side = 'root';
+			} elseif ( 'top-secondary' === $parent ) {
+				$side = 'secondary';
 			} else {
-				continue; // a dropdown child — not top level
+				continue; // a dropdown child — not a top-level bar item
 			}
 
 			$out[] = array(
-				'id'    => (string) $id,
+				'id'    => $id,
 				'label' => self::node_label( $node ),
-				'group' => $group,
+				'group' => $side,
 			);
 		}
 		return $out;

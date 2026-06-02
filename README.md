@@ -338,10 +338,10 @@ That's it — the boot orchestrator picks the folder up automatically on `after_
 
 This README is the single source. (The in-app dashboard widget that used to mirror it has been removed — the maintenance overhead of keeping two surfaces in sync wasn't worth the duplication.)
 
-- **Recently shipped** — custom dashboard (greeting · quick actions · stat tiles · recent activity · site-health · storage); notification center (a toolbar bell that collects promotional notice nags into a side drawer); hide admin footer; a mobile-responsive pass over the chrome + list tables.
+- **Recently shipped** — menu manager (reorder · per-item icons · hide entries) and a matching toolbar manager (reorder + hide the admin bar's top-level items, left / right sides); cookieless traffic stats (opt-in, unique-visitor counting); custom dashboard (greeting · quick actions · stat tiles · recent activity · site-health · storage); notification center (a toolbar bell that collects promotional notice nags into a side drawer); hide admin footer; a mobile-responsive pass over the chrome + list tables.
 - **In progress** — broader plugin coverage: more hand-tuned dark-mode adapters so the long tail of plugins looks right out of the box.
 - **Next** — more native screens styled; in-app palette editor; colour sync; more provider adapters; accessibility / contrast checks; import / export settings; per-role visibility; admin-bar polish.
-- **Planned** — command palette (⌘K); theme variants; per-user theme preference; native menu editor; white-label; custom admin CSS; density / compact mode; typography controls; Bricks dynamic logo tag.
+- **Planned** — command palette (⌘K); theme variants; per-user theme preference; white-label; custom admin CSS; density / compact mode; typography controls; Bricks dynamic logo tag.
 
 ## Contributing
 

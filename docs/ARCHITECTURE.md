@@ -217,6 +217,13 @@ individually switch-off-able:
   self-demote). Display name is intentionally not exposed here — that's a
   per-user preference that belongs on user-edit.php. Off = no Quick Edit
   link; the native "Edit" link to user-edit.php still works.
+- **On by default** (structural editors, each with its own AdminKit subpage):
+  `menu_manager_enabled` (Menu tab — reorder the admin menu + submenus, per-item
+  icons, hide entries) and `toolbar_manager_enabled` (Toolbar tab — reorder + hide
+  the top-level admin-bar nodes, split into the bar's left / right sides). Both
+  apply late over the LIVE structure (`admin_menu` / `admin_bar_menu`); the toolbar
+  editor fetches its nodes over REST (the bar renders too late to ship in boot data).
+  Toggling either off restores the native structure and keeps your saved layout.
 - **Availability-gated, default ON**: `bricks_builder_enabled` restyles the
   Bricks builder UI when the Bricks theme is active; the Features row is locked
   on non-Bricks sites.

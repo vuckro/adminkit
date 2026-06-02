@@ -742,6 +742,14 @@ msgstr "Menu"
 msgid "Menu manager"
 msgstr "Gestionnaire de menu"
 
+#: inc/settings/class-settings-catalog.php:84
+msgid "Toolbar manager"
+msgstr "Gestionnaire de barre d’outils"
+
+#: inc/settings/class-settings-catalog.php:85
+msgid "Reorder and hide the top-level items in the admin toolbar (the bar across the top of the screen) — configured in the Toolbar tab. Off restores the native toolbar (your saved layout is kept)."
+msgstr "Réorganisez et masquez les éléments de premier niveau de la barre d’outils d’administration (la barre en haut de l’écran) — configuré dans l’onglet Barre d’outils. Désactivé rétablit la barre native (votre disposition est conservée)."
+
 #: inc/wp-core/class-local-avatars.php:306 inc/wp-core/class-user-quick-edit.php:254
 msgid "Missing user id."
 msgstr "Identifiant d’utilisateur manquant."
@@ -1307,20 +1315,24 @@ msgid "Toolbar"
 msgstr "Barre d’outils"
 
 #: inc/settings/class-settings-page.php:394
-msgid "Reorder and hide the top-level items in the admin toolbar. Use the arrows to reorder; the eye to hide. Hidden items are removed from the bar only — they don't block access. Changes apply after you save."
-msgstr "Réorganisez et masquez les éléments de premier niveau de la barre d’outils d’administration. Les flèches pour réordonner ; l’œil pour masquer. Les éléments masqués sont seulement retirés de la barre — ils ne bloquent pas l’accès. Les changements s’appliquent après enregistrement."
+msgid "Reorder and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn't block access. Reset restores the native layout. Changes apply after you save."
+msgstr "Réorganisez et masquez les éléments de votre barre d’outils d’administration. Glissez la poignée (ou utilisez les flèches) pour réordonner au sein de chaque côté ; l’œil retire un élément de la barre uniquement — il ne bloque pas l’accès. Réinitialiser rétablit la disposition native. Les changements s’appliquent après enregistrement."
 
-#: inc/settings/class-settings-page.php:398
+#: inc/settings/class-settings-page.php:395
+msgid "Reset toolbar"
+msgstr "Réinitialiser la barre"
+
+#: inc/settings/class-settings-page.php:397
 msgid "No toolbar items found."
 msgstr "Aucun élément de barre d’outils trouvé."
+
+#: inc/settings/class-settings-page.php:398
+msgid "Left"
+msgstr "Gauche"
 
 #: inc/settings/class-settings-page.php:399
 msgid "Right"
 msgstr "Droite"
-
-#: inc/settings/class-settings-page.php:400
-msgid "Shown on the right side of the bar (e.g. your account)."
-msgstr "Affiché à droite de la barre (ex. votre compte)."
 
 #: inc/features/dashboard/class-custom-dashboard.php:665
 msgid "Working late, %s"

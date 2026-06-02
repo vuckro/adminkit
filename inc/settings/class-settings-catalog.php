@@ -73,6 +73,12 @@ class AdminKit_Settings_Catalog {
 				'desc'  => __( 'Reorder the admin menu and submenus, set a per-item icon (an AdminKit glyph, a WordPress dashicon, or your own), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept).', 'adminkit' ),
 			),
 			array(
+				'key'   => 'toolbar_manager_enabled',
+				'group' => $appearance,
+				'label' => __( 'Toolbar manager', 'adminkit' ),
+				'desc'  => __( 'Reorder and hide the top-level items in the admin toolbar (the bar across the top of the screen) — configured in the Toolbar tab. Off restores the native toolbar (your saved layout is kept).', 'adminkit' ),
+			),
+			array(
 				'key'   => 'hide_footer_enabled',
 				'group' => $appearance,
 				'label' => __( 'Hide admin footer', 'adminkit' ),

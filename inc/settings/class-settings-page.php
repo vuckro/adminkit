@@ -391,12 +391,11 @@ class AdminKit_Settings_Page {
 
 				// Toolbar manager tab.
 				'toolbarTab'        => __( 'Toolbar', 'adminkit' ),
-				'toolbarIntro'      => __( 'Reorder and hide the top-level items in the admin toolbar. Use the arrows to reorder; the eye to hide. Hidden items are removed from the bar only — they don\'t block access. Changes apply after you save.', 'adminkit' ),
-				'toolbarSave'       => __( 'Save changes', 'adminkit' ),
-				'toolbarSaved'      => __( 'Saved', 'adminkit' ),
+				'toolbarIntro'      => __( 'Reorder and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn\'t block access. Reset restores the native layout. Changes apply after you save.', 'adminkit' ),
+				'toolbarReset'      => __( 'Reset toolbar', 'adminkit' ),
 				'toolbarEmpty'      => __( 'No toolbar items found.', 'adminkit' ),
+				'toolbarLeft'       => __( 'Left', 'adminkit' ),
 				'toolbarRight'      => __( 'Right', 'adminkit' ),
-				'toolbarRightHint'  => __( 'Shown on the right side of the bar (e.g. your account).', 'adminkit' ),
 
 				// Menu manager tab.
 				'menuIntro'         => __( 'Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access.', 'adminkit' ),

@@ -75,6 +75,12 @@
 	state.menu = ( SCREEN === 'menu' && MM.menu && MM.menu.length ) ? buildMenuModel( MM.menu, MM.config || { top: [], sub: {} } ) : [];
 	state.menuDirty = false;
 
+	// Toolbar working-model — { left, right } sides of the admin bar, filled async from
+	// REST on the Toolbar screen. Like the menu, it does NOT own a Save button: edits
+	// flag state.toolbarDirty and ride the shared "Save changes" bar (see save()).
+	state.toolbar = { left: [], right: [] };
+	state.toolbarDirty = false;
+
 	// --- tiny DOM helper -----------------------------------------------------
 	function el( tag, attrs, kids ) {
 		var n = document.createElement( tag );
@@ -1854,73 +1860,104 @@
 
 	function markMenuDirty() { state.menuDirty = true; markDirty(); }
 
-	// Toolbar editor — reorder + hide the TOP-LEVEL admin-bar nodes. The live nodes are
-	// fetched over REST (the bar renders too late to ship in boot data), reordered with
-	// the ↑↓ controls (accessible), hidden with the eye, and saved back to the same route.
+	// Toolbar editor — reorder + hide the TOP-LEVEL admin-bar nodes, split into the bar's
+	// two native sides (the left default group vs the right `top-secondary` / account
+	// cluster) so reordering never fights WP's group boundary — dragging stays within a
+	// side. Live nodes are fetched over REST (the bar renders too late to ship in boot
+	// data); reorder via the drag handle or ↑↓; hide via the eye; Reset returns to the
+	// native layout. No standalone Save — edits ride the shared "Save changes" bar.
 	// Top level only; no rename / custom items / icons (kept deliberately simple).
 	function buildToolbar() {
 		var TB = D.toolbar || {};
 		var p  = el( 'section', { 'class': 'ak-panel ak-panel--menu', role: 'tabpanel' }, [ intro( I.toolbarIntro ) ] );
 		var listWrap = el( 'div', { 'class': 'ak-menu-tree' } );
-		var status   = el( 'span', { 'class': 'ak-toolbar__status', hidden: 'hidden', role: 'status' } );
-		var model    = []; // [{ id, label, group, hidden }]
+		var nodesRaw = []; // the pristine fetched nodes, kept so Reset can rebuild
 
-		var saveBtn = el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--primary', text: I.toolbarSave || 'Save changes', disabled: 'disabled', onclick: save } );
-		p.appendChild( el( 'div', { 'class': 'ak-actions ak-menu-toolbar' }, [ saveBtn, status ] ) );
+		p.appendChild( el( 'div', { 'class': 'ak-actions ak-menu-toolbar' }, [
+			el( 'button', { type: 'button', 'class': 'ak-btn ak-btn--ghost', text: I.toolbarReset || 'Reset', onclick: reset } )
+		] ) );
 		p.appendChild( listWrap );
-
-		function markDirty() { saveBtn.disabled = false; status.hidden = true; }
 
 		function load() {
 			if ( ! apiFetch || ! TB.route ) { listWrap.textContent = I.statsNone || '—'; return; }
-			var base = TB.route.charAt( 0 ) === '/' ? TB.route : '/' + TB.route;
-			apiFetch( { path: base } )
-				.then( function ( res ) { model = toModel( ( res && res.nodes ) || [], ( res && res.config ) || {} ); render(); } )
+			apiFetch( { path: tbPath() } )
+				.then( function ( res ) {
+					nodesRaw = ( res && res.nodes ) || [];
+					state.toolbar = toSides( nodesRaw, ( res && res.config ) || {} );
+					render();
+				} )
 				.catch( function () { listWrap.textContent = I.statsNone || '—'; } );
 		}
 
-		// Order the live nodes by the saved order (new/unseen nodes appended in native
-		// order), and carry the hidden flag.
-		function toModel( nodes, config ) {
+		// Build { left, right } from the live nodes + a saved layout: honour the saved
+		// order WITHIN each side, append any new/unseen node in native order, carry hidden.
+		function toSides( nodes, config ) {
 			var hidden = {};
 			( config.hidden || [] ).forEach( function ( id ) { hidden[ id ] = true; } );
 			var byId = {};
 			nodes.forEach( function ( n ) { byId[ n.id ] = { id: n.id, label: n.label, group: n.group, hidden: !! hidden[ n.id ] }; } );
-			var out = [];
-			( config.order || [] ).forEach( function ( id ) { if ( byId[ id ] ) { out.push( byId[ id ] ); delete byId[ id ]; } } );
-			nodes.forEach( function ( n ) { if ( byId[ n.id ] ) { out.push( byId[ n.id ] ); delete byId[ n.id ]; } } );
-			return out;
+			var sides = { left: [], right: [] }, seen = {};
+			function place( it ) { sides[ it.group === 'secondary' ? 'right' : 'left' ].push( it ); }
+			( config.order || [] ).forEach( function ( id ) { if ( byId[ id ] && ! seen[ id ] ) { seen[ id ] = 1; place( byId[ id ] ); } } );
+			nodes.forEach( function ( n ) { if ( ! seen[ n.id ] ) { seen[ n.id ] = 1; place( byId[ n.id ] ); } } );
+			return sides;
 		}
 
-		function move( i, dir ) {
-			var to = i + dir;
-			if ( to < 0 || to >= model.length ) { return; }
-			var tmp = model[ i ]; model[ i ] = model[ to ]; model[ to ] = tmp;
-			render(); markDirty();
+		function reset() {
+			state.toolbar = toSides( nodesRaw, {} ); // native order, nothing hidden
+			render();
+			markToolbarDirty();
+		}
+
+		// Swap a row with its neighbour (↑↓), within its own side only.
+		function move( side, i, dir ) {
+			var list = state.toolbar[ side ], to = i + dir;
+			if ( to < 0 || to >= list.length ) { return; }
+			var tmp = list[ i ]; list[ i ] = list[ to ]; list[ to ] = tmp;
+			render(); markToolbarDirty();
+		}
+		// Splice a dragged row out and back in at a new index, same side.
+		function moveTo( side, from, to ) {
+			var list = state.toolbar[ side ];
+			if ( from === to || from < 0 || from >= list.length ) { return; }
+			list.splice( to, 0, list.splice( from, 1 )[ 0 ] );
 		}
 
 		function render() {
 			listWrap.textContent = '';
-			if ( ! model.length ) {
+			if ( ! ( state.toolbar.left.length + state.toolbar.right.length ) ) {
 				listWrap.appendChild( el( 'p', { 'class': 'ak-stats__empty', text: I.toolbarEmpty || 'No toolbar items found.' } ) );
 				return;
 			}
-			model.forEach( function ( item, i ) {
+			section( 'left', I.toolbarLeft || 'Left' );
+			section( 'right', I.toolbarRight || 'Right' );
+		}
+
+		// One side: a small heading + its draggable rows. Drag is scoped to the side via
+		// the drop predicate (ds.side === side), so a row can't cross the boundary.
+		function section( side, heading ) {
+			var list = state.toolbar[ side ];
+			if ( ! list.length ) { return; }
+			listWrap.appendChild( el( 'div', { 'class': 'ak-toolbar__side' }, [ el( 'span', { text: heading } ) ] ) );
+			list.forEach( function ( item, i ) {
 				var row = el( 'div', { 'class': 'ak-menu-row ak-menu-row--top' + ( item.hidden ? ' is-hidden' : '' ) } );
-				row.appendChild( moveCtl( i ) );
+				var h   = handle();
+				row.appendChild( h );
+				row.appendChild( moveCtl( side, i ) );
 				row.appendChild( el( 'span', { 'class': 'ak-menu-row__title', text: item.label } ) );
-				if ( item.group === 'secondary' ) {
-					row.appendChild( el( 'span', { 'class': 'ak-badge', title: I.toolbarRightHint || '', text: I.toolbarRight || 'Right' } ) );
-				}
 				row.appendChild( hideCtl( item ) );
+				dragSource( h, row, { kind: 'tb', side: side, i: i } );
+				dropZone( row, function ( ds ) { return ds.kind === 'tb' && ds.side === side; }, function ( ds ) {
+					moveTo( side, ds.i, i ); render(); markToolbarDirty();
+				} );
 				listWrap.appendChild( el( 'div', { 'class': 'ak-menu-group' }, [ row ] ) );
 			} );
 		}
 
-		function moveCtl( i ) {
-			var up = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveUp || 'Move up', 'aria-label': I.menuMoveUp || 'Move up', onclick: function () { move( i, -1 ); } } );
+		function moveCtl( side, i ) {
+			var up = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveUp || 'Move up', 'aria-label': I.menuMoveUp || 'Move up', onclick: function () { move( side, i, -1 ); } } );
 			up.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>';
-			var down = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveDown || 'Move down', 'aria-label': I.menuMoveDown || 'Move down', onclick: function () { move( i, 1 ); } } );
+			var down = el( 'button', { type: 'button', 'class': 'ak-menu-move__btn', title: I.menuMoveDown || 'Move down', 'aria-label': I.menuMoveDown || 'Move down', onclick: function () { move( side, i, 1 ); } } );
 			down.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
 			return el( 'span', { 'class': 'ak-menu-move' }, [ up, down ] );
 		}
@@ -1933,7 +1970,7 @@
 				paint( btn, item );
 				var row = btn.closest && btn.closest( '.ak-menu-row' );
 				if ( row ) { row.classList.toggle( 'is-hidden', !! item.hidden ); }
-				markDirty();
+				markToolbarDirty();
 			} );
 			return btn;
 		}
@@ -1947,24 +1984,29 @@
 			btn.setAttribute( 'aria-label', lbl );
 		}
 
-		function save() {
-			if ( ! apiFetch || ! TB.route ) { return; }
-			var base = TB.route.charAt( 0 ) === '/' ? TB.route : '/' + TB.route;
-			saveBtn.disabled = true;
-			apiFetch( {
-				path: base,
-				method: 'POST',
-				data: {
-					order:  model.map( function ( m ) { return m.id; } ),
-					hidden: model.filter( function ( m ) { return m.hidden; } ).map( function ( m ) { return m.id; } )
-				}
-			} )
-				.then( function () { status.textContent = I.toolbarSaved || 'Saved'; status.hidden = false; } )
-				.catch( function () { saveBtn.disabled = false; } );
-		}
-
 		load();
 		return p;
+	}
+
+	// Normalise the toolbar REST route to a leading-slash path (apiFetch wants that).
+	function tbPath() {
+		var r = ( D.toolbar && D.toolbar.route ) || '';
+		return r.charAt( 0 ) === '/' ? r : '/' + r;
+	}
+
+	// Flag the toolbar layout dirty and light up the shared Save bar (mirrors the menu).
+	function markToolbarDirty() { state.toolbarDirty = true; markDirty(); }
+
+	// Flatten { left, right } into the persisted shape: a single ordered id list (left
+	// then right — the server reorders WITHIN each WP group, so the concatenation is safe)
+	// plus the hidden id set. Read by the shared save() when state.toolbarDirty.
+	function gatherToolbar() {
+		var t   = state.toolbar || { left: [], right: [] };
+		var all = ( t.left || [] ).concat( t.right || [] );
+		return {
+			order:  all.map( function ( m ) { return m.id; } ),
+			hidden: all.filter( function ( m ) { return m.hidden; } ).map( function ( m ) { return m.id; } )
+		};
 	}
 
 	function buildMenu() {
@@ -2609,12 +2651,17 @@
 			var mpath = D.menuManager.route.charAt( 0 ) === '/' ? D.menuManager.route : '/' + D.menuManager.route;
 			jobs.push( apiFetch( { path: mpath, method: 'POST', data: { items: gatherMenu() } } ) );
 		}
+		// The toolbar layout posts to its own route, only when it changed.
+		if ( state.toolbarDirty && D.toolbar && D.toolbar.route ) {
+			jobs.push( apiFetch( { path: tbPath(), method: 'POST', data: gatherToolbar() } ) );
+		}
 		if ( ! jobs.length ) { state.saving = false; state.dirty = false; updateBar(); return; }
 		Promise.all( jobs )
 			.then( function () {
 				state.saving = false;
 				state.dirty = false;
 				state.menuDirty = false;
+				state.toolbarDirty = false;
 				updateBar();
 				setStatus( 'is-saved', I.saved );
 				// The toggles gate asset loading SERVER-side, so reflecting them
