@@ -285,6 +285,26 @@ body.adminkit.toplevel_page_fluentcrm-admin .el-button--primary.is-disabled:focu
 	color: var( --ak-text-muted ) !important;
 }
 
+/* Primary button label → --ak-on-accent (the contrast-correct ink for the brand
+   fill). FluentCRM ties it to --el-button-text-color: var(--el-color-white),
+   then flips --el-color-white to near-black #0E121B inside its own .fcrm-dark
+   class. Override the button var directly so the label is legible on the brand
+   fill in BOTH modes, regardless of the host's dark class. */
+body.adminkit.toplevel_page_fluentcrm-admin .el-button--primary {
+	--el-button-text-color: var( --ak-on-accent );
+	--el-button-hover-text-color: var( --ak-on-accent );
+}
+
+/* Topbar nav — active + hover item → neutral elevated surface (the host paints
+   --fc-secondary-bg = the page token; lift it to a clear elevated step instead,
+   like the FluentCart / FluentBooking nav). Text stays heading-neutral. */
+body.adminkit.toplevel_page_fluentcrm-admin ul.fcrm_menu li.fcrm_active .fcrm_menu_primary,
+body.adminkit.toplevel_page_fluentcrm-admin ul.fcrm_menu li .fcrm_menu_primary:hover,
+body.adminkit.toplevel_page_fluentcrm-admin ul.fcrm_menu.fcrm_menu_open .fcrm_menu_primary:hover {
+	background-color: var( --ak-elevated ) !important;
+	color: var( --ak-heading ) !important;
+}
+
 /* Funnel badge — host paints bg with --fc-primary-text (near-black) + white
    text. --fc-primary-text → --ak-heading, which FLIPS light in dark → an
    invisible white-on-white pill. Route to a solid brand pill instead. */

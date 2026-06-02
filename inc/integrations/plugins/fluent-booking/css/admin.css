@@ -162,16 +162,21 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
 	background-color: var( --ak-bg );
 }
 
-/* Top menu bar — frame it like AdminKit's content panel (same as the FluentCart
-   adapter): the bar's --fcal-primary-bg surface paints over #wpbody-content's
-   native left edge + rounded corner, so recreate them on the bar — left + top
-   border and an 18px top-left radius. Desktop only (≥783px), where AdminKit
-   draws the rounded corner; flat on mobile. */
+/* Un-glue the app from the panel edge. FluentBooking pulls its whole app wrapper
+   left 20px (`#fluent-booking-app{margin-left:-20px;padding-left:20px}`) and its
+   menu bar another -20px to cancel WP's #wpcontent padding for full-bleed. AdminKit
+   zeroes that padding (≥783px), so the pulls drag the app's surface 20px PAST the
+   panel's left edge, hiding AdminKit's content-panel left border + rounded corner
+   behind it. Reset both margins to 0 (same fix the FluentCart adapter does on its
+   app wrapper): the app's own padding-left:20px then gives a clean gutter, content
+   (bar + body) sits flush inside the panel, and AdminKit's NATIVE border + corner
+   frame the whole thing coherently. No manual border needed (this content is z-auto,
+   below AdminKit's z-101 corner overlay — unlike the z-2000 FluentCart/CRM bars).
+   Desktop only; flat on mobile. */
 @media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app,
 	body.adminkit.toplevel_page_fluent-booking .fframe_main-menu-items {
-		border-top: 1px solid var( --ak-border );
-		border-left: 1px solid var( --ak-border );
-		border-top-left-radius: 18px;
+		margin-left: 0;
 	}
 }
 
@@ -593,13 +598,12 @@ body.adminkit.toplevel_page_fluent-booking .fcal_tips_error {
 	border-left-color: var( --ak-error ) !important;
 }
 
-/* Active main-nav item — the plugin paints it with the blue accent PAIR
-   (pale bg + accent text). Keep that relationship on-brand: a subtle tint
-   behind brand-colored text so the two never collapse to one color. */
+/* Active main-nav item — neutral (like the FluentCart / FluentCRM top nav): an
+   elevated surface behind heading-colored text, not a brand tint. */
 body.adminkit.toplevel_page_fluent-booking .fcal_nav li.active_item a,
 body.adminkit.toplevel_page_fluent-booking .fframe_menu li.active_item a {
-	background: var( --ak-primary-subtle ) !important;
-	color: var( --ak-primary ) !important;
+	background: var( --ak-elevated ) !important;
+	color: var( --ak-heading ) !important;
 }
 
 /* Search-box magnifier (Element Plus Search icon, fill:currentColor) reads
