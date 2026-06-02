@@ -7,7 +7,8 @@
  * row per distinct referrer, PER DAY) via an `INSERT … ON DUPLICATE KEY UPDATE`.
  *
  * Three metrics per day: page views (every hit), visits (sessions — inferred from
- * the Referer at write time) and UNIQUE VISITORS. Uniques are exact, deduped via
+ * the Referer at write time) and UNIQUE VISITORS. Uniques are deduped (near-exact —
+ * a rare simultaneous first-hit of one visitor can off-by-one) via
  * an ephemeral, self-pruning set of `kind='uniq'` rows keyed by a salted,
  * DAILY-ROTATING hash of IP + User-Agent (see AdminKit_Stats_Tracker::visitor_hash).
  * The raw IP is never stored, the hash can't be reversed or linked across days,
@@ -78,7 +79,9 @@ class AdminKit_Stats_Store {
 ) {$collate};";
 
 		dbDelta( $sql );
-		update_option( self::DB_VERSION_KEY, self::DB_VERSION, false );
+		// Autoload the version flag so ensure_schema()'s per-request version compare is
+		// a free in-memory read (it now runs on rest_api_init too — see the tracker).
+		update_option( self::DB_VERSION_KEY, self::DB_VERSION, true );
 	}
 
 	/**
@@ -104,21 +107,24 @@ class AdminKit_Stats_Store {
 		$visit = $is_visit ? 1 : 0;
 
 		// Unique-visitor dedup: a per-day `uniq` row keyed by the salted IP+UA hash.
-		// INSERT IGNORE collides on the PK for a visitor already seen today, so
-		// rows_affected === 1 means "first hit today" → count this as a new unique.
-		// Only the one-way hash is stored (never the IP); prune_old_uniques() drops
-		// these rows after a couple of days, leaving just the `uniques` counter.
+		// INSERT IGNORE collides on the PK for a visitor already seen today. Read the
+		// affected count from query()'s RETURN value (not $wpdb->rows_affected a statement
+		// later, which any intervening query could clobber): 1 ⇒ a row was inserted (first
+		// hit today) ⇒ new unique; 0 ⇒ duplicate. Reliable on MySQL and MariaDB. Near-exact
+		// — only a rare simultaneous first-hit of the SAME visitor can off-by-one. Only the
+		// one-way hash is stored (never the IP); prune_old_uniques() drops these rows after
+		// a couple of days, leaving just the `uniques` counter.
 		$is_unique = 0;
 		if ( '' !== $visitor_hash ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$wpdb->query(
+			$affected = $wpdb->query(
 				$wpdb->prepare(
 					"INSERT IGNORE INTO {$table} (stat_date, kind, name, pageviews, visits, uniques) VALUES (%s,'uniq',%s,0,0,0)",
 					$date,
 					$visitor_hash
 				)
 			);
-			$is_unique = ( 1 === (int) $wpdb->rows_affected ) ? 1 : 0;
+			$is_unique = ( 1 === (int) $affected ) ? 1 : 0;
 		}
 
 		$rows   = array();
@@ -161,7 +167,10 @@ class AdminKit_Stats_Store {
 	public static function prune_old_uniques() {
 		global $wpdb;
 		$table  = self::table();
-		$cutoff = gmdate( 'Y-m-d', time() - DAY_IN_SECONDS ); // keep today + yesterday.
+		// SITE-LOCAL yesterday — must match how record()/visitor_hash() stamp the day
+		// (current_time), or a +UTC-offset site could prune the current local day's dedup
+		// rows around midnight and re-count returning visitors. Keeps today + yesterday.
+		$cutoff = gmdate( 'Y-m-d', current_time( 'timestamp' ) - DAY_IN_SECONDS ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query(
 			$wpdb->prepare( "DELETE FROM {$table} WHERE kind = 'uniq' AND stat_date < %s", $cutoff )
@@ -185,8 +194,10 @@ class AdminKit_Stats_Store {
 	/**
 	 * Mark an anonymous visitor active "now". MINUTE-BUCKETED design: each minute
 	 * is a separate transient holding only that minute's tokens; "active" = union
-	 * of the last ACTIVE_WINDOW_BUCKETS minute-buckets. Bounded writes, race-safe
-	 * (a worst-case collision loses one token, not the whole map).
+	 * of the last ACTIVE_WINDOW_BUCKETS minute-buckets. Bounded writes. NOTE: this is a
+	 * read-modify-write on the bucket map, so under heavy concurrency overlapping writers
+	 * can clobber each other and the live count can slightly UNDER-report at peak — an
+	 * accepted trade for a cheap, cookieless presence signal (it's not a precise gauge).
 	 *
 	 * Each bucket entry is `{p: path, s: source, t: ts}` — that gives us
 	 * `active_visitors()` (distinct token count, unchanged behaviour) AND

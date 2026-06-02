@@ -2276,7 +2276,9 @@
 		var aRect = anchor.getBoundingClientRect();
 		var vh    = window.innerHeight || document.documentElement.clientHeight;
 		if ( aRect.bottom + 4 + popH > vh && aRect.top - 4 - popH > 0 ) {
-			pop.style.top = ( anchor.offsetTop - popH - 4 ) + 'px';
+			// Flip above. Clamp to 0 (row-relative) so a tall picker in a scrolled tree
+			// never pins with a negative top above the row box.
+			pop.style.top = Math.max( 0, anchor.offsetTop - popH - 4 ) + 'px';
 		} else {
 			pop.style.top = ( anchor.offsetTop + anchor.offsetHeight + 4 ) + 'px';
 		}

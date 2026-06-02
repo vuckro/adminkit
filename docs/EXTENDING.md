@@ -228,6 +228,7 @@ never stored, and the hash can't be linked across days. Hooks:
 | `adminkit/stats/summary_range` | `(array, $start, $end, $limit)` | Final read seam — swap in a GA4 / Plausible source. |
 | `adminkit/stats/bot_needles` | `(string[])` | UA substrings dropped at the collector. |
 | `adminkit/stats/is_bot` | `(?bool, $ua)` | Short-circuit bot detection per request. |
+| `adminkit/stats/trust_proxy` | `(bool)` | Return true ONLY when the site is genuinely behind a trusted proxy/CDN, to honour `CF-Connecting-IP` / `X-Forwarded-For` for the visitor IP. **Off by default** — those headers are client-spoofable on a direct host and would let anyone inflate unique-visitor counts via the public beacon. |
 | `adminkit/stats/client_ip` | `(string)` | Override the resolved client IP (proxies/CDN) feeding the unique-visitor hash; only hashed, never stored. |
 | `adminkit/stats/cards` | `(array, $start, $end, $preset)` | **Contribute extra metric tiles** (e.g. WooCommerce revenue, FluentCart conversions). |
 

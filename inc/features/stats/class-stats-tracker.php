@@ -61,8 +61,14 @@ class AdminKit_Stats_Tracker {
 			return;
 		}
 
-		// Keep the schema current without a front-end DB hit (admin-only).
+		// Keep the schema current. Admin requests via admin_init; the REST collector via
+		// rest_api_init too, so a front-end beacon never writes to a not-yet-migrated
+		// column (e.g. right after a plugin UPDATE — activation hooks don't fire on update
+		// — before any admin page loads, which used to silently drop hits). ensure_schema
+		// early-returns on a version match, so it's a cheap (autoloaded) option compare on
+		// the hot path; dbDelta only runs the once when the version actually moves.
 		add_action( 'admin_init', array( 'AdminKit_Stats_Store', 'ensure_schema' ) );
+		add_action( 'rest_api_init', array( 'AdminKit_Stats_Store', 'ensure_schema' ) );
 		// Prune yesterday's unique-dedup rows once a day, admin-side (off the hot path).
 		add_action( 'admin_init', array( __CLASS__, 'maybe_prune' ) );
 
@@ -263,30 +269,37 @@ class AdminKit_Stats_Tracker {
 	}
 
 	/**
-	 * Resolve the client IP. REMOTE_ADDR is the beacon's direct peer — correct on a
-	 * normal host; behind a reverse proxy / CDN it's the proxy, so honour the usual
-	 * forwarded headers (first hop) first. Filter `adminkit/stats/client_ip` to pin
-	 * it for bespoke infra (or force REMOTE_ADDR if forwarded headers are spoofable
-	 * on your setup). The value only ever feeds visitor_hash() and is never stored.
+	 * Resolve the client IP. REMOTE_ADDR (the beacon's direct peer) by DEFAULT — the
+	 * safe choice on a normal host. Forwarded headers (X-Forwarded-For /
+	 * CF-Connecting-IP) are CLIENT-SPOOFABLE on a host that isn't actually behind a
+	 * trusted proxy, and since uniques are keyed on the IP hash, a spoofed header on
+	 * the PUBLIC /hit endpoint could mint unlimited fake "unique visitors" (+ dedup
+	 * rows). So they're consulted ONLY when a site opts in via `adminkit/stats/trust_proxy`
+	 * (genuinely behind a proxy/CDN). `adminkit/stats/client_ip` still allows a bespoke
+	 * override. The value only ever feeds visitor_hash() and is never stored.
 	 *
 	 * @return string
 	 */
 	private static function client_ip() {
-		$ip = '';
-		foreach ( array( 'HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR' ) as $key ) {
-			if ( empty( $_SERVER[ $key ] ) ) {
-				continue;
+		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
+		if ( apply_filters( 'adminkit/stats/trust_proxy', false ) ) {
+			foreach ( array( 'HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR' ) as $key ) {
+				if ( empty( $_SERVER[ $key ] ) ) {
+					continue;
+				}
+				$candidate = (string) wp_unslash( $_SERVER[ $key ] );
+				// X-Forwarded-For can be "client, proxy1, proxy2" — the client is first.
+				if ( false !== strpos( $candidate, ',' ) ) {
+					$parts     = explode( ',', $candidate );
+					$candidate = trim( $parts[0] );
+				}
+				if ( filter_var( $candidate, FILTER_VALIDATE_IP ) ) {
+					$ip = $candidate;
+					break;
+				}
 			}
-			$candidate = (string) wp_unslash( $_SERVER[ $key ] );
-			// X-Forwarded-For can be "client, proxy1, proxy2" — the client is first.
-			if ( false !== strpos( $candidate, ',' ) ) {
-				$parts     = explode( ',', $candidate );
-				$candidate = trim( $parts[0] );
-			}
-			$ip = $candidate;
-			break;
 		}
-		/** Override the resolved client IP (proxies/CDN, or to force REMOTE_ADDR). */
+		/** Override the resolved client IP (proxies/CDN, or to force a specific value). */
 		$ip    = (string) apply_filters( 'adminkit/stats/client_ip', $ip );
 		$valid = filter_var( $ip, FILTER_VALIDATE_IP );
 		return $valid ? $valid : '';
@@ -312,6 +325,9 @@ class AdminKit_Stats_Tracker {
 		$path = '/' . ltrim( $path, '/' );
 		$path = preg_replace( '#/+#', '/', $path );
 		$path = rawurldecode( $path );
+		// Decoding can re-introduce a query/fragment (e.g. %3F → ?); drop it so the same
+		// page can't split into two rows (and to bound junk-encoded path-row bloat).
+		$path = preg_replace( '/[?#].*$/', '', $path );
 		// Never store control chars; cap to the 190-char column.
 		$path = preg_replace( '/[\x00-\x1F\x7F]/', '', $path );
 		if ( strlen( $path ) > 190 ) {
@@ -340,7 +356,9 @@ class AdminKit_Stats_Tracker {
 		}
 		$host = strtolower( $host );
 		$self = strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
-		if ( $host === $self || 'www.' . $self === $host || $host === 'www.' . $self ) {
+		// Compare with a leading www. stripped from BOTH sides, so example.com and
+		// www.example.com count as the same (own) host whichever way round it is.
+		if ( preg_replace( '/^www\./', '', $host ) === preg_replace( '/^www\./', '', $self ) ) {
 			return 'internal';
 		}
 		$host = preg_replace( '/^www\./', '', $host );

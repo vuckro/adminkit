@@ -943,6 +943,12 @@ class AdminKit_Menu_Manager {
 		if ( 0 !== stripos( $icon, 'data:image/svg+xml' ) || strlen( $icon ) > 16384 ) {
 			return '';
 		}
+		// A valid (percent-encoded) data-URI never contains a literal '<'. Rejecting it
+		// here blocks a `</style>` breakout from the inline <style> block print_css() emits
+		// the mask into (the `"`-strip below alone wouldn't stop a `</style>` injection).
+		if ( false !== strpos( $icon, '<' ) ) {
+			return '';
+		}
 		return str_replace( '"', '', $icon );
 	}
 }
