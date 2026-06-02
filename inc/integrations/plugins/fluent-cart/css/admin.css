@@ -656,7 +656,7 @@ body.adminkit.toplevel_page_fluent-cart .dialog-footer {
 }
 body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container {
 	background-color: var( --ak-surface ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-advanced-filters {
 	background-color: var( --ak-elevated ) !important;
