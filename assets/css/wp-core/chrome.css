@@ -85,11 +85,14 @@ body.adminkit.options-connectors-php #wpbody-content {
    CHROME, not content: drawn as a position:fixed overlay pinned to the
    toolbar/menu junction, so they stay put while the page scrolls underneath and
    render identically on EVERY admin page (full-bleed plugin screens included),
-   whatever their markup. The LEFT hairline stays on #wpbody-content above — a
-   full-height vertical line is always visible at any scroll position, so it needs
-   no pinning. Host: #wpwrap (always present; no transform/filter/contain ancestor,
+   whatever their markup. The LEFT hairline now ALSO rides this fixed ::before (it
+   spans full height, bottom:0) so a plugin SPA's full-bleed over-pull
+   (margin-left:-20px dragged past the panel edge) can't paint over it the way it
+   covered the old #wpbody-content border. #wpbody-content keeps its own matching
+   border-left for non-SPA pages — both sit at the same x, so they coincide.
+   Host: #wpwrap (always present; no transform/filter/contain ancestor,
    so fixed resolves to the viewport). Desktop only — flat <783px.
-   ::before = top line + corner arc;  ::after = concave chrome-toned notch fill (a
+   ::before = top line + full-height left line + corner arc;  ::after = concave chrome-toned notch fill (a
    radial-gradient sliver, concentric with the arc). pointer-events:none, z-ordered
    above content but below the fly-out submenu / admin bar / modals. */
 @media screen and (min-width: 783px) {
@@ -101,9 +104,12 @@ body.adminkit.options-connectors-php #wpbody-content {
 		left: 160px;          /* expanded sidebar width */
 		pointer-events: none;
 	}
-	body.adminkit #wpwrap::before {        /* top hairline + rounded corner arc */
+	body.adminkit #wpwrap::before {        /* top hairline + FULL-HEIGHT left hairline + corner arc */
 		right: 0;
-		height: 18px;
+		bottom: 0;                         /* full height: the left line is now a fixed overlay too —
+		                                      never covered by a plugin SPA's full-bleed over-pull
+		                                      (it coincides with #wpbody-content's own border on
+		                                      normal pages, so no visible change there). */
 		box-sizing: border-box;
 		border-top: 1px solid var(--ak-border);
 		border-left: 1px solid var(--ak-border);
