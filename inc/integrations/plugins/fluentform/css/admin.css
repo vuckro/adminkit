@@ -69,10 +69,19 @@ body.adminkit .ff_header .plugin-name img {
 	display: none;
 }
 
+/* The host gives .plugin-name a fixed 30px height but no line-height, so the
+   wordmark sat at the TOP of that box and floated above the menu row. Match the
+   line-height to the box height to vertically centre it against the nav tabs
+   (the header group already centres its flex children). */
+body.adminkit .ff_header .plugin-name {
+	line-height: 30px;
+}
+
 body.adminkit .ff_header .plugin-name::after {
 	content: var( --ak-wordmark, "FluentForm" );
 	font-size: 18px;
 	font-weight: 700;
+	line-height: 30px;
 	letter-spacing: -0.01em;
 	color: var(--ak-heading);
 }
