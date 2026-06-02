@@ -518,7 +518,8 @@ body.adminkit.toplevel_page_fluent-cart .el-button--primary span {
 
 /* Panel titles + active fluid-tab text → heading. */
 body.adminkit.toplevel_page_fluent-cart .fct-dashboard-recent-activities__header_title,
-body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab.classic-tab-style .fct-fluid-tab-item.active {
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab.classic-tab-style .fct-fluid-tab-item.active,
+body.adminkit.toplevel_page_fluent-cart .fct-admin-sidebar .sidebar-title {
 	color: var( --ak-heading ) !important;
 }
 
