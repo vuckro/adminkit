@@ -28,6 +28,7 @@ is in [ARCHITECTURE.md](ARCHITECTURE.md#asset-registry-css--js).
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
 | `adminkit/extra_tokens_handle` | filter | `(string\|null, string $context)` | Return a stylesheet handle to inject as a dependency of `adminkit-tokens` — how a **provider** feeds its live palette (Bricks). |
+| `adminkit/editor_canvas_provider_css` | filter | `(string, string $context)` | Return a stylesheet URL to inject into the Gutenberg canvas iframe, before `tokens.css` — the canvas-iframe equivalent of `extra_tokens_handle`, so a **provider** (Bricks) feeds its palette into the block-editor content frame. |
 | `adminkit/tokens_enqueued` | action | `(string $context)` | Fires right after `adminkit-tokens` is enqueued. Hook with `wp_add_inline_style( AdminKit_Assets::TOKENS_HANDLE, $css )` to inject runtime token overrides. |
 
 ## Settings

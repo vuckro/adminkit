@@ -4,13 +4,15 @@
  * The block-editor canvas is a separate <iframe> document — the editor-chrome
  * CSS and the page's `data-adminkit-theme` attribute don't reach it. This script
  * (running in the parent) reaches into the iframe to:
- *   1. inject AdminKit's token stylesheets + canvas.css as <link>s in its <head>,
- *      so `--ak-*` resolve inside the canvas;
+ *   1. inject AdminKit's token stylesheets + canvas.css as <link>s in its <head>
+ *      (plus the inline brand-accent override as a <style>), so `--ak-*` resolve
+ *      inside the canvas and brand buttons take the accent, not WaasKit yellow;
  *   2. mirror the parent's theme attribute onto the iframe <html>, so the same
  *      `:root[data-adminkit-theme="dark"]` token block flips the canvas.
  *
  * Config comes from `window.AdminKitCanvas` (printed by class-gutenberg.php):
- *   { attr: 'data-adminkit-theme', styles: [ '…/waaskit-tokens.css?ver=…', … ] }
+ *   { attr: 'data-adminkit-theme', styles: [ '…/waaskit-tokens.css?ver=…', … ],
+ *     accent: ':root{--ak-primary:…}…' }
  *
  * Only loaded when the "Gutenberg" feature (editor_content_theme) is ON.
  * Reads the parent attribute, never writes it — no loop with the toggle handler.
@@ -109,6 +111,16 @@
 				link.setAttribute( MARK, '' );
 				doc.head.appendChild( link );
 			} );
+			// Brand-accent override: emitted INLINE on the page (computed per brand),
+			// so it isn't one of the <link>s above. Inject it as a <style> AFTER them
+			// so it wins over tokens.css's WaasKit-yellow --ak-primary default — that's
+			// what makes the canvas's brand buttons take the accent instead of yellow.
+			if ( cfg.accent ) {
+				var st = doc.createElement( 'style' );
+				st.setAttribute( MARK, '' );
+				st.textContent = cfg.accent;
+				doc.head.appendChild( st );
+			}
 			root.setAttribute( MARK, '' );
 		}
 

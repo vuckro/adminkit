@@ -156,20 +156,42 @@ class AdminKit_Assets {
 	 * @return void
 	 */
 	public static function inject_accent_family( $context ) {
+		$css = self::accent_family_css();
+		if ( '' === $css ) {
+			return;
+		}
+		// One concatenated string → ONE wp_add_inline_style() call. Splitting across
+		// two calls is not ordering-guaranteed on every WP version.
+		wp_add_inline_style( self::TOKENS_HANDLE, $css );
+	}
+
+	/**
+	 * Build the accent-family override CSS — the dual light/dark `:root` block that
+	 * re-points --ak-primary (+ hover / subtle / on-accent / focus) to the active
+	 * accent (ADMINKIT_BLUE for the 'adminkit' source, the saved hex for 'custom').
+	 * Returns '' when Bricks provides the accent (its own stylesheet rides the
+	 * cascade) or no usable hex resolves.
+	 *
+	 * Shared by inject_accent_family() (page contexts, via wp_add_inline_style) AND
+	 * the Gutenberg canvas — whose iframe needs the SAME override injected as a
+	 * <style>, since the inline page style never reaches the iframe (that gap is why
+	 * brand buttons in the canvas, `.wp-block-button__link { background: var(--ak-
+	 * primary) }`, rendered the WaasKit-yellow default instead of the brand accent).
+	 *
+	 * @return string CSS (no <style> wrapper), or '' to skip.
+	 */
+	public static function accent_family_css() {
 		$source = AdminKit_Settings::accent_source();
 		if ( 'bricks' === $source ) {
-			return;
+			return '';
 		}
 		$hex = ( 'custom' === $source )
 			? (string) sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) )
 			: self::ADMINKIT_BLUE;
 		if ( '' === $hex ) {
-			return;
+			return '';
 		}
 		$on = self::contrast_text_for( $hex );
-		// One concatenated string → ONE wp_add_inline_style() call. Splitting
-		// across two calls is not ordering-guaranteed on every WP version, so
-		// keep the dual block welded together.
 		$light = ':root{'
 			. '--ak-primary:' . $hex . ';'
 			. '--ak-primary-hover:color-mix(in srgb,' . $hex . ' 82%,#000);'
@@ -184,7 +206,7 @@ class AdminKit_Assets {
 			. '--ak-on-accent:' . $on . ';'
 			. '--ak-focus:color-mix(in srgb,' . $hex . ' 27%,transparent)'
 			. '}';
-		wp_add_inline_style( self::TOKENS_HANDLE, $light . $dark );
+		return $light . $dark;
 	}
 
 	/**

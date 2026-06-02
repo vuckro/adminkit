@@ -179,6 +179,9 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	protected static function boot() {
 		add_filter( 'adminkit/should_load', array( __CLASS__, 'bypass_builder' ), 10, 2 );
 		add_filter( 'adminkit/extra_tokens_handle', array( __CLASS__, 'provide_tokens' ), 10, 2 );
+		// Feed the same palette into the Gutenberg canvas iframe, but only when Bricks
+		// is the active accent source (else the AdminKit/custom inline accent owns it).
+		add_filter( 'adminkit/editor_canvas_provider_css', array( __CLASS__, 'editor_canvas_provider_css' ), 10, 2 );
 
 		// Priority 2: register the observer before Bricks's own inline mode
 		// script (printed with the head scripts, ~priority 9) sets the attribute,
@@ -616,5 +619,28 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			(string) filemtime( $path )
 		);
 		return self::TOKENS_HANDLE;
+	}
+
+	/**
+	 * Provide the Bricks Style Manager palette URL for the Gutenberg canvas iframe —
+	 * but ONLY when Bricks is the active accent source (otherwise the AdminKit/custom
+	 * inline accent override owns --ak-primary and a Bricks palette would fight it).
+	 * The canvas loads it before tokens.css so `var(--accent)` resolves to Bricks's
+	 * palette there, exactly like the page. Empty string when not applicable.
+	 *
+	 * @param string $url     Accumulator from the filter (empty by default).
+	 * @param string $context Editor context tag.
+	 * @return string
+	 */
+	public static function editor_canvas_provider_css( $url, $context ) {
+		if ( 'bricks' !== AdminKit_Settings::accent_source() ) {
+			return $url;
+		}
+		$upload = wp_upload_dir();
+		$path   = $upload['basedir'] . self::TOKENS_REL;
+		if ( ! file_exists( $path ) ) {
+			return $url;
+		}
+		return $upload['baseurl'] . self::TOKENS_REL . '?ver=' . filemtime( $path );
 	}
 }
