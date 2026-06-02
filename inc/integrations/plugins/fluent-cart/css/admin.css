@@ -738,8 +738,10 @@ body.adminkit.toplevel_page_fluent-cart .el-button.is-tertiary:focus {
 	color: var( --ak-text ) !important;
 }
 
-/* Textarea — soft border + text (bg stays transparent, fine). */
+/* Textarea — input background + soft border + body text (FC leaves the bg
+   transparent in dark, which let the page show through). */
 body.adminkit.toplevel_page_fluent-cart .el-textarea__inner {
+	background-color: var( --ak-elevated ) !important;
 	border-color: var( --ak-border ) !important;
 	color: var( --ak-text ) !important;
 }
@@ -748,6 +750,15 @@ body.adminkit.toplevel_page_fluent-cart .el-textarea__inner {
 body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .wp-editor-tools .wp-editor-container {
 	background-color: var( --ak-surface ) !important;
 	border-color: var( --ak-border ) !important;
+}
+
+/* TinyMCE editor surfaces — FC paints the stack body #f5f6f7 (light) /
+   rgb(21 29 38) (dark) and leaves the edit area #fff; route both to surface so
+   the whole editor reads as one themed panel (the toolbar .mce-panel is already
+   handled by AdminKit core at higher specificity). */
+body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .mce-container-body.mce-stack-layout,
+body.adminkit.toplevel_page_fluent-cart .custom-wp-editor-wrapper .mce-edit-area {
+	background-color: var( --ak-surface ) !important;
 }
 
 /* Editor iframe loading scrim — 80% surface (was a hard #1c2732cc). */

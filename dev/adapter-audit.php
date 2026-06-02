@@ -32,7 +32,7 @@ require_once __DIR__ . '/css-scan.php';
 // (Tier A). Entries below carry debt FORCED by the host, not a code-quality
 // fault — they are the baseline as of the last review.
 $BUDGET = array(
-	'fluent-cart'       => 184, // FC compiles its palette into Tailwind utilities + stock Element Plus literals; every host literal mapped to a token needs !important to beat them (incl. status badges success/warning/danger, neutral checked-checkbox label)
+	'fluent-cart'       => 186, // FC compiles its palette into Tailwind utilities + stock Element Plus literals; every host literal mapped to a token needs !important to beat them (incl. status badges success/warning/danger, neutral checked-checkbox label, textarea + TinyMCE editor backgrounds past FC's dark overrides)
 	'fluent-booking'    => 108, // ApexCharts chart text/grid/tooltip + Element Plus (host inline styles) + #306ae0 hardcoded across ~126 component states + Vue editor surfaces + neutral settings-sidebar hover
 	'fluent-crm'        => 24,  // FluentCRM is variable-driven (Tier A remap); the !important are literals it hard-codes past its vars (funnel block types/badges/connectors, brand pills, disabled-primary contrast, neutral active-nav) + logo white-label + dark-only toggle hide
 	'fluent-community'  => 36,  // onboarding wizard (stock Element Plus + own .fcom_* literals): panel/card surfaces, brand button, near-black text/borders, error notice, logo white-label — all past the EP vars
