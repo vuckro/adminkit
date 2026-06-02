@@ -541,7 +541,7 @@ body.adminkit.toplevel_page_fluent-cart .fct-empty-state svg path[stroke]:not([s
    rule regardless of its #fct_admin_app_wrapper scope. */
 body.adminkit.toplevel_page_fluent-cart .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--error):not(.el-button--info):not(.is-text):not(.is-link),
 body.adminkit.toplevel_page_fluent-cart .icon-button {
-	background-color: var( --ak-elevated ) !important;
+	background-color: var( --ak-surface ) !important;
 	border-color: var( --ak-border-strong ) !important;
 	color: var( --ak-text ) !important;
 }
