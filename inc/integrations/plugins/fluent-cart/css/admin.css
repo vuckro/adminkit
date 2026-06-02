@@ -641,7 +641,8 @@ body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab {
 body.adminkit.toplevel_page_fluent-cart .fct-integration-table-footer,
 body.adminkit.toplevel_page_fluent-cart .el-cascader-panel.is-bordered,
 body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-condition-or-wrap,
-body.adminkit.toplevel_page_fluent-cart .fct-report-card-header {
+body.adminkit.toplevel_page_fluent-cart .fct-report-card-header,
+body.adminkit.toplevel_page_fluent-cart .fct-shared-variant-item-box {
 	border-color: var( --ak-border-strong ) !important;
 }
 body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-container {
