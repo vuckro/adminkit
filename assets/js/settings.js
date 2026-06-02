@@ -1955,8 +1955,8 @@
 		var h = handle();
 		row.appendChild( h );
 		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
-		row.appendChild( hideBtn( item, tree ) );
 		row.appendChild( el( 'span', { 'class': 'ak-menu-row__title ak-menu-seplabel', text: '— ' + I.menuSeparator + ' —' } ) );
+		row.appendChild( hideBtn( item, tree ) );
 		row.appendChild( removeBtn( ti, tree ) );
 		dragSource( h, row, { kind: 'top', ti: ti } );
 		dropZone( row, function ( ds ) { return ds.kind === 'top'; }, function ( ds ) {
@@ -1970,18 +1970,18 @@
 		var h = handle();
 		row.appendChild( h );
 		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
-		row.appendChild( hideBtn( item, tree ) );
 		row.appendChild( iconBtn( item, tree ) );
 		var titleIn = el( 'input', { type: 'text', 'class': 'ak-menu-input', value: item.title || '', placeholder: I.menuLinkTitle } );
 		titleIn.addEventListener( 'input', function () { item.title = titleIn.value; markMenuDirty(); } );
 		var urlIn = el( 'input', { type: 'text', 'class': 'ak-menu-input ak-menu-input--url', value: item.url || '', placeholder: I.menuLinkUrl } );
 		urlIn.addEventListener( 'input', function () { item.url = urlIn.value; markMenuDirty(); } );
-		// Order: handle · move · hide · icon · [title + URL fields] · new-tab · remove.
-		// The title + URL inputs are the editable content; new-tab and the remove (×)
-		// sit at the far right.
+		// Order: handle · move · icon · [title + URL fields] · new-tab · hide · remove.
+		// The title + URL inputs are the editable content; new-tab, hide (eye) and the
+		// remove (×) sit at the far right.
 		row.appendChild( titleIn );
 		row.appendChild( urlIn );
 		row.appendChild( newTabBtn( item, tree ) );
+		row.appendChild( hideBtn( item, tree ) );
 		row.appendChild( removeBtn( ti, tree ) );
 		// Drag from the handle only, so the URL/title inputs stay text-selectable.
 		dragSource( h, row, { kind: 'top', ti: ti } );
@@ -2004,13 +2004,10 @@
 		var h = handle();
 		row.appendChild( h );
 		row.appendChild( moveControl( moveTopBy( ti, tree ) ) );
-		// Order: handle · move(↑↓) · hide(eye) · icon · [title fills] · URL · submenus.
-		if ( top.slug !== MM.self ) {
-			row.appendChild( hideBtn( top, tree ) );
-		}
+		// Order: handle · move(↑↓) · link(URL) · icon · [title fills] · submenus · hide(eye).
+		row.appendChild( urlBtn( top, tree ) );
 		row.appendChild( iconBtn( top, tree ) );
 		row.appendChild( titleInput( top ) );
-		row.appendChild( urlBtn( top, tree ) );
 		if ( top.children.length ) {
 			var caret = el( 'span', { 'class': 'ak-menu-row__caret', 'aria-hidden': 'true' } );
 			caret.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
@@ -2021,6 +2018,10 @@
 				title: I.menuSubmenusToggle,
 				onclick: function () { top.open = ! top.open; renderTree( tree ); }
 			}, [ caret, el( 'span', { text: top.children.length + ' ' + I.menuSubmenus } ) ] ) );
+		}
+		// Hide (eye) sits at the row's far right (never AdminKit's own menu).
+		if ( top.slug !== MM.self ) {
+			row.appendChild( hideBtn( top, tree ) );
 		}
 		dragSource( h, row, { kind: 'top', ti: ti } );
 		// Reorder tops, and accept a submenu dragged from any section (nest it here).
@@ -2048,8 +2049,8 @@
 		var h = handle();
 		row.appendChild( h );
 		row.appendChild( moveControl( moveChildBy( ti, ci, tree ) ) );
-		row.appendChild( hideBtn( child, tree ) );
 		row.appendChild( titleInput( child ) );
+		row.appendChild( hideBtn( child, tree ) );
 		dragSource( h, row, { kind: 'sub', ti: ti, ci: ci } );
 		dropZone( row, function ( ds ) { return ds.kind === 'sub'; }, function ( ds ) {
 			moveChild( ds.ti, ds.ci, ti, ci ); renderTree( tree ); markMenuDirty();
