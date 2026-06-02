@@ -488,7 +488,7 @@ body.adminkit.toplevel_page_fluent-cart .fct-card .fct-card-header.border-bottom
 	border-color: var( --ak-border ) !important;
 }
 body.adminkit.toplevel_page_fluent-cart .fct-settings-nav-collapse-button-wrapper {
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* Headings + raised-item text. */
@@ -575,7 +575,7 @@ body.adminkit.toplevel_page_fluent-cart .search-bar.is-transparent .el-input__wr
 /* Settings page header — surface + strong border. */
 body.adminkit.toplevel_page_fluent-cart .fct-setting-header {
 	background-color: var( --ak-surface ) !important;
-	border-color: var( --ak-border-strong ) !important;
+	border-color: var( --ak-border ) !important;
 }
 
 /* Active settings-nav link. */
