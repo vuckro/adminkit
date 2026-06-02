@@ -44,17 +44,17 @@ body.adminkit .ff_menu_link {
 
 body.adminkit .ff_menu_link:hover,
 body.adminkit .ff_menu_link:focus {
-	color: var(--ak-primary);
+	color: var(--ak-heading);
 }
 
 /* Active nav item — FF paints #e8f2ff bg + #1a7efb text (the .active
-   class sits on the parent li, link is the child). Route to the
-   primary-soft pill. */
+   class sits on the parent li, link is the child). Route to a NEUTRAL
+   elevated pill (matches the FluentCart / CRM / Booking nav), not a brand tint. */
 body.adminkit .ff_menu .active .ff_menu_link,
 body.adminkit .ff_menu .active > .ff_menu_link,
 body.adminkit .ff_menu_link.active {
-	background-color: var(--ak-primary-subtle);
-	color: var(--ak-primary);
+	background-color: var(--ak-elevated);
+	color: var(--ak-heading);
 }
 
 body.adminkit .ff_form_name,
@@ -533,8 +533,8 @@ body.adminkit .ff_layout_section_sidebar {
 body.adminkit .ff_layout_section_sidebar a.active,
 body.adminkit .ff_layout_section_sidebar li.active > a,
 body.adminkit .ff_layout_section_sidebar .el-menu-item.is-active {
-	background: var(--ak-primary-subtle);
-	color: var(--ak-primary);
+	background: var(--ak-elevated);
+	color: var(--ak-heading);
 }
 
 /* Settings list buttons (.ff_list_button_link) — dark #4b4c4d slab
