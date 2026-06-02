@@ -1,0 +1,198 @@
+/* Loco Translate — Tier-B-by-selector skin.
+   Loco scopes its rules with the wrapper ID `#loco-admin.wrap` (1,1,0); ours use
+   `body.adminkit #loco-admin.wrap …` (1,3,x) so they win the ID battle, mostly
+   without !important (only where Loco itself forces one). --ak-* tokens only.
+   Left on Loco's own colours (deliberate): the language-flag chips (.lang-*),
+   PO-status hues, ACE syntax tokens, and the word-level diff add/remove (those
+   are WP-core themed). */
+
+
+/* ===== 1. App surface ===== */
+body.adminkit #loco-admin.wrap {
+	color: var( --ak-text );
+}
+
+
+/* ===== 2. Notices + panels =====
+   Loco: 1px #ddd box + 4px left accent + #fff bg + a faint shadow. */
+body.adminkit #loco-admin.wrap .notice,
+body.adminkit #loco-admin.wrap .panel {
+	background: var( --ak-surface );
+	border-color: var( --ak-border );
+	box-shadow: none;
+}
+body.adminkit #loco-admin.wrap .notice-info,
+body.adminkit #loco-admin.wrap .panel-info,
+body.adminkit #loco-admin.wrap .panel-debug {
+	border-color: var( --ak-info );
+}
+body.adminkit #loco-admin.wrap .notice-success,
+body.adminkit #loco-admin.wrap .panel-success {
+	border-color: var( --ak-success );
+}
+body.adminkit #loco-admin.wrap .notice-warning,
+body.adminkit #loco-admin.wrap .panel-warning {
+	border-color: var( --ak-warning );
+}
+body.adminkit #loco-admin.wrap .notice-error,
+body.adminkit #loco-admin.wrap .panel-error {
+	border-color: var( --ak-error );
+}
+
+
+/* ===== 3. Buttons =====
+   Loco re-skins WP buttons inside #loco-admin (border #aaa, text #444, hover #000),
+   which out-ranks AdminKit's global button theme — re-point to tokens. */
+body.adminkit #loco-admin.wrap .button,
+body.adminkit #loco-admin.wrap .button-secondary {
+	background: var( --ak-btn-bg, var( --ak-surface ) );
+	border-color: var( --ak-border );
+	color: var( --ak-text );
+}
+body.adminkit #loco-admin.wrap .button:hover,
+body.adminkit #loco-admin.wrap .button:focus {
+	border-color: var( --ak-border-strong );
+	color: var( --ak-heading );
+}
+body.adminkit #loco-admin.wrap .button-link {
+	color: var( --ak-primary );
+}
+body.adminkit #loco-admin.wrap .button-primary {
+	color: var( --ak-on-accent );
+}
+/* Danger / success / inverted variants ship gradient fills + text-shadows —
+   flatten to solid semantic / neutral tokens. */
+body.adminkit #loco-admin.wrap .button-danger {
+	background: var( --ak-error );
+	border-color: var( --ak-error );
+	color: var( --ak-on-accent );
+	text-shadow: none;
+}
+body.adminkit #loco-admin.wrap .button-success {
+	background: var( --ak-success );
+	border-color: var( --ak-success );
+	color: var( --ak-on-accent );
+	text-shadow: none;
+}
+body.adminkit #loco-admin.wrap .button-success:hover {
+	background: var( --ak-success );
+}
+body.adminkit #loco-admin.wrap .wp-core-ui button.inverted {
+	background: var( --ak-elevated );
+	border-color: var( --ak-border );
+	color: var( --ak-text );
+	text-shadow: none;
+}
+
+
+/* ===== 4. Native inputs (Loco only sets border+colour, AdminKit forms stay on) ===== */
+body.adminkit #loco-admin.wrap input[type="text"],
+body.adminkit #loco-admin.wrap input[type="search"],
+body.adminkit #loco-admin.wrap input[type="email"],
+body.adminkit #loco-admin.wrap input[type="url"],
+body.adminkit #loco-admin.wrap input[type="number"],
+body.adminkit #loco-admin.wrap textarea,
+body.adminkit #loco-admin.wrap select {
+	background-color: var( --ak-input-bg );
+	border-color: var( --ak-border );
+	color: var( --ak-text );
+}
+
+
+/* ===== 5. Selector widget (the language / set dropdown) ===== */
+body.adminkit #loco-admin.wrap .selector .handle:after {
+	color: var( --ak-text-muted );
+}
+body.adminkit #loco-admin.wrap .selector .handle:hover,
+body.adminkit #loco-admin.wrap .selector .handle:hover:after {
+	color: var( --ak-heading );
+	border-color: var( --ak-border-strong );
+}
+body.adminkit #loco-admin.wrap .selector.active .handle {
+	background-color: var( --ak-elevated );
+	border-color: var( --ak-border-strong );
+	color: var( --ak-text );
+}
+body.adminkit #loco-admin.wrap .selector.readonly .handle {
+	border-color: var( --ak-border );
+}
+body.adminkit #loco-admin.wrap .selectorsep:before,
+body.adminkit #loco-admin.wrap .selectoradd > a.icon:before {
+	color: var( --ak-text-muted );
+}
+body.adminkit #loco-admin.wrap .selectorsep a.icon,
+body.adminkit #loco-admin.wrap .selectorsep span,
+body.adminkit #loco-admin.wrap .selector .icon:before {
+	color: var( --ak-text );
+}
+body.adminkit #loco-admin.wrap .selector li.group-end {
+	border-bottom-color: var( --ak-border );
+}
+body.adminkit #loco-admin.wrap .selector li.selected {
+	background: var( --ak-surface-muted );
+}
+body.adminkit #loco-admin.wrap .selector li.over {
+	background-color: var( --ak-hover-bg );
+	color: var( --ak-heading );
+	text-shadow: none;
+}
+body.adminkit #loco-admin.wrap .selector li.over .label {
+	color: var( --ak-heading );
+}
+
+/* Autocomplete result list (#666/#a8a8a8 fills; the .selected uses !important). */
+body.adminkit #loco-admin.wrap div.auto-comp-result:hover {
+	background: var( --ak-hover-bg );
+	border-top-color: var( --ak-border );
+	border-bottom-color: var( --ak-border );
+}
+body.adminkit #loco-admin.wrap div.auto-comp-result.selected {
+	background: var( --ak-elevated ) !important;
+	border-top-color: var( --ak-border );
+	border-bottom-color: var( --ak-border );
+}
+
+
+/* ===== 6. Progress bars ===== */
+body.adminkit #loco-admin.wrap div.progress .t {
+	background-color: var( --ak-surface-muted );
+	border-color: var( --ak-border );
+}
+body.adminkit #loco-admin.wrap div.progress .t .bar {
+	background-color: var( --ak-success );
+}
+body.adminkit #loco-admin.wrap div.progress .t .bar.f {
+	background-color: var( --ak-error );
+}
+
+
+/* ===== 7. PO editor (the translation grid) =====
+   Zebra rows tint blue (rgba(0,115,170,.05)); the selected cell is solid #0073aa. */
+body.adminkit #loco-admin.wrap .wg-tr:nth-child(even) {
+	background-color: var( --ak-surface-muted );
+}
+body.adminkit #loco-admin.wrap .wg-cols > div > div.selected {
+	background-color: var( --ak-primary );
+	color: var( --ak-on-accent );
+}
+
+
+/* ===== 8. Config form (form#loco-conf) ===== */
+body.adminkit #loco-admin.wrap form#loco-conf > div {
+	border-bottom-color: var( --ak-border );
+}
+body.adminkit #loco-admin.wrap form#loco-conf p.description {
+	color: var( --ak-text-muted );
+}
+body.adminkit #loco-admin.wrap form#loco-conf tr:hover p.description {
+	color: var( --ak-text );
+}
+
+
+/* ===== 9. Modal (jQuery-UI dialog appended to <body>, outside #loco-admin) ===== */
+body.adminkit .loco-modal,
+body.adminkit .loco-modal .loco-api {
+	background: var( --ak-surface );
+	border-color: var( --ak-border );
+	color: var( --ak-text );
+}

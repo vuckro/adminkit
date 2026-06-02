@@ -45,6 +45,7 @@ $BUDGET = array(
 	'fluentform'        => 7,   // bundled OLD Element UI hardcodes hex everywhere (Tier B by selector); the !important beat host `!important` literals (checked-checkbox label, table row-hover transparent, form-selector focus #0e121b, conversational-editor well #fafafa, .mb-4 margin-utility reset)
 	'acf'               => 17, // ACF forces !important on btn labels, postbox titles, open-field handle links, field-type picker option states, options-page dropdown border + file-selector-button label (hex col = #acf-* id selectors, not colors)
 	'woocommerce'       => 3, // WC pins !important on the disabled list-reorder arrows (admin.css .wc-move-disabled), an analytics table border (wc-admin.css), and the admin-bar "Coming soon" badge (admin.css #wp-admin-bar-woocommerce-site-visibility-badge — moved here from wp-core/adminbar.css to keep WC-specific selectors in the WC adapter) — all three must match !important to win
+	'loco-translate'    => 1, // Tier-B-by-selector: 1 !important to beat Loco's own `.auto-comp-result.selected{…!important}` autocomplete-highlight rule; everything else wins on the `body.adminkit #loco-admin.wrap` ID scope
 );
 
 $root = ak_find_root() . '/inc/integrations';
