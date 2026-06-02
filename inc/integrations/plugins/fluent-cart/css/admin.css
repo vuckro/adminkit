@@ -196,6 +196,7 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 @media screen and (min-width: 783px) {
 	body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 		border-top: 1px solid var( --ak-border ) !important;
+		border-left: 1px solid var( --ak-border ) !important;
 		border-top-left-radius: 18px !important;
 	}
 }
