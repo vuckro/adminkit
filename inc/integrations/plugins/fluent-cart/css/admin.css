@@ -844,14 +844,12 @@ body.adminkit.toplevel_page_fluent-cart .badge.danger {
 	color: var( --ak-error ) !important;
 }
 
-/* Empty-state illustrations ("no data" cards) — FC's SVGs are MONOCHROME (every
-   path fill="#2C3C4E", its dark-400 slate). A CSS `fill` overrides the SVG
-   presentation attribute, so route the paths to --ak-border-strong (the token
-   #2C3C4E maps to) — the icon stays a muted slate but flips with the theme
-   instead of staying FluentCart-blue. */
-body.adminkit.toplevel_page_fluent-cart .fct-empty-text svg path {
-	fill: var( --ak-border-strong );
-}
+/* Empty-state illustrations ("no data" cards) are left NATIVE. FC ships them as
+   composed multi-tone SVGs (soft #EAEEF9/#D5DDEA fills + #FDFEFF→#ECF0F5
+   gradients) WITH their own light/dark variants (Tailwind `dark:hidden` /
+   `dark:block`), so FC already swaps the artwork per theme. A blanket `fill`
+   override flattens every path to one slate tone and wrecks the illustration —
+   same call as the dashboard illustrations above. */
 
 /* Monthly-report list rows. */
 body.adminkit.toplevel_page_fluent-cart .fct-report-monthly-list li {
