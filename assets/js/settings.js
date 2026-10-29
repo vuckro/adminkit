@@ -43,7 +43,7 @@
 		wpLogo: ( D.wpLogo === 'logo' ) ? 'logo' : 'favicon',       // admin-bar / site-name mark: logo | favicon
 		loginLogo: ( D.loginLogo === 'logo' ) ? 'logo' : 'favicon', // login screen mark: logo | favicon
 		brandAccent: D.brandAccent || '',    // user hex (only meaningful when accentSource === 'custom')
-		// 'adminkit' = WP Blue (#3858E9), 'bricks' = Bricks provider --accent, 'custom' = brandAccent hex
+		// 'adminkit' = WaasKit roles; 'bricks' = provider; 'custom' = brandAccent hex
 		accentSource: D.accentSource || 'adminkit'
 	};
 	( D.features || [] ).forEach( function ( f ) {
@@ -397,7 +397,7 @@
 		// Accent picker — a segmented control that switches between three sources
 		// feeding `--ak-primary`:
 		//
-		//   • AdminKit (default) — D.adminkitBlue (#3858E9, WordPress Blue)
+		//   • WaasKit (default) — native light/dark accent roles
 		//   • Bricks              — the Bricks provider --accent (no override)
 		//   • Custom              — the user's `brand_accent` hex
 		//
@@ -417,7 +417,7 @@
 			// pill silently drops; their stored `accentSource === 'bricks'` still
 			// resolves server-side via accent_source(), but the UI no longer offers a
 			// dead button. Hide rather than grey: a dead pill was confusing.
-			var sources = [ { v: 'adminkit', label: I.accentSrcAdminKit || 'WordPress' } ];
+			var sources = [ { v: 'adminkit', label: I.accentSrcAdminKit || 'WaasKit' } ];
 			if ( D.bricksConnected ) {
 				sources.push( { v: 'bricks', label: I.accentSrcBricks || 'Bricks' } );
 			}
@@ -453,7 +453,7 @@
 			} );
 			var hexInput = el( 'input', {
 				type: 'text', 'class': 'ak-accent-inline__hex',
-				placeholder: '#3858E9', spellcheck: 'false',
+				placeholder: '#1549AB', spellcheck: 'false',
 				maxlength: '7'
 			} );
 			hexInput.value = state.brandAccent || '';
@@ -464,57 +464,38 @@
 				swatch.setAttribute( 'hidden', '' );
 			}
 			var native = el( 'input', { type: 'color', 'class': 'ak-accent-inline__native' } );
-			native.value = isValidHex( state.brandAccent ) ? state.brandAccent : ( D.adminkitBlue || '#3858E9' );
+			native.value = isValidHex( state.brandAccent ) ? state.brandAccent : ( D.adminkitBlue || '#1549AB' );
 
 			// Update the inline <style id="ak-accent-preview"> for live preview.
 			// Mirrors AdminKit_Assets::inject_accent_family() in PHP, so what the
 			// browser shows BEFORE save == what the server emits AFTER save.
 			//
-			//   • 'adminkit' → emit dual block with D.adminkitBlue (#3858E9). The
-			//                  cascade in tokens.css would otherwise leak WaasKit
-			//                  yellow via var(--accent, …) — this inline override
-			//                  loads after tokens.css and wins on cascade ties
-			//                  (light) AND on specificity (dark, :root[data-…]).
-			//   • 'custom'   → same dual block, with user hex.
-			//   • 'bricks'   → no inline rule. Bricks's stylesheet handles its own
-			//                  --accent + dark mode via the cascade.
-			//
-			// Dark-mode tweaks vs light: hover lightens (mix with #fff) so it's
-			// readable on #2c2c2c surfaces, and subtle bumps to 22% mix so the
-			// pale tint reads against the darker substrate (same proportions as
-			// wp-baseline.css's dark surface scheme).
-			//
-			// Live-preview limitation: switching between source ∈ {adminkit,
-			// custom} ↔ bricks doesn't load/unload wp-baseline.css client-side
-			// (that's a server-side enqueue decision). Surface-level palette
-			// swaps still require save+reload. The accent itself updates
-			// immediately in both modes thanks to this dual-block emission.
+			// Default source inherits the native WaasKit light/dark roles.
+			// Only a valid custom hex emits a preview override.
 			function applyPreview() {
 				var id = 'ak-accent-preview';
 				var existing = document.getElementById( id );
 
 				var hex = null;
-				if ( state.accentSource === 'adminkit' ) {
-					hex = D.adminkitBlue || '#3858E9';
-				} else if ( state.accentSource === 'custom' && isValidHex( state.brandAccent ) ) {
+				if ( state.accentSource === 'custom' && isValidHex( state.brandAccent ) ) {
 					hex = state.brandAccent;
 				}
 
 				if ( hex ) {
 					var on = bestOnAccent( hex );
-					var css = ':root{'
-						+ '--ak-primary:' + hex + ';'
+					var css = ':root,#wpadminbar{'
+						+ '--ak-custom-accent:' + hex + ';--ak-custom-on-accent:' + on + ';--ak-primary:' + hex + ';'
 						+ '--ak-primary-hover:color-mix(in srgb,' + hex + ' 82%,#000);'
 						+ '--ak-primary-subtle:color-mix(in srgb,' + hex + ' 12%,var(--ak-surface));'
 						+ '--ak-on-accent:' + on + ';'
-						+ '--ak-focus:color-mix(in srgb,' + hex + ' 27%,transparent)'
+						+ '--ak-focus:' + hex
 						+ '}'
-						+ ':root[data-adminkit-theme="dark"]{'
-						+ '--ak-primary:' + hex + ';'
+						+ ':root[data-adminkit-theme="dark"],:root[data-adminkit-theme="dark"] #wpadminbar{'
+						+ '--ak-custom-accent:' + hex + ';--ak-custom-on-accent:' + on + ';--ak-primary:' + hex + ';'
 						+ '--ak-primary-hover:color-mix(in srgb,' + hex + ' 82%,#fff);'
 						+ '--ak-primary-subtle:color-mix(in srgb,' + hex + ' 22%,var(--ak-surface));'
 						+ '--ak-on-accent:' + on + ';'
-						+ '--ak-focus:color-mix(in srgb,' + hex + ' 27%,transparent)'
+						+ '--ak-focus:' + hex
 						+ '}';
 					if ( ! existing ) {
 						existing = document.createElement( 'style' );

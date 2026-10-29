@@ -37,7 +37,7 @@ new → `features/`.**
   `AdminKit_Settings_Catalog::features()` for the UI.
 - **Per-screen CSS** → `assets/css/wp-screens/<name>.css` + a `register_screen()`
   line in `inc/wp-core/class-chrome.php`.
-- **A token / colour** → edit `tokens/palettes/*.json`, run `php tokens/build.php`,
+- **A token / colour** → edit `tokens/palettes/waaskit.json`, run `php tokens/build.php`,
   commit both the JSON and the regenerated `waaskit-tokens.css`. Never hand-edit
   the generated CSS.
 

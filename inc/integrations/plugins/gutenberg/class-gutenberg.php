@@ -137,6 +137,7 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 			return; // "Gutenberg" canvas theming off — leave the canvas WP-default.
 		}
 		$styles = array_values( array_filter( array(
+			self::asset_url( AdminKit_Assets::FONTS_SRC ),                // local WaasKit font faces
 			self::asset_url( AdminKit_Assets::WAASKIT_SRC ),              // token primitives (baseline)
 			// Provider palette (e.g. Bricks Style Manager) — loads BETWEEN the
 			// baseline and the --ak-* layer so tokens.css's var(--accent) resolves to
@@ -156,7 +157,7 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 				// The brand-accent --ak-primary family is emitted INLINE on the page
 				// (computed per brand), so it isn't one of the stylesheet URLs above;
 				// the canvas JS injects it as a <style> AFTER them so brand buttons in
-				// the canvas take the accent, not the WaasKit-yellow default.
+				// the canvas follow an explicit custom/provider accent.
 				'accent' => AdminKit_Assets::accent_family_css(),
 			) ) . ';'
 		);

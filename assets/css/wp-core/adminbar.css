@@ -506,3 +506,6 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 		border-bottom-right-radius: 0;
 	}
 }
+
+/* Match WaasKit typography on the frontend toolbar as well as wp-admin. */
+#wpadminbar, #wpadminbar .ab-item { font-family: var(--ak-font-body); }

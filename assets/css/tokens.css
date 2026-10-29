@@ -1,174 +1,54 @@
-/* AdminKit design tokens
-   ======================================================================
-   AdminKit restyles wp-admin entirely through `--ak-*` custom properties;
-   no AdminKit rule reads a raw color. Each token resolves through a
-   fallback chain — WaasKit SEMANTIC role first, then a self-contained default:
-
-        --ak-surface: var(--surface, hsl(0, 0%, 96%));
-                          │                  └ last-resort literal (see below)
-                          └ WaasKit semantic role (normal source)
-
-   `--surface` and the rest of the WaasKit semantic layer are ALWAYS present:
-   AdminKit ships the full WaasKit token baseline (assets/css/waaskit-tokens.css,
-   generated from tokens/palettes/* — enqueued before this file). A live
-   provider (Bricks) loads after the baseline and overrides it. So the inline
-   hsl/hex defaults here are an emergency fallback only — for the (unexpected)
-   case where the baseline file is missing. AdminKit mirrors the WaasKit semantic
-   layer 1:1. Full mapping: docs/TOKENS.md.
-
-   ── Light / dark ────────────────────────────────────────────────────────
-   Tokens live on :root so they inherit down to #wpadminbar / #adminmenu.
-   Dark mode is AdminKit's own [data-adminkit-theme="dark"] on <html>; a
-   provider's own dark toggle never fires in wp-admin, so the dark block
-   re-maps onto the provider INVERSE ramp (--neutral-d-N), whose
-   light-context value already equals the matching --neutral-l-N DARK value.
-   That reproduces the provider's dark palette exactly — no provider toggle.
-
-   ── Surfaces: 3 levels, by ROLE ───────────────────────────────────────────
-     --ak-bg        page background, behind everything        (--background)
-     --ak-surface   cards, panels, table rows                 (--surface)
-     --ak-elevated  raised / distinct: headers, hover-down,
-                    dropdowns, selected, chrome state          (--elevated)
-   The lightness order flips between modes (correct for an elevation model) —
-   always pick by role, never by a hardcoded lightness.
-   Form fields use their own --ak-input-bg (lifted lighter than --ak-surface) so
-   they detach from cards; see below.
-
-   ── Two tiers ─────────────────────────────────────────────────────────────
-   1. WaasKit semantics (1:1) — surfaces, borders, text (+ muted), accent
-      (+ hover / on / subtle), input, focus, overlay, and the notification set
-      (success/warning/error/info + each -subtle). These mirror WaasKit's locked
-      23-token semantic layer exactly (see docs/WAASKIT-DESIGN-SYSTEM.md).
-   2. AdminKit additions — roles WaasKit doesn't expose as a token but wp-admin
-      needs: --ak-secondary, --ak-hover-bg, --ak-shadow-elevated and the geometry/
-      type tokens. Tagged "+ AdminKit addition" below. Map: docs/TOKENS.md.
-      (Inverse text is NOT a token — it's done with a .scheme-* scope class.)
-
-   ── Conventions ──────────────────────────────────────────────────────────
-   • Flat by design — depth is shown by surface tone. The lone exception is
-     --ak-shadow-elevated for true floating layers (dropdowns); it inverts
-     black→white between light/dark so the lift reads in both modes.
-   • Radii + type stay in px (the provider rem scale renders too large in admin).
-   • One declaration per token. Derived tints use color-mix off --ak-primary as
-     the no-provider FALLBACK only — the provider's --accent-hover / --accent-subtle /
-     --focus win when present (so no duplicate static line is needed anymore).
-   • Surfaces and borders stay neutral by default; the accent family is the only
-     dynamic brand override emitted by PHP. Text stays neutral for legibility. */
-
+/* AdminKit → current WaasKit design system.
+ * Source: tokens/palettes/waaskit.json → php tokens/build.php.
+ * Every screen and adapter continues to consume --ak-* roles.
+ * WaasKit owns color, typography, radius, elevation and focus in both themes.
+ * Admin density stays in pixels to preserve native WordPress layouts.
+ */
 :root {
-	/* ── Surfaces ──────────────────────────────────────────────────────── */
-	--ak-bg: var(--background, hsl(0, 0%, 98%));
-	--ak-surface: var(--surface, hsl(0, 0%, 96%));
-	--ak-elevated: var(--elevated, hsl(0, 0%, 93%));
-
-	/* Form-field fill — lifts lighter than --ak-surface so an <input> / <select>
-	   / <textarea> reads as raised off cards, panels and the page. Light = white;
-	   dark uses the provider's elevated ramp (see the dark block). */
-	--ak-input-bg: var(--input, hsl(0, 0%, 100%)); /* bridges WaasKit --input (→ --neutral-l-1) */
-
-	/* Muted surface — for disabled / readonly / "gated" form controls. Needs
-	   to read as clearly different from BOTH --ak-input-bg (white) AND
-	   --ak-surface (card panels), otherwise a disabled field inside a card
-	   looks identical to an editable one. ~90% lightness in light, slightly
-	   darker than --ak-surface in dark. */
-	--ak-surface-muted: var(--surface-muted, hsl(0, 0%, 90%));
-
-	/* ── Borders ───────────────────────────────────────────────────────── */
-	--ak-border: var(--border, hsl(0, 0%, 89%));
-	--ak-border-strong: var(--border-strong, hsl(0, 0%, 82%));
-
-	/* ── Text ──────────────────────────────────────────────────────────── */
-	--ak-text: var(--text, hsl(0, 0%, 32%));
-	--ak-text-muted: var(--text-muted, hsl(0, 0%, 50%)); /* bridges WaasKit --text-muted (→ --neutral-l-7) */
-	--ak-heading: var(--heading, hsl(0, 0%, 18%));
-
-	/* ── Accent (brand) ────────────────────────────────────────────────────
-	   --ak-primary mirrors WaasKit --accent; --primary-hover / --primary-subtle
-	   mirror --accent-hover / --accent-subtle (WaasKit defines all three, so a
-	   single line — color-mix / the l-* ramp are just the no-provider fallback).
-	   --ak-primary-subtle is OPAQUE per WaasKit (--accent-subtle → --primary-l-9,
-	   harmonised with the status -subtle set); the dark block re-maps it onto --primary-d-9. */
-	--ak-primary: var(--accent, var(--primary, var(--neutral-l-8, hsl(0, 0%, 32%))));
-	--ak-primary-hover: var(--accent-hover, var(--primary-d-1, color-mix(in srgb, var(--ak-primary) 82%, #000)));
-	--ak-primary-subtle: var(--accent-subtle, var(--primary-l-9, color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface))));
-	/* Foreground on a brand fill — WaasKit --accent-on (→ --primary-d-9): dark
-	   text on the light/yellow brand. Standalone falls to off-white for the
-	   no-provider mid-gray accent. */
-	--ak-on-accent: var(--accent-on, hsl(0, 0%, 98%));
-	--ak-secondary: var(--ak-primary); /* aliased to --ak-primary — single brand colour, no separate secondary concept */
-
-	/* ── State ─────────────────────────────────────────────────────────────
-	   --ak-hover-bg is the hover tint for FLOATING / any-surface targets — dropdown
-	   & component menu items, panels, etc. It MUST be a TRANSLUCENT tint: those
-	   targets are transparent at rest, so it composites over whatever is beneath →
-	   a visible step on ANY surface, including --ak-elevated elements (an opaque
-	   elevated value would be invisible there). Black in light, white in dark
-	   (calmed value in the dark block below). Known-surface rows / tables / menu
-	   items instead lift to --ak-elevated directly — a crisper step (see
-	   settings.css, tables.css, chrome.css). Then the focus color + its ring. */
-	--ak-hover-bg: var(--hover, rgba(0, 0, 0, 0.04));
-	/* Elevation shadow — the one sanctioned exception to the flat rule, for
-	   true floating layers (admin-bar dropdowns). Mode-aware like --hover-bg:
-	   a black drop in light, inverted to a white lift in dark (a dark drop is
-	   invisible on a dark page). */
-	--ak-shadow-elevated: 0 8px 24px -10px rgba(0, 0, 0, 0.3);
-	--ak-focus: var(--focus, color-mix(in srgb, var(--ak-primary) 27%, transparent));
-	--ak-focus-ring: 0 0 0 3px var(--ak-focus);
-
-	/* ── Secondary button — single source of truth ───────────────────────────
-	   Every secondary button reads ONLY these three tokens — rest fill from
-	   --ak-btn-bg, hover/focus from --ak-btn-hover-*. Consumers: .button /
-	   .button-secondary, the "Choose File" chooser, the stacked header CTAs,
-	   #doaction / #post-query-submit, .components-button.is-secondary, the ACF /
-	   HappyFiles secondaries, the post editor's .taxonomy-add-new and the
-	   settings-page .ak-btn. To iterate the secondary button, THIS is the one
-	   place to edit — every consumer updates, light + dark.
-
-	   Rest fill = --ak-elevated: a step off --ak-surface (darker in light, lighter
-	   in dark) so the button stands out from the surface cards it sits on. The
-	   hover fill is OPAQUE — the rest fill nudged toward the text colour — so the
-	   darken is identical on ANY parent (a translucent tint vanished on
-	   same-coloured panels). Both derive from --ak-elevated / --ak-text, which
-	   flip per mode, so no dark fill override is needed; only the hover border is
-	   re-tuned per mode below. */
-	--ak-btn-bg: var(--ak-elevated);
-	--ak-btn-hover-bg: color-mix(in srgb, var(--ak-btn-bg), var(--ak-text) 7%);
-	--ak-btn-hover-border: var(--ak-border-strong);
-
-	/* ── Overlay ─────────────────────────────────────────────────────────
-	   Scrim behind modals / drawers — a translucent black, both modes. */
-	--ak-overlay: var(--overlay, var(--black-t-7, rgba(0, 0, 0, 0.5)));
-
-	/* ── Status (notifications) ──────────────────────────────────────────────
-	   Base hues mirror WaasKit --success/-warning/-error/-info. The -subtle fills
-	   bridge WaasKit's semantic subtle roles (opaque pale, the l-9 ramp, in light);
-	   the dark block re-maps them onto the d-9 ramp. color-mix over --ak-surface is
-	   the no-provider fallback only. */
-	--ak-success: var(--success, #11b76b);
-	--ak-success-subtle: var(--success-subtle, var(--success-l-9, color-mix(in srgb, var(--ak-success) 14%, var(--ak-surface))));
-	--ak-warning: var(--warning, #ffa100);
-	--ak-warning-subtle: var(--warning-subtle, var(--warning-l-9, color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface))));
-	--ak-error: var(--error, #f04662);
-	--ak-error-subtle: var(--error-subtle, var(--error-l-9, color-mix(in srgb, var(--ak-error) 14%, var(--ak-surface))));
-	--ak-info: var(--info, #2895d4);
-	--ak-info-subtle: var(--info-subtle, var(--info-l-9, color-mix(in srgb, var(--ak-info) 14%, var(--ak-surface))));
-
-	/* ── Geometry + type (px on purpose — see header) ───────────────────── */
-	--ak-radius-s: 6px;
-	--ak-radius-m: 10px;
-	--ak-radius-l: 14px;
-	--ak-radius-xl: 18px;   /* matches the content-panel corner */
-	--ak-radius-full: 9999px;
-
-	/* Spacing — px on purpose, same rationale as radii/type: the provider's
-	   --space-* scale is fluid (rem/clamp) and sized for frontend layout, far too
-	   large for admin chrome. A tight, fixed admin scale so component spacing reads
-	   from one source instead of scattered magic numbers. + AdminKit addition. */
+	--ak-bg: var(--wk-bg);
+	--ak-surface: var(--wk-surface);
+	--ak-elevated: var(--wk-surface-raised);
+	--ak-input-bg: var(--wk-surface);
+	--ak-surface-muted: var(--wk-surface-sunken);
+	--ak-border: var(--wk-border);
+	--ak-border-strong: var(--wk-border-strong);
+	--ak-text: var(--wk-text);
+	--ak-text-muted: var(--wk-text-muted);
+	--ak-heading: var(--wk-text);
+	--ak-primary: var(--wk-accent);
+	--ak-primary-hover: var(--wk-accent-hover);
+	--ak-primary-subtle: var(--wk-accent-soft);
+	--ak-on-accent: var(--wk-on-accent);
+	--ak-secondary: var(--wk-accent);
+	--ak-hover-bg: var(--wk-surface-hover);
+	--ak-shadow-elevated: var(--wk-elevation-2);
+	--ak-focus: var(--wk-focus-ring);
+	--ak-focus-ring: 0 0 0 var(--wk-focus-offset) var(--ak-bg),
+		0 0 0 calc(var(--wk-focus-offset) + var(--wk-focus-width)) var(--ak-focus);
+	--ak-overlay: var(--wk-overlay);
+	--ak-success: var(--wk-success-text);
+	--ak-success-subtle: var(--wk-success-soft);
+	--ak-warning: var(--wk-warning-text);
+	--ak-warning-subtle: var(--wk-warning-soft);
+	--ak-error: var(--wk-danger-text);
+	--ak-error-subtle: var(--wk-danger-soft);
+	--ak-info: var(--wk-info-text);
+	--ak-info-subtle: var(--wk-info-soft);
+	--ak-radius-s: var(--wk-radius-md);
+	--ak-radius-m: var(--wk-radius-lg);
+	--ak-radius-l: var(--wk-radius-xl);
+	--ak-radius-xl: var(--wk-radius-2xl);
+	--ak-radius-full: var(--wk-radius-full);
+	--ak-font-body: var(--wk-font-sans);
+	--ak-font-mono: var(--wk-font-mono);
+	--ak-btn-bg: var(--wk-surface);
+	--ak-btn-hover-bg: var(--wk-surface-hover);
+	--ak-btn-hover-border: var(--wk-border-strong);
+	--ak-space-2xs: 2px;
 	--ak-space-xs: 4px;
 	--ak-space-s: 8px;
+	--ak-space-m: 12px;
 	--ak-space-l: 16px;
-
-	--ak-font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 	--ak-text-xs: 12px;
 	--ak-text-s: 13px;
 	--ak-text-m: 14px;
@@ -185,11 +65,11 @@ body.adminkit[class*="admin-color-"],
 body.wp-customizer,
 body.wp-customizer[class*="admin-color-"] {
 	--wp-admin-theme-color: var(--ak-primary);
-	--wp-admin-theme-color--rgb: 255, 214, 79;
+	--wp-admin-theme-color--rgb: 21, 73, 171;
 	--wp-admin-theme-color-darker-10: var(--ak-primary-hover);
-	--wp-admin-theme-color-darker-10--rgb: 209, 175, 65;
+	--wp-admin-theme-color-darker-10--rgb: 21, 59, 135;
 	--wp-admin-theme-color-darker-20: var(--ak-primary-hover);
-	--wp-admin-theme-color-darker-20--rgb: 209, 175, 65;
+	--wp-admin-theme-color-darker-20--rgb: 21, 59, 135;
 
 	/* @wordpress/components React UI tokens (options-connectors, Gutenberg meta,
 	   custom React admin pages). Routing them through AdminKit tokens flips the
@@ -212,61 +92,9 @@ body.wp-customizer[class*="admin-color-"] {
 	--wp-components-color-gray-900: var(--ak-heading);
 }
 
-/* Dark mode — [data-adminkit-theme="dark"] on <html>. Surfaces / borders /
-   text mirror the provider's DARK palette via the inverse ramp: --neutral-d-N
-   resolves (in the admin's light context) to --neutral-l-N's dark value, so
-   these match what --background / --surface / --text would be in the provider's
-   own dark mode — no provider toggle required. Only tokens that differ from
-   :root are re-declared; the compat aliases above follow automatically. */
-:root[data-adminkit-theme="dark"] {
-	--ak-bg: var(--neutral-d-1, hsl(0, 0%, 7%));
-	--ak-surface: var(--neutral-d-2, hsl(0, 0%, 11%));
-	--ak-elevated: var(--neutral-d-3, hsl(0, 0%, 14%));
-
-	/* Dark field — lifts a step lighter than the card (the provider's elevated
-	   ramp, --neutral-d-3) so it detaches, mirroring the white field in light. */
-	--ak-input-bg: var(--neutral-d-3, hsl(0, 0%, 14%));
-
-	/* Muted surface (dark) — LIGHTER than --ak-surface (11%) and --ak-input-bg
-	   (14%), inverting the light-mode direction. On near-black surfaces, a
-	   "darker disabled" reads as a void cut into the card and produces font
-	   antialiasing artefacts that look like text shadowing. A slightly raised
-	   neutral grey gives the field a clear identity without prominence, and
-	   keeps text legible. */
-	--ak-surface-muted: var(--surface-muted, hsl(0, 0%, 18%));
-
-	--ak-border: var(--neutral-d-4, hsl(0, 0%, 18%));
-	--ak-border-strong: var(--neutral-d-5, hsl(0, 0%, 24%));
-
-	--ak-text: var(--neutral-d-8, hsl(0, 0%, 72%));
-	--ak-text-muted: var(--neutral-d-7, hsl(0, 0%, 56%));
-	--ak-heading: var(--neutral-d-9, hsl(0, 0%, 86%));
-
-	/* Accent stays the brand (provider --accent/--primary don't flip in admin);
-	   standalone falls to a mid-gray for ~4.5:1 contrast with white text. */
-	--ak-primary: var(--accent, var(--primary, var(--neutral-d-6, hsl(0, 0%, 38%))));
-	--ak-primary-hover: var(--accent-hover, var(--primary-l-2, color-mix(in srgb, var(--ak-primary) 82%, #fff)));
-	--ak-secondary: var(--ak-primary); /* aliased — see light-mode rule above */
-
-	/* Subtle fills — WaasKit's -subtle roles carry an explicit dark value (the
-	   d-9/d-10 ramp). The provider's own dark mode never fires in wp-admin, so we
-	   read those dark primitives straight (same trick as the surfaces above) to
-	   reproduce WaasKit dark instead of leaving a pale light tint on a dark UI. */
-	--ak-primary-subtle: var(--primary-d-9, color-mix(in srgb, var(--ak-primary) 22%, var(--ak-surface)));
-	--ak-success-subtle: var(--success-d-9, color-mix(in srgb, var(--ak-success) 22%, var(--ak-surface)));
-	--ak-warning-subtle: var(--warning-d-9, color-mix(in srgb, var(--ak-warning) 22%, var(--ak-surface)));
-	--ak-error-subtle:   var(--error-d-9, color-mix(in srgb, var(--ak-error) 22%, var(--ak-surface)));
-	--ak-info-subtle:    var(--info-d-9, color-mix(in srgb, var(--ak-info) 22%, var(--ak-surface)));
-
-	/* Inverted elevation — a white lift reads on a dark page where a black
-	   drop would vanish. */
-	--ak-shadow-elevated: 0 8px 24px -10px rgba(255, 255, 255, 0.14);
-	/* Hover tint — white in dark (a black tint vanishes on a dark UI); calmed
-	   (~0.06) so row / menu / tab hovers stay subtle but visible on any surface. */
-	--ak-hover-bg: rgba(255, 255, 255, 0.06);
-
-	/* Secondary-button hover: the fill auto-adapts via the :root color-mix (it
-	   lightens here as surface + text flip). Only the border needs a lift — the
-	   d-5 border reads too faint on dark surfaces, so step it to d-6. */
-	--ak-btn-hover-border: var(--neutral-d-6, hsl(0, 0%, 38%));
-}
+/* Focus tokens remain opaque; the WaasKit two-ring shadow is shared by
+   native controls, the login form, and AdminKit components. */
+body.adminkit ::selection { background: var(--ak-primary-subtle); color: var(--ak-heading); }
+body.adminkit input, body.adminkit textarea { caret-color: var(--ak-primary); }
+body.adminkit { scrollbar-color: var(--ak-border-strong) var(--ak-bg); }
+body.adminkit code, body.adminkit kbd, body.adminkit pre { font-family: var(--ak-font-mono); }

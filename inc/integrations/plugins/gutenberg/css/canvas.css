@@ -25,6 +25,7 @@ html[data-adminkit-canvas] body.editor-styles-wrapper {
 	box-sizing: border-box;
 }
 .editor-styles-wrapper {
+	font-family: var(--ak-font-body);
 	color: var(--ak-text);
 }
 /* Canvas scrollbar follows the theme (tokens flip in dark). */

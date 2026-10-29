@@ -30,3 +30,9 @@ body.adminkit a:focus {
 body.adminkit a:focus {
 	box-shadow: none;
 }
+
+/* Keyboard navigation retains the WaasKit focus indicator. */
+body.adminkit a:not(.button):focus-visible {
+	outline: var(--wk-focus-width) solid var(--ak-focus);
+	outline-offset: var(--wk-focus-offset);
+}

@@ -24,7 +24,7 @@ body.adminkit .wp-core-ui select {
 	   for selects below survives. The shorthand would clear WP's arrow SVG
 	   AND ours. */
 	background-color: var(--ak-input-bg);
-	border: 1px solid var(--ak-border);
+	border: 1px solid var(--ak-border-strong);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	font-family: var(--ak-font-body);
@@ -343,4 +343,12 @@ body.adminkit input[type="file"] {
 	body.adminkit .wp-core-ui select {
 		font-size: 16px;
 	}
+}
+
+/* WaasKit two-ring keyboard focus on native form controls. */
+body.adminkit.wp-core-ui input:not([type="hidden"]):focus-visible,
+body.adminkit.wp-core-ui textarea:focus-visible,
+body.adminkit.wp-core-ui select:focus-visible {
+	outline: none;
+	box-shadow: var(--ak-focus-ring);
 }

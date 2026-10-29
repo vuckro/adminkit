@@ -73,9 +73,7 @@ body.adminkit .wrap .page-title-action,
 body.adminkit .wrap .page-title-action:active {
 	background: var(--ak-primary);
 	border: 1px solid var(--ak-primary);
-	/* Foreground on the brand fill — WaasKit --accent-on (→ --primary-d-9):
-	   dark text on the yellow brand. Read via the token so it tracks the
-	   tokens instead of pinning a primitive. */
+	/* WaasKit foreground follows its light/dark accent fill. */
 	color: var(--ak-on-accent);
 	text-shadow: none;
 	box-shadow: none;
@@ -235,4 +233,13 @@ body.adminkit #doaction2:focus,
 body.adminkit #post-query-submit:focus {
 	box-shadow: none;
 	border-color: var(--ak-btn-hover-border);
+}
+
+/* WaasKit keyboard focus must remain visible after the native focus resets. */
+body.adminkit .button:focus-visible,
+body.adminkit .button-secondary:focus-visible,
+body.adminkit .button-primary:focus-visible,
+body.adminkit .wrap .page-title-action:focus-visible {
+	outline: none;
+	box-shadow: var(--ak-focus-ring);
 }

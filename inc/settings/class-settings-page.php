@@ -365,7 +365,7 @@ class AdminKit_Settings_Page {
 			// One of 'adminkit' | 'bricks' | 'custom'. Drives the segmented picker
 			// in the Brand card and the Source pill colour for accent-family tokens.
 			'accentSource' => AdminKit_Settings::accent_source(),
-			// Default AdminKit accent (WordPress Blue). The SPA seeds the swatch
+			// WaasKit custom-picker seed. The default accent uses native roles. The SPA seeds the swatch
 			// with this when source = 'adminkit' before getComputedStyle resolves.
 			'adminkitBlue' => AdminKit_Assets::ADMINKIT_BLUE,
 			// Bricks detection — true when the Bricks theme is the active theme.
@@ -474,10 +474,10 @@ class AdminKit_Settings_Page {
 				'slotUpload'          => __( 'Upload', 'adminkit' ),
 				'slotRemove'          => __( 'Remove', 'adminkit' ),
 
-				// Accent picker — 3 sources (WordPress / Bricks / Custom). The
+				// Accent picker — 3 sources (WaasKit / Bricks / Custom). The
 				// Bricks option only renders when the integration is connected.
 				'accentLabel'         => __( 'Brand color', 'adminkit' ),
-				'accentSrcAdminKit'   => __( 'WordPress', 'adminkit' ),
+				'accentSrcAdminKit'   => __( 'WaasKit', 'adminkit' ),
 				'accentSrcBricks'     => __( 'Bricks', 'adminkit' ),
 				'accentSrcCustom'     => __( 'Custom', 'adminkit' ),
 				'displayLabel'        => __( 'Display', 'adminkit' ),

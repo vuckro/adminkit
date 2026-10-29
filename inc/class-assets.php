@@ -43,34 +43,19 @@ defined( 'ABSPATH' ) || exit;
 class AdminKit_Assets {
 
 	const FONTS_HANDLE  = 'adminkit-fonts';
-	const FONTS_URL     = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap';
+	const FONTS_SRC     = 'assets/css/fonts.css';
 	const TOKENS_HANDLE = 'adminkit-tokens';
 	const TOKENS_SRC    = 'assets/css/tokens.css';
 
-	/**
-	 * AdminKit's default accent — WordPress Blue (the Block Editor primary, the
-	 * modern admin blue used in Gutenberg / FSE). Emitted as the inline override
-	 * for `--ak-primary` when `accent_source` resolves to 'adminkit', so it wins
-	 * over any Bricks provider --accent. The derived accent tokens (hover,
-	 * subtle, on-accent, focus ring) recalculate automatically via color-mix()
-	 * in tokens.css — one knob, whole family follows.
-	 *
-	 * If you change this, update the [[reference-wp-blue-3858e9]] memo too.
-	 */
-	const ADMINKIT_BLUE = '#3858E9';
+	/** Default hex seed for the custom-color picker; native accent uses WaasKit roles. */
+	const ADMINKIT_BLUE = '#1549AB';
 
-	// Built-in WaasKit token baseline (generated from tokens/palettes/*
-	// by the adminkit-tokens-build skill). Shipped so AdminKit is brand-complete with
+	// Built-in WaasKit token baseline (generated from tokens/palettes/waaskit.json
+	// by php tokens/build.php). Shipped so AdminKit is brand-complete with
 	// no provider; a live provider (Bricks) loads AFTER it and overrides it.
 	const WAASKIT_HANDLE = 'adminkit-waaskit';
 	const WAASKIT_SRC    = 'assets/css/waaskit-tokens.css';
 
-	// WordPress-mapped baseline — AdminKit's own palette identity (Modern WP).
-	// Loaded only when accent_source resolves to 'adminkit' or 'custom'; sits in
-	// the cascade between any Bricks provider stylesheet and tokens.css so the
-	// chosen identity wins. Static file — change `wp-baseline.css` to retune.
-	const WP_BASELINE_HANDLE = 'adminkit-wp-baseline';
-	const WP_BASELINE_SRC    = 'assets/css/wp-baseline.css';
 
 	/**
 	 * Registered asset entries.
@@ -105,55 +90,20 @@ class AdminKit_Assets {
 		add_filter( 'admin_body_class', array( __CLASS__, 'add_admin_body_class' ) );
 		add_filter( 'login_body_class', array( __CLASS__, 'add_login_body_class' ) );
 
-		add_filter( 'wp_resource_hints', array( __CLASS__, 'resource_hints' ), 10, 2 );
 
 		// Accent family override — emits a dual-block (light :root + dark
 		// :root[data-adminkit-theme="dark"]) inline rule on the tokens
 		// stylesheet so every UI surface that consumes --ak-primary &
-		// derivatives picks AdminKit-Blue (or the user's custom hex) in BOTH
+		// derivatives follows an explicit user override in BOTH
 		// modes. Bricks source is a no-op (Bricks's stylesheet rules the
 		// cascade on its own). See inject_accent_family() for the cascade rationale.
 		add_action( 'adminkit/tokens_enqueued', array( __CLASS__, 'inject_accent_family' ) );
 	}
 
 	/**
-	 * Emit the accent-family CSS overrides inline on top of tokens.css.
-	 *
-	 * Why this method exists at all
-	 * -----------------------------
-	 * tokens.css declares --ak-primary inside both :root{} (specificity 0,1,0)
-	 * AND :root[data-adminkit-theme="dark"]{} (specificity 0,2,0), reading from
-	 * WaasKit's `--accent` primitive (which is the WaasKit yellow). Since
-	 * tokens.css loads AFTER wp-baseline.css (it lists wp-baseline as a dep)
-	 * the WaasKit chain wins on cascade ties in light mode, and the dark block
-	 * wins by specificity in dark mode — both leak yellow into AdminKit/Custom.
-	 *
-	 * The only layer that loads after tokens.css's dark block is inline-style
-	 * appended to the tokens handle (`wp_add_inline_style()` emits AFTER the
-	 * linked stylesheet, into the same DOM order). We therefore emit a DUAL
-	 * BLOCK here — a `:root{}` for light AND a
-	 * `:root[data-adminkit-theme="dark"]{}` for dark — so both specificity
-	 * tiers are covered.
-	 *
-	 * Per source:
-	 *   • 'adminkit' → AdminKit-Blue (`ADMINKIT_BLUE` constant, #3858E9).
-	 *   • 'custom'   → user's `brand_accent` hex (sanitized).
-	 *   • 'bricks'   → no-op. Bricks's provider stylesheet handles its own
-	 *                  --accent + dark mode through the cascade.
-	 *
-	 * Family covered: --ak-primary, --ak-primary-hover, --ak-primary-subtle,
-	 * --ak-on-accent, --ak-focus. Dark-mode tweaks:
-	 *   • hover lightens (mix with #fff) instead of darkening — readable on dark
-	 *     surfaces where × 82% black would go nearly black-on-#2c2c2c.
-	 *   • subtle bumps from 12% to 22% mix with --ak-surface so the pale tint
-	 *     reads against the darker substrate (matches the proportion in
-	 *     wp-baseline.css's dark surfaces).
-	 *
-	 * Mirrored JS-side in `assets/js/settings.js::applyPreview()` so the live
-	 * preview during the segmented-source change matches what we emit after save.
-	 *
-	 * @param string $context  admin | login | frontend | editor | customize
-	 * @return void
+	 * Emit only explicit custom/provider accent overrides after the token sheet.
+	 * The default source inherits WaasKit's native light and dark roles.
+	 * @param string $context Asset context.
 	 */
 	public static function inject_accent_family( $context ) {
 		$css = self::accent_family_css();
@@ -166,45 +116,38 @@ class AdminKit_Assets {
 	}
 
 	/**
-	 * Build the accent-family override CSS — the dual light/dark `:root` block that
-	 * re-points --ak-primary (+ hover / subtle / on-accent / focus) to the active
-	 * accent (ADMINKIT_BLUE for the 'adminkit' source, the saved hex for 'custom').
-	 * Returns '' when Bricks provides the accent (its own stylesheet rides the
-	 * cascade) or no usable hex resolves.
-	 *
-	 * Shared by inject_accent_family() (page contexts, via wp_add_inline_style) AND
-	 * the Gutenberg canvas — whose iframe needs the SAME override injected as a
-	 * <style>, since the inline page style never reaches the iframe (that gap is why
-	 * brand buttons in the canvas, `.wp-block-button__link { background: var(--ak-
-	 * primary) }`, rendered the WaasKit-yellow default instead of the brand accent).
-	 *
-	 * @return string CSS (no <style> wrapper), or '' to skip.
+	 * Custom colors and the opt-in legacy Bricks provider remain supported.
+	 * An empty string leaves the default WaasKit accent, hover and focus intact.
+	 * Also consumed by the Gutenberg canvas.
+	 * @return string CSS without a style wrapper.
 	 */
 	public static function accent_family_css() {
 		$source = AdminKit_Settings::accent_source();
 		if ( 'bricks' === $source ) {
+			return ':root,#wpadminbar{--ak-bg:var(--background,var(--wk-bg));--ak-surface:var(--surface,var(--wk-surface));--ak-primary:var(--accent,var(--wk-accent));--ak-primary-hover:var(--accent-hover,var(--wk-accent-hover));--ak-on-accent:var(--accent-on,var(--wk-on-accent))}'
+				. ':root[data-adminkit-theme="dark"],:root[data-adminkit-theme="dark"] #wpadminbar{--ak-bg:var(--neutral-d-1,var(--wk-bg));--ak-surface:var(--neutral-d-2,var(--wk-surface))}';
+		}
+		if ( 'custom' !== $source ) {
 			return '';
 		}
-		$hex = ( 'custom' === $source )
-			? (string) sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) )
-			: self::ADMINKIT_BLUE;
+		$hex = (string) sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) );
 		if ( '' === $hex ) {
 			return '';
 		}
 		$on = self::contrast_text_for( $hex );
-		$light = ':root{'
-			. '--ak-primary:' . $hex . ';'
+		$light = ':root,#wpadminbar{'
+			. '--ak-custom-accent:' . $hex . ';--ak-custom-on-accent:' . $on . ';--ak-primary:' . $hex . ';'
 			. '--ak-primary-hover:color-mix(in srgb,' . $hex . ' 82%,#000);'
 			. '--ak-primary-subtle:color-mix(in srgb,' . $hex . ' 12%,var(--ak-surface));'
 			. '--ak-on-accent:' . $on . ';'
-			. '--ak-focus:color-mix(in srgb,' . $hex . ' 27%,transparent)'
+			. '--ak-focus:' . $hex
 			. '}';
-		$dark = ':root[data-adminkit-theme="dark"]{'
-			. '--ak-primary:' . $hex . ';'
+		$dark = ':root[data-adminkit-theme="dark"],:root[data-adminkit-theme="dark"] #wpadminbar{'
+			. '--ak-custom-accent:' . $hex . ';--ak-custom-on-accent:' . $on . ';--ak-primary:' . $hex . ';'
 			. '--ak-primary-hover:color-mix(in srgb,' . $hex . ' 82%,#fff);'
 			. '--ak-primary-subtle:color-mix(in srgb,' . $hex . ' 22%,var(--ak-surface));'
 			. '--ak-on-accent:' . $on . ';'
-			. '--ak-focus:color-mix(in srgb,' . $hex . ' 27%,transparent)'
+			. '--ak-focus:' . $hex
 			. '}';
 		return $light . $dark;
 	}
@@ -410,12 +353,12 @@ class AdminKit_Assets {
 	}
 
 	/**
-	 * Enqueue the Google Fonts stylesheet.
+	 * Enqueue the locally hosted WaasKit font families.
 	 *
 	 * @return void
 	 */
 	private static function enqueue_fonts() {
-		wp_enqueue_style( self::FONTS_HANDLE, self::FONTS_URL, array(), null );
+		wp_enqueue_style( self::FONTS_HANDLE, ADMINKIT_URL . self::FONTS_SRC, array(), (string) filemtime( ADMINKIT_PATH . self::FONTS_SRC ) );
 	}
 
 	/**
@@ -429,16 +372,11 @@ class AdminKit_Assets {
 	 * @return void
 	 */
 	private static function enqueue_tokens( $context, array $core_deps = array() ) {
-		// Ship the WaasKit baseline first, as the leading dep of adminkit-tokens, so
-		// the brand tokens are always present even with no provider. A provider
-		// (Bricks) returns its handle below and is registered to depend on this
-		// baseline, so it loads AFTER and overrides it (see Bricks::provide_tokens()).
-		// Not on the frontend: there a live provider already themes the page and the
-		// admin bar follows it (mode-flipping) via the provider's frontend bridge —
-		// a static light-context baseline would fight that in dark mode. The baseline
-		// is for wp-admin / login / editor, where no live provider theming runs.
+		// The frontend receives toolbar-scoped tokens only; public page styles
+		// remain owned by the site's theme. Admin, login and editors use :root.
 		$baseline = '';
-		$wk_path  = ADMINKIT_PATH . self::WAASKIT_SRC;
+		$wk_src = 'frontend' === $context ? 'assets/css/waaskit-toolbar-tokens.css' : self::WAASKIT_SRC;
+		$wk_path = ADMINKIT_PATH . $wk_src;
 
 		/**
 		 * Whether to ship the built-in WaasKit baseline tokens. Return false to
@@ -451,10 +389,10 @@ class AdminKit_Assets {
 		 */
 		$load_baseline = (bool) apply_filters( 'adminkit/enqueue_baseline', true, $context );
 
-		if ( $load_baseline && 'frontend' !== $context && file_exists( $wk_path ) ) {
+		if ( $load_baseline && file_exists( $wk_path ) ) {
 			wp_enqueue_style(
 				self::WAASKIT_HANDLE,
-				ADMINKIT_URL . self::WAASKIT_SRC,
+				ADMINKIT_URL . $wk_src,
 				$core_deps,
 				(string) filemtime( $wk_path )
 			);
@@ -463,41 +401,13 @@ class AdminKit_Assets {
 
 		$extra = apply_filters( 'adminkit/extra_tokens_handle', null, $context );
 
-		// AdminKit's own WP-mapped baseline — loaded when the user picked
-		// 'adminkit' as the accent source (default), or 'custom' (custom uses
-		// the same neutrals + their picked accent on top). Bricks source skips
-		// this so the Bricks provider stays canonical.
-		//
-		// Depends on `$baseline` (WaasKit) AND `$extra` (Bricks if present), so
-		// it loads AFTER both in the cascade — whatever a provider declared gets
-		// overridden by AdminKit's intentional choice. The deps array passed to
-		// tokens.css below ALSO lists `$wp_baseline` last, for explicit ordering
-		// alongside its own dep chain.
-		$wp_baseline = null;
-		$wp_path     = ADMINKIT_PATH . self::WP_BASELINE_SRC;
-		if ( file_exists( $wp_path ) && in_array( AdminKit_Settings::accent_source(), array( 'adminkit', 'custom' ), true ) ) {
-			$wp_deps = array_filter(
-				array( $baseline, $extra ),
-				static function ( $dep ) {
-					return $dep && wp_style_is( $dep, 'registered' );
-				}
-			);
-			wp_enqueue_style(
-				self::WP_BASELINE_HANDLE,
-				ADMINKIT_URL . self::WP_BASELINE_SRC,
-				$wp_deps,
-				(string) filemtime( $wp_path )
-			);
-			$wp_baseline = self::WP_BASELINE_HANDLE;
-		}
-
 		// Only depend on handles that are actually registered. WP 6.9.1+ DROPS a
 		// stylesheet — and everything that transitively depends on it — if it lists
 		// a missing dependency. The baseline is skipped on the frontend, and a
 		// provider could return a handle it didn't enqueue; either would otherwise
 		// take the whole --ak-* layer (and the admin bar) down with it.
 		$deps = array_filter(
-			array_merge( $core_deps, array( $baseline, $extra, $wp_baseline ) ),
+			array_merge( $core_deps, array( $baseline, $extra ) ),
 			static function ( $dep ) {
 				return $dep && wp_style_is( $dep, 'registered' );
 			}
@@ -596,18 +506,4 @@ class AdminKit_Assets {
 		return $classes;
 	}
 
-	/**
-	 * Preconnect to Google Fonts so the first paint isn't blocked on DNS.
-	 *
-	 * @param array  $hints
-	 * @param string $relation_type
-	 * @return array
-	 */
-	public static function resource_hints( $hints, $relation_type ) {
-		if ( 'preconnect' === $relation_type ) {
-			$hints[] = array( 'href' => 'https://fonts.googleapis.com', 'crossorigin' => 'anonymous' );
-			$hints[] = array( 'href' => 'https://fonts.gstatic.com', 'crossorigin' => 'anonymous' );
-		}
-		return $hints;
-	}
 }

@@ -722,12 +722,14 @@
    menu are LIGHT in light mode and DARK in dark mode — exactly like the real admin —
    instead of a fixed dark rail. */
 .adminkit-app .ak-bp__frame {
-	--p-canvas: #fafafa;   /* page background (≈ --ak-bg) */
-	--p-surface: #f2f3f5;  /* chrome (bar + menu) AND cards (≈ --ak-surface) */
-	--p-elevated: #e8eaed; /* header bands (≈ --ak-elevated) */
-	--p-text: #1d2327;
-	--p-muted: #646970;
-	--p-border: #dcdde1;
+	--p-canvas: var(--wk-bg);
+	--p-surface: var(--wk-surface);
+	--p-elevated: var(--wk-surface-raised);
+	--p-text: var(--wk-text);
+	--p-muted: var(--wk-text-muted);
+	--p-border: var(--wk-border);
+	--p-accent: var(--ak-custom-accent, var(--wk-accent));
+	--p-on-accent: var(--ak-custom-on-accent, var(--wk-on-accent));
 	/* Aliases — the existing chrome/card rules ride the themed tones above. */
 	--p-rail: var(--p-surface);
 	--p-rail-text: var(--p-text);
@@ -748,14 +750,6 @@
 @media (prefers-reduced-motion: reduce) {
 	.adminkit-app .ak-bp__frame { animation: none; }
 }
-.adminkit-app .ak-bp__frame[data-preview-theme="dark"] {
-	--p-canvas: #1a1e23;
-	--p-surface: #242b31;
-	--p-elevated: #2f373e;
-	--p-text: #e8eaed;
-	--p-muted: #9aa0a6;
-	--p-border: #394149;
-}
 .adminkit-app .ak-bp__bar {
 	display: flex;
 	align-items: center;
@@ -769,7 +763,7 @@
 .adminkit-app .ak-bp__logo { height: 20px; width: auto; max-width: 160px; object-fit: contain; display: block; }
 .adminkit-app .ak-bp__logo-ph { font-size: 12px; color: var(--p-rail-text); opacity: .65; }
 .adminkit-app .ak-bp__favicon { width: 18px; height: 18px; border-radius: 4px; object-fit: cover; display: block; flex: none; }
-.adminkit-app .ak-bp__favicon--empty { background: var(--ak-primary); }
+.adminkit-app .ak-bp__favicon--empty { background: var(--p-accent); }
 .adminkit-app .ak-bp__site { font-size: 12px; font-weight: 600; color: var(--p-rail-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .adminkit-app .ak-bp__dots { display: inline-flex; gap: 6px; flex: none; }
 .adminkit-app .ak-bp__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--p-rail-text); opacity: .4; }
@@ -778,9 +772,9 @@
 .adminkit-app .ak-bp__nav { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
 .adminkit-app .ak-bp__nav-ic { width: 14px; height: 14px; border-radius: 4px; background: var(--p-rail-text); opacity: .45; flex: none; }
 .adminkit-app .ak-bp__nav-bar { height: 6px; border-radius: 3px; background: var(--p-rail-text); opacity: .3; flex: 1; }
-.adminkit-app .ak-bp__nav.is-active { background: var(--ak-primary); }
+.adminkit-app .ak-bp__nav.is-active { background: var(--p-accent); }
 .adminkit-app .ak-bp__nav.is-active .ak-bp__nav-ic,
-.adminkit-app .ak-bp__nav.is-active .ak-bp__nav-bar { background: var(--ak-on-accent); opacity: .95; }
+.adminkit-app .ak-bp__nav.is-active .ak-bp__nav-bar { background: var(--p-on-accent); opacity: .95; }
 .adminkit-app .ak-bp__content { padding: 16px; background: var(--p-canvas); display: flex; flex-direction: column; gap: 12px; }
 /* Page header: title + a primary action, like the dashboard greeting row. */
 .adminkit-app .ak-bp__chead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -806,8 +800,8 @@
 	padding: 7px 15px;
 	border: 0;
 	border-radius: var(--ak-radius-s);
-	background: var(--ak-primary);
-	color: var(--ak-on-accent);
+	background: var(--p-accent);
+	color: var(--p-on-accent);
 	font: inherit;
 	font-size: 12px;
 	font-weight: 600;

@@ -60,7 +60,7 @@ docs/                   Deep-dive guides (see "More docs" below).
 | Add an integration (skin a plugin/theme) | `php dev/adapter-scan.php ../{host} --slug={slug} --emit`, fill TODOs, fine-tune css, then audit + drift | [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) |
 | Add per-screen CSS | Add `assets/css/wp-screens/{name}.css`, register via `self::register_screen()` in `inc/wp-core/class-chrome.php` | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 | Add a JS behaviour | New `assets/js/wp-core/{name}.js`, enqueue via `AdminKit_Assets::enqueue_script()` | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
-| Change a baseline token | Edit `tokens/palettes/*.json`, run `php tokens/build.php`, commit JSON + regenerated CSS | [docs/TOKENS.md](docs/TOKENS.md) |
+| Change a baseline token | Edit `tokens/palettes/waaskit.json`, run `php tokens/build.php`, commit JSON + regenerated CSS | [docs/TOKENS.md](docs/TOKENS.md) |
 | Detect host / WP-core CSS changes | `php dev/adapter-drift.php` (per adapter) or `--wp-core` | [docs/TOKENS.md](docs/TOKENS.md#drift-detection-keeping-adapters-alive) |
 | Add a setting / feature toggle | `AdminKit_Settings::register()` (+ an `AdminKit_Settings_Catalog::features()` row for the UI), then update the Settings inventory | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#settings) |
 | Add a hook (filter / action) | namespace it `adminkit/…`, then document it | [docs/EXTENDING.md](docs/EXTENDING.md) |
@@ -109,7 +109,7 @@ decision.** Skipping step 2 or 3 is exactly how past iterations got lost.
   release (bump the version, write the `readme.txt` changelog entry, set the stable
   tag together). Leave the version alone otherwise.
 - **`assets/css/waaskit-tokens.css` is GENERATED.** Never hand-edit it. Change
-  `tokens/palettes/*.json` and run `php tokens/build.php`. `--check` is a drift gate.
+  `tokens/palettes/waaskit.json` and run `php tokens/build.php`. `--check` is a drift gate.
 - **Every AdminKit stylesheet reads `--ak-*` tokens, never raw colours.** That
   indirection powers dark mode and provider theming. Keep it. Deliberate exceptions:
   (1) `integrations/themes/bricks/css/builder.css` — the Bricks builder is a
