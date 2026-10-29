@@ -5,7 +5,7 @@ Le système actuel est décrit dans [WAASKIT-DESIGN-SYSTEM.md](WAASKIT-DESIGN-SY
 ## Chaîne de génération
 
 1. `tokens/palettes/waaskit.json` : instantané des variables WaasKit natives, avec provenance.
-2. `php tokens/build.php` : génère `assets/css/waaskit-tokens.css` ; `--check` détecte toute dérive des trois feuilles générées. Le build suit les dépendances dans les deux thèmes et refuse les références manquantes ou circulaires. Il conserve les 50 variables amont nécessaires sur les 156 du relevé complet.
+2. `php tokens/build.php` : génère `assets/css/waaskit-tokens.css` ; `--check` détecte toute dérive des trois feuilles générées. Le build suit les dépendances dans les deux thèmes et refuse les références manquantes ou circulaires. Il n’émet que les variables requises et leurs dépendances ; le relevé amont complet reste conservé.
 3. `tokens/adminkit.json` définit les rôles `--ak-*` ; `tokens/wordpress.css` contient la correspondance WordPress. Le build génère `assets/css/tokens.css` sans analyser ni réécrire une feuille CSS existante.
 4. Une couleur personnalisée ou la source Bricks explicitement sélectionnée peut ajouter une surcharge d’accent. Le mode par défaut conserve les rôles WaasKit dans les deux thèmes.
 
@@ -25,7 +25,8 @@ Le système actuel est décrit dans [WAASKIT-DESIGN-SYSTEM.md](WAASKIT-DESIGN-SY
 | statut `-subtle` | statut `-soft` |
 | `--ak-font-body`, `--ak-font-mono` | `--wk-font-sans`, `--wk-font-mono` |
 | rayons `s/m/l/xl/full` | rayons `md/lg/xl/2xl/full` |
-| `--ak-shadow-elevated` | `--wk-elevation-2` |
+| `--ak-shadow-elevated`, `--ak-shadow-subtle` | `--wk-elevation-2`, `--wk-elevation-1` |
+| `--ak-duration-fast`, `--ak-ease-standard` | `--wk-duration-fast`, `--wk-ease-standard` |
 
 Sur le site public, `waaskit-toolbar-tokens.css` est généré avec les mêmes variables dans le seul périmètre `#wpadminbar` ; le thème public ne reçoit aucune déclaration WaasKit sur `:root`. L’aperçu des réglages possède ses propres rôles clair/sombre, issus de la même source.
 

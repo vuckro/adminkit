@@ -189,3 +189,11 @@ and packages `HEAD` by default.
 
 See [EXTENDING.md](EXTENDING.md) for hooks, [INTEGRATIONS.md](INTEGRATIONS.md) for
 adapter contracts and [INSTALL.md](INSTALL.md) for packaging.
+
+## Native list tables
+
+The list-table skin follows the [WaasKit table component](https://design.waaskit.site/composants/tableaux/): 16px card radius, sunken 40px column headers, fine row dividers, soft hover and checked-row accent state. Native rows retain their content-driven height and WordPress controls.
+
+`list-table-chrome.js` groups the existing top/bottom navigation bars and scroll container into one card on native Posts, Pages, Media-list, Users, Terms, Comments and Plugins screens. Controls stay in their original form with their existing IDs and event handlers. Third-party screens retain their existing wrappers. The redundant table footer headings are visually hidden inside a card; top sorting/selection headers and both navigation bars remain available. Mobile row expansion and Quick/Bulk Edit retain their native behavior.
+
+This presentation writes no options or user metadata.

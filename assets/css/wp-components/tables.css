@@ -47,27 +47,10 @@ body.adminkit .widefat tbody tr:first-child th {
 	border-top: none;
 }
 
-/* WP list tables. Three declarations make fill + horizontal scroll work together:
-   - width:100% fills the area (no dead space, Quick Edit spans full width).
-   - table-layout:auto OVERRIDES WP's `table.fixed { table-layout: fixed }`
-     (list-tables.css). Fixed layout caps the table at width:100% and sizes
-     columns by the HEADER row, ignoring cell content — so long nowrap cells
-     overflow and overlap their neighbours (the "compacted / overlapping text,
-     no scroll" bug). Auto layout sizes columns to their content (cells are
-     nowrap — see "Anti-squish"), so a wide table grows PAST its .ak-table-scroll
-     wrapper and scrolls instead of squashing; a narrow one fills via width:100%.
-   - overflow:visible lets the table overflow the wrapper (→ scroll) AND defeats
-     the .widefat `overflow:hidden` on .wp-list-table.widefat (which would clip
-     the overflowing cells).
-   NO outer frame border on the table OR the JS wrapper: .ak-table-scroll is injected
-   by a FOOTER script, so a border living on it paints a beat after first paint (the
-   flicker the maintainer caught). The "less flat" lift comes instead from the distinct
-   header/footer band + the row separators below — both on the table, so they paint
-   render-blocking with no late wrapper to wait for. (A true card frame would need the
-   wrapper rendered server-side; deliberately out of scope to keep this simple.) */
+/* WaasKit list-table surface. Keep WordPress markup, column sizing and sorting. */
 body.adminkit .wp-list-table {
 	background: var(--ak-table-bg);
-	border: 0;
+	border: 1px solid var(--ak-table-border);
 	border-radius: var(--ak-table-radius);
 	border-collapse: separate;
 	border-spacing: 0;
@@ -75,66 +58,107 @@ body.adminkit .wp-list-table {
 	width: 100%;
 	table-layout: auto;
 }
-
-body.adminkit .wp-list-table thead th,
-body.adminkit .wp-list-table thead td,
-body.adminkit .wp-list-table tfoot th,
-body.adminkit .wp-list-table tfoot td,
-body.adminkit .wp-list-table thead th.check-column,
-body.adminkit .wp-list-table tfoot th.check-column {
-	/* Softly-accentuated header/footer band: --ak-table-header-bg is a gentle step
-	   between the body (--ak-surface) and --ak-elevated — distinct enough to read as a
-	   header, without the heavy band --ak-elevated gave. The bottom hairline + bold
-	   labels reinforce it. */
+body.adminkit .wp-list-table :is(thead, tfoot) :is(th, td) {
+	box-sizing: border-box;
+	height: 40px;
+	padding: 0 16px;
 	background: var(--ak-table-header-bg);
-	color: var(--ak-heading);
-	font-weight: 600;
-	font-size: var(--ak-text-s);
+	color: var(--ak-text-muted);
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+	border-top: 0;
 	border-bottom: 1px solid var(--ak-border);
-	border-top: none;
-	padding: 10px;
-}
-
-/* Footer band — separate it from the LAST row with a top hairline (and drop the
-   shared bottom border, which would double up against the card's bottom edge). */
-body.adminkit .wp-list-table tfoot th,
-body.adminkit .wp-list-table tfoot td {
-	border-top: 1px solid var(--ak-border);
-	border-bottom: none;
-}
-
-/* Sort indicators + header links — all heading color */
-body.adminkit .wp-list-table thead th a,
-body.adminkit .wp-list-table tfoot th a,
-body.adminkit .wp-list-table thead th.sorted .sorting-indicator,
-body.adminkit .wp-list-table thead th.sortable:hover .sorting-indicator {
-	color: var(--ak-heading);
-}
-
-body.adminkit .wp-list-table tbody td,
-body.adminkit .wp-list-table tbody th {
-	padding: 10px;
-	border-top: 1px solid var(--ak-border);
-	color: var(--ak-text);
-	font-size: var(--ak-text-s);
-	/* Middle-align cell content so short cells (author / date / status) line up
-	   against the taller title cell (title + row-actions block) — a tidy, centred
-	   row rather than WP's top-baseline. .check-column already uses middle. */
 	vertical-align: middle;
 }
-
-body.adminkit .wp-list-table tbody tr:first-child td,
-body.adminkit .wp-list-table tbody tr:first-child th {
-	border-top: none;
+body.adminkit .wp-list-table :is(thead, tfoot) th:is(.sortable, .sorted) { padding: 0; }
+body.adminkit .wp-list-table :is(thead, tfoot) th a {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	min-height: 40px;
+	padding: 0 16px;
+	font: inherit;
+	color: inherit;
+	border-radius: var(--ak-radius-s);
 }
-
-/* Row hover — the SOFT translucent tint (--ak-hover-bg), not the crisp opaque
-   --ak-elevated step, so the hover stays gentle on the table surface. Applied to the
-   CELLS only (not the <tr> as well): a translucent tint on both composites twice and
-   reads darker than intended — the cells already cover the whole row. */
-body.adminkit .wp-list-table tbody tr:hover td,
-body.adminkit .wp-list-table tbody tr:hover th {
+body.adminkit .wp-list-table :is(thead, tfoot) th a:hover {
 	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+body.adminkit .wp-list-table tfoot :is(th, td) {
+	border-top: 1px solid var(--ak-border);
+	border-bottom: 0;
+}
+body.adminkit .wp-list-table tbody :is(td, th) {
+	box-sizing: border-box;
+	height: 52px;
+	padding: 8px 16px;
+	border-top: 0;
+	border-bottom: 1px solid var(--ak-border);
+	color: var(--ak-text);
+	font-size: var(--ak-text-s);
+	vertical-align: middle;
+	transition: background-color var(--ak-duration-fast) var(--ak-ease-standard);
+}
+body.adminkit .wp-list-table tbody tr:last-child > :is(td, th) { border-bottom: 0; }
+body.adminkit .wp-list-table tbody tr:not(.inline-edit-row):not(.no-items):is(:hover, :focus-within) > :is(td, th) {
+	background: var(--ak-hover-bg);
+}
+body.adminkit .wp-list-table tbody tr:has(> .check-column input[type="checkbox"]:checked) > :is(td, th) {
+	background: var(--ak-primary-subtle);
+}
+/* Core removes the last row's shadow with #the-list specificity. */
+body.adminkit .wp-list-table tbody tr:has(> .check-column input[type="checkbox"]:checked) > .check-column,
+body.adminkit .wp-list-table #the-list tr:has(> .check-column input[type="checkbox"]:checked) > .check-column {
+	box-shadow: inset 2px 0 0 var(--ak-primary);
+}
+body.adminkit .wp-list-table .row-title { font-weight: 500; }
+body.adminkit .wp-list-table :is(.column-posts, .column-comments, .column-date) { font-variant-numeric: tabular-nums; }
+
+/* Native bulk/filter/pagination controls share the same card, outside the scroll area. */
+body.adminkit .ak-table-card {
+	position: relative;
+	clear: both;
+	background: var(--ak-table-bg);
+	border: 1px solid var(--ak-table-border);
+	border-radius: var(--ak-table-radius);
+	box-shadow: var(--ak-shadow-subtle);
+	overflow: hidden;
+}
+body.adminkit .ak-table-card > .tablenav {
+	box-sizing: border-box;
+	height: auto;
+	min-height: 56px;
+	margin: 0;
+	padding: 12px 16px;
+	flex-wrap: wrap;
+	overflow: visible;
+}
+body.adminkit .ak-table-card > .tablenav.top { border-bottom: 1px solid var(--ak-border); }
+body.adminkit .ak-table-card > .tablenav.bottom { border-top: 1px solid var(--ak-border); }
+body.adminkit .ak-table-card > .ak-table-scroll { border: 0; border-radius: 0; box-shadow: none; }
+body.adminkit .ak-table-card .wp-list-table tfoot { display: none; }
+body.adminkit .ak-table-card .tablenav-pages {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+	height: auto;
+	margin: 0 0 0 auto;
+}
+body.adminkit .ak-table-card .pagination-links,
+body.adminkit .ak-table-card .paging-input {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	white-space: nowrap;
+}
+body.adminkit .ak-table-card .paging-input { padding-inline: 4px; }
+body.adminkit .ak-table-card .current-page { width: 3em; min-width: 0; }
+
+
+@media (prefers-reduced-motion: reduce) {
+	body.adminkit .wp-list-table tbody :is(td, th) { transition: none; }
 }
 
 /* Primary-column title links — post/page `.row-title` and the users.php
@@ -182,7 +206,7 @@ body.adminkit .wp-list-table .column-username .row-actions {
 body.adminkit .wp-list-table .row-actions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 4px;
+	gap: 8px;
 	align-items: center;
 }
 
@@ -204,7 +228,8 @@ body.adminkit .wp-list-table .row-actions button.button-link {
 	font-size: var(--ak-text-xs);
 	line-height: 1.6;
 	color: var(--ak-text-muted);
-	padding: 2px 6px;
+	padding: 0;
+	min-height: 24px;
 	border: 0;
 	background: none;
 	border-radius: var(--ak-radius-s);
@@ -219,8 +244,9 @@ body.adminkit .wp-list-table .row-actions a:hover,
 body.adminkit .wp-list-table .row-actions a:focus,
 body.adminkit .wp-list-table .row-actions button.button-link:hover,
 body.adminkit .wp-list-table .row-actions button.button-link:focus {
-	background: var(--ak-hover-bg) !important;
-	color: var(--ak-heading) !important;
+	background: transparent !important;
+	color: var(--ak-primary) !important;
+	text-decoration: underline;
 }
 
 body.adminkit .wp-list-table .row-actions .delete a,
@@ -464,8 +490,8 @@ body.adminkit .alternate {
 }
 
 body.adminkit .wp-list-table .check-column {
-	width: 2.2em;
-	padding: 10px 0 10px 10px;
+	width: 40px;
+	padding: 8px 0 8px 16px;
 	vertical-align: middle;
 }
 
@@ -484,26 +510,15 @@ body.adminkit .check-column label:hover {
 	background: transparent;
 }
 
-/* --- Wide-table horizontal scroll ----------------------------------------
-   A list table wider than the content area scrolls horizontally as a unit
-   (header + rows together) instead of squashing its columns or — below 782px —
-   collapsing into WP's stacked pile. The wrapper carries the scroll; the table
-   inside is border-less width:100%,
-   so it FILLS the wrapper when it fits (no dead space, Quick Edit spans full
-   width) and overflows → scrolls when wide. overflow-x:auto scrolls horizontally;
-   overflow-y:hidden suppresses any vertical scrollbar. class-list-table-chrome.php injects this
-   <div> around each table.
-
-   clear:both is essential: overflow-x:auto makes this wrapper a block formatting
-   context, and a BFC refuses to overlap floats — so without it the wrapper would
-   shrink into the narrow gap beside the floated tablenav controls (.alignleft
-   .actions — wide on WooCommerce's product list — and the floated .search-box)
-   instead of dropping below them full-width. (Seen as the table collapsing to a
-   ~118px sliver wedged to the right.) Clearing the floats keeps it full-width. */
+/* Scroll only the table, leaving native controls visible above/below it.
+   A positioned scroll container also contains WordPress's absolute screen-reader
+   labels, preventing offscreen columns from widening the document. */
 body.adminkit .ak-table-scroll {
+	position: relative;
 	clear: both;
 	background: var(--ak-table-bg);
-	border: 0; /* frameless — see the .wp-list-table note above (no late wrapper border) */
+	border: 1px solid var(--ak-table-border);
+	box-shadow: var(--ak-shadow-subtle);
 	border-radius: var(--ak-table-radius);
 	overflow-x: auto;
 	overflow-y: hidden;
@@ -553,12 +568,7 @@ body.adminkit .wp-list-table th.column-primary {
    within a min/max range: min-width keeps a short value from being squashed thin,
    max-width caps a long one so it can't blow the table width out. Quick Edit forms
    span all columns, so they wrap too. */
-body.adminkit .wp-list-table td.column-description,
-body.adminkit .wp-list-table td.column-excerpt,
-body.adminkit .wp-list-table td.comment,
-body.adminkit .wp-list-table td.column-comment,
-body.adminkit .wp-list-table td[class*="seo"],
-body.adminkit .wp-list-table td[class*="description"] {
+body.adminkit .wp-list-table tbody :is(td, th):is(.column-description, .column-excerpt, .comment, .column-comment, [class*="seo"], [class*="description"]) {
 	white-space: normal;
 	min-width: 240px;
 	max-width: 420px;
@@ -589,6 +599,8 @@ body.adminkit .wp-list-table .inline-edit-row th {
    (The screenshot column sits BEFORE WP's primary column, which breaks the stacked row,
    so it's dropped on phones — see post-previews.css.) */
 @media screen and (max-width: 782px) {
+	body.adminkit .wp-list-table tbody :is(td, th) { height: auto; }
+	body.adminkit .wp-list-table tbody .column-primary { min-height: 52px; }
 	body.adminkit .wp-list-table {
 		table-layout: fixed;
 	}
@@ -609,4 +621,10 @@ body.adminkit .wp-list-table .inline-edit-row th {
 		font-weight: 600;
 		color: var(--ak-text-muted);
 	}
+}
+
+/* Row actions remain reachable with a keyboard and are always visible on touch. */
+body.adminkit .wp-list-table tr:focus-within .row-actions { visibility: visible; }
+@media (hover: none), (max-width: 782px) {
+	body.adminkit .wp-list-table .row-actions { visibility: visible; }
 }

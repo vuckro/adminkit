@@ -7,10 +7,8 @@
  * `views_*` filters. Loaded as a footer script on admin pages.
  */
 (function () {
-	// Wrap each list table in a horizontal-scroll container (.ak-table-scroll):
-	// the table stays width:100% so it fills the area + Quick Edit spans full
-	// width, while a too-wide table slides inside the wrapper instead of
-	// squashing or stacking. The tablenav stays outside (only the table is wrapped).
+	// Scroll wide columns as one table; native list screens also group their
+	// existing top/bottom controls in a WaasKit-style card within the same form.
 	Array.prototype.forEach.call(document.querySelectorAll('.wp-list-table'), function (table) {
 		var parent = table.parentNode;
 		if (!parent || (parent.classList && parent.classList.contains('ak-table-scroll'))) return;
@@ -18,6 +16,19 @@
 		wrap.className = 'ak-table-scroll';
 		parent.insertBefore(wrap, table);
 		wrap.appendChild(table);
+		// Group native list-table controls without changing their form or handlers.
+		var nativeScreen = document.body.matches('.edit-php, .upload-php, .users-php, .edit-tags-php, .edit-comments-php, .plugins-php');
+		if (!nativeScreen || parent.querySelectorAll('.wp-list-table').length !== 1) return;
+		var bars = Array.prototype.filter.call(parent.children, function (node) {
+			return node.classList.contains('tablenav');
+		});
+		if (!bars.length) return;
+		var card = document.createElement('div');
+		card.className = 'ak-table-card';
+		parent.insertBefore(card, bars[0]);
+		bars.filter(function (bar) { return bar.classList.contains('top'); }).forEach(function (bar) { card.appendChild(bar); });
+		card.appendChild(wrap);
+		bars.filter(function (bar) { return bar.classList.contains('bottom'); }).forEach(function (bar) { card.appendChild(bar); });
 	});
 
 	// Quick / Bulk Edit: keep the inline-edit form within the visible area on a

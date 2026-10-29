@@ -44,5 +44,8 @@
   "--ak-space-l": "16px",
   "--ak-text-xs": "12px",
   "--ak-text-s": "13px",
-  "--ak-text-m": "14px"
+  "--ak-text-m": "14px",
+  "--ak-shadow-subtle": "var(--wk-elevation-1)",
+  "--ak-duration-fast": "var(--wk-duration-fast)",
+  "--ak-ease-standard": "var(--wk-ease-standard)"
 }

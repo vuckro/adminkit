@@ -29,6 +29,7 @@
 	--wk-radius-xl: calc(1rem * var(--wk-radius-scale));
 	--wk-radius-2xl: calc(1.5rem * var(--wk-radius-scale));
 	--wk-radius-full: 999px;
+	--wk-ease-standard: cubic-bezier(0.2, 0, 0, 1);
 	--wk-bg: var(--wk-neutral-50);
 	--wk-surface: var(--wk-neutral-0);
 	--wk-surface-sunken: var(--wk-neutral-100);
@@ -52,7 +53,9 @@
 	--wk-info-text: oklch(41% 0.09 240);
 	--wk-info-soft: oklch(96.5% 0.015 240);
 	--wk-overlay: oklch(14% 0 0 / 0.48);
+	--wk-elevation-1: 0 1px 2px oklch(0% 0 0 / 0.045), 0 1px 3px oklch(0% 0 0 / 0.035);
 	--wk-elevation-2: 0 2px 4px oklch(0% 0 0 / 0.04), 0 8px 18px oklch(0% 0 0 / 0.065);
+	--wk-duration-fast: 150ms;
 }
 
 :root[data-adminkit-theme="dark"], .adminkit-app .ak-bp__frame[data-preview-theme="dark"] {
@@ -80,5 +83,6 @@
 	--wk-info-text: oklch(86% 0.05 240);
 	--wk-info-soft: oklch(29% 0.02 240);
 	--wk-overlay: oklch(8% 0 0 / 0.62);
+	--wk-elevation-1: 0 1px 3px oklch(0% 0 0 / 0.38), inset 0 1px 0 oklch(100% 0 0 / 0.055);
 	--wk-elevation-2: 0 4px 10px oklch(0% 0 0 / 0.4), 0 12px 28px oklch(0% 0 0 / 0.32), inset 0 1px 0 oklch(100% 0 0 / 0.075);
 }
