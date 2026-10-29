@@ -1,8 +1,8 @@
 # Installing AdminKit
 
 AdminKit is a regular WordPress plugin: drop it into `wp-content/plugins/`,
-activate it, you're done. No build step, no Composer or npm dependencies, no
-database tables. WordPress 6.0+ and PHP 7.4+ are the only requirements.
+activate it, you're done. No Composer or npm dependencies. Activation creates the menu-layout and statistics
+tables; statistics tracking remains opt-in. WordPress 6.0+ and PHP 7.4+ are the only requirements.
 
 This page covers three audiences:
 
@@ -88,7 +88,7 @@ files (`dev/`, `tokens/`, `.claude/`, `CLAUDE.md`, …) never leak into a releas
 php dev/package.php \
   --target="/path/to/your/wp-content/plugins"
 
-# package.php defaults to origin/main. To package a specific tag instead:
+# package.php defaults to HEAD (the checked-out revision). To package a specific tag instead:
 php dev/package.php --ref=v1.0.0 --target=...
 # ...or the local uncommitted working tree:
 php dev/package.php --working-tree --target=...
@@ -150,8 +150,8 @@ instead of `adminkit/`. WordPress wants the directory to match the main PHP
 file's slug. Rename it to `adminkit/` and try again — or use the release zip
 from `dev/package.php`, which gets the folder name right by construction.
 
-**`git archive` fails: "unknown revision 'origin/main'".**
-You haven't fetched the remote. `git fetch origin && php dev/package.php …`.
+**`git archive` cannot resolve the requested revision.**
+Check `--ref`; the default is `HEAD`. Fetch before packaging a remote reference.
 
 **`dev/package.php` complains about a forbidden path.**
 Something in `.distignore` is too lax, or a new dev-only folder was added

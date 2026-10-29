@@ -1,0 +1,399 @@
+/* AdminKit navigation screen. WaasKit roles; no build step. */
+.adminkit-app .ak-menu-tree {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-top: 8px;
+}
+.adminkit-app .ak-menu-group {
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-radius-m);
+	background: var(--ak-card-bg);
+}
+.adminkit-app .ak-menu-row {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 10px;
+}
+.adminkit-app .ak-menu-row--top { font-weight: 600; }
+.adminkit-app .ak-menu-row--child {
+	padding-left: 22px;
+	font-weight: 400;
+	border-top: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-menu-row.is-hidden { opacity: 0.5; }
+.adminkit-app .ak-menu-row.is-dragging { opacity: 0.4; }
+.adminkit-app .ak-menu-row.is-drop { box-shadow: inset 0 2px 0 0 var(--ak-primary); }
+.adminkit-app .ak-menu-handle {
+	display: inline-flex;
+	align-items: center;
+	color: var(--ak-muted);
+	cursor: grab;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-move {
+	display: inline-flex;
+	flex-direction: column;
+	flex: 0 0 auto;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	overflow: hidden;
+}
+.adminkit-app .ak-menu-move__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 15px;
+	padding: 0;
+	border: 0;
+	background: var(--ak-surface);
+	color: var(--ak-muted);
+	cursor: pointer;
+}
+.adminkit-app .ak-menu-move__btn:first-child { border-bottom: 1px solid var(--ak-border); }
+.adminkit-app .ak-menu-move__btn:hover { color: var(--ak-text); background: var(--ak-elevated); }
+.adminkit-app .ak-menu-move__btn:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); color: var(--ak-text); }
+.adminkit-app .ak-menu-move__btn svg { width: 11px; height: 11px; display: block; }
+.adminkit-app .ak-menu-row__title {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--ak-text);
+}
+.adminkit-app .ak-menu-row__expand {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	border: 0;
+	background: transparent;
+	color: var(--ak-muted);
+	font-size: var(--ak-text-xs);
+	cursor: pointer;
+	padding: 2px 6px;
+	border-radius: var(--ak-radius-s);
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-row__expand:hover,
+.adminkit-app .ak-menu-row__expand.on { color: var(--ak-text); }
+.adminkit-app .ak-menu-row__caret { display: inline-flex; transition: transform 0.15s ease; }
+.adminkit-app .ak-menu-row__caret svg { width: 10px; height: 10px; display: block; }
+.adminkit-app .ak-menu-row__expand.on .ak-menu-row__caret { transform: rotate( 90deg ); }
+
+.adminkit-app .ak-menu-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	cursor: pointer;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-icon:hover { border-color: var(--ak-primary); }
+.adminkit-app .ak-menu-icon__g { display: inline-flex; width: 18px; height: 18px; }
+.adminkit-app .ak-menu-icon__g svg { width: 18px; height: 18px; }
+.adminkit-app .ak-menu-icon .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	line-height: 18px;
+}
+.adminkit-app .ak-menu-hide {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-muted);
+	cursor: pointer;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-hide:hover { border-color: var(--ak-primary); color: var(--ak-text); }
+.adminkit-app .ak-menu-hide svg { width: 16px; height: 16px; }
+.adminkit-app .ak-menu-hide[aria-pressed="true"] {
+	color: var(--ak-text);
+	border-color: var(--ak-border-strong);
+}
+
+.adminkit-app .ak-icon-pop {
+	position: absolute;
+	z-index: 20;
+	top: 44px;
+	left: 10px;
+	width: 264px;
+	padding: 8px;
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-radius-m);
+	background: var(--ak-elevated);
+	box-shadow: 0 8px 30px rgba( 0, 0, 0, 0.18 );
+	max-height: min( 440px, 78vh );
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+.adminkit-app .ak-icon-pop__tabs {
+	display: flex;
+	gap: 4px;
+	margin: 0 0 8px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-icon-pop__tab {
+	flex: 1;
+	border: 1px solid var(--ak-border);
+	background: transparent;
+	color: var(--ak-text-muted);
+	cursor: pointer;
+	padding: 5px 8px;
+	border-radius: var(--ak-radius-s);
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+}
+.adminkit-app .ak-icon-pop__tab:hover { color: var(--ak-heading); }
+.adminkit-app .ak-icon-pop__tab.on {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+.adminkit-app .ak-icon-pop__search {
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0 0 6px;
+	padding: 5px 8px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	font-size: var(--ak-text-xs);
+}
+.adminkit-app .ak-icon-pop__search:focus { border-color: var(--ak-primary); outline: none; }
+.adminkit-app .ak-icon-pop__defbar {
+	display: flex;
+	gap: 4px;
+	margin-bottom: 6px;
+}
+.adminkit-app .ak-icon-pop__def {
+	flex: 1;
+	display: block;
+	text-align: center;
+	border: 1px solid var(--ak-card-border);
+	background: transparent;
+	color: var(--ak-text);
+	cursor: pointer;
+	padding: 4px 6px;
+	border-radius: var(--ak-radius-s);
+	font-size: var(--ak-text-xs);
+}
+.adminkit-app .ak-icon-pop__def:hover,
+.adminkit-app .ak-icon-pop__def.on { background: var(--ak-elevated); border-color: var(--ak-border-strong); }
+.adminkit-app .ak-icon-pop__grid {
+	display: grid;
+	grid-template-columns: repeat( 7, 1fr );
+	gap: 4px;
+}
+.adminkit-app .ak-icon-pop__sw {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	border: 1px solid transparent;
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	cursor: pointer;
+}
+.adminkit-app .ak-icon-pop__sw:hover { border-color: var(--ak-primary); }
+.adminkit-app .ak-icon-pop__sw.on {
+	border-color: var(--ak-primary);
+	background: var(--ak-primary-subtle);
+}
+.adminkit-app .ak-icon-pop__sw svg { width: 18px; height: 18px; }
+.adminkit-app .ak-icon-pop__sw .dashicons {
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+	line-height: 18px;
+}
+.adminkit-app .ak-menu-icon__mask {
+	background-color: currentColor;
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+}
+.adminkit-app .ak-icon-pop__custom {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-icon-pop__customic { flex: 0 0 auto; display: inline-flex; color: var(--ak-muted); }
+.adminkit-app .ak-icon-pop__hint {
+	margin-top: 6px;
+	font-size: var(--ak-text-xs);
+	line-height: 1.4;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-icon-pop__hint a { color: var(--ak-primary); text-decoration: none; }
+.adminkit-app .ak-icon-pop__hint a:hover { text-decoration: underline; }
+.adminkit-app .ak-icon-pop__ta {
+	flex: 1 1 auto;
+	min-width: 0;
+	font-family: monospace;
+	font-size: var(--ak-text-xs);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	padding: 4px 6px;
+}
+.adminkit-app .ak-icon-pop__customlbl {
+	font-size: var(--ak-text-xs);
+	color: var(--ak-muted);
+	margin: 0 0 6px;
+	line-height: 1.4;
+}
+.adminkit-app .ak-menu-url {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-muted);
+	cursor: pointer;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-url:hover { border-color: var(--ak-primary); color: var(--ak-text); }
+.adminkit-app .ak-menu-url.on { border-color: var(--ak-primary); color: var(--ak-primary); background: var(--ak-primary-subtle); }
+.adminkit-app .ak-menu-url svg { width: 15px; height: 15px; }
+.adminkit-app .ak-url-pop { width: 300px; }
+.adminkit-app .ak-url-pop__current {
+	display: flex;
+	align-items: baseline;
+	gap: 4px;
+	min-width: 0;
+	margin: 0 0 8px;
+	font-size: var(--ak-text-xs);
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-url-pop__current-lbl { flex: 0 0 auto; }
+.adminkit-app .ak-url-pop__current-val {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: monospace;
+	color: var(--ak-text);
+}
+.adminkit-app .ak-url-pop__row { align-items: center; }
+.adminkit-app .ak-url-pop__row .ak-menu-input { flex: 1 1 auto; min-width: 0; }
+.adminkit-app .ak-menu-newtab {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-muted);
+	cursor: pointer;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-newtab:hover { border-color: var(--ak-primary); color: var(--ak-text); }
+.adminkit-app .ak-menu-newtab.on { border-color: var(--ak-primary); color: var(--ak-primary); background: var(--ak-primary-subtle); }
+.adminkit-app .ak-menu-newtab svg { width: 14px; height: 14px; }
+.adminkit-app .ak-menu-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 10px; }
+.adminkit-app .ak-menu-toolbar__spacer { margin-left: auto; }
+.adminkit-app .ak-toolbar__side {
+	margin: 16px 0 6px;
+	font-size: var(--ak-text-xs, .72rem);
+	font-weight: 700;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-toolbar__side:first-child { margin-top: 2px; }
+@media screen and (max-width: 600px) {
+	.adminkit-app .ak-menu-toolbar__spacer { margin-left: 0; }
+}
+.adminkit-app .ak-menu-row--sep { padding-top: 6px; padding-bottom: 6px; }
+.adminkit-app .ak-menu-seplabel {
+	color: var(--ak-muted);
+	font-style: italic;
+	font-weight: 400;
+	letter-spacing: 0.04em;
+}
+.adminkit-app .ak-menu-input {
+	flex: 0 1 auto;
+	min-width: 0;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	padding: 5px 8px;
+	font-size: var(--ak-text-s);
+}
+.adminkit-app .ak-menu-input:focus {
+	outline: none;
+	border-color: var(--ak-primary);
+}
+.adminkit-app .ak-menu-input--url {
+	flex: 1 1 auto;
+	font-family: monospace;
+	font-size: var(--ak-text-xs);
+}
+.adminkit-app .ak-menu-remove {
+	width: 24px;
+	height: 24px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface);
+	color: var(--ak-muted);
+	cursor: pointer;
+	line-height: 1;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-menu-remove:hover {
+	color: var(--ak-error);
+	border-color: var(--ak-error);
+}
+.adminkit-app .ak-menu-title {
+	flex: 1 1 auto;
+	font: inherit;
+	border-color: transparent;
+	background: transparent;
+	padding: 4px 6px;
+}
+.adminkit-app .ak-menu-title:hover { border-color: var(--ak-border); }
+.adminkit-app .ak-menu-title:focus {
+	outline: none;
+	border-color: var(--ak-primary);
+	background: var(--ak-surface);
+}
+.adminkit-app .ak-menu-children.is-drop {
+	box-shadow: inset 0 0 0 2px var(--ak-primary);
+	border-radius: var(--ak-radius-s);
+}

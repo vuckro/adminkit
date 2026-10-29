@@ -1,10 +1,7 @@
-/* AdminKit → current WaasKit design system.
- * Source: tokens/palettes/waaskit.json → php tokens/build.php.
- * Every screen and adapter continues to consume --ak-* roles.
- * WaasKit owns color, typography, radius, elevation and focus in both themes.
- * Admin density stays in pixels to preserve native WordPress layouts.
- */
-:root {
+/* GENERATED WaasKit roles — edit tokens/palettes/waaskit.json or tokens/adminkit.json.
+ * Regenerate: php tokens/build.php; verify: php tokens/build.php --check. */
+
+:root, #wpadminbar {
 	--ak-bg: var(--wk-bg);
 	--ak-surface: var(--wk-surface);
 	--ak-elevated: var(--wk-surface-raised);

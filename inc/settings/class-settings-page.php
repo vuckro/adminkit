@@ -176,7 +176,7 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Enqueue the shared AdminKit admin app (settings.js + settings.css) and hand
+	 * Enqueue the small host plus the current screen's script and styles; hand
 	 * it a boot payload. Every surface module (Settings, Menu, Statistics) calls
 	 * this from its own enqueue hook, passing the data ITS screen needs — so each
 	 * page ships only its own slice (no menu snapshot on the stats page, etc.).
@@ -190,14 +190,23 @@ class AdminKit_Settings_Page {
 	 * @return void
 	 */
 	public static function enqueue_app( array $data, $needs_media = false ) {
-		$css = 'assets/css/settings.css';
-		$js  = 'assets/js/settings.js';
-
-		if ( $needs_media ) {
-			wp_enqueue_media(); // WordPress media frame, for the Brand-card pickers.
+		$screen = isset( $data['screen'] ) ? $data['screen'] : 'main';
+		$module = in_array( $screen, array( 'menu', 'toolbar' ), true ) ? 'navigation' : $screen;
+		if ( ! in_array( $module, array( 'main', 'navigation', 'stats' ), true ) ) {
+			return;
 		}
+		if ( $needs_media ) {
+			wp_enqueue_media();
+		}
+		$css = 'assets/css/settings.css';
+		$screen_css = 'assets/css/settings/' . $module . '.css';
+		$js = 'assets/js/settings.js';
+		$screen_js = 'assets/js/settings/' . $module . '.js';
+		$screen_handle = self::HANDLE . '-' . $module;
 		wp_enqueue_style( self::HANDLE, ADMINKIT_URL . $css, array( AdminKit_Assets::TOKENS_HANDLE ), self::ver( $css ) );
-		wp_enqueue_script( self::HANDLE, ADMINKIT_URL . $js, array( 'wp-api-fetch' ), self::ver( $js ), true );
+		wp_enqueue_style( $screen_handle, ADMINKIT_URL . $screen_css, array( self::HANDLE ), self::ver( $screen_css ) );
+		wp_enqueue_script( $screen_handle, ADMINKIT_URL . $screen_js, array( 'wp-api-fetch' ), self::ver( $screen_js ), true );
+		wp_enqueue_script( self::HANDLE, ADMINKIT_URL . $js, array( $screen_handle ), self::ver( $js ), true );
 		wp_add_inline_script( self::HANDLE, 'window.AdminKitData=' . wp_json_encode( $data ) . ';', 'before' );
 	}
 
@@ -326,10 +335,10 @@ class AdminKit_Settings_Page {
 		}
 
 		// Statistics — full boot payload only on the Statistics screen; its i18n is
-		// merged on every screen (cheap strings) so the shared engine always has them.
+		// included only on that screen.
 		$has_stats  = class_exists( 'AdminKit_Stats_Page' );
 		$stats      = ( $is_stats && $has_stats ) ? AdminKit_Stats_Page::boot_data() : array( 'enabled' => false );
-		$stats_i18n = $has_stats ? AdminKit_Stats_Page::i18n() : array();
+		$stats_i18n = ( $is_stats && $has_stats ) ? AdminKit_Stats_Page::i18n() : array();
 
 		// Menu editor — the captured admin-menu tree (a non-trivial snapshot) is
 		// only built on the Menu screen; empty elsewhere.
@@ -342,7 +351,7 @@ class AdminKit_Settings_Page {
 			? AdminKit_Toolbar_Manager::boot_data()
 			: array( 'enabled' => false );
 
-		return array(
+		$data = array(
 			'screen'       => $screen,
 			'route'        => self::REST_NS . self::REST_ROUTE,
 			'features'     => $features,
@@ -454,6 +463,13 @@ class AdminKit_Settings_Page {
 				'mediaTitle'        => __( 'Select a logo', 'adminkit' ),
 				'mediaButton'       => __( 'Use this image', 'adminkit' ),
 
+				// Settings transfer controls.
+				'settingsExport'     => __( 'Export', 'adminkit' ),
+				'settingsImport'     => __( 'Import', 'adminkit' ),
+				'settingsExportHint' => __( 'Download these settings as a JSON file', 'adminkit' ),
+				'settingsImportHint' => __( 'Load settings from a JSON file', 'adminkit' ),
+				'settingsImportError' => __( 'That file isn’t a valid AdminKit settings export.', 'adminkit' ),
+
 				// Save bar.
 				'save'              => __( 'Save changes', 'adminkit' ),
 				'saving'            => __( 'Saving…', 'adminkit' ),
@@ -498,6 +514,24 @@ class AdminKit_Settings_Page {
 
 			) + $stats_i18n, // Statistics-tab strings, merged from the stats-page module.
 		);
+		if ( ! $is_main ) {
+			foreach ( array( 'logos', 'siteName', 'siteIcon', 'wpLogo', 'loginLogo', 'brandAccent', 'accentSource', 'adminkitBlue', 'bricksDetected', 'bricksConnected', 'bricksTokenCount', 'features', 'integrations' ) as $key ) {
+				unset( $data[ $key ] );
+			}
+		}
+		// Each module receives its own copy plus the shared save-bar strings.
+		$common = array( 'save', 'saving', 'saved', 'error', 'unsaved' );
+		$data['i18n'] = array_filter( $data['i18n'], static function ( $key ) use ( $screen, $common ) {
+			if ( in_array( $key, $common, true ) ) {
+				return true;
+			}
+			if ( 'stats' === $screen ) {
+				return 0 === strpos( $key, 'stats' );
+			}
+			$is_navigation = 0 === strpos( $key, 'menu' ) || 0 === strpos( $key, 'toolbar' );
+			return 'main' === $screen ? ! $is_navigation : $is_navigation;
+		}, ARRAY_FILTER_USE_KEY );
+		return $data;
 	}
 
 	/**

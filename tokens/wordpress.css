@@ -1,0 +1,44 @@
+/* Remap WP's built-in theme color (blue) to our accent. The selector chains
+   .adminkit / .wp-customizer AND [class*="admin-color-"] so specificity (0,2,1)
+   outranks WP's own color-scheme rules (body.admin-color-*, 0,1,1). One-shot fix
+   for Quick Edit links, focus rings, selected states, the Customizer's accents,
+   and any plugin that reads --wp-admin-theme-color. The Customizer has no
+   body.adminkit (it skips admin_body_class), so it's listed explicitly. */
+body.adminkit,
+body.adminkit[class*="admin-color-"],
+body.wp-customizer,
+body.wp-customizer[class*="admin-color-"] {
+	--wp-admin-theme-color: var(--ak-primary);
+	--wp-admin-theme-color--rgb: 21, 73, 171;
+	--wp-admin-theme-color-darker-10: var(--ak-primary-hover);
+	--wp-admin-theme-color-darker-10--rgb: 21, 59, 135;
+	--wp-admin-theme-color-darker-20: var(--ak-primary-hover);
+	--wp-admin-theme-color-darker-20--rgb: 21, 59, 135;
+
+	/* @wordpress/components React UI tokens (options-connectors, Gutenberg meta,
+	   custom React admin pages). Routing them through AdminKit tokens flips the
+	   whole React UI between light + dark with the rest. */
+	--wp-components-color-accent: var(--ak-primary);
+	--wp-components-color-accent-darker-10: var(--ak-primary-hover);
+	--wp-components-color-accent-darker-20: var(--ak-primary-hover);
+	--wp-components-color-accent-inverted: var(--ak-on-accent);
+	--wp-components-color-background: var(--ak-surface);
+	--wp-components-color-foreground: var(--ak-text);
+	--wp-components-color-foreground-inverted: var(--ak-surface);
+	--wp-components-color-gray-100: var(--ak-bg);
+	--wp-components-color-gray-200: var(--ak-surface);
+	--wp-components-color-gray-300: var(--ak-border);
+	--wp-components-color-gray-400: var(--ak-border-strong);
+	--wp-components-color-gray-500: var(--ak-text-muted);
+	--wp-components-color-gray-600: var(--ak-text-muted);
+	--wp-components-color-gray-700: var(--ak-text);
+	--wp-components-color-gray-800: var(--ak-heading);
+	--wp-components-color-gray-900: var(--ak-heading);
+}
+
+/* Focus tokens remain opaque; the WaasKit two-ring shadow is shared by
+   native controls, the login form, and AdminKit components. */
+body.adminkit ::selection { background: var(--ak-primary-subtle); color: var(--ak-heading); }
+body.adminkit input, body.adminkit textarea { caret-color: var(--ak-primary); }
+body.adminkit { scrollbar-color: var(--ak-border-strong) var(--ak-bg); }
+body.adminkit code, body.adminkit kbd, body.adminkit pre { font-family: var(--ak-font-mono); }

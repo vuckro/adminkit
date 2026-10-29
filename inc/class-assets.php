@@ -153,15 +153,11 @@ class AdminKit_Assets {
 	}
 
 	/**
-	 * Pick the most-readable foreground colour for a given accent hex —
-	 * `#ffffff` for dark accents, `#1d2327` (WP heading ink) for light accents.
-	 * Uses the WCAG 2.x relative-luminance formula (with the sRGB linearisation
-	 * curve) so it agrees with what a contrast checker would say. Threshold
-	 * 0.55 leans toward white slightly past mid-grey, which matches Material /
-	 * WordPress 6.x conventions on borderline mid-luminance accents.
-	 *
-	 * @param string $hex Sanitised hex like #abc or #aabbcc.
-	 * @return string '#ffffff' or '#1d2327'.
+	 * Choose the stronger WCAG contrast against a custom hex fill.
+	 * Pure white/black guarantee at least 4.5:1 for an opaque sRGB background.
+	 * Mirrored in settings/main.js for the unsaved custom-color preview.
+	 * @param string $hex Sanitised #rgb or #rrggbb.
+	 * @return string Foreground hex.
 	 */
 	public static function contrast_text_for( $hex ) {
 		$h = ltrim( (string) $hex, '#' );
@@ -173,13 +169,13 @@ class AdminKit_Assets {
 		}
 		$srgb = static function ( $byte ) {
 			$c = $byte / 255;
-			return ( $c <= 0.03928 ) ? $c / 12.92 : pow( ( $c + 0.055 ) / 1.055, 2.4 );
+			return ( $c <= 0.04045 ) ? $c / 12.92 : pow( ( $c + 0.055 ) / 1.055, 2.4 );
 		};
 		$r = $srgb( hexdec( substr( $h, 0, 2 ) ) );
 		$g = $srgb( hexdec( substr( $h, 2, 2 ) ) );
 		$b = $srgb( hexdec( substr( $h, 4, 2 ) ) );
 		$lum = ( 0.2126 * $r ) + ( 0.7152 * $g ) + ( 0.0722 * $b );
-		return ( $lum < 0.55 ) ? '#ffffff' : '#1d2327';
+		return 1.05 / ( $lum + 0.05 ) >= ( $lum + 0.05 ) / 0.05 ? '#ffffff' : '#000000';
 	}
 
 	/**

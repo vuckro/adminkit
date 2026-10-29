@@ -1,33 +1,14 @@
-/* AdminKit settings page (SPA).
-   Modern but flat — no decorative shadows, no animations. Depth comes from
-   surface tone, spacing and type. Everything is built from --ak-* tokens so the
-   page themes light/dark with the rest of wp-admin. Interactive controls are
-   scoped under .adminkit-app so they outrank wp-admin's own input styling. */
-
+/* AdminKit shared controls. WaasKit roles; no build step. */
 .adminkit-app {
-	/* Cap the whole settings UI (header, tabs and every panel) to a comfortable
-	   column so toggle rows aren't stretched full-width — each switch stays close
-	   to its label. Left-aligned: the side gutter comes from `.wrap` (chrome.css),
-	   so the column sits under the page's left edge like every other admin screen. */
 	max-width: 720px;
 	font-family: var(--ak-font-body);
 	color: var(--ak-text);
 }
-
-/* Every AdminKit surface runs the FULL content width now. The focused Menu/Stats
-   pages are data-dense (a menu tree, charts, side-by-side lists); the tabbed
-   Settings SPA lays Features + Plugins out as a responsive card grid (below) so
-   the width is used, not just stretched. */
 .adminkit-app[data-screen="menu"],
 .adminkit-app[data-screen="stats"],
 .adminkit-app[data-screen="main"] {
 	max-width: none;
 }
-
-/* ── Main Settings: full-width responsive layout ─────────────────────────────
-   Everything runs full width. The search bar stays readable (not stretched);
-   the Brand studio spans the full width (controls | live preview); Features +
-   Plugins reflow into a 2 → 3 column card grid, collapsing on narrow. */
 .adminkit-app[data-screen="main"] .ak-search-wrap { max-width: 460px; }
 
 @media screen and (min-width: 900px) {
@@ -40,7 +21,6 @@
 		background: transparent;
 		overflow: visible;
 	}
-	/* Each row is now its own card (the stacked-list border-collapse is undone). */
 	.adminkit-app[data-screen="main"] .ak-rows .ak-row {
 		align-items: flex-start;
 		border: 1px solid var(--ak-card-border);
@@ -51,9 +31,6 @@
 		border-top: 1px solid var(--ak-card-border);
 	}
 	.adminkit-app[data-screen="main"] .ak-rows .ak-row:hover { background: var(--ak-elevated); }
-	/* Child feature rows take a full grid row, right under their group, and swap the
-	   absolute connector rail (which assumed a vertical list) for a left accent +
-	   indent that reads as "sub-setting" wherever the grid places it. */
 	.adminkit-app[data-screen="main"] .ak-rows .ak-row--child {
 		grid-column: 1 / -1;
 		padding-left: 16px;
@@ -66,25 +43,16 @@
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 }
-
-/* Header ------------------------------------------------------------------ */
 .adminkit-app .ak-head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 16px;
-	/* padding-top: 9px mirrors a native wp-admin h1's own `padding: 9px 0 4px`
-	   (common.css) so the title gets the same breathing room above it as every
-	   other admin page — the .wrap margin alone left it 9px too high.
-	   padding-bottom + .ak-tabs' 16px top margin (chrome.css) ≈ a native h1→nav-tab gap. */
 	padding: 9px 0 12px;
 }
 .adminkit-app .ak-title {
 	margin: 0;
 	padding: 0;
-	/* Read like a native wp-admin page title (WP h1 = 23px / 400, recoloured in
-	   chrome.css) rather than a bespoke wordmark, so this page matches the rest
-	   of admin. */
 	font-family: var(--ak-font-body);
 	font-size: 23px;
 	font-weight: 400;
@@ -96,7 +64,6 @@
 	align-items: center;
 	gap: 14px;
 }
-/* Bulk enable/disable-all row on the Features tab — reuses .ak-actions layout. */
 .adminkit-app .ak-bulk { margin-bottom: 14px; }
 .adminkit-app .ak-status {
 	display: inline-flex;
@@ -137,19 +104,10 @@
 	color: var(--ak-on-accent);
 }
 .adminkit-app .ak-btn--primary:hover { background: var(--ak-primary-hover); border-color: var(--ak-primary-hover); }
-/* Secondary .ak-btn hover/focus — the canonical secondary feedback (shared
-   --ak-btn-hover-* tokens), matching .button-secondary across wp-admin. */
 .adminkit-app .ak-btn:not(.ak-btn--primary):hover,
 .adminkit-app .ak-btn:not(.ak-btn--primary):focus-visible { background: var(--ak-btn-hover-bg); border-color: var(--ak-btn-hover-border); }
 .adminkit-app .ak-btn:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
 .adminkit-app .ak-btn[disabled] { opacity: .45; cursor: default; }
-
-/* `.ak-tabs` shape lives in wp-core/chrome.css (one rule set, reused for
-   every navigation strip we build — the AdminKit SPA tabs, the profile
-   tabs and the options-general grouping). Nothing settings-specific
-   remains here. */
-
-/* Panels ------------------------------------------------------------------ */
 .adminkit-app .ak-panel[hidden] { display: none; }
 .adminkit-app .ak-intro {
 	margin: 0 0 20px;
@@ -170,16 +128,12 @@
 	letter-spacing: .06em;
 	color: var(--ak-text-muted);
 }
-/* Neutral count pill beside a group title (e.g. "Plugins 7", "Themes 1"). The
-   title is uppercased + letter-spaced; reset that so the number reads plainly. */
 .adminkit-app .ak-group__count {
 	margin-left: 8px;
 	vertical-align: middle;
 	text-transform: none;
 	letter-spacing: normal;
 }
-
-/* Rows -------------------------------------------------------------------- */
 .adminkit-app .ak-rows {
 	border: 1px solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
@@ -194,14 +148,7 @@
 	border-top: 1px solid var(--ak-border);
 }
 .adminkit-app .ak-row:first-child { border-top: 0; }
-/* Row hover lifts to --ak-elevated — a crisp step, since the row sits on a known
-   surface (the .ak-rows card). Floating / any-surface hovers (dropdowns, menus)
-   use the translucent --ak-hover-bg instead, which stays visible on elevated. */
 .adminkit-app .ak-row:hover { background: var(--ak-elevated); }
-/* Nested feature (e.g. mShots under Post previews) — clearly a child of the row
-   above: indented into a gutter with a subtle L-shaped connector rail. The rail
-   is a pseudo-element drawn in the gutter (a vertical drop + a horizontal tick
-   into the label), so it stays crisp even when the row content is dimmed. */
 .adminkit-app .ak-row--child {
 	position: relative;
 	padding-left: 38px;
@@ -212,20 +159,12 @@
 	left: 18px;
 	top: 0;
 	width: 9px;
-	height: 50%;                                   /* drop from the top edge to the vertical centre */
+	height: 50%;
 	border-left: 1.5px solid var(--ak-border-strong);
 	border-bottom: 1.5px solid var(--ak-border-strong);
 	border-bottom-left-radius: 6px;
 	pointer-events: none;
 }
-
-/* Dim states. The dim is applied to the row CONTENT (label + switch), never the
-   connector rail, so a locked child still reads as nested. Two cases:
-   • is-off  — the feature is simply switched off; its switch stays operable so it
-     can be turned back on.
-   • is-locked — a child whose parent is off: dimmed AND non-operable (the input
-     is also `disabled` in JS; pointer-events here blocks the label hit area too).
-   Snaps back the instant the parent is on again (the classes are toggled live). */
 .adminkit-app .ak-row.is-off .ak-row__main,
 .adminkit-app .ak-row.is-off .ak-switch,
 .adminkit-app .ak-row.is-locked .ak-row__main,
@@ -241,16 +180,12 @@
 }
 .adminkit-app .ak-row__label { font-size: var(--ak-text-s); font-weight: 500; color: var(--ak-heading); }
 .adminkit-app .ak-row__desc { font-size: var(--ak-text-xs); line-height: 1.5; color: var(--ak-text-muted); max-width: 54ch; }
-/* Plugin name + its native/generic badge, hugging the left together. The label
-   keeps its natural width (no flex-grow) so the badge sits right next to it. */
 .adminkit-app .ak-row__head {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	flex-wrap: wrap;
 }
-
-/* Toggle switch (flat, no transition) ------------------------------------- */
 .adminkit-app .ak-switch {
 	position: relative;
 	flex: 0 0 auto;
@@ -292,10 +227,6 @@
 .adminkit-app .ak-switch__input:checked ~ .ak-switch__track { background: var(--ak-primary); }
 .adminkit-app .ak-switch__input:checked ~ .ak-switch__knob { left: 21px; }
 .adminkit-app .ak-switch__input:focus-visible ~ .ak-switch__track { outline: 2px solid var(--ak-primary); outline-offset: 2px; }
-
-/* Dashboard — overview hero strip ----------------------------------------- */
-/* Bordered cells sharing a 1px grid gap (the --ak-border shows through), so the
-   overview reads as one tidy panel split into provider / modules / mode. */
 .adminkit-app .ak-hero {
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 180px, 1fr ) );
@@ -305,9 +236,6 @@
 	background: var(--ak-card-border);
 	overflow: hidden;
 }
-
-/* Badge chips — shared by the Plugins tab (Native / System / Generic) and
-   the group count chips. */
 .adminkit-app .ak-badge {
 	display: inline-flex;
 	align-items: center;
@@ -325,11 +253,9 @@
 	background: var(--ak-primary-subtle);
 	border-color: transparent;
 }
-
-/* Segmented control (Display row toggles + accent source picker) --------- */
 .adminkit-app .ak-seg {
 	display: inline-flex;
-	margin-left: auto;            /* push the options to the right */
+	margin-left: auto;
 	gap: 2px;
 	padding: 2px;
 	background: var(--ak-input-bg);
@@ -357,12 +283,6 @@
 	color: var(--ak-on-accent);
 	background: var(--ak-primary);
 }
-
-/* Design tab — Brand card + Tokens disclosure (final layout, Phase A) ------ */
-
-/* The Brand card wraps everything interactive at the top of the Design tab:
-   slots row, accent picker, derived strip, display selectors. One bordered
-   container with a small head (eyebrow + title + status + Actions menu). */
 .adminkit-app .ak-card {
 	border: 1px solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
@@ -377,10 +297,6 @@
 	margin-bottom: 16px;
 }
 .adminkit-app .ak-card__head-main { flex: 1; min-width: 0; }
-/* Same fixed sizing for every card title regardless of underlying h2/h3 — UA
-   defaults differ between h levels (margins, line-height), so we pin every
-   value explicitly here to keep the three Design-tab cards (Brand, Typography,
-   Token map) reading at the same visual weight. */
 .adminkit-app .ak-card__title {
 	margin: 4px 0 0;
 	padding: 0;
@@ -389,11 +305,6 @@
 	line-height: 1.3;
 	color: var(--ak-heading);
 }
-/* Sync status row in the Brand card head — connection state + token count.
-   The dot is an explicit element so we can colour-key it per state (green
-   when connected; reserved tokens for a future "disconnected" red state).
-   The count chip sits on the right of the label, muted by token to read
-   as metadata, not a primary number. */
 .adminkit-app .ak-card__status {
 	margin: 6px 0 0;
 	font-size: var(--ak-text-xs);
@@ -424,854 +335,22 @@
 	font-size: 11px;
 }
 
-/* Brand slots — two cards (light- and dark-mode logo) side by side. The favicon
-   is managed by WordPress's native Site Icon (Settings → General). Each slot is a
-   HORIZONTAL strip — small preview zone on the left, label / sub / Upload button
-   stacked on the right — so each cell stays short in height. The fixed light/dark
-   backdrops MUST NOT flip with the admin theme; they show each image on the
-   surface it's built for, like a swatch (same logic as the existing
-   .ak-logo-pick--light/--dark per the CLAUDE.md guardrail). */
-.adminkit-app .ak-brand-slots {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 12px;
-	margin-bottom: 16px;
-}
-/* Horizontal slot layout — zone on the LEFT, body (label + sub + button) on
-   the RIGHT. Keeps each card short in height; the 2-up grid gives each cell
-   roughly half the card width — plenty of room for the preview zone plus a
-   tight body without wrapping the button under the text. */
-.adminkit-app .ak-brand-slot {
-	border: 1px dashed var(--ak-card-border);
-	border-radius: var(--ak-card-radius);
-	padding: 10px;
-	display: flex;
-	align-items: center;
-	gap: 10px;
-}
-/* Zone shape — base 44px square (shared radius / padding / centring); the
-   light/dark logo slots override width/height below to a wider rectangle so
-   wordmarks read at their natural landscape aspect rather than squashed into a
-   square. Inner padding keeps the image off the rounded corners. */
-.adminkit-app .ak-brand-slot__zone {
-	width: 44px;
-	height: 44px;
-	border-radius: var(--ak-radius-s, 6px);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 4px;
-	color: var(--ak-text-muted);
-	flex: 0 0 auto;
-	overflow: hidden;
-	cursor: pointer;
-	transition: box-shadow 120ms ease;
-}
-/* Logo slots — rectangular zone matches a wordmark's natural aspect (~2:1). */
-.adminkit-app .ak-brand-slot--light .ak-brand-slot__zone,
-.adminkit-app .ak-brand-slot--dark .ak-brand-slot__zone {
-	width: 72px;
-	height: 44px;
-}
-/* Zone is a click-to-replace shortcut alongside the Upload / Remove button.
-   Hover reveals the affordance: an inset accent ring around the zone, plus a
-   subtle dim on a filled preview so it reads as "click to change". */
-.adminkit-app .ak-brand-slot__zone:hover {
-	box-shadow: inset 0 0 0 2px var(--ak-primary);
-}
-.adminkit-app .ak-brand-slot__zone:hover img {
-	opacity: 0.75;
-}
-.adminkit-app .ak-brand-slot__zone img {
-	max-width: 100%;
-	max-height: 100%;
-	width: auto;
-	height: auto;
-	display: block;
-}
-/* Empty-state upload icon — inherits the zone's `color` (muted text) and
-   the inline SVG uses `currentColor` on its strokes. */
-.adminkit-app .ak-brand-slot__drop {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-}
-/* Fixed light/dark backdrops — same guarded exception as .ak-logo-pick--light/--dark.
-   The light slot sits on white, the dark slot on near-black, so each wordmark
-   previews on the surface it's built for. These MUST NOT flip with the admin theme. */
-.adminkit-app .ak-brand-slot--light .ak-brand-slot__zone { background: #ffffff; color: #888; }
-.adminkit-app .ak-brand-slot--dark .ak-brand-slot__zone { background: #0a0a0a; color: #888; }
-/* Body sits to the right of the zone — left-aligned column that fills the
-   remaining horizontal space. Tight vertical gap so label / sub / button
-   stack within the zone's height; long sub-labels wrap to a second line. */
-.adminkit-app .ak-brand-slot__body {
-	flex: 1 1 auto;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 2px;
-	min-width: 0;
-}
-.adminkit-app .ak-brand-slot__label {
-	font-size: 13px;
-	font-weight: 600;
-	color: var(--ak-heading);
-	line-height: 1.2;
-}
-.adminkit-app .ak-brand-slot__sub {
-	font-size: 11px;
-	line-height: 1.35;
-	color: var(--ak-text-muted);
-	margin: 0 0 6px;
-	max-width: 100%;
-}
-.adminkit-app .ak-brand-slot__btns {
-	display: flex;
-	gap: 6px;
-	align-items: center;
-}
-/* One button per slot — label + action toggle between "↑ Upload" (empty) and
-   "Remove" (filled). Compact pill so it doesn't crowd the narrow card width.
-   The .is-remove state shifts the colour to the muted text token so a
-   destructive click reads slightly different from the neutral upload action,
-   without being a screaming red. */
-.adminkit-app .ak-brand-slot__btn {
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-	padding: 3px 10px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s, 6px);
-	background: var(--ak-elevated);
-	color: var(--ak-text);
-	font-size: 11px;
-	cursor: pointer;
-}
-.adminkit-app .ak-brand-slot__btn:hover {
-	border-color: var(--ak-border-strong);
-	background: var(--ak-hover-bg);
-}
-.adminkit-app .ak-brand-slot__btn.is-remove {
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-brand-slot__btn.is-remove:hover {
-	color: var(--ak-error, #d63638);
-	border-color: var(--ak-error, #d63638);
-}
-
-/* Inline Accent picker — lives on its own .ak-display-row (the "Color" row),
-   peer to the Display row above. Three controls:
-     • segmented [AdminKit|Bricks|Custom]   — switches the source
-     • swatch (only when source = Custom)   — opens the OS picker
-     • hex input (only when source = Custom) — editable value
-   Swatch + hex are `[hidden]` outside Custom (the segmented alone is the
-   affordance for AdminKit / Bricks — no per-pixel choice to make).
-   Gap matches .ak-display-row__field (8px) so the picker reads as just another
-   field, not a special-case inline control. */
-.adminkit-app .ak-accent-inline {
-	gap: 8px;
-}
-.adminkit-app .ak-accent-inline .ak-seg { margin-left: 0; }
-.adminkit-app .ak-accent-inline__hex[hidden],
-.adminkit-app .ak-accent-inline__sw[hidden] { display: none; }
-.adminkit-app .ak-accent-inline__sw {
-	width: 22px;
-	height: 22px;
-	border-radius: var(--ak-radius-s, 6px);
-	border: 1px solid var(--ak-border-strong);
-	background: var(--ak-primary);
-	cursor: pointer;
-	padding: 0;
-	flex: 0 0 auto;
-}
-.adminkit-app .ak-accent-inline__hex {
-	width: 92px;
-	font-family: monospace;
-	font-size: var(--ak-text-xs);
-	padding: 4px 8px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s, 6px);
-	background: var(--ak-input-bg, var(--ak-bg));
-	color: var(--ak-text);
-}
-.adminkit-app .ak-accent-inline__hex:focus {
-	outline: none;
-	border-color: var(--ak-primary);
-	box-shadow: var(--ak-focus-ring);
-}
-/* Native input is anchored off-screen — clicking the swatch forwards to it
-   so the OS picker opens at the right spot. */
-.adminkit-app .ak-accent-inline__native {
-	position: absolute;
-	opacity: 0;
-	pointer-events: none;
-	width: 0;
-	height: 0;
-}
-
-/* Display / Color rows — sibling rows below the brand slots, same chrome,
-   each separated by a top border. Symmetric padding-block: 20px gives the
-   content breathing room ABOVE the next row's border (otherwise the content
-   sits flush against it). Last row has its padding-bottom collapsed so the
-   row doesn't double up with the card's own bottom padding. */
-.adminkit-app .ak-display-row {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 24px;
-	padding-top: 20px;
-	padding-bottom: 20px;
-	margin-top: 4px;
-	border-top: 1px solid var(--ak-border);
-}
-.adminkit-app .ak-display-row:last-child { padding-bottom: 0; }
-.adminkit-app .ak-display-row__lbl {
-	font-size: var(--ak-text-s);
-	font-weight: 600;
-	color: var(--ak-heading);
-	min-width: 64px;
-}
-.adminkit-app .ak-display-row__field {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-}
-.adminkit-app .ak-display-row__field-lbl {
-	font-size: var(--ak-text-xs);
-	font-weight: 500;
-	color: var(--ak-text-muted);
-	margin-right: 2px;
-}
-
-/* Narrow viewports — Brand-card slots collapse to one column, the display
-   row tightens its gap so the segmented controls don't crowd. */
-@media screen and (max-width: 960px) {
-	.adminkit-app .ak-brand-slots { grid-template-columns: 1fr; }
-	.adminkit-app .ak-display-row { gap: 12px; }
-}
-
-/* ── Brand studio: controls + live preview ───────────────────────────────────
-   Two columns on wide screens (controls | preview); stacks on narrow. The
-   preview is a self-contained mock with its OWN fixed light/dark backdrop (like
-   a swatch) so the brand shows in both themes whatever the admin theme is. */
-.adminkit-app .ak-brand-studio {
-	display: grid;
-	/* Controls keep a comfortable fixed-ish column; the preview takes ALL the
-	   remaining width so it reads big at full screen (the point of the studio). */
-	grid-template-columns: minmax( 320px, 440px ) minmax( 0, 1fr );
-	gap: 30px;
-	align-items: start;
-}
-.adminkit-app .ak-brand-studio__controls {
-	display: flex;
-	flex-direction: column;
-	gap: 18px;
-	min-width: 0;
-}
-/* The controls column is narrow — stack the two logo slots instead of cramming
-   them side by side. */
-.adminkit-app .ak-brand-studio__controls .ak-brand-slots {
-	grid-template-columns: 1fr;
-}
-@media screen and (max-width: 1080px) {
-	.adminkit-app .ak-brand-studio { grid-template-columns: 1fr; gap: 22px; }
-	.adminkit-app .ak-brand-preview { position: static; }
-}
-
-.adminkit-app .ak-brand-preview { position: sticky; top: 20px; min-width: 0; }
-.adminkit-app .ak-bp__head {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 10px;
-	margin-bottom: 10px;
-}
-.adminkit-app .ak-bp__title {
-	font-size: var(--ak-text-xs);
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: .06em;
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-bp__themes {
-	display: inline-flex;
-	gap: 2px;
-	padding: 2px;
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-}
-.adminkit-app .ak-bp__theme {
-	padding: 3px 11px;
-	border: 0;
-	border-radius: calc( var(--ak-radius-s) - 2px );
-	background: transparent;
-	color: var(--ak-text-muted);
-	font: inherit;
-	font-size: var(--ak-text-xs);
-	font-weight: 500;
-	cursor: pointer;
-}
-.adminkit-app .ak-bp__theme.is-active { background: var(--ak-elevated); color: var(--ak-heading); }
-
-/* The mock frame carries its own palette via --p-* (a fixed light/dark swatch, so the
-   Clair/Sombre toggle previews EITHER theme regardless of the live admin theme). It
-   mirrors AdminKit's real model: a page CANVAS, a SURFACE shared by the chrome (bar +
-   menu) AND the cards, and an ELEVATED tone for header bands. The chrome rides
-   --p-surface (via the --p-rail alias) + --p-text (via --p-rail-text), so the bar and
-   menu are LIGHT in light mode and DARK in dark mode — exactly like the real admin —
-   instead of a fixed dark rail. */
-.adminkit-app .ak-bp__frame {
-	--p-canvas: var(--wk-bg);
-	--p-surface: var(--wk-surface);
-	--p-elevated: var(--wk-surface-raised);
-	--p-text: var(--wk-text);
-	--p-muted: var(--wk-text-muted);
-	--p-border: var(--wk-border);
-	--p-accent: var(--ak-custom-accent, var(--wk-accent));
-	--p-on-accent: var(--ak-custom-on-accent, var(--wk-on-accent));
-	/* Aliases — the existing chrome/card rules ride the themed tones above. */
-	--p-rail: var(--p-surface);
-	--p-rail-text: var(--p-text);
-	--p-card: var(--p-surface);
-	overflow: hidden;
-	border: 1px solid var(--ak-card-border);
-	border-radius: var(--ak-card-radius);
-	background: var(--p-canvas);
-	box-shadow: 0 1px 3px rgba( 0, 0, 0, .08 );
-	/* Fade + lift in (~0.28s) on render, so navigating between the Menu / Settings
-	   pages eases the mock into view instead of snapping it. Reduced-motion → instant. */
-	animation: ak-bp-in 0.28s ease-out both;
-}
-@keyframes ak-bp-in {
-	from { opacity: 0; transform: translateY(6px); }
-	to   { opacity: 1; transform: translateY(0); }
-}
-@media (prefers-reduced-motion: reduce) {
-	.adminkit-app .ak-bp__frame { animation: none; }
-}
-.adminkit-app .ak-bp__bar {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	height: 42px;
-	padding: 0 14px;
-	background: var(--p-rail);
-	border-bottom: 1px solid var(--p-border);
-}
-.adminkit-app .ak-bp__mark { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
-.adminkit-app .ak-bp__logo { height: 20px; width: auto; max-width: 160px; object-fit: contain; display: block; }
-.adminkit-app .ak-bp__logo-ph { font-size: 12px; color: var(--p-rail-text); opacity: .65; }
-.adminkit-app .ak-bp__favicon { width: 18px; height: 18px; border-radius: 4px; object-fit: cover; display: block; flex: none; }
-.adminkit-app .ak-bp__favicon--empty { background: var(--p-accent); }
-.adminkit-app .ak-bp__site { font-size: 12px; font-weight: 600; color: var(--p-rail-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.adminkit-app .ak-bp__dots { display: inline-flex; gap: 6px; flex: none; }
-.adminkit-app .ak-bp__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--p-rail-text); opacity: .4; }
-.adminkit-app .ak-bp__layout { display: grid; grid-template-columns: 84px 1fr; min-height: 320px; }
-.adminkit-app .ak-bp__menu { background: var(--p-rail); padding: 10px 0; display: flex; flex-direction: column; gap: 2px; border-right: 1px solid var(--p-border); }
-.adminkit-app .ak-bp__nav { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
-.adminkit-app .ak-bp__nav-ic { width: 14px; height: 14px; border-radius: 4px; background: var(--p-rail-text); opacity: .45; flex: none; }
-.adminkit-app .ak-bp__nav-bar { height: 6px; border-radius: 3px; background: var(--p-rail-text); opacity: .3; flex: 1; }
-.adminkit-app .ak-bp__nav.is-active { background: var(--p-accent); }
-.adminkit-app .ak-bp__nav.is-active .ak-bp__nav-ic,
-.adminkit-app .ak-bp__nav.is-active .ak-bp__nav-bar { background: var(--p-on-accent); opacity: .95; }
-.adminkit-app .ak-bp__content { padding: 16px; background: var(--p-canvas); display: flex; flex-direction: column; gap: 12px; }
-/* Page header: title + a primary action, like the dashboard greeting row. */
-.adminkit-app .ak-bp__chead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.adminkit-app .ak-bp__chead .ak-bp__btn { align-self: center; margin-top: 0; }
-/* Widget grid — two white postbox-style cards on the grey canvas (WP dashboard). */
-.adminkit-app .ak-bp__cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.adminkit-app .ak-bp__card {
-	background: var(--p-card);
-	border: 1px solid var(--p-border);
-	border-radius: var(--ak-card-radius);
-	padding: 12px;
-	display: flex;
-	flex-direction: column;
-	gap: 9px;
-}
-.adminkit-app .ak-bp__card-h { height: 9px; width: 52%; border-radius: 4px; background: var(--p-text); opacity: .66; }
-.adminkit-app .ak-bp__h { height: 14px; width: 44%; border-radius: 5px; background: var(--p-text); opacity: .82; }
-.adminkit-app .ak-bp__line { height: 8px; border-radius: 4px; background: var(--p-muted); opacity: .5; }
-.adminkit-app .ak-bp__line--short { width: 68%; }
-.adminkit-app .ak-bp__btn {
-	align-self: flex-start;
-	margin-top: 2px;
-	padding: 7px 15px;
-	border: 0;
-	border-radius: var(--ak-radius-s);
-	background: var(--p-accent);
-	color: var(--p-on-accent);
-	font: inherit;
-	font-size: 12px;
-	font-weight: 600;
-	cursor: default;
-}
-/* List-table preview — a "loading" skeleton (no fake data): a header band + a few
-   placeholder rows, mirroring the real list-table chrome (soft header band + row
-   hairlines) we apply on Articles / Pages, so the user sees how a list view renders. */
-.adminkit-app .ak-bp__table {
-	border: 1px solid var(--p-border);
-	border-radius: var(--ak-card-radius);
-	overflow: hidden;
-	background: var(--p-card);
-}
-.adminkit-app .ak-bp__trow {
-	display: grid;
-	grid-template-columns: 2.4fr 1fr 1fr;
-	gap: 12px;
-	align-items: center;
-	padding: 10px 12px;
-	border-top: 1px solid var(--p-border);
-}
-.adminkit-app .ak-bp__trow:first-child { border-top: 0; }
-.adminkit-app .ak-bp__trow--head { background: var(--p-elevated); }
-.adminkit-app .ak-bp__tcell { height: 7px; border-radius: 3px; background: var(--p-muted); opacity: .4; }
-.adminkit-app .ak-bp__trow--head .ak-bp__tcell { opacity: .6; }
-
 @media screen and (max-width: 782px) {
 	.adminkit-app .ak-head { flex-wrap: wrap; }
 }
-
-/* === Menu manager tab ===================================================== */
-/* The editor reads best as a tidy LEFT-hand column. At full screen width each
-   row's controls (icons, "N submenus", URL, hide) drift to the far right, away
-   from the item name; cap the panel so items + their controls stay grouped on the
-   left (the page itself stays full-width — only this editor column is bounded). */
 .adminkit-app[data-screen="menu"] .ak-panel--menu {
 	max-width: 1040px;
 }
-.adminkit-app .ak-menu-tree {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	margin-top: 8px;
-}
-.adminkit-app .ak-menu-group {
-	border: 1px solid var(--ak-card-border);
-	border-radius: var(--ak-radius-m);
-	background: var(--ak-card-bg);
-}
-.adminkit-app .ak-menu-row {
-	position: relative;
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 8px 10px;
-}
-.adminkit-app .ak-menu-row--top { font-weight: 600; }
-.adminkit-app .ak-menu-row--child {
-	padding-left: 22px;
-	font-weight: 400;
-	border-top: 1px solid var(--ak-border);
-}
-.adminkit-app .ak-menu-row.is-hidden { opacity: 0.5; }
-.adminkit-app .ak-menu-row.is-dragging { opacity: 0.4; }
-.adminkit-app .ak-menu-row.is-drop { box-shadow: inset 0 2px 0 0 var(--ak-primary); }
-.adminkit-app .ak-menu-handle {
-	display: inline-flex;
-	align-items: center;
-	color: var(--ak-muted);
-	cursor: grab;
-	flex: 0 0 auto;
-}
-/* Up/down reorder control — a compact spinner beside the drag handle (accessible
-   click/keyboard alternative to dragging). */
-.adminkit-app .ak-menu-move {
-	display: inline-flex;
-	flex-direction: column;
-	flex: 0 0 auto;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	overflow: hidden;
-}
-.adminkit-app .ak-menu-move__btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 22px;
-	height: 15px;
-	padding: 0;
-	border: 0;
-	background: var(--ak-surface);
-	color: var(--ak-muted);
-	cursor: pointer;
-}
-.adminkit-app .ak-menu-move__btn:first-child { border-bottom: 1px solid var(--ak-border); }
-.adminkit-app .ak-menu-move__btn:hover { color: var(--ak-text); background: var(--ak-elevated); }
-.adminkit-app .ak-menu-move__btn:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); color: var(--ak-text); }
-.adminkit-app .ak-menu-move__btn svg { width: 11px; height: 11px; display: block; }
-.adminkit-app .ak-menu-row__title {
-	flex: 1 1 auto;
-	min-width: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	color: var(--ak-text);
-}
-.adminkit-app .ak-menu-row__expand {
-	display: inline-flex;
-	align-items: center;
-	gap: 5px;
-	border: 0;
-	background: transparent;
-	color: var(--ak-muted);
-	font-size: var(--ak-text-xs);
-	cursor: pointer;
-	padding: 2px 6px;
-	border-radius: var(--ak-radius-s);
-	flex: 0 0 auto;
-}
-.adminkit-app .ak-menu-row__expand:hover,
-.adminkit-app .ak-menu-row__expand.on { color: var(--ak-text); }
-.adminkit-app .ak-menu-row__caret { display: inline-flex; transition: transform 0.15s ease; }
-.adminkit-app .ak-menu-row__caret svg { width: 10px; height: 10px; display: block; }
-.adminkit-app .ak-menu-row__expand.on .ak-menu-row__caret { transform: rotate( 90deg ); }
-
-.adminkit-app .ak-menu-icon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 30px;
-	height: 30px;
-	padding: 0;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	cursor: pointer;
-	flex: 0 0 auto;
-}
-.adminkit-app .ak-menu-icon:hover { border-color: var(--ak-primary); }
-.adminkit-app .ak-menu-icon__g { display: inline-flex; width: 18px; height: 18px; }
-.adminkit-app .ak-menu-icon__g svg { width: 18px; height: 18px; }
-.adminkit-app .ak-menu-icon .dashicons {
-	font-size: 18px;
-	width: 18px;
-	height: 18px;
-	line-height: 18px;
-}
-
-/* Hide/Show toggle — a compact eye icon (mirrors the other 30×30 row buttons).
-   Pressed = item hidden (eye-off shown). */
-.adminkit-app .ak-menu-hide {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 30px;
-	height: 30px;
-	padding: 0;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-muted);
-	cursor: pointer;
-	flex: 0 0 auto;
-}
-.adminkit-app .ak-menu-hide:hover { border-color: var(--ak-primary); color: var(--ak-text); }
-.adminkit-app .ak-menu-hide svg { width: 16px; height: 16px; }
-.adminkit-app .ak-menu-hide[aria-pressed="true"] {
-	color: var(--ak-text);
-	border-color: var(--ak-border-strong);
-}
-
-.adminkit-app .ak-icon-pop {
-	position: absolute;
-	z-index: 20;
-	top: 44px;
-	left: 10px;
-	width: 264px;
-	padding: 8px;
-	border: 1px solid var(--ak-card-border);
-	border-radius: var(--ak-radius-m);
-	background: var(--ak-elevated);
-	box-shadow: 0 8px 30px rgba( 0, 0, 0, 0.18 );
-	max-height: min( 440px, 78vh );
-	overflow-y: auto;
-	overscroll-behavior: contain;
-}
-/* Tabs at the top of the picker — switch between the AdminKit glyph set and the
-   native WordPress dashicons (only one pane shows at a time). */
-.adminkit-app .ak-icon-pop__tabs {
-	display: flex;
-	gap: 4px;
-	margin: 0 0 8px;
-	padding-bottom: 8px;
-	border-bottom: 1px solid var(--ak-border);
-}
-.adminkit-app .ak-icon-pop__tab {
-	flex: 1;
-	border: 1px solid var(--ak-border);
-	background: transparent;
-	color: var(--ak-text-muted);
-	cursor: pointer;
-	padding: 5px 8px;
-	border-radius: var(--ak-radius-s);
-	font-size: var(--ak-text-xs);
-	font-weight: 600;
-}
-.adminkit-app .ak-icon-pop__tab:hover { color: var(--ak-heading); }
-.adminkit-app .ak-icon-pop__tab.on {
-	background: var(--ak-elevated);
-	border-color: var(--ak-border-strong);
-	color: var(--ak-heading);
-}
-.adminkit-app .ak-icon-pop__search {
-	width: 100%;
-	box-sizing: border-box;
-	margin: 0 0 6px;
-	padding: 5px 8px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	font-size: var(--ak-text-xs);
-}
-.adminkit-app .ak-icon-pop__search:focus { border-color: var(--ak-primary); outline: none; }
-.adminkit-app .ak-icon-pop__defbar {
-	display: flex;
-	gap: 4px;
-	margin-bottom: 6px;
-}
-.adminkit-app .ak-icon-pop__def {
-	flex: 1;
-	display: block;
-	text-align: center;
-	border: 1px solid var(--ak-card-border);
-	background: transparent;
-	color: var(--ak-text);
-	cursor: pointer;
-	padding: 4px 6px;
-	border-radius: var(--ak-radius-s);
-	font-size: var(--ak-text-xs);
-}
-.adminkit-app .ak-icon-pop__def:hover,
-.adminkit-app .ak-icon-pop__def.on { background: var(--ak-elevated); border-color: var(--ak-border-strong); }
-.adminkit-app .ak-icon-pop__grid {
-	display: grid;
-	grid-template-columns: repeat( 7, 1fr );
-	gap: 4px;
-}
-.adminkit-app .ak-icon-pop__sw {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 30px;
-	height: 30px;
-	border: 1px solid transparent;
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	cursor: pointer;
-}
-.adminkit-app .ak-icon-pop__sw:hover { border-color: var(--ak-primary); }
-.adminkit-app .ak-icon-pop__sw.on {
-	border-color: var(--ak-primary);
-	background: var(--ak-primary-subtle);
-}
-.adminkit-app .ak-icon-pop__sw svg { width: 18px; height: 18px; }
-.adminkit-app .ak-icon-pop__sw .dashicons {
-	width: 18px;
-	height: 18px;
-	font-size: 18px;
-	line-height: 18px;
-}
-.adminkit-app .ak-menu-icon__mask {
-	background-color: currentColor;
-	-webkit-mask-size: contain;
-	mask-size: contain;
-	-webkit-mask-repeat: no-repeat;
-	mask-repeat: no-repeat;
-	-webkit-mask-position: center;
-	mask-position: center;
-}
-.adminkit-app .ak-icon-pop__custom {
-	display: flex;
-	gap: 6px;
-	align-items: center;
-	margin-top: 8px;
-	padding-top: 8px;
-	border-top: 1px solid var(--ak-border);
-}
-.adminkit-app .ak-icon-pop__customic { flex: 0 0 auto; display: inline-flex; color: var(--ak-muted); }
-/* Quick "grab an SVG from Icon Bolt" tip under the paste field. */
-.adminkit-app .ak-icon-pop__hint {
-	margin-top: 6px;
-	font-size: var(--ak-text-xs);
-	line-height: 1.4;
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-icon-pop__hint a { color: var(--ak-primary); text-decoration: none; }
-.adminkit-app .ak-icon-pop__hint a:hover { text-decoration: underline; }
-.adminkit-app .ak-icon-pop__ta {
-	flex: 1 1 auto;
-	min-width: 0;
-	font-family: monospace;
-	font-size: var(--ak-text-xs);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	padding: 4px 6px;
-}
 .adminkit-app .ak-btn--small { padding: 4px 10px; font-size: var(--ak-text-xs); }
-
-/* Custom-section label (icon picker + custom-URL popover). */
-.adminkit-app .ak-icon-pop__customlbl {
-	font-size: var(--ak-text-xs);
-	color: var(--ak-muted);
-	margin: 0 0 6px;
-	line-height: 1.4;
-}
-
-/* Custom-URL button (mirrors the icon button) + its popover. */
-.adminkit-app .ak-menu-url {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 30px;
-	height: 30px;
-	padding: 0;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-muted);
-	cursor: pointer;
-	flex: 0 0 auto;
-}
-.adminkit-app .ak-menu-url:hover { border-color: var(--ak-primary); color: var(--ak-text); }
-.adminkit-app .ak-menu-url.on { border-color: var(--ak-primary); color: var(--ak-primary); background: var(--ak-primary-subtle); }
-.adminkit-app .ak-menu-url svg { width: 15px; height: 15px; }
-.adminkit-app .ak-url-pop { width: 300px; }
-/* "Current : <destination>" line above the URL field — shows where the item
-   points before you change it. */
-.adminkit-app .ak-url-pop__current {
-	display: flex;
-	align-items: baseline;
-	gap: 4px;
-	min-width: 0;
-	margin: 0 0 8px;
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-url-pop__current-lbl { flex: 0 0 auto; }
-.adminkit-app .ak-url-pop__current-val {
-	min-width: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	font-family: monospace;
-	color: var(--ak-text);
-}
-.adminkit-app .ak-url-pop__row { align-items: center; }
-.adminkit-app .ak-url-pop__row .ak-menu-input { flex: 1 1 auto; min-width: 0; }
-.adminkit-app .ak-menu-newtab {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 30px;
-	height: 30px;
-	padding: 0;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-muted);
-	cursor: pointer;
-	flex: 0 0 auto;
-}
-.adminkit-app .ak-menu-newtab:hover { border-color: var(--ak-primary); color: var(--ak-text); }
-.adminkit-app .ak-menu-newtab.on { border-color: var(--ak-primary); color: var(--ak-primary); background: var(--ak-primary-subtle); }
-.adminkit-app .ak-menu-newtab svg { width: 14px; height: 14px; }
-
-/* Toolbar (Add link / Add separator / Reset · Export / Import) + custom rows */
-.adminkit-app .ak-menu-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 10px; }
-/* Push Export/Import to the trailing edge, away from the create/reset actions. */
-.adminkit-app .ak-menu-toolbar__spacer { margin-left: auto; }
-/* Toolbar editor: a small heading above each side (Left / Right) of the bar. */
-.adminkit-app .ak-toolbar__side {
-	margin: 16px 0 6px;
-	font-size: var(--ak-text-xs, .72rem);
-	font-weight: 700;
-	letter-spacing: .04em;
-	text-transform: uppercase;
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-toolbar__side:first-child { margin-top: 2px; }
-@media screen and (max-width: 600px) {
-	.adminkit-app .ak-menu-toolbar__spacer { margin-left: 0; }
-}
 .adminkit-app .ak-btn--ghost {
 	background: transparent;
 	border-color: var(--ak-border);
-	color: var(--ak-muted);
+	color: var(--ak-text-muted);
 }
 .adminkit-app .ak-btn--ghost:hover {
 	color: var(--ak-text);
 	border-color: var(--ak-border-strong);
 }
-.adminkit-app .ak-menu-row--sep { padding-top: 6px; padding-bottom: 6px; }
-.adminkit-app .ak-menu-seplabel {
-	color: var(--ak-muted);
-	font-style: italic;
-	font-weight: 400;
-	letter-spacing: 0.04em;
-}
-.adminkit-app .ak-menu-input {
-	flex: 0 1 auto;
-	min-width: 0;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	padding: 5px 8px;
-	font-size: var(--ak-text-s);
-}
-.adminkit-app .ak-menu-input:focus {
-	outline: none;
-	border-color: var(--ak-primary);
-}
-.adminkit-app .ak-menu-input--url {
-	flex: 1 1 auto;
-	font-family: monospace;
-	font-size: var(--ak-text-xs);
-}
-.adminkit-app .ak-menu-remove {
-	width: 24px;
-	height: 24px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-muted);
-	cursor: pointer;
-	line-height: 1;
-	flex: 0 0 auto;
-}
-.adminkit-app .ak-menu-remove:hover {
-	color: var(--ak-error);
-	border-color: var(--ak-error);
-}
-
-/* Inline-editable label: looks like text until hover/focus */
-.adminkit-app .ak-menu-title {
-	flex: 1 1 auto;
-	font: inherit;
-	border-color: transparent;
-	background: transparent;
-	padding: 4px 6px;
-}
-.adminkit-app .ak-menu-title:hover { border-color: var(--ak-border); }
-.adminkit-app .ak-menu-title:focus {
-	outline: none;
-	border-color: var(--ak-primary);
-	background: var(--ak-surface);
-}
-/* Cross-section drop affordance on a parent's open children area */
-.adminkit-app .ak-menu-children.is-drop {
-	box-shadow: inset 0 0 0 2px var(--ak-primary);
-	border-radius: var(--ak-radius-s);
-}
-
-/* ── Features tab — search + collapsible groups (enhancement) ─────────────── */
 .adminkit-app .ak-search-wrap { margin-bottom: 14px; }
 .adminkit-app .ak-search-wrap .ak-search {
 	width: 100%;
@@ -1287,407 +366,4 @@
 	outline: none;
 	border-color: var(--ak-primary);
 	box-shadow: var(--ak-focus-ring);
-}
-/* ── Statistics tab — full drill-in for the cookieless tracker ───────────── */
-.adminkit-app .ak-stats__head {
-	display: flex;
-	align-items: center;
-	gap: 10px 14px;
-	flex-wrap: wrap;
-	margin-bottom: 16px;
-}
-.adminkit-app .ak-stats__active {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 3px 10px;
-	border-radius: var(--ak-radius-full);
-	background: var(--ak-success-subtle);
-	color: var(--ak-success);
-	font-size: var(--ak-text-xs);
-	font-weight: 600;
-}
-.adminkit-app .ak-stats__active[hidden] { display: none; }
-.adminkit-app .ak-stats__active-dot {
-	width: 7px;
-	height: 7px;
-	border-radius: 50%;
-	background: var(--ak-success);
-	animation: ak-stats-pulse 2s ease-in-out infinite;
-}
-@keyframes ak-stats-pulse {
-	0%, 100% { opacity: 1; transform: scale(1); }
-	50%      { opacity: .4; transform: scale(.7); }
-}
-@media ( prefers-reduced-motion: reduce ) {
-	.adminkit-app .ak-stats__active-dot { animation: none; }
-}
-/* Range picker — presets segmented control + (revealed) custom inputs. Sits
-   flush-left with the rest of the panel content. */
-.adminkit-app .ak-stats__range {
-	display: inline-flex;
-	align-items: center;
-	gap: 10px;
-	flex-wrap: wrap;
-}
-.adminkit-app .ak-stats__presets {
-	display: inline-flex;
-	gap: 2px;
-	padding: 2px;
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-}
-.adminkit-app .ak-stats__preset {
-	padding: 4px 12px;
-	border: 0;
-	border-radius: calc(var(--ak-radius-s) - 2px);
-	background: transparent;
-	color: var(--ak-text-muted);
-	font: inherit;
-	font-size: var(--ak-text-xs);
-	font-weight: 500;
-	cursor: pointer;
-	transition: background-color .12s ease, color .12s ease;
-}
-.adminkit-app .ak-stats__preset:hover { color: var(--ak-heading); }
-.adminkit-app .ak-stats__preset.is-active {
-	background: var(--ak-surface-muted);
-	color: var(--ak-heading);
-}
-.adminkit-app .ak-stats__custom {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-}
-.adminkit-app .ak-stats__custom[hidden] { display: none; }
-.adminkit-app .ak-stats__range-lbl {
-	font-size: var(--ak-text-xs);
-	font-weight: 500;
-	color: var(--ak-text-muted);
-	text-transform: uppercase;
-	letter-spacing: .04em;
-}
-.adminkit-app .ak-stats__date {
-	/* color-scheme tells the browser to render its native calendar widget
-	   (icon included) in the matching light/dark variant. */
-	color-scheme: light;
-	padding: 5px 10px;
-	background: var(--ak-input-bg);
-	color: var(--ak-text);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	font: inherit;
-	font-size: var(--ak-text-s);
-	line-height: 1.2;
-	cursor: pointer;
-}
-.adminkit-app .ak-stats__date:focus-visible {
-	outline: none;
-	border-color: var(--ak-primary);
-	box-shadow: var(--ak-focus-ring);
-}
-[data-adminkit-theme="dark"] .adminkit-app .ak-stats__date {
-	color-scheme: dark;
-}
-.adminkit-app .ak-stats.is-loading .ak-stats__body { opacity: .5; transition: opacity .12s ease; }
-
-.adminkit-app .ak-stats__empty,
-.adminkit-app .ak-stats__none {
-	margin: 8px 0 0;
-	color: var(--ak-text-muted);
-	font-size: var(--ak-text-s);
-}
-
-/* Metrics */
-.adminkit-app .ak-stats__metrics {
-	display: flex;
-	gap: 36px;
-	margin-bottom: 18px;
-}
-.adminkit-app .ak-stats__metric { display: flex; flex-direction: column; gap: 2px; }
-.adminkit-app .ak-stats__metric-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-.adminkit-app .ak-stats__metric-num {
-	font-size: 30px;
-	font-weight: 700;
-	line-height: 1.1;
-	color: var(--ak-heading);
-}
-.adminkit-app .ak-stats__metric-lbl {
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-stats__metric-sub {
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
-}
-/* Trend badge — up = success, down = error, flat = muted. Tabular so the % keeps
-   the number baseline steady as the period changes. */
-.adminkit-app .ak-stats__trend {
-	display: inline-flex;
-	align-items: center;
-	gap: 2px;
-	font-size: var(--ak-text-xs);
-	font-weight: 600;
-	font-variant-numeric: tabular-nums;
-	white-space: nowrap;
-}
-.adminkit-app .ak-stats__trend--up   { color: var(--ak-success); }
-.adminkit-app .ak-stats__trend--down { color: var(--ak-error); }
-.adminkit-app .ak-stats__trend--flat { color: var(--ak-text-muted); }
-
-/* Bar chart */
-.adminkit-app .ak-stats__chart {
-	margin-bottom: 22px;
-	padding: 14px;
-	border: 1px solid var(--ak-card-border);
-	border-radius: var(--ak-card-radius);
-	background: var(--ak-card-bg);
-}
-.adminkit-app .ak-stats__chart-svg {
-	display: block;
-	width: 100%;
-	height: 120px;
-}
-/* Line/area chart. The area is a soft accent fill; the line keeps a constant
-   2px stroke via non-scaling-stroke despite the stretched (preserveAspectRatio
-   none) viewBox. */
-.adminkit-app .ak-stats__area {
-	fill: var(--ak-primary);
-	opacity: .12;
-	stroke: none;
-}
-.adminkit-app .ak-stats__line {
-	fill: none;
-	stroke: var(--ak-primary);
-	stroke-width: 2;
-	stroke-linecap: round;
-	stroke-linejoin: round;
-	vector-effect: non-scaling-stroke;
-}
-/* Hairline y-reference lines (max / mid / 0). */
-.adminkit-app .ak-stats__grid {
-	stroke: var(--ak-border);
-	stroke-width: 1;
-	vector-effect: non-scaling-stroke;
-	opacity: .55;
-}
-/* Axes layout: value scale (left) · plot + date scale (bottom). */
-.adminkit-app .ak-stats__chart-axes {
-	display: grid;
-	grid-template-columns: auto minmax( 0, 1fr );
-	gap: 10px;
-}
-.adminkit-app .ak-stats__chart-y {
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	height: 120px;
-	padding: 8px 0;
-	text-align: right;
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
-	font-variant-numeric: tabular-nums;
-}
-.adminkit-app .ak-stats__chart-plot { min-width: 0; }
-.adminkit-app .ak-stats__chart-x {
-	display: flex;
-	justify-content: space-between;
-	margin-top: 6px;
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
-	font-variant-numeric: tabular-nums;
-}
-
-/* Two lists side by side */
-.adminkit-app .ak-stats__cols {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 22px;
-}
-@media screen and (max-width: 782px) {
-	.adminkit-app .ak-stats__cols { grid-template-columns: 1fr; }
-}
-.adminkit-app .ak-stats__list {
-	border: 1px solid var(--ak-card-border);
-	border-radius: var(--ak-card-radius);
-	background: var(--ak-card-bg);
-	overflow: hidden;
-}
-.adminkit-app .ak-stats__list-head {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 10px 14px;
-	border-bottom: 1px solid var(--ak-card-border);
-}
-.adminkit-app .ak-stats__list-h,
-.adminkit-app .ak-stats__list-hv {
-	font-size: var(--ak-text-xs);
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: .04em;
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-stats__rows { margin: 0; padding: 0; list-style: none; }
-.adminkit-app .ak-stats__row {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-	padding: 8px 14px;
-	border-top: 1px solid var(--ak-border);
-	font-size: var(--ak-text-s);
-}
-.adminkit-app .ak-stats__row:first-child { border-top: 0; }
-.adminkit-app .ak-stats__row-name {
-	min-width: 0;
-	overflow: hidden;
-	color: var(--ak-text);
-	text-decoration: none;
-}
-.adminkit-app a.ak-stats__row-name {
-	display: flex;
-	flex-direction: column;
-	gap: 1px;
-	line-height: 1.3;
-}
-.adminkit-app a.ak-stats__row-name:hover .ak-stats__row-title { color: var(--ak-primary); }
-.adminkit-app .ak-stats__row-title,
-.adminkit-app .ak-stats__row-sub {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-.adminkit-app .ak-stats__row-sub {
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-stats__row-val {
-	flex: none;
-	font-variant-numeric: tabular-nums;
-	font-weight: 600;
-	color: var(--ak-heading);
-}
-
-/* Search + pager — full Statistics page lists only (the dashboard card stays a
-   5-row glance, no chrome). Client-side over the already-fetched rows. */
-.adminkit-app .ak-stats__list-tools {
-	padding: 8px 10px;
-	border-bottom: 1px solid var(--ak-card-border);
-}
-.adminkit-app .ak-stats__search {
-	width: 100%;
-	box-sizing: border-box;
-	margin: 0;
-	padding: 5px 10px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	font-size: var(--ak-text-s);
-}
-.adminkit-app .ak-stats__search:focus {
-	border-color: var(--ak-primary);
-	outline: none;
-}
-.adminkit-app .ak-stats__row--empty {
-	justify-content: center;
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-stats__pager {
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-	gap: 8px;
-	padding: 8px 14px;
-	border-top: 1px solid var(--ak-border);
-}
-.adminkit-app .ak-stats__pager[hidden] { display: none; }
-.adminkit-app .ak-stats__pager-info {
-	font-size: var(--ak-text-xs);
-	font-variant-numeric: tabular-nums;
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-stats__pager-btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 26px;
-	height: 26px;
-	padding: 0;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	font-size: 16px;
-	line-height: 1;
-	cursor: pointer;
-}
-.adminkit-app .ak-stats__pager-btn:hover:not(:disabled) {
-	border-color: var(--ak-border-strong);
-	color: var(--ak-heading);
-}
-.adminkit-app .ak-stats__pager-btn:disabled {
-	opacity: .4;
-	cursor: default;
-}
-
-/* ── Live preset chip + Live view body ─────────────────────────────────────
-   The Live chip carries a small green dot (calm by default; CSS animates it
-   only when active so the chip reads as "watching now"). The body switches
-   to a big "active right now" headline with the page/source breakdown of the
-   visitors currently on the site — same list shell as the period view. */
-.adminkit-app .ak-stats__preset--live {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-}
-.adminkit-app .ak-stats__pulse {
-	display: inline-block;
-	width: 7px;
-	height: 7px;
-	border-radius: 50%;
-	background: var(--ak-success);
-	flex: none;
-}
-.adminkit-app .ak-stats__preset--live.is-active .ak-stats__pulse {
-	animation: ak-stats-pulse 1.4s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-	.adminkit-app .ak-stats__preset--live.is-active .ak-stats__pulse { animation: none; }
-}
-
-/* Live view hero — LEFT-aligned + clean, homogenised with the dashboard card:
-   just the big accent count + label. The "right now" label, the auto-refresh and
-   the pulsing "En direct" chip carry the live cue, so no halo/ring here. */
-.adminkit-app .ak-stats__live-headline {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 6px;
-	margin: 8px 0 24px;
-	padding: 8px 0;
-}
-.adminkit-app .ak-stats__live-num {
-	font-size: 64px;
-	font-weight: 700;
-	line-height: 1;
-	letter-spacing: -.02em;
-	color: var(--ak-primary);
-	font-variant-numeric: tabular-nums;
-}
-.adminkit-app .ak-stats__live-lbl {
-	font-size: var(--ak-text-xs);
-	font-weight: 600;
-	color: var(--ak-text-muted);
-	text-transform: uppercase;
-	letter-spacing: .1em;
-}
-.adminkit-app .ak-stats__live-empty {
-	margin: 4px 0 0;
-	max-width: 460px;
-	font-size: var(--ak-text-s);
-	color: var(--ak-text-muted);
 }

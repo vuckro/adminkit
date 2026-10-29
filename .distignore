@@ -13,6 +13,9 @@
 # AI / agent scratch and internal guides
 .claude
 CLAUDE.md
+AGENTS.md
+docs
+README.md
 
 # GitHub-only metadata (Playground blueprints, repo configuration)
 .wordpress-org

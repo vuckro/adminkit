@@ -2,7 +2,7 @@
 
 AdminKit utilise le design system publié sur [Design WaasKit](https://design.waaskit.site/), relevé le 29 octobre 2026. La source précise est [l’export CSS natif](https://design.waaskit.site/wp-content/uploads/waaskit-exports/wk-ui.css). Les composants marketing de cet export ne sont pas chargés dans WordPress.
 
-Le fichier `tokens/palettes/waaskit.json` conserve la provenance et son SHA-256, les 74 variables stables, 82 variables contextuelles claires et 47 substitutions sombres. Il remplace les anciennes palettes Bricks jaune/orange. Le bleu par défaut est le rôle WaasKit `--wk-accent`, différent en clair et sombre, sans substitution par le bleu WordPress historique. Le site waaskit.com utilise une variante monochrome ; la référence retenue ici est Design WaasKit, chromaticité 0.17.
+Le fichier `tokens/palettes/waaskit.json` conserve la provenance et son SHA-256, les 74 variables stables, 82 variables contextuelles claires et 47 substitutions sombres. Le build ne distribue que les 50 variables utilisées et leurs dépendances ; le relevé complet reste dans Git. Il remplace les anciennes palettes Bricks jaune/orange. Le bleu par défaut est le rôle WaasKit `--wk-accent`, différent en clair et sombre, sans substitution par le bleu WordPress historique. Le site waaskit.com utilise une variante monochrome ; la référence retenue ici est Design WaasKit, chromaticité 0.17.
 
 - Couleurs OKLCH, surfaces et textes sémantiques distincts.
 - Geist et Geist Mono, hébergées localement avec leurs licences SIL OFL.
@@ -24,4 +24,4 @@ php tokens/build.php
 php tokens/build.php --check
 ```
 
-Les fichiers `assets/css/waaskit-tokens.css` (administration et aperçu) et `assets/css/waaskit-toolbar-tokens.css` (barre publique uniquement) sont générés et ne doivent jamais être édités directement. `assets/css/tokens.css` contient la correspondance des rôles et les adaptations de densité pour WordPress. Les polices sont déclarées dans `assets/css/fonts.css`.
+Les fichiers `assets/css/waaskit-tokens.css` (administration et aperçu) et `assets/css/waaskit-toolbar-tokens.css` (barre publique uniquement) sont générés et ne doivent jamais être édités directement. `assets/css/tokens.css` est également généré, depuis `tokens/adminkit.json` (rôles et densité) et `tokens/wordpress.css` (correspondance WordPress). Les polices sont déclarées dans `assets/css/fonts.css`.

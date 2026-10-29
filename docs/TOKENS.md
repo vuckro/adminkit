@@ -5,8 +5,8 @@ Le système actuel est décrit dans [WAASKIT-DESIGN-SYSTEM.md](WAASKIT-DESIGN-SY
 ## Chaîne de génération
 
 1. `tokens/palettes/waaskit.json` : instantané des variables WaasKit natives, avec provenance.
-2. `php tokens/build.php` : génère `assets/css/waaskit-tokens.css` ; `--check` détecte toute dérive.
-3. `assets/css/tokens.css` : relie les rôles `--ak-*` consommés par les écrans à `--wk-*`.
+2. `php tokens/build.php` : génère `assets/css/waaskit-tokens.css` ; `--check` détecte toute dérive des trois feuilles générées. Le build suit les dépendances dans les deux thèmes et refuse les références manquantes ou circulaires. Il conserve les 50 variables amont nécessaires sur les 156 du relevé complet.
+3. `tokens/adminkit.json` définit les rôles `--ak-*` ; `tokens/wordpress.css` contient la correspondance WordPress. Le build génère `assets/css/tokens.css` sans analyser ni réécrire une feuille CSS existante.
 4. Une couleur personnalisée ou la source Bricks explicitement sélectionnée peut ajouter une surcharge d’accent. Le mode par défaut conserve les rôles WaasKit dans les deux thèmes.
 
 | AdminKit | WaasKit |

@@ -1,0 +1,327 @@
+/* AdminKit main screen. WaasKit roles; no build step. */
+.adminkit-app .ak-brand-slots {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 12px;
+	margin-bottom: 16px;
+}
+.adminkit-app .ak-brand-slot {
+	border: 1px dashed var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	padding: 10px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.adminkit-app .ak-brand-slot__zone {
+	width: 44px;
+	height: 44px;
+	border-radius: var(--ak-radius-s, 6px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 4px;
+	color: var(--ak-text-muted);
+	flex: 0 0 auto;
+	overflow: hidden;
+	cursor: pointer;
+	transition: box-shadow 120ms ease;
+}
+.adminkit-app .ak-brand-slot--light .ak-brand-slot__zone,
+.adminkit-app .ak-brand-slot--dark .ak-brand-slot__zone {
+	width: 72px;
+	height: 44px;
+}
+.adminkit-app .ak-brand-slot__zone:hover {
+	box-shadow: inset 0 0 0 2px var(--ak-primary);
+}
+.adminkit-app .ak-brand-slot__zone:hover img {
+	opacity: 0.75;
+}
+.adminkit-app .ak-brand-slot__zone img {
+	max-width: 100%;
+	max-height: 100%;
+	width: auto;
+	height: auto;
+	display: block;
+}
+.adminkit-app .ak-brand-slot__drop {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+.adminkit-app .ak-brand-slot--light .ak-brand-slot__zone { background: #ffffff; color: #888; }
+.adminkit-app .ak-brand-slot--dark .ak-brand-slot__zone { background: #0a0a0a; color: #888; }
+.adminkit-app .ak-brand-slot__body {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	min-width: 0;
+}
+.adminkit-app .ak-brand-slot__label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--ak-heading);
+	line-height: 1.2;
+}
+.adminkit-app .ak-brand-slot__sub {
+	font-size: 11px;
+	line-height: 1.35;
+	color: var(--ak-text-muted);
+	margin: 0 0 6px;
+	max-width: 100%;
+}
+.adminkit-app .ak-brand-slot__btns {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+}
+.adminkit-app .ak-brand-slot__btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 10px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s, 6px);
+	background: var(--ak-elevated);
+	color: var(--ak-text);
+	font-size: 11px;
+	cursor: pointer;
+}
+.adminkit-app .ak-brand-slot__btn:hover {
+	border-color: var(--ak-border-strong);
+	background: var(--ak-hover-bg);
+}
+.adminkit-app .ak-brand-slot__btn.is-remove {
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-brand-slot__btn.is-remove:hover {
+	color: var(--ak-error, #d63638);
+	border-color: var(--ak-error, #d63638);
+}
+.adminkit-app .ak-accent-inline {
+	gap: 8px;
+}
+.adminkit-app .ak-accent-inline .ak-seg { margin-left: 0; }
+.adminkit-app .ak-accent-inline__hex[hidden],
+.adminkit-app .ak-accent-inline__sw[hidden] { display: none; }
+.adminkit-app .ak-accent-inline__sw {
+	width: 22px;
+	height: 22px;
+	border-radius: var(--ak-radius-s, 6px);
+	border: 1px solid var(--ak-border-strong);
+	background: var(--ak-primary);
+	cursor: pointer;
+	padding: 0;
+	flex: 0 0 auto;
+}
+.adminkit-app .ak-accent-inline__hex {
+	width: 92px;
+	font-family: monospace;
+	font-size: var(--ak-text-xs);
+	padding: 4px 8px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s, 6px);
+	background: var(--ak-input-bg, var(--ak-bg));
+	color: var(--ak-text);
+}
+.adminkit-app .ak-accent-inline__hex:focus {
+	outline: none;
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring);
+}
+.adminkit-app .ak-accent-inline__native {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+	width: 0;
+	height: 0;
+}
+.adminkit-app .ak-display-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 24px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	margin-top: 4px;
+	border-top: 1px solid var(--ak-border);
+}
+.adminkit-app .ak-display-row:last-child { padding-bottom: 0; }
+.adminkit-app .ak-display-row__lbl {
+	font-size: var(--ak-text-s);
+	font-weight: 600;
+	color: var(--ak-heading);
+	min-width: 64px;
+}
+.adminkit-app .ak-display-row__field {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+.adminkit-app .ak-display-row__field-lbl {
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+	color: var(--ak-text-muted);
+	margin-right: 2px;
+}
+@media screen and (max-width: 960px) {
+	.adminkit-app .ak-brand-slots { grid-template-columns: 1fr; }
+	.adminkit-app .ak-display-row { gap: 12px; }
+}
+.adminkit-app .ak-brand-studio {
+	display: grid;
+	grid-template-columns: minmax( 320px, 440px ) minmax( 0, 1fr );
+	gap: 30px;
+	align-items: start;
+}
+.adminkit-app .ak-brand-studio__controls {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	min-width: 0;
+}
+.adminkit-app .ak-brand-studio__controls .ak-brand-slots {
+	grid-template-columns: 1fr;
+}
+@media screen and (max-width: 1080px) {
+	.adminkit-app .ak-brand-studio { grid-template-columns: 1fr; gap: 22px; }
+	.adminkit-app .ak-brand-preview { position: static; }
+}
+
+.adminkit-app .ak-brand-preview { position: sticky; top: 20px; min-width: 0; }
+.adminkit-app .ak-bp__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+.adminkit-app .ak-bp__title {
+	font-size: var(--ak-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .06em;
+	color: var(--ak-text-muted);
+}
+.adminkit-app .ak-bp__themes {
+	display: inline-flex;
+	gap: 2px;
+	padding: 2px;
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+.adminkit-app .ak-bp__theme {
+	padding: 3px 11px;
+	border: 0;
+	border-radius: calc( var(--ak-radius-s) - 2px );
+	background: transparent;
+	color: var(--ak-text-muted);
+	font: inherit;
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+	cursor: pointer;
+}
+.adminkit-app .ak-bp__theme.is-active { background: var(--ak-elevated); color: var(--ak-heading); }
+.adminkit-app .ak-bp__frame {
+	--p-canvas: var(--wk-bg);
+	--p-surface: var(--wk-surface);
+	--p-elevated: var(--wk-surface-raised);
+	--p-text: var(--wk-text);
+	--p-muted: var(--wk-text-muted);
+	--p-border: var(--wk-border);
+	--p-accent: var(--ak-custom-accent, var(--wk-accent));
+	--p-on-accent: var(--ak-custom-on-accent, var(--wk-on-accent));
+	--p-rail: var(--p-surface);
+	--p-rail-text: var(--p-text);
+	--p-card: var(--p-surface);
+	overflow: hidden;
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	background: var(--p-canvas);
+	box-shadow: 0 1px 3px rgba( 0, 0, 0, .08 );
+	animation: ak-bp-in 0.28s ease-out both;
+}
+@keyframes ak-bp-in {
+	from { opacity: 0; transform: translateY(6px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+	.adminkit-app .ak-bp__frame { animation: none; }
+}
+.adminkit-app .ak-bp__bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 42px;
+	padding: 0 14px;
+	background: var(--p-rail);
+	border-bottom: 1px solid var(--p-border);
+}
+.adminkit-app .ak-bp__mark { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.adminkit-app .ak-bp__logo { height: 20px; width: auto; max-width: 160px; object-fit: contain; display: block; }
+.adminkit-app .ak-bp__logo-ph { font-size: 12px; color: var(--p-rail-text); opacity: .65; }
+.adminkit-app .ak-bp__favicon { width: 18px; height: 18px; border-radius: 4px; object-fit: cover; display: block; flex: none; }
+.adminkit-app .ak-bp__favicon--empty { background: var(--p-accent); }
+.adminkit-app .ak-bp__site { font-size: 12px; font-weight: 600; color: var(--p-rail-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adminkit-app .ak-bp__dots { display: inline-flex; gap: 6px; flex: none; }
+.adminkit-app .ak-bp__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--p-rail-text); opacity: .4; }
+.adminkit-app .ak-bp__layout { display: grid; grid-template-columns: 84px 1fr; min-height: 320px; }
+.adminkit-app .ak-bp__menu { background: var(--p-rail); padding: 10px 0; display: flex; flex-direction: column; gap: 2px; border-right: 1px solid var(--p-border); }
+.adminkit-app .ak-bp__nav { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
+.adminkit-app .ak-bp__nav-ic { width: 14px; height: 14px; border-radius: 4px; background: var(--p-rail-text); opacity: .45; flex: none; }
+.adminkit-app .ak-bp__nav-bar { height: 6px; border-radius: 3px; background: var(--p-rail-text); opacity: .3; flex: 1; }
+.adminkit-app .ak-bp__nav.is-active { background: var(--p-accent); }
+.adminkit-app .ak-bp__nav.is-active .ak-bp__nav-ic,
+.adminkit-app .ak-bp__nav.is-active .ak-bp__nav-bar { background: var(--p-on-accent); opacity: .95; }
+.adminkit-app .ak-bp__content { padding: 16px; background: var(--p-canvas); display: flex; flex-direction: column; gap: 12px; }
+.adminkit-app .ak-bp__chead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.adminkit-app .ak-bp__chead .ak-bp__btn { align-self: center; margin-top: 0; }
+.adminkit-app .ak-bp__cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.adminkit-app .ak-bp__card {
+	background: var(--p-card);
+	border: 1px solid var(--p-border);
+	border-radius: var(--ak-card-radius);
+	padding: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 9px;
+}
+.adminkit-app .ak-bp__card-h { height: 9px; width: 52%; border-radius: 4px; background: var(--p-text); opacity: .66; }
+.adminkit-app .ak-bp__h { height: 14px; width: 44%; border-radius: 5px; background: var(--p-text); opacity: .82; }
+.adminkit-app .ak-bp__line { height: 8px; border-radius: 4px; background: var(--p-muted); opacity: .5; }
+.adminkit-app .ak-bp__line--short { width: 68%; }
+.adminkit-app .ak-bp__btn {
+	align-self: flex-start;
+	margin-top: 2px;
+	padding: 7px 15px;
+	border: 0;
+	border-radius: var(--ak-radius-s);
+	background: var(--p-accent);
+	color: var(--p-on-accent);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: default;
+}
+.adminkit-app .ak-bp__table {
+	border: 1px solid var(--p-border);
+	border-radius: var(--ak-card-radius);
+	overflow: hidden;
+	background: var(--p-card);
+}
+.adminkit-app .ak-bp__trow {
+	display: grid;
+	grid-template-columns: 2.4fr 1fr 1fr;
+	gap: 12px;
+	align-items: center;
+	padding: 10px 12px;
+	border-top: 1px solid var(--p-border);
+}
+.adminkit-app .ak-bp__trow:first-child { border-top: 0; }
+.adminkit-app .ak-bp__trow--head { background: var(--p-elevated); }
+.adminkit-app .ak-bp__tcell { height: 7px; border-radius: 3px; background: var(--p-muted); opacity: .4; }
+.adminkit-app .ak-bp__trow--head .ak-bp__tcell { opacity: .6; }

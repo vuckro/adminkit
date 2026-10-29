@@ -27,9 +27,8 @@ new → `features/`.**
 ## How to add the common things
 
 - **A feature module** → drop `inc/features/<name>/class-<name>.php` with a
-  `public static function init()`, then add one `require_once` in `adminkit.php`
-  and one `::init()` call in `inc/class-plugin.php` (boot order matters — see the
-  ordered list there). Gate it on a setting: `AdminKit_Settings::register( '<name>_enabled', [ 'default' => true ] )`.
+  `public static function init()`, then add its path and boot callable to
+  `AdminKit_Plugin::MODULES` in `inc/class-plugin.php` (boot order is explicit). Gate it on a setting: `AdminKit_Settings::register( '<name>_enabled', [ 'default' => true ] )`.
 - **An integration (skin a plugin/theme)** → just create
   `inc/integrations/plugins/<slug>/class-<slug>.php` (class
   `AdminKit_Integration_<Slug>`). It's **auto-discovered** — no loader edit.
@@ -38,15 +37,17 @@ new → `features/`.**
 - **Per-screen CSS** → `assets/css/wp-screens/<name>.css` + a `register_screen()`
   line in `inc/wp-core/class-chrome.php`.
 - **A token / colour** → edit `tokens/palettes/waaskit.json`, run `php tokens/build.php`,
-  commit both the JSON and the regenerated `waaskit-tokens.css`. Never hand-edit
+  commit the source and generated token stylesheets. Role mappings live in
+  `tokens/adminkit.json`; WordPress mappings in `tokens/wordpress.css`. Never hand-edit
   the generated CSS.
 
 ## Workflow
 
-- **Main-only.** Work on `main`, commit in logical units, `git push`. Spin a
-  short-lived branch only for risky work; fast-forward it back and delete it.
-- **A pre-commit hook** rejects any commit with broken PHP (`php -l`),
-  unparseable JS, or imbalanced CSS braces. Bypass (rarely) with `--no-verify`.
+- **Follow the user’s chosen branch and target.** The current work uses
+  `reprise/base-main-locale` and localhost:10013. Commit coherent units; never
+  rewrite main or change a remote site as a side effect.
+- Run PHP/JS lint, `php tokens/build.php --check`, `php dev/check.php` and the
+  relevant adapter/browser checks before committing.
 - **Docs are part of the change.** If you rename a file, add a setting, or change
   a hook, update the doc that describes it in the same commit.
 - **i18n:** there is **no `msgfmt`/`xgettext`/`wp-cli` here** — only `php`. The

@@ -9,8 +9,7 @@
  * release zip. Anything NOT shipped (dev tooling, build sources, scratch)
  * stays in GitHub — only the runtime is packaged.
  *
- * The script defaults to packaging origin/docs/overhaul (the active integration
- * branch — see CLAUDE.md). Use --ref to package a different branch / tag, or
+ * The script defaults to packaging HEAD (the checked-out revision). Use --ref to package a different branch / tag, or
  * --working-tree to package the local uncommitted state.
  *
  * Usage (run from anywhere inside the AdminKit repo):
@@ -59,7 +58,7 @@ if ( ! $root || ! is_dir( $root . '/.git' ) ) {
 	exit( 1 );
 }
 
-$ref          = $opts['ref']           ?? 'origin/docs/overhaul';
+$ref          = $opts['ref']           ?? 'HEAD';
 $use_working  = isset( $opts['working-tree'] );
 $target       = $opts['target']        ?? null;
 $zip          = $opts['zip']           ?? null;
@@ -136,7 +135,7 @@ foreach ( array( '.distignore', '.gitignore' ) as $f ) {
 }
 
 // 3. Sanity gate — these should NOT survive into the staged copy.
-$forbidden = array( 'dev', 'tokens', '.git', '.claude', 'node_modules', 'vendor' );
+$forbidden = array( 'dev', 'tokens', '.git', '.claude', 'node_modules', 'vendor', 'docs', 'AGENTS.md', 'CLAUDE.md', 'README.md' );
 $found     = array();
 foreach ( $forbidden as $dir ) {
 	if ( file_exists( "$plugin_staging/$dir" ) ) {

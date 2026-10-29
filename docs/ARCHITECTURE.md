@@ -80,7 +80,7 @@ enqueued in the footer via
 `filemtime` cache-bust as CSS, with PHP data passed as a `before` inline
 bootstrap (`window.AdminKit*`). The one exception is the **theme pre-paint
 script** in `class-theme-toggle.php`: it stays inline in `<head>` so dark/light
-applies before first paint (no FOUC). `assets/js/settings.js` is the settings SPA.
+applies before first paint (no FOUC). `assets/js/settings.js` is the shared host for the screen modules.
 
 **Where AdminKit registers its own assets:** `inc/wp-core/class-chrome.php` (all
 admin CSS — chrome, components, screens), `class-login.php` (login), the wp-core
@@ -98,7 +98,7 @@ assets/
 │   ├── login.css                  # login context
 │   └── settings.css               # AdminKit settings page
 └── js/
-    ├── settings.js                # settings SPA
+    ├── settings.js                # shared screen host
     └── wp-core/                   # footer bricks: profile-account, post-previews, list-table-chrome, user-quick-edit, username-changer
 inc/integrations/{plugins|themes}/{slug}/css/   # integration CSS, registered by each class
 ```
@@ -113,31 +113,23 @@ inc/integrations/{plugins|themes}/{slug}/css/   # integration CSS, registered by
 `wp_add_inline_style( AdminKit_Assets::TOKENS_HANDLE, $css )` to inject runtime
 token overrides (e.g. a provider/integration applying live values).
 
-## The token cascade (the core idea)
+## The token cascade
 
-Every `--ak-*` token resolves through layers, each **optional**, degrading cleanly:
+The complete WaasKit snapshot is `tokens/palettes/waaskit.json`. Role declarations
+live in `tokens/adminkit.json`; native WordPress variable mappings live in
+`tokens/wordpress.css`. The PHP build follows both themes' dependencies and emits
+only required WaasKit variables. Missing or circular references fail the build.
 
-```
-provider tokens   (Bricks live CSS at /uploads/bricks/css/…, runtime)    ← optional
-      ↓ overrides
-WaasKit baseline  (assets/css/waaskit-tokens.css, generated from tokens/) ← optional
-      ↓ feeds
---ak-* layer      (assets/css/tokens.css — ALWAYS on; owns the dark flip)
-      ↓ final fallback
-neutral greys     (hardcoded hsl() at the end of each var() chain)
-```
+Generated outputs: `waaskit-tokens.css` (document/preview),
+`waaskit-toolbar-tokens.css` (public toolbar scope), and `tokens.css` (AdminKit roles
+and WordPress mappings). The full upstream snapshot is preserved in source control.
+The public toolbar receives no WaasKit declarations on the site's root element.
 
-```css
---ak-primary: var(--accent, var(--primary, var(--neutral-l-8, hsl(0,0%,32%))));
-              /*  provider    baseline       baseline          standalone */
-```
-
-Cascade order is set in `enqueue_tokens()` (class-assets.php): WP core →
-`adminkit-waaskit` (baseline) → provider handle → `adminkit-tokens`. Later sheets
-win. Dark mode is AdminKit's: `tokens.css` redeclares semantic surface/border/text
-under `[data-adminkit-theme="dark"]`; brand colours stay constant. Turn the
-baseline off with `add_filter( 'adminkit/enqueue_baseline', '__return_false' )`;
-a provider off via its integration toggle. Full catalogue + build: [TOKENS.md](TOKENS.md).
+The default accent follows WaasKit's separate light/dark roles. Explicit custom
+colors and the opt-in Bricks provider add overrides through the existing hook.
+A custom color uses whichever of pure black or white offers the higher contrast;
+the browser preview and PHP output apply the same WCAG calculation.
+See [TOKENS.md](TOKENS.md).
 
 ## Provider model
 
@@ -156,150 +148,44 @@ plug into the same seams — `adminkit/extra_tokens_handle`,
 
 ## Settings
 
-`AdminKit_Settings` is the registry; `AdminKit_Settings_Page` mounts a small
-vanilla-JS SPA (`assets/js/settings.js`) at its own top-level admin menu
-entry (**AdminKit**, sibling of Plugins / Users / Tools / Settings,
-position 81). The page prints a single host element
-(`<div id="adminkit-app">`) and `settings.js` builds the chrome (title +
-save bar + 3-tab strip) inside it. Saving runs through one REST route
-(`adminkit/v1/settings`). The three tabs are: **Dashboard** (the
-interactive Brand card — light + dark logos and light + dark favicons
-in a 2×2 grid, accent picker, plus the `wp_logo` / `login_logo` modes
-for the site-name and login brand marks, then a read-only reference of
-the semantic token map); **Features** (the module toggles); and
-**Plugins** (every installed plugin plus AdminKit's active theme
-adapter, each carrying a **Native** badge when AdminKit ships a tuned
-adapter for it — a per-host enable toggle plus dark mode — while
-everything else inherits AdminKit's **generic** base token styling
-automatically. Rows are grouped (Plugins, Themes) with a count pill per
-group title, and AdminKit itself appears as a locked **System** row,
-always on, not toggleable here. The Native badge tracks whether an
-adapter exists, not whether the plugin is currently active).
+`AdminKit_Settings_Page` owns the host, capability checks and REST settings save.
+The shared `assets/js/settings.js` host receives one screen factory:
 
-The light favicon slot in the Brand card bidirectionally binds to WP's
-native `site_icon` option — WordPress's own Site Icon row on
-Settings → General edits the same value, so the two surfaces stay in
-sync on next page load. The native WP Settings pages (General, Writing,
-Reading, Discussion, Media, Permalinks) keep their stock WordPress UI;
-AdminKit only contributes CSS polish on top (form-table card chrome,
-width cap), no JS rebuild.
+| Pages | JavaScript | Styles |
+| --- | --- | --- |
+| Brand / Features / Plugins | `settings/main.js` | `settings/main.css` |
+| Menu / Toolbar | `settings/navigation.js` | `settings/navigation.css` |
+| Statistics | `settings/stats.js` | `settings/stats.css` |
 
-```php
-AdminKit_Settings::register( $key, array $args );  // declare a setting (idempotent)
-AdminKit_Settings::get( $key );                    // option → default → adminkit/setting/{key} filter
-AdminKit_Settings::schema();                        // registered schema (UI render + save sanitising)
-```
+Paths are relative to `assets/js/` and `assets/css/`. Every page also loads the
+small shared host and `settings.css`. WordPress script dependencies guarantee
+that its factory exists before the host mounts. No framework or build is required.
 
-What's registered today. AdminKit ships **fully-featured** — every feature toggle
-defaults ON, so the plugin looks complete on activation — and each stays
-individually switch-off-able:
+Factories receive shared data, state and helpers explicitly. They return their
+tabs and, for an editable page, one request builder. The host normalizes the route,
+posts through `wp-api-fetch` and displays the save result. There is no multi-endpoint
+save batch: menu, toolbar and settings save only their own data.
 
-- **On by default** (bound to existing enqueue filters / providers in
-  `bind_modules()`): `module_login_enabled`, `theme_toggle_enabled`,
-  `post_previews_enabled`.
-- **On by default** (feature modules, each individually disable-able):
-  `editor_content_theme` (themes the Gutenberg block-editor canvas — content +
-  native blocks — in light/dark; off keeps the canvas matching the live site),
-  `replace_icons_enabled` (swaps native menu/toolbar dashicons for AdminKit's set
-  — `inc/wp-core/class-menu-icons.php`, filterable via `adminkit/menu_icons` /
-  `adminkit/toolbar_icons`; non-destructive — only stock dashicons. **Always on,
-  no UI toggle**: a global on/off duplicated the Menu manager, which now owns
-  per-item icon control — AdminKit glyph / WordPress dashicon / reset-to-original;
-  the setting stays registered so a filter can still disable it),
-  and `quick_edit_users_enabled` (`inc/wp-core/class-user-quick-edit.php`) hooks
-  `user_row_actions` to inject a "Quick Edit" affordance into each users.php
-  row, opens an inline `<template>`-cloned editor below the row with first
-  name / last name / email / role, and POSTs the changes to a dedicated AJAX
-  endpoint that runs `wp_update_user()` and returns the new field values —
-  the JS repaints the row's visible cells in place, no page reload. Per-row
-  nonce + `edit_user` capability gate both the entry point and the save; role
-  changes additionally need `promote_users` and reject the current user (no
-  self-demote). Display name is intentionally not exposed here — that's a
-  per-user preference that belongs on user-edit.php. Off = no Quick Edit
-  link; the native "Edit" link to user-edit.php still works.
-- **On by default** (structural editors, each with its own AdminKit subpage):
-  `menu_manager_enabled` (Menu tab — reorder the admin menu + submenus, per-item
-  icons, hide entries) and `toolbar_manager_enabled` (Toolbar tab — reorder + hide
-  the top-level admin-bar nodes, split into the bar's left / right sides). Both
-  apply late over the LIVE structure (`admin_menu` / `admin_bar_menu`); the toolbar
-  editor fetches its nodes over REST (the bar renders too late to ship in boot data).
-  Toggling either off restores the native structure and keeps your saved layout.
-- **Availability-gated, default ON**: `bricks_builder_enabled` restyles the
-  Bricks builder UI when the Bricks theme is active; the Features row is locked
-  on non-Bricks sites.
-- **On by default** (external service — the one non-front-end-neutral default):
-  `custom_avatars_enabled`
-  (`inc/wp-core/class-local-avatars.php`) registers "AdminKit Portraits (Generated)"
-  in *Settings → Discussion → Default Avatar* via the core `avatar_defaults` filter,
-  and intercepts `pre_get_avatar_data` with a three-step cascade — bail if another
-  filter already set `$args['url']`, bail if the user has a real Gravatar (`d=404`
-  HEAD probe cached in `adminkit_has_gravatar` user meta, invalidated on
-  `profile_update`), otherwise set `$args['url']` directly to a unique DiceBear
-  portrait. Setting `url` (rather than `default`) is deliberate: Gravatar's Photon
-  proxy strips query strings from the `d=` fallback, which would erase the per-user
-  seed. Non-PII seed (md5 of the login) + solid pastel backdrop per user so a fresh
-  users list reads as distinct cards. **ON by default** (maintainer's UX call — a generated portrait beats an
-  empty silhouette); the trade-off is that it calls DiceBear (`api.dicebear.com`) and
-  can render on the front end, so it's the one default that isn't front-end-neutral.
-  Enabling (plugin activation / the off→on transition, plus a one-time `admin_init`
-  catch-up for installs updating into the new default) sets the WP Default Avatar to
-  our key; switching off resets it to Mystery Person. See [EXTENDING.md → Avatars](EXTENDING.md#avatars).
-- **Off by default** (opt-in — destructive): `username_changer_enabled`
-  (`inc/wp-core/class-username-changer.php`) — turns the natively-disabled
-  Username field on profile.php / user-edit.php into a *locked* readonly input
-  that surfaces a `window.confirm()` warning on click before unlocking. The
-  rename then rides WordPress's native "Update User" submit: we hook
-  `user_profile_update_errors` to validate (`sanitize_user( $raw, true )`
-  round-trip equality + `username_exists()` deduplication), and
-  `profile_update` to apply (`$wpdb->update( $wpdb->users, ... )` since
-  `wp_update_user()` refuses that column, plus `clean_user_cache()`).
-  Sensitive: changing `user_login` invalidates the affected user's auth
-  cookies on every device. Self-edit destroys our other sessions
-  (`destroy_others( wp_get_session_token() )`) and re-issues our current
-  cookie under the new login so the post-save redirect lands authenticated;
-  other-user edits destroy ALL of the target's sessions. Multisite is
-  skipped at `init()` level (cross-site `user_login` mappings are out of
-  scope). Fires `adminkit/username_changed` ($user_id, $old, $new) for audit
-  logs.
-- **Asset gate**: the `adminkit/should_load` filter wraps *every* context, so any
-  veto (an integration bypassing a host's full-screen UI, say) pauses AdminKit's
-  styling there while the plugin stays active.
-- **Branding**: `logo_light`, `logo_dark`, `wp_logo` (`logo` | `favicon`
-  — the brand mark at the site-name node; the top-left WordPress logo is always
-  hidden) — resolved by
-  `AdminKit_Settings::brand_logo()` / `AdminKit_Core_Branding`. `login_logo`
-  (`logo` | `favicon`, default `favicon`) independently drives the wp-login.php mark
-  via `AdminKit_Core_Login` (a legacy `''` = inherit `wp_logo` is still honoured, but
-  the UI no longer offers it). `accent_source` (`adminkit` | `bricks` | `custom`,
-  empty resolves to "auto") + `brand_accent` (sanitised hex, for custom mode)
-  drive the accent palette via `AdminKit_Assets::inject_accent_family()` hooked
-  on `adminkit/tokens_enqueued` — emits a dual-block `:root{}` + `:root[data-adminkit-theme="dark"]{}`
-  inline rule covering `--ak-primary`, `--ak-primary-hover`, `--ak-primary-subtle`,
-  `--ak-on-accent`, `--ak-focus`. The inline-style cascade position (after
-  tokens.css) is what makes the override actually win in dark mode where
-  tokens.css's `[data-adminkit-theme="dark"]` block would otherwise leak
-  WaasKit yellow through `var(--accent, …)`. Bricks source = no inline rule
-  (Bricks's stylesheet rides the cascade). See `docs/EXTENDING.md#accent` for
-  the full per-mode formula table.
-- **Integration gates**: one `integration_{slug}_enabled` per discovered adapter
-  (default ON), bound to `adminkit/integration_enabled` and driven by the Plugins
-  tab.
+Main tabs mount on first selection. Tab panels retain stable ARIA relationships
+and keyboard navigation; single-panel pages have no orphaned tab labels. Statistics
+fetch immediately on their dedicated page; the obsolete hidden Stats-tab observer
+has been removed. Statistics tracking remains opt-in.
 
-Add a setting from an integration in its `boot()`:
+Boot data and translations are filtered per screen. The media frame loads only
+for Brand controls. Existing schema/defaults, settings sanitization, WordPress
+capabilities, REST nonces and separate menu/toolbar routes remain in place.
 
-```php
-AdminKit_Settings::register( 'foo_density', array( 'default' => 'comfortable' ) );
-add_filter( 'adminkit/setting/foo_density', fn( $v ) => $v ); // optional override
-$density = AdminKit_Settings::get( 'foo_density' );
-```
+Settings are stored in `adminkit_settings`. Menu layouts use the existing per-site
+rows in the shared menu table; toolbar layouts use `adminkit_toolbar`. Full feature
+catalogs and defaults live in `inc/settings/class-settings.php` and
+`class-settings-catalog.php`, rather than a duplicate list in this document.
 
-Saving keeps only registered keys and runs each through its `sanitize` callback.
-There is intentionally **no per-token colour editor** — the Design tab's token
-map is a read-only reference (the palette is driven by the provider/baseline
-cascade); its only interactive controls are the Branding block at the top.
+## Verification
 
-## Where to go next
+Run `php tokens/build.php --check`, `php dev/check.php`, PHP/JS lint and the adapter
+audit. Browser-check the affected screens, actual save/reload and unauthorized REST
+writes. The packaging tool excludes development sources, docs and agent instructions
+and packages `HEAD` by default.
 
-[CLAUDE.md](../CLAUDE.md) (task index + guardrails) ·
-[INTEGRATIONS.md](INTEGRATIONS.md) · [TOKENS.md](TOKENS.md) ·
-[EXTENDING.md](EXTENDING.md)
+See [EXTENDING.md](EXTENDING.md) for hooks, [INTEGRATIONS.md](INTEGRATIONS.md) for
+adapter contracts and [INSTALL.md](INSTALL.md) for packaging.
