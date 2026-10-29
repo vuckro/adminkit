@@ -1473,3 +1473,11 @@ msgstr ""
 #: inc/settings/class-settings-page.php
 msgid "Need an icon? Copy an SVG from"
 msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Monochrome"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "WaasKit blue"
+msgstr ""

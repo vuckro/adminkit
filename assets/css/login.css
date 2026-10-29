@@ -232,7 +232,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 #wp-submit:focus {
 	background: var(--ak-primary-hover) !important;
 	border-color: var(--ak-primary-hover) !important;
-	color: var(--ak-on-accent) !important;
+	color: var(--ak-on-accent-hover) !important;
 }
 
 .login .button-primary:focus,
@@ -302,7 +302,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 }
 
 .login input[type="checkbox"]:focus-visible {
-	outline: 2px solid var(--ak-primary);
+	outline: 2px solid var(--ak-focus);
 	outline-offset: 2px;
 }
 

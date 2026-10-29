@@ -46,7 +46,7 @@ body.adminkit .theme-browser .theme.active .theme-actions .button.activate:hover
 body.adminkit .theme-browser .theme.active .theme-actions .button.activate:focus {
 	background: var(--ak-primary-hover);
 	border-color: var(--ak-primary-hover);
-	color: var(--ak-on-accent);
+	color: var(--ak-on-accent-hover);
 }
 
 /* Secondary buttons in the card action strip ("Live Preview", etc.). WP core

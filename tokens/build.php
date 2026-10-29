@@ -49,6 +49,10 @@ function ak_token_block( $selector, array $values, $scheme = '' ) {
 	return $css . "}\n";
 }
 
+function ak_legacy_rgb( array $values ) {
+	return array( '--ak-primary-rgb' => $values['primary'], '--ak-primary-hover-rgb' => $values['hover'] );
+}
+
 try {
 	$data = ak_read_tokens( __DIR__ . '/palettes/waaskit.json' );
 	$roles = ak_read_tokens( __DIR__ . '/adminkit.json' );
@@ -59,7 +63,7 @@ try {
 	}
 
 	// Keep the complete upstream snapshot, but ship only roles consumed by the UI.
-	$wanted = array_keys( $roles );
+	$wanted = array_merge( array_keys( $roles ), array_keys( $data['presets']['monochrome']['light'] ) );
 	$files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $root . '/assets', FilesystemIterator::SKIP_DOTS ) );
 	foreach ( $files as $file ) {
 		if ( ! in_array( $file->getExtension(), array( 'css', 'js' ), true ) || 0 === strpos( $file->getFilename(), 'waaskit-' ) ) {
@@ -70,13 +74,16 @@ try {
 	}
 	$wanted = array_unique( $wanted );
 	$used = array();
+	$mono = $data['presets']['monochrome'];
 	foreach ( array( 'light', 'dark' ) as $theme ) {
-		$values = array_merge( $data['primitives'], $data['light'], 'dark' === $theme ? $data['dark'] : array(), $roles );
-		$theme_used = array();
-		foreach ( $wanted as $name ) {
-			ak_token_dependencies( $name, $values, $theme_used );
+		foreach ( array( false, true ) as $monochrome ) {
+			$values = array_merge( $data['primitives'], $data['light'], 'dark' === $theme ? $data['dark'] : array(), $monochrome ? $mono[ $theme ] : array(), $roles );
+			$theme_used = array();
+			foreach ( $wanted as $name ) {
+				ak_token_dependencies( $name, $values, $theme_used );
+			}
+			$used += $theme_used;
 		}
-		$used += $theme_used;
 	}
 	foreach ( array( 'primitives', 'light', 'dark' ) as $group ) {
 		$data[ $group ] = array_intersect_key( $data[ $group ], $used );
@@ -86,12 +93,19 @@ try {
 	foreach ( array( 'document', 'toolbar' ) as $context ) {
 		$base = 'toolbar' === $context ? '#wpadminbar' : ':root, .adminkit-app .ak-bp__frame';
 		$dark = 'toolbar' === $context ? ':root[data-adminkit-theme="dark"] #wpadminbar' : ':root[data-adminkit-theme="dark"], .adminkit-app .ak-bp__frame[data-preview-theme="dark"]';
-		$css = $header . ak_token_block( $base, array_merge( $data['primitives'], $data['light'] ), 'light' );
-		$css .= ak_token_block( $dark, $data['dark'], 'dark' );
+		$light = array_merge( $data['primitives'], $data['light'], $mono['light'], ak_legacy_rgb( $data['legacy_rgb']['monochrome']['light'] ) );
+		$css = $header . ak_token_block( $base, $light, 'light' );
+		$css .= ak_token_block( $dark, array_merge( $data['dark'], $mono['dark'], ak_legacy_rgb( $data['legacy_rgb']['monochrome']['dark'] ) ), 'dark' );
+		$blue_light = array_intersect_key( $data['light'], $mono['light'] );
+		$blue_dark = array_intersect_key( array_merge( $data['light'], $data['dark'] ), $mono['dark'] );
+		$blue_base = 'toolbar' === $context ? ':root[data-adminkit-accent="waaskit"] #wpadminbar' : ':root[data-adminkit-accent="waaskit"], :root[data-adminkit-accent="waaskit"] .ak-bp__frame';
+		$blue_night = 'toolbar' === $context ? ':root[data-adminkit-accent="waaskit"][data-adminkit-theme="dark"] #wpadminbar' : ':root[data-adminkit-accent="waaskit"][data-adminkit-theme="dark"], :root[data-adminkit-accent="waaskit"] .ak-bp__frame[data-preview-theme="dark"]';
+		$css .= ak_token_block( $blue_base, array_merge( $blue_light, ak_legacy_rgb( $data['legacy_rgb']['waaskit']['light'] ) ) );
+		$css .= ak_token_block( $blue_night, array_merge( $blue_dark, ak_legacy_rgb( $data['legacy_rgb']['waaskit']['dark'] ) ) );
 		$filename = 'toolbar' === $context ? 'waaskit-toolbar-tokens.css' : 'waaskit-tokens.css';
 		$outputs[ $root . '/assets/css/' . $filename ] = $css;
 	}
-	$outputs[ $root . '/assets/css/tokens.css' ] = $header . ak_token_block( ':root, #wpadminbar', $roles ) . "\n" . file_get_contents( __DIR__ . '/wordpress.css' );
+	$outputs[ $root . '/assets/css/tokens.css' ] = $header . ak_token_block( ':root, #wpadminbar', $roles ) . "\n" . file_get_contents( __DIR__ . '/appearance.css' ) . "\n" . file_get_contents( __DIR__ . '/wordpress.css' );
 	if ( in_array( '--print', $argv, true ) ) {
 		echo reset( $outputs );
 		exit;

@@ -59,7 +59,7 @@ body.wp-customizer #save:hover,
 body.wp-customizer #save:focus {
 	background: var(--ak-primary-hover);
 	border-color: var(--ak-primary-hover);
-	color: var(--ak-on-accent);
+	color: var(--ak-on-accent-hover);
 }
 
 /* Close (X) button — WP paints the glyph #50575e on a #fff strip and
@@ -177,7 +177,7 @@ body.wp-customizer .customize-control textarea:focus {
 
 /* Links inside controls (e.g. "Edit" / external help). */
 body.wp-customizer .customize-control a {
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 }
 
 /* ── Info box (top of the controls pane on the root screen) ─────────────
@@ -328,7 +328,7 @@ body.wp-customizer.wp-core-ui .button-primary {
 
 /* Links — WP hardcodes `a { color:#3858e9 }` (a literal, not the variable). */
 body.wp-customizer a {
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 }
 
 /* customize-info accordion title (id-level #fff / #50575e). */

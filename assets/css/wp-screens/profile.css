@@ -454,7 +454,7 @@ body.adminkit .ak-subsection > summary::-webkit-details-marker {
 }
 
 body.adminkit .ak-subsection > summary:focus-visible {
-	outline: 2px solid var(--ak-primary);
+	outline: 2px solid var(--ak-focus);
 	outline-offset: 2px;
 }
 

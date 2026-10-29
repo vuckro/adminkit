@@ -213,5 +213,49 @@
     "--wk-elevation-2": "0 4px 10px oklch(0% 0 0 / 0.4), 0 12px 28px oklch(0% 0 0 / 0.32), inset 0 1px 0 oklch(100% 0 0 / 0.075)",
     "--wk-elevation-3": "0 6px 14px oklch(0% 0 0 / 0.42), 0 20px 44px oklch(0% 0 0 / 0.45), inset 0 1px 0 oklch(100% 0 0 / 0.09)",
     "--wk-elevation-4": "0 10px 24px oklch(0% 0 0 / 0.48), 0 40px 88px oklch(0% 0 0 / 0.58), inset 0 1px 0 oklch(100% 0 0 / 0.11)"
+  },
+  "presets": {
+    "monochrome": {
+      "light": {
+        "--wk-accent": "var(--wk-neutral-950)",
+        "--wk-accent-hover": "var(--wk-neutral-800)",
+        "--wk-on-accent": "var(--wk-neutral-0)",
+        "--wk-accent-text": "var(--wk-neutral-950)",
+        "--wk-accent-soft": "var(--wk-neutral-100)",
+        "--wk-accent-line": "var(--wk-neutral-200)",
+        "--wk-focus-ring": "var(--wk-neutral-950)"
+      },
+      "dark": {
+        "--wk-accent": "oklch(98% 0.002 258)",
+        "--wk-accent-hover": "oklch(90% 0.004 258)",
+        "--wk-on-accent": "var(--wk-neutral-950)",
+        "--wk-accent-text": "oklch(98% 0.002 258)",
+        "--wk-accent-soft": "oklch(29.5% 0.006 258)",
+        "--wk-accent-line": "oklch(41% 0.008 258)",
+        "--wk-focus-ring": "oklch(98% 0.002 258)"
+      }
+    }
+  },
+  "legacy_rgb": {
+    "monochrome": {
+      "light": {
+        "primary": "12, 13, 15",
+        "hover": "43, 46, 50"
+      },
+      "dark": {
+        "primary": "247, 248, 250",
+        "hover": "220, 222, 225"
+      }
+    },
+    "waaskit": {
+      "light": {
+        "primary": "0, 73, 170",
+        "hover": "0, 62, 139"
+      },
+      "dark": {
+        "primary": "104, 162, 248",
+        "hover": "155, 195, 254"
+      }
+    }
   }
 }

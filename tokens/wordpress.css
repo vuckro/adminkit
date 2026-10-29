@@ -9,11 +9,11 @@ body.adminkit[class*="admin-color-"],
 body.wp-customizer,
 body.wp-customizer[class*="admin-color-"] {
 	--wp-admin-theme-color: var(--ak-primary);
-	--wp-admin-theme-color--rgb: 21, 73, 171;
+	--wp-admin-theme-color--rgb: var(--ak-primary-rgb);
 	--wp-admin-theme-color-darker-10: var(--ak-primary-hover);
-	--wp-admin-theme-color-darker-10--rgb: 21, 59, 135;
+	--wp-admin-theme-color-darker-10--rgb: var(--ak-primary-hover-rgb);
 	--wp-admin-theme-color-darker-20: var(--ak-primary-hover);
-	--wp-admin-theme-color-darker-20--rgb: 21, 59, 135;
+	--wp-admin-theme-color-darker-20--rgb: var(--ak-primary-hover-rgb);
 
 	/* @wordpress/components React UI tokens (options-connectors, Gutenberg meta,
 	   custom React admin pages). Routing them through AdminKit tokens flips the

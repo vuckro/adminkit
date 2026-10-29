@@ -33,3 +33,8 @@ jobs:
 
       - name: Token catalog is in sync (waaskit-tokens.css)
         run: php tokens/build.php --check
+
+      - name: Custom accent contrast and CSS ownership
+        run: |
+          php dev/check.php
+          php dev/css-contract.php

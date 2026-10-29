@@ -362,7 +362,7 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
    both at equal specificity so our brand color wins on load order. */
 #wpadminbar li:hover #adminbarsearch:before,
 #wpadminbar li #adminbarsearch.adminbar-focused:before {
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 }
 
 

@@ -91,12 +91,8 @@ class AdminKit_Assets {
 		add_filter( 'login_body_class', array( __CLASS__, 'add_login_body_class' ) );
 
 
-		// Accent family override — emits a dual-block (light :root + dark
-		// :root[data-adminkit-theme="dark"]) inline rule on the tokens
-		// stylesheet so every UI surface that consumes --ak-primary &
-		// derivatives follows an explicit user override in BOTH
-		// modes. Bricks source is a no-op (Bricks's stylesheet rules the
-		// cascade on its own). See inject_accent_family() for the cascade rationale.
+		// Dynamic custom inputs and the optional Bricks adapter. The generated
+		// token stylesheets own palette selection and the shared accent family.
 		add_action( 'adminkit/tokens_enqueued', array( __CLASS__, 'inject_accent_family' ) );
 	}
 
@@ -124,8 +120,8 @@ class AdminKit_Assets {
 	public static function accent_family_css() {
 		$source = AdminKit_Settings::accent_source();
 		if ( 'bricks' === $source ) {
-			return ':root,#wpadminbar{--ak-bg:var(--background,var(--wk-bg));--ak-surface:var(--surface,var(--wk-surface));--ak-primary:var(--accent,var(--wk-accent));--ak-primary-hover:var(--accent-hover,var(--wk-accent-hover));--ak-on-accent:var(--accent-on,var(--wk-on-accent))}'
-				. ':root[data-adminkit-theme="dark"],:root[data-adminkit-theme="dark"] #wpadminbar{--ak-bg:var(--neutral-d-1,var(--wk-bg));--ak-surface:var(--neutral-d-2,var(--wk-surface))}';
+			return ':root[data-adminkit-accent="bricks"],:root[data-adminkit-accent="bricks"] #wpadminbar{--ak-bg:var(--background,var(--wk-bg));--ak-surface:var(--surface,var(--wk-surface));--ak-primary:var(--accent,var(--wk-accent));--ak-primary-hover:var(--accent-hover,var(--wk-accent-hover));--ak-on-accent:var(--accent-on,var(--wk-on-accent))}'
+				. ':root[data-adminkit-accent="bricks"][data-adminkit-theme="dark"],:root[data-adminkit-accent="bricks"][data-adminkit-theme="dark"] #wpadminbar{--ak-bg:var(--neutral-d-1,var(--wk-bg));--ak-surface:var(--neutral-d-2,var(--wk-surface))}';
 		}
 		if ( 'custom' !== $source ) {
 			return '';
@@ -134,22 +130,11 @@ class AdminKit_Assets {
 		if ( '' === $hex ) {
 			return '';
 		}
-		$on = self::contrast_text_for( $hex );
-		$light = ':root,#wpadminbar{'
-			. '--ak-custom-accent:' . $hex . ';--ak-custom-on-accent:' . $on . ';--ak-primary:' . $hex . ';'
-			. '--ak-primary-hover:color-mix(in srgb,' . $hex . ' 82%,#000);'
-			. '--ak-primary-subtle:color-mix(in srgb,' . $hex . ' 12%,var(--ak-surface));'
-			. '--ak-on-accent:' . $on . ';'
-			. '--ak-focus:' . $hex
-			. '}';
-		$dark = ':root[data-adminkit-theme="dark"],:root[data-adminkit-theme="dark"] #wpadminbar{'
-			. '--ak-custom-accent:' . $hex . ';--ak-custom-on-accent:' . $on . ';--ak-primary:' . $hex . ';'
-			. '--ak-primary-hover:color-mix(in srgb,' . $hex . ' 82%,#fff);'
-			. '--ak-primary-subtle:color-mix(in srgb,' . $hex . ' 22%,var(--ak-surface));'
-			. '--ak-on-accent:' . $on . ';'
-			. '--ak-focus:' . $hex
-			. '}';
-		return $light . $dark;
+		// Dynamic values only: the complete family lives in tokens/appearance.css.
+		$channels = self::hex_channels( $hex );
+		return ':root,#wpadminbar{--ak-custom-accent:' . $hex . ';--ak-custom-on-accent:' . self::contrast_text_for( $hex )
+			. ';--ak-custom-on-hover-light:' . self::hover_foreground( $channels, false ) . ';--ak-custom-on-hover-dark:' . self::hover_foreground( $channels, true )
+			. ';--ak-custom-r:' . $channels[0] . ';--ak-custom-g:' . $channels[1] . ';--ak-custom-b:' . $channels[2] . '}';
 	}
 
 	/**
@@ -160,22 +145,36 @@ class AdminKit_Assets {
 	 * @return string Foreground hex.
 	 */
 	public static function contrast_text_for( $hex ) {
-		$h = ltrim( (string) $hex, '#' );
-		if ( 3 === strlen( $h ) ) {
-			$h = $h[0] . $h[0] . $h[1] . $h[1] . $h[2] . $h[2];
-		}
-		if ( 6 !== strlen( $h ) || ! ctype_xdigit( $h ) ) {
+		$channels = self::hex_channels( $hex );
+		if ( ! $channels ) {
 			return '#ffffff';
 		}
 		$srgb = static function ( $byte ) {
 			$c = $byte / 255;
 			return ( $c <= 0.04045 ) ? $c / 12.92 : pow( ( $c + 0.055 ) / 1.055, 2.4 );
 		};
-		$r = $srgb( hexdec( substr( $h, 0, 2 ) ) );
-		$g = $srgb( hexdec( substr( $h, 2, 2 ) ) );
-		$b = $srgb( hexdec( substr( $h, 4, 2 ) ) );
+		$r = $srgb( $channels[0] );
+		$g = $srgb( $channels[1] );
+		$b = $srgb( $channels[2] );
 		$lum = ( 0.2126 * $r ) + ( 0.7152 * $g ) + ( 0.0722 * $b );
 		return 1.05 / ( $lum + 0.05 ) >= ( $lum + 0.05 ) / 0.05 ? '#ffffff' : '#000000';
+	}
+
+	/** Contrast for the exact two custom hover fills declared in appearance.css. */
+	private static function hover_foreground( array $channels, $dark ) {
+		$mix = array_map( static function ( $channel ) use ( $dark ) {
+			return (int) round( $channel * 0.82 + ( $dark ? 255 * 0.18 : 0 ) );
+		}, $channels );
+		return self::contrast_text_for( sprintf( '#%02x%02x%02x', $mix[0], $mix[1], $mix[2] ) );
+	}
+
+	/** Parse the same sRGB channels used by contrast and native WP RGB aliases. */
+	private static function hex_channels( $hex ) {
+		$h = ltrim( (string) $hex, '#' );
+		if ( 3 === strlen( $h ) ) {
+			$h = $h[0] . $h[0] . $h[1] . $h[1] . $h[2] . $h[2];
+		}
+		return 6 === strlen( $h ) && ctype_xdigit( $h ) ? array( hexdec( substr( $h, 0, 2 ) ), hexdec( substr( $h, 2, 2 ) ), hexdec( substr( $h, 4, 2 ) ) ) : array();
 	}
 
 	/**

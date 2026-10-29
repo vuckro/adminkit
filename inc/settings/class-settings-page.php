@@ -493,7 +493,8 @@ class AdminKit_Settings_Page {
 				// Accent picker — 3 sources (WaasKit / Bricks / Custom). The
 				// Bricks option only renders when the integration is connected.
 				'accentLabel'         => __( 'Brand color', 'adminkit' ),
-				'accentSrcAdminKit'   => __( 'WaasKit', 'adminkit' ),
+				'accentSrcMonochrome' => __( 'Monochrome', 'adminkit' ),
+				'accentSrcAdminKit'   => __( 'WaasKit blue', 'adminkit' ),
 				'accentSrcBricks'     => __( 'Bricks', 'adminkit' ),
 				'accentSrcCustom'     => __( 'Custom', 'adminkit' ),
 				'displayLabel'        => __( 'Display', 'adminkit' ),

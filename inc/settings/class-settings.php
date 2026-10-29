@@ -115,40 +115,19 @@ class AdminKit_Settings {
 			'sanitize' => 'sanitize_hex_color',
 		) );
 
-		// Accent source — which of the three feeds `--ak-primary`:
-		//   • 'adminkit' (default WordPress Blue #3858E9, forced over Bricks)
-		//   • 'bricks'   (use the Bricks-provided --accent, no override)
-		//   • 'custom'   (use the `brand_accent` hex)
-		// Empty default = "auto" — resolved at READ time by accent_source() so the
-		// effective source flips with Bricks (de)activation without burning a value
-		// into the option. Once the user picks explicitly, that choice sticks.
+		// Monochrome is explicit and independent of installed themes/providers.
 		self::register( 'accent_source', array(
-			'type'     => 'select',
-			'group'    => 'branding',
-			'default'  => '',
+			'type' => 'select', 'group' => 'branding', 'default' => 'monochrome',
 			'sanitize' => static function ( $v ) {
-				return in_array( $v, array( 'adminkit', 'bricks', 'custom' ), true ) ? $v : '';
+				return in_array( $v, array( 'monochrome', 'adminkit', 'bricks', 'custom' ), true ) ? $v : 'monochrome';
 			},
 		) );
 	}
 
-	/**
-	 * Resolve the effective accent source — applies the "auto" default at read
-	 * time. Use this everywhere instead of `get('accent_source')` so the cascade
-	 * (Bricks active → 'bricks', else 'adminkit') stays correct even when the
-	 * Bricks integration toggles after install.
-	 *
-	 * @return string 'adminkit' | 'bricks' | 'custom'
-	 */
+	/** Resolve stored legacy blue/provider choices; unset values use monochrome. */
 	public static function accent_source() {
-		$raw = (string) self::get( 'accent_source' );
-		if ( '' !== $raw ) {
-			return $raw;
-		}
-		if ( class_exists( 'AdminKit_Integration_Bricks' ) && AdminKit_Integration_Bricks::is_active() ) {
-			return 'bricks';
-		}
-		return 'adminkit';
+		$source = (string) self::get( 'accent_source' );
+		return in_array( $source, array( 'monochrome', 'adminkit', 'bricks', 'custom' ), true ) ? $source : 'monochrome';
 	}
 
 	/**

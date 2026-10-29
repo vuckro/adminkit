@@ -24,7 +24,7 @@ body.adminkit .attachments-browser .attachment {
 
 body.adminkit .attachments-browser .attachment.selected .attachment-preview,
 body.adminkit .attachments-browser .attachment.details .attachment-preview {
-	outline: 2px solid var(--ak-primary);
+	outline: 2px solid var(--ak-focus);
 	outline-offset: 2px;
 	box-shadow: none;
 }
@@ -279,7 +279,7 @@ body.adminkit .media-frame-toolbar .media-toolbar {
    primary focus. Declared after the resting colors so it wins on focus. */
 body.adminkit .media-menu-item:focus {
 	box-shadow: none;
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 	outline: none;
 }
 
@@ -331,7 +331,7 @@ body.adminkit .edit-attachment-frame .media-modal-close:hover,
 body.adminkit .edit-attachment-frame .media-modal-close:focus {
 	background: var(--ak-hover-bg);
 	border-color: var(--ak-border);
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 	box-shadow: none;
 }
 
@@ -341,7 +341,7 @@ body.adminkit .edit-attachment-frame .media-modal-close:focus {
    beats us. */
 body.adminkit .edit-attachment-frame .media-modal-close:hover .media-modal-icon::before,
 body.adminkit .edit-attachment-frame .media-modal-close:focus .media-modal-icon::before {
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 }
 
 body.adminkit .edit-media-header .left:focus-visible,

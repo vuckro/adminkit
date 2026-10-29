@@ -16,7 +16,7 @@
 	--ak-primary-hover: var(--wk-accent-hover);
 	--ak-primary-subtle: var(--wk-accent-soft);
 	--ak-on-accent: var(--wk-on-accent);
-	--ak-secondary: var(--wk-accent);
+	--ak-secondary: var(--ak-primary);
 	--ak-hover-bg: var(--wk-surface-hover);
 	--ak-shadow-elevated: var(--wk-elevation-2);
 	--ak-focus: var(--wk-focus-ring);
@@ -52,6 +52,34 @@
 	--ak-shadow-subtle: var(--wk-elevation-1);
 	--ak-duration-fast: var(--wk-duration-fast);
 	--ak-ease-standard: var(--wk-ease-standard);
+	--ak-primary-text: var(--wk-accent-text);
+	--ak-layout-wide: var(--wk-layout-wide);
+	--ak-on-accent-hover: var(--ak-on-accent);
+}
+
+/* Accent variants. PHP/JS supply values only; this file owns the entire cascade. */
+:root[data-adminkit-accent="custom"],
+:root[data-adminkit-accent="custom"] #wpadminbar {
+	--ak-primary-rgb: var(--ak-custom-r), var(--ak-custom-g), var(--ak-custom-b);
+	--ak-primary-hover-rgb: calc(var(--ak-custom-r) * 0.82), calc(var(--ak-custom-g) * 0.82), calc(var(--ak-custom-b) * 0.82);
+	--ak-primary: var(--ak-custom-accent, var(--wk-accent));
+	--ak-on-accent: var(--ak-custom-on-accent, var(--wk-on-accent));
+	--ak-on-accent-hover: var(--ak-custom-on-hover-light, var(--ak-on-accent));
+	--ak-primary-hover: color-mix(in srgb, var(--ak-primary) 82%, black);
+	--ak-primary-subtle: color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface));
+	--ak-primary-text: color-mix(in srgb, var(--ak-primary) 30%, var(--ak-heading));
+	--ak-focus: var(--ak-primary-text);
+}
+:root[data-adminkit-accent="custom"][data-adminkit-theme="dark"],
+:root[data-adminkit-accent="custom"][data-adminkit-theme="dark"] #wpadminbar {
+	--ak-primary-hover: color-mix(in srgb, var(--ak-primary) 82%, white);
+	--ak-on-accent-hover: var(--ak-custom-on-hover-dark, var(--ak-on-accent));
+	--ak-primary-hover-rgb: calc(var(--ak-custom-r) * 0.82 + 255 * 0.18), calc(var(--ak-custom-g) * 0.82 + 255 * 0.18), calc(var(--ak-custom-b) * 0.82 + 255 * 0.18);
+	--ak-primary-subtle: color-mix(in srgb, var(--ak-primary) 22%, var(--ak-surface));
+}
+:root[data-adminkit-accent="custom"] .ak-bp__frame {
+	--p-accent: var(--ak-custom-accent, var(--wk-accent));
+	--p-on-accent: var(--ak-custom-on-accent, var(--wk-on-accent));
 }
 
 /* Remap WP's built-in theme color (blue) to our accent. The selector chains
@@ -65,11 +93,11 @@ body.adminkit[class*="admin-color-"],
 body.wp-customizer,
 body.wp-customizer[class*="admin-color-"] {
 	--wp-admin-theme-color: var(--ak-primary);
-	--wp-admin-theme-color--rgb: 21, 73, 171;
+	--wp-admin-theme-color--rgb: var(--ak-primary-rgb);
 	--wp-admin-theme-color-darker-10: var(--ak-primary-hover);
-	--wp-admin-theme-color-darker-10--rgb: 21, 59, 135;
+	--wp-admin-theme-color-darker-10--rgb: var(--ak-primary-hover-rgb);
 	--wp-admin-theme-color-darker-20: var(--ak-primary-hover);
-	--wp-admin-theme-color-darker-20--rgb: 21, 59, 135;
+	--wp-admin-theme-color-darker-20--rgb: var(--ak-primary-hover-rgb);
 
 	/* @wordpress/components React UI tokens (options-connectors, Gutenberg meta,
 	   custom React admin pages). Routing them through AdminKit tokens flips the

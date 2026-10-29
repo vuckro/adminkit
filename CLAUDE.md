@@ -17,7 +17,7 @@ It has no runtime dependencies and no npm or Composer build.
   `settings/navigation.js` and `settings/stats.js` load only on their matching pages.
   Styles use the same split under `assets/css/settings/`. Main tabs mount on demand.
 - `tokens/palettes/waaskit.json` is the complete upstream WaasKit snapshot.
-  `tokens/adminkit.json` maps roles; `tokens/wordpress.css` maps native WordPress
+  `tokens/adminkit.json` maps roles; `tokens/appearance.css` owns custom-state CSS; `tokens/wordpress.css` maps native WordPress
   variables. `php tokens/build.php` generates all three token stylesheets.
 - `dev/` contains PHP-only checks, adapter tooling and packaging; it never ships.
 
@@ -29,7 +29,9 @@ It has no runtime dependencies and no npm or Composer build.
 - Keep plugin classes and public `adminkit/*` hooks stable. Reference:
   [docs/EXTENDING.md](docs/EXTENDING.md).
 - Keep version 1.0.0 until the maintainer explicitly approves a release bump.
-- Every component consumes `--ak-*` roles. The WaasKit bridge consumes `--wk-*`.
+- Monochrome WaasKit is the default preset; blue and custom are explicit.
+- Every component consumes `--ak-*` roles. Accent ink uses `--ak-primary-text`,
+  while filled controls use `--ak-primary` plus `--ak-on-accent`. The WaasKit bridge consumes `--wk-*`.
   Generated `tokens.css`, `waaskit-tokens.css` and `waaskit-toolbar-tokens.css` must
   be changed through their build-time sources, then regenerated.
 - Dark mode is driven by AdminKit's existing document attribute. Do not add an
@@ -51,6 +53,7 @@ php -l changed-file.php
 node --check changed-file.js
 php tokens/build.php --check
 php dev/check.php
+php dev/css-contract.php
 php dev/adapter-audit.php
 php dev/adapter-drift.php
 ```

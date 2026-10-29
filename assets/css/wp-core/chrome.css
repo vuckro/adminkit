@@ -318,7 +318,7 @@ body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head 
    (feature OFF) is coloured the same way, so this one rule covers both. */
 body.adminkit #adminmenu li.current a.menu-top .wp-menu-image::before,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-menu-image::before {
-	color: var(--ak-primary) !important;
+	color: var(--ak-primary-text) !important;
 }
 
 /* "You-are-here" LEFT ACCENT MARKER — a short --ak-primary bar on the active
@@ -442,7 +442,7 @@ body.adminkit #adminmenu .wp-submenu a:focus {
 body.adminkit #adminmenu .wp-submenu li.current a,
 body.adminkit #adminmenu .wp-submenu li.current a:hover,
 body.adminkit #adminmenu .wp-submenu li.current a:focus {
-	color: var(--ak-primary) !important;
+	color: var(--ak-primary-text) !important;
 	border-left: 0 !important;
 	box-shadow: none !important;
 	font-weight: 600;
@@ -628,8 +628,7 @@ body.adminkit .widget-inside,
 body.adminkit .widget-top,
 body.adminkit .widgets-holder-wrap,
 body.adminkit .wp-editor-container,
-body.adminkit p.popular-tags,
-body.adminkit table.widefat {
+body.adminkit p.popular-tags {
 	border: none;
 	box-shadow: none;
 }
@@ -1176,7 +1175,7 @@ body.adminkit .ak-tabs button.on {
 
 /* Focus ring on AdminKit's real <button>s. */
 body.adminkit .ak-tabs button:focus-visible {
-	outline: 2px solid var(--ak-primary);
+	outline: 2px solid var(--ak-focus);
 	outline-offset: -2px;
 }
 

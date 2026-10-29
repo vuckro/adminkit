@@ -233,8 +233,8 @@
 	--p-text: var(--wk-text);
 	--p-muted: var(--wk-text-muted);
 	--p-border: var(--wk-border);
-	--p-accent: var(--ak-custom-accent, var(--wk-accent));
-	--p-on-accent: var(--ak-custom-on-accent, var(--wk-on-accent));
+	--p-accent: var(--wk-accent);
+	--p-on-accent: var(--wk-on-accent);
 	--p-rail: var(--p-surface);
 	--p-rail-text: var(--p-text);
 	--p-card: var(--p-surface);
@@ -325,3 +325,8 @@
 .adminkit-app .ak-bp__trow--head { background: var(--p-elevated); }
 .adminkit-app .ak-bp__tcell { height: 7px; border-radius: 3px; background: var(--p-muted); opacity: .4; }
 .adminkit-app .ak-bp__trow--head .ak-bp__tcell { opacity: .6; }
+
+.adminkit-app[data-screen="main"] { max-width: var(--ak-layout-wide); }
+
+/* Brand choices wrap without widening the card at narrow admin viewports. */
+.adminkit-app .ak-accent-inline .ak-seg { flex-wrap: wrap; max-width: 100%; }

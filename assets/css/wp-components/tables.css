@@ -3,10 +3,10 @@
    in screens/plugins.css since they only apply on plugins.php. */
 
 /* .widefat content text — WP hardcodes #2c3338 which doesn't react to dark mode */
-body.adminkit .widefat p,
-body.adminkit .widefat ol,
-body.adminkit .widefat ul,
-body.adminkit .widefat li {
+body.adminkit .widefat:not(.wp-list-table) p,
+body.adminkit .widefat:not(.wp-list-table) ol,
+body.adminkit .widefat:not(.wp-list-table) ul,
+body.adminkit .widefat:not(.wp-list-table) li {
 	color: var(--ak-text);
 }
 
@@ -16,7 +16,7 @@ body.adminkit .widefat li {
    solid #c3c4c7 }` + `.widefat thead { background: #f6f7f7 }`, all
    hardcoded. The .wp-list-table rules above only kick in when both
    classes are present, so the bare-widefat case needs its own block. */
-body.adminkit .widefat {
+body.adminkit .widefat:not(.wp-list-table) {
 	background: var(--ak-table-bg);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-table-radius);
@@ -25,10 +25,10 @@ body.adminkit .widefat {
 	overflow: hidden;
 }
 
-body.adminkit .widefat thead th,
-body.adminkit .widefat thead td,
-body.adminkit .widefat tfoot th,
-body.adminkit .widefat tfoot td {
+body.adminkit .widefat:not(.wp-list-table) thead th,
+body.adminkit .widefat:not(.wp-list-table) thead td,
+body.adminkit .widefat:not(.wp-list-table) tfoot th,
+body.adminkit .widefat:not(.wp-list-table) tfoot td {
 	background: var(--ak-table-header-bg);
 	color: var(--ak-heading);
 	font-weight: 600;
@@ -36,14 +36,14 @@ body.adminkit .widefat tfoot td {
 	border-top: none;
 }
 
-body.adminkit .widefat tbody td,
-body.adminkit .widefat tbody th {
+body.adminkit .widefat:not(.wp-list-table) tbody td,
+body.adminkit .widefat:not(.wp-list-table) tbody th {
 	color: var(--ak-text);
 	border-top: 1px solid var(--ak-border);
 }
 
-body.adminkit .widefat tbody tr:first-child td,
-body.adminkit .widefat tbody tr:first-child th {
+body.adminkit .widefat:not(.wp-list-table) tbody tr:first-child td,
+body.adminkit .widefat:not(.wp-list-table) tbody tr:first-child th {
 	border-top: none;
 }
 
@@ -245,7 +245,7 @@ body.adminkit .wp-list-table .row-actions a:focus,
 body.adminkit .wp-list-table .row-actions button.button-link:hover,
 body.adminkit .wp-list-table .row-actions button.button-link:focus {
 	background: transparent !important;
-	color: var(--ak-primary) !important;
+	color: var(--ak-primary-text) !important;
 	text-decoration: underline;
 }
 
@@ -269,7 +269,7 @@ body.adminkit .column-comments a.post-com-count-approved:focus .comment-count-ap
 body.adminkit .column-response a.post-com-count-approved:hover .comment-count-approved,
 body.adminkit .column-response a.post-com-count-approved:focus .comment-count-approved {
 	background: var(--ak-secondary);
-	color: #fff;
+	color: var(--ak-on-accent);
 }
 
 /* Status-filter row (.subsubsub: All | Published | Drafts | Trash | …). core
@@ -484,8 +484,8 @@ body.adminkit .inline-edit-row h4 {
 }
 
 /* Striped + bordered cells (refined compatibility) */
-body.adminkit .striped > tbody > :nth-child(odd),
-body.adminkit .alternate {
+body.adminkit .widefat.striped > tbody > :nth-child(odd),
+body.adminkit .widefat .alternate {
 	background: var(--ak-surface);
 }
 
@@ -599,6 +599,7 @@ body.adminkit .wp-list-table .inline-edit-row th {
    (The screenshot column sits BEFORE WP's primary column, which breaks the stacked row,
    so it's dropped on phones — see post-previews.css.) */
 @media screen and (max-width: 782px) {
+	body.adminkit .wp-list-table tbody :is(th, td) { min-width: 0; max-width: none; overflow-wrap: anywhere; }
 	body.adminkit .wp-list-table tbody :is(td, th) { height: auto; }
 	body.adminkit .wp-list-table tbody .column-primary { min-height: 52px; }
 	body.adminkit .wp-list-table {

@@ -5,8 +5,7 @@
 	color: var(--ak-text);
 }
 .adminkit-app[data-screen="menu"],
-.adminkit-app[data-screen="stats"],
-.adminkit-app[data-screen="main"] {
+.adminkit-app[data-screen="stats"] {
 	max-width: none;
 }
 .adminkit-app[data-screen="main"] .ak-search-wrap { max-width: 460px; }
@@ -61,9 +60,14 @@
 }
 .adminkit-app .ak-actions {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
-	gap: 14px;
+	gap: 8px;
+	min-width: 0;
+	max-width: 100%;
 }
+.adminkit-app .ak-actions .ak-btn { white-space: nowrap; }
+.adminkit-app .ak-status:empty { display: none; }
 .adminkit-app .ak-bulk { margin-bottom: 14px; }
 .adminkit-app .ak-status {
 	display: inline-flex;
@@ -103,7 +107,7 @@
 	border-color: var(--ak-primary);
 	color: var(--ak-on-accent);
 }
-.adminkit-app .ak-btn--primary:hover { background: var(--ak-primary-hover); border-color: var(--ak-primary-hover); }
+.adminkit-app .ak-btn--primary:hover { background: var(--ak-primary-hover); border-color: var(--ak-primary-hover); color: var(--ak-on-accent-hover); }
 .adminkit-app .ak-btn:not(.ak-btn--primary):hover,
 .adminkit-app .ak-btn:not(.ak-btn--primary):focus-visible { background: var(--ak-btn-hover-bg); border-color: var(--ak-btn-hover-border); }
 .adminkit-app .ak-btn:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
@@ -226,7 +230,7 @@
 }
 .adminkit-app .ak-switch__input:checked ~ .ak-switch__track { background: var(--ak-primary); }
 .adminkit-app .ak-switch__input:checked ~ .ak-switch__knob { left: 21px; }
-.adminkit-app .ak-switch__input:focus-visible ~ .ak-switch__track { outline: 2px solid var(--ak-primary); outline-offset: 2px; }
+.adminkit-app .ak-switch__input:focus-visible ~ .ak-switch__track { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
 .adminkit-app .ak-hero {
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 180px, 1fr ) );
@@ -249,7 +253,7 @@
 	border-radius: var(--ak-radius-full);
 }
 .adminkit-app .ak-badge--brand {
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 	background: var(--ak-primary-subtle);
 	border-color: transparent;
 }

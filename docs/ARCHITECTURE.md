@@ -116,8 +116,8 @@ token overrides (e.g. a provider/integration applying live values).
 ## The token cascade
 
 The complete WaasKit snapshot is `tokens/palettes/waaskit.json`. Role declarations
-live in `tokens/adminkit.json`; native WordPress variable mappings live in
-`tokens/wordpress.css`. The PHP build follows both themes' dependencies and emits
+live in `tokens/adminkit.json`. `tokens/appearance.css` owns custom-state rules,
+and `tokens/wordpress.css` owns native aliases. The PHP build follows both themes' dependencies and emits
 only required WaasKit variables. Missing or circular references fail the build.
 
 Generated outputs: `waaskit-tokens.css` (document/preview),
@@ -125,7 +125,7 @@ Generated outputs: `waaskit-tokens.css` (document/preview),
 and WordPress mappings). The full upstream snapshot is preserved in source control.
 The public toolbar receives no WaasKit declarations on the site's root element.
 
-The default accent follows WaasKit's separate light/dark roles. Explicit custom
+The default accent is WaasKit monochrome, with separate light/dark roles; WaasKit blue is explicit. Explicit custom
 colors and the opt-in Bricks provider add overrides through the existing hook.
 A custom color uses whichever of pure black or white offers the higher contrast;
 the browser preview and PHP output apply the same WCAG calculation.
@@ -197,3 +197,9 @@ The list-table skin follows the [WaasKit table component](https://design.waaskit
 `list-table-chrome.js` groups the existing top/bottom navigation bars and scroll container into one card on native Posts, Pages, Media-list, Users, Terms, Comments and Plugins screens. Controls stay in their original form with their existing IDs and event handlers. Third-party screens retain their existing wrappers. The redundant table footer headings are visually hidden inside a card; top sorting/selection headers and both navigation bars remain available. Mobile row expansion and Quick/Bulk Edit retain their native behavior.
 
 This presentation writes no options or user metadata.
+
+## CSS ownership
+
+Generated tokens own color values. Appearance variants are attribute-scoped; components consume the role appropriate to the surface, including separate accent ink and on-fill ink. PHP and JavaScript inject custom values only, so live preview and saved settings share one stylesheet implementation. Native list tables and generic widefat tables have separate owners, and chrome does not reset table borders. Settings content is bounded by WaasKit’s wide container and choice controls wrap at mobile widths.
+
+Run `php dev/css-contract.php` alongside token drift, contrast and browser checks. Do not add a global reset or another override layer to repair a local component.

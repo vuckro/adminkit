@@ -70,7 +70,7 @@ body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-seconda
 body.adminkit .components-button.is-pressed,
 body.adminkit .components-button.is-pressed:hover:not(:disabled, [aria-disabled="true"]) {
 	background: var(--ak-primary-subtle);
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 }
 
 /* Cards + panels (the main surface containers) */

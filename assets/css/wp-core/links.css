@@ -19,7 +19,7 @@ body.adminkit a {
 body.adminkit a:hover,
 body.adminkit a:focus {
 	border-color: var(--ak-primary);
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 	text-decoration: none;
 }
 

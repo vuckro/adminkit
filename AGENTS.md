@@ -38,7 +38,7 @@ new → `features/`.**
   line in `inc/wp-core/class-chrome.php`.
 - **A token / colour** → edit `tokens/palettes/waaskit.json`, run `php tokens/build.php`,
   commit the source and generated token stylesheets. Role mappings live in
-  `tokens/adminkit.json`; WordPress mappings in `tokens/wordpress.css`. Never hand-edit
+  `tokens/adminkit.json`; custom states in `tokens/appearance.css` and WordPress mappings in `tokens/wordpress.css`. Never hand-edit
   the generated CSS.
 
 ## Workflow
@@ -47,13 +47,12 @@ new → `features/`.**
   `reprise/base-main-locale` and localhost:10013. Commit coherent units; never
   rewrite main or change a remote site as a side effect.
 - Run PHP/JS lint, `php tokens/build.php --check`, `php dev/check.php` and the
-  relevant adapter/browser checks before committing.
+  relevant adapter/browser checks plus `php dev/css-contract.php` before committing.
 - **Docs are part of the change.** If you rename a file, add a setting, or change
   a hook, update the doc that describes it in the same commit.
-- **i18n:** there is **no `msgfmt`/`xgettext`/`wp-cli` here** — only `php`. The
-  `languages/` catalog is regenerated with a small PHP extract→`.po`→`.mo`
-  pipeline (see [adminkit-i18n notes in CLAUDE.md]). `__()/_e()/esc_html__()`
-  etc. with the `adminkit` text domain.
+- **i18n:** keep strings translatable with the `adminkit` domain. Update the
+  catalogs in `languages/` and compile the French MO with `msgfmt` when strings change.
+
 
 ## Guardrails (don't break these)
 

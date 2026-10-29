@@ -98,6 +98,7 @@
 
 		// 2) Mirror the mode attribute — drives the --ak-* dark block once tokens load.
 		root.setAttribute( ATTR, m );
+		root.setAttribute('data-adminkit-accent', document.documentElement.getAttribute('data-adminkit-accent') || 'monochrome');
 
 		// 3) Inject the token + canvas stylesheets once per (re)mounted document.
 		if ( doc.head && ! root.hasAttribute( MARK ) ) {
@@ -135,7 +136,7 @@
 	// Instant flip when the parent toggle changes.
 	new MutationObserver( tick ).observe(
 		document.documentElement,
-		{ attributes: true, attributeFilter: [ ATTR ] }
+		{ attributes: true, attributeFilter: [ ATTR, 'data-adminkit-accent' ] }
 	);
 
 	// Catch the iframe being (re)created — first mount, device preview, code-editor

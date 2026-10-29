@@ -103,7 +103,7 @@ body.adminkit .wp-full-overlay-footer .devices button:focus {
 
 body.adminkit .wp-full-overlay-footer .devices button:hover:before,
 body.adminkit .wp-full-overlay-footer .devices button:focus:before {
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 }
 
 body.adminkit .wp-full-overlay-footer .devices button.active {
@@ -126,7 +126,7 @@ body.adminkit.wp-core-ui .wp-full-overlay .collapse-sidebar {
 
 body.adminkit.wp-core-ui .wp-full-overlay .collapse-sidebar:hover,
 body.adminkit.wp-core-ui .wp-full-overlay .collapse-sidebar:focus {
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 }
 
 body.adminkit .wp-full-overlay .collapse-sidebar-arrow:before {

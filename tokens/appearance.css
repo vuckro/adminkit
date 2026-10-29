@@ -1,0 +1,24 @@
+/* Accent variants. PHP/JS supply values only; this file owns the entire cascade. */
+:root[data-adminkit-accent="custom"],
+:root[data-adminkit-accent="custom"] #wpadminbar {
+	--ak-primary-rgb: var(--ak-custom-r), var(--ak-custom-g), var(--ak-custom-b);
+	--ak-primary-hover-rgb: calc(var(--ak-custom-r) * 0.82), calc(var(--ak-custom-g) * 0.82), calc(var(--ak-custom-b) * 0.82);
+	--ak-primary: var(--ak-custom-accent, var(--wk-accent));
+	--ak-on-accent: var(--ak-custom-on-accent, var(--wk-on-accent));
+	--ak-on-accent-hover: var(--ak-custom-on-hover-light, var(--ak-on-accent));
+	--ak-primary-hover: color-mix(in srgb, var(--ak-primary) 82%, black);
+	--ak-primary-subtle: color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface));
+	--ak-primary-text: color-mix(in srgb, var(--ak-primary) 30%, var(--ak-heading));
+	--ak-focus: var(--ak-primary-text);
+}
+:root[data-adminkit-accent="custom"][data-adminkit-theme="dark"],
+:root[data-adminkit-accent="custom"][data-adminkit-theme="dark"] #wpadminbar {
+	--ak-primary-hover: color-mix(in srgb, var(--ak-primary) 82%, white);
+	--ak-on-accent-hover: var(--ak-custom-on-hover-dark, var(--ak-on-accent));
+	--ak-primary-hover-rgb: calc(var(--ak-custom-r) * 0.82 + 255 * 0.18), calc(var(--ak-custom-g) * 0.82 + 255 * 0.18), calc(var(--ak-custom-b) * 0.82 + 255 * 0.18);
+	--ak-primary-subtle: color-mix(in srgb, var(--ak-primary) 22%, var(--ak-surface));
+}
+:root[data-adminkit-accent="custom"] .ak-bp__frame {
+	--p-accent: var(--ak-custom-accent, var(--wk-accent));
+	--p-on-accent: var(--ak-custom-on-accent, var(--wk-on-accent));
+}

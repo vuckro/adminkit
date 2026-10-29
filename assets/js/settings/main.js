@@ -37,7 +37,7 @@
 			loginLogo: D.loginLogo === 'logo' ? 'logo' : 'favicon', // login screen mark: logo | favicon
 			brandAccent: D.brandAccent || '', // user hex (only meaningful when accentSource === 'custom')
 			// 'adminkit' = WaasKit roles; 'bricks' = provider; 'custom' = brandAccent hex
-			accentSource: D.accentSource || 'adminkit'
+			accentSource: D.accentSource || 'monochrome'
 		});
 
 		(D.features || []).forEach(function (f) {
@@ -231,7 +231,7 @@
 				// pill silently drops; their stored `accentSource === 'bricks'` still
 				// resolves server-side via accent_source(), but the UI no longer offers a
 				// dead button. Hide rather than grey: a dead pill was confusing.
-				var sources = [{ v: 'adminkit', label: I.accentSrcAdminKit || 'WaasKit' }];
+				var sources = [{ v: 'monochrome', label: I.accentSrcMonochrome }, { v: 'adminkit', label: I.accentSrcAdminKit || 'WaasKit' }];
 				if (D.bricksConnected) {
 					sources.push({ v: 'bricks', label: I.accentSrcBricks || 'Bricks' });
 				}
@@ -298,66 +298,31 @@
 				// Default source inherits the native WaasKit light/dark roles.
 				// Only a valid custom hex emits a preview override.
 				function applyPreview() {
-					var id = 'ak-accent-preview';
-					var existing = document.getElementById(id);
-
-					var hex = null;
-					if (state.accentSource === 'custom' && isValidHex(state.brandAccent)) {
-						hex = state.brandAccent;
-					}
-
-					if (hex) {
-						var on = bestOnAccent(hex);
-						var css =
-							':root,#wpadminbar{' +
-							'--ak-custom-accent:' +
-							hex +
-							';--ak-custom-on-accent:' +
-							on +
-							';--ak-primary:' +
-							hex +
-							';' +
-							'--ak-primary-hover:color-mix(in srgb,' +
-							hex +
-							' 82%,#000);' +
-							'--ak-primary-subtle:color-mix(in srgb,' +
-							hex +
-							' 12%,var(--ak-surface));' +
-							'--ak-on-accent:' +
-							on +
-							';' +
-							'--ak-focus:' +
-							hex +
-							'}' +
-							':root[data-adminkit-theme="dark"],:root[data-adminkit-theme="dark"] #wpadminbar{' +
-							'--ak-custom-accent:' +
-							hex +
-							';--ak-custom-on-accent:' +
-							on +
-							';--ak-primary:' +
-							hex +
-							';' +
-							'--ak-primary-hover:color-mix(in srgb,' +
-							hex +
-							' 82%,#fff);' +
-							'--ak-primary-subtle:color-mix(in srgb,' +
-							hex +
-							' 22%,var(--ak-surface));' +
-							'--ak-on-accent:' +
-							on +
-							';' +
-							'--ak-focus:' +
-							hex +
-							'}';
+					var source = state.accentSource === 'adminkit' ? 'waaskit' : state.accentSource;
+					var hex = source === 'custom' && isValidHex(state.brandAccent) ? state.brandAccent : null;
+					document.documentElement.setAttribute('data-adminkit-accent', source === 'custom' && !hex ? 'monochrome' : source);
+					var existing = document.getElementById('ak-accent-preview');
+					if (source === 'custom') {
+						var rgb = hex ? accentChannels(hex) : [];
 						if (!existing) {
 							existing = document.createElement('style');
-							existing.id = id;
+							existing.id = 'ak-accent-preview';
 							document.head.appendChild(existing);
 						}
-						existing.textContent = css;
+						var values = {
+							'--ak-custom-accent': hex || 'initial',
+							'--ak-custom-on-accent': hex ? bestOnAccent(hex) : 'initial',
+							'--ak-custom-on-hover-light': hex ? bestOnAccent(hoverHex(rgb, false)) : 'initial',
+							'--ak-custom-on-hover-dark': hex ? bestOnAccent(hoverHex(rgb, true)) : 'initial',
+							'--ak-custom-r': hex ? rgb[0] : 'initial',
+							'--ak-custom-g': hex ? rgb[1] : 'initial',
+							'--ak-custom-b': hex ? rgb[2] : 'initial'
+						};
+						existing.textContent = ':root,#wpadminbar{' + Object.keys(values).map(function (key) {
+							return key + ':' + values[key];
+						}).join(';') + '}';
 					} else if (existing) {
-						// bricks (or empty/invalid custom) → no inline override needed.
-						existing.parentNode.removeChild(existing);
+						existing.remove();
 					}
 					swatch.style.background = 'var(--ak-primary)';
 				}
@@ -426,22 +391,22 @@
 			}
 
 			// Use the stronger black/white contrast, matching contrast_text_for() in PHP.
-			function bestOnAccent(hex) {
-				if (!isValidHex(hex)) {
-					return '#ffffff';
-				}
+			function accentChannels(hex) {
 				var h = hex.replace('#', '');
-				if (h.length === 3) {
-					h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
-				}
+				if (h.length === 3) { h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2]; }
+				return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+			}
+			function hoverHex(rgb, dark) {
+				return '#' + rgb.map(function (channel) { return Math.round(channel * 0.82 + (dark ? 255 * 0.18 : 0)).toString(16).padStart(2, '0'); }).join('');
+			}
+			function bestOnAccent(hex) {
+				if (!isValidHex(hex)) { return '#ffffff'; }
+				var rgb = accentChannels(hex);
 				function lin(byte) {
 					var c = byte / 255;
 					return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
 				}
-				var L =
-					0.2126 * lin(parseInt(h.slice(0, 2), 16)) +
-					0.7152 * lin(parseInt(h.slice(2, 4), 16)) +
-					0.0722 * lin(parseInt(h.slice(4, 6), 16));
+				var L = 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2]);
 				return 1.05 / (L + 0.05) >= (L + 0.05) / 0.05 ? '#ffffff' : '#000000';
 			}
 

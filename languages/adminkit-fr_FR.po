@@ -1487,3 +1487,11 @@ msgstr "Nouveau"
 #: inc/settings/class-settings-page.php
 msgid "Need an icon? Copy an SVG from"
 msgstr "Besoin d’une icône ? Copiez un SVG depuis"
+
+#: inc/settings/class-settings-page.php
+msgid "Monochrome"
+msgstr "Monochrome"
+
+#: inc/settings/class-settings-page.php
+msgid "WaasKit blue"
+msgstr "Bleu WaasKit"

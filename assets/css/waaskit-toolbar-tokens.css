@@ -6,6 +6,7 @@
 	--wk-brand-h: 258;
 	--wk-brand-c: 0.17;
 	--wk-brand-50: oklch(97.2% calc(var(--wk-brand-c) * 0.076) var(--wk-brand-h));
+	--wk-brand-200: oklch(89% calc(var(--wk-brand-c) * 0.306) var(--wk-brand-h));
 	--wk-brand-300: oklch(81% calc(var(--wk-brand-c) * 0.559) var(--wk-brand-h));
 	--wk-brand-400: oklch(71% calc(var(--wk-brand-c) * 0.824) var(--wk-brand-h));
 	--wk-brand-500: oklch(57% calc(var(--wk-brand-c) * 1.059) var(--wk-brand-h));
@@ -18,11 +19,13 @@
 	--wk-neutral-200: oklch(92.4% 0.005 258);
 	--wk-neutral-500: oklch(60% 0.009 258);
 	--wk-neutral-750: oklch(34% 0.009 258);
+	--wk-neutral-800: oklch(30% 0.008 258);
 	--wk-neutral-950: oklch(16% 0.004 258);
 	--wk-focus-width: 2px;
 	--wk-focus-offset: 2px;
 	--wk-font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 	--wk-font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	--wk-layout-wide: 80rem;
 	--wk-radius-scale: 1;
 	--wk-radius-md: calc(0.5rem * var(--wk-radius-scale));
 	--wk-radius-lg: calc(0.75rem * var(--wk-radius-scale));
@@ -39,11 +42,13 @@
 	--wk-text-muted: var(--wk-neutral-750);
 	--wk-border: var(--wk-neutral-200);
 	--wk-border-strong: var(--wk-neutral-500);
-	--wk-accent: var(--wk-brand-600);
-	--wk-accent-hover: var(--wk-brand-700);
+	--wk-accent: var(--wk-neutral-950);
+	--wk-accent-hover: var(--wk-neutral-800);
 	--wk-on-accent: var(--wk-neutral-0);
-	--wk-accent-soft: var(--wk-brand-50);
-	--wk-focus-ring: var(--wk-brand-500);
+	--wk-accent-text: var(--wk-neutral-950);
+	--wk-accent-soft: var(--wk-neutral-100);
+	--wk-accent-line: var(--wk-neutral-200);
+	--wk-focus-ring: var(--wk-neutral-950);
 	--wk-success-text: oklch(40% 0.1 152);
 	--wk-success-soft: oklch(96.5% 0.03 152);
 	--wk-warning-text: oklch(43% 0.095 62);
@@ -56,6 +61,8 @@
 	--wk-elevation-1: 0 1px 2px oklch(0% 0 0 / 0.045), 0 1px 3px oklch(0% 0 0 / 0.035);
 	--wk-elevation-2: 0 2px 4px oklch(0% 0 0 / 0.04), 0 8px 18px oklch(0% 0 0 / 0.065);
 	--wk-duration-fast: 150ms;
+	--ak-primary-rgb: 12, 13, 15;
+	--ak-primary-hover-rgb: 43, 46, 50;
 }
 
 :root[data-adminkit-theme="dark"] #wpadminbar {
@@ -69,11 +76,13 @@
 	--wk-text-muted: oklch(90% 0.006 258);
 	--wk-border: oklch(34.5% 0.006 258);
 	--wk-border-strong: oklch(58% 0.01 258);
-	--wk-accent: var(--wk-brand-400);
-	--wk-accent-hover: var(--wk-brand-300);
+	--wk-accent: oklch(98% 0.002 258);
+	--wk-accent-hover: oklch(90% 0.004 258);
 	--wk-on-accent: var(--wk-neutral-950);
-	--wk-accent-soft: oklch(29% calc(var(--wk-brand-c) * 0.265) var(--wk-brand-h));
-	--wk-focus-ring: var(--wk-brand-400);
+	--wk-accent-text: oklch(98% 0.002 258);
+	--wk-accent-soft: oklch(29.5% 0.006 258);
+	--wk-accent-line: oklch(41% 0.008 258);
+	--wk-focus-ring: oklch(98% 0.002 258);
 	--wk-success-text: oklch(85% 0.1 152);
 	--wk-success-soft: oklch(28% 0.035 152);
 	--wk-warning-text: oklch(87% 0.1 80);
@@ -85,4 +94,30 @@
 	--wk-overlay: oklch(8% 0 0 / 0.62);
 	--wk-elevation-1: 0 1px 3px oklch(0% 0 0 / 0.38), inset 0 1px 0 oklch(100% 0 0 / 0.055);
 	--wk-elevation-2: 0 4px 10px oklch(0% 0 0 / 0.4), 0 12px 28px oklch(0% 0 0 / 0.32), inset 0 1px 0 oklch(100% 0 0 / 0.075);
+	--ak-primary-rgb: 247, 248, 250;
+	--ak-primary-hover-rgb: 220, 222, 225;
+}
+
+:root[data-adminkit-accent="waaskit"] #wpadminbar {
+	--wk-accent: var(--wk-brand-600);
+	--wk-accent-hover: var(--wk-brand-700);
+	--wk-on-accent: var(--wk-neutral-0);
+	--wk-accent-text: var(--wk-brand-700);
+	--wk-accent-soft: var(--wk-brand-50);
+	--wk-accent-line: var(--wk-brand-200);
+	--wk-focus-ring: var(--wk-brand-500);
+	--ak-primary-rgb: 0, 73, 170;
+	--ak-primary-hover-rgb: 0, 62, 139;
+}
+
+:root[data-adminkit-accent="waaskit"][data-adminkit-theme="dark"] #wpadminbar {
+	--wk-accent: var(--wk-brand-400);
+	--wk-accent-hover: var(--wk-brand-300);
+	--wk-on-accent: var(--wk-neutral-950);
+	--wk-accent-text: var(--wk-brand-300);
+	--wk-accent-soft: oklch(29% calc(var(--wk-brand-c) * 0.265) var(--wk-brand-h));
+	--wk-accent-line: oklch(44% calc(var(--wk-brand-c) * 0.47) var(--wk-brand-h));
+	--wk-focus-ring: var(--wk-brand-400);
+	--ak-primary-rgb: 104, 162, 248;
+	--ak-primary-hover-rgb: 155, 195, 254;
 }

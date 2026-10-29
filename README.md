@@ -1,7 +1,7 @@
 # AdminKit
 
 A standalone WordPress plugin for a consistent administration interface, using the
-current [WaasKit design system](https://design.waaskit.site/). WordPress 6.0+,
+current [WaasKit design system](https://design.waaskit.site/), with monochrome branding by default. WordPress 6.0+,
 PHP 7.4+. No runtime dependencies, no npm or Composer build.
 
 ## Features
@@ -48,6 +48,7 @@ variables required by AdminKit.
 php tokens/build.php
 php tokens/build.php --check
 php dev/check.php
+php dev/css-contract.php
 php dev/adapter-audit.php
 php dev/adapter-drift.php
 ```

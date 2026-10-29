@@ -90,6 +90,10 @@ class AdminKit_Theme_Toggle {
 	 * @return void
 	 */
 	public static function print_script() {
+		$accent = AdminKit_Settings::accent_source();
+		if ( 'custom' === $accent && ! sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) ) ) {
+			$accent = 'monochrome';
+		}
 		$attr        = self::attribute();
 		$dataset_key = self::attribute_to_dataset( $attr );
 		$key         = self::storage_key();
@@ -98,6 +102,7 @@ class AdminKit_Theme_Toggle {
 <script id="adminkit-theme">
 (function(){
 	var d = document.documentElement;
+	d.setAttribute('data-adminkit-accent', <?php echo wp_json_encode( 'adminkit' === $accent ? 'waaskit' : $accent ); ?>);
 	var DS = <?php echo wp_json_encode( $dataset_key ); ?>;
 <?php if ( ! $enabled ) : ?>
 	d.dataset[DS] = 'light'; /* "Dark mode" feature off → force light, ignore any saved/system preference. */

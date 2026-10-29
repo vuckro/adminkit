@@ -58,7 +58,7 @@ body.adminkit .button.active,
 body.adminkit .wp-core-ui .button.active {
 	background-color: var(--ak-primary-subtle);
 	border-color: var(--ak-primary);
-	color: var(--ak-primary);
+	color: var(--ak-primary-text);
 	box-shadow: none;
 }
 
@@ -88,7 +88,7 @@ body.adminkit .wrap .page-title-action:focus {
 	background: var(--ak-primary-hover);
 	border-color: var(--ak-primary-hover);
 	/* Keep the resting label color — the text must not shift on hover. */
-	color: var(--ak-on-accent);
+	color: var(--ak-on-accent-hover);
 }
 
 /* When several header action buttons stack (e.g. Add New + Import on the

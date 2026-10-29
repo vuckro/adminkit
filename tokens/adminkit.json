@@ -13,7 +13,7 @@
   "--ak-primary-hover": "var(--wk-accent-hover)",
   "--ak-primary-subtle": "var(--wk-accent-soft)",
   "--ak-on-accent": "var(--wk-on-accent)",
-  "--ak-secondary": "var(--wk-accent)",
+  "--ak-secondary": "var(--ak-primary)",
   "--ak-hover-bg": "var(--wk-surface-hover)",
   "--ak-shadow-elevated": "var(--wk-elevation-2)",
   "--ak-focus": "var(--wk-focus-ring)",
@@ -47,5 +47,8 @@
   "--ak-text-m": "14px",
   "--ak-shadow-subtle": "var(--wk-elevation-1)",
   "--ak-duration-fast": "var(--wk-duration-fast)",
-  "--ak-ease-standard": "var(--wk-ease-standard)"
+  "--ak-ease-standard": "var(--wk-ease-standard)",
+  "--ak-primary-text": "var(--wk-accent-text)",
+  "--ak-layout-wide": "var(--wk-layout-wide)",
+  "--ak-on-accent-hover": "var(--ak-on-accent)"
 }
