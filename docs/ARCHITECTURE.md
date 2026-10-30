@@ -272,4 +272,4 @@ On desktop hover-capable devices, post/page/CPT titles are vertically centered o
 
 Installed extension names share the same resting centering and hover/focus lift as content titles. The native plugin `row-actions.visible` class is overridden only for desktop hover reveal; touch retains native visible actions.
 
-Plugin-specific cell alignment and action spacing belong to `wp-screens/plugins.css`; desktop plugin cells share vertical centering, while mobile layout and update notices retain native alignment. The reveal animation stays in the shared table component.
+Native list table alignment is centralized in `wp-components/tables.css`. Compact primary labels (content, taxonomy, installed plugins and usernames with avatars) share the centered resting state and title lift. Comments and media retain their richer content layout while sharing action reveal and keyboard access. Mobile keeps native disclosures; inline editors and update notices are excluded from desktop alignment.

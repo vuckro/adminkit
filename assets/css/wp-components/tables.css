@@ -726,17 +726,39 @@ body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-a
   pointer-events: auto;
  }
 }
-/* Post/page/CPT and plugin titles start halfway into the reserved action line, so the
+/* Native desktop list cells share a vertical axis. Long-form comments keep
+   their reading alignment; inline editors and notices keep their own layout. */
+@media (min-width: 783px) {
+ body.adminkit .wp-list-table:not(.comments) tbody > tr:has(> .column-primary):not(.inline-edit-row):not(.plugin-update-tr) > :is(td, th) {
+  vertical-align: middle;
+ }
+}
+/* Normalize compact labels only. Media and comments contain richer content
+   and retain native layout; actions still share the reveal/focus treatment. */
+@media (hover: hover) and (min-width: 783px) {
+ body.adminkit .wp-list-table .column-primary:has(> .row-actions) > strong:has(> .row-title),
+ body.adminkit .wp-list-table .plugin-title:has(> .row-actions) > strong {
+  display: block;
+  margin: 0;
+ }
+ body.adminkit .wp-list-table .column-username:has(> .row-actions) > strong { display: inline-block; }
+ body.adminkit .wp-list-table .column-primary:has(> strong > .row-title, > strong > a):not(:has(> .filename)):not(.column-comment) > br { display: none; }
+ body.adminkit .wp-list-table .column-primary:has(> strong > .row-title, > strong > a):not(:has(> .filename)):not(.column-comment) > .row-actions,
+ body.adminkit .wp-list-table .plugin-title > .row-actions {
+  padding: 2px 0 0;
+  margin-top: 0;
+ }
+}
+/* Compact primary labels start halfway into the reserved action line, so the
    resting title is vertically centered. Hover/focus lifts it to 3px below its native
    position; actions stay in flow to reserve room even for wrapped titles. */
 @media (hover: hover) and (min-width: 783px) {
- body.adminkit .wp-list-table :is(.column-title:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong) {
-  display: block;
+ body.adminkit .wp-list-table :is(.column-primary:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong, .column-username:has(> .row-actions) > :is(strong, img.avatar)) {
   translate: 0 13px;
   transition: translate 200ms var(--ak-ease-standard);
  }
- body.adminkit .wp-list-table tr:is(:hover, :focus-within) :is(.column-title:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong),
- body.adminkit .wp-list-table .column-title:has(> .row-actions.visible) > strong:has(> .row-title) {
+ body.adminkit .wp-list-table tr:is(:hover, :focus-within) :is(.column-primary:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong, .column-username:has(> .row-actions) > :is(strong, img.avatar)),
+ body.adminkit .wp-list-table:not(.plugins) .column-primary:has(> .row-actions.visible) > strong:has(> .row-title) {
   translate: 0 3px;
  }
 }
@@ -751,5 +773,5 @@ body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-a
 }
 @media (prefers-reduced-motion: reduce) {
  body.adminkit .wp-list-table :is(td, th, .row-actions),
- body.adminkit .wp-list-table :is(.column-title:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong) { transition: none; }
+ body.adminkit .wp-list-table :is(.column-primary:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong, .column-username:has(> .row-actions) > :is(strong, img.avatar)) { transition: none; }
 }
