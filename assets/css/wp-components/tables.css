@@ -720,11 +720,13 @@ body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-a
   visibility: visible;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 120ms var(--ak-ease-standard);
+  translate: 0 4px;
+  transition: opacity 120ms var(--ak-ease-standard), translate 180ms var(--ak-ease-standard);
  }
  body.adminkit .wp-list-table tr:is(:hover, :focus-within) .row-actions,
  body.adminkit .wp-list-table .row-actions.visible {
   opacity: 1;
+  translate: 0 0;
   pointer-events: auto;
  }
 }
@@ -739,4 +741,7 @@ body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-a
 }
 @media (prefers-reduced-motion: reduce) {
  body.adminkit .wp-list-table :is(td, th, .row-actions) { transition: none; }
+ body.adminkit .wp-list-table .row-actions,
+ body.adminkit .wp-list-table tr:is(:hover, :focus-within) .row-actions,
+ body.adminkit .wp-list-table .row-actions.visible { translate: none; }
 }

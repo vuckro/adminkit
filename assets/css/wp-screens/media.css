@@ -365,3 +365,12 @@ body.adminkit.upload-php .wp-filter { margin-bottom: 16px; }
 body.adminkit.upload-php .ak-table-card { margin-top: 16px; }
 /* File names are secondary content, but must retain readable contrast. */
 body.adminkit.upload-php .wp-list-table .filename { color: var(--ak-text-muted); }
+
+/* Persistent file actions: quiet feedback without hiding essential controls. */
+body.adminkit .attachment-info .actions :is(a, button) {
+ transition: color 120ms var(--ak-ease-standard), text-decoration-color 120ms var(--ak-ease-standard);
+ text-underline-offset: .2em;
+}
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit .attachment-info .actions :is(a, button) { transition: none; }
+}
