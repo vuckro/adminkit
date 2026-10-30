@@ -268,13 +268,15 @@ indicator. Mobile segments use the shared touch-control height and scroll within
 the available width. WooCommerce overrides retain the same geometry. Markup,
 ARIA semantics, links, selected state and form fields stay owned by each screen.
 
+Storage upgrade 6 drops the retired `logo_light`, `logo_dark`, `logo_source`, `wp_logo`, `login_logo`, `ui_radius`, `ui_density` and `generic_theming_on` keys (a legacy light/dark logo seeds `logo_url` when it is empty). `uninstall.php` removes every AdminKit option, transient and the network-shared menu table when the plugin is deleted; deactivation keeps data. Saving from the settings screen replaces only the keys it posts, so `logo_url` (edited on Settings → General) is never reset.
+
 Storage upgrade 5 removes the retired online-users flag and `adminkit_last_login` user metadata. Native WordPress `session_tokens` are preserved. AdminKit no longer records login timestamps or scans sessions for presence.
 
 On desktop hover-capable devices, post/page/CPT titles are vertically centered over the reserved native actions space at rest. Hover or keyboard focus lifts the title by 10px over 200ms and reveals the actions; row height stays fixed throughout. Touch keeps native layout. Reduced motion changes states immediately.
 
 Installed extension names share the same resting centering and hover/focus lift as content titles. The native plugin `row-actions.visible` class is overridden only for desktop hover reveal; touch retains native visible actions.
 
-Native list table alignment is centralized in `wp-components/tables.css`. Compact primary labels (content, taxonomy, installed plugins and usernames with avatars) share the centered resting state and title lift. Comments and media retain their richer content layout while sharing action reveal and keyboard access. Mobile keeps native disclosures; inline editors and update notices are excluded from desktop alignment.
+Native list table alignment is centralized in `wp-components/tables.css`. Compact primary labels (content, taxonomy, installed plugins and usernames with avatars) share the centered resting state and title lift. Media extends this treatment in `wp-screens/media.css`: title and muted filename move together while the thumbnail stays stationary. Comments retain their richer content layout. All share action reveal and keyboard access. Mobile keeps native disclosures; inline editors and update notices are excluded from desktop alignment. Media label motion respects reduced-motion preferences.
 
 ### Current-user profile layout
 

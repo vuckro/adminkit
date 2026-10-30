@@ -60,17 +60,13 @@ toggle over to the host.
 
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
-| `adminkit/brand_logo` | filter | `('' \| string \| array)` | Brand logo fallback when the Branding settings are empty. Return a URL string, or `array( 'light' => …, 'dark' => …, 'preloader' => … )`. Drives the brand mark at the site-name node and login branding; the settings win over the filter. |
+| `adminkit/brand_logo` | filter | `('' \| string \| array)` | Brand logo fallback when no logo is set in Settings → General. Return a URL string, or `array( 'light' => …, 'dark' => …, 'preloader' => … )`. Drives the brand mark at the site-name node and login branding; the settings win over the filter. |
 
-Resolved by `AdminKit_Settings::brand_logo( $mode )`. Logos are normally set
-no-code on the AdminKit Dashboard branding card, alongside the `wp_logo` mode for the
-brand mark rendered at the site-name node (next to the site title; the top-left
-WordPress logo is always hidden): `logo` (the brand logo), `favicon` (the site
-icon). `logo` falls back to `favicon`, then to a bare site title when
-nothing is set; `inc/wp-core/class-branding.php`. The login screen has its own
-`login_logo` setting (`logo` | `favicon`), so it can show a square favicon while
-the bar shows a wide logo, or
-vice versa; resolved in `inc/wp-core/class-login.php`.
+Resolved by `AdminKit_Settings::brand_logo( $mode )`. The single brand logo
+(`logo_url`) is edited in Settings → General, after the native site icon. The
+toolbar mark is automatic (`inc/wp-core/class-branding.php`); the login screen
+shows the brand logo when one is set and falls back to the site icon
+(`inc/wp-core/class-login.php`).
 
 ### Accent — and the WordPress palette baseline
 
@@ -202,7 +198,7 @@ categorization; toggle off ⇒ every notice renders inline. Hooks in
 
 Subclassing `AdminKit_Integration_Base` is itself the main extension mechanism —
 drop a folder under `inc/integrations/{plugins\|themes}/{slug}/` and it auto-loads.
-The overridable methods (`slug`, `is_active`, `owns_screen`, `register_assets`,
+The overridable methods (`slug`, `label`, `host_files`, `is_active`, `owns_screen`, `register_assets`,
 `boot`, `host_version`, `max_tested_host_version`) are documented in
 [INTEGRATIONS.md](INTEGRATIONS.md). New settings, dashboard widgets and provider
 tokens are all added from an integration's `boot()` via the hooks above.

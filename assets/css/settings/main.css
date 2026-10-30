@@ -1,106 +1,4 @@
-/* AdminKit main screen. WaasKit roles; no build step. */
-.adminkit-app .ak-brand-slots {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: calc(12px * var(--ak-space-scale, 1));
-	margin-bottom: calc(16px * var(--ak-space-scale, 1));
-}
-.adminkit-app .ak-brand-slot {
-	border: 1px dashed var(--ak-card-border);
-	border-radius: var(--ak-card-radius);
-	padding: calc(10px * var(--ak-space-scale, 1));
-	display: flex;
-	align-items: center;
-	gap: calc(10px * var(--ak-space-scale, 1));
-}
-.adminkit-app .ak-brand-slot__zone {
-	width: 44px;
-	height: 44px;
-	border-radius: var(--ak-radius-s, 6px);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: calc(4px * var(--ak-space-scale, 1));
-	color: var(--ak-text-muted);
-	flex: 0 0 auto;
-	overflow: hidden;
-	cursor: pointer;
-	transition: box-shadow 120ms ease;
-}
-.adminkit-app .ak-brand-slot--light .ak-brand-slot__zone,
-.adminkit-app .ak-brand-slot--dark .ak-brand-slot__zone {
-	width: 72px;
-	height: 44px;
-}
-.adminkit-app .ak-brand-slot__zone:hover {
-	box-shadow: inset 0 0 0 2px var(--ak-primary);
-}
-.adminkit-app .ak-brand-slot__zone:hover img {
-	opacity: 0.75;
-}
-.adminkit-app .ak-brand-slot__zone img {
-	max-width: 100%;
-	max-height: 100%;
-	width: auto;
-	height: auto;
-	display: block;
-}
-.adminkit-app .ak-brand-slot__drop {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-}
-.adminkit-app .ak-brand-slot--light .ak-brand-slot__zone { background: #ffffff; color: #888; }
-.adminkit-app .ak-brand-slot--dark .ak-brand-slot__zone { background: #0a0a0a; color: #888; }
-.adminkit-app .ak-brand-slot__body {
-	flex: 1 1 auto;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: calc(2px * var(--ak-space-scale, 1));
-	min-width: 0;
-}
-.adminkit-app .ak-brand-slot__label {
-	font-size: calc(13px * var(--ak-type-scale, 1));
-	font-weight: 600;
-	color: var(--ak-heading);
-	line-height: 1.2;
-}
-.adminkit-app .ak-brand-slot__sub {
-	font-size: calc(11px * var(--ak-type-scale, 1));
-	line-height: 1.35;
-	color: var(--ak-text-muted);
-	margin: 0 0 calc(6px * var(--ak-space-scale, 1));
-	max-width: 100%;
-}
-.adminkit-app .ak-brand-slot__btns {
-	display: flex;
-	gap: calc(6px * var(--ak-space-scale, 1));
-	align-items: center;
-}
-.adminkit-app .ak-brand-slot__btn {
-	display: inline-flex;
-	align-items: center;
-	gap: calc(4px * var(--ak-space-scale, 1));
-	padding: calc(3px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1));
-	border: var(--ak-border-width) solid var(--ak-border);
-	border-radius: var(--ak-radius-s, 6px);
-	background: var(--ak-elevated);
-	color: var(--ak-text);
-	font-size: calc(11px * var(--ak-type-scale, 1));
-	cursor: pointer;
-}
-.adminkit-app .ak-brand-slot__btn:hover {
-	border-color: var(--ak-border-strong);
-	background: var(--ak-hover-bg);
-}
-.adminkit-app .ak-brand-slot__btn.is-remove {
-	color: var(--ak-text-muted);
-}
-.adminkit-app .ak-brand-slot__btn.is-remove:hover {
-	color: var(--ak-error, #d63638);
-	border-color: var(--ak-error, #d63638);
-}
+
 .adminkit-app .ak-accent-inline {
 	gap: calc(8px * var(--ak-space-scale, 1));
 }
@@ -139,37 +37,10 @@
 	width: 0;
 	height: 0;
 }
-.adminkit-app .ak-display-row {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: calc(24px * var(--ak-space-scale, 1));
-	padding-top: calc(20px * var(--ak-space-scale, 1));
-	padding-bottom: calc(20px * var(--ak-space-scale, 1));
-	margin-top: calc(4px * var(--ak-space-scale, 1));
-	border-top: 1px solid var(--ak-border);
-}
-.adminkit-app .ak-display-row:last-child { padding-bottom: 0; }
-.adminkit-app .ak-display-row__lbl {
-	font-size: var(--ak-text-s);
-	font-weight: 600;
-	color: var(--ak-heading);
-	min-width: 64px;
-}
 .adminkit-app .ak-display-row__field {
 	display: inline-flex;
 	align-items: center;
 	gap: calc(8px * var(--ak-space-scale, 1));
-}
-.adminkit-app .ak-display-row__field-lbl {
-	font-size: var(--ak-text-xs);
-	font-weight: 500;
-	color: var(--ak-text-muted);
-	margin-right: calc(2px * var(--ak-space-scale, 1));
-}
-@media screen and (max-width: 960px) {
-	.adminkit-app .ak-brand-slots { grid-template-columns: 1fr; }
-	.adminkit-app .ak-display-row { gap: calc(12px * var(--ak-space-scale, 1)); }
 }
 .adminkit-app[data-screen="main"] { max-width: var(--ak-layout-wide); }
 
@@ -207,9 +78,6 @@
 .adminkit-app[data-screen="main"] .ak-row.is-off { opacity: 1; }
 .adminkit-app[data-screen="main"] .ak-row.is-locked { opacity: 1; }
 .adminkit-app[data-screen="main"] .ak-group__title { text-transform: none; letter-spacing: normal; font-size: calc(16px * var(--ak-type-scale, 1)); color: var(--ak-heading); margin: calc(28px * var(--ak-space-scale, 1)) 0 calc(12px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-feature-details { margin-top: calc(5px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-feature-details summary { cursor: pointer; color: var(--ak-text-muted); font-size: var(--ak-text-s); width: fit-content; }
-.adminkit-app .ak-feature-details p { max-width: 70ch; margin: calc(10px * var(--ak-space-scale, 1)) 0 0; }
 .adminkit-app .ak-feature-details summary:focus-visible,
 .adminkit-app .ak-overview-link:focus-visible { outline: 2px solid var(--ak-primary); outline-offset: 4px; }
 .adminkit-app .ak-panel-title { font-size: calc(28px * var(--ak-type-scale, 1)); line-height: 1.25; font-weight: 600; color: var(--ak-heading); margin: 0 0 calc(12px * var(--ak-space-scale, 1)); }
@@ -219,13 +87,8 @@
 .adminkit-app .ak-overview-entry dd { margin: 0; color: var(--ak-text-muted); font-variant-numeric: tabular-nums; }
 .adminkit-app .ak-overview-link { color: var(--ak-text); text-underline-offset: 4px; }
 .adminkit-app .ak-scope-note { max-width: 70ch; color: var(--ak-text-muted); line-height: 1.7; }
-.adminkit-app .ak-presets { padding-top: calc(8px * var(--ak-space-scale, 1)); border-top: 1px solid var(--ak-border); }
-.adminkit-app .ak-presets h3 { color: var(--ak-heading); font-size: calc(15px * var(--ak-type-scale, 1)); }
-.adminkit-app .ak-preset-field { display: grid; grid-template-columns: 1fr minmax(140px, 1fr); gap: calc(12px * var(--ak-space-scale, 1)); align-items: center; margin: calc(12px * var(--ak-space-scale, 1)) 0; }
-.adminkit-app .ak-preset-field select { width: 100%; min-width: 0; font-family: var(--ak-font-body); }
 @media (max-width: 1200px) {
 	.adminkit-app[data-screen="main"] { grid-template-columns: 170px minmax(0, 1fr); column-gap: calc(24px * var(--ak-space-scale, 1)); }
-	.adminkit-app .ak-brand-studio { grid-template-columns: 1fr; }
 }
 @media (max-width: 782px) {
 	.adminkit-app[data-screen="main"] { display: block; }
@@ -233,15 +96,12 @@
 	.adminkit-app[data-screen="main"] .ak-tabs { position: static; flex-direction: row; flex-wrap: wrap; margin-bottom: calc(24px * var(--ak-space-scale, 1)); }
 	.adminkit-app[data-screen="main"] .ak-tabs button { min-height: 44px; }
 	.adminkit-app .ak-overview-entry { flex-direction: column; align-items: flex-start; gap: calc(12px * var(--ak-space-scale, 1)); }
-	.adminkit-app .ak-preset-field { grid-template-columns: 1fr; gap: calc(4px * var(--ak-space-scale, 1)); }
 }
 .adminkit-app .ak-feature-summary { color: var(--ak-text-muted); font-size: var(--ak-text-s); line-height: 1.5; margin: calc(5px * var(--ak-space-scale, 1)) 0; max-width: 70ch; }
 /* An off setting remains readable and actionable. Only its switch conveys off. */
 .adminkit-app[data-screen="main"] .ak-row.is-off .ak-row__main,
 .adminkit-app[data-screen="main"] .ak-row.is-off .ak-switch,
 .adminkit-app[data-screen="main"] .ak-row.is-muted .ak-row__main { opacity: 1; }
-.adminkit-app .ak-brand-slot__zone { border: 0; font: inherit; }
-.adminkit-app .ak-brand-slot__zone:focus-visible { outline: 2px solid var(--ak-primary); outline-offset: 3px; }
 .adminkit-app .ak-empty { color: var(--ak-text-muted); padding-block: calc(16px * var(--ak-space-scale, 1)); }
 
 /* Keep locked setting labels readable; only the unavailable switch is subdued. */
@@ -291,9 +151,6 @@
 	.adminkit-app .ak-feature-technical > div { grid-template-columns: 1fr; gap: calc(3px * var(--ak-space-scale, 1)); }
 }
 
-.adminkit-app[data-screen="main"] .ak-design-workspace > .ak-card__head { margin-bottom: 0; }
-
-
 /* Dedicated foundation pages. Category changes never alter the saved profile. */
 .adminkit-app .ak-foundations-title { margin: 0 0 calc(14px * var(--ak-space-scale, 1)); font-size: calc(26px * var(--ak-type-scale, 1)); line-height: 1.25; color: var(--ak-heading); }
 .adminkit-app .ak-foundations-editor { display: grid; grid-template-columns: minmax(0, 1fr); gap: calc(24px * var(--ak-space-scale, 1)); align-items: start; }
@@ -308,9 +165,6 @@
 .adminkit-app .ak-foundations-panel h3 { font-size: calc(21px * var(--ak-type-scale, 1)); line-height: 1.3; color: var(--ak-heading); margin: 0 0 calc(10px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-foundation-intro { margin: 0 0 calc(24px * var(--ak-space-scale, 1)); color: var(--ak-text-muted); font-size: calc(13px * var(--ak-type-scale, 1)); line-height: 1.7; max-width: 70ch; }
 .adminkit-app .ak-foundation-scope { font-size: calc(12px * var(--ak-type-scale, 1)); color: var(--ak-text-muted); line-height: 1.7; margin: calc(20px * var(--ak-space-scale, 1)) 0 0; max-width: 90ch; }
-.adminkit-app .ak-identity-placements { display: grid; gap: calc(20px * var(--ak-space-scale, 1)); margin-top: calc(24px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-identity-placements .ak-display-row__field { display: flex; align-items: center; flex-wrap: wrap; gap: calc(12px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-identity-placements .ak-display-row__field-lbl { min-width: 90px; }
 .adminkit-app .ak-foundation-slider { padding: calc(18px * var(--ak-space-scale, 1)) 0; margin-bottom: calc(20px * var(--ak-space-scale, 1)); border-block: 1px solid var(--ak-border); }
 .adminkit-app .ak-foundation-slider > div { display: flex; gap: calc(16px * var(--ak-space-scale, 1)); align-items: center; justify-content: space-between; margin-bottom: calc(12px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-foundations-panel label { display: block; color: var(--ak-heading); font-size: calc(13px * var(--ak-type-scale, 1)); font-weight: 500; }
@@ -383,14 +237,10 @@
  .adminkit-app .ak-palette-header { flex-wrap: wrap; }
 }
 
-
-
-
 /* Keep the accent controls compact and aligned beside the source selector. */
 .adminkit-app .ak-foundations-panel .ak-accent-inline { align-items: center; }
 .adminkit-app .ak-foundations-panel .ak-accent-inline .ak-seg { width: auto; flex: 0 1 440px; }
 .adminkit-app .ak-foundations-panel .ak-accent-inline input.ak-accent-inline__hex { width: 110px; flex: 0 0 110px; min-width: 0; }
-
 
 /* Each palette is a self-contained theme, independent of the admin chrome. */
 .adminkit-app .ak-palette-theme {
@@ -437,7 +287,6 @@
 .adminkit-app .ak-shape-table strong { background: var(--wk-surface-sunken); }
 .adminkit-app .ak-shape-table span { border-top: 1px solid var(--wk-border); color: var(--wk-text-muted); }
 
-
 .adminkit-app .ak-shape-selects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .adminkit-app .ak-shape-selects label { margin-bottom: 8px; }
 .adminkit-app .ak-shape-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 24px; }
@@ -473,3 +322,9 @@
 .adminkit-app .ak-color-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-bottom: 24px; }
 .adminkit-app .ak-color-controls .ak-foundation-accent { flex: 1 1 360px; min-width: 0; margin-bottom: 0; }
 .adminkit-app .ak-color-controls .ak-palette-theme-switch { flex: 0 0 auto; margin-bottom: 0; }
+.adminkit-app .ak-scale-preview { font-family: var(--ak-prev-font, inherit); }
+.adminkit-app .ak-scale-sample { display: grid; gap: calc(12px * var(--ak-prev-space, 1)); padding: calc(18px * var(--ak-prev-space, 1)); background: var(--wk-surface); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-radius-m); }
+.adminkit-app .ak-scale-sample strong { font-size: calc(20px * var(--ak-prev-type, 1)); color: var(--wk-text); }
+.adminkit-app .ak-scale-sample p { margin: 0; font-size: calc(14px * var(--ak-prev-type, 1)); color: var(--wk-text-muted); }
+.adminkit-app .ak-scale-rows { display: grid; gap: calc(8px * var(--ak-prev-space, 1)); }
+.adminkit-app .ak-scale-rows span { padding: calc(10px * var(--ak-prev-space, 1)) calc(12px * var(--ak-prev-space, 1)); font-size: calc(13px * var(--ak-prev-type, 1)); color: var(--wk-text); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-radius-s); }

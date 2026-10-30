@@ -18,7 +18,6 @@ class AdminKit_Design_System {
 		foreach ( array( 's' => 8, 'm' => 12, 'l' => 16, 'xl' => 24 ) as $size => $pixels ) {
 			$vars .= '--ak-radius-' . $size . ':calc(' . $pixels . 'px * var(--ak-radius-scale));';
 		}
-		$vars .= '--ak-card-radius:var(--ak-radius-l);';
 		$highlight = $settings['components']['buttons']['highlight'];
 		$empty_shadow = 'inset 0 0 0 transparent';
 		$vars .= '--ak-btn-primary-elevation:var(' . ( 'always' === $highlight ? '--wk-elevation-1' : '--wk-elevation-1-shadow' ) . ');';

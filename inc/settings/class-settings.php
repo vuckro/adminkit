@@ -52,56 +52,18 @@ class AdminKit_Settings {
 	}
 
 	/**
-	 * Branding settings — optional brand logo URLs for light + dark mode. Empty by
-	 * default (no asset shipped). Consumed by branding surfaces (and
-	 * available to any integration) via AdminKit_Settings::get(). URLs are stored
-	 * sanitized; an empty value is dropped so the consumer can fall back.
+	 * Branding settings — the single optional brand logo URL (empty by default, no
+	 * asset shipped), plus the accent choice. The logo is edited on Settings →
+	 * General; consumers read it through brand_logo().
 	 *
 	 * @return void
 	 */
 	private static function register_branding() {
-		self::register( 'logo_source', array( 'type' => 'select', 'group' => 'branding', 'default' => 'upload', 'sanitize' => static function ( $v ) { return 'url' === $v ? 'url' : 'upload'; } ) );
-		foreach ( array( 'logo_url', 'logo_light', 'logo_dark' ) as $key ) {
-			self::register( $key, array(
-				'type'     => 'text',
-				'group'    => 'branding',
-				'default'  => '',
-				'sanitize' => 'esc_url_raw',
-			) );
-		}
-
-		// The site-name brand mark (next to the site title; the top-left WordPress
-		// logo is always hidden): the brand logo, the site icon (favicon), or hidden.
-		// `logo` falls back to `favicon`, then to the bare site title, when no brand
-		// logo is configured. Read by AdminKit_Core_Branding. Unknown / legacy values
-		// degrade to `favicon`.
-		self::register( 'wp_logo', array(
-			'type'     => 'select',
+		self::register( 'logo_url', array(
+			'type'     => 'text',
 			'group'    => 'branding',
-			'default'  => 'favicon',
-			// Admin bar has no `hide` — picking `favicon` when no Site Icon is set
-			// already yields a bare title (favicon_chip_css() returns ''). Legacy
-			// stored `'hide'` values degrade to `favicon` here. Login screen keeps
-			// its `hide` (separate setting `login_logo`).
-			'sanitize' => static function ( $v ) {
-				return in_array( $v, array( 'logo', 'favicon' ), true ) ? $v : 'favicon';
-			},
-		) );
-
-		// Login-screen mark — its OWN choice, independent of the admin bar: `logo`
-		// (rectangular wordmark) or `favicon` (square site icon). Read by
-		// AdminKit_Core_Login::login_mode(). Defaults to `favicon` — picking it
-		// with no Site Icon set collapses the WP login logo entirely, so no
-		// explicit `hide` mode is needed. Legacy stored `'hide'` degrades to
-		// `favicon` here. (A legacy '' = "inherit wp_logo" is still honoured by
-		// login_mode() for back-compat.)
-		self::register( 'login_logo', array(
-			'type'     => 'select',
-			'group'    => 'branding',
-			'default'  => 'favicon',
-			'sanitize' => static function ( $v ) {
-				return in_array( $v, array( 'logo', 'favicon' ), true ) ? $v : 'favicon';
-			},
+			'default'  => '',
+			'sanitize' => 'esc_url_raw',
 		) );
 
 		// Brand accent — the hex used when `accent_source` === 'custom'. Ignored
@@ -120,28 +82,23 @@ class AdminKit_Settings {
 
 		// Monochrome is explicit and independent of installed themes/providers.
 		self::register( 'accent_source', array(
-			'type' => 'select', 'group' => 'branding', 'default' => 'adminkit',
+			'type' => 'select', 'group' => 'branding', 'default' => 'monochrome',
 			'sanitize' => static function ( $v ) {
-				return in_array( $v, array( 'monochrome', 'adminkit', 'bricks', 'custom' ), true ) ? $v : 'adminkit';
+				return in_array( $v, array( 'monochrome', 'adminkit', 'bricks', 'custom' ), true ) ? $v : 'monochrome';
 			},
 		) );
 	}
 
-	/** Bounded site-wide design presets. Unknown values retain the native baseline. */
+	/** Interface font preset. Unknown values retain the humanist baseline. */
 	private static function register_appearance() {
-		$presets = array(
-			'ui_density' => array( 'default', 'compact', 'comfortable' ),
-			'ui_radius' => array( 'default', 'square', 'soft' ),
-			'ui_font' => array( 'default', 'humanist', 'classic', 'system' ),
-		);
-		foreach ( $presets as $key => $allowed ) {
-			self::register( $key, array(
-				'type' => 'select', 'group' => 'appearance', 'default' => 'ui_font' === $key ? 'humanist' : 'default',
-				'sanitize' => static function ( $value ) use ( $allowed, $key ) {
-					return in_array( $value, $allowed, true ) ? $value : ( 'ui_font' === $key ? 'humanist' : 'default' );
-				},
-			) );
-		}
+		self::register( 'ui_font', array(
+			'type'     => 'select',
+			'group'    => 'appearance',
+			'default'  => 'humanist',
+			'sanitize' => static function ( $value ) {
+				return in_array( $value, array( 'humanist', 'classic', 'system' ), true ) ? $value : 'humanist';
+			},
+		) );
 	}
 
 	/** Advanced studio settings are persisted for previews; global adoption is separate. */
@@ -178,17 +135,17 @@ class AdminKit_Settings {
 		return $result;
 	}
 
-	/** Resolve stored legacy blue/provider choices; unset values use WordPress. */
+	/** Resolve the accent source; unset / unknown values use Monochrome. */
 	public static function accent_source() {
 		$source = (string) self::get( 'accent_source' );
-		return in_array( $source, array( 'monochrome', 'adminkit', 'bricks', 'custom' ), true ) ? $source : 'adminkit';
+		return in_array( $source, array( 'monochrome', 'adminkit', 'bricks', 'custom' ), true ) ? $source : 'monochrome';
 	}
 
 	/**
 	 * Resolve the brand logo URL for a mode — the single source of truth used
 	 * everywhere AdminKit shows a logo.
 	 *
-	 * Order: the Branding setting (logo_light / logo_dark) wins; otherwise the
+	 * Order: the Branding setting (logo_url) wins; otherwise the
 	 * `adminkit/brand_logo` filter (a URL string, or an array keyed
 	 * light / dark / preloader). Returns '' when nothing is set, so each consumer
 	 * can no-op cleanly (no asset is ever shipped).
@@ -205,10 +162,6 @@ class AdminKit_Settings {
 		$single = trim( (string) self::get( 'logo_url' ) );
 		if ( '' !== $single ) { return $single; }
 		$mode = ( 'light' === $mode ) ? 'light' : 'dark';
-		$url  = trim( (string) self::get( 'logo_' . $mode ) );
-		if ( '' !== $url ) {
-			return $url;
-		}
 		$f = apply_filters( 'adminkit/brand_logo', '' );
 		if ( is_array( $f ) && ! empty( $f[ $mode ] ) ) {
 			return (string) $f[ $mode ];
@@ -360,8 +313,7 @@ class AdminKit_Settings {
 		}
 
 		// SELECT settings: re-run the sanitiser at read time so legacy stored
-		// values that are no longer in the valid set (e.g. the old 'hide' mode
-		// for wp_logo / login_logo) degrade gracefully to the declared default
+		// values that are no longer in the valid set (e.g. a retired preset) degrade gracefully to the declared default
 		// rather than leaking through as-is to every consumer. Sanitisers for
 		// select fields return the default when the value is unknown, so this
 		// is always safe to apply.

@@ -51,9 +51,6 @@ class AdminKit_Core_Options_General {
 		if ( ! current_user_can( 'manage_options' ) || ! is_array( $input ) ) { return $stored; }
 		if ( isset( $input['logo_url'] ) && is_string( $input['logo_url'] ) ) {
 			$stored['logo_url'] = esc_url_raw( $input['logo_url'], array( 'http', 'https' ) );
-			$stored['logo_light'] = '';
-			$stored['logo_dark'] = '';
-			$stored['logo_source'] = 'upload';
 		}
 		return $stored;
 	}

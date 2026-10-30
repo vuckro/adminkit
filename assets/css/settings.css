@@ -238,16 +238,6 @@
 .adminkit-app .ak-switch__input:checked ~ .ak-switch__track { background: var(--ak-primary); }
 .adminkit-app .ak-switch__input:checked ~ .ak-switch__knob { left: 21px; background: var(--ak-on-accent); }
 .adminkit-app .ak-switch__input:focus-visible ~ .ak-switch__track { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
-.adminkit-app .ak-hero {
-	display: grid;
-	grid-template-columns: repeat( auto-fit, minmax( 180px, 1fr ) );
-	gap: calc(1px * var(--ak-space-scale, 1));
-	border: var(--ak-border-width) solid var(--ak-card-border);
-	border-radius: var(--ak-card-radius);
-	background: var(--ak-card-border);
-	overflow: hidden;
-	box-shadow: var(--ak-card-shadow);
-}
 .adminkit-app .ak-badge {
 	display: inline-flex;
 	align-items: center;
@@ -303,50 +293,6 @@
 	margin-bottom: calc(16px * var(--ak-space-scale, 1));
 	box-shadow: var(--ak-card-shadow);
 }
-.adminkit-app .ak-card__head {
-	display: flex;
-	align-items: flex-start;
-	gap: calc(12px * var(--ak-space-scale, 1));
-	margin-bottom: calc(16px * var(--ak-space-scale, 1));
-}
-.adminkit-app .ak-card__head-main { flex: 1; min-width: 0; }
-.adminkit-app .ak-card__title {
-	margin: calc(4px * var(--ak-space-scale, 1)) 0 0;
-	padding: 0;
-	font-size: calc(16px * var(--ak-type-scale, 1));
-	font-weight: 600;
-	line-height: 1.3;
-	color: var(--ak-heading);
-}
-.adminkit-app .ak-card__status {
-	margin: calc(6px * var(--ak-space-scale, 1)) 0 0;
-	font-size: var(--ak-text-xs);
-	color: var(--ak-text-muted);
-	display: inline-flex;
-	align-items: center;
-	gap: calc(6px * var(--ak-space-scale, 1));
-}
-.adminkit-app .ak-card__status-dot {
-	width: 7px;
-	height: 7px;
-	border-radius: 50%;
-	background: var(--ak-text-muted);
-	flex: 0 0 auto;
-}
-.adminkit-app .ak-card__status.is-connected .ak-card__status-dot {
-	background: var(--ak-success, #00a32a);
-}
-.adminkit-app .ak-card__status.is-disconnected .ak-card__status-dot {
-	background: var(--ak-error, #d63638);
-}
-.adminkit-app .ak-card__status-count {
-	padding: calc(1px * var(--ak-space-scale, 1)) calc(7px * var(--ak-space-scale, 1));
-	border-radius: var(--ak-radius-full, 999px);
-	background: var(--ak-elevated);
-	color: var(--ak-text-muted);
-	font-variant-numeric: tabular-nums;
-	font-size: calc(11px * var(--ak-type-scale, 1));
-}
 
 @media screen and (max-width: 782px) {
 	.adminkit-app .ak-head { flex-wrap: wrap; }
@@ -355,7 +301,6 @@
 	.adminkit-app .ak-actions .ak-btn--primary { flex-basis: 100%; }
 	.adminkit-app .ak-btn { min-height: var(--ak-control-height-touch); line-height: 1.4; }
 	.adminkit-app .ak-tabs { max-width: 100%; overflow-x: auto; box-sizing: border-box; }
-	.adminkit-app .ak-tab { flex-shrink: 0; min-height: var(--ak-control-height-touch); }
 }
 .adminkit-app[data-screen="menu"] .ak-panel--menu {
 	max-width: 1040px;

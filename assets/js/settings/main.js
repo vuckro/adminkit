@@ -18,27 +18,16 @@
 			features:
 				'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
 			plugins:
-				'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>',
-			// Upload arrow-up-tray — shown in empty brand-slot zones in lieu of a "Drop" text.
-			upload:
-				'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>'
+				'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>'
 		};
 		Object.assign(state, {
 			dirty: false,
 			saving: false,
 			features: {}, // setting key -> bool
 			integrations: {}, // integration slug -> bool (adapter enabled)
-			logos: {
-				// setting key -> url string
-				light: (D.logos && D.logos.light) || '',
-				dark: (D.logos && D.logos.dark) || ''
-			},
-			logoSource: D.logoSource === 'url' ? 'url' : 'upload',
-			wpLogo: D.wpLogo === 'logo' ? 'logo' : 'favicon', // admin-bar / site-name mark: logo | favicon
-			loginLogo: D.loginLogo === 'logo' ? 'logo' : 'favicon', // login screen mark: logo | favicon
 			brandAccent: D.brandAccent || '', // user hex (only meaningful when accentSource === 'custom')
-			// 'adminkit' = WaasKit roles; 'bricks' = provider; 'custom' = brandAccent hex
-			accentSource: D.accentSource || 'adminkit'
+			// 'monochrome' = default; 'adminkit' = WaasKit blue; 'bricks' = provider; 'custom' = brandAccent hex
+			accentSource: D.accentSource || 'monochrome'
 		});
 
 		(D.features || []).forEach(function (f) {
@@ -59,8 +48,7 @@
 			}
 		});
 
-		state.appearance = Object.assign({ ui_density: 'default', ui_radius: 'default', ui_font: 'humanist' }, D.appearance || {});
-		if (state.appearance.ui_font === 'default') { state.appearance.ui_font = 'humanist'; }
+		state.appearance = Object.assign({ ui_font: 'humanist' }, D.appearance || {});
 
 		state.designSystem = Object.assign({ radius_scale: 1, space_scale: 1, type_scale: 1, border_width: 1, elevation: 'default' }, D.designSystem || {});
 		state.designSystem.components = { buttons: Object.assign({ highlight: 'always' }, (state.designSystem.components || {}).buttons || {}) };
@@ -98,7 +86,7 @@
 				// pill silently drops; their stored `accentSource === 'bricks'` still
 				// resolves server-side via accent_source(), but the UI no longer offers a
 				// dead button. Hide rather than grey: a dead pill was confusing.
-				var sources = [{ v: 'adminkit', label: I.accentSrcAdminKit || 'WordPress' }, { v: 'monochrome', label: I.accentSrcMonochrome }];
+				var sources = [{ v: 'monochrome', label: I.accentSrcMonochrome }, { v: 'adminkit', label: I.accentSrcAdminKit || 'WordPress' }];
 				if (D.bricksConnected) {
 					sources.push({ v: 'bricks', label: I.accentSrcBricks || 'Bricks' });
 				}
@@ -347,7 +335,8 @@
 			var paletteCards = [];
 			var roles = [
 				['accent', I.foundationAccent], ['on-accent', I.foundationOnAccent],
-				['bg', I.foundationBackground], ['surface', I.foundationSurface], ['text', I.foundationText], ['text-muted', I.foundationMuted], ['border', I.foundationBorder]
+				['bg', I.foundationBackground], ['surface', I.foundationSurface], ['text', I.foundationText], ['text-muted', I.foundationMuted], ['border', I.foundationBorder],
+				['success-text', I.foundationSuccess], ['warning-text', I.foundationWarning], ['danger-text', I.foundationDanger], ['info-text', I.foundationInfo]
 			];
 			function toHex(cssColor) {
 				var canvas = document.createElement('canvas'); canvas.width = canvas.height = 1;
@@ -407,8 +396,53 @@
 			};
 			section('colors', I.studioColors, I.foundationColorsHelp, [el('div', { class: 'ak-color-controls' }, [el('div', { class: 'ak-foundation-accent' }, [accentPicker()]), el('div', { class: 'ak-palette-theme-switch' }, [themeSwitch(I.studioColors)])]), el('div', { class: 'ak-palettes' }, paletteCards.map(function (card) { return card.scope; }))]);
 
-			function developing() { return el('p', { class: 'ak-foundation-development', text: I.foundationDevelopment }); }
-			section('type', I.studioType, I.studioTypeHint, [developing()]);
+			// Typography + spacing: scales are saved in `design_system`, the font preset in `ui_font`.
+			var fontStacks = { humanist: '"Trebuchet MS",Verdana,sans-serif', classic: 'Arial,Helvetica,sans-serif', system: 'ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif' };
+			var fontSelect = el('select', { id: 'ak-type-font' }, [['humanist', I.fontHumanist], ['classic', I.fontClassic], ['system', I.fontSystem]].map(function (item) { return el('option', { value: item[0], text: item[1] }); }));
+			fontSelect.value = fontStacks[state.appearance.ui_font] ? state.appearance.ui_font : 'humanist';
+			var typeScale = el('input', { type: 'range', id: 'ak-type-scale', min: '0.75', max: '1.5', step: '0.05', value: String(state.designSystem.type_scale) });
+			var typeScaleValue = el('output', { for: typeScale.id });
+			var spaceScale = el('input', { type: 'range', id: 'ak-space-scale', min: '0.5', max: '2', step: '0.05', value: String(state.designSystem.space_scale) });
+			var spaceScaleValue = el('output', { for: spaceScale.id });
+			var scalePreviews = [];
+			function makeScalePreviews() {
+				var frames = ['light', 'dark'].map(function (mode) {
+				return el('div', { class: 'ak-bp__frame ak-shape-preview ak-scale-preview', 'data-preview-theme': mode }, [
+					el('h4', { text: mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark }),
+					el('div', { class: 'ak-scale-sample' }, [
+						el('strong', { text: I.studioType }), el('p', { text: I.studioSample }),
+						el('div', { class: 'ak-scale-rows' }, [el('span', { text: I.studioSample }), el('span', { text: I.studioSample }), el('span', { text: I.studioSample })])
+					])
+				]);
+				});
+				Array.prototype.push.apply(scalePreviews, frames);
+				return frames;
+			}
+			function refreshScales() {
+				typeScaleValue.textContent = number(state.designSystem.type_scale) + ' ×';
+				typeScale.setAttribute('aria-valuetext', typeScaleValue.textContent);
+				spaceScaleValue.textContent = number(state.designSystem.space_scale) + ' ×';
+				spaceScale.setAttribute('aria-valuetext', spaceScaleValue.textContent);
+				scalePreviews.forEach(function (preview) {
+					preview.style.setProperty('--ak-prev-type', state.designSystem.type_scale);
+					preview.style.setProperty('--ak-prev-space', state.designSystem.space_scale);
+					preview.style.setProperty('--ak-prev-font', fontStacks[state.appearance.ui_font] || fontStacks.humanist);
+				});
+			}
+			fontSelect.addEventListener('change', function () { state.appearance.ui_font = fontSelect.value; refreshScales(); markDirty(); });
+			typeScale.addEventListener('input', function () { state.designSystem.type_scale = Number(typeScale.value); refreshScales(); markDirty(); });
+			spaceScale.addEventListener('input', function () { state.designSystem.space_scale = Number(spaceScale.value); refreshScales(); markDirty(); });
+			function scaleSlider(input, output, label) {
+				return el('div', { class: 'ak-foundation-slider' }, [el('div', {}, [el('label', { for: input.id, text: label }), output]), input]);
+			}
+			section('type', I.studioType, I.studioTypeHint, [
+				el('div', { class: 'ak-shape-selects' }, [el('div', {}, [el('label', { for: fontSelect.id, text: I.studioFont }), fontSelect])]),
+				scaleSlider(typeScale, typeScaleValue, I.studioTypeScale),
+				el('button', { type: 'button', class: 'ak-btn', text: I.resetDefaults, onclick: function () {
+					state.appearance.ui_font = 'humanist'; fontSelect.value = 'humanist'; state.designSystem.type_scale = 1; typeScale.value = '1'; refreshScales(); markDirty();
+				} })
+			]);
+			attachPreview('type', makeScalePreviews());
 			var radius = el('input', { type: 'range', id: 'ak-shape-radius', min: '0', max: '2', step: '0.05', value: String(state.designSystem.radius_scale) });
 			var radiusValue = el('output', { for: radius.id });
 			var elevation = el('select', { id: 'ak-shape-elevation' }, [
@@ -477,7 +511,13 @@
 				} })
 			]);
 			attachPreview('shapes', shapePreviews.slice());
-			section('spacing', I.studioSpacing, I.studioSpacingHint, [developing()]);
+			section('spacing', I.studioSpacing, I.studioSpacingHint, [
+				scaleSlider(spaceScale, spaceScaleValue, I.studioSpaceScale),
+				el('button', { type: 'button', class: 'ak-btn', text: I.resetDefaults, onclick: function () {
+					state.designSystem.space_scale = 1; spaceScale.value = '1'; refreshScales(); markDirty();
+				} })
+			]);
+			attachPreview('spacing', makeScalePreviews());
 
 			// Component-specific effects share the existing draft, previews and Save.
 			var highlightSelect = el('select', { id: 'ak-buttons-highlight', 'aria-describedby': 'ak-buttons-highlight-help' }, [
@@ -504,7 +544,7 @@
 				el('p', { id: 'ak-buttons-highlight-help', class: 'ak-foundation-intro', text: I.componentHighlightHelp })
 			]);
 			attachPreview('components', buttonPreviews);
-			refreshShapes(); refreshShapeColors();
+			refreshShapes(); refreshShapeColors(); refreshScales();
 			p.classList.add('ak-foundations');
 			p.appendChild(el('h2', { class: 'ak-foundations-title', text: I.designSystem })); p.appendChild(intro(I.designIntro));
 			editor.appendChild(nav); editor.appendChild(panes); p.appendChild(editor); p.appendChild(previewDock); p.appendChild(scopeNote);
@@ -1048,7 +1088,6 @@
 			// Per-plugin opt-in for generic plugins (no native adapter). POST as a
 			// flat array of plugin file paths the user has turned theming off for.
 			v.generic_theming_off = Object.keys(state.genericThemingOff);
-			v.login_logo = state.loginLogo;
 			v.brand_accent = state.brandAccent;
 			v.accent_source = state.accentSource;
 			Object.assign(v, state.appearance);

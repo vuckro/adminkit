@@ -93,6 +93,12 @@ class AdminKit_Settings_Catalog {
 				'desc'  => __( 'Hide the contextual "Help" tab at the top-right of admin screens, for cleaner chrome. "Screen Options" is left in place. Off restores it.', 'adminkit' ),
 			),
 			array(
+				'key'   => 'replace_icons_enabled',
+				'group' => $appearance,
+				'label' => __( 'AdminKit icons', 'adminkit' ),
+				'desc'  => __( 'Replace the WordPress menu icons with the AdminKit set. Off restores the native dashicons (icons you chose in the menu manager are kept).', 'adminkit' ),
+			),
+			array(
 				'key'   => 'quick_edit_users_enabled',
 				'group' => $users,
 				'label' => __( 'Users quick edit', 'adminkit' ),
@@ -120,6 +126,7 @@ class AdminKit_Settings_Catalog {
 			'toolbar_manager_enabled' => __( 'Organize shortcuts in the top toolbar.', 'adminkit' ),
 			'hide_footer_enabled' => __( 'Remove the WordPress footer and version line.', 'adminkit' ),
 			'hide_help_button_enabled' => __( 'Hide contextual help on admin screens.', 'adminkit' ),
+			'replace_icons_enabled' => __( 'Use the AdminKit icon set in the admin menu.', 'adminkit' ),
 			'quick_edit_users_enabled' => __( 'Edit account details directly from the users list.', 'adminkit' ),
 			'username_changer_enabled' => __( 'Allow administrators to rename a user login.', 'adminkit' ),
 		);
@@ -142,27 +149,6 @@ class AdminKit_Settings_Catalog {
 			return $specs;
 		}
 		$specs  = array();
-		$labels = array(
-			'acf'               => 'Advanced Custom Fields (ACF)',
-			'admin-menu-editor' => 'Admin Menu Editor',
-			'bricks'            => 'Bricks',
-			'fluent-affiliate'  => 'FluentAffiliate',
-			'fluent-booking'    => 'FluentBooking',
-			'fluent-cart'       => 'FluentCart',
-			'fluent-community'  => 'FluentCommunity',
-			'fluent-crm'        => 'FluentCRM',
-			'fluent-smtp'       => 'FluentSMTP',
-			'fluent-snippets'   => 'FluentSnippets',
-			'fluentform'        => 'Fluent Forms',
-			'flying-press'      => 'FlyingPress',
-			'happyfiles'        => 'HappyFiles',
-			'loco-translate'    => 'Loco Translate',
-			'query-monitor'     => 'Query Monitor',
-			'slim-seo'          => 'Slim SEO',
-			'woocommerce'       => 'WooCommerce',
-			'wp-migrate-db-pro' => 'WP Migrate DB Pro',
-			'wpcode'            => 'WPCode',
-		);
 		$files  = glob( ADMINKIT_PATH . 'inc/integrations/*/*/class-*.php' );
 		if ( ! $files ) {
 			return $specs;
@@ -185,7 +171,7 @@ class AdminKit_Settings_Catalog {
 			}
 			$specs[] = array(
 				'slug'  => $slug,
-				'label' => isset( $labels[ $slug ] ) ? $labels[ $slug ] : ucwords( str_replace( '-', ' ', $slug ) ),
+				'label' => call_user_func( array( $class, 'label' ) ),
 				'type'  => $type,
 				'class' => $class,
 			);
@@ -199,13 +185,12 @@ class AdminKit_Settings_Catalog {
 	 * @return array<int, array>
 	 */
 	public static function plugins_list() {
-		$hosts   = self::integration_host_files();
 		$by_file = array();
 		foreach ( self::integration_specs() as $s ) {
 			if ( 'plugin' !== $s['type'] ) {
 				continue;
 			}
-			foreach ( (array) ( isset( $hosts[ $s['slug'] ] ) ? $hosts[ $s['slug'] ] : array() ) as $file ) {
+			foreach ( (array) call_user_func( array( $s['class'], 'host_files' ) ) as $file ) {
 				$by_file[ $file ] = $s['slug'];
 			}
 		}
@@ -300,27 +285,6 @@ class AdminKit_Settings_Catalog {
 	}
 
 	/**
-	 * Count CSS custom-property declarations in Bricks's generated token file.
-	 *
-	 * @return int
-	 */
-	public static function bricks_token_count() {
-		if ( ! class_exists( 'AdminKit_Integration_Bricks' ) ) {
-			return 0;
-		}
-		$upload = wp_upload_dir();
-		$path   = $upload['basedir'] . AdminKit_Integration_Bricks::TOKENS_REL;
-		if ( ! is_readable( $path ) ) {
-			return 0;
-		}
-		$css = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions
-		if ( false === $css || '' === $css ) {
-			return 0;
-		}
-		return preg_match_all( '/--[a-z0-9_-]+\s*:/i', $css );
-	}
-
-	/**
 	 * Register integration toggles and the generic plugin opt-out list.
 	 *
 	 * @return void
@@ -352,33 +316,5 @@ class AdminKit_Settings_Catalog {
 				return array_values( array_unique( $clean ) );
 			},
 		) );
-	}
-
-	/**
-	 * Known host plugin file(s) per adapter slug.
-	 *
-	 * @return array<string, string[]>
-	 */
-	private static function integration_host_files() {
-		return array(
-			'acf'               => array( 'advanced-custom-fields/acf.php', 'advanced-custom-fields-pro/acf.php', 'secure-custom-fields/secure-custom-fields.php' ),
-			'admin-menu-editor' => array( 'admin-menu-editor/menu-editor.php', 'admin-menu-editor-pro/menu-editor.php' ),
-			'fluent-affiliate'  => array( 'fluent-affiliate/fluent-affiliate.php' ),
-			'fluent-booking'    => array( 'fluent-booking/fluent-booking.php', 'fluent-booking-pro/fluent-booking-pro.php' ),
-			'fluent-cart'       => array( 'fluent-cart/fluent-cart.php', 'fluent-cart-pro/fluent-cart-pro.php' ),
-			'fluent-community'  => array( 'fluent-community/fluent-community.php', 'fluent-community-pro/fluent-community-pro.php' ),
-			'fluent-crm'        => array( 'fluent-crm/fluent-crm.php', 'fluentcampaign-pro/fluentcampaign-pro.php' ),
-			'fluent-smtp'       => array( 'fluent-smtp/fluent-smtp.php' ),
-			'fluent-snippets'   => array( 'easy-code-manager/easy-code-manager.php' ),
-			'fluentform'        => array( 'fluentform/fluentform.php', 'fluentformpro/fluentformpro.php' ),
-			'flying-press'      => array( 'flying-press/flying-press.php' ),
-			'happyfiles'        => array( 'happyfiles/happyfiles.php', 'happyfiles-pro/happyfiles.php' ),
-			'loco-translate'    => array( 'loco-translate/loco.php' ),
-			'query-monitor'     => array( 'query-monitor/query-monitor.php' ),
-			'slim-seo'          => array( 'slim-seo/slim-seo.php' ),
-			'woocommerce'       => array( 'woocommerce/woocommerce.php' ),
-			'wp-migrate-db-pro' => array( 'wp-migrate-db-pro/wp-migrate-db-pro.php', 'wp-migrate-db/wp-migrate-db.php' ),
-			'wpcode'            => array( 'wpcode/wpcode.php', 'insert-headers-and-footers/ihaf.php' ),
-		);
 	}
 }

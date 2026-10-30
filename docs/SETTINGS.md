@@ -4,28 +4,13 @@ The first AdminKit submenu entry is Dashboard, followed by Menu and Toolbar when
 
 ## Appearance storage and validation
 
-`AdminKit_Settings` registers three allowlisted settings. Unknown density/radius values normalize to `default`; unknown font values normalize to `humanist`. User-authored CSS is never emitted.
+`AdminKit_Settings` registers one allowlisted font preset, `ui_font`. Unknown values normalize to `humanist`. User-authored CSS is never emitted. Corner, text and spacing scales live in `design_system` (see below); the former `ui_density` and `ui_radius` presets were removed in storage upgrade 6.
 
 | Setting | Allowed values | Default |
 | --- | --- | --- |
-| `ui_density` | `default`, `compact`, `comfortable` | `default` |
-| `ui_radius` | `default`, `square`, `soft` | `default` |
-| `ui_font` | `default`, `humanist`, `classic`, `system` | `humanist` |
+| `ui_font` | `humanist`, `classic`, `system` | `humanist` |
 
-`AdminKit_Assets::appearance_css()` emits mapped preset declarations. Density/radius `default` and explicit font `system` add no override, allowing the existing token and card-style system to supply its values. Humanist, the registered font default, emits its bounded font stack. The baseline control-height token is 32px; the baseline touch target is 44px. Defaults do not force native table cell padding.
-
-| Preset | Emitted tokens / behavior |
-| --- | --- |
-| Density: compact | `--ak-control-height:28px`; `--ak-ui-row-space:8px` |
-| Density: comfortable | `--ak-control-height:40px`; `--ak-ui-row-space:16px` |
-| Radius: square | `--ak-radius-s:2px`; `--ak-radius-m:4px`; `--ak-radius-l:4px`; `--ak-card-radius:4px` |
-| Radius: soft | `--ak-radius-s:10px`; `--ak-radius-m:14px`; `--ak-radius-l:16px`; `--ak-card-radius:16px` |
-| Font: humanist | `--ak-font-body:"Trebuchet MS",Verdana,sans-serif` |
-| Font: classic | `--ak-font-body:Arial,Helvetica,sans-serif` |
-
-Non-default density also sets vertical padding on `body.wp-admin .widefat td` and `th` through `--ak-ui-row-space`. Control heights, radii and fonts affect components that consume their respective `--ak-*` tokens; this does not guarantee that every third-party layout follows the presets. Adapters retain their own layouts.
-
-Explicit System uses `ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif`. Humanist defaults to `"Trebuchet MS",Verdana,sans-serif`; Classic uses `Arial,Helvetica,sans-serif`. Legacy `default` maps to Humanist in the editor until Save; explicit `system` stays System. Typography choices are bounded system stacks. They do not introduce font upload, arbitrary font names or remote custom-font loading.
+`AdminKit_Design_System::css()` is the only appearance emitter and maps the font to its bounded stack: Humanist `"Trebuchet MS",Verdana,sans-serif`, Classic `Arial,Helvetica,sans-serif`, System `ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif`. The baseline control-height token is 32px; the baseline touch target is 44px.
 
 ## Scope and preview
 
@@ -112,7 +97,7 @@ Typography now contains only family and scale; Shapes only radius scale and elev
 
 Automatic tinting of neutral roles was removed after visual review. Custom now
 changes only the accent family; generated neutral recipes and editor boot data
-were removed. Explicit saved per-role overrides remain intact. Typography and Spacing show an In development notice. Shapes/elevation exposes
+were removed. Explicit saved per-role overrides remain intact. Typography exposes the `ui_font` preset and a 0.75–1.5 text scale; Spacing exposes a 0.5–2 scale; both have live local previews and a reset. The palette editor covers 11 roles (the four status-text roles included). Shapes/elevation exposes
 a 0–2 corner scale, 0–4px outline width and Default/Flat/Subtle/Raised surface elevation, with scoped
 light/dark previews and a reset for these three values. Changes apply after Save.
 Default preserves the restored contact shadows; Flat explicitly removes card and

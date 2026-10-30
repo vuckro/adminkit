@@ -5,8 +5,8 @@
  * Owns three things for the login page, all gated by the "Login screen" feature
  * (module_login_enabled):
  *   1. the login stylesheet (assets/css/login.css);
- *   2. the login LOGO — the brand logo or the site icon, per the SAME `wp_logo`
- *      setting that drives the admin-bar mark, so one choice brands both;
+ *   2. the login LOGO — the brand logo (Settings → General → Administration
+ *      logo) when set, otherwise the site icon;
  *   3. a light / dark SWITCH on the page (shown only when the dark-mode feature is
  *      on), persisted with the SAME attribute + storage key as the rest of AdminKit
  *      so the choice carries between the login screen and wp-admin.
@@ -119,15 +119,15 @@ class AdminKit_Core_Login {
 	/**
 	 * Build the brand-logo <img> markup for the login screen — light + dark variants
 	 * (theme-toggled by login.css), each decorative-but-named (alt = the site name,
-	 * so the wrapping logo link has an accessible name). Returns '' unless the
-	 * `wp_logo` mode is `logo` AND a brand logo is configured (the only case that
+	 * so the wrapping logo link has an accessible name). Returns '' unless a
+	 * brand logo is configured (the only case that
 	 * renders an <img>; favicon / fallback stay a CSS background).
 	 *
 	 * @param string $alt Accessible name for the link (the site name).
 	 * @return string '' when no brand <img> applies.
 	 */
 	private static function brand_logo_img( $alt ) {
-		if ( 'logo' !== self::login_mode() ) {
+		if ( 'logo' !== self::login_mark_type() ) {
 			return '';
 		}
 		$light = AdminKit_Settings::brand_logo( 'light' );
@@ -168,22 +168,7 @@ class AdminKit_Core_Login {
 	}
 
 	/**
-	 * The effective login-screen mark mode — its OWN `login_logo` setting (`logo`
-	 * or `favicon`, defaulting to `favicon`), independent of the admin bar. So the
-	 * login can show a favicon (square) while the bar shows the logo (rectangle), or
-	 * vice versa. A legacy empty value ("inherit `wp_logo`") is still honoured for
-	 * back-compat, though the UI no longer offers it.
-	 *
-	 * @return string 'logo' | 'favicon'
-	 */
-	private static function login_mode() {
-		$mode = AdminKit_Settings::get( 'login_logo' );
-		return ( '' !== $mode ) ? $mode : AdminKit_Settings::get( 'wp_logo' );
-	}
-
-	/**
-	 * Which mark the login screen will show: 'logo' (a configured brand wordmark,
-	 * when the effective mode is "logo"), 'favicon' (the site icon), or '' (none —
+	 * Which mark the login screen will show: 'logo' (a configured brand wordmark), 'favicon' (the site icon), or '' (none —
 	 * neither a brand logo nor a Site Icon is configured). The '' case is the
 	 * implicit "hide" path: print_login_logo_style() collapses the WP login logo
 	 * in that case, matching the admin bar's "favicon when none set = bare title"
@@ -192,14 +177,12 @@ class AdminKit_Core_Login {
 	 * @return string 'logo' | 'favicon' | ''
 	 */
 	private static function login_mark_type() {
-		if ( 'logo' === self::login_mode() ) {
-			$logo = AdminKit_Settings::brand_logo( 'light' );
-			if ( '' === $logo ) {
-				$logo = AdminKit_Settings::brand_logo( 'dark' );
-			}
-			if ( '' !== $logo ) {
-				return 'logo';
-			}
+		$logo = AdminKit_Settings::brand_logo( 'light' );
+		if ( '' === $logo ) {
+			$logo = AdminKit_Settings::brand_logo( 'dark' );
+		}
+		if ( '' !== $logo ) {
+			return 'logo';
 		}
 		return '' !== get_site_icon_url( 200 ) ? 'favicon' : '';
 	}

@@ -177,6 +177,9 @@ class AdminKit_Theme_Toggle {
 	 */
 	public static function register_view_site_node( $bar ) {
 		$in_admin = is_admin();
+		if ( ! apply_filters( 'adminkit/should_load', true, $in_admin ? 'admin' : 'frontend' ) ) {
+			return;
+		}
 
 		// wp-admin → "open site" (external) glyph; front end → house.
 		$open  = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'external-link' ) );
@@ -206,11 +209,12 @@ class AdminKit_Theme_Toggle {
 	 * print_editor_bridge() toggles to mirror AdminKit's mode — so light mode
 	 * keeps the normal white editor and only dark mode recolors it.
 	 *
-	 * Values are literal (the iframe has no access to tokens.css) and track the
-	 * AdminKit dark neutrals: bg #121212, surface #1c1c1c, text #bfbfbf, heading
-	 * #dbdbdb, border #2e2e2e, elevated #242424. The editing well uses the bg tone
-	 * (recessed below the surface .wp-editor-container) so it reads with relief in
-	 * dark mode, mirroring the white-on-grey relief light mode gets for free.
+	 * Values are literal (the iframe has no access to tokens.css) and mirror the
+	 * WaasKit dark roles in assets/css/waaskit-tokens.css: bg (--wk-bg), surface
+	 * (--wk-surface), text (--wk-text / --wk-text-muted), border (--wk-border). The
+	 * editing well uses the bg tone (recessed below the surface .wp-editor-container)
+	 * so it reads with relief in dark mode, mirroring the white-on-grey relief light
+	 * mode gets for free.
 	 * Links use a readable blue rather than the brand accent, which is poor as
 	 * body-copy link color.
 	 *
@@ -221,14 +225,20 @@ class AdminKit_Theme_Toggle {
 		if ( ! is_admin() ) {
 			return $init;
 		}
-		$css = 'html.ak-editor-dark{background-color:#121212}'
-			. 'html.ak-editor-dark body#tinymce{background-color:#121212;color:#bfbfbf}'
+		$bg      = 'oklch(20.5% 0.005 258)';
+		$surface = 'oklch(24.8% 0.005 258)';
+		$text    = 'oklch(90% 0.006 258)';
+		$strong  = 'oklch(98% 0.002 258)';
+		$subtle  = 'oklch(81% 0.008 258)';
+		$border  = 'oklch(34.5% 0.006 258)';
+		$css = 'html.ak-editor-dark{background-color:' . $bg . '}'
+			. 'html.ak-editor-dark body#tinymce{background-color:' . $bg . ';color:' . $text . '}'
 			. 'html.ak-editor-dark a{color:#6aa0ff}'
-			. 'html.ak-editor-dark h1,html.ak-editor-dark h2,html.ak-editor-dark h3,html.ak-editor-dark h4,html.ak-editor-dark h5,html.ak-editor-dark h6{color:#dbdbdb}'
-			. 'html.ak-editor-dark hr{border-color:#2e2e2e}'
-			. 'html.ak-editor-dark table td,html.ak-editor-dark table th{border-color:#2e2e2e}'
-			. 'html.ak-editor-dark blockquote{border-left-color:#3a3a3a;color:#a8a8a8}'
-			. 'html.ak-editor-dark code,html.ak-editor-dark pre{background-color:#242424;color:#dbdbdb}';
+			. 'html.ak-editor-dark h1,html.ak-editor-dark h2,html.ak-editor-dark h3,html.ak-editor-dark h4,html.ak-editor-dark h5,html.ak-editor-dark h6{color:' . $strong . '}'
+			. 'html.ak-editor-dark hr{border-color:' . $border . '}'
+			. 'html.ak-editor-dark table td,html.ak-editor-dark table th{border-color:' . $border . '}'
+			. 'html.ak-editor-dark blockquote{border-left-color:' . $border . ';color:' . $subtle . '}'
+			. 'html.ak-editor-dark code,html.ak-editor-dark pre{background-color:' . $surface . ';color:' . $strong . '}';
 
 		$init['content_style'] = isset( $init['content_style'] )
 			? $init['content_style'] . ' ' . $css

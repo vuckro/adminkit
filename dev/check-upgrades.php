@@ -46,7 +46,7 @@ foreach ( array( 'adminkit_portraits' => 'mystery', 'identicon' => 'identicon' )
 $options = array( AdminKit_Upgrades::OPTION => 1, 'adminkit_settings' => array( 'bricks_builder_enabled' => true, 'plugins_active_first_enabled' => false, 'theme_toggle_enabled' => true ), 'bricks_global_settings' => array( 'builderMode' => 'dark' ) );
 $metadata = array( 1 => array( 'first_name' => 'Keep' ) );
 AdminKit_Upgrades::run();
-if ( array( 'theme_toggle_enabled' => true, 'active_items_first_enabled' => false ) !== $options['adminkit_settings'] || array( 'builderMode' => 'dark' ) !== $options['bricks_global_settings'] || array( 1 => array( 'first_name' => 'Keep' ) ) !== $metadata || 5 !== $options[AdminKit_Upgrades::OPTION] ) {
+if ( array( 'theme_toggle_enabled' => true, 'active_items_first_enabled' => false ) !== $options['adminkit_settings'] || array( 'builderMode' => 'dark' ) !== $options['bricks_global_settings'] || array( 1 => array( 'first_name' => 'Keep' ) ) !== $metadata || 6 !== $options[AdminKit_Upgrades::OPTION] ) {
  throw new RuntimeException( 'Version 2 did not clean only the retired flags.' );
 }
 $before_writes = $writes;
@@ -68,12 +68,20 @@ if($before_drops!==$wpdb->drops)throw new RuntimeException('Completed cleanup re
 $options = array( AdminKit_Upgrades::OPTION => 4, 'adminkit_settings' => array( 'online_users_enabled' => true, 'theme_toggle_enabled' => true ) );
 $metadata = array( 1 => array( 'adminkit_last_login' => 123, 'session_tokens' => array( 'native' => 'keep' ), 'first_name' => 'Keep' ) );
 AdminKit_Upgrades::run();
-if ( array( 'theme_toggle_enabled' => true ) !== $options['adminkit_settings'] || array( 1 => array( 'session_tokens' => array( 'native' => 'keep' ), 'first_name' => 'Keep' ) ) !== $metadata || 5 !== $options[AdminKit_Upgrades::OPTION] ) {
+if ( array( 'theme_toggle_enabled' => true ) !== $options['adminkit_settings'] || array( 1 => array( 'session_tokens' => array( 'native' => 'keep' ), 'first_name' => 'Keep' ) ) !== $metadata || 6 !== $options[AdminKit_Upgrades::OPTION] ) {
  throw new RuntimeException( 'Online users cleanup changed native sessions or left retired data.' );
 }
 $before_writes = $writes;
 AdminKit_Upgrades::run();
 if ( $writes !== $before_writes ) { throw new RuntimeException( 'Online users cleanup repeated.' ); }
+$options = array( AdminKit_Upgrades::OPTION => 5, 'adminkit_settings' => array( 'logo_light' => 'https://x.test/l.svg', 'logo_dark' => 'https://x.test/d.svg', 'logo_source' => 'url', 'wp_logo' => 'logo', 'login_logo' => 'favicon', 'ui_radius' => 'soft', 'ui_density' => 'compact', 'generic_theming_on' => array(), 'ui_font' => 'system', 'theme_toggle_enabled' => true ) );
+AdminKit_Upgrades::run();
+if ( array( 'ui_font' => 'system', 'theme_toggle_enabled' => true, 'logo_url' => 'https://x.test/l.svg' ) != $options['adminkit_settings'] || 6 !== $options[AdminKit_Upgrades::OPTION] ) {
+ throw new RuntimeException( 'Retired logo/appearance keys were not migrated cleanly.' );
+}
+$before_writes = $writes;
+AdminKit_Upgrades::run();
+if ( $writes !== $before_writes ) { throw new RuntimeException( 'Version 6 cleanup repeated.' ); }
 $options = array();
 $allowed = false;
 $before_writes = $writes;

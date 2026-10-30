@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Upgrades {
 
-	const VERSION = 5;
+	const VERSION = 6;
 	const OPTION  = 'adminkit_storage_version';
 
 	public static function init() {
@@ -68,6 +68,24 @@ class AdminKit_Upgrades {
 			}
 			// WordPress session_tokens belong to core and must remain untouched.
 			delete_metadata( 'user', 0, 'adminkit_last_login', '', true );
+		}
+
+		if ( $version < 6 ) {
+			// One brand logo (`logo_url`); drop retired logo/appearance/preset keys.
+			$settings = get_option( AdminKit_Settings::OPTION_KEY, array() );
+			$retired  = array( 'logo_light', 'logo_dark', 'logo_source', 'wp_logo', 'login_logo', 'ui_radius', 'ui_density', 'generic_theming_on' );
+			if ( is_array( $settings ) && array_intersect( $retired, array_keys( $settings ) ) ) {
+				if ( empty( $settings['logo_url'] ) ) {
+					foreach ( array( 'logo_light', 'logo_dark' ) as $legacy ) {
+						if ( ! empty( $settings[ $legacy ] ) && is_string( $settings[ $legacy ] ) ) {
+							$settings['logo_url'] = $settings[ $legacy ];
+							break;
+						}
+					}
+				}
+				$settings = array_diff_key( $settings, array_flip( $retired ) );
+				update_option( AdminKit_Settings::OPTION_KEY, $settings );
+			}
 		}
 
 		// Admin-only migration state does not need to be autoloaded on the front end.
