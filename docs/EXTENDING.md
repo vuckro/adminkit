@@ -258,60 +258,6 @@ your own delta against the previous period if you want a trend badge — AdminKi
 passes the value through verbatim. Keep queries cheap and cached: the stats UI is
 meant to stay light on the database.
 
-## Avatars
-
-One setting (`custom_avatars_enabled`, on by default). With it on, AdminKit
-registers **AdminKit Portraits (Generated)** in *Settings → Discussion → Default
-Avatar* — the same dropdown WordPress already uses for Wavatar / Identicon /
-Retro / MonsterID. Pick it there to give every user a unique generated portrait.
-
-### When AdminKit serves a portrait — the cascade
-
-The filter (`pre_get_avatar_data`) runs three checks, in order:
-
-1. **`$args['url']` already populated** → another filter handled it (Simple
-   Local Avatars, WP User Avatar, an OAuth login plugin saving a remote URL,
-   etc.). AdminKit bails — never overrides another plugin's URL.
-2. **Real Gravatar exists** — `HEAD gravatar.com/avatar/HASH?d=404`. Returns
-   200 when the user has uploaded an avatar to Gravatar, 404 otherwise. The
-   result is cached forever in the `adminkit_has_gravatar` user meta (`1` or
-   `0`) and invalidated on `profile_update` so an email change re-checks.
-   First render of a user does one HEAD with a 2s timeout (~200ms typical);
-   every later render is a cache hit. → AdminKit bails when 200.
-3. **Otherwise** → AdminKit sets `$args['url']` to the DiceBear portrait URL.
-
-### Why `$args['url']` and not `$args['default']`
-
-Setting `$args['default']` (the `d=` fallback) does NOT work — Gravatar proxies
-the redirect through Photon (`i2.wp.com`), which **strips every query string**
-from `d=`, including our per-user `seed=`. Every user would land on DiceBear's
-default image. Setting `$args['url']` directly short-circuits Gravatar so the
-seed survives intact.
-
-### What's not here
-
-- No profile-picture upload field. User uploads are Gravatar's job (or a
-  dedicated plugin) — AdminKit owns the *generated portrait* slot only.
-- No style / URL / palette filters. Constants are inlined (style `avataaars`,
-  10-colour pastel palette as a solid backdrop). To swap, extend the class via
-  a must-use plugin or open a hook here when a real need surfaces.
-
-### Generator
-
-[DiceBear](https://www.dicebear.com) hosted HTTP API (`api.dicebear.com`), style
-`avataaars` (cartoon Memoji-like portraits with skin tones, hair, accessories
-varied per seed). Each URL carries a non-PII seed (md5 of the user_login —
-never the raw email) and `backgroundColor=` (a 10-colour palette DiceBear picks
-one solid colour from per seed) — so every user reads as a distinct card.
-
-Example — self-host the generated avatars instead of calling DiceBear:
-
-```php
-add_filter( 'adminkit/generated_avatar_url', function ( $url, $user_id, $size ) {
-    return home_url( "/avatars/{$user_id}-{$size}.png" );
-}, 10, 3 );
-```
-
 ## Lifecycle
 
 | Hook | Type | Purpose |

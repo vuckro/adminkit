@@ -23,13 +23,6 @@
  *    span) that fight our layout. We ship our own styles instead, scoped
  *    to `.adminkit-qe-*` classes.
  *
- * The header also surfaces a "Refresh avatar" button — visible only when
- * `AdminKit_Local_Avatars::can_regenerate()` says the user actually renders
- * with our DiceBear portrait (feature on, AdminKit Portraits picked in
- * Settings → Discussion, no real Gravatar). The button POSTs to the
- * `adminkit_shuffle_avatar` AJAX endpoint owned by `class-local-avatars.php`
- * — Quick Edit doesn't re-implement the seed roll, it just consumes it.
- *
  * Security:
  *  - One nonce per row, bound to the user-id action key.
  *  - `current_user_can( 'edit_user', $target )` gates BOTH the action link
@@ -84,20 +77,13 @@ class AdminKit_User_Quick_Edit {
 		$avatar_url   = get_avatar_url( $user->ID, array( 'size' => 80 ) );
 		$display_name = $user->display_name ? $user->display_name : $user->user_login;
 
-		// "Refresh avatar" data ride-along: a separate nonce (bound to the
-		// avatar-shuffle action key in AdminKit_Local_Avatars) plus a 1/0
-		// flag the JS reads to know whether to render the button.
-		$can_regen     = AdminKit_Local_Avatars::can_regenerate( $user );
-		$shuffle_nonce = $can_regen ? wp_create_nonce( AdminKit_Local_Avatars::SHUFFLE_NONCE ) : '';
-
 		$btn = sprintf(
 			'<button type="button" class="button-link adminkit-qe-open"'
 			. ' data-user-id="%1$d" data-nonce="%2$s"'
 			. ' data-first-name="%3$s" data-last-name="%4$s"'
 			. ' data-email="%5$s" data-role="%6$s"'
 			. ' data-avatar-url="%7$s" data-display-name="%8$s"'
-			. ' data-shuffle-nonce="%9$s" data-can-regenerate="%10$d"'
-			. ' aria-expanded="false">%11$s</button>',
+			. ' aria-expanded="false">%9$s</button>',
 			(int) $user->ID,
 			esc_attr( $nonce ),
 			esc_attr( (string) $user->first_name ),
@@ -106,8 +92,6 @@ class AdminKit_User_Quick_Edit {
 			esc_attr( $role ),
 			esc_attr( (string) $avatar_url ),
 			esc_attr( (string) $display_name ),
-			esc_attr( $shuffle_nonce ),
-			$can_regen ? 1 : 0,
 			esc_html__( 'Quick Edit', 'adminkit' )
 		);
 
@@ -197,7 +181,6 @@ class AdminKit_User_Quick_Edit {
 								<strong class="adminkit-qe-display-name"></strong>
 								<span class="adminkit-qe-email-display"></span>
 							</div>
-							<button type="button" class="button adminkit-qe-regenerate" hidden><?php esc_html_e( 'Refresh avatar', 'adminkit' ); ?></button>
 						</header>
 
 						<fieldset class="adminkit-qe-fields">

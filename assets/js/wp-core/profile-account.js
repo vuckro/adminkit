@@ -201,47 +201,6 @@
 			wrap.insertBefore(header, title);
 			header.appendChild(hero);
 			header.appendChild(title);
-			// Order: avatar → title → "Refresh avatar" (AJAX, when PHP supplied
-			// the endpoint data) → native "Add User" action. Refresh sits to the
-			// LEFT of Add User because it's about the user being edited; Add User
-			// is the global navigation action and stays the rightmost CTA.
-			//
-			// The refresh button does an AJAX POST to `adminkit_shuffle_avatar`
-			// (the same endpoint the users.php Quick Edit inline editor uses) and
-			// swaps the hero img src on success. No page reload, no URL
-			// round-trip — the only state that needs updating is the seed +
-			// the visible <img>.
-			if (S.refreshAvatarAjaxUrl && S.refreshAvatarNonce && S.refreshAvatarUserId) {
-				var refresh = document.createElement('button');
-				refresh.type = 'button';
-				refresh.className = 'page-title-action';
-				refresh.textContent = S.refreshAvatarLabel || 'Refresh avatar';
-				refresh.addEventListener('click', function () {
-					if (refresh.disabled) { return; }
-					refresh.disabled = true;
-					var fd = new FormData();
-					fd.append('action', 'adminkit_shuffle_avatar');
-					fd.append('user_id', S.refreshAvatarUserId);
-					fd.append('_wpnonce', S.refreshAvatarNonce);
-					fetch(S.refreshAvatarAjaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
-						.then(function (r) { return r.json().catch(function () { return null; }); })
-						.then(function (json) {
-							refresh.disabled = false;
-							var url = json && json.success && json.data && json.data.avatar_url;
-							if (url && heroImg) {
-								heroImg.srcset = '';
-								heroImg.src = url;
-							} else {
-								window.alert(S.refreshAvatarError || 'Could not refresh the avatar.');
-							}
-						})
-						.catch(function () {
-							refresh.disabled = false;
-							window.alert(S.refreshAvatarError || 'Could not refresh the avatar.');
-						});
-				});
-				header.appendChild(refresh);
-			}
 			if (action) {
 				header.appendChild(action);
 			}
@@ -379,9 +338,7 @@
 		  // group fields visually: names side-by-side, email + nickname together,
 		  // display name + role together, then login standalone (full width to give
 		  // the "click to enable" affordance room), and a 2-up footer: new password
-		  // + reset. The "Refresh avatar" button is NOT pulled here —
-		  // mountProfilePictureHero() places it in the page header so this card
-		  // stays focused on identity data. Website (`.user-url-wrap`) and
+		  // + reset. Website (`.user-url-wrap`) and
 		  // biographical info (`.user-description-wrap`) live on the Settings tab
 		  // — the user-facing copy / locale set, not the identity set.
 		  rows: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', ['.user-user-login-wrap', '.user-login-wrap'], ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
@@ -614,7 +571,7 @@
 	}
 
 	// On narrow screens, move all page-title-action buttons (native "Add New User"
-	// + any added by AdminKit, e.g. "Refresh avatar") below the tabs + panels —
+	// and any added by other plugins) below the tabs + panels —
 	// they shouldn't sit above the content on mobile. Restored to the header on
 	// wide screens.
 	var pageActions = Array.prototype.slice.call(document.querySelectorAll('.page-title-action'));

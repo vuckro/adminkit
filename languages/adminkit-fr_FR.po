@@ -24,12 +24,6 @@ msgstr "Outils disponibles"
 msgid "Import"
 msgstr "Importer"
 
-#: inc/wp-core/class-local-avatars.php:464
-msgid "%d avatar refreshed."
-msgid_plural "%d avatars refreshed."
-msgstr[0] "%d avatar actualisé."
-msgstr[1] "%d avatars actualisés."
-
 #: inc/settings/class-settings-page.php:401
 msgid "%d tokens"
 msgstr "%d tokens"
@@ -214,10 +208,6 @@ msgstr "Capacités supplémentaires"
 msgid "Addresses"
 msgstr "Adresses"
 
-#: inc/settings/class-settings-catalog.php:109
-msgid "Optional: every user without a real Gravatar gets a unique generated portrait instead of an empty silhouette (sets \"AdminKit Portraits\" as your Default Avatar in Settings → Discussion). Portraits come from an external service (DiceBear); turn off to restore Mystery Person."
-msgstr "Optionnel : chaque utilisateur sans vrai Gravatar reçoit un portrait généré unique au lieu d’une silhouette vide (définit « AdminKit Portraits » comme avatar par défaut dans Réglages → Discussion). Les portraits proviennent d’un service externe (DiceBear) ; désactivez pour rétablir « Personne mystère »."
-
 #: inc/settings/class-settings-catalog.php:37
 msgid "Adds a bell to the toolbar that collects admin notices into a side drawer, keeping success confirmations inline. Off restores every notice to its normal place."
 msgstr "Ajoute une cloche à la barre d’outils qui regroupe les notices d’administration dans un tiroir latéral, tout en gardant les confirmations en ligne. Désactivé, chaque notice retrouve sa place habituelle."
@@ -237,10 +227,6 @@ msgstr "E-mail d’administration, qui peut s’inscrire et le rôle par défaut
 #: inc/features/dashboard/class-custom-dashboard.php:203 inc/features/dashboard/class-custom-dashboard.php:904
 msgid "AdminKit"
 msgstr "AdminKit"
-
-#: inc/wp-core/class-local-avatars.php:182
-msgid "AdminKit Portraits (Generated)"
-msgstr "Portraits AdminKit (Générés)"
 
 #: inc/settings/class-settings-catalog.php:72
 msgid "AdminKit icons"
@@ -378,10 +364,6 @@ msgstr "Contenu et listes"
 msgid "Core, plugins, themes"
 msgstr "Cœur, extensions, thèmes"
 
-#: inc/wp-core/class-local-avatars.php:403
-msgid "Could not refresh the avatar — please try again."
-msgstr "Impossible d’actualiser l’avatar — veuillez réessayer."
-
 #: inc/settings/class-settings-page.php:394
 msgid "Could not save"
 msgstr "Échec de l’enregistrement"
@@ -397,10 +379,6 @@ msgstr "Pages consultées"
 #: inc/features/stats/class-stats-dashboard.php:456 inc/settings/class-settings-page.php:415
 msgid "Custom"
 msgstr "Personnalisé"
-
-#: inc/settings/class-settings-catalog.php:108
-msgid "Custom avatars"
-msgstr "Avatars personnalisés"
 
 #: inc/settings/class-settings-catalog.php:30
 msgid "Custom dashboard"
@@ -750,10 +728,6 @@ msgstr "Gestionnaire de barre d’outils"
 msgid "Reorder and hide the top-level items in the admin toolbar (the bar across the top of the screen) — configured in the Toolbar tab. Off restores the native toolbar (your saved layout is kept)."
 msgstr "Réorganisez et masquez les éléments de premier niveau de la barre d’outils d’administration (la barre en haut de l’écran) — configuré dans l’onglet Barre d’outils. Désactivé rétablit la barre native (votre disposition est conservée)."
 
-#: inc/wp-core/class-local-avatars.php:306 inc/wp-core/class-user-quick-edit.php:254
-msgid "Missing user id."
-msgstr "Identifiant d’utilisateur manquant."
-
 #: inc/features/dashboard/class-custom-dashboard.php:1284
 msgid "Moderate"
 msgstr "Modérer"
@@ -941,10 +915,6 @@ msgstr "Connexions récentes"
 #: inc/features/dashboard/class-custom-dashboard.php:1038
 msgid "Recommended"
 msgstr "Recommandés"
-
-#: inc/wp-core/class-local-avatars.php:402 inc/wp-core/class-local-avatars.php:423 inc/wp-core/class-user-quick-edit.php:200
-msgid "Refresh avatar"
-msgstr "Actualiser l'avatar"
 
 #: inc/settings/class-settings-page.php:365 inc/settings/class-settings-page.php:408
 msgid "Remove"
@@ -1354,10 +1324,6 @@ msgstr "Écrire un article"
 msgid "Year to date"
 msgstr "Année en cours"
 
-#: inc/wp-core/class-local-avatars.php:310 inc/wp-core/class-user-quick-edit.php:259
-msgid "You are not allowed to do that."
-msgstr "Vous n'êtes pas autorisé·e à faire cela."
-
 #: inc/features/notifications/class-notification-center.php:183
 msgid "You’re all caught up."
 msgstr "Vous êtes à jour."
@@ -1499,3 +1465,11 @@ msgstr "Bleu WaasKit"
 #: inc/settings/class-settings-page.php
 msgid "No icons found."
 msgstr "Aucune icône trouvée."
+
+#: inc/wp-core/class-user-quick-edit.php:254
+msgid "Missing user id."
+msgstr "Identifiant d’utilisateur manquant."
+
+#: inc/wp-core/class-user-quick-edit.php:259
+msgid "You are not allowed to do that."
+msgstr "Vous n'êtes pas autorisé·e à faire cela."

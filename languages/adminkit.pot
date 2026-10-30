@@ -6,12 +6,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "X-Domain: adminkit\n"
 
-#: inc/wp-core/class-local-avatars.php:464
-msgid "%d avatar refreshed."
-msgid_plural "%d avatars refreshed."
-msgstr[0] ""
-msgstr[1] ""
-
 #: inc/settings/class-settings-page.php:401
 msgid "%d tokens"
 msgstr ""
@@ -196,10 +190,6 @@ msgstr ""
 msgid "Addresses"
 msgstr ""
 
-#: inc/settings/class-settings-catalog.php:109
-msgid "Optional: every user without a real Gravatar gets a unique generated portrait instead of an empty silhouette (sets \"AdminKit Portraits\" as your Default Avatar in Settings → Discussion). Portraits come from an external service (DiceBear); turn off to restore Mystery Person."
-msgstr ""
-
 #: inc/settings/class-settings-catalog.php:37
 msgid "Adds a bell to the toolbar that collects admin notices into a side drawer, keeping success confirmations inline. Off restores every notice to its normal place."
 msgstr ""
@@ -218,10 +208,6 @@ msgstr ""
 
 #: inc/features/dashboard/class-custom-dashboard.php:203 inc/features/dashboard/class-custom-dashboard.php:904
 msgid "AdminKit"
-msgstr ""
-
-#: inc/wp-core/class-local-avatars.php:182
-msgid "AdminKit Portraits (Generated)"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:72
@@ -360,10 +346,6 @@ msgstr ""
 msgid "Core, plugins, themes"
 msgstr ""
 
-#: inc/wp-core/class-local-avatars.php:403
-msgid "Could not refresh the avatar — please try again."
-msgstr ""
-
 #: inc/settings/class-settings-page.php:394
 msgid "Could not save"
 msgstr ""
@@ -378,10 +360,6 @@ msgstr ""
 
 #: inc/features/stats/class-stats-dashboard.php:456 inc/settings/class-settings-page.php:415
 msgid "Custom"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:108
-msgid "Custom avatars"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:30
@@ -732,10 +710,6 @@ msgstr ""
 msgid "Reorder and hide the top-level items in the admin toolbar (the bar across the top of the screen) — configured in the Toolbar tab. Off restores the native toolbar (your saved layout is kept)."
 msgstr ""
 
-#: inc/wp-core/class-local-avatars.php:306 inc/wp-core/class-user-quick-edit.php:254
-msgid "Missing user id."
-msgstr ""
-
 #: inc/features/dashboard/class-custom-dashboard.php:1284
 msgid "Moderate"
 msgstr ""
@@ -922,10 +896,6 @@ msgstr ""
 
 #: inc/features/dashboard/class-custom-dashboard.php:1038
 msgid "Recommended"
-msgstr ""
-
-#: inc/wp-core/class-local-avatars.php:402 inc/wp-core/class-local-avatars.php:423 inc/wp-core/class-user-quick-edit.php:200
-msgid "Refresh avatar"
 msgstr ""
 
 #: inc/settings/class-settings-page.php:365 inc/settings/class-settings-page.php:408
@@ -1336,10 +1306,6 @@ msgstr ""
 msgid "Year to date"
 msgstr ""
 
-#: inc/wp-core/class-local-avatars.php:310 inc/wp-core/class-user-quick-edit.php:259
-msgid "You are not allowed to do that."
-msgstr ""
-
 #: inc/features/notifications/class-notification-center.php:183
 msgid "You’re all caught up."
 msgstr ""
@@ -1484,4 +1450,12 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "No icons found."
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php:254
+msgid "Missing user id."
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php:259
+msgid "You are not allowed to do that."
 msgstr ""

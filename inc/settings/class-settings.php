@@ -213,14 +213,6 @@ class AdminKit_Settings {
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// External DiceBear portraits are opt-in; native avatars remain unchanged.
-		self::register( 'custom_avatars_enabled', array(
-			'type'     => 'toggle',
-			'group'    => 'features',
-			'default'  => false,
-			'sanitize' => 'rest_sanitize_boolean',
-		) );
-
 		// User quick edit — OFF by default. Mirrors the post Quick Edit pattern
 		// for the users list: inline form to update first name / last name /
 		// email / role from users.php without opening user-edit.php. Read by

@@ -41,6 +41,7 @@ class AdminKit_Plugin {
 		'wp-core/class-branding.php'                           => 'AdminKit_Core_Branding::init',
 		'wp-core/class-menu-icons.php'                         => 'AdminKit_Core_Menu_Icons::init',
 		'settings/class-settings.php'                          => 'AdminKit_Settings::init',
+		'class-upgrades.php'                                  => 'AdminKit_Upgrades::init',
 		'settings/class-settings-catalog.php'                 => null, // booted by Settings_Page
 		'settings/class-settings-gate.php'                    => null, // booted by Settings_Page
 		'settings/class-settings-page.php'                     => 'AdminKit_Settings_Page::init',
@@ -48,7 +49,6 @@ class AdminKit_Plugin {
 
 		// wp-core — restyle of existing WordPress screens.
 		'wp-core/class-profile-account.php'                    => 'AdminKit_Profile_Account::init',
-		'wp-core/class-local-avatars.php'                      => 'AdminKit_Local_Avatars::init',
 		'wp-core/class-list-table-chrome.php'                  => 'AdminKit_Core_List_Table_Chrome::init',
 		'wp-core/class-admin-bar.php'                          => 'AdminKit_Core_Admin_Bar::init',
 		'wp-core/class-options-general.php'                    => 'AdminKit_Core_Options_General::init',

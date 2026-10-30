@@ -229,3 +229,13 @@ Contrôle local : sortie de survol échantillonnée sur 20 images par thème, ma
 `assets/css/wp-components/feedback.css` habille les alertes de premier niveau et celles déplacées dans `.ak-nc-list` : surface neutre, bordure fine, icône Lucide propre au statut dans une tuile douce, fermeture discrète avec focus et cible tactile de 44 px sur mobile. Les notices contextuelles des formulaires et lignes de mise à jour gardent leur géométrie compacte. Les snackbars React reçoivent une surface surélevée et des actions contrastées ; leurs durées, annonces et gestionnaires restent natifs.
 
 Références : [Alertes WaasKit](https://design.waaskit.site/composants/alertes/) et [Modales et toasts](https://design.waaskit.site/composants/modales-toasts/). Les essais utilisent des exemples DOM temporaires, retirés ensuite, sans activation d’extension ni modification des messages métier. La fermeture est exercée par `wp-notice-added` et le gestionnaire natif `click.wp-dismiss-notice` de WordPress, au clavier. Succès/info/avertissement/erreur et snackbar contrôlés à 1280 et 390 px en clair/sombre : aucun défaut au dépistage de contraste textuel ni débordement du document. Preuves dans `output/funnelkit-review/followup/alerts-native-review.log` du workspace.
+
+### Storage upgrades
+
+`AdminKit_Upgrades` applies versioned, per-site upgrades on `admin_init` for an
+administrator. `adminkit_storage_version` is not autoloaded. Upgrade 1 retires the
+custom-avatar setting, sync marker and user metadata; only the former AdminKit
+portrait default is reset to WordPress's Mystery Person. Other avatar choices
+and ordinary user profile fields are preserved. User metadata is network-shared
+in multisite; the removed avatar module no longer consumes it on any site.
+Native WordPress avatars remain available; AdminKit no longer generates portraits.

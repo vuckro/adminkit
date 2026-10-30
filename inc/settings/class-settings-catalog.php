@@ -103,12 +103,6 @@ class AdminKit_Settings_Catalog {
 				'desc'  => __( 'Lets admins rename a user\'s login on Users → Edit (WordPress disables this by default). Sensitive — invalidates the user\'s active sessions; they must sign in again. Single-site only.', 'adminkit' ),
 			),
 			array(
-				'key'   => 'custom_avatars_enabled',
-				'group' => $users,
-				'label' => __( 'Custom avatars', 'adminkit' ),
-				'desc'  => __( 'Optional: every user without a real Gravatar gets a unique generated portrait instead of an empty silhouette (sets "AdminKit Portraits" as your Default Avatar in Settings → Discussion). Portraits come from an external service (DiceBear); turn off to restore Mystery Person.', 'adminkit' ),
-			),
-			array(
 				'key'   => 'online_users_enabled',
 				'group' => $users,
 				'label' => __( 'Online users', 'adminkit' ),

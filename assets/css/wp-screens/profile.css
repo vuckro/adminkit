@@ -35,7 +35,7 @@ body.adminkit.user-new-php #message p:nth-of-type(2) {
 
 /* Profile picture hero (moved out of accordions under page title). Flex
    instead of grid so any number of `.page-title-action` buttons (native
-   "Add User" + AdminKit's "Refresh avatar") sit inline next to the title
+   "Add User" and third-party actions) sit inline next to the title
    rather than wrapping under the avatar. */
 body.adminkit.user-edit-php .ak-profile-header,
 body.adminkit.profile-php .ak-profile-header {
