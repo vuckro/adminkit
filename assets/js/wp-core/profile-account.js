@@ -25,6 +25,7 @@
 		if (S.readyClass) { docEl.classList.add(S.readyClass); }
 	}
 
+	var isExistingAccount = document.body.classList.contains('profile-php') || document.body.classList.contains('user-edit-php');
 	var form = document.querySelector('#your-profile, #createuser');
 	if (!form || form.dataset.akAccount) { reveal(); return; }
 	form.dataset.akAccount = '1';
@@ -523,9 +524,8 @@
 
 	// The profile and account-creation form share a wide identity card and a narrower
 	// security card inside the same tabpanel. Move native rows, retaining field
-	// names, event handlers and WordPress's password controls. User-edit
-	// keeps its existing layout.
-	if (document.body.classList.contains('profile-php') || form.id === 'createuser') {
+	// names, event handlers and WordPress's password controls on all account screens.
+	if (isExistingAccount || form.id === 'createuser') {
 		var information = panelFor('information');
 		if (information) {
 			var identity = makePanel('ak-profile-identity', S.identity_contact, '');
@@ -556,14 +556,14 @@
 
 	// Profile Settings: separate native controls into readable sibling cards.
 	// Keep the outer tabpanel and original controls (including app-password JS).
-	if (document.body.classList.contains('profile-php')) {
+	if (isExistingAccount) {
 		var settings = panelFor('settings');
 		if (settings) {
 			var parts = [
 				{ id: 'public-profile', title: S.public_profile, desc: S.public_profile_desc },
-				{ id: 'admin-preferences', title: S.admin_preferences, desc: S.admin_preferences_desc },
-				{ id: 'sessions', title: S.profile_sessions, desc: S.profile_sessions_desc },
-				{ id: 'applications', title: S.profile_apps, desc: S.profile_apps_desc }
+				{ id: 'admin-preferences', title: S.admin_preferences, desc: document.body.classList.contains('user-edit-php') ? '' : S.admin_preferences_desc },
+				{ id: 'sessions', title: S.profile_sessions, desc: document.body.classList.contains('user-edit-php') ? '' : S.profile_sessions_desc },
+				{ id: 'applications', title: S.profile_apps, desc: document.body.classList.contains('user-edit-php') ? '' : S.profile_apps_desc }
 			].map(function (def) {
 				var part = makePanel('profile-' + def.id, def.title, def.desc);
 				part.card.id = 'ak-profile-' + def.id;

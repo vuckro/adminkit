@@ -373,3 +373,11 @@ ARIA roles and timing remain unchanged. Plugin update rows retain their table
 spacing while consuming this same alert frame. The login module registers
 `adminkit-login-feedback` against the same stylesheet after `adminkit-login`, so
 login and password-recovery messages use the same recipe.
+
+Account editing (`user-edit.php`) shares the existing-account workspace with
+`profile.php`: identity/contact and password controls in sibling cards, preferences
+in separate settings cards, and sessions/application passwords in Security.
+The layout moves native controls without cloning or changing submission names;
+plugin sections retain their own tabs. Self-addressed help copy is omitted when
+editing another user. Isolated rendering verified at 1440/390px in light/dark;
+all native inputs remain in the original form. No live account save was tested.
