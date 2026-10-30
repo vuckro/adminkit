@@ -153,7 +153,7 @@ The shared `assets/js/settings.js` host receives one screen factory:
 
 | Pages | JavaScript | Styles |
 | --- | --- | --- |
-| Brand / Features / Plugins | `settings/main.js` | `settings/main.css` |
+| Brand / Features / Plugins | `settings/main.js` (host) + `settings/design.js`, `features.js`, `plugins.js` (one tab each, loaded first and exposed on `window.AdminKitParts`) | `settings/main.css` |
 | Menu / Toolbar | `settings/navigation.js` | `settings/navigation.css` |
 
 Paths are relative to `assets/js/` and `assets/css/`. Every page also loads the

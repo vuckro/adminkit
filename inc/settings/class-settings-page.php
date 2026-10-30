@@ -197,7 +197,16 @@ class AdminKit_Settings_Page {
 		$screen_handle = self::HANDLE . '-' . $module;
 		wp_enqueue_style( self::HANDLE, ADMINKIT_URL . $css, array( AdminKit_Assets::TOKENS_HANDLE ), self::ver( $css ) );
 		wp_enqueue_style( $screen_handle, ADMINKIT_URL . $screen_css, array( self::HANDLE ), self::ver( $screen_css ) );
-		wp_enqueue_script( $screen_handle, ADMINKIT_URL . $screen_js, array( 'wp-api-fetch' ), self::ver( $screen_js ), true );
+		// The main screen's tabs live in their own files (assets/js/settings/<part>.js).
+		$deps = array( 'wp-api-fetch' );
+		if ( 'main' === $module ) {
+			foreach ( array( 'design', 'features', 'plugins' ) as $part ) {
+				$part_js = 'assets/js/settings/' . $part . '.js';
+				wp_enqueue_script( $screen_handle . '-' . $part, ADMINKIT_URL . $part_js, array(), self::ver( $part_js ), true );
+				$deps[] = $screen_handle . '-' . $part;
+			}
+		}
+		wp_enqueue_script( $screen_handle, ADMINKIT_URL . $screen_js, $deps, self::ver( $screen_js ), true );
 		wp_enqueue_script( self::HANDLE, ADMINKIT_URL . $js, array( $screen_handle ), self::ver( $js ), true );
 		wp_add_inline_script( self::HANDLE, 'window.AdminKitData=' . wp_json_encode( $data ) . ';', 'before' );
 	}
