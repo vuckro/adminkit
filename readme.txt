@@ -62,7 +62,7 @@ Yes. Every feature is an individual toggle on the AdminKit settings page, and al
 * Initial release.
 * A flat, modern restyle of wp-admin, wp-login.php and the frontend admin bar, built entirely on CSS custom properties (`--ak-*` tokens).
 * Light + dark mode with a sun/moon toggle in the admin bar (and `prefers-color-scheme` on first visit).
-* Opt-in Gutenberg canvas theming and icon replacement.
+* Opt-in Gutenberg canvas theming. Lucide icons are included in the default admin skin.
 * Tabbed Settings screens (including Discussion, Reading and Writing), plus dedicated Menu and Toolbar screens under the AdminKit menu.
 * Login-screen branding with a centred logo and a light/dark toggle; plus a brand mark at the site title — your logo, the site favicon, or none — with the top-left WordPress logo hidden.
 * Registry-based assets with per-screen conditional loading, integration scaffolding and host-drift detection.

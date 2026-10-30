@@ -33,3 +33,9 @@ un repère de 2 px. La palette publique WaasKit n’est pas modifiée.
 Vérification : `php dev/check-icons.php` valide tous les noms, les anciens alias,
 la géométrie en contour et l’absence de balises/attributs exécutables dans le SVG.
 Les captures et scripts de revue locale sont dans `output/` du dossier Adminkit.
+
+Les icônes Lucide font partie de l’habillage par défaut, indépendamment de
+l’activation du gestionnaire de menus. Le réglage interne
+`replace_icons_enabled` reste disponible pour les intégrateurs. Les choix
+par entrée du gestionnaire restent prioritaires, dont `wp-default` pour
+rétablir le pictogramme WordPress d’origine sans désactiver toute la bibliothèque.

@@ -14,7 +14,8 @@ PHP 7.4+. No runtime dependencies, no npm or Composer build.
 - Dedicated plugin/theme adapters, loaded only when the corresponding host is active.
   [Integration reference](docs/INTEGRATIONS.md).
 
-All optional features and integrations are disabled by default. Enable only the tools
+Lucide icons are part of the default administration skin. Optional tools and
+integrations are disabled by default. Enable only the tools
 you need in the AdminKit settings. The menu table is created only when its feature is enabled. Hiding a menu does not change
 WordPress permissions. The frontend toolbar is scoped so the site's public design
 remains owned by its theme.

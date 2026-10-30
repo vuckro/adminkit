@@ -203,7 +203,8 @@ Run `php dev/css-contract.php` alongside token drift, contrast and browser check
 
 ### Opt-in defaults
 
-All optional feature and adapter switches default to false. Stored explicit choices
+Optional tools and adapter switches default to false; icon replacement belongs
+to the base skin and defaults to true. Stored explicit choices
 remain effective; resetting Features or Extensions restores the disabled defaults.
 Generic plugin screens require their plugin file in `generic_theming_on`; the old
 `generic_theming_off` blacklist no longer implicitly enables unknown plugins.

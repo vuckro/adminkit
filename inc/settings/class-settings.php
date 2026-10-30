@@ -195,11 +195,11 @@ class AdminKit_Settings {
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// Icon replacement is opt-in, independently of the menu editor.
+		// AdminKit icons are part of the default skin; the menu editor owns per-item choices.
 		self::register( 'replace_icons_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => false,
+			'default'  => true,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 

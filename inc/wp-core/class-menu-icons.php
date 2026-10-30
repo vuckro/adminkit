@@ -1,7 +1,7 @@
 <?php
 /**
  * Menu & toolbar icons — swap WordPress's native dashicons for a cohesive AdminKit
- * icon set (Lucide). Opt-in via the `replace_icons_enabled` setting.
+ * icon set (Lucide). Enabled by default via `replace_icons_enabled`.
  *
  * Designed to be NON-DESTRUCTIVE and fully overridable — never a brute override:
  *   - The menu map is keyed by dashicon CLASS (`dashicons-admin-post` …), so it
