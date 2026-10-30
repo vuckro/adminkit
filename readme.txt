@@ -1,6 +1,6 @@
 === AdminKit ===
 Contributors: waaskit
-Tags: admin, dashboard, dark-mode, admin-theme, avatars
+Tags: admin, dark-mode, admin-theme
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Give your WordPress admin a clean, modern look — one-click dark mode, a refreshed dashboard, a menu editor and private stats. No setup needed.
+Give your WordPress admin a clean, modern look — optional dark mode, a menu editor and focused administration tools. No setup needed.
 
 == Description ==
 
@@ -16,11 +16,9 @@ AdminKit gives the whole WordPress back office — the dashboard, every settings
 
 It also adds a handful of quality-of-life tools, each an individual on/off toggle:
 
-* a **redesigned dashboard** (greeting, quick actions, at-a-glance counts, site health, storage, recent activity — drag the cards to taste),
 * an **admin-menu editor** (reorder, rename, re-icon, hide entries),
-* **cookieless visitor stats** (unique visitors + page views, with a live view — no cookies, no IP stored, no consent banner),
 * a **notifications drawer** that tidies admin notices off the top of every screen,
-* **generated avatars** for users with no photo, and inline **Quick Edit** on the users list.
+* inline **Quick Edit** on the users list.
 
 It is **standalone** — no theme or page builder required, and **nothing changes on the public side of your site**; AdminKit lives entirely inside wp-admin. Under the hood it's built on CSS variables, so it can optionally pick up your brand colours from a provider like Bricks.
 
@@ -32,12 +30,10 @@ It is **standalone** — no theme or page builder required, and **nothing change
 * Conditional, per-screen CSS loading — pages only load the styles they need.
 * Users-list Quick Edit: a "Quick Edit" link on each row of Users → All Users opens an inline editor for first / last name, email and role — same pattern WordPress ships for posts. Saves via AJAX, no full page reload.
 * Username changer (opt-in): turns the natively-disabled Username field into an editable one on Users → Edit. Validates the new login, dedupes against existing users, and destroys the affected user's sessions so the old name can't keep an old device signed in. Single-site only.
-* A custom dashboard that replaces the stock one: a greeting, quick actions, at-a-glance counts, site-health and storage, recent activity — drag the cards to rearrange them per user.
 * A built-in Menu editor: reorder the admin menu and submenus, swap icons and hide entries, on its own AdminKit screen.
-* Cookieless Statistics: a tiny no-cookie beacon counts unique visitors and page views, shown on a dashboard card and a dedicated Statistics screen with a live view. Uniqueness uses a salted, daily-rotating hash of IP + browser computed in memory — the raw IP is never stored and the hash can't be linked across days, so there's no cookie and no consent banner. Off by default; turn it on in Settings → Features.
 * A Notification Center: a toolbar bell that gathers admin notices into a side drawer so the top of every screen stays calm.
 * Online users: see who's signed in right now (read from existing WordPress sessions, no extra tracking), with an "Online" filter and a "Last login" column on the Users screen.
-* Tabbed Settings, plus dedicated Menu and Statistics screens under the AdminKit menu.
+* Tabbed Settings, plus dedicated Menu and Toolbar screens under the AdminKit menu.
 * Optional adapters that skin popular plugins/themes (Bricks, WooCommerce, ACF, the Fluent suite, and more).
 
 == Installation ==
@@ -67,9 +63,7 @@ Yes. Every feature is an individual toggle on the AdminKit settings page, and al
 * A flat, modern restyle of wp-admin, wp-login.php and the frontend admin bar, built entirely on CSS custom properties (`--ak-*` tokens).
 * Light + dark mode with a sun/moon toggle in the admin bar (and `prefers-color-scheme` on first visit).
 * Opt-in Gutenberg canvas theming and icon replacement.
-* A custom dashboard (greeting, quick actions, at-a-glance counts, site health, storage, recent activity) with per-user drag-to-rearrange cards.
-* A built-in admin Menu editor, a cookieless Statistics screen (unique visitors + page views, no cookies / no IP stored, with a live view), a Notification Center drawer, and an Online-users view — each an individual toggle.
-* Tabbed Settings screens (including Discussion, Reading and Writing), plus dedicated Menu and Statistics screens under the AdminKit menu.
+* Tabbed Settings screens (including Discussion, Reading and Writing), plus dedicated Menu and Toolbar screens under the AdminKit menu.
 * Login-screen branding with a centred logo and a light/dark toggle; plus a brand mark at the site title — your logo, the site favicon, or none — with the top-left WordPress logo hidden.
 * Registry-based assets with per-screen conditional loading, integration scaffolding and host-drift detection.
 * Optional adapters that skin popular plugins/themes (Bricks, WooCommerce, ACF, the Fluent suite, and more).

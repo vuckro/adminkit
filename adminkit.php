@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       AdminKit
  * Plugin URI:        https://github.com/vuckro/adminkit
- * Description:       Give your WordPress admin a clean, modern look — one-click dark mode, a refreshed dashboard, a menu editor, cookieless stats and polished plugin screens. Standalone, no setup.
+ * Description:       Give your WordPress admin a clean, modern look — optional dark mode, menu and toolbar editors, and polished plugin screens. Standalone, no setup.
  * Version:           1.0.0
  * Requires at least: 6.0
  * Requires PHP:      7.4

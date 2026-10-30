@@ -59,8 +59,6 @@ class AdminKit_Plugin {
 
 		// features — AdminKit tools that add their own surface.
 		'features/online-users/class-online-users.php'         => 'AdminKit_Online_Users::init',
-		'features/dashboard/class-dashboard-cards.php'         => null, // presentation half, used by Custom_Dashboard
-		'features/dashboard/class-custom-dashboard.php'        => 'AdminKit_Custom_Dashboard::init',
 		'features/notifications/class-notification-center.php' => 'AdminKit_Notification_Center::init',
 		'wp-core/class-footer.php'                             => 'AdminKit_Footer::init',
 		'wp-core/class-help-button.php'                        => 'AdminKit_Help_Button::init',
@@ -68,10 +66,6 @@ class AdminKit_Plugin {
 		'wp-core/class-content-list.php'                       => 'AdminKit_Content_List::init',
 		'features/menu/class-menu-store.php'                   => null, // schema only
 		'features/menu/class-menu-manager.php'                 => 'AdminKit_Menu_Manager::init',
-		'features/stats/class-stats-store.php'                 => null, // schema only
-		'features/stats/class-stats-tracker.php'               => 'AdminKit_Stats_Tracker::init',
-		'features/stats/class-stats-dashboard.php'             => 'AdminKit_Stats_Dashboard::init',
-		'features/stats/class-stats-page.php'                  => 'AdminKit_Stats_Page::init',
 		'features/toolbar/class-toolbar-manager.php'           => 'AdminKit_Toolbar_Manager::init',
 	);
 

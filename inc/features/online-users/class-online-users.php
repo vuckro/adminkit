@@ -13,13 +13,11 @@
  * scope.
  *
  * The ONLY write this feature adds is a single `adminkit_last_login` user meta on the
- * `wp_login` action — one write per login — used for the "recent logins" dashboard
- * fallback and the "Last login" column, both of which must work for users whose
+ * `wp_login` action — one write per login — used for the "Last login" column, which must work for users whose
  * session is already gone.
  *
  * Surfaces (all reversible — toggle off and each disappears, native screens
- * untouched): a dashboard card (consumed by AdminKit_Custom_Dashboard), plus an
- * "Online" view tab + "Last login" column on the Users list table.
+ * untouched): a "Last login" column with online indicators on the Users list table.
  *
  * Filter:
  *   adminkit/online_users/enabled  (bool)  master on/off

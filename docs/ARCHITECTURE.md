@@ -17,9 +17,9 @@ adminkit.php
   └─ AdminKit_Plugin::init()
        ├─ AdminKit_Assets::init()          wire the 4 dispatch hooks
        ├─ wp-core modules ::init()         chrome, login, profile, admin bar, list-table,
-       │                                   post-previews + custom-dashboard, online-users,
+       │                                   post-previews, online-users,
        │                                   notification-center, footer, help-button, plugins-list
-       ├─ feature modules ::init()         inc/features/{menu,stats}/ — self-contained tools,
+       ├─ feature modules ::init()         inc/features/{menu,toolbar}/ — self-contained tools,
        │                                   each self-registers its own AdminKit subpage
        ├─ Settings + Theme toggle init
        ├─ boot_integrations()              glob inc/integrations/*/*/class-*.php,
@@ -30,7 +30,7 @@ adminkit.php
 Two tiers under `inc/`: **wp-core/** restyles surfaces WordPress already renders;
 **features/** adds NEW AdminKit surfaces (the menu editor, the analytics pages), each its own
 focused admin subpage. The AdminKit menu has three subpages — **Settings** (tabbed: Brand ·
-Features · Plugins), **Menu**, **Statistics** (read-only) — all driven by one build-free
+Features · Plugins), **Menu**, **Toolbar** — all driven by one build-free
 vanilla-DOM engine (`assets/js/settings.js`) mounted per-screen via a `data-screen` host
 attribute; `inc/settings/class-settings-page.php` exposes the shared `render_host()` / `enqueue_app()` /
 `boot_data($screen)` helpers each subpage calls. Dark mode is design-time CSS only — no runtime
@@ -155,7 +155,6 @@ The shared `assets/js/settings.js` host receives one screen factory:
 | --- | --- | --- |
 | Brand / Features / Plugins | `settings/main.js` | `settings/main.css` |
 | Menu / Toolbar | `settings/navigation.js` | `settings/navigation.css` |
-| Statistics | `settings/stats.js` | `settings/stats.css` |
 
 Paths are relative to `assets/js/` and `assets/css/`. Every page also loads the
 small shared host and `settings.css`. WordPress script dependencies guarantee
@@ -167,9 +166,7 @@ posts through `wp-api-fetch` and displays the save result. There is no multi-end
 save batch: menu, toolbar and settings save only their own data.
 
 Main tabs mount on first selection. Tab panels retain stable ARIA relationships
-and keyboard navigation; single-panel pages have no orphaned tab labels. Statistics
-fetch immediately on their dedicated page; the obsolete hidden Stats-tab observer
-has been removed. Statistics tracking remains opt-in.
+and keyboard navigation; single-panel pages have no orphaned tab labels.
 
 Boot data and translations are filtered per screen. The media frame loads only
 for Brand controls. Existing schema/defaults, settings sanitization, WordPress
@@ -211,8 +208,8 @@ remain effective; resetting Features or Extensions restores the disabled default
 Generic plugin screens require their plugin file in `generic_theming_on`; the old
 `generic_theming_off` blacklist no longer implicitly enables unknown plugins.
 Core administration styling and the settings screen remain the base layer.
-Menu/toolbar editors bind their routes and hooks only when enabled. Menu and stats
-tables are created lazily by their enabled modules, never by plugin activation.
+Menu/toolbar editors bind their routes and hooks only when enabled. The menu
+table is created lazily by its enabled module, never by plugin activation.
 
 ### WPDS et Connecteurs natifs
 
@@ -250,3 +247,11 @@ Storage upgrade 3 renames `plugins_active_first_enabled` to
 already saved new value. This opt-in now covers standard post/page/CPT lists
 (Published) as well as plugins (Active). Native page hierarchies remain intact;
 explicit filters, content searches and requested sorting are preserved.
+
+Storage upgrade 4 retires the custom dashboard and traffic statistics. It removes
+the per-site statistics table, module settings, database-version/prune markers,
+module-owned user preferences and database-backed caches. Other modules and native
+WordPress dashboard preferences are retained. A failed table drop is retried.
+External transient caches expire by their existing TTLs; the dedicated statistics
+object-cache group is flushed when supported. No global cache flush is performed.
+The WordPress dashboard remains available with the base administration skin.

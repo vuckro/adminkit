@@ -24,12 +24,7 @@ class AdminKit_Settings_Catalog {
 		$appearance = __( 'Appearance', 'adminkit' );
 		$users      = __( 'Users & access', 'adminkit' );
 		$rows       = array(
-			array(
-				'key'   => 'custom_dashboard_enabled',
-				'group' => $content,
-				'label' => __( 'Custom dashboard', 'adminkit' ),
-				'desc'  => __( 'Replace the WordPress dashboard with a custom one: greeting, quick actions, stat tiles, recent activity, site health and storage. Off restores the native dashboard.', 'adminkit' ),
-			),
+
 			array(
 				'key'   => 'notification_center_enabled',
 				'group' => $content,
@@ -106,14 +101,9 @@ class AdminKit_Settings_Catalog {
 				'key'   => 'online_users_enabled',
 				'group' => $users,
 				'label' => __( 'Online users', 'adminkit' ),
-				'desc'  => __( 'Track who is signed in (read from existing WordPress sessions, no extra tracking) and show them on the dashboard, plus an "Online" filter and a "Last login" column on the Users screen. Off hides all of it.', 'adminkit' ),
+				'desc'  => __( 'Track who is signed in (read from existing WordPress sessions, no extra tracking) and show a "Last login" column with online indicators on the Users screen. Off hides all of it.', 'adminkit' ),
 			),
-			array(
-				'key'   => 'stats_enabled',
-				'group' => $content,
-				'label' => __( 'Traffic stats', 'adminkit' ),
-				'desc'  => __( 'Count page views and visits with a tiny cookieless beacon — no cookies, no IP storage, no consent banner, and almost no database footprint (pre-summed daily totals). Signed-in staff and bots are excluded. Off disables tracking entirely.', 'adminkit' ),
-			),
+
 		);
 
 		return $rows;

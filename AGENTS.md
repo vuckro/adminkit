@@ -15,7 +15,7 @@ brand theming come for free. PHP is organised by **intent**:
 | --- | --- | --- |
 | `inc/settings/` | The settings system (registry + SPA host) | `class-settings-page.php` |
 | `inc/wp-core/` | Restyle a screen WordPress already renders | `class-chrome.php`, `class-login.php` |
-| `inc/features/<name>/` | Add a NEW AdminKit surface (page, dashboard, store) | `features/stats/`, `features/menu/` |
+| `inc/features/<name>/` | Add a NEW AdminKit surface (page, dashboard, store) | `features/toolbar/`, `features/menu/` |
 | `inc/integrations/{plugins,themes}/<slug>/` | Skin a third-party plugin/theme | `integrations/themes/bricks/` |
 | `assets/css`, `assets/js` | Styles + behaviour, organised by load context | `assets/css/wp-screens/` |
 | `tokens/` | Source palettes → `php tokens/build.php` → `waaskit-tokens.css` | — |
@@ -61,8 +61,8 @@ new → `features/`.**
 - Dark mode is **design-time CSS only** — there is no runtime auto-theme engine.
 - Don't bump the version (`adminkit.php` header + `ADMINKIT_VERSION` + the
   `readme.txt` stable tag) without the maintainer's go-ahead.
-- Class name ↔ file name is 1:1 (`AdminKit_Custom_Dashboard` →
-  `features/dashboard/class-custom-dashboard.php`). Keep it that way.
+- Class name ↔ file name is 1:1 (`AdminKit_Toolbar_Manager` →
+  `features/toolbar/class-toolbar-manager.php`). Keep it that way.
 
 When in doubt, read [CLAUDE.md](CLAUDE.md) — it has the full task table and the
 "why" behind the non-obvious choices.

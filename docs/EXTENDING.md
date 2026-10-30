@@ -38,7 +38,6 @@ is in [ARCHITECTURE.md](ARCHITECTURE.md#asset-registry-css--js).
 | `adminkit/setting/{key}` | filter | `(mixed $value)` | Final value of any setting, applied last in `AdminKit_Settings::get()` — override env-specifically without the UI. |
 | `adminkit/providers` | filter | `(array)` | The provider list on the settings page; each `{ id, label, status, detected }`. |
 | `adminkit/integration_enabled` | filter | `(bool, string $slug)` | Gate a specific integration (e.g. `'bricks'`). |
-| `adminkit/dashboard` | filter | `(array)` | The settings Dashboard tab payload (cards / next-up). |
 
 `adminkit/setting/{key}` is in `inc/settings/class-settings.php`; the rest in
 `inc/settings/class-settings-page.php`.
@@ -179,25 +178,6 @@ capture and updates it in place. All hooks are in
 | `adminkit/post_previews/refresh_interval` | `(int $seconds)` | Screenshot cache window (0 = pin). |
 | `adminkit/post_previews/thumb_url` / `full_url` | `(string, WP_Post, $w, $h)` | Override the screenshot URL. |
 
-## Custom dashboard
-
-A server-rendered replacement for the wp-admin dashboard (greeting + quick actions
-+ stat tiles + recent activity + site-health + storage). Toggle off ⇒ the native
-dashboard returns. Hooks in `inc/wp-core/class-custom-dashboard.php`:
-
-| Hook | Signature | Purpose |
-| --- | --- | --- |
-| `adminkit/dashboard/enabled` | `(bool)` | Master on/off (mirrors the feature toggle). |
-| `adminkit/dashboard/greetings` | `(string[], int $hour)` | Greeting templates (`%s` = the styled name span); a fresh one is picked per load. |
-| `adminkit/dashboard/quotes` | `(string[])` | The rotating intro line under the greeting. |
-| `adminkit/dashboard/quick_actions` | `(array)` | The quick-action buttons. |
-| `adminkit/dashboard/stats` | `(array)` | The four stat tiles. |
-| `adminkit/dashboard/activity` | `(array)` | Recent-activity rows. |
-| `adminkit/dashboard/priorities` | `(array)` | The "priorities" / next-up list. |
-| `adminkit/dashboard/site_health` | `(array)` | Site-health card (score, badge, checks). |
-| `adminkit/dashboard/storage` | `(array)` | Storage segments — a host can add e.g. a backups row. |
-| `adminkit/dashboard/storage_total` | `(int $bytes)` | Total quota in bytes (0 = no quota → no bar / percent). |
-
 ## Notifications
 
 A toolbar bell that collects promotional notice "nags" into a right-side drawer,
@@ -210,53 +190,6 @@ categorization; toggle off ⇒ every notice renders inline. Hooks in
 | `adminkit/notifications/enabled` | `(bool)` | Master on/off (mirrors the feature toggle). |
 | `adminkit/notifications/js_allow` | `(string[])` | CSS selectors forced INTO the drawer. |
 | `adminkit/notifications/js_deny` | `(string[])` | CSS selectors forced to stay inline. |
-
-## Statistics
-
-The built-in cookieless tracker (`inc/features/stats/`) renders a period view
-(Unique visitors · Page views · trend vs the previous equal-length period · chart
-· top pages / sources) and a real-time Live view. Unique visitors are deduped by a
-salted, **daily-rotating** hash of IP + User-Agent computed server-side (see
-`AdminKit_Stats_Tracker::visitor_hash`) — cookieless, consent-free, the raw IP is
-never stored, and the hash can't be linked across days. Hooks:
-
-| Hook | Signature | Purpose |
-| --- | --- | --- |
-| `adminkit/stats/enabled` | `(bool)` | Master on/off (mirrors the feature toggle + gates collection). |
-| `adminkit/stats/dashboard_capability` | `(string)` | Capability required to view stats (default `edit_posts`). |
-| `adminkit/stats/default_range` | `(array{0,1})` | `[start, end]` Y-m-d when no preference is saved. |
-| `adminkit/stats/summary_ttl` | `(int)` | Cache TTL (seconds) for a summary read. |
-| `adminkit/stats/summary_range` | `(array, $start, $end, $limit)` | Final read seam — swap in a GA4 / Plausible source. |
-| `adminkit/stats/bot_needles` | `(string[])` | UA substrings dropped at the collector. |
-| `adminkit/stats/is_bot` | `(?bool, $ua)` | Short-circuit bot detection per request. |
-| `adminkit/stats/trust_proxy` | `(bool)` | Return true ONLY when the site is genuinely behind a trusted proxy/CDN, to honour `CF-Connecting-IP` / `X-Forwarded-For` for the visitor IP. **Off by default** — those headers are client-spoofable on a direct host and would let anyone inflate unique-visitor counts via the public beacon. |
-| `adminkit/stats/client_ip` | `(string)` | Override the resolved client IP (proxies/CDN) feeding the unique-visitor hash; only hashed, never stored. |
-| `adminkit/stats/cards` | `(array, $start, $end, $preset)` | **Contribute extra metric tiles** (e.g. WooCommerce revenue, FluentCart conversions). |
-
-**`adminkit/stats/cards`** is the seam for future commerce integrations. Return a
-list of cards; each is sanitised server-side and painted beside the native
-Visits / Page-views tiles on the Statistics page. Card shape:
-
-```php
-add_filter( 'adminkit/stats/cards', function ( $cards, $start, $end, $preset ) {
-    $cards[] = array(
-        'id'    => 'woo_revenue',                 // stable key (sanitised)
-        'label' => __( 'Revenue', 'my-plugin' ),  // already translated
-        'value' => '1 240 €',                     // already formatted for display
-        'sub'   => __( '38 orders', 'my-plugin' ),// optional secondary line
-        'trend' => array(                          // optional ▲/▼ badge
-            'dir'  => 'up',                        // 'up' | 'down' | 'flat'
-            'text' => '+12%',
-        ),
-    );
-    return $cards;
-}, 10, 4 );
-```
-
-The window is `[$start, $end]` (Y-m-d, the resolved range for `$preset`). Compute
-your own delta against the previous period if you want a trend badge — AdminKit
-passes the value through verbatim. Keep queries cheap and cached: the stats UI is
-meant to stay light on the database.
 
 ## Lifecycle
 

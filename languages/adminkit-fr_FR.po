@@ -28,97 +28,9 @@ msgstr "Importer"
 msgid "%d tokens"
 msgstr "%d tokens"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1250 inc/features/dashboard/class-custom-dashboard.php:1439
-msgid "%d update available"
-msgid_plural "%d updates available"
-msgstr[0] "%d mise à jour disponible"
-msgstr[1] "%d mises à jour disponibles"
-
-#: inc/features/stats/class-stats-dashboard.php:439
-msgid "%s active now"
-msgid_plural "%s active now"
-msgstr[0] "%s actif maintenant"
-msgstr[1] "%s actifs maintenant"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1117 inc/features/dashboard/class-custom-dashboard.php:1398 inc/features/online-users/class-online-users.php:232
+#: inc/features/online-users/class-online-users.php:232
 msgid "%s ago"
 msgstr "Il y a %s"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1284
-msgid "%s comment to moderate"
-msgid_plural "%s comments to moderate"
-msgstr[0] "%s commentaire à modérer"
-msgstr[1] "%s commentaires à modérer"
-
-#: inc/features/dashboard/class-custom-dashboard.php:759 inc/features/dashboard/class-custom-dashboard.php:782
-msgid "%s draft"
-msgid_plural "%s drafts"
-msgstr[0] "%s brouillon"
-msgstr[1] "%s brouillons"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1274
-msgid "%s draft to finish"
-msgid_plural "%s drafts to finish"
-msgstr[0] "%s brouillon à finir"
-msgstr[1] "%s brouillons à finir"
-
-#: inc/features/dashboard/class-custom-dashboard.php:790
-msgid "%s in moderation"
-msgstr "%s en modération"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1259
-msgid "%s inactive plugin"
-msgid_plural "%s inactive plugins"
-msgstr[0] "%s extension inactive"
-msgstr[1] "%s extensions inactives"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1263
-msgid "%s inactive theme"
-msgid_plural "%s inactive themes"
-msgstr[0] "%s thème inactif"
-msgstr[1] "%s thèmes inactifs"
-
-#: inc/features/dashboard/class-custom-dashboard.php:674
-msgid "%s is back!"
-msgstr "%s est de retour !"
-
-#: inc/features/dashboard/class-custom-dashboard.php:796
-msgid "%s on disk"
-msgstr "%s sur le disque"
-
-#: inc/features/dashboard/class-custom-dashboard.php:493 inc/features/dashboard/class-custom-dashboard.php:802
-msgid "%s online now"
-msgid_plural "%s online now"
-msgstr[0] "%s connecté"
-msgstr[1] "%s connectés"
-
-#: inc/features/dashboard/class-custom-dashboard.php:765
-msgid "%s pending review"
-msgstr "%s en attente de relecture"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1279
-msgid "%s post pending"
-msgid_plural "%s posts pending"
-msgstr[0] "%s article en attente"
-msgstr[1] "%s articles en attente"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1289
-msgid "%s scheduled post"
-msgid_plural "%s scheduled posts"
-msgstr[0] "%s publication planifiée"
-msgstr[1] "%s publications planifiées"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1392
-msgid "(no title)"
-msgstr "(sans titre)"
-
-#: inc/features/stats/class-stats-dashboard.php:453
-msgid "30 days"
-msgstr "30 jours"
-
-#: inc/features/stats/class-stats-dashboard.php:454
-msgid "90 days"
-msgstr "90 jours"
 
 #: inc/wp-core/class-username-changer.php:180
 msgid "<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or any of . - _ @ — and nothing else."
@@ -127,30 +39,6 @@ msgstr "<strong>Erreur :</strong> nom d’utilisateur invalide. Utilisez des let
 #: inc/wp-core/class-username-changer.php:188
 msgid "<strong>Error:</strong> That username is already taken."
 msgstr "<strong>Erreur :</strong> ce nom d’utilisateur est déjà pris."
-
-#: inc/features/dashboard/class-custom-dashboard.php:603
-msgid "A clear menu helps visitors find what matters."
-msgstr "Un menu clair aide les visiteurs à trouver l’essentiel."
-
-#: inc/features/dashboard/class-custom-dashboard.php:607
-msgid "A fast site is a friendly site — mind your page weight."
-msgstr "Un site rapide est un site accueillant — surveillez le poids des pages."
-
-#: inc/features/dashboard/class-custom-dashboard.php:572
-msgid "A fresh start — pick one thing to ship today."
-msgstr "Un nouveau départ — choisissez une chose à livrer aujourd’hui."
-
-#: inc/features/dashboard/class-custom-dashboard.php:579
-msgid "A good afternoon to refine and improve."
-msgstr "Un bel après-midi pour peaufiner et améliorer."
-
-#: inc/features/dashboard/class-custom-dashboard.php:641
-msgid "A good day begins"
-msgstr "Une bonne journée commence"
-
-#: inc/features/dashboard/class-custom-dashboard.php:659
-msgid "A quiet evening to get ahead"
-msgstr "La soirée est calme pour avancer"
 
 #: inc/wp-core/class-profile-account.php:165
 msgid "About Yourself"
@@ -172,25 +60,13 @@ msgstr "Gestion du compte"
 msgid "Account sections"
 msgstr "Sections du compte"
 
-#: inc/features/dashboard/class-custom-dashboard.php:599
-msgid "Add alt text to images — better SEO and accessibility."
-msgstr "Ajoutez un texte alternatif aux images — meilleur référencement et accessibilité."
-
 #: inc/settings/class-settings-page.php:359
 msgid "Add link"
 msgstr "Ajouter un lien"
 
-#: inc/features/dashboard/class-custom-dashboard.php:702
-msgid "Add media"
-msgstr "Ajouter un média"
-
 #: inc/settings/class-settings-page.php:360
 msgid "Add separator"
 msgstr "Ajouter un séparateur"
-
-#: inc/features/dashboard/class-custom-dashboard.php:705
-msgid "Add user"
-msgstr "Créer un compte"
 
 #: inc/wp-core/class-profile-account.php:166
 msgid "Additional Capabilities"
@@ -216,7 +92,6 @@ msgstr "Ajoute une colonne de vignettes aux tableaux de types de contenu — l�
 msgid "Admin email, who can sign up, and the default role assigned to new users."
 msgstr "E-mail d’administration, qui peut s’inscrire et le rôle par défaut attribué aux nouveaux utilisateurs."
 
-#: inc/features/dashboard/class-custom-dashboard.php:203 inc/features/dashboard/class-custom-dashboard.php:904
 msgid "AdminKit"
 msgstr "AdminKit"
 
@@ -232,14 +107,6 @@ msgstr "AdminKit lui-même — toujours actif, non désactivable ici."
 msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
 msgstr "AdminKit fournit un adaptateur dédié pour cette extension — clair et sombre."
 
-#: inc/features/dashboard/class-custom-dashboard.php:1308
-msgid "All clear — nothing to do today."
-msgstr "Tout est en ordre — rien à faire aujourd’hui."
-
-#: inc/features/dashboard/class-custom-dashboard.php:765
-msgid "All published"
-msgstr "Tout est publié"
-
 #: inc/settings/class-settings-catalog.php:24
 msgid "Appearance"
 msgstr "Apparence"
@@ -252,27 +119,15 @@ msgstr "Mots de passe d'application"
 msgid "Apply"
 msgstr "Appliquer"
 
-#: inc/features/dashboard/class-custom-dashboard.php:198 inc/features/dashboard/class-custom-dashboard.php:812
-msgid "At a glance"
-msgstr "En un coup d’œil"
-
 #: inc/wp-core/class-options-discussion.php:101
 msgid "Avatars"
 msgstr "Avatars"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1279
-msgid "Awaiting review"
-msgstr "En attente de relecture"
-
-#: inc/features/dashboard/class-custom-dashboard.php:595
-msgid "Back up before big changes — future you will thank you."
-msgstr "Sauvegardez avant les gros changements — vous vous remercierez plus tard."
 
 #: inc/settings/class-settings-catalog.php:66
 msgid "Block editor"
 msgstr "Éditeur de blocs"
 
-#: inc/features/dashboard/class-custom-dashboard.php:890 inc/settings/class-settings-page.php:398
+#: inc/settings/class-settings-page.php:398
 msgid "Brand"
 msgstr "Marque"
 
@@ -284,25 +139,13 @@ msgstr "Couleur de marque"
 msgid "Bricks"
 msgstr "Bricks"
 
-#: inc/features/dashboard/class-custom-dashboard.php:668
-msgid "Burning the midnight oil, %s?"
-msgstr "Tard le soir, %s ?"
-
 #: inc/wp-core/class-user-quick-edit.php:230
 msgid "Cancel"
 msgstr "Annuler"
 
-#: inc/features/dashboard/class-custom-dashboard.php:165
-msgid "Cards to display"
-msgstr "Cartes à afficher"
-
 #: inc/settings/class-settings-page.php:349
 msgid "Choose an icon"
 msgstr "Choisir une icône"
-
-#: inc/features/dashboard/class-custom-dashboard.php:614
-msgid "Clarity is the courtesy of the maker."
-msgstr "La clarté est la politesse de celui qui crée."
 
 #: inc/settings/class-settings-page.php:369
 msgid "Clear"
@@ -312,35 +155,17 @@ msgstr "Effacer"
 msgid "Close"
 msgstr "Fermer"
 
-#: inc/features/dashboard/class-custom-dashboard.php:574
-msgid "Coffee first, then a quick win."
-msgstr "Un café d’abord, puis une victoire rapide."
-
-#: inc/features/stats/class-stats-dashboard.php:417 inc/features/stats/class-stats-page.php:153
-msgid "Coming from"
-msgstr "Provenance"
-
 #: inc/wp-core/class-options-discussion.php:102 inc/wp-core/class-options-discussion.php:106
 msgid "Comment settings"
 msgstr "Réglages des commentaires"
 
-#: inc/features/dashboard/class-custom-dashboard.php:787
 msgid "Comments"
 msgstr "Commentaires"
-
-#: inc/features/dashboard/class-custom-dashboard.php:598
-msgid "Compress images before upload for faster pages."
-msgstr "Compressez les images avant l’envoi pour des pages plus rapides."
-
-#: inc/features/dashboard/class-custom-dashboard.php:613
-msgid "Consistency beats intensity: one good decision at a time."
-msgstr "La régularité l’emporte sur l’intensité : une bonne décision à la fois."
 
 #: inc/wp-core/class-profile-account.php:161
 msgid "Contact Info"
 msgstr "Coordonnées"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1389
 msgid "Content"
 msgstr "Contenu"
 
@@ -348,35 +173,18 @@ msgstr "Contenu"
 msgid "Content & lists"
 msgstr "Contenu et listes"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1250
-msgid "Core, plugins, themes"
-msgstr "Cœur, extensions, thèmes"
-
 #: inc/settings/class-settings-page.php:394
 msgid "Could not save"
 msgstr "Échec de l’enregistrement"
 
-#: inc/settings/class-settings-catalog.php:121
-msgid "Count page views and visits with a tiny cookieless beacon — no cookies, no IP storage, no consent banner, and almost no database footprint (pre-summed daily totals). Signed-in staff and bots are excluded. Off disables tracking entirely."
-msgstr "Comptez les pages vues et les visites avec une balise légère sans cookie — aucun cookie, aucune adresse IP stockée, aucun bandeau de consentement, et une empreinte base de données minime (totaux journaliers pré-agrégés). Le personnel connecté et les robots sont exclus. Désactivé, le suivi est entièrement coupé."
-
-#: inc/features/stats/class-stats-dashboard.php:416 inc/features/stats/class-stats-page.php:152
-msgid "Currently viewing"
-msgstr "Pages consultées"
-
-#: inc/features/stats/class-stats-dashboard.php:456 inc/settings/class-settings-page.php:415
+#: inc/settings/class-settings-page.php:415
 msgid "Custom"
 msgstr "Personnalisé"
-
-#: inc/settings/class-settings-catalog.php:30
-msgid "Custom dashboard"
-msgstr "Tableau de bord personnalisé"
 
 #: inc/settings/class-settings-page.php:367
 msgid "Custom link"
 msgstr "Lien personnalisé"
 
-#: inc/features/dashboard/class-custom-dashboard.php:161
 msgid "Customize"
 msgstr "Personnaliser"
 
@@ -384,43 +192,17 @@ msgstr "Personnaliser"
 msgid "Dark mode"
 msgstr "Mode sombre"
 
-#: inc/class-theme-toggle.php:189 inc/features/dashboard/class-custom-dashboard.php:104 inc/settings/class-settings-page.php:339
+#: inc/class-theme-toggle.php:189 inc/settings/class-settings-page.php:339
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1562
 msgid "Database"
 msgstr "Base de données"
-
-#: inc/features/stats/class-stats-dashboard.php:479 inc/features/stats/class-stats-page.php:145
-msgid "Date range"
-msgstr "Plage de dates"
-
-#: inc/features/dashboard/class-custom-dashboard.php:608
-msgid "Deactivate and delete plugins you no longer use."
-msgstr "Désactivez et supprimez les extensions que vous n’utilisez plus."
-
-#: inc/features/dashboard/class-custom-dashboard.php:1441
-msgid "Debug mode off"
-msgstr "Débogage désactivé"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1240 inc/features/dashboard/class-custom-dashboard.php:1441
-msgid "Debug mode on"
-msgstr "Mode débogage actif"
 
 #: inc/settings/class-settings-page.php:350
 msgid "Default"
 msgstr "Par défaut"
 
-#: inc/features/dashboard/class-custom-dashboard.php:604
-msgid "Descriptive titles win clicks and rankings."
-msgstr "Des titres descriptifs gagnent des clics et un meilleur classement."
-
-#: inc/features/dashboard/class-custom-dashboard.php:1237 inc/features/dashboard/class-custom-dashboard.php:1240 inc/features/dashboard/class-custom-dashboard.php:1244
-msgid "Details"
-msgstr "Détails"
-
-#: inc/features/stats/class-stats-dashboard.php:550 inc/features/stats/class-stats-page.php:139
 msgid "Direct"
 msgstr "Direct"
 
@@ -432,33 +214,16 @@ msgstr "Tout désactiver"
 msgid "Display"
 msgstr "Affichage"
 
-#: inc/features/dashboard/class-custom-dashboard.php:612
-msgid "Done is better than perfect — publish, then refine."
-msgstr "Bien fait vaut mieux que parfait — publiez, puis affinez."
-
-#: inc/features/dashboard/class-custom-dashboard.php:1384
-msgid "Draft"
-msgstr "Brouillon"
-
 #: inc/settings/class-settings-page.php:356
 msgid "Drag to reorder"
 msgstr "Glissez pour réorganiser"
 
-#: inc/features/dashboard/class-custom-dashboard.php:330
-msgid "Drag to reorder this card"
-msgstr "Glissez pour réorganiser cette carte"
-
-#: inc/features/dashboard/class-custom-dashboard.php:960
 msgid "Edit"
 msgstr "Modifier"
 
 #: inc/settings/class-settings-catalog.php:97
 msgid "Edit first name, last name, email and role inline from the users list — no need to open the full profile."
 msgstr "Modifiez prénom, nom, e-mail et rôle directement depuis la liste des utilisateurs — sans ouvrir le profil complet."
-
-#: inc/features/dashboard/class-custom-dashboard.php:509
-msgid "Edit my profile"
-msgstr "Modifier mon profil"
 
 #: inc/wp-core/class-user-quick-edit.php:214
 msgid "Email"
@@ -468,49 +233,21 @@ msgstr "E-mail"
 msgid "Enable all"
 msgstr "Tout activer"
 
-#: inc/features/stats/class-stats-dashboard.php:506
-msgid "End date"
-msgstr "Date de fin"
-
-#: inc/features/dashboard/class-custom-dashboard.php:584
-msgid "Evening is a good time for a calm review."
-msgstr "Le soir est un bon moment pour une revue tranquille."
-
 #: inc/settings/class-settings-page.php:377
 msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
 msgstr "Toutes les extensions installées sur votre site, ainsi que les adaptateurs de thème actifs d’AdminKit. Les natifs ont un adaptateur dédié, activable par hôte ; les autres portent un badge Générique et héritent automatiquement du style de base d’AdminKit."
-
-#: inc/features/dashboard/class-custom-dashboard.php:1437
-msgid "Everything's up to date"
-msgstr "Tout est à jour"
 
 #: inc/settings/class-settings-page.php:422
 msgid "Favicon"
 msgstr "Favicon"
 
-#: inc/features/dashboard/class-custom-dashboard.php:891 inc/settings/class-settings-page.php:342
+#: inc/settings/class-settings-page.php:342
 msgid "Features"
 msgstr "Fonctionnalités"
-
-#: inc/features/dashboard/class-custom-dashboard.php:600
-msgid "Fewer plugins, fewer surprises — keep only what you use."
-msgstr "Moins d’extensions, moins de surprises — ne gardez que ce que vous utilisez."
 
 #: inc/wp-core/class-user-quick-edit.php:206
 msgid "First name"
 msgstr "Prénom"
-
-#: inc/features/dashboard/class-custom-dashboard.php:606
-msgid "Fresh content keeps your visitors coming back."
-msgstr "Un contenu frais fait revenir vos visiteurs."
-
-#: inc/features/dashboard/class-custom-dashboard.php:643
-msgid "Fresh start, %s"
-msgstr "Nouveau départ, %s"
-
-#: inc/features/stats/class-stats-page.php:143
-msgid "From"
-msgstr "De"
 
 #: inc/wp-core/class-options-general.php:102
 msgid "General"
@@ -520,53 +257,9 @@ msgstr "Général"
 msgid "Generic"
 msgstr "Générique"
 
-#: inc/features/dashboard/class-custom-dashboard.php:675
-msgid "Glad to see you, %s"
-msgstr "Content de vous voir, %s"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1004
-msgid "Good"
-msgstr "Bon"
-
-#: inc/features/dashboard/class-custom-dashboard.php:648
-msgid "Good afternoon, %s"
-msgstr "Bon après-midi, %s"
-
-#: inc/features/dashboard/class-custom-dashboard.php:611
-msgid "Good design is as little design as possible. — Dieter Rams"
-msgstr "« Le bon design, c’est le moins de design possible. » — Dieter Rams"
-
-#: inc/features/dashboard/class-custom-dashboard.php:657 inc/features/dashboard/class-custom-dashboard.php:667
-msgid "Good evening, %s"
-msgstr "Bonsoir, %s"
-
-#: inc/features/dashboard/class-custom-dashboard.php:639
-msgid "Good morning, %s"
-msgstr "Bonne matinée, %s"
-
-#: inc/features/dashboard/class-custom-dashboard.php:673
-msgid "Great to see you again, %s"
-msgstr "Ravi de vous revoir, %s"
-
 #: inc/features/notifications/class-notification-center.php:182
 msgid "Grouped notices"
 msgstr "Notices groupées"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1237 inc/features/dashboard/class-custom-dashboard.php:1428
-msgid "HTTPS off"
-msgstr "HTTPS inactif"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1428
-msgid "HTTPS on"
-msgstr "HTTPS actif"
-
-#: inc/features/dashboard/class-custom-dashboard.php:658
-msgid "Have a good evening, %s"
-msgstr "Bonne soirée, %s"
-
-#: inc/features/dashboard/class-custom-dashboard.php:638 inc/features/dashboard/class-custom-dashboard.php:649
-msgid "Hello, %s"
-msgstr "Bonjour, %s"
 
 #: inc/settings/class-settings-page.php:352
 msgid "Hide"
@@ -604,22 +297,6 @@ msgstr "Identité, contact et mot de passe."
 msgid "Information"
 msgstr "Informations"
 
-#: inc/features/dashboard/class-custom-dashboard.php:602
-msgid "Internal links help readers and search engines explore."
-msgstr "Les liens internes aident les lecteurs et les moteurs de recherche à explorer."
-
-#: inc/features/dashboard/class-custom-dashboard.php:651
-msgid "Keep it going, %s"
-msgstr "Continuez comme ça, %s"
-
-#: inc/features/dashboard/class-custom-dashboard.php:597
-msgid "Keep plugins and themes updated to stay secure and fast."
-msgstr "Gardez extensions et thèmes à jour pour rester sûr et rapide."
-
-#: inc/features/dashboard/class-custom-dashboard.php:578
-msgid "Keep the momentum — small steps add up."
-msgstr "Gardez l’élan — les petits pas comptent."
-
 #: inc/settings/class-settings-page.php:362
 msgid "Label"
 msgstr "Libellé"
@@ -627,10 +304,6 @@ msgstr "Libellé"
 #: inc/wp-core/class-options-general.php:110
 msgid "Language, date & time"
 msgstr "Langue, date et heure"
-
-#: inc/features/dashboard/class-custom-dashboard.php:538
-msgid "Language, date & time settings"
-msgstr "Réglages de langue, date et heure"
 
 #: inc/features/online-users/class-online-users.php:208
 msgid "Last login"
@@ -640,29 +313,16 @@ msgstr "Dernière connexion"
 msgid "Last name"
 msgstr "Nom"
 
-#: inc/features/dashboard/class-custom-dashboard.php:588
-msgid "Late-night focus — remember to save often."
-msgstr "Concentration nocturne — pensez à enregistrer souvent."
-
-#: inc/features/dashboard/class-custom-dashboard.php:678
-msgid "Let's make something great, %s"
-msgstr "Créons quelque chose de génial, %s"
-
 #: inc/settings/class-settings-catalog.php:103
 msgid "Lets admins rename a user's login on Users → Edit (WordPress disables this by default). Sensitive — invalidates the user's active sessions; they must sign in again. Single-site only."
 msgstr "Permet aux administrateurs de renommer l’identifiant d’un utilisateur dans Comptes → Modifier (WordPress le désactive par défaut). Sensible — invalide les sessions actives de l’utilisateur ; il devra se reconnecter. Site unique uniquement."
 
-#: inc/features/stats/class-stats-dashboard.php:451
 msgid "Live"
 msgstr "En direct"
 
 #: inc/wp-core/class-post-previews.php:415
 msgid "Loading preview…"
 msgstr "Chargement de l’aperçu…"
-
-#: inc/features/stats/class-stats-page.php:142
-msgid "Loading…"
-msgstr "Chargement…"
 
 #: inc/settings/class-settings-page.php:420
 msgid "Login"
@@ -684,19 +344,13 @@ msgstr "Logo mode sombre"
 msgid "Logo Light Mode"
 msgstr "Logo mode clair"
 
-#: inc/features/dashboard/class-custom-dashboard.php:652
-msgid "Making progress, %s?"
-msgstr "Ça avance, %s ?"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1259 inc/features/dashboard/class-custom-dashboard.php:1263
 msgid "Manage"
 msgstr "Gérer"
 
-#: inc/features/dashboard/class-custom-dashboard.php:793 inc/features/dashboard/class-custom-dashboard.php:1561
 msgid "Media"
 msgstr "Médias"
 
-#: inc/features/dashboard/class-custom-dashboard.php:894 inc/features/menu/class-menu-manager.php:129 inc/features/menu/class-menu-manager.php:130 inc/settings/class-settings-page.php:344
+#: inc/features/menu/class-menu-manager.php:129 inc/features/menu/class-menu-manager.php:130 inc/settings/class-settings-page.php:344
 msgid "Menu"
 msgstr "Menu"
 
@@ -712,18 +366,6 @@ msgstr "Gestionnaire de barre d’outils"
 msgid "Reorder and hide the top-level items in the admin toolbar (the bar across the top of the screen) — configured in the Toolbar tab. Off restores the native toolbar (your saved layout is kept)."
 msgstr "Réorganisez et masquez les éléments de premier niveau de la barre d’outils d’administration (la barre en haut de l’écran) — configuré dans l’onglet Barre d’outils. Désactivé rétablit la barre native (votre disposition est conservée)."
 
-#: inc/features/dashboard/class-custom-dashboard.php:1284
-msgid "Moderate"
-msgstr "Modérer"
-
-#: inc/features/dashboard/class-custom-dashboard.php:573
-msgid "Morning is a great time to plan and publish."
-msgstr "Le matin est idéal pour planifier et publier."
-
-#: inc/features/dashboard/class-custom-dashboard.php:601
-msgid "Most visitors are on mobile — preview your pages there."
-msgstr "La plupart des visiteurs sont sur mobile — prévisualisez-y vos pages."
-
 #: inc/wp-core/class-profile-account.php:160
 msgid "Name"
 msgstr "Nom"
@@ -732,49 +374,13 @@ msgstr "Nom"
 msgid "Native"
 msgstr "Natif"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1003
-msgid "Needs attention"
-msgstr "À améliorer"
-
 #: inc/features/online-users/class-online-users.php:233
 msgid "Never"
 msgstr "Jamais"
 
-#: inc/features/dashboard/class-custom-dashboard.php:699
-msgid "New page"
-msgstr "Nouvelle page"
-
-#: inc/features/stats/class-stats-dashboard.php:531 inc/features/stats/class-stats-page.php:141
-msgid "No data"
-msgstr "Aucune donnée"
-
 #: inc/settings/class-settings-page.php:383
 msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
 msgstr "Aucun adaptateur dédié — thémé automatiquement par la couche de base d'AdminKit."
-
-#: inc/features/dashboard/class-custom-dashboard.php:759 inc/features/dashboard/class-custom-dashboard.php:782
-msgid "No drafts"
-msgstr "Aucun brouillon"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1101
-msgid "No recent sign-ins yet."
-msgstr "Aucune connexion récente."
-
-#: inc/features/stats/class-stats-dashboard.php:324 inc/features/stats/class-stats-page.php:140
-msgid "No traffic data yet — views will appear here as visitors arrive."
-msgstr "Pas encore de données de trafic — les vues apparaîtront ici à mesure que les visiteurs arrivent."
-
-#: inc/features/stats/class-stats-dashboard.php:385 inc/features/stats/class-stats-page.php:154
-msgid "Nobody is on the site right now — this view refreshes automatically."
-msgstr "Personne n’est sur le site pour le moment — cette vue se rafraîchit automatiquement."
-
-#: inc/features/dashboard/class-custom-dashboard.php:802
-msgid "None online"
-msgstr "Personne en ligne"
-
-#: inc/features/dashboard/class-custom-dashboard.php:934
-msgid "Nothing recent yet."
-msgstr "Rien de récent pour l’instant."
 
 #: inc/features/notifications/class-notification-center.php:184
 msgid "Notices from plugins and WordPress collect here, out of your way."
@@ -788,19 +394,14 @@ msgstr "Centre de notifications"
 msgid "Notifications"
 msgstr "Notifications"
 
-#: inc/features/dashboard/class-custom-dashboard.php:204 inc/features/dashboard/class-custom-dashboard.php:1114 inc/features/online-users/class-online-users.php:227 inc/features/online-users/class-online-users.php:227
+#: inc/features/online-users/class-online-users.php:227 inc/features/online-users/class-online-users.php:227
 msgid "Online"
-msgstr "En ligne"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1096
-msgid "Online now"
 msgstr "En ligne"
 
 #: inc/settings/class-settings-catalog.php:114
 msgid "Online users"
 msgstr "Utilisateurs en ligne"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1274 inc/features/dashboard/class-custom-dashboard.php:1279
 msgid "Open"
 msgstr "Ouvrir"
 
@@ -812,43 +413,21 @@ msgstr "Ouvrir dans un nouvel onglet"
 msgid "Other settings"
 msgstr "Autres réglages"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1432
-msgid "PHP %s"
-msgstr "PHP %s"
-
-#: inc/features/stats/class-stats-page.php:146
 msgid "Page"
 msgstr "Page"
 
-#: inc/features/stats/class-stats-dashboard.php:335 inc/features/stats/class-stats-page.php:135
-msgid "Page views"
-msgstr "Pages vues"
-
-#: inc/features/dashboard/class-custom-dashboard.php:762
 msgid "Pages"
 msgstr "Pages"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1036
-msgid "Passed"
-msgstr "Réussis"
 
 #: inc/settings/class-settings-page.php:357
 msgid "Paste an SVG or a data:image/svg+xml URI…"
 msgstr "Collez un SVG ou une URI data:image/svg+xml…"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1381
-msgid "Pending"
-msgstr "En attente"
-
 #: inc/wp-core/class-profile-account.php:162
 msgid "Personal Options"
 msgstr "Options personnelles"
 
-#: inc/features/dashboard/class-custom-dashboard.php:676
-msgid "Pick up where you left off?"
-msgstr "On reprend où on s’était arrêté ?"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1563 inc/settings/class-settings-page.php:343
+#: inc/settings/class-settings-page.php:343
 msgid "Plugins"
 msgstr "Extensions"
 
@@ -860,7 +439,6 @@ msgstr "Pointez cet élément vers une URL personnalisée (interne ou externe). 
 msgid "Post previews"
 msgstr "Aperçus des publications"
 
-#: inc/features/dashboard/class-custom-dashboard.php:756
 msgid "Posts"
 msgstr "Articles"
 
@@ -872,7 +450,6 @@ msgstr "Aperçu"
 msgid "Preview unavailable"
 msgstr "Aperçu indisponible"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1378
 msgid "Published"
 msgstr "Publié"
 
@@ -880,33 +457,12 @@ msgstr "Publié"
 msgid "Quick Edit"
 msgstr "Modification rapide"
 
-#: inc/features/dashboard/class-custom-dashboard.php:589
-msgid "Quiet hours are good for deep work."
-msgstr "Les heures calmes sont propices au travail en profondeur."
-
-#: inc/features/dashboard/class-custom-dashboard.php:640
-msgid "Ready for today, %s?"
-msgstr "Prêt pour aujourd’hui, %s ?"
-
-#: inc/features/dashboard/class-custom-dashboard.php:200 inc/features/dashboard/class-custom-dashboard.php:930
-msgid "Recent changes"
-msgstr "Modifications récentes"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1096
-msgid "Recent logins"
-msgstr "Connexions récentes"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1038
 msgid "Recommended"
 msgstr "Recommandés"
 
 #: inc/settings/class-settings-page.php:365 inc/settings/class-settings-page.php:408
 msgid "Remove"
 msgstr "Supprimer"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1259 inc/features/dashboard/class-custom-dashboard.php:1263
-msgid "Remove if unused"
-msgstr "À supprimer si inutile"
 
 #: inc/settings/class-settings-page.php:366
 msgid "Rename — clear to restore the original"
@@ -924,10 +480,6 @@ msgstr "Réorganisez le menu d’administration et ses sous-menus, changez les i
 msgid "Reorder the admin menu and submenus, set a per-item icon (an AdminKit glyph, a WordPress dashicon, or your own), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
 msgstr "Réorganisez le menu d’administration et ses sous-menus, définissez une icône par élément (un glyphe AdminKit, un dashicon WordPress ou la vôtre) et masquez des entrées — configuré dans l’onglet Menu. Désactivé, le menu natif de WordPress est restauré (votre disposition enregistrée est conservée)."
 
-#: inc/settings/class-settings-catalog.php:31
-msgid "Replace the WordPress dashboard with a custom one: greeting, quick actions, stat tiles, recent activity, site health and storage. Off restores the native dashboard."
-msgstr "Remplace le tableau de bord WordPress par un tableau personnalisé : accueil, actions rapides, tuiles de statistiques, activité récente, santé du site et stockage. Désactivé, le tableau de bord natif est restauré."
-
 #: inc/settings/class-settings-page.php:348
 msgid "Reset menu"
 msgstr "Réinitialiser le menu"
@@ -939,10 +491,6 @@ msgstr "Réinitialiser aux valeurs par défaut"
 #: inc/settings/class-settings-catalog.php:61
 msgid "Restyle wp-login.php to match the admin (logo, dark mode, focus states)."
 msgstr "Restyle wp-login.php pour s’accorder à l’administration (logo, mode sombre, états de focus)."
-
-#: inc/features/dashboard/class-custom-dashboard.php:642
-msgid "Rise and shine, %s"
-msgstr "Debout, %s"
 
 #: inc/wp-core/class-user-quick-edit.php:219
 msgid "Role"
@@ -972,17 +520,9 @@ msgstr "Enregistré"
 msgid "Saving…"
 msgstr "Enregistrement…"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1033
-msgid "Score"
-msgstr "Score"
-
 #: inc/settings/class-settings-page.php:376
 msgid "Search features…"
 msgstr "Rechercher des fonctionnalités…"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1237
-msgid "Security and SEO"
-msgstr "Sécurité et référencement"
 
 #: inc/settings/class-settings-page.php:387
 msgid "Select a logo"
@@ -992,11 +532,7 @@ msgstr "Sélectionner un logo"
 msgid "Separator"
 msgstr "Séparateur"
 
-#: inc/features/dashboard/class-custom-dashboard.php:609
-msgid "Set a featured image — it shapes how posts are shared."
-msgstr "Définissez une image mise en avant — elle façonne le partage des articles."
-
-#: inc/features/dashboard/class-custom-dashboard.php:843 inc/features/dashboard/class-custom-dashboard.php:906 inc/settings/class-settings-page.php:93 inc/wp-core/class-profile-account.php:170
+#: inc/settings/class-settings-page.php:93 inc/wp-core/class-profile-account.php:170
 msgid "Settings"
 msgstr "Réglages"
 
@@ -1012,17 +548,9 @@ msgstr "Afficher / masquer les sous-menus"
 msgid "Shown in browser tabs, bookmark lists and the app icon when visitors save your site to a phone home screen."
 msgstr "Affiché dans les onglets du navigateur, les favoris et l’icône d’application quand les visiteurs ajoutent votre site à l’écran d’accueil de leur téléphone."
 
-#: inc/features/dashboard/class-custom-dashboard.php:610
-msgid "Simplicity is the ultimate sophistication. — Leonardo da Vinci"
-msgstr "« La simplicité est la sophistication suprême. » — Léonard de Vinci"
-
 #: inc/wp-core/class-options-general.php:106
 msgid "Site Icon"
 msgstr "Icône du site"
-
-#: inc/features/dashboard/class-custom-dashboard.php:199 inc/features/dashboard/class-custom-dashboard.php:1015
-msgid "Site health"
-msgstr "Santé du site"
 
 #: inc/wp-core/class-options-general.php:104
 msgid "Site identity"
@@ -1032,33 +560,14 @@ msgstr "Identité du site"
 msgid "Site language plus the timezone and formats used wherever dates appear."
 msgstr "La langue du site ainsi que le fuseau horaire et les formats utilisés partout où des dates apparaissent."
 
-#: inc/features/dashboard/class-custom-dashboard.php:202 inc/features/dashboard/class-custom-dashboard.php:841
-msgid "Site preview"
-msgstr "Aperçu du site"
-
-#: inc/features/stats/class-stats-page.php:147
 msgid "Source"
 msgstr "Source"
 
-#: inc/features/stats/class-stats-dashboard.php:504
-msgid "Start date"
-msgstr "Date de début"
-
-#: inc/features/dashboard/class-custom-dashboard.php:897 inc/features/stats/class-stats-dashboard.php:76 inc/features/stats/class-stats-dashboard.php:319 inc/features/stats/class-stats-dashboard.php:370 inc/features/stats/class-stats-page.php:59 inc/features/stats/class-stats-page.php:60 inc/features/stats/class-stats-page.php:132
 msgid "Statistics"
 msgstr "Statistiques"
 
-#: inc/features/dashboard/class-custom-dashboard.php:666
-msgid "Still up, %s?"
-msgstr "Encore debout, %s ?"
-
-#: inc/features/dashboard/class-custom-dashboard.php:201 inc/features/dashboard/class-custom-dashboard.php:1149
 msgid "Storage"
 msgstr "Stockage"
-
-#: inc/features/dashboard/class-custom-dashboard.php:596
-msgid "Strong passwords and two-factor auth keep your account safe."
-msgstr "Un mot de passe fort et l’authentification à deux facteurs protègent votre compte."
 
 #: inc/settings/class-settings-catalog.php:73
 msgid "The DEFAULT icon set for the whole admin menu + toolbar (AdminKit's glyphs instead of WordPress's dashicons). Per-item icons you pick in the Menu manager override this; icons set by other plugins are left alone."
@@ -1068,19 +577,11 @@ msgstr "Le jeu d’icônes par DÉFAUT pour tout le menu d’administration et l
 msgid "System"
 msgstr "Système"
 
-#: inc/features/dashboard/class-custom-dashboard.php:605
-msgid "Test your contact form now and then."
-msgstr "Testez votre formulaire de contact de temps en temps."
-
-#: inc/features/dashboard/class-custom-dashboard.php:650
-msgid "The afternoon is yours"
-msgstr "L’après-midi est à vous"
-
 #: inc/settings/class-settings-catalog.php:67
 msgid "Theme the Gutenberg canvas in light and dark. Off keeps the canvas matching your live site exactly."
 msgstr "Thématise le canevas Gutenberg en clair et sombre. Désactivé, le canevas reste identique à votre site en ligne."
 
-#: inc/features/dashboard/class-custom-dashboard.php:1564 inc/settings/class-settings-page.php:384
+#: inc/settings/class-settings-page.php:384
 msgid "Themes"
 msgstr "Thèmes"
 
@@ -1088,21 +589,8 @@ msgstr "Thèmes"
 msgid "This username cannot be changed."
 msgstr "Ce nom d’utilisateur ne peut pas être modifié."
 
-#: inc/features/stats/class-stats-page.php:144
 msgid "To"
 msgstr "À"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1040
-msgid "To address"
-msgstr "À traiter"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1053
-msgid "To-do"
-msgstr "Actions à faire"
-
-#: inc/features/stats/class-stats-dashboard.php:452
-msgid "Today"
-msgstr "Aujourd’hui"
 
 #: inc/class-theme-toggle.php:158 inc/integrations/plugins/gutenberg/class-gutenberg.php:109 inc/wp-core/class-login.php:265
 msgid "Toggle light / dark mode"
@@ -1112,53 +600,19 @@ msgstr "Basculer entre le mode clair et sombre"
 msgid "Tokens synced with Bricks Builder"
 msgstr "Tokens synchronisés avec Bricks Builder"
 
-#: inc/features/stats/class-stats-dashboard.php:343 inc/features/stats/class-stats-page.php:137
-msgid "Top pages"
-msgstr "Pages les plus vues"
+#: inc/settings/class-settings-catalog.php
+msgid "Track who is signed in (read from existing WordPress sessions, no extra tracking) and show a \"Last login\" column with online indicators on the Users screen. Off hides all of it."
+msgstr "Affiche les utilisateurs connectés à partir des sessions WordPress existantes et une colonne « Dernière connexion » avec indicateurs de présence dans la liste des comptes. Désactivé, masque ces éléments."
 
-#: inc/features/stats/class-stats-dashboard.php:344 inc/features/stats/class-stats-page.php:138
-msgid "Top sources"
-msgstr "Sources principales"
-
-#: inc/settings/class-settings-catalog.php:115
-msgid "Track who is signed in (read from existing WordPress sessions, no extra tracking) and show them on the dashboard, plus an \"Online\" filter and a \"Last login\" column on the Users screen. Off hides all of it."
-msgstr "Identifie qui est connecté (lu depuis les sessions WordPress existantes, sans suivi supplémentaire) et l'affiche sur le tableau de bord, avec un filtre « En ligne » et une colonne « Dernière connexion » sur l'écran Utilisateurs. Désactivé masque le tout."
-
-#: inc/features/stats/class-stats-page.php:133
-msgid "Traffic from the built-in, cookieless tracker. Pick any date range to see unique visitors, page views, your most-viewed pages and where visitors come from."
-msgstr "Trafic issu du traqueur intégré sans cookie. Choisissez une plage de dates pour voir les visiteurs uniques, les pages vues, vos pages les plus consultées et la provenance des visiteurs."
-
-#: inc/features/stats/class-stats-page.php:134
-msgid "Unique visitors"
-msgstr "Visiteurs uniques"
-
-#: inc/features/stats/class-stats-page.php:145
-msgid "No match"
-msgstr "Aucun résultat"
-
-#: inc/features/stats/class-stats-page.php:146
 msgid "Search…"
 msgstr "Rechercher…"
 
-#: inc/features/stats/class-stats-page.php:147
 msgid "Previous"
 msgstr "Précédent"
-
-#: inc/features/stats/class-stats-page.php:148
-msgid "Next"
-msgstr "Suivant"
-
-#: inc/settings/class-settings-catalog.php:120
-msgid "Traffic stats"
-msgstr "Statistiques de trafic"
 
 #: inc/settings/class-settings-page.php:372
 msgid "Turn AdminKit modules on or off."
 msgstr "Activez ou désactivez les modules AdminKit."
-
-#: inc/features/dashboard/class-custom-dashboard.php:1240
-msgid "Turn off in production"
-msgstr "À désactiver en production"
 
 #: inc/wp-core/class-username-changer.php:130
 msgid "Type the new username, then click \"Update User\" below to save."
@@ -1168,13 +622,8 @@ msgstr "Saisissez le nouveau nom d’utilisateur, puis cliquez sur « Mettre à 
 msgid "Unsaved changes"
 msgstr "Modifications non enregistrées"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1250
 msgid "Update"
 msgstr "Mettre à jour"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1244
-msgid "Update PHP %s"
-msgstr "PHP %s à mettre à jour"
 
 #: inc/wp-core/class-user-quick-edit.php:232
 msgid "Update User"
@@ -1192,7 +641,6 @@ msgstr "Utiliser cette image"
 msgid "Username changer"
 msgstr "Changeur de nom d’utilisateur"
 
-#: inc/features/dashboard/class-custom-dashboard.php:799
 msgid "Users"
 msgstr "Comptes"
 
@@ -1204,55 +652,14 @@ msgstr "Utilisateurs et accès"
 msgid "Users quick edit"
 msgstr "Modification rapide des utilisateurs"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1244
-msgid "Version too old"
-msgstr "Version trop ancienne"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1289 inc/features/dashboard/class-custom-dashboard.php:1325
 msgid "View"
 msgstr "Voir"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1134
-msgid "View all online accounts"
-msgstr "Voir tous les comptes en ligne"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1059
-msgid "View full report"
-msgstr "Voir le rapport complet"
-
-#: inc/features/stats/class-stats-dashboard.php:475
-msgid "View all statistics"
-msgstr "Voir toutes les statistiques"
-
-#: inc/class-theme-toggle.php:189 inc/features/dashboard/class-custom-dashboard.php:850 inc/features/dashboard/class-custom-dashboard.php:857 inc/features/dashboard/class-custom-dashboard.php:963
+#: inc/class-theme-toggle.php:189
 msgid "View site"
 msgstr "Voir le site"
 
-#: inc/features/stats/class-stats-page.php:155
-msgid "Viewers"
-msgstr "Visiteurs"
-
-#: inc/features/stats/class-stats-page.php:148
-msgid "Views"
-msgstr "Vues"
-
-#: inc/features/stats/class-stats-dashboard.php:437
-msgid "Visitors active on the site in the last few minutes"
-msgstr "Visiteurs actifs sur le site ces dernières minutes"
-
-#: inc/features/stats/class-stats-dashboard.php:332 inc/features/stats/class-stats-page.php:134 inc/features/stats/class-stats-page.php:149
-msgid "Visits"
-msgstr "Visites"
-
-#: inc/features/dashboard/class-custom-dashboard.php:677
-msgid "Welcome back, %s"
-msgstr "Bon retour, %s"
-
-#: inc/features/dashboard/class-custom-dashboard.php:660
-msgid "Winding down, %s?"
-msgstr "Fin de journée, %s ?"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1565 inc/settings/class-settings-page.php:413 inc/settings/class-settings-page.php:419
+#: inc/settings/class-settings-page.php:413 inc/settings/class-settings-page.php:419
 msgid "WordPress"
 msgstr "WordPress"
 
@@ -1288,31 +695,10 @@ msgstr "Gauche"
 msgid "Right"
 msgstr "Droite"
 
-#: inc/features/dashboard/class-custom-dashboard.php:665
-msgid "Working late, %s"
-msgstr "Il est tard, %s"
-
-#: inc/features/dashboard/class-custom-dashboard.php:583
-msgid "Wrapping up? A quick backup is a good habit."
-msgstr "Vous terminez ? Une sauvegarde rapide est une bonne habitude."
-
-#: inc/features/dashboard/class-custom-dashboard.php:696
-msgid "Write a post"
-msgstr "Écrire un article"
-
-#: inc/features/stats/class-stats-dashboard.php:455
-msgid "Year to date"
-msgstr "Année en cours"
-
 #: inc/features/notifications/class-notification-center.php:183
 msgid "You’re all caught up."
 msgstr "Vous êtes à jour."
 
-#: inc/features/stats/class-stats-page.php:136
-msgid "active now"
-msgstr "actifs maintenant"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1159
 msgid "available"
 msgstr "disponibles"
 
@@ -1320,31 +706,12 @@ msgstr "disponibles"
 msgid "https://…"
 msgstr "https://…"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1432
-msgid "recommended"
-msgstr "recommandé"
-
 #: inc/settings/class-settings-page.php:354
 msgid "submenus"
 msgstr "sous-menus"
 
-#: inc/features/dashboard/class-custom-dashboard.php:1157
 msgid "used"
 msgstr "utilisés"
-
-#: inc/features/dashboard/class-custom-dashboard.php:1165
-msgid "used by your site"
-msgstr "utilisés par votre site"
-
-#: inc/features/stats/class-stats-dashboard.php:381 inc/features/stats/class-stats-page.php:150
-msgid "visitor active right now"
-msgid_plural "visitors active right now"
-msgstr[0] "visiteur actif en ce moment"
-msgstr[1] "visiteurs actifs en ce moment"
-
-#: inc/features/stats/class-stats-page.php:151
-msgid "visitors active right now"
-msgstr "visiteurs actifs en ce moment"
 
 #: inc/settings/class-settings-page.php
 msgid "Export"
@@ -1361,14 +728,6 @@ msgstr "Charger des réglages depuis un fichier JSON"
 #: inc/settings/class-settings-page.php
 msgid "That file isn’t a valid AdminKit settings export."
 msgstr "Ce fichier n’est pas un export de réglages AdminKit valide."
-
-#: inc/features/stats/class-stats-dashboard.php
-msgid "7 days"
-msgstr "7 jours"
-
-#: inc/features/stats/class-stats-page.php
-msgid "vs previous period"
-msgstr "vs période précédente"
 
 #: inc/settings/class-settings-page.php
 msgid "Download this menu layout as a JSON file"
@@ -1414,10 +773,6 @@ msgstr "Monter"
 msgid "Move down"
 msgstr "Descendre"
 
-#: inc/features/stats/class-stats-dashboard.php
-msgid "No views in this period yet."
-msgstr "Aucune vue sur cette période pour l’instant."
-
 #: inc/settings/class-settings-page.php
 msgid "Search plugins…"
 msgstr "Rechercher une extension…"
@@ -1426,7 +781,6 @@ msgstr "Rechercher une extension…"
 msgid "Current"
 msgstr "Actuel"
 
-#: inc/features/stats/class-stats-page.php inc/features/stats/class-stats-dashboard.php
 msgid "New"
 msgstr "Nouveau"
 

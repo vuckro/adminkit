@@ -4,8 +4,7 @@
 	font-family: var(--ak-font-body);
 	color: var(--ak-text);
 }
-.adminkit-app[data-screen="menu"],
-.adminkit-app[data-screen="stats"] {
+.adminkit-app[data-screen="menu"] {
 	max-width: none;
 }
 .adminkit-app[data-screen="main"] .ak-search-wrap { max-width: 460px; }

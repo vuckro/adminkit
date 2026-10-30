@@ -26,10 +26,9 @@ class AdminKit_Settings_Page {
 
 	/** Submenu page slugs for the focused surfaces that live OUTSIDE the SPA.
 	 *  Each is registered by its OWN module (AdminKit_Menu_Manager,
-	 *  AdminKit_Stats_Page) — these consts are the shared source of truth so the
-	 *  shell, the modules and the dashboard quick-links all agree on the slugs. */
+	 *  AdminKit_Toolbar_Manager) — these consts are the shared source of truth so the
+	 *  shell and the modules all agree on the slugs. */
 	const SLUG_MENU    = 'adminkit-menu';
-	const SLUG_STATS   = 'adminkit-stats';
 	const SLUG_TOOLBAR = 'adminkit-toolbar';
 
 	/** Asset handle shared by the SPA's script + style. */
@@ -47,8 +46,8 @@ class AdminKit_Settings_Page {
 	 */
 	public static function init() {
 		add_action( 'admin_menu', array( __CLASS__, 'add_submenu' ) );
-		// Relabel the auto first submenu AFTER the Menu/Statistics modules add their
-		// pages (priority 11). Then (priority 13) reorder to Statistics · Menu · Settings.
+		// Relabel the auto first submenu AFTER the Menu/Toolbar modules add their
+		// pages (priority 11). Then (priority 13) reorder to Menu · Toolbar · Settings.
 		add_action( 'admin_menu', array( __CLASS__, 'relabel_first_submenu' ), 12 );
 		add_action( 'admin_menu', array( __CLASS__, 'reorder_submenu' ), 13 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
@@ -82,7 +81,7 @@ class AdminKit_Settings_Page {
 	/**
 	 * Relabel the auto-created first submenu (WordPress labels it after the
 	 * top-level title — "AdminKit") to "Settings", so the submenu reads
-	 * Settings · Menu · Statistics. The Menu + Statistics entries register
+	 * Settings · Menu · Toolbar. The Menu + Toolbar entries register
 	 * themselves from their own modules (each surface owns its page). Runs at
 	 * admin_menu priority 12 (after those modules, at 11). Defensive: only
 	 * renames the first row while it's still the unrenamed self-link.
@@ -97,7 +96,7 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Reorder the AdminKit submenu to Statistics · Menu · Settings — the daily
+	 * Reorder the AdminKit submenu to Menu · Toolbar · Settings — the daily
 	 * surfaces (analytics, then menu) on top, configuration last. Runs at
 	 * admin_menu priority 13 (after relabel at 12). Slugs not in the rank map keep
 	 * their relative order at the end. Cosmetic only — clicking the parent still
@@ -111,7 +110,6 @@ class AdminKit_Settings_Page {
 			return;
 		}
 		$rank = array(
-			self::SLUG_STATS   => 0, // Statistics
 			self::SLUG_MENU    => 1, // Menu
 			self::SLUG_TOOLBAR => 2, // Toolbar
 			self::SLUG         => 3, // Settings (the parent self-link)
@@ -140,12 +138,12 @@ class AdminKit_Settings_Page {
 
 	/**
 	 * Print the SPA host for a given screen. Every AdminKit admin surface (the
-	 * Settings SPA, the Menu editor, the Statistics page) mounts the SAME
+	 * Settings SPA, the Menu editor, the Toolbar editor) mounts the SAME
 	 * `settings.js` engine into this host; the `data-screen` attribute tells the
 	 * engine which surface to build. Modules call this from their own page
 	 * callbacks, so the shell markup lives in exactly one place.
 	 *
-	 * @param string $screen 'main' | 'menu' | 'stats'.
+	 * @param string $screen 'main' | 'menu' | 'toolbar'.
 	 * @return void
 	 */
 	public static function render_host( $screen ) {
@@ -177,9 +175,9 @@ class AdminKit_Settings_Page {
 
 	/**
 	 * Enqueue the small host plus the current screen's script and styles; hand
-	 * it a boot payload. Every surface module (Settings, Menu, Statistics) calls
+	 * it a boot payload. Every surface module (Settings, Menu, Toolbar) calls
 	 * this from its own enqueue hook, passing the data ITS screen needs — so each
-	 * page ships only its own slice (no menu snapshot on the stats page, etc.).
+	 * page ships only its own slice (no menu snapshot on the main settings page, for example.).
 	 *
 	 * The style depends on `adminkit-tokens` so `var(--ak-*)` resolves; the script
 	 * depends on `wp-api-fetch` (which wires the REST nonce). The shared HANDLE is
@@ -192,7 +190,7 @@ class AdminKit_Settings_Page {
 	public static function enqueue_app( array $data, $needs_media = false ) {
 		$screen = isset( $data['screen'] ) ? $data['screen'] : 'main';
 		$module = in_array( $screen, array( 'menu', 'toolbar' ), true ) ? 'navigation' : $screen;
-		if ( ! in_array( $module, array( 'main', 'navigation', 'stats' ), true ) ) {
+		if ( ! in_array( $module, array( 'main', 'navigation' ), true ) ) {
 			return;
 		}
 		if ( $needs_media ) {
@@ -296,7 +294,6 @@ class AdminKit_Settings_Page {
 	public static function boot_data( $screen = 'main' ) {
 		$is_main    = ( 'main' === $screen );
 		$is_menu    = ( 'menu' === $screen );
-		$is_stats   = ( 'stats' === $screen );
 		$is_toolbar = ( 'toolbar' === $screen );
 
 		// Brand / Features / Plugins data — only the Settings ("main") screen needs
@@ -334,12 +331,6 @@ class AdminKit_Settings_Page {
 			$integrations = AdminKit_Settings_Catalog::plugins_list();
 		}
 
-		// Statistics — full boot payload only on the Statistics screen; its i18n is
-		// included only on that screen.
-		$has_stats  = class_exists( 'AdminKit_Stats_Page' );
-		$stats      = ( $is_stats && $has_stats ) ? AdminKit_Stats_Page::boot_data() : array( 'enabled' => false );
-		$stats_i18n = ( $is_stats && $has_stats ) ? AdminKit_Stats_Page::i18n() : array();
-
 		// Menu editor — the captured admin-menu tree (a non-trivial snapshot) is
 		// only built on the Menu screen; empty elsewhere.
 		$menu_manager = $is_menu ? AdminKit_Menu_Manager::editor_data() : array();
@@ -356,7 +347,6 @@ class AdminKit_Settings_Page {
 			'route'        => self::REST_NS . self::REST_ROUTE,
 			'features'     => $features,
 			'integrations' => $integrations,
-			'stats'        => $stats,
 			'toolbar'      => $toolbar,
 			'logos'        => array(
 				'light' => (string) AdminKit_Settings::get( 'logo_light' ),
@@ -514,7 +504,7 @@ class AdminKit_Settings_Page {
 				'brandPreviewSignIn' => __( 'Sign in', 'adminkit' ),
 				'brandPreviewButton' => __( 'Button', 'adminkit' ),
 
-			) + $stats_i18n, // Statistics-tab strings, merged from the stats-page module.
+			),
 		);
 		if ( ! $is_main ) {
 			foreach ( array( 'logos', 'siteName', 'siteIcon', 'wpLogo', 'loginLogo', 'brandAccent', 'accentSource', 'adminkitBlue', 'bricksDetected', 'bricksConnected', 'bricksTokenCount', 'features', 'integrations' ) as $key ) {
@@ -526,9 +516,6 @@ class AdminKit_Settings_Page {
 		$data['i18n'] = array_filter( $data['i18n'], static function ( $key ) use ( $screen, $common ) {
 			if ( in_array( $key, $common, true ) ) {
 				return true;
-			}
-			if ( 'stats' === $screen ) {
-				return 0 === strpos( $key, 'stats' );
 			}
 			$is_navigation = 0 === strpos( $key, 'menu' ) || 0 === strpos( $key, 'toolbar' );
 			return 'main' === $screen ? ! $is_navigation : $is_navigation;

@@ -145,7 +145,7 @@
 	}
 	function applyHash() {
 		var id = location.hash.slice(1);
-		if (id === 'menu' || id === 'stats') {
+		if (id === 'menu') {
 			location.href = 'admin.php?page=adminkit-' + id;
 			return;
 		}
