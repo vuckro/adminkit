@@ -643,8 +643,8 @@
 
 			// Reflect a feature's state on its row: dim it ("is-off") when switched
 			// off — the switch stays clickable so it can be turned back on — and,
-			// for a child OR an unavailable feature (e.g. Bricks builder without
-			// the Bricks theme), lock it ("is-locked": dimmed + the switch made
+			// for a child OR an unavailable feature (e.g. a host-specific tool without
+			// its host), lock it ("is-locked": dimmed + the switch made
 			// non-operable, both via CSS and the disabled input).
 			// `available: false` is permanent for the session; `parent` locks/
 			// unlocks live as the parent toggles.
@@ -720,7 +720,7 @@
 				});
 				var rowAttrs = { class: 'ak-row' + (f.parent ? ' ak-row--child' : '') };
 				// Show the prereq hint on hover when the feature can't run (e.g.
-				// Bricks builder without the Bricks theme). refreshRow() applies the
+				// a host-specific tool without its host). refreshRow() applies the
 				// is-locked + disabled styling; this just explains why.
 				if (f.available === false && f.unavailableHint) {
 					rowAttrs.title = f.unavailableHint;

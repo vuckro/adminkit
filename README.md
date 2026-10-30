@@ -80,3 +80,5 @@ This section is the roadmap reference.
 ## License
 
 GPL-2.0-or-later. Geist font files retain their bundled SIL OFL licenses.
+
+Bricks builder restyling is not included.

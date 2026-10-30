@@ -35,14 +35,11 @@ defined( 'ABSPATH' ) || exit;
 class AdminKit_Plugins_List {
 
 	/**
-	 * Register the setting (default OFF) + wire the plugins-screen entry point. The
-	 * setting registers unconditionally so the Settings page can discover it while off.
+	 * Wire the plugins-screen entry point; the shared opt-in is registered by Settings.
 	 *
 	 * @return void
 	 */
 	public static function init() {
-		AdminKit_Settings::register( 'plugins_active_first_enabled', array( 'default' => false ) );
-
 		add_action( 'load-plugins.php', array( __CLASS__, 'on_plugins_screen' ) );
 	}
 
@@ -72,7 +69,7 @@ class AdminKit_Plugins_List {
 	 * @return bool
 	 */
 	public static function enabled() {
-		return (bool) apply_filters( 'adminkit/plugins_active_first/enabled', AdminKit_Settings::get( 'plugins_active_first_enabled' ) );
+		return (bool) apply_filters( 'adminkit/plugins_active_first/enabled', apply_filters( 'adminkit/active_items_first/enabled', AdminKit_Settings::get( 'active_items_first_enabled' ) ) );
 	}
 
 	/**

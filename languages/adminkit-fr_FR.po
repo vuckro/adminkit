@@ -172,14 +172,6 @@ msgstr "Gestion du compte"
 msgid "Account sections"
 msgstr "Sections du compte"
 
-#: inc/settings/class-settings-catalog.php:131
-msgid "Activate the Bricks theme to use this."
-msgstr "Activez le thème Bricks pour utiliser ceci."
-
-#: inc/settings/class-settings-catalog.php:48
-msgid "Active plugins first"
-msgstr "Extensions actives en premier"
-
 #: inc/features/dashboard/class-custom-dashboard.php:599
 msgid "Add alt text to images — better SEO and accessibility."
 msgstr "Ajoutez un texte alternatif aux images — meilleur référencement et accessibilité."
@@ -291,10 +283,6 @@ msgstr "Couleur de marque"
 #: inc/settings/class-settings-page.php:414
 msgid "Bricks"
 msgstr "Bricks"
-
-#: inc/settings/class-settings-catalog.php:128
-msgid "Bricks builder"
-msgstr "Constructeur Bricks"
 
 #: inc/features/dashboard/class-custom-dashboard.php:668
 msgid "Burning the midnight oil, %s?"
@@ -619,10 +607,6 @@ msgstr "Informations"
 #: inc/features/dashboard/class-custom-dashboard.php:602
 msgid "Internal links help readers and search engines explore."
 msgstr "Les liens internes aident les lecteurs et les moteurs de recherche à explorer."
-
-#: inc/settings/class-settings-catalog.php:49
-msgid "Keep active plugins front and center: open the plugins list on the \"Active\" filter and sort active plugins to the top of the \"All\" view. After you toggle a plugin it follows the change — activating jumps to \"Active\", deactivating drops to \"All\" — so it never vanishes from the filter you were on. Falls back to \"All\" when nothing is active. Off restores WordPress's default — the \"All\" view in alphabetical order."
-msgstr "Gardez les extensions actives en avant : ouvre la liste sur le filtre « Activé » et place les extensions actives en haut de la vue « Tout ». Après une bascule, l’extension suit le changement — l’activation saute vers « Activé », la désactivation retombe sur « Tout » — pour ne jamais disparaître du filtre où vous étiez. Revient à « Tout » quand rien n’est actif. Désactivé, c’est le comportement par défaut de WordPress — la vue « Tout » par ordre alphabétique."
 
 #: inc/features/dashboard/class-custom-dashboard.php:651
 msgid "Keep it going, %s"
@@ -951,10 +935,6 @@ msgstr "Réinitialiser le menu"
 #: inc/settings/class-settings-page.php:375
 msgid "Reset to defaults"
 msgstr "Réinitialiser aux valeurs par défaut"
-
-#: inc/settings/class-settings-catalog.php:129
-msgid "Restyle the Bricks builder UI with your tokens. Automatically sets Bricks → Settings → Builder mode to \"Custom\"."
-msgstr "Restyle l’interface du constructeur Bricks avec vos tokens. Règle automatiquement Bricks → Réglages → Mode constructeur sur « Personnalisé »."
 
 #: inc/settings/class-settings-catalog.php:61
 msgid "Restyle wp-login.php to match the admin (logo, dark mode, focus states)."
@@ -1473,3 +1453,11 @@ msgstr "Identifiant d’utilisateur manquant."
 #: inc/wp-core/class-user-quick-edit.php:259
 msgid "You are not allowed to do that."
 msgstr "Vous n'êtes pas autorisé·e à faire cela."
+
+#: inc/settings/class-settings-catalog.php
+msgid "Active items first"
+msgstr "Éléments actifs en premier"
+
+#: inc/settings/class-settings-catalog.php
+msgid "Prioritize published articles, pages and custom post types, and active plugins. Open their lists on Published or Active when available, and group published or active items first in All. Explicit filters, searches and content sorting are preserved. Off restores the native WordPress lists."
+msgstr "Donne la priorité aux articles, pages et types de contenus personnalisés publiés, ainsi qu’aux extensions actives. Ouvre leurs listes sur « Publiés » ou « Actives » lorsque des éléments existent, et les place en premier dans « Tous ». Les filtres explicites, recherches et tris de contenus sont conservés. Désactivé, rétablit les listes natives de WordPress."

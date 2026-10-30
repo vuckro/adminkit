@@ -154,14 +154,6 @@ msgstr ""
 msgid "Account sections"
 msgstr ""
 
-#: inc/settings/class-settings-catalog.php:131
-msgid "Activate the Bricks theme to use this."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:48
-msgid "Active plugins first"
-msgstr ""
-
 #: inc/features/dashboard/class-custom-dashboard.php:599
 msgid "Add alt text to images — better SEO and accessibility."
 msgstr ""
@@ -272,10 +264,6 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php:414
 msgid "Bricks"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:128
-msgid "Bricks builder"
 msgstr ""
 
 #: inc/features/dashboard/class-custom-dashboard.php:668
@@ -600,10 +588,6 @@ msgstr ""
 
 #: inc/features/dashboard/class-custom-dashboard.php:602
 msgid "Internal links help readers and search engines explore."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:49
-msgid "Keep active plugins front and center: open the plugins list on the \"Active\" filter and sort active plugins to the top of the \"All\" view. After you toggle a plugin it follows the change — activating jumps to \"Active\", deactivating drops to \"All\" — so it never vanishes from the filter you were on. Falls back to \"All\" when nothing is active. Off restores WordPress's default — the \"All\" view in alphabetical order."
 msgstr ""
 
 #: inc/features/dashboard/class-custom-dashboard.php:651
@@ -932,10 +916,6 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php:375
 msgid "Reset to defaults"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:129
-msgid "Restyle the Bricks builder UI with your tokens. Automatically sets Bricks → Settings → Builder mode to \"Custom\"."
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php:61
@@ -1458,4 +1438,12 @@ msgstr ""
 
 #: inc/wp-core/class-user-quick-edit.php:259
 msgid "You are not allowed to do that."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Active items first"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Prioritize published articles, pages and custom post types, and active plugins. Open their lists on Published or Active when available, and group published or active items first in All. Explicit filters, searches and content sorting are preserved. Off restores the native WordPress lists."
 msgstr ""

@@ -178,7 +178,7 @@ the cascade collapses (`--background`, `--surface`, `--accent` — gone). The
 Bricks adapter's `provide_tokens()` enqueues `AdminKit_Assets::WAASKIT_HANDLE`
 in that case and returns it instead, so AdminKit's shipped defaults carry the
 same variables until the host's saved colours arrive. Mirror the same logic
-inside `enqueue_builder_fallback_tokens()` if your integration also touches
+in any dedicated enqueue path if your integration also touches
 a builder/UI surface — same chain, two contexts, single source of truth.
 
 ### Bypass restyling in a host's full-screen UI

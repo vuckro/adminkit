@@ -19,9 +19,6 @@
  * values degrade to `favicon`. Applied in wp-admin AND on the front-end toolbar
  * (logged-in users see it there too).
  *
- * The Bricks builder reads the SAME source (AdminKit_Settings::brand_logo()), so
- * one configuration drives the brand everywhere. The whole output is gated by the
- * adminkit/should_load filter, so any veto pauses it along with the rest of AdminKit.
  *
  * @package AdminKit
  */

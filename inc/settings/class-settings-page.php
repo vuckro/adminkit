@@ -322,7 +322,7 @@ class AdminKit_Settings_Page {
 					'bulk'    => ! isset( $f['bulk'] ) || (bool) $f['bulk'],
 					// `available => false` renders the row as locked + dimmed (toggle
 					// disabled, optional hint tooltip). Used when a feature's prerequisite
-					// isn't met (e.g. Bricks builder when the Bricks theme isn't active).
+					// isn't met (e.g. a host-specific tool when its host is inactive).
 					'available'       => ! isset( $f['available'] ) || (bool) $f['available'],
 					'unavailableHint' => isset( $f['unavailableHint'] ) ? $f['unavailableHint'] : '',
 				);

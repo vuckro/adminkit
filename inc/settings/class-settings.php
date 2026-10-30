@@ -51,7 +51,7 @@ class AdminKit_Settings {
 
 	/**
 	 * Branding settings — optional brand logo URLs for light + dark mode. Empty by
-	 * default (no asset shipped). Consumed by the Bricks builder integration (and
+	 * default (no asset shipped). Consumed by branding surfaces (and
 	 * available to any integration) via AdminKit_Settings::get(). URLs are stored
 	 * sanitized; an empty value is dropped so the consumer can fall back.
 	 *
@@ -132,7 +132,7 @@ class AdminKit_Settings {
 
 	/**
 	 * Resolve the brand logo URL for a mode — the single source of truth used
-	 * everywhere AdminKit shows a logo (admin menu, Bricks builder).
+	 * everywhere AdminKit shows a logo.
 	 *
 	 * Order: the Branding setting (logo_light / logo_dark) wins; otherwise the
 	 * `adminkit/brand_logo` filter (a URL string, or an array keyed
@@ -173,6 +173,7 @@ class AdminKit_Settings {
 		$toggles = array(
 			'module_login_enabled',
 			'theme_toggle_enabled',
+			'active_items_first_enabled',
 		);
 		foreach ( $toggles as $key ) {
 			self::register( $key, array(
@@ -188,17 +189,6 @@ class AdminKit_Settings {
 		// the canvas matching the live site exactly (a client's page layout untouched).
 		// The canvas-injection wiring plugs into this flag.
 		self::register( 'editor_content_theme', array(
-			'type'     => 'toggle',
-			'group'    => 'features',
-			'default'  => false,
-			'sanitize' => 'rest_sanitize_boolean',
-		) );
-
-		// Bricks builder restyle — OFF by default (when the Bricks theme is the
-		// active theme; the Features row is greyed-out otherwise via the
-		// `available` flag, so a non-Bricks site still sees the option but can't
-		// flip it). Read by AdminKit_Integration_Bricks::enqueue_builder().
-		self::register( 'bricks_builder_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
 			'default'  => false,

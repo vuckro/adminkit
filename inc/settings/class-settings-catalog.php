@@ -43,10 +43,10 @@ class AdminKit_Settings_Catalog {
 				'desc'  => __( 'Adds a thumbnail column to post-type list tables — the featured image first, with a live WordPress.com mShots screenshot as fallback on production sites (skipped on localhost where mShots can\'t reach the page anyway).', 'adminkit' ),
 			),
 			array(
-				'key'   => 'plugins_active_first_enabled',
+				'key'   => 'active_items_first_enabled',
 				'group' => $content,
-				'label' => __( 'Active plugins first', 'adminkit' ),
-				'desc'  => __( 'Keep active plugins front and center: open the plugins list on the "Active" filter and sort active plugins to the top of the "All" view. After you toggle a plugin it follows the change — activating jumps to "Active", deactivating drops to "All" — so it never vanishes from the filter you were on. Falls back to "All" when nothing is active. Off restores WordPress\'s default — the "All" view in alphabetical order.', 'adminkit' ),
+				'label' => __( 'Active items first', 'adminkit' ),
+				'desc'  => __( 'Prioritize published articles, pages and custom post types, and active plugins. Open their lists on Published or Active when available, and group published or active items first in All. Explicit filters, searches and content sorting are preserved. Off restores the native WordPress lists.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'theme_toggle_enabled',
@@ -114,15 +114,6 @@ class AdminKit_Settings_Catalog {
 				'label' => __( 'Traffic stats', 'adminkit' ),
 				'desc'  => __( 'Count page views and visits with a tiny cookieless beacon — no cookies, no IP storage, no consent banner, and almost no database footprint (pre-summed daily totals). Signed-in staff and bots are excluded. Off disables tracking entirely.', 'adminkit' ),
 			),
-		);
-
-		$rows[] = array(
-			'key'             => 'bricks_builder_enabled',
-			'group'           => $appearance,
-			'label'           => __( 'Bricks builder', 'adminkit' ),
-			'desc'            => __( 'Restyle the Bricks builder UI with your tokens. Automatically sets Bricks → Settings → Builder mode to "Custom".', 'adminkit' ),
-			'available'       => self::bricks_detected(),
-			'unavailableHint' => __( 'Activate the Bricks theme to use this.', 'adminkit' ),
 		);
 
 		return $rows;

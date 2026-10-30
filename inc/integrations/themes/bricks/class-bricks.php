@@ -11,12 +11,6 @@
  *    `adminkit-tokens`, so a green changed to red in Bricks flows through to
  *    every wp-admin button. See `provide_tokens()`.
  *
- *  - **Builder chrome restyle (opt-in).** When the "Bricks builder" feature is
- *    on (Settings → Features) the builder's panels / toolbar / structure tree
- *    get AdminKit-themed chrome via `builder.css`. The general AdminKit admin
- *    restyle is suppressed in the builder context so the two don't fight.
- *    See `enqueue_builder()` + `bypass_builder()`.
- *
  *  - **Frontend admin-bar theme sync.** On the front end the admin bar follows
  *    Bricks's site mode (`data-brx-theme`) and pushes AdminKit's own toggle
  *    flips back into Bricks. See `print_theme_bridge()` for the full rationale.
@@ -61,7 +55,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	/**
 	 * The Bricks builder is two documents — the chrome (main frame) and the
 	 * canvas (iframe). Most callers want "either", a few need to distinguish
-	 * (e.g. enqueue_builder loads different sheets per frame).
+	 * (the adapter avoids injecting administration styles into either frame).
 	 *
 	 * @return bool
 	 */
@@ -188,12 +182,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		// so the first flip is caught and the bar paints in sync.
 		add_action( 'wp_head', array( __CLASS__, 'print_theme_bridge' ), 2 );
 
-		// Opt-in builder restyle. Separate from bypass_builder() above (which keeps
-		// the builder pristine for the rest of AdminKit): this one stylesheet is the
-		// "Bricks builder" feature, gated inside enqueue_builder(). Priority 9999 so
-		// it lands after Bricks's own builder CSS.
-		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_builder' ), 9999 );
-
 		// When the AdminKit "icons" feature is on, give Bricks's own menu item a "B"
 		// mark so it matches the set (priority 22 = just after AdminKit_Core_Menu_Icons).
 		add_action( 'admin_head', array( __CLASS__, 'print_menu_icon' ), 22 );
@@ -205,48 +193,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		add_filter( 'adminkit/toolbar_icons', array( __CLASS__, 'toolbar_icons' ) );
 		add_filter( 'adminkit/toolbar_icon_ab_item_nodes', array( __CLASS__, 'toolbar_ab_item_nodes' ) );
 
-		// Force Bricks's own "Builder mode" setting to `custom` whenever the
-		// AdminKit Bricks-builder integration is on — that's the prerequisite for
-		// builder.css's [data-builder-mode="custom"] block to apply. Without it,
-		// Bricks ignores every --builder-* remap we write. Idempotent: only writes
-		// the option when the value actually needs changing.
-		add_action( 'admin_init', array( __CLASS__, 'sync_bricks_builder_mode' ) );
-	}
-
-	/**
-	 * Ensure Bricks's `builderMode` global setting is `custom` so the builder
-	 * actually consumes the --builder-* variables our CSS sets. Bricks supports
-	 * three modes (Light / Dark / Custom) — the `[data-builder-mode="custom"]`
-	 * selector that gates our mapping block only matches in the third one.
-	 *
-	 * Runs on `admin_init`, only when AdminKit's Bricks-builder toggle is on AND
-	 * Bricks is the active theme. The option is read every admin page-load
-	 * (cheap, autoloaded by WordPress) but `update_option` only fires when the
-	 * stored value isn't already `custom` — so on steady state this is a no-op.
-	 *
-	 * Trade-off recorded: when AdminKit's Bricks-builder toggle is on, the user
-	 * can no longer keep Bricks in "Dark" or "Light" builder mode (we'd flip it
-	 * back next admin page-load). That's deliberate — the toggle's whole purpose
-	 * is the Custom-mode restyle. Toggle off if you want Bricks's own modes back.
-	 *
-	 * @return void
-	 */
-	public static function sync_bricks_builder_mode() {
-		if ( ! self::is_active() ) {
-			return;
-		}
-		if ( ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
-			return;
-		}
-		$bricks = get_option( 'bricks_global_settings', array() );
-		if ( ! is_array( $bricks ) ) {
-			$bricks = array();
-		}
-		if ( ( $bricks['builderMode'] ?? '' ) === 'custom' ) {
-			return; // already correct — no write
-		}
-		$bricks['builderMode'] = 'custom';
-		update_option( 'bricks_global_settings', $bricks );
 	}
 
 	/**
@@ -287,7 +233,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 * Replace Bricks's admin-menu icon with a clean layout/grid glyph (masked, like
 	 * the AdminKit icon set) when the icons feature is on — so it stops standing out
 	 * as a base64 SVG. Bricks sets that icon as an INLINE background, so `!important`
-	 * is the only way to clear it: a deliberate, scoped exception (like builder.css).
+	 * is the only way to clear it: a deliberate, scoped exception for a masked icon.
 	 *
 	 * @return void
 	 */
@@ -382,195 +328,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 })();
 </script>
 		<?php
-	}
-
-	/**
-	 * Restyle the Bricks builder — the "Bricks builder" feature.
-	 *
-	 * Dedicated enqueue: the builder has no admin bar, so AdminKit's normal
-	 * frontend dispatch (and its --ak-* layer) skips it. The builder is a
-	 * Bricks/WaasKit surface, so the sheets map onto the live WaasKit provider
-	 * variables instead (see each file's header).
-	 *
-	 * The builder is TWO documents, and they get DIFFERENT sheets:
-	 *   - MAIN frame  → builder.css        — chrome (toolbar, panels, structure…),
-	 *                                         including the --bricks-* and
-	 *                                         --builder-* variable remaps.
-	 *   - canvas IFRAME → builder-canvas.css — only canvas-surface tweaks, NO
-	 *                                          variable remaps (those would alter
-	 *                                          the rendered page itself).
-	 *
-	 * The CHROME restyle (panels, scrollbars, code editor, variable remaps) is opt-in
-	 * via Settings → Bricks builder. The LOGO branding (toolbar favicon + preloader
-	 * brand logo) always loads in the builder when a brand logo is set — it's a safe,
-	 * brand-positive touch, so it doesn't require the toggle.
-	 *
-	 * @return void
-	 */
-	public static function enqueue_builder() {
-		if ( ! apply_filters( 'adminkit/should_load', true, 'builder' ) ) {
-			return;
-		}
-		if ( ! AdminKit_Settings::get( 'bricks_builder_enabled' ) ) {
-			return;
-		}
-
-		$base = 'inc/integrations/themes/bricks/css/';
-
-		// Canvas iframe — only the canvas tweaks (no variable remaps). MUST be
-		// tested first: the iframe also satisfies ?bricks=run / bricks_is_builder_main(),
-		// so checking the main frame first would leak the chrome's :root remap
-		// into the rendered page.
-		if ( self::is_builder_iframe() ) {
-			self::enqueue_style_file( 'adminkit-bricks-builder-canvas', $base . 'builder-canvas.css' );
-			return;
-		}
-
-		// Main builder frame — load the single builder restyle sheet + inject the
-		// resolved logo URL as a CSS variable so the toolbar and preloader pick it up.
-		if ( ! self::is_builder_main() ) {
-			return;
-		}
-
-		// ── Token stack ──────────────────────────────────────────────────────
-		// AdminKit's normal frontend dispatch (where the token stack — WaasKit
-		// baseline → Bricks's style-manager.min.css → --ak-* layer — is
-		// enqueued) is gated on is_admin_bar_showing(), which is FALSE inside
-		// the Bricks builder (Bricks suppresses the bar). So without an
-		// explicit enqueue here, builder.css would land with NO token layer
-		// underneath it: every var(--background), var(--surface), etc. would
-		// be undefined and the panels paint transparent — showing through to
-		// Bricks's own dark backdrop, so the entire builder UI turns black.
-		// Enqueue the stack ourselves, in cascade order, so the restyle paints
-		// with AdminKit defaults whether or not the user has imported a
-		// Bricks Style Manager palette.
-		self::enqueue_token_stack();
-
-		$deps = wp_style_is( AdminKit_Assets::TOKENS_HANDLE, 'registered' )
-			? array( AdminKit_Assets::TOKENS_HANDLE )
-			: array();
-
-		if ( ! self::enqueue_style_file( 'adminkit-bricks-builder', $base . 'builder.css', $deps ) ) {
-			return;
-		}
-
-		// Two independent surfaces, each with one asset and one fallback:
-		//
-		//   • PRELOADER → brand logo if set, otherwise Bricks's native
-		//     preloader paints untouched (animated logo + title visible).
-		//
-		//   • TOOLBAR LOGO → favicon if set, otherwise Bricks's native
-		//     toolbar img sits in the accent frame (CSS-static rule).
-		//
-		// Favicon detection: get_site_icon_url() only returns a URL when the
-		// user has formally set a Site Icon in Settings → General. Lots of
-		// sites have a /favicon.ico at the root without ever doing that, so
-		// fall back to it when present — same icon either way.
-		$brand_logo = AdminKit_Settings::brand_logo( 'dark' );
-		$favicon    = get_site_icon_url( 192 );
-		if ( '' === $favicon && file_exists( ABSPATH . 'favicon.ico' ) ) {
-			$favicon = home_url( '/favicon.ico' );
-		}
-		$css = '';
-
-		if ( '' !== $brand_logo ) {
-			$url  = 'url("' . esc_url_raw( $brand_logo ) . '")';
-			$css .= '#bricks-preloader{background:#171717}'
-				. '#bricks-preloader .bricks-logo-animated,'
-				. '#bricks-preloader .title,'
-				. '#bricks-preloader .sub-title{display:none}'
-				. '#bricks-preloader .bricks-loading-inner{display:grid;place-items:center}'
-				. '#bricks-preloader .bricks-loading-inner::before{'
-				. 'content:"";width:15rem;aspect-ratio:1;'
-				. 'background:' . $url . ' center/contain no-repeat;'
-				. 'animation:adminkit-bricks-preloader-pulse 1.4s ease-in-out infinite}'
-				. '@keyframes adminkit-bricks-preloader-pulse{50%{transform:scale(1.1)}}';
-		}
-
-		if ( '' !== $favicon ) {
-			// Size the `.logo` container AND the inner img — Bricks's own CSS
-			// pins `.logo img { width: 100% }` (so the img tracks whatever
-			// width the parent gives it). Setting just the img isn't enough;
-			// the parent has to know to be 32px wide for the img to follow.
-			$url  = 'url("' . esc_url_raw( $favicon ) . '")';
-			$css .= '#bricks-toolbar .logo{background-color:transparent;padding:0;width:32px;height:32px}'
-				. '#bricks-toolbar .logo img{content:' . $url . ';width:32px;height:32px;border-radius:6px}';
-		}
-
-		if ( '' !== $css ) {
-			wp_add_inline_style( 'adminkit-bricks-builder', $css );
-		}
-	}
-
-	/**
-	 * Enqueue AdminKit's full token cascade for the builder context. The
-	 * normal frontend dispatch skips it (admin bar isn't showing in the
-	 * builder, so dispatch_frontend bails) — so the builder restyle would
-	 * otherwise reference undefined CSS vars. This recreates the same
-	 * three-layer load order class-assets.php uses elsewhere:
-	 *
-	 *   1. WaasKit baseline   — 309 tokens (--background, --surface, ramps),
-	 *                           the safety net when the user hasn't imported
-	 *                           anything into Bricks's Style Manager.
-	 *   2. Bricks's user palette (style-manager.min.css, via provide_tokens)
-	 *                         — only loaded if the file exists on disk;
-	 *                           depends on the baseline so it cascades on top.
-	 *   3. adminkit-tokens.css (the --ak-* layer) — depends on whichever of
-	 *                           the two above are registered.
-	 *
-	 * wp_enqueue_style is idempotent on handle, so if another code path has
-	 * already enqueued any of these (unlikely in the builder), the call here
-	 * is a no-op.
-	 *
-	 * @return void
-	 */
-	private static function enqueue_token_stack() {
-		// 1. WaasKit baseline.
-		$wk_path = ADMINKIT_PATH . AdminKit_Assets::WAASKIT_SRC;
-		if ( file_exists( $wk_path ) ) {
-			wp_enqueue_style(
-				AdminKit_Assets::WAASKIT_HANDLE,
-				ADMINKIT_URL . AdminKit_Assets::WAASKIT_SRC,
-				array(),
-				(string) filemtime( $wk_path )
-			);
-		}
-
-		// 2. Bricks Style Manager palette (if present). provide_tokens()
-		//    handles the file-exists check + dep-on-baseline wiring.
-		self::provide_tokens( null, 'builder' );
-
-		// 3. adminkit-tokens (--ak-* layer). Depends on whichever of the
-		//    two above are registered so the cascade resolves.
-		$tk_path = ADMINKIT_PATH . AdminKit_Assets::TOKENS_SRC;
-		$deps    = array_filter(
-			array( AdminKit_Assets::WAASKIT_HANDLE, self::TOKENS_HANDLE ),
-			static function ( $h ) { return wp_style_is( $h, 'registered' ); }
-		);
-		wp_enqueue_style(
-			AdminKit_Assets::TOKENS_HANDLE,
-			ADMINKIT_URL . AdminKit_Assets::TOKENS_SRC,
-			$deps,
-			file_exists( $tk_path ) ? (string) filemtime( $tk_path ) : ADMINKIT_VERSION
-		);
-	}
-
-	/**
-	 * Enqueue one of the integration's stylesheets by repo-relative path, with a
-	 * filemtime cache-bust. Returns false if the file is missing.
-	 *
-	 * @param string   $handle
-	 * @param string   $rel    Path relative to the plugin root.
-	 * @param string[] $deps   Optional handles to depend on (must already be registered).
-	 * @return bool
-	 */
-	private static function enqueue_style_file( $handle, $rel, array $deps = array() ) {
-		$path = ADMINKIT_PATH . $rel;
-		if ( ! file_exists( $path ) ) {
-			return false;
-		}
-		wp_enqueue_style( $handle, ADMINKIT_URL . $rel, $deps, (string) filemtime( $path ) );
-		return true;
 	}
 
 	/**

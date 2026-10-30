@@ -61,7 +61,7 @@ toggle over to the host.
 
 | Hook | Type | Signature | Purpose |
 | --- | --- | --- | --- |
-| `adminkit/brand_logo` | filter | `('' \| string \| array)` | Brand logo fallback when the Branding settings are empty. Return a URL string, or `array( 'light' => …, 'dark' => …, 'preloader' => … )`. Drives the brand mark at the site-name node **and** the Bricks builder; the settings win over the filter. |
+| `adminkit/brand_logo` | filter | `('' \| string \| array)` | Brand logo fallback when the Branding settings are empty. Return a URL string, or `array( 'light' => …, 'dark' => …, 'preloader' => … )`. Drives the brand mark at the site-name node and login branding; the settings win over the filter. |
 
 Resolved by `AdminKit_Settings::brand_logo( $mode )`. Logos are normally set
 no-code on the AdminKit Dashboard branding card, alongside the `wp_logo` mode for the

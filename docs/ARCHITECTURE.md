@@ -239,3 +239,14 @@ portrait default is reset to WordPress's Mystery Person. Other avatar choices
 and ordinary user profile fields are preserved. User metadata is network-shared
 in multisite; the removed avatar module no longer consumes it on any site.
 Native WordPress avatars remain available; AdminKit no longer generates portraits.
+
+Storage upgrade 2 removes `bricks_builder_enabled` from the settings document.
+The Bricks builder styling, assets and automatic builder-mode writes are removed;
+the separate optional Bricks admin/token adapter remains. No previous Bricks
+builder mode was recorded, so migration does not overwrite the native setting.
+
+Storage upgrade 3 renames `plugins_active_first_enabled` to
+`active_items_first_enabled`, retaining an explicit choice and preferring an
+already saved new value. This opt-in now covers standard post/page/CPT lists
+(Published) as well as plugins (Active). Native page hierarchies remain intact;
+explicit filters, content searches and requested sorting are preserved.
