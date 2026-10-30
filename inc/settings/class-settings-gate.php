@@ -49,13 +49,19 @@ class AdminKit_Settings_Gate {
 	}
 
 	/**
-	 * An integration runs only after an explicit opt-in.
+	 * Third-party integrations require opt-in; core editor chrome is standard.
 	 *
 	 * @param bool   $enabled
 	 * @param string $slug
 	 * @return bool
 	 */
 	public static function gate_integration( $enabled, $slug ) {
+		// Gutenberg ships with WordPress. Its chrome must accompany the admin
+		// skin even when optional plugin integrations are all disabled. Canvas
+		// theming remains separately gated by editor_content_theme.
+		if ( 'gutenberg' === $slug ) {
+			return $enabled;
+		}
 		$v = AdminKit_Settings::get( 'integration_' . $slug . '_enabled' );
 		return $enabled && (bool) $v;
 	}

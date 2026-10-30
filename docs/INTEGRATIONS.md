@@ -274,7 +274,7 @@ host's own theme attribute (one-way) for `color-scheme`. The
 - [fluent-booking](../inc/integrations/plugins/fluent-booking/) — FluentBooking 2.5 semantic tokens, legacy aliases, Element Plus and same-origin TinyMCE theme synchronization. [Visual review](FLUENTBOOKING-REVIEW.md).
 
 - [bricks](../inc/integrations/themes/bricks/class-bricks.php) — token injection + opt-in builder theming (with a baseline fallback when the builder's colours are cleared).
-- [gutenberg](../inc/integrations/plugins/gutenberg/class-gutenberg.php) — the `editor` asset context + opt-in theming of the iframed canvas (content + native blocks).
+- [gutenberg](../inc/integrations/plugins/gutenberg/class-gutenberg.php) — core editor chrome always accompanies the admin skin, independent of third-party integration opt-ins. It is excluded from the plugin integration catalog. The `editor_content_theme` feature separately enables theming of the iframed canvas (content + native blocks), off by default; `adminkit/integration_enabled` can still disable the adapter explicitly.
 - [wpcode](../inc/integrations/plugins/wpcode/class-wpcode.php) — minimal Tier A (remap `--wpcode-*`, zero `!important`).
 - [acf](../inc/integrations/plugins/acf/class-acf.php) — clean Tier B (host hardcodes hex), screen-scoped + version-gated.
 - [woocommerce](../inc/integrations/plugins/woocommerce) — WooCommerce 10/11: onboarding, React/WPDS, classic products, HPOS orders, settings, SelectWoo and shared toolbar. [Coverage and verification](WOOCOMMERCE-REVIEW.md).

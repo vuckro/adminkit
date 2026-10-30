@@ -157,6 +157,11 @@ class AdminKit_Settings_Catalog {
 		}
 		foreach ( $files as $file ) {
 			$slug  = substr( basename( $file, '.php' ), strlen( 'class-' ) );
+			// Core editor chrome is always part of the admin skin, not a plugin
+			// opt-in. The feature catalog owns the optional canvas setting.
+			if ( 'gutenberg' === $slug ) {
+				continue;
+			}
 			$class = 'AdminKit_Integration_' . str_replace( '-', '_', ucwords( $slug, '-' ) );
 			if ( ! class_exists( $class ) || ! method_exists( $class, 'is_active' ) ) {
 				continue;
