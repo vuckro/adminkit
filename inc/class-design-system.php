@@ -28,12 +28,7 @@ class AdminKit_Design_System {
 		$vars .= '--ak-shadow-subtle:' . $shadows[ $settings['elevation'] ] . ';--ak-design-elevation:' . $shadows[ $settings['elevation'] ] . ';';
 		$css = $selector . '{' . $vars . '}';
 		foreach ( array( 'light', 'dark' ) as $mode ) {
-			$palette = array();
-			if ( 'custom' === AdminKit_Settings::accent_source() ) {
-				$palette = self::custom_neutrals( (string) AdminKit_Settings::get( 'brand_accent' ), $mode );
-			}
-			// Explicit role edits always win; generated values are never persisted.
-			$palette = array_merge( $palette, $settings['colors'][ $mode ] );
+			$palette = $settings['colors'][ $mode ];
 			if ( ! $palette ) { continue; }
 			$root = ':root[data-adminkit-theme="' . $mode . '"]';
 			// Match the specificity of explicit custom/provider dark presets.
@@ -43,35 +38,6 @@ class AdminKit_Design_System {
 			$css .= $target . '{' . self::palette( $palette, 'dark' === $mode ) . '}';
 		}
 		return $css;
-	}
-
-	/** One recipe shared with the settings editor via its boot data. Percentages
-	 * stay low so the custom hue gently colors neutrals without flattening roles.
-	 */
-	public static function neutral_recipe() {
-		return array(
-			'light' => array( 'bg' => array( '#f9fafc', 3 ), 'surface' => array( '#ffffff', 2 ), 'text' => array( '#0c0d0f', 12 ), 'text-muted' => array( '#35383d', 10 ), 'border' => array( '#e4e6e9', 12 ) ),
-			'dark' => array( 'bg' => array( '#161719', 4 ), 'surface' => array( '#202124', 5 ), 'text' => array( '#f7f8fa', 8 ), 'text-muted' => array( '#dbdee2', 8 ), 'border' => array( '#37393c', 14 ) ),
-		);
-	}
-
-	/** Pure, deterministic sRGB interpolation. Invalid seeds leave the baseline. */
-	public static function custom_neutrals( $hex, $mode ) {
-		$hex = is_string( $hex ) ? sanitize_hex_color( $hex ) : null;
-		if ( ! $hex ) { return array(); }
-		if ( 4 === strlen( $hex ) ) { $hex = '#' . $hex[1] . $hex[1] . $hex[2] . $hex[2] . $hex[3] . $hex[3]; }
-		$recipe = self::neutral_recipe();
-		$palette = array();
-		foreach ( $recipe[ 'dark' === $mode ? 'dark' : 'light' ] as $role => $entry ) {
-			$rgb = array();
-			for ( $i = 1; $i <= 5; $i += 2 ) {
-				$base = hexdec( substr( $entry[0], $i, 2 ) );
-				$seed = hexdec( substr( $hex, $i, 2 ) );
-				$rgb[] = (int) round( $base + ( $seed - $base ) * $entry[1] / 100 );
-			}
-			$palette[ $role ] = sprintf( '#%02x%02x%02x', $rgb[0], $rgb[1], $rgb[2] );
-		}
-		return $palette;
 	}
 
 	/** Derive interactive states from the editable roles, keeping all aliases in sync. */

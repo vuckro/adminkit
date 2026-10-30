@@ -437,16 +437,6 @@
 				else if (event.key === 'Home') { index = 0; } else if (event.key === 'End') { index = sections.length - 1; } else { return; }
 				event.preventDefault(); selectSection(sections[index].id); sections[index].tab.focus();
 			});
-			function slider(key, label, min, max, step, changed) {
-				var input = el('input', { id: 'ak-design-' + key, type: 'range', min: String(min), max: String(max), step: String(step), value: String(state.designSystem[key]) });
-				var output = el('output', { for: input.id, text: number(input.value) + '×' });
-				input.setAttribute('aria-valuetext', output.textContent);
-				input.addEventListener('input', function () {
-					state.designSystem[key] = Number(input.value); output.textContent = number(input.value) + '×'; input.setAttribute('aria-valuetext', output.textContent);
-					changed(); markDirty();
-				});
-				return el('div', { class: 'ak-foundation-slider' }, [el('div', {}, [el('label', { for: input.id, text: label }), output]), input]);
-			}
 			section('identity', I.studioIdentity, I.foundationIdentityHelp, [slotsRow, el('div', { class: 'ak-identity-placements' }, [wpField])]);
 
 			// Theme-scoped WaasKit roles come from the generated token stylesheet.
@@ -502,13 +492,7 @@
 					roles.forEach(function (role) { card.scope.style.removeProperty('--wk-' + role[0]); });
 					if (state.accentSource === 'custom' && isValidHex(state.brandAccent)) {
 						card.scope.style.setProperty('--wk-accent', state.brandAccent); card.scope.style.setProperty('--wk-on-accent', bestOnAccent(state.brandAccent));
-						var seed = accentChannels(state.brandAccent);
-						var recipe = (D.customNeutralRecipe || {})[card.mode] || {};
-						Object.keys(recipe).forEach(function (role) {
-							var base = accentChannels(recipe[role][0]), amount = recipe[role][1] / 100;
-							var hex = '#' + base.map(function (channel, i) { return Math.round(channel + (seed[i] - channel) * amount).toString(16).padStart(2, '0'); }).join('');
-							card.scope.style.setProperty('--wk-' + role, hex);
-						});
+
 					}
 					Object.keys(values).forEach(function (role) { card.scope.style.setProperty('--wk-' + role, values[role]); });
 					if (!card.scope.isConnected) { return; }
@@ -523,19 +507,10 @@
 			};
 			section('colors', I.studioColors, I.foundationColorsHelp, [el('div', { class: 'ak-foundation-accent' }, [accentPicker()]), el('div', { class: 'ak-palettes' }, paletteCards.map(function (card) { return card.scope; }))]);
 
-			function field(label, input) { return el('div', { class: 'ak-simple-field' }, [el('label', { for: input.id, text: label }), input]); }
-			var font = el('select', { id: 'ak-type-font' });
-			[['humanist', I.humanist], ['system', I.foundationSystemFont], ['classic', I.classic]].forEach(function (item) { font.appendChild(el('option', { value: item[0], text: item[1] })); });
-			font.value = state.appearance.ui_font;
-			font.addEventListener('change', function () { state.appearance.ui_font = font.value; markDirty(); });
-			function unchanged() {}
-			section('type', I.studioType, I.studioTypeHint, [field(I.foundationFont, font), slider('type_scale', I.studioScale, .75, 1.5, .01, unchanged)]);
-			var elevation = el('select', { id: 'ak-foundation-elevation' });
-			[['flat', I.studioFlat], ['subtle', I.studioSubtle], ['raised', I.studioRaised]].forEach(function (item) { elevation.appendChild(el('option', { value: item[0], text: item[1] })); });
-			elevation.value = state.designSystem.elevation;
-			elevation.addEventListener('change', function () { state.designSystem.elevation = elevation.value; markDirty(); });
-			section('shapes', I.studioShapes, I.studioShapesHint, [slider('radius_scale', I.studioRadiusScale, 0, 2, .05, unchanged), field(I.studioElevation, elevation)]);
-			section('spacing', I.studioSpacing, I.studioSpacingHint, [slider('space_scale', I.studioSpaceScale, .5, 2, .05, unchanged)]);
+			function developing() { return el('p', { class: 'ak-foundation-development', text: I.foundationDevelopment }); }
+			section('type', I.studioType, I.studioTypeHint, [developing()]);
+			section('shapes', I.studioShapes, I.studioShapesHint, [developing()]);
+			section('spacing', I.studioSpacing, I.studioSpacingHint, [developing()]);
 			window.addEventListener('resize', function () { nav.setAttribute('aria-orientation', window.matchMedia('(max-width: 782px)').matches ? 'horizontal' : 'vertical'); });
 			p.classList.add('ak-foundations');
 			p.appendChild(el('h2', { class: 'ak-foundations-title', text: I.designSystem })); p.appendChild(intro(I.designIntro));

@@ -365,7 +365,6 @@ class AdminKit_Settings_Page {
 			// One of 'adminkit' | 'bricks' | 'custom'. Drives the segmented picker
 			// in the Brand card and the Source pill colour for accent-family tokens.
 			'accentSource' => AdminKit_Settings::accent_source(),
-			'customNeutralRecipe' => AdminKit_Design_System::neutral_recipe(),
 			'designSystem' => AdminKit_Settings::sanitize_design_system( AdminKit_Settings::get( 'design_system' ) ),
 			'settingsStorage' => array( 'table' => (string) $wpdb->options, 'option' => AdminKit_Settings::OPTION_KEY ),
 			'appearance' => array( 'ui_density' => AdminKit_Settings::get( 'ui_density' ), 'ui_radius' => AdminKit_Settings::get( 'ui_radius' ), 'ui_font' => AdminKit_Settings::get( 'ui_font' ) ),
@@ -388,7 +387,7 @@ class AdminKit_Settings_Page {
 				'foundationInvalidColor' => __( 'Use a hex color such as #1549ab.', 'adminkit' ),
 				'foundationSections' => __( 'Design foundations', 'adminkit' ),
 				'foundationIdentityHelp' => __( 'Choose your logos and where they appear.', 'adminkit' ),
-				'foundationColorsHelp' => __( 'Choose colors for light and dark. Custom subtly tints the neutrals. Manual colors take priority. Save to apply the complete palette.', 'adminkit' ),
+				'foundationColorsHelp' => __( 'Choose colors for light and dark. Custom changes the accent while keeping neutral backgrounds and text. Save to apply your changes.', 'adminkit' ),
 				'foundationTypeHelp' => __( 'A fluid type scale from small text to large headings. Edit the sample and adjust its scale.', 'adminkit' ),
 				'foundationShapesHelp' => __( 'Adjust the corner scale. Pill-shaped elements keep their own shape.', 'adminkit' ),
 				'foundationSpaceHelp' => __( 'Adjust the shared spacing scale.', 'adminkit' ),
@@ -414,6 +413,7 @@ class AdminKit_Settings_Page {
 				'foundationInherited' => __( 'Inherited', 'adminkit' ),
 				'foundationCustom' => __( 'Customized', 'adminkit' ),
 				'foundationContrast' => __( 'Text / background contrast: %s:1', 'adminkit' ),
+				'foundationDevelopment' => __( 'In development', 'adminkit' ),
 				'foundationScope' => __( 'These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design.', 'adminkit' ),
 				'studioIdentity' => __( 'Identity', 'adminkit' ),
 				'studioColors' => __( 'Colors', 'adminkit' ),

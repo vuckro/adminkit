@@ -1213,7 +1213,7 @@ msgid "Choose your logos and where they appear."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Choose colors for light and dark. Custom subtly tints the neutrals. Manual colors take priority. Save to apply the complete palette."
+msgid "Choose colors for light and dark. Custom changes the accent while keeping neutral backgrounds and text. Save to apply your changes."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -1363,4 +1363,7 @@ msgstr ""
 
 #: inc/wp-core/class-profile-account.php
 msgid "Permissions for this role are defined by the site or a plugin."
+msgstr ""
+
+msgid "In development"
 msgstr ""

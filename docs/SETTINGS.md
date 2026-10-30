@@ -107,3 +107,11 @@ The regression suite samples 4,096 seeds in both modes and checks body/muted tex
 Unsaved accent changes no longer modify the document theme/accent attribute or global CSS. All color experiments remain in local light/dark palette scopes; saving reloads the page and applies the complete PHP-compiled palette together. WordPress/monochrome palette scopes select their own preset independently of the saved document preset. Invalid color inputs block saving and focus the affected field rather than silently saving a previous value.
 
 Typography now contains only family and scale; Shapes only radius scale and elevation; Spacing only scale. The specimen galleries and transient text/weight tools were removed. Identity upload/placement controls and stored settings are preserved. Browser checks validate distinct preset colors, scoped unsaved custom neutrals and the simplified controls; authenticated save/reload remains unverified.
+
+## Current simplified scope
+
+Automatic tinting of neutral roles was removed after visual review. Custom now
+changes only the accent family; generated neutral recipes and editor boot data
+were removed. Explicit saved per-role overrides remain intact. Typography,
+Shapes/elevation and Spacing show only title, description and an In development
+notice. Their saved values are preserved but no controls are exposed for now.

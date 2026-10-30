@@ -32,39 +32,9 @@ $profile['design_system'] = array( 'type_scale' => INF, 'space_scale' => -1, 'ra
 $invalid = AdminKit_Design_System::css();
 ak_assert( false === strpos( $invalid, '<script>' ) && false === strpos( $invalid, '--ak-unknown' ), 'CSS injection rejected' );
 ak_assert( false !== strpos( $invalid, '--ak-type-scale:1;' ), 'Invalid scales use defaults' );
-// Generated neutrals remain readable even for saturated or extreme seed colors.
-function ak_neutral_luminance( $hex ) {
- $rgb = sscanf( $hex, '#%02x%02x%02x' );
- foreach ( $rgb as &$c ) { $c /= 255; $c = $c <= .04045 ? $c / 12.92 : pow( ( $c + .055 ) / 1.055, 2.4 ); }
- return .2126 * $rgb[0] + .7152 * $rgb[1] + .0722 * $rgb[2];
-}
-$count = 0;
-for ( $r = 0; $r <= 255; $r += 17 ) {
- for ( $g = 0; $g <= 255; $g += 17 ) {
-  for ( $b = 0; $b <= 255; $b += 17 ) {
-   $seed = sprintf( '#%02x%02x%02x', $r, $g, $b );
-   foreach ( array( 'light', 'dark' ) as $mode ) {
-    $colors = AdminKit_Design_System::custom_neutrals( $seed, $mode );
-    foreach ( array( 'text', 'text-muted' ) as $ink ) {
-     foreach ( array( 'bg', 'surface' ) as $background ) {
-      $a = ak_neutral_luminance( $colors[ $ink ] ); $z = ak_neutral_luminance( $colors[ $background ] );
-      ak_assert( ( max( $a, $z ) + .05 ) / ( min( $a, $z ) + .05 ) >= 4.5, 'Generated neutral contrast: ' . $seed );
-     }
-    }
-   }
-   $count++;
-  }
- }
-}
-ak_assert( array() === AdminKit_Design_System::custom_neutrals( 'url(evil)', 'light' ), 'Invalid automatic palette seed' );
-$profile = array( 'accent_source' => 'custom', 'brand_accent' => '#b64720', 'design_system' => array( 'colors' => array( 'light' => array( 'bg' => '#abcdef' ) ) ) );
-$automatic = AdminKit_Design_System::css();
-ak_assert( false !== strpos( $automatic, '--ak-bg:#abcdef;' ), 'Manual roles override generated neutrals' );
-$profile['design_system'] = array();
-$fixtures['auto'] = AdminKit_Design_System::css();
-$fixtures['neutralRecipe'] = AdminKit_Design_System::neutral_recipe();
-$fixtures['neutralExpected'] = AdminKit_Design_System::custom_neutrals( '#b64720', 'light' );
-echo "OK: $count automatic neutral palettes pass light/dark text contrast; explicit overrides preserved\n";
+$profile = array( 'accent_source' => 'custom', 'brand_accent' => '#e31c1c' );
+$neutral = AdminKit_Design_System::css();
+ak_assert( false === strpos( $neutral, '--ak-bg:' ) && false === strpos( $neutral, '--ak-text:' ), 'Custom accent must leave neutrals untouched' );
 if ( isset( $argv[1] ) ) { file_put_contents( $argv[1], json_encode( $fixtures, JSON_PRETTY_PRINT ) ); }
 echo "OK: runtime palettes, scales, contrast aliases, toolbar containment and invalid input\n";
 

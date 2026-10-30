@@ -1227,8 +1227,8 @@ msgid "Choose your logos and where they appear."
 msgstr "Choisissez vos logos et leurs emplacements."
 
 #: inc/settings/class-settings-page.php
-msgid "Choose colors for light and dark. Custom subtly tints the neutrals. Manual colors take priority. Save to apply the complete palette."
-msgstr "Choisissez les couleurs en clair et en sombre. Personnalisé teinte subtilement les neutres. Les couleurs manuelles restent prioritaires. Enregistrez pour appliquer toute la palette."
+msgid "Choose colors for light and dark. Custom changes the accent while keeping neutral backgrounds and text. Save to apply your changes."
+msgstr "Choisissez les couleurs en clair et en sombre. Personnalisé change l’accent en conservant des fonds et des textes neutres. Enregistrez pour appliquer vos modifications."
 
 #: inc/settings/class-settings-page.php
 msgid "A fluid type scale from small text to large headings. Edit the sample and adjust its scale."
@@ -1378,3 +1378,6 @@ msgstr "Gère son profil, sans accès à la modification des contenus."
 #: inc/wp-core/class-profile-account.php
 msgid "Permissions for this role are defined by the site or a plugin."
 msgstr "Les droits de ce rôle sont définis par le site ou une extension."
+
+msgid "In development"
+msgstr "En cours de développement"
