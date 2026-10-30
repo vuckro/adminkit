@@ -128,3 +128,5 @@ raster images retain original colors. Administrator SVG uploads accept only a
 256KB vector subset with no scripts, event handlers, embedded/external content,
 DTD/entities or styles. The supplied WaasKit SVG was imported as attachment 36
 and selected locally. No public frontend branding was changed outside the toolbar.
+
+Logo source selection is implicit: the import button and URL field are directly visible. A successful media pick sets upload source; a valid URL edit sets URL source. Both update one shared logo value. Replacing/removing clears stale URL validation errors. No source dropdown is rendered.

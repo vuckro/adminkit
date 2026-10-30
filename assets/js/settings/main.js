@@ -97,23 +97,42 @@
 
 			function singleLogo() {
 				var preview = el('img', { alt: '', class: 'ak-single-logo-preview' });
-				var source = el('select', { id: 'ak-logo-source' }, [el('option', { value: 'upload', text: I.logoUpload }), el('option', { value: 'url', text: I.logoUrl })]);
-				source.value = state.logoSource;
 				var url = el('input', { id: 'ak-logo-url', type: 'url', placeholder: 'https://', value: state.logos.light || state.logos.dark || '' });
-				var urlLabel = el('label', { for: url.id, text: I.logoUrl });
-				var upload = el('button', { type: 'button', class: 'ak-btn', text: I.slotUpload, onclick: function () { openMedia(function (value) { set(value); markDirty(); }); } });
-				var remove = el('button', { type: 'button', class: 'ak-btn', text: I.slotRemove, onclick: function () { set(''); markDirty(); } });
-				function set(value) { state.logos.light = state.logos.dark = value; url.value = value; sync(); }
+				var upload = el('button', { type: 'button', class: 'ak-btn', text: I.logoUpload, onclick: function () {
+					openMedia(function (value) { setLogo(value, 'upload'); });
+				} });
+				var remove = el('button', { type: 'button', class: 'ak-btn', text: I.slotRemove, onclick: function () { setLogo(''); } });
+
 				function sync() {
 					var value = state.logos.light || state.logos.dark || '';
-					preview.hidden = !value; if (value) { preview.src = value; } else { preview.removeAttribute('src'); }
+					preview.hidden = !value;
+					if (value) { preview.src = value; } else { preview.removeAttribute('src'); }
 					preview.classList.toggle('ak-single-logo-svg', /\.svg(?:[?#]|$)/i.test(value));
-					upload.hidden = state.logoSource !== 'upload'; url.hidden = state.logoSource !== 'url'; urlLabel.hidden = url.hidden; remove.disabled = !value;
+					remove.disabled = !value;
 				}
-				source.addEventListener('change', function () { state.logoSource = source.value; sync(); markDirty(); });
-				url.addEventListener('change', function () { if (url.value && !/^https?:\/\//i.test(url.value)) { url.setAttribute('aria-invalid', 'true'); url.setCustomValidity(I.logoInvalidUrl); return; } url.removeAttribute('aria-invalid'); url.setCustomValidity(''); set(url.value.trim()); markDirty(); });
+				function setLogo(value, source) {
+					state.logos.light = state.logos.dark = value;
+					if (source) { state.logoSource = source; }
+					url.value = value;
+					url.removeAttribute('aria-invalid');
+					url.setCustomValidity('');
+					sync();
+					markDirty();
+				}
+				url.addEventListener('change', function () {
+					var value = url.value.trim();
+					var valid = !value;
+					try { valid = !value || ['http:', 'https:'].indexOf(new URL(value).protocol) !== -1; } catch (error) { valid = false; }
+					if (!valid) { url.setAttribute('aria-invalid', 'true'); url.setCustomValidity(I.logoInvalidUrl); return; }
+					setLogo(value, 'url');
+				});
 				sync();
-				return el('div', { class: 'ak-single-logo' }, [el('label', { for: source.id, text: I.logoSource }), source, urlLabel, url, preview, el('div', { class: 'ak-actions' }, [upload, remove]), el('p', { text: I.logoHelp })]);
+				return el('div', { class: 'ak-single-logo' }, [
+					preview,
+					el('div', { class: 'ak-single-logo-actions' }, [upload, remove]),
+					el('div', {}, [el('label', { for: url.id, text: I.logoUrl }), url]),
+					el('p', { text: I.logoHelp })
+				]);
 			}
 
 			// Segmented control reused for the Display row (Admin bar + Login screen).

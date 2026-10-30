@@ -387,3 +387,6 @@
 .adminkit-app .ak-single-logo-preview[hidden], .adminkit-app .ak-single-logo [hidden] { display: none; }
 :root[data-adminkit-theme="dark"] .adminkit-app .ak-single-logo-svg { filter: invert(1); }
 .adminkit-app .ak-single-logo p { margin: 0; color: var(--ak-text-muted); line-height: 1.6; }
+
+.adminkit-app .ak-single-logo-actions { display: flex; flex-wrap: wrap; gap: var(--ak-space-s); }
+.adminkit-app .ak-single-logo label { margin-bottom: var(--ak-space-s); }
