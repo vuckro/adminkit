@@ -341,7 +341,7 @@ preserved outside those cards. No JavaScript or animation is added.
 
 ### General settings navigation
 
-`options-general.js` keeps native fields in the original form and groups them into General, Accounts & registration, and Language/date/time tabs. The locale tab separates language/timezone from display formats into two cards. Desktop panels use the shared two-column grid; the account panel keeps a single readable column. Card headings and introductions are localized by `class-options-general.php`.
+`options-general.js` keeps native fields in the original form and groups them into General, Accounts & registration, and Language/date/time tabs. The locale tab separates language/timezone from display formats into two cards. Desktop panels use the shared two-column grid; the account panel keeps a single readable column. In Identity, site details lead, followed by the site icon and administration logo in that DOM order; desktop places these two visual assets in the right column. Card headings and introductions are localized by `class-options-general.php`.
 
 ### Discussion settings cards
 
@@ -387,3 +387,5 @@ Account layout rhythm is shared by all three account routes: 24px card padding
 the design system. Header and form use the same 1240px maximum width. Settings
 labels remain above controls at every width. Isolated checks cover all available
 tabs at 1440/390px, input-node preservation and horizontal overflow.
+
+The brand logo is edited in WordPress General Settings, after the native site icon. Toolbar identity is automatic: wordmark with the expanded menu, site icon with the folded or mobile menu, and WordPress mark if no site icon exists. The legacy wp_logo option is retained for import compatibility but no longer chooses toolbar rendering. They use the native General Settings form and preserve unrelated AdminKit options. Design system sections cover colors, typography, shapes and spacing.

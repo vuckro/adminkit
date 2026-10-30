@@ -1399,3 +1399,14 @@ msgstr "Utilisez un SVG simple composé de formes vectorielles, sans script ni c
 
 msgid "Enter a valid image URL starting with https:// or http://."
 msgstr "Saisissez une URL d’image valide commençant par https:// ou http://."
+
+#: inc/settings/class-settings-page.php
+msgid "Administration logo"
+msgstr "Logo de l’administration"
+
+#: inc/settings/class-settings-page.php
+msgid "Shown with the expanded menu. The site icon takes over when the menu is collapsed."
+msgstr "Affiché lorsque le menu est déplié. L’icône du site prend le relais lorsque le menu est replié."
+
+msgid "Upload image"
+msgstr "Importer une image"

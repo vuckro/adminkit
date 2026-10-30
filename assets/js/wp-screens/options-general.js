@@ -42,6 +42,7 @@
 	var BLOCKS = [
 		{ id: 'site-identity', tab: 'general', title: S.identity || 'Site identity',          desc: S.identityDesc || '', rows: [ 'blogname', 'blogdescription', 'siteurl', 'home' ] },
 		{ id: 'site-icon',     tab: 'general', title: S.siteIcon || 'Site Icon',              desc: S.siteIconDesc || '', rows: [ 'site_icon' ] },
+		{ id: 'admin-logo', tab: 'general', title: S.logo, desc: S.logoDesc, rows: [ 'adminkit_settings[logo_url]' ] },
 		{ id: 'account',       tab: 'account', title: S.account  || 'Account & registration', desc: S.accountDesc  || '', rows: [ 'admin_email', 'new_admin_email', 'users_can_register', 'default_role' ] },
 		{ id: 'locale',        tab: 'locale',  title: S.languageZone || 'Language & timezone', desc: S.languageZoneDesc || '', rows: [ 'WPLANG', 'timezone_string' ] },
 		{ id: 'formats',       tab: 'locale',  title: S.formats || 'Date & time formats', desc: S.formatsDesc || '', rows: [ 'date_format', 'time_format', 'start_of_week' ] }
@@ -239,4 +240,35 @@
 	} );
 
 	reveal();
+})();
+
+(function () {
+	'use strict';
+
+	var input = document.getElementById( 'ak-general-logo-url' );
+	if ( ! input ) { return; }
+	var preview = document.getElementById( 'ak-general-logo-preview' );
+	var remove = document.getElementById( 'ak-general-logo-remove' );
+
+	function sync() {
+		var url = input.value.trim();
+		preview.classList.toggle( 'ak-logo-dynamic', /\.svg(?:[?#]|$)/i.test( url ) );
+		preview.hidden = ! url;
+		remove.disabled = ! url;
+		if ( url ) { preview.src = url; }
+		else { preview.removeAttribute( 'src' ); }
+	}
+
+	input.addEventListener( 'change', sync );
+	remove.addEventListener( 'click', function () { input.value = ''; sync(); } );
+	document.getElementById( 'ak-general-logo-upload' ).addEventListener( 'click', function () {
+		if ( ! window.wp || ! wp.media ) { return; }
+		var frame = wp.media( { multiple: false, library: { type: 'image' } } );
+		frame.on( 'select', function () {
+			var selected = frame.state().get( 'selection' ).first();
+			if ( selected ) { input.value = selected.toJSON().url; sync(); }
+		} );
+		frame.open();
+	} );
+	sync();
 })();

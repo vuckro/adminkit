@@ -1,25 +1,7 @@
 <?php
 /**
- * Branding — the brand mark across AdminKit surfaces.
- *
- * AdminKit shows ONE brand mark on the admin bar, at the SITE-NAME node (next to
- * the site title — more coherent than the far-left WordPress logo). The top-left
- * `#wp-admin-bar-wp-logo` node is ALWAYS hidden (admin AND front-end toolbar),
- * which also drops its "About WordPress" submenu — intended. The `wp_logo` setting
- * now drives the SITE-NAME mark:
- *   - `favicon` → the Site Icon as a small rounded chip before the site title,
- *                 KEEPING the title text (a background box on the ::before);
- *   - `logo`    → the configured brand logo (AdminKit Dashboard branding card,
- *                 light + dark) injected as a real <img> that REPLACES the title
- *                 text (the wordmark IS the name, so logo + "SiteName" would be
- *                 redundant) — a wide wordmark auto-sizes to its aspect ratio
- *                 (tight, no empty box) and border-radius rounds the actual image;
- * `logo` falls back to `favicon` when no brand logo is configured. Either branded
- * mode hides the site-name "house" glyph so the mark replaces it; legacy `hide`
- * values degrade to `favicon`. Applied in wp-admin AND on the front-end toolbar
- * (logged-in users see it there too).
- *
- *
+ * Automatic toolbar identity: wordmark when expanded, site icon when compact.
+ * Without a wordmark, use the site icon and title; WordPress is the last fallback.
  * @package AdminKit
  */
 
@@ -86,27 +68,7 @@ class AdminKit_Core_Branding {
 		return true;
 	}
 
-	/**
-	 * Inject the brand logo as real <img> element(s) into the admin-bar SITE-NAME
-	 * node — but ONLY when the mode is `logo` AND a brand logo is configured. An
-	 * <img> is a replaced element, so `height:<fixed>;width:auto` (set in CSS) makes
-	 * it auto-size to the wordmark's aspect ratio: tight, no empty box, and the
-	 * border-radius rounds the actual image. A CSS background couldn't do that — a
-	 * fixed-width box left a gap and rounded the box, not the white-tile logo.
-	 *
-	 * Both the light and the dark variant are rendered; CSS shows the right one per
-	 * the theme flag (an <img src> can't be swapped from CSS). The wordmark REPLACES
-	 * the site title (so the title text is hidden in CSS, not kept): the node's
-	 * `title` becomes the two <img>s plus the original title wrapped in a
-	 * .ak-site-name-text span (hidden in CSS). The visible <img> carries the site
-	 * name as its `alt` for an accessible name; the off-theme one is decorative
-	 * (alt=""). The node's href + submenu (meta) are preserved by re-adding with the
-	 * same id, and a marker class scopes the CSS to this branded state. Gated by the
-	 * same should_load veto + showing/context guard the rest of the branding uses.
-	 *
-	 * @param WP_Admin_Bar $bar
-	 * @return void
-	 */
+	/** Keep native toolbar navigation and accessible names while adding both marks. */
 	public static function inject_brand_logo( $bar ) {
 		if ( ! is_admin_bar_showing() ) {
 			return;
@@ -115,14 +77,11 @@ class AdminKit_Core_Branding {
 		if ( ! apply_filters( 'adminkit/should_load', true, $context ) ) {
 			return;
 		}
-		if ( 'logo' !== AdminKit_Settings::get( 'wp_logo' ) ) {
-			return;
-		}
 
 		$light = AdminKit_Settings::brand_logo( 'light' );
 		$dark  = AdminKit_Settings::brand_logo( 'dark' );
 		if ( '' === $light && '' === $dark ) {
-			return; // logo mode but nothing configured → site_name_mark_css() falls back to the favicon chip.
+			return; // No wordmark: the site icon and title remain available.
 		}
 		if ( '' === $light ) {
 			$light = $dark;
@@ -139,10 +98,13 @@ class AdminKit_Core_Branding {
 		// The wordmark IS the site name — give the (hidden) link an accessible name.
 		$label = get_bloginfo( 'name', 'display' );
 
-		// One visible <img> carries the accessible name (alt=site name); the other is
-		// decorative (alt="") — only one shows per theme. esc_url for each src.
+		// Each variant carries the same name; CSS exposes only the active mark.
 		$img  = '<img class="ak-brand-logo ak-brand-logo--light" src="' . esc_url( $light ) . '" alt="' . esc_attr( $label ) . '" />';
-		$img .= '<img class="ak-brand-logo ak-brand-logo--dark' . AdminKit_Settings::dynamic_logo_class() . '" src="' . esc_url( $dark ) . '" alt="" />';
+		$img .= '<img class="ak-brand-logo ak-brand-logo--dark' . AdminKit_Settings::dynamic_logo_class() . '" src="' . esc_url( $dark ) . '" alt="' . esc_attr( $label ) . '" />';
+		$icon = get_site_icon_url( 96 );
+		$img .= $icon
+			? '<img class="ak-brand-compact" src="' . esc_url( $icon ) . '" alt="' . esc_attr( $label ) . '" />'
+			: '<span class="ak-brand-compact dashicons dashicons-wordpress" role="img" aria-label="' . esc_attr( $label ) . '"></span>';
 
 		$meta          = is_array( $node->meta ) ? $node->meta : array();
 		$meta['class'] = ( isset( $meta['class'] ) && '' !== $meta['class'] )
@@ -204,44 +166,22 @@ class AdminKit_Core_Branding {
 		}
 	}
 
-	/**
-	 * The full brand-mark treatment — identical in wp-admin and on the front-end
-	 * toolbar. Always hides the top-left wp-logo node; then, per `wp_logo`, paints
-	 * the mark at the site-name node: `logo` shows the configured brand logo (or
-	 * falls back to the favicon chip when nothing is configured), `favicon` shows
-	 * the Site Icon chip (or nothing when no Site Icon is set — that's the
-	 * implicit "hide" path; no explicit `hide` mode exists for the admin bar).
-	 *
-	 * @return string
-	 */
+	/** Hide duplicate core marks and apply the automatic toolbar identity. */
 	private static function css() {
 		// The top-left WordPress logo is ALWAYS hidden now — the brand mark lives at
 		// the site name instead. Two selectors: the .wp-admin one beats WP's wp-admin
 		// rule, the plain one covers the front end.
 		$css  = '.wp-admin #wpadminbar #wp-admin-bar-wp-logo,';
 		$css .= '#wpadminbar #wp-admin-bar-wp-logo{display:none}';
+		// Core also prepends a site-icon image; AdminKit supplies its own mark.
+		$css .= '#wpadminbar #wp-admin-bar-site-name > .ab-item > img.site-icon{display:none}';
 
 		return $css . self::site_name_mark_css();
 	}
 
-	/**
-	 * The mark at the site-name node, per `wp_logo`:
-	 *   - `logo`    → size the brand <img> injected by inject_brand_logo() and hide
-	 *                 the title text (the wordmark replaces it). Falls back to the
-	 *                 favicon chip when no logo is configured.
-	 *   - `favicon` → the Site Icon as a rounded chip before the title — or the
-	 *                 WordPress logomark glyph when no Site Icon is configured.
-	 * Any other value (incl. legacy stored `'hide'`) degrades to `favicon`.
-	 *
-	 * The WordPress logomark is the final fallback: rather than leaving WP's
-	 * default house dashicon (\f102), we swap to the WP "W" mark (\f120). An
-	 * unbranded install still feels owned, and the bar reads as WordPress
-	 * rather than "Home of a generic site".
-	 *
-	 * @return string
-	 */
+	/** Prefer a configured logo, then site icon, then the WordPress mark. */
 	private static function site_name_mark_css() {
-		if ( 'logo' === AdminKit_Settings::get( 'wp_logo' ) ) {
+		if ( AdminKit_Settings::brand_logo( 'light' ) || AdminKit_Settings::brand_logo( 'dark' ) ) {
 			$css = self::brand_logo_css();
 			if ( '' !== $css ) {
 				return $css;
@@ -258,28 +198,7 @@ class AdminKit_Core_Branding {
 		return self::wp_logomark_css();
 	}
 
-	/**
-	 * CSS for the brand logo at the site-name node — sizes the real <img> element(s)
-	 * injected by inject_brand_logo() and hides the now-redundant title text. An
-	 * <img> is a REPLACED element, so `height:20px;width:auto` makes it auto-size to
-	 * the wordmark's intrinsic aspect ratio: tight (no empty box), never cropped, and
-	 * `border-radius` rounds the actual image — exactly what a CSS background could
-	 * not do.
-	 *
-	 * The light variant shows by default; the dark variant under the theme flag (an
-	 * <img src> can't be swapped from CSS, so both are rendered and toggled here with
-	 * `display`). The injection is gated on `wp_logo === 'logo'` AND a configured
-	 * logo, so the marker class (.ak-has-brand-logo) is the signal that an <img> is
-	 * present; '' here when nothing is configured (site_name_mark_css() then falls
-	 * back to the favicon chip).
-	 *
-	 * `object-fit:contain` + a `max-width` cap guard against an oversized source ever
-	 * overflowing the bar. The .ak-has-brand-logo class on the node lifts our
-	 * selectors past WP core's own site-name rule cleanly. The default house/site
-	 * glyph is hidden via hide_site_name_glyph(); the title text is hidden here.
-	 *
-	 * @return string
-	 */
+	/** Theme-aware wordmark sizing; native compact menu states switch to the icon. */
 	private static function brand_logo_css() {
 		$light = AdminKit_Settings::brand_logo( 'light' );
 		$dark  = AdminKit_Settings::brand_logo( 'dark' );
@@ -311,14 +230,30 @@ class AdminKit_Core_Branding {
 			. $item . '{width:auto;text-indent:0;overflow:visible;padding:0 10px}'
 			. $img . '{height:24px;max-width:100px}'
 			. '}'
+			. self::compact_mark_css( $item )
 			. self::hide_site_name_glyph();
+	}
+
+	/** CSS follows WordPress's native folded and responsive menu states. */
+	private static function compact_mark_css( $item ) {
+		$compact = $item . ' .ak-brand-compact';
+		$folded = 'body.folded ' . $item;
+		$auto = 'body.auto-fold ' . $item;
+		$rules = static function ( $selector ) {
+			return $selector . ' .ak-brand-logo{display:none!important}'
+				. $selector . ' .ak-brand-compact{display:block;width:20px;height:20px;object-fit:contain;font-size:20px}'
+				. $selector . '{width:36px;justify-content:center;padding:0;text-indent:0}';
+		};
+		return $compact . '{display:none}' . $rules( $folded )
+			. '@media(min-width:783px) and (max-width:960px){' . $rules( $auto ) . '}'
+			. '@media(max-width:782px){' . $rules( $item ) . $item . '{width:52px}}';
 	}
 
 	/**
 	 * Site Icon (favicon) as a small rounded chip before the site title, at the
 	 * site-name node — replacing WordPress's "house" glyph there but KEEPING the
 	 * title text. '' when no Site Icon is configured, so it degrades cleanly (bare
-	 * title). Used for `wp_logo === 'favicon'` and as the `logo` fallback.
+	 * title). Used when no wordmark is configured.
 	 *
 	 * Painted as a `background-image` on the ::before (NOT content:url): a content
 	 * image renders at its INTRINSIC size — browsers ignore width/height on a
@@ -347,7 +282,7 @@ class AdminKit_Core_Branding {
 			'{content:"";display:block;box-sizing:border-box;'
 			. 'float:left;width:18px;height:18px;padding:0;margin:7px 6px 7px 0;top:0;'
 			. 'background-image:' . $favicon . ' !important;background-position:center;background-repeat:no-repeat;background-size:cover;'
-			. 'border-radius:var(--ak-radius-s,5px)}';
+			. 'border-radius:0}';
 		// Mobile (≤782px): WP turns the site-name node into a 52px-wide, position:relative
 		// cell with the title text hidden (text-indent:100%). The desktop chip (an 18px
 		// float pinned left, tuned to the 32px bar) then reads tiny + off-centre — the

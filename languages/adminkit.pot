@@ -1385,3 +1385,14 @@ msgstr ""
 
 msgid "Enter a valid image URL starting with https:// or http://."
 msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Administration logo"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Shown with the expanded menu. The site icon takes over when the menu is collapsed."
+msgstr ""
+
+msgid "Upload image"
+msgstr ""

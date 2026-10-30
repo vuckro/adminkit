@@ -31,8 +31,45 @@ class AdminKit_Core_Options_General {
 	 * @return void
 	 */
 	public static function init() {
+		add_action( 'admin_init', array( __CLASS__, 'register_branding' ) );
 		add_action( 'admin_head', array( __CLASS__, 'print_prepaint' ), 1 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
+	}
+
+
+	/** Keep identity editing alongside the native site icon, using the same form. */
+	public static function register_branding() {
+		global $pagenow;
+		if ( ! in_array( $pagenow, array( 'options-general.php', 'options.php' ), true )
+			|| ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
+		register_setting( 'general', AdminKit_Settings::OPTION_KEY, array( 'sanitize_callback' => array( __CLASS__, 'sanitize_branding' ) ) );
+		add_settings_field( 'ak_branding', __( 'Administration logo', 'adminkit' ), array( __CLASS__, 'branding_field' ), 'general' );
+	}
+
+	public static function sanitize_branding( $input ) {
+		$stored = (array) get_option( AdminKit_Settings::OPTION_KEY, array() );
+		if ( ! current_user_can( 'manage_options' ) || ! is_array( $input ) ) { return $stored; }
+		if ( isset( $input['logo_url'] ) && is_string( $input['logo_url'] ) ) {
+			$stored['logo_url'] = esc_url_raw( $input['logo_url'], array( 'http', 'https' ) );
+			$stored['logo_light'] = '';
+			$stored['logo_dark'] = '';
+			$stored['logo_source'] = 'upload';
+		}
+		return $stored;
+	}
+
+	public static function branding_field() {
+		$url = AdminKit_Settings::brand_logo( 'light' );
+		?>
+		<div class="ak-general-logo">
+			<img id="ak-general-logo-preview" class="<?php echo esc_attr( AdminKit_Settings::dynamic_logo_class() ); ?>" <?php if ( $url ) : ?>src="<?php echo esc_url( $url ); ?>"<?php endif; ?> alt="" <?php echo $url ? '' : 'hidden'; ?> />
+			<p><button type="button" class="button" id="ak-general-logo-upload"><?php esc_html_e( 'Upload image', 'adminkit' ); ?></button> <button type="button" class="button" id="ak-general-logo-remove"><?php esc_html_e( 'Remove', 'adminkit' ); ?></button></p>
+			<div class="ak-general-logo__url">
+			<label for="ak-general-logo-url"><?php esc_html_e( 'Image URL', 'adminkit' ); ?></label>
+			<input type="url" id="ak-general-logo-url" name="adminkit_settings[logo_url]" value="<?php echo esc_url( $url ); ?>" />
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -97,7 +134,10 @@ class AdminKit_Core_Options_General {
 			return;
 		}
 
+		wp_enqueue_media();
 		$strings = array(
+			'logo' => __( 'Administration logo', 'adminkit' ),
+			'logoDesc' => __( 'Shown with the expanded menu. The site icon takes over when the menu is collapsed.', 'adminkit' ),
 			// Top-level navigation and card headings.
 			'tabGeneral'   => __( 'Identity', 'adminkit' ),
 			'tabAccount'   => __( 'Account', 'adminkit' ),

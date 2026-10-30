@@ -268,3 +268,25 @@ body.adminkit.options-reading-php .ak-reading-card .form-table th { width: 220px
  body.adminkit.options-reading-php .ak-reading-card { padding: calc(16px * var(--ak-space-scale, 1)); }
  body.adminkit.options-reading-php .ak-reading-card .form-table th { width: auto; }
 }
+
+body.adminkit .ak-general-logo img { display:block; max-width:240px; max-height:72px; object-fit:contain; margin-bottom:var(--ak-space-l); }
+body.adminkit .ak-general-logo img[hidden] { display:none; }
+
+/* The card heading labels the logo; use a single full-width control stack. */
+body.adminkit #ak-opt-admin-logo .form-table th { display: none; }
+body.adminkit #ak-opt-admin-logo .form-table td { display: block; width: auto; padding: 0; }
+body.adminkit .ak-general-logo { display: grid; gap: var(--ak-space-l); }
+body.adminkit .ak-general-logo > p { margin: 0; display: flex; flex-wrap: wrap; gap: var(--ak-space-s); }
+body.adminkit .ak-general-logo img { max-width: 100%; width: 240px; height: 64px; object-position: left center; margin: 0; }
+body.adminkit .ak-general-logo__url { display: grid; gap: var(--ak-space-s); }
+body.adminkit .ak-general-logo__url label { color: var(--ak-text-muted); }
+/* Native media actions remain intact; only the oversized browser mockup is removed. */
+body.adminkit #ak-opt-site-icon .form-table th { display: none; }
+body.adminkit #ak-opt-site-icon .form-table td { display: block; width: auto; padding: 0; }
+body.adminkit #ak-opt-site-icon #site-icon-preview { width: 64px; height: 64px; padding: 0; margin: 0 0 var(--ak-space-l); border: 0; background: transparent; box-shadow: none; }
+body.adminkit #ak-opt-site-icon #site-icon-preview .direction-wrap { position: static; width: 100%; height: 100%; padding: 0; }
+body.adminkit #ak-opt-site-icon #app-icon-preview { position: static; width: 64px; height: 64px; margin: 0; border-radius: var(--ak-radius-s); box-shadow: none; }
+body.adminkit #ak-opt-site-icon .site-icon-preview-browser,
+body.adminkit #ak-opt-site-icon #site-icon-preview::after { display: none; }
+body.adminkit #ak-opt-site-icon .site-icon-action-buttons { display: flex; flex-wrap: wrap; gap: var(--ak-space-s); margin-bottom: var(--ak-space-m); }
+:root[data-adminkit-theme="dark"] body.adminkit .ak-general-logo img.ak-logo-dynamic { filter: invert(1); }
