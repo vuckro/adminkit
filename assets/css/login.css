@@ -43,7 +43,7 @@ body.ak-login-mark--favicon #login h1 a {
 	width: 84px;
 	height: 84px;
 	background-size: cover;
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 }
 /* Wordmark → a real <img>, shown CLEANLY with no card/box: just a centred image
    sized by its height (width auto = tight, aspect-true) with a radius that rounds
@@ -105,7 +105,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	height: 38px;
 	padding: 0;
 	background: var(--ak-btn-bg);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-full);
 	color: var(--ak-text);
 	cursor: pointer;
@@ -143,12 +143,13 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	display: block;
 }
 
-/* Form card — flat, no shadow */
+/* Form card follows the same saved surface elevation as administration. */
 #loginform,
 .login form {
-	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-m);
+	background: var(--ak-card-bg);
+	border: var(--ak-border-width) solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
 	padding: calc(24px * var(--ak-space-scale, 1));
 }
 
@@ -157,7 +158,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 .login input[type="password"],
 .login input[type="email"] {
 	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	font-family: var(--ak-font-body);
@@ -212,7 +213,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 .wp-core-ui .login .button-primary,
 #wp-submit {
 	background: var(--ak-primary) !important;
-	border: 1px solid var(--ak-primary) !important;
+	border: var(--ak-border-width) solid var(--ak-primary) !important;
 	color: var(--ak-on-accent) !important;
 	font-family: var(--ak-font-body);
 	font-size: var(--ak-text-s);
@@ -221,7 +222,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	padding: 0 calc(14px * var(--ak-space-scale, 1));
 	min-height: 32px;
 	line-height: 2.15;
-	box-shadow: none;
+	box-shadow: var(--ak-btn-primary-shadow);
 	text-shadow: none;
 	float: right;
 }
@@ -233,12 +234,18 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	background: var(--ak-primary-hover) !important;
 	border-color: var(--ak-primary-hover) !important;
 	color: var(--ak-on-accent-hover) !important;
+	box-shadow: var(--ak-btn-primary-shadow-hover);
 }
 
 .login .button-primary:focus,
 #wp-submit:focus {
-	box-shadow: var(--ak-focus-ring) !important;
+	box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow) !important;
 }
+
+.login .button-primary:hover:focus,
+#wp-submit:hover:focus { box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow-hover) !important; }
+.login .button-primary:disabled,
+#wp-submit:disabled { box-shadow: none !important; }
 
 /* "Remember me" — the checkbox becomes a flat on/off toggle, matching AdminKit's
    admin inputs. inputs.css isn't loaded on wp-login.php, so the toggle geometry
@@ -357,7 +364,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 /* Language switcher */
 .login .language-switcher select {
 	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	padding: calc(4px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
@@ -367,7 +374,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 
 .login .language-switcher .button {
 	background: transparent;
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
 	padding: calc(4px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1));

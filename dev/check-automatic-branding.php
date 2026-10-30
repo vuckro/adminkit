@@ -5,7 +5,8 @@ class AdminKit_Settings {
  public static $logo = 'http://localhost:10013/wp-content/uploads/2026/10/waaskit-logo.svg';
  public static function brand_logo( $mode ) { return self::$logo; }
  public static function dynamic_logo_class() { return ' ak-logo-dynamic'; }
- public static function get( $key ) { return 'favicon'; } // A legacy choice must not suppress the logo.
+ public static $enabled = true;
+ public static function get( $key ) { return 'branding_enabled' === $key ? self::$enabled : 'favicon'; } // A legacy choice must not suppress the logo.
 }
 $GLOBALS['icon'] = 'http://localhost:10013/wp-content/uploads/2026/10/cropped-Favicon-WaasKit-150x150.png';
 function is_admin_bar_showing() { return true; }
@@ -35,4 +36,10 @@ if ( ! str_contains( $bar->node->title, 'dashicons-wordpress' ) ) { throw new Ru
 AdminKit_Settings::$logo = '';
 $bar = new Test_Brand_Bar(); AdminKit_Core_Branding::inject_brand_logo( $bar );
 if ( 'WaasKit' !== $bar->node->title ) { throw new RuntimeException( 'No logo should retain native title' ); }
+AdminKit_Settings::$logo = 'https://example.test/logo.svg';
+AdminKit_Settings::$enabled = false;
+$bar = new Test_Brand_Bar(); AdminKit_Core_Branding::inject_brand_logo( $bar );
+if ( 'WaasKit' !== $bar->node->title ) { throw new RuntimeException( 'Disabled identity must preserve the native toolbar node' ); }
+ob_start(); AdminKit_Core_Branding::print_admin(); $disabled_css = ob_get_clean();
+if ( '' !== $disabled_css || '' === AdminKit_Settings::$logo ) { throw new RuntimeException( 'Disabled identity must emit no branding CSS and retain its saved logo' ); }
 echo "OK: automatic marks, native menu states, legacy choice ignored and missing-image fallbacks\n";

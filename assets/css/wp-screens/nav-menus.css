@@ -5,8 +5,9 @@
 
 body.adminkit.nav-menus-php .manage-menus {
 	background: var(--ak-card-bg);
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
 }
 
 body.adminkit.nav-menus-php #post-body {
@@ -40,7 +41,7 @@ body.adminkit input#menu-name {
    lifts it to --ak-border-strong). */
 body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle {
 	background: var(--ak-elevated);
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	color: var(--ak-text);
 }
 
@@ -105,9 +106,10 @@ body.adminkit.nav-menus-php #nav-menu-meta h2 {
 }
 
 body.adminkit.nav-menus-php .accordion-container .outer-border {
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	overflow: hidden;
+	box-shadow: var(--ak-card-shadow);
 }
 
 body.adminkit.nav-menus-php .accordion-section,
@@ -208,9 +210,10 @@ body.adminkit.nav-menus-php .accordion-section-content .inside > p {
 /* Menu-edit wrapper (the "Menu structure" right column) — bordered rounded
    card so the whole panel reads as one surface. */
 body.adminkit.nav-menus-php .menu-edit {
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	overflow: hidden;
+	box-shadow: var(--ak-card-shadow);
 }
 
 body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle {

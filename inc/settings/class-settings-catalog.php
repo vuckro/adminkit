@@ -44,6 +44,13 @@ class AdminKit_Settings_Catalog {
 				'desc'  => __( 'Prioritize published articles, pages and custom post types, and active plugins. Open their lists on Published or Active when available, and group published or active items first in All. Explicit filters, searches and content sorting are preserved. Off restores the native WordPress lists.', 'adminkit' ),
 			),
 			array(
+				'key'   => 'branding_enabled',
+				'group' => $appearance,
+				'label' => __( 'Brand identity', 'adminkit' ),
+				'desc'  => __( 'Use the administration logo and site icon in the toolbar. Off restores the native WordPress identity and keeps your saved logo.', 'adminkit' ),
+				'settingsUrl' => admin_url( 'options-general.php#ak-general-logo-url' ),
+			),
+			array(
 				'key'   => 'theme_toggle_enabled',
 				'group' => $appearance,
 				'label' => __( 'Dark mode', 'adminkit' ),
@@ -102,6 +109,7 @@ class AdminKit_Settings_Catalog {
 		);
 
 		$summaries = array(
+			'branding_enabled' => __( 'Personalize the identity displayed in the toolbar.', 'adminkit' ),
 			'notification_center_enabled' => __( 'Collect admin notices in one place.', 'adminkit' ),
 			'post_previews_enabled' => __( 'Recognize your publications by their thumbnails.', 'adminkit' ),
 			'active_items_first_enabled' => __( 'Find published content and active plugins first.', 'adminkit' ),

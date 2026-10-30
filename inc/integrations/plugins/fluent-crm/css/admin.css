@@ -146,10 +146,10 @@ body.adminkit.toplevel_page_fluentcrm-admin {
 	--el-disabled-border-color: var( --ak-border );
 
 	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
-	--el-box-shadow: none;
-	--el-box-shadow-light: none;
-	--el-box-shadow-lighter: none;
-	--el-box-shadow-dark: none;
+	--el-box-shadow: var(--ak-shadow-elevated);
+	--el-box-shadow-light: var(--ak-shadow-elevated);
+	--el-box-shadow-lighter: var(--ak-shadow-elevated);
+	--el-box-shadow-dark: var(--ak-shadow-elevated);
 }
 
 
@@ -433,3 +433,7 @@ body.adminkit.toplevel_page_fluentcrm-admin .el-radio__input.is-checked + .el-ra
 body.adminkit.toplevel_page_fluentcrm-admin .el-radio.is-checked .el-radio__label {
 	color: var( --ak-text );
 }
+
+/* Element cards share surface elevation; floating poppers keep overlay depth. */
+body.adminkit.toplevel_page_fluentcrm-admin .el-card { box-shadow: var(--ak-card-shadow); border-color: var(--ak-card-border); border-width: var(--ak-border-width); border-radius: var(--ak-card-radius); }
+body.adminkit.toplevel_page_fluentcrm-admin .el-card .el-card { box-shadow: none; }

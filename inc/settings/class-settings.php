@@ -120,9 +120,9 @@ class AdminKit_Settings {
 
 		// Monochrome is explicit and independent of installed themes/providers.
 		self::register( 'accent_source', array(
-			'type' => 'select', 'group' => 'branding', 'default' => 'monochrome',
+			'type' => 'select', 'group' => 'branding', 'default' => 'adminkit',
 			'sanitize' => static function ( $v ) {
-				return in_array( $v, array( 'monochrome', 'adminkit', 'bricks', 'custom' ), true ) ? $v : 'monochrome';
+				return in_array( $v, array( 'monochrome', 'adminkit', 'bricks', 'custom' ), true ) ? $v : 'adminkit';
 			},
 		) );
 	}
@@ -147,18 +147,24 @@ class AdminKit_Settings {
 	/** Advanced studio settings are persisted for previews; global adoption is separate. */
 	public static function sanitize_design_system( $input ) {
 		$input = is_array( $input ) ? $input : array();
-		$result = array( 'radius_scale' => 1, 'space_scale' => 1, 'type_scale' => 1, 'border_width' => 1, 'elevation' => 'flat', 'colors' => array( 'light' => array(), 'dark' => array() ) );
+		$result = array( 'radius_scale' => 1, 'space_scale' => 1, 'type_scale' => 1, 'border_width' => 1, 'elevation' => 'default', 'components' => array( 'buttons' => array( 'highlight' => 'always' ) ), 'colors' => array( 'light' => array(), 'dark' => array() ) );
 		foreach ( array( 'radius_scale' => array( 0, 2 ), 'space_scale' => array( 0.5, 2 ), 'type_scale' => array( 0.75, 1.5 ) ) as $key => $bounds ) {
 			$value = isset( $input[ $key ] ) && is_numeric( $input[ $key ] ) ? (float) $input[ $key ] : null;
 			if ( null !== $value && is_finite( $value ) && $value >= $bounds[0] && $value <= $bounds[1] ) {
 				$result[ $key ] = round( $value, 2 );
 			}
 		}
-		if ( isset( $input['border_width'] ) && in_array( $input['border_width'], array( 1, 2, '1', '2' ), true ) ) {
+		if ( isset( $input['border_width'] ) && in_array( $input['border_width'], array( 0, 1, 2, 3, 4, '0', '1', '2', '3', '4' ), true ) ) {
 			$result['border_width'] = (int) $input['border_width'];
 		}
-		if ( isset( $input['elevation'] ) && in_array( $input['elevation'], array( 'flat', 'subtle', 'raised' ), true ) ) {
+		if ( isset( $input['elevation'] ) && in_array( $input['elevation'], array( 'default', 'flat', 'subtle', 'raised' ), true ) ) {
 			$result['elevation'] = $input['elevation'];
+		}
+		// Component settings are explicitly allowlisted; unknown future keys are ignored.
+		$components = isset( $input['components'] ) && is_array( $input['components'] ) ? $input['components'] : array();
+		$buttons = isset( $components['buttons'] ) && is_array( $components['buttons'] ) ? $components['buttons'] : array();
+		if ( isset( $buttons['highlight'] ) && in_array( $buttons['highlight'], array( 'off', 'hover', 'always' ), true ) ) {
+			$result['components']['buttons']['highlight'] = $buttons['highlight'];
 		}
 		$roles = array( 'bg', 'surface', 'text', 'text-muted', 'border', 'accent', 'on-accent', 'success-text', 'warning-text', 'danger-text', 'info-text' );
 		$colors = isset( $input['colors'] ) && is_array( $input['colors'] ) ? $input['colors'] : array();
@@ -172,10 +178,10 @@ class AdminKit_Settings {
 		return $result;
 	}
 
-	/** Resolve stored legacy blue/provider choices; unset values use monochrome. */
+	/** Resolve stored legacy blue/provider choices; unset values use WordPress. */
 	public static function accent_source() {
 		$source = (string) self::get( 'accent_source' );
-		return in_array( $source, array( 'monochrome', 'adminkit', 'bricks', 'custom' ), true ) ? $source : 'monochrome';
+		return in_array( $source, array( 'monochrome', 'adminkit', 'bricks', 'custom' ), true ) ? $source : 'adminkit';
 	}
 
 	/**
@@ -225,6 +231,8 @@ class AdminKit_Settings {
 	 * @return void
 	 */
 	private static function register_feature_catalog() {
+		// Preserve the existing automatic toolbar identity on older installations.
+		self::register( 'branding_enabled', array( 'type' => 'toggle', 'group' => 'features', 'default' => true, 'sanitize' => 'rest_sanitize_boolean' ) );
 		$toggles = array(
 			'module_login_enabled',
 			'theme_toggle_enabled',

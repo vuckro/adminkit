@@ -11,6 +11,42 @@ require dirname( __DIR__ ) . '/inc/class-design-system.php';
 function ak_assert( $condition, $message ) { if ( ! $condition ) { throw new RuntimeException( $message ); } }
 $base = AdminKit_Design_System::css();
 ak_assert( false !== strpos( $base, '--ak-type-scale:1;' ), 'Default type scale' );
+ak_assert( false === strpos( $base, '--ak-design-elevation:' ), 'Default preserves theme contact elevation' );
+foreach ( array( 'flat' => 'none', 'subtle' => 'var(--wk-elevation-1)', 'raised' => 'var(--wk-elevation-2)' ) as $choice => $expected ) {
+ $profile = array( 'design_system' => array( 'elevation' => $choice, 'border_width' => 2 ) );
+ $css = AdminKit_Design_System::css();
+ ak_assert( false !== strpos( $css, '--ak-design-elevation:' . $expected . ';' ), 'Saved elevation reaches card/table role' );
+ ak_assert( false !== strpos( $css, '--ak-border-width:2px;' ), 'Saved outline width reaches runtime' );
+ ak_assert( false === strpos( $css, '--ak-shadow-subtle:' ), 'Surface elevation must not alter control shadows' );
+}
+// A borderless profile must survive persistence and compilation, including string 0.
+foreach ( array( 0, 1, 2, 3, 4, '0', '1', '2', '3', '4' ) as $width ) {
+ $profile = array( 'design_system' => array( 'border_width' => $width, 'radius_scale' => 0, 'components' => array( 'buttons' => array( 'highlight' => 'off' ) ) ) );
+ $clean = AdminKit_Settings::sanitize_design_system( $profile['design_system'] );
+ ak_assert( (int) $width === $clean['border_width'], 'Outline width survives sanitization, including zero' );
+ $css = AdminKit_Design_System::css();
+ ak_assert( false !== strpos( $css, '--ak-border-width:' . (int) $width . 'px;' ), 'Outline width reaches the shared runtime' );
+ ak_assert( false === strpos( $css, '--ak-focus-ring:' ), 'Decorative border choice must not remove keyboard focus' );
+}
+foreach ( array( -1, 5, 1.5, true, array(), '0px' ) as $invalid_width ) {
+ $clean = AdminKit_Settings::sanitize_design_system( array( 'border_width' => $invalid_width ) );
+ ak_assert( 1 === $clean['border_width'], 'Unsupported outline widths fall back to one pixel' );
+}
+// Component choices survive sanitization, old profiles and malformed input.
+foreach ( array( 'off', 'hover', 'always' ) as $choice ) {
+ $profile = array( 'design_system' => array( 'components' => array( 'buttons' => array( 'highlight' => $choice ) ) ) );
+ $clean = AdminKit_Settings::sanitize_design_system( $profile['design_system'] );
+ ak_assert( $choice === $clean['components']['buttons']['highlight'], 'Component mode survives save sanitization' );
+ $css = AdminKit_Design_System::css();
+ $effect = 'var(--ak-btn-highlight-effect)';
+ $empty = 'inset 0 0 0 transparent';
+ ak_assert( false !== strpos( $css, '--ak-btn-primary-highlight:' . ( 'always' === $choice ? $effect : $empty ) . ';' ), 'Rest state matches selected highlight mode' );
+ ak_assert( false !== strpos( $css, '--ak-btn-primary-highlight-hover:' . ( 'off' === $choice ? $empty : $effect ) . ';' ), 'Hover state matches selected highlight mode' );
+}
+foreach ( array( array(), array( 'components' => 'invalid' ), array( 'components' => array( 'buttons' => array( 'highlight' => array( 'off' ), 'unknown' => 'x' ) ) ) ) as $input ) {
+ $clean = AdminKit_Settings::sanitize_design_system( $input );
+ ak_assert( array( 'buttons' => array( 'highlight' => 'always' ) ) === $clean['components'], 'Legacy and malformed component values retain compatible defaults' );
+}
 $profile = array( 'ui_font' => 'system', 'design_system' => array( 'type_scale' => 1.5, 'space_scale' => 2, 'radius_scale' => 0, 'elevation' => 'raised', 'colors' => array( 'light' => array( 'bg' => '#eef6ef', 'surface' => '#ffffff', 'text' => '#142b20', 'accent' => '#276044', 'border' => '#819d8b' ), 'dark' => array( 'bg' => '#11251b', 'surface' => '#183425', 'text' => '#f0fff4', 'accent' => '#9bdfb6', 'success-text' => '#aaddbb' ) ) ) );
 $custom = AdminKit_Design_System::css();
 ak_assert( false !== strpos( $custom, '--ak-radius-scale:0;' ), 'Zero radius must survive' );

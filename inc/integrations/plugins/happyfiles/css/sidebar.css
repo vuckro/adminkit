@@ -205,7 +205,7 @@ body.adminkit .happyfiles-context-menu {
 	background-color: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
-	box-shadow: 0 6px 24px -8px rgba(0, 0, 0, 0.3);
+	box-shadow: var(--ak-shadow-elevated);
 	color: var(--ak-text);
 	overflow: hidden;
 }

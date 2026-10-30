@@ -51,7 +51,9 @@
 	--ak-text-s: calc(13px * var(--ak-type-scale, 1));
 	--ak-text-m: calc(14px * var(--ak-type-scale, 1));
 	--ak-shadow-subtle: var(--wk-elevation-1);
-	--ak-btn-primary-shadow: var(--ak-shadow-subtle), inset 0 1px 0 oklch(100% 0 0 / 0.14);
+	--ak-btn-primary-elevation: var(--wk-elevation-1);
+	--ak-btn-primary-elevation-hover: var(--wk-elevation-1);
+	--ak-btn-primary-shadow: var(--ak-btn-primary-elevation), var(--ak-btn-primary-highlight);
 	--ak-duration-fast: var(--wk-duration-fast);
 	--ak-ease-standard: var(--wk-ease-standard);
 	--ak-primary-text: var(--wk-accent-text);
@@ -68,6 +70,11 @@
 	--ak-type-scale: 1;
 	--ak-space-scale: 1;
 	--ak-radius-scale: 1;
+	--ak-border-width: 1px;
+	--ak-btn-highlight-effect: inset 0 1px 0 oklch(100% 0 0 / 0.14);
+	--ak-btn-primary-highlight: var(--ak-btn-highlight-effect);
+	--ak-btn-primary-highlight-hover: var(--ak-btn-primary-highlight);
+	--ak-btn-primary-shadow-hover: var(--ak-btn-primary-elevation-hover), var(--ak-btn-primary-highlight-hover);
 }
 
 /* Accent variants. PHP/JS supply values only; this file owns the entire cascade. */
@@ -93,6 +100,30 @@
 :root[data-adminkit-accent="custom"] .ak-bp__frame {
 	--p-accent: var(--ak-custom-accent, var(--wk-accent));
 	--p-on-accent: var(--ak-custom-on-accent, var(--wk-on-accent));
+}
+
+
+/* Shared outer surfaces. Kept here so admin, login and themed previews use
+   the same contour/contact elevation; inner rows keep their own separators. */
+body.adminkit,
+body.login,
+.adminkit-app .ak-bp__frame {
+	--ak-card-bg: var(--ak-surface);
+	--ak-card-border: color-mix(in srgb, var(--ak-border) 55%, transparent);
+	--ak-card-radius: var(--ak-radius-m);
+	--ak-default-card-shadow: 0 2px 2px -1px color-mix(in srgb, var(--ak-text) 12%, transparent);
+	--ak-card-shadow: var(--ak-design-elevation, var(--ak-default-card-shadow));
+	--ak-table-bg: var(--ak-surface);
+	--ak-table-border: var(--ak-card-border);
+	--ak-table-shadow: var(--ak-card-shadow);
+	--ak-table-radius: var(--ak-radius-l);
+	--ak-table-header-bg: var(--ak-surface-muted);
+}
+:root[data-adminkit-theme="dark"] body.adminkit,
+:root[data-adminkit-theme="dark"] body.login,
+.adminkit-app .ak-bp__frame[data-preview-theme="dark"] {
+ --ak-card-border: color-mix(in srgb, var(--ak-border) 72%, transparent);
+ --ak-default-card-shadow: var(--wk-elevation-1);
 }
 
 /* Remap WP's built-in theme color (blue) to our accent. The selector chains

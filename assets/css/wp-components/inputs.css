@@ -24,7 +24,7 @@ body.adminkit.wp-core-ui select {
 	   for selects below survives. The shorthand would clear WP's arrow SVG
 	   AND ours. */
 	background-color: var(--ak-input-bg);
-	border: 1px solid var(--ak-input-border);
+	border: var(--ak-border-width) solid var(--ak-input-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	font-family: var(--ak-font-body);
@@ -173,8 +173,9 @@ body.adminkit.wp-core-ui select:disabled:hover {
 }
 
 /* Radios — 16px round, neutral fill + a brand dot when checked. */
+/* Radio outlines identify the control itself, even in a borderless profile. */
 body.adminkit input[type="radio"] {
-	border: 1px solid var(--ak-input-border);
+	border: max(1px, var(--ak-border-width)) solid var(--ak-input-border);
 	border-radius: 50%;
 	background: var(--ak-input-bg);
 	width: 16px;

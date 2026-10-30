@@ -17,7 +17,7 @@ body.adminkit .button-secondary,
 body.adminkit.wp-core-ui .button-secondary,
 body.adminkit .wrap .page-title-action {
 	background: var(--ak-btn-bg);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
 	padding: 0 calc(10px * var(--ak-space-scale, 1));
@@ -68,7 +68,7 @@ body.adminkit.wp-core-ui .button-primary,
 body.adminkit .wrap .page-title-action,
 body.adminkit .wrap .page-title-action:active {
 	background: var(--ak-primary);
-	border: 1px solid var(--ak-primary);
+	border: var(--ak-border-width) solid var(--ak-primary);
 	/* WaasKit foreground follows its light/dark accent fill. */
 	color: var(--ak-on-accent);
 	text-shadow: none;
@@ -86,8 +86,9 @@ body.adminkit.wp-core-ui .button-primary:hover,
 body.adminkit .wrap .page-title-action:hover {
 	background: var(--ak-primary-hover);
 	border-color: var(--ak-primary-hover);
-	/* Keep the resting label color — the text must not shift on hover. */
+	/* Hover fill and label are computed as one contrast-safe pair. */
 	color: var(--ak-on-accent-hover);
+	box-shadow: var(--ak-btn-primary-shadow-hover);
 }
 
 /* When several header action buttons stack (e.g. Add New + Import on the
@@ -141,7 +142,7 @@ body.adminkit .button[disabled] {
 	   pages. Force the full shorthand so the chip always reads as a bordered
 	   button — without this the "Active" pill on installed plugins drops its
 	   border in some contexts. */
-	border: 1px solid var(--ak-border) !important;
+	border: var(--ak-border-width) solid var(--ak-border) !important;
 	color: var(--ak-text-disabled) !important;
 	cursor: not-allowed;
 }
@@ -152,7 +153,7 @@ body.adminkit .button[disabled] {
    bright OS-default button in the middle of our flat chrome. */
 body.adminkit input[type="file"]::file-selector-button {
 	background: var(--ak-btn-bg);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	font-family: var(--ak-font-body);
@@ -203,7 +204,7 @@ body.adminkit.wp-core-ui .button.button-small {
    shadow — in both the resting and hover/focus states. */
 body.adminkit button.remove-site-icon {
 	background: var(--ak-error-subtle);
-	border: 1px solid color-mix(in srgb, var(--ak-error) 35%, transparent);
+	border: var(--ak-border-width) solid color-mix(in srgb, var(--ak-error) 35%, transparent);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-error);
 	box-shadow: none;
@@ -230,9 +231,7 @@ body.adminkit #post-query-submit:focus {
 
 /* WaasKit keyboard focus must remain visible after the native focus resets. */
 body.adminkit .button:focus-visible,
-body.adminkit .button-secondary:focus-visible,
-body.adminkit .button-primary:focus-visible,
-body.adminkit .wrap .page-title-action:focus-visible {
+body.adminkit .button-secondary:focus-visible {
 	outline: none;
 	box-shadow: var(--ak-focus-ring);
 }
@@ -266,4 +265,24 @@ body.adminkit .wrap .page-title-action:active {
 	background: var(--ak-primary-hover);
 	border-color: var(--ak-primary-hover);
 	color: var(--ak-on-accent-hover);
+}
+
+/* Primary relief and keyboard focus are independent of surface elevation. */
+body.adminkit .button-primary:focus-visible,
+body.adminkit.wp-core-ui .button-primary:focus-visible,
+body.adminkit .wrap .page-title-action:focus-visible {
+ outline: none;
+ box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow);
+}
+
+/* Hover relief keeps the keyboard ring when both interaction states overlap. */
+body.adminkit .button-primary:hover:focus-visible,
+body.adminkit.wp-core-ui .button-primary:hover:focus-visible,
+body.adminkit .wrap .page-title-action:hover:focus-visible {
+ box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow-hover);
+}
+
+body.adminkit.wp-core-ui .button-primary:hover:focus:not(:focus-visible),
+body.adminkit .wrap .page-title-action:hover:focus:not(:focus-visible) {
+ box-shadow: var(--ak-btn-primary-shadow-hover);
 }

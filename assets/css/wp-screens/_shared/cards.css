@@ -12,6 +12,7 @@
 body.adminkit .card {
 	background: var(--ak-card-bg);
 	border-color: var(--ak-card-border);
+	border-width: var(--ak-border-width);
 	border-radius: var(--ak-card-radius);
 	color: var(--ak-text);
 	box-shadow: var(--ak-card-shadow);
@@ -22,6 +23,7 @@ body.adminkit .card {
 body.adminkit .welcome-panel {
 	background: var(--ak-card-bg);
 	border-color: var(--ak-card-border);
+	border-width: var(--ak-border-width);
 	border-radius: var(--ak-card-radius);
 	color: var(--ak-text);
 	box-shadow: var(--ak-card-shadow);

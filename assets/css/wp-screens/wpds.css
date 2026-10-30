@@ -173,7 +173,7 @@ body.adminkit .connectors-page .ai-plugin-callout .components-button.is-primary,
 body.adminkit .connectors-page .ai-plugin-callout .components-button.is-secondary {
 	background: var(--ak-primary);
 	color: var(--ak-on-accent);
-	box-shadow: none;
+	box-shadow: var(--ak-btn-primary-shadow);
 	border-color: var(--ak-primary);
 }
 
@@ -181,6 +181,7 @@ body.adminkit .connectors-page .ai-plugin-callout .components-button.is-primary:
 body.adminkit .connectors-page .ai-plugin-callout .components-button.is-secondary:hover {
 	background: var(--ak-primary-hover);
 	color: var(--ak-on-accent-hover);
+	box-shadow: var(--ak-btn-primary-shadow-hover);
 }
 
 /* New wpds admin pages (Connectors, Font Library) render inside
@@ -305,8 +306,8 @@ body.adminkit.options-connectors-php .connectors-page { box-sizing: border-box; 
 body.adminkit.options-connectors-php .connectors-page .components-item { border-radius: var(--ak-radius-m); }
 body.adminkit.options-connectors-php .connectors-page .components-item p { color: var(--ak-text-muted); }
 body.adminkit.options-connectors-php .connectors-page .components-button { border-radius: var(--ak-radius-s); }
-body.adminkit.options-connectors-php .connectors-page .components-button.is-secondary { border-color: var(--ak-border); color: var(--ak-text); box-shadow: inset 0 0 0 1px var(--ak-border); background: var(--ak-surface); }
-body.adminkit.options-connectors-php .connectors-page .components-button.is-secondary:hover { border-color: var(--ak-border-strong); background: var(--ak-hover-bg); box-shadow: inset 0 0 0 1px var(--ak-border-strong); }
+body.adminkit.options-connectors-php .connectors-page .components-button.is-secondary { border-color: var(--ak-border); color: var(--ak-text); box-shadow: inset 0 0 0 var(--ak-border-width) var(--ak-border); background: var(--ak-surface); }
+body.adminkit.options-connectors-php .connectors-page .components-button.is-secondary:hover { border-color: var(--ak-border-strong); background: var(--ak-hover-bg); box-shadow: inset 0 0 0 var(--ak-border-width) var(--ak-border-strong); }
 body.adminkit.options-connectors-php .connectors-page .components-button:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
 
 body.adminkit.options-connectors-php .connectors-page h2.components-text { color: var(--ak-heading); }
@@ -323,3 +324,6 @@ body.adminkit.options-connectors-php .connector-item--ai-provider-for-openai svg
 }
 body.adminkit.options-connectors-php .connectors-page > p { color: var(--ak-text-muted); }
 body.adminkit.options-connectors-php .boot-layout__stage h1 { font-size: calc(24px * var(--ak-type-scale, 1)); line-height: 1.3; font-weight: 600; }
+
+body.adminkit.options-connectors-php .connectors-page .components-button.is-primary:focus-visible { box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow); }
+body.adminkit.options-connectors-php .connectors-page .components-button.is-primary:hover:focus-visible { box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow-hover); }

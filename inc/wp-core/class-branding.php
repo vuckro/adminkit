@@ -70,7 +70,7 @@ class AdminKit_Core_Branding {
 
 	/** Keep native toolbar navigation and accessible names while adding both marks. */
 	public static function inject_brand_logo( $bar ) {
-		if ( ! is_admin_bar_showing() ) {
+		if ( ! AdminKit_Settings::get( 'branding_enabled' ) || ! is_admin_bar_showing() ) {
 			return;
 		}
 		$context = is_admin() ? 'admin' : 'frontend';
@@ -144,7 +144,7 @@ class AdminKit_Core_Branding {
 	 * @return void
 	 */
 	public static function print_frontend() {
-		if ( ! is_admin_bar_showing() ) {
+		if ( ! AdminKit_Settings::get( 'branding_enabled' ) || ! is_admin_bar_showing() ) {
 			return;
 		}
 		if ( ! apply_filters( 'adminkit/should_load', true, 'frontend' ) ) {
@@ -168,6 +168,7 @@ class AdminKit_Core_Branding {
 
 	/** Hide duplicate core marks and apply the automatic toolbar identity. */
 	private static function css() {
+		if ( ! AdminKit_Settings::get( 'branding_enabled' ) ) { return ''; }
 		// The top-left WordPress logo is ALWAYS hidden now — the brand mark lives at
 		// the site name instead. Two selectors: the .wp-admin one beats WP's wp-admin
 		// rule, the plain one covers the front end.

@@ -9,6 +9,33 @@
 	   because that row's td has no background of its own. Route every plugins
 	   tr through the shared table surface; the per-state rules below still flip
    active/inactive on tr.active/tr.inactive cells. */
+
+/* Keep search with the status filters instead of floating it across an empty
+   row. A stacked label also accommodates long translated names on mobile. */
+body.adminkit.plugins-php .search-plugins .search-box {
+	float: none;
+	clear: both;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: calc(6px * var(--ak-space-scale, 1));
+	width: min(100%, 26rem);
+	margin: calc(16px * var(--ak-space-scale, 1)) 0;
+}
+
+body.adminkit.plugins-php .search-plugins .search-box label {
+	color: var(--ak-text-muted);
+	font-size: var(--ak-text-s);
+}
+
+body.adminkit.plugins-php .search-plugins .search-box input[type="search"] {
+	float: none;
+	width: 100%;
+	min-width: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
 body.adminkit .wp-list-table.plugins tr {
 	background: var(--ak-table-bg);
 }
@@ -321,6 +348,7 @@ body.adminkit .upload-theme .wp-upload-form {
 	border-color: var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	color: var(--ak-text);
+	box-shadow: var(--ak-card-shadow);
 }
 
 body.adminkit .upload-plugin .install-help,

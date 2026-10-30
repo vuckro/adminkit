@@ -1219,16 +1219,16 @@ msgid "Back to settings"
 msgstr "Retour aux réglages"
 
 #: inc/settings/class-settings-page.php
-msgid "Design foundations"
-msgstr "Fondations du design"
+msgid "Design system sections"
+msgstr "Rubriques du design système"
 
 #: inc/settings/class-settings-page.php
 msgid "Choose your logo and where it appears."
 msgstr "Choisissez votre logo et son emplacement."
 
 #: inc/settings/class-settings-page.php
-msgid "Choose colors for light and dark. Custom changes the accent while keeping neutral backgrounds and text. Save to apply your changes."
-msgstr "Choisissez les couleurs en clair et en sombre. Personnalisé change l’accent en conservant des fonds et des textes neutres. Enregistrez pour appliquer vos modifications."
+msgid "Choose colors for light and dark. Custom lets you choose the accent and edit each palette color. Save to apply your changes."
+msgstr "Choisissez les couleurs en clair et en sombre. Personnalisé permet de choisir l’accent et de modifier chaque couleur de la palette. Enregistrez pour appliquer vos modifications."
 
 #: inc/settings/class-settings-page.php
 msgid "A fluid type scale from small text to large headings. Edit the sample and adjust its scale."
@@ -1379,6 +1379,30 @@ msgstr "Gère son profil, sans accès à la modification des contenus."
 msgid "Permissions for this role are defined by the site or a plugin."
 msgstr "Les droits de ce rôle sont définis par le site ou une extension."
 
+#: inc/wp-core/class-profile-account.php
+msgid "Full access"
+msgstr "Accès complet"
+
+#: inc/wp-core/class-profile-account.php
+msgid "Broad access to content"
+msgstr "Accès étendu aux contenus"
+
+#: inc/wp-core/class-profile-account.php
+msgid "Can publish their own posts"
+msgstr "Publication de ses propres articles"
+
+#: inc/wp-core/class-profile-account.php
+msgid "Content requires approval"
+msgstr "Contenus soumis à validation"
+
+#: inc/wp-core/class-profile-account.php
+msgid "Profile access only"
+msgstr "Accès limité au profil"
+
+#: inc/wp-core/class-profile-account.php
+msgid "Permissions to check"
+msgstr "Droits à vérifier"
+
 msgid "In development"
 msgstr "En cours de développement"
 
@@ -1408,5 +1432,100 @@ msgstr "Logo de l’administration"
 msgid "Shown with the expanded menu. The site icon takes over when the menu is collapsed."
 msgstr "Affiché lorsque le menu est déplié. L’icône du site prend le relais lorsque le menu est replié."
 
+#: inc/settings/class-settings-page.php
+msgid "Site icon (favicon)"
+msgstr "Icône du site (favicon)"
+
+#: inc/settings/class-settings-page.php
+msgid "Used in browser tabs and bookmarks. This image is managed in WordPress General Settings."
+msgstr "Utilisée dans les onglets du navigateur et les favoris. Cette image se règle dans les réglages généraux de WordPress."
+
+#: inc/settings/class-settings-page.php
+msgid "Edit the site icon in WordPress"
+msgstr "Modifier l’icône dans WordPress"
+
+msgid "Customize the foundations and components of your interface."
+msgstr "Personnalisez les fondations et les composants de votre interface."
+
 msgid "Upload image"
 msgstr "Importer une image"
+
+msgid "Neutral"
+msgstr "Neutre"
+
+msgid "Base"
+msgstr "Base"
+
+#, php-format
+msgid "Preview: %s — save to apply"
+msgstr "Aperçu : %s — enregistrez pour appliquer"
+
+msgid "Primary action"
+msgstr "Action principale"
+
+msgid "Accent color"
+msgstr "Couleur d’accent"
+
+#: inc/settings/class-settings-page.php
+msgid "Edit settings"
+msgstr "Modifier les réglages"
+
+#: inc/settings/class-settings-page.php
+msgid "Corner shapes, outlines and depth for buttons, fields, cards and tables."
+msgstr "Arrondis, contours et profondeur des boutons, champs, cartes et tableaux."
+
+#: inc/settings/class-settings-page.php
+msgid "Preview changes here, then save to apply them. Elevation affects cards and tables; focus indicators stay visible."
+msgstr "Prévisualisez les changements ici, puis enregistrez pour les appliquer. L’élévation concerne les cartes et les tableaux ; les indicateurs de focus restent visibles."
+
+#: inc/settings/class-settings-page.php
+msgid "Card"
+msgstr "Carte"
+
+#: inc/settings/class-settings-page.php
+msgid "Table"
+msgstr "Tableau"
+
+#: inc/settings/class-settings-page.php
+msgid "Components"
+msgstr "Composants"
+
+#: inc/settings/class-settings-page.php
+msgid "Appearance and interaction settings, organized by component."
+msgstr "Réglages d’apparence et d’interaction, organisés par composant."
+
+#: inc/settings/class-settings-page.php
+msgid "Buttons"
+msgstr "Boutons"
+
+#: inc/settings/class-settings-page.php
+msgid "Top-edge highlight"
+msgstr "Reflet sur le bord supérieur"
+
+#: inc/settings/class-settings-page.php
+msgid "Controls the highlight on primary buttons and page actions. Hover the previews to compare light and dark. Save to apply across the administration."
+msgstr "Règle le reflet des boutons principaux et des actions de page. Survolez les aperçus pour comparer les modes clair et sombre. Enregistrez pour appliquer à l’administration."
+
+#: inc/settings/class-settings-page.php
+msgid "Off"
+msgstr "Désactivé"
+
+#: inc/settings/class-settings-page.php
+msgid "On hover"
+msgstr "Au survol"
+
+#: inc/settings/class-settings-page.php
+msgid "Always"
+msgstr "Permanent"
+
+#: inc/settings/class-settings-page.php
+msgid "Preview theme"
+msgstr "Thème de l’aperçu"
+
+#: inc/settings/class-settings-catalog.php
+msgid "Use the administration logo and site icon in the toolbar. Off restores the native WordPress identity and keeps your saved logo."
+msgstr "Utilise le logo de l’administration et l’icône du site dans la barre d’outils. La désactivation rétablit l’identité native de WordPress et conserve le logo enregistré."
+
+#: inc/settings/class-settings-catalog.php
+msgid "Personalize the identity displayed in the toolbar."
+msgstr "Personnalisez l’identité affichée dans la barre d’outils."

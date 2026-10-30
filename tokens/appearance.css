@@ -22,3 +22,27 @@
 	--p-accent: var(--ak-custom-accent, var(--wk-accent));
 	--p-on-accent: var(--ak-custom-on-accent, var(--wk-on-accent));
 }
+
+
+/* Shared outer surfaces. Kept here so admin, login and themed previews use
+   the same contour/contact elevation; inner rows keep their own separators. */
+body.adminkit,
+body.login,
+.adminkit-app .ak-bp__frame {
+	--ak-card-bg: var(--ak-surface);
+	--ak-card-border: color-mix(in srgb, var(--ak-border) 55%, transparent);
+	--ak-card-radius: var(--ak-radius-m);
+	--ak-default-card-shadow: 0 2px 2px -1px color-mix(in srgb, var(--ak-text) 12%, transparent);
+	--ak-card-shadow: var(--ak-design-elevation, var(--ak-default-card-shadow));
+	--ak-table-bg: var(--ak-surface);
+	--ak-table-border: var(--ak-card-border);
+	--ak-table-shadow: var(--ak-card-shadow);
+	--ak-table-radius: var(--ak-radius-l);
+	--ak-table-header-bg: var(--ak-surface-muted);
+}
+:root[data-adminkit-theme="dark"] body.adminkit,
+:root[data-adminkit-theme="dark"] body.login,
+.adminkit-app .ak-bp__frame[data-preview-theme="dark"] {
+ --ak-card-border: color-mix(in srgb, var(--ak-border) 72%, transparent);
+ --ak-default-card-shadow: var(--wk-elevation-1);
+}

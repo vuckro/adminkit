@@ -1205,7 +1205,7 @@ msgid "Back to settings"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Design foundations"
+msgid "Design system sections"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -1213,7 +1213,7 @@ msgid "Choose your logo and where it appears."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Choose colors for light and dark. Custom changes the accent while keeping neutral backgrounds and text. Save to apply your changes."
+msgid "Choose colors for light and dark. Custom lets you choose the accent and edit each palette color. Save to apply your changes."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -1365,6 +1365,30 @@ msgstr ""
 msgid "Permissions for this role are defined by the site or a plugin."
 msgstr ""
 
+#: inc/wp-core/class-profile-account.php
+msgid "Full access"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Broad access to content"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Can publish their own posts"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Content requires approval"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Profile access only"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Permissions to check"
+msgstr ""
+
 msgid "In development"
 msgstr ""
 
@@ -1394,5 +1418,100 @@ msgstr ""
 msgid "Shown with the expanded menu. The site icon takes over when the menu is collapsed."
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "Site icon (favicon)"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Used in browser tabs and bookmarks. This image is managed in WordPress General Settings."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Edit the site icon in WordPress"
+msgstr ""
+
+msgid "Customize the foundations and components of your interface."
+msgstr ""
+
 msgid "Upload image"
+msgstr ""
+
+msgid "Neutral"
+msgstr ""
+
+msgid "Base"
+msgstr ""
+
+#, php-format
+msgid "Preview: %s — save to apply"
+msgstr ""
+
+msgid "Primary action"
+msgstr ""
+
+msgid "Accent color"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Edit settings"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Corner shapes, outlines and depth for buttons, fields, cards and tables."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Preview changes here, then save to apply them. Elevation affects cards and tables; focus indicators stay visible."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Card"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Table"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Components"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Appearance and interaction settings, organized by component."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Buttons"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Top-edge highlight"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Controls the highlight on primary buttons and page actions. Hover the previews to compare light and dark. Save to apply across the administration."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Off"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "On hover"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Always"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Preview theme"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Use the administration logo and site icon in the toolbar. Off restores the native WordPress identity and keeps your saved logo."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Personalize the identity displayed in the toolbar."
 msgstr ""

@@ -24,6 +24,12 @@ body.adminkit #wpbody-content {
 	background: var(--ak-bg);
 }
 
+/* The panel outline and its corner fill must share exactly the same geometry,
+   including a zero radius and fractional design-system scales. */
+body.adminkit {
+	--ak-panel-radius: calc(18px * var(--ak-radius-scale, 1));
+}
+
 /* Modern WP-style content panel. The chrome (toolbar + admin menu) is FLUSH /
    borderless — its own separators are removed (see adminbar.css + the #adminmenu
    rule below) — and the content PANEL carries the hairline instead, so it reads
@@ -113,14 +119,15 @@ body.adminkit.options-connectors-php #wpbody-content {
 		box-sizing: border-box;
 		border-top: 1px solid var(--ak-border);
 		border-left: 1px solid var(--ak-border);
-		border-top-left-radius: calc(18px * var(--ak-radius-scale, 1));
+		border-top-left-radius: var(--ak-panel-radius);
 		z-index: 101;
 	}
 	body.adminkit #wpwrap::after {         /* concave chrome-toned notch fill */
-		width: 18px;
-		height: 18px;
-		background: radial-gradient( circle 18px at bottom right,
-			transparent 0 17.5px, var(--ak-surface) 18px );
+		width: var(--ak-panel-radius);
+		height: var(--ak-panel-radius);
+		background: radial-gradient(circle var(--ak-panel-radius) at bottom right,
+			transparent 0 max(0px, calc(var(--ak-panel-radius) - 0.5px)),
+			var(--ak-surface) var(--ak-panel-radius));
 		z-index: 100;
 	}
 	body.adminkit.folded #wpwrap::before,  /* menu folded by hand → 36px edge */
@@ -144,18 +151,6 @@ body.adminkit.block-editor-page.is-fullscreen-mode #wpwrap::after {
 
 body.adminkit {
 	font-size: var(--ak-text-m);
-	/* Cards + tables: two independent families on the same base tokens — identical
-	   today, free to diverge later (e.g. a different table radius) without one
-	   dragging the other. */
-	--ak-card-bg: var(--ak-surface);
-	--ak-card-border: color-mix(in srgb, var(--ak-border) 55%, transparent);
-	--ak-card-radius: var(--ak-radius-m);
-	--ak-card-shadow: var(--ak-design-elevation, 0 2px 2px -1px color-mix(in srgb, var(--ak-text) 12%, transparent));
-	--ak-table-bg: var(--ak-surface);
-	--ak-table-border: var(--ak-card-border);
-	--ak-table-shadow: var(--ak-card-shadow);
-	--ak-table-radius: var(--ak-radius-l);
-	--ak-table-header-bg: var(--ak-surface-muted);
 	--ak-nav-gap: calc(6px * var(--ak-space-scale, 1));
 	--ak-nav-pill-gap: calc(7px * var(--ak-space-scale, 1));
 	--ak-nav-pill-height: calc(34px * max(var(--ak-type-scale, 1), var(--ak-space-scale, 1)));
@@ -164,10 +159,6 @@ body.adminkit {
 	--ak-nav-pill-radius: max(0px, calc(var(--ak-radius-s) - 3px));
 }
 
-:root[data-adminkit-theme="dark"] body.adminkit {
-	--ak-card-border: color-mix(in srgb, var(--ak-border) 72%, transparent);
-	--ak-card-shadow: var(--ak-design-elevation, var(--ak-shadow-subtle));
-}
 
 /* Dark-mode scrollbars. The browser paints native scrollbars from the page's
    color-scheme, which AdminKit keeps light (so native form controls stay
@@ -409,7 +400,7 @@ body.adminkit #adminmenu .opensub .wp-submenu {
 	body.adminkit #adminmenu li.opensub:not( .wp-has-current-submenu ) > .wp-submenu,
 	body.adminkit.folded #adminmenu .wp-submenu,
 	body.adminkit.auto-fold #adminmenu li:not( .wp-has-current-submenu ) > .wp-submenu {
-		border: 1px solid var(--ak-card-border);
+		border: var(--ak-border-width) solid var(--ak-card-border);
 		border-radius: var(--ak-card-radius);
 		box-shadow: var(--ak-shadow-elevated, 0 8px 24px rgba(0, 0, 0, 0.18));
 		margin-left: calc(6px * var(--ak-space-scale, 1));
@@ -499,10 +490,11 @@ body.adminkit #collapse-button:focus-visible {
 	outline-offset: calc(-1 * var(--wk-focus-width));
 }
 
-/* Postboxes / metaboxes */
-body.adminkit .postbox {
+/* Postboxes / metaboxes; beat core's dashboard-specific fixed radius. */
+body.adminkit .postbox,
+body.adminkit #dashboard-widgets .postbox {
 	background: var(--ak-card-bg);
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	margin-bottom: calc(16px * var(--ak-space-scale, 1));
 	overflow: hidden;
@@ -630,7 +622,7 @@ body.adminkit p.popular-tags {
    excerpt, and any plugin that calls wp_editor(). */
 body.adminkit .stuffbox {
 	background: var(--ak-card-bg);
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	overflow: hidden;
 	box-shadow: var(--ak-card-shadow);
@@ -671,7 +663,7 @@ body.adminkit #major-publishing-actions #publishing-action {
 
 body.adminkit .wp-editor-container {
 	background: var(--ak-card-bg);
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-radius-s);
 	overflow: hidden;
 }
@@ -794,7 +786,7 @@ body.adminkit #wp-content-editor-tools {
    themed strip in dark mode. */
 body.adminkit #post-status-info {
 	background-color: var(--ak-card-bg);
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 }
 
 /* Link / permalink helper text (comment edit link box, post slug box) —
@@ -890,7 +882,7 @@ body.adminkit #screen-meta {
 	background: var(--ak-card-bg);
 	border: none;
 	border-bottom: 1px solid var(--ak-card-border);
-	border-top-left-radius: calc(18px * var(--ak-radius-scale, 1));
+	border-top-left-radius: var(--ak-panel-radius);
 	overflow: hidden;
 	color: var(--ak-text);
 }
@@ -1034,7 +1026,7 @@ body.adminkit .ak-tabs {
 	gap: calc(2px * var(--ak-space-scale, 1));
 	margin: calc(16px * var(--ak-space-scale, 1)) 0;
 	padding: calc(3px * var(--ak-space-scale, 1));
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface-muted);
 	list-style: none;
@@ -1077,7 +1069,7 @@ body.adminkit .ak-tabs button {
 	margin: 0;
 	padding: 0 var(--ak-nav-pill-padding-x);
 	height: var(--ak-nav-pill-height);
-	border: 1px solid transparent;
+	border: var(--ak-border-width) solid transparent;
 	border-radius: var(--ak-nav-pill-radius);
 	background: transparent;
 	overflow: hidden;

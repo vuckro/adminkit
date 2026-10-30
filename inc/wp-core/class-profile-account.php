@@ -197,6 +197,14 @@ class AdminKit_Profile_Account {
 			'security'         => __( 'Security', 'adminkit' ),
 			'more'            => __( 'Other settings', 'adminkit' ),
 			'nav'             => __( 'Account sections', 'adminkit' ),
+			'role_levels' => array(
+				'critical' => __( 'Full access', 'adminkit' ),
+				'high' => __( 'Broad access to content', 'adminkit' ),
+				'medium' => __( 'Can publish their own posts', 'adminkit' ),
+				'limited' => __( 'Content requires approval', 'adminkit' ),
+				'minimal' => __( 'Profile access only', 'adminkit' ),
+				'custom' => __( 'Permissions to check', 'adminkit' ),
+			),
 			'role_descriptions' => array(
 				'administrator' => __( 'Manages all site settings, content and user accounts.', 'adminkit' ),
 				'editor' => __( 'Publishes and manages all posts and pages, including those written by others.', 'adminkit' ),

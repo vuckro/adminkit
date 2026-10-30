@@ -77,7 +77,7 @@ body.adminkit:is(
 ) .wrap > form > .form-table,
 body.adminkit.options-discussion-php .ak-options-panel > .form-table {
 	background: var(--ak-card-bg);
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	padding: calc(4px * var(--ak-space-scale, 1)) calc(20px * var(--ak-space-scale, 1));
 	box-shadow: var(--ak-card-shadow);
@@ -105,7 +105,7 @@ body.adminkit.options-general-php .ak-options-block {
 	margin: 0 0 calc(28px * var(--ak-space-scale, 1));
 	padding: calc(20px * var(--ak-space-scale, 1));
 	background: var(--ak-card-bg);
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	box-shadow: var(--ak-card-shadow);
 }
@@ -209,7 +209,7 @@ body.adminkit.options-discussion-php .ak-discussion-card {
  padding: calc(20px * var(--ak-space-scale, 1));
  min-width: 0;
  background: var(--ak-card-bg);
- border: 1px solid var(--ak-card-border);
+ border: var(--ak-border-width) solid var(--ak-card-border);
  border-radius: var(--ak-card-radius);
  box-shadow: var(--ak-card-shadow);
 }
@@ -240,8 +240,9 @@ body.adminkit.options-reading-php .ak-reading-card {
  margin: 0 0 calc(24px * var(--ak-space-scale, 1));
  padding: calc(20px * var(--ak-space-scale, 1));
  background: var(--ak-card-bg);
- border: 1px solid var(--ak-card-border);
+ border: var(--ak-border-width) solid var(--ak-card-border);
  border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
 }
 body.adminkit.options-reading-php .ak-reading-card > h2 {
  margin: 0 0 calc(4px * var(--ak-space-scale, 1));

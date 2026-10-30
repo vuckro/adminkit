@@ -114,8 +114,9 @@ body.adminkit .drag-drop.drag-over #drag-drop-area {
 body.adminkit.upload-php .wp-filter,
 body.adminkit.upload-php .media-toolbar {
 	background: var(--ak-card-bg);
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
 	padding: calc(12px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
 }
 
@@ -170,6 +171,7 @@ body.adminkit .view-switch a.current::before {
    surface white with dark text, none of which flip in dark mode.
    Route through tokens so the entire modal reads in both modes. */
 body.adminkit .media-modal-content {
+	box-shadow: var(--ak-shadow-elevated);
 	background: var(--ak-bg);
 	color: var(--ak-text);
 }

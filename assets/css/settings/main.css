@@ -83,7 +83,7 @@
 	align-items: center;
 	gap: calc(4px * var(--ak-space-scale, 1));
 	padding: calc(3px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1));
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s, 6px);
 	background: var(--ak-elevated);
 	color: var(--ak-text);
@@ -111,7 +111,7 @@
 	width: 22px;
 	height: 22px;
 	border-radius: var(--ak-radius-s, 6px);
-	border: 1px solid var(--ak-border-strong);
+	border: var(--ak-border-width) solid var(--ak-border-strong);
 	background: var(--ak-primary);
 	cursor: pointer;
 	padding: 0;
@@ -122,7 +122,7 @@
 	font-family: monospace;
 	font-size: var(--ak-text-xs);
 	padding: calc(4px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s, 6px);
 	background: var(--ak-input-bg, var(--ak-bg));
 	color: var(--ak-text);
@@ -201,7 +201,7 @@
 .adminkit-app[data-screen="main"] .ak-tabs .ic { display: inline-flex; }
 .adminkit-app[data-screen="main"] .ak-panels { min-width: 0; }
 .adminkit-app[data-screen="main"] .ak-savebar { grid-column: 1 / -1; }
-.adminkit-app[data-screen="main"] .ak-rows { display: block; border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); background: var(--ak-surface); overflow: hidden; }
+.adminkit-app[data-screen="main"] .ak-rows { display: block; border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); background: var(--ak-card-bg); box-shadow: var(--ak-card-shadow); overflow: hidden; }
 .adminkit-app[data-screen="main"] .ak-rows .ak-row { border: 0; border-top: 1px solid var(--ak-border); border-radius: 0; box-shadow: none; background: transparent; padding: calc(18px * var(--ak-space-scale, 1)) calc(20px * var(--ak-space-scale, 1)); align-items: flex-start; }
 .adminkit-app[data-screen="main"] .ak-rows .ak-row:first-child { border-top: 0; }
 .adminkit-app[data-screen="main"] .ak-row.is-off { opacity: 1; }
@@ -279,7 +279,7 @@
 .adminkit-app .ak-feature-save-note { color: var(--ak-text-muted); max-width: 70ch; font-size: var(--ak-text-xs); line-height: 1.6; margin: calc(12px * var(--ak-space-scale, 1)) 0 0; }
 
 /* A single surfaced overview groups the configuration and gives actions weight. */
-.adminkit-app .ak-overview-list { background: var(--ak-surface); border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); overflow: hidden; margin: calc(24px * var(--ak-space-scale, 1)) 0; }
+.adminkit-app .ak-overview-list { background: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); overflow: hidden; margin: calc(24px * var(--ak-space-scale, 1)) 0; }
 .adminkit-app .ak-overview-entry { padding: calc(20px * var(--ak-space-scale, 1)) calc(24px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-overview-entry:last-child { border-bottom: 0; }
 .adminkit-app .ak-overview-link { text-decoration: none; white-space: normal; text-align: center; line-height: 1.4; flex-shrink: 0; }
@@ -296,14 +296,14 @@
 
 /* Dedicated foundation pages. Category changes never alter the saved profile. */
 .adminkit-app .ak-foundations-title { margin: 0 0 calc(14px * var(--ak-space-scale, 1)); font-size: calc(26px * var(--ak-type-scale, 1)); line-height: 1.25; color: var(--ak-heading); }
-.adminkit-app .ak-foundations-editor { display: grid; grid-template-columns: 165px minmax(0, 1fr); gap: calc(24px * var(--ak-space-scale, 1)); align-items: start; }
-.adminkit-app .ak-foundations-nav { display: flex; flex-direction: column; gap: calc(4px * var(--ak-space-scale, 1)); position: sticky; top: 56px; }
-.adminkit-app .ak-foundations-nav button { font: inherit; font-size: calc(13px * var(--ak-type-scale, 1)); font-weight: 500; text-align: left; line-height: 1.5; border: 1px solid transparent; border-radius: var(--ak-radius-s); padding: calc(11px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)); color: var(--ak-text-muted); background: transparent; cursor: pointer; }
+.adminkit-app .ak-foundations-editor { display: grid; grid-template-columns: minmax(0, 1fr); gap: calc(24px * var(--ak-space-scale, 1)); align-items: start; }
+.adminkit-app .ak-foundations-nav { display: flex; flex-direction: row; flex-wrap: wrap; gap: calc(4px * var(--ak-space-scale, 1)); position: static; }
+.adminkit-app .ak-foundations-nav button { font: inherit; font-size: calc(13px * var(--ak-type-scale, 1)); font-weight: 500; text-align: left; line-height: 1.5; border: var(--ak-border-width) solid transparent; border-radius: var(--ak-radius-s); padding: calc(11px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)); color: var(--ak-text-muted); background: transparent; cursor: pointer; }
 .adminkit-app .ak-foundations-nav button:hover { color: var(--ak-heading); background: var(--ak-hover-bg); }
 .adminkit-app .ak-foundations-nav button[aria-selected="true"] { color: var(--ak-heading); background: var(--ak-surface); border-color: var(--ak-border); }
 .adminkit-app .ak-foundations-nav button:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
 .adminkit-app .ak-foundations-panes { min-width: 0; }
-.adminkit-app .ak-foundations-panel { padding: calc(24px * var(--ak-space-scale, 1)); background: var(--ak-surface); border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); min-width: 0; }
+.adminkit-app .ak-foundations-panel { padding: calc(24px * var(--ak-space-scale, 1)); background: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); min-width: 0; }
 .adminkit-app .ak-foundations-panel[hidden] { display: none; }
 .adminkit-app .ak-foundations-panel h3 { font-size: calc(21px * var(--ak-type-scale, 1)); line-height: 1.3; color: var(--ak-heading); margin: 0 0 calc(10px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-foundation-intro { margin: 0 0 calc(24px * var(--ak-space-scale, 1)); color: var(--ak-text-muted); font-size: calc(13px * var(--ak-type-scale, 1)); line-height: 1.7; max-width: 70ch; }
@@ -316,15 +316,18 @@
 .adminkit-app .ak-foundations-panel label { display: block; color: var(--ak-heading); font-size: calc(13px * var(--ak-type-scale, 1)); font-weight: 500; }
 .adminkit-app .ak-foundation-slider output { font-size: calc(13px * var(--ak-type-scale, 1)); font-variant-numeric: tabular-nums; color: var(--ak-text); }
 .adminkit-app .ak-foundation-slider input[type="range"] { width: 100%; min-height: 32px; margin: 0; padding: 0; accent-color: var(--ak-primary); cursor: pointer; box-shadow: none; }
-.adminkit-app .ak-foundations-panel :is(input[type="text"], input[type="url"], select) { width: 100%; min-width: 0; box-sizing: border-box; border: 1px solid var(--ak-border); border-radius: var(--ak-radius-s); background: var(--ak-input-bg); color: var(--ak-text); padding: calc(9px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)); font: inherit; font-size: calc(13px * var(--ak-type-scale, 1)); min-height: 38px; }
-.adminkit-app .ak-foundations-panel :is(input, select, button):focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
+.adminkit-app .ak-foundations-panel :is(input[type="text"], input[type="url"], select),
+.adminkit-app .ak-shape-controls input[type="text"] { width: 100%; min-width: 0; box-sizing: border-box; border: var(--ak-border-width) solid var(--ak-border); border-radius: var(--ak-radius-s); background: var(--ak-input-bg); color: var(--ak-text); padding: calc(9px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)); font: inherit; font-size: calc(13px * var(--ak-type-scale, 1)); min-height: 38px; }
+.adminkit-app .ak-foundations-panel :is(input, select):focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
 .adminkit-app .ak-foundations-panel input[aria-invalid="true"] { border-color: var(--ak-error); }
 .adminkit-app .ak-foundation-accent { margin-bottom: calc(24px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-foundations-panel .ak-accent-inline { display: flex; flex-wrap: wrap; gap: calc(8px * var(--ak-space-scale, 1)); width: 100%; }
 .adminkit-app .ak-foundations-panel .ak-accent-inline .ak-seg { display: flex; flex-wrap: wrap; max-width: 440px; box-sizing: border-box; width: 100%; padding: calc(3px * var(--ak-space-scale, 1)); gap: calc(2px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-foundations-panel .ak-accent-inline .ak-seg__opt { flex: 1 1 8rem; min-width: 0; white-space: normal; padding: calc(9px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1)); text-align: center; }
-.adminkit-app .ak-palettes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr)); gap: calc(16px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-palette-theme { container-type: inline-size; position: relative; padding: calc(14px * var(--ak-space-scale, 1)); border: 1px solid var(--ak-border); border-radius: var(--ak-radius-s); background: var(--ak-surface); min-width: 0; }
+.adminkit-app .ak-palettes { display: block; }
+.adminkit-app .ak-palette-theme-switch { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+.adminkit-app .ak-palette-theme[hidden] { display: none; }
+.adminkit-app .ak-palette-theme { container-type: inline-size; position: relative; padding: calc(14px * var(--ak-space-scale, 1)); border: var(--ak-border-width) solid var(--ak-border); border-radius: var(--ak-radius-s); background: var(--ak-surface); min-width: 0; }
 .adminkit-app .ak-palette-header { display: flex; justify-content: space-between; align-items: center; gap: calc(8px * var(--ak-space-scale, 1)); margin-bottom: calc(16px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-palette-header h4 { margin: 0; font-size: calc(15px * var(--ak-type-scale, 1)); color: var(--ak-heading); }
 .adminkit-app .ak-palette-header .ak-btn { font-size: calc(11px * var(--ak-type-scale, 1)); padding: calc(8px * var(--ak-space-scale, 1)); line-height: 1.4; }
@@ -336,18 +339,16 @@
 .adminkit-app .ak-palette-row input.ak-palette-hex { font-family: var(--ak-font-mono); font-size: calc(10px * var(--ak-type-scale, 1)); padding: calc(6px * var(--ak-space-scale, 1)) calc(4px * var(--ak-space-scale, 1)); min-height: 32px; }
 .adminkit-app .ak-palette-reset { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 32px; padding: 0; border: 0; background: transparent; color: var(--ak-text-muted); cursor: pointer; }
 .adminkit-app .ak-palette-reset:disabled { color: var(--ak-text-disabled); cursor: default; }
-.adminkit-app .ak-palette-reading { background: var(--wk-bg); color: var(--wk-text); font-size: calc(15px * var(--ak-type-scale, 1)); line-height: 1.6; padding: calc(12px * var(--ak-space-scale, 1)); border-radius: var(--ak-radius-s); margin-top: calc(12px * var(--ak-space-scale, 1)); overflow-wrap: anywhere; }
-.adminkit-app .ak-palette-contrast { font-size: calc(11px * var(--ak-type-scale, 1)); line-height: 1.6; color: var(--ak-text-muted); margin: calc(12px * var(--ak-space-scale, 1)) 0 0; }
-.adminkit-app .ak-palette-contrast[data-pass="false"] { color: var(--ak-warning); }
 @media (max-width: 1100px) {
-	.adminkit-app .ak-foundations-editor { grid-template-columns: 140px minmax(0, 1fr); gap: calc(16px * var(--ak-space-scale, 1)); }
+	.adminkit-app .ak-foundations-editor { grid-template-columns: minmax(0, 1fr); gap: calc(16px * var(--ak-space-scale, 1)); }
 }
 @media (max-width: 782px) {
 	.adminkit-app .ak-foundations-editor { display: block; }
-	.adminkit-app .ak-foundations-nav { position: static; flex-direction: row; overflow-x: auto; margin: 0 0 calc(16px * var(--ak-space-scale, 1)); padding: calc(3px * var(--ak-space-scale, 1)); }
+	.adminkit-app .ak-foundations-nav { position: static; flex-direction: row; flex-wrap: wrap; margin: 0 0 calc(16px * var(--ak-space-scale, 1)); padding: calc(3px * var(--ak-space-scale, 1)); }
 	.adminkit-app .ak-foundations-nav button { flex: 0 0 auto; white-space: nowrap; min-height: 44px; }
 	.adminkit-app .ak-foundations-panel { padding: calc(16px * var(--ak-space-scale, 1)); }
-	.adminkit-app .ak-foundations-panel :is(input[type="text"], input[type="url"], select) { min-height: 44px; }
+	.adminkit-app .ak-foundations-panel :is(input[type="text"], input[type="url"], select),
+.adminkit-app .ak-shape-controls input[type="text"] { min-height: 44px; }
 	.adminkit-app .ak-palettes { display: block; }
 	.adminkit-app .ak-palette-theme { margin-bottom: calc(16px * var(--ak-space-scale, 1)); padding: calc(10px * var(--ak-space-scale, 1)); }
 	.adminkit-app .ak-palette-row { grid-template-columns: 30px minmax(0, 1fr) 70px 28px; gap: calc(5px * var(--ak-space-scale, 1)); }
@@ -382,11 +383,93 @@
  .adminkit-app .ak-palette-header { flex-wrap: wrap; }
 }
 
-.adminkit-app .ak-single-logo { display: grid; gap: var(--ak-space-l); }
-.adminkit-app .ak-single-logo-preview { display: block; width: min(100%, 240px); height: 72px; object-fit: contain; object-position: left center; }
-.adminkit-app .ak-single-logo-preview[hidden], .adminkit-app .ak-single-logo [hidden] { display: none; }
-:root[data-adminkit-theme="dark"] .adminkit-app .ak-single-logo-svg { filter: invert(1); }
-.adminkit-app .ak-single-logo p { margin: 0; color: var(--ak-text-muted); line-height: 1.6; }
 
-.adminkit-app .ak-single-logo-actions { display: flex; flex-wrap: wrap; gap: var(--ak-space-s); }
-.adminkit-app .ak-single-logo label { margin-bottom: var(--ak-space-s); }
+
+
+/* Keep the accent controls compact and aligned beside the source selector. */
+.adminkit-app .ak-foundations-panel .ak-accent-inline { align-items: center; }
+.adminkit-app .ak-foundations-panel .ak-accent-inline .ak-seg { width: auto; flex: 0 1 440px; }
+.adminkit-app .ak-foundations-panel .ak-accent-inline input.ak-accent-inline__hex { width: 110px; flex: 0 0 110px; min-width: 0; }
+
+
+/* Each palette is a self-contained theme, independent of the admin chrome. */
+.adminkit-app .ak-palette-theme {
+ --ak-bg: var(--wk-bg);
+ --ak-surface: var(--wk-surface);
+ --ak-input-bg: var(--wk-bg);
+ --ak-btn-bg: var(--wk-surface);
+ --ak-text: var(--wk-text);
+ --ak-heading: var(--wk-text);
+ --ak-text-muted: var(--wk-text-muted);
+ --ak-text-disabled: var(--wk-text-disabled);
+ --ak-border: var(--wk-border);
+ --ak-border-strong: var(--wk-border-strong);
+ --ak-hover-bg: var(--wk-surface-hover);
+ --ak-primary: var(--wk-accent);
+ --ak-on-accent: var(--wk-on-accent);
+ --ak-primary-text: var(--wk-accent-text);
+ --ak-focus: var(--wk-focus-ring);
+ color: var(--wk-text);
+ background: var(--wk-surface);
+}
+.adminkit-app .ak-palette-theme[data-preview-theme="light"] { color-scheme: light; }
+.adminkit-app .ak-palette-theme[data-preview-theme="dark"] { color-scheme: dark; }
+
+/* Shapes: scoped unsaved previews in both themes. */
+.adminkit-app .ak-shape-help { margin-top: 10px; }
+/* A single theme preview below the active settings panel. */
+.adminkit-app .ak-design-preview { margin-top: calc(28px * var(--ak-space-scale, 1)); }
+.adminkit-app .ak-design-preview[hidden],
+.adminkit-app .ak-design-preview [hidden] { display: none; }
+.adminkit-app .ak-design-preview__head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+.adminkit-app .ak-design-preview__head h3 { margin: 0; color: var(--ak-heading); font-size: var(--ak-text-m); line-height: 1.4; }
+.adminkit-app .ak-design-preview__themes { display: flex; gap: 4px; }
+.adminkit-app .ak-design-preview__themes .ak-btn { min-height: 44px; }
+.adminkit-app .ak-design-preview__themes .ak-btn[aria-pressed="true"] { color: var(--ak-primary-text); background: var(--ak-primary-subtle); border-color: var(--ak-primary); }
+.adminkit-app .ak-design-preview .ak-shape-preview { border-radius: var(--ak-radius-m); }
+.adminkit-app .ak-shape-preview { padding: 24px; background: var(--wk-bg); color: var(--wk-text); min-width: 0; }
+.adminkit-app .ak-shape-preview h4 { color: var(--wk-text); margin: 0 0 20px; font-size: var(--ak-text-m); }
+.adminkit-app :is(.ak-shape-card, .ak-shape-table) { background: var(--wk-surface); border: var(--ak-border-width) solid var(--ak-card-border); box-shadow: var(--ak-shape-shadow); overflow: hidden; }
+.adminkit-app .ak-shape-card { border-radius: calc(12px * var(--ak-shape-scale)); padding: 18px; margin-bottom: 24px; }
+.adminkit-app .ak-shape-card p { margin: 8px 0 0; color: var(--wk-text-muted); }
+.adminkit-app .ak-shape-table { border-radius: calc(16px * var(--ak-shape-scale)); }
+.adminkit-app .ak-shape-table > * { display: block; padding: 12px 16px; }
+.adminkit-app .ak-shape-table strong { background: var(--wk-surface-sunken); }
+.adminkit-app .ak-shape-table span { border-top: 1px solid var(--wk-border); color: var(--wk-text-muted); }
+
+
+.adminkit-app .ak-shape-selects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.adminkit-app .ak-shape-selects label { margin-bottom: 8px; }
+.adminkit-app .ak-shape-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 24px; }
+.adminkit-app .ak-shape-controls > label { width: 100%; color: var(--wk-text); font-size: var(--ak-text-s); font-weight: 500; }
+.adminkit-app .ak-shape-controls label > span { display: block; margin-bottom: 8px; }
+.adminkit-app .ak-shape-preview {
+ --ak-primary: var(--wk-accent);
+ --ak-primary-hover: var(--wk-accent-hover);
+ --ak-on-accent: var(--wk-on-accent);
+ --ak-on-accent-hover: var(--wk-on-accent);
+ --ak-border: var(--wk-border);
+ --ak-btn-bg: var(--wk-surface);
+ --ak-btn-hover-bg: var(--wk-surface-hover);
+ --ak-btn-hover-border: var(--wk-border-strong);
+ --ak-input-bg: var(--wk-surface);
+ --ak-surface-muted: var(--wk-surface-sunken);
+ --ak-text-muted: var(--wk-text-muted);
+ --ak-text: var(--wk-text);
+ --ak-heading: var(--wk-text);
+ --ak-focus: var(--wk-focus-ring);
+ --ak-btn-primary-shadow: var(--ak-btn-primary-elevation), var(--ak-btn-primary-highlight);
+ --ak-btn-primary-shadow-hover: var(--ak-btn-primary-elevation-hover), var(--ak-btn-primary-highlight-hover);
+ --ak-focus-ring: 0 0 0 2px var(--wk-bg), 0 0 0 4px var(--wk-focus-ring);
+}
+.adminkit-app .ak-shape-controls input[type="text"] { border-width: var(--ak-border-width); }
+@media (max-width: 600px) { .adminkit-app .ak-shape-selects { grid-template-columns: minmax(0, 1fr); } }
+
+.adminkit-app .ak-feature-settings { display: inline-flex; align-items: center; width: fit-content; max-width: 100%; margin-top: 8px; text-decoration: none; }
+
+.adminkit-app .ak-foundation-scope[hidden] { display: none; }
+
+/* Palette family and edited theme share one responsive control row. */
+.adminkit-app .ak-color-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-bottom: 24px; }
+.adminkit-app .ak-color-controls .ak-foundation-accent { flex: 1 1 360px; min-width: 0; margin-bottom: 0; }
+.adminkit-app .ak-color-controls .ak-palette-theme-switch { flex: 0 0 auto; margin-bottom: 0; }

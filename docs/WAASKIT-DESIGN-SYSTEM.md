@@ -123,3 +123,7 @@ de l’éditeur. La navigation des réglages d’événement reste accessible su
 écran. La matrice principale couvre 50 cas : cinq écrans, cinq largeurs, deux
 thèmes. Voir [la recette détaillée](FLUENTBOOKING-REVIEW.md) pour les preuves et
 les limites liées à la version gratuite installée.
+
+### Default color fidelity
+
+Default light and dark color roles remain those of the upstream export recorded in `tokens/palettes/waaskit.json`. The eleven dark neutral roles use WaasKit’s OKLCH values, including subtle chroma; they must not be replaced by approximate pure-gray hex values. On 2026-10-31 the live export matched the recorded SHA-256 and these roles were restored. Component shadow splitting remains a local, visually equivalent adaptation. Custom saved overrides still take precedence.

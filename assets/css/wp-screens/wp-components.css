@@ -34,13 +34,13 @@ body.adminkit .components-button.is-primary {
    border in dark, identical to light). */
 body.adminkit .components-button.is-secondary {
 	background: var(--ak-btn-bg);
-	box-shadow: inset 0 0 0 1px var(--ak-border);
+	box-shadow: inset 0 0 0 var(--ak-border-width) var(--ak-border);
 	color: var(--ak-text);
 }
 
 body.adminkit .components-button.is-secondary:hover:not(:disabled, [aria-disabled="true"], .is-pressed) {
 	background: var(--ak-btn-hover-bg);
-	box-shadow: inset 0 0 0 1px var(--ak-btn-hover-border);
+	box-shadow: inset 0 0 0 var(--ak-border-width) var(--ak-btn-hover-border);
 	color: var(--ak-text);
 }
 
@@ -51,13 +51,13 @@ body.adminkit .components-button.is-secondary:hover:not(:disabled, [aria-disable
    border on hover/focus. */
 body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary {
 	background: var(--ak-btn-bg);
-	box-shadow: inset 0 0 0 1px var(--ak-border);
+	box-shadow: inset 0 0 0 var(--ak-border-width) var(--ak-border);
 	color: var(--ak-text);
 }
 body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary:hover:not(:disabled, [aria-disabled="true"], .is-pressed),
 body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary:focus:not(:disabled, [aria-disabled="true"], .is-pressed) {
 	background: var(--ak-btn-hover-bg);
-	box-shadow: inset 0 0 0 1px var(--ak-btn-hover-border);
+	box-shadow: inset 0 0 0 var(--ak-border-width) var(--ak-btn-hover-border);
 	color: var(--ak-text);
 }
 
@@ -78,6 +78,7 @@ body.adminkit .components-card,
 body.adminkit .components-panel {
 	background: var(--ak-card-bg);
 	border-color: var(--ak-card-border);
+	border-width: var(--ak-border-width);
 	color: var(--ak-text);
 	box-shadow: var(--ak-card-shadow);
 }
@@ -251,7 +252,7 @@ body.adminkit .editor-collapsible-block-toolbar .components-toolbar:after {
    document, so the visitor-facing content canvas stays untouched. */
 body.adminkit .components-placeholder.components-placeholder {
 	background-color: var(--ak-surface);
-	box-shadow: inset 0 0 0 1px var(--ak-border);
+	box-shadow: inset 0 0 0 var(--ak-border-width) var(--ak-border);
 	color: var(--ak-text);
 }
 
@@ -268,3 +269,24 @@ body.adminkit .components-form-toggle.is-checked .components-form-toggle__thumb 
 	background: var(--ak-on-accent);
 	border-color: var(--ak-on-accent);
 }
+
+/* Filled React actions share native button relief; focus composes both roles. */
+body.adminkit .components-button.is-primary:not(:disabled, [aria-disabled="true"]) {
+ background: var(--ak-primary);
+ color: var(--ak-on-accent);
+ box-shadow: var(--ak-btn-primary-shadow);
+}
+body.adminkit .components-button.is-primary:hover:not(:disabled, [aria-disabled="true"]) {
+ background: var(--ak-primary-hover);
+ color: var(--ak-on-accent-hover);
+ box-shadow: var(--ak-btn-primary-shadow-hover);
+}
+body.adminkit .components-button.is-primary:focus-visible:not(:disabled, [aria-disabled="true"]) {
+ box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow);
+}
+body.adminkit .components-button.is-primary:hover:focus-visible:not(:disabled, [aria-disabled="true"]) {
+ box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow-hover);
+}
+body.adminkit .components-button.is-primary:is(:disabled, [aria-disabled="true"]) { box-shadow: none; }
+/* Panels nested in editor cards are divisions of one surface, not new cards. */
+body.adminkit :is(.components-card, .components-panel) .components-panel { box-shadow: none; }

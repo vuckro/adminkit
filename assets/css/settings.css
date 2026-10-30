@@ -22,7 +22,7 @@
 	}
 	.adminkit-app[data-screen="main"] .ak-rows .ak-row {
 		align-items: flex-start;
-		border: 1px solid var(--ak-card-border);
+		border: var(--ak-border-width) solid var(--ak-card-border);
 		border-radius: var(--ak-card-radius);
 		background: var(--ak-card-bg);
 	box-shadow: var(--ak-card-shadow);
@@ -92,7 +92,7 @@
 	font-weight: 500;
 	line-height: 1;
 	padding: calc(9px * var(--ak-space-scale, 1)) calc(18px * var(--ak-space-scale, 1));
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-btn-bg);
 	color: var(--ak-text);
@@ -104,10 +104,11 @@
 	color: var(--ak-on-accent);
 	box-shadow: var(--ak-btn-primary-shadow);
 }
-.adminkit-app .ak-btn--primary:hover { background: var(--ak-primary-hover); border-color: var(--ak-primary-hover); color: var(--ak-on-accent-hover); }
+.adminkit-app .ak-btn--primary:hover { box-shadow: var(--ak-btn-primary-shadow-hover); background: var(--ak-primary-hover); border-color: var(--ak-primary-hover); color: var(--ak-on-accent-hover); }
 .adminkit-app .ak-btn:not(.ak-btn--primary):hover,
 .adminkit-app .ak-btn:not(.ak-btn--primary):focus-visible { background: var(--ak-btn-hover-bg); border-color: var(--ak-btn-hover-border); }
 .adminkit-app .ak-btn:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
+.adminkit-app .ak-btn--primary:focus-visible { box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow); }
 .adminkit-app .ak-btn[disabled],
 .adminkit-app .ak-btn[disabled]:hover {
 	background: var(--ak-surface-muted);
@@ -144,7 +145,7 @@
 	letter-spacing: normal;
 }
 .adminkit-app .ak-rows {
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	background: var(--ak-card-bg);
 	overflow: hidden;
@@ -241,7 +242,7 @@
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 180px, 1fr ) );
 	gap: calc(1px * var(--ak-space-scale, 1));
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	background: var(--ak-card-border);
 	overflow: hidden;
@@ -256,7 +257,7 @@
 	line-height: 1.6;
 	color: var(--ak-text-muted);
 	background: var(--ak-elevated);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-full);
 }
 .adminkit-app .ak-badge--brand {
@@ -270,7 +271,7 @@
 	gap: calc(2px * var(--ak-space-scale, 1));
 	padding: calc(2px * var(--ak-space-scale, 1));
 	background: var(--ak-input-bg);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 }
 .adminkit-app .ak-seg__opt {
@@ -295,7 +296,7 @@
 	background: var(--ak-primary);
 }
 .adminkit-app .ak-card {
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	background: var(--ak-card-bg);
 	padding: calc(20px * var(--ak-space-scale, 1)) calc(24px * var(--ak-space-scale, 1));
@@ -376,7 +377,7 @@
 	padding: calc(8px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1));
 	background: var(--ak-input-bg);
 	color: var(--ak-text);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	font-size: var(--ak-text-s);
 }
@@ -414,3 +415,5 @@
 	.adminkit-app .ak-savebar { gap: calc(12px * var(--ak-space-scale, 1)); flex-wrap: wrap; }
 	.adminkit-app .ak-savebar .ak-btn { min-height: 44px; }
 }
+
+.adminkit-app .ak-btn--primary:hover:focus-visible { box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow-hover); }

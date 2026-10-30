@@ -59,6 +59,14 @@ body.block-editor-page.adminkit .editor-document-bar .editor-document-bar__post-
 	color: var(--ak-heading);
 }
 
+/* This h1 labels a toolbar command, not the admin page. Prevent the global
+   heading scale from enlarging it inside Gutenberg's fixed-height header. */
+body.block-editor-page.adminkit .editor-document-bar__title h1 {
+	font-size: var(--ak-text-s);
+	line-height: 1.4;
+	margin: 0;
+}
+
 /* Document bar button hover — neutral hover wash, consistent with the
    rest of the editor chrome. */
 body.block-editor-page.adminkit .editor-document-bar .components-button:hover:not(:disabled, [aria-disabled="true"]) {

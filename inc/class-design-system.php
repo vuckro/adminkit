@@ -14,21 +14,34 @@ class AdminKit_Design_System {
 		$settings = AdminKit_Settings::sanitize_design_system( AdminKit_Settings::get( 'design_system' ) );
 		$selector = $toolbar_only ? ':root #wpadminbar' : ':root,:root #wpadminbar';
 		$vars = '--ak-type-scale:' . $settings['type_scale'] . ';--ak-space-scale:' . $settings['space_scale'] . ';--ak-radius-scale:' . $settings['radius_scale'] . ';';
-		$vars .= '--wk-radius-scale:var(--ak-radius-scale);';
+		$vars .= '--wk-radius-scale:var(--ak-radius-scale);--ak-border-width:' . $settings['border_width'] . 'px;';
 		foreach ( array( 's' => 8, 'm' => 12, 'l' => 16, 'xl' => 24 ) as $size => $pixels ) {
 			$vars .= '--ak-radius-' . $size . ':calc(' . $pixels . 'px * var(--ak-radius-scale));';
 		}
 		$vars .= '--ak-card-radius:var(--ak-radius-l);';
+		$highlight = $settings['components']['buttons']['highlight'];
+		$empty_shadow = 'inset 0 0 0 transparent';
+		$vars .= '--ak-btn-primary-elevation:var(' . ( 'always' === $highlight ? '--wk-elevation-1' : '--wk-elevation-1-shadow' ) . ');';
+		$vars .= '--ak-btn-primary-elevation-hover:var(' . ( 'off' === $highlight ? '--wk-elevation-1-shadow' : '--wk-elevation-1' ) . ');';
+		$vars .= '--ak-btn-primary-highlight:' . ( 'always' === $highlight ? 'var(--ak-btn-highlight-effect)' : $empty_shadow ) . ';';
+		$vars .= '--ak-btn-primary-highlight-hover:' . ( 'off' === $highlight ? $empty_shadow : 'var(--ak-btn-highlight-effect)' ) . ';';
 		// Font is also scoped explicitly on the toolbar (its upstream sheet resets it).
 		$fonts = array( 'humanist' => '"Trebuchet MS",Verdana,sans-serif', 'classic' => 'Arial,Helvetica,sans-serif', 'system' => 'ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif' );
 		$font = AdminKit_Settings::get( 'ui_font' );
 		$family = isset( $fonts[ $font ] ) ? $fonts[ $font ] : $fonts['humanist'];
 		$vars .= '--ak-font-body:' . $family . ';--wk-font-sans:' . $family . ';';
 		$shadows = array( 'flat' => 'none', 'subtle' => 'var(--wk-elevation-1)', 'raised' => 'var(--wk-elevation-2)' );
-		$vars .= '--ak-shadow-subtle:' . $shadows[ $settings['elevation'] ] . ';--ak-design-elevation:' . $shadows[ $settings['elevation'] ] . ';';
+		// Default preserves the theme-specific contact shadow owned by card surfaces.
+		if ( isset( $shadows[ $settings['elevation'] ] ) ) {
+			$vars .= '--ak-design-elevation:' . $shadows[ $settings['elevation'] ] . ';';
+		}
 		$css = $selector . '{' . $vars . '}';
 		foreach ( array( 'light', 'dark' ) as $mode ) {
 			$palette = $settings['colors'][ $mode ];
+			if ( 'custom' === AdminKit_Settings::accent_source() ) {
+				$accent = sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) );
+				if ( $accent ) { $palette = array_merge( array( 'accent' => $accent ), $palette ); }
+			}
 			if ( ! $palette ) { continue; }
 			$root = ':root[data-adminkit-theme="' . $mode . '"]';
 			// Match the specificity of explicit custom/provider dark presets.
@@ -58,11 +71,14 @@ class AdminKit_Design_System {
 			$hex = $palette['accent'];
 			if ( 4 === strlen( $hex ) ) { $hex = '#' . $hex[1] . $hex[1] . $hex[2] . $hex[2] . $hex[3] . $hex[3]; }
 			$rgb = array( hexdec( substr( $hex, 1, 2 ) ), hexdec( substr( $hex, 3, 2 ) ), hexdec( substr( $hex, 5, 2 ) ) );
-			$hover = array_map( static function ( $c ) use ( $dark ) { return (int) round( $c * .82 + ( $dark ? 255 * .18 : 0 ) ); }, $rgb );
+			$foreground = isset( $palette['on-accent'] ) ? $palette['on-accent'] : AdminKit_Assets::contrast_text_for( $hex );
+			$mix = '#000000' === $foreground ? 'white' : 'black';
+			$lighten = 'white' === $mix;
+			$hover = array_map( static function ( $c ) use ( $lighten ) { return (int) round( $c * .82 + ( $lighten ? 255 * .18 : 0 ) ); }, $rgb );
 			$css .= '--ak-primary-rgb:' . implode( ',', $rgb ) . ';--ak-primary-hover-rgb:' . implode( ',', $hover ) . ';';
 			$css .= '--ak-primary-hover:color-mix(in srgb,var(--ak-primary) 82%,' . $mix . ');--ak-primary-subtle:color-mix(in srgb,var(--ak-primary) 12%,var(--ak-surface));--ak-primary-text:color-mix(in srgb,var(--ak-primary) 30%,var(--ak-text));--ak-focus:var(--ak-primary-text);--wk-accent-hover:var(--ak-primary-hover);--wk-accent-soft:var(--ak-primary-subtle);--wk-accent-text:var(--ak-primary-text);--wk-focus-ring:var(--ak-focus);';
-			$css .= '--ak-on-accent:' . ( isset( $palette['on-accent'] ) ? $palette['on-accent'] : AdminKit_Assets::contrast_text_for( $hex ) ) . ';';
-			$css .= '--ak-on-accent-hover:' . AdminKit_Assets::contrast_text_for( sprintf( '#%02x%02x%02x', $hover[0], $hover[1], $hover[2] ) ) . ';';
+			$css .= '--ak-on-accent:' . $foreground . ';';
+			$css .= '--ak-on-accent-hover:' . $foreground . ';';
 		}
 		foreach ( array( 'success-text' => 'success', 'warning-text' => 'warning', 'danger-text' => 'error', 'info-text' => 'info' ) as $role => $token ) {
 			if ( isset( $palette[ $role ] ) || isset( $palette['surface'] ) ) { $css .= '--ak-' . $token . '-subtle:color-mix(in srgb,var(--ak-' . $token . ') 10%,var(--ak-surface));'; }

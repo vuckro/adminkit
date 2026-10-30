@@ -158,10 +158,10 @@ body.adminkit.toplevel_page_fluent-affiliate {
 
 	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. EP's dark
 	   block ships heavy black drop-shadows, so neutralise the whole set. */
-	--el-box-shadow: none;
-	--el-box-shadow-light: none;
-	--el-box-shadow-lighter: none;
-	--el-box-shadow-dark: none;
+	--el-box-shadow: var(--ak-shadow-elevated);
+	--el-box-shadow-light: var(--ak-shadow-elevated);
+	--el-box-shadow-lighter: var(--ak-shadow-elevated);
+	--el-box-shadow-dark: var(--ak-shadow-elevated);
 }
 
 
@@ -493,3 +493,7 @@ body.adminkit.toplevel_page_fluent-affiliate .text-danger {
 body.adminkit.toplevel_page_fluent-affiliate .text-info {
 	color: var( --ak-text-muted );
 }
+
+/* Element cards share surface elevation; floating poppers keep overlay depth. */
+body.adminkit.toplevel_page_fluent-affiliate .el-card { box-shadow: var(--ak-card-shadow); border-color: var(--ak-card-border); border-width: var(--ak-border-width); border-radius: var(--ak-card-radius); }
+body.adminkit.toplevel_page_fluent-affiliate .el-card .el-card { box-shadow: none; }

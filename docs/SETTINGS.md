@@ -76,8 +76,8 @@ Shapes shows a 2/4/8/12/16/24px radius family multiplied by radius scale; pill g
 | `type_scale` | 0.75–1.5 | 0.01 | 1 |
 | `radius_scale` | 0–2 | 0.05 | 1 |
 | `space_scale` | 0.5–2 | 0.05 | 1 |
-| `elevation` | flat, subtle, raised | select | flat |
-| `border_width` | 1, 2 | no editor control; legacy compatibility | 1 |
+| `elevation` | default, flat, subtle, raised | select | default |
+| `border_width` | 0, 1, 2, 3, 4 | select | 1 |
 | `colors.light`, `colors.dark` | eleven allowlisted hex role overrides | picker / hex | empty objects |
 
 Scale values are finite, within bounds and rounded server-side to two decimals; UI steps do not impose a discrete server allowlist. Values participate in save/import/export and are compiled into shared runtime tokens after saving. Identity and existing accent/provider paths remain intact; explicit per-role palette values win over preset/provider defaults, including custom accents in dark mode.
@@ -112,9 +112,16 @@ Typography now contains only family and scale; Shapes only radius scale and elev
 
 Automatic tinting of neutral roles was removed after visual review. Custom now
 changes only the accent family; generated neutral recipes and editor boot data
-were removed. Explicit saved per-role overrides remain intact. Typography,
-Shapes/elevation and Spacing show only title, description and an In development
-notice. Their saved values are preserved but no controls are exposed for now.
+were removed. Explicit saved per-role overrides remain intact. Typography and Spacing show an In development notice. Shapes/elevation exposes
+a 0–2 corner scale, 0–4px outline width and Default/Flat/Subtle/Raised surface elevation, with scoped
+light/dark previews and a reset for these three values. Changes apply after Save.
+Default preserves the restored contact shadows; Flat explicitly removes card and
+table shadows. Elevation does not change control shadows or focus indicators.
+Outline width applies to owned native buttons, fields and outer card/table frames;
+internal separators retain one pixel. Primary buttons keep a shared contact shadow
+and top inset highlight in both themes, including alongside keyboard focus.
+Third-party adapters retain their own geometry unless they consume these roles.
+Existing saved elevation values are preserved.
 
 ## Single brand logo
 
@@ -130,3 +137,23 @@ DTD/entities or styles. The supplied WaasKit SVG was imported as attachment 36
 and selected locally. No public frontend branding was changed outside the toolbar.
 
 Logo source selection is implicit: the import button and URL field are directly visible. A successful media pick sets upload source; a valid URL edit sets URL source. Both update one shared logo value. Replacing/removing clears stale URL validation errors. No source dropdown is rendered.
+
+### Design system → Components → Buttons
+
+`design_system.components.buttons.highlight` accepts `off`, `hover` or `always` (default). Older exports without `components` retain the existing permanent highlight; malformed values and unknown keys are discarded by `sanitize_design_system()`. This nested allowlist is the extension point for future component settings, without introducing a second option or save endpoint.
+
+The shared settings Save and JSON import/export include the component draft. Light/dark previews inherit the current palette, corner scale and outline width. Changing a component only marks the draft dirty; it does not save or alter other foundation values.
+
+The compiler emits separate resting/hover highlight and elevation tokens. Disabling the highlight also removes the inset highlight from the dark elevation, while keeping its outer shadow. Native primary buttons, primary page actions and AdminKit primary buttons consume the shared roles. Secondary/disabled controls and keyboard focus keep their established behavior. Vendor controls with their own shadows require adapter support; public page buttons are outside scope.
+
+Border width is a component-outline setting, not an instruction to remove every line. Zero removes decorative outlines on token-consuming buttons, fields, cards, tables, status strips, pagination and notices. Row dividers, the administration frame and semantic indicators remain independent. Radio outlines keep a minimum 1px because they identify the control; focus rings remain independent. Existing profiles retain 1px. Values outside the integer allowlist 0–4 fall back to 1px.
+
+The Shapes and Components previews render in a separate region below the settings panel. One Light/Dark button group selects the visible theme; the choice is shared across these sections for the lifetime of the page, initializes from the administration theme, and is never saved. Switching theme does not mark the draft dirty. Other sections hide this preview region. Both theme frames stay available to the palette/shape draft refresh so switching always shows current values.
+
+Colors keeps the in-panel Light/Dark switch and both independent drafts, but no external sample/contrast preview or scope note. Shapes and Components retain the shared preview region. The reveal-field validation behavior remains in place.
+
+### Brand identity feature
+
+The overview shows feature and adapter counts; it no longer contains the identity summary. Features → Appearance contains `branding_enabled`, a boolean defaulting to true to preserve existing automatic toolbar branding. Its settings link opens the administration-logo field in native General settings. Off disables AdminKit’s toolbar mark injection and branding CSS for administration and frontend toolbars; stored logo URLs remain intact. Login styling and its independent logo setting are unchanged. The feature participates in the shared save, export/import, status counts and bulk controls.
+
+Shapes and Components no longer expose local Light/Dark preview controls. Their single visible preview follows `data-adminkit-theme` and updates when the administration toolbar changes it, without marking the settings draft dirty. The Colors editor retains its independent palette-theme selector.

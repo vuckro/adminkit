@@ -64,15 +64,21 @@
 	if (form.id === 'createuser') {
 		var roleSelect = form.querySelector('select#role');
 		if (roleSelect && S.role_descriptions) {
-			var roleHelp = document.createElement('p');
+			var roleHelp = document.createElement('div');
 			roleHelp.id = 'ak-role-description';
 			roleHelp.className = 'description';
 			roleHelp.setAttribute('aria-live', 'polite');
 			roleHelp.setAttribute('aria-atomic', 'true');
 			roleSelect.insertAdjacentElement('afterend', roleHelp);
 			roleSelect.setAttribute('aria-describedby', [roleSelect.getAttribute('aria-describedby'), roleHelp.id].filter(Boolean).join(' '));
+			var roleTitle = document.createElement('strong');
+			var roleDetail = document.createElement('span');
+			roleHelp.append(roleTitle, roleDetail);
 			function describeRole() {
-				roleHelp.textContent = Object.prototype.hasOwnProperty.call(S.role_descriptions, roleSelect.value)
+				var level = { administrator: 'critical', editor: 'high', author: 'medium', contributor: 'limited', subscriber: 'minimal' }[roleSelect.value] || 'custom';
+				roleHelp.dataset.level = level;
+				roleTitle.textContent = S.role_levels[level];
+				roleDetail.textContent = Object.prototype.hasOwnProperty.call(S.role_descriptions, roleSelect.value)
 					? S.role_descriptions[roleSelect.value] : S.role_descriptions.custom;
 			}
 			roleSelect.addEventListener('change', describeRole);

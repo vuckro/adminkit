@@ -11,8 +11,18 @@ body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header,
 body.adminkit:is(.block-editor-page, .widgets-php) .editor-header,
 body.adminkit:is(.block-editor-page, .widgets-php) .interface-interface-skeleton__header {
 	background: var(--ak-surface);
-	border-bottom: 1px solid var(--ak-border);
 	color: var(--ak-text);
+}
+
+/* The skeleton owns the divider. Its nested toolbar must not add another
+   border on top of Gutenberg's native one-pixel shadow. */
+body.adminkit:is(.block-editor-page, .widgets-php) .interface-interface-skeleton__header {
+	border-bottom: 1px solid var(--ak-border);
+	box-shadow: none;
+}
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header,
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header {
+	border-bottom: 0;
 }
 
 /* Light/dark toggle injected into the editor header (js/theme-toggle.js) — the

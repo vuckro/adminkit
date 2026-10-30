@@ -23,8 +23,8 @@ body.adminkit.user-new-php #createuser {
 /* Hide the legacy WP color-scheme picker on profile pages — AdminKit
    now owns the chrome palette + light/dark toggle, so the per-user
    "Admin Color Scheme" row would just confuse and lead nowhere. */
-body.adminkit.user-edit-php tr.user-admin-color-wrap,
-body.adminkit.profile-php tr.user-admin-color-wrap {
+body.adminkit.user-edit-php #your-profile tr.user-admin-color-wrap,
+body.adminkit.profile-php #your-profile tr.user-admin-color-wrap {
 	display: none;
 }
 
@@ -268,7 +268,7 @@ body.adminkit .ak-account {
    their inputs in the form so submission still posts every field. */
 body.adminkit .ak-card {
 	background: var(--ak-card-bg);
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	padding: var(--ak-account-inset);
 	box-shadow: var(--ak-card-shadow);
@@ -759,6 +759,54 @@ body.adminkit #application-passwords-section .new-application-password-notice > 
 /* Keep role guidance visible in the account-creation identity card. */
 body.adminkit .ak-card.ak-grid #ak-role-description {
 	display: block;
-	margin: var(--ak-space-xs) 0 0;
+	margin: var(--ak-space-m) 0 0;
 	color: var(--ak-text-muted);
+}
+
+body.adminkit .ak-card.ak-grid #ak-role-description {
+ --ak-role-ink: var(--ak-info);
+ --ak-role-soft: var(--ak-info-subtle);
+ position: relative;
+ box-sizing: border-box;
+ padding: var(--ak-space-m) var(--ak-space-l) var(--ak-space-m) calc(56px * var(--ak-space-scale, 1));
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-m);
+ background: var(--ak-surface);
+ color: var(--ak-text);
+ line-height: 1.5;
+}
+body.adminkit #ak-role-description[data-level="critical"] {
+ --ak-role-ink: var(--ak-error);
+ --ak-role-soft: var(--ak-error-subtle);
+}
+body.adminkit #ak-role-description:is([data-level="high"], [data-level="medium"], [data-level="custom"]) {
+ --ak-role-ink: var(--ak-warning);
+ --ak-role-soft: var(--ak-warning-subtle);
+}
+body.adminkit #ak-role-description::before {
+ content: "";
+ position: absolute;
+ inset-inline-start: var(--ak-space-m);
+ top: var(--ak-space-m);
+ width: 30px;
+ height: 30px;
+ border-radius: var(--ak-radius-s);
+ background: var(--ak-role-soft);
+}
+body.adminkit #ak-role-description::after {
+ content: "";
+ position: absolute;
+ inset-inline-start: calc(19px * var(--ak-space-scale, 1));
+ top: calc(19px * var(--ak-space-scale, 1));
+ width: 16px;
+ height: 16px;
+ background: var(--ak-role-ink);
+ mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 8v5m0 3h.01'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+body.adminkit #ak-role-description strong,
+body.adminkit #ak-role-description span { display: block; }
+body.adminkit #ak-role-description strong { font-weight: 600; }
+body.adminkit #ak-role-description span {
+ margin-top: var(--ak-space-xs);
+ color: var(--ak-text-muted);
 }

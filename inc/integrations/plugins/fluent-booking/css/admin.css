@@ -177,10 +177,10 @@ html body.adminkit.toplevel_page_fluent-booking {
 	--el-dropdown-menuItem-hover-color: var( --ak-text );
 
 	/* Flat — AdminKit is shadow-free; the border tokens carry the edge. */
-	--el-box-shadow: none;
-	--el-box-shadow-light: none;
-	--el-box-shadow-lighter: none;
-	--el-box-shadow-dark: none;
+	--el-box-shadow: var(--ak-shadow-elevated);
+	--el-box-shadow-light: var(--ak-shadow-elevated);
+	--el-box-shadow-lighter: var(--ak-shadow-elevated);
+	--el-box-shadow-dark: var(--ak-shadow-elevated);
 }
 
 
@@ -828,10 +828,10 @@ body.adminkit.toplevel_page_fluent-booking .el-message-box__headerbtn i {
 
 
 /* ============================================================
-   12. CARDS — surfaces + flat hover
+   12. CARDS — shared surface elevation
    Event-type "slots" ship no background (transparent on the page); give them
-   a surface token. Several cards add a hover-elevation box-shadow — AdminKit
-   is flat, so drop those and use a border shift for the hover affordance.
+   a surface token. Rest and hover share saved elevation; the border shift
+   signals hover without introducing a second elevation scale.
    ============================================================ */
 
 body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot {
@@ -841,7 +841,7 @@ body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot {
 body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot:hover,
 body.adminkit.toplevel_page_fluent-booking .fcal_settings_card:hover,
 body.adminkit.toplevel_page_fluent-booking .fcal_configure_integration_card:hover {
-	box-shadow: none !important;
+	box-shadow: var(--ak-card-shadow) !important;
 }
 
 body.adminkit.toplevel_page_fluent-booking .fcal_cal_slot:hover {
@@ -1438,3 +1438,9 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_radio_btn_g
 	clip-path: inset(50%);
 	overflow: hidden;
 }
+
+/* Element cards share surface elevation; floating poppers keep overlay depth. */
+body.adminkit.toplevel_page_fluent-booking .el-card { box-shadow: var(--ak-card-shadow); border-color: var(--ak-card-border); border-width: var(--ak-border-width); border-radius: var(--ak-card-radius); }
+body.adminkit.toplevel_page_fluent-booking .el-card .el-card { box-shadow: none; }
+
+body.adminkit.toplevel_page_fluent-booking :is(.fcal_cal_slot, .fcal_settings_card, .fcal_configure_integration_card) { box-shadow: var(--ak-card-shadow) !important; border-color: var(--ak-card-border); border-width: var(--ak-border-width); border-radius: var(--ak-card-radius); }

@@ -160,6 +160,7 @@ body.adminkit .wp-filter .favorites-form {
 body.adminkit .filter-group {
 	background: var(--ak-card-bg);
 	border-color: var(--ak-card-border);
+	border-width: var(--ak-border-width);
 	color: var(--ak-text);
 	border-radius: var(--ak-card-radius);
 	box-shadow: var(--ak-card-shadow);
@@ -189,6 +190,7 @@ body.adminkit .upload-plugin .wp-upload-form {
 	background: var(--ak-card-bg);
 	border-color: var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
 }
 
 body.adminkit .upload-theme .install-help,

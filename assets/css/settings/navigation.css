@@ -6,7 +6,7 @@
 	margin-top: calc(8px * var(--ak-space-scale, 1));
 }
 .adminkit-app .ak-menu-group {
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-radius-m);
 	background: var(--ak-card-bg);
 	box-shadow: var(--ak-card-shadow);
@@ -38,7 +38,7 @@
 	display: inline-flex;
 	flex-direction: column;
 	flex: 0 0 auto;
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	overflow: hidden;
 }
@@ -92,7 +92,7 @@
 	width: 30px;
 	height: 30px;
 	padding: 0;
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-text);
@@ -115,7 +115,7 @@
 	width: 30px;
 	height: 30px;
 	padding: 0;
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-muted);
@@ -136,7 +136,7 @@
 	left: 10px;
 	width: 264px;
 	padding: calc(8px * var(--ak-space-scale, 1));
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-radius-m);
 	background: var(--ak-elevated);
 	box-shadow: var(--ak-shadow-elevated);
@@ -153,7 +153,7 @@
 }
 .adminkit-app .ak-icon-pop__tab {
 	flex: 1;
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	background: transparent;
 	color: var(--ak-text-muted);
 	cursor: pointer;
@@ -173,7 +173,7 @@
 	box-sizing: border-box;
 	margin: 0 0 calc(6px * var(--ak-space-scale, 1));
 	padding: calc(5px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-text);
@@ -189,7 +189,7 @@
 	flex: 1;
 	display: block;
 	text-align: center;
-	border: 1px solid var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
 	background: transparent;
 	color: var(--ak-text);
 	cursor: pointer;
@@ -210,7 +210,7 @@
 	justify-content: center;
 	width: 30px;
 	height: 30px;
-	border: 1px solid transparent;
+	border: var(--ak-border-width) solid transparent;
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-text);
@@ -259,7 +259,7 @@
 	min-width: 0;
 	font-family: var(--ak-font-mono);
 	font-size: var(--ak-text-xs);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-text);
@@ -278,7 +278,7 @@
 	width: 30px;
 	height: 30px;
 	padding: 0;
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-muted);
@@ -316,7 +316,7 @@
 	width: 30px;
 	height: 30px;
 	padding: 0;
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-muted);
@@ -350,7 +350,7 @@
 .adminkit-app .ak-menu-input {
 	flex: 0 1 auto;
 	min-width: 0;
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-text);
@@ -369,7 +369,7 @@
 .adminkit-app .ak-menu-remove {
 	width: 24px;
 	height: 24px;
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-muted);

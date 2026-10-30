@@ -44,6 +44,7 @@ body.adminkit.widgets-php .edit-widgets-header .components-button:not(.is-primar
 body.adminkit.widgets-php .wp-block[data-type="core/widget-area"] .components-panel__body {
 	background: var(--ak-card-bg);
 	border-color: var(--ak-card-border);
+	border-width: var(--ak-border-width);
 	border-radius: var(--ak-card-radius);
 	box-shadow: var(--ak-card-shadow);
 }

@@ -54,7 +54,9 @@ body.adminkit.site-health-info-php hr {
 body.adminkit .privacy-settings-accordion,
 body.adminkit .health-check-accordion {
 	border-color: var(--ak-card-border);
+	border-width: var(--ak-border-width);
 	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
 	overflow: hidden;
 }
 
@@ -164,7 +166,7 @@ body.adminkit .health-check-body .hr-separator {
    #50575e text and a #fff bg from common.css. */
 body.adminkit .health-check-table {
 	background: var(--ak-table-bg);
-	border: 1px solid var(--ak-table-border);
+	border: var(--ak-border-width) solid var(--ak-table-border);
 	border-radius: var(--ak-table-radius);
 }
 

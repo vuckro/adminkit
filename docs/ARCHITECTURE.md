@@ -308,11 +308,20 @@ the native administration `.wrap` gutters and left alignment. Tabs, cards and
 submit share the form edges; no page width or margin override is added.
 Cards align at the top and retain their natural height; no script measures them.
 
-Card surfaces share `--ak-card-border` and `--ak-card-shadow` in `chrome.css`:
+Card surfaces share `--ak-card-border` and `--ak-card-shadow` in the source
+`tokens/appearance.css` (generated into `tokens.css`):
 a light contour and compact 2px contact shadow in light mode, with the existing
-low elevation in dark mode. Native postboxes, settings/account cards, AdminKit
+low elevation in dark mode. The design-system elevation setting overrides only these surface shadows;
+its Default choice preserves the theme-specific contact shadow. Native postboxes, settings/account cards, AdminKit
 panels, generic cards and theme/plugin catalog cards consume this shared role.
 Headers, form controls, tables and floating overlays retain their own treatments.
+
+Primary buttons share `--ak-btn-primary-shadow`: WaasKit contact elevation plus
+`--ak-btn-primary-highlight`, a fine top inset reflection. This role is independent
+of surface elevation and the legacy subtle-shadow alias. Keyboard focus composes
+the focus ring with that relief; disabled buttons remove it. Shapes & elevation
+also exposes the validated 0–4px `--ak-border-width`, consumed by owned buttons,
+fields and outer card/table frames. Internal separators remain one pixel.
 
 Table outer frames use `--ak-table-border` and `--ak-table-shadow`, mapped to
 the card contour and contact elevation. Wrapped tables receive the shadow only
@@ -389,3 +398,23 @@ labels remain above controls at every width. Isolated checks cover all available
 tabs at 1440/390px, input-node preservation and horizontal overflow.
 
 The brand logo is edited in WordPress General Settings, after the native site icon. Toolbar identity is automatic: wordmark with the expanded menu, site icon with the folded or mobile menu, and WordPress mark if no site icon exists. The legacy wp_logo option is retained for import compatibility but no longer chooses toolbar rendering. They use the native General Settings form and preserve unrelated AdminKit options. Design system sections cover colors, typography, shapes and spacing.
+
+Component appearance settings live under the validated `design_system.components.<component>` object. The settings screen edits a local draft; `AdminKit_Design_System` compiles allowlisted choices to shared semantic tokens. First consumer: `buttons.highlight` (`off|hover|always`). Add future choices to validation, compiler, translated controls and regression coverage together; avoid per-screen CSS overrides or a parallel save flow.
+
+
+### Surface coherence audit (2026-10-31)
+
+AdminKit overview, foundation/component panels and grouped feature/integration
+rows consume the same card contour, radius and elevation as native postboxes.
+Only the outer group is elevated; internal rows and nested React/Element panels
+retain separators. The token source also scopes card/table roles on login and
+preview frames, so unsaved preview themes resolve their own contact shadow and
+dark contour rather than inheriting the surrounding administration theme.
+
+React primary actions and login actions use native primary relief/hover/focus
+roles. React secondary inset borders use the validated border-width token while
+preserving core geometry. Media overlays, Element poppers and HappyFiles menus
+use floating elevation; those stay distinct from the saved surface setting.
+Element card adapters (Booking/CRM/Affiliate) use surface elevation, including
+hover, without adding another hover lift. These inactive adapters require visual
+verification on the owning plugin screens before any remote release.

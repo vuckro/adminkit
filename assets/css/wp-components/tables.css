@@ -18,7 +18,7 @@ body.adminkit .widefat li {
    classes are present, so the bare-widefat case needs its own block. */
 body.adminkit .widefat:not(.wp-list-table) {
 	background: var(--ak-table-bg);
-	border: 1px solid var(--ak-table-border);
+	border: var(--ak-border-width) solid var(--ak-table-border);
 	box-shadow: var(--ak-table-shadow);
 	border-radius: var(--ak-table-radius);
 	border-collapse: separate;
@@ -52,7 +52,7 @@ body.adminkit .widefat:not(.wp-list-table) tbody tr:first-child th {
 body.adminkit .wp-list-table {
 	background: var(--ak-table-bg);
 	box-shadow: var(--ak-table-shadow);
-	border: 1px solid var(--ak-table-border);
+	border: var(--ak-border-width) solid var(--ak-table-border);
 	border-radius: var(--ak-table-radius);
 	border-collapse: separate;
 	border-spacing: 0;
@@ -122,7 +122,7 @@ body.adminkit .ak-table-card {
 	position: relative;
 	clear: both;
 	background: var(--ak-table-bg);
-	border: 1px solid var(--ak-table-border);
+	border: var(--ak-border-width) solid var(--ak-table-border);
 	border-radius: var(--ak-table-radius);
 	box-shadow: var(--ak-table-shadow);
 	overflow: hidden;
@@ -181,7 +181,7 @@ body.adminkit .wp-list-table td.username strong a:focus {
    username's text inset, including when links wrap on narrow screens. */
 body.adminkit .wp-list-table .column-username img {
 	border-radius: var(--ak-radius-s);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	box-sizing: border-box;
 	width: 32px;
 	height: 32px;
@@ -346,7 +346,7 @@ body.adminkit .tablenav .tablenav-pages {
 body.adminkit .tablenav .tablenav-pages a,
 body.adminkit .tablenav .tablenav-pages a:link {
 	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
 	padding: calc(2px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
@@ -374,7 +374,7 @@ body.adminkit .tablenav .tablenav-pages span.current {
    they became glaring white boxes next to "N items". Mute them to a disabled chip. */
 body.adminkit .tablenav .tablenav-pages-navspan {
 	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	color: var(--ak-text-muted);
 	border-radius: var(--ak-radius-s);
 	padding: calc(2px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
@@ -502,7 +502,7 @@ body.adminkit .inline-edit-row .inline-edit-save {
 body.adminkit #bulk-titles,
 body.adminkit ul.cat-checklist {
 	background: var(--ak-surface);
-	border: 1px solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 }
 
@@ -545,7 +545,7 @@ body.adminkit .ak-table-scroll {
 	position: relative;
 	clear: both;
 	background: var(--ak-table-bg);
-	border: 1px solid var(--ak-table-border);
+	border: var(--ak-border-width) solid var(--ak-table-border);
 	box-shadow: var(--ak-table-shadow);
 	border-radius: var(--ak-table-radius);
 	overflow-x: auto;

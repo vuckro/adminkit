@@ -6,6 +6,7 @@
 body.adminkit .theme-browser .theme {
 	background: var(--ak-card-bg);
 	border-color: var(--ak-card-border);
+	border-width: var(--ak-border-width);
 	border-radius: var(--ak-card-radius);
 	box-shadow: var(--ak-card-shadow);
 }
@@ -119,6 +120,7 @@ body.adminkit .theme-overlay .theme-wrap {
 	background: var(--ak-bg);
 	color: var(--ak-text);
 	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-shadow-elevated);
 }
 
 /* Top header strip with prev / next / close buttons */

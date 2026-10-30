@@ -38,7 +38,7 @@
 			loginLogo: D.loginLogo === 'logo' ? 'logo' : 'favicon', // login screen mark: logo | favicon
 			brandAccent: D.brandAccent || '', // user hex (only meaningful when accentSource === 'custom')
 			// 'adminkit' = WaasKit roles; 'bricks' = provider; 'custom' = brandAccent hex
-			accentSource: D.accentSource || 'monochrome'
+			accentSource: D.accentSource || 'adminkit'
 		});
 
 		(D.features || []).forEach(function (f) {
@@ -62,7 +62,8 @@
 		state.appearance = Object.assign({ ui_density: 'default', ui_radius: 'default', ui_font: 'humanist' }, D.appearance || {});
 		if (state.appearance.ui_font === 'default') { state.appearance.ui_font = 'humanist'; }
 
-		state.designSystem = Object.assign({ radius_scale: 1, space_scale: 1, type_scale: 1, border_width: 1, elevation: 'flat' }, D.designSystem || {});
+		state.designSystem = Object.assign({ radius_scale: 1, space_scale: 1, type_scale: 1, border_width: 1, elevation: 'default' }, D.designSystem || {});
+		state.designSystem.components = { buttons: Object.assign({ highlight: 'always' }, (state.designSystem.components || {}).buttons || {}) };
 
 		state.designSystem.colors = { light: Object.assign({}, state.designSystem.colors && state.designSystem.colors.light), dark: Object.assign({}, state.designSystem.colors && state.designSystem.colors.dark) };
 
@@ -73,105 +74,6 @@
 			var paletteRefresh = function () {};
 
 			// --- Common helpers used inside buildDesign() ---------------------------
-
-			// Open the WP media frame and call back with the chosen attachment URL +
-			// the full attachment object (so callers can grab `id` for site_icon-style
-			// pipelines that need the attachment ID, not just the URL).
-			function openMedia(onPick) {
-				if (!window.wp || !wp.media) {
-					return;
-				}
-				var frame = wp.media({
-					title: I.mediaTitle || 'Select a logo',
-					button: { text: I.mediaButton || 'Use this image' },
-					library: { type: 'image' },
-					multiple: false
-				});
-				frame.on('select', function () {
-					var att = frame.state().get('selection').first().toJSON();
-					var url = (att && att.url) || '';
-					onPick(url, att);
-				});
-				frame.open();
-			}
-
-			function singleLogo() {
-				var preview = el('img', { alt: '', class: 'ak-single-logo-preview' });
-				var url = el('input', { id: 'ak-logo-url', type: 'url', placeholder: 'https://', value: state.logos.light || state.logos.dark || '' });
-				var upload = el('button', { type: 'button', class: 'ak-btn', text: I.logoUpload, onclick: function () {
-					openMedia(function (value) { setLogo(value, 'upload'); });
-				} });
-				var remove = el('button', { type: 'button', class: 'ak-btn', text: I.slotRemove, onclick: function () { setLogo(''); } });
-
-				function sync() {
-					var value = state.logos.light || state.logos.dark || '';
-					preview.hidden = !value;
-					if (value) { preview.src = value; } else { preview.removeAttribute('src'); }
-					preview.classList.toggle('ak-single-logo-svg', /\.svg(?:[?#]|$)/i.test(value));
-					remove.disabled = !value;
-				}
-				function setLogo(value, source) {
-					state.logos.light = state.logos.dark = value;
-					if (source) { state.logoSource = source; }
-					url.value = value;
-					url.removeAttribute('aria-invalid');
-					url.setCustomValidity('');
-					sync();
-					markDirty();
-				}
-				url.addEventListener('change', function () {
-					var value = url.value.trim();
-					var valid = !value;
-					try { valid = !value || ['http:', 'https:'].indexOf(new URL(value).protocol) !== -1; } catch (error) { valid = false; }
-					if (!valid) { url.setAttribute('aria-invalid', 'true'); url.setCustomValidity(I.logoInvalidUrl); return; }
-					setLogo(value, 'url');
-				});
-				sync();
-				return el('div', { class: 'ak-single-logo' }, [
-					preview,
-					el('div', { class: 'ak-single-logo-actions' }, [upload, remove]),
-					el('div', {}, [el('label', { for: url.id, text: I.logoUrl }), url]),
-					el('p', { text: I.logoHelp })
-				]);
-			}
-
-			// Segmented control reused for the Display row (Admin bar + Login screen).
-			// Same DOM as the rest of the SPA (.ak-seg / .ak-seg__opt) so the existing
-			// styling kicks in.
-			function logoSeg(stateKey, labelId, label, opts) {
-				var btns = [];
-				var seg = el('div', { class: 'ak-seg', role: 'radiogroup', 'aria-labelledby': labelId });
-				opts.forEach(function (o) {
-					var active = state[stateKey] === o.v;
-					var b = el('button', {
-						type: 'button',
-						class: 'ak-seg__opt' + (active ? ' is-active' : ''),
-						role: 'radio',
-						'aria-checked': active ? 'true' : 'false',
-						title: o.label,
-						text: o.label
-					});
-					b._v = o.v;
-					b.addEventListener('click', function () {
-						if (state[stateKey] === o.v) {
-							return;
-						}
-						state[stateKey] = o.v;
-						btns.forEach(function (x) {
-							var on = x._v === o.v;
-							x.classList.toggle('is-active', on);
-							x.setAttribute('aria-checked', on ? 'true' : 'false');
-						});
-						markDirty();
-					});
-					btns.push(b);
-					seg.appendChild(b);
-				});
-				return el('div', { class: 'ak-display-row__field' }, [
-					el('span', { class: 'ak-display-row__field-lbl', id: labelId, text: label }),
-					seg
-				]);
-			}
 
 			// Accent picker — a segmented control that switches between three sources
 			// feeding `--ak-primary`:
@@ -196,7 +98,7 @@
 				// pill silently drops; their stored `accentSource === 'bricks'` still
 				// resolves server-side via accent_source(), but the UI no longer offers a
 				// dead button. Hide rather than grey: a dead pill was confusing.
-				var sources = [{ v: 'monochrome', label: I.accentSrcMonochrome }, { v: 'adminkit', label: I.accentSrcAdminKit || 'WordPress' }];
+				var sources = [{ v: 'adminkit', label: I.accentSrcAdminKit || 'WordPress' }, { v: 'monochrome', label: I.accentSrcMonochrome }];
 				if (D.bricksConnected) {
 					sources.push({ v: 'bricks', label: I.accentSrcBricks || 'Bricks' });
 				}
@@ -265,15 +167,10 @@
 					hexInput.setAttribute('hidden', '');
 					swatch.setAttribute('hidden', '');
 				}
-				var native = el('input', { type: 'color', class: 'ak-accent-inline__native' });
+				hexInput.setAttribute('aria-label', I.accentLabel || 'Accent');
+				var native = el('input', { type: 'color', class: 'ak-accent-inline__native', tabindex: '-1', 'aria-label': I.accentLabel || 'Accent' });
 				native.value = isValidHex(state.brandAccent) ? state.brandAccent : D.adminkitBlue || '#1549AB';
 
-				// Update the inline <style id="ak-accent-preview"> for live preview.
-				// Mirrors AdminKit_Assets::inject_accent_family() in PHP, so what the
-				// browser shows BEFORE save == what the server emits AFTER save.
-				//
-				// Default source inherits the native WaasKit light/dark roles.
-				// Only a valid custom hex emits a preview override.
 				function applyPreview() {
 					// Keep unsaved experiments inside the palette editor. The shared
 					// runtime compiler applies settings only after a successful save.
@@ -298,9 +195,11 @@
 
 				function setSource(newSrc) {
 					state.accentSource = newSrc;
+					state.designSystem.colors = { light: {}, dark: {} };
 					if (newSrc === 'custom' && !isValidHex(state.brandAccent)) { state.brandAccent = D.adminkitBlue || '#1549ab'; hexInput.value = state.brandAccent; }
 					hexInput.removeAttribute('aria-invalid');
 					syncSeg();
+					native.value = isValidHex(state.brandAccent) ? state.brandAccent : native.value;
 					applyPreview();
 					paletteRefresh(true);
 					markDirty();
@@ -316,6 +215,7 @@
 					if (hexInput.value !== v) {
 						hexInput.value = v;
 					}
+					native.value = isValidHex(state.brandAccent) ? state.brandAccent : native.value;
 					applyPreview();
 					paletteRefresh(true);
 					markDirty();
@@ -369,12 +269,50 @@
 				return 1.05 / (L + 0.05) >= (L + 0.05) / 0.05 ? '#ffffff' : '#000000';
 			}
 
-			var slotsRow = singleLogo();
-			var wpField = logoSeg('wpLogo', 'ak-wp-logo-label', I.wpLogoLabel, [{ v: 'favicon', label: I.wpLogoFavicon }, { v: 'logo', label: I.wpLogoBrand }]);
 			var sections = [];
+			var sectionKey = 'adminkit:foundation-section:' + location.pathname + location.search;
+			var rememberedSection = 'colors';
+			try { rememberedSection = sessionStorage.getItem(sectionKey) || rememberedSection; } catch (error) {}
 			var editor = el('div', { class: 'ak-foundations-editor' });
-			var nav = el('div', { class: 'ak-foundations-nav', role: 'tablist', 'aria-label': I.foundationSections, 'aria-orientation': window.matchMedia('(max-width: 782px)').matches ? 'horizontal' : 'vertical' });
+			var nav = el('div', { class: 'ak-foundations-nav', role: 'tablist', 'aria-label': I.foundationSections, 'aria-orientation': 'horizontal' });
 			var panes = el('div', { class: 'ak-foundations-panes' });
+			var scopeNote = el('p', { class: 'ak-foundation-scope', text: I.foundationScope });
+			// Preview navigation is local UI state, independent of the saved profile.
+			var previewGroups = {};
+			var previewMode = document.documentElement.getAttribute('data-adminkit-theme') === 'dark' ? 'dark' : 'light';
+			var previewSection = rememberedSection;
+			var previewTitle = el('h3', { id: 'ak-design-preview-title' });
+			var previewBody = el('div');
+			var themeButtons = [];
+			function themeSwitch(label) {
+				return el('div', { class: 'ak-design-preview__themes', role: 'group', 'aria-label': label }, ['light', 'dark'].map(function (mode) {
+					var button = el('button', { type: 'button', class: 'ak-btn', text: mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark, 'aria-pressed': String(mode === previewMode), onclick: function () {
+						previewMode = mode; refreshPreview();
+					} });
+					themeButtons.push({ button: button, mode: mode }); return button;
+				}));
+			}
+
+			var previewDock = el('section', { class: 'ak-design-preview', role: 'region', 'aria-labelledby': previewTitle.id, hidden: 'hidden' }, [
+				el('div', { class: 'ak-design-preview__head' }, [previewTitle]), previewBody
+			]);
+			function attachPreview(id, frames) {
+				var group = el('div', { hidden: 'hidden' }, frames);
+				previewGroups[id] = { group: group, frames: frames }; previewBody.appendChild(group);
+			}
+			function refreshPreview() {
+				var selected = sections.find(function (item) { return item.id === previewSection; });
+				previewDock.hidden = !previewGroups[previewSection];
+				previewTitle.textContent = I.designPreview + (selected ? ' — ' + selected.title : '');
+				themeButtons.forEach(function (item) { item.button.setAttribute('aria-pressed', String(item.mode === previewMode)); });
+				paletteCards.forEach(function (card) { card.scope.hidden = card.mode !== previewMode; });
+				var administrationTheme = document.documentElement.getAttribute('data-adminkit-theme') === 'dark' ? 'dark' : 'light';
+				Object.keys(previewGroups).forEach(function (id) {
+					previewGroups[id].group.hidden = id !== previewSection;
+					previewGroups[id].frames.forEach(function (frame) { frame.hidden = frame.dataset.previewTheme !== administrationTheme; });
+				});
+			}
+
 			function number(value) { return Number(value).toLocaleString(document.documentElement.lang || 'fr', { maximumFractionDigits: 2 }); }
 			function section(id, title, description, children) {
 				var tab = el('button', { type: 'button', role: 'tab', id: 'ak-foundation-tab-' + id, 'aria-controls': 'ak-foundation-' + id, 'aria-selected': 'false', tabindex: '-1', text: title });
@@ -382,14 +320,17 @@
 					el('h3', { text: title }), el('p', { class: 'ak-foundation-intro', text: description })
 				].concat(children));
 				tab.addEventListener('click', function () { selectSection(id); });
-				sections.push({ id: id, tab: tab, pane: pane }); nav.appendChild(tab); panes.appendChild(pane);
+				sections.push({ id: id, title: title, tab: tab, pane: pane }); nav.appendChild(tab); panes.appendChild(pane);
 				return pane;
 			}
 			function selectSection(id) {
+				if (!sections.some(function (item) { return item.id === id; })) { id = 'colors'; }
+				try { sessionStorage.setItem(sectionKey, id); } catch (error) {}
 				sections.forEach(function (item) {
 					var active = item.id === id;
 					item.tab.setAttribute('aria-selected', String(active)); item.tab.tabIndex = active ? 0 : -1; item.pane.hidden = !active;
 				});
+				previewSection = id; scopeNote.hidden = id === 'colors'; refreshPreview();
 				requestAnimationFrame(function () { paletteRefresh(); });
 			}
 			nav.addEventListener('keydown', function (event) {
@@ -400,28 +341,23 @@
 				else if (event.key === 'Home') { index = 0; } else if (event.key === 'End') { index = sections.length - 1; } else { return; }
 				event.preventDefault(); selectSection(sections[index].id); sections[index].tab.focus();
 			});
-			section('identity', I.studioIdentity, I.foundationIdentityHelp, [slotsRow, el('div', { class: 'ak-identity-placements' }, [wpField])]);
+
 
 			// Theme-scoped WaasKit roles come from the generated token stylesheet.
 			var paletteCards = [];
 			var roles = [
-				['bg', I.foundationBackground], ['surface', I.foundationSurface], ['text', I.foundationText], ['text-muted', I.foundationMuted], ['border', I.foundationBorder],
-				['accent', I.foundationAccent], ['on-accent', I.foundationOnAccent], ['success-text', I.foundationSuccess], ['warning-text', I.foundationWarning], ['danger-text', I.foundationDanger], ['info-text', I.foundationInfo]
+				['accent', I.foundationAccent], ['on-accent', I.foundationOnAccent],
+				['bg', I.foundationBackground], ['surface', I.foundationSurface], ['text', I.foundationText], ['text-muted', I.foundationMuted], ['border', I.foundationBorder]
 			];
 			function toHex(cssColor) {
 				var canvas = document.createElement('canvas'); canvas.width = canvas.height = 1;
 				var ctx = canvas.getContext('2d'); ctx.fillStyle = cssColor; ctx.fillRect(0, 0, 1, 1);
 				return '#' + Array.from(ctx.getImageData(0, 0, 1, 1).data).slice(0, 3).map(function (v) { return v.toString(16).padStart(2, '0'); }).join('');
 			}
-			function contrast(a, b) {
-				function luminance(hex) { var c = accentChannels(hex).map(function (v) { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return c[0] * .2126 + c[1] * .7152 + c[2] * .0722; }
-				var x = luminance(a), y = luminance(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05);
-			}
 			['light', 'dark'].forEach(function (mode) {
 				var modeLabel = mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark;
 				var scope = el('div', { class: 'ak-bp__frame ak-palette-theme', 'data-preview-theme': mode });
 				var rows = [], probes = {};
-				var contrastText = el('p', { class: 'ak-palette-contrast', 'aria-live': 'polite' });
 				var header = el('div', { class: 'ak-palette-header' }, [el('h4', { text: mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark }), el('button', { type: 'button', class: 'ak-btn', text: I.foundationPaletteReset, onclick: function () { state.designSystem.colors[mode] = {}; paletteRefresh(); markDirty(); } })]);
 				scope.appendChild(header);
 				roles.forEach(function (role) {
@@ -437,6 +373,7 @@
 						if (!isValidHex(value)) { hex.setAttribute('aria-invalid', 'true'); error.hidden = false; return; }
 						hex.removeAttribute('aria-invalid'); state.designSystem.colors[mode][role[0]] = value.toLowerCase(); paletteRefresh(); markDirty();
 					}
+					hex.addEventListener('adminkit:reveal-field', function () { previewMode = mode; if (previewSection === 'colors') { refreshPreview(); } else { selectSection('colors'); } });
 					picker.addEventListener('input', function () { change(picker.value); });
 					hex.addEventListener('change', function () { change(hex.value.trim()); });
 					var reset = el('button', { type: 'button', class: 'ak-palette-reset', text: I.foundationReset, 'aria-label': I.foundationReset + ' — ' + role[1] + ' — ' + modeLabel, onclick: function () { delete state.designSystem.colors[mode][role[0]]; paletteRefresh(); markDirty(); } });
@@ -444,14 +381,14 @@
 					scope.appendChild(el('div', { class: 'ak-palette-row' }, [picker, el('div', {}, [el('label', { for: id, text: role[1] }), inherited]), hex, reset, error]));
 					rows.push({ role: role[0], picker: picker, hex: hex, inherited: inherited, reset: reset, error: error });
 				});
-				scope.appendChild(el('div', { class: 'ak-palette-reading', text: I.foundationPangram })); scope.appendChild(contrastText);
-				paletteCards.push({ mode: mode, scope: scope, rows: rows, probes: probes, contrastText: contrastText });
+				paletteCards.push({ mode: mode, scope: scope, rows: rows, probes: probes });
 			});
 			paletteRefresh = function (resetAccent) {
 				paletteCards.forEach(function (card) {
-					var values = state.designSystem.colors[card.mode];
+					var overrides = state.accentSource === 'custom' ? state.designSystem.colors[card.mode] : {};
+					if (resetAccent) { delete overrides.accent; delete overrides['on-accent']; }
+					var values = state.accentSource === 'custom' ? Object.assign({}, overrides) : {};
 					card.scope.setAttribute('data-preview-accent', state.accentSource === 'adminkit' ? 'waaskit' : 'monochrome');
-					if (resetAccent) { delete values.accent; delete values['on-accent']; }
 					roles.forEach(function (role) { card.scope.style.removeProperty('--wk-' + role[0]); });
 					if (state.accentSource === 'custom' && isValidHex(state.brandAccent)) {
 						card.scope.style.setProperty('--wk-accent', state.brandAccent); card.scope.style.setProperty('--wk-on-accent', bestOnAccent(state.brandAccent));
@@ -461,24 +398,118 @@
 					if (!card.scope.isConnected) { return; }
 					card.rows.forEach(function (row) {
 						var resolved = toHex(getComputedStyle(card.probes[row.role]).backgroundColor);
+						row.picker.disabled = state.accentSource !== 'custom'; row.hex.disabled = state.accentSource !== 'custom';
 						row.picker.value = resolved; row.hex.value = values[row.role] || resolved; row.hex.removeAttribute('aria-invalid'); row.error.hidden = true;
-						row.inherited.textContent = values[row.role] ? I.foundationCustom : I.foundationInherited; row.reset.disabled = !values[row.role];
+						row.inherited.textContent = overrides[row.role] ? I.foundationCustom : I.foundationInherited; row.reset.disabled = !overrides[row.role];
 					});
-					var ratio = contrast(toHex(getComputedStyle(card.probes.text).backgroundColor), toHex(getComputedStyle(card.probes.bg).backgroundColor));
-					card.contrastText.textContent = I.foundationContrast.replace('%s', number(ratio)); card.contrastText.dataset.pass = String(ratio >= 4.5);
 				});
+				if (shapePreviews) { refreshShapeColors(); }
 			};
-			section('colors', I.studioColors, I.foundationColorsHelp, [el('div', { class: 'ak-foundation-accent' }, [accentPicker()]), el('div', { class: 'ak-palettes' }, paletteCards.map(function (card) { return card.scope; }))]);
+			section('colors', I.studioColors, I.foundationColorsHelp, [el('div', { class: 'ak-color-controls' }, [el('div', { class: 'ak-foundation-accent' }, [accentPicker()]), el('div', { class: 'ak-palette-theme-switch' }, [themeSwitch(I.studioColors)])]), el('div', { class: 'ak-palettes' }, paletteCards.map(function (card) { return card.scope; }))]);
 
 			function developing() { return el('p', { class: 'ak-foundation-development', text: I.foundationDevelopment }); }
 			section('type', I.studioType, I.studioTypeHint, [developing()]);
-			section('shapes', I.studioShapes, I.studioShapesHint, [developing()]);
+			var radius = el('input', { type: 'range', id: 'ak-shape-radius', min: '0', max: '2', step: '0.05', value: String(state.designSystem.radius_scale) });
+			var radiusValue = el('output', { for: radius.id });
+			var elevation = el('select', { id: 'ak-shape-elevation' }, [
+				['default', I.defaultPreset], ['flat', I.studioFlat], ['subtle', I.studioSubtle], ['raised', I.studioRaised]
+			].map(function (item) { return el('option', { value: item[0], text: item[1] }); }));
+			elevation.value = state.designSystem.elevation;
+			var borderWidth = el('select', { id: 'ak-shape-border' }, [0, 1, 2, 3, 4].map(function (width) { return el('option', { value: String(width), text: width + ' px' }); }));
+			borderWidth.value = String(state.designSystem.border_width);
+			var shapePreviews = ['light', 'dark'].map(function (mode) {
+				return el('div', { class: 'ak-bp__frame ak-shape-preview', 'data-preview-theme': mode }, [
+					el('h4', { text: mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark }),
+					el('div', { class: 'ak-shape-controls' }, [
+						el('button', { type: 'button', class: 'ak-btn ak-btn--primary', text: I.previewAction }),
+						el('button', { type: 'button', class: 'ak-btn', text: I.studioSecondary }),
+						el('label', {}, [el('span', { text: I.studioField }), el('input', { type: 'text', value: 'AdminKit', 'aria-label': I.studioField + ' — ' + (mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark) })])
+					]),
+					el('div', { class: 'ak-shape-card' }, [el('strong', { text: I.shapeCard }), el('p', { text: I.studioSample })]),
+					el('div', { class: 'ak-shape-table', role: 'img', 'aria-label': I.shapeTable }, [
+						el('strong', { text: I.shapeTable }), el('span', { text: I.studioSample }), el('span', { text: I.studioSample })
+					])
+				]);
+			});
+			function refreshShapeColors() {
+				shapePreviews.forEach(function (preview) {
+					preview.setAttribute('data-preview-accent', state.accentSource === 'adminkit' ? 'waaskit' : 'monochrome');
+					roles.forEach(function (role) { preview.style.removeProperty('--wk-' + role[0]); });
+					preview.style.removeProperty('--wk-accent-hover');
+					if (state.accentSource !== 'custom') { return; }
+					var values = Object.assign({}, state.designSystem.colors[preview.dataset.previewTheme]);
+					if (!values.accent && isValidHex(state.brandAccent)) { values.accent = state.brandAccent; }
+					if (values.accent) {
+						if (!values['on-accent']) { values['on-accent'] = bestOnAccent(values.accent); }
+						preview.style.setProperty('--wk-accent-hover', hoverHex(accentChannels(values.accent), bestOnAccent(values.accent) === '#000000'));
+					}
+					Object.keys(values).forEach(function (role) { preview.style.setProperty('--wk-' + role, values[role]); });
+				});
+			}
+			function refreshShapes() {
+				radiusValue.textContent = number(state.designSystem.radius_scale) + ' ×';
+				radius.setAttribute('aria-valuetext', radiusValue.textContent);
+				shapePreviews.forEach(function (preview) {
+					var highlight = state.designSystem.components.buttons.highlight;
+					preview.style.setProperty('--ak-btn-primary-elevation', highlight === 'always' ? 'var(--wk-elevation-1)' : 'var(--wk-elevation-1-shadow)');
+					preview.style.setProperty('--ak-btn-primary-elevation-hover', highlight === 'off' ? 'var(--wk-elevation-1-shadow)' : 'var(--wk-elevation-1)');
+					preview.style.setProperty('--ak-btn-primary-highlight', highlight === 'always' ? 'var(--ak-btn-highlight-effect)' : 'inset 0 0 0 transparent');
+					preview.style.setProperty('--ak-btn-primary-highlight-hover', highlight === 'off' ? 'inset 0 0 0 transparent' : 'var(--ak-btn-highlight-effect)');
+					preview.style.setProperty('--ak-shape-scale', state.designSystem.radius_scale);
+					preview.style.setProperty('--ak-border-width', state.designSystem.border_width + 'px');
+					preview.style.setProperty('--ak-radius-s', 'calc(8px * ' + state.designSystem.radius_scale + ')');
+					var depth = { flat: 'none', subtle: 'var(--wk-elevation-1)', raised: 'var(--wk-elevation-2)' }[state.designSystem.elevation];
+					preview.style.setProperty('--ak-shape-shadow', depth || 'var(--ak-default-card-shadow)');
+				});
+			}
+			borderWidth.addEventListener('change', function () { state.designSystem.border_width = Number(borderWidth.value); refreshShapes(); markDirty(); });
+			radius.addEventListener('input', function () { state.designSystem.radius_scale = Number(radius.value); refreshShapes(); markDirty(); });
+			elevation.addEventListener('change', function () { state.designSystem.elevation = elevation.value; refreshShapes(); markDirty(); });
+			section('shapes', I.studioShapes, I.shapeHint, [
+				el('div', { class: 'ak-foundation-slider' }, [el('div', {}, [el('label', { for: radius.id, text: I.studioRadiusScale }), radiusValue]), radius]),
+				el('div', { class: 'ak-shape-selects' }, [
+					el('div', {}, [el('label', { for: borderWidth.id, text: I.studioBorder }), borderWidth]),
+					el('div', {}, [el('label', { for: elevation.id, text: I.studioElevation }), elevation])
+				]),
+				el('p', { class: 'ak-foundation-intro ak-shape-help', text: I.shapeHelp }),
+				el('button', { type: 'button', class: 'ak-btn', text: I.resetDefaults, onclick: function () {
+					state.designSystem.radius_scale = 1; state.designSystem.border_width = 1; borderWidth.value = '1'; state.designSystem.elevation = 'default'; radius.value = '1'; elevation.value = 'default'; refreshShapes(); markDirty();
+				} })
+			]);
+			attachPreview('shapes', shapePreviews.slice());
 			section('spacing', I.studioSpacing, I.studioSpacingHint, [developing()]);
-			window.addEventListener('resize', function () { nav.setAttribute('aria-orientation', window.matchMedia('(max-width: 782px)').matches ? 'horizontal' : 'vertical'); });
+
+			// Component-specific effects share the existing draft, previews and Save.
+			var highlightSelect = el('select', { id: 'ak-buttons-highlight', 'aria-describedby': 'ak-buttons-highlight-help' }, [
+				['off', I.componentOff], ['hover', I.componentHover], ['always', I.componentAlways]
+			].map(function (item) { return el('option', { value: item[0], text: item[1] }); }));
+			highlightSelect.value = state.designSystem.components.buttons.highlight;
+			highlightSelect.addEventListener('change', function () {
+				state.designSystem.components.buttons.highlight = highlightSelect.value; refreshShapes(); markDirty();
+			});
+			var buttonPreviews = ['light', 'dark'].map(function (mode) {
+				return el('div', { class: 'ak-bp__frame ak-shape-preview', 'data-preview-theme': mode }, [
+					el('h4', { text: mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark }),
+					el('div', { class: 'ak-shape-controls' }, [
+						el('button', { type: 'button', class: 'ak-btn ak-btn--primary', text: I.previewAction }),
+						el('button', { type: 'button', class: 'ak-btn', text: I.studioSecondary }),
+						el('button', { type: 'button', class: 'ak-btn ak-btn--primary', disabled: 'disabled', text: I.componentDisabled })
+					])
+				]);
+			});
+			Array.prototype.push.apply(shapePreviews, buttonPreviews);
+			section('components', I.studioComponents, I.componentsHelp, [
+				el('h4', { text: I.componentButtons }),
+				el('div', { class: 'ak-shape-selects' }, [el('div', {}, [el('label', { for: highlightSelect.id, text: I.componentHighlight }), highlightSelect])]),
+				el('p', { id: 'ak-buttons-highlight-help', class: 'ak-foundation-intro', text: I.componentHighlightHelp })
+			]);
+			attachPreview('components', buttonPreviews);
+			refreshShapes(); refreshShapeColors();
 			p.classList.add('ak-foundations');
 			p.appendChild(el('h2', { class: 'ak-foundations-title', text: I.designSystem })); p.appendChild(intro(I.designIntro));
-			editor.appendChild(nav); editor.appendChild(panes); p.appendChild(editor); p.appendChild(el('p', { class: 'ak-foundation-scope', text: I.foundationScope }));
-			selectSection('identity');
+			editor.appendChild(nav); editor.appendChild(panes); p.appendChild(editor); p.appendChild(previewDock); p.appendChild(scopeNote);
+			selectSection(rememberedSection);
+			new MutationObserver(refreshPreview).observe(document.documentElement, { attributes: true, attributeFilter: ['data-adminkit-theme'] });
 			return p;
 		}
 
@@ -619,6 +650,7 @@
 					el('div', { class: 'ak-row__main' }, [
 						el('div', { class: 'ak-feature-heading' }, [el('span', { class: 'ak-row__label', text: f.label }), infoButton]),
 						f.summary ? el('p', { class: 'ak-feature-summary', text: f.summary }) : null,
+						f.settingsUrl ? el('a', { class: 'ak-btn ak-feature-settings', href: f.settingsUrl, text: I.editIdentitySettings }) : null,
 						help
 					]),
 					el('label', { class: 'ak-switch' }, [
@@ -1016,16 +1048,12 @@
 			// Per-plugin opt-in for generic plugins (no native adapter). POST as a
 			// flat array of plugin file paths the user has turned theming off for.
 			v.generic_theming_off = Object.keys(state.genericThemingOff);
-			v.logo_url = state.logos.light || state.logos.dark || '';
-			v.logo_source = state.logoSource;
-			v.logo_light = '';
-			v.logo_dark = '';
-			v.wp_logo = state.wpLogo;
 			v.login_logo = state.loginLogo;
 			v.brand_accent = state.brandAccent;
 			v.accent_source = state.accentSource;
 			Object.assign(v, state.appearance);
 			v.design_system = Object.assign({}, state.designSystem);
+			if (state.accentSource !== 'custom') { v.design_system.colors = { light: {}, dark: {} }; }
 			return v;
 		}
 		var refreshOverview = function () {};
@@ -1038,15 +1066,13 @@
 				var value = el('dd');
 				list.appendChild(el('div', { class: 'ak-overview-entry' }, [
 					el('div', {}, [el('dt', { text: label }), value]),
-					el('a', { href: '#' + target, class: 'ak-btn ak-overview-link', text: action })
+					el('a', { href: target.indexOf('.php') !== -1 ? target : '#' + target, class: 'ak-btn ak-overview-link', text: action })
 				]));
 				return value;
 			}
-			var identity = entry(I.identitySummary, 'brand', I.configureDesign);
 			var features = entry(I.activeFeatures, 'features', I.configureFeatures);
 			var plugins = entry(I.integrationSummary, 'plugins', I.configurePlugins);
 			refreshOverview = function () {
-				identity.textContent = state.logos.light || state.logos.dark ? I.identityReady : I.identityDefault;
 				features.textContent = (D.features || []).filter(function (f) { return f.available !== false && state.features[f.key] && (!f.parent || state.features[f.parent]); }).length + ' / ' + (D.features || []).filter(function (f) { return f.available !== false; }).length;
 				var adapters = (D.integrations || []).filter(function (i) { return i.supported && i.slug && !i.system && i.active !== false; });
 				plugins.textContent = adapters.filter(function (i) { return state.integrations[i.slug]; }).length + ' / ' + adapters.length;
