@@ -721,21 +721,28 @@ body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-a
   transition: opacity 120ms var(--ak-ease-standard);
  }
  body.adminkit .wp-list-table tr:is(:hover, :focus-within) .row-actions,
- body.adminkit .wp-list-table .row-actions.visible {
+ body.adminkit .wp-list-table:not(.plugins) .row-actions.visible {
   opacity: 1;
   pointer-events: auto;
  }
 }
-/* Post/page/CPT titles start halfway into the reserved action line, so the
+/* Normalize WordPress's plugin-only top alignment and action spacing before
+   sharing the content-title motion. Description height remains native. */
+@media (hover: hover) and (min-width: 783px) {
+ body.adminkit .wp-list-table.plugins tbody .plugin-title { vertical-align: middle; }
+ body.adminkit .wp-list-table.plugins .plugin-title > strong { margin: 0; }
+ body.adminkit .wp-list-table.plugins .plugin-title > .row-actions { padding: 2px 0 0; }
+}
+/* Post/page/CPT and plugin titles start halfway into the reserved action line, so the
    resting title is vertically centered. Hover/focus lifts it to 3px below its native
    position; actions stay in flow to reserve room even for wrapped titles. */
 @media (hover: hover) and (min-width: 783px) {
- body.adminkit .wp-list-table .column-title:has(> .row-actions) > strong:has(> .row-title) {
+ body.adminkit .wp-list-table :is(.column-title:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong) {
   display: block;
   translate: 0 13px;
   transition: translate 200ms var(--ak-ease-standard);
  }
- body.adminkit .wp-list-table tr:is(:hover, :focus-within) .column-title:has(> .row-actions) > strong:has(> .row-title),
+ body.adminkit .wp-list-table tr:is(:hover, :focus-within) :is(.column-title:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong),
  body.adminkit .wp-list-table .column-title:has(> .row-actions.visible) > strong:has(> .row-title) {
   translate: 0 3px;
  }
@@ -751,5 +758,5 @@ body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-a
 }
 @media (prefers-reduced-motion: reduce) {
  body.adminkit .wp-list-table :is(td, th, .row-actions),
- body.adminkit .wp-list-table .column-title:has(> .row-actions) > strong:has(> .row-title) { transition: none; }
+ body.adminkit .wp-list-table :is(.column-title:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong) { transition: none; }
 }
