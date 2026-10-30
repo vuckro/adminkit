@@ -828,6 +828,16 @@ body.adminkit .accordion-section-content {
 /* Welcome panel column container (dashboard hero bottom strip) — WP
    paints `bg: #fff; border: 1px solid #c3c4c7`. The dark hero header
    above stays as-is (#151515 is a design-intent contrast). */
+/* The native welcome banner owns its dark background and light foreground. */
+body.adminkit .welcome-panel-header :is(h2, p, a),
+body.adminkit .welcome-panel-header a:hover,
+body.adminkit .welcome-panel-header a:focus {
+	color: inherit;
+}
+body.adminkit .welcome-panel-header a:not(.button):focus-visible {
+	outline-color: currentColor;
+}
+
 body.adminkit .welcome-panel .welcome-panel-column-container {
 	background: var(--ak-card-bg);
 	border-color: var(--ak-card-border);
