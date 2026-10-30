@@ -563,7 +563,7 @@ body.adminkit.settings_page_menu_editor .rex-fancy-capability-counts.rex-with-ca
 body.adminkit.settings_page_menu_editor .rex-category-contents:has(> .rex-category) {
 	display: block;
 	column-width: 250px;
-	column-gap: 16px;
+	column-gap: calc(16px * var(--ak-space-scale, 1));
 }
 
 /* Leaf capability cards flow inside the columns as self-contained cards. */
@@ -571,7 +571,7 @@ body.adminkit.settings_page_menu_editor .rex-category-contents > .rex-category:n
 	width: auto;
 	min-width: 0;
 	max-width: none;
-	margin: 0 0 16px;
+	margin: 0 0 calc(16px * var(--ak-space-scale, 1));
 	break-inside: avoid;
 	background: var(--ak-surface);
 	box-shadow: none;
@@ -583,7 +583,7 @@ body.adminkit.settings_page_menu_editor .rex-category-contents > .rex-category.r
 	column-span: all;
 	width: auto;
 	max-width: none;
-	margin: 0 0 16px;
+	margin: 0 0 calc(16px * var(--ak-space-scale, 1));
 	background: transparent;
 	border: none;
 	box-shadow: none;

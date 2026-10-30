@@ -98,13 +98,19 @@ class AdminKit_Core_Options_Discussion {
 		}
 
 		$strings = array(
+			'participationDesc' => __( 'Choose who can comment and how conversations work.', 'adminkit' ),
+			'displayDesc' => __( 'Set comment pagination and display order.', 'adminkit' ),
+			'notificationsDesc' => __( 'Choose which events trigger an email notification.', 'adminkit' ),
+			'moderationDesc' => __( 'Control approval rules and filter unwanted comments.', 'adminkit' ),
+
+			'participation' => __( 'Participation', 'adminkit' ),
+			'display' => __( 'Display', 'adminkit' ),
+			'notifications' => __( 'Notifications', 'adminkit' ),
+			'moderation' => __( 'Moderation & filtering', 'adminkit' ),
+
 			'avatars'       => __( 'Avatars', 'adminkit' ),
 			'comments'      => __( 'Comment settings', 'adminkit' ),
-			// Synthesized heading + lede inserted before the Comments form-table
-			// (WP renders that table without any preceding heading, so the tab
-			// lands on an unexplained wall of fields otherwise).
-			'commentsTitle' => __( 'Comment settings', 'adminkit' ),
-			'commentsDesc'  => __( 'How comments work on your site — who can post, what they see when they do, when they get moderated, and the email you receive about them.', 'adminkit' ),
+
 		);
 
 		AdminKit_Assets::enqueue_script(

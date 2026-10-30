@@ -56,7 +56,7 @@ body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body #wpbody-cont
 body.adminkit.adminkit-woocommerce .woocommerce-profile-wizard__container { background: var(--ak-bg); color: var(--ak-text); }
 body.adminkit.adminkit-woocommerce .woocommerce-profiler-heading__title {
  color: var(--ak-heading);
- font-size: clamp(26px, 3vw, 36px);
+ font-size: calc(clamp(26px, 3vw, 36px) * var(--ak-type-scale, 1));
  line-height: 1.2;
  letter-spacing: -.025em;
 }
@@ -79,7 +79,7 @@ body.adminkit.adminkit-woocommerce .woocommerce-profiler-button-container .compo
  min-height: 40px;
 }
 @media (max-width: 600px) {
- body.adminkit.adminkit-woocommerce .woocommerce-profiler-page__content { padding-inline: 20px; }
+ body.adminkit.adminkit-woocommerce .woocommerce-profiler-page__content { padding-inline: calc(20px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-woocommerce .woocommerce-profiler-button-container .components-button { min-height: 44px; }
 }
 body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body #wpwrap::before,
@@ -127,7 +127,7 @@ body.adminkit.adminkit-woocommerce .wc-settings-email-preview-header :is(.wc-set
 body.adminkit.adminkit-woocommerce #woocommerce-order-actions .order_actions li.wide:has(.save_order) {
  display: flex;
  flex-direction: column;
- gap: 8px;
+ gap: calc(8px * var(--ak-space-scale, 1));
 }
 body.adminkit.adminkit-woocommerce #woocommerce-order-actions :is(.save_order, #delete-action) { float: none; width: 100%; margin: 0; padding: 0; }
 body.adminkit.adminkit-woocommerce #woocommerce-order-actions :is(.save_order, .submitdelete) {
@@ -136,7 +136,7 @@ body.adminkit.adminkit-woocommerce #woocommerce-order-actions :is(.save_order, .
  justify-content: center;
  width: 100%;
  min-height: 36px;
- padding: 8px 12px;
+ padding: calc(8px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1));
  box-sizing: border-box;
  line-height: 1.4;
  border-radius: var(--ak-radius-s);
@@ -170,8 +170,8 @@ body.adminkit.adminkit-woocommerce.woocommerce_page_wc-settings .nav-tab-wrapper
  width: max-content;
  max-width: 100%;
  box-sizing: border-box;
- gap: 2px;
- padding: 3px;
+ gap: calc(2px * var(--ak-space-scale, 1));
+ padding: calc(3px * var(--ak-space-scale, 1));
  background: var(--ak-surface-muted);
  border: 1px solid var(--ak-border);
  border-radius: var(--ak-radius-s);

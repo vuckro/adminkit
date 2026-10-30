@@ -69,6 +69,14 @@ class AdminKit_Profile_Account {
 		// a no-JS / failed-JS visitor never enters the hidden state.
 		add_action( 'admin_head', array( __CLASS__, 'print_prepaint' ), 1 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
+		add_action( 'in_admin_footer', array( __CLASS__, 'print_layout_script' ), 0 );
+	}
+
+	/** Build the parsed form before unrelated footer scripts can delay it. */
+	public static function print_layout_script() {
+		if ( self::should_enhance() && wp_script_is( 'adminkit-profile-account', 'enqueued' ) ) {
+			wp_print_scripts( array( 'adminkit-profile-account' ) );
+		}
 	}
 
 	/**
@@ -109,6 +117,13 @@ class AdminKit_Profile_Account {
 		}
 		$pending = self::PENDING_CLASS;
 		$ready   = self::READY_CLASS;
+		// Start fetching in the head; execute only once the complete form exists.
+		$script = wp_scripts()->registered['adminkit-profile-account'] ?? null;
+		if ( $script ) {
+			$src = add_query_arg( 'ver', $script->ver, $script->src );
+			$src = apply_filters( 'script_loader_src', $src, 'adminkit-profile-account' );
+			printf( '<link rel="preload" as="script" href="%s">' . "\n", esc_url( $src ) );
+		}
 		?>
 <script id="adminkit-account-prepaint">
 (function () {
@@ -169,9 +184,27 @@ class AdminKit_Profile_Account {
 				'info'     => array( 'label' => __( 'Information', 'adminkit' ), 'desc' => __( 'Identity, contact and password.', 'adminkit' ) ),
 				'settings' => array( 'label' => __( 'Settings', 'adminkit' ), 'desc' => __( 'Roles, language and preferences.', 'adminkit' ) ),
 			),
+			'public_profile' => __( 'Public profile', 'adminkit' ),
+			'public_profile_desc' => __( 'Language, website and biographical information.', 'adminkit' ),
+			'admin_preferences' => __( 'Administration preferences', 'adminkit' ),
+			'admin_preferences_desc' => __( 'Choose how you use the WordPress administration screens.', 'adminkit' ),
+			'profile_sessions' => __( 'Sessions', 'adminkit' ),
+			'profile_sessions_desc' => __( 'Manage your active sign-in sessions.', 'adminkit' ),
+			'profile_apps' => __( 'Application passwords', 'adminkit' ),
+			'profile_apps_desc' => __( 'Manage access for applications connected to your account.', 'adminkit' ),
 			'addresses'       => __( 'Addresses', 'adminkit' ),
+			'identity_contact' => __( 'Identity and contact', 'adminkit' ),
+			'security'         => __( 'Security', 'adminkit' ),
 			'more'            => __( 'Other settings', 'adminkit' ),
 			'nav'             => __( 'Account sections', 'adminkit' ),
+			'role_descriptions' => array(
+				'administrator' => __( 'Manages all site settings, content and user accounts.', 'adminkit' ),
+				'editor' => __( 'Publishes and manages all posts and pages, including those written by others.', 'adminkit' ),
+				'author' => __( 'Writes, publishes and manages their own posts.', 'adminkit' ),
+				'contributor' => __( 'Writes and edits their own posts, but cannot publish them or upload media.', 'adminkit' ),
+				'subscriber' => __( 'Manages their own profile, without access to content editing.', 'adminkit' ),
+				'custom' => __( 'Permissions for this role are defined by the site or a plugin.', 'adminkit' ),
+			),
 			'username_locked' => __( 'This username cannot be changed.', 'adminkit' ),
 			// Anti-FOUC marker classes (set on <html> pre-paint by print_prepaint);
 			// the builder swaps pending → ready to reveal the form. Shared from PHP

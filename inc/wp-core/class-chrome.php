@@ -144,6 +144,13 @@ class AdminKit_Core_Chrome {
 			'options-media',
 			'options-permalink',
 		) );
+		AdminKit_Assets::register( array(
+			'handle' => 'adminkit-taxonomy-layout',
+			'src' => self::ASSETS_BASE . 'wp-screens/taxonomy.css',
+			'deps' => $tokens,
+			'context' => 'admin',
+			'condition' => static function ( $screen ) { return $screen && 'edit-tags' === $screen->base; },
+		) );
 		self::register_screen( 'themes',          array( 'themes', 'theme-install' ) );
 		self::register_screen( 'theme-install',   array( 'themes', 'theme-install' ) );
 		// user-new.php reports screen id 'user' (WP strips '-new'); the CSS

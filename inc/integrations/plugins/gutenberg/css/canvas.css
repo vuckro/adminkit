@@ -37,7 +37,7 @@ html[data-adminkit-canvas]::-webkit-scrollbar { width: 12px; height: 12px; backg
 html[data-adminkit-canvas]::-webkit-scrollbar-track { background: var(--ak-bg); }
 html[data-adminkit-canvas]::-webkit-scrollbar-thumb {
 	background: var(--ak-border-strong);
-	border-radius: 8px;
+	border-radius: calc(8px * var(--ak-radius-scale, 1));
 	border: 3px solid transparent;
 	background-clip: padding-box;
 }

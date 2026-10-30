@@ -46,6 +46,8 @@ class AdminKit_Settings {
 	public static function init() {
 		self::register_feature_catalog();
 		self::register_branding();
+		self::register_appearance();
+		self::register( 'design_system', array( 'type' => 'object', 'group' => 'appearance', 'default' => self::sanitize_design_system( array() ), 'sanitize' => array( __CLASS__, 'sanitize_design_system' ) ) );
 		self::bind_modules();
 	}
 
@@ -122,6 +124,51 @@ class AdminKit_Settings {
 				return in_array( $v, array( 'monochrome', 'adminkit', 'bricks', 'custom' ), true ) ? $v : 'monochrome';
 			},
 		) );
+	}
+
+	/** Bounded site-wide design presets. Unknown values retain the native baseline. */
+	private static function register_appearance() {
+		$presets = array(
+			'ui_density' => array( 'default', 'compact', 'comfortable' ),
+			'ui_radius' => array( 'default', 'square', 'soft' ),
+			'ui_font' => array( 'default', 'humanist', 'classic', 'system' ),
+		);
+		foreach ( $presets as $key => $allowed ) {
+			self::register( $key, array(
+				'type' => 'select', 'group' => 'appearance', 'default' => 'ui_font' === $key ? 'humanist' : 'default',
+				'sanitize' => static function ( $value ) use ( $allowed, $key ) {
+					return in_array( $value, $allowed, true ) ? $value : ( 'ui_font' === $key ? 'humanist' : 'default' );
+				},
+			) );
+		}
+	}
+
+	/** Advanced studio settings are persisted for previews; global adoption is separate. */
+	public static function sanitize_design_system( $input ) {
+		$input = is_array( $input ) ? $input : array();
+		$result = array( 'radius_scale' => 1, 'space_scale' => 1, 'type_scale' => 1, 'border_width' => 1, 'elevation' => 'flat', 'colors' => array( 'light' => array(), 'dark' => array() ) );
+		foreach ( array( 'radius_scale' => array( 0, 2 ), 'space_scale' => array( 0.5, 2 ), 'type_scale' => array( 0.75, 1.5 ) ) as $key => $bounds ) {
+			$value = isset( $input[ $key ] ) && is_numeric( $input[ $key ] ) ? (float) $input[ $key ] : null;
+			if ( null !== $value && is_finite( $value ) && $value >= $bounds[0] && $value <= $bounds[1] ) {
+				$result[ $key ] = round( $value, 2 );
+			}
+		}
+		if ( isset( $input['border_width'] ) && in_array( $input['border_width'], array( 1, 2, '1', '2' ), true ) ) {
+			$result['border_width'] = (int) $input['border_width'];
+		}
+		if ( isset( $input['elevation'] ) && in_array( $input['elevation'], array( 'flat', 'subtle', 'raised' ), true ) ) {
+			$result['elevation'] = $input['elevation'];
+		}
+		$roles = array( 'bg', 'surface', 'text', 'text-muted', 'border', 'accent', 'on-accent', 'success-text', 'warning-text', 'danger-text', 'info-text' );
+		$colors = isset( $input['colors'] ) && is_array( $input['colors'] ) ? $input['colors'] : array();
+		foreach ( array( 'light', 'dark' ) as $mode ) {
+			$palette = isset( $colors[ $mode ] ) && is_array( $colors[ $mode ] ) ? $colors[ $mode ] : array();
+			foreach ( $roles as $role ) {
+				$value = isset( $palette[ $role ] ) && is_string( $palette[ $role ] ) ? sanitize_hex_color( $palette[ $role ] ) : null;
+				if ( $value ) { $result['colors'][ $mode ][ $role ] = strtolower( $value ); }
+			}
+		}
+		return $result;
 	}
 
 	/** Resolve stored legacy blue/provider choices; unset values use monochrome. */

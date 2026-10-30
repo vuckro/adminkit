@@ -20,8 +20,8 @@ body.login.adminkit {
 	   each side — so the card stays clear of the edges on ≤360px phones instead of
 	   forcing horizontal scroll. */
 	width: min( 360px, calc( 100% - 32px ) );
-	padding-top: 24px;
-	padding-bottom: 24px;
+	padding-top: calc(24px * var(--ak-space-scale, 1));
+	padding-bottom: calc(24px * var(--ak-space-scale, 1));
 }
 
 /* Logo — AdminKit_Core_Login tags <body> with the mark type so we can frame each
@@ -32,7 +32,7 @@ body.login.adminkit {
    actual image. */
 #login h1 a {
 	display: block;
-	margin: 0 auto 20px;
+	margin: 0 auto calc(20px * var(--ak-space-scale, 1));
 	background-position: center center;
 	background-repeat: no-repeat;
 	border-radius: var(--ak-radius-l, 14px);
@@ -149,7 +149,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
-	padding: 24px;
+	padding: calc(24px * var(--ak-space-scale, 1));
 }
 
 .login form .input,
@@ -162,7 +162,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	color: var(--ak-text);
 	font-family: var(--ak-font-body);
 	font-size: var(--ak-text-m);
-	padding: 8px 10px;
+	padding: calc(8px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1));
 	box-shadow: none;
 }
 
@@ -218,7 +218,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	font-size: var(--ak-text-s);
 	font-weight: 500;
 	border-radius: var(--ak-radius-s);
-	padding: 0 14px;
+	padding: 0 calc(14px * var(--ak-space-scale, 1));
 	min-height: 32px;
 	line-height: 2.15;
 	box-shadow: none;
@@ -247,7 +247,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 .login .forgetmenot {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: calc(8px * var(--ak-space-scale, 1));
 }
 
 .login .forgetmenot label {
@@ -315,7 +315,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 /* Nav links below form */
 .login #nav,
 .login #backtoblog {
-	padding: 8px 0;
+	padding: calc(8px * var(--ak-space-scale, 1)) 0;
 	text-align: center;
 }
 
@@ -336,7 +336,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 
 /* Privacy-policy link (shown when a privacy page is set) */
 .login .privacy-policy-page-link {
-	padding: 8px 0;
+	padding: calc(8px * var(--ak-space-scale, 1)) 0;
 	text-align: center;
 }
 
@@ -352,30 +352,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	color: var(--ak-heading);
 }
 
-/* Messages */
-/* Soft notices: coloured text on the colour's subtle tint + a VERY LIGHT border
-   blended from the colour (color-mix → no new token); even padding (no asymmetric
-   left-accent). .message/.notice = info (blue); #login_error = error. */
-.login .message,
-.login #login_error,
-.login .notice {
-	background: var(--ak-info-subtle);
-	border: 1px solid color-mix(in srgb, var(--ak-info) 30%, transparent);
-	border-radius: var(--ak-radius-s);
-	color: var(--ak-info);
-	font-size: var(--ak-text-s);
-	padding: 12px 14px;
-}
-
-.login #login_error {
-	background: var(--ak-error-subtle);
-	color: var(--ak-error);
-	border-color: color-mix(in srgb, var(--ak-error) 30%, transparent);
-}
-
-/* `.message` stays the base blue (--ak-info): on wp-login it carries informational
-   notes — the lost-password instruction, "check your email", etc. — not success,
-   so blue reads truer than WP's default green. */
+/* Login messages share wp-components/feedback.css with administration. */
 
 /* Language switcher */
 .login .language-switcher select {
@@ -383,7 +360,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
-	padding: 4px 8px;
+	padding: calc(4px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
 	font-family: var(--ak-font-body);
 	font-size: var(--ak-text-s);
 }
@@ -393,7 +370,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	border: 1px solid var(--ak-border);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
-	padding: 4px 10px;
+	padding: calc(4px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1));
 }
 
 .login .language-switcher .button:hover {

@@ -18,6 +18,14 @@ body.adminkit:is(.block-editor-page, .widgets-php) .interface-interface-skeleton
 /* Light/dark toggle injected into the editor header (js/theme-toggle.js) — the
    admin-bar toggle is hidden in the fullscreen editor. Inherits .components-button
    sizing; just size the icon and tint it with the header foreground. */
+/* Standard layout uses the admin-bar theme control; fullscreen uses the
+   editor control. DOM presence alone does not guarantee a visible button. */
+body.adminkit.block-editor-page #wpadminbar #wp-admin-bar-ak-view-site,
+body.adminkit.block-editor-page.is-fullscreen-mode:has(.ak-editor-theme-toggle) #wpadminbar #wp-admin-bar-ak-theme-toggle,
+body.adminkit.block-editor-page:not(.is-fullscreen-mode) .ak-editor-theme-toggle {
+	display: none;
+}
+
 body.adminkit:is(.block-editor-page, .widgets-php) .ak-editor-theme-toggle {
 	color: var(--ak-text);
 }
@@ -26,6 +34,25 @@ body.adminkit:is(.block-editor-page, .widgets-php) .ak-editor-theme-toggle svg {
 	height: 18px;
 	fill: none;
 	color: var(--ak-icon);
+}
+
+/* The admin-bar toggle remains available outside fullscreen; avoid duplicate
+   controls competing with the editor's compact mobile toolbar. */
+body.adminkit:not(.is-fullscreen-mode) .ak-editor-theme-toggle {
+	display: none;
+}
+@media (max-width: 480px) {
+	body.adminkit .editor-header__settings { gap: calc(4px * var(--ak-space-scale, 1)); }
+}
+
+/* The Site Editor deliberately keeps its navigation shell dark in light mode. */
+body.adminkit .edit-site-layout__sidebar {
+	--ak-heading: var(--ak-inverse-text);
+	--ak-text: var(--ak-inverse-text);
+}
+body.adminkit .edit-site-layout__sidebar .edit-site-sidebar-navigation-screen__title,
+body.adminkit .edit-site-layout__sidebar .editor-save-button {
+	color: var(--ak-text);
 }
 
 /* WP logo / "view mode" button (top-left). WP bakes the glyph onto a #1e1e1e
@@ -46,7 +73,7 @@ body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-fullscreen-mode-cl
 	width: 40px;
 	height: 40px;
 	object-fit: contain;
-	padding: 2px;
+	padding: calc(2px * var(--ak-space-scale, 1));
 	background: var(--ak-surface);
 	border-radius: var(--ak-radius-s);
 }

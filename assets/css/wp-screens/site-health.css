@@ -92,6 +92,9 @@ body.adminkit .health-check-accordion-trigger .icon,
 body.adminkit .site-health-view-passed .icon {
 	border-color: var(--ak-text-muted);
 }
+body.adminkit.wp-core-ui .button.site-health-view-passed {
+	padding-inline-end: calc(36px * var(--ak-space-scale, 1));
+}
 
 /* Badge text + semantic border colors */
 body.adminkit .privacy-settings-accordion-trigger .badge,

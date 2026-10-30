@@ -83,7 +83,7 @@
 	position: fixed;
 	z-index: 100000;
 	display: none;
-	padding: 6px;
+	padding: calc(6px * var(--ak-space-scale, 1));
 	background: var(--ak-elevated);
 	border: 1px solid var(--ak-border-strong);
 	border-radius: var(--ak-radius-m);
@@ -127,7 +127,7 @@
 .adminkit #ak-preview-pop.is-broken {
 	width: auto;
 	height: auto;
-	padding: 14px 16px;
+	padding: calc(14px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
 	color: var(--ak-text-muted);
 	font: 500 var(--ak-text-s) / 1.4 var(--ak-font-body);
 }

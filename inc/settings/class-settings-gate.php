@@ -45,11 +45,11 @@ class AdminKit_Settings_Gate {
 
 		$file = self::plugin_file_for_screen( $screen );
 		return ! $file || plugin_basename( ADMINKIT_FILE ) === $file
-			|| in_array( $file, (array) AdminKit_Settings::get( 'generic_theming_on' ), true );
+			|| ! in_array( $file, (array) AdminKit_Settings::get( 'generic_theming_off' ), true );
 	}
 
 	/**
-	 * Third-party integrations require opt-in; core editor chrome is standard.
+	 * Detected integrations default on; explicit saved opt-outs remain effective.
 	 *
 	 * @param bool   $enabled
 	 * @param string $slug
@@ -63,7 +63,7 @@ class AdminKit_Settings_Gate {
 			return $enabled;
 		}
 		$v = AdminKit_Settings::get( 'integration_' . $slug . '_enabled' );
-		return $enabled && (bool) $v;
+		return $enabled && ( null === $v || (bool) $v );
 	}
 
 	/**

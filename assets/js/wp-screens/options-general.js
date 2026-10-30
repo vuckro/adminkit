@@ -1,15 +1,9 @@
 /**
- * AdminKit — options-general.php: themed blocks + 2-tab navigation.
+ * AdminKit — options-general.php: themed blocks + grouped tab navigation.
  *
- * Tab 1 — Général:
- *   • Site identity        — blogname, blogdescription, siteurl, home
- *   • Site Icon            — site_icon (media-picker widget)
- *   • Account & registration — admin_email, new_admin_email,
- *                              users_can_register, default_role
- *
- * Tab 2 — Language, date & time:
- *   • Locale               — WPLANG, timezone_string, date_format,
- *                            time_format, start_of_week
+ * General: site identity and site icon.
+ * Account & registration: administration email, membership and default role.
+ * Language, date & time: language/timezone and display formats in separate cards.
  *
  * Each block gets its own card (heading + one-line description + nested
  * `.form-table`). Blocks are tagged with `data-ak-tab` so the tab strip
@@ -48,13 +42,15 @@
 	var BLOCKS = [
 		{ id: 'site-identity', tab: 'general', title: S.identity || 'Site identity',          desc: S.identityDesc || '', rows: [ 'blogname', 'blogdescription', 'siteurl', 'home' ] },
 		{ id: 'site-icon',     tab: 'general', title: S.siteIcon || 'Site Icon',              desc: S.siteIconDesc || '', rows: [ 'site_icon' ] },
-		{ id: 'account',       tab: 'general', title: S.account  || 'Account & registration', desc: S.accountDesc  || '', rows: [ 'admin_email', 'new_admin_email', 'users_can_register', 'default_role' ] },
-		{ id: 'locale',        tab: 'locale',  title: S.locale   || 'Language, date & time',  desc: S.localeDesc   || '', rows: [ 'WPLANG', 'timezone_string', 'date_format', 'time_format', 'start_of_week' ] }
+		{ id: 'account',       tab: 'account', title: S.account  || 'Account & registration', desc: S.accountDesc  || '', rows: [ 'admin_email', 'new_admin_email', 'users_can_register', 'default_role' ] },
+		{ id: 'locale',        tab: 'locale',  title: S.languageZone || 'Language & timezone', desc: S.languageZoneDesc || '', rows: [ 'WPLANG', 'timezone_string' ] },
+		{ id: 'formats',       tab: 'locale',  title: S.formats || 'Date & time formats', desc: S.formatsDesc || '', rows: [ 'date_format', 'time_format', 'start_of_week' ] }
 	];
 
 	var TABS = [
-		{ id: 'general', title: S.tabGeneral || 'General' },
-		{ id: 'locale',  title: S.locale     || 'Language, date & time' }
+		{ id: 'general', title: S.tabGeneral || 'Identity' },
+		{ id: 'locale',  title: S.tabLocale  || 'Localization' },
+		{ id: 'account', title: S.tabAccount || 'Account' }
 	];
 
 	// Leading tab icons (Lucide-style, currentColor) so this strip reads like the
@@ -63,6 +59,8 @@
 		general: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
 		locale:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
 	};
+
+	ICONS.account = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/></svg>';
 
 	var sourceTable = form.querySelector( ':scope > .form-table' );
 	if ( ! sourceTable ) { reveal(); return; }
@@ -129,12 +127,15 @@
 	var strip = document.createElement( 'nav' );
 	strip.className = 'nav-tab-wrapper';
 	strip.setAttribute( 'role', 'tablist' );
+	strip.setAttribute( 'aria-label', document.title.split( ' ‹ ' )[ 0 ] );
 	made.forEach( function ( t ) {
 		var btn = document.createElement( 'button' );
 		btn.type = 'button';
 		btn.dataset.target = t.id;
 		btn.className = 'nav-tab';
 		btn.setAttribute( 'role', 'tab' );
+		btn.id = 'ak-options-tab-' + t.id;
+		btn.setAttribute( 'aria-controls', 'ak-options-panel-' + t.id );
 		if ( ICONS[ t.id ] ) {
 			var ic = document.createElement( 'span' );
 			ic.className = 'ak-nav-tab-ic';
@@ -151,20 +152,27 @@
 	// of the form's visible content, just after WP's hidden nonce inputs).
 	var firstTagged = form.querySelector( '[data-ak-tab]' );
 	if ( firstTagged ) { form.insertBefore( strip, firstTagged ); }
+	// Group each existing tab's nodes once; native fields stay inside the form.
+	made.forEach( function ( t ) {
+		t.panel = document.createElement( 'div' );
+		t.panel.className = 'ak-options-panel';
+		t.panel.id = 'ak-options-panel-' + t.id;
+		t.panel.setAttribute( 'role', 'tabpanel' );
+		t.panel.setAttribute( 'aria-labelledby', t.btn.id );
+		form.insertBefore( t.panel, firstTagged );
+	} );
+	madeBlocks.forEach( function ( b ) {
+		made.forEach( function ( t ) { if ( t.id === b.tab ) { t.panel.appendChild( b.el ); } } );
+	} );
+
 
 	function activate( id, opts ) {
 		made.forEach( function ( t ) {
 			var on = t.id === id;
 			t.btn.classList.toggle( 'nav-tab-active', on );
 			t.btn.setAttribute( 'aria-selected', on ? 'true' : 'false' );
-		} );
-		// Toggle both `[hidden]` and the class (see the matching note in
-		// options-discussion.js — `[hidden]` alone is fragile against
-		// author rules that set `display` elsewhere up the cascade).
-		madeBlocks.forEach( function ( b ) {
-			var hide = b.tab !== id;
-			b.el.hidden = hide;
-			b.el.classList.toggle( 'ak-tab-hidden', hide );
+			t.btn.tabIndex = on ? 0 : -1;
+			t.panel.hidden = ! on;
 		} );
 		// Only touch the URL hash on user-initiated activations — never on
 		// the initial mount with a bare URL (would auto-scroll).
@@ -181,6 +189,27 @@
 		var b = e.target.closest( 'button' );
 		if ( b && b.dataset.target ) { activate( b.dataset.target, { updateHash: true } ); }
 	} );
+
+
+	strip.addEventListener( 'keydown', function ( e ) {
+		if ( ['ArrowLeft', 'ArrowRight', 'Home', 'End'].indexOf( e.key ) === -1 ) { return; }
+		var i = made.findIndex( function ( t ) { return t.btn === document.activeElement; } );
+		if ( i < 0 ) { return; }
+		var next = e.key === 'Home' ? 0 : e.key === 'End' ? made.length - 1 :
+			( i + ( e.key === 'ArrowRight' ? 1 : made.length - 1 ) ) % made.length;
+		e.preventDefault();
+		activate( made[ next ].id, { updateHash: true } );
+		made[ next ].btn.focus();
+	} );
+	// Native validation runs before submit; reveal only the first invalid field.
+	var revealingInvalid = false;
+	form.addEventListener( 'invalid', function ( e ) {
+		if ( revealingInvalid ) { return; }
+		revealingInvalid = true;
+		setTimeout( function () { revealingInvalid = false; }, 0 );
+		var panel = e.target.closest( '[data-ak-tab]' );
+		if ( panel ) { activate( panel.dataset.akTab, { updateHash: true } ); }
+	}, true );
 
 	function tabFor( slug ) {
 		for ( var i = 0; i < made.length; i++ ) {

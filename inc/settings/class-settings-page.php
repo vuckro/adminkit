@@ -47,7 +47,7 @@ class AdminKit_Settings_Page {
 	public static function init() {
 		add_action( 'admin_menu', array( __CLASS__, 'add_submenu' ) );
 		// Relabel the auto first submenu AFTER the Menu/Toolbar modules add their
-		// pages (priority 11). Then (priority 13) reorder to Menu · Toolbar · Settings.
+		// pages (priority 11). Then (priority 13) reorder to Dashboard · Menu · Toolbar.
 		add_action( 'admin_menu', array( __CLASS__, 'relabel_first_submenu' ), 12 );
 		add_action( 'admin_menu', array( __CLASS__, 'reorder_submenu' ), 13 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
@@ -80,8 +80,8 @@ class AdminKit_Settings_Page {
 
 	/**
 	 * Relabel the auto-created first submenu (WordPress labels it after the
-	 * top-level title — "AdminKit") to "Settings", so the submenu reads
-	 * Settings · Menu · Toolbar. The Menu + Toolbar entries register
+	 * top-level title — "AdminKit") to "Dashboard", so the submenu reads
+	 * Dashboard · Menu · Toolbar. The Menu + Toolbar entries register
 	 * themselves from their own modules (each surface owns its page). Runs at
 	 * admin_menu priority 12 (after those modules, at 11). Defensive: only
 	 * renames the first row while it's still the unrenamed self-link.
@@ -91,16 +91,15 @@ class AdminKit_Settings_Page {
 	public static function relabel_first_submenu() {
 		global $submenu;
 		if ( isset( $submenu[ self::SLUG ][0][2] ) && self::SLUG === $submenu[ self::SLUG ][0][2] ) {
-			$submenu[ self::SLUG ][0][0] = __( 'Settings', 'adminkit' );
+			$submenu[ self::SLUG ][0][0] = __( 'Dashboard', 'adminkit' );
 		}
 	}
 
 	/**
-	 * Reorder the AdminKit submenu to Menu · Toolbar · Settings — the daily
-	 * surfaces (analytics, then menu) on top, configuration last. Runs at
+	 * Reorder the AdminKit submenu to Dashboard · Menu · Toolbar. Runs at
 	 * admin_menu priority 13 (after relabel at 12). Slugs not in the rank map keep
 	 * their relative order at the end. Cosmetic only — clicking the parent still
-	 * opens Settings (its own slug callback).
+	 * opens Dashboard (its own slug callback).
 	 *
 	 * @return void
 	 */
@@ -110,9 +109,9 @@ class AdminKit_Settings_Page {
 			return;
 		}
 		$rank = array(
-			self::SLUG_MENU    => 1, // Menu
-			self::SLUG_TOOLBAR => 2, // Toolbar
-			self::SLUG         => 3, // Settings (the parent self-link)
+			self::SLUG         => 1, // Dashboard (the parent self-link)
+			self::SLUG_MENU    => 2, // Menu
+			self::SLUG_TOOLBAR => 3, // Toolbar
 		);
 		usort(
 			$submenu[ self::SLUG ],
@@ -292,6 +291,7 @@ class AdminKit_Settings_Page {
 	 * @return array
 	 */
 	public static function boot_data( $screen = 'main' ) {
+		global $wpdb;
 		$is_main    = ( 'main' === $screen );
 		$is_menu    = ( 'menu' === $screen );
 		$is_toolbar = ( 'toolbar' === $screen );
@@ -309,6 +309,7 @@ class AdminKit_Settings_Page {
 					'group'   => isset( $f['group'] ) ? $f['group'] : '',
 					'label'   => $f['label'],
 					'desc'    => $f['desc'],
+					'summary' => isset( $f['summary'] ) ? $f['summary'] : '',
 					'parent'  => isset( $f['parent'] ) ? $f['parent'] : '',
 					'value'   => (bool) AdminKit_Settings::get( $f['key'] ),
 					// Schema default — what the "Reset to defaults" bulk button restores to.
@@ -364,6 +365,10 @@ class AdminKit_Settings_Page {
 			// One of 'adminkit' | 'bricks' | 'custom'. Drives the segmented picker
 			// in the Brand card and the Source pill colour for accent-family tokens.
 			'accentSource' => AdminKit_Settings::accent_source(),
+			'customNeutralRecipe' => AdminKit_Design_System::neutral_recipe(),
+			'designSystem' => AdminKit_Settings::sanitize_design_system( AdminKit_Settings::get( 'design_system' ) ),
+			'settingsStorage' => array( 'table' => (string) $wpdb->options, 'option' => AdminKit_Settings::OPTION_KEY ),
+			'appearance' => array( 'ui_density' => AdminKit_Settings::get( 'ui_density' ), 'ui_radius' => AdminKit_Settings::get( 'ui_radius' ), 'ui_font' => AdminKit_Settings::get( 'ui_font' ) ),
 			// WaasKit custom-picker seed. The default accent uses native roles. The SPA seeds the swatch
 			// with this when source = 'adminkit' before getComputedStyle resolves.
 			'adminkitBlue' => AdminKit_Assets::ADMINKIT_BLUE,
@@ -380,6 +385,105 @@ class AdminKit_Settings_Page {
 			// Only populated on the Menu screen; empty elsewhere.
 			'menuManager'  => $menu_manager,
 			'i18n'         => array(
+				'foundationInvalidColor' => __( 'Use a hex color such as #1549ab.', 'adminkit' ),
+				'foundationSections' => __( 'Design foundations', 'adminkit' ),
+				'foundationIdentityHelp' => __( 'Choose your logos and where they appear.', 'adminkit' ),
+				'foundationColorsHelp' => __( 'Choose colors for light and dark. Custom subtly tints the neutrals. Manual colors take priority. Save to apply the complete palette.', 'adminkit' ),
+				'foundationTypeHelp' => __( 'A fluid type scale from small text to large headings. Edit the sample and adjust its scale.', 'adminkit' ),
+				'foundationShapesHelp' => __( 'Adjust the corner scale. Pill-shaped elements keep their own shape.', 'adminkit' ),
+				'foundationSpaceHelp' => __( 'Adjust the shared spacing scale.', 'adminkit' ),
+				'foundationSampleText' => __( 'Sample text', 'adminkit' ),
+				'foundationPangram' => __( 'The quick brown fox jumps over the lazy dog', 'adminkit' ),
+				'foundationWeight' => __( 'Weight', 'adminkit' ),
+				'foundationByRole' => __( 'By role', 'adminkit' ),
+				'foundationSystemFont' => __( 'System', 'adminkit' ),
+				'foundationFont' => __( 'Font family', 'adminkit' ),
+				'foundationReset' => __( 'Reset', 'adminkit' ),
+				'foundationBackground' => __( 'Background', 'adminkit' ),
+				'foundationSurface' => __( 'Surface', 'adminkit' ),
+				'foundationText' => __( 'Text', 'adminkit' ),
+				'foundationMuted' => __( 'Secondary text', 'adminkit' ),
+				'foundationBorder' => __( 'Border', 'adminkit' ),
+				'foundationAccent' => __( 'Accent', 'adminkit' ),
+				'foundationOnAccent' => __( 'Text on accent', 'adminkit' ),
+				'foundationSuccess' => __( 'Success', 'adminkit' ),
+				'foundationWarning' => __( 'Warning', 'adminkit' ),
+				'foundationDanger' => __( 'Error', 'adminkit' ),
+				'foundationInfo' => __( 'Information', 'adminkit' ),
+				'foundationPaletteReset' => __( 'Reset palette', 'adminkit' ),
+				'foundationInherited' => __( 'Inherited', 'adminkit' ),
+				'foundationCustom' => __( 'Customized', 'adminkit' ),
+				'foundationContrast' => __( 'Text / background contrast: %s:1', 'adminkit' ),
+				'foundationScope' => __( 'These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design.', 'adminkit' ),
+				'studioIdentity' => __( 'Identity', 'adminkit' ),
+				'studioColors' => __( 'Colors', 'adminkit' ),
+				'studioType' => __( 'Typography', 'adminkit' ),
+				'studioShapes' => __( 'Shapes & elevation', 'adminkit' ),
+				'studioSpacing' => __( 'Spacing', 'adminkit' ),
+				'studioIdentityHint' => __( 'Logos and where they appear.', 'adminkit' ),
+				'studioColorsHint' => __( 'Accent and light/dark appearance.', 'adminkit' ),
+				'studioTypeHint' => __( 'Font family and text scale.', 'adminkit' ),
+				'studioShapesHint' => __( 'Corner scale, outlines and depth.', 'adminkit' ),
+				'studioSpacingHint' => __( 'Density and breathing room between elements.', 'adminkit' ),
+				'studioScale' => __( 'Text scale', 'adminkit' ),
+				'studioRadiusScale' => __( 'Corner scale', 'adminkit' ),
+				'studioSpaceScale' => __( 'Spacing scale', 'adminkit' ),
+				'studioBorder' => __( 'Outline width', 'adminkit' ),
+				'studioElevation' => __( 'Elevation', 'adminkit' ),
+				'studioFlat' => __( 'Flat', 'adminkit' ),
+				'studioSubtle' => __( 'Subtle', 'adminkit' ),
+				'studioRaised' => __( 'Raised', 'adminkit' ),
+				'studioPreview' => __( 'Component workshop', 'adminkit' ),
+				'studioSample' => __( 'Sample content — preview only', 'adminkit' ),
+				'studioField' => __( 'Site name', 'adminkit' ),
+				'studioSecondary' => __( 'Secondary action', 'adminkit' ),
+				'studioAdvancedNote' => __( 'Advanced scales are saved with your design system and apply to this preview.', 'adminkit' ),
+				'studioJump' => __( 'View preview', 'adminkit' ),
+				'studioBack' => __( 'Back to settings', 'adminkit' ),
+				'studioReset' => __( 'Reset advanced scales', 'adminkit' ),
+				'featureHelp' => __( 'Details about %s', 'adminkit' ),
+				'technicalDetails' => __( 'Technical details', 'adminkit' ),
+				'storageTable' => __( 'Database table', 'adminkit' ),
+				'storageOption' => __( 'Option', 'adminkit' ),
+				'storageKey' => __( 'Setting key', 'adminkit' ),
+				'defaultValue' => __( 'Default value', 'adminkit' ),
+				'enabledState' => __( 'Enabled', 'adminkit' ),
+				'disabledState' => __( 'Disabled', 'adminkit' ),
+				'saveTiming' => __( 'This switch is stored only after you save changes. Opening this help does not write to the database.', 'adminkit' ),
+				'pluginInactive' => __( 'Plugin inactive', 'adminkit' ),
+				'samplePreview' => __( 'Illustrative preview', 'adminkit' ),
+				'sampleTitle' => __( 'Publication title', 'adminkit' ),
+				'sampleStatus' => __( 'Status', 'adminkit' ),
+				'samplePublished' => __( 'Published', 'adminkit' ),
+				'samplePublications' => __( 'Your publications', 'adminkit' ),
+				'noResults' => __( 'No results. Try another search term.', 'adminkit' ),
+				'overview' => __( 'Overview', 'adminkit' ),
+				'overviewIntro' => __( 'Your administration, at a glance. Configure its appearance and choose the tools your site needs.', 'adminkit' ),
+				'designSystem' => __( 'Design system', 'adminkit' ),
+				'designIntro' => __( 'Configure your identity and explore your interface foundations.', 'adminkit' ),
+				'appearancePresets' => __( 'Interface preferences', 'adminkit' ),
+				'density' => __( 'Density', 'adminkit' ),
+				'corners' => __( 'Corners', 'adminkit' ),
+				'typography' => __( 'Typography', 'adminkit' ),
+				'defaultPreset' => __( 'Default', 'adminkit' ),
+				'compact' => __( 'Compact', 'adminkit' ),
+				'comfortable' => __( 'Comfortable', 'adminkit' ),
+				'square' => __( 'Straight', 'adminkit' ),
+				'soft' => __( 'Soft', 'adminkit' ),
+				'humanist' => __( 'Humanist', 'adminkit' ),
+				'classic' => __( 'Classic', 'adminkit' ),
+				'activeFeatures' => __( 'Enabled features', 'adminkit' ),
+				'integrationSummary' => __( 'Supported plugins', 'adminkit' ),
+				'identitySummary' => __( 'Brand identity', 'adminkit' ),
+				'identityReady' => __( 'Custom logo configured', 'adminkit' ),
+				'identityDefault' => __( 'Using the site identity', 'adminkit' ),
+				'configureDesign' => __( 'Customize the interface', 'adminkit' ),
+				'configureFeatures' => __( 'Choose features', 'adminkit' ),
+				'configurePlugins' => __( 'Manage plugins', 'adminkit' ),
+				'siteSettings' => __( 'Site-wide settings', 'adminkit' ),
+				'details' => __( 'How it works', 'adminkit' ),
+				'overviewScope' => __( 'Design choices are shared across the site. Each user keeps their own light or dark mode preference when dark mode is enabled.', 'adminkit' ),
+
 				// Tab labels (the only three the SPA strip prints).
 				'dashboard'         => __( 'Dashboard', 'adminkit' ),
 				// "Features" matches the tab content (feature toggles like
@@ -439,6 +543,11 @@ class AdminKit_Settings_Page {
 				'enableAll'         => __( 'Enable all', 'adminkit' ),
 				'disableAll'        => __( 'Disable all', 'adminkit' ),
 				'resetDefaults'     => __( 'Reset to defaults', 'adminkit' ),
+				'filterFeatures'    => __( 'Filter features by status', 'adminkit' ),
+				'featuresFilterAll' => __( 'All features', 'adminkit' ),
+				'featuresFilterActive' => __( 'Active features', 'adminkit' ),
+				'featuresFilterInactive' => __( 'Inactive features', 'adminkit' ),
+				'featuresBulkScope' => __( 'These actions apply to all features, including those hidden by filters.', 'adminkit' ),
 				'searchFeatures'    => __( 'Search features…', 'adminkit' ),
 				'searchPlugins'     => __( 'Search plugins…', 'adminkit' ),
 				'pluginsIntro'      => __( 'Every plugin installed on your site, plus AdminKit\'s active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit\'s base styling automatically.', 'adminkit' ),
@@ -485,14 +594,13 @@ class AdminKit_Settings_Page {
 				// Bricks option only renders when the integration is connected.
 				'accentLabel'         => __( 'Brand color', 'adminkit' ),
 				'accentSrcMonochrome' => __( 'Monochrome', 'adminkit' ),
-				'accentSrcAdminKit'   => __( 'WaasKit blue', 'adminkit' ),
+				'accentSrcAdminKit'   => __( 'WordPress', 'adminkit' ),
 				'accentSrcBricks'     => __( 'Bricks', 'adminkit' ),
 				'accentSrcCustom'     => __( 'Custom', 'adminkit' ),
 				'displayLabel'        => __( 'Display', 'adminkit' ),
 
 				// "Display" row — segmented controls for Admin bar + Login screen.
-				'wpLogoLabel'       => __( 'WordPress', 'adminkit' ),
-				'loginLogoLabel'    => __( 'Login', 'adminkit' ),
+				'wpLogoLabel'       => __( 'WordPress administration', 'adminkit' ),
 				'wpLogoBrand'       => __( 'Logo', 'adminkit' ),
 				'wpLogoFavicon'     => __( 'Favicon', 'adminkit' ),
 
@@ -507,7 +615,7 @@ class AdminKit_Settings_Page {
 			),
 		);
 		if ( ! $is_main ) {
-			foreach ( array( 'logos', 'siteName', 'siteIcon', 'wpLogo', 'loginLogo', 'brandAccent', 'accentSource', 'adminkitBlue', 'bricksDetected', 'bricksConnected', 'bricksTokenCount', 'features', 'integrations' ) as $key ) {
+			foreach ( array( 'designSystem', 'settingsStorage', 'appearance', 'logos', 'siteName', 'siteIcon', 'wpLogo', 'loginLogo', 'brandAccent', 'accentSource', 'adminkitBlue', 'bricksDetected', 'bricksConnected', 'bricksTokenCount', 'features', 'integrations' ) as $key ) {
 				unset( $data[ $key ] );
 			}
 		}

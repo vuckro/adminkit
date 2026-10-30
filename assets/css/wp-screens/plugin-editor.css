@@ -66,7 +66,7 @@ body.adminkit:is(.plugin-editor-php, .theme-editor-php) .CodeMirror .CodeMirror-
 
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub {
 	border-bottom: 1px solid var(--ak-border);
-	margin-bottom: 12px;
+	margin-bottom: calc(12px * var(--ak-space-scale, 1));
 }
 
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) .file-error {
@@ -78,11 +78,11 @@ body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside {
  width: 280px;
 }
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside > h2 {
- padding: 12px 16px;
- font-size: 14px;
+ padding: calc(12px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
+ font-size: calc(14px * var(--ak-type-scale, 1));
 }
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside > ul {
- padding: 8px;
+ padding: calc(8px * var(--ak-space-scale, 1));
  border: 1px solid var(--ak-border);
  border-radius: var(--ak-radius-m);
 }
@@ -97,7 +97,7 @@ body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside .notice {
  color: inherit;
 }
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside li:not(.howto) a {
- padding: 8px 10px;
+ padding: calc(8px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1));
  border-radius: var(--ak-radius-s);
  overflow-wrap: anywhere;
 }
@@ -109,7 +109,7 @@ body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside a:hover {
  background: var(--ak-hover-bg);
 }
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) #template {
- margin-inline-end: 304px;
+ margin-inline-end: calc(304px * var(--ak-space-scale, 1));
 }
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) #template .CodeMirror {
  width: 100%;
@@ -122,23 +122,29 @@ body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub {
  flex-wrap: wrap;
  align-items: center;
  justify-content: space-between;
- gap: 16px;
- padding-block: 12px 20px;
- margin-bottom: 20px;
+ gap: calc(16px * var(--ak-space-scale, 1));
+ padding-block: calc(12px * var(--ak-space-scale, 1)) calc(20px * var(--ak-space-scale, 1));
+ margin-bottom: calc(20px * var(--ak-space-scale, 1));
 }
-body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub .alignright { float: none; }
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub .alignright {
+ float: none;
+ margin-inline-start: auto;
+}
+/* The native float clearer becomes a third flex item and reserves empty
+   space after the selector. Flex layout already handles clearing. */
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub > br.clear { display: none; }
 @media (max-width: 960px) {
- body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside { float: none; width: 100%; margin-bottom: 20px; }
+ body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside { float: none; width: 100%; margin-bottom: calc(20px * var(--ak-space-scale, 1)); }
  body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside > ul { height: auto; min-height: 0; max-height: 260px; }
  body.adminkit:is(.plugin-editor-php, .theme-editor-php) #template { margin-inline-end: 0; }
- body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub .alignright { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+ body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub .alignright { display: flex; flex-wrap: wrap; align-items: center; gap: calc(8px * var(--ak-space-scale, 1)); }
 }
 /* Core also reserves sidebar space on the editor's immediate wrapper. */
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) #template > div { margin-right: 0; }
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside .nonessential {
  color: var(--ak-text-muted);
  font-style: normal;
- font-size: 12px;
+ font-size: calc(12px * var(--ak-type-scale, 1));
 }
 @media (max-width: 960px) {
  body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub > form { min-width: 0; max-width: 100%; }

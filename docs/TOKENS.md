@@ -33,6 +33,11 @@ Sur le site public, `waaskit-toolbar-tokens.css` est généré avec les mêmes v
 
 Les alias se recalculent sur le même élément racine lorsque `data-adminkit-theme` change. Les variables générées n’imposent ni `prefers-color-scheme` ni préférence différente de celle d’AdminKit. Les contrôles natifs conservent leur densité WordPress ; les couleurs, polices et géométries suivent WaasKit.
 
+Le pont `wp-screens/wpds.css` couvre aussi les noms étendus `background` et
+`foreground` des pages admin-ui de l’éditeur de site. Ces valeurs natives étant
+définies en ligne, les rôles concernés les remplacent explicitement sur le
+provider, en desktop et mobile, sans cibler les classes générées de WordPress.
+
 ## Contrat de cascade
 
 - Les composants ne redéfinissent pas la palette globale : fonds `--ak-primary`, texte sur fond `--ak-on-accent`, liens et icônes d’accent `--ak-primary-text`.

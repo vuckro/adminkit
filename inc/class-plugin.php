@@ -33,6 +33,7 @@ class AdminKit_Plugin {
 		// Helpers — loaded for everyone, nothing to boot.
 		'class-screen.php'                                     => null,
 		'class-icons.php'                                      => null,
+		'class-design-system.php'                              => null,
 
 		// Core services + the settings system, in boot order.
 		'class-assets.php'                                     => 'AdminKit_Assets::init',
@@ -52,6 +53,7 @@ class AdminKit_Plugin {
 		'wp-core/class-list-table-chrome.php'                  => 'AdminKit_Core_List_Table_Chrome::init',
 		'wp-core/class-admin-bar.php'                          => 'AdminKit_Core_Admin_Bar::init',
 		'wp-core/class-options-general.php'                    => 'AdminKit_Core_Options_General::init',
+		'wp-core/class-reading-layout.php'                     => 'AdminKit_Core_Reading_Layout::init',
 		'wp-core/class-options-discussion.php'                 => 'AdminKit_Core_Options_Discussion::init',
 		'wp-core/class-post-previews.php'                      => 'AdminKit_Post_Previews::init',
 		'wp-core/class-user-quick-edit.php'                    => 'AdminKit_User_Quick_Edit::init',

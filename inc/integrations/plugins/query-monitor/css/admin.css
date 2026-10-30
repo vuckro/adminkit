@@ -17,6 +17,10 @@
    is handled by the bridge mirroring AdminKit's mode onto the panel data-theme. */
 
 #query-monitor-main {
+	--qm-font-default-face: var(--ak-font-body);
+	--qm-font-default-size: calc(12px * var(--ak-type-scale, 1));
+	--qm-font-code-face: var(--ak-font-mono);
+	--qm-font-code-size: calc(11px * var(--ak-type-scale, 1));
 	/* ── Accent ──────────────────────────────────────────────────────────────
 	   QM's WP-blue accent (fed by the fresh/modern scheme). Overriding the
 	   consumed var re-colours links, buttons, the selected menu item and SQL
@@ -105,7 +109,7 @@
 
 	/* ── SQL keywords → brand ────────────────────────────────────────────────
 	   Left on QM's own colours (code / data, like chart series): the SQL string
-	   value tint (--qm-sql-value-fg), the 8 timeline series, the fonts, and the
+	   value tint (--qm-sql-value-fg), the 8 timeline series and the
 	   easter-egg --qm-fabulous-gradient. The bridge's data-theme sync keeps the
 	   value tint resolving to AdminKit's mode. */
 	--qm-sql-keyword-fg: var(--ak-primary);

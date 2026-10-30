@@ -234,7 +234,7 @@ body.adminkit.nav-menus-php .menu-item-settings {
    strip doesn't sit flush against the last field. */
 body.adminkit.nav-menus-php .menu-item-actions {
 	border-top: 1px solid var(--ak-border);
-	margin-top: 10px;
+	margin-top: calc(10px * var(--ak-space-scale, 1));
 }
 
 /* The Bricks custom fields (.field-bricks-mega-menu, -multilevel)
@@ -242,7 +242,7 @@ body.adminkit.nav-menus-php .menu-item-actions {
    the same rhythm as native fields. */
 body.adminkit.nav-menus-php .field-bricks-mega-menu,
 body.adminkit.nav-menus-php .field-bricks-multilevel {
-	margin-top: 10px;
+	margin-top: calc(10px * var(--ak-space-scale, 1));
 }
 
 /* "Add menu items" sidebar (#side-sortables.accordion-container).

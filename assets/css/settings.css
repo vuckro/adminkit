@@ -13,10 +13,11 @@
 	.adminkit-app[data-screen="main"] .ak-rows {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 10px;
+		gap: calc(10px * var(--ak-space-scale, 1));
 		border: 0;
 		border-radius: 0;
 		background: transparent;
+		box-shadow: none;
 		overflow: visible;
 	}
 	.adminkit-app[data-screen="main"] .ak-rows .ak-row {
@@ -24,14 +25,15 @@
 		border: 1px solid var(--ak-card-border);
 		border-radius: var(--ak-card-radius);
 		background: var(--ak-card-bg);
-	}
+	box-shadow: var(--ak-card-shadow);
+}
 	.adminkit-app[data-screen="main"] .ak-rows .ak-row:first-child {
 		border-top: 1px solid var(--ak-card-border);
 	}
 	.adminkit-app[data-screen="main"] .ak-rows .ak-row:hover { background: var(--ak-elevated); }
 	.adminkit-app[data-screen="main"] .ak-rows .ak-row--child {
 		grid-column: 1 / -1;
-		padding-left: 16px;
+		padding-left: calc(16px * var(--ak-space-scale, 1));
 		border-left: 1px solid var(--ak-border-strong);
 	}
 	.adminkit-app[data-screen="main"] .ak-rows .ak-row--child::before { content: none; }
@@ -45,14 +47,14 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 16px;
-	padding: 9px 0 12px;
+	gap: calc(16px * var(--ak-space-scale, 1));
+	padding: calc(9px * var(--ak-space-scale, 1)) 0 calc(12px * var(--ak-space-scale, 1));
 }
 .adminkit-app .ak-title {
 	margin: 0;
 	padding: 0;
 	font-family: var(--ak-font-body);
-	font-size: 23px;
+	font-size: calc(23px * var(--ak-type-scale, 1));
 	font-weight: 400;
 	line-height: 1.3;
 	color: var(--ak-heading);
@@ -60,13 +62,13 @@
 .adminkit-app .ak-actions {
 	display: flex;
 	align-items: center;
-	gap: 14px;
+	gap: calc(14px * var(--ak-space-scale, 1));
 }
-.adminkit-app .ak-bulk { margin-bottom: 14px; }
+.adminkit-app .ak-bulk { margin-bottom: calc(14px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-status {
 	display: inline-flex;
 	align-items: center;
-	gap: 7px;
+	gap: calc(7px * var(--ak-space-scale, 1));
 	font-size: var(--ak-text-s);
 	color: var(--ak-text-muted);
 }
@@ -89,7 +91,7 @@
 	font-size: var(--ak-text-s);
 	font-weight: 500;
 	line-height: 1;
-	padding: 9px 18px;
+	padding: calc(9px * var(--ak-space-scale, 1)) calc(18px * var(--ak-space-scale, 1));
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-btn-bg);
@@ -110,25 +112,25 @@
 .adminkit-app .ak-btn[disabled]:hover {
 	background: var(--ak-surface-muted);
 	border-color: var(--ak-border);
-	color: var(--ak-text-disabled);
+	color: var(--ak-text-muted);
 	opacity: 1;
 	cursor: not-allowed;
 	box-shadow: none;
 }
 .adminkit-app .ak-panel[hidden] { display: none; }
 .adminkit-app .ak-intro {
-	margin: 0 0 20px;
+	margin: 0 0 calc(20px * var(--ak-space-scale, 1));
 	max-width: 62ch;
 	font-size: var(--ak-text-s);
 	line-height: 1.6;
 	color: var(--ak-text-muted);
 }
 
-.adminkit-app .ak-group { margin-bottom: 28px; }
+.adminkit-app .ak-group { margin-bottom: calc(28px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-group:last-child { margin-bottom: 0; }
 .adminkit-app .ak-group__title {
-	margin: 0 0 10px;
-	padding-left: 2px;
+	margin: 0 0 calc(10px * var(--ak-space-scale, 1));
+	padding-left: calc(2px * var(--ak-space-scale, 1));
 	font-size: var(--ak-text-xs);
 	font-weight: 600;
 	text-transform: uppercase;
@@ -136,7 +138,7 @@
 	color: var(--ak-text-muted);
 }
 .adminkit-app .ak-group__count {
-	margin-left: 8px;
+	margin-left: calc(8px * var(--ak-space-scale, 1));
 	vertical-align: middle;
 	text-transform: none;
 	letter-spacing: normal;
@@ -146,19 +148,20 @@
 	border-radius: var(--ak-card-radius);
 	background: var(--ak-card-bg);
 	overflow: hidden;
+	box-shadow: var(--ak-card-shadow);
 }
 .adminkit-app .ak-row {
 	display: flex;
 	align-items: center;
-	gap: 14px;
-	padding: 13px 16px;
+	gap: calc(14px * var(--ak-space-scale, 1));
+	padding: calc(13px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
 	border-top: 1px solid var(--ak-border);
 }
 .adminkit-app .ak-row:first-child { border-top: 0; }
 .adminkit-app .ak-row:hover { background: var(--ak-elevated); }
 .adminkit-app .ak-row--child {
 	position: relative;
-	padding-left: 38px;
+	padding-left: calc(38px * var(--ak-space-scale, 1));
 }
 .adminkit-app .ak-row--child::before {
 	content: "";
@@ -169,7 +172,7 @@
 	height: 50%;
 	border-left: 1.5px solid var(--ak-border-strong);
 	border-bottom: 1.5px solid var(--ak-border-strong);
-	border-bottom-left-radius: 6px;
+	border-bottom-left-radius: calc(6px * var(--ak-radius-scale, 1));
 	pointer-events: none;
 }
 .adminkit-app .ak-row.is-off .ak-row__main,
@@ -183,14 +186,14 @@
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 3px;
+	gap: calc(3px * var(--ak-space-scale, 1));
 }
 .adminkit-app .ak-row__label { font-size: var(--ak-text-s); font-weight: 500; color: var(--ak-heading); }
 .adminkit-app .ak-row__desc { font-size: var(--ak-text-xs); line-height: 1.5; color: var(--ak-text-muted); max-width: 54ch; }
 .adminkit-app .ak-row__head {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: calc(8px * var(--ak-space-scale, 1));
 	flex-wrap: wrap;
 }
 .adminkit-app .ak-switch {
@@ -228,7 +231,7 @@
 	width: 18px;
 	height: 18px;
 	border-radius: 50%;
-	background: var(--ak-text);
+	background: var(--ak-surface);
 	pointer-events: none;
 }
 .adminkit-app .ak-switch__input:checked ~ .ak-switch__track { background: var(--ak-primary); }
@@ -237,16 +240,17 @@
 .adminkit-app .ak-hero {
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 180px, 1fr ) );
-	gap: 1px;
+	gap: calc(1px * var(--ak-space-scale, 1));
 	border: 1px solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	background: var(--ak-card-border);
 	overflow: hidden;
+	box-shadow: var(--ak-card-shadow);
 }
 .adminkit-app .ak-badge {
 	display: inline-flex;
 	align-items: center;
-	padding: 2px 9px;
+	padding: calc(2px * var(--ak-space-scale, 1)) calc(9px * var(--ak-space-scale, 1));
 	font-size: var(--ak-text-xs);
 	font-weight: 600;
 	line-height: 1.6;
@@ -263,8 +267,8 @@
 .adminkit-app .ak-seg {
 	display: inline-flex;
 	margin-left: auto;
-	gap: 2px;
-	padding: 2px;
+	gap: calc(2px * var(--ak-space-scale, 1));
+	padding: calc(2px * var(--ak-space-scale, 1));
 	background: var(--ak-input-bg);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
@@ -280,8 +284,8 @@
 	cursor: pointer;
 	color: var(--ak-text-muted);
 	background: transparent;
-	padding: 5px 11px;
-	border-radius: calc(var(--ak-radius-s) - 2px);
+	padding: calc(5px * var(--ak-space-scale, 1)) calc(11px * var(--ak-space-scale, 1));
+	border-radius: max(0px, calc(var(--ak-radius-s) - 2px));
 }
 .adminkit-app .ak-seg__opt:hover { color: var(--ak-heading); background: var(--ak-hover-bg, var(--ak-elevated)); }
 .adminkit-app .ak-seg__opt:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
@@ -294,31 +298,32 @@
 	border: 1px solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	background: var(--ak-card-bg);
-	padding: 20px 24px;
-	margin-bottom: 16px;
+	padding: calc(20px * var(--ak-space-scale, 1)) calc(24px * var(--ak-space-scale, 1));
+	margin-bottom: calc(16px * var(--ak-space-scale, 1));
+	box-shadow: var(--ak-card-shadow);
 }
 .adminkit-app .ak-card__head {
 	display: flex;
 	align-items: flex-start;
-	gap: 12px;
-	margin-bottom: 16px;
+	gap: calc(12px * var(--ak-space-scale, 1));
+	margin-bottom: calc(16px * var(--ak-space-scale, 1));
 }
 .adminkit-app .ak-card__head-main { flex: 1; min-width: 0; }
 .adminkit-app .ak-card__title {
-	margin: 4px 0 0;
+	margin: calc(4px * var(--ak-space-scale, 1)) 0 0;
 	padding: 0;
-	font-size: 16px;
+	font-size: calc(16px * var(--ak-type-scale, 1));
 	font-weight: 600;
 	line-height: 1.3;
 	color: var(--ak-heading);
 }
 .adminkit-app .ak-card__status {
-	margin: 6px 0 0;
+	margin: calc(6px * var(--ak-space-scale, 1)) 0 0;
 	font-size: var(--ak-text-xs);
 	color: var(--ak-text-muted);
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
+	gap: calc(6px * var(--ak-space-scale, 1));
 }
 .adminkit-app .ak-card__status-dot {
 	width: 7px;
@@ -334,12 +339,12 @@
 	background: var(--ak-error, #d63638);
 }
 .adminkit-app .ak-card__status-count {
-	padding: 1px 7px;
+	padding: calc(1px * var(--ak-space-scale, 1)) calc(7px * var(--ak-space-scale, 1));
 	border-radius: var(--ak-radius-full, 999px);
 	background: var(--ak-elevated);
 	color: var(--ak-text-muted);
 	font-variant-numeric: tabular-nums;
-	font-size: 11px;
+	font-size: calc(11px * var(--ak-type-scale, 1));
 }
 
 @media screen and (max-width: 782px) {
@@ -354,7 +359,7 @@
 .adminkit-app[data-screen="menu"] .ak-panel--menu {
 	max-width: 1040px;
 }
-.adminkit-app .ak-btn--small { padding: 4px 10px; font-size: var(--ak-text-xs); }
+.adminkit-app .ak-btn--small { padding: calc(4px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1)); font-size: var(--ak-text-xs); }
 .adminkit-app .ak-btn--ghost {
 	background: transparent;
 	border-color: var(--ak-border);
@@ -364,11 +369,11 @@
 	color: var(--ak-text);
 	border-color: var(--ak-border-strong);
 }
-.adminkit-app .ak-search-wrap { margin-bottom: 14px; }
+.adminkit-app .ak-search-wrap { margin-bottom: calc(14px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-search-wrap .ak-search {
 	width: 100%;
 	box-sizing: border-box;
-	padding: 8px 12px;
+	padding: calc(8px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1));
 	background: var(--ak-input-bg);
 	color: var(--ak-text);
 	border: 1px solid var(--ak-border);
@@ -379,4 +384,33 @@
 	outline: none;
 	border-color: var(--ak-primary);
 	box-shadow: var(--ak-focus-ring);
+}
+
+/* One shared save action for settings and navigation editors. */
+.adminkit-app .ak-savebar {
+	position: sticky;
+	bottom: 0;
+	z-index: 20;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: calc(20px * var(--ak-space-scale, 1));
+	padding: calc(16px * var(--ak-space-scale, 1)) 0;
+	margin-top: calc(32px * var(--ak-space-scale, 1));
+	border-top: 1px solid var(--ak-border);
+	background: var(--ak-bg);
+}
+/* Match native settings submit sizing in both enabled and disabled states. */
+.adminkit-app .ak-savebar .ak-btn {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ box-sizing: border-box;
+ min-height: 40px;
+ padding: 0 calc(18px * var(--ak-space-scale, 1));
+ line-height: 1.4;
+}
+@media (max-width: 600px) {
+	.adminkit-app .ak-savebar { gap: calc(12px * var(--ak-space-scale, 1)); flex-wrap: wrap; }
+	.adminkit-app .ak-savebar .ak-btn { min-height: 44px; }
 }

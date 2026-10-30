@@ -190,7 +190,7 @@ body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
 	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar {
 		border-top: 1px solid var( --ak-border );
 		border-left: 1px solid var( --ak-border );
-		border-top-left-radius: 18px;
+		border-top-left-radius: calc(18px * var(--ak-radius-scale, 1));
 	}
 }
 
@@ -206,8 +206,8 @@ body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm-app {
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_page_header,
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_company_contacts_wrap,
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_edit_campaign_steps_wrapper {
-	padding-left: 20px;
-	padding-right: 20px;
+	padding-left: calc(20px * var(--ak-space-scale, 1));
+	padding-right: calc(20px * var(--ak-space-scale, 1));
 }
 /* The contacts rich area already pads 0 20px — zero it so the parent gutter above
    doesn't double up to 40px. */
@@ -219,7 +219,7 @@ body.adminkit.toplevel_page_fluentcrm-admin .fcrm_company_contacts_wrap .fcrm_ri
 /* Subscriber profile isn't in the gutter group above, so it ran flush to the
    panel's left edge — add the same left gutter so it lines up with the rest. */
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_profile_wrapper {
-	padding-left: 20px;
+	padding-left: calc(20px * var(--ak-space-scale, 1));
 }
 
 /* "Additional Information" sidebar card — its empty-state box ships a hard light
@@ -304,7 +304,7 @@ body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a:focus {
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a::after {
 	content: var( --ak-wordmark, "CRM" );
 	color: var( --ak-heading );
-	font-size: 18px;
+	font-size: calc(18px * var(--ak-type-scale, 1));
 	font-weight: 700;
 	letter-spacing: 0.01em;
 }

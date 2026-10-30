@@ -242,7 +242,7 @@ body.adminkit #bricks-settings .bricks-custom-capabilities-wrapper .capability-i
    16px rhythm as every other AdminKit nav strip. Bricks ships its own tab
    icons, so we no longer inject any. */
 body.adminkit #bricks-settings-tabs-wrapper {
-	margin: 16px 0;
+	margin: calc(16px * var(--ak-space-scale, 1)) 0;
 }
 
 /* Settings-tab icons — REMOVED. AdminKit used to inject a masked SVG icon in
@@ -337,7 +337,7 @@ body.adminkit .wp-list-table.elements .element-status span {
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	cursor: pointer;
-	padding: 3px 8px;
+	padding: calc(3px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
 	transition: none;
 }
 
@@ -562,8 +562,8 @@ body.adminkit #bricks-settings #tab-custom-code tr.code-note {
 	border-top-color: var(--ak-border);
 }
 body.adminkit #bricks-settings #tab-custom-code tr.code-note td {
-	padding: 12px 20px;
+	padding: calc(12px * var(--ak-space-scale, 1)) calc(20px * var(--ak-space-scale, 1));
 	background-color: var(--ak-surface);
 	color: var(--ak-text-muted);
-	font-size: 13px;
+	font-size: calc(13px * var(--ak-type-scale, 1));
 }

@@ -4,6 +4,16 @@
    (.media-modal, .media-frame, .attachment, …) or the .upload-php body
    class, so the file is inert on pages without media UI. */
 
+/* Copy feedback inherits the action wrapper's zero-size separator text.
+   Restore its label while leaving WordPress in charge of .hidden. */
+body.adminkit .media .row-actions .copy-to-clipboard-container .success {
+	font-size: var(--ak-text-xs);
+	line-height: 1.6;
+	background: var(--ak-text);
+	color: var(--ak-surface);
+	border-radius: var(--ak-radius-s);
+}
+
 body.adminkit .attachments-browser .attachment .attachment-preview {
 	border-radius: var(--ak-radius-s);
 	overflow: hidden;
@@ -106,7 +116,7 @@ body.adminkit.upload-php .media-toolbar {
 	background: var(--ak-card-bg);
 	border: 1px solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
-	padding: 12px 16px;
+	padding: calc(12px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
 }
 
 body.adminkit.upload-php .wp-filter .attachment-filters,
@@ -136,7 +146,7 @@ body.adminkit.upload-php .media-sidebar {
 body.adminkit.upload-php .media-sidebar .attachment-details h2 {
 	color: var(--ak-heading);
 	border-bottom: 1px solid var(--ak-border);
-	padding-bottom: 8px;
+	padding-bottom: calc(8px * var(--ak-space-scale, 1));
 }
 
 /* View-switch (list / grid toggle above upload.php). WP defaults paint
@@ -361,7 +371,7 @@ body.adminkit .media-modal :is(.instructions, .suggested-dimensions, .upload-ins
 }
 
 /* Separate the media view/filter toolbar from the list action card. */
-body.adminkit.upload-php .wp-filter { margin-bottom: 16px; }
-body.adminkit.upload-php .ak-table-card { margin-top: 16px; }
+body.adminkit.upload-php .wp-filter { margin-bottom: calc(16px * var(--ak-space-scale, 1)); }
+body.adminkit.upload-php .ak-table-card { margin-top: calc(16px * var(--ak-space-scale, 1)); }
 /* File names are secondary content, but must retain readable contrast. */
 body.adminkit.upload-php .wp-list-table .filename { color: var(--ak-text-muted); }

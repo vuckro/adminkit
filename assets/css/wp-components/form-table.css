@@ -13,28 +13,28 @@
 /* Form section headings (each `<h2>` inside a settings `<form>`) */
 body.adminkit .wrap > form > h2 {
 	color: var(--ak-heading);
-	font-size: 16px;
+	font-size: calc(16px * var(--ak-type-scale, 1));
 	font-weight: 600;
-	margin-top: 32px;
-	margin-bottom: 8px;
-	padding-bottom: 8px;
+	margin-top: calc(32px * var(--ak-space-scale, 1));
+	margin-bottom: calc(8px * var(--ak-space-scale, 1));
+	padding-bottom: calc(8px * var(--ak-space-scale, 1));
 	border-bottom: 1px solid var(--ak-border);
 }
 
 body.adminkit .wrap > form > h2:first-of-type {
-	margin-top: 16px;
+	margin-top: calc(16px * var(--ak-space-scale, 1));
 }
 
 /* `.form-table` rhythm — label column width, vertical alignment */
 body.adminkit .form-table {
-	margin-top: 8px;
+	margin-top: calc(8px * var(--ak-space-scale, 1));
 	border-collapse: separate;
 	border-spacing: 0;
 }
 
 body.adminkit .form-table > tbody > tr > th,
 body.adminkit .form-table > tbody > tr > td {
-	padding: 12px 16px 12px 0;
+	padding: calc(12px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)) 0;
 	vertical-align: top;
 }
 
@@ -58,7 +58,7 @@ body.adminkit .form-wrap label {
 body.adminkit .form-table td p.description {
 	color: var(--ak-text-muted);
 	font-size: var(--ak-text-xs);
-	margin-top: 6px;
+	margin-top: calc(6px * var(--ak-space-scale, 1));
 }
 
 /* Generic helper text — bare `p.description` and `.form-wrap` body
@@ -79,8 +79,43 @@ body.adminkit .form-table input[type="password"] {
 
 /* Submit row padding (used by every settings form) */
 body.adminkit p.submit {
-	padding-top: 24px;
+	padding-top: calc(24px * var(--ak-space-scale, 1));
 	margin-top: 0;
+}
+
+/* One save-row convention for native settings and account forms. Scope to
+   owned screens so plugin actions, bulk actions and editor toolbars keep
+   their own layout. Inline-size follows each form's existing width. */
+body.adminkit:is(.options-general-php, .options-writing-php, .options-reading-php,
+ .options-discussion-php, .options-media-php, .options-permalink-php,
+ .profile-php, .user-edit-php, .user-new-php)
+ :is(.wrap > form, #your-profile, #createuser) > .submit {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--ak-space-s);
+	margin-top: calc(28px * var(--ak-space-scale, 1));
+	padding-top: calc(20px * var(--ak-space-scale, 1));
+	border-top: 1px solid var(--ak-border);
+}
+
+body.adminkit:is(.options-general-php, .options-writing-php, .options-reading-php,
+ .options-discussion-php, .options-media-php, .options-permalink-php,
+ .profile-php, .user-edit-php, .user-new-php)
+ :is(.wrap > form, #your-profile, #createuser) > .submit .button-primary {
+	min-height: 40px;
+	padding-inline: calc(18px * var(--ak-space-scale, 1));
+}
+
+@media (max-width: 600px) {
+	body.adminkit:is(.options-general-php, .options-writing-php, .options-reading-php,
+	 .options-discussion-php, .options-media-php, .options-permalink-php,
+	 .profile-php, .user-edit-php, .user-new-php)
+	 :is(.wrap > form, #your-profile, #createuser) > .submit .button-primary {
+		width: 100%;
+		min-height: var(--ak-control-height-touch);
+	}
 }
 
 /* Mobile (≤782px) — WP core stacks `.form-table` cells to full width here, but
@@ -96,11 +131,11 @@ body.adminkit p.submit {
 	body.adminkit .form-table > tbody > tr > td {
 		display: block;
 		width: auto;
-		padding: 4px 0;
+		padding: calc(4px * var(--ak-space-scale, 1)) 0;
 	}
 	body.adminkit .form-table > tbody > tr > th {
-		padding-top: 12px;
-		padding-bottom: 4px;
+		padding-top: calc(12px * var(--ak-space-scale, 1));
+		padding-bottom: calc(4px * var(--ak-space-scale, 1));
 	}
 	body.adminkit .form-table input.regular-text,
 	body.adminkit .form-table input[type="text"],

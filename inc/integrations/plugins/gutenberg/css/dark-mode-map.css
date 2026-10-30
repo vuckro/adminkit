@@ -35,9 +35,23 @@ body.block-editor-page.adminkit .interface-interface-skeleton__footer {
 
 /* ========== 2. Document bar (centered title bar, v15+) ========== */
 body.block-editor-page.adminkit .editor-document-bar {
-	background: var(--ak-elevated);
+	background: var(--ak-surface-muted);
 	border-color: var(--ak-border);
+	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .editor-document-bar:hover,
+body.block-editor-page.adminkit .editor-document-bar:focus-within {
+	background: var(--ak-hover-bg);
+}
+
+body.block-editor-page.adminkit .editor-document-bar .components-button {
+	border-radius: var(--ak-radius-s);
+}
+
+body.block-editor-page.adminkit .editor-document-bar .components-button:focus-visible {
+	box-shadow: var(--ak-focus-ring);
 }
 
 body.block-editor-page.adminkit .editor-document-bar__title,
@@ -53,6 +67,73 @@ body.block-editor-page.adminkit .editor-document-bar .components-button:hover:no
 	border-radius: var(--ak-radius-s);
 }
 
+
+/* Command palette: core hardcodes dark labels, white selection text and a
+   light divider. Keep the search row integrated with the dialog surface. */
+body.block-editor-page.adminkit .commands-command-menu {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-radius: var(--ak-radius-m);
+}
+
+body.block-editor-page.adminkit .commands-command-menu__header {
+	padding-block: calc(8px * var(--ak-space-scale, 1));
+	color: var(--ak-icon);
+}
+
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-input] {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-input]::placeholder {
+	color: var(--ak-text-muted);
+	opacity: 1;
+}
+
+body.block-editor-page.adminkit .commands-command-menu__header:focus-within {
+	box-shadow: inset 0 -2px var(--ak-focus);
+}
+
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-root] > [cmdk-list] {
+	border-color: var(--ak-border);
+}
+
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-group-heading],
+body.block-editor-page.adminkit .commands-command-menu__item-category {
+	color: var(--ak-text-muted);
+}
+
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-empty],
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-item] {
+	color: var(--ak-text);
+}
+
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-item] > div {
+	border-radius: var(--ak-radius-s);
+}
+
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-item][aria-selected="true"] > div,
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-item]:active > div {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary-text);
+}
+
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-item] svg {
+	fill: currentColor;
+}
+
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-item][aria-selected="true"] .commands-command-menu__item-category,
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-item]:active .commands-command-menu__item-category {
+	color: var(--ak-primary-text);
+}
+
+body.block-editor-page.adminkit .commands-command-menu__container [cmdk-item][aria-disabled="true"] {
+	color: var(--ak-text-disabled);
+}
 
 /* ========== 3. Sidebar internals ========== */
 /* Outer surface set in editor.css; headings + tab strip here. */
@@ -566,14 +647,14 @@ body.block-editor-page.adminkit .editor-post-card-panel,
 body.block-editor-page.adminkit .editor-post-featured-image,
 body.block-editor-page.adminkit .editor-post-last-edited-panel {
 	border-bottom: 1px solid var(--ak-border);
-	padding-bottom: 12px;
-	margin-bottom: 4px;
+	padding-bottom: calc(12px * var(--ak-space-scale, 1));
+	margin-bottom: calc(4px * var(--ak-space-scale, 1));
 }
 
 body.block-editor-page.adminkit .editor-post-panel__row + .editor-post-panel__row {
 	border-top: 1px solid var(--ak-border);
-	padding-top: 8px;
-	margin-top: 8px;
+	padding-top: calc(8px * var(--ak-space-scale, 1));
+	margin-top: calc(8px * var(--ak-space-scale, 1));
 }
 
 body.block-editor-page.adminkit .editor-post-card-panel__title-name {
@@ -760,10 +841,8 @@ body.block-editor-page.adminkit .components-border-control__style-button[aria-pr
 
 
 /* ========== 25. Featured image upload area ========== */
-/* WP default puts a dashed light-gray border on the container/toggle
-   which clashed with the dark sidebar. Drop the border entirely —
-   the --ak-surface slab + radius alone defines the upload target
-   against --ak-surface. */
+/* Keep the preview wrapper neutral; give the empty upload button its own
+   surface and outline so it remains discoverable against the sidebar. */
 body.block-editor-page.adminkit .editor-post-featured-image__container,
 body.block-editor-page.adminkit .editor-post-featured-image__toggle {
 	background: var(--ak-surface);
@@ -772,10 +851,20 @@ body.block-editor-page.adminkit .editor-post-featured-image__toggle {
 	border-radius: var(--ak-radius-s);
 }
 
+body.block-editor-page.adminkit .editor-post-featured-image__toggle {
+	background: var(--ak-elevated);
+	box-shadow: inset 0 0 0 1px var(--ak-border-strong);
+}
+
 body.block-editor-page.adminkit .editor-post-featured-image__toggle:hover,
 body.block-editor-page.adminkit .editor-post-featured-image__toggle:focus {
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
+	box-shadow: inset 0 0 0 1px var(--ak-btn-hover-border);
+}
+
+body.block-editor-page.adminkit .editor-post-featured-image__toggle:focus-visible {
+	box-shadow: inset 0 0 0 1px var(--ak-btn-hover-border), var(--ak-focus-ring);
 }
 
 body.block-editor-page.adminkit .components-drop-zone__content {

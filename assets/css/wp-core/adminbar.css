@@ -162,7 +162,7 @@
 	#wpadminbar #wp-admin-bar-my-account.with-avatar > a img {
 		width: auto;
 		height: 24px;
-		margin-top: -6px;
+		margin-top: calc(-6px * var(--ak-space-scale, 1));
 		/* WP core paints `border:1px solid #8c8f94; background:#f0f0f1` on this exact
 		   selector (2,1,2). The radius rule above is only (1,1,2), so core's frame won
 		   — kill it here at matching specificity (we load after core). */
@@ -320,7 +320,7 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 	box-sizing: border-box;
 	width: 28px;
 	height: 24px;
-	padding: 0 8px 0 26px;
+	padding: 0 calc(8px * var(--ak-space-scale, 1)) 0 calc(26px * var(--ak-space-scale, 1));
 	background-color: transparent;
 	border: 1px solid transparent;
 	border-radius: var(--ak-radius-s);

@@ -31,7 +31,7 @@
 	});
 	app.textContent = '';
 	app.removeAttribute('aria-busy');
-	var actions = [statusEl];
+	var actions = [];
 	if (screen === 'main') {
 		var input = el('input', {
 			type: 'file',
@@ -65,9 +65,6 @@
 			}),
 			input
 		);
-	}
-	if (surface.request) {
-		actions.push(saveBtn);
 	}
 	app.appendChild(
 		el('div', { class: 'ak-head' }, [
@@ -134,6 +131,9 @@
 		applyHash();
 	}
 	app.appendChild(panelWrap);
+	if (surface.request) {
+		app.appendChild(el('div', { class: 'ak-savebar' }, [statusEl, saveBtn]));
+	}
 	updateBar();
 
 	function go(id) {
@@ -158,6 +158,7 @@
 		);
 	}
 	function selectTab(id) {
+		if (surface.onSelect) { surface.onSelect(id); }
 		tabs.forEach(function (tab) {
 			var selected = tab.id === id;
 			if (selected && !tab.built) {
@@ -228,6 +229,14 @@
 		}
 		if (!apiFetch) {
 			setStatus('is-error', I.error);
+			return;
+		}
+		var invalid = app.querySelector('[aria-invalid="true"]');
+		if (invalid) {
+			setStatus('is-error', I.foundationInvalidColor || I.error);
+			var panel = invalid.closest('[role="tabpanel"][hidden]');
+			if (panel) { var tab = document.getElementById(panel.getAttribute('aria-labelledby')); if (tab) { tab.click(); } }
+			invalid.focus();
 			return;
 		}
 		var request = surface.request();

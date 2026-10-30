@@ -42,10 +42,10 @@ body.adminkit.profile-php .ak-profile-header {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: 12px;
+	gap: calc(12px * var(--ak-space-scale, 1));
 	width: 100%;
 	max-width: 960px;
-	margin: 2px 0 10px;
+	margin: calc(2px * var(--ak-space-scale, 1)) 0 calc(10px * var(--ak-space-scale, 1));
 }
 
 body.adminkit.user-edit-php .ak-profile-header > h1,
@@ -78,7 +78,7 @@ body.adminkit.user-edit-php .user-profile-picture td,
 body.adminkit.profile-php .user-profile-picture td {
 	display: inline-flex;
 	align-items: center;
-	gap: 10px;
+	gap: calc(10px * var(--ak-space-scale, 1));
 }
 
 body.adminkit.user-edit-php .ak-profile-picture-hero__content p,
@@ -93,7 +93,7 @@ body.adminkit.profile-php .ak-profile-picture-hero__content > :not(img) {
 
 body.adminkit.user-edit-php .ak-profile-picture-hero__content .description,
 body.adminkit.profile-php .ak-profile-picture-hero__content .description {
-	margin-top: 4px;
+	margin-top: calc(4px * var(--ak-space-scale, 1));
 }
 
 body.adminkit.user-edit-php .ak-profile-picture-hero__content img,
@@ -113,7 +113,7 @@ body.adminkit .color-option {
 	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
-	padding: 8px;
+	padding: calc(8px * var(--ak-space-scale, 1));
 }
 
 body.adminkit .color-option.selected {
@@ -127,35 +127,62 @@ body.adminkit:is(.user-edit-php, .profile-php, .user-new-php) :is(#your-profile,
 	box-shadow: var(--ak-focus-ring);
 }
 
-/* Password strength meter (Add User / profile / user-edit). WP paints light
-   pastel state backgrounds (#b8e6bf strong, #f5e6ab good, #f1adad short) that
-   glare on dark surfaces. Route each state to a subtle token tint + semantic
-   border, and give the box a little breathing room above the field. */
+/* Compact WaasKit alert: neutral surface and border, semantic icon tile.
+   Keep WordPress text and live-region updates as the source of state. */
 body.adminkit #pass-strength-result {
-	margin-top: 8px;
-	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	background-color: var(--ak-surface);
-	color: var(--ak-text);
+ --ak-strength-ink: var(--ak-info);
+ --ak-strength-soft: var(--ak-info-subtle);
+ position: relative;
+ box-sizing: border-box;
+ min-height: 48px;
+ margin-top: calc(8px * var(--ak-space-scale, 1));
+ padding: calc(12px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)) calc(52px * var(--ak-space-scale, 1));
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-m);
+ background: var(--ak-surface);
+ color: var(--ak-text);
+ text-align: start;
+ font-size: var(--ak-text-xs);
+ font-weight: 600;
+ line-height: 1.5;
 }
-
-body.adminkit #pass-strength-result.short,
-body.adminkit #pass-strength-result.bad {
-	background-color: var(--ak-error-subtle);
-	border-color: var(--ak-error);
-	color: var(--ak-text);
+body.adminkit #pass-strength-result::before {
+ content: "";
+ position: absolute;
+ inset-inline-start: 10px;
+ top: 50%;
+ transform: translateY(-50%);
+ width: 30px;
+ height: 30px;
+ background: var(--ak-strength-soft);
+ border-radius: var(--ak-radius-s);
 }
-
+body.adminkit #pass-strength-result::after {
+ content: "";
+ position: absolute;
+ inset-inline-start: 17px;
+ top: 50%;
+ transform: translateY(-50%);
+ width: 16px;
+ height: 16px;
+ background: var(--ak-strength-ink);
+ mask: var(--ak-strength-icon) center / contain no-repeat;
+}
+body.adminkit #pass-strength-result {
+ --ak-strength-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 8v5m0 3h.01'/%3E%3C/svg%3E");
+}
+body.adminkit #pass-strength-result:is(.short, .bad) {
+ --ak-strength-ink: var(--ak-error);
+ --ak-strength-soft: var(--ak-error-subtle);
+}
 body.adminkit #pass-strength-result.good {
-	background-color: color-mix(in srgb, var(--ak-warning) 18%, var(--ak-surface));
-	border-color: var(--ak-warning);
-	color: var(--ak-text);
+ --ak-strength-ink: var(--ak-warning);
+ --ak-strength-soft: var(--ak-warning-subtle);
 }
-
 body.adminkit #pass-strength-result.strong {
-	background-color: color-mix(in srgb, var(--ak-success) 18%, var(--ak-surface));
-	border-color: var(--ak-success);
-	color: var(--ak-text);
+ --ak-strength-ink: var(--ak-success);
+ --ak-strength-soft: var(--ak-success-subtle);
+ --ak-strength-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='m8 12 3 3 5-6'/%3E%3C/svg%3E");
 }
 
 /* Align the password tools to the 320px text-input width
@@ -171,7 +198,7 @@ body.adminkit #pass-strength-result {
 body.adminkit .wp-pwd {
 	display: flex;
 	align-items: flex-start;
-	gap: 8px;
+	gap: calc(8px * var(--ak-space-scale, 1));
 }
 
 body.adminkit .wp-pwd .password-input-wrapper {
@@ -195,7 +222,7 @@ body.adminkit .wp-pwd input#pass1 {
    the form shows in full. A `load`-time safety in the bootstrap also force-
    reveals if the script throws, so content is never trapped hidden.
    visibility (not display:none) keeps layout measurable during the build — no
-   reflow jump on reveal; opacity adds a soft fade. */
+   reflow jump on reveal. The finished layout appears without a fade. */
 html.ak-account-pending #your-profile,
 html.ak-account-pending #createuser {
 	visibility: hidden;
@@ -206,14 +233,6 @@ html.ak-account-ready #your-profile,
 html.ak-account-ready #createuser {
 	visibility: visible;
 	opacity: 1;
-	transition: opacity .12s ease;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	html.ak-account-ready #your-profile,
-	html.ak-account-ready #createuser {
-		transition: none;
-	}
 }
 
 /* --- Account screen: horizontal tabs, one panel at a time ----------------
@@ -239,7 +258,8 @@ body.adminkit .ak-card {
 	background: var(--ak-card-bg);
 	border: 1px solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
-	padding: 22px 24px;
+	padding: calc(22px * var(--ak-space-scale, 1)) calc(24px * var(--ak-space-scale, 1));
+	box-shadow: var(--ak-card-shadow);
 }
 
 /* Two cards on the same tab (e.g. Settings → curated card + the "Other
@@ -254,7 +274,7 @@ body.adminkit .ak-card {
    1st tab's card — the gap differed per tab. Gating on a VISIBLE predecessor
    keeps the 16px only between two cards genuinely shown together. */
 body.adminkit .ak-card:not([hidden]) + .ak-card {
-	margin-top: 16px;
+	margin-top: calc(16px * var(--ak-space-scale, 1));
 }
 
 body.adminkit .ak-card[hidden] {
@@ -262,19 +282,19 @@ body.adminkit .ak-card[hidden] {
 }
 
 body.adminkit .ak-card-head {
-	margin-bottom: 18px;
+	margin-bottom: calc(18px * var(--ak-space-scale, 1));
 }
 
 body.adminkit .ak-card-head h2 {
 	margin: 0;
-	font-size: 16px;
+	font-size: calc(16px * var(--ak-type-scale, 1));
 	font-weight: 600;
 	letter-spacing: -0.01em;
 	color: var(--ak-heading);
 }
 
 body.adminkit .ak-card-desc {
-	margin: 3px 0 0;
+	margin: calc(3px * var(--ak-space-scale, 1)) 0 0;
 	font-size: var(--ak-text-xs);
 	color: var(--ak-text-muted);
 }
@@ -300,7 +320,7 @@ body.adminkit .ak-card.ak-grid .form-table > tbody {
 	/* 6 columns = LCM(2, 3): supports both .ak-half (span 3 → 1/2) and
 	   .ak-third (span 2 → 1/3) without changing the rest of the grid. */
 	grid-template-columns: repeat(6, minmax(0, 1fr));
-	gap: 16px 20px;
+	gap: calc(16px * var(--ak-space-scale, 1)) calc(20px * var(--ak-space-scale, 1));
 }
 
 body.adminkit .ak-card.ak-grid .form-table > tbody > tr {
@@ -325,7 +345,7 @@ body.adminkit .ak-card.ak-grid .form-table > tbody > tr > td {
 }
 
 body.adminkit .ak-card.ak-grid .form-table > tbody > tr > th {
-	margin-bottom: 6px;
+	margin-bottom: calc(6px * var(--ak-space-scale, 1));
 	color: var(--ak-text);
 	font-weight: 600;
 	font-size: var(--ak-text-xs);
@@ -344,7 +364,7 @@ body.adminkit .ak-card.ak-grid .description {
    broke vertical alignment with the paired half-width rows above. */
 body.adminkit .ak-card.ak-grid .user-user-login-wrap td > .description {
 	display: block;
-	margin-top: 6px;
+	margin-top: calc(6px * var(--ak-space-scale, 1));
 }
 
 /* Inline hint that lives inside the <label> ("(required)" / "(nécessaire)"
@@ -352,9 +372,9 @@ body.adminkit .ak-card.ak-grid .user-user-login-wrap td > .description {
    next to the field name, muted, so the label stays on one line. */
 body.adminkit .ak-card.ak-grid .form-table th label > .description {
 	display: inline;
-	margin: 0 0 0 2px;
+	margin: 0 0 0 calc(2px * var(--ak-space-scale, 1));
 	font-weight: normal;
-	font-size: 11px;
+	font-size: calc(11px * var(--ak-type-scale, 1));
 	color: var(--ak-text-muted);
 }
 
@@ -399,8 +419,8 @@ body.adminkit #createuser .ak-card.ak-grid .form-table textarea {
 /* Sub-heading for a secondary section folded into a panel (e.g. Application
    Passwords inside Sécurité) — a divider + label, no extra container. */
 body.adminkit .ak-card-sub {
-	margin: 22px 0 12px;
-	padding-top: 16px;
+	margin: calc(22px * var(--ak-space-scale, 1)) 0 calc(12px * var(--ak-space-scale, 1));
+	padding-top: calc(16px * var(--ak-space-scale, 1));
 	border-top: 1px solid var(--ak-border);
 	font-size: var(--ak-text-m);
 	font-weight: 600;
@@ -419,9 +439,9 @@ body.adminkit .ak-card-sub:first-child {
 body.adminkit .ak-subsection > summary {
 	display: flex;
 	align-items: center;
-	gap: 10px;
+	gap: calc(10px * var(--ak-space-scale, 1));
 	margin: 0;
-	padding: 16px 0 12px;
+	padding: calc(16px * var(--ak-space-scale, 1)) 0 calc(12px * var(--ak-space-scale, 1));
 	border-top: 1px solid var(--ak-border);
 	font-size: var(--ak-text-m);
 	font-weight: 600;
@@ -461,7 +481,7 @@ body.adminkit .ak-subsection[open] > summary::after {
 }
 
 body.adminkit .ak-subsection > .form-table {
-	margin: 0 0 14px;
+	margin: 0 0 calc(14px * var(--ak-space-scale, 1));
 }
 
 /* Application Password creation form inside Settings:
@@ -469,8 +489,8 @@ body.adminkit .ak-subsection > .form-table {
 body.adminkit #application-passwords-section .create-application-password {
 	display: grid;
 	grid-template-columns: 240px minmax(0, 1fr);
-	column-gap: 16px;
-	row-gap: 12px;
+	column-gap: calc(16px * var(--ak-space-scale, 1));
+	row-gap: calc(12px * var(--ak-space-scale, 1));
 	align-items: start;
 	max-width: none;
 }
@@ -478,8 +498,8 @@ body.adminkit #application-passwords-section .create-application-password {
 body.adminkit #application-passwords-section .create-application-password .form-field {
 	display: grid;
 	grid-template-columns: 240px minmax(0, 1fr);
-	column-gap: 16px;
-	row-gap: 10px;
+	column-gap: calc(16px * var(--ak-space-scale, 1));
+	row-gap: calc(10px * var(--ak-space-scale, 1));
 	grid-column: 1 / -1;
 	margin: 0;
 	max-width: none;
@@ -513,7 +533,7 @@ body.adminkit #application-passwords-section .create-application-password #do_ne
 	grid-column: 2;
 	justify-self: start;
 	min-height: 40px;
-	padding: 0 16px;
+	padding: 0 calc(16px * var(--ak-space-scale, 1));
 }
 
 @media (max-width: 782px) {
@@ -533,7 +553,7 @@ body.adminkit #application-passwords-section .create-application-password #do_ne
 	body.adminkit .ak-account > .page-title-action {
 		display: block;
 		width: 100%;
-		margin-top: 16px;
+		margin-top: calc(16px * var(--ak-space-scale, 1));
 		text-align: center;
 	}
 
@@ -555,4 +575,179 @@ body.adminkit #application-passwords-section .create-application-password #do_ne
 		grid-column: 1;
 		grid-row: auto;
 	}
+}
+
+/* Profile and account creation: identity/contact and security share one tabpanel.
+   The wrapper has no surface; each sibling card owns its own border. */
+/* Native .wrap gutters own the page inset. Only the form limits its width. */
+body.adminkit :is(#your-profile, #createuser).ak-profile-workspace {
+ max-width: 1240px;
+}
+body.adminkit .ak-profile-workspace .ak-account {
+ max-width: none;
+}
+body.adminkit .ak-profile-workspace .ak-information-layout {
+ display: grid;
+ grid-template-columns: minmax(0, 2fr) minmax(290px, 1fr);
+ gap: calc(20px * var(--ak-space-scale, 1));
+ align-items: start;
+}
+body.adminkit .ak-profile-workspace .ak-information-layout[hidden] {
+ display: none;
+}
+/* Match the identity card's height on the shared grid row, without fixing
+   heights or stretching the spacing between security controls. */
+body.adminkit .ak-profile-workspace .ak-information-layout > #ak-profile-security {
+ align-self: stretch;
+}
+body.adminkit .ak-profile-workspace .ak-information-layout > .ak-card {
+ min-width: 0;
+ margin: 0;
+ padding: calc(28px * var(--ak-space-scale, 1));
+}
+body.adminkit .ak-profile-workspace .ak-information-layout .ak-card-head {
+ margin-bottom: calc(28px * var(--ak-space-scale, 1));
+}
+body.adminkit .ak-profile-workspace .ak-information-layout .ak-card-head h2 {
+ font-size: calc(18px * var(--ak-type-scale, 1));
+ line-height: 1.4;
+}
+body.adminkit .ak-profile-workspace .ak-information-layout .ak-card.ak-grid .form-table > tbody {
+ gap: calc(24px * var(--ak-space-scale, 1)) calc(20px * var(--ak-space-scale, 1));
+}
+body.adminkit .ak-profile-workspace .ak-information-layout .ak-card.ak-grid .form-table > tbody > tr > th {
+ margin-bottom: calc(8px * var(--ak-space-scale, 1));
+ font-size: var(--ak-text-s);
+}
+body.adminkit :is(#your-profile, #createuser) .ak-information-layout :is(input[type="text"], input[type="email"], input[type="password"], select) {
+ min-height: 40px;
+ font-size: var(--ak-text-s);
+}
+body.adminkit #ak-profile-security .button {
+ min-height: 38px;
+ height: auto;
+ white-space: normal;
+ line-height: 1.5;
+ padding: calc(8px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1));
+}
+body.adminkit #ak-profile-security .description {
+ line-height: 1.6;
+ font-size: var(--ak-text-xs);
+}
+body.adminkit #ak-profile-security .wp-pwd {
+ min-width: 0;
+}
+@media (max-width: 1120px) {
+ body.adminkit .ak-profile-workspace .ak-information-layout {
+  grid-template-columns: minmax(0, 1fr);
+ }
+}
+@media (max-width: 600px) {
+ body.adminkit .ak-profile-workspace .ak-information-layout > .ak-card {
+  padding: calc(20px * var(--ak-space-scale, 1));
+ }
+ body.adminkit .ak-profile-workspace .ak-information-layout .ak-card-head {
+  margin-bottom: calc(20px * var(--ak-space-scale, 1));
+ }
+ body.adminkit .ak-profile-workspace .ak-information-layout .ak-card.ak-grid .form-table > tbody > tr.ak-half {
+  grid-column: 1 / -1;
+ }
+}
+
+/* Settings tab: sibling cards retain their headings and introductions inside. */
+body.adminkit .ak-settings-layout {
+ display: grid;
+ grid-template-columns: minmax(0, 1fr);
+ gap: calc(24px * var(--ak-space-scale, 1));
+ align-items: stretch;
+ min-width: 0;
+}
+body.adminkit .ak-settings-layout[hidden] { display: none; }
+body.adminkit .ak-settings-layout > .ak-card { margin: 0; min-width: 0; }
+body.adminkit .ak-settings-layout > .ak-card + .ak-card { margin-top: 0; }
+body.adminkit .ak-settings-layout .ak-card-head { margin-bottom: calc(20px * var(--ak-space-scale, 1)); }
+body.adminkit .ak-settings-layout .form-table { margin-top: 0; }
+body.adminkit .ak-settings-layout textarea { max-width: 100%; }
+/* Pair cards in DOM/keyboard order. Labels above controls keep half-width
+   cards readable without reserving the full-screen form's label column. */
+@media (min-width: 1200px) {
+ body.adminkit .ak-settings-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+ body.adminkit .ak-settings-layout .form-table > tbody > tr > :is(th, td) {
+  display: block;
+  width: auto;
+  padding: 0;
+ }
+ body.adminkit .ak-settings-layout .form-table > tbody > tr > th { padding-top: calc(16px * var(--ak-space-scale, 1)); padding-bottom: calc(8px * var(--ak-space-scale, 1)); }
+ body.adminkit .ak-settings-layout .form-table > tbody > tr:first-child > th { padding-top: 0; }
+ body.adminkit .ak-settings-layout .form-table :is(input, select, textarea) { min-width: 0; max-width: 100%; }
+ body.adminkit .ak-settings-layout .button { white-space: normal; height: auto; }
+}
+body.adminkit .ak-settings-layout #application-passwords-section :is(.create-application-password, .create-application-password .form-field) {
+ grid-template-columns: minmax(0, 1fr);
+}
+body.adminkit .ak-settings-layout #application-passwords-section .create-application-password .form-field > :is(label, input, .description),
+body.adminkit .ak-settings-layout #application-passwords-section #do_new_application_password {
+ grid-column: 1;
+ grid-row: auto;
+ min-width: 0;
+ max-width: 100%;
+}
+body.adminkit .ak-settings-layout .application-passwords-list-table-wrapper { overflow-x: auto; }
+
+/* Semantic feedback belongs to the alert; the input retains its normal
+   border and keyboard focus treatment, as on the WaasKit reference. */
+body.adminkit :is(#pass1, #pass1-text):is(.short, .bad, .good, .strong) {
+ border-color: var(--ak-border);
+}
+
+/* One-time credential: label above, wrapping copy action and readable code.
+   Preserve the native live feedback, label and dismiss control. */
+body.adminkit #application-passwords-section .new-application-password-notice {
+ margin: calc(20px * var(--ak-space-scale, 1)) 0;
+}
+body.adminkit #application-passwords-section .application-password-display {
+ display: flex;
+ flex-wrap: wrap;
+ align-items: center;
+ gap: calc(10px * var(--ak-space-scale, 1));
+ min-width: 0;
+}
+body.adminkit #application-passwords-section .application-password-display > label {
+ flex-basis: 100%;
+ margin: 0;
+}
+body.adminkit #application-passwords-section #new-application-password-value {
+ box-sizing: border-box;
+ flex: 1 1 260px;
+ width: 100%;
+ min-width: 0;
+ max-width: 100%;
+ margin: 0;
+ font-family: var(--ak-font-mono);
+ font-size: var(--ak-text-xs);
+}
+body.adminkit #application-passwords-section .application-password-display .copy-button {
+ flex: 0 0 auto;
+ margin: 0;
+}
+body.adminkit #application-passwords-section .new-application-password-notice > p:last-of-type {
+ margin-top: calc(12px * var(--ak-space-scale, 1));
+ font-size: var(--ak-text-xs);
+ line-height: 1.6;
+}
+
+/* WaasKit alert hierarchy: semibold title, quieter supporting text. */
+body.adminkit #application-passwords-section .application-password-display > label {
+ font-weight: 600;
+ line-height: 1.35;
+}
+body.adminkit #application-passwords-section .new-application-password-notice > p:last-of-type {
+ color: var(--ak-text-muted);
+}
+
+/* Keep role guidance visible in the account-creation identity card. */
+body.adminkit .ak-card.ak-grid #ak-role-description {
+	display: block;
+	margin: var(--ak-space-xs) 0 0;
+	color: var(--ak-text-muted);
 }

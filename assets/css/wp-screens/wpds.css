@@ -4,9 +4,24 @@
    CSS-in-JS class plus `[data-wpds-theme-provider-id="..."]` (the
    ":r2:" suffix is React's internal counter — changes per render).
    Match the attribute selector doubled to beat WP's (0,3,0) at (0,3,1)
-   without depending on the hashed class. All my AdminKit tokens flip
+   without depending on the hashed class. The Site Editor's admin-ui pages
+   receive the same bridge at their provider, overriding its inline defaults.
+   All AdminKit tokens flip
    between light + dark, so a single mapping covers both modes. */
-body.adminkit [data-wpds-theme-provider-id][data-wpds-theme-provider-id] {
+body.adminkit [data-wpds-theme-provider-id][data-wpds-theme-provider-id],
+body.adminkit :is(.edit-site-layout__area, .edit-site-layout__mobile) [data-wpds-corner-radius] {
+	/* Current admin-ui pages use the expanded background/foreground names and
+	   set their default palette inline on the corner-radius provider. */
+	--wpds-color-background-surface-neutral: var(--ak-bg) !important;
+	--wpds-color-background-surface-neutral-strong: var(--ak-surface) !important;
+	--wpds-color-background-surface-neutral-weak: var(--ak-surface) !important;
+	--wpds-color-foreground-content-neutral: var(--ak-text) !important;
+	--wpds-color-foreground-content-neutral-weak: var(--ak-text-muted) !important;
+	--wpds-color-foreground-interactive-neutral: var(--ak-text) !important;
+	--wpds-color-foreground-interactive-neutral-active: var(--ak-heading) !important;
+	--wpds-color-foreground-interactive-neutral-weak: var(--ak-text-muted) !important;
+	--wpds-color-foreground-interactive-neutral-weak-active: var(--ak-text) !important;
+	--wpds-color-background-interactive-neutral-weak-active: var(--ak-hover-bg) !important;
 	/* Neutral surfaces */
 	--wpds-color-bg-surface-neutral: var(--ak-bg);
 	--wpds-color-bg-surface-neutral-strong: var(--ak-surface);
@@ -20,12 +35,12 @@ body.adminkit [data-wpds-theme-provider-id][data-wpds-theme-provider-id] {
 	--wpds-color-fg-interactive-neutral-weak: var(--ak-text-muted);
 
 	/* Neutral strokes (borders / dividers) */
-	--wpds-color-stroke-interactive-neutral: var(--ak-border-strong);
-	--wpds-color-stroke-interactive-neutral-active: var(--ak-text);
-	--wpds-color-stroke-interactive-neutral-strong: var(--ak-text);
-	--wpds-color-stroke-surface-neutral: var(--ak-border);
-	--wpds-color-stroke-surface-neutral-strong: var(--ak-border-strong);
-	--wpds-color-stroke-surface-neutral-weak: var(--ak-border);
+	--wpds-color-stroke-interactive-neutral: var(--ak-border-strong) !important;
+	--wpds-color-stroke-interactive-neutral-active: var(--ak-text) !important;
+	--wpds-color-stroke-interactive-neutral-strong: var(--ak-text) !important;
+	--wpds-color-stroke-surface-neutral: var(--ak-border) !important;
+	--wpds-color-stroke-surface-neutral-strong: var(--ak-border-strong) !important;
+	--wpds-color-stroke-surface-neutral-weak: var(--ak-border) !important;
 
 	/* Toggle / slider thumb + track */
 	--wpds-color-bg-thumb-neutral-weak: var(--ak-text-muted);
@@ -113,6 +128,15 @@ body.adminkit [data-wpds-theme-provider-id][data-wpds-theme-provider-id] {
 	--wpds-color-stroke-interactive-error-active: var(--ak-error);
 	--wpds-color-stroke-surface-error: var(--ak-error);
 	--wpds-color-stroke-surface-error-strong: var(--ak-error);
+}
+
+body.adminkit .edit-site-layout__mobile .edit-site-sidebar__screen-wrapper:has(.edit-site-layout__mobile-content) {
+	background: var(--ak-bg);
+}
+/* Mobile navigation and save bars keep their native dark background. */
+body.adminkit .edit-site-layout__mobile .edit-site-site-hub__back-button,
+body.adminkit .edit-site-layout__mobile .edit-site-save-hub__button:not(.is-primary) {
+	color: var(--ak-inverse-text);
 }
 
 /* `.connectors-page .components-item` — each connector card. WP hardcodes
@@ -298,4 +322,4 @@ body.adminkit.options-connectors-php .connector-item--ai-provider-for-openai svg
  body.adminkit.options-connectors-php .connectors-page .components-truncate { white-space: normal; overflow: visible; }
 }
 body.adminkit.options-connectors-php .connectors-page > p { color: var(--ak-text-muted); }
-body.adminkit.options-connectors-php .boot-layout__stage h1 { font-size: 24px; line-height: 1.3; font-weight: 600; }
+body.adminkit.options-connectors-php .boot-layout__stage h1 { font-size: calc(24px * var(--ak-type-scale, 1)); line-height: 1.3; font-weight: 600; }

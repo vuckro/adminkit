@@ -18,9 +18,9 @@ body.adminkit.adminkit-funnelkit-automations :is(#bwfcrm-page, .bwf-fullsc-modal
 body.adminkit.adminkit-funnelkit-automations :is(#bwfcrm-page, .bwf-fullsc-modal) .bwf-profile-name { background: var(--ak-surface-muted); color: var(--ak-text); }
 body.adminkit.adminkit-funnelkit-automations :is(#bwfcrm-page, .bwf-fullsc-modal) :is(.bwf-sc-side-content-h-title, .bwf-info-empty-value span) { color: var(--ak-text); }
 @media (max-width: 782px) {
- body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-stretch-header-single { flex-direction: column; align-items: stretch; height: auto; gap: 12px; padding: 16px; }
+ body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-stretch-header-single { flex-direction: column; align-items: stretch; height: auto; gap: calc(12px * var(--ak-space-scale, 1)); padding: calc(16px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal :is(.bwf-modal-heading, .bwf-sc-side-content-h-wrap, .bwf-sc-side-content-h-wrap > div) { width: 100%; min-width: 0; max-width: 100%; }
- body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-sc-side-content-h { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; min-width: 0; }
+ body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-sc-side-content-h { display: flex; flex-wrap: wrap; gap: calc(8px * var(--ak-space-scale, 1)); width: 100%; min-width: 0; }
  body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-sc-side-content-h-title { flex: 1 1 100%; width: 100%; overflow-wrap: anywhere; }
  body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-sc-contact-tab-menu { display: flex; overflow-x: auto; white-space: nowrap; width: 100%; }
  body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-sc-contact-tab-menu_item { flex-shrink: 0; min-width: max-content; }
@@ -34,7 +34,7 @@ body.adminkit.adminkit-funnelkit-automations :is(#bwfcrm-page, .bwf-fullsc-modal
  body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal :is(.bwf-sc-contact-main-wrap, .bwf-sc-contact-wrap) { display: block; width: 100%; min-width: 0; max-width: 100%; }
  body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal :is(.bwf-sc-contact-tab-wrap, .bwf-sc-side-content-wrap) { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
  body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-c-s-avatar { flex: 0 0 44px; width: 44px; height: 44px; }
- body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-sc-side-content-h-wrap { align-items: flex-start; gap: 12px; }
+ body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-sc-side-content-h-wrap { align-items: flex-start; gap: calc(12px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-sc-side-content-h-wrap > div:not(.bwf-c-s-avatar) { flex: 1; min-width: 0; }
 }
 body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-sc-side-content-sub-h-wrap :is(span, p) { color: var(--ak-text-muted); }
@@ -43,13 +43,13 @@ body.adminkit.adminkit-funnelkit-automations .bwf-1d1772e8.is-lite { background:
 body.adminkit.adminkit-funnelkit-automations .bwf-1d1772e8.is-lite a { color: var(--ak-primary-text) !important; }
 body.adminkit.adminkit-funnelkit-automations :is(#bwfcrm-page, .components-modal__frame) :is(.bwf-license-lite-wrap, .bwf-no-license-field) { background: var(--ak-surface-muted); color: var(--ak-text); }
 @media (max-width: 782px) {
- body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .component--bwf-settings-form { display: block; min-height: 0; padding: 16px; }
+ body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .component--bwf-settings-form { display: block; min-height: 0; padding: calc(16px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page :is(.bwf--settings-tab-wrap, .bwf--settings-tab-content) { width: 100%; min-width: 0; max-width: 100%; padding: 0; box-sizing: border-box; }
- body.adminkit.adminkit-funnelkit-automations #bwfcrm-page :is(.bwf--settings-tab-list, .bwf--settings-subtab-list) { display: flex; flex-direction: row; overflow-x: auto; white-space: nowrap; position: static; gap: 12px; box-shadow: none !important; }
- body.adminkit.adminkit-funnelkit-automations #bwfcrm-page :is(.tab--title, .subtab--title) { flex: 0 0 auto; padding: 12px 4px; }
+ body.adminkit.adminkit-funnelkit-automations #bwfcrm-page :is(.bwf--settings-tab-list, .bwf--settings-subtab-list) { display: flex; flex-direction: row; overflow-x: auto; white-space: nowrap; position: static; gap: calc(12px * var(--ak-space-scale, 1)); box-shadow: none !important; }
+ body.adminkit.adminkit-funnelkit-automations #bwfcrm-page :is(.tab--title, .subtab--title) { flex: 0 0 auto; padding: calc(12px * var(--ak-space-scale, 1)) calc(4px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-nav-indicator { display: none; }
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .tab--title.active--tab { border-bottom: 1px solid var(--ak-border-strong); color: var(--ak-text); }
- body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .tab--heading { position: static; transform: none; margin: 16px 0; padding: 0; }
+ body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .tab--heading { position: static; transform: none; margin: calc(16px * var(--ak-space-scale, 1)) 0; padding: 0; }
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page :is(.bwf-license-lite-wrap, .bwf-no-license-field, .components-base-control, .components-base-control__field, .bwf-select-control__control-input) { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
 }
 body.adminkit.adminkit-funnelkit-automations .bwf-fullsc-modal .bwf-notes-wrap :is(.bwf-content-header-new, .bwf-timeline-body, .note-body, .note-body p) { background: var(--ak-surface-muted); color: var(--ak-text); border-color: var(--ak-border); }
@@ -66,7 +66,7 @@ body.adminkit.adminkit-funnelkit-automations :is(#bwfcrm-page, .bwf-single-autom
 body.adminkit.adminkit-funnelkit-automations .bwf-single-automation-modal-wrap .bwf-node-content.bwf-end .bwf-node-content-item { background: var(--ak-surface-muted); color: var(--ak-text); transition: none; }
 body.adminkit.adminkit-funnelkit-automations .bwf-single-automation-modal-wrap :is(.bwf-node-brick, .bwf-node-content) { border-color: var(--ak-border); box-shadow: none; }
 body.adminkit.adminkit-funnelkit-automations .bwf-single-automation-modal-wrap .bwf-node-icon { background: var(--ak-surface-muted); border-color: var(--ak-border); }
-body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-settings .field--license { padding: 20px; border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); background: var(--ak-surface); box-sizing: border-box; }
+body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-settings .field--license { padding: calc(20px * var(--ak-space-scale, 1)); border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); background: var(--ak-surface); box-sizing: border-box; }
 body.adminkit.adminkit-funnelkit-automations :is(#bwfcrm-page, .bwf-single-automation-modal-wrap) .bwf-node-wrapper .bwf-inner-wrapper { border-color: var(--ak-border); }
 body.adminkit.adminkit-funnelkit-automations :is(#bwfcrm-page, .bwf-single-automation-modal-wrap) .bwf-node-wrapper .bwf-inner-wrapper .bwf-node-brick .bwf-node-icon { background: var(--ak-surface-muted); border-color: var(--ak-border); }
 body.adminkit.adminkit-funnelkit-automations :is(#bwfcrm-page, .bwf-single-automation-modal-wrap) .bwf-node-wrapper .bwf-inner-wrapper.bwf-selected-node { border-color: var(--ak-focus); }
@@ -77,7 +77,7 @@ body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs-list
 body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs-list-item-r .components-button:disabled { opacity: .55; cursor: not-allowed; }
 body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs-list-item-r svg { color: var(--ak-text-muted); fill: currentColor; }
 @media (max-width: 782px) {
- body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs .bwf-email-notifs-list .bwf-email-notifs-list-item { flex-wrap: wrap; gap: 12px; padding: 16px; }
+ body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs .bwf-email-notifs-list .bwf-email-notifs-list-item { flex-wrap: wrap; gap: calc(12px * var(--ak-space-scale, 1)); padding: calc(16px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs-list-item-l { flex: 1 1 100%; min-width: 0; }
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs-list-item-r { max-width: 100%; flex-wrap: wrap; }
 }
@@ -85,11 +85,11 @@ body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs-list
 body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-global-s-s-item-label { color: var(--ak-text); }
 @media (max-width: 782px) {
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-template-main-wrapper { display: block; min-width: 0; max-width: 100%; }
- body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-template-section-body { width: 100%; min-width: 0; max-width: 100%; padding: 16px; margin: 0; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-template-section-body { width: 100%; min-width: 0; max-width: 100%; padding: calc(16px * var(--ak-space-scale, 1)); margin: 0; box-sizing: border-box; }
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-template-section-body .bwf-table { max-width: 100%; min-width: 0; overflow-x: auto; }
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-template-section-body .bwf-email-notifs { width: 100%; padding-inline: 0; box-sizing: border-box; }
 }
 @media (max-width: 782px) {
- body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs-list-item-r { display: flex; width: 100%; justify-content: flex-end; align-items: center; gap: 8px; }
+ body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs-list-item-r { display: flex; width: 100%; justify-content: flex-end; align-items: center; gap: calc(8px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs-list-item-r .components-base-control { flex: 0 0 auto; width: auto; min-width: 0; max-width: none; margin: 0; }
 }

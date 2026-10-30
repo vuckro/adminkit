@@ -25,7 +25,7 @@ body.adminkit:is(
 	.options-permalink-php
 ) .wrap > form {
 	max-width: 960px;
-	margin-top: 20px;
+	margin-top: calc(20px * var(--ak-space-scale, 1));
 }
 
 /* General + Discussion build tabbed/carded structure in footer JS. Their PHP
@@ -63,7 +63,7 @@ body.adminkit:is(
 ) .wrap > form > h2 {
 	border-bottom: none;
 	padding-bottom: 0;
-	margin-bottom: 4px;
+	margin-bottom: calc(4px * var(--ak-space-scale, 1));
 }
 
 /* ──── 3. .form-table — self-contained card ──── */
@@ -75,11 +75,12 @@ body.adminkit:is(
 	.options-media-php,
 	.options-permalink-php
 ) .wrap > form > .form-table,
-body.adminkit.options-general-php .ak-options-block > .form-table {
+body.adminkit.options-discussion-php .ak-options-panel > .form-table {
 	background: var(--ak-card-bg);
 	border: 1px solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
-	padding: 4px 20px;
+	padding: calc(4px * var(--ak-space-scale, 1)) calc(20px * var(--ak-space-scale, 1));
+	box-shadow: var(--ak-card-shadow);
 }
 
 body.adminkit:is(
@@ -89,44 +90,56 @@ body.adminkit:is(
 	.options-discussion-php,
 	.options-media-php,
 	.options-permalink-php
-) .wrap > form > .form-table {
-	margin: 4px 0 20px;
+) .wrap > form > .form-table,
+body.adminkit.options-discussion-php .ak-options-panel > .form-table {
+	margin: calc(4px * var(--ak-space-scale, 1)) 0 calc(20px * var(--ak-space-scale, 1));
 }
 
 
 /* ──── 4. options-general.php — themed blocks (Site identity / Account /
    Locale). The JS (assets/js/wp-screens/options-general.js) wraps each
    group in `<section class="ak-options-block">` with its own `<h2>`, an
-   optional one-line description, and an inner `.form-table`. Title +
-   description sit above the card; the card itself reuses rule (3)'s
-   chrome so groups read as a coherent stack. */
+   optional description, and an inner `.form-table`. The section owns the
+   card chrome so heading, introduction and fields share one surface. */
 body.adminkit.options-general-php .ak-options-block {
-	margin: 0 0 28px;
+	margin: 0 0 calc(28px * var(--ak-space-scale, 1));
+	padding: calc(20px * var(--ak-space-scale, 1));
+	background: var(--ak-card-bg);
+	border: 1px solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
 }
 body.adminkit.options-general-php .ak-options-block__title {
-	margin: 0 0 4px;
+	margin: 0 0 calc(4px * var(--ak-space-scale, 1));
 	padding: 0;
 	border: 0;
-	font-size: 15px;
+	font-size: calc(15px * var(--ak-type-scale, 1));
 	font-weight: 600;
 	color: var(--ak-heading);
 }
 body.adminkit.options-general-php .ak-options-block__desc {
-	margin: 0 0 12px;
-	font-size: 13px;
+	margin: 0 0 calc(16px * var(--ak-space-scale, 1));
+	font-size: calc(13px * var(--ak-type-scale, 1));
 	color: var(--ak-text-muted);
 	line-height: 1.5;
 	max-width: 64ch;
 }
-/* When the description is missing, the title alone needs a fuller gap to
-   the card below — give the adjacent `.form-table` a top margin. */
+/* Maintain heading-to-fields spacing when a section has no introduction. */
 body.adminkit.options-general-php .ak-options-block__title + .form-table {
-	margin-top: 8px;
+	margin-top: calc(8px * var(--ak-space-scale, 1));
 }
-/* Nested cards inherit the shared card chrome from rule (3); only their stack
-   margin differs because the surrounding block owns the vertical rhythm. */
+/* The table only lays out fields; the surrounding section owns the card. */
 body.adminkit.options-general-php .ak-options-block > .form-table {
 	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+@media (max-width: 782px) {
+	body.adminkit.options-general-php .ak-options-block { padding: calc(16px * var(--ak-space-scale, 1)); }
 }
 
 
@@ -142,36 +155,25 @@ body.adminkit.options-general-php .ak-options-block > .form-table {
    placement + the headings-inside-panels polish live here. */
 body.adminkit.options-general-php .wrap > form > .nav-tab-wrapper,
 body.adminkit.options-discussion-php .wrap > form > .nav-tab-wrapper {
-	margin: 4px 0 16px;
+	margin: calc(4px * var(--ak-space-scale, 1)) 0 calc(16px * var(--ak-space-scale, 1));
 }
 
-/* Belt-and-suspenders hide for tab-switched content. The JS sets both the
-   `[hidden]` attribute (semantic / a11y) AND this class on every tagged
-   element when its tab isn't active. The `[hidden]` UA rule's
-   `display: none` can lose to author rules higher up the cascade
-   (anything that sets display on the same element); this class is an
-   author rule we control, so its `display: none` is always respected on
-   pages we own. Scoped to the two options pages so it can't bleed. */
-body.adminkit.options-general-php .ak-tab-hidden,
-body.adminkit.options-discussion-php .ak-tab-hidden {
-	display: none;
-}
 /* Headings + ledes that ride into the form via `data-ak-tab` (Avatars is
    WP-native, Comment settings is JS-synthesized — same shape both ways).
    Drop WP's default h2 underline and tighten the spacing so the pair
    reads as a card label rather than a divider. Same look as the
    themed-block titles on options-general.php. */
-body.adminkit.options-discussion-php .wrap > form > h2[data-ak-tab] {
+body.adminkit.options-discussion-php .ak-options-panel > h2[data-ak-tab] {
 	border-bottom: 0;
-	margin: 4px 0 0;
+	margin: calc(4px * var(--ak-space-scale, 1)) 0 0;
 	padding: 0;
-	font-size: 15px;
+	font-size: calc(15px * var(--ak-type-scale, 1));
 	font-weight: 600;
 	color: var(--ak-heading);
 }
-body.adminkit.options-discussion-php .wrap > form > p[data-ak-tab] {
-	margin: 4px 0 12px;
-	font-size: 13px;
+body.adminkit.options-discussion-php .ak-options-panel > p[data-ak-tab] {
+	margin: calc(4px * var(--ak-space-scale, 1)) 0 calc(12px * var(--ak-space-scale, 1));
+	font-size: calc(13px * var(--ak-type-scale, 1));
 	color: var(--ak-text-muted);
 	line-height: 1.5;
 	max-width: 64ch;
@@ -184,15 +186,85 @@ body.adminkit.options-general-php .ak-options-block .form-table input:is([type=t
  max-width: 640px;
 }
 @media (min-width: 1200px) {
- body.adminkit.options-general-php .wrap > form {
+ body.adminkit.options-general-php .ak-options-panel {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-  column-gap: 28px;
+  column-gap: calc(28px * var(--ak-space-scale, 1));
   align-items: start;
  }
- body.adminkit.options-general-php .wrap > form > :not(.ak-options-block) { grid-column: 1 / -1; }
  body.adminkit.options-general-php #ak-opt-site-identity { grid-column: 1; grid-row: span 2; }
  body.adminkit.options-general-php .ak-options-block { min-width: 0; }
- body.adminkit.options-general-php .ak-options-block[data-ak-tab=locale] { grid-column: 1 / -1; }
+ body.adminkit.options-general-php #ak-options-panel-account { grid-template-columns: minmax(0, 960px); }
  body.adminkit.options-general-php .ak-options-block .form-table th { width: 160px; }
+}
+
+body.adminkit .ak-options-panel[hidden] { display: none; }
+
+/* Discussion cards retain native table rows and the original settings form. */
+body.adminkit.options-discussion-php .ak-discussion-cards {
+ display: grid;
+ gap: calc(24px * var(--ak-space-scale, 1));
+}
+body.adminkit.options-discussion-php .ak-discussion-card {
+ padding: calc(20px * var(--ak-space-scale, 1));
+ min-width: 0;
+ background: var(--ak-card-bg);
+ border: 1px solid var(--ak-card-border);
+ border-radius: var(--ak-card-radius);
+ box-shadow: var(--ak-card-shadow);
+}
+body.adminkit.options-discussion-php .ak-discussion-card > h2 {
+ margin: 0 0 calc(12px * var(--ak-space-scale, 1));
+ font-size: calc(15px * var(--ak-type-scale, 1));
+ font-weight: 600;
+ color: var(--ak-heading);
+}
+body.adminkit.options-discussion-php .ak-discussion-card > .form-table {
+ margin: 0;
+ width: 100%;
+}
+body.adminkit.options-discussion-php .ak-discussion-card > .ak-options-block__desc {
+ margin: calc(-6px * var(--ak-space-scale, 1)) 0 calc(16px * var(--ak-space-scale, 1));
+ max-width: 64ch;
+ font-size: var(--ak-text-s);
+ line-height: 1.5;
+ color: var(--ak-text-muted);
+}
+body.adminkit.options-discussion-php .ak-discussion-card textarea { max-width: 100%; }
+@media (max-width: 782px) {
+ body.adminkit.options-discussion-php .ak-discussion-card { padding: calc(16px * var(--ak-space-scale, 1)); }
+}
+
+/* Reading: one purpose per card, with all original fields in the native form. */
+body.adminkit.options-reading-php .ak-reading-card {
+ margin: 0 0 calc(24px * var(--ak-space-scale, 1));
+ padding: calc(20px * var(--ak-space-scale, 1));
+ background: var(--ak-card-bg);
+ border: 1px solid var(--ak-card-border);
+ border-radius: var(--ak-card-radius);
+}
+body.adminkit.options-reading-php .ak-reading-card > h2 {
+ margin: 0 0 calc(4px * var(--ak-space-scale, 1));
+ padding: 0;
+ font-size: calc(15px * var(--ak-type-scale, 1));
+ color: var(--ak-heading);
+}
+body.adminkit.options-reading-php .ak-reading-card__desc {
+ margin: 0 0 calc(16px * var(--ak-space-scale, 1));
+ max-width: 70ch;
+ font-size: var(--ak-text-s);
+ line-height: 1.5;
+ color: var(--ak-text-muted);
+}
+body.adminkit.options-reading-php .ak-reading-card > .form-table {
+ margin: 0;
+ background: transparent;
+ border: 0;
+ box-shadow: none;
+}
+body.adminkit.options-reading-php .ak-reading-card .form-table td { padding-right: 0; }
+body.adminkit.options-reading-php .ak-reading-card .form-table th { width: 220px; }
+@media (max-width: 782px) {
+ body.adminkit.options-reading-php .ak-reading-card { padding: calc(16px * var(--ak-space-scale, 1)); }
+ body.adminkit.options-reading-php .ak-reading-card .form-table th { width: auto; }
 }

@@ -201,7 +201,7 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 	body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 		border-top: 1px solid var( --ak-border ) !important;
 		border-left: 1px solid var( --ak-border ) !important;
-		border-top-left-radius: 18px !important;
+		border-top-left-radius: calc(18px * var(--ak-radius-scale, 1)) !important;
 	}
 	/* Reports/Settings hang a position:absolute secondary nav at left:160px with
 	   an --ak-surface fill, which paints over #wpbody-content's native left
@@ -226,7 +226,7 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a {
 body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a::after {
 	content: var( --ak-wordmark, "FluentCart" );
 	color: var( --ak-heading );
-	font-size: 18px;
+	font-size: calc(18px * var(--ak-type-scale, 1));
 	font-weight: 700;
 	letter-spacing: 0.01em;
 	white-space: nowrap;
@@ -904,7 +904,7 @@ body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a img {
 body.adminkit.post-type-fluent-products .fct_admin_logo_wrap a::after {
 	content: var( --ak-wordmark, "FluentCart" );
 	color: var( --ak-heading );
-	font-size: 18px;
+	font-size: calc(18px * var(--ak-type-scale, 1));
 	font-weight: 700;
 	letter-spacing: 0.01em;
 }

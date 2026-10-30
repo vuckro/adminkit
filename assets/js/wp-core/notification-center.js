@@ -76,6 +76,9 @@
 		if ( matchesAny( el, C.deny ) || el.hasAttribute( 'data-ak-nc-keep' ) ) { return false; }
 		if ( matchesAny( el, C.allow ) || el.hasAttribute( 'data-ak-nc-group' ) ) { return true; }
 		if ( isContextual( el ) ) { return false; }   // page UI, not a banner alert
+		// Native action feedback belongs beside the form, not behind the bell.
+		if ( el.matches( '.settings-error, #message.error, #message.notice-error' ) ||
+			( el.matches( '.error, .notice-error' ) && document.body.matches( '.profile-php, .user-edit-php, .user-new-php' ) ) ) { return false; }
 		if ( isSuccess( el ) ) { return false; }       // success confirmations stay inline
 		return true;                                    // every other alert → the panel
 	}
@@ -183,7 +186,8 @@
 		var f = focusables();
 		if ( ! f.length ) { return; }
 		var first = f[ 0 ], last = f[ f.length - 1 ];
-		if ( e.shiftKey && document.activeElement === first ) { e.preventDefault(); last.focus(); }
+		if ( ! drawer.contains( document.activeElement ) ) { e.preventDefault(); ( e.shiftKey ? last : first ).focus(); }
+		else if ( e.shiftKey && document.activeElement === first ) { e.preventDefault(); last.focus(); }
 		else if ( ! e.shiftKey && document.activeElement === last ) { e.preventDefault(); first.focus(); }
 	}
 	function open() {

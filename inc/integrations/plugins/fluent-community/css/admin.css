@@ -286,9 +286,9 @@ body.adminkit.toplevel_page_fluent-community .fcom_onboarding_logo {
 body.adminkit.toplevel_page_fluent-community .fcom_step_header::before {
 	content: var( --ak-wordmark, "FluentCommunity" );
 	display: block;
-	margin: 0 auto 8px;
+	margin: 0 auto calc(8px * var(--ak-space-scale, 1));
 	color: var( --ak-heading );
-	font-size: 18px;
+	font-size: calc(18px * var(--ak-type-scale, 1));
 	font-weight: 700;
 	letter-spacing: 0.01em;
 }

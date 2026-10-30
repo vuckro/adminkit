@@ -104,7 +104,7 @@
 	--ak-primary-hover-rgb: 220, 222, 225;
 }
 
-:root[data-adminkit-accent="waaskit"], :root[data-adminkit-accent="waaskit"] .ak-bp__frame {
+:root[data-adminkit-accent="waaskit"], .adminkit-app .ak-bp__frame[data-preview-accent="waaskit"] {
 	--wk-accent: var(--wk-brand-600);
 	--wk-accent-hover: var(--wk-brand-700);
 	--wk-on-accent: var(--wk-neutral-0);
@@ -116,7 +116,7 @@
 	--ak-primary-hover-rgb: 0, 62, 139;
 }
 
-:root[data-adminkit-accent="waaskit"][data-adminkit-theme="dark"], :root[data-adminkit-accent="waaskit"] .ak-bp__frame[data-preview-theme="dark"] {
+:root[data-adminkit-accent="waaskit"][data-adminkit-theme="dark"], .adminkit-app .ak-bp__frame[data-preview-accent="waaskit"][data-preview-theme="dark"] {
 	--wk-accent: var(--wk-brand-400);
 	--wk-accent-hover: var(--wk-brand-300);
 	--wk-on-accent: var(--wk-neutral-950);

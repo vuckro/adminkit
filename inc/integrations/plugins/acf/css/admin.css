@@ -139,7 +139,7 @@ body.adminkit.acf-admin-page .acf-admin-toolbar {
 	   neutralised, so draw the panel's top-left corner on the bar itself. */
 	border-top: 1px solid var(--ak-border);
 	border-left: 1px solid var(--ak-border);
-	border-top-left-radius: 18px;
+	border-top-left-radius: calc(18px * var(--ak-radius-scale, 1));
 }
 
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-tab {
@@ -193,7 +193,7 @@ body.adminkit.acf-admin-page .acf-admin-toolbar .acf-logo {
 body.adminkit.acf-admin-page .acf-admin-toolbar .acf-logo::after {
 	content: var( --ak-wordmark, "ACF" );
 	color: var(--ak-heading);
-	font-size: 18px;
+	font-size: calc(18px * var(--ak-type-scale, 1));
 	font-weight: 700;
 	letter-spacing: 0.05em;
 }
@@ -578,7 +578,7 @@ body.adminkit.acf-admin-page .postbox-container .acf-tab-wrap {
 	top: 0;
 	left: 0;
 	width: auto;
-	margin: 0 0 20px 0;
+	margin: 0 0 calc(20px * var(--ak-space-scale, 1)) 0;
 }
 
 /* "Regenerate labels" bar (post-type / taxonomy / options editors) — same
@@ -929,7 +929,7 @@ body.adminkit.acf-admin-page .acf-field-icon-picker .acf-tab-wrap .acf-tab-group
 }
 
 body.adminkit.acf-admin-page .acf-field-icon-picker .acf-tab-wrap .acf-tab-group {
-	margin-bottom: 12px;
+	margin-bottom: calc(12px * var(--ak-space-scale, 1));
 }
 
 body.adminkit.acf-admin-page .acf-field-icon-picker .acf-icon-picker-media-library,

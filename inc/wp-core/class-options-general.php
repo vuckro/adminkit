@@ -98,8 +98,14 @@ class AdminKit_Core_Options_General {
 		}
 
 		$strings = array(
-			// Top-level tabs — General groups everything that's not locale.
-			'tabGeneral'   => __( 'General', 'adminkit' ),
+			// Top-level navigation and card headings.
+			'tabGeneral'   => __( 'Identity', 'adminkit' ),
+			'tabAccount'   => __( 'Account', 'adminkit' ),
+			'tabLocale'    => __( 'Localization', 'adminkit' ),
+			'languageZone' => __( 'Language & timezone', 'adminkit' ),
+			'languageZoneDesc' => __( 'Choose the site language and the timezone used for publishing.', 'adminkit' ),
+			'formats' => __( 'Date & time formats', 'adminkit' ),
+			'formatsDesc' => __( 'Choose how dates and times appear, and the first day of the week.', 'adminkit' ),
 			// Block titles + one-line lede shown above each card.
 			'identity'     => __( 'Site identity', 'adminkit' ),
 			'identityDesc' => __( 'How your site presents itself — name, tagline and addresses.', 'adminkit' ),

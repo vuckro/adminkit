@@ -49,7 +49,7 @@ body.adminkit #wpbody-content {
 		   evened out.) Global (every .wrap admin page). Phones get their own gutters in
 		   the max-width block below. No !important needed: body.adminkit .wrap (0,2,1)
 		   beats WP's .wrap (0,1,0). */
-		margin: 30px 40px 30px 40px;
+		margin: calc(30px * var(--ak-space-scale, 1)) calc(40px * var(--ak-space-scale, 1)) calc(30px * var(--ak-space-scale, 1)) calc(40px * var(--ak-space-scale, 1));
 	}
 }
 body.adminkit #wpbody-content {
@@ -67,7 +67,7 @@ body.adminkit #wpbody-content {
 	   side gutters out on phones. Applies to every .wrap admin screen, not just the
 	   dashboard. (0,2,1) beats WP's (0,1,0). */
 	body.adminkit .wrap {
-		margin: 10px 12px 0;
+		margin: calc(10px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)) 0;
 	}
 }
 
@@ -113,7 +113,7 @@ body.adminkit.options-connectors-php #wpbody-content {
 		box-sizing: border-box;
 		border-top: 1px solid var(--ak-border);
 		border-left: 1px solid var(--ak-border);
-		border-top-left-radius: 18px;
+		border-top-left-radius: calc(18px * var(--ak-radius-scale, 1));
 		z-index: 101;
 	}
 	body.adminkit #wpwrap::after {         /* concave chrome-toned notch fill */
@@ -148,18 +148,25 @@ body.adminkit {
 	   today, free to diverge later (e.g. a different table radius) without one
 	   dragging the other. */
 	--ak-card-bg: var(--ak-surface);
-	--ak-card-border: color-mix(in srgb, var(--ak-border) 72%, transparent);
+	--ak-card-border: color-mix(in srgb, var(--ak-border) 55%, transparent);
 	--ak-card-radius: var(--ak-radius-m);
+	--ak-card-shadow: var(--ak-design-elevation, 0 2px 2px -1px color-mix(in srgb, var(--ak-text) 12%, transparent));
 	--ak-table-bg: var(--ak-surface);
-	--ak-table-border: var(--ak-border);
+	--ak-table-border: var(--ak-card-border);
+	--ak-table-shadow: var(--ak-card-shadow);
 	--ak-table-radius: var(--ak-radius-l);
 	--ak-table-header-bg: var(--ak-surface-muted);
-	--ak-nav-gap: 6px;
-	--ak-nav-pill-gap: 7px;
-	--ak-nav-pill-height: 34px;
-	--ak-nav-pill-padding-x: 14px;
+	--ak-nav-gap: calc(6px * var(--ak-space-scale, 1));
+	--ak-nav-pill-gap: calc(7px * var(--ak-space-scale, 1));
+	--ak-nav-pill-height: calc(34px * max(var(--ak-type-scale, 1), var(--ak-space-scale, 1)));
+	--ak-nav-pill-padding-x: calc(14px * var(--ak-space-scale, 1));
 	/* Match the status-filter track's 3px inset. */
-	--ak-nav-pill-radius: calc(var(--ak-radius-s) - 3px);
+	--ak-nav-pill-radius: max(0px, calc(var(--ak-radius-s) - 3px));
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit {
+	--ak-card-border: color-mix(in srgb, var(--ak-border) 72%, transparent);
+	--ak-card-shadow: var(--ak-design-elevation, var(--ak-shadow-subtle));
 }
 
 /* Dark-mode scrollbars. The browser paints native scrollbars from the page's
@@ -405,7 +412,7 @@ body.adminkit #adminmenu .opensub .wp-submenu {
 		border: 1px solid var(--ak-card-border);
 		border-radius: var(--ak-card-radius);
 		box-shadow: var(--ak-shadow-elevated, 0 8px 24px rgba(0, 0, 0, 0.18));
-		margin-left: 6px;
+		margin-left: calc(6px * var(--ak-space-scale, 1));
 	}
 }
 
@@ -497,8 +504,9 @@ body.adminkit .postbox {
 	background: var(--ak-card-bg);
 	border: 1px solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
-	margin-bottom: 16px;
+	margin-bottom: calc(16px * var(--ak-space-scale, 1));
 	overflow: hidden;
+	box-shadow: var(--ak-card-shadow);
 }
 
 body.adminkit .postbox-header {
@@ -516,7 +524,7 @@ body.adminkit .widget .widget-top h3 {
 }
 
 body.adminkit .postbox .inside {
-	padding: 16px;
+	padding: calc(16px * var(--ak-space-scale, 1));
 	margin: 0;
 }
 
@@ -583,20 +591,7 @@ body.adminkit #dashboard_quick_press .drafts h2 {
 	color: var(--ak-heading);
 }
 
-/* Notices — soft style (matches the login notices): no shadow, a flat rounded
-   card; per-status SUBTLE tint as bg + the colour as text + a VERY LIGHT border
-   blended from the colour (color-mix → no new token), set below. Untyped .notice
-   = neutral. */
-body.adminkit .notice,
-body.adminkit div.updated,
-body.adminkit div.error,
-body.adminkit .update-nag {
-	border: 1px solid transparent;
-	border-radius: var(--ak-radius-s);
-	box-shadow: none;
-	padding: 12px 16px;
-}
-
+/* Shared alert appearance lives in wp-components/feedback.css. */
 /* Lift top-level notices off the page-title block so they don't read as stuck
    against the h1 + "Add new" button. Scoped to direct children of `.wrap` —
    notices nested inside meta-boxes, form-table cells, etc. keep their tighter
@@ -607,12 +602,6 @@ body.adminkit .wrap > div.error,
 body.adminkit .wrap > .update-nag {
 	margin-top: var(--ak-space-l);
 }
-body.adminkit .notice {
-	background: var(--ak-elevated);
-	color: var(--ak-text);
-	border-color: var(--ak-border);
-}
-
 /* WP's common.css groups a dozen container classes under a single
    `border: 1px solid #c3c4c7; box-shadow: 0 1px 1px rgba(0,0,0,0.04)`
    rule. Strip both — components that need a border get one back
@@ -644,6 +633,7 @@ body.adminkit .stuffbox {
 	border: 1px solid var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
 	overflow: hidden;
+	box-shadow: var(--ak-card-shadow);
 }
 
 /* Stuffbox header — WP draws the #f0f0f1 bottom divider via
@@ -671,7 +661,7 @@ body.adminkit #major-publishing-actions {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: 8px;
+	gap: calc(8px * var(--ak-space-scale, 1));
 }
 /* Keep Publish/Update hard right (with or without a Move-to-Trash on the left)
    and vertically centred with it — fixes the row's button alignment. */
@@ -759,17 +749,17 @@ body.adminkit .mce-statusbar .mce-path .mce-divider {
    .html-active on the .wp-editor-wrap) reads as a raised, bordered pill. */
 body.adminkit .wp-editor-tabs {
 	display: inline-flex;
-	gap: 2px;
-	padding: 3px;
+	gap: calc(2px * var(--ak-space-scale, 1));
+	padding: calc(3px * var(--ak-space-scale, 1));
 	background: var(--ak-elevated);
 	border-radius: var(--ak-radius-s);
 }
 
 body.adminkit .wp-editor-tabs .wp-switch-editor {
 	margin: 0;
-	padding: 3px 12px;
+	padding: calc(3px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1));
 	border: 1px solid transparent;
-	border-radius: 5px;
+	border-radius: calc(5px * var(--ak-radius-scale, 1));
 	background: transparent;
 	color: var(--ak-text-muted);
 	font-weight: 500;
@@ -877,47 +867,6 @@ body.adminkit .tagchecklist > li {
 	color: var(--ak-text);
 }
 
-body.adminkit .notice-info {
-	background: var(--ak-info-subtle);
-	color: var(--ak-info);
-	border-color: color-mix(in srgb, var(--ak-info) 30%, transparent);
-}
-
-body.adminkit .notice-success,
-body.adminkit div.updated,
-body.adminkit .updated {
-	background: var(--ak-success-subtle);
-	color: var(--ak-success);
-	border-color: color-mix(in srgb, var(--ak-success) 30%, transparent);
-}
-
-body.adminkit .notice-error,
-body.adminkit div.error,
-body.adminkit .error {
-	background: var(--ak-error-subtle);
-	color: var(--ak-error);
-	border-color: color-mix(in srgb, var(--ak-error) 30%, transparent);
-}
-
-body.adminkit .notice-warning,
-body.adminkit .update-nag {
-	background: var(--ak-warning-subtle);
-	color: var(--ak-warning);
-	border-color: color-mix(in srgb, var(--ak-warning) 30%, transparent);
-}
-
-/* WP hardcodes `color: #1e1e1e` on notice / updated / error paragraph text,
-   which turns invisible on our dark surface. Route it through the token. */
-/* Let the message text take the notice's own colour (set per status above) so the
-   soft tint + coloured copy read as one — instead of WP's hardcoded #1e1e1e. */
-body.adminkit .notice p,
-body.adminkit .form-table td .notice p,
-body.adminkit .notice-title,
-body.adminkit div.error p,
-body.adminkit div.updated p {
-	color: inherit;
-}
-
 /* Notice dismiss cross — same #1e1e1e hardcoded in WP, in default + hover
    + active + focus states. Route through --ak-text-muted (lighter so the
    close button reads as secondary) with --ak-text on hover. */
@@ -941,7 +890,7 @@ body.adminkit #screen-meta {
 	background: var(--ak-card-bg);
 	border: none;
 	border-bottom: 1px solid var(--ak-card-border);
-	border-top-left-radius: 18px;
+	border-top-left-radius: calc(18px * var(--ak-radius-scale, 1));
 	overflow: hidden;
 	color: var(--ak-text);
 }
@@ -951,6 +900,20 @@ body.adminkit #screen-meta-links a {
 	background: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
+}
+
+/* Keep the native Help/Screen Options chevron beside its label at every width. */
+body.adminkit #screen-meta-links .show-settings {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ gap: calc(6px * var(--ak-space-scale, 1));
+ white-space: nowrap;
+}
+body.adminkit #screen-meta-links .show-settings::after {
+ flex: 0 0 auto;
+ padding: 0;
+ line-height: 1;
 }
 
 body.adminkit #screen-meta-links a:hover,
@@ -1068,9 +1031,9 @@ body.adminkit .ak-tabs {
 	display: inline-flex;
 	flex-wrap: nowrap;
 	align-items: center;
-	gap: 2px;
-	margin: 16px 0;
-	padding: 3px;
+	gap: calc(2px * var(--ak-space-scale, 1));
+	margin: calc(16px * var(--ak-space-scale, 1)) 0;
+	padding: calc(3px * var(--ak-space-scale, 1));
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface-muted);
@@ -1121,7 +1084,7 @@ body.adminkit .ak-tabs button {
 	box-shadow: none;
 	color: var(--ak-text-muted);
 	font: inherit;
-	font-size: 14px;
+	font-size: calc(14px * var(--ak-type-scale, 1));
 	font-weight: 500;
 	line-height: 1;
 	text-decoration: none;
@@ -1175,26 +1138,10 @@ body.adminkit .ak-tabs button:focus-visible {
 	body.adminkit :is(.subsubsub a, .filter-links a, .nav-tab, .ak-tabs button) { transition: none; }
 }
 
-/* 5 — Icons. `.ak-nav-tab-ic` is injected by list-table-chrome.js; `.ic` is
-   rendered by the AdminKit panel builders. Both inherit `currentColor` so they track the muted → heading
-   transition automatically. translateY(-1px) is an optical lift: Lucide-style
-   icons centre their visual mass slightly below the 24×24 viewBox geometric
-   centre (e.g. the trash icon's bulk sits below the handle), so a
-   geometrically-centred icon reads LOW next to text cap-height. 1px matches
-   what icon libraries recommend (`vertical-align: -0.125em` ≈ 1-2px @ 13px). */
+/* Tabs use text labels only across native settings and account panels. */
 body.adminkit .nav-tab .ak-nav-tab-ic,
 body.adminkit .ak-tabs button .ic {
-	display: inline-flex;
-	align-items: center;
-	color: currentColor;
-	transform: translateY(-1px);
-}
-
-body.adminkit .nav-tab .ak-nav-tab-ic svg,
-body.adminkit .ak-tabs button .ic svg {
-	display: block;
-	width: 16px;
-	height: 16px;
+ display: none;
 }
 
 /* Count badge — a soft notification bubble. Its fill is a tint of the count's OWN
@@ -1208,7 +1155,7 @@ body.adminkit .subsubsub .count {
 	justify-content: center;
 	min-width: 18px;
 	height: 18px;
-	padding: 0 6px;
+	padding: 0 calc(6px * var(--ak-space-scale, 1));
 	border-radius: var(--ak-radius-full);
 	background: color-mix(in srgb, currentColor 18%, transparent);
 	color: var(--ak-text-muted);
@@ -1256,7 +1203,7 @@ body.adminkit :is(.column-comments .comment-grey-bubble, .sorting-indicator) { c
 /* Status counts retain their own semantic color inside the shared segments. */
 body.adminkit .subsubsub .count {
  min-width: 18px;
- padding-inline: 4px;
+ padding-inline: calc(4px * var(--ak-space-scale, 1));
  background: color-mix(in srgb, currentColor 10%, transparent);
  font-variant-numeric: tabular-nums;
 }

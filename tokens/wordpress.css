@@ -42,3 +42,32 @@ body.adminkit ::selection { background: var(--ak-primary-subtle); color: var(--a
 body.adminkit input, body.adminkit textarea { caret-color: var(--ak-primary); }
 body.adminkit { scrollbar-color: var(--ak-border-strong) var(--ak-bg); }
 body.adminkit code, body.adminkit kbd, body.adminkit pre { font-family: var(--ak-font-mono); }
+
+/* Native WordPress typography has absolute pixel sizes. Map text roles once;
+   icon fonts and explicitly sized editorial content keep their own geometry. */
+body.adminkit { font-size: var(--ak-text-s); }
+body.adminkit :where(input, select, textarea, button) { font-family: var(--ak-font-body); }
+body.adminkit :where(p, .description, .form-table, .form-table td, .form-table th, .widefat td, .widefat th, .subsubsub, .tablenav, .button, .button-primary, .button-secondary) { font-size: var(--ak-text-s); }
+body.adminkit :where(h1, .wrap > h1) { font-size: calc(23px * var(--ak-type-scale)); }
+body.adminkit :where(h2, .wrap h2) { font-size: calc(18px * var(--ak-type-scale)); }
+body.adminkit :where(h3, .wrap h3) { font-size: calc(16px * var(--ak-type-scale)); }
+body.adminkit #adminmenu :where(a, .wp-submenu a) { font-size: var(--ak-text-s); }
+#wpadminbar :where(.ab-item, .ab-label) { font-size: var(--ak-text-s); }
+
+/* Shared library variables inherit into teleported Element Plus dialogs too. */
+body.adminkit {
+ --el-font-family: var(--ak-font-body);
+ --el-font-size-extra-small: var(--ak-text-xs);
+ --el-font-size-small: var(--ak-text-s);
+ --el-font-size-base: var(--ak-text-m);
+ --el-font-size-medium: calc(16px * var(--ak-type-scale));
+ --el-font-size-large: calc(18px * var(--ak-type-scale));
+ --el-font-size-extra-large: calc(20px * var(--ak-type-scale));
+ --el-border-radius-base: var(--ak-radius-s);
+ --el-border-radius-small: var(--ak-radius-s);
+ --el-border-radius-round: var(--ak-radius-full);
+ --el-component-size: var(--ak-control-height);
+ --el-component-size-small: calc(24px * max(var(--ak-space-scale), var(--ak-type-scale)));
+ --el-component-size-large: calc(40px * max(var(--ak-space-scale), var(--ak-type-scale)));
+}
+body.adminkit :where(.components-button, .components-text-control__input, .components-select-control__input) { font-family: var(--ak-font-body); font-size: var(--ak-text-s); }

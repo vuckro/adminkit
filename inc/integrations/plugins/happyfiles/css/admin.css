@@ -9,7 +9,7 @@
 /* ===== Settings shell ===== */
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs {
 	border-bottom: 1px solid var(--ak-border);
-	margin: 0 0 24px;
+	margin: 0 0 calc(24px * var(--ak-space-scale, 1));
 }
 
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-tabs li a {
@@ -105,7 +105,7 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content sel
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
-	padding: 6px 10px;
+	padding: calc(6px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1));
 	transition: none;
 }
 
@@ -148,7 +148,7 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content .bu
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tbody fieldset label {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
+	gap: calc(6px * var(--ak-space-scale, 1));
 	line-height: 1.6;
 }
 

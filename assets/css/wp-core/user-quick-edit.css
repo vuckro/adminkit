@@ -20,7 +20,7 @@
 .adminkit-quick-edit-row td.colspanchange {
 	position: sticky;
 	left: 0;
-	padding: 16px;
+	padding: calc(16px * var(--ak-space-scale, 1));
 }
 
 .adminkit-qe-wrap {
@@ -28,7 +28,7 @@
 	   the full table; without this cap the form overflows on narrow screens.
 	   32px = 2 × 16px padding from the sticky cell above. */
 	max-width: min(640px, calc(var(--ak-qe-w, 100vw) - 32px));
-	padding: 4px 0;
+	padding: calc(4px * var(--ak-space-scale, 1)) 0;
 }
 
 /* Header — avatar + display name + email, the "who am I editing" cue.
@@ -38,8 +38,8 @@
 .adminkit-qe-header {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	margin-bottom: 12px;
+	gap: calc(12px * var(--ak-space-scale, 1));
+	margin-bottom: calc(12px * var(--ak-space-scale, 1));
 }
 .adminkit-qe-avatar {
 	display: block;
@@ -58,13 +58,13 @@
 .adminkit-qe-display-name {
 	display: block;
 	font-weight: 600;
-	font-size: 14px;
+	font-size: calc(14px * var(--ak-type-scale, 1));
 	color: var(--ak-heading, #1d2327);
 }
 .adminkit-qe-email-display {
 	display: block;
 	color: var(--ak-text-muted, #646970);
-	font-size: 13px;
+	font-size: calc(13px * var(--ak-type-scale, 1));
 	word-break: break-all;
 }
 
@@ -77,16 +77,16 @@
 	margin: 0;
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
-	gap: 0 32px;
+	gap: 0 calc(32px * var(--ak-space-scale, 1));
 }
 .adminkit-qe-fields > label {
 	display: block;
-	margin: 0 0 12px;
+	margin: 0 0 calc(12px * var(--ak-space-scale, 1));
 }
 .adminkit-qe-fields .title {
 	display: block;
 	font-weight: 500;
-	margin-bottom: 4px;
+	margin-bottom: calc(4px * var(--ak-space-scale, 1));
 	color: var(--ak-text, #3c434a);
 }
 .adminkit-qe-fields input,
@@ -103,14 +103,14 @@
 .adminkit-qe-actions {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: calc(8px * var(--ak-space-scale, 1));
 	flex-wrap: wrap;
-	margin-top: 12px;
+	margin-top: calc(12px * var(--ak-space-scale, 1));
 }
 .adminkit-qe-actions .adminkit-qe-save {
 	margin-left: auto;
 }
 .adminkit-qe-error {
 	color: var(--ak-error, #d63638);
-	font-size: 13px;
+	font-size: calc(13px * var(--ak-type-scale, 1));
 }

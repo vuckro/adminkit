@@ -98,8 +98,8 @@ try {
 		$css .= ak_token_block( $dark, array_merge( $data['dark'], $mono['dark'], ak_legacy_rgb( $data['legacy_rgb']['monochrome']['dark'] ) ), 'dark' );
 		$blue_light = array_intersect_key( $data['light'], $mono['light'] );
 		$blue_dark = array_intersect_key( array_merge( $data['light'], $data['dark'] ), $mono['dark'] );
-		$blue_base = 'toolbar' === $context ? ':root[data-adminkit-accent="waaskit"] #wpadminbar' : ':root[data-adminkit-accent="waaskit"], :root[data-adminkit-accent="waaskit"] .ak-bp__frame';
-		$blue_night = 'toolbar' === $context ? ':root[data-adminkit-accent="waaskit"][data-adminkit-theme="dark"] #wpadminbar' : ':root[data-adminkit-accent="waaskit"][data-adminkit-theme="dark"], :root[data-adminkit-accent="waaskit"] .ak-bp__frame[data-preview-theme="dark"]';
+		$blue_base = 'toolbar' === $context ? ':root[data-adminkit-accent="waaskit"] #wpadminbar' : ':root[data-adminkit-accent="waaskit"], .adminkit-app .ak-bp__frame[data-preview-accent="waaskit"]';
+		$blue_night = 'toolbar' === $context ? ':root[data-adminkit-accent="waaskit"][data-adminkit-theme="dark"] #wpadminbar' : ':root[data-adminkit-accent="waaskit"][data-adminkit-theme="dark"], .adminkit-app .ak-bp__frame[data-preview-accent="waaskit"][data-preview-theme="dark"]';
 		$css .= ak_token_block( $blue_base, array_merge( $blue_light, ak_legacy_rgb( $data['legacy_rgb']['waaskit']['light'] ) ) );
 		$css .= ak_token_block( $blue_night, array_merge( $blue_dark, ak_legacy_rgb( $data['legacy_rgb']['waaskit']['dark'] ) ) );
 		$filename = 'toolbar' === $context ? 'waaskit-toolbar-tokens.css' : 'waaskit-tokens.css';

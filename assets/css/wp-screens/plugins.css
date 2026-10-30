@@ -76,14 +76,8 @@ body.adminkit .wp-list-table.plugins tr.plugin-update-tr td {
 	padding: 0;
 }
 
-body.adminkit .wp-list-table.plugins tr.plugin-update-tr .update-message,
-body.adminkit .wp-list-table.plugins .plugin-update-tr .notice {
-	background: var(--ak-warning-subtle);
-	border: none;
-	border-radius: 0;
-	margin: 0;
-	padding: 10px 16px;
-}
+/* Update notices share the global neutral alert and semantic icon. */
+body.adminkit .wp-list-table.plugins .plugin-update-tr .notice { margin: 0; }
 
 /* Don't tint the update-tr row on hover — the warning bg above
    already paints the cue, and the global row hover would
@@ -137,6 +131,7 @@ body.adminkit.plugin-install-php .plugin-card {
 	background-color: var(--ak-card-bg);
 	border-color: var(--ak-card-border);
 	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
 }
 
 /* Plugin card icon — round the thumbnail so it matches the rounded card. Covers
@@ -210,7 +205,7 @@ body.adminkit.plugin-install-php .plugins-popular-tags-wrapper {
 body.adminkit.plugin-install-php .wrap > h1.wp-heading-inline {
 	display: inline-block;
 	vertical-align: middle;
-	margin-right: 8px;
+	margin-right: calc(8px * var(--ak-space-scale, 1));
 }
 body.adminkit.plugin-install-php .wrap > .page-title-action {
 	position: static;
@@ -357,4 +352,51 @@ body.adminkit a:focus .plugin-icon {
 	body.adminkit .wp-list-table.plugins .column-auto-updates { width: 20%; }
 	body.adminkit .wp-list-table.plugins .plugin-title { white-space: normal; overflow-wrap: anywhere; }
 	body.adminkit .wp-list-table.plugins tbody :is(td, th) { vertical-align: top; }
+}
+
+/* Keep translated install actions in the card flow: absolute positioning with
+   a fixed 120px slot overlaps long labels and titles in two-column grids. */
+body.adminkit.plugin-install-php .plugin-card-top {
+ display: flex;
+ flex-direction: column;
+}
+body.adminkit.plugin-install-php .plugin-card .name,
+body.adminkit.plugin-install-php .plugin-card .desc > p {
+ margin-right: 0;
+}
+body.adminkit.plugin-install-php .plugin-card .desc {
+ order: 1;
+}
+body.adminkit.plugin-install-php .plugin-card .action-links {
+ order: 2;
+ position: static;
+ width: auto;
+ margin: calc(16px * var(--ak-space-scale, 1)) 0 0 calc(148px * var(--ak-space-scale, 1));
+}
+body.adminkit.plugin-install-php .plugin-action-buttons {
+ display: flex;
+ flex-wrap: wrap;
+ align-items: center;
+ gap: calc(10px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
+ float: none;
+ margin: 0;
+ text-align: start;
+}
+body.adminkit.plugin-install-php .plugin-action-buttons li,
+body.adminkit.plugin-install-php .plugin-action-buttons li .button {
+ margin: 0;
+}
+@media (max-width: 480px) {
+ body.adminkit.plugin-install-php .plugin-card .plugin-icon {
+  width: 64px;
+  height: 64px;
+ }
+ body.adminkit.plugin-install-php .plugin-card .name {
+  margin-left: calc(80px * var(--ak-space-scale, 1));
+  min-height: 64px;
+ }
+ body.adminkit.plugin-install-php .plugin-card .desc { margin-left: 0; }
+ body.adminkit.plugin-install-php .plugin-card .action-links {
+  margin-left: 0;
+ }
 }

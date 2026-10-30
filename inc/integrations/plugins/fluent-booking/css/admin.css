@@ -211,13 +211,13 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
 @media screen and (min-width: 783px) {
 	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
 		margin-left: 0;
-		padding-right: 20px; /* right gutter for the body (host pads only the left) */
+		padding-right: calc(20px * var(--ak-space-scale, 1)); /* right gutter for the body (host pads only the left) */
 	}
 	/* Keep the menu bar full-bleed: cancel the app's right padding on it (it
 	   already cancels the left via its own -20px) so the header spans the panel
 	   while the body sits inset left + right. */
 	body.adminkit.toplevel_page_fluent-booking .fframe_main-menu-items {
-		margin-right: -20px;
+		margin-right: calc(-20px * var(--ak-space-scale, 1));
 	}
 }
 
@@ -626,7 +626,7 @@ body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a:focus {
 body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a::after {
 	content: var( --ak-wordmark, "Booking" );
 	color: var( --ak-heading );
-	font-size: 18px;
+	font-size: calc(18px * var(--ak-type-scale, 1));
 	font-weight: 700;
 	letter-spacing: 0.01em;
 }
@@ -1019,7 +1019,7 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_welcome_ban
 	color: var(--ak-heading);
 }
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_welcome_banner h1 {
-	font-size: clamp(24px, 3vw, 32px);
+	font-size: calc(clamp(24px, 3vw, 32px) * var(--ak-type-scale, 1));
 	line-height: 1.25;
 }
 body.adminkit.toplevel_page_fluent-booking .el-button:focus-visible,
@@ -1028,7 +1028,7 @@ body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn:focus-visible {
 	box-shadow: var(--ak-focus-ring);
 }
 @media screen and (max-width: 782px) {
-	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_welcome_banner { padding: 24px 16px; }
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_welcome_banner { padding: calc(24px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1)); }
 	body.adminkit.toplevel_page_fluent-booking .el-button { min-height: var(--ak-control-height-touch); }
 }
 
@@ -1268,7 +1268,7 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_color_selec
 
 /* Long French dialog titles must leave room for the close control. */
 body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__header {
-	padding-inline-end: 56px;
+	padding-inline-end: calc(56px * var(--ak-space-scale, 1));
 }
 @media screen and (max-width: 782px) {
 	body.adminkit.toplevel_page_fluent-booking .wp_vue_editor_wrapper .popover-wrapper {
@@ -1378,7 +1378,7 @@ body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__header {
 	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_menu_opener_btn .el-icon {
 		width: 24px;
 		height: 24px;
-		font-size: 24px;
+		font-size: calc(24px * var(--ak-type-scale, 1));
 	}
 	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_menu_opener_btn:hover {
 		background: var( --ak-hover-bg );
@@ -1400,7 +1400,7 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .overview-widget 
 		box-shadow: none;
 	}
 	body.adminkit.toplevel_page_fluent-booking .el-dialog .fcal_booking_calendar .el-calendar__body {
-		padding: 6px 4px 10px;
+		padding: calc(6px * var(--ak-space-scale, 1)) calc(4px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1));
 	}
 	body.adminkit.toplevel_page_fluent-booking .el-dialog .fcal_booking_calendar .el-calendar-table {
 		table-layout: fixed;
@@ -1432,7 +1432,7 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_radio_btn_g
 	width: 1px;
 	height: 1px;
 	padding: 0;
-	margin: -1px;
+	margin: calc(-1px * var(--ak-space-scale, 1));
 	border: 0;
 	opacity: 0;
 	clip-path: inset(50%);

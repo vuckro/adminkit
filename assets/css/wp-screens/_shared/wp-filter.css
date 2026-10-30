@@ -24,3 +24,66 @@ body.adminkit .filter-count .count {
 	background: var(--ak-text-muted);
 	color: var(--ak-surface);
 }
+
+/* Installer toolbars use natural wrapping rather than native floats. A search
+   that cannot fit beside the filters takes the full next row. Media keeps its
+   own toolbar layout. Native drawer visibility remains untouched. */
+body.adminkit:is(.plugin-install-php, .theme-install-php) .wp-filter {
+ display: flex;
+ flex-wrap: wrap;
+ align-items: center;
+ justify-content: flex-start;
+ gap: calc(12px * var(--ak-space-scale, 1));
+ padding: calc(10px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1));
+}
+body.adminkit:is(.plugin-install-php, .theme-install-php) .wp-filter .filter-count {
+ flex: 0 0 auto;
+ min-width: 0;
+ margin: 0;
+}
+body.adminkit:is(.plugin-install-php, .theme-install-php) .wp-filter .filter-links {
+ float: none;
+ flex: 0 1 auto;
+ min-width: 0;
+}
+body.adminkit.theme-install-php .wp-filter .drawer-toggle {
+ flex: 0 0 auto;
+ margin: 0;
+}
+body.adminkit:is(.plugin-install-php, .theme-install-php) .wp-filter .search-form {
+ float: none;
+ flex: 1 1 440px;
+ min-width: 0;
+ margin: 0;
+}
+body.adminkit.theme-install-php .wp-filter .search-box {
+ display: flex;
+ align-items: center;
+ gap: calc(8px * var(--ak-space-scale, 1));
+ float: none;
+ width: 100%;
+ margin: 0;
+}
+body.adminkit:is(.plugin-install-php, .theme-install-php) .wp-filter .search-form input[type="search"] {
+ flex: 1 1 140px;
+ min-width: 0;
+ width: auto;
+}
+body.adminkit:is(.plugin-install-php, .theme-install-php) .wp-filter .search-form :is(label, select) {
+ flex-shrink: 0;
+}
+body.adminkit.theme-install-php .wp-filter > :is(.filter-drawer, .favorites-form, .filtered-by) {
+ flex: 0 0 100%;
+ box-sizing: border-box;
+ margin: 0;
+}
+@media (max-width: 782px) {
+ body.adminkit:is(.plugin-install-php, .theme-install-php) .wp-filter .search-form,
+ body.adminkit.theme-install-php .wp-filter .search-box {
+  flex-wrap: wrap;
+  row-gap: calc(8px * var(--ak-space-scale, 1));
+ }
+ body.adminkit:is(.plugin-install-php, .theme-install-php) .wp-filter .search-form label:not(.screen-reader-text) {
+  flex-basis: 100%;
+ }
+}

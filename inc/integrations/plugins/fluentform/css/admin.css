@@ -79,7 +79,7 @@ body.adminkit .ff_header .plugin-name {
 
 body.adminkit .ff_header .plugin-name::after {
 	content: var( --ak-wordmark, "FluentForm" );
-	font-size: 18px;
+	font-size: calc(18px * var(--ak-type-scale, 1));
 	font-weight: 700;
 	line-height: 30px;
 	letter-spacing: -0.01em;

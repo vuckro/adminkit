@@ -29,14 +29,9 @@
 	if (!form || form.dataset.akAccount) { reveal(); return; }
 	form.dataset.akAccount = '1';
 
-	// Stash + strip any boot hash before we build the panels: the cards take
-	// id=<slug>, so a #slug in the URL would make the browser jump down to that
-	// card. We re-apply it as state-only (replaceState in activate) once the tab
-	// is set, so the hash still deep-links the tab without scrolling the page.
+	// URL hashes select tabs; panel IDs are namespaced so the browser cannot
+	// mistake tab state for a scroll anchor during navigation or reload.
 	var bootHash = location.hash.slice(1);
-	if (bootHash && history.replaceState) {
-		history.replaceState(null, '', location.pathname + location.search);
-	}
 
 	// user-new.php ships its rows as bare `tr.form-field` (no `.user-X-wrap`
 	// hooks the curated CARDS below match against). Tag them up front by walking
@@ -61,6 +56,27 @@
 			var tr = input && input.closest('tr');
 			if (tr) { tr.classList.add(TAGS[name]); }
 		});
+	}
+
+
+	// Explain the selected role immediately, retaining the native role control.
+	if (form.id === 'createuser') {
+		var roleSelect = form.querySelector('select#role');
+		if (roleSelect && S.role_descriptions) {
+			var roleHelp = document.createElement('p');
+			roleHelp.id = 'ak-role-description';
+			roleHelp.className = 'description';
+			roleHelp.setAttribute('aria-live', 'polite');
+			roleHelp.setAttribute('aria-atomic', 'true');
+			roleSelect.insertAdjacentElement('afterend', roleHelp);
+			roleSelect.setAttribute('aria-describedby', [roleSelect.getAttribute('aria-describedby'), roleHelp.id].filter(Boolean).join(' '));
+			function describeRole() {
+				roleHelp.textContent = Object.prototype.hasOwnProperty.call(S.role_descriptions, roleSelect.value)
+					? S.role_descriptions[roleSelect.value] : S.role_descriptions.custom;
+			}
+			roleSelect.addEventListener('change', describeRole);
+			describeRole();
+		}
 	}
 
 	// Inline stroke icons (currentColor). One per curated tab + a set keyed to
@@ -223,7 +239,7 @@
 	// Ensure the username carries a "can't be changed" note shown below it —
 	// WP only prints this hint on profile.php, not on user-edit.php.
 	var loginRow = firstMatch(form, ['.user-user-login-wrap', '.user-login-wrap']);
-	if (loginRow) {
+	if (loginRow && form.id !== 'createuser') {
 		var loginCell = loginRow.querySelector('td');
 		if (loginCell && !loginCell.querySelector('.description')) {
 			var note = document.createElement('p');
@@ -248,10 +264,13 @@
 		used[id] = 1;
 		return id;
 	}
+	function panelFor(id) {
+		return document.getElementById('ak-account-panel-' + id);
+	}
 	function makePanel(id, label, desc) {
 		var card = document.createElement('section');
 		card.className = 'ak-card';
-		card.id = id;
+		card.id = 'ak-account-panel-' + id;
 		card.dataset.tab = id;
 		card.setAttribute('role', 'tabpanel');
 		card.setAttribute('aria-labelledby', 'tab-' + id);
@@ -276,6 +295,7 @@
 		b.dataset.target = id;
 		b.dataset.order = order;
 		b.setAttribute('role', 'tab');
+		b.setAttribute('aria-controls', 'ak-account-panel-' + id);
 		var ic = document.createElement('span'); ic.className = 'ic'; ic.innerHTML = I[icon] || I.plugin;
 		var tx = document.createElement('span'); tx.className = 'tx'; tx.textContent = label;
 		b.appendChild(ic);
@@ -419,7 +439,7 @@
 			if (h2.parentNode) h2.parentNode.removeChild(h2);
 		});
 		panels.appendChild(c.card);
-		addTab(c.card.id, 'address', S.addresses, 10);
+		addTab(c.card.dataset.tab, 'address', S.addresses, 10);
 	})();
 
 	// --- sweep leftovers (plugin sections + loose tables) -----------------
@@ -447,7 +467,7 @@
 		// us shipping a thin "Other settings" tab with a single row in it. Falls
 		// back to its own tab when Settings isn't on the page (Settings bailed,
 		// or another screen shape).
-		var settingsCard = used['settings'] ? document.getElementById('settings') : null;
+		var settingsCard = used['settings'] ? panelFor('settings') : null;
 		if (settingsCard) {
 			var secondary = document.createElement('section');
 			secondary.className = 'ak-card';
@@ -485,7 +505,7 @@
 		})
 		.forEach(function (btn) {
 			tabs.appendChild(btn);
-			var panel = document.getElementById(btn.dataset.target);
+			var panel = panelFor(btn.dataset.target);
 			if (panel) panels.appendChild(panel);
 		});
 
@@ -494,12 +514,122 @@
 	// the sort+re-append above moved the primaries around.
 	Array.prototype.slice.call(panels.children).forEach(function (p) {
 		var owner = p.dataset.tab;
-		if (!owner || owner === p.id) { return; }
-		var primary = document.getElementById(owner);
+		if (!owner) { return; }
+		var primary = panelFor(owner);
 		if (primary && primary !== p) {
 			primary.insertAdjacentElement('afterend', p);
 		}
 	});
+
+	// The profile and account-creation form share a wide identity card and a narrower
+	// security card inside the same tabpanel. Move native rows, retaining field
+	// names, event handlers and WordPress's password controls. User-edit
+	// keeps its existing layout.
+	if (document.body.classList.contains('profile-php') || form.id === 'createuser') {
+		var information = panelFor('information');
+		if (information) {
+			var identity = makePanel('ak-profile-identity', S.identity_contact, '');
+			var security = makePanel('ak-profile-security', S.security, '');
+			identity.card.id = 'ak-profile-identity';
+			security.card.id = 'ak-profile-security';
+			[identity, security].forEach(function (part) {
+				part.card.classList.add('ak-grid');
+				part.card.removeAttribute('role');
+				part.card.removeAttribute('aria-labelledby');
+				part.card.removeAttribute('data-tab');
+				part.card.setAttribute('aria-labelledby', part.card.id + '-heading');
+				part.card.querySelector('h2').id = part.card.id + '-heading';
+			});
+			var securityRows = '.user-user-login-wrap, .user-login-wrap, #password, .user-pass1-wrap, .user-generate-reset-link-wrap';
+			Array.prototype.slice.call(information.querySelectorAll(':scope > .form-table > tbody > tr')).forEach(function (row) {
+				row.classList.remove('ak-half', 'ak-third');
+				(row.matches(securityRows) ? security.tbody : identity.tbody).appendChild(row);
+			});
+			markHalf(identity.card, ['.user-first-name-wrap', '.user-last-name-wrap', '.user-nickname-wrap', '.user-display-name-wrap']);
+			pairFractions(identity.tbody);
+			information.className = 'ak-information-layout';
+			information.replaceChildren(identity.card, security.card);
+			form.classList.add('ak-profile-workspace');
+		}
+	}
+
+
+	// Profile Settings: separate native controls into readable sibling cards.
+	// Keep the outer tabpanel and original controls (including app-password JS).
+	if (document.body.classList.contains('profile-php')) {
+		var settings = panelFor('settings');
+		if (settings) {
+			var parts = [
+				{ id: 'public-profile', title: S.public_profile, desc: S.public_profile_desc },
+				{ id: 'admin-preferences', title: S.admin_preferences, desc: S.admin_preferences_desc },
+				{ id: 'sessions', title: S.profile_sessions, desc: S.profile_sessions_desc },
+				{ id: 'applications', title: S.profile_apps, desc: S.profile_apps_desc }
+			].map(function (def) {
+				var part = makePanel('profile-' + def.id, def.title, def.desc);
+				part.card.id = 'ak-profile-' + def.id;
+				part.card.removeAttribute('role');
+				part.card.removeAttribute('data-tab');
+				part.card.querySelector('h2').id = part.card.id + '-heading';
+				part.card.setAttribute('aria-labelledby', part.card.id + '-heading');
+				return part;
+			});
+			Array.prototype.slice.call(settings.querySelectorAll(':scope > .form-table > tbody > tr')).forEach(function (row) {
+				var target = row.matches('.user-language-wrap, .user-url-wrap, .user-description-wrap') ? 0 :
+					row.matches('.user-sessions-wrap') ? 2 : 1;
+				parts[target].tbody.appendChild(row);
+			});
+			var applications = settings.querySelector('#application-passwords-section');
+			if (applications) parts[3].card.appendChild(applications);
+			// Preserve extra non-table content; remove only the replaced headings.
+			Array.prototype.slice.call(settings.children).forEach(function (node) {
+				if (node.classList.contains('ak-card-head') || node.classList.contains('form-table')) return;
+				if (node.classList.contains('ak-card-sub') && node.textContent.trim() === S.sections.app_passwords) return;
+				parts[1].card.appendChild(node);
+			});
+			settings.className = 'ak-settings-layout';
+			settings.replaceChildren();
+			var securityPanel = document.createElement('div');
+			securityPanel.className = 'ak-settings-layout';
+			securityPanel.id = 'ak-account-panel-security';
+			securityPanel.dataset.tab = 'security';
+			securityPanel.setAttribute('role', 'tabpanel');
+			securityPanel.setAttribute('aria-labelledby', 'tab-security');
+			parts.forEach(function (part, index) {
+				if (!part.tbody.children.length) part.tbody.parentNode.remove();
+				if (part.card.querySelector('.form-table, #application-passwords-section') || part.card.children.length > 1) {
+					(index < 2 ? settings : securityPanel).appendChild(part.card);
+				}
+			});
+			if (securityPanel.children.length) {
+				panels.appendChild(securityPanel);
+				I.lock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
+				addTab('security', 'lock', S.security, 31);
+			}
+		}
+	}
+
+	// Account creation shares the Settings card grid, retaining DOM/tab order.
+	if (form.id === 'createuser') {
+		var creationSettings = panelFor('settings');
+		if (creationSettings) {
+			var settingsLayout = document.createElement('div');
+			settingsLayout.className = 'ak-settings-layout';
+			settingsLayout.id = creationSettings.id;
+			settingsLayout.dataset.tab = 'settings';
+			settingsLayout.setAttribute('role', 'tabpanel');
+			settingsLayout.setAttribute('aria-labelledby', 'tab-settings');
+			creationSettings.id = 'ak-createuser-settings';
+			creationSettings.removeAttribute('role');
+			creationSettings.removeAttribute('aria-labelledby');
+			panels.insertBefore(settingsLayout, creationSettings);
+			Array.prototype.slice.call(panels.children).forEach(function (part) {
+				if (part !== settingsLayout && part.dataset.tab === 'settings') {
+					part.removeAttribute('data-tab');
+					settingsLayout.appendChild(part);
+				}
+			});
+		}
+	}
 
 	// --- tabs: show one panel at a time -----------------------------------
 	var buttons = tabs.querySelectorAll('button');
@@ -548,27 +678,29 @@
 	});
 	// Roving arrow-key nav across the tab strip.
 	tabs.addEventListener('keydown', function (e) {
-		if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+		if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].indexOf(e.key) === -1) return;
 		var list = Array.prototype.slice.call(buttons);
 		var i = list.indexOf(document.activeElement);
 		if (i === -1) return;
-		var next = list[(i + (e.key === 'ArrowRight' ? 1 : list.length - 1)) % list.length];
+		var next = e.key === 'Home' ? list[0] : e.key === 'End' ? list[list.length - 1] :
+			list[(i + (e.key === 'ArrowRight' ? 1 : list.length - 1)) % list.length];
 		next.focus();
 		activate(next.dataset.target);
 		e.preventDefault();
 	});
+	// Reveal the first invalid control before the browser tries to focus it.
+	var revealingInvalid = false;
+	form.addEventListener('invalid', function (e) {
+		if (revealingInvalid) return;
+		revealingInvalid = true;
+		setTimeout(function () { revealingInvalid = false; }, 0);
+		var panel = e.target.closest('[data-tab]');
+		if (panel) activate(panel.dataset.tab);
+	}, true);
 	// Initial activation: URL hash wins (deep link from support / docs), then
 	// first tab as fallback.
 	activate(tabFor(bootHash) || buttons[0].dataset.target);
 
-	// Tab-state page: the hash selects a tab, never a scroll position, and WP can
-	// nudge the scroll on arrival (auto-focus on user-new.php, late scripts). Pin
-	// to the top on load — now (still hidden by the pre-paint, so no flash) and
-	// once next frame to beat a late focus.
-	window.scrollTo(0, 0);
-	if (window.requestAnimationFrame) {
-		window.requestAnimationFrame(function () { window.scrollTo(0, 0); });
-	}
 
 	// On narrow screens, move all page-title-action buttons (native "Add New User"
 	// and any added by other plugins) below the tabs + panels —

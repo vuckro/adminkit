@@ -201,13 +201,15 @@ Generated tokens own color values. Appearance variants are attribute-scoped; com
 
 Run `php dev/css-contract.php` alongside token drift, contrast and browser checks. Do not add a global reset or another override layer to repair a local component.
 
-### Opt-in defaults
+### Feature and integration defaults
 
-Optional tools and adapter switches default to false; icon replacement belongs
-to the base skin and defaults to true. Stored explicit choices
-remain effective; resetting Features or Extensions restores the disabled defaults.
-Generic plugin screens require their plugin file in `generic_theming_on`; the old
-`generic_theming_off` blacklist no longer implicitly enables unknown plugins.
+Optional tools default to false; icon replacement belongs to the base skin and
+defaults to true. Detected plugin adapters default to true. Stored explicit
+choices remain effective. Resetting Features restores their registered defaults;
+resetting Extensions enables all available integrations for debugging recovery.
+Generic plugin screens are themed unless their plugin file is in
+`generic_theming_off`. The legacy `generic_theming_on` allowlist no longer limits
+newly detected plugins.
 Core administration styling and the settings screen remain the base layer.
 Menu/toolbar editors bind their routes and hooks only when enabled. The menu
 table is created lazily by its enabled module, never by plugin activation.
@@ -273,3 +275,101 @@ On desktop hover-capable devices, post/page/CPT titles are vertically centered o
 Installed extension names share the same resting centering and hover/focus lift as content titles. The native plugin `row-actions.visible` class is overridden only for desktop hover reveal; touch retains native visible actions.
 
 Native list table alignment is centralized in `wp-components/tables.css`. Compact primary labels (content, taxonomy, installed plugins and usernames with avatars) share the centered resting state and title lift. Comments and media retain their richer content layout while sharing action reveal and keyboard access. Mobile keeps native disclosures; inline editors and update notices are excluded from desktop alignment.
+
+### Current-user profile layout
+
+Native account and General/Discussion settings tabs reveal the first invalid
+field before browser validation focuses it. General/Discussion group their
+existing nodes in labelled tabpanels; arrows, Home and End move between tabs.
+Action feedback (`settings-error`, native error `#message`, account errors)
+stays inline instead of moving to the notification drawer. Drawer opening makes
+visibility immediate so the existing focus call works during the slide animation.
+
+Table scroll regions use the existing resize observer to become named keyboard
+destinations only while overflowing. Title/name cells wrap; compact data does not.
+The editor theme button is hidden outside fullscreen because the admin bar already
+provides one. `--ak-inverse-text` preserves text on the Site Editor's dark sidebar.
+
+On `profile.php` and `user-new.php`, the Information tab presents two sibling cards: Identity and
+contact, and Security. The tabpanel retains its role and URL hash state. Panel IDs use the
+`ak-account-panel-` prefix and tabs point to them via `aria-controls`, so
+`#information` and `#settings` select tabs without native anchor scrolling.
+`profile-account.js` moves native rows without cloning fields; submission and
+password controls remain native. `profile.css` stacks the cards below 1120px.
+The user-edit screen retains its existing layout.
+
+The account layout script is preloaded in the head and printed at the start of
+`in_admin_footer`, after the complete form and before other footer scripts.
+The pending form is revealed immediately after grouping, without an opacity fade;
+the existing load/timeout fallback keeps fields accessible if the builder fails.
+
+The profile and account-creation forms share a 1240px maximum width and keep
+the native administration `.wrap` gutters and left alignment. Tabs, cards and
+submit share the form edges; no page width or margin override is added.
+Cards align at the top and retain their natural height; no script measures them.
+
+Card surfaces share `--ak-card-border` and `--ak-card-shadow` in `chrome.css`:
+a light contour and compact 2px contact shadow in light mode, with the existing
+low elevation in dark mode. Native postboxes, settings/account cards, AdminKit
+panels, generic cards and theme/plugin catalog cards consume this shared role.
+Headers, form controls, tables and floating overlays retain their own treatments.
+
+Table outer frames use `--ak-table-border` and `--ak-table-shadow`, mapped to
+the card contour and contact elevation. Wrapped tables receive the shadow only
+on the outer frame; internal rows and scrolling tables retain their separators.
+
+`wp-components/form-table.css` owns the shared save row for native General,
+Writing, Reading, Discussion, Media and Permalink settings, plus profile and
+account creation/edit forms. Actions align to the form's end after a separator;
+primary buttons are full width with a 44px minimum height below 600px. Editor,
+bulk and third-party plugin actions retain their own layout.
+
+### Installer browse layout
+
+`wp-screens/_shared/wp-filter.css` owns the wrapping toolbar layout for plugin
+and theme installers. Search expands into remaining space or fills the next row;
+native theme drawers keep their display state and span the toolbar width. Media
+and installed-theme toolbars retain their own layouts. Plugin installer card
+buttons stay in normal flow below the description so translated actions cannot
+overlap titles; the native thumbnail column remains unchanged.
+
+Shared Help/Screen Options toggles keep their native chevrons in a non-wrapping
+inline flex row. Pagination arrow links and disabled spans share centered glyphs
+and equal minimum hit areas (32px desktop, 40px mobile). The installer pagination
+uses the same inline alignment as table cards, while native one-page hiding is
+preserved outside those cards. No JavaScript or animation is added.
+
+### General settings navigation
+
+`options-general.js` keeps native fields in the original form and groups them into General, Accounts & registration, and Language/date/time tabs. The locale tab separates language/timezone from display formats into two cards. Desktop panels use the shared two-column grid; the account panel keeps a single readable column. Card headings and introductions are localized by `class-options-general.php`.
+
+### Discussion settings cards
+
+The Comments tab groups existing native rows into Participation, Display, Notifications, and Moderation/filtering cards, matched by input names. The mixed native Other comment settings row remains intact in Participation, including threaded replies. Unknown plugin rows stay in the original table. Fields retain their IDs, labels, values and original settings form; Avatars remains a separate tab.
+
+### Profile settings cards
+
+On `profile.php`, the existing Settings tabpanel groups native rows into Public profile, Administration preferences, Sessions, and Application passwords sibling cards. Headings and introductions are inside each card. Empty groups are omitted. The application-password wrapper and its native handlers are retained; user-edit and user creation retain their existing layouts.
+
+### Reading settings and taxonomy layout
+
+`wp-core/class-reading-layout.php` loads purpose-led enhancements only on Reading
+and taxonomy-list screens. `options-reading.js` groups native rows by field name
+into titled homepage/archive, RSS, and search visibility sections. Unknown extension
+rows stay in their source table. All fields and nonces stay in the original form.
+`taxonomy.js` runs after list-table chrome, adds a titled management header, and
+moves the existing search controls into it. `wp-screens/taxonomy.css` gives the
+creation form a bounded column, reduces helper-text density, and stacks columns
+below 1100px without changing native submission or responsive row controls.
+
+### Shared WordPress alerts
+
+`assets/css/wp-components/feedback.css` owns native `.notice`, legacy
+`div.updated`/`div.error`, `.update-nag`, React `.components-notice` and snackbar
+appearance. Matching is independent of parent containers, including dynamically
+inserted form/session/application-password messages. All statuses share a neutral
+surface and border, with a semantic icon tile. Core dismiss handlers, content,
+ARIA roles and timing remain unchanged. Plugin update rows retain their table
+spacing while consuming this same alert frame. The login module registers
+`adminkit-login-feedback` against the same stylesheet after `adminkit-login`, so
+login and password-recovery messages use the same recipe.

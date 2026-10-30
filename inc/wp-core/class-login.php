@@ -46,6 +46,13 @@ class AdminKit_Core_Login {
 			'context' => 'login',
 		) );
 
+		AdminKit_Assets::register( array(
+			'handle'  => 'adminkit-login-feedback',
+			'src'     => 'assets/css/wp-components/feedback.css',
+			'deps'    => array( 'adminkit-login' ),
+			'context' => 'login',
+		) );
+
 		// Login branding (logo + the link/text under it) is part of the "Login
 		// screen" feature; the callbacks/filters below no-op when it's off.
 		add_action( 'login_head', array( __CLASS__, 'print_login_logo_style' ) );

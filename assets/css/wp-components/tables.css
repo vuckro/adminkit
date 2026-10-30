@@ -18,7 +18,8 @@ body.adminkit .widefat li {
    classes are present, so the bare-widefat case needs its own block. */
 body.adminkit .widefat:not(.wp-list-table) {
 	background: var(--ak-table-bg);
-	border: 1px solid var(--ak-border);
+	border: 1px solid var(--ak-table-border);
+	box-shadow: var(--ak-table-shadow);
 	border-radius: var(--ak-table-radius);
 	border-collapse: separate;
 	border-spacing: 0;
@@ -50,6 +51,7 @@ body.adminkit .widefat:not(.wp-list-table) tbody tr:first-child th {
 /* WaasKit list-table surface. Keep WordPress markup, column sizing and sorting. */
 body.adminkit .wp-list-table {
 	background: var(--ak-table-bg);
+	box-shadow: var(--ak-table-shadow);
 	border: 1px solid var(--ak-table-border);
 	border-radius: var(--ak-table-radius);
 	border-collapse: separate;
@@ -61,7 +63,7 @@ body.adminkit .wp-list-table {
 body.adminkit .wp-list-table :is(thead, tfoot) :is(th, td) {
 	box-sizing: border-box;
 	height: 40px;
-	padding: 0 16px;
+	padding: 0 calc(16px * var(--ak-space-scale, 1));
 	background: var(--ak-table-header-bg);
 	color: var(--ak-text-muted);
 	font-size: var(--ak-text-xs);
@@ -74,9 +76,9 @@ body.adminkit .wp-list-table :is(thead, tfoot) th:is(.sortable, .sorted) { paddi
 body.adminkit .wp-list-table :is(thead, tfoot) th a {
 	display: flex;
 	align-items: center;
-	gap: 4px;
+	gap: calc(4px * var(--ak-space-scale, 1));
 	min-height: 40px;
-	padding: 0 16px;
+	padding: 0 calc(16px * var(--ak-space-scale, 1));
 	font: inherit;
 	color: inherit;
 	border-radius: var(--ak-radius-s);
@@ -92,7 +94,7 @@ body.adminkit .wp-list-table tfoot :is(th, td) {
 body.adminkit .wp-list-table tbody :is(td, th) {
 	box-sizing: border-box;
 	height: 52px;
-	padding: 8px 16px;
+	padding: calc(8px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
 	border-top: 0;
 	border-bottom: 1px solid var(--ak-border);
 	color: var(--ak-text);
@@ -122,7 +124,7 @@ body.adminkit .ak-table-card {
 	background: var(--ak-table-bg);
 	border: 1px solid var(--ak-table-border);
 	border-radius: var(--ak-table-radius);
-	box-shadow: none;
+	box-shadow: var(--ak-table-shadow);
 	overflow: hidden;
 }
 body.adminkit .ak-table-card > .tablenav {
@@ -130,7 +132,7 @@ body.adminkit .ak-table-card > .tablenav {
 	height: auto;
 	min-height: 56px;
 	margin: 0;
-	padding: 12px 16px;
+	padding: calc(12px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
 	flex-wrap: wrap;
 	overflow: visible;
 }
@@ -142,18 +144,19 @@ body.adminkit .ak-table-card .tablenav-pages {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: 8px;
+	gap: calc(8px * var(--ak-space-scale, 1));
 	height: auto;
 	margin: 0 0 0 auto;
 }
 body.adminkit .ak-table-card .pagination-links,
-body.adminkit .ak-table-card .paging-input {
+body.adminkit .tablenav .tablenav-pages:not(.one-page) .pagination-links,
+body.adminkit .tablenav .paging-input {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
+	gap: calc(4px * var(--ak-space-scale, 1));
 	white-space: nowrap;
 }
-body.adminkit .ak-table-card .paging-input { padding-inline: 4px; }
+body.adminkit .ak-table-card .paging-input { padding-inline: calc(4px * var(--ak-space-scale, 1)); }
 body.adminkit .ak-table-card .current-page { width: 3em; min-width: 0; }
 
 
@@ -174,26 +177,29 @@ body.adminkit .wp-list-table td.username strong a:focus {
 	color: var(--ak-heading);
 }
 
-/* users.php — round the gravatar (radius S) and vertically center it with the
-   username. WP floats the avatar top-left, which sits high against the rounded
-   image; inline-block + middle alignment puts the avatar and name on one
-   centered line. */
+/* Keep the avatar beside the complete identity block. Actions share the
+   username's text inset, including when links wrap on narrow screens. */
 body.adminkit .wp-list-table .column-username img {
 	border-radius: var(--ak-radius-s);
 	border: 1px solid var(--ak-border);
-	float: none;
+	box-sizing: border-box;
+	width: 32px;
+	height: 32px;
+	float: inline-start;
 	vertical-align: middle;
-	margin: 0 10px 0 0;
+	margin: calc(4px * var(--ak-space-scale, 1)) 0 0;
+	margin-inline-end: calc(10px * var(--ak-space-scale, 1));
 }
 
 body.adminkit .wp-list-table .column-username strong {
 	vertical-align: middle;
 }
 
-/* The centered avatar leaves the row actions hugging its bottom edge — add a
-   little breathing room between the name line and Edit / Delete / View. */
 body.adminkit .wp-list-table .column-username .row-actions {
-	margin-top: 8px;
+	margin-top: calc(8px * var(--ak-space-scale, 1));
+}
+body.adminkit .wp-list-table .column-username:has(> img.avatar) .row-actions {
+	margin-inline-start: calc(42px * var(--ak-space-scale, 1));
 }
 
 /* Row actions (Edit / Quick Edit / Trash / View / …) — modern, pipe-less chips,
@@ -205,11 +211,15 @@ body.adminkit .wp-list-table .column-username .row-actions {
 body.adminkit .wp-list-table .row-actions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px;
+	gap: calc(2px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1));
 	align-items: center;
 }
 
-body.adminkit .wp-list-table .row-actions span {
+/* Only action wrappers contain pipe separators. Nested feedback must retain
+   WordPress's hidden state and readable text size. */
+body.adminkit .wp-list-table .row-actions > span {
+	display: inline-flex;
+	align-items: center;
 	font-size: 0;
 }
 
@@ -234,6 +244,16 @@ body.adminkit .wp-list-table .row-actions button.button-link {
 	border-radius: var(--ak-radius-s);
 	text-decoration: none;
 	cursor: pointer;
+	white-space: nowrap;
+}
+
+/* Keep article and hierarchical page actions together on desktop. Their intrinsic width
+   sizes the title column; the existing table scroller handles narrow layouts. */
+@media screen and (min-width: 783px) {
+	body.adminkit .wp-list-table:is(.posts, .pages) .row-actions {
+		flex-wrap: nowrap;
+		width: max-content;
+	}
 }
 
 /* Text-only feedback: consistent underline, with destructive actions staying red. */
@@ -292,7 +312,7 @@ body.adminkit .tablenav {
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: center;
-	gap: 8px;
+	gap: calc(8px * var(--ak-space-scale, 1));
 	overflow-x: auto;
 	/* Horizontal scroll only when narrow. Without an explicit overflow-y the
 	   browser computes it to `auto` (visible+auto coupling), and a sub-pixel
@@ -302,7 +322,7 @@ body.adminkit .tablenav {
 	   a button whose natural height matches the row's exactly loses its
 	   top border to the overflow:hidden. */
 	overflow-y: hidden;
-	padding: 4px 0;
+	padding: calc(4px * var(--ak-space-scale, 1)) 0;
 	margin: var(--ak-tablenav-gap, 24px) 0;
 }
 
@@ -329,8 +349,8 @@ body.adminkit .tablenav .tablenav-pages a:link {
 	border: 1px solid var(--ak-border);
 	color: var(--ak-text);
 	border-radius: var(--ak-radius-s);
-	padding: 2px 8px;
-	margin: 0 2px;
+	padding: calc(2px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
+	margin: 0 calc(2px * var(--ak-space-scale, 1));
 }
 
 body.adminkit .tablenav .tablenav-pages a:hover {
@@ -345,7 +365,7 @@ body.adminkit .tablenav .tablenav-pages span.current {
 	color: var(--ak-surface);
 	border-color: var(--ak-heading);
 	border-radius: var(--ak-radius-s);
-	padding: 2px 8px;
+	padding: calc(2px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
 }
 
 /* Disabled « ‹ › » arrows — non-link spans WP renders at the ends of a range (or
@@ -357,8 +377,28 @@ body.adminkit .tablenav .tablenav-pages-navspan {
 	border: 1px solid var(--ak-border);
 	color: var(--ak-text-muted);
 	border-radius: var(--ak-radius-s);
-	padding: 2px 8px;
-	margin: 0 2px;
+	padding: calc(2px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
+	margin: 0 calc(2px * var(--ak-space-scale, 1));
+}
+
+/* Center arrow glyphs independently of native text baselines. Both live links
+   and disabled spans retain equal hit areas; mobile gets the native 40px target. */
+body.adminkit .tablenav .tablenav-pages :is(.button, .tablenav-pages-navspan) {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ box-sizing: border-box;
+ min-width: 32px;
+ min-height: 32px;
+ padding: 0 calc(8px * var(--ak-space-scale, 1));
+ margin: 0;
+ line-height: 1;
+}
+@media (max-width: 782px) {
+ body.adminkit .tablenav .tablenav-pages :is(.button, .tablenav-pages-navspan) {
+  min-width: 40px;
+  min-height: 40px;
+ }
 }
 
 /* "No items found" empty state */
@@ -366,7 +406,7 @@ body.adminkit .wp-list-table tbody tr.no-items td {
 	background: var(--ak-surface);
 	color: var(--ak-text-muted);
 	text-align: center;
-	padding: 32px 16px;
+	padding: calc(32px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
 }
 
 /* Quick Edit / Bulk Edit inline form */
@@ -386,7 +426,7 @@ body.adminkit tr.inline-edit-row td {
 body.adminkit .inline-edit-row td.colspanchange {
 	position: sticky;
 	left: 0;
-	padding: 16px;
+	padding: calc(16px * var(--ak-space-scale, 1));
 }
 
 body.adminkit .ak-qe-grid {
@@ -395,7 +435,7 @@ body.adminkit .ak-qe-grid {
 	width: calc(var(--ak-qe-w, 100%) - 32px);
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-	gap: 24px 32px;
+	gap: calc(24px * var(--ak-space-scale, 1)) calc(32px * var(--ak-space-scale, 1));
 	align-items: start;
 }
 
@@ -451,9 +491,9 @@ body.adminkit .inline-edit-row fieldset select:focus {
 
 body.adminkit .inline-edit-row .inline-edit-save {
 	background: transparent;
-	padding-top: 12px;
+	padding-top: calc(12px * var(--ak-space-scale, 1));
 	border-top: 1px solid var(--ak-table-border);
-	margin-top: 12px;
+	margin-top: calc(12px * var(--ak-space-scale, 1));
 }
 
 /* Scrollable category / bulk-title checklists — Quick Edit picker AND
@@ -479,7 +519,7 @@ body.adminkit .widefat .alternate {
 
 body.adminkit .wp-list-table .check-column {
 	width: 40px;
-	padding: 8px 0 8px 16px;
+	padding: calc(8px * var(--ak-space-scale, 1)) 0 calc(8px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
 	vertical-align: middle;
 }
 
@@ -506,7 +546,7 @@ body.adminkit .ak-table-scroll {
 	clear: both;
 	background: var(--ak-table-bg);
 	border: 1px solid var(--ak-table-border);
-	box-shadow: none;
+	box-shadow: var(--ak-table-shadow);
 	border-radius: var(--ak-table-radius);
 	overflow-x: auto;
 	overflow-y: hidden;
@@ -515,9 +555,16 @@ body.adminkit .ak-table-scroll {
    overflow:visible lets the table exceed the wrapper width → horizontal scroll. */
 body.adminkit .ak-table-scroll .wp-list-table {
 	border: 0;
+	box-shadow: none;
 	border-radius: 0;
 	overflow: visible;
 }
+
+body.adminkit .ak-table-scroll:focus-visible {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
+}
+body.adminkit .tablenav-pages.one-page .pagination-links { display: none; }
 
 /* Plugin-install page wraps its featured / popular / etc. tab content in
    .ak-table-scroll for shared scroll behaviour, but the page already paints
@@ -539,6 +586,21 @@ body.adminkit.plugin-install-php .ak-table-scroll {
 	body.adminkit .wp-list-table td {
 		white-space: nowrap;
 	}
+	body.adminkit .wp-list-table td:is(.column-title, .column-name, .column-username) {
+		white-space: normal;
+		max-width: 420px;
+	}
+}
+
+/* Long editorial titles stay compact without widening the entire list. */
+@media screen and (min-width: 783px) {
+ body.adminkit .wp-list-table:is(.posts, .pages) .column-title .row-title {
+  display: block;
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+ }
 }
 
 /* Primary (title / name) column floor. Short content — e.g. a one-word product
@@ -598,12 +660,12 @@ body.adminkit .wp-list-table .inline-edit-row th {
 		overflow-x: visible;
 	}
 	body.adminkit .wp-list-table tr:not(.inline-edit-row):not(.no-items) td.column-primary ~ td:not(.check-column) {
-		padding: 8px 0 0;
+		padding: calc(8px * var(--ak-space-scale, 1)) 0 0;
 	}
 	body.adminkit .wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.column-primary)::before {
 		position: static;
 		width: auto;
-		margin-bottom: 1px;
+		margin-bottom: calc(1px * var(--ak-space-scale, 1));
 		overflow: visible;
 		white-space: normal;
 		font-size: var(--ak-text-xs);
@@ -627,7 +689,7 @@ body.adminkit .wp-list-table tr:focus-within .row-actions { visibility: visible;
 		display: table-cell;
 		background: var(--ak-table-bg);
 		color: var(--ak-text-muted);
-		padding: 24px 16px;
+		padding: calc(24px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
 	}
 }
 
@@ -636,7 +698,7 @@ body.adminkit .ak-qe-grid > .inline-edit-wrapper {
 	display: grid;
 	grid-column: 1 / -1;
 	grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-	gap: 24px 32px;
+	gap: calc(24px * var(--ak-space-scale, 1)) calc(32px * var(--ak-space-scale, 1));
 	min-width: 0;
 }
 body.adminkit .inline-edit-wrapper > .inline-edit-save { grid-column: 1 / -1; }
@@ -646,9 +708,9 @@ body.adminkit .inline-edit-row .cat-checklist li,
 body.adminkit .inline-edit-row .checkbox-title,
 body.adminkit .inline-edit-row .inline-edit-legend { color: var(--ak-text); }
 body.adminkit .inline-edit-row .cat-checklist label.selectit { font-weight: 400; }
-body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group { display: flex; align-items: center; flex-wrap: wrap; gap: calc(8px * var(--ak-space-scale, 1)); }
 body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group label.alignleft { float: none; }
-body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group span.title { width: auto; float: none; display: block; margin-bottom: 4px; }
+body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group span.title { width: auto; float: none; display: block; margin-bottom: calc(4px * var(--ak-space-scale, 1)); }
 body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group span.input-text-wrap { margin-left: 0; }
 
 /* The grid follows available panel width, including folded and mobile menus. */
@@ -662,12 +724,23 @@ body.adminkit .ak-qe-grid > .inline-edit-wrapper { grid-template-columns: minmax
 	body.adminkit .ak-qe-grid > .inline-edit-wrapper { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 	body.adminkit .inline-edit-wrapper > .inline-edit-col-left { grid-column: auto; }
 }
+/* Pages (and other types without hierarchical taxonomy fields) have two native
+   groups. Size by the rendered structure, not a post-type name or SEO presence.
+   Extra plugin fieldsets retain their own placement; mobile remains one column. */
+@container (min-width: 600px) {
+	body.adminkit .quick-edit-row .ak-qe-grid > .inline-edit-wrapper:not(:has(> .inline-edit-col-center)) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	body.adminkit .quick-edit-row .inline-edit-wrapper:not(:has(> .inline-edit-col-center)) > .inline-edit-col-left:first-of-type {
+		grid-column: auto;
+	}
+}
 body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-col > label > span.title {
-	display: block; float: none; width: auto; margin-bottom: 4px;
+	display: block; float: none; width: auto; margin-bottom: calc(4px * var(--ak-space-scale, 1));
 }
 body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-col > label > span.input-text-wrap { margin-left: 0; }
 body.adminkit .inline-edit-row .inline-edit-date .title { float: none; width: auto; }
-body.adminkit .inline-edit-row .timestamp-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-left: 0; }
+body.adminkit .inline-edit-row .timestamp-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: calc(4px * var(--ak-space-scale, 1)); margin-left: 0; }
 body.adminkit .inline-edit-row .timestamp-wrap label { display: block; margin: 0; }
 body.adminkit .inline-edit-row .timestamp-wrap input { margin: 0; }
 body.adminkit .inline-edit-row ul.cat-checklist { height: auto; min-height: 96px; max-height: 180px; }
@@ -676,18 +749,183 @@ body.adminkit #bulk-titles :is(.ntdelitem, .title),
 body.adminkit #bulk-titles .ntdelbutton { color: var(--ak-text); }
 body.adminkit #bulk-titles .ntdelbutton:hover { color: var(--ak-error); }
 body.adminkit .inline-edit-row .inline-edit-col-right .inline-edit-group {
-	display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: 12px;
+	display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: calc(12px * var(--ak-space-scale, 1));
 }
 body.adminkit .inline-edit-row .inline-edit-col-right .inline-edit-group > label {
 	float: none; width: auto; min-width: 0; margin: 0;
 }
 body.adminkit .inline-edit-row .inline-edit-col-right label > span.title {
-	display: block; float: none; width: auto; margin-bottom: 4px;
+	display: block; float: none; width: auto; margin-bottom: calc(4px * var(--ak-space-scale, 1));
 }
 body.adminkit .inline-edit-row .inline-edit-col-right label:has(input[type="checkbox"]) {
-	display: flex; align-items: center; gap: 8px;
+	display: flex; align-items: center; gap: calc(8px * var(--ak-space-scale, 1));
 }
 body.adminkit .inline-edit-row .inline-edit-col-right select { max-width: 100%; }
+
+/* Quick Edit: one spacing rhythm, without the legacy float/label offsets.
+   Keep Bulk Edit and third-party custom field controls intact. */
+body.adminkit .quick-edit-row .inline-edit-wrapper {
+	position: relative;
+	padding: calc(var(--ak-text-s) * 1.5 + 24px) 8px 8px;
+	gap: calc(24px * var(--ak-space-scale, 1));
+}
+/* Treat the native form legend as the panel heading so every field column
+   begins on the same baseline, including when columns stack. */
+body.adminkit .quick-edit-row .inline-edit-wrapper > fieldset:first-of-type > .inline-edit-legend {
+	position: absolute;
+	top: 8px;
+	inset-inline-start: 8px;
+	margin: 0;
+}
+body.adminkit #wpbody-content .quick-edit-row .inline-edit-wrapper > fieldset {
+	padding: 0;
+	min-width: 0;
+}
+body.adminkit .quick-edit-row .inline-edit-col {
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: calc(16px * var(--ak-space-scale, 1));
+}
+body.adminkit #the-list .quick-edit-row .inline-edit-legend {
+	font-size: var(--ak-text-s);
+	text-transform: none;
+	line-height: 1.5;
+	padding: 0;
+	margin-bottom: calc(16px * var(--ak-space-scale, 1));
+}
+body.adminkit .quick-edit-row fieldset label,
+body.adminkit .quick-edit-row fieldset .inline-edit-categories-label {
+	margin: 0;
+	line-height: 1.5;
+}
+body.adminkit .quick-edit-row fieldset label > span.title,
+body.adminkit .quick-edit-row fieldset .inline-edit-categories-label {
+	float: none;
+	width: auto;
+	display: block;
+	line-height: 1.5;
+	margin: 0 0 calc(6px * var(--ak-space-scale, 1));
+}
+body.adminkit .quick-edit-row fieldset label > .input-text-wrap {
+	margin-left: 0;
+}
+body.adminkit .quick-edit-row fieldset .inline-edit-group {
+	margin: 0;
+	gap: calc(12px * var(--ak-space-scale, 1));
+}
+body.adminkit #wpbody-content .quick-edit-row fieldset.inline-edit-date {
+	float: none;
+	width: 100%;
+	padding: 0;
+}
+body.adminkit .quick-edit-row fieldset.inline-edit-date legend {
+	float: none;
+	width: auto;
+	line-height: 1.5;
+	margin-bottom: calc(6px * var(--ak-space-scale, 1));
+}
+body.adminkit .quick-edit-row .timestamp-wrap {
+	margin: 0;
+	gap: calc(4px * var(--ak-space-scale, 1));
+}
+body.adminkit .quick-edit-row .timestamp-wrap label { flex: 0 0 auto; }
+body.adminkit .quick-edit-row .timestamp-wrap select { width: auto; margin: 0; }
+body.adminkit .quick-edit-row .inline-edit-col > br.clear { display: none; }
+body.adminkit .quick-edit-row .inline-edit-group:has(.inline-edit-private) {
+	align-items: flex-end;
+	border-top: 1px solid var(--ak-table-border);
+	padding-top: calc(16px * var(--ak-space-scale, 1));
+}
+body.adminkit #wpbody-content .quick-edit-row .inline-edit-group:has(.inline-edit-private) > label:first-child {
+	flex: 0 1 22rem;
+	min-width: 0;
+	margin: 0;
+}
+body.adminkit .quick-edit-row .inline-edit-private,
+body.adminkit .quick-edit-row label:has(> input[name="slim_seo[noindex]"]) {
+	display: flex;
+	align-items: center;
+	gap: calc(8px * var(--ak-space-scale, 1));
+	min-height: 32px;
+}
+body.adminkit .quick-edit-row .inline-edit-or {
+	margin: 0;
+	line-height: 32px;
+	color: var(--ak-text-muted);
+}
+body.adminkit .quick-edit-row .inline-edit-col-right select { width: 100%; }
+/* Separate content, scheduling, visibility and publishing choices with quiet
+   rules, rather than enclosing every field in another card. */
+body.adminkit #wpbody-content .quick-edit-row fieldset.inline-edit-date {
+	border-top: 1px solid var(--ak-table-border);
+	padding-top: calc(12px * var(--ak-space-scale, 1));
+	margin-top: calc(4px * var(--ak-space-scale, 1));
+}
+body.adminkit .quick-edit-row .inline-edit-col-right .inline-edit-group {
+	border-top: 1px solid var(--ak-table-border);
+	padding-top: calc(16px * var(--ak-space-scale, 1));
+}
+body.adminkit .quick-edit-row .inline-edit-status { max-width: 22rem; }
+@container (min-width: 600px) {
+	body.adminkit #wpbody-content .quick-edit-row .inline-edit-wrapper > .inline-edit-col-right {
+		border-inline-start: 1px solid var(--ak-table-border);
+		padding-inline-start: calc(24px * var(--ak-space-scale, 1));
+	}
+}
+body.adminkit .quick-edit-row .inline-edit-col textarea {
+	min-height: 72px;
+	resize: vertical;
+}
+body.adminkit .quick-edit-row ul.cat-checklist { margin: 0; padding: calc(10px * var(--ak-space-scale, 1)); }
+/* Category labels and lists are siblings rather than a single field label;
+   avoid adding the column's flex gap to the standard label spacing. */
+body.adminkit .quick-edit-row .inline-edit-categories > .inline-edit-col { display: block; }
+body.adminkit .quick-edit-row .inline-edit-categories ul.cat-checklist { margin-bottom: calc(16px * var(--ak-space-scale, 1)); }
+body.adminkit .quick-edit-row .inline-edit-categories ul.cat-checklist:last-child { margin-bottom: 0; }
+body.adminkit .quick-edit-row .inline-edit-tags-wrap .howto {
+	margin: calc(6px * var(--ak-space-scale, 1)) 0 0;
+	color: var(--ak-text-muted);
+	line-height: 1.5;
+}
+/* A full-width option row keeps translated labels readable. Clearfix pseudo
+   elements are unnecessary grid items and must not create phantom tracks. */
+body.adminkit .quick-edit-row .inline-edit-col-right .inline-edit-group {
+	grid-template-columns: minmax(0, 1fr);
+	align-items: end;
+}
+body.adminkit .quick-edit-row .inline-edit-group.wp-clearfix::after { display: none; }
+body.adminkit .quick-edit-row .inline-edit-col-right label:has(input[type="checkbox"]) {
+	min-height: 32px;
+}
+body.adminkit .quick-edit-row .inline-edit-col-right input[type="checkbox"] { flex-shrink: 0; }
+/* Slim SEO emits an empty clearing paragraph before its fieldset. It must not
+   consume a grid cell. Its own region spans the form, with paired metadata. */
+body.adminkit .quick-edit-row .inline-edit-wrapper > p.wp-clearfix:empty { display: none; }
+body.adminkit #wpbody-content .quick-edit-row .inline-edit-wrapper > fieldset:has([name^="slim_seo["]) {
+	grid-column: 1 / -1;
+	border-top: 1px solid var(--ak-table-border);
+	padding-top: 0;
+}
+body.adminkit .quick-edit-row fieldset:has([name^="slim_seo["]) > .inline-edit-col {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: calc(16px * var(--ak-space-scale, 1)) calc(24px * var(--ak-space-scale, 1));
+	background: var(--ak-surface-muted);
+	border-radius: var(--ak-radius-s);
+	padding: calc(16px * var(--ak-space-scale, 1));
+	box-sizing: border-box;
+}
+body.adminkit .quick-edit-row fieldset:has([name^="slim_seo["]) .inline-edit-group { grid-column: 1 / -1; }
+@container (min-width: 600px) {
+	body.adminkit .quick-edit-row fieldset:has([name^="slim_seo["]) > .inline-edit-col {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+body.adminkit .quick-edit-row .inline-edit-save {
+	margin-top: 0;
+	padding-top: calc(16px * var(--ak-space-scale, 1));
+}
 
 /* Native comment actions carry semantic colors in both modes. */
 body.adminkit #the-comment-list .row-actions .unapprove a { color: var(--ak-warning); }
@@ -745,7 +983,7 @@ body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-a
  body.adminkit .wp-list-table .column-primary:has(> strong > .row-title, > strong > a):not(:has(> .filename)):not(.column-comment) > br { display: none; }
  body.adminkit .wp-list-table .column-primary:has(> strong > .row-title, > strong > a):not(:has(> .filename)):not(.column-comment) > .row-actions,
  body.adminkit .wp-list-table .plugin-title > .row-actions {
-  padding: 2px 0 0;
+  padding: calc(2px * var(--ak-space-scale, 1)) 0 0;
   margin-top: 0;
  }
 }
@@ -753,25 +991,35 @@ body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-a
    resting title is vertically centered. Hover/focus lifts it to 3px below its native
    position; actions stay in flow to reserve room even for wrapped titles. */
 @media (hover: hover) and (min-width: 783px) {
- body.adminkit .wp-list-table :is(.column-primary:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong, .column-username:has(> .row-actions) > :is(strong, img.avatar)) {
+ body.adminkit .wp-list-table :is(.column-primary:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong, .column-username:has(> .row-actions) > strong) {
   translate: 0 13px;
   transition: translate 200ms var(--ak-ease-standard);
  }
- body.adminkit .wp-list-table tr:is(:hover, :focus-within) :is(.column-primary:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong, .column-username:has(> .row-actions) > :is(strong, img.avatar)),
+ body.adminkit .wp-list-table tr:is(:hover, :focus-within) :is(.column-primary:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong, .column-username:has(> .row-actions) > strong),
  body.adminkit .wp-list-table:not(.plugins) .column-primary:has(> .row-actions.visible) > strong:has(> .row-title) {
   translate: 0 3px;
  }
 }
 @media (prefers-reduced-motion: no-preference) {
- body.adminkit .wp-list-table .inline-edit-row:not(.hidden) .inline-edit-wrapper {
-  animation: ak-inline-edit-open 160ms cubic-bezier(0.16, 1, 0.3, 1);
+ body.adminkit .wp-list-table .inline-edit-row.inline-editor > td > .ak-qe-grid {
+  animation: ak-inline-edit-open 180ms cubic-bezier(0.16, 1, 0.3, 1);
  }
 }
 @keyframes ak-inline-edit-open {
- from { opacity: .5; clip-path: inset(0 0 12px 0); }
- to { opacity: 1; clip-path: inset(0); }
+ from { opacity: 0; transform: translateY(-4px); }
+ to { opacity: 1; transform: translateY(0); }
 }
 @media (prefers-reduced-motion: reduce) {
  body.adminkit .wp-list-table :is(td, th, .row-actions),
  body.adminkit .wp-list-table :is(.column-primary:has(> .row-actions) > strong:has(> .row-title), .plugin-title:has(> .row-actions) > strong, .column-username:has(> .row-actions) > :is(strong, img.avatar)) { transition: none; }
+}
+
+/* Quiet, consistent SEO headings in editorial Quick Edit. */
+body.adminkit #wpbody-content .quick-edit-row .inline-edit-wrapper > fieldset:has([name^="slim_seo["]) {
+ border-top: 0;
+}
+body.adminkit .quick-edit-row .cat-checklist {
+ min-height: 88px;
+ max-height: 160px;
+ height: auto;
 }

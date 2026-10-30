@@ -7,6 +7,11 @@
  * `views_*` filters. Loaded as a footer script on admin pages.
  */
 (function () {
+	// Keep the full editorial title available when its visible label is truncated.
+	document.querySelectorAll('.wp-list-table:is(.posts, .pages) .column-title .row-title').forEach(function (link) {
+		if (!link.hasAttribute('title')) link.title = link.textContent.trim();
+	});
+
 	// Keep the primary action first in both visual and keyboard order.
 	if (document.body.matches('.post-php, .post-new-php')) {
 		var actions = document.getElementById('major-publishing-actions');
@@ -49,7 +54,20 @@
 	// size against, and (b) wrap the form columns in .ak-qe-grid so CSS can lay
 	// them out as a responsive grid instead of letting them ride the wide cell.
 	var scrolls = document.querySelectorAll('.ak-table-scroll');
-	function setQEWidth(el) { el.style.setProperty('--ak-qe-w', el.clientWidth + 'px'); }
+	var heading = document.querySelector('.wrap h1');
+	if (heading && !heading.id) heading.id = 'ak-table-heading';
+	function setQEWidth(el) {
+		el.style.setProperty('--ak-qe-w', el.clientWidth + 'px');
+		if (el.scrollWidth > el.clientWidth + 1) {
+			el.tabIndex = 0;
+			el.setAttribute('role', 'region');
+			if (heading) el.setAttribute('aria-labelledby', heading.id);
+		} else {
+			el.removeAttribute('tabindex');
+			el.removeAttribute('role');
+			el.removeAttribute('aria-labelledby');
+		}
+	}
 	if (window.ResizeObserver) {
 		var ro = new ResizeObserver(function (entries) {
 			entries.forEach(function (e) { setQEWidth(e.target); });

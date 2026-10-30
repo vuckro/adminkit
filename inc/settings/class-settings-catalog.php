@@ -101,6 +101,25 @@ class AdminKit_Settings_Catalog {
 
 		);
 
+		$summaries = array(
+			'notification_center_enabled' => __( 'Collect admin notices in one place.', 'adminkit' ),
+			'post_previews_enabled' => __( 'Recognize your publications by their thumbnails.', 'adminkit' ),
+			'active_items_first_enabled' => __( 'Find published content and active plugins first.', 'adminkit' ),
+			'theme_toggle_enabled' => __( 'Let each user choose light or dark mode.', 'adminkit' ),
+			'module_login_enabled' => __( 'Match the login screen to your administration.', 'adminkit' ),
+			'editor_content_theme' => __( 'Extend light and dark styling to the editor canvas.', 'adminkit' ),
+			'menu_manager_enabled' => __( 'Organize navigation and hide unnecessary entries.', 'adminkit' ),
+			'toolbar_manager_enabled' => __( 'Organize shortcuts in the top toolbar.', 'adminkit' ),
+			'hide_footer_enabled' => __( 'Remove the WordPress footer and version line.', 'adminkit' ),
+			'hide_help_button_enabled' => __( 'Hide contextual help on admin screens.', 'adminkit' ),
+			'quick_edit_users_enabled' => __( 'Edit account details directly from the users list.', 'adminkit' ),
+			'username_changer_enabled' => __( 'Allow administrators to rename a user login.', 'adminkit' ),
+		);
+		foreach ( $rows as &$row ) {
+			$row['summary'] = isset( $summaries[ $row['key'] ] ) ? $summaries[ $row['key'] ] : '';
+		}
+		unset( $row );
+
 		return $rows;
 	}
 
@@ -187,7 +206,7 @@ class AdminKit_Settings_Catalog {
 		if ( ! function_exists( 'get_plugins' ) || ! function_exists( 'is_plugin_active' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
-		$generic_on = (array) AdminKit_Settings::get( 'generic_theming_on' );
+		$generic_off = (array) AdminKit_Settings::get( 'generic_theming_off' );
 		$self        = plugin_basename( ADMINKIT_FILE );
 
 		foreach ( get_plugins() as $file => $data ) {
@@ -214,7 +233,7 @@ class AdminKit_Settings_Catalog {
 				'supported' => $supported,
 				'enabled'   => $supported
 					? (bool) AdminKit_Settings::get( 'integration_' . $slug . '_enabled' )
-					: in_array( $file, $generic_on, true ),
+					: ! in_array( $file, $generic_off, true ),
 				'active'    => is_plugin_active( $file ),
 			);
 		}
@@ -294,7 +313,7 @@ class AdminKit_Settings_Catalog {
 	}
 
 	/**
-	 * Register integration toggles and the generic plugin opt-in list.
+	 * Register integration toggles and the generic plugin opt-out list.
 	 *
 	 * @return void
 	 */
@@ -303,11 +322,11 @@ class AdminKit_Settings_Catalog {
 			AdminKit_Settings::register( 'integration_' . $s['slug'] . '_enabled', array(
 				'type'     => 'toggle',
 				'group'    => 'integrations',
-				'default'  => false,
+				'default'  => true,
 				'sanitize' => 'rest_sanitize_boolean',
 			) );
 		}
-		AdminKit_Settings::register( 'generic_theming_on', array(
+		AdminKit_Settings::register( 'generic_theming_off', array(
 			'type'     => 'array',
 			'group'    => 'integrations',
 			'default'  => array(),

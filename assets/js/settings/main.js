@@ -43,31 +43,33 @@
 		(D.features || []).forEach(function (f) {
 			state.features[f.key] = !!f.value;
 		});
-		// Per-plugin opt-in for generic plugins (no AdminKit adapter) — tracked as
-		// a set of plugin file paths the user has flipped ON. Default = unthemed;
-		// posted as `generic_theming_on` array (see PHP gate_generic_theming()).
-		state.genericThemingOn = {};
+		// Per-plugin opt-out for generic plugins (no AdminKit adapter) — tracked as
+		// a set of plugin file paths the user has flipped OFF. Default = themed;
+		// posted as `generic_theming_off` array (see PHP gate_generic_theming()).
+		state.genericThemingOff = {};
 		(D.integrations || []).forEach(function (i) {
 			if (i.supported && i.slug) {
 				state.integrations[i.slug] = !!i.enabled;
 				return;
 			}
-			// Generic plugin pre-seeded into the on-list when the schema says it
-			// starts enabled. System / theme rows without a file are no-ops.
-			if (!i.system && i.file && i.enabled === true) {
-				state.genericThemingOn[i.file] = true;
+			// Generic plugin pre-seeded into the opt-out list when explicitly disabled. System / theme rows without a file are no-ops.
+			if (!i.system && !i.supported && i.file && i.enabled === false) {
+				state.genericThemingOff[i.file] = true;
 			}
 		});
+
+		state.appearance = Object.assign({ ui_density: 'default', ui_radius: 'default', ui_font: 'humanist' }, D.appearance || {});
+		if (state.appearance.ui_font === 'default') { state.appearance.ui_font = 'humanist'; }
+
+		state.designSystem = Object.assign({ radius_scale: 1, space_scale: 1, type_scale: 1, border_width: 1, elevation: 'flat' }, D.designSystem || {});
+
+		state.designSystem.colors = { light: Object.assign({}, state.designSystem.colors && state.designSystem.colors.light), dark: Object.assign({}, state.designSystem.colors && state.designSystem.colors.dark) };
 
 		function buildDesign() {
 			var p = el('section', { class: 'ak-panel ak-panel--brand', role: 'tabpanel' });
 
-			// Assigned once the live-preview pane is built (below). Logo + display-mode
-			// controls call it to re-skin the mock in real time. (Accent rides the
-			// global --ak-primary the accent picker already updates, so it needs no
-			// explicit refresh here.) Closures capture the var, so the stub is safe
-			// until the real updater lands.
-			var previewUpdate = function () {};
+
+			var paletteRefresh = function () {};
 
 			// --- Common helpers used inside buildDesign() ---------------------------
 
@@ -101,7 +103,7 @@
 				// click-to-upload shortcut alongside the Upload button below).
 				var dropTxt = el('span', { class: 'ak-brand-slot__drop', 'aria-hidden': 'true' });
 				dropTxt.innerHTML = ICONS.upload;
-				var zone = el('div', { class: 'ak-brand-slot__zone' }, [preview, dropTxt]);
+				var zone = el('button', { type: 'button', class: 'ak-brand-slot__zone', 'aria-label': label }, [preview, dropTxt]);
 
 				// One button per slot, label + action toggle on filled state:
 				//   empty   → "↑ Upload"  → opens the WP media frame
@@ -136,7 +138,6 @@
 					state.logos[slotKey] = url || '';
 					syncPreview();
 					markDirty();
-					previewUpdate();
 				}
 
 				// Logos use the plain media frame (free-form aspect, no crop).
@@ -197,7 +198,6 @@
 							x.setAttribute('aria-checked', on ? 'true' : 'false');
 						});
 						markDirty();
-						previewUpdate();
 					});
 					btns.push(b);
 					seg.appendChild(b);
@@ -231,7 +231,7 @@
 				// pill silently drops; their stored `accentSource === 'bricks'` still
 				// resolves server-side via accent_source(), but the UI no longer offers a
 				// dead button. Hide rather than grey: a dead pill was confusing.
-				var sources = [{ v: 'monochrome', label: I.accentSrcMonochrome }, { v: 'adminkit', label: I.accentSrcAdminKit || 'WaasKit' }];
+				var sources = [{ v: 'monochrome', label: I.accentSrcMonochrome }, { v: 'adminkit', label: I.accentSrcAdminKit || 'WordPress' }];
 				if (D.bricksConnected) {
 					sources.push({ v: 'bricks', label: I.accentSrcBricks || 'Bricks' });
 				}
@@ -239,6 +239,17 @@
 
 				var btns = [];
 				var seg = el('div', { class: 'ak-seg', role: 'radiogroup', 'aria-label': I.accentLabel || 'Accent' });
+				seg.style.setProperty('--ak-accent-options', sources.length);
+				seg.addEventListener('keydown', function (event) {
+					var index = btns.indexOf(document.activeElement);
+					if (index < 0) { return; }
+					if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { index = (index + 1) % btns.length; }
+					else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { index = (index + btns.length - 1) % btns.length; }
+					else if (event.key === 'Home') { index = 0; }
+					else if (event.key === 'End') { index = btns.length - 1; }
+					else { return; }
+					event.preventDefault(); btns[index].click(); btns[index].focus();
+				});
 				sources.forEach(function (o) {
 					var active = state.accentSource === o.v;
 					var attrs = {
@@ -256,6 +267,7 @@
 						attrs['aria-disabled'] = 'true';
 					}
 					var b = el('button', attrs);
+					b.tabIndex = active ? 0 : -1;
 					b._v = o.v;
 					if (!o.disabled) {
 						b.addEventListener('click', function () {
@@ -298,33 +310,9 @@
 				// Default source inherits the native WaasKit light/dark roles.
 				// Only a valid custom hex emits a preview override.
 				function applyPreview() {
-					var source = state.accentSource === 'adminkit' ? 'waaskit' : state.accentSource;
-					var hex = source === 'custom' && isValidHex(state.brandAccent) ? state.brandAccent : null;
-					document.documentElement.setAttribute('data-adminkit-accent', source === 'custom' && !hex ? 'monochrome' : source);
-					var existing = document.getElementById('ak-accent-preview');
-					if (source === 'custom') {
-						var rgb = hex ? accentChannels(hex) : [];
-						if (!existing) {
-							existing = document.createElement('style');
-							existing.id = 'ak-accent-preview';
-							document.head.appendChild(existing);
-						}
-						var values = {
-							'--ak-custom-accent': hex || 'initial',
-							'--ak-custom-on-accent': hex ? bestOnAccent(hex) : 'initial',
-							'--ak-custom-on-hover-light': hex ? bestOnAccent(hoverHex(rgb, false)) : 'initial',
-							'--ak-custom-on-hover-dark': hex ? bestOnAccent(hoverHex(rgb, true)) : 'initial',
-							'--ak-custom-r': hex ? rgb[0] : 'initial',
-							'--ak-custom-g': hex ? rgb[1] : 'initial',
-							'--ak-custom-b': hex ? rgb[2] : 'initial'
-						};
-						existing.textContent = ':root,#wpadminbar{' + Object.keys(values).map(function (key) {
-							return key + ':' + values[key];
-						}).join(';') + '}';
-					} else if (existing) {
-						existing.remove();
-					}
-					swatch.style.background = 'var(--ak-primary)';
+					// Keep unsaved experiments inside the palette editor. The shared
+					// runtime compiler applies settings only after a successful save.
+					swatch.style.background = isValidHex(state.brandAccent) ? state.brandAccent : 'var(--ak-primary)';
 				}
 
 				function syncSeg() {
@@ -332,6 +320,7 @@
 						var on = b._v === state.accentSource;
 						b.classList.toggle('is-active', on);
 						b.setAttribute('aria-checked', on ? 'true' : 'false');
+						b.tabIndex = on ? 0 : -1;
 					});
 					if (state.accentSource === 'custom') {
 						hexInput.removeAttribute('hidden');
@@ -344,8 +333,11 @@
 
 				function setSource(newSrc) {
 					state.accentSource = newSrc;
+					if (newSrc === 'custom' && !isValidHex(state.brandAccent)) { state.brandAccent = D.adminkitBlue || '#1549ab'; hexInput.value = state.brandAccent; }
+					hexInput.removeAttribute('aria-invalid');
 					syncSeg();
 					applyPreview();
+					paletteRefresh(true);
 					markDirty();
 				}
 
@@ -355,10 +347,12 @@
 						v = '#' + v;
 					}
 					state.brandAccent = v;
+					hexInput.setAttribute('aria-invalid', String(!isValidHex(v)));
 					if (hexInput.value !== v) {
 						hexInput.value = v;
 					}
 					applyPreview();
+					paletteRefresh(true);
 					markDirty();
 				}
 
@@ -410,223 +404,148 @@
 				return 1.05 / (L + 0.05) >= (L + 0.05) / 0.05 ? '#ffffff' : '#000000';
 			}
 
-			// --- Brand card ----------------------------------------------------------
-			// The card head used to carry an uppercase eyebrow above the title
-			// (e.g. "BRAND" + "Logo, favicon & accent"). With the title now reading
-			// simply "Marque", the eyebrow just duplicates it — removed.
-			var cardHead = el('div', { class: 'ak-card__head' });
-			var headMain = el('div', { class: 'ak-card__head-main' }, [
-				el('h2', { class: 'ak-card__title', text: I.brandTitle || 'Marque' })
-			]);
-			// Bricks-sync status — visible ONLY when the integration is connected
-			// (theme active AND toggle on). Green dot + label + (N tokens) when
-			// available. Hidden entirely when disconnected — keeps the card clean
-			// rather than showing a dead "Bricks not connected" sentence on every
-			// site that doesn't use Bricks.
-			if (D.bricksConnected) {
-				var status = el('div', { class: 'ak-card__status is-connected' }, [
-					el('span', { class: 'ak-card__status-dot', 'aria-hidden': 'true' }),
-					el('span', { class: 'ak-card__status-label', text: I.brandSyncStatus || 'Tokens synced with Bricks Builder' })
-				]);
-				var n = parseInt(D.bricksTokenCount, 10);
-				if (n > 0) {
-					var fmt = I.brandSyncStatusCount || '%d tokens';
-					status.appendChild(el('span', { class: 'ak-card__status-count', text: fmt.replace('%d', String(n)) }));
-				}
-				headMain.appendChild(status);
-			}
-			cardHead.appendChild(headMain);
-
 			var slotsRow = el('div', { class: 'ak-brand-slots' }, [
-				brandSlot('light', I.slotLight || 'Logo Light Mode', I.slotLightSub || 'SVG · PNG ≥ 400×100'),
-				brandSlot('dark', I.slotDark || 'Logo Dark Mode', I.slotDarkSub || 'SVG · PNG ≥ 400×100')
+				brandSlot('light', I.slotLight, I.slotLightSub), brandSlot('dark', I.slotDark, I.slotDarkSub)
 			]);
-
-			// Display row — segmented controls for Admin bar + Login screen, and
-			// the compact inline Accent picker all on the same line. Everything
-			// the user can configure post-upload lives here, in one row, after
-			// the brand slots. The derived-colours strip is intentionally gone —
-			// the cascade derives Hover / Subtle / On-accent / Focus from --ak-primary
-			// automatically through color-mix(), so showing those values added clutter
-			// without a control. The Accent column anchors the right of the row so
-			// the colour is always close to the controls it tints.
-			// Admin bar: no `hide` option — picking Favicon when no Site Icon is set
-			// already yields a bare title (favicon_chip_css returns ''), so the third
-			// choice was redundant. Login screen keeps its `hide` (separate control).
-			// Order: Favicon first (it's the schema default — see register_branding),
-			// Logo second (the customisation step). Reads left-to-right as "starts
-			// here, swap in your logo if you have one".
-			var wpField = logoSeg('wpLogo', 'ak-wp-logo-label', I.wpLogoLabel || 'WordPress', [
-				{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' },
-				{ v: 'logo', label: I.wpLogoBrand || 'Logo' }
-			]);
-			// Login screen mirrors the admin bar: no `hide` option. Favicon with no
-			// Site Icon set collapses the WP login logo entirely (see class-login.php).
-			var loginField = logoSeg('loginLogo', 'ak-login-logo-label', I.loginLogoLabel || 'Login', [
-				{ v: 'favicon', label: I.wpLogoFavicon || 'Favicon' },
-				{ v: 'logo', label: I.wpLogoBrand || 'Logo' }
-			]);
-			// Two rows of identical chrome — same .ak-display-row, same row label
-			// treatment — so Display and Color read as siblings, not as a row + a
-			// pushed-right inline picker.
-			var displayRow = el('div', { class: 'ak-display-row' }, [
-				el('span', { class: 'ak-display-row__lbl', text: I.displayLabel || 'Display' }),
-				wpField,
-				loginField
-			]);
-			var colorRow = el('div', { class: 'ak-display-row' }, [
-				el('span', { class: 'ak-display-row__lbl', text: I.accentLabel || 'Color' }),
-				accentPicker()
-			]);
-
-			// --- Live preview pane ---------------------------------------------------
-			// A self-contained mock of the admin chrome + login screen that re-skins as
-			// you edit: the logo (light/dark variant), the favicon-vs-logo display mode,
-			// and the accent (which rides the global --ak-primary the accent picker
-			// already updates live). Its OWN light/dark toggle uses fixed backdrops —
-			// like a swatch — so you see the brand in both themes regardless of the
-			// admin's current theme. Decorative throughout: aria-hidden, buttons inert.
-			function brandPreview() {
-				var theme = document.documentElement.getAttribute('data-adminkit-theme') === 'dark' ? 'dark' : 'light';
-
-				var barMark = el('span', { class: 'ak-bp__mark' });
-
-				// Paint a brand mark (admin bar or login) for the current mode + theme:
-				//   logo mode    → the logo image for the active preview theme
-				//   favicon mode → the Site Icon (or an accent chip) + the site name
-				//   no asset     → a "Your logo" placeholder
-				function paintMark(markEl, mode) {
-					markEl.textContent = '';
-					var logo =
-						(theme === 'dark' ? state.logos.dark : state.logos.light) || state.logos.light || state.logos.dark || '';
-					if ('favicon' === mode) {
-						if (D.siteIcon) {
-							markEl.appendChild(el('img', { class: 'ak-bp__favicon', src: D.siteIcon, alt: '' }));
-						} else {
-							markEl.appendChild(el('span', { class: 'ak-bp__favicon ak-bp__favicon--empty' }));
-						}
-						markEl.appendChild(el('span', { class: 'ak-bp__site', text: D.siteName || '' }));
-					} else if (logo) {
-						markEl.appendChild(el('img', { class: 'ak-bp__logo', src: logo, alt: '' }));
-					} else {
-						markEl.appendChild(el('span', { class: 'ak-bp__logo-ph', text: I.brandPreviewLogo || 'Your logo' }));
-					}
-				}
-
-				var bar = el('div', { class: 'ak-bp__bar' }, [
-					barMark,
-					el('span', { class: 'ak-bp__dots' }, [
-						el('span', { class: 'ak-bp__dot' }),
-						el('span', { class: 'ak-bp__dot' }),
-						el('span', { class: 'ak-bp__dot' })
-					])
-				]);
-
-				// Menu rail — five rows, the second active (painted in the accent).
-				var menu = el('div', { class: 'ak-bp__menu' });
-				for (var i = 0; i < 5; i++) {
-					menu.appendChild(
-						el('div', { class: 'ak-bp__nav' + (1 === i ? ' is-active' : '') }, [
-							el('span', { class: 'ak-bp__nav-ic' }),
-							el('span', { class: 'ak-bp__nav-bar' })
-						])
-					);
-				}
-
-				// A small dashboard widget (postbox): a title line + a couple of body lines.
-				function bpCard() {
-					return el('div', { class: 'ak-bp__card' }, [
-						el('div', { class: 'ak-bp__card-h' }),
-						el('div', { class: 'ak-bp__line' }),
-						el('div', { class: 'ak-bp__line ak-bp__line--short' })
-					]);
-				}
-				// A list-table row — three skeleton cells (the header variant reads a touch stronger).
-				function bpRow(head) {
-					return el('div', { class: 'ak-bp__trow' + (head ? ' ak-bp__trow--head' : '') }, [
-						el('span', { class: 'ak-bp__tcell' }),
-						el('span', { class: 'ak-bp__tcell' }),
-						el('span', { class: 'ak-bp__tcell' })
-					]);
-				}
-
-				var content = el('div', { class: 'ak-bp__content' }, [
-					// Header row — page title + a primary action (the accent button), like the
-					// dashboard greeting + its quick actions.
-					el('div', { class: 'ak-bp__chead' }, [
-						el('div', { class: 'ak-bp__h' }),
-						el('button', {
-							type: 'button',
-							tabindex: '-1',
-							class: 'ak-bp__btn',
-							text: I.brandPreviewButton || 'Button'
-						})
-					]),
-					// Dashboard widgets — two postbox cards on the canvas.
-					el('div', { class: 'ak-bp__cards' }, [bpCard(), bpCard()]),
-					// List-table view — a loading skeleton (no fake data): a header band + rows.
-					el('div', { class: 'ak-bp__table' }, [bpRow(true), bpRow(), bpRow(), bpRow()])
-				]);
-
-				var frame = el('div', { class: 'ak-bp__frame', 'data-preview-theme': theme }, [
-					bar,
-					el('div', { class: 'ak-bp__layout' }, [menu, content])
-				]);
-
-				function update() {
-					frame.setAttribute('data-preview-theme', theme);
-					paintMark(barMark, state.wpLogo);
-				}
-
-				var lightBtn = el('button', {
-					type: 'button',
-					class: 'ak-bp__theme' + ('light' === theme ? ' is-active' : ''),
-					text: I.brandPreviewLight || 'Light'
-				});
-				var darkBtn = el('button', {
-					type: 'button',
-					class: 'ak-bp__theme' + ('dark' === theme ? ' is-active' : ''),
-					text: I.brandPreviewDark || 'Dark'
-				});
-				function setTheme(t) {
-					theme = t;
-					lightBtn.classList.toggle('is-active', 'light' === t);
-					darkBtn.classList.toggle('is-active', 'dark' === t);
-					update();
-				}
-				lightBtn.addEventListener('click', function () {
-					setTheme('light');
-				});
-				darkBtn.addEventListener('click', function () {
-					setTheme('dark');
-				});
-
-				var head = el('div', { class: 'ak-bp__head' }, [
-					el('span', { class: 'ak-bp__title', text: I.brandPreviewTitle || 'Live preview' }),
-					el('div', { class: 'ak-bp__themes', role: 'group' }, [lightBtn, darkBtn])
-				]);
-
-				var root = el('div', { class: 'ak-brand-preview' }, [head, frame]);
-				update();
-				return { el: root, update: update };
+			var wpField = logoSeg('wpLogo', 'ak-wp-logo-label', I.wpLogoLabel, [{ v: 'favicon', label: I.wpLogoFavicon }, { v: 'logo', label: I.wpLogoBrand }]);
+			var sections = [];
+			var editor = el('div', { class: 'ak-foundations-editor' });
+			var nav = el('div', { class: 'ak-foundations-nav', role: 'tablist', 'aria-label': I.foundationSections, 'aria-orientation': window.matchMedia('(max-width: 782px)').matches ? 'horizontal' : 'vertical' });
+			var panes = el('div', { class: 'ak-foundations-panes' });
+			function number(value) { return Number(value).toLocaleString(document.documentElement.lang || 'fr', { maximumFractionDigits: 2 }); }
+			function section(id, title, description, children) {
+				var tab = el('button', { type: 'button', role: 'tab', id: 'ak-foundation-tab-' + id, 'aria-controls': 'ak-foundation-' + id, 'aria-selected': 'false', tabindex: '-1', text: title });
+				var pane = el('section', { class: 'ak-foundations-panel', id: 'ak-foundation-' + id, role: 'tabpanel', 'aria-labelledby': tab.id, hidden: 'hidden' }, [
+					el('h3', { text: title }), el('p', { class: 'ak-foundation-intro', text: description })
+				].concat(children));
+				tab.addEventListener('click', function () { selectSection(id); });
+				sections.push({ id: id, tab: tab, pane: pane }); nav.appendChild(tab); panes.appendChild(pane);
+				return pane;
 			}
+			function selectSection(id) {
+				sections.forEach(function (item) {
+					var active = item.id === id;
+					item.tab.setAttribute('aria-selected', String(active)); item.tab.tabIndex = active ? 0 : -1; item.pane.hidden = !active;
+				});
+				requestAnimationFrame(function () { paletteRefresh(); });
+			}
+			nav.addEventListener('keydown', function (event) {
+				var index = sections.findIndex(function (item) { return item.tab === document.activeElement; });
+				if (index < 0) { return; }
+				if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { index = (index + 1) % sections.length; }
+				else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { index = (index + sections.length - 1) % sections.length; }
+				else if (event.key === 'Home') { index = 0; } else if (event.key === 'End') { index = sections.length - 1; } else { return; }
+				event.preventDefault(); selectSection(sections[index].id); sections[index].tab.focus();
+			});
+			function slider(key, label, min, max, step, changed) {
+				var input = el('input', { id: 'ak-design-' + key, type: 'range', min: String(min), max: String(max), step: String(step), value: String(state.designSystem[key]) });
+				var output = el('output', { for: input.id, text: number(input.value) + '×' });
+				input.setAttribute('aria-valuetext', output.textContent);
+				input.addEventListener('input', function () {
+					state.designSystem[key] = Number(input.value); output.textContent = number(input.value) + '×'; input.setAttribute('aria-valuetext', output.textContent);
+					changed(); markDirty();
+				});
+				return el('div', { class: 'ak-foundation-slider' }, [el('div', {}, [el('label', { for: input.id, text: label }), output]), input]);
+			}
+			section('identity', I.studioIdentity, I.foundationIdentityHelp, [slotsRow, el('div', { class: 'ak-identity-placements' }, [wpField])]);
 
-			// Studio: identity + controls on the left, the live preview on the right.
-			var controls = el('div', { class: 'ak-brand-studio__controls' }, [slotsRow, displayRow, colorRow]);
-			var preview = brandPreview();
-			previewUpdate = preview.update;
+			// Theme-scoped WaasKit roles come from the generated token stylesheet.
+			var paletteCards = [];
+			var roles = [
+				['bg', I.foundationBackground], ['surface', I.foundationSurface], ['text', I.foundationText], ['text-muted', I.foundationMuted], ['border', I.foundationBorder],
+				['accent', I.foundationAccent], ['on-accent', I.foundationOnAccent], ['success-text', I.foundationSuccess], ['warning-text', I.foundationWarning], ['danger-text', I.foundationDanger], ['info-text', I.foundationInfo]
+			];
+			function toHex(cssColor) {
+				var canvas = document.createElement('canvas'); canvas.width = canvas.height = 1;
+				var ctx = canvas.getContext('2d'); ctx.fillStyle = cssColor; ctx.fillRect(0, 0, 1, 1);
+				return '#' + Array.from(ctx.getImageData(0, 0, 1, 1).data).slice(0, 3).map(function (v) { return v.toString(16).padStart(2, '0'); }).join('');
+			}
+			function contrast(a, b) {
+				function luminance(hex) { var c = accentChannels(hex).map(function (v) { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return c[0] * .2126 + c[1] * .7152 + c[2] * .0722; }
+				var x = luminance(a), y = luminance(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05);
+			}
+			['light', 'dark'].forEach(function (mode) {
+				var modeLabel = mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark;
+				var scope = el('div', { class: 'ak-bp__frame ak-palette-theme', 'data-preview-theme': mode });
+				var rows = [], probes = {};
+				var contrastText = el('p', { class: 'ak-palette-contrast', 'aria-live': 'polite' });
+				var header = el('div', { class: 'ak-palette-header' }, [el('h4', { text: mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark }), el('button', { type: 'button', class: 'ak-btn', text: I.foundationPaletteReset, onclick: function () { state.designSystem.colors[mode] = {}; paletteRefresh(); markDirty(); } })]);
+				scope.appendChild(header);
+				roles.forEach(function (role) {
+					var id = 'ak-palette-' + mode + '-' + role[0];
+					var picker = el('input', { type: 'color', id: id, 'aria-label': role[1] + ' — ' + (mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark) });
+					var hex = el('input', { type: 'text', class: 'ak-palette-hex', maxlength: '7', spellcheck: 'false', 'aria-label': role[1] + ' hex — ' + modeLabel });
+					var inherited = el('span', { class: 'ak-palette-origin' });
+					var error = el('span', { class: 'ak-palette-error', role: 'alert', id: id + '-error', hidden: 'hidden', text: I.foundationInvalidColor });
+					hex.setAttribute('aria-describedby', error.id);
+					var probe = el('span', { class: 'ak-palette-probe', 'aria-hidden': 'true' }); probe.style.backgroundColor = 'var(--wk-' + role[0] + ')'; probes[role[0]] = probe; scope.appendChild(probe);
+					function change(value) {
+						if (!value) { delete state.designSystem.colors[mode][role[0]]; paletteRefresh(); markDirty(); return; }
+						if (!isValidHex(value)) { hex.setAttribute('aria-invalid', 'true'); error.hidden = false; return; }
+						hex.removeAttribute('aria-invalid'); state.designSystem.colors[mode][role[0]] = value.toLowerCase(); paletteRefresh(); markDirty();
+					}
+					picker.addEventListener('input', function () { change(picker.value); });
+					hex.addEventListener('change', function () { change(hex.value.trim()); });
+					var reset = el('button', { type: 'button', class: 'ak-palette-reset', text: I.foundationReset, 'aria-label': I.foundationReset + ' — ' + role[1] + ' — ' + modeLabel, onclick: function () { delete state.designSystem.colors[mode][role[0]]; paletteRefresh(); markDirty(); } });
+					reset.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></svg>';
+					scope.appendChild(el('div', { class: 'ak-palette-row' }, [picker, el('div', {}, [el('label', { for: id, text: role[1] }), inherited]), hex, reset, error]));
+					rows.push({ role: role[0], picker: picker, hex: hex, inherited: inherited, reset: reset, error: error });
+				});
+				scope.appendChild(el('div', { class: 'ak-palette-reading', text: I.foundationPangram })); scope.appendChild(contrastText);
+				paletteCards.push({ mode: mode, scope: scope, rows: rows, probes: probes, contrastText: contrastText });
+			});
+			paletteRefresh = function (resetAccent) {
+				paletteCards.forEach(function (card) {
+					var values = state.designSystem.colors[card.mode];
+					card.scope.setAttribute('data-preview-accent', state.accentSource === 'adminkit' ? 'waaskit' : 'monochrome');
+					if (resetAccent) { delete values.accent; delete values['on-accent']; }
+					roles.forEach(function (role) { card.scope.style.removeProperty('--wk-' + role[0]); });
+					if (state.accentSource === 'custom' && isValidHex(state.brandAccent)) {
+						card.scope.style.setProperty('--wk-accent', state.brandAccent); card.scope.style.setProperty('--wk-on-accent', bestOnAccent(state.brandAccent));
+						var seed = accentChannels(state.brandAccent);
+						var recipe = (D.customNeutralRecipe || {})[card.mode] || {};
+						Object.keys(recipe).forEach(function (role) {
+							var base = accentChannels(recipe[role][0]), amount = recipe[role][1] / 100;
+							var hex = '#' + base.map(function (channel, i) { return Math.round(channel + (seed[i] - channel) * amount).toString(16).padStart(2, '0'); }).join('');
+							card.scope.style.setProperty('--wk-' + role, hex);
+						});
+					}
+					Object.keys(values).forEach(function (role) { card.scope.style.setProperty('--wk-' + role, values[role]); });
+					if (!card.scope.isConnected) { return; }
+					card.rows.forEach(function (row) {
+						var resolved = toHex(getComputedStyle(card.probes[row.role]).backgroundColor);
+						row.picker.value = resolved; row.hex.value = values[row.role] || resolved; row.hex.removeAttribute('aria-invalid'); row.error.hidden = true;
+						row.inherited.textContent = values[row.role] ? I.foundationCustom : I.foundationInherited; row.reset.disabled = !values[row.role];
+					});
+					var ratio = contrast(toHex(getComputedStyle(card.probes.text).backgroundColor), toHex(getComputedStyle(card.probes.bg).backgroundColor));
+					card.contrastText.textContent = I.foundationContrast.replace('%s', number(ratio)); card.contrastText.dataset.pass = String(ratio >= 4.5);
+				});
+			};
+			section('colors', I.studioColors, I.foundationColorsHelp, [el('div', { class: 'ak-foundation-accent' }, [accentPicker()]), el('div', { class: 'ak-palettes' }, paletteCards.map(function (card) { return card.scope; }))]);
 
-			var card = el('section', { class: 'ak-card ak-card--studio' }, [
-				cardHead,
-				el('div', { class: 'ak-brand-studio' }, [controls, preview.el])
-			]);
-			p.appendChild(card);
-
+			function field(label, input) { return el('div', { class: 'ak-simple-field' }, [el('label', { for: input.id, text: label }), input]); }
+			var font = el('select', { id: 'ak-type-font' });
+			[['humanist', I.humanist], ['system', I.foundationSystemFont], ['classic', I.classic]].forEach(function (item) { font.appendChild(el('option', { value: item[0], text: item[1] })); });
+			font.value = state.appearance.ui_font;
+			font.addEventListener('change', function () { state.appearance.ui_font = font.value; markDirty(); });
+			function unchanged() {}
+			section('type', I.studioType, I.studioTypeHint, [field(I.foundationFont, font), slider('type_scale', I.studioScale, .75, 1.5, .01, unchanged)]);
+			var elevation = el('select', { id: 'ak-foundation-elevation' });
+			[['flat', I.studioFlat], ['subtle', I.studioSubtle], ['raised', I.studioRaised]].forEach(function (item) { elevation.appendChild(el('option', { value: item[0], text: item[1] })); });
+			elevation.value = state.designSystem.elevation;
+			elevation.addEventListener('change', function () { state.designSystem.elevation = elevation.value; markDirty(); });
+			section('shapes', I.studioShapes, I.studioShapesHint, [slider('radius_scale', I.studioRadiusScale, 0, 2, .05, unchanged), field(I.studioElevation, elevation)]);
+			section('spacing', I.studioSpacing, I.studioSpacingHint, [slider('space_scale', I.studioSpaceScale, .5, 2, .05, unchanged)]);
+			window.addEventListener('resize', function () { nav.setAttribute('aria-orientation', window.matchMedia('(max-width: 782px)').matches ? 'horizontal' : 'vertical'); });
+			p.classList.add('ak-foundations');
+			p.appendChild(el('h2', { class: 'ak-foundations-title', text: I.designSystem })); p.appendChild(intro(I.designIntro));
+			editor.appendChild(nav); editor.appendChild(panes); p.appendChild(editor); p.appendChild(el('p', { class: 'ak-foundation-scope', text: I.foundationScope }));
+			selectSection('identity');
 			return p;
 		}
 
 		function buildFeatures() {
-			var p = el('section', { class: 'ak-panel', role: 'tabpanel' }, [intro(I.featuresIntro)]);
+			var p = el('section', { class: 'ak-panel', role: 'tabpanel' }, [el('h2', { class: 'ak-panel-title', text: I.features }), intro(I.featuresIntro)]);
 
 			var refs = {}; // key -> { input, row }
 			var groups = []; // [{ label, rows }] in first-seen order
@@ -688,6 +607,7 @@
 					}
 				});
 				(D.features || []).forEach(refreshRow);
+				filter();
 				markDirty();
 			}
 
@@ -707,15 +627,17 @@
 					}
 				});
 				(D.features || []).forEach(refreshRow);
+				filter();
 				markDirty();
 			}
 
 			(D.features || []).forEach(function (f) {
-				var input = el('input', { type: 'checkbox', class: 'ak-switch__input' });
+				var input = el('input', { type: 'checkbox', class: 'ak-switch__input', 'aria-label': f.label });
 				input.checked = !!state.features[f.key];
 				input.addEventListener('change', function () {
 					state.features[f.key] = input.checked;
 					(D.features || []).forEach(refreshRow);
+					filter();
 					markDirty();
 				});
 				var rowAttrs = { class: 'ak-row' + (f.parent ? ' ak-row--child' : '') };
@@ -725,10 +647,41 @@
 				if (f.available === false && f.unavailableHint) {
 					rowAttrs.title = f.unavailableHint;
 				}
+				var helpId = 'ak-feature-help-' + f.key;
+				var helpName = I.featureHelp.replace('%s', f.label);
+				var infoButton = el('button', {
+					type: 'button', class: 'ak-info-button', 'aria-label': helpName,
+					'aria-expanded': 'false', 'aria-controls': helpId, title: helpName
+				});
+				infoButton.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.01"/></svg>';
+				var technical = el('dl', { class: 'ak-feature-technical' });
+				var storage = D.settingsStorage || {};
+				[
+					[I.storageTable, storage.table], [I.storageOption, storage.option],
+					[I.storageKey, f.key], [I.defaultValue, f.default ? I.enabledState : I.disabledState]
+				].forEach(function (item) {
+					technical.appendChild(el('div', {}, [el('dt', { text: item[0] }), el('dd', {}, [el('code', { text: item[1] || '' })])]));
+				});
+				var help = el('div', { id: helpId, class: 'ak-feature-help', role: 'region', 'aria-label': helpName, hidden: 'hidden' }, [
+					el('p', { class: 'ak-row__desc', text: f.desc }),
+					el('h3', { text: I.technicalDetails }), technical,
+					el('p', { class: 'ak-feature-save-note', text: I.saveTiming })
+				]);
+				function toggleHelp(open) {
+					help.hidden = !open;
+					infoButton.setAttribute('aria-expanded', String(open));
+				}
+				infoButton.addEventListener('click', function () { toggleHelp(help.hidden); });
+				[infoButton, help].forEach(function (target) {
+					target.addEventListener('keydown', function (event) {
+						if (event.key === 'Escape' && !help.hidden) { toggleHelp(false); infoButton.focus(); event.stopPropagation(); }
+					});
+				});
 				var row = el('div', rowAttrs, [
 					el('div', { class: 'ak-row__main' }, [
-						el('span', { class: 'ak-row__label', text: f.label }),
-						el('span', { class: 'ak-row__desc', text: f.desc })
+						el('div', { class: 'ak-feature-heading' }, [el('span', { class: 'ak-row__label', text: f.label }), infoButton]),
+						f.summary ? el('p', { class: 'ak-feature-summary', text: f.summary }) : null,
+						help
 					]),
 					el('label', { class: 'ak-switch' }, [
 						input,
@@ -751,16 +704,38 @@
 				placeholder: I.searchFeatures || 'Search features…',
 				'aria-label': I.searchFeatures || 'Search features…'
 			});
+			var empty = el('p', { class: 'ak-empty', role: 'status', hidden: 'hidden', text: I.noResults });
+			var selectedStatus = 'all';
+			var statusButtons = {};
+			var statusFilters = el('div', { class: 'ak-feature-filters', role: 'group', 'aria-label': I.filterFeatures });
+			['all', 'active', 'inactive'].forEach(function (value) {
+				var button = el('button', {
+					type: 'button', class: 'ak-btn', 'aria-pressed': String(value === selectedStatus),
+					onclick: function () { selectedStatus = value; filter(); }
+				});
+				statusButtons[value] = button;
+				statusFilters.appendChild(button);
+			});
 			function filter() {
 				var q = (search.value || '').trim().toLowerCase();
+				var counts = { all: 0, active: 0, inactive: 0 };
 				(D.features || []).forEach(function (f) {
 					var r = refs[f.key];
 					if (!r) {
 						return;
 					}
-					var hay = ((f.label || '') + ' ' + (f.desc || '')).toLowerCase();
-					r.row.style.display = !q || hay.indexOf(q) !== -1 ? '' : 'none';
+					var hay = ((f.label || '') + ' ' + (f.desc || '') + ' ' + (f.summary || '')).toLowerCase();
+					var active = f.available !== false && !!state.features[f.key] && (!f.parent || !!state.features[f.parent]);
+					var status = active ? 'active' : 'inactive';
+					var matchesSearch = !q || hay.indexOf(q) !== -1;
+					if (matchesSearch) { counts.all++; counts[status]++; }
+					r.row.style.display = matchesSearch && (selectedStatus === 'all' || selectedStatus === status) ? '' : 'none';
 				});
+				['all', 'active', 'inactive'].forEach(function (value) {
+					statusButtons[value].textContent = I['featuresFilter' + value.charAt(0).toUpperCase() + value.slice(1)] + ' (' + counts[value] + ')';
+					statusButtons[value].setAttribute('aria-pressed', String(value === selectedStatus));
+				});
+				empty.hidden = Object.keys(refs).some(function (key) { return refs[key].row.style.display !== 'none'; });
 				groups.forEach(function (g) {
 					if (!g.wrapEl) {
 						return;
@@ -771,8 +746,10 @@
 					g.wrapEl.style.display = anyVisible ? '' : 'none';
 				});
 			}
+
 			search.addEventListener('input', filter);
 			p.appendChild(el('div', { class: 'ak-search-wrap' }, [search]));
+			p.appendChild(statusFilters);
 
 			// Bulk controls — flip every feature on/off, or restore the registered
 			// schema defaults (reuses the header's flex row + secondary buttons;
@@ -804,6 +781,8 @@
 				])
 			);
 
+			p.appendChild(el('p', { class: 'ak-feature-bulk-note', text: I.featuresBulkScope }));
+			p.appendChild(empty);
 			// One titled block per group label (order = first-seen). Static heading —
 			// the search field handles discovery; folding groups was visual noise.
 			groups.forEach(function (g) {
@@ -815,11 +794,12 @@
 				p.appendChild(wrap);
 			});
 
+			filter();
 			return p;
 		}
 
 		function buildPlugins() {
-			var p = el('section', { class: 'ak-panel', role: 'tabpanel' }, [intro(I.pluginsIntro)]);
+			var p = el('section', { class: 'ak-panel', role: 'tabpanel' }, [el('h2', { class: 'ak-panel-title', text: I.plugins }), intro(I.pluginsIntro)]);
 			var list = D.integrations || [];
 			if (!list.length) {
 				return p;
@@ -896,12 +876,13 @@
 				// can't act on a plugin that isn't loaded, so the toggle would be
 				// noise — the dim treatment alone reads as "not actionable here".
 				if (false === i.active) {
+					main.appendChild(el('span', { class: 'ak-row__desc', text: I.pluginInactive }));
 					return el('div', { class: 'ak-row is-muted' }, [main]);
 				}
 
 				// Active plugin (native or generic) → user-facing toggle.
 				// `.is-off` from the start paints the row dim with no flash.
-				var input = el('input', { type: 'checkbox', class: 'ak-switch__input' });
+				var input = el('input', { type: 'checkbox', class: 'ak-switch__input', 'aria-label': i.label });
 				input.checked = !!i.enabled;
 				var row = el('div', { class: 'ak-row' + (i.enabled ? '' : ' is-off') }, [
 					main,
@@ -921,12 +902,12 @@
 					});
 					inputs.push({ kind: 'native', slug: i.slug, input: input, row: row });
 				} else if (i.file) {
-					// Generic plugin → file path tracked in the on-list.
+					// Generic plugin → file path tracked in the opt-out list.
 					input.addEventListener('change', function () {
 						if (input.checked) {
-							state.genericThemingOn[i.file] = true;
+							delete state.genericThemingOff[i.file];
 						} else {
-							delete state.genericThemingOn[i.file];
+							state.genericThemingOff[i.file] = true;
 						}
 						syncOffClass(row, input.checked);
 						markDirty();
@@ -937,18 +918,18 @@
 			}
 
 			// Reset every toggle to its "AdminKit handles this plugin" default,
-			// which is OFF across the board (native integrations' schema default,
-			// generic plugins absent from the opt-in list). markDirty so the user
+			// which is ON for every detected host. Explicit opt-outs remain
+			// available for debugging. markDirty so the user
 			// can still walk away without committing.
 			function resetAll() {
 				inputs.forEach(function (r) {
-					r.input.checked = false;
+					r.input.checked = true;
 					if ('native' === r.kind) {
-						state.integrations[r.slug] = false;
+						state.integrations[r.slug] = true;
 					} else {
-						delete state.genericThemingOn[r.file];
+						delete state.genericThemingOff[r.file];
 					}
-					syncOffClass(r.row, false);
+					syncOffClass(r.row, true);
 				});
 				markDirty();
 			}
@@ -997,11 +978,13 @@
 				placeholder: I.searchPlugins || 'Search plugins…',
 				'aria-label': I.searchPlugins || 'Search plugins…'
 			});
+			var empty = el('p', { class: 'ak-empty', role: 'status', hidden: 'hidden', text: I.noResults });
 			function filterPlugins() {
 				var q = (search.value || '').trim().toLowerCase();
 				rowsRef.forEach(function (r) {
 					r.row.style.display = !q || r.text.indexOf(q) !== -1 ? '' : 'none';
 				});
+				empty.hidden = rowsRef.some(function (r) { return r.row.style.display !== 'none'; });
 				groupsRef.forEach(function (g) {
 					var any = g.rows.some(function (r) {
 						return r.row.style.display !== 'none';
@@ -1009,6 +992,7 @@
 					g.wrap.style.display = any ? '' : 'none';
 				});
 			}
+			p.appendChild(empty);
 			search.addEventListener('input', filterPlugins);
 			p.appendChild(el('div', { class: 'ak-search-wrap' }, [search]));
 
@@ -1092,19 +1076,52 @@
 				v['integration_' + slug + '_enabled'] = !!state.integrations[slug];
 			});
 			// Per-plugin opt-in for generic plugins (no native adapter). POST as a
-			// flat array of plugin file paths the user has turned theming on for.
-			v.generic_theming_on = Object.keys(state.genericThemingOn);
+			// flat array of plugin file paths the user has turned theming off for.
+			v.generic_theming_off = Object.keys(state.genericThemingOff);
 			v.logo_light = state.logos.light;
 			v.logo_dark = state.logos.dark;
 			v.wp_logo = state.wpLogo;
 			v.login_logo = state.loginLogo;
 			v.brand_accent = state.brandAccent;
 			v.accent_source = state.accentSource;
+			Object.assign(v, state.appearance);
+			v.design_system = Object.assign({}, state.designSystem);
 			return v;
 		}
+		var refreshOverview = function () {};
+		function buildOverview() {
+			var p = el('section', { class: 'ak-panel ak-overview', role: 'tabpanel' });
+			p.appendChild(el('h2', { class: 'ak-panel-title', text: I.overview }));
+			p.appendChild(intro(I.overviewIntro));
+			var list = el('dl', { class: 'ak-overview-list' });
+			function entry(label, target, action) {
+				var value = el('dd');
+				list.appendChild(el('div', { class: 'ak-overview-entry' }, [
+					el('div', {}, [el('dt', { text: label }), value]),
+					el('a', { href: '#' + target, class: 'ak-btn ak-overview-link', text: action })
+				]));
+				return value;
+			}
+			var identity = entry(I.identitySummary, 'brand', I.configureDesign);
+			var features = entry(I.activeFeatures, 'features', I.configureFeatures);
+			var plugins = entry(I.integrationSummary, 'plugins', I.configurePlugins);
+			refreshOverview = function () {
+				identity.textContent = state.logos.light || state.logos.dark ? I.identityReady : I.identityDefault;
+				features.textContent = (D.features || []).filter(function (f) { return f.available !== false && state.features[f.key] && (!f.parent || state.features[f.parent]); }).length + ' / ' + (D.features || []).filter(function (f) { return f.available !== false; }).length;
+				var adapters = (D.integrations || []).filter(function (i) { return i.supported && i.slug && !i.system && i.active !== false; });
+				plugins.textContent = adapters.filter(function (i) { return state.integrations[i.slug]; }).length + ' / ' + adapters.length;
+			};
+			refreshOverview();
+			p.appendChild(list);
+			p.appendChild(el('p', { class: 'ak-scope-note', text: I.overviewScope }));
+			return p;
+		}
+
 		return {
+			onSelect: function () { refreshOverview(); },
 			tabs: [
-				{ id: 'brand', label: I.brandTitle, icon: ICONS.brand, build: buildDesign },
+				{ id: 'overview', label: I.overview, icon: ICONS.features, build: buildOverview },
+				{ id: 'brand', label: I.designSystem, icon: ICONS.brand, build: buildDesign },
 				{ id: 'features', label: I.features, icon: ICONS.features, build: buildFeatures },
 				{ id: 'plugins', label: I.plugins, icon: ICONS.plugins, build: buildPlugins }
 			],

@@ -55,8 +55,8 @@ body.adminkit .edit-post-header-toolbar .button.button-primary:focus {
 
 body.adminkit .bricks-block-editor-notice-wrapper {
 	max-width: 560px;
-	margin: 64px auto;
-	padding: 40px 32px;
+	margin: calc(64px * var(--ak-space-scale, 1)) auto;
+	padding: calc(40px * var(--ak-space-scale, 1)) calc(32px * var(--ak-space-scale, 1));
 	background: var(--ak-surface);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-m);
@@ -64,8 +64,8 @@ body.adminkit .bricks-block-editor-notice-wrapper {
 }
 
 body.adminkit .bricks-block-editor-notice-wrapper .bricks-editor-message {
-	margin: 0 0 24px;
-	font-size: 16px;
+	margin: 0 0 calc(24px * var(--ak-space-scale, 1));
+	font-size: calc(16px * var(--ak-type-scale, 1));
 	font-weight: 600;
 	color: var(--ak-heading);
 	line-height: 1.4;
@@ -75,7 +75,7 @@ body.adminkit .bricks-block-editor-notice-wrapper .bricks-editor-buttons {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	gap: 12px;
+	gap: calc(12px * var(--ak-space-scale, 1));
 	flex-wrap: wrap;
 }
 
@@ -87,8 +87,8 @@ body.adminkit .bricks-block-editor-notice-wrapper a.button-primary {
 	color: var(--ak-on-accent);
 	border: 0;
 	border-radius: var(--ak-radius-s);
-	padding: 10px 22px;
-	font-size: 14px;
+	padding: calc(10px * var(--ak-space-scale, 1)) calc(22px * var(--ak-space-scale, 1));
+	font-size: calc(14px * var(--ak-type-scale, 1));
 	font-weight: 600;
 	text-transform: none;
 	box-shadow: none;
@@ -112,9 +112,9 @@ body.adminkit .bricks-block-editor-notice-wrapper a:not(.button-primary) {
 	color: var(--ak-text-muted);
 	border: 0;
 	box-shadow: none;
-	padding: 10px 14px;
+	padding: calc(10px * var(--ak-space-scale, 1)) calc(14px * var(--ak-space-scale, 1));
 	text-decoration: none;
-	font-size: 14px;
+	font-size: calc(14px * var(--ak-type-scale, 1));
 	font-weight: 500;
 }
 

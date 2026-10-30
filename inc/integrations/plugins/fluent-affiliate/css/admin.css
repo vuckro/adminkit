@@ -243,7 +243,7 @@ body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__logo a:focus {
 body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__logo a::after {
 	content: var( --ak-wordmark, "FluentAffiliate" );
 	color: var( --ak-heading );
-	font-size: 18px;
+	font-size: calc(18px * var(--ak-type-scale, 1));
 	font-weight: 700;
 	letter-spacing: 0.01em;
 }

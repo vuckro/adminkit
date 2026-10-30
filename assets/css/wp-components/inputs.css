@@ -30,7 +30,7 @@ body.adminkit.wp-core-ui select {
 	font-family: var(--ak-font-body);
 	font-size: var(--ak-text-s);
 	line-height: 1.8;
-	padding: 0 10px;
+	padding: 0 calc(10px * var(--ak-space-scale, 1));
 	min-height: var(--ak-control-height);
 	box-shadow: none;
 }
@@ -59,7 +59,7 @@ body.adminkit.wp-core-ui select {
 	background-repeat: no-repeat !important;
 	background-position: right 8px center !important;
 	background-size: 12px 12px !important;
-	padding-right: 28px;
+	padding-right: calc(28px * var(--ak-space-scale, 1));
 }
 
 /* Dark mode chevron — fill bumped to the muted-text colour so it reads
@@ -73,7 +73,7 @@ body.adminkit.wp-core-ui select {
 /* Textarea — restore vertical padding since it can wrap */
 body.adminkit textarea {
 	line-height: 1.5;
-	padding: 6px 10px;
+	padding: calc(6px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1));
 	min-height: 0;
 }
 
@@ -346,7 +346,7 @@ body.adminkit input[type="file"] {
 	body.adminkit textarea,
 	body.adminkit select,
 	body.adminkit.wp-core-ui select {
-		font-size: 16px;
+		font-size: calc(16px * var(--ak-type-scale, 1));
 	}
 }
 

@@ -107,12 +107,47 @@ class AdminKit_Assets {
 	 */
 	public static function inject_accent_family( $context ) {
 		$css = self::accent_family_css();
+		if ( in_array( $context, array( 'admin', 'login', 'editor', 'customize' ), true ) ) {
+			$css .= self::appearance_css();
+			$css .= AdminKit_Design_System::css();
+		}
+		if ( 'frontend' === $context ) {
+			$css .= AdminKit_Design_System::css( true );
+		}
 		if ( '' === $css ) {
 			return;
 		}
 		// One concatenated string → ONE wp_add_inline_style() call. Splitting across
 		// two calls is not ordering-guaranteed on every WP version.
 		wp_add_inline_style( self::TOKENS_HANDLE, $css );
+	}
+
+	/** Emit only allowlisted preset values; never put user-authored CSS into the page. */
+	public static function appearance_css() {
+		$maps = array(
+			'ui_radius' => array(
+				'square' => '--ak-radius-s:2px;--ak-radius-m:4px;--ak-radius-l:4px;--ak-card-radius:4px;',
+				'soft' => '--ak-radius-s:10px;--ak-radius-m:14px;--ak-radius-l:16px;--ak-card-radius:16px;',
+			),
+			'ui_font' => array(
+				'humanist' => '--ak-font-body:"Trebuchet MS",Verdana,sans-serif;',
+				'classic' => '--ak-font-body:Arial,Helvetica,sans-serif;',
+			),
+			'ui_density' => array(
+				'compact' => '--ak-control-height:28px;--ak-ui-row-space:8px;',
+				'comfortable' => '--ak-control-height:40px;--ak-ui-row-space:16px;',
+			),
+		);
+		$vars = '';
+		foreach ( $maps as $key => $values ) {
+			$value = AdminKit_Settings::get( $key );
+			$vars .= isset( $values[ $value ] ) ? $values[ $value ] : '';
+		}
+		$css = $vars ? ':root,:root #wpadminbar{' . $vars . '}' : '';
+		if ( 'default' !== AdminKit_Settings::get( 'ui_density' ) ) {
+			$css .= 'body.wp-admin .widefat td,body.wp-admin .widefat th{padding-top:var(--ak-ui-row-space,10px);padding-bottom:var(--ak-ui-row-space,10px)}';
+		}
+		return $css;
 	}
 
 	/**

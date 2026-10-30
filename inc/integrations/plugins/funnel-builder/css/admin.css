@@ -7,17 +7,17 @@ body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) 
 body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) :is(.bwf-st-c-badge-small, .bwf-st-c-badge-red) { background: var(--ak-warning-subtle); color: var(--ak-warning); }
 body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-node-wrapper :is(span, p) { color: var(--ak-text-muted); }
 @media (max-width: 782px) {
- body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .components-modal__content .bwf-funnel-modal__body { display: block; padding: 8px 0 0; width: 100%; }
- body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .components-modal__content .bwf-funnel-modal__body :is(.bwf-sidebar-nav + div, .bwf-funnel-modal__content) { min-width: 0; max-width: 100%; width: 100%; box-sizing: border-box; padding: 0 0 24px; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .components-modal__content .bwf-funnel-modal__body { display: block; padding: calc(8px * var(--ak-space-scale, 1)) 0 0; width: 100%; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .components-modal__content .bwf-funnel-modal__body :is(.bwf-sidebar-nav + div, .bwf-funnel-modal__content) { min-width: 0; max-width: 100%; width: 100%; box-sizing: border-box; padding: 0 0 calc(24px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwf-support-box { display: none; }
- body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal :is(.bwf-st-c-card-container, .is-lite-card) { display: flex; flex-wrap: wrap; gap: 12px; padding: 16px; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal :is(.bwf-st-c-card-container, .is-lite-card) { display: flex; flex-wrap: wrap; gap: calc(12px * var(--ak-space-scale, 1)); padding: calc(16px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwf-card-controls { margin-left: auto; flex-wrap: wrap; }
  body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwf-st-c-title { flex: 1 1 60%; min-width: 0; }
- body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwfan_selected_header { flex-direction: column; align-items: flex-start; padding: 16px 0; gap: 12px; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwfan_selected_header { flex-direction: column; align-items: flex-start; padding: calc(16px * var(--ak-space-scale, 1)) 0; gap: calc(12px * var(--ak-space-scale, 1)); }
 }
 @media (max-width: 782px) {
  body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwfan__step-header { margin: 0; padding: 0; width: 100%; }
- body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwf-flex.bwf--space-between { flex-wrap: wrap; gap: 12px; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwf-flex.bwf--space-between { flex-wrap: wrap; gap: calc(12px * var(--ak-space-scale, 1)); }
 }
 @media (max-width: 782px) {
  body.adminkit.adminkit-funnelkit-builder .bwf-admin-modal.bwf-funnel-modal .components-modal__content .components-modal__header .components-button.has-icon { display: inline-flex; position: absolute; top: 8px; right: 8px; min-height: 44px; width: 44px; color: var(--ak-text-muted); }
@@ -40,7 +40,7 @@ body.adminkit.adminkit-funnelkit.adminkit-funnelkit-builder #bwf-funnel-canvas-w
 body.adminkit.adminkit-funnelkit.adminkit-funnelkit-builder #bwf-funnel-canvas-wrap .bwf-node-wrapper :is(.bwf-inner-wrapper, .bwf-node-data-desc, .bwf-node-brick) { background: var(--ak-surface); border-color: var(--ak-border); }
 body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-settings .bwf-add-recipient-wrap :is(.components-base-control__label, .components-base-control__field) { background: var(--ak-surface); color: var(--ak-text-muted); }
 @media (max-width: 782px) {
- body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-funnel-list__analytics { flex: 1 1 100%; width: 100%; flex-wrap: wrap; min-width: 0; gap: 16px; }
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-funnel-list__analytics { flex: 1 1 100%; width: 100%; flex-wrap: wrap; min-width: 0; gap: calc(16px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-upgrade-pro-popover-wrap, .bwf-upgrade-pro-popover__toggler) { width: auto; max-width: 100%; white-space: normal; box-sizing: border-box; }
  body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-analytics-wrap { display: block; width: 100%; min-width: 0; }
  body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-analytics-wrap > div { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }

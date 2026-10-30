@@ -1,0 +1,157 @@
+/* A quiet creation column and a wider, explicitly titled management surface. */
+body.adminkit.edit-tags-php #col-container {
+ display: grid;
+ grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+ gap: calc(32px * var(--ak-space-scale, 1));
+ overflow: visible;
+ margin-top: calc(24px * var(--ak-space-scale, 1));
+}
+body.adminkit.edit-tags-php #col-left,
+body.adminkit.edit-tags-php #col-right {
+ float: none;
+ width: auto;
+ min-width: 0;
+}
+body.adminkit.edit-tags-php #col-left .col-wrap,
+body.adminkit.edit-tags-php #col-right .col-wrap { padding: 0; }
+body.adminkit.edit-tags-php #col-left .form-wrap { margin: 0; }
+body.adminkit.edit-tags-php #col-left h2 {
+ margin: 0 0 calc(20px * var(--ak-space-scale, 1));
+ padding: 0;
+ font-size: calc(15px * var(--ak-type-scale, 1));
+ color: var(--ak-heading);
+}
+body.adminkit.edit-tags-php #addtag .form-field { margin: 0 0 calc(16px * var(--ak-space-scale, 1)); padding: 0; }
+body.adminkit.edit-tags-php #addtag label { margin-bottom: calc(4px * var(--ak-space-scale, 1)); font-weight: 500; }
+body.adminkit.edit-tags-php #addtag :is(input[type=text], textarea, select) { width: 100%; box-sizing: border-box; }
+body.adminkit.edit-tags-php #addtag textarea { height: 100px; }
+body.adminkit.edit-tags-php #addtag .form-field p {
+ margin: calc(6px * var(--ak-space-scale, 1)) 0 0;
+ font-size: var(--ak-text-xs);
+ line-height: 1.5;
+ color: var(--ak-text-muted);
+}
+body.adminkit.edit-tags-php #addtag .submit { padding-top: calc(4px * var(--ak-space-scale, 1)); }
+body.adminkit.edit-tags-php .ak-taxonomy-head { padding: calc(20px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1)); }
+body.adminkit.edit-tags-php .ak-taxonomy-head h2 { margin: 0 0 calc(4px * var(--ak-space-scale, 1)); font-size: calc(15px * var(--ak-type-scale, 1)); color: var(--ak-heading); }
+body.adminkit.edit-tags-php .ak-taxonomy-head > p { margin: 0; font-size: var(--ak-text-s); color: var(--ak-text-muted); }
+body.adminkit.edit-tags-php .ak-taxonomy-head .search-box {
+ float: none;
+ display: flex;
+ flex-wrap: wrap;
+ gap: calc(8px * var(--ak-space-scale, 1));
+ margin: calc(16px * var(--ak-space-scale, 1)) 0 0;
+}
+body.adminkit.edit-tags-php .ak-taxonomy-head .search-box input[type=search] { float: none; margin: 0; flex: 1; min-width: 120px; }
+body.adminkit.edit-tags-php #col-right .form-wrap {
+ margin-top: calc(20px * var(--ak-space-scale, 1));
+ max-width: 75ch;
+ font-size: var(--ak-text-xs);
+ line-height: 1.5;
+}
+@media (min-width: 783px) {
+ /* Keep the shared nowrap headers and horizontal scroller; only long text wraps. */
+ body.adminkit.edit-tags-php .wp-list-table :is(th, td).column-primary { min-width: 240px; }
+ body.adminkit.edit-tags-php .wp-list-table .row-actions { flex-wrap: nowrap; width: max-content; }
+ body.adminkit.edit-tags-php .wp-list-table tbody :is(th, td):is(.column-description, [class*="seo"], [class*="description"]) { min-width: 140px; max-width: 260px; white-space: normal; overflow-wrap: break-word; }
+ body.adminkit.edit-tags-php .wp-list-table .column-posts { width: 64px; }
+}
+@media (max-width: 1100px) {
+ body.adminkit.edit-tags-php #col-container { grid-template-columns: minmax(0, 1fr); gap: calc(28px * var(--ak-space-scale, 1)); }
+ body.adminkit.edit-tags-php #col-left .form-wrap { max-width: 560px; }
+}
+@media (min-width: 1101px) {
+ body.adminkit.edit-tags-php #col-left { grid-column: 1; grid-row: 1; }
+ body.adminkit.edit-tags-php #col-right { grid-column: 2; grid-row: 1; }
+}
+
+/* Term Quick Edit: consistent field rhythm within the visible table viewport. */
+body.adminkit.edit-tags-php #wpbody-content .inline-edit-wrapper {
+ grid-template-columns: minmax(0, 1fr);
+ gap: calc(24px * var(--ak-space-scale, 1));
+ container-type: inline-size;
+}
+body.adminkit.edit-tags-php #wpbody-content .inline-edit-wrapper > fieldset {
+ float: none;
+ width: auto;
+ margin: 0;
+ padding: 0;
+}
+body.adminkit.edit-tags-php .inline-edit-wrapper .inline-edit-legend {
+ display: block;
+ margin: 0 0 calc(16px * var(--ak-space-scale, 1));
+ padding: 0;
+ font-size: calc(15px * var(--ak-type-scale, 1));
+ font-weight: 600;
+ text-transform: none;
+ color: var(--ak-heading);
+}
+body.adminkit.edit-tags-php .inline-edit-wrapper > fieldset:first-child .inline-edit-col {
+ display: grid;
+ gap: calc(16px * var(--ak-space-scale, 1));
+ padding: 0;
+}
+body.adminkit.edit-tags-php .inline-edit-wrapper > fieldset:first-child label {
+ display: flex;
+ flex-direction: column;
+ gap: calc(6px * var(--ak-space-scale, 1));
+ margin: 0;
+}
+body.adminkit.edit-tags-php .inline-edit-wrapper > fieldset:first-child label :is(.title, .input-text-wrap) {
+ float: none;
+ width: auto;
+ margin: 0;
+ line-height: 1.5;
+}
+body.adminkit.edit-tags-php .inline-edit-wrapper > fieldset:first-child input[type=text] {
+ width: 100%;
+ box-sizing: border-box;
+}
+body.adminkit.edit-tags-php #wpbody-content .inline-edit-wrapper > fieldset + fieldset {
+ border-top: 1px solid var(--ak-border);
+ padding-top: calc(24px * var(--ak-space-scale, 1));
+}
+@container (min-width: 540px) {
+ body.adminkit.edit-tags-php .inline-edit-wrapper > fieldset:first-child .inline-edit-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+ }
+}
+/* Plugin clearing nodes must not create empty rows between form sections. */
+body.adminkit.edit-tags-php .inline-edit-wrapper > p.wp-clearfix:empty { display: none; }
+body.adminkit.edit-tags-php #wpbody-content .inline-edit-wrapper > fieldset:has([name^="slim_seo["]) {
+ border: 0;
+ padding: 0;
+}
+body.adminkit.edit-tags-php .inline-edit-wrapper fieldset:has([name^="slim_seo["]) > .inline-edit-col {
+ display: grid;
+ grid-template-columns: minmax(0, 1fr);
+ gap: calc(16px * var(--ak-space-scale, 1)) calc(24px * var(--ak-space-scale, 1));
+ padding: calc(16px * var(--ak-space-scale, 1));
+ margin: 0;
+ background: var(--ak-surface-muted);
+ border-radius: var(--ak-radius-s);
+}
+body.adminkit.edit-tags-php .inline-edit-wrapper fieldset:has([name^="slim_seo["]) label {
+ display: flex;
+ flex-direction: column;
+ gap: calc(6px * var(--ak-space-scale, 1));
+ margin: 0;
+}
+body.adminkit.edit-tags-php .inline-edit-wrapper fieldset:has([name^="slim_seo["]) label > span.title {
+ float: none;
+ width: auto;
+ margin: 0;
+}
+body.adminkit.edit-tags-php .inline-edit-wrapper fieldset:has([name^="slim_seo["]) :is(input[type=text], textarea) {
+ width: 100%;
+ box-sizing: border-box;
+ margin: 0;
+}
+body.adminkit.edit-tags-php .inline-edit-wrapper fieldset:has([name^="slim_seo["]) textarea { min-height: 88px; }
+body.adminkit.edit-tags-php .inline-edit-wrapper fieldset:has([name^="slim_seo["]) .inline-edit-group { grid-column: 1 / -1; }
+body.adminkit.edit-tags-php .inline-edit-wrapper .inline-edit-save { margin-top: 0; padding-top: calc(16px * var(--ak-space-scale, 1)); }
+@container (min-width: 600px) {
+ body.adminkit.edit-tags-php .inline-edit-wrapper fieldset:has([name^="slim_seo["]) > .inline-edit-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+ }
+}
