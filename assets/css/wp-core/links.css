@@ -36,3 +36,23 @@ body.adminkit a:not(.button):focus-visible {
 	outline: var(--wk-focus-width) solid var(--ak-focus);
 	outline-offset: var(--wk-focus-offset);
 }
+
+/* Quiet link feedback shared by table titles and persistent media actions.
+   Inline backgrounds follow wrapped text; no pseudo-element or layout movement. */
+body.adminkit :is(.wp-list-table .row-title, .attachment-info .actions a, .attachment-info .actions button) {
+ background-image: linear-gradient(currentColor, currentColor);
+ background-repeat: no-repeat;
+ background-position: 0 100%;
+ background-size: 0% 1px;
+ text-decoration: none;
+ -webkit-box-decoration-break: clone;
+ box-decoration-break: clone;
+ transition: background-size 160ms var(--ak-ease-standard), color 120ms var(--ak-ease-standard);
+}
+body.adminkit :is(.wp-list-table .row-title, .attachment-info .actions a, .attachment-info .actions button):is(:hover, :focus-visible) {
+ background-size: 100% 1px;
+ text-decoration: none;
+}
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit :is(.wp-list-table .row-title, .attachment-info .actions a, .attachment-info .actions button) { transition: none; }
+}

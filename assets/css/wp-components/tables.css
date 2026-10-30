@@ -715,9 +715,8 @@ body.adminkit .wp-list-table #the-list tr:has(> .check-column input[type=checkbo
 body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-author-uri) {
  color: var(--ak-text-muted);
 }
-/* Reserve the native action space: only paint moves, never the row geometry.
-   Animate the title wrapper so wrapped titles and post-state labels move together.
-   Pointer and keyboard share one state; touch keeps WordPress's disclosure. */
+/* Native action space stays reserved. Pointer and keyboard share a short fade;
+   title and action geometry remain fixed. Touch keeps WordPress's disclosure. */
 @media (hover: hover) and (min-width: 783px) {
  body.adminkit .wp-list-table .row-actions {
   visibility: visible;
@@ -729,27 +728,6 @@ body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-a
  body.adminkit .wp-list-table .row-actions.visible {
   opacity: 1;
   pointer-events: auto;
- }
-}
-@media (hover: hover) and (min-width: 783px) and (prefers-reduced-motion: no-preference) {
- body.adminkit .wp-list-table {
-  --ak-row-motion-duration: 180ms;
-  --ak-row-motion-distance: 4px;
- }
- body.adminkit .wp-list-table .column-primary > strong:has(> .row-title) {
-  display: block;
-  transition: translate var(--ak-row-motion-duration) var(--ak-ease-standard);
- }
- body.adminkit .wp-list-table .row-actions {
-  translate: 0 var(--ak-row-motion-distance);
-  transition: opacity 120ms var(--ak-ease-standard), translate var(--ak-row-motion-duration) var(--ak-ease-standard);
- }
- body.adminkit .wp-list-table tr:is(:hover, :focus-within):has(.row-actions) .column-primary > strong:has(> .row-title) {
-  translate: 0 calc(-1 * var(--ak-row-motion-distance));
- }
- body.adminkit .wp-list-table tr:is(:hover, :focus-within) .row-actions,
- body.adminkit .wp-list-table .row-actions.visible {
-  translate: 0 0;
  }
 }
 @media (prefers-reduced-motion: no-preference) {
