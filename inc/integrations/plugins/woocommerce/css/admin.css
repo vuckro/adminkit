@@ -404,16 +404,16 @@ body.adminkit.woocommerce_page_wc-settings #mainform {
 }
 
 body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper {
-	background-color: var(--ak-surface);
-	border-bottom-color: var(--ak-border);
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border);
 }
 
 /* Settings nav bar — full-bleed it to the form's edges (negative side margins)
    while keeping its tab labels aligned to the page padding, so it reads as a
    header strip rather than a boxed-in row. */
 body.adminkit.woocommerce_page_wc-settings #mainform nav {
-	margin: 0 -30px 24px -30px;
-	padding-left: 30px;
+	margin: 16px 0;
+	padding: 3px;
 }
 
 /* Page header — the React-rendered "Payments" title + description (this screen
@@ -510,8 +510,8 @@ body.adminkit.woocommerce_page_wc-settings .components-modal__frame {
 }
 
 body.adminkit.woocommerce_page_wc-settings .components-modal__header {
-	background-color: var(--ak-surface);
-	border-bottom-color: var(--ak-border);
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border);
 }
 
 body.adminkit.woocommerce_page_wc-settings .components-modal__header-heading,
@@ -553,38 +553,30 @@ body.adminkit.woocommerce_page_wc-settings .wc-settings-marketplace-link {
 	color: var(--ak-text-muted);
 }
 
-/* Settings nav tabs — WC repaints them as boxed per-page tabs (resting #505050,
-   active #070707 + yellow underline) that diverge from AdminKit's modern
-   underline tabs (chrome.css `.nav-tab`, also used on profile / Loco Translate).
-   Fully replicate that skin here: flat (transparent, no box border), a 2px
-   bottom-border underline, muted resting → heading active. The
-   .woocommerce_page_wc-settings + .nav-tab-wrapper chain (0,5,1) beats WC's
-   .woo-nav-tab-wrapper .nav-tab variants. */
+/* Match the shared segmented tabs while outranking WooCommerce's tab resets. */
 body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab {
 	background: transparent;
-	border: none;
-	border-bottom: 2px solid transparent;
-	border-radius: 0;
-	margin: 0 4px -1px 0;
-	padding: 8px 14px;
+	border: 1px solid transparent;
+	border-radius: var(--ak-nav-pill-radius);
+	margin: 0;
+	padding: 0 var(--ak-nav-pill-padding-x);
 	color: var(--ak-text-muted);
 	font-weight: 500;
 }
-
 body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab:hover {
 	background: transparent;
+	border-color: transparent;
 	color: var(--ak-heading);
 }
-
 body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active,
 body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active:hover,
 body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active:focus,
 body.adminkit.woocommerce_page_wc-settings .nav-tab-wrapper .nav-tab-active:focus:active {
-	background: transparent;
+	background: var(--ak-elevated);
 	color: var(--ak-heading);
-	border-bottom-color: var(--ak-heading);
+	border-color: var(--ak-border);
+	box-shadow: var(--ak-shadow-subtle);
 }
-
 
 /* ===== Site visibility setting (General tab slotfill) ===== */
 /* The "Site visibility" React slotfill hardcodes its heading + description text
@@ -744,8 +736,8 @@ body.adminkit #woocommerce-order-items table.woocommerce_order_items .cost .spli
 }
 
 body.adminkit #woocommerce-order-items table.woocommerce_order_items .cost .split-input div.input:first-child {
-	background-color: var(--ak-surface);
-	border-bottom-color: var(--ak-border);
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border);
 }
 
 /* Row-action icons (edit / delete line item) — muted, stronger on hover. */
@@ -1119,8 +1111,8 @@ body.adminkit .wc-backbone-modal-content {
 }
 
 body.adminkit .wc-backbone-modal .wc-backbone-modal-header {
-	background-color: var(--ak-surface);
-	border-bottom-color: var(--ak-border);
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border);
 }
 
 body.adminkit .wc-backbone-modal footer {

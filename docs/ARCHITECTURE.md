@@ -255,3 +255,12 @@ WordPress dashboard preferences are retained. A failed table drop is retried.
 External transient caches expire by their existing TTLs; the dedicated statistics
 object-cache group is flushed when supported. No global cache flush is performed.
 The WordPress dashboard remains available with the base administration skin.
+
+### Shared navigation segments
+
+Status filters, native settings tabs, browse filters and AdminKit panel tabs share
+one segmented-control definition in `wp-core/chrome.css`: 3px track inset, 2px gap,
+34px desktop segments, neutral active border/elevation and a visible keyboard
+indicator. Mobile segments use the shared touch-control height and scroll within
+the available width. WooCommerce overrides retain the same geometry. Markup,
+ARIA semantics, links, selected state and form fields stay owned by each screen.

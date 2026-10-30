@@ -167,7 +167,7 @@ body.adminkit.adminkit-woocommerce.woocommerce_page_wc-settings .nav-tab-wrapper
  flex-wrap: nowrap;
  overflow-x: auto;
  overflow-y: hidden;
- width: 100%;
+ width: max-content;
  max-width: 100%;
  box-sizing: border-box;
  gap: 2px;
@@ -181,8 +181,8 @@ body.adminkit.adminkit-woocommerce.woocommerce_page_wc-settings .nav-tab {
  flex: 0 0 auto;
  border: 1px solid transparent;
  margin: 0;
- padding-inline: 12px;
- border-radius: var(--ak-radius-s);
+ padding: 0 var(--ak-nav-pill-padding-x);
+ border-radius: var(--ak-nav-pill-radius);
  color: var(--ak-text-muted);
  background: transparent;
  text-decoration: none;

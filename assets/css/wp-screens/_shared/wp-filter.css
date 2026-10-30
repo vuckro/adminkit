@@ -11,18 +11,10 @@ body.adminkit .wp-filter {
 	box-shadow: none;
 }
 
-/* Tab links inside `.wp-filter`-style bars (Featured / Popular /
-   Recommended / Favorites on plugin-install, Filter links on
-   upload, ...). WP paints `.current` at #1d2327 (near-black). */
-body.adminkit .filter-links li > a {
-	color: var(--ak-text-muted);
-	border-bottom-color: transparent;
-}
-
-body.adminkit .filter-links li > a:hover,
-body.adminkit .filter-links li > a:focus,
-body.adminkit .filter-links .current {
-	color: var(--ak-heading);
+/* Segment geometry/states are shared with Articles/Pages in chrome.css.
+   This strip sits inside the existing browse toolbar, so it needs no outer gap. */
+body.adminkit .wp-filter .filter-links {
+	margin: 0;
 }
 
 /* Count chip ("(123)" pill next to a filter / tab) — WP hardcodes

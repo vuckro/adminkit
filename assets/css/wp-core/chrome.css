@@ -158,11 +158,8 @@ body.adminkit {
 	--ak-nav-pill-gap: 7px;
 	--ak-nav-pill-height: 34px;
 	--ak-nav-pill-padding-x: 14px;
-	/* Inner segment radius — concentric with the segmented container: its
-	   --ak-radius-s (6px) corner MINUS the 2px inset, so the active pill's rounded
-	   corners nest exactly inside the group's border instead of bulging past it
-	   (matches .ak-stats__preset / .ak-dash__stats-preset, which use the same calc). */
-	--ak-nav-pill-radius: calc(var(--ak-radius-s) - 2px);
+	/* Match the status-filter track's 3px inset. */
+	--ak-nav-pill-radius: calc(var(--ak-radius-s) - 3px);
 }
 
 /* Dark-mode scrollbars. The browser paints native scrollbars from the page's
@@ -1062,58 +1059,32 @@ body.adminkit .media-modal-content {
    - `.ak-tabs`          AdminKit-built strips (profile cards, options-general
                          + discussion, AdminKit SPA). Real <button>s. */
 
-/* 1 — Container shape. `font-size: 0` collapses every anonymous text node
-   inside the container — both the " |" separator WP prints inside each <li>
-   AND the whitespace text nodes WP leaves between <li>s (`</li>\n\t<li>`).
-   In a flex layout those `\n\t` text nodes become anonymous flex items with
-   their own width, which otherwise paint as a visible 3-5px gap (cumulative
-   over 6 pills → ~30px of phantom space). Child <a>/<button>/.count rules
-   below restore readable font-size.
-
-   `line-height: 0` is the second leg of the same defence: with `font-size: 0`
-   the container's `normal` line-height could still resolve to a non-zero px
-   value via the inherited line-height multiplier (some UAs floor `normal`
-   at the parent's font-metric height, not zero), which surfaces as a phantom
-   band of empty space ABOVE / BELOW the pill row. Zero line-height on the
-   container kills that floor; the pills drive the row's used height by
-   themselves.
-
-   Keep the strip itself flat. The interactive pill carries hover/current state,
-   which avoids a hard first-paint frame on native list and settings screens. */
+/* Shared geometry for native status links, settings links and panel buttons.
+   Zero type size hides WordPress's literal pipe separators; children restore it. */
 body.adminkit .subsubsub,
 body.adminkit .nav-tab-wrapper,
+body.adminkit .filter-links,
 body.adminkit .ak-tabs {
 	display: inline-flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	align-items: center;
 	gap: 2px;
 	margin: 16px 0;
-	/* Segmented control — ONE bordered group for EVERY admin nav strip: list-table
-	   filters (.subsubsub), settings tabs (.nav-tab-wrapper — Bricks / ACF /
-	   Permalinks) and AdminKit's own strips (.ak-tabs — profile, settings SPA). The
-	   2px inset keeps each pill's rounded corners clear of the container's rounded
-	   border, so the overflow clip (ul.subsubsub) / sideways scroll (.ak-tabs) never
-	   shaves the first or last pill — that inset is what makes rounding safe here. */
-	padding: 2px;
+	padding: 3px;
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
-	background: var(--ak-surface);
+	background: var(--ak-surface-muted);
 	list-style: none;
 	width: max-content;
 	max-width: 100%;
+	box-sizing: border-box;
 	font-size: 0;
 	line-height: 0;
-}
-
-/* `.ak-tabs` scrolls sideways on overflow (long profile tab lists) instead
-   of wrapping — single-row strip with a hidden scrollbar. */
-body.adminkit .ak-tabs {
-	flex-wrap: nowrap;
 	overflow-x: auto;
 	overflow-y: hidden;
 	scrollbar-width: none;
 }
-body.adminkit .ak-tabs::-webkit-scrollbar { display: none; }
+body.adminkit :is(.subsubsub, .nav-tab-wrapper, .filter-links, .ak-tabs)::-webkit-scrollbar { display: none; }
 
 /* `.nav-tab-wrapper` variant: WP wraps each <a> in <li>. Strip default list
    margin/padding so the pill child renders cleanly. */
@@ -1126,24 +1097,24 @@ body.adminkit ul.nav-tab-wrapper > li {
 
 /* `.subsubsub` variant: <li>s get no list margin. The pipe + inter-<li>
    whitespace are already hidden via the container's font-size: 0 above. */
-body.adminkit .subsubsub li {
+body.adminkit .subsubsub li,
+body.adminkit .filter-links li {
 	margin: 0;
 }
 
-/* 2 — Pill children (the link / button inside the container). Explicit
-   height + `line-height: 1` removes every source of pill-height
-   drift: no `line-height: 1.3` fractional half-leading, no vertical padding
-   adding to the line box, no descender slack. */
+/* Every segment keeps the Articles/Pages dimensions and neutral states. */
 body.adminkit .subsubsub a,
+body.adminkit .filter-links a,
 body.adminkit .nav-tab,
 body.adminkit .ak-tabs button {
 	display: inline-flex;
 	align-items: center;
+	flex-shrink: 0;
 	gap: var(--ak-nav-pill-gap);
 	margin: 0;
 	padding: 0 var(--ak-nav-pill-padding-x);
 	height: var(--ak-nav-pill-height);
-	border: 0;
+	border: 1px solid transparent;
 	border-radius: var(--ak-nav-pill-radius);
 	background: transparent;
 	overflow: hidden;
@@ -1155,42 +1126,53 @@ body.adminkit .ak-tabs button {
 	line-height: 1;
 	text-decoration: none;
 	white-space: nowrap;
-	float: none;      /* WP's `.nav-tab` defaults to float:left, breaks flex. */
+	float: none;
 	cursor: pointer;
 	box-sizing: border-box;
+	transition: color var(--wk-duration-fast) var(--wk-ease-standard), background-color var(--wk-duration-fast) var(--wk-ease-standard);
 }
-
-/* 3 — Hover / focus: neutral wash, heading colour. */
 body.adminkit .subsubsub a:hover,
+body.adminkit .filter-links a:hover,
 body.adminkit .subsubsub a:focus,
+body.adminkit .filter-links a:focus,
 body.adminkit .nav-tab:hover,
 body.adminkit .nav-tab:focus,
-body.adminkit .ak-tabs button:hover {
-	background: var(--ak-hover-bg);
+body.adminkit .ak-tabs button:hover,
+body.adminkit .ak-tabs button:focus {
+	background: transparent;
+	border-color: transparent;
 	color: var(--ak-heading);
 }
-
-/* 4 — Active: a clearly-raised pill, heading colour, bold. Every current pill is
-   neutral — the filter's status colour is carried by the count badge, not the pill.
-   Fill is --ak-surface-muted: a CLEARER neutral step off the track than --ak-elevated
-   in BOTH modes (lighter in dark, a touch darker in light), so the selected segment
-   reads at a glance — a clean fill, no inner border. */
 body.adminkit .subsubsub a.current,
+body.adminkit .filter-links a.current,
+body.adminkit .filter-links a.current:hover,
+body.adminkit .filter-links a.current:focus,
 body.adminkit .subsubsub a.current:hover,
 body.adminkit .subsubsub a.current:focus,
 body.adminkit .nav-tab-active,
 body.adminkit .nav-tab-active:hover,
 body.adminkit .nav-tab-active:focus,
-body.adminkit .ak-tabs button.on {
-	background: var(--ak-surface-muted);
+body.adminkit .ak-tabs button.on,
+body.adminkit .ak-tabs button.on:hover,
+body.adminkit .ak-tabs button.on:focus {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+	box-shadow: var(--ak-shadow-subtle);
 	color: var(--ak-heading);
-	font-weight: 600;
+	font-weight: 500;
 }
-
-/* Focus ring on AdminKit's real <button>s. */
+body.adminkit .subsubsub a:not(.button):focus-visible,
+body.adminkit .filter-links a:not(.button):focus-visible,
+body.adminkit .nav-tab:not(.button):focus-visible,
 body.adminkit .ak-tabs button:focus-visible {
-	outline: 2px solid var(--ak-focus);
+	outline: 2px solid var(--ak-text-muted);
 	outline-offset: -2px;
+}
+@media screen and (max-width: 782px) {
+	body.adminkit { --ak-nav-pill-height: var(--ak-control-height-touch); }
+}
+@media (prefers-reduced-motion: reduce) {
+	body.adminkit :is(.subsubsub a, .filter-links a, .nav-tab, .ak-tabs button) { transition: none; }
 }
 
 /* 5 — Icons. `.ak-nav-tab-ic` is injected by list-table-chrome.js; `.ic` is
@@ -1271,48 +1253,12 @@ body.adminkit .ak-dash__actions .ak-btn--primary svg { color: var(--ak-on-accent
 
 body.adminkit :is(.column-comments .comment-grey-bubble, .sorting-indicator) { color: var(--ak-icon); }
 
-/* Native status filters follow WaasKit's segmented tabs. These remain
-   navigation links, rather than ARIA tabs controlling an in-page panel. */
-body.adminkit ul.subsubsub {
- padding: 3px;
- gap: 2px;
- background: var(--ak-surface-muted);
- border-radius: var(--wk-radius-md);
-}
-body.adminkit .subsubsub a {
- padding-inline: 14px;
- border: 1px solid transparent;
- border-radius: calc(var(--wk-radius-md) - 3px);
- font-weight: 500;
- transition: color var(--wk-duration-fast) var(--wk-ease-standard), background-color var(--wk-duration-fast) var(--wk-ease-standard);
-}
-body.adminkit .subsubsub a:hover,
-body.adminkit .subsubsub a:focus {
- background: transparent;
- /* Keep the global link accent out of these neutral navigation segments. */
- border-color: transparent;
- color: var(--ak-heading);
-}
-body.adminkit .subsubsub a.current,
-body.adminkit .subsubsub a.current:hover,
-body.adminkit .subsubsub a.current:focus {
- background: var(--ak-elevated);
- border-color: var(--ak-border);
- box-shadow: var(--wk-elevation-1);
- font-weight: 500;
-}
-body.adminkit .subsubsub a:not(.button):focus-visible {
- outline: 2px solid var(--ak-text-muted);
- outline-offset: -2px;
-}
+/* Status counts retain their own semantic color inside the shared segments. */
 body.adminkit .subsubsub .count {
  min-width: 18px;
  padding-inline: 4px;
  background: color-mix(in srgb, currentColor 10%, transparent);
  font-variant-numeric: tabular-nums;
-}
-@media (prefers-reduced-motion: reduce) {
- body.adminkit .subsubsub a { transition: none; }
 }
 
 /* Native WordPress controls: feedback only, no page entrance choreography. */
