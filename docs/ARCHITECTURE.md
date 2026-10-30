@@ -268,4 +268,4 @@ ARIA semantics, links, selected state and form fields stay owned by each screen.
 
 Storage upgrade 5 removes the retired online-users flag and `adminkit_last_login` user metadata. Native WordPress `session_tokens` are preserved. AdminKit no longer records login timestamps or scans sessions for presence.
 
-Table row actions reveal with a short opacity/4px translation transition on desktop hover and keyboard focus, without changing row geometry. Touch actions remain visible; reduced motion removes the transition and translation. Media detail actions stay visible with color feedback only.
+Table row titles and their state labels rise together by 4px while actions reveal with a coordinated short opacity/4px translation transition on desktop hover and keyboard focus, without changing row geometry. Touch actions remain visible; reduced motion removes the transition and translation. Media detail actions stay visible with color feedback only.
