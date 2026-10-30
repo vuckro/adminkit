@@ -233,7 +233,7 @@
 		}
 		var invalid = app.querySelector('[aria-invalid="true"]');
 		if (invalid) {
-			setStatus('is-error', I.foundationInvalidColor || I.error);
+			setStatus('is-error', invalid.validationMessage || I.foundationInvalidColor || I.error);
 			var panel = invalid.closest('[role="tabpanel"][hidden]');
 			if (panel) { var tab = document.getElementById(panel.getAttribute('aria-labelledby')); if (tab) { tab.click(); } }
 			invalid.focus();

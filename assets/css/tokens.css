@@ -168,3 +168,6 @@ body.adminkit {
  --el-component-size-large: calc(40px * max(var(--ak-space-scale), var(--ak-type-scale)));
 }
 body.adminkit :where(.components-button, .components-text-control__input, .components-select-control__input) { font-family: var(--ak-font-body); font-size: var(--ak-text-s); }
+
+/* A single monochrome SVG keeps inverse lettering when the theme flips. */
+:root[data-adminkit-theme="dark"] :is(.ak-brand-logo--dark, .ak-login-logo-img--dark).ak-logo-dynamic { filter: invert(1); }

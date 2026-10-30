@@ -1223,8 +1223,8 @@ msgid "Design foundations"
 msgstr "Fondations du design"
 
 #: inc/settings/class-settings-page.php
-msgid "Choose your logos and where they appear."
-msgstr "Choisissez vos logos et leurs emplacements."
+msgid "Choose your logo and where it appears."
+msgstr "Choisissez votre logo et son emplacement."
 
 #: inc/settings/class-settings-page.php
 msgid "Choose colors for light and dark. Custom changes the accent while keeping neutral backgrounds and text. Save to apply your changes."
@@ -1381,3 +1381,21 @@ msgstr "Les droits de ce rôle sont définis par le site ou une extension."
 
 msgid "In development"
 msgstr "En cours de développement"
+
+msgid "Logo source"
+msgstr "Source du logo"
+
+msgid "Import an image"
+msgstr "Importer une image"
+
+msgid "Image URL"
+msgstr "URL de l’image"
+
+msgid "Use a monochrome SVG for automatic light and dark appearance. Other images keep their original colors."
+msgstr "Utilisez un SVG monochrome pour l’adapter automatiquement aux modes clair et sombre. Les autres images conservent leurs couleurs."
+
+msgid "Use a simple SVG containing only vector shapes, without scripts or embedded content."
+msgstr "Utilisez un SVG simple composé de formes vectorielles, sans script ni contenu intégré."
+
+msgid "Enter a valid image URL starting with https:// or http://."
+msgstr "Saisissez une URL d’image valide commençant par https:// ou http://."

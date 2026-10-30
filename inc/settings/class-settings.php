@@ -60,7 +60,8 @@ class AdminKit_Settings {
 	 * @return void
 	 */
 	private static function register_branding() {
-		foreach ( array( 'logo_light', 'logo_dark' ) as $key ) {
+		self::register( 'logo_source', array( 'type' => 'select', 'group' => 'branding', 'default' => 'upload', 'sanitize' => static function ( $v ) { return 'url' === $v ? 'url' : 'upload'; } ) );
+		foreach ( array( 'logo_url', 'logo_light', 'logo_dark' ) as $key ) {
 			self::register( $key, array(
 				'type'     => 'text',
 				'group'    => 'branding',
@@ -189,7 +190,14 @@ class AdminKit_Settings {
 	 * @param string $mode 'light' | 'dark'.
 	 * @return string Raw URL, or '' when unset.
 	 */
+	public static function dynamic_logo_class() {
+		$url = (string) self::get( 'logo_url' );
+		return preg_match( '/\.svg$/i', (string) parse_url( $url, PHP_URL_PATH ) ) ? ' ak-logo-dynamic' : '';
+	}
+
 	public static function brand_logo( $mode ) {
+		$single = trim( (string) self::get( 'logo_url' ) );
+		if ( '' !== $single ) { return $single; }
 		$mode = ( 'light' === $mode ) ? 'light' : 'dark';
 		$url  = trim( (string) self::get( 'logo_' . $mode ) );
 		if ( '' !== $url ) {

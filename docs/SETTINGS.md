@@ -115,3 +115,16 @@ changes only the accent family; generated neutral recipes and editor boot data
 were removed. Explicit saved per-role overrides remain intact. Typography,
 Shapes/elevation and Spacing show only title, description and an In development
 notice. Their saved values are preserved but no controls are exposed for now.
+
+## Single brand logo
+
+Identity exposes one logo and an exclusive Upload / Image URL source selector.
+`logo_url` wins over legacy mode-specific settings; legacy values remain readable
+until the next save, which migrates to the single URL and clears obsolete slots.
+Removing a logo clears both old slots to prevent an unexpected fallback.
+SVG images are rendered as external images, never user-authored inline markup.
+A monochrome SVG reverses colors in dark mode, preserving inverse lettering;
+raster images retain original colors. Administrator SVG uploads accept only a
+256KB vector subset with no scripts, event handlers, embedded/external content,
+DTD/entities or styles. The supplied WaasKit SVG was imported as attachment 36
+and selected locally. No public frontend branding was changed outside the toolbar.

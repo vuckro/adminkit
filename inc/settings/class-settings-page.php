@@ -350,14 +350,15 @@ class AdminKit_Settings_Page {
 			'integrations' => $integrations,
 			'toolbar'      => $toolbar,
 			'logos'        => array(
-				'light' => (string) AdminKit_Settings::get( 'logo_light' ),
-				'dark'  => (string) AdminKit_Settings::get( 'logo_dark' ),
+				'light' => (string) AdminKit_Settings::brand_logo( 'light' ),
+				'dark'  => (string) AdminKit_Settings::brand_logo( 'dark' ),
 			),
 			// Site identity for the Brand-studio live preview (mock admin bar +
 			// login). Name + the WP Site Icon URL so the "Favicon" display mode
 			// previews accurately. Cheap; only meaningful on the Brand tab.
 			'siteName'     => (string) get_bloginfo( 'name' ),
 			'siteIcon'     => (string) get_site_icon_url( 64 ),
+			'logoSource' => (string) AdminKit_Settings::get( 'logo_source' ),
 			'wpLogo'       => (string) AdminKit_Settings::get( 'wp_logo' ),
 			'loginLogo'    => (string) AdminKit_Settings::get( 'login_logo' ),
 			'brandAccent'  => (string) AdminKit_Settings::get( 'brand_accent' ),
@@ -386,7 +387,7 @@ class AdminKit_Settings_Page {
 			'i18n'         => array(
 				'foundationInvalidColor' => __( 'Use a hex color such as #1549ab.', 'adminkit' ),
 				'foundationSections' => __( 'Design foundations', 'adminkit' ),
-				'foundationIdentityHelp' => __( 'Choose your logos and where they appear.', 'adminkit' ),
+				'foundationIdentityHelp' => __( 'Choose your logo and where it appears.', 'adminkit' ),
 				'foundationColorsHelp' => __( 'Choose colors for light and dark. Custom changes the accent while keeping neutral backgrounds and text. Save to apply your changes.', 'adminkit' ),
 				'foundationTypeHelp' => __( 'A fluid type scale from small text to large headings. Edit the sample and adjust its scale.', 'adminkit' ),
 				'foundationShapesHelp' => __( 'Adjust the corner scale. Pill-shaped elements keep their own shape.', 'adminkit' ),
@@ -413,6 +414,12 @@ class AdminKit_Settings_Page {
 				'foundationInherited' => __( 'Inherited', 'adminkit' ),
 				'foundationCustom' => __( 'Customized', 'adminkit' ),
 				'foundationContrast' => __( 'Text / background contrast: %s:1', 'adminkit' ),
+				'singleLogo' => __( 'Logo', 'adminkit' ),
+				'logoSource' => __( 'Logo source', 'adminkit' ),
+				'logoUpload' => __( 'Import an image', 'adminkit' ),
+				'logoUrl' => __( 'Image URL', 'adminkit' ),
+				'logoInvalidUrl' => __( 'Enter a valid image URL starting with https:// or http://.', 'adminkit' ),
+				'logoHelp' => __( 'Use a monochrome SVG for automatic light and dark appearance. Other images keep their original colors.', 'adminkit' ),
 				'foundationDevelopment' => __( 'In development', 'adminkit' ),
 				'foundationScope' => __( 'These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design.', 'adminkit' ),
 				'studioIdentity' => __( 'Identity', 'adminkit' ),

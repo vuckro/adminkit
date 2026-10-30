@@ -1209,7 +1209,7 @@ msgid "Design foundations"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Choose your logos and where they appear."
+msgid "Choose your logo and where it appears."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -1366,4 +1366,22 @@ msgid "Permissions for this role are defined by the site or a plugin."
 msgstr ""
 
 msgid "In development"
+msgstr ""
+
+msgid "Logo source"
+msgstr ""
+
+msgid "Import an image"
+msgstr ""
+
+msgid "Image URL"
+msgstr ""
+
+msgid "Use a monochrome SVG for automatic light and dark appearance. Other images keep their original colors."
+msgstr ""
+
+msgid "Use a simple SVG containing only vector shapes, without scripts or embedded content."
+msgstr ""
+
+msgid "Enter a valid image URL starting with https:// or http://."
 msgstr ""

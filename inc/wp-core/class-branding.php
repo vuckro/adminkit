@@ -47,9 +47,43 @@ class AdminKit_Core_Branding {
 	 * @return void
 	 */
 	public static function init() {
+		add_filter( 'upload_mimes', array( __CLASS__, 'logo_upload_mimes' ) );
+		add_filter( 'wp_handle_upload_prefilter', array( __CLASS__, 'validate_logo_upload' ) );
 		add_action( 'admin_bar_menu', array( __CLASS__, 'inject_brand_logo' ), 80 );
 		add_action( 'admin_head', array( __CLASS__, 'print_admin' ), 20 );
 		add_action( 'wp_head', array( __CLASS__, 'print_frontend' ), 20 );
+	}
+
+	/** SVG upload is limited to administrators and a strict vector-only subset. */
+	public static function logo_upload_mimes( $mimes ) {
+		if ( current_user_can( 'manage_options' ) ) { $mimes['svg'] = 'image/svg+xml'; }
+		return $mimes;
+	}
+
+	public static function validate_logo_upload( $file ) {
+		if ( 'svg' !== strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) ) ) { return $file; }
+		$valid = current_user_can( 'manage_options' ) && isset( $file['size'] ) && $file['size'] <= 262144 && self::safe_logo_svg( file_get_contents( $file['tmp_name'] ) );
+		if ( ! $valid ) { $file['error'] = __( 'Use a simple SVG containing only vector shapes, without scripts or embedded content.', 'adminkit' ); }
+		return $file;
+	}
+
+	/** Validate without ever rendering user-authored SVG markup inline. */
+	public static function safe_logo_svg( $svg ) {
+		if ( ! is_string( $svg ) || strlen( $svg ) > 262144 || preg_match( '/<!DOCTYPE|<!ENTITY|<\?(?!xml\s)/i', $svg ) || ! class_exists( 'DOMDocument' ) ) { return false; }
+		$previous = libxml_use_internal_errors( true );
+		$doc = new DOMDocument();
+		$loaded = $doc->loadXML( $svg, LIBXML_NONET );
+		libxml_clear_errors(); libxml_use_internal_errors( $previous );
+		if ( ! $loaded || 'svg' !== $doc->documentElement->localName ) { return false; }
+		$tags = array( 'svg', 'g', 'path', 'rect', 'circle', 'ellipse', 'polygon', 'polyline', 'line', 'title', 'desc' );
+		$attributes = array( 'viewBox', 'width', 'height', 'fill', 'fill-rule', 'clip-rule', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-dasharray', 'stroke-dashoffset', 'opacity', 'fill-opacity', 'stroke-opacity', 'transform', 'd', 'x', 'y', 'x1', 'x2', 'y1', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'points', 'preserveAspectRatio', 'version' );
+		foreach ( $doc->getElementsByTagName( '*' ) as $element ) {
+			if ( 'http://www.w3.org/2000/svg' !== $element->namespaceURI || ! in_array( $element->localName, $tags, true ) ) { return false; }
+			foreach ( $element->attributes as $attr ) {
+				if ( ! in_array( $attr->name, $attributes, true ) || preg_match( '/url\s*\(|javascript:|https?:|@import/i', $attr->value ) ) { return false; }
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -108,7 +142,7 @@ class AdminKit_Core_Branding {
 		// One visible <img> carries the accessible name (alt=site name); the other is
 		// decorative (alt="") — only one shows per theme. esc_url for each src.
 		$img  = '<img class="ak-brand-logo ak-brand-logo--light" src="' . esc_url( $light ) . '" alt="' . esc_attr( $label ) . '" />';
-		$img .= '<img class="ak-brand-logo ak-brand-logo--dark" src="' . esc_url( $dark ) . '" alt="" />';
+		$img .= '<img class="ak-brand-logo ak-brand-logo--dark' . AdminKit_Settings::dynamic_logo_class() . '" src="' . esc_url( $dark ) . '" alt="" />';
 
 		$meta          = is_array( $node->meta ) ? $node->meta : array();
 		$meta['class'] = ( isset( $meta['class'] ) && '' !== $meta['class'] )

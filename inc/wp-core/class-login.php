@@ -143,7 +143,7 @@ class AdminKit_Core_Login {
 		}
 		$alt = esc_attr( $alt );
 		return '<img class="ak-login-logo-img ak-login-logo-img--light" src="' . esc_url( $light ) . '" alt="' . $alt . '" />'
-			. '<img class="ak-login-logo-img ak-login-logo-img--dark" src="' . esc_url( $dark ) . '" alt="" />';
+			. '<img class="ak-login-logo-img ak-login-logo-img--dark' . AdminKit_Settings::dynamic_logo_class() . '" src="' . esc_url( $dark ) . '" alt="" />';
 	}
 
 	/**

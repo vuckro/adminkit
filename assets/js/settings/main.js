@@ -33,6 +33,7 @@
 				light: (D.logos && D.logos.light) || '',
 				dark: (D.logos && D.logos.dark) || ''
 			},
+			logoSource: D.logoSource === 'url' ? 'url' : 'upload',
 			wpLogo: D.wpLogo === 'logo' ? 'logo' : 'favicon', // admin-bar / site-name mark: logo | favicon
 			loginLogo: D.loginLogo === 'logo' ? 'logo' : 'favicon', // login screen mark: logo | favicon
 			brandAccent: D.brandAccent || '', // user hex (only meaningful when accentSource === 'custom')
@@ -94,80 +95,25 @@
 				frame.open();
 			}
 
-			// One brand slot — a dashed card with a fixed-backdrop drop zone (preview
-			// or upload-arrow placeholder) + label + sub + Upload / Remove button.
-			// `slotKey` is 'light' or 'dark' → the brand wordmark URL in `state.logos[key]`.
-			function brandSlot(slotKey, label, sub) {
-				var preview = el('img', { class: 'ak-brand-slot__preview', alt: '' });
-				// Empty-state placeholder is an upload-arrow icon (the zone is a
-				// click-to-upload shortcut alongside the Upload button below).
-				var dropTxt = el('span', { class: 'ak-brand-slot__drop', 'aria-hidden': 'true' });
-				dropTxt.innerHTML = ICONS.upload;
-				var zone = el('button', { type: 'button', class: 'ak-brand-slot__zone', 'aria-label': label }, [preview, dropTxt]);
-
-				// One button per slot, label + action toggle on filled state:
-				//   empty   → "↑ Upload"  → opens the WP media frame
-				//   filled  → "Remove"    → clears the slot (sets it to empty)
-				// Clicking the drop zone is a separate shortcut that ALWAYS opens
-				// the media frame (to replace whatever is there).
-				var actionBtn = el('button', {
-					type: 'button',
-					class: 'ak-brand-slot__btn'
-				});
-
-				function currentUrl() {
-					return state.logos[slotKey] || '';
+			function singleLogo() {
+				var preview = el('img', { alt: '', class: 'ak-single-logo-preview' });
+				var source = el('select', { id: 'ak-logo-source' }, [el('option', { value: 'upload', text: I.logoUpload }), el('option', { value: 'url', text: I.logoUrl })]);
+				source.value = state.logoSource;
+				var url = el('input', { id: 'ak-logo-url', type: 'url', placeholder: 'https://', value: state.logos.light || state.logos.dark || '' });
+				var urlLabel = el('label', { for: url.id, text: I.logoUrl });
+				var upload = el('button', { type: 'button', class: 'ak-btn', text: I.slotUpload, onclick: function () { openMedia(function (value) { set(value); markDirty(); }); } });
+				var remove = el('button', { type: 'button', class: 'ak-btn', text: I.slotRemove, onclick: function () { set(''); markDirty(); } });
+				function set(value) { state.logos.light = state.logos.dark = value; url.value = value; sync(); }
+				function sync() {
+					var value = state.logos.light || state.logos.dark || '';
+					preview.hidden = !value; if (value) { preview.src = value; } else { preview.removeAttribute('src'); }
+					preview.classList.toggle('ak-single-logo-svg', /\.svg(?:[?#]|$)/i.test(value));
+					upload.hidden = state.logoSource !== 'upload'; url.hidden = state.logoSource !== 'url'; urlLabel.hidden = url.hidden; remove.disabled = !value;
 				}
-				function syncPreview() {
-					var url = currentUrl();
-					if (url) {
-						preview.src = url;
-						preview.style.display = '';
-						dropTxt.style.display = 'none';
-						actionBtn.textContent = I.slotRemove || 'Remove';
-						actionBtn.classList.add('is-remove');
-					} else {
-						preview.removeAttribute('src');
-						preview.style.display = 'none';
-						dropTxt.style.display = '';
-						actionBtn.textContent = '↑ ' + (I.slotUpload || 'Upload');
-						actionBtn.classList.remove('is-remove');
-					}
-				}
-				function setLogo(url) {
-					state.logos[slotKey] = url || '';
-					syncPreview();
-					markDirty();
-				}
-
-				// Logos use the plain media frame (free-form aspect, no crop).
-				var pick = openMedia;
-
-				// Drop zone is always a "pick / replace" shortcut. The action button
-				// branches on current state — clears when filled, picks when empty.
-				zone.addEventListener('click', function () {
-					pick(setLogo);
-				});
-				actionBtn.addEventListener('click', function (e) {
-					e.stopPropagation();
-					if (currentUrl()) {
-						setLogo('', null);
-					} else {
-						pick(setLogo);
-					}
-				});
-
-				syncPreview();
-
-				// Label row (always present) + optional badge chip next to it.
-				return el('div', { class: 'ak-brand-slot ak-brand-slot--' + slotKey }, [
-					zone,
-					el('div', { class: 'ak-brand-slot__body' }, [
-						el('div', { class: 'ak-brand-slot__label', text: label }),
-						sub ? el('div', { class: 'ak-brand-slot__sub', text: sub }) : null,
-						el('div', { class: 'ak-brand-slot__btns' }, [actionBtn])
-					])
-				]);
+				source.addEventListener('change', function () { state.logoSource = source.value; sync(); markDirty(); });
+				url.addEventListener('change', function () { if (url.value && !/^https?:\/\//i.test(url.value)) { url.setAttribute('aria-invalid', 'true'); url.setCustomValidity(I.logoInvalidUrl); return; } url.removeAttribute('aria-invalid'); url.setCustomValidity(''); set(url.value.trim()); markDirty(); });
+				sync();
+				return el('div', { class: 'ak-single-logo' }, [el('label', { for: source.id, text: I.logoSource }), source, urlLabel, url, preview, el('div', { class: 'ak-actions' }, [upload, remove]), el('p', { text: I.logoHelp })]);
 			}
 
 			// Segmented control reused for the Display row (Admin bar + Login screen).
@@ -404,9 +350,7 @@
 				return 1.05 / (L + 0.05) >= (L + 0.05) / 0.05 ? '#ffffff' : '#000000';
 			}
 
-			var slotsRow = el('div', { class: 'ak-brand-slots' }, [
-				brandSlot('light', I.slotLight, I.slotLightSub), brandSlot('dark', I.slotDark, I.slotDarkSub)
-			]);
+			var slotsRow = singleLogo();
 			var wpField = logoSeg('wpLogo', 'ak-wp-logo-label', I.wpLogoLabel, [{ v: 'favicon', label: I.wpLogoFavicon }, { v: 'logo', label: I.wpLogoBrand }]);
 			var sections = [];
 			var editor = el('div', { class: 'ak-foundations-editor' });
@@ -1053,8 +997,10 @@
 			// Per-plugin opt-in for generic plugins (no native adapter). POST as a
 			// flat array of plugin file paths the user has turned theming off for.
 			v.generic_theming_off = Object.keys(state.genericThemingOff);
-			v.logo_light = state.logos.light;
-			v.logo_dark = state.logos.dark;
+			v.logo_url = state.logos.light || state.logos.dark || '';
+			v.logo_source = state.logoSource;
+			v.logo_light = '';
+			v.logo_dark = '';
 			v.wp_logo = state.wpLogo;
 			v.login_logo = state.loginLogo;
 			v.brand_accent = state.brandAccent;
