@@ -381,3 +381,9 @@ The layout moves native controls without cloning or changing submission names;
 plugin sections retain their own tabs. Self-addressed help copy is omitted when
 editing another user. Isolated rendering verified at 1440/390px in light/dark;
 all native inputs remain in the original form. No live account save was tested.
+
+Account layout rhythm is shared by all three account routes: 24px card padding
+(20px on phones), 24px heading-to-content spacing, 18px headings, scaled through
+the design system. Header and form use the same 1240px maximum width. Settings
+labels remain above controls at every width. Isolated checks cover all available
+tabs at 1440/390px, input-node preservation and horizontal overflow.
