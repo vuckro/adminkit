@@ -201,8 +201,7 @@ body.adminkit .wp-list-table .column-username .row-actions {
    made the actions flow to the RIGHT of the title and inflate the primary column,
    which on phones pushed Title and the next column far apart. The literal " | "
    separators are text nodes inside each <span>; collapse them with font-size:0 and
-   restore the link text, then space the actions with a flex gap that wraps. Each
-   action gets a soft hover chip; Trash stays red with a danger-tint hover. */
+   restore the link text, then space the actions with a flex gap that wraps. Actions stay lightweight text links; destructive actions retain their red tone. */
 body.adminkit .wp-list-table .row-actions {
 	display: flex;
 	flex-wrap: wrap;
@@ -237,9 +236,7 @@ body.adminkit .wp-list-table .row-actions button.button-link {
 	cursor: pointer;
 }
 
-/* Hover/focus — neutral chip (Trash gets the danger chip below). The
-   !important + higher specificity beat the global brand chip on a:hover in
-   links.css, so row actions stay neutral instead of going primary. */
+/* Text-only feedback: consistent underline, with destructive actions staying red. */
 body.adminkit .wp-list-table .row-actions a:hover,
 body.adminkit .wp-list-table .row-actions a:focus,
 body.adminkit .wp-list-table .row-actions button.button-link:hover,
@@ -247,6 +244,8 @@ body.adminkit .wp-list-table .row-actions button.button-link:focus {
 	background: transparent !important;
 	color: var(--ak-primary-text) !important;
 	text-decoration: underline;
+	text-underline-offset: .18em;
+	text-decoration-thickness: 1px;
 }
 
 body.adminkit .wp-list-table .row-actions .delete a,
@@ -258,7 +257,6 @@ body.adminkit .wp-list-table .row-actions .delete a:hover,
 body.adminkit .wp-list-table .row-actions .delete a:focus,
 body.adminkit .wp-list-table .row-actions .trash a:hover,
 body.adminkit .wp-list-table .row-actions .trash a:focus {
-	background: var(--ak-error-subtle) !important;
 	color: var(--ak-error) !important;
 }
 
