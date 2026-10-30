@@ -729,17 +729,17 @@ body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-a
  }
 }
 /* Post/page/CPT titles start halfway into the reserved action line, so the
-   resting title is vertically centered. Hover/focus returns it to its native
+   resting title is vertically centered. Hover/focus lifts it to 3px below its native
    position; actions stay in flow to reserve room even for wrapped titles. */
 @media (hover: hover) and (min-width: 783px) {
  body.adminkit .wp-list-table .column-title:has(> .row-actions) > strong:has(> .row-title) {
   display: block;
   translate: 0 13px;
-  transition: translate 180ms var(--ak-ease-standard);
+  transition: translate 200ms var(--ak-ease-standard);
  }
  body.adminkit .wp-list-table tr:is(:hover, :focus-within) .column-title:has(> .row-actions) > strong:has(> .row-title),
  body.adminkit .wp-list-table .column-title:has(> .row-actions.visible) > strong:has(> .row-title) {
-  translate: 0 0;
+  translate: 0 3px;
  }
 }
 @media (prefers-reduced-motion: no-preference) {
