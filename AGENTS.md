@@ -31,7 +31,10 @@ new → `features/`.**
   `AdminKit_Plugin::MODULES` in `inc/class-plugin.php` (boot order is explicit). Gate it on a setting: `AdminKit_Settings::register( '<name>_enabled', [ 'default' => false ] )`.
 - **An integration (skin a plugin/theme)** → just create
   `inc/integrations/plugins/<slug>/class-<slug>.php` (class
-  `AdminKit_Integration_<Slug>`). It's **auto-discovered** — no loader edit.
+  `AdminKit_Integration_<Slug>`). It's **auto-discovered** — no loader edit. Plugin
+  adapters declare `label()` and `host_files()` on the class itself (that is what
+  lists the host as Native in Settings → Plugins and makes its switch work); never
+  add a central list.
 - **A setting / feature toggle** → `AdminKit_Settings::register()` + a row in
   `AdminKit_Settings_Catalog::features()` for the UI.
 - **Per-screen CSS** → `assets/css/wp-screens/<name>.css` + a `register_screen()`

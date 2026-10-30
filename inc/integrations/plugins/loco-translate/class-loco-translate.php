@@ -40,6 +40,16 @@ class AdminKit_Integration_Loco_Translate extends AdminKit_Integration_Base {
 		return 'loco-translate';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'Loco Translate';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'loco-translate/loco.php' );
+	}
+
 	/**
 	 * Loco's menu slug is `loco` (screen `toplevel_page_loco`), not the adapter
 	 * slug, so the base wordmark resolver needs it explicitly.

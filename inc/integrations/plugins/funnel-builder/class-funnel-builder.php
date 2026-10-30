@@ -3,6 +3,8 @@
 defined( 'ABSPATH' ) || exit;
 class AdminKit_Integration_Funnel_Builder extends AdminKit_Integration_Base {
  public static function slug() { return 'funnel-builder'; }
+ public static function label() { return 'Funnel Builder'; }
+ public static function host_files() { return array( 'funnel-builder/funnel-builder.php', 'funnel-builder-pro/funnel-builder-pro.php' ); }
  public static function is_active() { return defined( 'WFFN_VERSION' ); }
  protected static function host_version() { return defined( 'WFFN_VERSION' ) ? WFFN_VERSION : null; }
  protected static function max_tested_host_version() { return '3'; }

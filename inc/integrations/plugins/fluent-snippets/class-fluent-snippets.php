@@ -65,6 +65,16 @@ class AdminKit_Integration_Fluent_Snippets extends AdminKit_Integration_Base {
 		return 'fluent-snippets';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'FluentSnippets';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'easy-code-manager/easy-code-manager.php' );
+	}
+
 	/**
 	 * FluentSnippets registers its top-level menu under the slug `fluent-snippets`
 	 * (== slug()), so the base wordmark resolver needs no override.

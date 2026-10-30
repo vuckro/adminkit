@@ -30,6 +30,16 @@ class AdminKit_Integration_Flying_Press extends AdminKit_Integration_Base {
 		return 'flying-press';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'FlyingPress';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'flying-press/flying-press.php' );
+	}
+
 	/**
 	 * FlyingPress defines FLYING_PRESS_VERSION in its bootstrap.
 	 *

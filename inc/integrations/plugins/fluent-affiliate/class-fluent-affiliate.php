@@ -59,6 +59,16 @@ class AdminKit_Integration_Fluent_Affiliate extends AdminKit_Integration_Base {
 		return 'fluent-affiliate';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'FluentAffiliate';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'fluent-affiliate/fluent-affiliate.php' );
+	}
+
 	/**
 	 * FluentAffiliate registers its top-level menu under the slug `fluent-affiliate`
 	 * (== slug()), so the base wordmark resolver needs no override.

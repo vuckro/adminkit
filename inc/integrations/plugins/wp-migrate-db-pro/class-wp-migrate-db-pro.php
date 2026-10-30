@@ -24,6 +24,16 @@ class AdminKit_Integration_Wp_Migrate_Db_Pro extends AdminKit_Integration_Base {
 		return 'wp-migrate-db-pro';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'WP Migrate DB Pro';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'wp-migrate-db-pro/wp-migrate-db-pro.php', 'wp-migrate-db/wp-migrate-db.php' );
+	}
+
 	/**
 	 * WP Migrate (Pro) defines `WPMDBPRO_FILE` in its bootstrap.
 	 * The free WP Migrate ships under the same plugin slug too —

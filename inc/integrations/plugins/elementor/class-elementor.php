@@ -27,6 +27,16 @@ class AdminKit_Integration_Elementor extends AdminKit_Integration_Base {
 		return 'elementor';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'Elementor';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'elementor/elementor.php', 'elementor-pro/elementor-pro.php' );
+	}
+
 	/**
 	 * Elementor Free defines ELEMENTOR_VERSION at boot (Pro requires Free).
 	 */

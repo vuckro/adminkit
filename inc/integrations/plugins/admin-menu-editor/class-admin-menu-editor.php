@@ -30,6 +30,16 @@ class AdminKit_Integration_Admin_Menu_Editor extends AdminKit_Integration_Base {
 		return 'admin-menu-editor';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'Admin Menu Editor';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'admin-menu-editor/menu-editor.php', 'admin-menu-editor-pro/menu-editor.php' );
+	}
+
 	/**
 	 * Detects both the free plugin and Pro — both instantiate
 	 * `new WPMenuEditor(...)` at boot.

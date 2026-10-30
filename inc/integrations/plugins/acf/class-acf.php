@@ -34,6 +34,16 @@ class AdminKit_Integration_Acf extends AdminKit_Integration_Base {
 		return 'acf';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'Advanced Custom Fields (ACF)';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'advanced-custom-fields/acf.php', 'advanced-custom-fields-pro/acf.php', 'secure-custom-fields/secure-custom-fields.php' );
+	}
+
 	/**
 	 * ACF roots its admin under the field-group CPT, so its top-level menu slug
 	 * is the CPT list URL. Point the wordmark at that menu title (falls back to

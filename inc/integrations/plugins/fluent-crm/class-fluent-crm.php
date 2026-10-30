@@ -41,6 +41,16 @@ class AdminKit_Integration_Fluent_Crm extends AdminKit_Integration_Base {
 		return 'fluent-crm';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'FluentCRM';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'fluent-crm/fluent-crm.php', 'fluentcampaign-pro/fluentcampaign-pro.php' );
+	}
+
 	/**
 	 * FluentCRM registers its top-level menu under `fluentcrm-admin` (not the
 	 * slug), so point the wordmark at that menu title.

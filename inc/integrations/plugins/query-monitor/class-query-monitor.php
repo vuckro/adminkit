@@ -31,6 +31,16 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 		return 'query-monitor';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'Query Monitor';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'query-monitor/query-monitor.php' );
+	}
+
 	/**
 	 * QM defines QM_VERSION in its bootstrap (query-monitor.php).
 	 *

@@ -22,6 +22,16 @@ class AdminKit_Integration_Fluent_Smtp extends AdminKit_Integration_Base {
 		return 'fluent-smtp';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'FluentSMTP';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'fluent-smtp/fluent-smtp.php' );
+	}
+
 	/**
 	 * FluentSMTP registers its screen as the `fluent-mail` submenu (under
 	 * Settings), so point the wordmark at that submenu title.

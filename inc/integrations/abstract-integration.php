@@ -53,6 +53,27 @@ abstract class AdminKit_Integration_Base {
 	abstract public static function is_active();
 
 	/**
+	 * Human-readable host name shown in Settings → Plugins. Override when the
+	 * product name isn't a simple title-cased slug (e.g. `WooCommerce`).
+	 *
+	 * @return string
+	 */
+	public static function label() {
+		return ucwords( str_replace( '-', ' ', static::slug() ) );
+	}
+
+	/**
+	 * Host plugin file(s) (`dir/main.php`) this adapter themes. Plugin adapters
+	 * MUST declare them so Settings → Plugins lists the host as Native and its
+	 * switch gates the adapter. Theme adapters leave this empty.
+	 *
+	 * @return string[]
+	 */
+	public static function host_files() {
+		return array();
+	}
+
+	/**
 	 * Whether the integration owns the given screen — drives the
 	 * conditional-loading closure in the asset registry.
 	 *

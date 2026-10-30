@@ -3,6 +3,8 @@
 defined( 'ABSPATH' ) || exit;
 class AdminKit_Integration_Wp_Marketing_Automations extends AdminKit_Integration_Base {
  public static function slug() { return 'wp-marketing-automations'; }
+ public static function label() { return 'FunnelKit Automations'; }
+ public static function host_files() { return array( 'wp-marketing-automations/wp-marketing-automations.php', 'wp-marketing-automations-pro/wp-marketing-automations-pro.php' ); }
  public static function is_active() { return defined( 'BWFAN_VERSION' ); }
  protected static function host_version() { return defined( 'BWFAN_VERSION' ) ? BWFAN_VERSION : null; }
  protected static function max_tested_host_version() { return '3'; }

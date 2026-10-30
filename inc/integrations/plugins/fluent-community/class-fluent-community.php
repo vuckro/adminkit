@@ -49,6 +49,16 @@ class AdminKit_Integration_Fluent_Community extends AdminKit_Integration_Base {
 		return 'fluent-community';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'FluentCommunity';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'fluent-community/fluent-community.php', 'fluent-community-pro/fluent-community-pro.php' );
+	}
+
 	/**
 	 * FluentCommunity registers its top-level menu under the `fluent-community`
 	 * slug (same as slug()), so the base wordmark resolver finds it without an

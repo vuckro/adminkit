@@ -17,6 +17,16 @@ class AdminKit_Integration_Wpcode extends AdminKit_Integration_Base {
 		return 'wpcode';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'WPCode';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'wpcode/wpcode.php', 'insert-headers-and-footers/ihaf.php' );
+	}
+
 	/**
 	 * WPCode defines WPCODE_VERSION in its bootstrap (ihaf.php).
 	 */

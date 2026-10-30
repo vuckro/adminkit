@@ -37,6 +37,16 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 		return 'woocommerce';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'WooCommerce';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'woocommerce/woocommerce.php' );
+	}
+
 
 	/** Stable scope shared by React, embedded and classic WooCommerce screens. */
 	public static function owns_any_screen( $screen ) {

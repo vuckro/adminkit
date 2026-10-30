@@ -26,6 +26,16 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 		return 'slim-seo';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'Slim SEO';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'slim-seo/slim-seo.php' );
+	}
+
 	/**
 	 * Slim SEO defines `SLIM_SEO_VER` in its bootstrap (`slim-seo.php`).
 	 *

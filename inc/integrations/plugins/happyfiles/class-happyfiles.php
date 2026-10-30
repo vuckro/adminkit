@@ -23,6 +23,16 @@ class AdminKit_Integration_Happyfiles extends AdminKit_Integration_Base {
 		return 'happyfiles';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'HappyFiles';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'happyfiles/happyfiles.php', 'happyfiles-pro/happyfiles.php' );
+	}
+
 	/**
 	 * HappyFiles defines `HAPPYFILES_VERSION` in its bootstrap.
 	 *

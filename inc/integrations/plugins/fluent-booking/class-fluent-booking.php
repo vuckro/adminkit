@@ -25,6 +25,16 @@ class AdminKit_Integration_Fluent_Booking extends AdminKit_Integration_Base {
 		return 'fluent-booking';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'FluentBooking';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'fluent-booking/fluent-booking.php', 'fluent-booking-pro/fluent-booking-pro.php' );
+	}
+
 	/**
 	 * FluentBooking defines `FLUENT_BOOKING_VERSION` in its bootstrap.
 	 *

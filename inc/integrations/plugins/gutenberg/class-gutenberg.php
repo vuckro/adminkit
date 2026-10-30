@@ -158,7 +158,7 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 				// (computed per brand), so it isn't one of the stylesheet URLs above;
 				// the canvas JS injects it as a <style> AFTER them so brand buttons in
 				// the canvas follow an explicit custom/provider accent.
-				'accent' => AdminKit_Assets::accent_family_css() . AdminKit_Assets::appearance_css() . AdminKit_Design_System::css(),
+				'accent' => AdminKit_Assets::accent_family_css() . AdminKit_Design_System::css(),
 			) ) . ';'
 		);
 	}

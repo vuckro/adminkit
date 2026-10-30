@@ -26,6 +26,16 @@ class AdminKit_Integration_Fluentform extends AdminKit_Integration_Base {
 		return 'fluentform';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'Fluent Forms';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'fluentform/fluentform.php', 'fluentformpro/fluentformpro.php' );
+	}
+
 	/**
 	 * FluentForm registers its top-level menu under `fluent_forms`.
 	 *

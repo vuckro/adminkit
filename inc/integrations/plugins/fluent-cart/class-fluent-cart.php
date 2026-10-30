@@ -48,6 +48,16 @@ class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
 		return 'fluent-cart';
 	}
 
+	/** @return string Human-readable host name shown in Settings → Plugins. */
+	public static function label() {
+		return 'FluentCart';
+	}
+
+	/** @return string[] Host plugin file(s) this adapter themes. */
+	public static function host_files() {
+		return array( 'fluent-cart/fluent-cart.php', 'fluent-cart-pro/fluent-cart-pro.php' );
+	}
+
 	/**
 	 * FluentCart defines `FLUENTCART_VERSION` in its bootstrap.
 	 *
