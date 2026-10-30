@@ -358,3 +358,16 @@ body.adminkit a:focus .plugin-icon {
 	body.adminkit .wp-list-table.plugins .plugin-title { white-space: normal; overflow-wrap: anywhere; }
 	body.adminkit .wp-list-table.plugins tbody :is(td, th) { vertical-align: top; }
 }
+
+/* Desktop rows share one vertical axis: checkbox, name and secondary cells.
+   Keep native top alignment on mobile and leave update notices untouched. */
+@media (min-width: 783px) {
+ body.adminkit .wp-list-table.plugins tbody > tr[data-plugin]:not(.plugin-update-tr) > :is(th, td) {
+  vertical-align: middle;
+ }
+}
+/* Match the shared title reveal's reserved 24px action line + 2px separation. */
+@media (hover: hover) and (min-width: 783px) {
+ body.adminkit .wp-list-table.plugins .plugin-title > strong { margin: 0; }
+ body.adminkit .wp-list-table.plugins .plugin-title > .row-actions { padding: 2px 0 0; }
+}

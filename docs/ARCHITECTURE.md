@@ -271,3 +271,5 @@ Storage upgrade 5 removes the retired online-users flag and `adminkit_last_login
 On desktop hover-capable devices, post/page/CPT titles are vertically centered over the reserved native actions space at rest. Hover or keyboard focus lifts the title by 10px over 200ms and reveals the actions; row height stays fixed throughout. Touch keeps native layout. Reduced motion changes states immediately.
 
 Installed extension names share the same resting centering and hover/focus lift as content titles. The native plugin `row-actions.visible` class is overridden only for desktop hover reveal; touch retains native visible actions.
+
+Plugin-specific cell alignment and action spacing belong to `wp-screens/plugins.css`; desktop plugin cells share vertical centering, while mobile layout and update notices retain native alignment. The reveal animation stays in the shared table component.
