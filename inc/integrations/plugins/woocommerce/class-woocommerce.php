@@ -1,6 +1,6 @@
 <?php
 /**
- * WooCommerce integration — Tier B adapter (wc-admin React app).
+ * WooCommerce integration — Tier B adapter for WooCommerce 10/11 admin.
  *
  * WooCommerce's modern admin (Home, Onboarding, Analytics, Marketing, …) is a
  * React SPA built on @wordpress/components plus WooCommerce's own
@@ -13,9 +13,10 @@
  * class, which `Loader::add_admin_body_classes()` puts on <body> for every
  * wc-admin screen (including the full-screen onboarding profiler). Because the
  * scope sits on <body>, @wordpress/components overlays that portal to the
- * document root (popovers, select listboxes) inherit the skin too. The classic
- * WC screens (Settings, list tables) carry no such class and get their own
- * pass later.
+ * document root (popovers, select listboxes) inherit the skin too. Classic products, HPOS orders and settings use admin.css; modern.css
+ * bridges WooCommerce 11 WPDS tokens and shared interactions through the
+ * stable adminkit-woocommerce body scope. SelectWoo also supports customer
+ * billing/shipping fields on WordPress profile screens.
  *
  * Tier B → version-gated on the major: a new WooCommerce major is the release
  * most likely to rename the component classes this adapter targets, so past
@@ -34,6 +35,46 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 	 */
 	public static function slug() {
 		return 'woocommerce';
+	}
+
+
+	/** Stable scope shared by React, embedded and classic WooCommerce screens. */
+	public static function owns_any_screen( $screen ) {
+		return self::owns_screen( $screen ) || self::owns_classic_screen( $screen );
+	}
+
+	protected static function boot() {
+		if ( self::host_within_tested_range() ) {
+			add_filter( 'admin_body_class', array( __CLASS__, 'body_class' ) );
+			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_behaviors' ) );
+			add_action( 'admin_head', array( __CLASS__, 'print_product_icons' ) );
+		}
+	}
+
+
+	public static function enqueue_behaviors() {
+		if ( ! self::owns_select2_screen( get_current_screen() ) || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return;
+		}
+		AdminKit_Assets::enqueue_script( 'adminkit-woocommerce-admin', 'inc/integrations/plugins/woocommerce/js/admin.js' );
+	}
+
+
+	/** Use the shared Lucide registry for WooCommerce product-data tabs. */
+	public static function print_product_icons() {
+		if ( ! self::owns_classic_screen( get_current_screen() ) || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return;
+		}
+		$icons = array( 'general' => 'badge-euro', 'inventory' => 'package', 'shipping' => 'truck', 'linked_product' => 'link', 'attribute' => 'list-filter', 'variations' => 'git-branch', 'advanced' => 'settings' );
+		$css = '';
+		foreach ( $icons as $tab => $icon ) {
+			$css .= 'body.adminkit.adminkit-woocommerce .wc-tabs li.' . $tab . '_options a::before{content:"";display:inline-block;width:16px;height:16px;vertical-align:middle;' . AdminKit_Icons::mask( AdminKit_Icons::svg( $icon ) ) . '}';
+		}
+		echo '<style id="adminkit-woocommerce-icons">' . $css . '</style>'; // Trusted internal selectors and registry SVGs.
+	}
+
+	public static function body_class( $classes ) {
+		return self::owns_any_screen( get_current_screen() ) ? $classes . ' adminkit-woocommerce' : $classes;
 	}
 
 	/**
@@ -138,13 +179,13 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Verified against WooCommerce 10.x. A new major may reshuffle the component
+	 * Verified against WooCommerce 10.x and 11.2.x. A new major may reshuffle the component
 	 * classes this Tier B adapter overrides, so gate on the major.
 	 *
 	 * @return string|null
 	 */
 	protected static function max_tested_host_version() {
-		return '10';
+		return '11';
 	}
 
 	/**
@@ -156,6 +197,22 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 		if ( ! self::host_within_tested_range() ) {
 			return;
 		}
+		foreach ( array( 'admin', 'frontend' ) as $context ) {
+			AdminKit_Assets::register( array(
+				'handle'    => 'adminkit-woocommerce-toolbar-' . $context,
+				'src'       => 'inc/integrations/plugins/woocommerce/css/toolbar.css',
+				'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+				'context'   => $context,
+				'condition' => 'is_admin_bar_showing',
+			) );
+		}
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-woocommerce-modern',
+			'src'       => 'inc/integrations/plugins/woocommerce/css/modern.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_any_screen' ),
+		) );
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-woocommerce-wc-admin',
 			'src'       => 'inc/integrations/plugins/woocommerce/css/wc-admin.css',

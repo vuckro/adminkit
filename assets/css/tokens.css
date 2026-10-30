@@ -50,11 +50,20 @@
 	--ak-text-s: 13px;
 	--ak-text-m: 14px;
 	--ak-shadow-subtle: var(--wk-elevation-1);
+	--ak-btn-primary-shadow: var(--ak-shadow-subtle), inset 0 1px 0 oklch(100% 0 0 / 0.14);
 	--ak-duration-fast: var(--wk-duration-fast);
 	--ak-ease-standard: var(--wk-ease-standard);
 	--ak-primary-text: var(--wk-accent-text);
 	--ak-layout-wide: var(--wk-layout-wide);
 	--ak-on-accent-hover: var(--ak-on-accent);
+	--ak-control-height: 32px;
+	--ak-control-height-touch: 44px;
+	--ak-muted: var(--ak-text-muted);
+	--ak-text-subtle: var(--wk-text-subtle);
+	--ak-text-disabled: var(--wk-text-disabled);
+	--ak-input-border: var(--ak-border);
+	--ak-icon: color-mix(in srgb, var(--ak-text-muted) 68%, var(--ak-surface));
+	--ak-icon-active: var(--ak-text-muted);
 }
 
 /* Accent variants. PHP/JS supply values only; this file owns the entire cascade. */

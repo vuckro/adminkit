@@ -1,57 +1,68 @@
-/* FluentBooking — toplevel_page_fluent-booking.
+/* FluentBooking administration — scoped to its WordPress screen.
 
-   FluentBooking v2 is a Vue 3 SPA on Element Plus. It themes itself through
-   TWO INDEPENDENT layers of CSS custom properties:
-
-     1. its own --fcal-* tokens — surfaces (--fcal-primary-bg = card/white,
-        --fcal-secondary-bg = page, --fcal-active-bg = hover/zebra), text
-        (--fcal-primary-text = heading, --fcal-secondary-text = muted),
-        borders (--fcal-primary-border, --fcal-secondary-border) and a single
-        blue accent PAIR: --fcal-color-text (#306ae0) + --fcal-color-bg
-        (#f0f6fe, the pale tint behind it);
-
-     2. Element Plus --el-* tokens, set to LITERAL HEX — and, unlike FluentCRM,
-        NOT aliased to the --fcal-* layer. So the two layers are unrelated and
-        each has to be remapped on its own (block 1 below does both).
-
-   The catch — and the reason a plain variable remap isn't enough — is that
-   FluentBooking ALSO hard-codes its brand blue #306ae0 directly into ~126
-   Element Plus component states: checked switches / checkboxes / radios,
-   focused inputs, active tabs, pagination, calendar selection, primary
-   buttons, links and focus rings. Those are literals (no var()), so the
-   token remap can't reach them. Block 3 catches them with grouped overrides.
-
-   Two brand intents collapse to one. FluentBooking splits "primary" in two —
-   a near-black #19283a it parks in --el-color-primary (used for a handful of
-   neutral chrome bits) and the blue #306ae0 it uses for every interactive
-   accent. AdminKit has one brand, so BOTH route to --ak-primary: buttons,
-   links, switches, checks, active states all speak the brand, white pinned on
-   top of filled controls. Because --ak-* flip with AdminKit's dark mode this
-   one file covers light AND dark — we never touch FluentBooking's own html.dark
-   theme.
-
-   Why these selectors win. FluentBooking declares its tokens on `body` (light)
-   and `html.dark body` / `html.dark` (dark). Our token block targets
-   `:root, body.adminkit.toplevel_page_fluent-booking` (0,2,1) which outranks
-   all three. The hard-coded #306ae0 lives in very deep component selectors, so
-   block 3 uses short grouped selectors + !important to win regardless of depth
-   — that's what lets one rule per *category of state* replace 126 per-element
-   rules. Element Plus teleports dialogs/poppers to <body>, so the body-scoped
-   selectors reach them too. */
-
+   FluentBooking 2.5 uses semantic --fcal-* tokens alongside its legacy
+   aliases and Element Plus's independent --el-* layer. Map all three to
+   AdminKit, including body-teleported dialogs and dropdowns. The remaining
+   selector overrides cover host literals and component-specific states.
+   AdminKit's existing theme attribute remains authoritative; the PHP bridge
+   mirrors it to FluentBooking and to same-origin TinyMCE documents.
+   Public booking pages are outside this adapter's scope. */
 
 /* ============================================================
    1. TOKEN REMAP — --fcal-* and --el-* → AdminKit tokens
    ============================================================ */
 
 :root,
-body.adminkit.toplevel_page_fluent-booking {
+html body.adminkit.toplevel_page_fluent-booking {
+	/* FluentBooking 2.5 semantic layer (the legacy aliases below remain
+	   in use by event forms). Keep both generations on the same roles. */
+	--fcal-body-bg: var( --ak-bg );
+	--fcal-surface: var( --ak-surface );
+	--fcal-surface-sunk: var( --ak-surface-muted );
+	--fcal-surface-raised: var( --ak-elevated );
+	--fcal-border: var( --ak-border );
+	--fcal-border-strong: var( --ak-border-strong );
+	--fcal-heading: var( --ak-heading );
+	--fcal-text: var( --ak-text );
+	--fcal-text-mid: var( --ak-text-muted );
+	--fcal-text-light: var( --ak-text-muted );
+	--fcal-accent: var( --ak-primary );
+	--fcal-accent-hover: var( --ak-primary-hover );
+	--fcal-accent-contrast: var( --ak-on-accent );
+	--fcal-accent-wash: var( --ak-primary-subtle );
+	--fcal-card-line: var( --ak-border );
+	--fcal-neutral-bg: var( --ak-surface-muted );
+	--fcal-neutral-fg: var( --ak-text-muted );
+	--fcal-link: var( --ak-primary-text );
+	--fcal-link-hover: var( --ak-primary-text );
+	--fcal-success-wash: var( --ak-success-subtle );
+	--fcal-success-bg: var( --ak-success-subtle );
+	--fcal-success-line: var( --ak-success );
+	--fcal-success-fg: var( --ak-success );
+	--fcal-warning-wash: var( --ak-warning-subtle );
+	--fcal-warning-bg: var( --ak-warning-subtle );
+	--fcal-warning-line: var( --ak-warning );
+	--fcal-warning-fg: var( --ak-warning );
+	--fcal-danger-wash: var( --ak-error-subtle );
+	--fcal-danger-bg: var( --ak-error-subtle );
+	--fcal-danger-line: var( --ak-error );
+	--fcal-danger-fg: var( --ak-error );
+	--fcal-info-wash: var( --ak-info-subtle );
+	--fcal-info-bg: var( --ak-info-subtle );
+	--fcal-info-line: var( --ak-info );
+	--fcal-info-fg: var( --ak-info );
+	--fcal-shadow-card: none;
+	--fcal-shadow-lift: none;
+	--fcal-shadow-pop: none;
+	--el-skeleton-color: var( --ak-surface-muted );
+	--el-skeleton-to-color: var( --ak-elevated );
+
 	/* --- FluentBooking's own --fcal-* layer --- */
 
 	/* Surfaces */
 	--fcal-primary-bg: var( --ak-surface );       /* cards, inputs, panels, dialogs */
 	--fcal-secondary-bg: var( --ak-bg );          /* app page background */
-	--fcal-active-bg: var( --ak-surface );        /* hover / zebra / active row */
+	--fcal-active-bg: var( --ak-hover-bg );        /* hover / zebra / active row */
 
 	/* Text */
 	--fcal-primary-text: var( --ak-heading );     /* titles, labels, values */
@@ -65,10 +76,26 @@ body.adminkit.toplevel_page_fluent-booking {
 	   behind them). This is the #306ae0 / #f0f6fe couple the user sees as
 	   "the blue that keeps coming back" — anywhere it flows through the
 	   variable it's handled here; the hard-coded copies are block 3. */
-	--fcal-color-text: var( --ak-primary );
+	--fcal-color-text: var( --ak-primary-text );
 	--fcal-color-bg: var( --ak-primary-subtle );
 
 	/* --- Element Plus --el-* layer (independent — must be set directly) --- */
+
+	/* Shared control geometry and type, including teleported popovers. */
+	--el-font-family: var( --ak-font-body );
+	--el-font-size-base: var( --ak-text-m );
+	--el-font-size-small: var( --ak-text-s );
+	--el-font-size-extra-small: var( --ak-text-xs );
+	--el-border-radius-base: var( --ak-radius-s );
+	--el-border-radius-small: var( --ak-radius-s );
+	--el-border-radius-round: var( --ak-radius-full );
+	--el-component-size: var( --ak-control-height );
+	--el-mask-color: var( --ak-overlay );
+	--el-overlay-color: var( --ak-overlay );
+	--el-color-success-light-9: var( --ak-success-subtle );
+	--el-color-warning-light-9: var( --ak-warning-subtle );
+	--el-color-danger-light-9: var( --ak-error-subtle );
+	--el-color-error-light-9: var( --ak-error-subtle );
 
 	/* Brand. --el-color-primary is FluentBooking's near-black; route it to
 	   the brand so any EP default that still reads it is on-brand. */
@@ -79,7 +106,7 @@ body.adminkit.toplevel_page_fluent-booking {
 	   hover tint falls back to EP's stock #409eff when this is unset. Pin it
 	   to the brand rgb (same literal as tokens.css --wp-admin-theme-color--rgb)
 	   — alpha tints read correctly over any surface in both modes. */
-	--el-color-primary-rgb: 117, 163, 59;
+	--el-color-primary-rgb: var(--ak-primary-rgb);
 
 	/* Primary ramp — keep filled/hover/disabled/plain-bg primary states on
 	   brand instead of EP's blue-derived steps. */
@@ -229,7 +256,7 @@ body.adminkit.toplevel_page_fluent-booking .el-radio-button.is-active .el-radio-
 
 /* Active tab — brand text + underline (not a fill). */
 body.adminkit.toplevel_page_fluent-booking .fcal_tabs > .el-tabs__header .el-tabs__nav .el-tabs__item.is-active {
-	color: var( --ak-primary ) !important;
+	color: var( --ak-primary-text ) !important;
 }
 
 /* Control glyphs on the solid fill → white so they read. */
@@ -264,7 +291,7 @@ body.adminkit.toplevel_page_fluent-booking .fframe_menu li.fframe_item_buy .ffra
 body.adminkit.toplevel_page_fluent-booking .fcal_feature_module span.fcal_addon_installed {
 	background-color: var( --ak-primary-subtle ) !important;
 	border-color: var( --ak-primary ) !important;
-	color: var( --ak-primary ) !important;
+	color: var( --ak-primary-text ) !important;
 }
 
 /* Settings sidebar active item — neutral (like the main nav + cart/crm): an
@@ -338,7 +365,7 @@ body.adminkit.toplevel_page_fluent-booking .fcal_spot_details_value a,
 body.adminkit.toplevel_page_fluent-booking .fcal_remote_cal_link,
 body.adminkit.toplevel_page_fluent-booking .fcal_create_calendar_body p a,
 body.adminkit.toplevel_page_fluent-booking .el-link:not(.el-link--danger):not(.el-link--success):not(.el-link--warning):not(.el-link--info) {
-	color: var( --ak-primary ) !important;
+	color: var( --ak-primary-text ) !important;
 }
 
 /* 3e. Brand borders — focused inputs/textareas, active under-line tabs,
@@ -363,7 +390,7 @@ body.adminkit.toplevel_page_fluent-booking .fcal_configure_integration_card:hove
 body.adminkit.toplevel_page_fluent-booking .el-button:not([class*="el-button--"]):hover,
 body.adminkit.toplevel_page_fluent-booking .el-button.is-text:hover,
 body.adminkit.toplevel_page_fluent-booking .el-button-group .el-button:not([class*="el-button--"]):hover {
-	color: var( --ak-primary ) !important;
+	color: var( --ak-primary-text ) !important;
 }
 
 /* Default-button hovers the plugin painted with a #306ae0 border → brand
@@ -400,15 +427,7 @@ body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn:hover,
 body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn:focus {
 	background-color: var( --ak-primary-hover ) !important;
 	border-color: var( --ak-primary-hover ) !important;
-	color: var( --ak-on-accent ) !important;
-}
-
-/* Disabled primary → neutral muted (not a blue). */
-body.adminkit.toplevel_page_fluent-booking .el-button.el-button--primary.is-disabled,
-body.adminkit.toplevel_page_fluent-booking .el-button--primary.is-disabled:hover {
-	background-color: var( --ak-surface ) !important;
-	border-color: var( --ak-border ) !important;
-	color: var( --ak-text-muted ) !important;
+	color: var(--ak-on-accent-hover) !important;
 }
 
 /* Filter-popover checked radio → solid brand like the other checked controls. */
@@ -440,7 +459,8 @@ body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-wi
 	background-color: color-mix( in srgb, var( --ak-info ) 10%, transparent ) !important;
 }
 body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget .icon {
-	background: var( --ak-info ) !important;
+	background: var( --ak-info-subtle ) !important;
+	color: var( --ak-info );
 }
 
 /* 1 — Total Bookings — warning */
@@ -448,7 +468,8 @@ body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-wi
 	background-color: color-mix( in srgb, var( --ak-warning ) 10%, transparent ) !important;
 }
 body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget:first-child .icon {
-	background: var( --ak-warning ) !important;
+	background: var( --ak-warning-subtle ) !important;
+	color: var( --ak-warning );
 }
 
 /* 2 — Completed — success */
@@ -456,7 +477,8 @@ body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-wi
 	background-color: color-mix( in srgb, var( --ak-success ) 10%, transparent ) !important;
 }
 body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget:nth-child(2) .icon {
-	background: var( --ak-success ) !important;
+	background: var( --ak-success-subtle ) !important;
+	color: var( --ak-success );
 }
 
 /* 3 — Cancelled — error */
@@ -464,7 +486,8 @@ body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-wi
 	background-color: color-mix( in srgb, var( --ak-error ) 10%, transparent ) !important;
 }
 body.adminkit.toplevel_page_fluent-booking .fcal_dashboard_overview .overview-widget:nth-child(3) .icon {
-	background: var( --ak-error ) !important;
+	background: var( --ak-error-subtle ) !important;
+	color: var( --ak-error );
 }
 
 /* Trend "stat" pill inside the overview card — it's a directional indicator, so
@@ -620,7 +643,7 @@ body.adminkit.toplevel_page_fluent-booking .menu_logo_holder a span {
    ============================================================ */
 
 /* Decorative party emoji in the dashboard welcome banner — drop it. */
-body.adminkit.toplevel_page_fluent-booking .fcal_welcome_banner .party_icon {
+body.adminkit.toplevel_page_fluent-booking .fcal_welcome_banner :is(.party_icon, .welcome-svg) {
 	display: none;
 }
 
@@ -639,10 +662,9 @@ body.adminkit.toplevel_page_fluent-booking .fcal_tips_error {
 
 /* Active main-nav item — neutral (like the FluentCart / FluentCRM top nav): an
    elevated surface behind heading-colored text, not a brand tint. */
-body.adminkit.toplevel_page_fluent-booking .fcal_nav li.active_item a,
-body.adminkit.toplevel_page_fluent-booking .fframe_menu li.active_item a {
-	background: var( --ak-elevated ) !important;
-	color: var( --ak-heading ) !important;
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app :is(.fcal_nav, .fframe_menu) li.active_item a {
+	background: var( --ak-elevated );
+	color: var( --ak-heading );
 }
 
 /* Search-box magnifier (Element Plus Search icon, fill:currentColor) reads
@@ -651,7 +673,7 @@ body.adminkit.toplevel_page_fluent-booking .fcal_search_input .el-input__prefix,
 body.adminkit.toplevel_page_fluent-booking .fcal_search_input .el-input__prefix-inner,
 body.adminkit.toplevel_page_fluent-booking .fcal_search_input .el-input__prefix-inner i,
 body.adminkit.toplevel_page_fluent-booking .fcal_search_input .el-icon {
-	color: var( --ak-primary );
+	color: var( --ak-primary-text );
 }
 
 /* Dialog close (X) — the plugin colors it with --el-color-info, which is the
@@ -673,12 +695,11 @@ body.adminkit.toplevel_page_fluent-booking .el-dialog__headerbtn:focus .el-dialo
    10. MORE FIXES — soft banner, slate text, blue focus, TinyMCE
    ============================================================ */
 
-/* Welcome banner — was a solid brand fill (heavy). Soften to a ~25% brand
-   wash with dark text so it reads as a gentle hero, not a green slab. */
+/* Welcome content uses the semantic tint and readable text in both modes. */
 body.adminkit.toplevel_page_fluent-booking .fcal_welcome_banner {
-	background-color: color-mix( in srgb, var( --ak-primary ) 25%, transparent ) !important;
+	background-color: var(--ak-primary-subtle) !important;
 	border-color: var( --ak-primary ) !important;
-	color: var( --ak-heading ) !important;
+	color: var( --ak-heading );
 }
 
 /* Dashboard overview widgets — the big stat value (h1) hard-codes the
@@ -704,7 +725,7 @@ body.adminkit.toplevel_page_fluent-booking .fcal_license_box p {
    out-specifies the plugin's, so no !important needed. */
 body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_select .default_schedule {
 	background: var( --ak-primary-subtle );
-	color: var( --ak-primary );
+	color: var( --ak-primary-text );
 }
 
 /* Plain / secondary buttons — the plugin tints hover+focus with a hard blue
@@ -715,7 +736,7 @@ body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_plain_btn:n
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn2:not(.danger):hover,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_primary_btn2:not(.danger):focus {
 	background: var( --ak-primary-subtle ) !important;
-	color: var( --ak-primary ) !important;
+	color: var( --ak-primary-text ) !important;
 }
 
 /* TinyMCE (classic editor used in notification/email fields). Its panels +
@@ -991,4 +1012,429 @@ body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_select ul .el-dropdow
 body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_select ul .el-select-dropdown__item.selected,
 body.adminkit.toplevel_page_fluent-booking .el-popper.fcal_select ul .el-select-dropdown__item:hover {
 	background: var( --ak-hover-bg );
+}
+
+/* The host sets colors directly on the children, bypassing the banner color. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_welcome_banner :is(h1, h2, p) {
+	color: var(--ak-heading);
+}
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_welcome_banner h1 {
+	font-size: clamp(24px, 3vw, 32px);
+	line-height: 1.25;
+}
+body.adminkit.toplevel_page_fluent-booking .el-button:focus-visible,
+body.adminkit.toplevel_page_fluent-booking .fcal_primary_btn:focus-visible {
+	outline: none;
+	box-shadow: var(--ak-focus-ring);
+}
+@media screen and (max-width: 782px) {
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_welcome_banner { padding: 24px 16px; }
+	body.adminkit.toplevel_page_fluent-booking .el-button { min-height: var(--ak-control-height-touch); }
+}
+
+/* Control states use the same roles as native AdminKit forms. Keep Element
+   Plus's inset border: form primitives are intentionally not enqueued here. */
+body.adminkit.toplevel_page_fluent-booking :is(.el-input, .el-select, .el-textarea) {
+	--el-input-border-color: var( --ak-border-strong );
+	--el-input-hover-border-color: var( --ak-primary );
+	--el-input-focus-border-color: var( --ak-primary );
+	--el-input-bg-color: var( --ak-input-bg );
+	--el-select-border-color-hover: var( --ak-primary );
+	--el-select-input-focus-border-color: var( --ak-primary );
+}
+
+body.adminkit.toplevel_page_fluent-booking :is(.el-input__wrapper, .el-select__wrapper, .el-textarea__inner) {
+	border-radius: var( --ak-radius-s );
+	background-color: var( --ak-input-bg );
+}
+
+body.adminkit.toplevel_page_fluent-booking :is(.el-button, .el-input__inner, .el-textarea__inner, .el-select__wrapper) {
+	font-family: var( --ak-font-body );
+}
+
+/* Covers both Vue's disabled class and native disabled attributes. These
+   selectors must also beat the host's branded hover rules. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-button:is(.is-disabled, :disabled),
+body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__footer .dialog-footer .el-button:is(.is-disabled, :disabled),
+body.adminkit.toplevel_page_fluent-booking .el-button:is(.is-disabled, :disabled),
+body.adminkit.toplevel_page_fluent-booking .el-button:is(.is-disabled, :disabled):is(:hover, :focus) {
+	background-color: var( --ak-surface-muted ) !important;
+	border-color: var( --ak-border ) !important;
+	color: var( --ak-text-muted ) !important;
+	opacity: 1 !important; /* Host declares disabled button opacity as !important. */
+	box-shadow: none;
+}
+
+/* Keyboard focus remains visible through the host's !important hover rules. */
+body.adminkit.toplevel_page_fluent-booking :is(.el-button, .fcal_primary_btn, .el-dialog__headerbtn, .el-tabs__item, .el-dropdown-menu__item, .el-select-dropdown__item):focus-visible,
+body.adminkit.toplevel_page_fluent-booking :is(.el-checkbox__input, .el-radio__input).is-focus :is(.el-checkbox__inner, .el-radio__inner),
+body.adminkit.toplevel_page_fluent-booking .el-switch:has(input:focus-visible) .el-switch__core {
+	outline: 2px solid var( --ak-focus );
+	outline-offset: 2px;
+}
+
+body.adminkit.toplevel_page_fluent-booking :is(.el-dialog, .el-message-box, .el-drawer) {
+	border-radius: var( --ak-radius-m );
+	color: var( --ak-text );
+}
+
+@media screen and (max-width: 782px) {
+	html body.adminkit.toplevel_page_fluent-booking {
+		--el-component-size: var( --ak-control-height-touch );
+	}
+	body.adminkit.toplevel_page_fluent-booking .el-overlay .el-dialog {
+		max-width: calc(100% - 32px);
+	}
+}
+
+/* The SPA owns its scroll container. WordPress's footer padding and the
+   host's 100vh outer wrapper otherwise create a second page scrollbar. */
+body.adminkit.toplevel_page_fluent-booking #wpbody-content {
+	padding-bottom: 0;
+}
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app {
+	height: calc(100dvh - var(--wp-admin--admin-bar--height, 32px));
+	min-height: 0;
+}
+
+/* The new header's upgrade link still ships literal blue in both themes. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fframe_settings .fcal_upgrade_pro_btn {
+	color: var( --ak-text );
+	border-color: var( --ak-border-strong );
+	border-radius: var( --ak-radius-s );
+}
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fframe_settings .fcal_upgrade_pro_btn:is(:hover, :focus-visible) {
+	background: var( --ak-hover-bg );
+	border-color: var( --ak-primary );
+	color: var( --ak-heading );
+}
+
+/* Unchecked controls need a visible edge, just like native admin fields. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app :is(.el-checkbox__input, .el-radio__input):not(.is-checked) :is(.el-checkbox__inner, .el-radio__inner) {
+	background-color: var( --ak-input-bg );
+	border-color: var( --ak-border-strong );
+}
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-button:is(.is-disabled, :disabled) {
+	opacity: 1;
+}
+body.adminkit.toplevel_page_fluent-booking :is(.fframe_menu_primary, .settings_menu, .fcal_menu_opener_btn, .fcal_mobile_settings_menu_opener, .el-drawer__close-btn):focus-visible {
+	outline: 2px solid var( --ak-focus );
+	outline-offset: -2px;
+}
+@media screen and (max-width: 782px) {
+	body.adminkit.toplevel_page_fluent-booking .el-drawer.rtl {
+		width: calc(100% - 16px) !important; /* Overrides Element Plus's inline 80%. */
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .menu_logo_holder {
+		flex: 1 0 auto;
+	}
+}
+
+/* FluentBooking sets literal 40px inner heights and 16px field typography,
+   bypassing Element Plus's density tokens. Match the other admin forms. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-input .el-input__wrapper,
+body.adminkit.toplevel_page_fluent-booking .el-overlay .el-input .el-input__wrapper {
+	box-sizing: border-box;
+	height: var( --el-component-size );
+	min-height: var( --el-component-size );
+	padding: 0 var( --ak-space-m );
+	border: 1px solid var( --ak-border-strong );
+	border-radius: var( --ak-radius-s );
+	background: var( --ak-input-bg );
+	box-shadow: none;
+}
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-input .el-input__inner,
+body.adminkit.toplevel_page_fluent-booking .el-overlay .el-input .el-input__inner {
+	height: 100%;
+	min-height: 0;
+	font-size: var( --ak-text-m );
+}
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .el-input .el-input__wrapper:has(input:focus-visible),
+body.adminkit.toplevel_page_fluent-booking .el-overlay .el-input .el-input__wrapper:has(input:focus-visible) {
+	outline: 2px solid var( --ak-focus );
+	outline-offset: 2px;
+}
+
+/* A license restriction is informational, not a destructive action. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_pro_notice {
+	background: var( --ak-surface-muted );
+	border: 1px solid var( --ak-border );
+	border-radius: var( --ak-radius-s );
+	flex-wrap: wrap;
+	gap: var( --ak-space-l );
+}
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_pro_notice .fcal_danger_btn {
+	background: var( --ak-primary );
+	border-color: var( --ak-primary );
+	color: var( --ak-on-accent );
+	flex-shrink: 0;
+}
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_pro_notice .fcal_danger_btn:hover {
+	background: var( --ak-primary-hover );
+	border-color: var( --ak-primary-hover );
+	color: var( --ak-on-accent-hover );
+}
+/* These two supplier marks are monochrome black SVGs, unlike the colored
+   service logos. Preserve their shapes on a dark integration header. */
+:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluent-booking .fcal_configure_integration_card img:is([src$="/tw.svg"], [src$="/Ncloud.svg"]) {
+	filter: invert(1);
+}
+@media screen and (max-width: 782px) {
+	body.adminkit.toplevel_page_fluent-booking .el-overlay .el-dialog {
+		box-sizing: border-box;
+		width: calc(100% - 32px);
+		min-width: 0;
+		max-width: calc(100% - 32px);
+		margin-inline: auto;
+		inset-inline: auto;
+	}
+	body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__footer .dialog-footer {
+		flex-wrap: wrap;
+		gap: var( --ak-space-s );
+	}
+	body.adminkit.toplevel_page_fluent-booking .el-dialog .dialog-footer .el-button {
+		max-width: 100%;
+		white-space: normal;
+	}
+}
+@media screen and (max-width: 480px) {
+	body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__footer .dialog-footer {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+	}
+	body.adminkit.toplevel_page_fluent-booking .el-dialog .dialog-footer .el-button {
+		width: 100%;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	body.adminkit.toplevel_page_fluent-booking .el-dialog.fcal_new_booking .fcal_event_date {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0;
+	}
+	body.adminkit.toplevel_page_fluent-booking .el-dialog.fcal_new_booking .fcal_event_date .el-form-item {
+		width: 100%;
+		min-width: 0;
+	}
+}
+
+/* The color swatch is absolutely positioned before the input wrapper. Keep
+   it above the field's new opaque surface and center it at either density. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_color_select .fcal_color {
+	z-index: 1;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none;
+}
+
+/* The event sidebar's mobile opener is an unlabeled div. Keep its existing
+   links directly reachable as a horizontally scrollable navigation. */
+@media screen and (max-width: 1024px) {
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_slot_settings {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_slot_settings > .el-aside {
+		display: block;
+		width: 100%;
+		max-width: 100%;
+		padding: 0;
+		margin-bottom: var( --ak-space-l );
+		background: transparent;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_slot_settings .fcal_settings_sidebar {
+		display: flex;
+		flex-direction: row;
+		gap: var( --ak-space-xs );
+		overflow-x: auto;
+		padding: var( --ak-space-xs );
+		margin: 0;
+		background: var( --ak-surface );
+		border-radius: var( --ak-radius-s );
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_slot_settings .fcal_settings_sidebar li {
+		flex: 0 0 auto;
+		margin: 0;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_slot_settings .fcal_settings_sidebar a {
+		min-height: var( --ak-control-height-touch );
+		white-space: nowrap;
+		box-sizing: border-box;
+	}
+}
+
+/* Long French dialog titles must leave room for the close control. */
+body.adminkit.toplevel_page_fluent-booking .el-dialog .el-dialog__header {
+	padding-inline-end: 56px;
+}
+@media screen and (max-width: 782px) {
+	body.adminkit.toplevel_page_fluent-booking .wp_vue_editor_wrapper .popover-wrapper {
+		position: static;
+		margin-bottom: var( --ak-space-s );
+	}
+	body.adminkit.toplevel_page_fluent-booking .wp_vue_editor_wrapper .wp-media-buttons {
+		float: none;
+		margin-bottom: var( --ak-space-s );
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_header .fcal_event_settings_menu_opener {
+		display: none;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_header .el-breadcrumb {
+		flex-wrap: wrap;
+		row-gap: var( --ak-space-s );
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_header .el-breadcrumb__item {
+		flex: 0 0 auto;
+		max-width: 100%;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_header .el-breadcrumb__inner {
+		word-break: normal;
+		overflow-wrap: anywhere;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_cal_slots {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_cal_slot {
+		min-width: 0;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_notification_header .header_right {
+		min-width: 0;
+		max-width: 100%;
+		flex-wrap: wrap;
+		gap: var( --ak-space-s );
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_section_header:has(.fcal_search_input) > .fcal_actions {
+		display: grid;
+		grid-template-columns: var(--ak-control-height-touch) minmax(0, 1fr);
+		gap: var( --ak-space-s );
+		width: 100%;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_section_header .fcal_actions > .fcal_search_input {
+		grid-column: 1 / -1;
+		grid-row: 1;
+		width: 100%;
+		max-width: none;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_section_header:has(.fcal_search_input) .fcal_actions_right {
+		grid-column: 2;
+		grid-row: 2;
+		justify-self: end;
+	}
+}
+
+/* Reserve room for the WordPress sidebar at intermediate widths. The
+   native menu opener avoids squeezing the full desktop navigation. */
+@media screen and (max-width: 1200px) {
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fframe_main-menu-items > ul.fframe_menu {
+		display: none;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fframe_handheld {
+		display: flex;
+		position: relative;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fframe_handheld .fcal_mobile_menu {
+		display: none; /* The host toggles this through an inline display value. */
+		position: absolute;
+		top: 100%;
+		left: 0;
+		z-index: 1000;
+		flex-direction: column;
+		min-width: 180px;
+		gap: var( --ak-space-xs );
+		padding: var( --ak-space-s );
+		margin: 0;
+		background: var( --ak-surface );
+		border: 1px solid var( --ak-border );
+		border-radius: var( --ak-radius-s );
+		box-shadow: none;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_menu_opener_btn {
+		min-width: var( --ak-control-height-touch );
+		min-height: var( --ak-control-height-touch );
+		justify-content: center;
+	}
+}
+@media screen and (max-width: 1200px) {
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_menu_opener_btn {
+		display: inline-flex;
+		align-items: center;
+		padding: 0;
+		margin: 0 var(--ak-space-s) 0 0;
+		border: 0;
+		border-radius: var( --ak-radius-s );
+		background: transparent;
+		color: var( --ak-text );
+		cursor: pointer;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_menu_opener_btn .el-icon {
+		width: 24px;
+		height: 24px;
+		font-size: 24px;
+	}
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_menu_opener_btn:hover {
+		background: var( --ak-hover-bg );
+	}
+}
+
+/* The host's statistical SVGs contain white presentation fills. Match the
+   semantic foreground on each soft icon tile so dark mode stays legible. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .overview-widget .icon svg [fill]:not([fill="none"]) {
+	fill: currentColor;
+}
+@media screen and (max-width: 480px) {
+	/* The booking calendar is an inline popup with a literal 300px width;
+	   fit its seven columns inside the mobile dialog's field instead. */
+	body.adminkit.toplevel_page_fluent-booking .el-dialog .fcal_event_date .el-form-item__content .fcal_booking_calendar {
+		box-sizing: border-box;
+		width: 100%;
+		max-width: 100%;
+		box-shadow: none;
+	}
+	body.adminkit.toplevel_page_fluent-booking .el-dialog .fcal_booking_calendar .el-calendar__body {
+		padding: 6px 4px 10px;
+	}
+	body.adminkit.toplevel_page_fluent-booking .el-dialog .fcal_booking_calendar .el-calendar-table {
+		table-layout: fixed;
+		width: 100%;
+	}
+	body.adminkit.toplevel_page_fluent-booking .el-dialog .fcal_booking_calendar .el-calendar-table th {
+		font-size: var( --ak-text-xs );
+	}
+	body.adminkit.toplevel_page_fluent-booking .el-dialog .fcal_event_date .el-form-item__content .fcal_booking_calendar .el-calendar__body .el-calendar-table tbody tr td .el-calendar-day {
+		width: 100%;
+		height: 32px;
+		box-sizing: border-box;
+	}
+	body.adminkit.toplevel_page_fluent-booking .el-dialog .fcal_event_date .el-form-item__content .fcal_booking_calendar .el-calendar__body .el-calendar-table tbody tr td .el-calendar-day p {
+		line-height: 32px;
+	}
+}
+
+/* Onboarding's outer frame ships a literal light gray; use the same quiet
+   separator as its rows instead of the stronger border reserved for fields. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_features_boxes {
+	border-color: var( --ak-border );
+}
+
+/* WordPress's disabled-input styles can reveal Element Plus's native radio
+   above the segmented control. Keep it focusable but visually clipped. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_radio_btn_group .el-radio-button__original-radio {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	border: 0;
+	opacity: 0;
+	clip-path: inset(50%);
+	overflow: hidden;
 }

@@ -111,3 +111,9 @@ body.adminkit.wp-admin .select2-container.select2-container--open .select2-selec
 	border-color: var(--ak-border-strong);
 	box-shadow: none;
 }
+/* Empty/loading search results are portaled outside the owning field. */
+body.adminkit .select2-results__options .select2-results__option { color: var(--ak-text); }
+body.adminkit .select2-results__options .select2-results__message { color: var(--ak-text-muted); }
+/* Also applies to the billing/shipping fields on WordPress customer profiles. */
+body.adminkit .select2-container { max-width: 100%; min-width: 0; }
+body.adminkit .select2-hidden-accessible { inset-inline-start: 0; min-width: 0; min-height: 0; max-width: 1px; max-height: 1px; }

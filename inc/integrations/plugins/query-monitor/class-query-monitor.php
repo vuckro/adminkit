@@ -107,12 +107,12 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 			return;
 		}
 
-		// Stopwatch / timer glyph (Heroicons-style solid clock) — Query Monitor's
+		// Stopwatch / timer glyph (shared Lucide outline clock) — Query Monitor's
 		// headline toolbar number is the page-generation time, so a timer reads far
 		// more clearly than a generic bug as "performance / timing". The fill is
 		// irrelevant — it's a mask; the visible colour is currentColor (the toolbar
 		// foreground). The clock face + hands give the unmistakable "timing" read.
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm.75 4.5a.75.75 0 0 0-1.5 0v5.25c0 .199.079.39.22.53l3.182 3.182a.75.75 0 0 0 1.06-1.06l-2.962-2.963V6.75Z" clip-rule="evenodd"/></svg>';
+		$svg = AdminKit_Icons::svg( 'clock' );
 		$uri = 'url("data:image/svg+xml,' . rawurlencode( $svg ) . '")';
 
 		// Model the floated ::before as exactly the 32px bar (padding 6 + 20 + 6 = 32)

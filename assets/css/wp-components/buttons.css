@@ -12,9 +12,9 @@
    stays clearly below the filled primary. (Pressed/active states keep an accent —
    that's a selection indicator, not hover.) */
 body.adminkit .button,
-body.adminkit .wp-core-ui .button,
+body.adminkit.wp-core-ui .button,
 body.adminkit .button-secondary,
-body.adminkit .wp-core-ui .button-secondary,
+body.adminkit.wp-core-ui .button-secondary,
 body.adminkit .wrap .page-title-action {
 	background: var(--ak-btn-bg);
 	border: 1px solid var(--ak-border);
@@ -25,28 +25,24 @@ body.adminkit .wrap .page-title-action {
 	font-size: var(--ak-text-s);
 	font-weight: 500;
 	line-height: 2.15;
-	min-height: 30px;
+	min-height: var(--ak-control-height);
 	box-shadow: none;
 	cursor: pointer;
 }
 
 body.adminkit .button:hover,
-body.adminkit .wp-core-ui .button:hover,
+body.adminkit.wp-core-ui .button:hover,
 body.adminkit .button-secondary:hover,
-body.adminkit .wp-core-ui .button-secondary:hover,
-body.adminkit .button:focus,
-body.adminkit .wp-core-ui .button:focus,
-body.adminkit .button-secondary:focus,
-body.adminkit .wp-core-ui .button-secondary:focus {
+body.adminkit.wp-core-ui .button-secondary:hover {
 	background: var(--ak-btn-hover-bg);
 	border-color: var(--ak-btn-hover-border);
 	color: var(--ak-text);
 }
 
 body.adminkit .button:focus,
-body.adminkit .wp-core-ui .button:focus,
+body.adminkit.wp-core-ui .button:focus,
 body.adminkit .button-secondary:focus,
-body.adminkit .wp-core-ui .button-secondary:focus {
+body.adminkit.wp-core-ui .button-secondary:focus {
 	box-shadow: none;
 	outline: none;
 }
@@ -55,7 +51,7 @@ body.adminkit .wp-core-ui .button-secondary:focus {
    switch). WP paints them WP-blue with an inset shadow and stacks a blue focus
    ring on top. Route to a soft primary state and flatten both shadows. */
 body.adminkit .button.active,
-body.adminkit .wp-core-ui .button.active {
+body.adminkit.wp-core-ui .button.active {
 	background-color: var(--ak-primary-subtle);
 	border-color: var(--ak-primary);
 	color: var(--ak-primary-text);
@@ -63,12 +59,12 @@ body.adminkit .wp-core-ui .button.active {
 }
 
 body.adminkit .button.active:focus,
-body.adminkit .wp-core-ui .button.active:focus {
+body.adminkit.wp-core-ui .button.active:focus {
 	box-shadow: none;
 }
 
 body.adminkit .button-primary,
-body.adminkit .wp-core-ui .button-primary,
+body.adminkit.wp-core-ui .button-primary,
 body.adminkit .wrap .page-title-action,
 body.adminkit .wrap .page-title-action:active {
 	background: var(--ak-primary);
@@ -76,15 +72,18 @@ body.adminkit .wrap .page-title-action:active {
 	/* WaasKit foreground follows its light/dark accent fill. */
 	color: var(--ak-on-accent);
 	text-shadow: none;
-	box-shadow: none;
+	/* WaasKit primary: soft elevation and a fine highlight along the top edge. */
+	box-shadow: var(--ak-btn-primary-shadow);
+}
+
+body.adminkit.wp-core-ui .button-primary:focus:not(:focus-visible),
+body.adminkit .wrap .page-title-action:focus:not(:focus-visible) {
+	box-shadow: var(--ak-btn-primary-shadow);
 }
 
 body.adminkit .button-primary:hover,
-body.adminkit .wp-core-ui .button-primary:hover,
-body.adminkit .button-primary:focus,
-body.adminkit .wp-core-ui .button-primary:focus,
-body.adminkit .wrap .page-title-action:hover,
-body.adminkit .wrap .page-title-action:focus {
+body.adminkit.wp-core-ui .button-primary:hover,
+body.adminkit .wrap .page-title-action:hover {
 	background: var(--ak-primary-hover);
 	border-color: var(--ak-primary-hover);
 	/* Keep the resting label color — the text must not shift on hover. */
@@ -101,6 +100,7 @@ body.adminkit .wrap .page-title-action ~ .page-title-action {
 	background: var(--ak-btn-bg);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
+	box-shadow: none;
 }
 
 body.adminkit .wrap .page-title-action ~ .page-title-action:hover,
@@ -108,16 +108,7 @@ body.adminkit .wrap .page-title-action ~ .page-title-action:focus {
 	background: var(--ak-btn-hover-bg);
 	border-color: var(--ak-btn-hover-border);
 	color: var(--ak-text);
-}
-
-body.adminkit .button-primary:disabled,
-body.adminkit .button-primary.disabled,
-body.adminkit .wp-core-ui .button-primary:disabled,
-body.adminkit .wp-core-ui .button-primary.disabled {
-	background: var(--ak-border-strong) !important;
-	border-color: var(--ak-border-strong) !important;
-	color: var(--ak-surface) !important;
-	opacity: 0.7;
+	box-shadow: none;
 }
 
 /* Generic / secondary disabled buttons — incl. the plugin-install "Installed!" /
@@ -126,7 +117,7 @@ body.adminkit .wp-core-ui .button-primary.disabled {
    (`color:#8a8a8a; border-color:#d8d8d8; background:0 0`), so we override with
    !important too AND match its full selector list.
    GOTCHA (this was the bug): `.wp-core-ui` lives on the <body> itself
-   (`body.wp-core-ui.adminkit`), so a `body.adminkit .wp-core-ui …` DESCENDANT
+   (`body.wp-core-ui.adminkit`), so a `body.adminkit.wp-core-ui …` DESCENDANT
    selector matches nothing — there is no nested `.wp-core-ui`. It has to be COMPOUND
    (`body.adminkit.wp-core-ui …`). With the old descendant form, `.button-disabled`
    (which had no plain fallback) fell through and WP's grey leaked onto those chips in
@@ -142,14 +133,16 @@ body.adminkit .button-disabled,
 body.adminkit .button.disabled,
 body.adminkit .button:disabled,
 body.adminkit .button[disabled] {
-	background: var(--ak-surface) !important;
+	background: var(--ak-surface-muted) !important;
+	opacity: 1;
+	box-shadow: none !important;
 	/* WP ships `border-color: #d8d8d8 !important` AND a separate later rule that
 	   may reset border-width/style on the "Active"-state button of plugin-install
 	   pages. Force the full shorthand so the chip always reads as a bordered
 	   button — without this the "Active" pill on installed plugins drops its
 	   border in some contexts. */
 	border: 1px solid var(--ak-border) !important;
-	color: var(--ak-text-muted) !important;
+	color: var(--ak-text-disabled) !important;
 	cursor: not-allowed;
 }
 
@@ -177,7 +170,7 @@ body.adminkit input[type="file"]::file-selector-button:hover {
 }
 
 body.adminkit .button-link-delete,
-body.adminkit .wp-core-ui .button-link-delete {
+body.adminkit.wp-core-ui .button-link-delete {
 	color: var(--ak-error);
 	background: transparent;
 	border: none;
@@ -189,7 +182,7 @@ body.adminkit .button-link-delete:hover {
 }
 
 body.adminkit .button.button-large,
-body.adminkit .wp-core-ui .button.button-large {
+body.adminkit.wp-core-ui .button.button-large {
 	padding: 0 14px;
 	font-size: var(--ak-text-m);
 	min-height: 36px;
@@ -197,7 +190,7 @@ body.adminkit .wp-core-ui .button.button-large {
 }
 
 body.adminkit .button.button-small,
-body.adminkit .wp-core-ui .button.button-small {
+body.adminkit.wp-core-ui .button.button-small {
 	padding: 0 8px;
 	font-size: var(--ak-text-xs);
 	min-height: 26px;
@@ -242,4 +235,35 @@ body.adminkit .button-primary:focus-visible,
 body.adminkit .wrap .page-title-action:focus-visible {
 	outline: none;
 	box-shadow: var(--ak-focus-ring);
+}
+
+/* ID-based bulk-action resets must retain the shared keyboard indicator. */
+body.adminkit #doaction:focus-visible,
+body.adminkit #doaction2:focus-visible,
+body.adminkit #post-query-submit:focus-visible {
+	box-shadow: var(--ak-focus-ring);
+}
+@media screen and (max-width: 782px) {
+	body.adminkit .button,
+	body.adminkit.wp-core-ui .button,
+	body.adminkit .wrap .page-title-action {
+		min-height: var(--ak-control-height-touch);
+		line-height: 1.4;
+		padding-block: 11px;
+		box-sizing: border-box;
+	}
+}
+
+/* Pressed states use the same semantic family as hover, never native WP blue. */
+body.adminkit.wp-core-ui .button:not(.button-primary):active {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+body.adminkit.wp-core-ui .button-primary:active,
+body.adminkit .wrap .page-title-action:active {
+	background: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
+	color: var(--ak-on-accent-hover);
 }

@@ -1,0 +1,14 @@
+/* Same-origin TinyMCE document; loaded after the host's inline dark styles. */
+body.mce-content-body {
+	background: var( --ak-input-bg );
+	color: var( --ak-text );
+	font-family: var( --ak-font-body );
+	font-size: var( --ak-text-m );
+	line-height: 1.6;
+	caret-color: var( --ak-primary );
+}
+/* FluentBooking injects `* { color: white }` in dark mode. Reset that rule
+   without replacing colors explicitly authored in the document's content. */
+body :where(*) { color: inherit; }
+a:not([style*="color"]) { color: var( --ak-primary-text ); }
+::selection { background: var( --ak-primary-subtle ); color: var( --ak-heading ); }

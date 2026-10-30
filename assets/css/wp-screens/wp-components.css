@@ -178,7 +178,7 @@ body.adminkit .components-form-toggle .components-form-toggle__track {
 }
 
 body.adminkit .components-form-toggle .components-form-toggle__thumb {
-	background: var(--ak-surface);
+	background: var(--ak-text);
 }
 
 body.adminkit .components-form-toggle.is-checked .components-form-toggle__track {
@@ -234,9 +234,9 @@ body.adminkit .components-button.is-primary:disabled:active:enabled,
 body.adminkit .components-button.is-primary[aria-disabled="true"],
 body.adminkit .components-button.is-primary[aria-disabled="true"]:active:enabled,
 body.adminkit .components-button.is-primary[aria-disabled="true"]:enabled {
-	background: var(--ak-border) !important;
+	background: var(--ak-surface-muted) !important;
 	border-color: var(--ak-border) !important;
-	color: var(--ak-text-muted) !important;
+	color: var(--ak-text-disabled) !important;
 }
 
 
@@ -272,4 +272,18 @@ body.adminkit .components-placeholder.components-placeholder {
 	background-color: var(--ak-surface);
 	box-shadow: inset 0 0 0 1px var(--ak-border);
 	color: var(--ak-text);
+}
+
+body.adminkit .components-button.is-primary:not(:disabled):not([aria-disabled="true"]):is(:hover, :active) {
+	background: var(--ak-primary-hover);
+	color: var(--ak-on-accent-hover);
+}
+body.adminkit .components-button:focus-visible {
+	outline: none;
+	box-shadow: var(--ak-focus-ring);
+}
+
+body.adminkit .components-form-toggle.is-checked .components-form-toggle__thumb {
+	background: var(--ak-on-accent);
+	border-color: var(--ak-on-accent);
 }

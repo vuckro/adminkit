@@ -150,8 +150,8 @@ class AdminKit_Theme_Toggle {
 		if ( ! AdminKit_Settings::get( 'theme_toggle_enabled' ) ) {
 			return; // "Light / dark toggle" feature switched off.
 		}
-		$sun  = '<svg class="ak-theme-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Zm11.394-5.834a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75Zm-3.916 6.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591ZM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18Zm-4.242-.697a.75.75 0 0 0-1.061-1.06l-1.591 1.59a.75.75 0 0 0 1.06 1.061l1.591-1.59ZM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12Zm.697-4.243a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 0 0-1.061 1.06l1.59 1.591Z"/></svg>';
-		$moon = '<svg class="ak-theme-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clip-rule="evenodd"/></svg>';
+		$sun  = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'sun' ) );
+		$moon = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'moon' ) );
 
 		$bar->add_node( array(
 			'id'     => self::NODE_ID,
@@ -179,8 +179,8 @@ class AdminKit_Theme_Toggle {
 		$in_admin = is_admin();
 
 		// wp-admin → "open site" (external) glyph; front end → house.
-		$open  = '<svg class="ak-theme-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M15.75 2.25H21a.75.75 0 0 1 .75.75v5.25a.75.75 0 0 1-1.5 0V4.81L8.03 17.03a.75.75 0 0 1-1.06-1.06L19.19 3.75h-3.44a.75.75 0 0 1 0-1.5Z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M1.5 4.5a3 3 0 0 1 3-3h6a.75.75 0 0 1 0 1.5h-6a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-6a.75.75 0 0 1 1.5 0v6a3 3 0 0 1-3 3h-12a3 3 0 0 1-3-3v-12Z" clip-rule="evenodd"/></svg>';
-		$house = '<svg class="ak-theme-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.47 3.84a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.06l-8.69-8.69a2.25 2.25 0 0 0-3.18 0l-8.69 8.69a.75.75 0 1 0 1.06 1.06l8.69-8.69Z"/><path d="m12 5.43 8.16 8.16c.03.02.05.05.08.09v6.2A1.88 1.88 0 0 1 18.37 22H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75v4.5A.75.75 0 0 1 9 22H5.63a1.88 1.88 0 0 1-1.88-1.88v-6.2l.09-.09L12 5.43Z"/></svg>';
+		$open  = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'external-link' ) );
+		$house = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'house' ) );
 
 		$bar->add_node( array(
 			'id'     => 'ak-view-site',

@@ -1,0 +1,5 @@
+/* Shared menu chrome, also on core WordPress pages. External upgrade links keep
+   their native destination; inline promotional paint follows the admin palette. */
+body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami) .wp-menu-image::before { background-image: none; }
+body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami) .wp-submenu a[target="_blank"] { background-color: var(--ak-funnelkit-menu-bg, transparent) !important; color: var(--ak-text) !important; }
+body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami) .wp-submenu a[target="_blank"]:is(:hover, :focus-visible) { --ak-funnelkit-menu-bg: var(--ak-hover-bg); }

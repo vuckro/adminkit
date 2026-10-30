@@ -1,0 +1,233 @@
+/* WooCommerce 11: shared WPDS/DataViews bridge for React settings and portals.
+   All values remain AdminKit roles; no WooCommerce data or behavior is changed. */
+body.adminkit.adminkit-woocommerce,
+body.adminkit.adminkit-woocommerce [data-wpds-theme-provider-id][data-wpds-theme-provider-id] {
+ --wp-dataviews-color-background: var(--ak-surface);
+ --wpds-color-background-surface-neutral: var(--ak-bg);
+ --wpds-color-background-surface-neutral-strong: var(--ak-surface);
+ --wpds-color-background-interactive-neutral-weak: var(--ak-surface);
+ --wpds-color-background-interactive-neutral-weak-active: var(--ak-hover-bg);
+ --wpds-color-background-interactive-neutral-strong-active: var(--ak-heading);
+ --wpds-color-background-interactive-brand-strong: var(--ak-primary);
+ --wpds-color-background-interactive-brand-strong-active: var(--ak-primary);
+ --wpds-color-background-interactive-brand-weak: var(--ak-primary-subtle);
+ --wpds-color-background-interactive-brand-weak-active: var(--ak-primary-subtle);
+ --wpds-color-foreground-content-neutral: var(--ak-text);
+ --wpds-color-foreground-content-neutral-weak: var(--ak-text-muted);
+ --wpds-color-foreground-content-error-weak: var(--ak-error);
+ --wpds-color-foreground-interactive-neutral: var(--ak-text);
+ --wpds-color-foreground-interactive-neutral-active: var(--ak-heading);
+ --wpds-color-foreground-interactive-neutral-weak: var(--ak-text-muted);
+ --wpds-color-foreground-interactive-neutral-strong: var(--ak-on-accent);
+ --wpds-color-foreground-interactive-brand: var(--ak-primary-text);
+ --wpds-color-foreground-interactive-brand-active: var(--ak-primary-text);
+ --wpds-color-foreground-interactive-brand-strong: var(--ak-on-accent);
+ --wpds-color-stroke-focus: var(--ak-focus);
+ --wpds-color-stroke-interactive-neutral: var(--ak-input-border);
+ --wpds-color-stroke-interactive-neutral-active: var(--ak-text-muted);
+ --wpds-color-stroke-interactive-brand: var(--ak-primary);
+ --wpds-color-stroke-interactive-brand-active: var(--ak-primary);
+ --wpds-color-stroke-surface-neutral: var(--ak-border);
+ --wpds-color-stroke-surface-neutral-weak: var(--ak-border);
+ --wpds-color-stroke-surface-brand: var(--ak-primary);
+ --wpds-border-radius-sm: var(--ak-radius-s);
+ --wpds-border-radius-md: var(--ak-radius-m);
+ --wpds-border-radius-lg: var(--ak-radius-m);
+}
+body.adminkit.adminkit-woocommerce .dataviews-wrapper { border-radius: var(--ak-radius-m); }
+body.adminkit.adminkit-woocommerce .dataforms-layouts-card__field-description { color: var(--ak-text-muted); }
+/* Product and order side panels retain their controls at narrow widths. */
+body.adminkit.adminkit-woocommerce :is(.woocommerce_options_panel, .woocommerce_order_items_wrapper) { min-width: 0; }
+@media (prefers-reduced-motion: no-preference) {
+ body.adminkit.adminkit-woocommerce :is(.woocommerce_data_tabs a, .wc-tabs a, .order-status, .select2-selection) {
+  transition: background-color 120ms var(--ak-ease-standard), color 120ms var(--ak-ease-standard), border-color 120ms var(--ak-ease-standard);
+ }
+}
+/* Full-screen setup has no WordPress sidebar; remove its reserved frame. */
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body #wpcontent {
+ margin-left: 0;
+ margin-right: 0;
+ padding: 0;
+ border: 0;
+ border-radius: 0;
+ background: var(--ak-bg);
+}
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body #wpbody-content { padding-bottom: 0; }
+body.adminkit.adminkit-woocommerce .woocommerce-profile-wizard__container { background: var(--ak-bg); color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-heading__title {
+ color: var(--ak-heading);
+ font-size: clamp(26px, 3vw, 36px);
+ line-height: 1.2;
+ letter-spacing: -.025em;
+}
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-heading__subtitle { color: var(--ak-text-muted); line-height: 1.6; }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-choice-container {
+ background: var(--ak-surface);
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-m);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-choice-container:has(input:checked) {
+ background: var(--ak-hover-bg);
+ border-color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-choice-container:hover { border-color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-choice label { color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-progress-bar__container { background: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-progress-bar__filler { background: var(--ak-primary); }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-button-container .components-button {
+ border-radius: var(--ak-radius-s);
+ min-height: 40px;
+}
+@media (max-width: 600px) {
+ body.adminkit.adminkit-woocommerce .woocommerce-profiler-page__content { padding-inline: 20px; }
+ body.adminkit.adminkit-woocommerce .woocommerce-profiler-button-container .components-button { min-height: 44px; }
+}
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body #wpwrap::before,
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body #wpwrap::after { display: none; }
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body #wpbody-content { border: 0; }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-plugins-plugin-card {
+ background: var(--ak-surface);
+ border-color: var(--ak-border);
+ border-radius: var(--ak-radius-m);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-plugins-plugin-card .woocommerce-profiler-plugins-plugin-card-text-header .woocommerce-profiler-plugins-plugin-card-title { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-plugins-plugin-card .woocommerce-profiler-plugins-plugin-card-text p,
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-plugins-jetpack-agreement { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-plugins .woocommerce-profiler-plugins__footer.sticky-footer { background: var(--ak-bg); }
+/* Home tasks, metrics and chart empty states retain readable secondary text. */
+body.adminkit.adminkit-woocommerce .woocommerce-homescreen :is(h1, h2, h3),
+body.adminkit.adminkit-woocommerce .woocommerce-task-list__item-expandable-content span { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce :is(.woocommerce-task-header__contents p, .woocommerce-stats-overview__install-jetpack-promo p, .woocommerce_marketing_plugin_card_body__details-description, .d3-chart__empty-message, .woocommerce-analytics-import-status-bar-wrapper__label) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .components-text { color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce .woocommerce-summary :is(.components-text, .components-truncate) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .woocommerce-marketing-overview .components-flex-item { color: var(--ak-text-muted); }
+/* HPOS order details and custom fields. */
+body.adminkit.adminkit-woocommerce #order_data .order_data_column :is(label, p, address, .none_set) { color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce #order_data .woocommerce-Order-customerIP,
+body.adminkit.adminkit-woocommerce :is(.order_notes .no-items, #order_data .edit_address, #woocommerce-order-items .times) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce #woocommerce-order-items .woocommerce_order_items :is(tbody, tfoot),
+body.adminkit.adminkit-woocommerce #woocommerce-order-items .woocommerce_order_items tbody tr { background: var(--ak-surface); }
+body.adminkit.adminkit-woocommerce #postcustomstuff thead th { background: var(--ak-elevated); color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce :is(.widefat .na, .select2-container .select2-selection__clear) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .wc_status_table :is(.yes, .no, code),
+body.adminkit.adminkit-woocommerce .woocommerce_status_table :is(.yes, .no, code) { color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce .red { color: var(--ak-error); }
+/* WooCommerce 11's payment provider screen is a React island in wc-settings. */
+body.adminkit.adminkit-woocommerce.woocommerce-settings-payments-tab :is(#wpbody, #mainform) { background: var(--ak-bg); }
+body.adminkit.adminkit-woocommerce.woocommerce-settings-payments-tab .nav-tab-wrapper { background: var(--ak-surface-muted); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce.woocommerce-settings-payments-tab .nav-tab { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce.woocommerce-settings-payments-tab .nav-tab-active { background: var(--ak-elevated); color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce .settings-payment-gateways__list .woocommerce-list__item { background: var(--ak-surface); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .settings-payment-gateways__list .woocommerce-list__item:hover { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-woocommerce .settings-payment-gateways__list .woocommerce-list__item-title { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce :is(.settings-payment-gateways__list .woocommerce-list__item-content, .components-country-select-control__label, .woocommerce-incentive-banner__copy p, .woocommerce-incentive-banner__terms) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .components-country-select-control__menu { background: var(--ak-surface); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .wc-settings-email-preview-header { background: var(--ak-surface); color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce .wc-settings-email-preview-header :is(.wc-settings-email-preview-header-subject, span) { color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce #woocommerce-order-actions .order_actions li.wide:has(.save_order) {
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+}
+body.adminkit.adminkit-woocommerce #woocommerce-order-actions :is(.save_order, #delete-action) { float: none; width: 100%; margin: 0; padding: 0; }
+body.adminkit.adminkit-woocommerce #woocommerce-order-actions :is(.save_order, .submitdelete) {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ width: 100%;
+ min-height: 36px;
+ padding: 8px 12px;
+ box-sizing: border-box;
+ line-height: 1.4;
+ border-radius: var(--ak-radius-s);
+}
+body.adminkit.adminkit-woocommerce #woocommerce-order-actions .submitdelete { color: var(--ak-error); background: var(--ak-error-subtle); text-decoration: none; }
+body.adminkit.adminkit-woocommerce #woocommerce-order-actions .submitdelete:hover { background: color-mix(in srgb, var(--ak-error) 16%, var(--ak-surface)); }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-woocommerce #woocommerce-order-actions :is(.save_order, .submitdelete) { min-height: 44px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+ body.adminkit.adminkit-woocommerce :is(.components-button, .button, .woocommerce-profiler-choice-container) {
+  transition: background-color 120ms var(--ak-ease-standard), border-color 120ms var(--ak-ease-standard), color 120ms var(--ak-ease-standard);
+ }
+}
+body.adminkit.adminkit-woocommerce .woocommerce-inbox-message__title .woocommerce-inbox-note__action-button span { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce [class*="woocommerce-marketing"] .components-flex-block { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce #order_data .order_data_column strong { color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce #woocommerce-order-items .woocommerce_order_items .item .times { color: var(--ak-text-muted); opacity: 1; }
+body.adminkit.adminkit-woocommerce .woocommerce-status-badge--success { background: var(--ak-success-subtle); color: var(--ak-success); }
+body.adminkit.adminkit-woocommerce .woocommerce-status-badge--warning { background: var(--ak-warning-subtle); color: var(--ak-warning); }
+body.adminkit.adminkit-woocommerce .settings-payment-gateways__header-title { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce .woocommerce-woopayments-payment-methods-logos-count { color: var(--ak-text-muted); background: var(--ak-surface-muted); }
+body.adminkit.adminkit-woocommerce .settings-payments-other-providers__content { color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce .select2-container { max-width: 100%; min-width: 0; }
+/* Settings navigation stays one predictable, horizontally scrollable row. */
+body.adminkit.adminkit-woocommerce.woocommerce_page_wc-settings .nav-tab-wrapper {
+ display: flex;
+ flex-wrap: nowrap;
+ overflow-x: auto;
+ overflow-y: hidden;
+ width: 100%;
+ max-width: 100%;
+ box-sizing: border-box;
+ gap: 2px;
+ padding: 3px;
+ background: var(--ak-surface-muted);
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-s);
+ scrollbar-width: thin;
+}
+body.adminkit.adminkit-woocommerce.woocommerce_page_wc-settings .nav-tab {
+ flex: 0 0 auto;
+ border: 1px solid transparent;
+ margin: 0;
+ padding-inline: 12px;
+ border-radius: var(--ak-radius-s);
+ color: var(--ak-text-muted);
+ background: transparent;
+ text-decoration: none;
+}
+body.adminkit.adminkit-woocommerce.woocommerce_page_wc-settings .nav-tab-active {
+ border-color: var(--ak-border);
+ color: var(--ak-heading);
+ background: var(--ak-elevated);
+}
+body.adminkit.adminkit-woocommerce .ak-table-scroll > .widefat { margin: 0; border: 0; }
+/* SelectWoo's clipped native select must not extend the document by one pixel. */
+body.adminkit.adminkit-woocommerce .select2-hidden-accessible { inset-inline-start: 0; }
+body.adminkit.adminkit-woocommerce .other-payment-gateways__header__title,
+body.adminkit.adminkit-woocommerce .other-payment-gateways__header__title span { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce .wp-editor-tools { background: var(--ak-surface); }
+body.adminkit.adminkit-woocommerce .wc-backbone-modal .wc-backbone-modal-content { border-radius: var(--ak-radius-m); border: 1px solid var(--ak-border); }
+body.adminkit.adminkit-woocommerce .wc-backbone-modal header { border-radius: var(--ak-radius-m) var(--ak-radius-m) 0 0; }
+body.adminkit.adminkit-woocommerce .wc-backbone-modal footer { border-radius: 0 0 var(--ak-radius-m) var(--ak-radius-m); }
+body.adminkit.adminkit-woocommerce #woocommerce-order-items .woocommerce_order_items .split-input,
+body.adminkit.adminkit-woocommerce #woocommerce-order-items .woocommerce_order_items .split-input .input { background: var(--ak-surface); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .select2-hidden-accessible {
+ min-width: 0;
+ min-height: 0;
+ max-width: 1px;
+ max-height: 1px;
+ padding: 0;
+}
+/* Notes become visible only after the first real interaction adds one. */
+body.adminkit.adminkit-woocommerce #woocommerce-order-notes .order_notes .note .note_content { background: var(--ak-elevated); color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce #woocommerce-order-notes .order_notes .note .note_content p { color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce #woocommerce-order-notes .order_notes .note .note_content::after { border-top-color: var(--ak-elevated); }
+body.adminkit.adminkit-woocommerce #woocommerce-order-notes .order_notes .note .meta,
+body.adminkit.adminkit-woocommerce #woocommerce-order-notes .order_notes .note .meta abbr { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce #woocommerce-order-notes .order_notes .note .delete_note { color: var(--ak-error); }
+body.adminkit.adminkit-woocommerce :is(.woocommerce-tree-select-control__label, .woocommerce-tree-select-control__help) { color: var(--ak-text-muted); }
+/* Email editor fieldsets must shrink with their form column on phones. */
+body.adminkit.adminkit-woocommerce .form-table td fieldset { min-inline-size: 0; max-width: 100%; }
+body.adminkit.adminkit-woocommerce .form-table td textarea { min-width: 0; max-width: 100%; box-sizing: border-box; }
+/* WP's expanded TinyMCE toolbar uses an ID rule and a measured inline width. */
+body.adminkit.adminkit-woocommerce #wpbody-content .wp-editor-tools {
+ background: var(--ak-surface);
+ max-width: 100%;
+ box-sizing: border-box;
+}
+/* The gap below order lines exposes the metabox interior, not its table. */
+body.adminkit.adminkit-woocommerce #woocommerce-order-items .inside { background: var(--ak-surface); }
+body.adminkit.adminkit-woocommerce #postcustomstuff table,
+body.adminkit.adminkit-woocommerce #postcustomstuff :is(th, td) { border-color: var(--ak-border); }

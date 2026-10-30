@@ -1,0 +1,84 @@
+/* FunnelKit Builder — screen-specific refinements, shared components in shared.css. */
+body.adminkit.adminkit-funnelkit-builder :is(.bwf-selected-header, .bwf-st-c-wrap, .bwf-st-c, .bwf-card-action, .bwf-support-box) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder .bwf-steps-container { background: var(--ak-bg); }
+body.adminkit.adminkit-funnelkit-builder :is(.bwf-st-c, .bwf-st-c-wrap) { border-radius: var(--ak-radius-m); }
+body.adminkit.adminkit-funnelkit-builder :is(.bwf-st-c-title, .bwf-selected-header-title, .bwf-support-box-title) { color: var(--ak-heading); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) :is(.bwf-node-wrapper, .bwf-node-brick, .bwf-node-content-item) { background: var(--ak-surface); border-color: var(--ak-border); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) :is(.bwf-st-c-badge-small, .bwf-st-c-badge-red) { background: var(--ak-warning-subtle); color: var(--ak-warning); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-node-wrapper :is(span, p) { color: var(--ak-text-muted); }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .components-modal__content .bwf-funnel-modal__body { display: block; padding: 8px 0 0; width: 100%; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .components-modal__content .bwf-funnel-modal__body :is(.bwf-sidebar-nav + div, .bwf-funnel-modal__content) { min-width: 0; max-width: 100%; width: 100%; box-sizing: border-box; padding: 0 0 24px; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwf-support-box { display: none; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal :is(.bwf-st-c-card-container, .is-lite-card) { display: flex; flex-wrap: wrap; gap: 12px; padding: 16px; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwf-card-controls { margin-left: auto; flex-wrap: wrap; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwf-st-c-title { flex: 1 1 60%; min-width: 0; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwfan_selected_header { flex-direction: column; align-items: flex-start; padding: 16px 0; gap: 12px; }
+}
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwfan__step-header { margin: 0; padding: 0; width: 100%; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwf-flex.bwf--space-between { flex-wrap: wrap; gap: 12px; }
+}
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit-builder .bwf-admin-modal.bwf-funnel-modal .components-modal__content .components-modal__header .components-button.has-icon { display: inline-flex; position: absolute; top: 8px; right: 8px; min-height: 44px; width: 44px; color: var(--ak-text-muted); }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .components-modal__header-heading { width: calc(100% - 44px); overflow-wrap: normal; word-break: normal; }
+}
+body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal :is(.bwf-st-c, .bwf-st-c-card-container, .bwf-st-c-sub-st-wrap) { border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwf-funnel-step-analytics__overlay { background: color-mix(in srgb, var(--ak-surface) 70%, transparent); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) :is(.bwfan_navigation a, .wffn_import_description) { background: var(--ak-surface); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) .bwf-node-wrapper :is(div, span, p, a) { color: var(--ak-text); border-color: var(--ak-border); }
+/* The lazy flow bundle uses its own ID root, beyond the app shell. */
+body.adminkit.adminkit-funnelkit-builder #bwf-funnel-canvas-wrap .bwf-node-wrapper.bwf-start .bwf-node-content .bwf-node-content-item { background: var(--ak-success-subtle); color: var(--ak-success); }
+body.adminkit.adminkit-funnelkit-builder #bwf-funnel-canvas-wrap .bwf-node-wrapper .bwf-node-content :is(div, span, a, p) { color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder #bwf-funnel-canvas-wrap .bwf-node-wrapper .bwf-node-content .bwf-node-content-item { background: var(--ak-surface); }
+body.adminkit.adminkit-funnelkit-builder #bwf-funnel-canvas-wrap .bwf-node-wrapper .bwf-node-content :is(.bwf-node-stats, .bwf-st-c__step-type) { color: var(--ak-text-muted); }
+
+body.adminkit.adminkit-funnelkit-builder #bwf-funnel-canvas-wrap .bwf-node-wrapper :is(.bwf-node-inner-content, .bwf-node-inner-content span, .bwf-node-data-desc span, .bwf-views-label-wrap) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder #bwf-funnel-canvas-wrap .bwf-node-wrapper .bwf-node-brick { background: var(--ak-surface); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit.adminkit-funnelkit-builder #bwf-funnel-canvas-wrap .bwf-node-wrapper .bwf-inner-wrapper .bwf-node-brick .bwf-node-inner-content span { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit.adminkit-funnelkit-builder #bwf-funnel-canvas-wrap .bwf-node-wrapper .bwf-inner-wrapper .bwf-node-data-desc span { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit.adminkit-funnelkit-builder #bwf-funnel-canvas-wrap .bwf-node-wrapper :is(.bwf-inner-wrapper, .bwf-node-data-desc, .bwf-node-brick) { background: var(--ak-surface); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-settings .bwf-add-recipient-wrap :is(.components-base-control__label, .components-base-control__field) { background: var(--ak-surface); color: var(--ak-text-muted); }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-funnel-list__analytics { flex: 1 1 100%; width: 100%; flex-wrap: wrap; min-width: 0; gap: 16px; }
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-upgrade-pro-popover-wrap, .bwf-upgrade-pro-popover__toggler) { width: auto; max-width: 100%; white-space: normal; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-analytics-wrap { display: block; width: 100%; min-width: 0; }
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-analytics-wrap > div { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-c-container, .bwf-c-content-inner, .bwf-c-content-body) { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-chart-tabs .components-button { min-width: 0; max-width: 100%; white-space: normal; height: auto; min-height: 44px; }
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-sublium-page__footer-usecases, .bwf-sublium-page__footer-usecases-col) { width: 100%; min-width: 0; max-width: 100%; display: flex; flex-direction: column; }
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-sublium-page__footer-usecase { width: 100%; min-width: 0; max-width: 100%; }
+}
+/* Promotional plugin pages use literal light gradients, not surface colors.
+   Replace the complete background so their tokenized text works in both modes. */
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-sublium-page__header, .bwf-product-pitching-page__header) { background: var(--ak-bg); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-sublium-page__feature-icon, .bwf-product-pitching-page__header-feature-icon, .bwf-product-pitching-page__header-rating, .bwf-product-pitching-page__footer, .bwf-sublium-page__footer-card, .bwf-sublium-page__video-container) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); box-shadow: none; }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-sublium-page__header-title, .bwf-sublium-page__feature-label, .bwf-product-pitching-page__header-title, .bwf-sublium-page__footer-title) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-sublium-page__header-description, .bwf-sublium-page__payment-text) { color: var(--ak-text-muted); }
+/* Sublium forces a literal pale background on these icon disks. */
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-sublium-page .bwf-product-pitching-page__content-feature-icon { background: var(--ak-surface) !important; }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-sublium-page__feature-icon, .bwf-product-pitching-page__content-feature-icon) svg { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-sublium-page__feature-icon, .bwf-product-pitching-page__content-feature-icon) svg [stroke]:not([stroke="none"]) { stroke: currentColor; }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-sublium-page__feature-icon, .bwf-product-pitching-page__content-feature-icon) svg [fill]:not([fill="none"]) { fill: currentColor; }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-product-pitching-page__content-title, .bwf-product-pitching-page__content-feature-title, .bwf-sublium-page__and-more, .bwf-sublium-page__footer-usecase span) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-product-pitching-page__content-description, .bwf-product-pitching-page__content-feature-description) { color: var(--ak-text-muted); }
+:root[data-adminkit-theme="dark"] body.adminkit.adminkit-funnelkit-builder .bwf-sublium-page__header-logo { filter: grayscale(1) brightness(0) invert(1); }
+/* Step-list hover/drag states ship in a lazy bundle with literal light paint. */
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-f-steps .bwf-st-c-wrap .bwf-st-c { border-color: var(--ak-border); background: var(--ak-surface); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-f-steps .bwf-st-c-wrap:is(:hover, :focus-within, .is-dragging) > .bwf-st-c { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-f-steps .bwf-st-c-wrap .bwf-st-c .bwf-st-c-sub-st-wrap { background: var(--ak-surface); border-color: var(--ak-border); }
+/* Child-card hover and close backgrounds are explicitly important in BWF. */
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-f-steps .bwf-st-c-sub-st-wrap .bwf-st-c { background: var(--ak-surface) !important; }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-f-steps .bwf-st-c-wrap .bwf-st-c .bwf-close-icon { background: transparent !important; }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-f-steps .bwf-st-c-wrap:is(:hover, .is-dragging) .bwf-funnel-step-analytics__overlay { background: color-mix(in srgb, var(--ak-hover-bg) 88%, transparent); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-st-c-wrap :is(.bwf-st-c-title a, .bwf-st-c__step-type, .bwf-views-label-wrap, .bwf-text-light, .bwf-list-btn, .bwf-list-btn span) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) :is(.bwf-list-btn, .bwf-card-controls .bwf-card-action) { background: var(--ak-surface); border-color: var(--ak-border); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) :is(.bwf-list-btn, .bwf-card-controls .bwf-card-action):hover { background: var(--ak-hover-bg); border-color: var(--ak-border-strong); }
+/* BWF draws a light outline via box-shadow in addition to the card border. */
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-f-steps .bwf-st-c { box-shadow: none !important; border: 1px solid var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-st-c .bwf-st-c-sub-st-wrap .bwf-st-c { border-color: var(--ak-border); }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-funnel-step-analytics { width: 100%; max-width: 100%; min-width: 0; flex: 1 1 100%; display: flex; justify-content: space-between; }
+ body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-funnel-step-analytics__item { min-width: 0; width: auto; flex: 1; text-align: center; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .components-modal__header-heading { text-wrap: balance; overflow-wrap: break-word; word-break: normal; }
+}

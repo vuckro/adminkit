@@ -123,16 +123,12 @@ body.adminkit .connectors-page .components-item {
 	border-color: var(--ak-border);
 }
 
-/* AI plugin callout — pink-purple gradient hero on top of the
-   connectors page. The gradient is design-intent; in dark mode tone
-   it down by overlaying a dark tint via a more subtle multiplier so
-   the text stays legible without losing the brand-y feel. */
-:root[data-adminkit-theme="dark"] body.adminkit .connectors-page .ai-plugin-callout {
-	background-color: #2d1f2b;
-	background-image:
-		radial-gradient(ellipse 70% 120% at 18% 115%, rgba(202, 158, 198, 0.18) 0, rgba(202, 158, 198, 0) 60%),
-		radial-gradient(ellipse 55% 110% at 92% -15%, rgba(208, 175, 217, 0.16) 0, rgba(208, 175, 217, 0) 65%),
-		radial-gradient(ellipse 40% 85% at 58% -10%, rgba(170, 130, 184, 0.12) 0, rgba(170, 130, 184, 0) 70%);
+/* Core callout uses the same restrained surface as other settings notices. */
+body.adminkit .connectors-page .ai-plugin-callout {
+ background: var(--ak-surface-muted);
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-m);
+ color: var(--ak-text);
 }
 
 /* Text + button inside the callout — needs to read on the pink-purple
@@ -188,3 +184,118 @@ body.adminkit .boot-layout-container *:not([class*="destructive"]) {
 	--wp-components-color-accent-darker-20: var(--ak-primary-hover) !important;
 	--wp-admin-theme-color: var(--ak-primary) !important;
 }
+
+/* WP 7.1 WPDS writes renamed background/foreground tokens inline on both the
+   root and nested theme providers. The semantic attribute + inline token marker
+   is stable; no generated class names or React IDs. Important is required only
+   to replace those inline custom properties, not arbitrary component paint. */
+body.adminkit .boot-layout-container [data-wpds-corner-radius][style*="--wpds-color-background-surface-neutral"] {
+	--wpds-color-background-surface-neutral: var(--ak-bg) !important;
+	--wpds-color-background-surface-neutral-strong: var(--ak-surface) !important;
+	--wpds-color-background-surface-neutral-weak: var(--ak-surface) !important;
+	--wpds-color-foreground-content-neutral: var(--ak-text) !important;
+	--wpds-color-foreground-content-neutral-weak: var(--ak-text-muted) !important;
+	--wpds-color-foreground-interactive-neutral: var(--ak-text) !important;
+	--wpds-color-foreground-interactive-neutral-active: var(--ak-heading) !important;
+	--wpds-color-foreground-interactive-neutral-weak: var(--ak-text-muted) !important;
+	--wpds-color-stroke-interactive-neutral: var(--ak-border-strong) !important;
+	--wpds-color-stroke-interactive-neutral-active: var(--ak-text) !important;
+	--wpds-color-stroke-interactive-neutral-strong: var(--ak-text) !important;
+	--wpds-color-stroke-surface-neutral: var(--ak-border) !important;
+	--wpds-color-stroke-surface-neutral-strong: var(--ak-border-strong) !important;
+	--wpds-color-stroke-surface-neutral-weak: var(--ak-border) !important;
+	--wpds-color-background-thumb-neutral-weak: var(--ak-text-muted) !important;
+	--wpds-color-background-thumb-neutral-weak-active: var(--ak-text) !important;
+	--wpds-color-background-track-neutral: var(--ak-border-strong) !important;
+	--wpds-color-background-track-neutral-weak: var(--ak-border) !important;
+	--wpds-color-background-interactive-neutral-strong: var(--ak-heading) !important;
+	--wpds-color-background-interactive-neutral-strong-active: var(--ak-text) !important;
+	--wpds-color-background-interactive-neutral-weak-active: var(--ak-hover-bg) !important;
+	--wpds-color-foreground-interactive-neutral-strong: var(--ak-surface) !important;
+	--wpds-color-foreground-interactive-neutral-strong-active: var(--ak-surface) !important;
+	--wpds-color-background-interactive-neutral-strong-disabled: var(--ak-border) !important;
+	--wpds-color-foreground-interactive-neutral-disabled: var(--ak-text-muted) !important;
+	--wpds-color-foreground-interactive-neutral-strong-disabled: var(--ak-text-muted) !important;
+	--wpds-color-foreground-interactive-neutral-weak-disabled: var(--ak-text-muted) !important;
+	--wpds-color-stroke-interactive-neutral-disabled: var(--ak-border) !important;
+	--wpds-color-background-thumb-neutral-disabled: var(--ak-border) !important;
+	--wpds-color-background-interactive-brand-strong: var(--ak-primary) !important;
+	--wpds-color-background-interactive-brand-strong-active: var(--ak-primary-hover) !important;
+	--wpds-color-background-interactive-brand-weak-active: var(--ak-primary-subtle) !important;
+	--wpds-color-foreground-interactive-brand: var(--ak-primary) !important;
+	--wpds-color-foreground-interactive-brand-active: var(--ak-primary-hover) !important;
+	--wpds-color-foreground-interactive-brand-strong: var(--ak-on-accent) !important;
+	--wpds-color-foreground-interactive-brand-strong-active: var(--ak-on-accent) !important;
+	--wpds-color-background-thumb-brand: var(--ak-primary) !important;
+	--wpds-color-background-thumb-brand-active: var(--ak-primary-hover) !important;
+	--wpds-color-stroke-focus: var(--ak-primary) !important;
+	--wpds-color-stroke-interactive-brand: var(--ak-primary) !important;
+	--wpds-color-stroke-interactive-brand-active: var(--ak-primary-hover) !important;
+	--wpds-color-stroke-surface-brand: var(--ak-border) !important;
+	--wpds-color-stroke-surface-brand-strong: var(--ak-primary) !important;
+	--wpds-color-background-surface-brand: var(--ak-primary-subtle) !important;
+	--wpds-color-background-surface-info-weak: var(--ak-info-subtle) !important;
+	--wpds-color-background-surface-info: var(--ak-info-subtle) !important;
+	--wpds-color-foreground-content-info: var(--ak-info) !important;
+	--wpds-color-foreground-content-info-weak: var(--ak-info) !important;
+	--wpds-color-stroke-surface-info: var(--ak-info) !important;
+	--wpds-color-stroke-surface-info-strong: var(--ak-info) !important;
+	--wpds-color-background-surface-success-weak: var(--ak-success-subtle) !important;
+	--wpds-color-background-surface-success: var(--ak-success-subtle) !important;
+	--wpds-color-foreground-content-success: var(--ak-success) !important;
+	--wpds-color-foreground-content-success-weak: var(--ak-success) !important;
+	--wpds-color-stroke-surface-success: var(--ak-success) !important;
+	--wpds-color-stroke-surface-success-strong: var(--ak-success) !important;
+	--wpds-color-background-surface-caution-weak: var(--ak-warning-subtle) !important;
+	--wpds-color-background-surface-caution: var(--ak-warning-subtle) !important;
+	--wpds-color-foreground-content-caution: var(--ak-warning) !important;
+	--wpds-color-foreground-content-caution-weak: var(--ak-warning) !important;
+	--wpds-color-background-surface-warning-weak: var(--ak-warning-subtle) !important;
+	--wpds-color-background-surface-warning: var(--ak-warning-subtle) !important;
+	--wpds-color-foreground-content-warning: var(--ak-warning) !important;
+	--wpds-color-foreground-content-warning-weak: var(--ak-warning) !important;
+	--wpds-color-stroke-surface-warning: var(--ak-warning) !important;
+	--wpds-color-stroke-surface-warning-strong: var(--ak-warning) !important;
+	--wpds-color-background-interactive-error-strong: var(--ak-error) !important;
+	--wpds-color-background-interactive-error-strong-active: var(--ak-error) !important;
+	--wpds-color-background-interactive-error-active: var(--ak-error-subtle) !important;
+	--wpds-color-background-interactive-error-weak-active: var(--ak-error-subtle) !important;
+	--wpds-color-background-surface-error-weak: var(--ak-error-subtle) !important;
+	--wpds-color-background-surface-error: var(--ak-error-subtle) !important;
+	--wpds-color-foreground-content-error: var(--ak-error) !important;
+	--wpds-color-foreground-content-error-weak: var(--ak-error) !important;
+	--wpds-color-foreground-interactive-error: var(--ak-error) !important;
+	--wpds-color-foreground-interactive-error-active: var(--ak-error) !important;
+	--wpds-color-foreground-interactive-error-strong: var(--ak-surface) !important;
+	--wpds-color-foreground-interactive-error-strong-active: var(--ak-surface) !important;
+	--wpds-color-stroke-interactive-error: var(--ak-error) !important;
+	--wpds-color-stroke-interactive-error-strong: var(--ak-error) !important;
+	--wpds-color-stroke-interactive-error-active: var(--ak-error) !important;
+	--wpds-color-stroke-surface-error: var(--ak-error) !important;
+	--wpds-color-stroke-surface-error-strong: var(--ak-error) !important;
+}
+
+/* Shared boot-layout chrome belongs to the page canvas, including its header. */
+body.adminkit.options-connectors-php .boot-layout__stage { background: var(--ak-bg); color: var(--ak-text); }
+body.adminkit.options-connectors-php .connectors-page { box-sizing: border-box; }
+body.adminkit.options-connectors-php .connectors-page .components-item { border-radius: var(--ak-radius-m); }
+body.adminkit.options-connectors-php .connectors-page .components-item p { color: var(--ak-text-muted); }
+body.adminkit.options-connectors-php .connectors-page .components-button { border-radius: var(--ak-radius-s); }
+body.adminkit.options-connectors-php .connectors-page .components-button.is-secondary { border-color: var(--ak-border); color: var(--ak-text); box-shadow: inset 0 0 0 1px var(--ak-border); background: var(--ak-surface); }
+body.adminkit.options-connectors-php .connectors-page .components-button.is-secondary:hover { border-color: var(--ak-border-strong); background: var(--ak-hover-bg); box-shadow: inset 0 0 0 1px var(--ak-border-strong); }
+body.adminkit.options-connectors-php .connectors-page .components-button:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
+
+body.adminkit.options-connectors-php .connectors-page h2.components-text { color: var(--ak-heading); }
+body.adminkit.options-connectors-php .connectors-page span.components-text { color: var(--ak-text-muted); }
+body.adminkit.options-connectors-php .connector-item--ai-provider-for-openai svg { color: var(--ak-text); }
+body.adminkit.options-connectors-php .connector-item--ai-provider-for-openai svg path { color: inherit; fill: currentColor; }
+:root[data-adminkit-theme="dark"] body.adminkit .ai-plugin-callout__decoration { filter: invert(1); opacity: .5; }
+@media (prefers-reduced-motion: no-preference) {
+ body.adminkit.options-connectors-php .connectors-page .components-button { transition: background-color 120ms ease-out, box-shadow 120ms ease-out; }
+}
+@media (max-width: 600px) {
+ body.adminkit.options-connectors-php .connectors-page .components-item [data-wp-component="FlexBlock"] { min-width: 0; }
+ body.adminkit.options-connectors-php .connectors-page .components-truncate { white-space: normal; overflow: visible; }
+}
+body.adminkit.options-connectors-php .connectors-page > p { color: var(--ak-text-muted); }
+body.adminkit.options-connectors-php .boot-layout__stage h1 { font-size: 24px; line-height: 1.3; font-weight: 600; }

@@ -1,28 +1,7 @@
-/* Generic feedback surfaces — the WP-core "feedback" family that ANY plugin
-   reuses without shipping an adapter: the SOLID-fill notice variant and the
-   AJAX progress/result states (update / install / activate). Themed through
-   --ak-* so an UNSUPPORTED plugin still reads cleanly in light AND dark.
-
-   Scope: the standard bordered notices (`.notice`, `.notice-success|-error|
-   -warning|-info`, `.notice p`, `.notice-dismiss`, postboxes and nav-tabs) are
-   ALREADY themed in wp-core/chrome.css — this file does NOT redeclare them, it
-   only fills the variants chrome.css leaves to WP's hardcoded colours:
-
-     1. `.notice-alt`        — WP's solid-fill variant (used inside meta-boxes,
-                               the plugin-info modal, `wp.updates` rows). WP pins
-                               opaque pale fills (#eff9f1 / #fef8ee / #fcf0f0 /
-                               #fff) that survive into dark mode and clash.
-     2. AJAX feedback states — `.update-message` / `.updating-message` /
-                               `.updated-message` containers + the dashicon
-                               glyphs WP hardcodes #d63638 (red) / #68de7c
-                               (green) on, including the `.button.*` inline
-                               states (installing / activating / installed …).
-
-   Always loaded in admin (registered alongside the other wp-components files);
-   every selector is a no-op where the markup is absent. Colour/token only — no
-   geometry — so plugin layouts stay untouched. Wins by specificity (the
-   `body.adminkit` + compound-class chains out-rank WP's own rules), so no
-   `!important`. */
+/* Generic WordPress feedback: compact contextual variants and update states,
+   followed by the WaasKit banner/toast recipe for page-level notices and the
+   notification center. Native content, status, dismissal and timing stay owned
+   by WordPress. Selectors avoid metabox and plugin-update row geometry. */
 
 /* ── 1. Solid-fill notices (`.notice-alt`) ──────────────────────────────────
    The bare `.notice-alt` has no own fill in WP (it only drops the shadow), so
@@ -118,3 +97,48 @@ body.adminkit .button.updated-message::before,
 body.adminkit .button.activated-message::before {
 	color: var(--ak-success);
 }
+
+/* WaasKit alert recipe: neutral surface, semantic icon tile, native content and
+   dismiss handler. Contextual update rows/forms keep their compact treatments. */
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag) {
+ --ak-notice-ink: var(--ak-info);
+ --ak-notice-soft: var(--ak-info-subtle);
+ --ak-notice-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2016v-4%22%20%2F%3E%20%3Cpath%20d%3D%22M12%208h.01%22%20%2F%3E%3C%2Fsvg%3E");
+ position: relative; box-sizing: border-box; min-height: 66px;
+ padding: 16px 52px 16px 64px;
+ background: var(--ak-surface); color: var(--ak-text);
+ border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); box-shadow: none;
+}
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag):is(.notice-success, .updated) { --ak-notice-ink: var(--ak-success); --ak-notice-soft: var(--ak-success-subtle); --ak-notice-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20%2F%3E%20%3Cpath%20d%3D%22m16%209-5.5%205.5L8%2012%22%20%2F%3E%3C%2Fsvg%3E"); }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag):is(.notice-warning, .update-nag) { --ak-notice-ink: var(--ak-warning); --ak-notice-soft: var(--ak-warning-subtle); --ak-notice-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m21.73%2018-8-14a2%202%200%200%200-3.48%200l-8%2014A2%202%200%200%200%204%2021h16a2%202%200%200%200%201.73-3%22%20%2F%3E%20%3Cpath%20d%3D%22M12%209v4%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2017h.01%22%20%2F%3E%3C%2Fsvg%3E"); }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag):is(.notice-error, .error) { --ak-notice-ink: var(--ak-error); --ak-notice-soft: var(--ak-error-subtle); --ak-notice-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20%2F%3E%20%3Cpath%20d%3D%22m15%209-6%206%22%20%2F%3E%20%3Cpath%20d%3D%22m9%209%206%206%22%20%2F%3E%3C%2Fsvg%3E"); }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag)::before { content: ""; position: absolute; inset-inline-start: 16px; top: 16px; width: 32px; height: 32px; background: var(--ak-notice-soft); border-radius: var(--ak-radius-s); }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag)::after { content: ""; position: absolute; inset-inline-start: 23px; top: 23px; width: 18px; height: 18px; background: var(--ak-notice-ink); -webkit-mask: var(--ak-notice-icon) center / contain no-repeat; mask: var(--ak-notice-icon) center / contain no-repeat; pointer-events: none; }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag) p { margin: 4px 0 8px; padding: 0; color: var(--ak-text); line-height: 1.5; }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag) p:last-child { margin-bottom: 0; }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag) :is(h2, h3, .notice-title) { margin-top: 0; color: var(--ak-heading); }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag) .notice-dismiss { top: 12px; inset-inline-end: 12px; width: 32px; height: 32px; padding: 6px; border-radius: var(--ak-radius-s); color: var(--ak-text-muted); }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag) .notice-dismiss::before { width: 20px; height: 20px; color: inherit; }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag) .notice-dismiss:hover { background: var(--ak-hover-bg); color: var(--ak-text); }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag) .notice-dismiss:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; box-shadow: none; }
+/* React notices/snackbars keep their live-region, actions, dismissal and timing. */
+body.adminkit .components-snackbar { background: var(--ak-elevated); color: var(--ak-text); border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); box-shadow: var(--ak-shadow-elevated); padding: 14px 16px; font-family: var(--ak-font-body); font-size: 13px; line-height: 1.5; max-width: min(440px, calc(100vw - 32px)); box-sizing: border-box; }
+body.adminkit .components-snackbar :is(.components-snackbar__content, .components-snackbar__icon) { color: var(--ak-text); }
+body.adminkit .components-snackbar .components-snackbar__action { color: var(--ak-primary-text); text-decoration: none; border-radius: var(--ak-radius-s); }
+body.adminkit .components-snackbar .components-snackbar__action:hover { text-decoration: underline; text-underline-offset: .2em; }
+body.adminkit .components-snackbar .components-button:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; box-shadow: none; }
+@media (max-width: 782px) {
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag) { padding-inline-end: 52px; }
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag) .notice-dismiss { width: 44px; height: 44px; top: 6px; inset-inline-end: 4px; padding: 12px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+body.adminkit :is(.wrap, #wpbody-content, .ak-nc-origin, .ak-nc-list) > :is(.notice, div.updated, div.error, .update-nag) .notice-dismiss { transition: background-color 120ms var(--ak-ease-standard), color 120ms var(--ak-ease-standard); }
+}
+
+/* React alert surfaces use the same neutral frame; their own content/icon and
+   dismiss slots remain in place, including third-party event handlers. */
+body.adminkit .components-notice { background: var(--ak-surface); color: var(--ak-text); border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); box-shadow: none; }
+body.adminkit .components-notice :is(.components-notice__content, .components-notice__content p) { color: var(--ak-text); }
+body.adminkit .components-notice .components-notice__dismiss { color: var(--ak-text-muted); border-radius: var(--ak-radius-s); }
+body.adminkit .components-notice .components-notice__dismiss:hover { background: var(--ak-hover-bg); color: var(--ak-text); }
+body.adminkit .components-notice .components-notice__dismiss:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; box-shadow: none; }

@@ -22,7 +22,8 @@ body.adminkit .theme-browser .theme .theme-name {
 /* Theme card action strip (Activate / Live Preview / Customize) — WP overlays
    it with semi-transparent black; route to a token surface so the buttons sit
    on a themed strip in both modes, and tokenize the divider. */
-body.adminkit .theme-browser .theme .theme-actions {
+body.adminkit .theme-browser .theme .theme-actions,
+body.adminkit .theme-browser .theme.active .theme-actions {
 	background: var(--ak-card-bg);
 	border-left-color: var(--ak-card-border);
 }
@@ -225,7 +226,8 @@ body.adminkit .theme-overlay .theme-description {
 /* Theme tags row at the bottom of the modal (".Tags: blog, news, …"). WP
    paints a 3px #f0f0f1 divider above + #646970 text. Route both through
    tokens so the divider tracks --ak-border and the label reads as muted. */
-body.adminkit .theme-overlay .theme-tags {
+body.adminkit .theme-overlay .theme-tags,
+body.adminkit .theme-overlay .theme-tags span {
 	border-top-color: var(--ak-border);
 	color: var(--ak-text-muted);
 }

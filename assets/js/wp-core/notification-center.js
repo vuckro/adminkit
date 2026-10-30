@@ -63,7 +63,7 @@
 	// Page-UI notices (NOT the top-of-page notice area): WP's "render in place"
 	// .inline notices, and anything nested in a metabox / form / list table / the
 	// settings app / our own drawer.
-	var SKIP_CONTAINERS = '.postbox, .inside, .form-table, .wp-list-table, .widget, .widgets-holder-wrap, .adminkit-app, .ak-nc-drawer, .components-notice-list';
+	var SKIP_CONTAINERS = '#templateside, #template, .postbox, .inside, .form-table, .wp-list-table, .widget, .widgets-holder-wrap, .adminkit-app, .ak-nc-drawer, .components-notice-list';
 	function isContextual( el ) {
 		// `.inline` / `.below-h2` are WP's "render in place" markers (same exclusion
 		// Clearfy uses); plus anything nested in page UI (skip containers).

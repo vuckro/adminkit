@@ -91,8 +91,12 @@ class AdminKit_Assets {
 		add_filter( 'login_body_class', array( __CLASS__, 'add_login_body_class' ) );
 
 
-		// Dynamic custom inputs and the optional Bricks adapter. The generated
-		// token stylesheets own palette selection and the shared accent family.
+		// Accent family override — emits a dual-block (light :root + dark
+		// :root[data-adminkit-theme="dark"]) inline rule on the tokens
+		// stylesheet so every UI surface that consumes --ak-primary &
+		// derivatives follows an explicit user override in BOTH
+		// modes. Bricks source is a no-op (Bricks's stylesheet rules the
+		// cascade on its own). See inject_accent_family() for the cascade rationale.
 		add_action( 'adminkit/tokens_enqueued', array( __CLASS__, 'inject_accent_family' ) );
 	}
 

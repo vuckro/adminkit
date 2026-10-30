@@ -111,22 +111,21 @@ body.adminkit.upload-php .media-toolbar {
 
 body.adminkit.upload-php .wp-filter .attachment-filters,
 body.adminkit.upload-php .wp-filter .search-form input[type="search"] {
-	background: var(--ak-input-bg);
+	background-color: var(--ak-input-bg);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 }
 
-/* Focus state — match the standard `input:focus` treatment (primary border +
-   subtle tint background). The `.wp-filter .search-form` ancestor selector
+/* Focus state — preserve the input surface, with the WaasKit border and ring. The `.wp-filter .search-form` ancestor selector
    gives this rule higher specificity than `body.adminkit input[type="search"]:focus`
    in inputs.css, which otherwise loses to the WP media-modal hardcodes. */
 body.adminkit.upload-php .wp-filter .search-form input[type="search"]:focus {
 	border-color: var(--ak-primary);
-	background-color: var(--ak-primary-subtle);
+	background-color: var(--ak-input-bg);
 	color: var(--ak-text);
 	outline: 0;
-	box-shadow: none;
+	box-shadow: var(--ak-focus-ring);
 }
 
 body.adminkit.upload-php .media-sidebar {
@@ -355,3 +354,14 @@ body.adminkit .edit-media-header [disabled]:hover {
 	color: var(--ak-text-muted);
 	background: transparent;
 }
+
+/* Secondary copy inside the media picker has its own native literal color. */
+body.adminkit .media-modal :is(.instructions, .suggested-dimensions, .upload-instructions, .max-upload-size) {
+	color: var(--ak-text-muted);
+}
+
+/* Separate the media view/filter toolbar from the list action card. */
+body.adminkit.upload-php .wp-filter { margin-bottom: 16px; }
+body.adminkit.upload-php .ak-table-card { margin-top: 16px; }
+/* File names are secondary content, but must retain readable contrast. */
+body.adminkit.upload-php .wp-list-table .filename { color: var(--ak-text-muted); }

@@ -19,19 +19,19 @@ body.adminkit input[type="datetime-local"],
 body.adminkit input[type="color"],
 body.adminkit textarea,
 body.adminkit select,
-body.adminkit .wp-core-ui select {
+body.adminkit.wp-core-ui select {
 	/* background-color (not the shorthand) so a `background-image` declared
 	   for selects below survives. The shorthand would clear WP's arrow SVG
 	   AND ours. */
 	background-color: var(--ak-input-bg);
-	border: 1px solid var(--ak-border-strong);
+	border: 1px solid var(--ak-input-border);
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	font-family: var(--ak-font-body);
 	font-size: var(--ak-text-s);
 	line-height: 1.8;
 	padding: 0 10px;
-	min-height: 30px;
+	min-height: var(--ak-control-height);
 	box-shadow: none;
 }
 
@@ -52,10 +52,10 @@ body.adminkit .wp-core-ui select {
    these three with `!important` keeps exactly one chevron, right-aligned,
    in every state. */
 body.adminkit select,
-body.adminkit .wp-core-ui select {
+body.adminkit.wp-core-ui select {
 	-webkit-appearance: none;
 	appearance: none;
-	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='14' height='14'><path fill='%23646970' d='M5 7l5 6 5-6z'/></svg>");
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c8f94' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
 	background-repeat: no-repeat !important;
 	background-position: right 8px center !important;
 	background-size: 12px 12px !important;
@@ -66,8 +66,8 @@ body.adminkit .wp-core-ui select {
    on the light-muted surface (#2e2e2e) without going so bright that it
    competes with the option text rendered just to its left. */
 :root[data-adminkit-theme="dark"] body.adminkit select,
-:root[data-adminkit-theme="dark"] body.adminkit .wp-core-ui select {
-	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='14' height='14'><path fill='%23a7aaad' d='M5 7l5 6 5-6z'/></svg>");
+:root[data-adminkit-theme="dark"] body.adminkit.wp-core-ui select {
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c8f94' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
 }
 
 /* Textarea — restore vertical padding since it can wrap */
@@ -85,19 +85,24 @@ body.adminkit input[type="search"]:focus,
 body.adminkit input[type="number"]:focus,
 body.adminkit input[type="tel"]:focus,
 body.adminkit input[type="date"]:focus,
+body.adminkit input[type="month"]:focus,
+body.adminkit input[type="week"]:focus,
+body.adminkit input[type="time"]:focus,
+body.adminkit input[type="datetime-local"]:focus,
 body.adminkit textarea:focus,
 body.adminkit select:focus {
 	border-color: var(--ak-primary);
-	/* `background-color` (not `background` shorthand) so the chevron
+	/* Keep the field surface stable and preserve the chevron.
+	   `background-color` (not `background` shorthand) so the chevron
 	   `background-image` declared on selects below survives focus.
 	   The shorthand would reset `background-image` to `none` AND
 	   `background-repeat` to its default `repeat`, which tiles the
 	   chevron across the field whenever a select is focused. */
-	background-color: var(--ak-primary-subtle);
+	background-color: var(--ak-input-bg);
 	/* WP's `.wp-core-ui select:focus` hardcodes `color: #1e1e1e`, which stays
-	   near-black (invisible) on the dark focus tint — pin it to the token. */
+	   near-black (invisible) on a dark input surface — pin it to the token. */
 	color: var(--ak-text);
-	box-shadow: none;
+	box-shadow: var(--ak-focus-ring);
 	outline: none;
 }
 
@@ -107,7 +112,7 @@ body.adminkit select:focus {
    specificity than WP's `:hover` variant, so it leaks through. Match
    `.wp-core-ui select:hover` plus `body.adminkit` prefix to land at
    (0,3,2) and beat WP's (0,2,1) without !important. */
-body.adminkit .wp-core-ui select:hover,
+body.adminkit.wp-core-ui select:hover,
 body.adminkit select:hover {
 	color: var(--ak-heading);
 	border-color: var(--ak-border-strong);
@@ -131,9 +136,9 @@ body.adminkit select:hover {
 body.adminkit input:disabled,
 body.adminkit textarea:disabled,
 body.adminkit select:disabled,
-body.adminkit .wp-core-ui select:disabled {
+body.adminkit.wp-core-ui select:disabled {
 	background-color: var(--ak-surface-muted, #f0f0f1);
-	color: var(--ak-text-muted, #8c8f94);
+	color: var(--ak-text-disabled);
 	border-color: var(--ak-border);
 	cursor: not-allowed;
 	/* WP forms.css hardcodes `text-shadow: 0 1px 0 #fff` on disabled
@@ -149,27 +154,27 @@ body.adminkit .wp-core-ui select:disabled {
    across the field. Pinning every background prop here keeps one chevron
    right-aligned, regardless of WP cascading. */
 body.adminkit select:disabled,
-body.adminkit .wp-core-ui select:disabled {
-	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='14' height='14'><path fill='%23a0a5aa' d='M5 7l5 6 5-6z'/></svg>");
+body.adminkit.wp-core-ui select:disabled {
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c8f94' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
 	background-repeat: no-repeat;
 	background-position: right 8px center;
 	background-size: 12px 12px;
 }
 
 :root[data-adminkit-theme="dark"] body.adminkit select:disabled,
-:root[data-adminkit-theme="dark"] body.adminkit .wp-core-ui select:disabled {
-	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='14' height='14'><path fill='%23a7aaad' d='M5 7l5 6 5-6z'/></svg>");
+:root[data-adminkit-theme="dark"] body.adminkit.wp-core-ui select:disabled {
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c8f94' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
 }
 
 body.adminkit select:disabled:hover,
-body.adminkit .wp-core-ui select:disabled:hover {
-	color: var(--ak-text-muted, #8c8f94);
+body.adminkit.wp-core-ui select:disabled:hover {
+	color: var(--ak-text-disabled);
 	border-color: var(--ak-border);
 }
 
 /* Radios — 16px round, neutral fill + a brand dot when checked. */
 body.adminkit input[type="radio"] {
-	border: 1px solid var(--ak-border-strong);
+	border: 1px solid var(--ak-input-border);
 	border-radius: 50%;
 	background: var(--ak-input-bg);
 	width: 16px;
@@ -340,7 +345,7 @@ body.adminkit input[type="file"] {
 	body.adminkit input[type="datetime-local"],
 	body.adminkit textarea,
 	body.adminkit select,
-	body.adminkit .wp-core-ui select {
+	body.adminkit.wp-core-ui select {
 		font-size: 16px;
 	}
 }
@@ -352,3 +357,24 @@ body.adminkit.wp-core-ui select:focus-visible {
 	outline: none;
 	box-shadow: var(--ak-focus-ring);
 }
+
+/* Placeholder and readonly states follow both theme variants. */
+body.adminkit input::placeholder,
+body.adminkit textarea::placeholder { color: var(--ak-text-subtle); opacity: 1; }
+body.adminkit input[readonly],
+body.adminkit textarea[readonly] { background-color: var(--ak-surface-muted); }
+@media screen and (max-width: 782px) {
+	body.adminkit input:is([type="text"], [type="email"], [type="url"], [type="password"], [type="search"], [type="number"], [type="tel"], [type="date"], [type="time"], [type="datetime-local"]),
+	body.adminkit select,
+	body.adminkit.wp-core-ui select { min-height: var(--ak-control-height-touch); }
+}
+
+/* A checked toggle needs a contrasting knob against either accent variant. */
+body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):checked::before,
+:root[data-adminkit-theme="dark"] body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):checked::before {
+	background: var(--ak-on-accent);
+}
+body.adminkit input[readonly]:focus,
+body.adminkit textarea[readonly]:focus { background-color: var(--ak-surface-muted); }
+body.adminkit input[type="checkbox"]:disabled { cursor: not-allowed; }
+body.adminkit :is(ul.categorychecklist, ul.cat-checklist) label.selectit { color: var(--ak-text); }

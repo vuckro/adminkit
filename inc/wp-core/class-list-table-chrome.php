@@ -30,6 +30,7 @@ class AdminKit_Core_List_Table_Chrome {
 	 */
 	public static function init() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
+		add_action( 'admin_head', array( __CLASS__, 'first_paint' ), 1 );
 		add_filter( 'user_row_actions', array( __CLASS__, 'trim_row_actions' ), 99 );
 		// Strip the parenthesised counts ("(24)" → "24") server-side, BEFORE
 		// first paint, so the user never sees them flash to the cleaned value
@@ -41,6 +42,31 @@ class AdminKit_Core_List_Table_Chrome {
 		// `views_{screen}` hook above doesn't catch — so the counts flashed there.
 		// Strip on this filter too; strip_views_decorations is idempotent.
 		add_filter( 'comment_status_links', array( __CLASS__, 'strip_views_decorations' ) );
+	}
+
+	/** Hide only the native table region until its synchronous footer layout is ready. */
+	public static function first_paint() {
+		$screen = get_current_screen();
+		if ( ! $screen || ! in_array( $screen->base, array( 'edit', 'upload', 'users', 'edit-tags', 'edit-comments', 'plugins' ), true ) || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return;
+		}
+		?>
+		<style id="ak-table-first-paint">
+		html.ak-table-pending body.adminkit :is(.wp-list-table, .tablenav, .ak-table-card) { visibility: hidden; }
+		</style>
+		<script>
+		(function () {
+			var root = document.documentElement;
+			root.classList.add('ak-table-pending');
+			window.akRevealTables = function () {
+				root.classList.remove('ak-table-pending');
+			};
+			// Fail open if another extension interrupts the footer, or JS fails.
+			setTimeout(window.akRevealTables, 1500);
+			window.addEventListener('pageshow', window.akRevealTables);
+		})();
+		</script>
+		<?php
 	}
 
 	/**

@@ -176,3 +176,23 @@ body.adminkit.options-discussion-php .wrap > form > p[data-ak-tab] {
 	line-height: 1.5;
 	max-width: 64ch;
 }
+
+/* General settings use available workspace without stretching text measures. */
+body.adminkit.options-general-php .wrap > form { max-width: 1440px; }
+body.adminkit.options-general-php .ak-options-block .form-table input:is([type=text], [type=url], [type=email]) {
+ width: 100%;
+ max-width: 640px;
+}
+@media (min-width: 1200px) {
+ body.adminkit.options-general-php .wrap > form {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  column-gap: 28px;
+  align-items: start;
+ }
+ body.adminkit.options-general-php .wrap > form > :not(.ak-options-block) { grid-column: 1 / -1; }
+ body.adminkit.options-general-php #ak-opt-site-identity { grid-column: 1; grid-row: span 2; }
+ body.adminkit.options-general-php .ak-options-block { min-width: 0; }
+ body.adminkit.options-general-php .ak-options-block[data-ak-tab=locale] { grid-column: 1 / -1; }
+ body.adminkit.options-general-php .ak-options-block .form-table th { width: 160px; }
+}

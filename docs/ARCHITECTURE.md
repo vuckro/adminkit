@@ -116,8 +116,8 @@ token overrides (e.g. a provider/integration applying live values).
 ## The token cascade
 
 The complete WaasKit snapshot is `tokens/palettes/waaskit.json`. Role declarations
-live in `tokens/adminkit.json`. `tokens/appearance.css` owns custom-state rules,
-and `tokens/wordpress.css` owns native aliases. The PHP build follows both themes' dependencies and emits
+live in `tokens/adminkit.json`; native WordPress variable mappings live in
+`tokens/appearance.css` owns custom-state rules and `tokens/wordpress.css` owns native aliases. The PHP build follows both themes' dependencies and emits
 only required WaasKit variables. Missing or circular references fail the build.
 
 Generated outputs: `waaskit-tokens.css` (document/preview),
@@ -213,3 +213,19 @@ Generic plugin screens require their plugin file in `generic_theming_on`; the ol
 Core administration styling and the settings screen remain the base layer.
 Menu/toolbar editors bind their routes and hooks only when enabled. Menu and stats
 tables are created lazily by their enabled modules, never by plugin activation.
+
+### WPDS et Connecteurs natifs
+
+Le raccord des fournisseurs WPDS historiques et WordPress 7.1 est décrit dans [CORE-CONNECTORS-REVIEW.md](CORE-CONNECTORS-REVIEW.md). Les variables inline renommées sont traduites vers les rôles AdminKit dans `assets/css/wp-screens/wpds.css`.
+
+### Survol du menu et icônes masquées
+
+Le masque SVG du menu peint `currentColor`. `wp-core/chrome.css` limite sa transition à `color` au lieu du `transition: all` natif. L’état `.opensub`, maintenu brièvement par WordPress après la sortie de souris, reçoit explicitement la couleur active pour éviter le passage blanc de `colors/modern`. Le fond de survol utilise `--ak-hover-bg`, distinct du menu clair comme sombre. Les transitions sont supprimées avec `prefers-reduced-motion: reduce`.
+
+Contrôle local : sortie de survol échantillonnée sur 20 images par thème, masque/dimensions stables, aucune couleur blanche intermédiaire ; durée réduite à 0 s avec la préférence de mouvement réduit. Rapport `output/funnelkit-review/followup/menu-hover-final.log` du workspace.
+
+### Alertes et notifications WaasKit
+
+`assets/css/wp-components/feedback.css` habille les alertes de premier niveau et celles déplacées dans `.ak-nc-list` : surface neutre, bordure fine, icône Lucide propre au statut dans une tuile douce, fermeture discrète avec focus et cible tactile de 44 px sur mobile. Les notices contextuelles des formulaires et lignes de mise à jour gardent leur géométrie compacte. Les snackbars React reçoivent une surface surélevée et des actions contrastées ; leurs durées, annonces et gestionnaires restent natifs.
+
+Références : [Alertes WaasKit](https://design.waaskit.site/composants/alertes/) et [Modales et toasts](https://design.waaskit.site/composants/modales-toasts/). Les essais utilisent des exemples DOM temporaires, retirés ensuite, sans activation d’extension ni modification des messages métier. La fermeture est exercée par `wp-notice-added` et le gestionnaire natif `click.wp-dismiss-notice` de WordPress, au clavier. Succès/info/avertissement/erreur et snackbar contrôlés à 1280 et 390 px en clair/sombre : aucun défaut au dépistage de contraste textuel ni débordement du document. Preuves dans `output/funnelkit-review/followup/alerts-native-review.log` du workspace.

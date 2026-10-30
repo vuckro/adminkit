@@ -2,21 +2,11 @@
 /**
  * FluentBooking integration.
  *
- * FluentBooking v2 renders its admin as a Vue 3 SPA on Element Plus. Unlike
- * FluentCRM (which aliases Element Plus's `--el-*` tokens TO its own `--fc-*`
- * layer), FluentBooking keeps the two layers independent:
- *   - its own `--fcal-*` tokens (surfaces, text, borders, plus a single
- *     blue accent pair `--fcal-color-text` / `--fcal-color-bg`);
- *   - Element Plus `--el-*` tokens set to literal hex — NOT wired to
- *     `--fcal-*` — so each layer has to be remapped on its own.
- * On top of that, FluentBooking hard-codes its brand blue (#306ae0) directly
- * into ~126 Element Plus component states (checked switches/checkboxes/radios,
- * focused inputs, active tabs, calendar selection, links, focus rings) instead
- * of routing them through `--el-color-primary` (which it reserves for the
- * near-black #19283a). Those literals can't be reached by the variable remap,
- * so admin.css pairs the token remap with a grouped `!important` override that
- * flips every blue accent to the AdminKit brand. The whole thing flips with
- * AdminKit's dark mode because the `--ak-*` tokens do.
+ * FluentBooking uses a Vue SPA with independent FluentBooking and Element
+ * Plus token layers. The adapter maps the 2.5 semantic tokens and the legacy
+ * aliases to AdminKit, then handles component literals in its scoped CSS.
+ * Theme synchronization also covers FluentBooking's newer fluent_theme_dark
+ * class and the isolated documents used by its TinyMCE editors.
  *
  * Loaded only on the toplevel_page_fluent-booking screen (the SPA owns every
  * sub-route via hash routing under that one page).
@@ -52,13 +42,14 @@ class AdminKit_Integration_Fluent_Booking extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Verified against FluentBooking 2.x. Bump after re-checking the skin on a
+	 * Verified against FluentBooking Free 2.5.0. Pro-only settings show their
+	 * native locked state in this environment. Re-check the skin on a
 	 * new major — register_assets() falls back to native UI until you do.
 	 *
 	 * @return string|null
 	 */
 	protected static function max_tested_host_version() {
-		return '2.1.1';
+		return '2.5.0';
 	}
 
 	/**
@@ -156,11 +147,11 @@ class AdminKit_Integration_Fluent_Booking extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Slave FluentBooking's theme to AdminKit's.
+	 * Keep FluentBooking's theme synchronized with AdminKit.
 	 *
 	 * FluentBooking ships its own light/dark switch (`toggleColorMode()`):
-	 * it toggles a `dark` class on BOTH `<html>` and `#wpbody-content` and
-	 * stores `localStorage.fcal_color_mode`. Left alone it desyncs from
+	 * it toggles `dark` / `fluent_theme_dark` on its document and app roots
+	 * and stores the modern `fluent_theme_mode` plus legacy `fcal_color_mode`. Left alone it desyncs from
 	 * AdminKit (e.g. the user flips AdminKit dark but FluentBooking stays
 	 * light, or vice-versa). We hide FluentBooking's toggle (admin.css) and
 	 * mirror AdminKit's mode onto its storage key + class instead, so there
@@ -190,16 +181,53 @@ class AdminKit_Integration_Fluent_Booking extends AdminKit_Integration_Base {
 		try{var s=localStorage.getItem('adminkit-theme');if(s){return s==='dark'?'dark':'light';}}catch(e){}
 		return (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 	}
+	// TinyMCE lives in a same-origin document: reuse the static token sheets
+	// there and mirror the theme attribute, without calculating a palette.
+	function syncEditor(frame){
+		try{
+			var doc=frame.contentDocument;
+			if(!doc||!doc.head||!doc.body||!doc.body.isContentEditable){return;}
+			doc.documentElement.setAttribute('data-adminkit-theme',akMode());
+			doc.documentElement.setAttribute('data-adminkit-accent',document.documentElement.getAttribute('data-adminkit-accent')||'');
+			if(!doc.getElementById('adminkit-booking-editor')){
+				['adminkit-fonts-css','adminkit-waaskit-css','adminkit-tokens-css'].forEach(function(id){
+					var source=document.getElementById(id);
+					if(source){doc.head.appendChild(source.cloneNode(true));}
+				});
+				var accent=document.getElementById('adminkit-tokens-inline-css');
+				if(accent){doc.head.appendChild(accent.cloneNode(true));}
+				var style=doc.createElement('link');
+				style.id='adminkit-booking-editor';style.rel='stylesheet';
+				style.href=<?php echo wp_json_encode( ADMINKIT_URL . 'inc/integrations/plugins/fluent-booking/css/editor.css?ver=' . filemtime( ADMINKIT_PATH . 'inc/integrations/plugins/fluent-booking/css/editor.css' ) ); ?>;
+				doc.head.appendChild(style);
+			}
+		}catch(e){} // Ignore third-party/cross-origin frames.
+	}
+	function syncEditors(){
+		document.querySelectorAll('.mce-edit-area iframe').forEach(syncEditor);
+	}
 	function sync(){
 		var m=akMode();
-		try{localStorage.setItem('fcal_color_mode',m);}catch(e){}
-		[document.documentElement,document.getElementById('wpbody-content')].forEach(function(el){
-			if(el){el.classList.toggle('dark',m==='dark');}
+		try{localStorage.setItem('fcal_color_mode',m);localStorage.setItem('fluent_theme_mode',m);}catch(e){}
+		[document.documentElement,document.body,document.getElementById('wpbody-content')].forEach(function(el){
+			if(el){
+				el.classList.toggle('dark',m==='dark');
+				el.classList.toggle('fluent_theme_dark',m==='dark');
+			}
 		});
+		syncEditors();
 	}
+	document.addEventListener('load',function(event){
+		if(event.target.matches&&event.target.matches('.mce-edit-area iframe')){syncEditor(event.target);}
+	},true);
 	sync();
 	document.addEventListener('DOMContentLoaded',function(){
 		sync();
+		if(window.tinymce){
+			tinymce.on('AddEditor',function(event){
+				event.editor.on('init',function(){syncEditor(event.editor.iframeElement);});
+			});
+		}
 		new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['data-adminkit-theme']});
 	});
 })();

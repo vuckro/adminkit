@@ -238,6 +238,7 @@ body.adminkit .ak-dash .ak-btn--primary {
 body.adminkit .ak-dash .ak-btn--primary:hover {
 	background: var(--ak-primary-hover);
 	border-color: var(--ak-primary-hover);
+	color: var(--ak-on-accent-hover);
 }
 
 /* ── Card base (dashboard-local) ─────────────────────────────────────────── */
@@ -1495,4 +1496,8 @@ body.adminkit .ak-dash__stats-live-empty {
 /* Nobody on the site → the count goes muted (calm). */
 body.adminkit .ak-dash__stats-live.is-quiet .ak-dash__stats-live-num {
 	color: var(--ak-text-muted);
+}
+
+@media screen and (max-width: 782px) {
+	body.adminkit .ak-dash .ak-btn { min-height: var(--ak-control-height-touch); box-sizing: border-box; }
 }

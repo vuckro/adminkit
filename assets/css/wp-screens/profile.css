@@ -121,23 +121,10 @@ body.adminkit .color-option.selected {
 	box-shadow: none;
 }
 
-/* Profile pages: keep the UI fully flat (no focus shadows). */
-body.adminkit.user-edit-php #your-profile input:focus,
-body.adminkit.user-edit-php #your-profile select:focus,
-body.adminkit.user-edit-php #your-profile textarea:focus,
-body.adminkit.user-edit-php #your-profile .button:focus,
-body.adminkit.user-edit-php #your-profile .wp-core-ui .button:focus,
-body.adminkit.profile-php #your-profile input:focus,
-body.adminkit.profile-php #your-profile select:focus,
-body.adminkit.profile-php #your-profile textarea:focus,
-body.adminkit.profile-php #your-profile .button:focus,
-body.adminkit.profile-php #your-profile .wp-core-ui .button:focus,
-body.adminkit.user-new-php #createuser input:focus,
-body.adminkit.user-new-php #createuser select:focus,
-body.adminkit.user-new-php #createuser textarea:focus,
-body.adminkit.user-new-php #createuser .button:focus,
-body.adminkit.user-new-php #createuser .wp-core-ui .button:focus {
-	box-shadow: none !important;
+/* Account forms use the same WaasKit focus as the other native forms. */
+body.adminkit:is(.user-edit-php, .profile-php, .user-new-php) :is(#your-profile, #createuser) :is(input, select, textarea):focus,
+body.adminkit:is(.user-edit-php, .profile-php, .user-new-php) :is(#your-profile, #createuser) .button:focus-visible {
+	box-shadow: var(--ak-focus-ring);
 }
 
 /* Password strength meter (Add User / profile / user-edit). WP paints light

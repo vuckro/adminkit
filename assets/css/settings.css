@@ -33,7 +33,7 @@
 	.adminkit-app[data-screen="main"] .ak-rows .ak-row--child {
 		grid-column: 1 / -1;
 		padding-left: 16px;
-		border-left: 3px solid var(--ak-primary);
+		border-left: 1px solid var(--ak-border-strong);
 	}
 	.adminkit-app[data-screen="main"] .ak-rows .ak-row--child::before { content: none; }
 }
@@ -60,14 +60,9 @@
 }
 .adminkit-app .ak-actions {
 	display: flex;
-	flex-wrap: wrap;
 	align-items: center;
-	gap: 8px;
-	min-width: 0;
-	max-width: 100%;
+	gap: 14px;
 }
-.adminkit-app .ak-actions .ak-btn { white-space: nowrap; }
-.adminkit-app .ak-status:empty { display: none; }
 .adminkit-app .ak-bulk { margin-bottom: 14px; }
 .adminkit-app .ak-status {
 	display: inline-flex;
@@ -106,12 +101,21 @@
 	background: var(--ak-primary);
 	border-color: var(--ak-primary);
 	color: var(--ak-on-accent);
+	box-shadow: var(--ak-btn-primary-shadow);
 }
 .adminkit-app .ak-btn--primary:hover { background: var(--ak-primary-hover); border-color: var(--ak-primary-hover); color: var(--ak-on-accent-hover); }
 .adminkit-app .ak-btn:not(.ak-btn--primary):hover,
 .adminkit-app .ak-btn:not(.ak-btn--primary):focus-visible { background: var(--ak-btn-hover-bg); border-color: var(--ak-btn-hover-border); }
 .adminkit-app .ak-btn:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
-.adminkit-app .ak-btn[disabled] { opacity: .45; cursor: default; }
+.adminkit-app .ak-btn[disabled],
+.adminkit-app .ak-btn[disabled]:hover {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text-disabled);
+	opacity: 1;
+	cursor: not-allowed;
+	box-shadow: none;
+}
 .adminkit-app .ak-panel[hidden] { display: none; }
 .adminkit-app .ak-intro {
 	margin: 0 0 20px;
@@ -225,11 +229,11 @@
 	width: 18px;
 	height: 18px;
 	border-radius: 50%;
-	background: #fff;
+	background: var(--ak-text);
 	pointer-events: none;
 }
 .adminkit-app .ak-switch__input:checked ~ .ak-switch__track { background: var(--ak-primary); }
-.adminkit-app .ak-switch__input:checked ~ .ak-switch__knob { left: 21px; }
+.adminkit-app .ak-switch__input:checked ~ .ak-switch__knob { left: 21px; background: var(--ak-on-accent); }
 .adminkit-app .ak-switch__input:focus-visible ~ .ak-switch__track { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
 .adminkit-app .ak-hero {
 	display: grid;
@@ -341,6 +345,12 @@
 
 @media screen and (max-width: 782px) {
 	.adminkit-app .ak-head { flex-wrap: wrap; }
+	.adminkit-app .ak-actions { flex: 1 1 100%; flex-wrap: wrap; gap: var(--ak-space-s); }
+	.adminkit-app .ak-actions .ak-btn { flex: 1 1 auto; }
+	.adminkit-app .ak-actions .ak-btn--primary { flex-basis: 100%; }
+	.adminkit-app .ak-btn { min-height: var(--ak-control-height-touch); line-height: 1.4; }
+	.adminkit-app .ak-tabs { max-width: 100%; overflow-x: auto; box-sizing: border-box; }
+	.adminkit-app .ak-tab { flex-shrink: 0; min-height: var(--ak-control-height-touch); }
 }
 .adminkit-app[data-screen="menu"] .ak-panel--menu {
 	max-width: 1040px;

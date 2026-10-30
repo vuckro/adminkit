@@ -1,7 +1,7 @@
 <?php
 /**
  * Menu & toolbar icons — swap WordPress's native dashicons for a cohesive AdminKit
- * icon set (Heroicons). Opt-in via the `replace_icons_enabled` setting.
+ * icon set (Lucide). Opt-in via the `replace_icons_enabled` setting.
  *
  * Designed to be NON-DESTRUCTIVE and fully overridable — never a brute override:
  *   - The menu map is keyed by dashicon CLASS (`dashicons-admin-post` …), so it
@@ -50,7 +50,7 @@ class AdminKit_Core_Menu_Icons {
 		if ( ! self::enabled( 'admin' ) ) {
 			return;
 		}
-		self::emit( self::menu_css() . self::slug_css() . self::toolbar_css() );
+		self::emit( self::menu_css() . self::slug_css() . self::toolbar_css() . self::native_css() );
 	}
 
 	/**
@@ -109,6 +109,7 @@ class AdminKit_Core_Menu_Icons {
 			'dashicons-admin-post'       => AdminKit_Icons::svg( 'article' ),
 			'dashicons-admin-media'      => AdminKit_Icons::svg( 'photo' ),
 			'dashicons-admin-page'       => AdminKit_Icons::svg( 'document' ),
+			'dashicons-admin-generic'    => AdminKit_Icons::svg( 'settings' ),
 			'dashicons-admin-comments'   => AdminKit_Icons::svg( 'chat' ),
 			'dashicons-admin-appearance' => AdminKit_Icons::svg( 'brush' ),
 			'dashicons-admin-plugins'    => AdminKit_Icons::svg( 'plugin' ),
@@ -116,9 +117,7 @@ class AdminKit_Core_Menu_Icons {
 			'dashicons-admin-tools'      => AdminKit_Icons::svg( 'wrench' ),
 			'dashicons-admin-settings'   => AdminKit_Icons::svg( 'cog' ),
 			'dashicons-admin-customizer' => AdminKit_Icons::svg( 'swatch' ),
-			// NOTE: `dashicons-admin-generic` (the default gear a plugin gets when it
-			// sets no icon) is intentionally NOT mapped — those generic plugins keep
-			// their native gear rather than all collapsing to one AdminKit glyph.
+			// Plugins using the generic gear share Lucide’s settings glyph.
 			'dashicons-admin-network'    => AdminKit_Icons::svg( 'globe' ),
 			'dashicons-admin-site'       => AdminKit_Icons::svg( 'globe' ),
 			'dashicons-admin-site-alt3'  => AdminKit_Icons::svg( 'globe' ),
@@ -183,7 +182,141 @@ class AdminKit_Core_Menu_Icons {
 	 * @return string[]
 	 */
 	public static function mapped_classes() {
-		return array_keys( self::menu_icon_map() );
+		return array_values( array_unique( array_merge( array_keys( self::menu_icon_map() ), array_keys( self::native_icon_names() ) ) ) );
+	}
+
+	private static function native_icon_names() {
+		return array(
+			'dashicons-yes' => 'check',
+			'dashicons-yes-alt' => 'circle-check',
+			'dashicons-no' => 'x',
+			'dashicons-no-alt' => 'x',
+			'dashicons-dismiss' => 'x',
+			'dashicons-plus' => 'plus',
+			'dashicons-plus-alt' => 'circle-plus',
+			'dashicons-minus' => 'minus',
+			'dashicons-trash' => 'trash-2',
+			'dashicons-edit' => 'pencil',
+			'dashicons-edit-page' => 'file-pen-line',
+			'dashicons-visibility' => 'eye',
+			'dashicons-hidden' => 'eye-off',
+			'dashicons-external' => 'external-link',
+			'dashicons-download' => 'download',
+			'dashicons-upload' => 'upload',
+			'dashicons-upload-alt' => 'upload',
+			'dashicons-format-image' => 'image',
+			'dashicons-format-gallery' => 'images',
+			'dashicons-format-audio' => 'music',
+			'dashicons-format-video' => 'video',
+			'dashicons-format-quote' => 'quote',
+			'dashicons-format-status' => 'message-circle',
+			'dashicons-format-chat' => 'messages-square',
+			'dashicons-format-aside' => 'sticky-note',
+			'dashicons-admin-collapse' => 'panel-left-close',
+			'dashicons-arrow-left-alt2' => 'chevron-left',
+			'dashicons-arrow-right-alt2' => 'chevron-right',
+			'dashicons-arrow-up-alt2' => 'chevron-up',
+			'dashicons-arrow-down-alt2' => 'chevron-down',
+			'dashicons-arrow-left-alt' => 'arrow-left',
+			'dashicons-arrow-right-alt' => 'arrow-right',
+			'dashicons-arrow-up-alt' => 'arrow-up',
+			'dashicons-arrow-down-alt' => 'arrow-down',
+			'dashicons-arrow-up' => 'arrow-up',
+			'dashicons-arrow-down' => 'arrow-down',
+			'dashicons-arrow-left' => 'arrow-left',
+			'dashicons-arrow-right' => 'arrow-right',
+			'dashicons-sort' => 'arrow-up-down',
+			'dashicons-list-view' => 'list',
+			'dashicons-excerpt-view' => 'list-collapse',
+			'dashicons-grid-view' => 'grid-2x2',
+			'dashicons-info' => 'info',
+			'dashicons-warning' => 'triangle-alert',
+			'dashicons-editor-help' => 'circle-help',
+			'dashicons-search' => 'search',
+			'dashicons-bell' => 'bell',
+			'dashicons-clock' => 'clock',
+			'dashicons-backup' => 'history',
+			'dashicons-update' => 'refresh-cw',
+			'dashicons-update-alt' => 'refresh-cw',
+			'dashicons-menu' => 'menu',
+			'dashicons-menu-alt' => 'menu',
+			'dashicons-menu-alt2' => 'menu',
+			'dashicons-menu-alt3' => 'menu',
+			'dashicons-heart' => 'heart',
+			'dashicons-star-filled' => 'star',
+			'dashicons-star-empty' => 'star',
+			'dashicons-star-half' => 'star-half',
+			'dashicons-category' => 'folder',
+			'dashicons-tagcloud' => 'tags',
+			'dashicons-tag' => 'tag',
+			'dashicons-location' => 'map-pin',
+			'dashicons-location-alt' => 'map-pin',
+			'dashicons-lightbulb' => 'lightbulb',
+			'dashicons-microphone' => 'mic',
+			'dashicons-desktop' => 'monitor',
+			'dashicons-smartphone' => 'smartphone',
+			'dashicons-tablet' => 'tablet',
+			'dashicons-laptop' => 'laptop',
+			'dashicons-phone' => 'phone',
+			'dashicons-clipboard' => 'clipboard',
+			'dashicons-nametag' => 'contact-round',
+			'dashicons-awards' => 'award',
+			'dashicons-portfolio' => 'briefcase-business',
+			'dashicons-archive' => 'archive',
+			'dashicons-building' => 'building',
+			'dashicons-schedule' => 'calendar-clock',
+			'dashicons-smiley' => 'smile',
+			'dashicons-flag' => 'flag',
+			'dashicons-marker' => 'map-pin',
+			'dashicons-align-left' => 'align-left',
+			'dashicons-align-center' => 'align-center',
+			'dashicons-align-right' => 'align-right',
+			'dashicons-editor-bold' => 'bold',
+			'dashicons-editor-italic' => 'italic',
+			'dashicons-editor-underline' => 'underline',
+			'dashicons-editor-strikethrough' => 'strikethrough',
+			'dashicons-editor-ul' => 'list',
+			'dashicons-editor-ol' => 'list-ordered',
+			'dashicons-editor-quote' => 'quote',
+			'dashicons-editor-code' => 'code',
+			'dashicons-admin-links' => 'link',
+			'dashicons-editor-unlink' => 'unlink',
+			'dashicons-editor-removeformatting' => 'remove-formatting',
+			'dashicons-editor-paste-text' => 'clipboard-paste',
+			'dashicons-editor-outdent' => 'outdent',
+			'dashicons-editor-indent' => 'indent',
+			'dashicons-editor-undo' => 'undo',
+			'dashicons-editor-redo' => 'redo',
+			'dashicons-editor-expand' => 'expand',
+			'dashicons-editor-contract' => 'shrink',
+			'dashicons-table-col-after' => 'columns-3',
+			'dashicons-table-row-after' => 'rows-3',
+			'dashicons-align-none' => 'align-justify',
+		);
+	}
+
+	/** Replace common native action glyphs without touching brand logos or content. */
+	private static function native_css() {
+		$map = self::menu_icon_map();
+		$extra = self::native_icon_names();
+		foreach ( $extra as $class => $name ) { $map[ $class ] = AdminKit_Icons::svg( $name ); }
+		$css = '';
+		foreach ( $map as $class => $svg ) {
+			if ( ! is_string( $svg ) || '' === $svg || ! preg_match( '/^dashicons-[a-z0-9-]+$/', $class ) ) { continue; }
+			$css .= 'body.adminkit .dashicons.' . $class . '::before,body.adminkit .dashicons-before.' . $class . '::before{content:"";display:inline-block;width:20px;height:20px;font-size:0;' . AdminKit_Icons::mask( $svg ) . '}';
+		}
+		$special = array(
+			'#collapse-button .collapse-button-icon::after' => 'panel-left-close',
+			'.column-comments .comment-grey-bubble::before' => 'message-square',
+			'.sorting-indicator.asc::before' => 'chevron-up',
+			'.sorting-indicator.desc::before' => 'chevron-down',
+			'.view-switch .view-list::before' => 'list',
+			'.view-switch .view-grid::before' => 'grid-2x2',
+		);
+		foreach ( $special as $selector => $name ) {
+			$css .= 'body.adminkit ' . $selector . '{content:"";display:inline-block;width:18px;height:18px;' . AdminKit_Icons::mask( AdminKit_Icons::svg( $name ) ) . '}';
+		}
+		return $css;
 	}
 
 	/**

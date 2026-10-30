@@ -226,27 +226,26 @@ body.adminkit #adminmenu li.menu-top {
 }
 
 /* Hover / focus on non-current items — match WP's exact selectors with
-   !important to defeat colors.css. Lifts to --ak-elevated — a crisp step on the
-   sidebar surface, matching the settings rows + list tables (the current item,
-   also --ak-elevated, stays distinct by its bold label). */
+   !important to defeat colors.css. The hover role remains visible on the
+   sidebar in both themes; the active row keeps its separate selection state. */
 body.adminkit #adminmenu a:hover,
 body.adminkit #adminmenu li.menu-top:hover,
 body.adminkit #adminmenu li.opensub > a.menu-top,
 body.adminkit #adminmenu li > a.menu-top:focus {
 	color: var(--ak-heading) !important;
-	background-color: var(--ak-elevated) !important;
+	background-color: var(--ak-hover-bg) !important;
 }
 
 /* WP core ships `#adminmenu a:focus, #adminmenu a:hover` with
    `box-shadow: inset 4px 0 0 0 currentColor; transition: box-shadow .1s`.
    That paints a 4px vertical bar in the link's text color — in the Modern
    scheme that color is blue (#7b90ff), so a colored stripe leaks into our
-   palette on focus / hover, plus the animation we don't want. Kill both. */
+   palette on focus / hover. Remove that shadow; explicit color transitions
+   below replace the native transition-all behavior. */
 body.adminkit #adminmenu a:focus,
 body.adminkit #adminmenu a:hover,
 body.adminkit.folded #adminmenu .wp-submenu-head:hover {
 	box-shadow: none !important;
-	transition: none !important;
 }
 
 body.adminkit #adminmenu li.menu-top:hover .wp-menu-image::before,
@@ -255,7 +254,7 @@ body.adminkit #adminmenu li.menu-top:focus-within .wp-menu-image::before {
 }
 
 body.adminkit #adminmenu .wp-menu-image::before {
-	color: var(--ak-text-muted);
+	color: var(--ak-icon);
 }
 
 /* Plugin menu icons drawn as a data-URI SVG or an <img> on `.wp-menu-image`
@@ -282,21 +281,21 @@ body.adminkit #adminmenu li.wp-has-current-submenu {
 	--ak-mic: 0.95;
 }
 
-/* Current item — the active row carries a subtle ACCENT fill: a 12% brand tint
+/* Current item — the active row carries a subtle ACCENT fill: a 8% brand tint
    mixed into the surface (so it stays mode- AND provider-aware) — NOT a hardcoded
    `#3858e91a` alpha. We mix explicitly rather than reuse --ak-primary-subtle here
    because that token's DARK value is bumped to 22% (so pale chips/badges read on
-   dark), which is a touch heavy as a full-row menu fill: a fixed 12% keeps the row
+   dark), which is a touch heavy as a full-row menu fill: a fixed 8% keeps the row
    equally quiet in light AND dark. Brand HUE (not a neutral lift) so the active row
    stays distinct from the neutral --ak-elevated hover; it reads "selected in the
-   brand colour" with the accent icon + 3px accent left marker below. --ak-heading
+   brand colour" with the accent icon + 2px accent left marker below. --ak-heading
    label stays legible. Covers the whole <li> (incl. wp-menu-open / current.menu-top). */
 body.adminkit #adminmenu li.current a.menu-top,
 body.adminkit #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
 body.adminkit #adminmenu li.wp-menu-open,
 body.adminkit #adminmenu li.current.menu-top {
-	background: color-mix(in srgb, var(--ak-primary) 12%, var(--ak-surface)) !important;
+	background: color-mix(in srgb, var(--ak-primary) 8%, var(--ak-surface)) !important;
 	color: var(--ak-heading) !important;
 }
 
@@ -318,7 +317,7 @@ body.adminkit #adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head 
    (feature OFF) is coloured the same way, so this one rule covers both. */
 body.adminkit #adminmenu li.current a.menu-top .wp-menu-image::before,
 body.adminkit #adminmenu li.wp-has-current-submenu .wp-menu-image::before {
-	color: var(--ak-primary-text) !important;
+	color: var(--ak-icon-active) !important;
 }
 
 /* "You-are-here" LEFT ACCENT MARKER — a short --ak-primary bar on the active
@@ -346,7 +345,7 @@ body.adminkit #adminmenu li.wp-menu-open > a.menu-top::before {
 	top: 0;
 	bottom: 0;
 	left: 0;
-	width: 3px;
+	width: 2px;
 	background: var(--ak-primary) !important;
 	border-radius: 0 var(--ak-radius-s, 5px) var(--ak-radius-s, 5px) 0;
 	z-index: 4;
@@ -487,8 +486,15 @@ body.adminkit #collapse-button {
 }
 
 body.adminkit #collapse-button:hover,
-body.adminkit #collapse-button:focus {
+body.adminkit #collapse-button:focus,
+body.adminkit #collapse-button:active {
+	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
+	box-shadow: none;
+}
+body.adminkit #collapse-button:focus-visible {
+	outline: var(--wk-focus-width) solid var(--ak-focus);
+	outline-offset: calc(-1 * var(--wk-focus-width));
 }
 
 /* Postboxes / metaboxes */
@@ -1246,3 +1252,90 @@ body.adminkit .subsubsub li.spam .count {
 body.adminkit .subsubsub li.mine .count {
 	color: var(--ak-info);
 }
+
+/* Quieter supporting glyphs; active/hover states keep their own emphasis. */
+body.adminkit :is(.ak-dash__greeting, .ak-dash__actions, .ak-dash__adminkit-ic, .ak-dash__rc-icon, .ak-post-preview--empty) svg { color: var(--ak-icon); }
+body.adminkit #collapse-button .collapse-button-icon { color: var(--ak-icon); }
+body.adminkit #adminmenu li.menu-top:hover .wp-menu-image::before,
+body.adminkit #adminmenu li.menu-top:focus-within .wp-menu-image::before { color: var(--ak-icon-active); }
+
+body.adminkit .ak-dash__actions .ak-btn--primary svg { color: var(--ak-on-accent); }
+
+body.adminkit :is(.column-comments .comment-grey-bubble, .sorting-indicator) { color: var(--ak-icon); }
+
+/* Native status filters follow WaasKit's segmented tabs. These remain
+   navigation links, rather than ARIA tabs controlling an in-page panel. */
+body.adminkit ul.subsubsub {
+ padding: 3px;
+ gap: 2px;
+ background: var(--ak-surface-muted);
+ border-radius: var(--wk-radius-md);
+}
+body.adminkit .subsubsub a {
+ padding-inline: 14px;
+ border: 1px solid transparent;
+ border-radius: calc(var(--wk-radius-md) - 3px);
+ font-weight: 500;
+ transition: color var(--wk-duration-fast) var(--wk-ease-standard), background-color var(--wk-duration-fast) var(--wk-ease-standard);
+}
+body.adminkit .subsubsub a:hover,
+body.adminkit .subsubsub a:focus {
+ background: transparent;
+ /* Keep the global link accent out of these neutral navigation segments. */
+ border-color: transparent;
+ color: var(--ak-heading);
+}
+body.adminkit .subsubsub a.current,
+body.adminkit .subsubsub a.current:hover,
+body.adminkit .subsubsub a.current:focus {
+ background: var(--ak-elevated);
+ border-color: var(--ak-border);
+ box-shadow: var(--wk-elevation-1);
+ font-weight: 500;
+}
+body.adminkit .subsubsub a:not(.button):focus-visible {
+ outline: 2px solid var(--ak-text-muted);
+ outline-offset: -2px;
+}
+body.adminkit .subsubsub .count {
+ min-width: 18px;
+ padding-inline: 4px;
+ background: color-mix(in srgb, currentColor 10%, transparent);
+ font-variant-numeric: tabular-nums;
+}
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit .subsubsub a { transition: none; }
+}
+
+/* Native WordPress controls: feedback only, no page entrance choreography. */
+@media (prefers-reduced-motion: no-preference) {
+body.adminkit:is(.index-php, .edit-php, .edit-tags-php, .upload-php, .media-new-php, .post-php, .post-new-php, .edit-comments-php, .comment-php, .themes-php, .theme-install-php, .plugins-php, .plugin-install-php, .users-php, .user-new-php, .profile-php, .user-edit-php, .options-general-php, .options-writing-php, .options-reading-php, .options-discussion-php, .options-media-php, .options-permalink-php, .tools-php, .import-php, .export-php, .site-health-php, .theme-editor-php, .plugin-editor-php) :is(.button, .page-title-action, .nav-tab, .ak-tabs button, #adminmenu a, .row-actions a) {
+ transition: background-color 120ms var(--ak-ease-standard), border-color 120ms var(--ak-ease-standard), color 120ms var(--ak-ease-standard);
+}
+body.adminkit:is(.index-php, .edit-php, .edit-tags-php, .upload-php, .media-new-php, .post-php, .post-new-php, .edit-comments-php, .comment-php, .themes-php, .theme-install-php, .plugins-php, .plugin-install-php, .users-php, .user-new-php, .profile-php, .user-edit-php, .options-general-php, .options-writing-php, .options-reading-php, .options-discussion-php, .options-media-php, .options-permalink-php, .tools-php, .import-php, .export-php, .site-health-php, .theme-editor-php, .plugin-editor-php) :is(input:not([type=checkbox]):not([type=radio]), textarea, select) {
+ transition: border-color 120ms var(--ak-ease-standard), box-shadow 120ms var(--ak-ease-standard);
+}
+body.adminkit:is(.index-php, .edit-php, .edit-tags-php, .upload-php, .media-new-php, .post-php, .post-new-php, .edit-comments-php, .comment-php, .themes-php, .theme-install-php, .plugins-php, .plugin-install-php, .users-php, .user-new-php, .profile-php, .user-edit-php, .options-general-php, .options-writing-php, .options-reading-php, .options-discussion-php, .options-media-php, .options-permalink-php, .tools-php, .import-php, .export-php, .site-health-php, .theme-editor-php, .plugin-editor-php) details[open] > :not(summary) {
+ animation: ak-disclosure-open 140ms var(--ak-ease-standard);
+}
+}
+@keyframes ak-disclosure-open { from { opacity: .6; } to { opacity: 1; } }
+
+/* A masked icon paints currentColor through its background. Animating both
+   color AND background-color (WP's transition:all) produces a bright exit flash.
+   Animate the color once; the mask, geometry and background remain stable. */
+body.adminkit #adminmenu .wp-menu-image::before {
+ transition: color 120ms var(--ak-ease-standard);
+}
+body.adminkit #adminmenu :is(a, li.menu-top) {
+ transition: background-color 120ms var(--ak-ease-standard), color 120ms var(--ak-ease-standard);
+}
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit #adminmenu :is(a, li.menu-top),
+ body.adminkit #adminmenu .wp-menu-image::before { transition: none; }
+}
+
+/* WP keeps .opensub for a short closing delay and paints its icon white even
+   after :hover ends. Cover that native state rather than flashing through it. */
+body.adminkit #adminmenu li.menu-top .wp-menu-image::before { color: var(--ak-icon); }
+body.adminkit #adminmenu li.menu-top:is(:hover, :focus-within, .opensub) .wp-menu-image::before { color: var(--ak-icon-active); }

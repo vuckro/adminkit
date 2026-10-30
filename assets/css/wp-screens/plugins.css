@@ -48,7 +48,7 @@ body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
    border-left with !important to beat the `.plugins tbody td/th` reset above. */
 body.adminkit .wp-list-table.plugins tr.active th.check-column,
 body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
-	border-left: 4px solid color-mix(in srgb, var(--ak-success) 60%, var(--ak-table-bg)) !important;
+	border-left: 1px solid color-mix(in srgb, var(--ak-success) 60%, var(--ak-table-bg)) !important;
 }
 
 /* Inactive plugins — keep the table surface, mute the title.
@@ -347,4 +347,14 @@ body.adminkit .wp-list-table.plugin-install {
    own ring, so focus is still visible. */
 body.adminkit a:focus .plugin-icon {
 	box-shadow: none;
+}
+
+/* Long plugin names must wrap rather than squeeze the description column. */
+@media screen and (min-width: 783px) {
+	body.adminkit .wp-list-table.plugins { table-layout: fixed; }
+	body.adminkit .wp-list-table.plugins .column-name { width: 30%; }
+	body.adminkit .wp-list-table.plugins .column-description { width: auto; }
+	body.adminkit .wp-list-table.plugins .column-auto-updates { width: 20%; }
+	body.adminkit .wp-list-table.plugins .plugin-title { white-space: normal; overflow-wrap: anywhere; }
+	body.adminkit .wp-list-table.plugins tbody :is(td, th) { vertical-align: top; }
 }

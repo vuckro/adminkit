@@ -916,7 +916,9 @@
 
 		function openIconPicker(anchor, top, tree) {
 			closeIconPicker();
-			var pop = el('div', { class: 'ak-icon-pop' });
+			var pop = el('div', { class: 'ak-icon-pop', role: 'dialog', 'aria-label': I.menuIconPick });
+			anchor.setAttribute('aria-expanded', 'true');
+			pop.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.preventDefault(); closeIconPicker(); anchor.focus(); } });
 			var choices = []; // { el, val } — every selectable swatch, for the highlight sweep.
 
 			// Repaint highlight + the anchor button. `commit` also flags the menu dirty;
@@ -941,7 +943,7 @@
 			var akTab = el('button', {
 				type: 'button',
 				class: 'ak-icon-pop__tab on',
-				text: I.menuIconAkSet || 'AdminKit icons'
+				text: 'Lucide'
 			});
 			var wpTab = el('button', {
 				type: 'button',
@@ -976,21 +978,38 @@
 			});
 			choices.push({ el: noneBtn, val: '' });
 			akPane.appendChild(el('div', { class: 'ak-icon-pop__defbar' }, [noneBtn]));
+			var search = el('input', { type: 'search', class: 'ak-icon-pop__search', placeholder: I.menuIconSearch, 'aria-label': I.menuIconSearch });
+			akPane.appendChild(search);
+			var empty = el('p', { class: 'ak-icon-pop__empty', role: 'status', 'aria-live': 'polite' });
+			akPane.appendChild(empty);
 			var grid = el('div', { class: 'ak-icon-pop__grid' });
-			Object.keys(MM.icons || {}).forEach(function (name) {
-				var sw = el('button', {
-					type: 'button',
-					class: 'ak-icon-pop__sw',
-					title: name,
-					'aria-label': name,
-					onclick: function () {
-						choose(name);
-					}
+			var names = Object.keys(MM.icons || {});
+			var filtered = names;
+			var shown = 0;
+			function appendIcons() {
+				filtered.slice(shown, shown + 120).forEach(function (name) {
+					var sw = el('button', { type: 'button', class: 'ak-icon-pop__sw', title: name, 'aria-label': name, onclick: function () { choose(name); } });
+					sw.innerHTML = MM.icons[name];
+					choices.push({ el: sw, val: name });
+					grid.appendChild(sw);
 				});
-				sw.innerHTML = MM.icons[name];
-				choices.push({ el: sw, val: name });
-				grid.appendChild(sw);
+				shown = Math.min(shown + 120, filtered.length);
+				paint();
+			}
+			search.addEventListener('input', function () {
+				var words = { calendrier: 'calendar', fleche: 'arrow', gauche: 'left', droite: 'right', haut: 'up', bas: 'down', reglage: 'settings', reglages: 'settings', parametres: 'settings', image: 'image', photo: 'image', dossier: 'folder', fichier: 'file', message: 'message', utilisateur: 'user', recherche: 'search', maison: 'house', panier: 'cart', courriel: 'mail', horloge: 'clock', alerte: 'alert' };
+				var q = search.value.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/\s+/).map(function (word) { return words[word] || word; }).join('-');
+				filtered = names.filter(function (name) { return name.indexOf(q) !== -1; });
+				choices = choices.filter(function (c) { return !grid.contains(c.el); });
+				grid.textContent = '';
+				empty.textContent = filtered.length ? '' : I.menuIconEmpty;
+				shown = 0;
+				appendIcons();
 			});
+			pop.addEventListener('scroll', function () {
+				if (akPane.style.display !== 'none' && pop.scrollTop + pop.clientHeight >= pop.scrollHeight - 120 && shown < filtered.length) appendIcons();
+			});
+			appendIcons();
 			akPane.appendChild(grid);
 			pop.appendChild(akPane);
 
@@ -1081,7 +1100,7 @@
 			pop.appendChild(
 				el('div', { class: 'ak-icon-pop__hint' }, [
 					document.createTextNode((I.menuIconHint || 'Need an icon? Copy an SVG from') + ' '),
-					el('a', { href: 'https://www.iconbolt.com/', target: '_blank', rel: 'noopener', text: 'Icon Bolt' }),
+					el('a', { href: 'https://lucide.dev/icons/', target: '_blank', rel: 'noopener', text: 'Lucide' }),
 					document.createTextNode('.')
 				])
 			);
@@ -1090,6 +1109,7 @@
 			positionPopover(pop, anchor);
 			pop.__akAnchor = anchor;
 			openPicker = pop;
+			search.focus();
 			paint(); // seed the highlight (no dirty flag).
 			setTimeout(function () {
 				document.addEventListener('mousedown', onDocDown, true);
@@ -1129,6 +1149,7 @@
 
 		function closeIconPicker() {
 			if (openPicker && openPicker.parentNode) {
+				if (openPicker.__akAnchor) openPicker.__akAnchor.setAttribute('aria-expanded', 'false');
 				openPicker.parentNode.removeChild(openPicker);
 			}
 			openPicker = null;

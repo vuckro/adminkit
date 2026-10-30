@@ -7,6 +7,15 @@
  * `views_*` filters. Loaded as a footer script on admin pages.
  */
 (function () {
+	// Keep the primary action first in both visual and keyboard order.
+	if (document.body.matches('.post-php, .post-new-php')) {
+		var actions = document.getElementById('major-publishing-actions');
+		var publish = document.getElementById('publishing-action');
+		if (actions && publish && publish.parentNode === actions) {
+			actions.insertBefore(publish, actions.firstChild);
+		}
+	}
+
 	// Scroll wide columns as one table; native list screens also group their
 	// existing top/bottom controls in a WaasKit-style card within the same form.
 	Array.prototype.forEach.call(document.querySelectorAll('.wp-list-table'), function (table) {
@@ -30,6 +39,9 @@
 		card.appendChild(wrap);
 		bars.filter(function (bar) { return bar.classList.contains('bottom'); }).forEach(function (bar) { card.appendChild(bar); });
 	});
+
+	// Reveal only after the table, controls and duplicate footer have settled.
+	if (window.akRevealTables) window.akRevealTables();
 
 	// Quick / Bulk Edit: keep the inline-edit form within the visible area on a
 	// wide (horizontally scrollable) table. The edit cell spans every column, so

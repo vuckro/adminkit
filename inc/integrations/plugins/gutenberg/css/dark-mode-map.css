@@ -451,7 +451,8 @@ body.block-editor-page.adminkit .editor-post-publish-panel__footer {
 	color: var(--ak-text);
 }
 
-body.block-editor-page.adminkit .editor-post-publish-panel__title {
+body.block-editor-page.adminkit .editor-post-publish-panel__title,
+body.block-editor-page.adminkit .editor-post-publish-panel__prepublish > div > strong {
 	color: var(--ak-heading);
 }
 
@@ -1177,3 +1178,40 @@ body.block-editor-page.adminkit .components-button[aria-pressed="true"]:hover:no
 	color: var(--ak-primary);
 	border-radius: var(--ak-radius-s);
 }
+
+/* Native editor controls that use CSS-in-JS literals in WordPress 7. */
+body.block-editor-page.adminkit .block-editor-inserter__search.components-search-control {
+	background: var(--ak-surface);
+}
+body.block-editor-page.adminkit .components-search-control .components-input-control__input {
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+body.block-editor-page.adminkit .components-search-control .components-input-control__input::placeholder,
+body.block-editor-page.adminkit .components-search-control .components-input-control__suffix,
+body.block-editor-page.adminkit .components-search-control .components-input-control__prefix {
+	color: var(--ak-text-subtle);
+}
+body.block-editor-page.adminkit .components-form-token-field input.components-form-token-field__input {
+	background: transparent;
+	color: var(--ak-text);
+	box-shadow: none;
+	border: 0;
+}
+body.block-editor-page.adminkit .components-panel__body-toggle:focus { outline: none; }
+body.block-editor-page.adminkit .components-panel__body-toggle:focus-visible { box-shadow: var(--ak-focus-ring); }
+body.block-editor-page.adminkit .editor-post-panel__row-label { flex-basis: 44%; }
+body.block-editor-page.adminkit .editor-post-panel__row-control { min-width: 0; }
+
+/* The token input is nested inside the focused field; draw only one ring. */
+body.block-editor-page.adminkit .components-form-token-field input.components-form-token-field__input:focus {
+	outline: none;
+	box-shadow: none;
+}
+body.block-editor-page.adminkit .components-form-token-field__input-container:focus-within { outline: none; }
+
+body.block-editor-page.adminkit .components-search-control .components-input-control__container {
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+body.block-editor-page.adminkit .components-search-control svg { color: var(--ak-text-muted); }

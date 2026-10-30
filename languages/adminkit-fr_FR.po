@@ -1495,3 +1495,7 @@ msgstr "Monochrome"
 #: inc/settings/class-settings-page.php
 msgid "WaasKit blue"
 msgstr "Bleu WaasKit"
+
+#: inc/settings/class-settings-page.php
+msgid "No icons found."
+msgstr "Aucune icône trouvée."

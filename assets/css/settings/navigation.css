@@ -138,7 +138,7 @@
 	border: 1px solid var(--ak-card-border);
 	border-radius: var(--ak-radius-m);
 	background: var(--ak-elevated);
-	box-shadow: 0 8px 30px rgba( 0, 0, 0, 0.18 );
+	box-shadow: var(--ak-shadow-elevated);
 	max-height: min( 440px, 78vh );
 	overflow-y: auto;
 	overscroll-behavior: contain;
@@ -256,7 +256,7 @@
 .adminkit-app .ak-icon-pop__ta {
 	flex: 1 1 auto;
 	min-width: 0;
-	font-family: monospace;
+	font-family: var(--ak-font-mono);
 	font-size: var(--ak-text-xs);
 	border: 1px solid var(--ak-border);
 	border-radius: var(--ak-radius-s);
@@ -303,7 +303,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	font-family: monospace;
+	font-family: var(--ak-font-mono);
 	color: var(--ak-text);
 }
 .adminkit-app .ak-url-pop__row { align-items: center; }
@@ -362,7 +362,7 @@
 }
 .adminkit-app .ak-menu-input--url {
 	flex: 1 1 auto;
-	font-family: monospace;
+	font-family: var(--ak-font-mono);
 	font-size: var(--ak-text-xs);
 }
 .adminkit-app .ak-menu-remove {
@@ -397,3 +397,20 @@
 	box-shadow: inset 0 0 0 2px var(--ak-primary);
 	border-radius: var(--ak-radius-s);
 }
+
+/* Keep menu names readable when the controls no longer fit on one line. */
+@media screen and (max-width: 782px) {
+	.adminkit-app .ak-menu-row { flex-wrap: wrap; gap: var(--ak-space-s); }
+	.adminkit-app .ak-menu-title { flex: 1 1 calc(100% - 130px); min-width: 120px; max-width: 100%; box-sizing: border-box; }
+	.adminkit-app .ak-menu-row__expand { margin-left: auto; min-height: var(--ak-control-height-touch); }
+	.adminkit-app :is(.ak-menu-icon, .ak-menu-url, .ak-menu-hide, .ak-menu-newtab, .ak-menu-remove) { width: var(--ak-control-height-touch); height: var(--ak-control-height-touch); }
+	.adminkit-app .ak-menu-move__btn { width: 30px; height: 22px; }
+	.adminkit-app .ak-menu-row--link .ak-menu-input--url { flex-basis: 100%; }
+	.adminkit-app :is(.ak-icon-pop, .ak-url-pop) { max-width: calc(100vw - 70px); box-sizing: border-box; }
+}
+
+.adminkit-app .ak-icon-pop__sw { color: var(--ak-icon); }
+.adminkit-app .ak-icon-pop__sw:is(:hover, :focus-visible, .on) { color: var(--ak-icon-active); }
+.adminkit-app .ak-icon-pop__search { width: 100%; }
+
+.adminkit-app .ak-icon-pop__empty:empty { display: none; }

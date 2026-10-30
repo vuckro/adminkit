@@ -3,10 +3,10 @@
    in screens/plugins.css since they only apply on plugins.php. */
 
 /* .widefat content text — WP hardcodes #2c3338 which doesn't react to dark mode */
-body.adminkit .widefat:not(.wp-list-table) p,
-body.adminkit .widefat:not(.wp-list-table) ol,
-body.adminkit .widefat:not(.wp-list-table) ul,
-body.adminkit .widefat:not(.wp-list-table) li {
+body.adminkit .widefat p,
+body.adminkit .widefat ol,
+body.adminkit .widefat ul,
+body.adminkit .widefat li {
 	color: var(--ak-text);
 }
 
@@ -122,7 +122,7 @@ body.adminkit .ak-table-card {
 	background: var(--ak-table-bg);
 	border: 1px solid var(--ak-table-border);
 	border-radius: var(--ak-table-radius);
-	box-shadow: var(--ak-shadow-subtle);
+	box-shadow: none;
 	overflow: hidden;
 }
 body.adminkit .ak-table-card > .tablenav {
@@ -272,27 +272,16 @@ body.adminkit .column-response a.post-com-count-approved:focus .comment-count-ap
 	color: var(--ak-on-accent);
 }
 
-/* Status-filter row (.subsubsub: All | Published | Drafts | Trash | …). core
-   chrome.css lays it out as inline pills that wrap (flex-wrap: wrap), so on a
-   narrow screen they pile onto several lines. Keep them on ONE line — like the
-   table itself — so the filters stay a single tidy strip. ul.subsubsub (0,2,2)
-   out-specifies the chrome.css rule (0,2,1) so flex-wrap flips without !important.
-
-   Overflow: `clip` (not `auto`/`hidden`). `auto` reserves a band for the
-   horizontal scrollbar at the bottom of the element in WebKit/Blink even when
-   no scrolling is happening and `scrollbar-width: none` is set — that reserved
-   gutter is what produced the persistent empty strip under the pills the user
-   was seeing on plugins.php / edit.php / edit-comments.php. `clip` skips the
-   scroll machinery entirely (no gutter, no reserved band); on very narrow
-   screens the rightmost pills get visually cut off instead of scrolling, which
-   is the accepted trade — the same handful of short labels (All / Active /
-   Inactive / …) fit at every realistic admin viewport. */
+/* Keep status filters reachable on small screens without a scrollbar gutter. */
 body.adminkit ul.subsubsub {
 	flex-wrap: nowrap;
 	max-width: 100%;
-	overflow-x: clip;
-	overflow-y: clip;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: none;
 }
+body.adminkit ul.subsubsub::-webkit-scrollbar { display: none; }
+body.adminkit ul.subsubsub li { flex-shrink: 0; }
 
 /* tablenav (bulk actions + filters + pagination, above & below list tables).
    Lay the controls out in a SINGLE horizontal row that scrolls when narrow
@@ -446,7 +435,7 @@ body.adminkit .inline-edit-row fieldset .inline-edit-categories label {
 body.adminkit .inline-edit-row fieldset label span.input-text-wrap input,
 body.adminkit .inline-edit-row fieldset label textarea,
 body.adminkit .inline-edit-row fieldset select {
-	background: var(--ak-surface);
+	background-color: var(--ak-input-bg);
 	border-color: var(--ak-border);
 	border-radius: var(--ak-radius-s);
 }
@@ -458,7 +447,8 @@ body.adminkit .inline-edit-row fieldset label span.input-text-wrap input:focus,
 body.adminkit .inline-edit-row fieldset label textarea:focus,
 body.adminkit .inline-edit-row fieldset select:focus {
 	border-color: var(--ak-primary);
-	background: var(--ak-primary-subtle);
+	background-color: var(--ak-input-bg);
+	box-shadow: var(--ak-focus-ring);
 }
 
 body.adminkit .inline-edit-row .inline-edit-save {
@@ -518,7 +508,7 @@ body.adminkit .ak-table-scroll {
 	clear: both;
 	background: var(--ak-table-bg);
 	border: 1px solid var(--ak-table-border);
-	box-shadow: var(--ak-shadow-subtle);
+	box-shadow: none;
 	border-radius: var(--ak-table-radius);
 	overflow-x: auto;
 	overflow-y: hidden;
@@ -628,4 +618,125 @@ body.adminkit .wp-list-table .inline-edit-row th {
 body.adminkit .wp-list-table tr:focus-within .row-actions { visibility: visible; }
 @media (hover: none), (max-width: 782px) {
 	body.adminkit .wp-list-table .row-actions { visibility: visible; }
+}
+
+/* Native post-list actions are hidden by WordPress on phones. */
+@media screen and (max-width: 782px) {
+	body.adminkit .ak-table-card > .tablenav.top { min-height: 0; padding-block: 0; border-bottom: 0; }
+	body.adminkit .tablenav.bottom .actions { display: flex; flex-wrap: wrap; flex-shrink: 1; gap: var(--ak-space-s); max-width: 100%; padding-right: 0; }
+	body.adminkit .tablenav.bottom .actions select { max-width: 100%; margin-right: 0; }
+	body.adminkit .wp-list-table tbody tr.no-items td {
+		display: table-cell;
+		background: var(--ak-table-bg);
+		color: var(--ak-text-muted);
+		padding: 24px 16px;
+	}
+}
+
+/* WordPress 7 wraps the fieldsets in a region; preserve its semantics and grid. */
+body.adminkit .ak-qe-grid > .inline-edit-wrapper {
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+	gap: 24px 32px;
+	min-width: 0;
+}
+body.adminkit .inline-edit-wrapper > .inline-edit-save { grid-column: 1 / -1; }
+body.adminkit .inline-edit-wrapper > fieldset { min-width: 0; }
+body.adminkit .inline-edit-row .cat-checklist label.selectit,
+body.adminkit .inline-edit-row .cat-checklist li,
+body.adminkit .inline-edit-row .checkbox-title,
+body.adminkit .inline-edit-row .inline-edit-legend { color: var(--ak-text); }
+body.adminkit .inline-edit-row .cat-checklist label.selectit { font-weight: 400; }
+body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group label.alignleft { float: none; }
+body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group span.title { width: auto; float: none; display: block; margin-bottom: 4px; }
+body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group span.input-text-wrap { margin-left: 0; }
+
+/* The grid follows available panel width, including folded and mobile menus. */
+body.adminkit .ak-qe-grid { container-type: inline-size; }
+body.adminkit .ak-qe-grid > .inline-edit-wrapper { grid-template-columns: minmax(0, 1fr); }
+@container (min-width: 600px) {
+	body.adminkit .ak-qe-grid > .inline-edit-wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	body.adminkit .inline-edit-wrapper > .inline-edit-col-left { grid-column: 1 / -1; }
+}
+@container (min-width: 960px) {
+	body.adminkit .ak-qe-grid > .inline-edit-wrapper { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	body.adminkit .inline-edit-wrapper > .inline-edit-col-left { grid-column: auto; }
+}
+body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-col > label > span.title {
+	display: block; float: none; width: auto; margin-bottom: 4px;
+}
+body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-col > label > span.input-text-wrap { margin-left: 0; }
+body.adminkit .inline-edit-row .inline-edit-date .title { float: none; width: auto; }
+body.adminkit .inline-edit-row .timestamp-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-left: 0; }
+body.adminkit .inline-edit-row .timestamp-wrap label { display: block; margin: 0; }
+body.adminkit .inline-edit-row .timestamp-wrap input { margin: 0; }
+body.adminkit .inline-edit-row ul.cat-checklist { height: auto; min-height: 96px; max-height: 180px; }
+
+body.adminkit #bulk-titles :is(.ntdelitem, .title),
+body.adminkit #bulk-titles .ntdelbutton { color: var(--ak-text); }
+body.adminkit #bulk-titles .ntdelbutton:hover { color: var(--ak-error); }
+body.adminkit .inline-edit-row .inline-edit-col-right .inline-edit-group {
+	display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: 12px;
+}
+body.adminkit .inline-edit-row .inline-edit-col-right .inline-edit-group > label {
+	float: none; width: auto; min-width: 0; margin: 0;
+}
+body.adminkit .inline-edit-row .inline-edit-col-right label > span.title {
+	display: block; float: none; width: auto; margin-bottom: 4px;
+}
+body.adminkit .inline-edit-row .inline-edit-col-right label:has(input[type="checkbox"]) {
+	display: flex; align-items: center; gap: 8px;
+}
+body.adminkit .inline-edit-row .inline-edit-col-right select { max-width: 100%; }
+
+/* Native comment actions carry semantic colors in both modes. */
+body.adminkit #the-comment-list .row-actions .unapprove a { color: var(--ak-warning); }
+body.adminkit #the-comment-list .row-actions .approve a { color: var(--ak-success); }
+body.adminkit #the-comment-list .row-actions .spam a { color: var(--ak-error); }
+
+/* Long author names in the comments table must not overlap the comment text. */
+body.adminkit .wp-list-table tbody td.column-author {
+	white-space: normal; overflow-wrap: anywhere;
+}
+
+body.adminkit .tablenav .current-page { border-color: var(--ak-input-border); }
+
+/* Table interaction rhythm: stable columns, neutral selection, readable states. */
+body.adminkit .wp-list-table thead th.sorted { color: var(--ak-heading); }
+body.adminkit .wp-list-table tbody tr:has(> .check-column input[type=checkbox]:checked) > :is(td, th) {
+ background: color-mix(in srgb, var(--ak-text-muted) 10%, var(--ak-table-bg));
+}
+body.adminkit .wp-list-table tbody tr:has(> .check-column input[type=checkbox]:checked) > .check-column,
+body.adminkit .wp-list-table #the-list tr:has(> .check-column input[type=checkbox]:checked) > .check-column {
+ box-shadow: inset 2px 0 0 var(--ak-text-muted);
+}
+body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-author-uri) {
+ color: var(--ak-text-muted);
+}
+@media (hover: hover) and (min-width: 783px) {
+ body.adminkit .wp-list-table .row-actions {
+  visibility: visible;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms var(--ak-ease-standard);
+ }
+ body.adminkit .wp-list-table tr:is(:hover, :focus-within) .row-actions,
+ body.adminkit .wp-list-table .row-actions.visible {
+  opacity: 1;
+  pointer-events: auto;
+ }
+}
+@media (prefers-reduced-motion: no-preference) {
+ body.adminkit .wp-list-table .inline-edit-row:not(.hidden) .inline-edit-wrapper {
+  animation: ak-inline-edit-open 160ms cubic-bezier(0.16, 1, 0.3, 1);
+ }
+}
+@keyframes ak-inline-edit-open {
+ from { opacity: .5; clip-path: inset(0 0 12px 0); }
+ to { opacity: 1; clip-path: inset(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit .wp-list-table :is(td, th, .row-actions) { transition: none; }
 }

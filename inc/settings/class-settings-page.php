@@ -415,6 +415,7 @@ class AdminKit_Settings_Page {
 				'menuIconAkSet'     => __( 'AdminKit icons', 'adminkit' ),
 				'menuIconWpSet'     => __( 'WordPress icons', 'adminkit' ),
 				'menuIconSearch'    => __( 'Search…', 'adminkit' ),
+				'menuIconEmpty'     => __( 'No icons found.', 'adminkit' ),
 				'menuHide'          => __( 'Hide', 'adminkit' ),
 				'menuShow'          => __( 'Show', 'adminkit' ),
 				'menuSubmenus'      => __( 'submenus', 'adminkit' ),

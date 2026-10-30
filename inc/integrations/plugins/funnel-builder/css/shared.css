@@ -1,0 +1,292 @@
+/* FunnelKit's two apps share BWF components. Keep this skin inside their owned
+   admin pages, including body-portaled dialogs; no checkout/email content skin. */
+body.adminkit.adminkit-funnelkit {
+ --xy-background-color: var(--ak-bg);
+ --xy-node-background-color: var(--ak-surface);
+ --xy-node-color: var(--ak-text);
+ --xy-node-border: 1px solid var(--ak-border);
+ --xy-edge-stroke: var(--ak-border-strong);
+ --xy-edge-stroke-selected: var(--ak-primary);
+ --xy-handle-background-color: var(--ak-text-muted);
+ --xy-handle-border-color: var(--ak-surface);
+ --xy-controls-button-background-color: var(--ak-surface);
+ --xy-controls-button-background-color-hover: var(--ak-hover-bg);
+ --xy-controls-button-color: var(--ak-text);
+ --xy-controls-button-border-color: var(--ak-border);
+ --xy-minimap-background-color: var(--ak-surface);
+ --xy-minimap-node-background-color: var(--ak-border-strong);
+ --xy-attribution-background-color: var(--ak-surface);
+}
+body.adminkit.adminkit-funnelkit :is(#wpbody, #wpbody-content, .wffn-page, .bwfcrm-page, .bwf-container) { background: var(--ak-bg); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) {
+ font-family: var(--ak-font-body);
+ color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) :is(.bwfan_header, .bwfan_header_l1, .bwf-card, .bwf-card-content, .bwf-table, .bwf-tabs-accordian-wrap, .bwf-tab-section-wrap, .bwf-summary, .bwf-step-sticky, .wffn-side-panel, .bwf-announcements__header, .bwf-announcements__body, .components-modal__frame, .components-modal__content, .components-modal__header, .components-popover__content) {
+ background-color: var(--ak-surface);
+ border-color: var(--ak-border);
+ color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) :is(h1, h2, h3, h4, label, legend, .components-base-control__label, .bwf-card-title, .bwf-modal-title, .bwf-section-title) { color: var(--ak-heading); }
+/* The host marks its large inline-editable page title important. */
+body.adminkit.adminkit-funnelkit .bwf-header-title { color: var(--ak-heading) !important; }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) :is(p, .hint, .description, .components-base-control__help, .bwf-description) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit :is(.bwf-table-table, .bwf-table-item, .bwf-table-header, .bwf-card-footer, .bwf-card-header, .bwf-table-empty-item) { color: var(--ak-text); border-color: var(--ak-border); background: var(--ak-surface); }
+body.adminkit.adminkit-funnelkit .bwf-table-table :is(td, th, div, span, p, a, strong) { color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(.bwf-table-header, .bwf-table-header-2, .bwf-table-table th, .bwf-table-table th.bwf-table-col-sticky) { background: var(--ak-surface-muted); color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit .bwf-table-table tr td.bwf-table-item.bwf-table-col-sticky { background: var(--ak-surface); }
+body.adminkit.adminkit-funnelkit .bwf-table-table:not(.is-loading) tr:hover :is(td, .bwf-table-col-sticky) { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-funnelkit .bwf-table-table::before,
+body.adminkit.adminkit-funnelkit .bwf-table-table::after { background: none; pointer-events: none; }
+body.adminkit.adminkit-funnelkit .bwf-card { border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); box-shadow: none; }
+body.adminkit.adminkit-funnelkit :is(.components-modal__frame, .components-popover__content) { border-radius: var(--ak-radius-m); }
+/* BWF hardcodes important filled/gray button colors; preserve their semantics. */
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .components-button:is(.is-primary, .is-draft) {
+ background: var(--ak-primary) !important;
+ color: var(--ak-on-accent) !important;
+ border-color: var(--ak-primary);
+ border-radius: var(--ak-radius-s);
+}
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .bwf-fullsc-modal, .components-modal__frame, .components-popover__content) .components-button:is(.bwf-btn-gray, .is-gray, .is-white, .is-secondary-gray, .is-light, .is-tertiary, .bwf-funnel-buttons .is-secondary) {
+ background: var(--ak-surface) !important;
+ color: var(--ak-text) !important;
+ border-color: var(--ak-border) !important;
+ border-radius: var(--ak-radius-s);
+}
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .bwf-fullsc-modal, .components-modal__frame, .components-popover__content) .components-button:is(.bwf-btn-gray, .is-gray, .is-white, .is-secondary-gray, .is-light, .is-tertiary, .bwf-funnel-buttons .is-secondary):hover { background: var(--ak-hover-bg) !important; }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) .components-button.is-link { color: var(--ak-primary-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]), textarea, select) {
+ background-color: var(--ak-surface);
+ color: var(--ak-text);
+ border-color: var(--ak-input-border);
+ border-radius: var(--ak-radius-s);
+}
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(input, textarea, select):focus {
+ background-color: var(--ak-surface);
+ color: var(--ak-text);
+ border-color: var(--ak-primary);
+ box-shadow: var(--ak-focus-ring);
+}
+body.adminkit.adminkit-funnelkit :is(.bwf-select-control__menu, .bwf-select-control__listbox, .bwf-select-control-listbox, .bwf-select-control__control-input, .bwf-select-control__option) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(.bwf-select-control__option--is-focused, .bwf-select-control-option:hover) { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-funnelkit :is(.bwf-select-control__single-value, .bwf-select-control__placeholder) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit .bwf-table-table { scrollbar-color: var(--ak-border-strong) transparent; }
+@media (prefers-reduced-motion: no-preference) {
+ body.adminkit.adminkit-funnelkit :is(.components-button, .bwf-table-table td, .bwf-tab-section-item, .bwf-select-control__option) { transition: background-color 120ms var(--ak-ease-standard), color 120ms var(--ak-ease-standard), border-color 120ms var(--ak-ease-standard); }
+}
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(.bwf-table-table, .bwf-card) { max-width: 100%; min-width: 0; }
+ body.adminkit.adminkit-funnelkit .components-button { min-height: 44px; }
+}
+
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwfan_navigation a, .bwf-user-setup-step__heading, .bwf-user-setup-step__heading *, .bwf-user-setup-step__desc, .bwf-user-setup-modal__completed-count) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf--tag { color: var(--ak-text); background: var(--ak-elevated); border-color: var(--ak-border); }
+/* Shared dashboard and navigation primitives (the apps use div headings). */
+body.adminkit.adminkit-funnelkit :is(.bwf-dashboard, .wffn-funnel-common, .bwf--settings-tab-content) { background: var(--ak-bg); }
+body.adminkit.adminkit-funnelkit :is(.bwf-tiles, .bwf-chart, .bwf-banner, .bwf-notification-wrap) { background: var(--ak-surface); border-color: var(--ak-border); box-shadow: none; }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-heading-1, .bwf-heading-2, .bwf-heading-3, .bwf-primary, .bwf-tiles__title, .bwf-tiles__value, .bwf-notifications-title, .bwf-dashboard-card-zero-state__heading, .bwf-user-setup-step__heading) { color: var(--ak-heading); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-secondary, .bwf-tiles__item-label, .bwf-dashboard-card-zero-state__subheading, .bwf-notifications-content, .bwf-sidebar-nav-item, .bwf-select-controls-label, .field-label, .wffn_import_description, .wffn_template_meta_right, .bwf-sublium-page__payment-text) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwfan_navigation a, .bwfan_navigation span, .bwf-header-right-wrap button, .bwf-announcements__header-title) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-announcements__body :is(div, span, strong, a, li, p, h3) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-link, .bwf-announcements__body a) { color: var(--ak-primary-text); }
+body.adminkit.adminkit-funnelkit .bwf-attention-container { background: var(--ak-surface-muted); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit .bwf-header-upgrade-pro-notification { background-color: var(--ak-surface-muted) !important; }
+body.adminkit.adminkit-funnelkit .bwf-header-upgrade-pro-btn { color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(.bwfan_header, .bwf-user-setup-modal__header) .wffn-logo,
+body.adminkit.adminkit-funnelkit .bwf-user-setup-modal__header-logo { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit .bwf-admin-modal .components-modal__header { box-sizing: border-box; width: 100%; }
+body.adminkit.adminkit-funnelkit .bwf-admin-modal :is(.components-modal__header button, .bwf-support-box a) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .components-button.is-secondary-gray { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+
+/* Dialog frames are portaled directly into body. Match host app specificity. */
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) { background-color: var(--ak-surface); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.components-modal__content, .components-modal__header, .components-modal__header-heading, .bwf-support-box) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit .components-modal__frame :is(button, [role=tab], a, label, .components-checkbox-control__label) { color: inherit; }
+
+/* Vendor primitives assign literal colors to both parents and child spans. */
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) :is(.bwf-tiles__heading, .bwf-tiles__item-title, .bwf-tiles__item-value, .bwf-chart-title, .bwf-sidebar-nav-title, .bwf-content-header-title2, .automation-title, .bwf-node-content-label, .bwf-node-content-item, .bwf-node-status-label, .bwf-notifications-title, .bwf-heading3-new, .bwf-sublium-page__footer-title) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) :is(.bwf-text-light, .bwf-secondary, .bwf-tiles__item-label, .bwf-notifications-content, .bwf-detail, .bwf-funnel-list-count, .bwf-content-header-count, .bwf-node-content-type, .tab--title, .indicator-text, .wffn_template_meta_right, .wffn_import_description, .bwf-st-c__step-type) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-notifications-message, .bwf-tiles, .bwf-chart, .bwf-content-header, .bwf-content-header-wrap, .bwf-node, .bwf-node-content, .bwf-node-content-item, .bwf-node-status, .bwf-support-box, .automation-title, .bwf-sidebar-nav, .wffn_template_meta, .wffn_template_sec, .wffn_import_from_scratch) { background-color: var(--ak-surface); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-tiles, .bwf-chart, .bwf-notifications-message, .wffn_template_meta) :is(div, span, p, a) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.components-button.is-gray-light, .components-button.is-secondary-light, .components-button.is-secondary-gray) { background: var(--ak-surface-muted); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .components-button.is-primary :is(span, svg) { color: var(--ak-on-accent); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-node-status-count, .bwf-tags, .bwf--tag) { background: var(--ak-surface-muted); color: var(--ak-text); border-color: var(--ak-border); }
+/* Both apps pin these navigation/notification/white-button colors important. */
+body.adminkit.adminkit-funnelkit .bwf-sidebar-nav .bwf-sidebar-nav-inner :is(.bwf-sidebar-nav-item, .bwf-sidebar-nav-item div, .bwf-sidebar-nav-item span:not(.bwf-tags, .bwfan_tooltip_text)) { color: var(--ak-text-muted) !important; }
+body.adminkit.adminkit-funnelkit .bwf-sidebar-nav .bwf-sidebar-nav-inner .bwf-sidebar-nav-item.is-selected { color: var(--ak-text) !important; border-color: var(--ak-border-strong); }
+body.adminkit.adminkit-funnelkit .bwf-announcements__body .bwf-announcements__list-item-content a { color: var(--ak-primary-text) !important; }
+body.adminkit.adminkit-funnelkit .bwf-notification-wrap.bwf-notification-error .bwf-notifications-message :is(.bwf-notifications-title, .bwf-notifications-content) { color: var(--ak-text) !important; }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .components-button:not(.is-primary):focus-visible { outline: 2px solid var(--ak-text-muted); outline-offset: 2px; box-shadow: none; }
+/* App shells and reusable list, filter and settings surfaces. */
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.wffn-funnel-common, .bwfcrm-wrap, .bwfan_page_header, .bwf-card-list__header, .bwf-card-list__card, .bwf-template-list-header, .wffn_tab_container, .wffn_template_sec_design, .wffn_template_sec_meta, .bwf-analytics-filters, .bwf-title, .bwf-select-control__control, .bwf-content-header-new, .bwf-crm-cart-report-filter, .bwf-dropdown-button, .bwf-dropdown-button-labels, .bwf-smtp-box, .bwf--settings-tab-list-header, .tab--heading) { background-color: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-card-list__card, .wffn_template_sec_meta, .bwf-title, .tab--heading, .bwf--settings-tab-content) :is(h2, h3, div, span, label, p) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.wffn_tab_container a, .wffn_template_sec_meta a, .bwf-card-list__header a, .bwf-card-list__card a) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-select-control__control { border-color: var(--ak-input-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-notification-wrap, .bwf-attention-container, .bwf-banner) { background: var(--ak-surface-muted); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-notification-wrap, .bwf-attention-container, .bwf-banner) :is(div, span, p, a) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .components-button.bwf-dismiss { background: transparent; color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit #adminmenu a[href*="upgrade"] { background: var(--ak-surface); color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .wffn-funnel-common) { background: var(--ak-bg); color: var(--ak-text); }
+@media (prefers-reduced-motion: no-preference) {
+ body.adminkit.adminkit-funnelkit .components-modal__frame:not(.bwf-funnel-modal):not(.bwf-single-automation-modal-wrap) { animation: ak-funnelkit-dialog 140ms var(--ak-ease-standard); }
+ @keyframes ak-funnelkit-dialog { from { opacity: .85; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
+}
+
+/* Neutral segmented states, readable notices and secondary controls. */
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) :is(.bwf-heading, .bwf-content-header-title, .bwf-normal-text, .bwf-heading7-new, .bwf-h1, .bwf-head, .bwf-step, .bwf-list-item-detail, .bwf-sublium-page__header-title, .bwf-sublium-page__header-description, .bwf-sublium-page__feature-label, .bwf-legend-item-title, .wffn_template_sec_meta_group) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-heading5-new, .bwf-activity-time, .bwf-select-controls-label, .bwf-advance-toggle span) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-pro-control-field, .bwf-pro-control-field *, .bwf-attention-container *, .bwf-smtp-section p) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-pro-control-field, .bwf-advance-toggle) { background: var(--ak-surface-muted); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-advance-toggle .bwf-active { background: var(--ak-elevated); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.components-button.is-secondary, .components-button.is-tertiary, .components-button.is-success) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .components-button:not(.is-primary):not(.is-destructive) span { color: inherit; }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-analytics-filters, .bwf-tabs-accordian-wrap, .bwfan_navigation) :is(label, a, span) { color: var(--ak-text); }
+/* Native promotional notices force inline surfaces and hardcoded links. */
+body.adminkit.adminkit-funnelkit :is(.bwf-notification-wrap, .bwf-pro-control-field) { background-color: var(--ak-surface-muted) !important; }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-normal-a-t { color: var(--ak-primary-text) !important; }
+/* The host injects body{min-width:1280px!important}, even on phones. */
+body.adminkit.adminkit-funnelkit { min-width: 0 !important; }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) { min-width: 0; max-width: 100%; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwfan_header, .bwfan_header_l1, .bwfan_page_header, .bwf-content-header-new) { flex-wrap: wrap; height: auto; min-height: 56px; gap: 12px; padding: 12px 16px; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwfan_navigation { display: flex; overflow-x: auto; max-width: 100%; white-space: nowrap; gap: 16px; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwfan_navigation > * { flex-shrink: 0; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-sidebar-nav, .bwf-sidebar-nav-inner) { width: 100%; min-width: 0; display: flex; overflow-x: auto; white-space: nowrap; gap: 12px; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-sidebar-nav-item { flex-shrink: 0; padding: 12px 4px; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-sidebar-nav-title { display: none; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-table-table, .bwf-table) { overflow-x: auto; }
+ body.adminkit.adminkit-funnelkit .components-modal__frame .components-modal__content { padding: 16px; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit .components-modal__frame .components-modal__header-heading-container { min-width: 0; width: 100%; }
+}
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwfan_header_l, .bwfan_header_r) { min-width: 0; width: 100%; max-width: 100%; flex-wrap: wrap; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.wtfb-widget-tabs, .bwf-right-nav, .bwf-settings, .wtfb-tab-form) { display: block; min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings .form-group { display: block; width: 100%; max-width: 100%; min-width: 0; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings .form-group > * { width: 100%; max-width: 100%; min-width: 0; float: none; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-pro-control-field, .bwf-notification-wrap) { white-space: normal; overflow-wrap: anywhere; }
+ body.adminkit.adminkit-funnelkit .components-modal__frame .components-modal__content { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit .bwf-crm-side-panel { width: min(549px, 100vw); max-width: 100vw; }
+}
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-sidebar-nav, .bwf-sidebar-nav-inner) { max-width: 100%; height: auto; min-height: 0; max-height: none; position: static; align-self: auto; flex: 1 1 auto; border-left: 0; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-sidebar-nav .bwf-sidebar-nav-item.is-pro { display: flex; width: auto; }
+}
+body.adminkit.adminkit-funnelkit .components-modal__frame .components-modal__header .components-button[aria-label] svg { fill: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-list-btn, .bwf-ellipsis-menu__toggle) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(.bwf-list-btn, .bwf-ellipsis-menu__toggle) svg path { fill: var(--ak-text-muted); }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-pro-container, .bwf-pro-control-field, .bwf-settings .components-base-control, .bwf-settings .components-base-control__field, .bwf-settings .bwf-control-container) { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings :is(.bwf-control-container, .bwf-select-control__control) { padding-left: 0; padding-right: 0; display: block; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-pro-control-field .bwf-flex { flex-wrap: wrap; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) iframe { max-width: 100%; }
+}
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-pro-container, .bwf-brown-light-notice) { background: var(--ak-surface-muted); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-brown-light-notice :is(span, a, div) { color: var(--ak-text); }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings :is(input, textarea, select, .components-button, .hint, .bwf-brown-light-notice) { margin-left: 0; margin-right: 0; max-width: 100%; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings .components-base-control__label { position: static; display: block; width: 100%; max-width: 100%; margin: 0 0 8px; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-pro-container { display: block; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-pro-container .components-button { width: 100%; margin-top: 12px; }
+ body.adminkit.adminkit-funnelkit .wffn-side-panel { max-width: 100vw; }
+}
+@media (max-width: 782px) {
+ /* The host forces a 320px desktop label-column offset on fields and actions. */
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings :is(input, textarea, select, .components-button, .hint, .bwf-brown-light-notice, .bwf-error-text) { margin-left: 0 !important; }
+}
+body.adminkit.adminkit-funnelkit :is(.tab--title, .bwf-advance-toggle > span):focus-visible { outline: 2px solid var(--ak-text-muted); outline-offset: 2px; border-radius: var(--ak-radius-s); }
+/* Monochrome control icons; keep brand artwork and template previews intact. */
+body.adminkit.adminkit-funnelkit :is(.bwf-header-right-wrap, .bwf-c-s-heading, .bwf-c-s-modal-header, .bwf-sc-section-heading) svg { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit :is(.bwf-header-right-wrap, .bwf-c-s-heading, .bwf-c-s-modal-header, .bwf-sc-section-heading) svg [fill]:not([fill="none"]) { color: inherit; fill: currentColor; }
+body.adminkit.adminkit-funnelkit :is(.bwf-header-right-wrap, .bwf-c-s-heading, .bwf-c-s-modal-header, .bwf-sc-section-heading) svg [stroke]:not([stroke="none"]) { color: inherit; stroke: currentColor; }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwfan_navigation { flex-wrap: nowrap; width: 100%; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwfan_navigation > span { flex: 0 0 auto; width: auto; margin: 0; }
+}
+/* Secondary screen vocabulary: empty states, tool jobs and field affixes. */
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) :is(h5, h6, .task--title, .bwf-zero-sec-i-d-item-title, .bwf-shortcode-list__heading, .text-control-with-affixes__suffix, .bwf-legend-item-title) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-zero-sec-i-d-item-desc, .bwf-zero-sec p, .bwf-zero-sec span, .bwf-tab-item) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-tab-item.active-tab, .bwf-settings .hint a, .bwf-zero-sec a) { color: var(--ak-primary-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.text-control-with-affixes__suffix, .bwf-shortcode-list, .bwf-notification-section) { background: var(--ak-surface-muted); border-color: var(--ak-border); }
+/* BWF pins settings label colors in its form group rules. */
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-select-controls-label, .bwf-tabs-accordian-wrap .components-base-control__label) { color: var(--ak-text-muted) !important; }
+
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-tab-section-item, .bwf-tab-section-item span, .bwf-c-s-heading span, .bwf-c-s-heading div, .bwf-accordion-label-elm, .bwf-accordion-label-elm span, .bwf-smtp-section > div) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-dropdown-button-labels span, .bwf-setting-send-test-mail-warp, .bwf-logging-notice, .bwf-controls-box) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-c-s-collapsible table, .bwf-notes-wrap) :is(td, th, span, div, p, a) { color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-c-s-collapsible table, .bwf-c-s-collapsible td) { background: var(--ak-surface); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-setting-send-test-mail-warp :is(div, span, p, label) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-setting-send-test-mail-warp { max-width: 100%; box-sizing: border-box; }
+
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.wffn_template_sec_meta_group, .bwf-tab-section-item.active) { background: var(--ak-surface-muted); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .components-button.is-draft span { color: var(--ak-on-accent); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-add-recipient-wrap, .bwf-add-recipient-input, .bwf-add-recipient-empty-value, .bwf-legend-item, .bwf-legend-item-title) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-add-recipient-wrap, .bwf-add-recipient-input) :is(span, div, label) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-table-table .bwf-a-no-underline :is(b, span) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-c-name-initials { background: var(--ak-surface-muted); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-c-name-initials span { color: inherit; }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings .bwf-checkbox-control { max-width: calc(100% - 320px); width: auto; min-width: 0; box-sizing: border-box; }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings .bwf-checkbox-control__label { width: auto; max-width: 100%; min-width: 0; white-space: normal; }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings .bwf-checkbox-control { max-width: 100%; margin-left: 0; }
+}
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings a { color: var(--ak-primary-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-add-recipient-input .components-base-control__label { background: var(--ak-surface); color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit .bwf-fullsc-modal .bwf-normal-a-t { background: var(--ak-surface); }
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit.adminkit-funnelkit :is(.components-modal__frame, .bwf-tab-section-item, .bwf-node-wrapper) { animation: none; transition: none; }
+ body.adminkit.adminkit-funnelkit .react-flow__edge.animated path { animation: none; }
+}
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .components-button:is(.is-primary, .is-draft):not(:disabled):hover { background: var(--ak-primary-hover) !important; }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) :is(.bwf-card-list__header, .bwf-template-list-header, .bwf-card-list__card) { flex-wrap: wrap; min-width: 0; max-width: 100%; width: 100%; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) :is(.bwf-card-list__header, .bwf-template-list-header) > div { flex-wrap: wrap; min-width: 0; max-width: 100%; width: 100%; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) :is(.bwf-tempaltes-nav, .wffn_template_editor_selector, .bwf-radio-control-inner) { min-width: 0; max-width: 100%; width: 100%; flex-wrap: wrap; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-card-list__card > * { min-width: 0; max-width: 100%; flex-wrap: wrap; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-card-list__card { flex-direction: column; align-items: stretch; gap: 16px; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) :is(.bwf-dashboard-banner-wrap, .bwf-contact-main-wrapper, .bwf-cart-main-wrapper, .bwf-automationlist-main-wrapper, .bwf-broadcast-main-wrapper, .bwf-report-main-wrapper) { flex-direction: column; min-width: 0; width: 100%; max-width: 100%; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) :is(.bwf-banner, .bwf-contact-section-sidebar, .bwf-contact-section-body, .bwf-cart-section-sidebar, .bwf-cart-section-body, .bwf-report-section-sidebar, .bwf-report-section-body, .bwf-broadcast-section-body, .bwf-crm-analytics-wrap, .bwf-table, .bwf-table-table) { min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-tiles__item-list { grid-template-columns: repeat(2, minmax(0, 1fr)); flex-wrap: wrap; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-tiles__item { min-width: 0; }
+ body.adminkit.adminkit-funnelkit :is(.bwf-tab-item, .subtab--title) { min-height: 44px; box-sizing: border-box; }
+}
+body.adminkit.adminkit-funnelkit :is(.bwf-tab-item, .subtab--title):focus-visible { outline: 2px solid var(--ak-text-muted); outline-offset: 2px; }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) :is(.bwf-dashboard-banner, .bwf-w-620, .bwf-image-upload-wrap, .bwf-chart-tabs, .bwf-chart-header, .bwf-filters-filter, .bwfcrm-filters-basic-filters) { min-width: 0; max-width: 100%; width: 100%; box-sizing: border-box; flex-wrap: wrap; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-dashboard-banner { display: block; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-dashboard-banner .bwf-banner { margin-bottom: 16px; padding: 16px; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-card-list__card { display: block; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-card-list__card > div { width: 100%; max-width: 100%; margin-bottom: 12px; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-card-list__card :is(.components-flex, .bwf-flex) { flex-wrap: wrap; min-width: 0; max-width: 100%; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) :is(.bwf-tiles__item-header, .bwf-filters) { flex-wrap: wrap; min-width: 0; max-width: 100%; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) :is(.bwf-smtp-wrap, .bwf-filters-filter) .components-button { width: 100%; min-width: 0; max-width: 100%; height: auto; min-height: 44px; white-space: normal; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-dropdown-button-labels { white-space: normal; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) :is(.bwf-sublium-page__features, .bwf-sublium-page__payment-section, .bwf-sublium-page__payment-text, .bwf-sublium-page__payment-logos, .bwf-product-pitching-page__content-features) { width: 100%; min-width: 0; max-width: 100%; flex-wrap: wrap; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-product-pitching-page__content-features { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) :is(.bwf-widgets-wrap, .bwf-dashboard-overview__item-list) { grid-template-columns: minmax(0, 1fr); min-width: 0; max-width: 100%; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-tiles__item-list { gap: 16px; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-tiles__item-title { white-space: normal; overflow-wrap: anywhere; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) :is(.bwf-chart, .bwf-upgrade-pro__on-page-analytics) { min-width: 0; max-width: 100%; overflow-x: auto; }
+}
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) .bwf-select-control-1 :is(.components-base-control__field, .components-base-control__label) { background: var(--ak-surface); color: var(--ak-text-muted); }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-banner-1 { display: block; margin-right: 0; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-video-thumbnil { width: 100%; max-width: 100%; min-width: 0; margin-top: 16px; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-upgrade-pro__on-page-container { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; padding: 16px; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-upgrade-pro__on-page-container .bwf-tiles { width: 100%; max-width: 100%; min-width: 0; padding: 16px; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page) .bwf-upgrade-pro-cta { max-width: 100%; white-space: normal; min-height: 44px; height: auto; }
+}
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit .components-modal__header .components-button.has-icon { min-width: 44px; }
+ body.adminkit.adminkit-funnelkit .bwf-advance-toggle > span { display: inline-flex; align-items: center; min-height: 44px; box-sizing: border-box; }
+}
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) :is(.components-button, .bwf-table-table td, .bwf-select-control__option) { transition: none; }
+}
+/* BWF forces a 600ms button transition important, including reduced motion. */
+body.adminkit.adminkit-funnelkit { --ak-funnelkit-motion-duration: 0ms; }
+@media (prefers-reduced-motion: no-preference) {
+ body.adminkit.adminkit-funnelkit { --ak-funnelkit-motion-duration: 120ms; }
+}
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) .components-button { transition: background-color var(--ak-funnelkit-motion-duration) var(--ak-ease-standard), color var(--ak-funnelkit-motion-duration) var(--ak-ease-standard), border-color var(--ak-funnelkit-motion-duration) var(--ak-ease-standard) !important; }

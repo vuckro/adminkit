@@ -20,8 +20,7 @@ body.adminkit:is(.post-php, .post-new-php) #titlediv #title {
 
 /* ----- Publish box footer -----
    Hide "Copy to a new draft" (WooCommerce duplicate) per request, and turn
-   "Move to Trash" into a flat danger button. The footer then reads cleanly:
-   [Move to Trash] … [Update]. */
+   "Move to Trash" into a flat danger button. The primary action comes first, with deletion underneath. */
 body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions #duplicate-action {
 	display: none;
 }
@@ -113,3 +112,40 @@ body.adminkit:is(.post-php, .post-new-php) .bricks-editor .wp-editor-container {
 /* "Edit with Bricks" CTAs live in inc/integrations/bricks/css/edit-button.css
    — broader selector coverage (Gutenberg toolbar + classic notice +
    page editor) and only loads when Bricks is active. */
+
+/* A single action column in the classic publish/media sidebar. */
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions {
+ flex-direction: column;
+ align-items: stretch;
+ gap: 8px;
+ padding: 12px;
+}
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions :is(#publishing-action, #delete-action) {
+ float: none;
+ width: 100%;
+ margin: 0;
+ padding: 0;
+ text-align: center;
+}
+body.adminkit:is(.post-php, .post-new-php) #publishing-action { position: relative; }
+body.adminkit:is(.post-php, .post-new-php) #publishing-action .spinner {
+ position: absolute;
+ inset-inline-start: 10px;
+ top: 50%;
+ margin: -10px 0 0;
+}
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions :is(#publish, #delete-action .submitdelete) {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ width: 100%;
+ min-height: 36px;
+ box-sizing: border-box;
+ line-height: 1.4;
+ padding: 8px 12px;
+ white-space: normal;
+}
+body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions > .clear { display: none; }
+@media (max-width: 782px) {
+ body.adminkit:is(.post-php, .post-new-php) #major-publishing-actions :is(#publish, #delete-action .submitdelete) { min-height: 44px; }
+}

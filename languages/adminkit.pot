@@ -1481,3 +1481,7 @@ msgstr ""
 #: inc/settings/class-settings-page.php
 msgid "WaasKit blue"
 msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "No icons found."
+msgstr ""

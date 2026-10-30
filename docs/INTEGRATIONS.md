@@ -271,10 +271,16 @@ host's own theme attribute (one-way) for `color-scheme`. The
 
 ## Reference implementations
 
+- [fluent-booking](../inc/integrations/plugins/fluent-booking/) — FluentBooking 2.5 semantic tokens, legacy aliases, Element Plus and same-origin TinyMCE theme synchronization. [Visual review](FLUENTBOOKING-REVIEW.md).
+
 - [bricks](../inc/integrations/themes/bricks/class-bricks.php) — token injection + opt-in builder theming (with a baseline fallback when the builder's colours are cleared).
 - [gutenberg](../inc/integrations/plugins/gutenberg/class-gutenberg.php) — the `editor` asset context + opt-in theming of the iframed canvas (content + native blocks).
 - [wpcode](../inc/integrations/plugins/wpcode/class-wpcode.php) — minimal Tier A (remap `--wpcode-*`, zero `!important`).
 - [acf](../inc/integrations/plugins/acf/class-acf.php) — clean Tier B (host hardcodes hex), screen-scoped + version-gated.
-- [woocommerce](../inc/integrations/plugins/woocommerce) — the most comprehensive: wc-admin React app + classic screens by token remap.
+- [woocommerce](../inc/integrations/plugins/woocommerce) — WooCommerce 10/11: onboarding, React/WPDS, classic products, HPOS orders, settings, SelectWoo and shared toolbar. [Coverage and verification](WOOCOMMERCE-REVIEW.md).
 - [flying-press](../inc/integrations/plugins/flying-press/class-flying-press.php) — Tier B against a Tailwind app compiled `important: true`.
 - [query-monitor](../inc/integrations/plugins/query-monitor/) — Tier A delivered into an open shadow root via a JS bridge.
+
+## FunnelKit Builder et Automations
+
+Les deux adaptateurs Tier B partagent les composants BWF sans exiger que les deux extensions soient actives. Les fichiers communs sont livrés dans `plugins/funnel-builder/` et référencés explicitement par l’adaptateur `wp-marketing-automations`. Les styles de contenu se limitent aux écrans possédés et à leurs portails. `shared.css`, `controls.css` et `shared.js` sont partagés ; `menu.css` ne traite que les entrées FunnelKit du menu WordPress ; aucun habillage de checkout public ou de corps d’e-mail. Versions, couverture et limites : [FUNNELKIT-REVIEW.md](FUNNELKIT-REVIEW.md).

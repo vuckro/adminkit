@@ -72,3 +72,80 @@ body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub {
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) .file-error {
 	color: var(--ak-error);
 }
+
+/* Editor workspace: a legible explorer beside a bounded code viewport. */
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside {
+ width: 280px;
+}
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside > h2 {
+ padding: 12px 16px;
+ font-size: 14px;
+}
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside > ul {
+ padding: 8px;
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-m);
+}
+/* A .notice here is a native file label, never a banner. */
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside .notice {
+ display: inline;
+ margin: 0;
+ padding: 0;
+ border: 0;
+ background: transparent;
+ box-shadow: none;
+ color: inherit;
+}
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside li:not(.howto) a {
+ padding: 8px 10px;
+ border-radius: var(--ak-radius-s);
+ overflow-wrap: anywhere;
+}
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside li.current-file > a {
+ background: var(--ak-hover-bg);
+ color: var(--ak-heading);
+}
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside a:hover {
+ background: var(--ak-hover-bg);
+}
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #template {
+ margin-inline-end: 304px;
+}
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #template .CodeMirror {
+ width: 100%;
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-m);
+ overflow: hidden;
+}
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub {
+ display: flex;
+ flex-wrap: wrap;
+ align-items: center;
+ justify-content: space-between;
+ gap: 16px;
+ padding-block: 12px 20px;
+ margin-bottom: 20px;
+}
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub .alignright { float: none; }
+@media (max-width: 960px) {
+ body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside { float: none; width: 100%; margin-bottom: 20px; }
+ body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside > ul { height: auto; min-height: 0; max-height: 260px; }
+ body.adminkit:is(.plugin-editor-php, .theme-editor-php) #template { margin-inline-end: 0; }
+ body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub .alignright { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+}
+/* Core also reserves sidebar space on the editor's immediate wrapper. */
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #template > div { margin-right: 0; }
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside .nonessential {
+ color: var(--ak-text-muted);
+ font-style: normal;
+ font-size: 12px;
+}
+@media (max-width: 960px) {
+ body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub > form { min-width: 0; max-width: 100%; }
+ body.adminkit:is(.plugin-editor-php, .theme-editor-php) #theme-plugin-editor-selector { width: 100%; white-space: normal; }
+ body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub :is(#theme, #plugin) { max-width: 100%; min-width: 0; flex: 1 1 180px; }
+}
+@media (max-width: 960px) {
+ body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub .alignright { width: 100%; min-width: 0; }
+ body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub form { width: 100%; max-width: 100%; min-width: 0; }
+}

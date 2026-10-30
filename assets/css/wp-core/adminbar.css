@@ -28,7 +28,7 @@
 #wpadminbar .ab-icon::before,
 #wpadminbar .ab-item::before,
 #wpadminbar .ab-item::after {
-	color: var(--ak-text-muted) !important;
+	color: var(--ak-icon) !important;
 }
 
 /* Hover / focus on top-level items. WP's admin-bar.css ships four
@@ -509,3 +509,7 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 
 /* Match WaasKit typography on the frontend toolbar as well as wp-admin. */
 #wpadminbar, #wpadminbar .ab-item { font-family: var(--ak-font-body); }
+
+#wpadminbar .ak-theme-icon { color: var(--ak-icon); }
+#wpadminbar .ab-item:hover .ak-theme-icon,
+#wpadminbar .ab-item:focus-visible .ak-theme-icon { color: var(--ak-icon-active); }
