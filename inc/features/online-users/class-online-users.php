@@ -46,7 +46,7 @@ class AdminKit_Online_Users {
 	 * @return void
 	 */
 	public static function init() {
-		AdminKit_Settings::register( 'online_users_enabled', array( 'default' => true ) );
+		AdminKit_Settings::register( 'online_users_enabled', array( 'default' => false ) );
 
 		add_action( 'wp_login', array( __CLASS__, 'record_login' ), 10, 2 );
 
@@ -64,7 +64,7 @@ class AdminKit_Online_Users {
 	}
 
 	/**
-	 * Master switch — registered setting (default ON) through a filter.
+	 * Master switch — registered setting (default OFF) through a filter.
 	 *
 	 * @return bool
 	 */

@@ -15,7 +15,9 @@ PHP 7.4+. No runtime dependencies, no npm or Composer build.
 - Dedicated plugin/theme adapters, loaded only when the corresponding host is active.
   [Integration reference](docs/INTEGRATIONS.md).
 
-All tools can be configured in the AdminKit settings. Hiding a menu does not change
+All optional features and integrations are disabled by default. Enable only the tools
+you need in the AdminKit settings. Menu and statistics tables are created only when
+the corresponding feature is enabled. Hiding a menu does not change
 WordPress permissions. The frontend toolbar is scoped so the site's public design
 remains owned by its theme.
 

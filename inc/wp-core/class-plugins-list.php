@@ -22,7 +22,7 @@
  *      the result of your action and can undo it, rather than watching it disappear.
  *
  * All three are gated to the plugins screen (hooked from `load-plugins.php`) behind a
- * single setting (default ON) so they travel together as one coherent feature.
+ * single setting (default OFF) so they travel together as one coherent feature.
  *
  * Filter:
  *   adminkit/plugins_active_first/enabled  (bool)  master on/off
@@ -35,13 +35,13 @@ defined( 'ABSPATH' ) || exit;
 class AdminKit_Plugins_List {
 
 	/**
-	 * Register the setting (default ON) + wire the plugins-screen entry point. The
+	 * Register the setting (default OFF) + wire the plugins-screen entry point. The
 	 * setting registers unconditionally so the Settings page can discover it while off.
 	 *
 	 * @return void
 	 */
 	public static function init() {
-		AdminKit_Settings::register( 'plugins_active_first_enabled', array( 'default' => true ) );
+		AdminKit_Settings::register( 'plugins_active_first_enabled', array( 'default' => false ) );
 
 		add_action( 'load-plugins.php', array( __CLASS__, 'on_plugins_screen' ) );
 	}

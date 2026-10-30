@@ -53,7 +53,7 @@ class AdminKit_Custom_Dashboard {
 	 * @return void
 	 */
 	public static function init() {
-		AdminKit_Settings::register( 'custom_dashboard_enabled', array( 'default' => true ) );
+		AdminKit_Settings::register( 'custom_dashboard_enabled', array( 'default' => false ) );
 
 		if ( ! self::is_enabled() ) {
 			return;
@@ -76,7 +76,7 @@ class AdminKit_Custom_Dashboard {
 	}
 
 	/**
-	 * Master switch — registered setting (default ON) through a filter.
+	 * Master switch — registered setting (default OFF) through a filter.
 	 *
 	 * @return bool
 	 */

@@ -49,8 +49,7 @@ class AdminKit_Toolbar_Manager {
 	private static $page_hook = '';
 
 	/**
-	 * Register the setting + wire hooks. The REST route is always registered (the
-	 * editor needs it); application is gated on the toggle.
+	 * Register the setting; bind the editor route and application only when enabled.
 	 *
 	 * @return void
 	 */
@@ -58,15 +57,16 @@ class AdminKit_Toolbar_Manager {
 		AdminKit_Settings::register( 'toolbar_manager_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => true,
+			'default'  => false,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 
 		if ( ! self::is_enabled() ) {
 			return;
 		}
+
+		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 
 		// Self-register the focused "Toolbar" submenu page (priority 12 so it lands
 		// after Menu/Statistics under the AdminKit parent).
@@ -79,8 +79,7 @@ class AdminKit_Toolbar_Manager {
 	}
 
 	/**
-	 * Master switch — gates APPLICATION only (the editor page is always available so a
-	 * layout can be prepared while off).
+	 * Master switch for the editor and toolbar application.
 	 *
 	 * @return bool
 	 */

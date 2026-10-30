@@ -26,7 +26,7 @@
  * query string — including our per-user `seed=`. Bypassing Gravatar by
  * populating `url` ourselves preserves the seed.
  *
- * Gated by `custom_avatars_enabled` (default ON). Off = AdminKit invisible to
+ * Gated by `custom_avatars_enabled` (default OFF). Off = AdminKit invisible to
  * the avatar pipeline.
  *
  * External service: DiceBear (`api.dicebear.com`). Disclosed in `readme.txt`.
@@ -106,17 +106,12 @@ class AdminKit_Local_Avatars {
 		add_action( 'update_option_' . AdminKit_Settings::OPTION_KEY, array( __CLASS__, 'on_settings_update' ), 10, 2 );
 		register_deactivation_hook( ADMINKIT_FILE, array( __CLASS__, 'cleanup_avatar_default' ) );
 		register_activation_hook( ADMINKIT_FILE, array( __CLASS__, 'restore_avatar_default' ) );
-		// One-time catch-up: Custom avatars now ships ON by default, but an EXISTING
-		// install updating INTO that default fires neither the activation hook nor an
-		// off→on transition — so its `avatar_default` would stay Mystery and the feature
-		// would read "on" yet render nothing. Reconcile once (flagged), still respecting
-		// an explicit choice: restore_avatar_default() no-ops unless the toggle is on AND
-		// the Default Avatar is still Mystery.
-		add_action( 'admin_init', array( __CLASS__, 'maybe_sync_default' ) );
-
 		if ( ! AdminKit_Settings::get( 'custom_avatars_enabled' ) ) {
 			return;
 		}
+		// Reconcile only when the user has opted in.
+		add_action( 'admin_init', array( __CLASS__, 'maybe_sync_default' ) );
+
 		add_filter( 'avatar_defaults', array( __CLASS__, 'register_default' ) );
 		add_filter( 'pre_get_avatar_data', array( __CLASS__, 'filter_avatar_data' ), 10, 2 );
 		// Email or login change → drop the cached Gravatar check so it re-runs next render.
@@ -187,7 +182,7 @@ class AdminKit_Local_Avatars {
 
 	/**
 	 * Run restore_avatar_default() exactly once over an install's lifetime, to catch up
-	 * EXISTING sites when the ON-by-default value shipped (a plugin update fires no
+	 * enabled sites after an update (a plugin update fires no
 	 * activation hook). The flag is autoloaded, so after the first admin_init the check
 	 * is a free in-memory read. Idempotent and choice-respecting (restore_avatar_default
 	 * self-gates on the toggle + a Mystery default).

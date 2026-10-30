@@ -106,7 +106,7 @@ class AdminKit_Settings_Catalog {
 				'key'   => 'custom_avatars_enabled',
 				'group' => $users,
 				'label' => __( 'Custom avatars', 'adminkit' ),
-				'desc'  => __( 'On by default: every user without a real Gravatar gets a unique generated portrait instead of an empty silhouette (sets "AdminKit Portraits" as your Default Avatar in Settings → Discussion). Portraits come from an external service (DiceBear); turn off to restore Mystery Person.', 'adminkit' ),
+				'desc'  => __( 'Optional: every user without a real Gravatar gets a unique generated portrait instead of an empty silhouette (sets "AdminKit Portraits" as your Default Avatar in Settings → Discussion). Portraits come from an external service (DiceBear); turn off to restore Mystery Person.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'online_users_enabled',
@@ -212,7 +212,7 @@ class AdminKit_Settings_Catalog {
 		if ( ! function_exists( 'get_plugins' ) || ! function_exists( 'is_plugin_active' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
-		$generic_off = (array) AdminKit_Settings::get( 'generic_theming_off' );
+		$generic_on = (array) AdminKit_Settings::get( 'generic_theming_on' );
 		$self        = plugin_basename( ADMINKIT_FILE );
 
 		foreach ( get_plugins() as $file => $data ) {
@@ -237,14 +237,9 @@ class AdminKit_Settings_Catalog {
 				'label'     => '' !== (string) $data['Name'] ? $data['Name'] : $file,
 				'type'      => 'plugin',
 				'supported' => $supported,
-				// Mirror the gate's effective default: a supported integration runs
-				// UNLESS explicitly turned off (AdminKit_Settings_Gate::gate_integration
-				// treats a null setting as ON). Reading the raw setting here showed
-				// never-toggled natives as OFF — greyed-out, reading as "not native"
-				// — even though they were actually theming.
 				'enabled'   => $supported
-					? ( null === ( $ie = AdminKit_Settings::get( 'integration_' . $slug . '_enabled' ) ) ? true : (bool) $ie )
-					: ! in_array( $file, $generic_off, true ),
+					? (bool) AdminKit_Settings::get( 'integration_' . $slug . '_enabled' )
+					: in_array( $file, $generic_on, true ),
 				'active'    => is_plugin_active( $file ),
 			);
 		}
@@ -324,7 +319,7 @@ class AdminKit_Settings_Catalog {
 	}
 
 	/**
-	 * Register integration toggles and the generic plugin opt-out list.
+	 * Register integration toggles and the generic plugin opt-in list.
 	 *
 	 * @return void
 	 */
@@ -333,11 +328,11 @@ class AdminKit_Settings_Catalog {
 			AdminKit_Settings::register( 'integration_' . $s['slug'] . '_enabled', array(
 				'type'     => 'toggle',
 				'group'    => 'integrations',
-				'default'  => true,
+				'default'  => false,
 				'sanitize' => 'rest_sanitize_boolean',
 			) );
 		}
-		AdminKit_Settings::register( 'generic_theming_off', array(
+		AdminKit_Settings::register( 'generic_theming_on', array(
 			'type'     => 'array',
 			'group'    => 'integrations',
 			'default'  => array(),

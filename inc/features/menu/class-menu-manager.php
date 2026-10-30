@@ -119,13 +119,16 @@ class AdminKit_Menu_Manager {
 	private static $page_hook = '';
 
 	/**
-	 * Register the setting + wire hooks. The snapshot capture is always wired (the
-	 * editor needs it even when off); application is gated on the toggle.
+	 * Register the setting; bind editor routes, snapshots and schema only when enabled.
 	 *
 	 * @return void
 	 */
 	public static function init() {
-		AdminKit_Settings::register( 'menu_manager_enabled', array( 'default' => true ) );
+		AdminKit_Settings::register( 'menu_manager_enabled', array( 'default' => false ) );
+
+		if ( ! self::is_enabled() ) {
+			return;
+		}
 
 		// Ensure the table exists before admin_menu (apply) reads it — `init` fires
 		// earlier than admin_menu; gate to admin so the front end never touches it.
@@ -137,10 +140,6 @@ class AdminKit_Menu_Manager {
 		// Always tidy WP's legacy Link Manager menu when it's disabled — runs before
 		// the editor snapshot (9998) so it's gone from the editor too.
 		add_action( 'admin_menu', array( __CLASS__, 'hide_legacy_link_manager' ), 9990 );
-
-		if ( ! self::is_enabled() ) {
-			return;
-		}
 
 		// Self-register the focused "Menu" submenu page (priority 11 so the AdminKit
 		// parent menu exists first). The editor mounts the shared SPA engine on the

@@ -28,7 +28,7 @@ new → `features/`.**
 
 - **A feature module** → drop `inc/features/<name>/class-<name>.php` with a
   `public static function init()`, then add its path and boot callable to
-  `AdminKit_Plugin::MODULES` in `inc/class-plugin.php` (boot order is explicit). Gate it on a setting: `AdminKit_Settings::register( '<name>_enabled', [ 'default' => true ] )`.
+  `AdminKit_Plugin::MODULES` in `inc/class-plugin.php` (boot order is explicit). Gate it on a setting: `AdminKit_Settings::register( '<name>_enabled', [ 'default' => false ] )`.
 - **An integration (skin a plugin/theme)** → just create
   `inc/integrations/plugins/<slug>/class-<slug>.php` (class
   `AdminKit_Integration_<Slug>`). It's **auto-discovered** — no loader edit.

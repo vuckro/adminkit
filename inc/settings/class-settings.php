@@ -160,7 +160,7 @@ class AdminKit_Settings {
 
 
 	/**
-	 * Declare the feature / module toggles (all boolean, default ON). They
+	 * Declare the feature / module toggles (all boolean, default OFF). They
 	 * carry no `__()` labels — those live in AdminKit_Settings_Page so they
 	 * resolve on the admin screen — so this can run at load, before the `init`
 	 * action, which is when modules read these values to gate themselves.
@@ -178,64 +178,50 @@ class AdminKit_Settings {
 			self::register( $key, array(
 				'type'     => 'toggle',
 				'group'    => 'features',
-				'default'  => true,
+				'default'  => false,
 				'sanitize' => 'rest_sanitize_boolean',
 			) );
 		}
 
-		// Editor content theming ("Gutenberg") — ON by default. Themes the block
+		// Editor content theming ("Gutenberg") — OFF by default. Themes the block
 		// content inside the editor canvas (iframe) to match AdminKit. Set OFF to keep
 		// the canvas matching the live site exactly (a client's page layout untouched).
 		// The canvas-injection wiring plugs into this flag.
 		self::register( 'editor_content_theme', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => true,
+			'default'  => false,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// Bricks builder restyle — ON by default (when the Bricks theme is the
+		// Bricks builder restyle — OFF by default (when the Bricks theme is the
 		// active theme; the Features row is greyed-out otherwise via the
 		// `available` flag, so a non-Bricks site still sees the option but can't
 		// flip it). Read by AdminKit_Integration_Bricks::enqueue_builder().
 		self::register( 'bricks_builder_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => true,
+			'default'  => false,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// AdminKit icons — ALWAYS ON (no UI toggle: it's part of the standard restyle,
-		// and a global on/off duplicated the Menu manager, which is now THE place to
-		// override / reset icons per item — AdminKit glyph, WordPress dashicon, or your
-		// own). Stays a registered setting (default true) so power users can still flip
-		// it off via code/filter. Read by AdminKit_Core_Menu_Icons; non-destructive.
+		// Icon replacement is opt-in, independently of the menu editor.
 		self::register( 'replace_icons_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => true,
+			'default'  => false,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// Custom avatars — ON by default. Registers "AdminKit Portraits (Generated)"
-		// in WordPress's Settings → Discussion → Default Avatar dropdown and serves
-		// a unique generated portrait for users with no real Gravatar. Read by
-		// AdminKit_Local_Avatars. Non-destructive — when off, AdminKit does nothing
-		// to avatars and Gravatar behaviour is 100% unchanged.
-		// ON by default (maintainer's UX call): a unique generated portrait reads far
-		// better than an empty Mystery-Person silhouette. TRADE-OFF, kept honest: it
-		// calls an EXTERNAL service (DiceBear) and those images can load on the front
-		// end, so activation is NOT front-end-neutral. Non-PII seed (md5 of login, never
-		// the email); real Gravatars are respected; disclosed in readme.txt. Switch off
-		// in Settings → Features (which resets the Default Avatar back to Mystery Person).
+		// External DiceBear portraits are opt-in; native avatars remain unchanged.
 		self::register( 'custom_avatars_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => true,
+			'default'  => false,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 
-		// User quick edit — ON by default. Mirrors the post Quick Edit pattern
+		// User quick edit — OFF by default. Mirrors the post Quick Edit pattern
 		// for the users list: inline form to update first name / last name /
 		// email / role from users.php without opening user-edit.php. Read by
 		// AdminKit_User_Quick_Edit. Off = no Quick Edit affordance; the Edit
@@ -243,7 +229,7 @@ class AdminKit_Settings {
 		self::register( 'quick_edit_users_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => true,
+			'default'  => false,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 

@@ -43,16 +43,13 @@ class AdminKit_Settings_Gate {
 			}
 		}
 
-		$off = (array) AdminKit_Settings::get( 'generic_theming_off' );
-		if ( ! $off ) {
-			return true;
-		}
 		$file = self::plugin_file_for_screen( $screen );
-		return ! ( $file && in_array( $file, $off, true ) );
+		return ! $file || plugin_basename( ADMINKIT_FILE ) === $file
+			|| in_array( $file, (array) AdminKit_Settings::get( 'generic_theming_on' ), true );
 	}
 
 	/**
-	 * An integration runs unless the user turned it off.
+	 * An integration runs only after an explicit opt-in.
 	 *
 	 * @param bool   $enabled
 	 * @param string $slug
@@ -60,7 +57,7 @@ class AdminKit_Settings_Gate {
 	 */
 	public static function gate_integration( $enabled, $slug ) {
 		$v = AdminKit_Settings::get( 'integration_' . $slug . '_enabled' );
-		return ( null === $v ) ? $enabled : (bool) $v;
+		return $enabled && (bool) $v;
 	}
 
 	/**

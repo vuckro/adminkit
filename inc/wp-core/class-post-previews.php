@@ -23,7 +23,7 @@
  *
  * ── Modularity / the future settings ("CBI") page ───────────────────────────
  * The whole feature is gated by is_enabled(), which reads the
- * `post_previews_enabled` setting (registered here, default ON). The future
+ * `post_previews_enabled` setting (registered here, default OFF). The future
  * settings page only has to write
  *   adminkit_settings['post_previews_enabled'] = false
  * to switch it off — no code change. Which post types get the column is curated
@@ -69,7 +69,7 @@ class AdminKit_Post_Previews {
 	 * @return void
 	 */
 	public static function init() {
-		AdminKit_Settings::register( 'post_previews_enabled', array( 'default' => true ) );
+		AdminKit_Settings::register( 'post_previews_enabled', array( 'default' => false ) );
 
 		if ( ! self::is_enabled() ) {
 			return;
@@ -95,7 +95,7 @@ class AdminKit_Post_Previews {
 	}
 
 	/**
-	 * Master switch. Reads the registered setting (default ON) and runs it
+	 * Master switch. Reads the registered setting (default OFF) and runs it
 	 * through a filter so code can force it either way.
 	 *
 	 * @return bool

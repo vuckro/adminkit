@@ -43,19 +43,19 @@
 		(D.features || []).forEach(function (f) {
 			state.features[f.key] = !!f.value;
 		});
-		// Per-plugin opt-out for generic plugins (no AdminKit adapter) — tracked as
-		// a set of plugin file paths the user has flipped OFF. Default = themed;
-		// posted as `generic_theming_off` array (see PHP gate_generic_theming()).
-		state.genericThemingOff = {};
+		// Per-plugin opt-in for generic plugins (no AdminKit adapter) — tracked as
+		// a set of plugin file paths the user has flipped ON. Default = unthemed;
+		// posted as `generic_theming_on` array (see PHP gate_generic_theming()).
+		state.genericThemingOn = {};
 		(D.integrations || []).forEach(function (i) {
 			if (i.supported && i.slug) {
 				state.integrations[i.slug] = !!i.enabled;
 				return;
 			}
-			// Generic plugin pre-seeded into the off-list when the schema says it
-			// starts disabled. System / theme rows without a file are no-ops.
-			if (!i.system && i.file && i.enabled === false) {
-				state.genericThemingOff[i.file] = true;
+			// Generic plugin pre-seeded into the on-list when the schema says it
+			// starts enabled. System / theme rows without a file are no-ops.
+			if (!i.system && i.file && i.enabled === true) {
+				state.genericThemingOn[i.file] = true;
 			}
 		});
 
@@ -921,12 +921,12 @@
 					});
 					inputs.push({ kind: 'native', slug: i.slug, input: input, row: row });
 				} else if (i.file) {
-					// Generic plugin → file path tracked in the off-list.
+					// Generic plugin → file path tracked in the on-list.
 					input.addEventListener('change', function () {
 						if (input.checked) {
-							delete state.genericThemingOff[i.file];
+							state.genericThemingOn[i.file] = true;
 						} else {
-							state.genericThemingOff[i.file] = true;
+							delete state.genericThemingOn[i.file];
 						}
 						syncOffClass(row, input.checked);
 						markDirty();
@@ -937,18 +937,18 @@
 			}
 
 			// Reset every toggle to its "AdminKit handles this plugin" default,
-			// which is ON across the board (native integrations' schema default,
-			// generic plugins not in the opt-out list). markDirty so the user
+			// which is OFF across the board (native integrations' schema default,
+			// generic plugins absent from the opt-in list). markDirty so the user
 			// can still walk away without committing.
 			function resetAll() {
 				inputs.forEach(function (r) {
-					r.input.checked = true;
+					r.input.checked = false;
 					if ('native' === r.kind) {
-						state.integrations[r.slug] = true;
+						state.integrations[r.slug] = false;
 					} else {
-						delete state.genericThemingOff[r.file];
+						delete state.genericThemingOn[r.file];
 					}
-					syncOffClass(r.row, true);
+					syncOffClass(r.row, false);
 				});
 				markDirty();
 			}
@@ -1091,9 +1091,9 @@
 			Object.keys(state.integrations).forEach(function (slug) {
 				v['integration_' + slug + '_enabled'] = !!state.integrations[slug];
 			});
-			// Per-plugin opt-out for generic plugins (no native adapter). POST as a
-			// flat array of plugin file paths the user has turned theming off for.
-			v.generic_theming_off = Object.keys(state.genericThemingOff);
+			// Per-plugin opt-in for generic plugins (no native adapter). POST as a
+			// flat array of plugin file paths the user has turned theming on for.
+			v.generic_theming_on = Object.keys(state.genericThemingOn);
 			v.logo_light = state.logos.light;
 			v.logo_dark = state.logos.dark;
 			v.wp_logo = state.wpLogo;

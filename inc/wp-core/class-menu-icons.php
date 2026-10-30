@@ -1,7 +1,7 @@
 <?php
 /**
  * Menu & toolbar icons — swap WordPress's native dashicons for a cohesive AdminKit
- * icon set (Heroicons). On by default via the `replace_icons_enabled` setting.
+ * icon set (Heroicons). Opt-in via the `replace_icons_enabled` setting.
  *
  * Designed to be NON-DESTRUCTIVE and fully overridable — never a brute override:
  *   - The menu map is keyed by dashicon CLASS (`dashicons-admin-post` …), so it

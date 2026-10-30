@@ -22,13 +22,13 @@ defined( 'ABSPATH' ) || exit;
 class AdminKit_Footer {
 
 	/**
-	 * Register the setting (default ON) + wire the hide when enabled. The setting
+	 * Register the setting (default OFF) + wire the hide when enabled. The setting
 	 * is registered unconditionally so the Settings page can discover it while off.
 	 *
 	 * @return void
 	 */
 	public static function init() {
-		AdminKit_Settings::register( 'hide_footer_enabled', array( 'default' => true ) );
+		AdminKit_Settings::register( 'hide_footer_enabled', array( 'default' => false ) );
 
 		if ( ! self::is_enabled() ) {
 			return;
@@ -38,7 +38,7 @@ class AdminKit_Footer {
 	}
 
 	/**
-	 * Master switch — registered setting (default ON) through a filter.
+	 * Master switch — registered setting (default OFF) through a filter.
 	 *
 	 * @return bool
 	 */

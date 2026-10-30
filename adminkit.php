@@ -27,8 +27,3 @@ define( 'ADMINKIT_URL', plugin_dir_url( __FILE__ ) );
 // edit there; this loader stays static.
 require_once ADMINKIT_PATH . 'inc/class-plugin.php';
 AdminKit_Plugin::init();
-
-// Create the menu + stats data-store tables on activation (the store classes are
-// loaded by the orchestrator above).
-register_activation_hook( ADMINKIT_FILE, array( 'AdminKit_Menu_Store', 'ensure_schema' ) );
-register_activation_hook( ADMINKIT_FILE, array( 'AdminKit_Stats_Store', 'ensure_schema' ) );

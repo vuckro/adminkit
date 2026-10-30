@@ -203,3 +203,13 @@ This presentation writes no options or user metadata.
 Generated tokens own color values. Appearance variants are attribute-scoped; components consume the role appropriate to the surface, including separate accent ink and on-fill ink. PHP and JavaScript inject custom values only, so live preview and saved settings share one stylesheet implementation. Native list tables and generic widefat tables have separate owners, and chrome does not reset table borders. Settings content is bounded by WaasKit’s wide container and choice controls wrap at mobile widths.
 
 Run `php dev/css-contract.php` alongside token drift, contrast and browser checks. Do not add a global reset or another override layer to repair a local component.
+
+### Opt-in defaults
+
+All optional feature and adapter switches default to false. Stored explicit choices
+remain effective; resetting Features or Extensions restores the disabled defaults.
+Generic plugin screens require their plugin file in `generic_theming_on`; the old
+`generic_theming_off` blacklist no longer implicitly enables unknown plugins.
+Core administration styling and the settings screen remain the base layer.
+Menu/toolbar editors bind their routes and hooks only when enabled. Menu and stats
+tables are created lazily by their enabled modules, never by plugin activation.
