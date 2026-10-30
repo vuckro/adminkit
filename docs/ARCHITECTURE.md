@@ -267,5 +267,3 @@ the available width. WooCommerce overrides retain the same geometry. Markup,
 ARIA semantics, links, selected state and form fields stay owned by each screen.
 
 Storage upgrade 5 removes the retired online-users flag and `adminkit_last_login` user metadata. Native WordPress `session_tokens` are preserved. AdminKit no longer records login timestamps or scans sessions for presence.
-
-Table titles remain fixed. Row actions reveal with a short opacity transition on desktop hover and keyboard focus, without changing row geometry. Touch retains native disclosure. Table titles and persistent media action links share a progressive underline in `wp-core/links.css`; reduced motion makes the underline immediate. No script or stored state is required.

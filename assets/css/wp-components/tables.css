@@ -715,8 +715,6 @@ body.adminkit .wp-list-table #the-list tr:has(> .check-column input[type=checkbo
 body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-author-uri) {
  color: var(--ak-text-muted);
 }
-/* Native action space stays reserved. Pointer and keyboard share a short fade;
-   title and action geometry remain fixed. Touch keeps WordPress's disclosure. */
 @media (hover: hover) and (min-width: 783px) {
  body.adminkit .wp-list-table .row-actions {
   visibility: visible;
