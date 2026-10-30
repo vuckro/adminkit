@@ -135,12 +135,10 @@ body.adminkit.options-connectors-php #wpbody-content {
 		left: 36px;
 	}
 }
-/* Step the fixed frame aside on full-takeover screens (React boot pages, block
-   editor) — same intent as the options-connectors-php rule above. */
-body.adminkit.options-connectors-php #wpwrap::before,
-body.adminkit.options-connectors-php #wpwrap::after,
-body.adminkit.block-editor-page #wpwrap::before,
-body.adminkit.block-editor-page #wpwrap::after {
+/* Only a fullscreen editor removes the toolbar/sidebar junction. React screens
+   and the non-fullscreen editor retain the same frame as native admin pages. */
+body.adminkit.block-editor-page.is-fullscreen-mode #wpwrap::before,
+body.adminkit.block-editor-page.is-fullscreen-mode #wpwrap::after {
 	display: none;
 }
 
