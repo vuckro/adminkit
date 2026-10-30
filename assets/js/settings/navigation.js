@@ -308,7 +308,7 @@
 				listWrap.textContent = '';
 				if (!(state.toolbar.left.length + state.toolbar.right.length)) {
 					listWrap.appendChild(
-						el('p', { class: 'ak-stats__empty', text: I.toolbarEmpty || 'No toolbar items found.' })
+						el('p', { text: I.toolbarEmpty || 'No toolbar items found.' })
 					);
 					return;
 				}

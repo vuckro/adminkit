@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Upgrades {
 
-	const VERSION = 4;
+	const VERSION = 5;
 	const OPTION  = 'adminkit_storage_version';
 
 	public static function init() {
@@ -58,6 +58,16 @@ class AdminKit_Upgrades {
 
 		if ( $version < 4 && ! self::remove_dashboard_and_stats() ) {
 			return; // Retry a failed table removal on the next administrator request.
+		}
+
+		if ( $version < 5 ) {
+			$settings = get_option( AdminKit_Settings::OPTION_KEY, array() );
+			if ( is_array( $settings ) && array_key_exists( 'online_users_enabled', $settings ) ) {
+				unset( $settings['online_users_enabled'] );
+				update_option( AdminKit_Settings::OPTION_KEY, $settings );
+			}
+			// WordPress session_tokens belong to core and must remain untouched.
+			delete_metadata( 'user', 0, 'adminkit_last_login', '', true );
 		}
 
 		// Admin-only migration state does not need to be autoloaded on the front end.

@@ -46,7 +46,7 @@ foreach ( array( 'adminkit_portraits' => 'mystery', 'identicon' => 'identicon' )
 $options = array( AdminKit_Upgrades::OPTION => 1, 'adminkit_settings' => array( 'bricks_builder_enabled' => true, 'plugins_active_first_enabled' => false, 'theme_toggle_enabled' => true ), 'bricks_global_settings' => array( 'builderMode' => 'dark' ) );
 $metadata = array( 1 => array( 'first_name' => 'Keep' ) );
 AdminKit_Upgrades::run();
-if ( array( 'theme_toggle_enabled' => true, 'active_items_first_enabled' => false ) !== $options['adminkit_settings'] || array( 'builderMode' => 'dark' ) !== $options['bricks_global_settings'] || array( 1 => array( 'first_name' => 'Keep' ) ) !== $metadata || 4 !== $options[AdminKit_Upgrades::OPTION] ) {
+if ( array( 'theme_toggle_enabled' => true, 'active_items_first_enabled' => false ) !== $options['adminkit_settings'] || array( 'builderMode' => 'dark' ) !== $options['bricks_global_settings'] || array( 1 => array( 'first_name' => 'Keep' ) ) !== $metadata || 5 !== $options[AdminKit_Upgrades::OPTION] ) {
  throw new RuntimeException( 'Version 2 did not clean only the retired flags.' );
 }
 $before_writes = $writes;
@@ -65,6 +65,15 @@ $wpdb->fail_drop=false;AdminKit_Upgrades::run();
 if(array('menu_manager_enabled'=>true)!==$options['adminkit_settings']||(isset($options['adminkit_stats_db_version'])||isset($options['adminkit_stats_pruned']))||isset($options['_transient_adminkit_dash_health_v5'])||isset($options['_transient_timeout_adminkit_stats_sum_test'])||'keep'!==$options['_transient_other_cache']||array(1=>array('metaboxhidden_dashboard'=>array('native-widget'),'first_name'=>'Keep'))!==$metadata)throw new RuntimeException('Module cleanup left retired data or changed unrelated data.');
 $before_drops=$wpdb->drops;AdminKit_Upgrades::run();
 if($before_drops!==$wpdb->drops)throw new RuntimeException('Completed cleanup repeated the table drop.');
+$options = array( AdminKit_Upgrades::OPTION => 4, 'adminkit_settings' => array( 'online_users_enabled' => true, 'theme_toggle_enabled' => true ) );
+$metadata = array( 1 => array( 'adminkit_last_login' => 123, 'session_tokens' => array( 'native' => 'keep' ), 'first_name' => 'Keep' ) );
+AdminKit_Upgrades::run();
+if ( array( 'theme_toggle_enabled' => true ) !== $options['adminkit_settings'] || array( 1 => array( 'session_tokens' => array( 'native' => 'keep' ), 'first_name' => 'Keep' ) ) !== $metadata || 5 !== $options[AdminKit_Upgrades::OPTION] ) {
+ throw new RuntimeException( 'Online users cleanup changed native sessions or left retired data.' );
+}
+$before_writes = $writes;
+AdminKit_Upgrades::run();
+if ( $writes !== $before_writes ) { throw new RuntimeException( 'Online users cleanup repeated.' ); }
 $options = array();
 $allowed = false;
 $before_writes = $writes;

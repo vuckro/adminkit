@@ -28,10 +28,6 @@ msgstr "Importer"
 msgid "%d tokens"
 msgstr "%d tokens"
 
-#: inc/features/online-users/class-online-users.php:232
-msgid "%s ago"
-msgstr "Il y a %s"
-
 #: inc/wp-core/class-username-changer.php:180
 msgid "<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or any of . - _ @ — and nothing else."
 msgstr "<strong>Erreur :</strong> nom d’utilisateur invalide. Utilisez des lettres, des chiffres, des espaces ou l’un de . - _ @ — et rien d’autre."
@@ -305,10 +301,6 @@ msgstr "Libellé"
 msgid "Language, date & time"
 msgstr "Langue, date et heure"
 
-#: inc/features/online-users/class-online-users.php:208
-msgid "Last login"
-msgstr "Dernière connexion"
-
 #: inc/wp-core/class-user-quick-edit.php:210
 msgid "Last name"
 msgstr "Nom"
@@ -374,10 +366,6 @@ msgstr "Nom"
 msgid "Native"
 msgstr "Natif"
 
-#: inc/features/online-users/class-online-users.php:233
-msgid "Never"
-msgstr "Jamais"
-
 #: inc/settings/class-settings-page.php:383
 msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
 msgstr "Aucun adaptateur dédié — thémé automatiquement par la couche de base d'AdminKit."
@@ -393,14 +381,6 @@ msgstr "Centre de notifications"
 #: inc/features/notifications/class-notification-center.php:135 inc/features/notifications/class-notification-center.php:181 inc/features/notifications/class-notification-center.php:186
 msgid "Notifications"
 msgstr "Notifications"
-
-#: inc/features/online-users/class-online-users.php:227 inc/features/online-users/class-online-users.php:227
-msgid "Online"
-msgstr "En ligne"
-
-#: inc/settings/class-settings-catalog.php:114
-msgid "Online users"
-msgstr "Utilisateurs en ligne"
 
 msgid "Open"
 msgstr "Ouvrir"
@@ -599,10 +579,6 @@ msgstr "Basculer entre le mode clair et sombre"
 #: inc/settings/class-settings-page.php:399
 msgid "Tokens synced with Bricks Builder"
 msgstr "Tokens synchronisés avec Bricks Builder"
-
-#: inc/settings/class-settings-catalog.php
-msgid "Track who is signed in (read from existing WordPress sessions, no extra tracking) and show a \"Last login\" column with online indicators on the Users screen. Off hides all of it."
-msgstr "Affiche les utilisateurs connectés à partir des sessions WordPress existantes et une colonne « Dernière connexion » avec indicateurs de présence dans la liste des comptes. Désactivé, masque ces éléments."
 
 msgid "Search…"
 msgstr "Rechercher…"

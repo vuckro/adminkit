@@ -10,10 +10,6 @@ msgstr ""
 msgid "%d tokens"
 msgstr ""
 
-#: inc/features/online-users/class-online-users.php:232
-msgid "%s ago"
-msgstr ""
-
 #: inc/wp-core/class-username-changer.php:180
 msgid "<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or any of . - _ @ — and nothing else."
 msgstr ""
@@ -287,10 +283,6 @@ msgstr ""
 msgid "Language, date & time"
 msgstr ""
 
-#: inc/features/online-users/class-online-users.php:208
-msgid "Last login"
-msgstr ""
-
 #: inc/wp-core/class-user-quick-edit.php:210
 msgid "Last name"
 msgstr ""
@@ -356,10 +348,6 @@ msgstr ""
 msgid "Native"
 msgstr ""
 
-#: inc/features/online-users/class-online-users.php:233
-msgid "Never"
-msgstr ""
-
 #: inc/settings/class-settings-page.php:383
 msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
 msgstr ""
@@ -374,14 +362,6 @@ msgstr ""
 
 #: inc/features/notifications/class-notification-center.php:135 inc/features/notifications/class-notification-center.php:181 inc/features/notifications/class-notification-center.php:186
 msgid "Notifications"
-msgstr ""
-
-#: inc/features/online-users/class-online-users.php:227 inc/features/online-users/class-online-users.php:227
-msgid "Online"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:114
-msgid "Online users"
 msgstr ""
 
 msgid "Open"
@@ -580,10 +560,6 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php:399
 msgid "Tokens synced with Bricks Builder"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Track who is signed in (read from existing WordPress sessions, no extra tracking) and show a \"Last login\" column with online indicators on the Users screen. Off hides all of it."
 msgstr ""
 
 msgid "Search…"

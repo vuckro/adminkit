@@ -58,7 +58,6 @@ class AdminKit_Plugin {
 		'wp-core/class-username-changer.php'                   => 'AdminKit_Username_Changer::init',
 
 		// features — AdminKit tools that add their own surface.
-		'features/online-users/class-online-users.php'         => 'AdminKit_Online_Users::init',
 		'features/notifications/class-notification-center.php' => 'AdminKit_Notification_Center::init',
 		'wp-core/class-footer.php'                             => 'AdminKit_Footer::init',
 		'wp-core/class-help-button.php'                        => 'AdminKit_Help_Button::init',

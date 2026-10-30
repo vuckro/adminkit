@@ -14,7 +14,7 @@ It has no runtime dependencies and no npm or Composer build.
 - `inc/class-assets.php` owns asset registration, context gates and the token cascade.
 - `inc/settings/` owns the schema, catalogs, permissions, settings route and UI host.
 - `assets/js/settings.js` is the shared UI host. `settings/main.js`,
-  `settings/navigation.js` and `settings/navigation.js` load only on their matching pages.
+  `settings/navigation.js` load only on their matching pages.
   Styles use the same split under `assets/css/settings/`. Main tabs mount on demand.
 - `tokens/palettes/waaskit.json` is the complete upstream WaasKit snapshot.
   `tokens/adminkit.json` maps roles; `tokens/appearance.css` owns custom-state CSS; `tokens/wordpress.css` maps native WordPress

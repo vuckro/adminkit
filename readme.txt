@@ -32,7 +32,6 @@ It is **standalone** — no theme or page builder required, and **nothing change
 * Username changer (opt-in): turns the natively-disabled Username field into an editable one on Users → Edit. Validates the new login, dedupes against existing users, and destroys the affected user's sessions so the old name can't keep an old device signed in. Single-site only.
 * A built-in Menu editor: reorder the admin menu and submenus, swap icons and hide entries, on its own AdminKit screen.
 * A Notification Center: a toolbar bell that gathers admin notices into a side drawer so the top of every screen stays calm.
-* Online users: see who's signed in right now (read from existing WordPress sessions, no extra tracking), with an "Online" filter and a "Last login" column on the Users screen.
 * Tabbed Settings, plus dedicated Menu and Toolbar screens under the AdminKit menu.
 * Optional adapters that skin popular plugins/themes (Bricks, WooCommerce, ACF, the Fluent suite, and more).
 

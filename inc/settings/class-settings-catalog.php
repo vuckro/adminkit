@@ -97,12 +97,7 @@ class AdminKit_Settings_Catalog {
 				'label' => __( 'Username changer', 'adminkit' ),
 				'desc'  => __( 'Lets admins rename a user\'s login on Users → Edit (WordPress disables this by default). Sensitive — invalidates the user\'s active sessions; they must sign in again. Single-site only.', 'adminkit' ),
 			),
-			array(
-				'key'   => 'online_users_enabled',
-				'group' => $users,
-				'label' => __( 'Online users', 'adminkit' ),
-				'desc'  => __( 'Track who is signed in (read from existing WordPress sessions, no extra tracking) and show a "Last login" column with online indicators on the Users screen. Off hides all of it.', 'adminkit' ),
-			),
+
 
 		);
 

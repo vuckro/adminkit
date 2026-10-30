@@ -17,7 +17,7 @@ adminkit.php
   └─ AdminKit_Plugin::init()
        ├─ AdminKit_Assets::init()          wire the 4 dispatch hooks
        ├─ wp-core modules ::init()         chrome, login, profile, admin bar, list-table,
-       │                                   post-previews, online-users,
+       │                                   post-previews,
        │                                   notification-center, footer, help-button, plugins-list
        ├─ feature modules ::init()         inc/features/{menu,toolbar}/ — self-contained tools,
        │                                   each self-registers its own AdminKit subpage
@@ -265,3 +265,5 @@ one segmented-control definition in `wp-core/chrome.css`: 3px track inset, 2px g
 indicator. Mobile segments use the shared touch-control height and scroll within
 the available width. WooCommerce overrides retain the same geometry. Markup,
 ARIA semantics, links, selected state and form fields stay owned by each screen.
+
+Storage upgrade 5 removes the retired online-users flag and `adminkit_last_login` user metadata. Native WordPress `session_tokens` are preserved. AdminKit no longer records login timestamps or scans sessions for presence.
