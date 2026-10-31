@@ -16,6 +16,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: adminkit\n"
 
+#: inc/settings/class-settings-page.php
+#, php-format
+msgid "%1$s of %2$s features active"
+msgstr "%1$s sur %2$s fonctionnalités actives"
+
 #: inc/wp-core/class-username-changer.php
 msgid "<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or any of . - _ @ — and nothing else."
 msgstr "<strong>Erreur :</strong> nom d’utilisateur invalide. Utilisez des lettres, des chiffres, des espaces ou l’un de . - _ @ — et rien d’autre."
@@ -152,6 +157,14 @@ msgstr "S’applique après l’enregistrement des modifications."
 msgid "Apply"
 msgstr "Appliquer"
 
+#: inc/settings/class-settings-page.php
+msgid "At a glance"
+msgstr "En un coup d’œil"
+
+#: inc/settings/class-settings-page.php
+msgid "At your own pace. These steps are optional."
+msgstr "À votre rythme. Ces étapes sont facultatives."
+
 #: inc/wp-core/class-options-discussion.php
 msgid "Avatars"
 msgstr "Avatars"
@@ -197,6 +210,10 @@ msgid "Card"
 msgstr "Carte"
 
 #: inc/settings/class-settings-page.php
+msgid "Changes apply after saving."
+msgstr "Les modifications s’appliquent après enregistrement."
+
+#: inc/settings/class-settings-page.php
 #, php-format
 msgid "Choice: %s"
 msgstr "Choix : %s"
@@ -229,6 +246,10 @@ msgstr "Personnalisez votre utilisation de l’administration WordPress."
 msgid "Choose the site language and the timezone used for publishing."
 msgstr "Choisissez la langue du site et le fuseau horaire utilisé pour les publications."
 
+#: inc/settings/class-settings-page.php
+msgid "Choose the tools that make your everyday work easier."
+msgstr "Choisissez les outils qui vous simplifient le quotidien."
+
 #: inc/wp-core/class-reading-layout.php
 msgid "Choose whether to ask search engines to avoid indexing this site."
 msgstr "Choisissez si vous souhaitez demander aux moteurs de recherche de ne pas indexer ce site."
@@ -257,6 +278,10 @@ msgstr "Interface épurée"
 msgid "Close"
 msgstr "Fermer"
 
+#: inc/settings/class-settings-page.php
+msgid "Close settings"
+msgstr "Fermer les réglages"
+
 #: inc/settings/class-settings-catalog.php
 msgid "Collect admin notices into a toolbar drawer while keeping inline action confirmations in place."
 msgstr "Regroupe les notifications d’administration dans un tiroir de la barre d’outils tout en conservant les confirmations d’action en ligne."
@@ -265,9 +290,21 @@ msgstr "Regroupe les notifications d’administration dans un tiroir de la barre
 msgid "Colors"
 msgstr "Couleurs"
 
+#: inc/settings/class-settings-page.php
+msgid "Colors, typography and components"
+msgstr "Couleurs, typographie et composants"
+
 #: inc/wp-core/class-options-discussion.php
 msgid "Comment settings"
 msgstr "Réglages des commentaires"
+
+#: inc/settings/class-settings-page.php
+msgid "Configuration"
+msgstr "Configuration"
+
+#: inc/settings/class-settings-page.php
+msgid "Configure"
+msgstr "Configurer"
 
 #: inc/wp-core/class-profile-account.php
 msgid "Contact Info"
@@ -312,6 +349,10 @@ msgstr "Personnaliser"
 #: inc/settings/class-settings-page.php
 msgid "Customize the WordPress sidebar menu and top admin toolbar."
 msgstr "Personnalisez le menu latéral et la barre d’outils supérieure de WordPress."
+
+#: inc/settings/class-settings-page.php
+msgid "Customize the design"
+msgstr "Personnaliser le design"
 
 #: inc/settings/class-settings-page.php
 msgid "Customize the foundations and components of your interface."
@@ -370,6 +411,10 @@ msgid "Display"
 msgstr "Affichage"
 
 #: inc/settings/class-settings-page.php
+msgid "Done"
+msgstr "Terminer"
+
+#: inc/settings/class-settings-page.php
 msgid "Download these settings as a JSON file"
 msgstr "Télécharger ces réglages dans un fichier JSON"
 
@@ -426,8 +471,24 @@ msgid "Every plugin installed on your site, plus AdminKit's active theme adapter
 msgstr "Toutes les extensions installées sur votre site, ainsi que les adaptateurs de thème actifs d’AdminKit. Les natifs ont un adaptateur dédié, activable par hôte ; les autres portent un badge Générique et héritent automatiquement du style de base d’AdminKit."
 
 #: inc/settings/class-settings-page.php
+msgid "Explore features"
+msgstr "Explorer les fonctionnalités"
+
+#: inc/settings/class-settings-page.php
+msgid "Explore the possibilities"
+msgstr "Explorez les possibilités"
+
+#: inc/settings/class-settings-page.php
+msgid "Explore, adjust, keep what works for you."
+msgstr "Explorez, ajustez, gardez ce qui vous convient."
+
+#: inc/settings/class-settings-page.php
 msgid "Export"
 msgstr "Exporter"
+
+#: inc/settings/class-settings-page.php
+msgid "Export the current configuration as a JSON file. Pending changes are included."
+msgstr "Exportez la configuration actuelle au format JSON. Les modifications en attente sont incluses."
 
 #: inc/settings/class-settings-page.php
 msgid "Feature active"
@@ -497,6 +558,10 @@ msgstr "Masqué"
 msgid "Hide"
 msgstr "Masquer"
 
+#: inc/settings/class-settings-page.php
+msgid "Hide first steps"
+msgstr "Masquer les premiers pas"
+
 #: inc/settings/class-settings-catalog.php
 msgid "Hide the Help tab"
 msgstr "Masquer l’onglet d’aide"
@@ -541,6 +606,10 @@ msgstr "URL de l’image"
 msgid "Import"
 msgstr "Importer"
 
+#: inc/settings/class-settings-page.php
+msgid "Import an AdminKit export. Save or discard pending changes before importing."
+msgstr "Importez un export AdminKit. Enregistrez ou abandonnez les modifications en attente avant l’import."
+
 #: inc/settings/class-settings-catalog.php
 msgid "In All, place published content and active plugins before the others. Explicit sorting and searches take priority."
 msgstr "Dans Toutes, place les contenus publiés et les extensions actives avant les autres. Les tris explicites et les recherches restent prioritaires."
@@ -560,6 +629,14 @@ msgstr "Informations"
 #: inc/settings/class-settings-page.php
 msgid "Inherited"
 msgstr "Héritée"
+
+#: inc/settings/class-settings-page.php
+msgid "Keep your configuration"
+msgstr "Conserver votre configuration"
+
+#: inc/settings/class-settings-page.php
+msgid "Keep, transfer or restore your AdminKit settings."
+msgstr "Conservez, transférez ou restaurez vos réglages AdminKit."
 
 #: inc/settings/class-settings-page.php
 msgid "Label"
@@ -609,9 +686,17 @@ msgstr "Localisation"
 msgid "Login screen"
 msgstr "Écran de connexion"
 
+#: inc/settings/class-settings-page.php
+msgid "Make your first adjustment"
+msgstr "Faites un premier réglage"
+
 #: inc/wp-core/class-profile-account.php
 msgid "Manage access for applications connected to your account."
 msgstr "Gérez les accès des applications connectées à votre compte."
+
+#: inc/settings/class-settings-page.php
+msgid "Manage all features"
+msgstr "Gérer les fonctionnalités"
 
 #: inc/wp-core/class-reading-layout.php
 msgid "Manage terms"
@@ -753,6 +838,10 @@ msgstr "Autres réglages"
 msgid "Outline width"
 msgstr "Épaisseur des contours"
 
+#: inc/settings/class-settings-page.php
+msgid "Overview"
+msgstr "Vue d’ensemble"
+
 #: inc/wp-core/class-options-discussion.php
 msgid "Participation"
 msgstr "Participation"
@@ -792,6 +881,10 @@ msgstr "Pointez cet élément vers une URL personnalisée (interne ou externe). 
 #: inc/settings/class-settings-catalog.php
 msgid "Post previews"
 msgstr "Aperçus des publications"
+
+#: inc/settings/class-settings-page.php
+msgid "Prepare default feature choices"
+msgstr "Préparer les choix par défaut"
 
 #: inc/settings/class-settings-page.php inc/wp-core/class-post-previews.php
 msgid "Preview"
@@ -884,6 +977,22 @@ msgstr "Réinitialiser aux valeurs par défaut"
 #: inc/settings/class-settings-page.php
 msgid "Reset toolbar"
 msgstr "Réinitialiser la barre"
+
+#: inc/settings/class-settings-page.php
+msgid "Restore a configuration"
+msgstr "Reprendre une configuration"
+
+#: inc/settings/class-settings-page.php
+msgid "Restore feature defaults"
+msgstr "Rétablir les fonctionnalités par défaut"
+
+#: inc/settings/class-settings-page.php
+msgid "Restore the default feature choices. Design settings and navigation layouts are kept. Save to apply."
+msgstr "Rétablissez les choix par défaut des fonctionnalités. Le design et les configurations de navigation sont conservés. Enregistrez pour appliquer."
+
+#: inc/settings/class-settings-page.php
+msgid "Review first steps"
+msgstr "Revoir les premiers pas"
 
 #: inc/settings/class-settings-page.php
 msgid "Right"
@@ -1000,6 +1109,10 @@ msgstr "Affiché lorsque le menu est déplié. L’icône du site prend le relai
 #: inc/settings/class-settings-page.php
 msgid "Sidebar menu"
 msgstr "Menu latéral"
+
+#: inc/settings/class-settings-page.php
+msgid "Sidebar menu and toolbar"
+msgstr "Menu latéral et barre d’outils"
 
 #: inc/wp-core/class-options-general.php
 msgid "Site Icon"
@@ -1228,6 +1341,18 @@ msgstr "Vous modifiez la barre d’outils affichée dans l’administration Word
 #: inc/wp-core/class-user-quick-edit.php
 msgid "You are not allowed to do that."
 msgstr "Vous n'êtes pas autorisé·e à faire cela."
+
+#: inc/settings/class-settings-page.php
+msgid "Your administration, simply."
+msgstr "Votre administration, simplement."
+
+#: inc/settings/class-settings-page.php
+msgid "Your features, by purpose"
+msgstr "Vos fonctionnalités, par usage"
+
+#: inc/settings/class-settings-page.php
+msgid "Your first steps"
+msgstr "Vos premiers pas"
 
 #: inc/features/notifications/class-notification-center.php
 msgid "You’re all caught up."

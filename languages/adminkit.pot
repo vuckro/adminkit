@@ -16,6 +16,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: adminkit\n"
 
+#: inc/settings/class-settings-page.php
+#, php-format
+msgid "%1$s of %2$s features active"
+msgstr ""
+
 #: inc/wp-core/class-username-changer.php
 msgid "<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or any of . - _ @ — and nothing else."
 msgstr ""
@@ -152,6 +157,14 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "At a glance"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "At your own pace. These steps are optional."
+msgstr ""
+
 #: inc/wp-core/class-options-discussion.php
 msgid "Avatars"
 msgstr ""
@@ -197,6 +210,10 @@ msgid "Card"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "Changes apply after saving."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 #, php-format
 msgid "Choice: %s"
 msgstr ""
@@ -229,6 +246,10 @@ msgstr ""
 msgid "Choose the site language and the timezone used for publishing."
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "Choose the tools that make your everyday work easier."
+msgstr ""
+
 #: inc/wp-core/class-reading-layout.php
 msgid "Choose whether to ask search engines to avoid indexing this site."
 msgstr ""
@@ -257,6 +278,10 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "Close settings"
+msgstr ""
+
 #: inc/settings/class-settings-catalog.php
 msgid "Collect admin notices into a toolbar drawer while keeping inline action confirmations in place."
 msgstr ""
@@ -265,8 +290,20 @@ msgstr ""
 msgid "Colors"
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "Colors, typography and components"
+msgstr ""
+
 #: inc/wp-core/class-options-discussion.php
 msgid "Comment settings"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Configuration"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Configure"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -311,6 +348,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Customize the WordPress sidebar menu and top admin toolbar."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Customize the design"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -370,6 +411,10 @@ msgid "Display"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "Done"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "Download these settings as a JSON file"
 msgstr ""
 
@@ -426,7 +471,23 @@ msgid "Every plugin installed on your site, plus AdminKit's active theme adapter
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "Explore features"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Explore the possibilities"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Explore, adjust, keep what works for you."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "Export"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Export the current configuration as a JSON file. Pending changes are included."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -497,6 +558,10 @@ msgstr ""
 msgid "Hide"
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "Hide first steps"
+msgstr ""
+
 #: inc/settings/class-settings-catalog.php
 msgid "Hide the Help tab"
 msgstr ""
@@ -541,6 +606,10 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "Import an AdminKit export. Save or discard pending changes before importing."
+msgstr ""
+
 #: inc/settings/class-settings-catalog.php
 msgid "In All, place published content and active plugins before the others. Explicit sorting and searches take priority."
 msgstr ""
@@ -559,6 +628,14 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Inherited"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Keep your configuration"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Keep, transfer or restore your AdminKit settings."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -609,8 +686,16 @@ msgstr ""
 msgid "Login screen"
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "Make your first adjustment"
+msgstr ""
+
 #: inc/wp-core/class-profile-account.php
 msgid "Manage access for applications connected to your account."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Manage all features"
 msgstr ""
 
 #: inc/wp-core/class-reading-layout.php
@@ -753,6 +838,10 @@ msgstr ""
 msgid "Outline width"
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "Overview"
+msgstr ""
+
 #: inc/wp-core/class-options-discussion.php
 msgid "Participation"
 msgstr ""
@@ -791,6 +880,10 @@ msgstr ""
 
 #: inc/settings/class-settings-catalog.php
 msgid "Post previews"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Prepare default feature choices"
 msgstr ""
 
 #: inc/settings/class-settings-page.php inc/wp-core/class-post-previews.php
@@ -883,6 +976,22 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Reset toolbar"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Restore a configuration"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Restore feature defaults"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Restore the default feature choices. Design settings and navigation layouts are kept. Save to apply."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Review first steps"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -999,6 +1108,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Sidebar menu"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Sidebar menu and toolbar"
 msgstr ""
 
 #: inc/wp-core/class-options-general.php
@@ -1227,6 +1340,18 @@ msgstr ""
 
 #: inc/wp-core/class-user-quick-edit.php
 msgid "You are not allowed to do that."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Your administration, simply."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Your features, by purpose"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Your first steps"
 msgstr ""
 
 #: inc/features/notifications/class-notification-center.php

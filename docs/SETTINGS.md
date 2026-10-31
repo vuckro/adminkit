@@ -189,3 +189,29 @@ all registered values; their `_adminkit: settings` marker is required on import.
 Custom hover colors derive from the effective per-theme accent and foreground in
 both palette/shape previews and the PHP compiler; an explicit foreground override
 remains effective. Provider previews use provider hover variables when available.
+
+## Native content pages (2026-10-31)
+
+AdminKit uses five native WordPress menu pages, all requiring `manage_options`:
+
+| Page | URL parameter | Content |
+| --- | --- | --- |
+| Overview | `page=adminkit` | Actual feature counts, purpose groups and optional first-use guide |
+| Features | `page=adminkit-features` | Search, state/category filters, inline switches and contextual options |
+| Design system | `page=adminkit-design` | Existing palette, typography, shapes/components and integration editors |
+| Navigation | `page=adminkit-navigation` | Existing sidebar-menu and toolbar editors |
+| Configuration | `page=adminkit-configuration` | Native-format export/import and feature-default draft preparation |
+
+The prototype's application frame, personal theme selector and simulated admin preview are not shipped. WordPress owns the surrounding navigation, toolbar and theme. Page styles consume the existing `--ak-*` roles. `assets/css/settings/pages.css` owns the content-only layout; no shared WordPress screen stylesheet is changed by this integration.
+
+Native page URLs are exposed in `AdminKitData.pages`; `initialTab` chooses the pane on load. Historical `#brand`, `#features`, `#navigation`, `#menu` and `#toolbar` links remain supported. Overview category links open the feature page with `#category=<translated group>`; this filter is transient. The original inner tab host remains a fallback for legacy/offline boot payloads, and is hidden on native pages.
+
+Feature switches and nested options update the existing shared draft. The contextual dialog's **Done** closes it; it does not submit. The global **Save changes** action retains scoped revisions, saves navigation layouts before settings and preserves drafts on API failures. Unsaved native-page navigation now triggers the browser's standard unload warning. Feature configuration links for the menu/toolbar open their actual navigation editors.
+
+Configuration imports retain the `_adminkit: settings` marker and server-side schema validation. Exports include pending drafts. Restore defaults prepares only eligible catalogue features and their options; it preserves the design profile, assets and navigation layouts until the normal save. Existing saved values and defaults are not migrated or reset by this UI change.
+
+The optional guide is browser-local, keyed by host and REST route. Exploring the catalogue, completing a settings save and exporting mark its three steps; completion hides the guide, and dismissal/reopen are available. This guide does not alter plugin options.
+
+The pristine menu snapshot is collected on the five exact AdminKit page slugs, before menu application. This allows the navigation editor to retain its original tree on its new native page. Snapshot collection still does not run on unrelated plugin pages.
+
+Validation: unified offline gate, actual local WordPress save/reload and 403 failure/retry, dialog Escape/focus, empty search, native menu snapshots, light/dark desktop/mobile views and toolbar mobile. Temporary test values in `adminkit_settings` were restored to the exact pre-test option. These checks do not assert exhaustive compatibility with every third-party plugin or every device.

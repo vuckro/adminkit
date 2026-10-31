@@ -41,14 +41,14 @@ assert.equal(sub[0].matches(':disabled'),true);assert.equal(state.features.foote
 assert.equal(input(1).disabled,true);assert.equal(state.features.child,true,'parent lock preserves child choice');
 select('Child').click();assert.match(visible('.ak-features-hint')[0].textContent,/Enable parent/);
 const search=d.querySelector('input[type=search]');search.value='identifiant';search.dispatchEvent(new w.Event('input'));
-assert.equal(visible('.ak-features-item').length,1);assert.equal(visible('.ak-features-effect')[0].textContent,'Renommer le compte');
+assert.equal(visible('.ak-features-item').length,1);select('Identifiant').click();assert.equal(visible('.ak-features-effect')[0].textContent,'Renommer le compte');
 const bulk = [...d.querySelectorAll('.ak-features-bulk button')];bulk[0].click();
 assert.equal(state.features.parent,true,'bulk applies outside visible search');assert.equal(state.features.guarded,false,'bulk:false preserved');assert.equal(state.features.unavailable,true,'unavailable preserved');assert.equal(input(1).disabled,false);
 bulk[1].click();assert.equal(state.features.footer_option,false,'bulk off preserves nested choices');bulk[0].click();assert.equal(state.features.footer_option,false,'bulk on preserves nested choices');bulk[2].click();assert.equal(state.features.footer_option,true,'defaults restore nested choices');assert.equal(state.features.help_option,true);assert.equal(state.features.parent,true);assert.equal(state.features.child,true);assert.equal(state.features.guarded,false);
 search.value='Footer description';search.dispatchEvent(new w.Event('input'));assert.equal(visible('.ak-features-item').length,1,'search finds parent via nested option');search.value='';search.dispatchEvent(new w.Event('input'));const status=d.querySelector('select');status.value='active';change(status);select('Appearance').click();input(0).focus();input(0).checked=false;change(input(0));
 assert.equal(d.activeElement,status,'filtered-out last active control returns focus to status');
 search.value='zzzz';search.dispatchEvent(new w.Event('input'));assert.equal(d.querySelector('.ak-empty').hidden,false);assert.equal(d.querySelector('.ak-features-workspace').hidden,true);
-search.value='';search.dispatchEvent(new w.Event('input'));status.value='all';change(status);category('Users').click();mobile=true;select('Identifiant').click();assert.equal(d.activeElement.textContent,'Identifiant');assert.ok(scrolls>0);visible('.ak-features-back')[0].click();assert.equal(d.activeElement,select('Identifiant'));
+search.value='';search.dispatchEvent(new w.Event('input'));status.value='all';change(status);category('Users').click();mobile=true;select('Identifiant').click();assert.equal(d.activeElement.textContent,'Identifiant');assert.equal(d.querySelector('.ak-feature-dialog').hidden,false);visible('.ak-feature-done')[0].click();assert.equal(d.activeElement,select('Identifiant'));
 category('All categories').click();select('Appearance').click();
 const parentPanel=d.getElementById(select('Appearance').getAttribute('aria-controls'));
 assert.equal(parentPanel.querySelector('.ak-feature-pending').hidden,false,'pending master change is explicit');

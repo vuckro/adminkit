@@ -23,3 +23,14 @@ foreach(array('main','menu','toolbar')as$screen){
 }
 $scripts=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>'unknown'));check(!$scripts,'Assets loaded outside supported screens');
 echo "OK: main/menu/toolbar asset graphs resolve factories before host, with cache versions and inline boot data.\n";
+
+// Native WordPress submenu entries are content pages, with the existing capability.
+$native_pages=array();
+function __($text,$domain){return $text;}
+function add_menu_page($title,$label,$capability,$slug,$callback,$icon,$position){return 'toplevel_page_'.$slug;}
+function add_submenu_page($parent,$title,$label,$capability,$slug,$callback){global $native_pages;$native_pages[$slug]=array($parent,$capability,$callback);return $parent.'_page_'.$slug;}
+AdminKit_Settings_Page::add_submenu();
+check(count($native_pages)===5,'Expected five native AdminKit content pages');
+foreach($native_pages as$page){check($page[0]==='adminkit'&&$page[1]==='manage_options'&&$page[2]===array('AdminKit_Settings_Page','render_page'),'Native page lost parent, capability or shared host');}
+$hooks=new ReflectionProperty('AdminKit_Settings_Page','page_tabs');$hooks->setAccessible(true);$registered=$hooks->getValue();
+check($registered['adminkit_page_adminkit-navigation']==='navigation'&&$registered['adminkit_page_adminkit-configuration']==='configuration','Native hooks do not route to their own page');

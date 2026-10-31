@@ -6,7 +6,7 @@ const { JSDOM } = require('jsdom');
 const root = path.resolve(__dirname, '../..');
 const base = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json')));
 function boot(source) {
- const dom = new JSDOM('<div id="adminkit-app"></div>', { url:'http://localhost/',runScripts:'outside-only',pretendToBeVisual:true });
+ const dom = new JSDOM('<div id="adminkit-app"></div>', { url:'http://localhost/#brand',runScripts:'outside-only',pretendToBeVisual:true });
  const w=dom.window;
  const data=JSON.parse(JSON.stringify(base));
  data.accentSource=source; data.brandAccent='#123456';

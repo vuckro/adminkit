@@ -194,7 +194,7 @@ class AdminKit_Menu_Manager {
 		if ( ! is_admin() || empty( $_GET['page'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return false;
 		}
-		return AdminKit_Settings_Page::SLUG === sanitize_key( wp_unslash( $_GET['page'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return in_array( sanitize_key( wp_unslash( $_GET['page'] ) ), array( AdminKit_Settings_Page::SLUG, 'adminkit-features', 'adminkit-design', 'adminkit-navigation', 'adminkit-configuration' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**

@@ -63,6 +63,7 @@
 		state.designSystem.colors = { light: Object.assign({}, state.designSystem.colors && state.designSystem.colors.light), dark: Object.assign({}, state.designSystem.colors && state.designSystem.colors.dark) };
 
 		function exportSettings() {
+			guideMark('export');
 			var payload = {
 				_adminkit: 'settings',
 				version: D.version || '1',
@@ -130,7 +131,69 @@
 			return v;
 		}
 
+		var overviewPanel = null, configurationActions = [], guideExpanded = false, guide = {};
+		var guideKey = 'adminkit:guide:' + location.host + ':' + (D.route || '');
+		try { var storedGuide = JSON.parse(localStorage.getItem(guideKey)); if (storedGuide && typeof storedGuide === 'object' && !Array.isArray(storedGuide)) { guide = storedGuide; } } catch (error) {}
+		function guideMark(key) { guide[key] = true; try { localStorage.setItem(guideKey, JSON.stringify(guide)); } catch (error) {} }
+		function pageLink(id, label, className, hash) { return el('a', { class: className || 'ak-btn', href: ((D.pages || {})[id] || ('#' + id)) + (hash || ''), text: label }); }
+		function featureGroups() {
+			var result = [];
+			(D.features || []).forEach(function (feature) {
+				var group = result.filter(function (item) { return item.label === feature.group; })[0];
+				if (!group) { group = { label: feature.group, features: [] }; result.push(group); }
+				group.features.push(feature);
+			});
+			return result;
+		}
+		function isActive(feature) { return feature.available !== false && !!state.features[feature.key] && (!feature.parent || !!state.features[feature.parent]); }
+		function buildOverview() { overviewPanel = el('section', { class: 'ak-panel ak-overview', role: 'tabpanel' }); refreshOverview(); return overviewPanel; }
+		function refreshOverview() {
+			overviewPanel.textContent = '';
+			var steps = ['explore', 'configure', 'export'], complete = steps.every(function (key) { return guide[key]; });
+			overviewPanel.appendChild(el('h2', { class: 'ak-panel-title', text: I.pageOverviewTitle }));
+			overviewPanel.appendChild(intro(I.pageOverviewIntro));
+			if (guideExpanded || (!complete && !guide.hidden)) {
+				var hide = el('button', { class: 'ak-btn ak-btn--quiet', type: 'button', text: I.pageGuideHide, onclick: function () { guideExpanded = false; guideMark('hidden'); refreshOverview(); overviewPanel.querySelector('.ak-guide-show').focus(); } });
+				var progress = steps.filter(function (key) { return guide[key]; }).length;
+				var list = el('ol', { class: 'ak-guide-steps' });
+				[[I.pageGuideExplore, 'features'], [I.pageGuideConfigure, 'brand'], [I.pageGuideExport, 'configuration']].forEach(function (step, index) {
+					list.appendChild(el('li', { class: guide[steps[index]] ? 'is-complete' : '' }, [el('span', { class: 'ak-guide-marker', 'aria-hidden': 'true', text: guide[steps[index]] ? '' : String(index + 1) }), pageLink(step[1], step[0], 'ak-guide-link')]));
+				});
+				overviewPanel.appendChild(el('section', { class: 'ak-guide' }, [el('div', {}, [el('h3', { text: I.pageGuideTitle }), el('p', { text: I.pageGuideIntro }), pageLink('features', I.pageExplore, 'ak-btn ak-btn--primary')]), el('div', {}, [el('div', { class: 'ak-guide-head' }, [el('span', { class: 'ak-guide-progress', text: progress + ' / 3' }), hide]), list, el('p', { class: 'ak-guide-note', text: I.pageGuideOptional })])]));
+			} else {
+				overviewPanel.appendChild(el('button', { type: 'button', class: 'ak-btn ak-btn--quiet ak-guide-show', text: I.pageGuideShow, onclick: function () { guideExpanded = true; refreshOverview(); overviewPanel.querySelector('.ak-guide button').focus(); } }));
+			}
+			var available = (D.features || []).filter(function (feature) { return feature.available !== false; });
+			var active = available.filter(isActive).length;
+			var count = (I.pageActiveCount || '').replace('%1$s', active).replace('%2$s', available.length);
+			overviewPanel.appendChild(el('h3', { class: 'ak-overview-section', text: I.pageSummary }));
+			overviewPanel.appendChild(el('div', { class: 'ak-overview-summary' }, [el('div', {}, [el('strong', { text: count }), el('p', { text: I.pageSavedScope })]), pageLink('features', I.pageManageAll)]));
+			overviewPanel.appendChild(el('h3', { class: 'ak-overview-section', text: I.pageCategories }));
+			var categories = el('div', { class: 'ak-overview-groups' });
+			featureGroups().forEach(function (group) {
+				var link = pageLink('features', '', 'ak-overview-group', '#category=' + encodeURIComponent(group.label));
+				var icon = el('span', { class: 'ak-features-icon', 'aria-hidden': 'true' }); icon.innerHTML = group.features[0].iconSvg || '';
+				link.appendChild(icon); link.appendChild(el('span', { text: group.label }));
+				link.appendChild(el('span', { class: 'ak-overview-count', text: group.features.filter(isActive).length + ' / ' + group.features.length })); categories.appendChild(link);
+			});
+			overviewPanel.appendChild(categories);
+			overviewPanel.appendChild(el('div', { class: 'ak-overview-links' }, [pageLink('brand', I.pageDesignAction), navPart ? pageLink('navigation', I.navigation) : null]));
+		}
+		function buildConfiguration() {
+			var panel = el('section', { class: 'ak-panel ak-configuration', role: 'tabpanel' }, [el('h2', { class: 'ak-panel-title', text: I.pageConfiguration }), intro(I.pageSettingsIntro)]);
+			function row(title, description, controls) { panel.appendChild(el('section', { class: 'ak-configuration-row' }, [el('div', {}, [el('h3', { text: title }), el('p', { text: description })]), el('div', { class: 'ak-actions' }, controls)])); }
+			row(I.pageExportTitle, I.pageExportDesc, configurationActions.length ? [configurationActions[0]] : []);
+			row(I.pageImportTitle, I.pageImportDesc, configurationActions.slice(1));
+			var defaults = el('details', { class: 'ak-defaults' }, [el('summary', { text: I.resetDefaults }), el('button', { type: 'button', class: 'ak-btn', text: I.pageDefaultsConfirm, onclick: function () {
+				(D.features || []).forEach(function (feature) { if (feature.available === false || feature.bulk === false) { return; } state.features[feature.key] = !!feature.default; (feature.options || []).forEach(function (option) { state.features[option.key] = !!option.default; }); });
+				markDirty(); if (buildFeatures.refresh) { buildFeatures.refresh(); } defaults.open = false;
+			} })]);
+			row(I.pageDefaultsTitle, I.pageDefaultsDesc, [defaults]);
+			return panel;
+		}
+
 		var mainTabs = [
+			{ id: 'overview', label: I.pageOverview, icon: ICONS.menu, build: buildOverview },
 			{ id: 'brand', label: I.designSystem, icon: ICONS.brand, build: buildDesign },
 			{ id: 'features', label: I.features, icon: ICONS.plugins, build: buildFeatures }
 		];
@@ -138,11 +201,15 @@
 			mainTabs.push({ id: 'navigation', label: I.navigation || I.menu, icon: ICONS.menu, build: navPart.buildNavigation });
 		}
 
+		mainTabs.push({ id: 'configuration', label: I.pageConfiguration, icon: ICONS.toolbar, build: buildConfiguration });
 		return {
 			tabs: mainTabs,
+			setActions: function (actions) { configurationActions = actions; },
+			onSelect: function (id) { if (id === 'features') { guideMark('explore'); } if (id === 'overview' && overviewPanel) { refreshOverview(); } },
 			exportSettings: exportSettings,
 			importSettings: importSettings,
 			onSaved: function (scope, data, response) {
+				if (scope === 'settings') { guideMark('configure'); }
 				if (scope === 'settings' && buildFeatures.acknowledge) { buildFeatures.acknowledge((response && response.values) || data.values || {}); }
 			},
 			onHash: function (rawId) {

@@ -32,9 +32,12 @@
 		setStatus: setStatus,
 		updateBar: updateBar
 	});
+	var fallbackTitle = app.previousElementSibling;
+	if (fallbackTitle && fallbackTitle.matches('h1.screen-reader-text')) { fallbackTitle.remove(); }
 	app.textContent = '';
 	app.removeAttribute('aria-busy');
 	var actions = [];
+	if (D.pages) { app.classList.add('has-native-pages'); }
 	if (screen === 'main') {
 		var input = el('input', {
 			type: 'file',
@@ -70,10 +73,11 @@
 			input
 		);
 	}
+	if (surface.setActions) { surface.setActions(actions); }
 	app.appendChild(
 		el('div', { class: 'ak-head' }, [
-			el('h1', { class: 'ak-title', text: 'AdminKit' }),
-			el('div', { class: 'ak-actions' }, actions)
+			el('h1', { class: 'ak-title', text: D.pageTitle || 'AdminKit' }),
+			el('div', { class: 'ak-actions' }, surface.setActions ? [] : actions)
 		])
 	);
 	var tabs = surface.tabs;
@@ -84,7 +88,7 @@
 		single.removeAttribute('role');
 		panelWrap.appendChild(single);
 	} else {
-		var nav = el('div', { class: 'ak-tabs', role: 'tablist', 'aria-label': 'AdminKit' });
+		var nav = el('div', { class: 'ak-tabs', role: 'tablist', 'aria-label': 'AdminKit', hidden: D.pages ? 'hidden' : null });
 		tabs.forEach(function (tab) {
 			var icon = el('span', { class: 'ic', 'aria-hidden': 'true' });
 			icon.innerHTML = tab.icon;
@@ -141,6 +145,8 @@
 	}
 	updateBar();
 
+	window.addEventListener('beforeunload', function (event) { if (state.dirty) { event.preventDefault(); event.returnValue = ''; } });
+
 	function go(id) {
 		if (location.hash === '#' + id) {
 			selectTab(id);
@@ -156,7 +162,7 @@
 				return tab.id === id;
 			})
 				? id
-				: tabs[0].id
+				: (D.initialTab || tabs[0].id)
 		);
 		if (surface.onHash && rawId !== id) {
 			surface.onHash(rawId);
@@ -164,6 +170,7 @@
 	}
 	function selectTab(id) {
 		activeTabId = id;
+		if (D.pages) { var activePage = tabs.filter(function (tab) { return tab.id === id; })[0]; var pageTitle = app.querySelector('.ak-title'); if (activePage && pageTitle) { pageTitle.textContent = activePage.label; } }
 		if (surface.onSelect) { surface.onSelect(id); }
 		tabs.forEach(function (tab) {
 			var selected = tab.id === id;

@@ -27,6 +27,9 @@ class AdminKit_Settings_Page {
 	/** Asset handle shared by the SPA's script + style. */
 	const HANDLE = 'adminkit-settings';
 
+	/** Native WordPress page hooks mapped to their content pane. */
+	private static $page_tabs = array();
+
 	/** REST namespace + route the SPA saves to. */
 	const REST_NS    = 'adminkit/v1';
 	const REST_ROUTE = '/settings';
@@ -56,7 +59,7 @@ class AdminKit_Settings_Page {
 	 * @return void
 	 */
 	public static function add_submenu() {
-		add_menu_page(
+		$root_hook = add_menu_page(
 			'AdminKit',
 			'AdminKit',
 			'manage_options',
@@ -65,6 +68,19 @@ class AdminKit_Settings_Page {
 			'dashicons-admin-customizer',
 			81
 		);
+		self::$page_tabs[ $root_hook ] = 'overview';
+		$pages = array(
+			self::SLUG => array( 'overview', __( 'Overview', 'adminkit' ) ),
+			'adminkit-features' => array( 'features', __( 'Features', 'adminkit' ) ),
+			'adminkit-design' => array( 'brand', __( 'Design system', 'adminkit' ) ),
+			'adminkit-navigation' => array( 'navigation', __( 'Navigation', 'adminkit' ) ),
+			'adminkit-configuration' => array( 'configuration', __( 'Configuration', 'adminkit' ) ),
+		);
+		foreach ( $pages as $slug => $page ) {
+			$hook = add_submenu_page( self::SLUG, $page[1] . ' — AdminKit', $page[1], 'manage_options', $slug, array( __CLASS__, 'render_page' ) );
+			self::$page_tabs[ $hook ] = $page[0];
+		}
+
 	}
 
 	/**
@@ -109,10 +125,18 @@ class AdminKit_Settings_Page {
 	 * @return void
 	 */
 	public static function enqueue( $hook ) {
-		if ( 'toplevel_page_' . self::SLUG !== $hook ) {
+		if ( ! isset( self::$page_tabs[ $hook ] ) && 'toplevel_page_' . self::SLUG !== $hook ) {
 			return;
 		}
-		self::enqueue_app( self::boot_data( 'main' ) );
+		$data = self::boot_data( 'main' );
+		$data['initialTab'] = isset( self::$page_tabs[ $hook ] ) ? self::$page_tabs[ $hook ] : 'overview';
+		$titles = array( 'overview' => __( 'Overview', 'adminkit' ), 'features' => __( 'Features', 'adminkit' ), 'brand' => __( 'Design system', 'adminkit' ), 'navigation' => __( 'Navigation', 'adminkit' ), 'configuration' => __( 'Configuration', 'adminkit' ) );
+		$data['pageTitle'] = $titles[ $data['initialTab'] ];
+		$data['pages'] = array();
+		foreach ( array( 'overview' => 'adminkit', 'features' => 'adminkit-features', 'brand' => 'adminkit-design', 'navigation' => 'adminkit-navigation', 'configuration' => 'adminkit-configuration' ) as $tab => $slug ) {
+			$data['pages'][ $tab ] = admin_url( 'admin.php?page=' . $slug );
+		}
+		self::enqueue_app( $data );
 	}
 
 	/**
@@ -141,6 +165,8 @@ class AdminKit_Settings_Page {
 		$screen_handle = self::HANDLE . '-' . $module;
 		wp_enqueue_style( self::HANDLE, ADMINKIT_URL . $css, array( AdminKit_Assets::TOKENS_HANDLE ), self::ver( $css ) );
 		wp_enqueue_style( $screen_handle, ADMINKIT_URL . $screen_css, array( self::HANDLE ), self::ver( $screen_css ) );
+		$pages_css = 'assets/css/settings/pages.css';
+		wp_enqueue_style( self::HANDLE . '-pages', ADMINKIT_URL . $pages_css, array( $screen_handle ), self::ver( $pages_css ) );
 		// The main screen's tabs live in their own files (assets/js/settings/<part>.js).
 		$deps = array( 'wp-api-fetch' );
 		$navigation_deps = array();
@@ -338,6 +364,9 @@ class AdminKit_Settings_Page {
 
 		$data = array(
 			'screen'       => $screen,
+			'pages'        => null,
+			'initialTab'   => 'overview',
+			'pageTitle'    => '',
 			'version'      => ADMINKIT_VERSION,
 			'values'       => $is_main ? array_combine( array_keys( AdminKit_Settings::schema() ), array_map( array( 'AdminKit_Settings', 'get' ), array_keys( AdminKit_Settings::schema() ) ) ) : array(),
 			'route'        => self::REST_NS . self::REST_ROUTE,
@@ -362,6 +391,38 @@ class AdminKit_Settings_Page {
 			// Only populated on the Menu screen; empty elsewhere.
 			'menuManager'  => $menu_manager,
 			'i18n'         => array(
+								'pageOverview' => __( 'Overview', 'adminkit' ),
+				'pageConfiguration' => __( 'Configuration', 'adminkit' ),
+				'pageOverviewTitle' => __( 'Your administration, simply.', 'adminkit' ),
+				'pageOverviewIntro' => __( 'Choose the tools that make your everyday work easier.', 'adminkit' ),
+				'pageSummary' => __( 'At a glance', 'adminkit' ),
+				'pageActiveCount' => __( '%1$s of %2$s features active', 'adminkit' ),
+				'pageCategories' => __( 'Your features, by purpose', 'adminkit' ),
+				'pageExplore' => __( 'Explore features', 'adminkit' ),
+				'pageConfigure' => __( 'Configure', 'adminkit' ),
+				'pageDone' => __( 'Done', 'adminkit' ),
+				'pageClose' => __( 'Close settings', 'adminkit' ),
+				'pageManageAll' => __( 'Manage all features', 'adminkit' ),
+				'pageDesignAction' => __( 'Customize the design', 'adminkit' ),
+				'pageDesignSummary' => __( 'Colors, typography and components', 'adminkit' ),
+				'pageNavigationSummary' => __( 'Sidebar menu and toolbar', 'adminkit' ),
+				'pageSettingsIntro' => __( 'Keep, transfer or restore your AdminKit settings.', 'adminkit' ),
+				'pageExportTitle' => __( 'Keep your configuration', 'adminkit' ),
+				'pageExportDesc' => __( 'Export the current configuration as a JSON file. Pending changes are included.', 'adminkit' ),
+				'pageImportTitle' => __( 'Restore a configuration', 'adminkit' ),
+				'pageImportDesc' => __( 'Import an AdminKit export. Save or discard pending changes before importing.', 'adminkit' ),
+				'pageDefaultsTitle' => __( 'Restore feature defaults', 'adminkit' ),
+				'pageDefaultsDesc' => __( 'Restore the default feature choices. Design settings and navigation layouts are kept. Save to apply.', 'adminkit' ),
+				'pageDefaultsConfirm' => __( 'Prepare default feature choices', 'adminkit' ),
+				'pageGuideTitle' => __( 'Your first steps', 'adminkit' ),
+				'pageGuideIntro' => __( 'Explore, adjust, keep what works for you.', 'adminkit' ),
+				'pageGuideExplore' => __( 'Explore the possibilities', 'adminkit' ),
+				'pageGuideConfigure' => __( 'Make your first adjustment', 'adminkit' ),
+				'pageGuideExport' => __( 'Keep your configuration', 'adminkit' ),
+				'pageGuideOptional' => __( 'At your own pace. These steps are optional.', 'adminkit' ),
+				'pageGuideHide' => __( 'Hide first steps', 'adminkit' ),
+				'pageGuideShow' => __( 'Review first steps', 'adminkit' ),
+				'pageSavedScope' => __( 'Changes apply after saving.', 'adminkit' ),
 				'foundationInvalidColor' => __( 'Use a hex color such as #1549ab.', 'adminkit' ),
 				'foundationSections' => __( 'Design system sections', 'adminkit' ),
 				'previewAction' => __( 'Primary action', 'adminkit' ),

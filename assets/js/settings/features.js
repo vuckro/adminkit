@@ -11,6 +11,7 @@
 				el('h2', { class: 'ak-panel-title', text: I.features }), context.intro(I.featuresIntro)
 			]);
 			var refs = {}, groups = [], selected = '', category = '';
+			if (location.hash.indexOf('#category=') === 0) { try { category = decodeURIComponent(location.hash.slice(10)); } catch (error) {} }
 			var search = el('input', { type: 'search', class: 'ak-search', placeholder: I.searchFeatures, 'aria-label': I.searchFeatures });
 			var status = el('select', { class: 'ak-features-status', 'aria-label': I.filterFeatures });
 			['all', 'active', 'inactive'].forEach(function (value) {
@@ -43,8 +44,18 @@
 			});
 			p.appendChild(el('div', { class: 'ak-features-tools' }, [search, status, bulk]));
 			var categories = el('nav', { class: 'ak-features-categories', 'aria-label': I.featureCategories });
-			var list = el('nav', { class: 'ak-features-list', 'aria-label': I.featureChoose, id: 'ak-feature-list' });
-			var details = el('div', { class: 'ak-features-details' });
+			var list = el('div', { class: 'ak-features-list', 'aria-label': I.featureChoose, id: 'ak-feature-list' });
+			var returnFocus = null;
+			var details = el('dialog', { class: 'ak-features-details ak-feature-dialog', 'aria-label': I.pageConfigure, hidden: 'hidden' });
+			function closeDetail() {
+				if (typeof details.close === 'function') { details.close(); } else { details.removeAttribute('open'); }
+				details.hidden = true;
+				if (selected && refs[selected]) { refs[selected].button.setAttribute('aria-expanded', 'false'); }
+				if (returnFocus && returnFocus.isConnected && !returnFocus.closest('[hidden]')) { returnFocus.focus(); }
+			}
+			details.appendChild(el('div', { class: 'ak-feature-dialog-head' }, [el('span', { text: I.pageConfigure }), el('button', { type: 'button', class: 'ak-btn', text: I.pageClose, onclick: closeDetail })]));
+			details.addEventListener('cancel', function (event) { event.preventDefault(); closeDetail(); });
+			details.addEventListener('click', function (event) { if (event.target === details) { var bounds = details.getBoundingClientRect(); if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) { closeDetail(); } } });
 			var workspace = el('div', { class: 'ak-features-workspace' }, [list, details]);
 			var empty = el('p', { class: 'ak-empty', role: 'status', hidden: 'hidden' });
 			p.appendChild(categories); p.appendChild(empty); p.appendChild(workspace);
@@ -57,13 +68,14 @@
 			}
 			function active(f) { return f.available !== false && !!state.features[f.key] && (!f.parent || !!state.features[f.parent]); }
 			function locked(f) { return f.available === false || !!(f.parent && !state.features[f.parent]); }
-			function revealDetail() {
-				if (selected && window.matchMedia('(max-width: 782px)').matches) {
-					refs[selected].panel.scrollIntoView({ block: 'start' });
-					refs[selected].heading.focus({ preventScroll: true });
+			function select(key) {
+				if (D.pages && D.pages.navigation && (key === 'menu_manager_enabled' || key === 'toolbar_manager_enabled')) {
+					window.location.href = D.pages.navigation + (key === 'toolbar_manager_enabled' ? '#toolbar' : '#menu'); return;
 				}
+				selected = key; returnFocus = refs[key].button; details.setAttribute('aria-labelledby', refs[key].heading.id); details.hidden = false; refresh();
+				if (typeof details.showModal === 'function') { if (!details.open) { details.showModal(); } } else { details.setAttribute('open', ''); }
+				refs[key].heading.focus();
 			}
-			function select(key) { selected = key; refresh(); revealDetail(); }
 			features.forEach(function (f, index) {
 				var group = groups.filter(function (g) { return g.label === (f.group || ''); })[0];
 				if (!group) {
@@ -78,10 +90,12 @@
 				var panelId = 'ak-feature-detail-' + index;
 				var heading = el('h3', { id: panelId + '-title', tabindex: '-1', text: f.label });
 				var rowStatus = el('span', { class: 'ak-features-item__status' });
-				var button = el('button', { type: 'button', class: 'ak-features-item', 'aria-controls': panelId, 'aria-pressed': 'false', onclick: function () { select(f.key); } }, [
-					icon(f), el('span', { class: 'ak-features-item__text' }, [el('span', { class: 'ak-features-item__label', text: f.label }), rowStatus]), el('span', { class: 'ak-features-dot', 'aria-hidden': 'true' })
+				var button = el('button', { type: 'button', class: 'ak-features-item', 'aria-controls': panelId, 'aria-expanded': 'false', 'aria-haspopup': 'dialog', onclick: function () { select(f.key); } }, [
+					icon(f), el('span', { class: 'ak-features-item__text' }, [el('span', { class: 'ak-features-item__label', text: f.label }), el('span', { class: 'ak-feature-row-desc', text: f.desc }), rowStatus]), el('span', { class: 'ak-feature-config-label', text: I.pageConfigure })
 				]);
-				group.rows.appendChild(button);
+				var quickInput = el('input', { type: 'checkbox', class: 'ak-switch__input', 'aria-label': f.label });
+				quickInput.addEventListener('change', function () { state.features[f.key] = quickInput.checked; refresh(); context.markDirty(); });
+				group.rows.appendChild(el('article', { class: 'ak-feature-catalog-row' }, [button, el('label', { class: 'ak-switch' }, [quickInput, el('span', { class: 'ak-switch__track' }), el('span', { class: 'ak-switch__knob' })])]));
 				var input = el('input', { type: 'checkbox', class: 'ak-switch__input', 'aria-label': f.label, 'aria-describedby': panelId + '-hint' });
 				input.addEventListener('change', function () {
 					state.features[f.key] = input.checked;
@@ -90,11 +104,8 @@
 				var stateLabel = el('span', { class: 'ak-features-state__label' });
 				var hint = el('p', { id: panelId + '-hint', class: 'ak-features-hint' });
 				var pendingBadge = el('span', { class: 'ak-feature-pending', text: I.featurePending, hidden: 'hidden' });
-				var back = el('button', { type: 'button', class: 'ak-features-back', text: I.featureBack, onclick: function () {
-					list.scrollIntoView({ block: 'start' }); button.focus({ preventScroll: true });
-				} });
 				var panel = el('section', { class: 'ak-features-detail', id: panelId, role: 'region', 'aria-labelledby': panelId + '-title', hidden: 'hidden' }, [
-					back, icon(f), heading, f.group ? el('p', { class: 'ak-features-detail__category', text: f.group }) : null,
+					icon(f), heading, f.group ? el('p', { class: 'ak-features-detail__category', text: f.group }) : null,
 					el('h4', { text: I.featureEffect }), el('p', { class: 'ak-features-effect', text: f.desc }),
 					el('div', { class: 'ak-features-state' }, [el('div', {}, [el('div', { class: 'ak-feature-state-heading' }, [stateLabel, pendingBadge]), hint]),
 						el('label', { class: 'ak-switch' }, [input, el('span', { class: 'ak-switch__track' }), el('span', { class: 'ak-switch__knob' })])])
@@ -124,8 +135,9 @@
 					optionFooter = el('p', { id: optionHintId, class: 'ak-features-hint', text: I.featureOptionsHint });
 					panel.appendChild(optionFooter);
 				}
+				panel.appendChild(el('button', { type: 'button', class: 'ak-btn ak-feature-done', text: I.pageDone, onclick: closeDetail }));
 				details.appendChild(panel);
-				refs[f.key] = { button: button, input: input, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, pendingBadge: pendingBadge, optionNote: optionNote, optionNoteTitle: optionNoteTitle, optionNoteText: optionNoteText, optionFooter: optionFooter, optionSet: optionSet, optionInputs: optionInputs, visible: false };
+				refs[f.key] = { button: button, input: input, quickInput: quickInput, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, pendingBadge: pendingBadge, optionNote: optionNote, optionNoteTitle: optionNoteTitle, optionNoteText: optionNoteText, optionFooter: optionFooter, optionSet: optionSet, optionInputs: optionInputs, visible: false };
 			});
 			var categoryButtons = [];
 			function categoryButton(label, value, count) {
@@ -151,10 +163,10 @@
 					var matchesStatus = match && (status.value === 'all' || (status.value === 'active') === on);
 					if (matchesStatus) { categoryCounts[f.group || ''] = (categoryCounts[f.group || ''] || 0) + 1; }
 					r.visible = matchesStatus && (!category || category === f.group);
-					r.button.hidden = !r.visible;
+					r.button.hidden = !r.visible; r.button.parentElement.hidden = !r.visible;
 					if (r.visible) { visible.push(f.key); }
 					r.input.checked = f.available !== false && !!state.features[f.key];
-					r.input.disabled = isLocked;
+					r.input.disabled = isLocked; r.quickInput.disabled = isLocked; r.quickInput.checked = r.input.checked;
 					if (r.optionSet) {
 						r.optionSet.disabled = !on;
 						r.optionNote.hidden = on;
@@ -178,10 +190,10 @@
 					r.hint.textContent = f.available === false ? (f.unavailableHint || I.featureUnavailable) : (f.parent && !state.features[f.parent] ? I.featureParentOff : (masterChanged ? (on ? I.featureWillEnable : I.featureWillDisable) : (optionsChanged ? I.featureOptionsWillApply : (on ? I.featureSavedOn : I.featureSavedOff))));
 					r.panel.classList.toggle('is-locked', isLocked);
 				});
-				if (visible.indexOf(selected) === -1) { selected = visible[0] || ''; }
+				if (visible.indexOf(selected) === -1) { selected = ''; if (!details.hidden) { closeDetail(); } }
 				features.forEach(function (f) {
 					var r = refs[f.key];
-					r.button.setAttribute('aria-pressed', String(f.key === selected));
+					r.button.setAttribute('aria-expanded', String(f.key === selected && !details.hidden));
 					r.panel.hidden = f.key !== selected;
 				});
 				groups.forEach(function (g) { g.wrap.hidden = !g.keys.some(function (key) { return refs[key].visible; }); });
@@ -201,6 +213,7 @@
 			refreshView = refresh;
 			refresh(); return p;
 		}
+		buildFeatures.refresh = function () { if (refreshView) { refreshView(); } };
 		buildFeatures.acknowledge = function (values) {
 			(D.features || []).forEach(function (f) {
 				[f].concat(f.options || []).forEach(function (item) {

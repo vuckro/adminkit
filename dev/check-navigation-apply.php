@@ -7,6 +7,8 @@ function update_option($key,$value,$autoload=null){global$options,$writes;$optio
 function current_user_can($cap){global$allowed;return$allowed;}
 function apply_filters($hook,$value){return$value;}
 function is_admin(){global$admin;return$admin;}
+function sanitize_key($value){return preg_replace('/[^a-z0-9_-]/','',strtolower($value));}
+function wp_unslash($value){return $value;}
 function sanitize_text_field($s){return strip_tags($s);}
 function esc_html($s){return htmlspecialchars($s,ENT_QUOTES);}
 function esc_attr($s){return htmlspecialchars($s,ENT_QUOTES);}
@@ -114,3 +116,8 @@ $bar_showing=false;ob_start();AdminKit_Toolbar_Manager::print_css();check(ob_get
 AdminKit_Toolbar_Manager::flush_snapshots();check(!$transients,'Snapshot invalidation missed a context');
 AdminKit_Settings::$values=array();
 echo "OK: real menu/toolbar apply, protected nodes, stable children, metadata, taxonomy highlights, history authorization and context isolation.\n";
+
+// The new native AdminKit pages still own the pristine editor snapshot.
+$screen_check=new ReflectionMethod('AdminKit_Menu_Manager','is_menu_editor_screen');$screen_check->setAccessible(true);
+$admin=true;foreach(array('adminkit','adminkit-features','adminkit-design','adminkit-navigation','adminkit-configuration')as$page){$_GET['page']=$page;check($screen_check->invoke(null),'Missing editor snapshot on '.$page);}
+$_GET['page']='other-plugin';check(!$screen_check->invoke(null),'Snapshot escaped AdminKit pages');unset($_GET['page']);

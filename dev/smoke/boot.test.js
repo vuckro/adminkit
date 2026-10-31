@@ -34,10 +34,11 @@ const tick = () => new Promise((r) => setTimeout(r, 30));
 const doc = window.document;
 const assert = (cond, msg) => { if (!cond) { errors.push('ASSERT: ' + msg); } };
 assert(!doc.getElementById('adminkit-app').hasAttribute('aria-busy'), 'app finished booting');
+doc.getElementById('ak-tab-brand').click(); await tick();
 assert(doc.getElementById('ak-type-scale').value === '1.13', 'valid non-preset typography scale survives mounting');
 assert(doc.getElementById('ak-shape-radius').value === '1.37', 'valid non-preset radius scale survives mounting');
 const tabs = [...doc.querySelectorAll('[role="tab"].ak-tabs button, .ak-tabs [role="tab"]')];
-assert(tabs.length === 3, 'main tabs rendered (' + tabs.length + ')');
+assert(tabs.length === 5, 'main tabs rendered (' + tabs.length + ')');
 for (const tab of tabs) {
   try { tab.click(); await tick(); } catch (e) { errors.push('tab ' + tab.id + ': ' + e.stack); }
 }

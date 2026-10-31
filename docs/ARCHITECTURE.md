@@ -217,3 +217,7 @@ contracts, adapter budgets, jsdom, i18n, registry integrity and HEAD/working-tre
 package dry-runs. CI invokes that same command on PHP 7.4/8.2 with Node 24.
 Real browser saves, user/session behavior, multisite and active host visual checks
 remain integration checks; a skipped host drift check is not validation.
+
+### Settings pages inside native WordPress
+
+`AdminKit_Settings_Page` registers Overview, Features, Design system, Navigation and Configuration under the native AdminKit menu. All five share the existing SPA host and REST contracts. The hook-to-pane map selects the initial content; `AdminKitData.pages` supplies native links. No standalone web-app frame is mounted. `assets/css/settings/pages.css` is the content-only override layered after the shared screen styles. The menu manager's pristine snapshot whitelist includes those exact page slugs so its editor works on the new Navigation page. Draft ownership, permissions, nonces, module defaults and saved layouts remain unchanged.
