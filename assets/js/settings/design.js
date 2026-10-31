@@ -350,13 +350,27 @@
 			if (state.appearance.ui_font === 'humanist' || !fontCatalog[state.appearance.ui_font]) {
 				state.appearance.ui_font = 'geist';
 			}
+			function snapChoice(val, choices, fallback) {
+				var num = Number(val);
+				if (!isFinite(num)) { return fallback; }
+				var best = choices[0];
+				choices.forEach(function (c) {
+					if (Math.abs(c - num) < Math.abs(best - num)) { best = c; }
+				});
+				return best;
+			}
 			var fontSelect = el('select', { id: 'ak-type-font' }, Object.keys(fontCatalog).map(function (key) {
 				var label = key === 'system' && I.fontSystem ? I.fontSystem : fontCatalog[key].label;
 				return el('option', { value: key, text: label });
 			}));
 			fontSelect.value = state.appearance.ui_font;
-			var typeScale = el('input', { type: 'range', id: 'ak-type-scale', min: '0.75', max: '1.5', step: '0.05', value: String(state.designSystem.type_scale) });
-			var typeScaleValue = el('output', { for: typeScale.id });
+			var typeChoices = [0.9, 0.95, 1, 1.05, 1.1];
+			state.designSystem.type_scale = snapChoice(state.designSystem.type_scale, typeChoices, 1);
+			var typeScale = el('select', { id: 'ak-type-scale' }, typeChoices.map(function (scale) {
+				var pct = Math.round(scale * 100) + ' %';
+				return el('option', { value: String(scale), text: scale === 1 ? I.defaultPreset + ' (' + pct + ')' : pct });
+			}));
+			typeScale.value = String(state.designSystem.type_scale);
 			var scalePreviews = ['light', 'dark'].map(function (mode) {
 				return el('div', { class: 'ak-bp__frame ak-shape-preview ak-scale-preview', 'data-preview-theme': mode }, [
 					el('div', { class: 'ak-scale-sample' }, [
@@ -383,8 +397,6 @@
 				var entry = fontCatalog[state.appearance.ui_font] || fontCatalog.geist;
 				var font = entry.stack;
 				ensureGoogleFont(entry.google);
-				typeScaleValue.textContent = number(state.designSystem.type_scale) + ' ×';
-				typeScale.setAttribute('aria-valuetext', typeScaleValue.textContent);
 				// Live preview on the page itself AND in the specimen frame.
 				var root = document.documentElement.style;
 				root.setProperty('--ak-type-scale', state.designSystem.type_scale);
@@ -395,14 +407,15 @@
 					preview.style.setProperty('--ak-prev-font', font);
 				});
 			}
+			function onTypeScale() { state.designSystem.type_scale = Number(typeScale.value); refreshScales(); markDirty(); }
 			fontSelect.addEventListener('change', function () { state.appearance.ui_font = fontSelect.value; refreshScales(); markDirty(); });
-			typeScale.addEventListener('input', function () { state.designSystem.type_scale = Number(typeScale.value); refreshScales(); markDirty(); });
-			function scaleSlider(input, output, label) {
-				return el('div', { class: 'ak-foundation-slider' }, [el('div', {}, [el('label', { for: input.id, text: label }), output]), input]);
-			}
+			typeScale.addEventListener('change', onTypeScale);
+			typeScale.addEventListener('input', onTypeScale);
 			section('type', I.studioType, I.studioTypeHint, [
-				el('div', { class: 'ak-foundation-field' }, [el('label', { for: fontSelect.id, text: I.studioFont }), fontSelect]),
-				scaleSlider(typeScale, typeScaleValue, I.studioTypeScale),
+				el('div', { class: 'ak-shape-selects' }, [
+					el('div', {}, [el('label', { for: fontSelect.id, text: I.studioFont }), fontSelect]),
+					el('div', {}, [el('label', { for: typeScale.id, text: I.studioTypeScale }), typeScale])
+				]),
 				el('button', { type: 'button', class: 'ak-btn', text: I.resetDefaults, onclick: function () {
 					state.appearance.ui_font = 'geist'; fontSelect.value = 'geist';
 					state.designSystem.type_scale = 1; typeScale.value = '1';
@@ -412,8 +425,13 @@
 			attachPreview('type', scalePreviews);
 
 			// --- Section 3: Shapes & Surfaces (Radius + Border + Elevation + Button highlight) ---
-			var radius = el('input', { type: 'range', id: 'ak-shape-radius', min: '0', max: '2', step: '0.05', value: String(state.designSystem.radius_scale) });
-			var radiusValue = el('output', { for: radius.id });
+			var radiusChoices = [0, 0.5, 1, 1.25, 1.5];
+			state.designSystem.radius_scale = snapChoice(state.designSystem.radius_scale, radiusChoices, 1);
+			var radius = el('select', { id: 'ak-shape-radius' }, radiusChoices.map(function (scale) {
+				var label = scale === 0 ? '0 px' : scale === 1 ? I.defaultPreset + ' (1 ×)' : number(scale) + ' ×';
+				return el('option', { value: String(scale), text: label });
+			}));
+			radius.value = String(state.designSystem.radius_scale);
 			var elevation = el('select', { id: 'ak-shape-elevation' }, [
 				['default', I.defaultPreset], ['flat', I.studioFlat], ['subtle', I.studioSubtle], ['raised', I.studioRaised]
 			].map(function (item) { return el('option', { value: item[0], text: item[1] }); }));
@@ -455,8 +473,6 @@
 				});
 			}
 			function refreshShapes() {
-				radiusValue.textContent = number(state.designSystem.radius_scale) + ' ×';
-				radius.setAttribute('aria-valuetext', radiusValue.textContent);
 				var highlight = state.designSystem.components.buttons.highlight;
 				var depth = { flat: 'none', subtle: 'var(--wk-elevation-1)', raised: 'var(--wk-elevation-2)' }[state.designSystem.elevation];
 				// Live preview on the page itself AND in the specimen frame.
@@ -483,14 +499,16 @@
 					preview.style.setProperty('--ak-shape-shadow', depth || 'var(--ak-default-card-shadow)');
 				});
 			}
+			function onRadius() { state.designSystem.radius_scale = Number(radius.value); refreshShapes(); markDirty(); }
 			borderWidth.addEventListener('change', function () { state.designSystem.border_width = Number(borderWidth.value); refreshShapes(); markDirty(); });
-			radius.addEventListener('input', function () { state.designSystem.radius_scale = Number(radius.value); refreshShapes(); markDirty(); });
+			radius.addEventListener('change', onRadius);
+			radius.addEventListener('input', onRadius);
 			elevation.addEventListener('change', function () { state.designSystem.elevation = elevation.value; refreshShapes(); markDirty(); });
 			highlightSelect.addEventListener('change', function () { state.designSystem.components.buttons.highlight = highlightSelect.value; refreshShapes(); markDirty(); });
 
 			section('shapes', I.studioShapes, I.shapeHint, [
-				scaleSlider(radius, radiusValue, I.studioRadiusScale),
 				el('div', { class: 'ak-shape-selects' }, [
+					el('div', {}, [el('label', { for: radius.id, text: I.studioRadiusScale }), radius]),
 					el('div', {}, [el('label', { for: borderWidth.id, text: I.studioBorder }), borderWidth]),
 					el('div', {}, [el('label', { for: elevation.id, text: I.studioElevation }), elevation]),
 					el('div', {}, [el('label', { for: highlightSelect.id, text: I.componentHighlight }), highlightSelect])
