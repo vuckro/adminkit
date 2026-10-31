@@ -128,6 +128,11 @@ body.adminkit .theme-overlay .theme-header {
 	border-bottom-color: var(--ak-border);
 }
 
+/* Keep the close button's hover/focus surface inside the rounded modal corner. */
+body.adminkit .theme-overlay .theme-header .close {
+	border-top-right-radius: var(--ak-card-radius);
+}
+
 body.adminkit .theme-overlay .theme-header .close,
 body.adminkit .theme-overlay .theme-header .right,
 body.adminkit .theme-overlay .theme-header .left {

@@ -57,8 +57,7 @@ class AdminKit_Settings_Gate {
 	 */
 	public static function gate_integration( $enabled, $slug ) {
 		// Gutenberg ships with WordPress. Its chrome must accompany the admin
-		// skin even when optional plugin integrations are all disabled. Canvas
-		// theming remains separately gated by editor_content_theme.
+		// skin even when optional plugin integrations are all disabled.
 		if ( 'gutenberg' === $slug ) {
 			return $enabled;
 		}

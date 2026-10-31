@@ -21,14 +21,10 @@
  *                        #fff / #1e1e1e / #ddd / #f0f0f0 (panels, document bar,
  *                        popovers, modals, inserter, list view, form controls,
  *                        block toolbar) so the whole chrome flips with the toggle.
- *                        Always on; the canvas (.editor-styles-wrapper) is left alone here.
- *   canvas.css         — theming of the iframed canvas (content + native blocks),
- *                        gated by the "Gutenberg" feature (editor_content_theme, ON by
- *                        default). Injected INTO the editor iframe by canvas-theme.js.
- *   js/theme-toggle.js — sun/moon toggle injected into the editor header
- *   js/canvas-theme.js — injects the token CSS + canvas.css into the editor iframe and
- *                        mirrors data-adminkit-theme onto the iframe <html> (so the dark
- *                        token block flips the canvas). Gated by the "Gutenberg" feature.
+ *                        Always on; the content canvas (.editor-styles-wrapper) is
+ *                        never touched so the active front-end theme owns it.
+ *   js/theme-toggle.js — sun/moon toggle injected into the editor header when the
+ *                        top admin bar is hidden by fullscreen mode
  *
  * @package AdminKit
  */
@@ -81,7 +77,6 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 	 */
 	protected static function boot() {
 		add_action( 'enqueue_block_editor_assets', array( __CLASS__, 'enqueue_theme_toggle' ) );
-		add_action( 'enqueue_block_editor_assets', array( __CLASS__, 'enqueue_canvas_theme' ) );
 	}
 
 	/**
@@ -109,72 +104,5 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 				'label' => __( 'Toggle light / dark mode', 'adminkit' ),
 			) ) . ';'
 		);
-	}
-
-	/**
-	 * Theme the editor's iframed canvas (content + native blocks) in light + dark.
-	 * Gated by the "Gutenberg" feature (editor_content_theme, ON by default) so a
-	 * site can still opt out when the editor canvas must match the front end.
-	 *
-	 * The block-editor canvas is a separate <iframe> document that neither the
-	 * editor-chrome CSS nor the page's data-adminkit-theme attribute reach. So we
-	 * hand canvas-theme.js the (mtime-stamped) URLs of the token files +
-	 * wp-components.css (the @wordpress/components theming — placeholders, buttons,
-	 * inputs) + canvas.css; it injects them as <link>s into the iframe <head>, tags
-	 * the iframe <body> with `adminkit` (so the `body.adminkit …` --wp-* accent
-	 * remap + component rules match inside, instead of falling back to WP blue),
-	 * and mirrors the theme attribute onto the iframe <html> so the same --ak-*
-	 * dark block flips the canvas. Raw stylesheets go straight in — no
-	 * block_editor_settings_all transform to fight (which can rewrite :root).
-	 *
-	 * @return void
-	 */
-	public static function enqueue_canvas_theme() {
-		if ( ! apply_filters( 'adminkit/should_load', true, 'editor' ) ) {
-			return;
-		}
-		if ( ! AdminKit_Settings::get( 'editor_content_theme' ) ) {
-			return; // "Gutenberg" canvas theming off — leave the canvas WP-default.
-		}
-		$styles = array_values( array_filter( array(
-			self::asset_url( AdminKit_Assets::FONTS_SRC ),                // local WaasKit font faces
-			self::asset_url( AdminKit_Assets::WAASKIT_SRC ),              // token primitives (baseline)
-			// Provider palette (e.g. Bricks Style Manager) — loads BETWEEN the
-			// baseline and the --ak-* layer so tokens.css's var(--accent) resolves to
-			// the provider's accent inside the canvas, mirroring the page cascade.
-			(string) apply_filters( 'adminkit/editor_canvas_provider_css', '', 'editor' ),
-			self::asset_url( AdminKit_Assets::TOKENS_SRC ),               // --ak-* (light + dark) + --wp-* accent remap
-			self::asset_url( 'assets/css/wp-screens/wp-components.css' ), // @wordpress/components UI (placeholders, buttons, inputs)
-			self::asset_url( self::BASE . 'canvas.css' ),                 // native-block content mapping
-		) ) );
-		AdminKit_Assets::enqueue_script(
-			'adminkit-gutenberg-canvas-theme',
-			'inc/integrations/plugins/gutenberg/js/canvas-theme.js',
-			array(),
-			'window.AdminKitCanvas=' . wp_json_encode( array(
-				'attr'   => AdminKit_Theme_Toggle::attribute(),
-				'styles' => $styles,
-				// The brand-accent --ak-primary family is emitted INLINE on the page
-				// (computed per brand), so it isn't one of the stylesheet URLs above;
-				// the canvas JS injects it as a <style> AFTER them so brand buttons in
-				// the canvas follow an explicit custom/provider accent.
-				'accent' => AdminKit_Assets::accent_family_css() . AdminKit_Design_System::css(),
-			) ) . ';'
-		);
-	}
-
-	/**
-	 * Plugin-root-relative asset path → absolute URL with an mtime cache-bust (so
-	 * canvas edits skip the iframe cache). Empty string when the file is missing.
-	 *
-	 * @param string $src Path relative to ADMINKIT_PATH.
-	 * @return string
-	 */
-	private static function asset_url( $src ) {
-		$path = ADMINKIT_PATH . $src;
-		if ( ! file_exists( $path ) ) {
-			return '';
-		}
-		return ADMINKIT_URL . $src . '?ver=' . filemtime( $path );
 	}
 }

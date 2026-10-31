@@ -214,9 +214,9 @@ class AdminKit_Settings {
 			) );
 		}
 
-		// Opt-in workflow enhancements — disabled by default so content/editor/user
+		// Opt-in workflow enhancements — disabled by default so content/user
 		// workflows stay untouched until explicitly enabled.
-		foreach ( array( 'editor_content_theme', 'active_items_first_enabled', 'quick_edit_users_enabled', 'username_changer_enabled' ) as $opt_in ) {
+		foreach ( array( 'active_items_first_enabled', 'quick_edit_users_enabled', 'username_changer_enabled' ) as $opt_in ) {
 			self::register( $opt_in, array(
 				'type'     => 'toggle',
 				'group'    => 'features',

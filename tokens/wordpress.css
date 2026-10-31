@@ -44,13 +44,16 @@ body.adminkit { scrollbar-color: var(--ak-border-strong) var(--ak-bg); }
 body.adminkit code, body.adminkit kbd, body.adminkit pre { font-family: var(--ak-font-mono); }
 
 /* Native WordPress typography has absolute pixel sizes. Map text roles once;
-   icon fonts and explicitly sized editorial content keep their own geometry. */
+   icon fonts and explicitly sized editorial content keep their own geometry.
+   Exclude [class~="editor-styles-wrapper"] inside :where() (zero specificity, no
+   ".editor-styles-wrapper" substring) so non-iframed Gutenberg canvases keep
+   their front-end theme typography untouched. */
 body.adminkit { font-size: var(--ak-text-s); }
-body.adminkit :where(input, select, textarea, button) { font-family: var(--ak-font-body); }
-body.adminkit :where(p, .description, .form-table, .form-table td, .form-table th, .widefat td, .widefat th, .subsubsub, .tablenav, .button, .button-primary, .button-secondary) { font-size: var(--ak-text-s); }
-body.adminkit :where(h1, .wrap > h1) { font-size: calc(23px * var(--ak-type-scale)); }
-body.adminkit :where(h2, .wrap h2) { font-size: calc(18px * var(--ak-type-scale)); }
-body.adminkit :where(h3, .wrap h3) { font-size: calc(16px * var(--ak-type-scale)); }
+body.adminkit :where(:is(input, select, textarea, button):not([class~="editor-styles-wrapper"] *)) { font-family: var(--ak-font-body); }
+body.adminkit :where(:is(p, .description, .form-table, .form-table td, .form-table th, .widefat td, .widefat th, .subsubsub, .tablenav, .button, .button-primary, .button-secondary):not([class~="editor-styles-wrapper"] *)) { font-size: var(--ak-text-s); }
+body.adminkit :where(:is(h1, .wrap > h1):not([class~="editor-styles-wrapper"] *)) { font-size: calc(23px * var(--ak-type-scale)); }
+body.adminkit :where(:is(h2, .wrap h2):not([class~="editor-styles-wrapper"] *)) { font-size: calc(18px * var(--ak-type-scale)); }
+body.adminkit :where(:is(h3, .wrap h3):not([class~="editor-styles-wrapper"] *)) { font-size: calc(16px * var(--ak-type-scale)); }
 body.adminkit #adminmenu :where(a, .wp-submenu a) { font-size: var(--ak-text-s); }
 #wpadminbar :where(.ab-item, .ab-label) { font-size: var(--ak-text-s); }
 

@@ -231,3 +231,17 @@ body.adminkit.adminkit-woocommerce #wpbody-content .wp-editor-tools {
 body.adminkit.adminkit-woocommerce #woocommerce-order-items .inside { background: var(--ak-surface); }
 body.adminkit.adminkit-woocommerce #postcustomstuff table,
 body.adminkit.adminkit-woocommerce #postcustomstuff :is(th, td) { border-color: var(--ak-border); }
+
+/* Product onboarding portals also appear outside the wc-admin React screens. */
+body.adminkit.adminkit-woocommerce .woocommerce-tour-kit .tour-kit-frame__container,
+body.adminkit.adminkit-woocommerce .woocommerce-tour-kit-step {
+ background: var(--ak-surface);
+ color: var(--ak-text);
+ border-radius: var(--ak-radius-m);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-tour-kit .woocommerce-tour-kit-step__heading { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce .woocommerce-tour-kit .woocommerce-tour-kit-step__description { color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce .woocommerce-tour-kit :is(.components-card__footer, .woocommerce-tour-kit-step-navigation) { color: var(--ak-text-muted); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .woocommerce-tour-kit .components-button:not(.is-primary) { color: var(--ak-text); background: var(--ak-surface); border-radius: var(--ak-radius-s); }
+body.adminkit.adminkit-woocommerce .woocommerce-tour-kit .components-button:not(.is-primary):hover { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-woocommerce .woocommerce-tour-kit .components-button:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; box-shadow: none; }

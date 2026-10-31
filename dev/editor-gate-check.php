@@ -13,7 +13,6 @@ foreach ( array( false, true ) as $opt_in ) {
 	AdminKit_Settings::$values = array(
 		'integration_gutenberg_enabled' => $opt_in,
 		'integration_woocommerce_enabled' => $opt_in,
-		'editor_content_theme' => false,
 	);
 	if ( true !== AdminKit_Settings_Gate::gate_integration( true, 'gutenberg' )
 		|| false !== AdminKit_Settings_Gate::gate_integration( false, 'gutenberg' )

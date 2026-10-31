@@ -1200,3 +1200,89 @@ body.adminkit .status-disabled::before {
 body.adminkit.woocommerce-settings-payments-section_legacy #wpbody-content {
 	background-color: var(--ak-bg);
 }
+
+/* Classic editor details: preserve native markup and actions in both themes. */
+body.adminkit.adminkit-woocommerce #postcustomstuff :is(table, tbody, tr, td),
+body.adminkit.adminkit-woocommerce #order_custom #newmeta {
+ background: var(--ak-surface);
+ border-color: var(--ak-border);
+ color: var(--ak-text);
+}
+body.adminkit.adminkit-woocommerce #minor-publishing-actions {
+ display: flex;
+ flex-wrap: wrap;
+ gap: calc(8px * var(--ak-space-scale, 1));
+}
+body.adminkit.adminkit-woocommerce #minor-publishing-actions :is(#save-action, #preview-action) {
+ float: none;
+ padding: 0;
+ flex: 1 1 auto;
+ text-align: start;
+}
+body.adminkit.adminkit-woocommerce #minor-publishing-actions .button {
+ width: 100%;
+ white-space: normal;
+ text-align: center;
+}
+/* TinyMCE paints its focused button white, independently of :focus. */
+body.adminkit.adminkit-woocommerce .mce-toolbar .mce-btn.mce-btn:focus,
+body.adminkit.adminkit-woocommerce .mce-toolbar .mce-btn.mce-btn:hover {
+ background: var(--ak-elevated);
+ border-color: var(--ak-border);
+}
+body.adminkit.adminkit-woocommerce .mce-toolbar .mce-btn:focus-visible {
+ outline: 2px solid var(--ak-focus);
+ outline-offset: 1px;
+}
+/* WC's #message padding overrides the shared alert's reserved icon space. */
+body.adminkit.adminkit-woocommerce #message.updated {
+ padding-inline-start: calc(64px * var(--ak-space-scale, 1));
+ padding-inline-end: calc(56px * var(--ak-space-scale, 1));
+}
+body.adminkit.adminkit-woocommerce .wp-list-table.products .row-actions {
+ left: auto;
+ inset-inline-start: auto;
+ margin-inline-start: 0;
+}
+/* Product fields belong beside the three native Quick Edit columns. WC's
+   clear:left otherwise starts a second, mostly empty row beneath them. */
+body.adminkit.adminkit-woocommerce #wpbody-content .quick-edit-row #woocommerce-fields {
+ clear: none;
+ grid-column: 1 / -1;
+ display: grid;
+ grid-template-columns: repeat(3, minmax(0, 1fr));
+ gap: calc(16px * var(--ak-space-scale, 1)) calc(24px * var(--ak-space-scale, 1));
+ padding-top: calc(20px * var(--ak-space-scale, 1));
+ border-top: 1px solid var(--ak-border);
+}
+body.adminkit.adminkit-woocommerce #woocommerce-fields :is(.text, select) {
+ float: none;
+ width: 100%;
+ margin: 0;
+}
+body.adminkit.adminkit-woocommerce #woocommerce-fields .dimensions div {
+ display: flex;
+ flex-wrap: wrap;
+ gap: calc(4px * var(--ak-space-scale, 1));
+}
+body.adminkit.adminkit-woocommerce #woocommerce-fields .dimensions div span.title {
+ float: none;
+ width: 100%;
+}
+body.adminkit.adminkit-woocommerce #woocommerce-fields .dimensions div span.input-text-wrap {
+ margin: 0;
+ width: 100%;
+ display: flex;
+ gap: calc(4px * var(--ak-space-scale, 1));
+}
+body.adminkit.adminkit-woocommerce #woocommerce-fields :is(.height, .length, .width) {
+ flex: 1 1 0;
+ min-width: 0;
+ width: 0;
+}
+@media (max-width: 1100px) {
+ body.adminkit.adminkit-woocommerce #wpbody-content .quick-edit-row #woocommerce-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+ body.adminkit.adminkit-woocommerce #wpbody-content .quick-edit-row #woocommerce-fields { grid-template-columns: minmax(0, 1fr); }
+}

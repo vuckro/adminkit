@@ -63,18 +63,6 @@
             "unavailableHint": ""
         },
         {
-            "key": "editor_content_theme",
-            "group": "Appearance & navigation",
-            "label": "Block editor canvas",
-            "desc": "Extend light and dark AdminKit styling inside the Gutenberg canvas. Keep off to preserve your front-end theme styles.",
-            "parent": "",
-            "value": true,
-            "default": false,
-            "bulk": true,
-            "available": true,
-            "unavailableHint": ""
-        },
-        {
             "key": "notification_center_enabled",
             "group": "Contenu et listes",
             "label": "Centre de notifications",

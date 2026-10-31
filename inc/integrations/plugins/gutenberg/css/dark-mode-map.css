@@ -549,14 +549,11 @@ body.block-editor-page.adminkit .editor-post-publish-panel__prepublish > div > s
 /* ========== 16. Canvas isolation ========== */
 /* The canvas stays light in both modes — it represents the
    visitor-facing rendering and must keep its declared block colors.
-   Theming the canvas dark broke text legibility on default blocks
-   (theme.json and core block CSS pin specific dark text colors that
-   become invisible against a dark surface). Industry pattern:
-   light canvas, dark chrome. The frame around the canvas
-   (interface-skeleton__content + edit-post-visual-editor wrappers)
-   is dark via earlier sections — that's the visible "framing".
-   color-scheme: light keeps native form controls light too. */
-body.block-editor-page.adminkit .editor-styles-wrapper {
+   Use [class~="editor-styles-wrapper"] rather than .editor-styles-wrapper so
+   Gutenberg's useCompatibilityStyles scanner (which checks selectorText.includes
+   for ".editor-styles-wrapper" or ".wp-block") never clones this chrome
+   stylesheet into the iframed editor canvas. */
+body.block-editor-page.adminkit [class~="editor-styles-wrapper"] {
 	color-scheme: light;
 }
 

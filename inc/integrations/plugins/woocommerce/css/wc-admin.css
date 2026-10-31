@@ -1178,3 +1178,65 @@ body.adminkit.woocommerce-admin-page .woocommerce-customer-effort-score__selecti
 body.adminkit.woocommerce-admin-page .woocommerce-customer-effort-score__selection .components-radio-control__option input:checked + label {
 	background-color: var(--ak-elevated);
 }
+
+/* Analytics: D3 overlays and empty states use the same quiet surface. */
+body.adminkit.woocommerce-admin-page .d3-chart__container .d3-chart__tooltip {
+ background: var(--ak-elevated);
+ color: var(--ak-text);
+ border-color: var(--ak-border);
+ border-radius: var(--ak-radius-s);
+ box-shadow: var(--ak-shadow-elevated);
+ box-sizing: border-box;
+ max-width: 100%;
+}
+body.adminkit.woocommerce-admin-page .d3-chart__container .d3-chart__tooltip h4 { color: var(--ak-text-muted); }
+body.adminkit.woocommerce-admin-page .d3-chart__container .d3-chart__tooltip :is(li, .key-key, .key-value) { color: var(--ak-text); }
+body.adminkit.woocommerce-admin-page .d3-chart__container .d3-chart__empty-message {
+ color: var(--ak-text-muted);
+ border: 0;
+ background: transparent;
+ font-size: var(--ak-text-s);
+ font-weight: 400;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-summary {
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-m);
+ overflow: hidden;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-summary .woocommerce-summary__item {
+ border-color: var(--ak-border);
+ box-shadow: none;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-summary .woocommerce-summary__item:focus-visible {
+ outline: 2px solid var(--ak-focus);
+ outline-offset: -3px;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-filters-date__button {
+ border-color: var(--ak-input-border);
+ border-radius: var(--ak-radius-s);
+ height: auto;
+ min-height: 44px;
+ white-space: normal;
+ text-align: start;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar {
+ height: auto;
+ min-height: 50px;
+ box-sizing: border-box;
+ background: var(--ak-surface);
+ border-color: var(--ak-border);
+ border-radius: var(--ak-radius-s);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__content {
+ flex-wrap: wrap;
+ gap: calc(12px * var(--ak-space-scale, 1));
+ min-width: 0;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__trigger {
+ flex: 0 0 auto;
+ width: auto;
+ max-width: 100%;
+ white-space: normal;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__label { color: var(--ak-text-muted); white-space: normal; }
+body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__value { color: var(--ak-text); white-space: normal; }

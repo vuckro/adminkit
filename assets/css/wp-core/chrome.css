@@ -179,10 +179,9 @@ body.adminkit .wrap h1.wp-heading-inline {
 /* Global h1 / h2 / h3 fallback. WP applies `color: #1d2327` to every
    heading level in common.css; without this catch-all, headings
    inside random widgets / plugin pages / React UIs stay near-black
-   on a dark surface. */
-body.adminkit h1,
-body.adminkit h2,
-body.adminkit h3 {
+   on a dark surface. Exclude [class~="editor-styles-wrapper"] so
+   non-iframed Gutenberg canvases keep their front-end theme colors. */
+body.adminkit :where(:is(h1, h2, h3):not([class~="editor-styles-wrapper"] *)) {
 	color: var(--ak-heading);
 }
 
@@ -191,7 +190,7 @@ body.adminkit h3 {
    (a double-line trick simulating a hairline shadow). The bottom line
    reads as a bright stripe on dark surfaces. Route the top through
    --ak-border and transparent the bottom. */
-body.adminkit hr {
+body.adminkit :where(hr:not([class~="editor-styles-wrapper"] *)) {
 	border-top-color: var(--ak-border);
 	border-bottom-color: transparent;
 }

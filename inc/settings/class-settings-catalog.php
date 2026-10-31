@@ -56,12 +56,6 @@ class AdminKit_Settings_Catalog {
 				'desc'  => __( 'Hide the WordPress footer bar and contextual Help tab on admin screens.', 'adminkit' ),
 			),
 			array(
-				'key'   => 'editor_content_theme',
-				'group' => $appearance,
-				'label' => __( 'Block editor canvas', 'adminkit' ),
-				'desc'  => __( 'Extend light and dark AdminKit styling inside the Gutenberg canvas. Keep off to preserve your front-end theme styles.', 'adminkit' ),
-			),
-			array(
 				'key'   => 'notification_center_enabled',
 				'group' => $content,
 				'label' => __( 'Notification center', 'adminkit' ),

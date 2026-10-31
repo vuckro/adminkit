@@ -46,11 +46,19 @@
 	}
 
 	// The header (post + site editor) mounts after first paint — poll briefly.
+	// In WP 7.1+, #wpadminbar remains visible even in .is-fullscreen-mode, so the
+	// admin-bar theme toggle is already on screen; only inject into the editor
+	// header when the skeleton covers or hides #wpadminbar (top <= 0).
 	var tries = 0;
 	var timer = setInterval(function () {
 		var bar = document.querySelector('.editor-header__settings, .edit-post-header__settings');
 		if (bar) {
 			clearInterval(timer);
+			var skeleton = document.querySelector('.interface-interface-skeleton');
+			var ab = document.getElementById('wpadminbar');
+			if (ab && ab.offsetHeight > 0 && skeleton && skeleton.getBoundingClientRect().top > 0) {
+				return;
+			}
 			if (!bar.querySelector('.ak-editor-theme-toggle')) {
 				bar.insertBefore(makeButton(), bar.firstChild);
 			}
