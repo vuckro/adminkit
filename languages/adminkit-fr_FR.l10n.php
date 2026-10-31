@@ -90,6 +90,7 @@ return array (
     'Manage' => 'Gérer',
     'Media' => 'Médias',
     'Menu' => 'Menu',
+    'Sidebar menu' => 'Menu latéral',
     'Navigation' => 'Navigation',
     'Customize the WordPress sidebar menu and top admin toolbar.' => 'Personnalisez le menu latéral et la barre d’outils supérieure de WordPress.',
     'Menu manager' => 'Gestionnaire de menu',

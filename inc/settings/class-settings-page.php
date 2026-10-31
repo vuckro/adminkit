@@ -370,7 +370,7 @@ class AdminKit_Settings_Page {
 				'plugins'           => __( 'Plugins', 'adminkit' ),
 				'navigation'        => __( 'Navigation', 'adminkit' ),
 				'navigationIntro'   => __( 'Customize the WordPress sidebar menu and top admin toolbar.', 'adminkit' ),
-				'menu'              => __( 'Menu', 'adminkit' ),
+				'menu'              => __( 'Sidebar menu', 'adminkit' ),
 
 				// Toolbar manager tab.
 				'toolbarTab'        => __( 'Toolbar', 'adminkit' ),

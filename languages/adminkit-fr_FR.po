@@ -346,6 +346,9 @@ msgstr "Médias"
 msgid "Menu"
 msgstr "Menu"
 
+msgid "Sidebar menu"
+msgstr "Menu latéral"
+
 msgid "Navigation"
 msgstr "Navigation"
 
