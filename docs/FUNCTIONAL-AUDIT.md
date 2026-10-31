@@ -266,3 +266,30 @@ were inspected; no JavaScript errors or document overflow were observed.
 Original options and raw menu rows were restored and read back; scratch users,
 posts and temporary authentication sessions/files were removed. Evidence lives at
 workspace level in `output/playwright/toolbar-php-refactor-20261031/`.
+
+
+## Follow-up: C2 feature discovery
+
+The approved C2 surface from `dev/prototypes/features-round2` is implemented in
+the existing Features tab: combined search/status/category filters, grouped
+feature selection and a persistent detail pane with the existing switch draft.
+Search, status, category and selection remain transient. Detail panels and input
+nodes survive filtering; the shared settings host still owns dirty state,
+payload snapshots, saving and failure/retry. Catalog icon names resolve through
+the shared PHP SVG renderer. Bulk actions retain global scope, skip unavailable
+and `bulk: false` entries, and can update dependent child draft values while the
+individual child switch is locked. No storage migration or new save route was
+introduced.
+
+All 151 offline checks passed. Actual local WordPress/Chromium verification
+covered save/reload, a failed save retaining the feature draft, and successful
+retry. Search, categories and empty results passed. Desktop (1440px), tablet
+(900px) and mobile (390px) in light/dark showed no document overflow or JavaScript
+errors. Mobile feature selection moved focus to the detail heading, and its
+return control restored focus to the selection button.
+
+Evidence and captures are retained at workspace level in
+`output/playwright/features-c2-20261031/`. Original settings were restored, the
+isolated authentication session was revoked and temporary authentication files
+were removed. This evidence covers the local WordPress target and C2 workflow;
+it does not establish third-party adapter or multisite compatibility.

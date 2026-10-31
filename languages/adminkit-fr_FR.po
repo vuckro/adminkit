@@ -109,6 +109,10 @@ msgid "Administration preferences"
 msgstr "Préférences d’administration"
 
 #: inc/settings/class-settings-page.php
+msgid "All categories"
+msgstr "Toutes les catégories"
+
+#: inc/settings/class-settings-page.php
 msgid "All features"
 msgstr "Toutes"
 
@@ -133,12 +137,20 @@ msgid "Application passwords"
 msgstr "Mots de passe d’application"
 
 #: inc/settings/class-settings-page.php
+msgid "Applies after saving changes."
+msgstr "S’applique après l’enregistrement des modifications."
+
+#: inc/settings/class-settings-page.php
 msgid "Apply"
 msgstr "Appliquer"
 
 #: inc/wp-core/class-options-discussion.php
 msgid "Avatars"
 msgstr "Avatars"
+
+#: inc/settings/class-settings-page.php
+msgid "Back to features"
+msgstr "Retour aux fonctionnalités"
 
 #: inc/settings/class-settings-page.php
 msgid "Background"
@@ -160,6 +172,10 @@ msgstr "Bricks"
 msgid "Broad access to content"
 msgstr "Accès étendu aux contenus"
 
+#: inc/settings/class-settings-page.php
+msgid "Bulk actions"
+msgstr "Actions groupées"
+
 #: inc/wp-core/class-profile-account.php
 msgid "Can publish their own posts"
 msgstr "Publication de ses propres articles"
@@ -171,6 +187,10 @@ msgstr "Annuler"
 #: inc/settings/class-settings-page.php
 msgid "Card"
 msgstr "Carte"
+
+#: inc/settings/class-settings-page.php
+msgid "Choose a feature"
+msgstr "Choisir une fonctionnalité"
 
 #: inc/settings/class-settings-page.php
 msgid "Choose an icon"
@@ -365,12 +385,28 @@ msgid "Enable all"
 msgstr "Tout activer"
 
 #: inc/settings/class-settings-page.php
+msgid "Enable the parent feature to use this option."
+msgstr "Activez la fonctionnalité parente pour utiliser cette option."
+
+#: inc/settings/class-settings-page.php
 msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
 msgstr "Toutes les extensions installées sur votre site, ainsi que les adaptateurs de thème actifs d’AdminKit. Les natifs ont un adaptateur dédié, activable par hôte ; les autres portent un badge Générique et héritent automatiquement du style de base d’AdminKit."
 
 #: inc/settings/class-settings-page.php
 msgid "Export"
 msgstr "Exporter"
+
+#: inc/settings/class-settings-page.php
+msgid "Feature active"
+msgstr "Fonctionnalité active"
+
+#: inc/settings/class-settings-page.php
+msgid "Feature categories"
+msgstr "Catégories de fonctionnalités"
+
+#: inc/settings/class-settings-page.php
+msgid "Feature inactive"
+msgstr "Fonctionnalité inactive"
 
 #: inc/settings/class-settings-page.php
 msgid "Features"
@@ -583,6 +619,10 @@ msgstr "Aucun adaptateur dédié — thémé automatiquement par la couche de ba
 #: inc/settings/class-settings-page.php
 msgid "No icons found."
 msgstr "Aucune icône trouvée."
+
+#: inc/settings/class-settings-page.php
+msgid "No results in this category. Choose another category or clear the filters."
+msgstr "Aucun résultat dans cette catégorie. Choisissez une autre catégorie ou effacez les filtres."
 
 #: inc/settings/class-settings-page.php
 msgid "No results. Try another search term."
@@ -933,6 +973,10 @@ msgid "Themes"
 msgstr "Thèmes"
 
 #: inc/settings/class-settings-page.php
+msgid "These actions apply to all available features, including those hidden by filters."
+msgstr "Ces actions s’appliquent à toutes les fonctionnalités disponibles, y compris celles masquées par les filtres."
+
+#: inc/settings/class-settings-page.php
 msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."
 msgstr "Ces réglages s’appliquent à l’administration WordPress et aux extensions prises en charge après enregistrement. Votre site public conserve son propre design."
 
@@ -971,6 +1015,10 @@ msgstr "Saisissez le nouveau nom d’utilisateur, puis cliquez sur « Mettre à 
 #: inc/settings/class-settings-page.php
 msgid "Typography"
 msgstr "Typographie"
+
+#: inc/settings/class-settings-page.php
+msgid "Unavailable"
+msgstr "Indisponible"
 
 #: inc/settings/class-settings-page.php
 msgid "Unsaved changes"
@@ -1015,6 +1063,10 @@ msgstr "Waaskit"
 #: inc/settings/class-settings-page.php
 msgid "Warning text"
 msgstr "Texte d’avertissement"
+
+#: inc/settings/class-settings-page.php
+msgid "What this feature does"
+msgstr "Ce que fait cette fonctionnalité"
 
 #: inc/settings/class-settings-page.php
 msgid "WordPress"

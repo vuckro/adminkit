@@ -1,237 +1,150 @@
-/** AdminKit Features tab. Part of the main screen (settings/main.js); no build step. */
+/** Feature discovery: category filters, selectable list and persistent detail panels. */
 (function () {
 	'use strict';
 	window.AdminKitParts = window.AdminKitParts || {};
 	window.AdminKitParts.features = function (context) {
-		var D = context.D;
-		var I = context.I;
-		var state = context.state;
-		var el = context.el;
-		var intro = context.intro;
-		var markDirty = context.markDirty;
-
-		function buildFeatures() {
-			var p = el('section', { class: 'ak-panel', role: 'tabpanel' }, [el('h2', { class: 'ak-panel-title', text: I.features }), intro(I.featuresIntro)]);
-
-			var refs = {}; // key -> { input, row }
-			var groups = []; // [{ label, rows }] in first-seen order
-			var byGroup = {};
-			// Bucket each feature row under its `group` label (identical labels share
-			// a block); keeps a child in the same group as its parent.
-			function rowsFor(label) {
-				if (!byGroup[label]) {
-					byGroup[label] = { label: label, rows: el('div', { class: 'ak-rows' }), keys: [], wrapEl: null };
-					groups.push(byGroup[label]);
-				}
-				return byGroup[label].rows;
-			}
-
-			// Reflect a feature's state on its row: dim it ("is-off") when switched
-			// off — the switch stays clickable so it can be turned back on — and,
-			// for a child OR an unavailable feature (e.g. a host-specific tool without
-			// its host), lock it ("is-locked": dimmed + the switch made
-			// non-operable, both via CSS and the disabled input).
-			// `available: false` is permanent for the session; `parent` locks/
-			// unlocks live as the parent toggles.
-			function refreshRow(f) {
-				var r = refs[f.key];
-				if (!r) {
-					return;
-				}
-				if (f.available === false) {
-					// Hard lock — prerequisite isn't met. Force the visual state to
-					// OFF so it doesn't read as "on but blocked" (confusing — looks
-					// like the feature is somehow half-active). The saved value in
-					// state.features stays untouched: when the prerequisite returns,
-					// the row re-renders with the user's last actual choice.
-					r.input.disabled = true;
-					r.input.checked = false;
-					r.row.classList.add('is-locked');
-					r.row.classList.add('is-off');
-					return;
-				}
-				r.row.classList.toggle('is-off', !state.features[f.key]);
-				r.input.checked = !!state.features[f.key];
-				if (f.parent) {
-					var parentOn = !!state.features[f.parent];
-					r.input.disabled = !parentOn;
-					r.row.classList.toggle('is-locked', !parentOn);
-				}
-			}
-
-			// Flip every feature at once (the "enable / disable all" controls).
-			// Rows flagged `bulk: false` OR `available: false` (prerequisite missing)
-			// are left untouched — sweeping them would be nonsensical.
-			function setAll(on) {
-				(D.features || []).forEach(function (f) {
-					if (f.bulk === false || f.available === false) {
-						return;
-					}
-					state.features[f.key] = on;
-					if (refs[f.key]) {
-						refs[f.key].input.checked = on;
-					}
+		var D = context.D, I = context.I, state = context.state, el = context.el;
+		return function buildFeatures() {
+			var features = D.features || [];
+			var p = el('section', { class: 'ak-panel ak-features', role: 'tabpanel' }, [
+				el('h2', { class: 'ak-panel-title', text: I.features }), context.intro(I.featuresIntro)
+			]);
+			var refs = {}, groups = [], selected = '', category = '';
+			var search = el('input', { type: 'search', class: 'ak-search', placeholder: I.searchFeatures, 'aria-label': I.searchFeatures });
+			var status = el('select', { class: 'ak-features-status', 'aria-label': I.filterFeatures });
+			['all', 'active', 'inactive'].forEach(function (value) {
+				status.appendChild(el('option', { value: value, text: I['featuresFilter' + value.charAt(0).toUpperCase() + value.slice(1)] }));
+			});
+			var bulk = el('details', { class: 'ak-features-bulk' });
+			var actions = el('div', { class: 'ak-features-bulk__actions' }, [el('p', { text: I.featureBulkScope })]);
+			bulk.appendChild(el('summary', { text: I.featureBulk }));
+			bulk.appendChild(actions);
+			function setAll(mode) {
+				var changed = false;
+				features.forEach(function (f) {
+					if (f.bulk === false || f.available === false) { return; }
+					var value = mode === 'default' ? !!f.default : mode === 'on';
+					if (!!state.features[f.key] !== value) { state.features[f.key] = value; changed = true; }
 				});
-				(D.features || []).forEach(refreshRow);
-				filter();
-				markDirty();
+				bulk.open = false;
+				refresh();
+				if (changed) { context.markDirty(); }
 			}
+			[['on', I.enableAll], ['off', I.disableAll], ['default', I.resetDefaults]].forEach(function (action) {
+				actions.appendChild(el('button', { type: 'button', class: 'ak-btn', text: action[1], onclick: function () {
+					setAll(action[0]); bulk.querySelector('summary').focus();
+				} }));
+			});
+			p.appendChild(el('div', { class: 'ak-features-tools' }, [search, status, bulk]));
+			var categories = el('nav', { class: 'ak-features-categories', 'aria-label': I.featureCategories });
+			var list = el('nav', { class: 'ak-features-list', 'aria-label': I.featureChoose, id: 'ak-feature-list' });
+			var details = el('div', { class: 'ak-features-details' });
+			var workspace = el('div', { class: 'ak-features-workspace' }, [list, details]);
+			var empty = el('p', { class: 'ak-empty', role: 'status', hidden: 'hidden' });
+			p.appendChild(categories); p.appendChild(empty); p.appendChild(workspace);
 
-			// Restore every feature to its registered schema default (passed in
-			// `f.default` from boot_data). No confirm prompt — markDirty puts the
-			// page in "unsaved" state so the user can still walk away without
-			// committing by reloading or navigating off. Same skip rules as setAll.
-			function resetAll() {
-				(D.features || []).forEach(function (f) {
-					if (f.bulk === false || f.available === false) {
-						return;
-					}
-					var def = !!f.default;
-					state.features[f.key] = def;
-					if (refs[f.key]) {
-						refs[f.key].input.checked = def;
-					}
-				});
-				(D.features || []).forEach(refreshRow);
-				filter();
-				markDirty();
+			function icon(f) {
+				var n = el('span', { class: 'ak-features-icon', 'aria-hidden': 'true' });
+				// Trusted markup comes only from the shared PHP Lucide renderer.
+				n.innerHTML = f.iconSvg || '';
+				return n;
 			}
-
-			(D.features || []).forEach(function (f) {
-				var input = el('input', { type: 'checkbox', class: 'ak-switch__input', 'aria-label': f.label });
-				input.checked = !!state.features[f.key];
+			function active(f) { return f.available !== false && !!state.features[f.key] && (!f.parent || !!state.features[f.parent]); }
+			function locked(f) { return f.available === false || !!(f.parent && !state.features[f.parent]); }
+			function revealDetail() {
+				if (selected && window.matchMedia('(max-width: 782px)').matches) {
+					refs[selected].panel.scrollIntoView({ block: 'start' });
+					refs[selected].heading.focus({ preventScroll: true });
+				}
+			}
+			function select(key) { selected = key; refresh(); revealDetail(); }
+			features.forEach(function (f, index) {
+				var group = groups.filter(function (g) { return g.label === (f.group || ''); })[0];
+				if (!group) {
+					group = { label: f.group || '', keys: [], count: el('span', { class: 'ak-features-count' }) };
+					group.rows = el('div', { class: 'ak-features-group__items' });
+					group.wrap = el('section', { class: 'ak-features-group' }, [
+						group.label ? el('h3', { class: 'ak-features-group__title', text: group.label }) : null, group.rows
+					]);
+					groups.push(group); list.appendChild(group.wrap);
+				}
+				group.keys.push(f.key);
+				var panelId = 'ak-feature-detail-' + index;
+				var heading = el('h3', { id: panelId + '-title', tabindex: '-1', text: f.label });
+				var rowStatus = el('span', { class: 'ak-features-item__status' });
+				var button = el('button', { type: 'button', class: 'ak-features-item', 'aria-controls': panelId, 'aria-pressed': 'false', onclick: function () { select(f.key); } }, [
+					icon(f), el('span', { class: 'ak-features-item__text' }, [el('span', { class: 'ak-features-item__label', text: f.label }), rowStatus])
+				]);
+				group.rows.appendChild(button);
+				var input = el('input', { type: 'checkbox', class: 'ak-switch__input', 'aria-label': f.label, 'aria-describedby': panelId + '-hint' });
 				input.addEventListener('change', function () {
 					state.features[f.key] = input.checked;
-					(D.features || []).forEach(refreshRow);
-					filter();
-					markDirty();
+					refresh(); context.markDirty();
 				});
-				var rowAttrs = { class: 'ak-row' + (f.parent ? ' ak-row--child' : '') };
-				// Show the prereq hint on hover when the feature can't run (e.g.
-				// a host-specific tool without its host). refreshRow() applies the
-				// is-locked + disabled styling; this just explains why.
-				if (f.available === false && f.unavailableHint) {
-					rowAttrs.title = f.unavailableHint;
-				}
-				var row = el('div', rowAttrs, [
-					el('div', { class: 'ak-row__main' }, [
-						el('div', { class: 'ak-feature-heading' }, [el('span', { class: 'ak-row__label', text: f.label })]),
-						f.desc ? el('p', { class: 'ak-feature-summary', text: f.desc }) : null
-					]),
-					el('label', { class: 'ak-switch' }, [
-						input,
-						el('span', { class: 'ak-switch__track' }),
-						el('span', { class: 'ak-switch__knob' })
-					])
+				var stateLabel = el('span', { class: 'ak-features-state__label' });
+				var hint = el('p', { id: panelId + '-hint', class: 'ak-features-hint' });
+				var back = el('button', { type: 'button', class: 'ak-features-back', text: I.featureBack, onclick: function () {
+					list.scrollIntoView({ block: 'start' }); button.focus({ preventScroll: true });
+				} });
+				var panel = el('section', { class: 'ak-features-detail', id: panelId, role: 'region', 'aria-labelledby': panelId + '-title', hidden: 'hidden' }, [
+					back, icon(f), heading, f.group ? el('p', { class: 'ak-features-detail__category', text: f.group }) : null,
+					el('h4', { text: I.featureEffect }), el('p', { class: 'ak-features-effect', text: f.desc }),
+					el('div', { class: 'ak-features-state' }, [el('div', {}, [stateLabel, hint]),
+						el('label', { class: 'ak-switch' }, [input, el('span', { class: 'ak-switch__track' }), el('span', { class: 'ak-switch__knob' })])])
 				]);
-				refs[f.key] = { input: input, row: row };
-				rowsFor(f.group || '').appendChild(row);
-				byGroup[f.group || ''].keys.push(f.key);
+				details.appendChild(panel);
+				refs[f.key] = { button: button, input: input, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, visible: false };
 			});
-
-			(D.features || []).forEach(refreshRow); // initial dim + dependency state
-
-			// Search/filter — narrows the visible rows by label + description as you
-			// type, hides groups left with nothing, and expands all while searching.
-			var search = el('input', {
-				type: 'search',
-				class: 'ak-search',
-				placeholder: I.searchFeatures,
-				'aria-label': I.searchFeatures
-			});
-			var empty = el('p', { class: 'ak-empty', role: 'status', hidden: 'hidden', text: I.noResults });
-			var selectedStatus = 'all';
-			var statusButtons = {};
-			var statusFilters = el('div', { class: 'ak-feature-filters', role: 'group', 'aria-label': I.filterFeatures });
-			['all', 'active', 'inactive'].forEach(function (value) {
-				var button = el('button', {
-					type: 'button', class: 'ak-btn', 'aria-pressed': String(value === selectedStatus),
-					onclick: function () { selectedStatus = value; filter(); }
-				});
-				statusButtons[value] = button;
-				statusFilters.appendChild(button);
-			});
-			function filter() {
-				var q = (search.value || '').trim().toLowerCase();
-				var counts = { all: 0, active: 0, inactive: 0 };
-				(D.features || []).forEach(function (f) {
-					var r = refs[f.key];
-					if (!r) {
-						return;
-					}
-					var hay = ((f.label || '') + ' ' + (f.desc || '')).toLowerCase();
-					var active = f.available !== false && !!state.features[f.key] && (!f.parent || !!state.features[f.parent]);
-					var status = active ? 'active' : 'inactive';
-					var matchesSearch = !q || hay.indexOf(q) !== -1;
-					if (matchesSearch) { counts.all++; counts[status]++; }
-					r.row.style.display = matchesSearch && (selectedStatus === 'all' || selectedStatus === status) ? '' : 'none';
-				});
-				['all', 'active', 'inactive'].forEach(function (value) {
-					statusButtons[value].textContent = I['featuresFilter' + value.charAt(0).toUpperCase() + value.slice(1)] + ' (' + counts[value] + ')';
-					statusButtons[value].setAttribute('aria-pressed', String(value === selectedStatus));
-				});
-				empty.hidden = Object.keys(refs).some(function (key) { return refs[key].row.style.display !== 'none'; });
-				groups.forEach(function (g) {
-					if (!g.wrapEl) {
-						return;
-					}
-					var anyVisible = g.keys.some(function (k) {
-						return refs[k] && refs[k].row.style.display !== 'none';
-					});
-					g.wrapEl.style.display = anyVisible ? '' : 'none';
-				});
+			var categoryButtons = [];
+			function categoryButton(label, value, count) {
+				var b = el('button', { type: 'button', class: 'ak-btn', 'aria-pressed': 'false', onclick: function () { category = value; refresh(); } }, [
+					el('span', { text: label }), count
+				]);
+				categories.appendChild(b); categoryButtons.push({ button: b, value: value, count: count });
 			}
-
-			search.addEventListener('input', filter);
-			p.appendChild(el('div', { class: 'ak-search-wrap' }, [search]));
-			p.appendChild(statusFilters);
-
-			// Bulk controls — flip every feature on/off, or restore the registered
-			// schema defaults (reuses the header's flex row + secondary buttons;
-			// no new layout CSS).
-			p.appendChild(
-				el('div', { class: 'ak-actions ak-bulk' }, [
-					el('button', {
-						type: 'button',
-						class: 'ak-btn',
-						text: I.enableAll,
-						onclick: function () {
-							setAll(true);
-						}
-					}),
-					el('button', {
-						type: 'button',
-						class: 'ak-btn',
-						text: I.disableAll,
-						onclick: function () {
-							setAll(false);
-						}
-					}),
-					el('button', {
-						type: 'button',
-						class: 'ak-btn',
-						text: I.resetDefaults,
-						onclick: resetAll
-					})
-				])
-			);
-
-			p.appendChild(empty);
-			// One titled block per group label (order = first-seen). Static heading —
-			// the search field handles discovery; folding groups was visual noise.
-			groups.forEach(function (g) {
-				var wrap = el('div', { class: 'ak-group' }, [
-					g.label ? el('h2', { class: 'ak-group__title', text: g.label }) : null,
-					g.rows
-				]);
-				g.wrapEl = wrap;
-				p.appendChild(wrap);
-			});
-
-			filter();
-			return p;
-		}
-
-		return buildFeatures;
+			categoryButton(I.featureAllCategories, '', el('span', { class: 'ak-features-count' }));
+			groups.forEach(function (g) { categoryButton(g.label, g.label, g.count); });
+			function normalize(value) { return (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+			function refresh() {
+				var focused = document.activeElement;
+				var q = normalize(search.value).trim(), visible = [], counts = { all: 0, active: 0, inactive: 0 }, categoryCounts = {};
+				features.forEach(function (f) {
+					var r = refs[f.key], on = active(f), isLocked = locked(f);
+					var match = normalize(f.label + ' ' + f.desc + ' ' + (f.group || '')).indexOf(q) !== -1;
+					if (match) { counts.all++; counts[on ? 'active' : 'inactive']++; }
+					var matchesStatus = match && (status.value === 'all' || (status.value === 'active') === on);
+					if (matchesStatus) { categoryCounts[f.group || ''] = (categoryCounts[f.group || ''] || 0) + 1; }
+					r.visible = matchesStatus && (!category || category === f.group);
+					r.button.hidden = !r.visible;
+					if (r.visible) { visible.push(f.key); }
+					r.input.checked = f.available !== false && !!state.features[f.key];
+					r.input.disabled = isLocked;
+					r.status.textContent = isLocked ? I.featureUnavailable : (on ? I.featureActive : I.featureInactive);
+					r.stateLabel.textContent = r.status.textContent;
+					r.hint.textContent = f.available === false ? (f.unavailableHint || I.featureUnavailable) : (f.parent && !state.features[f.parent] ? I.featureParentOff : I.featureSaveHint);
+					r.panel.classList.toggle('is-locked', isLocked);
+				});
+				if (visible.indexOf(selected) === -1) { selected = visible[0] || ''; }
+				features.forEach(function (f) {
+					var r = refs[f.key];
+					r.button.setAttribute('aria-pressed', String(f.key === selected));
+					r.panel.hidden = f.key !== selected;
+				});
+				groups.forEach(function (g) { g.wrap.hidden = !g.keys.some(function (key) { return refs[key].visible; }); });
+				categoryButtons.forEach(function (c) {
+					c.button.setAttribute('aria-pressed', String(category === c.value));
+					c.count.textContent = String(c.value ? (categoryCounts[c.value] || 0) : Object.keys(categoryCounts).reduce(function (n, key) { return n + categoryCounts[key]; }, 0));
+				});
+				['all', 'active', 'inactive'].forEach(function (value, index) { status.options[index].textContent = I['featuresFilter' + value.charAt(0).toUpperCase() + value.slice(1)] + ' (' + counts[value] + ')'; });
+				workspace.hidden = !visible.length; empty.hidden = !!visible.length;
+				empty.textContent = counts.all && category ? I.featureCategoryEmpty : I.noResults;
+				// A status-filtered switch may hide its own panel. Keep keyboard focus in the workflow.
+				if (focused && workspace.contains(focused) && (focused.closest('[hidden]') || focused.disabled)) {
+					if (selected) { refs[selected].button.focus(); } else { status.focus(); }
+				}
+			}
+			search.addEventListener('input', refresh); status.addEventListener('change', refresh);
+			refresh(); return p;
+		};
 	};
 })();

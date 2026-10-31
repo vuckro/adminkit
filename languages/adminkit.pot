@@ -109,6 +109,10 @@ msgid "Administration preferences"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "All categories"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "All features"
 msgstr ""
 
@@ -133,11 +137,19 @@ msgid "Application passwords"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "Applies after saving changes."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "Apply"
 msgstr ""
 
 #: inc/wp-core/class-options-discussion.php
 msgid "Avatars"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Back to features"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -160,6 +172,10 @@ msgstr ""
 msgid "Broad access to content"
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "Bulk actions"
+msgstr ""
+
 #: inc/wp-core/class-profile-account.php
 msgid "Can publish their own posts"
 msgstr ""
@@ -170,6 +186,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Card"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Choose a feature"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -365,11 +385,27 @@ msgid "Enable all"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "Enable the parent feature to use this option."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Export"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Feature active"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Feature categories"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Feature inactive"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -582,6 +618,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "No icons found."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "No results in this category. Choose another category or clear the filters."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -933,6 +973,10 @@ msgid "Themes"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "These actions apply to all available features, including those hidden by filters."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."
 msgstr ""
 
@@ -970,6 +1014,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Typography"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Unavailable"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -1014,6 +1062,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Warning text"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "What this feature does"
 msgstr ""
 
 #: inc/settings/class-settings-page.php

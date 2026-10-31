@@ -50,6 +50,44 @@ login and editor contexts. Frontend output is scoped to `#wpadminbar`.
 Decorative outlines and card elevation do not remove keyboard focus indicators
 or internal row separators. Component choices compile to shared semantic roles.
 
+## Feature discovery (C2)
+
+The Features tab uses search, an All/Active/Inactive selector and category buttons
+with counts above a grouped selection list and one detail pane. The pane shows
+the feature icon, category, effect, current state, availability hint and switch.
+Search matches labels, descriptions and categories without case or accent
+sensitivity. Search and status combine with category selection; empty groups
+hide, and an empty result displays a status message. Counts for status reflect
+search matches; category counts additionally reflect the status filter.
+
+Search, status, category and selected feature are transient UI state. They do
+not dirty settings or enter saved payloads. If the selected feature leaves the
+results, the first visible feature is selected. Detail panels and their actual
+checkbox inputs are created once and retained in the DOM while hidden, so
+filtering and selection preserve draft controls. Switches update the existing
+`state.features` draft and shared host dirty/save flow; there is no separate
+feature transport or storage format.
+
+Unavailable features and children whose parent is off expose disabled switches
+with an explanation. Effective Active status requires availability, a stored-on
+draft value and an enabled parent when present. Turning a parent off preserves
+the child's draft value. Bulk Enable all, Disable all and Reset to defaults live
+in a disclosure and apply across all filters. They skip unavailable features and
+catalog entries with `bulk: false`; otherwise they also update dependent child
+values, even while the parent locks their individual switches. Defaults come
+from the registered schema.
+
+Catalog metadata supplies shared icon names. PHP resolves them through
+`AdminKit_Icons::display_svg()` into trusted `iconSvg` bootstrap markup; feature
+JavaScript does not maintain a second icon path library.
+
+Desktop and tablet use a grouped list beside a sticky detail pane. At 782px and
+below, category controls form two columns, the list scrolls within a bounded
+height and details follow the list. Selecting a feature scrolls to and focuses
+its heading; the return control scrolls back and focuses its list button. If a
+filter change hides or disables the focused control, focus moves to the next
+selected feature button or the status selector for empty results.
+
 ## Saving, import and export
 
 The shared save bar saves all changed scopes, including drafts in hidden tabs.
