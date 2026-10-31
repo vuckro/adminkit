@@ -113,7 +113,7 @@ class AdminKit_Post_Previews {
 	 * @return bool
 	 */
 	public static function owns_screen( $screen ) {
-		return $screen && 'edit' === $screen->base && self::is_target( $screen->post_type );
+		return apply_filters( 'adminkit/should_load', true, 'admin' ) && $screen && 'edit' === $screen->base && self::is_target( $screen->post_type );
 	}
 
 	/**
@@ -162,6 +162,7 @@ class AdminKit_Post_Previews {
 	 * @return void
 	 */
 	public static function hook_inline_save() {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- core verifies the inline-save nonce; these are read only to wire a display filter.
 		$post_type   = isset( $_POST['post_type'] ) ? sanitize_key( wp_unslash( $_POST['post_type'] ) ) : '';
 		$screen_name = isset( $_POST['screen'] ) ? sanitize_text_field( wp_unslash( $_POST['screen'] ) ) : '';

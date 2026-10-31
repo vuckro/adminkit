@@ -53,6 +53,13 @@ class AdminKit_User_Quick_Edit {
 		}
 		add_filter( 'user_row_actions', array( __CLASS__, 'add_row_action' ), 20, 2 );
 		add_action( 'admin_footer-users.php', array( __CLASS__, 'print_form_template' ) );
+		AdminKit_Assets::register( array(
+			'handle' => 'adminkit-user-quick-edit',
+			'src' => 'assets/css/wp-core/user-quick-edit.css',
+			'deps' => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context' => 'admin',
+			'condition' => static function ( $screen ) { return $screen && 'users' === $screen->base && current_user_can( 'list_users' ); },
+		) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'wp_ajax_adminkit_user_quick_edit', array( __CLASS__, 'handle_save' ) );
 	}
@@ -63,6 +70,7 @@ class AdminKit_User_Quick_Edit {
 	 * can open pre-filled without a second request.
 	 */
 	public static function add_row_action( $actions, $user ) {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return $actions; }
 		if ( ! ( $user instanceof WP_User ) || ! current_user_can( 'edit_user', $user->ID ) ) {
 			return $actions;
 		}
@@ -118,6 +126,7 @@ class AdminKit_User_Quick_Edit {
 	 * references a `--ak-*` token.
 	 */
 	public static function enqueue( $hook ) {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
 		if ( 'users.php' !== $hook ) {
 			return;
 		}
@@ -125,14 +134,6 @@ class AdminKit_User_Quick_Edit {
 			return;
 		}
 
-		$css_src  = 'assets/css/wp-core/user-quick-edit.css';
-		$css_path = ADMINKIT_PATH . $css_src;
-		wp_enqueue_style(
-			'adminkit-user-quick-edit',
-			ADMINKIT_URL . $css_src,
-			array( AdminKit_Assets::TOKENS_HANDLE ),
-			file_exists( $css_path ) ? (string) filemtime( $css_path ) : ADMINKIT_VERSION
-		);
 
 		AdminKit_Assets::enqueue_script(
 			'adminkit-user-quick-edit',
@@ -154,6 +155,7 @@ class AdminKit_User_Quick_Edit {
 	 * removed columns from users.php.
 	 */
 	public static function print_form_template() {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
 		if ( ! current_user_can( 'list_users' ) ) {
 			return;
 		}
@@ -232,6 +234,7 @@ class AdminKit_User_Quick_Edit {
 	 * be hit directly so we re-check here.
 	 */
 	public static function handle_save() {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { wp_send_json_error( array( 'message' => __( 'You are not allowed to do that.', 'adminkit' ) ), 403 ); }
 		$user_id = isset( $_POST['user_id'] ) ? (int) $_POST['user_id'] : 0;
 		if ( ! $user_id ) {
 			wp_send_json_error( array( 'message' => __( 'Missing user id.', 'adminkit' ) ), 400 );

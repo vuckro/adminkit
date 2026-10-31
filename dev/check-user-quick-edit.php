@@ -31,3 +31,5 @@ $allowed=false; $update=null;
 try { AdminKit_User_Quick_Edit::handle_save(); } catch (Quick_Edit_Response $done) {}
 check($response === 403 && $update === null, 'Unauthorized target reached update');
 echo "OK: editable role allowlist, self-demotion guard and target capability denial.\n";
+
+function apply_filters($hook, $value) { return $value; }

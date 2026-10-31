@@ -57,7 +57,7 @@ check(false === AdminKit_Settings::get('theme_toggle_enabled'), 'Legacy string f
 $options['adminkit_settings']=new stdClass();
 check(true === AdminKit_Settings::get('theme_toggle_enabled'), 'Malformed option should use registered default');
 class AdminKit_Core_Menu_Icons { public static function mapped_classes() { return array(); } }
-class AdminKit_Icons { public static function set() { return array(); } }
+require ADMINKIT_PATH . 'inc/class-icons.php';
 AdminKit_Settings::register('menu_manager_enabled', array('default'=>false));
 $before=$wpdb->reads;
 $editor=AdminKit_Menu_Manager::editor_data();

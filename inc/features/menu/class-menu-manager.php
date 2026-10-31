@@ -74,34 +74,7 @@ class AdminKit_Menu_Manager {
 	 *
 	 * @var string[]
 	 */
-	const WP_DASHICONS = array(
-		'dashicons-admin-generic', 'dashicons-admin-links', 'dashicons-admin-multisite',
-		'dashicons-menu', 'dashicons-wordpress', 'dashicons-pressthis', 'dashicons-update', 'dashicons-info',
-		'dashicons-welcome-write-blog', 'dashicons-welcome-add-page', 'dashicons-welcome-view-site',
-		'dashicons-welcome-widgets-menus', 'dashicons-welcome-comments', 'dashicons-welcome-learn-more',
-		'dashicons-format-aside', 'dashicons-format-image', 'dashicons-format-video', 'dashicons-format-status',
-		'dashicons-format-quote', 'dashicons-format-chat', 'dashicons-format-audio',
-		'dashicons-camera', 'dashicons-images-alt', 'dashicons-video-alt3',
-		'dashicons-media-document', 'dashicons-media-spreadsheet', 'dashicons-media-interactive',
-		'dashicons-media-text', 'dashicons-media-archive', 'dashicons-media-code', 'dashicons-media-audio',
-		'dashicons-media-video', 'dashicons-media-default',
-		'dashicons-edit', 'dashicons-trash', 'dashicons-sticky', 'dashicons-external',
-		'dashicons-visibility', 'dashicons-hidden', 'dashicons-post-status',
-		'dashicons-arrow-up-alt', 'dashicons-arrow-down-alt', 'dashicons-arrow-left-alt', 'dashicons-arrow-right-alt',
-		'dashicons-leftright', 'dashicons-sort', 'dashicons-randomize',
-		'dashicons-excerpt-view', 'dashicons-grid-view', 'dashicons-move',
-		'dashicons-hammer', 'dashicons-migrate', 'dashicons-universal-access', 'dashicons-tickets',
-		'dashicons-nametag', 'dashicons-clipboard', 'dashicons-heart', 'dashicons-schedule',
-		'dashicons-businesswoman', 'dashicons-testimonial', 'dashicons-portfolio', 'dashicons-awards',
-		'dashicons-archive', 'dashicons-tagcloud', 'dashicons-category', 'dashicons-bell',
-		'dashicons-yes', 'dashicons-yes-alt', 'dashicons-no', 'dashicons-no-alt',
-		'dashicons-plus', 'dashicons-plus-alt', 'dashicons-minus', 'dashicons-dismiss', 'dashicons-marker', 'dashicons-flag',
-		'dashicons-star-filled', 'dashicons-star-half', 'dashicons-star-empty',
-		'dashicons-location-alt', 'dashicons-vault', 'dashicons-sos', 'dashicons-slides',
-		'dashicons-download', 'dashicons-upload', 'dashicons-backup', 'dashicons-clock', 'dashicons-lightbulb', 'dashicons-microphone',
-		'dashicons-desktop', 'dashicons-laptop', 'dashicons-tablet', 'dashicons-smartphone', 'dashicons-phone', 'dashicons-smiley',
-		'dashicons-palmtree', 'dashicons-album', 'dashicons-index-card', 'dashicons-carrot', 'dashicons-building',
-	);
+	const WP_DASHICONS = AdminKit_Icons::WP_DASHICONS;
 
 	/** @var array<string,string> Per-request map of injected class => custom URL (top-level link override). */
 	private static $url_overrides = array();
@@ -627,7 +600,7 @@ class AdminKit_Menu_Manager {
 				$kept[] = $slug; // first time we see it → record it last.
 			}
 		}
-		if ( $kept !== $seen ) {
+		if ( $kept !== $seen && current_user_can( 'manage_options' ) ) {
 			update_option( 'adminkit_menu_seen', $kept, false );
 		}
 		return $kept;
@@ -663,9 +636,12 @@ class AdminKit_Menu_Manager {
 	 * @return string
 	 */
 	private static function current_menu_slug() {
-		global $pagenow, $typenow, $plugin_page;
+		global $pagenow, $typenow, $taxnow, $plugin_page;
 		if ( ! empty( $plugin_page ) ) {
 			return (string) $plugin_page;
+		}
+		if ( in_array( $pagenow, array( 'edit-tags.php', 'term.php' ), true ) && ! empty( $taxnow ) ) {
+			return 'edit-tags.php?taxonomy=' . $taxnow . ( ! empty( $typenow ) && 'post' !== $typenow ? '&post_type=' . $typenow : '' );
 		}
 		if ( ! empty( $typenow ) && ! empty( $pagenow ) ) {
 			return $pagenow . '?post_type=' . $typenow;
@@ -751,12 +727,7 @@ class AdminKit_Menu_Manager {
 	 * @return bool
 	 */
 	private static function is_icon( $icon ) {
-		return is_string( $icon ) && (
-			'wp-default' === $icon
-			|| ( 0 === strpos( $icon, 'dashicons-' ) && in_array( $icon, self::WP_DASHICONS, true ) )
-			|| AdminKit_Icons::has( $icon )
-			|| 0 === strpos( $icon, 'data:image/svg+xml' )
-		);
+		return '' !== AdminKit_Icons::sanitize_icon( $icon );
 	}
 
 	/**
@@ -768,12 +739,7 @@ class AdminKit_Menu_Manager {
 	 * @return string
 	 */
 	private static function icon_mask( $icon ) {
-		if ( is_string( $icon ) && 0 === strpos( $icon, 'data:image/svg+xml' ) ) {
-			$uri = 'url("' . $icon . '")';
-			return 'background-color:currentColor;-webkit-mask:' . $uri . ' center/20px 20px no-repeat;mask:' . $uri . ' center/20px 20px no-repeat;';
-		}
-		$svg = AdminKit_Icons::svg( $icon );
-		return '' === $svg ? '' : AdminKit_Icons::mask( $svg );
+		return AdminKit_Icons::icon_mask( $icon );
 	}
 
 	/* --------------------------------------------------------------------- */
@@ -881,34 +847,6 @@ class AdminKit_Menu_Manager {
 	 * @return string
 	 */
 	private static function sanitize_icon( $icon ) {
-		if ( ! is_string( $icon ) || '' === $icon ) {
-			return '';
-		}
-		// Reset-to-original sentinel.
-		if ( 'wp-default' === $icon ) {
-			return 'wp-default';
-		}
-		// A chosen WordPress dashicon — accept ONLY the curated, AdminKit-safe set, so
-		// a stored value is always one we can render natively (no codepoint, no clash).
-		if ( 0 === strpos( $icon, 'dashicons-' ) ) {
-			return in_array( $icon, self::WP_DASHICONS, true ) ? $icon : '';
-		}
-		if ( AdminKit_Icons::has( $icon ) ) {
-			return $icon;
-		}
-		$icon = trim( $icon );
-		if ( 0 === stripos( $icon, '<svg' ) ) {
-			$icon = 'data:image/svg+xml,' . rawurlencode( $icon );
-		}
-		if ( 0 !== stripos( $icon, 'data:image/svg+xml' ) || strlen( $icon ) > 16384 ) {
-			return '';
-		}
-		// A valid (percent-encoded) data-URI never contains a literal '<'. Rejecting it
-		// here blocks a `</style>` breakout from the inline <style> block print_css() emits
-		// the mask into (the `"`-strip below alone wouldn't stop a `</style>` injection).
-		if ( false !== strpos( $icon, '<' ) ) {
-			return '';
-		}
-		return str_replace( '"', '', $icon );
+		return AdminKit_Icons::sanitize_icon( $icon );
 	}
 }

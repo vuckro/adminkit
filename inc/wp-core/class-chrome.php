@@ -186,7 +186,7 @@ class AdminKit_Core_Chrome {
 	 * @return void
 	 */
 	public static function clean_chrome_css( $context ) {
-		if ( 'admin' !== $context ) {
+		if ( 'admin' !== $context || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return;
 		}
 		$enabled = (bool) apply_filters( 'adminkit/clean_chrome/enabled', (bool) AdminKit_Settings::get( 'clean_chrome_enabled' ) );

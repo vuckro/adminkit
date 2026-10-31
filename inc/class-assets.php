@@ -485,6 +485,8 @@ class AdminKit_Assets {
 	 * @return void
 	 */
 	public static function enqueue_script( $handle, $src, array $deps = array(), $data = null ) {
+		$context = is_admin() ? 'admin' : 'frontend';
+		if ( ! apply_filters( 'adminkit/should_load', true, $context ) || ! apply_filters( 'adminkit/enqueue_' . $context, true ) ) { return; }
 		$path = ADMINKIT_PATH . $src;
 		wp_enqueue_script(
 			$handle,

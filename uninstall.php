@@ -16,7 +16,7 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
  */
 function adminkit_uninstall_site() {
 	global $wpdb;
-	foreach ( array( 'adminkit_settings', 'adminkit_toolbar', 'adminkit_menu_seen', 'adminkit_storage_version' ) as $option ) {
+	foreach ( array( 'adminkit_settings', 'adminkit_toolbar', 'adminkit_menu_seen', 'adminkit_storage_version', 'adminkit_stats_db_version', 'adminkit_stats_pruned', 'adminkit_avatars_default_synced' ) as $option ) {
 		delete_option( $option );
 	}
 	// Cached menu config (adminkit_menu_cfg_<blog_id>) and toolbar snapshot, including expired timeouts.
@@ -29,7 +29,11 @@ function adminkit_uninstall_site() {
 	) );
 	foreach ( (array) $names as $name ) {
 		delete_option( $name );
+		$transient = preg_replace( '/^_(?:site_)?transient_(?:timeout_)?/', '', $name );
+		if ( 0 === strpos( $name, '_site_transient_' ) ) { delete_site_transient( $transient ); }
+		else { delete_transient( $transient ); }
 	}
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}adminkit_stats" );
 }
 
 if ( is_multisite() ) {
@@ -47,3 +51,25 @@ if ( is_multisite() ) {
 global $wpdb;
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->base_prefix}adminkit_menu_items" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 delete_site_option( 'adminkit_menu_db_version' );
+
+// Retired user metadata is global on multisite; never remove WordPress session tokens.
+foreach ( array( 'adminkit_avatar_seed', 'adminkit_has_gravatar', 'adminkit_last_login', 'adminkit_dash_layout', 'adminkit_dash_hidden', 'adminkit_stats_range' ) as $adminkit_meta_key ) {
+	delete_metadata( 'user', 0, $adminkit_meta_key, '', true );
+}
+
+if ( is_multisite() ) {
+	// Site transients live in network sitemeta, not the per-site options tables.
+	$adminkit_network_keys = $wpdb->get_col( $wpdb->prepare(
+		"SELECT DISTINCT meta_key FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s OR meta_key LIKE %s",
+		$wpdb->esc_like( '_site_transient_adminkit_' ) . '%',
+		$wpdb->esc_like( '_site_transient_timeout_adminkit_' ) . '%'
+	) );
+	foreach ( get_networks( array( 'fields' => 'ids', 'number' => 0 ) ) as $adminkit_network_id ) {
+		delete_network_option( $adminkit_network_id, 'adminkit_menu_db_version' );
+		foreach ( (array) $adminkit_network_keys as $adminkit_network_key ) {
+			delete_network_option( $adminkit_network_id, $adminkit_network_key );
+			$adminkit_transient = preg_replace( '/^_site_transient_(?:timeout_)?/', '', $adminkit_network_key );
+			wp_cache_delete( $adminkit_transient, 'site-transient' );
+		}
+	}
+}

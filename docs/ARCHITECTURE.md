@@ -476,3 +476,26 @@ drafts, including logo and inactive adapter toggles. Ordinary saves still post o
 editable keys to avoid overwriting General Settings. Import requires the
 `_adminkit: settings` marker and an object `values`; unknown/obsolete keys are
 filtered by the server schema without making an otherwise valid import fail.
+
+### Shared navigation and native-module gates
+
+`AdminKit_Icons` owns `WP_DASHICONS`, `sanitize_icon()`, `icon_mask()` and the strict
+SVG geometry validator. The menu constant remains an alias for compatibility.
+Raw, percent-encoded and base64 vector input is canonicalized into an encoded
+mask; XML entities, scripts, events, links, styles and embedded content are refused.
+Stored legacy icons are validated again before producing CSS.
+
+Only `manage_options` viewers persist first-seen menu order; restricted views do
+not prune the administrator's history. Moved taxonomy menus resolve their native
+taxonomy/post-type slug for parent and submenu highlighting. Toolbar protected
+IDs accept both native IDs and the historical `wp-admin-bar-` prefix.
+
+WP-Core user-tool styles register through Assets. Enqueue and output/write
+callbacks respect `adminkit/should_load`; the shared script helper also checks the
+admin/frontend context gate. Login branding, preview columns and list-order
+entrypoints honor the same veto, leaving native behavior in place.
+
+Uninstall removes the current settings/menu/toolbar storage, historical per-site
+stats tables and options, retired AdminKit user metadata and transient caches.
+Multisite cleanup covers per-site options and network sitemeta across networks.
+Native user/session data and other plugins' storage are outside its namespace.

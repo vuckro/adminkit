@@ -85,6 +85,13 @@ class AdminKit_Username_Changer {
 		if ( is_multisite() ) {
 			return;
 		}
+		AdminKit_Assets::register( array(
+			'handle' => 'adminkit-username-changer',
+			'src' => 'assets/css/wp-core/username-changer.css',
+			'deps' => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context' => 'admin',
+			'condition' => static function ( $screen ) { return $screen && in_array( $screen->base, array( 'profile', 'user-edit' ), true ) && current_user_can( 'edit_user', self::target_user_id( $screen->base . '.php' ) ); },
+		) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'user_profile_update_errors', array( __CLASS__, 'validate' ), 10, 3 );
 		add_action( 'profile_update', array( __CLASS__, 'apply' ), 10, 2 );
@@ -107,6 +114,7 @@ class AdminKit_Username_Changer {
 	}
 
 	public static function enqueue( $hook ) {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
 		$user_id = self::target_user_id( $hook );
 		if ( ! $user_id ) {
 			return;
@@ -115,14 +123,6 @@ class AdminKit_Username_Changer {
 			return;
 		}
 
-		$css_src  = 'assets/css/wp-core/username-changer.css';
-		$css_path = ADMINKIT_PATH . $css_src;
-		wp_enqueue_style(
-			'adminkit-username-changer',
-			ADMINKIT_URL . $css_src,
-			array( AdminKit_Assets::TOKENS_HANDLE ),
-			file_exists( $css_path ) ? (string) filemtime( $css_path ) : ADMINKIT_VERSION
-		);
 
 		AdminKit_Assets::enqueue_script(
 			'adminkit-username-changer',
@@ -154,6 +154,7 @@ class AdminKit_Username_Changer {
 	 *                          `$user->ID` is the only reliable property here).
 	 */
 	public static function validate( $errors, $update, $user ) {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
 		if ( ! $update ) {
 			return; // Creation flow, not our concern.
 		}
@@ -208,6 +209,7 @@ class AdminKit_Username_Changer {
 	 * @param WP_User $old_user_data Pre-update user object — what `user_login` was before this request.
 	 */
 	public static function apply( $user_id, $old_user_data ) {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
 		if ( ! current_user_can( 'edit_user', $user_id ) ) {
 			return; // Defence in depth — the form gate already requires this.
 		}

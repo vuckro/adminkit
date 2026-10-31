@@ -76,7 +76,7 @@ class AdminKit_Core_Login {
 	 * @return bool
 	 */
 	private static function is_enabled() {
-		return (bool) AdminKit_Settings::get( 'module_login_enabled' );
+		return (bool) AdminKit_Settings::get( 'module_login_enabled' ) && (bool) apply_filters( 'adminkit/should_load', true, 'login' );
 	}
 
 	/**

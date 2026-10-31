@@ -38,11 +38,12 @@ class AdminKit_Core_Branding {
 
 	/** SVG upload is limited to administrators and a strict vector-only subset. */
 	public static function logo_upload_mimes( $mimes ) {
-		if ( current_user_can( 'manage_options' ) ) { $mimes['svg'] = 'image/svg+xml'; }
+		if ( apply_filters( 'adminkit/should_load', true, 'admin' ) && current_user_can( 'manage_options' ) ) { $mimes['svg'] = 'image/svg+xml'; }
 		return $mimes;
 	}
 
 	public static function validate_logo_upload( $file ) {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return $file; }
 		if ( 'svg' !== strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) ) ) { return $file; }
 		$valid = current_user_can( 'manage_options' ) && isset( $file['size'] ) && $file['size'] <= 262144 && self::safe_logo_svg( file_get_contents( $file['tmp_name'] ) );
 		if ( ! $valid ) { $file['error'] = __( 'Use a simple SVG containing only vector shapes, without scripts or embedded content.', 'adminkit' ); }

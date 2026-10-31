@@ -151,7 +151,7 @@ class AdminKit_Toolbar_Manager {
 			'wp-admin-bar-my-account', // the account menu (sign-out lives under it)
 			'wp-admin-bar-menu-toggle', // the responsive bar toggle
 		) );
-		return array_fill_keys( array_map( 'strval', $ids ), true );
+		return array_fill_keys( array_map( static function ( $id ) { return preg_replace( '/^wp-admin-bar-/', '', (string) $id ); }, $ids ), true );
 	}
 
 	/* ─────────────────────────── Admin page ─────────────────────────── */
@@ -771,29 +771,7 @@ class AdminKit_Toolbar_Manager {
 	 * @return string
 	 */
 	private static function sanitize_icon( $icon ) {
-		if ( ! is_string( $icon ) || '' === $icon ) {
-			return '';
-		}
-		if ( 'wp-default' === $icon ) {
-			return 'wp-default';
-		}
-		if ( 0 === strpos( $icon, 'dashicons-' ) ) {
-			return ( class_exists( 'AdminKit_Menu_Manager' ) && in_array( $icon, AdminKit_Menu_Manager::WP_DASHICONS, true ) ) ? $icon : '';
-		}
-		if ( class_exists( 'AdminKit_Icons' ) && AdminKit_Icons::has( $icon ) ) {
-			return $icon;
-		}
-		$icon = trim( $icon );
-		if ( 0 === stripos( $icon, '<svg' ) ) {
-			$icon = 'data:image/svg+xml,' . rawurlencode( $icon );
-		}
-		if ( 0 !== stripos( $icon, 'data:image/svg+xml' ) || strlen( $icon ) > 16384 ) {
-			return '';
-		}
-		if ( false !== strpos( $icon, '<' ) ) {
-			return '';
-		}
-		return str_replace( '"', '', $icon );
+		return AdminKit_Icons::sanitize_icon( $icon );
 	}
 
 	/* ─────────────────────────── Apply ─────────────────────────── */
@@ -1094,14 +1072,6 @@ class AdminKit_Toolbar_Manager {
 	 * @return string
 	 */
 	private static function icon_mask( $icon ) {
-		if ( 0 === strpos( $icon, 'data:image/svg+xml' ) ) {
-			$uri = 'url("' . $icon . '")';
-			return 'background-color:currentColor;-webkit-mask:' . $uri . ' center/20px 20px no-repeat;mask:' . $uri . ' center/20px 20px no-repeat;';
-		}
-		if ( ! class_exists( 'AdminKit_Icons' ) ) {
-			return '';
-		}
-		$svg = AdminKit_Icons::svg( $icon );
-		return '' === $svg ? '' : AdminKit_Icons::mask( $svg );
+		return AdminKit_Icons::icon_mask( $icon );
 	}
 }

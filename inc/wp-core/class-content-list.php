@@ -12,6 +12,7 @@ class AdminKit_Content_List {
 	}
 
 	public static function on_content_screen() {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
 		$screen = get_current_screen();
 		if ( ! $screen || 'edit' !== $screen->base || ! $screen->post_type || 'attachment' === $screen->post_type ) {
 			return;

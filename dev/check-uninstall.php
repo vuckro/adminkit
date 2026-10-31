@@ -1,43 +1,41 @@
 <?php
-/** Run: php dev/check-uninstall.php. Verifies uninstall.php touches only AdminKit data. */
-define( 'WP_UNINSTALL_PLUGIN', 'adminkit/adminkit.php' );
-$deleted = array(); $site_deleted = array(); $queries = array(); $switched = array();
-$options = array( '_transient_adminkit_menu_cfg_1', '_transient_timeout_adminkit_menu_cfg_1', '_transient_adminkit_toolbar_nodes', '_transient_other_cache', 'blogname' );
-function defined_multisite() { return $GLOBALS['multisite']; }
-function is_multisite() { return $GLOBALS['multisite']; }
-function get_sites( $args ) { return array( 1, 2 ); }
-function switch_to_blog( $id ) { $GLOBALS['switched'][] = $id; }
-function restore_current_blog() {}
-function delete_option( $name ) { $GLOBALS['deleted'][] = $name; }
-function delete_site_option( $name ) { $GLOBALS['site_deleted'][] = $name; }
-class Test_Uninstall_DB {
-	public $options = 'wp_options'; public $base_prefix = 'wp_';
-	public function esc_like( $s ) { return addcslashes( $s, '_%\\' ); }
-	public function prepare( $sql, ...$args ) { return $args; }
-	public function get_col( $args ) {
-		$out = array();
-		foreach ( $GLOBALS['options'] as $name ) {
-			foreach ( $args as $like ) { if ( 0 === strpos( $name, str_replace( '\\', '', rtrim( $like, '%' ) ) ) ) { $out[] = $name; break; } }
-		}
-		return $out;
-	}
-	public function query( $sql ) { $GLOBALS['queries'][] = $sql; }
+/** Model per-site and multi-network storage; assert only AdminKit data is removed. */
+define('WP_UNINSTALL_PLUGIN','adminkit/adminkit.php');
+function is_multisite(){return $GLOBALS['multisite'];}
+function get_sites($args){return array(1,2);}
+function get_networks($args){return array(1,2);}
+function switch_to_blog($id){global $wpdb; $wpdb->prefix='wp_'.$id.'_';$wpdb->options=$wpdb->prefix.'options';}
+function restore_current_blog(){global $wpdb;$wpdb->prefix='wp_';$wpdb->options='wp_options';}
+function delete_option($key){$GLOBALS['deleted'][]=$key;}
+function delete_site_option($key){$GLOBALS['network_deleted'][]=$key;}
+function delete_network_option($id,$key){$GLOBALS['network_deleted'][]=$key;}
+function delete_transient($key){$GLOBALS['transients'][]=$key;}
+function delete_site_transient($key){$GLOBALS['transients'][]=$key;}
+function wp_cache_delete($key,$group){$GLOBALS['cache'][]=array($key,$group);}
+function delete_metadata($type,$id,$key,$value,$all){if($type!=='user'||$id!==0||!$all)throw new RuntimeException('Unexpected metadata scope');$GLOBALS['metadata'][]=$key;}
+class Uninstall_DB {
+ public $prefix='wp_',$base_prefix='wp_',$options='wp_options',$sitemeta='wp_sitemeta';
+ public function esc_like($s){return addcslashes($s,'_%\\');}
+ public function prepare($sql,...$args){return array($sql,$args);}
+ public function get_col($prepared){
+  $names=strpos($prepared[0],'meta_key')!==false?array('_site_transient_adminkit_network','_site_transient_timeout_adminkit_expired','_site_transient_other'):array('_transient_adminkit_menu_cfg_1','_transient_timeout_adminkit_expired','_site_transient_adminkit_legacy','_transient_other','blogname');
+  return array_values(array_filter($names,function($name)use($prepared){foreach($prepared[1]as$pattern){if(strpos($name,str_replace('\\','',rtrim($pattern,'%')))===0)return true;}return false;}));
+ }
+ public function query($sql){$GLOBALS['queries'][]=$sql;}
 }
-$wpdb = new Test_Uninstall_DB();
-foreach ( array( false, true ) as $multisite ) {
-	$deleted = $site_deleted = $queries = $switched = array();
-	$GLOBALS['multisite'] = $multisite;
-	$file = file_get_contents( __DIR__ . '/../uninstall.php' );
-	// Re-declare the helper only once.
-	if ( function_exists( 'adminkit_uninstall_site' ) ) { $file = preg_replace( '/function adminkit_uninstall_site\(\) \{.*?\n\}\n/s', '', $file, 1 ); }
-	eval( '?>' . $file );
-	$expected_sites = $multisite ? 2 : 1;
-	foreach ( $deleted as $name ) {
-		if ( 0 !== strpos( $name, 'adminkit_' ) && ! preg_match( '/^_transient_(timeout_)?adminkit_/', $name ) ) { throw new RuntimeException( "Unexpected deletion: $name" ); }
-	}
-	if ( count( array_keys( $deleted, 'adminkit_settings', true ) ) !== $expected_sites ) { throw new RuntimeException( 'Settings not removed on every site.' ); }
-	if ( in_array( '_transient_other_cache', $deleted, true ) || in_array( 'blogname', $deleted, true ) ) { throw new RuntimeException( 'Unrelated data removed.' ); }
-	if ( array( 'DROP TABLE IF EXISTS wp_adminkit_menu_items' ) !== $queries ) { throw new RuntimeException( 'Unexpected SQL.' ); }
-	if ( array( 'adminkit_menu_db_version' ) !== $site_deleted ) { throw new RuntimeException( 'Network version option kept.' ); }
+foreach(array(false,true)as$multisite){
+ $GLOBALS['multisite']=$multisite;$wpdb=new Uninstall_DB();$deleted=$network_deleted=$queries=$transients=$cache=$metadata=array();
+ $source=file_get_contents(dirname(__DIR__).'/uninstall.php');
+ if(function_exists('adminkit_uninstall_site'))$source=preg_replace('/function adminkit_uninstall_site\(\) \{.*?\n\}\n/s','',$source,1);
+ eval('?>'.$source);
+ foreach(array_merge($deleted,$network_deleted)as$key){if(!preg_match('/^(?:adminkit_|_(?:site_)?transient_(?:timeout_)?adminkit_)/',$key))throw new RuntimeException('Unrelated option removed: '.$key);}
+ foreach($metadata as$key){if(strpos($key,'adminkit_')!==0)throw new RuntimeException('Unrelated metadata removed');}
+ $sites=$multisite?2:1;
+ foreach(array('adminkit_settings','adminkit_stats_db_version','adminkit_stats_pruned','adminkit_avatars_default_synced')as$key){if(count(array_keys($deleted,$key,true))!==$sites)throw new RuntimeException('Historical site option retained: '.$key);}
+ $expected=$multisite?array('DROP TABLE IF EXISTS wp_1_adminkit_stats','DROP TABLE IF EXISTS wp_2_adminkit_stats','DROP TABLE IF EXISTS wp_adminkit_menu_items'):array('DROP TABLE IF EXISTS wp_adminkit_stats','DROP TABLE IF EXISTS wp_adminkit_menu_items');
+ if($queries!==$expected)throw new RuntimeException('Unexpected table cleanup');
+ if(!in_array('adminkit_expired',$transients,true))throw new RuntimeException('Expired transient not invalidated');
+ if($multisite&&(!in_array('_site_transient_adminkit_network',$network_deleted,true)||count($cache)!==4))throw new RuntimeException('Network transient cleanup incomplete');
+ if(count($metadata)!==6)throw new RuntimeException('Retired user metadata retained');
 }
-echo "OK: uninstall removes only AdminKit options, transients and the menu table (single site and multisite).\n";
+echo "OK: current/historical per-site storage, all networks, expired transients and owned metadata only.\n";

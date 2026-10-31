@@ -41,3 +41,5 @@ check($cookies[0] === array(7,true,'','current-token') && WP_Session_Tokens::$de
 AdminKit_Username_Changer::apply(7,$old);
 check($wpdb->writes === 1, 'Rename repeated after pending candidate consumed');
 echo "OK: native nonce, candidate/target binding, length/duplicate validation, old cache and current session.\n";
+
+function apply_filters($hook, $value) { return $value; }

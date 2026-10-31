@@ -55,6 +55,7 @@ class AdminKit_Plugins_List {
 	 * @return void
 	 */
 	public static function on_plugins_screen() {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
 		if ( ! self::enabled() ) {
 			return;
 		}
