@@ -71,7 +71,9 @@ Main loads Design/Features/Plugins/Navigation parts; main tabs build on first
 selection. Styles are shared plus context-specific sheets. Factories return tabs
 and `requests()` keyed by `settings`, `menu`, `toolbar` (legacy hosts can return
 one `request()`). Controls call `markDirty(scope)`; main settings are the default
-scope. The toolbar pane is inert until its initial data fetch completes.
+scope. Shared title/icon controls receive their owning scope explicitly from the
+toolbar so title-only or icon-only edits cannot mark the menu draft instead. The
+toolbar pane is inert until its initial data fetch completes.
 
 Save snapshots all dirty scopes and sends layouts before settings, since settings
 can disable their routes. Successful scopes clear only if their revision has not

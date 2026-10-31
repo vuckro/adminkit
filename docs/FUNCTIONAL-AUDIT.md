@@ -161,3 +161,53 @@ Local WordPress integration verification for these fixes:
 The unified gate passed all 137 checks after these corrections (85 PHP syntax,
 27 JavaScript syntax, generated tokens, 18 regression scripts, two CSS/adapter
 checks and four jsdom suites). Plugin version remains 1.0.0; storage version is 8.
+
+
+## Follow-up: full navigation and feature-toggle flows
+
+Two further defects were reproduced with the actual navigation factory and save
+host, then corrected:
+
+- Shared toolbar title/icon controls marked the menu scope dirty. A title-only or
+  icon-only toolbar edit could therefore save the menu endpoint and lose the
+  toolbar change on reload. These controls now receive their owning scope from
+  the toolbar; menu controls keep their existing default.
+- Switching toolbar contexts called an undefined `closePicker()`, raising a
+  ReferenceError before selecting the frontend. It now closes the existing
+  icon/URL popover through `closeIconPicker()`.
+
+The permanent navigation jsdom suite boots real controls and the real save host,
+checks title-only and icon-only edits for menu, admin toolbar and frontend
+toolbar, and rejects JavaScript errors. Merely opening a picker stays clean.
+Both the unified gate and `npm run test:boot` include the new suite.
+
+Actual local WordPress/Chromium verification covered:
+
+- Anonymous, missing-nonce and subscriber writes denied for settings/menu/toolbar;
+  malformed bodies rejected with HTTP 400.
+- Menu rename, icons, arrow movement controls, hiding, custom links/new tabs,
+  separators, native mouse drag of a taxonomy submenu, save/reload and direct
+  access to a hidden screen. Export/reset/import round-tripped the saved layout.
+- Toolbar title-only and icon-only saves reached only the toolbar endpoint;
+  order/hiding, literal `$1` labels, admin/frontend context selection, persistence
+  and actual frontend application passed.
+- An injected toolbar HTTP 500 after a successful menu save retained the toolbar
+  draft. Retrying saved only the remaining scope.
+- Pending menu/toolbar layouts saved before settings disabled their routes.
+  Disabled routes returned 404, editor controls disappeared, and re-enabling
+  restored the saved layouts.
+- All available feature switches persisted off/on. Native checks covered the theme
+  toggle, notifications, footer, Quick Edit template, username script, post-preview
+  column and login assets/toggle.
+- Persisted menu reset removed custom titles/icons/links. Toolbar resets affected
+  only the selected context; protected account/toggle IDs remained available.
+  Two temporary articles exercised Published-first off/on behavior, and the bulk
+  defaults control restored each feature to its registered default.
+- Desktop/mobile at 1440/390px in light/dark had no document overflow or JavaScript
+  errors; screenshots were also inspected.
+
+The unified gate passed 139 checks. Evidence and reproducible browser runners are
+retained at workspace level under
+`output/playwright/navigation-validation-20261031/`. Original options and raw menu
+rows are restored and read back; temporary sessions/accounts/articles are removed. This
+validates the local single-site target, not multisite or third-party adapters.

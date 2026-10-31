@@ -29,7 +29,7 @@ ak_test_group('Generated tokens',array(array(PHP_BINARY,'tokens/build.php','--ch
 $tests=glob('dev/check*.php');sort($tests);$tests[]='dev/editor-gate-check.php';
 ak_test_group('Regression checks (including i18n/modules/packaging)',array_map(static function($file){return array(PHP_BINARY,$file);},$tests));
 ak_test_group('CSS contracts and adapter budgets',array(array(PHP_BINARY,'dev/css-contract.php'),array(PHP_BINARY,'dev/adapter-audit.php')));
-ak_test_group('Real jsdom settings modules',array(array('node','dev/smoke/boot.test.js'),array('node','dev/smoke/saving.test.js'),array('node','dev/smoke/design.test.js'),array('node','dev/smoke/users.test.js')));
+ak_test_group('Real jsdom settings modules',array(array('node','dev/smoke/boot.test.js'),array('node','dev/smoke/saving.test.js'),array('node','dev/smoke/design.test.js'),array('node','dev/smoke/users.test.js'),array('node','dev/smoke/navigation.test.js')));
 $elapsed=round(microtime(true)-$started,1);
 if($failures){fwrite(STDERR,count($failures)." failed checks out of $checks ($elapsed s).\n");exit(1);}
 echo "OK: all $checks checks passed ($elapsed s). External host drift/browser checks remain separate.\n";

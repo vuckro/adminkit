@@ -305,7 +305,7 @@
 				if (ctx !== 'admin' && ctx !== 'frontend') {
 					return;
 				}
-				closePicker();
+				closeIconPicker();
 				activeCtx = ctx;
 				['admin', 'frontend'].forEach(function (k) {
 					var btn = ctxButtons[k];
@@ -502,8 +502,8 @@
 					var h = handle();
 					row.appendChild(h);
 					row.appendChild(moveCtl(side, i));
-					row.appendChild(iconBtn(item, listWrap));
-					row.appendChild(titleInput(item));
+					row.appendChild(iconBtn(item, listWrap, 'toolbar'));
+					row.appendChild(titleInput(item, 'toolbar'));
 					row.appendChild(hideCtl(item));
 					dragSource(h, row, { kind: 'tb', ctx: activeCtx, side: side, i: i });
 					dropZone(
@@ -1097,7 +1097,7 @@
 			btn.setAttribute('aria-label', lbl);
 		}
 
-		function iconBtn(top, tree) {
+		function iconBtn(top, tree, scope) {
 			var btn = el('button', {
 				type: 'button',
 				class: 'ak-menu-icon',
@@ -1112,7 +1112,7 @@
 					closeIconPicker();
 					return;
 				}
-				openIconPicker(btn, top, tree);
+				openIconPicker(btn, top, tree, scope);
 			});
 			return btn;
 		}
@@ -1145,7 +1145,7 @@
 			btn.appendChild(g);
 		}
 
-		function openIconPicker(anchor, top, tree) {
+		function openIconPicker(anchor, top, tree, scope) {
 			closeIconPicker();
 			var pop = el('div', { class: 'ak-icon-pop', role: 'dialog', 'aria-label': I.menuIconPick });
 			anchor.setAttribute('aria-expanded', 'true');
@@ -1164,7 +1164,7 @@
 			function choose(val) {
 				top.icon = val;
 				paint();
-				markDirty('menu');
+				markDirty(scope || 'menu');
 			}
 
 			// Tabbed picker: an "AdminKit" pane (the curated glyph set) and a "WordPress"
@@ -1541,7 +1541,7 @@
 			state.menu[toTi].open = true;
 		}
 
-		function titleInput(item) {
+		function titleInput(item, scope) {
 			var inp = el('input', {
 				type: 'text',
 				class: 'ak-menu-input ak-menu-title',
@@ -1552,7 +1552,7 @@
 			});
 			inp.addEventListener('input', function () {
 				item.title = inp.value;
-				markDirty('menu');
+				markDirty(scope || 'menu');
 			});
 			return inp;
 		}

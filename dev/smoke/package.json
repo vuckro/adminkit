@@ -4,7 +4,7 @@
   "description": "Browser smoke tests for AdminKit (run: npm test). Dev only, never shipped.",
   "scripts": {
     "test": "playwright test",
-    "test:boot": "node boot.test.js && node saving.test.js && node design.test.js"
+    "test:boot": "node boot.test.js && node saving.test.js && node design.test.js && node users.test.js && node navigation.test.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
