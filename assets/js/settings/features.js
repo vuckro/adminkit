@@ -73,7 +73,7 @@
 				var heading = el('h3', { id: panelId + '-title', tabindex: '-1', text: f.label });
 				var rowStatus = el('span', { class: 'ak-features-item__status' });
 				var button = el('button', { type: 'button', class: 'ak-features-item', 'aria-controls': panelId, 'aria-pressed': 'false', onclick: function () { select(f.key); } }, [
-					icon(f), el('span', { class: 'ak-features-item__text' }, [el('span', { class: 'ak-features-item__label', text: f.label }), rowStatus])
+					icon(f), el('span', { class: 'ak-features-item__text' }, [el('span', { class: 'ak-features-item__label', text: f.label }), rowStatus]), el('span', { class: 'ak-features-dot', 'aria-hidden': 'true' })
 				]);
 				group.rows.appendChild(button);
 				var input = el('input', { type: 'checkbox', class: 'ak-switch__input', 'aria-label': f.label, 'aria-describedby': panelId + '-hint' });
@@ -119,6 +119,7 @@
 					if (r.visible) { visible.push(f.key); }
 					r.input.checked = f.available !== false && !!state.features[f.key];
 					r.input.disabled = isLocked;
+					r.button.setAttribute('data-feature-state', isLocked ? 'unavailable' : (on ? 'active' : 'inactive'));
 					r.status.textContent = isLocked ? I.featureUnavailable : (on ? I.featureActive : I.featureInactive);
 					r.stateLabel.textContent = r.status.textContent;
 					r.hint.textContent = f.available === false ? (f.unavailableHint || I.featureUnavailable) : (f.parent && !state.features[f.parent] ? I.featureParentOff : I.featureSaveHint);

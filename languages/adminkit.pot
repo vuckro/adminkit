@@ -52,6 +52,10 @@ msgstr ""
 msgid "Account sections"
 msgstr ""
 
+#: inc/settings/class-settings-catalog.php
+msgid "Accounts"
+msgstr ""
+
 #: inc/settings/class-settings-page.php
 msgid "Active features"
 msgstr ""
@@ -125,7 +129,7 @@ msgid "Always"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
-msgid "Appearance & navigation"
+msgid "Appearance"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -250,10 +254,6 @@ msgstr ""
 
 #: inc/wp-core/class-profile-account.php
 msgid "Contact Info"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Content & lists"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -532,6 +532,10 @@ msgstr ""
 msgid "Light"
 msgstr ""
 
+#: inc/settings/class-settings-catalog.php
+msgid "Lists"
+msgstr ""
+
 #: inc/settings/class-settings-page.php
 msgid "Load a menu layout from a JSON file"
 msgstr ""
@@ -604,7 +608,7 @@ msgstr ""
 msgid "Native"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-catalog.php inc/settings/class-settings-page.php
 msgid "Navigation"
 msgstr ""
 
@@ -1042,10 +1046,6 @@ msgstr ""
 
 #: inc/settings/class-settings-catalog.php
 msgid "Username changer"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Users & access"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php

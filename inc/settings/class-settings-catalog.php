@@ -20,9 +20,10 @@ class AdminKit_Settings_Catalog {
 	 * @return array
 	 */
 	public static function features() {
-		$appearance = __( 'Appearance & navigation', 'adminkit' );
-		$content    = __( 'Content & lists', 'adminkit' );
-		$users      = __( 'Users & access', 'adminkit' );
+		$appearance = __( 'Appearance', 'adminkit' );
+		$navigation = __( 'Navigation', 'adminkit' );
+		$lists      = __( 'Lists', 'adminkit' );
+		$accounts   = __( 'Accounts', 'adminkit' );
 
 		return array(
 			array(
@@ -42,14 +43,14 @@ class AdminKit_Settings_Catalog {
 			array(
 				'key'   => 'menu_manager_enabled',
 				'icon'  => 'panel-left',
-				'group' => $appearance,
+				'group' => $navigation,
 				'label' => __( 'Menu manager', 'adminkit' ),
 				'desc'  => __( 'Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Menu.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'toolbar_manager_enabled',
 				'icon'  => 'panel-top',
-				'group' => $appearance,
+				'group' => $navigation,
 				'label' => __( 'Toolbar manager', 'adminkit' ),
 				'desc'  => __( 'Reorder and hide top toolbar items from AdminKit → Toolbar.', 'adminkit' ),
 			),
@@ -63,35 +64,35 @@ class AdminKit_Settings_Catalog {
 			array(
 				'key'   => 'notification_center_enabled',
 				'icon'  => 'bell',
-				'group' => $content,
+				'group' => $appearance,
 				'label' => __( 'Notification center', 'adminkit' ),
 				'desc'  => __( 'Collect admin notices into a toolbar drawer while keeping inline action confirmations in place.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'active_items_first_enabled',
 				'icon'  => 'list-filter',
-				'group' => $content,
+				'group' => $lists,
 				'label' => __( 'Active items first', 'adminkit' ),
 				'desc'  => __( 'Open content and plugin lists on Published or Active by default, and group active items first in All.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'post_previews_enabled',
 				'icon'  => 'image',
-				'group' => $content,
+				'group' => $lists,
 				'label' => __( 'Post previews', 'adminkit' ),
 				'desc'  => __( 'Show a thumbnail column in post and page list tables.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'quick_edit_users_enabled',
 				'icon'  => 'user-pen',
-				'group' => $users,
+				'group' => $accounts,
 				'label' => __( 'Users quick edit', 'adminkit' ),
 				'desc'  => __( 'Edit first name, last name, email and role inline from the users list.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'username_changer_enabled',
 				'icon'  => 'user-round-cog',
-				'group' => $users,
+				'group' => $accounts,
 				'label' => __( 'Username changer', 'adminkit' ),
 				'desc'  => __( 'Allow administrators to rename a user login on Users → Edit (single-site only; signs the user out).', 'adminkit' ),
 			),

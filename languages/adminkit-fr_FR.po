@@ -52,6 +52,10 @@ msgstr "Gestion du compte"
 msgid "Account sections"
 msgstr "Sections du compte"
 
+#: inc/settings/class-settings-catalog.php
+msgid "Accounts"
+msgstr "Comptes"
+
 #: inc/settings/class-settings-page.php
 msgid "Active features"
 msgstr "Actives"
@@ -125,8 +129,8 @@ msgid "Always"
 msgstr "Permanent"
 
 #: inc/settings/class-settings-catalog.php
-msgid "Appearance & navigation"
-msgstr "Apparence et navigation"
+msgid "Appearance"
+msgstr "Apparence"
 
 #: inc/wp-core/class-profile-account.php
 msgid "Application Passwords"
@@ -251,10 +255,6 @@ msgstr "Réglages des commentaires"
 #: inc/wp-core/class-profile-account.php
 msgid "Contact Info"
 msgstr "Coordonnées"
-
-#: inc/settings/class-settings-catalog.php
-msgid "Content & lists"
-msgstr "Contenu et listes"
 
 #: inc/wp-core/class-profile-account.php
 msgid "Content requires approval"
@@ -532,6 +532,10 @@ msgstr "Gauche"
 msgid "Light"
 msgstr "Clair"
 
+#: inc/settings/class-settings-catalog.php
+msgid "Lists"
+msgstr "Liste"
+
 #: inc/settings/class-settings-page.php
 msgid "Load a menu layout from a JSON file"
 msgstr "Charger une disposition de menu depuis un fichier JSON"
@@ -604,7 +608,7 @@ msgstr "Nom"
 msgid "Native"
 msgstr "Natif"
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-catalog.php inc/settings/class-settings-page.php
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -1043,10 +1047,6 @@ msgstr "Utilisez un SVG simple composé de formes vectorielles, sans script ni c
 #: inc/settings/class-settings-catalog.php
 msgid "Username changer"
 msgstr "Changeur de nom d’utilisateur"
-
-#: inc/settings/class-settings-catalog.php
-msgid "Users & access"
-msgstr "Utilisateurs et accès"
 
 #: inc/settings/class-settings-catalog.php
 msgid "Users quick edit"

@@ -4,7 +4,7 @@
     "features": [
         {
             "key": "theme_toggle_enabled",
-            "group": "Appearance & navigation",
+            "group": "Appearance",
             "label": "Mode sombre",
             "desc": "Add a light/dark mode switch to the toolbar. When off, light mode is used everywhere.",
             "parent": "",
@@ -16,7 +16,7 @@
         },
         {
             "key": "module_login_enabled",
-            "group": "Appearance & navigation",
+            "group": "Appearance",
             "label": "Écran de connexion",
             "desc": "Style wp-login.php to match the administration (logo, dark mode and focus states).",
             "parent": "",
@@ -28,7 +28,7 @@
         },
         {
             "key": "menu_manager_enabled",
-            "group": "Appearance & navigation",
+            "group": "Navigation",
             "label": "Gestionnaire de menu",
             "desc": "Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Menu.",
             "parent": "",
@@ -40,7 +40,7 @@
         },
         {
             "key": "toolbar_manager_enabled",
-            "group": "Appearance & navigation",
+            "group": "Navigation",
             "label": "Gestionnaire de barre d’outils",
             "desc": "Reorder and hide top toolbar items from AdminKit → Toolbar.",
             "parent": "",
@@ -52,7 +52,7 @@
         },
         {
             "key": "clean_chrome_enabled",
-            "group": "Appearance & navigation",
+            "group": "Appearance",
             "label": "Clean interface",
             "desc": "Hide the WordPress footer bar and contextual Help tab on admin screens.",
             "parent": "",
@@ -64,7 +64,7 @@
         },
         {
             "key": "notification_center_enabled",
-            "group": "Contenu et listes",
+            "group": "Appearance",
             "label": "Centre de notifications",
             "desc": "Collect admin notices into a toolbar drawer while keeping inline action confirmations in place.",
             "parent": "",
@@ -76,7 +76,7 @@
         },
         {
             "key": "active_items_first_enabled",
-            "group": "Contenu et listes",
+            "group": "Lists",
             "label": "Éléments actifs en premier",
             "desc": "Open content and plugin lists on Published or Active by default, and group active items first in All.",
             "parent": "",
@@ -88,7 +88,7 @@
         },
         {
             "key": "post_previews_enabled",
-            "group": "Contenu et listes",
+            "group": "Lists",
             "label": "Aperçus des publications",
             "desc": "Show a thumbnail column in post and page list tables.",
             "parent": "",
@@ -100,7 +100,7 @@
         },
         {
             "key": "quick_edit_users_enabled",
-            "group": "Utilisateurs et accès",
+            "group": "Accounts",
             "label": "Modification rapide des utilisateurs",
             "desc": "Edit first name, last name, email and role inline from the users list.",
             "parent": "",
@@ -112,7 +112,7 @@
         },
         {
             "key": "username_changer_enabled",
-            "group": "Utilisateurs et accès",
+            "group": "Accounts",
             "label": "Changeur de nom d’utilisateur",
             "desc": "Allow administrators to rename a user login on Users → Edit (single-site only; signs the user out).",
             "parent": "",
