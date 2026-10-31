@@ -324,15 +324,29 @@
 			}
 
 			// Build { left, right } from the live nodes + a saved layout: honour the saved
-			// order WITHIN each side, append any new/unseen node in native order, carry hidden.
+			// order WITHIN each side, append any new/unseen node in native order, carry hidden,
+			// title overrides, and icon overrides.
 			function toSides(nodes, config) {
 				var hidden = {};
 				(config.hidden || []).forEach(function (id) {
 					hidden[id] = true;
 				});
+				var titles = (config && config.titles) || {};
+				var icons = (config && config.icons) || {};
 				var byId = {};
 				nodes.forEach(function (n) {
-					byId[n.id] = { id: n.id, label: n.label, group: n.group, hidden: !!hidden[n.id] };
+					var otitle = n.label || n.id;
+					byId[n.id] = {
+						id: n.id,
+						label: otitle,
+						otitle: otitle,
+						title: titles[n.id] && titles[n.id] !== '' ? titles[n.id] : otitle,
+						icon: icons[n.id] || '',
+						defaultIcon: n.defaultIcon || '',
+						dashicon: n.dashicon || '',
+						group: n.group,
+						hidden: !!hidden[n.id]
+					};
 				});
 				var sides = { left: [], right: [] },
 					seen = {};
@@ -413,7 +427,8 @@
 					var h = handle();
 					row.appendChild(h);
 					row.appendChild(moveCtl(side, i));
-					row.appendChild(el('span', { class: 'ak-menu-row__title', text: item.label }));
+					row.appendChild(iconBtn(item, listWrap));
+					row.appendChild(titleInput(item));
 					row.appendChild(hideCtl(item));
 					dragSource(h, row, { kind: 'tb', side: side, i: i });
 					dropZone(
@@ -500,6 +515,17 @@
 		function gatherToolbar() {
 			var t = state.toolbar || { left: [], right: [] };
 			var all = (t.left || []).concat(t.right || []);
+			var titles = {},
+				icons = {};
+			all.forEach(function (m) {
+				var ttl = titleOverride(m);
+				if (ttl) {
+					titles[m.id] = ttl;
+				}
+				if (m.icon) {
+					icons[m.id] = m.icon;
+				}
+			});
 			return {
 				order: all.map(function (m) {
 					return m.id;
@@ -510,7 +536,9 @@
 					})
 					.map(function (m) {
 						return m.id;
-					})
+					}),
+				titles: titles,
+				icons: icons
 			};
 		}
 
@@ -1021,6 +1049,9 @@
 			} else if (top.icon && MM.icons[top.icon]) {
 				g = el('span', { class: 'ak-menu-icon__g' });
 				g.innerHTML = MM.icons[top.icon];
+			} else if (top.defaultIcon && MM.icons[top.defaultIcon]) {
+				g = el('span', { class: 'ak-menu-icon__g' });
+				g.innerHTML = MM.icons[top.defaultIcon];
 			} else if (top.dashicon) {
 				g = el('span', { class: 'dashicons ' + top.dashicon });
 			} else {

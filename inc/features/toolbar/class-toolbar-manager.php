@@ -1,7 +1,7 @@
 <?php
 /**
- * Toolbar manager — reorder + hide the TOP-LEVEL admin-bar nodes (a focused
- * cousin of the Menu manager). Top level only; no rename, no custom items.
+ * Toolbar manager — reorder, rename, swap icons and hide the TOP-LEVEL admin-bar nodes
+ * (a focused cousin of the Menu manager). Top level only; no custom items.
  *
  * Snapshot: the admin bar renders too late in the page to capture before the
  * SPA's boot data, so the editor pulls the live top-level nodes over REST. The
@@ -12,12 +12,13 @@
  * Apply: on `admin_bar_menu` very late (after every plugin has added its nodes),
  * on BOTH wp-admin and the front-end bar (logged-in). Hide = remove_node(); reorder
  * = re-add the kept nodes in the saved order (each node's children ride along — they
- * reference the parent id, which is re-added with the same id). Reordering is within
- * a node's own group (WP's left default group vs the right `top-secondary`), so the
- * account cluster stays on the right.
+ * reference the parent id, which is re-added with the same id), applying any custom
+ * title or icon override along the way. Reordering is within a node's own group
+ * (WP's left default group vs the right `top-secondary`), so the account cluster
+ * stays on the right.
  *
- * Storage: a single autoload-off option (the layout is small — a list of ids + a
- * hidden set), not a table.
+ * Storage: a single autoload-off option (the layout is small — a list of ids, a
+ * hidden set, and per-node title/icon maps), not a table.
  *
  * Filters:
  *   adminkit/toolbar_manager/enabled  (bool)    master on/off (mirrors the toggle)
@@ -31,7 +32,7 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Toolbar_Manager {
 
-	/** Single option holding { order: [id…], hidden: [id…] }. */
+	/** Single option holding { order: [id…], hidden: [id…], titles: {id:title}, icons: {id:icon} }. */
 	const OPTION = 'adminkit_toolbar';
 
 	const REST_NS    = 'adminkit/v1';
@@ -47,6 +48,31 @@ class AdminKit_Toolbar_Manager {
 
 	/** Submenu page hook suffix (set when the page registers); gates enqueue. */
 	private static $page_hook = '';
+
+	/** @var array<string,string> Per-request map of `#wp-admin-bar-<id>` => custom icon override. */
+	private static $icon_overrides = array();
+
+	/** @var array<string,bool> Per-request set of `#wp-admin-bar-<id>` nodes that paint on `> .ab-item::before`. */
+	private static $ab_item_overrides = array();
+
+	/**
+	 * Core WP admin-bar node id => native dashicons codepoint + whether it paints on
+	 * `.ab-icon` or `> .ab-item::before`, for restoring the original WP dashicon when a
+	 * user explicitly pins a toolbar node back to `wp-default`.
+	 *
+	 * @var array<string,array{glyph:string,target:string}>
+	 */
+	private static $toolbar_dashicon_glyphs = array(
+		'wp-logo'         => array( 'glyph' => '\\f120', 'target' => 'ab-icon' ),
+		'site-name'       => array( 'glyph' => '\\f226', 'target' => 'ab-item' ),
+		'updates'         => array( 'glyph' => '\\f463', 'target' => 'ab-icon' ),
+		'comments'        => array( 'glyph' => '\\f101', 'target' => 'ab-icon' ),
+		'new-content'     => array( 'glyph' => '\\f132', 'target' => 'ab-icon' ),
+		'edit'            => array( 'glyph' => '\\f464', 'target' => 'ab-item' ),
+		'customize'       => array( 'glyph' => '\\f540', 'target' => 'ab-item' ),
+		'command-palette' => array( 'glyph' => '\\f179', 'target' => 'ab-icon' ),
+		'menu-toggle'     => array( 'glyph' => '\\f333', 'target' => 'ab-icon' ),
+	);
 
 	/**
 	 * Register the setting; bind the editor route and application only when enabled.
@@ -72,6 +98,8 @@ class AdminKit_Toolbar_Manager {
 		// Apply on BOTH bars (wp-admin + front-end for logged-in users), very late so
 		// every node — core + plugins — already exists.
 		add_action( 'admin_bar_menu', array( __CLASS__, 'apply' ), 99999 );
+		add_action( 'admin_head', array( __CLASS__, 'print_css' ), 22 );
+		add_action( 'wp_head', array( __CLASS__, 'print_css' ), 22 );
 	}
 
 	/**
@@ -136,15 +164,41 @@ class AdminKit_Toolbar_Manager {
 	/* ─────────────────────────── Config ─────────────────────────── */
 
 	/**
-	 * The saved layout: a desired top-level order + a hidden set. Sanitised on read.
+	 * The saved layout: a desired top-level order, a hidden set, and per-node title +
+	 * icon overrides. Sanitised on read.
 	 *
-	 * @return array{order:string[],hidden:string[]}
+	 * @return array{order:string[],hidden:string[],titles:array<string,string>,icons:array<string,string>}
 	 */
 	public static function get_config() {
-		$cfg = get_option( self::OPTION, array() );
+		$cfg    = get_option( self::OPTION, array() );
 		$order  = ( isset( $cfg['order'] ) && is_array( $cfg['order'] ) ) ? array_values( array_map( 'strval', $cfg['order'] ) ) : array();
 		$hidden = ( isset( $cfg['hidden'] ) && is_array( $cfg['hidden'] ) ) ? array_values( array_map( 'strval', $cfg['hidden'] ) ) : array();
-		return array( 'order' => $order, 'hidden' => $hidden );
+		$titles = array();
+		if ( isset( $cfg['titles'] ) && is_array( $cfg['titles'] ) ) {
+			foreach ( $cfg['titles'] as $id => $t ) {
+				$id = self::sanitize_node_id( $id );
+				$t  = is_string( $t ) ? sanitize_text_field( $t ) : '';
+				if ( '' !== $id && '' !== $t ) {
+					$titles[ $id ] = $t;
+				}
+			}
+		}
+		$icons = array();
+		if ( isset( $cfg['icons'] ) && is_array( $cfg['icons'] ) ) {
+			foreach ( $cfg['icons'] as $id => $ic ) {
+				$id = self::sanitize_node_id( $id );
+				$ic = self::sanitize_icon( $ic );
+				if ( '' !== $id && '' !== $ic ) {
+					$icons[ $id ] = $ic;
+				}
+			}
+		}
+		return array(
+			'order'  => $order,
+			'hidden' => $hidden,
+			'titles' => $titles,
+			'icons'  => $icons,
+		);
 	}
 
 	/* ─────────────────────────── REST ─────────────────────────── */
@@ -271,13 +325,59 @@ class AdminKit_Toolbar_Manager {
 				continue; // a dropdown child — not a top-level bar item
 			}
 
-			$out[] = array(
-				'id'    => $id,
-				'label' => self::node_label( $node ),
-				'group' => $side,
+			$defaults = self::node_default_icons( $id );
+			$out[]    = array(
+				'id'          => $id,
+				'label'       => self::node_label( $node ),
+				'group'       => $side,
+				'defaultIcon' => $defaults['defaultIcon'],
+				'dashicon'    => $defaults['dashicon'],
 			);
 		}
 		return $out;
+	}
+
+	/**
+	 * Default icon metadata for a toolbar node so the editor's icon button previews
+	 * the same glyph the bar displays by default.
+	 *
+	 * @param string $id
+	 * @return array{defaultIcon:string,dashicon:string}
+	 */
+	private static function node_default_icons( $id ) {
+		$lucide_map = array(
+			'menu-toggle'     => 'menu',
+			'site-name'       => 'home',
+			'comments'        => 'chat',
+			'new-content'     => 'plus',
+			'updates'         => 'update',
+			'command-palette' => 'search',
+			'edit'            => 'document-pencil',
+			'customize'       => 'sliders',
+			'archive'         => 'eye',
+			'ak-notifications' => 'bell',
+			'ak-view-site'    => 'external-link',
+			'ak-theme-toggle' => 'sun',
+			'query-monitor'   => 'clock',
+			'my-account'      => 'user',
+			'ame-quick-search-tb' => 'search',
+		);
+		$dashicon_map = array(
+			'wp-logo'         => 'dashicons-wordpress',
+			'menu-toggle'     => 'dashicons-menu',
+			'site-name'       => 'dashicons-admin-home',
+			'comments'        => 'dashicons-admin-comments',
+			'new-content'     => 'dashicons-plus',
+			'updates'         => 'dashicons-update',
+			'command-palette' => 'dashicons-search',
+			'edit'            => 'dashicons-edit',
+			'customize'       => 'dashicons-admin-customizer',
+			'my-account'      => 'dashicons-admin-users',
+		);
+		return array(
+			'defaultIcon' => isset( $lucide_map[ $id ] ) ? $lucide_map[ $id ] : '',
+			'dashicon'    => isset( $dashicon_map[ $id ] ) ? $dashicon_map[ $id ] : '',
+		);
 	}
 
 	/**
@@ -312,9 +412,8 @@ class AdminKit_Toolbar_Manager {
 
 	/**
 	 * POST handler — sanitise + persist the layout. `order` is a list of node ids in
-	 * the desired order; `hidden` a list of ids to remove. Protected ids can't be
-	 * hidden. Both are stored verbatim (ids are validated on apply against the live
-	 * bar, so a stale id is simply ignored there).
+	 * the desired order; `hidden` a list of ids to remove; `titles` and `icons` hold
+	 * per-node custom labels and icon overrides. Protected ids can't be hidden.
 	 *
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response
@@ -322,6 +421,8 @@ class AdminKit_Toolbar_Manager {
 	public static function rest_save( $request ) {
 		$order_in  = $request->get_param( 'order' );
 		$hidden_in = $request->get_param( 'hidden' );
+		$titles_in = $request->get_param( 'titles' );
+		$icons_in  = $request->get_param( 'icons' );
 
 		$order     = array();
 		$protected = self::protected_nodes();
@@ -342,10 +443,32 @@ class AdminKit_Toolbar_Manager {
 				}
 			}
 		}
+		$titles = array();
+		if ( is_array( $titles_in ) ) {
+			foreach ( $titles_in as $id => $t ) {
+				$id = self::sanitize_node_id( $id );
+				$t  = is_string( $t ) ? sanitize_text_field( $t ) : '';
+				if ( '' !== $id && '' !== $t ) {
+					$titles[ $id ] = $t;
+				}
+			}
+		}
+		$icons = array();
+		if ( is_array( $icons_in ) ) {
+			foreach ( $icons_in as $id => $ic ) {
+				$id = self::sanitize_node_id( $id );
+				$ic = self::sanitize_icon( $ic );
+				if ( '' !== $id && '' !== $ic ) {
+					$icons[ $id ] = $ic;
+				}
+			}
+		}
 
 		update_option( self::OPTION, array(
 			'order'  => array_values( array_unique( $order ) ),
 			'hidden' => array_values( array_unique( $hidden ) ),
+			'titles' => $titles,
+			'icons'  => $icons,
 		), false );
 
 		return rest_ensure_response( array( 'saved' => true, 'config' => self::get_config() ) );
@@ -362,11 +485,46 @@ class AdminKit_Toolbar_Manager {
 		return preg_replace( '/[^a-zA-Z0-9_\-]/', '', $id );
 	}
 
+	/**
+	 * Sanitise a toolbar icon value: `wp-default`, a curated WordPress dashicon class,
+	 * a known AdminKit icon name, or a custom SVG data-URI. Mirrors
+	 * AdminKit_Menu_Manager::sanitize_icon().
+	 *
+	 * @param mixed $icon
+	 * @return string
+	 */
+	private static function sanitize_icon( $icon ) {
+		if ( ! is_string( $icon ) || '' === $icon ) {
+			return '';
+		}
+		if ( 'wp-default' === $icon ) {
+			return 'wp-default';
+		}
+		if ( 0 === strpos( $icon, 'dashicons-' ) ) {
+			return ( class_exists( 'AdminKit_Menu_Manager' ) && in_array( $icon, AdminKit_Menu_Manager::WP_DASHICONS, true ) ) ? $icon : '';
+		}
+		if ( class_exists( 'AdminKit_Icons' ) && AdminKit_Icons::has( $icon ) ) {
+			return $icon;
+		}
+		$icon = trim( $icon );
+		if ( 0 === stripos( $icon, '<svg' ) ) {
+			$icon = 'data:image/svg+xml,' . rawurlencode( $icon );
+		}
+		if ( 0 !== stripos( $icon, 'data:image/svg+xml' ) || strlen( $icon ) > 16384 ) {
+			return '';
+		}
+		if ( false !== strpos( $icon, '<' ) ) {
+			return '';
+		}
+		return str_replace( '"', '', $icon );
+	}
+
 	/* ─────────────────────────── Apply ─────────────────────────── */
 
 	/**
-	 * Apply the saved layout to the live bar: hide (remove) then reorder. Runs on
-	 * `admin_bar_menu` very late so every node already exists.
+	 * Apply the saved layout to the live bar: hide (remove), apply custom titles +
+	 * icons, then reorder. Runs on `admin_bar_menu` very late so every node already
+	 * exists.
 	 *
 	 * @param WP_Admin_Bar $bar
 	 * @return void
@@ -376,7 +534,7 @@ class AdminKit_Toolbar_Manager {
 			return;
 		}
 		$cfg = self::get_config();
-		if ( empty( $cfg['order'] ) && empty( $cfg['hidden'] ) ) {
+		if ( empty( $cfg['order'] ) && empty( $cfg['hidden'] ) && empty( $cfg['titles'] ) && empty( $cfg['icons'] ) ) {
 			return;
 		}
 		$protected = self::protected_nodes();
@@ -389,6 +547,26 @@ class AdminKit_Toolbar_Manager {
 			}
 			$hidden[ $id ] = true;
 			$bar->remove_node( $id );
+		}
+
+		// Apply title + icon overrides to any live node (whether reordered or not).
+		$touched = array_unique( array_merge( array_keys( $cfg['titles'] ), array_keys( $cfg['icons'] ) ) );
+		foreach ( $touched as $id ) {
+			if ( isset( $hidden[ $id ] ) ) {
+				continue;
+			}
+			$node = $bar->get_node( $id );
+			if ( ! $node ) {
+				continue;
+			}
+			$props = (array) $node;
+			if ( isset( $cfg['titles'][ $id ] ) && '' !== $cfg['titles'][ $id ] ) {
+				$props = self::apply_node_title( $props, $cfg['titles'][ $id ] );
+			}
+			if ( isset( $cfg['icons'][ $id ] ) && '' !== $cfg['icons'][ $id ] ) {
+				$props = self::apply_node_icon( $id, $props, $cfg['icons'][ $id ] );
+			}
+			$bar->add_node( $props );
 		}
 
 		// Reorder: re-add the kept nodes in the saved order. Re-adding moves a node to
@@ -407,5 +585,197 @@ class AdminKit_Toolbar_Manager {
 			$bar->remove_node( $id );
 			$bar->add_node( (array) $node );
 		}
+	}
+
+	/**
+	 * Replace the visible label of a toolbar node while keeping its icon, count
+	 * bubbles, avatar or brand logo intact.
+	 *
+	 * @param array  $props
+	 * @param string $custom_title
+	 * @return array
+	 */
+	private static function apply_node_title( $props, $custom_title ) {
+		$safe = esc_html( $custom_title );
+		$raw  = isset( $props['title'] ) ? (string) $props['title'] : '';
+		$meta = isset( $props['meta'] ) && is_array( $props['meta'] ) ? $props['meta'] : array();
+
+		if ( isset( $meta['menu_title'] ) ) {
+			$meta['menu_title'] = $custom_title;
+		}
+
+		if ( false !== strpos( $raw, 'ak-site-name-text' ) ) {
+			$raw = preg_replace( '/(<span[^>]*class=["\'][^"\']*ak-site-name-text[^"\']*["\'][^>]*>).*?(<\/span>)/is', '$1' . $safe . '$2', $raw, 1 );
+		} elseif ( false !== strpos( $raw, 'class="ab-label"' ) || false !== strpos( $raw, "class='ab-label'" ) ) {
+			$raw = preg_replace( '/(<span[^>]*class=["\']ab-label["\'][^>]*>).*?(<\/span>)/is', '$1' . $safe . '$2', $raw, 1 );
+		} elseif ( false !== strpos( $raw, 'display-name' ) ) {
+			$raw = preg_replace( '/^.*?(<img\b.*)?$/is', $safe . '$1', $raw, 1 );
+		} elseif ( false !== strpos( $raw, 'ak-theme-icon' ) ) {
+			$meta['title'] = $custom_title;
+		} elseif ( false !== strpos( $raw, 'ab-icon' ) ) {
+			if ( false !== strpos( $raw, 'screen-reader-text' ) ) {
+				$raw = preg_replace( '/<span[^>]*class=["\'][^"\']*screen-reader-text[^"\']*["\'][^>]*>.*?<\/span>/is', '<span class="ab-label">' . $safe . '</span>', $raw, 1 );
+			} else {
+				$raw .= '<span class="ab-label">' . $safe . '</span>';
+			}
+		} elseif ( preg_match( '/^(<span[^>]*>.*?<\/span>)\s*[^<]+$/is', $raw, $m ) ) {
+			$raw = $m[1] . ' ' . $safe;
+		} else {
+			$raw = $safe;
+		}
+
+		$props['title'] = $raw;
+		$props['meta']  = $meta;
+		return $props;
+	}
+
+	/**
+	 * Apply a custom icon override to a toolbar node:
+	 *   - for AdminKit SVG nodes (`ak-notifications`, `ak-view-site`, `ak-theme-toggle`),
+	 *     replace the inline `<svg class="ak-theme-icon" ...>` directly when a Lucide icon
+	 *     is chosen;
+	 *   - for other nodes, ensure `.ab-icon` is present (or record an `.ab-item::before`
+	 *     override) and queue the CSS rule for `print_css()`.
+	 *
+	 * @param string $id
+	 * @param array  $props
+	 * @param string $icon
+	 * @return array
+	 */
+	private static function apply_node_icon( $id, $props, $icon ) {
+		$raw = isset( $props['title'] ) ? (string) $props['title'] : '';
+
+		// Inline-SVG AdminKit toolbar buttons: swap the inline SVG directly when a
+		// Lucide icon name is picked.
+		if ( false !== strpos( $raw, 'ak-theme-icon' ) && class_exists( 'AdminKit_Icons' ) && AdminKit_Icons::has( $icon ) ) {
+			$svg = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( $icon ) );
+			$props['title'] = preg_replace( '/<svg[^>]*class=["\'][^"\']*ak-theme-icon[^"\']*["\'][^>]*>.*?<\/svg>/is', $svg, $raw );
+			return $props;
+		}
+
+		$dom_id = ( 0 === strpos( $id, 'wp-admin-bar-' ) ) ? $id : 'wp-admin-bar-' . $id;
+
+		if ( 0 === strpos( $icon, 'dashicons-' ) ) {
+			if ( false !== strpos( $raw, 'ab-icon' ) ) {
+				$props['title'] = preg_replace(
+					'/class=(["\'])([^"\']*\bab-icon\b[^"\']*)\1/i',
+					'class=$1$2 dashicons-before ' . esc_attr( $icon ) . '$1',
+					$raw,
+					1
+				);
+			} else {
+				$props['title'] = '<span class="ab-icon dashicons-before ' . esc_attr( $icon ) . '" aria-hidden="true"></span>' . $raw;
+			}
+			self::$icon_overrides[ $dom_id ] = $icon;
+			return $props;
+		}
+
+		if ( 'wp-default' === $icon ) {
+			self::$icon_overrides[ $dom_id ] = 'wp-default:' . $id;
+			return $props;
+		}
+
+		// Lucide icon name or custom SVG data-URI: ensure the node has an `.ab-icon`
+		// span (unless it's a known `> .ab-item::before` node like edit/customize/query-monitor).
+		$ab_item_ids = array(
+			'edit'          => true,
+			'customize'     => true,
+			'archive'       => true,
+			'query-monitor' => true,
+		);
+		if ( isset( $ab_item_ids[ $id ] ) ) {
+			self::$ab_item_overrides[ $dom_id ] = true;
+		} elseif ( false === strpos( $raw, 'ab-icon' ) ) {
+			$props['title'] = '<span class="ab-icon" aria-hidden="true"></span>' . $raw;
+		}
+		self::$icon_overrides[ $dom_id ] = $icon;
+		return $props;
+	}
+
+	/**
+	 * Print per-node toolbar icon CSS overrides in `admin_head` and `wp_head` (at
+	 * priority 22, right after `AdminKit_Core_Menu_Icons` at 21).
+	 *
+	 * @return void
+	 */
+	public static function print_css() {
+		if ( empty( self::$icon_overrides ) || ! is_admin_bar_showing() ) {
+			return;
+		}
+		$desktop = '';
+		$mobile  = '';
+
+		foreach ( self::$icon_overrides as $dom_id => $icon ) {
+			if ( 0 === strpos( $icon, 'dashicons-' ) ) {
+				// Cancel any AdminKit mask on this node's `.ab-icon` so WP's native
+				// dashicons-before class paints its font glyph.
+				$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' .ab-icon.ab-icon.ab-icon';
+				$desktop .= $sel . '{box-sizing:border-box;height:32px;width:20px;padding:6px 0;margin-right:6px}';
+				$desktop .= $sel . '::before{-webkit-mask:none;mask:none;background:transparent;font:normal 20px/1 dashicons;display:block;width:20px;height:20px}';
+				continue;
+			}
+
+			if ( 0 === strncmp( $icon, 'wp-default:', 11 ) ) {
+				$raw_id = substr( $icon, 11 );
+				if ( isset( self::$toolbar_dashicon_glyphs[ $raw_id ] ) ) {
+					$info  = self::$toolbar_dashicon_glyphs[ $raw_id ];
+					$glyph = $info['glyph'];
+					if ( 'ab-item' === $info['target'] ) {
+						$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before';
+						$desktop .= $sel . '{content:"' . $glyph . '";-webkit-mask:none;mask:none;background:transparent;font:normal 20px/1 dashicons;float:left;width:20px;height:32px;padding:6px 0;margin-right:6px}';
+					} else {
+						$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' .ab-icon.ab-icon.ab-icon::before';
+						$desktop .= $sel . '{content:"' . $glyph . '";-webkit-mask:none;mask:none;background:transparent;font:normal 20px/1 dashicons}';
+					}
+				}
+				continue;
+			}
+
+			$mask = self::icon_mask( $icon );
+			if ( '' === $mask ) {
+				continue;
+			}
+
+			if ( ! empty( self::$ab_item_overrides[ $dom_id ] ) ) {
+				$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before';
+				$desktop .= $sel . '{content:"";box-sizing:border-box;float:left;height:32px;width:20px;padding:6px 0;margin-right:6px;position:static;top:auto;' . $mask . '}';
+				$mobile  .= $sel . '{content:"";box-sizing:border-box;display:block;float:none;width:52px;height:46px;margin:0;text-indent:0;position:static;top:auto;' . $mask . '-webkit-mask-size:22px 22px;mask-size:22px 22px}';
+			} else {
+				$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' .ab-icon.ab-icon.ab-icon';
+				$desktop .= $sel . '{box-sizing:border-box;height:32px;width:20px;padding:6px 0;margin-right:6px}';
+				$desktop .= $sel . '::before{content:"";display:block;width:20px;height:20px;margin:0;position:static;top:auto;' . $mask . '}';
+				$mobile  .= $sel . '{box-sizing:border-box;width:52px;height:46px;margin:0;padding:0}';
+				$mobile  .= $sel . '::before{content:"";display:block;width:52px;height:46px;margin:0;position:static;top:auto;' . $mask . '-webkit-mask-size:22px 22px;mask-size:22px 22px}';
+			}
+		}
+
+		$css = '';
+		if ( '' !== $desktop ) {
+			$css .= '@media screen and (min-width:783px){' . $desktop . '}';
+		}
+		if ( '' !== $mobile ) {
+			$css .= '@media screen and (max-width:782px){' . $mobile . '}';
+		}
+		if ( '' !== $css ) {
+			echo '<style id="adminkit-toolbar-manager">' . $css . "</style>\n";
+		}
+	}
+
+	/**
+	 * Build the CSS mask declarations for a Lucide icon name or SVG data-URI.
+	 *
+	 * @param string $icon
+	 * @return string
+	 */
+	private static function icon_mask( $icon ) {
+		if ( 0 === strpos( $icon, 'data:image/svg+xml' ) ) {
+			$uri = 'url("' . $icon . '")';
+			return 'background-color:currentColor;-webkit-mask:' . $uri . ' center/20px 20px no-repeat;mask:' . $uri . ' center/20px 20px no-repeat;';
+		}
+		if ( ! class_exists( 'AdminKit_Icons' ) ) {
+			return '';
+		}
+		$svg = AdminKit_Icons::svg( $icon );
+		return '' === $svg ? '' : AdminKit_Icons::mask( $svg );
 	}
 }

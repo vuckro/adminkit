@@ -173,6 +173,7 @@ return array (
     'WordPress icon' => 'Icône WordPress',
     'WordPress icons' => 'Icônes WordPress',
     'Toolbar' => 'Barre d’outils',
+    'Reorder, rename, change icons, and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn\'t block access. Reset restores the native layout. Changes apply after you save.' => 'Réorganisez, renommez, changez les icônes et masquez les éléments de votre barre d’outils d’administration. Glissez la poignée (ou utilisez les flèches) pour réordonner au sein de chaque côté ; l’œil retire un élément de la barre uniquement — il ne bloque pas l’accès. Réinitialiser rétablit la disposition native. Les changements s’appliquent après enregistrement.',
     'Reorder and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn\'t block access. Reset restores the native layout. Changes apply after you save.' => 'Réorganisez et masquez les éléments de votre barre d’outils d’administration. Glissez la poignée (ou utilisez les flèches) pour réordonner au sein de chaque côté ; l’œil retire un élément de la barre uniquement — il ne bloque pas l’accès. Réinitialiser rétablit la disposition native. Les changements s’appliquent après enregistrement.',
     'Reset toolbar' => 'Réinitialiser la barre',
     'No toolbar items found.' => 'Aucun élément de barre d’outils trouvé.',

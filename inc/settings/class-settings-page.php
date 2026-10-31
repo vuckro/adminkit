@@ -283,7 +283,9 @@ class AdminKit_Settings_Page {
 		}
 
 		// Menu editor — the captured admin-menu tree (only built on the AdminKit screen).
-		$menu_manager = ( $is_main || $is_menu ) ? AdminKit_Menu_Manager::editor_data() : array();
+		// Also included on the legacy standalone toolbar screen so the shared icon picker
+		// (icons + dashicons) is available for toolbar items too.
+		$menu_manager = ( $is_main || $is_menu || $is_toolbar ) ? AdminKit_Menu_Manager::editor_data() : array();
 
 		// Toolbar editor — lightweight boot (just the REST route + enabled); the live
 		// admin-bar nodes are fetched over REST when the Toolbar tab is opened.
@@ -374,7 +376,7 @@ class AdminKit_Settings_Page {
 
 				// Toolbar manager tab.
 				'toolbarTab'        => __( 'Toolbar', 'adminkit' ),
-				'toolbarIntro'      => __( 'Reorder and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn\'t block access. Reset restores the native layout. Changes apply after you save.', 'adminkit' ),
+				'toolbarIntro'      => __( 'Reorder, rename, change icons, and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn\'t block access. Reset restores the native layout. Changes apply after you save.', 'adminkit' ),
 				'toolbarReset'      => __( 'Reset toolbar', 'adminkit' ),
 				'toolbarEmpty'      => __( 'No toolbar items found.', 'adminkit' ),
 				'toolbarLeft'       => __( 'Left', 'adminkit' ),
