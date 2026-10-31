@@ -78,7 +78,7 @@ class AdminKit_Icons {
 			foreach ( $node->attributes as $attribute ) {
 				if ( 'xmlns' === $attribute->nodeName && 'http://www.w3.org/2000/svg' === $attribute->value ) { continue; }
 				if ( ! in_array( $attribute->nodeName, $attributes, true )
-					|| preg_match( '/url\s*\(|(?:https?|data|javascript):|[\\\\<>;&"\']/', $attribute->value ) ) { return ''; }
+					|| preg_match( '/url\s*\(|(?:https?|data|javascript):|[\\\\<>;&"\']/i', $attribute->value ) ) { return ''; }
 			}
 			foreach ( $node->childNodes as $child ) {
 				if ( XML_ELEMENT_NODE !== $child->nodeType && ( XML_TEXT_NODE !== $child->nodeType || '' !== trim( $child->textContent ) ) ) { return ''; }

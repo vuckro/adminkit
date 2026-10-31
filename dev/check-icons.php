@@ -22,7 +22,7 @@ foreach(array($valid,'data:image/svg+xml,'.rawurlencode($valid),'data:image/svg+
  $clean=AdminKit_Icons::sanitize_icon($input);
  if(strpos($clean,'data:image/svg+xml,')!==0||strpos(AdminKit_Icons::icon_mask($input),'mask:')===false)throw new RuntimeException('Safe SVG rejected');
 }
-foreach(array('<script/>','<foreignObject/>','<image href="https://x.test"/>','<path onload="alert(1)"/>','<path style="fill:red"/>','<path fill="url(https://x.test)"/>','<use href="#x"/>','<animate/>')as$markup){
+foreach(array('<script/>','<foreignObject/>','<image href="https://x.test"/>','<path onload="alert(1)"/>','<path style="fill:red"/>','<path fill="url(https://x.test)"/>','<path fill="URL(HTTP://x.test)"/>','<use href="#x"/>','<animate/>')as$markup){
  $svg='<svg xmlns="http://www.w3.org/2000/svg">'.$markup.'</svg>';
  foreach(array($svg,'data:image/svg+xml,'.rawurlencode($svg),'data:image/svg+xml;base64,'.base64_encode($svg))as$input){
   if(AdminKit_Icons::sanitize_icon($input)!==''||AdminKit_Icons::icon_mask($input)!=='')throw new RuntimeException('Unsafe SVG accepted: '.$markup);
