@@ -1,0 +1,62 @@
+[
+    {
+        "key": "theme_toggle_enabled",
+        "group": "Apparence et navigation",
+        "label": "Mode sombre",
+        "desc": "Ajoute un sélecteur clair\/sombre à la barre d’outils. La désactivation impose le mode clair partout."
+    },
+    {
+        "key": "module_login_enabled",
+        "group": "Apparence et navigation",
+        "label": "Écran de connexion",
+        "desc": "Habille wp-login.php comme l’administration (logo, mode sombre et états de focus)."
+    },
+    {
+        "key": "menu_manager_enabled",
+        "group": "Apparence et navigation",
+        "label": "Gestionnaire de menu",
+        "desc": "Réorganisez, renommez, changez les icônes et masquez les éléments du menu latéral depuis AdminKit → Menu."
+    },
+    {
+        "key": "toolbar_manager_enabled",
+        "group": "Apparence et navigation",
+        "label": "Gestionnaire de barre d’outils",
+        "desc": "Réorganisez et masquez les éléments principaux de la barre d’outils depuis AdminKit → Barre d’outils."
+    },
+    {
+        "key": "clean_chrome_enabled",
+        "group": "Apparence et navigation",
+        "label": "Interface épurée",
+        "desc": "Masque le pied de page WordPress et l’onglet d’aide contextuelle dans l’administration."
+    },
+    {
+        "key": "notification_center_enabled",
+        "group": "Contenu et listes",
+        "label": "Centre de notifications",
+        "desc": "Regroupe les notifications d’administration dans un tiroir de la barre d’outils tout en conservant les confirmations d’action en ligne."
+    },
+    {
+        "key": "active_items_first_enabled",
+        "group": "Contenu et listes",
+        "label": "Éléments actifs en premier",
+        "desc": "Ouvre les listes de contenus et d’extensions sur Publiés ou Actives par défaut, et place les éléments actifs en premier dans Tout."
+    },
+    {
+        "key": "post_previews_enabled",
+        "group": "Contenu et listes",
+        "label": "Aperçus des publications",
+        "desc": "Affiche une colonne de vignettes dans les listes d’articles et de pages."
+    },
+    {
+        "key": "quick_edit_users_enabled",
+        "group": "Utilisateurs et accès",
+        "label": "Modification rapide des utilisateurs",
+        "desc": "Modifiez le prénom, le nom, l’e-mail et le rôle directement dans la liste des utilisateurs."
+    },
+    {
+        "key": "username_changer_enabled",
+        "group": "Utilisateurs et accès",
+        "label": "Changeur de nom d’utilisateur",
+        "desc": "Permet aux administrateurs de modifier un identifiant dans Utilisateurs → Modifier (site unique uniquement ; déconnecte l’utilisateur)."
+    }
+]
