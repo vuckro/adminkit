@@ -19,6 +19,7 @@ const errors = [];
 window.addEventListener('error', (e) => errors.push(e.error || e.message));
 window.matchMedia = window.matchMedia || (() => ({ matches: false, addEventListener() {}, removeEventListener() {} }));
 window.MutationObserver = window.MutationObserver;
+fixture.designSystem = Object.assign({}, fixture.designSystem, { type_scale: 1.13, radius_scale: 1.37 });
 window.AdminKitData = fixture;
 window.wp = { apiFetch: () => Promise.resolve({}) };
 window.HTMLCanvasElement.prototype.getContext = () => ({ fillRect() {}, fillStyle: '', getImageData: () => ({ data: [0, 0, 0, 255] }) });
@@ -32,6 +33,8 @@ const tick = () => new Promise((r) => setTimeout(r, 30));
 const doc = window.document;
 const assert = (cond, msg) => { if (!cond) { errors.push('ASSERT: ' + msg); } };
 assert(!doc.getElementById('adminkit-app').hasAttribute('aria-busy'), 'app finished booting');
+assert(doc.getElementById('ak-type-scale').value === '1.13', 'valid non-preset typography scale survives mounting');
+assert(doc.getElementById('ak-shape-radius').value === '1.37', 'valid non-preset radius scale survives mounting');
 const tabs = [...doc.querySelectorAll('[role="tab"].ak-tabs button, .ak-tabs [role="tab"]')];
 assert(tabs.length === 3, 'main tabs rendered (' + tabs.length + ')');
 for (const tab of tabs) {

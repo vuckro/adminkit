@@ -14,9 +14,9 @@ PHP 7.4+. No runtime dependencies, no npm or Composer build.
 - Dedicated plugin/theme adapters, loaded only when the corresponding host is active.
   [Integration reference](docs/INTEGRATIONS.md).
 
-Lucide icons are part of the default administration skin. Optional tools and
-integrations are disabled by default. Enable only the tools
-you need in the AdminKit settings. The menu table is created only when its feature is enabled. Hiding a menu does not change
+Lucide icons are part of the default administration skin. Navigation editors, notifications and detected adapters are enabled by default.
+User quick edit, username changing, post previews and active-items-first are opt-in.
+Adjust these tools in the AdminKit settings. The menu table is created only when its feature is enabled. Hiding a menu does not change
 WordPress permissions. The frontend toolbar is scoped so the site's public design
 remains owned by its theme.
 
@@ -49,6 +49,10 @@ variables required by AdminKit.
 php tokens/build.php
 php tokens/build.php --check
 php dev/check.php
+php dev/check-write-endpoints.php
+php dev/check-username-changer.php
+node dev/smoke/boot.test.js
+node dev/smoke/saving.test.js
 php dev/css-contract.php
 php dev/adapter-audit.php
 php dev/adapter-drift.php
@@ -73,7 +77,7 @@ This section is the roadmap reference.
 
 - **Recently shipped** — menu manager (reorder · per-item icons · hide entries) and a matching toolbar manager (reorder + hide the admin bar's top-level items, left / right sides); notification center (a toolbar bell that collects promotional notice nags into a side drawer); hide admin footer; a mobile-responsive pass over the chrome + list tables.
 - **In progress** — broader plugin coverage: more hand-tuned dark-mode adapters so the long tail of plugins looks right out of the box.
-- **Next** — more native screens styled; in-app palette editor; colour sync; more provider adapters; accessibility / contrast checks; import / export settings; per-role visibility; admin-bar polish.
+- **Next** — more native screens styled; in-app palette editor; colour sync; more provider adapters; accessibility / contrast checks; per-role visibility; admin-bar polish.
 - **Planned** — command palette (⌘K); theme variants; per-user theme preference; white-label; custom admin CSS; density / compact mode; typography controls; Bricks dynamic logo tag.
 
 ## License

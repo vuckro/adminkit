@@ -183,12 +183,24 @@ class AdminKit_Settings_Page {
 	 * preserved untouched.
 	 *
 	 * @param WP_REST_Request $request
-	 * @return WP_REST_Response
+	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function rest_save( $request ) {
 		AdminKit_Settings_Catalog::register_integration_toggles(); // so per-integration keys persist
 		$values = $request->get_param( 'values' );
-		$values = is_array( $values ) ? $values : array();
+		if ( ! is_array( $values ) ) {
+			return AdminKit_Storage::error( 'adminkit_invalid_values', 400 );
+		}
+
+		foreach ( array_intersect_key( AdminKit_Settings::schema(), $values ) as $key => $args ) {
+			$value = $values[ $key ];
+			$type = $args['type'];
+			$valid = in_array( $type, array( 'array', 'object' ), true ) ? is_array( $value )
+				: ( 'toggle' === $type ? in_array( $value, array( true, false, 0, 1, '0', '1', 'true', 'false' ), true ) : is_string( $value ) );
+			if ( ! $valid ) {
+				return AdminKit_Storage::error( 'adminkit_invalid_values', 400 );
+			}
+		}
 
 		$clean = self::sanitize( $values );
 
@@ -202,7 +214,8 @@ class AdminKit_Settings_Page {
 		$posted = array_intersect_key( $values, AdminKit_Settings::schema() );
 		$final  = array_merge( array_diff_key( $existing, $posted ), $clean );
 
-		update_option( AdminKit_Settings::OPTION_KEY, $final );
+		$saved = AdminKit_Storage::save_option( AdminKit_Settings::OPTION_KEY, $final );
+		if ( is_wp_error( $saved ) ) { return $saved; }
 
 		return rest_ensure_response( array( 'ok' => true, 'values' => $final ) );
 	}

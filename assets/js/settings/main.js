@@ -77,8 +77,10 @@
 		}
 
 		function importSettings(file) {
+			if (state.saving || state.dirty) { setStatus('is-error', I.unsaved); return; }
 			var reader = new FileReader();
 			reader.onload = function () {
+				if (state.saving || state.dirty) { setStatus('is-error', I.unsaved); return; }
 				var data, values;
 				try {
 					data = JSON.parse(reader.result);
@@ -91,7 +93,7 @@
 						: data && typeof data === 'object'
 							? data
 							: null;
-				if (!values || !apiFetch) {
+				if (!values || Array.isArray(values) || !apiFetch) {
 					setStatus('is-error', I.settingsImportError || 'That file isn’t a valid AdminKit settings export.');
 					return;
 				}
@@ -99,6 +101,8 @@
 				updateBar();
 				apiFetch({ path: D.route, method: 'POST', data: { values: values } })
 					.then(function () {
+						state.saving = false;
+						if (state.dirty) { updateBar(); return; }
 						window.location.reload();
 					})
 					.catch(function () {
@@ -146,6 +150,14 @@
 					return 'navigation';
 				}
 				return rawId;
+			},
+			requests: function () {
+				var requests = { settings: { path: D.route, data: { values: gather() } } };
+				if (navPart) {
+					requests.menu = navPart.menuRequest();
+					requests.toolbar = navPart.toolbarRequest();
+				}
+				return requests;
 			},
 			request: function (activeTabId) {
 				if (navPart && activeTabId === 'navigation') {

@@ -44,11 +44,11 @@ class AdminKit_Menu_Store {
 	 * on every admin load — it's a single option compare until the version bumps.
 	 * The version lives in a NETWORK option because the table is network-shared.
 	 *
-	 * @return void
+	 * @return bool
 	 */
 	public static function ensure_schema() {
 		if ( self::DB_VERSION === get_site_option( self::DB_VERSION_KEY ) ) {
-			return;
+			return true;
 		}
 
 		global $wpdb;
@@ -75,10 +75,14 @@ class AdminKit_Menu_Store {
   updated_at datetime default NULL,
   PRIMARY KEY  (id),
   KEY blog_id (blog_id)
-) {$collate};";
+) ENGINE=InnoDB {$collate};";
 
 		dbDelta( $sql );
+		if ( $wpdb->last_error || $table !== $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ) ) {
+			return false;
+		}
 		update_site_option( self::DB_VERSION_KEY, self::DB_VERSION );
+		return true;
 	}
 
 	/**
@@ -114,7 +118,11 @@ class AdminKit_Menu_Store {
 			ARRAY_A
 		);
 
-		$config = self::assemble( is_array( $rows ) ? $rows : array() );
+		// A transient must not turn a temporary query failure into a day-long empty layout.
+		if ( ! is_array( $rows ) ) {
+			return array( 'top' => array(), 'sub' => array() );
+		}
+		$config = self::assemble( $rows );
 		self::$cache[ $blog_id ] = $config;
 		set_transient( self::CACHE_PREFIX . $blog_id, $config, DAY_IN_SECONDS );
 		return $config;
@@ -123,25 +131,39 @@ class AdminKit_Menu_Store {
 	/**
 	 * Replace a site's saved layout. Items are already-sanitised rows:
 	 *   { parent:string, slug:string, position:int, icon:string, hidden:bool }
-	 * (top-level rows carry parent ''). Delete-then-insert keeps it a clean snapshot.
+	 * (top-level rows carry parent ''). Transactional replacement preserves the previous snapshot on failure.
 	 *
 	 * @param array         $items
 	 * @param int|null      $blog_id Defaults to the current site.
-	 * @return void
+	 * @return true|WP_Error
 	 */
 	public static function save_config( array $items, $blog_id = null ) {
 		$blog_id = ( null === $blog_id ) ? get_current_blog_id() : (int) $blog_id;
 
 		global $wpdb;
 		$table = self::table();
-		$wpdb->delete( $table, array( 'blog_id' => $blog_id ), array( '%d' ) );
+		if ( ! self::ensure_schema() ) {
+			return AdminKit_Storage::error( 'adminkit_menu_schema_failed' );
+		}
+		// Never claim rollback safety for a legacy non-transactional table.
+		$status = $wpdb->get_row( $wpdb->prepare( 'SHOW TABLE STATUS WHERE Name = %s', $table ), ARRAY_A );
+		if ( ! is_array( $status ) || 'innodb' !== strtolower( $status['Engine'] ?? '' ) ) {
+			return AdminKit_Storage::error( 'adminkit_menu_requires_innodb' );
+		}
+		if ( false === $wpdb->query( 'START TRANSACTION' ) ) {
+			return AdminKit_Storage::error( 'adminkit_menu_storage_failed' );
+		}
+		if ( false === $wpdb->delete( $table, array( 'blog_id' => $blog_id ), array( '%d' ) ) ) {
+			$wpdb->query( 'ROLLBACK' );
+			return AdminKit_Storage::error( 'adminkit_menu_storage_failed' );
+		}
 
 		$now = current_time( 'mysql' );
 		foreach ( $items as $it ) {
 			if ( empty( $it['slug'] ) ) {
 				continue;
 			}
-			$wpdb->insert(
+			$inserted = $wpdb->insert(
 				$table,
 				array(
 					'blog_id'    => $blog_id,
@@ -158,9 +180,19 @@ class AdminKit_Menu_Store {
 				),
 				array( '%d', '%s', '%s', '%d', '%s', '%s', '%d', '%d', '%s', '%s', '%s' )
 			);
+			if ( false === $inserted ) {
+				$wpdb->query( 'ROLLBACK' );
+				return AdminKit_Storage::error( 'adminkit_menu_storage_failed' );
+			}
 		}
 
+		if ( false === $wpdb->query( 'COMMIT' ) ) {
+			$wpdb->query( 'ROLLBACK' );
+			self::flush_cache( $blog_id );
+			return AdminKit_Storage::error( 'adminkit_menu_storage_failed' );
+		}
 		self::flush_cache( $blog_id );
+		return true;
 	}
 
 	/**

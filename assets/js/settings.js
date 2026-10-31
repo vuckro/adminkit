@@ -9,6 +9,9 @@
 	var I = D.i18n || {};
 	var apiFetch = window.wp && window.wp.apiFetch;
 	var state = { dirty: false, saving: false };
+	var revisions = {};
+	var revision = 0;
+	var reloadTimer = null;
 	var screen = D.screen || 'main';
 	var module = screen === 'menu' || screen === 'toolbar' ? 'navigation' : screen;
 	var factory = window.AdminKitScreens && window.AdminKitScreens[module];
@@ -57,6 +60,7 @@
 			el('button', {
 				class: 'ak-btn',
 				type: 'button',
+				id: 'ak-settings-import',
 				text: I.settingsImport,
 				title: I.settingsImportHint,
 				onclick: function () {
@@ -73,6 +77,7 @@
 		])
 	);
 	var tabs = surface.tabs;
+	var activeTabId = tabs[0] ? tabs[0].id : '';
 	var panelWrap = el('div', { class: 'ak-panels' });
 	if (tabs.length === 1) {
 		var single = tabs[0].build();
@@ -135,8 +140,6 @@
 		app.appendChild(el('div', { class: 'ak-savebar' }, [statusEl, saveBtn]));
 	}
 	updateBar();
-
-	var activeTabId = tabs[0] ? tabs[0].id : '';
 
 	function go(id) {
 		if (location.hash === '#' + id) {
@@ -216,13 +219,17 @@
 	}
 	function updateBar() {
 		saveBtn.disabled = state.saving || !state.dirty;
+		var importBtn = document.getElementById('ak-settings-import');
+		if (importBtn) { importBtn.disabled = state.saving || state.dirty; }
 		if (state.saving) {
 			setStatus('is-saving', I.saving);
 		} else if (state.dirty) {
 			setStatus('is-dirty', I.unsaved);
 		}
 	}
-	function markDirty() {
+	function markDirty(scope) {
+		clearTimeout(reloadTimer);
+		revisions[scope || (screen === 'main' ? 'settings' : screen)] = ++revision;
 		state.dirty = true;
 		updateBar();
 	}
@@ -243,28 +250,46 @@
 			invalid.focus();
 			return;
 		}
-		var request = surface.request(activeTabId);
-		if (!request || !request.path) {
+		var requests = surface.requests ? surface.requests() : {};
+		if (!surface.requests) {
+			Object.keys(revisions).forEach(function (scope) { requests[scope] = surface.request(activeTabId); });
+		}
+		// Save layouts before settings can disable their routes on the next request.
+		var pending = Object.keys(revisions).sort(function (a, b) {
+			return (a === 'settings' ? 1 : 0) - (b === 'settings' ? 1 : 0);
+		}).map(function (scope) {
+			return { scope: scope, revision: revisions[scope], request: requests[scope] ? JSON.parse(JSON.stringify(requests[scope])) : null };
+		});
+		if (!pending.length || pending.some(function (item) { return !item.request || !item.request.path; })) {
+			setStatus('is-error', I.error);
 			return;
 		}
-		request.path = '/' + request.path.replace(/^\//, '');
-		request.method = 'POST';
 		state.saving = true;
 		updateBar();
-		apiFetch(request)
-			.then(function () {
-				state.saving = false;
-				state.dirty = false;
-				updateBar();
-				setStatus('is-saved', I.saved);
-				setTimeout(function () {
-					location.reload();
-				}, 600);
-			})
-			.catch(function () {
-				state.saving = false;
-				updateBar();
-				setStatus('is-error', I.error);
+		// Keep endpoint ownership separate, but save every pending draft before reloading.
+		var chain = Promise.resolve();
+		pending.forEach(function (item) {
+			chain = chain.then(function () {
+				item.request.path = '/' + item.request.path.replace(/^\//, '');
+				item.request.method = 'POST';
+				return apiFetch(item.request);
+			}).then(function () {
+				if (revisions[item.scope] === item.revision) { delete revisions[item.scope]; }
 			});
+		});
+		chain.then(function () {
+			state.saving = false;
+			state.dirty = Object.keys(revisions).length > 0;
+			updateBar();
+			if (!state.dirty) {
+				setStatus('is-saved', I.saved);
+				reloadTimer = setTimeout(function () { if (!state.dirty) { location.reload(); } }, 600);
+			}
+		}).catch(function () {
+			state.saving = false;
+			state.dirty = Object.keys(revisions).length > 0;
+			updateBar();
+			setStatus('is-error', I.error);
+		});
 	}
 })();

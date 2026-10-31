@@ -258,6 +258,7 @@ class AdminKit_Settings_Catalog {
 				}
 				$clean = array();
 				foreach ( $v as $file ) {
+					if ( ! is_string( $file ) ) { continue; }
 					$file = sanitize_text_field( (string) $file );
 					if ( '' !== $file ) {
 						$clean[] = $file;

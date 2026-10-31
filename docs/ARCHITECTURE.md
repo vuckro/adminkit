@@ -28,13 +28,12 @@ adminkit.php
 ```
 
 Two tiers under `inc/`: **wp-core/** restyles surfaces WordPress already renders;
-**features/** adds NEW AdminKit surfaces (the menu editor, the analytics pages), each its own
-focused admin subpage. The AdminKit menu has three subpages — **Settings** (tabbed: Brand ·
-Features · Plugins), **Menu**, **Toolbar** — all driven by one build-free
-vanilla-DOM engine (`assets/js/settings.js`) mounted per-screen via a `data-screen` host
-attribute; `inc/settings/class-settings-page.php` exposes the shared `render_host()` / `enqueue_app()` /
-`boot_data($screen)` helpers each subpage calls. Dark mode is design-time CSS only — no runtime
-auto-theme engine.
+**features/** adds NEW AdminKit surfaces (menu/toolbar editors and the notification drawer), each its own
+focused admin subpage. The AdminKit workspace has Design system, Features and Navigation tabs. Navigation
+contains the Menu and Toolbar editors when enabled. Legacy standalone editor hosts
+remain supported by the shared build-free vanilla-DOM engine
+(`assets/js/settings.js`); `AdminKit_Settings_Page` supplies boot data and assets.
+Dark mode is design-time CSS only — no runtime auto-theme engine.
 
 `after_setup_theme` runs after the active theme loads, so host constants
 (`BRICKS_VERSION`, `WC_VERSION`, …) are reliable when an integration checks
@@ -160,11 +159,16 @@ Paths are relative to `assets/js/` and `assets/css/`. Every page also loads the
 small shared host and `settings.css`. WordPress script dependencies guarantee
 that its factory exists before the host mounts. No framework or build is required.
 
-Factories receive shared data, state and helpers explicitly. They return their
-tabs and, for an editable page, one request builder. The host normalizes the route,
-posts through `wp-api-fetch` and displays the save result. There is no multi-endpoint
-save batch: menu, toolbar and settings save only their own data.
-
+Factories receive shared data, state and helpers explicitly. A unified factory
+returns `requests()`, keyed by persistence scope (`settings`, `menu`, `toolbar`).
+Standalone hosts may return one `request()`. Controls call `markDirty(scope)`;
+settings controls default to `settings`. The host snapshots pending payloads and
+saves them sequentially, with settings last so disabling a feature cannot remove
+its route before its layout saves. Successful scopes are cleared only if their
+revision is unchanged. On failure, remaining drafts stay editable and retryable;
+there is no cross-endpoint transaction. Reload occurs only when every draft is
+saved, and any newer edit cancels it. Import is available only without pending
+edits or an active save.
 Main tabs mount on first selection. Tab panels retain stable ARIA relationships
 and keyboard navigation; single-panel pages have no orphaned tab labels.
 
@@ -203,8 +207,9 @@ Run `php dev/css-contract.php` alongside token drift, contrast and browser check
 
 ### Feature and integration defaults
 
-Optional tools default to false; icon replacement belongs to the base skin and
-defaults to true. Detected plugin adapters default to true. Stored explicit
+Branding, icons, theme toggle, login styling, clean chrome, navigation editors
+and notifications default to true. User quick edit, username changing, previews
+and active-items-first remain opt-in. Detected plugin adapters default to true. Stored explicit
 choices remain effective. Resetting Features restores their registered defaults;
 resetting Extensions enables all available integrations for debugging recovery.
 Generic plugin screens are themed unless their plugin file is in
@@ -322,7 +327,7 @@ Primary buttons share `--ak-btn-primary-shadow`: WaasKit contact elevation plus
 `--ak-btn-primary-highlight`, a fine top inset reflection. This role is independent
 of surface elevation and the legacy subtle-shadow alias. Keyboard focus composes
 the focus ring with that relief; disabled buttons remove it. Shapes & elevation
-also exposes the validated 0–4px `--ak-border-width`, consumed by owned buttons,
+also exposes the validated 0–2px `--ak-border-width`, consumed by owned buttons,
 fields and outer card/table frames. Internal separators remain one pixel.
 
 Table outer frames use `--ak-table-border` and `--ak-table-shadow`, mapped to
@@ -420,3 +425,27 @@ use floating elevation; those stay distinct from the saved surface setting.
 Element card adapters (Booking/CRM/Affiliate) use surface elevation, including
 hover, without adding another hover lift. These inactive adapters require visual
 verification on the owning plugin screens before any remote release.
+
+### Write contracts
+
+`AdminKit_Storage` reports option writes as `true|WP_Error`, distinguishing an
+unchanged option from a failed update. Controllers reject malformed container
+and setting types before mutation; empty menu arrays and empty toolbar contexts
+are explicit resets. Settings writes preserve omitted keys. Toolbar writes
+preserve the omitted context. REST capabilities and native nonce handling stay
+in their existing permission callbacks / WordPress authentication layer.
+
+Menu snapshots replace rows inside an InnoDB transaction, rolling back failed
+deletes/inserts and invalidating caches after commit. New tables explicitly use
+InnoDB. Existing nontransactional tables are refused with
+`adminkit_menu_requires_innodb`; conversion requires an explicit maintenance step.
+Schema failures do not advance the schema version. Failed reads do not populate
+empty layout transients. The table remains network-shared with per-site rows.
+
+Username changes are queued only after the native profile nonce, target capability,
+strict syntax, uniqueness and 60-byte column limit are checked. `profile_update`
+consumes only that target's queued candidate, clears old-login and new-user cache
+keys, and retains the current session token when renewing a self-edit cookie.
+Quick-edit role assignment respects WordPress's `editable_roles` filter.
+
+See [FUNCTIONAL-AUDIT.md](FUNCTIONAL-AUDIT.md) for regression checks and limits.

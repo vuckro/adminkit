@@ -257,7 +257,7 @@ class AdminKit_User_Quick_Edit {
 		// posted role actually exists in WP's roles registry.
 		if ( isset( $_POST['role'] ) && current_user_can( 'promote_users' ) ) {
 			$role = sanitize_key( wp_unslash( $_POST['role'] ) );
-			if ( $role && array_key_exists( $role, wp_roles()->get_names() ) ) {
+			if ( $role && array_key_exists( $role, get_editable_roles() ) ) {
 				// Don't let an admin demote themselves accidentally — same
 				// guard wp-admin's own user-edit applies.
 				if ( $user_id !== get_current_user_id() ) {

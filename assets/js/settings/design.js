@@ -359,13 +359,20 @@
 				});
 				return best;
 			}
+			// Presets are shortcuts: mounting the editor must preserve valid imported scales.
+			function scaleChoice(value, choices, min, max) {
+				var num = Number(value);
+				if (!isFinite(num) || num < min || num > max) { return 1; }
+				if (choices.indexOf(num) < 0) { choices.push(num); choices.sort(function (a, b) { return a - b; }); }
+				return num;
+			}
 			var fontSelect = el('select', { id: 'ak-type-font' }, Object.keys(fontCatalog).map(function (key) {
 				var label = key === 'system' && I.fontSystem ? I.fontSystem : fontCatalog[key].label;
 				return el('option', { value: key, text: label });
 			}));
 			fontSelect.value = state.appearance.ui_font;
 			var typeChoices = [0.9, 0.95, 1, 1.05, 1.1];
-			state.designSystem.type_scale = snapChoice(state.designSystem.type_scale, typeChoices, 1);
+			state.designSystem.type_scale = scaleChoice(state.designSystem.type_scale, typeChoices, 0.75, 1.5);
 			var typeScale = el('select', { id: 'ak-type-scale' }, typeChoices.map(function (scale) {
 				var pct = Math.round(scale * 100) + ' %';
 				return el('option', { value: String(scale), text: scale === 1 ? I.defaultPreset + ' (' + pct + ')' : pct });
@@ -426,7 +433,7 @@
 
 			// --- Section 3: Shapes & Surfaces (Radius + Border + Elevation + Button highlight) ---
 			var radiusChoices = [0, 0.5, 1, 1.25, 1.5];
-			state.designSystem.radius_scale = snapChoice(state.designSystem.radius_scale, radiusChoices, 1);
+			state.designSystem.radius_scale = scaleChoice(state.designSystem.radius_scale, radiusChoices, 0, 2);
 			var radius = el('select', { id: 'ak-shape-radius' }, radiusChoices.map(function (scale) {
 				var label = scale === 0 ? '0 px' : scale === 1 ? I.defaultPreset + ' (1 ×)' : number(scale) + ' ×';
 				return el('option', { value: String(scale), text: label });

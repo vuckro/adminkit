@@ -73,6 +73,9 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Username_Changer {
 
+	/** @var array<int,string> Renames validated by the native profile form in this request. */
+	private static $pending = array();
+
 	public static function init() {
 		if ( ! AdminKit_Settings::get( 'username_changer_enabled' ) ) {
 			return;
@@ -154,10 +157,14 @@ class AdminKit_Username_Changer {
 		if ( ! $update ) {
 			return; // Creation flow, not our concern.
 		}
-		if ( ! isset( $_POST['user_login'] ) ) {
+		if ( ! isset( $_POST['user_login'] ) || ! is_string( $_POST['user_login'] ) ) {
 			return;
 		}
+		unset( self::$pending[ (int) ( $user->ID ?? 0 ) ] );
 		if ( empty( $user->ID ) || ! current_user_can( 'edit_user', (int) $user->ID ) ) {
+			return;
+		}
+		if ( ! isset( $_POST['_wpnonce'] ) || ! is_string( $_POST['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['_wpnonce'] ), 'update-user_' . (int) $user->ID ) ) {
 			return;
 		}
 		$current = get_userdata( (int) $user->ID );
@@ -174,7 +181,7 @@ class AdminKit_Username_Changer {
 		// We then require an exact round-trip: if sanitisation stripped or
 		// changed anything, reject — never silently save a different name.
 		$sanitized = sanitize_user( $raw, true );
-		if ( '' === $sanitized || $sanitized !== $raw ) {
+		if ( '' === $sanitized || $sanitized !== $raw || strlen( $sanitized ) > 60 ) {
 			$errors->add(
 				'adminkit_username_invalid',
 				__( '<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or any of . - _ @ — and nothing else.', 'adminkit' )
@@ -187,7 +194,9 @@ class AdminKit_Username_Changer {
 				'adminkit_username_taken',
 				__( '<strong>Error:</strong> That username is already taken.', 'adminkit' )
 			);
+			return;
 		}
+		self::$pending[ (int) $user->ID ] = $sanitized;
 	}
 
 	/**
@@ -202,11 +211,9 @@ class AdminKit_Username_Changer {
 		if ( ! current_user_can( 'edit_user', $user_id ) ) {
 			return; // Defence in depth — the form gate already requires this.
 		}
-		if ( ! isset( $_POST['user_login'] ) ) {
-			return;
-		}
-
-		$raw = trim( (string) wp_unslash( $_POST['user_login'] ) );
+		if ( ! isset( self::$pending[ $user_id ] ) ) { return; }
+		$raw = self::$pending[ $user_id ];
+		unset( self::$pending[ $user_id ] );
 		$old_login = is_object( $old_user_data ) ? (string) $old_user_data->user_login : '';
 		if ( '' === $raw || $raw === $old_login ) {
 			return;
@@ -239,12 +246,14 @@ class AdminKit_Username_Changer {
 			array( '%s' ),
 			array( '%d' )
 		);
-		if ( false === $updated ) {
+		if ( 1 !== $updated ) {
 			return;
 		}
 
 		// Bust the user-object + login caches so subsequent reads see the new
 		// value within this request and the next.
+		// The old login is a separate cache key; clearing only the ID leaves it stale.
+		clean_user_cache( $old_user_data );
 		clean_user_cache( $user_id );
 
 		// The WP auth cookie hashes `user_login`. After this rename every
@@ -263,8 +272,10 @@ class AdminKit_Username_Changer {
 			if ( $token ) {
 				WP_Session_Tokens::get_instance( $user_id )->destroy_others( $token );
 			}
+			$cookie = wp_parse_auth_cookie( '', 'logged_in' );
+			$remember = is_array( $cookie ) && (int) $cookie['expiration'] > time() + 2 * DAY_IN_SECONDS;
 			wp_clear_auth_cookie();
-			wp_set_auth_cookie( $user_id, false );
+			wp_set_auth_cookie( $user_id, $remember, '', $token );
 		} else {
 			WP_Session_Tokens::get_instance( $user_id )->destroy_all();
 		}

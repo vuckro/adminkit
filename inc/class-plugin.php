@@ -31,6 +31,7 @@ class AdminKit_Plugin {
 	 */
 	const MODULES = array(
 		// Helpers — loaded for everyone, nothing to boot.
+		'class-storage.php'                                    => null,
 		'class-screen.php'                                     => null,
 		'class-icons.php'                                      => null,
 		'class-design-system.php'                              => null,

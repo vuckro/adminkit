@@ -151,8 +151,7 @@ class AdminKit_Menu_Manager {
 	}
 
 	/**
-	 * Master switch — gates APPLICATION only (the editor tab is always available so
-	 * a layout can be prepared while off).
+	 * Master switch — gates application, snapshots and the write route.
 	 *
 	 * @return bool
 	 */
@@ -318,7 +317,7 @@ class AdminKit_Menu_Manager {
 		$dashicons = array_values( array_diff( self::WP_DASHICONS, AdminKit_Core_Menu_Icons::mapped_classes() ) );
 		return array(
 			'menu'      => self::$snapshot,
-			'config'    => AdminKit_Menu_Store::get_config(),
+			'config'    => self::is_enabled() ? AdminKit_Menu_Store::get_config() : array( 'top' => array(), 'sub' => array() ),
 			'icons'     => AdminKit_Icons::set(),
 			'dashicons' => $dashicons,
 			'route'     => '/adminkit/v1/menu',
@@ -804,13 +803,21 @@ class AdminKit_Menu_Manager {
 	 * Persist a submitted layout.
 	 *
 	 * @param WP_REST_Request $request
-	 * @return WP_REST_Response
+	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function rest_save( $request ) {
-		AdminKit_Menu_Store::ensure_schema();
 		$items_in = $request->get_param( 'items' );
-		$items    = self::sanitize_items( is_array( $items_in ) ? $items_in : array() );
-		AdminKit_Menu_Store::save_config( $items );
+		if ( ! is_array( $items_in ) || array_values( $items_in ) !== $items_in ) {
+			return AdminKit_Storage::error( 'adminkit_invalid_menu', 400 );
+		}
+		foreach ( $items_in as $item ) {
+			if ( ! is_array( $item ) || ! isset( $item['slug'] ) || ! is_string( $item['slug'] ) || '' === trim( $item['slug'] ) ) {
+				return AdminKit_Storage::error( 'adminkit_invalid_menu', 400 );
+			}
+		}
+		$items = self::sanitize_items( $items_in );
+		$result = AdminKit_Menu_Store::save_config( $items );
+		if ( is_wp_error( $result ) ) { return $result; }
 		return rest_ensure_response( array( 'ok' => true ) );
 	}
 
@@ -844,8 +851,8 @@ class AdminKit_Menu_Manager {
 				'position' => isset( $it['position'] ) ? (int) $it['position'] : 0,
 				'icon'     => $icon,
 				'url'      => ( '' === $parent && isset( $it['url'] ) ) ? esc_url_raw( trim( (string) $it['url'] ) ) : '',
-				'new_tab'  => ! empty( $it['newTab'] ),
-				'hidden'   => ! empty( $it['hidden'] ),
+				'new_tab'  => isset( $it['newTab'] ) && rest_sanitize_boolean( $it['newTab'] ),
+				'hidden'   => isset( $it['hidden'] ) && rest_sanitize_boolean( $it['hidden'] ),
 				'type'     => $type,
 				'title'    => $title,
 			);

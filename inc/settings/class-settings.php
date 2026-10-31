@@ -284,6 +284,7 @@ class AdminKit_Settings {
 	 */
 	public static function get( $key ) {
 		$stored  = get_option( self::OPTION_KEY, array() );
+		$stored  = is_array( $stored ) ? $stored : array();
 		$default = isset( self::$schema[ $key ]['default'] ) ? self::$schema[ $key ]['default'] : null;
 		$value   = isset( $stored[ $key ] ) ? $stored[ $key ] : $default;
 
@@ -294,12 +295,9 @@ class AdminKit_Settings {
 			$value = $default;
 		}
 
-		// SELECT settings: re-run the sanitiser at read time so legacy stored
-		// values that are no longer in the valid set (e.g. a retired preset) degrade gracefully to the declared default
-		// rather than leaking through as-is to every consumer. Sanitisers for
-		// select fields return the default when the value is unknown, so this
-		// is always safe to apply.
-		if ( 'select' === ( isset( self::$schema[ $key ]['type'] ) ? self::$schema[ $key ]['type'] : '' )
+		// Normalize legacy select/toggle values before consumers cast them. In
+		// particular, a stored string "false" must not enable a boolean feature.
+		if ( in_array( self::$schema[ $key ]['type'] ?? '', array( 'select', 'toggle' ), true )
 			&& isset( self::$schema[ $key ]['sanitize'] )
 			&& is_callable( self::$schema[ $key ]['sanitize'] ) ) {
 			$value = call_user_func( self::$schema[ $key ]['sanitize'], $value );

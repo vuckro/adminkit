@@ -689,13 +689,38 @@ class AdminKit_Toolbar_Manager {
 	 * Protected ids can't be hidden.
 	 *
 	 * @param WP_REST_Request $request
-	 * @return WP_REST_Response
+	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function rest_save( $request ) {
 		$protected   = self::protected_nodes();
 		$current     = self::get_config();
 		$admin_in    = $request->get_param( 'admin' );
 		$frontend_in = $request->get_param( 'frontend' );
+
+		$params = $request->get_params();
+		foreach ( array( 'admin', 'frontend', 'order', 'hidden', 'titles', 'icons' ) as $key ) {
+			if ( array_key_exists( $key, $params ) && ! is_array( $params[ $key ] ) ) {
+				return AdminKit_Storage::error( 'adminkit_invalid_toolbar', 400 );
+			}
+		}
+		if ( ! array_intersect_key( $params, array_flip( array( 'admin', 'frontend', 'order', 'hidden', 'titles', 'icons' ) ) ) ) {
+			return AdminKit_Storage::error( 'adminkit_invalid_toolbar', 400 );
+		}
+
+		foreach ( array( $admin_in, $frontend_in, $params ) as $slice ) {
+			if ( ! is_array( $slice ) ) { continue; }
+			foreach ( array( 'order', 'hidden', 'titles', 'icons' ) as $field ) {
+				if ( ! array_key_exists( $field, $slice ) ) { continue; }
+				if ( ! is_array( $slice[ $field ] ) ) {
+					return AdminKit_Storage::error( 'adminkit_invalid_toolbar', 400 );
+				}
+				foreach ( $slice[ $field ] as $value ) {
+					if ( ! is_string( $value ) ) {
+						return AdminKit_Storage::error( 'adminkit_invalid_toolbar', 400 );
+					}
+				}
+			}
+		}
 
 		if ( is_array( $admin_in ) || is_array( $frontend_in ) ) {
 			$saved = array(
@@ -715,7 +740,8 @@ class AdminKit_Toolbar_Manager {
 			);
 		}
 
-		update_option( self::OPTION, $saved, false );
+		$result = AdminKit_Storage::save_option( self::OPTION, $saved, false );
+		if ( is_wp_error( $result ) ) { return $result; }
 
 		$configs = self::get_config();
 		return rest_ensure_response( array(

@@ -297,6 +297,7 @@
 				el('h3', { text: I.toolbarTab || 'Toolbar' }),
 				el('p', { class: 'ak-foundation-intro', text: I.toolbarIntro })
 			]);
+			if (TB.enabled === false) { return p; }
 			var listWrap = el('div', { class: 'ak-menu-tree ak-toolbar-columns' });
 
 			var ctxButtons = {};
@@ -373,6 +374,8 @@
 					listWrap.textContent = I.toolbarEmpty || '—';
 					return;
 				}
+				p.inert = true;
+				p.setAttribute('aria-busy', 'true');
 				apiFetch({ path: tbPath() })
 					.then(function (res) {
 						var nbc = (res && res.nodesByContext) || {};
@@ -384,8 +387,11 @@
 							frontend: toSides(nodesByCtx.frontend, cbc.frontend || {})
 						};
 						render();
+						p.inert = false;
+						p.removeAttribute('aria-busy');
 					})
 					.catch(function () {
+						p.removeAttribute('aria-busy');
 						listWrap.textContent = I.toolbarEmpty || '—';
 					});
 			}
@@ -438,7 +444,7 @@
 			function reset() {
 				state.toolbar[activeCtx] = toSides(nodesByCtx[activeCtx] || [], {}); // native order, nothing hidden
 				render();
-				markDirty();
+				markDirty('toolbar');
 			}
 
 			// Swap a row with its neighbour (↑↓), within its own side only.
@@ -454,7 +460,7 @@
 				list[i] = list[to];
 				list[to] = tmp;
 				render(movedKey);
-				markDirty();
+				markDirty('toolbar');
 			}
 			// Splice a dragged row out and back in at a new index, same side.
 			function moveTo(side, from, to) {
@@ -511,7 +517,7 @@
 							var movedKey = movedItem ? 'tb:' + activeCtx + ':' + side + ':' + movedItem.id : null;
 							moveTo(side, ds.i, i);
 							render(movedKey);
-							markDirty();
+							markDirty('toolbar');
 						}
 					);
 					col.appendChild(
@@ -557,7 +563,7 @@
 					if (row) {
 						row.classList.toggle('is-hidden', !!item.hidden);
 					}
-					markDirty();
+					markDirty('toolbar');
 				});
 				return btn;
 			}
@@ -668,7 +674,7 @@
 						onclick: function () {
 							state.menu = buildMenuModel(MM.menu, { top: [], sub: {} });
 							renderTree(tree);
-							markDirty();
+							markDirty('menu');
 						}
 					}),
 					el('button', {
@@ -759,7 +765,7 @@
 				}
 				state.menu = buildMenuModel(MM.menu, configFromItems(items));
 				renderTree(tree);
-				markDirty(); // shows "Unsaved changes" — the user reviews, then Saves.
+				markDirty('menu'); // shows "Unsaved changes" — the user reviews, then Saves.
 			};
 			reader.readAsText(file);
 		}
@@ -771,7 +777,7 @@
 					: { type: 'link', slug: '', url: '', title: '', icon: '', hidden: false };
 			state.menu.push(item);
 			renderTree(tree);
-			markDirty();
+			markDirty('menu');
 		}
 
 		function renderTree(tree, movedKey) {
@@ -813,7 +819,7 @@
 					var movedKey = movedTop ? topFlipKey(movedTop) : null;
 					moveTop(ds.ti, ti);
 					renderTree(tree, movedKey);
-					markDirty();
+					markDirty('menu');
 				}
 			);
 			return el('div', { class: 'ak-menu-group', 'data-flip-id': topFlipKey(item) }, [row]);
@@ -833,7 +839,7 @@
 			});
 			titleIn.addEventListener('input', function () {
 				item.title = titleIn.value;
-				markDirty();
+				markDirty('menu');
 			});
 			var urlIn = el('input', {
 				type: 'text',
@@ -843,7 +849,7 @@
 			});
 			urlIn.addEventListener('input', function () {
 				item.url = urlIn.value;
-				markDirty();
+				markDirty('menu');
 			});
 			// Order: handle · move · icon · [title + URL fields] · new-tab · hide · remove.
 			// The title + URL inputs are the editable content; new-tab, hide (eye) and the
@@ -865,7 +871,7 @@
 					var movedKey = movedTop ? topFlipKey(movedTop) : null;
 					moveTop(ds.ti, ti);
 					renderTree(tree, movedKey);
-					markDirty();
+					markDirty('menu');
 				}
 			);
 			return el('div', { class: 'ak-menu-group', 'data-flip-id': topFlipKey(item) }, [row]);
@@ -881,7 +887,7 @@
 				onclick: function () {
 					state.menu.splice(ti, 1);
 					renderTree(tree);
-					markDirty();
+					markDirty('menu');
 				}
 			});
 		}
@@ -941,7 +947,7 @@
 						}
 					}
 					renderTree(tree, movedKey);
-					markDirty();
+					markDirty('menu');
 				}
 			);
 
@@ -962,7 +968,7 @@
 						moveChildToTop(ds.ti, ds.ci, ti);
 						var movedKey = movedSub ? subFlipKey(top, movedSub) : null;
 						renderTree(tree, movedKey);
-						markDirty();
+						markDirty('menu');
 					}
 				);
 				group.appendChild(kids);
@@ -992,7 +998,7 @@
 					moveChild(ds.ti, ds.ci, ti, ci);
 					var movedKey = movedSub ? subFlipKey(top, movedSub) : null;
 					renderTree(tree, movedKey);
-					markDirty();
+					markDirty('menu');
 				}
 			);
 			return row;
@@ -1043,7 +1049,7 @@
 				m[ti] = m[to];
 				m[to] = tmp;
 				renderTree(tree, movedKey);
-				markDirty();
+				markDirty('menu');
 			};
 		}
 
@@ -1060,7 +1066,7 @@
 				kids[ci] = kids[to];
 				kids[to] = tmp;
 				renderTree(tree, movedKey);
-				markDirty();
+				markDirty('menu');
 			};
 		}
 
@@ -1074,7 +1080,7 @@
 				if (row) {
 					row.classList.toggle('is-hidden', !!item.hidden);
 				}
-				markDirty();
+				markDirty('menu');
 			});
 			return btn;
 		}
@@ -1158,7 +1164,7 @@
 			function choose(val) {
 				top.icon = val;
 				paint();
-				markDirty();
+				markDirty('menu');
 			}
 
 			// Tabbed picker: an "AdminKit" pane (the curated glyph set) and a "WordPress"
@@ -1391,7 +1397,7 @@
 				onclick: function () {
 					item.newTab = !item.newTab;
 					renderTree(tree);
-					markDirty();
+					markDirty('menu');
 				}
 			});
 			btn.innerHTML =
@@ -1453,7 +1459,7 @@
 				onclick: function () {
 					top.url = (inp.value || '').replace(/^\s+|\s+$/g, '');
 					anchor.classList.toggle('on', !!top.url);
-					markDirty();
+					markDirty('menu');
 					closeIconPicker();
 				}
 			});
@@ -1546,7 +1552,7 @@
 			});
 			inp.addEventListener('input', function () {
 				item.title = inp.value;
-				markDirty();
+				markDirty('menu');
 			});
 			return inp;
 		}
