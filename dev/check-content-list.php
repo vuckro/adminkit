@@ -1,7 +1,7 @@
 <?php
 /** Run: php dev/check-content-list.php. No WordPress/database writes. */
 define( 'ABSPATH', __DIR__ );
-class AdminKit_Settings { public static $enabled = false; public static function get( $key ) { return self::$enabled; } }
+class AdminKit_Settings { public static $enabled = false; public static $choices = array(); public static function get( $key ) { return $key === 'active_items_first_enabled' ? self::$enabled : (self::$choices[$key] ?? true); } }
 require dirname( __DIR__ ) . '/inc/wp-core/class-content-list.php';
 class Test_Redirect extends RuntimeException {}
 class Test_Query {
@@ -42,4 +42,10 @@ $screen->post_type='post';
 foreach(array(array('post_status'=>'all'),array('s'=>'search'),array('book_genre'=>'fiction'),array('orderby'=>'title')) as $params){$_GET=$params;AdminKit_Content_List::on_content_screen();}
 $_GET=array();$referer='http://test/wp-admin/edit.php?post_status=publish';AdminKit_Content_List::on_content_screen();
 $referer='';$published=0;AdminKit_Content_List::on_content_screen();
+$published=1;$_GET=array();AdminKit_Settings::$choices=array('active_items_first_content_default'=>false,'active_items_first_sort'=>true);
+AdminKit_Content_List::on_content_screen();
+if(strpos(AdminKit_Content_List::published_first('native',new Test_Query(array('post_type'=>'post'))),'CASE WHEN')!==0)throw new RuntimeException('Turning landing off also disabled sorting');
+AdminKit_Settings::$choices=array('active_items_first_sort'=>false,'active_items_first_content_default'=>true);
+if(AdminKit_Content_List::published_first('native',new Test_Query(array('post_type'=>'post')))!=='native')throw new RuntimeException('Disabled sort still changed query');
+try { AdminKit_Content_List::on_content_screen(); throw new RuntimeException('Turning sorting off also disabled landing'); } catch(Test_Redirect $expected) {}
 echo "OK: opt-in post/page/CPT priority; explicit filters/search, All navigation, secondary queries and empty lists preserved.\n";

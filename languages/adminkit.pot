@@ -204,6 +204,10 @@ msgstr ""
 msgid "Choose colors for light and dark. Custom lets you choose the accent and edit each palette color. Save to apply your changes."
 msgstr ""
 
+#: inc/settings/class-settings-catalog.php
+msgid "Choose how content and plugin tables open, and whether published or active items come first."
+msgstr ""
+
 #: inc/wp-core/class-options-general.php
 msgid "Choose how dates and times appear, and the first day of the week."
 msgstr ""
@@ -452,6 +456,10 @@ msgstr ""
 msgid "Give your WordPress admin a clean, modern look — optional dark mode, menu and toolbar editors, and polished plugin screens. Standalone, no setup."
 msgstr ""
 
+#: inc/settings/class-settings-catalog.php
+msgid "Group published or active items first in All"
+msgstr ""
+
 #: inc/features/notifications/class-notification-center.php
 msgid "Grouped notices"
 msgstr ""
@@ -502,6 +510,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Import"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "In All, place published content and active plugins before the others. Explicit sorting and searches take priority."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -664,16 +676,28 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
+#: inc/settings/class-settings-catalog.php
+msgid "On arrival, show active plugins. After activation or deactivation, keep the changed plugin visible."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "On arrival, show published posts, pages and custom content. Searches and chosen filters stay unchanged."
+msgstr ""
+
 #: inc/settings/class-settings-page.php
 msgid "On hover"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
-msgid "Open content and plugin lists on Published or Active by default, and group active items first in All."
+msgid "Open content tables on Published"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Open in a new tab"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Open the plugins table on Active"
 msgstr ""
 
 #: inc/settings/class-settings-page.php

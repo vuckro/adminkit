@@ -100,7 +100,30 @@
             "default": false,
             "bulk": true,
             "available": true,
-            "unavailableHint": ""
+            "unavailableHint": "",
+            "options": [
+                {
+                    "key": "active_items_first_content_default",
+                    "label": "Open content on Published",
+                    "desc": "Open content on Published",
+                    "value": true,
+                    "default": true
+                },
+                {
+                    "key": "active_items_first_plugins_default",
+                    "label": "Open plugins on Active",
+                    "desc": "Open plugins on Active",
+                    "value": true,
+                    "default": true
+                },
+                {
+                    "key": "active_items_first_sort",
+                    "label": "Group active items first in All",
+                    "desc": "Group active items first in All",
+                    "value": true,
+                    "default": true
+                }
+            ]
         },
         {
             "key": "post_previews_enabled",

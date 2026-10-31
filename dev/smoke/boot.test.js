@@ -65,7 +65,7 @@ assert(doc.querySelectorAll('.ak-palette-theme input[type="color"]').length >= 2
 doc.getElementById('ak-tab-features').click();
 const clean = [...doc.querySelectorAll('.ak-features-item')].find(n => n.textContent.includes('Clean interface'));
 clean.click();
-const nested = doc.querySelectorAll('.ak-feature-options input');
+const nested = doc.getElementById(clean.getAttribute('aria-controls')).querySelectorAll('.ak-feature-options input');
 assert(nested.length === 2 && nested[0].checked && nested[1].checked, 'nested defaults mount without losing values');
 nested[0].checked = false; nested[0].dispatchEvent(new window.Event('change', { bubbles:true }));
 const save = doc.querySelector('.ak-savebar .ak-btn--primary');

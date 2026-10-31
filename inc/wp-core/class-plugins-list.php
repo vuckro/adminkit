@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugins list — one opt-out behavior that keeps the plugins screen (plugins.php)
+ * Plugins list — configurable opt-in behavior that keeps the plugins screen (plugins.php)
  * leading with what's actually running. Three mechanics, one promise:
  *
  *   1. Open on "Active" — land on the "Active" status filter instead of "All" when
@@ -21,8 +21,8 @@
  *      still on top and the row you just switched off sits right below it — so you see
  *      the result of your action and can undo it, rather than watching it disappear.
  *
- * All three are gated to the plugins screen (hooked from `load-plugins.php`) behind a
- * single setting (default OFF) so they travel together as one coherent feature.
+ * All three are gated to the plugins screen and the shared opt-in master.
+ * Opening/following the Active view and sorting All can be configured independently.
  *
  * Filter:
  *   adminkit/plugins_active_first/enabled  (bool)  master on/off
@@ -59,9 +59,13 @@ class AdminKit_Plugins_List {
 		if ( ! self::enabled() ) {
 			return;
 		}
-		self::maybe_redirect_after_action();
-		self::maybe_redirect_to_active();
-		add_action( 'pre_current_active_plugins', array( __CLASS__, 'sort_active_first' ) );
+		if ( AdminKit_Settings::get( 'active_items_first_plugins_default' ) ) {
+			self::maybe_redirect_after_action();
+			self::maybe_redirect_to_active();
+		}
+		if ( AdminKit_Settings::get( 'active_items_first_sort' ) ) {
+			add_action( 'pre_current_active_plugins', array( __CLASS__, 'sort_active_first' ) );
+		}
 	}
 
 	/**
@@ -85,6 +89,12 @@ class AdminKit_Plugins_List {
 	 * @return void
 	 */
 	public static function sort_active_first() {
+		if ( ! AdminKit_Settings::get( 'active_items_first_sort' ) ) { return; }
+		// A chosen sort, search or status view belongs to WordPress and the user.
+		foreach ( array( 'orderby', 'order', 's' ) as $key ) {
+			if ( isset( $_GET[ $key ] ) ) { return; }
+		}
+		if ( isset( $_GET['plugin_status'] ) && ! in_array( $_GET['plugin_status'], array( '', 'all' ), true ) ) { return; }
 		global $wp_list_table;
 		if ( ! $wp_list_table instanceof WP_Plugins_List_Table
 			|| empty( $wp_list_table->items )
@@ -119,6 +129,7 @@ class AdminKit_Plugins_List {
 	 * @return void
 	 */
 	public static function maybe_redirect_to_active() {
+		if ( ! AdminKit_Settings::get( 'active_items_first_plugins_default' ) ) { return; }
 		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'GET' !== strtoupper( (string) $_SERVER['REQUEST_METHOD'] ) ) {
 			return;
 		}
@@ -164,6 +175,7 @@ class AdminKit_Plugins_List {
 	 * @return void
 	 */
 	public static function maybe_redirect_after_action() {
+		if ( ! AdminKit_Settings::get( 'active_items_first_plugins_default' ) ) { return; }
 		$targets = array(
 			'activate'         => 'active',
 			'activate-multi'   => 'active',

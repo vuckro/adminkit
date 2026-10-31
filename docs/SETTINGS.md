@@ -119,6 +119,15 @@ both effects without changing their stored values. Footer text/WordPress version
 and the contextual Help tab can now be hidden independently. These settings affect
 administration only. Existing per-element filters retain their override behavior.
 
+Active items first has three enabled-by-default sub-options under its existing
+opt-in master: `active_items_first_content_default` opens plain content arrivals
+on Published, `active_items_first_plugins_default` opens plugins on Active and
+follows the changed plugin after activation/deactivation, and
+`active_items_first_sort` groups published/active rows in All. Landing and sorting
+can be disabled independently. Searches, explicit ordering/status and native All
+navigation remain authoritative. Missing sub-options retain the prior behavior;
+turning the master off retains choices. No retired migration key is reused.
+
 ## Saving, import and export
 
 The shared save bar saves all changed scopes, including drafts in hidden tabs.

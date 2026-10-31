@@ -85,7 +85,24 @@ class AdminKit_Settings_Catalog {
 				'icon'  => 'list-filter',
 				'group' => $tables,
 				'label' => __( 'Active items first', 'adminkit' ),
-				'desc'  => __( 'Open content and plugin lists on Published or Active by default, and group active items first in All.', 'adminkit' ),
+				'desc'  => __( 'Choose how content and plugin tables open, and whether published or active items come first.', 'adminkit' ),
+				'options' => array(
+					array(
+						'key' => 'active_items_first_content_default',
+						'label' => __( 'Open content tables on Published', 'adminkit' ),
+						'desc' => __( 'On arrival, show published posts, pages and custom content. Searches and chosen filters stay unchanged.', 'adminkit' ),
+					),
+					array(
+						'key' => 'active_items_first_plugins_default',
+						'label' => __( 'Open the plugins table on Active', 'adminkit' ),
+						'desc' => __( 'On arrival, show active plugins. After activation or deactivation, keep the changed plugin visible.', 'adminkit' ),
+					),
+					array(
+						'key' => 'active_items_first_sort',
+						'label' => __( 'Group published or active items first in All', 'adminkit' ),
+						'desc' => __( 'In All, place published content and active plugins before the others. Explicit sorting and searches take priority.', 'adminkit' ),
+					),
+				),
 			),
 			array(
 				'key'   => 'post_previews_enabled',

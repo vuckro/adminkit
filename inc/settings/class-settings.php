@@ -205,8 +205,16 @@ class AdminKit_Settings {
 			) );
 		}
 
-		// Core AdminKit experience — enabled by default on fresh installs.
-		foreach ( array( 'theme_toggle_enabled', 'clean_chrome_enabled', 'clean_chrome_hide_footer', 'clean_chrome_hide_help' ) as $default_on ) {
+		// Baseline defaults and sub-options preserve each parent's prior behavior.
+		foreach ( array(
+			'theme_toggle_enabled',
+			'clean_chrome_enabled',
+			'clean_chrome_hide_footer',
+			'clean_chrome_hide_help',
+			'active_items_first_content_default',
+			'active_items_first_plugins_default',
+			'active_items_first_sort',
+		) as $default_on ) {
 			self::register( $default_on, array(
 				'type'     => 'toggle',
 				'group'    => 'features',

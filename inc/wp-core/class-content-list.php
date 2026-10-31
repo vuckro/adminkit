@@ -17,7 +17,10 @@ class AdminKit_Content_List {
 		if ( ! $screen || 'edit' !== $screen->base || ! $screen->post_type || 'attachment' === $screen->post_type ) {
 			return;
 		}
-		add_filter( 'posts_orderby', array( __CLASS__, 'published_first' ), 20, 2 );
+		if ( AdminKit_Settings::get( 'active_items_first_sort' ) ) {
+			add_filter( 'posts_orderby', array( __CLASS__, 'published_first' ), 20, 2 );
+		}
+		if ( ! AdminKit_Settings::get( 'active_items_first_content_default' ) ) { return; }
 		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'GET' !== strtoupper( (string) $_SERVER['REQUEST_METHOD'] ) ) {
 			return;
 		}
@@ -45,6 +48,7 @@ class AdminKit_Content_List {
 	}
 
 	public static function published_first( $orderby, $query ) {
+		if ( ! AdminKit_Settings::get( 'active_items_first_sort' ) ) { return $orderby; }
 		$screen = get_current_screen();
 		if ( ! is_admin() || ! $screen || 'edit' !== $screen->base || ! $query->is_main_query() || $query->get( 'post_type' ) !== $screen->post_type ) {
 			return $orderby;

@@ -293,3 +293,36 @@ Evidence and captures are retained at workspace level in
 isolated authentication session was revoked and temporary authentication files
 were removed. This evidence covers the local WordPress target and C2 workflow;
 it does not establish third-party adapter or multisite compatibility.
+
+
+## Grouped options review (2026-10-31)
+
+Active items first now separates content landing, plugin landing/action-follow,
+and All-view grouping. Each child defaults on while the existing master stays
+opt-in. Disabling landing does not disable sorting, and disabling sorting does
+not disable landing. Explicit plugin sorts/search/status views now remain native,
+as content views already did. Existing shared and historical plugin gate filters
+remain available. Sub-options use the shared nested controls and settings path.
+
+| Feature | Decision |
+| --- | --- |
+| Clean interface | Implemented: independent footer and Help choices. |
+| Active items first | Implemented: three behavior choices, no per-post-type matrix. |
+| Post previews | Next useful candidate: choose content types and optionally enlarged hover previews. Current types are already filterable; this UI is not implemented. Keep remote mShots opt-in outside the normal choices. |
+| Login screen | Branding versus styling may be separable later; logo editing and theme choice already have owners. No new duplicate controls now. |
+| Notification center | Keep essential action confirmations visible; severity filters need a defined safety policy before becoming user controls. |
+| Menu / toolbar managers | Already have dedicated editors and independent toolbar contexts; avoid duplicating those options in the feature card. |
+| Dark mode | Palette and personal theme preference already have separate controls; no extra feature-level settings. |
+| Users quick edit | Field/role permissions remain native server policy; avoid presenting security restrictions as cosmetic preferences. |
+| Username changer | A single atomic action; no useful independent behavior to expose. |
+
+Validation: 153 offline checks pass, including independent content/plugin
+landing and grouping, plugin action-follow, explicit filters/search/order, and
+shared nested-draft save behavior. Local WordPress checks exercised all eight
+sub-option combinations, native content ordering with deterministic scratch posts,
+plugin landing URLs, explicit content searches/sorts and parent off/on retention.
+Desktop/mobile light/dark captures were inspected. Settings were restored and
+scratch posts plus the isolated session/authentication files removed. Evidence:
+workspace `output/playwright/active-options-20261031/`. Plugin-row grouping itself
+is covered by the offline prepared-table fixture; no real plugin was activated or
+deactivated for the browser test.

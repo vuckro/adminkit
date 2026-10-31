@@ -204,6 +204,10 @@ msgstr "Choisir une icône"
 msgid "Choose colors for light and dark. Custom lets you choose the accent and edit each palette color. Save to apply your changes."
 msgstr "Choisissez les couleurs en clair et en sombre. Personnalisé permet de choisir l’accent et de modifier chaque couleur de la palette. Enregistrez pour appliquer vos modifications."
 
+#: inc/settings/class-settings-catalog.php
+msgid "Choose how content and plugin tables open, and whether published or active items come first."
+msgstr "Choisissez la vue d’ouverture des tableaux et le regroupement des éléments publiés ou actifs."
+
 #: inc/wp-core/class-options-general.php
 msgid "Choose how dates and times appear, and the first day of the week."
 msgstr "Choisissez l’affichage des dates et des heures ainsi que le premier jour de la semaine."
@@ -452,6 +456,10 @@ msgstr "Générique"
 msgid "Give your WordPress admin a clean, modern look — optional dark mode, menu and toolbar editors, and polished plugin screens. Standalone, no setup."
 msgstr "Donnez à votre administration WordPress une interface claire et moderne : mode sombre, éditeurs de menu et de barre d’outils en option, et écrans d’extensions harmonisés. Autonome, sans configuration."
 
+#: inc/settings/class-settings-catalog.php
+msgid "Group published or active items first in All"
+msgstr "Regrouper les éléments publiés ou actifs en tête de Toutes"
+
 #: inc/features/notifications/class-notification-center.php
 msgid "Grouped notices"
 msgstr "Notices groupées"
@@ -503,6 +511,10 @@ msgstr "URL de l’image"
 #: inc/settings/class-settings-page.php
 msgid "Import"
 msgstr "Importer"
+
+#: inc/settings/class-settings-catalog.php
+msgid "In All, place published content and active plugins before the others. Explicit sorting and searches take priority."
+msgstr "Dans Toutes, place les contenus publiés et les extensions actives avant les autres. Les tris explicites et les recherches restent prioritaires."
 
 #: inc/settings/class-settings-page.php
 msgid "Inactive features"
@@ -664,17 +676,29 @@ msgstr "Notifications"
 msgid "Off"
 msgstr "Désactivé"
 
+#: inc/settings/class-settings-catalog.php
+msgid "On arrival, show active plugins. After activation or deactivation, keep the changed plugin visible."
+msgstr "À l’ouverture, affiche les extensions actives. Après une activation ou une désactivation, conserve l’extension modifiée dans la vue affichée."
+
+#: inc/settings/class-settings-catalog.php
+msgid "On arrival, show published posts, pages and custom content. Searches and chosen filters stay unchanged."
+msgstr "À l’ouverture, affiche les articles, pages et contenus personnalisés publiés. Les recherches et les filtres choisis restent prioritaires."
+
 #: inc/settings/class-settings-page.php
 msgid "On hover"
 msgstr "Au survol"
 
 #: inc/settings/class-settings-catalog.php
-msgid "Open content and plugin lists on Published or Active by default, and group active items first in All."
-msgstr "Ouvre les listes de contenus et d’extensions sur Publiés ou Actives par défaut, et place les éléments actifs en premier dans Tout."
+msgid "Open content tables on Published"
+msgstr "Ouvrir les contenus sur Publiés"
 
 #: inc/settings/class-settings-page.php
 msgid "Open in a new tab"
 msgstr "Ouvrir dans un nouvel onglet"
+
+#: inc/settings/class-settings-catalog.php
+msgid "Open the plugins table on Active"
+msgstr "Ouvrir les extensions sur Actives"
 
 #: inc/settings/class-settings-page.php
 msgid "Options"
