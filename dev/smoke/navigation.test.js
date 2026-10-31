@@ -25,6 +25,11 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 15));
       await tick();
       const pane = screen === 'main' ? w.document.getElementById('ak-navigation-' + scope) : w.document.querySelector('.ak-panel--menu');
       if (toolbarContext === 'frontend') pane.querySelectorAll('.ak-menu-toolbar__seg button')[1].click();
+      if (scope === 'toolbar') {
+        assert.equal(pane.querySelector('h3').textContent, data.i18n[toolbarContext === 'frontend' ? 'toolbarFrontendTitle' : 'toolbarAdminTitle']);
+        assert.equal(pane.querySelector('.ak-toolbar-scope').textContent, data.i18n[toolbarContext === 'frontend' ? 'toolbarFrontendScope' : 'toolbarAdminScope']);
+        assert.equal(w.document.querySelector('.ak-savebar button').disabled, true, 'context selection does not dirty a draft');
+      }
       if (action === 'title') {
         const input = pane.querySelector('.ak-menu-title'); input.value = 'Audit title'; input.dispatchEvent(new w.Event('input'));
       } else if (action === 'url') {

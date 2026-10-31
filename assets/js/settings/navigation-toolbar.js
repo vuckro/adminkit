@@ -25,8 +25,10 @@
 			var TB = D.toolbar || {};
 			var activeCtx = 'admin';
 			var nodesByCtx = { admin: [], frontend: [] };
+			var contextTitle = el('h3', { text: I.toolbarAdminTitle });
+			var scopeHint = el('p', { id: 'ak-toolbar-scope', class: 'ak-toolbar-scope', 'aria-live': 'polite', text: I.toolbarAdminScope });
 			var p = el('section', { class: 'ak-panel ak-panel--menu', role: 'tabpanel' }, [
-				el('h3', { text: I.toolbarTab }),
+				contextTitle,
 				el('p', { class: 'ak-foundation-intro', text: I.toolbarIntro })
 			]);
 			if (TB.enabled === false) { return p; }
@@ -39,6 +41,8 @@
 				}
 				closeIconPicker();
 				activeCtx = ctx;
+				contextTitle.textContent = ctx === 'admin' ? I.toolbarAdminTitle : I.toolbarFrontendTitle;
+				scopeHint.textContent = ctx === 'admin' ? I.toolbarAdminScope : I.toolbarFrontendScope;
 				['admin', 'frontend'].forEach(function (k) {
 					var btn = ctxButtons[k];
 					if (!btn) {
@@ -56,7 +60,8 @@
 				{
 					class: 'ak-seg ak-menu-toolbar__seg',
 					role: 'group',
-					'aria-label': I.toolbarContext
+					'aria-label': I.toolbarContext,
+					'aria-describedby': 'ak-toolbar-scope'
 				},
 				[
 					(ctxButtons.admin = el('button', {
@@ -91,6 +96,8 @@
 					})
 				])
 			);
+			p.appendChild(scopeHint);
+			p.appendChild(el('p', { class: 'ak-toolbar-save-hint', text: I.toolbarSaveScope }));
 			p.appendChild(listWrap);
 
 			function currentSides() {

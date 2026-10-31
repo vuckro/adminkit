@@ -1,7 +1,11 @@
 # Settings workspace
 
 The main workspace has Design system, Features and Navigation tabs. Navigation
-contains Menu and Toolbar editors when enabled. The legacy standalone editor
+contains Menu and Toolbar editors when enabled. Toolbar headings and scope hints
+identify the Administration or Public site view. The latter configures the
+WordPress bar shown on the frontend, normally for logged-in users; it does not
+edit public pages or the site navigation menu. Both layouts remain independent,
+and Save applies pending edits from both views. The legacy standalone editor
 hosts remain supported. Settings are site-wide; light/dark preference remains
 personal. Branding's single `logo_url` is edited in WordPress General Settings.
 

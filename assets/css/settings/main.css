@@ -347,3 +347,6 @@ body.adminkit .adminkit-app .ak-features-tools :is(select.ak-features-status, su
 /* State remains readable in text; the filled/hollow dot adds a quick scan cue. */
 .adminkit-app .ak-features-dot { box-sizing: border-box; flex: 0 0 8px; width: 8px; height: 8px; margin-inline-start: auto; border: 1px solid var(--ak-text-muted); border-radius: 50%; background: transparent; }
 .adminkit-app .ak-features-item[data-feature-state="active"] .ak-features-dot { border-color: var(--ak-success); background: var(--ak-success); }
+/* Explain the selected toolbar surface beside its context selector. */
+.adminkit-app .ak-toolbar-scope { color: var(--ak-heading); font-size: var(--ak-text-s); line-height: 1.6; max-width: 75ch; margin: calc(16px * var(--ak-space-scale, 1)) 0 calc(6px * var(--ak-space-scale, 1)); }
+.adminkit-app .ak-toolbar-save-hint { color: var(--ak-text-muted); font-size: var(--ak-text-xs); line-height: 1.6; max-width: 75ch; margin: 0 0 calc(24px * var(--ak-space-scale, 1)); }

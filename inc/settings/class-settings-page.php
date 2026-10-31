@@ -404,11 +404,16 @@ class AdminKit_Settings_Page {
 
 				// Toolbar manager tab.
 				'toolbarTab'        => __( 'Toolbar', 'adminkit' ),
-				'toolbarIntro'      => __( 'Reorder, rename, change icons, and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn\'t block access. Reset restores the native layout. Changes apply after you save.', 'adminkit' ),
+				'toolbarIntro'      => __( 'Reorder, rename, change icons or hide toolbar items. Hiding an item does not block access to it in WordPress.', 'adminkit' ),
 				'toolbarReset'      => __( 'Reset toolbar', 'adminkit' ),
 				'toolbarEmpty'      => __( 'No toolbar items found.', 'adminkit' ),
 				'toolbarLeft'       => __( 'Left', 'adminkit' ),
 				'toolbarRight'      => __( 'Right', 'adminkit' ),
+				'toolbarAdminTitle' => __( 'Toolbar — Administration', 'adminkit' ),
+				'toolbarFrontendTitle' => __( 'Toolbar — Public site', 'adminkit' ),
+				'toolbarAdminScope' => __( 'You are editing the toolbar inside the WordPress administration.', 'adminkit' ),
+				'toolbarFrontendScope' => __( 'You are editing the WordPress toolbar on the public site, normally visible only to logged-in users. These settings do not change your public pages or site menus.', 'adminkit' ),
+				'toolbarSaveScope' => __( 'The two views have independent layouts. Saving applies pending changes from both views.', 'adminkit' ),
 				'toolbarContext'    => __( 'Toolbar context', 'adminkit' ),
 				'toolbarAdmin'      => __( 'Administration', 'adminkit' ),
 				'toolbarFrontend'   => __( 'Public site', 'adminkit' ),

@@ -427,6 +427,11 @@
         "accentSrcBricks": "Bricks",
         "accentSrcCustom": "Personnalisé",
         "brandPreviewLight": "Clair",
-        "brandPreviewDark": "Sombre"
+        "brandPreviewDark": "Sombre",
+        "toolbarAdminTitle": "Toolbar — Administration",
+        "toolbarFrontendTitle": "Toolbar — Public site",
+        "toolbarAdminScope": "Inside the WordPress administration.",
+        "toolbarFrontendScope": "On the public site for logged-in users.",
+        "toolbarSaveScope": "Saving applies both views."
     }
 }

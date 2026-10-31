@@ -769,8 +769,8 @@ msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag
 msgstr "Réorganisez le menu d’administration et ses sous-menus, changez les icônes et masquez des entrées. Glissez pour réorganiser ; les changements s’appliquent après enregistrement. Masquer retire un élément du menu uniquement — cela ne bloque pas l’accès direct."
 
 #: inc/settings/class-settings-page.php
-msgid "Reorder, rename, change icons, and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn't block access. Reset restores the native layout. Changes apply after you save."
-msgstr "Réorganisez, renommez, changez les icônes et masquez les éléments de votre barre d’outils d’administration. Faites glisser la poignée (ou utilisez les flèches) pour les réorganiser de chaque côté ; l’œil masque un élément dans la barre uniquement, sans bloquer son accès. La réinitialisation restaure la disposition native. Les modifications s’appliquent après l’enregistrement."
+msgid "Reorder, rename, change icons or hide toolbar items. Hiding an item does not block access to it in WordPress."
+msgstr "Réorganisez, renommez, changez les icônes ou masquez les éléments de la barre d’outils. Masquer un élément ne bloque pas son accès dans WordPress."
 
 #: inc/settings/class-settings-catalog.php
 msgid "Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Menu."
@@ -973,6 +973,10 @@ msgid "That file isn’t a valid AdminKit settings export."
 msgstr "Ce fichier n’est pas un export de réglages AdminKit valide."
 
 #: inc/settings/class-settings-page.php
+msgid "The two views have independent layouts. Saving applies pending changes from both views."
+msgstr "Les deux vues ont des dispositions indépendantes. L’enregistrement applique les modifications en attente des deux vues."
+
+#: inc/settings/class-settings-page.php
 msgid "Themes"
 msgstr "Thèmes"
 
@@ -1003,6 +1007,14 @@ msgstr "Contexte de la barre d’outils"
 #: inc/settings/class-settings-catalog.php
 msgid "Toolbar manager"
 msgstr "Gestionnaire de barre d’outils"
+
+#: inc/settings/class-settings-page.php
+msgid "Toolbar — Administration"
+msgstr "Barre d’outils — Administration"
+
+#: inc/settings/class-settings-page.php
+msgid "Toolbar — Public site"
+msgstr "Barre d’outils — Site public"
 
 #: inc/settings/class-settings-page.php
 msgid "Top-edge highlight"
@@ -1087,6 +1099,14 @@ msgstr "Rédige et modifie ses propres articles, sans pouvoir les publier ni ajo
 #: inc/wp-core/class-profile-account.php
 msgid "Writes, publishes and manages their own posts."
 msgstr "Rédige, publie et gère ses propres articles."
+
+#: inc/settings/class-settings-page.php
+msgid "You are editing the WordPress toolbar on the public site, normally visible only to logged-in users. These settings do not change your public pages or site menus."
+msgstr "Vous modifiez la barre WordPress affichée sur le site public, normalement visible uniquement par les utilisateurs connectés. Ces réglages ne modifient ni vos pages publiques ni les menus du site."
+
+#: inc/settings/class-settings-page.php
+msgid "You are editing the toolbar inside the WordPress administration."
+msgstr "Vous modifiez la barre d’outils affichée dans l’administration WordPress."
 
 #: inc/wp-core/class-user-quick-edit.php
 msgid "You are not allowed to do that."

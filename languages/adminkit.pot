@@ -769,7 +769,7 @@ msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Reorder, rename, change icons, and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn't block access. Reset restores the native layout. Changes apply after you save."
+msgid "Reorder, rename, change icons or hide toolbar items. Hiding an item does not block access to it in WordPress."
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
@@ -973,6 +973,10 @@ msgid "That file isn’t a valid AdminKit settings export."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "The two views have independent layouts. Saving applies pending changes from both views."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "Themes"
 msgstr ""
 
@@ -1002,6 +1006,14 @@ msgstr ""
 
 #: inc/settings/class-settings-catalog.php
 msgid "Toolbar manager"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Toolbar — Administration"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Toolbar — Public site"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -1086,6 +1098,14 @@ msgstr ""
 
 #: inc/wp-core/class-profile-account.php
 msgid "Writes, publishes and manages their own posts."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "You are editing the WordPress toolbar on the public site, normally visible only to logged-in users. These settings do not change your public pages or site menus."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "You are editing the toolbar inside the WordPress administration."
 msgstr ""
 
 #: inc/wp-core/class-user-quick-edit.php
