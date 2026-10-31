@@ -63,26 +63,48 @@ function boot(hash = '', legacy = false) {
   c.save(); await tick();
   assert.equal(c.calls[1].request.data.value, 2, 'next save includes new edit');
   c.calls[1].resolve({}); await tick(); c.dom.window.close();
-  // The main factory also imports settings directly; late edits must survive that request.
-  const imported = new JSDOM('', { url: 'http://localhost/', runScripts: 'outside-only' });
+  // Boot the actual main factory and host: imports lock all editing surfaces until reload.
+  const imported = new JSDOM('<div id="adminkit-app"></div>', { url: 'http://localhost/', runScripts: 'outside-only' });
   const iw = imported.window;
-  const state = {}; let reader, resolveImport, importCalls = 0;
+  let reader, importCall, main, state;
+  const importCalls = [];
   iw.FileReader = class { constructor() { reader = this; } readAsText() {} };
-  iw.AdminKitParts = { design: () => () => {}, features: () => () => {} };
+  iw.AdminKitData = { screen: 'main', route: 'settings', brandAccent: '#111111', appearance: { ui_font: 'geist' }, i18n: { error: 'Error' } };
+  iw.AdminKitParts = {
+    design: context => () => context.el('section', {}, [context.el('input', { id: 'edit-design' })]),
+    features: context => () => context.el('section')
+  };
+  iw.wp = { apiFetch: request => new Promise((resolve, reject) => { importCall = { request, resolve, reject }; importCalls.push(importCall); }) };
   iw.eval(fs.readFileSync(path.resolve(__dirname, '../../assets/js/settings/main.js'), 'utf8'));
-  const main = iw.AdminKitScreens.main({ D: { route: 'settings' }, I: {}, state,
-    apiFetch: () => { importCalls++; return new Promise(resolve => { resolveImport = resolve; }); },
-    el() {}, intro() {}, markDirty() {}, setStatus() {}, updateBar() {}
-  });
+  const factory = iw.AdminKitScreens.main;
+  iw.AdminKitScreens.main = context => { state = context.state; main = factory(context); return main; };
+  iw.eval(source);
+  const regions = () => [...iw.document.querySelectorAll('.ak-panels, .ak-tabs, .ak-actions')];
   main.importSettings({});
   state.dirty = true; reader.result = '{"_adminkit":"settings","values":{}}'; reader.onload();
-  assert.equal(importCalls, 0, 'edits while reading the import file prevent submission');
+  assert.equal(importCalls.length, 0, 'edits while reading the import file prevent submission');
   state.dirty = false; main.importSettings({});
-  reader.result = '{"_adminkit":"settings","values":{}}'; reader.onload();
+  reader.result = '{"_adminkit":"settings","values":{"brand_accent":"#222222","ui_font":"inter"}}'; reader.onload();
+  assert.equal(state.importing, true);
   assert.equal(state.saving, true);
-  state.dirty = true; resolveImport({}); await tick();
+  assert.equal(regions().length, 3);
+  assert.ok(regions().every(region => region.inert), 'all editing surfaces lock during import');
+  assert.equal(iw.document.querySelector('.ak-savebar button').disabled, true);
+  assert.equal(iw.document.querySelector('.ak-savebar').inert, undefined, 'import status remains accessible');
+  assert.equal(importCall.request.data.values.brand_accent, '#222222');
+  importCall.reject(new Error('database unavailable')); await tick();
+  assert.equal(state.importing, false);
   assert.equal(state.saving, false);
-  assert.equal(state.dirty, true, 'edits during import request remain pending without reload');
+  assert.ok(regions().every(region => !region.inert), 'failed imports restore editing');
+  assert.equal(main.requests().settings.data.values.brand_accent, '#111111', 'failure preserves the original draft');
+  assert.equal(iw.document.querySelector('.ak-status').textContent, 'Error');
+  main.importSettings({}); reader.result = '{"_adminkit":"settings","values":{"brand_accent":"#222222"}}'; reader.onload();
+  // jsdom cannot navigate; a successful import must remain locked while awaiting reload.
+  importCall.resolve({}); await tick();
+  assert.equal(state.importing, true);
+  assert.equal(state.saving, true);
+  assert.equal(state.dirty, false);
+  assert.ok(regions().every(region => region.inert), 'success cannot reopen stale controls before reload');
   imported.window.close();
   console.log('OK: hash endpoint, all drafts, partial failure/retry, immutable requests and edits during save.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

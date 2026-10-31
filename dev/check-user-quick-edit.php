@@ -22,11 +22,25 @@ function check($value,$message) { if (!$value) throw new RuntimeException($messa
 foreach (array('administrator'=>false,'subscriber'=>true) as $role=>$accepted) {
  $_POST=array('user_id'=>8,'role'=>$role); $update=null;
  try { AdminKit_User_Quick_Edit::handle_save(); } catch (Quick_Edit_Response $done) {}
- check($accepted === isset($update['role']), 'editable_roles filter bypassed for '.$role);
+ check($accepted ? $response === 200 && isset($update['role']) : $response === 403 && $update === null, 'editable_roles filter bypassed for '.$role);
 }
 $_POST=array('user_id'=>7,'role'=>'subscriber');
 try { AdminKit_User_Quick_Edit::handle_save(); } catch (Quick_Edit_Response $done) {}
 check(!isset($update['role']), 'Quick edit allowed accidental self-demotion');
+// The form must advertise exactly the same allowlist as the endpoint.
+function get_current_screen() { return new stdClass(); }
+function get_column_headers($screen) { return array(); }
+function esc_html_e($text,$domain) { echo htmlspecialchars($text,ENT_QUOTES); }
+function esc_html($text) { return htmlspecialchars($text,ENT_QUOTES); }
+function esc_attr($text) { return htmlspecialchars($text,ENT_QUOTES); }
+function wp_list_pluck($list,$field) { return array_map(static function($item) use($field) { return $item[$field]; },$list); }
+ob_start(); AdminKit_User_Quick_Edit::print_form_template(); $markup=ob_get_clean();
+preg_match_all('/<option value="([^"]+)"/',$markup,$roles);
+check($roles[1] === array_keys(get_editable_roles()), 'Form proposed an unassignable role');
+$_POST=array('user_id'=>8,'first_name'=>'Keep'); $update=null;
+function sanitize_text_field($value) { return $value; }
+try { AdminKit_User_Quick_Edit::handle_save(); } catch (Quick_Edit_Response $done) {}
+check($response === 200 && $update === array('ID'=>8,'first_name'=>'Keep'), 'An omitted role blocked unrelated profile edits');
 $allowed=false; $update=null;
 try { AdminKit_User_Quick_Edit::handle_save(); } catch (Quick_Edit_Response $done) {}
 check($response === 403 && $update === null, 'Unauthorized target reached update');

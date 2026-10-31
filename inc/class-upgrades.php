@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Upgrades {
 
-	const VERSION = 7;
+	const VERSION = 8;
 	const OPTION  = 'adminkit_storage_version';
 
 	public static function init() {
@@ -22,8 +22,8 @@ class AdminKit_Upgrades {
 		}
 
 		$version = (int) get_option( self::OPTION, 0 );
-		// Prepare upgrade 7 before immutable upgrade 6 can discard legacy intent.
-		if ( $version < 7 && ! self::migrate_clean_chrome() ) { return; }
+		// Preserve legacy intent before cleanup, including repair of completed older upgrades.
+		if ( $version < 8 && ! self::migrate_clean_chrome() ) { return; }
 		if ( $version < 1 ) {
 			// Retire generated portraits without changing another avatar provider's choice.
 			if ( 'adminkit_portraits' === get_option( 'avatar_default' ) ) {
@@ -90,8 +90,33 @@ class AdminKit_Upgrades {
 			}
 		}
 
+		// Upgrade 8 also repairs settings left behind by a failed historical write.
+		if ( ! self::repair_legacy_settings() ) { return; }
+
 		// Admin-only migration state does not need to be autoloaded on the front end.
 		update_option( self::OPTION, self::VERSION, false );
+	}
+
+	/** Verify historical settings writes before advancing the storage version. */
+	private static function repair_legacy_settings() {
+		$before = get_option( AdminKit_Settings::OPTION_KEY, array() );
+		if ( ! is_array( $before ) ) { return true; }
+		$settings = $before;
+		if ( array_key_exists( 'plugins_active_first_enabled', $settings ) && ! array_key_exists( 'active_items_first_enabled', $settings ) ) {
+			$settings['active_items_first_enabled'] = rest_sanitize_boolean( $settings['plugins_active_first_enabled'] );
+		}
+		if ( empty( $settings['logo_url'] ) ) {
+			foreach ( array( 'logo_light', 'logo_dark' ) as $legacy ) {
+				if ( ! empty( $settings[ $legacy ] ) && is_string( $settings[ $legacy ] ) ) {
+					$settings['logo_url'] = $settings[ $legacy ];
+					break;
+				}
+			}
+		}
+		$retired = array( 'custom_avatars_enabled', 'bricks_builder_enabled', 'plugins_active_first_enabled', 'custom_dashboard_enabled', 'stats_enabled', 'online_users_enabled', 'logo_light', 'logo_dark', 'logo_source', 'wp_logo', 'login_logo', 'ui_radius', 'ui_density', 'generic_theming_on', 'hide_footer_enabled', 'hide_help_button_enabled', 'editor_content_theme' );
+		$settings = array_diff_key( $settings, array_flip( $retired ) );
+		return $settings === $before || update_option( AdminKit_Settings::OPTION_KEY, $settings )
+			|| $settings === get_option( AdminKit_Settings::OPTION_KEY, array() );
 	}
 
 	/** Upgrade 7. Persist intent before older cleanup, so a failed write is retryable. */

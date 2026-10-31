@@ -119,3 +119,45 @@ Evidence lives in `output/stabilization-20261031/` at workspace level: PHP-versi
 logs, browser log, color comparisons, reproducible runners and viewport captures.
 This does not claim live account-renaming, remote deployment, exhaustive multisite
 execution or compatibility approval for inactive host adapters.
+
+
+## Follow-up: four reliability regressions
+
+- Settings import now makes editing regions inert until success reloads the page.
+  A failed import unlocks them and keeps the previous values. Status remains
+  accessible. This prevents stale client values from overwriting imported values.
+- Storage upgrade 8 repairs retired setting keys from failed historical writes,
+  including sites already marked version 7. Failed persistence does not advance
+  the version; retry preserves explicit logo, priority and chrome choices. Frozen
+  upgrade 6 remains byte-for-byte unchanged.
+- Quick Edit displays only `get_editable_roles()` and rejects forbidden/empty
+  posted roles with HTTP 403 before updating any fields. If the current role is
+  excluded by that filter, the client disables and omits the role field so other
+  profile fields remain editable. Self-demotion protection remains in place.
+- Toolbar title replacements now use literal callbacks for native label, search,
+  account and accessibility markup, preserving dollar and backslash sequences.
+
+Permanent regression coverage exercises failed historical writes from storage
+versions 0–7, retry/idempotency and explicit choices; real settings-host import
+locking and failure recovery; role form/endpoint parity; and title replacements
+across native markup shapes. These are isolated fixtures, not live account edits.
+
+
+Local WordPress integration verification for these fixes:
+
+- Actual settings imports and subsequent saves were exercised in Chromium at
+  1440px/light and 390px/dark. A delayed request blocked editing; an injected HTTP
+  500 restored editing; successful POST/reload and the next save retained the
+  imported font/accent. No JavaScript errors or document overflow were observed.
+- Native WordPress `editable_roles` filtering and AJAX handling rejected a
+  forbidden role without partially updating a scratch user's profile, then
+  persisted an allowed role. The scratch user was deleted afterward; email
+  delivery was intercepted. A real `WP_Admin_Bar` preserved a title with dollar
+  and backslash references.
+- Original settings/toolbar options were restored and read back. The temporary
+  browser session was revoked. Evidence is retained at workspace level in
+  `output/four-fixes-20261031/`.
+
+The unified gate passed all 137 checks after these corrections (85 PHP syntax,
+27 JavaScript syntax, generated tokens, 18 regression scripts, two CSS/adapter
+checks and four jsdom suites). Plugin version remains 1.0.0; storage version is 8.

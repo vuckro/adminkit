@@ -93,15 +93,16 @@
 					setStatus('is-error', I.settingsImportError);
 					return;
 				}
+				state.importing = true;
 				state.saving = true;
 				updateBar();
 				apiFetch({ path: D.route, method: 'POST', data: { values: values } })
 					.then(function () {
-						state.saving = false;
-						if (state.dirty) { updateBar(); return; }
+						// Keep controls locked until the server values are mounted by reload.
 						window.location.reload();
 					})
 					.catch(function () {
+						state.importing = false;
 						state.saving = false;
 						setStatus('is-error', I.error);
 						updateBar();

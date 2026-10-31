@@ -170,7 +170,7 @@ class AdminKit_User_Quick_Edit {
 		}
 
 		$can_promote = current_user_can( 'promote_users' );
-		$roles       = wp_roles()->get_names();
+		$roles       = wp_list_pluck( get_editable_roles(), 'name' );
 		?>
 		<template id="adminkit-quick-edit-template">
 			<tr class="adminkit-quick-edit-row">
@@ -257,15 +257,16 @@ class AdminKit_User_Quick_Edit {
 		}
 
 		// Role: only honoured when the editor can promote, and only when the
-		// posted role actually exists in WP's roles registry.
+		// posted role belongs to WordPress's filtered assignable set.
 		if ( isset( $_POST['role'] ) && current_user_can( 'promote_users' ) ) {
 			$role = sanitize_key( wp_unslash( $_POST['role'] ) );
-			if ( $role && array_key_exists( $role, get_editable_roles() ) ) {
-				// Don't let an admin demote themselves accidentally — same
-				// guard wp-admin's own user-edit applies.
-				if ( $user_id !== get_current_user_id() ) {
-					$update['role'] = $role;
-				}
+			if ( ! $role || ! array_key_exists( $role, get_editable_roles() ) ) {
+				wp_send_json_error( array( 'message' => __( 'You are not allowed to do that.', 'adminkit' ) ), 403 );
+			}
+			// Don't let an admin demote themselves accidentally — same
+			// guard wp-admin's own user-edit applies.
+			if ( $user_id !== get_current_user_id() ) {
+				$update['role'] = $role;
 			}
 		}
 

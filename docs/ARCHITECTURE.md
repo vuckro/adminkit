@@ -90,8 +90,9 @@ values from failed updates; controllers propagate failures rather than success.
 Settings exports merge every registered effective value with editable drafts,
 including logo and inactive adapter switches. Normal saves omit non-editable keys
 such as the General Settings logo. Imports require `_adminkit: settings` plus an
-object `values`. Import is blocked by pending drafts/busy state, and edits during
-its request prevent reload. Menu import/export has its own marked layout format.
+object `values`. Import is blocked by pending drafts/busy state. During its request, editing
+regions are inert while the save status stays accessible. Success keeps the
+workspace locked until reload mounts server values; failure restores editing. Menu import/export has its own marked layout format.
 
 ## Navigation storage and application
 
@@ -109,7 +110,9 @@ prune the administrator's history.
 
 Toolbar data is the `adminkit_toolbar` option with separate `admin`/`frontend`
 contexts; legacy flat layouts read as admin. Omitted contexts remain unchanged.
-Protection accepts native IDs and historical `wp-admin-bar-` prefixed IDs, keeping
+Custom titles use literal regex callbacks so dollar/backslash sequences cannot
+be interpreted as replacement references. Protection accepts native IDs and
+historical `wp-admin-bar-` prefixed IDs, keeping
 the account and responsive toggle available. Reordering retains child parents and
 metadata. Hiding menus/toolbar nodes never grants or revokes WordPress permissions.
 
@@ -122,8 +125,10 @@ values are revalidated before CSS output; native Lucide names/aliases stay stabl
 ## User tools
 
 Quick Edit uses the native AJAX nonce and target capabilities, and limits role
-assignment to `get_editable_roles()` with self-demotion protection. Username
-changes are single-site only: the native profile nonce, target capability, strict
+assignment to `get_editable_roles()` with self-demotion protection. The form uses
+the same allowlist; rejected roles return HTTP 403 before any profile write. A
+filtered-out current role disables the select and is omitted from the request.
+Username changes are single-site only: the native profile nonce, target capability, strict
 syntax, uniqueness and 60-byte limit validate a queued candidate. `profile_update`
 consumes only that target's candidate once, clears old/new cache keys, and retains
 the current session token on self-edit. Another user's sessions are invalidated.
@@ -139,7 +144,10 @@ Upgrade 7 prepares legacy footer/help intent before version 6 could discard it.
 An explicit `clean_chrome_enabled` wins; otherwise any old opt-out produces false,
 while all known old flags true produces true. Retired keys are removed only after
 a successful write, so failure is retryable. Independent historical footer/help
-filters remain effective over the unified switch.
+filters remain effective over the unified switch. Upgrade 8 repairs historical
+settings left behind by failed writes, including installations marked version 7.
+It preserves explicit replacement values and verifies persistence before advancing
+the storage version. Upgrade 6 remains unchanged.
 
 Deactivation preserves storage. Uninstall removes current and historical AdminKit
 options, per-site stats tables, the shared menu table, retired user metadata and

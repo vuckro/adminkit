@@ -47,7 +47,7 @@ foreach ( array( 'adminkit_portraits' => 'mystery', 'identicon' => 'identicon' )
 $options = array( AdminKit_Upgrades::OPTION => 1, 'adminkit_settings' => array( 'bricks_builder_enabled' => true, 'plugins_active_first_enabled' => false, 'theme_toggle_enabled' => true ), 'bricks_global_settings' => array( 'builderMode' => 'dark' ) );
 $metadata = array( 1 => array( 'first_name' => 'Keep' ) );
 AdminKit_Upgrades::run();
-if ( array( 'theme_toggle_enabled' => true, 'active_items_first_enabled' => false ) !== $options['adminkit_settings'] || array( 'builderMode' => 'dark' ) !== $options['bricks_global_settings'] || array( 1 => array( 'first_name' => 'Keep' ) ) !== $metadata || 7 !== $options[AdminKit_Upgrades::OPTION] ) {
+if ( array( 'theme_toggle_enabled' => true, 'active_items_first_enabled' => false ) !== $options['adminkit_settings'] || array( 'builderMode' => 'dark' ) !== $options['bricks_global_settings'] || array( 1 => array( 'first_name' => 'Keep' ) ) !== $metadata || AdminKit_Upgrades::VERSION !== $options[AdminKit_Upgrades::OPTION] ) {
  throw new RuntimeException( 'Version 2 did not clean only the retired flags.' );
 }
 $before_writes = $writes;
@@ -69,7 +69,7 @@ if($before_drops!==$wpdb->drops)throw new RuntimeException('Completed cleanup re
 $options = array( AdminKit_Upgrades::OPTION => 4, 'adminkit_settings' => array( 'online_users_enabled' => true, 'theme_toggle_enabled' => true ) );
 $metadata = array( 1 => array( 'adminkit_last_login' => 123, 'session_tokens' => array( 'native' => 'keep' ), 'first_name' => 'Keep' ) );
 AdminKit_Upgrades::run();
-if ( array( 'theme_toggle_enabled' => true ) !== $options['adminkit_settings'] || array( 1 => array( 'session_tokens' => array( 'native' => 'keep' ), 'first_name' => 'Keep' ) ) !== $metadata || 7 !== $options[AdminKit_Upgrades::OPTION] ) {
+if ( array( 'theme_toggle_enabled' => true ) !== $options['adminkit_settings'] || array( 1 => array( 'session_tokens' => array( 'native' => 'keep' ), 'first_name' => 'Keep' ) ) !== $metadata || AdminKit_Upgrades::VERSION !== $options[AdminKit_Upgrades::OPTION] ) {
  throw new RuntimeException( 'Online users cleanup changed native sessions or left retired data.' );
 }
 $before_writes = $writes;
@@ -77,7 +77,7 @@ AdminKit_Upgrades::run();
 if ( $writes !== $before_writes ) { throw new RuntimeException( 'Online users cleanup repeated.' ); }
 $options = array( AdminKit_Upgrades::OPTION => 5, 'adminkit_settings' => array( 'logo_light' => 'https://x.test/l.svg', 'logo_dark' => 'https://x.test/d.svg', 'logo_source' => 'url', 'wp_logo' => 'logo', 'login_logo' => 'favicon', 'ui_radius' => 'soft', 'ui_density' => 'compact', 'generic_theming_on' => array(), 'ui_font' => 'system', 'theme_toggle_enabled' => true ) );
 AdminKit_Upgrades::run();
-if ( array( 'ui_font' => 'system', 'theme_toggle_enabled' => true, 'logo_url' => 'https://x.test/l.svg' ) != $options['adminkit_settings'] || 7 !== $options[AdminKit_Upgrades::OPTION] ) {
+if ( array( 'ui_font' => 'system', 'theme_toggle_enabled' => true, 'logo_url' => 'https://x.test/l.svg' ) != $options['adminkit_settings'] || AdminKit_Upgrades::VERSION !== $options[AdminKit_Upgrades::OPTION] ) {
  throw new RuntimeException( 'Retired logo/appearance keys were not migrated cleanly.' );
 }
 $before_writes = $writes;
@@ -88,7 +88,7 @@ foreach (array(0, 5, 6) as $version) {
  foreach (array(array(true,true,true), array(true,false,false), array(false,true,false), array('false',true,false)) as $case) {
   $options=array(AdminKit_Upgrades::OPTION=>$version, 'adminkit_settings'=>array('hide_footer_enabled'=>$case[0], 'hide_help_button_enabled'=>$case[1], 'editor_content_theme'=>true, 'logo_url'=>'keep'));
   AdminKit_Upgrades::run();
-  if ($options['adminkit_settings'] !== array('logo_url'=>'keep','clean_chrome_enabled'=>$case[2]) || $options[AdminKit_Upgrades::OPTION] !== 7) throw new RuntimeException('Upgrade 7 lost legacy intent.');
+  if ($options['adminkit_settings'] !== array('logo_url'=>'keep','clean_chrome_enabled'=>$case[2]) || $options[AdminKit_Upgrades::OPTION] !== AdminKit_Upgrades::VERSION) throw new RuntimeException('Upgrade 7 lost legacy intent.');
   $before_writes=$writes; AdminKit_Upgrades::run();
   if ($before_writes!==$writes) throw new RuntimeException('Upgrade 7 repeated.');
  }
@@ -102,7 +102,22 @@ $options=array(AdminKit_Upgrades::OPTION=>5, 'adminkit_settings'=>array('hide_fo
 $fail_settings=true; AdminKit_Upgrades::run();
 if ($options[AdminKit_Upgrades::OPTION] !== 5 || !isset($options['adminkit_settings']['hide_footer_enabled'])) throw new RuntimeException('Failed upgrade 7 lost retry data.');
 $fail_settings=false; AdminKit_Upgrades::run();
-if ($options[AdminKit_Upgrades::OPTION] !== 7 || $options['adminkit_settings'] !== array('clean_chrome_enabled'=>false)) throw new RuntimeException('Upgrade 7 retry failed.');
+if ($options[AdminKit_Upgrades::OPTION] !== AdminKit_Upgrades::VERSION || $options['adminkit_settings'] !== array('clean_chrome_enabled'=>false)) throw new RuntimeException('Upgrade 7 retry failed.');
+// Failed historical writes must remain retryable, including previously completed version 7.
+foreach (range(0, 7) as $version) {
+ $legacy=array('logo_light'=>'https://x.test/legacy.svg','plugins_active_first_enabled'=>false,'custom_avatars_enabled'=>true,'bricks_builder_enabled'=>true,'custom_dashboard_enabled'=>true,'stats_enabled'=>true,'online_users_enabled'=>true,'ui_radius'=>'soft','theme_toggle_enabled'=>false);
+ $options=array(AdminKit_Upgrades::OPTION=>$version,'adminkit_settings'=>$legacy);
+ $fail_settings=true; AdminKit_Upgrades::run();
+ if ($options[AdminKit_Upgrades::OPTION] !== $version || $options['adminkit_settings'] !== $legacy) throw new RuntimeException('Historical write failure advanced storage version or lost retry data.');
+ $fail_settings=false; AdminKit_Upgrades::run();
+ $expected=array('theme_toggle_enabled'=>false,'active_items_first_enabled'=>false,'logo_url'=>'https://x.test/legacy.svg');
+ if ($options[AdminKit_Upgrades::OPTION] !== AdminKit_Upgrades::VERSION || $options['adminkit_settings'] != $expected) throw new RuntimeException('Historical settings repair failed.');
+ $before_writes=$writes; AdminKit_Upgrades::run();
+ if ($writes!==$before_writes) throw new RuntimeException('Historical repair repeated.');
+}
+$options=array(AdminKit_Upgrades::OPTION=>7,'adminkit_settings'=>array('logo_light'=>'old','logo_url'=>'chosen','plugins_active_first_enabled'=>true,'active_items_first_enabled'=>false,'hide_help_button_enabled'=>false));
+AdminKit_Upgrades::run();
+if ($options['adminkit_settings'] != array('logo_url'=>'chosen','active_items_first_enabled'=>false,'clean_chrome_enabled'=>false)) throw new RuntimeException('Repair replaced explicit choices.');
 $options = array();
 $allowed = false;
 $before_writes = $writes;

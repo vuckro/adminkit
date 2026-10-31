@@ -863,19 +863,19 @@ class AdminKit_Toolbar_Manager {
 		}
 
 		if ( false !== strpos( $raw, 'adminbarsearch' ) || false !== strpos( $raw, '<form' ) ) {
-			$raw = preg_replace( '/(<label[^>]*>).*?(<\/label>)/is', '$1' . $safe . '$2', $raw, 1 );
-			$raw = preg_replace( '/(<input[^>]*type=["\']submit["\'][^>]*value=["\'])[^"\']*(["\'])/is', '$1' . $safe_at . '$2', $raw, 1 );
+			$raw = preg_replace_callback( '/(<label[^>]*>).*?(<\/label>)/is', static function ( $match ) use ( $safe ) { return $match[1] . $safe . $match[2]; }, $raw, 1 );
+			$raw = preg_replace_callback( '/(<input[^>]*type=["\']submit["\'][^>]*value=["\'])[^"\']*(["\'])/is', static function ( $match ) use ( $safe_at ) { return $match[1] . $safe_at . $match[2]; }, $raw, 1 );
 		} elseif ( false !== strpos( $raw, 'ak-site-name-text' ) ) {
-			$raw = preg_replace( '/(<span[^>]*class=["\'][^"\']*ak-site-name-text[^"\']*["\'][^>]*>).*?(<\/span>)/is', '$1' . $safe . '$2', $raw, 1 );
+			$raw = preg_replace_callback( '/(<span[^>]*class=["\'][^"\']*ak-site-name-text[^"\']*["\'][^>]*>).*?(<\/span>)/is', static function ( $match ) use ( $safe ) { return $match[1] . $safe . $match[2]; }, $raw, 1 );
 		} elseif ( false !== strpos( $raw, 'class="ab-label"' ) || false !== strpos( $raw, "class='ab-label'" ) ) {
-			$raw = preg_replace( '/(<span[^>]*class=["\']ab-label["\'][^>]*>).*?(<\/span>)/is', '$1' . $safe . '$2', $raw, 1 );
+			$raw = preg_replace_callback( '/(<span[^>]*class=["\']ab-label["\'][^>]*>).*?(<\/span>)/is', static function ( $match ) use ( $safe ) { return $match[1] . $safe . $match[2]; }, $raw, 1 );
 		} elseif ( false !== strpos( $raw, 'display-name' ) ) {
-			$raw = preg_replace( '/^.*?(<img\b.*)?$/is', $safe . '$1', $raw, 1 );
+			$raw = preg_replace_callback( '/^.*?(<img\b.*)?$/is', static function ( $match ) use ( $safe ) { return $safe . ( isset( $match[1] ) ? $match[1] : '' ); }, $raw, 1 );
 		} elseif ( false !== strpos( $raw, 'ak-theme-icon' ) ) {
 			$meta['title'] = $custom_title;
 		} elseif ( false !== strpos( $raw, 'ab-icon' ) ) {
 			if ( false !== strpos( $raw, 'screen-reader-text' ) ) {
-				$raw = preg_replace( '/<span[^>]*class=["\'][^"\']*screen-reader-text[^"\']*["\'][^>]*>.*?<\/span>/is', '<span class="ab-label">' . $safe . '</span>', $raw, 1 );
+				$raw = preg_replace_callback( '/<span[^>]*class=["\'][^"\']*screen-reader-text[^"\']*["\'][^>]*>.*?<\/span>/is', static function () use ( $safe ) { return '<span class="ab-label">' . $safe . '</span>'; }, $raw, 1 );
 			} else {
 				$raw .= '<span class="ab-label">' . $safe . '</span>';
 			}

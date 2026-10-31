@@ -218,6 +218,10 @@
 		statusEl.textContent = text || '';
 	}
 	function updateBar() {
+		// Imports replace the workspace: prevent edits until reload, but keep status accessible.
+		app.querySelectorAll('.ak-panels, .ak-tabs, .ak-actions').forEach(function (region) {
+			region.inert = !!state.importing;
+		});
 		saveBtn.disabled = state.saving || !state.dirty;
 		var importBtn = document.getElementById('ak-settings-import');
 		if (importBtn) { importBtn.disabled = state.saving || state.dirty; }

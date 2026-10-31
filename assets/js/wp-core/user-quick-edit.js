@@ -88,6 +88,9 @@
 			fill(editor, '.adminkit-qe-last-name', btn.dataset.lastName || '');
 			fill(editor, '.adminkit-qe-email', btn.dataset.email || '');
 			fill(editor, '.adminkit-qe-role', btn.dataset.role || '');
+			// A filtered-out current role must not become an implicit role change.
+			var roleField = editor.querySelector('.adminkit-qe-role');
+			if (roleField && !roleField.value) { roleField.disabled = true; }
 
 			var cancel = editor.querySelector('.adminkit-qe-cancel');
 			if (cancel) { cancel.addEventListener('click', closeEditor); }
@@ -133,7 +136,7 @@
 			fd.append('last_name', editor.querySelector('.adminkit-qe-last-name').value);
 			fd.append('user_email', editor.querySelector('.adminkit-qe-email').value);
 			var roleEl = editor.querySelector('.adminkit-qe-role');
-			if (roleEl) { fd.append('role', roleEl.value); }
+			if (roleEl && !roleEl.disabled) { fd.append('role', roleEl.value); }
 
 			if (saveBtn) { saveBtn.disabled = true; }
 			if (cancel) { cancel.disabled = true; }

@@ -48,4 +48,25 @@ check(strpos($bar->get_node('a')->title,'Renamed')!==false&&strpos($bar->get_nod
 check($bar->get_node('child')->parent==='a','Toolbar reorder changed child parent');
 check(array_slice(array_keys($bar->nodes),-2)===array('b','a'),'Toolbar saved order failed');
 $admin=false;$bar=new Fixture_Bar();AdminKit_Toolbar_Manager::apply($bar);check(!$bar->get_node('b')&&$bar->get_node('a')->title==='a','Toolbar context isolation failed');
+// Replacement text must be literal in every native markup shape, including dollars/backslashes.
+$admin=true;
+foreach (array('Price $1', '${2} and $0', 'Path \\1 & <tag> "quote"') as $title) {
+ foreach (array(
+  '<form id="adminbarsearch"><label>Before</label><input type="submit" value="Before"></form>',
+  '<span class="ak-site-name-text">Before</span>',
+  '<span class="ab-icon"></span><span class="ab-label">Before</span>',
+  '<span class="display-name">Before</span><img src="avatar.png">',
+  '<span class="ab-icon"></span><span class="screen-reader-text">Before</span>',
+  '<span class="ab-icon"></span>Before',
+  'Before'
+ ) as $markup) {
+  $bar=new Fixture_Bar(); $bar->nodes['a']->title=$markup;
+  $options[AdminKit_Toolbar_Manager::OPTION]=array('admin'=>array('titles'=>array('a'=>$title)));
+  AdminKit_Toolbar_Manager::apply($bar);
+  $actual=$bar->get_node('a')->title;
+  check(strpos($actual,esc_html(sanitize_text_field($title)))!==false, 'Toolbar interpreted replacement text: '.$actual);
+  check(substr_count($actual,'class="ab-label"')<=1,'Toolbar duplicated label markup');
+  if(strpos($markup,'<form')!==false)check(strpos($actual,'value="'.esc_attr(sanitize_text_field($title)).'"')!==false,'Search submit title was corrupted');
+ }
+}
 echo "OK: real menu/toolbar apply, protected nodes, stable children, metadata, taxonomy highlights, history authorization and context isolation.\n";
