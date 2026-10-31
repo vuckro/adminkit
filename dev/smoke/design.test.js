@@ -40,6 +40,8 @@ for(const source of ['monochrome','adminkit','bricks','custom']) {
  if(source==='bricks'){assert.equal(frames[0].style.getPropertyValue('--wk-accent'),'#224466');assert.equal(frames[0].style.getPropertyValue('--wk-accent-hover'),'#335577');}
  if(source==='custom') {
   assert.equal(frames[0].style.getPropertyValue('--wk-on-accent'),'#000000','per-mode accent determines automatic foreground');
+  assert.equal(frames[0].style.getPropertyValue('--wk-accent-hover'),'#ffffff','derived hover follows the active palette foreground');
+  assert.equal(frames[1].style.getPropertyValue('--wk-accent-hover'),'#0f2b47','dark custom hover matches server compiler');
   const hex=w.document.querySelector('.ak-accent-inline__hex');hex.value='#oops';hex.dispatchEvent(new w.Event('input'));
   assert.equal(state.brandAccent,'#123456','invalid text changed last valid accent');
   w.document.querySelector('.ak-accent-inline [role=radio]').click();

@@ -86,3 +86,7 @@ UI text is translated in PHP and sent to JavaScript in each screen's bootstrap.
 and `adminkit-fr_FR.l10n.php`. The drift gate verifies source coverage, compiled
 parity and JS bootstrap keys. Main exports carry the current plugin version and
 all registered values; their `_adminkit: settings` marker is required on import.
+
+Custom hover colors derive from the effective per-theme accent and foreground in
+both palette/shape previews and the PHP compiler; an explicit foreground override
+remains effective. Provider previews use provider hover variables when available.

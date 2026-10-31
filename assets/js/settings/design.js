@@ -323,6 +323,7 @@
 					if (state.accentSource === 'custom') {
 						if (!values.accent && isValidHex(state.brandAccent)) { values.accent = state.brandAccent; }
 						if (values.accent && !values['on-accent']) { values['on-accent'] = bestOnAccent(values.accent); }
+						if (values.accent) { values['accent-hover'] = hoverHex(accentChannels(values.accent), values['on-accent'] === '#000000'); }
 					}
 					Object.keys(values).forEach(function (role) { card.scope.style.setProperty('--wk-' + role, values[role]); });
 					if (!card.scope.isConnected) { return; }
@@ -487,7 +488,7 @@
 					if (!values.accent && isValidHex(state.brandAccent)) { values.accent = state.brandAccent; }
 					if (values.accent) {
 						if (!values['on-accent']) { values['on-accent'] = bestOnAccent(values.accent); }
-						preview.style.setProperty('--wk-accent-hover', hoverHex(accentChannels(values.accent), bestOnAccent(values.accent) === '#000000'));
+						preview.style.setProperty('--wk-accent-hover', hoverHex(accentChannels(values.accent), values['on-accent'] === '#000000'));
 					}
 					Object.keys(values).forEach(function (role) { preview.style.setProperty('--wk-' + role, values[role]); });
 				});
