@@ -38,3 +38,7 @@ Verified Marketplace in light/dark desktop, light sidebar-notch computed color, 
 Home's introduction uses a WPDS Text span; it now receives the heading role explicitly. Activity-panel hover/focus/active surfaces, empty-state headings and activity-card borders follow theme roles. Blueprint's embedded settings island now themes its headings, descriptions, upload/success surfaces, export-group separators/counts and icons.
 
 Browser checked dark home introduction, existing rounded neutral inbox buttons, opened Commandes panel/focused toggle and its empty-state heading, plus Blueprint in light/dark. No import/export or configuration save was submitted. Dark preference restored. Token/color/CSS checks, adapter budget/drift, whitespace and Impeccable detector pass.
+
+## Product row-action leading gap
+
+Corrected the hidden-ID selector to target the actual native product list (.post-type-product .wp-list-table); WooCommerce does not give this table a .products class. Removing the zero-width ID flex item also removes its leading flex gap. Browser keyboard reveal confirmed identical title/Edit x coordinates (360px), with ID display:none. CSS contracts, color checks and whitespace checks pass.

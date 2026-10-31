@@ -1297,7 +1297,9 @@ body.adminkit.adminkit-woocommerce #woocommerce-fields :is(.height, .length, .wi
 }
 /* WC's text-only ID wrapper collapses to zero text size in shared row actions;
    remove its empty flex slot so Edit aligns with the product title. */
-body.adminkit.adminkit-woocommerce .wp-list-table.products .row-actions > .id { display: none; }
+/* WooCommerce uses the native .posts table, not a .products class.
+   Remove its zero-width ID flex item so it cannot leave a leading gap. */
+body.adminkit.adminkit-woocommerce.post-type-product .wp-list-table .row-actions > .id { display: none; }
 
 /* Settings help stays in the label flow instead of sitting under the next cell. */
 body.adminkit.adminkit-woocommerce.woocommerce_page_wc-settings .woocommerce table.form-table th label .woocommerce-help-tip {
