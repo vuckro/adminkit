@@ -14,7 +14,81 @@
 		var setStatus = context.setStatus;
 		var MM = D.menuManager || { menu: [], config: { top: [], sub: {} }, icons: {} };
 		var dragState = null,
-			openPicker = null;
+			openPicker = null,
+			uidSeq = 0;
+
+		function nextUid(prefix) {
+			uidSeq += 1;
+			return (prefix || 'ak-') + Date.now() + '-' + uidSeq;
+		}
+
+		function topFlipKey(item) {
+			if (!item._uid) {
+				item._uid = item.slug ? 'top:' + item.slug : nextUid('top:custom:');
+			}
+			return item._uid;
+		}
+
+		function subFlipKey(top, child) {
+			return 'sub:' + (top.slug || topFlipKey(top)) + ':' + child.slug;
+		}
+
+		function snapshotFlip(container) {
+			var map = {};
+			if (!container || !container.querySelectorAll) {
+				return map;
+			}
+			var nodes = container.querySelectorAll('[data-flip-id]');
+			for (var i = 0; i < nodes.length; i++) {
+				var k = nodes[i].getAttribute('data-flip-id');
+				if (k && typeof nodes[i].getBoundingClientRect === 'function') {
+					map[k] = nodes[i].getBoundingClientRect().top;
+				}
+			}
+			return map;
+		}
+
+		function playFlip(container, prevMap, movedKey) {
+			if (!container || !prevMap || !container.querySelectorAll) {
+				return;
+			}
+			if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+				return;
+			}
+			var nodes = container.querySelectorAll('[data-flip-id]');
+			var animated = [];
+			for (var i = 0; i < nodes.length; i++) {
+				var node = nodes[i];
+				var k = node.getAttribute('data-flip-id');
+				if (!k || typeof prevMap[k] !== 'number' || typeof node.getBoundingClientRect !== 'function') {
+					continue;
+				}
+				var dy = prevMap[k] - node.getBoundingClientRect().top;
+				if (Math.abs(dy) < 1) {
+					continue;
+				}
+				node.style.transition = 'none';
+				node.style.transform = 'translateY(' + dy + 'px)';
+				if (movedKey && k === movedKey) {
+					node.classList.add('is-moved');
+				}
+				animated.push(node);
+			}
+			if (!animated.length) {
+				return;
+			}
+			void container.offsetHeight;
+			animated.forEach(function (node) {
+				node.style.transition =
+					'transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease, border-color 220ms ease';
+				node.style.transform = '';
+				setTimeout(function () {
+					node.style.transition = '';
+					node.style.transform = '';
+					node.classList.remove('is-moved');
+				}, 240);
+			});
+		}
 		state.menu = buildMenuModel(MM.menu || [], MM.config || { top: [], sub: {} });
 		state.toolbar = { left: [], right: [] };
 		function buildMenuModel(snapshot, config) {
@@ -293,10 +367,11 @@
 				if (to < 0 || to >= list.length) {
 					return;
 				}
+				var movedKey = 'tb:' + side + ':' + list[i].id;
 				var tmp = list[i];
 				list[i] = list[to];
 				list[to] = tmp;
-				render();
+				render(movedKey);
 				markDirty();
 			}
 			// Splice a dragged row out and back in at a new index, same side.
@@ -308,7 +383,8 @@
 				list.splice(to, 0, list.splice(from, 1)[0]);
 			}
 
-			function render() {
+			function render(movedKey) {
+				var prevFlip = movedKey ? snapshotFlip(listWrap) : null;
 				listWrap.textContent = '';
 				if (!(state.toolbar.left.length + state.toolbar.right.length)) {
 					listWrap.appendChild(
@@ -318,6 +394,9 @@
 				}
 				section('left', I.toolbarLeft || 'Left');
 				section('right', I.toolbarRight || 'Right');
+				if (prevFlip) {
+					playFlip(listWrap, prevFlip, movedKey);
+				}
 			}
 
 			// One side: a column with a small heading + its draggable rows. Drag is scoped
@@ -343,12 +422,16 @@
 							return ds.kind === 'tb' && ds.side === side;
 						},
 						function (ds) {
+							var movedItem = state.toolbar[side] && state.toolbar[side][ds.i];
+							var movedKey = movedItem ? 'tb:' + side + ':' + movedItem.id : null;
 							moveTo(side, ds.i, i);
-							render();
+							render(movedKey);
 							markDirty();
 						}
 					);
-					col.appendChild(el('div', { class: 'ak-menu-group' }, [row]));
+					col.appendChild(
+						el('div', { class: 'ak-menu-group', 'data-flip-id': 'tb:' + side + ':' + item.id }, [row])
+					);
 				});
 				listWrap.appendChild(col);
 			}
@@ -585,7 +668,8 @@
 			markDirty();
 		}
 
-		function renderTree(tree) {
+		function renderTree(tree, movedKey) {
+			var prevFlip = movedKey ? snapshotFlip(tree) : null;
 			tree.textContent = '';
 			state.menu.forEach(function (top, ti) {
 				var t = top.type || 'item';
@@ -597,6 +681,9 @@
 					tree.appendChild(topGroup(top, ti, tree));
 				}
 			});
+			if (prevFlip) {
+				playFlip(tree, prevFlip, movedKey);
+			}
 		}
 
 		function separatorRow(item, ti, tree) {
@@ -616,12 +703,14 @@
 					return ds.kind === 'top';
 				},
 				function (ds) {
+					var movedTop = state.menu[ds.ti];
+					var movedKey = movedTop ? topFlipKey(movedTop) : null;
 					moveTop(ds.ti, ti);
-					renderTree(tree);
+					renderTree(tree, movedKey);
 					markDirty();
 				}
 			);
-			return el('div', { class: 'ak-menu-group' }, [row]);
+			return el('div', { class: 'ak-menu-group', 'data-flip-id': topFlipKey(item) }, [row]);
 		}
 
 		function linkRow(item, ti, tree) {
@@ -666,12 +755,14 @@
 					return ds.kind === 'top';
 				},
 				function (ds) {
+					var movedTop = state.menu[ds.ti];
+					var movedKey = movedTop ? topFlipKey(movedTop) : null;
 					moveTop(ds.ti, ti);
-					renderTree(tree);
+					renderTree(tree, movedKey);
 					markDirty();
 				}
 			);
-			return el('div', { class: 'ak-menu-group' }, [row]);
+			return el('div', { class: 'ak-menu-group', 'data-flip-id': topFlipKey(item) }, [row]);
 		}
 
 		function removeBtn(ti, tree) {
@@ -731,17 +822,24 @@
 					return true;
 				},
 				function (ds) {
+					var movedKey = null;
 					if (ds.kind === 'top') {
+						var movedTop = state.menu[ds.ti];
+						movedKey = movedTop ? topFlipKey(movedTop) : null;
 						moveTop(ds.ti, ti);
 					} else {
+						var movedSub = state.menu[ds.ti] && state.menu[ds.ti].children && state.menu[ds.ti].children[ds.ci];
 						moveChildToTop(ds.ti, ds.ci, ti);
+						if (movedSub) {
+							movedKey = subFlipKey(top, movedSub);
+						}
 					}
-					renderTree(tree);
+					renderTree(tree, movedKey);
 					markDirty();
 				}
 			);
 
-			var group = el('div', { class: 'ak-menu-group' }, [row]);
+			var group = el('div', { class: 'ak-menu-group', 'data-flip-id': topFlipKey(top) }, [row]);
 			if (top.children.length && top.open) {
 				var kids = el('div', { class: 'ak-menu-children' });
 				top.children.forEach(function (child, ci) {
@@ -754,8 +852,10 @@
 						return ds.kind === 'sub';
 					},
 					function (ds) {
+						var movedSub = state.menu[ds.ti] && state.menu[ds.ti].children && state.menu[ds.ti].children[ds.ci];
 						moveChildToTop(ds.ti, ds.ci, ti);
-						renderTree(tree);
+						var movedKey = movedSub ? subFlipKey(top, movedSub) : null;
+						renderTree(tree, movedKey);
 						markDirty();
 					}
 				);
@@ -765,7 +865,11 @@
 		}
 
 		function childRow(ti, child, ci, tree) {
-			var row = el('div', { class: 'ak-menu-row ak-menu-row--child' + (child.hidden ? ' is-hidden' : '') });
+			var top = state.menu[ti];
+			var row = el('div', {
+				class: 'ak-menu-row ak-menu-row--child' + (child.hidden ? ' is-hidden' : ''),
+				'data-flip-id': subFlipKey(top, child)
+			});
 			var h = handle();
 			row.appendChild(h);
 			row.appendChild(moveControl(moveChildBy(ti, ci, tree)));
@@ -778,8 +882,10 @@
 					return ds.kind === 'sub';
 				},
 				function (ds) {
+					var movedSub = state.menu[ds.ti] && state.menu[ds.ti].children && state.menu[ds.ti].children[ds.ci];
 					moveChild(ds.ti, ds.ci, ti, ci);
-					renderTree(tree);
+					var movedKey = movedSub ? subFlipKey(top, movedSub) : null;
+					renderTree(tree, movedKey);
 					markDirty();
 				}
 			);
@@ -826,25 +932,28 @@
 				if (to < 0 || to >= m.length) {
 					return;
 				}
+				var movedKey = topFlipKey(m[ti]);
 				var tmp = m[ti];
 				m[ti] = m[to];
 				m[to] = tmp;
-				renderTree(tree);
+				renderTree(tree, movedKey);
 				markDirty();
 			};
 		}
 
 		function moveChildBy(ti, ci, tree) {
 			return function (dir) {
-				var kids = state.menu[ti].children,
+				var top = state.menu[ti],
+					kids = top.children,
 					to = ci + dir;
 				if (to < 0 || to >= kids.length) {
 					return;
 				}
+				var movedKey = subFlipKey(top, kids[ci]);
 				var tmp = kids[ci];
 				kids[ci] = kids[to];
 				kids[to] = tmp;
-				renderTree(tree);
+				renderTree(tree, movedKey);
 				markDirty();
 			};
 		}
