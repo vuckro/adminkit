@@ -290,3 +290,88 @@ body.adminkit.adminkit-woocommerce .bank-accounts__list .components-button.is-se
 @media (max-width: 782px) {
  body.adminkit.adminkit-woocommerce :is(.settings-payments-offline__container, .woocommerce_marketing_plugin_card_body, .bank-accounts__list) .components-button:is(.is-primary, .is-secondary) { min-height: 44px; }
 }
+
+/* Shared customer/report filters use the same soft border and input radius. */
+body.adminkit.adminkit-woocommerce :is(.woocommerce-filters-filter__button, .woocommerce-filters-date__button, .woocommerce-search__input, .woocommerce-tree-select-control__control) {
+ border-color: var(--ak-border);
+ border-radius: var(--ak-radius-s);
+ background: var(--ak-surface);
+ color: var(--ak-text);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-tree-select-control :is(.woocommerce-tree-select-control__control-input, .woocommerce-tree-select-control__menu) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .woocommerce-tree-select-control .woocommerce-tag { background: var(--ak-elevated); color: var(--ak-text); border-radius: var(--ak-radius-s); }
+body.adminkit.adminkit-woocommerce .woocommerce-tree-select-control .woocommerce-tag__remove { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .woocommerce-tree-select-control:focus-within { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
+body.adminkit.adminkit-woocommerce table.pickup-locations { background: var(--ak-surface); color: var(--ak-text); border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); overflow: hidden; border-spacing: 0; }
+body.adminkit.adminkit-woocommerce table.pickup-locations :is(th, td) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce table.pickup-locations thead th { background: var(--ak-elevated); color: var(--ak-text-muted); }
+/* Provider rows, placeholders and navigation share a skin, including loading. */
+body.adminkit.adminkit-woocommerce .settings-payments-main__container .woocommerce-list__item { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .settings-payments-main__container :is(.drag-handle, .woocommerce-list__item-after, .other-payment-gateways__header) svg { fill: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .settings-payments-main__container .woocommerce-status-badge { background: var(--ak-elevated); color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce .settings-payments-main__container .components-button:is(.is-primary, .is-secondary),
+body.adminkit.adminkit-woocommerce :is(.pickup-locations, .wc-shipping-zone-settings) .components-button { border-radius: var(--ak-radius-s); }
+/* WooPayments setup is a WooCommerce-owned modal, including embedded steps. */
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal { background: var(--ak-bg); color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce :is(.settings-payments-onboarding-modal__content, .settings-payments-onboarding-modal__step, .settings-payments-onboarding-modal__header) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal__sidebar { background: var(--ak-elevated); color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal :is(h1, h2, h3, .woocommerce-list__item-title) { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal :is(p, .woocommerce-list__item-content) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal .woocommerce-list__item { background: var(--ak-surface); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal__sidebar--list-item { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal .components-button { border-radius: var(--ak-radius-s); }
+/* PayPal exposes its palette on the root; preserve its layout and onboarding. */
+body.adminkit.adminkit-woocommerce #ppcp-settings-container {
+ --color-black: var(--ak-heading);
+ --color-white: var(--ak-surface);
+ --color-gray-900: var(--ak-heading);
+ --color-gray-800: var(--ak-text);
+ --color-gray-700: var(--ak-text-muted);
+ --color-gray-600: var(--ak-text-muted);
+ --color-gray-500: var(--ak-input-border);
+ --color-gray-400: var(--ak-border);
+ --color-gray-300: var(--ak-border);
+ --color-gray-200: var(--ak-border);
+ --color-gray-100: var(--ak-elevated);
+ --color-separators: var(--ak-border);
+ --color-text-title: var(--ak-heading);
+ --color-text-main: var(--ak-text);
+ --color-text-teriary: var(--ak-text-muted);
+ --color-text-description: var(--ak-text-muted);
+ --color-blueberry: var(--ak-primary-text);
+ --ppcp-color-app-bg: var(--ak-surface);
+ --container-border-radius: var(--ak-radius-m);
+ background: var(--ak-surface);
+ color: var(--ak-text);
+}
+body.adminkit.adminkit-woocommerce #ppcp-settings-container .components-button { border-radius: var(--ak-radius-s); }
+body.adminkit.adminkit-woocommerce .settings-payments-main__container .settings-payment-gateways { border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal__wrapper { background: var(--ak-bg); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal__sidebar--header-title { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal__sidebar--list-item.is-active { background: var(--ak-hover-bg); color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce .woocommerce-dropdown-button { border-color: var(--ak-border); border-radius: var(--ak-radius-s); }
+body.adminkit.adminkit-woocommerce { --ppcp-color-app-bg: var(--ak-bg); }
+body.adminkit.adminkit-woocommerce #ppcp-settings-container :is(h1, h2, h3, h4, .ppcp--box-title, .ppcp-r-feature-refresh__content-title, .ppcp--method-title, .ppcp-r-badge-box__title-text) { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce #ppcp-settings-container .components-button.is-primary {
+ --button-background: var(--ak-primary);
+ --button-color: var(--ak-on-accent);
+ --button-disabled-background: var(--ak-elevated);
+ --button-disabled-color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-woocommerce #ppcp-settings-container .components-button.is-secondary {
+ --button-background: var(--ak-surface);
+ --button-color: var(--ak-text);
+ --button-border-color: var(--ak-border);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-filters-filter .woocommerce-dropdown-button.woocommerce-dropdown-button,
+body.adminkit.adminkit-woocommerce .woocommerce-filters-date .woocommerce-filters-date__button.woocommerce-filters-date__button { border-color: var(--ak-border); border-radius: var(--ak-radius-m); }
+body.adminkit.adminkit-woocommerce .woocommerce-tree-select-control .woocommerce-tag :is(.woocommerce-tag__text, .woocommerce-tag__remove) { background: var(--ak-elevated); color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce .woocommerce-tree-select-control .woocommerce-tag__remove:hover { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-woocommerce .woocommerce-tree-select-control .woocommerce-tree-select-control__control { border-radius: var(--ak-radius-s); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal :is(.woocommerce-recommended-payment-methods__header, .woocommerce-recommended-payment-methods__list_footer) { background: var(--ak-surface); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal .settings-payments-methods__container .woocommerce-list__item:hover { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-woocommerce .settings-payments-onboarding-modal .settings-payments-methods__container .woocommerce-list__item:is(:hover, :focus-within) .woocommerce-list__item-title { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce.woocommerce_page_wc-settings-shipping-pickup_location .components-checkbox-control__input:not(:checked) { background: var(--ak-input-bg); border-color: var(--ak-input-border); }
+body.adminkit.adminkit-woocommerce #ppcp-settings-container .ppcp-r-welcome-features__col { border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce #ppcp-settings-container .ppcp-r-welcome-features__col > * { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce #ppcp-settings-container .ppcp-r-onboarding-header__logo-wrapper svg path { fill: var(--ak-heading); }

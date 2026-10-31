@@ -70,7 +70,7 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 	}
 
 
-	/** Use the shared Lucide registry for WooCommerce product-data tabs. */
+	/** Use the shared Lucide registry for product-data tabs and order statuses. */
 	public static function print_product_icons() {
 		if ( ! self::owns_classic_screen( get_current_screen() ) || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return;
@@ -79,6 +79,10 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 		$css = '';
 		foreach ( $icons as $tab => $icon ) {
 			$css .= 'body.adminkit.adminkit-woocommerce .wc-tabs li.' . $tab . '_options a::before{content:"";display:inline-block;width:16px;height:16px;vertical-align:middle;' . AdminKit_Icons::mask( AdminKit_Icons::svg( $icon ) ) . '}';
+		}
+		$status_icons = array( 'pending' => 'clock', 'processing' => 'loader', 'on-hold' => 'pause', 'completed' => 'circle-check', 'cancelled' => 'circle-x', 'failed' => 'circle-alert', 'refunded' => 'rotate-ccw', 'checkout-draft' => 'file-text' );
+		foreach ( $status_icons as $status => $icon ) {
+			$css .= 'body.adminkit.adminkit-woocommerce .order-status.status-' . $status . '::before{' . str_replace( '20px 20px', '14px 14px', AdminKit_Icons::mask( AdminKit_Icons::svg( $icon ) ) ) . '}';
 		}
 		echo '<style id="adminkit-woocommerce-icons">' . $css . '</style>'; // Trusted internal selectors and registry SVGs.
 	}

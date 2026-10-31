@@ -7,9 +7,7 @@
    these rules cover only the WC-specific containers that hardcode
    #fff / #eee / #fdfdfd / #555 / #666 and therefore break in dark mode.
 
-   Order-status pills (.order-status.status-*) are intentionally left alone:
-   they're self-contained colored badges (paired pastel bg + dark text) that
-   stay legible in both modes.
+   Order-status pills use semantic theme roles and shared registry icons.
 
    Tier B. Enqueued on product/coupon/order edit screens + the WooCommerce menu
    pages (the wc-admin React app is excluded — it has its own file). */
@@ -1317,3 +1315,25 @@ body.adminkit.adminkit-woocommerce #message.updated > p {
  margin-block: calc(16px - .75em);
 }
 body.adminkit.adminkit-woocommerce #message.updated { padding-block: calc(16px * var(--ak-space-scale, 1)); }
+
+/* Semantic compact order badges; the native label remains the accessible name. */
+body.adminkit.adminkit-woocommerce .order-status {
+ display: inline-flex;
+ align-items: center;
+ gap: 6px;
+ padding: 4px 10px;
+ border-radius: var(--ak-radius-full);
+ background: var(--ak-elevated);
+ color: var(--ak-text);
+ font-size: var(--ak-text-xs);
+ line-height: 1.5;
+ font-weight: 500;
+ white-space: nowrap;
+}
+body.adminkit.adminkit-woocommerce .order-status > span { margin: 0; }
+body.adminkit.adminkit-woocommerce .order-status::before { content: ''; flex: 0 0 14px; width: 14px; height: 14px; }
+body.adminkit.adminkit-woocommerce .order-status:is(.status-completed, .status-processing) { background: var(--ak-success-subtle); color: var(--ak-success); }
+body.adminkit.adminkit-woocommerce .order-status:is(.status-pending, .status-on-hold) { background: var(--ak-warning-subtle); color: var(--ak-warning); }
+body.adminkit.adminkit-woocommerce .order-status:is(.status-failed, .status-cancelled) { background: var(--ak-error-subtle); color: var(--ak-error); }
+body.adminkit.adminkit-woocommerce .wc-shipping-zone-settings :is(th p, .description),
+body.adminkit.adminkit-woocommerce .wc-shipping-zone-heading a { color: var(--ak-text-muted); }
