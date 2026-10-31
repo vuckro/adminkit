@@ -567,3 +567,31 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-list>.menupop>.ab-item>.ak-mobile-action-label::after { content:""; width:6px; height:6px; flex-shrink:0; border-top:1.5px solid currentColor; border-right:1.5px solid currentColor; transform:rotate(45deg); }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-list>.menupop.hover>.ab-item>.ak-mobile-action-label::after { transform:rotate(135deg); }
 }
+
+/* Menu feedback uses the same 22px line weight as the other toolbar controls. */
+.ak-menu-trigger-glyph { display:none; }
+@media screen and (max-width:782px){
+ #wpadminbar.ak-frame-enhanced { position:fixed; top:0; }
+ #wpadminbar.ak-frame-enhanced #wp-admin-bar-menu-toggle>.ab-item { display:flex; align-items:center; justify-content:center; border-radius:var(--ak-radius-s); }
+ #wpadminbar.ak-frame-enhanced #wp-admin-bar-menu-toggle>.ab-item>.ab-icon { display:none; }
+ #wpadminbar.ak-frame-enhanced #wp-admin-bar-menu-toggle>.ab-item::before { display:none; }
+ #wpadminbar.ak-frame-enhanced .ak-menu-trigger-glyph { display:flex; width:22px; height:22px; color:var(--ak-text); }
+ #wpadminbar.ak-frame-enhanced .ak-menu-trigger-glyph svg { display:block; width:22px; height:22px; }
+ #wpadminbar.ak-frame-enhanced .ak-menu-trigger-glyph path { transform-origin:12px 12px; transition:transform 180ms cubic-bezier(.16,1,.3,1),opacity 100ms ease; }
+ #wpadminbar.ak-frame-enhanced .ak-menu-trigger-glyph path:first-child { transform:translateY(-5px); }
+ #wpadminbar.ak-frame-enhanced .ak-menu-trigger-glyph path:last-child { transform:translateY(5px); }
+ #wpadminbar.ak-frame-enhanced #wp-admin-bar-menu-toggle>[aria-expanded="true"] { background:var(--ak-hover-bg); }
+ #wpadminbar.ak-frame-enhanced [aria-expanded="true"] .ak-menu-trigger-glyph path:first-child { transform:rotate(45deg); }
+ #wpadminbar.ak-frame-enhanced [aria-expanded="true"] .ak-menu-trigger-glyph path:nth-child(2) { opacity:0; }
+ #wpadminbar.ak-frame-enhanced [aria-expanded="true"] .ak-menu-trigger-glyph path:last-child { transform:rotate(-45deg); }
+ #wpadminbar.ak-frame-enhanced :is(.ak-mobile-bar-toggle,#wp-admin-bar-menu-toggle>.ab-item) { transition:background-color 120ms ease,color 120ms ease; }
+ #wpadminbar.ak-frame-enhanced :is(.ak-mobile-bar-toggle,#wp-admin-bar-menu-toggle>.ab-item):active { background:var(--ak-pressed-bg,var(--ak-hover-bg)); }
+ #wpadminbar.ak-frame-enhanced #wp-admin-bar-menu-toggle>.ab-item:focus-visible { outline:2px solid var(--ak-focus); outline-offset:-3px; }
+ #wpadminbar.ak-frame-enhanced .ak-mobile-bar-panel:not([hidden]) { animation:ak-toolbar-reveal 140ms cubic-bezier(.16,1,.3,1); transform-origin:top right; }
+ @keyframes ak-toolbar-reveal { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+}
+@media screen and (max-width:782px) and (prefers-reduced-motion:reduce){
+ #wpadminbar.ak-frame-enhanced .ak-menu-trigger-glyph path,
+ #wpadminbar.ak-frame-enhanced :is(.ak-mobile-bar-toggle,#wp-admin-bar-menu-toggle>.ab-item) { transition:none; }
+ #wpadminbar.ak-frame-enhanced .ak-mobile-bar-panel:not([hidden]) { animation:none; }
+}

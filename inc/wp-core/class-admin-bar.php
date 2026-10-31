@@ -3,7 +3,8 @@
  * Responsive admin bar.
  *
  * On wp-admin touch widths, secondary native toolbar nodes move into an accessible
- * disclosure. Existing nodes/listeners and submenus are preserved, and desktop
+ * disclosure. The native navigation also gains a scroll-preserving overlay drawer
+ * and an expanded-state menu glyph. Existing nodes/listeners and submenus are preserved, and desktop
  * restores their exact positions. Without JavaScript, the CSS scroll fallback
  * keeps every original action reachable. Public-site bars retain scrolling.
  *
@@ -59,6 +60,9 @@ class AdminKit_Core_Admin_Bar {
 		wp_localize_script( 'adminkit-admin-bar', 'AdminKitMobileBar', array(
 			'more' => __( 'More actions', 'adminkit' ),
 			'admin' => is_admin(),
+			'navigation' => wp_style_is( 'adminkit-chrome', 'enqueued' ),
+			'openMenu' => __( 'Open administration menu', 'adminkit' ),
+			'closeMenu' => __( 'Close administration menu', 'adminkit' ),
 			'queryMonitor' => 'Query Monitor',
 			'icons' => $icons,
 			'fallbackIcon' => AdminKit_Icons::display_svg( 'chevron-right' ),

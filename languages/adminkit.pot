@@ -278,6 +278,10 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
+#: inc/wp-core/class-admin-bar.php
+msgid "Close administration menu"
+msgstr ""
+
 #: inc/settings/class-settings-page.php
 msgid "Close settings"
 msgstr ""
@@ -804,6 +808,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "On hover"
+msgstr ""
+
+#: inc/wp-core/class-admin-bar.php
+msgid "Open administration menu"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php

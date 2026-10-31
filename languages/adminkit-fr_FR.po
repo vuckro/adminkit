@@ -278,6 +278,10 @@ msgstr "Interface épurée"
 msgid "Close"
 msgstr "Fermer"
 
+#: inc/wp-core/class-admin-bar.php
+msgid "Close administration menu"
+msgstr "Fermer le menu d’administration"
+
 #: inc/settings/class-settings-page.php
 msgid "Close settings"
 msgstr "Fermer les réglages"
@@ -805,6 +809,10 @@ msgstr "À l’ouverture, affiche les articles, pages et contenus personnalisés
 #: inc/settings/class-settings-page.php
 msgid "On hover"
 msgstr "Au survol"
+
+#: inc/wp-core/class-admin-bar.php
+msgid "Open administration menu"
+msgstr "Ouvrir le menu d’administration"
 
 #: inc/settings/class-settings-catalog.php
 msgid "Open content tables on Published"

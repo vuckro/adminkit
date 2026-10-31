@@ -251,3 +251,22 @@ the appropriate control is displayed at the WordPress 782px breakpoint. Switchin
 section does not dirty the shared draft. Desktop keeps the existing tab keyboard
 behavior. Touch fields use larger text/targets and the save action respects the
 bottom safe area.
+
+The wp-admin navigation enhancement keeps WordPress's menu-toggle handler and
+`#wpwrap.wp-responsive-open` as its source of truth. Below 783px, the existing menu
+becomes a fixed, independently scrollable drawer (up to 300px, leaving a 56px outer
+touch area on narrow phones). It overlays rather than shifts `#wpbody`. The toolbar
+remains fixed, and its 22px line icon changes to a close glyph from the same expanded
+state. Escape/outside tap restore trigger focus; visible drawer links and the trigger
+form a keyboard loop. Toolbar actions and navigation dismiss one another.
+
+The protected page region is `#wpbody` plus `#wpfooter`, never `#wpcontent` because
+WordPress mounts `#wpadminbar` inside that container. Existing inert states are
+restored. Opening records the scroll position/body offset before WordPress handles
+the click; a scoped fixed-body lock keeps the page visually in place and restores
+its scroll position after close or desktop resize. No menu tree, stored layout or
+permission is changed. Transitions have reduced-motion alternatives and the native
+frame remains the fallback when the enhancement script/styles are disabled.
+The drawer additionally requires the chrome stylesheet to be enqueued; a consumer
+veto of that stylesheet preserves native navigation while the toolbar enhancement
+can remain active. This compatibility path has a regression check.

@@ -1231,3 +1231,29 @@ body.adminkit #adminmenu :is(a, li.menu-top) {
    after :hover ends. Cover that native state rather than flashing through it. */
 body.adminkit #adminmenu li.menu-top .wp-menu-image::before { color: var(--ak-icon); }
 body.adminkit #adminmenu li.menu-top:is(:hover, :focus-within, .opensub) .wp-menu-image::before { color: var(--ak-icon-active); }
+
+/* Mobile navigation overlays the workspace instead of pushing it off screen. */
+.ak-admin-menu-scrim { display:none; }
+@media screen and (max-width:782px){
+ html.ak-admin-menu-open, html.ak-admin-menu-open body { overflow:hidden; overscroll-behavior:none; }
+ html.ak-admin-menu-open body { position:fixed; top:var(--ak-menu-scroll-offset,0px); left:0; right:0; width:100%; }
+ body.adminkit.ak-frame-enhanced #adminmenuback { display:none; }
+ body.adminkit.ak-frame-enhanced #adminmenuwrap { display:block; position:fixed; float:none; inset:46px auto 0 0; top:46px; width:min(300px,calc(100vw - 56px)); height:calc(100dvh - 46px); margin:0; padding:12px 0 max(16px,env(safe-area-inset-bottom)); box-sizing:border-box; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:var(--ak-border-strong) var(--ak-surface); z-index:99998; border-right:1px solid var(--ak-border); transform:translateX(-100%); visibility:hidden; transition:transform 200ms cubic-bezier(.16,1,.3,1),visibility 0s 200ms; }
+ body.adminkit.ak-frame-enhanced #adminmenu { position:static; width:100%; margin:0; }
+ body.adminkit.ak-frame-enhanced #adminmenu li.menu-top { width:100%; }
+ body.adminkit.ak-frame-enhanced .wp-responsive-open #adminmenuwrap { transform:translateX(0); visibility:visible; transition-delay:0s; }
+ body.adminkit.ak-frame-enhanced .wp-responsive-open #wpbody { right:0; left:0; }
+ body.adminkit.ak-frame-enhanced .wp-responsive-open #wpcontent,
+ body.adminkit.ak-frame-enhanced .wp-responsive-open #wpfooter { margin-left:0; margin-right:0; }
+ body.adminkit.ak-frame-enhanced .ak-admin-menu-scrim:not([hidden]) { display:block; position:fixed; inset:46px 0 0; margin:0; padding:0; width:100%; border:0; border-radius:0; background:var(--ak-text); opacity:.18; z-index:99997; cursor:pointer; animation:ak-scrim-reveal 180ms ease-out; }
+ body.adminkit.ak-frame-enhanced #adminmenu a { transition:background-color 100ms ease,color 100ms ease; }
+ body.adminkit.ak-frame-enhanced #adminmenu a:focus-visible { outline:2px solid var(--ak-focus); outline-offset:-3px; }
+ body.rtl.adminkit.ak-frame-enhanced #adminmenuwrap { inset-inline-start:0; inset-inline-end:auto; transform:translateX(100%); border-right:0; border-left:1px solid var(--ak-border); }
+ body.rtl.adminkit.ak-frame-enhanced .wp-responsive-open #adminmenuwrap { transform:translateX(0); }
+ @keyframes ak-scrim-reveal { from{opacity:0} to{opacity:.18} }
+}
+@media screen and (max-width:782px) and (prefers-reduced-motion:reduce){
+ body.adminkit.ak-frame-enhanced #adminmenuwrap { transition:none; }
+ body.adminkit.ak-frame-enhanced .ak-admin-menu-scrim:not([hidden]) { animation:none; }
+ body.adminkit.ak-frame-enhanced #adminmenu a { transition:none; }
+}

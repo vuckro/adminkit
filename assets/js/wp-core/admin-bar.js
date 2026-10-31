@@ -48,15 +48,19 @@
 		if (restoreFocus) { button.focus(); }
 	}
 	button.addEventListener('click', function () {
+		if (navigation && navigation.isOpen()) { navigation.close(false); }
 		var open = panel.hidden;
 		panel.hidden = !open;
 		button.setAttribute('aria-expanded', String(open));
 	});
 	document.addEventListener('click', function (event) {
 		if (!wrapper.contains(event.target)) { close(false); }
+		if (navigation && navigation.isOpen() && bar.contains(event.target) && !event.target.closest('#wp-admin-bar-menu-toggle')) { navigation.close(false); }
 	});
 	document.addEventListener('keydown', function (event) {
-		if (event.key === 'Escape' && !panel.hidden) { event.preventDefault(); close(true); }
+		if (event.key !== 'Escape') { return; }
+		if (!panel.hidden) { event.preventDefault(); close(true); }
+		else if (navigation && navigation.isOpen()) { event.preventDefault(); navigation.close(true); }
 	});
 	wrapper.addEventListener('focusout', function (event) {
 		if (event.relatedTarget && !wrapper.contains(event.relatedTarget)) { close(false); }
@@ -104,7 +108,69 @@
 			if (action && item.label.parentNode !== action) { action.appendChild(item.icon); action.appendChild(item.label); }
 		});
 	}).observe(list, { childList: true, subtree: true });
-	if (mq.addEventListener) { mq.addEventListener('change', sync); }
-	else { mq.addListener(sync); }
-	sync();
+	function enhanceNavigation() {
+		if (data.navigation === false) { return null; }
+		var trigger = bar.querySelector('#wp-admin-bar-menu-toggle > .ab-item');
+		var drawer = document.getElementById('adminmenuwrap');
+		var page = document.getElementById('wpwrap');
+		if (!trigger || !drawer || !page) { return null; }
+		var root = document.documentElement;
+		var regions = [];
+		var wasOpen = false;
+		var pendingScroll = null, lockedScroll = null;
+		var scrim = document.createElement('button');
+		scrim.type = 'button'; scrim.className = 'ak-admin-menu-scrim'; scrim.tabIndex = -1;
+		scrim.setAttribute('aria-label', data.closeMenu); scrim.hidden = true;
+		document.body.appendChild(scrim);
+		var glyph = document.createElement('span'); glyph.className = 'ak-menu-trigger-glyph'; glyph.setAttribute('aria-hidden', 'true');
+		glyph.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M4 12h16"/><path d="M4 12h16"/><path d="M4 12h16"/></svg>';
+		trigger.appendChild(glyph);
+		trigger.setAttribute('aria-controls', drawer.id);
+		trigger.addEventListener('click', function () { if (!isOpen()) { pendingScroll = { y: window.scrollY, top: document.body.getBoundingClientRect().top }; } }, true);
+		document.body.classList.add('ak-frame-enhanced');
+		bar.classList.add('ak-frame-enhanced');
+		function isOpen() { return mq.matches && page.classList.contains('wp-responsive-open'); }
+		function closeDrawer(restoreFocus) {
+			if (isOpen()) { trigger.click(); }
+			if (restoreFocus) { trigger.focus({ preventScroll: true }); }
+		}
+		function render() {
+			if (!mq.matches && page.classList.contains('wp-responsive-open')) { page.classList.remove('wp-responsive-open'); }
+			var open = isOpen();
+			if (open && !wasOpen) { lockedScroll = pendingScroll || { y: window.scrollY, top: document.body.getBoundingClientRect().top }; pendingScroll = null; root.style.setProperty('--ak-menu-scroll-offset', lockedScroll.top + 'px'); }
+			trigger.setAttribute('aria-expanded', String(open));
+			trigger.setAttribute('aria-label', open ? data.closeMenu : data.openMenu);
+			root.classList.toggle('ak-admin-menu-open', open);
+			scrim.hidden = !open;
+			drawer.inert = mq.matches && !open;
+			if (mq.matches) { drawer.setAttribute('aria-hidden', String(!open)); }
+			else { drawer.removeAttribute('aria-hidden'); }
+			if (open && !wasOpen) {
+				close(false);
+				regions = Array.prototype.slice.call(document.querySelectorAll('#wpbody, #wpfooter')).map(function (node) { var old = node.inert; node.inert = true; return { node: node, inert: old }; });
+				window.requestAnimationFrame(function () { var first = drawer.querySelector('#adminmenu a'); if (isOpen() && first) { first.focus({ preventScroll: true }); } });
+			} else if (!open && wasOpen) {
+				regions.forEach(function (region) { region.node.inert = region.inert; }); regions = [];
+				root.style.removeProperty('--ak-menu-scroll-offset');
+				if (lockedScroll) { window.scrollTo(0, lockedScroll.y); lockedScroll = null; }
+			}
+			wasOpen = open;
+		}
+		scrim.addEventListener('click', function () { closeDrawer(true); });
+		document.addEventListener('keydown', function (event) {
+			if (event.key !== 'Tab' || !isOpen()) { return; }
+			var items = [trigger].concat(Array.prototype.slice.call(drawer.querySelectorAll('a[href], button, input, select')).filter(function (node) { return !node.disabled && node.getClientRects().length; }));
+			var first = items[0], last = items[items.length - 1];
+			if (event.shiftKey && (document.activeElement === first || items.indexOf(document.activeElement) === -1)) { event.preventDefault(); last.focus(); }
+			else if (!event.shiftKey && (document.activeElement === last || items.indexOf(document.activeElement) === -1)) { event.preventDefault(); first.focus(); }
+		});
+		new MutationObserver(render).observe(page, { attributes: true, attributeFilter: ['class'] });
+		render();
+		return { isOpen: isOpen, close: closeDrawer, sync: render };
+	}
+	var navigation = enhanceNavigation();
+	function layout() { sync(); if (navigation) { navigation.sync(); } }
+	if (mq.addEventListener) { mq.addEventListener('change', layout); }
+	else { mq.addListener(layout); }
+	layout();
 })();
