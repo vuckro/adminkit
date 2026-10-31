@@ -7,6 +7,7 @@ function apply_filters($hook,$value){global$allow;return$hook==='adminkit/should
 function get_current_screen(){global$screen;return$screen;}
 function current_user_can(...$args){return true;}
 function is_admin_bar_showing(){return true;}
+function wp_style_is($handle,$state){return false;}
 function is_multisite(){return false;}
 function add_action(...$args){}
 function add_filter(...$args){}
@@ -55,4 +56,5 @@ if(AdminKit_Core_Login::filter_header_url('native')!=='native'||AdminKit_Core_Br
 try{AdminKit_User_Quick_Edit::handle_save();throw new RuntimeException('Vetoed AJAX did not deny');}catch(Gate_Denial $expected){}
 foreach(array(true,false)as$admin)AdminKit_Assets::enqueue_script('test','missing.js');
 foreach(glob(ADMINKIT_PATH.'inc/wp-core/class-*.php')as$file){if(preg_match('/\bwp_enqueue_(?:style|script)\s*\(/',file_get_contents($file)))throw new RuntimeException('WP-Core bypasses Assets: '.$file);}
+$allow=true;AdminKit_Core_Admin_Bar::enqueue(); // A disabled toolbar stylesheet must also disable DOM relocation.
 echo "OK: WP-Core vetoed callbacks emit no markup/assets/writes; user tools register styles through Assets.\n";

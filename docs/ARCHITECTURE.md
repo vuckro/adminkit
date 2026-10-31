@@ -235,3 +235,19 @@ error feedback reveal it; import errors remain visible even when no settings dra
 is dirty. The existing revision and recovery contracts still own persistence. The
 optional first-steps checklist uses three compact columns on desktop, stacked on
 mobile, and remains dismissible and automatically hidden after completion.
+
+On mobile wp-admin, `wp-core/admin-bar.js` progressively moves secondary native
+admin-bar nodes into a “More actions” disclosure. It preserves each node and its
+listeners/submenus, uses comment placeholders to restore the exact desktop order,
+and reapplies labels after diagnostic plugins refresh their node contents.
+Menu, site, notifications and account remain directly reachable. The behavior is
+transient DOM presentation; it never changes the stored toolbar layout or its
+server-side pristine snapshot. The public-site toolbar retains horizontal scrolling
+and edge indicators; without JavaScript the original scrollable bar remains usable.
+
+Foundation/navigation sections gain a native mobile select from the existing tab
+buttons. Both controls invoke the same pane selection and stay synchronized; only
+the appropriate control is displayed at the WordPress 782px breakpoint. Switching
+section does not dirty the shared draft. Desktop keeps the existing tab keyboard
+behavior. Touch fields use larger text/targets and the save action respects the
+bottom safe area.

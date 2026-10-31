@@ -730,6 +730,10 @@ msgstr "Modération et filtrage"
 msgid "Monochrome"
 msgstr "Monochrome"
 
+#: inc/wp-core/class-admin-bar.php
+msgid "More actions"
+msgstr "Autres actions"
+
 #: inc/settings/class-settings-page.php
 msgid "Move down"
 msgstr "Descendre"

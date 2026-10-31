@@ -53,6 +53,11 @@ const designTab = doc.getElementById('ak-tab-brand');
 if (designTab) { designTab.click(); await tick(); }
 const sectionTabs = [...doc.querySelectorAll('#ak-panel-brand .ak-foundations-nav [role="tab"]')];
 assert(sectionTabs.length === 4, 'design sections rendered (' + sectionTabs.length + ')');
+const sectionPicker = doc.querySelector('#ak-panel-brand .ak-section-picker select');
+assert(sectionPicker && sectionPicker.options.length === 4, 'native mobile picker exposes all foundation sections');
+sectionPicker.value = sectionTabs[1].id; sectionPicker.dispatchEvent(new window.Event('change', {bubbles:true})); await tick();
+assert(sectionTabs[1].getAttribute('aria-selected') === 'true' && sectionPicker.value === sectionTabs[1].id, 'mobile selection uses the original pane routing');
+assert(doc.querySelector('.ak-savebar').hidden, 'section selection alone does not dirty settings');
 for (const tab of sectionTabs) {
   try { tab.click(); await tick(); } catch (e) { errors.push('section ' + tab.id + ': ' + e.stack); }
 }

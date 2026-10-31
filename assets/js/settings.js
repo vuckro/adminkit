@@ -189,6 +189,22 @@
 				tab.panel.hidden = !selected;
 			}
 		});
+		enhanceSectionPickers();
+	}
+	function enhanceSectionPickers() {
+		panelWrap.querySelectorAll('.ak-foundations-nav').forEach(function (nav) {
+			if (nav.dataset.mobilePicker) { return; }
+			nav.dataset.mobilePicker = 'true';
+			var buttons = Array.prototype.slice.call(nav.querySelectorAll('[role=tab]'));
+			var select = el('select', { 'aria-label': nav.getAttribute('aria-label') });
+			buttons.forEach(function (button) { select.appendChild(el('option', { value: button.id, text: button.textContent })); });
+			function syncPicker() { var active = buttons.filter(function (button) { return button.getAttribute('aria-selected') === 'true'; })[0]; if (active) { select.value = active.id; } }
+			select.addEventListener('change', function () { var target = buttons.filter(function (button) { return button.id === select.value; })[0]; if (target) { target.click(); } });
+			var label = el('label', { class: 'ak-section-picker' }, [el('span', { text: nav.getAttribute('aria-label') }), select]);
+			nav.before(label);
+			new MutationObserver(syncPicker).observe(nav, { attributes: true, subtree: true, attributeFilter: ['aria-selected'] });
+			syncPicker();
+		});
 	}
 	function el(tag, attrs, kids) {
 		var n = document.createElement(tag);

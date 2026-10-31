@@ -2,12 +2,10 @@
 /**
  * Responsive admin bar.
  *
- * adminbar.css turns #wp-toolbar into a single horizontal-scroll row on WP's
- * touch bar (≤782px) so the toolbar items no longer wrap onto a second line that
- * overlaps the page. This class loads the small script that drives the edge
- * "fondu" — hiding the left fade at the scroll start, the right fade at the end,
- * and both when the bar fits without scrolling. It degrades cleanly: with no JS
- * the CSS shows a symmetric fade on both edges.
+ * On wp-admin touch widths, secondary native toolbar nodes move into an accessible
+ * disclosure. Existing nodes/listeners and submenus are preserved, and desktop
+ * restores their exact positions. Without JavaScript, the CSS scroll fallback
+ * keeps every original action reachable. Public-site bars retain scrolling.
  *
  * The styling all lives in adminbar.css (registered by AdminKit_Core_Chrome for
  * the `admin` and `frontend` contexts); this class only adds the behaviour. The
@@ -28,8 +26,8 @@ class AdminKit_Core_Admin_Bar {
 	 * @return void
 	 */
 	public static function init() {
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
-		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ), 10000 );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ), 10000 );
 	}
 
 	/**
@@ -47,9 +45,23 @@ class AdminKit_Core_Admin_Bar {
 		if ( ! apply_filters( 'adminkit/should_load', true, $context ) ) {
 			return;
 		}
+		if ( ! wp_style_is( 'adminkit-adminbar', 'enqueued' ) ) {
+			return;
+		}
 		AdminKit_Assets::enqueue_script(
 			'adminkit-admin-bar',
 			'assets/js/wp-core/admin-bar.js'
 		);
+		$icons = array();
+		foreach ( array( 'wp-logo' => 'info', 'command-palette' => 'search', 'comments' => 'message-square', 'new-content' => 'plus', 'query-monitor' => 'clock', 'ak-view-site' => 'external-link', 'ak-theme-toggle' => 'sun' ) as $node => $icon ) {
+			$icons[ 'wp-admin-bar-' . $node ] = AdminKit_Icons::display_svg( $icon );
+		}
+		wp_localize_script( 'adminkit-admin-bar', 'AdminKitMobileBar', array(
+			'more' => __( 'More actions', 'adminkit' ),
+			'admin' => is_admin(),
+			'queryMonitor' => 'Query Monitor',
+			'icons' => $icons,
+			'fallbackIcon' => AdminKit_Icons::display_svg( 'chevron-right' ),
+		) );
 	}
 }

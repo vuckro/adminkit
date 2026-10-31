@@ -184,6 +184,7 @@ return array (
     'Missing user id.' => 'Identifiant d’utilisateur manquant.',
     'Moderation & filtering' => 'Modération et filtrage',
     'Monochrome' => 'Monochrome',
+    'More actions' => 'Autres actions',
     'Move down' => 'Descendre',
     'Move up' => 'Monter',
     'Name' => 'Nom',

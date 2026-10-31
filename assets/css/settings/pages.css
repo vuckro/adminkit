@@ -199,3 +199,17 @@
  .adminkit-app .ak-toolbar-columns .ak-menu-icon{grid-column:3;grid-row:2}
  .adminkit-app .ak-toolbar-columns .ak-menu-hide{grid-column:4;grid-row:2}
 }
+
+/* Native mobile section picker: one predictable control, no wrapped tab strip. */
+.adminkit-app .ak-section-picker { display: none; }
+@media(max-width:782px){
+ .adminkit-app[data-screen="main"] .ak-section-picker { display: block; margin: 0 0 20px; color: var(--ak-text-muted); font-size: var(--ak-text-xs); line-height: 1.5; }
+ .adminkit-app .ak-section-picker>span { display: block; margin-bottom: 8px; }
+ .adminkit-app[data-screen="main"] .ak-section-picker select { box-sizing: border-box; width: 100%; max-width: none; min-height: 48px; margin: 0; padding: 10px 36px 10px 14px; border: 1px solid var(--ak-border); border-radius: var(--ak-radius-s); font-family: var(--ak-font-body); font-size: calc(16px * var(--ak-type-scale,1)); line-height: 1.5; color: var(--ak-text); background-color: var(--ak-surface); }
+ .adminkit-app[data-screen="main"] .ak-section-picker + .ak-foundations-nav { display: none; }
+ .adminkit-app[data-screen="main"] :is(input[type="text"],input[type="search"],input[type="url"],select,textarea) { font-size: max(16px, var(--ak-text-s)); }
+ .adminkit-app[data-screen="main"] a.ak-btn,
+ .adminkit-app[data-screen="main"] .ak-btn { min-height: 44px; }
+ .adminkit-app .ak-savebar { padding-bottom: max(14px,env(safe-area-inset-bottom)); }
+ .adminkit-app .ak-feature-dialog { padding-bottom: env(safe-area-inset-bottom); }
+}
