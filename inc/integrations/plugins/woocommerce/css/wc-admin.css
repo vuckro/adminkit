@@ -1326,3 +1326,15 @@ body.adminkit.woocommerce-admin-page .woocommerce-marketplace__product-card :is(
 body.adminkit.woocommerce-admin-page .woocommerce-marketplace__quality-badge__chip { background: var(--ak-elevated); color: var(--ak-text-muted); }
 /* Host pins this divider with !important. */
 body.adminkit.woocommerce-admin-page .woocommerce-inbox-dismiss-all-modal .components-modal__header { border-bottom-color: var(--ak-border) !important; }
+
+/* Home's introduction is WPDS Text rather than a semantic heading. */
+body.adminkit.woocommerce-admin-page .woocommerce-layout__inbox-title .components-text { color: var(--ak-heading); }
+body.adminkit.woocommerce-admin-page .woocommerce-homescreen .woocommerce-activity-panel .components-panel__body-toggle:is(:hover, :focus, :active) {
+ background: var(--ak-hover-bg);
+ color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-homescreen .woocommerce-activity-panel .components-panel__body { border-color: var(--ak-border); }
+body.adminkit.woocommerce-admin-page .woocommerce-homescreen .woocommerce-activity-panel .components-panel__body-toggle svg { fill: currentColor; }
+body.adminkit.woocommerce-admin-page .woocommerce-homescreen .woocommerce-activity-panel .woocommerce-empty-activity-card h4 { color: var(--ak-heading); }
+body.adminkit.woocommerce-admin-page .woocommerce-activity-panel .woocommerce-activity-card { background: var(--ak-surface); color: var(--ak-text-muted); border-color: var(--ak-border); }
+body.adminkit.woocommerce-admin-page .woocommerce-homescreen .woocommerce-activity-panel .woocommerce-layout__activity-panel-outbound-link:is(:hover, :active, :focus) { background: var(--ak-hover-bg); }

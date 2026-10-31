@@ -375,3 +375,14 @@ body.adminkit.adminkit-woocommerce.woocommerce_page_wc-settings-shipping-pickup_
 body.adminkit.adminkit-woocommerce #ppcp-settings-container .ppcp-r-welcome-features__col { border-color: var(--ak-border); }
 body.adminkit.adminkit-woocommerce #ppcp-settings-container .ppcp-r-welcome-features__col > * { color: var(--ak-text-muted); }
 body.adminkit.adminkit-woocommerce #ppcp-settings-container .ppcp-r-onboarding-header__logo-wrapper svg path { fill: var(--ak-heading); }
+
+/* Blueprint settings are an embedded React island on the classic settings page. */
+body.adminkit.adminkit-woocommerce .blueprint-settings-slotfill { color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce .blueprint-settings-slotfill :is(h3, h4, .woocommerce-collapsible-content, .woocommerce-collapsible-content__toggle span) { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce .blueprint-settings-slotfill :is(p, .woo-blueprint-export-step-desc, .woocommerce-collapsible-content p.woocommerce-collapsible-content-hint, .woocommerce-collapsible-content .woocommerce-collapsible-content__content p, .blueprint-settings-export-group-item-count) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce :is(.blueprint-upload-form, .blueprint-upload-dropzone-success) { background: var(--ak-surface); border-color: var(--ak-border); border-radius: var(--ak-radius-s); }
+body.adminkit.adminkit-woocommerce .blueprint-upload-form .blueprint-upload-dropzone :is(.blueprint-upload-dropzone-text, .blueprint-upload-max-size) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .blueprint-settings-slotfill .woocommerce-collapsible-content { border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .blueprint-settings-slotfill svg { fill: currentColor; }
+body.adminkit.adminkit-woocommerce .blueprint-settings-slotfill .woocommerce-collapsible-content__toggle:hover { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-woocommerce .blueprint-settings-slotfill .blueprint-settings-export-group { border-color: var(--ak-border); }
