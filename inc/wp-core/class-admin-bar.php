@@ -54,7 +54,7 @@ class AdminKit_Core_Admin_Bar {
 			'assets/js/wp-core/admin-bar.js'
 		);
 		$icons = array();
-		foreach ( array( 'wp-logo' => 'info', 'command-palette' => 'search', 'comments' => 'message-square', 'new-content' => 'plus', 'query-monitor' => 'clock', 'ak-view-site' => 'external-link', 'ak-theme-toggle' => 'sun' ) as $node => $icon ) {
+		foreach ( array( 'wp-logo' => 'info', 'command-palette' => 'search', 'comments' => 'message-square', 'new-content' => 'plus', 'query-monitor' => 'clock', 'ak-view-site' => 'external-link', 'ak-theme-toggle' => 'sun', 'my-account' => 'user' ) as $node => $icon ) {
 			$icons[ 'wp-admin-bar-' . $node ] = AdminKit_Icons::display_svg( $icon );
 		}
 		wp_localize_script( 'adminkit-admin-bar', 'AdminKitMobileBar', array(

@@ -78,7 +78,7 @@
 			return;
 		}
 		if (bar.classList.contains('ak-bar-compact')) { return; }
-		var keep = ['wp-admin-bar-menu-toggle', 'wp-admin-bar-site-name', 'wp-admin-bar-ak-notifications', 'wp-admin-bar-my-account'];
+		var keep = ['wp-admin-bar-menu-toggle', 'wp-admin-bar-site-name', 'wp-admin-bar-ak-notifications', 'wp-admin-bar-ak-view-site', 'wp-admin-bar-ak-theme-toggle'];
 		toolbar.querySelectorAll(':scope > ul > li').forEach(function (node) {
 			if (keep.indexOf(node.id) !== -1 || node.hidden || getComputedStyle(node).display === 'none' && node.style.display === 'none') { return; }
 			var action = node.querySelector(':scope > .ab-item');

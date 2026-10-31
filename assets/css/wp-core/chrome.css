@@ -68,12 +68,10 @@ body.adminkit #wpbody-content {
 		border-left: 0;
 		border-top-left-radius: 0;
 	}
-	/* WP's native `.wrap { margin: 10px 20px 0 2px }` is 2px left / 20px right — so
-	   content sits flush left with a gap on the right ("collé à gauche"). Even the
-	   side gutters out on phones. Applies to every .wrap admin screen, not just the
-	   dashboard. (0,2,1) beats WP's (0,1,0). */
+	/* Native wpcontent adds left-only padding. Give mobile pages symmetric gutters. */
+	body.adminkit #wpcontent { padding-inline: 0; }
 	body.adminkit .wrap {
-		margin: calc(10px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)) 0;
+		margin: calc(10px * var(--ak-space-scale, 1)) calc(20px * var(--ak-space-scale, 1)) 0;
 	}
 }
 
@@ -1256,4 +1254,19 @@ body.adminkit #adminmenu li.menu-top:is(:hover, :focus-within, .opensub) .wp-men
  body.adminkit.ak-frame-enhanced #adminmenuwrap { transition:none; }
  body.adminkit.ak-frame-enhanced .ak-admin-menu-scrim:not([hidden]) { animation:none; }
  body.adminkit.ak-frame-enhanced #adminmenu a { transition:none; }
+}
+
+/* Existing native submenu state supplies the mobile disclosure affordance. */
+@media screen and (max-width:782px){
+ body.adminkit.ak-frame-enhanced #adminmenu .wp-has-submenu>.menu-top .wp-menu-name { position:relative; left:auto; right:auto; padding-inline-end:36px; }
+ body.adminkit.ak-frame-enhanced #adminmenu .wp-has-submenu>.menu-top .wp-menu-name::after { content:""; position:absolute; inset-inline-end:18px; top:50%; width:6px; height:6px; margin-top:-3px; border-top:1.5px solid currentColor; border-right:1.5px solid currentColor; transform:rotate(45deg); transition:transform 120ms ease; }
+ body.adminkit.ak-frame-enhanced #adminmenu :is(.wp-has-current-submenu,.wp-menu-open,.opensub)>.menu-top:not([aria-expanded="false"]) .wp-menu-name::after { transform:rotate(135deg); }
+ body.rtl.adminkit.ak-frame-enhanced #adminmenu .wp-has-submenu>.menu-top .wp-menu-name::after { transform:rotate(-135deg); }
+ body.rtl.adminkit.ak-frame-enhanced #adminmenu :is(.wp-has-current-submenu,.wp-menu-open,.opensub)>.menu-top:not([aria-expanded="false"]) .wp-menu-name::after { transform:rotate(135deg); }
+}
+@media screen and (max-width:782px){
+ body.adminkit.ak-frame-enhanced #adminmenu .wp-has-submenu>.menu-top[aria-expanded="true"] .wp-menu-name::after { transform:rotate(135deg); }
+}
+@media screen and (max-width:782px) and (prefers-reduced-motion:reduce){
+ body.adminkit.ak-frame-enhanced #adminmenu .wp-has-submenu>.menu-top .wp-menu-name::after { transition:none; }
 }

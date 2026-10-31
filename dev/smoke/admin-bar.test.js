@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {JSDOM} = require('jsdom');
 (async()=>{
-const dom = new JSDOM('<div id="wpwrap"><div id="adminmenuwrap"><ul id="adminmenu"><li><a href="/dashboard">Dashboard</a></li></ul></div><div id="wpcontent"><div id="wpbody">Workspace</div></div><div id="wpfooter">Footer</div></div><div id="wpadminbar"><div id="wp-toolbar"><ul id="root"><li id="wp-admin-bar-menu-toggle"><a class="ab-item" href="#" aria-expanded="false">Menu</a></li><li id="wp-admin-bar-site-name"><a class="ab-item">Site</a></li><li id="wp-admin-bar-new-content"><a class="ab-item">Create</a><div class="ab-sub-wrapper"><a href="/new">Post</a></div></li><li id="wp-admin-bar-query-monitor"><a class="ab-item">QM</a></li></ul><ul><li id="wp-admin-bar-my-account"><a class="ab-item">Account</a></li></ul></div></div>', {url:'http://localhost', runScripts:'outside-only',pretendToBeVisual:true});
+const dom = new JSDOM('<div id="wpwrap"><div id="adminmenuwrap"><ul id="adminmenu"><li><a href="/dashboard">Dashboard</a></li></ul></div><div id="wpcontent"><div id="wpbody">Workspace</div></div><div id="wpfooter">Footer</div></div><div id="wpadminbar"><div id="wp-toolbar"><ul id="root"><li id="wp-admin-bar-menu-toggle"><a class="ab-item" href="#" aria-expanded="false">Menu</a></li><li id="wp-admin-bar-site-name"><a class="ab-item">Site</a></li><li id="wp-admin-bar-new-content"><a class="ab-item">Create</a><div class="ab-sub-wrapper"><a href="/new">Post</a></div></li><li id="wp-admin-bar-query-monitor"><a class="ab-item">QM</a></li></ul><ul id="wp-admin-bar-top-secondary"><li id="wp-admin-bar-ak-view-site"><a class="ab-item">View site</a></li><li id="wp-admin-bar-ak-theme-toggle"><a class="ab-item">Theme</a></li><li id="wp-admin-bar-my-account"><a class="ab-item">Account</a></li></ul></div></div>', {url:'http://localhost', runScripts:'outside-only',pretendToBeVisual:true});
 const w=dom.window,d=w.document;
 let resize, clicked=0;
 const mq={matches:true,addEventListener(type,fn){resize=fn;}};
@@ -16,7 +16,10 @@ menuTrigger.addEventListener('click',event=>{event.preventDefault();const open=d
 const original=[...d.querySelector('#root').children];
 const native=original[2];native.querySelector('a').addEventListener('click',()=>clicked++);
 w.eval(fs.readFileSync(path.resolve(__dirname,'../../assets/js/wp-core/admin-bar.js'),'utf8'));
-assert.equal(d.querySelector('.ak-mobile-bar-list').children.length,2);
+assert.equal(d.querySelector('.ak-mobile-bar-list').children.length,3);
+assert.equal(d.querySelector('#wp-admin-bar-ak-view-site').parentElement.id,'wp-admin-bar-top-secondary','site link remains directly available');
+assert.equal(d.querySelector('#wp-admin-bar-ak-theme-toggle').parentElement.id,'wp-admin-bar-top-secondary','theme switch remains directly available');
+assert.equal(d.querySelector('#wp-admin-bar-my-account').parentElement.className,'ak-mobile-bar-list','account is grouped without crowding toolbar');
 assert.equal(d.querySelector('.ak-mobile-bar-list').firstElementChild,native,'move original rather than cloning');
 native.querySelector('a').click();assert.equal(clicked,1,'native handler preserved');
 const diagnostic=d.querySelector('#wp-admin-bar-query-monitor>.ab-item');

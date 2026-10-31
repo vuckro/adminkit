@@ -240,7 +240,7 @@ On mobile wp-admin, `wp-core/admin-bar.js` progressively moves secondary native
 admin-bar nodes into a “More actions” disclosure. It preserves each node and its
 listeners/submenus, uses comment placeholders to restore the exact desktop order,
 and reapplies labels after diagnostic plugins refresh their node contents.
-Menu, site, notifications and account remain directly reachable. The behavior is
+Menu, site, notifications, View site and the theme switch remain directly reachable. The account is grouped into More actions so those controls retain 44px targets even at 320px. The behavior is
 transient DOM presentation; it never changes the stored toolbar layout or its
 server-side pristine snapshot. The public-site toolbar retains horizontal scrolling
 and edge indicators; without JavaScript the original scrollable bar remains usable.
@@ -270,3 +270,14 @@ frame remains the fallback when the enhancement script/styles are disabled.
 The drawer additionally requires the chrome stylesheet to be enqueued; a consumer
 veto of that stylesheet preserves native navigation while the toolbar enhancement
 can remain active. This compatibility path has a regression check.
+
+
+Mobile content gutters now come from symmetric 20px `.wrap` margins after removing
+WordPress's left-only `#wpcontent` padding. The More panel keeps at least 16px at
+each phone edge. Native secondary nodes are still moved/restored without cloning;
+account presentation normalizes inherited text indentation and grid rows.
+
+Mobile sidebar disclosure chevrons use CSS only. They read the existing native
+`aria-expanded` state, with current/open class fallbacks, and respect reduced motion.
+Relative label positioning explicitly clears the native folded-menu left offset;
+no extra submenu state or click handler is introduced.

@@ -527,13 +527,14 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
  #wpadminbar.ak-bar-compact #wp-admin-bar-site-name > .ab-item { padding-inline: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: calc(14px * var(--ak-type-scale,1)); }
  #wpadminbar.ak-bar-compact #wp-admin-bar-menu-toggle,
  #wpadminbar.ak-bar-compact #wp-admin-bar-ak-notifications,
- #wpadminbar.ak-bar-compact #wp-admin-bar-my-account { flex: 0 0 44px; width: 44px; }
- #wpadminbar.ak-bar-compact :is(#wp-admin-bar-menu-toggle,#wp-admin-bar-ak-notifications,#wp-admin-bar-my-account) > .ab-item { width: 44px; height: 46px; min-width: 0; padding: 0; box-sizing: border-box; }
+ #wpadminbar.ak-bar-compact #wp-admin-bar-ak-view-site,
+ #wpadminbar.ak-bar-compact #wp-admin-bar-ak-theme-toggle { flex: 0 0 44px; width: 44px; }
+ #wpadminbar.ak-bar-compact :is(#wp-admin-bar-menu-toggle,#wp-admin-bar-ak-notifications,#wp-admin-bar-ak-view-site,#wp-admin-bar-ak-theme-toggle) > .ab-item { width: 44px; height: 46px; min-width: 0; padding: 0; box-sizing: border-box; }
  #wpadminbar.ak-bar-compact .ak-mobile-bar-tools { display: block; flex: 0 0 44px; width: 44px; }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-toggle { display: flex; align-items: center; justify-content: center; width: 44px; height: 46px; padding: 0; border: 0; border-radius: var(--ak-radius-s); background: transparent; color: var(--ak-text); cursor: pointer; }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-toggle:is(:hover,[aria-expanded="true"]) { background: var(--ak-hover-bg); }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-toggle:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: -3px; }
- #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-panel { position: absolute; top: 52px; inset-inline-end: 8px; width: min(340px,calc(100vw - 16px)); max-height: calc(100dvh - 68px); overflow-y: auto; overscroll-behavior: contain; padding: 8px; box-sizing: border-box; border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); background: var(--ak-surface); color: var(--ak-text); z-index: 100001; }
+ #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-panel { position: absolute; top: 52px; inset-inline-end: 16px; width: min(360px,calc(100vw - 32px)); max-height: calc(100dvh - 68px); overflow-y: auto; overscroll-behavior: contain; padding: 8px; box-sizing: border-box; border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); background: var(--ak-surface); color: var(--ak-text); z-index: 100001; }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-panel[hidden] { display: none; }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-heading { padding: 8px 12px 12px; color: var(--ak-text-muted); font-size: calc(12px * var(--ak-type-scale,1)); line-height: 1.5; }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-list { float: none; margin: 0; padding: 0; }
@@ -547,11 +548,11 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 }
 
 @media screen and (max-width:782px){
- #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-list>li>.ab-item { display: grid; grid-template-columns:20px minmax(0,1fr); column-gap:12px; text-align:start; }
+ #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-list>li>.ab-item { display: grid; grid-template-columns:20px minmax(0,1fr); column-gap:12px; text-align:start; text-indent:0; }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-list>li>.ab-item>:not(.ak-mobile-action-icon):not(.ak-mobile-action-label) { display:none; }
- #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-action-icon { display:flex; grid-column:1; align-items:center; justify-content:center; width:20px; height:20px; color:var(--ak-text-muted); }
+ #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-action-icon { display:flex; grid-column:1; grid-row:1; align-items:center; justify-content:center; width:20px; height:20px; color:var(--ak-text-muted); }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-action-icon>svg { width:20px; height:20px; display:block; }
- #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-action-label { grid-column:2; margin:0; padding:0; font-size:calc(14px * var(--ak-type-scale,1)); font-weight:400; }
+ #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-action-label { grid-column:2; grid-row:1; margin:0; padding:0; font-size:calc(14px * var(--ak-type-scale,1)); font-weight:400; }
 }
 @media screen and (max-width:782px){
  #wpadminbar.ak-bar-compact #wp-admin-bar-site-name>.ab-item::before { display:none; }
