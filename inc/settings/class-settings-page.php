@@ -24,13 +24,6 @@ class AdminKit_Settings_Page {
 	/** `?page=` slug for the top-level menu + the `toplevel_page_{slug}` screen id. */
 	const SLUG = 'adminkit';
 
-	/** Submenu page slugs for the focused surfaces that live OUTSIDE the SPA.
-	 *  Each is registered by its OWN module (AdminKit_Menu_Manager,
-	 *  AdminKit_Toolbar_Manager) — these consts are the shared source of truth so the
-	 *  shell and the modules all agree on the slugs. */
-	const SLUG_MENU    = 'adminkit-menu';
-	const SLUG_TOOLBAR = 'adminkit-toolbar';
-
 	/** Asset handle shared by the SPA's script + style. */
 	const HANDLE = 'adminkit-settings';
 
@@ -46,10 +39,6 @@ class AdminKit_Settings_Page {
 	 */
 	public static function init() {
 		add_action( 'admin_menu', array( __CLASS__, 'add_submenu' ) );
-		// Relabel the auto first submenu AFTER the Menu/Toolbar modules add their
-		// pages (priority 11). Then (priority 13) reorder to Dashboard · Menu · Toolbar.
-		add_action( 'admin_menu', array( __CLASS__, 'relabel_first_submenu' ), 12 );
-		add_action( 'admin_menu', array( __CLASS__, 'reorder_submenu' ), 13 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 		AdminKit_Settings_Gate::init();
@@ -75,51 +64,6 @@ class AdminKit_Settings_Page {
 			array( __CLASS__, 'render_page' ),
 			'dashicons-admin-customizer',
 			81
-		);
-	}
-
-	/**
-	 * Relabel the auto-created first submenu (WordPress labels it after the
-	 * top-level title — "AdminKit") to "Dashboard", so the submenu reads
-	 * Dashboard · Menu · Toolbar. The Menu + Toolbar entries register
-	 * themselves from their own modules (each surface owns its page). Runs at
-	 * admin_menu priority 12 (after those modules, at 11). Defensive: only
-	 * renames the first row while it's still the unrenamed self-link.
-	 *
-	 * @return void
-	 */
-	public static function relabel_first_submenu() {
-		global $submenu;
-		if ( isset( $submenu[ self::SLUG ][0][2] ) && self::SLUG === $submenu[ self::SLUG ][0][2] ) {
-			$submenu[ self::SLUG ][0][0] = __( 'Dashboard', 'adminkit' );
-		}
-	}
-
-	/**
-	 * Reorder the AdminKit submenu to Dashboard · Menu · Toolbar. Runs at
-	 * admin_menu priority 13 (after relabel at 12). Slugs not in the rank map keep
-	 * their relative order at the end. Cosmetic only — clicking the parent still
-	 * opens Dashboard (its own slug callback).
-	 *
-	 * @return void
-	 */
-	public static function reorder_submenu() {
-		global $submenu;
-		if ( empty( $submenu[ self::SLUG ] ) || ! is_array( $submenu[ self::SLUG ] ) ) {
-			return;
-		}
-		$rank = array(
-			self::SLUG         => 1, // Dashboard (the parent self-link)
-			self::SLUG_MENU    => 2, // Menu
-			self::SLUG_TOOLBAR => 3, // Toolbar
-		);
-		usort(
-			$submenu[ self::SLUG ],
-			static function ( $a, $b ) use ( $rank ) {
-				$ra = isset( $a[2], $rank[ $a[2] ] ) ? $rank[ $a[2] ] : 99;
-				$rb = isset( $b[2], $rank[ $b[2] ] ) ? $rank[ $b[2] ] : 99;
-				return $ra - $rb;
-			}
 		);
 	}
 
@@ -200,7 +144,9 @@ class AdminKit_Settings_Page {
 		// The main screen's tabs live in their own files (assets/js/settings/<part>.js).
 		$deps = array( 'wp-api-fetch' );
 		if ( 'main' === $module ) {
-			foreach ( array( 'design', 'features', 'plugins' ) as $part ) {
+			$nav_css = 'assets/css/settings/navigation.css';
+			wp_enqueue_style( self::HANDLE . '-navigation', ADMINKIT_URL . $nav_css, array( self::HANDLE ), self::ver( $nav_css ) );
+			foreach ( array( 'design', 'features', 'plugins', 'navigation' ) as $part ) {
 				$part_js = 'assets/js/settings/' . $part . '.js';
 				wp_enqueue_script( $screen_handle . '-' . $part, ADMINKIT_URL . $part_js, array(), self::ver( $part_js ), true );
 				$deps[] = $screen_handle . '-' . $part;
@@ -336,14 +282,12 @@ class AdminKit_Settings_Page {
 			$integrations = AdminKit_Settings_Catalog::plugins_list();
 		}
 
-		// Menu editor — the captured admin-menu tree (a non-trivial snapshot) is
-		// only built on the Menu screen; empty elsewhere.
-		$menu_manager = $is_menu ? AdminKit_Menu_Manager::editor_data() : array();
+		// Menu editor — the captured admin-menu tree (only built on the AdminKit screen).
+		$menu_manager = ( $is_main || $is_menu ) ? AdminKit_Menu_Manager::editor_data() : array();
 
 		// Toolbar editor — lightweight boot (just the REST route + enabled); the live
-		// admin-bar nodes are fetched over REST on the Toolbar screen, not here (the
-		// bar renders too late in the page to snapshot before this payload is built).
-		$toolbar = ( $is_toolbar && class_exists( 'AdminKit_Toolbar_Manager' ) )
+		// admin-bar nodes are fetched over REST when the Toolbar tab is opened.
+		$toolbar = ( ( $is_main || $is_toolbar ) && class_exists( 'AdminKit_Toolbar_Manager' ) )
 			? AdminKit_Toolbar_Manager::boot_data()
 			: array( 'enabled' => false );
 
@@ -517,15 +461,6 @@ class AdminKit_Settings_Page {
 				unset( $data[ $key ] );
 			}
 		}
-		// Each module receives its own copy plus the shared save-bar strings.
-		$common = array( 'save', 'saving', 'saved', 'error', 'unsaved' );
-		$data['i18n'] = array_filter( $data['i18n'], static function ( $key ) use ( $screen, $common ) {
-			if ( in_array( $key, $common, true ) ) {
-				return true;
-			}
-			$is_navigation = 0 === strpos( $key, 'menu' ) || 0 === strpos( $key, 'toolbar' );
-			return 'main' === $screen ? ! $is_navigation : $is_navigation;
-		}, ARRAY_FILTER_USE_KEY );
 		return $data;
 	}
 

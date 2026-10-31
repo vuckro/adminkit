@@ -67,10 +67,6 @@ class AdminKit_Toolbar_Manager {
 		}
 
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
-
-		// Self-register the focused "Toolbar" submenu page (priority 12 so it lands
-		// after Menu/Statistics under the AdminKit parent).
-		add_action( 'admin_menu', array( __CLASS__, 'add_page' ), 12 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 
 		// Apply on BOTH bars (wp-admin + front-end for logged-in users), very late so
@@ -109,49 +105,18 @@ class AdminKit_Toolbar_Manager {
 	/* ─────────────────────────── Admin page ─────────────────────────── */
 
 	/**
-	 * Register the Toolbar editor as an AdminKit submenu. Mounts the shared SPA engine
-	 * on the 'toolbar' screen.
-	 *
-	 * @return void
-	 */
-	public static function add_page() {
-		self::$page_hook = (string) add_submenu_page(
-			AdminKit_Settings_Page::SLUG,
-			__( 'Toolbar', 'adminkit' ),
-			__( 'Toolbar', 'adminkit' ),
-			'manage_options',
-			AdminKit_Settings_Page::SLUG_TOOLBAR,
-			array( __CLASS__, 'render_page' )
-		);
-	}
-
-	/**
-	 * Render the page host on the 'toolbar' screen — the shared engine builds the UI.
-	 *
-	 * @return void
-	 */
-	public static function render_page() {
-		AdminKit_Settings_Page::render_host( 'toolbar' );
-	}
-
-	/**
-	 * Enqueue the shared admin app with the toolbar-screen boot payload, on this page
-	 * only (gated on the hook suffix captured at registration).
+	 * Capture the PRISTINE bar on the AdminKit settings screen (admin context → the full
+	 * node set, incl. is_admin()-gated nodes the REST context can't see), just before
+	 * apply() @ 99999. Written server-side now; read by the SPA's REST GET a moment
+	 * later in the same page load.
 	 *
 	 * @param string $hook Current admin page hook suffix.
 	 * @return void
 	 */
 	public static function enqueue( $hook ) {
-		if ( '' === self::$page_hook || $hook !== self::$page_hook ) {
+		if ( 'toplevel_page_' . AdminKit_Settings_Page::SLUG !== $hook ) {
 			return;
 		}
-		AdminKit_Settings_Page::enqueue_app( AdminKit_Settings_Page::boot_data( 'toolbar' ) );
-
-		// Capture the PRISTINE bar from THIS page's own render (admin context → the full
-		// node set, incl. is_admin()-gated nodes the REST context can't see), just before
-		// apply() @ 99999. Written server-side now; read by the SPA's REST GET a moment
-		// later in the same page load. Hooked here (not in init) so it costs nothing off
-		// the Toolbar page — enqueue() already runs only there.
 		add_action( 'admin_bar_menu', array( __CLASS__, 'capture' ), 99998 );
 	}
 

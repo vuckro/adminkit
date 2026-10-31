@@ -136,6 +136,8 @@
 	}
 	updateBar();
 
+	var activeTabId = tabs[0] ? tabs[0].id : '';
+
 	function go(id) {
 		if (location.hash === '#' + id) {
 			selectTab(id);
@@ -145,10 +147,6 @@
 	}
 	function applyHash() {
 		var id = location.hash.slice(1);
-		if (id === 'menu') {
-			location.href = 'admin.php?page=adminkit-' + id;
-			return;
-		}
 		selectTab(
 			tabs.some(function (tab) {
 				return tab.id === id;
@@ -158,6 +156,7 @@
 		);
 	}
 	function selectTab(id) {
+		activeTabId = id;
 		if (surface.onSelect) { surface.onSelect(id); }
 		tabs.forEach(function (tab) {
 			var selected = tab.id === id;
@@ -240,7 +239,7 @@
 			invalid.focus();
 			return;
 		}
-		var request = surface.request();
+		var request = surface.request(activeTabId);
 		if (!request || !request.path) {
 			return;
 		}

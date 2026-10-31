@@ -7,7 +7,7 @@ const { JSDOM } = require('jsdom');
 
 const root = path.resolve(__dirname, '../..');
 const fixture = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json'), 'utf8'));
-const scripts = ['design', 'features', 'plugins'].map((n) => 'assets/js/settings/' + n + '.js').concat(['assets/js/settings/main.js', 'assets/js/settings.js']);
+const scripts = ['design', 'features', 'plugins', 'navigation'].map((n) => 'assets/js/settings/' + n + '.js').concat(['assets/js/settings/main.js', 'assets/js/settings.js']);
 
 const dom = new JSDOM('<!doctype html><html><body><div id="adminkit-app" class="adminkit-app" data-screen="main" aria-busy="true"></div></body></html>', {
   url: 'http://localhost/wp-admin/admin.php?page=adminkit',
@@ -33,7 +33,7 @@ const doc = window.document;
 const assert = (cond, msg) => { if (!cond) { errors.push('ASSERT: ' + msg); } };
 assert(!doc.getElementById('adminkit-app').hasAttribute('aria-busy'), 'app finished booting');
 const tabs = [...doc.querySelectorAll('[role="tab"].ak-tabs button, .ak-tabs [role="tab"]')];
-assert(tabs.length === 2, 'main tabs rendered (' + tabs.length + ')');
+assert(tabs.length === 4, 'main tabs rendered (' + tabs.length + ')');
 for (const tab of tabs) {
   try { tab.click(); await tick(); } catch (e) { errors.push('tab ' + tab.id + ': ' + e.stack); }
 }

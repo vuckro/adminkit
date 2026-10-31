@@ -1,8 +1,9 @@
 /** AdminKit navigation screen. Loaded only on its own admin page; no build step. */
 (function () {
 	'use strict';
+	window.AdminKitParts = window.AdminKitParts || {};
 	window.AdminKitScreens = window.AdminKitScreens || {};
-	window.AdminKitScreens.navigation = function (context) {
+	window.AdminKitParts.navigation = window.AdminKitScreens.navigation = function (context) {
 		var D = context.D;
 		var I = context.I;
 		var apiFetch = context.apiFetch;
@@ -14,7 +15,7 @@
 		var MM = D.menuManager || { menu: [], config: { top: [], sub: {} }, icons: {} };
 		var dragState = null,
 			openPicker = null;
-		state.menu = D.screen === 'menu' ? buildMenuModel(MM.menu || [], MM.config || { top: [], sub: {} }) : [];
+		state.menu = buildMenuModel(MM.menu || [], MM.config || { top: [], sub: {} });
 		state.toolbar = { left: [], right: [] };
 		function buildMenuModel(snapshot, config) {
 			// Global lookups so a submenu can be rebuilt under ANY parent (cross-section):
@@ -1326,6 +1327,14 @@
 			return inp;
 		}
 		return {
+			buildMenu: buildMenu,
+			buildToolbar: buildToolbar,
+			menuRequest: function () {
+				return { path: MM.route, data: { items: gatherMenu() } };
+			},
+			toolbarRequest: function () {
+				return { path: tbPath(), data: gatherToolbar() };
+			},
 			tabs:
 				D.screen === 'toolbar'
 					? [{ id: 'toolbar', label: I.toolbarTab, build: buildToolbar }]

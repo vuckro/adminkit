@@ -14,11 +14,16 @@
 		var updateBar = context.updateBar;
 		var buildDesign = window.AdminKitParts.design(context);
 		var buildFeatures = window.AdminKitParts.features(context);
+		var navPart = window.AdminKitParts.navigation ? window.AdminKitParts.navigation(context) : null;
 		var ICONS = {
 			brand:
 				'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="10.5" r=".9" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".9" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12.5" r=".9" fill="currentColor" stroke="none"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>',
 			plugins:
-				'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>'
+				'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>',
+			menu:
+				'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18M14 9h4M14 15h4"/></svg>',
+			toolbar:
+				'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M7 6h.01M11 6h.01"/></svg>'
 		};
 		Object.assign(state, {
 			dirty: false,
@@ -123,14 +128,26 @@
 			return v;
 		}
 
+		var mainTabs = [
+			{ id: 'brand', label: I.designSystem, icon: ICONS.brand, build: buildDesign },
+			{ id: 'features', label: I.features, icon: ICONS.plugins, build: buildFeatures }
+		];
+		if (navPart) {
+			mainTabs.push({ id: 'menu', label: I.menu, icon: ICONS.menu, build: navPart.buildMenu });
+			mainTabs.push({ id: 'toolbar', label: I.toolbarTab, icon: ICONS.toolbar, build: navPart.buildToolbar });
+		}
+
 		return {
-			tabs: [
-				{ id: 'brand', label: I.designSystem, icon: ICONS.brand, build: buildDesign },
-				{ id: 'features', label: I.features, icon: ICONS.plugins, build: buildFeatures }
-			],
+			tabs: mainTabs,
 			exportSettings: exportSettings,
 			importSettings: importSettings,
-			request: function () {
+			request: function (activeTabId) {
+				if (navPart && activeTabId === 'menu') {
+					return navPart.menuRequest();
+				}
+				if (navPart && activeTabId === 'toolbar') {
+					return navPart.toolbarRequest();
+				}
 				return { path: D.route, data: { values: gather() } };
 			}
 		};

@@ -141,12 +141,6 @@ class AdminKit_Menu_Manager {
 		// the editor snapshot (9998) so it's gone from the editor too.
 		add_action( 'admin_menu', array( __CLASS__, 'hide_legacy_link_manager' ), 9990 );
 
-		// Self-register the focused "Menu" submenu page (priority 11 so the AdminKit
-		// parent menu exists first). The editor mounts the shared SPA engine on the
-		// 'menu' screen.
-		add_action( 'admin_menu', array( __CLASS__, 'add_page' ), 11 );
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
-
 		add_action( 'admin_menu', array( __CLASS__, 'apply' ), 9999 );
 		add_filter( 'custom_menu_order', '__return_true' );
 		add_filter( 'menu_order', array( __CLASS__, 'order_top_level' ) );
@@ -154,46 +148,6 @@ class AdminKit_Menu_Manager {
 		add_filter( 'submenu_file', array( __CLASS__, 'remap_submenu_file' ) );
 		add_action( 'admin_head', array( __CLASS__, 'print_css' ), 22 );
 		add_action( 'admin_footer', array( __CLASS__, 'print_url_overrides' ) );
-	}
-
-	/**
-	 * Register the Menu editor as an AdminKit submenu (only when the feature is on,
-	 * mirroring the old in-SPA tab gating). Mounts the shared engine on 'menu'.
-	 *
-	 * @return void
-	 */
-	public static function add_page() {
-		self::$page_hook = (string) add_submenu_page(
-			AdminKit_Settings_Page::SLUG,
-			__( 'Menu', 'adminkit' ),
-			__( 'Menu', 'adminkit' ),
-			'manage_options',
-			AdminKit_Settings_Page::SLUG_MENU,
-			array( __CLASS__, 'render_page' )
-		);
-	}
-
-	/**
-	 * Render the page host on the 'menu' screen — the shared engine builds the UI.
-	 *
-	 * @return void
-	 */
-	public static function render_page() {
-		AdminKit_Settings_Page::render_host( 'menu' );
-	}
-
-	/**
-	 * Enqueue the shared admin app with the menu-screen boot payload, on this page
-	 * only (gated on the hook suffix captured at registration).
-	 *
-	 * @param string $hook Current admin page hook suffix.
-	 * @return void
-	 */
-	public static function enqueue( $hook ) {
-		if ( '' === self::$page_hook || $hook !== self::$page_hook ) {
-			return;
-		}
-		AdminKit_Settings_Page::enqueue_app( AdminKit_Settings_Page::boot_data( 'menu' ) );
 	}
 
 	/**
@@ -268,7 +222,7 @@ class AdminKit_Menu_Manager {
 		if ( ! is_admin() || empty( $_GET['page'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return false;
 		}
-		return AdminKit_Settings_Page::SLUG_MENU === sanitize_key( wp_unslash( $_GET['page'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return AdminKit_Settings_Page::SLUG === sanitize_key( wp_unslash( $_GET['page'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
