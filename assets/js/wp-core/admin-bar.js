@@ -31,6 +31,13 @@
 	button.setAttribute('aria-expanded', 'false');
 	button.setAttribute('aria-controls', 'ak-mobile-bar-panel');
 	button.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>';
+	// Reuse only the avatar image; the native account action stays intact.
+	var avatar = bar.querySelector('#wp-admin-bar-my-account > .ab-item img.avatar');
+	if (avatar) {
+		var photo = avatar.cloneNode(false);
+		photo.alt = ''; photo.removeAttribute('id'); photo.setAttribute('aria-hidden', 'true');
+		button.replaceChildren(photo);
+	}
 	var panel = document.createElement('div');
 	panel.id = 'ak-mobile-bar-panel';
 	panel.className = 'ak-mobile-bar-panel';
@@ -96,7 +103,8 @@
 			icon.innerHTML = (data.icons && data.icons[node.id]) || data.fallbackIcon || '';
 			action.appendChild(icon); action.appendChild(label);
 			moved.push({ node: node, placeholder: placeholder, label: label, icon: icon });
-			list.appendChild(node);
+			if (node.id === 'wp-admin-bar-my-account') { list.prepend(node); }
+			else { list.appendChild(node); }
 		});
 		if (!moved.length) { return; }
 		toolbar.appendChild(wrapper);

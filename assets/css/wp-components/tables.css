@@ -1023,3 +1023,14 @@ body.adminkit .quick-edit-row .cat-checklist {
  max-height: 160px;
  height: auto;
 }
+
+/* Native expanded content rows: labels and values share a compact reading axis. */
+@media screen and (max-width:782px) {
+ body.adminkit .wp-list-table:is(.posts,.pages,.media,.users) tr.is-expanded:not(.inline-edit-row):not(.no-items) > :is(td,th).column-primary ~ td[data-colname]:not(.hidden) {
+  padding:8px 16px 8px 35%; position:relative; min-height:38px; line-height:1.5;
+ }
+ body.adminkit .wp-list-table:is(.posts,.pages,.media,.users) tr.is-expanded:not(.inline-edit-row):not(.no-items) > :is(td,th).column-primary ~ td[data-colname]::before {
+  position:absolute; inset-inline-start:12px; top:8px; width:calc(35% - 24px); margin:0; line-height:1.5; font-weight:500;
+ }
+ body.adminkit .wp-list-table:is(.posts,.pages,.media,.users) tr.is-expanded:not(.inline-edit-row):not(.no-items) > :is(td,th).column-primary ~ td[data-colname]:last-child { padding-bottom:16px; }
+}
