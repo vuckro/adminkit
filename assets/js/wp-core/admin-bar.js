@@ -131,6 +131,28 @@
 		var drawer = document.getElementById('adminmenuwrap');
 		var page = document.getElementById('wpwrap');
 		if (!trigger || !drawer || !page) { return null; }
+		// Keep the native link and give disclosure its own touch/keyboard control.
+		drawer.querySelectorAll('#adminmenu .wp-has-submenu > a.menu-top').forEach(function (link, index) {
+			var submenu = link.parentElement.querySelector(':scope > .wp-submenu');
+			if (!submenu) { return; }
+			var disclosure = document.createElement('button');
+			disclosure.type = 'button'; disclosure.className = 'ak-submenu-toggle';
+			disclosure.setAttribute('aria-label', data.submenu + ' ' + (link.querySelector('.wp-menu-name') || link).textContent.trim());
+			if (!submenu.id) { submenu.id = 'ak-native-submenu-' + index; }
+			disclosure.setAttribute('aria-controls', submenu.id);
+			if (link.parentElement.classList.contains('wp-has-current-submenu')) { link.setAttribute('aria-expanded', 'true'); }
+			var nativeToggle = false;
+			link.addEventListener('click', function (event) {
+				if (mq.matches && !nativeToggle) { event.stopPropagation(); }
+			});
+			disclosure.addEventListener('click', function () {
+				nativeToggle = true; link.click(); nativeToggle = false;
+				disclosure.focus({ preventScroll:true });
+			});
+			function reflect() { disclosure.setAttribute('aria-expanded', link.getAttribute('aria-expanded') === 'true' ? 'true' : 'false'); }
+			new MutationObserver(reflect).observe(link, { attributes:true, attributeFilter:['aria-expanded'] });
+			reflect(); link.after(disclosure);
+		});
 		var root = document.documentElement;
 		var regions = [];
 		var wasOpen = false;

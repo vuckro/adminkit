@@ -1270,3 +1270,25 @@ body.adminkit #adminmenu li.menu-top:is(:hover, :focus-within, .opensub) .wp-men
 @media screen and (max-width:782px) and (prefers-reduced-motion:reduce){
  body.adminkit.ak-frame-enhanced #adminmenu .wp-has-submenu>.menu-top .wp-menu-name::after { transition:none; }
 }
+
+/* Links navigate; a separate, generous touch target opens native submenus. */
+#adminmenu .ak-submenu-toggle { display:none; }
+@media screen and (max-width:782px) {
+ body.adminkit.ak-frame-enhanced #adminmenu .wp-has-submenu { position:relative; }
+ body.adminkit.ak-frame-enhanced #adminmenu .wp-has-submenu > a.menu-top { width:calc(100% - 48px); box-sizing:border-box; }
+ body.adminkit.ak-frame-enhanced #adminmenu .wp-has-submenu > .menu-top .wp-menu-name::after { display:none; }
+ body.adminkit.ak-frame-enhanced #adminmenu .ak-submenu-toggle { display:flex; align-items:center; justify-content:center; position:absolute; inset-inline-end:0; top:0; width:48px; height:48px; margin:0; padding:0; border:0; border-radius:var(--ak-radius-s); background:transparent; color:var(--ak-text-muted); cursor:pointer; }
+ body.adminkit.ak-frame-enhanced #adminmenu .ak-submenu-toggle::after { content:""; width:6px; height:6px; border-top:1.5px solid currentColor; border-right:1.5px solid currentColor; transform:rotate(45deg); transition:transform 120ms ease; }
+ body.adminkit.ak-frame-enhanced #adminmenu .ak-submenu-toggle[aria-expanded="true"]::after { transform:rotate(135deg); }
+ body.adminkit.ak-frame-enhanced #adminmenu .ak-submenu-toggle:is(:hover,:active) { background:var(--ak-hover-bg); }
+ body.adminkit.ak-frame-enhanced #adminmenu .ak-submenu-toggle:focus-visible { outline:2px solid var(--ak-focus); outline-offset:-3px; }
+ body.rtl.adminkit.ak-frame-enhanced #adminmenu .ak-submenu-toggle:not([aria-expanded="true"])::after { transform:rotate(-135deg); }
+}
+@media (prefers-reduced-motion:reduce) { #adminmenu .ak-submenu-toggle::after { transition:none; } }
+@media screen and (max-width:782px) {
+ body.adminkit.ak-frame-enhanced #adminmenu .wp-has-submenu > a.menu-top::after { display:none; }
+}
+@media screen and (max-width:782px) {
+ body.adminkit.ak-frame-enhanced #adminmenu .ak-submenu-toggle[aria-expanded="false"] ~ .wp-submenu { display:none; }
+ body.adminkit.ak-frame-enhanced #adminmenu .ak-submenu-toggle[aria-expanded="true"] ~ .wp-submenu { display:block; }
+}

@@ -1102,7 +1102,7 @@ msgstr ""
 msgid "Show"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-page.php inc/wp-core/class-admin-bar.php
 msgid "Show / hide submenus"
 msgstr ""
 

@@ -61,6 +61,7 @@ class AdminKit_Core_Admin_Bar {
 			'more' => __( 'More actions', 'adminkit' ),
 			'admin' => is_admin(),
 			'navigation' => wp_style_is( 'adminkit-chrome', 'enqueued' ),
+			'submenu' => __( 'Show / hide submenus', 'adminkit' ),
 			'openMenu' => __( 'Open administration menu', 'adminkit' ),
 			'closeMenu' => __( 'Close administration menu', 'adminkit' ),
 			'queryMonitor' => 'Query Monitor',
