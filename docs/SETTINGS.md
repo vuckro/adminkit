@@ -54,7 +54,7 @@ or internal row separators. Component choices compile to shared semantic roles.
 
 Features are grouped into Appearance (including notifications), Navigation (menu
 and toolbar managers), Lists and Accounts. In French these are Apparence,
-Navigation, Liste and Comptes. Each selection-list item has a filled active or
+Navigation, Liste and Comptes. Each selection-list item has a green filled active or
 hollow inactive dot alongside its textual status; unavailable items remain hollow.
 
 The Features tab uses search, an All/Active/Inactive selector and category buttons

@@ -346,4 +346,4 @@ body.adminkit .adminkit-app .ak-features-tools :is(select.ak-features-status, su
 .adminkit-app .ak-features-bulk summary:hover { background: var(--ak-hover-bg); }
 /* State remains readable in text; the filled/hollow dot adds a quick scan cue. */
 .adminkit-app .ak-features-dot { box-sizing: border-box; flex: 0 0 8px; width: 8px; height: 8px; margin-inline-start: auto; border: 1px solid var(--ak-text-muted); border-radius: 50%; background: transparent; }
-.adminkit-app .ak-features-item[data-feature-state="active"] .ak-features-dot { border-color: var(--ak-text); background: var(--ak-text); }
+.adminkit-app .ak-features-item[data-feature-state="active"] .ak-features-dot { border-color: var(--ak-success); background: var(--ak-success); }
