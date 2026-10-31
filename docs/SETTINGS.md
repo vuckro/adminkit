@@ -78,3 +78,11 @@ verification. Native user tools retain their form/AJAX nonce and target checks.
 Run the commands in [FUNCTIONAL-AUDIT.md](FUNCTIONAL-AUDIT.md). Offline tests cover
 persistence failures and draft behavior. They do not prove third-party host
 compatibility, live email delivery or live account-renaming behavior.
+
+## Translation catalogs
+
+UI text is translated in PHP and sent to JavaScript in each screen's bootstrap.
+`php dev/i18n.php --write` synchronizes POT/PO and compiles both MO (with `msgfmt`)
+and `adminkit-fr_FR.l10n.php`. The drift gate verifies source coverage, compiled
+parity and JS bootstrap keys. Main exports carry the current plugin version and
+all registered values; their `_adminkit: settings` marker is required on import.

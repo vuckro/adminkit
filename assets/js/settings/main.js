@@ -90,7 +90,7 @@
 				}
 				values = data && !Array.isArray(data) && data._adminkit === 'settings' && data.values && typeof data.values === 'object' ? data.values : null;
 				if (!values || Array.isArray(values) || !apiFetch) {
-					setStatus('is-error', I.settingsImportError || 'That file isn’t a valid AdminKit settings export.');
+					setStatus('is-error', I.settingsImportError);
 					return;
 				}
 				state.saving = true;

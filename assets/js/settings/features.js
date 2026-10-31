@@ -136,8 +136,8 @@
 			var search = el('input', {
 				type: 'search',
 				class: 'ak-search',
-				placeholder: I.searchFeatures || 'Search features…',
-				'aria-label': I.searchFeatures || 'Search features…'
+				placeholder: I.searchFeatures,
+				'aria-label': I.searchFeatures
 			});
 			var empty = el('p', { class: 'ak-empty', role: 'status', hidden: 'hidden', text: I.noResults });
 			var selectedStatus = 'all';
@@ -210,7 +210,7 @@
 					el('button', {
 						type: 'button',
 						class: 'ak-btn',
-						text: I.resetDefaults || 'Reset to defaults',
+						text: I.resetDefaults,
 						onclick: resetAll
 					})
 				])

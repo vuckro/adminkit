@@ -11,8 +11,8 @@
 (function () {
 	if (!document.querySelector('[data-ak-full]')) { return; }
 	var DATA = window.AdminKitPostPreviews || {};
-	var LOADING_LABEL = DATA.loading || 'Loading preview…';
-	var BROKEN_LABEL = DATA.broken || 'Preview unavailable';
+	var LOADING_LABEL = DATA.loading;
+	var BROKEN_LABEL = DATA.broken;
 
 	// If a screenshot fails to load, flag its cell as broken (a flat
 	// placeholder) instead of showing the browser's broken-image glyph.

@@ -1,874 +1,39 @@
 # AdminKit — translation template.
 # Copyright (C) 2026 Waaskit
+# GPL-2.0-or-later
 msgid ""
 msgstr ""
 "Project-Id-Version: AdminKit 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/vuckro/adminkit/issues\n"
+"POT-Creation-Date: 2026-10-31 00:00+0100\n"
+"PO-Revision-Date: 2026-10-31 00:00+0100\n"
+"Last-Translator: AdminKit\n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: adminkit\n"
 
-#: inc/settings/class-settings-page.php:401
-msgid "%d tokens"
-msgstr ""
-
-#: inc/wp-core/class-username-changer.php:180
+#: inc/wp-core/class-username-changer.php
 msgid "<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or any of . - _ @ — and nothing else."
 msgstr ""
 
-#: inc/wp-core/class-username-changer.php:188
+#: inc/wp-core/class-username-changer.php
 msgid "<strong>Error:</strong> That username is already taken."
 msgstr ""
 
-#: inc/wp-core/class-profile-account.php:165
+#: inc/wp-core/class-profile-account.php
 msgid "About Yourself"
 msgstr ""
 
-#: inc/wp-core/class-profile-account.php:165
+#: inc/wp-core/class-profile-account.php
 msgid "About the user"
 msgstr ""
 
-#: inc/wp-core/class-options-general.php:108
-msgid "Account & registration"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:163
-msgid "Account Management"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:174
-msgid "Account sections"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:359
-msgid "Add link"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:360
-msgid "Add separator"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:166
-msgid "Additional Capabilities"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:172
-msgid "Addresses"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:37
-msgid "Adds a bell to the toolbar that collects admin notices into a side drawer, keeping success confirmations inline. Off restores every notice to its normal place."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:55
-msgid "Adds a light/dark toggle to the admin bar. Off forces light mode site-wide."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:43
-msgid "Adds a thumbnail column to post-type list tables — the featured image first, with a live WordPress.com mShots screenshot as fallback on production sites (skipped on localhost where mShots can't reach the page anyway)."
-msgstr ""
-
-#: inc/wp-core/class-options-general.php:109
-msgid "Admin email, who can sign up, and the default role assigned to new users."
-msgstr ""
-
-msgid "AdminKit"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:72
-msgid "AdminKit icons"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:381
-msgid "AdminKit itself — always on and not removable here."
-msgstr ""
-
-#: inc/settings/class-settings-page.php:379
-msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:24
-msgid "Appearance"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:164
-msgid "Application Passwords"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:358
-msgid "Apply"
-msgstr ""
-
-#: inc/wp-core/class-options-discussion.php:101
-msgid "Avatars"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:66
-msgid "Block editor"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:398
-msgid "Brand"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:412
-msgid "Brand color"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:414
-msgid "Bricks"
-msgstr ""
-
-#: inc/wp-core/class-user-quick-edit.php:230
-msgid "Cancel"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:349
-msgid "Choose an icon"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:369
-msgid "Clear"
-msgstr ""
-
-#: inc/features/notifications/class-notification-center.php:185
-msgid "Close"
-msgstr ""
-
-#: inc/wp-core/class-options-discussion.php:102 inc/wp-core/class-options-discussion.php:106
-msgid "Comment settings"
-msgstr ""
-
-msgid "Comments"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:161
-msgid "Contact Info"
-msgstr ""
-
-msgid "Content"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:23
-msgid "Content & lists"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:394
-msgid "Could not save"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:415
-msgid "Custom"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:367
-msgid "Custom link"
-msgstr ""
-
-msgid "Customize"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:54
-msgid "Dark mode"
-msgstr ""
-
-#: inc/class-theme-toggle.php:189 inc/settings/class-settings-page.php:339
-msgid "Dashboard"
-msgstr ""
-
-msgid "Database"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:350
-msgid "Default"
-msgstr ""
-
-msgid "Direct"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:374
-msgid "Disable all"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:416
-msgid "Display"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:356
-msgid "Drag to reorder"
-msgstr ""
-
-msgid "Edit"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:97
-msgid "Edit first name, last name, email and role inline from the users list — no need to open the full profile."
-msgstr ""
-
-#: inc/wp-core/class-user-quick-edit.php:214
-msgid "Email"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:373
-msgid "Enable all"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:377
-msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
-msgstr ""
-
-#: inc/settings/class-settings-page.php:422
-msgid "Favicon"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:342
-msgid "Features"
-msgstr ""
-
-#: inc/wp-core/class-user-quick-edit.php:206
-msgid "First name"
-msgstr ""
-
-#: inc/wp-core/class-options-general.php:102
-msgid "General"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:382
-msgid "Generic"
-msgstr ""
-
-#: inc/features/notifications/class-notification-center.php:182
-msgid "Grouped notices"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:352
-msgid "Hide"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:84
-msgid "Hide admin footer"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:90
-msgid "Hide the Help button"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:85
-msgid "Hide the admin footer bar — the \"Thank you for creating with WordPress\" line and the version number — on every screen, for a cleaner app-like look. Off restores it."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:91
-msgid "Hide the contextual \"Help\" tab at the top-right of admin screens, for cleaner chrome. \"Screen Options\" is left in place. Off restores it."
-msgstr ""
-
-#: inc/wp-core/class-options-discussion.php:107
-msgid "How comments work on your site — who can post, what they see when they do, when they get moderated, and the email you receive about them."
-msgstr ""
-
-#: inc/wp-core/class-options-general.php:105
-msgid "How your site presents itself — name, tagline and addresses."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:169
-msgid "Identity, contact and password."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:169
-msgid "Information"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:362
-msgid "Label"
-msgstr ""
-
-#: inc/wp-core/class-options-general.php:110
-msgid "Language, date & time"
-msgstr ""
-
-#: inc/wp-core/class-user-quick-edit.php:210
-msgid "Last name"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:103
-msgid "Lets admins rename a user's login on Users → Edit (WordPress disables this by default). Sensitive — invalidates the user's active sessions; they must sign in again. Single-site only."
-msgstr ""
-
-msgid "Live"
-msgstr ""
-
-#: inc/wp-core/class-post-previews.php:415
-msgid "Loading preview…"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:420
-msgid "Login"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:60
-msgid "Login screen"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:421
-msgid "Logo"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:405
-msgid "Logo Dark Mode"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:403
-msgid "Logo Light Mode"
-msgstr ""
-
-msgid "Manage"
-msgstr ""
-
-msgid "Media"
-msgstr ""
-
-#: inc/features/menu/class-menu-manager.php:129 inc/features/menu/class-menu-manager.php:130 inc/settings/class-settings-page.php:344
-msgid "Menu"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:78
-msgid "Menu manager"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:84
-msgid "Toolbar manager"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:85
-msgid "Reorder and hide the top-level items in the admin toolbar (the bar across the top of the screen) — configured in the Toolbar tab. Off restores the native toolbar (your saved layout is kept)."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:160
-msgid "Name"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:378
-msgid "Native"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:383
-msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
-msgstr ""
-
-#: inc/features/notifications/class-notification-center.php:184
-msgid "Notices from plugins and WordPress collect here, out of your way."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:36
-msgid "Notification center"
-msgstr ""
-
-#: inc/features/notifications/class-notification-center.php:135 inc/features/notifications/class-notification-center.php:181 inc/features/notifications/class-notification-center.php:186
-msgid "Notifications"
-msgstr ""
-
-msgid "Open"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:364
-msgid "Open in a new tab"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:173
-msgid "Other settings"
-msgstr ""
-
-msgid "Page"
-msgstr ""
-
-msgid "Pages"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:357
-msgid "Paste an SVG or a data:image/svg+xml URI…"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:162
-msgid "Personal Options"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:343
-msgid "Plugins"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:368
-msgid "Point this item at a custom URL (internal or external). Its submenu still works."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:42
-msgid "Post previews"
-msgstr ""
-
-msgid "Posts"
-msgstr ""
-
-#: inc/wp-core/class-post-previews.php:201
-msgid "Preview"
-msgstr ""
-
-#: inc/wp-core/class-post-previews.php:416
-msgid "Preview unavailable"
-msgstr ""
-
-msgid "Published"
-msgstr ""
-
-#: inc/wp-core/class-user-quick-edit.php:111 inc/wp-core/class-user-quick-edit.php:204
-msgid "Quick Edit"
-msgstr ""
-
-msgid "Recommended"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:365 inc/settings/class-settings-page.php:408
-msgid "Remove"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:366
-msgid "Rename — clear to restore the original"
-msgstr ""
-
-#: inc/wp-core/class-username-changer.php:131
-msgid "Renaming a user invalidates every active sign-in they have. They must use the new username from now on. Continue?"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:347
-msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:79
-msgid "Reorder the admin menu and submenus, set a per-item icon (an AdminKit glyph, a WordPress dashicon, or your own), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept)."
-msgstr ""
-
-#: inc/settings/class-settings-page.php:348
-msgid "Reset menu"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:375
-msgid "Reset to defaults"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:61
-msgid "Restyle wp-login.php to match the admin (logo, dark mode, focus states)."
-msgstr ""
-
-#: inc/wp-core/class-user-quick-edit.php:219
-msgid "Role"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:170
-msgid "Roles, language and preferences."
-msgstr ""
-
-#: inc/settings/class-settings-page.php:404 inc/settings/class-settings-page.php:406
-msgid "SVG · PNG ≥ 400×100"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:391
-msgid "Save changes"
-msgstr ""
-
-#: inc/wp-core/class-user-quick-edit.php:159
-msgid "Save failed."
-msgstr ""
-
-#: inc/settings/class-settings-page.php:393
-msgid "Saved"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:392
-msgid "Saving…"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:376
-msgid "Search features…"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:387
-msgid "Select a logo"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:361
-msgid "Separator"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:93 inc/wp-core/class-profile-account.php:170
-msgid "Settings"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:353
-msgid "Show"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:355
-msgid "Show / hide submenus"
-msgstr ""
-
-#: inc/wp-core/class-options-general.php:107
-msgid "Shown in browser tabs, bookmark lists and the app icon when visitors save your site to a phone home screen."
-msgstr ""
-
-#: inc/wp-core/class-options-general.php:106
-msgid "Site Icon"
-msgstr ""
-
-#: inc/wp-core/class-options-general.php:104
-msgid "Site identity"
-msgstr ""
-
-#: inc/wp-core/class-options-general.php:111
-msgid "Site language plus the timezone and formats used wherever dates appear."
-msgstr ""
-
-msgid "Source"
-msgstr ""
-
-msgid "Statistics"
-msgstr ""
-
-msgid "Storage"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:73
-msgid "The DEFAULT icon set for the whole admin menu + toolbar (AdminKit's glyphs instead of WordPress's dashicons). Per-item icons you pick in the Menu manager override this; icons set by other plugins are left alone."
-msgstr ""
-
-#: inc/settings/class-settings-page.php:380
-msgid "System"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:67
-msgid "Theme the Gutenberg canvas in light and dark. Off keeps the canvas matching your live site exactly."
-msgstr ""
-
-#: inc/settings/class-settings-page.php:384
-msgid "Themes"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php:175
-msgid "This username cannot be changed."
-msgstr ""
-
-msgid "To"
-msgstr ""
-
-#: inc/class-theme-toggle.php:158 inc/integrations/plugins/gutenberg/class-gutenberg.php:109 inc/wp-core/class-login.php:265
-msgid "Toggle light / dark mode"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:399
-msgid "Tokens synced with Bricks Builder"
-msgstr ""
-
-msgid "Search…"
-msgstr ""
-
-msgid "Previous"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:372
-msgid "Turn AdminKit modules on or off."
-msgstr ""
-
-#: inc/wp-core/class-username-changer.php:130
-msgid "Type the new username, then click \"Update User\" below to save."
-msgstr ""
-
-#: inc/settings/class-settings-page.php:395
-msgid "Unsaved changes"
-msgstr ""
-
-msgid "Update"
-msgstr ""
-
-#: inc/wp-core/class-user-quick-edit.php:232
-msgid "Update User"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:407
-msgid "Upload"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:388
-msgid "Use this image"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:102
-msgid "Username changer"
-msgstr ""
-
-msgid "Users"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:25
-msgid "Users & access"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php:96
-msgid "Users quick edit"
-msgstr ""
-
-msgid "View"
-msgstr ""
-
-#: inc/class-theme-toggle.php:189
-msgid "View site"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:413 inc/settings/class-settings-page.php:419
-msgid "WordPress"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:351
-msgid "WordPress icon"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:389
-msgid "WordPress icons"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:393
-msgid "Toolbar"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:394
-msgid "Reorder and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn't block access. Reset restores the native layout. Changes apply after you save."
-msgstr ""
-
-#: inc/settings/class-settings-page.php:395
-msgid "Reset toolbar"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:397
-msgid "No toolbar items found."
-msgstr ""
-
-#: inc/settings/class-settings-page.php:398
-msgid "Left"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:399
-msgid "Right"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:400
-msgid "Toolbar context"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:401
-msgid "Administration"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:402
-msgid "Public site"
-msgstr ""
-
-#: inc/features/notifications/class-notification-center.php:183
-msgid "You’re all caught up."
-msgstr ""
-
-msgid "available"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:363
-msgid "https://…"
-msgstr ""
-
-#: inc/settings/class-settings-page.php:354
-msgid "submenus"
-msgstr ""
-
-msgid "used"
-msgstr ""
-
 #: inc/settings/class-settings-page.php
-msgid "Export"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Import"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Download these settings as a JSON file"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Load settings from a JSON file"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "That file isn’t a valid AdminKit settings export."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Download this menu layout as a JSON file"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Load a menu layout from a JSON file"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "That file isn’t a valid AdminKit menu export."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Live preview"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Light"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Dark"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Your logo"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Sign in"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Button"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Move up"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Move down"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Search plugins…"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Current"
-msgstr ""
-
-msgid "New"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Need an icon? Copy an SVG from"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Monochrome"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "No icons found."
-msgstr ""
-
-#: inc/wp-core/class-user-quick-edit.php:254
-msgid "Missing user id."
-msgstr ""
-
-#: inc/wp-core/class-user-quick-edit.php:259
-msgid "You are not allowed to do that."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Active items first"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Prioritize published articles, pages and custom post types, and active plugins. Open their lists on Published or Active when available, and group published or active items first in All. Explicit filters, searches and content sorting are preserved. Off restores the native WordPress lists."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Identity and contact"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Security"
-msgstr ""
-
-
-#: inc/wp-core/class-options-general.php
-msgid "Language & timezone"
-msgstr ""
-
-#: inc/wp-core/class-options-general.php
-msgid "Choose the site language and the timezone used for publishing."
-msgstr ""
-
-#: inc/wp-core/class-options-general.php
-msgid "Date & time formats"
-msgstr ""
-
-#: inc/wp-core/class-options-general.php
-msgid "Choose how dates and times appear, and the first day of the week."
-msgstr ""
-
-#: inc/wp-core/class-options-discussion.php
-msgid "Participation"
-msgstr ""
-
-#: inc/wp-core/class-options-discussion.php
-msgid "Moderation & filtering"
-msgstr ""
-
-#: inc/wp-core/class-options-discussion.php
-msgid "Choose who can comment and how conversations work."
-msgstr ""
-
-#: inc/wp-core/class-options-discussion.php
-msgid "Set comment pagination and display order."
-msgstr ""
-
-#: inc/wp-core/class-options-discussion.php
-msgid "Choose which events trigger an email notification."
-msgstr ""
-
-#: inc/wp-core/class-options-discussion.php
-msgid "Control approval rules and filter unwanted comments."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Public profile"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Language, website and biographical information."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Administration preferences"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Choose how you use the WordPress administration screens."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Sessions"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Manage your active sign-in sessions."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Application passwords"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Manage access for applications connected to your account."
-msgstr ""
-
-#: inc/wp-core/class-options-general.php
-msgid "Identity"
+msgid "Accent"
 msgstr ""
 
 #: inc/wp-core/class-options-general.php
@@ -876,392 +41,103 @@ msgid "Account"
 msgstr ""
 
 #: inc/wp-core/class-options-general.php
-msgid "Localization"
+msgid "Account & registration"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Account Management"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Account sections"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Overview"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Your administration, at a glance. Configure its appearance and choose the tools your site needs."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Design system"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Configure your identity and explore your interface foundations."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Interface preferences"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Density"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Corners"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Typography"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Compact"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Comfortable"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Straight"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Soft"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Humanist"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Classic"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Enabled features"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Supported plugins"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Brand identity"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Custom logo configured"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Using the site identity"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Customize the interface"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Choose features"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Manage plugins"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Site-wide settings"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "How it works"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Design choices are shared across the site. Each user keeps their own light or dark mode preference when dark mode is enabled."
+msgid "Active features"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
-msgid "Collect admin notices in one place."
+msgid "Active items first"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
-msgid "Recognize your publications by their thumbnails."
+msgid "Add a light/dark mode switch to the toolbar. When off, light mode is used everywhere."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Add link"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Add separator"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Additional Capabilities"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Addresses"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Admin email, who can sign up, and the default role assigned to new users."
+msgstr ""
+
+#: adminkit.php
+msgid "AdminKit"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "AdminKit itself — always on and not removable here."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Administration"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Administration logo"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Administration preferences"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "All features"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
-msgid "Find published content and active plugins first."
+msgid "Allow administrators to rename a user login on Users → Edit (single-site only; signs the user out)."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Always"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
-msgid "Let each user choose light or dark mode."
+msgid "Appearance & navigation"
 msgstr ""
 
-#: inc/settings/class-settings-catalog.php
-msgid "Match the login screen to your administration."
+#: inc/wp-core/class-profile-account.php
+msgid "Application Passwords"
 msgstr ""
 
-#: inc/settings/class-settings-catalog.php
-msgid "Extend light and dark styling to the editor canvas."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Organize navigation and hide unnecessary entries."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Organize shortcuts in the top toolbar."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Remove the WordPress footer and version line."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Hide contextual help on admin screens."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Edit account details directly from the users list."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Allow administrators to rename a user login."
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Plugin inactive"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Illustrative preview"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Publication title"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Status"
-msgstr ""
-
-#: inc/settings/class-settings-catalog.php
-msgid "Your publications"
-msgstr ""
-
-#: inc/wp-core/class-reading-layout.php
-msgid "Homepage & archives"
-msgstr ""
-
-#: inc/wp-core/class-reading-layout.php
-msgid "Choose your homepage content and the number of posts shown in archives."
-msgstr ""
-
-#: inc/wp-core/class-reading-layout.php
-msgid "RSS feeds"
-msgstr ""
-
-#: inc/wp-core/class-reading-layout.php
-msgid "Set how many posts feeds include and how much content they share."
-msgstr ""
-
-#: inc/wp-core/class-reading-layout.php
-msgid "Search engine visibility"
-msgstr ""
-
-#: inc/wp-core/class-reading-layout.php
-msgid "Choose whether to ask search engines to avoid indexing this site."
-msgstr ""
-
-#: inc/wp-core/class-reading-layout.php
-msgid "Manage terms"
-msgstr ""
-
-#: inc/wp-core/class-reading-layout.php
-msgid "Find, edit and organize existing terms."
+#: inc/wp-core/class-profile-account.php
+msgid "Application passwords"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "No results. Try another search term."
+msgid "Apply"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
-#, php-format
-msgid "Details about %s"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Technical details"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Database table"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Option"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Setting key"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Default value"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Enabled"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Disabled"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "This switch is stored only after you save changes. Opening this help does not write to the database."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Colors"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Shapes & elevation"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Spacing"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Logos and where they appear."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Accent and light/dark appearance."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Font family and text scale."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Corner scale, outlines and depth."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Density and breathing room between elements."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Text scale"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Corner scale"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Spacing scale"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Outline width"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Elevation"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Flat"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Subtle"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Raised"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Component workshop"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Sample content — preview only"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Site name"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Secondary action"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Advanced scales are saved with your design system and apply to this preview."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Reset advanced scales"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "View preview"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Back to settings"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Design system sections"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Choose your logo and where it appears."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Choose colors for light and dark. Custom lets you choose the accent and edit each palette color. Save to apply your changes."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "A fluid type scale from small text to large headings. Edit the sample and adjust its scale."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Adjust the corner scale. Pill-shaped elements keep their own shape."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Adjust the shared spacing scale."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Sample text"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "The quick brown fox jumps over the lazy dog"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Weight"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "By role"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Font family"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Reset"
+#: inc/wp-core/class-options-discussion.php
+msgid "Avatars"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -1269,116 +145,15 @@ msgid "Background"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Surface"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Text"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Secondary text"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
 msgid "Border"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Accent"
+msgid "Brand color"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Text on accent"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Success"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Warning"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Error"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Reset palette"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Inherited"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Customized"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-#, php-format
-msgid "Text / background contrast: %s:1"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Use a hex color such as #1549ab."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "WordPress administration"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Filter features by status"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "All features"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Active features"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Inactive features"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "These actions apply to all features, including those hidden by filters."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Manages all site settings, content and user accounts."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Publishes and manages all posts and pages, including those written by others."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Writes, publishes and manages their own posts."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Writes and edits their own posts, but cannot publish them or upload media."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Manages their own profile, without access to content editing."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Permissions for this role are defined by the site or a plugin."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Full access"
+msgid "Bricks"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -1389,91 +164,8 @@ msgstr ""
 msgid "Can publish their own posts"
 msgstr ""
 
-#: inc/wp-core/class-profile-account.php
-msgid "Content requires approval"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Profile access only"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Permissions to check"
-msgstr ""
-
-msgid "In development"
-msgstr ""
-
-msgid "Logo source"
-msgstr ""
-
-msgid "Import an image"
-msgstr ""
-
-msgid "Image URL"
-msgstr ""
-
-msgid "Use a monochrome SVG for automatic light and dark appearance. Other images keep their original colors."
-msgstr ""
-
-msgid "Use a simple SVG containing only vector shapes, without scripts or embedded content."
-msgstr ""
-
-msgid "Enter a valid image URL starting with https:// or http://."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Administration logo"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Shown with the expanded menu. The site icon takes over when the menu is collapsed."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Site icon (favicon)"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Used in browser tabs and bookmarks. This image is managed in WordPress General Settings."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Edit the site icon in WordPress"
-msgstr ""
-
-msgid "Customize the foundations and components of your interface."
-msgstr ""
-
-msgid "Upload image"
-msgstr ""
-
-msgid "Neutral"
-msgstr ""
-
-msgid "Base"
-msgstr ""
-
-#, php-format
-msgid "Preview: %s — save to apply"
-msgstr ""
-
-msgid "Primary action"
-msgstr ""
-
-msgid "Accent color"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Edit settings"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Corner shapes, outlines and depth for buttons, fields, cards and tables."
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Preview changes here, then save to apply them. Elevation affects cards and tables; focus indicators stay visible."
+#: inc/wp-core/class-user-quick-edit.php
+msgid "Cancel"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -1481,27 +173,435 @@ msgid "Card"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Table"
+msgid "Choose an icon"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Components"
+msgid "Choose colors for light and dark. Custom lets you choose the accent and edit each palette color. Save to apply your changes."
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Choose how dates and times appear, and the first day of the week."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Choose how you use the WordPress administration screens."
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Choose the site language and the timezone used for publishing."
+msgstr ""
+
+#: inc/wp-core/class-reading-layout.php
+msgid "Choose whether to ask search engines to avoid indexing this site."
+msgstr ""
+
+#: inc/wp-core/class-options-discussion.php
+msgid "Choose which events trigger an email notification."
+msgstr ""
+
+#: inc/wp-core/class-options-discussion.php
+msgid "Choose who can comment and how conversations work."
+msgstr ""
+
+#: inc/wp-core/class-reading-layout.php
+msgid "Choose your homepage content and the number of posts shown in archives."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Clean interface"
+msgstr ""
+
+#: inc/features/notifications/class-notification-center.php
+msgid "Close"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Collect admin notices into a toolbar drawer while keeping inline action confirmations in place."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Appearance and interaction settings, organized by component."
+msgid "Colors"
+msgstr ""
+
+#: inc/wp-core/class-options-discussion.php
+msgid "Comment settings"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Contact Info"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Content & lists"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Content requires approval"
+msgstr ""
+
+#: inc/wp-core/class-options-discussion.php
+msgid "Control approval rules and filter unwanted comments."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Buttons"
+msgid "Corner scale"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Top-edge highlight"
+msgid "Corner shapes, outlines and depth for buttons, fields, cards and tables."
+msgstr ""
+
+#: inc/class-storage.php inc/settings/class-settings-page.php
+msgid "Could not save"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Controls the highlight on primary buttons and page actions. Hover the previews to compare light and dark. Save to apply across the administration."
+msgid "Current"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Custom"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Custom link"
+msgstr ""
+
+#: inc/features/toolbar/class-toolbar-manager.php
+msgid "Customize"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Customize the WordPress sidebar menu and top admin toolbar."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Customize the foundations and components of your interface."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Customized"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Danger text"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Dark"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Dark mode"
+msgstr ""
+
+#: inc/class-theme-toggle.php inc/features/toolbar/class-toolbar-manager.php
+msgid "Dashboard"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Date & time formats"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Default"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Design system"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Design system sections"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Disable all"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Disabled"
+msgstr ""
+
+#: inc/wp-core/class-options-discussion.php
+msgid "Display"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Download these settings as a JSON file"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Download this menu layout as a JSON file"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Drag to reorder"
+msgstr ""
+
+#: inc/features/toolbar/class-toolbar-manager.php
+msgid "Edit Page"
+msgstr ""
+
+#: inc/features/toolbar/class-toolbar-manager.php
+msgid "Edit Site"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Edit first name, last name, email and role inline from the users list."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Elevation"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php
+msgid "Email"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Enable all"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Export"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Features"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Filter features by status"
+msgstr ""
+
+#: inc/wp-core/class-reading-layout.php
+msgid "Find, edit and organize existing terms."
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php
+msgid "First name"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Flat"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Font family"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Font family and text scale."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Full access"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Generic"
+msgstr ""
+
+#: adminkit.php
+msgid "Give your WordPress admin a clean, modern look — optional dark mode, menu and toolbar editors, and polished plugin screens. Standalone, no setup."
+msgstr ""
+
+#: inc/features/notifications/class-notification-center.php
+msgid "Grouped notices"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Hide"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Hide the WordPress footer bar and contextual Help tab on admin screens."
+msgstr ""
+
+#: inc/wp-core/class-reading-layout.php
+msgid "Homepage & archives"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "How your site presents itself — name, tagline and addresses."
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Identity"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Identity and contact"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Identity, contact and password."
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Image URL"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Import"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Inactive features"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Info text"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Information"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Inherited"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Label"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Language & timezone"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Language, date & time"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Language, website and biographical information."
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php
+msgid "Last name"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Left"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Light"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Load a menu layout from a JSON file"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Load settings from a JSON file"
+msgstr ""
+
+#: inc/wp-core/class-post-previews.php
+msgid "Loading preview…"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Localization"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Login screen"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Manage access for applications connected to your account."
+msgstr ""
+
+#: inc/wp-core/class-reading-layout.php
+msgid "Manage terms"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Manage your active sign-in sessions."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Manages all site settings, content and user accounts."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Manages their own profile, without access to content editing."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Menu manager"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php
+msgid "Missing user id."
+msgstr ""
+
+#: inc/wp-core/class-options-discussion.php
+msgid "Moderation & filtering"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Monochrome"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Move down"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Move up"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Name"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Native"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Navigation"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Need an icon? Copy an SVG from"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "No icons found."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "No results. Try another search term."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "No toolbar items found."
+msgstr ""
+
+#: inc/features/notifications/class-notification-center.php
+msgid "Notices from plugins and WordPress collect here, out of your way."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Notification center"
+msgstr ""
+
+#: inc/features/notifications/class-notification-center.php inc/wp-core/class-options-discussion.php
+msgid "Notifications"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -1512,18 +612,442 @@ msgstr ""
 msgid "On hover"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
-msgid "Always"
+#: inc/settings/class-settings-catalog.php
+msgid "Open content and plugin lists on Published or Active by default, and group active items first in All."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
-msgid "Preview theme"
+msgid "Open in a new tab"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Other settings"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Outline width"
+msgstr ""
+
+#: inc/wp-core/class-options-discussion.php
+msgid "Participation"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Paste an SVG or a data:image/svg+xml URI…"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Permissions for this role are defined by the site or a plugin."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Permissions to check"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Personal Options"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Plugin inactive"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Plugins"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Point this item at a custom URL (internal or external). Its submenu still works."
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
-msgid "Use the administration logo and site icon in the toolbar. Off restores the native WordPress identity and keeps your saved logo."
+msgid "Post previews"
+msgstr ""
+
+#: inc/settings/class-settings-page.php inc/wp-core/class-post-previews.php
+msgid "Preview"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Preview changes here, then save to apply them. Elevation affects cards and tables; focus indicators stay visible."
+msgstr ""
+
+#: inc/wp-core/class-post-previews.php
+msgid "Preview unavailable"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Primary action"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Profile access only"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Public profile"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Public site"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Publishes and manages all posts and pages, including those written by others."
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php
+msgid "Quick Edit"
+msgstr ""
+
+#: inc/wp-core/class-reading-layout.php
+msgid "RSS feeds"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Raised"
+msgstr ""
+
+#: inc/settings/class-settings-page.php inc/wp-core/class-options-general.php
+msgid "Remove"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Rename — clear to restore the original"
+msgstr ""
+
+#: inc/wp-core/class-username-changer.php
+msgid "Renaming a user invalidates every active sign-in they have. They must use the new username from now on. Continue?"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
-msgid "Personalize the identity displayed in the toolbar."
+msgid "Reorder and hide top toolbar items from AdminKit → Toolbar."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Reorder, rename, change icons, and hide the items in your admin toolbar. Drag the handle (or use the arrows) to reorder within each side; the eye hides an item from the bar only — it doesn't block access. Reset restores the native layout. Changes apply after you save."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Menu."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Reset"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Reset menu"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Reset palette"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Reset to defaults"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Reset toolbar"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Right"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php
+msgid "Role"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Roles, language and preferences."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Sample content — preview only"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Save changes"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php
+msgid "Save failed."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Saved"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Saving…"
+msgstr ""
+
+#: inc/features/toolbar/class-toolbar-manager.php
+msgid "Search"
+msgstr ""
+
+#: inc/wp-core/class-reading-layout.php
+msgid "Search engine visibility"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Search features…"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Search plugins…"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Search…"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Secondary action"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Secondary text"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Security"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Separator"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Sessions"
+msgstr ""
+
+#: inc/wp-core/class-options-discussion.php
+msgid "Set comment pagination and display order."
+msgstr ""
+
+#: inc/wp-core/class-reading-layout.php
+msgid "Set how many posts feeds include and how much content they share."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Settings"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Shapes & elevation"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Show"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Show / hide submenus"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Show a thumbnail column in post and page list tables."
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Shown in browser tabs, bookmark lists and the app icon when visitors save your site to a phone home screen."
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Shown with the expanded menu. The site icon takes over when the menu is collapsed."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Sidebar menu"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Site Icon"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Site identity"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Site language plus the timezone and formats used wherever dates appear."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Site name"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Style wp-login.php to match the administration (logo, dark mode and focus states)."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Subtle"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Success text"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Surface"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "System"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Table"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Text"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Text on accent"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Text scale"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "That file isn’t a valid AdminKit menu export."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "That file isn’t a valid AdminKit settings export."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Themes"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "This username cannot be changed."
+msgstr ""
+
+#: inc/class-theme-toggle.php inc/integrations/plugins/gutenberg/class-gutenberg.php inc/wp-core/class-login.php
+msgid "Toggle light / dark mode"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Toolbar"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Toolbar context"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Toolbar manager"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Top-edge highlight"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Turn AdminKit modules on or off."
+msgstr ""
+
+#: inc/wp-core/class-username-changer.php
+msgid "Type the new username, then click \"Update User\" below to save."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Typography"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Unsaved changes"
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php
+msgid "Update User"
+msgstr ""
+
+#: inc/wp-core/class-options-general.php
+msgid "Upload image"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Use a hex color such as #1549ab."
+msgstr ""
+
+#: inc/wp-core/class-branding.php
+msgid "Use a simple SVG containing only vector shapes, without scripts or embedded content."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Username changer"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Users & access"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Users quick edit"
+msgstr ""
+
+#: inc/class-theme-toggle.php
+msgid "View site"
+msgstr ""
+
+#: adminkit.php
+msgid "Waaskit"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Warning text"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "WordPress"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "WordPress icon"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "WordPress icons"
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Writes and edits their own posts, but cannot publish them or upload media."
+msgstr ""
+
+#: inc/wp-core/class-profile-account.php
+msgid "Writes, publishes and manages their own posts."
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php
+msgid "You are not allowed to do that."
+msgstr ""
+
+#: inc/features/notifications/class-notification-center.php
+msgid "You’re all caught up."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "https://…"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "submenus"
 msgstr ""

@@ -80,8 +80,8 @@
 	// Avatars FIRST per UX request — focused single-purpose tab, opens
 	// directly on the small avatar card. Comment settings is the long bucket.
 	var TABS = [
-		{ id: 'avatars',  title: S.avatars  || 'Avatars' },
-		{ id: 'comments', title: S.comments || 'Comment settings' }
+		{ id: 'avatars',  title: S.avatars },
+		{ id: 'comments', title: S.comments }
 	];
 
 	// Drop a tab if the page has no matching content (defensive: a plugin
@@ -135,10 +135,10 @@
 	var commentsPanel = form.querySelector('#ak-options-panel-comments');
 	if (commentsPanel) {
 		var groups = [
-			{ key: 'participation', desc: S.participationDesc || '', title: S.participation || 'Participation', names: ['default_comment_status', 'require_name_email'] },
-			{ key: 'display', desc: S.displayDesc || '', title: S.display || 'Display', names: ['page_comments'] },
-			{ key: 'notifications', desc: S.notificationsDesc || '', title: S.notifications || 'Notifications', names: ['comments_notify'] },
-			{ key: 'moderation', desc: S.moderationDesc || '', title: S.moderation || 'Moderation & filtering', names: ['comment_moderation', 'comment_max_links', 'disallowed_keys'] }
+			{ key: 'participation', desc: S.participationDesc || '', title: S.participation, names: ['default_comment_status', 'require_name_email'] },
+			{ key: 'display', desc: S.displayDesc || '', title: S.display, names: ['page_comments'] },
+			{ key: 'notifications', desc: S.notificationsDesc || '', title: S.notifications, names: ['comments_notify'] },
+			{ key: 'moderation', desc: S.moderationDesc || '', title: S.moderation, names: ['comment_moderation', 'comment_max_links', 'disallowed_keys'] }
 		];
 		var cards = document.createElement('div');
 		cards.className = 'ak-discussion-cards';

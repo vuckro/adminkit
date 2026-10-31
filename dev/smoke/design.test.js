@@ -11,7 +11,8 @@ function boot(source) {
  const data=JSON.parse(JSON.stringify(base));
  data.accentSource=source; data.brandAccent='#123456';
  data.values={ logo_url:'https://example.test/logo.svg',integration_hidden_enabled:false,extension_key:'keep' };
- data.designSystem={ type_scale:1.13,radius_scale:1.37,colors:{light:{bg:'#abcdef',accent:'#654321'},dark:{bg:'#112233'}} };
+ data.designSystem={ type_scale:1.13,radius_scale:1.37,colors:{light:{bg:'#abcdef',accent:'#ffffff'},dark:{bg:'#112233'}} };
+ if(source==='bricks'){w.document.documentElement.style.setProperty('--accent','#224466');w.document.documentElement.style.setProperty('--accent-hover','#335577');}
  w.AdminKitData=data; w.matchMedia=()=>({matches:false,addEventListener(){}});
  w.HTMLCanvasElement.prototype.getContext=()=>({ fillRect(){},getImageData(){return {data:[0,0,0,255]};} });
  const calls=[]; let reader, exported;
@@ -36,7 +37,9 @@ for(const source of ['monochrome','adminkit','bricks','custom']) {
  for(const frame of frames) {
   assert.equal(!!frame.style.getPropertyValue('--wk-bg'),source==='custom','inactive custom colors leaked for '+source);
  }
+ if(source==='bricks'){assert.equal(frames[0].style.getPropertyValue('--wk-accent'),'#224466');assert.equal(frames[0].style.getPropertyValue('--wk-accent-hover'),'#335577');}
  if(source==='custom') {
+  assert.equal(frames[0].style.getPropertyValue('--wk-on-accent'),'#000000','per-mode accent determines automatic foreground');
   const hex=w.document.querySelector('.ak-accent-inline__hex');hex.value='#oops';hex.dispatchEvent(new w.Event('input'));
   assert.equal(state.brandAccent,'#123456','invalid text changed last valid accent');
   w.document.querySelector('.ak-accent-inline [role=radio]').click();

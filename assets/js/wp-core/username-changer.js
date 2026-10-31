@@ -31,7 +31,8 @@
  */
 (function () {
 	function boot() {
-		var L = window.AdminKitUsernameChanger || {};
+		var L = window.AdminKitUsernameChanger;
+		if (!L || !L.unlockConfirm || !L.unlockedHint) { return; }
 
 		var row = document.querySelector('tr.user-user-login-wrap');
 		if (!row) { return; }
@@ -78,7 +79,7 @@
 			// `confirm()` is a hard modal — the right pattern for a
 			// destructive operation. A custom modal would also work but adds
 			// markup and DOM management for no real UX gain here.
-			if (!window.confirm(L.unlockConfirm || 'Renaming a user invalidates every active sign-in they have. Continue?')) {
+			if (!window.confirm(L.unlockConfirm)) {
 				input.blur();
 				return;
 			}
@@ -90,7 +91,7 @@
 			// enough visual cue).
 			description = document.createElement('p');
 			description.className = 'description adminkit-uc-active';
-			description.textContent = L.unlockedHint || 'Type the new username, then click "Update User" below.';
+			description.textContent = L.unlockedHint;
 			td.appendChild(description);
 
 			// Browser focus events on already-focused readonly inputs are

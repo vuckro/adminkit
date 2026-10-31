@@ -294,7 +294,7 @@
 			var activeCtx = 'admin';
 			var nodesByCtx = { admin: [], frontend: [] };
 			var p = el('section', { class: 'ak-panel ak-panel--menu', role: 'tabpanel' }, [
-				el('h3', { text: I.toolbarTab || 'Toolbar' }),
+				el('h3', { text: I.toolbarTab }),
 				el('p', { class: 'ak-foundation-intro', text: I.toolbarIntro })
 			]);
 			if (TB.enabled === false) { return p; }
@@ -324,14 +324,14 @@
 				{
 					class: 'ak-seg ak-menu-toolbar__seg',
 					role: 'group',
-					'aria-label': I.toolbarContext || 'Toolbar context'
+					'aria-label': I.toolbarContext
 				},
 				[
 					(ctxButtons.admin = el('button', {
 						type: 'button',
 						class: 'ak-seg__opt is-active',
 						'aria-pressed': 'true',
-						text: I.toolbarAdmin || 'Administration',
+						text: I.toolbarAdmin,
 						onclick: function () {
 							switchContext('admin');
 						}
@@ -340,7 +340,7 @@
 						type: 'button',
 						class: 'ak-seg__opt',
 						'aria-pressed': 'false',
-						text: I.toolbarFrontend || 'Public site',
+						text: I.toolbarFrontend,
 						onclick: function () {
 							switchContext('frontend');
 						}
@@ -354,7 +354,7 @@
 					el('button', {
 						type: 'button',
 						class: 'ak-btn ak-btn--ghost ak-menu-toolbar__spacer',
-						text: I.toolbarReset || 'Reset',
+						text: I.toolbarReset,
 						onclick: reset
 					})
 				])
@@ -477,12 +477,12 @@
 				listWrap.textContent = '';
 				if (!(sides.left.length + sides.right.length)) {
 					listWrap.appendChild(
-						el('p', { text: I.toolbarEmpty || 'No toolbar items found.' })
+						el('p', { text: I.toolbarEmpty })
 					);
 					return;
 				}
-				section('left', I.toolbarLeft || 'Left');
-				section('right', I.toolbarRight || 'Right');
+				section('left', I.toolbarLeft);
+				section('right', I.toolbarRight);
 				if (prevFlip) {
 					playFlip(listWrap, prevFlip, movedKey);
 				}
@@ -531,8 +531,8 @@
 				var up = el('button', {
 					type: 'button',
 					class: 'ak-menu-move__btn',
-					title: I.menuMoveUp || 'Move up',
-					'aria-label': I.menuMoveUp || 'Move up',
+					title: I.menuMoveUp,
+					'aria-label': I.menuMoveUp,
 					onclick: function () {
 						move(side, i, -1);
 					}
@@ -542,8 +542,8 @@
 				var down = el('button', {
 					type: 'button',
 					class: 'ak-menu-move__btn',
-					title: I.menuMoveDown || 'Move down',
-					'aria-label': I.menuMoveDown || 'Move down',
+					title: I.menuMoveDown,
+					'aria-label': I.menuMoveDown,
 					onclick: function () {
 						move(side, i, 1);
 					}
@@ -572,7 +572,7 @@
 					'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S5.5 5.5 12 5.5 21.5 12 21.5 12 18.5 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
 				var eyeOff =
 					'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.6 9.6 0 0 1 12 6c6.5 0 9.5 6 9.5 6a16.2 16.2 0 0 1-2.3 3.1M6.6 6.6A16 16 0 0 0 2.5 12s3 6 9.5 6a9.3 9.3 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
-				var lbl = item.hidden ? I.menuShow || 'Show' : I.menuHide || 'Hide';
+				var lbl = item.hidden ? I.menuShow : I.menuHide;
 				btn.innerHTML = item.hidden ? eyeOff : eye;
 				btn.setAttribute('aria-pressed', item.hidden ? 'true' : 'false');
 				btn.setAttribute('title', lbl);
@@ -628,7 +628,7 @@
 
 		function buildMenu() {
 			var p = el('section', { class: 'ak-panel ak-panel--menu', role: 'tabpanel' });
-			p.appendChild(el('h3', { text: I.menu || 'Menu' }));
+			p.appendChild(el('h3', { text: I.menu }));
 			p.appendChild(el('p', { class: 'ak-foundation-intro', text: I.menuIntro }));
 			if (!MM.menu || !MM.menu.length) {
 				return p;
@@ -680,14 +680,14 @@
 					el('button', {
 						type: 'button',
 						class: 'ak-btn ak-menu-toolbar__spacer',
-						text: I.menuExport || 'Export',
+						text: I.menuExport,
 						title: I.menuExportHint || '',
 						onclick: exportMenu
 					}),
 					el('button', {
 						type: 'button',
 						class: 'ak-btn',
-						text: I.menuImport || 'Import',
+						text: I.menuImport,
 						title: I.menuImportHint || '',
 						onclick: function () {
 							importInput.click();
@@ -760,7 +760,7 @@
 							? data
 							: null;
 				if (!items) {
-					setStatus('is-error', I.menuImportError || 'That file isn’t a valid AdminKit menu export.');
+					setStatus('is-error', I.menuImportError);
 					return;
 				}
 				state.menu = buildMenuModel(MM.menu, configFromItems(items));
@@ -1015,8 +1015,8 @@
 			var up = el('button', {
 				type: 'button',
 				class: 'ak-menu-move__btn',
-				title: I.menuMoveUp || 'Move up',
-				'aria-label': I.menuMoveUp || 'Move up',
+				title: I.menuMoveUp,
+				'aria-label': I.menuMoveUp,
 				onclick: function () {
 					move(-1);
 				}
@@ -1026,8 +1026,8 @@
 			var down = el('button', {
 				type: 'button',
 				class: 'ak-menu-move__btn',
-				title: I.menuMoveDown || 'Move down',
-				'aria-label': I.menuMoveDown || 'Move down',
+				title: I.menuMoveDown,
+				'aria-label': I.menuMoveDown,
 				onclick: function () {
 					move(1);
 				}
@@ -1090,7 +1090,7 @@
 				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S5.5 5.5 12 5.5 21.5 12 21.5 12 18.5 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
 			var eyeOff =
 				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.6 9.6 0 0 1 12 6c6.5 0 9.5 6 9.5 6a16.2 16.2 0 0 1-2.3 3.1M6.6 6.6A16 16 0 0 0 2.5 12s3 6 9.5 6a9.3 9.3 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
-			var lbl = item.hidden ? I.menuShow || 'Show' : I.menuHide || 'Hide';
+			var lbl = item.hidden ? I.menuShow : I.menuHide;
 			btn.innerHTML = item.hidden ? eyeOff : eye;
 			btn.setAttribute('aria-pressed', item.hidden ? 'true' : 'false');
 			btn.setAttribute('title', lbl);
@@ -1179,7 +1179,7 @@
 			var wpTab = el('button', {
 				type: 'button',
 				class: 'ak-icon-pop__tab',
-				text: I.menuIconWpSet || 'WordPress icons'
+				text: I.menuIconWpSet
 			});
 			var akPane = el('div', { class: 'ak-icon-pop__pane' });
 			var wpPane = el('div', { class: 'ak-icon-pop__pane' });
@@ -1251,14 +1251,14 @@
 			var wpSearch = el('input', {
 				type: 'search',
 				class: 'ak-icon-pop__search',
-				placeholder: I.menuIconSearch || 'Search…',
-				'aria-label': I.menuIconWpSet || 'WordPress icons'
+				placeholder: I.menuIconSearch,
+				'aria-label': I.menuIconWpSet
 			});
 			wpPane.appendChild(wpSearch);
 			var wpBtn = el('button', {
 				type: 'button',
 				class: 'ak-icon-pop__def',
-				text: I.menuIconWp || 'WordPress icon',
+				text: I.menuIconWp,
 				onclick: function () {
 					choose('wp-default');
 				}
@@ -1330,7 +1330,7 @@
 			// Quick tip: where to grab a pasteable SVG icon.
 			pop.appendChild(
 				el('div', { class: 'ak-icon-pop__hint' }, [
-					document.createTextNode((I.menuIconHint || 'Need an icon? Copy an SVG from') + ' '),
+					document.createTextNode((I.menuIconHint) + ' '),
 					el('a', { href: 'https://lucide.dev/icons/', target: '_blank', rel: 'noopener', text: 'Lucide' }),
 					document.createTextNode('.')
 				])
@@ -1434,7 +1434,7 @@
 			if (current) {
 				pop.appendChild(
 					el('div', { class: 'ak-url-pop__current' }, [
-						el('span', { class: 'ak-url-pop__current-lbl', text: (I.menuUrlCurrent || 'Current') + ' : ' }),
+						el('span', { class: 'ak-url-pop__current-lbl', text: (I.menuUrlCurrent) + ' : ' }),
 						el('code', { class: 'ak-url-pop__current-val', title: current, text: current })
 					])
 				);
@@ -1577,7 +1577,7 @@
 			var nav = el('div', {
 				class: 'ak-foundations-nav',
 				role: 'tablist',
-				'aria-label': I.navigation || 'Navigation',
+				'aria-label': I.navigation,
 				'aria-orientation': 'horizontal'
 			});
 			var panes = el('div', { class: 'ak-foundations-panes' });
@@ -1649,10 +1649,10 @@
 				sections[index].tab.focus();
 			});
 
-			addSection('menu', I.menu || 'Menu', buildMenu());
-			addSection('toolbar', I.toolbarTab || 'Toolbar', buildToolbar());
+			addSection('menu', I.menu, buildMenu());
+			addSection('toolbar', I.toolbarTab, buildToolbar());
 
-			p.appendChild(el('h2', { class: 'ak-foundations-title', text: I.navigation || 'Navigation' }));
+			p.appendChild(el('h2', { class: 'ak-foundations-title', text: I.navigation }));
 			p.appendChild(intro(I.navigationIntro || I.menuIntro));
 			editor.appendChild(nav);
 			editor.appendChild(panes);

@@ -309,6 +309,7 @@ class AdminKit_Settings_Page {
 
 		$data = array(
 			'screen'       => $screen,
+			'version'      => ADMINKIT_VERSION,
 			'values'       => $is_main ? array_combine( array_keys( AdminKit_Settings::schema() ), array_map( array( 'AdminKit_Settings', 'get' ), array_keys( AdminKit_Settings::schema() ) ) ) : array(),
 			'route'        => self::REST_NS . self::REST_ROUTE,
 			'features'     => $features,

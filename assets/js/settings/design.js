@@ -45,7 +45,7 @@
 			function providerValues(mode) {
 				if (state.accentSource !== 'bricks') { return {}; }
 				var style = getComputedStyle(document.documentElement);
-				var map = { bg: mode === 'dark' ? '--neutral-d-1' : '--background', surface: mode === 'dark' ? '--neutral-d-2' : '--surface', accent: '--accent', 'on-accent': '--accent-on' };
+				var map = { bg: mode === 'dark' ? '--neutral-d-1' : '--background', surface: mode === 'dark' ? '--neutral-d-2' : '--surface', accent: '--accent', 'on-accent': '--accent-on', 'accent-hover': '--accent-hover' };
 				var values = {};
 				Object.keys(map).forEach(function (role) { var value = style.getPropertyValue(map[role]).trim(); if (value) { values[role] = value; } });
 				return values;
@@ -56,15 +56,15 @@
 			function accentPicker() {
 				var sources = [
 					{ v: 'monochrome', label: I.accentSrcMonochrome },
-					{ v: 'adminkit', label: I.accentSrcAdminKit || 'WordPress' }
+					{ v: 'adminkit', label: I.accentSrcAdminKit }
 				];
 				if (D.bricksConnected) {
-					sources.push({ v: 'bricks', label: I.accentSrcBricks || 'Bricks' });
+					sources.push({ v: 'bricks', label: I.accentSrcBricks });
 				}
-				sources.push({ v: 'custom', label: I.accentSrcCustom || 'Custom' });
+				sources.push({ v: 'custom', label: I.accentSrcCustom });
 
 				var btns = [];
-				var seg = el('div', { class: 'ak-seg', role: 'radiogroup', 'aria-label': I.accentLabel || 'Accent' });
+				var seg = el('div', { class: 'ak-seg', role: 'radiogroup', 'aria-label': I.accentLabel });
 				seg.style.setProperty('--ak-accent-options', sources.length);
 				seg.addEventListener('keydown', function (event) {
 					var index = btns.indexOf(document.activeElement);
@@ -98,7 +98,7 @@
 				var swatch = el('button', {
 					type: 'button',
 					class: 'ak-accent-inline__sw',
-					'aria-label': I.accentLabel || 'Accent'
+					'aria-label': I.accentLabel
 				});
 				var hexInput = el('input', {
 					type: 'text',
@@ -106,14 +106,14 @@
 					placeholder: '#1549AB',
 					spellcheck: 'false',
 					maxlength: '7',
-					'aria-label': I.accentLabel || 'Accent'
+					'aria-label': I.accentLabel
 				});
 				hexInput.value = state.brandAccent || '';
 				if (state.accentSource !== 'custom') {
 					hexInput.setAttribute('hidden', '');
 					swatch.setAttribute('hidden', '');
 				}
-				var native = el('input', { type: 'color', class: 'ak-accent-inline__native', tabindex: '-1', 'aria-label': I.accentLabel || 'Accent' });
+				var native = el('input', { type: 'color', class: 'ak-accent-inline__native', tabindex: '-1', 'aria-label': I.accentLabel });
 				native.value = isValidHex(state.brandAccent) ? state.brandAccent : D.adminkitBlue || '#1549AB';
 
 				function applyPreview() {
@@ -319,9 +319,10 @@
 					var values = state.accentSource === 'custom' ? Object.assign({}, overrides) : providerValues(card.mode);
 					card.scope.setAttribute('data-preview-accent', state.accentSource === 'adminkit' ? 'waaskit' : 'monochrome');
 					roles.forEach(function (role) { card.scope.style.removeProperty('--wk-' + role[0]); });
-					if (state.accentSource === 'custom' && isValidHex(state.brandAccent)) {
-						card.scope.style.setProperty('--wk-accent', state.brandAccent);
-						card.scope.style.setProperty('--wk-on-accent', bestOnAccent(state.brandAccent));
+					card.scope.style.removeProperty('--wk-accent-hover');
+					if (state.accentSource === 'custom') {
+						if (!values.accent && isValidHex(state.brandAccent)) { values.accent = state.brandAccent; }
+						if (values.accent && !values['on-accent']) { values['on-accent'] = bestOnAccent(values.accent); }
 					}
 					Object.keys(values).forEach(function (role) { card.scope.style.setProperty('--wk-' + role, values[role]); });
 					if (!card.scope.isConnected) { return; }
@@ -348,7 +349,7 @@
 			// --- Section 2: Typography (Font family + Text scale) --------------------
 			var fontCatalog = D.fonts || {
 				geist: { label: 'Geist (AdminKit)', stack: '"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif', google: null },
-				system: { label: I.fontSystem || 'System UI', stack: 'ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif', google: null },
+				system: { label: I.fontSystem, stack: 'ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif', google: null },
 				inter: { label: 'Inter (Google Fonts)', stack: '"Inter",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'Inter:wght@400;500;600;700' },
 				'plus-jakarta-sans': { label: 'Plus Jakarta Sans (Google Fonts)', stack: '"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'Plus+Jakarta+Sans:wght@400;500;600;700' },
 				'dm-sans': { label: 'DM Sans (Google Fonts)', stack: '"DM Sans",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'DM+Sans:wght@400;500;600;700' },

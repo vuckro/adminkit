@@ -40,18 +40,18 @@
 	// labels never break detection. Missing rows (e.g. WPLANG on a site
 	// without translations) are silently skipped.
 	var BLOCKS = [
-		{ id: 'site-identity', tab: 'general', title: S.identity || 'Site identity',          desc: S.identityDesc || '', rows: [ 'blogname', 'blogdescription', 'siteurl', 'home' ] },
-		{ id: 'site-icon',     tab: 'general', title: S.siteIcon || 'Site Icon',              desc: S.siteIconDesc || '', rows: [ 'site_icon' ] },
+		{ id: 'site-identity', tab: 'general', title: S.identity,          desc: S.identityDesc || '', rows: [ 'blogname', 'blogdescription', 'siteurl', 'home' ] },
+		{ id: 'site-icon',     tab: 'general', title: S.siteIcon,              desc: S.siteIconDesc || '', rows: [ 'site_icon' ] },
 		{ id: 'admin-logo', tab: 'general', title: S.logo, desc: S.logoDesc, rows: [ 'adminkit_settings[logo_url]' ] },
-		{ id: 'account',       tab: 'account', title: S.account  || 'Account & registration', desc: S.accountDesc  || '', rows: [ 'admin_email', 'new_admin_email', 'users_can_register', 'default_role' ] },
-		{ id: 'locale',        tab: 'locale',  title: S.languageZone || 'Language & timezone', desc: S.languageZoneDesc || '', rows: [ 'WPLANG', 'timezone_string' ] },
-		{ id: 'formats',       tab: 'locale',  title: S.formats || 'Date & time formats', desc: S.formatsDesc || '', rows: [ 'date_format', 'time_format', 'start_of_week' ] }
+		{ id: 'account',       tab: 'account', title: S.account, desc: S.accountDesc  || '', rows: [ 'admin_email', 'new_admin_email', 'users_can_register', 'default_role' ] },
+		{ id: 'locale',        tab: 'locale',  title: S.languageZone, desc: S.languageZoneDesc || '', rows: [ 'WPLANG', 'timezone_string' ] },
+		{ id: 'formats',       tab: 'locale',  title: S.formats, desc: S.formatsDesc || '', rows: [ 'date_format', 'time_format', 'start_of_week' ] }
 	];
 
 	var TABS = [
-		{ id: 'general', title: S.tabGeneral || 'Identity' },
-		{ id: 'locale',  title: S.tabLocale  || 'Localization' },
-		{ id: 'account', title: S.tabAccount || 'Account' }
+		{ id: 'general', title: S.tabGeneral },
+		{ id: 'locale',  title: S.tabLocale },
+		{ id: 'account', title: S.tabAccount }
 	];
 
 	// Leading tab icons (Lucide-style, currentColor) so this strip reads like the

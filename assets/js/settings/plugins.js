@@ -26,7 +26,7 @@
 				return el('span', {
 					class: 'ak-badge ak-badge--brand',
 					title: I.nativeHint || '',
-					text: I.native || 'Native'
+					text: I.native
 				});
 			}
 
@@ -35,7 +35,7 @@
 				return el('span', {
 					class: 'ak-badge',
 					title: I.systemHint || '',
-					text: I.system || 'System'
+					text: I.system
 				});
 			}
 
@@ -45,7 +45,7 @@
 				return el('span', {
 					class: 'ak-badge',
 					title: I.genericHint || '',
-					text: I.generic || 'Generic'
+					text: I.generic
 				});
 			}
 
@@ -150,8 +150,8 @@
 			// search field + bulk bar above them.
 			var sections = [];
 			[
-				{ type: 'theme', label: I.themesLabel || 'Themes' },
-				{ type: 'plugin', label: I.plugins || 'Plugins' }
+				{ type: 'theme', label: I.themesLabel },
+				{ type: 'plugin', label: I.plugins }
 			].forEach(function (sec) {
 				var items = list.filter(function (i) {
 					return i.type === sec.type;
@@ -165,7 +165,7 @@
 					var r = pluginRow(i);
 					// Searchable by plugin name + its badge word (so "native" / "generic"
 					// narrow to that kind). The badge tracks the adapter status.
-					var badge = i.system ? I.system || 'System' : i.supported ? I.native || 'Native' : I.generic || 'Generic';
+					var badge = i.system ? I.system : i.supported ? I.native : I.generic;
 					var ref = { row: r, text: ((i.label || '') + ' ' + badge).toLowerCase() };
 					rowsRef.push(ref);
 					groupRows.push(ref);
@@ -187,8 +187,8 @@
 			var search = el('input', {
 				type: 'search',
 				class: 'ak-search',
-				placeholder: I.searchPlugins || 'Search plugins…',
-				'aria-label': I.searchPlugins || 'Search plugins…'
+				placeholder: I.searchPlugins,
+				'aria-label': I.searchPlugins
 			});
 			var empty = el('p', { class: 'ak-empty', role: 'status', hidden: 'hidden', text: I.noResults });
 			function filterPlugins() {
@@ -216,7 +216,7 @@
 						el('button', {
 							type: 'button',
 							class: 'ak-btn',
-							text: I.resetDefaults || 'Reset to defaults',
+							text: I.resetDefaults,
 							onclick: resetAll
 						})
 					])

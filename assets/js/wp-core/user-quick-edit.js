@@ -146,7 +146,7 @@
 					if (!json || !json.success) {
 						if (saveBtn) { saveBtn.disabled = false; }
 						if (cancel) { cancel.disabled = false; }
-						var msg = (json && json.data && json.data.message) || L.genericErr || 'Error';
+						var msg = (json && json.data && json.data.message) || L.genericErr;
 						if (errEl) { errEl.textContent = msg; }
 						return;
 					}
@@ -157,7 +157,7 @@
 					if (spinner) { spinner.classList.remove('is-active'); }
 					if (saveBtn) { saveBtn.disabled = false; }
 					if (cancel) { cancel.disabled = false; }
-					if (errEl) { errEl.textContent = L.genericErr || 'Error'; }
+					if (errEl) { errEl.textContent = L.genericErr; }
 				});
 		}
 
