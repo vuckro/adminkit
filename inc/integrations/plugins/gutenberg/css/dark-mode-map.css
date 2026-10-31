@@ -1235,6 +1235,9 @@ body.block-editor-page.adminkit .interface-interface-skeleton__sidebar {
 	background: var(--ak-surface);
 	border-top: 0;
 	border-left-color: var(--ak-border);
+	/* The complementary area already owns a 1px divider. Core's outer
+	   shadow otherwise doubles and darkens that same edge. */
+	box-shadow: none;
 }
 
 
