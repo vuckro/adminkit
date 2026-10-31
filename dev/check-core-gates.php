@@ -1,7 +1,7 @@
 <?php
 /** An explicit global veto leaves WP-Core outputs, assets and write entrypoints inert. */
 define('ABSPATH',__DIR__.'/');define('ADMINKIT_PATH',dirname(__DIR__).'/');
-$admin=true;$allow=false;$screen=(object)array('id'=>'profile','base'=>'profile','post_type'=>'post');$registrations=array();
+$admin=true;$allow=false;$screen=(object)array('id'=>'profile','base'=>'profile','post_type'=>'post');
 function is_admin(){global$admin;return$admin;}
 function apply_filters($hook,$value){global$allow;return$hook==='adminkit/should_load'?$allow:$value;}
 function get_current_screen(){global$screen;return$screen;}

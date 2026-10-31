@@ -2,39 +2,34 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, reprise/base-main-locale, 'codex/**' ]
   pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  lint:
+  quality:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        # The plugin requires PHP 7.4; check the floor and a current version.
         php: [ '7.4', '8.2' ]
-    name: PHP ${{ matrix.php }}
+    name: Quality / PHP ${{ matrix.php }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: dom, libxml
           coverage: none
-
-      - name: Lint every PHP file
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: dev/smoke/package-lock.json
+      - name: Install quality tooling
         run: |
-          set -e
-          find adminkit.php inc dev tokens -name '*.php' -print0 \
-            | xargs -0 -n1 -P4 php -l > /dev/null
-          echo "All PHP files parse."
-
-      - name: Token catalog is in sync (waaskit-tokens.css)
-        run: php tokens/build.php --check
-
-      - name: Custom accent contrast and CSS ownership
-        run: |
-          php dev/check.php
-          php dev/css-contract.php
+          sudo apt-get update
+          sudo apt-get install -y gettext rsync
+          npm ci --prefix dev/smoke
+      - name: Unified quality gate
+        run: php dev/test-all.php

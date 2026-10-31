@@ -46,19 +46,12 @@ WaasKit's complete source snapshot stays in Git while generated CSS includes onl
 variables required by AdminKit.
 
 ```sh
-php tokens/build.php
-php tokens/build.php --check
-php dev/check.php
-php dev/check-write-endpoints.php
-php dev/check-username-changer.php
-node dev/smoke/boot.test.js
-node dev/smoke/saving.test.js
-php dev/css-contract.php
-php dev/adapter-audit.php
-php dev/adapter-drift.php
+npm ci --prefix dev/smoke
+php dev/test-all.php
 ```
 
-Lint changed PHP with `php -l` and JavaScript with `node --check`. Browser-check
+The unified gate includes syntax, all regression scripts, CSS/token contracts,
+i18n drift, module/package integrity and jsdom tests. Browser-check
 affected screens and persistence before deploying. Host drift checks require the
 corresponding third-party plugin/theme to be installed.
 

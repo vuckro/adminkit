@@ -1,501 +1,163 @@
 # Architecture
 
-How AdminKit fits together, end to end — the mental model plus the two APIs you
-touch most (the **asset registry** and the **settings registry**). Token
-specifics live in [TOKENS.md](TOKENS.md); integration patterns in
-[INTEGRATIONS.md](INTEGRATIONS.md); every hook in [EXTENDING.md](EXTENDING.md).
-
-## The shape of it
-
-AdminKit is **standalone** — it ships a complete look with no dependencies — and
-optionally takes brand colours from a **provider** (a theme/framework like
-Bricks). Everything visual flows through CSS custom properties (`--ak-*`), so one
-indirection drives both dark mode and provider theming.
-
-```
-adminkit.php
-  └─ AdminKit_Plugin::init()
-       ├─ AdminKit_Assets::init()          wire the 4 dispatch hooks
-       ├─ wp-core modules ::init()         chrome, login, profile, admin bar, list-table,
-       │                                   post-previews,
-       │                                   notification-center, footer, help-button, plugins-list
-       ├─ feature modules ::init()         inc/features/{menu,toolbar}/ — self-contained tools,
-       │                                   each self-registers its own AdminKit subpage
-       ├─ Settings + Theme toggle init
-       ├─ boot_integrations()              glob inc/integrations/*/*/class-*.php,
-       │                                   queue each maybe_init() on after_setup_theme
-       └─ do_action( 'adminkit/loaded' )
-```
-
-Two tiers under `inc/`: **wp-core/** restyles surfaces WordPress already renders;
-**features/** adds NEW AdminKit surfaces (menu/toolbar editors and the notification drawer), each its own
-focused admin subpage. The AdminKit workspace has Design system, Features and Navigation tabs. Navigation
-contains the Menu and Toolbar editors when enabled. Legacy standalone editor hosts
-remain supported by the shared build-free vanilla-DOM engine
-(`assets/js/settings.js`); `AdminKit_Settings_Page` supplies boot data and assets.
-Dark mode is design-time CSS only — no runtime auto-theme engine.
-
-`after_setup_theme` runs after the active theme loads, so host constants
-(`BRICKS_VERSION`, `WC_VERSION`, …) are reliable when an integration checks
-`is_active()`. Class names (`AdminKit_*`) are stable; the folder grouping is
-organizational only — integration discovery derives the class from the file
-basename (see [INTEGRATIONS.md](INTEGRATIONS.md)).
-
-## Asset registry (CSS + JS)
-
-CSS is **declared**, not enqueued directly. Each module calls
-`AdminKit_Assets::register([ … ])`; a dispatcher enqueues the matching entries
-once per request, per **context**:
-
-| Context | WP hook | When (priority 9999, after WP) |
-| --- | --- | --- |
-| `admin` | `admin_enqueue_scripts` | every wp-admin page |
-| `login` | `login_enqueue_scripts` | wp-login.php |
-| `frontend` | `wp_enqueue_scripts` | only when the admin bar shows |
-| `editor` | `enqueue_block_editor_assets` | block / site / widgets / nav editors |
-
-```php
-AdminKit_Assets::register( array(
-    'handle'    => 'adminkit-themes',
-    'src'       => 'assets/css/wp-screens/themes.css', // relative to ADMINKIT_PATH
-    'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
-    'context'   => 'admin',
-    'section'   => 'pages',  // optional; defaults to handle minus `adminkit-`
-    'condition' => static function ( $screen ) {        // null = always-load
-        return $screen && in_array( $screen->id, array( 'themes', 'theme-install' ), true );
-    },
-) );
-```
-
-**Three gates** decide whether a registered entry enqueues, in order — any false
-skips it: `adminkit/enqueue_{section}` (per-section bail), `adminkit/enqueue_{handle}`
-(per-asset bail), then the `condition` closure. `filemtime` cache-busts every
-file (edit CSS/JS → no version bump). All bail filters are in [EXTENDING.md](EXTENDING.md).
-
-**JS bricks.** Feature behaviour (profile tabs, post-preview hover + click-to-recapture,
-list-table polish, local avatars) ships as `assets/js/wp-core/*.js`. All are
-enqueued in the footer via
-`AdminKit_Assets::enqueue_script( $handle, $src, $deps, $data )` — same
-`filemtime` cache-bust as CSS, with PHP data passed as a `before` inline
-bootstrap (`window.AdminKit*`). The one exception is the **theme pre-paint
-script** in `class-theme-toggle.php`: it stays inline in `<head>` so dark/light
-applies before first paint (no FOUC). `assets/js/settings.js` is the shared host for the screen modules.
-
-**Where AdminKit registers its own assets:** `inc/wp-core/class-chrome.php` (all
-admin CSS — chrome, components, screens), `class-login.php` (login), the wp-core
-feature classes (their CSS + JS), and each integration's `register_assets()`.
-The dispatcher itself knows about no specific asset.
-
-```
-assets/
-├── css/
-│   ├── tokens.css                 # the --ak-* layer, ALWAYS on; owns dark mode
-│   ├── waaskit-tokens.css         # GENERATED baseline (see TOKENS.md — do not edit)
-│   ├── wp-core/                   # always in admin: chrome, links, adminbar
-│   ├── wp-components/             # always in admin (section `forms`): inputs, buttons, tables, form-table, post-previews
-│   ├── wp-screens/                # per-screen (section `pages`) + _shared/ + a few broad always-on (wp-components, wpds, font-library, media)
-│   ├── login.css                  # login context
-│   └── settings.css               # AdminKit settings page
-└── js/
-    ├── settings.js                # shared screen host
-    └── wp-core/                   # footer bricks: profile-account, post-previews, list-table-chrome, user-quick-edit, username-changer
-inc/integrations/{plugins|themes}/{slug}/css/   # integration CSS, registered by each class
-```
-
-**Add a per-screen file:** drop `assets/css/wp-screens/{name}.css`, then add a
-`self::register_screen( '{name}', array( '{screen-id}', … ) )` line in
-`inc/wp-core/class-chrome.php`. The helper wraps the registry call with the
-`section => 'pages'` filter and a screen-matching `condition`.
-
-**Dynamic CSS:** the `adminkit/tokens_enqueued` action fires right after
-`adminkit-tokens` is enqueued for a context — hook it with
-`wp_add_inline_style( AdminKit_Assets::TOKENS_HANDLE, $css )` to inject runtime
-token overrides (e.g. a provider/integration applying live values).
-
-## The token cascade
-
-The complete WaasKit snapshot is `tokens/palettes/waaskit.json`. Role declarations
-live in `tokens/adminkit.json`; native WordPress variable mappings live in
-`tokens/appearance.css` owns custom-state rules and `tokens/wordpress.css` owns native aliases. The PHP build follows both themes' dependencies and emits
-only required WaasKit variables. Missing or circular references fail the build.
-
-Generated outputs: `waaskit-tokens.css` (document/preview),
-`waaskit-toolbar-tokens.css` (public toolbar scope), and `tokens.css` (AdminKit roles
-and WordPress mappings). The full upstream snapshot is preserved in source control.
-The public toolbar receives no WaasKit declarations on the site's root element.
-
-The default accent is WaasKit monochrome, with separate light/dark roles; WaasKit blue is explicit. Explicit custom
-colors and the opt-in Bricks provider add overrides through the existing hook.
-A custom color uses whichever of pure black or white offers the higher contrast;
-the browser preview and PHP output apply the same WCAG calculation.
-See [TOKENS.md](TOKENS.md).
-
-## Provider model
-
-A provider is just an integration that supplies tokens at runtime. Bricks
-(`inc/integrations/themes/bricks/class-bricks.php`) is the reference:
-`provide_tokens()` (on `adminkit/extra_tokens_handle`) enqueues the host's live
-token sheet **as a dependency of the baseline**, so it loads after and wins;
-returns the existing handle when the host hasn't generated one, leaving
-AdminKit's baseline as the visible fallback. The settings page exposes connected
-provider state through `AdminKit_Settings_Catalog`.
-
-**To add a provider:** create an integration that returns its token handle from
-`adminkit/extra_tokens_handle`. No core changes. Future palette-sync work should
-plug into the same seams — `adminkit/extra_tokens_handle`,
-`AdminKit_Settings_Catalog`, the `adminkit/setting/{key}` filter, and REST save.
-
-## Settings
-
-`AdminKit_Settings_Page` owns the host, capability checks and REST settings save.
-The shared `assets/js/settings.js` host receives one screen factory:
-
-| Pages | JavaScript | Styles |
-| --- | --- | --- |
-| Brand / Features / Plugins | `settings/main.js` (host) + `settings/design.js`, `features.js`, `plugins.js` (one tab each, loaded first and exposed on `window.AdminKitParts`) | `settings/main.css` |
-| Menu / Toolbar | `settings/navigation.js` | `settings/navigation.css` |
-
-Paths are relative to `assets/js/` and `assets/css/`. Every page also loads the
-small shared host and `settings.css`. WordPress script dependencies guarantee
-that its factory exists before the host mounts. No framework or build is required.
-
-Factories receive shared data, state and helpers explicitly. A unified factory
-returns `requests()`, keyed by persistence scope (`settings`, `menu`, `toolbar`).
-Standalone hosts may return one `request()`. Controls call `markDirty(scope)`;
-settings controls default to `settings`. The host snapshots pending payloads and
-saves them sequentially, with settings last so disabling a feature cannot remove
-its route before its layout saves. Successful scopes are cleared only if their
-revision is unchanged. On failure, remaining drafts stay editable and retryable;
-there is no cross-endpoint transaction. Reload occurs only when every draft is
-saved, and any newer edit cancels it. Import is available only without pending
-edits or an active save.
-Main tabs mount on first selection. Tab panels retain stable ARIA relationships
-and keyboard navigation; single-panel pages have no orphaned tab labels.
-
-Boot data and translations are filtered per screen. The media frame loads only
-for Brand controls. Existing schema/defaults, settings sanitization, WordPress
-capabilities, REST nonces and separate menu/toolbar routes remain in place.
-
-Settings are stored in `adminkit_settings`. Menu layouts use the existing per-site
-rows in the shared menu table; toolbar layouts use `adminkit_toolbar`. Full feature
-catalogs and defaults live in `inc/settings/class-settings.php` and
-`class-settings-catalog.php`, rather than a duplicate list in this document.
-
-## Verification
-
-Run `php tokens/build.php --check`, `php dev/check.php`, PHP/JS lint and the adapter
-audit. Browser-check the affected screens, actual save/reload and unauthorized REST
-writes. The packaging tool excludes development sources, docs and agent instructions
-and packages `HEAD` by default.
-
-See [EXTENDING.md](EXTENDING.md) for hooks, [INTEGRATIONS.md](INTEGRATIONS.md) for
-adapter contracts and [INSTALL.md](INSTALL.md) for packaging.
-
-## Native list tables
-
-The list-table skin follows the [WaasKit table component](https://design.waaskit.site/composants/tableaux/): 16px card radius, sunken 40px column headers, fine row dividers, soft hover and checked-row accent state. Native rows retain their content-driven height and WordPress controls.
-
-`list-table-chrome.js` groups the existing top/bottom navigation bars and scroll container into one card on native Posts, Pages, Media-list, Users, Terms, Comments and Plugins screens. Controls stay in their original form with their existing IDs and event handlers. Third-party screens retain their existing wrappers. The redundant table footer headings are visually hidden inside a card; top sorting/selection headers and both navigation bars remain available. Mobile row expansion and Quick/Bulk Edit retain their native behavior.
-
-This presentation writes no options or user metadata.
-
-## CSS ownership
-
-Generated tokens own color values. Appearance variants are attribute-scoped; components consume the role appropriate to the surface, including separate accent ink and on-fill ink. PHP and JavaScript inject custom values only, so live preview and saved settings share one stylesheet implementation. Native list tables and generic widefat tables have separate owners, and chrome does not reset table borders. Settings content is bounded by WaasKit’s wide container and choice controls wrap at mobile widths.
-
-Run `php dev/css-contract.php` alongside token drift, contrast and browser checks. Do not add a global reset or another override layer to repair a local component.
-
-### Feature and integration defaults
-
-Branding, icons, theme toggle, login styling, clean chrome, navigation editors
-and notifications default to true. User quick edit, username changing, previews
-and active-items-first remain opt-in. Detected plugin adapters default to true. Stored explicit
-choices remain effective. Resetting Features restores their registered defaults;
-resetting Extensions enables all available integrations for debugging recovery.
-Generic plugin screens are themed unless their plugin file is in
-`generic_theming_off`. The legacy `generic_theming_on` allowlist no longer limits
-newly detected plugins.
-Core administration styling and the settings screen remain the base layer.
-Menu/toolbar editors bind their routes and hooks only when enabled. The menu
-table is created lazily by its enabled module, never by plugin activation.
-
-### WPDS et Connecteurs natifs
-
-Le raccord des fournisseurs WPDS historiques et WordPress 7.1 est décrit dans [CORE-CONNECTORS-REVIEW.md](CORE-CONNECTORS-REVIEW.md). Les variables inline renommées sont traduites vers les rôles AdminKit dans `assets/css/wp-screens/wpds.css`.
-
-### Survol du menu et icônes masquées
-
-Le masque SVG du menu peint `currentColor`. `wp-core/chrome.css` limite sa transition à `color` au lieu du `transition: all` natif. L’état `.opensub`, maintenu brièvement par WordPress après la sortie de souris, reçoit explicitement la couleur active pour éviter le passage blanc de `colors/modern`. Le fond de survol utilise `--ak-hover-bg`, distinct du menu clair comme sombre. Les transitions sont supprimées avec `prefers-reduced-motion: reduce`.
-
-Contrôle local : sortie de survol échantillonnée sur 20 images par thème, masque/dimensions stables, aucune couleur blanche intermédiaire ; durée réduite à 0 s avec la préférence de mouvement réduit. Rapport `output/funnelkit-review/followup/menu-hover-final.log` du workspace.
-
-### Alertes et notifications WaasKit
-
-`assets/css/wp-components/feedback.css` habille les alertes de premier niveau et celles déplacées dans `.ak-nc-list` : surface neutre, bordure fine, icône Lucide propre au statut dans une tuile douce, fermeture discrète avec focus et cible tactile de 44 px sur mobile. Les notices contextuelles des formulaires et lignes de mise à jour gardent leur géométrie compacte. Les snackbars React reçoivent une surface surélevée et des actions contrastées ; leurs durées, annonces et gestionnaires restent natifs.
-
-Références : [Alertes WaasKit](https://design.waaskit.site/composants/alertes/) et [Modales et toasts](https://design.waaskit.site/composants/modales-toasts/). Les essais utilisent des exemples DOM temporaires, retirés ensuite, sans activation d’extension ni modification des messages métier. La fermeture est exercée par `wp-notice-added` et le gestionnaire natif `click.wp-dismiss-notice` de WordPress, au clavier. Succès/info/avertissement/erreur et snackbar contrôlés à 1280 et 390 px en clair/sombre : aucun défaut au dépistage de contraste textuel ni débordement du document. Preuves dans `output/funnelkit-review/followup/alerts-native-review.log` du workspace.
-
-### Storage upgrades
-
-`AdminKit_Upgrades` applies versioned, per-site upgrades on `admin_init` for an
-administrator. `adminkit_storage_version` is not autoloaded. Upgrade 1 retires the
-custom-avatar setting, sync marker and user metadata; only the former AdminKit
-portrait default is reset to WordPress's Mystery Person. Other avatar choices
-and ordinary user profile fields are preserved. User metadata is network-shared
-in multisite; the removed avatar module no longer consumes it on any site.
-Native WordPress avatars remain available; AdminKit no longer generates portraits.
-
-Storage upgrade 2 removes `bricks_builder_enabled` from the settings document.
-The Bricks builder styling, assets and automatic builder-mode writes are removed;
-the separate optional Bricks admin/token adapter remains. No previous Bricks
-builder mode was recorded, so migration does not overwrite the native setting.
-
-Storage upgrade 3 renames `plugins_active_first_enabled` to
-`active_items_first_enabled`, retaining an explicit choice and preferring an
-already saved new value. This opt-in now covers standard post/page/CPT lists
-(Published) as well as plugins (Active). Native page hierarchies remain intact;
-explicit filters, content searches and requested sorting are preserved.
-
-Storage upgrade 4 retires the custom dashboard and traffic statistics. It removes
-the per-site statistics table, module settings, database-version/prune markers,
-module-owned user preferences and database-backed caches. Other modules and native
-WordPress dashboard preferences are retained. A failed table drop is retried.
-External transient caches expire by their existing TTLs; the dedicated statistics
-object-cache group is flushed when supported. No global cache flush is performed.
-The WordPress dashboard remains available with the base administration skin.
-
-### Shared navigation segments
-
-Status filters, native settings tabs, browse filters and AdminKit panel tabs share
-one segmented-control definition in `wp-core/chrome.css`: 3px track inset, 2px gap,
-34px desktop segments, neutral active border/elevation and a visible keyboard
-indicator. Mobile segments use the shared touch-control height and scroll within
-the available width. WooCommerce overrides retain the same geometry. Markup,
-ARIA semantics, links, selected state and form fields stay owned by each screen.
-
-Storage upgrade 6 drops the retired `logo_light`, `logo_dark`, `logo_source`, `wp_logo`, `login_logo`, `ui_radius`, `ui_density` and `generic_theming_on` keys (a legacy light/dark logo seeds `logo_url` when it is empty). `uninstall.php` removes every AdminKit option, transient and the network-shared menu table when the plugin is deleted; deactivation keeps data. Saving from the settings screen replaces only the keys it posts, so `logo_url` (edited on Settings → General) is never reset.
-
-Storage upgrade 5 removes the retired online-users flag and `adminkit_last_login` user metadata. Native WordPress `session_tokens` are preserved. AdminKit no longer records login timestamps or scans sessions for presence.
-
-On desktop hover-capable devices, post/page/CPT titles are vertically centered over the reserved native actions space at rest. Hover or keyboard focus lifts the title by 10px over 200ms and reveals the actions; row height stays fixed throughout. Touch keeps native layout. Reduced motion changes states immediately.
-
-Installed extension names share the same resting centering and hover/focus lift as content titles. The native plugin `row-actions.visible` class is overridden only for desktop hover reveal; touch retains native visible actions.
-
-Native list table alignment is centralized in `wp-components/tables.css`. Compact primary labels (content, taxonomy, installed plugins and usernames with avatars) share the centered resting state and title lift. Media extends this treatment in `wp-screens/media.css`: title and muted filename move together while the thumbnail stays stationary. Comments retain their richer content layout. All share action reveal and keyboard access. Mobile keeps native disclosures; inline editors and update notices are excluded from desktop alignment. Media label motion respects reduced-motion preferences.
-
-### Current-user profile layout
-
-Native account and General/Discussion settings tabs reveal the first invalid
-field before browser validation focuses it. General/Discussion group their
-existing nodes in labelled tabpanels; arrows, Home and End move between tabs.
-Action feedback (`settings-error`, native error `#message`, account errors)
-stays inline instead of moving to the notification drawer. Drawer opening makes
-visibility immediate so the existing focus call works during the slide animation.
-
-Table scroll regions use the existing resize observer to become named keyboard
-destinations only while overflowing. Title/name cells wrap; compact data does not.
-The editor theme button is hidden outside fullscreen because the admin bar already
-provides one. `--ak-inverse-text` preserves text on the Site Editor's dark sidebar.
-
-On `profile.php` and `user-new.php`, the Information tab presents two sibling cards: Identity and
-contact, and Security. The tabpanel retains its role and URL hash state. Panel IDs use the
-`ak-account-panel-` prefix and tabs point to them via `aria-controls`, so
-`#information` and `#settings` select tabs without native anchor scrolling.
-`profile-account.js` moves native rows without cloning fields; submission and
-password controls remain native. `profile.css` stacks the cards below 1120px.
-The user-edit screen retains its existing layout.
-
-The account layout script is preloaded in the head and printed at the start of
-`in_admin_footer`, after the complete form and before other footer scripts.
-The pending form is revealed immediately after grouping, without an opacity fade;
-the existing load/timeout fallback keeps fields accessible if the builder fails.
-
-The profile and account-creation forms share a 1240px maximum width and keep
-the native administration `.wrap` gutters and left alignment. Tabs, cards and
-submit share the form edges; no page width or margin override is added.
-Cards align at the top and retain their natural height; no script measures them.
-
-Card surfaces share `--ak-card-border` and `--ak-card-shadow` in the source
-`tokens/appearance.css` (generated into `tokens.css`):
-a light contour and compact 2px contact shadow in light mode, with the existing
-low elevation in dark mode. The design-system elevation setting overrides only these surface shadows;
-its Default choice preserves the theme-specific contact shadow. Native postboxes, settings/account cards, AdminKit
-panels, generic cards and theme/plugin catalog cards consume this shared role.
-Headers, form controls, tables and floating overlays retain their own treatments.
-
-Primary buttons share `--ak-btn-primary-shadow`: WaasKit contact elevation plus
-`--ak-btn-primary-highlight`, a fine top inset reflection. This role is independent
-of surface elevation and the legacy subtle-shadow alias. Keyboard focus composes
-the focus ring with that relief; disabled buttons remove it. Shapes & elevation
-also exposes the validated 0–2px `--ak-border-width`, consumed by owned buttons,
-fields and outer card/table frames. Internal separators remain one pixel.
-
-Table outer frames use `--ak-table-border` and `--ak-table-shadow`, mapped to
-the card contour and contact elevation. Wrapped tables receive the shadow only
-on the outer frame; internal rows and scrolling tables retain their separators.
-
-`wp-components/form-table.css` owns the shared save row for native General,
-Writing, Reading, Discussion, Media and Permalink settings, plus profile and
-account creation/edit forms. Actions align to the form's end after a separator;
-primary buttons are full width with a 44px minimum height below 600px. Editor,
-bulk and third-party plugin actions retain their own layout.
-
-### Installer browse layout
-
-`wp-screens/_shared/wp-filter.css` owns the wrapping toolbar layout for plugin
-and theme installers. Search expands into remaining space or fills the next row;
-native theme drawers keep their display state and span the toolbar width. Media
-and installed-theme toolbars retain their own layouts. Plugin installer card
-buttons stay in normal flow below the description so translated actions cannot
-overlap titles; the native thumbnail column remains unchanged.
-
-Shared Help/Screen Options toggles keep their native chevrons in a non-wrapping
-inline flex row. Pagination arrow links and disabled spans share centered glyphs
-and equal minimum hit areas (32px desktop, 40px mobile). The installer pagination
-uses the same inline alignment as table cards, while native one-page hiding is
-preserved outside those cards. No JavaScript or animation is added.
-
-### General settings navigation
-
-`options-general.js` keeps native fields in the original form and groups them into General, Accounts & registration, and Language/date/time tabs. The locale tab separates language/timezone from display formats into two cards. Desktop panels use the shared two-column grid; the account panel keeps a single readable column. In Identity, site details lead, followed by the site icon and administration logo in that DOM order; desktop places these two visual assets in the right column. Card headings and introductions are localized by `class-options-general.php`.
-
-### Discussion settings cards
-
-The Comments tab groups existing native rows into Participation, Display, Notifications, and Moderation/filtering cards, matched by input names. The mixed native Other comment settings row remains intact in Participation, including threaded replies. Unknown plugin rows stay in the original table. Fields retain their IDs, labels, values and original settings form; Avatars remains a separate tab.
-
-### Profile settings cards
-
-On `profile.php`, the existing Settings tabpanel groups native rows into Public profile, Administration preferences, Sessions, and Application passwords sibling cards. Headings and introductions are inside each card. Empty groups are omitted. The application-password wrapper and its native handlers are retained; user-edit and user creation retain their existing layouts.
-
-### Reading settings and taxonomy layout
-
-`wp-core/class-reading-layout.php` loads purpose-led enhancements only on Reading
-and taxonomy-list screens. `options-reading.js` groups native rows by field name
-into titled homepage/archive, RSS, and search visibility sections. Unknown extension
-rows stay in their source table. All fields and nonces stay in the original form.
-`taxonomy.js` runs after list-table chrome, adds a titled management header, and
-moves the existing search controls into it. `wp-screens/taxonomy.css` gives the
-creation form a bounded column, reduces helper-text density, and stacks columns
-below 1100px without changing native submission or responsive row controls.
-
-### Shared WordPress alerts
-
-`assets/css/wp-components/feedback.css` owns native `.notice`, legacy
-`div.updated`/`div.error`, `.update-nag`, React `.components-notice` and snackbar
-appearance. Matching is independent of parent containers, including dynamically
-inserted form/session/application-password messages. All statuses share a neutral
-surface and border, with a semantic icon tile. Core dismiss handlers, content,
-ARIA roles and timing remain unchanged. Plugin update rows retain their table
-spacing while consuming this same alert frame. The login module registers
-`adminkit-login-feedback` against the same stylesheet after `adminkit-login`, so
-login and password-recovery messages use the same recipe.
-
-Account editing (`user-edit.php`) shares the existing-account workspace with
-`profile.php`: identity/contact and password controls in sibling cards, preferences
-in separate settings cards, and sessions/application passwords in Security.
-The layout moves native controls without cloning or changing submission names;
-plugin sections retain their own tabs. Self-addressed help copy is omitted when
-editing another user. Isolated rendering verified at 1440/390px in light/dark;
-all native inputs remain in the original form. No live account save was tested.
-
-Account layout rhythm is shared by all three account routes: 24px card padding
-(20px on phones), 24px heading-to-content spacing, 18px headings, scaled through
-the design system. Header and form use the same 1240px maximum width. Settings
-labels remain above controls at every width. Isolated checks cover all available
-tabs at 1440/390px, input-node preservation and horizontal overflow.
-
-The brand logo is edited in WordPress General Settings, after the native site icon. Toolbar identity is automatic: wordmark with the expanded menu, site icon with the folded or mobile menu, and WordPress mark if no site icon exists. The legacy wp_logo option is retained for import compatibility but no longer chooses toolbar rendering. They use the native General Settings form and preserve unrelated AdminKit options. Design system sections cover colors, typography, shapes and spacing.
-
-Component appearance settings live under the validated `design_system.components.<component>` object. The settings screen edits a local draft; `AdminKit_Design_System` compiles allowlisted choices to shared semantic tokens. First consumer: `buttons.highlight` (`off|hover|always`). Add future choices to validation, compiler, translated controls and regression coverage together; avoid per-screen CSS overrides or a parallel save flow.
-
-
-### Surface coherence audit (2026-10-31)
-
-AdminKit overview, foundation/component panels and grouped feature/integration
-rows consume the same card contour, radius and elevation as native postboxes.
-Only the outer group is elevated; internal rows and nested React/Element panels
-retain separators. The token source also scopes card/table roles on login and
-preview frames, so unsaved preview themes resolve their own contact shadow and
-dark contour rather than inheriting the surrounding administration theme.
-
-React primary actions and login actions use native primary relief/hover/focus
-roles. React secondary inset borders use the validated border-width token while
-preserving core geometry. Media overlays, Element poppers and HappyFiles menus
-use floating elevation; those stay distinct from the saved surface setting.
-Element card adapters (Booking/CRM/Affiliate) use surface elevation, including
-hover, without adding another hover lift. These inactive adapters require visual
-verification on the owning plugin screens before any remote release.
-
-### Write contracts
-
-`AdminKit_Storage` reports option writes as `true|WP_Error`, distinguishing an
-unchanged option from a failed update. Controllers reject malformed container
-and setting types before mutation; empty menu arrays and empty toolbar contexts
-are explicit resets. Settings writes preserve omitted keys. Toolbar writes
-preserve the omitted context. REST capabilities and native nonce handling stay
-in their existing permission callbacks / WordPress authentication layer.
-
-Menu snapshots replace rows inside an InnoDB transaction, rolling back failed
-deletes/inserts and invalidating caches after commit. New tables explicitly use
-InnoDB. Existing nontransactional tables are refused with
-`adminkit_menu_requires_innodb`; conversion requires an explicit maintenance step.
-Schema failures do not advance the schema version. Failed reads do not populate
-empty layout transients. The table remains network-shared with per-site rows.
-
-Username changes are queued only after the native profile nonce, target capability,
-strict syntax, uniqueness and 60-byte column limit are checked. `profile_update`
-consumes only that target's queued candidate, clears old-login and new-user cache
-keys, and retains the current session token when renewing a self-edit cookie.
-Quick-edit role assignment respects WordPress's `editable_roles` filter.
-
-See [FUNCTIONAL-AUDIT.md](FUNCTIONAL-AUDIT.md) for regression checks and limits.
-
-### Upgrade 7 and settings round-trips
-
-Upgrade 6 is frozen; the regression suite pins its block hash. Upgrade 7 prepares
-legacy chrome intent before that old cleanup can discard it, including upgrades
-from versions below 6. An explicit `clean_chrome_enabled` wins. Otherwise any
-legacy opt-out yields false; all known legacy flags true yields true. Retired keys
-are removed only after their intent has been persisted; a failed write is retryable.
-`adminkit/clean_chrome/enabled` supplies the default for the independent historical
-`adminkit/hide_footer/enabled` and `adminkit/hide_help_button/enabled` filters.
-
-Integration setting keys are registered by Settings::init from adapter filenames,
-before adapter classes boot and without translating labels. Catalog discovery
-remains deferred for screen presentation. Generic screen ownership uses the
-longest delimiter-bounded plugin prefix, not filesystem iteration order.
-
-Custom palette overrides remain stored but compile only while `accent_source` is
-`custom`, matching preview activation. Source changes discard invalid field text
-and retain the last validated brand accent. Preset lists display valid imported
-scales without changing the draft on mount. Bricks previews read the same provider
-variables as the saved accent compiler, with the baseline as fallback.
-
-Settings exports contain all registered effective values plus current editable
-drafts, including logo and inactive adapter toggles. Ordinary saves still post only
-editable keys to avoid overwriting General Settings. Import requires the
-`_adminkit: settings` marker and an object `values`; unknown/obsolete keys are
-filtered by the server schema without making an otherwise valid import fail.
-
-### Shared navigation and native-module gates
-
-`AdminKit_Icons` owns `WP_DASHICONS`, `sanitize_icon()`, `icon_mask()` and the strict
-SVG geometry validator. The menu constant remains an alias for compatibility.
-Raw, percent-encoded and base64 vector input is canonicalized into an encoded
-mask; XML entities, scripts, events, links, styles and embedded content are refused.
-Stored legacy icons are validated again before producing CSS.
-
-Only `manage_options` viewers persist first-seen menu order; restricted views do
-not prune the administrator's history. Moved taxonomy menus resolve their native
-taxonomy/post-type slug for parent and submenu highlighting. Toolbar protected
-IDs accept both native IDs and the historical `wp-admin-bar-` prefix.
-
-WP-Core user-tool styles register through Assets. Enqueue and output/write
-callbacks respect `adminkit/should_load`; the shared script helper also checks the
-admin/frontend context gate. Login branding, preview columns and list-order
-entrypoints honor the same veto, leaving native behavior in place.
-
-Uninstall removes the current settings/menu/toolbar storage, historical per-site
-stats tables and options, retired AdminKit user metadata and transient caches.
-Multisite cleanup covers per-site options and network sitemeta across networks.
-Native user/session data and other plugins' storage are outside its namespace.
+AdminKit is a standalone WordPress 6.0+/PHP 7.4+ plugin with no runtime Composer
+or JavaScript dependencies. PHP owns settings and native hooks; build-free DOM
+modules enhance existing controls; CSS consumes the shared `--ak-*` token layer.
+Development tooling is separate from the distributed plugin.
+
+## Bootstrap and ownership
+
+`adminkit.php` defines paths/version and calls `AdminKit_Plugin::init()`.
+`MODULES` is the ordered registry: first every file is required, then non-null boot
+callables execute in registry order. Helpers have null boot values. Files under
+`inc/` outside integrations must belong to this registry, except the orchestrator.
+The module/package check verifies that relationship and every boot callable.
+
+- `inc/settings/`: schema, catalogs, permission/loading gates and workspace host.
+- `inc/wp-core/`: existing WordPress surfaces and optional native workflow tools.
+- `inc/features/`: Menu, Toolbar and the notification drawer.
+- `inc/integrations/{plugins,themes}/{slug}/`: auto-discovered host adapters.
+- `inc/class-assets.php`, `class-icons.php`, `class-design-system.php`,
+  `class-storage.php`: shared services.
+
+Settings registers integration keys immediately from adapter filenames, without
+loading translated labels or consulting host activation. Adapter files load after
+the modules; `maybe_init()` runs on `after_setup_theme`, when host constants are
+available. Catalog labels/host state resolve later for the UI. `adminkit/loaded`
+fires once module hooks are wired and integration initialization is queued.
+Class names and public `adminkit/*` hooks remain stable.
+
+## Assets and CSS contracts
+
+Modules declare styles through `AdminKit_Assets::register()`. Dispatchers at
+priority 9999 handle `admin`, `login`, `frontend`, `editor` and `customize` using
+the corresponding WordPress enqueue hooks. Frontend dispatch requires the admin
+bar. Loading first checks `adminkit/should_load` and `adminkit/enqueue_{context}`;
+each style then checks its section filter, handle filter and optional condition.
+
+Scripts use `AdminKit_Assets::enqueue_script($handle, $src, $deps, $data)`, with
+filemtime cache busting and an optional inline `before` bootstrap. The helper
+checks admin/frontend context gates. WP-Core callbacks also gate their markup and
+behavior: vetoed user tools do not add controls or perform their writes; vetoed
+list enhancements leave native lists alone. Prepaint/profile footer placement
+retains its existing special handling to prevent hidden or flashing forms.
+Settings host scripts are owned by the settings controller.
+
+Generated `waaskit-tokens.css`, `waaskit-toolbar-tokens.css` and `tokens.css` come
+from `tokens/palettes/waaskit.json`, `tokens/adminkit.json`, `tokens/appearance.css`
+and `tokens/wordpress.css`. Never edit generated output. Components consume
+`--ak-*`, including separate accent ink, on-accent ink, surface elevation, table
+frames, outline width and focus roles. Surface choices do not remove internal
+separators or focus rings. Frontend foundation output stays scoped to the toolbar.
+See [TOKENS.md](TOKENS.md) and the executable CSS contract for details.
+
+Dark/light is selected by the existing document attribute and explicit user
+preference; there is no automatic theme-selection engine. Monochrome is default;
+WordPress blue (`adminkit`), Bricks and custom are explicit accent sources.
+Custom palettes remain stored but are previewed/compiled only in custom mode.
+Bricks preview values use the same provider properties as saved accent CSS.
+Invalid hex field text cannot replace the last validated brand accent, and source
+changes discard invalid field text. Valid non-preset type/radius scales appear as
+extra select choices; mounting Design does not mutate them.
+
+## Settings workspace and writes
+
+The main workspace has Design system, Features and Navigation tabs. Navigation
+contains Menu and Toolbar; disabled features do not fetch or provision their
+storage. Legacy standalone editor host factories remain supported.
+
+`assets/js/settings.js` supplies explicit data/state/helpers to screen factories.
+Main loads Design/Features/Plugins/Navigation parts; main tabs build on first
+selection. Styles are shared plus context-specific sheets. Factories return tabs
+and `requests()` keyed by `settings`, `menu`, `toolbar` (legacy hosts can return
+one `request()`). Controls call `markDirty(scope)`; main settings are the default
+scope. The toolbar pane is inert until its initial data fetch completes.
+
+Save snapshots all dirty scopes and sends layouts before settings, since settings
+can disable their routes. Successful scopes clear only if their revision has not
+changed. A failure keeps remaining drafts for retry; newer edits prevent reload
+and cancel a scheduled reload. These are independent endpoint writes, not a
+cross-endpoint transaction. Separate browser tabs retain last-write semantics.
+
+The schema is authoritative. Boolean/select reads normalize legacy types before
+applying `adminkit/setting/{key}`. Malformed settings containers use defaults.
+REST validates container/setting types before writes. Settings replace posted
+registered keys only; omitted and unknown stored keys remain. Unknown imported
+keys are ignored. Clearing an override removes it, while false remains false.
+`AdminKit_Storage::save_option()` returns `true|WP_Error`, distinguishing unchanged
+values from failed updates; controllers propagate failures rather than success.
+
+Settings exports merge every registered effective value with editable drafts,
+including logo and inactive adapter switches. Normal saves omit non-editable keys
+such as the General Settings logo. Imports require `_adminkit: settings` plus an
+object `values`. Import is blocked by pending drafts/busy state, and edits during
+its request prevent reload. Menu import/export has its own marked layout format.
+
+## Navigation storage and application
+
+Menu rows use `{base_prefix}adminkit_menu_items`, keyed by `blog_id`. The schema
+is created lazily when enabled, never by activation. Writes require InnoDB and
+replace a site's rows inside a transaction, rolling back failed deletes/inserts.
+Caches invalidate after commit; failed reads are not cached as empty layouts.
+Existing MyISAM tables are refused before deletion rather than silently converted.
+
+Menu application preserves native capabilities and direct access. Hiding uses
+presentation classes, with AdminKit's own menu protected. Submenus can move and
+retain native capabilities; taxonomy/post-type slugs resolve moved highlights.
+Only `manage_options` viewers persist first-seen order; restricted menus cannot
+prune the administrator's history.
+
+Toolbar data is the `adminkit_toolbar` option with separate `admin`/`frontend`
+contexts; legacy flat layouts read as admin. Omitted contexts remain unchanged.
+Protection accepts native IDs and historical `wp-admin-bar-` prefixed IDs, keeping
+the account and responsive toggle available. Reordering retains child parents and
+metadata. Hiding menus/toolbar nodes never grants or revokes WordPress permissions.
+
+`AdminKit_Icons` owns the dashicon allowlist, sanitization, mask compilation and
+strict custom-SVG validation. The old menu constant remains an alias. Raw,
+percent-encoded and base64 vector inputs canonicalize to an encoded mask. Scripts,
+events, styles, links, XML entities and embedded content are rejected. Stored
+values are revalidated before CSS output; native Lucide names/aliases stay stable.
+
+## User tools
+
+Quick Edit uses the native AJAX nonce and target capabilities, and limits role
+assignment to `get_editable_roles()` with self-demotion protection. Username
+changes are single-site only: the native profile nonce, target capability, strict
+syntax, uniqueness and 60-byte limit validate a queued candidate. `profile_update`
+consumes only that target's candidate once, clears old/new cache keys, and retains
+the current session token on self-edit. Another user's sessions are invalidated.
+Native fields, other profile updates and unrelated user metadata remain WordPress's.
+
+## Upgrades and uninstall
+
+`AdminKit_Upgrades` runs on `admin_init` for `manage_options`; version state is a
+non-autoloaded per-site option. Versions 1–5 retire portraits, builder flags,
+old active-first flags, dashboard/stats storage and online-user tracking.
+Upgrade 6 (logo/appearance cleanup) is immutable and pinned by a regression hash.
+Upgrade 7 prepares legacy footer/help intent before version 6 could discard it.
+An explicit `clean_chrome_enabled` wins; otherwise any old opt-out produces false,
+while all known old flags true produces true. Retired keys are removed only after
+a successful write, so failure is retryable. Independent historical footer/help
+filters remain effective over the unified switch.
+
+Deactivation preserves storage. Uninstall removes current and historical AdminKit
+options, per-site stats tables, the shared menu table, retired user metadata and
+transients (including expired/network sitemeta entries across networks). Native
+session tokens, dashboard preferences and other plugins' namespaces are preserved.
+
+## Translation and verification
+
+All UI copy is localized in PHP and sent to JavaScript through explicit bootstraps;
+JS does not maintain separate English fallback sentences. Proper product/font
+names and technical color examples are explicit checker exceptions.
+`php dev/i18n.php --write` extracts current messages with gettext, preserves French
+translations, removes dead entries and generates POT, PO, MO (`msgfmt`) and PHP
+catalogs. `--check` verifies all four without editing the worktree.
+
+Run `npm ci --prefix dev/smoke` once, then `php dev/test-all.php`. The offline gate
+covers PHP/JS syntax, generated tokens, all `dev/check*.php`, editor gating, CSS
+contracts, adapter budgets, jsdom, i18n, registry integrity and HEAD/working-tree
+package dry-runs. CI invokes that same command on PHP 7.4/8.2 with Node 24.
+Real browser saves, user/session behavior, multisite and active host visual checks
+remain integration checks; a skipped host drift check is not validation.

@@ -1,158 +1,110 @@
-# Installing AdminKit
+# Installing and validating AdminKit
 
-AdminKit is a regular WordPress plugin: drop it into `wp-content/plugins/`,
-activate it, you're done. No Composer or npm dependencies. Activation creates the menu-layout and statistics
-tables; statistics tracking remains opt-in. WordPress 6.0+ and PHP 7.4+ are the only requirements.
+AdminKit requires WordPress 6.0+ and PHP 7.4+. It ships its generated assets and
+fonts without runtime npm/Composer dependencies. PHP DOM is needed for custom SVG
+validation. The plugin version remains 1.0.0 until an approved release bump.
 
-This page covers three audiences:
+## Install a packaged copy
 
-1. [End users](#1-end-users--install-the-release-zip) — install the release zip
-2. [Developers](#2-developers--clone-and-symlink) — clone the repo, hack on it
-3. [Maintainers / AI assistants](#3-maintainers--cut-a-release) — cut a release
+Install an archive produced by `dev/package.php` through Plugins → Add New →
+Upload Plugin, or copy its `adminkit/` directory to `wp-content/plugins/` and
+activate it. Open AdminKit for Design system, Features and Navigation. Branding's
+single logo is edited under WordPress General Settings.
 
----
+Branding, icons, theme toggle, login styling, clean chrome, navigation editors,
+notifications and detected adapters default on. User Quick Edit, Username Changer,
+post previews and active-items-first are opt-in. Hiding navigation is presentation,
+not permission control. Settings are per-site; dark/light preference is personal.
 
-## 1. End users — install the release zip
+Activation does not create statistics storage. The menu table is provisioned
+lazily when its enabled module runs in administration or a menu save needs it.
+Versioned upgrades run for an administrator and retain their retry state on
+failure. Deactivation preserves data; deletion removes current/historical AdminKit
+storage and caches. Back up before replacing or deleting an installed copy.
 
-Download the latest release zip from
-[GitHub Releases](https://github.com/vuckro/adminkit/releases) (we'll publish
-one as soon as 1.0.0 ships — until then, use the developer workflow below).
+## Develop on the active checkout
 
-In WordPress:
+The current local target is `reprise/base-main-locale` and `localhost:10013`.
+Remote sites and release branches are separate targets. A symlink from
+`wp-content/plugins/adminkit` to this checkout makes edits live immediately;
+otherwise package the working tree explicitly. Cache busting uses filemtime.
 
-1. **Plugins → Add New → Upload Plugin** → choose the `adminkit-X.Y.Z.zip` file → **Install Now**.
-2. **Activate Plugin.**
-3. Open the **AdminKit** entry in the wp-admin sidebar (top-level
-   menu, just after Settings). The page hosts a three-tab SPA:
-   **Dashboard** (brand controls — light + dark logos, light + dark
-   favicons in a 2×2 grid, accent picker), **Features** (module
-   on/off toggles), **Plugins** (per-host adapter list). The native
-   WP Settings pages (General, Writing, Reading, Discussion, Media,
-   Permalinks) keep their stock WordPress UI, with light CSS polish
-   and small JS enhancements (themed blocks on General, 2-tab strip
-   on Discussion).
+Development prerequisites: PHP CLI with DOM/libxml, Node (24 for the CI workflow),
+Git, gettext tools (`xgettext`, `msgfmt`) and rsync. Install JS test dependencies:
 
-That's it — there's no setup wizard, no DB migration, no required configuration.
-Defaults are sensible: Gutenberg canvas theming, AdminKit icons, and local
-avatars are on; everything else stays out of your way until you opt in.
-
-The release zip contains **runtime files only** — no `dev/`, no build sources,
-no Git metadata. If you accidentally downloaded the GitHub source tree
-(via "Download ZIP" on the repo page) you'll have those extra folders; they're
-harmless but not what you want. Prefer the **Releases** page.
-
----
-
-## 2. Developers — clone and symlink
-
-Use this when you want to read, modify, or contribute to AdminKit.
-
-```bash
-# 1. Clone the repo somewhere convenient (NOT inside wp-content/plugins/).
-git clone https://github.com/vuckro/adminkit.git ~/code/adminkit
-cd ~/code/adminkit                 # main is the only branch — see CLAUDE.md
-
-# 2. Symlink (or copy) into your WP install.
-ln -s ~/code/adminkit /path/to/wp-content/plugins/adminkit
-# Or, if symlinks don't suit your setup, use the packager below.
-
-# 3. Activate via wp-admin → Plugins.
+```sh
+npm ci --prefix dev/smoke
+php dev/test-all.php
 ```
 
-Symlinking gives you live edits with no copy step — change a CSS or PHP file in
-`~/code/adminkit/`, refresh wp-admin, see it. Cache-busting is automatic
-(asset URLs include `?ver=<filemtime>`).
+The command runs PHP/JS syntax, token drift, every `dev/check*.php`, the editor
+regression, CSS/adapter budgets and all three jsdom suites. Registry checks verify
+boot callables and runtime files, plus both HEAD and working-tree dry-runs.
+It fails if a test/dependency is unavailable; it does not silently skip a gate.
+The GitHub workflow runs this same command on PHP 7.4/8.2 and Node 24.
 
-Pre-merge gates (run from inside the checkout — see CLAUDE.md for the full list):
+Host-dependent and browser checks remain additional:
 
-```bash
-php -l <changed-file>           # syntax
-php tokens/build.php --check    # token-drift gate
-php dev/adapter-audit.php       # CSS-debt gate
-php dev/adapter-drift.php       # host/WP CSS drift gate
+```sh
+php dev/adapter-drift.php
+AK_URL=http://localhost:10013 npm test --prefix dev/smoke
 ```
 
----
+Authenticated smoke tests need `AK_USER` and `AK_PASS` in the environment; do not
+commit or print credentials. A skipped host/authenticated test is not compatibility
+or persistence validation. Test affected screens in light/dark and mobile widths,
+actual save/reload, capability and REST-nonce failures as appropriate. Use isolated
+accounts/storage for destructive failure tests; do not reset the site database.
 
-## 3. Maintainers — cut a release
+## Translation changes
 
-AdminKit's packager (`dev/package.php`) produces a clean install in two forms:
-**dropped straight into a WP plugins folder** (for testing on a real site) or
-**zipped** (for the GitHub Releases page). It honours `.distignore`, so dev-only
-files (`dev/`, `tokens/`, `.claude/`, `CLAUDE.md`, …) never leak into a release.
+UI copy originates in PHP and is passed to JS via localized bootstraps. Product
+names and technical examples are explicit exceptions. To synchronize:
 
-### Install into a WordPress site (no symlink, fresh copy)
-
-```bash
-# From inside the AdminKit checkout:
-php dev/package.php \
-  --target="/path/to/your/wp-content/plugins"
-
-# package.php defaults to HEAD (the checked-out revision). To package a specific tag instead:
-php dev/package.php --ref=v1.0.0 --target=...
-# ...or the local uncommitted working tree:
-php dev/package.php --working-tree --target=...
-
-# To install the local working tree (incl. uncommitted changes):
-php dev/package.php --working-tree --target=...
+```sh
+php dev/i18n.php --missing
+# Translate the missing msgids in languages/adminkit-fr_FR.po.
+php dev/i18n.php --write
+php dev/check-i18n.php
 ```
 
-The packager writes to `<target>/adminkit/` (creating it, replacing it if it
-already exists). After it finishes, deactivate + reactivate the plugin in
-wp-admin to refresh.
+The write step extracts current strings, removes dead entries, regenerates POT/PO,
+compiles MO with `msgfmt` and writes `adminkit-fr_FR.l10n.php`. Commit all four
+artifacts together. `--check` verifies them without modifying the checkout.
 
-### Produce the release zip
+## Package the intended revision
 
-```bash
-php dev/package.php --ref=v1.0.0 --zip=adminkit-1.0.0.zip
-```
+Packaging defaults to committed `HEAD`, including on feature branches:
 
-The zip has `adminkit/` as its single top-level entry, so users who upload it
-via **Plugins → Add New → Upload Plugin** land in
-`wp-content/plugins/adminkit/` — the layout WordPress expects.
-
-### Sanity-check what would ship (dry run)
-
-```bash
+```sh
 php dev/package.php --dry-run
+php dev/package.php --working-tree --dry-run
+php dev/package.php --working-tree --zip=/tmp/adminkit-local.zip
+php dev/package.php --ref=HEAD --zip=/tmp/adminkit-reviewed.zip
 ```
 
-Lists every file that would land in the install. Use this when you change
-`.distignore` to confirm you didn't accidentally drop a runtime file.
+`.distignore` removes development dependencies/tools, token sources, baselines,
+documentation and agent instructions. Runtime PHP, generated CSS/JS, icons/fonts,
+licenses, translations and uninstall remain. The package integrity check confirms
+that required modules and all catalog formats ship.
 
-### Cutting a versioned release (checklist)
+`--target=/path/to/wp-content/plugins` replaces only that target's `adminkit`
+directory. Back up an existing copy first; do not target a live development symlink
+with the replacement operation. For a working tree use `--working-tree`; otherwise
+uncommitted changes are absent. Inspect the dry-run before installation.
 
-1. Confirm the maintainer wants to bump the version (see Guardrails in
-   [CLAUDE.md](../CLAUDE.md)). Until they say so, the version stays at 1.0.0.
-2. Bump in **three** places — they must match:
-   - `adminkit.php` → `Version:` header
-   - `adminkit.php` → `define( 'ADMINKIT_VERSION', ... )`
-   - `readme.txt` → `Stable tag:`
-3. Add a `== Changelog ==` entry in `readme.txt`.
-4. Run the four pre-merge gates above.
-5. Commit to `main` and `git push` (main is the trunk — no promotion step).
-6. Tag: `git tag vX.Y.Z && git push --tags`.
-7. Cut the zip: `php dev/package.php --ref=vX.Y.Z --zip=adminkit-X.Y.Z.zip`.
-8. Upload the zip to GitHub Releases for tag `vX.Y.Z`.
+## Releases and troubleshooting
 
----
+Commit validated units on the active branch. A release/version bump, merge to
+main, tag, push or remote installation needs its own intended workflow; none is a
+side effect of testing or local packaging. Keep the plugin header, constant and
+readme stable tag aligned if a release bump is approved.
 
-## Troubleshooting
-
-**Plugin activates but wp-admin doesn't look restyled.**
-Hard-refresh (Cmd/Ctrl-Shift-R) — the browser may be serving a cached
-stylesheet. AdminKit cache-busts via `filemtime`, so refreshing always picks up
-the latest CSS.
-
-**"Plugin file does not exist" on activation.**
-You probably unzipped a folder named `adminkit-main/` or `adminkit-X.Y.Z/`
-instead of `adminkit/`. WordPress wants the directory to match the main PHP
-file's slug. Rename it to `adminkit/` and try again — or use the release zip
-from `dev/package.php`, which gets the folder name right by construction.
-
-**`git archive` cannot resolve the requested revision.**
-Check `--ref`; the default is `HEAD`. Fetch before packaging a remote reference.
-
-**`dev/package.php` complains about a forbidden path.**
-Something in `.distignore` is too lax, or a new dev-only folder was added
-without listing it. Update `.distignore`, re-run `--dry-run` to confirm.
+- An unstyled page can be caused by an explicit context/integration veto, a disabled
+  feature or cached assets. Verify loading gates before adding CSS overrides.
+- `adminkit_menu_requires_innodb` means a legacy nontransactional menu table was
+  refused before deletion. Convert it during explicit backed-up maintenance.
+- A failed later save leaves earlier scopes saved and remaining drafts editable.
+  Retry before navigating away; there is no transaction across the three routes.
+- A packaging failure for a forbidden file means the exclusion/registry contract
+  needs repair. Do not bypass the quality gate or install the whole source tree.

@@ -49,12 +49,13 @@ new → `features/`.**
 - **Follow the user’s chosen branch and target.** The current work uses
   `reprise/base-main-locale` and localhost:10013. Commit coherent units; never
   rewrite main or change a remote site as a side effect.
-- Run PHP/JS lint, `php tokens/build.php --check`, `php dev/check.php` and the
-  relevant adapter/browser checks plus `php dev/css-contract.php` before committing.
+- Run `php dev/test-all.php` (after `npm ci --prefix dev/smoke`) plus relevant
+  host/browser checks before committing. This is the same gate used by CI.
 - **Docs are part of the change.** If you rename a file, add a setting, or change
   a hook, update the doc that describes it in the same commit.
 - **i18n:** keep strings translatable with the `adminkit` domain. Update the
-  catalogs in `languages/` and compile the French MO with `msgfmt` when strings change.
+  catalogs in `languages/` through `php dev/i18n.php --write`; it compiles both MO
+  (via `msgfmt`) and l10n.php, and the unified gate checks drift.
 
 
 ## Guardrails (don't break these)

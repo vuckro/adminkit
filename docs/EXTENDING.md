@@ -1,221 +1,132 @@
 # Extension points
 
-Every place you can change AdminKit's behaviour **without editing core** — the
-hooks, the integration contract, and the external files you adjust. This is the
-map a maintainer reaches for when a WordPress or host-plugin update shifts
-something and a mapping needs tuning (see [Where to fix when a host
-changes](#where-to-fix-when-a-host-changes)).
+Keep public class names and namespaced hooks stable. The implementations under
+`inc/` are authoritative; this page describes the currently supported hooks.
 
-Conventions: hooks are namespaced `adminkit/…`; integration hooks namespace under
-the host (`adminkit/foo/…`). `{…}` in a name is a dynamic segment.
+## Loading and assets
 
-## Asset loading
-
-| Hook | Type | Signature | Purpose |
-| --- | --- | --- | --- |
-| `adminkit/should_load` | filter | `(bool, string $context)` | Master switch for a context (`admin`/`login`/`frontend`/`editor`/`builder`). Return false to disable all AdminKit styling there — e.g. integrations use it to bypass a host's full-screen UI. |
-| `adminkit/enqueue_{context}` | filter | `(bool)` | Per-context gate, e.g. `adminkit/enqueue_login`. The `login` + `editor` ones are wired to the feature toggles. |
-| `adminkit/enqueue_{section}` | filter | `(bool)` | Per-section gate (section = handle minus `adminkit-`), e.g. `adminkit/enqueue_forms` drops inputs+buttons+tables together. |
-| `adminkit/enqueue_{handle}` | filter | `(bool)` | Per-asset gate, e.g. `adminkit/enqueue_adminkit-themes`. |
-| `adminkit/enqueue_baseline` | filter | `(bool, string $context)` | Ship the WaasKit baseline tokens. `__return_false` drops it (ride the provider, or neutral fallbacks). |
-| `adminkit/enqueued_{context}` | action | `(string $context)` | Fires after a context finishes dispatching. |
-
-All in `inc/class-assets.php`. The three-gate model (section → handle → condition)
-is in [ARCHITECTURE.md](ARCHITECTURE.md#asset-registry-css--js).
-
-## Tokens & providers
-
-| Hook | Type | Signature | Purpose |
-| --- | --- | --- | --- |
-| `adminkit/extra_tokens_handle` | filter | `(string\|null, string $context)` | Return a stylesheet handle to inject as a dependency of `adminkit-tokens` — how a **provider** feeds its live palette (Bricks). |
-| `adminkit/tokens_enqueued` | action | `(string $context)` | Fires right after `adminkit-tokens` is enqueued. Hook with `wp_add_inline_style( AdminKit_Assets::TOKENS_HANDLE, $css )` to inject runtime token overrides. |
-
-## Settings
-
-| Hook | Type | Signature | Purpose |
-| --- | --- | --- | --- |
-| `adminkit/setting/{key}` | filter | `(mixed $value)` | Final value of any setting, applied last in `AdminKit_Settings::get()` — override env-specifically without the UI. |
-| `adminkit/providers` | filter | `(array)` | The provider list on the settings page; each `{ id, label, status, detected }`. |
-| `adminkit/integration_enabled` | filter | `(bool, string $slug)` | Gate a specific integration (e.g. `'bricks'`). |
-
-`adminkit/setting/{key}` is in `inc/settings/class-settings.php`; the rest in
-`inc/settings/class-settings-page.php`.
-
-## Theme / dark mode
-
-| Hook | Type | Signature | Purpose |
-| --- | --- | --- | --- |
-| `adminkit/theme_attribute` | filter | `(string)` | The HTML attribute carrying the mode (default `data-adminkit-theme`). |
-| `adminkit/theme_storage_key` | filter | `(string)` | The localStorage key (default `adminkit-theme`). |
-
-Both in `inc/class-theme-toggle.php`. AdminKit's toggle is **authoritative** — it
-always flips its own attribute and persists, so dark mode works standalone with no
-provider. When Bricks is active its adapter adds an **additive** bridge on top
-(adopts Bricks's mode on load, then mirrors AdminKit's flips into Bricks via
-`data-brx-theme` + `brx_mode`, guarded against loops); AdminKit never hands the
-toggle over to the host.
-
-## Branding
-
-| Hook | Type | Signature | Purpose |
-| --- | --- | --- | --- |
-| `adminkit/brand_logo` | filter | `('' \| string \| array)` | Brand logo fallback when no logo is set in Settings → General. Return a URL string, or `array( 'light' => …, 'dark' => …, 'preloader' => … )`. Drives the brand mark at the site-name node and login branding; the settings win over the filter. |
-
-Resolved by `AdminKit_Settings::brand_logo( $mode )`. The single brand logo
-(`logo_url`) is edited in Settings → General, after the native site icon. The
-toolbar mark is automatic (`inc/wp-core/class-branding.php`); the login screen
-shows the brand logo when one is set and falls back to the site icon
-(`inc/wp-core/class-login.php`).
-
-### Accent — and the WordPress palette baseline
-
-The Design tab's source picker switches between **three personalities** for the
-admin UI via the `accent_source` setting:
-
-| Source | Accent emission | Result |
+| Hook | Signature after the value, or action arguments | Contract |
 | --- | --- | --- |
-| `'adminkit'` (default when Bricks is not active) | inline `<style>` with `#3858E9` (dual block, light + dark) | WordPress Block Editor blue across the admin in both modes. |
-| `'bricks'` (default when Bricks is active) | none — Bricks's stylesheet cascades naturally | Bricks `--accent` in both modes. |
-| `'custom'` | inline `<style>` with the user's `brand_accent` hex (dual block, light + dark) | AdminKit's WP-neutral palette + the user's accent. |
+| `adminkit/loaded` | action, no arguments | Module hooks wired, integrations queued for `after_setup_theme` |
+| `adminkit/should_load` | filter `(bool $load, string $context)` | Master context veto; also honored by native markup/behavior callbacks |
+| `adminkit/enqueue_{context}` | filter `(bool)` | Context asset gate |
+| `adminkit/enqueue_{section}` | filter `(bool)` | Registered stylesheet section gate |
+| `adminkit/enqueue_{handle}` | filter `(bool)` | Registered stylesheet handle gate |
+| `adminkit/enqueue_baseline` | filter `(bool, string $context)` | WaasKit baseline token loading |
+| `adminkit/extra_tokens_handle` | filter `(string|null, string $context)` | An enqueued provider handle to depend on |
+| `adminkit/tokens_enqueued` | action `(string $context)` | Add inline token overrides to `AdminKit_Assets::TOKENS_HANDLE` |
+| `adminkit/enqueued_{context}` | action, no arguments | Context dispatch completed |
 
-A `''` stored value resolves to "auto" at read time — `'bricks'` if Bricks is
-active, `'adminkit'` otherwise — via `AdminKit_Settings::accent_source()`. Use
-that helper everywhere; never read the raw setting directly.
+Contexts are `admin`, `login`, `frontend`, `editor`, `customize`. Frontend dispatch
+requires the toolbar. `register()` declares CSS with `handle`, relative `src`,
+`deps`, `context`, optional `section` and `condition($screen)`. Its per-entry gate
+order is section, handle, condition. Script helpers check the master/context gates.
 
-#### Cascade order
+```php
+AdminKit_Assets::register( array(
+    'handle' => 'adminkit-example',
+    'src' => 'assets/css/wp-screens/example.css',
+    'deps' => array( AdminKit_Assets::TOKENS_HANDLE ),
+    'context' => 'admin',
+    'section' => 'pages',
+    'condition' => static function ( $screen ) {
+        return $screen && 'example' === $screen->id;
+    },
+) );
+```
 
-Set in `AdminKit_Assets::enqueue_tokens()` via the `deps` array of each handle:
+Use `AdminKit_Assets::enqueue_script()` for runtime JS and its localized `before`
+bootstrap. Native modules must gate their controls/prepaint/behavior too: skipping
+only a stylesheet can leave enhanced markup or invisible controls behind.
 
-1. `assets/css/waaskit-tokens.css` (`adminkit-waaskit`, always loaded) — neutral safety net.
-2. Provider tokens (Bricks's stylesheet) — only when source = `'bricks'` AND Bricks is detected.
-3. `assets/css/wp-baseline.css` (`adminkit-wp-baseline`) — only when source ∈ {`'adminkit'`, `'custom'`}. Declares WP surfaces, borders, inks, status. Currently shadowed by tokens.css (same `:root{}` specificity, later load wins) — kept as intent-as-code; the visual diff vs. WaasKit's neutrals is imperceptible.
-4. `assets/css/tokens.css` (`adminkit-tokens`) — the AdminKit consumer layer. Declares `--ak-*` in BOTH `:root{}` AND `:root[data-adminkit-theme="dark"]{}`.
-5. Inline `<style id="ak-accent-preview">` — emitted by `AdminKit_Assets::inject_accent_family()` when source ∈ {`'adminkit'`, `'custom'`}. Dual block: `:root{}` + `:root[data-adminkit-theme="dark"]{}`.
+## Settings, integrations and branding
 
-Step 5 is the source of truth for `--ak-primary`, `--ak-primary-hover`,
-`--ak-primary-subtle`, `--ak-on-accent`, and `--ak-focus`. It exists because
-tokens.css's dark block (`(0,2,0)` specificity) would otherwise beat any
-plain `:root{}` declaration on cascade-tie or specificity. The inline style
-loads AFTER tokens.css and matches its dark selector specificity, so the
-dual block wins everywhere — in both light and dark modes, for both
-AdminKit-Blue and Custom.
-
-#### Dual-block formula
-
-Same family in both blocks; two formulas differ between light and dark:
-
-| Token | `:root{}` (light) | `:root[data-adminkit-theme="dark"]{}` (dark) |
+| Hook | Signature | Contract |
 | --- | --- | --- |
-| `--ak-primary` | `<hex>` | `<hex>` (same) |
-| `--ak-primary-hover` | `color-mix(in srgb, <hex> 82%, #000)` | `color-mix(in srgb, <hex> 82%, #fff)` (lighten — readable on dark surfaces) |
-| `--ak-primary-subtle` | `color-mix(in srgb, <hex> 12%, var(--ak-surface))` | `color-mix(in srgb, <hex> 22%, var(--ak-surface))` (bumped mix — reads on `#2c2c2c`) |
-| `--ak-on-accent` | `contrast_text_for(<hex>)` | (same — mode-independent) |
-| `--ak-focus` | `color-mix(in srgb, <hex> 27%, transparent)` | (same — translucent works both modes) |
+| `adminkit/setting/{key}` | `(mixed $value)` | Final effective setting after stored/default normalization |
+| `adminkit/integration_enabled` | `(bool, string $slug)` | Host adapter gate; the native Gutenberg chrome remains part of the base skin |
+| `adminkit/brand_logo` | `(string|array $fallback)` | Used only without `logo_url`; a URL or light/dark URL map |
+| `adminkit/theme_attribute` | `(string)` | Document attribute, default `data-adminkit-theme` |
+| `adminkit/theme_storage_key` | `(string)` | Preference storage key, default `adminkit-theme` |
 
-The PHP emission must mirror the JS `applyPreview()` byte-for-byte so live
-preview agrees with the post-save state. `bricks` source short-circuits both
-(PHP early-returns, JS removes the `<style>` node).
+Declare settings with `AdminKit_Settings::register($key, $args)` and add feature
+rows to the catalog when appropriate. Schema entries declare default/type/group
+and a sanitizer. Integration toggles register early from adapter filenames; do
+not register them again while rendering/saving a page. Host inventory labels
+resolve later, after translations and hosts are available.
 
-#### Why `--ak-on-accent` is NOT `color-mix()`
+Adapters live in `inc/integrations/{plugins,themes}/{slug}/class-{slug}.php`, extend
+`AdminKit_Integration_Base` and follow its `AdminKit_Integration_{Slug}` class
+convention. Keep `label()`, `host_files()`, `is_active()`, `owns_screen()` and asset
+registration with the adapter rather than central plugin lists. The orchestrator
+auto-discovers them. See [INTEGRATIONS.md](INTEGRATIONS.md).
 
-Hover/subtle/focus derivatives follow `--ak-primary` via `color-mix()` chains
-automatically — flip one knob, the family follows. But `--ak-on-accent` (the
-foreground colour for text/icons on the accent fill) is computed from the
-accent's WCAG relative luminance — `AdminKit_Assets::contrast_text_for()`
-PHP side, `bestOnAccent()` JS side, byte-for-byte the same algorithm. Without
-this, a near-black custom accent would leave white-on-black text invisible.
+`logo_url` is edited in General Settings, shared with login and automatic toolbar
+branding. Monochrome is the default accent; `adminkit` is explicit WaasKit blue,
+`bricks` uses provider variables and `custom` activates saved hex overrides.
+`AdminKit_Design_System::css()` compiles validated foundations. Do not add a second
+palette engine, unscoped frontend CSS or per-screen appearance persistence.
 
-The constant `AdminKit_Assets::ADMINKIT_BLUE` holds the WP-Blue default —
-change it there if you ever need to ship a different out-of-the-box accent.
-The JS bootstrap exposes the same value as `D.adminkitBlue`.
+## Feature gates and backward compatibility
+
+| Hook | Signature | Contract |
+| --- | --- | --- |
+| `adminkit/clean_chrome/enabled` | `(bool)` | Unified footer/help baseline |
+| `adminkit/hide_footer/enabled` | `(bool)` | Historical per-footer override, applied after unified gate |
+| `adminkit/hide_help_button/enabled` | `(bool)` | Historical per-help override, applied after unified gate |
+| `adminkit/active_items_first/enabled` | `(bool)` | Shared content/plugin priority feature |
+| `adminkit/plugins_active_first/enabled` | `(bool)` | Additional plugin-list gate |
+| `adminkit/menu_manager/enabled` | `(bool)` | Menu editor application/hooks/routes |
+| `adminkit/toolbar_manager/enabled` | `(bool)` | Toolbar editor application/hooks/routes |
+| `adminkit/toolbar/capability` | `(string)` | Toolbar edit capability, default `manage_options` |
+| `adminkit/toolbar/protected_nodes` | `(string[])` | Nodes that cannot be hidden; native or `wp-admin-bar-` prefixed IDs |
+| `adminkit/username_changed` | action `(int $user_id, string $old, string $new)` | A validated rename actually succeeded |
+
+Upgrade 7 converts old chrome options into the unified setting and removes their
+stored keys. Their filters remain separate and effective, including an explicit
+false veto or true override. The immutable upgrade-6 block must not be edited;
+new persistent transformations need a new versioned migration and failure tests.
 
 ## Icons
 
-The "AdminKit icons" feature (`replace_icons_enabled`, on by default) swaps
-WordPress's native dashicons for a cohesive set. Both maps are filterable — that's
-how an integration ships its plugin's icon, or how you override/remove any entry.
+| Hook | Value shape |
+| --- | --- |
+| `adminkit/menu_icons` | Dashicon class → SVG map |
+| `adminkit/menu_slug_icons` | Menu slug → SVG map |
+| `adminkit/toolbar_icons` | Toolbar DOM node ID → SVG map |
+| `adminkit/toolbar_icon_ab_item_nodes` | Toolbar DOM node ID → bool map for icons on the anchor itself |
 
-| Hook | Type | Signature | Purpose |
-| --- | --- | --- | --- |
-| `adminkit/menu_icons` | filter | `(array)` | Admin-menu map, **dashicon-class ⇒ SVG markup** (e.g. `'dashicons-admin-post' => '<svg…>'`). Return `''` for a key to skip it. |
-| `adminkit/menu_slug_icons` | filter | `(array)` | Admin-menu map, **menu-slug ⇒ SVG markup** (e.g. `'fluent-snippets' => '<svg…>'`), for plugins that paint a base64 / custom-image icon (no dashicon class, so `adminkit/menu_icons` can't reach them). Targets `#toplevel_page_<slug>`. Return `''` to skip. |
-| `adminkit/toolbar_icons` | filter | `(array)` | Admin-bar map, **node-id ⇒ SVG markup** (e.g. `'wp-admin-bar-comments' => '<svg…>'`). |
-| `adminkit/toolbar_icon_ab_item_nodes` | filter | `(array)` | Map of **node-id ⇒ bool** marking toolbar nodes whose icon must be painted on `> .ab-item::before` instead of a child `.ab-icon` span. Set this for a node that renders a dashicon-font glyph or plain text rather than an `.ab-icon` child (core `edit`/`customize`, Bricks `edit_with_bricks`/`editor_mode`). A node not listed is assumed to carry an `.ab-icon`. |
+The bundled Lucide names and role aliases are stable. Shared menu/toolbar custom
+input goes through `AdminKit_Icons::sanitize_icon()` and `icon_mask()`. The curated
+`WP_DASHICONS` now belongs to Icons; `AdminKit_Menu_Manager::WP_DASHICONS` remains
+a compatibility alias. Safe vector SVGs become canonical data masks; styles,
+external references, events and embedded content are rejected, including old
+stored values at output time. PHP DOM is required to validate custom SVG input.
 
-Keyed by dashicon class / node id so only items still using a stock icon are
-touched — a custom icon (Admin Menu Editor, a plugin's own image) is never
-overridden. The SVG is painted via CSS `mask` + `currentColor` (no `!important`),
-so it inherits the menu/toolbar colour. `inc/wp-core/class-menu-icons.php`.
-
-Example — register a text-only toolbar node so AdminKit paints its glyph on the
-link itself:
-
-```php
-add_filter( 'adminkit/toolbar_icon_ab_item_nodes', function ( $map ) {
-    $map['wp-admin-bar-my-plugin'] = true;
-    return $map;
-} );
-```
-
-## Post previews
-
-A list-table screenshot column (mShots or featured image). The thumbnail re-captures
-on demand: clicking an mShots thumbnail rotates its `v` cache key to force a fresh
-capture and updates it in place. All hooks are in
-`inc/wp-core/class-post-previews.php`:
+## Notices and previews
 
 | Hook | Signature | Purpose |
 | --- | --- | --- |
-| `adminkit/post_previews/enabled` | `(bool)` | Master on/off for the preview column. |
-| `adminkit/post_previews/provider` | `(string `mshots`\|`featured`)` | Screenshot source; the "Live screenshots" toggle forces `featured` when off. |
-| `adminkit/post_previews/post_types` | `(string[])` | Which list tables get the column. |
-| `adminkit/post_previews/thumb_size` / `full_size` | `(int[2] [w,h])` | Column thumbnail / hover sizes. |
-| `adminkit/post_previews/refresh_interval` | `(int $seconds)` | Screenshot cache window (0 = pin). |
-| `adminkit/post_previews/thumb_url` / `full_url` | `(string, WP_Post, $w, $h)` | Override the screenshot URL. |
+| `adminkit/notifications/enabled` | `(bool)` | Notification drawer gate |
+| `adminkit/notifications/js_allow` | `(string[])` | Selectors explicitly grouped into the drawer |
+| `adminkit/notifications/js_deny` | `(string[])` | Selectors retained inline |
+| `adminkit/post_previews/enabled` | `(bool)` | Preview feature gate |
+| `adminkit/post_previews/provider` | `(string)` | Default `featured`; `mshots` explicitly enables screenshots |
+| `adminkit/post_previews/post_types` | `(string[])` | Target content lists |
+| `adminkit/post_previews/thumb_size` | `(int[2])` | Thumbnail dimensions, default 160×120 |
+| `adminkit/post_previews/full_size` | `(int[2])` | Large preview dimensions, default 1200×800 |
+| `adminkit/post_previews/refresh_interval` | `(int $seconds)` | Screenshot refresh interval; 0 pins it |
+| `adminkit/post_previews/thumb_url` | `(string $url, WP_Post $post, int $w, int $h)` | Thumbnail URL override |
+| `adminkit/post_previews/full_url` | `(string $url, WP_Post $post, int $w, int $h)` | Large preview URL override |
 
-## Notifications
+Notice authors can use `data-ak-nc-group` or `data-ak-nc-keep`; node movement
+preserves native handlers. Inline action confirmations stay with their forms.
 
-A toolbar bell that collects promotional notice "nags" into a right-side drawer,
-leaving genuine notices (success, errors, interactive) inline. Client-side
-categorization; toggle off ⇒ every notice renders inline. Hooks in
-`inc/wp-core/class-notification-center.php`:
+## Verification
 
-| Hook | Signature | Purpose |
-| --- | --- | --- |
-| `adminkit/notifications/enabled` | `(bool)` | Master on/off (mirrors the feature toggle). |
-| `adminkit/notifications/js_allow` | `(string[])` | CSS selectors forced INTO the drawer. |
-| `adminkit/notifications/js_deny` | `(string[])` | CSS selectors forced to stay inline. |
-
-## Lifecycle
-
-| Hook | Type | Purpose |
-| --- | --- | --- |
-| `adminkit/loaded` | action | Fires after all modules + integrations init (`inc/class-plugin.php`). Late setup. |
-| `adminkit/username_changed` | action | Fires after the **Username changer** feature renames `user_login`. Args: `(int $user_id, string $old_login, string $new_login)`. Use to log the rename in an audit / activity log, or to sync external systems that key on `user_login`. |
-
-## The integration contract
-
-Subclassing `AdminKit_Integration_Base` is itself the main extension mechanism —
-drop a folder under `inc/integrations/{plugins\|themes}/{slug}/` and it auto-loads.
-The overridable methods (`slug`, `label`, `host_files`, `is_active`, `owns_screen`, `register_assets`,
-`boot`, `host_version`, `max_tested_host_version`) are documented in
-[INTEGRATIONS.md](INTEGRATIONS.md). New settings, dashboard widgets and provider
-tokens are all added from an integration's `boot()` via the hooks above.
-
-## Where to fix when a host changes
-
-When `dev/adapter-drift.php` reports drift (a host renamed a variable/class or
-rebranded — see [TOKENS.md → Drift detection](TOKENS.md#drift-detection-keeping-adapters-alive)),
-the mapping lives in **external, per-adapter files** — no core edit:
-
-1. **`inc/integrations/{type}/{slug}/css/admin.css`** — the host→token mapping. A
-   removed Tier A variable or a renamed Tier B selector is fixed here.
-2. **`owns_screen()` / `is_active()`** in the adapter class — if the host changed
-   its screen id or version constant.
-3. **`max_tested_host_version()`** — bump after re-verifying on a new host major
-   (or let the gate fall back to the host's native UI).
-4. **`baseline.json`** — re-freeze with `php dev/adapter-drift.php --slug={slug} --update`
-   once reconciled.
-
-For WP core itself, the same flow applies via `--wp-core`; the core CSS targets
-live in `assets/css/wp-core/`, `wp-components/`, and `wp-screens/`.
+Run `php dev/test-all.php` after installing `dev/smoke` dependencies. For UI copy,
+add translated PHP bootstrap values, update French PO entries, then run
+`php dev/i18n.php --write`. The checker rejects dead/missing catalog entries,
+stale compiled MO/PHP output and unlocalized JS UI literals. Browser-test affected
+screens and native submission behavior; the offline suite does not replace host
+or account/session integration checks.

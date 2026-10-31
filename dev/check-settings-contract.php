@@ -39,7 +39,6 @@ foreach(array(false,true) as $master) {
 }
 $styles=array(); AdminKit_Core_Chrome::clean_chrome_css('login'); check(!$styles,'Chrome leaked outside admin');
 $source=file_get_contents(ADMINKIT_PATH.'inc/class-upgrades.php');
-$start=strpos($source, '\t\tif ( $version < 6 ) {');
 // Extract the complete block by counting braces (the original block has no braces in strings).
 $start=strpos($source, 'if ( $version < 6 ) {'); $depth=0; $end=null;
 for($i=strpos($source,'{',$start);$i<strlen($source);$i++) { if($source[$i]==='{')$depth++; if($source[$i]==='}' && --$depth===0) { $end=$i; break; } }

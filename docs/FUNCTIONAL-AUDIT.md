@@ -85,3 +85,37 @@ No live account was renamed and no email was sent. The browser configuration
 writes were intercepted except for the unchanged REST settings save. Inactive
 third-party adapters and multisite runtime were not exhaustively exercised;
 per-site storage and uninstall behavior have offline coverage.
+
+## Follow-up: stabilization and quality lock
+
+The follow-up adds upgrade 7 without editing upgrade 6, restores independent
+legacy chrome filters, registers integration settings early and resolves generic
+screen ownership by longest prefix. Settings exports cover every active schema
+key and require their format marker on import. Shared icon validation, restricted
+menu-history writes, taxonomy highlighting, WP-Core vetoes, protected toolbar IDs
+and historical/network uninstall cleanup now have regression coverage.
+
+`php dev/test-all.php` is the unified local/CI gate: PHP/JS syntax, tokens, all
+check scripts, editor gating, CSS contracts, adapter budgets, jsdom, i18n and
+MODULES/package integrity. It passed 135 checks on local PHP 8.2.30 and 8.4.10.
+The committed workflow also targets PHP 7.4; that runtime was not available
+locally, and no remote CI execution is claimed here.
+
+Current POT/PO/MO/PHP catalogs agree on 259 active messages; 327 JS bootstrap
+references are checked. All missing French translations were supplied and dead
+entries removed. The catalog generation/check process is deterministic.
+
+Additional Chromium verification compared actual preview colors with CSS produced
+by the real PHP compiler: four sources × two themes × seven roles (56 comparisons),
+including dormant custom palettes and simulated provider variables. No differences
+remained after fixing custom hover derivation. The actual workspace exported all
+40 active setting keys and rejected a wrong import marker without posting. Live
+REST accepted an unchanged save and rejected malformed settings, invalid accent
+input and missing nonces. Configuration-changing UI POSTs were intercepted.
+Navigation was checked at 1440/390px in light/dark with no JS errors or document
+overflow. The temporary audit session was revoked afterward.
+
+Evidence lives in `output/stabilization-20261031/` at workspace level: PHP-version
+logs, browser log, color comparisons, reproducible runners and viewport captures.
+This does not claim live account-renaming, remote deployment, exhaustive multisite
+execution or compatibility approval for inactive host adapters.
