@@ -35,6 +35,10 @@ new → `features/`.**
   adapters declare `label()` and `host_files()` on the class itself (that is what
   lists the host as Native in Settings → Plugins and makes its switch work); never
   add a central list.
+- **Navigation UI** → `assets/js/settings/navigation.js` routes panes;
+  `navigation-menu.js` and `navigation-toolbar.js` own their drafts and requests;
+  `navigation-controls.js` owns shared controls. Keep the WordPress enqueue
+  dependencies and smoke loaders aligned when changing these boundaries.
 - **A setting / feature toggle** → `AdminKit_Settings::register()` + a row in
   `AdminKit_Settings_Catalog::features()` for the UI.
 - **Per-screen CSS** → `assets/css/wp-screens/<name>.css` + a `register_screen()`

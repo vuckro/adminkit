@@ -211,3 +211,29 @@ retained at workspace level under
 `output/playwright/navigation-validation-20261031/`. Original options and raw menu
 rows are restored and read back; temporary sessions/accounts/articles are removed. This
 validates the local single-site target, not multisite or third-party adapters.
+
+
+## Follow-up: navigation responsibility split
+
+The 1,696-line navigation closure is now four build-free factories: a 151-line
+routing host, shared controls/popover/gesture handling, the sidebar menu editor,
+and the admin/frontend toolbar editor. Editors expose `build()`/`request()` and
+receive the same explicit host context plus one shared controls instance. Public
+main/legacy factories, DOM selectors, payload shapes and draft scopes are retained.
+No setting, storage migration, external dependency or plugin version was added.
+
+WordPress enqueue dependencies cover the main page and legacy menu/toolbar hosts;
+each file keeps filemtime cache busting. A new asset-graph check validates these
+three entrypoints, and the packaging check requires the new runtime factories.
+The jsdom navigation suite now exercises actual main and legacy hosts, both
+toolbar contexts, title/icon-only writes and the shared menu URL popover.
+
+All 144 offline checks passed. The complete local browser navigation suite was
+replayed after extraction, including permissions, malformed payloads, native drag,
+menu import/export, isolated toolbar contexts, save failure/retry, feature gates,
+resets, protected IDs and Published-first off/on. Screenshots at 1440/390px in
+light/dark showed no document overflow or JavaScript errors; desktop/mobile
+captures were also inspected. Original options and raw menu rows were restored
+and read back, and all scratch accounts/posts/sessions were removed.
+Evidence is retained at workspace level in
+`output/playwright/navigation-refactor-20261031/`.

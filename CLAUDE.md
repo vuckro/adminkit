@@ -18,7 +18,10 @@ Keep changes simple, explicit and compatible with PHP 7.4+/WordPress 6.0+.
   compatibility constant/hooks; do not copy the allowlist or SVG parser.
 - `assets/js/settings.js` hosts per-scope revisioned drafts. Save layouts before
   settings; clear only unchanged revisions and never reload away newer edits.
-  Factories receive explicit context; runtime JS stays build-free.
+  Factories receive explicit context; runtime JS stays build-free. Navigation
+  has separate controls/menu/toolbar factories; its host only routes panes and
+  delegates payloads. Update enqueue dependencies and smoke loaders when adding
+  a settings part.
 - Tokens originate in `tokens/`; generated styles consume the `--ak-*` contract.
   Run the builder rather than editing generated CSS. Keep public toolbar CSS scoped.
 

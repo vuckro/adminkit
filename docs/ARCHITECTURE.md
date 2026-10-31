@@ -43,6 +43,24 @@ list enhancements leave native lists alone. Prepaint/profile footer placement
 retains its existing special handling to prevent hidden or flashing forms.
 Settings host scripts are owned by the settings controller.
 
+Navigation has four build-free factories under `assets/js/settings/`:
+
+- `navigation-controls.js`: shared title/icon controls, popup lifecycle, drag
+  gestures and reorder animation. Each workspace gets one controls instance.
+- `navigation-menu.js`: native menu snapshot/draft, rendering, submenu movement,
+  custom links, reset and import/export. Exposes `build()` and `request()`.
+- `navigation-toolbar.js`: node loading, independent admin/frontend drafts,
+  rendering, context reset and serialization. Exposes `build()` and `request()`.
+- `navigation.js`: pane/hash routing and the existing main/standalone factory
+  contract; delegates builds and request payloads to the owning editor.
+
+The controls instance is passed explicitly to each editor. Editors receive the
+existing host context and keep the same per-scope revisions; neither editor owns
+cross-endpoint saving. WordPress enqueue dependencies load controls before editors
+and all factories before the navigation host, for main and legacy menu/toolbar
+pages. Every file retains filemtime cache busting. Asset-graph and working-package
+checks cover these runtime dependencies.
+
 Generated `waaskit-tokens.css`, `waaskit-toolbar-tokens.css` and `tokens.css` come
 from `tokens/palettes/waaskit.json`, `tokens/adminkit.json`, `tokens/appearance.css`
 and `tokens/wordpress.css`. Never edit generated output. Components consume

@@ -143,12 +143,23 @@ class AdminKit_Settings_Page {
 		wp_enqueue_style( $screen_handle, ADMINKIT_URL . $screen_css, array( self::HANDLE ), self::ver( $screen_css ) );
 		// The main screen's tabs live in their own files (assets/js/settings/<part>.js).
 		$deps = array( 'wp-api-fetch' );
+		$navigation_deps = array();
+		foreach ( array( 'controls', 'menu', 'toolbar' ) as $part ) {
+			$part_js = 'assets/js/settings/navigation-' . $part . '.js';
+			$part_handle = self::HANDLE . '-navigation-' . $part;
+			$part_deps = 'controls' === $part ? array() : array( self::HANDLE . '-navigation-controls' );
+			wp_enqueue_script( $part_handle, ADMINKIT_URL . $part_js, $part_deps, self::ver( $part_js ), true );
+			$navigation_deps[] = $part_handle;
+		}
+		if ( 'navigation' === $module ) {
+			$deps = array_merge( $deps, $navigation_deps );
+		}
 		if ( 'main' === $module ) {
 			$nav_css = 'assets/css/settings/navigation.css';
 			wp_enqueue_style( self::HANDLE . '-navigation', ADMINKIT_URL . $nav_css, array( self::HANDLE ), self::ver( $nav_css ) );
 			foreach ( array( 'design', 'features', 'plugins', 'navigation' ) as $part ) {
 				$part_js = 'assets/js/settings/' . $part . '.js';
-				wp_enqueue_script( $screen_handle . '-' . $part, ADMINKIT_URL . $part_js, array(), self::ver( $part_js ), true );
+				wp_enqueue_script( $screen_handle . '-' . $part, ADMINKIT_URL . $part_js, 'navigation' === $part ? $navigation_deps : array(), self::ver( $part_js ), true );
 				$deps[] = $screen_handle . '-' . $part;
 			}
 		}
