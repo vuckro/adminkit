@@ -45,6 +45,7 @@ class AdminKit_Settings {
 	 */
 	public static function init() {
 		self::register_feature_catalog();
+		AdminKit_Settings_Catalog::register_integration_toggles();
 		self::register_branding();
 		self::register_appearance();
 		self::register( 'design_system', array( 'type' => 'object', 'group' => 'appearance', 'default' => self::sanitize_design_system( array() ), 'sanitize' => array( __CLASS__, 'sanitize_design_system' ) ) );

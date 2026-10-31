@@ -7,9 +7,10 @@ $options = array();
 $metadata = array();
 $writes = 0;
 $allowed = true;
+$fail_settings = false;
 function current_user_can( $cap ) { global $allowed; return $allowed; }
 function get_option( $key, $default = false ) { global $options; return $options[ $key ] ?? $default; }
-function update_option( $key, $value, $autoload = null ) { global $options, $writes; $options[ $key ] = $value; ++$writes; }
+function update_option( $key, $value, $autoload = null ) { global $options, $writes, $fail_settings; if ($fail_settings && $key === 'adminkit_settings') return false; $options[ $key ] = $value; ++$writes; return true; }
 function rest_sanitize_boolean( $value ) { return ! in_array( $value, array( false, 0, '0', 'false' ), true ); }
 function delete_option( $key ) { global $options, $writes; unset( $options[ $key ] ); ++$writes; }
 function delete_metadata( $type, $id, $key, $value, $all ) {
@@ -46,7 +47,7 @@ foreach ( array( 'adminkit_portraits' => 'mystery', 'identicon' => 'identicon' )
 $options = array( AdminKit_Upgrades::OPTION => 1, 'adminkit_settings' => array( 'bricks_builder_enabled' => true, 'plugins_active_first_enabled' => false, 'theme_toggle_enabled' => true ), 'bricks_global_settings' => array( 'builderMode' => 'dark' ) );
 $metadata = array( 1 => array( 'first_name' => 'Keep' ) );
 AdminKit_Upgrades::run();
-if ( array( 'theme_toggle_enabled' => true, 'active_items_first_enabled' => false ) !== $options['adminkit_settings'] || array( 'builderMode' => 'dark' ) !== $options['bricks_global_settings'] || array( 1 => array( 'first_name' => 'Keep' ) ) !== $metadata || 6 !== $options[AdminKit_Upgrades::OPTION] ) {
+if ( array( 'theme_toggle_enabled' => true, 'active_items_first_enabled' => false ) !== $options['adminkit_settings'] || array( 'builderMode' => 'dark' ) !== $options['bricks_global_settings'] || array( 1 => array( 'first_name' => 'Keep' ) ) !== $metadata || 7 !== $options[AdminKit_Upgrades::OPTION] ) {
  throw new RuntimeException( 'Version 2 did not clean only the retired flags.' );
 }
 $before_writes = $writes;
@@ -68,7 +69,7 @@ if($before_drops!==$wpdb->drops)throw new RuntimeException('Completed cleanup re
 $options = array( AdminKit_Upgrades::OPTION => 4, 'adminkit_settings' => array( 'online_users_enabled' => true, 'theme_toggle_enabled' => true ) );
 $metadata = array( 1 => array( 'adminkit_last_login' => 123, 'session_tokens' => array( 'native' => 'keep' ), 'first_name' => 'Keep' ) );
 AdminKit_Upgrades::run();
-if ( array( 'theme_toggle_enabled' => true ) !== $options['adminkit_settings'] || array( 1 => array( 'session_tokens' => array( 'native' => 'keep' ), 'first_name' => 'Keep' ) ) !== $metadata || 6 !== $options[AdminKit_Upgrades::OPTION] ) {
+if ( array( 'theme_toggle_enabled' => true ) !== $options['adminkit_settings'] || array( 1 => array( 'session_tokens' => array( 'native' => 'keep' ), 'first_name' => 'Keep' ) ) !== $metadata || 7 !== $options[AdminKit_Upgrades::OPTION] ) {
  throw new RuntimeException( 'Online users cleanup changed native sessions or left retired data.' );
 }
 $before_writes = $writes;
@@ -76,12 +77,32 @@ AdminKit_Upgrades::run();
 if ( $writes !== $before_writes ) { throw new RuntimeException( 'Online users cleanup repeated.' ); }
 $options = array( AdminKit_Upgrades::OPTION => 5, 'adminkit_settings' => array( 'logo_light' => 'https://x.test/l.svg', 'logo_dark' => 'https://x.test/d.svg', 'logo_source' => 'url', 'wp_logo' => 'logo', 'login_logo' => 'favicon', 'ui_radius' => 'soft', 'ui_density' => 'compact', 'generic_theming_on' => array(), 'ui_font' => 'system', 'theme_toggle_enabled' => true ) );
 AdminKit_Upgrades::run();
-if ( array( 'ui_font' => 'system', 'theme_toggle_enabled' => true, 'logo_url' => 'https://x.test/l.svg' ) != $options['adminkit_settings'] || 6 !== $options[AdminKit_Upgrades::OPTION] ) {
+if ( array( 'ui_font' => 'system', 'theme_toggle_enabled' => true, 'logo_url' => 'https://x.test/l.svg' ) != $options['adminkit_settings'] || 7 !== $options[AdminKit_Upgrades::OPTION] ) {
  throw new RuntimeException( 'Retired logo/appearance keys were not migrated cleanly.' );
 }
 $before_writes = $writes;
 AdminKit_Upgrades::run();
 if ( $writes !== $before_writes ) { throw new RuntimeException( 'Version 6 cleanup repeated.' ); }
+// Both direct 6 -> 7 and older upgrades must preserve explicit legacy opt-outs.
+foreach (array(0, 5, 6) as $version) {
+ foreach (array(array(true,true,true), array(true,false,false), array(false,true,false), array('false',true,false)) as $case) {
+  $options=array(AdminKit_Upgrades::OPTION=>$version, 'adminkit_settings'=>array('hide_footer_enabled'=>$case[0], 'hide_help_button_enabled'=>$case[1], 'editor_content_theme'=>true, 'logo_url'=>'keep'));
+  AdminKit_Upgrades::run();
+  if ($options['adminkit_settings'] !== array('logo_url'=>'keep','clean_chrome_enabled'=>$case[2]) || $options[AdminKit_Upgrades::OPTION] !== 7) throw new RuntimeException('Upgrade 7 lost legacy intent.');
+  $before_writes=$writes; AdminKit_Upgrades::run();
+  if ($before_writes!==$writes) throw new RuntimeException('Upgrade 7 repeated.');
+ }
+}
+foreach (array(true,false) as $explicit) {
+ $options=array(AdminKit_Upgrades::OPTION=>6, 'adminkit_settings'=>array('hide_footer_enabled'=>!$explicit, 'clean_chrome_enabled'=>$explicit));
+ AdminKit_Upgrades::run();
+ if ($options['adminkit_settings'] !== array('clean_chrome_enabled'=>$explicit)) throw new RuntimeException('Upgrade 7 replaced explicit consolidated choice.');
+}
+$options=array(AdminKit_Upgrades::OPTION=>5, 'adminkit_settings'=>array('hide_footer_enabled'=>false));
+$fail_settings=true; AdminKit_Upgrades::run();
+if ($options[AdminKit_Upgrades::OPTION] !== 5 || !isset($options['adminkit_settings']['hide_footer_enabled'])) throw new RuntimeException('Failed upgrade 7 lost retry data.');
+$fail_settings=false; AdminKit_Upgrades::run();
+if ($options[AdminKit_Upgrades::OPTION] !== 7 || $options['adminkit_settings'] !== array('clean_chrome_enabled'=>false)) throw new RuntimeException('Upgrade 7 retry failed.');
 $options = array();
 $allowed = false;
 $before_writes = $writes;

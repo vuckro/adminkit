@@ -186,7 +186,6 @@ class AdminKit_Settings_Page {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function rest_save( $request ) {
-		AdminKit_Settings_Catalog::register_integration_toggles(); // so per-integration keys persist
 		$values = $request->get_param( 'values' );
 		if ( ! is_array( $values ) ) {
 			return AdminKit_Storage::error( 'adminkit_invalid_values', 400 );
@@ -202,6 +201,9 @@ class AdminKit_Settings_Page {
 			}
 		}
 
+		if ( isset( $values['brand_accent'] ) && '' !== $values['brand_accent'] && ! sanitize_hex_color( $values['brand_accent'] ) ) {
+			return AdminKit_Storage::error( 'adminkit_invalid_values', 400 );
+		}
 		$clean = self::sanitize( $values );
 
 		$existing = get_option( AdminKit_Settings::OPTION_KEY, array() );
@@ -291,7 +293,6 @@ class AdminKit_Settings_Page {
 			// Plugins tab — every installed plugin (plus AdminKit's active theme
 			// adapters); supported ones are badged "Native" (a tuned AdminKit adapter),
 			// the rest carry no badge and ride the generic base layer.
-			AdminKit_Settings_Catalog::register_integration_toggles();
 			$integrations = AdminKit_Settings_Catalog::plugins_list();
 		}
 
@@ -308,6 +309,7 @@ class AdminKit_Settings_Page {
 
 		$data = array(
 			'screen'       => $screen,
+			'values'       => $is_main ? array_combine( array_keys( AdminKit_Settings::schema() ), array_map( array( 'AdminKit_Settings', 'get' ), array_keys( AdminKit_Settings::schema() ) ) ) : array(),
 			'route'        => self::REST_NS . self::REST_ROUTE,
 			'features'     => $features,
 			'integrations' => $integrations,

@@ -42,6 +42,15 @@
 				return 1.05 / (L + 0.05) >= (L + 0.05) / 0.05 ? '#ffffff' : '#000000';
 			}
 
+			function providerValues(mode) {
+				if (state.accentSource !== 'bricks') { return {}; }
+				var style = getComputedStyle(document.documentElement);
+				var map = { bg: mode === 'dark' ? '--neutral-d-1' : '--background', surface: mode === 'dark' ? '--neutral-d-2' : '--surface', accent: '--accent', 'on-accent': '--accent-on' };
+				var values = {};
+				Object.keys(map).forEach(function (role) { var value = style.getPropertyValue(map[role]).trim(); if (value) { values[role] = value; } });
+				return values;
+			}
+
 			// Accent picker — switches between Monochrome (default), WordPress (WaasKit blue),
 			// Bricks (when active + enabled), and Custom.
 			function accentPicker() {
@@ -134,6 +143,8 @@
 						state.brandAccent = D.adminkitBlue || '#1549ab';
 						hexInput.value = state.brandAccent;
 					}
+					// Discard invalid field text, never the last validated accent.
+					hexInput.value = state.brandAccent;
 					hexInput.removeAttribute('aria-invalid');
 					syncSeg();
 					native.value = isValidHex(state.brandAccent) ? state.brandAccent : native.value;
@@ -146,7 +157,7 @@
 					if (v && v.charAt(0) !== '#') {
 						v = '#' + v;
 					}
-					state.brandAccent = v;
+					if (isValidHex(v)) { state.brandAccent = v; }
 					hexInput.setAttribute('aria-invalid', String(!isValidHex(v)));
 					if (hexInput.value !== v) {
 						hexInput.value = v;
@@ -305,7 +316,7 @@
 			paletteRefresh = function () {
 				paletteCards.forEach(function (card) {
 					var overrides = state.accentSource === 'custom' ? state.designSystem.colors[card.mode] : {};
-					var values = state.accentSource === 'custom' ? Object.assign({}, overrides) : {};
+					var values = state.accentSource === 'custom' ? Object.assign({}, overrides) : providerValues(card.mode);
 					card.scope.setAttribute('data-preview-accent', state.accentSource === 'adminkit' ? 'waaskit' : 'monochrome');
 					roles.forEach(function (role) { card.scope.style.removeProperty('--wk-' + role[0]); });
 					if (state.accentSource === 'custom' && isValidHex(state.brandAccent)) {
@@ -372,12 +383,12 @@
 			}));
 			fontSelect.value = state.appearance.ui_font;
 			var typeChoices = [0.9, 0.95, 1, 1.05, 1.1];
-			state.designSystem.type_scale = scaleChoice(state.designSystem.type_scale, typeChoices, 0.75, 1.5);
+			var displayedTypeScale = scaleChoice(state.designSystem.type_scale, typeChoices, 0.75, 1.5);
 			var typeScale = el('select', { id: 'ak-type-scale' }, typeChoices.map(function (scale) {
 				var pct = Math.round(scale * 100) + ' %';
 				return el('option', { value: String(scale), text: scale === 1 ? I.defaultPreset + ' (' + pct + ')' : pct });
 			}));
-			typeScale.value = String(state.designSystem.type_scale);
+			typeScale.value = String(displayedTypeScale);
 			var scalePreviews = ['light', 'dark'].map(function (mode) {
 				return el('div', { class: 'ak-bp__frame ak-shape-preview ak-scale-preview', 'data-preview-theme': mode }, [
 					el('div', { class: 'ak-scale-sample' }, [
@@ -433,12 +444,12 @@
 
 			// --- Section 3: Shapes & Surfaces (Radius + Border + Elevation + Button highlight) ---
 			var radiusChoices = [0, 0.5, 1, 1.25, 1.5];
-			state.designSystem.radius_scale = scaleChoice(state.designSystem.radius_scale, radiusChoices, 0, 2);
+			var displayedRadiusScale = scaleChoice(state.designSystem.radius_scale, radiusChoices, 0, 2);
 			var radius = el('select', { id: 'ak-shape-radius' }, radiusChoices.map(function (scale) {
 				var label = scale === 0 ? '0 px' : scale === 1 ? I.defaultPreset + ' (1 ×)' : number(scale) + ' ×';
 				return el('option', { value: String(scale), text: label });
 			}));
-			radius.value = String(state.designSystem.radius_scale);
+			radius.value = String(displayedRadiusScale);
 			var elevation = el('select', { id: 'ak-shape-elevation' }, [
 				['default', I.defaultPreset], ['flat', I.studioFlat], ['subtle', I.studioSubtle], ['raised', I.studioRaised]
 			].map(function (item) { return el('option', { value: item[0], text: item[1] }); }));
@@ -470,8 +481,8 @@
 					preview.setAttribute('data-preview-accent', state.accentSource === 'adminkit' ? 'waaskit' : 'monochrome');
 					roles.forEach(function (role) { preview.style.removeProperty('--wk-' + role[0]); });
 					preview.style.removeProperty('--wk-accent-hover');
-					if (state.accentSource !== 'custom') { return; }
-					var values = Object.assign({}, state.designSystem.colors[preview.dataset.previewTheme]);
+					var values = state.accentSource === 'custom' ? Object.assign({}, state.designSystem.colors[preview.dataset.previewTheme]) : providerValues(preview.dataset.previewTheme);
+					if (state.accentSource !== 'custom') { Object.keys(values).forEach(function (role) { preview.style.setProperty('--wk-' + role, values[role]); }); return; }
 					if (!values.accent && isValidHex(state.brandAccent)) { values.accent = state.brandAccent; }
 					if (values.accent) {
 						if (!values['on-accent']) { values['on-accent'] = bestOnAccent(values.accent); }

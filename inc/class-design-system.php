@@ -97,7 +97,7 @@ class AdminKit_Design_System {
 		}
 		$css = $selector . '{' . $vars . '}';
 		foreach ( array( 'light', 'dark' ) as $mode ) {
-			$palette = $settings['colors'][ $mode ];
+			$palette = 'custom' === AdminKit_Settings::accent_source() ? $settings['colors'][ $mode ] : array();
 			if ( 'custom' === AdminKit_Settings::accent_source() ) {
 				$accent = sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) );
 				if ( $accent ) { $palette = array_merge( array( 'accent' => $accent ), $palette ); }

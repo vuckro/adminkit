@@ -75,10 +75,10 @@ function boot(hash = '', legacy = false) {
     el() {}, intro() {}, markDirty() {}, setStatus() {}, updateBar() {}
   });
   main.importSettings({});
-  state.dirty = true; reader.result = '{"values":{}}'; reader.onload();
+  state.dirty = true; reader.result = '{"_adminkit":"settings","values":{}}'; reader.onload();
   assert.equal(importCalls, 0, 'edits while reading the import file prevent submission');
   state.dirty = false; main.importSettings({});
-  reader.result = '{"values":{}}'; reader.onload();
+  reader.result = '{"_adminkit":"settings","values":{}}'; reader.onload();
   assert.equal(state.saving, true);
   state.dirty = true; resolveImport({}); await tick();
   assert.equal(state.saving, false);

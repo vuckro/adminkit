@@ -42,6 +42,7 @@
 		// a set of plugin file paths the user has flipped OFF. Default = themed;
 		// posted as `generic_theming_off` array (see PHP gate_generic_theming()).
 		state.genericThemingOff = {};
+		((D.values || {}).generic_theming_off || []).forEach(function (file) { state.genericThemingOff[file] = true; });
 		(D.integrations || []).forEach(function (i) {
 			if (i.supported && i.slug) {
 				state.integrations[i.slug] = !!i.enabled;
@@ -65,7 +66,7 @@
 				_adminkit: 'settings',
 				version: D.version || '1',
 				exported: new Date().toISOString(),
-				values: gather()
+				values: gather(true)
 			};
 			var blob = new Blob([JSON.stringify(payload, null, '\t')], { type: 'application/json' });
 			var url = URL.createObjectURL(blob);
@@ -87,12 +88,7 @@
 				} catch (e) {
 					data = null;
 				}
-				values =
-					data && typeof data === 'object' && data.values && typeof data.values === 'object'
-						? data.values
-						: data && typeof data === 'object'
-							? data
-							: null;
+				values = data && !Array.isArray(data) && data._adminkit === 'settings' && data.values && typeof data.values === 'object' ? data.values : null;
 				if (!values || Array.isArray(values) || !apiFetch) {
 					setStatus('is-error', I.settingsImportError || 'That file isn’t a valid AdminKit settings export.');
 					return;
@@ -114,8 +110,8 @@
 			reader.readAsText(file);
 		}
 
-		function gather() {
-			var v = {};
+		function gather(includeAll) {
+			var v = includeAll ? Object.assign({}, D.values || {}) : {};
 			Object.keys(state.features).forEach(function (k) {
 				v[k] = !!state.features[k];
 			});

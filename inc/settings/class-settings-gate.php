@@ -93,17 +93,22 @@ class AdminKit_Settings_Gate {
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
+		$match = null;
+		$length = -1;
 		foreach ( get_plugins() as $file => $_data ) {
 			$dir  = dirname( $file );
 			$base = basename( $file, '.php' );
 			if ( '.' === $dir ) {
 				$dir = $base;
 			}
-			if ( $slug === $dir || $slug === $base
-				|| 0 === strpos( $slug, $dir . '-' ) || 0 === strpos( $slug, $dir . '_' ) ) {
-				return ( $cache[ $id ] = $file );
+			foreach ( array_unique( array( $dir, $base ) ) as $prefix ) {
+				if ( ( $slug === $prefix || 0 === strpos( $slug, $prefix . '-' ) || 0 === strpos( $slug, $prefix . '_' ) )
+					&& strlen( $prefix ) > $length ) {
+					$match = $file;
+					$length = strlen( $prefix );
+				}
 			}
 		}
-		return ( $cache[ $id ] = null );
+		return ( $cache[ $id ] = $match );
 	}
 }

@@ -47,7 +47,14 @@ foreach ( array( array(), array( 'components' => 'invalid' ), array( 'components
  $clean = AdminKit_Settings::sanitize_design_system( $input );
  ak_assert( array( 'buttons' => array( 'highlight' => 'always' ) ) === $clean['components'], 'Legacy and malformed component values retain compatible defaults' );
 }
-$profile = array( 'ui_font' => 'system', 'design_system' => array( 'type_scale' => 1.5, 'radius_scale' => 0, 'elevation' => 'raised', 'colors' => array( 'light' => array( 'bg' => '#eef6ef', 'surface' => '#ffffff', 'text' => '#142b20', 'accent' => '#276044', 'border' => '#819d8b' ), 'dark' => array( 'bg' => '#11251b', 'surface' => '#183425', 'text' => '#f0fff4', 'accent' => '#9bdfb6', 'success-text' => '#aaddbb' ) ) ) );
+$profile = array( 'accent_source' => 'custom', 'ui_font' => 'system', 'design_system' => array( 'type_scale' => 1.5, 'radius_scale' => 0, 'elevation' => 'raised', 'colors' => array( 'light' => array( 'bg' => '#eef6ef', 'surface' => '#ffffff', 'text' => '#142b20', 'accent' => '#276044', 'border' => '#819d8b' ), 'dark' => array( 'bg' => '#11251b', 'surface' => '#183425', 'text' => '#f0fff4', 'accent' => '#9bdfb6', 'success-text' => '#aaddbb' ) ) ) );
+
+foreach (array('monochrome','adminkit','bricks') as $source) {
+ $profile['accent_source']=$source;
+ $preset=AdminKit_Design_System::css();
+ ak_assert(strpos($preset,'--ak-bg:#eef6ef;') === false && strpos($preset,'--ak-primary:#276044;') === false,'Inactive custom colors leaked into preset '.$source);
+}
+$profile['accent_source']='custom';
 $custom = AdminKit_Design_System::css();
 ak_assert( false !== strpos( $custom, '--ak-radius-scale:0;' ), 'Zero radius must survive' );
 ak_assert( false !== strpos( $custom, '--ak-type-scale:1.5;' ), 'Continuous scales must reach runtime' );

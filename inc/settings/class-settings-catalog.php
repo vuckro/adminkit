@@ -230,7 +230,6 @@ class AdminKit_Settings_Catalog {
 		if ( ! self::bricks_detected() ) {
 			return false;
 		}
-		self::register_integration_toggles();
 		return (bool) AdminKit_Settings::get( 'integration_bricks_enabled' );
 	}
 
@@ -240,8 +239,10 @@ class AdminKit_Settings_Catalog {
 	 * @return void
 	 */
 	public static function register_integration_toggles() {
-		foreach ( self::integration_specs() as $s ) {
-			AdminKit_Settings::register( 'integration_' . $s['slug'] . '_enabled', array(
+		foreach ( glob( ADMINKIT_PATH . 'inc/integrations/*/*/class-*.php' ) ?: array() as $file ) {
+			$slug = substr( basename( $file, '.php' ), 6 );
+			if ( 'gutenberg' === $slug ) { continue; }
+			AdminKit_Settings::register( 'integration_' . $slug . '_enabled', array(
 				'type'     => 'toggle',
 				'group'    => 'integrations',
 				'default'  => true,

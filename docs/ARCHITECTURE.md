@@ -449,3 +449,30 @@ keys, and retains the current session token when renewing a self-edit cookie.
 Quick-edit role assignment respects WordPress's `editable_roles` filter.
 
 See [FUNCTIONAL-AUDIT.md](FUNCTIONAL-AUDIT.md) for regression checks and limits.
+
+### Upgrade 7 and settings round-trips
+
+Upgrade 6 is frozen; the regression suite pins its block hash. Upgrade 7 prepares
+legacy chrome intent before that old cleanup can discard it, including upgrades
+from versions below 6. An explicit `clean_chrome_enabled` wins. Otherwise any
+legacy opt-out yields false; all known legacy flags true yields true. Retired keys
+are removed only after their intent has been persisted; a failed write is retryable.
+`adminkit/clean_chrome/enabled` supplies the default for the independent historical
+`adminkit/hide_footer/enabled` and `adminkit/hide_help_button/enabled` filters.
+
+Integration setting keys are registered by Settings::init from adapter filenames,
+before adapter classes boot and without translating labels. Catalog discovery
+remains deferred for screen presentation. Generic screen ownership uses the
+longest delimiter-bounded plugin prefix, not filesystem iteration order.
+
+Custom palette overrides remain stored but compile only while `accent_source` is
+`custom`, matching preview activation. Source changes discard invalid field text
+and retain the last validated brand accent. Preset lists display valid imported
+scales without changing the draft on mount. Bricks previews read the same provider
+variables as the saved accent compiler, with the baseline as fallback.
+
+Settings exports contain all registered effective values plus current editable
+drafts, including logo and inactive adapter toggles. Ordinary saves still post only
+editable keys to avoid overwriting General Settings. Import requires the
+`_adminkit: settings` marker and an object `values`; unknown/obsolete keys are
+filtered by the server schema without making an otherwise valid import fail.

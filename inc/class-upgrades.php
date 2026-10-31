@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Upgrades {
 
-	const VERSION = 6;
+	const VERSION = 7;
 	const OPTION  = 'adminkit_storage_version';
 
 	public static function init() {
@@ -22,6 +22,8 @@ class AdminKit_Upgrades {
 		}
 
 		$version = (int) get_option( self::OPTION, 0 );
+		// Prepare upgrade 7 before immutable upgrade 6 can discard legacy intent.
+		if ( $version < 7 && ! self::migrate_clean_chrome() ) { return; }
 		if ( $version < 1 ) {
 			// Retire generated portraits without changing another avatar provider's choice.
 			if ( 'adminkit_portraits' === get_option( 'avatar_default' ) ) {
@@ -90,6 +92,21 @@ class AdminKit_Upgrades {
 
 		// Admin-only migration state does not need to be autoloaded on the front end.
 		update_option( self::OPTION, self::VERSION, false );
+	}
+
+	/** Upgrade 7. Persist intent before older cleanup, so a failed write is retryable. */
+	private static function migrate_clean_chrome() {
+		$before = get_option( AdminKit_Settings::OPTION_KEY, array() );
+		if ( ! is_array( $before ) ) { return true; }
+		$settings = $before;
+		$legacy = array_intersect_key( $before, array_flip( array( 'hide_footer_enabled', 'hide_help_button_enabled' ) ) );
+		if ( ! array_key_exists( 'clean_chrome_enabled', $settings ) && $legacy ) {
+			// A legacy opt-out wins: do not hide a surface the user kept visible.
+			$settings['clean_chrome_enabled'] = ! in_array( false, array_map( 'rest_sanitize_boolean', $legacy ), true );
+		}
+		$settings = array_diff_key( $settings, array_flip( array( 'hide_footer_enabled', 'hide_help_button_enabled', 'editor_content_theme' ) ) );
+		return $settings === $before || update_option( AdminKit_Settings::OPTION_KEY, $settings )
+			|| $settings === get_option( AdminKit_Settings::OPTION_KEY, array() );
 	}
 
 	/** Remove only the retired modules' site data; leave native dashboard preferences. */
