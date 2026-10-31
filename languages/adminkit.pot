@@ -532,10 +532,6 @@ msgstr ""
 msgid "Light"
 msgstr ""
 
-#: inc/settings/class-settings-catalog.php
-msgid "Lists"
-msgstr ""
-
 #: inc/settings/class-settings-page.php
 msgid "Load a menu layout from a JSON file"
 msgstr ""
@@ -950,6 +946,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Table"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Tables"
 msgstr ""
 
 #: inc/settings/class-settings-page.php

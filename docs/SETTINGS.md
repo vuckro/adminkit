@@ -53,12 +53,12 @@ or internal row separators. Component choices compile to shared semantic roles.
 ## Feature discovery (C2)
 
 Features are grouped into Appearance (including notifications), Navigation (menu
-and toolbar managers), Lists and Accounts. In French these are Apparence,
-Navigation, Liste and Comptes. Each selection-list item has a green filled active or
+and toolbar managers), Tables and Accounts. In French these are Apparence,
+Navigation, Tableaux and Comptes. Each selection-list item has a green filled active or
 hollow inactive dot alongside its textual status; unavailable items remain hollow.
 
 The Features tab uses search, an All/Active/Inactive selector and category buttons
-with counts above a grouped selection list and one detail pane. The pane shows
+with neutral circular count badges above a grouped selection list and one detail pane. The pane shows
 the feature icon, category, effect, current state, availability hint and switch.
 Search matches labels, descriptions and categories without case or accent
 sensitivity. Search and status combine with category selection; empty groups

@@ -285,7 +285,7 @@
 .adminkit-app .ak-features-categories .ak-btn { display: flex; align-items: center; gap: calc(10px * var(--ak-space-scale, 1)); min-height: 44px; font-size: var(--ak-text-xs); background: transparent; border-color: transparent; white-space: normal; text-align: start; }
 .adminkit-app .ak-features-categories .ak-btn[aria-pressed="true"] { color: var(--ak-heading); background: var(--ak-surface); border-color: var(--ak-border); }
 .adminkit-app .ak-features-categories .ak-btn:hover { background: var(--ak-hover-bg); }
-.adminkit-app .ak-features-count { color: var(--ak-text-muted); font-variant-numeric: tabular-nums; margin-inline-start: auto; }
+.adminkit-app .ak-features-count { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; box-sizing: border-box; min-width: 1.8em; height: 1.8em; padding-inline: .25em; border-radius: var(--ak-radius-full); color: var(--ak-text); background: var(--ak-surface-muted); font-variant-numeric: tabular-nums; line-height: 1; margin-inline-start: auto; }
 .adminkit-app .ak-features-workspace { display: grid; grid-template-columns: minmax(200px, .75fr) minmax(260px, 1.25fr); align-items: start; gap: calc(28px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-features-list, .adminkit-app .ak-features-details { min-width: 0; }
 .adminkit-app .ak-features-group + .ak-features-group { margin-top: calc(24px * var(--ak-space-scale, 1)); }

@@ -76,7 +76,7 @@
         },
         {
             "key": "active_items_first_enabled",
-            "group": "Lists",
+            "group": "Tables",
             "label": "Éléments actifs en premier",
             "desc": "Open content and plugin lists on Published or Active by default, and group active items first in All.",
             "parent": "",
@@ -88,7 +88,7 @@
         },
         {
             "key": "post_previews_enabled",
-            "group": "Lists",
+            "group": "Tables",
             "label": "Aperçus des publications",
             "desc": "Show a thumbnail column in post and page list tables.",
             "parent": "",

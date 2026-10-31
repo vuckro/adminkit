@@ -22,7 +22,7 @@ class AdminKit_Settings_Catalog {
 	public static function features() {
 		$appearance = __( 'Appearance', 'adminkit' );
 		$navigation = __( 'Navigation', 'adminkit' );
-		$lists      = __( 'Lists', 'adminkit' );
+		$tables     = __( 'Tables', 'adminkit' );
 		$accounts   = __( 'Accounts', 'adminkit' );
 
 		return array(
@@ -71,14 +71,14 @@ class AdminKit_Settings_Catalog {
 			array(
 				'key'   => 'active_items_first_enabled',
 				'icon'  => 'list-filter',
-				'group' => $lists,
+				'group' => $tables,
 				'label' => __( 'Active items first', 'adminkit' ),
 				'desc'  => __( 'Open content and plugin lists on Published or Active by default, and group active items first in All.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'post_previews_enabled',
 				'icon'  => 'image',
-				'group' => $lists,
+				'group' => $tables,
 				'label' => __( 'Post previews', 'adminkit' ),
 				'desc'  => __( 'Show a thumbnail column in post and page list tables.', 'adminkit' ),
 			),
