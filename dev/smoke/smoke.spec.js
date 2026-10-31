@@ -47,8 +47,9 @@ test.describe('wp-admin', () => {
     expect(await page.evaluate(() => typeof window.wp !== 'undefined' && !!window.wp.media)).toBe(false);
     await page.getByRole('tab', { name: /typograph/i }).first().click();
     await expect(page.locator('#ak-type-scale')).toBeVisible();
-    await page.getByRole('tab', { name: /spac|espac/i }).first().click();
     await expect(page.locator('#ak-space-scale')).toBeVisible();
+    await page.getByRole('tab', { name: /shape|forme/i }).first().click();
+    await expect(page.locator('#ak-shape-radius')).toBeVisible();
     expect(problems).toEqual([]);
   });
 

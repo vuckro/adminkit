@@ -13,178 +13,8 @@
 		function buildDesign() {
 			var p = el('section', { class: 'ak-panel ak-panel--brand', role: 'tabpanel' });
 
-
 			var paletteRefresh = function () {};
-
-			// --- Common helpers used inside buildDesign() ---------------------------
-
-			// Accent picker — a segmented control that switches between three sources
-			// feeding `--ak-primary`:
-			//
-			//   • WaasKit (default) — native light/dark accent roles
-			//   • Bricks              — the Bricks provider --accent (no override)
-			//   • Custom              — the user's `brand_accent` hex
-			//
-			// The hex input only appears when source = 'custom'. The swatch always
-			// shows the resolved colour (clicking it pops the OS-native picker, which
-			// also auto-switches the source to 'custom').
-			//
-			// Live preview writes / removes a `<style id="ak-accent-preview">` node
-			// so the whole accent family (hover, subtle, on-accent, focus ring) and
-			// the token-map pills update without a reload. The node is REMOVED for
-			// 'bricks' so the cascade picks the provider's --accent naturally;
-			// REMOVED for 'custom' with an invalid/empty hex so the cascade takes back;
-			// otherwise WRITTEN with the right value.
-			function accentPicker() {
-				// Bricks only appears in the segmented when the integration is connected
-				// (theme active AND toggle on). If the user disables the integration the
-				// pill silently drops; their stored `accentSource === 'bricks'` still
-				// resolves server-side via accent_source(), but the UI no longer offers a
-				// dead button. Hide rather than grey: a dead pill was confusing.
-				var sources = [{ v: 'monochrome', label: I.accentSrcMonochrome }, { v: 'adminkit', label: I.accentSrcAdminKit || 'WordPress' }];
-				if (D.bricksConnected) {
-					sources.push({ v: 'bricks', label: I.accentSrcBricks || 'Bricks' });
-				}
-				sources.push({ v: 'custom', label: I.accentSrcCustom || 'Custom' });
-
-				var btns = [];
-				var seg = el('div', { class: 'ak-seg', role: 'radiogroup', 'aria-label': I.accentLabel || 'Accent' });
-				seg.style.setProperty('--ak-accent-options', sources.length);
-				seg.addEventListener('keydown', function (event) {
-					var index = btns.indexOf(document.activeElement);
-					if (index < 0) { return; }
-					if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { index = (index + 1) % btns.length; }
-					else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { index = (index + btns.length - 1) % btns.length; }
-					else if (event.key === 'Home') { index = 0; }
-					else if (event.key === 'End') { index = btns.length - 1; }
-					else { return; }
-					event.preventDefault(); btns[index].click(); btns[index].focus();
-				});
-				sources.forEach(function (o) {
-					var active = state.accentSource === o.v;
-					var attrs = {
-						type: 'button',
-						class: 'ak-seg__opt' + (active ? ' is-active' : ''),
-						role: 'radio',
-						'aria-checked': active ? 'true' : 'false',
-						text: o.label
-					};
-					if (o.title) {
-						attrs.title = o.title;
-					}
-					if (o.disabled) {
-						attrs.disabled = '';
-						attrs['aria-disabled'] = 'true';
-					}
-					var b = el('button', attrs);
-					b.tabIndex = active ? 0 : -1;
-					b._v = o.v;
-					if (!o.disabled) {
-						b.addEventListener('click', function () {
-							if (state.accentSource === o.v) {
-								return;
-							}
-							setSource(o.v);
-						});
-					}
-					btns.push(b);
-					seg.appendChild(b);
-				});
-
-				var swatch = el('button', {
-					type: 'button',
-					class: 'ak-accent-inline__sw',
-					'aria-label': I.accentLabel || 'Accent'
-				});
-				var hexInput = el('input', {
-					type: 'text',
-					class: 'ak-accent-inline__hex',
-					placeholder: '#1549AB',
-					spellcheck: 'false',
-					maxlength: '7'
-				});
-				hexInput.value = state.brandAccent || '';
-				// Both swatch and hex hide outside Custom mode — the segmented alone
-				// is the affordance for AdminKit / Bricks (no per-pixel choice to make).
-				if (state.accentSource !== 'custom') {
-					hexInput.setAttribute('hidden', '');
-					swatch.setAttribute('hidden', '');
-				}
-				hexInput.setAttribute('aria-label', I.accentLabel || 'Accent');
-				var native = el('input', { type: 'color', class: 'ak-accent-inline__native', tabindex: '-1', 'aria-label': I.accentLabel || 'Accent' });
-				native.value = isValidHex(state.brandAccent) ? state.brandAccent : D.adminkitBlue || '#1549AB';
-
-				function applyPreview() {
-					// Keep unsaved experiments inside the palette editor. The shared
-					// runtime compiler applies settings only after a successful save.
-					swatch.style.background = isValidHex(state.brandAccent) ? state.brandAccent : 'var(--ak-primary)';
-				}
-
-				function syncSeg() {
-					btns.forEach(function (b) {
-						var on = b._v === state.accentSource;
-						b.classList.toggle('is-active', on);
-						b.setAttribute('aria-checked', on ? 'true' : 'false');
-						b.tabIndex = on ? 0 : -1;
-					});
-					if (state.accentSource === 'custom') {
-						hexInput.removeAttribute('hidden');
-						swatch.removeAttribute('hidden');
-					} else {
-						hexInput.setAttribute('hidden', '');
-						swatch.setAttribute('hidden', '');
-					}
-				}
-
-				function setSource(newSrc) {
-					state.accentSource = newSrc;
-					state.designSystem.colors = { light: {}, dark: {} };
-					if (newSrc === 'custom' && !isValidHex(state.brandAccent)) { state.brandAccent = D.adminkitBlue || '#1549ab'; hexInput.value = state.brandAccent; }
-					hexInput.removeAttribute('aria-invalid');
-					syncSeg();
-					native.value = isValidHex(state.brandAccent) ? state.brandAccent : native.value;
-					applyPreview();
-					paletteRefresh(true);
-					markDirty();
-				}
-
-				function setHex(raw) {
-					var v = (raw || '').trim().toLowerCase();
-					if (v && v.charAt(0) !== '#') {
-						v = '#' + v;
-					}
-					state.brandAccent = v;
-					hexInput.setAttribute('aria-invalid', String(!isValidHex(v)));
-					if (hexInput.value !== v) {
-						hexInput.value = v;
-					}
-					native.value = isValidHex(state.brandAccent) ? state.brandAccent : native.value;
-					applyPreview();
-					paletteRefresh(true);
-					markDirty();
-				}
-
-				hexInput.addEventListener('input', function () {
-					setHex(hexInput.value);
-				});
-				// Clicking the swatch ALWAYS opens the native picker AND auto-switches
-				// the source to Custom — the picker only makes sense in custom mode.
-				swatch.addEventListener('click', function () {
-					if (state.accentSource !== 'custom') {
-						setSource('custom');
-					}
-					native.click();
-				});
-				native.addEventListener('input', function () {
-					setHex(native.value);
-				});
-
-				applyPreview();
-
-				// No inner "Accent" sub-label — the parent row already carries the
-				// "Color" label on the left (same treatment as the Display row).
-				return el('div', { class: 'ak-display-row__field ak-accent-inline' }, [seg, swatch, hexInput, native]);
-			}
+			var syncSeg = function () {};
 
 			// Compact hex validator — same shape as `sanitize_hex_color` PHP-side:
 			// #abc or #aabbcc only, no rgba / hsl.
@@ -212,6 +42,139 @@
 				return 1.05 / (L + 0.05) >= (L + 0.05) / 0.05 ? '#ffffff' : '#000000';
 			}
 
+			// Accent picker — switches between Monochrome (default), WordPress (WaasKit blue),
+			// Bricks (when active + enabled), and Custom.
+			function accentPicker() {
+				var sources = [
+					{ v: 'monochrome', label: I.accentSrcMonochrome },
+					{ v: 'adminkit', label: I.accentSrcAdminKit || 'WordPress' }
+				];
+				if (D.bricksConnected) {
+					sources.push({ v: 'bricks', label: I.accentSrcBricks || 'Bricks' });
+				}
+				sources.push({ v: 'custom', label: I.accentSrcCustom || 'Custom' });
+
+				var btns = [];
+				var seg = el('div', { class: 'ak-seg', role: 'radiogroup', 'aria-label': I.accentLabel || 'Accent' });
+				seg.style.setProperty('--ak-accent-options', sources.length);
+				seg.addEventListener('keydown', function (event) {
+					var index = btns.indexOf(document.activeElement);
+					if (index < 0) { return; }
+					if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { index = (index + 1) % btns.length; }
+					else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { index = (index + btns.length - 1) % btns.length; }
+					else if (event.key === 'Home') { index = 0; }
+					else if (event.key === 'End') { index = btns.length - 1; }
+					else { return; }
+					event.preventDefault(); btns[index].click(); btns[index].focus();
+				});
+				sources.forEach(function (o) {
+					var active = state.accentSource === o.v;
+					var b = el('button', {
+						type: 'button',
+						class: 'ak-seg__opt' + (active ? ' is-active' : ''),
+						role: 'radio',
+						'aria-checked': active ? 'true' : 'false',
+						text: o.label
+					});
+					b.tabIndex = active ? 0 : -1;
+					b._v = o.v;
+					b.addEventListener('click', function () {
+						if (state.accentSource === o.v) { return; }
+						setSource(o.v);
+					});
+					btns.push(b);
+					seg.appendChild(b);
+				});
+
+				var swatch = el('button', {
+					type: 'button',
+					class: 'ak-accent-inline__sw',
+					'aria-label': I.accentLabel || 'Accent'
+				});
+				var hexInput = el('input', {
+					type: 'text',
+					class: 'ak-accent-inline__hex',
+					placeholder: '#1549AB',
+					spellcheck: 'false',
+					maxlength: '7',
+					'aria-label': I.accentLabel || 'Accent'
+				});
+				hexInput.value = state.brandAccent || '';
+				if (state.accentSource !== 'custom') {
+					hexInput.setAttribute('hidden', '');
+					swatch.setAttribute('hidden', '');
+				}
+				var native = el('input', { type: 'color', class: 'ak-accent-inline__native', tabindex: '-1', 'aria-label': I.accentLabel || 'Accent' });
+				native.value = isValidHex(state.brandAccent) ? state.brandAccent : D.adminkitBlue || '#1549AB';
+
+				function applyPreview() {
+					swatch.style.background = isValidHex(state.brandAccent) ? state.brandAccent : 'var(--ak-primary)';
+				}
+
+				syncSeg = function () {
+					btns.forEach(function (b) {
+						var on = b._v === state.accentSource;
+						b.classList.toggle('is-active', on);
+						b.setAttribute('aria-checked', on ? 'true' : 'false');
+						b.tabIndex = on ? 0 : -1;
+					});
+					if (state.accentSource === 'custom') {
+						hexInput.removeAttribute('hidden');
+						swatch.removeAttribute('hidden');
+					} else {
+						hexInput.setAttribute('hidden', '');
+						swatch.setAttribute('hidden', '');
+					}
+					applyPreview();
+				};
+
+				function setSource(newSrc) {
+					state.accentSource = newSrc;
+					if (newSrc === 'custom' && !isValidHex(state.brandAccent)) {
+						state.brandAccent = D.adminkitBlue || '#1549ab';
+						hexInput.value = state.brandAccent;
+					}
+					hexInput.removeAttribute('aria-invalid');
+					syncSeg();
+					native.value = isValidHex(state.brandAccent) ? state.brandAccent : native.value;
+					paletteRefresh(false);
+					markDirty();
+				}
+
+				function setHex(raw) {
+					var v = (raw || '').trim().toLowerCase();
+					if (v && v.charAt(0) !== '#') {
+						v = '#' + v;
+					}
+					state.brandAccent = v;
+					hexInput.setAttribute('aria-invalid', String(!isValidHex(v)));
+					if (hexInput.value !== v) {
+						hexInput.value = v;
+					}
+					if (isValidHex(v)) {
+						native.value = v;
+						// Keep per-theme accent overrides aligned when the user picks a new global brand accent.
+						delete state.designSystem.colors.light.accent;
+						delete state.designSystem.colors.dark.accent;
+						delete state.designSystem.colors.light['on-accent'];
+						delete state.designSystem.colors.dark['on-accent'];
+					}
+					applyPreview();
+					paletteRefresh(false);
+					markDirty();
+				}
+
+				hexInput.addEventListener('input', function () { setHex(hexInput.value); });
+				swatch.addEventListener('click', function () {
+					if (state.accentSource !== 'custom') { setSource('custom'); }
+					native.click();
+				});
+				native.addEventListener('input', function () { setHex(native.value); });
+
+				applyPreview();
+				return el('div', { class: 'ak-display-row__field ak-accent-inline' }, [seg, swatch, hexInput, native]);
+			}
+
 			var sections = [];
 			var sectionKey = 'adminkit:foundation-section:' + location.pathname + location.search;
 			var rememberedSection = 'colors';
@@ -220,7 +183,7 @@
 			var nav = el('div', { class: 'ak-foundations-nav', role: 'tablist', 'aria-label': I.foundationSections, 'aria-orientation': 'horizontal' });
 			var panes = el('div', { class: 'ak-foundations-panes' });
 			var scopeNote = el('p', { class: 'ak-foundation-scope', text: I.foundationScope });
-			// Preview navigation is local UI state, independent of the saved profile.
+
 			var previewGroups = {};
 			var previewMode = document.documentElement.getAttribute('data-adminkit-theme') === 'dark' ? 'dark' : 'light';
 			var previewSection = rememberedSection;
@@ -285,8 +248,7 @@
 				event.preventDefault(); selectSection(sections[index].id); sections[index].tab.focus();
 			});
 
-
-			// Theme-scoped WaasKit roles come from the generated token stylesheet.
+			// --- Section 1: Colors (Preset + 11 semantic roles per theme) ------------
 			var paletteCards = [];
 			var roles = [
 				['accent', I.foundationAccent], ['on-accent', I.foundationOnAccent],
@@ -302,17 +264,30 @@
 				var modeLabel = mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark;
 				var scope = el('div', { class: 'ak-bp__frame ak-palette-theme', 'data-preview-theme': mode });
 				var rows = [], probes = {};
-				var header = el('div', { class: 'ak-palette-header' }, [el('h4', { text: mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark }), el('button', { type: 'button', class: 'ak-btn', text: I.foundationPaletteReset, onclick: function () { state.designSystem.colors[mode] = {}; paletteRefresh(); markDirty(); } })]);
+				var header = el('div', { class: 'ak-palette-header' }, [
+					el('h4', { text: modeLabel }),
+					el('button', { type: 'button', class: 'ak-btn', text: I.foundationPaletteReset, onclick: function () {
+						state.designSystem.colors[mode] = {};
+						paletteRefresh();
+						markDirty();
+					} })
+				]);
 				scope.appendChild(header);
 				roles.forEach(function (role) {
 					var id = 'ak-palette-' + mode + '-' + role[0];
-					var picker = el('input', { type: 'color', id: id, 'aria-label': role[1] + ' — ' + (mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark) });
+					var picker = el('input', { type: 'color', id: id, 'aria-label': role[1] + ' — ' + modeLabel });
 					var hex = el('input', { type: 'text', class: 'ak-palette-hex', maxlength: '7', spellcheck: 'false', 'aria-label': role[1] + ' hex — ' + modeLabel });
 					var inherited = el('span', { class: 'ak-palette-origin' });
 					var error = el('span', { class: 'ak-palette-error', role: 'alert', id: id + '-error', hidden: 'hidden', text: I.foundationInvalidColor });
 					hex.setAttribute('aria-describedby', error.id);
 					var probe = el('span', { class: 'ak-palette-probe', 'aria-hidden': 'true' }); probe.style.backgroundColor = 'var(--wk-' + role[0] + ')'; probes[role[0]] = probe; scope.appendChild(probe);
 					function change(value) {
+						// Editing any color automatically activates the Custom palette mode.
+						if (state.accentSource !== 'custom') {
+							state.accentSource = 'custom';
+							if (!isValidHex(state.brandAccent)) { state.brandAccent = D.adminkitBlue || '#1549ab'; }
+							syncSeg();
+						}
 						if (!value) { delete state.designSystem.colors[mode][role[0]]; paletteRefresh(); markDirty(); return; }
 						if (!isValidHex(value)) { hex.setAttribute('aria-invalid', 'true'); error.hidden = false; return; }
 						hex.removeAttribute('aria-invalid'); state.designSystem.colors[mode][role[0]] = value.toLowerCase(); paletteRefresh(); markDirty();
@@ -327,31 +302,39 @@
 				});
 				paletteCards.push({ mode: mode, scope: scope, rows: rows, probes: probes });
 			});
-			paletteRefresh = function (resetAccent) {
+			paletteRefresh = function () {
 				paletteCards.forEach(function (card) {
 					var overrides = state.accentSource === 'custom' ? state.designSystem.colors[card.mode] : {};
-					if (resetAccent) { delete overrides.accent; delete overrides['on-accent']; }
 					var values = state.accentSource === 'custom' ? Object.assign({}, overrides) : {};
 					card.scope.setAttribute('data-preview-accent', state.accentSource === 'adminkit' ? 'waaskit' : 'monochrome');
 					roles.forEach(function (role) { card.scope.style.removeProperty('--wk-' + role[0]); });
 					if (state.accentSource === 'custom' && isValidHex(state.brandAccent)) {
-						card.scope.style.setProperty('--wk-accent', state.brandAccent); card.scope.style.setProperty('--wk-on-accent', bestOnAccent(state.brandAccent));
-
+						card.scope.style.setProperty('--wk-accent', state.brandAccent);
+						card.scope.style.setProperty('--wk-on-accent', bestOnAccent(state.brandAccent));
 					}
 					Object.keys(values).forEach(function (role) { card.scope.style.setProperty('--wk-' + role, values[role]); });
 					if (!card.scope.isConnected) { return; }
 					card.rows.forEach(function (row) {
 						var resolved = toHex(getComputedStyle(card.probes[row.role]).backgroundColor);
-						row.picker.disabled = state.accentSource !== 'custom'; row.hex.disabled = state.accentSource !== 'custom';
-						row.picker.value = resolved; row.hex.value = values[row.role] || resolved; row.hex.removeAttribute('aria-invalid'); row.error.hidden = true;
-						row.inherited.textContent = overrides[row.role] ? I.foundationCustom : I.foundationInherited; row.reset.disabled = !overrides[row.role];
+						row.picker.value = resolved;
+						row.hex.value = values[row.role] || resolved;
+						row.hex.removeAttribute('aria-invalid');
+						row.error.hidden = true;
+						row.inherited.textContent = overrides[row.role] ? I.foundationCustom : I.foundationInherited;
+						row.reset.disabled = !overrides[row.role];
 					});
 				});
 				if (shapePreviews) { refreshShapeColors(); }
 			};
-			section('colors', I.studioColors, I.foundationColorsHelp, [el('div', { class: 'ak-color-controls' }, [el('div', { class: 'ak-foundation-accent' }, [accentPicker()]), el('div', { class: 'ak-palette-theme-switch' }, [themeSwitch(I.studioColors)])]), el('div', { class: 'ak-palettes' }, paletteCards.map(function (card) { return card.scope; }))]);
+			section('colors', I.studioColors, I.foundationColorsHelp, [
+				el('div', { class: 'ak-color-controls' }, [
+					el('div', { class: 'ak-foundation-accent' }, [accentPicker()]),
+					el('div', { class: 'ak-palette-theme-switch' }, [themeSwitch(I.studioColors)])
+				]),
+				el('div', { class: 'ak-palettes' }, paletteCards.map(function (card) { return card.scope; }))
+			]);
 
-			// Typography + spacing: scales are saved in `design_system`, the font preset in `ui_font`.
+			// --- Section 2: Typography & Spacing (Font + Text scale + Space scale) ---
 			var fontStacks = { humanist: '"Trebuchet MS",Verdana,sans-serif', classic: 'Arial,Helvetica,sans-serif', system: 'ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif' };
 			var fontSelect = el('select', { id: 'ak-type-font' }, [['humanist', I.fontHumanist], ['classic', I.fontClassic], ['system', I.fontSystem]].map(function (item) { return el('option', { value: item[0], text: item[1] }); }));
 			fontSelect.value = fontStacks[state.appearance.ui_font] ? state.appearance.ui_font : 'humanist';
@@ -359,29 +342,30 @@
 			var typeScaleValue = el('output', { for: typeScale.id });
 			var spaceScale = el('input', { type: 'range', id: 'ak-space-scale', min: '0.5', max: '2', step: '0.05', value: String(state.designSystem.space_scale) });
 			var spaceScaleValue = el('output', { for: spaceScale.id });
-			var scalePreviews = [];
-			function makeScalePreviews() {
-				var frames = ['light', 'dark'].map(function (mode) {
+			var scalePreviews = ['light', 'dark'].map(function (mode) {
 				return el('div', { class: 'ak-bp__frame ak-shape-preview ak-scale-preview', 'data-preview-theme': mode }, [
-					el('h4', { text: mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark }),
 					el('div', { class: 'ak-scale-sample' }, [
 						el('strong', { text: I.studioType }), el('p', { text: I.studioSample }),
 						el('div', { class: 'ak-scale-rows' }, [el('span', { text: I.studioSample }), el('span', { text: I.studioSample }), el('span', { text: I.studioSample })])
 					])
 				]);
-				});
-				Array.prototype.push.apply(scalePreviews, frames);
-				return frames;
-			}
+			});
 			function refreshScales() {
+				var font = fontStacks[state.appearance.ui_font] || fontStacks.humanist;
 				typeScaleValue.textContent = number(state.designSystem.type_scale) + ' ×';
 				typeScale.setAttribute('aria-valuetext', typeScaleValue.textContent);
 				spaceScaleValue.textContent = number(state.designSystem.space_scale) + ' ×';
 				spaceScale.setAttribute('aria-valuetext', spaceScaleValue.textContent);
+				// Live preview on the page itself AND in the specimen frame.
+				var root = document.documentElement.style;
+				root.setProperty('--ak-type-scale', state.designSystem.type_scale);
+				root.setProperty('--ak-space-scale', state.designSystem.space_scale);
+				root.setProperty('--ak-font-body', font);
+				root.setProperty('--wk-font-sans', font);
 				scalePreviews.forEach(function (preview) {
 					preview.style.setProperty('--ak-prev-type', state.designSystem.type_scale);
 					preview.style.setProperty('--ak-prev-space', state.designSystem.space_scale);
-					preview.style.setProperty('--ak-prev-font', fontStacks[state.appearance.ui_font] || fontStacks.humanist);
+					preview.style.setProperty('--ak-prev-font', font);
 				});
 			}
 			fontSelect.addEventListener('change', function () { state.appearance.ui_font = fontSelect.value; refreshScales(); markDirty(); });
@@ -390,14 +374,20 @@
 			function scaleSlider(input, output, label) {
 				return el('div', { class: 'ak-foundation-slider' }, [el('div', {}, [el('label', { for: input.id, text: label }), output]), input]);
 			}
-			section('type', I.studioType, I.studioTypeHint, [
+			section('type', I.studioType + ' & ' + I.studioSpacing.toLowerCase(), I.studioTypeHint, [
 				el('div', { class: 'ak-shape-selects' }, [el('div', {}, [el('label', { for: fontSelect.id, text: I.studioFont }), fontSelect])]),
 				scaleSlider(typeScale, typeScaleValue, I.studioTypeScale),
+				scaleSlider(spaceScale, spaceScaleValue, I.studioSpaceScale),
 				el('button', { type: 'button', class: 'ak-btn', text: I.resetDefaults, onclick: function () {
-					state.appearance.ui_font = 'humanist'; fontSelect.value = 'humanist'; state.designSystem.type_scale = 1; typeScale.value = '1'; refreshScales(); markDirty();
+					state.appearance.ui_font = 'humanist'; fontSelect.value = 'humanist';
+					state.designSystem.type_scale = 1; typeScale.value = '1';
+					state.designSystem.space_scale = 1; spaceScale.value = '1';
+					refreshScales(); markDirty();
 				} })
 			]);
-			attachPreview('type', makeScalePreviews());
+			attachPreview('type', scalePreviews);
+
+			// --- Section 3: Shapes & Surfaces (Radius + Border + Elevation + Button highlight) ---
 			var radius = el('input', { type: 'range', id: 'ak-shape-radius', min: '0', max: '2', step: '0.05', value: String(state.designSystem.radius_scale) });
 			var radiusValue = el('output', { for: radius.id });
 			var elevation = el('select', { id: 'ak-shape-elevation' }, [
@@ -406,12 +396,17 @@
 			elevation.value = state.designSystem.elevation;
 			var borderWidth = el('select', { id: 'ak-shape-border' }, [0, 1, 2, 3, 4].map(function (width) { return el('option', { value: String(width), text: width + ' px' }); }));
 			borderWidth.value = String(state.designSystem.border_width);
+			var highlightSelect = el('select', { id: 'ak-buttons-highlight', 'aria-describedby': 'ak-buttons-highlight-help' }, [
+				['off', I.componentOff], ['hover', I.componentHover], ['always', I.componentAlways]
+			].map(function (item) { return el('option', { value: item[0], text: item[1] }); }));
+			highlightSelect.value = state.designSystem.components.buttons.highlight;
+
 			var shapePreviews = ['light', 'dark'].map(function (mode) {
 				return el('div', { class: 'ak-bp__frame ak-shape-preview', 'data-preview-theme': mode }, [
-					el('h4', { text: mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark }),
 					el('div', { class: 'ak-shape-controls' }, [
 						el('button', { type: 'button', class: 'ak-btn ak-btn--primary', text: I.previewAction }),
 						el('button', { type: 'button', class: 'ak-btn', text: I.studioSecondary }),
+						el('button', { type: 'button', class: 'ak-btn ak-btn--primary', disabled: 'disabled', text: I.componentDisabled }),
 						el('label', {}, [el('span', { text: I.studioField }), el('input', { type: 'text', value: 'AdminKit', 'aria-label': I.studioField + ' — ' + (mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark) })])
 					]),
 					el('div', { class: 'ak-shape-card' }, [el('strong', { text: I.shapeCard }), el('p', { text: I.studioSample })]),
@@ -438,8 +433,22 @@
 			function refreshShapes() {
 				radiusValue.textContent = number(state.designSystem.radius_scale) + ' ×';
 				radius.setAttribute('aria-valuetext', radiusValue.textContent);
+				var highlight = state.designSystem.components.buttons.highlight;
+				var depth = { flat: 'none', subtle: 'var(--wk-elevation-1)', raised: 'var(--wk-elevation-2)' }[state.designSystem.elevation];
+				// Live preview on the page itself AND in the specimen frame.
+				var root = document.documentElement.style;
+				root.setProperty('--ak-radius-scale', state.designSystem.radius_scale);
+				root.setProperty('--wk-radius-scale', state.designSystem.radius_scale);
+				root.setProperty('--ak-border-width', state.designSystem.border_width + 'px');
+				[['s', 8], ['m', 12], ['l', 16], ['xl', 24]].forEach(function (r) {
+					root.setProperty('--ak-radius-' + r[0], 'calc(' + r[1] + 'px * ' + state.designSystem.radius_scale + ')');
+				});
+				if (depth) { root.setProperty('--ak-design-elevation', depth); } else { root.removeProperty('--ak-design-elevation'); }
+				root.setProperty('--ak-btn-primary-elevation', highlight === 'always' ? 'var(--wk-elevation-1)' : 'var(--wk-elevation-1-shadow)');
+				root.setProperty('--ak-btn-primary-elevation-hover', highlight === 'off' ? 'var(--wk-elevation-1-shadow)' : 'var(--wk-elevation-1)');
+				root.setProperty('--ak-btn-primary-highlight', highlight === 'always' ? 'var(--ak-btn-highlight-effect)' : 'inset 0 0 0 transparent');
+				root.setProperty('--ak-btn-primary-highlight-hover', highlight === 'off' ? 'inset 0 0 0 transparent' : 'var(--ak-btn-highlight-effect)');
 				shapePreviews.forEach(function (preview) {
-					var highlight = state.designSystem.components.buttons.highlight;
 					preview.style.setProperty('--ak-btn-primary-elevation', highlight === 'always' ? 'var(--wk-elevation-1)' : 'var(--wk-elevation-1-shadow)');
 					preview.style.setProperty('--ak-btn-primary-elevation-hover', highlight === 'off' ? 'var(--wk-elevation-1-shadow)' : 'var(--wk-elevation-1)');
 					preview.style.setProperty('--ak-btn-primary-highlight', highlight === 'always' ? 'var(--ak-btn-highlight-effect)' : 'inset 0 0 0 transparent');
@@ -447,58 +456,32 @@
 					preview.style.setProperty('--ak-shape-scale', state.designSystem.radius_scale);
 					preview.style.setProperty('--ak-border-width', state.designSystem.border_width + 'px');
 					preview.style.setProperty('--ak-radius-s', 'calc(8px * ' + state.designSystem.radius_scale + ')');
-					var depth = { flat: 'none', subtle: 'var(--wk-elevation-1)', raised: 'var(--wk-elevation-2)' }[state.designSystem.elevation];
 					preview.style.setProperty('--ak-shape-shadow', depth || 'var(--ak-default-card-shadow)');
 				});
 			}
 			borderWidth.addEventListener('change', function () { state.designSystem.border_width = Number(borderWidth.value); refreshShapes(); markDirty(); });
 			radius.addEventListener('input', function () { state.designSystem.radius_scale = Number(radius.value); refreshShapes(); markDirty(); });
 			elevation.addEventListener('change', function () { state.designSystem.elevation = elevation.value; refreshShapes(); markDirty(); });
+			highlightSelect.addEventListener('change', function () { state.designSystem.components.buttons.highlight = highlightSelect.value; refreshShapes(); markDirty(); });
+
 			section('shapes', I.studioShapes, I.shapeHint, [
-				el('div', { class: 'ak-foundation-slider' }, [el('div', {}, [el('label', { for: radius.id, text: I.studioRadiusScale }), radiusValue]), radius]),
+				scaleSlider(radius, radiusValue, I.studioRadiusScale),
 				el('div', { class: 'ak-shape-selects' }, [
 					el('div', {}, [el('label', { for: borderWidth.id, text: I.studioBorder }), borderWidth]),
-					el('div', {}, [el('label', { for: elevation.id, text: I.studioElevation }), elevation])
+					el('div', {}, [el('label', { for: elevation.id, text: I.studioElevation }), elevation]),
+					el('div', {}, [el('label', { for: highlightSelect.id, text: I.componentHighlight }), highlightSelect])
 				]),
-				el('p', { class: 'ak-foundation-intro ak-shape-help', text: I.shapeHelp }),
+				el('p', { id: 'ak-buttons-highlight-help', class: 'ak-foundation-intro ak-shape-help', text: I.shapeHelp }),
 				el('button', { type: 'button', class: 'ak-btn', text: I.resetDefaults, onclick: function () {
-					state.designSystem.radius_scale = 1; state.designSystem.border_width = 1; borderWidth.value = '1'; state.designSystem.elevation = 'default'; radius.value = '1'; elevation.value = 'default'; refreshShapes(); markDirty();
+					state.designSystem.radius_scale = 1; radius.value = '1';
+					state.designSystem.border_width = 1; borderWidth.value = '1';
+					state.designSystem.elevation = 'default'; elevation.value = 'default';
+					state.designSystem.components.buttons.highlight = 'always'; highlightSelect.value = 'always';
+					refreshShapes(); markDirty();
 				} })
 			]);
-			attachPreview('shapes', shapePreviews.slice());
-			section('spacing', I.studioSpacing, I.studioSpacingHint, [
-				scaleSlider(spaceScale, spaceScaleValue, I.studioSpaceScale),
-				el('button', { type: 'button', class: 'ak-btn', text: I.resetDefaults, onclick: function () {
-					state.designSystem.space_scale = 1; spaceScale.value = '1'; refreshScales(); markDirty();
-				} })
-			]);
-			attachPreview('spacing', makeScalePreviews());
+			attachPreview('shapes', shapePreviews);
 
-			// Component-specific effects share the existing draft, previews and Save.
-			var highlightSelect = el('select', { id: 'ak-buttons-highlight', 'aria-describedby': 'ak-buttons-highlight-help' }, [
-				['off', I.componentOff], ['hover', I.componentHover], ['always', I.componentAlways]
-			].map(function (item) { return el('option', { value: item[0], text: item[1] }); }));
-			highlightSelect.value = state.designSystem.components.buttons.highlight;
-			highlightSelect.addEventListener('change', function () {
-				state.designSystem.components.buttons.highlight = highlightSelect.value; refreshShapes(); markDirty();
-			});
-			var buttonPreviews = ['light', 'dark'].map(function (mode) {
-				return el('div', { class: 'ak-bp__frame ak-shape-preview', 'data-preview-theme': mode }, [
-					el('h4', { text: mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark }),
-					el('div', { class: 'ak-shape-controls' }, [
-						el('button', { type: 'button', class: 'ak-btn ak-btn--primary', text: I.previewAction }),
-						el('button', { type: 'button', class: 'ak-btn', text: I.studioSecondary }),
-						el('button', { type: 'button', class: 'ak-btn ak-btn--primary', disabled: 'disabled', text: I.componentDisabled })
-					])
-				]);
-			});
-			Array.prototype.push.apply(shapePreviews, buttonPreviews);
-			section('components', I.studioComponents, I.componentsHelp, [
-				el('h4', { text: I.componentButtons }),
-				el('div', { class: 'ak-shape-selects' }, [el('div', {}, [el('label', { for: highlightSelect.id, text: I.componentHighlight }), highlightSelect])]),
-				el('p', { id: 'ak-buttons-highlight-help', class: 'ak-foundation-intro', text: I.componentHighlightHelp })
-			]);
-			attachPreview('components', buttonPreviews);
 			refreshShapes(); refreshShapeColors(); refreshScales();
 			p.classList.add('ak-foundations');
 			p.appendChild(el('h2', { class: 'ak-foundations-title', text: I.designSystem })); p.appendChild(intro(I.designIntro));

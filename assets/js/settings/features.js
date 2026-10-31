@@ -159,7 +159,7 @@
 					if (!r) {
 						return;
 					}
-					var hay = ((f.label || '') + ' ' + (f.desc || '') + ' ' + (f.summary || '')).toLowerCase();
+					var hay = ((f.label || '') + ' ' + (f.desc || '')).toLowerCase();
 					var active = f.available !== false && !!state.features[f.key] && (!f.parent || !!state.features[f.parent]);
 					var status = active ? 'active' : 'inactive';
 					var matchesSearch = !q || hay.indexOf(q) !== -1;

@@ -29,7 +29,7 @@ if ( false === strpos( $appearance, '[data-adminkit-accent="custom"]' ) ) {
 	$failures[] = 'Custom appearance is not scoped to its explicit preset';
 }
 $main = file_get_contents( $root . '/assets/css/settings/main.css' );
-foreach ( array( '.ak-overview-list', '.ak-foundations-panel', '.ak-rows' ) as $surface ) {
+foreach ( array( '.ak-foundations-panel', '.ak-rows' ) as $surface ) {
  if ( ! preg_match( '/' . preg_quote( $surface, '/' ) . '\s*\{[^}]*box-shadow:\s*var\(--ak-card-shadow\)/', $main ) ) {
   $failures[] = $surface . ': outer surface lost shared elevation';
  }

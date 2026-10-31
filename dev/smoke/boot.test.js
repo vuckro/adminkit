@@ -41,7 +41,7 @@ for (const tab of tabs) {
 const designTab = doc.getElementById('ak-tab-brand');
 if (designTab) { designTab.click(); await tick(); }
 const sectionTabs = [...doc.querySelectorAll('.ak-foundations-nav [role="tab"]')];
-assert(sectionTabs.length >= 5, 'design sections rendered (' + sectionTabs.length + ')');
+assert(sectionTabs.length === 3, 'design sections rendered (' + sectionTabs.length + ')');
 for (const tab of sectionTabs) {
   try { tab.click(); await tick(); } catch (e) { errors.push('section ' + tab.id + ': ' + e.stack); }
 }

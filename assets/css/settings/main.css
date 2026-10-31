@@ -78,15 +78,7 @@
 .adminkit-app[data-screen="main"] .ak-row.is-off { opacity: 1; }
 .adminkit-app[data-screen="main"] .ak-row.is-locked { opacity: 1; }
 .adminkit-app[data-screen="main"] .ak-group__title { text-transform: none; letter-spacing: normal; font-size: calc(16px * var(--ak-type-scale, 1)); color: var(--ak-heading); margin: calc(28px * var(--ak-space-scale, 1)) 0 calc(12px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-feature-details summary:focus-visible,
-.adminkit-app .ak-overview-link:focus-visible { outline: 2px solid var(--ak-primary); outline-offset: 4px; }
 .adminkit-app .ak-panel-title { font-size: calc(28px * var(--ak-type-scale, 1)); line-height: 1.25; font-weight: 600; color: var(--ak-heading); margin: 0 0 calc(12px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-overview-list { margin: calc(32px * var(--ak-space-scale, 1)) 0; border-top: 1px solid var(--ak-border); }
-.adminkit-app .ak-overview-entry { display: flex; align-items: center; justify-content: space-between; gap: calc(24px * var(--ak-space-scale, 1)); padding: calc(24px * var(--ak-space-scale, 1)) 0; border-bottom: 1px solid var(--ak-border); }
-.adminkit-app .ak-overview-entry dt { font-weight: 600; color: var(--ak-heading); margin-bottom: calc(8px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-overview-entry dd { margin: 0; color: var(--ak-text-muted); font-variant-numeric: tabular-nums; }
-.adminkit-app .ak-overview-link { color: var(--ak-text); text-underline-offset: 4px; }
-.adminkit-app .ak-scope-note { max-width: 70ch; color: var(--ak-text-muted); line-height: 1.7; }
 @media (max-width: 1200px) {
 	.adminkit-app[data-screen="main"] { grid-template-columns: 170px minmax(0, 1fr); column-gap: calc(24px * var(--ak-space-scale, 1)); }
 }
@@ -95,7 +87,6 @@
 	.adminkit-app[data-screen="main"] .ak-head { flex-wrap: wrap; gap: calc(16px * var(--ak-space-scale, 1)); }
 	.adminkit-app[data-screen="main"] .ak-tabs { position: static; flex-direction: row; flex-wrap: wrap; margin-bottom: calc(24px * var(--ak-space-scale, 1)); }
 	.adminkit-app[data-screen="main"] .ak-tabs button { min-height: 44px; }
-	.adminkit-app .ak-overview-entry { flex-direction: column; align-items: flex-start; gap: calc(12px * var(--ak-space-scale, 1)); }
 }
 .adminkit-app .ak-feature-summary { color: var(--ak-text-muted); font-size: var(--ak-text-s); line-height: 1.5; margin: calc(5px * var(--ak-space-scale, 1)) 0; max-width: 70ch; }
 /* An off setting remains readable and actionable. Only its switch conveys off. */
@@ -108,48 +99,7 @@
 .adminkit-app[data-screen="main"] .ak-row.is-locked .ak-row__main { opacity: 1; }
 .adminkit-app[data-screen="main"] .ak-row.is-locked .ak-switch { opacity: .65; }
 
-/* Contextual help sits with the setting it explains, with explicit technical facts. */
 .adminkit-app .ak-feature-heading { display: flex; align-items: center; gap: calc(8px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-info-button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	flex: 0 0 auto;
-	width: 28px;
-	height: 28px;
-	padding: 0;
-	border: 0;
-	border-radius: var(--ak-radius-full);
-	background: transparent;
-	color: var(--ak-text-muted);
-	cursor: pointer;
-}
-.adminkit-app .ak-info-button:hover,
-.adminkit-app .ak-info-button[aria-expanded="true"] { background: var(--ak-primary-subtle); color: var(--ak-primary-text); }
-.adminkit-app .ak-info-button:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
-.adminkit-app .ak-feature-help { margin-top: calc(16px * var(--ak-space-scale, 1)); padding: calc(16px * var(--ak-space-scale, 1)); background: var(--ak-bg); border-radius: var(--ak-radius-s); }
-.adminkit-app .ak-feature-help[hidden] { display: none; }
-.adminkit-app .ak-feature-help .ak-row__desc { margin: 0; max-width: 70ch; }
-.adminkit-app .ak-feature-help h3 { font-size: var(--ak-text-s); color: var(--ak-heading); margin: calc(20px * var(--ak-space-scale, 1)) 0 calc(12px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-feature-technical { margin: 0; }
-.adminkit-app .ak-feature-technical > div { display: grid; grid-template-columns: minmax(120px, 180px) minmax(0, 1fr); gap: calc(12px * var(--ak-space-scale, 1)); padding-block: calc(6px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-feature-technical dt { color: var(--ak-text-muted); font-size: var(--ak-text-s); }
-.adminkit-app .ak-feature-technical dd { margin: 0; min-width: 0; }
-.adminkit-app .ak-feature-technical code { background: transparent; color: var(--ak-text); padding: 0; font-size: var(--ak-text-xs); overflow-wrap: anywhere; }
-.adminkit-app .ak-feature-save-note { color: var(--ak-text-muted); max-width: 70ch; font-size: var(--ak-text-xs); line-height: 1.6; margin: calc(12px * var(--ak-space-scale, 1)) 0 0; }
-
-/* A single surfaced overview groups the configuration and gives actions weight. */
-.adminkit-app .ak-overview-list { background: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); overflow: hidden; margin: calc(24px * var(--ak-space-scale, 1)) 0; }
-.adminkit-app .ak-overview-entry { padding: calc(20px * var(--ak-space-scale, 1)) calc(24px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-overview-entry:last-child { border-bottom: 0; }
-.adminkit-app .ak-overview-link { text-decoration: none; white-space: normal; text-align: center; line-height: 1.4; flex-shrink: 0; }
-.adminkit-app .ak-overview-entry dd { font-variant-numeric: tabular-nums; }
-@media (max-width: 782px) {
-	.adminkit-app .ak-info-button { width: 44px; height: 44px; }
-	.adminkit-app .ak-overview-entry { padding: calc(20px * var(--ak-space-scale, 1)); }
-	.adminkit-app .ak-overview-link { min-height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; }
-	.adminkit-app .ak-feature-technical > div { grid-template-columns: 1fr; gap: calc(3px * var(--ak-space-scale, 1)); }
-}
 
 /* Dedicated foundation pages. Category changes never alter the saved profile. */
 .adminkit-app .ak-foundations-title { margin: 0 0 calc(14px * var(--ak-space-scale, 1)); font-size: calc(26px * var(--ak-type-scale, 1)); line-height: 1.25; color: var(--ak-heading); }
@@ -225,7 +175,6 @@
  border-color: var(--ak-primary);
  color: var(--ak-on-accent);
 }
-.adminkit-app .ak-feature-bulk-note { color: var(--ak-text-muted); font-size: calc(12px * var(--ak-type-scale, 1)); margin: calc(-4px * var(--ak-space-scale, 1)) 0 calc(20px * var(--ak-space-scale, 1)); max-width: 70ch; }
 
 /* Palette controls respond to their actual panel width, including enlarged text. */
 @container (max-width: 400px) {
@@ -287,7 +236,7 @@
 .adminkit-app .ak-shape-table strong { background: var(--wk-surface-sunken); }
 .adminkit-app .ak-shape-table span { border-top: 1px solid var(--wk-border); color: var(--wk-text-muted); }
 
-.adminkit-app .ak-shape-selects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.adminkit-app .ak-shape-selects { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
 .adminkit-app .ak-shape-selects label { margin-bottom: 8px; }
 .adminkit-app .ak-shape-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 24px; }
 .adminkit-app .ak-shape-controls > label { width: 100%; color: var(--wk-text); font-size: var(--ak-text-s); font-weight: 500; }
@@ -313,8 +262,6 @@
 }
 .adminkit-app .ak-shape-controls input[type="text"] { border-width: var(--ak-border-width); }
 @media (max-width: 600px) { .adminkit-app .ak-shape-selects { grid-template-columns: minmax(0, 1fr); } }
-
-.adminkit-app .ak-feature-settings { display: inline-flex; align-items: center; width: fit-content; max-width: 100%; margin-top: 8px; text-decoration: none; }
 
 .adminkit-app .ak-foundation-scope[hidden] { display: none; }
 
