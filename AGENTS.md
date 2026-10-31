@@ -39,6 +39,9 @@ new → `features/`.**
   `navigation-menu.js` and `navigation-toolbar.js` own their drafts and requests;
   `navigation-controls.js` owns shared controls. Keep the WordPress enqueue
   dependencies and smoke loaders aligned when changing these boundaries.
+- **Toolbar PHP** → `AdminKit_Toolbar_Manager` keeps public hooks/routes;
+  `Toolbar_Config`, `Toolbar_Snapshot` and `Toolbar_Renderer` own validation/storage,
+  pristine collection and rendering. Register helpers with null boot values.
 - **A setting / feature toggle** → `AdminKit_Settings::register()` + a row in
   `AdminKit_Settings_Catalog::features()` for the UI.
 - **Per-screen CSS** → `assets/css/wp-screens/<name>.css` + a `register_screen()`

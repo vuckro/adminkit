@@ -268,7 +268,7 @@ msgstr ""
 msgid "Custom link"
 msgstr ""
 
-#: inc/features/toolbar/class-toolbar-manager.php
+#: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Customize"
 msgstr ""
 
@@ -296,7 +296,7 @@ msgstr ""
 msgid "Dark mode"
 msgstr ""
 
-#: inc/class-theme-toggle.php inc/features/toolbar/class-toolbar-manager.php
+#: inc/class-theme-toggle.php inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Dashboard"
 msgstr ""
 
@@ -340,11 +340,11 @@ msgstr ""
 msgid "Drag to reorder"
 msgstr ""
 
-#: inc/features/toolbar/class-toolbar-manager.php
+#: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Edit Page"
 msgstr ""
 
-#: inc/features/toolbar/class-toolbar-manager.php
+#: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Edit Site"
 msgstr ""
 
@@ -788,7 +788,7 @@ msgstr ""
 msgid "Saving…"
 msgstr ""
 
-#: inc/features/toolbar/class-toolbar-manager.php
+#: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Search"
 msgstr ""
 

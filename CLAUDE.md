@@ -22,6 +22,9 @@ Keep changes simple, explicit and compatible with PHP 7.4+/WordPress 6.0+.
   has separate controls/menu/toolbar factories; its host only routes panes and
   delegates payloads. Update enqueue dependencies and smoke loaders when adding
   a settings part.
+- Toolbar PHP keeps its public facade on `AdminKit_Toolbar_Manager`; configuration,
+  snapshots and rendering live in three registered helpers. Keep existing hook
+  callbacks/priorities, option/cache keys and REST envelopes on refactors.
 - Tokens originate in `tokens/`; generated styles consume the `--ak-*` contract.
   Run the builder rather than editing generated CSS. Keep public toolbar CSS scoped.
 

@@ -128,6 +128,23 @@ retain native capabilities; taxonomy/post-type slugs resolve moved highlights.
 Only `manage_options` viewers persist first-seen order; restricted menus cannot
 prune the administrator's history.
 
+Toolbar PHP has four owners under `inc/features/toolbar/`:
+
+- `AdminKit_Toolbar_Manager`: stable public facade, setting gate, WordPress hook
+  callbacks/priorities, capabilities and REST response envelopes.
+- `AdminKit_Toolbar_Config`: storage key, protected-node/capability filters,
+  normalization, merged-parameter validation and persistence through
+  `AdminKit_Storage`. `save(array $params)` returns normalized contexts or WP_Error.
+- `AdminKit_Toolbar_Snapshot`: pristine node capture/cache, REST fallback rebuild,
+  context-specific metadata and frontend synthesis. The facade guards privileged
+  frontend capture; fallback collection suspends the facade's application hooks.
+- `AdminKit_Toolbar_Renderer`: applies an explicit validated layout/protected-node
+  set/branding policy and owns per-request icon CSS queues and native markup edits.
+
+The three helpers have null boot entries in `MODULES`; only the manager registers
+hooks. Existing public manager methods, constants, route names, response shapes,
+cache keys and filters remain the integration contract. Helpers are internal.
+
 Toolbar data is the `adminkit_toolbar` option with separate `admin`/`frontend`
 contexts; legacy flat layouts read as admin. Omitted contexts remain unchanged.
 Custom titles use literal regex callbacks so dollar/backslash sequences cannot

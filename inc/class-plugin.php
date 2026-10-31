@@ -66,6 +66,9 @@ class AdminKit_Plugin {
 		'wp-core/class-content-list.php'                       => 'AdminKit_Content_List::init',
 		'features/menu/class-menu-store.php'                   => null, // schema only
 		'features/menu/class-menu-manager.php'                 => 'AdminKit_Menu_Manager::init',
+		'features/toolbar/class-toolbar-config.php'            => null,
+		'features/toolbar/class-toolbar-snapshot.php'          => null,
+		'features/toolbar/class-toolbar-renderer.php'          => null,
 		'features/toolbar/class-toolbar-manager.php'           => 'AdminKit_Toolbar_Manager::init',
 	);
 

@@ -237,3 +237,32 @@ captures were also inspected. Original options and raw menu rows were restored
 and read back, and all scratch accounts/posts/sessions were removed.
 Evidence is retained at workspace level in
 `output/playwright/navigation-refactor-20261031/`.
+
+
+## Follow-up: toolbar PHP responsibility split
+
+The 1,077-line toolbar manager is now a 183-line stable public facade plus three
+registered internal helpers: Config (normalization, policy and persistence),
+Snapshot (pristine collection/cache and context metadata), and Renderer (native
+node edits and per-request icon CSS). Only the facade binds WordPress hooks.
+Public manager methods/constants, filter names, callback priorities, route names,
+REST envelopes, option/cache keys and saved formats remain unchanged. No storage
+migration, external dependency or plugin version change was introduced.
+
+The endpoint failure/validation suite now loads the registered helpers. Navigation
+fixtures additionally verify stable facade hooks/constants, authorized frontend
+capture, pristine snapshots independent of saved titles, synthesized context
+nodes, unchanged GET envelopes, snapshot invalidation and desktop/mobile icon CSS
+through the existing public head callback. The registry/package gate verifies the
+three helpers are registered and distributed.
+
+All 147 offline checks passed after regenerating translation source references;
+all 259 messages/translations remain unchanged. Actual local WordPress/Chromium
+verification replayed the full navigation suite and reset/default cases, including
+a cold-cache toolbar REST read, permissions, malformed payloads, native drag,
+admin/frontend isolation, title/icon-only saves, failure/retry, feature toggles,
+protected IDs and Published-first behavior. Desktop/mobile light/dark captures
+were inspected; no JavaScript errors or document overflow were observed.
+Original options and raw menu rows were restored and read back; scratch users,
+posts and temporary authentication sessions/files were removed. Evidence lives at
+workspace level in `output/playwright/toolbar-php-refactor-20261031/`.

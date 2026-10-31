@@ -10,11 +10,14 @@ function is_admin(){global$admin;return$admin;}
 function sanitize_text_field($s){return strip_tags($s);}
 function esc_html($s){return htmlspecialchars($s,ENT_QUOTES);}
 function esc_attr($s){return htmlspecialchars($s,ENT_QUOTES);}
-class AdminKit_Settings {public static function get($key){return false;}}
+class AdminKit_Settings {const OPTION_KEY='adminkit_settings';public static $values=array();public static function get($key){return self::$values[$key]??false;}public static function register($key,$args){}}
 class AdminKit_Settings_Page {const SLUG='adminkit';}
 class AdminKit_Menu_Store {public static $config=array();public static function get_config(){return self::$config;}}
 require ADMINKIT_PATH.'inc/class-icons.php';
 require ADMINKIT_PATH.'inc/features/menu/class-menu-manager.php';
+require ADMINKIT_PATH.'inc/features/toolbar/class-toolbar-config.php';
+require ADMINKIT_PATH.'inc/features/toolbar/class-toolbar-snapshot.php';
+require ADMINKIT_PATH.'inc/features/toolbar/class-toolbar-renderer.php';
 require ADMINKIT_PATH.'inc/features/toolbar/class-toolbar-manager.php';
 function check($value,$message){if(!$value)throw new RuntimeException($message);}
 function item($slug,$title){return array($title,'read',$slug,$title,'menu-top','','dashicons-menu');}
@@ -69,4 +72,45 @@ foreach (array('Price $1', '${2} and $0', 'Path \\1 & <tag> "quote"') as $title)
   if(strpos($markup,'<form')!==false)check(strpos($actual,'value="'.esc_attr(sanitize_text_field($title)).'"')!==false,'Search submit title was corrupted');
  }
 }
+// The manager remains the stable hook facade; helper classes must not register hooks.
+$hooks=array();
+function add_action($hook,$callback,$priority=10){global$hooks;$hooks[]=array($hook,$callback,$priority);}
+AdminKit_Settings::$values=array('toolbar_manager_enabled'=>true);
+AdminKit_Toolbar_Manager::init();
+foreach(array(array('admin_bar_menu','capture_frontend',99998),array('admin_bar_menu','apply',99999),array('admin_head','print_css',22),array('wp_head','print_css',22),array('rest_api_init','register_routes',10))as$expected){
+ check(in_array(array($expected[0],array('AdminKit_Toolbar_Manager',$expected[1]),$expected[2]),$hooks,true),'Public hook callback/priority changed');
+}
+$before=count($hooks);AdminKit_Toolbar_Manager::enqueue('unrelated');check(count($hooks)===$before,'Snapshot capture leaked to another screen');
+AdminKit_Toolbar_Manager::enqueue('toplevel_page_adminkit');check(end($hooks)===array('admin_bar_menu',array('AdminKit_Toolbar_Manager','capture'),99998),'Admin capture hook changed');
+check(AdminKit_Toolbar_Manager::OPTION==='adminkit_toolbar'&&AdminKit_Toolbar_Manager::SNAPSHOT_KEY==='adminkit_toolbar_nodes'&&AdminKit_Toolbar_Manager::FRONTEND_SNAPSHOT_KEY==='adminkit_toolbar_nodes_frontend','Public storage constants changed');
+
+// Snapshot collection is pristine, context-aware and independent of the saved layout.
+define('HOUR_IN_SECONDS',3600);$transients=array();$bar_showing=true;
+function get_transient($key){global$transients;return$transients[$key]??false;}
+function set_transient($key,$value,$ttl){global$transients;$transients[$key]=$value;}
+function delete_transient($key){global$transients;unset($transients[$key]);}
+function is_admin_bar_showing(){global$bar_showing;return$bar_showing;}
+function wp_strip_all_tags($text){return strip_tags($text);}
+function __($text,$domain='default'){return$text;}
+function rest_ensure_response($value){return$value;}
+class Snapshot_Bar extends Fixture_Bar {public function get_nodes(){return$this->nodes;}}
+$bar=new Snapshot_Bar();$bar->add_node(array('id'=>'site-name','parent'=>false,'title'=>'Native site'));
+$bar->add_node(array('id'=>'search','parent'=>'top-secondary','title'=>'<form id="adminbarsearch"><label>Search</label></form>'));
+$options[AdminKit_Toolbar_Manager::OPTION]=array('admin'=>array('titles'=>array('site-name'=>'Saved site')));
+AdminKit_Toolbar_Manager::capture($bar);
+$cached=$transients[AdminKit_Toolbar_Manager::SNAPSHOT_KEY];
+check($cached[array_search('site-name',array_column($cached,'id'),true)]['label']==='Native site','Snapshot applied a saved title');
+$before=$options;$response=AdminKit_Toolbar_Manager::rest_get();check($before===$options,'Snapshot read changed persisted layout');
+check($response['nodes']===$response['nodesByContext']['admin']&&$response['config']['titles']['site-name']==='Saved site','REST envelope changed');
+check(in_array('search',array_column($response['nodesByContext']['frontend'],'id'),true)&&!in_array('menu-toggle',array_column($response['nodesByContext']['frontend'],'id'),true),'Frontend synthesis lost context isolation');
+$admin=false;$allowed=false;AdminKit_Toolbar_Manager::capture_frontend($bar);check(!isset($transients[AdminKit_Toolbar_Manager::FRONTEND_SNAPSHOT_KEY]),'Restricted user populated privileged snapshot');
+$allowed=true;AdminKit_Toolbar_Manager::capture_frontend($bar);check(isset($transients[AdminKit_Toolbar_Manager::FRONTEND_SNAPSHOT_KEY]),'Authorized frontend capture failed');
+
+// CSS queues move with the renderer, while the public head callback stays stable.
+$options[AdminKit_Toolbar_Manager::OPTION]=array('frontend'=>array('icons'=>array('site-name'=>'home','search'=>'home')));
+AdminKit_Toolbar_Manager::apply($bar);ob_start();AdminKit_Toolbar_Manager::print_css();$css=ob_get_clean();
+check(strpos($css,'id="adminkit-toolbar-manager"')!==false&&strpos($css,'#wp-admin-bar-site-name')!==false&&strpos($css,'#adminbarsearch::before')!==false&&strpos($css,'max-width:782px')!==false,'Renderer lost node CSS, search form or mobile rules');
+$bar_showing=false;ob_start();AdminKit_Toolbar_Manager::print_css();check(ob_get_clean()==='','Icon CSS leaked without a toolbar');
+AdminKit_Toolbar_Manager::flush_snapshots();check(!$transients,'Snapshot invalidation missed a context');
+AdminKit_Settings::$values=array();
 echo "OK: real menu/toolbar apply, protected nodes, stable children, metadata, taxonomy highlights, history authorization and context isolation.\n";

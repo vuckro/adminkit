@@ -268,7 +268,7 @@ msgstr "Personnalisé"
 msgid "Custom link"
 msgstr "Lien personnalisé"
 
-#: inc/features/toolbar/class-toolbar-manager.php
+#: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Customize"
 msgstr "Personnaliser"
 
@@ -296,7 +296,7 @@ msgstr "Sombre"
 msgid "Dark mode"
 msgstr "Mode sombre"
 
-#: inc/class-theme-toggle.php inc/features/toolbar/class-toolbar-manager.php
+#: inc/class-theme-toggle.php inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
@@ -340,11 +340,11 @@ msgstr "Télécharger cette disposition de menu dans un fichier JSON"
 msgid "Drag to reorder"
 msgstr "Glissez pour réorganiser"
 
-#: inc/features/toolbar/class-toolbar-manager.php
+#: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Edit Page"
 msgstr "Modifier la page"
 
-#: inc/features/toolbar/class-toolbar-manager.php
+#: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Edit Site"
 msgstr "Modifier le site"
 
@@ -788,7 +788,7 @@ msgstr "Enregistré"
 msgid "Saving…"
 msgstr "Enregistrement…"
 
-#: inc/features/toolbar/class-toolbar-manager.php
+#: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Search"
 msgstr "Rechercher"
 
