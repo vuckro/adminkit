@@ -236,7 +236,7 @@
 					var active = item.id === id;
 					item.tab.setAttribute('aria-selected', String(active)); item.tab.tabIndex = active ? 0 : -1; item.pane.hidden = !active;
 				});
-				previewSection = id; scopeNote.hidden = id === 'colors'; refreshPreview();
+				previewSection = id; scopeNote.hidden = (id === 'colors' || id === 'plugins'); refreshPreview();
 				requestAnimationFrame(function () { paletteRefresh(); });
 			}
 			nav.addEventListener('keydown', function (event) {
@@ -505,6 +505,12 @@
 				} })
 			]);
 			attachPreview('shapes', shapePreviews);
+
+			// --- Section 4: Extensions / Plugins supported by the Design System ------
+			if (window.AdminKitParts && typeof window.AdminKitParts.plugins === 'function') {
+				var buildPlugins = window.AdminKitParts.plugins(context);
+				section('plugins', I.plugins, I.pluginsIntro, buildPlugins());
+			}
 
 			refreshShapes(); refreshShapeColors(); refreshScales();
 			p.classList.add('ak-foundations');

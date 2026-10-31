@@ -11,10 +11,10 @@
 		var markDirty = context.markDirty;
 
 		function buildPlugins() {
-			var p = el('section', { class: 'ak-panel', role: 'tabpanel' }, [el('h2', { class: 'ak-panel-title', text: I.plugins }), intro(I.pluginsIntro)]);
+			var frag = [];
 			var list = D.integrations || [];
 			if (!list.length) {
-				return p;
+				return frag;
 			}
 
 			var inputs = []; // every toggle (native + generic), for the Reset button
@@ -204,15 +204,14 @@
 					g.wrap.style.display = any ? '' : 'none';
 				});
 			}
-			p.appendChild(empty);
 			search.addEventListener('input', filterPlugins);
-			p.appendChild(el('div', { class: 'ak-search-wrap' }, [search]));
+			frag.push(el('div', { class: 'ak-search-wrap' }, [search]));
 
 			// Single bulk control — Reset puts every toggle back to ON (the
 			// "AdminKit handles this plugin" default for both native + generic).
 			// Skipped when no row carries a toggle (e.g. every plugin inactive).
 			if (inputs.length) {
-				p.appendChild(
+				frag.push(
 					el('div', { class: 'ak-actions ak-bulk' }, [
 						el('button', {
 							type: 'button',
@@ -223,10 +222,11 @@
 					])
 				);
 			}
+			frag.push(empty);
 			sections.forEach(function (s) {
-				p.appendChild(s);
+				frag.push(s);
 			});
-			return p;
+			return frag;
 		}
 
 		return buildPlugins;
