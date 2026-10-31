@@ -141,7 +141,7 @@
 	}
 	app.appendChild(panelWrap);
 	if (surface.request) {
-		app.appendChild(el('div', { class: 'ak-savebar' }, [statusEl, saveBtn]));
+		app.appendChild(el('div', { class: 'ak-savebar', hidden: !state.dirty }, [statusEl, saveBtn]));
 	}
 	updateBar();
 
@@ -222,7 +222,9 @@
 	}
 	function setStatus(cls, text) {
 		statusEl.className = 'ak-status' + (cls ? ' ' + cls : '');
-		statusEl.textContent = text || '';
+		statusEl.textContent = text ? text + (cls === 'is-error' && text === I.error && I.saveRecovery ? '. ' + I.saveRecovery : '') : '';
+		var bar = statusEl.closest('.ak-savebar');
+		if (bar) { bar.hidden = !state.dirty && !state.saving && !text; }
 	}
 	function updateBar() {
 		// Imports replace the workspace: prevent edits until reload, but keep status accessible.

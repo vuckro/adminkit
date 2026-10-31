@@ -1,11 +1,15 @@
+.adminkit-app[data-screen="main"],
+.adminkit-app[data-screen="main"] *,
+.adminkit-app[data-screen="main"] *::before,
+.adminkit-app[data-screen="main"] *::after{box-sizing:border-box}
 /* Content pages only. Native WordPress owns the surrounding navigation and theme. */
-.adminkit-app[data-screen="main"]{display:block;max-width:var(--ak-layout-wide)}
+.adminkit-app[data-screen="main"]{display:block;max-width:min(1080px,var(--ak-layout-wide))}
 .adminkit-app.has-native-pages .ak-tabs[hidden]{display:none}
 .adminkit-app[data-screen="main"] .ak-tabs{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;margin:0 0 28px;border-bottom:1px solid var(--ak-border);padding-bottom:12px}
-.adminkit-app[data-screen="main"] .ak-head{padding:12px 0 28px}
+.adminkit-app[data-screen="main"] .ak-head{padding:8px 0 12px}
 .adminkit-app.has-native-pages .ak-panel>.ak-panel-title:first-child,.adminkit-app.has-native-pages .ak-panel>.ak-foundations-title:first-child{display:none}
-.adminkit-app .ak-title{font-size:calc(28px * var(--ak-type-scale,1));font-weight:600;line-height:1.3}
-.adminkit-app .ak-intro{max-width:75ch;margin-bottom:26px;line-height:1.7}
+.adminkit-app .ak-title{font-size:calc(26px * var(--ak-type-scale,1));font-weight:600;line-height:1.3}
+.adminkit-app .ak-intro{max-width:75ch;margin-bottom:24px;line-height:1.6}
 .adminkit-app .ak-overview-section{font-size:calc(17px * var(--ak-type-scale,1));margin:30px 0 14px;color:var(--ak-heading);font-weight:600}
 .adminkit-app .ak-overview-summary{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:24px;border:1px solid var(--ak-border);border-radius:var(--ak-radius-m);background:var(--ak-surface)}
 .adminkit-app .ak-overview-summary strong{font-size:var(--ak-text-s);font-weight:600}
@@ -17,8 +21,8 @@
 .adminkit-app .ak-overview-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
 .adminkit-app a.ak-btn{text-decoration:none;display:inline-flex;justify-content:center;align-items:center;min-height:38px;line-height:1.4}
 .adminkit-app .ak-btn--quiet{background:transparent;border:0;padding:8px 0;color:var(--ak-text-muted);text-decoration:underline;text-underline-offset:3px;font-size:var(--ak-text-xs);line-height:1.5}
-.adminkit-app .ak-guide{display:grid;grid-template-columns:1fr 1fr;gap:32px;padding:28px;border:1px solid var(--ak-border);border-radius:var(--ak-radius-m);background:var(--ak-surface);margin-bottom:26px}
-.adminkit-app .ak-guide h3{font-size:calc(22px * var(--ak-type-scale,1));margin:0 0 12px;font-weight:600;color:var(--ak-heading)}
+.adminkit-app .ak-guide{display:grid;grid-template-columns:1fr 1fr;gap:40px;padding:24px;border:1px solid var(--ak-border);border-radius:var(--ak-radius-m);background:var(--ak-surface);margin-bottom:26px}
+.adminkit-app .ak-guide h3{font-size:calc(20px * var(--ak-type-scale,1));margin:0 0 12px;font-weight:600;color:var(--ak-heading)}
 .adminkit-app .ak-guide p{font-size:var(--ak-text-s);color:var(--ak-text-muted);line-height:1.7;margin:0 0 20px;max-width:45ch}
 .adminkit-app .ak-guide-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:7px}
 .adminkit-app .ak-guide-progress{font-size:var(--ak-text-xs);color:var(--ak-text-muted);font-variant-numeric:tabular-nums}
@@ -44,12 +48,12 @@
 .adminkit-app .ak-features-group{margin-bottom:28px}
 .adminkit-app .ak-features-group__title{font-size:var(--ak-text-s);font-weight:600;margin-bottom:12px}
 .adminkit-app .ak-features-group__items{display:block;border:1px solid var(--ak-border);border-radius:var(--ak-radius-m);overflow:hidden;background:var(--ak-surface)}
-.adminkit-app .ak-feature-catalog-row{display:flex;align-items:center;gap:20px;padding:0 22px;border-top:1px solid var(--ak-border)}
+.adminkit-app .ak-feature-catalog-row{display:flex;align-items:center;gap:20px;padding:0 20px;border-top:1px solid var(--ak-border)}
 .adminkit-app .ak-feature-catalog-row:first-child{border-top:0}
-.adminkit-app .ak-feature-catalog-row .ak-features-item{min-width:0;flex:1;display:flex;gap:16px;align-items:center;border:0;background:transparent;box-shadow:none;padding:21px 0;text-align:left}
+.adminkit-app .ak-feature-catalog-row .ak-features-item{min-width:0;flex:1;display:flex;gap:16px;align-items:center;border:0;background:transparent;box-shadow:none;padding:18px 0;text-align:left;margin:0;border-radius:0}
 .adminkit-app .ak-feature-catalog-row .ak-features-item:hover{background:transparent}
 .adminkit-app .ak-feature-catalog-row:hover{background:var(--ak-hover-bg)}
-.adminkit-app .ak-feature-row-desc{display:block;margin:5px 0;color:var(--ak-text-muted);font-size:var(--ak-text-xs);line-height:1.6;max-width:70ch}
+.adminkit-app .ak-feature-row-desc{display:block;margin:6px 0 0;color:var(--ak-text-muted);font-size:var(--ak-text-xs);line-height:1.6;max-width:70ch}
 .adminkit-app .ak-feature-config-label{margin-left:auto;color:var(--ak-text-muted);font-size:var(--ak-text-xs);padding-left:16px;white-space:nowrap}
 .adminkit-app .ak-feature-catalog-row .ak-switch{flex-shrink:0}
 .adminkit-app .ak-feature-catalog-row[hidden],.adminkit-app .ak-features-item[hidden],.adminkit-app .ak-feature-dialog[hidden],.adminkit-app .ak-features-group[hidden]{display:none}
@@ -75,3 +79,123 @@
 .adminkit-app .is-complete .ak-guide-marker::after{content:"";width:9px;height:5px;border-bottom:1.5px solid currentColor;border-left:1.5px solid currentColor;transform:rotate(-45deg);margin-top:-3px}
 
 .adminkit-app .ak-panel--navigation .ak-foundations-panel{background:transparent;border:0;box-shadow:none;padding:0}
+
+/* One navigation language across the catalog and both editors. */
+.adminkit-app[data-screen="main"] .ak-foundations-nav{gap:24px;border-bottom:1px solid var(--ak-border);margin:0;flex-wrap:wrap}
+.adminkit-app[data-screen="main"] .ak-foundations-nav button{border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:10px 0 14px;min-height:44px;box-shadow:none}
+.adminkit-app[data-screen="main"] .ak-foundations-nav button[aria-selected="true"]{background:transparent;border-bottom-color:var(--ak-heading);color:var(--ak-heading)}
+.adminkit-app[data-screen="main"] .ak-foundations-panel{padding:24px;box-shadow:none}
+.adminkit-app[data-screen="main"] .ak-foundations-panel h3{font-size:calc(19px * var(--ak-type-scale,1));line-height:1.4;margin-bottom:8px}
+.adminkit-app[data-screen="main"] .ak-foundation-intro{line-height:1.6;margin-bottom:24px}
+/* Palette rows carry the theme; a second frame inside the panel adds no hierarchy. */
+.adminkit-app[data-screen="main"] .ak-palette-theme{border:0;border-radius:var(--ak-radius-s);padding:16px;background:var(--ak-surface)}
+.adminkit-app[data-screen="main"] .ak-palette-header{margin-bottom:8px}
+.adminkit-app[data-screen="main"] .ak-palette-row{padding:12px 0;min-height:64px}
+.adminkit-app[data-screen="main"] .ak-palette-row label{font-size:var(--ak-text-xs)}
+.adminkit-app[data-screen="main"] .ak-palette-origin{font-size:calc(11px * var(--ak-type-scale,1))}
+.adminkit-app[data-screen="main"] .ak-palette-row input.ak-palette-hex{font-size:calc(11px * var(--ak-type-scale,1))}
+/* State belongs beside the feature name, with the explanation beneath. */
+.adminkit-app .ak-feature-row-heading{display:flex;align-items:baseline;gap:8px 12px;flex-wrap:wrap}
+.adminkit-app .ak-feature-row-heading .ak-features-item__status{margin:0;font-size:calc(11px * var(--ak-type-scale,1));font-weight:400}
+.adminkit-app .ak-features-item[data-feature-state="active"] .ak-features-item__status{color:var(--ak-success)}
+.adminkit-app .ak-feature-catalog-row .ak-features-icon{color:var(--ak-text-muted)}
+.adminkit-app .ak-feature-config-label{font-weight:500}
+.adminkit-app .ak-features-tools{margin-block:0 16px}
+.adminkit-app .ak-features-categories{gap:24px;margin-bottom:24px}
+.adminkit-app .ak-features-count{background:transparent;min-width:0;height:auto;color:var(--ak-text-muted);font-weight:400}
+.adminkit-app .ak-savebar{padding:14px 0;min-height:68px}
+.adminkit-app .ak-savebar .ak-status{margin-inline-end:auto;line-height:1.5}
+.adminkit-app .ak-feature-dialog .ak-features-detail>h3{font-size:calc(22px * var(--ak-type-scale,1));line-height:1.35}
+.adminkit-app .ak-feature-dialog-head .ak-btn{min-height:36px}
+.adminkit-app[data-screen="main"] .ak-panel--navigation .ak-foundations-panel{padding:0}
+.adminkit-app[data-screen="main"] .ak-panel--navigation .ak-foundations-nav{margin-bottom:24px}
+.adminkit-app .ak-menu-group{box-shadow:none}
+.adminkit-app .ak-menu-tree{gap:8px}
+.adminkit-app .ak-overview-group{font-weight:500}
+.adminkit-app .ak-overview-count{font-weight:400}
+@media(min-width:1100px){
+ .adminkit-app[data-screen="main"] .ak-palette-theme{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px}
+ .adminkit-app[data-screen="main"] .ak-palette-header{grid-column:1/-1}
+}
+@media(max-width:782px){
+ .adminkit-app[data-screen="main"] .ak-head{padding:4px 0 10px}
+ .adminkit-app .ak-intro{margin-bottom:24px}
+ .adminkit-app[data-screen="main"] .ak-title{font-size:calc(23px * var(--ak-type-scale,1))}
+ .adminkit-app[data-screen="main"] .ak-foundations-panel{padding:20px 16px}
+ .adminkit-app[data-screen="main"] .ak-foundations-nav{gap:8px 20px;margin-bottom:20px;padding:0}
+ .adminkit-app .ak-features-categories{flex-wrap:nowrap;overflow-x:auto;gap:24px;padding:0 2px;scrollbar-width:thin;scrollbar-color:var(--ak-border-strong) transparent}
+ .adminkit-app .ak-features-categories .ak-btn{flex-shrink:0;white-space:nowrap}
+ .adminkit-app .ak-feature-catalog-row .ak-features-item{gap:8px 12px}
+ .adminkit-app .ak-feature-row-heading{gap:4px 8px}
+ .adminkit-app .ak-feature-catalog-row .ak-feature-row-desc{font-size:var(--ak-text-xs);line-height:1.5}
+ .adminkit-app .ak-feature-config-label{padding-left:32px;min-height:28px;display:flex;align-items:center}
+ .adminkit-app .ak-guide{gap:20px;padding:20px}
+ .adminkit-app .ak-guide-steps li{padding:12px 0}
+ .adminkit-app .ak-savebar{gap:10px}
+ .adminkit-app .ak-savebar .ak-status{flex-basis:100%}
+ .adminkit-app .ak-savebar .ak-btn{width:100%}
+}
+
+/* Optional onboarding stays a compact checklist, then leaves the overview. */
+.adminkit-app .ak-guide{display:block;padding:24px}
+.adminkit-app .ak-guide-head{align-items:flex-start;margin-bottom:16px;gap:24px}
+.adminkit-app .ak-guide-head h3{margin-bottom:6px;font-size:calc(18px * var(--ak-type-scale,1))}
+.adminkit-app .ak-guide-head p{margin:0;font-size:var(--ak-text-xs)}
+.adminkit-app .ak-guide-controls{display:flex;align-items:center;gap:16px;flex-shrink:0}
+.adminkit-app .ak-guide-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.adminkit-app .ak-guide-steps li{padding:16px 0;border-top:1px solid var(--ak-border);border-bottom:0}
+.adminkit-app .ak-guide .ak-guide-note{margin:0}
+.adminkit-app[data-screen="main"] .ak-menu-group{box-shadow:none}
+.adminkit-app[data-screen="main"] .ak-menu-tree{gap:8px}
+.adminkit-app[data-screen="main"] .ak-palette-theme[hidden]{display:none}
+@media(max-width:782px){
+ .adminkit-app .ak-guide{padding:20px}
+ .adminkit-app .ak-guide-head{flex-direction:column;gap:8px;margin-bottom:8px}
+ .adminkit-app .ak-guide-controls{width:100%;justify-content:space-between}
+ .adminkit-app .ak-guide-steps{display:block}
+ .adminkit-app .ak-guide-steps li{padding:12px 0}
+ .adminkit-app .ak-guide .ak-guide-note{margin-top:8px}
+ .adminkit-app[data-screen="main"] .ak-palette-theme{padding:12px}
+}
+
+/* A real type specimen exposes hierarchy instead of three identical sample rows. */
+.adminkit-app .ak-scale-sample{box-shadow:none;gap:16px}
+.adminkit-app .ak-scale-sample>strong{font-size:calc(26px * var(--ak-prev-type,1));font-weight:600;line-height:1.3;max-width:30ch}
+.adminkit-app .ak-scale-sample>p{font-size:calc(14px * var(--ak-prev-type,1));line-height:1.6;max-width:65ch}
+.adminkit-app .ak-scale-rows{gap:12px;border-top:1px solid var(--ak-border);padding-top:20px}
+.adminkit-app .ak-scale-rows span{border:0;border-radius:0;padding:0;line-height:1.6}
+.adminkit-app .ak-scale-rows span:nth-child(1){font-size:calc(18px * var(--ak-prev-type,1));font-weight:600}
+.adminkit-app .ak-scale-rows span:nth-child(2){font-size:calc(13px * var(--ak-prev-type,1))}
+.adminkit-app .ak-scale-rows span:nth-child(3){font-size:calc(12px * var(--ak-prev-type,1));color:var(--ak-text-muted)}
+@media(max-width:782px){
+ .adminkit-app[data-screen="main"] .ak-foundations-nav{flex-wrap:nowrap;overflow-x:auto;gap:24px;scrollbar-width:thin;scrollbar-color:var(--ak-border-strong) transparent}
+ .adminkit-app[data-screen="main"] .ak-foundations-nav button{flex-shrink:0}
+ .adminkit-app .ak-scale-sample{padding:20px}
+}
+
+/* Keep a color role on one row when the actual panel can accommodate it. */
+@container (min-width:260px) and (max-width:400px){
+ .adminkit-app[data-screen="main"] .ak-palette-row{grid-template-columns:28px minmax(0,1fr) 68px 28px;gap:6px;min-height:68px}
+ .adminkit-app[data-screen="main"] .ak-palette-row>input[type="color"],
+ .adminkit-app[data-screen="main"] .ak-palette-row>div,
+ .adminkit-app[data-screen="main"] .ak-palette-row>input.ak-palette-hex,
+ .adminkit-app[data-screen="main"] .ak-palette-row>.ak-palette-reset{grid-column:auto;grid-row:auto}
+ .adminkit-app[data-screen="main"] .ak-palette-row>input.ak-palette-hex{width:100%}
+ .adminkit-app[data-screen="main"] .ak-palette-row>.ak-palette-reset{width:28px;height:44px}
+}
+
+/* Narrow-screen task categories remain visible without lateral discovery. */
+@media(max-width:782px){
+ .adminkit-app .ak-features-categories,
+ .adminkit-app[data-screen="main"] .ak-foundations-nav{flex-wrap:wrap;overflow:visible;gap:0 20px}
+ .adminkit-app .ak-features-categories .ak-btn{white-space:normal;min-height:44px}
+ /* A full-width editable name sits above an intentional strip of controls. */
+ .adminkit-app[data-screen="main"] .ak-toolbar-columns .ak-menu-row{display:grid;grid-template-columns:24px minmax(88px,1fr) 44px 44px;gap:6px;padding:10px 12px}
+ .adminkit-app .ak-toolbar-columns .ak-menu-title{grid-column:1/-1;grid-row:1;width:100%;min-width:0;max-width:none;min-height:36px;font-weight:500}
+ .adminkit-app .ak-toolbar-columns .ak-menu-handle{grid-column:1;grid-row:2;justify-self:center;align-self:center}
+ .adminkit-app .ak-toolbar-columns .ak-menu-move{grid-column:2;grid-row:2;flex-direction:row;justify-self:start}
+ .adminkit-app .ak-toolbar-columns .ak-menu-move__btn{width:44px;height:44px}
+ .adminkit-app .ak-toolbar-columns .ak-menu-move__btn:first-child{border-bottom:0;border-right:1px solid var(--ak-border)}
+ .adminkit-app .ak-toolbar-columns .ak-menu-icon{grid-column:3;grid-row:2}
+ .adminkit-app .ak-toolbar-columns .ak-menu-hide{grid-column:4;grid-row:2}
+}

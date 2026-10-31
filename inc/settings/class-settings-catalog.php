@@ -45,14 +45,14 @@ class AdminKit_Settings_Catalog {
 				'icon'  => 'panel-left',
 				'group' => $navigation,
 				'label' => __( 'Menu manager', 'adminkit' ),
-				'desc'  => __( 'Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Menu.', 'adminkit' ),
+				'desc'  => __( 'Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Navigation.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'toolbar_manager_enabled',
 				'icon'  => 'panel-top',
 				'group' => $navigation,
 				'label' => __( 'Toolbar manager', 'adminkit' ),
-				'desc'  => __( 'Reorder and hide top toolbar items from AdminKit → Toolbar.', 'adminkit' ),
+				'desc'  => __( 'Reorder and hide top toolbar items from AdminKit → Navigation.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'clean_chrome_enabled',

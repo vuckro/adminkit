@@ -159,7 +159,7 @@
 				[[I.pageGuideExplore, 'features'], [I.pageGuideConfigure, 'brand'], [I.pageGuideExport, 'configuration']].forEach(function (step, index) {
 					list.appendChild(el('li', { class: guide[steps[index]] ? 'is-complete' : '' }, [el('span', { class: 'ak-guide-marker', 'aria-hidden': 'true', text: guide[steps[index]] ? '' : String(index + 1) }), pageLink(step[1], step[0], 'ak-guide-link')]));
 				});
-				overviewPanel.appendChild(el('section', { class: 'ak-guide' }, [el('div', {}, [el('h3', { text: I.pageGuideTitle }), el('p', { text: I.pageGuideIntro }), pageLink('features', I.pageExplore, 'ak-btn ak-btn--primary')]), el('div', {}, [el('div', { class: 'ak-guide-head' }, [el('span', { class: 'ak-guide-progress', text: progress + ' / 3' }), hide]), list, el('p', { class: 'ak-guide-note', text: I.pageGuideOptional })])]));
+				overviewPanel.appendChild(el('section', { class: 'ak-guide' }, [el('div', { class: 'ak-guide-head' }, [el('div', {}, [el('h3', { text: I.pageGuideTitle }), el('p', { text: I.pageGuideIntro })]), el('div', { class: 'ak-guide-controls' }, [el('span', { class: 'ak-guide-progress', text: progress + ' / 3' }), hide])]), list, el('p', { class: 'ak-guide-note', text: I.pageGuideOptional })]));
 			} else {
 				overviewPanel.appendChild(el('button', { type: 'button', class: 'ak-btn ak-btn--quiet ak-guide-show', text: I.pageGuideShow, onclick: function () { guideExpanded = true; refreshOverview(); overviewPanel.querySelector('.ak-guide button').focus(); } }));
 			}

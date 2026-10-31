@@ -38,13 +38,16 @@ function boot(hash = '', legacy = false) {
   a.calls[0].resolve({}); await tick(); a.dom.window.close();
 
   const b = boot();
+  assert.equal(b.w.document.querySelector('.ak-savebar').hidden, true, 'clean workspace has no idle save action');
   await b.edit('settings'); await b.edit('menu'); await b.edit('toolbar');
+  assert.equal(b.w.document.querySelector('.ak-savebar').hidden, false, 'editing reveals the shared save action');
   b.save(); await tick();
   assert.equal(b.calls[0].request.path, '/menu');
   b.calls[0].resolve({}); await tick();
   assert.equal(b.calls[1].request.path, '/toolbar');
   b.calls[1].reject(new Error('database unavailable')); await tick();
   assert.equal(b.calls.length, 2, 'stop on failure');
+  assert.equal(b.w.document.querySelector('.ak-savebar').hidden, false, 'failed saves keep recovery visible');
   assert.deepEqual(b.acknowledgements.map(a=>a.scope), ['menu'], 'only successful writes establish a saved baseline');
   assert.equal(b.timers.filter(Boolean).length, 0, 'never reload and discard failed drafts');
   b.save(); await tick();
@@ -101,6 +104,7 @@ function boot(hash = '', legacy = false) {
   assert.ok(regions().every(region => !region.inert), 'failed imports restore editing');
   assert.equal(main.requests().settings.data.values.brand_accent, '#111111', 'failure preserves the original draft');
   assert.equal(iw.document.querySelector('.ak-status').textContent, 'Error');
+  assert.equal(iw.document.querySelector('.ak-savebar').hidden, false, 'import errors remain visible even without a dirty settings draft');
   main.importSettings({}); reader.result = '{"_adminkit":"settings","values":{"brand_accent":"#222222"}}'; reader.onload();
   // jsdom cannot navigate; a successful import must remain locked while awaiting reload.
   importCall.resolve({}); await tick();

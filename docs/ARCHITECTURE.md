@@ -221,3 +221,17 @@ remain integration checks; a skipped host drift check is not validation.
 ### Settings pages inside native WordPress
 
 `AdminKit_Settings_Page` registers Overview, Features, Design system, Navigation and Configuration under the native AdminKit menu. All five share the existing SPA host and REST contracts. The hook-to-pane map selects the initial content; `AdminKitData.pages` supplies native links. No standalone web-app frame is mounted. `assets/css/settings/pages.css` is the content-only override layered after the shared screen styles. The menu manager's pristine snapshot whitelist includes those exact page slugs so its editor works on the new Navigation page. Draft ownership, permissions, nonces, module defaults and saved layouts remain unchanged.
+
+
+Content geometry is scoped to the main settings host: border-box sizing prevents
+links from adding padding to their minimum heights, and a 1080px maximum bounds
+long editor rows without changing native WordPress gutters. Foundation and feature
+navigation use the same underline pattern; narrow screens scroll the category
+strip. Palette fields respond to the width of their own container, while the
+inactive theme remains hidden at every breakpoint.
+
+The shared save bar is hidden in a clean workspace. Editing, saving, success and
+error feedback reveal it; import errors remain visible even when no settings draft
+is dirty. The existing revision and recovery contracts still own persistence. The
+optional first-steps checklist uses three compact columns on desktop, stacked on
+mobile, and remains dismissible and automatically hidden after completion.

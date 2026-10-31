@@ -943,8 +943,8 @@ msgid "Renaming a user invalidates every active sign-in they have. They must use
 msgstr "Renommer un utilisateur invalide toutes ses connexions actives. Il devra utiliser le nouveau nom d’utilisateur désormais. Continuer ?"
 
 #: inc/settings/class-settings-catalog.php
-msgid "Reorder and hide top toolbar items from AdminKit → Toolbar."
-msgstr "Réorganisez et masquez les éléments principaux de la barre d’outils depuis AdminKit → Barre d’outils."
+msgid "Reorder and hide top toolbar items from AdminKit → Navigation."
+msgstr "Réorganisez et masquez les éléments principaux de la barre d’outils depuis AdminKit → Navigation."
 
 #: inc/settings/class-settings-page.php
 msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access."
@@ -955,8 +955,8 @@ msgid "Reorder, rename, change icons or hide toolbar items. Hiding an item does 
 msgstr "Réorganisez, renommez, changez les icônes ou masquez les éléments de la barre d’outils. Masquer un élément ne bloque pas son accès dans WordPress."
 
 #: inc/settings/class-settings-catalog.php
-msgid "Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Menu."
-msgstr "Réorganisez, renommez, changez les icônes et masquez les éléments du menu latéral depuis AdminKit → Menu."
+msgid "Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Navigation."
+msgstr "Réorganisez, renommez, changez les icônes et masquez les éléments du menu latéral depuis AdminKit → Navigation."
 
 #: inc/settings/class-settings-page.php
 msgid "Reset"
@@ -1345,6 +1345,10 @@ msgstr "Vous n'êtes pas autorisé·e à faire cela."
 #: inc/settings/class-settings-page.php
 msgid "Your administration, simply."
 msgstr "Votre administration, simplement."
+
+#: inc/settings/class-settings-page.php
+msgid "Your changes are kept. Try again."
+msgstr "Vos modifications sont conservées. Réessayez."
 
 #: inc/settings/class-settings-page.php
 msgid "Your features, by purpose"

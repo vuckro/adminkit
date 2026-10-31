@@ -943,7 +943,7 @@ msgid "Renaming a user invalidates every active sign-in they have. They must use
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
-msgid "Reorder and hide top toolbar items from AdminKit → Toolbar."
+msgid "Reorder and hide top toolbar items from AdminKit → Navigation."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -955,7 +955,7 @@ msgid "Reorder, rename, change icons or hide toolbar items. Hiding an item does 
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
-msgid "Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Menu."
+msgid "Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Navigation."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -1344,6 +1344,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Your administration, simply."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Your changes are kept. Try again."
 msgstr ""
 
 #: inc/settings/class-settings-page.php

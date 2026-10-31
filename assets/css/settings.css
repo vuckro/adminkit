@@ -346,6 +346,7 @@
 	border-top: 1px solid var(--ak-border);
 	background: var(--ak-bg);
 }
+.adminkit-app .ak-savebar[hidden] { display: none; }
 /* Match native settings submit sizing in both enabled and disabled states. */
 .adminkit-app .ak-savebar .ak-btn {
  display: inline-flex;

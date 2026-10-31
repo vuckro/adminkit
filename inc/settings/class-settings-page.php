@@ -593,6 +593,7 @@ class AdminKit_Settings_Page {
 				'saving'            => __( 'Saving…', 'adminkit' ),
 				'saved'             => __( 'Saved', 'adminkit' ),
 				'error'             => __( 'Could not save', 'adminkit' ),
+				'saveRecovery'      => __( 'Your changes are kept. Try again.', 'adminkit' ),
 				'unsaved'           => __( 'Unsaved changes', 'adminkit' ),
 
 				// --- Brand card -------------------------------------------------

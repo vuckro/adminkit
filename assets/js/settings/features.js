@@ -91,7 +91,7 @@
 				var heading = el('h3', { id: panelId + '-title', tabindex: '-1', text: f.label });
 				var rowStatus = el('span', { class: 'ak-features-item__status' });
 				var button = el('button', { type: 'button', class: 'ak-features-item', 'aria-controls': panelId, 'aria-expanded': 'false', 'aria-haspopup': 'dialog', onclick: function () { select(f.key); } }, [
-					icon(f), el('span', { class: 'ak-features-item__text' }, [el('span', { class: 'ak-features-item__label', text: f.label }), el('span', { class: 'ak-feature-row-desc', text: f.desc }), rowStatus]), el('span', { class: 'ak-feature-config-label', text: I.pageConfigure })
+					icon(f), el('span', { class: 'ak-features-item__text' }, [el('span', { class: 'ak-feature-row-heading' }, [el('span', { class: 'ak-features-item__label', text: f.label }), rowStatus]), el('span', { class: 'ak-feature-row-desc', text: f.desc })]), el('span', { class: 'ak-feature-config-label', text: I.pageConfigure })
 				]);
 				var quickInput = el('input', { type: 'checkbox', class: 'ak-switch__input', 'aria-label': f.label });
 				quickInput.addEventListener('change', function () { state.features[f.key] = quickInput.checked; refresh(); context.markDirty(); });

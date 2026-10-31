@@ -394,8 +394,8 @@
 			var scalePreviews = ['light', 'dark'].map(function (mode) {
 				return el('div', { class: 'ak-bp__frame ak-shape-preview ak-scale-preview', 'data-preview-theme': mode }, [
 					el('div', { class: 'ak-scale-sample' }, [
-						el('strong', { text: I.studioType }), el('p', { text: I.studioSample }),
-						el('div', { class: 'ak-scale-rows' }, [el('span', { text: I.studioSample }), el('span', { text: I.studioSample }), el('span', { text: I.studioSample })])
+						el('strong', { text: I.pageOverviewTitle }), el('p', { text: I.pageOverviewIntro }),
+						el('div', { class: 'ak-scale-rows' }, [el('span', { text: I.pageCategories }), el('span', { text: I.pageGuideIntro }), el('span', { text: I.pageGuideOptional })])
 					])
 				]);
 			});
