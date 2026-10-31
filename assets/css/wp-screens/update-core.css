@@ -3,6 +3,65 @@
    tables, #c3c4c7 thead/tfoot dividers, #1d2327 headings, and a
    #f0f0f1 / #c3c4c7 fallback square for plugins without an icon. */
 
+/* Keep native document order and actions; replace WP's 4em heading gaps
+   with a compact reading column and clearly separated update groups. */
+body.adminkit.update-core-php #wpbody-content > .wrap {
+	max-width: 960px;
+}
+
+body.adminkit.update-core-php .wrap > p {
+	max-width: 75ch;
+}
+
+body.adminkit.update-core-php .wrap > h2 {
+	margin: calc(28px * var(--ak-space-scale, 1)) 0 calc(8px * var(--ak-space-scale, 1));
+	padding-top: calc(20px * var(--ak-space-scale, 1));
+	border-top: 1px solid var(--ak-border);
+	font-size: calc(18px * var(--ak-type-scale, 1));
+	line-height: 1.4;
+}
+
+body.adminkit.update-core-php .wrap > h2.wp-current-version {
+	margin-top: calc(24px * var(--ak-space-scale, 1));
+	margin-bottom: calc(4px * var(--ak-space-scale, 1));
+}
+
+body.adminkit.update-core-php .wrap > h2.response {
+	margin-top: calc(20px * var(--ak-space-scale, 1));
+	padding-top: 0;
+	border-top: 0;
+	font-size: calc(16px * var(--ak-type-scale, 1));
+}
+
+body.adminkit.update-core-php p.update-last-checked {
+	margin-top: 0;
+	font-variant-numeric: tabular-nums;
+}
+
+body.adminkit.update-core-php p.auto-update-status {
+	margin: calc(16px * var(--ak-space-scale, 1)) 0;
+	line-height: 1.65;
+}
+
+body.adminkit.update-core-php .core-updates {
+	margin: calc(12px * var(--ak-space-scale, 1)) 0;
+}
+
+body.adminkit.update-core-php .core-updates .submit {
+	display: flex;
+	flex-wrap: wrap;
+	gap: calc(8px * var(--ak-space-scale, 1));
+	margin: 0;
+	padding: 0;
+}
+
+body.adminkit.update-core-php .core-updates .submit .button {
+	margin: 0;
+	max-width: 100%;
+	white-space: normal;
+	height: auto;
+}
+
 body.adminkit.update-core-php h2,
 body.adminkit.update-core-php h2.response,
 body.adminkit.update-core-php h2.wp-current-version {

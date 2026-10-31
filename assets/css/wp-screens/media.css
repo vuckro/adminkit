@@ -4,6 +4,61 @@
    (.media-modal, .media-frame, .attachment, …) or the .upload-php body
    class, so the file is inert on pages without media UI. */
 
+/* The filename belongs to the primary label. Reserve the action line like
+   other native tables, lifting both text lines together on hover or focus.
+   Keep the thumbnail stationary while the label moves. */
+body.adminkit .wp-list-table.media .column-title > .filename {
+	color: var(--ak-text-muted);
+	overflow-wrap: anywhere;
+}
+
+@media (hover: hover) and (min-width: 783px) {
+	body.adminkit .wp-list-table.media .column-title > strong,
+	body.adminkit .wp-list-table.media .column-title > .filename {
+		position: relative;
+		top: 13px;
+		transition: top 200ms var(--ak-ease-standard);
+	}
+	body.adminkit .wp-list-table.media .column-title > strong {
+		display: block;
+		margin: 0;
+	}
+	body.adminkit .wp-list-table.media .column-title .media-icon {
+		position: relative;
+		top: -13px;
+		transition: top 200ms var(--ak-ease-standard);
+	}
+	body.adminkit .wp-list-table.media .column-title > .filename {
+		margin-top: calc(2px * var(--ak-space-scale, 1));
+		margin-bottom: calc(2px * var(--ak-space-scale, 1));
+	}
+	body.adminkit .wp-list-table.media .column-title > .row-actions {
+		padding-top: calc(2px * var(--ak-space-scale, 1));
+	}
+	body.adminkit .wp-list-table.media tr:is(:hover, :focus-within) .column-title > :is(strong, .filename),
+	body.adminkit .wp-list-table.media .column-title:has(> .row-actions.visible) > :is(strong, .filename) {
+		top: 3px;
+	}
+	body.adminkit .wp-list-table.media tr:is(:hover, :focus-within) .media-icon,
+	body.adminkit .wp-list-table.media .column-title:has(> .row-actions.visible) .media-icon {
+		top: -3px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body.adminkit .wp-list-table.media .column-title > :is(strong, .filename),
+	body.adminkit .wp-list-table.media .media-icon {
+		transition: none;
+	}
+}
+
+/* The nested inline wrapper otherwise adds a baseline gap around the button
+   inside the shared zero-font-size action wrapper. */
+body.adminkit .media .row-actions .copy-to-clipboard-container {
+	display: inline-flex;
+	align-items: center;
+}
+
 /* Copy feedback inherits the action wrapper's zero-size separator text.
    Restore its label while leaving WordPress in charge of .hidden. */
 body.adminkit .media .row-actions .copy-to-clipboard-container .success {
