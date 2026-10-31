@@ -328,15 +328,31 @@
 .adminkit-app .ak-menu-newtab svg { width: 14px; height: 14px; }
 .adminkit-app .ak-menu-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: calc(8px * var(--ak-space-scale, 1)); margin: 0 0 calc(10px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-menu-toolbar__spacer { margin-left: auto; }
+.adminkit-app .ak-toolbar-columns {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: calc(20px * var(--ak-space-scale, 1));
+	align-items: start;
+}
+.adminkit-app .ak-toolbar-col {
+	display: flex;
+	flex-direction: column;
+	gap: calc(6px * var(--ak-space-scale, 1));
+	min-width: 0;
+}
 .adminkit-app .ak-toolbar__side {
-	margin: calc(16px * var(--ak-space-scale, 1)) 0 calc(6px * var(--ak-space-scale, 1));
+	margin: calc(4px * var(--ak-space-scale, 1)) 0 calc(2px * var(--ak-space-scale, 1));
 	font-size: var(--ak-text-xs, .72rem);
 	font-weight: 700;
 	letter-spacing: .04em;
 	text-transform: uppercase;
 	color: var(--ak-text-muted);
 }
-.adminkit-app .ak-toolbar__side:first-child { margin-top: calc(2px * var(--ak-space-scale, 1)); }
+@media screen and (max-width: 782px) {
+	.adminkit-app .ak-toolbar-columns {
+		grid-template-columns: 1fr;
+	}
+}
 @media screen and (max-width: 600px) {
 	.adminkit-app .ak-menu-toolbar__spacer { margin-left: 0; }
 }

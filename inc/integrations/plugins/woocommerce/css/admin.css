@@ -1300,3 +1300,21 @@ body.adminkit.adminkit-woocommerce #woocommerce-fields :is(.height, .length, .wi
 /* WC's text-only ID wrapper collapses to zero text size in shared row actions;
    remove its empty flex slot so Edit aligns with the product title. */
 body.adminkit.adminkit-woocommerce .wp-list-table.products .row-actions > .id { display: none; }
+
+/* Settings help stays in the label flow instead of sitting under the next cell. */
+body.adminkit.adminkit-woocommerce.woocommerce_page_wc-settings .woocommerce table.form-table th label .woocommerce-help-tip {
+ position: relative;
+ inset: auto;
+ margin: 0;
+ margin-inline-start: calc(6px * var(--ak-space-scale, 1));
+ vertical-align: middle;
+}
+body.adminkit.adminkit-woocommerce.woocommerce_page_wc-settings #mainform .subsubsub li a {
+ padding-inline: calc(14px * var(--ak-space-scale, 1));
+}
+/* Core inserts hidden fields before this paragraph, so :first-child misses it. */
+body.adminkit.adminkit-woocommerce #message.updated > p {
+ margin-block: calc(16px - .75em);
+}
+body.adminkit.adminkit-woocommerce #message.updated { padding-block: calc(16px * var(--ak-space-scale, 1)); }
+body.adminkit.adminkit-woocommerce #coupon_data .form-field > label { line-height: 1.5; }

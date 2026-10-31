@@ -214,8 +214,11 @@
 
 		function buildToolbar() {
 			var TB = D.toolbar || {};
-			var p = el('section', { class: 'ak-panel ak-panel--menu', role: 'tabpanel' }, [intro(I.toolbarIntro)]);
-			var listWrap = el('div', { class: 'ak-menu-tree' });
+			var p = el('section', { class: 'ak-panel ak-panel--menu', role: 'tabpanel' }, [
+				el('h3', { text: I.toolbarTab || 'Toolbar' }),
+				el('p', { class: 'ak-foundation-intro', text: I.toolbarIntro })
+			]);
+			var listWrap = el('div', { class: 'ak-menu-tree ak-toolbar-columns' });
 			var nodesRaw = []; // the pristine fetched nodes, kept so Reset can rebuild
 
 			p.appendChild(
@@ -317,14 +320,15 @@
 				section('right', I.toolbarRight || 'Right');
 			}
 
-			// One side: a small heading + its draggable rows. Drag is scoped to the side via
-			// the drop predicate (ds.side === side), so a row can't cross the boundary.
+			// One side: a column with a small heading + its draggable rows. Drag is scoped
+			// to the side via the drop predicate (ds.side === side), so a row can't cross the boundary.
 			function section(side, heading) {
 				var list = state.toolbar[side];
 				if (!list.length) {
 					return;
 				}
-				listWrap.appendChild(el('div', { class: 'ak-toolbar__side' }, [el('span', { text: heading })]));
+				var col = el('div', { class: 'ak-toolbar-col' });
+				col.appendChild(el('div', { class: 'ak-toolbar__side' }, [el('span', { text: heading })]));
 				list.forEach(function (item, i) {
 					var row = el('div', { class: 'ak-menu-row ak-menu-row--top' + (item.hidden ? ' is-hidden' : '') });
 					var h = handle();
@@ -344,8 +348,9 @@
 							markDirty();
 						}
 					);
-					listWrap.appendChild(el('div', { class: 'ak-menu-group' }, [row]));
+					col.appendChild(el('div', { class: 'ak-menu-group' }, [row]));
 				});
+				listWrap.appendChild(col);
 			}
 
 			function moveCtl(side, i) {
@@ -428,7 +433,8 @@
 
 		function buildMenu() {
 			var p = el('section', { class: 'ak-panel ak-panel--menu', role: 'tabpanel' });
-			p.appendChild(intro(I.menuIntro));
+			p.appendChild(el('h3', { text: I.menu || 'Menu' }));
+			p.appendChild(el('p', { class: 'ak-foundation-intro', text: I.menuIntro }));
 			if (!MM.menu || !MM.menu.length) {
 				return p;
 			}
@@ -1326,9 +1332,126 @@
 			});
 			return inp;
 		}
+		var activeSection = 'menu';
+		var selectNavSection = null;
+
+		function buildNavigation() {
+			var p = el('section', { class: 'ak-panel ak-panel--navigation ak-foundations', role: 'tabpanel' });
+			var sections = [];
+			var sectionKey = 'adminkit:navigation-section:' + location.pathname + location.search;
+			var remembered = 'menu';
+			try {
+				remembered = sessionStorage.getItem(sectionKey) || remembered;
+			} catch (error) {}
+			if (location.hash === '#toolbar') {
+				remembered = 'toolbar';
+			} else if (location.hash === '#menu') {
+				remembered = 'menu';
+			}
+
+			var editor = el('div', { class: 'ak-foundations-editor' });
+			var nav = el('div', {
+				class: 'ak-foundations-nav',
+				role: 'tablist',
+				'aria-label': I.navigation || 'Navigation',
+				'aria-orientation': 'horizontal'
+			});
+			var panes = el('div', { class: 'ak-foundations-panes' });
+
+			function addSection(id, title, pane) {
+				var tab = el('button', {
+					type: 'button',
+					role: 'tab',
+					id: 'ak-navigation-tab-' + id,
+					'aria-controls': 'ak-navigation-' + id,
+					'aria-selected': 'false',
+					tabindex: '-1',
+					text: title
+				});
+				pane.classList.add('ak-foundations-panel');
+				pane.id = 'ak-navigation-' + id;
+				pane.setAttribute('aria-labelledby', tab.id);
+				pane.hidden = true;
+				tab.addEventListener('click', function () {
+					selectSection(id);
+				});
+				sections.push({ id: id, title: title, tab: tab, pane: pane });
+				nav.appendChild(tab);
+				panes.appendChild(pane);
+			}
+
+			function selectSection(id) {
+				if (
+					!sections.some(function (item) {
+						return item.id === id;
+					})
+				) {
+					id = 'menu';
+				}
+				activeSection = id;
+				try {
+					sessionStorage.setItem(sectionKey, id);
+				} catch (error) {}
+				sections.forEach(function (item) {
+					var active = item.id === id;
+					item.tab.setAttribute('aria-selected', String(active));
+					item.tab.tabIndex = active ? 0 : -1;
+					item.pane.hidden = !active;
+				});
+			}
+
+			selectNavSection = selectSection;
+
+			nav.addEventListener('keydown', function (event) {
+				var index = sections.findIndex(function (item) {
+					return item.tab === document.activeElement;
+				});
+				if (index < 0) {
+					return;
+				}
+				if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+					index = (index + 1) % sections.length;
+				} else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+					index = (index + sections.length - 1) % sections.length;
+				} else if (event.key === 'Home') {
+					index = 0;
+				} else if (event.key === 'End') {
+					index = sections.length - 1;
+				} else {
+					return;
+				}
+				event.preventDefault();
+				selectSection(sections[index].id);
+				sections[index].tab.focus();
+			});
+
+			addSection('menu', I.menu || 'Menu', buildMenu());
+			addSection('toolbar', I.toolbarTab || 'Toolbar', buildToolbar());
+
+			p.appendChild(el('h2', { class: 'ak-foundations-title', text: I.navigation || 'Navigation' }));
+			p.appendChild(intro(I.navigationIntro || I.menuIntro));
+			editor.appendChild(nav);
+			editor.appendChild(panes);
+			p.appendChild(editor);
+			selectSection(remembered);
+			return p;
+		}
+
 		return {
 			buildMenu: buildMenu,
 			buildToolbar: buildToolbar,
+			buildNavigation: buildNavigation,
+			selectSection: function (id) {
+				activeSection = id;
+				if (selectNavSection) {
+					selectNavSection(id);
+				}
+			},
+			activeRequest: function () {
+				return activeSection === 'toolbar'
+					? { path: tbPath(), data: gatherToolbar() }
+					: { path: MM.route, data: { items: gatherMenu() } };
+			},
 			menuRequest: function () {
 				return { path: MM.route, data: { items: gatherMenu() } };
 			},

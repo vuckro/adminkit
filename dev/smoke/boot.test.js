@@ -33,14 +33,20 @@ const doc = window.document;
 const assert = (cond, msg) => { if (!cond) { errors.push('ASSERT: ' + msg); } };
 assert(!doc.getElementById('adminkit-app').hasAttribute('aria-busy'), 'app finished booting');
 const tabs = [...doc.querySelectorAll('[role="tab"].ak-tabs button, .ak-tabs [role="tab"]')];
-assert(tabs.length === 4, 'main tabs rendered (' + tabs.length + ')');
+assert(tabs.length === 3, 'main tabs rendered (' + tabs.length + ')');
 for (const tab of tabs) {
   try { tab.click(); await tick(); } catch (e) { errors.push('tab ' + tab.id + ': ' + e.stack); }
+}
+// Navigation sub-tabs (Menu, Toolbar).
+const navSectionTabs = [...doc.querySelectorAll('#ak-panel-navigation .ak-foundations-nav [role="tab"]')];
+assert(navSectionTabs.length === 2, 'navigation sections rendered (' + navSectionTabs.length + ')');
+for (const tab of navSectionTabs) {
+  try { tab.click(); await tick(); } catch (e) { errors.push('nav section ' + tab.id + ': ' + e.stack); }
 }
 // Design system sections (Colors, Typography, Shapes & elevation, Plugins).
 const designTab = doc.getElementById('ak-tab-brand');
 if (designTab) { designTab.click(); await tick(); }
-const sectionTabs = [...doc.querySelectorAll('.ak-foundations-nav [role="tab"]')];
+const sectionTabs = [...doc.querySelectorAll('#ak-panel-brand .ak-foundations-nav [role="tab"]')];
 assert(sectionTabs.length === 4, 'design sections rendered (' + sectionTabs.length + ')');
 for (const tab of sectionTabs) {
   try { tab.click(); await tick(); } catch (e) { errors.push('section ' + tab.id + ': ' + e.stack); }

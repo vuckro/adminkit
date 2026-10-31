@@ -245,3 +245,48 @@ body.adminkit.adminkit-woocommerce .woocommerce-tour-kit :is(.components-card__f
 body.adminkit.adminkit-woocommerce .woocommerce-tour-kit .components-button:not(.is-primary) { color: var(--ak-text); background: var(--ak-surface); border-radius: var(--ak-radius-s); }
 body.adminkit.adminkit-woocommerce .woocommerce-tour-kit .components-button:not(.is-primary):hover { background: var(--ak-hover-bg); }
 body.adminkit.adminkit-woocommerce .woocommerce-tour-kit .components-button:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; box-shadow: none; }
+
+/* Offline methods use a sortable list outside settings-payment-gateways__list. */
+body.adminkit.adminkit-woocommerce .settings-payments-offline__container .woocommerce-list__item {
+ background: var(--ak-surface);
+ border-color: var(--ak-border);
+ color: var(--ak-text);
+}
+body.adminkit.adminkit-woocommerce .settings-payments-offline__container .woocommerce-list__item:hover { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-woocommerce .settings-payments-offline__container .woocommerce-list__item-title { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce .settings-payments-offline__container .woocommerce-list__item-content { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .settings-payments-offline__container .drag-handle svg { fill: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .settings-payments-offline__container .settings-payments-offline__header { border-color: var(--ak-border); }
+/* Embedded React islands do not load the wc-admin button skin. */
+body.adminkit.adminkit-woocommerce :is(.settings-payments-offline__container, .woocommerce_marketing_plugin_card_body) .components-button:is(.is-primary, .is-secondary) {
+ border-radius: var(--ak-radius-s);
+ min-height: 36px;
+ height: auto;
+ padding: calc(8px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1));
+ line-height: 1.4;
+ white-space: normal;
+ box-shadow: none;
+}
+body.adminkit.adminkit-woocommerce :is(.settings-payments-offline__container, .woocommerce_marketing_plugin_card_body) .components-button.is-secondary {
+ color: var(--ak-text);
+ background: var(--ak-surface);
+ border: 1px solid var(--ak-border);
+}
+body.adminkit.adminkit-woocommerce :is(.settings-payments-offline__container, .woocommerce_marketing_plugin_card_body) .components-button.is-secondary:hover { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-woocommerce :is(.settings-payments-offline__container, .woocommerce_marketing_plugin_card_body) .components-button:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
+/* BACS account list is a React grid, not a native .widefat table. */
+body.adminkit.adminkit-woocommerce .bank-accounts__list { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); border-radius: var(--ak-radius-s); }
+body.adminkit.adminkit-woocommerce .bank-accounts__list-header { background: var(--ak-elevated); color: var(--ak-text-muted); border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce :is(.bank-accounts__list-item, .bank-accounts__add-button, .settings-section) { border-color: var(--ak-border); }
+body.adminkit.adminkit-woocommerce .bank-accounts__list-item:not(.action):hover { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-woocommerce .bank-accounts__list .components-button.is-secondary {
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-s);
+ color: var(--ak-text);
+ background: var(--ak-surface);
+ box-shadow: none;
+}
+body.adminkit.adminkit-woocommerce .bank-accounts__list .components-button.is-secondary:hover { background: var(--ak-hover-bg); }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-woocommerce :is(.settings-payments-offline__container, .woocommerce_marketing_plugin_card_body, .bank-accounts__list) .components-button:is(.is-primary, .is-secondary) { min-height: 44px; }
+}

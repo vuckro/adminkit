@@ -133,20 +133,23 @@
 			{ id: 'features', label: I.features, icon: ICONS.plugins, build: buildFeatures }
 		];
 		if (navPart) {
-			mainTabs.push({ id: 'menu', label: I.menu, icon: ICONS.menu, build: navPart.buildMenu });
-			mainTabs.push({ id: 'toolbar', label: I.toolbarTab, icon: ICONS.toolbar, build: navPart.buildToolbar });
+			mainTabs.push({ id: 'navigation', label: I.navigation || I.menu, icon: ICONS.menu, build: navPart.buildNavigation });
 		}
 
 		return {
 			tabs: mainTabs,
 			exportSettings: exportSettings,
 			importSettings: importSettings,
-			request: function (activeTabId) {
-				if (navPart && activeTabId === 'menu') {
-					return navPart.menuRequest();
+			onHash: function (rawId) {
+				if (navPart && (rawId === 'menu' || rawId === 'toolbar')) {
+					navPart.selectSection(rawId);
+					return 'navigation';
 				}
-				if (navPart && activeTabId === 'toolbar') {
-					return navPart.toolbarRequest();
+				return rawId;
+			},
+			request: function (activeTabId) {
+				if (navPart && activeTabId === 'navigation') {
+					return navPart.activeRequest();
 				}
 				return { path: D.route, data: { values: gather() } };
 			}

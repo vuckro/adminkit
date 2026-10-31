@@ -146,7 +146,8 @@
 		}
 	}
 	function applyHash() {
-		var id = location.hash.slice(1);
+		var rawId = location.hash.slice(1);
+		var id = surface.onHash ? surface.onHash(rawId) : rawId;
 		selectTab(
 			tabs.some(function (tab) {
 				return tab.id === id;
@@ -154,6 +155,9 @@
 				? id
 				: tabs[0].id
 		);
+		if (surface.onHash && rawId !== id) {
+			surface.onHash(rawId);
+		}
 	}
 	function selectTab(id) {
 		activeTabId = id;

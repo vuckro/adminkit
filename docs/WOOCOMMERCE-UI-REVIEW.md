@@ -12,3 +12,9 @@ Target: localhost:10013, WooCommerce 11.2.1. CSS-only adapter refinement.
 Verification: token build check, dev/check.php, CSS contracts, PHP/JS syntax, adapter budget audit and installed WooCommerce drift check pass. Impeccable detector reported no findings. Browser inspection covered dark desktop product Quick Edit, product editor, tour steps 1–2, HPOS custom-field computed surfaces, dark mobile analytics/product tour, and light analytics at 1024px. No checkout, order creation, product save, or actual analytics import was submitted. Tooltip colors, publication notice spacing and draft-button wrapping were source-reviewed; a complete transaction and accessibility audit was outside this visual pass.
 
 The initial CSS changes were included by a concurrent commit (298b01f); the follow-up preserves that history and completes the fieldset/grid/border corrections.
+
+## Settings, payments and marketing follow-up
+
+Offline sortable payment rows and the BACS account grid now use theme surfaces, text and border roles. Native help icons stay in their label flow, including keyboard-accessible tooltip triggers. Settings sub-tabs retain horizontal padding even for WooCommerce's special first link. Marketing and offline-payment buttons use the shared radius, with 44px mobile targets. Coupon notices explicitly restore vertical padding and paragraph alignment; coupon labels use normal multiline leading.
+
+Verified dark desktop general settings and offline payments, BACS desktop/mobile with no document overflow, and source-reviewed shared light roles. Existing gateway activation and bank details were not changed; no extension was installed. All standard code/token/CSS and adapter checks passed. A direct BACS navigation once returned a WordPress access error; entering through the native Manage action loaded the form normally.

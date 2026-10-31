@@ -368,6 +368,8 @@ class AdminKit_Settings_Page {
 				'defaultPreset' => __( 'Default', 'adminkit' ),
 				'features'          => __( 'Features', 'adminkit' ),
 				'plugins'           => __( 'Plugins', 'adminkit' ),
+				'navigation'        => __( 'Navigation', 'adminkit' ),
+				'navigationIntro'   => __( 'Customize the WordPress sidebar menu and top admin toolbar.', 'adminkit' ),
 				'menu'              => __( 'Menu', 'adminkit' ),
 
 				// Toolbar manager tab.

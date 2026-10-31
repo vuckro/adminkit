@@ -346,6 +346,12 @@ msgstr "Médias"
 msgid "Menu"
 msgstr "Menu"
 
+msgid "Navigation"
+msgstr "Navigation"
+
+msgid "Customize the WordPress sidebar menu and top admin toolbar."
+msgstr "Personnalisez le menu latéral et la barre d’outils supérieure de WordPress."
+
 #: inc/settings/class-settings-catalog.php:78
 msgid "Menu manager"
 msgstr "Gestionnaire de menu"
