@@ -45,7 +45,7 @@ assert(sectionTabs.length === 3, 'design sections rendered (' + sectionTabs.leng
 for (const tab of sectionTabs) {
   try { tab.click(); await tick(); } catch (e) { errors.push('section ' + tab.id + ': ' + e.stack); }
 }
-for (const id of ['ak-type-scale', 'ak-space-scale', 'ak-shape-radius']) {
+for (const id of ['ak-type-scale', 'ak-shape-radius']) {
   const input = doc.getElementById(id);
   assert(input, id + ' present');
   if (input) { input.value = '1.2'; input.dispatchEvent(new window.Event('input', { bubbles: true })); }

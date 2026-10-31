@@ -334,14 +334,29 @@
 				el('div', { class: 'ak-palettes' }, paletteCards.map(function (card) { return card.scope; }))
 			]);
 
-			// --- Section 2: Typography & Spacing (Font + Text scale + Space scale) ---
-			var fontStacks = { humanist: '"Trebuchet MS",Verdana,sans-serif', classic: 'Arial,Helvetica,sans-serif', system: 'ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif' };
-			var fontSelect = el('select', { id: 'ak-type-font' }, [['humanist', I.fontHumanist], ['classic', I.fontClassic], ['system', I.fontSystem]].map(function (item) { return el('option', { value: item[0], text: item[1] }); }));
-			fontSelect.value = fontStacks[state.appearance.ui_font] ? state.appearance.ui_font : 'humanist';
+			// --- Section 2: Typography (Font family + Text scale) --------------------
+			var fontCatalog = D.fonts || {
+				geist: { label: 'Geist (AdminKit)', stack: '"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif', google: null },
+				system: { label: I.fontSystem || 'System UI', stack: 'ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif', google: null },
+				inter: { label: 'Inter (Google Fonts)', stack: '"Inter",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'Inter:wght@400;500;600;700' },
+				'plus-jakarta-sans': { label: 'Plus Jakarta Sans (Google Fonts)', stack: '"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'Plus+Jakarta+Sans:wght@400;500;600;700' },
+				'dm-sans': { label: 'DM Sans (Google Fonts)', stack: '"DM Sans",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'DM+Sans:wght@400;500;600;700' },
+				manrope: { label: 'Manrope (Google Fonts)', stack: '"Manrope",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'Manrope:wght@400;500;600;700' },
+				outfit: { label: 'Outfit (Google Fonts)', stack: '"Outfit",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'Outfit:wght@400;500;600;700' },
+				poppins: { label: 'Poppins (Google Fonts)', stack: '"Poppins",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'Poppins:wght@400;500;600;700' },
+				'space-grotesk': { label: 'Space Grotesk (Google Fonts)', stack: '"Space Grotesk",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'Space+Grotesk:wght@400;500;600;700' },
+				'ibm-plex-sans': { label: 'IBM Plex Sans (Google Fonts)', stack: '"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'IBM+Plex+Sans:wght@400;500;600;700' }
+			};
+			if (state.appearance.ui_font === 'humanist' || !fontCatalog[state.appearance.ui_font]) {
+				state.appearance.ui_font = 'geist';
+			}
+			var fontSelect = el('select', { id: 'ak-type-font' }, Object.keys(fontCatalog).map(function (key) {
+				var label = key === 'system' && I.fontSystem ? I.fontSystem : fontCatalog[key].label;
+				return el('option', { value: key, text: label });
+			}));
+			fontSelect.value = state.appearance.ui_font;
 			var typeScale = el('input', { type: 'range', id: 'ak-type-scale', min: '0.75', max: '1.5', step: '0.05', value: String(state.designSystem.type_scale) });
 			var typeScaleValue = el('output', { for: typeScale.id });
-			var spaceScale = el('input', { type: 'range', id: 'ak-space-scale', min: '0.5', max: '2', step: '0.05', value: String(state.designSystem.space_scale) });
-			var spaceScaleValue = el('output', { for: spaceScale.id });
 			var scalePreviews = ['light', 'dark'].map(function (mode) {
 				return el('div', { class: 'ak-bp__frame ak-shape-preview ak-scale-preview', 'data-preview-theme': mode }, [
 					el('div', { class: 'ak-scale-sample' }, [
@@ -350,38 +365,47 @@
 					])
 				]);
 			});
+			function ensureGoogleFont(googleSpec) {
+				var linkId = 'ak-google-font-preview';
+				var existing = document.getElementById(linkId);
+				if (!googleSpec) {
+					return;
+				}
+				var href = 'https://fonts.googleapis.com/css2?family=' + googleSpec + '&display=swap';
+				if (!existing) {
+					existing = el('link', { id: linkId, rel: 'stylesheet', href: href });
+					document.head.appendChild(existing);
+				} else if (existing.getAttribute('href') !== href) {
+					existing.setAttribute('href', href);
+				}
+			}
 			function refreshScales() {
-				var font = fontStacks[state.appearance.ui_font] || fontStacks.humanist;
+				var entry = fontCatalog[state.appearance.ui_font] || fontCatalog.geist;
+				var font = entry.stack;
+				ensureGoogleFont(entry.google);
 				typeScaleValue.textContent = number(state.designSystem.type_scale) + ' ×';
 				typeScale.setAttribute('aria-valuetext', typeScaleValue.textContent);
-				spaceScaleValue.textContent = number(state.designSystem.space_scale) + ' ×';
-				spaceScale.setAttribute('aria-valuetext', spaceScaleValue.textContent);
 				// Live preview on the page itself AND in the specimen frame.
 				var root = document.documentElement.style;
 				root.setProperty('--ak-type-scale', state.designSystem.type_scale);
-				root.setProperty('--ak-space-scale', state.designSystem.space_scale);
 				root.setProperty('--ak-font-body', font);
 				root.setProperty('--wk-font-sans', font);
 				scalePreviews.forEach(function (preview) {
 					preview.style.setProperty('--ak-prev-type', state.designSystem.type_scale);
-					preview.style.setProperty('--ak-prev-space', state.designSystem.space_scale);
 					preview.style.setProperty('--ak-prev-font', font);
 				});
 			}
 			fontSelect.addEventListener('change', function () { state.appearance.ui_font = fontSelect.value; refreshScales(); markDirty(); });
 			typeScale.addEventListener('input', function () { state.designSystem.type_scale = Number(typeScale.value); refreshScales(); markDirty(); });
-			spaceScale.addEventListener('input', function () { state.designSystem.space_scale = Number(spaceScale.value); refreshScales(); markDirty(); });
 			function scaleSlider(input, output, label) {
 				return el('div', { class: 'ak-foundation-slider' }, [el('div', {}, [el('label', { for: input.id, text: label }), output]), input]);
 			}
-			section('type', I.studioType + ' & ' + I.studioSpacing.toLowerCase(), I.studioTypeHint, [
-				el('div', { class: 'ak-shape-selects' }, [el('div', {}, [el('label', { for: fontSelect.id, text: I.studioFont }), fontSelect])]),
+			section('type', I.studioType, I.studioTypeHint, [
+				el('div', { class: 'ak-foundation-field' }, [el('label', { for: fontSelect.id, text: I.studioFont }), fontSelect]),
 				scaleSlider(typeScale, typeScaleValue, I.studioTypeScale),
-				scaleSlider(spaceScale, spaceScaleValue, I.studioSpaceScale),
 				el('button', { type: 'button', class: 'ak-btn', text: I.resetDefaults, onclick: function () {
-					state.appearance.ui_font = 'humanist'; fontSelect.value = 'humanist';
+					state.appearance.ui_font = 'geist'; fontSelect.value = 'geist';
 					state.designSystem.type_scale = 1; typeScale.value = '1';
-					state.designSystem.space_scale = 1; spaceScale.value = '1';
 					refreshScales(); markDirty();
 				} })
 			]);

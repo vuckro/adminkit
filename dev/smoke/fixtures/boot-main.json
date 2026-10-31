@@ -177,11 +177,10 @@
     "toolbar": {
         "enabled": false
     },
-    "brandAccent": "",
+    "brandAccent": "#5f8de3",
     "accentSource": "monochrome",
     "designSystem": {
         "radius_scale": 1,
-        "space_scale": 1,
         "type_scale": 1,
         "border_width": 1,
         "elevation": "default",
@@ -196,7 +195,59 @@
         }
     },
     "appearance": {
-        "ui_font": "humanist"
+        "ui_font": "inter"
+    },
+    "fonts": {
+        "geist": {
+            "label": "Geist (AdminKit)",
+            "stack": "\"Geist\",ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif",
+            "google": null
+        },
+        "system": {
+            "label": "System UI",
+            "stack": "ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif",
+            "google": null
+        },
+        "inter": {
+            "label": "Inter (Google Fonts)",
+            "stack": "\"Inter\",ui-sans-serif,system-ui,-apple-system,sans-serif",
+            "google": "Inter:wght@400;500;600;700"
+        },
+        "plus-jakarta-sans": {
+            "label": "Plus Jakarta Sans (Google Fonts)",
+            "stack": "\"Plus Jakarta Sans\",ui-sans-serif,system-ui,-apple-system,sans-serif",
+            "google": "Plus+Jakarta+Sans:wght@400;500;600;700"
+        },
+        "dm-sans": {
+            "label": "DM Sans (Google Fonts)",
+            "stack": "\"DM Sans\",ui-sans-serif,system-ui,-apple-system,sans-serif",
+            "google": "DM+Sans:wght@400;500;600;700"
+        },
+        "manrope": {
+            "label": "Manrope (Google Fonts)",
+            "stack": "\"Manrope\",ui-sans-serif,system-ui,-apple-system,sans-serif",
+            "google": "Manrope:wght@400;500;600;700"
+        },
+        "outfit": {
+            "label": "Outfit (Google Fonts)",
+            "stack": "\"Outfit\",ui-sans-serif,system-ui,-apple-system,sans-serif",
+            "google": "Outfit:wght@400;500;600;700"
+        },
+        "poppins": {
+            "label": "Poppins (Google Fonts)",
+            "stack": "\"Poppins\",ui-sans-serif,system-ui,-apple-system,sans-serif",
+            "google": "Poppins:wght@400;500;600;700"
+        },
+        "space-grotesk": {
+            "label": "Space Grotesk (Google Fonts)",
+            "stack": "\"Space Grotesk\",ui-sans-serif,system-ui,-apple-system,sans-serif",
+            "google": "Space+Grotesk:wght@400;500;600;700"
+        },
+        "ibm-plex-sans": {
+            "label": "IBM Plex Sans (Google Fonts)",
+            "stack": "\"IBM Plex Sans\",ui-sans-serif,system-ui,-apple-system,sans-serif",
+            "google": "IBM+Plex+Sans:wght@400;500;600;700"
+        }
     },
     "adminkitBlue": "#1549AB",
     "bricksConnected": false,
@@ -222,11 +273,8 @@
         "foundationDanger": "Danger text",
         "foundationInfo": "Info text",
         "studioFont": "Police",
-        "fontHumanist": "Humaniste",
-        "fontClassic": "Classique",
         "fontSystem": "Système",
         "studioTypeScale": "Échelle du texte",
-        "studioSpaceScale": "Échelle des espacements",
         "foundationScope": "Ces réglages s’appliquent à l’administration WordPress et aux extensions prises en charge après enregistrement. Votre site public conserve son propre design.",
         "studioColors": "Couleurs",
         "studioType": "Typographie",
@@ -237,8 +285,7 @@
         "componentAlways": "Permanent",
         "componentDisabled": "Désactivé",
         "studioShapes": "Formes et élévation",
-        "studioSpacing": "Espacements",
-        "studioTypeHint": "Font family, text scale, and spacing scale.",
+        "studioTypeHint": "Famille de caractères et échelle du texte.",
         "studioRadiusScale": "Échelle des arrondis",
         "studioBorder": "Épaisseur des contours",
         "shapeHint": "Arrondis, contours et profondeur des boutons, champs, cartes et tableaux.",

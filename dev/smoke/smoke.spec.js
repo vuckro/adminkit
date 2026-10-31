@@ -46,8 +46,8 @@ test.describe('wp-admin', () => {
     await expect(page.locator('#adminkit-app')).not.toHaveAttribute('aria-busy', 'true');
     expect(await page.evaluate(() => typeof window.wp !== 'undefined' && !!window.wp.media)).toBe(false);
     await page.getByRole('tab', { name: /typograph/i }).first().click();
+    await expect(page.locator('#ak-type-font')).toBeVisible();
     await expect(page.locator('#ak-type-scale')).toBeVisible();
-    await expect(page.locator('#ak-space-scale')).toBeVisible();
     await page.getByRole('tab', { name: /shape|forme/i }).first().click();
     await expect(page.locator('#ak-shape-radius')).toBeVisible();
     expect(problems).toEqual([]);

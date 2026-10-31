@@ -51,9 +51,9 @@
 			}
 		});
 
-		state.appearance = Object.assign({ ui_font: 'humanist' }, D.appearance || {});
+		state.appearance = Object.assign({ ui_font: 'geist' }, D.appearance || {});
 
-		state.designSystem = Object.assign({ radius_scale: 1, space_scale: 1, type_scale: 1, border_width: 1, elevation: 'default' }, D.designSystem || {});
+		state.designSystem = Object.assign({ radius_scale: 1, type_scale: 1, border_width: 1, elevation: 'default' }, D.designSystem || {});
 		state.designSystem.components = { buttons: Object.assign({ highlight: 'always' }, (state.designSystem.components || {}).buttons || {}) };
 
 		state.designSystem.colors = { light: Object.assign({}, state.designSystem.colors && state.designSystem.colors.light), dark: Object.assign({}, state.designSystem.colors && state.designSystem.colors.dark) };

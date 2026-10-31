@@ -358,12 +358,24 @@ class AdminKit_Assets {
 	}
 
 	/**
-	 * Enqueue the locally hosted WaasKit font families.
+	 * Enqueue the locally hosted WaasKit font families, plus the active Google Font when selected.
 	 *
 	 * @return void
 	 */
 	private static function enqueue_fonts() {
 		wp_enqueue_style( self::FONTS_HANDLE, ADMINKIT_URL . self::FONTS_SRC, array(), (string) filemtime( ADMINKIT_PATH . self::FONTS_SRC ) );
+		if ( class_exists( 'AdminKit_Design_System' ) ) {
+			$fonts = AdminKit_Design_System::fonts();
+			$font  = (string) AdminKit_Settings::get( 'ui_font' );
+			if ( ! empty( $fonts[ $font ]['google'] ) ) {
+				wp_enqueue_style(
+					self::FONTS_HANDLE . '-google',
+					'https://fonts.googleapis.com/css2?family=' . $fonts[ $font ]['google'] . '&display=swap',
+					array(),
+					null
+				);
+			}
+		}
 	}
 
 	/**

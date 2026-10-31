@@ -89,14 +89,24 @@ class AdminKit_Settings {
 		) );
 	}
 
-	/** Interface font preset. Unknown values retain the humanist baseline. */
+	/** Interface font preset. Unknown or legacy values resolve to the Geist baseline. */
 	private static function register_appearance() {
 		self::register( 'ui_font', array(
 			'type'     => 'select',
 			'group'    => 'appearance',
-			'default'  => 'humanist',
+			'default'  => 'geist',
 			'sanitize' => static function ( $value ) {
-				return in_array( $value, array( 'humanist', 'classic', 'system' ), true ) ? $value : 'humanist';
+				$value = (string) $value;
+				if ( 'humanist' === $value ) {
+					return 'geist';
+				}
+				if ( 'classic' === $value ) {
+					return 'inter';
+				}
+				$allowed = class_exists( 'AdminKit_Design_System' )
+					? array_keys( AdminKit_Design_System::fonts() )
+					: array( 'geist', 'system', 'inter', 'plus-jakarta-sans', 'dm-sans', 'manrope', 'outfit', 'poppins', 'space-grotesk', 'ibm-plex-sans' );
+				return in_array( $value, $allowed, true ) ? $value : 'geist';
 			},
 		) );
 	}
@@ -104,8 +114,8 @@ class AdminKit_Settings {
 	/** Advanced studio settings are persisted for previews; global adoption is separate. */
 	public static function sanitize_design_system( $input ) {
 		$input = is_array( $input ) ? $input : array();
-		$result = array( 'radius_scale' => 1, 'space_scale' => 1, 'type_scale' => 1, 'border_width' => 1, 'elevation' => 'default', 'components' => array( 'buttons' => array( 'highlight' => 'always' ) ), 'colors' => array( 'light' => array(), 'dark' => array() ) );
-		foreach ( array( 'radius_scale' => array( 0, 2 ), 'space_scale' => array( 0.5, 2 ), 'type_scale' => array( 0.75, 1.5 ) ) as $key => $bounds ) {
+		$result = array( 'radius_scale' => 1, 'type_scale' => 1, 'border_width' => 1, 'elevation' => 'default', 'components' => array( 'buttons' => array( 'highlight' => 'always' ) ), 'colors' => array( 'light' => array(), 'dark' => array() ) );
+		foreach ( array( 'radius_scale' => array( 0, 2 ), 'type_scale' => array( 0.75, 1.5 ) ) as $key => $bounds ) {
 			$value = isset( $input[ $key ] ) && is_numeric( $input[ $key ] ) ? (float) $input[ $key ] : null;
 			if ( null !== $value && is_finite( $value ) && $value >= $bounds[0] && $value <= $bounds[1] ) {
 				$result[ $key ] = round( $value, 2 );

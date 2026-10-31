@@ -359,7 +359,8 @@ class AdminKit_Settings_Page {
 			// in the Brand card and the Source pill colour for accent-family tokens.
 			'accentSource' => AdminKit_Settings::accent_source(),
 			'designSystem' => AdminKit_Settings::sanitize_design_system( AdminKit_Settings::get( 'design_system' ) ),
-			'appearance' => array( 'ui_font' => AdminKit_Settings::get( 'ui_font' ) ),
+			'appearance'   => array( 'ui_font' => AdminKit_Settings::get( 'ui_font' ) ),
+			'fonts'        => AdminKit_Design_System::fonts(),
 			// WaasKit custom-picker seed. The default accent uses native roles. The SPA seeds the swatch
 			// with this when source = 'adminkit' before getComputedStyle resolves.
 			'adminkitBlue' => AdminKit_Assets::ADMINKIT_BLUE,
@@ -390,11 +391,8 @@ class AdminKit_Settings_Page {
 				'foundationDanger' => __( 'Danger text', 'adminkit' ),
 				'foundationInfo' => __( 'Info text', 'adminkit' ),
 				'studioFont' => __( 'Font family', 'adminkit' ),
-				'fontHumanist' => __( 'Humanist', 'adminkit' ),
-				'fontClassic' => __( 'Classic', 'adminkit' ),
 				'fontSystem' => __( 'System', 'adminkit' ),
 				'studioTypeScale' => __( 'Text scale', 'adminkit' ),
-				'studioSpaceScale' => __( 'Spacing scale', 'adminkit' ),
 				'foundationScope' => __( 'These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design.', 'adminkit' ),
 				'studioColors' => __( 'Colors', 'adminkit' ),
 				'studioType' => __( 'Typography', 'adminkit' ),
@@ -405,8 +403,7 @@ class AdminKit_Settings_Page {
 				'componentAlways' => __( 'Always', 'adminkit' ),
 				'componentDisabled' => __( 'Disabled', 'adminkit' ),
 				'studioShapes' => __( 'Shapes & elevation', 'adminkit' ),
-				'studioSpacing' => __( 'Spacing', 'adminkit' ),
-				'studioTypeHint' => __( 'Font family, text scale, and spacing scale.', 'adminkit' ),
+				'studioTypeHint' => __( 'Font family and text scale.', 'adminkit' ),
 				'studioRadiusScale' => __( 'Corner scale', 'adminkit' ),
 				'studioBorder' => __( 'Outline width', 'adminkit' ),
 				'shapeHint' => __( 'Corner shapes, outlines and depth for buttons, fields, cards and tables.', 'adminkit' ),
@@ -516,7 +513,7 @@ class AdminKit_Settings_Page {
 			),
 		);
 		if ( ! $is_main ) {
-			foreach ( array( 'designSystem', 'appearance', 'brandAccent', 'accentSource', 'adminkitBlue', 'bricksConnected', 'features', 'integrations' ) as $key ) {
+			foreach ( array( 'designSystem', 'appearance', 'fonts', 'brandAccent', 'accentSource', 'adminkitBlue', 'bricksConnected', 'features', 'integrations' ) as $key ) {
 				unset( $data[ $key ] );
 			}
 		}
