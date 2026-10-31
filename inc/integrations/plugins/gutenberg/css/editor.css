@@ -199,16 +199,8 @@ body.adminkit:is(.block-editor-page, .widgets-php) .components-tab-panel__tabs .
 	box-shadow: inset 0 -2px 0 var(--ak-heading);
 }
 
-/* Snackbar notices */
-body.adminkit:is(.block-editor-page, .widgets-php) .components-snackbar {
-	background: var(--neutral-l-9, hsl(0, 0%, 18%));
-	border-radius: var(--ak-radius-m);
-	font-family: var(--ak-font-body);
-}
-
-body.adminkit:is(.block-editor-page, .widgets-php) .components-snackbar.components-snackbar--success {
-	background: var(--ak-success);
-}
+/* Snackbars use the shared wp-components/feedback.css surface, text and action
+   tokens together. A separate dark editor background breaks that contrast. */
 
 /* Badges (.components-badge) — WP hardcodes the default badge as #f0f0f0 / #2f2f2f. */
 body.adminkit:is(.block-editor-page, .widgets-php) .components-badge.is-default {
