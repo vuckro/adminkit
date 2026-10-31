@@ -21,7 +21,7 @@
             "desc": "Style wp-login.php to match the administration (logo, dark mode and focus states).",
             "parent": "",
             "value": true,
-            "default": true,
+            "default": false,
             "bulk": true,
             "available": true,
             "unavailableHint": ""

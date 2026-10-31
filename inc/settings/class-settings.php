@@ -206,7 +206,7 @@ class AdminKit_Settings {
 		}
 
 		// Core AdminKit experience — enabled by default on fresh installs.
-		foreach ( array( 'theme_toggle_enabled', 'module_login_enabled', 'clean_chrome_enabled' ) as $default_on ) {
+		foreach ( array( 'theme_toggle_enabled', 'clean_chrome_enabled' ) as $default_on ) {
 			self::register( $default_on, array(
 				'type'     => 'toggle',
 				'group'    => 'features',
@@ -215,9 +215,9 @@ class AdminKit_Settings {
 			) );
 		}
 
-		// Opt-in workflow enhancements — disabled by default so content/user
-		// workflows stay untouched until explicitly enabled.
-		foreach ( array( 'active_items_first_enabled', 'quick_edit_users_enabled', 'username_changer_enabled' ) as $opt_in ) {
+		// Opt-in login styling and workflow enhancements keep native screens
+		// untouched until explicitly enabled.
+		foreach ( array( 'module_login_enabled', 'active_items_first_enabled', 'quick_edit_users_enabled', 'username_changer_enabled' ) as $opt_in ) {
 			self::register( $opt_in, array(
 				'type'     => 'toggle',
 				'group'    => 'features',

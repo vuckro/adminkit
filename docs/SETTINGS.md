@@ -8,8 +8,8 @@ personal. Branding's single `logo_url` is edited in WordPress General Settings.
 ## Defaults and data
 
 `AdminKit_Settings::schema()` is authoritative. Branding, icons, dark-mode toggle,
-login styling, clean chrome, menu/toolbar editors and notifications default on.
-Post previews, active-items-first, user quick edit and username changing are
+clean chrome, menu/toolbar editors and notifications default on.
+Login styling, post previews, active-items-first, user quick edit and username changing are
 opt-in. Detected adapters and generic plugin styling default on; explicit opt-outs
 are preserved. Hidden menu/toolbar nodes do not revoke WordPress capabilities.
 

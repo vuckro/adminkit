@@ -11,8 +11,8 @@ Upload Plugin, or copy its `adminkit/` directory to `wp-content/plugins/` and
 activate it. Open AdminKit for Design system, Features and Navigation. Branding's
 single logo is edited under WordPress General Settings.
 
-Branding, icons, theme toggle, login styling, clean chrome, navigation editors,
-notifications and detected adapters default on. User Quick Edit, Username Changer,
+Branding, icons, theme toggle, clean chrome, navigation editors,
+notifications and detected adapters default on. Login styling, User Quick Edit, Username Changer,
 post previews and active-items-first are opt-in. Hiding navigation is presentation,
 not permission control. Settings are per-site; dark/light preference is personal.
 
