@@ -81,6 +81,11 @@ Catalog metadata supplies shared icon names. PHP resolves them through
 `AdminKit_Icons::display_svg()` into trusted `iconSvg` bootstrap markup; feature
 JavaScript does not maintain a second icon path library.
 
+Selected category/list items and discovery controls use the existing
+`--ak-border` role. The detail pane consumes shared `--ak-card-shadow`; the bulk
+popup uses `--ak-shadow-elevated`. Its native `<details>` disclosure has a trailing
+chevron that reflects the open state. These treatments reuse existing tokens.
+
 Desktop and tablet use a grouped list beside a sticky detail pane. At 782px and
 below, category controls form two columns, the list scrolls within a bounded
 height and details follow the list. Selecting a feature scrolls to and focuses
