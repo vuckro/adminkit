@@ -1317,4 +1317,3 @@ body.adminkit.adminkit-woocommerce #message.updated > p {
  margin-block: calc(16px - .75em);
 }
 body.adminkit.adminkit-woocommerce #message.updated { padding-block: calc(16px * var(--ak-space-scale, 1)); }
-body.adminkit.adminkit-woocommerce #coupon_data .form-field > label { line-height: 1.5; }
