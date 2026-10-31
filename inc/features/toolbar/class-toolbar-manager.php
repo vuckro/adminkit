@@ -32,19 +32,24 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Toolbar_Manager {
 
-	/** Single option holding { order: [id…], hidden: [id…], titles: {id:title}, icons: {id:icon} }. */
+	/**
+	 * Option holding per-context toolbar layouts (`admin` and `frontend`), each shaped as
+	 * `{ order: [id…], hidden: [id…], titles: {id:title}, icons: {id:icon} }`. Legacy flat
+	 * `{ order, hidden, titles, icons }` options migrate transparently on read.
+	 */
 	const OPTION = 'adminkit_toolbar';
 
 	const REST_NS    = 'adminkit/v1';
 	const REST_ROUTE = '/toolbar';
 
 	/**
-	 * Transient holding the PRISTINE top-level nodes, captured during a real Toolbar-page
-	 * render (admin context). The REST reader prefers it over an in-request rebuild: some
-	 * nodes are `is_admin()`-gated (the command palette, for one) and never appear in the
-	 * REST context, so a REST-only snapshot would silently miss them.
+	 * Transient holding the PRISTINE admin-context top-level nodes, captured during a real
+	 * admin-bar render (admin context). The REST reader prefers it over an in-request
+	 * rebuild: some nodes are `is_admin()`-gated (the command palette, for one) and never
+	 * appear in the REST context, so a REST-only snapshot would silently miss them.
 	 */
-	const SNAPSHOT_KEY = 'adminkit_toolbar_nodes';
+	const SNAPSHOT_KEY          = 'adminkit_toolbar_nodes';
+	const FRONTEND_SNAPSHOT_KEY = 'adminkit_toolbar_nodes_frontend';
 
 	/** Submenu page hook suffix (set when the page registers); gates enqueue. */
 	private static $page_hook = '';
@@ -65,12 +70,14 @@ class AdminKit_Toolbar_Manager {
 	private static $toolbar_dashicon_glyphs = array(
 		'wp-logo'         => array( 'glyph' => '\\f120', 'target' => 'ab-icon' ),
 		'site-name'       => array( 'glyph' => '\\f226', 'target' => 'ab-item' ),
+		'site-editor'     => array( 'glyph' => '\\f100', 'target' => 'ab-item' ),
 		'updates'         => array( 'glyph' => '\\f463', 'target' => 'ab-icon' ),
 		'comments'        => array( 'glyph' => '\\f101', 'target' => 'ab-icon' ),
 		'new-content'     => array( 'glyph' => '\\f132', 'target' => 'ab-icon' ),
 		'edit'            => array( 'glyph' => '\\f464', 'target' => 'ab-item' ),
 		'customize'       => array( 'glyph' => '\\f540', 'target' => 'ab-item' ),
 		'command-palette' => array( 'glyph' => '\\f179', 'target' => 'ab-icon' ),
+		'search'          => array( 'glyph' => '\\f179', 'target' => 'search' ),
 		'menu-toggle'     => array( 'glyph' => '\\f333', 'target' => 'ab-icon' ),
 	);
 
@@ -95,11 +102,28 @@ class AdminKit_Toolbar_Manager {
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 
+		// Capture the live front-end bar when an administrator views the site so the
+		// Toolbar editor's "Front end" mode reflects any theme/plugin front-end items.
+		add_action( 'admin_bar_menu', array( __CLASS__, 'capture_frontend' ), 99998 );
+
 		// Apply on BOTH bars (wp-admin + front-end for logged-in users), very late so
 		// every node — core + plugins — already exists.
 		add_action( 'admin_bar_menu', array( __CLASS__, 'apply' ), 99999 );
 		add_action( 'admin_head', array( __CLASS__, 'print_css' ), 22 );
 		add_action( 'wp_head', array( __CLASS__, 'print_css' ), 22 );
+		add_action( 'update_option_' . AdminKit_Settings::OPTION_KEY, array( __CLASS__, 'flush_snapshots' ) );
+		add_action( 'update_option_site_icon', array( __CLASS__, 'flush_snapshots' ) );
+	}
+
+	/**
+	 * Clear cached node snapshots when branding or site-icon settings change so the
+	 * editor immediately reflects the updated `site-name` / `wp-logo` state.
+	 *
+	 * @return void
+	 */
+	public static function flush_snapshots() {
+		delete_transient( self::SNAPSHOT_KEY );
+		delete_transient( self::FRONTEND_SNAPSHOT_KEY );
 	}
 
 	/**
@@ -164,18 +188,42 @@ class AdminKit_Toolbar_Manager {
 	/* ─────────────────────────── Config ─────────────────────────── */
 
 	/**
-	 * The saved layout: a desired top-level order, a hidden set, and per-node title +
-	 * icon overrides. Sanitised on read.
+	 * Sanitise a single context slice (`admin` or `frontend`) from raw option or REST data.
 	 *
+	 * @param mixed              $raw
+	 * @param array<string,bool> $protected
 	 * @return array{order:string[],hidden:string[],titles:array<string,string>,icons:array<string,string>}
 	 */
-	public static function get_config() {
-		$cfg    = get_option( self::OPTION, array() );
-		$order  = ( isset( $cfg['order'] ) && is_array( $cfg['order'] ) ) ? array_values( array_map( 'strval', $cfg['order'] ) ) : array();
-		$hidden = ( isset( $cfg['hidden'] ) && is_array( $cfg['hidden'] ) ) ? array_values( array_map( 'strval', $cfg['hidden'] ) ) : array();
+	private static function sanitize_context_slice( $raw, $protected = array() ) {
+		if ( ! is_array( $raw ) ) {
+			return array(
+				'order'  => array(),
+				'hidden' => array(),
+				'titles' => array(),
+				'icons'  => array(),
+			);
+		}
+		$order = array();
+		if ( isset( $raw['order'] ) && is_array( $raw['order'] ) ) {
+			foreach ( $raw['order'] as $id ) {
+				$id = self::sanitize_node_id( $id );
+				if ( '' !== $id ) {
+					$order[] = $id;
+				}
+			}
+		}
+		$hidden = array();
+		if ( isset( $raw['hidden'] ) && is_array( $raw['hidden'] ) ) {
+			foreach ( $raw['hidden'] as $id ) {
+				$id = self::sanitize_node_id( $id );
+				if ( '' !== $id && ! isset( $protected[ $id ] ) ) {
+					$hidden[] = $id;
+				}
+			}
+		}
 		$titles = array();
-		if ( isset( $cfg['titles'] ) && is_array( $cfg['titles'] ) ) {
-			foreach ( $cfg['titles'] as $id => $t ) {
+		if ( isset( $raw['titles'] ) && is_array( $raw['titles'] ) ) {
+			foreach ( $raw['titles'] as $id => $t ) {
 				$id = self::sanitize_node_id( $id );
 				$t  = is_string( $t ) ? sanitize_text_field( $t ) : '';
 				if ( '' !== $id && '' !== $t ) {
@@ -184,8 +232,8 @@ class AdminKit_Toolbar_Manager {
 			}
 		}
 		$icons = array();
-		if ( isset( $cfg['icons'] ) && is_array( $cfg['icons'] ) ) {
-			foreach ( $cfg['icons'] as $id => $ic ) {
+		if ( isset( $raw['icons'] ) && is_array( $raw['icons'] ) ) {
+			foreach ( $raw['icons'] as $id => $ic ) {
 				$id = self::sanitize_node_id( $id );
 				$ic = self::sanitize_icon( $ic );
 				if ( '' !== $id && '' !== $ic ) {
@@ -194,18 +242,46 @@ class AdminKit_Toolbar_Manager {
 			}
 		}
 		return array(
-			'order'  => $order,
-			'hidden' => $hidden,
+			'order'  => array_values( array_unique( $order ) ),
+			'hidden' => array_values( array_unique( $hidden ) ),
 			'titles' => $titles,
 			'icons'  => $icons,
 		);
+	}
+
+	/**
+	 * The saved layout: either for a specific context (`'admin'` | `'frontend'`) or the
+	 * full per-context map when `$context` is omitted. Legacy flat `{ order, hidden,
+	 * titles, icons }` options migrate transparently to the `admin` context on read.
+	 *
+	 * @param string|null $context Optional `'admin'` or `'frontend'`.
+	 * @return array
+	 */
+	public static function get_config( $context = null ) {
+		$raw       = get_option( self::OPTION, array() );
+		$protected = self::protected_nodes();
+		if ( is_array( $raw ) && ( isset( $raw['admin'] ) || isset( $raw['frontend'] ) ) ) {
+			$all = array(
+				'admin'    => self::sanitize_context_slice( isset( $raw['admin'] ) ? $raw['admin'] : array(), $protected ),
+				'frontend' => self::sanitize_context_slice( isset( $raw['frontend'] ) ? $raw['frontend'] : array(), $protected ),
+			);
+		} else {
+			$all = array(
+				'admin'    => self::sanitize_context_slice( $raw, $protected ),
+				'frontend' => self::sanitize_context_slice( array(), $protected ),
+			);
+		}
+		if ( 'admin' === $context || 'frontend' === $context ) {
+			return $all[ $context ];
+		}
+		return $all;
 	}
 
 	/* ─────────────────────────── REST ─────────────────────────── */
 
 	/**
 	 * GET  adminkit/v1/toolbar — the pristine top-level nodes + the saved layout.
-	 * POST adminkit/v1/toolbar — persist { order, hidden }.
+	 * POST adminkit/v1/toolbar — persist { admin: {...}, frontend: {...} }.
 	 *
 	 * @return void
 	 */
@@ -233,22 +309,34 @@ class AdminKit_Toolbar_Manager {
 	}
 
 	/**
-	 * GET payload — the pristine top-level nodes (admin-context capture preferred, an
-	 * in-request rebuild as fallback) + the saved layout.
+	 * GET payload — the pristine top-level nodes for both `admin` and `frontend`
+	 * contexts + the saved per-context layouts.
 	 *
 	 * @return WP_REST_Response
 	 */
 	public static function rest_get() {
-		$nodes = get_transient( self::SNAPSHOT_KEY );
-		if ( ! is_array( $nodes ) || ! $nodes ) {
-			// No admin-context capture yet (the SPA fetched before any Toolbar-page render,
-			// or it expired) — rebuild in-request. Degraded: misses is_admin()-gated nodes,
-			// but beats an empty editor.
-			$nodes = self::snapshot_nodes();
+		$admin_nodes = get_transient( self::SNAPSHOT_KEY );
+		if ( ! is_array( $admin_nodes ) || ! $admin_nodes ) {
+			$admin_nodes = self::snapshot_nodes();
 		}
+		$admin_nodes = self::filter_context_nodes( $admin_nodes, 'admin' );
+
+		$frontend_nodes = get_transient( self::FRONTEND_SNAPSHOT_KEY );
+		if ( ! is_array( $frontend_nodes ) || ! $frontend_nodes ) {
+			$frontend_nodes = self::snapshot_frontend_nodes( $admin_nodes );
+		} else {
+			$frontend_nodes = self::ensure_frontend_nodes( self::filter_context_nodes( $frontend_nodes, 'frontend' ) );
+		}
+
+		$configs = self::get_config();
 		return rest_ensure_response( array(
-			'nodes'  => $nodes,
-			'config' => self::get_config(),
+			'nodes'           => $admin_nodes,
+			'nodesByContext'  => array(
+				'admin'    => $admin_nodes,
+				'frontend' => $frontend_nodes,
+			),
+			'config'          => $configs['admin'],
+			'configByContext' => $configs,
 		) );
 	}
 
@@ -262,8 +350,23 @@ class AdminKit_Toolbar_Manager {
 	 */
 	public static function capture( $bar ) {
 		if ( is_object( $bar ) ) {
-			set_transient( self::SNAPSHOT_KEY, self::extract_nodes( $bar ), HOUR_IN_SECONDS );
+			set_transient( self::SNAPSHOT_KEY, self::extract_nodes( $bar, 'admin' ), HOUR_IN_SECONDS );
 		}
+	}
+
+	/**
+	 * Capture the live front-end admin-bar nodes when an administrator visits the public
+	 * site, BEFORE apply() reorders/hides them.
+	 *
+	 * @param WP_Admin_Bar $bar
+	 * @return void
+	 */
+	public static function capture_frontend( $bar ) {
+		if ( is_admin() || ! is_object( $bar ) || ! is_admin_bar_showing() || ! current_user_can( self::capability() ) ) {
+			return;
+		}
+		$nodes = self::ensure_frontend_nodes( self::extract_nodes( $bar, 'frontend' ) );
+		set_transient( self::FRONTEND_SNAPSHOT_KEY, $nodes, HOUR_IN_SECONDS );
 	}
 
 	/**
@@ -271,21 +374,166 @@ class AdminKit_Toolbar_Manager {
 	 * extract its top-level nodes. Runs in the CALLER's context (REST = not is_admin()),
 	 * so it can miss `is_admin()`-gated nodes — exactly why capture() is preferred.
 	 *
-	 * @return array<int,array{id:string,label:string,group:string}>
+	 * @return array<int,array{id:string,label:string,group:string,defaultIcon:string,dashicon:string}>
 	 */
 	private static function snapshot_nodes() {
 		require_once ABSPATH . WPINC . '/class-wp-admin-bar.php';
 
-		// Detach our own apply so the throwaway render is pristine, then build the bar
-		// exactly like core's _wp_admin_bar_init (initialize → add_menus → the action).
+		remove_action( 'admin_bar_menu', array( __CLASS__, 'capture_frontend' ), 99998 );
 		remove_action( 'admin_bar_menu', array( __CLASS__, 'apply' ), 99999 );
 		$bar = new WP_Admin_Bar();
 		$bar->initialize();
 		$bar->add_menus();
 		do_action( 'admin_bar_menu', $bar );
+		add_action( 'admin_bar_menu', array( __CLASS__, 'capture_frontend' ), 99998 );
 		add_action( 'admin_bar_menu', array( __CLASS__, 'apply' ), 99999 );
 
-		return self::extract_nodes( $bar );
+		return self::extract_nodes( $bar, 'admin' );
+	}
+
+	/**
+	 * Synthesize the front-end toolbar node list when no front-end page has been visited
+	 * yet since the transient cleared. Adapts the admin snapshot to the front-end context
+	 * (dropping wp-admin-only nodes and adding front-end core nodes like `site-editor` /
+	 * `customize`, `edit`, and `search`).
+	 *
+	 * @param array<int,array> $admin_nodes
+	 * @return array<int,array>
+	 */
+	private static function snapshot_frontend_nodes( $admin_nodes ) {
+		$admin_only = array(
+			'menu-toggle'                      => true,
+			'command-palette'                  => true,
+			'ak-notifications'                 => true,
+			'woocommerce-site-visibility-badge' => true,
+			'archive'                          => true,
+		);
+		$out = array();
+		foreach ( $admin_nodes as $node ) {
+			$id = isset( $node['id'] ) ? (string) $node['id'] : '';
+			if ( '' === $id || isset( $admin_only[ $id ] ) ) {
+				continue;
+			}
+			if ( 'ak-view-site' === $id ) {
+				$defaults            = self::node_default_icons( 'ak-view-site', 'frontend' );
+				$node['label']       = __( 'Dashboard', 'adminkit' );
+				$node['defaultIcon'] = $defaults['defaultIcon'];
+				$node['dashicon']    = $defaults['dashicon'];
+			}
+			$out[] = $node;
+		}
+		return self::ensure_frontend_nodes( $out );
+	}
+
+	/**
+	 * Ensure context-dependent front-end core nodes (`site-editor` or `customize`,
+	 * `edit`, and `search`) are always present in the front-end editor list even if the
+	 * snapshot was captured on an archive/home view where `edit` wasn't rendered.
+	 *
+	 * @param array<int,array> $nodes
+	 * @return array<int,array>
+	 */
+	private static function ensure_frontend_nodes( $nodes ) {
+		$by_id = array();
+		foreach ( $nodes as $n ) {
+			if ( isset( $n['id'] ) ) {
+				$by_id[ $n['id'] ] = $n;
+			}
+		}
+
+		$is_block_theme = function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
+		$extra_after    = array();
+
+		if ( $is_block_theme && ! isset( $by_id['site-editor'] ) ) {
+			$defaults                    = self::node_default_icons( 'site-editor', 'frontend' );
+			$extra_after['site-name'][] = array(
+				'id'          => 'site-editor',
+				'label'       => __( 'Edit Site' ),
+				'group'       => 'root',
+				'defaultIcon' => $defaults['defaultIcon'],
+				'dashicon'    => $defaults['dashicon'],
+			);
+		} elseif ( ! $is_block_theme && ! isset( $by_id['customize'] ) ) {
+			$defaults                    = self::node_default_icons( 'customize', 'frontend' );
+			$extra_after['site-name'][] = array(
+				'id'          => 'customize',
+				'label'       => __( 'Customize' ),
+				'group'       => 'root',
+				'defaultIcon' => $defaults['defaultIcon'],
+				'dashicon'    => $defaults['dashicon'],
+			);
+		}
+
+		if ( ! isset( $by_id['edit'] ) ) {
+			$defaults    = self::node_default_icons( 'edit', 'frontend' );
+			$pt_obj      = function_exists( 'get_post_type_object' ) ? get_post_type_object( 'page' ) : null;
+			$edit_label  = ( $pt_obj && isset( $pt_obj->labels->edit_item ) ) ? $pt_obj->labels->edit_item : __( 'Edit Page' );
+			$anchor      = isset( $by_id['new-content'] ) ? 'new-content' : 'site-name';
+			$extra_after[ $anchor ][] = array(
+				'id'          => 'edit',
+				'label'       => $edit_label,
+				'group'       => 'root',
+				'defaultIcon' => $defaults['defaultIcon'],
+				'dashicon'    => $defaults['dashicon'],
+			);
+		}
+
+		$out = array();
+		foreach ( $nodes as $n ) {
+			$out[] = $n;
+			$id    = isset( $n['id'] ) ? $n['id'] : '';
+			if ( isset( $extra_after[ $id ] ) ) {
+				foreach ( $extra_after[ $id ] as $ins ) {
+					$out[] = $ins;
+				}
+				unset( $extra_after[ $id ] );
+			}
+		}
+		foreach ( $extra_after as $ins_list ) {
+			foreach ( $ins_list as $ins ) {
+				$out[] = $ins;
+			}
+		}
+
+		if ( ! isset( $by_id['search'] ) ) {
+			$defaults = self::node_default_icons( 'search', 'frontend' );
+			$out[]    = array(
+				'id'          => 'search',
+				'label'       => __( 'Search' ),
+				'group'       => 'secondary',
+				'defaultIcon' => $defaults['defaultIcon'],
+				'dashicon'    => $defaults['dashicon'],
+			);
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Refresh context-dependent metadata (such as hiding `wp-logo` and updating
+	 * `site-name`'s default icon when `branding_enabled` is active) on a cached snapshot.
+	 *
+	 * @param array<int,array> $nodes
+	 * @param string           $context `'admin'` | `'frontend'`
+	 * @return array<int,array>
+	 */
+	private static function filter_context_nodes( $nodes, $context ) {
+		$branding = (bool) AdminKit_Settings::get( 'branding_enabled' );
+		$out      = array();
+		foreach ( $nodes as $n ) {
+			if ( ! is_array( $n ) || empty( $n['id'] ) ) {
+				continue;
+			}
+			$id = (string) $n['id'];
+			if ( $branding && 'wp-logo' === $id ) {
+				continue;
+			}
+			$defaults         = self::node_default_icons( $id, $context );
+			$n['defaultIcon'] = $defaults['defaultIcon'];
+			$n['dashicon']    = $defaults['dashicon'];
+			$out[]            = $n;
+		}
+		return $out;
 	}
 
 	/**
@@ -293,28 +541,26 @@ class AdminKit_Toolbar_Manager {
 	 * shape. Shared by capture() (real bar) and snapshot_nodes() (throwaway bar).
 	 *
 	 * @param WP_Admin_Bar $bar
-	 * @return array<int,array{id:string,label:string,group:string}>
+	 * @param string       $context `'admin'` | `'frontend'`
+	 * @return array<int,array{id:string,label:string,group:string,defaultIcon:string,dashicon:string}>
 	 */
-	private static function extract_nodes( $bar ) {
+	private static function extract_nodes( $bar, $context = 'admin' ) {
 		$nodes = $bar->get_nodes();
 		if ( ! is_array( $nodes ) ) {
 			return array();
 		}
 
-		// Classify each node against WP's verified admin-bar structure (see
-		// wp-includes/admin-bar.php): the ONLY top-level group is `top-secondary`
-		// (the right cluster — account, search…), added with no parent; every other
-		// group is a dropdown sub-group (parent = an item). get_nodes() returns the
-		// raw, UNBOUND nodes, so a top-level item's parent is still false/'' (it is
-		// rebound to 'root' only later in _bind, during render):
-		//   • parent false / '' / 'root' → left cluster
-		//   • parent 'top-secondary'     → right cluster
-		//   • anything else              → a dropdown child (skip)
-		$out = array();
+		$branding = (bool) AdminKit_Settings::get( 'branding_enabled' );
+		$out      = array();
 		foreach ( $nodes as $id => $node ) {
 			$id = (string) $id;
 			if ( 'root' === $id || ! empty( $node->group ) ) {
 				continue; // the root container + group wrappers aren't items
+			}
+			// When AdminKit's automatic toolbar identity is active, `#wp-admin-bar-wp-logo`
+			// is hidden by CSS (`AdminKit_Core_Branding`) and its mark lives on `site-name`.
+			if ( $branding && 'wp-logo' === $id ) {
+				continue;
 			}
 			$parent = isset( $node->parent ) ? $node->parent : false;
 			if ( false === $parent || '' === $parent || 'root' === $parent ) {
@@ -325,7 +571,7 @@ class AdminKit_Toolbar_Manager {
 				continue; // a dropdown child — not a top-level bar item
 			}
 
-			$defaults = self::node_default_icons( $id );
+			$defaults = self::node_default_icons( $id, $context );
 			$out[]    = array(
 				'id'          => $id,
 				'label'       => self::node_label( $node ),
@@ -339,39 +585,65 @@ class AdminKit_Toolbar_Manager {
 
 	/**
 	 * Default icon metadata for a toolbar node so the editor's icon button previews
-	 * the same glyph the bar displays by default.
+	 * the same glyph the bar displays by default in the given context (`admin` vs
+	 * `frontend`, and accounting for `branding_enabled`).
 	 *
 	 * @param string $id
+	 * @param string $context `'admin'` | `'frontend'`
 	 * @return array{defaultIcon:string,dashicon:string}
 	 */
-	private static function node_default_icons( $id ) {
+	private static function node_default_icons( $id, $context = 'admin' ) {
+		$branding = (bool) AdminKit_Settings::get( 'branding_enabled' );
+		if ( 'site-name' === $id ) {
+			// When automatic branding is on, `site-name` displays the brand mark (falling
+			// back to the WordPress `W` logomark `\f120`), not the generic house glyph.
+			if ( $branding ) {
+				return array(
+					'defaultIcon' => '',
+					'dashicon'    => 'dashicons-wordpress',
+				);
+			}
+			return array(
+				'defaultIcon' => 'home',
+				'dashicon'    => 'dashicons-admin-home',
+			);
+		}
+		if ( 'ak-view-site' === $id ) {
+			return array(
+				'defaultIcon' => 'frontend' === $context ? 'home' : 'external-link',
+				'dashicon'    => '',
+			);
+		}
 		$lucide_map = array(
-			'menu-toggle'     => 'menu',
-			'site-name'       => 'home',
-			'comments'        => 'chat',
-			'new-content'     => 'plus',
-			'updates'         => 'update',
-			'command-palette' => 'search',
-			'edit'            => 'document-pencil',
-			'customize'       => 'sliders',
-			'archive'         => 'eye',
-			'ak-notifications' => 'bell',
-			'ak-view-site'    => 'external-link',
-			'ak-theme-toggle' => 'sun',
-			'query-monitor'   => 'clock',
-			'my-account'      => 'user',
+			'menu-toggle'         => 'menu',
+			'comments'            => 'chat',
+			'new-content'         => 'plus',
+			'updates'             => 'update',
+			'command-palette'     => 'search',
+			'search'              => 'search',
+			'edit'                => 'document-pencil',
+			'customize'           => 'sliders',
+			'site-editor'         => 'app',
+			'archive'             => 'eye',
+			'ak-notifications'    => 'bell',
+			'ak-theme-toggle'     => 'sun',
+			'query-monitor'       => 'clock',
+			'my-account'          => 'user',
 			'ame-quick-search-tb' => 'search',
+			'edit_with_bricks'    => 'brush',
+			'editor_mode'         => 'app',
 		);
 		$dashicon_map = array(
 			'wp-logo'         => 'dashicons-wordpress',
 			'menu-toggle'     => 'dashicons-menu',
-			'site-name'       => 'dashicons-admin-home',
 			'comments'        => 'dashicons-admin-comments',
 			'new-content'     => 'dashicons-plus',
 			'updates'         => 'dashicons-update',
 			'command-palette' => 'dashicons-search',
+			'search'          => 'dashicons-search',
 			'edit'            => 'dashicons-edit',
 			'customize'       => 'dashicons-admin-customizer',
+			'site-editor'     => 'dashicons-layout',
 			'my-account'      => 'dashicons-admin-users',
 		);
 		return array(
@@ -411,67 +683,46 @@ class AdminKit_Toolbar_Manager {
 	}
 
 	/**
-	 * POST handler — sanitise + persist the layout. `order` is a list of node ids in
-	 * the desired order; `hidden` a list of ids to remove; `titles` and `icons` hold
-	 * per-node custom labels and icon overrides. Protected ids can't be hidden.
+	 * POST handler — sanitise + persist the layout. Accepts either a per-context
+	 * `{ admin: {...}, frontend: {...} }` payload or a legacy flat `{ order, hidden,
+	 * titles, icons }` payload (which updates `admin` while keeping `frontend`).
+	 * Protected ids can't be hidden.
 	 *
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response
 	 */
 	public static function rest_save( $request ) {
-		$order_in  = $request->get_param( 'order' );
-		$hidden_in = $request->get_param( 'hidden' );
-		$titles_in = $request->get_param( 'titles' );
-		$icons_in  = $request->get_param( 'icons' );
+		$protected   = self::protected_nodes();
+		$current     = self::get_config();
+		$admin_in    = $request->get_param( 'admin' );
+		$frontend_in = $request->get_param( 'frontend' );
 
-		$order     = array();
-		$protected = self::protected_nodes();
-		if ( is_array( $order_in ) ) {
-			foreach ( $order_in as $id ) {
-				$id = self::sanitize_node_id( $id );
-				if ( '' !== $id ) {
-					$order[] = $id;
-				}
-			}
-		}
-		$hidden = array();
-		if ( is_array( $hidden_in ) ) {
-			foreach ( $hidden_in as $id ) {
-				$id = self::sanitize_node_id( $id );
-				if ( '' !== $id && ! isset( $protected[ $id ] ) ) {
-					$hidden[] = $id;
-				}
-			}
-		}
-		$titles = array();
-		if ( is_array( $titles_in ) ) {
-			foreach ( $titles_in as $id => $t ) {
-				$id = self::sanitize_node_id( $id );
-				$t  = is_string( $t ) ? sanitize_text_field( $t ) : '';
-				if ( '' !== $id && '' !== $t ) {
-					$titles[ $id ] = $t;
-				}
-			}
-		}
-		$icons = array();
-		if ( is_array( $icons_in ) ) {
-			foreach ( $icons_in as $id => $ic ) {
-				$id = self::sanitize_node_id( $id );
-				$ic = self::sanitize_icon( $ic );
-				if ( '' !== $id && '' !== $ic ) {
-					$icons[ $id ] = $ic;
-				}
-			}
+		if ( is_array( $admin_in ) || is_array( $frontend_in ) ) {
+			$saved = array(
+				'admin'    => is_array( $admin_in ) ? self::sanitize_context_slice( $admin_in, $protected ) : $current['admin'],
+				'frontend' => is_array( $frontend_in ) ? self::sanitize_context_slice( $frontend_in, $protected ) : $current['frontend'],
+			);
+		} else {
+			$legacy = array(
+				'order'  => $request->get_param( 'order' ),
+				'hidden' => $request->get_param( 'hidden' ),
+				'titles' => $request->get_param( 'titles' ),
+				'icons'  => $request->get_param( 'icons' ),
+			);
+			$saved  = array(
+				'admin'    => self::sanitize_context_slice( $legacy, $protected ),
+				'frontend' => $current['frontend'],
+			);
 		}
 
-		update_option( self::OPTION, array(
-			'order'  => array_values( array_unique( $order ) ),
-			'hidden' => array_values( array_unique( $hidden ) ),
-			'titles' => $titles,
-			'icons'  => $icons,
-		), false );
+		update_option( self::OPTION, $saved, false );
 
-		return rest_ensure_response( array( 'saved' => true, 'config' => self::get_config() ) );
+		$configs = self::get_config();
+		return rest_ensure_response( array(
+			'saved'           => true,
+			'config'          => $configs['admin'],
+			'configByContext' => $configs,
+		) );
 	}
 
 	/**
@@ -522,9 +773,9 @@ class AdminKit_Toolbar_Manager {
 	/* ─────────────────────────── Apply ─────────────────────────── */
 
 	/**
-	 * Apply the saved layout to the live bar: hide (remove), apply custom titles +
-	 * icons, then reorder. Runs on `admin_bar_menu` very late so every node already
-	 * exists.
+	 * Apply the saved layout for the active context (`admin` vs `frontend`) to the live
+	 * bar: hide (remove), apply custom titles + icons, then reorder. Runs on
+	 * `admin_bar_menu` very late so every node already exists.
 	 *
 	 * @param WP_Admin_Bar $bar
 	 * @return void
@@ -533,11 +784,13 @@ class AdminKit_Toolbar_Manager {
 		if ( ! is_object( $bar ) ) {
 			return;
 		}
-		$cfg = self::get_config();
+		$context = is_admin() ? 'admin' : 'frontend';
+		$cfg     = self::get_config( $context );
 		if ( empty( $cfg['order'] ) && empty( $cfg['hidden'] ) && empty( $cfg['titles'] ) && empty( $cfg['icons'] ) ) {
 			return;
 		}
 		$protected = self::protected_nodes();
+		$branding  = (bool) AdminKit_Settings::get( 'branding_enabled' );
 
 		// Hide: drop the node (children go with it). Never a protected id.
 		$hidden = array();
@@ -552,7 +805,7 @@ class AdminKit_Toolbar_Manager {
 		// Apply title + icon overrides to any live node (whether reordered or not).
 		$touched = array_unique( array_merge( array_keys( $cfg['titles'] ), array_keys( $cfg['icons'] ) ) );
 		foreach ( $touched as $id ) {
-			if ( isset( $hidden[ $id ] ) ) {
+			if ( isset( $hidden[ $id ] ) || ( $branding && 'wp-logo' === $id ) ) {
 				continue;
 			}
 			$node = $bar->get_node( $id );
@@ -575,7 +828,7 @@ class AdminKit_Toolbar_Manager {
 		// just sits where WP added it). A node's children ride along (they reference the
 		// re-added parent id).
 		foreach ( $cfg['order'] as $id ) {
-			if ( isset( $hidden[ $id ] ) ) {
+			if ( isset( $hidden[ $id ] ) || ( $branding && 'wp-logo' === $id ) ) {
 				continue;
 			}
 			$node = $bar->get_node( $id );
@@ -589,22 +842,26 @@ class AdminKit_Toolbar_Manager {
 
 	/**
 	 * Replace the visible label of a toolbar node while keeping its icon, count
-	 * bubbles, avatar or brand logo intact.
+	 * bubbles, avatar, search form or brand logo intact.
 	 *
 	 * @param array  $props
 	 * @param string $custom_title
 	 * @return array
 	 */
 	private static function apply_node_title( $props, $custom_title ) {
-		$safe = esc_html( $custom_title );
-		$raw  = isset( $props['title'] ) ? (string) $props['title'] : '';
-		$meta = isset( $props['meta'] ) && is_array( $props['meta'] ) ? $props['meta'] : array();
+		$safe    = esc_html( $custom_title );
+		$safe_at = esc_attr( $custom_title );
+		$raw     = isset( $props['title'] ) ? (string) $props['title'] : '';
+		$meta    = isset( $props['meta'] ) && is_array( $props['meta'] ) ? $props['meta'] : array();
 
 		if ( isset( $meta['menu_title'] ) ) {
 			$meta['menu_title'] = $custom_title;
 		}
 
-		if ( false !== strpos( $raw, 'ak-site-name-text' ) ) {
+		if ( false !== strpos( $raw, 'adminbarsearch' ) || false !== strpos( $raw, '<form' ) ) {
+			$raw = preg_replace( '/(<label[^>]*>).*?(<\/label>)/is', '$1' . $safe . '$2', $raw, 1 );
+			$raw = preg_replace( '/(<input[^>]*type=["\']submit["\'][^>]*value=["\'])[^"\']*(["\'])/is', '$1' . $safe_at . '$2', $raw, 1 );
+		} elseif ( false !== strpos( $raw, 'ak-site-name-text' ) ) {
 			$raw = preg_replace( '/(<span[^>]*class=["\'][^"\']*ak-site-name-text[^"\']*["\'][^>]*>).*?(<\/span>)/is', '$1' . $safe . '$2', $raw, 1 );
 		} elseif ( false !== strpos( $raw, 'class="ab-label"' ) || false !== strpos( $raw, "class='ab-label'" ) ) {
 			$raw = preg_replace( '/(<span[^>]*class=["\']ab-label["\'][^>]*>).*?(<\/span>)/is', '$1' . $safe . '$2', $raw, 1 );
@@ -634,6 +891,8 @@ class AdminKit_Toolbar_Manager {
 	 *   - for AdminKit SVG nodes (`ak-notifications`, `ak-view-site`, `ak-theme-toggle`),
 	 *     replace the inline `<svg class="ak-theme-icon" ...>` directly when a Lucide icon
 	 *     is chosen;
+	 *   - for `search` (`#wp-admin-bar-search` on the front end), leave the `<form>` intact
+	 *     and target `#adminbarsearch::before` in `print_css()`;
 	 *   - for other nodes, ensure `.ab-icon` is present (or record an `.ab-item::before`
 	 *     override) and queue the CSS rule for `print_css()`.
 	 *
@@ -654,6 +913,23 @@ class AdminKit_Toolbar_Manager {
 		}
 
 		$dom_id = ( 0 === strpos( $id, 'wp-admin-bar-' ) ) ? $id : 'wp-admin-bar-' . $id;
+
+		if ( 'search' === $id || false !== strpos( $raw, 'adminbarsearch' ) ) {
+			self::$icon_overrides[ $dom_id ] = ( 'wp-default' === $icon ) ? 'wp-default:search' : $icon;
+			return $props;
+		}
+
+		// When a user explicitly overrides `site-name`'s icon, strip any injected brand
+		// logo class so the custom icon + site name text render cleanly.
+		if ( 'site-name' === $id ) {
+			if ( isset( $props['meta']['class'] ) && is_string( $props['meta']['class'] ) ) {
+				$props['meta']['class'] = trim( str_replace( 'ak-has-brand-logo', '', $props['meta']['class'] ) );
+			}
+			if ( false !== strpos( $raw, 'ak-site-name-text' ) && preg_match( '/<span[^>]*class=["\'][^"\']*ak-site-name-text[^"\']*["\'][^>]*>(.*?)<\/span>/is', $raw, $m ) ) {
+				$raw            = $m[1];
+				$props['title'] = $raw;
+			}
+		}
 
 		if ( 0 === strpos( $icon, 'dashicons-' ) ) {
 			if ( false !== strpos( $raw, 'ab-icon' ) ) {
@@ -676,12 +952,16 @@ class AdminKit_Toolbar_Manager {
 		}
 
 		// Lucide icon name or custom SVG data-URI: ensure the node has an `.ab-icon`
-		// span (unless it's a known `> .ab-item::before` node like edit/customize/query-monitor).
+		// span (unless it's a known `> .ab-item::before` node like site-name/edit/customize/site-editor/query-monitor).
 		$ab_item_ids = array(
-			'edit'          => true,
-			'customize'     => true,
-			'archive'       => true,
-			'query-monitor' => true,
+			'site-name'        => true,
+			'edit'             => true,
+			'customize'        => true,
+			'site-editor'      => true,
+			'archive'          => true,
+			'query-monitor'    => true,
+			'edit_with_bricks' => true,
+			'editor_mode'      => true,
 		);
 		if ( isset( $ab_item_ids[ $id ] ) ) {
 			self::$ab_item_overrides[ $dom_id ] = true;
@@ -694,7 +974,8 @@ class AdminKit_Toolbar_Manager {
 
 	/**
 	 * Print per-node toolbar icon CSS overrides in `admin_head` and `wp_head` (at
-	 * priority 22, right after `AdminKit_Core_Menu_Icons` at 21).
+	 * priority 22, right after `AdminKit_Core_Menu_Icons` at 21 and `AdminKit_Core_Branding`
+	 * at 20).
 	 *
 	 * @return void
 	 */
@@ -706,6 +987,25 @@ class AdminKit_Toolbar_Manager {
 		$mobile  = '';
 
 		foreach ( self::$icon_overrides as $dom_id => $icon ) {
+			// When `site-name` has an explicit custom icon override, neutralize
+			// `AdminKit_Core_Branding`'s `::before` mark so only the chosen icon shows.
+			if ( 'wp-admin-bar-site-name' === $dom_id && 0 === strpos( $icon, 'dashicons-' ) ) {
+				$desktop .= '.wp-admin #wpadminbar #wp-toolbar #wp-admin-bar-site-name > .ab-item.ab-item.ab-item::before,#wpadminbar #wp-toolbar #wp-admin-bar-site-name > .ab-item.ab-item.ab-item::before{content:none !important;background-image:none !important}';
+			}
+
+			if ( 'wp-admin-bar-search' === $dom_id ) {
+				$sel = '#wpadminbar #wp-toolbar #wp-admin-bar-search #adminbarsearch::before';
+				if ( 0 === strncmp( $icon, 'wp-default:', 11 ) ) {
+					$desktop .= $sel . '{content:"\\f179";-webkit-mask:none;mask:none;background:transparent;font:normal 20px/1 dashicons}';
+				} else {
+					$mask = self::icon_mask( $icon );
+					if ( '' !== $mask ) {
+						$desktop .= $sel . '{content:"";width:20px;height:20px;top:6px;' . $mask . '}';
+					}
+				}
+				continue;
+			}
+
 			if ( 0 === strpos( $icon, 'dashicons-' ) ) {
 				// Cancel any AdminKit mask on this node's `.ab-icon` so WP's native
 				// dashicons-before class paints its font glyph.
@@ -721,8 +1021,8 @@ class AdminKit_Toolbar_Manager {
 					$info  = self::$toolbar_dashicon_glyphs[ $raw_id ];
 					$glyph = $info['glyph'];
 					if ( 'ab-item' === $info['target'] ) {
-						$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before';
-						$desktop .= $sel . '{content:"' . $glyph . '";-webkit-mask:none;mask:none;background:transparent;font:normal 20px/1 dashicons;float:left;width:20px;height:32px;padding:6px 0;margin-right:6px}';
+						$sel      = '.wp-admin #wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before,#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before';
+						$desktop .= $sel . '{content:"' . $glyph . '" !important;-webkit-mask:none;mask:none;background:transparent !important;font:normal 20px/1 dashicons;float:left;width:20px;height:32px;padding:6px 0;margin-right:6px}';
 					} else {
 						$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' .ab-icon.ab-icon.ab-icon::before';
 						$desktop .= $sel . '{content:"' . $glyph . '";-webkit-mask:none;mask:none;background:transparent;font:normal 20px/1 dashicons}';
@@ -737,9 +1037,9 @@ class AdminKit_Toolbar_Manager {
 			}
 
 			if ( ! empty( self::$ab_item_overrides[ $dom_id ] ) ) {
-				$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before';
-				$desktop .= $sel . '{content:"";box-sizing:border-box;float:left;height:32px;width:20px;padding:6px 0;margin-right:6px;position:static;top:auto;' . $mask . '}';
-				$mobile  .= $sel . '{content:"";box-sizing:border-box;display:block;float:none;width:52px;height:46px;margin:0;text-indent:0;position:static;top:auto;' . $mask . '-webkit-mask-size:22px 22px;mask-size:22px 22px}';
+				$sel      = '.wp-admin #wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before,#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before';
+				$desktop .= $sel . '{content:"" !important;background-image:none !important;box-sizing:border-box;float:left;height:32px;width:20px;padding:6px 0;margin-right:6px;position:static;top:auto;' . $mask . '}';
+				$mobile  .= $sel . '{content:"" !important;background-image:none !important;box-sizing:border-box;display:block;float:none;width:52px;height:46px;margin:0;text-indent:0;position:static;top:auto;' . $mask . '-webkit-mask-size:22px 22px;mask-size:22px 22px}';
 			} else {
 				$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' .ab-icon.ab-icon.ab-icon';
 				$desktop .= $sel . '{box-sizing:border-box;height:32px;width:20px;padding:6px 0;margin-right:6px}';

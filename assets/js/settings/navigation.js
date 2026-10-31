@@ -90,7 +90,10 @@
 			});
 		}
 		state.menu = buildMenuModel(MM.menu || [], MM.config || { top: [], sub: {} });
-		state.toolbar = { left: [], right: [] };
+		state.toolbar = {
+			admin: { left: [], right: [] },
+			frontend: { left: [], right: [] }
+		};
 		function buildMenuModel(snapshot, config) {
 			// Global lookups so a submenu can be rebuilt under ANY parent (cross-section):
 			// childTitle = every submenu slug -> its original title; claimed = every slug
@@ -288,24 +291,82 @@
 
 		function buildToolbar() {
 			var TB = D.toolbar || {};
+			var activeCtx = 'admin';
+			var nodesByCtx = { admin: [], frontend: [] };
 			var p = el('section', { class: 'ak-panel ak-panel--menu', role: 'tabpanel' }, [
 				el('h3', { text: I.toolbarTab || 'Toolbar' }),
 				el('p', { class: 'ak-foundation-intro', text: I.toolbarIntro })
 			]);
 			var listWrap = el('div', { class: 'ak-menu-tree ak-toolbar-columns' });
-			var nodesRaw = []; // the pristine fetched nodes, kept so Reset can rebuild
+
+			var ctxButtons = {};
+			function switchContext(ctx) {
+				if (ctx !== 'admin' && ctx !== 'frontend') {
+					return;
+				}
+				closePicker();
+				activeCtx = ctx;
+				['admin', 'frontend'].forEach(function (k) {
+					var btn = ctxButtons[k];
+					if (!btn) {
+						return;
+					}
+					var on = k === activeCtx;
+					btn.classList.toggle('is-active', on);
+					btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+				});
+				render();
+			}
+
+			var seg = el(
+				'div',
+				{
+					class: 'ak-seg ak-menu-toolbar__seg',
+					role: 'group',
+					'aria-label': I.toolbarContext || 'Toolbar context'
+				},
+				[
+					(ctxButtons.admin = el('button', {
+						type: 'button',
+						class: 'ak-seg__opt is-active',
+						'aria-pressed': 'true',
+						text: I.toolbarAdmin || 'Administration',
+						onclick: function () {
+							switchContext('admin');
+						}
+					})),
+					(ctxButtons.frontend = el('button', {
+						type: 'button',
+						class: 'ak-seg__opt',
+						'aria-pressed': 'false',
+						text: I.toolbarFrontend || 'Public site',
+						onclick: function () {
+							switchContext('frontend');
+						}
+					}))
+				]
+			);
 
 			p.appendChild(
 				el('div', { class: 'ak-actions ak-menu-toolbar' }, [
+					seg,
 					el('button', {
 						type: 'button',
-						class: 'ak-btn ak-btn--ghost',
+						class: 'ak-btn ak-btn--ghost ak-menu-toolbar__spacer',
 						text: I.toolbarReset || 'Reset',
 						onclick: reset
 					})
 				])
 			);
 			p.appendChild(listWrap);
+
+			function currentSides() {
+				if (!state.toolbar || !state.toolbar[activeCtx]) {
+					state.toolbar = state.toolbar || {};
+					state.toolbar[activeCtx] = { left: [], right: [] };
+				}
+				return state.toolbar[activeCtx];
+			}
 
 			function load() {
 				if (!apiFetch || !TB.route) {
@@ -314,8 +375,14 @@
 				}
 				apiFetch({ path: tbPath() })
 					.then(function (res) {
-						nodesRaw = (res && res.nodes) || [];
-						state.toolbar = toSides(nodesRaw, (res && res.config) || {});
+						var nbc = (res && res.nodesByContext) || {};
+						var cbc = (res && res.configByContext) || {};
+						nodesByCtx.admin = nbc.admin || (res && res.nodes) || [];
+						nodesByCtx.frontend = nbc.frontend || [];
+						state.toolbar = {
+							admin: toSides(nodesByCtx.admin, cbc.admin || (res && res.config) || {}),
+							frontend: toSides(nodesByCtx.frontend, cbc.frontend || {})
+						};
 						render();
 					})
 					.catch(function () {
@@ -328,13 +395,13 @@
 			// title overrides, and icon overrides.
 			function toSides(nodes, config) {
 				var hidden = {};
-				(config.hidden || []).forEach(function (id) {
+				((config && config.hidden) || []).forEach(function (id) {
 					hidden[id] = true;
 				});
 				var titles = (config && config.titles) || {};
 				var icons = (config && config.icons) || {};
 				var byId = {};
-				nodes.forEach(function (n) {
+				(nodes || []).forEach(function (n) {
 					var otitle = n.label || n.id;
 					byId[n.id] = {
 						id: n.id,
@@ -353,13 +420,13 @@
 				function place(it) {
 					sides[it.group === 'secondary' ? 'right' : 'left'].push(it);
 				}
-				(config.order || []).forEach(function (id) {
+				((config && config.order) || []).forEach(function (id) {
 					if (byId[id] && !seen[id]) {
 						seen[id] = 1;
 						place(byId[id]);
 					}
 				});
-				nodes.forEach(function (n) {
+				(nodes || []).forEach(function (n) {
 					if (!seen[n.id]) {
 						seen[n.id] = 1;
 						place(byId[n.id]);
@@ -369,19 +436,20 @@
 			}
 
 			function reset() {
-				state.toolbar = toSides(nodesRaw, {}); // native order, nothing hidden
+				state.toolbar[activeCtx] = toSides(nodesByCtx[activeCtx] || [], {}); // native order, nothing hidden
 				render();
 				markDirty();
 			}
 
 			// Swap a row with its neighbour (↑↓), within its own side only.
 			function move(side, i, dir) {
-				var list = state.toolbar[side],
+				var sides = currentSides();
+				var list = sides[side],
 					to = i + dir;
 				if (to < 0 || to >= list.length) {
 					return;
 				}
-				var movedKey = 'tb:' + side + ':' + list[i].id;
+				var movedKey = 'tb:' + activeCtx + ':' + side + ':' + list[i].id;
 				var tmp = list[i];
 				list[i] = list[to];
 				list[to] = tmp;
@@ -390,7 +458,7 @@
 			}
 			// Splice a dragged row out and back in at a new index, same side.
 			function moveTo(side, from, to) {
-				var list = state.toolbar[side];
+				var list = currentSides()[side];
 				if (from === to || from < 0 || from >= list.length) {
 					return;
 				}
@@ -399,8 +467,9 @@
 
 			function render(movedKey) {
 				var prevFlip = movedKey ? snapshotFlip(listWrap) : null;
+				var sides = currentSides();
 				listWrap.textContent = '';
-				if (!(state.toolbar.left.length + state.toolbar.right.length)) {
+				if (!(sides.left.length + sides.right.length)) {
 					listWrap.appendChild(
 						el('p', { text: I.toolbarEmpty || 'No toolbar items found.' })
 					);
@@ -416,7 +485,7 @@
 			// One side: a column with a small heading + its draggable rows. Drag is scoped
 			// to the side via the drop predicate (ds.side === side), so a row can't cross the boundary.
 			function section(side, heading) {
-				var list = state.toolbar[side];
+				var list = currentSides()[side];
 				if (!list.length) {
 					return;
 				}
@@ -430,22 +499,23 @@
 					row.appendChild(iconBtn(item, listWrap));
 					row.appendChild(titleInput(item));
 					row.appendChild(hideCtl(item));
-					dragSource(h, row, { kind: 'tb', side: side, i: i });
+					dragSource(h, row, { kind: 'tb', ctx: activeCtx, side: side, i: i });
 					dropZone(
 						row,
 						function (ds) {
-							return ds.kind === 'tb' && ds.side === side;
+							return ds.kind === 'tb' && ds.ctx === activeCtx && ds.side === side;
 						},
 						function (ds) {
-							var movedItem = state.toolbar[side] && state.toolbar[side][ds.i];
-							var movedKey = movedItem ? 'tb:' + side + ':' + movedItem.id : null;
+							var sides = currentSides();
+							var movedItem = sides[side] && sides[side][ds.i];
+							var movedKey = movedItem ? 'tb:' + activeCtx + ':' + side + ':' + movedItem.id : null;
 							moveTo(side, ds.i, i);
 							render(movedKey);
 							markDirty();
 						}
 					);
 					col.appendChild(
-						el('div', { class: 'ak-menu-group', 'data-flip-id': 'tb:' + side + ':' + item.id }, [row])
+						el('div', { class: 'ak-menu-group', 'data-flip-id': 'tb:' + activeCtx + ':' + side + ':' + item.id }, [row])
 					);
 				});
 				listWrap.appendChild(col);
@@ -512,8 +582,8 @@
 			return r.charAt(0) === '/' ? r : '/' + r;
 		}
 
-		function gatherToolbar() {
-			var t = state.toolbar || { left: [], right: [] };
+		function gatherToolbarSlice(sides) {
+			var t = sides || { left: [], right: [] };
 			var all = (t.left || []).concat(t.right || []);
 			var titles = {},
 				icons = {};
@@ -539,6 +609,14 @@
 					}),
 				titles: titles,
 				icons: icons
+			};
+		}
+
+		function gatherToolbar() {
+			var tb = state.toolbar || {};
+			return {
+				admin: gatherToolbarSlice(tb.admin),
+				frontend: gatherToolbarSlice(tb.frontend)
 			};
 		}
 

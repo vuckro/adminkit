@@ -680,6 +680,18 @@ msgstr "Gauche"
 msgid "Right"
 msgstr "Droite"
 
+#: inc/settings/class-settings-page.php:400
+msgid "Toolbar context"
+msgstr "Contexte de la barre d’outils"
+
+#: inc/settings/class-settings-page.php:401
+msgid "Administration"
+msgstr "Administration"
+
+#: inc/settings/class-settings-page.php:402
+msgid "Public site"
+msgstr "Site public"
+
 #: inc/features/notifications/class-notification-center.php:183
 msgid "You’re all caught up."
 msgstr "Vous êtes à jour."

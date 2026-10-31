@@ -334,6 +334,7 @@
 .adminkit-app .ak-menu-newtab.on { border-color: var(--ak-primary); color: var(--ak-primary-text); background: var(--ak-primary-subtle); }
 .adminkit-app .ak-menu-newtab svg { width: 14px; height: 14px; }
 .adminkit-app .ak-menu-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: calc(10px * var(--ak-space-scale, 1)); margin: calc(4px * var(--ak-space-scale, 1)) 0 calc(22px * var(--ak-space-scale, 1)); }
+.adminkit-app .ak-menu-toolbar__seg { margin-left: 0; }
 .adminkit-app .ak-menu-toolbar__spacer { margin-left: auto; }
 .adminkit-app .ak-toolbar-columns {
 	display: grid;

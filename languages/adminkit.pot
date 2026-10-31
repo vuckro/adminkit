@@ -653,6 +653,18 @@ msgstr ""
 msgid "Right"
 msgstr ""
 
+#: inc/settings/class-settings-page.php:400
+msgid "Toolbar context"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:401
+msgid "Administration"
+msgstr ""
+
+#: inc/settings/class-settings-page.php:402
+msgid "Public site"
+msgstr ""
+
 #: inc/features/notifications/class-notification-center.php:183
 msgid "You’re all caught up."
 msgstr ""

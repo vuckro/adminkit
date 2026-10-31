@@ -346,6 +346,7 @@ class AdminKit_Core_Menu_Icons {
 			// (a plain document). Same node in the front-end toolbar and the back office.
 			'wp-admin-bar-edit'        => AdminKit_Icons::svg( 'document-pencil' ),
 			'wp-admin-bar-customize'   => AdminKit_Icons::svg( 'sliders' ),
+			'wp-admin-bar-site-editor' => AdminKit_Icons::svg( 'app' ),
 			// `archive` → WP's "View Posts"/"View Pages" node on a post-type LIST screen
 			// (edit.php): a plain-text link out to the post-type archive on the front
 			// end. An eye reads as "view/look at the live listing" — distinct from the
@@ -372,11 +373,12 @@ class AdminKit_Core_Menu_Icons {
 	 */
 	private static function ab_item_nodes() {
 		$nodes = array(
-			'wp-admin-bar-edit'      => true,
-			'wp-admin-bar-customize' => true,
+			'wp-admin-bar-edit'        => true,
+			'wp-admin-bar-customize'   => true,
+			'wp-admin-bar-site-editor' => true,
 			// "View Posts"/"View Pages" on a list screen — a plain-text link with no
 			// `.ab-icon` span, so its glyph is created on `> .ab-item::before`.
-			'wp-admin-bar-archive'   => true,
+			'wp-admin-bar-archive'     => true,
 		);
 		return (array) apply_filters( 'adminkit/toolbar_icon_ab_item_nodes', $nodes );
 	}

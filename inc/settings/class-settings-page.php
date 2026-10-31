@@ -381,6 +381,9 @@ class AdminKit_Settings_Page {
 				'toolbarEmpty'      => __( 'No toolbar items found.', 'adminkit' ),
 				'toolbarLeft'       => __( 'Left', 'adminkit' ),
 				'toolbarRight'      => __( 'Right', 'adminkit' ),
+				'toolbarContext'    => __( 'Toolbar context', 'adminkit' ),
+				'toolbarAdmin'      => __( 'Administration', 'adminkit' ),
+				'toolbarFrontend'   => __( 'Public site', 'adminkit' ),
 
 				// Menu manager tab.
 				'menuIntro'         => __( 'Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access.', 'adminkit' ),
