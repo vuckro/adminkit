@@ -352,13 +352,13 @@ body.adminkit #adminmenu li.wp-menu-open > a.menu-top::before {
    WP draws no `wp-menu-arrow` element — the indicator is a pure CSS border-
    triangle on `::after` (admin-menu.css ~L339): `border:solid 8px transparent`
    whose `border-right-color` is hardcoded to #f0f0f1 (near-white). Two states:
-     • Active/current item → ACCENT (matches the left marker + accent icon).
+     • Active/current item → canvas surface (a clean cutout at the sidebar edge).
      • Hovered non-current item (opensub) → BORDER (neutral; matches the fly-out
        popup's own border so the wedge reads as a callout notch, not an accent).
    `!important` beats WP's hardcoded hex (no theme var there). */
 body.adminkit #adminmenu a.wp-has-current-submenu:after,
 body.adminkit #adminmenu > li.current > a.current:after {
-	border-right-color: var(--ak-primary) !important;
+	border-right-color: var(--ak-bg) !important;
 }
 
 body.adminkit #adminmenu li.wp-has-submenu.wp-not-current-submenu.opensub:hover:after,

@@ -1337,3 +1337,10 @@ body.adminkit.adminkit-woocommerce .order-status:is(.status-pending, .status-on-
 body.adminkit.adminkit-woocommerce .order-status:is(.status-failed, .status-cancelled) { background: var(--ak-error-subtle); color: var(--ak-error); }
 body.adminkit.adminkit-woocommerce .wc-shipping-zone-settings :is(th p, .description),
 body.adminkit.adminkit-woocommerce .wc-shipping-zone-heading a { color: var(--ak-text-muted); }
+
+/* Order history and form separator share the theme's quiet border. */
+body.adminkit #woocommerce-order-notes .add_note { border-bottom-color: var(--ak-border); }
+body.adminkit #woocommerce-order-notes ul.order_notes li .note_content {
+ border-color: var(--ak-border);
+ border-radius: var(--ak-radius-s);
+}

@@ -1244,3 +1244,85 @@ body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__v
    leaving series colors and legend swatches paired. */
 body.adminkit.woocommerce-admin-page .d3-chart__container :is(.tick line, .focus-grid line) { stroke: var(--ak-border); }
 body.adminkit.woocommerce-admin-page .d3-chart__container .axis text { fill: var(--ak-text-muted); }
+
+/* Marketplace cards have their own hardcoded inner surface. */
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__product-card__details {
+ background: var(--ak-surface);
+ color: var(--ak-text);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__product-card {
+ border-color: var(--ak-border);
+ border-radius: var(--ak-radius-m);
+ overflow: hidden;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__product-card__footer {
+ color: var(--ak-text);
+}
+body.adminkit.woocommerce-admin-page :is(.woocommerce-marketplace__search, .woocommerce-marketplace__header-account-trigger) {
+ border-color: var(--ak-border);
+ border-radius: var(--ak-radius-s);
+}
+
+/* Shared React action buttons, including inbox and Jetpack actions. */
+body.adminkit.woocommerce-admin-page .components-button:is(.is-primary, .is-secondary) {
+ border-radius: var(--ak-radius-s);
+ white-space: normal;
+ height: auto;
+ min-height: 36px;
+ line-height: 1.4;
+}
+body.adminkit.woocommerce-admin-page .components-button.is-secondary {
+ background: var(--ak-surface);
+ color: var(--ak-text);
+ border: 1px solid var(--ak-border);
+ box-shadow: none;
+}
+body.adminkit.woocommerce-admin-page .components-button.is-secondary:hover:not(:disabled) {
+ background: var(--ak-hover-bg);
+ color: var(--ak-heading);
+ box-shadow: none;
+}
+body.adminkit.woocommerce-admin-page .components-button:is(.is-primary, .is-secondary):focus-visible {
+ outline: 2px solid var(--ak-focus);
+ outline-offset: 2px;
+}
+
+/* Inbox confirmation uses a shared usage-modal message inside a different frame. */
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-dismiss-all-modal {
+ max-width: calc(100vw - 32px);
+ overflow-x: hidden;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-dismiss-all-modal :is(.components-modal__content, .components-modal__header, .woocommerce-usage-modal__message, .woocommerce-usage-modal__actions) {
+ background: var(--ak-surface);
+ color: var(--ak-text);
+ border-color: var(--ak-border);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-dismiss-all-modal .components-modal__content {
+ overflow-x: hidden;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-dismiss-all-modal .woocommerce-usage-modal__actions {
+ display: flex;
+ flex-wrap: wrap;
+ justify-content: flex-end;
+ gap: 12px;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-quick-links__item-link {
+ color: var(--ak-text);
+ border-radius: var(--ak-radius-s);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-quick-links__item-link:hover {
+ background: var(--ak-hover-bg);
+ color: var(--ak-heading);
+}
+body.adminkit.woocommerce-admin-page .woocommerce-quick-links__item-link svg {
+ fill: currentColor;
+}
+/* Sponsored cards receive a white gradient inline from Marketplace. */
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__product-card.is-sponsored {
+ background: var(--ak-surface) !important;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__product-card :is(.woocommerce-marketplace__product-card__price, .woocommerce-marketplace__product-card__price-label) { color: var(--ak-text); }
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__product-card :is(.woocommerce-marketplace__product-card__sponsored-label, .woocommerce-marketplace__product-card__price-billing, .woocommerce-marketplace__product-card__vendor-details) { color: var(--ak-text-muted); }
+body.adminkit.woocommerce-admin-page .woocommerce-marketplace__quality-badge__chip { background: var(--ak-elevated); color: var(--ak-text-muted); }
+/* Host pins this divider with !important. */
+body.adminkit.woocommerce-admin-page .woocommerce-inbox-dismiss-all-modal .components-modal__header { border-bottom-color: var(--ak-border) !important; }

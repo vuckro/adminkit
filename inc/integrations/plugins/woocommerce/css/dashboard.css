@@ -27,3 +27,8 @@ body.adminkit #woocommerce_dashboard_status .wc_status_list li a::before { color
 body.adminkit #woocommerce_dashboard_status .wc_status_list li a:is(:hover, :focus-visible) { background: var(--ak-hover-bg); }
 body.adminkit #woocommerce_dashboard_status .wc_status_list li a:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: -3px; }
 body.adminkit .dashboard-widget-finish-setup p { color: var(--ak-text-muted); }
+
+/* Host dashboard selectors are more specific than the generic paragraph skin. */
+body.adminkit #dashboard-widgets .dashboard-widget-finish-setup__content p {
+ color: var(--ak-text-muted);
+}
