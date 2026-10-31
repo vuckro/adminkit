@@ -37,6 +37,7 @@
 
 		(D.features || []).forEach(function (f) {
 			state.features[f.key] = !!f.value;
+			(f.options || []).forEach(function (option) { state.features[option.key] = !!option.value; });
 		});
 		// Per-plugin opt-out for generic plugins (no AdminKit adapter) — tracked as
 		// a set of plugin file paths the user has flipped OFF. Default = themed;

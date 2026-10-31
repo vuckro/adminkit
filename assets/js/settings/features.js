@@ -25,6 +25,11 @@
 					if (f.bulk === false || f.available === false) { return; }
 					var value = mode === 'default' ? !!f.default : mode === 'on';
 					if (!!state.features[f.key] !== value) { state.features[f.key] = value; changed = true; }
+					if (mode === 'default') {
+						(f.options || []).forEach(function (option) {
+							if (!!state.features[option.key] !== !!option.default) { state.features[option.key] = !!option.default; changed = true; }
+						});
+					}
 				});
 				bulk.open = false;
 				refresh();
@@ -92,8 +97,26 @@
 					el('div', { class: 'ak-features-state' }, [el('div', {}, [stateLabel, hint]),
 						el('label', { class: 'ak-switch' }, [input, el('span', { class: 'ak-switch__track' }), el('span', { class: 'ak-switch__knob' })])])
 				]);
+				var optionInputs = [];
+				var optionSet = null;
+				if ((f.options || []).length) {
+					var optionHintId = panelId + '-options-hint';
+					optionSet = el('fieldset', { class: 'ak-feature-options', 'aria-describedby': optionHintId }, [el('legend', { text: I.featureOptions })]);
+					(f.options || []).forEach(function (option, optionIndex) {
+						var optionId = panelId + '-option-' + optionIndex;
+						var optionInput = el('input', { id: optionId, type: 'checkbox', class: 'ak-switch__input', 'aria-label': option.label, 'aria-describedby': optionId + '-desc' });
+						optionInput.addEventListener('change', function () { state.features[option.key] = optionInput.checked; refresh(); context.markDirty(); });
+						optionInputs.push({ key: option.key, input: optionInput });
+						optionSet.appendChild(el('div', { class: 'ak-feature-option' }, [
+							el('div', {}, [el('label', { for: optionId, text: option.label }), el('p', { id: optionId + '-desc', text: option.desc })]),
+							el('label', { class: 'ak-switch' }, [optionInput, el('span', { class: 'ak-switch__track' }), el('span', { class: 'ak-switch__knob' })])
+						]));
+					});
+					panel.appendChild(optionSet);
+					panel.appendChild(el('p', { id: optionHintId, class: 'ak-features-hint', text: I.featureOptionsHint }));
+				}
 				details.appendChild(panel);
-				refs[f.key] = { button: button, input: input, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, visible: false };
+				refs[f.key] = { button: button, input: input, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, optionSet: optionSet, optionInputs: optionInputs, visible: false };
 			});
 			var categoryButtons = [];
 			function categoryButton(label, value, count) {
@@ -110,7 +133,7 @@
 				var q = normalize(search.value).trim(), visible = [], counts = { all: 0, active: 0, inactive: 0 }, categoryCounts = {};
 				features.forEach(function (f) {
 					var r = refs[f.key], on = active(f), isLocked = locked(f);
-					var match = normalize(f.label + ' ' + f.desc + ' ' + (f.group || '')).indexOf(q) !== -1;
+					var match = normalize(f.label + ' ' + f.desc + ' ' + (f.group || '') + ' ' + (f.options || []).map(function (option) { return option.label + ' ' + (option.desc || ''); }).join(' ')).indexOf(q) !== -1;
 					if (match) { counts.all++; counts[on ? 'active' : 'inactive']++; }
 					var matchesStatus = match && (status.value === 'all' || (status.value === 'active') === on);
 					if (matchesStatus) { categoryCounts[f.group || ''] = (categoryCounts[f.group || ''] || 0) + 1; }
@@ -119,6 +142,8 @@
 					if (r.visible) { visible.push(f.key); }
 					r.input.checked = f.available !== false && !!state.features[f.key];
 					r.input.disabled = isLocked;
+					if (r.optionSet) { r.optionSet.disabled = !on; }
+					r.optionInputs.forEach(function (option) { option.input.checked = !!state.features[option.key]; });
 					r.button.setAttribute('data-feature-state', isLocked ? 'unavailable' : (on ? 'active' : 'inactive'));
 					r.status.textContent = isLocked ? I.featureUnavailable : (on ? I.featureActive : I.featureInactive);
 					r.stateLabel.textContent = r.status.textContent;
@@ -140,7 +165,7 @@
 				workspace.hidden = !visible.length; empty.hidden = !!visible.length;
 				empty.textContent = counts.all && category ? I.featureCategoryEmpty : I.noResults;
 				// A status-filtered switch may hide its own panel. Keep keyboard focus in the workflow.
-				if (focused && workspace.contains(focused) && (focused.closest('[hidden]') || focused.disabled)) {
+				if (focused && workspace.contains(focused) && (focused.closest('[hidden]') || focused.disabled || focused.matches(':disabled'))) {
 					if (selected) { refs[selected].button.focus(); } else { status.focus(); }
 				}
 			}

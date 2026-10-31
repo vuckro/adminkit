@@ -281,10 +281,25 @@ class AdminKit_Settings_Page {
 		if ( $is_main ) {
 			$schema = AdminKit_Settings::schema();
 			foreach ( AdminKit_Settings_Catalog::features() as $f ) {
+				$options = array();
+				foreach ( isset( $f['options'] ) ? $f['options'] : array() as $option ) {
+					// Only registered boolean settings may become nested controls.
+					if ( ! isset( $schema[ $option['key'] ] ) || 'toggle' !== $schema[ $option['key'] ]['type'] ) {
+						continue;
+					}
+					$options[] = array(
+						'key' => $option['key'],
+						'label' => $option['label'],
+						'desc' => isset( $option['desc'] ) ? $option['desc'] : '',
+						'value' => (bool) AdminKit_Settings::get( $option['key'] ),
+						'default' => (bool) $schema[ $option['key'] ]['default'],
+					);
+				}
 				$features[] = array(
 					'key'     => $f['key'],
 					'group'   => isset( $f['group'] ) ? $f['group'] : '',
 					'label'   => $f['label'],
+					'options' => $options,
 					'iconSvg' => AdminKit_Icons::display_svg( isset( $f['icon'] ) ? $f['icon'] : 'plug' ),
 					'desc'    => $f['desc'],
 					'parent'  => isset( $f['parent'] ) ? $f['parent'] : '',
@@ -453,6 +468,8 @@ class AdminKit_Settings_Page {
 				'menuUrlTitle'      => __( 'Custom link', 'adminkit' ),
 				'menuUrlLabel'      => __( 'Point this item at a custom URL (internal or external). Its submenu still works.', 'adminkit' ),
 				'menuUrlCurrent'    => __( 'Current', 'adminkit' ),
+				'featureOptions' => __( 'Options', 'adminkit' ),
+				'featureOptionsHint' => __( 'These choices are preserved when the feature is off and apply after saving.', 'adminkit' ),
 				'featureCategories' => __( 'Feature categories', 'adminkit' ),
 				'featureAllCategories' => __( 'All categories', 'adminkit' ),
 				'featureChoose'     => __( 'Choose a feature', 'adminkit' ),

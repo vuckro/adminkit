@@ -60,7 +60,23 @@
             "default": true,
             "bulk": true,
             "available": true,
-            "unavailableHint": ""
+            "unavailableHint": "",
+            "options": [
+                {
+                    "key": "clean_chrome_hide_footer",
+                    "label": "Hide the WordPress footer",
+                    "desc": "Footer text and version",
+                    "value": true,
+                    "default": true
+                },
+                {
+                    "key": "clean_chrome_hide_help",
+                    "label": "Hide the Help tab",
+                    "desc": "Contextual help",
+                    "value": true,
+                    "default": true
+                }
+            ]
         },
         {
             "key": "notification_center_enabled",
@@ -432,6 +448,8 @@
         "toolbarFrontendTitle": "Toolbar — Public site",
         "toolbarAdminScope": "Inside the WordPress administration.",
         "toolbarFrontendScope": "On the public site for logged-in users.",
-        "toolbarSaveScope": "Saving applies both views."
+        "toolbarSaveScope": "Saving applies both views.",
+        "featureOptions": "Options",
+        "featureOptionsHint": "Choices retained while off; save to apply."
     }
 }

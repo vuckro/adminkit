@@ -350,3 +350,10 @@ body.adminkit .adminkit-app .ak-features-tools :is(select.ak-features-status, su
 /* Explain the selected toolbar surface beside its context selector. */
 .adminkit-app .ak-toolbar-scope { color: var(--ak-heading); font-size: var(--ak-text-s); line-height: 1.6; max-width: 75ch; margin: calc(16px * var(--ak-space-scale, 1)) 0 calc(6px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-toolbar-save-hint { color: var(--ak-text-muted); font-size: var(--ak-text-xs); line-height: 1.6; max-width: 75ch; margin: 0 0 calc(24px * var(--ak-space-scale, 1)); }
+/* Nested feature options share the parent draft, without adding catalogue rows. */
+.adminkit-app .ak-feature-options { margin: calc(24px * var(--ak-space-scale, 1)) 0 calc(8px * var(--ak-space-scale, 1)); padding: 0; border: 0; min-width: 0; }
+.adminkit-app .ak-feature-options legend { padding: 0; margin-bottom: calc(4px * var(--ak-space-scale, 1)); font-size: var(--ak-text-s); font-weight: 600; color: var(--ak-heading); }
+.adminkit-app .ak-feature-option { display: flex; align-items: center; justify-content: space-between; gap: calc(16px * var(--ak-space-scale, 1)); padding-block: calc(16px * var(--ak-space-scale, 1)); border-bottom: 1px solid var(--ak-border); }
+.adminkit-app .ak-feature-option label:not(.ak-switch) { font-size: var(--ak-text-s); font-weight: 500; color: var(--ak-text); }
+.adminkit-app .ak-feature-option p { margin: calc(5px * var(--ak-space-scale, 1)) 0 0; font-size: var(--ak-text-xs); line-height: 1.5; color: var(--ak-text-muted); }
+.adminkit-app .ak-feature-options:disabled .ak-switch { opacity: .65; }

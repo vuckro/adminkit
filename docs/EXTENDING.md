@@ -55,6 +55,14 @@ and a sanitizer. Integration toggles register early from adapter filenames; do
 not register them again while rendering/saving a page. Host inventory labels
 resolve later, after translations and hosts are available.
 
+A feature row may include `options`, an array of `{key, label, desc}` entries for
+nested toggles. Register each key with type `toggle`, a boolean default and
+`rest_sanitize_boolean` before rendering; unregistered/non-toggle entries are
+excluded from boot data. The settings host includes their drafts in normal
+save/import/export. The consuming module must combine its parent gate with each
+option; presentation alone never gates runtime behavior. Do not reuse retired
+migration keys for new sub-options.
+
 Adapters live in `inc/integrations/{plugins,themes}/{slug}/class-{slug}.php`, extend
 `AdminKit_Integration_Base` and follow its `AdminKit_Integration_{Slug}` class
 convention. Keep `label()`, `host_files()`, `is_active()`, `owns_screen()` and asset
@@ -72,8 +80,8 @@ palette engine, unscoped frontend CSS or per-screen appearance persistence.
 | Hook | Signature | Contract |
 | --- | --- | --- |
 | `adminkit/clean_chrome/enabled` | `(bool)` | Unified footer/help baseline |
-| `adminkit/hide_footer/enabled` | `(bool)` | Historical per-footer override, applied after unified gate |
-| `adminkit/hide_help_button/enabled` | `(bool)` | Historical per-help override, applied after unified gate |
+| `adminkit/hide_footer/enabled` | `(bool)` | Historical per-footer override, applied after master and footer sub-option |
+| `adminkit/hide_help_button/enabled` | `(bool)` | Historical per-help override, applied after master and help sub-option |
 | `adminkit/active_items_first/enabled` | `(bool)` | Shared content/plugin priority feature |
 | `adminkit/plugins_active_first/enabled` | `(bool)` | Additional plugin-list gate |
 | `adminkit/menu_manager/enabled` | `(bool)` | Menu editor application/hooks/routes |

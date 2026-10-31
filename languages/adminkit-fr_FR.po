@@ -224,6 +224,10 @@ msgstr "Choisissez si vous souhaitez demander aux moteurs de recherche de ne pas
 msgid "Choose which events trigger an email notification."
 msgstr "Choisissez les événements qui déclenchent une notification par e-mail."
 
+#: inc/settings/class-settings-catalog.php
+msgid "Choose which secondary elements to hide in the WordPress administration."
+msgstr "Choisissez les éléments secondaires à masquer dans l’administration WordPress."
+
 #: inc/wp-core/class-options-discussion.php
 msgid "Choose who can comment and how conversations work."
 msgstr "Choisissez qui peut commenter et comment fonctionnent les échanges."
@@ -457,8 +461,20 @@ msgid "Hide"
 msgstr "Masquer"
 
 #: inc/settings/class-settings-catalog.php
-msgid "Hide the WordPress footer bar and contextual Help tab on admin screens."
-msgstr "Masque le pied de page WordPress et l’onglet d’aide contextuelle dans l’administration."
+msgid "Hide the Help tab"
+msgstr "Masquer l’onglet d’aide"
+
+#: inc/settings/class-settings-catalog.php
+msgid "Hide the WordPress footer"
+msgstr "Masquer le pied de page WordPress"
+
+#: inc/settings/class-settings-catalog.php
+msgid "Hide the contextual Help tab at the top of administration screens."
+msgstr "Masque l’onglet d’aide contextuelle en haut des écrans d’administration."
+
+#: inc/settings/class-settings-catalog.php
+msgid "Hide the footer text and WordPress version at the bottom of administration screens."
+msgstr "Masque le texte du pied de page et la version de WordPress en bas des écrans d’administration."
 
 #: inc/wp-core/class-reading-layout.php
 msgid "Homepage & archives"
@@ -659,6 +675,10 @@ msgstr "Ouvre les listes de contenus et d’extensions sur Publiés ou Actives p
 #: inc/settings/class-settings-page.php
 msgid "Open in a new tab"
 msgstr "Ouvrir dans un nouvel onglet"
+
+#: inc/settings/class-settings-page.php
+msgid "Options"
+msgstr "Options"
 
 #: inc/wp-core/class-profile-account.php
 msgid "Other settings"
@@ -983,6 +1003,10 @@ msgstr "Thèmes"
 #: inc/settings/class-settings-page.php
 msgid "These actions apply to all available features, including those hidden by filters."
 msgstr "Ces actions s’appliquent à toutes les fonctionnalités disponibles, y compris celles masquées par les filtres."
+
+#: inc/settings/class-settings-page.php
+msgid "These choices are preserved when the feature is off and apply after saving."
+msgstr "Ces choix sont conservés lorsque la fonctionnalité est désactivée et s’appliquent après l’enregistrement."
 
 #: inc/settings/class-settings-page.php
 msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."

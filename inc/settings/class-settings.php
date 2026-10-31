@@ -185,7 +185,7 @@ class AdminKit_Settings {
 
 
 	/**
-	 * Declare the feature / module toggles (all boolean, default OFF). They
+	 * Declare boolean feature/module toggles and their sub-options. They
 	 * carry no `__()` labels — those live in AdminKit_Settings_Page so they
 	 * resolve on the admin screen — so this can run at load, before the `init`
 	 * action, which is when modules read these values to gate themselves.
@@ -206,7 +206,7 @@ class AdminKit_Settings {
 		}
 
 		// Core AdminKit experience — enabled by default on fresh installs.
-		foreach ( array( 'theme_toggle_enabled', 'clean_chrome_enabled' ) as $default_on ) {
+		foreach ( array( 'theme_toggle_enabled', 'clean_chrome_enabled', 'clean_chrome_hide_footer', 'clean_chrome_hide_help' ) as $default_on ) {
 			self::register( $default_on, array(
 				'type'     => 'toggle',
 				'group'    => 'features',

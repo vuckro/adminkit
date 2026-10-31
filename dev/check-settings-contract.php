@@ -37,6 +37,20 @@ foreach(array(false,true) as $master) {
   }
  }
 }
+$filters=array();
+foreach(array(false,true) as $master) {
+ foreach(array(false,true) as $footer) {
+  foreach(array(false,true) as $help) {
+   $options[AdminKit_Settings::OPTION_KEY]=array('clean_chrome_enabled'=>$master,'clean_chrome_hide_footer'=>$footer,'clean_chrome_hide_help'=>$help);
+   $styles=array(); AdminKit_Core_Chrome::clean_chrome_css('admin'); $css=implode('',$styles);
+   check((strpos($css,'#wpfooter')!==false)===($master && $footer),'Footer sub-option/master mismatch');
+   check((strpos($css,'#contextual-help-link-wrap')!==false)===($master && $help),'Help sub-option/master mismatch');
+  }
+ }
+}
+$options[AdminKit_Settings::OPTION_KEY]=array('clean_chrome_enabled'=>true);
+$styles=array(); AdminKit_Core_Chrome::clean_chrome_css('admin'); $css=implode('',$styles);
+check(strpos($css,'#wpfooter')!==false && strpos($css,'#contextual-help-link-wrap')!==false,'Missing sub-options must preserve historical behavior');
 $styles=array(); AdminKit_Core_Chrome::clean_chrome_css('login'); check(!$styles,'Chrome leaked outside admin');
 $source=file_get_contents(ADMINKIT_PATH.'inc/class-upgrades.php');
 // Extract the complete block by counting braces (the original block has no braces in strings).

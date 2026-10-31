@@ -180,7 +180,7 @@ class AdminKit_Core_Chrome {
 
 	/**
 	 * Hide the WordPress footer bar (#wpfooter) and contextual Help tab
-	 * (#contextual-help-link-wrap) when `clean_chrome_enabled` is on.
+	 * (#contextual-help-link-wrap) according to the enabled module's sub-options.
 	 *
 	 * @param string $context Asset context.
 	 * @return void
@@ -191,10 +191,10 @@ class AdminKit_Core_Chrome {
 		}
 		$enabled = (bool) apply_filters( 'adminkit/clean_chrome/enabled', (bool) AdminKit_Settings::get( 'clean_chrome_enabled' ) );
 		$selectors = array();
-		if ( apply_filters( 'adminkit/hide_footer/enabled', $enabled ) ) {
+		if ( apply_filters( 'adminkit/hide_footer/enabled', $enabled && (bool) AdminKit_Settings::get( 'clean_chrome_hide_footer' ) ) ) {
 			$selectors[] = 'body.adminkit #wpfooter';
 		}
-		if ( apply_filters( 'adminkit/hide_help_button/enabled', $enabled ) ) {
+		if ( apply_filters( 'adminkit/hide_help_button/enabled', $enabled && (bool) AdminKit_Settings::get( 'clean_chrome_hide_help' ) ) ) {
 			$selectors[] = 'body.adminkit #contextual-help-link-wrap';
 		}
 		if ( $selectors ) {

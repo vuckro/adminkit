@@ -59,7 +59,19 @@ class AdminKit_Settings_Catalog {
 				'icon'  => 'scan',
 				'group' => $appearance,
 				'label' => __( 'Clean interface', 'adminkit' ),
-				'desc'  => __( 'Hide the WordPress footer bar and contextual Help tab on admin screens.', 'adminkit' ),
+				'desc'  => __( 'Choose which secondary elements to hide in the WordPress administration.', 'adminkit' ),
+				'options' => array(
+					array(
+						'key' => 'clean_chrome_hide_footer',
+						'label' => __( 'Hide the WordPress footer', 'adminkit' ),
+						'desc' => __( 'Hide the footer text and WordPress version at the bottom of administration screens.', 'adminkit' ),
+					),
+					array(
+						'key' => 'clean_chrome_hide_help',
+						'label' => __( 'Hide the Help tab', 'adminkit' ),
+						'desc' => __( 'Hide the contextual Help tab at the top of administration screens.', 'adminkit' ),
+					),
+				),
 			),
 			array(
 				'key'   => 'notification_center_enabled',

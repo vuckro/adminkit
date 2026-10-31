@@ -224,6 +224,10 @@ msgstr ""
 msgid "Choose which events trigger an email notification."
 msgstr ""
 
+#: inc/settings/class-settings-catalog.php
+msgid "Choose which secondary elements to hide in the WordPress administration."
+msgstr ""
+
 #: inc/wp-core/class-options-discussion.php
 msgid "Choose who can comment and how conversations work."
 msgstr ""
@@ -457,7 +461,19 @@ msgid "Hide"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
-msgid "Hide the WordPress footer bar and contextual Help tab on admin screens."
+msgid "Hide the Help tab"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Hide the WordPress footer"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Hide the contextual Help tab at the top of administration screens."
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Hide the footer text and WordPress version at the bottom of administration screens."
 msgstr ""
 
 #: inc/wp-core/class-reading-layout.php
@@ -658,6 +674,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Open in a new tab"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Options"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -982,6 +1002,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "These actions apply to all available features, including those hidden by filters."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "These choices are preserved when the feature is off and apply after saving."
 msgstr ""
 
 #: inc/settings/class-settings-page.php

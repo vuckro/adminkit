@@ -102,6 +102,23 @@ its heading; the return control scrolls back and focuses its list button. If a
 filter change hides or disables the focused control, focus moves to the next
 selected feature button or the status selector for empty results.
 
+### Grouped feature options
+
+Features may declare nested boolean `options` in the catalog. Registered keys
+supply values/defaults to the bootstrap, share `state.features` and the existing
+settings request, but do not create extra catalogue entries or inflate counts.
+Search also matches option labels/descriptions. Nested controls stay visible but
+are disabled while their parent is unavailable or off; choices are retained.
+Enable all/Disable all only change the parent. Reset to defaults restores nested
+options too, respecting the parent's availability and bulk exclusions.
+
+Clean interface has `clean_chrome_hide_footer` and `clean_chrome_hide_help`, both
+true by default to preserve the previous combined behavior without a migration.
+The master `clean_chrome_enabled` gates their effects. Turning it off suspends
+both effects without changing their stored values. Footer text/WordPress version
+and the contextual Help tab can now be hidden independently. These settings affect
+administration only. Existing per-element filters retain their override behavior.
+
 ## Saving, import and export
 
 The shared save bar saves all changed scopes, including drafts in hidden tabs.

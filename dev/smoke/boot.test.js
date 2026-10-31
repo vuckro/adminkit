@@ -21,7 +21,8 @@ window.matchMedia = window.matchMedia || (() => ({ matches: false, addEventListe
 window.MutationObserver = window.MutationObserver;
 fixture.designSystem = Object.assign({}, fixture.designSystem, { type_scale: 1.13, radius_scale: 1.37 });
 window.AdminKitData = fixture;
-window.wp = { apiFetch: () => Promise.resolve({}) };
+const requests = [];
+window.wp = { apiFetch: request => { requests.push(request); return Promise.resolve({}); } };
 window.HTMLCanvasElement.prototype.getContext = () => ({ fillRect() {}, fillStyle: '', getImageData: () => ({ data: [0, 0, 0, 255] }) });
 
 for (const file of scripts) {
@@ -60,13 +61,24 @@ for (const [id, val] of [['ak-type-scale', '1.1'], ['ak-shape-radius', '1.25']])
   if (input) { input.value = val; input.dispatchEvent(new window.Event('change', { bubbles: true })); }
 }
 assert(doc.querySelectorAll('.ak-palette-theme input[type="color"]').length >= 22, 'palette shows 11 roles x 2 modes');
+// Nested controls mount from saved values and use the actual main save payload.
+doc.getElementById('ak-tab-features').click();
+const clean = [...doc.querySelectorAll('.ak-features-item')].find(n => n.textContent.includes('Clean interface'));
+clean.click();
+const nested = doc.querySelectorAll('.ak-feature-options input');
+assert(nested.length === 2 && nested[0].checked && nested[1].checked, 'nested defaults mount without losing values');
+nested[0].checked = false; nested[0].dispatchEvent(new window.Event('change', { bubbles:true }));
 const save = doc.querySelector('.ak-savebar .ak-btn--primary');
 assert(save && !save.disabled, 'edits mark the form dirty');
+save.click(); await tick();
+const posted = requests.find(r => r.method === 'POST' && r.data && r.data.values);
+assert(posted && posted.data.values.clean_chrome_hide_footer === false && posted.data.values.clean_chrome_hide_help === true, 'actual main save includes independent nested choices');
 
 if (errors.length) {
   console.error('FAIL\n' + errors.map(String).join('\n'));
   process.exit(1);
 }
+dom.window.close();
 console.log('OK: settings SPA boots in jsdom; ' + tabs.length + ' tabs, ' + sectionTabs.length + ' design sections, edits mark dirty.');
 
 })();
