@@ -8,6 +8,15 @@
 	var mq = window.matchMedia('(max-width: 782px)');
 	// Public-site toolbars retain their original scroll behavior and native search.
 	if (!data.admin) {
+		function alignDiagnostic() {
+			var icon = bar.querySelector('#wp-admin-bar-query-monitor > .ab-item > .ab-icon');
+			if (icon && !icon.querySelector('svg') && data.icons && data.icons['wp-admin-bar-query-monitor']) {
+				icon.classList.add('ak-mobile-diagnostic-icon');
+				icon.insertAdjacentHTML('afterbegin', data.icons['wp-admin-bar-query-monitor']);
+			}
+		}
+		new MutationObserver(alignDiagnostic).observe(toolbar, { childList:true, subtree:true });
+		alignDiagnostic();
 		function updateEdges() {
 			var overflow = toolbar.scrollWidth - toolbar.clientWidth;
 			bar.classList.toggle('ak-bar-no-scroll', mq.matches && overflow <= 1);
