@@ -659,13 +659,13 @@ body.adminkit.woocommerce-admin-page .woocommerce-filters-filter__content-list-i
 
 /* — Summary: inter-cell grid dividers. WC re-asserts #e0e0e0 through ~18
    `.has-N-items …:nth-of-type` selectors that out-specify the base item rule;
-   one higher-specificity rule recolors them all. The last-of-type bottom border
-   is pinned `!important` by WC, so match it. The container's inset shadow acts
+   one higher-specificity rule recolors them all. Responsive nth-cell bottom borders
+   are pinned `!important` by WC, so match them. The container's inset shadow acts
    as the outer 1px frame. */
 body.adminkit.woocommerce-admin-page .woocommerce-summary[class*="has-"] .woocommerce-summary__item-container .woocommerce-summary__item {
 	border-color: var(--ak-border);
 }
-body.adminkit.woocommerce-admin-page .woocommerce-summary__item-container:last-of-type .woocommerce-summary__item {
+body.adminkit.woocommerce-admin-page .woocommerce-summary[class*="has-"] .woocommerce-summary__item-container .woocommerce-summary__item {
 	border-bottom-color: var(--ak-border) !important;
 }
 body.adminkit.woocommerce-admin-page .woocommerce-summary {
@@ -1240,3 +1240,7 @@ body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__t
 }
 body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__label { color: var(--ak-text-muted); white-space: normal; }
 body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__value { color: var(--ak-text); white-space: normal; }
+/* D3 assigns hardcoded currentColor to axis groups; theme only their rules,
+   leaving series colors and legend swatches paired. */
+body.adminkit.woocommerce-admin-page .d3-chart__container :is(.tick line, .focus-grid line) { stroke: var(--ak-border); }
+body.adminkit.woocommerce-admin-page .d3-chart__container .axis text { fill: var(--ak-text-muted); }

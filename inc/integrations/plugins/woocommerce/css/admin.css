@@ -1244,8 +1244,19 @@ body.adminkit.adminkit-woocommerce .wp-list-table.products .row-actions {
  inset-inline-start: auto;
  margin-inline-start: 0;
 }
-/* Product fields belong beside the three native Quick Edit columns. WC's
-   clear:left otherwise starts a second, mostly empty row beneath them. */
+/* Product fields form a full-width section after the native Quick Edit columns. */
+body.adminkit.adminkit-woocommerce #wpbody-content .quick-edit-row .inline-edit-wrapper > fieldset:has(> #woocommerce-fields) {
+ grid-column: 1 / -1;
+ width: 100%;
+}
+body.adminkit.adminkit-woocommerce #woocommerce-fields > :is(h4, br.clear) { grid-column: 1 / -1; }
+body.adminkit.adminkit-woocommerce #woocommerce-fields > br.clear { display: none; }
+body.adminkit.adminkit-woocommerce #woocommerce-fields :is(.price_fields, .dimension_fields, .cost_fields) {
+ display: flex;
+ flex-direction: column;
+ gap: calc(12px * var(--ak-space-scale, 1));
+}
+body.adminkit.adminkit-woocommerce #woocommerce-fields :is(.price_fields, .dimension_fields, .cost_fields) > br.clear { display: none; }
 body.adminkit.adminkit-woocommerce #wpbody-content .quick-edit-row #woocommerce-fields {
  clear: none;
  grid-column: 1 / -1;
@@ -1286,3 +1297,6 @@ body.adminkit.adminkit-woocommerce #woocommerce-fields :is(.height, .length, .wi
 @media (max-width: 600px) {
  body.adminkit.adminkit-woocommerce #wpbody-content .quick-edit-row #woocommerce-fields { grid-template-columns: minmax(0, 1fr); }
 }
+/* WC's text-only ID wrapper collapses to zero text size in shared row actions;
+   remove its empty flex slot so Edit aligns with the product title. */
+body.adminkit.adminkit-woocommerce .wp-list-table.products .row-actions > .id { display: none; }

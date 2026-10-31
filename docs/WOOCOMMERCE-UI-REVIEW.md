@@ -1,0 +1,14 @@
+# WooCommerce UI review — 2026-10-31
+
+Target: localhost:10013, WooCommerce 11.2.1. CSS-only adapter refinement.
+
+- HPOS custom-field tables use theme surfaces throughout.
+- Product publishing controls wrap without float-induced misalignment; update notices reserve their icon space and TinyMCE focus keeps a themed surface.
+- Product tour headings, descriptions, navigation and focus consume AdminKit roles on classic screens as well as wc-admin.
+- Product Quick Edit gives its WooCommerce fieldset the full row, with responsive three/two/one-column data fields and aligned dimensions. Native field names, visibility toggles and save handlers remain intact.
+- Product row actions omit the empty ID flex slot to align Edit with the title.
+- Analytics dates and import status wrap, summary borders follow tokens at responsive breakpoints, and D3 tooltip/grid colors support dark mode without changing series colors.
+
+Verification: token build check, dev/check.php, CSS contracts, PHP/JS syntax, adapter budget audit and installed WooCommerce drift check pass. Impeccable detector reported no findings. Browser inspection covered dark desktop product Quick Edit, product editor, tour steps 1–2, HPOS custom-field computed surfaces, dark mobile analytics/product tour, and light analytics at 1024px. No checkout, order creation, product save, or actual analytics import was submitted. Tooltip colors, publication notice spacing and draft-button wrapping were source-reviewed; a complete transaction and accessibility audit was outside this visual pass.
+
+The initial CSS changes were included by a concurrent commit (298b01f); the follow-up preserves that history and completes the fieldset/grid/border corrections.
