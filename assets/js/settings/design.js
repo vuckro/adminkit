@@ -436,7 +436,8 @@
 				['default', I.defaultPreset], ['flat', I.studioFlat], ['subtle', I.studioSubtle], ['raised', I.studioRaised]
 			].map(function (item) { return el('option', { value: item[0], text: item[1] }); }));
 			elevation.value = state.designSystem.elevation;
-			var borderWidth = el('select', { id: 'ak-shape-border' }, [0, 1, 2, 3, 4].map(function (width) { return el('option', { value: String(width), text: width + ' px' }); }));
+			state.designSystem.border_width = snapChoice(state.designSystem.border_width, [0, 1, 2], 1);
+			var borderWidth = el('select', { id: 'ak-shape-border' }, [0, 1, 2].map(function (width) { return el('option', { value: String(width), text: width + ' px' }); }));
 			borderWidth.value = String(state.designSystem.border_width);
 			var highlightSelect = el('select', { id: 'ak-buttons-highlight', 'aria-describedby': 'ak-buttons-highlight-help' }, [
 				['off', I.componentOff], ['hover', I.componentHover], ['always', I.componentAlways]

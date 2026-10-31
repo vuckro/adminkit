@@ -121,7 +121,7 @@ class AdminKit_Settings {
 				$result[ $key ] = round( $value, 2 );
 			}
 		}
-		if ( isset( $input['border_width'] ) && in_array( $input['border_width'], array( 0, 1, 2, 3, 4, '0', '1', '2', '3', '4' ), true ) ) {
+		if ( isset( $input['border_width'] ) && in_array( $input['border_width'], array( 0, 1, 2, '0', '1', '2' ), true ) ) {
 			$result['border_width'] = (int) $input['border_width'];
 		}
 		if ( isset( $input['elevation'] ) && in_array( $input['elevation'], array( 'default', 'flat', 'subtle', 'raised' ), true ) ) {

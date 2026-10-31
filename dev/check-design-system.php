@@ -20,7 +20,7 @@ foreach ( array( 'flat' => 'none', 'subtle' => 'var(--wk-elevation-1)', 'raised'
  ak_assert( false === strpos( $css, '--ak-shadow-subtle:' ), 'Surface elevation must not alter control shadows' );
 }
 // A borderless profile must survive persistence and compilation, including string 0.
-foreach ( array( 0, 1, 2, 3, 4, '0', '1', '2', '3', '4' ) as $width ) {
+foreach ( array( 0, 1, 2, '0', '1', '2' ) as $width ) {
  $profile = array( 'design_system' => array( 'border_width' => $width, 'radius_scale' => 0, 'components' => array( 'buttons' => array( 'highlight' => 'off' ) ) ) );
  $clean = AdminKit_Settings::sanitize_design_system( $profile['design_system'] );
  ak_assert( (int) $width === $clean['border_width'], 'Outline width survives sanitization, including zero' );
@@ -28,7 +28,7 @@ foreach ( array( 0, 1, 2, 3, 4, '0', '1', '2', '3', '4' ) as $width ) {
  ak_assert( false !== strpos( $css, '--ak-border-width:' . (int) $width . 'px;' ), 'Outline width reaches the shared runtime' );
  ak_assert( false === strpos( $css, '--ak-focus-ring:' ), 'Decorative border choice must not remove keyboard focus' );
 }
-foreach ( array( -1, 5, 1.5, true, array(), '0px' ) as $invalid_width ) {
+foreach ( array( -1, 3, 4, 5, 1.5, true, array(), '0px' ) as $invalid_width ) {
  $clean = AdminKit_Settings::sanitize_design_system( array( 'border_width' => $invalid_width ) );
  ak_assert( 1 === $clean['border_width'], 'Unsupported outline widths fall back to one pixel' );
 }
