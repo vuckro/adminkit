@@ -57,6 +57,10 @@ msgid "Accounts"
 msgstr "Comptes"
 
 #: inc/settings/class-settings-page.php
+msgid "Activation to save"
+msgstr "Activation à enregistrer"
+
+#: inc/settings/class-settings-page.php
 msgid "Active features"
 msgstr "Actives"
 
@@ -191,6 +195,11 @@ msgstr "Annuler"
 #: inc/settings/class-settings-page.php
 msgid "Card"
 msgstr "Carte"
+
+#: inc/settings/class-settings-page.php
+#, php-format
+msgid "Choice: %s"
+msgstr "Choix : %s"
 
 #: inc/settings/class-settings-page.php
 msgid "Choose a feature"
@@ -333,6 +342,10 @@ msgid "Date & time formats"
 msgstr "Formats de date et d’heure"
 
 #: inc/settings/class-settings-page.php
+msgid "Deactivation to save"
+msgstr "Désactivation à enregistrer"
+
+#: inc/settings/class-settings-page.php
 msgid "Default"
 msgstr "Par défaut"
 
@@ -393,8 +406,20 @@ msgid "Enable all"
 msgstr "Tout activer"
 
 #: inc/settings/class-settings-page.php
+msgid "Enable the feature to apply these options. Your choices are preserved."
+msgstr "Activez la fonctionnalité pour appliquer ces options. Vos choix sont conservés."
+
+#: inc/settings/class-settings-page.php
 msgid "Enable the parent feature to use this option."
 msgstr "Activez la fonctionnalité parente pour utiliser cette option."
+
+#: inc/settings/class-settings-page.php
+msgid "Enabled"
+msgstr "Activé"
+
+#: inc/settings/class-settings-page.php
+msgid "Enabled in the saved configuration."
+msgstr "Active dans la configuration enregistrée."
 
 #: inc/settings/class-settings-page.php
 msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
@@ -463,6 +488,10 @@ msgstr "Regrouper les éléments publiés ou actifs en tête de Toutes"
 #: inc/features/notifications/class-notification-center.php
 msgid "Grouped notices"
 msgstr "Notices groupées"
+
+#: inc/settings/class-settings-catalog.php
+msgid "Hidden"
+msgstr "Masqué"
 
 #: inc/settings/class-settings-page.php
 msgid "Hide"
@@ -701,8 +730,20 @@ msgid "Open the plugins table on Active"
 msgstr "Ouvrir les extensions sur Actives"
 
 #: inc/settings/class-settings-page.php
+msgid "Option changes will apply after saving."
+msgstr "Les changements d’options s’appliqueront après l’enregistrement."
+
+#: inc/settings/class-settings-page.php
 msgid "Options"
 msgstr "Options"
+
+#: inc/settings/class-settings-page.php
+msgid "Options paused"
+msgstr "Options en pause"
+
+#: inc/settings/class-settings-page.php
+msgid "Options to save"
+msgstr "Options à enregistrer"
 
 #: inc/wp-core/class-profile-account.php
 msgid "Other settings"
@@ -719,6 +760,10 @@ msgstr "Participation"
 #: inc/settings/class-settings-page.php
 msgid "Paste an SVG or a data:image/svg+xml URI…"
 msgstr "Collez un SVG ou une URI data:image/svg+xml…"
+
+#: inc/settings/class-settings-page.php
+msgid "Pause to save"
+msgstr "Pause à enregistrer"
 
 #: inc/wp-core/class-profile-account.php
 msgid "Permissions for this role are defined by the site or a plugin."
@@ -867,6 +912,10 @@ msgstr "Échec de l’enregistrement."
 #: inc/settings/class-settings-page.php
 msgid "Saved"
 msgstr "Enregistré"
+
+#: inc/settings/class-settings-page.php
+msgid "Saving will pause these options. Your choices will be preserved."
+msgstr "L’enregistrement suspendra ces options. Vos choix seront conservés."
 
 #: inc/settings/class-settings-page.php
 msgid "Saving…"
@@ -1036,9 +1085,17 @@ msgstr "Ces choix sont conservés lorsque la fonctionnalité est désactivée et
 msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."
 msgstr "Ces réglages s’appliquent à l’administration WordPress et aux extensions prises en charge après enregistrement. Votre site public conserve son propre design."
 
+#: inc/settings/class-settings-page.php
+msgid "This feature has no effect while disabled."
+msgstr "Cette fonctionnalité n’a aucun effet lorsqu’elle est désactivée."
+
 #: inc/wp-core/class-profile-account.php
 msgid "This username cannot be changed."
 msgstr "Ce nom d’utilisateur ne peut pas être modifié."
+
+#: inc/settings/class-settings-page.php
+msgid "To save"
+msgstr "À enregistrer"
 
 #: inc/class-theme-toggle.php inc/integrations/plugins/gutenberg/class-gutenberg.php inc/wp-core/class-login.php
 msgid "Toggle light / dark mode"
@@ -1116,6 +1173,10 @@ msgstr "Modification rapide des utilisateurs"
 msgid "View site"
 msgstr "Voir le site"
 
+#: inc/settings/class-settings-catalog.php
+msgid "Visible"
+msgstr "Visible"
+
 #: adminkit.php
 msgid "Waaskit"
 msgstr "Waaskit"
@@ -1127,6 +1188,14 @@ msgstr "Texte d’avertissement"
 #: inc/settings/class-settings-page.php
 msgid "What this feature does"
 msgstr "Ce que fait cette fonctionnalité"
+
+#: inc/settings/class-settings-page.php
+msgid "Will be disabled after saving."
+msgstr "Sera désactivée après l’enregistrement."
+
+#: inc/settings/class-settings-page.php
+msgid "Will be enabled after saving."
+msgstr "Sera activée après l’enregistrement."
 
 #: inc/settings/class-settings-page.php
 msgid "WordPress"

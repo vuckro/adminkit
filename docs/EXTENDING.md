@@ -56,7 +56,13 @@ not register them again while rendering/saving a page. Host inventory labels
 resolve later, after translations and hosts are available.
 
 A feature row may include `options`, an array of `{key, label, desc}` entries for
-nested toggles. Register each key with type `toggle`, a boolean default and
+nested toggles. Optional translated `onLabel` and `offLabel` strings describe the
+boolean choice in the UI; absent labels default to Enabled/Disabled. For example,
+a hide-footer option uses Hidden/Visible. These labels do not change boolean
+storage, switch semantics or runtime gating. Disabled nested controls prefix the
+retained label with Choice: and explain the parent pause separately.
+
+Register each key with type `toggle`, a boolean default and
 `rest_sanitize_boolean` before rendering; unregistered/non-toggle entries are
 excluded from boot data. The settings host includes their drafts in normal
 save/import/export. The consuming module must combine its parent gate with each

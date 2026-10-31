@@ -4,7 +4,8 @@
 	window.AdminKitParts = window.AdminKitParts || {};
 	window.AdminKitParts.features = function (context) {
 		var D = context.D, I = context.I, state = context.state, el = context.el;
-		return function buildFeatures() {
+		var refreshView = null;
+		function buildFeatures() {
 			var features = D.features || [];
 			var p = el('section', { class: 'ak-panel ak-features', role: 'tabpanel' }, [
 				el('h2', { class: 'ak-panel-title', text: I.features }), context.intro(I.featuresIntro)
@@ -88,35 +89,43 @@
 				});
 				var stateLabel = el('span', { class: 'ak-features-state__label' });
 				var hint = el('p', { id: panelId + '-hint', class: 'ak-features-hint' });
+				var pendingBadge = el('span', { class: 'ak-feature-pending', text: I.featurePending, hidden: 'hidden' });
 				var back = el('button', { type: 'button', class: 'ak-features-back', text: I.featureBack, onclick: function () {
 					list.scrollIntoView({ block: 'start' }); button.focus({ preventScroll: true });
 				} });
 				var panel = el('section', { class: 'ak-features-detail', id: panelId, role: 'region', 'aria-labelledby': panelId + '-title', hidden: 'hidden' }, [
 					back, icon(f), heading, f.group ? el('p', { class: 'ak-features-detail__category', text: f.group }) : null,
 					el('h4', { text: I.featureEffect }), el('p', { class: 'ak-features-effect', text: f.desc }),
-					el('div', { class: 'ak-features-state' }, [el('div', {}, [stateLabel, hint]),
+					el('div', { class: 'ak-features-state' }, [el('div', {}, [el('div', { class: 'ak-feature-state-heading' }, [stateLabel, pendingBadge]), hint]),
 						el('label', { class: 'ak-switch' }, [input, el('span', { class: 'ak-switch__track' }), el('span', { class: 'ak-switch__knob' })])])
 				]);
 				var optionInputs = [];
-				var optionSet = null;
+				var optionSet = null, optionNote = null, optionNoteTitle = null, optionNoteText = null, optionFooter = null;
 				if ((f.options || []).length) {
 					var optionHintId = panelId + '-options-hint';
+					optionNoteTitle = el('strong');
+					optionNoteText = el('p');
+					optionNote = el('div', { id: panelId + '-options-pause', class: 'ak-feature-options-note', role: 'status', hidden: 'hidden' }, [optionNoteTitle, optionNoteText]);
+					panel.appendChild(optionNote);
 					optionSet = el('fieldset', { class: 'ak-feature-options', 'aria-describedby': optionHintId }, [el('legend', { text: I.featureOptions })]);
 					(f.options || []).forEach(function (option, optionIndex) {
 						var optionId = panelId + '-option-' + optionIndex;
-						var optionInput = el('input', { id: optionId, type: 'checkbox', class: 'ak-switch__input', 'aria-label': option.label, 'aria-describedby': optionId + '-desc' });
+						var optionInput = el('input', { id: optionId, type: 'checkbox', class: 'ak-switch__input', 'aria-label': option.label, 'aria-describedby': optionId + '-desc ' + optionId + '-state' });
 						optionInput.addEventListener('change', function () { state.features[option.key] = optionInput.checked; refresh(); context.markDirty(); });
-						optionInputs.push({ key: option.key, input: optionInput });
+						var optionState = el('span', { id: optionId + '-state', class: 'ak-feature-option__state' });
+						var optionPending = el('span', { id: optionId + '-pending', class: 'ak-feature-option__pending', text: I.featurePending, hidden: 'hidden' });
+						optionInputs.push({ key: option.key, input: optionInput, data: option, status: optionState, pending: optionPending });
 						optionSet.appendChild(el('div', { class: 'ak-feature-option' }, [
 							el('div', {}, [el('label', { for: optionId, text: option.label }), el('p', { id: optionId + '-desc', text: option.desc })]),
-							el('label', { class: 'ak-switch' }, [optionInput, el('span', { class: 'ak-switch__track' }), el('span', { class: 'ak-switch__knob' })])
+							el('div', { class: 'ak-feature-option__control' }, [optionState, el('label', { class: 'ak-switch' }, [optionInput, el('span', { class: 'ak-switch__track' }), el('span', { class: 'ak-switch__knob' })]), optionPending])
 						]));
 					});
 					panel.appendChild(optionSet);
-					panel.appendChild(el('p', { id: optionHintId, class: 'ak-features-hint', text: I.featureOptionsHint }));
+					optionFooter = el('p', { id: optionHintId, class: 'ak-features-hint', text: I.featureOptionsHint });
+					panel.appendChild(optionFooter);
 				}
 				details.appendChild(panel);
-				refs[f.key] = { button: button, input: input, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, optionSet: optionSet, optionInputs: optionInputs, visible: false };
+				refs[f.key] = { button: button, input: input, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, pendingBadge: pendingBadge, optionNote: optionNote, optionNoteTitle: optionNoteTitle, optionNoteText: optionNoteText, optionFooter: optionFooter, optionSet: optionSet, optionInputs: optionInputs, visible: false };
 			});
 			var categoryButtons = [];
 			function categoryButton(label, value, count) {
@@ -133,6 +142,10 @@
 				var q = normalize(search.value).trim(), visible = [], counts = { all: 0, active: 0, inactive: 0 }, categoryCounts = {};
 				features.forEach(function (f) {
 					var r = refs[f.key], on = active(f), isLocked = locked(f);
+					var masterChanged = !!state.features[f.key] !== !!f.value;
+					var optionsChanged = r.optionInputs.some(function (option) { return !!state.features[option.key] !== !!option.data.value; });
+					var pending = masterChanged || optionsChanged;
+					r.pendingBadge.hidden = !pending;
 					var match = normalize(f.label + ' ' + f.desc + ' ' + (f.group || '') + ' ' + (f.options || []).map(function (option) { return option.label + ' ' + (option.desc || ''); }).join(' ')).indexOf(q) !== -1;
 					if (match) { counts.all++; counts[on ? 'active' : 'inactive']++; }
 					var matchesStatus = match && (status.value === 'all' || (status.value === 'active') === on);
@@ -142,12 +155,27 @@
 					if (r.visible) { visible.push(f.key); }
 					r.input.checked = f.available !== false && !!state.features[f.key];
 					r.input.disabled = isLocked;
-					if (r.optionSet) { r.optionSet.disabled = !on; }
-					r.optionInputs.forEach(function (option) { option.input.checked = !!state.features[option.key]; });
+					if (r.optionSet) {
+						r.optionSet.disabled = !on;
+						r.optionNote.hidden = on;
+						r.optionFooter.hidden = !on;
+						r.optionSet.setAttribute('aria-describedby', on ? r.optionFooter.id : r.optionNote.id);
+						r.optionNoteTitle.textContent = isLocked ? I.featureUnavailable : (masterChanged ? I.featurePausePending : I.featureOptionsPaused);
+						r.optionNoteText.textContent = isLocked ? (f.unavailableHint || I.featureParentOff) : (masterChanged ? I.featureOptionsPausePendingHint : I.featureOptionsPausedHint);
+					}
+					r.optionInputs.forEach(function (option) {
+						var checked = !!state.features[option.key];
+						var choice = checked ? (option.data.onLabel || I.featureOptionOn) : (option.data.offLabel || I.featureOptionOff);
+						option.input.checked = checked;
+						option.status.textContent = on ? choice : I.featureOptionChoice.replace('%s', choice);
+						option.pending.hidden = !(masterChanged || checked !== !!option.data.value);
+						option.input.setAttribute('aria-describedby', option.input.id + '-desc ' + option.status.id + (option.pending.hidden ? '' : ' ' + option.pending.id));
+						option.status.setAttribute('data-choice', on && checked ? 'on' : 'off');
+					});
 					r.button.setAttribute('data-feature-state', isLocked ? 'unavailable' : (on ? 'active' : 'inactive'));
-					r.status.textContent = isLocked ? I.featureUnavailable : (on ? I.featureActive : I.featureInactive);
-					r.stateLabel.textContent = r.status.textContent;
-					r.hint.textContent = f.available === false ? (f.unavailableHint || I.featureUnavailable) : (f.parent && !state.features[f.parent] ? I.featureParentOff : I.featureSaveHint);
+					r.stateLabel.textContent = isLocked ? I.featureUnavailable : (on ? I.featureActive : I.featureInactive);
+					r.status.textContent = isLocked ? I.featureUnavailable : (masterChanged ? (on ? I.featureActivationPending : I.featureDeactivationPending) : (optionsChanged ? I.featureOptionsPending : r.stateLabel.textContent));
+					r.hint.textContent = f.available === false ? (f.unavailableHint || I.featureUnavailable) : (f.parent && !state.features[f.parent] ? I.featureParentOff : (masterChanged ? (on ? I.featureWillEnable : I.featureWillDisable) : (optionsChanged ? I.featureOptionsWillApply : (on ? I.featureSavedOn : I.featureSavedOff))));
 					r.panel.classList.toggle('is-locked', isLocked);
 				});
 				if (visible.indexOf(selected) === -1) { selected = visible[0] || ''; }
@@ -170,7 +198,17 @@
 				}
 			}
 			search.addEventListener('input', refresh); status.addEventListener('change', refresh);
+			refreshView = refresh;
 			refresh(); return p;
+		}
+		buildFeatures.acknowledge = function (values) {
+			(D.features || []).forEach(function (f) {
+				[f].concat(f.options || []).forEach(function (item) {
+					if (Object.prototype.hasOwnProperty.call(values, item.key)) { item.value = !!values[item.key]; }
+				});
+			});
+			if (refreshView) { refreshView(); }
 		};
+		return buildFeatures;
 	};
 })();

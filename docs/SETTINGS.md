@@ -67,7 +67,9 @@ the feature icon, category, effect, current state, availability hint and switch.
 Search matches labels, descriptions and categories without case or accent
 sensitivity. Search and status combine with category selection; empty groups
 hide, and an empty result displays a status message. Counts for status reflect
-search matches; category counts additionally reflect the status filter.
+search matches; category counts additionally reflect the status filter. Both
+filters and counts use the effective draft state, including unsaved changes.
+The green filled/hollow dots keep this same meaning; they do not confirm a save.
 
 Search, status, category and selected feature are transient UI state. They do
 not dirty settings or enter saved payloads. If the selected feature leaves the
@@ -78,7 +80,7 @@ filtering and selection preserve draft controls. Switches update the existing
 feature transport or storage format.
 
 Unavailable features and children whose parent is off expose disabled switches
-with an explanation. Effective Active status requires availability, a stored-on
+with an explanation. Effective Active status requires availability, an enabled
 draft value and an enabled parent when present. Turning a parent off preserves
 the child's draft value. Bulk Enable all, Disable all and Reset to defaults live
 in a disclosure and apply across all filters. They skip unavailable features and
@@ -102,6 +104,12 @@ its heading; the return control scrolls back and focuses its list button. If a
 filter change hides or disables the focused control, focus moves to the next
 selected feature button or the status selector for empty results.
 
+The list distinguishes activation, deactivation and option changes awaiting Save.
+The detail pane shows a To save badge when its master or any nested option differs
+from the saved baseline, with text explaining when the change will apply. Returning
+all choices to their saved values clears the feature pending indication.
+Unavailable status keeps priority over draft activation text.
+
 ### Grouped feature options
 
 Features may declare nested boolean `options` in the catalog. Registered keys
@@ -109,6 +117,14 @@ supply values/defaults to the bootstrap, share `state.features` and the existing
 settings request, but do not create extra catalogue entries or inflate counts.
 Search also matches option labels/descriptions. Nested controls stay visible but
 are disabled while their parent is unavailable or off; choices are retained.
+An explicit note explains that options are paused, that a pause awaits Save, or
+why the feature is unavailable. Each option shows Enabled/Disabled by default;
+semantic catalog labels can instead describe its effect. Clean interface uses
+Hidden/Visible for its footer and Help choices. While the master is off, the
+status reads Choice: followed by the retained choice, so it does not imply a
+current effect. Each option also shows To save when its own value or the master
+value differs from the saved baseline.
+
 Enable all/Disable all only change the parent. Reset to defaults restores nested
 options too, respecting the parent's availability and bulk exclusions.
 
@@ -134,7 +150,12 @@ The shared save bar saves all changed scopes, including drafts in hidden tabs.
 Menu/toolbar requests run before settings, since settings can disable their routes.
 Each payload is a snapshot; subsequent edits remain pending. Successful requests
 are not retried after a later failure. Failed requests and newer edits prevent
-reload. The endpoints are independent: a failure can leave some scopes saved.
+reload. Successful settings writes update the feature-state baseline from the
+response values, or from the posted snapshot when response values are absent.
+They do not overwrite the current draft: edits made while a save is in flight
+still compare against that acknowledged baseline and remain pending. A failed
+write never acknowledges feature values. The endpoints are independent: a failure
+can leave some scopes saved.
 
 Settings POSTs replace only posted registered keys, preserving the General
 Settings logo and unknown stored extension keys. Boolean false stays false;

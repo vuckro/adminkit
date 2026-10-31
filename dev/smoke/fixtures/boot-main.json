@@ -67,14 +67,18 @@
                     "label": "Hide the WordPress footer",
                     "desc": "Footer text and version",
                     "value": true,
-                    "default": true
+                    "default": true,
+                    "onLabel": "Hidden",
+                    "offLabel": "Visible"
                 },
                 {
                     "key": "clean_chrome_hide_help",
                     "label": "Hide the Help tab",
                     "desc": "Contextual help",
                     "value": true,
-                    "default": true
+                    "default": true,
+                    "onLabel": "Hidden",
+                    "offLabel": "Visible"
                 }
             ]
         },
@@ -473,6 +477,22 @@
         "toolbarFrontendScope": "On the public site for logged-in users.",
         "toolbarSaveScope": "Saving applies both views.",
         "featureOptions": "Options",
-        "featureOptionsHint": "Choices retained while off; save to apply."
+        "featureOptionsHint": "Choices retained while off; save to apply.",
+        "featurePending": "To save",
+        "featureActivationPending": "Activation to save",
+        "featureDeactivationPending": "Deactivation to save",
+        "featureOptionsPending": "Options to save",
+        "featureWillEnable": "Will be enabled after saving.",
+        "featureWillDisable": "Will be disabled after saving.",
+        "featureOptionsWillApply": "Option changes will apply after saving.",
+        "featureSavedOn": "Enabled in the saved configuration.",
+        "featureSavedOff": "This feature has no effect while disabled.",
+        "featureOptionsPaused": "Options paused",
+        "featurePausePending": "Pause to save",
+        "featureOptionsPausedHint": "Enable the feature to apply these options. Your choices are preserved.",
+        "featureOptionsPausePendingHint": "Saving will pause these options. Your choices will be preserved.",
+        "featureOptionOn": "Enabled",
+        "featureOptionOff": "Disabled",
+        "featureOptionChoice": "Choice: %s"
     }
 }

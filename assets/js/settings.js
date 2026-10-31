@@ -277,7 +277,8 @@
 				item.request.path = '/' + item.request.path.replace(/^\//, '');
 				item.request.method = 'POST';
 				return apiFetch(item.request);
-			}).then(function () {
+			}).then(function (response) {
+				if (surface.onSaved) { surface.onSaved(item.scope, item.request.data, response); }
 				if (revisions[item.scope] === item.revision) { delete revisions[item.scope]; }
 			});
 		});

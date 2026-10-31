@@ -10,6 +10,7 @@ let mobile = false, dirty = 0, scrolls = 0;
 w.matchMedia = () => ({ matches: mobile });
 w.HTMLElement.prototype.scrollIntoView = () => scrolls++;
 const I = { features:'Features',featuresIntro:'Tools',searchFeatures:'Search',filterFeatures:'Status',featuresFilterAll:'All',featuresFilterActive:'Active',featuresFilterInactive:'Inactive',featureBulk:'Bulk',featureBulkScope:'All available tools',enableAll:'Enable all',disableAll:'Disable all',resetDefaults:'Defaults',featureCategories:'Categories',featureChoose:'Choose',featureBack:'Back',featureEffect:'Effect',featureAllCategories:'All categories',featureActive:'Active',featureInactive:'Inactive',featureUnavailable:'Unavailable',featureParentOff:'Enable parent',featureSaveHint:'Save to apply',noResults:'No results',featureCategoryEmpty:'Empty category',featureOptions:'Options',featureOptionsHint:'Choices retained while off' };
+const extraI = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json'), 'utf8')).i18n; Object.keys(extraI).filter(k=>I[k]===undefined).forEach(k=>I[k]=extraI[k]);
 const features = [
  {key:'parent',label:'Appearance',desc:'Parent effect',group:'Interface',value:true,default:true,options:[{key:'footer_option',label:'Hide footer',desc:'Footer description',value:true,default:true},{key:'help_option',label:'Hide help',desc:'Help description',value:false,default:true}]},
  {key:'child',label:'Child',desc:'Child effect',group:'Interface',parent:'parent',value:true,default:true},
@@ -19,7 +20,8 @@ const features = [
 const state = { features:Object.fromEntries(features.flatMap(f=>[[f.key,f.value],...(f.options||[]).map(o=>[o.key,o.value])])) };
 function el(tag,attrs={},kids=[]) { const n=d.createElement(tag);Object.entries(attrs).forEach(([k,v])=>{if(v==null)return;if(k==='text')n.textContent=v;else if(k.startsWith('on'))n.addEventListener(k.slice(2),v);else n.setAttribute(k,v);});kids.filter(Boolean).forEach(k=>n.append(k));return n; }
 w.eval(fs.readFileSync(path.join(root,'assets/js/settings/features.js'),'utf8'));
-d.body.append(w.AdminKitParts.features({D:{features},I,state,el,intro:text=>el('p',{text}),markDirty:()=>dirty++})());
+const build = w.AdminKitParts.features({D:{features},I,state,el,intro:text=>el('p',{text}),markDirty:()=>dirty++});
+d.body.append(build());
 const visible = selector => [...d.querySelectorAll(selector)].filter(n=>!n.closest('[hidden]'));
 const select = label => [...d.querySelectorAll('.ak-features-item')].find(n=>n.textContent.includes(label));
 const category = label => [...d.querySelectorAll('.ak-features-categories button')].find(n=>n.textContent.includes(label));
@@ -47,5 +49,23 @@ search.value='Footer description';search.dispatchEvent(new w.Event('input'));ass
 assert.equal(d.activeElement,status,'filtered-out last active control returns focus to status');
 search.value='zzzz';search.dispatchEvent(new w.Event('input'));assert.equal(d.querySelector('.ak-empty').hidden,false);assert.equal(d.querySelector('.ak-features-workspace').hidden,true);
 search.value='';search.dispatchEvent(new w.Event('input'));status.value='all';change(status);category('Users').click();mobile=true;select('Identifiant').click();assert.equal(d.activeElement.textContent,'Identifiant');assert.ok(scrolls>0);visible('.ak-features-back')[0].click();assert.equal(d.activeElement,select('Identifiant'));
+category('All categories').click();select('Appearance').click();
+const parentPanel=d.getElementById(select('Appearance').getAttribute('aria-controls'));
+assert.equal(parentPanel.querySelector('.ak-feature-pending').hidden,false,'pending master change is explicit');
+build.acknowledge({parent:false,footer_option:true,help_option:true});
+assert.equal(parentPanel.querySelector('.ak-feature-pending').hidden,true,'successful save establishes a new baseline');
+assert.equal(parentPanel.querySelector('.ak-feature-options-note strong').textContent,I.featureOptionsPaused);
+assert.match(parentPanel.querySelector('.ak-feature-option__state').textContent,/Choice:/,'paused status describes a preference, not a live effect');
+input(0).checked=true;change(input(0));
+assert.equal(select('Appearance').querySelector('.ak-features-item__status').textContent,I.featureActivationPending);
+sub[0].checked=false;change(sub[0]);
+build.acknowledge({parent:true,footer_option:true,help_option:true});
+assert.equal(state.features.footer_option,false,'acknowledging an older request never overwrites a newer draft');
+assert.equal(parentPanel.querySelector('.ak-feature-pending').hidden,false,'newer edit remains visibly pending');
+assert.equal(parentPanel.querySelector('.ak-feature-option__pending').hidden,false);
+assert.match(sub[0].getAttribute('aria-describedby'),/-pending/,'pending status is described only while pending');
+build.acknowledge({footer_option:false});
+assert.equal(parentPanel.querySelector('.ak-feature-pending').hidden,true,'saving the newer edit clears pending');
+assert.ok(!sub[0].getAttribute('aria-describedby').includes('-pending'),'saved controls never announce hidden pending text');
 assert.ok(dirty>0); console.log('OK: real feature discovery preserves drafts, bulk/dependency policy, filters and mobile keyboard focus.');
 dom.window.close();

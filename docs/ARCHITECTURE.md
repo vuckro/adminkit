@@ -99,6 +99,17 @@ changed. A failure keeps remaining drafts for retry; newer edits prevent reload
 and cancel a scheduled reload. These are independent endpoint writes, not a
 cross-endpoint transaction. Separate browser tabs retain last-write semantics.
 
+After each successful request, the host invokes the optional
+`surface.onSaved(scope, data, response)` hook with that request's posted snapshot
+and response, before checking whether its revision can clear. Failed requests do
+not invoke it. Main forwards successful settings values to
+`buildFeatures.acknowledge()`, preferring response `values` and falling back to the
+posted `data.values`. Acknowledgment updates only the feature and nested-option
+metadata baseline, never the live draft. Feature pending badges compare against
+that baseline, so changes made during an in-flight save remain pending and a
+later scope failure does not make already-saved feature choices look unsaved.
+Lazy feature-panel construction reads the same updated metadata.
+
 The schema is authoritative. Boolean/select reads normalize legacy types before
 applying `adminkit/setting/{key}`. Malformed settings containers use defaults.
 REST validates container/setting types before writes. Settings replace posted

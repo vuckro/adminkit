@@ -73,6 +73,7 @@ assert(save && !save.disabled, 'edits mark the form dirty');
 save.click(); await tick();
 const posted = requests.find(r => r.method === 'POST' && r.data && r.data.values);
 assert(posted && posted.data.values.clean_chrome_hide_footer === false && posted.data.values.clean_chrome_hide_help === true, 'actual main save includes independent nested choices');
+assert(doc.getElementById(clean.getAttribute('aria-controls')).querySelector('.ak-feature-pending').hidden, 'actual host success clears the feature pending badge');
 
 if (errors.length) {
   console.error('FAIL\n' + errors.map(String).join('\n'));

@@ -8,7 +8,7 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 15));
 function boot(hash = '', legacy = false) {
   const dom = new JSDOM('<div id="adminkit-app"></div>', { url: 'http://localhost/' + hash, runScripts: 'outside-only' });
   const w = dom.window;
-  const calls = [], timers = [], values = { settings: 0, menu: 0, toolbar: 0 };
+  const calls = [], timers = [], acknowledgements = [], values = { settings: 0, menu: 0, toolbar: 0 };
   const nativeSetTimeout = w.setTimeout.bind(w), nativeClearTimeout = w.clearTimeout.bind(w);
   w.setTimeout = (callback, delay) => { if (delay !== 600) return nativeSetTimeout(callback, delay); timers.push(callback); return -timers.length; };
   w.clearTimeout = id => { if (id < 0) timers[-id - 1] = null; else nativeClearTimeout(id); };
@@ -16,6 +16,7 @@ function boot(hash = '', legacy = false) {
   w.wp = { apiFetch: request => new Promise((resolve, reject) => calls.push({ request, resolve, reject })) };
   w.AdminKitScreens = { main: context => {
     const surface = {
+      onSaved(scope, data) { acknowledgements.push({scope,data}); },
       tabs: Object.keys(values).map(scope => ({ id: scope, label: scope, build() {
         return context.el('section', { role: 'tabpanel' }, [context.el('button', { id: 'edit-' + scope, text: scope, onclick() { values[scope]++; context.markDirty(scope); } })]);
       } })),
@@ -28,7 +29,7 @@ function boot(hash = '', legacy = false) {
   const click = id => { assert.ok(w.document.getElementById(id), 'missing ' + id); w.document.getElementById(id).click(); };
   const save = () => w.document.querySelector('.ak-savebar button').click();
   const edit = async scope => { click('ak-tab-' + scope); await tick(); click('edit-' + scope); };
-  return { dom, w, calls, timers, click, save, edit };
+  return { dom, w, calls, timers, click, save, edit, acknowledgements };
 }
 (async () => {
   const a = boot('#menu', true);
@@ -44,6 +45,7 @@ function boot(hash = '', legacy = false) {
   assert.equal(b.calls[1].request.path, '/toolbar');
   b.calls[1].reject(new Error('database unavailable')); await tick();
   assert.equal(b.calls.length, 2, 'stop on failure');
+  assert.deepEqual(b.acknowledgements.map(a=>a.scope), ['menu'], 'only successful writes establish a saved baseline');
   assert.equal(b.timers.filter(Boolean).length, 0, 'never reload and discard failed drafts');
   b.save(); await tick();
   assert.equal(b.calls[2].request.path, '/toolbar', 'successful drafts are not submitted again');
@@ -60,6 +62,7 @@ function boot(hash = '', legacy = false) {
   await c.edit('settings'); c.calls[0].resolve({}); await tick();
   assert.equal(c.calls[0].request.data.value, 1, 'request preserves original snapshot');
   assert.equal(c.timers.filter(Boolean).length, 0, 'in-flight edits stay unsaved');
+  assert.equal(c.acknowledgements[0].data.value, 1, 'saved-state hook receives the posted snapshot rather than the newer edit');
   c.save(); await tick();
   assert.equal(c.calls[1].request.data.value, 2, 'next save includes new edit');
   c.calls[1].resolve({}); await tick(); c.dom.window.close();

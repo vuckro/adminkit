@@ -357,3 +357,19 @@ body.adminkit .adminkit-app .ak-features-tools :is(select.ak-features-status, su
 .adminkit-app .ak-feature-option label:not(.ak-switch) { font-size: var(--ak-text-s); font-weight: 500; color: var(--ak-text); }
 .adminkit-app .ak-feature-option p { margin: calc(5px * var(--ak-space-scale, 1)) 0 0; font-size: var(--ak-text-xs); line-height: 1.5; color: var(--ak-text-muted); }
 .adminkit-app .ak-feature-options:disabled .ak-switch { opacity: .65; }
+/* Separate a saved configuration, pending edits and suspended child choices. */
+.adminkit-app .ak-feature-state-heading { display: flex; align-items: center; flex-wrap: wrap; gap: calc(8px * var(--ak-space-scale, 1)); }
+.adminkit-app .ak-feature-pending { display: inline-flex; padding: 2px 8px; border-radius: var(--ak-radius-full); color: var(--ak-warning); background: var(--ak-warning-subtle); font-size: var(--ak-text-xs); font-weight: 500; }
+.adminkit-app .ak-feature-options-note { margin-top: calc(20px * var(--ak-space-scale, 1)); padding: calc(12px * var(--ak-space-scale, 1)); border-radius: var(--ak-radius-s); background: var(--ak-surface-muted); color: var(--ak-text); }
+.adminkit-app .ak-feature-options-note strong { font-size: var(--ak-text-s); font-weight: 500; }
+.adminkit-app .ak-feature-options-note p { margin: 4px 0 0; font-size: var(--ak-text-xs); line-height: 1.5; color: var(--ak-text-muted); }
+.adminkit-app .ak-feature-option__control { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: calc(8px * var(--ak-space-scale, 1)); flex: 0 0 auto; max-width: 45%; }
+.adminkit-app .ak-feature-option__state { font-size: var(--ak-text-xs); color: var(--ak-text-muted); line-height: 1.4; text-align: end; }
+.adminkit-app .ak-feature-option__state[data-choice="on"] { color: var(--ak-success); }
+.adminkit-app .ak-feature-option__pending { flex-basis: 100%; text-align: end; color: var(--ak-warning); font-size: var(--ak-text-xs); line-height: 1.4; }
+.adminkit-app .ak-feature-options:disabled .ak-switch { opacity: .45; }
+@media (max-width: 782px) {
+	.adminkit-app .ak-feature-option__control { flex-direction: column; align-items: flex-end; max-width: 40%; }
+	.adminkit-app .ak-feature-option__pending { flex-basis: auto; }
+}
+.adminkit-app .ak-feature-options:disabled .ak-switch__track { background: var(--ak-border-strong); }

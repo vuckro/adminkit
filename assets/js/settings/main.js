@@ -142,6 +142,9 @@
 			tabs: mainTabs,
 			exportSettings: exportSettings,
 			importSettings: importSettings,
+			onSaved: function (scope, data, response) {
+				if (scope === 'settings' && buildFeatures.acknowledge) { buildFeatures.acknowledge((response && response.values) || data.values || {}); }
+			},
 			onHash: function (rawId) {
 				if (navPart && (rawId === 'menu' || rawId === 'toolbar')) {
 					navPart.selectSection(rawId);

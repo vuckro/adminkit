@@ -57,6 +57,10 @@ msgid "Accounts"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "Activation to save"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "Active features"
 msgstr ""
 
@@ -190,6 +194,11 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Card"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+#, php-format
+msgid "Choice: %s"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -333,6 +342,10 @@ msgid "Date & time formats"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "Deactivation to save"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "Default"
 msgstr ""
 
@@ -393,7 +406,19 @@ msgid "Enable all"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "Enable the feature to apply these options. Your choices are preserved."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "Enable the parent feature to use this option."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Enabled"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Enabled in the saved configuration."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -462,6 +487,10 @@ msgstr ""
 
 #: inc/features/notifications/class-notification-center.php
 msgid "Grouped notices"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Hidden"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -701,7 +730,19 @@ msgid "Open the plugins table on Active"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+msgid "Option changes will apply after saving."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "Options"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Options paused"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Options to save"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -718,6 +759,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Paste an SVG or a data:image/svg+xml URI…"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Pause to save"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -866,6 +911,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Saved"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Saving will pause these options. Your choices will be preserved."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
@@ -1036,8 +1085,16 @@ msgstr ""
 msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "This feature has no effect while disabled."
+msgstr ""
+
 #: inc/wp-core/class-profile-account.php
 msgid "This username cannot be changed."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "To save"
 msgstr ""
 
 #: inc/class-theme-toggle.php inc/integrations/plugins/gutenberg/class-gutenberg.php inc/wp-core/class-login.php
@@ -1116,6 +1173,10 @@ msgstr ""
 msgid "View site"
 msgstr ""
 
+#: inc/settings/class-settings-catalog.php
+msgid "Visible"
+msgstr ""
+
 #: adminkit.php
 msgid "Waaskit"
 msgstr ""
@@ -1126,6 +1187,14 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "What this feature does"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Will be disabled after saving."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Will be enabled after saving."
 msgstr ""
 
 #: inc/settings/class-settings-page.php
