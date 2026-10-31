@@ -61,8 +61,6 @@ class AdminKit_Plugin {
 
 		// features — AdminKit tools that add their own surface.
 		'features/notifications/class-notification-center.php' => 'AdminKit_Notification_Center::init',
-		'wp-core/class-footer.php'                             => 'AdminKit_Footer::init',
-		'wp-core/class-help-button.php'                        => 'AdminKit_Help_Button::init',
 		'wp-core/class-plugins-list.php'                       => 'AdminKit_Plugins_List::init',
 		'wp-core/class-content-list.php'                       => 'AdminKit_Content_List::init',
 		'features/menu/class-menu-store.php'                   => null, // schema only

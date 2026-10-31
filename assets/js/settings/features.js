@@ -113,42 +113,10 @@
 				if (f.available === false && f.unavailableHint) {
 					rowAttrs.title = f.unavailableHint;
 				}
-				var helpId = 'ak-feature-help-' + f.key;
-				var helpName = I.featureHelp.replace('%s', f.label);
-				var infoButton = el('button', {
-					type: 'button', class: 'ak-info-button', 'aria-label': helpName,
-					'aria-expanded': 'false', 'aria-controls': helpId, title: helpName
-				});
-				infoButton.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.01"/></svg>';
-				var technical = el('dl', { class: 'ak-feature-technical' });
-				var storage = D.settingsStorage || {};
-				[
-					[I.storageTable, storage.table], [I.storageOption, storage.option],
-					[I.storageKey, f.key], [I.defaultValue, f.default ? I.enabledState : I.disabledState]
-				].forEach(function (item) {
-					technical.appendChild(el('div', {}, [el('dt', { text: item[0] }), el('dd', {}, [el('code', { text: item[1] || '' })])]));
-				});
-				var help = el('div', { id: helpId, class: 'ak-feature-help', role: 'region', 'aria-label': helpName, hidden: 'hidden' }, [
-					el('p', { class: 'ak-row__desc', text: f.desc }),
-					el('h3', { text: I.technicalDetails }), technical,
-					el('p', { class: 'ak-feature-save-note', text: I.saveTiming })
-				]);
-				function toggleHelp(open) {
-					help.hidden = !open;
-					infoButton.setAttribute('aria-expanded', String(open));
-				}
-				infoButton.addEventListener('click', function () { toggleHelp(help.hidden); });
-				[infoButton, help].forEach(function (target) {
-					target.addEventListener('keydown', function (event) {
-						if (event.key === 'Escape' && !help.hidden) { toggleHelp(false); infoButton.focus(); event.stopPropagation(); }
-					});
-				});
 				var row = el('div', rowAttrs, [
 					el('div', { class: 'ak-row__main' }, [
-						el('div', { class: 'ak-feature-heading' }, [el('span', { class: 'ak-row__label', text: f.label }), infoButton]),
-						f.summary ? el('p', { class: 'ak-feature-summary', text: f.summary }) : null,
-						f.settingsUrl ? el('a', { class: 'ak-btn ak-feature-settings', href: f.settingsUrl, text: I.editIdentitySettings }) : null,
-						help
+						el('div', { class: 'ak-feature-heading' }, [el('span', { class: 'ak-row__label', text: f.label })]),
+						f.desc ? el('p', { class: 'ak-feature-summary', text: f.desc }) : null
 					]),
 					el('label', { class: 'ak-switch' }, [
 						input,
@@ -248,7 +216,6 @@
 				])
 			);
 
-			p.appendChild(el('p', { class: 'ak-feature-bulk-note', text: I.featuresBulkScope }));
 			p.appendChild(empty);
 			// One titled block per group label (order = first-seen). Static heading —
 			// the search field handles discovery; folding groups was visual noise.

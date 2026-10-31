@@ -57,7 +57,7 @@ class AdminKit_Toolbar_Manager {
 		AdminKit_Settings::register( 'toolbar_manager_enabled', array(
 			'type'     => 'toggle',
 			'group'    => 'features',
-			'default'  => false,
+			'default'  => true,
 			'sanitize' => 'rest_sanitize_boolean',
 		) );
 

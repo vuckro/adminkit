@@ -55,7 +55,7 @@ class AdminKit_Notification_Center {
 	 * @return void
 	 */
 	public static function init() {
-		AdminKit_Settings::register( 'notification_center_enabled', array( 'default' => false ) );
+		AdminKit_Settings::register( 'notification_center_enabled', array( 'default' => true ) );
 
 		if ( ! self::is_enabled() ) {
 			return;

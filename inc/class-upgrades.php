@@ -73,7 +73,7 @@ class AdminKit_Upgrades {
 		if ( $version < 6 ) {
 			// One brand logo (`logo_url`); drop retired logo/appearance/preset keys.
 			$settings = get_option( AdminKit_Settings::OPTION_KEY, array() );
-			$retired  = array( 'logo_light', 'logo_dark', 'logo_source', 'wp_logo', 'login_logo', 'ui_radius', 'ui_density', 'generic_theming_on' );
+			$retired  = array( 'logo_light', 'logo_dark', 'logo_source', 'wp_logo', 'login_logo', 'ui_radius', 'ui_density', 'generic_theming_on', 'hide_footer_enabled', 'hide_help_button_enabled' );
 			if ( is_array( $settings ) && array_intersect( $retired, array_keys( $settings ) ) ) {
 				if ( empty( $settings['logo_url'] ) ) {
 					foreach ( array( 'logo_light', 'logo_dark' ) as $legacy ) {

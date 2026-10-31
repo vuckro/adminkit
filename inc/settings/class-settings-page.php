@@ -297,7 +297,6 @@ class AdminKit_Settings_Page {
 	 * @return array
 	 */
 	public static function boot_data( $screen = 'main' ) {
-		global $wpdb;
 		$is_main    = ( 'main' === $screen );
 		$is_menu    = ( 'menu' === $screen );
 		$is_toolbar = ( 'toolbar' === $screen );
@@ -362,7 +361,6 @@ class AdminKit_Settings_Page {
 			// in the Brand card and the Source pill colour for accent-family tokens.
 			'accentSource' => AdminKit_Settings::accent_source(),
 			'designSystem' => AdminKit_Settings::sanitize_design_system( AdminKit_Settings::get( 'design_system' ) ),
-			'settingsStorage' => array( 'table' => (string) $wpdb->options, 'option' => AdminKit_Settings::OPTION_KEY ),
 			'appearance' => array( 'ui_font' => AdminKit_Settings::get( 'ui_font' ) ),
 			// WaasKit custom-picker seed. The default accent uses native roles. The SPA seeds the swatch
 			// with this when source = 'adminkit' before getComputedStyle resolves.
@@ -429,30 +427,11 @@ class AdminKit_Settings_Page {
 				'studioSample' => __( 'Sample content — preview only', 'adminkit' ),
 				'studioField' => __( 'Site name', 'adminkit' ),
 				'studioSecondary' => __( 'Secondary action', 'adminkit' ),
-				'featureHelp' => __( 'Details about %s', 'adminkit' ),
-				'technicalDetails' => __( 'Technical details', 'adminkit' ),
-				'storageTable' => __( 'Database table', 'adminkit' ),
-				'storageOption' => __( 'Option', 'adminkit' ),
-				'storageKey' => __( 'Setting key', 'adminkit' ),
-				'defaultValue' => __( 'Default value', 'adminkit' ),
-				'enabledState' => __( 'Enabled', 'adminkit' ),
-				'disabledState' => __( 'Disabled', 'adminkit' ),
-				'saveTiming' => __( 'This switch is stored only after you save changes. Opening this help does not write to the database.', 'adminkit' ),
 				'pluginInactive' => __( 'Plugin inactive', 'adminkit' ),
 				'noResults' => __( 'No results. Try another search term.', 'adminkit' ),
-				'overview' => __( 'Overview', 'adminkit' ),
-				'overviewIntro' => __( 'Your administration, at a glance. Configure its appearance and choose the tools your site needs.', 'adminkit' ),
 				'designSystem' => __( 'Design system', 'adminkit' ),
 				'designIntro' => __( 'Customize the foundations and components of your interface.', 'adminkit' ),
 				'defaultPreset' => __( 'Default', 'adminkit' ),
-				'activeFeatures' => __( 'Enabled features', 'adminkit' ),
-				'integrationSummary' => __( 'Supported plugins', 'adminkit' ),
-				'editIdentitySettings' => __( 'Edit settings', 'adminkit' ),
-				'configureFeatures' => __( 'Choose features', 'adminkit' ),
-				'configurePlugins' => __( 'Manage plugins', 'adminkit' ),
-				'overviewScope' => __( 'Design choices are shared across the site. Each user keeps their own light or dark mode preference when dark mode is enabled.', 'adminkit' ),
-
-				// Tab labels (the only three the SPA strip prints).
 				'features'          => __( 'Features', 'adminkit' ),
 				'plugins'           => __( 'Plugins', 'adminkit' ),
 				'menu'              => __( 'Menu', 'adminkit' ),
@@ -508,7 +487,6 @@ class AdminKit_Settings_Page {
 				'featuresFilterAll' => __( 'All features', 'adminkit' ),
 				'featuresFilterActive' => __( 'Active features', 'adminkit' ),
 				'featuresFilterInactive' => __( 'Inactive features', 'adminkit' ),
-				'featuresBulkScope' => __( 'These actions apply to all features, including those hidden by filters.', 'adminkit' ),
 				'searchFeatures'    => __( 'Search features…', 'adminkit' ),
 				'searchPlugins'     => __( 'Search plugins…', 'adminkit' ),
 				'pluginsIntro'      => __( 'Every plugin installed on your site, plus AdminKit\'s active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit\'s base styling automatically.', 'adminkit' ),
@@ -545,7 +523,7 @@ class AdminKit_Settings_Page {
 			),
 		);
 		if ( ! $is_main ) {
-			foreach ( array( 'designSystem', 'settingsStorage', 'appearance', 'brandAccent', 'accentSource', 'adminkitBlue', 'bricksConnected', 'features', 'integrations' ) as $key ) {
+			foreach ( array( 'designSystem', 'appearance', 'brandAccent', 'accentSource', 'adminkitBlue', 'bricksConnected', 'features', 'integrations' ) as $key ) {
 				unset( $data[ $key ] );
 			}
 		}

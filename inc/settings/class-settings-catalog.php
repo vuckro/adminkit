@@ -20,122 +20,78 @@ class AdminKit_Settings_Catalog {
 	 * @return array
 	 */
 	public static function features() {
+		$appearance = __( 'Appearance & navigation', 'adminkit' );
 		$content    = __( 'Content & lists', 'adminkit' );
-		$appearance = __( 'Appearance', 'adminkit' );
 		$users      = __( 'Users & access', 'adminkit' );
-		$rows       = array(
 
-			array(
-				'key'   => 'notification_center_enabled',
-				'group' => $content,
-				'label' => __( 'Notification center', 'adminkit' ),
-				'desc'  => __( 'Adds a bell to the toolbar that collects admin notices into a side drawer, keeping success confirmations inline. Off restores every notice to its normal place.', 'adminkit' ),
-			),
-			array(
-				'key'   => 'post_previews_enabled',
-				'group' => $content,
-				'label' => __( 'Post previews', 'adminkit' ),
-				'desc'  => __( 'Adds a thumbnail column to post-type list tables — the featured image first, with a live WordPress.com mShots screenshot as fallback on production sites (skipped on localhost where mShots can\'t reach the page anyway).', 'adminkit' ),
-			),
-			array(
-				'key'   => 'active_items_first_enabled',
-				'group' => $content,
-				'label' => __( 'Active items first', 'adminkit' ),
-				'desc'  => __( 'Prioritize published articles, pages and custom post types, and active plugins. Open their lists on Published or Active when available, and group published or active items first in All. Explicit filters, searches and content sorting are preserved. Off restores the native WordPress lists.', 'adminkit' ),
-			),
-			array(
-				'key'   => 'branding_enabled',
-				'group' => $appearance,
-				'label' => __( 'Brand identity', 'adminkit' ),
-				'desc'  => __( 'Use the administration logo and site icon in the toolbar. Off restores the native WordPress identity and keeps your saved logo.', 'adminkit' ),
-				'settingsUrl' => admin_url( 'options-general.php#ak-general-logo-url' ),
-			),
+		return array(
 			array(
 				'key'   => 'theme_toggle_enabled',
 				'group' => $appearance,
 				'label' => __( 'Dark mode', 'adminkit' ),
-				'desc'  => __( 'Adds a light/dark toggle to the admin bar. Off forces light mode site-wide.', 'adminkit' ),
+				'desc'  => __( 'Add a light/dark mode switch to the toolbar. When off, light mode is used everywhere.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'module_login_enabled',
 				'group' => $appearance,
 				'label' => __( 'Login screen', 'adminkit' ),
-				'desc'  => __( 'Restyle wp-login.php to match the admin (logo, dark mode, focus states).', 'adminkit' ),
-			),
-			array(
-				'key'   => 'editor_content_theme',
-				'group' => $appearance,
-				'label' => __( 'Block editor', 'adminkit' ),
-				'desc'  => __( 'Theme the Gutenberg canvas in light and dark. Off keeps the canvas matching your live site exactly.', 'adminkit' ),
+				'desc'  => __( 'Style wp-login.php to match the administration (logo, dark mode and focus states).', 'adminkit' ),
 			),
 			array(
 				'key'   => 'menu_manager_enabled',
 				'group' => $appearance,
 				'label' => __( 'Menu manager', 'adminkit' ),
-				'desc'  => __( 'Reorder the admin menu and submenus, set a per-item icon (an AdminKit glyph, a WordPress dashicon, or your own), and hide entries — configured in the Menu tab. Off restores the native WordPress menu (your saved layout is kept).', 'adminkit' ),
+				'desc'  => __( 'Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Menu.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'toolbar_manager_enabled',
 				'group' => $appearance,
 				'label' => __( 'Toolbar manager', 'adminkit' ),
-				'desc'  => __( 'Reorder and hide the top-level items in the admin toolbar (the bar across the top of the screen) — configured in the Toolbar tab. Off restores the native toolbar (your saved layout is kept).', 'adminkit' ),
+				'desc'  => __( 'Reorder and hide top toolbar items from AdminKit → Toolbar.', 'adminkit' ),
 			),
 			array(
-				'key'   => 'hide_footer_enabled',
+				'key'   => 'clean_chrome_enabled',
 				'group' => $appearance,
-				'label' => __( 'Hide admin footer', 'adminkit' ),
-				'desc'  => __( 'Hide the admin footer bar — the "Thank you for creating with WordPress" line and the version number — on every screen, for a cleaner app-like look. Off restores it.', 'adminkit' ),
+				'label' => __( 'Clean interface', 'adminkit' ),
+				'desc'  => __( 'Hide the WordPress footer bar and contextual Help tab on admin screens.', 'adminkit' ),
 			),
 			array(
-				'key'   => 'hide_help_button_enabled',
+				'key'   => 'editor_content_theme',
 				'group' => $appearance,
-				'label' => __( 'Hide the Help button', 'adminkit' ),
-				'desc'  => __( 'Hide the contextual "Help" tab at the top-right of admin screens, for cleaner chrome. "Screen Options" is left in place. Off restores it.', 'adminkit' ),
+				'label' => __( 'Block editor canvas', 'adminkit' ),
+				'desc'  => __( 'Extend light and dark AdminKit styling inside the Gutenberg canvas. Keep off to preserve your front-end theme styles.', 'adminkit' ),
 			),
 			array(
-				'key'   => 'replace_icons_enabled',
-				'group' => $appearance,
-				'label' => __( 'AdminKit icons', 'adminkit' ),
-				'desc'  => __( 'Replace the WordPress menu icons with the AdminKit set. Off restores the native dashicons (icons you chose in the menu manager are kept).', 'adminkit' ),
+				'key'   => 'notification_center_enabled',
+				'group' => $content,
+				'label' => __( 'Notification center', 'adminkit' ),
+				'desc'  => __( 'Collect admin notices into a toolbar drawer while keeping inline action confirmations in place.', 'adminkit' ),
+			),
+			array(
+				'key'   => 'active_items_first_enabled',
+				'group' => $content,
+				'label' => __( 'Active items first', 'adminkit' ),
+				'desc'  => __( 'Open content and plugin lists on Published or Active by default, and group active items first in All.', 'adminkit' ),
+			),
+			array(
+				'key'   => 'post_previews_enabled',
+				'group' => $content,
+				'label' => __( 'Post previews', 'adminkit' ),
+				'desc'  => __( 'Show a thumbnail column in post and page list tables.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'quick_edit_users_enabled',
 				'group' => $users,
 				'label' => __( 'Users quick edit', 'adminkit' ),
-				'desc'  => __( 'Edit first name, last name, email and role inline from the users list — no need to open the full profile.', 'adminkit' ),
+				'desc'  => __( 'Edit first name, last name, email and role inline from the users list.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'username_changer_enabled',
 				'group' => $users,
 				'label' => __( 'Username changer', 'adminkit' ),
-				'desc'  => __( 'Lets admins rename a user\'s login on Users → Edit (WordPress disables this by default). Sensitive — invalidates the user\'s active sessions; they must sign in again. Single-site only.', 'adminkit' ),
+				'desc'  => __( 'Allow administrators to rename a user login on Users → Edit (single-site only; signs the user out).', 'adminkit' ),
 			),
-
-
 		);
-
-		$summaries = array(
-			'branding_enabled' => __( 'Personalize the identity displayed in the toolbar.', 'adminkit' ),
-			'notification_center_enabled' => __( 'Collect admin notices in one place.', 'adminkit' ),
-			'post_previews_enabled' => __( 'Recognize your publications by their thumbnails.', 'adminkit' ),
-			'active_items_first_enabled' => __( 'Find published content and active plugins first.', 'adminkit' ),
-			'theme_toggle_enabled' => __( 'Let each user choose light or dark mode.', 'adminkit' ),
-			'module_login_enabled' => __( 'Match the login screen to your administration.', 'adminkit' ),
-			'editor_content_theme' => __( 'Extend light and dark styling to the editor canvas.', 'adminkit' ),
-			'menu_manager_enabled' => __( 'Organize navigation and hide unnecessary entries.', 'adminkit' ),
-			'toolbar_manager_enabled' => __( 'Organize shortcuts in the top toolbar.', 'adminkit' ),
-			'hide_footer_enabled' => __( 'Remove the WordPress footer and version line.', 'adminkit' ),
-			'hide_help_button_enabled' => __( 'Hide contextual help on admin screens.', 'adminkit' ),
-			'replace_icons_enabled' => __( 'Use the AdminKit icon set in the admin menu.', 'adminkit' ),
-			'quick_edit_users_enabled' => __( 'Edit account details directly from the users list.', 'adminkit' ),
-			'username_changer_enabled' => __( 'Allow administrators to rename a user login.', 'adminkit' ),
-		);
-		foreach ( $rows as &$row ) {
-			$row['summary'] = isset( $summaries[ $row['key'] ] ) ? $summaries[ $row['key'] ] : '';
-		}
-		unset( $row );
-
-		return $rows;
 	}
 
 	/**

@@ -123,40 +123,11 @@
 			v.accent_source = state.accentSource;
 			Object.assign(v, state.appearance);
 			v.design_system = Object.assign({}, state.designSystem);
-			if (state.accentSource !== 'custom') { v.design_system.colors = { light: {}, dark: {} }; }
 			return v;
-		}
-		var refreshOverview = function () {};
-		function buildOverview() {
-			var p = el('section', { class: 'ak-panel ak-overview', role: 'tabpanel' });
-			p.appendChild(el('h2', { class: 'ak-panel-title', text: I.overview }));
-			p.appendChild(intro(I.overviewIntro));
-			var list = el('dl', { class: 'ak-overview-list' });
-			function entry(label, target, action) {
-				var value = el('dd');
-				list.appendChild(el('div', { class: 'ak-overview-entry' }, [
-					el('div', {}, [el('dt', { text: label }), value]),
-					el('a', { href: target.indexOf('.php') !== -1 ? target : '#' + target, class: 'ak-btn ak-overview-link', text: action })
-				]));
-				return value;
-			}
-			var features = entry(I.activeFeatures, 'features', I.configureFeatures);
-			var plugins = entry(I.integrationSummary, 'plugins', I.configurePlugins);
-			refreshOverview = function () {
-				features.textContent = (D.features || []).filter(function (f) { return f.available !== false && state.features[f.key] && (!f.parent || state.features[f.parent]); }).length + ' / ' + (D.features || []).filter(function (f) { return f.available !== false; }).length;
-				var adapters = (D.integrations || []).filter(function (i) { return i.supported && i.slug && !i.system && i.active !== false; });
-				plugins.textContent = adapters.filter(function (i) { return state.integrations[i.slug]; }).length + ' / ' + adapters.length;
-			};
-			refreshOverview();
-			p.appendChild(list);
-			p.appendChild(el('p', { class: 'ak-scope-note', text: I.overviewScope }));
-			return p;
 		}
 
 		return {
-			onSelect: function () { refreshOverview(); },
 			tabs: [
-				{ id: 'overview', label: I.overview, icon: ICONS.features, build: buildOverview },
 				{ id: 'brand', label: I.designSystem, icon: ICONS.brand, build: buildDesign },
 				{ id: 'features', label: I.features, icon: ICONS.features, build: buildFeatures },
 				{ id: 'plugins', label: I.plugins, icon: ICONS.plugins, build: buildPlugins }

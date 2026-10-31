@@ -174,6 +174,28 @@ class AdminKit_Core_Chrome {
 			'context' => 'frontend',
 			'section' => 'adminbar',
 		) );
+
+		add_action( 'adminkit/tokens_enqueued', array( __CLASS__, 'clean_chrome_css' ) );
+	}
+
+	/**
+	 * Hide the WordPress footer bar (#wpfooter) and contextual Help tab
+	 * (#contextual-help-link-wrap) when `clean_chrome_enabled` is on.
+	 *
+	 * @param string $context Asset context.
+	 * @return void
+	 */
+	public static function clean_chrome_css( $context ) {
+		if ( 'admin' !== $context ) {
+			return;
+		}
+		if ( ! apply_filters( 'adminkit/clean_chrome/enabled', (bool) AdminKit_Settings::get( 'clean_chrome_enabled' ) ) ) {
+			return;
+		}
+		wp_add_inline_style(
+			AdminKit_Assets::TOKENS_HANDLE,
+			'body.adminkit #wpfooter,body.adminkit #contextual-help-link-wrap{display:none}'
+		);
 	}
 
 	/**

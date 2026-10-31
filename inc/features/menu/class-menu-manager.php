@@ -124,7 +124,7 @@ class AdminKit_Menu_Manager {
 	 * @return void
 	 */
 	public static function init() {
-		AdminKit_Settings::register( 'menu_manager_enabled', array( 'default' => false ) );
+		AdminKit_Settings::register( 'menu_manager_enabled', array( 'default' => true ) );
 
 		if ( ! self::is_enabled() ) {
 			return;

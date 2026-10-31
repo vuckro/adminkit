@@ -184,65 +184,36 @@ class AdminKit_Settings {
 	 * @return void
 	 */
 	private static function register_feature_catalog() {
-		// Preserve the existing automatic toolbar identity on older installations.
-		self::register( 'branding_enabled', array( 'type' => 'toggle', 'group' => 'features', 'default' => true, 'sanitize' => 'rest_sanitize_boolean' ) );
-		$toggles = array(
-			'module_login_enabled',
-			'theme_toggle_enabled',
-			'active_items_first_enabled',
-		);
-		foreach ( $toggles as $key ) {
-			self::register( $key, array(
+		// Native skin capabilities (always on unless filtered/overridden).
+		foreach ( array( 'branding_enabled', 'replace_icons_enabled' ) as $native_key ) {
+			self::register( $native_key, array(
+				'type'     => 'toggle',
+				'group'    => 'features',
+				'default'  => true,
+				'sanitize' => 'rest_sanitize_boolean',
+			) );
+		}
+
+		// Core AdminKit experience — enabled by default on fresh installs.
+		foreach ( array( 'theme_toggle_enabled', 'module_login_enabled', 'clean_chrome_enabled' ) as $default_on ) {
+			self::register( $default_on, array(
+				'type'     => 'toggle',
+				'group'    => 'features',
+				'default'  => true,
+				'sanitize' => 'rest_sanitize_boolean',
+			) );
+		}
+
+		// Opt-in workflow enhancements — disabled by default so content/editor/user
+		// workflows stay untouched until explicitly enabled.
+		foreach ( array( 'editor_content_theme', 'active_items_first_enabled', 'quick_edit_users_enabled', 'username_changer_enabled' ) as $opt_in ) {
+			self::register( $opt_in, array(
 				'type'     => 'toggle',
 				'group'    => 'features',
 				'default'  => false,
 				'sanitize' => 'rest_sanitize_boolean',
 			) );
 		}
-
-		// Editor content theming ("Gutenberg") — OFF by default. Themes the block
-		// content inside the editor canvas (iframe) to match AdminKit. Set OFF to keep
-		// the canvas matching the live site exactly (a client's page layout untouched).
-		// The canvas-injection wiring plugs into this flag.
-		self::register( 'editor_content_theme', array(
-			'type'     => 'toggle',
-			'group'    => 'features',
-			'default'  => false,
-			'sanitize' => 'rest_sanitize_boolean',
-		) );
-
-		// AdminKit icons are part of the default skin; the menu editor owns per-item choices.
-		self::register( 'replace_icons_enabled', array(
-			'type'     => 'toggle',
-			'group'    => 'features',
-			'default'  => true,
-			'sanitize' => 'rest_sanitize_boolean',
-		) );
-
-		// User quick edit — OFF by default. Mirrors the post Quick Edit pattern
-		// for the users list: inline form to update first name / last name /
-		// email / role from users.php without opening user-edit.php. Read by
-		// AdminKit_User_Quick_Edit. Off = no Quick Edit affordance; the Edit
-		// link to user-edit.php still works as native WP.
-		self::register( 'quick_edit_users_enabled', array(
-			'type'     => 'toggle',
-			'group'    => 'features',
-			'default'  => false,
-			'sanitize' => 'rest_sanitize_boolean',
-		) );
-
-		// Username changer — OFF by default. Lets an admin rename
-		// `user_login` from profile.php / user-edit.php, a column WordPress
-		// disables in its own UI. Sensitive (it invalidates auth cookies and
-		// kicks the affected user out of every active session), so it ships
-		// opt-in. Read by AdminKit_Username_Changer. Off = the Username field
-		// stays the native read-only state.
-		self::register( 'username_changer_enabled', array(
-			'type'     => 'toggle',
-			'group'    => 'features',
-			'default'  => false,
-			'sanitize' => 'rest_sanitize_boolean',
-		) );
 	}
 
 	/**
@@ -279,14 +250,15 @@ class AdminKit_Settings {
 	 * @return void
 	 */
 	public static function register( $key, array $args = array() ) {
-		$args = wp_parse_args( $args, array(
-			'type'     => 'text',
-			'group'    => 'general',
+		$is_bool = isset( $args['default'] ) && is_bool( $args['default'] );
+		$args    = wp_parse_args( $args, array(
+			'type'     => $is_bool ? 'toggle' : 'text',
+			'group'    => $is_bool ? 'features' : 'general',
 			'label'    => '',
 			'desc'     => '',
 			'choices'  => null,
 			'default'  => null,
-			'sanitize' => null,
+			'sanitize' => $is_bool ? 'rest_sanitize_boolean' : null,
 		) );
 		self::$schema[ $key ] = $args;
 	}
