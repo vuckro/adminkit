@@ -300,14 +300,45 @@ class AdminKit_Menu_Manager {
 		// WordPress dashicons offered in the picker — minus the ones AdminKit remaps
 		// (those would render the AdminKit glyph, not the dashicon; see WP_DASHICONS).
 		$dashicons = array_values( array_diff( self::WP_DASHICONS, AdminKit_Core_Menu_Icons::mapped_classes() ) );
+		$config    = self::is_enabled() ? AdminKit_Menu_Store::get_config() : array( 'top' => array(), 'sub' => array() );
+
+		// Seed only the icons needed for immediate initial render (~45 glyphs); the full
+		// 2,302-icon Lucide catalog is fetched lazily from `iconsUrl` when the user opens
+		// the Icon Picker modal, keeping `window.AdminKitData` ~1 MB lighter.
+		$initial = array_merge(
+			array_keys( AdminKit_Icons::ALIASES ),
+			array( 'app', 'link', 'house', 'pencil', 'eye', 'plus', 'refresh-cw', 'search', 'sliders-horizontal', 'palette', 'bell', 'moon', 'external-link', 'user', 'users', 'wrench' )
+		);
+		foreach ( isset( $config['top'] ) && is_array( $config['top'] ) ? $config['top'] : array() as $t ) {
+			if ( ! empty( $t['icon'] ) && is_string( $t['icon'] ) ) {
+				$initial[] = $t['icon'];
+			}
+		}
+		if ( class_exists( 'AdminKit_Toolbar_Config' ) ) {
+			$tb = AdminKit_Toolbar_Config::get_config();
+			foreach ( array( 'admin', 'frontend' ) as $ctx ) {
+				foreach ( isset( $tb[ $ctx ]['icons'] ) && is_array( $tb[ $ctx ]['icons'] ) ? $tb[ $ctx ]['icons'] : array() as $ic ) {
+					if ( is_string( $ic ) && '' !== $ic ) {
+						$initial[] = $ic;
+					}
+				}
+			}
+		}
+		$json_file = ADMINKIT_PATH . 'assets/icons/lucide.json';
+		$icons_url = defined( 'ADMINKIT_URL' ) && is_file( $json_file )
+			? ADMINKIT_URL . 'assets/icons/lucide.json?ver=' . (string) filemtime( $json_file )
+			: '';
+
 		return array(
-			'menu'      => self::$snapshot,
-			'config'    => self::is_enabled() ? AdminKit_Menu_Store::get_config() : array( 'top' => array(), 'sub' => array() ),
-			'icons'     => AdminKit_Icons::set(),
-			'dashicons' => $dashicons,
-			'route'     => '/adminkit/v1/menu',
-			'self'      => AdminKit_Settings_Page::SLUG,
-			'seen'      => get_option( 'adminkit_menu_seen', array() ),
+			'menu'        => self::$snapshot,
+			'config'      => $config,
+			'icons'       => AdminKit_Icons::subset( $initial ),
+			'iconsUrl'    => $icons_url,
+			'iconAliases' => AdminKit_Icons::ALIASES,
+			'dashicons'   => $dashicons,
+			'route'       => '/adminkit/v1/menu',
+			'self'        => AdminKit_Settings_Page::SLUG,
+			'seen'        => get_option( 'adminkit_menu_seen', array() ),
 		);
 	}
 

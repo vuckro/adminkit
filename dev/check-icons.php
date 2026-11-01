@@ -30,4 +30,13 @@ foreach(array('<script/>','<foreignObject/>','<image href="https://x.test"/>','<
 }
 foreach(array('data:image/svg+xml,</style><script>x</script>','<!DOCTYPE svg [<!ENTITY x SYSTEM "file:///etc/passwd">]><svg>&x;</svg>','data:image/svg+xml;base64,???','<svg><path></svg>',str_repeat('x',16385))as$input){if(AdminKit_Icons::sanitize_icon($input)!=='')throw new RuntimeException('Malformed/oversized icon accepted');}
 foreach(AdminKit_Icons::names()as$name){if(AdminKit_Icons::validated_svg(AdminKit_Icons::svg($name))==='')throw new RuntimeException('Bundled SVG incompatible with shared validator: '.$name);}
-echo "OK: shared SVG canonicalization, legacy encodings, strict rejection and all bundled vectors.\n";
+$raw_catalog = json_decode( (string) file_get_contents( ADMINKIT_PATH . 'assets/icons/lucide.json' ), true );
+$expected_paths = array();
+foreach ( AdminKit_Icons::ALIASES as $role => $target ) {
+	if ( isset( $raw_catalog[ $target ] ) ) { $expected_paths[ $role ] = $raw_catalog[ $target ]; }
+}
+$expected_paths += (array) $raw_catalog;
+if ( AdminKit_Lucide_Paths::MAP !== $expected_paths ) {
+	throw new RuntimeException( 'inc/generated/lucide-paths.php is out of sync with assets/icons/lucide.json; run php dev/build-icons.php' );
+}
+echo "OK: shared SVG canonicalization, legacy encodings, strict rejection, OPcache sync and all bundled vectors.\n";

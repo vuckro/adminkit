@@ -33,6 +33,7 @@ class AdminKit_Plugin {
 		// Helpers — loaded for everyone, nothing to boot.
 		'class-storage.php'                                    => null,
 		'class-screen.php'                                     => null,
+		'generated/lucide-paths.php'                           => null,
 		'class-icons.php'                                      => null,
 		'class-design-system.php'                              => null,
 
@@ -146,13 +147,12 @@ class AdminKit_Plugin {
 	private static function boot_integrations() {
 		require_once ADMINKIT_PATH . 'inc/integrations/abstract-integration.php';
 
-		$files = glob( ADMINKIT_PATH . 'inc/integrations/*/*/class-*.php' );
+		$files = AdminKit_Settings_Catalog::integration_files();
 		if ( empty( $files ) ) {
 			return;
 		}
-		foreach ( $files as $file ) {
+		foreach ( $files as $slug => $file ) {
 			require_once $file;
-			$slug  = substr( basename( $file, '.php' ), strlen( 'class-' ) );
 			$class = 'AdminKit_Integration_' . str_replace( '-', '_', ucwords( $slug, '-' ) );
 			if ( class_exists( $class ) && method_exists( $class, 'maybe_init' ) ) {
 				add_action( 'after_setup_theme', array( $class, 'maybe_init' ) );

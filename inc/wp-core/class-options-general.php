@@ -80,7 +80,7 @@ class AdminKit_Core_Options_General {
 		} else {
 			$stored['logo_url'] = $clean;
 		}
-		update_option( AdminKit_Settings::OPTION_KEY, $stored );
+		update_option( AdminKit_Settings::OPTION_KEY, $stored, true );
 	}
 
 	/** Back-compat sanitizer kept callable in case external code invokes it directly. */

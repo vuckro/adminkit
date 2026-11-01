@@ -135,6 +135,29 @@ class AdminKit_Settings_Catalog {
 	}
 
 	/**
+	 * Memoized map of integration `slug => absolute_file_path` so `glob()` executes
+	 * at most once per PHP request across Settings, Catalog and Plugin boot.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function integration_files() {
+		static $map = null;
+		if ( null !== $map ) {
+			return $map;
+		}
+		$map   = array();
+		$files = glob( ADMINKIT_PATH . 'inc/integrations/*/*/class-*.php' );
+		if ( ! $files ) {
+			return $map;
+		}
+		foreach ( $files as $file ) {
+			$slug         = substr( basename( $file, '.php' ), strlen( 'class-' ) );
+			$map[ $slug ] = $file;
+		}
+		return $map;
+	}
+
+	/**
 	 * Discover integrations the way the orchestrator does.
 	 *
 	 * @return array<int, array{slug:string,label:string,type:string,class:string}>
@@ -144,13 +167,8 @@ class AdminKit_Settings_Catalog {
 		if ( null !== $specs ) {
 			return $specs;
 		}
-		$specs  = array();
-		$files  = glob( ADMINKIT_PATH . 'inc/integrations/*/*/class-*.php' );
-		if ( ! $files ) {
-			return $specs;
-		}
-		foreach ( $files as $file ) {
-			$slug  = substr( basename( $file, '.php' ), strlen( 'class-' ) );
+		$specs = array();
+		foreach ( self::integration_files() as $slug => $file ) {
 			// Core editor chrome is always part of the admin skin, not a plugin
 			// opt-in. The feature catalog owns the optional canvas setting.
 			if ( 'gutenberg' === $slug ) {
@@ -285,8 +303,7 @@ class AdminKit_Settings_Catalog {
 	 * @return void
 	 */
 	public static function register_integration_toggles() {
-		foreach ( glob( ADMINKIT_PATH . 'inc/integrations/*/*/class-*.php' ) ?: array() as $file ) {
-			$slug = substr( basename( $file, '.php' ), 6 );
+		foreach ( self::integration_files() as $slug => $_file ) {
 			if ( 'gutenberg' === $slug ) { continue; }
 			AdminKit_Settings::register( 'integration_' . $slug . '_enabled', array(
 				'type'     => 'toggle',

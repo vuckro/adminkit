@@ -148,10 +148,11 @@ class AdminKit_Settings_Page {
 		if ( ! self::is_settings_hook( $hook ) ) {
 			return;
 		}
-		$data = self::boot_data( 'main' );
-		$data['initialTab'] = isset( self::$page_tabs[ $hook ] ) ? self::$page_tabs[ $hook ] : 'overview';
+		$initial_tab = isset( self::$page_tabs[ $hook ] ) ? self::$page_tabs[ $hook ] : 'overview';
+		$data        = self::boot_data( 'main', $initial_tab );
+		$data['initialTab'] = $initial_tab;
 		$titles = array( 'overview' => __( 'Overview', 'adminkit' ), 'features' => __( 'Features', 'adminkit' ), 'brand' => __( 'Design system', 'adminkit' ), 'navigation' => __( 'Navigation', 'adminkit' ), 'configuration' => __( 'Configuration', 'adminkit' ) );
-		$data['pageTitle'] = $titles[ $data['initialTab'] ];
+		$data['pageTitle'] = $titles[ $initial_tab ];
 		$data['pages'] = array();
 		foreach ( array( 'overview' => 'adminkit', 'features' => 'adminkit-features', 'brand' => 'adminkit-design', 'navigation' => 'adminkit-navigation', 'configuration' => 'adminkit-configuration' ) as $tab => $slug ) {
 			$data['pages'][ $tab ] = admin_url( 'admin.php?page=' . $slug );
@@ -188,22 +189,40 @@ class AdminKit_Settings_Page {
 		$pages_css = 'assets/css/settings/pages.css';
 		wp_enqueue_style( self::HANDLE . '-pages', ADMINKIT_URL . $pages_css, array( $screen_handle ), self::ver( $pages_css ) );
 		// The main screen's tabs live in their own files (assets/js/settings/<part>.js).
-		$deps = array( 'wp-api-fetch' );
+		// When `pages` is populated (5 native WordPress submenu pages), load only the
+		// factories needed by `initialTab`; when `pages` is null (single-host mode), load all.
+		$paged_tab  = ( 'main' === $module && ! empty( $data['pages'] ) && ! empty( $data['initialTab'] ) ) ? (string) $data['initialTab'] : '';
+		$needs_nav  = ( 'navigation' === $module ) || ( 'main' === $module && ( '' === $paged_tab || 'navigation' === $paged_tab ) );
+		$deps       = array( 'wp-api-fetch' );
 		$navigation_deps = array();
-		foreach ( array( 'controls', 'menu', 'toolbar' ) as $part ) {
-			$part_js = 'assets/js/settings/navigation-' . $part . '.js';
-			$part_handle = self::HANDLE . '-navigation-' . $part;
-			$part_deps = 'controls' === $part ? array() : array( self::HANDLE . '-navigation-controls' );
-			wp_enqueue_script( $part_handle, ADMINKIT_URL . $part_js, $part_deps, self::ver( $part_js ), true );
-			$navigation_deps[] = $part_handle;
+		if ( $needs_nav ) {
+			foreach ( array( 'controls', 'menu', 'toolbar' ) as $part ) {
+				$part_js = 'assets/js/settings/navigation-' . $part . '.js';
+				$part_handle = self::HANDLE . '-navigation-' . $part;
+				$part_deps = 'controls' === $part ? array() : array( self::HANDLE . '-navigation-controls' );
+				wp_enqueue_script( $part_handle, ADMINKIT_URL . $part_js, $part_deps, self::ver( $part_js ), true );
+				$navigation_deps[] = $part_handle;
+			}
 		}
 		if ( 'navigation' === $module ) {
 			$deps = array_merge( $deps, $navigation_deps );
 		}
 		if ( 'main' === $module ) {
-			$nav_css = 'assets/css/settings/navigation.css';
-			wp_enqueue_style( self::HANDLE . '-navigation', ADMINKIT_URL . $nav_css, array( self::HANDLE ), self::ver( $nav_css ) );
-			foreach ( array( 'design', 'features', 'plugins', 'navigation' ) as $part ) {
+			if ( $needs_nav ) {
+				$nav_css = 'assets/css/settings/navigation.css';
+				wp_enqueue_style( self::HANDLE . '-navigation', ADMINKIT_URL . $nav_css, array( self::HANDLE ), self::ver( $nav_css ) );
+			}
+			$parts_for_tab = array(
+				'overview'      => array(),
+				'features'      => array( 'features' ),
+				'brand'         => array( 'design', 'plugins' ),
+				'navigation'    => array( 'navigation' ),
+				'configuration' => array(),
+			);
+			$main_parts = ( '' !== $paged_tab && isset( $parts_for_tab[ $paged_tab ] ) )
+				? $parts_for_tab[ $paged_tab ]
+				: array( 'design', 'features', 'plugins', 'navigation' );
+			foreach ( $main_parts as $part ) {
 				$part_js = 'assets/js/settings/' . $part . '.js';
 				wp_enqueue_script( $screen_handle . '-' . $part, ADMINKIT_URL . $part_js, 'navigation' === $part ? $navigation_deps : array(), self::ver( $part_js ), true );
 				$deps[] = $screen_handle . '-' . $part;
@@ -273,7 +292,7 @@ class AdminKit_Settings_Page {
 		$posted = array_intersect_key( $values, AdminKit_Settings::schema() );
 		$final  = array_merge( array_diff_key( $existing, $posted ), $clean );
 
-		$saved = AdminKit_Storage::save_option( AdminKit_Settings::OPTION_KEY, $final );
+		$saved = AdminKit_Storage::save_option( AdminKit_Settings::OPTION_KEY, $final, true );
 		if ( is_wp_error( $saved ) ) { return $saved; }
 
 		return rest_ensure_response( array( 'ok' => true, 'values' => $final ) );
@@ -312,19 +331,23 @@ class AdminKit_Settings_Page {
 	/**
 	 * Build the payload handed to the SPA via `window.AdminKitData`.
 	 *
+	 * @param string      $screen      Surface screen (`main` | `menu` | `toolbar`).
+	 * @param string|null $initial_tab Optional active native submenu tab (`overview` | `features` | `brand` | `navigation` | `configuration`).
 	 * @return array
 	 */
-	public static function boot_data( $screen = 'main' ) {
+	public static function boot_data( $screen = 'main', $initial_tab = null ) {
 		$is_main    = ( 'main' === $screen );
 		$is_menu    = ( 'menu' === $screen );
 		$is_toolbar = ( 'toolbar' === $screen );
+		$needs_plugins = $is_main && ( null === $initial_tab || 'brand' === $initial_tab );
+		$needs_nav     = $is_menu || $is_toolbar || ( $is_main && ( null === $initial_tab || 'navigation' === $initial_tab ) );
+		$needs_features = $is_main && ( null === $initial_tab || 'navigation' !== $initial_tab );
 
-		// Brand / Features / Plugins data — only the Settings ("main") screen needs
-		// the feature list + the (relatively costly) installed-plugins scan. Other
-		// screens ship empty arrays; the engine's `|| []` guards no-op on them.
+		// Brand / Features / Plugins data — only compute each expensive slice when the
+		// target submenu page (or single-host SPA mode where $initial_tab is null) uses it.
 		$features     = array();
 		$integrations = array();
-		if ( $is_main ) {
+		if ( $needs_features ) {
 			$schema = AdminKit_Settings::schema();
 			foreach ( AdminKit_Settings_Catalog::features() as $f ) {
 				$options = array();
@@ -365,20 +388,20 @@ class AdminKit_Settings_Page {
 					'unavailableHint' => isset( $f['unavailableHint'] ) ? $f['unavailableHint'] : '',
 				);
 			}
+		}
+		if ( $needs_plugins ) {
 			// Plugins tab — every installed plugin (plus AdminKit's active theme
 			// adapters); supported ones are badged "Native" (a tuned AdminKit adapter),
 			// the rest carry no badge and ride the generic base layer.
 			$integrations = AdminKit_Settings_Catalog::plugins_list();
 		}
 
-		// Menu editor — the captured admin-menu tree (only built on the AdminKit screen).
-		// Also included on the legacy standalone toolbar screen so the shared icon picker
-		// (icons + dashicons) is available for toolbar items too.
-		$menu_manager = ( $is_main || $is_menu || $is_toolbar ) ? AdminKit_Menu_Manager::editor_data() : array();
+		// Menu editor — the captured admin-menu tree (only built when Navigation is active).
+		$menu_manager = $needs_nav ? AdminKit_Menu_Manager::editor_data() : array();
 
 		// Toolbar editor — lightweight boot (just the REST route + enabled); the live
 		// admin-bar nodes are fetched over REST when the Toolbar tab is opened.
-		$toolbar = ( ( $is_main || $is_toolbar ) && class_exists( 'AdminKit_Toolbar_Manager' ) )
+		$toolbar = ( $needs_nav && ( $is_main || $is_toolbar ) && class_exists( 'AdminKit_Toolbar_Manager' ) )
 			? AdminKit_Toolbar_Manager::boot_data()
 			: array( 'enabled' => false );
 

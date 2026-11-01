@@ -82,5 +82,32 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 15));
     assert.ok(pane.querySelector('.ak-menu-title'), 'toolbar items rendered after retry');
     w.close();
   }
-  console.log('OK: actual menu/toolbar titles, icons and error recovery save to their own endpoints.');
+  // Lazy Icon Picker catalog fetch populates icons on demand when iconsUrl is provided.
+  {
+    const dom = new JSDOM('<div id="adminkit-app"></div>', { url: 'http://localhost/#menu', runScripts: 'outside-only' });
+    const w = dom.window;
+    const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json'), 'utf8'));
+    data.screen = 'menu';
+    data.menuManager.menu = [{ slug: 'tools.php', title: 'Tools', children: [] }];
+    data.menuManager.icons = { app: '<svg viewBox="0 0 24 24"></svg>' };
+    data.menuManager.iconsUrl = 'http://localhost/lucide.json';
+    data.menuManager.iconAliases = { rocketship: 'rocket' };
+    let fetchedUrl = '';
+    w.fetch = url => {
+      fetchedUrl = url;
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({ rocket: '<path d="M1 1l2 2"/>' }) });
+    };
+    w.AdminKitData = data;
+    w.wp = { apiFetch: () => Promise.resolve({}) };
+    for (const file of ['assets/js/settings/navigation-controls.js', 'assets/js/settings/navigation-menu.js', 'assets/js/settings/navigation-toolbar.js', 'assets/js/settings/navigation.js', 'assets/js/settings.js']) w.eval(fs.readFileSync(path.join(root, file), 'utf8'));
+    await tick();
+    assert.equal(fetchedUrl, '', 'catalog is not fetched before opening the icon picker');
+    w.document.querySelector('.ak-menu-icon').click();
+    await tick();
+    assert.equal(fetchedUrl, 'http://localhost/lucide.json', 'opening picker fetches lucide catalog');
+    assert.ok(w.document.querySelector('.ak-icon-pop__sw[title="rocket"]'), 'lazy-loaded icon swatch rendered');
+    assert.ok(w.document.querySelector('.ak-icon-pop__sw[title="rocketship"]'), 'alias icon swatch rendered from raw paths');
+    w.close();
+  }
+  console.log('OK: actual menu/toolbar titles, icons, lazy picker fetch and error recovery save to their own endpoints.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

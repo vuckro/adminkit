@@ -1,12 +1,13 @@
 <?php
 /** An explicit global veto leaves WP-Core outputs, assets and write entrypoints inert. */
 define('ABSPATH',__DIR__.'/');define('ADMINKIT_PATH',dirname(__DIR__).'/');
-$admin=true;$allow=false;$screen=(object)array('id'=>'profile','base'=>'profile','post_type'=>'post');
+$admin=true;$allow=false;$bar_showing=true;$current_hook='';$screen=(object)array('id'=>'profile','base'=>'profile','post_type'=>'post');
 function is_admin(){global$admin;return$admin;}
 function apply_filters($hook,$value){global$allow;return$hook==='adminkit/should_load'?$allow:$value;}
 function get_current_screen(){global$screen;return$screen;}
 function current_user_can(...$args){return true;}
-function is_admin_bar_showing(){return true;}
+function is_admin_bar_showing(){global$bar_showing;return$bar_showing;}
+function current_action(){global$current_hook;return$current_hook;}
 function wp_style_is($handle,$state){return false;}
 function is_multisite(){return false;}
 function add_action(...$args){}
@@ -20,9 +21,12 @@ function get_current_user_id(){return 1;}
 function __($s,$domain){return$s;}
 class Gate_Denial extends RuntimeException{}
 function wp_send_json_error($data,$status){if($status!==403)throw new RuntimeException('Wrong veto status');throw new Gate_Denial();}
-class AdminKit_Settings {public static function get($key){return true;}public static function register(...$args){}}
+class AdminKit_Settings {public static function get($key){return true;}public static function register(...$args){}public static function accent_source(){return 'monochrome';}}
 require ADMINKIT_PATH.'inc/class-screen.php';
 require ADMINKIT_PATH.'inc/class-assets.php';
+require ADMINKIT_PATH.'inc/class-theme-toggle.php';
+require ADMINKIT_PATH.'inc/integrations/abstract-integration.php';
+require ADMINKIT_PATH.'inc/integrations/themes/bricks/class-bricks.php';
 foreach(glob(ADMINKIT_PATH.'inc/wp-core/class-*.php')as$file)require_once$file;
 foreach(array('AdminKit_User_Quick_Edit','AdminKit_Username_Changer')as$class)$class::init();
 $registry=new ReflectionProperty('AdminKit_Assets','registry');$registry->setAccessible(true);
@@ -58,4 +62,8 @@ try{AdminKit_User_Quick_Edit::handle_save();throw new RuntimeException('Vetoed A
 foreach(array(true,false)as$admin)AdminKit_Assets::enqueue_script('test','missing.js');
 foreach(glob(ADMINKIT_PATH.'inc/wp-core/class-*.php')as$file){if(preg_match('/\bwp_enqueue_(?:style|script)\s*\(/',file_get_contents($file)))throw new RuntimeException('WP-Core bypasses Assets: '.$file);}
 $allow=true;AdminKit_Core_Admin_Bar::enqueue(); // A disabled toolbar stylesheet must also disable DOM relocation.
-echo "OK: WP-Core vetoed callbacks emit no markup/assets/writes; user tools register styles through Assets.\n";
+// Anonymous public frontend (admin bar hidden) must emit zero Theme_Toggle or Bricks scripts.
+$admin=false;$bar_showing=false;$current_hook='wp_head';
+ob_start();AdminKit_Theme_Toggle::print_script();AdminKit_Integration_Bricks::print_theme_bridge();$anon_out=ob_get_clean();
+if($anon_out!=='')throw new RuntimeException('Public anonymous frontend leaked script markup');
+echo "OK: WP-Core vetoed callbacks and anonymous frontend emit no markup/assets/writes; user tools register styles through Assets.\n";

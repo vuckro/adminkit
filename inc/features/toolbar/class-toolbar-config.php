@@ -200,7 +200,7 @@ class AdminKit_Toolbar_Config {
 			);
 		}
 
-		$result = AdminKit_Storage::save_option( self::OPTION, $saved, false );
+		$result = AdminKit_Storage::save_option( self::OPTION, $saved, true );
 		if ( is_wp_error( $result ) ) { return $result; }
 
 		return self::get_config();

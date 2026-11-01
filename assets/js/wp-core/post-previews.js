@@ -82,19 +82,28 @@
 		return !!span && !span.classList.contains('ak-preview--empty');
 	}
 
-	// Preload the larger hover images on idle so the first hover is instant — the
-	// browser then serves them from cache. Bounded to this page's thumbs (admin
-	// lists are paginated); skipped on very long pages to avoid a fetch storm.
-	function preloadFulls() {
-		var spans = document.querySelectorAll('[data-ak-full]');
-		if (!spans.length || spans.length > 40) { return; }
-		Array.prototype.forEach.call(spans, function (span) {
-			var full = span.getAttribute('data-ak-full');
-			if (full) { var im = new Image(); im.decoding = 'async'; im.src = full; }
-		});
+	// Preload a row's larger hover image only when the pointer enters or focus moves
+	// into its table row (or thumbnail), avoiding up to 40 idle image requests on page load.
+	function preloadSpan(span) {
+		if (!span || span.dataset.akPreloaded) { return; }
+		span.dataset.akPreloaded = '1';
+		var full = span.getAttribute('data-ak-full');
+		if (full) {
+			var im = new Image();
+			im.decoding = 'async';
+			im.src = full;
+		}
 	}
-	if (window.requestIdleCallback) { window.requestIdleCallback(preloadFulls); }
-	else { window.setTimeout(preloadFulls, 1200); }
+	function preloadFromEvent(e) {
+		var target = e.target;
+		if (!target || !target.closest) { return; }
+		var row = target.closest('tr') || target.closest('[data-ak-full]');
+		if (!row) { return; }
+		var span = row.hasAttribute('data-ak-full') ? row : row.querySelector('[data-ak-full]');
+		if (span && previewable(span)) { preloadSpan(span); }
+	}
+	document.addEventListener('pointerenter', preloadFromEvent, true);
+	document.addEventListener('focusin', preloadFromEvent);
 
 	document.addEventListener('mouseover', function (e) {
 		var span = e.target.closest ? e.target.closest('[data-ak-full]') : null;

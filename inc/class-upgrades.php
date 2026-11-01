@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Upgrades {
 
-	const VERSION = 8;
+	const VERSION = 9;
 	const OPTION  = 'adminkit_storage_version';
 
 	public static function init() {
@@ -93,8 +93,15 @@ class AdminKit_Upgrades {
 		// Upgrade 8 also repairs settings left behind by a failed historical write.
 		if ( ! self::repair_legacy_settings() ) { return; }
 
-		// Admin-only migration state does not need to be autoloaded on the front end.
-		update_option( self::OPTION, self::VERSION, false );
+		// Upgrade 9: ensure small, hot options are autoloaded to avoid extra per-request SELECTs.
+		if ( $version < 9 && function_exists( 'wp_set_option_autoload_values' ) ) {
+			wp_set_option_autoload_values( array(
+				AdminKit_Settings::OPTION_KEY => true,
+				'adminkit_toolbar'            => true,
+			) );
+		}
+
+		update_option( self::OPTION, self::VERSION, true );
 	}
 
 	/** Verify historical settings writes before advancing the storage version. */

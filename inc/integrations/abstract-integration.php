@@ -53,6 +53,15 @@ abstract class AdminKit_Integration_Base {
 	abstract public static function is_active();
 
 	/**
+	 * Integration kind (`'plugin'` or `'theme'`). Avoids filesystem `wp_get_theme()` probes.
+	 *
+	 * @return string
+	 */
+	public static function type() {
+		return 'plugin';
+	}
+
+	/**
 	 * Human-readable host name shown in Settings → Plugins. Override when the
 	 * product name isn't a simple title-cased slug (e.g. `WooCommerce`).
 	 *

@@ -44,6 +44,13 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * @return string
+	 */
+	public static function type() {
+		return 'theme';
+	}
+
+	/**
 	 * Whether the Bricks theme is active.
 	 *
 	 * @return bool
@@ -274,7 +281,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function print_theme_bridge() {
-		if ( is_admin() || self::is_builder() ) {
+		if ( is_admin() || self::is_builder() || ! is_admin_bar_showing() || ! apply_filters( 'adminkit/should_load', true, 'frontend' ) ) {
 			return;
 		}
 		$attr = AdminKit_Theme_Toggle::attribute();

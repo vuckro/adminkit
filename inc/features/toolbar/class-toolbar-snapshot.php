@@ -378,7 +378,11 @@ class AdminKit_Toolbar_Snapshot {
 
 	/** Capture an already authorized frontend bar. Permission checks belong to the facade. */
 	public static function capture_frontend( $bar ) {
-		$nodes = self::ensure_frontend_nodes( self::extract_nodes( $bar, 'frontend' ) );
+		$nodes    = self::ensure_frontend_nodes( self::extract_nodes( $bar, 'frontend' ) );
+		$existing = get_transient( self::FRONTEND_SNAPSHOT_KEY );
+		if ( is_array( $existing ) && md5( (string) wp_json_encode( $existing ) ) === md5( (string) wp_json_encode( $nodes ) ) ) {
+			return;
+		}
 		set_transient( self::FRONTEND_SNAPSHOT_KEY, $nodes, HOUR_IN_SECONDS );
 	}
 }

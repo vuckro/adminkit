@@ -35,19 +35,62 @@ class AdminKit_Icons {
 		'dashicons-desktop', 'dashicons-laptop', 'dashicons-tablet', 'dashicons-smartphone', 'dashicons-phone', 'dashicons-smiley',
 		'dashicons-palmtree', 'dashicons-album', 'dashicons-index-card', 'dashicons-carrot', 'dashicons-building',
 	);
+	const ALIASES = array(
+		'home'            => 'house',
+		'pencil-square'   => 'square-pen',
+		'document-pencil' => 'file-pen-line',
+		'article'         => 'newspaper',
+		'photo'           => 'image',
+		'document'        => 'file-text',
+		'chat'            => 'message-square',
+		'plugin'          => 'plug',
+		'cog'             => 'settings',
+		'swatch'          => 'swatch-book',
+		'update'          => 'refresh-cw',
+		'cart'            => 'shopping-cart',
+		'chart'           => 'chart-no-axes-combined',
+		'email'           => 'mail',
+		'bolt'            => 'zap',
+		'money'           => 'banknote',
+		'forms'           => 'list-checks',
+		'feedback'        => 'messages-square',
+		'translation'     => 'languages',
+		'id'              => 'contact-round',
+		'location'        => 'map-pin',
+		'gallery'         => 'images',
+		'app'             => 'layout-dashboard',
+		'sliders'         => 'sliders-horizontal',
+		'edit'            => 'square-pen',
+		'page'            => 'file',
+		'external'        => 'external-link',
+		'post'            => 'newspaper',
+		'comment'         => 'message-square',
+		'alert'           => 'triangle-alert',
+		'appearance'      => 'palette',
+		'tools'           => 'wrench',
+	);
+
 	/** Shared menu/toolbar input contract, including canonicalized safe SVG masks. */
 	public static function sanitize_icon( $icon ) {
+		static $cache = array();
 		if ( ! is_string( $icon ) || strlen( $icon ) > 16384 ) { return ''; }
 		$icon = trim( $icon );
 		if ( 'wp-default' === $icon || self::has( $icon ) || in_array( $icon, self::WP_DASHICONS, true ) ) { return $icon; }
+		if ( isset( $cache[ $icon ] ) ) { return $cache[ $icon ]; }
 		$svg = $icon;
 		if ( preg_match( '~^data:image/svg\+xml(?:;charset=utf-8)?(;base64)?,(.*)$~is', $icon, $matches ) ) {
 			$svg = ! empty( $matches[1] ) ? base64_decode( $matches[2], true ) : rawurldecode( $matches[2] );
 		}
 		$svg = self::validated_svg( $svg );
-		if ( '' === $svg ) { return ''; }
-		$uri = 'data:image/svg+xml,' . rawurlencode( $svg );
-		return strlen( $uri ) <= 16384 ? $uri : '';
+		$out = '';
+		if ( '' !== $svg ) {
+			$uri = 'data:image/svg+xml,' . rawurlencode( $svg );
+			$out = strlen( $uri ) <= 16384 ? $uri : '';
+		}
+		if ( count( $cache ) < 256 ) {
+			$cache[ $icon ] = $out;
+		}
+		return $out;
 	}
 
 	/** Revalidate legacy stored values too; raw data URIs never reach inline CSS. */
@@ -101,54 +144,25 @@ class AdminKit_Icons {
 		foreach ( self::names() as $name ) { $out[ $name ] = self::display_svg( $name ); }
 		return $out;
 	}
+	/** Return display SVGs only for the requested icon names (plus `'app'` fallback). */
+	public static function subset( array $names ) {
+		$out   = array();
+		$names = array_unique( array_merge( array( 'app' ), $names ) );
+		foreach ( $names as $name ) {
+			if ( is_string( $name ) && '' !== $name && self::has( $name ) ) {
+				$out[ $name ] = self::display_svg( $name );
+			}
+		}
+		return $out;
+	}
 	public static function mask( $svg ) {
 		$uri = 'url("data:image/svg+xml,' . rawurlencode( $svg ) . '")';
 		return 'background-color:currentColor;-webkit-mask:' . $uri . ' center/20px 20px no-repeat;mask:' . $uri . ' center/20px 20px no-repeat;';
 	}
 	private static function paths() {
-		static $paths = null;
-		if ( null !== $paths ) { return $paths; }
-		$catalog = json_decode( (string) file_get_contents( ADMINKIT_PATH . 'assets/icons/lucide.json' ), true );
-		if ( ! is_array( $catalog ) ) { $paths = array(); return $paths; }
-		$aliases = array(
-			'home' => 'house',
-			'pencil-square' => 'square-pen',
-			'document-pencil' => 'file-pen-line',
-			'article' => 'newspaper',
-			'photo' => 'image',
-			'document' => 'file-text',
-			'chat' => 'message-square',
-			'plugin' => 'plug',
-			'cog' => 'settings',
-			'swatch' => 'swatch-book',
-			'update' => 'refresh-cw',
-			'cart' => 'shopping-cart',
-			'chart' => 'chart-no-axes-combined',
-			'email' => 'mail',
-			'bolt' => 'zap',
-			'money' => 'banknote',
-			'forms' => 'list-checks',
-			'feedback' => 'messages-square',
-			'translation' => 'languages',
-			'id' => 'contact-round',
-			'location' => 'map-pin',
-			'gallery' => 'images',
-			'app' => 'layout-dashboard',
-			'sliders' => 'sliders-horizontal',
-			'edit' => 'square-pen',
-			'page' => 'file',
-			'external' => 'external-link',
-			'post' => 'newspaper',
-			'comment' => 'message-square',
-			'alert' => 'triangle-alert',
-			'appearance' => 'palette',
-			'tools' => 'wrench',
-		);
-		$paths = array();
-		foreach ( $aliases as $role => $name ) {
-			if ( isset( $catalog[ $name ] ) ) { $paths[ $role ] = $catalog[ $name ]; }
+		if ( ! class_exists( 'AdminKit_Lucide_Paths', false ) ) {
+			require_once ADMINKIT_PATH . 'inc/generated/lucide-paths.php';
 		}
-		$paths += $catalog;
-		return $paths;
+		return AdminKit_Lucide_Paths::MAP;
 	}
 }

@@ -12,9 +12,10 @@
 		var markDirty = context.markDirty;
 		var setStatus = context.setStatus;
 		var updateBar = context.updateBar;
-		var buildDesign = window.AdminKitParts.design(context);
-		var buildFeatures = window.AdminKitParts.features(context);
-		var navPart = window.AdminKitParts.navigation ? window.AdminKitParts.navigation(context) : null;
+		var emptyPanel = function () { return el('section', { class: 'ak-panel', role: 'tabpanel' }); };
+		var buildDesign = window.AdminKitParts && window.AdminKitParts.design ? window.AdminKitParts.design(context) : emptyPanel;
+		var buildFeatures = window.AdminKitParts && window.AdminKitParts.features ? window.AdminKitParts.features(context) : emptyPanel;
+		var navPart = window.AdminKitParts && window.AdminKitParts.navigation ? window.AdminKitParts.navigation(context) : null;
 		var ICONS = {
 			brand:
 				'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="10.5" r=".9" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".9" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12.5" r=".9" fill="currentColor" stroke="none"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>',
@@ -177,7 +178,7 @@
 				link.appendChild(el('span', { class: 'ak-overview-count', text: group.features.filter(isActive).length + ' / ' + group.features.length })); categories.appendChild(link);
 			});
 			overviewPanel.appendChild(categories);
-			overviewPanel.appendChild(el('div', { class: 'ak-overview-links' }, [pageLink('brand', I.pageDesignAction), navPart ? pageLink('navigation', I.navigation) : null]));
+			overviewPanel.appendChild(el('div', { class: 'ak-overview-links' }, [pageLink('brand', I.pageDesignAction), (navPart || (D.pages && D.pages.navigation)) ? pageLink('navigation', I.navigation) : null]));
 		}
 		function buildConfiguration() {
 			var panel = el('section', { class: 'ak-panel ak-configuration', role: 'tabpanel' }, [el('h2', { class: 'ak-panel-title', text: I.pageConfiguration }), intro(I.pageSettingsIntro)]);
@@ -197,8 +198,8 @@
 			{ id: 'brand', label: I.designSystem, icon: ICONS.brand, build: buildDesign },
 			{ id: 'features', label: I.features, icon: ICONS.plugins, build: buildFeatures }
 		];
-		if (navPart) {
-			mainTabs.push({ id: 'navigation', label: I.navigation || I.menu, icon: ICONS.menu, build: navPart.buildNavigation });
+		if (navPart || (D.pages && D.pages.navigation)) {
+			mainTabs.push({ id: 'navigation', label: I.navigation || I.menu, icon: ICONS.menu, build: navPart ? navPart.buildNavigation : emptyPanel });
 		}
 
 		mainTabs.push({ id: 'configuration', label: I.pageConfiguration, icon: ICONS.toolbar, build: buildConfiguration });

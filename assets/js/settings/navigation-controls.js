@@ -8,7 +8,57 @@
 		var el = context.el;
 		var markDirty = context.markDirty;
 		var MM = D.menuManager || { icons: {} };
+		MM.icons = MM.icons || {};
 		var dragState = null, openPicker = null;
+		var catalogLoaded = !MM.iconsUrl;
+		var catalogPromise = null;
+
+		function svgFromPath(inner) {
+			return (
+				'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+				inner +
+				'</svg>'
+			);
+		}
+
+		function ensureIconCatalog() {
+			if (catalogLoaded || !MM.iconsUrl || typeof window.fetch !== 'function') {
+				catalogLoaded = true;
+				return Promise.resolve(MM.icons);
+			}
+			if (catalogPromise) {
+				return catalogPromise;
+			}
+			catalogPromise = window
+				.fetch(MM.iconsUrl, { credentials: 'same-origin', cache: 'force-cache' })
+				.then(function (res) {
+					return res && res.ok ? res.json() : null;
+				})
+				.then(function (raw) {
+					if (raw && typeof raw === 'object') {
+						var aliases = MM.iconAliases || {};
+						Object.keys(aliases).forEach(function (role) {
+							var target = aliases[role];
+							if (typeof raw[target] === 'string' && !MM.icons[role]) {
+								MM.icons[role] = svgFromPath(raw[target]);
+							}
+						});
+						Object.keys(raw).forEach(function (name) {
+							if (typeof raw[name] === 'string' && !MM.icons[name]) {
+								MM.icons[name] = svgFromPath(raw[name]);
+							}
+						});
+						catalogLoaded = true;
+					}
+					catalogPromise = null;
+					return MM.icons;
+				})
+				.catch(function () {
+					catalogPromise = null;
+					return MM.icons;
+				});
+			return catalogPromise;
+		}
 
 		function snapshotFlip(container) {
 			var map = {};
@@ -209,7 +259,7 @@
 				shown = Math.min(shown + 120, filtered.length);
 				paint();
 			}
-			search.addEventListener('input', function () {
+			function applyIconFilter() {
 				var words = { calendrier: 'calendar', fleche: 'arrow', gauche: 'left', droite: 'right', haut: 'up', bas: 'down', reglage: 'settings', reglages: 'settings', parametres: 'settings', image: 'image', photo: 'image', dossier: 'folder', fichier: 'file', message: 'message', utilisateur: 'user', recherche: 'search', maison: 'house', panier: 'cart', courriel: 'mail', horloge: 'clock', alerte: 'alert' };
 				var q = search.value.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/\s+/).map(function (word) { return words[word] || word; }).join('-');
 				filtered = names.filter(function (name) { return name.indexOf(q) !== -1; });
@@ -218,11 +268,21 @@
 				empty.textContent = filtered.length ? '' : I.menuIconEmpty;
 				shown = 0;
 				appendIcons();
-			});
+			}
+			search.addEventListener('input', applyIconFilter);
 			pop.addEventListener('scroll', function () {
 				if (akPane.style.display !== 'none' && pop.scrollTop + pop.clientHeight >= pop.scrollHeight - 120 && shown < filtered.length) appendIcons();
 			});
 			appendIcons();
+			if (!catalogLoaded) {
+				ensureIconCatalog().then(function () {
+					if (openPicker !== pop) {
+						return;
+					}
+					names = Object.keys(MM.icons || {});
+					applyIconFilter();
+				});
+			}
 			akPane.appendChild(grid);
 			pop.appendChild(akPane);
 

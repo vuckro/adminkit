@@ -90,6 +90,13 @@ class AdminKit_Theme_Toggle {
 	 * @return void
 	 */
 	public static function print_script() {
+		$action = function_exists( 'current_action' ) ? current_action() : '';
+		if ( 'wp_head' === $action && ( ! is_admin_bar_showing() || ! apply_filters( 'adminkit/should_load', true, 'frontend' ) ) ) {
+			return;
+		}
+		if ( 'login_head' === $action && ( ! AdminKit_Settings::get( 'module_login_enabled' ) || ! apply_filters( 'adminkit/should_load', true, 'login' ) ) ) {
+			return;
+		}
 		$accent = AdminKit_Settings::accent_source();
 		if ( 'custom' === $accent && ! sanitize_hex_color( (string) AdminKit_Settings::get( 'brand_accent' ) ) ) {
 			$accent = 'monochrome';

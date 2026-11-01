@@ -88,14 +88,10 @@ class AdminKit_Core_Chrome {
 			) );
 		}
 
-		// --- wp-screens/ (always-loaded broad-usage files; legacy section 'pages') ---
-		// wp-components / wpds / font-library are used across many screens
-		// (Gutenberg, site editor, customizer, options-connectors, font-library).
-		// media.css styles the Media modal (Featured image, Site Icon, …), which
-		// opens on almost any screen, plus upload.php chrome (self-scoped via the
-		// .upload-php body class). Loading these broadly is cheaper — and, for the
-		// modal, more correct — than enumerating every screen.
-		foreach ( array( 'wp-components', 'wpds', 'font-library', 'media' ) as $broad ) {
+		// --- wp-screens/ (broad-usage & WPDS/Font Library conditional files; section 'pages') ---
+		// media.css styles the Media modal (Featured image, Site Icon, …), which can
+		// open on almost any screen, plus upload.php chrome (self-scoped via .upload-php).
+		foreach ( array( 'wp-components', 'media' ) as $broad ) {
 			AdminKit_Assets::register( array(
 				'handle'  => 'adminkit-' . $broad,
 				'src'     => self::ASSETS_BASE . 'wp-screens/' . $broad . '.css',
@@ -104,6 +100,38 @@ class AdminKit_Core_Chrome {
 				'section' => 'pages',
 			) );
 		}
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-wpds',
+			'src'       => self::ASSETS_BASE . 'wp-screens/wpds.css',
+			'deps'      => $tokens,
+			'context'   => 'admin',
+			'section'   => 'pages',
+			'condition' => static function ( $screen ) {
+				if ( function_exists( 'wp_style_is' ) && ( wp_style_is( 'wp-components', 'enqueued' ) || wp_style_is( 'wp-edit-site', 'enqueued' ) ) ) {
+					return true;
+				}
+				if ( ! $screen ) {
+					return false;
+				}
+				if ( method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor() ) {
+					return true;
+				}
+				return in_array( $screen->id, array( 'site-editor', 'widgets', 'options-connectors', 'appearance_page_font-library', 'edit-wp_block', 'edit-wp_template', 'edit-wp_template_part', 'edit-wp_navigation' ), true );
+			},
+		) );
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-font-library',
+			'src'       => self::ASSETS_BASE . 'wp-screens/font-library.css',
+			'deps'      => $tokens,
+			'context'   => 'admin',
+			'section'   => 'pages',
+			'condition' => static function ( $screen ) {
+				if ( function_exists( 'wp_style_is' ) && wp_style_is( 'wp-edit-site', 'enqueued' ) ) {
+					return true;
+				}
+				return $screen && ( 'site-editor' === $screen->id || 'appearance_page_font-library' === $screen->id || 0 === strpos( (string) $screen->id, 'appearance_page_font' ) );
+			},
+		) );
 
 		// --- Customizer (wp-admin/customize.php) ---
 		// Its own context: customize.php skips admin_enqueue_scripts, so this rides

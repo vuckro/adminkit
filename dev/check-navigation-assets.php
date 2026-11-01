@@ -34,3 +34,13 @@ check(count($native_pages)===5,'Expected five native AdminKit content pages');
 foreach($native_pages as$page){check($page[0]==='adminkit'&&$page[1]==='manage_options'&&$page[2]===array('AdminKit_Settings_Page','render_page'),'Native page lost parent, capability or shared host');}
 $hooks=new ReflectionProperty('AdminKit_Settings_Page','page_tabs');$hooks->setAccessible(true);$registered=$hooks->getValue();
 check($registered['adminkit_page_adminkit-navigation']==='navigation'&&$registered['adminkit_page_adminkit-configuration']==='configuration','Native hooks do not route to their own page');
+
+// Native 5-page mode slices script enqueues per active page while keeping full graph when pages === null.
+$pages_map=array('overview'=>'#','features'=>'#','brand'=>'#','navigation'=>'#','configuration'=>'#');
+$scripts=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>'main','pages'=>$pages_map,'initialTab'=>'overview'));
+check(!isset($scripts['adminkit-settings-navigation-controls'])&&!isset($scripts['adminkit-settings-main-design'])&&!isset($scripts['adminkit-settings-main-features'])&&isset($scripts['adminkit-settings-main'])&&isset($scripts['adminkit-settings']),'Overview page enqueued unused tab factories');
+$scripts=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>'main','pages'=>$pages_map,'initialTab'=>'brand'));
+check(isset($scripts['adminkit-settings-main-design'])&&isset($scripts['adminkit-settings-main-plugins'])&&!isset($scripts['adminkit-settings-navigation-controls']),'Design page did not slice factories cleanly');
+$scripts=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>'main','pages'=>$pages_map,'initialTab'=>'navigation'));
+check(isset($scripts['adminkit-settings-navigation-controls'])&&isset($scripts['adminkit-settings-main-navigation'])&&!isset($scripts['adminkit-settings-main-design']),'Navigation page did not load navigation factories cleanly');
+echo "OK: native 5-page mode slices per-tab script factories cleanly.\n";
