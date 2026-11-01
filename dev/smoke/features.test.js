@@ -67,5 +67,15 @@ assert.match(sub[0].getAttribute('aria-describedby'),/-pending/,'pending status 
 build.acknowledge({footer_option:false});
 assert.equal(parentPanel.querySelector('.ak-feature-pending').hidden,true,'saving the newer edit clears pending');
 assert.ok(!sub[0].getAttribute('aria-describedby').includes('-pending'),'saved controls never announce hidden pending text');
+// An inactive editor must offer activation instead of linking to its unavailable workspace.
+const navigationState = { features: { menu_manager_enabled:false, toolbar_manager_enabled:true } };
+const navigationBuild = w.AdminKitParts.features({D:{pages:{navigation:'/wp-admin/admin.php?page=adminkit-navigation'},features:[
+ {key:'menu_manager_enabled',label:'Menu manager',value:false,group:'Navigation'},
+ {key:'toolbar_manager_enabled',label:'Toolbar manager',value:true,group:'Navigation'}
+]},I,state:navigationState,el,intro:text=>el('p',{text}),markDirty:()=>dirty++});
+const navigationPanel = navigationBuild();d.body.append(navigationPanel);
+navigationPanel.querySelector('.ak-features-item').click();
+assert.equal(navigationPanel.querySelector('dialog').hidden,false,'inactive editor opens its activation details even when the other editor is enabled');
+assert.equal(navigationPanel.querySelector('.ak-features-state input').checked,false,'opening details preserves the disabled setting');
 assert.ok(dirty>0); console.log('OK: real feature discovery preserves drafts, bulk/dependency policy, filters and mobile keyboard focus.');
 dom.window.close();

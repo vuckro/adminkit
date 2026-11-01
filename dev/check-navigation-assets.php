@@ -28,6 +28,8 @@ echo "OK: main/menu/toolbar asset graphs resolve factories before host, with cac
 
 // Native WordPress submenu entries are content pages, with the existing capability.
 $native_pages=array();
+class AdminKit_Menu_Manager { public static $enabled=true; public static function is_enabled(){return self::$enabled;} }
+class AdminKit_Toolbar_Manager { public static $enabled=true; public static function is_enabled(){return self::$enabled;} }
 function __($text,$domain){return $text;}
 function add_menu_page($title,$label,$capability,$slug,$callback,$icon,$position){return 'toplevel_page_'.$slug;}
 function add_submenu_page($parent,$title,$label,$capability,$slug,$callback){global $native_pages;$native_pages[$slug]=array($parent,$capability,$callback);return $parent.'_page_'.$slug;}
@@ -36,6 +38,15 @@ check(count($native_pages)===5,'Expected five native AdminKit content pages');
 foreach($native_pages as$page){check($page[0]==='adminkit'&&$page[1]==='manage_options'&&$page[2]===array('AdminKit_Settings_Page','render_page'),'Native page lost parent, capability or shared host');}
 $hooks=new ReflectionProperty('AdminKit_Settings_Page','page_tabs');$hooks->setAccessible(true);$registered=$hooks->getValue();
 check($registered['adminkit_page_adminkit-navigation']==='navigation'&&$registered['adminkit_page_adminkit-configuration']==='configuration','Native hooks do not route to their own page');
+foreach(array(array(false,false),array(true,false),array(false,true),array(true,true))as$enabled){
+ AdminKit_Menu_Manager::$enabled=$enabled[0];AdminKit_Toolbar_Manager::$enabled=$enabled[1];
+ $native_pages=array();$hooks->setValue(null,array());AdminKit_Settings_Page::add_submenu();
+ $expected=$enabled[0]||$enabled[1];
+ check(isset($native_pages['adminkit-navigation'])===$expected,'Navigation page visibility ignores enabled editors');
+ check(count($native_pages)===($expected?5:4),'Navigation gate affects unrelated settings pages');
+ $registered=$hooks->getValue();
+ check(isset($registered['adminkit_page_adminkit-navigation'])===$expected,'Disabled navigation retains a registered page hook');
+}
 
 // Native 5-page mode slices script enqueues per active page while keeping full graph when pages === null.
 $pages_map=array('overview'=>'#','features'=>'#','brand'=>'#','navigation'=>'#','configuration'=>'#');

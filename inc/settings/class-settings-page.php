@@ -79,10 +79,22 @@ class AdminKit_Settings_Page {
 			'adminkit-configuration' => array( 'configuration', __( 'Configuration', 'adminkit' ) ),
 		);
 		foreach ( $pages as $slug => $page ) {
+			if ( 'navigation' === $page[0] && ! self::navigation_enabled() ) {
+				continue;
+			}
 			$hook = add_submenu_page( self::SLUG, $page[1] . ' — AdminKit', $page[1], 'manage_options', $slug, array( __CLASS__, 'render_page' ) );
 			self::$page_tabs[ $hook ] = $page[0];
 		}
 
+	}
+
+	/**
+	 * Whether at least one navigation editor is available.
+	 *
+	 * @return bool
+	 */
+	private static function navigation_enabled() {
+		return AdminKit_Menu_Manager::is_enabled() || AdminKit_Toolbar_Manager::is_enabled();
 	}
 
 	/**
@@ -157,6 +169,9 @@ class AdminKit_Settings_Page {
 		$data['pageTitle'] = $titles[ $initial_tab ];
 		$data['pages'] = array();
 		foreach ( array( 'overview' => 'adminkit', 'features' => 'adminkit-features', 'brand' => 'adminkit-design', 'navigation' => 'adminkit-navigation', 'configuration' => 'adminkit-configuration' ) as $tab => $slug ) {
+			if ( 'navigation' === $tab && ! self::navigation_enabled() ) {
+				continue;
+			}
 			$data['pages'][ $tab ] = admin_url( 'admin.php?page=' . $slug );
 		}
 		self::enqueue_app( $data );

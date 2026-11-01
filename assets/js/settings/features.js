@@ -70,7 +70,7 @@
 			function active(f) { return f.available !== false && !!state.features[f.key] && (!f.parent || !!state.features[f.parent]); }
 			function locked(f) { return f.available === false || !!(f.parent && !state.features[f.parent]); }
 			function select(key) {
-				if (D.pages && D.pages.navigation && (key === 'menu_manager_enabled' || key === 'toolbar_manager_enabled')) {
+				if (D.pages && D.pages.navigation && state.features[key] && (key === 'menu_manager_enabled' || key === 'toolbar_manager_enabled')) {
 					window.location.href = D.pages.navigation + (key === 'toolbar_manager_enabled' ? '#toolbar' : '#menu'); return;
 				}
 				selected = key; returnFocus = refs[key].button; details.setAttribute('aria-labelledby', refs[key].heading.id); details.hidden = false; refresh();
