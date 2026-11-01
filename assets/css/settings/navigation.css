@@ -99,14 +99,14 @@
 	width: 30px;
 	height: 30px;
 	padding: 0;
-	border: var(--ak-border-width) solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-btn-border, var(--ak-border));
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-text);
 	cursor: pointer;
 	flex: 0 0 auto;
 }
-.adminkit-app .ak-menu-icon:hover { border-color: var(--ak-primary); }
+.adminkit-app .ak-menu-icon:hover { border-color: var(--ak-btn-hover-border); background: var(--ak-btn-hover-bg); }
 .adminkit-app .ak-menu-icon__g { display: inline-flex; width: 18px; height: 18px; }
 .adminkit-app .ak-menu-icon__g svg { width: 18px; height: 18px; }
 .adminkit-app .ak-menu-icon .dashicons {
@@ -122,14 +122,14 @@
 	width: 30px;
 	height: 30px;
 	padding: 0;
-	border: var(--ak-border-width) solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-btn-border, var(--ak-border));
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-muted);
 	cursor: pointer;
 	flex: 0 0 auto;
 }
-.adminkit-app .ak-menu-hide:hover { border-color: var(--ak-primary); color: var(--ak-text); }
+.adminkit-app .ak-menu-hide:hover { border-color: var(--ak-btn-hover-border); background: var(--ak-btn-hover-bg); color: var(--ak-text); }
 .adminkit-app .ak-menu-hide svg { width: 16px; height: 16px; }
 .adminkit-app .ak-menu-hide[aria-pressed="true"] {
 	color: var(--ak-text);
@@ -236,9 +236,9 @@
 	color: var(--ak-text);
 	cursor: pointer;
 }
-.adminkit-app .ak-icon-pop__sw:hover { border-color: var(--ak-primary); }
+.adminkit-app .ak-icon-pop__sw:hover { border-color: var(--ak-btn-hover-border); background: var(--ak-hover-bg); }
 .adminkit-app .ak-icon-pop__sw.on {
-	border-color: var(--ak-primary);
+	border-color: var(--ak-border-strong);
 	background: var(--ak-primary-subtle);
 }
 .adminkit-app .ak-icon-pop__sw svg { width: 18px; height: 18px; }
@@ -298,15 +298,15 @@
 	width: 30px;
 	height: 30px;
 	padding: 0;
-	border: var(--ak-border-width) solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-btn-border, var(--ak-border));
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-muted);
 	cursor: pointer;
 	flex: 0 0 auto;
 }
-.adminkit-app .ak-menu-url:hover { border-color: var(--ak-primary); color: var(--ak-text); }
-.adminkit-app .ak-menu-url.on { border-color: var(--ak-primary); color: var(--ak-primary-text); background: var(--ak-primary-subtle); }
+.adminkit-app .ak-menu-url:hover { border-color: var(--ak-btn-hover-border); background: var(--ak-btn-hover-bg); color: var(--ak-text); }
+.adminkit-app .ak-menu-url.on { border-color: var(--ak-border-strong); color: var(--ak-primary-text); background: var(--ak-primary-subtle); }
 .adminkit-app .ak-menu-url svg { width: 15px; height: 15px; }
 .adminkit-app .ak-url-pop { width: 300px; }
 .adminkit-app .ak-url-pop__current {
@@ -336,15 +336,15 @@
 	width: 30px;
 	height: 30px;
 	padding: 0;
-	border: var(--ak-border-width) solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-btn-border, var(--ak-border));
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-surface);
 	color: var(--ak-muted);
 	cursor: pointer;
 	flex: 0 0 auto;
 }
-.adminkit-app .ak-menu-newtab:hover { border-color: var(--ak-primary); color: var(--ak-text); }
-.adminkit-app .ak-menu-newtab.on { border-color: var(--ak-primary); color: var(--ak-primary-text); background: var(--ak-primary-subtle); }
+.adminkit-app .ak-menu-newtab:hover { border-color: var(--ak-btn-hover-border); background: var(--ak-btn-hover-bg); color: var(--ak-text); }
+.adminkit-app .ak-menu-newtab.on { border-color: var(--ak-border-strong); color: var(--ak-primary-text); background: var(--ak-primary-subtle); }
 .adminkit-app .ak-menu-newtab svg { width: 14px; height: 14px; }
 .adminkit-app .ak-menu-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: calc(10px * var(--ak-space-scale, 1)); margin: calc(4px * var(--ak-space-scale, 1)) 0 calc(22px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-menu-toolbar__seg { margin-inline-start: 0; }

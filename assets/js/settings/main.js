@@ -181,7 +181,6 @@
 				link.appendChild(el('span', { class: 'ak-overview-count', text: group.features.filter(isActive).length + ' / ' + group.features.length })); categories.appendChild(link);
 			});
 			overviewPanel.appendChild(categories);
-			overviewPanel.appendChild(el('div', { class: 'ak-overview-links' }, [pageLink('brand', I.pageDesignAction), (navPart || (D.pages && D.pages.navigation)) ? pageLink('navigation', I.navigation) : null]));
 		}
 		function buildConfiguration() {
 			var panel = el('section', { class: 'ak-panel ak-configuration', role: 'tabpanel' }, [el('h2', { class: 'ak-panel-title', text: I.pageConfiguration }), intro(I.pageSettingsIntro)]);

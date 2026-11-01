@@ -194,10 +194,10 @@
  --ak-surface: var(--wk-surface);
  --ak-input-bg: var(--wk-bg);
  --ak-btn-bg: var(--wk-surface);
- --ak-btn-border: color-mix(in srgb, var(--wk-border) 78%, transparent);
+ --ak-btn-border: color-mix(in srgb, var(--wk-border) 72%, transparent);
  --ak-btn-text: color-mix(in srgb, var(--wk-text) 80%, var(--wk-text-muted));
  --ak-btn-hover-bg: color-mix(in srgb, var(--wk-text) 2.5%, var(--wk-surface));
- --ak-btn-hover-border: color-mix(in srgb, var(--wk-border) 90%, var(--wk-text));
+ --ak-btn-hover-border: var(--wk-border);
  --ak-text: var(--wk-text);
  --ak-heading: var(--wk-text);
  --ak-text-muted: var(--wk-text-muted);
@@ -225,7 +225,7 @@
 .adminkit-app .ak-design-preview__head h3 { margin: 0; color: var(--ak-heading); font-size: var(--ak-text-m); line-height: 1.4; }
 .adminkit-app .ak-design-preview__themes { display: flex; gap: 4px; }
 .adminkit-app .ak-design-preview__themes .ak-btn { min-height: 44px; }
-.adminkit-app .ak-design-preview__themes .ak-btn[aria-pressed="true"] { color: var(--ak-primary-text); background: var(--ak-primary-subtle); border-color: var(--ak-primary); }
+.adminkit-app .ak-design-preview__themes .ak-btn[aria-pressed="true"] { color: var(--ak-heading); background: var(--ak-surface-muted); border-color: var(--ak-btn-hover-border, var(--ak-border)); font-weight: 600; }
 .adminkit-app .ak-shape-preview { padding: 0; background: transparent; color: var(--wk-text); min-width: 0; }
 .adminkit-app .ak-shape-preview h4 { color: var(--wk-text); margin: 0 0 20px; font-size: var(--ak-text-m); }
 .adminkit-app :is(.ak-shape-card, .ak-shape-table) { background: var(--wk-surface); border: var(--ak-border-width) solid var(--ak-card-border); box-shadow: var(--ak-shape-shadow); overflow: hidden; }
@@ -248,10 +248,10 @@
  --ak-on-accent-hover: var(--wk-on-accent);
  --ak-border: var(--wk-border);
  --ak-btn-bg: var(--wk-surface);
- --ak-btn-border: color-mix(in srgb, var(--wk-border) 78%, transparent);
+ --ak-btn-border: color-mix(in srgb, var(--wk-border) 72%, transparent);
  --ak-btn-text: color-mix(in srgb, var(--wk-text) 80%, var(--wk-text-muted));
  --ak-btn-hover-bg: color-mix(in srgb, var(--wk-text) 2.5%, var(--wk-surface));
- --ak-btn-hover-border: color-mix(in srgb, var(--wk-border) 90%, var(--wk-text));
+ --ak-btn-hover-border: var(--wk-border);
  --ak-input-bg: var(--wk-surface);
  --ak-surface-muted: var(--wk-surface-sunken);
  --ak-text-muted: var(--wk-text-muted);

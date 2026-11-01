@@ -18,7 +18,6 @@ body.adminkit a {
    admin menu, help tabs — win naturally. */
 body.adminkit a:hover,
 body.adminkit a:focus {
-	border-color: var(--ak-primary);
 	color: var(--ak-primary-text);
 	text-decoration: none;
 }

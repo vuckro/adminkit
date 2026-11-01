@@ -130,11 +130,28 @@ body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header__settings {
 body.adminkit:is(.block-editor-page, .widgets-php) .editor-header .components-button:not(.is-primary),
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header .components-button:not(.is-primary) {
 	color: var(--ak-text);
+	border-radius: var(--ak-radius-s);
 }
 body.adminkit:is(.block-editor-page, .widgets-php) .editor-header .components-button:not(.is-primary):hover:not(:disabled),
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header .components-button:not(.is-primary):hover:not(:disabled) {
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
+}
+body.adminkit:is(.block-editor-page, .widgets-php) .components-button:focus:not(:focus-visible) {
+	outline: none;
+	box-shadow: none;
+}
+body.adminkit:is(.block-editor-page, .widgets-php) .editor-header .components-button:not(.is-primary, .is-secondary):focus-visible,
+body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header .components-button:not(.is-primary, .is-secondary):focus-visible {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
+	box-shadow: none;
+}
+body.adminkit:is(.block-editor-page, .widgets-php) :is(.interface-interface-skeleton__header, .interface-interface-skeleton__sidebar, .interface-interface-skeleton__secondary-sidebar, .components-popover, .components-modal__screen-overlay),
+body.adminkit:is(.block-editor-page, .widgets-php) [data-wpds-corner-radius]:not([class~="editor-styles-wrapper"] *) {
+	--wpds-color-stroke-focus: var(--ak-focus);
+	--wp-components-color-accent: var(--ak-primary);
+	--wp-admin-theme-color: var(--ak-primary);
 }
 
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-sidebar,
