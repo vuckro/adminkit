@@ -24,7 +24,7 @@ storage and caches. Back up before replacing or deleting an installed copy.
 
 ## Develop on the active checkout
 
-The current local target is `reprise/base-main-locale` and `localhost:10013`.
+The current local target is `main` and `http://localhost:10013` (`/Users/vucko/Local Sites/adminkit/app/public`).
 Remote sites and release branches are separate targets. A symlink from
 `wp-content/plugins/adminkit` to this checkout makes edits live immediately;
 otherwise package the working tree explicitly. Cache busting uses filemtime.
@@ -37,17 +37,20 @@ npm ci --prefix dev/smoke
 php dev/test-all.php
 ```
 
-The command runs PHP/JS syntax, token drift, every `dev/check*.php`, the editor
-regression, CSS/adapter budgets and all three jsdom suites. Registry checks verify
-boot callables and runtime files, plus both HEAD and working-tree dry-runs.
-It fails if a test/dependency is unavailable; it does not silently skip a gate.
-The GitHub workflow runs this same command on PHP 7.4/8.2 and Node 24.
+The command runs PHP/JS syntax, token drift, every `dev/check*.php` (23 suites
+including compliance/GDPR/security), the editor regression, CSS/adapter budgets,
+all 11 jsdom suites, and static analysis (WPCS, PHPStan level 5, ESLint, Stylelint).
+Registry checks verify boot callables and runtime files, plus both HEAD and
+working-tree dry-runs. It fails if a test/dependency is unavailable; it does not
+silently skip a gate. The GitHub workflow (`.github/workflows/ci.yml`) runs this
+same command across PHP 7.4–8.4 and WordPress 6.0 / latest.
 
 Host-dependent and browser checks remain additional:
 
 ```sh
-php dev/adapter-drift.php
-AK_URL=http://localhost:10013 npm test --prefix dev/smoke
+php dev/adapter-drift.php --wp-core --host="/Users/vucko/Local Sites/adminkit/app/public"
+php dev/adapter-drift.php --host="/Users/vucko/Local Sites/adminkit/app/public"
+AK_URL=http://localhost:10013 npm run test:e2e --prefix dev/smoke
 ```
 
 Authenticated smoke tests need `AK_USER` and `AK_PASS` in the environment; do not

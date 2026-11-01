@@ -16,7 +16,7 @@ callables execute in registry order. Helpers have null boot values. Files under
 and `inc/generated/lucide-paths.php`. The module/package check verifies that
 relationship and every boot callable.
 
-- `inc/settings/`: schema, catalogs, `AdminKit_Settings_I18n`, permission/loading gates and workspace host.
+- `inc/settings/`: schema, catalogs, `AdminKit_Settings_I18n`, memoized permission/loading gates and workspace host.
 - `inc/wp-core/`: existing WordPress surfaces and optional native workflow tools.
 - `inc/features/`: Menu (`Manager` + `Config`/`Snapshot`/`Renderer`/`Store`), Toolbar (`Manager` + `Config`/`Snapshot`/`Renderer`) and the notification drawer.
 - `inc/integrations/{plugins,themes}/{slug}/`: auto-discovered host adapters (memoized manifest, `AdminKit_FunnelKit_Integration` trait, shared `assets/css/vendor/element-plus.css`).
@@ -139,18 +139,21 @@ WordPress Playground), rolling back failed deletes/inserts while preserving rows
 whose slugs are invisible to non-Super-Admin editors on Multisite. Existing MyISAM
 or MEMORY tables are refused before deletion rather than silently converted.
 
-Menu PHP mirrors the four-owner Toolbar split under `inc/features/menu/`:
+Menu PHP mirrors the five-owner split under `inc/features/menu/`:
 
 - `AdminKit_Menu_Manager`: stable public facade, setting gate, WordPress hook
   callbacks/priorities, capabilities and REST response envelopes.
-- `AdminKit_Menu_Config`: item normalization, strict custom-link URL validation and
-  `seen_order` persistence.
+- `AdminKit_Menu_Config`: item normalization, strict custom-link URL validation
+  (rejecting quotes, angle brackets and control characters), composite `parent::slug`
+  keys and `seen_order` computation.
 - `AdminKit_Menu_Snapshot`: pristine native `$menu`/`$submenu` capture across all
   five AdminKit submenu screens for the Navigation editor.
-- `AdminKit_Menu_Renderer`: composite-key layout application, badge preservation,
-  cross-parent `$_parent_pages`/`$_registered_pages` hook remapping (falling back to
-  the original parent when a target parent is inaccessible for the current role),
-  and icon/folded-tooltip output.
+- `AdminKit_Menu_Renderer`: composite-key layout application, counter/update badge
+  preservation, cross-parent `$_parent_pages`/`$_registered_pages` hook remapping
+  (falling back to the original parent when a target parent is inaccessible for the
+  current role), and icon/folded-tooltip output.
+- `AdminKit_Menu_Store`: InnoDB and SQLite (`WP_SQLite_DB`) transactional persistence
+  and Multisite protection for invisible role-restricted rows.
 
 Toolbar PHP has four owners under `inc/features/toolbar/`:
 
@@ -222,14 +225,21 @@ session tokens, dashboard preferences and other plugins' namespaces are preserve
 All UI copy is localized in PHP and sent to JavaScript through explicit bootstraps;
 JS does not maintain separate English fallback sentences. Proper product/font
 names and technical color examples are explicit checker exceptions.
-`php dev/i18n.php --write` extracts current messages with gettext, preserves French
-translations, removes dead entries and generates POT, PO, MO (`msgfmt`) and PHP
-catalogs. `--check` verifies all four without editing the worktree.
+`php dev/i18n.php --write` filters PHP tokens so only `'adminkit'`-domain gettext
+calls are extracted, preserves `/* translators: */` comments, supports `_n()`
+plurals and `_x()` contexts, removes dead entries and generates POT, PO, MO
+(`msgfmt`) and PHP catalogs. `--check` verifies all four without editing the
+worktree, and `dev/check-i18n.php` enforces French typographic apostrophes (`’`)
+and non-breaking spaces (`\u{00A0}`) before `: ; ? !` and inside `« … »`.
 
-Run `npm ci --prefix dev/smoke` once, then `php dev/test-all.php`. The offline gate
-covers PHP/JS syntax, generated tokens, all `dev/check*.php`, editor gating, CSS
-contracts, adapter budgets, jsdom, i18n, registry integrity and HEAD/working-tree
-package dry-runs. CI invokes that same command on PHP 7.4/8.2 with Node 24.
+Run `npm ci --prefix dev/smoke` once, then `php dev/test-all.php` (`--fast` skips
+the static-analysis pass during quick iteration). The parallel offline gate (185
+checks) covers PHP/JS syntax, generated tokens, all 23 `dev/check*.php` suites
+(including `check-compliance.php` for GDPR/WP.org rules), editor gating, CSS
+contracts, adapter budgets, 11 jsdom suites, i18n, registry/package integrity, and
+static analysis (**WPCS Security/i18n**, **PHPStan level 5**, **ESLint**, and
+**Stylelint** logical RTL properties). CI (`.github/workflows/ci.yml`) invokes this
+gate across PHP 7.4–8.4 and WordPress 6.0 / latest.
 Real browser saves, user/session behavior, multisite and active host visual checks
 remain integration checks; a skipped host drift check is not validation.
 

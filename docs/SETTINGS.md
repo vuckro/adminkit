@@ -26,12 +26,17 @@ uninstallation removes AdminKit storage.
 
 Typography defaults to Geist. Supported fonts are Geist, System, Inter,
 Plus Jakarta Sans, DM Sans, Manrope, Outfit, Poppins, Space Grotesk and IBM Plex Sans.
-Legacy Humanist maps to Geist and Classic to Inter. The Design system tab contains
+Legacy Humanist and Classic both map to local Geist. For GDPR compliance, remote
+Google Fonts are gated behind the explicit `remote_fonts_enabled` toggle (off by
+default in *Design system → Typography*): when off, Google Font options remain
+disabled, zero requests are made to `fonts.googleapis.com` / `fonts.gstatic.com`,
+and stored Google Font selections fall back to Geist (`wp-login.php` never loads
+remote Google Fonts even when enabled). The Design system tab contains
 Colors, Typography, Shapes & elevation, and Plugins sections. Logos remain in
 General Settings (`adminkit_general_logo_url`, saved atomically via `whitelist_options`
 without registering the full `adminkit_settings` container on `options.php`).
 Plugins lists installed integrations, without activating hosts, and displays an
-explicit pause badge (`pausedReason`) when a host's version exceeds the adapter's
+explicit pause badge (`paused`) when a host's version exceeds the adapter's
 tested range.
 
 `AdminKit_Settings::sanitize_design_system()` allowlists the saved profile:
