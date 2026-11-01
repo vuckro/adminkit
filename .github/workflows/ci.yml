@@ -107,7 +107,7 @@ jobs:
               { "step": "activatePlugin", "pluginPath": "adminkit/adminkit.php" },
               {
                 "step": "runPHP",
-                "code": "<?php require_once '/wordpress/wp-load.php'; if ( ! class_exists( 'AdminKit_Plugin' ) || ! class_exists( 'AdminKit_Settings' ) ) { fwrite( STDERR, 'Packaged AdminKit failed to boot' ); exit( 1 ); } wp_set_current_user( 1 ); $res = rest_do_request( new WP_REST_Request( 'GET', '/adminkit/v1/toolbar-snapshot' ) ); if ( $res->is_error() ) { fwrite( STDERR, 'REST error: ' . $res->as_error()->get_error_message() ); exit( 1 ); } echo 'OK: packaged zip activated and verified in WordPress Playground.\n';"
+                "code": "<?php define( 'WP_DISABLE_FATAL_ERROR_HANDLER', true ); require_once '/wordpress/wp-load.php'; if ( ! class_exists( 'AdminKit_Plugin' ) || ! class_exists( 'AdminKit_Settings' ) ) { echo 'Packaged AdminKit failed to boot'; exit( 1 ); } wp_set_current_user( 1 ); $res = rest_do_request( new WP_REST_Request( 'GET', '/adminkit/v1/toolbar' ) ); if ( $res->is_error() ) { echo 'REST error: ' . $res->as_error()->get_error_message(); exit( 1 ); } echo 'OK: packaged zip activated and verified in WordPress Playground.';"
               }
             ]
           }
