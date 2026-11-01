@@ -99,7 +99,7 @@ class AdminKit_Settings {
 		) );
 	}
 
-	/** Interface font preset. Unknown or legacy values resolve to the Geist baseline. */
+	/** Interface font preset and explicit GDPR opt-in for remote Google Fonts. */
 	private static function register_appearance() {
 		self::register( 'ui_font', array(
 			'type'     => 'select',
@@ -107,17 +107,20 @@ class AdminKit_Settings {
 			'default'  => 'geist',
 			'sanitize' => static function ( $value ) {
 				$value = (string) $value;
-				if ( 'humanist' === $value ) {
+				if ( 'humanist' === $value || 'classic' === $value ) {
 					return 'geist';
-				}
-				if ( 'classic' === $value ) {
-					return 'inter';
 				}
 				$allowed = class_exists( 'AdminKit_Design_System' )
 					? array_keys( AdminKit_Design_System::fonts() )
 					: array( 'geist', 'system', 'inter', 'plus-jakarta-sans', 'dm-sans', 'manrope', 'outfit', 'poppins', 'space-grotesk', 'ibm-plex-sans' );
 				return in_array( $value, $allowed, true ) ? $value : 'geist';
 			},
+		) );
+		self::register( 'remote_fonts_enabled', array(
+			'type'     => 'toggle',
+			'group'    => 'appearance',
+			'default'  => false,
+			'sanitize' => 'rest_sanitize_boolean',
 		) );
 	}
 

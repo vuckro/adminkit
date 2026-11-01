@@ -98,10 +98,15 @@ class AdminKit_Design_System {
 		$vars .= '--ak-btn-primary-highlight:' . ( 'always' === $highlight ? 'var(--ak-btn-highlight-effect)' : $empty_shadow ) . ';';
 		$vars .= '--ak-btn-primary-highlight-hover:' . ( 'off' === $highlight ? $empty_shadow : 'var(--ak-btn-highlight-effect)' ) . ';';
 		// Font is also scoped explicitly on the toolbar (its upstream sheet resets it).
-		$fonts  = self::fonts();
-		$font   = (string) AdminKit_Settings::get( 'ui_font' );
-		$family = isset( $fonts[ $font ]['stack'] ) ? $fonts[ $font ]['stack'] : $fonts['geist']['stack'];
-		$vars  .= '--ak-font-body:' . $family . ';--wk-font-sans:' . $family . ';';
+		$fonts    = self::fonts();
+		$font     = (string) AdminKit_Settings::get( 'ui_font' );
+		$is_login = ( function_exists( 'is_login' ) && is_login() ) || ( isset( $GLOBALS['pagenow'] ) && 'wp-login.php' === $GLOBALS['pagenow'] );
+		if ( ! empty( $fonts[ $font ]['google'] ) && ( $is_login || ! AdminKit_Settings::get( 'remote_fonts_enabled' ) ) ) {
+			$family = $fonts['geist']['stack'];
+		} else {
+			$family = isset( $fonts[ $font ]['stack'] ) ? $fonts[ $font ]['stack'] : $fonts['geist']['stack'];
+		}
+		$vars .= '--ak-font-body:' . $family . ';--wk-font-sans:' . $family . ';';
 		$shadows = array( 'flat' => 'none', 'subtle' => 'var(--wk-elevation-1)', 'raised' => 'var(--wk-elevation-2)' );
 		// Default preserves the theme-specific contact shadow owned by card surfaces.
 		if ( isset( $shadows[ $settings['elevation'] ] ) ) {

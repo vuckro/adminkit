@@ -115,7 +115,7 @@ class AdminKit_Notification_Center {
 	 * theme-toggle (999) nodes in the `top-secondary` cluster. The count badge span
 	 * is rendered empty + hidden; the JS fills and unhides it. The whole node stays
 	 * hidden via CSS until the JS adds ACTIVE_CLASS, so a no-JS visitor never sees an
-	 * inert bell. Bell glyph: Heroicons (MIT), solid to match the other toolbar icons.
+	 * inert bell. Bell glyph: Lucide (ISC/MIT), matching the other toolbar icons.
 	 *
 	 * @param WP_Admin_Bar $bar
 	 * @return void
@@ -185,9 +185,13 @@ class AdminKit_Notification_Center {
 			'subtitle'     => __( 'Grouped notices', 'adminkit' ),
 			'empty'        => __( 'You’re all caught up.', 'adminkit' ),
 			'emptyDesc'    => __( 'Notices from plugins and WordPress collect here, out of your way.', 'adminkit' ),
-			'close'        => __( 'Close', 'adminkit' ),
-			'openLabel'    => __( 'Notifications', 'adminkit' ),
-			'nodeId'       => self::NODE_ID,
+			'close'             => __( 'Close', 'adminkit' ),
+			'openLabel'         => __( 'Notifications', 'adminkit' ),
+			/* translators: %s: notification count. */
+			'openCountSingular' => _n( '%s notification', '%s notifications', 1, 'adminkit' ),
+			/* translators: %s: notification count. */
+			'openCountPlural'   => _n( '%s notification', '%s notifications', 2, 'adminkit' ),
+			'nodeId'            => self::NODE_ID,
 			'pendingClass' => self::PENDING_CLASS,
 			'activeClass'  => self::ACTIVE_CLASS,
 			'allow'        => array_values( (array) apply_filters( 'adminkit/notifications/js_allow', array() ) ),

@@ -135,4 +135,17 @@ foreach ( array( 'assets/js', 'inc/integrations' ) as $directory ) {
 	}
 }
 
-echo "OK: $checked JS bootstrap references; UI copy is centralized in translated PHP; brand names are explicit exceptions.\n";
+// Verify French typographic and glossary invariants across languages/adminkit-fr_FR.po.
+$fr_po = (string) file_get_contents( 'languages/adminkit-fr_FR.po' );
+preg_match_all( '/^msgstr(?:\[\d+\])?\s+(".*")$/m', $fr_po, $fr_matches );
+foreach ( $fr_matches[1] as $raw_fr ) {
+	$fr = (string) json_decode( $raw_fr, true, 512, JSON_THROW_ON_ERROR );
+	if ( preg_match( "/[A-Za-zÀ-ÿ]'[A-Za-zÀ-ÿ]/u", $fr ) ) {
+		throw new RuntimeException( 'Straight ASCII apostrophe in fr_FR translation (use ’): ' . $fr );
+	}
+	if ( preg_match( '/\x20[:;?!]|«\x20|\x20»/u', $fr ) ) {
+		throw new RuntimeException( 'ASCII space before French double punctuation or inside guillemets (use NBSP \\u{00A0}): ' . $fr );
+	}
+}
+
+echo "OK: $checked JS bootstrap references; UI copy is centralized in translated PHP; fr_FR typography verified.\n";

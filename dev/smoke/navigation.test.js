@@ -132,7 +132,9 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 15));
     assert.equal(w.document.activeElement.getAttribute('data-focus-key'), 'top:tools.php:down', 'Focus stays on moved item Move Down button across re-render');
 
     // 2. Expand Tools submenu, change parent <select> to Settings (index 0 after swap), and verify reparenting + focus.
-    w.document.querySelector('[data-focus-key="top:tools.php:expand"]').click();
+    const expandBtn = w.document.querySelector('[data-focus-key="top:tools.php:expand"]');
+    assert.equal(expandBtn.textContent.trim(), '1 sous-menu', 'Singular submenu count uses _n() template');
+    expandBtn.click();
     const parentSel = w.document.querySelector('[data-focus-key="sub:tools.php:import.php:parent"]');
     assert.ok(parentSel, 'Keyboard parent selector rendered on child row');
     parentSel.focus();

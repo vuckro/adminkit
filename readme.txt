@@ -55,6 +55,28 @@ No — only the admin bar shown to logged-in users is restyled. Your site's publ
 
 Yes. Every feature is an individual toggle on the AdminKit settings page, and all optional features and integrations ship disabled.
 
+== External services ==
+
+AdminKit makes **no external network connections by default**. All baseline fonts (Geist) and icons (Lucide, Heroicons) are bundled locally inside the plugin. Two optional, administrator-controlled features can connect to third-party services when explicitly enabled:
+
+= Google Fonts (optional, disabled by default) =
+
+* **What it is used for:** Loading optional interface font families (Inter, Plus Jakarta Sans, DM Sans, Manrope, Outfit, Poppins, Space Grotesk, IBM Plex Sans) inside WordPress administration when an administrator explicitly enables **Load Google Fonts from Google servers** under **AdminKit → Design system → Typography**.
+* **What data is sent and when:** When enabled and a Google Font family is selected, the logged-in user's browser requests the CSS stylesheet from `https://fonts.googleapis.com/css2` and font files from `https://fonts.gstatic.com` on authenticated `wp-admin` / toolbar screens (never on `wp-login.php` or for logged-out public visitors). Standard HTTP request headers (including IP address and User-Agent) are transmitted to Google.
+* **Provider terms & privacy:** [Google Privacy Policy](https://policies.google.com/privacy) and [Google APIs Terms of Service](https://developers.google.com/terms).
+
+= WordPress.com mShots (developer filter opt-in, disabled by default) =
+
+* **What it is used for:** Generating fallback webpage thumbnail previews in post list tables when **Post previews** is enabled and a developer explicitly opts into the `mshots` provider via the `adminkit/post_previews/provider` PHP filter (the default provider uses local WordPress featured images only).
+* **What data is sent and when:** When opted in, the logged-in editor's browser requests a screenshot image from `https://s0.wordpress.com/mshots/v1/` containing the URL of published, non-password-protected public posts listed on the current admin table screen. Draft, private, and password-protected URLs are never sent.
+* **Provider terms & privacy:** [Automattic Privacy Policy](https://automattic.com/privacy/) and [WordPress.com Terms of Service](https://wordpress.com/tos/).
+
+== Credits ==
+
+* **Geist** typeface by Vercel — licensed under the [SIL Open Font License 1.1](https://openfontlicense.org/) ([source](https://github.com/vercel/geist-font)).
+* **Lucide** icon set by Lucide Contributors — licensed under the [ISC / MIT License](https://lucide.dev/license) ([source](https://github.com/lucide-icons/lucide)).
+* **Heroicons** by Tailwind Labs — licensed under the [MIT License](https://github.com/tailwindlabs/heroicons/blob/master/LICENSE) ([source](https://github.com/tailwindlabs/heroicons)).
+
 == Changelog ==
 
 = 1.0.0 =

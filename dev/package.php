@@ -127,7 +127,7 @@ if ( $use_working ) {
 
 // 2. Drop the .distignore / dev-only meta files themselves from the staged copy
 // (they don't belong in a user install).
-foreach ( array( '.distignore', '.gitignore' ) as $f ) {
+foreach ( array( '.distignore', '.gitignore', '.gitattributes', '.editorconfig', '.phpcs.xml.dist' ) as $f ) {
 	$p = "$plugin_staging/$f";
 	if ( is_file( $p ) ) {
 		unlink( $p );
@@ -135,15 +135,43 @@ foreach ( array( '.distignore', '.gitignore' ) as $f ) {
 }
 
 // 3. Sanity gate — these should NOT survive into the staged copy.
-$forbidden = array( 'dev', 'tokens', '.git', '.claude', 'node_modules', 'vendor', 'docs', 'AGENTS.md', 'CLAUDE.md', 'README.md' );
+$forbidden = array(
+	'dev',
+	'tokens',
+	'.git',
+	'.github',
+	'.wordpress-org',
+	'.claude',
+	'.impeccable',
+	'.phpcs.xml.dist',
+	'phpstan.neon',
+	'phpstan.neon.dist',
+	'composer.json',
+	'composer.lock',
+	'node_modules',
+	'vendor',
+	'docs',
+	'AGENTS.md',
+	'CLAUDE.md',
+	'README.md',
+);
 $found     = array();
 foreach ( $forbidden as $dir ) {
 	if ( file_exists( "$plugin_staging/$dir" ) ) {
 		$found[] = $dir;
 	}
 }
+$dot_iter = new RecursiveIteratorIterator(
+	new RecursiveDirectoryIterator( $plugin_staging, FilesystemIterator::SKIP_DOTS ),
+	RecursiveIteratorIterator::SELF_FIRST
+);
+foreach ( $dot_iter as $item ) {
+	if ( 0 === strpos( $item->getFilename(), '.' ) ) {
+		$found[] = substr( $item->getPathname(), strlen( $plugin_staging ) + 1 );
+	}
+}
 if ( $found ) {
-	fwrite( STDERR, "error: forbidden paths survived packaging: " . implode( ', ', $found ) . "\n" );
+	fwrite( STDERR, "error: forbidden paths survived packaging: " . implode( ', ', array_unique( $found ) ) . "\n" );
 	exit( 1 );
 }
 

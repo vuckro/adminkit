@@ -66,6 +66,21 @@ for (const [id, val] of [['ak-type-scale', '1.1'], ['ak-shape-radius', '1.25']])
   assert(input, id + ' present');
   if (input) { input.value = val; input.dispatchEvent(new window.Event('change', { bubbles: true })); }
 }
+// GDPR: Google Fonts <option>s stay disabled and no fonts.googleapis.com <link> is injected unless opted in.
+const fontSel = doc.getElementById('ak-type-font');
+const remoteToggle = doc.getElementById('ak-type-remote-fonts');
+assert(fontSel && remoteToggle && !remoteToggle.checked, 'remote Google Fonts opt-in toggle defaults to off');
+assert(fontSel.querySelector('option[value="inter"]').disabled === true, 'Google Font option disabled while opt-in is off');
+assert(!doc.getElementById('ak-google-font-preview'), 'no Google Fonts stylesheet injected while opt-in is off');
+remoteToggle.checked = true;
+remoteToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
+assert(fontSel.querySelector('option[value="inter"]').disabled === false, 'Google Font option enabled after opt-in');
+fontSel.value = 'inter';
+fontSel.dispatchEvent(new window.Event('change', { bubbles: true }));
+assert(!!doc.getElementById('ak-google-font-preview'), 'Google Fonts preview link injected only after explicit opt-in');
+remoteToggle.checked = false;
+remoteToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
+assert(!doc.getElementById('ak-google-font-preview') && fontSel.value === 'geist', 'disabling opt-in removes Google Fonts link and resets to Geist');
 assert(doc.querySelectorAll('.ak-palette-theme input[type="color"]').length >= 22, 'palette shows 11 roles x 2 modes');
 // Nested controls mount from saved values and use the actual main save payload.
 doc.getElementById('ak-tab-features').click();

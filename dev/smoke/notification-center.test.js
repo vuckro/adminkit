@@ -34,6 +34,8 @@ w.AdminKitNotificationCenter = {
   title: 'Notifications',
   subtitle: 'Grouped alerts',
   openLabel: 'Notifications',
+  openCountSingular: '%s notification',
+  openCountPlural: '%s notifications',
   close: 'Close',
   empty: 'All clear',
   emptyDesc: 'No notifications',
@@ -62,6 +64,7 @@ w.AdminKitNotificationCenter = {
   assert.ok(w.document.querySelector('.form-table .notice-info'), 'Contextual form-table notice must remain inline');
 
   const bell = w.document.querySelector('#wp-admin-bar-ak-notifications a');
+  assert.equal(bell.getAttribute('aria-label'), '2 notifications');
   const wpbody = w.document.getElementById('wpbody');
   bell.focus();
   bell.click();

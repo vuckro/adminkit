@@ -164,7 +164,8 @@
 		if ( n > 0 ) {
 			badgeEl.textContent = n > 9 ? '9+' : String( n );
 			badgeEl.hidden = false;
-			if ( bell ) { bell.setAttribute( 'aria-label', C.openLabel + ' (' + n + ')' ); }
+			var countTpl = n === 1 ? C.openCountSingular : C.openCountPlural;
+			if ( bell ) { bell.setAttribute( 'aria-label', countTpl ? countTpl.replace( '%s', String( n ) ) : C.openLabel + ' (' + n + ')' ); }
 		} else {
 			badgeEl.hidden = true;
 			if ( bell ) { bell.setAttribute( 'aria-label', C.openLabel ); }

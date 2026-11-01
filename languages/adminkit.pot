@@ -16,10 +16,27 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: adminkit\n"
 
+#. translators: 1: active feature count, 2: total available feature count.
 #: inc/settings/class-settings-i18n.php
 #, php-format
 msgid "%1$s of %2$s features active"
 msgstr ""
+
+#. translators: %s: notification count.
+#: inc/features/notifications/class-notification-center.php
+#, php-format
+msgid "%s notification"
+msgid_plural "%s notifications"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: submenu item count.
+#: inc/settings/class-settings-i18n.php
+#, php-format
+msgid "%s submenu"
+msgid_plural "%s submenus"
+msgstr[0] ""
+msgstr[1] ""
 
 #: inc/wp-core/class-username-changer.php
 msgid "<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or any of . - _ @ — and nothing else."
@@ -27,14 +44,6 @@ msgstr ""
 
 #: inc/wp-core/class-username-changer.php
 msgid "<strong>Error:</strong> That username is already taken."
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "About Yourself"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "About the user"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -47,10 +56,6 @@ msgstr ""
 
 #: inc/wp-core/class-options-general.php
 msgid "Account & registration"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Account Management"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -83,10 +88,6 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Add separator"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Additional Capabilities"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -139,10 +140,6 @@ msgstr ""
 
 #: inc/settings/class-settings-catalog.php
 msgid "Appearance"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Application Passwords"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -221,6 +218,7 @@ msgstr ""
 msgid "Changes apply after saving."
 msgstr ""
 
+#. translators: %s: retained option label while parent feature is off.
 #: inc/settings/class-settings-i18n.php
 #, php-format
 msgid "Choice: %s"
@@ -319,10 +317,6 @@ msgid "Configure"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
-msgid "Contact Info"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
 msgid "Content requires approval"
 msgstr ""
 
@@ -351,10 +345,6 @@ msgid "Current"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
-msgid "Custom"
-msgstr ""
-
-#: inc/settings/class-settings-i18n.php
 msgid "Custom link"
 msgstr ""
 
@@ -372,10 +362,6 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Customize the foundations and components of your interface."
-msgstr ""
-
-#: inc/settings/class-settings-i18n.php
-msgid "Customized"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -402,10 +388,6 @@ msgstr ""
 msgid "Deactivation to save"
 msgstr ""
 
-#: inc/settings/class-settings-i18n.php
-msgid "Default"
-msgstr ""
-
 #: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Design system"
 msgstr ""
@@ -416,10 +398,6 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Disable all"
-msgstr ""
-
-#: inc/settings/class-settings-i18n.php
-msgid "Disabled"
 msgstr ""
 
 #: inc/wp-core/class-options-discussion.php
@@ -472,10 +450,6 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Enable the parent feature to use this option."
-msgstr ""
-
-#: inc/settings/class-settings-i18n.php
-msgid "Enabled"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -548,10 +522,6 @@ msgstr ""
 
 #: inc/wp-core/class-profile-account.php
 msgid "Full access"
-msgstr ""
-
-#: inc/settings/class-settings-i18n.php
-msgid "Generic"
 msgstr ""
 
 #: adminkit.php
@@ -642,10 +612,7 @@ msgstr ""
 msgid "Information"
 msgstr ""
 
-#: inc/settings/class-settings-i18n.php
-msgid "Inherited"
-msgstr ""
-
+#. translators: 1: installed plugin version, 2: maximum tested version range (e.g. 2.5.x).
 #: inc/settings/class-settings-i18n.php
 #, php-format
 msgid "Installed version %1$s exceeds tested range (%2$s) — native plugin UI is kept until verified."
@@ -685,6 +652,10 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Light"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Load Google Fonts from Google servers"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -767,14 +738,6 @@ msgstr ""
 msgid "My Account"
 msgstr ""
 
-#: inc/wp-core/class-profile-account.php
-msgid "Name"
-msgstr ""
-
-#: inc/settings/class-settings-i18n.php
-msgid "Native"
-msgstr ""
-
 #: inc/settings/class-settings-catalog.php inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Navigation"
 msgstr ""
@@ -817,6 +780,10 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Off"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Off by default for privacy (GDPR). Enable to load remote font families from fonts.googleapis.com."
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php
@@ -897,10 +864,6 @@ msgstr ""
 
 #: inc/wp-core/class-profile-account.php
 msgid "Permissions to check"
-msgstr ""
-
-#: inc/wp-core/class-profile-account.php
-msgid "Personal Options"
 msgstr ""
 
 #: inc/wp-core/class-user-quick-edit.php
@@ -1196,10 +1159,6 @@ msgid "Surface"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
-msgid "System"
-msgstr ""
-
-#: inc/settings/class-settings-i18n.php
 msgid "Table"
 msgstr ""
 
@@ -1428,9 +1387,65 @@ msgid "You’re all caught up."
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
+msgctxt "accent color source"
+msgid "Custom"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgctxt "adapter badge"
+msgid "Generic"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgctxt "adapter badge"
+msgid "Native"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgctxt "adapter badge"
+msgid "System"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgctxt "button preview state"
+msgid "Disabled"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgctxt "design preset"
+msgid "Default"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgctxt "feature option state"
+msgid "Disabled"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgctxt "feature option state"
+msgid "Enabled"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgctxt "font family"
+msgid "System"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
 msgid "https://…"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
-msgid "submenus"
+msgctxt "menu icon option"
+msgid "Default"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgctxt "palette color state"
+msgid "Customized"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgctxt "palette color state"
+msgid "Inherited"
 msgstr ""

@@ -442,7 +442,10 @@ class AdminKit_Settings_Page {
 			// in the Brand card and the Source pill colour for accent-family tokens.
 			'accentSource' => AdminKit_Settings::accent_source(),
 			'designSystem' => AdminKit_Settings::sanitize_design_system( AdminKit_Settings::get( 'design_system' ) ),
-			'appearance'   => array( 'ui_font' => AdminKit_Settings::get( 'ui_font' ) ),
+			'appearance'   => array(
+				'ui_font'              => AdminKit_Settings::get( 'ui_font' ),
+				'remote_fonts_enabled' => (bool) AdminKit_Settings::get( 'remote_fonts_enabled' ),
+			),
 			'fonts'        => AdminKit_Design_System::fonts(),
 			// WaasKit custom-picker seed. The default accent uses native roles. The SPA seeds the swatch
 			// with this when source = 'adminkit' before getComputedStyle resolves.

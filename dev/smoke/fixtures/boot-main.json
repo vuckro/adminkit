@@ -227,7 +227,8 @@
         }
     },
     "appearance": {
-        "ui_font": "system"
+        "ui_font": "system",
+        "remote_fonts_enabled": false
     },
     "fonts": {
         "geist": {
@@ -340,7 +341,7 @@
     },
     "i18n": {
         "foundationInvalidColor": "Saisissez une couleur hexadécimale, par exemple #1549ab.",
-        "foundationSections": "Rubriques du design système",
+        "foundationSections": "Rubriques du système de design",
         "previewAction": "Action principale",
         "foundationColorsHelp": "Choisissez les couleurs en clair et en sombre. Personnalisé permet de choisir l’accent et de modifier chaque couleur de la palette. Enregistrez pour appliquer vos modifications.",
         "foundationReset": "Réinitialiser",
@@ -361,6 +362,8 @@
         "studioFont": "Police",
         "fontSystem": "Système",
         "studioTypeScale": "Échelle du texte",
+        "studioRemoteFonts": "Charger les polices Google Fonts depuis les serveurs Google",
+        "studioRemoteFontsHint": "Désactivé par défaut pour la confidentialité (RGPD). Activez pour charger les polices distantes depuis fonts.googleapis.com.",
         "foundationScope": "Ces réglages s’appliquent à l’administration WordPress et aux extensions prises en charge après enregistrement. Votre site public conserve son propre design.",
         "studioColors": "Couleurs",
         "studioType": "Typographie",
@@ -387,7 +390,7 @@
         "studioSecondary": "Action secondaire",
         "pluginInactive": "Extension inactive",
         "noResults": "Aucun résultat. Essayez un autre terme.",
-        "designSystem": "Design système",
+        "designSystem": "Système de design",
         "designIntro": "Personnalisez les fondations et les composants de votre interface.",
         "defaultPreset": "Par défaut",
         "features": "Fonctionnalités",
@@ -414,7 +417,8 @@
         "menuIconEmpty": "Aucune icône trouvée.",
         "menuHide": "Masquer",
         "menuShow": "Afficher",
-        "menuSubmenus": "sous-menus",
+        "menuSubmenuSingular": "%s sous-menu",
+        "menuSubmenuPlural": "%s sous-menus",
         "menuSubmenusToggle": "Afficher / masquer les sous-menus",
         "menuDragHint": "Glissez pour réorganiser",
         "menuMoveUp": "Monter",
@@ -455,7 +459,7 @@
         "system": "Système",
         "systemHint": "AdminKit lui-même — toujours actif, non désactivable ici.",
         "generic": "Générique",
-        "genericHint": "Aucun adaptateur dédié — thémé automatiquement par la couche de base d'AdminKit.",
+        "genericHint": "Aucun adaptateur dédié — habillé automatiquement par la couche de base d’AdminKit.",
         "themesLabel": "Thèmes",
         "settingsExport": "Exporter",
         "settingsImport": "Importer",

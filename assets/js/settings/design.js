@@ -204,7 +204,11 @@
 				'space-grotesk': { label: 'Space Grotesk (Google Fonts)', stack: '"Space Grotesk",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'Space+Grotesk:wght@400;500;600;700' },
 				'ibm-plex-sans': { label: 'IBM Plex Sans (Google Fonts)', stack: '"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,sans-serif', google: 'IBM+Plex+Sans:wght@400;500;600;700' }
 			};
-			if (state.appearance.ui_font === 'humanist' || !fontCatalog[state.appearance.ui_font]) {
+			if (
+				state.appearance.ui_font === 'humanist' ||
+				state.appearance.ui_font === 'classic' ||
+				!fontCatalog[state.appearance.ui_font]
+			) {
 				state.appearance.ui_font = 'geist';
 			}
 			function snapChoice(val, choices, fallback) {
@@ -233,15 +237,52 @@
 				}
 				return num;
 			}
+			var fontOptions = {};
 			var fontSelect = el(
 				'select',
 				{ id: 'ak-type-font' },
 				Object.keys(fontCatalog).map(function (key) {
 					var label = key === 'system' && I.fontSystem ? I.fontSystem : fontCatalog[key].label;
-					return el('option', { value: key, text: label });
+					var opt = el('option', { value: key, text: label });
+					fontOptions[key] = opt;
+					return opt;
 				})
 			);
-			fontSelect.value = state.appearance.ui_font;
+			function syncFontOptions() {
+				var remoteOn = !!state.appearance.remote_fonts_enabled;
+				Object.keys(fontOptions).forEach(function (key) {
+					fontOptions[key].disabled = !!(fontCatalog[key] && fontCatalog[key].google && !remoteOn);
+				});
+				if (!remoteOn && fontCatalog[state.appearance.ui_font] && fontCatalog[state.appearance.ui_font].google) {
+					state.appearance.ui_font = 'geist';
+				}
+				fontSelect.value = state.appearance.ui_font;
+			}
+			syncFontOptions();
+			var remoteFontsInput = el('input', {
+				type: 'checkbox',
+				id: 'ak-type-remote-fonts',
+				class: 'ak-switch__input',
+				'aria-label': I.studioRemoteFonts
+			});
+			remoteFontsInput.checked = !!state.appearance.remote_fonts_enabled;
+			var remoteFontsRow = el(
+				'div',
+				{ class: 'ak-row' + (remoteFontsInput.checked ? '' : ' is-off') },
+				[
+					el('div', { class: 'ak-row__main' }, [
+						el('div', { class: 'ak-row__head' }, [
+							el('label', { for: remoteFontsInput.id, class: 'ak-row__label', text: I.studioRemoteFonts })
+						]),
+						el('span', { class: 'ak-row__desc', text: I.studioRemoteFontsHint })
+					]),
+					el('label', { class: 'ak-switch' }, [
+						remoteFontsInput,
+						el('span', { class: 'ak-switch__track' }),
+						el('span', { class: 'ak-switch__knob' })
+					])
+				]
+			);
 			var typeChoices = [0.9, 0.95, 1, 1.05, 1.1];
 			var displayedTypeScale = scaleChoice(state.designSystem.type_scale, typeChoices, 0.75, 1.5);
 			var typeScale = el(
@@ -269,7 +310,10 @@
 			function ensureGoogleFont(googleSpec) {
 				var linkId = 'ak-google-font-preview';
 				var existing = document.getElementById(linkId);
-				if (!googleSpec) {
+				if (!googleSpec || !state.appearance.remote_fonts_enabled) {
+					if (existing && existing.parentNode) {
+						existing.parentNode.removeChild(existing);
+					}
 					return;
 				}
 				var href = 'https://fonts.googleapis.com/css2?family=' + googleSpec + '&display=swap';
@@ -282,7 +326,7 @@
 			}
 			function refreshScales() {
 				var entry = fontCatalog[state.appearance.ui_font] || fontCatalog.geist;
-				var font = entry.stack;
+				var font = entry.google && !state.appearance.remote_fonts_enabled ? fontCatalog.geist.stack : entry.stack;
 				ensureGoogleFont(entry.google);
 				var root = document.documentElement.style;
 				root.setProperty('--ak-type-scale', state.designSystem.type_scale);
@@ -303,6 +347,13 @@
 				refreshScales();
 				markDirty();
 			});
+			remoteFontsInput.addEventListener('change', function () {
+				state.appearance.remote_fonts_enabled = !!remoteFontsInput.checked;
+				remoteFontsRow.classList.toggle('is-off', !remoteFontsInput.checked);
+				syncFontOptions();
+				refreshScales();
+				markDirty();
+			});
 			typeScale.addEventListener('change', onTypeScale);
 			typeScale.addEventListener('input', onTypeScale);
 			section('type', I.studioType, I.studioTypeHint, [
@@ -310,13 +361,17 @@
 					el('div', {}, [el('label', { for: fontSelect.id, text: I.studioFont }), fontSelect]),
 					el('div', {}, [el('label', { for: typeScale.id, text: I.studioTypeScale }), typeScale])
 				]),
+				remoteFontsRow,
 				el('button', {
 					type: 'button',
 					class: 'ak-btn',
 					text: I.resetDefaults,
 					onclick: function () {
+						state.appearance.remote_fonts_enabled = false;
+						remoteFontsInput.checked = false;
+						remoteFontsRow.classList.add('is-off');
 						state.appearance.ui_font = 'geist';
-						fontSelect.value = 'geist';
+						syncFontOptions();
 						state.designSystem.type_scale = 1;
 						typeScale.value = '1';
 						refreshScales();

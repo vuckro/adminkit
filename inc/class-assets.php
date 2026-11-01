@@ -303,7 +303,7 @@ class AdminKit_Assets {
 			return;
 		}
 
-		self::enqueue_fonts();
+		self::enqueue_fonts( $context );
 		self::enqueue_tokens( $context, $core_deps );
 
 		$screen = AdminKit_Screen::get();
@@ -362,13 +362,15 @@ class AdminKit_Assets {
 	}
 
 	/**
-	 * Enqueue the locally hosted WaasKit font families, plus the active Google Font when selected.
+	 * Enqueue the locally hosted WaasKit font families, plus the active Google Font
+	 * when explicitly opted in (and never on unauthenticated `wp-login.php`).
 	 *
+	 * @param string $context Current dispatch context (`admin`, `login`, `frontend`, `editor`, `customize`).
 	 * @return void
 	 */
-	private static function enqueue_fonts() {
+	private static function enqueue_fonts( $context = 'admin' ) {
 		wp_enqueue_style( self::FONTS_HANDLE, ADMINKIT_URL . self::FONTS_SRC, array(), (string) filemtime( ADMINKIT_PATH . self::FONTS_SRC ) );
-		if ( class_exists( 'AdminKit_Design_System' ) ) {
+		if ( 'login' !== $context && class_exists( 'AdminKit_Design_System' ) && AdminKit_Settings::get( 'remote_fonts_enabled' ) ) {
 			$fonts = AdminKit_Design_System::fonts();
 			$font  = (string) AdminKit_Settings::get( 'ui_font' );
 			if ( ! empty( $fonts[ $font ]['google'] ) ) {

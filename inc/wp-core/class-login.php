@@ -255,10 +255,10 @@ class AdminKit_Core_Login {
 		$key         = AdminKit_Theme_Toggle::storage_key();
 		$label       = esc_attr__( 'Toggle light / dark mode', 'adminkit' );
 
-		// Sun + moon (Streamline, CC BY 4.0) — the same marks the admin-bar toggle
+		// Sun + moon from Lucide (ISC/MIT) — the same marks the admin-bar toggle
 		// uses; CSS in login.css shows the one matching the current theme.
-		$sun  = '<svg class="ak-login-theme-icon ak-theme-light" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Zm11.394-5.834a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75Zm-3.916 6.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591ZM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18Zm-4.242-.697a.75.75 0 0 0-1.061-1.06l-1.591 1.59a.75.75 0 0 0 1.06 1.061l1.591-1.59ZM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12Zm.697-4.243a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 0 0-1.061 1.06l1.59 1.591Z"/></svg>';
-		$moon = '<svg class="ak-login-theme-icon ak-theme-dark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clip-rule="evenodd"/></svg>';
+		$sun  = str_replace( '<svg ', '<svg class="ak-login-theme-icon ak-theme-light" ', AdminKit_Icons::display_svg( 'sun' ) );
+		$moon = str_replace( '<svg ', '<svg class="ak-login-theme-icon ak-theme-dark" ', AdminKit_Icons::display_svg( 'moon' ) );
 
 		printf(
 			'<button type="button" id="%1$s" class="ak-login-theme-toggle" aria-label="%2$s" title="%2$s" aria-pressed="false">%3$s%4$s</button>',

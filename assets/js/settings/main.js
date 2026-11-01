@@ -56,7 +56,8 @@
 			}
 		});
 
-		state.appearance = Object.assign({ ui_font: 'geist' }, D.appearance || {});
+		state.appearance = Object.assign({ ui_font: 'geist', remote_fonts_enabled: false }, D.appearance || {});
+		state.appearance.remote_fonts_enabled = !!state.appearance.remote_fonts_enabled;
 
 		state.designSystem = Object.assign({ radius_scale: 1, type_scale: 1, border_width: 1, elevation: 'default' }, D.designSystem || {});
 		state.designSystem.components = { buttons: Object.assign({ highlight: 'always' }, (state.designSystem.components || {}).buttons || {}) };

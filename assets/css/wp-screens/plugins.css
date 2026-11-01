@@ -124,30 +124,6 @@ body.adminkit .wp-list-table.plugins .plugin-version-author-uri {
 	color: var(--ak-text-muted);
 }
 
-/* Promo / upsell links injected via plugin_action_links / plugin_row_meta —
-   targeted by exact href or aria-label (and scoped to a plugin's row where a
-   pattern could be ambiguous) so each selector is a no-op when the plugin isn't
-   installed, and only marketing clutter is hidden — never functional links
-   (Settings, Deactivate, …).
-     - Slim SEO "Upgrade" action link + star-rating widget
-     - Query Monitor "Sponsor" link
-     - Fluent suite "Check Update" upsell (every Fluent plugin uses this exact
-       aria-label: FluentBooking Pro, FluentCart Pro, FluentCRM Pro)
-     - FluentCRM "Docs & FAQs" + "Developer Docs"
-     - Fluent Forms "Upgrade" + "Support" + "Developer Docs" + FluentSMTP cross-promo */
-body.adminkit.plugins-php a[href="https://elu.to/spp"],
-body.adminkit.plugins-php a[href*="wordpress.org/support/plugin/slim-seo/reviews"],
-body.adminkit.plugins-php a[href*="github.com/sponsors/johnbillion"],
-body.adminkit.plugins-php a[aria-label="Check Update"],
-body.adminkit.plugins-php tr[data-plugin="fluent-crm/fluent-crm.php"] a[href*="fluentcrm.com/docs"],
-body.adminkit.plugins-php tr[data-plugin="fluent-crm/fluent-crm.php"] a[href*="developers.fluentcrm.com"],
-body.adminkit.plugins-php tr[data-plugin="fluentform/fluentform.php"] a[href*="developers.fluentforms.com"],
-body.adminkit.plugins-php tr[data-plugin="fluentform/fluentform.php"] a[href*="fluentforms.com/pricing"],
-body.adminkit.plugins-php tr[data-plugin="fluentform/fluentform.php"] a[href*="fluentforms.com/contact-us"],
-body.adminkit.plugins-php tr[data-plugin="fluentform/fluentform.php"] a[href*="fluentsmtp.com"] {
-	display: none;
-}
-
 
 /* ===== Plugin install (plugin-install.php) =====
    Plugin cards, the filter bar, and the "More details" Thickbox modal

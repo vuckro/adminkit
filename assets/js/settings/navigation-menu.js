@@ -318,7 +318,14 @@
 								renderTree(tree);
 							}
 						},
-						[caret, el('span', { text: top.children.length + ' ' + I.menuSubmenus })]
+						[
+							caret,
+							el('span', {
+								text: (
+									(top.children.length === 1 ? I.menuSubmenuSingular : I.menuSubmenuPlural) || ''
+								).replace('%s', String(top.children.length))
+							})
+						]
 					)
 				);
 			}

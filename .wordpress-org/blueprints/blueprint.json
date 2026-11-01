@@ -2,7 +2,7 @@
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
 	"meta": {
 		"title": "AdminKit — live demo",
-		"description": "Try AdminKit on a throwaway WordPress, installed straight from the main branch.",
+		"description": "Try AdminKit on a throwaway WordPress instance with light/dark mode, the design system, and navigation editors.",
 		"author": "waaskit",
 		"categories": ["Plugins"]
 	},
@@ -11,18 +11,13 @@
 		"php": "8.2",
 		"wp": "latest"
 	},
-	"features": {
-		"networking": true
-	},
 	"login": true,
 	"steps": [
 		{
 			"step": "installPlugin",
 			"pluginData": {
-				"resource": "git:directory",
-				"url": "https://github.com/vuckro/adminkit",
-				"ref": "main",
-				"refType": "branch"
+				"resource": "wordpress.org/plugins",
+				"slug": "adminkit"
 			},
 			"options": {
 				"activate": true
