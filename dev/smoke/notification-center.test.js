@@ -76,6 +76,16 @@ w.AdminKitNotificationCenter = {
   assert.equal(bell.getAttribute('aria-expanded'), 'false');
   assert.equal(wpbody.inert, false, 'Background #wpbody inert is cleared on close');
 
+  const missing = new JSDOM(html.replace(/<li id="wp-admin-bar-ak-notifications">.*?<\/li>/, ''), { url:'http://localhost/wp-admin/', runScripts:'outside-only' });
+  missing.window.AdminKitNotificationCenter = w.AdminKitNotificationCenter;
+  missing.window.eval(source);
+  await new Promise(resolve => setTimeout(resolve, 10));
+  const missingDoc = missing.window.document;
+  assert.equal(missingDoc.querySelector('.ak-nc-drawer'), null, 'Do not create an unreachable drawer without a toolbar launcher');
+  assert.equal(missingDoc.querySelectorAll('#adminkit-nc-origin .notice-warning').length, 1, 'Missing launcher must keep warnings inline');
+  assert.equal(missingDoc.documentElement.classList.contains('ak-nc-pending'), false, 'Missing launcher must reveal native notices');
+  assert.equal(missingDoc.documentElement.classList.contains('ak-nc-active'), false);
+  missing.window.close();
   w.close();
   console.log('OK: notification-center groups alerts, skips <style>/<script>, preserves inline feedback and toggles cleanly.');
 })().catch((error) => { console.error(error); process.exitCode = 1; });

@@ -1,6 +1,7 @@
 // Run: AK_USER=<admin> AK_PASS=<password> npm test   (AK_URL defaults to http://localhost:10013)
 // Credentials come from the environment only — never commit or log them.
 const { test, expect } = require('@playwright/test');
+const path = require('node:path');
 
 const user = process.env.AK_USER;
 const pass = process.env.AK_PASS;
@@ -29,6 +30,53 @@ test('login screen loads without AdminKit errors', async ({ page }) => {
   await page.goto('/wp-login.php');
   await expect(page.locator('body.login')).toBeVisible();
   expect(problems).toEqual([]);
+});
+
+test('notification center works with only native toolbar and its own component assets', async ({ page }) => {
+  await page.goto('/wp-login.php');
+  await page.setContent(`<html><body class="wp-admin">
+    <div id="wpadminbar"><div id="wp-toolbar"><ul id="wp-admin-bar-top-secondary" class="ab-top-menu ab-top-secondary">
+      <li id="wp-admin-bar-ak-notifications"><a class="ab-item" href="#notifications"><span class="ak-nc-bell"><svg class="ak-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/></svg><span class="ak-nc-badge" hidden></span></span></a></li>
+      <li id="wp-admin-bar-my-account"><a class="ab-item" href="#account">Account</a></li>
+    </ul></div></div>
+    <div id="wpbody"><div id="wpbody-content"><div class="wrap"><div id="adminkit-nc-origin">
+      <div id="fixture-warning" class="notice notice-warning"><p>Warning to group</p></div>
+      <div id="fixture-success" class="notice notice-success"><p>Saved successfully</p></div>
+    </div></div></div></div>
+  </body></html>`);
+  await page.addStyleTag({ url: new URL('/wp-includes/css/admin-bar.min.css', page.url()).href });
+  const root = path.resolve(__dirname, '../..');
+  for (const file of ['assets/css/component-tokens.css', 'assets/css/wp-core/notification-center.css']) {
+    await page.addStyleTag({ path: path.join(root, file) });
+  }
+  await page.evaluate(() => {
+    window.AdminKitNotificationCenter = {
+      nodeId:'ak-notifications', pendingClass:'ak-nc-pending', activeClass:'ak-nc-active',
+      title:'Notifications', subtitle:'Grouped notices', close:'Close', openLabel:'Notifications',
+      empty:'All clear', emptyDesc:'Nothing to review', openCountSingular:'%s notification', openCountPlural:'%s notifications', allow:[], deny:[]
+    };
+  });
+  await page.addScriptTag({ path: path.join(root, 'assets/js/wp-core/notification-center.js') });
+  const bell = page.locator('#wp-admin-bar-ak-notifications > .ab-item');
+  const icon = bell.locator('svg');
+  const bounds = await icon.boundingBox();
+  expect(bounds.width).toBe(18);
+  expect(bounds.height).toBe(18);
+  await expect(page.locator('.ak-nc-list #fixture-warning')).toHaveCount(1);
+  await expect(page.locator('#adminkit-nc-origin #fixture-success')).toHaveCount(1);
+  await bell.hover();
+  const bellHover = await bell.evaluate(n => getComputedStyle(n).backgroundColor);
+  const account = page.locator('#wp-admin-bar-my-account > .ab-item');
+  await account.hover();
+  expect(bellHover).toBe(await account.evaluate(n => getComputedStyle(n).backgroundColor));
+  await bell.click();
+  await expect(page.getByRole('dialog', { name:'Notifications' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(bell).toBeFocused();
+  await page.setViewportSize({ width:390, height:844 });
+  const mobileBounds = await icon.boundingBox();
+  expect(mobileBounds.width).toBe(22);
+  expect(mobileBounds.height).toBe(22);
 });
 
 test.describe('wp-admin', () => {

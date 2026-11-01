@@ -45,9 +45,17 @@ html.ak-nc-active #wpadminbar #wp-admin-bar-ak-notifications {
 	align-items: center;
 	justify-content: center;
 }
-#wpadminbar #wp-admin-bar-ak-notifications:hover > .ab-item,
-#wpadminbar #wp-admin-bar-ak-notifications > .ab-item:focus {
+body.adminkit #wpadminbar #wp-admin-bar-ak-notifications:hover > .ab-item,
+body.adminkit #wpadminbar #wp-admin-bar-ak-notifications > .ab-item:focus {
 	background: var(--ak-hover-bg, var(--ak-elevated));
+}
+
+/* The feature owns its icon geometry even without the admin theme stylesheet. */
+#wpadminbar #wp-admin-bar-ak-notifications .ak-theme-icon {
+	display: block;
+	width: 18px;
+	height: 18px;
+	flex: none;
 }
 
 /* The bell wrapper anchors the count badge. */

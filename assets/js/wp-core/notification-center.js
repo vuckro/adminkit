@@ -239,6 +239,11 @@
 		return n;
 	}
 	function mount() {
+		var node = document.getElementById( 'wp-admin-bar-' + C.nodeId );
+		bell = node ? node.querySelector( 'a' ) : null;
+		// A toolbar configuration or another plugin may remove the launcher.
+		// Keep notices inline when the drawer would otherwise be unreachable.
+		if ( ! bell ) { return false; }
 		backdrop = el( 'div', 'ak-nc-backdrop', { 'data-ak-nc-close': '' } );
 
 		drawer = el( 'aside', 'ak-nc-drawer', {
@@ -267,15 +272,14 @@
 		document.body.appendChild( backdrop );
 		document.body.appendChild( drawer );
 
-		var node = document.getElementById( 'wp-admin-bar-' + C.nodeId );
 		badgeEl = node ? node.querySelector( '.ak-nc-badge' ) : null;
-		bell    = node ? node.querySelector( 'a' ) : null;
 		if ( ! badgeEl ) { badgeEl = el( 'span', 'ak-nc-badge', { hidden: '' } ); } // defensive
 		if ( bell ) { bell.setAttribute( 'aria-haspopup', 'dialog' ); bell.setAttribute( 'aria-expanded', 'false' ); }
 
 		document.addEventListener( 'click', function ( e ) {
 			if ( e.target.closest && e.target.closest( '[data-ak-nc-close]' ) ) { e.preventDefault(); close(); }
 		} );
+		return true;
 	}
 
 	/* ───────── observe late notices + dismissals ───────── */
@@ -310,17 +314,19 @@
 			toggle();
 		}, true );
 
+		var mounted = false;
 		try {
-			mount();
-			sweep();   // initial relocation
-			observe(); // late notices + dismissals
+			mounted = mount();
+			if ( mounted ) {
+				sweep();   // initial relocation
+				observe(); // late notices + dismissals
+			}
 		} catch ( err ) {
 			if ( window.console && console.error ) { console.error( '[AdminKit Notification Center]', err ); }
 		}
-		// ALWAYS reveal + show the bell — even on error — so the page is never left
-		// with notices stuck hidden or the bell missing.
+		// ALWAYS reveal notices; advertise the drawer only when it has a launcher.
 		doc.classList.remove( C.pendingClass );
-		doc.classList.add( C.activeClass );
+		if ( mounted ) { doc.classList.add( C.activeClass ); }
 	}
 
 	if ( document.readyState === 'loading' ) {
