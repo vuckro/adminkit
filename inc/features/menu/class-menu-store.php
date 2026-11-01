@@ -148,7 +148,10 @@ class AdminKit_Menu_Store {
 			return AdminKit_Storage::error( 'adminkit_menu_schema_failed' );
 		}
 		if ( self::is_sqlite( $wpdb ) ) {
-			$begin_sql = 'BEGIN TRANSACTION';
+			// The WordPress SQLite facade parses MySQL syntax before translating it.
+			// Modern facade drivers reject SQLite's native BEGIN TRANSACTION syntax.
+			$facade = is_a( $wpdb, 'WP_SQLite_DB' ) || is_a( $wpdb, 'WP_SQLite_Translator' );
+			$begin_sql = $facade ? 'START TRANSACTION' : 'BEGIN TRANSACTION';
 		} else {
 			// Never claim rollback safety for a legacy non-transactional table.
 			$status = $wpdb->get_row( $wpdb->prepare( 'SHOW TABLE STATUS WHERE Name = %s', $table ), ARRAY_A );

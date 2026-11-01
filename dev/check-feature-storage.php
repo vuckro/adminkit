@@ -63,6 +63,18 @@ check(in_array('BEGIN TRANSACTION', $wpdb->queries, true) && in_array('COMMIT', 
 $wpdb->fail = 'insert';
 check(is_wp_error(AdminKit_Menu_Store::save_config(array(array('slug' => 'a'), array('slug' => 'b')))), 'SQLite failed insert must return WP_Error');
 
+// The current WordPress SQLite integration accepts MySQL transaction syntax only.
+if (!class_exists('WP_SQLite_DB')) {
+ class WP_SQLite_DB extends Storage_Test_DB {
+  public function query($sql) { if($sql==='BEGIN TRANSACTION')return false;return parent::query($sql); }
+ }
+}
+$wpdb=new WP_SQLite_DB();$wpdb->is_sqlite=true;$wpdb->rows=$old;
+check(true===AdminKit_Menu_Store::save_config(array(array('slug'=>'translated-sqlite'))),'WordPress SQLite facade rejected menu save');
+$before=$wpdb->rows;$wpdb->inserts=0;$wpdb->fail='insert';
+check(is_wp_error(AdminKit_Menu_Store::save_config(array(array('slug'=>'a'),array('slug'=>'b')))),'Facade insert failure was reported as success');
+check($wpdb->rows===$before,'Facade rollback lost the saved menu');
+
 // Multisite site deletion cleanup (`wp_uninitialize_site`).
 $wpdb = new Storage_Test_DB(); $wpdb->rows = $old;
 $transients[AdminKit_Menu_Store::CACHE_PREFIX . 2] = array('top' => array(), 'sub' => array());
