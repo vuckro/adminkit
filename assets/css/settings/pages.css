@@ -14,10 +14,11 @@
 .adminkit-app .ak-overview-summary{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:24px;border:1px solid var(--ak-border);border-radius:var(--ak-radius-m);background:var(--ak-surface)}
 .adminkit-app .ak-overview-summary strong{font-size:var(--ak-text-s);font-weight:600}
 .adminkit-app .ak-overview-summary p{margin:7px 0 0;color:var(--ak-text-muted);font-size:var(--ak-text-xs)}
-.adminkit-app .ak-overview-groups{border-top:1px solid var(--ak-border)}
-.adminkit-app .ak-overview-group{display:flex;align-items:center;gap:16px;min-height:68px;padding:18px 12px;border-bottom:1px solid var(--ak-border);color:var(--ak-text);text-decoration:none;font-size:var(--ak-text-s)}
+.adminkit-app .ak-overview-groups{border:1px solid var(--ak-border);border-radius:var(--ak-radius-m);background:var(--ak-surface);overflow:hidden}
+.adminkit-app .ak-overview-group{display:flex;align-items:center;gap:16px;min-height:62px;padding:16px 20px;border-bottom:1px solid var(--ak-border);color:var(--ak-text);text-decoration:none;font-size:var(--ak-text-s);transition:background var(--ak-dur-fast) var(--ak-ease)}
+.adminkit-app .ak-overview-group:last-child{border-bottom:0}
 .adminkit-app .ak-overview-group:hover{background:var(--ak-hover-bg)}
-.adminkit-app .ak-overview-count{margin-inline-start:auto;color:var(--ak-text-muted);font-size:var(--ak-text-xs);font-variant-numeric:tabular-nums}
+.adminkit-app .ak-overview-count{margin-inline-start:auto;display:inline-flex;align-items:center;justify-content:center;padding:2px 9px;border-radius:var(--ak-radius-full);background:var(--ak-surface-muted);border:1px solid var(--ak-border);color:var(--ak-text-muted);font-size:calc(11px * var(--ak-type-scale,1));font-weight:500;font-variant-numeric:tabular-nums}
 .adminkit-app .ak-overview-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
 .adminkit-app a.ak-btn{text-decoration:none;display:inline-flex;justify-content:center;align-items:center;min-height:38px;line-height:1.4}
 .adminkit-app .ak-btn--quiet{background:transparent;border:0;padding:8px 0;color:var(--ak-text-muted);text-decoration:underline;text-underline-offset:3px;font-size:var(--ak-text-xs);line-height:1.5}
@@ -37,14 +38,24 @@
 .adminkit-app .ak-configuration-row h3{font-size:calc(16px * var(--ak-type-scale,1));font-weight:600;margin:0 0 8px;color:var(--ak-heading)}
 .adminkit-app .ak-configuration-row p{max-width:65ch;font-size:var(--ak-text-s);color:var(--ak-text-muted);line-height:1.7;margin:0}
 .adminkit-app .ak-configuration-row .ak-actions{flex-wrap:wrap}
-.adminkit-app .ak-defaults summary{cursor:pointer;padding:10px 0;font-size:var(--ak-text-s);color:var(--ak-text)}
+.adminkit-app .ak-defaults summary{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border:1px solid var(--ak-btn-border);border-radius:var(--ak-radius-s);background:var(--ak-btn-bg);color:var(--ak-text);font-size:var(--ak-text-xs);font-weight:500;line-height:1.4;cursor:pointer;list-style:none;transition:background var(--ak-dur-fast) var(--ak-ease),border-color var(--ak-dur-fast) var(--ak-ease)}
+.adminkit-app .ak-defaults summary::-webkit-details-marker{display:none}
+.adminkit-app .ak-defaults summary:hover{background:var(--ak-btn-hover-bg);border-color:var(--ak-btn-hover-border)}
 .adminkit-app .ak-defaults[open] .ak-btn{margin-top:10px}
 /* Searchable rows and native contextual dialog share the original draft. */
 .adminkit-app .ak-features-workspace{display:block}
 .adminkit-app .ak-features-list{max-height:none;overflow:visible;margin:0;padding:0}
 .adminkit-app .ak-features-categories{display:flex;gap:24px;flex-wrap:wrap;border-bottom:1px solid var(--ak-border);padding-bottom:0}
-.adminkit-app .ak-features-categories .ak-btn{border:0;border-bottom:2px solid transparent;border-radius:0;padding:10px 0 14px;background:transparent;box-shadow:none}
-.adminkit-app .ak-features-categories .ak-btn[aria-pressed="true"]{border-bottom-color:var(--ak-heading);background:transparent}
+.adminkit-app[data-screen="main"] .ak-features-categories .ak-btn,
+.adminkit-app .ak-features-categories .ak-btn{display:inline-flex;align-items:center;gap:8px;border:0;border-bottom:2px solid transparent;border-radius:0;padding:10px 2px 13px;margin-bottom:-1px;background:transparent;box-shadow:none;color:var(--ak-text-muted);font-weight:500;transition:color var(--ak-dur-fast) var(--ak-ease),border-color var(--ak-dur-fast) var(--ak-ease)}
+.adminkit-app[data-screen="main"] .ak-features-categories .ak-btn:not(.ak-btn--primary):hover,
+.adminkit-app[data-screen="main"] .ak-features-categories .ak-btn:not(.ak-btn--primary):focus-visible,
+.adminkit-app .ak-features-categories .ak-btn:hover,
+.adminkit-app .ak-features-categories .ak-btn:focus-visible{background:transparent;border-color:transparent;border-bottom-color:var(--ak-border-strong);color:var(--ak-heading);box-shadow:none}
+.adminkit-app[data-screen="main"] .ak-features-categories .ak-btn[aria-pressed="true"],
+.adminkit-app[data-screen="main"] .ak-features-categories .ak-btn[aria-pressed="true"]:hover,
+.adminkit-app[data-screen="main"] .ak-features-categories .ak-btn[aria-pressed="true"]:focus-visible,
+.adminkit-app .ak-features-categories .ak-btn[aria-pressed="true"]{border-color:transparent;border-bottom-color:var(--ak-heading);background:transparent;color:var(--ak-heading);font-weight:600;box-shadow:none}
 .adminkit-app .ak-features-group{margin-bottom:28px}
 .adminkit-app .ak-features-group__title{font-size:var(--ak-text-s);font-weight:600;margin-bottom:12px}
 .adminkit-app .ak-features-group__items{display:block;border:1px solid var(--ak-border);border-radius:var(--ak-radius-m);overflow:hidden;background:var(--ak-surface)}
@@ -63,7 +74,8 @@
 .adminkit-app .ak-feature-dialog .ak-features-detail{position:static;padding:28px 24px;border:0;border-radius:0;background:transparent;box-shadow:none}
 .adminkit-app .ak-feature-dialog .ak-features-detail[hidden]{display:none}
 .adminkit-app .ak-feature-dialog .ak-features-back{display:none}
-.adminkit-app .ak-feature-dialog .ak-features-icon{width:32px;height:32px;background:transparent;margin-bottom:15px}
+.adminkit-app .ak-feature-dialog .ak-features-icon{width:40px;height:40px;border-radius:var(--ak-radius-s);background:var(--ak-surface-muted);border:1px solid var(--ak-border);color:var(--ak-heading);margin-bottom:16px}
+.adminkit-app .ak-feature-dialog .ak-features-state{padding:16px;border:1px solid var(--ak-border);border-radius:var(--ak-radius-s);background:var(--ak-surface-muted);margin-top:20px}
 .adminkit-app .ak-feature-dialog .ak-feature-done{display:block;margin-block:28px 0;margin-inline-start:auto}
 .adminkit-app .ak-savebar{margin-top:30px;z-index:10}
 /* Keep the actual navigation editors; only their content arrangement changes. */
@@ -82,9 +94,14 @@
 
 /* One navigation language across the catalog and both editors. */
 .adminkit-app[data-screen="main"] .ak-foundations-nav{gap:24px;border-bottom:1px solid var(--ak-border);margin:0;flex-wrap:wrap}
-.adminkit-app[data-screen="main"] .ak-foundations-nav button{border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:10px 0 14px;min-height:44px;box-shadow:none}
-.adminkit-app[data-screen="main"] .ak-foundations-nav button[aria-selected="true"]{background:transparent;border-bottom-color:var(--ak-heading);color:var(--ak-heading)}
+.adminkit-app[data-screen="main"] .ak-foundations-nav button{border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:10px 2px 13px;margin-bottom:-1px;min-height:44px;box-shadow:none;color:var(--ak-text-muted);font-weight:500;transition:color var(--ak-dur-fast) var(--ak-ease),border-color var(--ak-dur-fast) var(--ak-ease)}
+.adminkit-app[data-screen="main"] .ak-foundations-nav button:hover,
+.adminkit-app[data-screen="main"] .ak-foundations-nav button:focus-visible{background:transparent;border-bottom-color:var(--ak-border-strong);color:var(--ak-heading)}
+.adminkit-app[data-screen="main"] .ak-foundations-nav button[aria-selected="true"],
+.adminkit-app[data-screen="main"] .ak-foundations-nav button[aria-selected="true"]:hover,
+.adminkit-app[data-screen="main"] .ak-foundations-nav button[aria-selected="true"]:focus-visible{background:transparent;border-bottom-color:var(--ak-heading);color:var(--ak-heading);font-weight:600}
 .adminkit-app[data-screen="main"] .ak-foundations-panel{padding:24px;box-shadow:none}
+.adminkit-app[data-screen="main"] .ak-foundations-panel>.ak-row{border:1px solid var(--ak-border);border-radius:var(--ak-radius-s);padding:14px 16px;margin-bottom:20px;background:var(--ak-surface-muted)}
 .adminkit-app[data-screen="main"] .ak-foundations-panel h3{font-size:calc(19px * var(--ak-type-scale,1));line-height:1.4;margin-bottom:8px}
 .adminkit-app[data-screen="main"] .ak-foundation-intro{line-height:1.6;margin-bottom:24px}
 /* Palette rows carry the theme; a second frame inside the panel adds no hierarchy. */
@@ -95,14 +112,23 @@
 .adminkit-app[data-screen="main"] .ak-palette-origin{font-size:calc(11px * var(--ak-type-scale,1))}
 .adminkit-app[data-screen="main"] .ak-palette-row input.ak-palette-hex{font-size:calc(11px * var(--ak-type-scale,1))}
 /* State belongs beside the feature name, with the explanation beneath. */
-.adminkit-app .ak-feature-row-heading{display:flex;align-items:baseline;gap:8px 12px;flex-wrap:wrap}
-.adminkit-app .ak-feature-row-heading .ak-features-item__status{margin:0;font-size:calc(11px * var(--ak-type-scale,1));font-weight:400}
-.adminkit-app .ak-features-item[data-feature-state="active"] .ak-features-item__status{color:var(--ak-success)}
+.adminkit-app .ak-feature-row-heading{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap}
+.adminkit-app .ak-feature-row-heading .ak-features-item__status{margin:0;display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:var(--ak-radius-full);font-size:calc(11px * var(--ak-type-scale,1));font-weight:500;line-height:1.45;border:1px solid var(--ak-border);background:var(--ak-surface-muted);color:var(--ak-text-muted)}
+.adminkit-app .ak-feature-row-heading .ak-features-item__status::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7;flex-shrink:0}
+.adminkit-app .ak-features-item[data-feature-state="active"] .ak-features-item__status{color:var(--ak-success);background:var(--ak-success-subtle);border-color:color-mix(in srgb,var(--ak-success) 28%,transparent)}
+.adminkit-app .ak-features-item[data-feature-state="active"] .ak-features-item__status::before{opacity:1}
+.adminkit-app .ak-features-item[data-feature-pending="true"] .ak-features-item__status{color:var(--ak-warning);background:var(--ak-warning-subtle);border-color:color-mix(in srgb,var(--ak-warning) 32%,transparent)}
+.adminkit-app .ak-features-item[data-feature-pending="true"] .ak-features-item__status::before{opacity:1}
+.adminkit-app .ak-features-item[data-feature-state="unavailable"] .ak-features-item__status{color:var(--ak-text-disabled);background:var(--ak-surface-muted);border-color:var(--ak-border)}
+.adminkit-app .ak-features-item[data-feature-state="unavailable"] .ak-features-item__status::before{opacity:.45}
 .adminkit-app .ak-feature-catalog-row .ak-features-icon{color:var(--ak-text-muted)}
-.adminkit-app .ak-feature-config-label{font-weight:500}
+.adminkit-app .ak-feature-config-label{font-weight:500;transition:color var(--ak-dur-fast) var(--ak-ease)}
+.adminkit-app .ak-feature-catalog-row:hover .ak-feature-config-label,
+.adminkit-app .ak-features-item:focus-visible .ak-feature-config-label{color:var(--ak-heading)}
 .adminkit-app .ak-features-tools{margin-block:0 16px}
 .adminkit-app .ak-features-categories{gap:24px;margin-bottom:24px}
-.adminkit-app .ak-features-count{background:transparent;min-width:0;height:auto;color:var(--ak-text-muted);font-weight:400}
+.adminkit-app .ak-features-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:19px;padding-inline:6px;border-radius:var(--ak-radius-full);background:var(--ak-surface-muted);border:1px solid var(--ak-border);color:var(--ak-text-muted);font-size:calc(11px * var(--ak-type-scale,1));font-weight:500;line-height:1;font-variant-numeric:tabular-nums}
+.adminkit-app .ak-features-categories .ak-btn[aria-pressed="true"] .ak-features-count{background:var(--ak-hover-bg);border-color:var(--ak-border-strong);color:var(--ak-heading);font-weight:600}
 .adminkit-app .ak-savebar{padding:14px 0;min-height:68px}
 .adminkit-app .ak-savebar .ak-status{margin-inline-end:auto;line-height:1.5}
 .adminkit-app .ak-feature-dialog .ak-features-detail>h3{font-size:calc(22px * var(--ak-type-scale,1));line-height:1.35}
@@ -112,7 +138,7 @@
 .adminkit-app .ak-menu-group{box-shadow:none}
 .adminkit-app .ak-menu-tree{gap:8px}
 .adminkit-app .ak-overview-group{font-weight:500}
-.adminkit-app .ak-overview-count{font-weight:400}
+.adminkit-app .ak-overview-count{font-weight:500}
 @media(min-width:1100px){
  .adminkit-app[data-screen="main"] .ak-palette-theme{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px}
  .adminkit-app[data-screen="main"] .ak-palette-header{grid-column:1/-1}

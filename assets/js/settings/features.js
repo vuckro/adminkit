@@ -141,14 +141,27 @@
 				refs[f.key] = { button: button, input: input, quickInput: quickInput, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, pendingBadge: pendingBadge, optionNote: optionNote, optionNoteTitle: optionNoteTitle, optionNoteText: optionNoteText, optionFooter: optionFooter, optionSet: optionSet, optionInputs: optionInputs, visible: false };
 			});
 			var categoryButtons = [];
+			function syncCategoryHash(value) {
+				try {
+					if (window.history && typeof window.history.replaceState === 'function') {
+						var base = location.pathname + location.search;
+						window.history.replaceState(null, '', value ? base + '#category=' + encodeURIComponent(value) : base);
+					}
+				} catch (error) {}
+			}
 			function categoryButton(label, value, count) {
-				var b = el('button', { type: 'button', class: 'ak-btn', 'aria-pressed': 'false', onclick: function () { category = value; refresh(); } }, [
+				var b = el('button', { type: 'button', class: 'ak-btn', 'aria-pressed': 'false', onclick: function () { category = value; syncCategoryHash(value); refresh(); } }, [
 					el('span', { text: label }), count
 				]);
 				categories.appendChild(b); categoryButtons.push({ button: b, value: value, count: count });
 			}
 			categoryButton(I.featureAllCategories, '', el('span', { class: 'ak-features-count' }));
 			groups.forEach(function (g) { categoryButton(g.label, g.label, g.count); });
+			window.addEventListener('hashchange', function () {
+				var nextCategory = '';
+				if (location.hash.indexOf('#category=') === 0) { try { nextCategory = decodeURIComponent(location.hash.slice(10)); } catch (error) {} }
+				if (nextCategory !== category) { category = nextCategory; refresh(); }
+			});
 			function normalize(value) { return (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
 			function refresh() {
 				var focused = document.activeElement;
@@ -186,6 +199,7 @@
 						option.status.setAttribute('data-choice', on && checked ? 'on' : 'off');
 					});
 					r.button.setAttribute('data-feature-state', isLocked ? 'unavailable' : (on ? 'active' : 'inactive'));
+					r.button.setAttribute('data-feature-pending', pending ? 'true' : 'false');
 					r.stateLabel.textContent = isLocked ? I.featureUnavailable : (on ? I.featureActive : I.featureInactive);
 					r.status.textContent = isLocked ? I.featureUnavailable : (masterChanged ? (on ? I.featureActivationPending : I.featureDeactivationPending) : (optionsChanged ? I.featureOptionsPending : r.stateLabel.textContent));
 					r.hint.textContent = f.available === false ? (f.unavailableHint || I.featureUnavailable) : (f.parent && !state.features[f.parent] ? I.featureParentOff : (masterChanged ? (on ? I.featureWillEnable : I.featureWillDisable) : (optionsChanged ? I.featureOptionsWillApply : (on ? I.featureSavedOn : I.featureSavedOff))));
