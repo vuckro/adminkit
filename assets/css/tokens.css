@@ -30,6 +30,8 @@
 	--ak-warning-subtle: var(--wk-warning-soft);
 	--ak-error: var(--wk-danger-text);
 	--ak-error-subtle: var(--wk-danger-soft);
+	--ak-danger-solid: var(--wk-danger);
+	--ak-on-danger-solid: var(--wk-on-danger);
 	--ak-info: var(--wk-info-text);
 	--ak-info-subtle: var(--wk-info-soft);
 	--ak-radius-s: var(--wk-radius-md);

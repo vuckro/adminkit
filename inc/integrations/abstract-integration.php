@@ -176,7 +176,7 @@ abstract class AdminKit_Integration_Base {
 	 */
 	public static function print_menu_wordmark() {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( ! $screen || ! static::owns_screen( $screen ) ) {
+		if ( ! $screen || ! static::owns_screen( $screen ) || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return;
 		}
 		$slug  = static::wordmark_menu_slug();

@@ -186,7 +186,7 @@
 /* Pending-count bubble (comments / updates) */
 #wpadminbar .ab-label .pending-count {
 	background: var(--ak-secondary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 	border-radius: var(--ak-radius-full);
 	font-weight: 600;
 }

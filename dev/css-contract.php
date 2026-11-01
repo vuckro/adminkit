@@ -11,6 +11,12 @@ foreach ( $files as $file ) {
 	if ( preg_match( '/(?<![-\w])color\s*:\s*var\(--ak-primary(?:-hover)?\)/', $css ) ) {
 		$failures[] = $file->getFilename() . ': accent fill used as text ink';
 	}
+	if ( preg_match( '/\{[^}]*background(?:-color)?\s*:\s*var\(--ak-(?:primary|secondary|accent|error)\b[^}]*(?<![-\w])color\s*:\s*#(?:fff|ffffff)\b/is', $css ) ) {
+		$failures[] = $file->getFilename() . ': hardcoded #fff on dynamic accent/error fill (use --ak-on-accent or --ak-on-danger-solid)';
+	}
+	if ( preg_match( '/--wpds-color-fg-interactive-(?:brand|error)-strong(?:-active)?\s*:\s*#(?:fff|ffffff)\b/i', $css ) ) {
+		$failures[] = $file->getFilename() . ': hardcoded #fff on WPDS strong brand/error foreground';
+	}
 }
 $chrome = file_get_contents( $root . '/assets/css/wp-core/chrome.css' );
 if ( preg_match( '/body\.adminkit\s+table\.widefat/', $chrome ) ) {

@@ -13,7 +13,7 @@ function sanitize_text_field($s){return strip_tags($s);}
 function esc_html($s){return htmlspecialchars($s,ENT_QUOTES);}
 function esc_attr($s){return htmlspecialchars($s,ENT_QUOTES);}
 class AdminKit_Settings {const OPTION_KEY='adminkit_settings';public static $values=array();public static function get($key){return self::$values[$key]??false;}public static function register($key,$args){}}
-class AdminKit_Settings_Page {const SLUG='adminkit';}
+class AdminKit_Settings_Page {const SLUG='adminkit';public static function is_settings_hook($hook){return in_array($hook,array('toplevel_page_adminkit','adminkit_page_adminkit-features','adminkit_page_adminkit-design','adminkit_page_adminkit-navigation','adminkit_page_adminkit-configuration'),true);}}
 class AdminKit_Menu_Store {public static $config=array();public static function get_config(){return self::$config;}}
 require ADMINKIT_PATH.'inc/class-icons.php';
 require ADMINKIT_PATH.'inc/features/menu/class-menu-manager.php';
@@ -84,6 +84,7 @@ foreach(array(array('admin_bar_menu','capture_frontend',99998),array('admin_bar_
 }
 $before=count($hooks);AdminKit_Toolbar_Manager::enqueue('unrelated');check(count($hooks)===$before,'Snapshot capture leaked to another screen');
 AdminKit_Toolbar_Manager::enqueue('toplevel_page_adminkit');check(end($hooks)===array('admin_bar_menu',array('AdminKit_Toolbar_Manager','capture'),99998),'Admin capture hook changed');
+AdminKit_Toolbar_Manager::enqueue('adminkit_page_adminkit-navigation');check(end($hooks)===array('admin_bar_menu',array('AdminKit_Toolbar_Manager','capture'),99998),'Navigation submenu missed pristine toolbar capture');
 check(AdminKit_Toolbar_Manager::OPTION==='adminkit_toolbar'&&AdminKit_Toolbar_Manager::SNAPSHOT_KEY==='adminkit_toolbar_nodes'&&AdminKit_Toolbar_Manager::FRONTEND_SNAPSHOT_KEY==='adminkit_toolbar_nodes_frontend','Public storage constants changed');
 
 // Snapshot collection is pristine, context-aware and independent of the saved layout.
@@ -97,11 +98,13 @@ function __($text,$domain='default'){return$text;}
 function rest_ensure_response($value){return$value;}
 class Snapshot_Bar extends Fixture_Bar {public function get_nodes(){return$this->nodes;}}
 $bar=new Snapshot_Bar();$bar->add_node(array('id'=>'site-name','parent'=>false,'title'=>'Native site'));
+$bar->add_node(array('id'=>'my-account','parent'=>'top-secondary','title'=>'Howdy, Personal Admin Name'));
 $bar->add_node(array('id'=>'search','parent'=>'top-secondary','title'=>'<form id="adminbarsearch"><label>Search</label></form>'));
 $options[AdminKit_Toolbar_Manager::OPTION]=array('admin'=>array('titles'=>array('site-name'=>'Saved site')));
 AdminKit_Toolbar_Manager::capture($bar);
 $cached=$transients[AdminKit_Toolbar_Manager::SNAPSHOT_KEY];
 check($cached[array_search('site-name',array_column($cached,'id'),true)]['label']==='Native site','Snapshot applied a saved title');
+check($cached[array_search('my-account',array_column($cached,'id'),true)]['label']==='My Account','Snapshot leaked personal display name into shared transient');
 $before=$options;$response=AdminKit_Toolbar_Manager::rest_get();check($before===$options,'Snapshot read changed persisted layout');
 check($response['nodes']===$response['nodesByContext']['admin']&&$response['config']['titles']['site-name']==='Saved site','REST envelope changed');
 check(in_array('search',array_column($response['nodesByContext']['frontend'],'id'),true)&&!in_array('menu-toggle',array_column($response['nodesByContext']['frontend'],'id'),true),'Frontend synthesis lost context isolation');
@@ -109,6 +112,11 @@ $admin=false;$allowed=false;AdminKit_Toolbar_Manager::capture_frontend($bar);che
 $allowed=true;AdminKit_Toolbar_Manager::capture_frontend($bar);check(isset($transients[AdminKit_Toolbar_Manager::FRONTEND_SNAPSHOT_KEY]),'Authorized frontend capture failed');
 
 // CSS queues move with the renderer, while the public head callback stays stable.
+$renderer_overrides=new ReflectionProperty('AdminKit_Toolbar_Renderer','icon_overrides');$renderer_overrides->setAccessible(true);$renderer_overrides->setValue(null,array());
+$renderer_ab=new ReflectionProperty('AdminKit_Toolbar_Renderer','ab_item_overrides');$renderer_ab->setAccessible(true);$renderer_ab->setValue(null,array());
+$options[AdminKit_Toolbar_Manager::OPTION]=array('frontend'=>array('icons'=>array('site-name'=>'home','search'=>'home','updates'=>'bell','hidden-node'=>'home'),'hidden'=>array('hidden-node')));
+ob_start();AdminKit_Toolbar_Manager::print_css();$head_css=ob_get_clean();
+check(strpos($head_css,'id="adminkit-toolbar-manager"')!==false&&strpos($head_css,'#wp-admin-bar-site-name')!==false&&strpos($head_css,'#adminbarsearch::before')!==false&&strpos($head_css,'#wp-admin-bar-updates')!==false&&strpos($head_css,'hidden-node')===false,'Head print_css() failed before admin_bar_menu::apply()');
 $options[AdminKit_Toolbar_Manager::OPTION]=array('frontend'=>array('icons'=>array('site-name'=>'home','search'=>'home')));
 AdminKit_Toolbar_Manager::apply($bar);ob_start();AdminKit_Toolbar_Manager::print_css();$css=ob_get_clean();
 check(strpos($css,'id="adminkit-toolbar-manager"')!==false&&strpos($css,'#wp-admin-bar-site-name')!==false&&strpos($css,'#adminbarsearch::before')!==false&&strpos($css,'max-width:782px')!==false,'Renderer lost node CSS, search form or mobile rules');

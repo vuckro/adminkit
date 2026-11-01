@@ -47,6 +47,10 @@ class AdminKit_Toolbar_Manager {
 		add_action( 'wp_head', array( __CLASS__, 'print_css' ), 22 );
 		add_action( 'update_option_' . AdminKit_Settings::OPTION_KEY, array( __CLASS__, 'flush_snapshots' ) );
 		add_action( 'update_option_site_icon', array( __CLASS__, 'flush_snapshots' ) );
+		add_action( 'update_option_blogname', array( __CLASS__, 'flush_snapshots' ) );
+		add_action( 'activated_plugin', array( __CLASS__, 'flush_snapshots' ) );
+		add_action( 'deactivated_plugin', array( __CLASS__, 'flush_snapshots' ) );
+		add_action( 'switch_theme', array( __CLASS__, 'flush_snapshots' ) );
 	}
 
 	/**
@@ -68,7 +72,10 @@ class AdminKit_Toolbar_Manager {
 	 * @return void
 	 */
 	public static function enqueue( $hook ) {
-		if ( 'toplevel_page_' . AdminKit_Settings_Page::SLUG !== $hook ) {
+		$is_settings = method_exists( 'AdminKit_Settings_Page', 'is_settings_hook' )
+			? AdminKit_Settings_Page::is_settings_hook( $hook )
+			: ( 'toplevel_page_' . AdminKit_Settings_Page::SLUG === $hook );
+		if ( ! $is_settings ) {
 			return;
 		}
 		add_action( 'admin_bar_menu', array( __CLASS__, 'capture' ), 99998 );

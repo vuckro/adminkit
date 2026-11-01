@@ -238,7 +238,11 @@
 	}
 	function setStatus(cls, text) {
 		statusEl.className = 'ak-status' + (cls ? ' ' + cls : '');
-		statusEl.textContent = text ? text + (cls === 'is-error' && text === I.error && I.saveRecovery ? '. ' + I.saveRecovery : '') : '';
+		var suffix = '';
+		if (text && cls === 'is-error' && I.saveRecovery && (text === I.error || text.indexOf(I.saveRecovery) === -1)) {
+			suffix = (/[.!?…]$/.test(text) ? ' ' : '. ') + I.saveRecovery;
+		}
+		statusEl.textContent = text ? text + suffix : '';
 		var bar = statusEl.closest('.ak-savebar');
 		if (bar) { bar.hidden = !state.dirty && !state.saving && !text; }
 	}
@@ -315,11 +319,12 @@
 				setStatus('is-saved', I.saved);
 				reloadTimer = setTimeout(function () { if (!state.dirty) { location.reload(); } }, 600);
 			}
-		}).catch(function () {
+		}).catch(function (err) {
 			state.saving = false;
 			state.dirty = Object.keys(revisions).length > 0;
 			updateBar();
-			setStatus('is-error', I.error);
+			var msg = err && typeof err.message === 'string' && err.message.trim() ? err.message.trim() : I.error;
+			setStatus('is-error', msg);
 		});
 	}
 })();

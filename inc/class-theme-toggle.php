@@ -150,6 +150,9 @@ class AdminKit_Theme_Toggle {
 		if ( ! AdminKit_Settings::get( 'theme_toggle_enabled' ) ) {
 			return; // "Light / dark toggle" feature switched off.
 		}
+		if ( ! apply_filters( 'adminkit/should_load', true, is_admin() ? 'admin' : 'frontend' ) ) {
+			return;
+		}
 		$sun  = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'sun' ) );
 		$moon = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'moon' ) );
 
@@ -222,7 +225,7 @@ class AdminKit_Theme_Toggle {
 	 * @return array
 	 */
 	public static function editor_content_style( $init ) {
-		if ( ! is_admin() ) {
+		if ( ! is_admin() || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return $init;
 		}
 		$bg      = 'oklch(20.5% 0.005 258)';
@@ -257,6 +260,9 @@ class AdminKit_Theme_Toggle {
 	 * @return void
 	 */
 	public static function print_editor_bridge() {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return;
+		}
 		$attr = self::attribute();
 		?>
 <script id="adminkit-editor-theme">

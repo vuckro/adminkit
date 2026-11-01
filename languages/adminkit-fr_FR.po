@@ -334,6 +334,10 @@ msgstr "Échelle des arrondis"
 msgid "Corner shapes, outlines and depth for buttons, fields, cards and tables."
 msgstr "Arrondis, contours et profondeur des boutons, champs, cartes et tableaux."
 
+#: inc/settings/class-settings-page.php
+msgid "Could not load toolbar items."
+msgstr "Impossible de charger les éléments de la barre d’outils."
+
 #: inc/class-storage.php inc/settings/class-settings-page.php
 msgid "Could not save"
 msgstr "Échec de l’enregistrement"
@@ -750,6 +754,10 @@ msgstr "Descendre"
 msgid "Move up"
 msgstr "Monter"
 
+#: inc/features/toolbar/class-toolbar-snapshot.php
+msgid "My Account"
+msgstr "Mon compte"
+
 #: inc/wp-core/class-profile-account.php
 msgid "Name"
 msgstr "Nom"
@@ -846,7 +854,7 @@ msgstr "Options en pause"
 msgid "Options to save"
 msgstr "Options à enregistrer"
 
-#: inc/wp-core/class-profile-account.php
+#: inc/wp-core/class-options-discussion.php inc/wp-core/class-options-general.php inc/wp-core/class-profile-account.php
 msgid "Other settings"
 msgstr "Autres réglages"
 
@@ -1009,6 +1017,10 @@ msgstr "Rétablir les fonctionnalités par défaut"
 #: inc/settings/class-settings-page.php
 msgid "Restore the default feature choices. Design settings and navigation layouts are kept. Save to apply."
 msgstr "Rétablissez les choix par défaut des fonctionnalités. Le design et les configurations de navigation sont conservés. Enregistrez pour appliquer."
+
+#: inc/settings/class-settings-page.php
+msgid "Retry"
+msgstr "Réessayer"
 
 #: inc/settings/class-settings-page.php
 msgid "Review first steps"

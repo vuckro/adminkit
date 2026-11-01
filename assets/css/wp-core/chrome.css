@@ -179,7 +179,7 @@ body.adminkit .wrap h1.wp-heading-inline {
    inside random widgets / plugin pages / React UIs stay near-black
    on a dark surface. Exclude [class~="editor-styles-wrapper"] so
    non-iframed Gutenberg canvases keep their front-end theme colors. */
-body.adminkit :where(:is(h1, h2, h3):not([class~="editor-styles-wrapper"] *)) {
+body.adminkit :where(:is(h1, h2, h3):not([class~="editor-styles-wrapper"] *, .edit-site-layout__sidebar *, .edit-site-layout__sidebar-region *, .edit-site-sidebar-navigation-screen *)) {
 	color: var(--ak-heading);
 }
 
@@ -441,7 +441,7 @@ body.adminkit #adminmenu .wp-submenu li.current a:focus {
 body.adminkit #adminmenu .awaiting-mod,
 body.adminkit #adminmenu .update-plugins {
 	background: var(--ak-secondary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 	border-radius: var(--ak-radius-full);
 	font-weight: 600;
 }
@@ -456,7 +456,7 @@ body.adminkit #adminmenu li.current a .awaiting-mod,
 body.adminkit #adminmenu li.menu-top:hover > a .update-plugins,
 body.adminkit #adminmenu li:hover a .awaiting-mod {
 	background: var(--ak-secondary);
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 /* Collapse menu */

@@ -72,12 +72,21 @@ class AdminKit_Plugin {
 		'features/toolbar/class-toolbar-manager.php'           => 'AdminKit_Toolbar_Manager::init',
 	);
 
+	/** @var bool Prevent duplicate boots when `init()` is called both directly and via `plugins_loaded`. */
+	private static $booted = false;
+
 	/**
-	 * Boot the plugin. Called once from the loader.
+	 * Boot the plugin. Called once from the loader (on `plugins_loaded` priority 5,
+	 * or immediately when included after `plugins_loaded`).
 	 *
 	 * @return void
 	 */
 	public static function init() {
+		if ( self::$booted ) {
+			return;
+		}
+		self::$booted = true;
+
 		add_action( 'init', array( __CLASS__, 'load_textdomain' ) );
 
 		// Pass 1: load every module file. Pass 2: boot the ones with an entry

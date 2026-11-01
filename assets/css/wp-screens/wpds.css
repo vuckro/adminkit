@@ -69,8 +69,8 @@ body.adminkit :is(.edit-site-layout__area, .edit-site-layout__mobile) [data-wpds
 	--wpds-color-bg-interactive-brand-weak-active: var(--ak-primary-subtle);
 	--wpds-color-fg-interactive-brand: var(--ak-primary);
 	--wpds-color-fg-interactive-brand-active: var(--ak-primary-hover);
-	--wpds-color-fg-interactive-brand-strong: #ffffff;
-	--wpds-color-fg-interactive-brand-strong-active: #ffffff;
+	--wpds-color-fg-interactive-brand-strong: var(--ak-on-accent);
+	--wpds-color-fg-interactive-brand-strong-active: var(--ak-on-accent);
 	--wpds-color-bg-thumb-brand: var(--ak-primary);
 	--wpds-color-bg-thumb-brand-active: var(--ak-primary-hover);
 	--wpds-color-stroke-focus-brand: var(--ak-primary);
@@ -111,8 +111,8 @@ body.adminkit :is(.edit-site-layout__area, .edit-site-layout__mobile) [data-wpds
 	--wpds-color-stroke-surface-warning-strong: var(--ak-warning);
 
 	/* Error */
-	--wpds-color-bg-interactive-error-strong: var(--ak-error);
-	--wpds-color-bg-interactive-error-strong-active: var(--ak-error);
+	--wpds-color-bg-interactive-error-strong: var(--ak-danger-solid);
+	--wpds-color-bg-interactive-error-strong-active: var(--ak-danger-solid);
 	--wpds-color-bg-interactive-error-active: rgba(240, 70, 98, 0.04);
 	--wpds-color-bg-interactive-error-weak-active: rgba(240, 70, 98, 0.08);
 	--wpds-color-bg-surface-error-weak: rgba(240, 70, 98, 0.04);
@@ -121,8 +121,8 @@ body.adminkit :is(.edit-site-layout__area, .edit-site-layout__mobile) [data-wpds
 	--wpds-color-fg-content-error-weak: var(--ak-error);
 	--wpds-color-fg-interactive-error: var(--ak-error);
 	--wpds-color-fg-interactive-error-active: var(--ak-error);
-	--wpds-color-fg-interactive-error-strong: #ffffff;
-	--wpds-color-fg-interactive-error-strong-active: #ffffff;
+	--wpds-color-fg-interactive-error-strong: var(--ak-on-danger-solid);
+	--wpds-color-fg-interactive-error-strong-active: var(--ak-on-danger-solid);
 	--wpds-color-stroke-interactive-error: var(--ak-error);
 	--wpds-color-stroke-interactive-error-strong: var(--ak-error);
 	--wpds-color-stroke-interactive-error-active: var(--ak-error);

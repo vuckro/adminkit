@@ -52,16 +52,28 @@ body.adminkit:not(.is-fullscreen-mode) .ak-editor-theme-toggle {
 	display: none;
 }
 @media (max-width: 480px) {
-	body.adminkit .editor-header__settings { gap: calc(4px * var(--ak-space-scale, 1)); }
+	body.adminkit :is(.editor-header__settings, .edit-post-header__settings) {
+		gap: calc(2px * var(--ak-space-scale, 1));
+		flex-shrink: 0;
+	}
+	body.adminkit :is(.editor-header__toolbar, .edit-post-header__toolbar) {
+		gap: calc(2px * var(--ak-space-scale, 1));
+		min-width: 0;
+	}
+	body.adminkit :is(.editor-header, .edit-post-header) .ak-editor-theme-toggle {
+		min-width: 32px;
+		width: 32px;
+		padding: 0;
+	}
 }
 
 /* The Site Editor deliberately keeps its navigation shell dark in light mode. */
-body.adminkit .edit-site-layout__sidebar {
+body.adminkit :is(.edit-site-layout__sidebar, .edit-site-layout__sidebar-region) {
 	--ak-heading: var(--ak-inverse-text);
 	--ak-text: var(--ak-inverse-text);
 }
-body.adminkit .edit-site-layout__sidebar .edit-site-sidebar-navigation-screen__title,
-body.adminkit .edit-site-layout__sidebar .editor-save-button {
+body.adminkit :is(.edit-site-layout__sidebar, .edit-site-layout__sidebar-region) .edit-site-sidebar-navigation-screen__title,
+body.adminkit :is(.edit-site-layout__sidebar, .edit-site-layout__sidebar-region) .editor-save-button {
 	color: var(--ak-text);
 }
 

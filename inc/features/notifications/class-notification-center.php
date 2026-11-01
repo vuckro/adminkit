@@ -120,7 +120,7 @@ class AdminKit_Notification_Center {
 	public static function register_node( $bar ) {
 		// Admin only — `admin_bar_menu` also fires on the front-end, but there are no
 		// admin notices to collect there, so the bell would just be a dead icon.
-		if ( ! is_admin() || ! self::is_enabled() ) {
+		if ( ! is_admin() || ! self::is_enabled() || ! self::should_enhance() ) {
 			return;
 		}
 		$bell = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'bell' ) );

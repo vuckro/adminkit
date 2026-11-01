@@ -219,6 +219,9 @@ class AdminKit_Toolbar_Snapshot {
 			if ( $branding && 'wp-logo' === $id ) {
 				continue;
 			}
+			if ( 'my-account' === $id ) {
+				$n['label'] = __( 'My Account', 'adminkit' );
+			}
 			$defaults         = self::node_default_icons( $id, $context );
 			$n['defaultIcon'] = $defaults['defaultIcon'];
 			$n['dashicon']    = $defaults['dashicon'];
@@ -265,7 +268,7 @@ class AdminKit_Toolbar_Snapshot {
 			$defaults = self::node_default_icons( $id, $context );
 			$out[]    = array(
 				'id'          => $id,
-				'label'       => self::node_label( $node ),
+				'label'       => 'my-account' === $id ? __( 'My Account', 'adminkit' ) : self::node_label( $node ),
 				'group'       => $side,
 				'defaultIcon' => $defaults['defaultIcon'],
 				'dashicon'    => $defaults['dashicon'],

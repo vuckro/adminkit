@@ -397,6 +397,8 @@
         "toolbarIntro": "Réorganisez et masquez les éléments de votre barre d’outils d’administration. Glissez la poignée (ou utilisez les flèches) pour réordonner au sein de chaque côté ; l’œil retire un élément de la barre uniquement — il ne bloque pas l’accès. Réinitialiser rétablit la disposition native. Les changements s’appliquent après enregistrement.",
         "toolbarReset": "Réinitialiser la barre",
         "toolbarEmpty": "Aucun élément de barre d’outils trouvé.",
+        "toolbarLoadError": "Impossible de charger les éléments de la barre d’outils.",
+        "toolbarRetry": "Réessayer",
         "toolbarLeft": "Gauche",
         "toolbarRight": "Droite",
         "toolbarContext": "Contexte de la barre d’outils",

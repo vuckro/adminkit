@@ -116,6 +116,26 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
+	 * Whether a WordPress `$hook_suffix` belongs to one of AdminKit's 5 native
+	 * settings screens (toplevel + 4 submenu pages).
+	 *
+	 * @param string $hook Current admin page hook suffix.
+	 * @return bool
+	 */
+	public static function is_settings_hook( $hook ) {
+		$hook = (string) $hook;
+		if ( isset( self::$page_tabs[ $hook ] ) || 'toplevel_page_' . self::SLUG === $hook ) {
+			return true;
+		}
+		foreach ( array( 'adminkit-features', 'adminkit-design', 'adminkit-navigation', 'adminkit-configuration' ) as $slug ) {
+			if ( self::SLUG . '_page_' . $slug === $hook ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Enqueue the SPA assets on the AdminKit submenu screen only, and hand
 	 * the app its data. The style depends on `adminkit-tokens` so
 	 * `var(--ak-*)` resolves; the script depends on `wp-api-fetch` (which
@@ -125,7 +145,7 @@ class AdminKit_Settings_Page {
 	 * @return void
 	 */
 	public static function enqueue( $hook ) {
-		if ( ! isset( self::$page_tabs[ $hook ] ) && 'toplevel_page_' . self::SLUG !== $hook ) {
+		if ( ! self::is_settings_hook( $hook ) ) {
 			return;
 		}
 		$data = self::boot_data( 'main' );
@@ -485,6 +505,8 @@ class AdminKit_Settings_Page {
 				'toolbarIntro'      => __( 'Reorder, rename, change icons or hide toolbar items. Hiding an item does not block access to it in WordPress.', 'adminkit' ),
 				'toolbarReset'      => __( 'Reset toolbar', 'adminkit' ),
 				'toolbarEmpty'      => __( 'No toolbar items found.', 'adminkit' ),
+				'toolbarLoadError'  => __( 'Could not load toolbar items.', 'adminkit' ),
+				'toolbarRetry'      => __( 'Retry', 'adminkit' ),
 				'toolbarLeft'       => __( 'Left', 'adminkit' ),
 				'toolbarRight'      => __( 'Right', 'adminkit' ),
 				'toolbarAdminTitle' => __( 'Toolbar — Administration', 'adminkit' ),

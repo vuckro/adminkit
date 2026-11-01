@@ -53,6 +53,7 @@ $callbacks=array(
 );
 foreach($callbacks as$callback){ob_start();call_user_func_array(array($callback[0],$callback[1]),$callback[2]);$out=ob_get_clean();if($out!=='')throw new RuntimeException('Markup escaped veto: '.implode('::',array_slice($callback,0,2)));}
 if(AdminKit_Core_Login::filter_header_url('native')!=='native'||AdminKit_Core_Branding::logo_upload_mimes(array())!==array())throw new RuntimeException('Login/upload modification escaped veto');
+if(AdminKit_Core_List_Table_Chrome::trim_row_actions(array('resetpassword'=>'x'))!==array('resetpassword'=>'x')||AdminKit_Core_List_Table_Chrome::strip_views_decorations(array('all'=>'<span class="count">(5)</span>'))!==array('all'=>'<span class="count">(5)</span>'))throw new RuntimeException('List-table row actions or view counts escaped veto');
 try{AdminKit_User_Quick_Edit::handle_save();throw new RuntimeException('Vetoed AJAX did not deny');}catch(Gate_Denial $expected){}
 foreach(array(true,false)as$admin)AdminKit_Assets::enqueue_script('test','missing.js');
 foreach(glob(ADMINKIT_PATH.'inc/wp-core/class-*.php')as$file){if(preg_match('/\bwp_enqueue_(?:style|script)\s*\(/',file_get_contents($file)))throw new RuntimeException('WP-Core bypasses Assets: '.$file);}

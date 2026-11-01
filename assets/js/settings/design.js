@@ -21,6 +21,17 @@
 			function isValidHex(v) {
 				return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test((v || '').trim());
 			}
+			function isFullHex(v) {
+				return /^#[0-9a-f]{6}$/i.test((v || '').trim());
+			}
+			function expandHex(raw) {
+				var v = (raw || '').trim().toLowerCase();
+				if (v && v.charAt(0) !== '#') { v = '#' + v; }
+				if (/^#[0-9a-f]{3}$/i.test(v)) {
+					return '#' + v.charAt(1) + v.charAt(1) + v.charAt(2) + v.charAt(2) + v.charAt(3) + v.charAt(3);
+				}
+				return v;
+			}
 
 			// Use the stronger black/white contrast, matching contrast_text_for() in PHP.
 			function accentChannels(hex) {
@@ -153,16 +164,13 @@
 				}
 
 				function setHex(raw) {
-					var v = (raw || '').trim().toLowerCase();
-					if (v && v.charAt(0) !== '#') {
-						v = '#' + v;
-					}
-					if (isValidHex(v)) { state.brandAccent = v; }
-					hexInput.setAttribute('aria-invalid', String(!isValidHex(v)));
+					var v = expandHex(raw);
+					if (isFullHex(v)) { state.brandAccent = v; }
+					hexInput.setAttribute('aria-invalid', String(!isFullHex(v)));
 					if (hexInput.value !== v) {
 						hexInput.value = v;
 					}
-					if (isValidHex(v)) {
+					if (isFullHex(v)) {
 						native.value = v;
 						// Keep per-theme accent overrides aligned when the user picks a new global brand accent.
 						delete state.designSystem.colors.light.accent;
@@ -175,7 +183,20 @@
 					markDirty();
 				}
 
-				hexInput.addEventListener('input', function () { setHex(hexInput.value); });
+				hexInput.addEventListener('input', function () {
+					var raw = (hexInput.value || '').trim();
+					var normalized = raw && raw.charAt(0) !== '#' ? '#' + raw : raw;
+					if (isFullHex(normalized)) {
+						setHex(normalized);
+					} else if (/^#?[0-9a-f]{0,5}$/i.test(raw)) {
+						hexInput.removeAttribute('aria-invalid');
+					} else {
+						hexInput.setAttribute('aria-invalid', 'true');
+					}
+				});
+				hexInput.addEventListener('change', function () {
+					setHex(hexInput.value);
+				});
 				swatch.addEventListener('click', function () {
 					if (state.accentSource !== 'custom') { setSource('custom'); }
 					native.click();
@@ -300,8 +321,9 @@
 							syncSeg();
 						}
 						if (!value) { delete state.designSystem.colors[mode][role[0]]; paletteRefresh(); markDirty(); return; }
-						if (!isValidHex(value)) { hex.setAttribute('aria-invalid', 'true'); error.hidden = false; return; }
-						hex.removeAttribute('aria-invalid'); state.designSystem.colors[mode][role[0]] = value.toLowerCase(); paletteRefresh(); markDirty();
+						var expanded = expandHex(value);
+						if (!isFullHex(expanded)) { hex.setAttribute('aria-invalid', 'true'); error.hidden = false; return; }
+						hex.removeAttribute('aria-invalid'); state.designSystem.colors[mode][role[0]] = expanded; paletteRefresh(); markDirty();
 					}
 					hex.addEventListener('adminkit:reveal-field', function () { previewMode = mode; if (previewSection === 'colors') { refreshPreview(); } else { selectSection('colors'); } });
 					picker.addEventListener('input', function () { change(picker.value); });

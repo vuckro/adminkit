@@ -77,7 +77,7 @@ class AdminKit_Core_List_Table_Chrome {
 	 */
 	public static function register_views_filter() {
 		$screen = get_current_screen();
-		if ( ! $screen ) {
+		if ( ! $screen || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return;
 		}
 		add_filter( "views_{$screen->id}", array( __CLASS__, 'strip_views_decorations' ) );
@@ -99,7 +99,7 @@ class AdminKit_Core_List_Table_Chrome {
 	 * @return mixed
 	 */
 	public static function strip_views_decorations( $views ) {
-		if ( ! is_array( $views ) ) {
+		if ( ! is_array( $views ) || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
 			return $views;
 		}
 		$pattern = '/(<span\b[^>]*\bclass\s*=\s*"[^"]*\bcount\b[^"]*"[^>]*>)\s*\(\s*(.*?)\s*\)\s*(<\/span>)/is';
@@ -117,6 +117,9 @@ class AdminKit_Core_List_Table_Chrome {
 	 *     the user-edit screen, just removed from the hover row.
 	 */
 	public static function trim_row_actions( $actions ) {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return $actions;
+		}
 		unset( $actions['resetpassword'] );
 		return $actions;
 	}

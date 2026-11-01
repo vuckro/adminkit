@@ -42,7 +42,14 @@ for(const source of ['monochrome','adminkit','bricks','custom']) {
   assert.equal(frames[0].style.getPropertyValue('--wk-on-accent'),'#000000','per-mode accent determines automatic foreground');
   assert.equal(frames[0].style.getPropertyValue('--wk-accent-hover'),'#ffffff','derived hover follows the active palette foreground');
   assert.equal(frames[1].style.getPropertyValue('--wk-accent-hover'),'#0f2b47','dark custom hover matches server compiler');
-  const hex=w.document.querySelector('.ak-accent-inline__hex');hex.value='#oops';hex.dispatchEvent(new w.Event('input'));
+  const hex=w.document.querySelector('.ak-accent-inline__hex');
+  hex.value='#154';hex.dispatchEvent(new w.Event('input'));
+  assert.equal(state.brandAccent,'#123456','typing 3-digit prefix must not prematurely overwrite accent');
+  assert.equal(state.designSystem.colors.light.accent,'#ffffff','typing 3-digit prefix must not erase custom palette overrides');
+  hex.value='#abc';hex.dispatchEvent(new w.Event('change'));
+  assert.equal(state.brandAccent,'#aabbcc','3-digit hex expands to 6-digit on change');
+  hex.value='#123456';hex.dispatchEvent(new w.Event('input'));
+  hex.value='#oops';hex.dispatchEvent(new w.Event('input'));
   assert.equal(state.brandAccent,'#123456','invalid text changed last valid accent');
   w.document.querySelector('.ak-accent-inline [role=radio]').click();
   assert.equal(state.brandAccent,'#123456','source change erased saved accent');

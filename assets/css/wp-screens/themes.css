@@ -250,8 +250,8 @@ body.adminkit .broken-themes a.delete-theme:hover,
 body.adminkit .broken-themes a.delete-theme:focus,
 body.adminkit .theme-overlay .theme-actions .delete-theme:hover,
 body.adminkit .theme-overlay .theme-actions .delete-theme:focus {
-	background: var(--ak-error);
-	color: #ffffff;
-	border-color: var(--ak-error);
-	box-shadow: 0 0 0 1px var(--ak-error);
+	background: var(--ak-danger-solid);
+	color: var(--ak-on-danger-solid);
+	border-color: var(--ak-danger-solid);
+	box-shadow: 0 0 0 1px var(--ak-danger-solid);
 }

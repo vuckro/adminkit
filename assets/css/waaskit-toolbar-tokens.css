@@ -57,6 +57,8 @@
 	--wk-success-soft: oklch(96.5% 0.03 152);
 	--wk-warning-text: oklch(43% 0.095 62);
 	--wk-warning-soft: oklch(97% 0.025 80);
+	--wk-danger: oklch(45% 0.17 27);
+	--wk-on-danger: var(--wk-neutral-0);
 	--wk-danger-text: oklch(43% 0.16 27);
 	--wk-danger-soft: oklch(96.5% 0.017 27);
 	--wk-info-text: oklch(41% 0.09 240);
@@ -94,6 +96,8 @@
 	--wk-success-soft: oklch(28% 0.035 152);
 	--wk-warning-text: oklch(87% 0.1 80);
 	--wk-warning-soft: oklch(29% 0.035 75);
+	--wk-danger: oklch(73% 0.14 25);
+	--wk-on-danger: var(--wk-neutral-950);
 	--wk-danger-text: oklch(84% 0.085 25);
 	--wk-danger-soft: oklch(28% 0.045 25);
 	--wk-info-text: oklch(86% 0.05 240);

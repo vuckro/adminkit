@@ -110,6 +110,7 @@ class AdminKit_Core_Options_Discussion {
 
 			'avatars'       => __( 'Avatars', 'adminkit' ),
 			'comments'      => __( 'Comment settings', 'adminkit' ),
+			'otherSettings' => __( 'Other settings', 'adminkit' ),
 
 		);
 

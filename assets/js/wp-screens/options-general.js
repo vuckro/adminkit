@@ -51,7 +51,8 @@
 	var TABS = [
 		{ id: 'general', title: S.tabGeneral },
 		{ id: 'locale',  title: S.tabLocale },
-		{ id: 'account', title: S.tabAccount }
+		{ id: 'account', title: S.tabAccount },
+		{ id: 'other',   title: S.tabOther }
 	];
 
 	// Leading tab icons (Lucide-style, currentColor) so this strip reads like the
@@ -62,6 +63,7 @@
 	};
 
 	ICONS.account = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/></svg>';
+	ICONS.other = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>';
 
 	var sourceTable = form.querySelector( ':scope > .form-table' );
 	if ( ! sourceTable ) { reveal(); return; }
@@ -110,12 +112,60 @@
 		}
 	} );
 
-	// Remove the source table if every row was scooped. Otherwise leave it
-	// in place — there may be third-party rows we don't know about.
+	// Wrap any leftover rows in sourceTable + any third-party `add_settings_section`
+	// tables (`<h2>` + `<table class="form-table">`) into clean `.ak-options-block`
+	// cards under the `other` tab so they never float ungrouped beneath every tab.
 	var sourceBody = sourceTable.querySelector( 'tbody' );
 	if ( sourceBody && ! sourceBody.querySelector( 'tr' ) ) {
 		sourceTable.parentNode.removeChild( sourceTable );
+	} else if ( sourceBody && sourceBody.querySelector( 'tr' ) ) {
+		var defaultExtra = document.createElement( 'section' );
+		defaultExtra.className = 'ak-options-block';
+		defaultExtra.id = 'ak-opt-other-default';
+		defaultExtra.dataset.akTab = 'other';
+		var defaultHeading = document.createElement( 'h2' );
+		defaultHeading.className = 'ak-options-block__title';
+		defaultHeading.textContent = S.tabOther;
+		defaultExtra.appendChild( defaultHeading );
+		sourceTable.parentNode.insertBefore( defaultExtra, sourceTable );
+		defaultExtra.appendChild( sourceTable );
+		madeBlocks.push( { el: defaultExtra, tab: 'other' } );
 	}
+
+	var extraIdx = 0;
+	Array.prototype.slice.call( form.querySelectorAll( ':scope > table.form-table' ) ).forEach( function ( tbl ) {
+		if ( ! tbl.querySelector( 'tr' ) ) { return; }
+		var card = document.createElement( 'section' );
+		card.className = 'ak-options-block';
+		card.id = 'ak-opt-other-' + ( ++extraIdx );
+		card.dataset.akTab = 'other';
+		var before = [];
+		var prev = tbl.previousElementSibling;
+		while ( prev && prev.tagName !== 'TABLE' && ! prev.hasAttribute( 'data-ak-tab' ) && ! ( prev.tagName === 'INPUT' && prev.getAttribute( 'type' ) === 'hidden' ) && ! prev.classList.contains( 'submit' ) ) {
+			before.unshift( prev );
+			prev = prev.previousElementSibling;
+		}
+		var hasHeading = before.some( function ( node ) {
+			if ( node.tagName === 'H2' || node.tagName === 'H3' ) {
+				node.classList.add( 'ak-options-block__title' );
+				return true;
+			}
+			if ( node.tagName === 'P' ) {
+				node.classList.add( 'ak-options-block__desc' );
+			}
+			return false;
+		} );
+		if ( ! hasHeading ) {
+			var fallbackH2 = document.createElement( 'h2' );
+			fallbackH2.className = 'ak-options-block__title';
+			fallbackH2.textContent = S.tabOther;
+			card.appendChild( fallbackH2 );
+		}
+		tbl.parentNode.insertBefore( card, tbl );
+		before.forEach( function ( node ) { card.appendChild( node ); } );
+		card.appendChild( tbl );
+		madeBlocks.push( { el: card, tab: 'other' } );
+	} );
 
 	// Tab strip — only render when both tabs ended up populated. Otherwise
 	// fall through to a flat stack of blocks (still functional, just no

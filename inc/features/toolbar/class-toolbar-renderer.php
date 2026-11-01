@@ -37,6 +37,25 @@ class AdminKit_Toolbar_Renderer {
 	);
 
 
+	/** @var array<string,bool> Toolbar node IDs whose icon paints on `> .ab-item::before` rather than `.ab-icon`. */
+	const AB_ITEM_IDS = array(
+		'site-name'        => true,
+		'edit'             => true,
+		'customize'        => true,
+		'site-editor'      => true,
+		'archive'          => true,
+		'query-monitor'    => true,
+		'edit_with_bricks' => true,
+		'editor_mode'      => true,
+	);
+
+	/** @var array<string,bool> AdminKit toolbar buttons rendered as inline `<svg class="ak-theme-icon">`. */
+	const INLINE_SVG_IDS = array(
+		'ak-notifications' => true,
+		'ak-view-site'     => true,
+		'ak-theme-toggle'  => true,
+	);
+
 	/**
 	 * Apply a validated layout and protection policy to the live
 	 * bar: hide (remove), apply custom titles + icons, then reorder. Runs on
@@ -49,6 +68,9 @@ class AdminKit_Toolbar_Renderer {
 	 * @return void
 	 */
 	public static function apply( $bar, array $cfg, array $protected, $branding ) {
+		self::$icon_overrides    = array();
+		self::$ab_item_overrides = array();
+
 		// Hide: drop the node (children go with it). Never a protected id.
 		$hidden = array();
 		foreach ( $cfg['hidden'] as $id ) {
@@ -210,23 +232,88 @@ class AdminKit_Toolbar_Renderer {
 
 		// Lucide icon name or custom SVG data-URI: ensure the node has an `.ab-icon`
 		// span (unless it's a known `> .ab-item::before` node like site-name/edit/customize/site-editor/query-monitor).
-		$ab_item_ids = array(
-			'site-name'        => true,
-			'edit'             => true,
-			'customize'        => true,
-			'site-editor'      => true,
-			'archive'          => true,
-			'query-monitor'    => true,
-			'edit_with_bricks' => true,
-			'editor_mode'      => true,
-		);
-		if ( isset( $ab_item_ids[ $id ] ) ) {
+		if ( self::is_ab_item_node( $id ) ) {
 			self::$ab_item_overrides[ $dom_id ] = true;
 		} elseif ( false === strpos( $raw, 'ab-icon' ) ) {
 			$props['title'] = '<span class="ab-icon" aria-hidden="true"></span>' . $raw;
 		}
 		self::$icon_overrides[ $dom_id ] = $icon;
 		return $props;
+	}
+
+	/**
+	 * Whether a toolbar node paints its icon on `> .ab-item::before` rather than `.ab-icon`.
+	 *
+	 * @param string $id Raw node id (with or without `wp-admin-bar-` prefix).
+	 * @return bool
+	 */
+	private static function is_ab_item_node( $id ) {
+		$raw_id = ( 0 === strpos( $id, 'wp-admin-bar-' ) ) ? substr( $id, 13 ) : $id;
+		$dom_id = 'wp-admin-bar-' . $raw_id;
+		if ( isset( self::AB_ITEM_IDS[ $raw_id ] ) ) {
+			return true;
+		}
+		$filtered = (array) apply_filters( 'adminkit/toolbar_icon_ab_item_nodes', array() );
+		return ! empty( $filtered[ $raw_id ] ) || ! empty( $filtered[ $dom_id ] );
+	}
+
+	/**
+	 * Build icon override maps directly from the saved toolbar configuration so
+	 * `print_css()` (at `admin_head` / `wp_head` priority 22) emits `<style>` in
+	 * `<head>` BEFORE `admin_bar_menu` runs in `<body>`.
+	 *
+	 * @return array{0:array<string,string>,1:array<string,bool>}
+	 */
+	private static function configured_icon_overrides() {
+		if ( ! class_exists( 'AdminKit_Toolbar_Config' ) ) {
+			return array( array(), array() );
+		}
+		$cfg = AdminKit_Toolbar_Config::get_config( is_admin() ? 'admin' : 'frontend' );
+		if ( empty( $cfg['icons'] ) || ! is_array( $cfg['icons'] ) ) {
+			return array( array(), array() );
+		}
+		$protected = AdminKit_Toolbar_Config::protected_nodes();
+		$hidden    = array();
+		if ( ! empty( $cfg['hidden'] ) && is_array( $cfg['hidden'] ) ) {
+			foreach ( $cfg['hidden'] as $hid ) {
+				if ( ! isset( $protected[ $hid ] ) ) {
+					$hidden[ $hid ] = true;
+				}
+			}
+		}
+		$branding  = class_exists( 'AdminKit_Settings' ) && (bool) AdminKit_Settings::get( 'branding_enabled' );
+		$overrides = array();
+		$ab_items  = array();
+
+		foreach ( $cfg['icons'] as $id => $icon ) {
+			$id   = (string) $id;
+			$icon = (string) $icon;
+			if ( '' === $id || '' === $icon || isset( $hidden[ $id ] ) || ( $branding && 'wp-logo' === $id ) ) {
+				continue;
+			}
+			// Inline-SVG AdminKit toolbar nodes swap `<svg class="ak-theme-icon">` directly in `apply_node_icon()`.
+			if ( isset( self::INLINE_SVG_IDS[ $id ] ) && class_exists( 'AdminKit_Icons' ) && AdminKit_Icons::has( $icon ) ) {
+				continue;
+			}
+			$dom_id = ( 0 === strpos( $id, 'wp-admin-bar-' ) ) ? $id : 'wp-admin-bar-' . $id;
+			if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $dom_id ) ) {
+				continue;
+			}
+			if ( 'search' === $id ) {
+				$overrides[ $dom_id ] = ( 'wp-default' === $icon ) ? 'wp-default:search' : $icon;
+				continue;
+			}
+			if ( 'wp-default' === $icon ) {
+				$overrides[ $dom_id ] = 'wp-default:' . $id;
+				continue;
+			}
+			if ( 0 !== strpos( $icon, 'dashicons-' ) && self::is_ab_item_node( $id ) ) {
+				$ab_items[ $dom_id ] = true;
+			}
+			$overrides[ $dom_id ] = $icon;
+		}
+
+		return array( $overrides, $ab_items );
 	}
 
 	/**
@@ -237,13 +324,24 @@ class AdminKit_Toolbar_Renderer {
 	 * @return void
 	 */
 	public static function print_css() {
-		if ( empty( self::$icon_overrides ) || ! is_admin_bar_showing() ) {
+		if ( ! is_admin_bar_showing() ) {
+			return;
+		}
+		$overrides = self::$icon_overrides;
+		$ab_items  = self::$ab_item_overrides;
+		if ( empty( $overrides ) ) {
+			list( $overrides, $ab_items ) = self::configured_icon_overrides();
+		}
+		if ( empty( $overrides ) ) {
 			return;
 		}
 		$desktop = '';
 		$mobile  = '';
 
-		foreach ( self::$icon_overrides as $dom_id => $icon ) {
+		foreach ( $overrides as $dom_id => $icon ) {
+			if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', (string) $dom_id ) ) {
+				continue;
+			}
 			// When `site-name` has an explicit custom icon override, neutralize
 			// `AdminKit_Core_Branding`'s `::before` mark so only the chosen icon shows.
 			if ( 'wp-admin-bar-site-name' === $dom_id && 0 === strpos( $icon, 'dashicons-' ) ) {
@@ -293,7 +391,7 @@ class AdminKit_Toolbar_Renderer {
 				continue;
 			}
 
-			if ( ! empty( self::$ab_item_overrides[ $dom_id ] ) ) {
+			if ( ! empty( $ab_items[ $dom_id ] ) ) {
 				$sel      = '.wp-admin #wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before,#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before';
 				$desktop .= $sel . '{content:"" !important;background-image:none !important;box-sizing:border-box;float:left;height:32px;width:20px;padding:6px 0;margin-right:6px;position:static;top:auto;' . $mask . '}';
 				$mobile  .= $sel . '{content:"" !important;background-image:none !important;box-sizing:border-box;display:block;float:none;width:52px;height:46px;margin:0;text-indent:0;position:static;top:auto;' . $mask . '-webkit-mask-size:22px 22px;mask-size:22px 22px}';

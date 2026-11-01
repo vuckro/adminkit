@@ -7,7 +7,7 @@ Keep public class names and namespaced hooks stable. The implementations under
 
 | Hook | Signature after the value, or action arguments | Contract |
 | --- | --- | --- |
-| `adminkit/loaded` | action, no arguments | Module hooks wired, integrations queued for `after_setup_theme` |
+| `adminkit/loaded` | action, no arguments | Fires on `plugins_loaded` (priority 5) once module hooks are wired and integrations queued for `after_setup_theme` |
 | `adminkit/should_load` | filter `(bool $load, string $context)` | Master context veto; also honored by native markup/behavior callbacks |
 | `adminkit/enqueue_{context}` | filter `(bool)` | Context asset gate |
 | `adminkit/enqueue_{section}` | filter `(bool)` | Registered stylesheet section gate |

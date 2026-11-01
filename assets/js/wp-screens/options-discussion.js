@@ -178,6 +178,45 @@
 			});
 			if (!source.querySelector('tbody > tr')) source.remove();
 		}
+		// Wrap any remaining third-party `.form-table` sections inside `#ak-options-panel-comments`
+		// into matching `.ak-options-block` cards so they share the same layout as core cards.
+		var extraCount = 0;
+		Array.prototype.slice.call(commentsPanel.querySelectorAll(':scope > table.form-table')).forEach(function (tbl) {
+			if (!tbl.querySelector('tbody > tr, tr')) { tbl.remove(); return; }
+			var extCard = document.createElement('section');
+			extCard.className = 'ak-options-block ak-discussion-card';
+			extCard.dataset.group = 'extra-' + (++extraCount);
+			var lead = [];
+			var prev = tbl.previousElementSibling;
+			while (prev && prev !== cards && prev.tagName !== 'TABLE') {
+				lead.unshift(prev);
+				prev = prev.previousElementSibling;
+			}
+			var foundHeading = false;
+			lead.forEach(function (node) {
+				node.removeAttribute('data-ak-tab');
+				if (!foundHeading && (node.tagName === 'H2' || node.tagName === 'H3')) {
+					node.className = 'ak-options-block__title';
+					node.id = node.id || ('ak-discussion-extra-' + extraCount);
+					extCard.setAttribute('aria-labelledby', node.id);
+					foundHeading = true;
+				} else if (node.tagName === 'P') {
+					node.classList.add('ak-options-block__desc');
+				}
+				extCard.appendChild(node);
+			});
+			if (!foundHeading) {
+				var h2 = document.createElement('h2');
+				h2.className = 'ak-options-block__title';
+				h2.id = 'ak-discussion-extra-' + extraCount;
+				h2.textContent = S.otherSettings;
+				extCard.setAttribute('aria-labelledby', h2.id);
+				extCard.appendChild(h2);
+			}
+			tbl.removeAttribute('data-ak-tab');
+			extCard.appendChild(tbl);
+			cards.appendChild(extCard);
+		});
 	}
 
 

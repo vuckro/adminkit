@@ -334,6 +334,10 @@ msgstr ""
 msgid "Corner shapes, outlines and depth for buttons, fields, cards and tables."
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "Could not load toolbar items."
+msgstr ""
+
 #: inc/class-storage.php inc/settings/class-settings-page.php
 msgid "Could not save"
 msgstr ""
@@ -750,6 +754,10 @@ msgstr ""
 msgid "Move up"
 msgstr ""
 
+#: inc/features/toolbar/class-toolbar-snapshot.php
+msgid "My Account"
+msgstr ""
+
 #: inc/wp-core/class-profile-account.php
 msgid "Name"
 msgstr ""
@@ -846,7 +854,7 @@ msgstr ""
 msgid "Options to save"
 msgstr ""
 
-#: inc/wp-core/class-profile-account.php
+#: inc/wp-core/class-options-discussion.php inc/wp-core/class-options-general.php inc/wp-core/class-profile-account.php
 msgid "Other settings"
 msgstr ""
 
@@ -1008,6 +1016,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Restore the default feature choices. Design settings and navigation layouts are kept. Save to apply."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Retry"
 msgstr ""
 
 #: inc/settings/class-settings-page.php

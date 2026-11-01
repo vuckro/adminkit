@@ -26,4 +26,10 @@ define( 'ADMINKIT_URL', plugin_dir_url( __FILE__ ) );
 // (inc/class-plugin.php → AdminKit_Plugin::MODULES). Adding a module is a one-line
 // edit there; this loader stays static.
 require_once ADMINKIT_PATH . 'inc/class-plugin.php';
-AdminKit_Plugin::init();
+if ( function_exists( 'did_action' ) && did_action( 'plugins_loaded' ) ) {
+	AdminKit_Plugin::init();
+} elseif ( function_exists( 'add_action' ) ) {
+	add_action( 'plugins_loaded', array( 'AdminKit_Plugin', 'init' ), 5 );
+} else {
+	AdminKit_Plugin::init();
+}

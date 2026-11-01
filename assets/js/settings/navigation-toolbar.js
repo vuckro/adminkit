@@ -24,6 +24,7 @@
 		function buildToolbar() {
 			var TB = D.toolbar || {};
 			var activeCtx = 'admin';
+			var hasLoaded = false;
 			var nodesByCtx = { admin: [], frontend: [] };
 			var contextTitle = el('h3', { text: I.toolbarAdminTitle });
 			var scopeHint = el('p', { id: 'ak-toolbar-scope', class: 'ak-toolbar-scope', 'aria-live': 'polite', text: I.toolbarAdminScope });
@@ -85,15 +86,17 @@
 				]
 			);
 
+			var resetBtn = el('button', {
+				type: 'button',
+				class: 'ak-btn ak-btn--ghost ak-menu-toolbar__spacer',
+				disabled: 'disabled',
+				text: I.toolbarReset,
+				onclick: reset
+			});
 			p.appendChild(
 				el('div', { class: 'ak-actions ak-menu-toolbar' }, [
 					seg,
-					el('button', {
-						type: 'button',
-						class: 'ak-btn ak-btn--ghost ak-menu-toolbar__spacer',
-						text: I.toolbarReset,
-						onclick: reset
-					})
+					resetBtn
 				])
 			);
 			p.appendChild(scopeHint);
@@ -113,6 +116,8 @@
 					listWrap.textContent = I.toolbarEmpty || '—';
 					return;
 				}
+				hasLoaded = false;
+				resetBtn.disabled = true;
 				p.inert = true;
 				p.setAttribute('aria-busy', 'true');
 				apiFetch({ path: tbPath() })
@@ -125,13 +130,29 @@
 							admin: toSides(nodesByCtx.admin, cbc.admin || (res && res.config) || {}),
 							frontend: toSides(nodesByCtx.frontend, cbc.frontend || {})
 						};
+						hasLoaded = true;
+						resetBtn.disabled = false;
 						render();
 						p.inert = false;
 						p.removeAttribute('aria-busy');
 					})
-					.catch(function () {
+					.catch(function (err) {
+						p.inert = false;
 						p.removeAttribute('aria-busy');
-						listWrap.textContent = I.toolbarEmpty || '—';
+						listWrap.textContent = '';
+						var errMsg = (err && typeof err.message === 'string' && err.message.trim()) || I.toolbarLoadError || I.error || '—';
+						var box = el('div', { class: 'ak-toolbar-error', role: 'alert' }, [
+							el('p', { text: errMsg })
+						]);
+						if (I.toolbarRetry) {
+							box.appendChild(el('button', {
+								type: 'button',
+								class: 'ak-btn',
+								text: I.toolbarRetry,
+								onclick: load
+							}));
+						}
+						listWrap.appendChild(box);
 					});
 			}
 
@@ -181,6 +202,9 @@
 			}
 
 			function reset() {
+				if (!hasLoaded) {
+					return;
+				}
 				state.toolbar[activeCtx] = toSides(nodesByCtx[activeCtx] || [], {}); // native order, nothing hidden
 				render();
 				markDirty('toolbar');

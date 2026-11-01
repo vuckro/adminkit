@@ -185,6 +185,7 @@ class AdminKit_Core_Options_General {
 			'tabGeneral'   => __( 'Identity', 'adminkit' ),
 			'tabAccount'   => __( 'Account', 'adminkit' ),
 			'tabLocale'    => __( 'Localization', 'adminkit' ),
+			'tabOther'     => __( 'Other settings', 'adminkit' ),
 			'languageZone' => __( 'Language & timezone', 'adminkit' ),
 			'languageZoneDesc' => __( 'Choose the site language and the timezone used for publishing.', 'adminkit' ),
 			'formats' => __( 'Date & time formats', 'adminkit' ),

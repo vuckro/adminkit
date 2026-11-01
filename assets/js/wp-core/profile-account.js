@@ -368,17 +368,17 @@
 		  // + reset. Website (`.user-url-wrap`) and
 		  // biographical info (`.user-description-wrap`) live on the Settings tab
 		  // — the user-facing copy / locale set, not the identity set.
-		  rows: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', ['.user-user-login-wrap', '.user-login-wrap'], ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
+		  rows: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap', '#ame-rex-other-roles-row', ['.user-user-login-wrap', '.user-login-wrap'], ['#password', '.user-pass1-wrap'], '.user-pass2-wrap', '.pw-weak', '.user-generate-reset-link-wrap' ],
 		  half: [ '.user-first-name-wrap', '.user-last-name-wrap', '.user-email-wrap', '.user-nickname-wrap', '.user-display-name-wrap', '.user-role-wrap', ['#password', '.user-pass1-wrap'], '.user-generate-reset-link-wrap' ],
 		  absorb: [ S.sections.name ] },
 		{ id: 'settings', icon: 'sliders', t: S.cards.settings, order: 30,
 		  // Curated triad first (language / website / bio), then per-user prefs
-		  // (syntax highlighting, comment shortcuts, admin bar) and pw confirm.
+		  // (syntax highlighting, comment shortcuts, admin bar).
 		  // Anything else WP exposes (Personal Options, App Passwords, About
 		  // Yourself leftover, Account Management, Capabilities) folds in via
 		  // absorb — the section heading text comes from WP core so it survives
 		  // translation.
-		  rows: [ '.user-language-wrap', '.user-url-wrap', '.user-description-wrap', '.user-syntax-highlighting-wrap', '.user-comment-shortcuts-wrap', ['.user-admin-bar-front-wrap', '.show-admin-bar'], '.user-pass2-wrap', '.pw-weak' ],
+		  rows: [ '.user-language-wrap', '.user-url-wrap', '.user-description-wrap', '.user-syntax-highlighting-wrap', '.user-comment-shortcuts-wrap', ['.user-admin-bar-front-wrap', '.show-admin-bar'] ],
 		  absorb: [ S.sections.app_passwords, S.sections.personal, S.sections.contact, S.sections.about, S.sections.account, S.sections.capabilities ] }
 	];
 
@@ -503,65 +503,9 @@
 		}
 	}
 
-	// Order the strip: by `data-order`, then alphabetically within a group
-	// (so sibling plugin tabs sort by name). Panels follow their tab.
-	Array.prototype.slice.call(tabs.children)
-		.sort(function (a, b) {
-			var d = (+a.dataset.order) - (+b.dataset.order);
-			return d || a.textContent.localeCompare(b.textContent);
-		})
-		.forEach(function (btn) {
-			tabs.appendChild(btn);
-			var panel = panelFor(btn.dataset.target);
-			if (panel) panels.appendChild(panel);
-		});
-
-	// Anchor any secondary cards (cards whose `data-tab` doesn't match their own
-	// id) right after their primary so each tab's content stays grouped after
-	// the sort+re-append above moved the primaries around.
-	Array.prototype.slice.call(panels.children).forEach(function (p) {
-		var owner = p.dataset.tab;
-		if (!owner) { return; }
-		var primary = panelFor(owner);
-		if (primary && primary !== p) {
-			primary.insertAdjacentElement('afterend', p);
-		}
-	});
-
-	// The profile and account-creation form share a wide identity card and a narrower
-	// security card inside the same tabpanel. Move native rows, retaining field
-	// names, event handlers and WordPress's password controls on all account screens.
-	if (isExistingAccount || form.id === 'createuser') {
-		var information = panelFor('information');
-		if (information) {
-			var identity = makePanel('ak-profile-identity', S.identity_contact, '');
-			var security = makePanel('ak-profile-security', S.security, '');
-			identity.card.id = 'ak-profile-identity';
-			security.card.id = 'ak-profile-security';
-			[identity, security].forEach(function (part) {
-				part.card.classList.add('ak-grid');
-				part.card.removeAttribute('role');
-				part.card.removeAttribute('aria-labelledby');
-				part.card.removeAttribute('data-tab');
-				part.card.setAttribute('aria-labelledby', part.card.id + '-heading');
-				part.card.querySelector('h2').id = part.card.id + '-heading';
-			});
-			var securityRows = '.user-user-login-wrap, .user-login-wrap, #password, .user-pass1-wrap, .user-generate-reset-link-wrap';
-			Array.prototype.slice.call(information.querySelectorAll(':scope > .form-table > tbody > tr')).forEach(function (row) {
-				row.classList.remove('ak-half', 'ak-third');
-				(row.matches(securityRows) ? security.tbody : identity.tbody).appendChild(row);
-			});
-			markHalf(identity.card, ['.user-first-name-wrap', '.user-last-name-wrap', '.user-nickname-wrap', '.user-display-name-wrap']);
-			pairFractions(identity.tbody);
-			information.className = 'ak-information-layout';
-			information.replaceChildren(identity.card, security.card);
-			form.classList.add('ak-profile-workspace');
-		}
-	}
-
-
-	// Profile Settings: separate native controls into readable sibling cards.
-	// Keep the outer tabpanel and original controls (including app-password JS).
+	// Profile Settings: separate native controls into readable sibling cards
+	// BEFORE sorting tabs so `security` (order 31) lands right after `settings` (30)
+	// and ahead of third-party plugin tabs (order 40).
 	if (isExistingAccount) {
 		var settings = panelFor('settings');
 		if (settings) {
@@ -611,6 +555,62 @@
 				I.lock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
 				addTab('security', 'lock', S.security, 31);
 			}
+		}
+	}
+
+	// Order the strip: by `data-order`, then alphabetically within a group
+	// (so sibling plugin tabs sort by name). Panels follow their tab.
+	Array.prototype.slice.call(tabs.children)
+		.sort(function (a, b) {
+			var d = (+a.dataset.order) - (+b.dataset.order);
+			return d || a.textContent.localeCompare(b.textContent);
+		})
+		.forEach(function (btn) {
+			tabs.appendChild(btn);
+			var panel = panelFor(btn.dataset.target);
+			if (panel) panels.appendChild(panel);
+		});
+
+	// Anchor any secondary cards (cards whose `data-tab` doesn't match their own
+	// id) right after their primary so each tab's content stays grouped after
+	// the sort+re-append above moved the primaries around.
+	Array.prototype.slice.call(panels.children).forEach(function (p) {
+		var owner = p.dataset.tab;
+		if (!owner) { return; }
+		var primary = panelFor(owner);
+		if (primary && primary !== p) {
+			primary.insertAdjacentElement('afterend', p);
+		}
+	});
+
+	// The profile and account-creation form share a wide identity card and a narrower
+	// security card inside the same tabpanel. Move native rows, retaining field
+	// names, event handlers and WordPress's password controls on all account screens.
+	if (isExistingAccount || form.id === 'createuser') {
+		var information = panelFor('information');
+		if (information) {
+			var identity = makePanel('ak-profile-identity', S.identity_contact, '');
+			var security = makePanel('ak-profile-security', S.security, '');
+			identity.card.id = 'ak-profile-identity';
+			security.card.id = 'ak-profile-security';
+			[identity, security].forEach(function (part) {
+				part.card.classList.add('ak-grid');
+				part.card.removeAttribute('role');
+				part.card.removeAttribute('aria-labelledby');
+				part.card.removeAttribute('data-tab');
+				part.card.setAttribute('aria-labelledby', part.card.id + '-heading');
+				part.card.querySelector('h2').id = part.card.id + '-heading';
+			});
+			var securityRows = '.user-user-login-wrap, .user-login-wrap, #password, .user-pass1-wrap, .user-pass2-wrap, .pw-weak, .user-generate-reset-link-wrap';
+			Array.prototype.slice.call(information.querySelectorAll(':scope > .form-table > tbody > tr')).forEach(function (row) {
+				row.classList.remove('ak-half', 'ak-third');
+				(row.matches(securityRows) ? security.tbody : identity.tbody).appendChild(row);
+			});
+			markHalf(identity.card, ['.user-first-name-wrap', '.user-last-name-wrap', '.user-nickname-wrap', '.user-display-name-wrap']);
+			pairFractions(identity.tbody);
+			information.className = 'ak-information-layout';
+			information.replaceChildren(identity.card, security.card);
+			form.classList.add('ak-profile-workspace');
 		}
 	}
 
@@ -700,6 +700,11 @@
 		if (revealingInvalid) return;
 		revealingInvalid = true;
 		setTimeout(function () { revealingInvalid = false; }, 0);
+		var details = e.target.closest && e.target.closest('details');
+		while (details) {
+			details.open = true;
+			details = details.parentElement && details.parentElement.closest('details');
+		}
 		var panel = e.target.closest('[data-tab]');
 		if (panel) activate(panel.dataset.tab);
 	}, true);

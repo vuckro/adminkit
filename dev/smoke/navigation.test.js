@@ -51,5 +51,36 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 15));
       w.close();
     }
   }
-  console.log('OK: actual menu/toolbar titles and icons save to their own endpoints.');
+  // Failed toolbar GET must clear inert, block premature reset, and allow Retry.
+  {
+    const dom = new JSDOM('<div id="adminkit-app"></div>', { url: 'http://localhost/#toolbar', runScripts: 'outside-only' });
+    const w = dom.window;
+    const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json'), 'utf8'));
+    data.screen = 'toolbar';
+    data.toolbar.enabled = true;
+    w.AdminKitData = data;
+    let attempts = 0;
+    w.wp = { apiFetch: () => {
+      attempts++;
+      if (attempts === 1) return Promise.reject({ message: 'REST temporary error' });
+      return Promise.resolve({ nodesByContext: { admin: [{ id: 'site-name', label: 'Site', group: 'root' }], frontend: [] }, configByContext: {} });
+    } };
+    for (const file of ['assets/js/settings/navigation-controls.js', 'assets/js/settings/navigation-menu.js', 'assets/js/settings/navigation-toolbar.js', 'assets/js/settings/navigation.js', 'assets/js/settings.js']) w.eval(fs.readFileSync(path.join(root, file), 'utf8'));
+    await tick();
+    const pane = w.document.querySelector('.ak-panel--menu');
+    assert.equal(pane.inert, false, 'failed GET must lift inert on toolbar pane');
+    const resetBtn = pane.querySelector('.ak-menu-toolbar .ak-btn--ghost');
+    assert.equal(resetBtn.disabled, true, 'reset stays disabled before toolbar nodes load');
+    resetBtn.click();
+    assert.equal(w.document.querySelector('.ak-savebar button').disabled, true, 'reset before load must not dirty empty toolbar draft');
+    const retryBtn = pane.querySelector('.ak-toolbar-error button');
+    assert.ok(retryBtn, 'retry button rendered on load error');
+    retryBtn.click();
+    await tick();
+    assert.equal(attempts, 2, 'retry button re-fetches toolbar nodes');
+    assert.equal(resetBtn.disabled, false, 'reset enabled once nodes load');
+    assert.ok(pane.querySelector('.ak-menu-title'), 'toolbar items rendered after retry');
+    w.close();
+  }
+  console.log('OK: actual menu/toolbar titles, icons and error recovery save to their own endpoints.');
 })().catch(error => { console.error(error); process.exitCode = 1; });
