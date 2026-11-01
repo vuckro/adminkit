@@ -54,8 +54,9 @@ class AdminKit_Settings_Gate {
 			return $should_load;
 		}
 		$screen_id = ! empty( $screen->id ) ? (string) $screen->id : '';
-		if ( '' !== $screen_id && array_key_exists( $screen_id, $memo ) ) {
-			return $memo[ $screen_id ];
+		$memo_key = get_current_blog_id() . ':' . get_current_user_id() . ':' . $screen_id;
+		if ( '' !== $screen_id && array_key_exists( $memo_key, $memo ) ) {
+			return $memo[ $memo_key ];
 		}
 		foreach ( AdminKit_Settings_Catalog::integration_specs() as $s ) {
 			if ( ! method_exists( $s['class'], 'owns_screen' ) || ! call_user_func( array( $s['class'], 'is_active' ) ) ) {
@@ -64,7 +65,7 @@ class AdminKit_Settings_Gate {
 			if ( call_user_func( array( $s['class'], 'owns_screen' ), $screen ) ) {
 				$allowed = (bool) apply_filters( 'adminkit/integration_enabled', true, $s['slug'] );
 				if ( '' !== $screen_id ) {
-					$memo[ $screen_id ] = $allowed;
+					$memo[ $memo_key ] = $allowed;
 				}
 				return $allowed;
 			}
@@ -74,7 +75,7 @@ class AdminKit_Settings_Gate {
 		$allowed = ! $file || plugin_basename( ADMINKIT_FILE ) === $file
 			|| ! in_array( $file, (array) AdminKit_Settings::get( 'generic_theming_off' ), true );
 		if ( '' !== $screen_id ) {
-			$memo[ $screen_id ] = $allowed;
+			$memo[ $memo_key ] = $allowed;
 		}
 		return $allowed;
 	}

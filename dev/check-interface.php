@@ -16,7 +16,7 @@ function wp_verify_nonce(...$args) { global $nonce; return $nonce; }
 function wp_unslash($v) { return $v; }
 function sanitize_text_field($v) { return strip_tags($v); }
 function sanitize_key($v) { return preg_replace('/[^a-z_]/','',$v); }
-function apply_filters($hook,$value,...$args) { global $broad; return $hook==='adminkit/should_load' ? $broad : $value; }
+function apply_filters($hook,$value,...$args) { global $broad; global $integration; return $hook==='adminkit/should_load' ? $broad : ($hook==='adminkit/integration_enabled' ? $integration : $value); }
 function is_admin_bar_showing() { global $bar; return $bar; }
 function check($value,$message) { if(!$value) throw new RuntimeException($message); }
 require dirname(__DIR__) . '/inc/class-interface.php';
@@ -45,3 +45,16 @@ $broad=false;check(!AdminKit_Interface::gate(true,'admin'),'Broad third-party ve
 $broad=true;check(!AdminKit_Interface::gate(false,'admin'),'Appearance veto overridden');
 check(AdminKit_Interface::sanitize_default(array('wordpress'))==='adminkit','Malformed default is not safe');
 echo "OK: personal interface defaults, account/site isolation, secure saves and contextual gates.\n";
+
+// Presentation exception caches must not retain another account/site's decision.
+class AdminKit_Settings_Catalog { public static function integration_specs(){return array(array('slug'=>'fixture','class'=>'Interface_Fixture_Adapter'));} }
+class Interface_Fixture_Adapter { public static function is_active(){return true;} public static function owns_screen($screen){return true;} }
+function get_current_screen(){return (object)array('id'=>'toplevel_page_fixture');}
+require dirname(__DIR__) . '/inc/settings/class-settings-gate.php';
+$site=1;$user=1;$integration=false;
+check(!AdminKit_Settings_Gate::gate_generic_theming(true,'admin'),'Plugin exception ignored');
+$site=2;$integration=true;
+check(AdminKit_Settings_Gate::gate_generic_theming(true,'admin'),'Plugin exception cache leaked across sites');
+$user=2;$integration=false;
+check(!AdminKit_Settings_Gate::gate_generic_theming(true,'admin'),'Plugin exception cache leaked across accounts');
+echo "OK: appearance exception cache is scoped by account and site.\n";
