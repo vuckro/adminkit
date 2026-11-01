@@ -63,8 +63,8 @@ body.adminkit .theme-browser .theme.active .theme-actions .button.activate:focus
 body.adminkit .theme-browser .theme .theme-actions .button:not(.button-primary),
 body.adminkit .theme-browser .theme.active .theme-actions .button:not(.button-primary) {
 	background: var(--ak-btn-bg);
-	border-color: var(--ak-border);
-	color: var(--ak-text);
+	border-color: var(--ak-btn-border, var(--ak-border));
+	color: var(--ak-btn-text, var(--ak-text));
 }
 body.adminkit .theme-browser .theme .theme-actions .button:not(.button-primary):hover,
 body.adminkit .theme-browser .theme .theme-actions .button:not(.button-primary):focus,

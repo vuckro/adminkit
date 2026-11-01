@@ -140,9 +140,9 @@ class AdminKit_Design_System {
 		if ( isset( $palette['text'] ) ) { $css .= '--ak-heading:var(--ak-text);'; }
 		if ( isset( $palette['text-muted'] ) ) { $css .= '--ak-text-subtle:var(--ak-text-muted);--ak-text-disabled:color-mix(in srgb,var(--ak-text-muted) 65%,var(--ak-surface));'; }
 		if ( isset( $palette['surface'] ) || isset( $palette['bg'] ) ) {
-			$css .= '--ak-elevated:var(--ak-surface);--ak-input-bg:var(--ak-surface);--ak-btn-bg:var(--ak-surface);--ak-surface-muted:color-mix(in srgb,var(--ak-text) 4%,var(--ak-surface));--ak-hover-bg:color-mix(in srgb,var(--ak-text) 7%,var(--ak-surface));--ak-btn-hover-bg:var(--ak-hover-bg);--wk-surface-raised:var(--ak-elevated);--wk-surface-sunken:var(--ak-surface-muted);--wk-surface-hover:var(--ak-hover-bg);';
+			$css .= '--ak-elevated:var(--ak-surface);--ak-input-bg:var(--ak-surface);--ak-btn-bg:var(--ak-surface);--ak-surface-muted:color-mix(in srgb,var(--ak-text) 4%,var(--ak-surface));--ak-hover-bg:color-mix(in srgb,var(--ak-text) 7%,var(--ak-surface));--ak-btn-hover-bg:color-mix(in srgb,var(--ak-text) 2.5%,var(--ak-surface));--wk-surface-raised:var(--ak-elevated);--wk-surface-sunken:var(--ak-surface-muted);--wk-surface-hover:var(--ak-hover-bg);';
 		}
-		if ( isset( $palette['border'] ) ) { $css .= '--ak-border-strong:color-mix(in srgb,var(--ak-border) 65%,var(--ak-text));--ak-btn-hover-border:var(--ak-border-strong);--wk-border-strong:var(--ak-border-strong);'; }
+		if ( isset( $palette['border'] ) ) { $css .= '--ak-border-strong:color-mix(in srgb,var(--ak-border) 65%,var(--ak-text));--ak-btn-border:color-mix(in srgb,var(--ak-border) 78%,transparent);--ak-btn-hover-border:color-mix(in srgb,var(--ak-border) 90%,var(--ak-text));--wk-border-strong:var(--ak-border-strong);'; }
 		if ( isset( $palette['accent'] ) ) {
 			$mix = $dark ? 'white' : 'black';
 			$hex = $palette['accent'];

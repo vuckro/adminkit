@@ -179,8 +179,8 @@ body.adminkit:is(.block-editor-page, .widgets-php) .editor-post-publish-button:f
 body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary {
 	background: var(--ak-surface);
 	border-radius: var(--ak-radius-s);
-	box-shadow: inset 0 0 0 1px var(--ak-border);
-	color: var(--ak-text);
+	box-shadow: inset 0 0 0 1px var(--ak-btn-border, var(--ak-border));
+	color: var(--ak-btn-text, var(--ak-text));
 }
 body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary:hover:not(:disabled),
 body.adminkit:is(.block-editor-page, .widgets-php) .components-button.is-secondary:focus:not(:disabled) {

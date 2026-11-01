@@ -92,11 +92,12 @@
 	font-weight: 500;
 	line-height: 1;
 	padding: calc(9px * var(--ak-space-scale, 1)) calc(18px * var(--ak-space-scale, 1));
-	border: var(--ak-border-width) solid var(--ak-border);
+	border: var(--ak-border-width) solid var(--ak-btn-border, var(--ak-border));
 	border-radius: var(--ak-radius-s);
 	background: var(--ak-btn-bg);
-	color: var(--ak-text);
+	color: var(--ak-btn-text, var(--ak-text));
 	cursor: pointer;
+	transition: background-color var(--ak-duration-fast, 150ms) var(--ak-ease-standard, ease), border-color var(--ak-duration-fast, 150ms) var(--ak-ease-standard, ease), color var(--ak-duration-fast, 150ms) var(--ak-ease-standard, ease);
 }
 .adminkit-app .ak-btn--primary {
 	background: var(--ak-primary);
@@ -106,7 +107,7 @@
 }
 .adminkit-app .ak-btn--primary:hover { box-shadow: var(--ak-btn-primary-shadow-hover); background: var(--ak-primary-hover); border-color: var(--ak-primary-hover); color: var(--ak-on-accent-hover); }
 .adminkit-app .ak-btn:not(.ak-btn--primary):hover,
-.adminkit-app .ak-btn:not(.ak-btn--primary):focus-visible { background: var(--ak-btn-hover-bg); border-color: var(--ak-btn-hover-border); }
+.adminkit-app .ak-btn:not(.ak-btn--primary):focus-visible { background: var(--ak-btn-hover-bg); border-color: var(--ak-btn-hover-border); color: var(--ak-text); }
 .adminkit-app .ak-btn:focus-visible { outline: 2px solid transparent; outline-offset: 2px; box-shadow: var(--ak-focus-ring); }
 .adminkit-app .ak-btn--primary:focus-visible { box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow); }
 .adminkit-app .ak-btn[disabled],
