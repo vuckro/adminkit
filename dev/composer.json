@@ -1,0 +1,21 @@
+{
+	"name": "waaskit/adminkit-dev",
+	"description": "Offline static-analysis tooling for AdminKit (never shipped in the plugin zip).",
+	"type": "project",
+	"license": "GPL-2.0-or-later",
+	"config": {
+		"vendor-dir": "vendor",
+		"sort-packages": true,
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"phpcompatibility/phpcompatibility-wp": "^2.1",
+		"phpstan/phpstan": "^2.1",
+		"squizlabs/php_codesniffer": "^3.11",
+		"szepeviktor/phpstan-wordpress": "^2.0",
+		"wp-coding-standards/wpcs": "^3.1"
+	}
+}

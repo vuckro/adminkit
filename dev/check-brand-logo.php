@@ -35,6 +35,14 @@ function wp_verify_nonce( $nonce, $action ) {
 	return 'valid-logo-nonce' === $nonce && 'adminkit_logo_upload' === $action;
 }
 
+function wp_unslash( $value ) {
+	return $value;
+}
+
+function sanitize_text_field( $value ) {
+	return trim( strip_tags( (string) $value ) );
+}
+
 require dirname( __DIR__ ) . '/inc/wp-core/class-branding.php';
 
 function assert_svg( $cond, $msg ) {

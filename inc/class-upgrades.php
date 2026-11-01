@@ -94,7 +94,7 @@ class AdminKit_Upgrades {
 		if ( ! self::repair_legacy_settings() ) { return; }
 
 		// Upgrade 9: ensure small, hot options are autoloaded to avoid extra per-request SELECTs.
-		if ( $version < 9 && function_exists( 'wp_set_option_autoload_values' ) ) {
+		if ( function_exists( 'wp_set_option_autoload_values' ) ) {
 			wp_set_option_autoload_values( array(
 				AdminKit_Settings::OPTION_KEY => true,
 				'adminkit_toolbar'            => true,

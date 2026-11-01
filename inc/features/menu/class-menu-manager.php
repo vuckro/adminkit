@@ -87,7 +87,7 @@ class AdminKit_Menu_Manager {
 	}
 
 	/** @return bool */
-	private static function is_menu_editor_screen() {
+	protected static function is_menu_editor_screen() {
 		return AdminKit_Menu_Snapshot::is_menu_editor_screen();
 	}
 
@@ -122,7 +122,7 @@ class AdminKit_Menu_Manager {
 	 * @param array $current Top-level slugs present right now.
 	 * @return array
 	 */
-	private static function seen_order( $current ) {
+	protected static function seen_order( $current ) {
 		return AdminKit_Menu_Renderer::seen_order( $current );
 	}
 

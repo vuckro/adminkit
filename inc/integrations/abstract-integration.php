@@ -268,7 +268,7 @@ abstract class AdminKit_Integration_Base {
 		printf(
 			'<style id="adminkit-%1$s-wordmark">body.adminkit{--ak-wordmark:"%2$s"}</style>' . "\n",
 			esc_attr( static::slug() ),
-			$value // CSS-string-escaped above; no markup possible.
+			$value // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSS-string-escaped above; wp_strip_all_tags removed all '<'.
 		);
 	}
 

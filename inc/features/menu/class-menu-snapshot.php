@@ -131,7 +131,7 @@ class AdminKit_Menu_Snapshot {
 			array_keys( AdminKit_Icons::ALIASES ),
 			array( 'app', 'link', 'house', 'pencil', 'eye', 'plus', 'refresh-cw', 'search', 'sliders-horizontal', 'palette', 'bell', 'moon', 'external-link', 'user', 'users', 'wrench' )
 		);
-		foreach ( isset( $config['top'] ) && is_array( $config['top'] ) ? $config['top'] : array() as $t ) {
+		foreach ( ! empty( $config['top'] ) ? $config['top'] : array() as $t ) {
 			if ( ! empty( $t['icon'] ) && is_string( $t['icon'] ) ) {
 				$initial[] = $t['icon'];
 			}

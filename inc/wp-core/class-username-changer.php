@@ -125,6 +125,7 @@ class AdminKit_Username_Changer {
 	 */
 	private static function target_user_id( $hook ) {
 		if ( 'user-edit.php' === $hook ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only user-edit.php screen target ID.
 			return isset( $_GET['user_id'] ) ? (int) $_GET['user_id'] : 0;
 		}
 		if ( 'profile.php' === $hook ) {
@@ -185,7 +186,7 @@ class AdminKit_Username_Changer {
 		if ( empty( $user->ID ) || ! self::can_rename( (int) $user->ID ) ) {
 			return;
 		}
-		if ( ! isset( $_POST['_wpnonce'] ) || ! is_string( $_POST['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['_wpnonce'] ), 'update-user_' . (int) $user->ID ) ) {
+		if ( ! isset( $_POST['_wpnonce'] ) || ! is_string( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'update-user_' . (int) $user->ID ) ) {
 			return;
 		}
 		$current = get_userdata( (int) $user->ID );
@@ -193,6 +194,7 @@ class AdminKit_Username_Changer {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Validated strictly against sanitize_user( $raw, true ) === $raw below so invalid chars error instead of silently mutating.
 		$raw = trim( (string) wp_unslash( $_POST['user_login'] ) );
 		if ( '' === $raw || $raw === $current->user_login ) {
 			return; // No change attempted.

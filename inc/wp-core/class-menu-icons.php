@@ -92,7 +92,8 @@ class AdminKit_Core_Menu_Icons {
 	 */
 	private static function emit( $css ) {
 		if ( '' !== $css ) {
-			echo '<style id="adminkit-icons">' . $css . "</style>\n"; // SVGs are URL-encoded in mask().
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static selectors and URL-encoded SVGs in mask().
+			echo '<style id="adminkit-icons">' . $css . "</style>\n";
 		}
 	}
 

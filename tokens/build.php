@@ -62,15 +62,17 @@ try {
 		}
 	}
 
-	// Keep the complete upstream snapshot, but ship only roles consumed by the UI.
+	// Keep the complete upstream snapshot, but ship only roles consumed by the UI (assets/ + inc/).
 	$wanted = array_merge( array_keys( $roles ), array_keys( $data['presets']['monochrome']['light'] ) );
-	$files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $root . '/assets', FilesystemIterator::SKIP_DOTS ) );
-	foreach ( $files as $file ) {
-		if ( ! in_array( $file->getExtension(), array( 'css', 'js' ), true ) || 0 === strpos( $file->getFilename(), 'waaskit-' ) ) {
-			continue;
+	foreach ( array( $root . '/assets', $root . '/inc' ) as $scan_dir ) {
+		$files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $scan_dir, FilesystemIterator::SKIP_DOTS ) );
+		foreach ( $files as $file ) {
+			if ( ! in_array( $file->getExtension(), array( 'css', 'js', 'php' ), true ) || 0 === strpos( $file->getFilename(), 'waaskit-' ) ) {
+				continue;
+			}
+			preg_match_all( '/var\(\s*(--wk-[a-z0-9-]+)/', (string) file_get_contents( $file->getPathname() ), $matches );
+			$wanted = array_merge( $wanted, $matches[1] );
 		}
-		preg_match_all( '/var\(\s*(--wk-[a-z0-9-]+)/', file_get_contents( $file->getPathname() ), $matches );
-		$wanted = array_merge( $wanted, $matches[1] );
 	}
 	$wanted = array_unique( $wanted );
 	$used = array();

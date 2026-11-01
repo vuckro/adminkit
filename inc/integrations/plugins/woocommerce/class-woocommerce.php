@@ -84,7 +84,8 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 		foreach ( $status_icons as $status => $icon ) {
 			$css .= 'body.adminkit.adminkit-woocommerce .order-status.status-' . $status . '::before{' . str_replace( '20px 20px', '14px 14px', AdminKit_Icons::mask( AdminKit_Icons::svg( $icon ) ) ) . '}';
 		}
-		echo '<style id="adminkit-woocommerce-icons">' . $css . '</style>'; // Trusted internal selectors and registry SVGs.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Trusted internal selectors and URL-encoded registry SVGs.
+		echo '<style id="adminkit-woocommerce-icons">' . $css . '</style>';
 	}
 
 	public static function body_class( $classes ) {
@@ -139,13 +140,13 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 			return false;
 		}
 		$post_types = array( 'product', 'shop_coupon', 'shop_order' );
-		if ( isset( $screen->post_type ) && in_array( $screen->post_type, $post_types, true ) ) {
+		if ( ! empty( $screen->post_type ) && in_array( $screen->post_type, $post_types, true ) ) {
 			return true;
 		}
-		if ( isset( $screen->parent_base ) && 'woocommerce' === $screen->parent_base ) {
+		if ( ! empty( $screen->parent_base ) && 'woocommerce' === $screen->parent_base ) {
 			return true;
 		}
-		return isset( $screen->id ) && 0 === strpos( $screen->id, 'woocommerce_page_wc-' );
+		return ! empty( $screen->id ) && 0 === strpos( $screen->id, 'woocommerce_page_wc-' );
 	}
 
 	/**
@@ -180,7 +181,7 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 	 * @return bool
 	 */
 	public static function owns_dashboard( $screen ) {
-		return $screen && isset( $screen->base ) && 'dashboard' === $screen->base;
+		return $screen && ! empty( $screen->base ) && 'dashboard' === $screen->base;
 	}
 
 	/**

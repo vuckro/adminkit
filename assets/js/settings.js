@@ -91,6 +91,7 @@
 		var nav = el('div', { class: 'ak-tabs', role: 'tablist', 'aria-label': 'AdminKit', hidden: D.pages ? 'hidden' : null });
 		tabs.forEach(function (tab) {
 			var icon = el('span', { class: 'ic', 'aria-hidden': 'true' });
+			// eslint-disable-next-line no-unsanitized/property -- Trusted static tab SVG icon.
 			icon.innerHTML = tab.icon;
 			tab.button = el(
 				'button',

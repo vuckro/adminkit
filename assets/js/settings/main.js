@@ -173,7 +173,9 @@
 			var categories = el('div', { class: 'ak-overview-groups' });
 			featureGroups().forEach(function (group) {
 				var link = pageLink('features', '', 'ak-overview-group', '#category=' + encodeURIComponent(group.label));
-				var icon = el('span', { class: 'ak-features-icon', 'aria-hidden': 'true' }); icon.innerHTML = group.features[0].iconSvg || '';
+				var icon = el('span', { class: 'ak-features-icon', 'aria-hidden': 'true' });
+				// eslint-disable-next-line no-unsanitized/property -- Trusted PHP Lucide SVG icon.
+				icon.innerHTML = group.features[0].iconSvg || '';
 				link.appendChild(icon); link.appendChild(el('span', { text: group.label }));
 				link.appendChild(el('span', { class: 'ak-overview-count', text: group.features.filter(isActive).length + ' / ' + group.features.length })); categories.appendChild(link);
 			});

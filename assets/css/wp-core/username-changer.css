@@ -17,8 +17,8 @@
    transition lines up with the unlock: when JS removes the class, the
    input animates back to its normal style instead of snapping. */
 body.adminkit .adminkit-uc-locked {
-	background-color: var(--ak-surface-muted, #f0f0f1) !important;
-	color: var(--ak-text-muted, #646970) !important;
+	background-color: var(--ak-surface-muted) !important;
+	color: var(--ak-text-muted) !important;
 	border-style: dashed !important;
 	cursor: pointer;
 	transition: background-color .12s ease, border-color .12s ease, color .12s ease;
@@ -29,15 +29,15 @@ body.adminkit .adminkit-uc-locked {
    edge so the affordance still reads as "gated, not a normal input". */
 body.adminkit .adminkit-uc-locked:hover,
 body.adminkit .adminkit-uc-locked:focus {
-	background-color: var(--ak-surface, #fff) !important;
-	border-color: var(--ak-primary, #2271b1) !important;
-	color: var(--ak-text, #2c3338) !important;
+	background-color: var(--ak-surface) !important;
+	border-color: var(--ak-primary) !important;
+	color: var(--ak-text) !important;
 	outline: none;
 }
 
 /* Hint that appears under the input once it's unlocked. Locked state is
    intentionally silent — the dashed input + pointer cursor carry the cue. */
 .adminkit-uc-active {
-	color: var(--ak-warning, #b45309);
+	color: var(--ak-warning);
 	font-weight: 500;
 }

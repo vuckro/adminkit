@@ -1,0 +1,17 @@
+includes:
+	- dev/vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+	level: 5
+	phpVersion: 70400
+	treatPhpDocTypesAsCertain: false
+	bootstrapFiles:
+		- dev/phpstan-bootstrap.php
+	scanFiles:
+		- inc/generated/lucide-paths.php
+	paths:
+		- adminkit.php
+		- uninstall.php
+		- inc
+	excludePaths:
+		- inc/generated/lucide-paths.php

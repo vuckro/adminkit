@@ -63,6 +63,7 @@
 			function icon(f) {
 				var n = el('span', { class: 'ak-features-icon', 'aria-hidden': 'true' });
 				// Trusted markup comes only from the shared PHP Lucide renderer.
+				// eslint-disable-next-line no-unsanitized/property -- Trusted PHP Lucide SVG icon.
 				n.innerHTML = f.iconSvg || '';
 				return n;
 			}

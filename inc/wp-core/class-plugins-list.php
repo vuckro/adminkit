@@ -92,11 +92,13 @@ class AdminKit_Plugins_List {
 	public static function sort_active_first() {
 		if ( function_exists( 'is_network_admin' ) && is_network_admin() ) { return; }
 		if ( ! AdminKit_Settings::get( 'active_items_first_sort' ) ) { return; }
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only WP plugins.php view/filter URL inspection.
 		// A chosen sort, search or status view belongs to WordPress and the user.
 		foreach ( array( 'orderby', 'order', 's' ) as $key ) {
 			if ( isset( $_GET[ $key ] ) ) { return; }
 		}
 		if ( isset( $_GET['plugin_status'] ) && ! in_array( $_GET['plugin_status'], array( '', 'all' ), true ) ) { return; }
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		global $wp_list_table;
 		if ( ! $wp_list_table instanceof WP_Plugins_List_Table
 			|| empty( $wp_list_table->items )
@@ -132,9 +134,11 @@ class AdminKit_Plugins_List {
 	 */
 	public static function maybe_redirect_to_active() {
 		if ( ! AdminKit_Settings::get( 'active_items_first_plugins_default' ) ) { return; }
-		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'GET' !== strtoupper( (string) $_SERVER['REQUEST_METHOD'] ) ) {
+		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? strtoupper( sanitize_key( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) : '';
+		if ( 'GET' !== $method ) {
 			return;
 		}
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only WP plugins.php view/filter URL inspection.
 		$status = isset( $_GET['plugin_status'] ) ? sanitize_key( wp_unslash( $_GET['plugin_status'] ) ) : '';
 		if ( '' !== $status ) {
 			return;
@@ -144,6 +148,7 @@ class AdminKit_Plugins_List {
 				return;
 			}
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		// Clicking the "All" tab/link comes from the plugins screen itself — respect it.
 		$referer = wp_get_referer();
 		if ( $referer && false !== strpos( $referer, 'plugins.php' ) ) {
@@ -184,6 +189,7 @@ class AdminKit_Plugins_List {
 			'deactivate'       => 'all',
 			'deactivate-multi' => 'all',
 		);
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only post-action redirect URL inspection.
 		$flag = '';
 		foreach ( array_keys( $targets ) as $key ) {
 			if ( isset( $_GET[ $key ] ) ) {
@@ -209,6 +215,7 @@ class AdminKit_Plugins_List {
 		if ( isset( $_GET['paged'] ) ) {
 			$args['paged'] = absint( wp_unslash( $_GET['paged'] ) );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		wp_safe_redirect( add_query_arg( $args, self_admin_url( 'plugins.php' ) ) );
 		exit;
 	}

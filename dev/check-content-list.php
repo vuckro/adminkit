@@ -14,6 +14,8 @@ $screen=(object) array('base'=>'edit','post_type'=>'post');
 $wpdb=(object) array('posts'=>'wp_posts');
 $hooks=0; $referer=''; $published=1;
 function apply_filters( $key, $value ) { return $value; }
+function wp_unslash( $value ) { return $value; }
+function sanitize_key( $value ) { return preg_replace( '/[^a-z0-9_\-]/', '', strtolower( (string) $value ) ); }
 function add_action( $hook, $callback ) { global $hooks; ++$hooks; }
 function add_filter( $hook, $callback, $priority, $args ) {}
 function get_current_screen() { global $screen; return $screen; }

@@ -26,18 +26,28 @@ define( 'AK_CSS_SCAN_LIB', '1.0.0' );
  * @return string
  */
 function ak_find_root() {
-	$d = getcwd();
-	while ( is_string( $d ) && '' !== $d && '/' !== $d ) {
-		if ( is_file( $d . '/adminkit.php' ) && is_dir( $d . '/inc/integrations' ) ) {
-			return $d;
+	$candidates = array();
+	if ( ! empty( $_SERVER['PWD'] ) && is_string( $_SERVER['PWD'] ) ) {
+		$candidates[] = $_SERVER['PWD'];
+	}
+	$cwd = getcwd();
+	if ( is_string( $cwd ) && '' !== $cwd ) {
+		$candidates[] = $cwd;
+	}
+	foreach ( $candidates as $start ) {
+		$d = $start;
+		while ( is_string( $d ) && '' !== $d && '/' !== $d ) {
+			if ( is_file( $d . '/adminkit.php' ) && is_dir( $d . '/inc/integrations' ) ) {
+				return $d;
+			}
+			$d = dirname( $d );
 		}
-		$d = dirname( $d );
 	}
 	$rel = dirname( __DIR__ ); // <root>/dev/ -> <root>
 	if ( is_file( $rel . '/adminkit.php' ) ) {
 		return $rel;
 	}
-	return getcwd();
+	return is_string( $cwd ) ? $cwd : '';
 }
 
 /**

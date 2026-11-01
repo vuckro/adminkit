@@ -390,6 +390,7 @@ class AdminKit_Toolbar_Renderer {
 			$css .= '@media screen and (max-width:782px){' . $mobile . '}';
 		}
 		if ( '' !== $css ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static selectors, validated IDs and URL-encoded masks.
 			echo '<style id="adminkit-toolbar-manager">' . $css . "</style>\n";
 		}
 	}

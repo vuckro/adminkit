@@ -162,6 +162,17 @@ class AdminKit_Settings {
 	}
 
 	/**
+	/**
+	 * CSS class suffix for dynamic SVG logo coloring (`ak-logo-dynamic`).
+	 *
+	 * @return string
+	 */
+	public static function dynamic_logo_class() {
+		$url = (string) self::get( 'logo_url' );
+		return preg_match( '/\.svg$/i', (string) parse_url( $url, PHP_URL_PATH ) ) ? ' ak-logo-dynamic' : '';
+	}
+
+	/**
 	 * Resolve the brand logo URL for a mode — the single source of truth used
 	 * everywhere AdminKit shows a logo.
 	 *
@@ -173,11 +184,6 @@ class AdminKit_Settings {
 	 * @param string $mode 'light' | 'dark'.
 	 * @return string Raw URL, or '' when unset.
 	 */
-	public static function dynamic_logo_class() {
-		$url = (string) self::get( 'logo_url' );
-		return preg_match( '/\.svg$/i', (string) parse_url( $url, PHP_URL_PATH ) ) ? ' ak-logo-dynamic' : '';
-	}
-
 	public static function brand_logo( $mode ) {
 		$single = trim( (string) self::get( 'logo_url' ) );
 		if ( '' !== $single ) { return $single; }

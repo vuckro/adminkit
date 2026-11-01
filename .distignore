@@ -3,12 +3,17 @@
 # assets/css/* (incl. waaskit-tokens.css) and PHP only. Build sources and dev
 # tooling stay in the GitHub repo but are stripped from the distributable.
 
-# Repo / VCS metadata
+# Repo / VCS metadata & hidden dotfiles
+.?*
 .git
 .gitattributes
 .gitignore
 .distignore
 .editorconfig
+.impeccable
+.phpcs.xml.dist
+phpstan.neon
+phpstan.neon.dist
 
 # AI / agent scratch and internal guides
 .claude

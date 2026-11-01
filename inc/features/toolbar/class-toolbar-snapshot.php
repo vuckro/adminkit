@@ -139,7 +139,7 @@ class AdminKit_Toolbar_Snapshot {
 			$defaults                    = self::node_default_icons( 'site-editor', 'frontend' );
 			$extra_after['site-name'][] = array(
 				'id'          => 'site-editor',
-				'label'       => __( 'Edit Site' ),
+				'label'       => __( 'Edit Site', 'adminkit' ),
 				'group'       => 'root',
 				'defaultIcon' => $defaults['defaultIcon'],
 				'dashicon'    => $defaults['dashicon'],
@@ -148,7 +148,7 @@ class AdminKit_Toolbar_Snapshot {
 			$defaults                    = self::node_default_icons( 'customize', 'frontend' );
 			$extra_after['site-name'][] = array(
 				'id'          => 'customize',
-				'label'       => __( 'Customize' ),
+				'label'       => __( 'Customize', 'adminkit' ),
 				'group'       => 'root',
 				'defaultIcon' => $defaults['defaultIcon'],
 				'dashicon'    => $defaults['dashicon'],
@@ -158,7 +158,7 @@ class AdminKit_Toolbar_Snapshot {
 		if ( ! isset( $by_id['edit'] ) ) {
 			$defaults    = self::node_default_icons( 'edit', 'frontend' );
 			$pt_obj      = function_exists( 'get_post_type_object' ) ? get_post_type_object( 'page' ) : null;
-			$edit_label  = ( $pt_obj && isset( $pt_obj->labels->edit_item ) ) ? $pt_obj->labels->edit_item : __( 'Edit Page' );
+			$edit_label  = ( $pt_obj && isset( $pt_obj->labels->edit_item ) ) ? $pt_obj->labels->edit_item : __( 'Edit Page', 'adminkit' );
 			$anchor      = isset( $by_id['new-content'] ) ? 'new-content' : 'site-name';
 			$extra_after[ $anchor ][] = array(
 				'id'          => 'edit',
@@ -190,7 +190,7 @@ class AdminKit_Toolbar_Snapshot {
 			$defaults = self::node_default_icons( 'search', 'frontend' );
 			$out[]    = array(
 				'id'          => 'search',
-				'label'       => __( 'Search' ),
+				'label'       => __( 'Search', 'adminkit' ),
 				'group'       => 'secondary',
 				'defaultIcon' => $defaults['defaultIcon'],
 				'dashicon'    => $defaults['dashicon'],

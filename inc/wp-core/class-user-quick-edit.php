@@ -265,7 +265,7 @@ class AdminKit_User_Quick_Edit {
 			$update['last_name'] = sanitize_text_field( wp_unslash( $_POST['last_name'] ) );
 		}
 		if ( isset( $_POST['user_email'] ) ) {
-			$raw_email   = trim( (string) wp_unslash( $_POST['user_email'] ) );
+			$raw_email   = trim( sanitize_text_field( wp_unslash( $_POST['user_email'] ) ) );
 			$clean_email = function_exists( 'sanitize_email' ) ? sanitize_email( $raw_email ) : $raw_email;
 			if ( '' === $clean_email || ( function_exists( 'is_email' ) && ! is_email( $clean_email ) ) ) {
 				wp_send_json_error( array( 'message' => __( 'Please enter a valid email address.', 'adminkit' ) ), 400 );
@@ -295,7 +295,7 @@ class AdminKit_User_Quick_Edit {
 			if ( ! $role || ! array_key_exists( $role, get_editable_roles() ) ) {
 				wp_send_json_error( array( 'message' => __( 'You are not allowed to do that.', 'adminkit' ) ), 403 );
 			}
-			$existing_roles = isset( $existing_user->roles ) ? array_values( array_filter( (array) $existing_user->roles, 'is_string' ) ) : array();
+			$existing_roles = ! empty( $existing_user->roles ) ? array_values( array_filter( (array) $existing_user->roles, 'is_string' ) ) : array();
 			if ( count( $existing_roles ) > 1 ) {
 				if ( $role !== $existing_roles[0] ) {
 					wp_send_json_error( array( 'message' => __( 'This user has multiple roles; edit roles on their full profile.', 'adminkit' ) ), 400 );
@@ -320,7 +320,7 @@ class AdminKit_User_Quick_Edit {
 			wp_send_json_success( array() );
 		}
 
-		$post_roles  = isset( $user->roles ) ? array_values( array_filter( (array) $user->roles, 'is_string' ) ) : array();
+		$post_roles  = ! empty( $user->roles ) ? array_values( array_filter( (array) $user->roles, 'is_string' ) ) : array();
 		$role_key    = isset( $post_roles[0] ) ? (string) $post_roles[0] : '';
 		$role_names  = wp_roles()->get_names();
 		$role_labels = array();

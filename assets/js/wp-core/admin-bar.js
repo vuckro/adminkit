@@ -12,6 +12,7 @@
 			var icon = bar.querySelector('#wp-admin-bar-query-monitor > .ab-item > .ab-icon');
 			if (icon && !icon.querySelector('svg') && data.icons && data.icons['wp-admin-bar-query-monitor']) {
 				icon.classList.add('ak-mobile-diagnostic-icon');
+				// eslint-disable-next-line no-unsanitized/method -- Trusted PHP-generated toolbar SVG icon.
 				icon.insertAdjacentHTML('afterbegin', data.icons['wp-admin-bar-query-monitor']);
 			}
 		}
@@ -109,6 +110,7 @@
 			var icon = document.createElement('span');
 			icon.className = 'ak-mobile-action-icon';
 			icon.setAttribute('aria-hidden', 'true');
+			// eslint-disable-next-line no-unsanitized/property -- Trusted PHP-generated toolbar SVG icon.
 			icon.innerHTML = (data.icons && data.icons[node.id]) || data.fallbackIcon || '';
 			action.appendChild(icon); action.appendChild(label);
 			moved.push({ node: node, placeholder: placeholder, label: label, icon: icon });

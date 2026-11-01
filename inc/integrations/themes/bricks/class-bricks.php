@@ -74,6 +74,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 * @return bool
 	 */
 	public static function is_builder_main() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only Bricks builder URL query flag.
 		if ( isset( $_GET['bricks'] ) && 'run' === $_GET['bricks'] ) {
 			return true;
 		}
@@ -249,13 +250,13 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 			return;
 		}
 		$uri = 'url("data:image/svg+xml,' . rawurlencode( self::LAYOUT_SVG ) . '")';
-		echo '<style id="adminkit-bricks-menu-icon">'
-			. '#adminmenu #toplevel_page_bricks .wp-menu-image{background-image:none!important;'
+		$css = '#adminmenu #toplevel_page_bricks .wp-menu-image{background-image:none!important;'
 			. 'box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}'
 			. '#adminmenu #toplevel_page_bricks .wp-menu-image::before{content:"";display:inline-block;'
 			. 'width:20px;height:20px;vertical-align:middle;background-color:currentColor;'
-			. '-webkit-mask:' . $uri . ' center/20px 20px no-repeat;mask:' . $uri . ' center/20px 20px no-repeat}'
-			. "</style>\n"; // SVG is URL-encoded.
+			. '-webkit-mask:' . $uri . ' center/20px 20px no-repeat;mask:' . $uri . ' center/20px 20px no-repeat}';
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static selectors and rawurlencoded SVG constant.
+		echo '<style id="adminkit-bricks-menu-icon">' . $css . "</style>\n";
 	}
 
 	/**

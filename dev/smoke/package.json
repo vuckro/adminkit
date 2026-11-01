@@ -1,13 +1,19 @@
 {
   "name": "adminkit-smoke",
   "private": true,
-  "description": "Browser smoke tests for AdminKit (run: npm test). Dev only, never shipped.",
+  "description": "Browser smoke, jsdom unit tests, ESLint and Stylelint for AdminKit (dev only, never shipped).",
   "scripts": {
     "test": "playwright test",
-    "test:boot": "node boot.test.js && node features.test.js && node saving.test.js && node design.test.js && node users.test.js && node navigation.test.js && node admin-bar.test.js"
+    "test:boot": "node boot.test.js && node features.test.js && node saving.test.js && node design.test.js && node users.test.js && node navigation.test.js && node admin-bar.test.js && node profile-account.test.js && node notification-center.test.js && node username-changer.test.js && node options-screens.test.js",
+    "lint:js": "eslint --config eslint.config.js ../../assets/js ../../inc/integrations",
+    "lint:css": "stylelint --config .stylelintrc.json '../../assets/css/**/*.css' '../../inc/integrations/**/*.css'"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
-    "jsdom": "^29.1.1"
+    "eslint": "^9.21.0",
+    "eslint-plugin-no-unsanitized": "^4.1.2",
+    "globals": "^16.0.0",
+    "jsdom": "^29.1.1",
+    "stylelint": "^16.15.0"
   }
 }

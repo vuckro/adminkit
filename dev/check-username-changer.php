@@ -47,6 +47,10 @@ function wp_unslash( $value ) {
 	return $value;
 }
 
+function sanitize_text_field( $value ) {
+	return trim( strip_tags( (string) $value ) );
+}
+
 function wp_verify_nonce( $value, $action ) {
 	return 'valid' === $value && 'update-user_7' === $action;
 }

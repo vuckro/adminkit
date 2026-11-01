@@ -56,12 +56,15 @@ class AdminKit_Core_Branding {
 				return true;
 			}
 		}
-		if ( empty( $_REQUEST['adminkit_logo_upload'] ) || '1' !== (string) $_REQUEST['adminkit_logo_upload'] ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Verified via wp_verify_nonce() right below.
+		$upload_flag = isset( $_REQUEST['adminkit_logo_upload'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['adminkit_logo_upload'] ) ) : '';
+		if ( '1' !== $upload_flag ) {
 			return false;
 		}
 		$nonce = isset( $_REQUEST['_ak_logo_nonce'] ) && is_string( $_REQUEST['_ak_logo_nonce'] )
-			? ( function_exists( 'wp_unslash' ) ? wp_unslash( $_REQUEST['_ak_logo_nonce'] ) : $_REQUEST['_ak_logo_nonce'] )
+			? sanitize_text_field( wp_unslash( $_REQUEST['_ak_logo_nonce'] ) )
 			: '';
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		return '' !== $nonce && function_exists( 'wp_verify_nonce' ) && (bool) wp_verify_nonce( $nonce, self::LOGO_UPLOAD_NONCE );
 	}
 
@@ -85,6 +88,7 @@ class AdminKit_Core_Branding {
 			return $file;
 		}
 		// Only intercept when SVG was uploaded through our Branding flow or when no other plugin owns SVG.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified by can_upload_logo_svg() right below.
 		$is_branding_upload = ! empty( $_REQUEST['adminkit_logo_upload'] );
 		if ( ! $is_branding_upload && ! self::can_upload_logo_svg( false ) ) {
 			return $file;
@@ -281,6 +285,7 @@ class AdminKit_Core_Branding {
 	 */
 	private static function print_css( $css ) {
 		if ( '' !== $css ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- URLs escaped in css_url(); static selectors.
 			echo '<style id="adminkit-branding">' . $css . "</style>\n";
 		}
 	}

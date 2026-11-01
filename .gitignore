@@ -10,3 +10,6 @@ node_modules/
 
 # Local dev tooling — kept out of the distributed plugin / GitHub.
 .claude/
+.impeccable/
+.phpcs.cache
+.phpstan.result.cache

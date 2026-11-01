@@ -164,14 +164,17 @@
 				g.style.maskImage = 'url("' + top.icon + '")';
 			} else if (top.icon && MM.icons[top.icon]) {
 				g = el('span', { class: 'ak-menu-icon__g' });
+				// eslint-disable-next-line no-unsanitized/property -- Trusted PHP-compiled Lucide SVG.
 				g.innerHTML = MM.icons[top.icon];
 			} else if (top.defaultIcon && MM.icons[top.defaultIcon]) {
 				g = el('span', { class: 'ak-menu-icon__g' });
+				// eslint-disable-next-line no-unsanitized/property -- Trusted PHP-compiled Lucide SVG.
 				g.innerHTML = MM.icons[top.defaultIcon];
 			} else if (top.dashicon) {
 				g = el('span', { class: 'dashicons ' + top.dashicon });
 			} else {
 				g = el('span', { class: 'ak-menu-icon__g' });
+				// eslint-disable-next-line no-unsanitized/property -- Trusted PHP-compiled Lucide SVG.
 				g.innerHTML = MM.icons.app || '';
 			}
 			btn.appendChild(g);
@@ -252,6 +255,7 @@
 			function appendIcons() {
 				filtered.slice(shown, shown + 120).forEach(function (name) {
 					var sw = el('button', { type: 'button', class: 'ak-icon-pop__sw', title: name, 'aria-label': name, onclick: function () { choose(name); } });
+					// eslint-disable-next-line no-unsanitized/property -- Trusted PHP-compiled Lucide SVG.
 					sw.innerHTML = MM.icons[name];
 					choices.push({ el: sw, val: name });
 					grid.appendChild(sw);

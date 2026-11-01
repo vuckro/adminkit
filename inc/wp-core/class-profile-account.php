@@ -145,6 +145,7 @@ class AdminKit_Profile_Account {
 		// languages/ (fr_FR maps "Information" → "Informations", etc.). A French
 		// source string would leak to every untranslated locale.
 		$strings = array(
+			// phpcs:disable WordPress.WP.I18n.MissingArgDomain -- Intentional WP core heading match.
 			'sections' => array(
 				'name'          => __( 'Name' ),
 				'contact'       => __( 'Contact Info' ),
@@ -154,6 +155,7 @@ class AdminKit_Profile_Account {
 				'about'         => array( __( 'About Yourself' ), __( 'About the user' ) ),
 				'capabilities'  => __( 'Additional Capabilities' ),
 			),
+			// phpcs:enable WordPress.WP.I18n.MissingArgDomain
 			'cards'    => array(
 				'info'     => array( 'label' => __( 'Information', 'adminkit' ), 'desc' => __( 'Identity, contact and password.', 'adminkit' ) ),
 				'settings' => array( 'label' => __( 'Settings', 'adminkit' ), 'desc' => __( 'Roles, language and preferences.', 'adminkit' ) ),

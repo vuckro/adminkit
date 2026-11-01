@@ -59,11 +59,11 @@
 	display: block;
 	font-weight: 600;
 	font-size: calc(14px * var(--ak-type-scale, 1));
-	color: var(--ak-heading, #1d2327);
+	color: var(--ak-heading);
 }
 .adminkit-qe-email-display {
 	display: block;
-	color: var(--ak-text-muted, #646970);
+	color: var(--ak-text-muted);
 	font-size: calc(13px * var(--ak-type-scale, 1));
 	word-break: break-all;
 }
@@ -87,7 +87,7 @@
 	display: block;
 	font-weight: 500;
 	margin-bottom: calc(4px * var(--ak-space-scale, 1));
-	color: var(--ak-text, #3c434a);
+	color: var(--ak-text);
 }
 .adminkit-qe-fields input,
 .adminkit-qe-fields select {
@@ -111,6 +111,6 @@
 	margin-left: auto;
 }
 .adminkit-qe-error {
-	color: var(--ak-error, #d63638);
+	color: var(--ak-error);
 	font-size: calc(13px * var(--ak-type-scale, 1));
 }

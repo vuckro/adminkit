@@ -76,7 +76,7 @@ class AdminKit_Menu_Config {
 				$seen_sub[ $it['slug'] ]                        = true;
 			}
 		}
-		foreach ( isset( $prev['top'] ) && is_array( $prev['top'] ) ? $prev['top'] : array() as $t ) {
+		foreach ( ! empty( $prev['top'] ) ? $prev['top'] : array() as $t ) {
 			$type = isset( $t['type'] ) ? (string) $t['type'] : 'item';
 			if ( 'item' !== $type || empty( $t['slug'] ) || isset( $seen_top[ $t['slug'] ] ) ) {
 				continue;
@@ -93,7 +93,7 @@ class AdminKit_Menu_Config {
 				'title'    => isset( $t['title'] ) ? (string) $t['title'] : '',
 			);
 		}
-		foreach ( isset( $prev['sub'] ) && is_array( $prev['sub'] ) ? $prev['sub'] : array() as $parent => $subs ) {
+		foreach ( ! empty( $prev['sub'] ) ? $prev['sub'] : array() as $parent => $subs ) {
 			foreach ( (array) $subs as $s ) {
 				if ( empty( $s['slug'] ) || isset( $seen_sub[ $parent . "\0" . $s['slug'] ] ) || isset( $seen_sub[ $s['slug'] ] ) ) {
 					continue;

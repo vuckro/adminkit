@@ -157,6 +157,7 @@ class AdminKit_Menu_Store {
 			}
 			$begin_sql = 'START TRANSACTION';
 		}
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Fixed transaction control keyword (BEGIN/START TRANSACTION).
 		if ( false === $wpdb->query( $begin_sql ) ) {
 			return AdminKit_Storage::error( 'adminkit_menu_storage_failed' );
 		}
@@ -231,7 +232,7 @@ class AdminKit_Menu_Store {
 	 * @return void
 	 */
 	public static function delete_site_data( $site ) {
-		$blog_id = ( is_object( $site ) && isset( $site->blog_id ) ) ? (int) $site->blog_id : (int) $site;
+		$blog_id = ( is_object( $site ) && ! empty( $site->blog_id ) ) ? (int) $site->blog_id : (int) $site;
 		if ( $blog_id <= 0 ) {
 			return;
 		}

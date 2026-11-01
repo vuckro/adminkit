@@ -221,6 +221,7 @@ class AdminKit_Core_Login {
 			// background-image on #login h1 a we have to beat).
 			$icon = self::css_url( get_site_icon_url( 200 ) );
 			$css  = '#login h1 a{background-image:' . $icon . ' !important}';
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped via css_url().
 			echo '<style id="adminkit-login-logo">' . $css . "</style>\n";
 			return;
 		}
@@ -262,9 +263,9 @@ class AdminKit_Core_Login {
 		printf(
 			'<button type="button" id="%1$s" class="ak-login-theme-toggle" aria-label="%2$s" title="%2$s" aria-pressed="false">%3$s%4$s</button>',
 			esc_attr( self::TOGGLE_ID ),
-			$label,
-			$sun,
-			$moon
+			esc_attr( __( 'Toggle light / dark mode', 'adminkit' ) ),
+			$sun, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static inline SVG.
+			$moon // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static inline SVG.
 		);
 		?>
 <script id="adminkit-login-theme-toggle">

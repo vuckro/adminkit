@@ -72,9 +72,9 @@ class AdminKit_Toolbar_Manager {
 	 * @return void
 	 */
 	public static function enqueue( $hook ) {
-		$is_settings = method_exists( 'AdminKit_Settings_Page', 'is_settings_hook' )
+		$is_settings = class_exists( 'AdminKit_Settings_Page', false )
 			? AdminKit_Settings_Page::is_settings_hook( $hook )
-			: ( 'toplevel_page_' . AdminKit_Settings_Page::SLUG === $hook );
+			: ( 'toplevel_page_adminkit' === $hook );
 		if ( ! $is_settings ) {
 			return;
 		}

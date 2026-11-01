@@ -53,7 +53,7 @@ class AdminKit_Settings_Gate {
 		if ( ! $screen ) {
 			return $should_load;
 		}
-		$screen_id = isset( $screen->id ) ? (string) $screen->id : '';
+		$screen_id = ! empty( $screen->id ) ? (string) $screen->id : '';
 		if ( '' !== $screen_id && array_key_exists( $screen_id, $memo ) ) {
 			return $memo[ $screen_id ];
 		}

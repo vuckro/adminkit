@@ -139,6 +139,7 @@
 			var ic = document.createElement('span');
 			ic.className = 'ak-nav-tab-ic';
 			ic.setAttribute('aria-hidden', 'true');
+			// eslint-disable-next-line no-unsanitized/property -- Static NAV_TAB_ICONS SVG map.
 			ic.innerHTML = icon;
 			a.insertBefore(ic, a.firstChild);
 		});

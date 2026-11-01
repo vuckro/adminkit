@@ -24,10 +24,12 @@ class AdminKit_Content_List {
 		if ( ! empty( $screen->id ) ) {
 			add_filter( 'views_' . $screen->id, array( __CLASS__, 'preserve_all_view_link' ), 10, 1 );
 		}
-		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'GET' !== strtoupper( (string) $_SERVER['REQUEST_METHOD'] ) ) {
+		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? strtoupper( sanitize_key( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) : '';
+		if ( 'GET' !== $method ) {
 			return;
 		}
 		// Only a plain list arrival is a default: preserve every native/custom filter.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only WP list-table URL filter inspection.
 		foreach ( array_keys( $_GET ) as $key ) {
 			if ( 'post_type' !== $key ) {
 				return;
@@ -57,6 +59,7 @@ class AdminKit_Content_List {
 			return $orderby;
 		}
 		$status = $query->get( 'post_status' );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only WP list-table URL sort inspection.
 		if ( ( $status && 'all' !== $status ) || $query->get( 's' ) || isset( $_GET['orderby'] ) || isset( $_GET['order'] ) ) {
 			return $orderby;
 		}

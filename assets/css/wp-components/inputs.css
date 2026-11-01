@@ -137,7 +137,7 @@ body.adminkit input:disabled,
 body.adminkit textarea:disabled,
 body.adminkit select:disabled,
 body.adminkit.wp-core-ui select:disabled {
-	background-color: var(--ak-surface-muted, #f0f0f1);
+	background-color: var(--ak-surface-muted);
 	color: var(--ak-text-disabled);
 	border-color: var(--ak-border);
 	cursor: not-allowed;

@@ -194,7 +194,7 @@ class AdminKit_Settings_Page {
 		// When `pages` is populated (5 native WordPress submenu pages), load only the
 		// factories needed by `initialTab`; when `pages` is null (single-host mode), load all.
 		$paged_tab  = ( 'main' === $module && ! empty( $data['pages'] ) && ! empty( $data['initialTab'] ) ) ? (string) $data['initialTab'] : '';
-		$needs_nav  = ( 'navigation' === $module ) || ( 'main' === $module && ( '' === $paged_tab || 'navigation' === $paged_tab ) );
+		$needs_nav  = ( 'navigation' === $module ) || ( '' === $paged_tab || 'navigation' === $paged_tab );
 		$deps       = array( 'wp-api-fetch' );
 		$navigation_deps = array();
 		if ( $needs_nav ) {

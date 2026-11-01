@@ -21,6 +21,7 @@
 	function isDark() { return root.getAttribute(ATTR) === 'dark'; }
 
 	function render(btn) {
+		// eslint-disable-next-line no-unsanitized/property -- Static inline SUN/MOON SVG constants.
 		btn.innerHTML = isDark() ? MOON : SUN;
 		btn.setAttribute('aria-pressed', isDark() ? 'true' : 'false');
 	}

@@ -69,7 +69,7 @@ class AdminKit_Core_Options_General {
 		}
 		check_admin_referer( 'general-options' );
 
-		$raw    = trim( (string) wp_unslash( $_POST[ self::LOGO_FIELD_NAME ] ) );
+		$raw    = trim( sanitize_text_field( wp_unslash( $_POST[ self::LOGO_FIELD_NAME ] ) ) );
 		$clean  = '' === $raw ? '' : esc_url_raw( $raw, array( 'http', 'https' ) );
 		$stored = get_option( AdminKit_Settings::OPTION_KEY, array() );
 		if ( ! is_array( $stored ) ) {

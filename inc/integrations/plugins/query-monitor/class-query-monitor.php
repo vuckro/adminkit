@@ -136,7 +136,8 @@ class AdminKit_Integration_Query_Monitor extends AdminKit_Integration_Base {
 			. '-webkit-mask:' . $uri . ' center/20px 20px no-repeat;'
 			. 'mask:' . $uri . ' center/20px 20px no-repeat}';
 
-		echo '<style id="adminkit-qm-icon">' . $css . "</style>\n"; // SVG is URL-encoded.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static selectors and URL-encoded SVG.
+		echo '<style id="adminkit-qm-icon">' . $css . "</style>\n";
 	}
 
 	/**

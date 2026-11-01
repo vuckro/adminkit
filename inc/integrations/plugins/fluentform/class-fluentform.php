@@ -162,6 +162,7 @@ class AdminKit_Integration_Fluentform extends AdminKit_Integration_Base {
 		$css  = $box . '{background-image:none !important;box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
 		$css .= $box . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
 			. 'vertical-align:middle;position:relative;top:-2px;' . AdminKit_Icons::mask( $svg ) . '}';
-		echo '<style id="adminkit-fluentform-menu-icon">' . $css . "</style>\n"; // SVG is URL-encoded in mask().
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static selectors and URL-encoded SVG in mask().
+		echo '<style id="adminkit-fluentform-menu-icon">' . $css . "</style>\n";
 	}
 }

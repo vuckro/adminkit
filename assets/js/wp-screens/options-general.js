@@ -191,6 +191,7 @@
 			var ic = document.createElement( 'span' );
 			ic.className = 'ak-nav-tab-ic';
 			ic.setAttribute( 'aria-hidden', 'true' );
+			// eslint-disable-next-line no-unsanitized/property -- Static ICONS SVG map.
 			ic.innerHTML = ICONS[ t.id ];
 			btn.appendChild( ic );
 		}

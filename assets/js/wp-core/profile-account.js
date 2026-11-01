@@ -94,6 +94,7 @@
 		b.setAttribute('aria-controls', 'ak-account-panel-' + id);
 		var ic = document.createElement('span');
 		ic.className = 'ic';
+		// eslint-disable-next-line no-unsanitized/property -- Static dom.ICONS SVG map.
 		ic.innerHTML = dom.ICONS[icon] || dom.ICONS.plugin;
 		var tx = document.createElement('span');
 		tx.className = 'tx';

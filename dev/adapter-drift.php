@@ -68,14 +68,14 @@ $lines = array();
 foreach ( $targets as $t ) {
 	$host = ak_resolve_host( $root, $t, $opts );
 
-	if ( null === $host['path'] || ! is_dir( $host['path'] ) ) {
+	if ( empty( $host['paths'] ) ) {
 		$lines[] = ak_h( $t['slug'] ) . "  skipped — host not installed" . ( $t['host_dir'] ? " ({$t['host_dir']})" : '' );
 		continue;
 	}
 
-	$files = ak_collect_css_files( array( $host['path'] ) );
+	$files = ak_collect_css_files( $host['paths'] );
 	if ( ! $files ) {
-		$lines[] = ak_h( $t['slug'] ) . "  skipped — no CSS found under " . $host['path'];
+		$lines[] = ak_h( $t['slug'] ) . "  skipped — no CSS found under " . implode( ', ', $host['paths'] );
 		continue;
 	}
 	$snap = ak_snapshot( ak_scan_css( $files ), $host, count( $files ) );
@@ -200,43 +200,79 @@ function ak_target( $slug, $baseline_path, $is_wp_core ) {
 }
 
 /**
- * Resolve a target's host path + version. Plugins live as siblings under
- * wp-content/plugins/; WP core is scanned from ABSPATH/wp-admin/css.
+ * Resolve a target's host CSS directories + version.
+ *
+ * Supports:
+ * - `--host=<path>` (WP root or wp-admin/css for `--wp-core`, or host dir / WP root for adapters);
+ * - `AK_WP_ROOT` environment variable when running from a standalone git clone;
+ * - symlinked `wp-content/plugins/adminkit` checkouts (`$_SERVER['PWD']`);
+ * - both `wp-content/plugins/<dir>` and `wp-content/themes/<dir>`;
+ * - both `wp-admin/css` and `wp-includes/css/dist` for `--wp-core`.
  *
  * @param string $root
  * @param array  $t
  * @param array  $opts
- * @return array{path:?string,dir:string,version:?string}
+ * @return array{paths:string[],dir:string,version:?string}
  */
 function ak_resolve_host( $root, array $t, array $opts ) {
-	$plugins_dir = dirname( $root );      // wp-content/plugins
-	$abspath     = dirname( $root, 3 );   // WP root (…/public)
+	$env_wp      = getenv( 'AK_WP_ROOT' );
+	$abspath     = ( is_string( $env_wp ) && '' !== $env_wp ) ? rtrim( $env_wp, '/' ) : dirname( $root, 3 );
+	$wp_content  = is_dir( $abspath . '/wp-content' ) ? $abspath . '/wp-content' : dirname( $root, 2 );
+	$plugins_dir = is_dir( $wp_content . '/plugins' ) ? $wp_content . '/plugins' : dirname( $root );
+	$themes_dir  = $wp_content . '/themes';
 
 	if ( $t['is_wp_core'] ) {
-		$path = $abspath . '/wp-admin/css';
+		if ( '' !== $opts['host'] ) {
+			$candidate = rtrim( ak_abs( $opts['host'], $root ), '/' );
+			if ( is_dir( $candidate . '/wp-admin/css' ) ) {
+				$abspath = $candidate;
+			} elseif ( 'css' === basename( $candidate ) && 'wp-admin' === basename( dirname( $candidate ) ) ) {
+				$abspath = dirname( $candidate, 2 );
+			}
+		}
+		$core_paths = array();
+		foreach ( array( $abspath . '/wp-admin/css', $abspath . '/wp-includes/css/dist' ) as $core_dir ) {
+			if ( is_dir( $core_dir ) ) {
+				$core_paths[] = $core_dir;
+			}
+		}
 		return array(
-			'path'    => is_dir( $path ) ? $path : null,
-			'dir'     => 'wp-admin/css',
+			'paths'   => $core_paths,
+			'dir'     => 'wp-admin/css + wp-includes/css/dist',
 			'version' => ak_wp_version( $abspath ),
 		);
 	}
 
 	// host_dir: --host override → baseline's host_dir → guess (slug).
-	$dir = $t['host_dir'];
+	$dir        = '' !== $t['host_dir'] ? $t['host_dir'] : $t['slug'];
+	$candidates = array();
+
 	if ( '' !== $opts['host'] ) {
-		$path = ak_abs( $opts['host'], $root );
-		$dir  = basename( rtrim( $opts['host'], '/' ) );
-	} elseif ( '' !== $dir ) {
-		$path = $plugins_dir . '/' . $dir;
+		$explicit = rtrim( ak_abs( $opts['host'], $root ), '/' );
+		if ( is_dir( $explicit . '/wp-admin' ) && is_dir( $explicit . '/wp-content' ) ) {
+			$candidates[] = $explicit . '/wp-content/plugins/' . $dir;
+			$candidates[] = $explicit . '/wp-content/themes/' . $dir;
+		} else {
+			$candidates[] = $explicit;
+			$dir          = basename( $explicit );
+		}
 	} else {
-		$dir  = $t['slug'];
-		$path = $plugins_dir . '/' . $dir;
+		$candidates[] = $plugins_dir . '/' . $dir;
+		$candidates[] = $themes_dir . '/' . $dir;
+	}
+
+	$resolved = null;
+	foreach ( $candidates as $candidate ) {
+		if ( is_dir( $candidate ) ) {
+			$resolved = $candidate;
+			break;
+		}
 	}
 
 	return array(
-		'path'    => is_dir( $path ) ? $path : null,
+		'paths'   => null !== $resolved ? array( $resolved ) : array(),
 		'dir'     => $dir,
-		'version' => is_dir( $path ) ? ak_plugin_version( $path ) : null,
+		'version' => null !== $resolved ? ak_plugin_version( $resolved ) : null,
 	);
 }
 
@@ -251,14 +287,20 @@ function ak_abs( $p, $root ) {
 	return $root . '/' . $p;
 }
 
-/** Read a plugin's Version: header from its main file. */
+/** Read a plugin's (or theme style.css's) Version: header. */
 function ak_plugin_version( $dir ) {
-	foreach ( glob( $dir . '/*.php' ) as $f ) {
+	foreach ( glob( $dir . '/*.php' ) ?: array() as $f ) {
 		$head = (string) file_get_contents( $f, false, null, 0, 8192 );
 		if ( '' === $head || false === stripos( $head, 'Plugin Name:' ) ) {
 			continue;
 		}
 		if ( preg_match( '/Version:\s*([0-9][0-9A-Za-z.\-]*)/i', $head, $m ) ) {
+			return trim( $m[1] );
+		}
+	}
+	if ( is_file( $dir . '/style.css' ) ) {
+		$head = (string) file_get_contents( $dir . '/style.css', false, null, 0, 8192 );
+		if ( false !== stripos( $head, 'Theme Name:' ) && preg_match( '/Version:\s*([0-9][0-9A-Za-z.\-]*)/i', $head, $m ) ) {
 			return trim( $m[1] );
 		}
 	}

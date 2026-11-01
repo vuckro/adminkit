@@ -71,7 +71,7 @@ html.ak-nc-active #wpadminbar #wp-admin-bar-ak-notifications {
 	justify-content: center;
 	border-radius: var(--ak-radius-full);
 	background: var(--ak-primary);
-	color: var(--ak-on-accent, #fff);
+	color: var(--ak-on-accent);
 	font-size: calc(10px * var(--ak-type-scale, 1));
 	font-weight: 600;
 	line-height: 1;

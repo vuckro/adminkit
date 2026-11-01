@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ '7.4', '8.2' ]
+        php: [ '7.4', '8.2', '8.3', '8.4' ]
     name: Quality / PHP ${{ matrix.php }}
     steps:
       - uses: actions/checkout@v4
@@ -20,16 +20,95 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, libxml
+          tools: composer:v2
           coverage: none
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: npm
           cache-dependency-path: dev/smoke/package-lock.json
+      - name: Cache Composer dev dependencies
+        uses: actions/cache@v4
+        with:
+          path: dev/vendor
+          key: composer-${{ runner.os }}-${{ matrix.php }}-${{ hashFiles('dev/composer.lock') }}
       - name: Install quality tooling
         run: |
           sudo apt-get update
-          sudo apt-get install -y gettext rsync
+          sudo apt-get install -y gettext rsync zip unzip
+          composer install --working-dir=dev --no-interaction --prefer-dist
           npm ci --prefix dev/smoke
-      - name: Unified quality gate
+      - name: Unified quality gate (syntax + unit + contracts + WPCS + PHPStan + ESLint + Stylelint + jsdom)
         run: php dev/test-all.php
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: quality
+    name: Playwright E2E (WordPress Playground SQLite)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: dev/smoke/package-lock.json
+      - name: Install smoke + Playwright browsers
+        run: |
+          npm ci --prefix dev/smoke
+          npx --prefix dev/smoke playwright install --with-deps chromium
+      - name: Run Playwright E2E against WordPress Playground
+        env:
+          AK_URL: http://127.0.0.1:9400
+          AK_USER: admin
+          AK_PASS: password
+        run: |
+          printf '{"steps":[{"step":"activatePlugin","pluginPath":"adminkit/adminkit.php"}]}' > /tmp/ci-blueprint.json
+          npx --yes @wp-playground/cli@latest server --port=9400 --mount=.:/wordpress/wp-content/plugins/adminkit --blueprint=/tmp/ci-blueprint.json &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID 2>/dev/null || true" EXIT
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:9400/wp-login.php >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+          npm test --prefix dev/smoke
+
+  package-and-pcp:
+    runs-on: ubuntu-latest
+    needs: quality
+    name: Release Package & Plugin Check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: dom, libxml, zip
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build distribution archive and verify clean contents
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext rsync zip unzip
+          php dev/check-modules.php
+          php dev/package.php --working-tree --out=/tmp/adminkit.zip
+          unzip -l /tmp/adminkit.zip
+          mkdir -p /tmp/pcp-target
+          unzip -q /tmp/adminkit.zip -d /tmp/pcp-target
+      - name: Run WordPress Plugin Check (PCP) via Playground Blueprint
+        run: |
+          cat << 'EOF' > /tmp/pcp-blueprint.json
+          {
+            "steps": [
+              { "step": "installPlugin", "pluginData": { "resource": "wordpress.org/plugins", "slug": "plugin-check" }, "options": { "activate": true } },
+              { "step": "activatePlugin", "pluginPath": "adminkit/adminkit.php" },
+              { "step": "wp-cli", "command": "wp plugin check adminkit --categories=general,plugin_repo --format=table" }
+            ]
+          }
+          EOF
+          npx --yes @wp-playground/cli@latest run-blueprint --mount=/tmp/pcp-target/adminkit:/wordpress/wp-content/plugins/adminkit --blueprint=/tmp/pcp-blueprint.json
+      - name: Upload release zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: adminkit-dist
+          path: /tmp/adminkit.zip

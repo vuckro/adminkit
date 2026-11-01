@@ -336,6 +336,7 @@
 				var eyeOff =
 					'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.6 9.6 0 0 1 12 6c6.5 0 9.5 6 9.5 6a16.2 16.2 0 0 1-2.3 3.1M6.6 6.6A16 16 0 0 0 2.5 12s3 6 9.5 6a9.3 9.3 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
 				var lbl = item.hidden ? I.menuShow : I.menuHide;
+				// eslint-disable-next-line no-unsanitized/property -- Static inline eye/eyeOff SVG constants.
 				btn.innerHTML = item.hidden ? eyeOff : eye;
 				btn.setAttribute('aria-pressed', item.hidden ? 'true' : 'false');
 				btn.setAttribute('title', lbl);
