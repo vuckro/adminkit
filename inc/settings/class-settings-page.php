@@ -452,7 +452,7 @@ class AdminKit_Settings_Page {
 			'pageTitle'    => '',
 			'interfaceDefault' => AdminKit_Interface::sanitize_default( AdminKit_Settings::get( 'interface_default' ) ),
 			'interfaceMode' => AdminKit_Interface::mode(),
-			'profileUrl' => admin_url( 'profile.php' ),
+			'profileUrl' => admin_url( 'profile.php#settings' ),
 			'version'      => ADMINKIT_VERSION,
 			'values'       => $is_main ? array_combine( array_keys( AdminKit_Settings::schema() ), array_map( array( 'AdminKit_Settings', 'get' ), array_keys( AdminKit_Settings::schema() ) ) ) : array(),
 			'route'        => self::REST_NS . self::REST_ROUTE,

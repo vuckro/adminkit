@@ -79,8 +79,8 @@ msgid "Active items first"
 msgstr "Éléments actifs en premier"
 
 #: inc/settings/class-settings-catalog.php
-msgid "Add a light/dark mode switch to the toolbar. When off, light mode is used everywhere."
-msgstr "Ajoute un sélecteur clair/sombre à la barre d’outils. La désactivation impose le mode clair partout."
+msgid "Add a light/dark mode switch to the AdminKit interface. WordPress classic keeps its native appearance."
+msgstr "Ajoute un sélecteur clair/sombre à l’interface AdminKit. WordPress classique conserve son apparence native."
 
 #: inc/settings/class-settings-i18n.php
 msgid "Add link"

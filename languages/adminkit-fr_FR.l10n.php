@@ -19,7 +19,7 @@ return array (
     'Activation to save' => 'Activation à enregistrer',
     'Active features' => 'Actives',
     'Active items first' => 'Éléments actifs en premier',
-    'Add a light/dark mode switch to the toolbar. When off, light mode is used everywhere.' => 'Ajoute un sélecteur clair/sombre à la barre d’outils. La désactivation impose le mode clair partout.',
+    'Add a light/dark mode switch to the AdminKit interface. WordPress classic keeps its native appearance.' => 'Ajoute un sélecteur clair/sombre à l’interface AdminKit. WordPress classique conserve son apparence native.',
     'Add link' => 'Ajouter un lien',
     'Add separator' => 'Ajouter un séparateur',
     'Addresses' => 'Adresses',

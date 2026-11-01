@@ -59,6 +59,7 @@ require the corresponding third-party plugin/theme to be installed.
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
+- [Personal interface choice and recovery](docs/INTERFACE.md)
 - [Tokens and generation](docs/TOKENS.md)
 - [WaasKit design reference](docs/WAASKIT-DESIGN-SYSTEM.md)
 - [Integrations](docs/INTEGRATIONS.md)

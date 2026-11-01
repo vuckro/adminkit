@@ -10,6 +10,7 @@
 			var p = el('section', { class: 'ak-panel ak-features', role: 'tabpanel' }, [
 				el('h2', { class: 'ak-panel-title', text: I.features }), context.intro(I.featuresIntro)
 			]);
+			if (D.interfaceMode === 'wordpress') { p.appendChild(context.intro(I.interfaceNativeNotice)); }
 			var refs = {}, groups = [], selected = '', category = '';
 			if (location.hash.indexOf('#category=') === 0) { try { category = decodeURIComponent(location.hash.slice(10)); } catch (error) {} }
 			var search = el('input', { type: 'search', class: 'ak-search', placeholder: I.searchFeatures, 'aria-label': I.searchFeatures });

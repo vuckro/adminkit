@@ -31,7 +31,7 @@ class AdminKit_Settings_Catalog {
 				'icon'  => 'moon',
 				'group' => $appearance,
 				'label' => __( 'Dark mode', 'adminkit' ),
-				'desc'  => __( 'Add a light/dark mode switch to the toolbar. When off, light mode is used everywhere.', 'adminkit' ),
+				'desc'  => __( 'Add a light/dark mode switch to the AdminKit interface. WordPress classic keeps its native appearance.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'module_login_enabled',
