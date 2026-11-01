@@ -643,6 +643,11 @@ msgid "Inherited"
 msgstr ""
 
 #: inc/settings/class-settings-page.php
+#, php-format
+msgid "Installed version %1$s exceeds tested range (%2$s) — native plugin UI is kept until verified."
+msgstr ""
+
+#: inc/settings/class-settings-page.php
 msgid "Keep your configuration"
 msgstr ""
 
@@ -1160,6 +1165,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Site name"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Skin paused"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php

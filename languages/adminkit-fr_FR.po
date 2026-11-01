@@ -643,6 +643,11 @@ msgid "Inherited"
 msgstr "Héritée"
 
 #: inc/settings/class-settings-page.php
+#, php-format
+msgid "Installed version %1$s exceeds tested range (%2$s) — native plugin UI is kept until verified."
+msgstr "La version installée %1$s dépasse la plage vérifiée (%2$s) — l’interface native de l’extension est conservée jusqu’à validation."
+
+#: inc/settings/class-settings-page.php
 msgid "Keep your configuration"
 msgstr "Conserver votre configuration"
 
@@ -1161,6 +1166,10 @@ msgstr "La langue du site ainsi que le fuseau horaire et les formats utilisés p
 #: inc/settings/class-settings-page.php
 msgid "Site name"
 msgstr "Nom du site"
+
+#: inc/settings/class-settings-page.php
+msgid "Skin paused"
+msgstr "Habillage en pause"
 
 #: inc/settings/class-settings-catalog.php
 msgid "Style wp-login.php to match the administration (logo, dark mode and focus states)."

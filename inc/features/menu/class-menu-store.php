@@ -145,12 +145,17 @@ class AdminKit_Menu_Store {
 		if ( ! self::ensure_schema() ) {
 			return AdminKit_Storage::error( 'adminkit_menu_schema_failed' );
 		}
-		// Never claim rollback safety for a legacy non-transactional table.
-		$status = $wpdb->get_row( $wpdb->prepare( 'SHOW TABLE STATUS WHERE Name = %s', $table ), ARRAY_A );
-		if ( ! is_array( $status ) || 'innodb' !== strtolower( $status['Engine'] ?? '' ) ) {
-			return AdminKit_Storage::error( 'adminkit_menu_requires_innodb' );
+		if ( self::is_sqlite( $wpdb ) ) {
+			$begin_sql = 'BEGIN TRANSACTION';
+		} else {
+			// Never claim rollback safety for a legacy non-transactional table.
+			$status = $wpdb->get_row( $wpdb->prepare( 'SHOW TABLE STATUS WHERE Name = %s', $table ), ARRAY_A );
+			if ( ! is_array( $status ) || 'innodb' !== strtolower( $status['Engine'] ?? '' ) ) {
+				return AdminKit_Storage::error( 'adminkit_menu_requires_innodb' );
+			}
+			$begin_sql = 'START TRANSACTION';
 		}
-		if ( false === $wpdb->query( 'START TRANSACTION' ) ) {
+		if ( false === $wpdb->query( $begin_sql ) ) {
 			return AdminKit_Storage::error( 'adminkit_menu_storage_failed' );
 		}
 		if ( false === $wpdb->delete( $table, array( 'blog_id' => $blog_id ), array( '%d' ) ) ) {
@@ -193,6 +198,46 @@ class AdminKit_Menu_Store {
 		}
 		self::flush_cache( $blog_id );
 		return true;
+	}
+
+	/**
+	 * Detect SQLite database drop-ins (WordPress Playground / `sqlite-database-integration`)
+	 * where `SHOW TABLE STATUS` does not report `Engine = InnoDB` and transactions open
+	 * with `BEGIN TRANSACTION`.
+	 *
+	 * @param object $wpdb Database connection instance.
+	 * @return bool
+	 */
+	private static function is_sqlite( $wpdb ) {
+		if ( is_object( $wpdb ) && ! empty( $wpdb->is_sqlite ) ) {
+			return true;
+		}
+		if ( defined( 'DB_ENGINE' ) && 'sqlite' === strtolower( (string) DB_ENGINE ) ) {
+			return true;
+		}
+		return defined( 'FQDB' )
+			|| class_exists( 'WP_SQLite_DB', false )
+			|| class_exists( 'WP_SQLite_Translator', false )
+			|| ( is_object( $wpdb ) && isset( $wpdb->dbh ) && $wpdb->dbh instanceof PDO );
+	}
+
+	/**
+	 * Remove all saved menu rows and cached transients for a deleted Multisite blog
+	 * (`wp_uninitialize_site` hook).
+	 *
+	 * @param \WP_Site|int $site Deleted site object or blog ID.
+	 * @return void
+	 */
+	public static function delete_site_data( $site ) {
+		$blog_id = ( is_object( $site ) && isset( $site->blog_id ) ) ? (int) $site->blog_id : (int) $site;
+		if ( $blog_id <= 0 ) {
+			return;
+		}
+		global $wpdb;
+		if ( is_object( $wpdb ) && method_exists( $wpdb, 'delete' ) ) {
+			$wpdb->delete( self::table(), array( 'blog_id' => $blog_id ), array( '%d' ) );
+		}
+		self::flush_cache( $blog_id );
 	}
 
 	/**

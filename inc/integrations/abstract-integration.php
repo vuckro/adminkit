@@ -122,20 +122,54 @@ abstract class AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Whether the host's MAJOR version is within the tested range. True when
-	 * either bound is unset (the common case). Comparing majors only keeps the
-	 * skin on across the host's minor/patch updates and falls back only when a
-	 * new major — the release most likely to reshuffle classes — lands.
+	 * Whether the host's installed version is within the tested range.
+	 *
+	 * - Unset bounds (`null` / `''`) always pass (Tier A variable-remap adapters).
+	 * - A 1-segment bound (`'3'`, `'11'`) gates on the MAJOR version (`< 4.0.0-alpha`).
+	 * - A 2+ segment bound (`'2.5'`, `'2.2.95'`) gates on `MAJOR.MINOR` (`< 2.3.0-alpha`),
+	 *   allowing patch updates within the verified minor series while pausing on untested
+	 *   minor/major releases.
 	 *
 	 * @return bool
 	 */
-	protected static function host_within_tested_range() {
+	public static function host_within_tested_range() {
 		$max = static::max_tested_host_version();
 		$cur = static::host_version();
-		if ( null === $max || null === $cur ) {
+		if ( null === $max || '' === (string) $max || null === $cur || '' === (string) $cur ) {
 			return true;
 		}
-		return (int) explode( '.', $cur )[0] <= (int) explode( '.', $max )[0];
+		$cur_clean = ltrim( trim( (string) $cur ), 'vV' );
+		$max_clean = ltrim( trim( (string) $max ), 'vV' );
+		if ( ! preg_match( '/^\d+/', $cur_clean ) || ! preg_match( '/^\d+/', $max_clean ) ) {
+			return true;
+		}
+		$parts = explode( '.', $max_clean );
+		if ( 1 === count( $parts ) ) {
+			$upper_exclusive = ( (int) $parts[0] + 1 ) . '.0.0-alpha';
+		} else {
+			$upper_exclusive = ( (int) $parts[0] ) . '.' . ( (int) $parts[1] + 1 ) . '.0-alpha';
+		}
+		return version_compare( $cur_clean, $upper_exclusive, '<' );
+	}
+
+	/**
+	 * When the host is active and exceeds `max_tested_host_version()`, return the
+	 * current and tested range strings so Settings → Plugins can surface "Skin paused".
+	 *
+	 * @return array{current:string,max:string}|null
+	 */
+	public static function paused_version_info() {
+		if ( ! static::is_active() || static::host_within_tested_range() ) {
+			return null;
+		}
+		$cur   = trim( (string) static::host_version() );
+		$max   = ltrim( trim( (string) static::max_tested_host_version() ), 'vV' );
+		$parts = explode( '.', $max );
+		$range = ( 1 === count( $parts ) ) ? $parts[0] . '.x' : $parts[0] . '.' . $parts[1] . '.x';
+		return array(
+			'current' => $cur,
+			'max'     => $range,
+		);
 	}
 
 	/**
@@ -210,8 +244,17 @@ abstract class AdminKit_Integration_Base {
 				}
 			}
 		}
-		// Drop update-count bubbles / any markup, collapse whitespace.
-		$title = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $title ) ) );
+		// Drop update-count bubbles (incl. nested spans), strip markup, decode entities.
+		$guard = 0;
+		while ( $guard < 6 && preg_match( '/<span\b/i', $title ) ) {
+			$next = preg_replace( '/<span\b[^>]*>(?:(?!<span\b).)*?<\/span>/is', '', $title );
+			if ( null === $next || $next === $title ) {
+				break;
+			}
+			$title = $next;
+			++$guard;
+		}
+		$title = trim( preg_replace( '/\s+/', ' ', html_entity_decode( wp_strip_all_tags( $title ), ENT_QUOTES, 'UTF-8' ) ) );
 		if ( '' === $title ) {
 			return;
 		}
@@ -240,6 +283,9 @@ abstract class AdminKit_Integration_Base {
 	 */
 	public static function maybe_init() {
 		if ( ! static::is_active() ) {
+			return;
+		}
+		if ( ! static::host_within_tested_range() ) {
 			return;
 		}
 		if ( ! apply_filters( 'adminkit/integration_enabled', true, static::slug() ) ) {

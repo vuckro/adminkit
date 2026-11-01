@@ -199,8 +199,10 @@ class AdminKit_Settings_Catalog {
 	 * @return array<int, array>
 	 */
 	public static function plugins_list() {
-		$by_file = array();
+		$by_file       = array();
+		$class_by_slug = array();
 		foreach ( self::integration_specs() as $s ) {
+			$class_by_slug[ $s['slug'] ] = $s['class'];
 			if ( 'plugin' !== $s['type'] ) {
 				continue;
 			}
@@ -232,7 +234,12 @@ class AdminKit_Settings_Catalog {
 			}
 			$slug      = isset( $by_file[ $file ] ) ? $by_file[ $file ] : '';
 			$supported = ( '' !== $slug );
-			$rows[]    = array(
+			$active    = is_plugin_active( $file );
+			$paused    = null;
+			if ( $supported && $active && isset( $class_by_slug[ $slug ] ) && method_exists( $class_by_slug[ $slug ], 'paused_version_info' ) ) {
+				$paused = call_user_func( array( $class_by_slug[ $slug ], 'paused_version_info' ) );
+			}
+			$row = array(
 				'slug'      => $slug,
 				'file'      => $file,
 				'label'     => '' !== (string) $data['Name'] ? $data['Name'] : $file,
@@ -241,15 +248,22 @@ class AdminKit_Settings_Catalog {
 				'enabled'   => $supported
 					? (bool) AdminKit_Settings::get( 'integration_' . $slug . '_enabled' )
 					: ! in_array( $file, $generic_off, true ),
-				'active'    => is_plugin_active( $file ),
+				'active'    => $active,
 			);
+			if ( is_array( $paused ) ) {
+				$row['paused'] = $paused;
+			}
+			$rows[] = $row;
 		}
 
 		foreach ( self::integration_specs() as $s ) {
 			if ( 'theme' !== $s['type'] || ! call_user_func( array( $s['class'], 'is_active' ) ) ) {
 				continue;
 			}
-			$rows[] = array(
+			$paused = method_exists( $s['class'], 'paused_version_info' )
+				? call_user_func( array( $s['class'], 'paused_version_info' ) )
+				: null;
+			$row = array(
 				'slug'      => $s['slug'],
 				'file'      => '',
 				'label'     => $s['label'],
@@ -258,6 +272,10 @@ class AdminKit_Settings_Catalog {
 				'enabled'   => (bool) AdminKit_Settings::get( 'integration_' . $s['slug'] . '_enabled' ),
 				'active'    => true,
 			);
+			if ( is_array( $paused ) ) {
+				$row['paused'] = $paused;
+			}
+			$rows[] = $row;
 		}
 
 		usort( $rows, static function ( $a, $b ) {

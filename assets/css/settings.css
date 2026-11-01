@@ -255,6 +255,11 @@
 	background: var(--ak-primary-subtle);
 	border-color: transparent;
 }
+.adminkit-app .ak-badge--warn {
+	color: var(--ak-warning);
+	background: var(--ak-warning-subtle);
+	border-color: transparent;
+}
 .adminkit-app .ak-seg {
 	display: inline-flex;
 	margin-left: auto;

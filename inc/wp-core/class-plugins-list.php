@@ -55,6 +55,7 @@ class AdminKit_Plugins_List {
 	 * @return void
 	 */
 	public static function on_plugins_screen() {
+		if ( function_exists( 'is_network_admin' ) && is_network_admin() ) { return; }
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
 		if ( ! self::enabled() ) {
 			return;
@@ -89,6 +90,7 @@ class AdminKit_Plugins_List {
 	 * @return void
 	 */
 	public static function sort_active_first() {
+		if ( function_exists( 'is_network_admin' ) && is_network_admin() ) { return; }
 		if ( ! AdminKit_Settings::get( 'active_items_first_sort' ) ) { return; }
 		// A chosen sort, search or status view belongs to WordPress and the user.
 		foreach ( array( 'orderby', 'order', 's' ) as $key ) {
@@ -134,7 +136,7 @@ class AdminKit_Plugins_List {
 			return;
 		}
 		$status = isset( $_GET['plugin_status'] ) ? sanitize_key( wp_unslash( $_GET['plugin_status'] ) ) : '';
-		if ( '' !== $status && 'all' !== $status ) {
+		if ( '' !== $status ) {
 			return;
 		}
 		foreach ( array( 's', 'paged', 'action', 'action2', 'activate', 'deactivate', 'activate-multi', 'deactivate-multi', 'deleted', 'error' ) as $flag ) {

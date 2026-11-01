@@ -122,6 +122,7 @@ class AdminKit_Menu_Manager {
 		add_filter( 'submenu_file', array( __CLASS__, 'remap_submenu_file' ) );
 		add_action( 'admin_head', array( __CLASS__, 'print_css' ), 22 );
 		add_action( 'admin_footer', array( __CLASS__, 'print_url_overrides' ) );
+		add_action( 'wp_uninitialize_site', array( 'AdminKit_Menu_Store', 'delete_site_data' ) );
 	}
 
 	/**
@@ -373,7 +374,7 @@ class AdminKit_Menu_Manager {
 			}
 			$cfg = $top_by_slug[ $item[2] ];
 			if ( isset( $cfg['title'] ) && '' !== $cfg['title'] ) {
-				$menu[ $pos ][0] = $cfg['title'];
+				$menu[ $pos ][0] = self::apply_menu_title( isset( $item[0] ) ? $item[0] : '', $cfg['title'] );
 			}
 			if ( ! empty( $cfg['hidden'] ) ) {
 				// Hide via CSS (keep the entry so the page title still resolves and the
@@ -420,43 +421,74 @@ class AdminKit_Menu_Manager {
 			}
 		}
 
-		// Submenus: reshuffle. Build the desired state for every configured child, then
-		// walk the live submenu — rename + hide in place, and MOVE items whose configured
-		// parent differs (cross-section), recording each move for the parent_file /
-		// submenu_file highlight remap. Then reorder every configured parent.
-		$desired = array();
+		// Determine which top-level parents exist and are accessible to the current user,
+		// so a cross-parent submenu move never orphans an item under a deactivated plugin
+		// or a section this role cannot open (e.g. an Editor when an item was moved under Settings).
+		$accessible_parents = array();
+		foreach ( (array) $menu as $top_item ) {
+			if ( empty( $top_item[2] ) ) {
+				continue;
+			}
+			$top_classes = ( isset( $top_item[4] ) && is_string( $top_item[4] ) ) ? $top_item[4] : '';
+			if ( false !== strpos( $top_classes, 'wp-menu-separator' ) ) {
+				continue;
+			}
+			$top_slug = (string) $top_item[2];
+			$top_cap  = isset( $top_item[1] ) ? (string) $top_item[1] : '';
+			if ( ( '' !== $top_cap && current_user_can( $top_cap ) ) || ! empty( $submenu[ $top_slug ] ) ) {
+				$accessible_parents[ $top_slug ] = true;
+			}
+		}
+
+		// Submenus: reshuffle. Index desired state first by composite `$parent . "\0" . $slug`
+		// so duplicate child slugs across sections (e.g. `customize.php`) never collide,
+		// falling back to slug-only lookup solely for cross-parent moves.
+		$desired_in_place = array();
+		$desired_moved    = array();
 		foreach ( $config['sub'] as $parent => $subs ) {
 			foreach ( $subs as $s ) {
 				if ( empty( $s['slug'] ) ) {
 					continue;
 				}
-				$desired[ $s['slug'] ] = array(
-					'parent' => $parent,
+				$entry = array(
+					'parent' => (string) $parent,
 					'hidden' => ! empty( $s['hidden'] ),
 					'title'  => isset( $s['title'] ) ? (string) $s['title'] : '',
 				);
+				$desired_in_place[ $parent . "\0" . $s['slug'] ] = $entry;
+				$desired_moved[ $s['slug'] ]                     = $entry;
 			}
 		}
-		foreach ( $submenu as $cur_parent => $items ) {
+		foreach ( array_keys( (array) $submenu ) as $cur_parent ) {
+			$items = isset( $submenu[ $cur_parent ] ) ? $submenu[ $cur_parent ] : null;
 			if ( ! is_array( $items ) ) {
 				continue;
 			}
 			foreach ( $items as $i => $item ) {
-				if ( empty( $item[2] ) || ! isset( $desired[ $item[2] ] ) ) {
+				if ( empty( $item[2] ) ) {
 					continue;
 				}
-				$d = $desired[ $item[2] ];
+				$sub_slug = (string) $item[2];
+				$comp_key = $cur_parent . "\0" . $sub_slug;
+				if ( isset( $desired_in_place[ $comp_key ] ) ) {
+					$d = $desired_in_place[ $comp_key ];
+				} elseif ( isset( $desired_moved[ $sub_slug ] ) ) {
+					$d = $desired_moved[ $sub_slug ];
+				} else {
+					continue;
+				}
 				if ( '' !== $d['title'] ) {
-					$item[0] = $d['title'];
+					$item[0] = self::apply_menu_title( isset( $item[0] ) ? $item[0] : '', $d['title'] );
 				}
 				if ( $d['hidden'] ) {
 					$item[4]          = trim( ( isset( $item[4] ) ? $item[4] : '' ) . ' ak-mh' );
 					self::$has_hidden = true;
 				}
-				if ( $cur_parent !== $d['parent'] ) {
+				if ( $cur_parent !== $d['parent'] && isset( $accessible_parents[ $d['parent'] ] ) ) {
 					unset( $submenu[ $cur_parent ][ $i ] );
 					$submenu[ $d['parent'] ][] = $item;
-					self::$moved[ $item[2] ]   = $d['parent'];
+					self::$moved[ $sub_slug ]  = $d['parent'];
+					self::remap_moved_plugin_submenu( $sub_slug, (string) $cur_parent, $d['parent'] );
 				} else {
 					$submenu[ $cur_parent ][ $i ] = $item;
 				}
@@ -525,8 +557,73 @@ class AdminKit_Menu_Manager {
 					$classes         .= ' ak-mh';
 					self::$has_hidden = true;
 				}
-				$title  = ( isset( $t['title'] ) && '' !== $t['title'] ) ? $t['title'] : $safe_href;
-				$menu[] = array( $title, 'read', $safe_href, $title, $classes, '', 'none' );
+				$raw_title = ( isset( $t['title'] ) && '' !== $t['title'] ) ? $t['title'] : $safe_href;
+				$title     = function_exists( 'esc_html' ) ? esc_html( $raw_title ) : htmlspecialchars( $raw_title, ENT_QUOTES, 'UTF-8' );
+				$menu[]    = array( $title, 'read', $safe_href, $title, $classes, '', 'none' );
+			}
+		}
+	}
+
+	/**
+	 * Escape a custom menu title while preserving live WordPress notification bubbles
+	 * (`awaiting-mod`, `update-plugins`, `count-N`, `menu-counter`), including nested spans.
+	 *
+	 * @param string $original_html Native `$menu[0]` / `$submenu[0]` markup.
+	 * @param string $custom_title  Saved user label.
+	 * @return string
+	 */
+	public static function apply_menu_title( $original_html, $custom_title ) {
+		$safe = function_exists( 'esc_html' ) ? esc_html( (string) $custom_title ) : htmlspecialchars( (string) $custom_title, ENT_QUOTES, 'UTF-8' );
+		if ( false === strpos( (string) $original_html, '<span' ) ) {
+			return $safe;
+		}
+		if ( preg_match_all( '~<span\b[^>]*class=(["\'])[^"\']*\b(?:awaiting-mod|update-plugins|count-\d+|menu-counter)\b[^"\']*\1[^>]*>((?:[^<]+|<(?!/?span\b)|<span\b[^>]*>(?2)</span>)*)</span>~is', (string) $original_html, $matches ) && ! empty( $matches[0] ) ) {
+			return $safe . ' ' . implode( ' ', $matches[0] );
+		}
+		return $safe;
+	}
+
+	/**
+	 * Remap WordPress's internal `$_parent_pages`, `$_registered_pages` and page-hook
+	 * actions when a plugin submenu (`add_submenu_page`) is moved across top-level parents,
+	 * preventing 404 hrefs in `menu-header.php` and 403s in `user_can_access_admin_page()`.
+	 *
+	 * @param string $slug       Submenu slug (`$item[2]`).
+	 * @param string $old_parent Original parent slug.
+	 * @param string $new_parent New parent slug.
+	 * @return void
+	 */
+	private static function remap_moved_plugin_submenu( $slug, $old_parent, $new_parent ) {
+		if ( ! function_exists( 'get_plugin_page_hookname' ) ) {
+			return;
+		}
+		if ( ! isset( $GLOBALS['_parent_pages'][ $slug ] ) && false !== strpos( $slug, '.php' ) ) {
+			return;
+		}
+		$old_hook                           = get_plugin_page_hookname( $slug, $old_parent );
+		$GLOBALS['_parent_pages'][ $slug ]  = $new_parent;
+		$new_hook                           = get_plugin_page_hookname( $slug, $new_parent );
+		if ( $new_hook === $old_hook || '' === $new_hook ) {
+			return;
+		}
+		$was_registered = ! empty( $GLOBALS['_registered_pages'][ $old_hook ] )
+			|| ( function_exists( 'has_action' ) && has_action( $old_hook ) );
+		if ( ! $was_registered ) {
+			return;
+		}
+		$GLOBALS['_registered_pages'][ $new_hook ] = true;
+		if ( function_exists( 'add_action' ) && function_exists( 'do_action' ) ) {
+			foreach ( array( '', 'load-', 'admin_print_styles-', 'admin_print_scripts-' ) as $prefix ) {
+				$src_hook = $prefix . $old_hook;
+				$dst_hook = $prefix . $new_hook;
+				if ( '' === $prefix || ( function_exists( 'has_action' ) && has_action( $src_hook ) ) ) {
+					add_action(
+						$dst_hook,
+						static function () use ( $src_hook ) {
+							do_action( $src_hook );
+						}
+					);
+				}
 			}
 		}
 	}
@@ -852,9 +949,78 @@ class AdminKit_Menu_Manager {
 			}
 		}
 		$items = self::sanitize_items( $items_in );
+		if ( ! empty( $items ) && function_exists( 'is_multisite' ) && is_multisite() && function_exists( 'is_super_admin' ) && ! is_super_admin() ) {
+			$items = self::preserve_invisible_multisite_items( $items );
+		}
 		$result = AdminKit_Menu_Store::save_config( $items );
 		if ( is_wp_error( $result ) ) { return $result; }
 		return rest_ensure_response( array( 'ok' => true ) );
+	}
+
+	/**
+	 * On Multisite, a non-super-admin's editor snapshot excludes super-admin-only menu
+	 * items (`manage_network`), so `navigation-menu.js` omits them from its payload.
+	 * Preserve any previously configured native `item` rows that were absent from this
+	 * submission so saving as a site administrator never wipes Super Admin rules.
+	 *
+	 * @param array $items Sanitised submitted rows.
+	 * @return array
+	 */
+	private static function preserve_invisible_multisite_items( array $items ) {
+		$prev = AdminKit_Menu_Store::get_config();
+		if ( empty( $prev['top'] ) && empty( $prev['sub'] ) ) {
+			return $items;
+		}
+		$seen_top = array();
+		$seen_sub = array();
+		$max_pos  = 0;
+		foreach ( $items as $it ) {
+			if ( '' === $it['parent'] ) {
+				$seen_top[ $it['slug'] ] = true;
+				if ( $it['position'] >= $max_pos ) {
+					$max_pos = $it['position'] + 1;
+				}
+			} else {
+				$seen_sub[ $it['parent'] . "\0" . $it['slug'] ] = true;
+				$seen_sub[ $it['slug'] ]                        = true;
+			}
+		}
+		foreach ( isset( $prev['top'] ) && is_array( $prev['top'] ) ? $prev['top'] : array() as $t ) {
+			$type = isset( $t['type'] ) ? (string) $t['type'] : 'item';
+			if ( 'item' !== $type || empty( $t['slug'] ) || isset( $seen_top[ $t['slug'] ] ) ) {
+				continue;
+			}
+			$items[] = array(
+				'parent'   => '',
+				'slug'     => (string) $t['slug'],
+				'position' => $max_pos++,
+				'icon'     => isset( $t['icon'] ) ? (string) $t['icon'] : '',
+				'url'      => isset( $t['url'] ) ? (string) $t['url'] : '',
+				'new_tab'  => ! empty( $t['new_tab'] ),
+				'hidden'   => ! empty( $t['hidden'] ),
+				'type'     => 'item',
+				'title'    => isset( $t['title'] ) ? (string) $t['title'] : '',
+			);
+		}
+		foreach ( isset( $prev['sub'] ) && is_array( $prev['sub'] ) ? $prev['sub'] : array() as $parent => $subs ) {
+			foreach ( (array) $subs as $s ) {
+				if ( empty( $s['slug'] ) || isset( $seen_sub[ $parent . "\0" . $s['slug'] ] ) || isset( $seen_sub[ $s['slug'] ] ) ) {
+					continue;
+				}
+				$items[] = array(
+					'parent'   => (string) $parent,
+					'slug'     => (string) $s['slug'],
+					'position' => isset( $s['position'] ) ? (int) $s['position'] : 999,
+					'icon'     => '',
+					'url'      => '',
+					'new_tab'  => false,
+					'hidden'   => ! empty( $s['hidden'] ),
+					'type'     => 'item',
+					'title'    => isset( $s['title'] ) ? (string) $s['title'] : '',
+				);
+			}
+		}
+		return $items;
 	}
 
 	/**

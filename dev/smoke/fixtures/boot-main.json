@@ -495,6 +495,8 @@
         "featureOptionsPausePendingHint": "Saving will pause these options. Your choices will be preserved.",
         "featureOptionOn": "Enabled",
         "featureOptionOff": "Disabled",
-        "featureOptionChoice": "Choice: %s"
+        "featureOptionChoice": "Choice: %s",
+        "pluginSkinPaused": "Habillage en pause",
+        "pluginSkinPausedHint": "La version installée %1$s dépasse la plage vérifiée (%2$s) — l’interface native est conservée."
     }
 }

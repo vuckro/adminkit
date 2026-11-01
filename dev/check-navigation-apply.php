@@ -129,3 +129,18 @@ echo "OK: real menu/toolbar apply, protected nodes, stable children, metadata, t
 $screen_check=new ReflectionMethod('AdminKit_Menu_Manager','is_menu_editor_screen');$screen_check->setAccessible(true);
 $admin=true;foreach(array('adminkit','adminkit-features','adminkit-design','adminkit-navigation','adminkit-configuration')as$page){$_GET['page']=$page;check($screen_check->invoke(null),'Missing editor snapshot on '.$page);}
 $_GET['page']='other-plugin';check(!$screen_check->invoke(null),'Snapshot escaped AdminKit pages');unset($_GET['page']);
+
+// Count bubbles (including nested spans) survive custom renames while HTML in custom titles is escaped.
+$badged='Plugins <span class="update-plugins count-3"><span class="plugin-count">3</span></span>';
+$renamed=AdminKit_Menu_Manager::apply_menu_title($badged,'Extensions <script>');
+check($renamed==='Extensions &lt;script&gt; <span class="update-plugins count-3"><span class="plugin-count">3</span></span>','Menu rename lost nested count bubble or failed to escape HTML');
+
+// Duplicate child slugs across parents stay disambiguated, and inaccessible target parents fall back safely.
+$allowed=false;
+$menu=array(5=>array('Posts','edit_posts','edit.php','Posts','menu-top','','dashicons-admin-post'),60=>array('Appearance','switch_themes','themes.php','Appearance','menu-top','','dashicons-admin-appearance'),80=>array('Settings','manage_options','options-general.php','Settings','menu-top','','dashicons-admin-settings'));
+$submenu=array('edit.php'=>array(array('All','edit_posts','edit.php'),array('Shared','edit_posts','customize.php'),array('Categories','manage_categories','edit-tags.php?taxonomy=category')),'themes.php'=>array(array('Customize','edit_theme_options','customize.php')));
+AdminKit_Menu_Store::$config=array('top'=>array(),'sub'=>array('edit.php'=>array(array('slug'=>'customize.php','title'=>'Post Custom','position'=>0,'hidden'=>false)),'themes.php'=>array(array('slug'=>'customize.php','title'=>'Theme Custom','position'=>0,'hidden'=>false)),'options-general.php'=>array(array('slug'=>'edit-tags.php?taxonomy=category','title'=>'Cats','position'=>0,'hidden'=>false))));
+AdminKit_Menu_Manager::apply();
+check($submenu['edit.php'][0][0]==='Post Custom'&&$submenu['themes.php'][0][0]==='Theme Custom','Duplicate child slugs across parents collided');
+check(empty($submenu['options-general.php'])&&count($submenu['edit.php'])===3,'Submenu moved into parent inaccessible to current role');
+$allowed=true;

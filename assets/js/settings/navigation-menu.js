@@ -44,18 +44,23 @@
 			// childTitle = every submenu slug -> its original title; claimed = every slug
 			// any saved parent lists (so it leaves its origin and shows under its new parent).
 			var snapBySlug = {},
-				childTitle = {};
+				childTitle = {},
+				childTitleByParent = {};
 			(snapshot || []).forEach(function (m) {
 				snapBySlug[m.slug] = m;
 				(m.children || []).forEach(function (c) {
-					childTitle[c.slug] = c.title;
+					childTitleByParent[m.slug + '\0' + c.slug] = c.title;
+					if (!childTitle.hasOwnProperty(c.slug)) {
+						childTitle[c.slug] = c.title;
+					}
 				});
 			});
 			var subCfg = (config && config.sub) || {};
 			var claimed = {};
 			Object.keys(subCfg).forEach(function (p) {
 				(subCfg[p] || []).forEach(function (s) {
-					claimed[s.slug] = true;
+					claimed[s.slug] = p;
+					claimed[p + '\0' + s.slug] = true;
 				});
 			});
 			var seen = {},
@@ -67,7 +72,7 @@
 					model.push({ type: 'separator', slug: t.slug, hidden: !!t.hidden });
 				} else if (m) {
 					seen[t.slug] = true;
-					model.push(makeTop(m, t, subCfg, childTitle, claimed));
+					model.push(makeTop(m, t, subCfg, childTitle, childTitleByParent, claimed));
 				} else if (t.type === 'link' || t.type === 'separator') {
 					model.push(makeCustom(t));
 				}
@@ -103,7 +108,7 @@
 				var node =
 					m.type === 'separator'
 						? { type: 'separator', slug: m.slug, hidden: false }
-						: makeTop(m, null, subCfg, childTitle, claimed);
+						: makeTop(m, null, subCfg, childTitle, childTitleByParent, claimed);
 				var at = prevSlug !== null ? indexOfSlug(prevSlug) : -1;
 				var pos = at >= 0 ? at + 1 : null === prevSlug ? 0 : model.length;
 				model.splice(pos, 0, node);
@@ -121,22 +126,24 @@
 				return ra - rb;
 			});
 			pending.forEach(function (m) {
-				model.push(makeTop(m, null, subCfg, childTitle, claimed));
+				model.push(makeTop(m, null, subCfg, childTitle, childTitleByParent, claimed));
 			});
 			return model;
 		}
 
-		function makeTop(m, topCfg, subCfg, childTitle, claimed) {
+		function makeTop(m, topCfg, subCfg, childTitle, childTitleByParent, claimed) {
 			topCfg = topCfg || {};
 			var children = [],
 				seenC = {};
 			// Configured children for this parent (may include children moved in from elsewhere).
 			(subCfg[m.slug] || []).forEach(function (s) {
-				if (!childTitle.hasOwnProperty(s.slug)) {
+				var compKey = m.slug + '\0' + s.slug;
+				var hasLocal = childTitleByParent.hasOwnProperty(compKey);
+				if (!hasLocal && !childTitle.hasOwnProperty(s.slug)) {
 					return;
 				} // child no longer exists → drop
 				seenC[s.slug] = true;
-				var ot = childTitle[s.slug];
+				var ot = hasLocal ? childTitleByParent[compKey] : childTitle[s.slug];
 				children.push({
 					slug: s.slug,
 					otitle: ot,
@@ -146,7 +153,8 @@
 			});
 			// This parent's own snapshot children not claimed elsewhere (new / unmoved).
 			(m.children || []).forEach(function (c) {
-				if (seenC[c.slug] || claimed[c.slug]) {
+				var claimedByOther = claimed[c.slug] && claimed[c.slug] !== m.slug && !claimed[m.slug + '\0' + c.slug];
+				if (seenC[c.slug] || claimedByOther) {
 					return;
 				}
 				children.push({ slug: c.slug, otitle: c.title, title: c.title, hidden: false });

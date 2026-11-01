@@ -37,11 +37,16 @@ function adminkit_uninstall_site() {
 }
 
 if ( is_multisite() ) {
-	foreach ( get_sites( array( 'fields' => 'ids', 'number' => 0 ) ) as $adminkit_blog_id ) {
-		switch_to_blog( $adminkit_blog_id );
-		adminkit_uninstall_site();
-		restore_current_blog();
-	}
+	$adminkit_offset = 0;
+	do {
+		$adminkit_sites = get_sites( array( 'fields' => 'ids', 'number' => 100, 'offset' => $adminkit_offset ) );
+		foreach ( (array) $adminkit_sites as $adminkit_blog_id ) {
+			switch_to_blog( $adminkit_blog_id );
+			adminkit_uninstall_site();
+			restore_current_blog();
+		}
+		$adminkit_offset += 100;
+	} while ( is_array( $adminkit_sites ) && 100 === count( $adminkit_sites ) );
 } else {
 	adminkit_uninstall_site();
 }

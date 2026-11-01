@@ -78,6 +78,25 @@ ak_assert( false !== strpos( $invalid, '--ak-type-scale:1;' ), 'Invalid scales u
 $profile = array( 'accent_source' => 'custom', 'brand_accent' => '#e31c1c' );
 $neutral = AdminKit_Design_System::css();
 ak_assert( false === strpos( $neutral, '--ak-bg:' ) && false === strpos( $neutral, '--ak-text:' ), 'Custom accent must leave neutrals untouched' );
+
+// Locale decimal separator safety (e.g. PHP 7.4 under fr_FR / de_DE LC_NUMERIC) + non-black dark on-accent mix.
+$prev_locale = setlocale( LC_NUMERIC, '0' );
+setlocale( LC_NUMERIC, 'fr_FR.UTF-8', 'fr_FR', 'de_DE.UTF-8', 'C' );
+$profile = array(
+	'accent_source' => 'custom',
+	'design_system' => array(
+		'type_scale'   => 1.15,
+		'radius_scale' => 0.75,
+		'colors'       => array(
+			'dark' => array( 'accent' => '#9bdfb6', 'on-accent' => '#09090b' ),
+		),
+	),
+);
+$fr_css = AdminKit_Design_System::css();
+if ( false !== $prev_locale ) { setlocale( LC_NUMERIC, $prev_locale ); }
+ak_assert( false !== strpos( $fr_css, '--ak-type-scale:1.15;' ) && false !== strpos( $fr_css, '--ak-radius-scale:0.75;' ) && false === strpos( $fr_css, '1,15' ), 'Float scales must never emit locale commas' );
+ak_assert( false !== strpos( $fr_css, '--ak-primary-hover:color-mix(in srgb,var(--ak-primary) 82%,white);' ), 'Dark non-#000000 on-accent foreground must lighten hover mix' );
+
 if ( isset( $argv[1] ) ) { file_put_contents( $argv[1], json_encode( $fixtures, JSON_PRETTY_PRINT ) ); }
 echo "OK: runtime palettes, scales, contrast aliases, toolbar containment and invalid input\n";
 

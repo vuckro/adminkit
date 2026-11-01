@@ -48,6 +48,9 @@ class AdminKit_Notification_Center {
 	/** @var bool Whether the admin-notice output buffer is currently open. */
 	private static $buffering = false;
 
+	/** @var int Output-buffer nesting level opened by capture_start(). */
+	private static $buffer_level = 0;
+
 	/**
 	 * Register the setting + wire hooks. The setting is registered unconditionally
 	 * so the Settings page can show the toggle while the feature is off.
@@ -84,7 +87,7 @@ class AdminKit_Notification_Center {
 	}
 
 	/**
-	 * Master switch — registered setting (default OFF) through a filter.
+	 * Master switch — registered setting (default ON) through a filter.
 	 *
 	 * @return bool
 	 */
@@ -210,7 +213,8 @@ class AdminKit_Notification_Center {
 			return;
 		}
 		ob_start();
-		self::$buffering = true;
+		self::$buffering    = true;
+		self::$buffer_level = ob_get_level();
 	}
 
 	/**
@@ -225,7 +229,12 @@ class AdminKit_Notification_Center {
 		if ( ! self::$buffering ) {
 			return;
 		}
-		self::$buffering = false;
+		$expected           = self::$buffer_level;
+		self::$buffering    = false;
+		self::$buffer_level = 0;
+		if ( $expected < 1 || ob_get_level() !== $expected ) {
+			return;
+		}
 		$html = ob_get_clean();
 		if ( '' === trim( (string) $html ) ) {
 			return;

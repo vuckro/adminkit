@@ -513,6 +513,9 @@ class AdminKit_Settings_Page {
 				'studioField' => __( 'Site name', 'adminkit' ),
 				'studioSecondary' => __( 'Secondary action', 'adminkit' ),
 				'pluginInactive' => __( 'Plugin inactive', 'adminkit' ),
+				'pluginSkinPaused' => __( 'Skin paused', 'adminkit' ),
+				/* translators: 1: installed plugin version, 2: maximum tested version range (e.g. 2.5.x). */
+				'pluginSkinPausedHint' => __( 'Installed version %1$s exceeds tested range (%2$s) — native plugin UI is kept until verified.', 'adminkit' ),
 				'noResults' => __( 'No results. Try another search term.', 'adminkit' ),
 				'designSystem' => __( 'Design system', 'adminkit' ),
 				'designIntro' => __( 'Customize the foundations and components of your interface.', 'adminkit' ),

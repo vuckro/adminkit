@@ -49,6 +49,17 @@
 				});
 			}
 
+			function pausedBadge(paused) {
+				var hint = (I.pluginSkinPausedHint || '')
+					.replace('%1$s', (paused && paused.current) || '')
+					.replace('%2$s', (paused && paused.max) || '');
+				return el('span', {
+					class: 'ak-badge ak-badge--warn',
+					title: hint,
+					text: I.pluginSkinPaused
+				});
+			}
+
 			// Keep the row's `.is-off` class in sync with the switch state so
 			// every disabled row (native OR generic) reads as greyed-out, the
 			// same treatment AdminKit's own System row gets.
@@ -65,9 +76,23 @@
 				// neutral System; supported → brand Native; any other installed
 				// plugin → neutral Generic (no dedicated adapter).
 				var badge = i.system ? systemBadge() : i.supported ? nativeBadge() : genericBadge();
+				var headChildren = [badge, el('span', { class: 'ak-row__label', text: i.label })];
+				if (i.paused) {
+					headChildren.push(pausedBadge(i.paused));
+				}
 				var main = el('div', { class: 'ak-row__main' }, [
-					el('div', { class: 'ak-row__head' }, [badge, el('span', { class: 'ak-row__label', text: i.label })])
+					el('div', { class: 'ak-row__head' }, headChildren)
 				]);
+				if (i.paused && I.pluginSkinPausedHint) {
+					main.appendChild(
+						el('span', {
+							class: 'ak-row__desc',
+							text: I.pluginSkinPausedHint
+								.replace('%1$s', i.paused.current || '')
+								.replace('%2$s', i.paused.max || '')
+						})
+					);
+				}
 
 				// System (AdminKit itself) → locked row, switch reads ON but is dead.
 				if (i.system) {
@@ -166,7 +191,8 @@
 					// Searchable by plugin name + its badge word (so "native" / "generic"
 					// narrow to that kind). The badge tracks the adapter status.
 					var badge = i.system ? I.system : i.supported ? I.native : I.generic;
-					var ref = { row: r, text: ((i.label || '') + ' ' + badge).toLowerCase() };
+					var pausedTxt = i.paused ? ' ' + (I.pluginSkinPaused || '') : '';
+					var ref = { row: r, text: ((i.label || '') + ' ' + badge + pausedTxt).toLowerCase() };
 					rowsRef.push(ref);
 					groupRows.push(ref);
 					rows.appendChild(r);

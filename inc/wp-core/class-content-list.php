@@ -21,6 +21,9 @@ class AdminKit_Content_List {
 			add_filter( 'posts_orderby', array( __CLASS__, 'published_first' ), 20, 2 );
 		}
 		if ( ! AdminKit_Settings::get( 'active_items_first_content_default' ) ) { return; }
+		if ( ! empty( $screen->id ) ) {
+			add_filter( 'views_' . $screen->id, array( __CLASS__, 'preserve_all_view_link' ), 10, 1 );
+		}
 		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'GET' !== strtoupper( (string) $_SERVER['REQUEST_METHOD'] ) ) {
 			return;
 		}
@@ -60,5 +63,32 @@ class AdminKit_Content_List {
 		global $wpdb;
 		$priority = "CASE WHEN {$wpdb->posts}.post_status = 'publish' THEN 0 ELSE 1 END ASC";
 		return $priority . ( $orderby ? ', ' . $orderby : '' );
+	}
+
+	/**
+	 * Ensure the native "All" view link on single-author sites carries `all_posts=1`
+	 * so clicking "All" never loops back to `post_status=publish` when the browser
+	 * sends `Referrer-Policy: no-referrer`.
+	 *
+	 * @param array<string,string> $views Status view links.
+	 * @return array<string,string>
+	 */
+	public static function preserve_all_view_link( $views ) {
+		if ( ! is_array( $views ) || empty( $views['all'] ) || ! is_string( $views['all'] ) ) {
+			return $views;
+		}
+		if ( false !== strpos( $views['all'], 'all_posts=' ) || false !== strpos( $views['all'], 'post_status=' ) ) {
+			return $views;
+		}
+		$views['all'] = preg_replace_callback(
+			'/\bhref=(["\'])([^"\']+)\1/i',
+			static function ( $m ) {
+				$sep = ( false === strpos( $m[2], '?' ) ) ? '?' : '&amp;';
+				return 'href=' . $m[1] . $m[2] . $sep . 'all_posts=1' . $m[1];
+			},
+			$views['all'],
+			1
+		);
+		return $views;
 	}
 }

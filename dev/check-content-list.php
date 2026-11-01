@@ -48,4 +48,8 @@ if(strpos(AdminKit_Content_List::published_first('native',new Test_Query(array('
 AdminKit_Settings::$choices=array('active_items_first_sort'=>false,'active_items_first_content_default'=>true);
 if(AdminKit_Content_List::published_first('native',new Test_Query(array('post_type'=>'post')))!=='native')throw new RuntimeException('Disabled sort still changed query');
 try { AdminKit_Content_List::on_content_screen(); throw new RuntimeException('Turning sorting off also disabled landing'); } catch(Test_Redirect $expected) {}
-echo "OK: opt-in post/page/CPT priority; explicit filters/search, All navigation, secondary queries and empty lists preserved.\n";
+$views = AdminKit_Content_List::preserve_all_view_link( array( 'all' => '<a href="edit.php">All</a>', 'publish' => '<a href="edit.php?post_status=publish">Published</a>' ) );
+if ( strpos( $views['all'], 'edit.php?all_posts=1' ) === false ) throw new RuntimeException( 'Single-author All link missing all_posts=1 for no-referrer safety' );
+$cpt_views = AdminKit_Content_List::preserve_all_view_link( array( 'all' => '<a href="edit.php?post_type=page">All</a>' ) );
+if ( strpos( $cpt_views['all'], 'edit.php?post_type=page&amp;all_posts=1' ) === false ) throw new RuntimeException( 'CPT All link missing all_posts=1' );
+echo "OK: opt-in post/page/CPT priority; explicit filters/search, All navigation (incl. no-referrer), secondary queries and empty lists preserved.\n";

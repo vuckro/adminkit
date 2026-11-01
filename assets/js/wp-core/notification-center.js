@@ -28,9 +28,14 @@
 	// Banner-ish class token — for custom plugin banners that skip the .notice class
 	// (e.g. Akismet's .akismet-alert). Only applied to DIRECT children of the notice
 	// area (see collect()), so it can't reach nested in-app UI.
-	var BANNERISH  = /(?:^|[\s_-])(?:notice|notices|alert|alerts|nag|message)(?:[\s_-]|$)/i;
+	var BANNERISH = /(?:^|[\s_-])(?:notice|notices|alert|alerts|nag)(?:[\s_-]|$)/i;
+	var NON_NOTICE_TAGS = /^(?:SCRIPT|STYLE|LINK|META|TEMPLATE|NOSCRIPT)$/i;
 	var PROCESSED  = 'data-ak-nc';
 	var doc        = document.documentElement;
+
+	function isNoticeElement( el ) {
+		return !! ( el && el.nodeType === 1 && ! NON_NOTICE_TAGS.test( el.tagName ) );
+	}
 
 	var backdrop, drawer, listEl, emptyEl, badgeEl, bell, lastFocus;
 	var isOpen = false;
@@ -101,7 +106,7 @@
 	// banners (Akismet alerts, etc.) without reaching nested plugin UI.
 	function collect() {
 		var root = eligibleRoot(), out = [], seen = [];
-		function add( el ) { if ( el && el.nodeType === 1 && seen.indexOf( el ) === -1 ) { seen.push( el ); out.push( el ); } }
+		function add( el ) { if ( isNoticeElement( el ) && seen.indexOf( el ) === -1 ) { seen.push( el ); out.push( el ); } }
 		var std = root.querySelectorAll( NOTICE_SEL ), i;
 		for ( i = 0; i < std.length; i++ ) { add( std[ i ] ); }
 		var areas = [ root ], wraps = root.querySelectorAll( '.wrap' ), w;
@@ -110,13 +115,13 @@
 			var kids = areas[ a ].children, k;
 			for ( k = 0; k < kids.length; k++ ) {
 				var kid = kids[ k ];
-				if ( ! kid.matches( NOTICE_SEL ) && isBannerish( kid ) && looksLikeBanner( kid ) ) { add( kid ); }
+				if ( isNoticeElement( kid ) && ! kid.matches( NOTICE_SEL ) && isBannerish( kid ) && looksLikeBanner( kid ) ) { add( kid ); }
 			}
 		}
 		// The server wraps EVERY notice-hook output in #adminkit-nc-origin, so its
 		// children are the authoritative, complete notice set — including custom
-		// banners that match no selector. (common.js may have pulled the standard
-		// ones out into .wrap; those are already caught by NOTICE_SEL above.)
+		// banners that match no selector. Non-visual tags (<style>, <script>, <link>)
+		// stay live in #adminkit-nc-origin without creating phantom drawer entries.
 		var origin = document.getElementById( 'adminkit-nc-origin' );
 		if ( origin ) {
 			var ok = origin.children, oi;
@@ -125,7 +130,7 @@
 		return out;
 	}
 	function judge( el ) {
-		if ( ! el || el.nodeType !== 1 || el.hasAttribute( PROCESSED ) ) { return; }
+		if ( ! isNoticeElement( el ) || el.hasAttribute( PROCESSED ) ) { return; }
 		if ( el.closest( '.ak-nc-drawer' ) ) { return; } // already relocated
 		el.setAttribute( PROCESSED, '1' );
 		if ( groupable( el ) ) {
@@ -148,11 +153,11 @@
 	/* ───────── badge + empty state ───────── */
 
 	function grouped() {
-		// Every element child of the list is a notice we moved here (standard OR
+		// Every visual element child of the list is a notice we moved here (standard OR
 		// custom-class), so count them all — filtering by NOTICE_SEL would miss the
 		// custom banners (e.g. Akismet's .akismet-alert) and undercount the badge.
 		return Array.prototype.slice.call( listEl.children ).filter( function ( n ) {
-			return n.nodeType === 1;
+			return isNoticeElement( n );
 		} );
 	}
 	function setBadge( n ) {

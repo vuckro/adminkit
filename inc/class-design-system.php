@@ -70,12 +70,24 @@ class AdminKit_Design_System {
 		);
 	}
 
+	/**
+	 * Format a numeric scale with locale-independent decimal dots (PHP 7.4 `LC_NUMERIC`
+	 * safe via `%F`) while keeping integer/single-decimal forms compact (`1`, `1.5`, `1.25`).
+	 *
+	 * @param float|int $val Scale value.
+	 * @return string
+	 */
+	private static function format_scale( $val ) {
+		$formatted = rtrim( rtrim( sprintf( '%.2F', (float) $val ), '0' ), '.' );
+		return ( '' === $formatted || '-0' === $formatted ) ? '0' : $formatted;
+	}
+
 	/** @return string CSS with validated values, without a style wrapper. */
 	public static function css( $toolbar_only = false ) {
 		$settings = AdminKit_Settings::sanitize_design_system( AdminKit_Settings::get( 'design_system' ) );
 		$selector = $toolbar_only ? ':root #wpadminbar' : ':root,:root #wpadminbar';
-		$vars = '--ak-type-scale:' . $settings['type_scale'] . ';--ak-radius-scale:' . $settings['radius_scale'] . ';';
-		$vars .= '--wk-radius-scale:var(--ak-radius-scale);--ak-border-width:' . $settings['border_width'] . 'px;';
+		$vars = '--ak-type-scale:' . self::format_scale( $settings['type_scale'] ) . ';--ak-radius-scale:' . self::format_scale( $settings['radius_scale'] ) . ';';
+		$vars .= '--wk-radius-scale:var(--ak-radius-scale);--ak-border-width:' . (int) $settings['border_width'] . 'px;';
 		foreach ( array( 's' => 8, 'm' => 12, 'l' => 16, 'xl' => 24 ) as $size => $pixels ) {
 			$vars .= '--ak-radius-' . $size . ':calc(' . $pixels . 'px * var(--ak-radius-scale));';
 		}
@@ -132,7 +144,7 @@ class AdminKit_Design_System {
 			if ( 4 === strlen( $hex ) ) { $hex = '#' . $hex[1] . $hex[1] . $hex[2] . $hex[2] . $hex[3] . $hex[3]; }
 			$rgb = array( hexdec( substr( $hex, 1, 2 ) ), hexdec( substr( $hex, 3, 2 ) ), hexdec( substr( $hex, 5, 2 ) ) );
 			$foreground = isset( $palette['on-accent'] ) ? $palette['on-accent'] : AdminKit_Assets::contrast_text_for( $hex );
-			$mix = '#000000' === $foreground ? 'white' : 'black';
+			$mix        = '#ffffff' === AdminKit_Assets::contrast_text_for( $foreground ) ? 'white' : 'black';
 			$lighten = 'white' === $mix;
 			$hover = array_map( static function ( $c ) use ( $lighten ) { return (int) round( $c * .82 + ( $lighten ? 255 * .18 : 0 ) ); }, $rgb );
 			$css .= '--ak-primary-rgb:' . implode( ',', $rgb ) . ';--ak-primary-hover-rgb:' . implode( ',', $hover ) . ';';
