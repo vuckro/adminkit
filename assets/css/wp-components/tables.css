@@ -146,7 +146,8 @@ body.adminkit .ak-table-card .tablenav-pages {
 	flex-wrap: wrap;
 	gap: calc(8px * var(--ak-space-scale, 1));
 	height: auto;
-	margin: 0 0 0 auto;
+	margin-block: 0;
+	margin-inline: auto 0;
 }
 body.adminkit .ak-table-card .pagination-links,
 body.adminkit .tablenav .tablenav-pages:not(.one-page) .pagination-links,
@@ -339,7 +340,7 @@ body.adminkit .tablenav .tablenav-pages {
 /* Pagination sits at the right when the row has room; once it scrolls, the auto
    margin collapses to 0 and it simply follows the controls. */
 body.adminkit .tablenav .tablenav-pages {
-	margin-left: auto;
+	margin-inline-start: auto;
 }
 
 /* tablenav (pagination row) */
@@ -425,7 +426,7 @@ body.adminkit tr.inline-edit-row td {
    stays in view as the table scrolls. */
 body.adminkit .inline-edit-row td.colspanchange {
 	position: sticky;
-	left: 0;
+	inset-inline-start: 0;
 	padding: calc(16px * var(--ak-space-scale, 1));
 }
 
@@ -519,7 +520,8 @@ body.adminkit .widefat .alternate {
 
 body.adminkit .wp-list-table .check-column {
 	width: 40px;
-	padding: calc(8px * var(--ak-space-scale, 1)) 0 calc(8px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
+	padding-block: calc(8px * var(--ak-space-scale, 1));
+	padding-inline: calc(16px * var(--ak-space-scale, 1)) 0;
 	vertical-align: middle;
 }
 
@@ -683,8 +685,8 @@ body.adminkit .wp-list-table tr:focus-within .row-actions { visibility: visible;
 /* Native post-list actions are hidden by WordPress on phones. */
 @media screen and (max-width: 782px) {
 	body.adminkit .ak-table-card > .tablenav.top { min-height: 0; padding-block: 0; border-bottom: 0; }
-	body.adminkit .tablenav.bottom .actions { display: flex; flex-wrap: wrap; flex-shrink: 1; gap: var(--ak-space-s); max-width: 100%; padding-right: 0; }
-	body.adminkit .tablenav.bottom .actions select { max-width: 100%; margin-right: 0; }
+	body.adminkit .tablenav.bottom .actions { display: flex; flex-wrap: wrap; flex-shrink: 1; gap: var(--ak-space-s); max-width: 100%; padding-inline-end: 0; }
+	body.adminkit .tablenav.bottom .actions select { max-width: 100%; margin-inline-end: 0; }
 	body.adminkit .wp-list-table tbody tr.no-items td {
 		display: table-cell;
 		background: var(--ak-table-bg);
@@ -711,7 +713,7 @@ body.adminkit .inline-edit-row .cat-checklist label.selectit { font-weight: 400;
 body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group { display: flex; align-items: center; flex-wrap: wrap; gap: calc(8px * var(--ak-space-scale, 1)); }
 body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group label.alignleft { float: none; }
 body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group span.title { width: auto; float: none; display: block; margin-bottom: calc(4px * var(--ak-space-scale, 1)); }
-body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group span.input-text-wrap { margin-left: 0; }
+body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-group span.input-text-wrap { margin-inline-start: 0; }
 
 /* The grid follows available panel width, including folded and mobile menus. */
 body.adminkit .ak-qe-grid { container-type: inline-size; }
@@ -738,9 +740,9 @@ body.adminkit .ak-qe-grid > .inline-edit-wrapper { grid-template-columns: minmax
 body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-col > label > span.title {
 	display: block; float: none; width: auto; margin-bottom: calc(4px * var(--ak-space-scale, 1));
 }
-body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-col > label > span.input-text-wrap { margin-left: 0; }
+body.adminkit .inline-edit-row .inline-edit-col-left .inline-edit-col > label > span.input-text-wrap { margin-inline-start: 0; }
 body.adminkit .inline-edit-row .inline-edit-date .title { float: none; width: auto; }
-body.adminkit .inline-edit-row .timestamp-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: calc(4px * var(--ak-space-scale, 1)); margin-left: 0; }
+body.adminkit .inline-edit-row .timestamp-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: calc(4px * var(--ak-space-scale, 1)); margin-inline-start: 0; }
 body.adminkit .inline-edit-row .timestamp-wrap label { display: block; margin: 0; }
 body.adminkit .inline-edit-row .timestamp-wrap input { margin: 0; }
 body.adminkit .inline-edit-row ul.cat-checklist { height: auto; min-height: 96px; max-height: 180px; }
@@ -808,7 +810,7 @@ body.adminkit .quick-edit-row fieldset .inline-edit-categories-label {
 	margin: 0 0 calc(6px * var(--ak-space-scale, 1));
 }
 body.adminkit .quick-edit-row fieldset label > .input-text-wrap {
-	margin-left: 0;
+	margin-inline-start: 0;
 }
 body.adminkit .quick-edit-row fieldset .inline-edit-group {
 	margin: 0;
@@ -948,6 +950,10 @@ body.adminkit .wp-list-table tbody tr:has(> .check-column input[type=checkbox]:c
 body.adminkit .wp-list-table #the-list tr:has(> .check-column input[type=checkbox]:checked) > .check-column {
  box-shadow: inset 2px 0 0 var(--ak-text-muted);
 }
+:is([dir="rtl"] body.adminkit, body.rtl.adminkit) .wp-list-table tbody tr:has(> .check-column input[type=checkbox]:checked) > .check-column,
+:is([dir="rtl"] body.adminkit, body.rtl.adminkit) .wp-list-table #the-list tr:has(> .check-column input[type=checkbox]:checked) > .check-column {
+ box-shadow: inset -2px 0 0 var(--ak-text-muted);
+}
 body.adminkit .wp-list-table :is(.column-date, .column-parent, .plugin-version-author-uri) {
  color: var(--ak-text-muted);
 }
@@ -1027,7 +1033,7 @@ body.adminkit .quick-edit-row .cat-checklist {
 /* Native expanded content rows: labels and values share a compact reading axis. */
 @media screen and (max-width:782px) {
  body.adminkit .wp-list-table:is(.posts,.pages,.media,.users) tr.is-expanded:not(.inline-edit-row):not(.no-items) > :is(td,th).column-primary ~ td[data-colname]:not(.hidden) {
-  padding:8px 16px 8px 35%; position:relative; min-height:38px; line-height:1.5;
+  padding-block:8px; padding-inline:35% 16px; position:relative; min-height:38px; line-height:1.5;
  }
  body.adminkit .wp-list-table:is(.posts,.pages,.media,.users) tr.is-expanded:not(.inline-edit-row):not(.no-items) > :is(td,th).column-primary ~ td[data-colname]::before {
   position:absolute; inset-inline-start:12px; top:8px; width:calc(35% - 24px); margin:0; line-height:1.5; font-weight:500;

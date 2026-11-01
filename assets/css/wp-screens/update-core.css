@@ -126,6 +126,6 @@ body.adminkit.update-core-php .core-updates li {
    blue clashes with our brand. */
 body.adminkit.update-core-php .notice-info {
 	background-color: var(--ak-surface);
-	border-left-color: var(--ak-info);
+	border-inline-start-color: var(--ak-info);
 	color: var(--ak-text);
 }

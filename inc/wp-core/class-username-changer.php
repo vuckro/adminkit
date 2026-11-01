@@ -151,8 +151,11 @@ class AdminKit_Username_Changer {
 			array(),
 			'window.AdminKitUsernameChanger=' . wp_json_encode(
 				array(
+					'unlockLabel'   => __( 'Change username', 'adminkit' ),
 					'unlockedHint'  => __( 'Type the new username, then click "Update User" below to save.', 'adminkit' ),
 					'unlockConfirm' => __( 'Renaming a user invalidates every active sign-in they have. They must use the new username from now on. Continue?', 'adminkit' ),
+					'confirmAction' => __( 'Unlock username', 'adminkit' ),
+					'cancelAction'  => __( 'Cancel', 'adminkit' ),
 				)
 			) . ';'
 		);

@@ -62,13 +62,16 @@ w.AdminKitNotificationCenter = {
   assert.ok(w.document.querySelector('.form-table .notice-info'), 'Contextual form-table notice must remain inline');
 
   const bell = w.document.querySelector('#wp-admin-bar-ak-notifications a');
+  const wpbody = w.document.getElementById('wpbody');
   bell.focus();
   bell.click();
   assert.equal(bell.getAttribute('aria-expanded'), 'true');
   assert.equal(w.document.querySelector('.ak-nc-drawer').classList.contains('is-open'), true);
+  assert.equal(wpbody.inert, true, 'Background #wpbody is marked inert while drawer is open');
 
   w.document.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
   assert.equal(bell.getAttribute('aria-expanded'), 'false');
+  assert.equal(wpbody.inert, false, 'Background #wpbody inert is cleared on close');
 
   w.close();
   console.log('OK: notification-center groups alerts, skips <style>/<script>, preserves inline feedback and toggles cleanly.');

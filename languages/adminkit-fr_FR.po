@@ -201,13 +201,17 @@ msgstr "Actions groupées"
 msgid "Can publish their own posts"
 msgstr "Publication de ses propres articles"
 
-#: inc/wp-core/class-user-quick-edit.php
+#: inc/wp-core/class-user-quick-edit.php inc/wp-core/class-username-changer.php
 msgid "Cancel"
 msgstr "Annuler"
 
 #: inc/settings/class-settings-i18n.php
 msgid "Card"
 msgstr "Carte"
+
+#: inc/wp-core/class-username-changer.php
+msgid "Change username"
+msgstr "Modifier l’identifiant"
 
 #: inc/wp-core/class-user-quick-edit.php
 msgid "Change your own email from Profile so it can be confirmed."
@@ -871,6 +875,10 @@ msgstr "Épaisseur des contours"
 msgid "Overview"
 msgstr "Vue d’ensemble"
 
+#: inc/settings/class-settings-i18n.php
+msgid "Parent menu"
+msgstr "Menu parent"
+
 #: inc/wp-core/class-options-discussion.php
 msgid "Participation"
 msgstr "Participation"
@@ -1306,6 +1314,10 @@ msgstr "Indisponible"
 #: inc/settings/class-settings-catalog.php
 msgid "Unavailable on Multisite networks."
 msgstr "Indisponible sur les réseaux Multisite."
+
+#: inc/wp-core/class-username-changer.php
+msgid "Unlock username"
+msgstr "Déverrouiller l’identifiant"
 
 #: inc/settings/class-settings-i18n.php
 msgid "Unsaved changes"

@@ -96,7 +96,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 .ak-login-theme-toggle {
 	position: fixed;
 	bottom: 20px;
-	right: 20px;
+	inset-inline-end: 20px;
 	z-index: 10;
 	display: flex;
 	align-items: center;
@@ -119,7 +119,8 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 }
 
 .ak-login-theme-toggle:focus-visible {
-	outline: none;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
 	border-color: var(--ak-primary);
 	box-shadow: var(--ak-focus-ring);
 }
@@ -174,7 +175,8 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	/* WaasKit field focus preserves the surface and adds its two-ring indicator. */
 	border-color: var(--ak-primary);
 	box-shadow: var(--ak-focus-ring);
-	outline: none;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
 }
 
 /* Browser autofill — the default pale-yellow/blue fill clashes with the surface
@@ -224,7 +226,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	line-height: 2.15;
 	box-shadow: var(--ak-btn-primary-shadow);
 	text-shadow: none;
-	float: right;
+	float: inline-end;
 }
 
 .login .button-primary:hover,
@@ -284,7 +286,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 	content: "";
 	position: absolute;
 	top: 2px;
-	left: 2px;
+	inset-inline-start: 2px;
 	width: 16px;
 	height: 16px;
 	margin: 0;
@@ -299,7 +301,7 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 
 .login input[type="checkbox"]:checked::before {
 	content: "";
-	left: 16px;
+	inset-inline-start: 16px;
 	color: transparent;
 }
 
@@ -389,4 +391,34 @@ body:not(.ak-login-mark--favicon):not(.ak-login-mark--logo) #login h1 a {
 .login input[type="checkbox"]:checked::before,
 :root[data-adminkit-theme="dark"] .login input[type="checkbox"]:checked::before {
 	background: var(--ak-on-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ak-login-theme-toggle {
+		transition: none;
+	}
+}
+
+@media (forced-colors: active) {
+	.login input[type="checkbox"] {
+		border: 1px solid ButtonText;
+		background: Canvas;
+		forced-color-adjust: none;
+	}
+	.login input[type="checkbox"]::before {
+		background: ButtonText;
+	}
+	.login input[type="checkbox"]:checked {
+		background: Highlight;
+		border-color: Highlight;
+	}
+	.login input[type="checkbox"]:checked::before {
+		background: HighlightText;
+	}
+	.login .button-primary,
+	#wp-submit {
+		background: Highlight !important;
+		color: HighlightText !important;
+		border-color: Highlight !important;
+	}
 }

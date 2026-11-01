@@ -160,7 +160,7 @@ body.adminkit input[type="file"]::file-selector-button {
 	font-size: var(--ak-text-s);
 	font-weight: 500;
 	padding: calc(4px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1));
-	margin-right: calc(10px * var(--ak-space-scale, 1));
+	margin-inline-end: calc(10px * var(--ak-space-scale, 1));
 	cursor: pointer;
 }
 
@@ -232,7 +232,8 @@ body.adminkit #post-query-submit:focus {
 /* WaasKit keyboard focus must remain visible after the native focus resets. */
 body.adminkit .button:focus-visible,
 body.adminkit .button-secondary:focus-visible {
-	outline: none;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
 	box-shadow: var(--ak-focus-ring);
 }
 
@@ -271,7 +272,8 @@ body.adminkit .wrap .page-title-action:active {
 body.adminkit .button-primary:focus-visible,
 body.adminkit.wp-core-ui .button-primary:focus-visible,
 body.adminkit .wrap .page-title-action:focus-visible {
- outline: none;
+ outline: 2px solid transparent;
+ outline-offset: 2px;
  box-shadow: var(--ak-focus-ring), var(--ak-btn-primary-shadow);
 }
 
@@ -285,4 +287,27 @@ body.adminkit .wrap .page-title-action:hover:focus-visible {
 body.adminkit.wp-core-ui .button-primary:hover:focus:not(:focus-visible),
 body.adminkit .wrap .page-title-action:hover:focus:not(:focus-visible) {
  box-shadow: var(--ak-btn-primary-shadow-hover);
+}
+
+@media (forced-colors: active) {
+ body.adminkit .button-primary,
+ body.adminkit.wp-core-ui .button-primary,
+ body.adminkit .wrap .page-title-action:not(.page-title-action ~ .page-title-action) {
+  background: Highlight;
+  color: HighlightText;
+  border-color: Highlight;
+ }
+ body.adminkit .button.active,
+ body.adminkit.wp-core-ui .button.active {
+  outline: 2px solid Highlight;
+ }
+ body.adminkit.wp-core-ui .button-disabled,
+ body.adminkit.wp-core-ui .button:disabled,
+ body.adminkit.wp-core-ui .button[disabled],
+ body.adminkit .button-disabled,
+ body.adminkit .button:disabled,
+ body.adminkit .button[disabled] {
+  color: GrayText !important;
+  border-color: GrayText !important;
+ }
 }

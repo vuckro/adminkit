@@ -195,10 +195,18 @@
 		else if ( e.shiftKey && document.activeElement === first ) { e.preventDefault(); last.focus(); }
 		else if ( ! e.shiftKey && document.activeElement === last ) { e.preventDefault(); first.focus(); }
 	}
+	function setBackgroundInert( on ) {
+		var ids = [ 'wpbody', 'wpfooter', 'adminmenuwrap', 'adminmenuback' ];
+		for ( var i = 0; i < ids.length; i++ ) {
+			var node = document.getElementById( ids[ i ] );
+			if ( node ) { node.inert = !! on; }
+		}
+	}
 	function open() {
 		if ( isOpen ) { return; }
 		isOpen = true;
 		lastFocus = document.activeElement;
+		setBackgroundInert( true );
 		backdrop.classList.add( 'is-open' );
 		drawer.classList.add( 'is-open' );
 		drawer.setAttribute( 'aria-hidden', 'false' );
@@ -210,6 +218,7 @@
 	function close() {
 		if ( ! isOpen ) { return; }
 		isOpen = false;
+		setBackgroundInert( false );
 		backdrop.classList.remove( 'is-open' );
 		drawer.classList.remove( 'is-open' );
 		drawer.setAttribute( 'aria-hidden', 'true' );

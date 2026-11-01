@@ -46,7 +46,7 @@ body.adminkit {
    scrollbar. Flat below 783px. */
 @media screen and (min-width: 783px) {
 	body.adminkit #wpcontent {
-		padding-left: 0;
+		padding-inline-start: 0;
 	}
 	body.adminkit .wrap {
 		/* Content inset — EQUAL left and right so the page sits balanced in the panel.
@@ -59,14 +59,14 @@ body.adminkit {
 	}
 }
 body.adminkit #wpbody-content {
-	box-sizing: border-box; /* keep the 1px left border inside width:100% → no h-scroll */
-	border-left: 1px solid var(--ak-border);
+	box-sizing: border-box; /* keep the 1px start border inside width:100% → no h-scroll */
+	border-inline-start: 1px solid var(--ak-border);
 }
 @media screen and (max-width: 782px) {
 	body.adminkit #wpbody-content {
 		border-top: 0;
-		border-left: 0;
-		border-top-left-radius: 0;
+		border-inline-start: 0;
+		border-start-start-radius: 0;
 	}
 	/* Native wpcontent adds left-only padding. Give mobile pages symmetric gutters. */
 	body.adminkit #wpcontent { padding-inline: 0; }
@@ -81,8 +81,8 @@ body.adminkit #wpbody-content {
    there so they don't fight the app's layout. */
 body.adminkit.options-connectors-php #wpbody-content {
 	border-top: 0;
-	border-left: 0;
-	border-top-left-radius: 0;
+	border-inline-start: 0;
+	border-start-start-radius: 0;
 }
 
 /* Fixed content-panel corner. The TOP hairline + rounded top-left corner are
@@ -105,19 +105,19 @@ body.adminkit.options-connectors-php #wpbody-content {
 		content: "";
 		position: fixed;
 		top: 32px;            /* under the 32px admin bar */
-		left: 160px;          /* expanded sidebar width */
+		inset-inline-start: 160px; /* expanded sidebar width */
 		pointer-events: none;
 	}
-	body.adminkit #wpwrap::before {        /* top hairline + FULL-HEIGHT left hairline + corner arc */
-		right: 0;
-		bottom: 0;                         /* full height: the left line is now a fixed overlay too —
+	body.adminkit #wpwrap::before {        /* top hairline + FULL-HEIGHT start hairline + corner arc */
+		inset-inline-end: 0;
+		bottom: 0;                         /* full height: the start line is now a fixed overlay too —
 		                                      never covered by a plugin SPA's full-bleed over-pull
 		                                      (it coincides with #wpbody-content's own border on
 		                                      normal pages, so no visible change there). */
 		box-sizing: border-box;
 		border-top: 1px solid var(--ak-border);
-		border-left: 1px solid var(--ak-border);
-		border-top-left-radius: var(--ak-panel-radius);
+		border-inline-start: 1px solid var(--ak-border);
+		border-start-start-radius: var(--ak-panel-radius);
 		z-index: 101;
 	}
 	body.adminkit #wpwrap::after {         /* concave chrome-toned notch fill */
@@ -128,16 +128,21 @@ body.adminkit.options-connectors-php #wpbody-content {
 			var(--ak-surface) var(--ak-panel-radius));
 		z-index: 100;
 	}
+	:is([dir="rtl"] body.adminkit, body.rtl.adminkit) #wpwrap::after {
+		background: radial-gradient(circle var(--ak-panel-radius) at bottom left,
+			transparent 0 max(0px, calc(var(--ak-panel-radius) - 0.5px)),
+			var(--ak-surface) var(--ak-panel-radius));
+	}
 	body.adminkit.folded #wpwrap::before,  /* menu folded by hand → 36px edge */
 	body.adminkit.folded #wpwrap::after {
-		left: 36px;
+		inset-inline-start: 36px;
 	}
 }
 /* Auto-fold band: WP collapses the menu to 36px between 783–960px. */
 @media screen and (min-width: 783px) and (max-width: 960px) {
 	body.adminkit #wpwrap::before,
 	body.adminkit #wpwrap::after {
-		left: 36px;
+		inset-inline-start: 36px;
 	}
 }
 /* Only a fullscreen editor removes the toolbar/sidebar junction. React screens
@@ -334,10 +339,13 @@ body.adminkit #adminmenu li.wp-menu-open > a.menu-top::before {
 	position: absolute;
 	top: 0;
 	bottom: 0;
-	left: 0;
+	inset-inline-start: 0;
 	width: 2px;
 	background: var(--ak-primary) !important;
-	border-radius: 0 var(--ak-radius-s, 5px) var(--ak-radius-s, 5px) 0;
+	border-start-start-radius: 0;
+	border-end-start-radius: 0;
+	border-start-end-radius: var(--ak-radius-s, 5px);
+	border-end-end-radius: var(--ak-radius-s, 5px);
 	z-index: 4;
 	pointer-events: none;
 }
@@ -356,12 +364,12 @@ body.adminkit #adminmenu li.wp-menu-open > a.menu-top::before {
    `!important` beats WP's hardcoded hex (no theme var there). */
 body.adminkit #adminmenu a.wp-has-current-submenu:after,
 body.adminkit #adminmenu > li.current > a.current:after {
-	border-right-color: var(--ak-bg) !important;
+	border-inline-end-color: var(--ak-bg) !important;
 }
 
 body.adminkit #adminmenu li.wp-has-submenu.wp-not-current-submenu.opensub:hover:after,
 body.adminkit #adminmenu li.wp-has-submenu.wp-not-current-submenu:focus-within:after {
-	border-right-color: var(--ak-border) !important;
+	border-inline-end-color: var(--ak-border) !important;
 }
 
 /* Sidebar submenu — elevated surface. Inline (expanded sidebar, current
@@ -400,7 +408,7 @@ body.adminkit #adminmenu .opensub .wp-submenu {
 		border: var(--ak-border-width) solid var(--ak-card-border);
 		border-radius: var(--ak-card-radius);
 		box-shadow: var(--ak-shadow-elevated, 0 8px 24px rgba(0, 0, 0, 0.18));
-		margin-left: calc(6px * var(--ak-space-scale, 1));
+		margin-inline-start: calc(6px * var(--ak-space-scale, 1));
 	}
 }
 
@@ -432,7 +440,7 @@ body.adminkit #adminmenu .wp-submenu li.current a,
 body.adminkit #adminmenu .wp-submenu li.current a:hover,
 body.adminkit #adminmenu .wp-submenu li.current a:focus {
 	color: var(--ak-primary-text) !important;
-	border-left: 0 !important;
+	border-inline-start: 0 !important;
 	box-shadow: none !important;
 	font-weight: 600;
 }
@@ -655,7 +663,7 @@ body.adminkit #major-publishing-actions {
 /* Keep Publish/Update hard right (with or without a Move-to-Trash on the left)
    and vertically centred with it — fixes the row's button alignment. */
 body.adminkit #major-publishing-actions #publishing-action {
-	margin-left: auto;
+	margin-inline-start: auto;
 }
 
 body.adminkit .wp-editor-container {
@@ -879,7 +887,7 @@ body.adminkit #screen-meta {
 	background: var(--ak-card-bg);
 	border: none;
 	border-bottom: 1px solid var(--ak-card-border);
-	border-top-left-radius: var(--ak-panel-radius);
+	border-start-start-radius: var(--ak-panel-radius);
 	overflow: hidden;
 	color: var(--ak-text);
 }
@@ -960,7 +968,7 @@ body.adminkit .contextual-help-tabs li.active a {
 body.adminkit .contextual-help-tabs .active,
 body.adminkit .contextual-help-tabs li.active {
 	background: color-mix(in srgb, var(--ak-primary) 16%, var(--ak-surface));
-	border-left-color: var(--ak-primary);
+	border-inline-start-color: var(--ak-primary);
 	box-shadow: none;
 }
 
@@ -1240,14 +1248,14 @@ body.adminkit #adminmenu li.menu-top:is(:hover, :focus-within, .opensub) .wp-men
  body.adminkit.ak-frame-enhanced #adminmenu { position:static; width:100%; margin:0; }
  body.adminkit.ak-frame-enhanced #adminmenu li.menu-top { width:100%; }
  body.adminkit.ak-frame-enhanced .wp-responsive-open #adminmenuwrap { transform:translateX(0); visibility:visible; transition-delay:0s; }
- body.adminkit.ak-frame-enhanced .wp-responsive-open #wpbody { right:0; left:0; }
+ body.adminkit.ak-frame-enhanced .wp-responsive-open #wpbody { inset-inline:0; }
  body.adminkit.ak-frame-enhanced .wp-responsive-open #wpcontent,
- body.adminkit.ak-frame-enhanced .wp-responsive-open #wpfooter { margin-left:0; margin-right:0; }
+ body.adminkit.ak-frame-enhanced .wp-responsive-open #wpfooter { margin-inline:0; }
  body.adminkit.ak-frame-enhanced .ak-admin-menu-scrim:not([hidden]) { display:block; position:fixed; inset:46px 0 0; margin:0; padding:0; width:100%; border:0; border-radius:0; background:var(--ak-text); opacity:.18; z-index:99997; cursor:pointer; animation:ak-scrim-reveal 180ms ease-out; }
  body.adminkit.ak-frame-enhanced #adminmenu a { transition:background-color 100ms ease,color 100ms ease; }
  body.adminkit.ak-frame-enhanced #adminmenu a:focus-visible { outline:2px solid var(--ak-focus); outline-offset:-3px; }
- body.rtl.adminkit.ak-frame-enhanced #adminmenuwrap { inset-inline-start:0; inset-inline-end:auto; transform:translateX(100%); border-right:0; border-left:1px solid var(--ak-border); }
- body.rtl.adminkit.ak-frame-enhanced .wp-responsive-open #adminmenuwrap { transform:translateX(0); }
+ :is([dir="rtl"] body.adminkit, body.rtl.adminkit).ak-frame-enhanced #adminmenuwrap { inset-inline-start:0; inset-inline-end:auto; transform:translateX(100%); border-right:0; border-left:1px solid var(--ak-border); }
+ :is([dir="rtl"] body.adminkit, body.rtl.adminkit).ak-frame-enhanced .wp-responsive-open #adminmenuwrap { transform:translateX(0); }
  @keyframes ak-scrim-reveal { from{opacity:0} to{opacity:.18} }
 }
 @media screen and (max-width:782px) and (prefers-reduced-motion:reduce){
@@ -1291,4 +1299,29 @@ body.adminkit #adminmenu li.menu-top:is(:hover, :focus-within, .opensub) .wp-men
 @media screen and (max-width:782px) {
  body.adminkit.ak-frame-enhanced #adminmenu .ak-submenu-toggle[aria-expanded="false"] ~ .wp-submenu { display:none; }
  body.adminkit.ak-frame-enhanced #adminmenu .ak-submenu-toggle[aria-expanded="true"] ~ .wp-submenu { display:block; }
+}
+
+@media (forced-colors: active) {
+	body.adminkit #adminmenu li.current > a.menu-top,
+	body.adminkit #adminmenu li.wp-has-current-submenu > a.wp-has-current-submenu {
+		outline: 2px solid Highlight;
+		outline-offset: -2px;
+	}
+	body.adminkit .subsubsub a.current,
+	body.adminkit .filter-links a.current,
+	body.adminkit .nav-tab-active,
+	body.adminkit .ak-tabs button.on {
+		background: Highlight;
+		color: HighlightText;
+		border-color: Highlight;
+	}
+	body.adminkit .postbox,
+	body.adminkit .stuffbox {
+		border: 1px solid CanvasText;
+	}
+	body.adminkit #adminmenu .awaiting-mod,
+	body.adminkit #adminmenu .update-plugins,
+	body.adminkit .subsubsub .count {
+		border: 1px solid CanvasText;
+	}
 }

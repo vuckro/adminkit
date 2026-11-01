@@ -34,7 +34,8 @@ body.adminkit .form-table {
 
 body.adminkit .form-table > tbody > tr > th,
 body.adminkit .form-table > tbody > tr > td {
-	padding: calc(12px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)) 0;
+	padding-block: calc(12px * var(--ak-space-scale, 1));
+	padding-inline: 0 calc(16px * var(--ak-space-scale, 1));
 	vertical-align: top;
 }
 

@@ -196,7 +196,7 @@ body.adminkit.upload-php .wp-filter .search-form input[type="search"]:focus {
 
 body.adminkit.upload-php .media-sidebar {
 	background: var(--ak-surface);
-	border-left: 1px solid var(--ak-border);
+	border-inline-start: 1px solid var(--ak-border);
 }
 
 body.adminkit.upload-php .media-sidebar .attachment-details h2 {
@@ -386,7 +386,7 @@ body.adminkit .edit-attachment-frame .attachment-info {
 body.adminkit .edit-media-header .left,
 body.adminkit .edit-media-header .right,
 body.adminkit .edit-media-header .media-modal-close {
-	border-left-color: var(--ak-border);
+	border-inline-start-color: var(--ak-border);
 }
 
 body.adminkit .edit-media-header .left:hover,

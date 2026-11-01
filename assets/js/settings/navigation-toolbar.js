@@ -11,6 +11,8 @@
 		var apiFetch = context.apiFetch;
 		var snapshotFlip = controls.snapshotFlip;
 		var playFlip = controls.playFlip;
+		var captureFocus = controls.captureFocus;
+		var restoreFocus = controls.restoreFocus;
 		var titleOverride = controls.titleOverride;
 		var handle = controls.handle;
 		var iconBtn = controls.iconBtn;
@@ -28,7 +30,7 @@
 			var nodesByCtx = { admin: [], frontend: [] };
 			var contextTitle = el('h3', { text: I.toolbarAdminTitle });
 			var scopeHint = el('p', { id: 'ak-toolbar-scope', class: 'ak-toolbar-scope', 'aria-live': 'polite', text: I.toolbarAdminScope });
-			var p = el('section', { class: 'ak-panel ak-panel--menu', role: 'tabpanel' }, [
+			var p = el('section', { class: 'ak-panel ak-panel--menu', role: D.pages ? null : 'tabpanel' }, [
 				contextTitle,
 				el('p', { class: 'ak-foundation-intro', text: I.toolbarIntro })
 			]);
@@ -235,6 +237,7 @@
 			}
 
 			function render(movedKey) {
+				var prevFocus = captureFocus ? captureFocus(listWrap) : null;
 				var prevFlip = movedKey ? snapshotFlip(listWrap) : null;
 				var sides = currentSides();
 				listWrap.textContent = '';
@@ -249,6 +252,9 @@
 				if (prevFlip) {
 					playFlip(listWrap, prevFlip, movedKey);
 				}
+				if (prevFocus && restoreFocus) {
+					restoreFocus(listWrap, prevFocus);
+				}
 			}
 
 			// One side: a column with a small heading + its draggable rows. Drag is scoped
@@ -261,13 +267,14 @@
 				var col = el('div', { class: 'ak-toolbar-col' });
 				col.appendChild(el('div', { class: 'ak-toolbar__side' }, [el('span', { text: heading })]));
 				list.forEach(function (item, i) {
+					var key = 'tb:' + activeCtx + ':' + side + ':' + item.id;
 					var row = el('div', { class: 'ak-menu-row ak-menu-row--top' + (item.hidden ? ' is-hidden' : '') });
 					var h = handle();
 					row.appendChild(h);
-					row.appendChild(moveCtl(side, i));
-					row.appendChild(iconBtn(item, listWrap, 'toolbar'));
-					row.appendChild(titleInput(item, 'toolbar'));
-					row.appendChild(hideCtl(item));
+					row.appendChild(moveCtl(side, i, key));
+					row.appendChild(iconBtn(item, listWrap, 'toolbar', key + ':icon'));
+					row.appendChild(titleInput(item, 'toolbar', key + ':title'));
+					row.appendChild(hideCtl(item, key + ':hide'));
 					dragSource(h, row, { kind: 'tb', ctx: activeCtx, side: side, i: i });
 					dropZone(
 						row,
@@ -284,18 +291,19 @@
 						}
 					);
 					col.appendChild(
-						el('div', { class: 'ak-menu-group', 'data-flip-id': 'tb:' + activeCtx + ':' + side + ':' + item.id }, [row])
+						el('div', { class: 'ak-menu-group', 'data-flip-id': key }, [row])
 					);
 				});
 				listWrap.appendChild(col);
 			}
 
-			function moveCtl(side, i) {
+			function moveCtl(side, i, keyPrefix) {
 				var up = el('button', {
 					type: 'button',
 					class: 'ak-menu-move__btn',
 					title: I.menuMoveUp,
 					'aria-label': I.menuMoveUp,
+					'data-focus-key': keyPrefix ? keyPrefix + ':up' : null,
 					onclick: function () {
 						move(side, i, -1);
 					}
@@ -307,6 +315,7 @@
 					class: 'ak-menu-move__btn',
 					title: I.menuMoveDown,
 					'aria-label': I.menuMoveDown,
+					'data-focus-key': keyPrefix ? keyPrefix + ':down' : null,
 					onclick: function () {
 						move(side, i, 1);
 					}
@@ -316,8 +325,12 @@
 				return el('span', { class: 'ak-menu-move' }, [up, down]);
 			}
 
-			function hideCtl(item) {
-				var btn = el('button', { type: 'button', class: 'ak-menu-hide' });
+			function hideCtl(item, focusKey) {
+				var btn = el('button', {
+					type: 'button',
+					class: 'ak-menu-hide',
+					'data-focus-key': focusKey || null
+				});
 				paint(btn, item);
 				btn.addEventListener('click', function () {
 					item.hidden = !item.hidden;

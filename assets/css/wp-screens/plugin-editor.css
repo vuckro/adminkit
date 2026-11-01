@@ -58,7 +58,7 @@ body.adminkit:is(.plugin-editor-php, .theme-editor-php) .tree-folder > li::after
 /* CodeMirror gutter (chrome around the editor — NOT the syntax) */
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) .CodeMirror-gutters {
 	background-color: var(--ak-surface);
-	border-right-color: var(--ak-border);
+	border-inline-end-color: var(--ak-border);
 }
 
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) .CodeMirror .CodeMirror-linenumber {
@@ -147,7 +147,7 @@ body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub > br.clear
  body.adminkit:is(.plugin-editor-php, .theme-editor-php) .fileedit-sub .alignright { display: flex; flex-wrap: wrap; align-items: center; gap: calc(8px * var(--ak-space-scale, 1)); }
 }
 /* Core also reserves sidebar space on the editor's immediate wrapper. */
-body.adminkit:is(.plugin-editor-php, .theme-editor-php) #template > div { margin-right: 0; }
+body.adminkit:is(.plugin-editor-php, .theme-editor-php) #template > div { margin-inline-end: 0; }
 body.adminkit:is(.plugin-editor-php, .theme-editor-php) #templateside .nonessential {
  color: var(--ak-text-muted);
  font-style: normal;

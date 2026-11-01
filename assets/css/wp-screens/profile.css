@@ -72,8 +72,7 @@ body.adminkit.profile-php .ak-profile-header > h1 {
 body.adminkit.user-edit-php .ak-profile-header > .page-title-action,
 body.adminkit.profile-php .ak-profile-header > .page-title-action {
 	flex: 0 0 auto;
-	margin-left: 0;
-	margin-right: 0;
+	margin-inline: 0;
 	position: static;
 	top: auto;
 	align-self: center;
@@ -148,7 +147,8 @@ body.adminkit #pass-strength-result {
  box-sizing: border-box;
  min-height: 48px;
  margin-top: calc(8px * var(--ak-space-scale, 1));
- padding: calc(12px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)) calc(52px * var(--ak-space-scale, 1));
+ padding-block: calc(12px * var(--ak-space-scale, 1));
+ padding-inline: calc(52px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1));
  border: 1px solid var(--ak-border);
  border-radius: var(--ak-radius-m);
  background: var(--ak-surface);
@@ -385,7 +385,8 @@ body.adminkit .ak-card.ak-grid .user-user-login-wrap td > .description {
    next to the field name, muted, so the label stays on one line. */
 body.adminkit .ak-card.ak-grid .form-table th label > .description {
 	display: inline;
-	margin: 0 0 0 calc(2px * var(--ak-space-scale, 1));
+	margin-block: 0;
+	margin-inline: calc(2px * var(--ak-space-scale, 1)) 0;
 	font-weight: normal;
 	font-size: calc(11px * var(--ak-type-scale, 1));
 	color: var(--ak-text-muted);
@@ -481,7 +482,7 @@ body.adminkit .ak-subsection > summary:focus-visible {
 /* Chevron from two borders; flips instantly when the section opens. */
 body.adminkit .ak-subsection > summary::after {
 	content: "";
-	margin-left: auto;
+	margin-inline-start: auto;
 	width: 7px;
 	height: 7px;
 	border-right: 2px solid var(--ak-text-muted);
@@ -558,7 +559,7 @@ body.adminkit #application-passwords-section .create-application-password #do_ne
 	body.adminkit.user-edit-php .ak-profile-header > .page-title-action,
 	body.adminkit.profile-php .ak-profile-header > .page-title-action {
 		grid-column: 1 / -1;
-		margin-left: 0;
+		margin-inline-start: 0;
 	}
 
 	/* "Add New User" relocated below the tabs/panels on mobile (moved by JS in
@@ -768,7 +769,8 @@ body.adminkit .ak-card.ak-grid #ak-role-description {
  --ak-role-soft: var(--ak-info-subtle);
  position: relative;
  box-sizing: border-box;
- padding: var(--ak-space-m) var(--ak-space-l) var(--ak-space-m) calc(56px * var(--ak-space-scale, 1));
+ padding-block: var(--ak-space-m);
+ padding-inline: calc(56px * var(--ak-space-scale, 1)) var(--ak-space-l);
  border: 1px solid var(--ak-border);
  border-radius: var(--ak-radius-m);
  background: var(--ak-surface);

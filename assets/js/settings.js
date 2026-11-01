@@ -111,9 +111,9 @@
 			nav.appendChild(tab.button);
 			tab.panel = el('section', {
 				id: 'ak-panel-' + tab.id,
-				role: 'tabpanel',
+				role: D.pages ? null : 'tabpanel',
 				hidden: 'hidden',
-				'aria-labelledby': tab.button.id
+				'aria-labelledby': D.pages ? null : tab.button.id
 			});
 			panelWrap.appendChild(tab.panel);
 		});
@@ -180,7 +180,12 @@
 				tab.panel = tab.build();
 				tab.built = true;
 				tab.panel.id = 'ak-panel-' + tab.id;
-				tab.panel.setAttribute('aria-labelledby', tab.button.id);
+				if (D.pages) {
+					tab.panel.removeAttribute('role');
+					tab.panel.removeAttribute('aria-labelledby');
+				} else {
+					tab.panel.setAttribute('aria-labelledby', tab.button.id);
+				}
 				panelWrap.replaceChild(tab.panel, previous);
 			}
 			tab.button.classList.toggle('on', selected);

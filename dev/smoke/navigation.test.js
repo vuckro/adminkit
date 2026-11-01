@@ -109,5 +109,43 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 15));
     assert.ok(w.document.querySelector('.ak-icon-pop__sw[title="rocketship"]'), 'alias icon swatch rendered from raw paths');
     w.close();
   }
-  console.log('OK: actual menu/toolbar titles, icons, lazy picker fetch and error recovery save to their own endpoints.');
+  // Keyboard reorder preserves focus, and submenu parent <select> moves submenus across parents without drag-and-drop.
+  {
+    const dom = new JSDOM('<div id="adminkit-app"></div>', { url: 'http://localhost/#menu', runScripts: 'outside-only' });
+    const w = dom.window, calls = [];
+    const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json'), 'utf8'));
+    data.screen = 'menu';
+    data.menuManager.menu = [
+      { slug: 'tools.php', title: 'Tools', children: [{ slug: 'import.php', title: 'Import' }] },
+      { slug: 'options-general.php', title: 'Settings', children: [] }
+    ];
+    w.AdminKitData = data;
+    w.wp = { apiFetch: request => { calls.push(request); return Promise.resolve({ ok: true }); } };
+    for (const file of ['assets/js/settings/navigation-controls.js', 'assets/js/settings/navigation-menu-model.js', 'assets/js/settings/navigation-menu.js', 'assets/js/settings/navigation-toolbar.js', 'assets/js/settings/navigation.js', 'assets/js/settings.js']) w.eval(fs.readFileSync(path.join(root, file), 'utf8'));
+    await tick();
+
+    // 1. Focus Move Down on Tools, click it, and verify focus stays on Tools' Move Down button in its new row.
+    const firstDown = w.document.querySelector('[data-focus-key="top:tools.php:down"]');
+    assert.ok(firstDown, 'Move down button carries data-focus-key');
+    firstDown.focus();
+    firstDown.click();
+    assert.equal(w.document.activeElement.getAttribute('data-focus-key'), 'top:tools.php:down', 'Focus stays on moved item Move Down button across re-render');
+
+    // 2. Expand Tools submenu, change parent <select> to Settings (index 0 after swap), and verify reparenting + focus.
+    w.document.querySelector('[data-focus-key="top:tools.php:expand"]').click();
+    const parentSel = w.document.querySelector('[data-focus-key="sub:tools.php:import.php:parent"]');
+    assert.ok(parentSel, 'Keyboard parent selector rendered on child row');
+    parentSel.focus();
+    parentSel.value = '0';
+    parentSel.dispatchEvent(new w.Event('change', { bubbles: true }));
+    assert.equal(w.document.activeElement.getAttribute('data-focus-key'), 'sub:options-general.php:import.php:parent', 'Focus follows reparented child <select>');
+
+    w.document.querySelector('.ak-savebar button').click();
+    await tick();
+    assert.equal(calls.length, 1);
+    const reparented = calls[0].data.items.find(it => it.slug === 'import.php');
+    assert.equal(reparented.parent, 'options-general.php', 'Submenu reparented to Settings via keyboard <select>');
+    w.close();
+  }
+  console.log('OK: actual menu/toolbar titles, icons, lazy picker fetch, keyboard focus/reparenting and error recovery save to their own endpoints.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

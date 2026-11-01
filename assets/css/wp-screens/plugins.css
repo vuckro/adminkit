@@ -43,7 +43,7 @@ body.adminkit .wp-list-table.plugins tr {
 /* Reset WP's per-cell border indicators */
 body.adminkit .wp-list-table.plugins tbody th,
 body.adminkit .wp-list-table.plugins tbody td {
-	border-left: none !important;
+	border-inline-start: none !important;
 	box-shadow: none;
 }
 
@@ -75,7 +75,7 @@ body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
    border-left with !important to beat the `.plugins tbody td/th` reset above. */
 body.adminkit .wp-list-table.plugins tr.active th.check-column,
 body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
-	border-left: 1px solid color-mix(in srgb, var(--ak-success) 60%, var(--ak-table-bg)) !important;
+	border-inline-start: 1px solid color-mix(in srgb, var(--ak-success) 60%, var(--ak-table-bg)) !important;
 }
 
 /* Inactive plugins — keep the table surface, mute the title.
@@ -232,7 +232,7 @@ body.adminkit.plugin-install-php .plugins-popular-tags-wrapper {
 body.adminkit.plugin-install-php .wrap > h1.wp-heading-inline {
 	display: inline-block;
 	vertical-align: middle;
-	margin-right: calc(8px * var(--ak-space-scale, 1));
+	margin-inline-end: calc(8px * var(--ak-space-scale, 1));
 }
 body.adminkit.plugin-install-php .wrap > .page-title-action {
 	position: static;
@@ -277,7 +277,7 @@ body.adminkit #plugin-information-tabs a.current {
    leaks that show through in dark mode. */
 body.adminkit #plugin-information .fyi {
 	background: var(--ak-surface) !important;
-	border-left-color: var(--ak-border) !important;
+	border-inline-start-color: var(--ak-border) !important;
 	color: var(--ak-text-muted) !important;
 }
 
@@ -331,7 +331,7 @@ body.adminkit #plugin-information pre {
 }
 
 body.adminkit #plugin-information blockquote {
-	border-left-color: var(--ak-border-strong);
+	border-inline-start-color: var(--ak-border-strong);
 	color: var(--ak-text-muted);
 }
 
@@ -390,7 +390,7 @@ body.adminkit.plugin-install-php .plugin-card-top {
 }
 body.adminkit.plugin-install-php .plugin-card .name,
 body.adminkit.plugin-install-php .plugin-card .desc > p {
- margin-right: 0;
+ margin-inline-end: 0;
 }
 body.adminkit.plugin-install-php .plugin-card .desc {
  order: 1;
@@ -399,7 +399,8 @@ body.adminkit.plugin-install-php .plugin-card .action-links {
  order: 2;
  position: static;
  width: auto;
- margin: calc(16px * var(--ak-space-scale, 1)) 0 0 calc(148px * var(--ak-space-scale, 1));
+ margin-block: calc(16px * var(--ak-space-scale, 1)) 0;
+ margin-inline: calc(148px * var(--ak-space-scale, 1)) 0;
 }
 body.adminkit.plugin-install-php .plugin-action-buttons {
  display: flex;
@@ -420,11 +421,11 @@ body.adminkit.plugin-install-php .plugin-action-buttons li .button {
   height: 64px;
  }
  body.adminkit.plugin-install-php .plugin-card .name {
-  margin-left: calc(80px * var(--ak-space-scale, 1));
+  margin-inline-start: calc(80px * var(--ak-space-scale, 1));
   min-height: 64px;
  }
- body.adminkit.plugin-install-php .plugin-card .desc { margin-left: 0; }
+ body.adminkit.plugin-install-php .plugin-card .desc { margin-inline-start: 0; }
  body.adminkit.plugin-install-php .plugin-card .action-links {
-  margin-left: 0;
+  margin-inline-start: 0;
  }
 }

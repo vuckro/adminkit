@@ -89,7 +89,7 @@ body.adminkit.nav-menus-php label.bulk-select-button:focus-within {
 }
 
 body.adminkit.nav-menus-php .locations-edit-menu-link {
-	border-right-color: var(--ak-border);
+	border-inline-end-color: var(--ak-border);
 }
 
 /* Item-edit focus ring — Modern color scheme paints a hardcoded blue
@@ -184,7 +184,10 @@ body.adminkit.nav-menus-php .customlinkdiv div.tabs-panel,
 body.adminkit.nav-menus-php .wp-tab-panel {
 	background-color: var(--ak-surface);
 	border-color: var(--ak-card-border);
-	border-radius: 0 var(--ak-radius-s) var(--ak-radius-s) var(--ak-radius-s);
+	border-start-start-radius: 0;
+	border-start-end-radius: var(--ak-radius-s);
+	border-end-end-radius: var(--ak-radius-s);
+	border-end-start-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 }
 
@@ -224,13 +227,13 @@ body.adminkit.nav-menus-php .menu-item-bar .menu-item-handle {
    connects flush with the settings drawer below, and round the
    drawer's own bottom corners. */
 body.adminkit.nav-menus-php .menu-item-edit-active .menu-item-bar .menu-item-handle {
-	border-bottom-left-radius: 0;
-	border-bottom-right-radius: 0;
+	border-end-start-radius: 0;
+	border-end-end-radius: 0;
 }
 
 body.adminkit.nav-menus-php .menu-item-settings {
-	border-bottom-left-radius: var(--ak-radius-s);
-	border-bottom-right-radius: var(--ak-radius-s);
+	border-end-start-radius: var(--ak-radius-s);
+	border-end-end-radius: var(--ak-radius-s);
 }
 
 /* Thin divider above the action strip (Remove | Cancel) so the
@@ -253,12 +256,12 @@ body.adminkit.nav-menus-php .field-bricks-multilevel {
    sections so the rounded shell isn't clipped flat by the inner
    borders. */
 body.adminkit.nav-menus-php #side-sortables.accordion-container .outer-border > li:first-child .accordion-section-title {
-	border-top-left-radius: var(--ak-radius-s);
-	border-top-right-radius: var(--ak-radius-s);
+	border-start-start-radius: var(--ak-radius-s);
+	border-start-end-radius: var(--ak-radius-s);
 }
 
 body.adminkit.nav-menus-php #side-sortables.accordion-container .outer-border > li:last-child .accordion-section-title,
 body.adminkit.nav-menus-php #side-sortables.accordion-container .outer-border > li:last-child .accordion-section-content {
-	border-bottom-left-radius: var(--ak-radius-s);
-	border-bottom-right-radius: var(--ak-radius-s);
+	border-end-start-radius: var(--ak-radius-s);
+	border-end-end-radius: var(--ak-radius-s);
 }

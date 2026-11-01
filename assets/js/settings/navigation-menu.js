@@ -14,6 +14,8 @@
 		var uidSeq = 0;
 		var snapshotFlip = controls.snapshotFlip;
 		var playFlip = controls.playFlip;
+		var captureFocus = controls.captureFocus;
+		var restoreFocus = controls.restoreFocus;
 		var titleOverride = controls.titleOverride;
 		var handle = controls.handle;
 		var iconBtn = controls.iconBtn;
@@ -45,7 +47,7 @@
 		}
 
 		function buildMenu() {
-			var p = el('section', { class: 'ak-panel ak-panel--menu', role: 'tabpanel' });
+			var p = el('section', { class: 'ak-panel ak-panel--menu', role: D.pages ? null : 'tabpanel' });
 			p.appendChild(el('h3', { text: I.menu }));
 			p.appendChild(el('p', { class: 'ak-foundation-intro', text: I.menuIntro }));
 			if (!MM.menu || !MM.menu.length) {
@@ -167,7 +169,12 @@
 			markDirty('menu');
 		}
 
-		function renderTree(tree, movedKey) {
+		function renderTree(tree, movedKey, explicitFocusKey) {
+			var prevFocus = explicitFocusKey
+				? { key: explicitFocusKey }
+				: captureFocus
+					? captureFocus(tree)
+					: null;
 			var prevFlip = movedKey ? snapshotFlip(tree) : null;
 			tree.textContent = '';
 			state.menu.forEach(function (top, ti) {
@@ -183,17 +190,21 @@
 			if (prevFlip) {
 				playFlip(tree, prevFlip, movedKey);
 			}
+			if (prevFocus && restoreFocus) {
+				restoreFocus(tree, prevFocus);
+			}
 		}
 
 		function separatorRow(item, ti, tree) {
+			var key = topFlipKey(item);
 			var row = el('div', { class: 'ak-menu-row ak-menu-row--sep' + (item.hidden ? ' is-hidden' : '') });
 			var h = handle();
 			row.appendChild(h);
-			row.appendChild(moveControl(moveTopBy(ti, tree)));
+			row.appendChild(moveControl(moveTopBy(ti, tree), key));
 			row.appendChild(
 				el('span', { class: 'ak-menu-row__title ak-menu-seplabel', text: '— ' + I.menuSeparator + ' —' })
 			);
-			row.appendChild(hideBtn(item, tree));
+			row.appendChild(hideBtn(item, tree, key + ':hide'));
 			row.appendChild(removeBtn(ti, tree));
 			dragSource(h, row, { kind: 'top', ti: ti });
 			dropZone(
@@ -209,20 +220,23 @@
 					markDirty('menu');
 				}
 			);
-			return el('div', { class: 'ak-menu-group', 'data-flip-id': topFlipKey(item) }, [row]);
+			return el('div', { class: 'ak-menu-group', 'data-flip-id': key }, [row]);
 		}
 
 		function linkRow(item, ti, tree) {
+			var key = topFlipKey(item);
 			var row = el('div', { class: 'ak-menu-row ak-menu-row--link' + (item.hidden ? ' is-hidden' : '') });
 			var h = handle();
 			row.appendChild(h);
-			row.appendChild(moveControl(moveTopBy(ti, tree)));
-			row.appendChild(iconBtn(item, tree));
+			row.appendChild(moveControl(moveTopBy(ti, tree), key));
+			row.appendChild(iconBtn(item, tree, 'menu', key + ':icon'));
 			var titleIn = el('input', {
 				type: 'text',
 				class: 'ak-menu-input',
 				value: item.title || '',
-				placeholder: I.menuLinkTitle
+				placeholder: I.menuLinkTitle,
+				'aria-label': I.menuLinkTitle,
+				'data-focus-key': key + ':title'
 			});
 			titleIn.addEventListener('input', function () {
 				item.title = titleIn.value;
@@ -232,7 +246,9 @@
 				type: 'text',
 				class: 'ak-menu-input ak-menu-input--url',
 				value: item.url || '',
-				placeholder: I.menuLinkUrl
+				placeholder: I.menuLinkUrl,
+				'aria-label': I.menuLinkUrl,
+				'data-focus-key': key + ':url'
 			});
 			urlIn.addEventListener('input', function () {
 				item.url = urlIn.value;
@@ -240,8 +256,8 @@
 			});
 			row.appendChild(titleIn);
 			row.appendChild(urlIn);
-			row.appendChild(newTabBtn(item, tree));
-			row.appendChild(hideBtn(item, tree));
+			row.appendChild(newTabBtn(item, tree, key + ':newtab'));
+			row.appendChild(hideBtn(item, tree, key + ':hide'));
 			row.appendChild(removeBtn(ti, tree));
 			dragSource(h, row, { kind: 'top', ti: ti });
 			dropZone(
@@ -257,7 +273,7 @@
 					markDirty('menu');
 				}
 			);
-			return el('div', { class: 'ak-menu-group', 'data-flip-id': topFlipKey(item) }, [row]);
+			return el('div', { class: 'ak-menu-group', 'data-flip-id': key }, [row]);
 		}
 
 		function removeBtn(ti, tree) {
@@ -276,13 +292,14 @@
 		}
 
 		function topGroup(top, ti, tree) {
+			var key = topFlipKey(top);
 			var row = el('div', { class: 'ak-menu-row ak-menu-row--top' + (top.hidden ? ' is-hidden' : '') });
 			var h = handle();
 			row.appendChild(h);
-			row.appendChild(moveControl(moveTopBy(ti, tree)));
-			row.appendChild(iconBtn(top, tree));
-			row.appendChild(titleInput(top));
-			row.appendChild(urlBtn(top, tree));
+			row.appendChild(moveControl(moveTopBy(ti, tree), key));
+			row.appendChild(iconBtn(top, tree, 'menu', key + ':icon'));
+			row.appendChild(titleInput(top, 'menu', key + ':title'));
+			row.appendChild(urlBtn(top, tree, key + ':url'));
 			if (top.children.length) {
 				var caret = el('span', { class: 'ak-menu-row__caret', 'aria-hidden': 'true' });
 				caret.innerHTML =
@@ -295,6 +312,7 @@
 							class: 'ak-menu-row__expand' + (top.open ? ' on' : ''),
 							'aria-expanded': top.open ? 'true' : 'false',
 							title: I.menuSubmenusToggle,
+							'data-focus-key': key + ':expand',
 							onclick: function () {
 								top.open = !top.open;
 								renderTree(tree);
@@ -305,7 +323,7 @@
 				);
 			}
 			if (top.slug !== MM.self) {
-				row.appendChild(hideBtn(top, tree));
+				row.appendChild(hideBtn(top, tree, key + ':hide'));
 			}
 			dragSource(h, row, { kind: 'top', ti: ti });
 			dropZone(
@@ -331,7 +349,7 @@
 				}
 			);
 
-			var group = el('div', { class: 'ak-menu-group', 'data-flip-id': topFlipKey(top) }, [row]);
+			var group = el('div', { class: 'ak-menu-group', 'data-flip-id': key }, [row]);
 			if (top.children.length && top.open) {
 				var kids = el('div', { class: 'ak-menu-children' });
 				top.children.forEach(function (child, ci) {
@@ -355,17 +373,58 @@
 			return group;
 		}
 
+		function parentSelect(ti, child, ci, tree, key) {
+			var sel = el('select', {
+				class: 'ak-menu-input ak-menu-parent-select',
+				title: I.menuParentLabel,
+				'aria-label': I.menuParentLabel,
+				'data-focus-key': key + ':parent'
+			});
+			var parentCount = 0;
+			state.menu.forEach(function (pTop, pTi) {
+				if ((pTop.type || 'item') !== 'item') {
+					return;
+				}
+				parentCount++;
+				var opt = el('option', {
+					value: String(pTi),
+					text: pTop.title || pTop.otitle || pTop.slug
+				});
+				if (pTi === ti) {
+					opt.selected = true;
+				}
+				sel.appendChild(opt);
+			});
+			if (parentCount < 2) {
+				sel.disabled = true;
+			}
+			sel.addEventListener('change', function () {
+				var targetTi = parseInt(sel.value, 10);
+				if (isNaN(targetTi) || targetTi === ti || !state.menu[targetTi]) {
+					return;
+				}
+				var targetTop = state.menu[targetTi];
+				M.moveChildToTop(state.menu, ti, ci, targetTi);
+				var newSubKey = subFlipKey(targetTop, child);
+				renderTree(tree, newSubKey, newSubKey + ':parent');
+				markDirty('menu');
+			});
+			return sel;
+		}
+
 		function childRow(ti, child, ci, tree) {
 			var top = state.menu[ti];
+			var key = subFlipKey(top, child);
 			var row = el('div', {
 				class: 'ak-menu-row ak-menu-row--child' + (child.hidden ? ' is-hidden' : ''),
-				'data-flip-id': subFlipKey(top, child)
+				'data-flip-id': key
 			});
 			var h = handle();
 			row.appendChild(h);
-			row.appendChild(moveControl(moveChildBy(ti, ci, tree)));
-			row.appendChild(titleInput(child));
-			row.appendChild(hideBtn(child, tree));
+			row.appendChild(moveControl(moveChildBy(ti, ci, tree), key));
+			row.appendChild(titleInput(child, 'menu', key + ':title'));
+			row.appendChild(parentSelect(ti, child, ci, tree, key));
+			row.appendChild(hideBtn(child, tree, key + ':hide'));
 			dragSource(h, row, { kind: 'sub', ti: ti, ci: ci });
 			dropZone(
 				row,
@@ -383,12 +442,13 @@
 			return row;
 		}
 
-		function moveControl(move) {
+		function moveControl(move, keyPrefix) {
 			var up = el('button', {
 				type: 'button',
 				class: 'ak-menu-move__btn',
 				title: I.menuMoveUp,
 				'aria-label': I.menuMoveUp,
+				'data-focus-key': keyPrefix ? keyPrefix + ':up' : null,
 				onclick: function () {
 					move(-1);
 				}
@@ -400,6 +460,7 @@
 				class: 'ak-menu-move__btn',
 				title: I.menuMoveDown,
 				'aria-label': I.menuMoveDown,
+				'data-focus-key': keyPrefix ? keyPrefix + ':down' : null,
 				onclick: function () {
 					move(1);
 				}
@@ -442,8 +503,12 @@
 			};
 		}
 
-		function hideBtn(item) {
-			var btn = el('button', { type: 'button', class: 'ak-menu-hide' });
+		function hideBtn(item, tree, focusKey) {
+			var btn = el('button', {
+				type: 'button',
+				class: 'ak-menu-hide',
+				'data-focus-key': focusKey || null
+			});
 			paintHide(btn, item);
 			btn.addEventListener('click', function () {
 				item.hidden = !item.hidden;
@@ -470,13 +535,14 @@
 			btn.setAttribute('aria-label', lbl);
 		}
 
-		function newTabBtn(item, tree) {
+		function newTabBtn(item, tree, focusKey) {
 			var btn = el('button', {
 				type: 'button',
 				class: 'ak-menu-newtab' + (item.newTab ? ' on' : ''),
 				'aria-pressed': item.newTab ? 'true' : 'false',
 				title: I.menuNewTab,
 				'aria-label': I.menuNewTab,
+				'data-focus-key': focusKey || null,
 				onclick: function () {
 					item.newTab = !item.newTab;
 					renderTree(tree);
@@ -488,18 +554,25 @@
 			return btn;
 		}
 
-		function urlBtn(top, tree) {
+		function urlBtn(top, tree, focusKey) {
 			var on = !!(top.url && top.url !== '');
 			var btn = el('button', {
 				type: 'button',
 				class: 'ak-menu-url' + (on ? ' on' : ''),
 				title: I.menuUrlTitle,
-				'aria-label': I.menuUrlTitle
+				'aria-label': I.menuUrlTitle,
+				'aria-haspopup': 'dialog',
+				'aria-expanded': 'false',
+				'data-focus-key': focusKey || null
 			});
 			btn.innerHTML =
 				'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
 			btn.addEventListener('click', function (e) {
 				e.stopPropagation();
+				if (controls.isPickerOpenFor && controls.isPickerOpenFor(btn)) {
+					closeIconPicker(true);
+					return;
+				}
 				openUrlPicker(btn, top);
 			});
 			return btn;
@@ -507,7 +580,8 @@
 
 		function openUrlPicker(anchor, top) {
 			closeIconPicker();
-			var pop = el('div', { class: 'ak-icon-pop ak-url-pop' });
+			var pop = el('dialog', { class: 'ak-icon-pop ak-url-pop', 'aria-label': I.menuUrlTitle });
+			anchor.setAttribute('aria-expanded', 'true');
 			pop.appendChild(el('div', { class: 'ak-icon-pop__customlbl', text: I.menuUrlLabel }));
 
 			var current = top.url || top.slug || '';
@@ -524,7 +598,8 @@
 				type: 'text',
 				class: 'ak-menu-input',
 				value: top.url || '',
-				placeholder: top.slug || I.menuLinkUrl
+				placeholder: top.slug || I.menuLinkUrl,
+				'aria-label': I.menuUrlTitle
 			});
 			var apply = el('button', {
 				type: 'button',
@@ -534,11 +609,18 @@
 					top.url = (inp.value || '').replace(/^\s+|\s+$/g, '');
 					anchor.classList.toggle('on', !!top.url);
 					markDirty('menu');
-					closeIconPicker();
+					closeIconPicker(true);
+				}
+			});
+			inp.addEventListener('keydown', function (e) {
+				if (e.key === 'Enter') {
+					e.preventDefault();
+					apply.click();
 				}
 			});
 			pop.appendChild(el('div', { class: 'ak-icon-pop__custom ak-url-pop__row' }, [inp, apply]));
 			controls.mountPopover(pop, anchor);
+			inp.focus();
 		}
 
 		return {

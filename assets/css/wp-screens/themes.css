@@ -27,7 +27,7 @@ body.adminkit .theme-browser .theme .theme-name {
 body.adminkit .theme-browser .theme .theme-actions,
 body.adminkit .theme-browser .theme.active .theme-actions {
 	background: var(--ak-card-bg);
-	border-left-color: var(--ak-card-border);
+	border-inline-start-color: var(--ak-card-border);
 }
 
 /* Active theme primary button (e.g. "Customize") — WP's active-card rules
@@ -130,14 +130,13 @@ body.adminkit .theme-overlay .theme-header {
 
 /* Keep the close button's hover/focus surface inside the rounded modal corner. */
 body.adminkit .theme-overlay .theme-header .close {
-	border-top-right-radius: var(--ak-card-radius);
+	border-start-end-radius: var(--ak-card-radius);
 }
 
 body.adminkit .theme-overlay .theme-header .close,
 body.adminkit .theme-overlay .theme-header .right,
 body.adminkit .theme-overlay .theme-header .left {
-	border-left-color: var(--ak-border);
-	border-right-color: var(--ak-border);
+	border-inline-color: var(--ak-border);
 	color: var(--ak-text-muted);
 }
 
@@ -179,8 +178,8 @@ body.adminkit .theme-overlay .theme-header .right.disabled:hover {
 body.adminkit .theme-overlay .theme-actions {
 	background: var(--ak-card-bg);
 	border-top-color: var(--ak-card-border);
-	border-bottom-left-radius: var(--ak-card-radius);
-	border-bottom-right-radius: var(--ak-card-radius);
+	border-end-start-radius: var(--ak-card-radius);
+	border-end-end-radius: var(--ak-card-radius);
 }
 
 /* Big screenshot frame on the left — round it (overflow clips the <img>

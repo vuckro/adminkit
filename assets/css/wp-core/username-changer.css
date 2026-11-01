@@ -1,43 +1,72 @@
 /**
  * AdminKit — Username Changer (profile.php / user-edit.php).
  *
- * The Username input carries one of two visual states once our JS is on the
- * page: `.adminkit-uc-locked` (looks deliberately different from a regular
- * field — dashed border, grayed fill, pointer cursor — to signal "you can't
- * just type here") or no class (normally editable — they confirmed).
- *
- * Selectors are prefixed with `body.adminkit` so they match the specificity
- * of the form-table input rules in `wp-screens/profile.css`; `!important`
- * on the contested properties (background, border-style, border-color)
- * makes the locked look survive cascading regardless of asset load order.
+ * The Username input starts as a calm readonly field (`.adminkit-uc-locked`)
+ * paired with an explicit unlock button (`.adminkit-uc-trigger`) and an inline
+ * confirmation banner (`.adminkit-uc-confirm`) so keyboard navigation never
+ * triggers a blocking browser modal on focus.
  */
 
-/* Locked: dashed border + muted fill + pointer cursor. The dashed edge is
-   the strongest "not a regular field" signal — universal across UIs. The
-   transition lines up with the unlock: when JS removes the class, the
-   input animates back to its normal style instead of snapping. */
 body.adminkit .adminkit-uc-locked {
 	background-color: var(--ak-surface-muted) !important;
 	color: var(--ak-text-muted) !important;
 	border-style: dashed !important;
-	cursor: pointer;
+	cursor: default;
 	transition: background-color .12s ease, border-color .12s ease, color .12s ease;
 }
 
-/* Hover / focus while locked: invite the click that fires the danger
-   confirm. Bump to the surface colour + accent border, keep the dashed
-   edge so the affordance still reads as "gated, not a normal input". */
-body.adminkit .adminkit-uc-locked:hover,
-body.adminkit .adminkit-uc-locked:focus {
-	background-color: var(--ak-surface) !important;
-	border-color: var(--ak-primary) !important;
-	color: var(--ak-text) !important;
-	outline: none;
+body.adminkit .adminkit-uc-trigger {
+	display: inline-flex;
+	align-items: center;
+	margin-top: calc(8px * var(--ak-space-scale, 1));
 }
 
-/* Hint that appears under the input once it's unlocked. Locked state is
-   intentionally silent — the dashed input + pointer cursor carry the cue. */
+body.adminkit .adminkit-uc-trigger[hidden],
+body.adminkit .adminkit-uc-confirm[hidden] {
+	display: none;
+}
+
+body.adminkit .adminkit-uc-confirm {
+	margin-top: calc(10px * var(--ak-space-scale, 1));
+	padding: calc(12px * var(--ak-space-scale, 1)) calc(14px * var(--ak-space-scale, 1));
+	border: var(--ak-border-width) solid var(--ak-border-strong);
+	border-radius: var(--ak-radius-m);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	max-width: 48ch;
+}
+
+body.adminkit .adminkit-uc-confirm-text {
+	margin: 0 0 calc(10px * var(--ak-space-scale, 1));
+	font-size: var(--ak-text-xs);
+	line-height: 1.5;
+	color: var(--ak-text);
+}
+
+body.adminkit .adminkit-uc-confirm-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: calc(8px * var(--ak-space-scale, 1));
+}
+
+/* Hint that appears under the input once it's unlocked. */
 .adminkit-uc-active {
 	color: var(--ak-warning);
 	font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body.adminkit .adminkit-uc-locked {
+		transition: none;
+	}
+}
+
+@media (forced-colors: active) {
+	body.adminkit .adminkit-uc-locked {
+		border: 1px dashed GrayText !important;
+	}
+	body.adminkit .adminkit-uc-confirm {
+		border: 1px solid CanvasText;
+	}
 }

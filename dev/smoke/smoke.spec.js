@@ -114,12 +114,33 @@ test.describe('wp-admin', () => {
     expect(problems).toEqual([]);
   });
 
-  test('RTL dir="rtl" renders without horizontal overflow on AdminKit pages', async ({ page }) => {
+  test('RTL dir="rtl" and keyboard accessibility work without layout overflow or focus traps', async ({ page }) => {
     const problems = watch(page);
     await page.goto('/wp-admin/admin.php?page=adminkit-features');
-    await page.evaluate(() => { document.documentElement.setAttribute('dir', 'rtl'); document.body.classList.add('rtl'); });
+    await page.evaluate(() => {
+      document.documentElement.setAttribute('lang', 'ar');
+      document.documentElement.setAttribute('dir', 'rtl');
+      document.body.classList.add('rtl');
+    });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow).toBeLessThanOrEqual(2);
+    const cornerMirrored = await page.evaluate(() => {
+      const bg = window.getComputedStyle(document.getElementById('wpwrap'), '::before').backgroundImage;
+      return bg.includes('0% 100%') || bg.includes('bottom left') || bg.includes('left bottom');
+    });
+    expect(cornerMirrored).toBe(true);
+
+    await page.goto('/wp-admin/profile.php');
+    let confirmTriggered = false;
+    page.on('dialog', (d) => {
+      confirmTriggered = true;
+      d.dismiss();
+    });
+    const loginInput = page.locator('#user_login');
+    if (await loginInput.count()) {
+      await loginInput.focus();
+      expect(confirmTriggered).toBe(false);
+    }
     expect(problems).toEqual([]);
   });
 });

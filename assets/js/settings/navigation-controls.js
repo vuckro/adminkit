@@ -117,6 +117,44 @@
 			});
 		}
 
+		function captureFocus(container) {
+			var active = document.activeElement;
+			if (!container || !active || !container.contains || !container.contains(active)) {
+				return null;
+			}
+			var key = active.getAttribute && active.getAttribute('data-focus-key');
+			if (!key) {
+				return null;
+			}
+			var start = null,
+				end = null;
+			try {
+				if (typeof active.selectionStart === 'number') {
+					start = active.selectionStart;
+					end = active.selectionEnd;
+				}
+			} catch (err) {}
+			return { key: key, start: start, end: end };
+		}
+
+		function restoreFocus(container, saved) {
+			if (!container || !saved || !saved.key || !container.querySelectorAll) {
+				return;
+			}
+			var nodes = container.querySelectorAll('[data-focus-key]');
+			for (var i = 0; i < nodes.length; i++) {
+				if (nodes[i].getAttribute('data-focus-key') === saved.key) {
+					nodes[i].focus();
+					if (typeof saved.start === 'number' && typeof nodes[i].setSelectionRange === 'function') {
+						try {
+							nodes[i].setSelectionRange(saved.start, saved.end);
+						} catch (err) {}
+					}
+					return;
+				}
+			}
+		}
+
 		function titleOverride(it) {
 			var t = it.title || '';
 			return '' !== t && t !== (it.otitle || '') ? t : '';
@@ -129,19 +167,22 @@
 			return h;
 		}
 
-		function iconBtn(top, tree, scope) {
+		function iconBtn(top, tree, scope, focusKey) {
 			var btn = el('button', {
 				type: 'button',
 				class: 'ak-menu-icon',
 				title: I.menuIconPick,
-				'aria-label': I.menuIconPick
+				'aria-label': I.menuIconPick,
+				'aria-haspopup': 'dialog',
+				'aria-expanded': 'false',
+				'data-focus-key': focusKey || null
 			});
 			paintIcon(btn, top);
 			btn.addEventListener('click', function (e) {
 				e.stopPropagation();
 				// Clicking the same icon button while its picker is open closes it (toggle).
 				if (openPicker && openPicker.__akAnchor === btn) {
-					closeIconPicker();
+					closeIconPicker(true);
 					return;
 				}
 				openIconPicker(btn, top, tree, scope);
@@ -182,9 +223,8 @@
 
 		function openIconPicker(anchor, top, tree, scope) {
 			closeIconPicker();
-			var pop = el('div', { class: 'ak-icon-pop', role: 'dialog', 'aria-label': I.menuIconPick });
+			var pop = el('dialog', { class: 'ak-icon-pop', 'aria-label': I.menuIconPick });
 			anchor.setAttribute('aria-expanded', 'true');
-			pop.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.preventDefault(); closeIconPicker(); anchor.focus(); } });
 			var choices = []; // { el, val } — every selectable swatch, for the highlight sweep.
 
 			// Repaint highlight + the anchor button. `commit` also flags the menu dirty;
@@ -388,24 +428,31 @@
 		}
 
 		function positionPopover(pop, anchor) {
+			var aRect = anchor.getBoundingClientRect();
+			var vh = window.innerHeight || document.documentElement.clientHeight || 768;
+			var popW = pop.offsetWidth || 264;
+			var popH = pop.offsetHeight || 0;
+			if (pop.classList.contains('is-modal')) {
+				var vw = window.innerWidth || document.documentElement.clientWidth || 1024;
+				var mLeft = Math.max(8, Math.min(aRect.left, vw - popW - 8));
+				var mTop =
+					aRect.bottom + 4 + popH > vh && aRect.top - 4 - popH > 8
+						? Math.max(8, aRect.top - popH - 4)
+						: aRect.bottom + 4;
+				pop.style.left = mLeft + 'px';
+				pop.style.top = mTop + 'px';
+				pop.style.right = 'auto';
+				return;
+			}
 			var row = anchor.parentNode;
 			var rowW = row.offsetWidth;
-			var popW = pop.offsetWidth || 264;
 			var left = anchor.offsetLeft;
 			if (left + popW > rowW) {
 				left = Math.max(0, rowW - popW);
 			}
 			pop.style.left = left + 'px';
 			pop.style.right = 'auto';
-			// Open below the button by default, but flip ABOVE it when below would spill
-			// past the viewport bottom and there's more room above — so the picker stays
-			// fully reachable from rows low on the page.
-			var popH = pop.offsetHeight || 0;
-			var aRect = anchor.getBoundingClientRect();
-			var vh = window.innerHeight || document.documentElement.clientHeight;
 			if (aRect.bottom + 4 + popH > vh && aRect.top - 4 - popH > 0) {
-				// Flip above. Clamp to 0 (row-relative) so a tall picker in a scrolled tree
-				// never pins with a negative top above the row box.
 				pop.style.top = Math.max(0, anchor.offsetTop - popH - 4) + 'px';
 			} else {
 				pop.style.top = anchor.offsetTop + anchor.offsetHeight + 4 + 'px';
@@ -413,18 +460,37 @@
 		}
 
 		function onDocDown(e) {
-			if (openPicker && !openPicker.contains(e.target)) {
-				closeIconPicker();
+			if (!openPicker) {
+				return;
+			}
+			if (openPicker.__akAnchor && openPicker.__akAnchor.contains && openPicker.__akAnchor.contains(e.target)) {
+				return;
+			}
+			if (!openPicker.contains(e.target)) {
+				closeIconPicker(false);
 			}
 		}
 
-		function closeIconPicker() {
-			if (openPicker && openPicker.parentNode) {
-				if (openPicker.__akAnchor) openPicker.__akAnchor.setAttribute('aria-expanded', 'false');
-				openPicker.parentNode.removeChild(openPicker);
+		function closeIconPicker(restoreFocusAtAnchor) {
+			var anchor = openPicker && openPicker.__akAnchor;
+			if (openPicker) {
+				if (anchor) {
+					anchor.setAttribute('aria-expanded', 'false');
+				}
+				if (typeof openPicker.close === 'function' && openPicker.open) {
+					try {
+						openPicker.close();
+					} catch (err) {}
+				}
+				if (openPicker.parentNode) {
+					openPicker.parentNode.removeChild(openPicker);
+				}
 			}
 			openPicker = null;
 			document.removeEventListener('mousedown', onDocDown, true);
+			if (restoreFocusAtAnchor && anchor && typeof anchor.focus === 'function') {
+				anchor.focus();
+			}
 		}
 
 		function dragSource(handle, row, info) {
@@ -469,14 +535,15 @@
 			});
 		}
 
-		function titleInput(item, scope) {
+		function titleInput(item, scope, focusKey) {
 			var inp = el('input', {
 				type: 'text',
 				class: 'ak-menu-input ak-menu-title',
 				value: item.title || '',
 				placeholder: item.otitle || item.slug || '',
 				title: I.menuRename,
-				'aria-label': I.menuRename
+				'aria-label': I.menuRename,
+				'data-focus-key': focusKey || null
 			});
 			inp.addEventListener('input', function () {
 				item.title = inp.value;
@@ -487,9 +554,38 @@
 
 		function mountPopover(pop, anchor) {
 			anchor.parentNode.appendChild(pop);
-			positionPopover(pop, anchor);
 			pop.__akAnchor = anchor;
 			openPicker = pop;
+			pop.addEventListener('cancel', function (e) {
+				e.preventDefault();
+				closeIconPicker(true);
+			});
+			pop.addEventListener('keydown', function (e) {
+				if (e.key === 'Escape') {
+					e.preventDefault();
+					closeIconPicker(true);
+				}
+			});
+			pop.addEventListener('click', function (e) {
+				if (e.target === pop && pop.classList.contains('is-modal') && (e.clientX || e.clientY)) {
+					var rect = pop.getBoundingClientRect();
+					if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+						closeIconPicker(true);
+					}
+				}
+			});
+			if (typeof pop.showModal === 'function') {
+				try {
+					pop.classList.add('is-modal');
+					pop.showModal();
+				} catch (err) {
+					pop.classList.remove('is-modal');
+					pop.setAttribute('open', '');
+				}
+			} else {
+				pop.setAttribute('open', '');
+			}
+			positionPopover(pop, anchor);
 			setTimeout(function () {
 				document.addEventListener('mousedown', onDocDown, true);
 			}, 0);
@@ -498,10 +594,15 @@
 		return {
 			snapshotFlip: snapshotFlip,
 			playFlip: playFlip,
+			captureFocus: captureFocus,
+			restoreFocus: restoreFocus,
 			titleOverride: titleOverride,
 			handle: handle,
 			iconBtn: iconBtn,
 			closeIconPicker: closeIconPicker,
+			isPickerOpenFor: function (anchor) {
+				return !!(openPicker && openPicker.__akAnchor === anchor);
+			},
 			dragSource: dragSource,
 			dropZone: dropZone,
 			titleInput: titleInput,

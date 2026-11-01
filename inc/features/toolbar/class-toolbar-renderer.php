@@ -126,6 +126,9 @@ class AdminKit_Toolbar_Renderer {
 			$raw = preg_replace_callback( '/^.*?(<img\b.*)?$/is', static function ( $match ) use ( $safe ) { return $safe . ( isset( $match[1] ) ? $match[1] : '' ); }, $raw, 1 );
 		} elseif ( false !== strpos( $raw, 'ak-theme-icon' ) ) {
 			$meta['title'] = $custom_title;
+			if ( false !== strpos( $raw, 'screen-reader-text' ) ) {
+				$raw = preg_replace_callback( '/(<span[^>]*class=["\'][^"\']*screen-reader-text[^"\']*["\'][^>]*>).*?(<\/span>)/is', static function ( $match ) use ( $safe ) { return $match[1] . $safe . $match[2]; }, $raw, 1 );
+			}
 		} elseif ( false !== strpos( $raw, 'ab-icon' ) ) {
 			if ( false !== strpos( $raw, 'screen-reader-text' ) ) {
 				$raw = preg_replace_callback( '/<span[^>]*class=["\'][^"\']*screen-reader-text[^"\']*["\'][^>]*>.*?<\/span>/is', static function () use ( $safe ) { return '<span class="ab-label">' . $safe . '</span>'; }, $raw, 1 );

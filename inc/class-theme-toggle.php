@@ -133,12 +133,24 @@ class AdminKit_Theme_Toggle {
 	// own attribute + persists; an optional provider bridge mirrors that flip into
 	// the provider afterwards, but the bar's own switch never depends on it.
 	var SEL = '#wp-admin-bar-<?php echo esc_js( self::NODE_ID ); ?> a';
+	function syncBtn() {
+		var b = document.querySelector(SEL);
+		if (!b) return;
+		b.setAttribute('role', 'button');
+		b.setAttribute('aria-pressed', d.dataset[DS] === 'dark' ? 'true' : 'false');
+	}
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', syncBtn);
+	} else {
+		syncBtn();
+	}
 	document.addEventListener('click', function (e) {
 		var a = e.target.closest && e.target.closest(SEL);
 		if (!a) return;
 		e.preventDefault();
 		var n = d.dataset[DS] === 'dark' ? 'light' : 'dark';
 		d.dataset[DS] = n;
+		syncBtn();
 		try { localStorage.setItem(KEY, n); } catch (err) {}
 	}, true);
 })();
@@ -147,8 +159,7 @@ class AdminKit_Theme_Toggle {
 	}
 
 	/**
-	 * Register the admin bar node — sun + moon SVGs from Streamline
-	 * (https://streamlinehq.com), CC BY 4.0.
+	 * Register the admin bar node — sun + moon SVGs from Lucide (ISC/MIT).
 	 *
 	 * @param WP_Admin_Bar $bar
 	 * @return void
@@ -160,17 +171,18 @@ class AdminKit_Theme_Toggle {
 		if ( ! apply_filters( 'adminkit/should_load', true, is_admin() ? 'admin' : 'frontend' ) ) {
 			return;
 		}
-		$sun  = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'sun' ) );
-		$moon = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'moon' ) );
+		$sun   = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'sun' ) );
+		$moon  = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'moon' ) );
+		$label = __( 'Toggle light / dark mode', 'adminkit' );
 
 		$bar->add_node( array(
 			'id'     => self::NODE_ID,
 			'parent' => 'top-secondary',
-			'title'  => '<span class="ak-theme-light">' . $sun . '</span><span class="ak-theme-dark">' . $moon . '</span>',
+			'title'  => '<span class="ak-theme-light">' . $sun . '</span><span class="ak-theme-dark">' . $moon . '</span><span class="screen-reader-text">' . esc_html( $label ) . '</span>',
 			'href'   => '#',
 			'meta'   => array(
 				'class' => 'ak-theme-toggle',
-				'title' => __( 'Toggle light / dark mode', 'adminkit' ),
+				'title' => $label,
 			),
 		) );
 	}
@@ -194,17 +206,18 @@ class AdminKit_Theme_Toggle {
 		// wp-admin → "open site" (external) glyph; front end → house.
 		$open  = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'external-link' ) );
 		$house = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'house' ) );
+		$label = $in_admin ? __( 'View site', 'adminkit' ) : __( 'Dashboard', 'adminkit' );
 
 		$bar->add_node( array(
 			'id'     => 'ak-view-site',
 			'parent' => 'top-secondary',
-			'title'  => $in_admin ? $open : $house,
+			'title'  => ( $in_admin ? $open : $house ) . '<span class="screen-reader-text">' . esc_html( $label ) . '</span>',
 			// Admin → the live site in the SAME tab (a plain navigation); front end →
 			// back to the dashboard (the house is the admin's "home base" / way in).
 			'href'   => $in_admin ? home_url( '/' ) : admin_url(),
 			'meta'   => array(
 				'class' => 'ak-view-site',
-				'title' => $in_admin ? __( 'View site', 'adminkit' ) : __( 'Dashboard', 'adminkit' ),
+				'title' => $label,
 			),
 		) );
 	}

@@ -11,7 +11,7 @@
    so the Install / Preview buttons read in both modes. */
 body.adminkit .theme-browser .theme .theme-actions {
 	background: rgba(0, 0, 0, 0.55);
-	border-left-color: var(--ak-border);
+	border-inline-start-color: var(--ak-border);
 }
 
 body.adminkit .theme-browser .theme .theme-actions .button:not(.button-primary) {
@@ -44,7 +44,7 @@ body.adminkit .theme-install-overlay .wp-full-overlay-main {
 body.adminkit .wp-full-overlay-sidebar,
 body.adminkit .theme-install-overlay .wp-full-overlay-sidebar {
 	background: var(--ak-surface);
-	border-right: 1px solid var(--ak-border);
+	border-inline-end: 1px solid var(--ak-border);
 }
 
 body.adminkit .theme-install-overlay .wp-full-overlay-sidebar-content {
@@ -58,7 +58,7 @@ body.adminkit .theme-install-overlay .close-full-overlay,
 body.adminkit .theme-install-overlay .previous-theme,
 body.adminkit .theme-install-overlay .next-theme {
 	background: var(--ak-surface);
-	border-right-color: var(--ak-border);
+	border-inline-end-color: var(--ak-border);
 	color: var(--ak-text);
 }
 

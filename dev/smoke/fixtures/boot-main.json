@@ -419,6 +419,7 @@
         "menuDragHint": "Glissez pour réorganiser",
         "menuMoveUp": "Monter",
         "menuMoveDown": "Descendre",
+        "menuParentLabel": "Menu parent",
         "menuIconCustom": "Collez un SVG ou une URI data:image/svg+xml…",
         "menuIconHint": "Besoin d’une icône ? Copiez un SVG depuis",
         "menuIconApply": "Appliquer",

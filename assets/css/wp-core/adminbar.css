@@ -115,9 +115,9 @@
 	}
 
 	/* Right-secondary dropdowns (account / profile, comments, updates) anchor to the
-	   screen's right edge — inset them so the card floats off the corner too. */
+	   screen's end edge — inset them so the card floats off the corner too. */
 	#wpadminbar #wp-admin-bar-top-secondary .menupop ul {
-		margin-right: var(--ak-space-s);
+		margin-inline-end: var(--ak-space-s);
 	}
 }
 
@@ -320,13 +320,20 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 	box-sizing: border-box;
 	width: 28px;
 	height: 24px;
-	padding: 0 calc(8px * var(--ak-space-scale, 1)) 0 calc(26px * var(--ak-space-scale, 1));
+	padding-block: 0;
+	padding-inline: calc(26px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
 	background-color: transparent;
 	border: 1px solid transparent;
 	border-radius: var(--ak-radius-s);
 	color: var(--ak-text);
 	cursor: pointer;
 	transition: width 200ms ease, background-color 200ms ease, border-color 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary > #wp-admin-bar-search #adminbarsearch input.adminbar-input {
+		transition: none;
+	}
 }
 
 /* EXPANDED (on focus): grow to a real tokenized field — surface bg, brand
@@ -352,7 +359,7 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
    on `#wpadminbar #adminbarsearch:before` (2,0,1) — we match that and win on load
    order — and recenters it over our 26px text-indent. */
 #wpadminbar #adminbarsearch:before {
-	left: 7px;
+	inset-inline-start: 7px;
 	color: var(--ak-text-muted);
 }
 
@@ -419,7 +426,7 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 	   fits; once it overflows this auto-margin collapses to 0 and everything
 	   packs tight to scroll as one strip. */
 	#wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary {
-		margin-left: auto;
+		margin-inline-start: auto;
 	}
 
 	/* Edge "fondu" — two gradient overlays pinned to the bar's visible left/right
@@ -441,12 +448,18 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 		transition: opacity 150ms ease;
 	}
 	#wpadminbar::before {
-		left: 0;
+		inset-inline-start: 0;
 		background: linear-gradient(to right, var(--ak-surface), transparent);
 	}
 	#wpadminbar::after {
-		right: 0;
+		inset-inline-end: 0;
 		background: linear-gradient(to left, var(--ak-surface), transparent);
+	}
+	:is([dir="rtl"], .rtl) #wpadminbar::before {
+		background: linear-gradient(to left, var(--ak-surface), transparent);
+	}
+	:is([dir="rtl"], .rtl) #wpadminbar::after {
+		background: linear-gradient(to right, var(--ak-surface), transparent);
 	}
 	/* Script-toggled state: drop the fade on an exhausted edge — and both edges
 	   when the whole bar fits without scrolling. */
@@ -495,15 +508,15 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 	#wpadminbar .menupop .ab-sub-wrapper > ul:not(:first-child) {
 		margin-top: 0;
 		border-top: 0 !important;
-		border-top-left-radius: 0;
-		border-top-right-radius: 0;
+		border-start-start-radius: 0;
+		border-start-end-radius: 0;
 	}
 
 	/* 3. Tous sauf le dernier groupe : coins bas droits, pour que seuls le
 	   tout premier (en haut) et le tout dernier (en bas) soient arrondis. */
 	#wpadminbar .menupop .ab-sub-wrapper > ul:not(:last-child) {
-		border-bottom-left-radius: 0;
-		border-bottom-right-radius: 0;
+		border-end-start-radius: 0;
+		border-end-end-radius: 0;
 	}
 }
 
@@ -566,6 +579,7 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-list>li>.ab-item::after { display:none; content:none; }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-action-label { display:flex; align-items:center; justify-content:space-between; gap:12px; }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-list>.menupop>.ab-item>.ak-mobile-action-label::after { content:""; width:6px; height:6px; flex-shrink:0; border-top:1.5px solid currentColor; border-right:1.5px solid currentColor; transform:rotate(45deg); }
+ :is([dir="rtl"], body.rtl) #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-list>.menupop:not(.hover)>.ab-item>.ak-mobile-action-label::after { transform:rotate(-135deg); }
  #wpadminbar.ak-bar-compact #wp-toolbar .ak-mobile-bar-list>.menupop.hover>.ab-item>.ak-mobile-action-label::after { transform:rotate(135deg); }
 }
 

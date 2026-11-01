@@ -19,7 +19,7 @@
    table edges on mobile instead of butting straight up against the viewport. */
 .adminkit-quick-edit-row td.colspanchange {
 	position: sticky;
-	left: 0;
+	inset-inline-start: 0;
 	padding: calc(16px * var(--ak-space-scale, 1));
 }
 
@@ -108,7 +108,7 @@
 	margin-top: calc(12px * var(--ak-space-scale, 1));
 }
 .adminkit-qe-actions .adminkit-qe-save {
-	margin-left: auto;
+	margin-inline-start: auto;
 }
 .adminkit-qe-error {
 	color: var(--ak-error);

@@ -27,7 +27,7 @@
 }
 .adminkit-app .ak-menu-row--top { font-weight: 600; }
 .adminkit-app .ak-menu-row--child {
-	padding-left: calc(22px * var(--ak-space-scale, 1));
+	padding-inline-start: calc(22px * var(--ak-space-scale, 1));
 	font-weight: 400;
 	border-top: 1px solid var(--ak-border);
 }
@@ -63,7 +63,7 @@
 }
 .adminkit-app .ak-menu-move__btn:first-child { border-bottom: 1px solid var(--ak-border); }
 .adminkit-app .ak-menu-move__btn:hover { color: var(--ak-text); background: var(--ak-elevated); }
-.adminkit-app .ak-menu-move__btn:focus-visible { outline: none; box-shadow: var(--ak-focus-ring); color: var(--ak-text); }
+.adminkit-app .ak-menu-move__btn:focus-visible { outline: 2px solid transparent; outline-offset: 2px; box-shadow: var(--ak-focus-ring); color: var(--ak-text); }
 .adminkit-app .ak-menu-move__btn svg { width: 11px; height: 11px; display: block; }
 .adminkit-app .ak-menu-row__title {
 	flex: 1 1 auto;
@@ -140,16 +140,29 @@
 	position: absolute;
 	z-index: 20;
 	top: 44px;
-	left: 10px;
+	inset-inline-start: 10px;
 	width: 264px;
+	margin: 0;
 	padding: calc(8px * var(--ak-space-scale, 1));
 	border: var(--ak-border-width) solid var(--ak-card-border);
 	border-radius: var(--ak-radius-m);
 	background: var(--ak-elevated);
+	color: var(--ak-text);
 	box-shadow: var(--ak-shadow-elevated);
 	max-height: min( 440px, 78vh );
 	overflow-y: auto;
 	overscroll-behavior: contain;
+}
+.adminkit-app dialog.ak-icon-pop:not([open]) {
+	display: none;
+}
+.adminkit-app dialog.ak-icon-pop.is-modal {
+	position: fixed;
+	inset: auto;
+	z-index: 100002;
+}
+.adminkit-app dialog.ak-icon-pop::backdrop {
+	background: transparent;
 }
 .adminkit-app .ak-icon-pop__tabs {
 	display: flex;
@@ -334,8 +347,8 @@
 .adminkit-app .ak-menu-newtab.on { border-color: var(--ak-primary); color: var(--ak-primary-text); background: var(--ak-primary-subtle); }
 .adminkit-app .ak-menu-newtab svg { width: 14px; height: 14px; }
 .adminkit-app .ak-menu-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: calc(10px * var(--ak-space-scale, 1)); margin: calc(4px * var(--ak-space-scale, 1)) 0 calc(22px * var(--ak-space-scale, 1)); }
-.adminkit-app .ak-menu-toolbar__seg { margin-left: 0; }
-.adminkit-app .ak-menu-toolbar__spacer { margin-left: auto; }
+.adminkit-app .ak-menu-toolbar__seg { margin-inline-start: 0; }
+.adminkit-app .ak-menu-toolbar__spacer { margin-inline-start: auto; }
 .adminkit-app .ak-toolbar-columns {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -362,7 +375,7 @@
 	}
 }
 @media screen and (max-width: 600px) {
-	.adminkit-app .ak-menu-toolbar__spacer { margin-left: 0; }
+	.adminkit-app .ak-menu-toolbar__spacer { margin-inline-start: 0; }
 }
 .adminkit-app .ak-menu-row--sep { padding-top: calc(9px * var(--ak-space-scale, 1)); padding-bottom: calc(9px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-menu-seplabel {
@@ -381,8 +394,12 @@
 	padding: calc(5px * var(--ak-space-scale, 1)) calc(8px * var(--ak-space-scale, 1));
 	font-size: var(--ak-text-s);
 }
+.adminkit-app .ak-menu-parent-select {
+	max-width: 180px;
+}
 .adminkit-app .ak-menu-input:focus {
-	outline: none;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
 	border-color: var(--ak-primary);
 }
 .adminkit-app .ak-menu-input--url {
@@ -414,7 +431,8 @@
 }
 .adminkit-app .ak-menu-title:hover { border-color: var(--ak-border); }
 .adminkit-app .ak-menu-title:focus {
-	outline: none;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
 	border-color: var(--ak-primary);
 	background: var(--ak-surface);
 }
@@ -427,7 +445,7 @@
 @media screen and (max-width: 782px) {
 	.adminkit-app .ak-menu-row { flex-wrap: wrap; gap: var(--ak-space-s); }
 	.adminkit-app .ak-menu-title { flex: 1 1 calc(100% - 130px); min-width: 120px; max-width: 100%; box-sizing: border-box; }
-	.adminkit-app .ak-menu-row__expand { margin-left: auto; min-height: var(--ak-control-height-touch); }
+	.adminkit-app .ak-menu-row__expand { margin-inline-start: auto; min-height: var(--ak-control-height-touch); }
 	.adminkit-app :is(.ak-menu-icon, .ak-menu-url, .ak-menu-hide, .ak-menu-newtab, .ak-menu-remove) { width: var(--ak-control-height-touch); height: var(--ak-control-height-touch); }
 	.adminkit-app .ak-menu-move__btn { width: 30px; height: 22px; }
 	.adminkit-app .ak-menu-row--link .ak-menu-input--url { flex-basis: 100%; }
@@ -439,3 +457,24 @@
 .adminkit-app .ak-icon-pop__search { width: 100%; }
 
 .adminkit-app .ak-icon-pop__empty:empty { display: none; }
+
+:is([dir="rtl"], body.rtl) .adminkit-app .ak-menu-row__expand:not(.on) .ak-menu-row__caret {
+	transform: scaleX(-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.adminkit-app .ak-menu-row__caret {
+		transition: none;
+	}
+}
+
+@media (forced-colors: active) {
+	.adminkit-app .ak-icon-pop__sw.on,
+	.adminkit-app .ak-menu-hide[aria-pressed="true"],
+	.adminkit-app .ak-menu-url.on,
+	.adminkit-app .ak-menu-newtab.on {
+		border-color: Highlight;
+		outline: 2px solid Highlight;
+		outline-offset: -2px;
+	}
+}

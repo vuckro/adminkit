@@ -263,7 +263,7 @@ body.adminkit.options-reading-php .ak-reading-card > .form-table {
  border: 0;
  box-shadow: none;
 }
-body.adminkit.options-reading-php .ak-reading-card .form-table td { padding-right: 0; }
+body.adminkit.options-reading-php .ak-reading-card .form-table td { padding-inline-end: 0; }
 body.adminkit.options-reading-php .ak-reading-card .form-table th { width: 220px; }
 @media (max-width: 782px) {
  body.adminkit.options-reading-php .ak-reading-card { padding: calc(16px * var(--ak-space-scale, 1)); }
@@ -279,6 +279,7 @@ body.adminkit #ak-opt-admin-logo .form-table td { display: block; width: auto; p
 body.adminkit .ak-general-logo { display: grid; gap: var(--ak-space-l); }
 body.adminkit .ak-general-logo > p { margin: 0; display: flex; flex-wrap: wrap; gap: var(--ak-space-s); }
 body.adminkit .ak-general-logo img { max-width: 100%; width: 240px; height: 64px; object-position: left center; margin: 0; }
+:is([dir="rtl"] body.adminkit, body.rtl.adminkit) .ak-general-logo img { object-position: right center; }
 body.adminkit .ak-general-logo__url { display: grid; gap: var(--ak-space-s); }
 body.adminkit .ak-general-logo__url label { color: var(--ak-text-muted); }
 /* Native media actions remain intact; only the oversized browser mockup is removed. */

@@ -59,7 +59,12 @@ body.adminkit.wp-core-ui select {
 	background-repeat: no-repeat !important;
 	background-position: right 8px center !important;
 	background-size: 12px 12px !important;
-	padding-right: calc(28px * var(--ak-space-scale, 1));
+	padding-inline-end: calc(28px * var(--ak-space-scale, 1));
+}
+
+:is([dir="rtl"] body.adminkit, body.rtl.adminkit) select,
+:is([dir="rtl"] body.adminkit, body.rtl.adminkit).wp-core-ui select {
+	background-position: left 8px center !important;
 }
 
 /* Dark mode chevron — fill bumped to the muted-text colour so it reads
@@ -103,7 +108,8 @@ body.adminkit select:focus {
 	   near-black (invisible) on a dark input surface — pin it to the token. */
 	color: var(--ak-text);
 	box-shadow: var(--ak-focus-ring);
-	outline: none;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
 }
 
 /* `<select>` hover — WP's forms.css ships
@@ -159,6 +165,11 @@ body.adminkit.wp-core-ui select:disabled {
 	background-repeat: no-repeat;
 	background-position: right 8px center;
 	background-size: 12px 12px;
+}
+
+:is([dir="rtl"] body.adminkit, body.rtl.adminkit) select:disabled,
+:is([dir="rtl"] body.adminkit, body.rtl.adminkit).wp-core-ui select:disabled {
+	background-position: left 8px center;
 }
 
 :root[data-adminkit-theme="dark"] body.adminkit select:disabled,
@@ -233,7 +244,7 @@ body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__in
 	content: "";
 	position: absolute;
 	top: 2px;
-	left: 2px;
+	inset-inline-start: 2px;
 	width: 16px;
 	height: 16px;
 	margin: 0;
@@ -248,7 +259,7 @@ body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__in
 
 body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):checked::before {
 	content: "";
-	left: 16px;
+	inset-inline-start: 16px;
 	color: transparent;
 }
 
@@ -355,7 +366,8 @@ body.adminkit input[type="file"] {
 body.adminkit.wp-core-ui input:not([type="hidden"]):focus-visible,
 body.adminkit.wp-core-ui textarea:focus-visible,
 body.adminkit.wp-core-ui select:focus-visible {
-	outline: none;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
 	box-shadow: var(--ak-focus-ring);
 }
 
@@ -379,3 +391,28 @@ body.adminkit input[readonly]:focus,
 body.adminkit textarea[readonly]:focus { background-color: var(--ak-surface-muted); }
 body.adminkit input[type="checkbox"]:disabled { cursor: not-allowed; }
 body.adminkit :is(ul.categorychecklist, ul.cat-checklist) label.selectit { color: var(--ak-text); }
+
+@media (forced-colors: active) {
+	body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):not(td.check-column *):not(th.check-column *):not(.cat-checklist *):not(.categorychecklist *):not(.category-checklist *):not(#cb-select-all-1):not(#cb-select-all-2) {
+		border: 1px solid ButtonText;
+		background: Canvas;
+		forced-color-adjust: none;
+	}
+	body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):not(td.check-column *):not(th.check-column *):not(.cat-checklist *):not(.categorychecklist *):not(.category-checklist *):not(#cb-select-all-1):not(#cb-select-all-2)::before {
+		background: ButtonText;
+	}
+	body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):not(td.check-column *):not(th.check-column *):not(.cat-checklist *):not(.categorychecklist *):not(.category-checklist *):not(#cb-select-all-1):not(#cb-select-all-2):checked {
+		background: Highlight;
+		border-color: Highlight;
+	}
+	body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):not(td.check-column *):not(th.check-column *):not(.cat-checklist *):not(.categorychecklist *):not(.category-checklist *):not(#cb-select-all-1):not(#cb-select-all-2):checked::before {
+		background: HighlightText;
+	}
+	body.adminkit input[type="radio"]:checked {
+		border-color: Highlight;
+	}
+	body.adminkit input[type="radio"]:checked::before {
+		background: Highlight;
+		forced-color-adjust: none;
+	}
+}

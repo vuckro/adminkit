@@ -270,7 +270,17 @@ html.ak-nc-active #wpadminbar #wp-admin-bar-ak-notifications {
 /* Respect reduced-motion */
 @media (prefers-reduced-motion: reduce) {
 	.ak-nc-backdrop,
-	.ak-nc-drawer {
+	.ak-nc-drawer,
+	.ak-nc-close {
 		transition: none;
+	}
+}
+
+@media (forced-colors: active) {
+	.ak-nc-drawer {
+		border-inline-start: 2px solid CanvasText;
+	}
+	#wpadminbar #wp-admin-bar-ak-notifications .ak-nc-badge {
+		border: 1px solid ButtonText;
 	}
 }

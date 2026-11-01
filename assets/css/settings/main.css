@@ -2,7 +2,7 @@
 .adminkit-app .ak-accent-inline {
 	gap: calc(8px * var(--ak-space-scale, 1));
 }
-.adminkit-app .ak-accent-inline .ak-seg { margin-left: 0; }
+.adminkit-app .ak-accent-inline .ak-seg { margin-inline-start: 0; }
 .adminkit-app .ak-accent-inline__hex[hidden],
 .adminkit-app .ak-accent-inline__sw[hidden] { display: none; }
 .adminkit-app .ak-accent-inline__sw {
@@ -26,7 +26,8 @@
 	color: var(--ak-text);
 }
 .adminkit-app .ak-accent-inline__hex:focus {
-	outline: none;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
 	border-color: var(--ak-primary);
 	box-shadow: var(--ak-focus-ring);
 }
@@ -68,7 +69,7 @@
 	top: 52px;
 	margin: 0;
 }
-.adminkit-app[data-screen="main"] .ak-tabs button { display: flex; gap: calc(10px * var(--ak-space-scale, 1)); align-items: center; text-align: left; white-space: normal; overflow: visible; height: auto; min-height: var(--ak-control-height); line-height: 1.45; padding: calc(12px * var(--ak-space-scale, 1)); border-radius: var(--ak-radius-s); }
+.adminkit-app[data-screen="main"] .ak-tabs button { display: flex; gap: calc(10px * var(--ak-space-scale, 1)); align-items: center; text-align: start; white-space: normal; overflow: visible; height: auto; min-height: var(--ak-control-height); line-height: 1.45; padding: calc(12px * var(--ak-space-scale, 1)); border-radius: var(--ak-radius-s); }
 .adminkit-app[data-screen="main"] .ak-tabs .ic { display: inline-flex; }
 .adminkit-app[data-screen="main"] .ak-panels { min-width: 0; }
 .adminkit-app[data-screen="main"] .ak-savebar { grid-column: 1 / -1; }
@@ -105,7 +106,7 @@
 .adminkit-app .ak-foundations-title { margin: 0 0 calc(14px * var(--ak-space-scale, 1)); font-size: calc(26px * var(--ak-type-scale, 1)); line-height: 1.25; color: var(--ak-heading); }
 .adminkit-app .ak-foundations-editor { display: grid; grid-template-columns: minmax(0, 1fr); gap: calc(24px * var(--ak-space-scale, 1)); align-items: start; }
 .adminkit-app .ak-foundations-nav { display: flex; flex-direction: row; flex-wrap: wrap; gap: calc(8px * var(--ak-space-scale, 1)); position: static; }
-.adminkit-app .ak-foundations-nav button { font: inherit; font-size: calc(13px * var(--ak-type-scale, 1)); font-weight: 500; text-align: left; line-height: 1.5; border: var(--ak-border-width) solid transparent; border-radius: var(--ak-radius-s); padding: calc(11px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)); color: var(--ak-text-muted); background: transparent; cursor: pointer; }
+.adminkit-app .ak-foundations-nav button { font: inherit; font-size: calc(13px * var(--ak-type-scale, 1)); font-weight: 500; text-align: start; line-height: 1.5; border: var(--ak-border-width) solid transparent; border-radius: var(--ak-radius-s); padding: calc(11px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)); color: var(--ak-text-muted); background: transparent; cursor: pointer; }
 .adminkit-app .ak-foundations-nav button:hover { color: var(--ak-heading); background: var(--ak-hover-bg); }
 .adminkit-app .ak-foundations-nav button[aria-selected="true"] { color: var(--ak-heading); background: var(--ak-surface); border-color: var(--ak-border); }
 .adminkit-app .ak-foundations-nav button:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
@@ -118,7 +119,7 @@
 .adminkit-app .ak-foundations-panel label { display: block; color: var(--ak-heading); font-size: calc(13px * var(--ak-type-scale, 1)); font-weight: 500; }
 .adminkit-app .ak-foundations-panel :is(input[type="text"], input[type="url"], select),
 .adminkit-app .ak-shape-controls input[type="text"] { width: 100%; min-width: 0; box-sizing: border-box; border: var(--ak-border-width) solid var(--ak-border); border-radius: var(--ak-radius-s); background: var(--ak-input-bg); color: var(--ak-text); padding: calc(9px * var(--ak-space-scale, 1)) calc(12px * var(--ak-space-scale, 1)); font: inherit; font-size: calc(13px * var(--ak-type-scale, 1)); min-height: 38px; }
-.adminkit-app .ak-foundations-panel :is(input, select):focus-visible { outline: none; box-shadow: var(--ak-focus-ring); }
+.adminkit-app .ak-foundations-panel :is(input, select):focus-visible { outline: 2px solid transparent; outline-offset: 2px; box-shadow: var(--ak-focus-ring); }
 .adminkit-app .ak-foundations-panel input[aria-invalid="true"] { border-color: var(--ak-error); }
 .adminkit-app .ak-foundation-accent { margin-bottom: calc(24px * var(--ak-space-scale, 1)); }
 .adminkit-app .ak-foundations-panel .ak-accent-inline { display: flex; flex-wrap: wrap; gap: calc(8px * var(--ak-space-scale, 1)); width: 100%; }
