@@ -44,6 +44,7 @@ class AdminKit_Plugin {
 		'wp-core/class-branding.php'                           => 'AdminKit_Core_Branding::init',
 		'wp-core/class-menu-icons.php'                         => 'AdminKit_Core_Menu_Icons::init',
 		'settings/class-settings.php'                          => 'AdminKit_Settings::init',
+		'class-interface.php'                                 => 'AdminKit_Interface::init',
 		'class-upgrades.php'                                  => 'AdminKit_Upgrades::init',
 		'settings/class-settings-catalog.php'                 => null, // booted by Settings_Page
 		'settings/class-settings-gate.php'                    => null, // booted by Settings_Page

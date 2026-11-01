@@ -114,6 +114,10 @@ msgstr ""
 msgid "Administration"
 msgstr ""
 
+#: inc/class-interface.php
+msgid "Administration interface"
+msgstr ""
+
 #: inc/wp-core/class-options-general.php
 msgid "Administration logo"
 msgstr ""
@@ -510,6 +514,10 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Flat"
+msgstr ""
+
+#: inc/class-interface.php
+msgid "Follow site default"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -1126,6 +1134,12 @@ msgstr ""
 msgid "Site Icon"
 msgstr ""
 
+#. translators: %s: current default administration interface.
+#: inc/class-interface.php
+#, php-format
+msgid "Site default: %s. Your choice only changes appearance; enabled tools and saved settings are kept."
+msgstr ""
+
 #: inc/wp-core/class-options-general.php
 msgid "Site identity"
 msgstr ""
@@ -1336,6 +1350,10 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "WordPress"
+msgstr ""
+
+#: inc/class-interface.php
+msgid "WordPress classic"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php

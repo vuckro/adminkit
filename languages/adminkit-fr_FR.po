@@ -114,6 +114,10 @@ msgstr "AdminKit fournit un adaptateur dédié pour cette extension — clair et
 msgid "Administration"
 msgstr "Administration"
 
+#: inc/class-interface.php
+msgid "Administration interface"
+msgstr "Interface d’administration"
+
 #: inc/wp-core/class-options-general.php
 msgid "Administration logo"
 msgstr "Logo de l’administration"
@@ -511,6 +515,10 @@ msgstr "Prénom"
 #: inc/settings/class-settings-i18n.php
 msgid "Flat"
 msgstr "À plat"
+
+#: inc/class-interface.php
+msgid "Follow site default"
+msgstr "Suivre le réglage du site"
 
 #: inc/settings/class-settings-i18n.php
 msgid "Font family"
@@ -1126,6 +1134,12 @@ msgstr "Menu latéral et barre d’outils"
 msgid "Site Icon"
 msgstr "Icône du site"
 
+#. translators: %s: current default administration interface.
+#: inc/class-interface.php
+#, php-format
+msgid "Site default: %s. Your choice only changes appearance; enabled tools and saved settings are kept."
+msgstr "Réglage du site : %s. Votre choix modifie uniquement l’apparence ; les outils activés et les réglages enregistrés sont conservés."
+
 #: inc/wp-core/class-options-general.php
 msgid "Site identity"
 msgstr "Identité du site"
@@ -1337,6 +1351,10 @@ msgstr "Sera activée après l’enregistrement."
 #: inc/settings/class-settings-i18n.php
 msgid "WordPress"
 msgstr "WordPress"
+
+#: inc/class-interface.php
+msgid "WordPress classic"
+msgstr "WordPress classique"
 
 #: inc/settings/class-settings-i18n.php
 msgid "WordPress icon"
