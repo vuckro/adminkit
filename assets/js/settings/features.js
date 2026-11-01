@@ -10,13 +10,14 @@
 			var p = el('section', { class: 'ak-panel ak-features', role: 'tabpanel' }, [
 				el('h2', { class: 'ak-panel-title', text: I.features }), context.intro(I.featuresIntro)
 			]);
-			if (D.interfaceMode === 'wordpress') { p.appendChild(context.intro(I.interfaceNativeNotice)); }
+			if (D.interfaceMode === 'wordpress') { p.appendChild(context.intro(D.adminThemeEnabled === false ? I.themeSiteDisabledNotice : I.interfaceNativeNotice)); }
 			var refs = {}, groups = [], selected = '', category = '';
 			if (location.hash.indexOf('#category=') === 0) { try { category = decodeURIComponent(location.hash.slice(10)); } catch (error) {} }
 			var search = el('input', { type: 'search', class: 'ak-search', placeholder: I.searchFeatures, 'aria-label': I.searchFeatures });
 			var status = el('select', { class: 'ak-features-status', 'aria-label': I.filterFeatures });
-			['all', 'active', 'inactive'].forEach(function (value) {
-				status.appendChild(el('option', { value: value, text: I['featuresFilter' + value.charAt(0).toUpperCase() + value.slice(1)] }));
+			var filterLabels = { all:I.featuresFilterAll, active:I.featuresFilterActive, inactive:I.featuresFilterInactive, paused:I.featuresFilterPaused, 'not-applied':I.featuresFilterNotApplied, unavailable:I.featuresFilterUnavailable };
+			Object.keys(filterLabels).forEach(function (value) {
+				status.appendChild(el('option', { value: value, text: filterLabels[value] }));
 			});
 			var bulk = el('details', { class: 'ak-features-bulk' });
 			var actions = el('div', { class: 'ak-features-bulk__actions' }, [el('p', { text: I.featureBulkScope })]);
@@ -68,9 +69,11 @@
 				n.innerHTML = f.iconSvg || '';
 				return n;
 			}
-			function active(f) { return f.available !== false && !!state.features[f.key] && (!f.parent || !!state.features[f.parent]); }
+			function resolved(f) { return context.featureStatus ? context.featureStatus(f) : { id:f.available === false || (f.parent && !state.features[f.parent]) ? 'unavailable' : (state.features[f.key] ? 'active' : 'inactive') }; }
+			function active(f) { return resolved(f).id === 'active'; }
 			function locked(f) { return f.available === false || !!(f.parent && !state.features[f.parent]); }
 			function select(key) {
+				if (key === 'admin_theme_enabled' && state.features[key] && D.pages && D.pages.brand) { window.location.href = D.pages.brand; return; }
 				if (D.pages && D.pages.navigation && state.features[key] && (key === 'menu_manager_enabled' || key === 'toolbar_manager_enabled')) {
 					window.location.href = D.pages.navigation + (key === 'toolbar_manager_enabled' ? '#toolbar' : '#menu'); return;
 				}
@@ -92,9 +95,11 @@
 				var panelId = 'ak-feature-detail-' + index;
 				var heading = el('h3', { id: panelId + '-title', tabindex: '-1', text: f.label });
 				var rowStatus = el('span', { class: 'ak-features-item__status' });
+				var applicability = el('span', { class:'ak-feature-row-desc', hidden:'hidden' });
 				var button = el('button', { type: 'button', class: 'ak-features-item', 'aria-controls': panelId, 'aria-expanded': 'false', 'aria-haspopup': 'dialog', onclick: function () { select(f.key); } }, [
 					icon(f), el('span', { class: 'ak-features-item__text' }, [el('span', { class: 'ak-feature-row-heading' }, [el('span', { class: 'ak-features-item__label', text: f.label }), rowStatus]), el('span', { class: 'ak-feature-row-desc', text: f.desc })]), el('span', { class: 'ak-feature-config-label', text: I.pageConfigure })
 				]);
+				button.querySelector('.ak-features-item__text').appendChild(applicability);
 				var quickInput = el('input', { type: 'checkbox', class: 'ak-switch__input', 'aria-label': f.label });
 				quickInput.addEventListener('change', function () { state.features[f.key] = quickInput.checked; refresh(); context.markDirty(); });
 				group.rows.appendChild(el('article', { class: 'ak-feature-catalog-row' }, [button, el('label', { class: 'ak-switch' }, [quickInput, el('span', { class: 'ak-switch__track' }), el('span', { class: 'ak-switch__knob' })])]));
@@ -139,7 +144,7 @@
 				}
 				panel.appendChild(el('button', { type: 'button', class: 'ak-btn ak-feature-done', text: I.pageDone, onclick: closeDetail }));
 				details.appendChild(panel);
-				refs[f.key] = { button: button, input: input, quickInput: quickInput, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, pendingBadge: pendingBadge, optionNote: optionNote, optionNoteTitle: optionNoteTitle, optionNoteText: optionNoteText, optionFooter: optionFooter, optionSet: optionSet, optionInputs: optionInputs, visible: false };
+				refs[f.key] = { applicability: applicability, button: button, input: input, quickInput: quickInput, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, pendingBadge: pendingBadge, optionNote: optionNote, optionNoteTitle: optionNoteTitle, optionNoteText: optionNoteText, optionFooter: optionFooter, optionSet: optionSet, optionInputs: optionInputs, visible: false };
 			});
 			var categoryButtons = [];
 			function syncCategoryHash(value) {
@@ -166,21 +171,23 @@
 			function normalize(value) { return (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
 			function refresh() {
 				var focused = document.activeElement;
-				var q = normalize(search.value).trim(), visible = [], counts = { all: 0, active: 0, inactive: 0 }, categoryCounts = {};
+				var q = normalize(search.value).trim(), visible = [], counts = { all:0, active:0, inactive:0, paused:0, 'not-applied':0, unavailable:0 }, categoryCounts = {};
 				features.forEach(function (f) {
 					var r = refs[f.key], on = active(f), isLocked = locked(f);
-					var masterChanged = !!state.features[f.key] !== !!f.value;
+					var outcome = resolved(f);
+					var requested = !!state.features[f.key];
+					var masterChanged = requested !== !!f.value;
 					var optionsChanged = r.optionInputs.some(function (option) { return !!state.features[option.key] !== !!option.data.value; });
 					var pending = masterChanged || optionsChanged;
 					r.pendingBadge.hidden = !pending;
 					var match = normalize(f.label + ' ' + f.desc + ' ' + (f.group || '') + ' ' + (f.options || []).map(function (option) { return option.label + ' ' + (option.desc || ''); }).join(' ')).indexOf(q) !== -1;
-					if (match) { counts.all++; counts[on ? 'active' : 'inactive']++; }
-					var matchesStatus = match && (status.value === 'all' || (status.value === 'active') === on);
+					if (match) { counts.all++; counts[outcome.id]++; }
+					var matchesStatus = match && (status.value === 'all' || status.value === outcome.id);
 					if (matchesStatus) { categoryCounts[f.group || ''] = (categoryCounts[f.group || ''] || 0) + 1; }
 					r.visible = matchesStatus && (!category || category === f.group);
 					r.button.hidden = !r.visible; r.button.parentElement.hidden = !r.visible;
 					if (r.visible) { visible.push(f.key); }
-					r.input.checked = f.available !== false && !!state.features[f.key];
+					r.input.checked = !!state.features[f.key];
 					r.input.disabled = isLocked; r.quickInput.disabled = isLocked; r.quickInput.checked = r.input.checked;
 					if (r.optionSet) {
 						r.optionSet.disabled = !on;
@@ -199,11 +206,15 @@
 						option.input.setAttribute('aria-describedby', option.input.id + '-desc ' + option.status.id + (option.pending.hidden ? '' : ' ' + option.pending.id));
 						option.status.setAttribute('data-choice', on && checked ? 'on' : 'off');
 					});
-					r.button.setAttribute('data-feature-state', isLocked ? 'unavailable' : (on ? 'active' : 'inactive'));
+					r.button.setAttribute('data-feature-state', outcome.id);
 					r.button.setAttribute('data-feature-pending', pending ? 'true' : 'false');
-					r.stateLabel.textContent = isLocked ? I.featureUnavailable : (on ? I.featureActive : I.featureInactive);
-					r.status.textContent = isLocked ? I.featureUnavailable : (masterChanged ? (on ? I.featureActivationPending : I.featureDeactivationPending) : (optionsChanged ? I.featureOptionsPending : r.stateLabel.textContent));
-					r.hint.textContent = f.available === false ? (f.unavailableHint || I.featureUnavailable) : (f.parent && !state.features[f.parent] ? I.featureParentOff : (masterChanged ? (on ? I.featureWillEnable : I.featureWillDisable) : (optionsChanged ? I.featureOptionsWillApply : (on ? I.featureSavedOn : I.featureSavedOff))));
+					r.stateLabel.textContent = ({ active:I.featureActive, inactive:I.featureInactive, paused:I.featurePaused, 'not-applied':I.featureNotApplied, unavailable:I.featureUnavailable })[outcome.id];
+					r.status.textContent = isLocked ? I.featureUnavailable : (masterChanged ? (requested ? I.featureActivationPending : I.featureDeactivationPending) : (optionsChanged ? I.featureOptionsPending : r.stateLabel.textContent));
+					r.hint.textContent = f.available === false ? (f.unavailableHint || I.featureUnavailable) : (f.parent && !state.features[f.parent] ? I.featureParentOff : (masterChanged ? (requested ? I.featureWillEnable : I.featureWillDisable) : (optionsChanged ? I.featureOptionsWillApply : (on ? I.featureSavedOn : I.featureSavedOff))));
+					if (!pending && outcome.reason) { r.hint.textContent = outcome.reason; }
+					r.status.title = outcome.reason || '';
+					r.applicability.hidden = outcome.id !== 'paused' && outcome.id !== 'not-applied';
+					r.applicability.textContent = outcome.reason || '';
 					r.panel.classList.toggle('is-locked', isLocked);
 				});
 				if (visible.indexOf(selected) === -1) { selected = ''; if (!details.hidden) { closeDetail(); } }
@@ -217,7 +228,7 @@
 					c.button.setAttribute('aria-pressed', String(category === c.value));
 					c.count.textContent = String(c.value ? (categoryCounts[c.value] || 0) : Object.keys(categoryCounts).reduce(function (n, key) { return n + categoryCounts[key]; }, 0));
 				});
-				['all', 'active', 'inactive'].forEach(function (value, index) { status.options[index].textContent = I['featuresFilter' + value.charAt(0).toUpperCase() + value.slice(1)] + ' (' + counts[value] + ')'; });
+				Object.keys(filterLabels).forEach(function (value, index) { status.options[index].textContent = filterLabels[value] + ' (' + counts[value] + ')'; });
 				workspace.hidden = !visible.length; empty.hidden = !!visible.length;
 				empty.textContent = counts.all && category ? I.featureCategoryEmpty : I.noResults;
 				// A status-filtered switch may hide its own panel. Keep keyboard focus in the workflow.

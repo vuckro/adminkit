@@ -8,7 +8,7 @@ function wp_enqueue_style(...$args) {}
 function wp_enqueue_script($handle,$src,$deps,$version,$footer) { global$scripts;$scripts[$handle]=array('src'=>$src,'deps'=>$deps,'version'=>$version,'footer'=>$footer); }
 function wp_add_inline_script($handle,$data,$position) { global$inline;$inline[$handle]=array($data,$position); }
 function wp_json_encode($value) { return json_encode($value); }
-function apply_filters($hook,$value,...$args) { return $value; }
+function apply_filters($hook,$value,...$args) { global $customization; return $hook==='adminkit/customization_available' ? ($customization ?? true) : $value; }
 function check($ok,$message) { if(!$ok)throw new RuntimeException($message); }
 foreach(array('main','menu','toolbar')as$screen){
  $scripts=array();$inline=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>$screen));
@@ -33,7 +33,7 @@ class AdminKit_Menu_Manager { public static $enabled=true; public static functio
 class AdminKit_Toolbar_Manager { public static $enabled=true; public static function is_enabled(){return self::$enabled;} }
 function __($text,$domain){return $text;}
 function add_menu_page($title,$label,$capability,$slug,$callback,$icon,$position){return 'toplevel_page_'.$slug;}
-function add_submenu_page($parent,$title,$label,$capability,$slug,$callback){global $native_pages;$native_pages[$slug]=array($parent,$capability,$callback);return $parent.'_page_'.$slug;}
+function add_submenu_page($parent,$title,$label,$capability,$slug,$callback){global $native_pages;if($parent===''){return 'admin_page_'.$slug;}$native_pages[$slug]=array($parent,$capability,$callback);return $parent.'_page_'.$slug;}
 AdminKit_Settings_Page::add_submenu();
 check(count($native_pages)===5,'Expected five native AdminKit content pages');
 foreach($native_pages as$page){check($page[0]==='adminkit'&&$page[1]==='manage_options'&&$page[2]===array('AdminKit_Settings_Page','render_page'),'Native page lost parent, capability or shared host');}
@@ -50,6 +50,9 @@ foreach(array(array(false,false),array(true,false),array(false,true),array(true,
 }
 
 // Native 5-page mode slices script enqueues per active page while keeping full graph when pages === null.
+$customization=false;$native_pages=array();AdminKit_Settings_Page::add_submenu();
+check(!isset($native_pages['adminkit-design'])&&isset($native_pages['adminkit-features']),'Unavailable customization must hide only its own menu entry');
+$customization=true;
 $pages_map=array('overview'=>'#','features'=>'#','brand'=>'#','navigation'=>'#','configuration'=>'#');
 $scripts=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>'main','pages'=>$pages_map,'initialTab'=>'overview'));
 check(!isset($scripts['adminkit-settings-navigation-controls'])&&!isset($scripts['adminkit-settings-main-design'])&&!isset($scripts['adminkit-settings-main-features'])&&isset($scripts['adminkit-settings-main'])&&isset($scripts['adminkit-settings']),'Overview page enqueued unused tab factories');

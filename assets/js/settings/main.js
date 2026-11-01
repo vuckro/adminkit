@@ -58,6 +58,7 @@
 
 		state.appearance = Object.assign({ ui_font: 'geist', remote_fonts_enabled: false }, D.appearance || {});
 		state.interfaceDefault = D.interfaceDefault || 'adminkit';
+		if (D.values && Object.prototype.hasOwnProperty.call(D.values, 'theme_toggle_enabled')) { state.features.theme_toggle_enabled = !!D.values.theme_toggle_enabled; }
 		state.appearance.remote_fonts_enabled = !!state.appearance.remote_fonts_enabled;
 
 		state.designSystem = Object.assign({ radius_scale: 1, type_scale: 1, border_width: 1, elevation: 'default' }, D.designSystem || {});
@@ -149,18 +150,18 @@
 			});
 			return result;
 		}
-		function isActive(feature) { return feature.available !== false && !!state.features[feature.key] && (!feature.parent || !!state.features[feature.parent]); }
+		function isActive(feature) { return context.featureStatus ? context.featureStatus(feature).id === 'active' : feature.available !== false && !!state.features[feature.key] && (!feature.parent || !!state.features[feature.parent]); }
 		function buildOverview() { overviewPanel = el('section', { class: 'ak-panel ak-overview', role: 'tabpanel' }); refreshOverview(); return overviewPanel; }
 		function refreshOverview() {
 			overviewPanel.textContent = '';
-			var steps = ['explore', 'configure', 'export'], complete = steps.every(function (key) { return guide[key]; });
+			var steps = D.customizationAvailable === false ? ['explore', 'export'] : ['explore', 'configure', 'export'], complete = steps.every(function (key) { return guide[key]; });
 			overviewPanel.appendChild(el('h2', { class: 'ak-panel-title', text: I.pageOverviewTitle }));
 			overviewPanel.appendChild(intro(I.pageOverviewIntro));
 			if (guideExpanded || (!complete && !guide.hidden)) {
 				var hide = el('button', { class: 'ak-btn ak-btn--quiet', type: 'button', text: I.pageGuideHide, onclick: function () { guideExpanded = false; guideMark('hidden'); refreshOverview(); overviewPanel.querySelector('.ak-guide-show').focus(); } });
 				var progress = steps.filter(function (key) { return guide[key]; }).length;
 				var list = el('ol', { class: 'ak-guide-steps' });
-				[[I.pageGuideExplore, 'features'], [I.pageGuideConfigure, 'brand'], [I.pageGuideExport, 'configuration']].forEach(function (step, index) {
+				[[I.pageGuideExplore, 'features'], [I.pageGuideConfigure, 'brand'], [I.pageGuideExport, 'configuration']].filter(function (step) { return step[1] !== 'brand' || D.customizationAvailable !== false; }).forEach(function (step, index) {
 					list.appendChild(el('li', { class: guide[steps[index]] ? 'is-complete' : '' }, [el('span', { class: 'ak-guide-marker', 'aria-hidden': 'true', text: guide[steps[index]] ? '' : String(index + 1) }), pageLink(step[1], step[0], 'ak-guide-link')]));
 				});
 				overviewPanel.appendChild(el('section', { class: 'ak-guide' }, [el('div', { class: 'ak-guide-head' }, [el('div', {}, [el('h3', { text: I.pageGuideTitle }), el('p', { text: I.pageGuideIntro })]), el('div', { class: 'ak-guide-controls' }, [el('span', { class: 'ak-guide-progress', text: progress + ' / 3' }), hide])]), list, el('p', { class: 'ak-guide-note', text: I.pageGuideOptional })]));
@@ -191,8 +192,9 @@
 				var interfaceSelect = el('select', { id: 'ak-interface-default', 'aria-label': I.interfaceDefault });
 				[['adminkit', 'AdminKit'], ['wordpress', I.interfaceClassic]].forEach(function (option) { interfaceSelect.appendChild(el('option', { value: option[0], text: option[1] })); });
 				interfaceSelect.value = state.interfaceDefault;
+				interfaceSelect.disabled = D.adminThemeEnabled === false;
 				interfaceSelect.addEventListener('change', function () { state.interfaceDefault = interfaceSelect.value; markDirty(); });
-				row(I.interfaceDefault, I.interfaceDefaultHint, [interfaceSelect]);
+				row(I.interfaceDefault, D.adminThemeEnabled === false ? I.themeSiteDisabledNotice : I.interfaceDefaultHint, [interfaceSelect]);
 				row(I.interfacePersonal, I.interfacePersonalHint, [el('a', { class: 'ak-btn', href: D.profileUrl, text: I.interfacePersonal })]);
 			}
 			row(I.pageExportTitle, I.pageExportDesc, configurationActions.length ? [configurationActions[0]] : []);
@@ -214,6 +216,7 @@
 			mainTabs.push({ id: 'navigation', label: I.navigation || I.menu, icon: ICONS.menu, build: navPart ? navPart.buildNavigation : emptyPanel });
 		}
 
+		mainTabs = mainTabs.filter(function (tab) { return tab.id !== 'brand' || D.customizationAvailable !== false; });
 		mainTabs.push({ id: 'configuration', label: I.pageConfiguration, icon: ICONS.toolbar, build: buildConfiguration });
 		return {
 			tabs: mainTabs,

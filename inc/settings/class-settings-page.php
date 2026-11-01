@@ -82,7 +82,8 @@ class AdminKit_Settings_Page {
 			if ( 'navigation' === $page[0] && ! self::navigation_enabled() ) {
 				continue;
 			}
-			$hook = add_submenu_page( self::SLUG, $page[1] . ' — AdminKit', $page[1], 'manage_options', $slug, array( __CLASS__, 'render_page' ) );
+			$parent = 'brand' === $page[0] && ! apply_filters( 'adminkit/customization_available', true ) ? '' : self::SLUG;
+			$hook = add_submenu_page( $parent, $page[1] . ' — AdminKit', $page[1], 'manage_options', $slug, array( __CLASS__, 'render_page' ) );
 			self::$page_tabs[ $hook ] = $page[0];
 		}
 
@@ -106,6 +107,11 @@ class AdminKit_Settings_Page {
 	 * @return void
 	 */
 	public static function render_page() {
+		$screen = get_current_screen();
+		if ( $screen && isset( self::$page_tabs[ $screen->id ] ) && 'brand' === self::$page_tabs[ $screen->id ] && ! apply_filters( 'adminkit/customization_available', true ) ) {
+			echo '<div class="wrap"><h1>' . esc_html__( 'Customization paused', 'adminkit' ) . '</h1><p>' . esc_html__( 'Enable the administration theme or the custom login screen to customize their appearance. Your saved design is kept.', 'adminkit' ) . '</p><a href="' . esc_url( admin_url( 'admin.php?page=adminkit-features' ) ) . '">' . esc_html__( 'Features', 'adminkit' ) . '</a></div>';
+			return;
+		}
 		self::render_host( 'main' );
 	}
 
@@ -163,6 +169,7 @@ class AdminKit_Settings_Page {
 			return;
 		}
 		$initial_tab = isset( self::$page_tabs[ $hook ] ) ? self::$page_tabs[ $hook ] : 'overview';
+		if ( 'brand' === $initial_tab && ! apply_filters( 'adminkit/customization_available', true ) ) { return; }
 		$data        = self::boot_data( 'main', $initial_tab );
 		$data['initialTab'] = $initial_tab;
 		$titles = array( 'overview' => __( 'Overview', 'adminkit' ), 'features' => __( 'Features', 'adminkit' ), 'brand' => __( 'Design system', 'adminkit' ), 'navigation' => __( 'Navigation', 'adminkit' ), 'configuration' => __( 'Configuration', 'adminkit' ) );
@@ -172,6 +179,7 @@ class AdminKit_Settings_Page {
 			if ( 'navigation' === $tab && ! self::navigation_enabled() ) {
 				continue;
 			}
+			if ( 'brand' === $tab && ! apply_filters( 'adminkit/customization_available', true ) ) { continue; }
 			$data['pages'][ $tab ] = admin_url( 'admin.php?page=' . $slug );
 		}
 		self::enqueue_app( $data );
@@ -452,6 +460,11 @@ class AdminKit_Settings_Page {
 			'pageTitle'    => '',
 			'interfaceDefault' => AdminKit_Interface::sanitize_default( AdminKit_Settings::get( 'interface_default' ) ),
 			'interfaceMode' => AdminKit_Interface::mode(),
+			'interfacePreference' => AdminKit_Interface::preference(),
+			'adminThemeEnabled' => AdminKit_Interface::theme_available(),
+			'customizationAvailable' => (bool) apply_filters( 'adminkit/customization_available', true ),
+			'toolsAllowed' => (bool) apply_filters( 'adminkit/should_load', true, 'admin' ),
+			'notificationLauncherHidden' => class_exists( 'AdminKit_Toolbar_Manager' ) && in_array( 'ak-notifications', AdminKit_Toolbar_Manager::get_config( 'admin' )['hidden'], true ),
 			'profileUrl' => admin_url( 'profile.php#settings' ),
 			'version'      => ADMINKIT_VERSION,
 			'values'       => $is_main ? array_combine( array_keys( AdminKit_Settings::schema() ), array_map( array( 'AdminKit_Settings', 'get' ), array_keys( AdminKit_Settings::schema() ) ) ) : array(),

@@ -225,6 +225,7 @@ class AdminKit_Settings {
 
 		// Baseline defaults and sub-options preserve each parent's prior behavior.
 		foreach ( array(
+			'admin_theme_enabled',
 			'theme_toggle_enabled',
 			'clean_chrome_enabled',
 			'clean_chrome_hide_footer',

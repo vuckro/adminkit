@@ -30,12 +30,29 @@
 		intro: intro,
 		markDirty: markDirty,
 		setStatus: setStatus,
-		updateBar: updateBar
+		updateBar: updateBar,
+		featureStatus: featureStatus
 	});
 	var fallbackTitle = app.previousElementSibling;
 	if (fallbackTitle && fallbackTitle.matches('h1.screen-reader-text')) { fallbackTitle.remove(); }
 	app.textContent = '';
 	app.removeAttribute('aria-busy');
+
+	// One resolution for catalogue badges, filters and overview counts.
+	function featureStatus(feature) {
+		var values = state.features || {}, key = feature.key;
+		if (feature.available === false) { return { id:'unavailable', reason:feature.unavailableHint || I.featureUnavailable }; }
+		if (!values[key]) { return { id:'inactive', reason:I.featureSavedOff }; }
+		if (feature.parent && !values[feature.parent]) { return { id:'paused', reason:I.featureParentOff }; }
+		if (key !== 'module_login_enabled' && D.toolsAllowed === false) { return { id:'paused', reason:I.featureContextPaused }; }
+		if (key === 'admin_theme_enabled') {
+			var choice = D.interfacePreference || 'inherit';
+			if (choice === 'inherit') { choice = state.interfaceDefault || D.interfaceDefault || 'adminkit'; }
+			if (choice === 'wordpress') { return { id:'not-applied', reason:I.featureClassicAccount }; }
+		}
+		if (key === 'notification_center_enabled' && values.toolbar_manager_enabled && D.notificationLauncherHidden) { return { id:'paused', reason:I.featureLauncherHidden }; }
+		return { id:'active', reason:I.featureSavedOn };
+	}
 	var actions = [];
 	if (D.pages) { app.classList.add('has-native-pages'); }
 	if (screen === 'main') {

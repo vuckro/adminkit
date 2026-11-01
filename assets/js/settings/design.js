@@ -12,7 +12,7 @@
 
 		function buildDesign() {
 			var p = el('section', { class: 'ak-panel ak-panel--brand', role: 'tabpanel' });
-			if (D.interfaceMode === 'wordpress') { p.appendChild(el('p', { class: 'ak-intro', text: I.interfaceNativeNotice })); }
+			if (D.interfaceMode === 'wordpress' && D.adminThemeEnabled !== false) { p.appendChild(el('p', { class: 'ak-intro', text: I.interfaceNativeNotice })); }
 			var sections = [];
 			var shapePreviews = null;
 			var sectionKey = 'adminkit:foundation-section:' + location.pathname + location.search;
@@ -159,7 +159,7 @@
 					item.pane.hidden = !active;
 				});
 				previewSection = id;
-				scopeNote.hidden = id === 'colors' || id === 'plugins';
+				scopeNote.hidden = id === 'colors' || id === 'plugins' || id === 'general';
 				refreshPreview();
 				requestAnimationFrame(function () {
 					colorsCtrl.paletteRefresh();
@@ -190,6 +190,13 @@
 			});
 
 			// --- Section 1: Colors ---------------------------------------------------
+			if (D.adminThemeEnabled !== undefined) {
+				var darkMode = el('input', { type:'checkbox', class:'ak-switch__input', 'aria-label':I.themeDarkMode });
+				darkMode.checked = !!state.features.theme_toggle_enabled;
+				darkMode.addEventListener('change', function () { state.features.theme_toggle_enabled = darkMode.checked; markDirty(); });
+				section('general', I.themeOptions, I.themeOptionsHint, [el('div', {class:'ak-row'}, [el('span', {class:'ak-row__label', text:I.themeDarkMode}), el('label', {class:'ak-switch'}, [darkMode, el('span', {class:'ak-switch__track'}), el('span', {class:'ak-switch__knob'})])])]);
+				if (!D.adminThemeEnabled) { p.appendChild(el('p', {class:'ak-intro', text:I.themeLoginOnly})); }
+			}
 			section('colors', I.studioColors, I.foundationColorsHelp, colorsCtrl.buildChildren(themeSwitch(I.studioColors)));
 
 			// --- Section 2: Typography -----------------------------------------------
@@ -540,7 +547,7 @@
 			attachPreview('shapes', shapePreviews);
 
 			// --- Section 4: Extensions / Plugins supported by the Design System ------
-			if (window.AdminKitParts && typeof window.AdminKitParts.plugins === 'function') {
+			if (D.adminThemeEnabled !== false && window.AdminKitParts && typeof window.AdminKitParts.plugins === 'function') {
 				var buildPlugins = window.AdminKitParts.plugins(context);
 				section('plugins', I.plugins, I.pluginsIntro, buildPlugins());
 			}

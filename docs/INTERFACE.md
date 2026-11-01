@@ -26,7 +26,10 @@ accounts following the site default. Save with the existing settings save button
 The adjacent **My administration interface** link opens the personal profile.
 
 Existing installations default to AdminKit. An explicit personal choice overrides
-the default. Preferences use site-scoped user metadata, outside the settings
+the default while the site makes the theme available. Under **Features → Appearance**,
+**Administration theme** controls availability for the site. Disabling it suspends
+the personal and default selectors, retaining their values. Re-enabling it restores
+the saved choices. Preferences use site-scoped user metadata, outside the settings
 export. A shared Multisite account can choose differently on each site. Personal
 saving uses the successful native profile-update hook, its own nonce and the
 current account's `edit_user` capability; it cannot change another account.
@@ -47,10 +50,25 @@ exceptions. Native appearance pauses skins for that account while preserving the
 saved switches. Design settings remain editable for accounts using AdminKit; a
 contextual note explains the distinction. The locked AdminKit system row is omitted.
 
+**Design system → General → Theme options** contains the dark-mode switch.
+Design system remains accessible to administrators using native appearance while
+the site theme is available, because these settings also affect other accounts.
+When only custom login is enabled, shared design controls remain available and
+the Extensions section is omitted. When both theme and login are disabled, the
+Design system submenu is hidden; its direct URL explains how to reactivate it.
+
+Tools have their own prerequisites rather than inheriting the theme switch.
+For example, a hidden notification launcher pauses grouping and keeps notices
+inline. The catalogue distinguishes enabled-but-paused tools and a theme not
+applied to the current account. See [FEATURE-DEPENDENCIES.md](FEATURE-DEPENDENCIES.md)
+for the verified matrix and remaining coverage.
+
 ## Recovery
 
 - Personal: save **AdminKit** in the native Profile field.
 - Site default: save **AdminKit** in Configuration. Explicit personal choices remain.
+- Site availability: enable **Administration theme** in Features → Appearance.
+  Switching off/on retains the design, default interface and personal preferences.
 - Code: revert the interface implementation commits in reverse order, identifying
   them in Git history. The preceding baseline is `a4df8f0`, including Gemini's
   completed work. Do not reset the branch to that baseline: later unrelated work

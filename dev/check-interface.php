@@ -44,6 +44,16 @@ $bar=false;check(!AdminKit_Interface::gate(true,'frontend'),'Anonymous frontend 
 $broad=false;check(!AdminKit_Interface::gate(true,'admin'),'Broad third-party veto ignored');
 $broad=true;check(!AdminKit_Interface::gate(false,'admin'),'Appearance veto overridden');
 check(AdminKit_Interface::sanitize_default(array('wordpress'))==='adminkit','Malformed default is not safe');
+$_POST['adminkit_interface']='adminkit';AdminKit_Interface::save_profile(1);
+AdminKit_Settings::$values['admin_theme_enabled']=false;
+check(AdminKit_Interface::mode()==='wordpress','Site-wide theme suspension must override personal AdminKit preference');
+check(AdminKit_Interface::preference()==='adminkit','Site-wide suspension erased personal preference');
+check(!AdminKit_Interface::customization_available(),'Customization remains available without any customized surface');
+AdminKit_Settings::$values['module_login_enabled']=true;
+check(AdminKit_Interface::customization_available(),'Independent login surface lost customization');
+check(AdminKit_Interface::gate(true,'login'),'Site-wide admin suspension incorrectly disabled login appearance');
+AdminKit_Settings::$values['admin_theme_enabled']=true;
+check(AdminKit_Interface::mode()==='adminkit','Reactivation did not restore saved personal preference');
 echo "OK: personal interface defaults, account/site isolation, secure saves and contextual gates.\n";
 
 // Presentation exception caches must not retain another account/site's decision.

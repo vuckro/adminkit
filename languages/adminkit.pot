@@ -78,10 +78,6 @@ msgstr ""
 msgid "Active items first"
 msgstr ""
 
-#: inc/settings/class-settings-catalog.php
-msgid "Add a light/dark mode switch to the AdminKit interface. WordPress classic keeps its native appearance."
-msgstr ""
-
 #: inc/settings/class-settings-i18n.php
 msgid "Add link"
 msgstr ""
@@ -124,6 +120,10 @@ msgstr ""
 
 #: inc/wp-core/class-profile-account.php
 msgid "Administration preferences"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Administration theme"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -360,6 +360,10 @@ msgstr ""
 msgid "Custom link"
 msgstr ""
 
+#: inc/settings/class-settings-page.php
+msgid "Customization paused"
+msgstr ""
+
 #: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Customize"
 msgstr ""
@@ -384,7 +388,7 @@ msgstr ""
 msgid "Dark"
 msgstr ""
 
-#: inc/settings/class-settings-catalog.php
+#: inc/settings/class-settings-i18n.php
 msgid "Dark mode"
 msgstr ""
 
@@ -413,7 +417,7 @@ msgid "Design system sections"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
-msgid "Disable all"
+msgid "Disable all tools"
 msgstr ""
 
 #: inc/wp-core/class-options-discussion.php
@@ -457,7 +461,11 @@ msgid "Email"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
-msgid "Enable all"
+msgid "Enable all tools"
+msgstr ""
+
+#: inc/settings/class-settings-page.php
+msgid "Enable the administration theme or the custom login screen to customize their appearance. Your saved design is kept."
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -466,6 +474,10 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Enable the parent feature to use this option."
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Enabled for the site. Your account uses WordPress classic."
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -638,6 +650,10 @@ msgstr ""
 msgid "Installed version %1$s exceeds tested range (%2$s) — native plugin UI is kept until verified."
 msgstr ""
 
+#: inc/settings/class-settings-catalog.php
+msgid "Interface tools"
+msgstr ""
+
 #: inc/settings/class-settings-i18n.php
 msgid "Keep your configuration"
 msgstr ""
@@ -674,6 +690,10 @@ msgstr ""
 msgid "Light"
 msgstr ""
 
+#: inc/settings/class-settings-catalog.php
+msgid "Lists and tables"
+msgstr ""
+
 #: inc/settings/class-settings-i18n.php
 msgid "Load Google Fonts from Google servers"
 msgstr ""
@@ -696,6 +716,10 @@ msgstr ""
 
 #: inc/settings/class-settings-catalog.php
 msgid "Login screen"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Make the AdminKit administration theme available. Disabling it restores WordPress classic for every account while keeping tools and saved preferences."
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -790,6 +814,14 @@ msgstr ""
 msgid "No toolbar items found."
 msgstr ""
 
+#: inc/settings/class-settings-i18n.php
+msgid "Not applied to my account"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Not applied to your account"
+msgstr ""
+
 #: inc/features/notifications/class-notification-center.php
 msgid "Notices from plugins and WordPress collect here, out of your way."
 msgstr ""
@@ -880,6 +912,18 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Pause to save"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Paused"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Paused by an integration or a site restriction. Your saved choice is kept."
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Paused features"
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -1192,10 +1236,6 @@ msgstr ""
 msgid "Table"
 msgstr ""
 
-#: inc/settings/class-settings-catalog.php
-msgid "Tables"
-msgstr ""
-
 #: inc/settings/class-settings-i18n.php
 msgid "Text"
 msgstr ""
@@ -1217,7 +1257,27 @@ msgid "That file isn’t a valid AdminKit settings export."
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
+msgid "The administration theme is disabled for this site. Tools remain available and appearance preferences are kept for reactivation."
+msgstr ""
+
+#: inc/class-interface.php
+msgid "The administration theme is disabled for this site. Your personal preference is kept for reactivation."
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "The administration theme is disabled. These appearance settings currently apply only to the custom login screen."
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "The notification bell is hidden by the toolbar manager. Notices remain inline."
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
 msgid "The two views have independent layouts. Saving applies pending changes from both views."
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Theme options"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -1225,11 +1285,15 @@ msgid "Themes"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
-msgid "These actions apply to all available features, including those hidden by filters."
+msgid "These actions apply to all available tools, including those hidden by filters. The administration theme and login appearance keep their own settings."
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "These choices are preserved when the feature is off and apply after saving."
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "These options apply to enabled AdminKit surfaces. Saved choices are kept when a surface is disabled."
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -1298,6 +1362,10 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Unavailable"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Unavailable features"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php

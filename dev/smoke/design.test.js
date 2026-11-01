@@ -5,7 +5,7 @@ const path = require('node:path');
 const { JSDOM } = require('jsdom');
 const root = path.resolve(__dirname, '../..');
 const base = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json')));
-function boot(source, native = false) {
+function boot(source, native = false, overrides = {}) {
  const dom = new JSDOM('<div id="adminkit-app"></div>', { url:'http://localhost/#brand',runScripts:'outside-only',pretendToBeVisual:true });
  const w=dom.window;
  const data=JSON.parse(JSON.stringify(base));
@@ -14,6 +14,7 @@ function boot(source, native = false) {
  data.values={ logo_url:'https://example.test/logo.svg',integration_hidden_enabled:false,extension_key:'keep' };
  data.designSystem={ type_scale:1.13,radius_scale:1.37,colors:{light:{bg:'#abcdef',accent:'#ffffff'},dark:{bg:'#112233'}} };
  if(source==='bricks'){w.document.documentElement.style.setProperty('--accent','#224466');w.document.documentElement.style.setProperty('--accent-hover','#335577');}
+ Object.assign(data,overrides);
  w.AdminKitData=data; w.matchMedia=()=>({matches:false,addEventListener(){}});
  w.HTMLCanvasElement.prototype.getContext=()=>({ fillRect(){},getImageData(){return {data:[0,0,0,255]};} });
  const calls=[]; let reader, exported;
@@ -65,6 +66,33 @@ for(const source of ['monochrome','adminkit','bricks','custom']) {
  assert.equal(w.auditSurface.requests().settings.data.values.logo_url,undefined,'normal save must not overwrite General Settings logo');
  t.dom.window.close();
 }
+const statusCase=boot('monochrome',true,{
+ interfacePreference:'wordpress',adminThemeEnabled:true,customizationAvailable:true,notificationLauncherHidden:true,
+ features:[
+  {key:'admin_theme_enabled',label:'Administration theme',group:'Appearance',value:true,default:true,bulk:false},
+  {key:'module_login_enabled',label:'Login',group:'Appearance',value:false,default:false,bulk:false},
+  {key:'toolbar_manager_enabled',label:'Toolbar',group:'Navigation',value:true,default:true},
+  {key:'notification_center_enabled',label:'Notifications',group:'Interface',value:true,default:true}
+ ],i18n:Object.assign({},base.i18n,{featureNotApplied:'Not applied to your account',featurePaused:'Paused',featureClassicAccount:'Your account uses WordPress classic',featureLauncherHidden:'Bell hidden',featuresFilterPaused:'Paused',featuresFilterNotApplied:'Not applied',featuresFilterUnavailable:'Unavailable'})
+});
+await new Promise(resolve=>statusCase.w.requestAnimationFrame(resolve));
+statusCase.w.document.getElementById('ak-tab-features').click();
+await new Promise(resolve=>statusCase.w.requestAnimationFrame(resolve));
+const sd=statusCase.w.document;
+const rows=[...sd.querySelectorAll('.ak-features-item')];
+const themeRow=rows.find(n=>n.textContent.includes('Administration theme'));
+assert.equal(themeRow.dataset.featureState,'not-applied','Saved-on theme must explain classic personal choice');
+assert.equal(themeRow.parentElement.querySelector('input').checked,true,'Not-applied status must preserve saved-on switch');
+assert.equal(rows.find(n=>n.textContent.includes('Notifications')).dataset.featureState,'paused','Hidden notification launcher must be reported as paused');
+statusCase.w.auditSurface.onSaved('settings',{values:{admin_theme_enabled:false}},{values:{admin_theme_enabled:false}});
+assert.equal(themeRow.querySelector('.ak-features-item__status').textContent,base.i18n.featureActivationPending,'Enabling a non-applied theme must announce activation pending');
+const filter=sd.querySelector('.ak-features-status');filter.value='paused';filter.dispatchEvent(new statusCase.w.Event('change'));
+assert.equal(rows.filter(n=>!n.closest('[hidden]')).length,1,'Paused filter disagrees with badge resolver');
+filter.value='all';filter.dispatchEvent(new statusCase.w.Event('change'));
+sd.querySelectorAll('.ak-features-bulk button')[1].click();
+assert.equal(statusCase.w.auditState.features.admin_theme_enabled,true,'Bulk tools action disabled the theme');
+assert.equal(statusCase.w.auditState.features.notification_center_enabled,false,'Bulk tools action missed a tool');
+statusCase.dom.window.close();
 const native=boot('monochrome',true);
 await new Promise(resolve=>native.w.requestAnimationFrame(resolve));
 assert.equal(native.w.document.documentElement.style.cssText,'','native design editor must not modify global appearance');

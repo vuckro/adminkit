@@ -34,7 +34,7 @@ sub[0].checked=false;change(sub[0]);assert.equal(state.features.footer_option,fa
 assert.equal(d.querySelector('.ak-features-count').textContent,'4','nested controls do not inflate feature counts');
 category('Users').click(); select('Unavailable host').click();
 assert.equal(dirty,1,'navigation never changes draft after the nested edit');
-assert.equal(input(2).disabled,true); assert.equal(input(2).checked,false); assert.equal(state.features.unavailable,true,'unavailable value retained');
+assert.equal(input(2).disabled,true); assert.equal(input(2).checked,true,'disabled control must show the retained saved choice'); assert.equal(state.features.unavailable,true,'unavailable value retained');
 assert.match(visible('.ak-features-hint')[0].textContent,/Install host/);
 category('All categories').click(); select('Appearance').click();input(0).checked=false;change(input(0));
 assert.equal(sub[0].matches(':disabled'),true);assert.equal(state.features.footer_option,false);

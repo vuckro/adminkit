@@ -15,6 +15,7 @@ class AdminKit_Interface {
 			'type' => 'select', 'group' => 'appearance', 'default' => 'adminkit',
 			'sanitize' => array( __CLASS__, 'sanitize_default' ),
 		) );
+		add_filter( 'adminkit/customization_available', array( __CLASS__, 'customization_available' ) );
 		add_filter( 'adminkit/appearance_enabled', array( __CLASS__, 'gate' ), 5, 2 );
 		add_action( 'personal_options', array( __CLASS__, 'profile_field' ) );
 		add_action( 'profile_update', array( __CLASS__, 'save_profile' ) );
@@ -39,8 +40,20 @@ class AdminKit_Interface {
 
 	/** @return string Resolved personal interface; never cached across accounts/sites. */
 	public static function mode() {
+		if ( ! self::theme_available() ) { return 'wordpress'; }
 		$value = self::preference();
 		return 'inherit' === $value ? self::sanitize_default( AdminKit_Settings::get( 'interface_default' ) ) : $value;
+	}
+
+	/** @return bool Whether the site makes the administration theme available. */
+	public static function theme_available() {
+		$value = AdminKit_Settings::get( 'admin_theme_enabled' );
+		return null === $value || (bool) $value;
+	}
+
+	/** @param bool $available Existing veto. @return bool */
+	public static function customization_available( $available = true ) {
+		return $available && ( self::theme_available() || (bool) AdminKit_Settings::get( 'module_login_enabled' ) );
 	}
 
 	/**
@@ -74,11 +87,12 @@ class AdminKit_Interface {
 			<th><label for="adminkit-interface"><?php esc_html_e( 'Administration interface', 'adminkit' ); ?></label></th>
 			<td>
 				<?php wp_nonce_field( 'adminkit_interface_' . $user->ID, 'adminkit_interface_nonce' ); ?>
-				<select name="adminkit_interface" id="adminkit-interface">
+				<select name="adminkit_interface" id="adminkit-interface" <?php disabled( ! self::theme_available() ); ?>>
 					<option value="inherit" <?php selected( $value, 'inherit' ); ?>><?php esc_html_e( 'Follow site default', 'adminkit' ); ?></option>
 					<option value="adminkit" <?php selected( $value, 'adminkit' ); ?>>AdminKit</option>
 					<option value="wordpress" <?php selected( $value, 'wordpress' ); ?>><?php esc_html_e( 'WordPress classic', 'adminkit' ); ?></option>
 				</select>
+				<?php if ( ! self::theme_available() ) : ?><p class="description"><?php esc_html_e( 'The administration theme is disabled for this site. Your personal preference is kept for reactivation.', 'adminkit' ); ?></p><?php endif; ?>
 				<p class="description"><?php
 					/* translators: %s: current default administration interface. */
 					printf( esc_html__( 'Site default: %s. Your choice only changes appearance; enabled tools and saved settings are kept.', 'adminkit' ), esc_html( 'adminkit' === $default ? 'AdminKit' : __( 'WordPress classic', 'adminkit' ) ) );

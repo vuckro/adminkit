@@ -192,3 +192,16 @@ test.describe('wp-admin', () => {
     expect(problems).toEqual([]);
   });
 });
+
+
+// Explicit opt-in: these fixtures intentionally change site settings and accounts.
+test('isolated feature dependency matrix', async ({ page }) => {
+  test.skip(process.env.AK_DISPOSABLE_AUDIT !== '1' || !process.env.AK_AUDIT_URL || !user || !pass, 'Requires AK_DISPOSABLE_AUDIT=1, AK_AUDIT_URL and disposable credentials.');
+  test.setTimeout(480000);
+  const target = new URL(process.env.AK_AUDIT_URL);
+  expect(['localhost', '127.0.0.1', '[::1]']).toContain(target.hostname);
+  expect(target.port).not.toBe('10013');
+  const audit = await require('./dependency-audit')(page, {baseURL:target.origin, username:user, password:pass});
+  expect(audit.errors).toEqual([]);
+  expect(audit.results).toHaveLength(16);
+});

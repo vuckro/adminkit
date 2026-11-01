@@ -78,10 +78,6 @@ msgstr "Actives"
 msgid "Active items first"
 msgstr "Éléments actifs en premier"
 
-#: inc/settings/class-settings-catalog.php
-msgid "Add a light/dark mode switch to the AdminKit interface. WordPress classic keeps its native appearance."
-msgstr "Ajoute un sélecteur clair/sombre à l’interface AdminKit. WordPress classique conserve son apparence native."
-
 #: inc/settings/class-settings-i18n.php
 msgid "Add link"
 msgstr "Ajouter un lien"
@@ -125,6 +121,10 @@ msgstr "Logo de l’administration"
 #: inc/wp-core/class-profile-account.php
 msgid "Administration preferences"
 msgstr "Préférences d’administration"
+
+#: inc/settings/class-settings-catalog.php
+msgid "Administration theme"
+msgstr "Thème d’administration"
 
 #: inc/settings/class-settings-i18n.php
 msgid "All categories"
@@ -360,6 +360,10 @@ msgstr "Actuel"
 msgid "Custom link"
 msgstr "Lien personnalisé"
 
+#: inc/settings/class-settings-page.php
+msgid "Customization paused"
+msgstr "Personnalisation en pause"
+
 #: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Customize"
 msgstr "Personnaliser"
@@ -384,7 +388,7 @@ msgstr "Texte de danger"
 msgid "Dark"
 msgstr "Sombre"
 
-#: inc/settings/class-settings-catalog.php
+#: inc/settings/class-settings-i18n.php
 msgid "Dark mode"
 msgstr "Mode sombre"
 
@@ -413,8 +417,8 @@ msgid "Design system sections"
 msgstr "Rubriques du système de design"
 
 #: inc/settings/class-settings-i18n.php
-msgid "Disable all"
-msgstr "Tout désactiver"
+msgid "Disable all tools"
+msgstr "Désactiver tous les outils"
 
 #: inc/wp-core/class-options-discussion.php
 msgid "Display"
@@ -457,8 +461,12 @@ msgid "Email"
 msgstr "E-mail"
 
 #: inc/settings/class-settings-i18n.php
-msgid "Enable all"
-msgstr "Tout activer"
+msgid "Enable all tools"
+msgstr "Activer tous les outils"
+
+#: inc/settings/class-settings-page.php
+msgid "Enable the administration theme or the custom login screen to customize their appearance. Your saved design is kept."
+msgstr "Activez le thème d’administration ou l’écran de connexion personnalisé pour personnaliser leur apparence. Votre design est conservé."
 
 #: inc/settings/class-settings-i18n.php
 msgid "Enable the feature to apply these options. Your choices are preserved."
@@ -467,6 +475,10 @@ msgstr "Activez la fonctionnalité pour appliquer ces options. Vos choix sont co
 #: inc/settings/class-settings-i18n.php
 msgid "Enable the parent feature to use this option."
 msgstr "Activez la fonctionnalité parente pour utiliser cette option."
+
+#: inc/settings/class-settings-i18n.php
+msgid "Enabled for the site. Your account uses WordPress classic."
+msgstr "Activé pour le site. Votre compte utilise WordPress classique."
 
 #: inc/settings/class-settings-i18n.php
 msgid "Enabled in the saved configuration."
@@ -638,6 +650,10 @@ msgstr "Informations"
 msgid "Installed version %1$s exceeds tested range (%2$s) — native plugin UI is kept until verified."
 msgstr "La version installée %1$s dépasse la plage vérifiée (%2$s) — l’interface native de l’extension est conservée jusqu’à validation."
 
+#: inc/settings/class-settings-catalog.php
+msgid "Interface tools"
+msgstr "Outils d’interface"
+
 #: inc/settings/class-settings-i18n.php
 msgid "Keep your configuration"
 msgstr "Conserver votre configuration"
@@ -674,6 +690,10 @@ msgstr "Gauche"
 msgid "Light"
 msgstr "Clair"
 
+#: inc/settings/class-settings-catalog.php
+msgid "Lists and tables"
+msgstr "Listes et tableaux"
+
 #: inc/settings/class-settings-i18n.php
 msgid "Load Google Fonts from Google servers"
 msgstr "Charger les polices Google Fonts depuis les serveurs Google"
@@ -697,6 +717,10 @@ msgstr "Localisation"
 #: inc/settings/class-settings-catalog.php
 msgid "Login screen"
 msgstr "Écran de connexion"
+
+#: inc/settings/class-settings-catalog.php
+msgid "Make the AdminKit administration theme available. Disabling it restores WordPress classic for every account while keeping tools and saved preferences."
+msgstr "Rend le thème d’administration AdminKit disponible. Sa désactivation rétablit WordPress classique pour tous les comptes en conservant les outils et les préférences."
 
 #: inc/settings/class-settings-i18n.php
 msgid "Make your first adjustment"
@@ -790,6 +814,14 @@ msgstr "Aucun résultat. Essayez un autre terme."
 msgid "No toolbar items found."
 msgstr "Aucun élément de barre d’outils trouvé."
 
+#: inc/settings/class-settings-i18n.php
+msgid "Not applied to my account"
+msgstr "Non appliquées à mon compte"
+
+#: inc/settings/class-settings-i18n.php
+msgid "Not applied to your account"
+msgstr "Non appliqué à votre compte"
+
 #: inc/features/notifications/class-notification-center.php
 msgid "Notices from plugins and WordPress collect here, out of your way."
 msgstr "Les notifications des extensions et de WordPress se regroupent ici, sans vous gêner."
@@ -881,6 +913,18 @@ msgstr "Collez un SVG ou une URI data:image/svg+xml…"
 #: inc/settings/class-settings-i18n.php
 msgid "Pause to save"
 msgstr "Pause à enregistrer"
+
+#: inc/settings/class-settings-i18n.php
+msgid "Paused"
+msgstr "En pause"
+
+#: inc/settings/class-settings-i18n.php
+msgid "Paused by an integration or a site restriction. Your saved choice is kept."
+msgstr "En pause à la demande d’une intégration ou d’une restriction du site. Votre choix est conservé."
+
+#: inc/settings/class-settings-i18n.php
+msgid "Paused features"
+msgstr "Fonctionnalités en pause"
 
 #: inc/wp-core/class-profile-account.php
 msgid "Permissions for this role are defined by the site or a plugin."
@@ -1192,10 +1236,6 @@ msgstr "Surface"
 msgid "Table"
 msgstr "Tableau"
 
-#: inc/settings/class-settings-catalog.php
-msgid "Tables"
-msgstr "Tableaux"
-
 #: inc/settings/class-settings-i18n.php
 msgid "Text"
 msgstr "Texte"
@@ -1217,20 +1257,44 @@ msgid "That file isn’t a valid AdminKit settings export."
 msgstr "Ce fichier n’est pas un export de réglages AdminKit valide."
 
 #: inc/settings/class-settings-i18n.php
+msgid "The administration theme is disabled for this site. Tools remain available and appearance preferences are kept for reactivation."
+msgstr "Le thème d’administration est désactivé sur ce site. Les outils restent disponibles et les préférences d’apparence sont conservées pour sa réactivation."
+
+#: inc/class-interface.php
+msgid "The administration theme is disabled for this site. Your personal preference is kept for reactivation."
+msgstr "Le thème d’administration est désactivé sur ce site. Votre préférence personnelle est conservée pour sa réactivation."
+
+#: inc/settings/class-settings-i18n.php
+msgid "The administration theme is disabled. These appearance settings currently apply only to the custom login screen."
+msgstr "Le thème d’administration est désactivé. Ces réglages d’apparence s’appliquent uniquement à l’écran de connexion personnalisé."
+
+#: inc/settings/class-settings-i18n.php
+msgid "The notification bell is hidden by the toolbar manager. Notices remain inline."
+msgstr "La cloche est masquée par le gestionnaire de barre d’outils. Les notifications restent dans la page."
+
+#: inc/settings/class-settings-i18n.php
 msgid "The two views have independent layouts. Saving applies pending changes from both views."
 msgstr "Les deux vues ont des dispositions indépendantes. L’enregistrement applique les modifications en attente des deux vues."
+
+#: inc/settings/class-settings-i18n.php
+msgid "Theme options"
+msgstr "Options du thème"
 
 #: inc/settings/class-settings-i18n.php
 msgid "Themes"
 msgstr "Thèmes"
 
 #: inc/settings/class-settings-i18n.php
-msgid "These actions apply to all available features, including those hidden by filters."
-msgstr "Ces actions s’appliquent à toutes les fonctionnalités disponibles, y compris celles masquées par les filtres."
+msgid "These actions apply to all available tools, including those hidden by filters. The administration theme and login appearance keep their own settings."
+msgstr "Ces actions s’appliquent à tous les outils disponibles, y compris ceux masqués par les filtres. Le thème d’administration et l’apparence de connexion conservent leurs propres réglages."
 
 #: inc/settings/class-settings-i18n.php
 msgid "These choices are preserved when the feature is off and apply after saving."
 msgstr "Ces choix sont conservés lorsque la fonctionnalité est désactivée et s’appliquent après l’enregistrement."
+
+#: inc/settings/class-settings-i18n.php
+msgid "These options apply to enabled AdminKit surfaces. Saved choices are kept when a surface is disabled."
+msgstr "Ces options s’appliquent aux surfaces AdminKit activées. Les choix sont conservés quand une surface est désactivée."
 
 #: inc/settings/class-settings-i18n.php
 msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."
@@ -1299,6 +1363,10 @@ msgstr "Typographie"
 #: inc/settings/class-settings-i18n.php
 msgid "Unavailable"
 msgstr "Indisponible"
+
+#: inc/settings/class-settings-i18n.php
+msgid "Unavailable features"
+msgstr "Fonctionnalités indisponibles"
 
 #: inc/settings/class-settings-catalog.php
 msgid "Unavailable on Multisite networks."

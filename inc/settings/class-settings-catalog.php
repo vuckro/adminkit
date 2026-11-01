@@ -22,19 +22,22 @@ class AdminKit_Settings_Catalog {
 	public static function features() {
 		$appearance = __( 'Appearance', 'adminkit' );
 		$navigation = __( 'Navigation', 'adminkit' );
-		$tables     = __( 'Tables', 'adminkit' );
+		$tables     = __( 'Lists and tables', 'adminkit' );
+		$interface  = __( 'Interface tools', 'adminkit' );
 		$accounts   = __( 'Accounts', 'adminkit' );
 
 		return array(
 			array(
-				'key'   => 'theme_toggle_enabled',
-				'icon'  => 'moon',
+				'key'   => 'admin_theme_enabled',
+				'bulk'  => false,
+				'icon'  => 'palette',
 				'group' => $appearance,
-				'label' => __( 'Dark mode', 'adminkit' ),
-				'desc'  => __( 'Add a light/dark mode switch to the AdminKit interface. WordPress classic keeps its native appearance.', 'adminkit' ),
+				'label' => __( 'Administration theme', 'adminkit' ),
+				'desc'  => __( 'Make the AdminKit administration theme available. Disabling it restores WordPress classic for every account while keeping tools and saved preferences.', 'adminkit' ),
 			),
 			array(
 				'key'   => 'module_login_enabled',
+				'bulk'  => false,
 				'icon'  => 'log-in',
 				'group' => $appearance,
 				'label' => __( 'Login screen', 'adminkit' ),
@@ -57,7 +60,7 @@ class AdminKit_Settings_Catalog {
 			array(
 				'key'   => 'clean_chrome_enabled',
 				'icon'  => 'scan',
-				'group' => $appearance,
+				'group' => $interface,
 				'label' => __( 'Clean interface', 'adminkit' ),
 				'desc'  => __( 'Choose which secondary elements to hide in the WordPress administration.', 'adminkit' ),
 				'options' => array(
@@ -80,7 +83,7 @@ class AdminKit_Settings_Catalog {
 			array(
 				'key'   => 'notification_center_enabled',
 				'icon'  => 'bell',
-				'group' => $appearance,
+				'group' => $interface,
 				'label' => __( 'Notification center', 'adminkit' ),
 				'desc'  => __( 'Collect admin notices into a toolbar drawer while keeping inline action confirmations in place.', 'adminkit' ),
 			),

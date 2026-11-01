@@ -6,7 +6,8 @@
     "test": "playwright test",
     "test:boot": "node boot.test.js && node features.test.js && node saving.test.js && node design.test.js && node users.test.js && node navigation.test.js && node admin-bar.test.js && node profile-account.test.js && node notification-center.test.js && node username-changer.test.js && node options-screens.test.js",
     "lint:js": "eslint --config eslint.config.js ../../assets/js ../../inc/integrations",
-    "lint:css": "stylelint --config .stylelintrc.json '../../assets/css/**/*.css' '../../inc/integrations/**/*.css'"
+    "lint:css": "stylelint --config .stylelintrc.json '../../assets/css/**/*.css' '../../inc/integrations/**/*.css'",
+    "test:dependencies": "playwright test --grep \"isolated feature dependency matrix\""
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
