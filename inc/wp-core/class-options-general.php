@@ -30,40 +30,86 @@ class AdminKit_Core_Options_General {
 	 *
 	 * @return void
 	 */
+	const LOGO_FIELD_NAME = 'adminkit_general_logo_url';
+
 	public static function init() {
 		add_action( 'admin_init', array( __CLASS__, 'register_branding' ) );
+		add_action( 'admin_action_update', array( __CLASS__, 'save_branding' ) );
 		add_action( 'admin_head', array( __CLASS__, 'print_prepaint' ), 1 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 	}
 
-
-	/** Keep identity editing alongside the native site icon, using the same form. */
+	/** Keep identity editing alongside the native site icon, without registering the full settings option in options.php. */
 	public static function register_branding() {
 		global $pagenow;
-		if ( ! in_array( $pagenow, array( 'options-general.php', 'options.php' ), true )
-			|| ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
-		register_setting( 'general', AdminKit_Settings::OPTION_KEY, array( 'sanitize_callback' => array( __CLASS__, 'sanitize_branding' ) ) );
+		if ( 'options-general.php' !== $pagenow
+			|| ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return;
+		}
 		add_settings_field( 'ak_branding', __( 'Administration logo', 'adminkit' ), array( __CLASS__, 'branding_field' ), 'general' );
 	}
 
+	/**
+	 * Persist ONLY the `logo_url` key when Settings → General is submitted,
+	 * avoiding a full-array `register_setting('general', 'adminkit_settings')`
+	 * write that could clobber concurrent AdminKit option keys.
+	 *
+	 * @return void
+	 */
+	public static function save_branding() {
+		global $pagenow;
+		if ( 'options.php' !== $pagenow
+			|| ! isset( $_POST['option_page'] )
+			|| 'general' !== $_POST['option_page']
+			|| ! isset( $_POST[ self::LOGO_FIELD_NAME ] )
+			|| ! is_string( $_POST[ self::LOGO_FIELD_NAME ] )
+			|| ! apply_filters( 'adminkit/should_load', true, 'admin' )
+			|| ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		check_admin_referer( 'general-options' );
+
+		$raw    = trim( (string) wp_unslash( $_POST[ self::LOGO_FIELD_NAME ] ) );
+		$clean  = '' === $raw ? '' : esc_url_raw( $raw, array( 'http', 'https' ) );
+		$stored = get_option( AdminKit_Settings::OPTION_KEY, array() );
+		if ( ! is_array( $stored ) ) {
+			$stored = array();
+		}
+		if ( '' === $clean ) {
+			unset( $stored['logo_url'] );
+		} else {
+			$stored['logo_url'] = $clean;
+		}
+		update_option( AdminKit_Settings::OPTION_KEY, $stored );
+	}
+
+	/** Back-compat sanitizer kept callable in case external code invokes it directly. */
 	public static function sanitize_branding( $input ) {
 		$stored = (array) get_option( AdminKit_Settings::OPTION_KEY, array() );
 		if ( ! current_user_can( 'manage_options' ) || ! is_array( $input ) ) { return $stored; }
 		if ( isset( $input['logo_url'] ) && is_string( $input['logo_url'] ) ) {
-			$stored['logo_url'] = esc_url_raw( $input['logo_url'], array( 'http', 'https' ) );
+			$clean = esc_url_raw( trim( $input['logo_url'] ), array( 'http', 'https' ) );
+			if ( '' === $clean ) {
+				unset( $stored['logo_url'] );
+			} else {
+				$stored['logo_url'] = $clean;
+			}
 		}
 		return $stored;
 	}
 
 	public static function branding_field() {
-		$url = AdminKit_Settings::brand_logo( 'light' );
+		$url   = AdminKit_Settings::brand_logo( 'light' );
+		$nonce = ( current_user_can( 'manage_options' ) && current_user_can( 'unfiltered_html' ) && function_exists( 'wp_create_nonce' ) )
+			? wp_create_nonce( AdminKit_Core_Branding::LOGO_UPLOAD_NONCE )
+			: '';
 		?>
 		<div class="ak-general-logo">
 			<img id="ak-general-logo-preview" class="<?php echo esc_attr( AdminKit_Settings::dynamic_logo_class() ); ?>" <?php if ( $url ) : ?>src="<?php echo esc_url( $url ); ?>"<?php endif; ?> alt="" <?php echo $url ? '' : 'hidden'; ?> />
-			<p><button type="button" class="button" id="ak-general-logo-upload"><?php esc_html_e( 'Upload image', 'adminkit' ); ?></button> <button type="button" class="button" id="ak-general-logo-remove"><?php esc_html_e( 'Remove', 'adminkit' ); ?></button></p>
+			<p><button type="button" class="button" id="ak-general-logo-upload" data-upload-nonce="<?php echo esc_attr( $nonce ); ?>"><?php esc_html_e( 'Upload image', 'adminkit' ); ?></button> <button type="button" class="button" id="ak-general-logo-remove"><?php esc_html_e( 'Remove', 'adminkit' ); ?></button></p>
 			<div class="ak-general-logo__url">
 			<label for="ak-general-logo-url"><?php esc_html_e( 'Image URL', 'adminkit' ); ?></label>
-			<input type="url" id="ak-general-logo-url" name="adminkit_settings[logo_url]" value="<?php echo esc_url( $url ); ?>" />
+			<input type="url" id="ak-general-logo-url" name="<?php echo esc_attr( self::LOGO_FIELD_NAME ); ?>" value="<?php echo esc_url( $url ); ?>" />
 			</div>
 		</div>
 		<?php

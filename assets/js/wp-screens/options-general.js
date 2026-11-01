@@ -42,7 +42,7 @@
 	var BLOCKS = [
 		{ id: 'site-identity', tab: 'general', title: S.identity,          desc: S.identityDesc || '', rows: [ 'blogname', 'blogdescription', 'siteurl', 'home' ] },
 		{ id: 'site-icon',     tab: 'general', title: S.siteIcon,              desc: S.siteIconDesc || '', rows: [ 'site_icon' ] },
-		{ id: 'admin-logo', tab: 'general', title: S.logo, desc: S.logoDesc, rows: [ 'adminkit_settings[logo_url]' ] },
+		{ id: 'admin-logo', tab: 'general', title: S.logo, desc: S.logoDesc, rows: [ 'adminkit_general_logo_url', 'adminkit_settings[logo_url]' ] },
 		{ id: 'account',       tab: 'account', title: S.account, desc: S.accountDesc  || '', rows: [ 'admin_email', 'new_admin_email', 'users_can_register', 'default_role' ] },
 		{ id: 'locale',        tab: 'locale',  title: S.languageZone, desc: S.languageZoneDesc || '', rows: [ 'WPLANG', 'timezone_string' ] },
 		{ id: 'formats',       tab: 'locale',  title: S.formats, desc: S.formatsDesc || '', rows: [ 'date_format', 'time_format', 'start_of_week' ] }
@@ -261,9 +261,21 @@
 
 	input.addEventListener( 'change', sync );
 	remove.addEventListener( 'click', function () { input.value = ''; sync(); } );
-	document.getElementById( 'ak-general-logo-upload' ).addEventListener( 'click', function () {
+	var uploadBtn = document.getElementById( 'ak-general-logo-upload' );
+	uploadBtn.addEventListener( 'click', function () {
 		if ( ! window.wp || ! wp.media ) { return; }
-		var frame = wp.media( { multiple: false, library: { type: 'image' } } );
+		var uploadNonce = uploadBtn.getAttribute( 'data-upload-nonce' ) || '';
+		var frameOpts = { multiple: false, library: { type: 'image' } };
+		if ( uploadNonce ) {
+			frameOpts.uploader = { params: { adminkit_logo_upload: '1', _ak_logo_nonce: uploadNonce } };
+		}
+		var frame = wp.media( frameOpts );
+		frame.on( 'open', function () {
+			if ( uploadNonce && frame.uploader && frame.uploader.uploader && frame.uploader.uploader.param ) {
+				frame.uploader.uploader.param( 'adminkit_logo_upload', '1' );
+				frame.uploader.uploader.param( '_ak_logo_nonce', uploadNonce );
+			}
+		} );
 		frame.on( 'select', function () {
 			var selected = frame.state().get( 'selection' ).first();
 			if ( selected ) { input.value = selected.toJSON().url; sync(); }

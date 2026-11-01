@@ -446,7 +446,8 @@ class AdminKit_Core_Menu_Icons {
 	private static function slug_css() {
 		$css = '';
 		foreach ( self::slug_icon_map() as $slug => $svg ) {
-			if ( '' === $svg || ! is_string( $svg ) ) {
+			$slug = (string) $slug;
+			if ( '' === $svg || ! is_string( $svg ) || ! preg_match( '/^[a-zA-Z0-9_-]+$/', $slug ) ) {
 				continue;
 			}
 			$box  = '#adminmenu #toplevel_page_' . $slug . ' .wp-menu-image';

@@ -202,7 +202,7 @@ class AdminKit_Plugins_List {
 			$flag           => 'true',
 		);
 		if ( isset( $_GET['s'] ) ) {
-			$args['s'] = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+			$args['s'] = rawurlencode( sanitize_text_field( wp_unslash( $_GET['s'] ) ) );
 		}
 		if ( isset( $_GET['paged'] ) ) {
 			$args['paged'] = absint( wp_unslash( $_GET['paged'] ) );

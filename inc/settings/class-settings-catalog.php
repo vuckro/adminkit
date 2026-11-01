@@ -123,11 +123,13 @@ class AdminKit_Settings_Catalog {
 				'desc'  => __( 'Edit first name, last name, email and role inline from the users list.', 'adminkit' ),
 			),
 			array(
-				'key'   => 'username_changer_enabled',
-				'icon'  => 'user-round-cog',
-				'group' => $accounts,
-				'label' => __( 'Username changer', 'adminkit' ),
-				'desc'  => __( 'Allow administrators to rename a user login on Users → Edit (single-site only; signs the user out).', 'adminkit' ),
+				'key'             => 'username_changer_enabled',
+				'icon'            => 'user-round-cog',
+				'group'           => $accounts,
+				'label'           => __( 'Username changer', 'adminkit' ),
+				'desc'            => __( 'Allow administrators to rename a user login on Users → Edit (single-site only; signs the user out).', 'adminkit' ),
+				'available'       => ! ( function_exists( 'is_multisite' ) && is_multisite() ),
+				'unavailableHint' => __( 'Unavailable on Multisite networks.', 'adminkit' ),
 			),
 		);
 	}

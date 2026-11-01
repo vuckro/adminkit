@@ -261,7 +261,7 @@ class AdminKit_Post_Previews {
 		// live mShots screenshot is opt-in per-site via the provider filter.
 		$provider = apply_filters( 'adminkit/post_previews/provider', 'featured' );
 
-		if ( $permalink && 'mshots' === $provider ) {
+		if ( $permalink && 'mshots' === $provider && 'publish' === get_post_status( $post ) && empty( $post->post_password ) ) {
 			$thumb = self::mshots_url( $permalink, $tw, $th );
 			$full  = self::mshots_url( $permalink, $fw, $fh );
 		} else {
@@ -308,7 +308,7 @@ class AdminKit_Post_Previews {
 			return '';
 		}
 		$provider = apply_filters( 'adminkit/post_previews/provider', 'featured' );
-		if ( 'mshots' === $provider && 'publish' === get_post_status( $post ) ) {
+		if ( 'mshots' === $provider && 'publish' === get_post_status( $post ) && empty( $post->post_password ) ) {
 			$permalink = get_permalink( $post );
 			$url       = $permalink ? self::mshots_url( $permalink, $w, $h ) : '';
 		} else {

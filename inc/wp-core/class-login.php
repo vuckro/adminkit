@@ -113,7 +113,7 @@ class AdminKit_Core_Login {
 		}
 		$name = get_bloginfo( 'name' );
 		$img  = self::brand_logo_img( $name );
-		return ( '' !== $img ) ? $img : $name;
+		return ( '' !== $img ) ? $img : esc_html( $name );
 	}
 
 	/**

@@ -347,6 +347,22 @@
 			return { top: top, sub: sub };
 		}
 
+		function isSafeMenuUrl(raw) {
+			if (typeof raw !== 'string') {
+				return false;
+			}
+			var s = raw.trim();
+			if (!s || s.length > 2048 || /['"<>`\\\x00-\x20\x7f]/.test(s) || s.indexOf('//') === 0) {
+				return false;
+			}
+			var colon = s.indexOf(':');
+			var boundary = s.search(/[/?#]/);
+			if (colon !== -1 && (boundary === -1 || colon < boundary)) {
+				return /^(?:https?|mailto|tel):/i.test(s);
+			}
+			return true;
+		}
+
 		function importMenu(file, tree) {
 			var reader = new FileReader();
 			reader.onload = function () {
@@ -357,15 +373,30 @@
 					data = null;
 				}
 				items =
-					data && typeof data === 'object' && Array.isArray(data.items)
+					data && typeof data === 'object' && data._adminkit === 'menu' && Array.isArray(data.items)
 						? data.items
-						: Array.isArray(data)
-							? data
-							: null;
+						: null;
 				if (!items) {
 					setStatus('is-error', I.menuImportError);
 					return;
 				}
+				items = items.filter(function (it) {
+					if (!it || typeof it !== 'object' || typeof it.slug !== 'string') {
+						return false;
+					}
+					if (it.type === 'link' && !isSafeMenuUrl(it.slug)) {
+						return false;
+					}
+					if (it.url && !isSafeMenuUrl(it.url)) {
+						it = Object.assign({}, it, { url: '' });
+					}
+					return true;
+				}).map(function (it) {
+					if (it.url && !isSafeMenuUrl(it.url)) {
+						return Object.assign({}, it, { url: '' });
+					}
+					return it;
+				});
 				state.menu = buildMenuModel(MM.menu, configFromItems(items));
 				renderTree(tree);
 				markDirty('menu'); // shows "Unsaved changes" — the user reviews, then Saves.

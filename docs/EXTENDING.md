@@ -94,6 +94,7 @@ palette engine, unscoped frontend CSS or per-screen appearance persistence.
 | `adminkit/toolbar_manager/enabled` | `(bool)` | Toolbar editor application/hooks/routes |
 | `adminkit/toolbar/capability` | `(string)` | Toolbar edit capability, default `manage_options` |
 | `adminkit/toolbar/protected_nodes` | `(string[])` | Nodes that cannot be hidden; native or `wp-admin-bar-` prefixed IDs |
+| `adminkit/username_changer/capability` | `(string)` | Capability required alongside `edit_user` to rename a login, default `edit_users` |
 | `adminkit/username_changed` | action `(int $user_id, string $old, string $new)` | A validated rename actually succeeded |
 
 Upgrade 7 converts old chrome options into the unified setting and removes their

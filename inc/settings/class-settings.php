@@ -64,7 +64,16 @@ class AdminKit_Settings {
 			'type'     => 'text',
 			'group'    => 'branding',
 			'default'  => '',
-			'sanitize' => 'esc_url_raw',
+			'sanitize' => static function ( $v ) {
+				if ( ! is_string( $v ) ) {
+					return '';
+				}
+				$v = trim( $v );
+				if ( '' === $v ) {
+					return '';
+				}
+				return function_exists( 'esc_url_raw' ) ? esc_url_raw( $v, array( 'http', 'https' ) ) : $v;
+			},
 		) );
 
 		// Brand accent — the hex used when `accent_source` === 'custom'. Ignored

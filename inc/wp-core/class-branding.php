@@ -28,45 +28,163 @@ class AdminKit_Core_Branding {
 	 *
 	 * @return void
 	 */
+	const LOGO_UPLOAD_NONCE = 'adminkit_logo_upload';
+
 	public static function init() {
 		add_filter( 'upload_mimes', array( __CLASS__, 'logo_upload_mimes' ) );
 		add_filter( 'wp_handle_upload_prefilter', array( __CLASS__, 'validate_logo_upload' ) );
+		add_filter( 'wp_handle_sideload_prefilter', array( __CLASS__, 'validate_logo_upload' ) );
 		add_action( 'admin_bar_menu', array( __CLASS__, 'inject_brand_logo' ), 80 );
 		add_action( 'admin_head', array( __CLASS__, 'print_admin' ), 20 );
 		add_action( 'wp_head', array( __CLASS__, 'print_frontend' ), 20 );
 	}
 
-	/** SVG upload is limited to administrators and a strict vector-only subset. */
+	/** Whether the current user and request context may upload a Branding SVG logo. */
+	private static function can_upload_logo_svg( $require_upload_nonce = false ) {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return false;
+		}
+		if ( class_exists( 'AdminKit_Settings' ) && ! AdminKit_Settings::get( 'branding_enabled' ) ) {
+			return false;
+		}
+		if ( ! current_user_can( 'manage_options' ) || ! current_user_can( 'unfiltered_html' ) ) {
+			return false;
+		}
+		if ( ! $require_upload_nonce ) {
+			global $pagenow;
+			if ( isset( $pagenow ) && 'options-general.php' === $pagenow ) {
+				return true;
+			}
+		}
+		if ( empty( $_REQUEST['adminkit_logo_upload'] ) || '1' !== (string) $_REQUEST['adminkit_logo_upload'] ) {
+			return false;
+		}
+		$nonce = isset( $_REQUEST['_ak_logo_nonce'] ) && is_string( $_REQUEST['_ak_logo_nonce'] )
+			? ( function_exists( 'wp_unslash' ) ? wp_unslash( $_REQUEST['_ak_logo_nonce'] ) : $_REQUEST['_ak_logo_nonce'] )
+			: '';
+		return '' !== $nonce && function_exists( 'wp_verify_nonce' ) && (bool) wp_verify_nonce( $nonce, self::LOGO_UPLOAD_NONCE );
+	}
+
+	/** SVG upload is scoped strictly to the Branding logo picker for admins with unfiltered_html. */
 	public static function logo_upload_mimes( $mimes ) {
-		if ( apply_filters( 'adminkit/should_load', true, 'admin' ) && current_user_can( 'manage_options' ) ) { $mimes['svg'] = 'image/svg+xml'; }
+		if ( self::can_upload_logo_svg( false ) ) {
+			$mimes['svg'] = 'image/svg+xml';
+		}
 		return $mimes;
 	}
 
 	public static function validate_logo_upload( $file ) {
-		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return $file; }
-		if ( 'svg' !== strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) ) ) { return $file; }
-		$valid = current_user_can( 'manage_options' ) && isset( $file['size'] ) && $file['size'] <= 262144 && self::safe_logo_svg( file_get_contents( $file['tmp_name'] ) );
-		if ( ! $valid ) { $file['error'] = __( 'Use a simple SVG containing only vector shapes, without scripts or embedded content.', 'adminkit' ); }
+		if ( ! is_array( $file ) || empty( $file['name'] ) ) {
+			return $file;
+		}
+		$ext = strtolower( pathinfo( (string) $file['name'], PATHINFO_EXTENSION ) );
+		if ( ! in_array( $ext, array( 'svg', 'svgz' ), true ) ) {
+			return $file;
+		}
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+			return $file;
+		}
+		// Only intercept when SVG was uploaded through our Branding flow or when no other plugin owns SVG.
+		$is_branding_upload = ! empty( $_REQUEST['adminkit_logo_upload'] );
+		if ( ! $is_branding_upload && ! self::can_upload_logo_svg( false ) ) {
+			return $file;
+		}
+		if ( 'svgz' === $ext || ! self::can_upload_logo_svg( $is_branding_upload ) || ! isset( $file['size'], $file['tmp_name'] ) || $file['size'] > 262144 || ! is_readable( $file['tmp_name'] ) ) {
+			$file['error'] = __( 'Use a simple SVG containing only vector shapes, without scripts or embedded content.', 'adminkit' );
+			return $file;
+		}
+		$canonical = self::canonical_logo_svg( (string) file_get_contents( $file['tmp_name'] ) );
+		if ( '' === $canonical || false === file_put_contents( $file['tmp_name'], $canonical ) ) {
+			$file['error'] = __( 'Use a simple SVG containing only vector shapes, without scripts or embedded content.', 'adminkit' );
+			return $file;
+		}
+		$file['size'] = strlen( $canonical );
 		return $file;
 	}
 
 	/** Validate without ever rendering user-authored SVG markup inline. */
 	public static function safe_logo_svg( $svg ) {
-		if ( ! is_string( $svg ) || strlen( $svg ) > 262144 || preg_match( '/<!DOCTYPE|<!ENTITY|<\?(?!xml\s)/i', $svg ) || ! class_exists( 'DOMDocument' ) ) { return false; }
+		return '' !== self::canonical_logo_svg( $svg );
+	}
+
+	/**
+	 * Parse, strictly allowlist and re-serialize an SVG document to canonical UTF-8 XML.
+	 * Rejects non-UTF-8 BOMs (UTF-16/UTF-32), DTDs, XML processing instructions (e.g. XSLT),
+	 * scripts, event handlers and external URL references while allowing internal #id gradients/clips.
+	 *
+	 * @param mixed $svg Raw SVG bytes.
+	 * @return string Canonicalized `<svg>...</svg>` XML, or '' when invalid/unsafe.
+	 */
+	public static function canonical_logo_svg( $svg ) {
+		if ( ! is_string( $svg ) || '' === $svg || strlen( $svg ) > 262144 || ! class_exists( 'DOMDocument' ) ) {
+			return '';
+		}
+		// Reject null bytes and UTF-16 / UTF-32 BOMs that bypass ASCII regexes.
+		if ( false !== strpos( $svg, "\x00" ) || 0 === strncmp( $svg, "\xFF\xFE", 2 ) || 0 === strncmp( $svg, "\xFE\xFF", 2 ) ) {
+			return '';
+		}
+		if ( preg_match( '/<!DOCTYPE|<!ENTITY|<\?(?!xml\s)/i', $svg ) ) {
+			return '';
+		}
 		$previous = libxml_use_internal_errors( true );
-		$doc = new DOMDocument();
-		$loaded = $doc->loadXML( $svg, LIBXML_NONET );
-		libxml_clear_errors(); libxml_use_internal_errors( $previous );
-		if ( ! $loaded || 'svg' !== $doc->documentElement->localName ) { return false; }
-		$tags = array( 'svg', 'g', 'path', 'rect', 'circle', 'ellipse', 'polygon', 'polyline', 'line', 'title', 'desc' );
-		$attributes = array( 'viewBox', 'width', 'height', 'fill', 'fill-rule', 'clip-rule', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-dasharray', 'stroke-dashoffset', 'opacity', 'fill-opacity', 'stroke-opacity', 'transform', 'd', 'x', 'y', 'x1', 'x2', 'y1', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'points', 'preserveAspectRatio', 'version' );
-		foreach ( $doc->getElementsByTagName( '*' ) as $element ) {
-			if ( 'http://www.w3.org/2000/svg' !== $element->namespaceURI || ! in_array( $element->localName, $tags, true ) ) { return false; }
-			foreach ( $element->attributes as $attr ) {
-				if ( ! in_array( $attr->name, $attributes, true ) || preg_match( '/url\s*\(|javascript:|https?:|@import/i', $attr->value ) ) { return false; }
+		$doc      = new DOMDocument();
+		$loaded   = $doc->loadXML( $svg, LIBXML_NONET );
+		libxml_clear_errors();
+		libxml_use_internal_errors( $previous );
+		if ( ! $loaded || null !== $doc->doctype || ! $doc->documentElement || 'svg' !== $doc->documentElement->localName || 'http://www.w3.org/2000/svg' !== $doc->documentElement->namespaceURI ) {
+			return '';
+		}
+		foreach ( $doc->childNodes as $top_node ) {
+			if ( XML_ELEMENT_NODE !== $top_node->nodeType && XML_COMMENT_NODE !== $top_node->nodeType ) {
+				return '';
+			}
+			if ( XML_COMMENT_NODE === $top_node->nodeType ) {
+				return '';
 			}
 		}
-		return true;
+		$tags       = array( 'svg', 'g', 'path', 'rect', 'circle', 'ellipse', 'polygon', 'polyline', 'line', 'defs', 'clipPath', 'linearGradient', 'radialGradient', 'stop', 'title', 'desc' );
+		$attributes = array( 'id', 'viewBox', 'width', 'height', 'fill', 'fill-rule', 'clip-rule', 'clip-path', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-dasharray', 'stroke-dashoffset', 'opacity', 'fill-opacity', 'stroke-opacity', 'stop-color', 'stop-opacity', 'offset', 'gradientUnits', 'gradientTransform', 'cx', 'cy', 'fx', 'fy', 'r', 'rx', 'ry', 'x', 'y', 'x1', 'x2', 'y1', 'y2', 'd', 'points', 'transform', 'preserveAspectRatio', 'version' );
+		$url_attrs  = array( 'fill', 'stroke', 'clip-path' );
+
+		foreach ( $doc->getElementsByTagName( '*' ) as $element ) {
+			if ( 'http://www.w3.org/2000/svg' !== $element->namespaceURI || ! in_array( $element->localName, $tags, true ) ) {
+				return '';
+			}
+			foreach ( $element->attributes as $attr ) {
+				if ( null !== $attr->namespaceURI && '' !== $attr->namespaceURI ) {
+					return '';
+				}
+				if ( ! in_array( $attr->name, $attributes, true ) ) {
+					return '';
+				}
+				$val = trim( (string) $attr->value );
+				if ( 'id' === $attr->name && ! preg_match( '/^[a-zA-Z0-9_-]+$/', $val ) ) {
+					return '';
+				}
+				if ( preg_match( '/(?:javascript|data|vbscript|https?|file):|@import|[<>\\\\]/i', $val ) ) {
+					return '';
+				}
+				if ( preg_match( '/url\s*\(/i', $val ) ) {
+					if ( ! in_array( $attr->name, $url_attrs, true ) || ! preg_match( '/^url\(\s*#[a-zA-Z0-9_-]+\s*\)$/i', $val ) ) {
+						return '';
+					}
+				}
+			}
+			foreach ( $element->childNodes as $child ) {
+				if ( XML_ELEMENT_NODE === $child->nodeType ) {
+					continue;
+				}
+				if ( XML_TEXT_NODE === $child->nodeType ) {
+					if ( '' !== trim( $child->textContent ) && ! in_array( $element->localName, array( 'title', 'desc' ), true ) ) {
+						return '';
+					}
+					continue;
+				}
+				return '';
+			}
+		}
+		$serialized = $doc->saveXML( $doc->documentElement );
+		return is_string( $serialized ) ? $serialized : '';
 	}
 
 	/** Keep native toolbar navigation and accessible names while adding both marks. */

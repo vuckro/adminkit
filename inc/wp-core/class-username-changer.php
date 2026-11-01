@@ -90,11 +90,31 @@ class AdminKit_Username_Changer {
 			'src' => 'assets/css/wp-core/username-changer.css',
 			'deps' => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context' => 'admin',
-			'condition' => static function ( $screen ) { return $screen && in_array( $screen->base, array( 'profile', 'user-edit' ), true ) && current_user_can( 'edit_user', self::target_user_id( $screen->base . '.php' ) ); },
+			'condition' => static function ( $screen ) { return $screen && in_array( $screen->base, array( 'profile', 'user-edit' ), true ) && self::can_rename( self::target_user_id( $screen->base . '.php' ) ); },
 		) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'user_profile_update_errors', array( __CLASS__, 'validate' ), 10, 3 );
 		add_action( 'profile_update', array( __CLASS__, 'apply' ), 10, 2 );
+	}
+
+	/**
+	 * Whether the current viewer may rename `$user_id`.
+	 *
+	 * WordPress grants `edit_user` to every logged-in user on their own profile,
+	 * so checking `edit_user` alone would allow subscribers to rename themselves
+	 * to `admin` or another member's handle. Require `edit_users` (filterable) in
+	 * addition to target-level `edit_user`.
+	 *
+	 * @param int $user_id Target user ID.
+	 * @return bool
+	 */
+	public static function can_rename( $user_id ) {
+		$user_id = (int) $user_id;
+		if ( $user_id <= 0 ) {
+			return false;
+		}
+		$cap = (string) apply_filters( 'adminkit/username_changer/capability', 'edit_users' );
+		return current_user_can( $cap ) && current_user_can( 'edit_user', $user_id );
 	}
 
 	/**
@@ -119,7 +139,7 @@ class AdminKit_Username_Changer {
 		if ( ! $user_id ) {
 			return;
 		}
-		if ( ! current_user_can( 'edit_user', $user_id ) ) {
+		if ( ! self::can_rename( $user_id ) ) {
 			return;
 		}
 
@@ -162,7 +182,7 @@ class AdminKit_Username_Changer {
 			return;
 		}
 		unset( self::$pending[ (int) ( $user->ID ?? 0 ) ] );
-		if ( empty( $user->ID ) || ! current_user_can( 'edit_user', (int) $user->ID ) ) {
+		if ( empty( $user->ID ) || ! self::can_rename( (int) $user->ID ) ) {
 			return;
 		}
 		if ( ! isset( $_POST['_wpnonce'] ) || ! is_string( $_POST['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['_wpnonce'] ), 'update-user_' . (int) $user->ID ) ) {
@@ -179,10 +199,12 @@ class AdminKit_Username_Changer {
 		}
 
 		// `sanitize_user( $v, true )` in strict mode keeps only allowed chars.
-		// We then require an exact round-trip: if sanitisation stripped or
-		// changed anything, reject — never silently save a different name.
+		// We then require an exact round-trip, WordPress's `validate_username()`
+		// and `illegal_user_logins` checks — never silently save a different name.
 		$sanitized = sanitize_user( $raw, true );
-		if ( '' === $sanitized || $sanitized !== $raw || strlen( $sanitized ) > 60 ) {
+		$illegal   = array_map( 'strtolower', array_filter( (array) apply_filters( 'illegal_user_logins', array() ), 'is_string' ) );
+		$valid_wp  = ! function_exists( 'validate_username' ) || validate_username( $sanitized );
+		if ( '' === $sanitized || $sanitized !== $raw || strlen( $sanitized ) > 60 || ! $valid_wp || in_array( strtolower( $sanitized ), $illegal, true ) ) {
 			$errors->add(
 				'adminkit_username_invalid',
 				__( '<strong>Error:</strong> Invalid username. Use letters, numbers, spaces, or any of . - _ @ — and nothing else.', 'adminkit' )
@@ -190,7 +212,9 @@ class AdminKit_Username_Changer {
 			return;
 		}
 
-		if ( username_exists( $sanitized ) ) {
+		$existing    = username_exists( $sanitized );
+		$email_owner = function_exists( 'email_exists' ) ? email_exists( $sanitized ) : false;
+		if ( ( $existing && (int) $existing !== (int) $user->ID ) || ( $email_owner && (int) $email_owner !== (int) $user->ID ) ) {
 			$errors->add(
 				'adminkit_username_taken',
 				__( '<strong>Error:</strong> That username is already taken.', 'adminkit' )
@@ -210,7 +234,7 @@ class AdminKit_Username_Changer {
 	 */
 	public static function apply( $user_id, $old_user_data ) {
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
-		if ( ! current_user_can( 'edit_user', $user_id ) ) {
+		if ( ! self::can_rename( $user_id ) ) {
 			return; // Defence in depth — the form gate already requires this.
 		}
 		if ( ! isset( self::$pending[ $user_id ] ) ) { return; }
@@ -270,14 +294,22 @@ class AdminKit_Username_Changer {
 		//     device they're on, they'll be signed out and must sign in again
 		//     with the new name.
 		if ( $user_id === get_current_user_id() ) {
-			$token = wp_get_session_token();
+			$token    = wp_get_session_token();
+			$sessions = WP_Session_Tokens::get_instance( $user_id );
+			$keep     = '';
 			if ( $token ) {
-				WP_Session_Tokens::get_instance( $user_id )->destroy_others( $token );
+				$still_valid = ! method_exists( $sessions, 'verify' ) || $sessions->verify( $token );
+				if ( $still_valid ) {
+					$sessions->destroy_others( $token );
+					$keep = $token;
+				} else {
+					$sessions->destroy_all();
+				}
 			}
-			$cookie = wp_parse_auth_cookie( '', 'logged_in' );
+			$cookie   = wp_parse_auth_cookie( '', 'logged_in' );
 			$remember = is_array( $cookie ) && (int) $cookie['expiration'] > time() + 2 * DAY_IN_SECONDS;
 			wp_clear_auth_cookie();
-			wp_set_auth_cookie( $user_id, $remember, '', $token );
+			wp_set_auth_cookie( $user_id, $remember, '', $keep );
 		} else {
 			WP_Session_Tokens::get_instance( $user_id )->destroy_all();
 		}

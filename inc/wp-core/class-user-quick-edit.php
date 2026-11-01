@@ -76,8 +76,10 @@ class AdminKit_User_Quick_Edit {
 		}
 
 		$nonce = wp_create_nonce( self::NONCE_ACTION . $user->ID );
-		$roles = (array) $user->roles;
-		$role  = $roles ? $roles[0] : '';
+		$roles = array_values( array_filter( (array) $user->roles, 'is_string' ) );
+		$role  = isset( $roles[0] ) ? $roles[0] : '';
+		$multi = count( $roles ) > 1 ? '1' : '0';
+		$self  = ( (int) $user->ID === (int) get_current_user_id() ) ? '1' : '0';
 
 		// Avatar + display name ride along so the inline editor's header can
 		// show "who am I editing" without a second request. Size 80 covers the
@@ -90,14 +92,17 @@ class AdminKit_User_Quick_Edit {
 			. ' data-user-id="%1$d" data-nonce="%2$s"'
 			. ' data-first-name="%3$s" data-last-name="%4$s"'
 			. ' data-email="%5$s" data-role="%6$s"'
-			. ' data-avatar-url="%7$s" data-display-name="%8$s"'
-			. ' aria-expanded="false">%9$s</button>',
+			. ' data-multi-role="%7$s" data-self="%8$s"'
+			. ' data-avatar-url="%9$s" data-display-name="%10$s"'
+			. ' aria-expanded="false">%11$s</button>',
 			(int) $user->ID,
 			esc_attr( $nonce ),
 			esc_attr( (string) $user->first_name ),
 			esc_attr( (string) $user->last_name ),
 			esc_attr( (string) $user->user_email ),
 			esc_attr( $role ),
+			esc_attr( $multi ),
+			esc_attr( $self ),
 			esc_attr( (string) $avatar_url ),
 			esc_attr( (string) $display_name ),
 			esc_html__( 'Quick Edit', 'adminkit' )
@@ -140,8 +145,10 @@ class AdminKit_User_Quick_Edit {
 			'assets/js/wp-core/user-quick-edit.js',
 			array(),
 			'window.AdminKitUserQuickEdit=' . wp_json_encode( array(
-				'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
-				'genericErr' => __( 'Save failed.', 'adminkit' ),
+				'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
+				'genericErr'    => __( 'Save failed.', 'adminkit' ),
+				'multiRoleHint' => __( 'This user has multiple roles; edit roles on their full profile.', 'adminkit' ),
+				'selfEmailHint' => __( 'Change your own email from Profile so it can be confirmed.', 'adminkit' ),
 			) ) . ';'
 		);
 	}
@@ -189,20 +196,20 @@ class AdminKit_User_Quick_Edit {
 							<legend class="screen-reader-text"><?php esc_html_e( 'Quick Edit', 'adminkit' ); ?></legend>
 							<label>
 								<span class="title"><?php esc_html_e( 'First name', 'adminkit' ); ?></span>
-								<input type="text" name="first_name" class="adminkit-qe-first-name">
+								<input type="text" class="adminkit-qe-first-name">
 							</label>
 							<label>
 								<span class="title"><?php esc_html_e( 'Last name', 'adminkit' ); ?></span>
-								<input type="text" name="last_name" class="adminkit-qe-last-name">
+								<input type="text" class="adminkit-qe-last-name">
 							</label>
 							<label>
 								<span class="title"><?php esc_html_e( 'Email', 'adminkit' ); ?></span>
-								<input type="email" name="user_email" class="adminkit-qe-email">
+								<input type="email" class="adminkit-qe-email">
 							</label>
 							<?php if ( $can_promote ) : ?>
 								<label>
 									<span class="title"><?php esc_html_e( 'Role', 'adminkit' ); ?></span>
-									<select name="role" class="adminkit-qe-role">
+									<select class="adminkit-qe-role">
 										<?php foreach ( $roles as $key => $name ) : ?>
 											<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( translate_user_role( $name ) ); ?></option>
 										<?php endforeach; ?>
@@ -245,6 +252,11 @@ class AdminKit_User_Quick_Edit {
 			wp_send_json_error( array( 'message' => __( 'You are not allowed to do that.', 'adminkit' ) ), 403 );
 		}
 
+		$existing_user = get_userdata( $user_id );
+		if ( ! $existing_user ) {
+			wp_send_json_error( array( 'message' => __( 'Missing user id.', 'adminkit' ) ), 404 );
+		}
+
 		$update = array( 'ID' => $user_id );
 		if ( isset( $_POST['first_name'] ) ) {
 			$update['first_name'] = sanitize_text_field( wp_unslash( $_POST['first_name'] ) );
@@ -253,19 +265,43 @@ class AdminKit_User_Quick_Edit {
 			$update['last_name'] = sanitize_text_field( wp_unslash( $_POST['last_name'] ) );
 		}
 		if ( isset( $_POST['user_email'] ) ) {
-			$update['user_email'] = sanitize_email( wp_unslash( $_POST['user_email'] ) );
+			$raw_email   = trim( (string) wp_unslash( $_POST['user_email'] ) );
+			$clean_email = function_exists( 'sanitize_email' ) ? sanitize_email( $raw_email ) : $raw_email;
+			if ( '' === $clean_email || ( function_exists( 'is_email' ) && ! is_email( $clean_email ) ) ) {
+				wp_send_json_error( array( 'message' => __( 'Please enter a valid email address.', 'adminkit' ) ), 400 );
+			}
+			$existing_email = isset( $existing_user->user_email ) ? (string) $existing_user->user_email : '';
+			if ( 0 !== strcasecmp( $clean_email, $existing_email ) ) {
+				if ( $user_id === get_current_user_id() ) {
+					wp_send_json_error( array( 'message' => __( 'Change your own email from Profile so it can be confirmed.', 'adminkit' ) ), 400 );
+				}
+				if ( function_exists( 'email_exists' ) ) {
+					$email_owner = email_exists( $clean_email );
+					if ( $email_owner && (int) $email_owner !== $user_id ) {
+						wp_send_json_error( array( 'message' => __( 'This email address is already registered.', 'adminkit' ) ), 409 );
+					}
+				}
+				$update['user_email'] = $clean_email;
+			}
 		}
 
-		// Role: only honoured when the editor can promote, and only when the
-		// posted role belongs to WordPress's filtered assignable set.
+		// Role: only honoured when the editor can promote both globally and on the target,
+		// and only when the posted role belongs to WordPress's filtered assignable set.
 		if ( isset( $_POST['role'] ) && current_user_can( 'promote_users' ) ) {
+			if ( ! current_user_can( 'promote_user', $user_id ) ) {
+				wp_send_json_error( array( 'message' => __( 'You are not allowed to do that.', 'adminkit' ) ), 403 );
+			}
 			$role = sanitize_key( wp_unslash( $_POST['role'] ) );
 			if ( ! $role || ! array_key_exists( $role, get_editable_roles() ) ) {
 				wp_send_json_error( array( 'message' => __( 'You are not allowed to do that.', 'adminkit' ) ), 403 );
 			}
-			// Don't let an admin demote themselves accidentally — same
-			// guard wp-admin's own user-edit applies.
-			if ( $user_id !== get_current_user_id() ) {
+			$existing_roles = isset( $existing_user->roles ) ? array_values( array_filter( (array) $existing_user->roles, 'is_string' ) ) : array();
+			if ( count( $existing_roles ) > 1 ) {
+				if ( $role !== $existing_roles[0] ) {
+					wp_send_json_error( array( 'message' => __( 'This user has multiple roles; edit roles on their full profile.', 'adminkit' ) ), 400 );
+				}
+				// Unchanged primary role on a multi-role user: omit $update['role'] so set_role() never wipes secondary roles.
+			} elseif ( $user_id !== get_current_user_id() ) {
 				$update['role'] = $role;
 			}
 		}
@@ -284,11 +320,16 @@ class AdminKit_User_Quick_Edit {
 			wp_send_json_success( array() );
 		}
 
-		$role_key = isset( $user->roles[0] ) ? (string) $user->roles[0] : '';
-		$role_names = wp_roles()->get_names();
-		$role_display = isset( $role_names[ $role_key ] )
-			? translate_user_role( $role_names[ $role_key ] )
-			: '';
+		$post_roles  = isset( $user->roles ) ? array_values( array_filter( (array) $user->roles, 'is_string' ) ) : array();
+		$role_key    = isset( $post_roles[0] ) ? (string) $post_roles[0] : '';
+		$role_names  = wp_roles()->get_names();
+		$role_labels = array();
+		foreach ( $post_roles as $r_key ) {
+			if ( isset( $role_names[ $r_key ] ) ) {
+				$role_labels[] = translate_user_role( $role_names[ $r_key ] );
+			}
+		}
+		$role_display = implode( ', ', $role_labels );
 
 		$name_display = trim( $user->first_name . ' ' . $user->last_name );
 		if ( '' === $name_display ) {

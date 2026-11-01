@@ -209,6 +209,10 @@ msgstr ""
 msgid "Card"
 msgstr ""
 
+#: inc/wp-core/class-user-quick-edit.php
+msgid "Change your own email from Profile so it can be confirmed."
+msgstr ""
+
 #: inc/settings/class-settings-page.php
 msgid "Changes apply after saving."
 msgstr ""
@@ -878,6 +882,10 @@ msgstr ""
 msgid "Personal Options"
 msgstr ""
 
+#: inc/wp-core/class-user-quick-edit.php
+msgid "Please enter a valid email address."
+msgstr ""
+
 #: inc/settings/class-settings-page.php
 msgid "Plugin inactive"
 msgstr ""
@@ -1210,8 +1218,16 @@ msgstr ""
 msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."
 msgstr ""
 
+#: inc/wp-core/class-user-quick-edit.php
+msgid "This email address is already registered."
+msgstr ""
+
 #: inc/settings/class-settings-page.php
 msgid "This feature has no effect while disabled."
+msgstr ""
+
+#: inc/wp-core/class-user-quick-edit.php
+msgid "This user has multiple roles; edit roles on their full profile."
 msgstr ""
 
 #: inc/wp-core/class-profile-account.php
@@ -1264,6 +1280,10 @@ msgstr ""
 
 #: inc/settings/class-settings-page.php
 msgid "Unavailable"
+msgstr ""
+
+#: inc/settings/class-settings-catalog.php
+msgid "Unavailable on Multisite networks."
 msgstr ""
 
 #: inc/settings/class-settings-page.php

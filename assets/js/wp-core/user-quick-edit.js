@@ -88,9 +88,28 @@
 			fill(editor, '.adminkit-qe-last-name', btn.dataset.lastName || '');
 			fill(editor, '.adminkit-qe-email', btn.dataset.email || '');
 			fill(editor, '.adminkit-qe-role', btn.dataset.role || '');
-			// A filtered-out current role must not become an implicit role change.
+
+			var emailField = editor.querySelector('.adminkit-qe-email');
+			if (emailField && btn.dataset.self === '1') {
+				emailField.readOnly = true;
+				if (L.selfEmailHint) { emailField.title = L.selfEmailHint; }
+			}
+
+			// A filtered-out current role OR a multi-role user must not trigger an implicit set_role() wipe.
 			var roleField = editor.querySelector('.adminkit-qe-role');
-			if (roleField && !roleField.value) { roleField.disabled = true; }
+			if (roleField && (!roleField.value || btn.dataset.multiRole === '1')) {
+				roleField.disabled = true;
+				if (btn.dataset.multiRole === '1' && L.multiRoleHint) {
+					roleField.title = L.multiRoleHint;
+				}
+			}
+
+			editor.addEventListener('keydown', function (e) {
+				if (e.key === 'Enter' && e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) {
+					e.preventDefault();
+					saveEditor(btn, editor, row);
+				}
+			});
 
 			var cancel = editor.querySelector('.adminkit-qe-cancel');
 			if (cancel) { cancel.addEventListener('click', closeEditor); }

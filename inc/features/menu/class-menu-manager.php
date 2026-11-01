@@ -104,9 +104,10 @@ class AdminKit_Menu_Manager {
 		}
 
 		// Ensure the table exists before admin_menu (apply) reads it — `init` fires
-		// earlier than admin_menu; gate to admin so the front end never touches it.
+		// earlier than admin_menu; gate to admin + manage_options so unprivileged
+		// users and the front end never touch dbDelta.
 		if ( is_admin() ) {
-			add_action( 'init', array( 'AdminKit_Menu_Store', 'ensure_schema' ) );
+			add_action( 'init', array( __CLASS__, 'maybe_ensure_schema' ) );
 		}
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'capture_snapshot' ), 9998 );
@@ -121,6 +122,17 @@ class AdminKit_Menu_Manager {
 		add_filter( 'submenu_file', array( __CLASS__, 'remap_submenu_file' ) );
 		add_action( 'admin_head', array( __CLASS__, 'print_css' ), 22 );
 		add_action( 'admin_footer', array( __CLASS__, 'print_url_overrides' ) );
+	}
+
+	/**
+	 * Provision the menu storage schema only for privileged administrators.
+	 *
+	 * @return void
+	 */
+	public static function maybe_ensure_schema() {
+		if ( current_user_can( 'manage_options' ) ) {
+			AdminKit_Menu_Store::ensure_schema();
+		}
 	}
 
 	/**
@@ -275,7 +287,7 @@ class AdminKit_Menu_Manager {
 	 * @return string
 	 */
 	private static function dashicon_class( $icon ) {
-		return ( is_string( $icon ) && 0 === strpos( $icon, 'dashicons-' ) ) ? $icon : '';
+		return ( is_string( $icon ) && preg_match( '/^dashicons-[a-z0-9-]+$/', $icon ) ) ? $icon : '';
 	}
 
 	/**
@@ -368,9 +380,12 @@ class AdminKit_Menu_Manager {
 			// top-level anchor. Done via JS (not by rewriting $item[2]) so the item's
 			// submenu and WP's own current-screen highlight stay intact.
 			if ( ! empty( $cfg['url'] ) ) {
-				$ucls            = 'ak-mu-' . ( ++$u );
-				$menu[ $pos ][4] = trim( ( isset( $menu[ $pos ][4] ) ? $menu[ $pos ][4] : '' ) . ' ' . $ucls );
-				self::$url_overrides[ $ucls ] = (string) $cfg['url'];
+				$safe_override = self::sanitize_menu_url( $cfg['url'] );
+				if ( '' !== $safe_override ) {
+					$ucls            = 'ak-mu-' . ( ++$u );
+					$menu[ $pos ][4] = trim( ( isset( $menu[ $pos ][4] ) ? $menu[ $pos ][4] : '' ) . ' ' . $ucls );
+					self::$url_overrides[ $ucls ] = $safe_override;
+				}
 			}
 		}
 
@@ -458,6 +473,16 @@ class AdminKit_Menu_Manager {
 				}
 				$menu[] = array( '', 'read', $t['slug'], '', $classes, '', '' );
 			} elseif ( 'link' === $type ) {
+				$safe_href = self::sanitize_menu_url( $t['slug'] );
+				if ( '' === $safe_href ) {
+					continue;
+				}
+				if ( function_exists( 'esc_url' ) ) {
+					$safe_href = esc_url( $safe_href, array( 'http', 'https', 'mailto', 'tel' ) );
+				}
+				if ( '' === $safe_href ) {
+					continue;
+				}
 				$icon                         = ( ! empty( $t['icon'] ) && self::is_icon( $t['icon'] ) ) ? (string) $t['icon'] : 'app';
 				$cls                          = 'ak-mi-' . ( ++$n );
 				$classes                      = 'menu-top ' . $cls;
@@ -469,8 +494,8 @@ class AdminKit_Menu_Manager {
 					$classes         .= ' ak-mh';
 					self::$has_hidden = true;
 				}
-				$title  = ( isset( $t['title'] ) && '' !== $t['title'] ) ? $t['title'] : $t['slug'];
-				$menu[] = array( $title, 'read', $t['slug'], $title, $classes, '', 'none' );
+				$title  = ( isset( $t['title'] ) && '' !== $t['title'] ) ? $t['title'] : $safe_href;
+				$menu[] = array( $title, 'read', $safe_href, $title, $classes, '', 'none' );
 			}
 		}
 	}
@@ -659,12 +684,15 @@ class AdminKit_Menu_Manager {
 	public static function print_css() {
 		$css = self::$has_hidden ? '#adminmenu .ak-mh{display:none}' : '';
 		foreach ( self::$icon_overrides as $cls => $icon ) {
+			if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', (string) $cls ) ) {
+				continue;
+			}
 			// "WordPress icon" sentinel — cancel AdminKit's global CSS mask for this
 			// item. Selector specificity (1,3,1) beats AdminKit's (1,2,1) so the
 			// native dashicon glyph is restored without !important.
 			if ( 0 === strncmp( $icon, 'wp-default', 10 ) ) {
 				$dashicon = strlen( $icon ) > 11 ? substr( $icon, 11 ) : '';
-				if ( '' !== $dashicon ) {
+				if ( '' !== $dashicon && preg_match( '/^dashicons-[a-z0-9-]+$/', $dashicon ) ) {
 					$glyph = isset( self::$dashicon_glyphs[ $dashicon ] ) ? self::$dashicon_glyphs[ $dashicon ] : '';
 					$sel   = '#adminmenu .' . $cls . ' .wp-menu-image.' . $dashicon;
 					$css  .= $sel . '{box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
@@ -705,10 +733,21 @@ class AdminKit_Menu_Manager {
 		}
 		$map = array();
 		foreach ( self::$url_overrides as $cls => $url ) {
-			$map[ $cls ]['href'] = esc_url_raw( $url );
+			if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', (string) $cls ) ) {
+				continue;
+			}
+			$safe = self::sanitize_menu_url( $url );
+			if ( '' !== $safe ) {
+				$map[ $cls ]['href'] = $safe;
+			}
 		}
 		foreach ( self::$new_tab as $cls => $on ) {
-			$map[ $cls ]['blank'] = true;
+			if ( preg_match( '/^[a-zA-Z0-9_-]+$/', (string) $cls ) ) {
+				$map[ $cls ]['blank'] = true;
+			}
+		}
+		if ( empty( $map ) ) {
+			return;
 		}
 		echo '<script id="adminkit-menu-urls">'
 			. '(function(m){Object.keys(m).forEach(function(c){'
@@ -807,7 +846,7 @@ class AdminKit_Menu_Manager {
 			$icon   = ( '' === $parent && isset( $it['icon'] ) ) ? self::sanitize_icon( $it['icon'] ) : '';
 			$title  = ( isset( $it['title'] ) && is_string( $it['title'] ) ) ? sanitize_text_field( $it['title'] ) : '';
 			// A custom link stores its destination URL as the slug; everything else is a plain slug.
-			$slug   = ( 'link' === $type ) ? esc_url_raw( $it['slug'] ) : self::sanitize_slug( $it['slug'] );
+			$slug   = ( 'link' === $type ) ? self::sanitize_menu_url( $it['slug'] ) : self::sanitize_slug( $it['slug'] );
 			if ( '' === $slug ) {
 				continue;
 			}
@@ -816,7 +855,7 @@ class AdminKit_Menu_Manager {
 				'slug'     => $slug,
 				'position' => isset( $it['position'] ) ? (int) $it['position'] : 0,
 				'icon'     => $icon,
-				'url'      => ( '' === $parent && isset( $it['url'] ) ) ? esc_url_raw( trim( (string) $it['url'] ) ) : '',
+				'url'      => ( '' === $parent && isset( $it['url'] ) ) ? self::sanitize_menu_url( $it['url'] ) : '',
 				'new_tab'  => isset( $it['newTab'] ) && rest_sanitize_boolean( $it['newTab'] ),
 				'hidden'   => isset( $it['hidden'] ) && rest_sanitize_boolean( $it['hidden'] ),
 				'type'     => $type,
@@ -824,6 +863,53 @@ class AdminKit_Menu_Manager {
 			);
 		}
 		return $clean;
+	}
+
+	/**
+	 * Strictly validate a custom menu link or URL override against attribute breakout,
+	 * protocol-relative redirects and unsafe URI schemes.
+	 *
+	 * `wp-admin/menu-header.php` outputs custom menu slugs inside single-quoted
+	 * `href='...'` without attribute escaping, and `esc_url_raw()` preserves `'`.
+	 * Rejecting quotes, angle brackets, backticks, backslashes and control characters
+	 * closes stored XSS both at write time and at render time.
+	 *
+	 * @param mixed $url Raw candidate URL or relative admin path.
+	 * @return string Validated URL, or '' when unsafe.
+	 */
+	public static function sanitize_menu_url( $url ) {
+		if ( ! is_string( $url ) ) {
+			return '';
+		}
+		$url = trim( $url );
+		if ( '' === $url || strlen( $url ) > 2048 ) {
+			return '';
+		}
+		if ( preg_match( '/[\x00-\x20\x7f\'"<>`\\\\]/', $url ) || 0 === strpos( $url, '//' ) ) {
+			return '';
+		}
+		$colon    = strpos( $url, ':' );
+		$boundary = strcspn( $url, '/?#' );
+		if ( false !== $colon && $colon < $boundary ) {
+			$scheme = strtolower( substr( $url, 0, $colon ) );
+			if ( ! in_array( $scheme, array( 'http', 'https', 'mailto', 'tel' ), true ) ) {
+				return '';
+			}
+			if ( in_array( $scheme, array( 'http', 'https' ), true ) ) {
+				$parts = function_exists( 'wp_parse_url' ) ? wp_parse_url( $url ) : parse_url( $url );
+				if ( ! is_array( $parts ) || empty( $parts['host'] ) ) {
+					return '';
+				}
+			}
+			if ( function_exists( 'esc_url_raw' ) ) {
+				$url = esc_url_raw( $url, array( 'http', 'https', 'mailto', 'tel' ) );
+			}
+			if ( '' === $url || preg_match( '/[\x00-\x20\x7f\'"<>`\\\\]/', $url ) ) {
+				return '';
+			}
+			return $url;
+		}
+		return preg_match( '/^(?:\/[a-zA-Z0-9_.\-\/~%]+|[a-zA-Z0-9_.\-]+)(?:[?#][^\x00-\x20\x7f\'"<>`\\\\]*)?$/', $url ) ? $url : '';
 	}
 
 	/**
