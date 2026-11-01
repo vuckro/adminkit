@@ -220,18 +220,9 @@ class AdminKit_Settings_Catalog {
 
 		foreach ( get_plugins() as $file => $data ) {
 			if ( $file === $self ) {
-				$rows[] = array(
-					'slug'      => '',
-					'file'      => $file,
-					'label'     => '' !== (string) $data['Name'] ? $data['Name'] : 'AdminKit',
-					'type'      => 'plugin',
-					'supported' => false,
-					'system'    => true,
-					'enabled'   => true,
-					'active'    => true,
-				);
 				continue;
 			}
+
 			$slug      = isset( $by_file[ $file ] ) ? $by_file[ $file ] : '';
 			$supported = ( '' !== $slug );
 			$active    = is_plugin_active( $file );

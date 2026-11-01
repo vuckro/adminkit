@@ -81,7 +81,7 @@ class AdminKit_Core_Menu_Icons {
 		if ( ! AdminKit_Settings::get( 'replace_icons_enabled' ) ) {
 			return false;
 		}
-		return (bool) apply_filters( 'adminkit/should_load', true, $context );
+		return (bool) ( apply_filters( 'adminkit/should_load', true, $context ) && apply_filters( 'adminkit/appearance_enabled', true, $context ) );
 	}
 
 	/**

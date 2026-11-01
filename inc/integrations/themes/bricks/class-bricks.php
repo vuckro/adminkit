@@ -246,7 +246,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		if ( ! AdminKit_Settings::get( 'replace_icons_enabled' ) ) {
 			return;
 		}
-		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+		if ( ! ( apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) ) {
 			return;
 		}
 		$uri = 'url("data:image/svg+xml,' . rawurlencode( self::LAYOUT_SVG ) . '")';
@@ -282,7 +282,7 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function print_theme_bridge() {
-		if ( is_admin() || self::is_builder() || ! is_admin_bar_showing() || ! apply_filters( 'adminkit/should_load', true, 'frontend' ) ) {
+		if ( is_admin() || self::is_builder() || ! is_admin_bar_showing() || ! ( apply_filters( 'adminkit/should_load', true, 'frontend' ) && apply_filters( 'adminkit/appearance_enabled', true, 'frontend' ) ) ) {
 			return;
 		}
 		$attr = AdminKit_Theme_Toggle::attribute();

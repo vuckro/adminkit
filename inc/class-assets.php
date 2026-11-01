@@ -46,6 +46,7 @@ class AdminKit_Assets {
 	const FONTS_SRC     = 'assets/css/fonts.css';
 	const TOKENS_HANDLE = 'adminkit-tokens';
 	const TOKENS_SRC    = 'assets/css/tokens.css';
+	const COMPONENTS_HANDLE = 'adminkit-component-tokens';
 
 	/** Default hex seed for the custom-color picker; native accent uses WaasKit roles. */
 	const ADMINKIT_BLUE = '#1549AB';
@@ -84,6 +85,7 @@ class AdminKit_Assets {
 	 */
 	public static function init() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'dispatch_admin' ), 9999 );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_clean_chrome' ), 10000 );
 		add_action( 'login_enqueue_scripts', array( __CLASS__, 'dispatch_login' ), 9999 );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'dispatch_frontend' ), 9999 );
 		add_action( 'enqueue_block_editor_assets', array( __CLASS__, 'dispatch_editor' ), 9999 );
@@ -217,6 +219,7 @@ class AdminKit_Assets {
 			'context'   => 'admin',
 			'section'   => null,
 			'condition' => null,
+			'appearance' => true,
 		) );
 
 		if ( empty( $args['handle'] ) || empty( $args['src'] ) ) {
@@ -303,17 +306,29 @@ class AdminKit_Assets {
 			return;
 		}
 
-		self::enqueue_fonts( $context );
-		self::enqueue_tokens( $context, $core_deps );
+		$appearance = (bool) apply_filters( 'adminkit/appearance_enabled', true, $context );
+		if ( $appearance ) {
+			self::enqueue_fonts( $context );
+			self::enqueue_tokens( $context, $core_deps );
+		}
 
 		$screen = AdminKit_Screen::get();
 
 		foreach ( self::$registry as $entry ) {
+			if ( ! $appearance && $entry['appearance'] ) {
+				continue;
+			}
 			if ( $entry['context'] !== $context ) {
 				continue;
 			}
 			if ( ! self::should_enqueue( $entry, $screen ) ) {
 				continue;
+			}
+			if ( ! $appearance ) {
+				self::enqueue_component_tokens();
+				$entry['deps'] = array_map( static function ( $dep ) {
+					return self::TOKENS_HANDLE === $dep ? self::COMPONENTS_HANDLE : $dep;
+				}, $entry['deps'] );
 			}
 			self::do_enqueue( $entry );
 		}
@@ -558,10 +573,26 @@ class AdminKit_Assets {
 	 * @return string
 	 */
 	public static function add_admin_body_class( $classes ) {
-		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) || ! apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
 			return $classes;
 		}
 		return $classes . ' adminkit';
+	}
+
+	/** Preserve explicit clean-interface choices without loading the modern skin. */
+	public static function enqueue_clean_chrome() {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) || apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
+			return;
+		}
+		wp_register_style( 'adminkit-clean-chrome', false );
+		wp_enqueue_style( 'adminkit-clean-chrome' );
+		AdminKit_Core_Chrome::clean_chrome_css( 'admin' );
+	}
+
+	/** Load only local, component-scoped variables; never the global skin. */
+	public static function enqueue_component_tokens() {
+		$src = 'assets/css/component-tokens.css';
+		wp_enqueue_style( self::COMPONENTS_HANDLE, ADMINKIT_URL . $src, array(), (string) filemtime( ADMINKIT_PATH . $src ) );
 	}
 
 	/**

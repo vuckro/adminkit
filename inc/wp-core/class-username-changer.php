@@ -86,6 +86,7 @@ class AdminKit_Username_Changer {
 			return;
 		}
 		AdminKit_Assets::register( array(
+			'appearance' => false,
 			'handle' => 'adminkit-username-changer',
 			'src' => 'assets/css/wp-core/username-changer.css',
 			'deps' => array( AdminKit_Assets::TOKENS_HANDLE ),

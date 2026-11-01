@@ -5,10 +5,11 @@ const path = require('node:path');
 const { JSDOM } = require('jsdom');
 const root = path.resolve(__dirname, '../..');
 const base = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json')));
-function boot(source) {
+function boot(source, native = false) {
  const dom = new JSDOM('<div id="adminkit-app"></div>', { url:'http://localhost/#brand',runScripts:'outside-only',pretendToBeVisual:true });
  const w=dom.window;
  const data=JSON.parse(JSON.stringify(base));
+ if(native){data.interfaceMode='wordpress';data.interfaceDefault='adminkit';data.profileUrl='/wp-admin/profile.php';}
  data.accentSource=source; data.brandAccent='#123456';
  data.values={ logo_url:'https://example.test/logo.svg',integration_hidden_enabled:false,extension_key:'keep' };
  data.designSystem={ type_scale:1.13,radius_scale:1.37,colors:{light:{bg:'#abcdef',accent:'#ffffff'},dark:{bg:'#112233'}} };
@@ -64,6 +65,17 @@ for(const source of ['monochrome','adminkit','bricks','custom']) {
  assert.equal(w.auditSurface.requests().settings.data.values.logo_url,undefined,'normal save must not overwrite General Settings logo');
  t.dom.window.close();
 }
+const native=boot('monochrome',true);
+await new Promise(resolve=>native.w.requestAnimationFrame(resolve));
+assert.equal(native.w.document.documentElement.style.cssText,'','native design editor must not modify global appearance');
+assert.equal(native.w.auditSurface.requests().settings.data.values.interface_default,'adminkit','site default missing from save payload');
+native.w.document.getElementById('ak-tab-configuration').click();
+await new Promise(resolve=>native.w.requestAnimationFrame(resolve));
+const selector=native.w.document.getElementById('ak-interface-default');
+selector.value='wordpress';selector.dispatchEvent(new native.w.Event('change'));
+assert.equal(native.w.auditSurface.requests().settings.data.values.interface_default,'wordpress','site default edit not included in save');
+assert.equal(native.w.document.documentElement.style.cssText,'','site default draft must not switch the current interface');
+native.dom.window.close();
 const t=boot('monochrome');
 for(const payload of [{values:{}},{_adminkit:'menu',values:{}},{_adminkit:'settings',values:[]},[]]) {
  t.w.auditSurface.importSettings({});t.read(JSON.stringify(payload));assert.equal(t.calls.length,0,'invalid export marker/container submitted');

@@ -8,6 +8,7 @@ function wp_enqueue_style(...$args) {}
 function wp_enqueue_script($handle,$src,$deps,$version,$footer) { global$scripts;$scripts[$handle]=array('src'=>$src,'deps'=>$deps,'version'=>$version,'footer'=>$footer); }
 function wp_add_inline_script($handle,$data,$position) { global$inline;$inline[$handle]=array($data,$position); }
 function wp_json_encode($value) { return json_encode($value); }
+function apply_filters($hook,$value,...$args) { return $value; }
 function check($ok,$message) { if(!$ok)throw new RuntimeException($message); }
 foreach(array('main','menu','toolbar')as$screen){
  $scripts=array();$inline=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>$screen));

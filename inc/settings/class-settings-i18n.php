@@ -20,6 +20,12 @@ class AdminKit_Settings_I18n {
 	 */
 	public static function strings() {
 		return array(
+			'interfaceDefault' => __( 'Default administration interface', 'adminkit' ),
+			'interfaceClassic' => __( 'WordPress classic', 'adminkit' ),
+			'interfaceDefaultHint' => __( 'Applies to accounts following the site default. Each person can choose their own interface in their profile. Enabled tools and saved settings are kept.', 'adminkit' ),
+			'interfacePersonal' => __( 'My administration interface', 'adminkit' ),
+			'interfacePersonalHint' => __( 'Choose AdminKit, WordPress classic or follow the site default in your profile.', 'adminkit' ),
+			'interfaceNativeNotice' => __( 'You are using WordPress classic. These site-wide appearance settings are saved for accounts using AdminKit; enabled tools remain available in both interfaces.', 'adminkit' ),
 			'pageOverview'                   => __( 'Overview', 'adminkit' ),
 			'pageConfiguration'              => __( 'Configuration', 'adminkit' ),
 			'pageOverviewTitle'              => __( 'Your administration, simply.', 'adminkit' ),

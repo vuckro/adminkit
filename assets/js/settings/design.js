@@ -12,6 +12,7 @@
 
 		function buildDesign() {
 			var p = el('section', { class: 'ak-panel ak-panel--brand', role: 'tabpanel' });
+			if (D.interfaceMode === 'wordpress') { p.appendChild(el('p', { class: 'ak-intro', text: I.interfaceNativeNotice })); }
 			var sections = [];
 			var shapePreviews = null;
 			var sectionKey = 'adminkit:foundation-section:' + location.pathname + location.search;
@@ -328,7 +329,7 @@
 				var entry = fontCatalog[state.appearance.ui_font] || fontCatalog.geist;
 				var font = entry.google && !state.appearance.remote_fonts_enabled ? fontCatalog.geist.stack : entry.stack;
 				ensureGoogleFont(entry.google);
-				var root = document.documentElement.style;
+				var root = (D.interfaceMode === 'wordpress' ? p : document.documentElement).style;
 				root.setProperty('--ak-type-scale', state.designSystem.type_scale);
 				root.setProperty('--ak-font-body', font);
 				root.setProperty('--wk-font-sans', font);
@@ -455,7 +456,7 @@
 			function refreshShapes() {
 				var highlight = state.designSystem.components.buttons.highlight;
 				var depth = { flat: 'none', subtle: 'var(--wk-elevation-1)', raised: 'var(--wk-elevation-2)' }[state.designSystem.elevation];
-				var root = document.documentElement.style;
+				var root = (D.interfaceMode === 'wordpress' ? p : document.documentElement).style;
 				root.setProperty('--ak-radius-scale', state.designSystem.radius_scale);
 				root.setProperty('--wk-radius-scale', state.designSystem.radius_scale);
 				root.setProperty('--ak-border-width', state.designSystem.border_width + 'px');

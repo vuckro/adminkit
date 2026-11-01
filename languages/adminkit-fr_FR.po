@@ -155,6 +155,10 @@ msgid "Applies after saving changes."
 msgstr "S’applique après l’enregistrement des modifications."
 
 #: inc/settings/class-settings-i18n.php
+msgid "Applies to accounts following the site default. Each person can choose their own interface in their profile. Enabled tools and saved settings are kept."
+msgstr "S’applique aux comptes qui suivent le réglage du site. Chaque personne peut choisir son interface dans son profil. Les outils activés et les réglages enregistrés sont conservés."
+
+#: inc/settings/class-settings-i18n.php
 msgid "Apply"
 msgstr "Appliquer"
 
@@ -227,6 +231,10 @@ msgstr "Les modifications s’appliquent après enregistrement."
 #, php-format
 msgid "Choice: %s"
 msgstr "Choix : %s"
+
+#: inc/settings/class-settings-i18n.php
+msgid "Choose AdminKit, WordPress classic or follow the site default in your profile."
+msgstr "Choisissez AdminKit, WordPress classique ou le réglage du site dans votre profil."
 
 #: inc/settings/class-settings-i18n.php
 msgid "Choose a feature"
@@ -391,6 +399,10 @@ msgstr "Formats de date et d’heure"
 #: inc/settings/class-settings-i18n.php
 msgid "Deactivation to save"
 msgstr "Désactivation à enregistrer"
+
+#: inc/settings/class-settings-i18n.php
+msgid "Default administration interface"
+msgstr "Interface d’administration par défaut"
 
 #: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Design system"
@@ -745,6 +757,10 @@ msgstr "Monter"
 #: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "My Account"
 msgstr "Mon compte"
+
+#: inc/settings/class-settings-i18n.php
+msgid "My administration interface"
+msgstr "Mon interface d’administration"
 
 #: inc/settings/class-settings-catalog.php inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Navigation"
@@ -1352,7 +1368,7 @@ msgstr "Sera activée après l’enregistrement."
 msgid "WordPress"
 msgstr "WordPress"
 
-#: inc/class-interface.php
+#: inc/class-interface.php inc/settings/class-settings-i18n.php
 msgid "WordPress classic"
 msgstr "WordPress classique"
 
@@ -1383,6 +1399,10 @@ msgstr "Vous modifiez la barre d’outils affichée dans l’administration Word
 #: inc/wp-core/class-user-quick-edit.php
 msgid "You are not allowed to do that."
 msgstr "Vous n’avez pas l’autorisation d’effectuer cette action."
+
+#: inc/settings/class-settings-i18n.php
+msgid "You are using WordPress classic. These site-wide appearance settings are saved for accounts using AdminKit; enabled tools remain available in both interfaces."
+msgstr "Vous utilisez WordPress classique. Ces réglages d’apparence du site sont conservés pour les comptes utilisant AdminKit ; les outils activés restent disponibles dans les deux interfaces."
 
 #: inc/settings/class-settings-i18n.php
 msgid "Your administration, simply."

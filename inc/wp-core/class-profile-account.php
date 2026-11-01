@@ -88,7 +88,7 @@ class AdminKit_Profile_Account {
 	 */
 	private static function should_enhance() {
 		return AdminKit_Screen::is_one_of( self::SCREENS )
-			&& (bool) apply_filters( 'adminkit/should_load', true, 'admin' );
+			&& (bool) ( apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) );
 	}
 
 	/**

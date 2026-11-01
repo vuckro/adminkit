@@ -219,7 +219,7 @@ abstract class AdminKit_Integration_Base {
 	 */
 	public static function print_menu_wordmark() {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( ! $screen || ! static::owns_screen( $screen ) || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+		if ( ! $screen || ! static::owns_screen( $screen ) || ! ( apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) ) {
 			return;
 		}
 		$slug  = static::wordmark_menu_slug();
@@ -282,6 +282,9 @@ abstract class AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function maybe_init() {
+		if ( ! apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
+			return;
+		}
 		if ( ! static::is_active() ) {
 			return;
 		}

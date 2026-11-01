@@ -197,7 +197,7 @@ class AdminKit_Core_Branding {
 			return;
 		}
 		$context = is_admin() ? 'admin' : 'frontend';
-		if ( ! apply_filters( 'adminkit/should_load', true, $context ) ) {
+		if ( ! ( apply_filters( 'adminkit/should_load', true, $context ) && apply_filters( 'adminkit/appearance_enabled', true, $context ) ) ) {
 			return;
 		}
 
@@ -254,7 +254,7 @@ class AdminKit_Core_Branding {
 	 * @return void
 	 */
 	public static function print_admin() {
-		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+		if ( ! ( apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) ) {
 			return;
 		}
 		self::print_css( self::css() );
@@ -270,7 +270,7 @@ class AdminKit_Core_Branding {
 		if ( ! AdminKit_Settings::get( 'branding_enabled' ) || ! is_admin_bar_showing() ) {
 			return;
 		}
-		if ( ! apply_filters( 'adminkit/should_load', true, 'frontend' ) ) {
+		if ( ! ( apply_filters( 'adminkit/should_load', true, 'frontend' ) && apply_filters( 'adminkit/appearance_enabled', true, 'frontend' ) ) ) {
 			return;
 		}
 		self::print_css( self::css() );

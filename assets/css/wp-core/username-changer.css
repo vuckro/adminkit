@@ -7,7 +7,7 @@
  * triggers a blocking browser modal on focus.
  */
 
-body.adminkit .adminkit-uc-locked {
+.adminkit-uc-locked {
 	background-color: var(--ak-surface-muted) !important;
 	color: var(--ak-text-muted) !important;
 	border-style: dashed !important;
@@ -15,18 +15,18 @@ body.adminkit .adminkit-uc-locked {
 	transition: background-color .12s ease, border-color .12s ease, color .12s ease;
 }
 
-body.adminkit .adminkit-uc-trigger {
+.adminkit-uc-trigger {
 	display: inline-flex;
 	align-items: center;
 	margin-top: calc(8px * var(--ak-space-scale, 1));
 }
 
-body.adminkit .adminkit-uc-trigger[hidden],
-body.adminkit .adminkit-uc-confirm[hidden] {
+.adminkit-uc-trigger[hidden],
+.adminkit-uc-confirm[hidden] {
 	display: none;
 }
 
-body.adminkit .adminkit-uc-confirm {
+.adminkit-uc-confirm {
 	margin-top: calc(10px * var(--ak-space-scale, 1));
 	padding: calc(12px * var(--ak-space-scale, 1)) calc(14px * var(--ak-space-scale, 1));
 	border: var(--ak-border-width) solid var(--ak-border-strong);
@@ -36,14 +36,14 @@ body.adminkit .adminkit-uc-confirm {
 	max-width: 48ch;
 }
 
-body.adminkit .adminkit-uc-confirm-text {
+.adminkit-uc-confirm-text {
 	margin: 0 0 calc(10px * var(--ak-space-scale, 1));
 	font-size: var(--ak-text-xs);
 	line-height: 1.5;
 	color: var(--ak-text);
 }
 
-body.adminkit .adminkit-uc-confirm-actions {
+.adminkit-uc-confirm-actions {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -57,16 +57,16 @@ body.adminkit .adminkit-uc-confirm-actions {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	body.adminkit .adminkit-uc-locked {
+	.adminkit-uc-locked {
 		transition: none;
 	}
 }
 
 @media (forced-colors: active) {
-	body.adminkit .adminkit-uc-locked {
+	.adminkit-uc-locked {
 		border: 1px dashed GrayText !important;
 	}
-	body.adminkit .adminkit-uc-confirm {
+	.adminkit-uc-confirm {
 		border: 1px solid CanvasText;
 	}
 }

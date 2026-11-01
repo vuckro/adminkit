@@ -220,13 +220,13 @@ class AdminKit_Core_Chrome {
 		$enabled = (bool) apply_filters( 'adminkit/clean_chrome/enabled', (bool) AdminKit_Settings::get( 'clean_chrome_enabled' ) );
 		$selectors = array();
 		if ( apply_filters( 'adminkit/hide_footer/enabled', $enabled && (bool) AdminKit_Settings::get( 'clean_chrome_hide_footer' ) ) ) {
-			$selectors[] = 'body.adminkit #wpfooter';
+			$selectors[] = 'body.wp-admin #wpfooter';
 		}
 		if ( apply_filters( 'adminkit/hide_help_button/enabled', $enabled && (bool) AdminKit_Settings::get( 'clean_chrome_hide_help' ) ) ) {
-			$selectors[] = 'body.adminkit #contextual-help-link-wrap';
+			$selectors[] = 'body.wp-admin #contextual-help-link-wrap';
 		}
 		if ( $selectors ) {
-			wp_add_inline_style( AdminKit_Assets::TOKENS_HANDLE, implode( ',', $selectors ) . '{display:none}' );
+			wp_add_inline_style( apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ? AdminKit_Assets::TOKENS_HANDLE : 'adminkit-clean-chrome', implode( ',', $selectors ) . '{display:none}' );
 		}
 	}
 

@@ -108,6 +108,18 @@ try {
 		$outputs[ $root . '/assets/css/' . $filename ] = $css;
 	}
 	$outputs[ $root . '/assets/css/tokens.css' ] = $header . ak_token_block( ':root, #wpadminbar', $roles ) . "\n" . file_get_contents( __DIR__ . '/appearance.css' ) . "\n" . file_get_contents( __DIR__ . '/wordpress.css' );
+
+	// Native WordPress mode: only tool roots receive a light component palette.
+	// Never emit :root, body, global WPDS aliases or font downloads in this layer.
+	$component_selector = ':where(.adminkit-app, .adminkit-quick-edit-row, [class*="adminkit-uc-"], .ak-nc-drawer, .ak-nc-backdrop, #wp-admin-bar-ak-notifications, .ak-preview, #ak-preview-pop, .column-ak_preview)';
+	$component_values = array_merge( $data['primitives'], $data['light'], $mono['light'], $roles, array(
+		'--ak-font-body' => 'system-ui, -apple-system, "Segoe UI", sans-serif',
+		'--ak-card-bg' => 'var(--ak-surface)',
+		'--ak-card-border' => 'var(--ak-border)',
+		'--ak-card-radius' => 'var(--ak-radius-m)',
+		'--ak-card-shadow' => 'none',
+	) );
+	$outputs[ $root . '/assets/css/component-tokens.css' ] = $header . ak_token_block( $component_selector, $component_values, 'light' );
 	if ( in_array( '--print', $argv, true ) ) {
 		echo reset( $outputs );
 		exit;

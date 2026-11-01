@@ -15,6 +15,7 @@ class AdminKit_Interface {
 			'type' => 'select', 'group' => 'appearance', 'default' => 'adminkit',
 			'sanitize' => array( __CLASS__, 'sanitize_default' ),
 		) );
+		add_filter( 'adminkit/appearance_enabled', array( __CLASS__, 'gate' ), 5, 2 );
 		add_action( 'personal_options', array( __CLASS__, 'profile_field' ) );
 		add_action( 'profile_update', array( __CLASS__, 'save_profile' ) );
 	}

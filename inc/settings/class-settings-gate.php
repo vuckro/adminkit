@@ -18,7 +18,7 @@ class AdminKit_Settings_Gate {
 	 */
 	public static function init() {
 		add_filter( 'adminkit/integration_enabled', array( __CLASS__, 'gate_integration' ), 10, 2 );
-		add_filter( 'adminkit/should_load', array( __CLASS__, 'gate_generic_theming' ), 10, 2 );
+		add_filter( 'adminkit/appearance_enabled', array( __CLASS__, 'gate_generic_theming' ), 10, 2 );
 		if ( function_exists( 'add_action' ) ) {
 			add_action( 'activated_plugin', array( __CLASS__, 'flush_plugin_map' ) );
 			add_action( 'deactivated_plugin', array( __CLASS__, 'flush_plugin_map' ) );

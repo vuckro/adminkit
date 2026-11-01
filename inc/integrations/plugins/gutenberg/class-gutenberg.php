@@ -88,7 +88,7 @@ class AdminKit_Integration_Gutenberg extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function enqueue_theme_toggle() {
-		if ( ! apply_filters( 'adminkit/should_load', true, 'editor' ) ) {
+		if ( ! ( apply_filters( 'adminkit/should_load', true, 'editor' ) && apply_filters( 'adminkit/appearance_enabled', true, 'editor' ) ) ) {
 			return;
 		}
 		if ( ! AdminKit_Settings::get( 'theme_toggle_enabled' ) ) {

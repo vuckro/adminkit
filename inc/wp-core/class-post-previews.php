@@ -76,6 +76,7 @@ class AdminKit_Post_Previews {
 		}
 
 		AdminKit_Assets::register( array(
+			'appearance' => false,
 			'handle'    => 'adminkit-post-previews',
 			'src'       => 'assets/css/wp-components/post-previews.css',
 			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),

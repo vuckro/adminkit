@@ -100,6 +100,10 @@ class AdminKit_Core_Options_General {
 
 	public static function branding_field() {
 		$url   = AdminKit_Settings::brand_logo( 'light' );
+		if ( ! apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
+			echo '<input type="url" class="regular-text" id="ak-general-logo-url" name="' . esc_attr( self::LOGO_FIELD_NAME ) . '" value="' . esc_url( $url ) . '" />';
+			return;
+		}
 		$nonce = ( current_user_can( 'manage_options' ) && current_user_can( 'unfiltered_html' ) && function_exists( 'wp_create_nonce' ) )
 			? wp_create_nonce( AdminKit_Core_Branding::LOGO_UPLOAD_NONCE )
 			: '';
@@ -124,7 +128,7 @@ class AdminKit_Core_Options_General {
 	 */
 	private static function should_enhance() {
 		return AdminKit_Screen::is_one_of( array( 'options-general' ) )
-			&& (bool) apply_filters( 'adminkit/should_load', true, 'admin' );
+			&& (bool) ( apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) );
 	}
 
 	/**

@@ -79,6 +79,7 @@ class AdminKit_Notification_Center {
 		add_action( 'all_admin_notices', array( __CLASS__, 'capture_end' ), PHP_INT_MAX );
 
 		AdminKit_Assets::register( array(
+			'appearance' => false,
 			'handle'  => 'adminkit-notification-center',
 			'src'     => 'assets/css/wp-core/notification-center.css',
 			'deps'    => array( AdminKit_Assets::TOKENS_HANDLE ),

@@ -91,10 +91,14 @@ class AdminKit_Theme_Toggle {
 	 */
 	public static function print_script() {
 		$action = function_exists( 'current_action' ) ? current_action() : '';
-		if ( 'wp_head' === $action && ( ! is_admin_bar_showing() || ! apply_filters( 'adminkit/should_load', true, 'frontend' ) ) ) {
+		if ( 'wp_head' === $action && ( ! is_admin_bar_showing() || ! ( apply_filters( 'adminkit/should_load', true, 'frontend' ) && apply_filters( 'adminkit/appearance_enabled', true, 'frontend' ) ) ) ) {
 			return;
 		}
-		if ( 'login_head' === $action && ( ! AdminKit_Settings::get( 'module_login_enabled' ) || ! apply_filters( 'adminkit/should_load', true, 'login' ) ) ) {
+		if ( 'login_head' === $action && ( ! AdminKit_Settings::get( 'module_login_enabled' ) || ! ( apply_filters( 'adminkit/should_load', true, 'login' ) && apply_filters( 'adminkit/appearance_enabled', true, 'login' ) ) ) ) {
+			return;
+		}
+		$context = 'login_head' === $action ? 'login' : ( 'wp_head' === $action ? 'frontend' : ( 'customize_controls_print_scripts' === $action ? 'customize' : 'admin' ) );
+		if ( ! apply_filters( 'adminkit/should_load', true, $context ) || ! apply_filters( 'adminkit/appearance_enabled', true, $context ) ) {
 			return;
 		}
 		$accent = AdminKit_Settings::accent_source();
@@ -168,7 +172,7 @@ class AdminKit_Theme_Toggle {
 		if ( ! AdminKit_Settings::get( 'theme_toggle_enabled' ) ) {
 			return; // "Light / dark toggle" feature switched off.
 		}
-		if ( ! apply_filters( 'adminkit/should_load', true, is_admin() ? 'admin' : 'frontend' ) ) {
+		if ( ! ( apply_filters( 'adminkit/should_load', true, is_admin() ? 'admin' : 'frontend' ) && apply_filters( 'adminkit/appearance_enabled', true, is_admin() ? 'admin' : 'frontend' ) ) ) {
 			return;
 		}
 		$sun   = str_replace( '<svg ', '<svg class="ak-theme-icon" ', AdminKit_Icons::display_svg( 'sun' ) );
@@ -199,7 +203,7 @@ class AdminKit_Theme_Toggle {
 	 */
 	public static function register_view_site_node( $bar ) {
 		$in_admin = is_admin();
-		if ( ! apply_filters( 'adminkit/should_load', true, $in_admin ? 'admin' : 'frontend' ) ) {
+		if ( ! ( apply_filters( 'adminkit/should_load', true, $in_admin ? 'admin' : 'frontend' ) && apply_filters( 'adminkit/appearance_enabled', true, $in_admin ? 'admin' : 'frontend' ) ) ) {
 			return;
 		}
 
@@ -245,7 +249,7 @@ class AdminKit_Theme_Toggle {
 	 * @return array
 	 */
 	public static function editor_content_style( $init ) {
-		if ( ! is_admin() || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+		if ( ! is_admin() || ! ( apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) ) {
 			return $init;
 		}
 		$bg      = 'oklch(20.5% 0.005 258)';
@@ -280,7 +284,7 @@ class AdminKit_Theme_Toggle {
 	 * @return void
 	 */
 	public static function print_editor_bridge() {
-		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+		if ( ! ( apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) ) {
 			return;
 		}
 		$attr = self::attribute();

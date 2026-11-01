@@ -4,13 +4,13 @@
    no animation — depth reads from the surface tone, matching tokens.css. */
 
 /* ── Column cell ───────────────────────────────────────────────────────── */
-.adminkit .column-ak_preview {
+.column-ak_preview {
 	width: 72px;
 	text-align: center;
 	vertical-align: middle;
 }
 /* Quick Edit / inline-edit rows: keep our column out of the editable grid. */
-.adminkit .inline-edit-row .column-ak_preview {
+.inline-edit-row .column-ak_preview {
 	display: none;
 }
 
@@ -21,19 +21,19 @@
    AFTER the title), so dropping it needs the row-level specificity AND !important.
    Desktop keeps the column + its hover preview. */
 @media screen and (max-width: 782px) {
-	body.adminkit .wp-list-table tr td.column-ak_preview,
-	body.adminkit .wp-list-table tr th.column-ak_preview {
+	body.wp-admin .wp-list-table tr td.column-ak_preview,
+	body.wp-admin .wp-list-table tr th.column-ak_preview {
 		display: none !important;
 	}
 }
 
 /* ── Thumbnail ─────────────────────────────────────────────────────────── */
-.adminkit .ak-preview {
+.ak-preview {
 	display: inline-block;
 	line-height: 0;
 	cursor: zoom-in; /* hovering opens the larger preview panel */
 }
-.adminkit .ak-preview__thumb {
+.ak-preview__thumb {
 	display: block;
 	width: 56px;
 	height: 42px;
@@ -46,8 +46,8 @@
 
 /* Empty (no featured image) + broken (it failed to load) → a clean icon box,
    not a dashed placeholder or the browser's broken-image glyph. */
-.adminkit .ak-preview--empty,
-.adminkit .ak-preview--broken {
+.ak-preview--empty,
+.ak-preview--broken {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
@@ -59,11 +59,11 @@
 	background: var(--ak-elevated);
 	cursor: default;
 }
-.adminkit .ak-preview--broken .ak-preview__thumb {
+.ak-preview--broken .ak-preview__thumb {
 	display: none; /* hide the failed image; the icon below stands in */
 }
-.adminkit .ak-preview--empty::after,
-.adminkit .ak-preview--broken::after {
+.ak-preview--empty::after,
+.ak-preview--broken::after {
 	content: "";
 	width: 20px;
 	height: 20px;
@@ -79,7 +79,7 @@
 }
 
 /* ── Hover preview panel (appended to <body>) ──────────────────────────── */
-.adminkit #ak-preview-pop {
+#ak-preview-pop {
 	position: fixed;
 	z-index: 100000;
 	display: none;
@@ -89,10 +89,10 @@
 	border-radius: var(--ak-radius-m);
 	pointer-events: none; /* purely a hover indicator of the thumb — never captures the cursor */
 }
-.adminkit #ak-preview-pop.is-visible {
+#ak-preview-pop.is-visible {
 	display: block;
 }
-.adminkit #ak-preview-pop img {
+#ak-preview-pop img {
 	display: block;
 	width: 560px;
 	max-width: 70vw;
@@ -101,15 +101,15 @@
 }
 
 /* While the screenshot loads, hold a fixed box so the panel doesn't jump. */
-.adminkit #ak-preview-pop.is-loading {
+#ak-preview-pop.is-loading {
 	width: 560px;
 	max-width: 70vw;
 	aspect-ratio: 3 / 2;
 }
-.adminkit #ak-preview-pop.is-loading img {
+#ak-preview-pop.is-loading img {
 	visibility: hidden;
 }
-.adminkit #ak-preview-pop.is-loading::after {
+#ak-preview-pop.is-loading::after {
 	content: attr(data-loading-label);
 	position: absolute;
 	inset: 0;
@@ -121,16 +121,16 @@
 }
 
 /* Both sources failed → a small message instead of a stretched broken image. */
-.adminkit #ak-preview-pop.is-broken img {
+#ak-preview-pop.is-broken img {
 	display: none;
 }
-.adminkit #ak-preview-pop.is-broken {
+#ak-preview-pop.is-broken {
 	width: auto;
 	height: auto;
 	padding: calc(14px * var(--ak-space-scale, 1)) calc(16px * var(--ak-space-scale, 1));
 	color: var(--ak-text-muted);
 	font: 500 var(--ak-text-s) / 1.4 var(--ak-font-body);
 }
-.adminkit #ak-preview-pop.is-broken::after {
+#ak-preview-pop.is-broken::after {
 	content: attr(data-broken-label);
 }

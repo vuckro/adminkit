@@ -54,6 +54,7 @@ class AdminKit_User_Quick_Edit {
 		add_filter( 'user_row_actions', array( __CLASS__, 'add_row_action' ), 20, 2 );
 		add_action( 'admin_footer-users.php', array( __CLASS__, 'print_form_template' ) );
 		AdminKit_Assets::register( array(
+			'appearance' => false,
 			'handle' => 'adminkit-user-quick-edit',
 			'src' => 'assets/css/wp-core/user-quick-edit.css',
 			'deps' => array( AdminKit_Assets::TOKENS_HANDLE ),

@@ -155,6 +155,10 @@ msgid "Applies after saving changes."
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
+msgid "Applies to accounts following the site default. Each person can choose their own interface in their profile. Enabled tools and saved settings are kept."
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
 msgid "Apply"
 msgstr ""
 
@@ -226,6 +230,10 @@ msgstr ""
 #: inc/settings/class-settings-i18n.php
 #, php-format
 msgid "Choice: %s"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Choose AdminKit, WordPress classic or follow the site default in your profile."
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -390,6 +398,10 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Deactivation to save"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Default administration interface"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
@@ -744,6 +756,10 @@ msgstr ""
 
 #: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "My Account"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "My administration interface"
 msgstr ""
 
 #: inc/settings/class-settings-catalog.php inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
@@ -1352,7 +1368,7 @@ msgstr ""
 msgid "WordPress"
 msgstr ""
 
-#: inc/class-interface.php
+#: inc/class-interface.php inc/settings/class-settings-i18n.php
 msgid "WordPress classic"
 msgstr ""
 
@@ -1382,6 +1398,10 @@ msgstr ""
 
 #: inc/wp-core/class-user-quick-edit.php
 msgid "You are not allowed to do that."
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "You are using WordPress classic. These site-wide appearance settings are saved for accounts using AdminKit; enabled tools remain available in both interfaces."
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php

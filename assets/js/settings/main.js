@@ -57,6 +57,7 @@
 		});
 
 		state.appearance = Object.assign({ ui_font: 'geist', remote_fonts_enabled: false }, D.appearance || {});
+		state.interfaceDefault = D.interfaceDefault || 'adminkit';
 		state.appearance.remote_fonts_enabled = !!state.appearance.remote_fonts_enabled;
 
 		state.designSystem = Object.assign({ radius_scale: 1, type_scale: 1, border_width: 1, elevation: 'default' }, D.designSystem || {});
@@ -130,6 +131,7 @@
 			v.accent_source = state.accentSource;
 			Object.assign(v, state.appearance);
 			v.design_system = Object.assign({}, state.designSystem);
+			if (D.interfaceDefault) { v.interface_default = state.interfaceDefault; }
 			return v;
 		}
 
@@ -185,6 +187,14 @@
 		function buildConfiguration() {
 			var panel = el('section', { class: 'ak-panel ak-configuration', role: 'tabpanel' }, [el('h2', { class: 'ak-panel-title', text: I.pageConfiguration }), intro(I.pageSettingsIntro)]);
 			function row(title, description, controls) { panel.appendChild(el('section', { class: 'ak-configuration-row' }, [el('div', {}, [el('h3', { text: title }), el('p', { text: description })]), el('div', { class: 'ak-actions' }, controls)])); }
+			if (D.interfaceDefault) {
+				var interfaceSelect = el('select', { id: 'ak-interface-default', 'aria-label': I.interfaceDefault });
+				[['adminkit', 'AdminKit'], ['wordpress', I.interfaceClassic]].forEach(function (option) { interfaceSelect.appendChild(el('option', { value: option[0], text: option[1] })); });
+				interfaceSelect.value = state.interfaceDefault;
+				interfaceSelect.addEventListener('change', function () { state.interfaceDefault = interfaceSelect.value; markDirty(); });
+				row(I.interfaceDefault, I.interfaceDefaultHint, [interfaceSelect]);
+				row(I.interfacePersonal, I.interfacePersonalHint, [el('a', { class: 'ak-btn', href: D.profileUrl, text: I.interfacePersonal })]);
+			}
 			row(I.pageExportTitle, I.pageExportDesc, configurationActions.length ? [configurationActions[0]] : []);
 			row(I.pageImportTitle, I.pageImportDesc, configurationActions.slice(1));
 			var defaults = el('details', { class: 'ak-defaults' }, [el('summary', { text: I.resetDefaults }), el('button', { type: 'button', class: 'ak-btn', text: I.pageDefaultsConfirm, onclick: function () {

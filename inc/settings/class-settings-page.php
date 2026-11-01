@@ -201,7 +201,12 @@ class AdminKit_Settings_Page {
 		$js = 'assets/js/settings.js';
 		$screen_js = 'assets/js/settings/' . $module . '.js';
 		$screen_handle = self::HANDLE . '-' . $module;
-		wp_enqueue_style( self::HANDLE, ADMINKIT_URL . $css, array( AdminKit_Assets::TOKENS_HANDLE ), self::ver( $css ) );
+		$tokens_handle = AdminKit_Assets::TOKENS_HANDLE;
+		if ( ! apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
+			AdminKit_Assets::enqueue_component_tokens();
+			$tokens_handle = AdminKit_Assets::COMPONENTS_HANDLE;
+		}
+		wp_enqueue_style( self::HANDLE, ADMINKIT_URL . $css, array( $tokens_handle ), self::ver( $css ) );
 		wp_enqueue_style( $screen_handle, ADMINKIT_URL . $screen_css, array( self::HANDLE ), self::ver( $screen_css ) );
 		$pages_css = 'assets/css/settings/pages.css';
 		wp_enqueue_style( self::HANDLE . '-pages', ADMINKIT_URL . $pages_css, array( $screen_handle ), self::ver( $pages_css ) );
@@ -445,6 +450,9 @@ class AdminKit_Settings_Page {
 			'pages'        => null,
 			'initialTab'   => 'overview',
 			'pageTitle'    => '',
+			'interfaceDefault' => AdminKit_Interface::sanitize_default( AdminKit_Settings::get( 'interface_default' ) ),
+			'interfaceMode' => AdminKit_Interface::mode(),
+			'profileUrl' => admin_url( 'profile.php' ),
 			'version'      => ADMINKIT_VERSION,
 			'values'       => $is_main ? array_combine( array_keys( AdminKit_Settings::schema() ), array_map( array( 'AdminKit_Settings', 'get' ), array_keys( AdminKit_Settings::schema() ) ) ) : array(),
 			'route'        => self::REST_NS . self::REST_ROUTE,

@@ -9,7 +9,7 @@ class AdminKit_Core_Reading_Layout {
 
 	public static function enqueue() {
 		$screen = get_current_screen();
-		if ( ! $screen || ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) {
+		if ( ! $screen || ! ( apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) ) {
 			return;
 		}
 		if ( 'options-reading' === $screen->id ) {

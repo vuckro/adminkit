@@ -12,7 +12,7 @@
 
 		function buildPlugins() {
 			var frag = [];
-			var list = D.integrations || [];
+			var list = (D.integrations || []).filter(function (item) { return !item.system; });
 			if (!list.length) {
 				return frag;
 			}
