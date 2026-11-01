@@ -2,9 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [ main, reprise/base-main-locale, 'codex/**' ]
+    branches: [ main, 'codex/**' ]
   pull_request:
   workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   quality:
@@ -91,7 +94,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gettext rsync zip unzip
           php dev/check-modules.php
-          php dev/package.php --working-tree --out=/tmp/adminkit.zip
+          php dev/package.php --working-tree --zip=/tmp/adminkit.zip
           unzip -l /tmp/adminkit.zip
           mkdir -p /tmp/pcp-target
           unzip -q /tmp/adminkit.zip -d /tmp/pcp-target

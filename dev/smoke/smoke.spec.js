@@ -92,9 +92,9 @@ test.describe('wp-admin', () => {
     await expect(radiusSelect).toBeVisible();
 
     const originalRadius = await radiusSelect.inputValue();
-    const nextRadius = originalRadius === 'sharp' ? 'rounded' : 'sharp';
+    const nextRadius = originalRadius === '0' ? '1' : '0';
     await radiusSelect.selectOption(nextRadius);
-    const saveBtn = page.locator('.ak-save-bar button.ak-btn--primary, .ak-actions button.ak-btn--primary').first();
+    const saveBtn = page.locator('.ak-savebar button.ak-btn--primary, .ak-save-bar button.ak-btn--primary, .ak-actions button.ak-btn--primary').first();
     if (await saveBtn.isVisible()) {
       await Promise.all([
         page.waitForResponse((r) => r.url().includes('/adminkit/v1/settings') && r.request().method() === 'POST'),
@@ -125,7 +125,7 @@ test.describe('wp-admin', () => {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow).toBeLessThanOrEqual(2);
     const cornerMirrored = await page.evaluate(() => {
-      const bg = window.getComputedStyle(document.getElementById('wpwrap'), '::before').backgroundImage;
+      const bg = window.getComputedStyle(document.getElementById('wpwrap'), '::after').backgroundImage;
       return bg.includes('0% 100%') || bg.includes('bottom left') || bg.includes('left bottom');
     });
     expect(cornerMirrored).toBe(true);

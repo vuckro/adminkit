@@ -41,6 +41,7 @@ $opts = getopt(
 		'working-tree',
 		'target::',
 		'zip::',
+		'out::',
 		'dry-run',
 		'quiet',
 		'help',
@@ -61,7 +62,7 @@ if ( ! $root || ! is_dir( $root . '/.git' ) ) {
 $ref          = $opts['ref']           ?? 'HEAD';
 $use_working  = isset( $opts['working-tree'] );
 $target       = $opts['target']        ?? null;
-$zip          = $opts['zip']           ?? null;
+$zip          = $opts['zip']           ?? ( $opts['out'] ?? null );
 $dry_run      = isset( $opts['dry-run'] );
 $quiet        = isset( $opts['quiet'] );
 
