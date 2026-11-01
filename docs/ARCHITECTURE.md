@@ -7,18 +7,21 @@ Development tooling is separate from the distributed plugin.
 
 ## Bootstrap and ownership
 
-`adminkit.php` defines paths/version and calls `AdminKit_Plugin::init()`.
+`adminkit.php` defines paths/version and hooks `AdminKit_Plugin::init()` onto
+`plugins_loaded` (priority 5, with an idempotent immediate fallback if already fired)
+so third-party plugins can register `adminkit/*` filters before modules boot.
 `MODULES` is the ordered registry: first every file is required, then non-null boot
 callables execute in registry order. Helpers have null boot values. Files under
-`inc/` outside integrations must belong to this registry, except the orchestrator.
-The module/package check verifies that relationship and every boot callable.
+`inc/` outside integrations must belong to this registry, except the orchestrator
+and `inc/generated/lucide-paths.php`. The module/package check verifies that
+relationship and every boot callable.
 
-- `inc/settings/`: schema, catalogs, permission/loading gates and workspace host.
+- `inc/settings/`: schema, catalogs, `AdminKit_Settings_I18n`, permission/loading gates and workspace host.
 - `inc/wp-core/`: existing WordPress surfaces and optional native workflow tools.
-- `inc/features/`: Menu, Toolbar and the notification drawer.
-- `inc/integrations/{plugins,themes}/{slug}/`: auto-discovered host adapters.
+- `inc/features/`: Menu (`Manager` + `Config`/`Snapshot`/`Renderer`/`Store`), Toolbar (`Manager` + `Config`/`Snapshot`/`Renderer`) and the notification drawer.
+- `inc/integrations/{plugins,themes}/{slug}/`: auto-discovered host adapters (memoized manifest, `AdminKit_FunnelKit_Integration` trait, shared `assets/css/vendor/element-plus.css`).
 - `inc/class-assets.php`, `class-icons.php`, `class-design-system.php`,
-  `class-storage.php`: shared services.
+  `class-storage.php`: shared services (`inc/generated/lucide-paths.php` provides OPcache icon paths).
 
 Settings registers integration keys immediately from adapter filenames, without
 loading translated labels or consulting host activation. Adapter files load after
@@ -43,16 +46,18 @@ list enhancements leave native lists alone. Prepaint/profile footer placement
 retains its existing special handling to prevent hidden or flashing forms.
 Settings host scripts are owned by the settings controller.
 
-Navigation has four build-free factories under `assets/js/settings/`:
+Navigation and settings editors use build-free modules under `assets/js/settings/`:
 
-- `navigation-controls.js`: shared title/icon controls, popup lifecycle, drag
+- `navigation-controls.js`: shared title/icon controls, lazy `/adminkit/v1/icons` picker, popup lifecycle, drag
   gestures and reorder animation. Each workspace gets one controls instance.
-- `navigation-menu.js`: native menu snapshot/draft, rendering, submenu movement,
-  custom links, reset and import/export. Exposes `build()` and `request()`.
+- `navigation-menu-model.js` + `navigation-menu.js`: menu normalization/composite keys/reconcile/serialization in `navigation-menu-model.js`, and DOM rendering, submenu movement, custom links, reset and import/export in `navigation-menu.js`. Exposes `build()` and `request()`.
 - `navigation-toolbar.js`: node loading, independent admin/frontend drafts,
   rendering, context reset and serialization. Exposes `build()` and `request()`.
 - `navigation.js`: pane/hash routing and the existing main/standalone factory
   contract; delegates builds and request payloads to the owning editor.
+- `design-colors.js` + `design.js`: sRGB/contrast/palette swatch editors in `design-colors.js`, and typography/shape/surface controls in `design.js`.
+- `wp-core/profile-account-dom.js` + `wp-core/profile-account.js`: shared icons/DOM table helpers and tabbed profile layout.
+- `AdminKit_Assets::print_prepaint()` emits the shared anti-FOUC inline script for Options General, Options Discussion and Profile screens.
 
 The controls instance is passed explicitly to each editor. Editors receive the
 existing host context and keep the same per-scope revisions; neither editor owns
@@ -127,17 +132,25 @@ workspace locked until reload mounts server values; failure restores editing. Me
 
 ## Navigation storage and application
 
-Menu rows use `{base_prefix}adminkit_menu_items`, keyed by `blog_id`. The schema
-is created lazily when enabled, never by activation. Writes require InnoDB and
-replace a site's rows inside a transaction, rolling back failed deletes/inserts.
-Caches invalidate after commit; failed reads are not cached as empty layouts.
-Existing MyISAM tables are refused before deletion rather than silently converted.
+Menu rows use `{base_prefix}adminkit_menu_items`, keyed by `blog_id` (and cleaned up
+on `wp_uninitialize_site`). The schema is created lazily when enabled, never by
+activation. Writes use transactions on both InnoDB and SQLite (`WP_SQLite_DB` /
+WordPress Playground), rolling back failed deletes/inserts while preserving rows
+whose slugs are invisible to non-Super-Admin editors on Multisite. Existing MyISAM
+or MEMORY tables are refused before deletion rather than silently converted.
 
-Menu application preserves native capabilities and direct access. Hiding uses
-presentation classes, with AdminKit's own menu protected. Submenus can move and
-retain native capabilities; taxonomy/post-type slugs resolve moved highlights.
-Only `manage_options` viewers persist first-seen order; restricted menus cannot
-prune the administrator's history.
+Menu PHP mirrors the four-owner Toolbar split under `inc/features/menu/`:
+
+- `AdminKit_Menu_Manager`: stable public facade, setting gate, WordPress hook
+  callbacks/priorities, capabilities and REST response envelopes.
+- `AdminKit_Menu_Config`: item normalization, strict custom-link URL validation and
+  `seen_order` persistence.
+- `AdminKit_Menu_Snapshot`: pristine native `$menu`/`$submenu` capture across all
+  five AdminKit submenu screens for the Navigation editor.
+- `AdminKit_Menu_Renderer`: composite-key layout application, badge preservation,
+  cross-parent `$_parent_pages`/`$_registered_pages` hook remapping (falling back to
+  the original parent when a target parent is inaccessible for the current role),
+  and icon/folded-tooltip output.
 
 Toolbar PHP has four owners under `inc/features/toolbar/`:
 
@@ -195,7 +208,9 @@ a successful write, so failure is retryable. Independent historical footer/help
 filters remain effective over the unified switch. Upgrade 8 repairs historical
 settings left behind by failed writes, including installations marked version 7.
 It preserves explicit replacement values and verifies persistence before advancing
-the storage version. Upgrade 6 remains unchanged.
+the storage version. Upgrade 9 promotes `adminkit_settings` and `adminkit_toolbar`
+to `autoload = true` so cold admin requests avoid extra per-option SQL queries.
+Upgrade 6 remains unchanged.
 
 Deactivation preserves storage. Uninstall removes current and historical AdminKit
 options, per-site stats tables, the shared menu table, retired user metadata and

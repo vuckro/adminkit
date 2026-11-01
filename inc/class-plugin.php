@@ -47,6 +47,7 @@ class AdminKit_Plugin {
 		'class-upgrades.php'                                  => 'AdminKit_Upgrades::init',
 		'settings/class-settings-catalog.php'                 => null, // booted by Settings_Page
 		'settings/class-settings-gate.php'                    => null, // booted by Settings_Page
+		'settings/class-settings-i18n.php'                    => null, // UI string catalog for Settings_Page
 		'settings/class-settings-page.php'                     => 'AdminKit_Settings_Page::init',
 		'class-theme-toggle.php'                               => 'AdminKit_Theme_Toggle::init',
 
@@ -66,6 +67,9 @@ class AdminKit_Plugin {
 		'wp-core/class-plugins-list.php'                       => 'AdminKit_Plugins_List::init',
 		'wp-core/class-content-list.php'                       => 'AdminKit_Content_List::init',
 		'features/menu/class-menu-store.php'                   => null, // schema only
+		'features/menu/class-menu-config.php'                  => null,
+		'features/menu/class-menu-snapshot.php'                => null,
+		'features/menu/class-menu-renderer.php'                => null,
 		'features/menu/class-menu-manager.php'                 => 'AdminKit_Menu_Manager::init',
 		'features/toolbar/class-toolbar-config.php'            => null,
 		'features/toolbar/class-toolbar-snapshot.php'          => null,

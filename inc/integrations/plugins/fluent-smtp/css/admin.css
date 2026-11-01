@@ -158,7 +158,7 @@ body.adminkit.settings_page_fluent-mail .fluent-mail-app .fss_wid_sub_headers .f
 
 /* The hour-count number that shows when a cell has activity */
 body.adminkit.settings_page_fluent-mail .fluent-mail-app .fcraft_time_hour .fcraft_time_hour_value {
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 /* Dashboard mailer + stat cards */
@@ -316,16 +316,16 @@ body.adminkit.settings_page_fluent-mail .el-button--success:focus {
 
 /* Warning */
 body.adminkit.settings_page_fluent-mail .el-button--warning {
-	background-color: var(--ak-warning);
+	background-color: var(--ak-warning-subtle);
 	border-color: var(--ak-warning);
-	color: #ffffff;
+	color: var(--ak-warning);
 }
 
 /* Danger */
 body.adminkit.settings_page_fluent-mail .el-button--danger {
-	background-color: var(--ak-error);
-	border-color: var(--ak-error);
-	color: #ffffff;
+	background-color: var(--ak-danger-solid);
+	border-color: var(--ak-danger-solid);
+	color: var(--ak-on-danger-solid);
 }
 
 /* Info / default ghost — neutral surface */
@@ -510,7 +510,7 @@ body.adminkit.settings_page_fluent-mail .el-dialog__body {
 
 /* Modal backdrop — soften the dim so the modal stands out cleanly */
 body.adminkit.settings_page_fluent-mail .v-modal {
-	background: rgba(0, 0, 0, 0.5);
+	background: var(--ak-overlay);
 }
 
 /* Close button (X) */
@@ -661,8 +661,8 @@ body.adminkit.settings_page_fluent-mail .el-dialog__body .el-button.nav {
 
 /* ===== Element UI alerts — intent colors ===== */
 body.adminkit.settings_page_fluent-mail .el-alert--success {
-	background-color: var(--ak-success);
-	color: #ffffff;
+	background-color: var(--ak-success-subtle);
+	color: var(--ak-success);
 }
 
 body.adminkit.settings_page_fluent-mail .el-alert--warning {
@@ -671,13 +671,13 @@ body.adminkit.settings_page_fluent-mail .el-alert--warning {
 }
 
 body.adminkit.settings_page_fluent-mail .el-alert--error {
-	background-color: var(--ak-error);
-	color: #ffffff;
+	background-color: var(--ak-error-subtle);
+	color: var(--ak-error);
 }
 
 body.adminkit.settings_page_fluent-mail .el-alert--info {
-	background-color: var(--ak-info);
-	color: #ffffff;
+	background-color: var(--ak-info-subtle);
+	color: var(--ak-info);
 }
 
 
@@ -843,21 +843,21 @@ body.adminkit.settings_page_fluent-mail .el-tag--info {
 }
 
 body.adminkit.settings_page_fluent-mail .el-tag--success {
-	background-color: var(--ak-success);
-	color: #ffffff;
-	border-color: var(--ak-success);
+	background-color: var(--ak-success-subtle);
+	color: var(--ak-success);
+	border-color: color-mix(in srgb, var(--ak-success) 30%, transparent);
 }
 
 body.adminkit.settings_page_fluent-mail .el-tag--warning {
-	background-color: var(--ak-warning);
-	color: #ffffff;
-	border-color: var(--ak-warning);
+	background-color: var(--ak-warning-subtle);
+	color: var(--ak-warning);
+	border-color: color-mix(in srgb, var(--ak-warning) 30%, transparent);
 }
 
 body.adminkit.settings_page_fluent-mail .el-tag--danger {
-	background-color: var(--ak-error);
-	color: #ffffff;
-	border-color: var(--ak-error);
+	background-color: var(--ak-error-subtle);
+	color: var(--ak-error);
+	border-color: color-mix(in srgb, var(--ak-error) 30%, transparent);
 }
 
 

@@ -115,42 +115,16 @@ class AdminKit_Profile_Account {
 		if ( ! self::should_enhance() ) {
 			return;
 		}
-		$pending = self::PENDING_CLASS;
-		$ready   = self::READY_CLASS;
 		// Start fetching in the head; execute only once the complete form exists.
-		$script = wp_scripts()->registered['adminkit-profile-account'] ?? null;
-		if ( $script ) {
-			$src = add_query_arg( 'ver', $script->ver, $script->src );
-			$src = apply_filters( 'script_loader_src', $src, 'adminkit-profile-account' );
-			printf( '<link rel="preload" as="script" href="%s">' . "\n", esc_url( $src ) );
+		foreach ( array( 'adminkit-profile-account-dom', 'adminkit-profile-account' ) as $handle ) {
+			$script = wp_scripts()->registered[ $handle ] ?? null;
+			if ( $script ) {
+				$src = add_query_arg( 'ver', $script->ver, $script->src );
+				$src = apply_filters( 'script_loader_src', $src, $handle );
+				printf( '<link rel="preload" as="script" href="%s">' . "\n", esc_url( $src ) );
+			}
 		}
-		?>
-<script id="adminkit-account-prepaint">
-(function () {
-	var d = document.documentElement;
-	d.classList.add(<?php echo wp_json_encode( $pending ); ?>);
-	// Safety net: if the footer builder never reveals the form (script error,
-	// blocked asset, …), force it visible so content is never trapped hidden.
-	function reveal() {
-		d.classList.remove(<?php echo wp_json_encode( $pending ); ?>);
-		d.classList.add(<?php echo wp_json_encode( $ready ); ?>);
-	}
-	window.addEventListener('load', function () {
-		// One frame after load: profile-account.js (also footer) has run by now in
-		// the normal case and already revealed. This only catches the failure case.
-		var after = function () {
-			if (d.classList.contains(<?php echo wp_json_encode( $pending ); ?>)) { reveal(); }
-		};
-		if (window.requestAnimationFrame) { window.requestAnimationFrame(after); }
-		else { window.setTimeout(after, 0); }
-	});
-	// Absolute backstop in case `load` never fires (e.g. a hung subresource).
-	setTimeout(function () {
-		if (d.classList.contains(<?php echo wp_json_encode( $pending ); ?>)) { reveal(); }
-	}, 3000);
-})();
-</script>
-		<?php
+		AdminKit_Assets::print_prepaint( 'adminkit-account-prepaint', self::PENDING_CLASS, self::READY_CLASS );
 	}
 
 	/**
@@ -222,9 +196,13 @@ class AdminKit_Profile_Account {
 		);
 
 		AdminKit_Assets::enqueue_script(
+			'adminkit-profile-account-dom',
+			'assets/js/wp-core/profile-account-dom.js'
+		);
+		AdminKit_Assets::enqueue_script(
 			'adminkit-profile-account',
 			'assets/js/wp-core/profile-account.js',
-			array(),
+			array( 'adminkit-profile-account-dom' ),
 			'window.AdminKitProfileAccount=' . wp_json_encode( $strings ) . ';'
 		);
 	}

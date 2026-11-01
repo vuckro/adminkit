@@ -129,7 +129,7 @@ class AdminKit_Integration_Fluent_Snippets extends AdminKit_Integration_Base {
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-fluent-snippets-admin',
 			'src'       => 'inc/integrations/plugins/fluent-snippets/css/admin.css',
-			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE, AdminKit_Assets::ELEMENT_PLUS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_screen' ),
 		) );

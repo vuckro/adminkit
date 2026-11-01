@@ -7,6 +7,52 @@
 defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Icons {
+	/**
+	 * Core WordPress admin-menu dashicon class → Unicode codepoint, used by
+	 * `AdminKit_Menu_Renderer` to restore a native glyph without `!important`
+	 * when an item is explicitly pinned back to `wp-default`.
+	 *
+	 * @var array<string,string>
+	 */
+	const MENU_DASHICON_GLYPHS = array(
+		'dashicons-dashboard'        => '\\f226',
+		'dashicons-admin-home'       => '\\f226',
+		'dashicons-admin-post'       => '\\f109',
+		'dashicons-admin-media'      => '\\f104',
+		'dashicons-admin-page'       => '\\f105',
+		'dashicons-admin-comments'   => '\\f101',
+		'dashicons-admin-appearance' => '\\f100',
+		'dashicons-admin-plugins'    => '\\f106',
+		'dashicons-admin-users'      => '\\f110',
+		'dashicons-admin-tools'      => '\\f107',
+		'dashicons-admin-settings'   => '\\f108',
+		'dashicons-admin-customizer' => '\\f540',
+		'dashicons-admin-network'    => '\\f112',
+		'dashicons-admin-site'       => '\\f319',
+		'dashicons-admin-site-alt3'  => '\\f524',
+	);
+
+	/**
+	 * Core WordPress admin-bar node id → native dashicon codepoint + paint target
+	 * (`ab-icon`, `ab-item`, or `search`), used by `AdminKit_Toolbar_Renderer` when
+	 * a toolbar node is explicitly pinned back to `wp-default`.
+	 *
+	 * @var array<string,array{glyph:string,target:string}>
+	 */
+	const TOOLBAR_DASHICON_GLYPHS = array(
+		'wp-logo'         => array( 'glyph' => '\\f120', 'target' => 'ab-icon' ),
+		'site-name'       => array( 'glyph' => '\\f226', 'target' => 'ab-item' ),
+		'site-editor'     => array( 'glyph' => '\\f100', 'target' => 'ab-item' ),
+		'updates'         => array( 'glyph' => '\\f463', 'target' => 'ab-icon' ),
+		'comments'        => array( 'glyph' => '\\f101', 'target' => 'ab-icon' ),
+		'new-content'     => array( 'glyph' => '\\f132', 'target' => 'ab-icon' ),
+		'edit'            => array( 'glyph' => '\\f464', 'target' => 'ab-item' ),
+		'customize'       => array( 'glyph' => '\\f540', 'target' => 'ab-item' ),
+		'command-palette' => array( 'glyph' => '\\f179', 'target' => 'ab-icon' ),
+		'search'          => array( 'glyph' => '\\f179', 'target' => 'search' ),
+		'menu-toggle'     => array( 'glyph' => '\\f333', 'target' => 'ab-icon' ),
+	);
+
 	const WP_DASHICONS = array(
 		'dashicons-admin-generic', 'dashicons-admin-links', 'dashicons-admin-multisite',
 		'dashicons-menu', 'dashicons-wordpress', 'dashicons-pressthis', 'dashicons-update', 'dashicons-info',

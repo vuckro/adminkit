@@ -88,7 +88,7 @@ class AdminKit_Integration_Fluent_Booking extends AdminKit_Integration_Base {
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-fluent-booking-admin',
 			'src'       => 'inc/integrations/plugins/fluent-booking/css/admin.css',
-			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE, AdminKit_Assets::ELEMENT_PLUS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_screen' ),
 		) );

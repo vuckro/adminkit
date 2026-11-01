@@ -28,7 +28,11 @@ Typography defaults to Geist. Supported fonts are Geist, System, Inter,
 Plus Jakarta Sans, DM Sans, Manrope, Outfit, Poppins, Space Grotesk and IBM Plex Sans.
 Legacy Humanist maps to Geist and Classic to Inter. The Design system tab contains
 Colors, Typography, Shapes & elevation, and Plugins sections. Logos remain in
-General Settings. Plugins lists installed integrations, without activating hosts.
+General Settings (`adminkit_general_logo_url`, saved atomically via `whitelist_options`
+without registering the full `adminkit_settings` container on `options.php`).
+Plugins lists installed integrations, without activating hosts, and displays an
+explicit pause badge (`pausedReason`) when a host's version exceeds the adapter's
+tested range.
 
 `AdminKit_Settings::sanitize_design_system()` allowlists the saved profile:
 
@@ -180,7 +184,9 @@ compatibility, live email delivery or live account-renaming behavior.
 
 ## Translation catalogs
 
-UI text is translated in PHP and sent to JavaScript in each screen's bootstrap.
+UI text is translated in PHP (`AdminKit_Settings_I18n`) and sent to JavaScript in
+each screen's bootstrap (sliced per native submenu page when `AdminKitData.pages`
+is present, with icons loaded on demand via `/adminkit/v1/icons`).
 `php dev/i18n.php --write` synchronizes POT/PO and compiles both MO (with `msgfmt`)
 and `adminkit-fr_FR.l10n.php`. The drift gate verifies source coverage, compiled
 parity and JS bootstrap keys. Main exports carry the current plugin version and

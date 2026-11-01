@@ -210,12 +210,13 @@ body.adminkit #bricks-settings input[type="checkbox"]::before {
 	width: 12px;
 	height: 12px;
 	transform: none;
-	background: #fff;
+	background: var(--ak-surface);
 }
 
 /* On: slide flush right (12 + 12px knob + 2px = 26px track width). */
 body.adminkit #bricks-settings input[type="checkbox"]:checked::before {
 	left: 12px;
+	background: var(--ak-on-accent);
 }
 
 /* Multiselect widget + dropdown */

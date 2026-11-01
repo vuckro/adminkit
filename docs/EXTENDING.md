@@ -36,7 +36,10 @@ AdminKit_Assets::register( array(
 ```
 
 Use `AdminKit_Assets::enqueue_script()` for runtime JS and its localized `before`
-bootstrap. Native modules must gate their controls/prepaint/behavior too: skipping
+bootstrap, and `AdminKit_Assets::print_prepaint()` for anti-FOUC inline class swaps.
+Element Plus adapters can depend on `AdminKit_Assets::ELEMENT_PLUS_HANDLE`
+(`adminkit-vendor-element-plus`) instead of duplicating `--el-*` variables.
+Native modules must gate their controls/prepaint/behavior too: skipping
 only a stylesheet can leave enhanced markup or invisible controls behind.
 
 ## Settings, integrations and branding

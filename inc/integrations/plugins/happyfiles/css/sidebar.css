@@ -112,7 +112,7 @@ body.adminkit #happyfiles-sidebar .icon:hover {
 }
 
 body.adminkit #happyfiles-sidebar .icon:hover svg g {
-	fill: #ffffff !important;
+	fill: var(--ak-on-accent) !important;
 }
 
 /* Folder row default state — token text */

@@ -13,10 +13,12 @@ foreach(array('main','menu','toolbar')as$screen){
  $scripts=array();$inline=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>$screen));
  $by_file=array();foreach($scripts as$handle=>$script){$path=substr($script['src'],strlen(ADMINKIT_URL));check(is_file(ADMINKIT_PATH.$path),'Missing runtime asset: '.$path);check($script['footer']&&$script['version'],'Missing footer/cache version');$by_file[$path]=$handle;}
  $controls=$by_file['assets/js/settings/navigation-controls.js'];
+ $menu_model=$by_file['assets/js/settings/navigation-menu-model.js'];
  $helpers=array($controls,$by_file['assets/js/settings/navigation-menu.js'],$by_file['assets/js/settings/navigation-toolbar.js']);
  $navigation=$by_file['assets/js/settings/navigation.js'];$host=$by_file['assets/js/settings.js'];
  foreach($helpers as$helper)check(in_array($helper,$scripts[$navigation]['deps'],true),'Navigation host can run before a factory');
  foreach(array_slice($helpers,1)as$helper)check(in_array($controls,$scripts[$helper]['deps'],true),'Editor is missing shared-control dependency');
+ check(in_array($menu_model,$scripts[$by_file['assets/js/settings/navigation-menu.js']]['deps'],true),'Menu editor is missing menu-model dependency');
  $seen=array();$visit=function($handle)use(&$visit,&$seen,$scripts){if($handle==='wp-api-fetch')return;check(isset($scripts[$handle]),'Unregistered dependency: '.$handle);if(isset($seen[$handle])){check($seen[$handle]===2,'Cyclic script dependency');return;}$seen[$handle]=1;foreach($scripts[$handle]['deps']as$dep)$visit($dep);$seen[$handle]=2;};$visit($host);
  check(isset($seen[$navigation]),'Loader does not depend on navigation host');
  check($inline[$host][1]==='before'&&strpos($inline[$host][0],'window.AdminKitData=')===0,'Boot data is not attached before loader');

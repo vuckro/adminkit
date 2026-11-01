@@ -227,8 +227,9 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn:active {
 
 /* Destructive variant keeps the red intent */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn.delete {
-	background: var(--ak-error);
-	border-color: var(--ak-error);
+	background: var(--ak-danger-solid);
+	border-color: var(--ak-danger-solid);
+	color: var(--ak-on-danger-solid);
 }
 
 
@@ -361,7 +362,7 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .panel-arrow path {
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .white-arrow g,
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .white-arrow path {
-	fill: #ffffff;
+	fill: var(--ak-on-accent);
 }
 
 
@@ -502,7 +503,7 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nested-accordion-expanded {
 }
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nested-accordion-expanded-title {
-	color: #ffffff;
+	color: var(--ak-on-accent);
 }
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nested-accordion-expanded-body {

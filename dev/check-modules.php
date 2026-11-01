@@ -27,7 +27,8 @@ function package_files(array$args):array{
 }
 $head=package_files(array());$working=package_files(array('--working-tree'));
 if(!$head||!$working)throw new RuntimeException('Empty package');
-foreach(array('controls','menu','toolbar')as$part)if(!in_array('assets/js/settings/navigation-'.$part.'.js',$working,true))throw new RuntimeException('Navigation factory excluded from working package: '.$part);
+foreach(array('controls','menu-model','menu','toolbar')as$part)if(!in_array('assets/js/settings/navigation-'.$part.'.js',$working,true))throw new RuntimeException('Navigation factory excluded from working package: '.$part);
+foreach(array('assets/js/settings/design-colors.js','assets/js/wp-core/profile-account-dom.js')as$part)if(!in_array($part,$working,true))throw new RuntimeException('Runtime JS module excluded from working package: '.$part);
 foreach($modules as$path=>$boot)if(!in_array('inc/'.$path,$working,true))throw new RuntimeException('Runtime module excluded from working package: '.$path);
 foreach(array($head,$working)as$package){
  foreach(array('adminkit.php','uninstall.php','languages/adminkit.pot','languages/adminkit-fr_FR.po','languages/adminkit-fr_FR.mo','languages/adminkit-fr_FR.l10n.php')as$required){if(!in_array($required,$package,true))throw new RuntimeException('Package missing '.$required);}

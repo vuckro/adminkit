@@ -268,6 +268,17 @@ function ak_path_matches_any( string $rel, array $patterns ): bool {
 	$basename = basename( $rel );
 	foreach ( $patterns as $p ) {
 		$p = rtrim( $p, '/' );
+		if ( $p === '' ) {
+			continue;
+		}
+		// Root-anchored "/foo" or "/foo/bar" → match only at root of staging.
+		if ( $p[0] === '/' ) {
+			$anchored = substr( $p, 1 );
+			if ( fnmatch( $anchored, $rel ) || strpos( $rel, $anchored . '/' ) === 0 || $rel === $anchored ) {
+				return true;
+			}
+			continue;
+		}
 		// Glob-style "**/foo" → match basename or any segment.
 		if ( strpos( $p, '**/' ) === 0 ) {
 			$tail = substr( $p, 3 );

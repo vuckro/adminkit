@@ -70,15 +70,16 @@ body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content tab
 
 /* ===== Delete button — `crimson` hardcoded ===== */
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tfoot .delete button {
-	background-color: var(--ak-error);
-	border-color: var(--ak-error);
-	color: #ffffff;
+	background-color: var(--ak-danger-solid);
+	border-color: var(--ak-danger-solid);
+	color: var(--ak-on-danger-solid);
 }
 
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tfoot .delete button:hover,
 body.adminkit.settings_page_happyfiles_settings #happyfiles-settings-content table tfoot .delete button:focus {
-	background-color: var(--ak-error);
-	border-color: var(--ak-error);
+	background-color: var(--ak-danger-solid);
+	border-color: var(--ak-danger-solid);
+	color: var(--ak-on-danger-solid);
 	filter: brightness(0.92);
 }
 

@@ -56,6 +56,10 @@ class AdminKit_Assets {
 	const WAASKIT_HANDLE = 'adminkit-waaskit';
 	const WAASKIT_SRC    = 'assets/css/waaskit-tokens.css';
 
+	/** Shared Element Plus `--el-*` → `--ak-*` bridge registered on admin screens for Fluent adapters. */
+	const ELEMENT_PLUS_HANDLE = 'adminkit-vendor-element-plus';
+	const ELEMENT_PLUS_SRC    = 'assets/css/vendor/element-plus.css';
+
 
 	/**
 	 * Registered asset entries.
@@ -438,6 +442,18 @@ class AdminKit_Assets {
 			file_exists( $path ) ? (string) filemtime( $path ) : ADMINKIT_VERSION
 		);
 
+		if ( 'admin' === $context && function_exists( 'wp_register_style' ) ) {
+			$ep_path = ADMINKIT_PATH . self::ELEMENT_PLUS_SRC;
+			if ( file_exists( $ep_path ) ) {
+				wp_register_style(
+					self::ELEMENT_PLUS_HANDLE,
+					ADMINKIT_URL . self::ELEMENT_PLUS_SRC,
+					array( self::TOKENS_HANDLE ),
+					(string) filemtime( $ep_path )
+				);
+			}
+		}
+
 		/**
 		 * Fires right after `adminkit-tokens` is enqueued for a context.
 		 * Hook here with `wp_add_inline_style` to inject dynamic CSS
@@ -455,11 +471,15 @@ class AdminKit_Assets {
 	 * own enqueue logic against the 1.0 API; new code should use
 	 * `register()`.
 	 *
+	 * @deprecated 1.1.0 Use `AdminKit_Assets::register()` instead.
 	 * @param string   $name Filename without extension (e.g. `core`).
 	 * @param string[] $deps
 	 * @return void
 	 */
 	public static function enqueue( $name, $deps = array() ) {
+		if ( function_exists( '_deprecated_function' ) ) {
+			_deprecated_function( __METHOD__, '1.1.0', 'AdminKit_Assets::register' );
+		}
 		$src  = 'assets/css/' . $name . '.css';
 		$path = ADMINKIT_PATH . $src;
 		wp_enqueue_style(
@@ -468,6 +488,34 @@ class AdminKit_Assets {
 			$deps,
 			file_exists( $path ) ? (string) filemtime( $path ) : ADMINKIT_VERSION
 		);
+	}
+
+	/**
+	 * Print an inline `<head>` anti-FOUC bootstrap that sets `$pending_class` on
+	 * `<html>` before first paint and guarantees reveal (`$ready_class`) both one
+	 * frame after `window.load` and after a 3-second absolute backstop if the
+	 * footer script fails to run.
+	 *
+	 * @param string $script_id     DOM id for the `<script>` tag.
+	 * @param string $pending_class Root class applied while the layout is pending.
+	 * @param string $ready_class   Root class swapped in once the layout is ready.
+	 * @return void
+	 */
+	public static function print_prepaint( $script_id, $pending_class, $ready_class ) {
+		$p = wp_json_encode( (string) $pending_class );
+		$r = wp_json_encode( (string) $ready_class );
+		echo '<script id="' . esc_attr( (string) $script_id ) . '">' . "\n"
+			. '(function () {'
+			. 'var d = document.documentElement;'
+			. 'd.classList.add(' . $p . ');' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON-encoded class token.
+			. 'function reveal() { d.classList.remove(' . $p . '); d.classList.add(' . $r . '); }' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			. 'window.addEventListener("load", function () {'
+			. 'var after = function () { if (d.classList.contains(' . $p . ')) { reveal(); } };' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			. 'if (window.requestAnimationFrame) { window.requestAnimationFrame(after); } else { window.setTimeout(after, 0); }'
+			. '});'
+			. 'setTimeout(function () { if (d.classList.contains(' . $p . ')) { reveal(); } }, 3000);' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			. '})();' . "\n"
+			. "</script>\n";
 	}
 
 	/**

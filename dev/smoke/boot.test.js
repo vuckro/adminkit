@@ -7,7 +7,7 @@ const { JSDOM } = require('jsdom');
 
 const root = path.resolve(__dirname, '../..');
 const fixture = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json'), 'utf8'));
-const scripts = ['design', 'features', 'plugins', 'navigation-controls', 'navigation-menu', 'navigation-toolbar', 'navigation'].map((n) => 'assets/js/settings/' + n + '.js').concat(['assets/js/settings/main.js', 'assets/js/settings.js']);
+const scripts = ['design-colors', 'design', 'features', 'plugins', 'navigation-controls', 'navigation-menu-model', 'navigation-menu', 'navigation-toolbar', 'navigation'].map((n) => 'assets/js/settings/' + n + '.js').concat(['assets/js/settings/main.js', 'assets/js/settings.js']);
 
 const dom = new JSDOM('<!doctype html><html><body><div id="adminkit-app" class="adminkit-app" data-screen="main" aria-busy="true"></div></body></html>', {
   url: 'http://localhost/wp-admin/admin.php?page=adminkit',

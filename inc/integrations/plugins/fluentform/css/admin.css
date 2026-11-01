@@ -206,9 +206,9 @@ body.adminkit .el-button--text {
 
 /* Danger buttons */
 body.adminkit .el-button--danger {
-	background: var(--ak-error);
-	border-color: var(--ak-error);
-	color: #ffffff;
+	background: var(--ak-danger-solid);
+	border-color: var(--ak-danger-solid);
+	color: var(--ak-on-danger-solid);
 }
 
 /* Icon buttons */

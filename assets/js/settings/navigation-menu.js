@@ -1,8 +1,9 @@
-/** Sidebar menu editor: native snapshot, draft model, controls and import/export. */
+/** Sidebar menu editor: tree UI, drag/drop, FLIP animation and URL/icon controls. */
 (function () {
 	'use strict';
 	window.AdminKitParts = window.AdminKitParts || {};
 	window.AdminKitParts.navigationMenu = function (context, controls) {
+		var M = window.AdminKitParts.navigationMenuModel;
 		var D = context.D;
 		var I = context.I;
 		var state = context.state;
@@ -21,7 +22,7 @@
 		var dropZone = controls.dropZone;
 		var titleInput = controls.titleInput;
 
-		state.menu = buildMenuModel(MM.menu || [], MM.config || { top: [], sub: {} });
+		state.menu = M.buildMenuModel(MM.menu || [], MM.config || { top: [], sub: {} }, MM.seen || []);
 
 		function nextUid(prefix) {
 			uidSeq += 1;
@@ -39,202 +40,8 @@
 			return 'sub:' + (top.slug || topFlipKey(top)) + ':' + child.slug;
 		}
 
-		function buildMenuModel(snapshot, config) {
-			// Global lookups so a submenu can be rebuilt under ANY parent (cross-section):
-			// childTitle = every submenu slug -> its original title; claimed = every slug
-			// any saved parent lists (so it leaves its origin and shows under its new parent).
-			var snapBySlug = {},
-				childTitle = {},
-				childTitleByParent = {};
-			(snapshot || []).forEach(function (m) {
-				snapBySlug[m.slug] = m;
-				(m.children || []).forEach(function (c) {
-					childTitleByParent[m.slug + '\0' + c.slug] = c.title;
-					if (!childTitle.hasOwnProperty(c.slug)) {
-						childTitle[c.slug] = c.title;
-					}
-				});
-			});
-			var subCfg = (config && config.sub) || {};
-			var claimed = {};
-			Object.keys(subCfg).forEach(function (p) {
-				(subCfg[p] || []).forEach(function (s) {
-					claimed[s.slug] = p;
-					claimed[p + '\0' + s.slug] = true;
-				});
-			});
-			var seen = {},
-				model = [];
-			((config && config.top) || []).forEach(function (t) {
-				var m = snapBySlug[t.slug];
-				if (m && m.type === 'separator') {
-					seen[t.slug] = true;
-					model.push({ type: 'separator', slug: t.slug, hidden: !!t.hidden });
-				} else if (m) {
-					seen[t.slug] = true;
-					model.push(makeTop(m, t, subCfg, childTitle, childTitleByParent, claimed));
-				} else if (t.type === 'link' || t.type === 'separator') {
-					model.push(makeCustom(t));
-				}
-				// else: a real menu that no longer exists → drop it.
-			});
-			// Place the snapshot items the saved layout didn't already position. Each is set
-			// at its NATURAL snapshot spot (right after the previous placed item) so the
-			// menu reproduces WordPress's default order — separators interspersed, not
-			// clustered. EXCEPTION: when a saved layout EXISTS, a real menu it doesn't list
-			// is a genuinely new plugin → defer it to the very bottom (ordered by first-seen
-			// below). With NO saved layout (a reset / pristine view) nothing is "new", so
-			// everything — separators AND menus — is placed naturally.
-			var hasConfig = ((config && config.top) || []).length > 0;
-			var indexOfSlug = function (slug) {
-				for (var i = 0; i < model.length; i++) {
-					if (model[i].slug === slug) {
-						return i;
-					}
-				}
-				return -1;
-			};
-			var pending = [];
-			var prevSlug = null;
-			(snapshot || []).forEach(function (m) {
-				if (seen[m.slug]) {
-					prevSlug = m.slug;
-					return;
-				}
-				if (hasConfig && m.type !== 'separator') {
-					pending.push(m); // new plugin (layout exists but omits it) → bottom; does NOT advance prevSlug
-					return;
-				}
-				var node =
-					m.type === 'separator'
-						? { type: 'separator', slug: m.slug, hidden: false }
-						: makeTop(m, null, subCfg, childTitle, childTitleByParent, claimed);
-				var at = prevSlug !== null ? indexOfSlug(prevSlug) : -1;
-				var pos = at >= 0 ? at + 1 : null === prevSlug ? 0 : model.length;
-				model.splice(pos, 0, node);
-				prevSlug = m.slug;
-			});
-			// New plugins (only when a layout exists) → appended at the very bottom, ordered
-			// by the order AdminKit first saw them (newest last), mirroring order_top_level().
-			var seenRank = {};
-			(MM.seen || []).forEach(function (slug, i) {
-				seenRank[slug] = i;
-			});
-			pending.sort(function (a, b) {
-				var ra = null != seenRank[a.slug] ? seenRank[a.slug] : 1e9;
-				var rb = null != seenRank[b.slug] ? seenRank[b.slug] : 1e9;
-				return ra - rb;
-			});
-			pending.forEach(function (m) {
-				model.push(makeTop(m, null, subCfg, childTitle, childTitleByParent, claimed));
-			});
-			return model;
-		}
-
-		function makeTop(m, topCfg, subCfg, childTitle, childTitleByParent, claimed) {
-			topCfg = topCfg || {};
-			var children = [],
-				seenC = {};
-			// Configured children for this parent (may include children moved in from elsewhere).
-			(subCfg[m.slug] || []).forEach(function (s) {
-				var compKey = m.slug + '\0' + s.slug;
-				var hasLocal = childTitleByParent.hasOwnProperty(compKey);
-				if (!hasLocal && !childTitle.hasOwnProperty(s.slug)) {
-					return;
-				} // child no longer exists → drop
-				seenC[s.slug] = true;
-				var ot = hasLocal ? childTitleByParent[compKey] : childTitle[s.slug];
-				children.push({
-					slug: s.slug,
-					otitle: ot,
-					title: s.title && s.title !== '' ? s.title : ot,
-					hidden: !!s.hidden
-				});
-			});
-			// This parent's own snapshot children not claimed elsewhere (new / unmoved).
-			(m.children || []).forEach(function (c) {
-				var claimedByOther = claimed[c.slug] && claimed[c.slug] !== m.slug && !claimed[m.slug + '\0' + c.slug];
-				if (seenC[c.slug] || claimedByOther) {
-					return;
-				}
-				children.push({ slug: c.slug, otitle: c.title, title: c.title, hidden: false });
-			});
-			return {
-				type: 'item',
-				slug: m.slug,
-				otitle: m.title,
-				title: topCfg.title && topCfg.title !== '' ? topCfg.title : m.title,
-				dashicon: m.dashicon || '',
-				icon: topCfg.icon || '',
-				url: topCfg.url || '',
-				hidden: !!topCfg.hidden,
-				open: false,
-				children: children
-			};
-		}
-
-		function makeCustom(t) {
-			if (t.type === 'separator') {
-				return { type: 'separator', slug: t.slug, hidden: !!t.hidden };
-			}
-			// Links store their destination URL as the slug.
-			return {
-				type: 'link',
-				slug: t.slug,
-				url: t.slug,
-				title: t.title || '',
-				icon: t.icon || '',
-				hidden: !!t.hidden,
-				newTab: !!t.new_tab
-			};
-		}
-
 		function gatherMenu() {
-			var items = [];
-			state.menu.forEach(function (top, ti) {
-				var type = top.type || 'item';
-				if (type === 'link') {
-					var url = (top.url || '').replace(/^\s+|\s+$/g, '');
-					if (!url) {
-						return;
-					} // a link with no URL yet is dropped
-					items.push({
-						parent: '',
-						slug: url,
-						position: ti,
-						icon: top.icon || '',
-						hidden: !!top.hidden,
-						type: 'link',
-						title: top.title || '',
-						newTab: !!top.newTab
-					});
-					return;
-				}
-				if (type === 'separator') {
-					items.push({ parent: '', slug: top.slug, position: ti, hidden: !!top.hidden, type: 'separator', title: '' });
-					return;
-				}
-				items.push({
-					parent: '',
-					slug: top.slug,
-					position: ti,
-					icon: top.icon || '',
-					url: top.url || '',
-					hidden: !!top.hidden,
-					type: 'item',
-					title: titleOverride(top)
-				});
-				(top.children || []).forEach(function (child, ci) {
-					items.push({
-						parent: top.slug,
-						slug: child.slug,
-						position: ci,
-						hidden: !!child.hidden,
-						title: titleOverride(child)
-					});
-				});
-			});
-			return items;
+			return M.gatherMenu(state.menu, titleOverride);
 		}
 
 		function buildMenu() {
@@ -246,8 +53,6 @@
 			}
 			var tree = el('div', { class: 'ak-menu-tree' });
 
-			// Import loads a layout into the editor and marks it dirty — the user reviews
-			// it, then Saves (consistent with every other menu edit; no silent write).
 			var importInput = el('input', {
 				type: 'file',
 				accept: 'application/json,.json',
@@ -283,7 +88,7 @@
 						class: 'ak-btn ak-btn--ghost',
 						text: I.menuReset,
 						onclick: function () {
-							state.menu = buildMenuModel(MM.menu, { top: [], sub: {} });
+							state.menu = M.buildMenuModel(MM.menu, { top: [], sub: {} }, MM.seen || []);
 							renderTree(tree);
 							markDirty('menu');
 						}
@@ -328,49 +133,6 @@
 			URL.revokeObjectURL(url);
 		}
 
-		function configFromItems(items) {
-			var top = [],
-				sub = {};
-			(items || []).forEach(function (it) {
-				if (it && it.parent) {
-					(sub[it.parent] = sub[it.parent] || []).push({
-						slug: it.slug,
-						position: it.position,
-						hidden: !!it.hidden,
-						title: it.title || ''
-					});
-				} else if (it) {
-					top.push({
-						slug: it.slug,
-						position: it.position,
-						icon: it.icon || '',
-						url: it.url || '',
-						new_tab: !!it.newTab,
-						hidden: !!it.hidden,
-						type: it.type || 'item',
-						title: it.title || ''
-					});
-				}
-			});
-			return { top: top, sub: sub };
-		}
-
-		function isSafeMenuUrl(raw) {
-			if (typeof raw !== 'string') {
-				return false;
-			}
-			var s = raw.trim();
-			if (!s || s.length > 2048 || /['"<>`\\\x00-\x20\x7f]/.test(s) || s.indexOf('//') === 0) {
-				return false;
-			}
-			var colon = s.indexOf(':');
-			var boundary = s.search(/[/?#]/);
-			if (colon !== -1 && (boundary === -1 || colon < boundary)) {
-				return /^(?:https?|mailto|tel):/i.test(s);
-			}
-			return true;
-		}
-
 		function importMenu(file, tree) {
 			var reader = new FileReader();
 			reader.onload = function () {
@@ -388,26 +150,9 @@
 					setStatus('is-error', I.menuImportError);
 					return;
 				}
-				items = items.filter(function (it) {
-					if (!it || typeof it !== 'object' || typeof it.slug !== 'string') {
-						return false;
-					}
-					if (it.type === 'link' && !isSafeMenuUrl(it.slug)) {
-						return false;
-					}
-					if (it.url && !isSafeMenuUrl(it.url)) {
-						it = Object.assign({}, it, { url: '' });
-					}
-					return true;
-				}).map(function (it) {
-					if (it.url && !isSafeMenuUrl(it.url)) {
-						return Object.assign({}, it, { url: '' });
-					}
-					return it;
-				});
-				state.menu = buildMenuModel(MM.menu, configFromItems(items));
+				state.menu = M.buildMenuModel(MM.menu, M.configFromItems(M.sanitizeImportedItems(items)), MM.seen || []);
 				renderTree(tree);
-				markDirty('menu'); // shows "Unsaved changes" — the user reviews, then Saves.
+				markDirty('menu');
 			};
 			reader.readAsText(file);
 		}
@@ -459,7 +204,7 @@
 				function (ds) {
 					var movedTop = state.menu[ds.ti];
 					var movedKey = movedTop ? topFlipKey(movedTop) : null;
-					moveTop(ds.ti, ti);
+					M.moveTop(state.menu, ds.ti, ti);
 					renderTree(tree, movedKey);
 					markDirty('menu');
 				}
@@ -493,15 +238,11 @@
 				item.url = urlIn.value;
 				markDirty('menu');
 			});
-			// Order: handle · move · icon · [title + URL fields] · new-tab · hide · remove.
-			// The title + URL inputs are the editable content; new-tab, hide (eye) and the
-			// remove (×) sit at the far right.
 			row.appendChild(titleIn);
 			row.appendChild(urlIn);
 			row.appendChild(newTabBtn(item, tree));
 			row.appendChild(hideBtn(item, tree));
 			row.appendChild(removeBtn(ti, tree));
-			// Drag from the handle only, so the URL/title inputs stay text-selectable.
 			dragSource(h, row, { kind: 'top', ti: ti });
 			dropZone(
 				row,
@@ -511,7 +252,7 @@
 				function (ds) {
 					var movedTop = state.menu[ds.ti];
 					var movedKey = movedTop ? topFlipKey(movedTop) : null;
-					moveTop(ds.ti, ti);
+					M.moveTop(state.menu, ds.ti, ti);
 					renderTree(tree, movedKey);
 					markDirty('menu');
 				}
@@ -539,7 +280,6 @@
 			var h = handle();
 			row.appendChild(h);
 			row.appendChild(moveControl(moveTopBy(ti, tree)));
-			// Order: handle · move(↑↓) · icon · [title fills] · link(URL) · submenus · hide(eye).
 			row.appendChild(iconBtn(top, tree));
 			row.appendChild(titleInput(top));
 			row.appendChild(urlBtn(top, tree));
@@ -564,12 +304,10 @@
 					)
 				);
 			}
-			// Hide (eye) sits at the row's far right (never AdminKit's own menu).
 			if (top.slug !== MM.self) {
 				row.appendChild(hideBtn(top, tree));
 			}
 			dragSource(h, row, { kind: 'top', ti: ti });
-			// Reorder tops, and accept a submenu dragged from any section (nest it here).
 			dropZone(
 				row,
 				function () {
@@ -580,10 +318,10 @@
 					if (ds.kind === 'top') {
 						var movedTop = state.menu[ds.ti];
 						movedKey = movedTop ? topFlipKey(movedTop) : null;
-						moveTop(ds.ti, ti);
+						M.moveTop(state.menu, ds.ti, ti);
 					} else {
 						var movedSub = state.menu[ds.ti] && state.menu[ds.ti].children && state.menu[ds.ti].children[ds.ci];
-						moveChildToTop(ds.ti, ds.ci, ti);
+						M.moveChildToTop(state.menu, ds.ti, ds.ci, ti);
 						if (movedSub) {
 							movedKey = subFlipKey(top, movedSub);
 						}
@@ -599,7 +337,6 @@
 				top.children.forEach(function (child, ci) {
 					kids.appendChild(childRow(ti, child, ci, tree));
 				});
-				// Dropping into the open children area (not onto a row) appends here.
 				dropZone(
 					kids,
 					function (ds) {
@@ -607,7 +344,7 @@
 					},
 					function (ds) {
 						var movedSub = state.menu[ds.ti] && state.menu[ds.ti].children && state.menu[ds.ti].children[ds.ci];
-						moveChildToTop(ds.ti, ds.ci, ti);
+						M.moveChildToTop(state.menu, ds.ti, ds.ci, ti);
 						var movedKey = movedSub ? subFlipKey(top, movedSub) : null;
 						renderTree(tree, movedKey);
 						markDirty('menu');
@@ -637,7 +374,7 @@
 				},
 				function (ds) {
 					var movedSub = state.menu[ds.ti] && state.menu[ds.ti].children && state.menu[ds.ti].children[ds.ci];
-					moveChild(ds.ti, ds.ci, ti, ci);
+					M.moveChild(state.menu, ds.ti, ds.ci, ti, ci);
 					var movedKey = movedSub ? subFlipKey(top, movedSub) : null;
 					renderTree(tree, movedKey);
 					markDirty('menu');
@@ -762,41 +499,32 @@
 				'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
 			btn.addEventListener('click', function (e) {
 				e.stopPropagation();
-				openUrlPicker(btn, top, tree);
+				openUrlPicker(btn, top);
 			});
 			return btn;
 		}
 
-		function openUrlPicker(anchor, top, tree) {
+		function openUrlPicker(anchor, top) {
 			closeIconPicker();
 			var pop = el('div', { class: 'ak-icon-pop ak-url-pop' });
 			pop.appendChild(el('div', { class: 'ak-icon-pop__customlbl', text: I.menuUrlLabel }));
 
-			// Show where this item points right now — the custom override if set, else
-			// its native WordPress destination (the slug). Read-only, so you SEE the link
-			// before changing it.
 			var current = top.url || top.slug || '';
 			if (current) {
 				pop.appendChild(
 					el('div', { class: 'ak-url-pop__current' }, [
-						el('span', { class: 'ak-url-pop__current-lbl', text: (I.menuUrlCurrent) + ' : ' }),
+						el('span', { class: 'ak-url-pop__current-lbl', text: I.menuUrlCurrent + ' : ' }),
 						el('code', { class: 'ak-url-pop__current-val', title: current, text: current })
 					])
 				);
 			}
 
-			// Pre-fill with the custom override; the placeholder is the native slug so an
-			// empty field still hints the current destination.
 			var inp = el('input', {
 				type: 'text',
 				class: 'ak-menu-input',
 				value: top.url || '',
 				placeholder: top.slug || I.menuLinkUrl
 			});
-			// Apply reflects the URL state on the anchor button in place (its `on` class)
-			// and closes — no full tree rebuild (which would destroy the anchor the popover
-			// hangs off, same trap the icon picker had). To clear: empty the field + Apply
-			// (an empty value resets the item to its native destination).
 			var apply = el('button', {
 				type: 'button',
 				class: 'ak-btn ak-btn--small',
@@ -810,32 +538,6 @@
 			});
 			pop.appendChild(el('div', { class: 'ak-icon-pop__custom ak-url-pop__row' }, [inp, apply]));
 			controls.mountPopover(pop, anchor);
-		}
-
-		function moveTop(from, to) {
-			var m = state.menu.splice(from, 1)[0];
-			state.menu.splice(to, 0, m);
-		}
-
-		function moveChild(fromTi, fromCi, toTi, toCi) {
-			var c = state.menu[fromTi].children.splice(fromCi, 1)[0];
-			if (fromTi === toTi && fromCi < toCi) {
-				toCi--;
-			}
-			if (!state.menu[toTi].children) {
-				state.menu[toTi].children = [];
-			}
-			state.menu[toTi].children.splice(toCi, 0, c);
-			state.menu[toTi].open = true;
-		}
-
-		function moveChildToTop(fromTi, fromCi, toTi) {
-			var c = state.menu[fromTi].children.splice(fromCi, 1)[0];
-			if (!state.menu[toTi].children) {
-				state.menu[toTi].children = [];
-			}
-			state.menu[toTi].children.push(c);
-			state.menu[toTi].open = true;
 		}
 
 		return {

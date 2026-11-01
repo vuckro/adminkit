@@ -28,7 +28,8 @@ tokens
 
 # Build / dependency artifacts (not used at runtime — adminkit has no JS or PHP deps)
 node_modules
-vendor
+/vendor
+/dev/vendor
 
 # Logs and OS / editor cruft
 *.log

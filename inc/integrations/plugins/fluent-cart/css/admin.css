@@ -22,8 +22,7 @@
 
 :root,
 body.adminkit.toplevel_page_fluent-cart {
-
-	/* FC's own design tokens */
+	/* FC's own design tokens (`--el-*` layer comes from `assets/css/vendor/element-plus.css`) */
 	--color-primary:   var( --ak-primary );
 	--color-secondary: var( --ak-secondary );
 	--color-neutral:   var( --ak-text );
@@ -33,75 +32,7 @@ body.adminkit.toplevel_page_fluent-cart {
 	--body-bg-dark:    var( --ak-bg );
 	--table-header-bg:       var( --ak-elevated );
 	--table-cell-bg-lighter: var( --ak-surface );
-
-	/* Element Plus brand ramp */
-	--el-color-primary:         var( --ak-primary );
-	--el-color-primary-dark-2:  var( --ak-primary-hover );
-	--el-color-primary-light-3: var( --ak-primary-hover );
-	--el-color-primary-light-5: var( --ak-primary-subtle );
-	--el-color-primary-light-7: var( --ak-primary-subtle );
-	--el-color-primary-light-8: var( --ak-primary-subtle );
-	--el-color-primary-light-9: var( --ak-primary-subtle );
-
-	/* Semantic — NOTE El Plus "info" is a neutral grey, not blue */
-	--el-color-success: var( --ak-success );
-	--el-color-warning: var( --ak-warning );
-	--el-color-danger:  var( --ak-error );
-	--el-color-error:   var( --ak-error );
-	--el-color-info:         var( --ak-text-muted );
-	--el-color-info-light-3: var( --ak-text-muted );
-	--el-color-info-light-5: var( --ak-border-strong );
-	--el-color-info-light-8: var( --ak-surface );
-	--el-color-info-light-9: var( --ak-surface );
-	--el-color-info-dark-2:  var( --ak-heading );
-	--el-rate-fill-color:    var( --ak-warning );
-
-	/* Text */
-	--el-text-color-primary:     var( --ak-heading );
-	--el-text-color-regular:     var( --ak-text );
-	--el-text-color-secondary:   var( --ak-text-muted );
-	--el-text-color-placeholder: var( --ak-text-muted );
-	--el-text-color-disabled:    var( --ak-text-muted );
-
-	/* Backgrounds */
-	--el-bg-color:         var( --ak-surface );
-	--el-bg-color-page:    var( --ak-bg );
-	--el-bg-color-overlay: var( --ak-surface );
-
-	/* Borders */
-	--el-border-color:             var( --ak-border );
-	--el-border-color-light:       var( --ak-border );
-	--el-border-color-lighter:     var( --ak-border );
-	--el-border-color-extra-light: var( --ak-border );
-	--el-border-color-dark:        var( --ak-border-strong );
-	--el-border-color-darker:      var( --ak-border-strong );
-
-	/* Fills */
-	--el-fill-color:             var( --ak-surface );
-	--el-fill-color-light:       var( --ak-surface );
-	--el-fill-color-lighter:     var( --ak-surface );
-	--el-fill-color-extra-light: var( --ak-surface );
-	--el-fill-color-dark:        var( --ak-elevated );
-	--el-fill-color-darker:      var( --ak-elevated );
-	--el-fill-color-blank:       var( --ak-surface );
-
-	/* Disabled */
-	--el-disabled-bg-color:     var( --ak-surface-muted );
-	--el-disabled-text-color:   var( --ak-text-muted );
-	--el-disabled-border-color: var( --ak-border );
-
-	/* Overlays + loading mask */
-	--el-overlay-color:         var( --ak-overlay );
-	--el-overlay-color-light:   var( --ak-overlay );
-	--el-overlay-color-lighter: var( --ak-overlay );
-	--el-mask-color:             color-mix( in srgb, var( --ak-surface ) 80%, transparent );
-	--el-mask-color-extra-light: color-mix( in srgb, var( --ak-surface ) 50%, transparent );
-
-	/* Shadows — floating layers get the elevated token, everything else flat */
-	--el-box-shadow:         var( --ak-shadow-elevated );
-	--el-box-shadow-light:   var( --ak-shadow-elevated );
 	--el-box-shadow-lighter: none;
-	--el-box-shadow-dark:    var( --ak-shadow-elevated );
 }
 
 

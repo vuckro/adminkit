@@ -16,7 +16,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: adminkit\n"
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 #, php-format
 msgid "%1$s of %2$s features active"
 msgstr ""
@@ -37,7 +37,7 @@ msgstr ""
 msgid "About the user"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Accent"
 msgstr ""
 
@@ -61,11 +61,11 @@ msgstr ""
 msgid "Accounts"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Activation to save"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Active features"
 msgstr ""
 
@@ -77,11 +77,11 @@ msgstr ""
 msgid "Add a light/dark mode switch to the toolbar. When off, light mode is used everywhere."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Add link"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Add separator"
 msgstr ""
 
@@ -101,15 +101,15 @@ msgstr ""
 msgid "AdminKit"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "AdminKit itself — always on and not removable here."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "AdminKit ships a tuned adapter for this plugin — light and dark."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Administration"
 msgstr ""
 
@@ -121,11 +121,11 @@ msgstr ""
 msgid "Administration preferences"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "All categories"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "All features"
 msgstr ""
 
@@ -133,7 +133,7 @@ msgstr ""
 msgid "Allow administrators to rename a user login on Users → Edit (single-site only; signs the user out)."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Always"
 msgstr ""
 
@@ -149,19 +149,19 @@ msgstr ""
 msgid "Application passwords"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Applies after saving changes."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Apply"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "At a glance"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "At your own pace. These steps are optional."
 msgstr ""
 
@@ -169,23 +169,23 @@ msgstr ""
 msgid "Avatars"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Back to features"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Background"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Border"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Brand color"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Bricks"
 msgstr ""
 
@@ -193,7 +193,7 @@ msgstr ""
 msgid "Broad access to content"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Bulk actions"
 msgstr ""
 
@@ -205,7 +205,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Card"
 msgstr ""
 
@@ -213,24 +213,24 @@ msgstr ""
 msgid "Change your own email from Profile so it can be confirmed."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Changes apply after saving."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 #, php-format
 msgid "Choice: %s"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Choose a feature"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Choose an icon"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Choose colors for light and dark. Custom lets you choose the accent and edit each palette color. Save to apply your changes."
 msgstr ""
 
@@ -250,7 +250,7 @@ msgstr ""
 msgid "Choose the site language and the timezone used for publishing."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Choose the tools that make your everyday work easier."
 msgstr ""
 
@@ -286,7 +286,7 @@ msgstr ""
 msgid "Close administration menu"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Close settings"
 msgstr ""
 
@@ -294,11 +294,11 @@ msgstr ""
 msgid "Collect admin notices into a toolbar drawer while keeping inline action confirmations in place."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Colors"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Colors, typography and components"
 msgstr ""
 
@@ -306,11 +306,11 @@ msgstr ""
 msgid "Comment settings"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Configuration"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Configure"
 msgstr ""
 
@@ -326,31 +326,31 @@ msgstr ""
 msgid "Control approval rules and filter unwanted comments."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Corner scale"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Corner shapes, outlines and depth for buttons, fields, cards and tables."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Could not load toolbar items."
 msgstr ""
 
-#: inc/class-storage.php inc/settings/class-settings-page.php
+#: inc/class-storage.php inc/settings/class-settings-i18n.php
 msgid "Could not save"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Current"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Custom"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Custom link"
 msgstr ""
 
@@ -358,27 +358,27 @@ msgstr ""
 msgid "Customize"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Customize the WordPress sidebar menu and top admin toolbar."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Customize the design"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Customize the foundations and components of your interface."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Customized"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Danger text"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Dark"
 msgstr ""
 
@@ -394,27 +394,27 @@ msgstr ""
 msgid "Date & time formats"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Deactivation to save"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Default"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Design system"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Design system sections"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Disable all"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Disabled"
 msgstr ""
 
@@ -422,19 +422,19 @@ msgstr ""
 msgid "Display"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Done"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Download these settings as a JSON file"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Download this menu layout as a JSON file"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Drag to reorder"
 msgstr ""
 
@@ -450,7 +450,7 @@ msgstr ""
 msgid "Edit first name, last name, email and role inline from the users list."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Elevation"
 msgstr ""
 
@@ -458,67 +458,67 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Enable all"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Enable the feature to apply these options. Your choices are preserved."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Enable the parent feature to use this option."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Enabled"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Enabled in the saved configuration."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Explore features"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Explore the possibilities"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Explore, adjust, keep what works for you."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Export"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Export the current configuration as a JSON file. Pending changes are included."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Feature active"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Feature categories"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Feature inactive"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Features"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Filter features by status"
 msgstr ""
 
@@ -530,15 +530,15 @@ msgstr ""
 msgid "First name"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Flat"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Font family"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Font family and text scale."
 msgstr ""
 
@@ -546,7 +546,7 @@ msgstr ""
 msgid "Full access"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Generic"
 msgstr ""
 
@@ -566,11 +566,11 @@ msgstr ""
 msgid "Hidden"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Hide"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Hide first steps"
 msgstr ""
 
@@ -614,11 +614,11 @@ msgstr ""
 msgid "Image URL"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Import"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Import an AdminKit export. Save or discard pending changes before importing."
 msgstr ""
 
@@ -626,11 +626,11 @@ msgstr ""
 msgid "In All, place published content and active plugins before the others. Explicit sorting and searches take priority."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Inactive features"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Info text"
 msgstr ""
 
@@ -638,24 +638,24 @@ msgstr ""
 msgid "Information"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Inherited"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 #, php-format
 msgid "Installed version %1$s exceeds tested range (%2$s) — native plugin UI is kept until verified."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Keep your configuration"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Keep, transfer or restore your AdminKit settings."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Label"
 msgstr ""
 
@@ -675,19 +675,19 @@ msgstr ""
 msgid "Last name"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Left"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Light"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Load a menu layout from a JSON file"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Load settings from a JSON file"
 msgstr ""
 
@@ -703,7 +703,7 @@ msgstr ""
 msgid "Login screen"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Make your first adjustment"
 msgstr ""
 
@@ -711,7 +711,7 @@ msgstr ""
 msgid "Manage access for applications connected to your account."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Manage all features"
 msgstr ""
 
@@ -743,7 +743,7 @@ msgstr ""
 msgid "Moderation & filtering"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Monochrome"
 msgstr ""
 
@@ -751,11 +751,11 @@ msgstr ""
 msgid "More actions"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Move down"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Move up"
 msgstr ""
 
@@ -767,35 +767,35 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Native"
 msgstr ""
 
-#: inc/settings/class-settings-catalog.php inc/settings/class-settings-page.php
+#: inc/settings/class-settings-catalog.php inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Navigation"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Need an icon? Copy an SVG from"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "No dedicated adapter — themed automatically by AdminKit's base layer."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "No icons found."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "No results in this category. Choose another category or clear the filters."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "No results. Try another search term."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "No toolbar items found."
 msgstr ""
 
@@ -811,7 +811,7 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Off"
 msgstr ""
 
@@ -823,7 +823,7 @@ msgstr ""
 msgid "On arrival, show published posts, pages and custom content. Searches and chosen filters stay unchanged."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "On hover"
 msgstr ""
 
@@ -835,7 +835,7 @@ msgstr ""
 msgid "Open content tables on Published"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Open in a new tab"
 msgstr ""
 
@@ -843,19 +843,19 @@ msgstr ""
 msgid "Open the plugins table on Active"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Option changes will apply after saving."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Options"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Options paused"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Options to save"
 msgstr ""
 
@@ -863,11 +863,11 @@ msgstr ""
 msgid "Other settings"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Outline width"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Overview"
 msgstr ""
 
@@ -875,11 +875,11 @@ msgstr ""
 msgid "Participation"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Paste an SVG or a data:image/svg+xml URI…"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Pause to save"
 msgstr ""
 
@@ -899,15 +899,15 @@ msgstr ""
 msgid "Please enter a valid email address."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Plugin inactive"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Plugins"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Point this item at a custom URL (internal or external). Its submenu still works."
 msgstr ""
 
@@ -915,15 +915,15 @@ msgstr ""
 msgid "Post previews"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Prepare default feature choices"
 msgstr ""
 
-#: inc/settings/class-settings-page.php inc/wp-core/class-post-previews.php
+#: inc/settings/class-settings-i18n.php inc/wp-core/class-post-previews.php
 msgid "Preview"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Preview changes here, then save to apply them. Elevation affects cards and tables; focus indicators stay visible."
 msgstr ""
 
@@ -931,7 +931,7 @@ msgstr ""
 msgid "Preview unavailable"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Primary action"
 msgstr ""
 
@@ -943,7 +943,7 @@ msgstr ""
 msgid "Public profile"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Public site"
 msgstr ""
 
@@ -959,15 +959,15 @@ msgstr ""
 msgid "RSS feeds"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Raised"
 msgstr ""
 
-#: inc/settings/class-settings-page.php inc/wp-core/class-options-general.php
+#: inc/settings/class-settings-i18n.php inc/wp-core/class-options-general.php
 msgid "Remove"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Rename — clear to restore the original"
 msgstr ""
 
@@ -979,11 +979,11 @@ msgstr ""
 msgid "Reorder and hide top toolbar items from AdminKit → Navigation."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Reorder, rename, change icons or hide toolbar items. Hiding an item does not block access to it in WordPress."
 msgstr ""
 
@@ -991,47 +991,47 @@ msgstr ""
 msgid "Reorder, rename, re-icon and hide sidebar menu items from AdminKit → Navigation."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Reset"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Reset menu"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Reset palette"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Reset to defaults"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Reset toolbar"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Restore a configuration"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Restore feature defaults"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Restore the default feature choices. Design settings and navigation layouts are kept. Save to apply."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Retry"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Review first steps"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Right"
 msgstr ""
 
@@ -1043,11 +1043,11 @@ msgstr ""
 msgid "Roles, language and preferences."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Sample content — preview only"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Save changes"
 msgstr ""
 
@@ -1055,15 +1055,15 @@ msgstr ""
 msgid "Save failed."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Saved"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Saving will pause these options. Your choices will be preserved."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Saving…"
 msgstr ""
 
@@ -1075,23 +1075,23 @@ msgstr ""
 msgid "Search engine visibility"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Search features…"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Search plugins…"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Search…"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Secondary action"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Secondary text"
 msgstr ""
 
@@ -1099,7 +1099,7 @@ msgstr ""
 msgid "Security"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Separator"
 msgstr ""
 
@@ -1119,15 +1119,15 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Shapes & elevation"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Show"
 msgstr ""
 
-#: inc/settings/class-settings-page.php inc/wp-core/class-admin-bar.php
+#: inc/settings/class-settings-i18n.php inc/wp-core/class-admin-bar.php
 msgid "Show / hide submenus"
 msgstr ""
 
@@ -1143,11 +1143,11 @@ msgstr ""
 msgid "Shown with the expanded menu. The site icon takes over when the menu is collapsed."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Sidebar menu"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Sidebar menu and toolbar"
 msgstr ""
 
@@ -1163,11 +1163,11 @@ msgstr ""
 msgid "Site language plus the timezone and formats used wherever dates appear."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Site name"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Skin paused"
 msgstr ""
 
@@ -1175,23 +1175,23 @@ msgstr ""
 msgid "Style wp-login.php to match the administration (logo, dark mode and focus states)."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Subtle"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Success text"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Surface"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "System"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Table"
 msgstr ""
 
@@ -1199,43 +1199,43 @@ msgstr ""
 msgid "Tables"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Text"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Text on accent"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Text scale"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "That file isn’t a valid AdminKit menu export."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "That file isn’t a valid AdminKit settings export."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "The two views have independent layouts. Saving applies pending changes from both views."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Themes"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "These actions apply to all available features, including those hidden by filters."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "These choices are preserved when the feature is off and apply after saving."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."
 msgstr ""
 
@@ -1243,7 +1243,7 @@ msgstr ""
 msgid "This email address is already registered."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "This feature has no effect while disabled."
 msgstr ""
 
@@ -1255,7 +1255,7 @@ msgstr ""
 msgid "This username cannot be changed."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "To save"
 msgstr ""
 
@@ -1263,11 +1263,11 @@ msgstr ""
 msgid "Toggle light / dark mode"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Toolbar"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Toolbar context"
 msgstr ""
 
@@ -1275,19 +1275,19 @@ msgstr ""
 msgid "Toolbar manager"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Toolbar — Administration"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Toolbar — Public site"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Top-edge highlight"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Turn AdminKit modules on or off."
 msgstr ""
 
@@ -1295,11 +1295,11 @@ msgstr ""
 msgid "Type the new username, then click \"Update User\" below to save."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Typography"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Unavailable"
 msgstr ""
 
@@ -1307,7 +1307,7 @@ msgstr ""
 msgid "Unavailable on Multisite networks."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Unsaved changes"
 msgstr ""
 
@@ -1319,7 +1319,7 @@ msgstr ""
 msgid "Upload image"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Use a hex color such as #1549ab."
 msgstr ""
 
@@ -1347,31 +1347,31 @@ msgstr ""
 msgid "Waaskit"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Warning text"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "What this feature does"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Will be disabled after saving."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Will be enabled after saving."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "WordPress"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "WordPress icon"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "WordPress icons"
 msgstr ""
 
@@ -1383,11 +1383,11 @@ msgstr ""
 msgid "Writes, publishes and manages their own posts."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "You are editing the WordPress toolbar on the public site, normally visible only to logged-in users. These settings do not change your public pages or site menus."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "You are editing the toolbar inside the WordPress administration."
 msgstr ""
 
@@ -1395,19 +1395,19 @@ msgstr ""
 msgid "You are not allowed to do that."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Your administration, simply."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Your changes are kept. Try again."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Your features, by purpose"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Your first steps"
 msgstr ""
 
@@ -1415,10 +1415,10 @@ msgstr ""
 msgid "You’re all caught up."
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "https://…"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "submenus"
 msgstr ""

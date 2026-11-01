@@ -19,6 +19,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+require_once __DIR__ . '/class-settings-i18n.php';
+
 class AdminKit_Settings_Page {
 
 	/** `?page=` slug for the top-level menu + the `toplevel_page_{slug}` screen id. */
@@ -196,12 +198,20 @@ class AdminKit_Settings_Page {
 		$deps       = array( 'wp-api-fetch' );
 		$navigation_deps = array();
 		if ( $needs_nav ) {
-			foreach ( array( 'controls', 'menu', 'toolbar' ) as $part ) {
+			foreach ( array( 'controls', 'menu-model', 'menu', 'toolbar' ) as $part ) {
 				$part_js = 'assets/js/settings/navigation-' . $part . '.js';
 				$part_handle = self::HANDLE . '-navigation-' . $part;
-				$part_deps = 'controls' === $part ? array() : array( self::HANDLE . '-navigation-controls' );
+				if ( 'controls' === $part || 'menu-model' === $part ) {
+					$part_deps = array();
+				} elseif ( 'menu' === $part ) {
+					$part_deps = array( self::HANDLE . '-navigation-controls', self::HANDLE . '-navigation-menu-model' );
+				} else {
+					$part_deps = array( self::HANDLE . '-navigation-controls' );
+				}
 				wp_enqueue_script( $part_handle, ADMINKIT_URL . $part_js, $part_deps, self::ver( $part_js ), true );
-				$navigation_deps[] = $part_handle;
+				if ( 'menu-model' !== $part ) {
+					$navigation_deps[] = $part_handle;
+				}
 			}
 		}
 		if ( 'navigation' === $module ) {
@@ -223,8 +233,18 @@ class AdminKit_Settings_Page {
 				? $parts_for_tab[ $paged_tab ]
 				: array( 'design', 'features', 'plugins', 'navigation' );
 			foreach ( $main_parts as $part ) {
+				if ( 'design' === $part ) {
+					$colors_js     = 'assets/js/settings/design-colors.js';
+					$colors_handle = $screen_handle . '-design-colors';
+					wp_enqueue_script( $colors_handle, ADMINKIT_URL . $colors_js, array(), self::ver( $colors_js ), true );
+					$part_deps = array( $colors_handle );
+				} elseif ( 'navigation' === $part ) {
+					$part_deps = $navigation_deps;
+				} else {
+					$part_deps = array();
+				}
 				$part_js = 'assets/js/settings/' . $part . '.js';
-				wp_enqueue_script( $screen_handle . '-' . $part, ADMINKIT_URL . $part_js, 'navigation' === $part ? $navigation_deps : array(), self::ver( $part_js ), true );
+				wp_enqueue_script( $screen_handle . '-' . $part, ADMINKIT_URL . $part_js, $part_deps, self::ver( $part_js ), true );
 				$deps[] = $screen_handle . '-' . $part;
 			}
 		}
@@ -433,226 +453,7 @@ class AdminKit_Settings_Page {
 			// Menu manager — captured tree, saved layout, icon set, save route.
 			// Only populated on the Menu screen; empty elsewhere.
 			'menuManager'  => $menu_manager,
-			'i18n'         => array(
-								'pageOverview' => __( 'Overview', 'adminkit' ),
-				'pageConfiguration' => __( 'Configuration', 'adminkit' ),
-				'pageOverviewTitle' => __( 'Your administration, simply.', 'adminkit' ),
-				'pageOverviewIntro' => __( 'Choose the tools that make your everyday work easier.', 'adminkit' ),
-				'pageSummary' => __( 'At a glance', 'adminkit' ),
-				'pageActiveCount' => __( '%1$s of %2$s features active', 'adminkit' ),
-				'pageCategories' => __( 'Your features, by purpose', 'adminkit' ),
-				'pageExplore' => __( 'Explore features', 'adminkit' ),
-				'pageConfigure' => __( 'Configure', 'adminkit' ),
-				'pageDone' => __( 'Done', 'adminkit' ),
-				'pageClose' => __( 'Close settings', 'adminkit' ),
-				'pageManageAll' => __( 'Manage all features', 'adminkit' ),
-				'pageDesignAction' => __( 'Customize the design', 'adminkit' ),
-				'pageDesignSummary' => __( 'Colors, typography and components', 'adminkit' ),
-				'pageNavigationSummary' => __( 'Sidebar menu and toolbar', 'adminkit' ),
-				'pageSettingsIntro' => __( 'Keep, transfer or restore your AdminKit settings.', 'adminkit' ),
-				'pageExportTitle' => __( 'Keep your configuration', 'adminkit' ),
-				'pageExportDesc' => __( 'Export the current configuration as a JSON file. Pending changes are included.', 'adminkit' ),
-				'pageImportTitle' => __( 'Restore a configuration', 'adminkit' ),
-				'pageImportDesc' => __( 'Import an AdminKit export. Save or discard pending changes before importing.', 'adminkit' ),
-				'pageDefaultsTitle' => __( 'Restore feature defaults', 'adminkit' ),
-				'pageDefaultsDesc' => __( 'Restore the default feature choices. Design settings and navigation layouts are kept. Save to apply.', 'adminkit' ),
-				'pageDefaultsConfirm' => __( 'Prepare default feature choices', 'adminkit' ),
-				'pageGuideTitle' => __( 'Your first steps', 'adminkit' ),
-				'pageGuideIntro' => __( 'Explore, adjust, keep what works for you.', 'adminkit' ),
-				'pageGuideExplore' => __( 'Explore the possibilities', 'adminkit' ),
-				'pageGuideConfigure' => __( 'Make your first adjustment', 'adminkit' ),
-				'pageGuideExport' => __( 'Keep your configuration', 'adminkit' ),
-				'pageGuideOptional' => __( 'At your own pace. These steps are optional.', 'adminkit' ),
-				'pageGuideHide' => __( 'Hide first steps', 'adminkit' ),
-				'pageGuideShow' => __( 'Review first steps', 'adminkit' ),
-				'pageSavedScope' => __( 'Changes apply after saving.', 'adminkit' ),
-				'foundationInvalidColor' => __( 'Use a hex color such as #1549ab.', 'adminkit' ),
-				'foundationSections' => __( 'Design system sections', 'adminkit' ),
-				'previewAction' => __( 'Primary action', 'adminkit' ),
-				'foundationColorsHelp' => __( 'Choose colors for light and dark. Custom lets you choose the accent and edit each palette color. Save to apply your changes.', 'adminkit' ),
-				'foundationReset' => __( 'Reset', 'adminkit' ),
-				'foundationBackground' => __( 'Background', 'adminkit' ),
-				'foundationSurface' => __( 'Surface', 'adminkit' ),
-				'foundationText' => __( 'Text', 'adminkit' ),
-				'foundationMuted' => __( 'Secondary text', 'adminkit' ),
-				'foundationBorder' => __( 'Border', 'adminkit' ),
-				'foundationAccent' => __( 'Accent', 'adminkit' ),
-				'foundationOnAccent' => __( 'Text on accent', 'adminkit' ),
-				'foundationPaletteReset' => __( 'Reset palette', 'adminkit' ),
-				'foundationInherited' => __( 'Inherited', 'adminkit' ),
-				'foundationCustom' => __( 'Customized', 'adminkit' ),
-				'foundationSuccess' => __( 'Success text', 'adminkit' ),
-				'foundationWarning' => __( 'Warning text', 'adminkit' ),
-				'foundationDanger' => __( 'Danger text', 'adminkit' ),
-				'foundationInfo' => __( 'Info text', 'adminkit' ),
-				'studioFont' => __( 'Font family', 'adminkit' ),
-				'fontSystem' => __( 'System', 'adminkit' ),
-				'studioTypeScale' => __( 'Text scale', 'adminkit' ),
-				'foundationScope' => __( 'These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design.', 'adminkit' ),
-				'studioColors' => __( 'Colors', 'adminkit' ),
-				'studioType' => __( 'Typography', 'adminkit' ),
-				'designPreview' => __( 'Preview', 'adminkit' ),
-				'componentHighlight' => __( 'Top-edge highlight', 'adminkit' ),
-				'componentOff' => __( 'Off', 'adminkit' ),
-				'componentHover' => __( 'On hover', 'adminkit' ),
-				'componentAlways' => __( 'Always', 'adminkit' ),
-				'componentDisabled' => __( 'Disabled', 'adminkit' ),
-				'studioShapes' => __( 'Shapes & elevation', 'adminkit' ),
-				'studioTypeHint' => __( 'Font family and text scale.', 'adminkit' ),
-				'studioRadiusScale' => __( 'Corner scale', 'adminkit' ),
-				'studioBorder' => __( 'Outline width', 'adminkit' ),
-				'shapeHint' => __( 'Corner shapes, outlines and depth for buttons, fields, cards and tables.', 'adminkit' ),
-				'shapeHelp' => __( 'Preview changes here, then save to apply them. Elevation affects cards and tables; focus indicators stay visible.', 'adminkit' ),
-				'shapeCard' => __( 'Card', 'adminkit' ),
-				'shapeTable' => __( 'Table', 'adminkit' ),
-				'studioElevation' => __( 'Elevation', 'adminkit' ),
-				'studioFlat' => __( 'Flat', 'adminkit' ),
-				'studioSubtle' => __( 'Subtle', 'adminkit' ),
-				'studioRaised' => __( 'Raised', 'adminkit' ),
-				'studioSample' => __( 'Sample content — preview only', 'adminkit' ),
-				'studioField' => __( 'Site name', 'adminkit' ),
-				'studioSecondary' => __( 'Secondary action', 'adminkit' ),
-				'pluginInactive' => __( 'Plugin inactive', 'adminkit' ),
-				'pluginSkinPaused' => __( 'Skin paused', 'adminkit' ),
-				/* translators: 1: installed plugin version, 2: maximum tested version range (e.g. 2.5.x). */
-				'pluginSkinPausedHint' => __( 'Installed version %1$s exceeds tested range (%2$s) — native plugin UI is kept until verified.', 'adminkit' ),
-				'noResults' => __( 'No results. Try another search term.', 'adminkit' ),
-				'designSystem' => __( 'Design system', 'adminkit' ),
-				'designIntro' => __( 'Customize the foundations and components of your interface.', 'adminkit' ),
-				'defaultPreset' => __( 'Default', 'adminkit' ),
-				'features'          => __( 'Features', 'adminkit' ),
-				'plugins'           => __( 'Plugins', 'adminkit' ),
-				'navigation'        => __( 'Navigation', 'adminkit' ),
-				'navigationIntro'   => __( 'Customize the WordPress sidebar menu and top admin toolbar.', 'adminkit' ),
-				'menu'              => __( 'Sidebar menu', 'adminkit' ),
-
-				// Toolbar manager tab.
-				'toolbarTab'        => __( 'Toolbar', 'adminkit' ),
-				'toolbarIntro'      => __( 'Reorder, rename, change icons or hide toolbar items. Hiding an item does not block access to it in WordPress.', 'adminkit' ),
-				'toolbarReset'      => __( 'Reset toolbar', 'adminkit' ),
-				'toolbarEmpty'      => __( 'No toolbar items found.', 'adminkit' ),
-				'toolbarLoadError'  => __( 'Could not load toolbar items.', 'adminkit' ),
-				'toolbarRetry'      => __( 'Retry', 'adminkit' ),
-				'toolbarLeft'       => __( 'Left', 'adminkit' ),
-				'toolbarRight'      => __( 'Right', 'adminkit' ),
-				'toolbarAdminTitle' => __( 'Toolbar — Administration', 'adminkit' ),
-				'toolbarFrontendTitle' => __( 'Toolbar — Public site', 'adminkit' ),
-				'toolbarAdminScope' => __( 'You are editing the toolbar inside the WordPress administration.', 'adminkit' ),
-				'toolbarFrontendScope' => __( 'You are editing the WordPress toolbar on the public site, normally visible only to logged-in users. These settings do not change your public pages or site menus.', 'adminkit' ),
-				'toolbarSaveScope' => __( 'The two views have independent layouts. Saving applies pending changes from both views.', 'adminkit' ),
-				'toolbarContext'    => __( 'Toolbar context', 'adminkit' ),
-				'toolbarAdmin'      => __( 'Administration', 'adminkit' ),
-				'toolbarFrontend'   => __( 'Public site', 'adminkit' ),
-
-				// Menu manager tab.
-				'menuIntro'         => __( 'Reorder the admin menu and submenus, change icons, and hide entries. Drag to reorder; changes apply after you save. Hiding removes an item from the menu only — it does not block direct access.', 'adminkit' ),
-				'menuReset'         => __( 'Reset menu', 'adminkit' ),
-				'menuIconPick'      => __( 'Choose an icon', 'adminkit' ),
-				'menuIconNone'      => __( 'Default', 'adminkit' ),
-				'menuIconWp'        => __( 'WordPress icon', 'adminkit' ),
-				'menuIconWpSet'     => __( 'WordPress icons', 'adminkit' ),
-				'menuIconSearch'    => __( 'Search…', 'adminkit' ),
-				'menuIconEmpty'     => __( 'No icons found.', 'adminkit' ),
-				'menuHide'          => __( 'Hide', 'adminkit' ),
-				'menuShow'          => __( 'Show', 'adminkit' ),
-				'menuSubmenus'      => __( 'submenus', 'adminkit' ),
-				'menuSubmenusToggle' => __( 'Show / hide submenus', 'adminkit' ),
-				'menuDragHint'      => __( 'Drag to reorder', 'adminkit' ),
-				'menuMoveUp'        => __( 'Move up', 'adminkit' ),
-				'menuMoveDown'      => __( 'Move down', 'adminkit' ),
-				'menuIconCustom'    => __( 'Paste an SVG or a data:image/svg+xml URI…', 'adminkit' ),
-				'menuIconHint'      => __( 'Need an icon? Copy an SVG from', 'adminkit' ),
-				'menuIconApply'     => __( 'Apply', 'adminkit' ),
-				'menuAddLink'       => __( 'Add link', 'adminkit' ),
-				'menuAddSeparator'  => __( 'Add separator', 'adminkit' ),
-				'menuExport'        => __( 'Export', 'adminkit' ),
-				'menuImport'        => __( 'Import', 'adminkit' ),
-				'menuExportHint'    => __( 'Download this menu layout as a JSON file', 'adminkit' ),
-				'menuImportHint'    => __( 'Load a menu layout from a JSON file', 'adminkit' ),
-				'menuImportError'   => __( 'That file isn’t a valid AdminKit menu export.', 'adminkit' ),
-				'menuSeparator'     => __( 'Separator', 'adminkit' ),
-				'menuLinkTitle'     => __( 'Label', 'adminkit' ),
-				'menuLinkUrl'       => __( 'https://…', 'adminkit' ),
-				'menuNewTab'        => __( 'Open in a new tab', 'adminkit' ),
-				'menuRemove'        => __( 'Remove', 'adminkit' ),
-				'menuRename'        => __( 'Rename — clear to restore the original', 'adminkit' ),
-				'menuUrlTitle'      => __( 'Custom link', 'adminkit' ),
-				'menuUrlLabel'      => __( 'Point this item at a custom URL (internal or external). Its submenu still works.', 'adminkit' ),
-				'menuUrlCurrent'    => __( 'Current', 'adminkit' ),
-				'featurePending' => __( 'To save', 'adminkit' ),
-				'featureActivationPending' => __( 'Activation to save', 'adminkit' ),
-				'featureDeactivationPending' => __( 'Deactivation to save', 'adminkit' ),
-				'featureOptionsPending' => __( 'Options to save', 'adminkit' ),
-				'featureWillEnable' => __( 'Will be enabled after saving.', 'adminkit' ),
-				'featureWillDisable' => __( 'Will be disabled after saving.', 'adminkit' ),
-				'featureOptionsWillApply' => __( 'Option changes will apply after saving.', 'adminkit' ),
-				'featureSavedOn' => __( 'Enabled in the saved configuration.', 'adminkit' ),
-				'featureSavedOff' => __( 'This feature has no effect while disabled.', 'adminkit' ),
-				'featureOptionsPaused' => __( 'Options paused', 'adminkit' ),
-				'featurePausePending' => __( 'Pause to save', 'adminkit' ),
-				'featureOptionsPausedHint' => __( 'Enable the feature to apply these options. Your choices are preserved.', 'adminkit' ),
-				'featureOptionsPausePendingHint' => __( 'Saving will pause these options. Your choices will be preserved.', 'adminkit' ),
-				'featureOptionOn' => __( 'Enabled', 'adminkit' ),
-				'featureOptionOff' => __( 'Disabled', 'adminkit' ),
-				'featureOptionChoice' => __( 'Choice: %s', 'adminkit' ),
-				'featureOptions' => __( 'Options', 'adminkit' ),
-				'featureOptionsHint' => __( 'These choices are preserved when the feature is off and apply after saving.', 'adminkit' ),
-				'featureCategories' => __( 'Feature categories', 'adminkit' ),
-				'featureAllCategories' => __( 'All categories', 'adminkit' ),
-				'featureChoose'     => __( 'Choose a feature', 'adminkit' ),
-				'featureEffect'     => __( 'What this feature does', 'adminkit' ),
-				'featureActive'     => __( 'Feature active', 'adminkit' ),
-				'featureInactive'   => __( 'Feature inactive', 'adminkit' ),
-				'featureUnavailable' => __( 'Unavailable', 'adminkit' ),
-				'featureParentOff'  => __( 'Enable the parent feature to use this option.', 'adminkit' ),
-				'featureSaveHint'   => __( 'Applies after saving changes.', 'adminkit' ),
-				'featureBack'       => __( 'Back to features', 'adminkit' ),
-				'featureCategoryEmpty' => __( 'No results in this category. Choose another category or clear the filters.', 'adminkit' ),
-				'featureBulk'       => __( 'Bulk actions', 'adminkit' ),
-				'featureBulkScope'  => __( 'These actions apply to all available features, including those hidden by filters.', 'adminkit' ),
-				'featuresIntro'     => __( 'Turn AdminKit modules on or off.', 'adminkit' ),
-				'enableAll'         => __( 'Enable all', 'adminkit' ),
-				'disableAll'        => __( 'Disable all', 'adminkit' ),
-				'resetDefaults'     => __( 'Reset to defaults', 'adminkit' ),
-				'filterFeatures'    => __( 'Filter features by status', 'adminkit' ),
-				'featuresFilterAll' => __( 'All features', 'adminkit' ),
-				'featuresFilterActive' => __( 'Active features', 'adminkit' ),
-				'featuresFilterInactive' => __( 'Inactive features', 'adminkit' ),
-				'searchFeatures'    => __( 'Search features…', 'adminkit' ),
-				'searchPlugins'     => __( 'Search plugins…', 'adminkit' ),
-				'pluginsIntro'      => __( 'Every plugin installed on your site, plus AdminKit\'s active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit\'s base styling automatically.', 'adminkit' ),
-				'native'            => __( 'Native', 'adminkit' ),
-				'nativeHint'        => __( 'AdminKit ships a tuned adapter for this plugin — light and dark.', 'adminkit' ),
-				'system'            => __( 'System', 'adminkit' ),
-				'systemHint'        => __( 'AdminKit itself — always on and not removable here.', 'adminkit' ),
-				'generic'           => __( 'Generic', 'adminkit' ),
-				'genericHint'       => __( 'No dedicated adapter — themed automatically by AdminKit\'s base layer.', 'adminkit' ),
-				'themesLabel'       => __( 'Themes', 'adminkit' ),
-
-				// Media frames.
-				'settingsExport'     => __( 'Export', 'adminkit' ),
-				'settingsImport'     => __( 'Import', 'adminkit' ),
-				'settingsExportHint' => __( 'Download these settings as a JSON file', 'adminkit' ),
-				'settingsImportHint' => __( 'Load settings from a JSON file', 'adminkit' ),
-				'settingsImportError' => __( 'That file isn’t a valid AdminKit settings export.', 'adminkit' ),
-
-				// Save bar.
-				'save'              => __( 'Save changes', 'adminkit' ),
-				'saving'            => __( 'Saving…', 'adminkit' ),
-				'saved'             => __( 'Saved', 'adminkit' ),
-				'error'             => __( 'Could not save', 'adminkit' ),
-				'saveRecovery'      => __( 'Your changes are kept. Try again.', 'adminkit' ),
-				'unsaved'           => __( 'Unsaved changes', 'adminkit' ),
-
-				// --- Brand card -------------------------------------------------
-				'accentLabel'         => __( 'Brand color', 'adminkit' ),
-				'accentSrcMonochrome' => __( 'Monochrome', 'adminkit' ),
-				'accentSrcAdminKit'   => __( 'WordPress', 'adminkit' ),
-				'accentSrcBricks'     => __( 'Bricks', 'adminkit' ),
-				'accentSrcCustom'     => __( 'Custom', 'adminkit' ),
-				'brandPreviewLight' => __( 'Light', 'adminkit' ),
-				'brandPreviewDark'  => __( 'Dark', 'adminkit' ),
-			),
+			'i18n'         => AdminKit_Settings_I18n::strings(),
 		);
 		if ( ! $is_main ) {
 			foreach ( array( 'designSystem', 'appearance', 'fonts', 'brandAccent', 'accentSource', 'adminkitBlue', 'bricksConnected', 'features', 'integrations' ) as $key ) {

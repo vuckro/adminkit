@@ -228,17 +228,19 @@ tested range so that case degrades to the host's clean native UI:
 
 ```php
 protected static function host_version()            { return defined( 'FOO_VERSION' ) ? FOO_VERSION : null; }
-protected static function max_tested_host_version() { return '2'; } // host's current major
-public static function register_assets() {
-    if ( ! static::host_within_tested_range() ) { return; } // past tested major → native UI
-    AdminKit_Assets::register( array( /* … */ ) );
-}
+protected static function max_tested_host_version() { return '2'; } // '2' for 2.x, or '2.5' for <= 2.5.x
 ```
 
-The gate compares **majors**, so the skin survives minor/patch updates.
+`AdminKit_Integration_Base::maybe_init()` enforces `host_within_tested_range()`
+centrally before `register_assets()`, `boot()` and `print_menu_wordmark()`, and
+exposes a `Skin paused` badge in *Design system → Plugins* when the host version
+is outside the tested range.
 [fluent-booking](../inc/integrations/plugins/fluent-booking/class-fluent-booking.php)
 and [flying-press](../inc/integrations/plugins/flying-press/class-flying-press.php)
-are the reference. **Pair every Tier B adapter with a `baseline.json`** (drift
+are the reference. Element Plus hosts share `AdminKit_Assets::ELEMENT_PLUS_HANDLE`
+(`assets/css/vendor/element-plus.css`), and FunnelKit hosts share
+`AdminKit_FunnelKit_Integration` (`inc/integrations/trait-funnelkit-integration.php`).
+**Pair every Tier B adapter with a `baseline.json`** (drift
 detection) so a host class/color change is caught before it ships — see
 [TOKENS.md → Drift detection](TOKENS.md#drift-detection-keeping-adapters-alive).
 

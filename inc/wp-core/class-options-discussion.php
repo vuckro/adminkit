@@ -60,30 +60,7 @@ class AdminKit_Core_Options_Discussion {
 		if ( ! self::should_enhance() ) {
 			return;
 		}
-		$pending = self::PENDING_CLASS;
-		$ready   = self::READY_CLASS;
-		?>
-<script id="adminkit-options-discussion-prepaint">
-(function () {
-	var d = document.documentElement;
-	d.classList.add(<?php echo wp_json_encode( $pending ); ?>);
-	function reveal() {
-		d.classList.remove(<?php echo wp_json_encode( $pending ); ?>);
-		d.classList.add(<?php echo wp_json_encode( $ready ); ?>);
-	}
-	window.addEventListener('load', function () {
-		var after = function () {
-			if (d.classList.contains(<?php echo wp_json_encode( $pending ); ?>)) { reveal(); }
-		};
-		if (window.requestAnimationFrame) { window.requestAnimationFrame(after); }
-		else { window.setTimeout(after, 0); }
-	});
-	setTimeout(function () {
-		if (d.classList.contains(<?php echo wp_json_encode( $pending ); ?>)) { reveal(); }
-	}, 3000);
-})();
-</script>
-		<?php
+		AdminKit_Assets::print_prepaint( 'adminkit-options-discussion-prepaint', self::PENDING_CLASS, self::READY_CLASS );
 	}
 
 	/**

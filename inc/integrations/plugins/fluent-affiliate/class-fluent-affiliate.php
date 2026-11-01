@@ -122,7 +122,7 @@ class AdminKit_Integration_Fluent_Affiliate extends AdminKit_Integration_Base {
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-fluent-affiliate-admin',
 			'src'       => 'inc/integrations/plugins/fluent-affiliate/css/admin.css',
-			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE, AdminKit_Assets::ELEMENT_PLUS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_screen' ),
 		) );

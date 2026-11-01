@@ -21,7 +21,7 @@ function boot(source) {
  w.Blob=class{constructor(parts){exported=JSON.parse(parts.join(''));}};
  w.URL.createObjectURL=()=> 'blob:fixture';w.URL.revokeObjectURL=()=>{};
  w.HTMLAnchorElement.prototype.click=()=>{};
- for(const name of ['design','features','plugins','main']) w.eval(fs.readFileSync(path.join(root,'assets/js/settings/'+name+'.js'),'utf8'));
+ for(const name of ['design-colors','design','features','plugins','main']) w.eval(fs.readFileSync(path.join(root,'assets/js/settings/'+name+'.js'),'utf8'));
  const original=w.AdminKitScreens.main;
  w.AdminKitScreens.main=context=>{w.auditState=context.state;w.auditSurface=original(context);return w.auditSurface;};
  w.eval(fs.readFileSync(path.join(root,'assets/js/settings.js'),'utf8'));

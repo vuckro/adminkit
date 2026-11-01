@@ -15,28 +15,6 @@ class AdminKit_Toolbar_Renderer {
 	/** @var array<string,bool> Per-request set of `#wp-admin-bar-<id>` nodes that paint on `> .ab-item::before`. */
 	private static $ab_item_overrides = array();
 
-	/**
-	 * Core WP admin-bar node id => native dashicons codepoint + whether it paints on
-	 * `.ab-icon` or `> .ab-item::before`, for restoring the original WP dashicon when a
-	 * user explicitly pins a toolbar node back to `wp-default`.
-	 *
-	 * @var array<string,array{glyph:string,target:string}>
-	 */
-	private static $toolbar_dashicon_glyphs = array(
-		'wp-logo'         => array( 'glyph' => '\\f120', 'target' => 'ab-icon' ),
-		'site-name'       => array( 'glyph' => '\\f226', 'target' => 'ab-item' ),
-		'site-editor'     => array( 'glyph' => '\\f100', 'target' => 'ab-item' ),
-		'updates'         => array( 'glyph' => '\\f463', 'target' => 'ab-icon' ),
-		'comments'        => array( 'glyph' => '\\f101', 'target' => 'ab-icon' ),
-		'new-content'     => array( 'glyph' => '\\f132', 'target' => 'ab-icon' ),
-		'edit'            => array( 'glyph' => '\\f464', 'target' => 'ab-item' ),
-		'customize'       => array( 'glyph' => '\\f540', 'target' => 'ab-item' ),
-		'command-palette' => array( 'glyph' => '\\f179', 'target' => 'ab-icon' ),
-		'search'          => array( 'glyph' => '\\f179', 'target' => 'search' ),
-		'menu-toggle'     => array( 'glyph' => '\\f333', 'target' => 'ab-icon' ),
-	);
-
-
 	/** @var array<string,bool> Toolbar node IDs whose icon paints on `> .ab-item::before` rather than `.ab-icon`. */
 	const AB_ITEM_IDS = array(
 		'site-name'        => true,
@@ -372,8 +350,8 @@ class AdminKit_Toolbar_Renderer {
 
 			if ( 0 === strncmp( $icon, 'wp-default:', 11 ) ) {
 				$raw_id = substr( $icon, 11 );
-				if ( isset( self::$toolbar_dashicon_glyphs[ $raw_id ] ) ) {
-					$info  = self::$toolbar_dashicon_glyphs[ $raw_id ];
+				if ( isset( AdminKit_Icons::TOOLBAR_DASHICON_GLYPHS[ $raw_id ] ) ) {
+					$info  = AdminKit_Icons::TOOLBAR_DASHICON_GLYPHS[ $raw_id ];
 					$glyph = $info['glyph'];
 					if ( 'ab-item' === $info['target'] ) {
 						$sel      = '.wp-admin #wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before,#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before';

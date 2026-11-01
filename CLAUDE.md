@@ -5,26 +5,30 @@ Keep changes simple, explicit and compatible with PHP 7.4+/WordPress 6.0+.
 
 ## Structure
 
-- `adminkit.php` delegates to `AdminKit_Plugin::MODULES`. Files load first; boot
-  callables run second. Add helpers/modules there; keep public class names stable.
+- `adminkit.php` hooks `AdminKit_Plugin::init()` onto `plugins_loaded` (priority 5)
+  so standard plugins can attach `adminkit/*` filters before modules boot. `MODULES`
+  requires every file first, then runs non-null boot callables in registry order.
 - `inc/wp-core/` enhances existing screens; `inc/features/` adds tools. Native
   fields, forms, capabilities, nonces and handlers remain owned by WordPress.
-- Adapter files auto-discover under `inc/integrations/{plugins,themes}/{slug}/`.
-  Their setting keys register early in Settings::init; host labels resolve later.
-- `inc/class-assets.php` owns style registration and the script helper. Respect
-  `adminkit/should_load` for markup, behavior and asset loading, including vetoed
-  native user-tool writes. Do not enqueue native-module styles directly.
-- `AdminKit_Icons` owns shared menu/toolbar icon validation and masks. Keep the
-  compatibility constant/hooks; do not copy the allowlist or SVG parser.
-- `assets/js/settings.js` hosts per-scope revisioned drafts. Save layouts before
-  settings; clear only unchanged revisions and never reload away newer edits.
-  Factories receive explicit context; runtime JS stays build-free. Navigation
-  has separate controls/menu/toolbar factories; its host only routes panes and
-  delegates payloads. Update enqueue dependencies and smoke loaders when adding
-  a settings part.
-- Toolbar PHP keeps its public facade on `AdminKit_Toolbar_Manager`; configuration,
-  snapshots and rendering live in three registered helpers. Keep existing hook
-  callbacks/priorities, option/cache keys and REST envelopes on refactors.
+- Adapter files auto-discover via a memoized manifest under
+  `inc/integrations/{plugins,themes}/{slug}/`. `maybe_init()` enforces
+  `host_within_tested_range()` centrally for assets, `boot()` and wordmarks. Element Plus
+  hosts share `AdminKit_Assets::ELEMENT_PLUS_HANDLE` (`assets/css/vendor/element-plus.css`);
+  FunnelKit hosts share `AdminKit_FunnelKit_Integration`.
+- `inc/class-assets.php` owns style registration, `enqueue_script()`, and the shared
+  `print_prepaint()` anti-FOUC helper. Respect `adminkit/should_load` across markup,
+  behavior and asset loading, and emit zero markup/CSS on anonymous public views.
+- `AdminKit_Icons` owns shared menu/toolbar icon validation, Dashicon glyph tables,
+  and the OPcache-backed `inc/generated/lucide-paths.php` map (served lazily via
+  `/adminkit/v1/icons` to the icon picker).
+- `assets/js/settings.js` hosts per-scope revisioned drafts across the five native
+  submenu pages (and legacy full-payload hosts), loading only the scripts/data each
+  screen needs (`design-colors.js`, `navigation-menu-model.js`, `profile-account-dom.js`
+  loaded via explicit `deps`). `AdminKit_Settings_I18n` owns localized UI strings.
+- Menu and Toolbar PHP keep stable public facades on `AdminKit_Menu_Manager` and
+  `AdminKit_Toolbar_Manager`; `*_Config`, `*_Snapshot` and `*_Renderer` helpers are
+  registered with `null` boot entries in `MODULES`. Keep existing hook priorities,
+  option/cache keys and REST envelopes on refactors.
 - Tokens originate in `tokens/`; generated styles consume the `--ak-*` contract.
   Run the builder rather than editing generated CSS. Keep public toolbar CSS scoped.
 

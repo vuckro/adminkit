@@ -252,8 +252,8 @@ body.adminkit.toplevel_page_flying-press .border-yellow-600 {
 body.adminkit.toplevel_page_flying-press .shadow-sm,
 body.adminkit.toplevel_page_flying-press .shadow,
 body.adminkit.toplevel_page_flying-press .shadow-lg {
-	--tw-shadow: 0 0 #0000 !important;
-	--tw-shadow-colored: 0 0 #0000 !important;
+	--tw-shadow: 0 0 transparent !important;
+	--tw-shadow-colored: 0 0 transparent !important;
 }
 
 

@@ -10,8 +10,10 @@
  *
  * Schema (version-gated via the network option `adminkit_menu_db_version`):
  *   {base_prefix}adminkit_menu_items
- *     id · blog_id · parent ('' = top-level) · slug · position · icon · hidden
- *     · roles (reserved, v2) · updated_at
+ *     id · blog_id · parent ('' = top-level) · slug · position · icon · url
+ *     · new_tab · hidden · type · title · roles (reserved NULL column for a
+ *     future per-role visibility UI; unused in 1.0 so hidden items remain
+ *     purely presentational) · updated_at
  *
  * @package AdminKit
  */
