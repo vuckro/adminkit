@@ -153,13 +153,13 @@ body.adminkit.block-editor-page.is-fullscreen-mode #wpwrap::after {
 }
 
 /* FluentHub replaces the native toolbar/sidebar junction with its own shell.
-   The native 32px/160px frame would cross that shell. Detect the rendered
-   workspace, so ordinary Fluent pages retain the frame when Hub is disabled. */
-body.adminkit:has(.fluent_uui) #wpwrap::before,
-body.adminkit:has(.fluent_uui) #wpwrap::after {
+   The native 32px/160px frame would cross that shell. The shell marker is set from its enqueued
+   stylesheet, so ordinary Fluent pages retain the frame when Hub is disabled. */
+body.adminkit.ak-fluenthub #wpwrap::before,
+body.adminkit.ak-fluenthub #wpwrap::after {
 	display: none;
 }
-body.adminkit:has(.fluent_uui) #wpbody-content {
+body.adminkit.ak-fluenthub #wpbody-content {
 	border-top: 0;
 	border-inline-start: 0;
 	border-start-start-radius: 0;

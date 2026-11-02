@@ -10,6 +10,7 @@ function wp_parse_args($args,$defaults){return array_merge($defaults,$args);}
 function is_admin(){return true;}
 function current_action(){return 'admin_head';}
 function wp_enqueue_style($handle,$src=null,$deps=array(),...$args){global$styles;$styles[$handle]=$deps;}
+function wp_style_is($handle,$state){global$styles;return isset($styles[$handle]);}
 function wp_enqueue_script($handle,...$args){global$scripts;$scripts[]=$handle;}
 function do_action(...$args){}
 function check($value,$message){if(!$value)throw new RuntimeException($message);}
@@ -26,6 +27,12 @@ check(AdminKit_Assets::add_admin_body_class('wp-admin')==='wp-admin','Native mod
 AdminKit_Assets::enqueue_script('tool-js','assets/js/wp-core/user-quick-edit.js');
 check($scripts===array('tool-js'),'Native mode lost feature JavaScript');
 ob_start();AdminKit_Theme_Toggle::print_script();$out=ob_get_clean();check($out==='','Native mode emitted global theme bootstrap');
+$appearance=true;
+check(AdminKit_Assets::add_admin_body_class('wp-admin')==='wp-admin adminkit','Ordinary admin frame lost its body scope');
+$styles['fluent_unified_ui']=array();
+check(AdminKit_Assets::add_admin_body_class('wp-admin')==='wp-admin adminkit ak-fluenthub','FluentHub replacement shell not detected');
+$appearance=false;
+check(AdminKit_Assets::add_admin_body_class('wp-admin')==='wp-admin','Native appearance must not carry a replacement-frame scope');
 $styles=array();$scripts=array();$allow=false;AdminKit_Assets::dispatch_admin();AdminKit_Assets::enqueue_script('blocked','missing.js');
 check(!$styles&&!$scripts,'Broad external veto failed to block tools');
 echo "OK: classic appearance preserves scoped tool CSS/JS without global skin, theme bootstrap or veto bypass.\n";

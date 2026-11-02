@@ -576,7 +576,9 @@ class AdminKit_Assets {
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) || ! apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
 			return $classes;
 		}
-		return $classes . ' adminkit';
+		// FluentToolkit enqueues this only on pages using its replacement shell.
+		$hub = wp_style_is( 'fluent_unified_ui', 'enqueued' ) || wp_style_is( 'fluent_unified_ui', 'done' );
+		return $classes . ' adminkit' . ( $hub ? ' ak-fluenthub' : '' );
 	}
 
 	/** Preserve explicit clean-interface choices without loading the modern skin. */
