@@ -1355,3 +1355,20 @@ body.block-editor-page.adminkit .components-search-control .components-input-con
 	color: var(--ak-text);
 }
 body.block-editor-page.adminkit .components-search-control svg { color: var(--ak-text-muted); }
+
+/* Inspector disclosure glyphs have their own hardcoded foreground in core.
+   Inheriting the button color preserves hover, focus and disabled states. */
+body.block-editor-page.adminkit .components-panel__body-toggle.components-button .components-panel__arrow {
+	color: inherit;
+	fill: currentColor;
+}
+
+/* Inspector hints and plugin-provided separators must follow the surrounding
+   chrome. Keep these rules outside the content canvas and its iframe. */
+body.block-editor-page.adminkit .block-editor-block-inspector :is(input, textarea)::placeholder {
+	color: var(--ak-text-subtle);
+	opacity: 1;
+}
+body.block-editor-page.adminkit .block-editor-block-inspector hr {
+	border-color: var(--ak-border);
+}
