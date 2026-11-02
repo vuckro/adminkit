@@ -16,7 +16,7 @@ does not create a runtime dependency. Sorting and thumbnails remain available
 with native WordPress appearance.
 
 The administration theme and login appearance are excluded from bulk tool actions.
-The dark-mode switch lives in Design system → General, rather than being a second
+The dark-mode switch lives in Features → Appearance → Administration theme → Configure, rather than being a second
 top-level appearance module. Extension skins remain in Design system → Extensions.
 
 Design system is available while either the administration theme or custom login

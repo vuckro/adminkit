@@ -78,6 +78,10 @@ msgstr "Actives"
 msgid "Active items first"
 msgstr "Éléments actifs en premier"
 
+#: inc/settings/class-settings-catalog.php
+msgid "Add a light/dark mode switch to the AdminKit interface. WordPress classic keeps its native appearance."
+msgstr "Ajoute un sélecteur clair/sombre à l’interface AdminKit. WordPress classique conserve son apparence native."
+
 #: inc/settings/class-settings-i18n.php
 msgid "Add link"
 msgstr "Ajouter un lien"
@@ -388,7 +392,7 @@ msgstr "Texte de danger"
 msgid "Dark"
 msgstr "Sombre"
 
-#: inc/settings/class-settings-i18n.php
+#: inc/settings/class-settings-catalog.php
 msgid "Dark mode"
 msgstr "Mode sombre"
 
@@ -1277,10 +1281,6 @@ msgid "The two views have independent layouts. Saving applies pending changes fr
 msgstr "Les deux vues ont des dispositions indépendantes. L’enregistrement applique les modifications en attente des deux vues."
 
 #: inc/settings/class-settings-i18n.php
-msgid "Theme options"
-msgstr "Options du thème"
-
-#: inc/settings/class-settings-i18n.php
 msgid "Themes"
 msgstr "Thèmes"
 
@@ -1291,10 +1291,6 @@ msgstr "Ces actions s’appliquent à tous les outils disponibles, y compris ceu
 #: inc/settings/class-settings-i18n.php
 msgid "These choices are preserved when the feature is off and apply after saving."
 msgstr "Ces choix sont conservés lorsque la fonctionnalité est désactivée et s’appliquent après l’enregistrement."
-
-#: inc/settings/class-settings-i18n.php
-msgid "These options apply to enabled AdminKit surfaces. Saved choices are kept when a surface is disabled."
-msgstr "Ces options s’appliquent aux surfaces AdminKit activées. Les choix sont conservés quand une surface est désactivée."
 
 #: inc/settings/class-settings-i18n.php
 msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."

@@ -73,7 +73,6 @@
 			function active(f) { return resolved(f).id === 'active'; }
 			function locked(f) { return f.available === false || !!(f.parent && !state.features[f.parent]); }
 			function select(key) {
-				if (key === 'admin_theme_enabled' && state.features[key] && D.pages && D.pages.brand) { window.location.href = D.pages.brand; return; }
 				if (D.pages && D.pages.navigation && state.features[key] && (key === 'menu_manager_enabled' || key === 'toolbar_manager_enabled')) {
 					window.location.href = D.pages.navigation + (key === 'toolbar_manager_enabled' ? '#toolbar' : '#menu'); return;
 				}
@@ -176,6 +175,7 @@
 					var r = refs[f.key], on = active(f), isLocked = locked(f);
 					var outcome = resolved(f);
 					var requested = !!state.features[f.key];
+					var optionsEditable = !isLocked && (on || (f.key === 'admin_theme_enabled' && requested));
 					var masterChanged = requested !== !!f.value;
 					var optionsChanged = r.optionInputs.some(function (option) { return !!state.features[option.key] !== !!option.data.value; });
 					var pending = masterChanged || optionsChanged;
@@ -190,10 +190,10 @@
 					r.input.checked = !!state.features[f.key];
 					r.input.disabled = isLocked; r.quickInput.disabled = isLocked; r.quickInput.checked = r.input.checked;
 					if (r.optionSet) {
-						r.optionSet.disabled = !on;
-						r.optionNote.hidden = on;
-						r.optionFooter.hidden = !on;
-						r.optionSet.setAttribute('aria-describedby', on ? r.optionFooter.id : r.optionNote.id);
+						r.optionSet.disabled = !optionsEditable;
+						r.optionNote.hidden = optionsEditable;
+						r.optionFooter.hidden = !optionsEditable;
+						r.optionSet.setAttribute('aria-describedby', optionsEditable ? r.optionFooter.id : r.optionNote.id);
 						r.optionNoteTitle.textContent = isLocked ? I.featureUnavailable : (masterChanged ? I.featurePausePending : I.featureOptionsPaused);
 						r.optionNoteText.textContent = isLocked ? (f.unavailableHint || I.featureParentOff) : (masterChanged ? I.featureOptionsPausePendingHint : I.featureOptionsPausedHint);
 					}

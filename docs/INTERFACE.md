@@ -50,7 +50,7 @@ exceptions. Native appearance pauses skins for that account while preserving the
 saved switches. Design settings remain editable for accounts using AdminKit; a
 contextual note explains the distinction. The locked AdminKit system row is omitted.
 
-**Design system → General → Theme options** contains the dark-mode switch.
+**Features → Appearance → Administration theme → Configure** contains the dark-mode switch.
 Design system remains accessible to administrators using native appearance while
 the site theme is available, because these settings also affect other accounts.
 When only custom login is enabled, shared design controls remain available and

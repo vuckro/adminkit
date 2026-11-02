@@ -34,6 +34,13 @@ class AdminKit_Settings_Catalog {
 				'group' => $appearance,
 				'label' => __( 'Administration theme', 'adminkit' ),
 				'desc'  => __( 'Make the AdminKit administration theme available. Disabling it restores WordPress classic for every account while keeping tools and saved preferences.', 'adminkit' ),
+				'options' => array(
+					array(
+						'key' => 'theme_toggle_enabled',
+						'label' => __( 'Dark mode', 'adminkit' ),
+						'desc' => __( 'Add a light/dark mode switch to the AdminKit interface. WordPress classic keeps its native appearance.', 'adminkit' ),
+					),
+				),
 			),
 			array(
 				'key'   => 'module_login_enabled',

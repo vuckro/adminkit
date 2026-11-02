@@ -69,7 +69,7 @@ for(const source of ['monochrome','adminkit','bricks','custom']) {
 const statusCase=boot('monochrome',true,{
  interfacePreference:'wordpress',adminThemeEnabled:true,customizationAvailable:true,notificationLauncherHidden:true,
  features:[
-  {key:'admin_theme_enabled',label:'Administration theme',group:'Appearance',value:true,default:true,bulk:false},
+  {key:'admin_theme_enabled',label:'Administration theme',group:'Appearance',value:true,default:true,bulk:false,options:[{key:'theme_toggle_enabled',label:'Dark mode',value:false,default:true,desc:'Allow dark mode'}]},
   {key:'module_login_enabled',label:'Login',group:'Appearance',value:false,default:false,bulk:false},
   {key:'toolbar_manager_enabled',label:'Toolbar',group:'Navigation',value:true,default:true},
   {key:'notification_center_enabled',label:'Notifications',group:'Interface',value:true,default:true}
@@ -83,6 +83,13 @@ const rows=[...sd.querySelectorAll('.ak-features-item')];
 const themeRow=rows.find(n=>n.textContent.includes('Administration theme'));
 assert.equal(themeRow.dataset.featureState,'not-applied','Saved-on theme must explain classic personal choice');
 assert.equal(themeRow.parentElement.querySelector('input').checked,true,'Not-applied status must preserve saved-on switch');
+themeRow.click();
+const darkOption=sd.querySelector('.ak-features-detail input[aria-label="Dark mode"]');
+assert.ok(darkOption,'Theme configuration must contain dark mode');
+assert.equal(darkOption.closest('fieldset').disabled,false,'Classic account must be able to configure the site theme');
+darkOption.checked=true;darkOption.dispatchEvent(new statusCase.w.Event('change'));
+assert.equal(statusCase.w.auditSurface.requests().settings.data.values.theme_toggle_enabled,true,'Moved dark mode choice missing from save');
+sd.querySelector('.ak-features-detail .ak-feature-done').click();
 assert.equal(rows.find(n=>n.textContent.includes('Notifications')).dataset.featureState,'paused','Hidden notification launcher must be reported as paused');
 statusCase.w.auditSurface.onSaved('settings',{values:{admin_theme_enabled:false}},{values:{admin_theme_enabled:false}});
 assert.equal(themeRow.querySelector('.ak-features-item__status').textContent,base.i18n.featureActivationPending,'Enabling a non-applied theme must announce activation pending');

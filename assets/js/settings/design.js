@@ -190,13 +190,7 @@
 			});
 
 			// --- Section 1: Colors ---------------------------------------------------
-			if (D.adminThemeEnabled !== undefined) {
-				var darkMode = el('input', { type:'checkbox', class:'ak-switch__input', 'aria-label':I.themeDarkMode });
-				darkMode.checked = !!state.features.theme_toggle_enabled;
-				darkMode.addEventListener('change', function () { state.features.theme_toggle_enabled = darkMode.checked; markDirty(); });
-				section('general', I.themeOptions, I.themeOptionsHint, [el('div', {class:'ak-row'}, [el('span', {class:'ak-row__label', text:I.themeDarkMode}), el('label', {class:'ak-switch'}, [darkMode, el('span', {class:'ak-switch__track'}), el('span', {class:'ak-switch__knob'})])])]);
-				if (!D.adminThemeEnabled) { p.appendChild(el('p', {class:'ak-intro', text:I.themeLoginOnly})); }
-			}
+			if (D.adminThemeEnabled === false) { p.appendChild(el('p', {class:'ak-intro', text:I.themeLoginOnly})); }
 			section('colors', I.studioColors, I.foundationColorsHelp, colorsCtrl.buildChildren(themeSwitch(I.studioColors)));
 
 			// --- Section 2: Typography -----------------------------------------------
