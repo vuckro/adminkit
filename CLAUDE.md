@@ -20,7 +20,7 @@ Keep changes simple, explicit, predictable and compatible with PHP 7.4+ / WordPr
 ## Non-Negotiable Guardrails
 
 - **Local environment**: Active branch `main`, live WordPress 7.1.4 site at `http://localhost:10013/` (`/Users/vucko/Local Sites/adminkit/app/public`, symlinked `wp-content/plugins/adminkit`, MySQL socket `/Users/vucko/Library/Application Support/Local/run/SIG0ugJnD/mysql/mysqld.sock`). Never wipe the WordPress core database (`wp_users`, `wp_posts`).
-- **Versioning & migrations**: Keep `ADMINKIT_VERSION` at `1.0.0` unless a release bump is explicitly approved. **Upgrade 6 in `inc/class-upgrades.php` is frozen** (pinned by SHA-256 in `dev/check-upgrades.php`); add new numbered upgrades for schema/option changes (`STORAGE_VERSION` is currently `9`).
+- **Versioning & migrations**: Keep `ADMINKIT_VERSION` at `1.0.0-beta.1` unless a release bump is explicitly approved. **Upgrade 6 in `inc/class-upgrades.php` is frozen** (pinned by SHA-256 in `dev/check-upgrades.php`); add new numbered upgrades for schema/option changes (`STORAGE_VERSION` is currently `9`).
 - **Design & CSS tokens**: Monochrome is the default accent; `adminkit` (WaasKit blue), `bricks` and `custom` are explicit choices. Never use raw `#hex` colors in component or adapter CSS (`dev/css-contract.php` and `dev/adapter-audit.php` enforce `--ak-*`, `--ak-on-accent`, `--ak-danger-solid`, `--ak-overlay`).
 - **Logical CSS (RTL) & Accessibility (WCAG 2.2 AA)**:
   - Use CSS logical properties (`margin-inline-*`, `padding-inline-*`, `inset-inline-*`, `border-inline-*`, `text-align: start/end`) in `assets/css/**/*.css`. Stylelint (`dev/smoke/.stylelintrc.json`) rejects physical `margin-left`/`right` and `padding-left`/`right`.

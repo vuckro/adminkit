@@ -1409,8 +1409,8 @@ msgid "Visible"
 msgstr "Visible"
 
 #: adminkit.php
-msgid "Waaskit"
-msgstr "Waaskit"
+msgid "WaasKit"
+msgstr "WaasKit"
 
 #: inc/settings/class-settings-i18n.php
 msgid "Warning text"

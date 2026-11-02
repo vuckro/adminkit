@@ -4,7 +4,7 @@ Tags: admin, dark-mode, admin-theme
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.0-beta.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,8 +79,8 @@ AdminKit makes **no external network connections by default**. All baseline font
 
 == Changelog ==
 
-= 1.0.0 =
-* Initial release.
+= 1.0.0-beta.1 =
+* Initial beta release.
 * A flat, modern restyle of wp-admin, wp-login.php and the frontend admin bar, built entirely on CSS custom properties (`--ak-*` tokens).
 * Light + dark mode with a sun/moon toggle in the admin bar (and `prefers-color-scheme` on first visit).
 * Opt-in Gutenberg canvas theming. Lucide icons are included in the default admin skin.
@@ -91,5 +91,5 @@ AdminKit makes **no external network connections by default**. All baseline font
 
 == Upgrade Notice ==
 
-= 1.0.0 =
-Initial release.
+= 1.0.0-beta.1 =
+Initial beta release.

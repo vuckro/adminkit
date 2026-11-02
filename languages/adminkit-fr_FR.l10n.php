@@ -350,7 +350,7 @@ return array (
     'Users quick edit' => 'Modification rapide des utilisateurs',
     'View site' => 'Voir le site',
     'Visible' => 'Visible',
-    'Waaskit' => 'Waaskit',
+    'WaasKit' => 'WaasKit',
     'Warning text' => 'Texte d’avertissement',
     'What this feature does' => 'Ce que fait cette fonctionnalité',
     'Will be disabled after saving.' => 'Sera désactivée après l’enregistrement.',

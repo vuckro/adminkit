@@ -1409,7 +1409,7 @@ msgid "Visible"
 msgstr ""
 
 #: adminkit.php
-msgid "Waaskit"
+msgid "WaasKit"
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php

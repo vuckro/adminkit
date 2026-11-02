@@ -3,10 +3,11 @@
  * Plugin Name:       AdminKit
  * Plugin URI:        https://github.com/vuckro/adminkit
  * Description:       Give your WordPress admin a clean, modern look — optional dark mode, menu and toolbar editors, and polished plugin screens. Standalone, no setup.
- * Version:           1.0.0
+ * Version:           1.0.0-beta.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
- * Author:            Waaskit
+ * Author:            WaasKit
+ * Author URI:        https://waaskit.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       adminkit
@@ -17,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ADMINKIT_VERSION', '1.0.0' );
+define( 'ADMINKIT_VERSION', '1.0.0-beta.1' );
 define( 'ADMINKIT_FILE', __FILE__ );
 define( 'ADMINKIT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ADMINKIT_URL', plugin_dir_url( __FILE__ ) );

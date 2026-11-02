@@ -32,5 +32,5 @@ AdminKit skins `wp-admin`, `wp-login.php` and the logged-in toolbar through `--a
 1. **Always run `php dev/test-all.php`** (185 checks: PHP/JS syntax, token drift, 23 regression/compliance checks, CSS/adapter contracts, 11 JSDOM suites, WPCS, PHPStan level 5, ESLint, Stylelint) before committing.
 2. **Zero raw hex colors** in component/adapter CSS (use `--ak-*`, `--ak-on-accent`, `--ak-danger-solid`, `--ak-overlay`) and **zero physical directional spacing** (`margin-left`/`right`, `padding-left`/`right`) in `assets/css/**/*.css` (use `margin-inline-*`, `padding-inline-*`).
 3. **GDPR & WP.org compliance**: Google Fonts stay disabled unless `remote_fonts_enabled` is opted in (and never load on `wp-login.php`); third-party plugin links in `plugins.php` are never hidden.
-4. **Frozen invariants**: Keep `ADMINKIT_VERSION` at `1.0.0` unless instructed, and never edit frozen `Upgrade 6` in `inc/class-upgrades.php`.
+4. **Frozen invariants**: Keep `ADMINKIT_VERSION` at `1.0.0-beta.1` unless instructed, and never edit frozen `Upgrade 6` in `inc/class-upgrades.php`.
 5. **Local live environment**: `http://localhost:10013/` (`/Users/vucko/Local Sites/adminkit/app/public`, symlinked to this repo, MySQL socket `/Users/vucko/Library/Application Support/Local/run/SIG0ugJnD/mysql/mysqld.sock`).
