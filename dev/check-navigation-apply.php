@@ -42,6 +42,7 @@ $allowed=true;$m->invoke(null,array('edit.php','new-plugin'));check($options['ad
 class Fixture_Bar {
  public $nodes=array();
  public function __construct(){foreach(array('a','b','my-account','menu-toggle','child')as$id)$this->add_node(array('id'=>$id,'parent'=>$id==='child'?'a':false,'title'=>$id,'meta'=>array('class'=>'native')));}
+ public function get_nodes(){return $this->nodes;}
  public function get_node($id){return isset($this->nodes[$id])?clone $this->nodes[$id]:null;}
  public function add_node($node){$this->nodes[$node['id']]=(object)$node;}
  public function remove_node($id){unset($this->nodes[$id]);}
@@ -51,7 +52,7 @@ $bar=new Fixture_Bar();AdminKit_Toolbar_Manager::apply($bar);
 check($bar->get_node('my-account')&&$bar->get_node('menu-toggle'),'Protected toolbar nodes were hidden');
 check(strpos($bar->get_node('a')->title,'Renamed')!==false&&strpos($bar->get_node('a')->meta['class'],'native')!==false,'Toolbar title/icon lost native metadata');
 check($bar->get_node('child')->parent==='a','Toolbar reorder changed child parent');
-check(array_slice(array_keys($bar->nodes),-2)===array('b','a'),'Toolbar saved order failed');
+check(array_keys(array_filter($bar->nodes,function($node){return empty($node->parent);}))===array('b','a','my-account','menu-toggle'),'New context actions must follow saved toolbar order');
 $admin=false;$bar=new Fixture_Bar();AdminKit_Toolbar_Manager::apply($bar);check(!$bar->get_node('b')&&$bar->get_node('a')->title==='a','Toolbar context isolation failed');
 // Replacement text must be literal in every native markup shape, including dollars/backslashes.
 $admin=true;

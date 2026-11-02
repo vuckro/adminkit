@@ -79,12 +79,15 @@ class AdminKit_Toolbar_Renderer {
 			$bar->add_node( $props );
 		}
 
-		// Reorder: re-add the kept nodes in the saved order. Re-adding moves a node to
-		// the end of its group's run, so walking the saved order rebuilds the sequence;
-		// any node NOT in the saved order keeps its native slot (a newly-appeared item
-		// just sits where WP added it). A node's children ride along (they reference the
-		// re-added parent id).
-		foreach ( $cfg['order'] as $id ) {
+		// Keep saved positions stable; newly appearing context actions follow them.
+		// Otherwise re-adding only saved nodes strands View/Updates before the site.
+		$order = $cfg['order'];
+		foreach ( (array) $bar->get_nodes() as $node ) {
+			if ( empty( $node->group ) && ( empty( $node->parent ) || in_array( $node->parent, array( 'root-default', 'top-secondary' ), true ) ) && ! in_array( $node->id, $order, true ) ) {
+				$order[] = $node->id;
+			}
+		}
+		foreach ( $order as $id ) {
 			if ( isset( $hidden[ $id ] ) || ( $branding && 'wp-logo' === $id ) ) {
 				continue;
 			}
