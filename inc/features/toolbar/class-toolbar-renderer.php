@@ -331,7 +331,8 @@ class AdminKit_Toolbar_Renderer {
 			if ( empty( $ab_items[ $dom_id ] ) && 0 !== strpos( $icon, 'wp-default:' ) && ! isset( self::INLINE_SVG_IDS[ substr( $dom_id, 13 ) ] ) && 'wp-admin-bar-search' !== $dom_id ) {
 				$rule = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item::before{content:none !important;background-image:none !important;display:none !important}';
 				$anchor = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item{background-image:none !important}';
-				$desktop .= $anchor . $rule;
+				$spacing = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item{padding-inline:calc(8px * var(--ak-space-scale,1)) !important}';
+				$desktop .= $anchor . $rule . $spacing;
 				$mobile .= $anchor . $rule;
 			}
 

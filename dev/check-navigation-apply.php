@@ -194,3 +194,5 @@ check(strpos($css,'#wp-admin-bar-plugin-root > .ab-item::before{content:none')!=
 check(strpos($css,'> .ab-item > .ab-icon')!==false,'Custom parent icon could leak into dropdown children');
 
 check(strpos($css,'#wp-admin-bar-plugin-root > .ab-item{background-image:none !important}')!==false,'Native background-image logo survived custom icon replacement');
+
+check(strpos($css,'#wp-admin-bar-plugin-root > .ab-item{padding-inline:calc(8px * var(--ak-space-scale,1)) !important}')!==false,'Native logo spacing survived custom replacement');
