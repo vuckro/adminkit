@@ -330,8 +330,9 @@ class AdminKit_Toolbar_Renderer {
 			// Suppress that decoration only when our replacement paints in .ab-icon.
 			if ( empty( $ab_items[ $dom_id ] ) && 0 !== strpos( $icon, 'wp-default:' ) && ! isset( self::INLINE_SVG_IDS[ substr( $dom_id, 13 ) ] ) && 'wp-admin-bar-search' !== $dom_id ) {
 				$rule = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item::before{content:none !important;background-image:none !important;display:none !important}';
-				$desktop .= $rule;
-				$mobile .= $rule;
+				$anchor = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item{background-image:none !important}';
+				$desktop .= $anchor . $rule;
+				$mobile .= $anchor . $rule;
 			}
 
 			// When `site-name` has an explicit custom icon override, neutralize

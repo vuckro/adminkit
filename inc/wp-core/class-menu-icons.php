@@ -482,8 +482,9 @@ class AdminKit_Core_Menu_Icons {
 			}
 		}
 		$css = '';
-		// Desktop: WP's compact 32px bar — the 20px masks already used there.
+		// Desktop: compact 16px optical glyphs inside the unchanged 32px bar.
 		if ( '' !== $desktop ) {
+			$desktop = str_replace( array( '20px', 'padding:6px 0' ), array( '16px', 'padding:8px 0' ), $desktop );
 			$css .= '@media screen and (min-width:783px){' . $desktop . '}';
 		}
 		// Mobile (≤782px): WP's 46px touch bar — without this the mapped nodes fall

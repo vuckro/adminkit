@@ -191,3 +191,5 @@ check($bar->get_node('plugin-settings')->title==='Configure'&&$bar->get_node('pl
 ob_start();AdminKit_Toolbar_Manager::print_css();$css=ob_get_clean();
 check(strpos($css,'#wp-admin-bar-plugin-root > .ab-item::before{content:none')!==false,'Native plugin decoration was not suppressed');
 check(strpos($css,'> .ab-item > .ab-icon')!==false,'Custom parent icon could leak into dropdown children');
+
+check(strpos($css,'#wp-admin-bar-plugin-root > .ab-item{background-image:none !important}')!==false,'Native background-image logo survived custom icon replacement');
