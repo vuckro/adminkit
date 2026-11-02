@@ -76,6 +76,36 @@ w.AdminKitNotificationCenter = {
   assert.equal(bell.getAttribute('aria-expanded'), 'false');
   assert.equal(wpbody.inert, false, 'Background #wpbody inert is cleared on close');
 
+  for (const screen of ['profile-php', 'user-edit-php', 'user-new-php']) {
+    const account = new JSDOM(html.replace('class="wp-admin"', `class="wp-admin ${screen}"`), { url: 'http://localhost/wp-admin/', runScripts: 'outside-only' });
+    const doc = account.window.document;
+    const plugin = doc.createElement('div');
+    plugin.id = 'slim-seo-notification';
+    plugin.className = 'notice notice-error is-dismissible';
+    plugin.innerHTML = '<p>Slim SEO: site hidden from search engines.</p><button type="button">Dismiss</button>';
+    let dismissed = false;
+    plugin.querySelector('button').addEventListener('click', () => { dismissed = true; plugin.remove(); });
+    doc.querySelector('#adminkit-nc-origin').appendChild(plugin);
+    const anonymousPlugin = doc.createElement('div');
+    anonymousPlugin.className = 'notice notice-error';
+    doc.querySelector('#adminkit-nc-origin').appendChild(anonymousPlugin);
+    const nativeError = doc.createElement('div');
+    nativeError.className = 'notice error';
+    doc.querySelector('.wrap').appendChild(nativeError);
+    account.window.AdminKitNotificationCenter = w.AdminKitNotificationCenter;
+    account.window.eval(source);
+    await new Promise(resolve => setTimeout(resolve, 10));
+    assert.ok(doc.querySelector('.ak-nc-list').contains(plugin), `${screen}: Slim SEO alert must be grouped`);
+    assert.ok(doc.querySelector('.ak-nc-list').contains(anonymousPlugin), `${screen}: captured plugin errors must be grouped`);
+    assert.ok(doc.querySelector('.wrap').contains(nativeError), `${screen}: native validation must remain beside the form`);
+    assert.ok(doc.querySelector('#adminkit-nc-origin .settings-error'), `${screen}: settings validation must remain inline`);
+    plugin.querySelector('button').click();
+    await new Promise(resolve => setTimeout(resolve, 10));
+    assert.equal(dismissed, true, 'Moving the live notice must preserve its dismiss handler');
+    assert.equal(doc.querySelector('.ak-nc-badge').textContent, '3', 'Dismissal updates the badge');
+    account.window.close();
+  }
+
   const missing = new JSDOM(html.replace(/<li id="wp-admin-bar-ak-notifications">.*?<\/li>/, ''), { url:'http://localhost/wp-admin/', runScripts:'outside-only' });
   missing.window.AdminKitNotificationCenter = w.AdminKitNotificationCenter;
   missing.window.eval(source);

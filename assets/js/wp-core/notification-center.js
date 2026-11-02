@@ -82,8 +82,11 @@
 		if ( matchesAny( el, C.allow ) || el.hasAttribute( 'data-ak-nc-group' ) ) { return true; }
 		if ( isContextual( el ) ) { return false; }   // page UI, not a banner alert
 		// Native action feedback belongs beside the form, not behind the bell.
+		// Account forms emit anonymous errors outside the captured notice hooks;
+		// plugin banners (e.g. Slim SEO) must still be grouped on these screens.
 		if ( el.matches( '.settings-error, #message.error, #message.notice-error' ) ||
-			( el.matches( '.error, .notice-error' ) && document.body.matches( '.profile-php, .user-edit-php, .user-new-php' ) ) ) { return false; }
+			( el.matches( '.error, .notice-error' ) && ! el.id && ! el.closest( '#adminkit-nc-origin' ) &&
+				document.body.matches( '.profile-php, .user-edit-php, .user-new-php' ) ) ) { return false; }
 		if ( isSuccess( el ) ) { return false; }       // success confirmations stay inline
 		return true;                                    // every other alert → the panel
 	}
