@@ -1350,3 +1350,11 @@ body.adminkit #adminmenu li.menu-top:is(:hover, :focus-within, .opensub) .wp-men
 		border: 1px solid CanvasText;
 	}
 }
+
+/* Hidden child links must not leave an empty desktop flyout or mobile drawer. */
+body.adminkit #adminmenu .ak-empty-submenu > .wp-submenu {
+	display: none !important;
+}
+body.adminkit #adminmenu .ak-empty-submenu > .menu-top .wp-menu-name::after {
+	display: none;
+}

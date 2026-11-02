@@ -136,7 +136,7 @@
 		// Keep the native link and give disclosure its own touch/keyboard control.
 		drawer.querySelectorAll('#adminmenu .wp-has-submenu > a.menu-top').forEach(function (link, index) {
 			var submenu = link.parentElement.querySelector(':scope > .wp-submenu');
-			if (!submenu) { return; }
+			if (!submenu || link.parentElement.classList.contains('ak-empty-submenu')) { return; }
 			var disclosure = document.createElement('button');
 			disclosure.type = 'button'; disclosure.className = 'ak-submenu-toggle';
 			disclosure.setAttribute('aria-label', data.submenu + ' ' + (link.querySelector('.wp-menu-name') || link).textContent.trim());

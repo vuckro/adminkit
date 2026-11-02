@@ -185,6 +185,22 @@ class AdminKit_Menu_Renderer {
 			self::reorder_submenu( $parent, $subs );
 		}
 
+
+		// Keep registered routes and the parent link, but suppress an empty flyout.
+		foreach ( (array) $menu as $position => $top_item ) {
+			$visible_child = false;
+			foreach ( isset( $submenu[ $top_item[2] ] ) ? $submenu[ $top_item[2] ] : array() as $child ) {
+				$classes = isset( $child[4] ) ? ' ' . $child[4] . ' ' : '';
+				if ( false === strpos( $classes, ' ak-mh ' ) && current_user_can( $child[1] ) ) {
+					$visible_child = true;
+					break;
+				}
+			}
+			if ( ! $visible_child ) {
+				$menu[ $position ][4] = trim( ( isset( $top_item[4] ) ? $top_item[4] : '' ) . ' ak-empty-submenu' );
+			}
+		}
+
 		$config_top = array();
 		foreach ( $config['top'] as $t ) {
 			$config_top[ $t['slug'] ] = true;
