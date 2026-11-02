@@ -165,6 +165,18 @@ body.adminkit.ak-fluenthub #wpbody-content {
 	border-start-start-radius: 0;
 }
 
+/* Hub owns its light/dark palette independently of AdminKit's toolbar theme. */
+body.adminkit.ak-fluenthub .fui-wordpress-menu-link {
+	color: var(--fui-text-soft);
+}
+body.adminkit.ak-fluenthub .fui-wordpress-menu-link:is(:hover, :focus-visible) {
+	color: var(--fui-text);
+}
+body.adminkit.ak-fluenthub .fui-wordpress-menu-link .fui-wp-mark {
+	color: inherit;
+	fill: currentColor;
+}
+
 body.adminkit {
 	font-size: var(--ak-text-m);
 	--ak-nav-gap: calc(6px * var(--ak-space-scale, 1));
