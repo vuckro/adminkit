@@ -248,7 +248,7 @@ class AdminKit_Toolbar_Snapshot {
 		$out      = array();
 		foreach ( $nodes as $id => $node ) {
 			$id = (string) $id;
-			if ( 'root' === $id || ! empty( $node->group ) ) {
+			if ( 'root' === $id || 'user-info' === $id || ! empty( $node->group ) ) {
 				continue; // the root container + group wrappers aren't items
 			}
 			// When AdminKit's automatic toolbar identity is active, `#wp-admin-bar-wp-logo`
@@ -257,7 +257,17 @@ class AdminKit_Toolbar_Snapshot {
 				continue;
 			}
 			$parent = isset( $node->parent ) ? $node->parent : false;
-			if ( false === $parent || '' === $parent || 'root' === $parent ) {
+			$owner = $parent;
+			$depth = 0;
+			$visited = array( $id => true );
+			while ( $owner && ! in_array( $owner, array( 'root', 'root-default', 'top-secondary' ), true ) && isset( $nodes[ $owner ] ) && ! isset( $visited[ $owner ] ) ) {
+				$visited[ $owner ] = true;
+				if ( empty( $nodes[ $owner ]->group ) ) { ++$depth; }
+				$owner = $nodes[ $owner ]->parent;
+			}
+			$parent_label = $depth && isset( $nodes[ $parent ] ) ? self::node_label( $nodes[ $parent ] ) : '';
+			$parent = $owner;
+			if ( false === $parent || '' === $parent || 'root' === $parent || 'root-default' === $parent ) {
 				$side = 'root';
 			} elseif ( 'top-secondary' === $parent ) {
 				$side = 'secondary';
@@ -270,6 +280,8 @@ class AdminKit_Toolbar_Snapshot {
 				'id'          => $id,
 				'label'       => 'my-account' === $id ? __( 'My Account', 'adminkit' ) : self::node_label( $node ),
 				'group'       => $side,
+				'depth'       => $depth,
+				'parentLabel' => $parent_label,
 				'defaultIcon' => $defaults['defaultIcon'],
 				'dashicon'    => $defaults['dashicon'],
 			);

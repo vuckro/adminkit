@@ -644,3 +644,10 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 @media screen and (min-width:783px) {
  #wpadminbar .ak-mobile-diagnostic-icon svg { display:none; }
 }
+
+/* Desktop glyphs share a compact optical size; touch targets remain unchanged. */
+@media screen and (min-width:783px) {
+ #wpadminbar #wp-toolbar .ak-theme-icon { width:16px; height:16px; }
+ #wpadminbar #wp-toolbar > ul > li > .ab-item > .ab-icon { width:16px; }
+ #wpadminbar #wp-toolbar > ul > li > .ab-item > .ab-icon::before { font-size:calc(16px * var(--ak-type-scale,1)); }
+}

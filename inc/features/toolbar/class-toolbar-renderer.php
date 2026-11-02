@@ -326,6 +326,14 @@ class AdminKit_Toolbar_Renderer {
 			if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', (string) $dom_id ) ) {
 				continue;
 			}
+			// A plugin may paint its native logo on the anchor itself (Weglot).
+			// Suppress that decoration only when our replacement paints in .ab-icon.
+			if ( empty( $ab_items[ $dom_id ] ) && 0 !== strpos( $icon, 'wp-default:' ) && ! isset( self::INLINE_SVG_IDS[ substr( $dom_id, 13 ) ] ) && 'wp-admin-bar-search' !== $dom_id ) {
+				$rule = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item::before{content:none !important;background-image:none !important;display:none !important}';
+				$desktop .= $rule;
+				$mobile .= $rule;
+			}
+
 			// When `site-name` has an explicit custom icon override, neutralize
 			// `AdminKit_Core_Branding`'s `::before` mark so only the chosen icon shows.
 			if ( 'wp-admin-bar-site-name' === $dom_id && 0 === strpos( $icon, 'dashicons-' ) ) {
@@ -348,7 +356,7 @@ class AdminKit_Toolbar_Renderer {
 			if ( 0 === strpos( $icon, 'dashicons-' ) ) {
 				// Cancel any AdminKit mask on this node's `.ab-icon` so WP's native
 				// dashicons-before class paints its font glyph.
-				$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' .ab-icon.ab-icon.ab-icon';
+				$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item > .ab-icon.ab-icon.ab-icon';
 				$desktop .= $sel . '{box-sizing:border-box;height:32px;width:20px;padding:6px 0;margin-right:6px}';
 				$desktop .= $sel . '::before{-webkit-mask:none;mask:none;background:transparent;font:normal 20px/1 dashicons;display:block;width:20px;height:20px}';
 				continue;
@@ -380,7 +388,7 @@ class AdminKit_Toolbar_Renderer {
 				$desktop .= $sel . '{content:"" !important;background-image:none !important;box-sizing:border-box;float:left;height:32px;width:20px;padding:6px 0;margin-right:6px;position:static;top:auto;' . $mask . '}';
 				$mobile  .= $sel . '{content:"" !important;background-image:none !important;box-sizing:border-box;display:block;float:none;width:52px;height:46px;margin:0;text-indent:0;position:static;top:auto;' . $mask . '-webkit-mask-size:22px 22px;mask-size:22px 22px}';
 			} else {
-				$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' .ab-icon.ab-icon.ab-icon';
+				$sel      = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item > .ab-icon.ab-icon.ab-icon';
 				$desktop .= $sel . '{box-sizing:border-box;height:32px;width:20px;padding:6px 0;margin-right:6px}';
 				$desktop .= $sel . '::before{content:"";display:block;width:20px;height:20px;margin:0;position:static;top:auto;' . $mask . '}';
 				$mobile  .= $sel . '{box-sizing:border-box;width:52px;height:46px;margin:0;padding:0}';
@@ -390,6 +398,7 @@ class AdminKit_Toolbar_Renderer {
 
 		$css = '';
 		if ( '' !== $desktop ) {
+			$desktop = str_replace( array( '20px', 'padding:6px 0', 'top:6px' ), array( '16px', 'padding:8px 0', 'top:8px' ), $desktop );
 			$css .= '@media screen and (min-width:783px){' . $desktop . '}';
 		}
 		if ( '' !== $mobile ) {
