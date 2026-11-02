@@ -1341,6 +1341,10 @@ msgid "Toolbar — Public site"
 msgstr "Barre d’outils — Site public"
 
 #: inc/settings/class-settings-i18n.php
+msgid "Top level"
+msgstr "Premier niveau"
+
+#: inc/settings/class-settings-i18n.php
 msgid "Top-edge highlight"
 msgstr "Reflet sur le bord supérieur"
 

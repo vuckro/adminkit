@@ -333,6 +333,7 @@ return array (
     'Toolbar manager' => 'Gestionnaire de barre d’outils',
     'Toolbar — Administration' => 'Barre d’outils — Administration',
     'Toolbar — Public site' => 'Barre d’outils — Site public',
+    'Top level' => 'Premier niveau',
     'Top-edge highlight' => 'Reflet sur le bord supérieur',
     'Turn AdminKit modules on or off.' => 'Activez ou désactivez les modules AdminKit.',
     'Type the new username, then click "Update User" below to save.' => 'Saisissez le nouveau nom d’utilisateur, puis cliquez sur « Mettre à jour l’utilisateur » ci-dessous pour enregistrer.',

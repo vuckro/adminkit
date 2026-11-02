@@ -78,7 +78,7 @@ class AdminKit_Menu_Config {
 		}
 		foreach ( ! empty( $prev['top'] ) ? $prev['top'] : array() as $t ) {
 			$type = isset( $t['type'] ) ? (string) $t['type'] : 'item';
-			if ( 'item' !== $type || empty( $t['slug'] ) || isset( $seen_top[ $t['slug'] ] ) ) {
+			if ( 'item' !== $type || empty( $t['slug'] ) || isset( $seen_top[ $t['slug'] ] ) || isset( $seen_sub[ $t['slug'] ] ) ) {
 				continue;
 			}
 			$items[] = array(
@@ -95,7 +95,7 @@ class AdminKit_Menu_Config {
 		}
 		foreach ( ! empty( $prev['sub'] ) ? $prev['sub'] : array() as $parent => $subs ) {
 			foreach ( (array) $subs as $s ) {
-				if ( empty( $s['slug'] ) || isset( $seen_sub[ $parent . "\0" . $s['slug'] ] ) || isset( $seen_sub[ $s['slug'] ] ) ) {
+				if ( empty( $s['slug'] ) || isset( $seen_sub[ $parent . "\0" . $s['slug'] ] ) || isset( $seen_sub[ $s['slug'] ] ) || isset( $seen_top[ $s['slug'] ] ) ) {
 					continue;
 				}
 				$items[] = array(

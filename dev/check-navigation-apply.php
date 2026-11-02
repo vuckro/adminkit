@@ -145,3 +145,31 @@ AdminKit_Menu_Manager::apply();
 check($submenu['edit.php'][0][0]==='Post Custom'&&$submenu['themes.php'][0][0]==='Theme Custom','Duplicate child slugs across parents collided');
 check(empty($submenu['options-general.php'])&&count($submenu['edit.php'])===3,'Submenu moved into parent inaccessible to current role');
 $allowed=true;
+
+// Native top-level pages can become second-level pages, retaining capabilities and children.
+$menu=array(10=>item('plugins.php','Plugins'),20=>array('Weglot','manage_options','weglot','Weglot','menu-top','','dashicons-translation'),81=>item('adminkit','AdminKit'));
+$submenu=array('plugins.php'=>array(array('Installed','activate_plugins','plugins.php')),'weglot'=>array(array('Weglot','manage_options','weglot'),array('Languages','manage_options','weglot-languages')));
+AdminKit_Menu_Store::$config=array('top'=>array(array('slug'=>'plugins.php')),'sub'=>array('plugins.php'=>array(array('slug'=>'plugins.php','position'=>0),array('slug'=>'weglot','title'=>'Translate','position'=>1),array('slug'=>'weglot-languages','position'=>2))));
+AdminKit_Menu_Manager::apply();
+check(!isset($menu[20])&&!isset($submenu['weglot']),'Demoted parent remained at first level');
+check(count($submenu['plugins.php'])===3,'Demotion lost or duplicated a child');
+check($submenu['plugins.php'][1][0]==='Translate'&&$submenu['plugins.php'][1][1]==='manage_options','Demotion changed title/capability');
+$plugin_page='weglot';$pagenow='admin.php';
+check(AdminKit_Menu_Manager::remap_parent_file('weglot')==='plugins.php','Demoted plugin parent highlight failed');
+check(AdminKit_Menu_Manager::remap_submenu_file(null)==='weglot','Demoted plugin child highlight failed');
+// Missing/inaccessible destinations and protected AdminKit remain reachable at first level.
+$allowed=false;
+$menu=array(20=>item('weglot','Weglot'),81=>item('adminkit','AdminKit'));
+$submenu=array();
+AdminKit_Menu_Store::$config=array('top'=>array(),'sub'=>array('plugins.php'=>array(array('slug'=>'weglot'),array('slug'=>'adminkit'))));
+AdminKit_Menu_Manager::apply();
+check(isset($menu[20],$menu[81]),'Invalid target removed an accessible menu');
+$allowed=true;
+
+// Multisite preservation must recognize a moved row instead of resurrecting its former level.
+AdminKit_Menu_Store::$config=array('top'=>array(array('slug'=>'weglot','type'=>'item')),'sub'=>array());
+$moved=array(array('slug'=>'weglot','parent'=>'plugins.php','position'=>0));
+check(count(AdminKit_Menu_Config::preserve_invisible_multisite_items($moved))===1,'Multisite resurrected a demoted top-level menu');
+AdminKit_Menu_Store::$config=array('top'=>array(),'sub'=>array('plugins.php'=>array(array('slug'=>'weglot'))));
+$promoted=array(array('slug'=>'weglot','parent'=>'','position'=>0));
+check(count(AdminKit_Menu_Config::preserve_invisible_multisite_items($promoted))===1,'Multisite resurrected a promoted submenu');

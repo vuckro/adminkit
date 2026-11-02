@@ -6,6 +6,53 @@ const { JSDOM } = require('jsdom');
 const root = path.resolve(__dirname, '../..');
 const tick = () => new Promise(resolve => setTimeout(resolve, 15));
 (async () => {
+  // Demotion survives save/reload, flattens children and supports returning to first level.
+  {
+    const dom = new JSDOM('<div id="adminkit-app"></div>', { url: 'http://localhost/#menu', runScripts: 'outside-only' });
+    const w = dom.window;
+    const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json'), 'utf8'));
+    data.screen = 'menu';
+    data.i18n.menuTopLevel = 'Top level';
+    data.menuManager.menu = [
+      { slug: 'plugins.php', title: 'Plugins', children: [{ slug: 'plugins.php', title: 'Installed plugins' }] },
+      { slug: 'weglot', title: 'Weglot', children: [{ slug: 'weglot', title: 'Weglot settings' }, { slug: 'weglot-languages', title: 'Languages' }] },
+      { slug: data.menuManager.self, title: 'AdminKit', children: [] }
+    ];
+    data.menuManager.config = { top: [], sub: {} };
+    w.AdminKitData = data;
+    const calls = [];
+    w.wp = { apiFetch: request => { calls.push(request); return new Promise(() => {}); } };
+    for (const file of ['assets/js/settings/navigation-controls.js', 'assets/js/settings/navigation-menu-model.js', 'assets/js/settings/navigation-menu.js', 'assets/js/settings/navigation-toolbar.js', 'assets/js/settings/navigation.js', 'assets/js/settings.js']) w.eval(fs.readFileSync(path.join(root, file), 'utf8'));
+    await tick();
+    const rows = [...w.document.querySelectorAll('.ak-menu-row--top')];
+    const weglotRow = rows.find(row => row.querySelector('input').value === 'Weglot');
+    const select = weglotRow.querySelector('select');
+    assert.ok(select, 'Native top-level menus expose a parent selector');
+    select.value = '0'; select.dispatchEvent(new w.Event('change'));
+    await tick();
+    assert.equal([...w.document.querySelectorAll('.ak-menu-row--top input')].some(input => input.value === 'Weglot'), false);
+    const childRow = [...w.document.querySelectorAll('.ak-menu-row--child')].find(row => row.querySelector('input').value === 'Weglot');
+    assert.ok(childRow, 'Demoted menu renders as a second-level row');
+    assert.equal(childRow.querySelector('select').options[0].textContent, 'Top level');
+    w.document.querySelector('.ak-savebar button').click(); await tick();
+    const items = calls.find(request => request.method).data.items;
+    assert.equal(items.filter(item => item.slug === 'weglot').length, 1, 'Native self-link is not duplicated');
+    assert.equal(items.find(item => item.slug === 'weglot').parent, 'plugins.php');
+    assert.equal(items.find(item => item.slug === 'weglot-languages').parent, 'plugins.php', 'Children flatten to the same second level');
+    const M = w.AdminKitParts.navigationMenuModel;
+    const config = M.configFromItems(items);
+    const reloaded = M.buildMenuModel(data.menuManager.menu, config, []);
+    assert.equal(reloaded.some(top => top.slug === 'weglot'), false, 'Reload does not resurrect demoted menus');
+    const target = reloaded.find(top => top.slug === 'plugins.php');
+    const index = target.children.findIndex(child => child.slug === 'weglot');
+    assert.ok(target.children[index].sourceTop, 'Reload preserves the option to return to first level');
+    M.promoteChild(reloaded, reloaded.indexOf(target), index);
+    const restored = M.buildMenuModel(data.menuManager.menu, M.configFromItems(M.gatherMenu(reloaded, item => item.title)), []);
+    assert.ok(restored.some(top => top.slug === 'weglot'), 'Promotion survives save/reload');
+    assert.equal(restored.find(top => top.slug === 'plugins.php').children.some(child => child.slug === 'weglot'), false);
+    w.close();
+  }
+
   for (const [screen, scope, toolbarContext] of [['main', 'menu', null], ['main', 'toolbar', 'admin'], ['main', 'toolbar', 'frontend'], ['menu', 'menu', null], ['toolbar', 'toolbar', 'admin'], ['toolbar', 'toolbar', 'frontend']]) {
     for (const action of scope === 'menu' ? ['title', 'icon', 'url'] : ['title', 'icon']) {
       const dom = new JSDOM('<div id="adminkit-app"></div>', { url: 'http://localhost/#' + scope, runScripts: 'outside-only' });

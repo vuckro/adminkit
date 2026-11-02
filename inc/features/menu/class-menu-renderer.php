@@ -146,6 +146,34 @@ class AdminKit_Menu_Renderer {
 				$desired_moved[ $s['slug'] ]                     = $entry;
 			}
 		}
+		// A configured child may originate from add_menu_page(), not add_submenu_page().
+		// Flatten its children into the same parent: wp-admin supports two levels.
+		foreach ( (array) $menu as $position => $item ) {
+			$slug = isset( $item[2] ) ? (string) $item[2] : '';
+			if ( ! isset( $desired_moved[ $slug ] ) || isset( $top_by_slug[ $slug ] ) || AdminKit_Settings_Page::SLUG === $slug ) {
+				continue;
+			}
+			$parent = $desired_moved[ $slug ]['parent'];
+			if ( $parent === $slug || ! isset( $accessible_parents[ $parent ] ) || ( isset( $desired_moved[ $parent ] ) && $desired_moved[ $parent ]['parent'] !== $parent && ! isset( $top_by_slug[ $parent ] ) ) ) {
+				continue;
+			}
+			if ( empty( $top_by_slug[ $parent ]['hidden'] ) && current_user_can( $item[1] ) ) {
+				$children = isset( $submenu[ $slug ] ) ? $submenu[ $slug ] : array();
+				$submenu[ $parent ][] = array( $item[0], $item[1], $slug, isset( $item[3] ) ? $item[3] : $item[0] );
+				self::$moved[ $slug ] = $parent;
+				self::remap_moved_plugin_submenu( $slug, '', $parent );
+				foreach ( $children as $child ) {
+					if ( $child[2] === $slug ) {
+						continue;
+					}
+					$submenu[ $parent ][] = $child;
+					self::$moved[ $child[2] ] = $parent;
+					self::remap_moved_plugin_submenu( (string) $child[2], $slug, $parent );
+				}
+				unset( $submenu[ $slug ], $menu[ $position ] );
+			}
+		}
+
 		foreach ( array_keys( (array) $submenu ) as $cur_parent ) {
 			$items = isset( $submenu[ $cur_parent ] ) ? $submenu[ $cur_parent ] : null;
 			if ( ! is_array( $items ) ) {

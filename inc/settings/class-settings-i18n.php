@@ -168,6 +168,7 @@ class AdminKit_Settings_I18n {
 			'menuDragHint'                   => __( 'Drag to reorder', 'adminkit' ),
 			'menuMoveUp'                     => __( 'Move up', 'adminkit' ),
 			'menuMoveDown'                   => __( 'Move down', 'adminkit' ),
+			'menuTopLevel'                   => __( 'Top level', 'adminkit' ),
 			'menuParentLabel'                => __( 'Parent menu', 'adminkit' ),
 			'menuIconCustom'                 => __( 'Paste an SVG or a data:image/svg+xml URI…', 'adminkit' ),
 			'menuIconHint'                   => __( 'Need an icon? Copy an SVG from', 'adminkit' ),

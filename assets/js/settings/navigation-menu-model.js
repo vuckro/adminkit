@@ -3,7 +3,7 @@
 	'use strict';
 	window.AdminKitParts = window.AdminKitParts || {};
 
-	function makeTop(m, topCfg, subCfg, childTitle, childTitleByParent, claimed) {
+	function makeTop(m, topCfg, subCfg, childTitle, childTitleByParent, claimed, snapBySlug) {
 		topCfg = topCfg || {};
 		var children = [],
 			seenC = {};
@@ -19,7 +19,8 @@
 				slug: s.slug,
 				otitle: ot,
 				title: s.title && s.title !== '' ? s.title : ot,
-				hidden: !!s.hidden
+				hidden: !!s.hidden,
+				sourceTop: s.slug !== m.slug && snapBySlug[s.slug] && snapBySlug[s.slug].type !== 'separator' ? snapBySlug[s.slug] : null
 			});
 		});
 		(m.children || []).forEach(function (c) {
@@ -64,6 +65,7 @@
 			childTitleByParent = {};
 		(snapshot || []).forEach(function (m) {
 			snapBySlug[m.slug] = m;
+			if (m.type !== 'separator') { childTitle[m.slug] = m.title; }
 			(m.children || []).forEach(function (c) {
 				childTitleByParent[m.slug + '\0' + c.slug] = c.title;
 				if (!Object.prototype.hasOwnProperty.call(childTitle, c.slug)) {
@@ -88,7 +90,7 @@
 				model.push({ type: 'separator', slug: t.slug, hidden: !!t.hidden });
 			} else if (m) {
 				seen[t.slug] = true;
-				model.push(makeTop(m, t, subCfg, childTitle, childTitleByParent, claimed));
+				model.push(makeTop(m, t, subCfg, childTitle, childTitleByParent, claimed, snapBySlug));
 			} else if (t.type === 'link' || t.type === 'separator') {
 				model.push(makeCustom(t));
 			}
@@ -105,6 +107,7 @@
 		var pending = [];
 		var prevSlug = null;
 		(snapshot || []).forEach(function (m) {
+			if (claimed[m.slug] && claimed[m.slug] !== m.slug) { return; }
 			if (seen[m.slug]) {
 				prevSlug = m.slug;
 				return;
@@ -116,7 +119,7 @@
 			var node =
 				m.type === 'separator'
 					? { type: 'separator', slug: m.slug, hidden: false }
-					: makeTop(m, null, subCfg, childTitle, childTitleByParent, claimed);
+					: makeTop(m, null, subCfg, childTitle, childTitleByParent, claimed, snapBySlug);
 			var at = prevSlug !== null ? indexOfSlug(prevSlug) : -1;
 			var pos = at >= 0 ? at + 1 : null === prevSlug ? 0 : model.length;
 			model.splice(pos, 0, node);
@@ -132,7 +135,19 @@
 			return ra - rb;
 		});
 		pending.forEach(function (m) {
-			model.push(makeTop(m, null, subCfg, childTitle, childTitleByParent, claimed));
+			model.push(makeTop(m, null, subCfg, childTitle, childTitleByParent, claimed, snapBySlug));
+		});
+		// Include newly registered children of a menu already moved below a parent.
+		(snapshot || []).forEach(function (source) {
+			var parent = claimed[source.slug];
+			if (!parent || parent === source.slug) { return; }
+			var target = model.filter(function (top) { return top.slug === parent; })[0];
+			if (!target) { return; }
+			(source.children || []).forEach(function (child) {
+				if ((!claimed[child.slug] || claimed[child.slug] === parent) && !target.children.some(function (entry) { return entry.slug === child.slug; })) {
+					target.children.push({ slug: child.slug, otitle: child.title, title: child.title, hidden: false });
+				}
+			});
 		});
 		return model;
 	}
@@ -247,6 +262,25 @@
 			});
 	}
 
+	function demoteTop(menu, fromTi, toTi) {
+		var source = menu[fromTi], target = menu[toTi];
+		if (!source || !target || source === target || source.type !== 'item' || target.type !== 'item') { return; }
+		var children = target.children || (target.children = []);
+		var moved = [Object.assign({}, source, { sourceTop: { slug: source.slug, title: source.otitle, dashicon: source.dashicon }, children: undefined })].concat(source.children || []);
+		moved.forEach(function (child) {
+			if (!children.some(function (existing) { return existing.slug === child.slug; })) { children.push(child); }
+		});
+		target.open = true;
+		menu.splice(fromTi, 1);
+	}
+
+	function promoteChild(menu, ti, ci) {
+		var child = menu[ti].children[ci];
+		if (!child.sourceTop) { return; }
+		menu[ti].children.splice(ci, 1);
+		menu.push(Object.assign({}, child, { type: 'item', children: [], open: false, dashicon: child.sourceTop.dashicon || '' }));
+	}
+
 	function moveTop(menu, from, to) {
 		var m = menu.splice(from, 1)[0];
 		menu.splice(to, 0, m);
@@ -280,6 +314,8 @@
 		isSafeMenuUrl: isSafeMenuUrl,
 		sanitizeImportedItems: sanitizeImportedItems,
 		moveTop: moveTop,
+		demoteTop: demoteTop,
+		promoteChild: promoteChild,
 		moveChild: moveChild,
 		moveChildToTop: moveChildToTop
 	};

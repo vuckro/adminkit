@@ -300,6 +300,7 @@
 			row.appendChild(iconBtn(top, tree, 'menu', key + ':icon'));
 			row.appendChild(titleInput(top, 'menu', key + ':title'));
 			row.appendChild(urlBtn(top, tree, key + ':url'));
+			if (top.slug !== MM.self) { row.appendChild(topParentSelect(ti, tree, key)); }
 			if (top.children.length) {
 				var caret = el('span', { class: 'ak-menu-row__caret', 'aria-hidden': 'true' });
 				caret.innerHTML =
@@ -380,6 +381,26 @@
 			return group;
 		}
 
+		function topParentSelect(ti, tree, key) {
+			var sel = el('select', { class: 'ak-menu-input ak-menu-parent-select', title: I.menuParentLabel, 'aria-label': I.menuParentLabel, 'data-focus-key': key + ':parent' });
+			sel.appendChild(el('option', { value: '', text: I.menuTopLevel }));
+			state.menu.forEach(function (top, index) {
+				if (index !== ti && top.type === 'item' && !top.hidden) {
+					sel.appendChild(el('option', { value: String(index), text: top.title || top.otitle || top.slug }));
+				}
+			});
+			sel.disabled = sel.options.length < 2;
+			sel.addEventListener('change', function () {
+				if (sel.value === '') { return; }
+				var target = state.menu[parseInt(sel.value, 10)], moved = state.menu[ti];
+				M.demoteTop(state.menu, ti, parseInt(sel.value, 10));
+				var movedKey = subFlipKey(target, moved);
+				renderTree(tree, movedKey, movedKey + ':parent');
+				markDirty('menu');
+			});
+			return sel;
+		}
+
 		function parentSelect(ti, child, ci, tree, key) {
 			var sel = el('select', {
 				class: 'ak-menu-input ak-menu-parent-select',
@@ -387,12 +408,11 @@
 				'aria-label': I.menuParentLabel,
 				'data-focus-key': key + ':parent'
 			});
-			var parentCount = 0;
+			if (child.sourceTop && child.slug !== MM.self) { sel.appendChild(el('option', { value: '', text: I.menuTopLevel })); }
 			state.menu.forEach(function (pTop, pTi) {
 				if ((pTop.type || 'item') !== 'item') {
 					return;
 				}
-				parentCount++;
 				var opt = el('option', {
 					value: String(pTi),
 					text: pTop.title || pTop.otitle || pTop.slug
@@ -402,10 +422,17 @@
 				}
 				sel.appendChild(opt);
 			});
-			if (parentCount < 2) {
+			if (sel.options.length < 2) {
 				sel.disabled = true;
 			}
 			sel.addEventListener('change', function () {
+				if (sel.value === '' && child.sourceTop) {
+					M.promoteChild(state.menu, ti, ci);
+					var promotedKey = topFlipKey(state.menu[state.menu.length - 1]);
+					renderTree(tree, promotedKey, promotedKey + ':parent');
+					markDirty('menu');
+					return;
+				}
 				var targetTi = parseInt(sel.value, 10);
 				if (isNaN(targetTi) || targetTi === ti || !state.menu[targetTi]) {
 					return;
