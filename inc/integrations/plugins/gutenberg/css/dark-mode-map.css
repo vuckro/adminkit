@@ -337,6 +337,18 @@ body.block-editor-page.adminkit .block-editor-block-toolbar .components-button[a
 }
 
 
+/* The parent selector is a sibling of the block toolbar, with a native white
+   background. Give this separate control a matching surface and foreground. */
+body.block-editor-page.adminkit .block-editor-block-list__block-popover .block-editor-block-parent-selector .block-editor-block-parent-selector__button {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+body.block-editor-page.adminkit .block-editor-block-list__block-popover .block-editor-block-parent-selector .block-editor-block-parent-selector__button:is(:hover, :focus-visible) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
 /* ========== 10. Popovers + dropdowns ========== */
 /* Skip popovers explicitly flagged .is-unstyled — Gutenberg uses
    that hook for transparent overlay popovers like the in-between
