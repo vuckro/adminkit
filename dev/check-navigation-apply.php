@@ -174,20 +174,21 @@ AdminKit_Menu_Store::$config=array('top'=>array(),'sub'=>array('plugins.php'=>ar
 $promoted=array(array('slug'=>'weglot','parent'=>'','position'=>0));
 check(count(AdminKit_Menu_Config::preserve_invisible_multisite_items($promoted))===1,'Multisite resurrected a promoted submenu');
 
-// Dropdown items are editable while groups and personal account details stay out of shared snapshots.
+// Only top-level toolbar items are exposed; native dropdowns remain owned by WordPress.
 $bar=new Fixture_Bar();
 $bar->add_node(array('id'=>'plugin-root','parent'=>false,'title'=>'Plugin'));
 $bar->add_node(array('id'=>'plugin-settings','parent'=>'plugin-root','title'=>'Settings'));
 $bar->add_node(array('id'=>'user-info','parent'=>'my-account','title'=>'Private identity'));
 AdminKit_Toolbar_Manager::capture($bar);
 $captured=$transients[AdminKit_Toolbar_Manager::SNAPSHOT_KEY];
-$child=$captured[array_search('plugin-settings',array_column($captured,'id'),true)];
-check($child['depth']===1&&$child['parentLabel']==='Plugin','Dropdown parent metadata was lost');
+check(in_array('plugin-root',array_column($captured,'id'),true),'Top-level toolbar customization disappeared');
+check(!in_array('plugin-settings',array_column($captured,'id'),true),'Unsupported dropdown editing remains exposed');
 check(!in_array('user-info',array_column($captured,'id'),true),'Personal identity entered shared toolbar snapshots');
 $bar_showing=true;$admin=false;
-$options[AdminKit_Toolbar_Manager::OPTION]=array('frontend'=>array('icons'=>array('plugin-root'=>'translation'),'titles'=>array('plugin-settings'=>'Configure')));
+$options[AdminKit_Toolbar_Manager::OPTION]=array('frontend'=>array('icons'=>array('plugin-root'=>'translation'),'titles'=>array('plugin-root'=>'Configure')));
 AdminKit_Toolbar_Manager::apply($bar);
-check($bar->get_node('plugin-settings')->title==='Configure'&&$bar->get_node('plugin-settings')->parent==='plugin-root','Child customization changed its native parent');
+check(strpos($bar->get_node('plugin-root')->title,'Configure')!==false,'Top-level renaming failed');
+check($bar->get_node('plugin-settings')->title==='Settings'&&$bar->get_node('plugin-settings')->parent==='plugin-root','Native dropdown was modified');
 ob_start();AdminKit_Toolbar_Manager::print_css();$css=ob_get_clean();
 check(strpos($css,'#wp-admin-bar-plugin-root > .ab-item::before{content:none')!==false,'Native plugin decoration was not suppressed');
 check(strpos($css,'> .ab-item > .ab-icon')!==false,'Custom parent icon could leak into dropdown children');

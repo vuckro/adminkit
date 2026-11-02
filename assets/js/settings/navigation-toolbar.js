@@ -180,8 +180,6 @@
 						defaultIcon: n.defaultIcon || '',
 						dashicon: n.dashicon || '',
 						group: n.group,
-						depth: n.depth || 0,
-						parentLabel: n.parentLabel || '',
 						hidden: !!hidden[n.id]
 					};
 				});
@@ -270,18 +268,18 @@
 				col.appendChild(el('div', { class: 'ak-toolbar__side' }, [el('span', { text: heading })]));
 				list.forEach(function (item, i) {
 					var key = 'tb:' + activeCtx + ':' + side + ':' + item.id;
-					var row = el('div', { class: 'ak-menu-row ' + (item.depth ? 'ak-menu-row--child' : 'ak-menu-row--top') + (item.hidden ? ' is-hidden' : '') });
+					var row = el('div', { class: 'ak-menu-row ak-menu-row--top' + (item.hidden ? ' is-hidden' : '') });
 					var h = handle();
-					if (!item.depth) { row.appendChild(h); row.appendChild(moveCtl(side, i, key)); }
-					if (item.depth) { row.appendChild(el('span', { class: 'ak-toolbar__side', text: item.parentLabel })); }
+					row.appendChild(h);
+					row.appendChild(moveCtl(side, i, key));
 					row.appendChild(iconBtn(item, listWrap, 'toolbar', key + ':icon'));
 					row.appendChild(titleInput(item, 'toolbar', key + ':title'));
 					row.appendChild(hideCtl(item, key + ':hide'));
-					if (!item.depth) { dragSource(h, row, { kind: 'tb', ctx: activeCtx, side: side, i: i }); }
+					dragSource(h, row, { kind: 'tb', ctx: activeCtx, side: side, i: i });
 					dropZone(
 						row,
 						function (ds) {
-							return !item.depth && ds.kind === 'tb' && ds.ctx === activeCtx && ds.side === side;
+							return ds.kind === 'tb' && ds.ctx === activeCtx && ds.side === side;
 						},
 						function (ds) {
 							var sides = currentSides();
