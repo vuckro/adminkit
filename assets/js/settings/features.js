@@ -73,8 +73,8 @@
 			function active(f) { return resolved(f).id === 'active'; }
 			function locked(f) { return f.available === false || !!(f.parent && !state.features[f.parent]); }
 			function select(key) {
-				if (D.pages && D.pages.navigation && state.features[key] && (key === 'menu_manager_enabled' || key === 'toolbar_manager_enabled')) {
-					window.location.href = D.pages.navigation + (key === 'toolbar_manager_enabled' ? '#toolbar' : '#menu'); return;
+				if ((D.pages ? D.pages.navigation : document.getElementById('ak-tab-navigation')) && state.features[key] && (key === 'menu_manager_enabled' || key === 'toolbar_manager_enabled')) {
+					window.location.href = ((D.pages || {}).navigation || '') + (key === 'toolbar_manager_enabled' ? '#toolbar' : '#menu'); return;
 				}
 				selected = key; returnFocus = refs[key].button; details.setAttribute('aria-labelledby', refs[key].heading.id); details.hidden = false; refresh();
 				if (typeof details.showModal === 'function') { if (!details.open) { details.showModal(); } } else { details.setAttribute('open', ''); }

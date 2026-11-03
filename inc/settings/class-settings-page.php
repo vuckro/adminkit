@@ -2,8 +2,7 @@
 /**
  * Settings page — the admin UI for AdminKit.
  *
- * Mounts AdminKit as a TOP-LEVEL admin menu entry (sibling of Plugins /
- * Users / Tools / Settings) that hosts the SPA. The PHP side here only:
+ * Mounts AdminKit as a single Settings submenu entry hosting the SPA. The PHP side here only:
  *   - registers the menu + renders an empty `<div id="adminkit-app">`
  *     host that `settings.js` builds into,
  *   - enqueues the SPA assets on that screen + hands the app its data via
@@ -50,26 +49,12 @@ class AdminKit_Settings_Page {
 	}
 
 	/**
-	 * Register AdminKit as a TOP-LEVEL admin menu entry — same level as
-	 * Plugins / Users / Tools / Settings, not nested under Settings. The
-	 * screen hook ends up as `toplevel_page_adminkit`; the enqueue gate
-	 * below matches that.
-	 *
-	 * Position 81 = right after Settings (which sits at 80). Icon is the
-	 * built-in dashicons palette-and-brush so no asset to ship.
+	 * Register the single SPA under Settings and retain hidden legacy URLs.
 	 *
 	 * @return void
 	 */
 	public static function add_submenu() {
-		$root_hook = add_menu_page(
-			'AdminKit',
-			'AdminKit',
-			'manage_options',
-			self::SLUG,
-			array( __CLASS__, 'render_page' ),
-			'dashicons-admin-customizer',
-			81
-		);
+		$root_hook = add_options_page( 'AdminKit', 'AdminKit', 'manage_options', self::SLUG, array( __CLASS__, 'render_page' ) );
 		self::$page_tabs[ $root_hook ] = 'overview';
 		$pages = array(
 			self::SLUG => array( 'overview', __( 'Overview', 'adminkit' ) ),
@@ -78,24 +63,13 @@ class AdminKit_Settings_Page {
 			'adminkit-navigation' => array( 'navigation', __( 'Navigation', 'adminkit' ) ),
 			'adminkit-configuration' => array( 'configuration', __( 'Configuration', 'adminkit' ) ),
 		);
+		// Preserve old deep links without occupying the WordPress menu.
 		foreach ( $pages as $slug => $page ) {
-			if ( 'navigation' === $page[0] && ! self::navigation_enabled() ) {
-				continue;
-			}
-			$parent = 'brand' === $page[0] && ! apply_filters( 'adminkit/customization_available', true ) ? '' : self::SLUG;
-			$hook = add_submenu_page( $parent, $page[1] . ' — AdminKit', $page[1], 'manage_options', $slug, array( __CLASS__, 'render_page' ) );
+			if ( self::SLUG === $slug ) { continue; }
+			$hook = add_submenu_page( '', $page[1] . ' — AdminKit', $page[1], 'manage_options', $slug, array( __CLASS__, 'render_page' ) );
 			self::$page_tabs[ $hook ] = $page[0];
 		}
 
-	}
-
-	/**
-	 * Whether at least one navigation editor is available.
-	 *
-	 * @return bool
-	 */
-	private static function navigation_enabled() {
-		return AdminKit_Menu_Manager::is_enabled() || AdminKit_Toolbar_Manager::is_enabled();
 	}
 
 	/**
@@ -144,7 +118,7 @@ class AdminKit_Settings_Page {
 	 */
 	public static function is_settings_hook( $hook ) {
 		$hook = (string) $hook;
-		if ( isset( self::$page_tabs[ $hook ] ) || 'toplevel_page_' . self::SLUG === $hook ) {
+		if ( isset( self::$page_tabs[ $hook ] ) || 'settings_page_' . self::SLUG === $hook || 'toplevel_page_' . self::SLUG === $hook ) {
 			return true;
 		}
 		foreach ( array( 'adminkit-features', 'adminkit-design', 'adminkit-navigation', 'adminkit-configuration' ) as $slug ) {
@@ -169,19 +143,10 @@ class AdminKit_Settings_Page {
 			return;
 		}
 		$initial_tab = isset( self::$page_tabs[ $hook ] ) ? self::$page_tabs[ $hook ] : 'overview';
-		if ( 'brand' === $initial_tab && ! apply_filters( 'adminkit/customization_available', true ) ) { return; }
-		$data        = self::boot_data( 'main', $initial_tab );
+		// Share one draft across all panels; build panels on first visit.
+		$data = self::boot_data( 'main' );
 		$data['initialTab'] = $initial_tab;
-		$titles = array( 'overview' => __( 'Overview', 'adminkit' ), 'features' => __( 'Features', 'adminkit' ), 'brand' => __( 'Design system', 'adminkit' ), 'navigation' => __( 'Navigation', 'adminkit' ), 'configuration' => __( 'Configuration', 'adminkit' ) );
-		$data['pageTitle'] = $titles[ $initial_tab ];
-		$data['pages'] = array();
-		foreach ( array( 'overview' => 'adminkit', 'features' => 'adminkit-features', 'brand' => 'adminkit-design', 'navigation' => 'adminkit-navigation', 'configuration' => 'adminkit-configuration' ) as $tab => $slug ) {
-			if ( 'navigation' === $tab && ! self::navigation_enabled() ) {
-				continue;
-			}
-			if ( 'brand' === $tab && ! apply_filters( 'adminkit/customization_available', true ) ) { continue; }
-			$data['pages'][ $tab ] = admin_url( 'admin.php?page=' . $slug );
-		}
+		$data['pageTitle'] = 'AdminKit';
 		self::enqueue_app( $data );
 	}
 

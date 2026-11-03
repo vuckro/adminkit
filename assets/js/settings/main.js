@@ -140,7 +140,7 @@
 		var guideKey = 'adminkit:guide:' + location.host + ':' + (D.route || '');
 		try { var storedGuide = JSON.parse(localStorage.getItem(guideKey)); if (storedGuide && typeof storedGuide === 'object' && !Array.isArray(storedGuide)) { guide = storedGuide; } } catch (error) {}
 		function guideMark(key) { guide[key] = true; try { localStorage.setItem(guideKey, JSON.stringify(guide)); } catch (error) {} }
-		function pageLink(id, label, className, hash) { return el('a', { class: className || 'ak-btn', href: ((D.pages || {})[id] || ('#' + id)) + (hash || ''), text: label }); }
+		function pageLink(id, label, className, hash) { return el('a', { class: className || 'ak-btn', href: ((D.pages || {})[id] || (hash || ('#' + id))) + (D.pages ? (hash || '') : ''), text: label }); }
 		function featureGroups() {
 			var result = [];
 			(D.features || []).forEach(function (feature) {
@@ -233,6 +233,7 @@
 					navPart.selectSection(rawId);
 					return 'navigation';
 				}
+				if (rawId.indexOf('category=') === 0) { return 'features'; }
 				return rawId;
 			},
 			requests: function () {

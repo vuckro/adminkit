@@ -34,24 +34,14 @@ class AdminKit_Toolbar_Manager { public static $enabled=true; public static func
 function __($text,$domain){return $text;}
 function add_menu_page($title,$label,$capability,$slug,$callback,$icon,$position){return 'toplevel_page_'.$slug;}
 function add_submenu_page($parent,$title,$label,$capability,$slug,$callback){global $native_pages;if($parent===''){return 'admin_page_'.$slug;}$native_pages[$slug]=array($parent,$capability,$callback);return $parent.'_page_'.$slug;}
+function add_options_page($title,$label,$capability,$slug,$callback){return add_submenu_page('options-general.php',$title,$label,$capability,$slug,$callback);}
 AdminKit_Settings_Page::add_submenu();
-check(count($native_pages)===5,'Expected five native AdminKit content pages');
-foreach($native_pages as$page){check($page[0]==='adminkit'&&$page[1]==='manage_options'&&$page[2]===array('AdminKit_Settings_Page','render_page'),'Native page lost parent, capability or shared host');}
+check(count($native_pages)===1,'Expected one Settings submenu entry');
+check($native_pages['adminkit'][0]==='options-general.php'&&$native_pages['adminkit'][1]==='manage_options','SPA lost Settings parent or capability');
 $hooks=new ReflectionProperty('AdminKit_Settings_Page','page_tabs');$hooks->setAccessible(true);$registered=$hooks->getValue();
-check($registered['adminkit_page_adminkit-navigation']==='navigation'&&$registered['adminkit_page_adminkit-configuration']==='configuration','Native hooks do not route to their own page');
-foreach(array(array(false,false),array(true,false),array(false,true),array(true,true))as$enabled){
- AdminKit_Menu_Manager::$enabled=$enabled[0];AdminKit_Toolbar_Manager::$enabled=$enabled[1];
- $native_pages=array();$hooks->setValue(null,array());AdminKit_Settings_Page::add_submenu();
- $expected=$enabled[0]||$enabled[1];
- check(isset($native_pages['adminkit-navigation'])===$expected,'Navigation page visibility ignores enabled editors');
- check(count($native_pages)===($expected?5:4),'Navigation gate affects unrelated settings pages');
- $registered=$hooks->getValue();
- check(isset($registered['adminkit_page_adminkit-navigation'])===$expected,'Disabled navigation retains a registered page hook');
-}
-
-// Native 5-page mode slices script enqueues per active page while keeping full graph when pages === null.
-$customization=false;$native_pages=array();AdminKit_Settings_Page::add_submenu();
-check(!isset($native_pages['adminkit-design'])&&isset($native_pages['adminkit-features']),'Unavailable customization must hide only its own menu entry');
+check($registered['options-general.php_page_adminkit']==='overview'&&$registered['admin_page_adminkit-navigation']==='navigation','SPA or legacy deep link lost routing');
+check(AdminKit_Settings_Page::is_settings_hook('options-general.php_page_adminkit'),'Settings hook not recognized');
+// Explicit paged payloads remain supported for older integrations.
 $customization=true;
 $pages_map=array('overview'=>'#','features'=>'#','brand'=>'#','navigation'=>'#','configuration'=>'#');
 $scripts=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>'main','pages'=>$pages_map,'initialTab'=>'overview'));
