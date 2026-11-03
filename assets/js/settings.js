@@ -180,6 +180,7 @@
 		}
 	}
 	function applyHash() {
+		var previousTabId = activeTabId;
 		var rawId = location.hash.slice(1);
 		var id = surface.onHash ? surface.onHash(rawId) : rawId;
 		selectTab(
@@ -189,6 +190,7 @@
 				? id
 				: (D.initialTab || tabs[0].id)
 		);
+		if (screen === 'main' && previousTabId !== activeTabId && typeof app.scrollIntoView === 'function') { app.scrollIntoView({ block: 'start', behavior: 'auto' }); }
 		if (surface.onHash && rawId !== id) {
 			surface.onHash(rawId);
 		}

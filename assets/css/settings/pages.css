@@ -3,7 +3,7 @@
 .adminkit-app[data-screen="main"] *::before,
 .adminkit-app[data-screen="main"] *::after{box-sizing:border-box}
 /* Content pages only. Native WordPress owns the surrounding navigation and theme. */
-.adminkit-app[data-screen="main"]{display:block;max-width:min(1080px,var(--ak-layout-wide))}
+.adminkit-app[data-screen="main"]{display:block;max-width:min(1080px,var(--ak-layout-wide));scroll-margin-block-start:66px}
 .adminkit-app.has-native-pages .ak-tabs[hidden]{display:none}
 .adminkit-app[data-screen="main"] .ak-tabs{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;margin:0 0 28px;border-bottom:1px solid var(--ak-border);padding-bottom:12px}
 .adminkit-app[data-screen="main"] .ak-head{padding:8px 0 12px}

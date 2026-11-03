@@ -39,6 +39,7 @@ assert(doc.getElementById('ak-type-scale').value === '1.13', 'valid non-preset t
 assert(doc.getElementById('ak-shape-radius').value === '1.37', 'valid non-preset radius scale survives mounting');
 const tabs = [...doc.querySelectorAll('[role="tab"].ak-tabs button, .ak-tabs [role="tab"]')];
 assert(tabs.length === 5, 'main tabs rendered (' + tabs.length + ')');
+let sectionScrolls = 0; doc.getElementById('adminkit-app').scrollIntoView = () => { sectionScrolls++; };
 const pagePicker = doc.getElementById('ak-page-select');
 assert(pagePicker && pagePicker.options.length === 5, 'mobile page picker exposes all SPA sections');
 pagePicker.value = 'configuration'; pagePicker.dispatchEvent(new window.Event('change', { bubbles: true })); await tick();
@@ -50,6 +51,7 @@ doc.querySelector('.ak-tabs').dispatchEvent(new window.KeyboardEvent('keydown', 
 assert(pagePicker.value === 'configuration', 'End selects the last section and synchronizes mobile navigation');
 doc.querySelector('.ak-tabs').dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Home', bubbles: true })); await tick();
 assert(pagePicker.value === 'overview', 'Home returns to overview');
+assert(sectionScrolls >= 4, 'section changes restore the workspace reading position');
 
 
 for (const tab of tabs) {
