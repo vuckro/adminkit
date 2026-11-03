@@ -225,6 +225,26 @@ body.block-editor-page.adminkit .components-form-token-field__input-container:fo
 	outline: none;
 }
 
+/* InputControl draws its surface and outline on separate native layers.
+   Theme both layers, including the URL combobox used by link popovers. */
+body.block-editor-page.adminkit .components-input-control__container {
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+body.block-editor-page.adminkit .components-input-control__backdrop {
+	border-color: var(--ak-border-strong);
+}
+body.block-editor-page.adminkit .components-input-control__container:focus-within .components-input-control__backdrop {
+	border-color: var(--ak-focus);
+	box-shadow: var(--ak-focus-ring);
+}
+body.block-editor-page.adminkit .components-input-control__container input:focus {
+	box-shadow: none;
+}
+body.block-editor-page.adminkit .components-input-control__input::placeholder {
+	color: var(--ak-text-subtle);
+}
+
 body.block-editor-page.adminkit .components-base-control__label,
 body.block-editor-page.adminkit .components-input-control__label {
 	color: var(--ak-text);
@@ -838,6 +858,16 @@ body.block-editor-page.adminkit .components-toggle-group-control-backdrop {
 	color: var(--ak-heading);
 }
 
+/* Current ToggleGroupControl paints the moving selection in ::before,
+   rather than the older backdrop class. Preserve its native geometry. */
+body.block-editor-page.adminkit .components-toggle-group-control::before {
+	background: var(--ak-primary-subtle);
+	box-shadow: inset 0 0 0 1px var(--ak-border-strong);
+}
+body.block-editor-page.adminkit .components-toggle-group-control-option-base[aria-checked="true"] {
+	color: var(--ak-heading);
+}
+
 
 /* ========== 23. Color palette (swatches + picker) ========== */
 body.block-editor-page.adminkit .components-color-palette,
@@ -1304,6 +1334,11 @@ body.block-editor-page.adminkit .components-button svg path {
 	fill: currentColor;
 }
 
+/* Stroke icons (including Etch's link control) must retain their open paths. */
+body.block-editor-page.adminkit .components-button svg[stroke] path {
+	fill: none;
+}
+
 /* Global pressed-state pill (.is-pressed / [aria-pressed="true"]).
    Gutenberg defaults to `background: var(--primary-t-2, #1e1e1e)` —
    the t-2 tint works when Bricks supplies it, but the #1e1e1e
@@ -1316,6 +1351,13 @@ body.block-editor-page.adminkit .components-button[aria-pressed="true"]:not(:dis
 body.block-editor-page.adminkit .components-button[aria-pressed="true"]:hover:not(:disabled, [aria-disabled="true"]) {
 	background: var(--ak-primary-subtle);
 	color: var(--ak-primary);
+	border-radius: var(--ak-radius-s);
+}
+
+/* Compact toolbar buttons draw their selected fill behind the icon in ::before.
+   Changing only the button background leaves a black icon on a black layer. */
+body.block-editor-page.adminkit .components-button:is(.is-pressed, [aria-pressed="true"]):not(:disabled, [aria-disabled="true"])::before {
+	background: var(--ak-primary-subtle);
 	border-radius: var(--ak-radius-s);
 }
 
