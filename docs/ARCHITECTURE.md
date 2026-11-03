@@ -1,6 +1,6 @@
 # Architecture
 
-AdminKit is a standalone WordPress 6.0+/PHP 7.4+ plugin with no runtime Composer
+AdminKit is a standalone WordPress 6.0+/PHP 8.3+ plugin with no runtime Composer
 or JavaScript dependencies. PHP owns settings and native hooks; build-free DOM
 modules enhance existing controls; CSS consumes the shared `--ak-*` token layer.
 Development tooling is separate from the distributed plugin.
@@ -239,7 +239,7 @@ checks) covers PHP/JS syntax, generated tokens, all 23 `dev/check*.php` suites
 contracts, adapter budgets, 11 jsdom suites, i18n, registry/package integrity, and
 static analysis (**WPCS Security/i18n**, **PHPStan level 5**, **ESLint**, and
 **Stylelint** logical RTL properties). CI (`.github/workflows/ci.yml`) invokes this
-gate across PHP 7.4–8.4 and WordPress 6.0 / latest.
+gate across PHP 8.3–8.5 and WordPress 6.0 / latest.
 Real browser saves, user/session behavior, multisite and active host visual checks
 remain integration checks; a skipped host drift check is not validation.
 
@@ -306,3 +306,12 @@ Mobile sidebar disclosure chevrons use CSS only. They read the existing native
 `aria-expanded` state, with current/open class fallbacks, and respect reduced motion.
 Relative label positioning explicitly clears the native folded-menu left offset;
 no extra submenu state or click handler is introduced.
+
+### Editor notifications
+
+The existing notification drawer also renders dismissible block-editor notices
+from `core/notices` through WordPress `NoticeList`. Original React nodes remain
+in place; their native banner container is hidden only after the bridge mounts.
+Dismissal updates the WordPress store. Actions close the drawer before opening
+editor dialogs. Pinned notices and snackbars retain their native placement.
+Without a toolbar launcher or when the feature is disabled, native notices remain.

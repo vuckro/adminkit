@@ -60,6 +60,7 @@ function ak_test_run_pool( array $commands, int $concurrency ): array {
 				'stdout'  => $pipes[1],
 				'stderr'  => $pipes[2],
 				'output'  => '',
+				'exitcode' => -1,
 			);
 		}
 
@@ -94,7 +95,12 @@ function ak_test_run_pool( array $commands, int $concurrency ): array {
 		}
 
 		foreach ( $running as $idx => $job ) {
+			// Before PHP 8.3, only the first status read after exit retains the code.
 			$status = proc_get_status( $job['process'] );
+			if ( ! $status['running'] && $status['exitcode'] >= 0 ) {
+				$running[ $idx ]['exitcode'] = $status['exitcode'];
+				$job['exitcode']             = $status['exitcode'];
+			}
 			$eof    = feof( $job['stdout'] ) && feof( $job['stderr'] );
 			if ( ! $status['running'] && $eof ) {
 				$tail  = (string) stream_get_contents( $job['stdout'] );
@@ -102,7 +108,7 @@ function ak_test_run_pool( array $commands, int $concurrency ): array {
 				fclose( $job['stdout'] );
 				fclose( $job['stderr'] );
 				$close_code      = proc_close( $job['process'] );
-				$exit_code       = $status['exitcode'] >= 0 ? $status['exitcode'] : $close_code;
+				$exit_code       = $job['exitcode'] >= 0 ? $job['exitcode'] : $close_code;
 				$results[ $idx ] = array( $exit_code, $job['output'] . $tail );
 				unset( $running[ $idx ] );
 			}
@@ -142,6 +148,29 @@ function ak_test_group( string $label, array $commands, int $pool = 8 ): void {
 	}
 
 	echo ( $bad ? 'FAIL' : 'PASS' ) . ': ' . $label . ' (' . count( $commands ) . ")\n";
+}
+
+// Exercise exit status independently of the platform's pipe EOF timing.
+if ( in_array( '--self-test-pool', $argv, true ) ) {
+	$commands = array();
+	$expected = array();
+	for ( $i = 0; $i < 64; ++$i ) {
+		$code       = $i % 3;
+		$commands[] = array( PHP_BINARY, '-r', 'fwrite(STDOUT, "out"); fwrite(STDERR, "err"); exit(' . $code . ');' );
+		$expected[] = $code;
+	}
+	$results = ak_test_run_pool( $commands, 8 );
+	if ( count( $results ) !== count( $commands ) ) {
+		exit( 1 );
+	}
+	foreach ( $results as $idx => $result ) {
+		if ( $expected[ $idx ] !== $result[0] || false === strpos( $result[1], 'out' ) || false === strpos( $result[1], 'err' ) ) {
+			fwrite( STDERR, "Process pool lost exit status or output for child $idx.\n" );
+			exit( 1 );
+		}
+	}
+	echo "OK: process pool preserves successful/failed exits and both output streams.\n";
+	exit( 0 );
 }
 
 // Discover first-party PHP and JS sources (skip VCS and vendored toolchains only).
@@ -242,7 +271,7 @@ if ( ! $fast ) {
 	if ( is_file( $root . '/dev/vendor/bin/phpcs' ) && is_file( $root . '/.phpcs.xml.dist' ) ) {
 		$static_cmds[] = array( PHP_BINARY, 'dev/vendor/bin/phpcs', '--standard=.phpcs.xml.dist' );
 	}
-	if ( is_file( $root . '/dev/vendor/bin/phpstan' ) && is_file( $root . '/phpstan.neon.dist' ) && PHP_VERSION_ID >= 70400 ) {
+	if ( is_file( $root . '/dev/vendor/bin/phpstan' ) && is_file( $root . '/phpstan.neon.dist' ) && PHP_VERSION_ID >= 80300 ) {
 		$static_cmds[] = array( PHP_BINARY, 'dev/vendor/bin/phpstan', 'analyse', '--configuration=phpstan.neon.dist', '--memory-limit=512M', '--no-progress' );
 	}
 	if ( is_file( $root . '/dev/smoke/node_modules/.bin/eslint' ) && is_file( $root . '/dev/smoke/eslint.config.js' ) ) {

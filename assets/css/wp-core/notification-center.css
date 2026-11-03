@@ -292,3 +292,9 @@ body.adminkit #wpadminbar #wp-admin-bar-ak-notifications > .ab-item:focus {
 		border: 1px solid ButtonText;
 	}
 }
+
+/* Only hide native dismissible banners once the store-backed drawer is ready.
+   Blocking notices and transient snackbars keep their native editor placement. */
+html.ak-nc-editor-active :is(.editor-notices__dismissible, .components-editor-notices__dismissible) {
+	display: none;
+}

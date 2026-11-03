@@ -39,6 +39,7 @@
 
 	var backdrop, drawer, listEl, emptyEl, badgeEl, bell, lastFocus;
 	var isOpen = false;
+	var editorCount = 0;
 
 	/* ───────── categorization ─────────
 	   Policy: group EVERYTHING into the panel EXCEPT success confirmations (which
@@ -175,9 +176,9 @@
 		}
 	}
 	function refresh() {
-		var n = grouped().length;
+		var n = grouped().length + editorCount;
 		emptyEl.hidden = n > 0;
-		listEl.hidden  = n === 0;
+		listEl.hidden  = grouped().length === 0;
 		setBadge( n ); // the badge always shows the live count of notices in the center
 	}
 
@@ -285,6 +286,39 @@
 		return true;
 	}
 
+	/* Render editor notices from WordPress's store, never move React-owned DOM.
+	   The same NoticeList retains native actions, dismissals and store updates. */
+	function mountEditorNotices() {
+		var wp = window.wp;
+		if ( ! C.editor || ! wp || ! wp.data || ! wp.element || ! wp.components || ! wp.components.NoticeList ) { return; }
+		var host = el( 'div', 'ak-nc-editor-notices' );
+		listEl.parentNode.insertBefore( host, emptyEl );
+		var root = wp.element.createRoot ? wp.element.createRoot( host ) : null;
+		var previous;
+		function update() {
+			var notices = wp.data.select( 'core/notices' ).getNotices();
+			if ( notices === previous ) { return; }
+			previous = notices;
+			var groupedNotices = notices.filter( function ( notice ) {
+				return notice.type !== 'snackbar' && notice.isDismissible !== false;
+			} );
+			var tree = wp.element.createElement( wp.components.NoticeList, {
+				notices: groupedNotices,
+				onRemove: function ( id ) { wp.data.dispatch( 'core/notices' ).removeNotice( id ); }
+			} );
+			if ( root ) { root.render( tree ); } else { wp.element.render( tree, host ); }
+			editorCount = groupedNotices.length;
+			refresh();
+		}
+		// Close before native actions open editor dialogs, removing background inert.
+		host.addEventListener( 'click', function ( event ) {
+			if ( event.target.closest( '.components-notice__action' ) ) { close(); }
+		}, true );
+		update();
+		wp.data.subscribe( update );
+		doc.classList.add( 'ak-nc-editor-active' );
+	}
+
 	/* ───────── observe late notices + dismissals ───────── */
 
 	function observe() {
@@ -321,6 +355,7 @@
 		try {
 			mounted = mount();
 			if ( mounted ) {
+				mountEditorNotices();
 				sweep();   // initial relocation
 				observe(); // late notices + dismissals
 			}

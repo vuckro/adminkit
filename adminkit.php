@@ -5,7 +5,7 @@
  * Description:       Give your WordPress admin a clean, modern look — optional dark mode, menu and toolbar editors, and polished plugin screens. Standalone, no setup.
  * Version:           1.0.0-beta.1
  * Requires at least: 6.0
- * Requires PHP:      7.4
+ * Requires PHP:      8.3
  * Author:            WaasKit
  * Author URI:        https://waaskit.com
  * License:           GPL-2.0-or-later

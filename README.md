@@ -2,7 +2,7 @@
 
 A standalone WordPress plugin for a consistent administration interface, using the
 current [WaasKit design system](https://design.waaskit.site/), with monochrome branding by default. WordPress 6.0+,
-PHP 7.4+. No runtime dependencies, no npm or Composer build.
+PHP 8.3+. No runtime dependencies, no npm or Composer build.
 
 ## Features
 

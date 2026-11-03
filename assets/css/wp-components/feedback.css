@@ -78,55 +78,6 @@ body.adminkit .components-snackbar .components-button:focus-visible { outline: 2
    replaces it; keep the native spinning glyph while an update is in progress. */
 body.adminkit :is(.update-message, .updated-message):not(.updating-message) p::before { display: none; }
 body.adminkit .updating-message p::before { color: var(--ak-info); }
-/* Keep actionable editor warnings in the native notice list. Compact the
-   content rather than moving React-owned notices into a second overlay. */
-body.adminkit .components-notice .components-notice__content {
- display: flex;
- flex-wrap: wrap;
- align-items: center;
- gap: 8px 16px;
- min-height: 32px;
-}
-body.adminkit .components-notice .components-notice__action:not(.is-link) {
- box-sizing: border-box;
- flex-shrink: 0;
- height: auto;
- min-height: var(--ak-control-height);
- max-width: 100%;
- margin: 0;
- padding: 6px 12px;
- background: var(--ak-btn-bg);
- color: var(--ak-btn-text, var(--ak-text));
- border: var(--ak-border-width) solid var(--ak-btn-border, var(--ak-border));
- border-radius: var(--ak-radius-s);
- box-shadow: none;
- font-family: var(--ak-font-body);
- font-size: var(--ak-text-s);
- font-weight: 500;
- line-height: 1.5;
- white-space: normal;
- text-align: start;
- text-decoration: none;
-}
-body.adminkit .components-notice .components-notice__action:not(.is-link):hover:not(:disabled) {
- background: var(--ak-btn-hover-bg);
- border-color: var(--ak-btn-hover-border);
- color: var(--ak-text);
-}
-body.adminkit .components-notice .components-notice__action:not(.is-link):focus-visible {
- outline: 2px solid var(--ak-focus);
- outline-offset: 2px;
- box-shadow: none;
-}
-body.adminkit .components-notice .components-notice__action:not(.is-link):disabled {
- background: var(--ak-surface-muted);
- color: var(--ak-text-muted);
- border-color: var(--ak-border);
- cursor: default;
-}
-@media (max-width: 782px) {
- body.adminkit .components-notice .components-notice__action:not(.is-link) { min-height: 44px; }
-}
 /* Notices can contain long filenames, URLs and translated error messages. */
 :is(body.adminkit, body.login) :is(.notice, div.updated, div.error, .update-nag, .components-notice, :where(#login_error, #login > .message)) { overflow-wrap: anywhere; }
 

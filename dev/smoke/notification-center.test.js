@@ -106,6 +106,57 @@ w.AdminKitNotificationCenter = {
     account.window.close();
   }
 
+  // The editor uses its notice store; React-owned source nodes stay in place.
+  const editor = new JSDOM(html + '<div class="editor-notices__dismissible">Native editor banners</div>', { url: 'http://localhost/wp-admin/', runScripts: 'outside-only' });
+  const ew = editor.window;
+  ew.AdminKitNotificationCenter = { ...w.AdminKitNotificationCenter, editor: true };
+  let notices = [
+    { id: 'autosave-exists', status: 'warning', content: 'Newer autosave', actions: [{ label: 'View autosave', onClick() { assert.equal(ew.document.getElementById('wpbody').inert, false); } }] },
+    { id: 'saved', type: 'snackbar', content: 'Saved' },
+    { id: 'blocking', isDismissible: false, content: 'Blocking error' },
+  ];
+  let notify;
+  let rendered;
+  ew.wp = {
+    data: {
+      select: () => ({ getNotices: () => notices }),
+      dispatch: () => ({ removeNotice: (id) => { notices = notices.filter(n => n.id !== id); notify(); } }),
+      subscribe: (callback) => { notify = callback; },
+    },
+    components: { NoticeList: 'NoticeList' },
+    element: {
+      createElement: (component, props) => props,
+      createRoot: (host) => ({ render: (props) => {
+        rendered = props;
+        host.replaceChildren();
+        for (const notice of props.notices) {
+          for (const action of notice.actions || []) {
+            const button = ew.document.createElement('button');
+            button.className = 'components-notice__action';
+            button.addEventListener('click', action.onClick);
+            host.appendChild(button);
+          }
+        }
+      } }),
+    },
+  };
+  ew.eval(source);
+  await new Promise(resolve => setTimeout(resolve, 10));
+  assert.equal(ew.document.documentElement.classList.contains('ak-nc-editor-active'), true);
+  assert.equal(rendered.notices.length, 1, 'Snackbars and blocking notices retain native placement');
+  assert.equal(rendered.notices[0].id, 'autosave-exists');
+  assert.equal(ew.document.querySelector('.ak-nc-badge').textContent, '3', 'Editor notices contribute to the existing badge');
+  ew.document.querySelector('#wp-admin-bar-ak-notifications a').click();
+  ew.document.querySelector('.ak-nc-editor-notices button').click();
+  assert.equal(ew.document.querySelector('.ak-nc-drawer').classList.contains('is-open'), false, 'Actions close the drawer before native editor dialogs open');
+  rendered.onRemove('autosave-exists');
+  assert.equal(ew.document.querySelector('.ak-nc-badge').textContent, '2', 'Native dismissal synchronizes the badge');
+  notices = [...notices, { id: 'late', content: 'Late warning' }];
+  notify();
+  assert.equal(rendered.notices[0].id, 'late', 'Late store updates appear in the drawer');
+  assert.ok(ew.document.querySelector('.editor-notices__dismissible'), 'Original React DOM is never moved or deleted');
+  ew.close();
+
   const missing = new JSDOM(html.replace(/<li id="wp-admin-bar-ak-notifications">.*?<\/li>/, ''), { url:'http://localhost/wp-admin/', runScripts:'outside-only' });
   missing.window.AdminKitNotificationCenter = w.AdminKitNotificationCenter;
   missing.window.eval(source);

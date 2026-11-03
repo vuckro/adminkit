@@ -1,7 +1,7 @@
 # Working on AdminKit
 
 AdminKit is a standalone WordPress plugin without runtime Composer or npm dependencies.
-Keep changes simple, explicit, predictable and compatible with PHP 7.4+ / WordPress 6.0+ (including SQLite / WordPress Playground and Multisite).
+Keep changes simple, explicit, predictable and compatible with PHP 8.3+ / WordPress 6.0+ (including SQLite / WordPress Playground and Multisite).
 
 ## Structure & Ownership
 

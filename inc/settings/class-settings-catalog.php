@@ -188,8 +188,9 @@ class AdminKit_Settings_Catalog {
 			if ( ! class_exists( $class ) || ! method_exists( $class, 'is_active' ) ) {
 				continue;
 			}
-			if ( method_exists( $class, 'type' ) ) {
-				$type = ( 'theme' === call_user_func( array( $class, 'type' ) ) ) ? 'theme' : 'plugin';
+			$type_callback = array( $class, 'type' );
+			if ( is_callable( $type_callback ) ) {
+				$type = ( 'theme' === call_user_func( $type_callback ) ) ? 'theme' : 'plugin';
 			} else {
 				$type = wp_get_theme( $slug )->exists() ? 'theme' : 'plugin';
 			}

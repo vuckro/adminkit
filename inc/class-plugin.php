@@ -159,8 +159,9 @@ class AdminKit_Plugin {
 		foreach ( $files as $slug => $file ) {
 			require_once $file;
 			$class = 'AdminKit_Integration_' . str_replace( '-', '_', ucwords( $slug, '-' ) );
-			if ( class_exists( $class ) && method_exists( $class, 'maybe_init' ) ) {
-				add_action( 'after_setup_theme', array( $class, 'maybe_init' ) );
+			$callback = array( $class, 'maybe_init' );
+			if ( class_exists( $class ) && is_callable( $callback ) ) {
+				add_action( 'after_setup_theme', $callback );
 			}
 		}
 	}

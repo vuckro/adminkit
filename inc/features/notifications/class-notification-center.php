@@ -97,17 +97,11 @@ class AdminKit_Notification_Center {
 	}
 
 	/**
-	 * Only enhance standard admin-notice screens. The block editor renders its
-	 * notices through a separate React store (`.components-notice-list`), not the
-	 * admin_notices DOM, so we step aside there; the Customizer has no notices.
+	 * Respect the shared administration asset gate, including the block editor.
 	 *
 	 * @return bool
 	 */
 	private static function should_enhance() {
-		$screen = AdminKit_Screen::get();
-		if ( $screen && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor() ) {
-			return false;
-		}
 		return (bool) apply_filters( 'adminkit/should_load', true, 'admin' );
 	}
 
@@ -172,7 +166,7 @@ class AdminKit_Notification_Center {
 
 	/**
 	 * Enqueue the footer script with its i18n + config bootstrap. Skipped where
-	 * there are no standard admin notices to sort (block editor, Customizer).
+	 * the shared administration asset gate is disabled.
 	 *
 	 * @return void
 	 */
@@ -181,7 +175,10 @@ class AdminKit_Notification_Center {
 			return;
 		}
 
+		$screen = AdminKit_Screen::get();
+		$editor = $screen && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor();
 		$config = array(
+			'editor'       => $editor,
 			'title'        => __( 'Notifications', 'adminkit' ),
 			'subtitle'     => __( 'Grouped notices', 'adminkit' ),
 			'empty'        => __( 'You’re all caught up.', 'adminkit' ),
@@ -202,7 +199,7 @@ class AdminKit_Notification_Center {
 		AdminKit_Assets::enqueue_script(
 			'adminkit-notification-center',
 			'assets/js/wp-core/notification-center.js',
-			array(),
+			$editor ? array( 'wp-data', 'wp-notices', 'wp-element', 'wp-components' ) : array(),
 			'window.AdminKitNotificationCenter=' . wp_json_encode( $config ) . ';'
 		);
 	}

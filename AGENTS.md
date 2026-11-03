@@ -4,7 +4,7 @@ Short orientation for AI coding assistants (Claude, Antigravity, Cursor, Codex).
 
 ## Mental Model
 
-AdminKit skins `wp-admin`, `wp-login.php` and the logged-in toolbar through `--ak-*` CSS tokens and adds opt-in workflow tools with **zero runtime Composer/npm dependencies** (PHP 7.4–8.4 / WordPress 6.0+ / SQLite & InnoDB / Multisite compatible) and **zero public frontend footprint** (`0` bytes emitted for anonymous visitors).
+AdminKit skins `wp-admin`, `wp-login.php` and the logged-in toolbar through `--ak-*` CSS tokens and adds opt-in workflow tools with **zero runtime Composer/npm dependencies** (PHP 8.3–8.5 / WordPress 6.0+ / SQLite & InnoDB / Multisite compatible) and **zero public frontend footprint** (`0` bytes emitted for anonymous visitors).
 
 | Path | Responsibility | Key Files |
 | --- | --- | --- |

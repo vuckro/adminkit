@@ -1,6 +1,6 @@
 # Installing and validating AdminKit
 
-AdminKit requires WordPress 6.0+ and PHP 7.4+. It ships its generated assets and
+AdminKit requires WordPress 6.0+ and PHP 8.3+. It ships its generated assets and
 fonts without runtime npm/Composer dependencies. PHP DOM is needed for custom SVG
 validation. The plugin version remains 1.0.0 until an approved release bump.
 
@@ -43,7 +43,7 @@ all 11 jsdom suites, and static analysis (WPCS, PHPStan level 5, ESLint, Styleli
 Registry checks verify boot callables and runtime files, plus both HEAD and
 working-tree dry-runs. It fails if a test/dependency is unavailable; it does not
 silently skip a gate. The GitHub workflow (`.github/workflows/ci.yml`) runs this
-same command across PHP 7.4–8.4 and WordPress 6.0 / latest.
+same command across PHP 8.3–8.5 and WordPress 6.0 / latest.
 
 Host-dependent and browser checks remain additional:
 
