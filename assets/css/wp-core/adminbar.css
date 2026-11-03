@@ -24,6 +24,13 @@
 	color: var(--ak-text) !important;
 }
 
+/* Polylang (free + Pro) marks an active language filter with the admin
+   accent. Use a neutral surface so toolbar text/icons retain their contrast
+   in both themes, while the active filter stays visibly highlighted. */
+#wpadminbar #wp-admin-bar-languages.pll-filtered-languages {
+	background-color: var(--ak-hover-bg, var(--ak-elevated));
+}
+
 /* Default icons (Dashicons + WP svgs) */
 #wpadminbar .ab-icon::before,
 #wpadminbar .ab-item::before,
