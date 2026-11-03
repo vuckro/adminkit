@@ -39,6 +39,19 @@ assert(doc.getElementById('ak-type-scale').value === '1.13', 'valid non-preset t
 assert(doc.getElementById('ak-shape-radius').value === '1.37', 'valid non-preset radius scale survives mounting');
 const tabs = [...doc.querySelectorAll('[role="tab"].ak-tabs button, .ak-tabs [role="tab"]')];
 assert(tabs.length === 5, 'main tabs rendered (' + tabs.length + ')');
+const pagePicker = doc.getElementById('ak-page-select');
+assert(pagePicker && pagePicker.options.length === 5, 'mobile page picker exposes all SPA sections');
+pagePicker.value = 'configuration'; pagePicker.dispatchEvent(new window.Event('change', { bubbles: true })); await tick();
+assert(doc.getElementById('ak-tab-configuration').getAttribute('aria-selected') === 'true', 'mobile page selection uses shared routing');
+window.location.hash = 'features'; await tick();
+assert(pagePicker.value === 'features', 'hash navigation synchronizes the mobile picker');
+assert(doc.querySelector('.ak-savebar').hidden, 'SPA navigation keeps the draft clean');
+doc.querySelector('.ak-tabs').dispatchEvent(new window.KeyboardEvent('keydown', { key: 'End', bubbles: true })); await tick();
+assert(pagePicker.value === 'configuration', 'End selects the last section and synchronizes mobile navigation');
+doc.querySelector('.ak-tabs').dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Home', bubbles: true })); await tick();
+assert(pagePicker.value === 'overview', 'Home returns to overview');
+
+
 for (const tab of tabs) {
   try { tab.click(); await tick(); } catch (e) { errors.push('tab ' + tab.id + ': ' + e.stack); }
 }
@@ -91,6 +104,8 @@ assert(nested.length === 2 && nested[0].checked && nested[1].checked, 'nested de
 nested[0].checked = false; nested[0].dispatchEvent(new window.Event('change', { bubbles:true }));
 const save = doc.querySelector('.ak-savebar .ak-btn--primary');
 assert(save && !save.disabled, 'edits mark the form dirty');
+pagePicker.value = 'configuration'; pagePicker.dispatchEvent(new window.Event('change', { bubbles: true })); await tick();
+assert(!save.disabled && !doc.querySelector('.ak-savebar').hidden, 'switching sections preserves the pending draft and save action');
 save.click(); await tick();
 const posted = requests.find(r => r.method === 'POST' && r.data && r.data.values);
 assert(posted && posted.data.values.clean_chrome_hide_footer === false && posted.data.values.clean_chrome_hide_help === true, 'actual main save includes independent nested choices');

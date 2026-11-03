@@ -245,6 +245,10 @@ msgid "Choose a feature"
 msgstr "Choisir une fonctionnalité"
 
 #: inc/settings/class-settings-i18n.php
+msgid "Choose a section"
+msgstr "Choisir une section"
+
+#: inc/settings/class-settings-i18n.php
 msgid "Choose an icon"
 msgstr "Choisir une icône"
 

@@ -155,8 +155,13 @@
 		function refreshOverview() {
 			overviewPanel.textContent = '';
 			var steps = D.customizationAvailable === false ? ['explore', 'export'] : ['explore', 'configure', 'export'], complete = steps.every(function (key) { return guide[key]; });
-			overviewPanel.appendChild(el('h2', { class: 'ak-panel-title', text: I.pageOverviewTitle }));
+			overviewPanel.appendChild(el('h2', { class: 'ak-panel-title', text: I.pageOverview }));
 			overviewPanel.appendChild(intro(I.pageOverviewIntro));
+			var available = (D.features || []).filter(function (feature) { return feature.available !== false; });
+			var active = available.filter(isActive).length;
+			var count = (I.pageActiveCount || '').replace('%1$s', active).replace('%2$s', available.length);
+			overviewPanel.appendChild(el('h3', { class: 'ak-overview-section', text: I.pageSummary }));
+			overviewPanel.appendChild(el('div', { class: 'ak-overview-summary' }, [el('div', {}, [el('strong', { text: count }), el('p', { text: I.pageSavedScope })]), pageLink('features', I.pageManageAll)]));
 			if (guideExpanded || (!complete && !guide.hidden)) {
 				var hide = el('button', { class: 'ak-btn ak-btn--quiet', type: 'button', text: I.pageGuideHide, onclick: function () { guideExpanded = false; guideMark('hidden'); refreshOverview(); overviewPanel.querySelector('.ak-guide-show').focus(); } });
 				var progress = steps.filter(function (key) { return guide[key]; }).length;
@@ -164,15 +169,10 @@
 				[[I.pageGuideExplore, 'features'], [I.pageGuideConfigure, 'brand'], [I.pageGuideExport, 'configuration']].filter(function (step) { return step[1] !== 'brand' || D.customizationAvailable !== false; }).forEach(function (step, index) {
 					list.appendChild(el('li', { class: guide[steps[index]] ? 'is-complete' : '' }, [el('span', { class: 'ak-guide-marker', 'aria-hidden': 'true', text: guide[steps[index]] ? '' : String(index + 1) }), pageLink(step[1], step[0], 'ak-guide-link')]));
 				});
-				overviewPanel.appendChild(el('section', { class: 'ak-guide' }, [el('div', { class: 'ak-guide-head' }, [el('div', {}, [el('h3', { text: I.pageGuideTitle }), el('p', { text: I.pageGuideIntro })]), el('div', { class: 'ak-guide-controls' }, [el('span', { class: 'ak-guide-progress', text: progress + ' / 3' }), hide])]), list, el('p', { class: 'ak-guide-note', text: I.pageGuideOptional })]));
+				overviewPanel.appendChild(el('section', { class: 'ak-guide' }, [el('div', { class: 'ak-guide-head' }, [el('div', {}, [el('h3', { text: I.pageGuideTitle }), el('p', { text: I.pageGuideIntro })]), el('div', { class: 'ak-guide-controls' }, [el('span', { class: 'ak-guide-progress', text: progress + ' / ' + steps.length }), hide])]), list, el('p', { class: 'ak-guide-note', text: I.pageGuideOptional })]));
 			} else {
 				overviewPanel.appendChild(el('button', { type: 'button', class: 'ak-btn ak-btn--quiet ak-guide-show', text: I.pageGuideShow, onclick: function () { guideExpanded = true; refreshOverview(); overviewPanel.querySelector('.ak-guide button').focus(); } }));
 			}
-			var available = (D.features || []).filter(function (feature) { return feature.available !== false; });
-			var active = available.filter(isActive).length;
-			var count = (I.pageActiveCount || '').replace('%1$s', active).replace('%2$s', available.length);
-			overviewPanel.appendChild(el('h3', { class: 'ak-overview-section', text: I.pageSummary }));
-			overviewPanel.appendChild(el('div', { class: 'ak-overview-summary' }, [el('div', {}, [el('strong', { text: count }), el('p', { text: I.pageSavedScope })]), pageLink('features', I.pageManageAll)]));
 			overviewPanel.appendChild(el('h3', { class: 'ak-overview-section', text: I.pageCategories }));
 			var categories = el('div', { class: 'ak-overview-groups' });
 			featureGroups().forEach(function (group) {
@@ -181,7 +181,8 @@
 				// eslint-disable-next-line no-unsanitized/property -- Trusted PHP Lucide SVG icon.
 				icon.innerHTML = group.features[0].iconSvg || '';
 				link.appendChild(icon); link.appendChild(el('span', { text: group.label }));
-				link.appendChild(el('span', { class: 'ak-overview-count', text: group.features.filter(isActive).length + ' / ' + group.features.length })); categories.appendChild(link);
+				link.appendChild(el('span', { class: 'ak-overview-count', text: group.features.filter(isActive).length + ' / ' + group.features.length }));
+				link.appendChild(el('span', { class: 'ak-overview-arrow', 'aria-hidden': 'true' })); categories.appendChild(link);
 			});
 			overviewPanel.appendChild(categories);
 		}
@@ -209,8 +210,8 @@
 
 		var mainTabs = [
 			{ id: 'overview', label: I.pageOverview, icon: ICONS.menu, build: buildOverview },
-			{ id: 'brand', label: I.designSystem, icon: ICONS.brand, build: buildDesign },
-			{ id: 'features', label: I.features, icon: ICONS.plugins, build: buildFeatures }
+			{ id: 'features', label: I.features, icon: ICONS.plugins, build: buildFeatures },
+			{ id: 'brand', label: I.designSystem, icon: ICONS.brand, build: buildDesign }
 		];
 		if (navPart || (D.pages && D.pages.navigation)) {
 			mainTabs.push({ id: 'navigation', label: I.navigation || I.menu, icon: ICONS.menu, build: navPart ? navPart.buildNavigation : emptyPanel });

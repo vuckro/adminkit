@@ -241,3 +241,37 @@
  .adminkit-app .ak-savebar { padding-bottom: max(14px,env(safe-area-inset-bottom)); }
  .adminkit-app .ak-feature-dialog { padding-bottom: env(safe-area-inset-bottom); }
 }
+
+/* One section navigation across the SPA; compact native selection on phones. */
+.adminkit-app .ak-page-picker { display: none; }
+.adminkit-app[data-screen="main"] .ak-tabs {
+ width: 100%; max-width: none; align-items: center; gap: 24px;
+ padding: 0; margin-block: 0 28px; border-radius: 0;
+}
+.adminkit-app[data-screen="main"] .ak-tabs button {
+ flex-shrink: 0; min-height: 48px; padding: 12px 2px;
+ border: 0; border-bottom: 2px solid transparent; border-radius: 0;
+ background: transparent; box-shadow: none; color: var(--ak-text-muted);
+ font-weight: 500; white-space: nowrap;
+ transition: color var(--ak-dur-fast) var(--ak-ease), border-color var(--ak-dur-fast) var(--ak-ease);
+}
+.adminkit-app[data-screen="main"] .ak-tabs button:hover { color: var(--ak-heading); background: transparent; }
+.adminkit-app[data-screen="main"] .ak-tabs button[aria-selected="true"] {
+ color: var(--ak-heading); border-bottom-color: var(--ak-heading); background: transparent; box-shadow: none;
+}
+.adminkit-app .ak-overview .ak-overview-summary { margin-bottom: 24px; box-shadow: none; }
+.adminkit-app .ak-overview .ak-guide { padding: 20px 24px; box-shadow: none; }
+.adminkit-app .ak-overview .ak-guide h3 { font-size: var(--ak-text-m); }
+.adminkit-app .ak-overview-groups { box-shadow: none; }
+.adminkit-app .ak-overview-arrow { width: 7px; height: 7px; border-block-start: 1.5px solid currentColor; border-inline-end: 1.5px solid currentColor; transform: rotate(45deg); color: var(--ak-text-muted); margin-inline: 4px 2px; flex-shrink: 0; }
+[dir="rtl"] .adminkit-app .ak-overview-arrow { transform: rotate(-45deg); }
+@media(max-width:782px){
+ .adminkit-app[data-screen="main"] .ak-page-picker { display: block; margin-bottom: 24px; }
+ .adminkit-app .ak-page-picker>span { display: block; margin-bottom: 8px; color: var(--ak-text-muted); font-size: var(--ak-text-xs); }
+ .adminkit-app[data-screen="main"] .ak-page-picker select { width: 100%; max-width: none; min-height: 48px; margin: 0; padding-block: 10px; padding-inline: 14px 36px; border: 1px solid var(--ak-border); border-radius: var(--ak-radius-s); background-color: var(--ak-surface); color: var(--ak-text); font-family: var(--ak-font-body); }
+ .adminkit-app[data-screen="main"] .ak-page-picker + .ak-tabs { display: none; }
+ .adminkit-app .ak-overview .ak-guide { padding: 20px; }
+}
+@media(forced-colors:active){
+ .adminkit-app[data-screen="main"] .ak-tabs button[aria-selected="true"] { border-bottom-color: Highlight; }
+}

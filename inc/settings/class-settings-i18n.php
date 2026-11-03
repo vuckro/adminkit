@@ -36,6 +36,7 @@ class AdminKit_Settings_I18n {
 			'interfacePersonal' => __( 'My administration interface', 'adminkit' ),
 			'interfacePersonalHint' => __( 'Choose AdminKit, WordPress classic or follow the site default in your profile.', 'adminkit' ),
 			'interfaceNativeNotice' => __( 'You are using WordPress classic. These site-wide appearance settings are saved for accounts using AdminKit; enabled tools remain available in both interfaces.', 'adminkit' ),
+			'pageSection'                    => __( 'Choose a section', 'adminkit' ),
 			'pageOverview'                   => __( 'Overview', 'adminkit' ),
 			'pageConfiguration'              => __( 'Configuration', 'adminkit' ),
 			'pageOverviewTitle'              => __( 'Your administration, simply.', 'adminkit' ),

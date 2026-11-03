@@ -60,6 +60,7 @@ return array (
     'Choice: %s' => 'Choix : %s',
     'Choose AdminKit, WordPress classic or follow the site default in your profile.' => 'Choisissez AdminKit, WordPress classique ou le réglage du site dans votre profil.',
     'Choose a feature' => 'Choisir une fonctionnalité',
+    'Choose a section' => 'Choisir une section',
     'Choose an icon' => 'Choisir une icône',
     'Choose colors for light and dark. Custom lets you choose the accent and edit each palette color. Save to apply your changes.' => 'Choisissez les couleurs en clair et en sombre. Personnalisé permet de choisir l’accent et de modifier chaque couleur de la palette. Enregistrez pour appliquer vos modifications.',
     'Choose how content and plugin tables open, and whether published or active items come first.' => 'Choisissez la vue d’ouverture des tableaux et le regroupement des éléments publiés ou actifs.',

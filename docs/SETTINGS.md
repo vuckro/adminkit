@@ -1,6 +1,11 @@
 # Settings workspace
 
-The main workspace has Design system, Features and Navigation tabs. Navigation
+Settings → AdminKit opens one SPA with Overview, Features, Design system, Navigation
+and Configuration sections. Desktop tabs share a full-width underline navigation;
+phones use a labelled native section picker synchronized with hash/history navigation.
+Keyboard arrows, Home and End navigate desktop tabs. Switching sections preserves
+pending drafts. Overview prioritizes current feature status before the optional
+first-steps guide, followed by direct links into feature categories. Navigation
 contains Menu and Toolbar editors when enabled. Toolbar headings and scope hints
 identify the Administration or Public site view. The latter configures the
 WordPress bar shown on the frontend, normally for logged-in users; it does not

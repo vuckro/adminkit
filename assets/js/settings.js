@@ -7,6 +7,7 @@
 		return;
 	}
 	var I = D.i18n || {};
+	var initialTitle = document.title || 'AdminKit';
 	var apiFetch = window.wp && window.wp.apiFetch;
 	var state = { dirty: false, saving: false };
 	var revisions = {};
@@ -153,6 +154,12 @@
 			go(tabs[i].id);
 			tabs[i].button.focus();
 		});
+		if (screen === 'main' && !D.pages) {
+			var pageSelect = el('select', { id: 'ak-page-select', 'aria-label': I.pageSection });
+			tabs.forEach(function (tab) { pageSelect.appendChild(el('option', { value: tab.id, text: tab.label })); });
+			pageSelect.addEventListener('change', function () { go(pageSelect.value); });
+			app.appendChild(el('label', { class: 'ak-page-picker' }, [el('span', { text: I.pageSection }), pageSelect]));
+		}
 		app.appendChild(nav);
 		window.addEventListener('hashchange', applyHash);
 		applyHash();
@@ -188,6 +195,7 @@
 	}
 	function selectTab(id) {
 		activeTabId = id;
+		if (pageSelect) { pageSelect.value = id; }
 		if (D.pages) { var activePage = tabs.filter(function (tab) { return tab.id === id; })[0]; var pageTitle = app.querySelector('.ak-title'); if (activePage && pageTitle) { pageTitle.textContent = activePage.label; } }
 		if (surface.onSelect) { surface.onSelect(id); }
 		tabs.forEach(function (tab) {
@@ -212,6 +220,7 @@
 				tab.panel.hidden = !selected;
 			}
 		});
+		if (screen === 'main') { var selectedTab = tabs.filter(function (tab) { return tab.id === id; })[0]; if (selectedTab) { document.title = selectedTab.label + ' — ' + initialTitle; } }
 		enhanceSectionPickers();
 	}
 	function enhanceSectionPickers() {
@@ -271,7 +280,7 @@
 	}
 	function updateBar() {
 		// Imports replace the workspace: prevent edits until reload, but keep status accessible.
-		app.querySelectorAll('.ak-panels, .ak-tabs, .ak-actions').forEach(function (region) {
+		app.querySelectorAll('.ak-panels, .ak-tabs, .ak-page-picker, .ak-actions').forEach(function (region) {
 			region.inert = !!state.importing;
 		});
 		saveBtn.disabled = state.saving || !state.dirty;
