@@ -183,6 +183,12 @@ if ( ! is_file( $main_file ) ) {
 	exit( 1 );
 }
 
+// The private staging parent stays 0700; the distributed plugin must be web-readable.
+if ( ! chmod( $plugin_staging, 0755 ) ) {
+	fwrite( STDERR, "error: cannot make the packaged plugin directory web-readable.\n" );
+	exit( 1 );
+}
+
 // 5. Report what we have.
 $file_count = ak_count_files( $plugin_staging );
 $size       = ak_dir_size( $plugin_staging );
