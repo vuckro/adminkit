@@ -12,6 +12,7 @@ const html = `<!doctype html><html class="ak-nc-pending"><body class="wp-admin">
 </ul></div>
 <div id="wpbody"><div id="wpbody-content"><div class="wrap">
   <h1>Dashboard</h1>
+  <div class="hide-if-js block-editor-no-js"><div class="notice notice-error">JavaScript required</div></div>
   <div id="adminkit-nc-origin">
     <style>.plugin-banner { color: inherit; }</style>
     <script>window.__bannerInit = true;</script>
@@ -55,6 +56,7 @@ w.AdminKitNotificationCenter = {
   assert.equal(badge.hidden, false);
   assert.equal(badge.textContent, '2', 'Only the 2 non-contextual/non-feedback alerts belong in the drawer');
   assert.equal(drawerList.children.length, 2);
+  assert.ok(w.document.querySelector('.hide-if-js .notice-error'), 'Hidden no-JavaScript fallback must never enter the drawer');
 
   const origin = w.document.getElementById('adminkit-nc-origin');
   assert.ok(origin.querySelector('style'), '<style> tag must remain in #adminkit-nc-origin');
