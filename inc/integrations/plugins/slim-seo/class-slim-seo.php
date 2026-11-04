@@ -78,9 +78,28 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * Only load the list adapter alongside the host's real column stylesheet.
+	 *
+	 * @param \WP_Screen|null $screen Screen.
+	 * @return bool
+	 */
+	public static function owns_columns_screen( $screen ) {
+		return $screen && in_array( $screen->base, array( 'edit', 'edit-tags' ), true )
+			&& wp_style_is( 'slim-seo-admin-columns', 'enqueued' );
+	}
+
+	/**
 	 * @return void
 	 */
 	public static function register_assets() {
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-slim-seo-columns',
+			'src'       => 'inc/integrations/plugins/slim-seo/css/columns.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE, 'slim-seo-admin-columns' ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_columns_screen' ),
+		) );
+
 		// Variable remap routing Slim SEO's --ss-color-* vars to our
 		// tokens. Loaded only where Slim SEO actually enqueues a
 		// stylesheet that sets those vars on :root (see owns_global_screen).

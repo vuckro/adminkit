@@ -1,0 +1,32 @@
+/* Slim SEO list columns: manual metadata is a neutral hint, not an alert.
+   Keep the host tooltip and SVG, and reserve a small gutter inside the cell. */
+body.adminkit .wp-list-table :is(.column-meta_title, .column-meta_description):has(.ss-manual-content) {
+	padding-inline-start: 40px;
+}
+body.adminkit .wp-list-table :is(.column-meta_title, .column-meta_description):has(.ss-manual-content) .ss-tooltip:nth-of-type(1) {
+	inset-inline-start: 12px;
+	inset-inline-end: auto;
+	top: 50%;
+	transform: translateY(-50%);
+}
+body.adminkit .wp-list-table .ss-manual-content {
+	box-sizing: border-box;
+	inline-size: 20px;
+	block-size: 20px;
+	padding: 0;
+	background: var(--ak-surface-muted);
+	color: var(--ak-text-muted);
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+body.adminkit .wp-list-table .ss-manual-content svg {
+	inline-size: 12px;
+	block-size: 12px;
+}
+/* Native responsive rows reserve 35% for column labels. Keep the marker
+   immediately before the value instead of underneath that label. */
+@media (max-width: 782px) {
+	body.adminkit .wp-list-table :is(.column-meta_title, .column-meta_description):has(.ss-manual-content) .ss-tooltip:nth-of-type(1) {
+		inset-inline-start: calc(35% - 24px);
+	}
+}
