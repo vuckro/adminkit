@@ -1,7 +1,12 @@
 /* WooCommerce site status in the admin and frontend toolbars. */
 #wpadminbar #wp-admin-bar-woocommerce-site-visibility-badge a.ab-item {
- background-color: var(--ak-elevated) !important;
- color: var(--ak-text);
+ background-color: var(--ak-info-subtle) !important;
+ color: var(--ak-info);
  border-radius: var(--ak-radius-s);
+}
+#wpadminbar #wp-admin-bar-woocommerce-site-visibility-badge a.ab-item:is(:hover, :focus-visible) {
+ color: var(--ak-info);
+ text-decoration: underline;
+ text-underline-offset: 3px;
 }
 #wpadminbar #wp-admin-bar-woocommerce-site-visibility-badge a.ab-item .woocommerce-site-visibility-badge { background: transparent; color: inherit; }

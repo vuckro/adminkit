@@ -1,0 +1,13 @@
+/* Simulation is a caution state, not a mail delivery failure.
+   The native link, label and connection settings remain owned by FluentSMTP. */
+#wpadminbar #wp-admin-bar-fluentsmtp_simulated a.ab-item {
+ background: var(--ak-warning-subtle);
+ color: var(--ak-warning);
+ border-radius: var(--ak-radius-s);
+}
+#wpadminbar #wp-admin-bar-fluentsmtp_simulated a.ab-item:is(:hover, :focus-visible) {
+ background: var(--ak-warning-subtle);
+ color: var(--ak-warning);
+ text-decoration: underline;
+ text-underline-offset: 3px;
+}

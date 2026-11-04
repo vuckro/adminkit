@@ -91,6 +91,15 @@ class AdminKit_Integration_Fluent_Smtp extends AdminKit_Integration_Base {
 		if ( ! static::host_within_tested_range() ) {
 			return;
 		}
+		foreach ( array( 'admin', 'frontend' ) as $context ) {
+			AdminKit_Assets::register( array(
+				'handle'    => 'adminkit-fluent-smtp-toolbar-' . $context,
+				'src'       => 'inc/integrations/plugins/fluent-smtp/css/toolbar.css',
+				'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+				'context'   => $context,
+				'condition' => 'is_admin_bar_showing',
+			) );
+		}
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-fluent-smtp-admin',
 			'src'       => 'inc/integrations/plugins/fluent-smtp/css/admin.css',
