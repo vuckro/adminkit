@@ -46,6 +46,7 @@ body.adminkit {
    state so it's inert on every other screen. */
 body.adminkit #wpbody.happyfiles-mounted #wpbody-content {
 	min-width: 0;
+	border-inline-start: 0;
 }
 
 /* Phones: HappyFiles ships NO media queries, so the flex layout above persists on
@@ -313,4 +314,29 @@ body.adminkit #happyfiles-sidebar [aria-label]:after {
 body.adminkit #happyfiles-sidebar [aria-label][data-aria-pos="bottom"]:after {
 	border-bottom-color: var(--ak-heading);
 	border-top-color: transparent;
+}
+
+/* A full-height resizer border beside the content-panel border reads as an
+   empty column. Keep the native drag target, with one small grip instead.
+   Scope to the list-screen shell; media dialogs retain host geometry. */
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer {
+	border: 0;
+	box-sizing: border-box;
+	width: 12px;
+	/* Native drag math subtracts 20px: keep the grip centre at that offset. */
+	margin-inline: 14px var(--ak-space-s);
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer::after {
+	content: "";
+	position: absolute;
+	inset-inline-start: calc(50% - 1px);
+	top: calc(50% - 18px);
+	width: 2px;
+	height: 36px;
+	border-radius: var(--ak-radius-s);
+	background-color: var(--ak-border);
+	pointer-events: none;
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer:hover::after {
+	background-color: var(--ak-text-muted);
 }
