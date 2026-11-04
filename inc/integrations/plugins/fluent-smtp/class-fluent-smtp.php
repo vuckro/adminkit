@@ -67,7 +67,7 @@ class AdminKit_Integration_Fluent_Smtp extends AdminKit_Integration_Base {
 	 * @return string|null
 	 */
 	protected static function max_tested_host_version() {
-		return '2.2.95';
+		return '2.4.5';
 	}
 
 	/**
@@ -99,6 +99,12 @@ class AdminKit_Integration_Fluent_Smtp extends AdminKit_Integration_Base {
 				'context'   => $context,
 				'condition' => 'is_admin_bar_showing',
 			) );
+		}
+		// Toolbar verified on 2.4.5; retain the existing 2.2 settings-skin
+		// boundary until the newer settings application is separately reviewed.
+		$version = static::host_version();
+		if ( null !== $version && version_compare( $version, '2.3.0-alpha', '>=' ) ) {
+			return;
 		}
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-fluent-smtp-admin',

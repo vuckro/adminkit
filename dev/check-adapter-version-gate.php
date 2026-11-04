@@ -131,3 +131,30 @@ check_gate( ! Test_Happyfiles_Adapter::host_within_tested_range(), 'Untested Hap
 Test_Happyfiles_Adapter::$version = '2.0.0';
 check_gate( ! Test_Happyfiles_Adapter::host_within_tested_range(), 'Untested HappyFiles major was allowed' );
 echo "OK: HappyFiles 1.9 adapter version regression.\n";
+
+// FluentSMTP toolbar evolves independently from its legacy settings skin.
+class AdminKit_Assets {
+	const TOKENS_HANDLE = 'tokens';
+	public static $registered = array();
+	public static function register( $asset ) {
+		self::$registered[] = $asset;
+	}
+}
+require dirname( __DIR__ ) . '/inc/integrations/plugins/fluent-smtp/class-fluent-smtp.php';
+class Test_Fluent_Smtp_Adapter extends AdminKit_Integration_Fluent_Smtp {
+	public static $version = '2.4.5';
+	public static function is_active() { return true; }
+	protected static function host_version() { return self::$version; }
+}
+foreach ( array( '2.2.95' => 3, '2.4.5' => 2, '2.5.0' => 0 ) as $version => $count ) {
+	Test_Fluent_Smtp_Adapter::$version = $version;
+	AdminKit_Assets::$registered = array();
+	Test_Fluent_Smtp_Adapter::maybe_init();
+	check_gate( count( AdminKit_Assets::$registered ) === $count, 'FluentSMTP asset boundary mismatch: ' . $version );
+	foreach ( AdminKit_Assets::$registered as $asset ) {
+		if ( false !== strpos( $asset['handle'], '-toolbar-' ) ) {
+			check_gate( 'is_admin_bar_showing' === $asset['condition'], 'FluentSMTP toolbar must require a visible admin bar' );
+		}
+	}
+}
+echo "OK: FluentSMTP toolbar/settings version boundaries and visible-toolbar condition.\n";
