@@ -33,7 +33,7 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 
 	/** @return string[] Host plugin file(s) this adapter themes. */
 	public static function host_files() {
-		return array( 'slim-seo/slim-seo.php' );
+		return array( 'slim-seo/slim-seo.php', 'slim-seo-pro/slim-seo-pro.php' );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 	 * @return bool
 	 */
 	public static function is_active() {
-		return defined( 'SLIM_SEO_VER' );
+		return defined( 'SLIM_SEO_VER' ) || defined( 'SLIM_SEO_PRO_VER' );
 	}
 
 	/**
@@ -121,4 +121,34 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 			'condition' => array( __CLASS__, 'owns_screen' ),
 		) );
 	}
+	/** @return void */
+	protected static function boot() {
+		add_action( 'admin_menu', array( __CLASS__, 'deduplicate_settings_page' ), 10001 );
+	}
+
+	/**
+	 * Older Pro can register its standalone page alongside the shared core page.
+	 * Keep the canonical renderer/save dispatcher; retain all Pro tab/save hooks.
+	 * This is a no-op when either renderer is absent (including Pro standalone).
+	 *
+	 * @return void
+	 */
+	public static function deduplicate_settings_page() {
+		$core = 'eLightUp\\SlimSEO\\Common\\Settings\\Page';
+		$legacy = 'SlimSEOPro\\Page';
+		$hook = 'settings_page_slim-seo';
+		if ( false === has_action( $hook, array( $core, 'render' ) ) || false === has_action( $hook, array( $legacy, 'render' ) ) ) { return; }
+		remove_action( $hook, array( $legacy, 'render' ) );
+		if ( false !== has_action( 'load-' . $hook, array( $core, 'save' ) ) ) {
+			remove_action( 'load-' . $hook, array( $legacy, 'save' ) );
+		}
+		global $submenu;
+		$seen = false;
+		foreach ( $submenu['options-general.php'] ?? array() as $key => $item ) {
+			if ( 'slim-seo' !== ( $item[2] ?? '' ) ) { continue; }
+			if ( $seen ) { unset( $submenu['options-general.php'][ $key ] ); }
+			$seen = true;
+		}
+	}
+
 }

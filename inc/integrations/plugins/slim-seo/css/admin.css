@@ -164,3 +164,106 @@ body.adminkit.settings_page_slim-seo aside.ss-sidebar {
 body.adminkit.settings_page_slim-seo .ss-content {
 	grid-template-columns: 1fr;
 }
+
+/* Shared settings and Pro schema components keep literal white surfaces. */
+body.adminkit.settings_page_slim-seo .ss-tabs,
+body.adminkit.settings_page_slim-seo .ss-tab-pane,
+body.adminkit.settings_page_slim-seo .sss-panel,
+body.adminkit.settings_page_slim-seo .sss-modal-body,
+body.adminkit.settings_page_slim-seo .ss-to-wrapper ul {
+	background-color: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+body.adminkit.settings_page_slim-seo .sss-panel--expanded > .sss-panel__header,
+body.adminkit.settings_page_slim-seo .sss-panel__header:hover,
+body.adminkit.settings_page_slim-seo .ss-table thead,
+body.adminkit.settings_page_slim-seo .ss-table tfoot {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
+}
+body.adminkit.settings_page_slim-seo .sss-schema__editable.sss-schema__editable,
+body.adminkit.settings_page_slim-seo .sss-panel__header,
+body.adminkit.settings_page_slim-seo .ss-table :is(th, td) {
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+body.adminkit.settings_page_slim-seo .sss-schemas-header,
+body.adminkit.settings_page_slim-seo .sss-tabs,
+body.adminkit.settings_page_slim-seo .sss-modal-heading {
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+body.adminkit.settings_page_slim-seo .ss-license-warning {
+	background-color: var(--ak-warning-subtle);
+	color: var(--ak-text);
+	border: 1px solid var(--ak-border);
+}
+/* Don't let an empty reorder cell grow into a phantom column. Keep the
+   handle separate from selection, fixed-width and visible on hover/focus. */
+body.adminkit.settings_page_slim-seo .ss-table .ss-redirect__drag-handle {
+	box-sizing: border-box;
+	width: 28px;
+	min-width: 28px;
+	padding-inline: 6px;
+}
+body.adminkit.settings_page_slim-seo .ss-table .ss-redirect__checkbox {
+	box-sizing: border-box;
+	width: 40px;
+	min-width: 40px;
+}
+body.adminkit.settings_page_slim-seo .ss-table :is(th, td) {
+	vertical-align: middle;
+}
+body.adminkit.settings_page_slim-seo .ss-table th.sortable > a,
+body.adminkit.settings_page_slim-seo .ss-table th.sorted > a {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px;
+}
+body.adminkit.settings_page_slim-seo .ss-table .ss-redirect__drag-handle svg {
+	fill: var(--ak-text-muted);
+}
+body.adminkit.settings_page_slim-seo .ss-tab-list {
+	overflow-x: auto;
+}
+body.adminkit.settings_page_slim-seo .ss-content,
+body.adminkit.settings_page_slim-seo .ss-tabs {
+	min-width: 0;
+}
+body.adminkit.settings_page_slim-seo .sss-panel__header .ss-toggle input:checked + .ss-toggle__switch::before,
+body.adminkit.settings_page_slim-seo .ss-toggle input:checked + .ss-toggle__switch::before {
+	background-color: var(--ak-on-accent);
+}
+@media (max-width: 782px) {
+	body.adminkit.settings_page_slim-seo .ss-content {
+		margin-inline: var(--ak-space-s);
+	}
+	body.adminkit.settings_page_slim-seo .ss-tab-pane:has(.ss-table) {
+		overflow-x: auto;
+	}
+	body.adminkit.settings_page_slim-seo .ss-table {
+		min-width: 720px;
+	}
+}
+
+/* Selection is a native checkbox; activation stays a separate host toggle. */
+body.adminkit.settings_page_slim-seo .ss-redirect__checkbox input[type="checkbox"] {
+	-webkit-appearance: auto;
+	appearance: auto;
+	accent-color: var(--ak-primary);
+	position: static;
+	width: 16px;
+	height: 16px;
+	min-width: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+}
+body.adminkit.settings_page_slim-seo .ss-redirect__checkbox input[type="checkbox"]::before {
+	content: none;
+}
+:root[data-adminkit-theme="dark"] body.adminkit.settings_page_slim-seo .ss-redirect__checkbox input[type="checkbox"] {
+	color-scheme: dark;
+}
