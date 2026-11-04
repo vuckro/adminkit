@@ -93,6 +93,26 @@ body.adminkit #happyfiles-sidebar #happyfiles-title {
 
 body.adminkit #happyfiles-actions {
 	flex-wrap: wrap;
+	gap: var(--ak-space-xs);
+}
+
+/* Equal hit areas with breathing room around the native 16px glyphs. */
+body.adminkit #happyfiles-actions .icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 26px;
+	height: 26px;
+	padding: 5px;
+	flex: 0 0 26px;
+}
+
+body.adminkit #happyfiles-actions .icon :is(i, svg) {
+	width: 16px;
+	height: 16px;
+	font-size: calc(16px * var(--ak-type-scale));
+	line-height: 16px;
 }
 
 /* In-sidebar notification cards (.happyfiles-notification). The bundled
@@ -316,8 +336,8 @@ body.adminkit #happyfiles-sidebar [aria-label][data-aria-pos="bottom"]:after {
 	border-top-color: transparent;
 }
 
-/* A full-height resizer border beside the content-panel border reads as an
-   empty column. Keep the native drag target, with one small grip instead.
+/* One quiet hairline and a small grip define the folder rail without the
+   former double-border empty column. Keep the native drag target and offset.
    Scope to the list-screen shell; media dialogs retain host geometry. */
 body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer {
 	border: 0;
@@ -325,6 +345,15 @@ body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer {
 	width: 12px;
 	/* Native drag math subtracts 20px: keep the grip centre at that offset. */
 	margin-inline: 14px var(--ak-space-s);
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer::before {
+	content: "";
+	position: absolute;
+	inset-block: var(--ak-space-l);
+	inset-inline-start: calc(50% - 0.5px);
+	width: 1px;
+	background-color: color-mix(in srgb, var(--ak-border) 55%, transparent);
+	pointer-events: none;
 }
 body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer::after {
 	content: "";
