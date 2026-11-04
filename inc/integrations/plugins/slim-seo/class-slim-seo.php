@@ -127,21 +127,26 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Older Pro can register its standalone page alongside the shared core page.
+	 * Bundled legacy modules can register a page alongside the shared core page.
 	 * Keep the canonical renderer/save dispatcher; retain all Pro tab/save hooks.
 	 * This is a no-op when either renderer is absent (including Pro standalone).
 	 *
 	 * @return void
 	 */
 	public static function deduplicate_settings_page() {
-		$core = 'eLightUp\\SlimSEO\\Common\\Settings\\Page';
-		$legacy = 'SlimSEOPro\\Page';
+		$core = \eLightUp\SlimSEO\Common\Settings\Page::class;
 		$hook = 'settings_page_slim-seo';
-		if ( false === has_action( $hook, array( $core, 'render' ) ) || false === has_action( $hook, array( $legacy, 'render' ) ) ) { return; }
-		remove_action( $hook, array( $legacy, 'render' ) );
-		if ( false !== has_action( 'load-' . $hook, array( $core, 'save' ) ) ) {
-			remove_action( 'load-' . $hook, array( $legacy, 'save' ) );
+		if ( false === has_action( $hook, array( $core, 'render' ) ) ) { return; }
+		$removed = false;
+		foreach ( array( \SlimSEO\Settings\Page::class, \SlimSEOPro\Page::class ) as $legacy ) {
+			if ( false === has_action( $hook, array( $legacy, 'render' ) ) ) { continue; }
+			remove_action( $hook, array( $legacy, 'render' ) );
+			if ( false !== has_action( 'load-' . $hook, array( $core, 'save' ) ) ) {
+				remove_action( 'load-' . $hook, array( $legacy, 'save' ) );
+			}
+			$removed = true;
 		}
+		if ( ! $removed ) { return; }
 		global $submenu;
 		$seen = false;
 		foreach ( $submenu['options-general.php'] ?? array() as $key => $item ) {
