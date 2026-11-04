@@ -114,3 +114,20 @@ check_gate(
 );
 
 echo "OK: adapter version gates (major & major.minor), paused_version_info, maybe_init guard, and wordmark sanitization.\n";
+
+// HappyFiles 1.9 must load the real adapter, while unknown minors stay paused.
+require dirname( __DIR__ ) . '/inc/integrations/plugins/happyfiles/class-happyfiles.php';
+class Test_Happyfiles_Adapter extends AdminKit_Integration_Happyfiles {
+	public static $version = '1.9';
+	protected static function host_version() {
+		return self::$version;
+	}
+}
+check_gate( Test_Happyfiles_Adapter::host_within_tested_range(), 'HappyFiles 1.9 skin unexpectedly paused' );
+Test_Happyfiles_Adapter::$version = '1.9.99';
+check_gate( Test_Happyfiles_Adapter::host_within_tested_range(), 'HappyFiles 1.9 patch skin unexpectedly paused' );
+Test_Happyfiles_Adapter::$version = '1.10.0';
+check_gate( ! Test_Happyfiles_Adapter::host_within_tested_range(), 'Untested HappyFiles minor was allowed' );
+Test_Happyfiles_Adapter::$version = '2.0.0';
+check_gate( ! Test_Happyfiles_Adapter::host_within_tested_range(), 'Untested HappyFiles major was allowed' );
+echo "OK: HappyFiles 1.9 adapter version regression.\n";

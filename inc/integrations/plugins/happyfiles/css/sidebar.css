@@ -20,6 +20,9 @@ body.adminkit {
 	--hf-bg-dark: var(--ak-elevated);
 	--hf-bg-info: var(--primary-t-1, var(--ak-hover-bg));
 	--hf-bg-success: var(--primary-t-1, var(--ak-hover-bg));
+	--hf-bg-light-8: var(--ak-border);
+	--hf-bg-light-12: var(--ak-text-muted);
+	--hf-bg-light-16: var(--ak-text-muted);
 
 	/* HappyFiles default --hf-border-radius is 2px (very sharp).
 	   Remap to --ak-radius-s so every element that consumes the
@@ -65,6 +68,30 @@ body.adminkit #wpbody.happyfiles-mounted #wpbody-content {
 /* ===== Sidebar shell ===== */
 body.adminkit #happyfiles-sidebar {
 	color: var(--ak-text);
+}
+
+/* Keep the folder rail inset from the admin menu on list screens.
+   Media dialogs own their own sidebar spacing. Preserve the native width and
+   resize/collapse behavior by including the inset in the inner box. */
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner:not(.hide) {
+	box-sizing: border-box;
+	padding-inline-start: var(--ak-space-l);
+}
+
+body.adminkit #happyfiles-header {
+	flex-wrap: wrap;
+	gap: var(--ak-space-s);
+	padding-block: var(--ak-space-l);
+}
+
+body.adminkit #happyfiles-sidebar #happyfiles-title {
+	font-size: calc(18px * var(--ak-type-scale));
+	line-height: 1.4;
+	margin: 0;
+}
+
+body.adminkit #happyfiles-actions {
+	flex-wrap: wrap;
 }
 
 /* In-sidebar notification cards (.happyfiles-notification). The bundled
@@ -128,7 +155,10 @@ body.adminkit #happyfiles-sidebar .folder:hover {
 }
 
 /* Count badge on default state */
-body.adminkit #happyfiles-sidebar .folder .count {
+body.adminkit #happyfiles-sidebar .folder .count,
+body.adminkit #happyfiles-sidebar .folder.open .count,
+body.adminkit #happyfiles-sidebar .folder.context .count,
+body.adminkit #happyfiles-sidebar .folder:hover > .count {
 	color: var(--ak-text);
 }
 
