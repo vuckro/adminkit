@@ -49,7 +49,7 @@
 		new MutationObserver(function () {
 			var value = read('fluent_theme_mode');
 			if (value !== lastNative && mode(value)) { lastNative = value; adopt(mode(value)); }
-		}).observe(body, { attributes: true, attributeFilter: ['class'] });
+		}).observe(body, { attributes: true, subtree: true, attributeFilter: ['class'] });
 		new MutationObserver(function (records) {
 			var changed = records.some(function (record) { return record.attributeName === D.attr; });
 			if (!changed) { return; }

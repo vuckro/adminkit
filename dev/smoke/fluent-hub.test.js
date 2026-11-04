@@ -52,7 +52,7 @@ async function setup({saved, native, enabled = true, channel = true, storage = t
   t.dom.window.close();
   t = await setup({channel:false});
   t.w.localStorage.setItem('fluent_theme_mode', 'dark');
-  t.w.document.body.classList.add('fluent_theme_dark'); await tick();
+  t.w.document.querySelector('.fluent_uui').classList.add('fluent_theme_dark'); await tick();
   assert.equal(t.mode(), 'dark', 'Class/storage fallback without BroadcastChannel');
   t.dom.window.close();
   t = await setup({storage:false});
