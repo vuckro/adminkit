@@ -37,11 +37,10 @@
  * wrapper + the .cm-editor frame) to AdminKit surfaces and leaves the syntax
  * tokens to CodeMirror's own theme.
  *
- * NO theme sync. FluentSnippets ships NO dark mode of its own (no html.dark /
- * data-theme in the bundle), so the --ak-* flip is what gives this screen one and
- * there is no host dark class to fight — hence no theme-sync JS in the PHP. Almost
- * every EP widget reads its colour through an --el-* var, so the §1 remap carries
- * the bulk and the literal sweep (§3–§5) is small and !important-light.
+ * Modern Snippets (10.58+) supplies --fsnip-* tokens and the shared Fluent
+ * light/dark/system switch. admin.css maps that layer as well as the legacy
+ * selectors. When FluentHub is mounted, its adapter bridges native theme intent
+ * to AdminKit; standalone Snippets retains its native controls.
  *
  * Loaded only on toplevel_page_fluent-snippets (the SPA owns every sub-route via
  * hash routing under that one WP page).

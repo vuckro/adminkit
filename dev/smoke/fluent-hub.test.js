@@ -1,0 +1,63 @@
+// Real theme bridge: native choice, AdminKit choice, system and missing APIs.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { JSDOM } = require('jsdom');
+const source = fs.readFileSync(path.resolve(__dirname, '../../inc/integrations/plugins/fluent-toolkit/js/theme.js'), 'utf8');
+const tick = () => new Promise(resolve => setTimeout(resolve, 15));
+async function setup({saved, native, enabled = true, channel = true, storage = true} = {}) {
+  const dom = new JSDOM('<html data-adminkit-theme="light"><body class="adminkit ak-fluenthub"><div class="fluent_uui"><div class="fui-sidebar-footer--left"></div></div></body></html>', {url:'https://test.invalid/wp-admin/', runScripts:'outside-only'});
+  const w = dom.window;
+  w.AdminKitFluentHub = {attr:'data-adminkit-theme', key:'adminkit-theme', enabled, label:'Toggle theme'};
+  const media = {matches:false, addEventListener(type, cb) { this.change = cb; }};
+  w.matchMedia = () => media;
+  const sent = [];
+  if (channel) { w.BroadcastChannel = class { constructor() { w.bridgeChannel = this; } postMessage(value) { sent.push(value); } }; }
+  if (saved) w.localStorage.setItem('adminkit-theme', saved);
+  if (native) w.localStorage.setItem('fluent_theme_mode', native);
+  if (!storage) Object.defineProperty(w, 'localStorage', {get() { throw new Error('denied'); }});
+  w.eval(source);
+  await tick();
+  return {dom, w, media, sent, mode:() => w.document.documentElement.getAttribute('data-adminkit-theme')};
+}
+(async () => {
+  let t = await setup({saved:'dark', native:'light'});
+  assert.equal(t.mode(), 'dark', 'Saved AdminKit choice wins at boot');
+  assert.equal(t.sent.at(-1).mode, 'dark');
+  t.w.localStorage.setItem('fluent_theme_mode', 'light');
+  t.w.bridgeChannel.onmessage({data:{mode:'light'}});
+  await tick();
+  assert.equal(t.mode(), 'light', 'Native channel updates AdminKit');
+  t.w.document.documentElement.setAttribute('data-adminkit-theme', 'dark');
+  await tick();
+  assert.equal(t.w.localStorage.getItem('fluent_theme_mode'), 'dark');
+  assert.equal(t.sent.length, 2, 'No feedback loop');
+  t.dom.window.close();
+  t = await setup({native:'system:light'});
+  t.media.matches = true; t.media.change(); await tick();
+  assert.equal(t.mode(), 'dark');
+  assert.equal(t.w.localStorage.getItem('adminkit-theme'), null, 'System mode remains automatic');
+  assert.equal(t.w.localStorage.getItem('fluent_theme_mode'), 'system:dark');
+  const button = t.w.document.getElementById('ak-fui-theme-toggle');
+  assert.equal(button.getAttribute('aria-pressed'), 'true');
+  button.click(); await tick();
+  assert.equal(t.mode(), 'light');
+  assert.equal(button.getAttribute('aria-pressed'), 'false');
+  t.dom.window.close();
+  t = await setup({enabled:false, native:'dark'});
+  assert.equal(t.mode(), 'light');
+  assert.equal(t.w.document.querySelector('.ak-fui-theme-toggle'), null);
+  t.w.bridgeChannel.onmessage({data:{mode:'dark'}}); await tick();
+  assert.equal(t.mode(), 'light', 'Feature opt-out cannot be overridden by native controls');
+  t.dom.window.close();
+  t = await setup({channel:false});
+  t.w.localStorage.setItem('fluent_theme_mode', 'dark');
+  t.w.document.body.classList.add('fluent_theme_dark'); await tick();
+  assert.equal(t.mode(), 'dark', 'Class/storage fallback without BroadcastChannel');
+  t.dom.window.close();
+  t = await setup({storage:false});
+  t.w.document.getElementById('ak-fui-theme-toggle').click(); await tick();
+  assert.equal(t.mode(), 'dark', 'Storage denial keeps toggle usable');
+  t.dom.window.close();
+  console.log('OK: FluentHub native/AdminKit/system sync, no loops, opt-out, fallback and storage denial.');
+})().catch(error => { console.error(error); process.exitCode = 1; });

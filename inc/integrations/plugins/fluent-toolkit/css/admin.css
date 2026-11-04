@@ -1,0 +1,65 @@
+/* FluentHub 2.1 replacement shell. Keep host layout and navigation ownership. */
+body.adminkit.ak-fluenthub {
+	--fui-primary-bg: var(--ak-surface);
+	--fui-bg: var(--ak-bg);
+	--fui-surface: var(--ak-elevated);
+	--fui-surface-hover: var(--ak-hover-bg);
+	--fui-surface-active: var(--ak-hover-bg);
+	--fui-border: var(--ak-border);
+	--fui-text-inverse: var(--ak-on-accent);
+	--fui-text: var(--ak-text);
+	--fui-text-muted: var(--ak-text-muted);
+	--fui-text-soft: var(--ak-text-muted);
+	--fui-text-faint: var(--ak-text-muted);
+	--fui-accent: var(--ak-primary);
+	--fui-accent-hover: var(--ak-primary);
+	--fui-shadow: var(--ak-shadow-subtle);
+}
+body.adminkit.ak-fluenthub .fui-app-content {
+	background-color: var(--ak-bg);
+	color: var(--ak-text);
+}
+body.adminkit.ak-fluenthub .ak-fui-theme-toggle {
+	background: transparent;
+	border: 0;
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+	cursor: pointer;
+	padding: var(--ak-space-s);
+	line-height: 1;
+}
+body.adminkit.ak-fluenthub .ak-fui-theme-toggle:hover {
+	background: var(--ak-hover-bg);
+}
+body.adminkit.ak-fluenthub .ak-fui-theme-toggle:focus-visible {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: 2px;
+}
+body.adminkit.ak-fluenthub .ak-fui-theme-toggle svg {
+	inline-size: 18px;
+	block-size: 18px;
+}
+
+/* Hub dashboard and MCP screens define their palette on these two roots. */
+body.adminkit.toplevel_page_fluent-toolkit .ft-app,
+body.adminkit.toplevel_page_fluent-toolkit .ft-topbar {
+	--bg: var(--ak-bg);
+	--surface: var(--ak-surface);
+	--surface-2: var(--ak-surface-muted);
+	--border: var(--ak-border);
+	--border-strong: var(--ak-text-muted);
+	--text: var(--ak-text);
+	--text-muted: var(--ak-text-muted);
+	--text-soft: var(--ak-text-muted);
+	--accent: var(--ak-primary);
+	--accent-soft: var(--ak-hover-bg);
+	--accent-border: var(--ak-border);
+	--ok: var(--ak-success);
+	--ok-soft: var(--ak-success-subtle);
+	--warn: var(--ak-warning);
+	--warn-soft: var(--ak-warning-subtle);
+	--danger: var(--ak-error);
+}
+body.adminkit.toplevel_page_fluent-toolkit #fluent_app {
+	background-color: var(--ak-bg);
+}
