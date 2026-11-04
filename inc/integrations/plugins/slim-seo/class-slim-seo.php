@@ -134,11 +134,11 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 	 * @return void
 	 */
 	public static function deduplicate_settings_page() {
-		$core = \eLightUp\SlimSEO\Common\Settings\Page::class;
+		$core = 'eLightUp\\SlimSEO\\Common\\Settings\\Page';
 		$hook = 'settings_page_slim-seo';
 		if ( false === has_action( $hook, array( $core, 'render' ) ) ) { return; }
 		$removed = false;
-		foreach ( array( \SlimSEO\Settings\Page::class, \SlimSEOPro\Page::class ) as $legacy ) {
+		foreach ( array( 'SlimSEO\\Settings\\Page', 'SlimSEOPro\\Page' ) as $legacy ) {
 			if ( false === has_action( $hook, array( $legacy, 'render' ) ) ) { continue; }
 			remove_action( $hook, array( $legacy, 'render' ) );
 			if ( false !== has_action( 'load-' . $hook, array( $core, 'save' ) ) ) {
