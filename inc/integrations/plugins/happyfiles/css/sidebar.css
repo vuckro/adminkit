@@ -134,33 +134,23 @@ body.adminkit #happyfiles-sidebar #happyfiles-title {
 	color: var(--ak-heading);
 }
 
-/* Header action icons (+, sort, eye, …). HappyFiles paints
-   `.icon.active` / `.icon.has` with --hf-bg-dark + #fff text. We
-   remapped --hf-bg-dark to --ak-elevated for general use, but in
-   light mode --ak-elevated is near-white and the white text
-   disappears.
-
-   Inverted hierarchy: the persistent active state stays soft
-   (subtle brand tint) and the transient :hover gets the strong
-   solid primary — hover is the louder feedback. */
+/* Folder tools are secondary controls: neutral at rest, selected and hovered.
+   Native SVG groups hardcode their fill, so keep them on the same foreground. */
+body.adminkit #happyfiles-sidebar .icon {
+	color: var(--ak-text);
+}
 body.adminkit #happyfiles-sidebar .icon.active,
-body.adminkit #happyfiles-sidebar .icon.has {
-	background-color: var(--primary-t-1, var(--ak-hover-bg)) !important;
-	color: var(--ak-primary) !important;
-}
-
-body.adminkit #happyfiles-sidebar .icon.active svg g,
-body.adminkit #happyfiles-sidebar .icon.has svg g {
-	fill: var(--ak-primary) !important;
-}
-
+body.adminkit #happyfiles-sidebar .icon.has,
 body.adminkit #happyfiles-sidebar .icon:hover {
-	background-color: var(--ak-primary) !important;
-	color: var(--ak-on-accent) !important;
+	background-color: var(--ak-hover-bg) !important;
+	color: var(--ak-heading) !important;
 }
-
-body.adminkit #happyfiles-sidebar .icon:hover svg g {
-	fill: var(--ak-on-accent) !important;
+body.adminkit #happyfiles-sidebar .icon svg g {
+	fill: currentColor !important;
+}
+body.adminkit #happyfiles-sidebar .icon:focus-visible {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
 }
 
 /* Folder row default state — token text */
@@ -397,7 +387,7 @@ body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide .toggle-
 	color: var(--ak-text);
 }
 body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide .toggle-sidebar:focus-visible {
-	outline: 2px solid var(--ak-primary);
+	outline: 2px solid var(--ak-focus);
 	outline-offset: 2px;
 }
 
