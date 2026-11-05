@@ -138,3 +138,13 @@ body.adminkit .el-radio:not(.is-disabled) .el-radio__input:has(input:focus-visib
 	outline: 2px solid var(--ak-focus);
 	outline-offset: 2px;
 }
+
+/* WP's typed-input selectors otherwise beat Element Plus's inner text colour.
+   Set the actual field, including WebKit fill, rather than recolouring a wrapper. */
+body.adminkit :is(.el-input,.el-textarea,.el-select) :is(.el-input__inner,.el-textarea__inner,.el-select__input) {
+ color:var(--ak-text);
+ -webkit-text-fill-color:currentColor;
+}
+body.adminkit :is(.el-input,.el-textarea,.el-select) :is(.el-input__inner,.el-textarea__inner,.el-select__input):disabled {
+ color:var(--ak-text-disabled);
+}

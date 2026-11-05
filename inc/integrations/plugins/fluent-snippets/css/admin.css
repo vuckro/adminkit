@@ -327,12 +327,12 @@ html body.adminkit.toplevel_page_fluent-snippets {
 	--fsnip-surface-sunk: var(--ak-surface-muted);
 	--fsnip-surface-raised: var(--ak-elevated);
 	--fsnip-border: var(--ak-border);
-	--fsnip-border-strong: var(--ak-text-muted);
+	--fsnip-border-strong: var(--ak-border-strong);
 	--fsnip-heading: var(--ak-heading);
 	--fsnip-text: var(--ak-text);
 	--fsnip-text-mid: var(--ak-text-muted);
 	--fsnip-text-light: var(--ak-text-muted);
-	--fsnip-link: var(--ak-primary);
+	--fsnip-link: var(--ak-text);
 	--fsnip-accent: var(--ak-primary);
 	--fsnip-accent-contrast: var(--ak-on-accent);
 	--fsnip-accent-wash: var(--ak-hover-bg);
@@ -362,4 +362,17 @@ body.adminkit.toplevel_page_fluent-snippets :is(.fsnip_app_nav a, .fsnip_seconda
 	outline: 2px solid var(--ak-focus);
 	outline-offset: 2px;
 	box-shadow: none;
+}
+
+/* Modern dark-mode defaults hard-code a pale hover on primary actions. */
+body.adminkit.toplevel_page_fluent-snippets .el-button--primary:not(.is-plain,.is-text,.is-link) {
+ --el-button-bg-color:var(--ak-primary);
+ --el-button-border-color:var(--ak-primary);
+ --el-button-text-color:var(--ak-on-accent);
+ --el-button-hover-bg-color:var(--ak-primary-hover);
+ --el-button-hover-border-color:var(--ak-primary-hover);
+ --el-button-hover-text-color:var(--ak-on-accent);
+ --el-button-active-bg-color:var(--ak-primary-hover);
+ --el-button-active-border-color:var(--ak-primary-hover);
+ --el-button-active-text-color:var(--ak-on-accent);
 }

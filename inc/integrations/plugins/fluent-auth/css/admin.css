@@ -11,10 +11,10 @@ html body.adminkit.toplevel_page_fluent-auth.fluent_theme_dark {
 	--fls-text: var(--ak-text);
 	--fls-text-mid: var(--ak-text-muted);
 	--fls-text-light: var(--ak-text-muted);
-	--fls-link: var(--ak-primary-text);
+	--fls-link: var(--ak-text);
 	--fls-accent: var(--ak-primary);
 	--fls-accent-contrast: var(--ak-on-accent);
-	--fls-accent-wash: var(--ak-primary-subtle);
+	--fls-accent-wash: var(--ak-hover-bg);
 	--fls-card-line: var(--ak-border);
 	--fls-shadow-card: var(--ak-shadow-subtle);
 	--fls-shadow-lift: var(--ak-shadow-subtle);
@@ -43,4 +43,15 @@ html body.adminkit.toplevel_page_fluent-auth.fluent_theme_dark {
 	--fls-tile-success-fg: var(--ak-success);
 	--fls-tile-two-fa-bg: var(--ak-info-subtle);
 	--fls-tile-two-fa-fg: var(--ak-info);
+}
+
+/* Enabled methods already expose their switch/status. Keep their grouping quiet. */
+body.adminkit.toplevel_page_fluent-auth .fls_2fa_method.fls_2fa_method_on {
+ border-color:var(--ak-border);
+}
+body.adminkit.toplevel_page_fluent-auth .fls_sub_bar .fls_sub_nav a.is_active {
+ border-bottom-color:var(--ak-heading);
+}
+body.adminkit.toplevel_page_fluent-auth .fls_settings_nav .fls_settings_subnav a::before {
+ background-color:var(--ak-heading);
 }

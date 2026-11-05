@@ -14,10 +14,10 @@ html body.adminkit.settings_page_fluent-mail.fluent_theme_dark {
 	--fsm-text: var(--ak-text);
 	--fsm-text-mid: var(--ak-text-muted);
 	--fsm-text-light: var(--ak-text-muted);
-	--fsm-link: var(--ak-primary-text);
+	--fsm-link: var(--ak-text);
 	--fsm-accent: var(--ak-primary);
 	--fsm-accent-contrast: var(--ak-on-accent);
-	--fsm-accent-wash: var(--ak-primary-subtle);
+	--fsm-accent-wash: var(--ak-hover-bg);
 	--fsm-card-line: var(--ak-border);
 	--fsm-shadow-card: var(--ak-shadow-subtle);
 	--fsm-shadow-lift: var(--ak-shadow-subtle);

@@ -5,15 +5,15 @@ body.adminkit.ak-fluenthub .fluent_theme_dark {
 	--fui-bg: var(--ak-bg);
 	--fui-surface: var(--ak-elevated);
 	--fui-surface-hover: var(--ak-hover-bg);
-	--fui-surface-active: var(--ak-primary-subtle);
+	--fui-surface-active: var(--ak-hover-bg);
 	--fui-border: var(--ak-border);
 	--fui-text-inverse: var(--ak-on-accent);
 	--fui-text: var(--ak-text);
 	--fui-text-muted: var(--ak-text-muted);
 	--fui-text-soft: var(--ak-text-muted);
 	--fui-text-faint: var(--ak-text-muted);
-	--fui-accent: var(--ak-primary);
-	--fui-accent-hover: var(--ak-primary);
+	--fui-accent: var(--ak-text);
+	--fui-accent-hover: var(--ak-heading);
 	--fui-shadow: var(--ak-shadow-subtle);
 }
 body.adminkit.ak-fluenthub .fui-app-content {
@@ -48,7 +48,7 @@ body.adminkit.toplevel_page_fluent-toolkit .ft-topbar {
 	--surface: var(--ak-surface);
 	--surface-2: var(--ak-surface-muted);
 	--border: var(--ak-border);
-	--border-strong: var(--ak-text-muted);
+	--border-strong: var(--ak-border-strong);
 	--text: var(--ak-text);
 	--text-muted: var(--ak-text-muted);
 	--text-soft: var(--ak-text-muted);
@@ -82,8 +82,8 @@ body.adminkit.ak-fluenthub :is(.fui-workspace, .fui-workspace-menu-item, .fui-pr
 	color: var(--ak-text);
 }
 body.adminkit.ak-fluenthub :is(.fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item):is(.active, [aria-current="page"]) {
-	background: var(--ak-primary-subtle);
-	color: var(--ak-primary);
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
 }
 /* A destructive action uses a soft semantic surface and a readable foreground
    together. The host's light-only hover fill cannot be paired with white text. */
@@ -103,4 +103,18 @@ body.adminkit.ak-fluenthub .fui-update-nag:focus-visible {
 
 body.adminkit.ak-fluenthub .fui-workspace-menu-item--danger {
 	color: var(--ak-error);
+}
+
+/* Hub's native dark rules bypass its palette for tabs and secondary actions. */
+body.adminkit.toplevel_page_fluent-toolkit .ft-topbar .ft-view-tab[aria-selected="true"] {
+ background:var(--ak-hover-bg); color:var(--ak-heading);
+}
+body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-btn-primary {
+ background:var(--ak-surface); border-color:var(--ak-border); color:var(--ak-text);
+}
+body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-btn-primary:is(:hover,:focus-visible):not(:disabled) {
+ background:var(--ak-hover-bg); border-color:var(--ak-border-strong); color:var(--ak-heading);
+}
+body.adminkit.toplevel_page_fluent-toolkit :is(.ft-view-tab,.ft-btn):focus-visible:not(:disabled) {
+ outline:2px solid var(--ak-focus); outline-offset:2px;
 }
