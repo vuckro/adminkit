@@ -29,6 +29,25 @@ AdminKit_Core_Branding::inject_brand_logo( $bar );
 if ( false === strpos( $bar->node->title, 'ak-brand-compact' ) || '/native-target' !== $bar->node->href || false === strpos( $bar->node->meta['class'], 'native-class' ) ) { throw new RuntimeException( 'Identity must preserve native navigation and expose both marks' ); }
 ob_start(); AdminKit_Core_Branding::print_admin(); $css = ob_get_clean();
 if ( false === strpos( $css, 'body.folded' ) || false === strpos( $css, 'body.auto-fold' ) ) { throw new RuntimeException( 'Native menu states missing' ); }
+// A configured wordmark must survive mobile, including a persisted desktop folded
+// preference. Every rule that exposes a compact mark must be desktop-scoped.
+preg_match_all( '/(@media[^{}]+|[^{}]+)\{|\}/', strip_tags( $css ), $tokens );
+$scopes = array();
+$compact_rules = 0;
+foreach ( $tokens[0] as $token ) {
+ if ( '}' === $token ) { array_pop( $scopes ); continue; }
+ $selector = trim( substr( $token, 0, -1 ) );
+ if ( false !== strpos( $selector, '.ak-brand-compact' ) && false === strpos( $selector, '@media' ) ) {
+  // The top-level default hides the compact image; only the visible-state rules
+  // mention a folded state, and none may apply below the desktop breakpoint.
+  if ( false !== strpos( $selector, 'body.' ) ) {
+   if ( ! preg_grep( '/@media\\s*\\(min-width:783px\\)/', $scopes ) ) { throw new RuntimeException( 'Compact menu mark must be desktop-only' ); }
+   ++$compact_rules;
+  } elseif ( ! empty( $scopes ) ) { throw new RuntimeException( 'Mobile must not replace a configured logo with an icon' ); }
+ }
+ $scopes[] = $selector;
+}
+if ( 2 !== $compact_rules ) { throw new RuntimeException( 'Folded and auto-folded desktop fallbacks must remain available' ); }
 if ( isset( $argv[1] ) ) { file_put_contents( $argv[1], json_encode( array( 'node' => $bar->node, 'css' => $css ) ) ); }
 $GLOBALS['icon'] = '';
 $bar = new Test_Brand_Bar(); AdminKit_Core_Branding::inject_brand_logo( $bar );

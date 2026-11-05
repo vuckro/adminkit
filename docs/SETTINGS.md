@@ -13,6 +13,9 @@ edit public pages or the site navigation menu. Both layouts remain independent,
 and Save applies pending edits from both views. The legacy standalone editor
 hosts remain supported. Settings are site-wide; light/dark preference remains
 personal. Branding's single `logo_url` is edited in WordPress General Settings.
+When configured, this logo remains visible in the mobile toolbar in both themes.
+The compact site icon is reserved for folded desktop menus (including auto-fold
+between 783 and 960px); without a logo, the native site-icon fallback is retained.
 
 ## Defaults and data
 
