@@ -275,6 +275,7 @@ class AdminKit_Menu_Store {
 				'slug'     => (string) $r['slug'],
 				'position' => (int) $r['position'],
 				'hidden'   => ! empty( $r['hidden'] ),
+				'url'      => isset( $r['url'] ) ? (string) $r['url'] : '',
 			);
 			if ( '' === $parent ) {
 				$item['icon']  = (string) $r['icon'];

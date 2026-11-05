@@ -141,6 +141,7 @@ class AdminKit_Menu_Renderer {
 					'parent' => (string) $parent,
 					'hidden' => ! empty( $s['hidden'] ),
 					'title'  => isset( $s['title'] ) ? (string) $s['title'] : '',
+					'url'    => isset( $s['url'] ) ? AdminKit_Menu_Config::sanitize_menu_url( $s['url'] ) : '',
 				);
 				$desired_in_place[ $parent . "\0" . $s['slug'] ] = $entry;
 				$desired_moved[ $s['slug'] ]                     = $entry;
@@ -198,6 +199,11 @@ class AdminKit_Menu_Renderer {
 				if ( $d['hidden'] ) {
 					$item[4]          = trim( ( isset( $item[4] ) ? $item[4] : '' ) . ' ak-mh' );
 					self::$has_hidden = true;
+				}
+				if ( '' !== $d['url'] ) {
+					$url_class = 'ak-sub-url-' . md5( $d['parent'] . "\0" . $sub_slug );
+					$item[4] = trim( ( isset( $item[4] ) ? $item[4] : '' ) . ' ' . $url_class );
+					self::$url_overrides[ $url_class ] = $d['url'];
 				}
 				if ( $cur_parent !== $d['parent'] && isset( $accessible_parents[ $d['parent'] ] ) ) {
 					unset( $submenu[ $cur_parent ][ $i ] );
@@ -318,6 +324,12 @@ class AdminKit_Menu_Renderer {
 	 * @return void
 	 */
 	private static function remap_moved_plugin_submenu( $slug, $old_parent, $new_parent ) {
+		// Native admin endpoints are not plugin pages, even when a plugin has
+		// registered their slug in $_parent_pages (e.g. WooCommerce coupons).
+		$file = explode( '?', $slug, 2 )[0];
+		if ( preg_match( '/^[a-zA-Z0-9_-]+\.php$/', $file ) && is_file( ABSPATH . 'wp-admin/' . $file ) ) {
+			return;
+		}
 		if ( ! function_exists( 'get_plugin_page_hookname' ) ) {
 			return;
 		}

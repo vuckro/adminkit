@@ -81,3 +81,8 @@ $transients[AdminKit_Menu_Store::CACHE_PREFIX . 2] = array('top' => array(), 'su
 AdminKit_Menu_Store::delete_site_data((object) array('blog_id' => 2));
 check(count($wpdb->rows) === 1 && $wpdb->rows[0]['blog_id'] === 1 && !isset($transients[AdminKit_Menu_Store::CACHE_PREFIX . 2]), 'Multisite delete_site_data missed blog cleanup');
 echo "OK: option no-op/failure, key-order normalization, SQLite/InnoDB transactions, site isolation and Multisite cleanup.\n";
+
+// URL overrides must survive the storage read boundary for submenu rows too.
+$assemble = new ReflectionMethod( 'AdminKit_Menu_Store', 'assemble' );
+$menu_config = $assemble->invoke( null, array( array( 'parent'=>'woocommerce', 'slug'=>'wc-orders', 'position'=>0, 'url'=>'admin.php?page=wc-orders&status=pending' ) ) );
+check( 'admin.php?page=wc-orders&status=pending' === $menu_config['sub']['woocommerce'][0]['url'], 'Submenu URL was discarded on storage read' );

@@ -20,6 +20,7 @@
 				otitle: ot,
 				title: s.title && s.title !== '' ? s.title : ot,
 				hidden: !!s.hidden,
+				url: s.url || '',
 				sourceTop: s.slug !== m.slug && snapBySlug[s.slug] && snapBySlug[s.slug].type !== 'separator' ? snapBySlug[s.slug] : null
 			});
 		});
@@ -191,6 +192,7 @@
 				items.push({
 					parent: top.slug,
 					slug: child.slug,
+					url: child.url || '',
 					position: ci,
 					hidden: !!child.hidden,
 					title: titleOverride(child)
@@ -207,6 +209,7 @@
 			if (it && it.parent) {
 				(sub[it.parent] = sub[it.parent] || []).push({
 					slug: it.slug,
+					url: it.url || '',
 					position: it.position,
 					hidden: !!it.hidden,
 					title: it.title || ''

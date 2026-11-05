@@ -457,6 +457,7 @@
 			row.appendChild(h);
 			row.appendChild(moveControl(moveChildBy(ti, ci, tree), key));
 			row.appendChild(titleInput(child, 'menu', key + ':title'));
+			row.appendChild(urlBtn(child, tree, key + ':url'));
 			row.appendChild(parentSelect(ti, child, ci, tree, key));
 			row.appendChild(hideBtn(child, tree, key + ':hide'));
 			dragSource(h, row, { kind: 'sub', ti: ti, ci: ci });
