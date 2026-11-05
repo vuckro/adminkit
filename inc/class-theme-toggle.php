@@ -258,7 +258,7 @@ class AdminKit_Theme_Toggle {
 		$strong  = 'oklch(98% 0.002 258)';
 		$subtle  = 'oklch(81% 0.008 258)';
 		$border  = 'oklch(34.5% 0.006 258)';
-		$css = 'html.ak-editor-dark{background-color:' . $bg . '}'
+		$css = 'html.ak-editor-dark{background-color:' . $bg . ';color-scheme:dark}'
 			. 'html.ak-editor-dark body#tinymce{background-color:' . $bg . ';color:' . $text . '}'
 			. 'html.ak-editor-dark a{color:#6aa0ff}'
 			. 'html.ak-editor-dark h1,html.ak-editor-dark h2,html.ak-editor-dark h3,html.ak-editor-dark h4,html.ak-editor-dark h5,html.ak-editor-dark h6{color:' . $strong . '}'
