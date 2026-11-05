@@ -116,7 +116,7 @@ class AdminKit_Core_Chrome {
 				if ( method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor() ) {
 					return true;
 				}
-				return in_array( $screen->id, array( 'site-editor', 'widgets', 'options-connectors', 'appearance_page_font-library', 'edit-wp_block', 'edit-wp_template', 'edit-wp_template_part', 'edit-wp_navigation' ), true );
+				return in_array( $screen->id, array( 'site-editor', 'widgets', 'options-connectors', 'font-library', 'appearance_page_font-library', 'edit-wp_block', 'edit-wp_template', 'edit-wp_template_part', 'edit-wp_navigation' ), true );
 			},
 		) );
 		AdminKit_Assets::register( array(
@@ -129,7 +129,7 @@ class AdminKit_Core_Chrome {
 				if ( function_exists( 'wp_style_is' ) && wp_style_is( 'wp-edit-site', 'enqueued' ) ) {
 					return true;
 				}
-				return $screen && ( 'site-editor' === $screen->id || 'appearance_page_font-library' === $screen->id || 0 === strpos( (string) $screen->id, 'appearance_page_font' ) );
+				return $screen && ( 'site-editor' === $screen->id || 'font-library' === $screen->id || 'appearance_page_font-library' === $screen->id || 0 === strpos( (string) $screen->id, 'appearance_page_font' ) );
 			},
 		) );
 
