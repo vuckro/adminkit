@@ -171,6 +171,12 @@
 		// Keep the native link and give disclosure its own touch/keyboard control.
 		drawer.querySelectorAll('#adminmenu .wp-has-submenu > a.menu-top').forEach(function (link, index) {
 			var submenu = link.parentElement.querySelector(':scope > .wp-submenu');
+			// Empty/hidden submenus still carry Core's submenu class. Their links
+			// must bypass the delegated disclosure handler just like visible ones.
+			var nativeToggle = false;
+			link.addEventListener('click', function (event) {
+				if (mq.matches && !nativeToggle) { event.stopPropagation(); }
+			});
 			if (!submenu || link.parentElement.classList.contains('ak-empty-submenu')) { return; }
 			var disclosure = document.createElement('button');
 			disclosure.type = 'button'; disclosure.className = 'ak-submenu-toggle';
@@ -178,10 +184,6 @@
 			if (!submenu.id) { submenu.id = 'ak-native-submenu-' + index; }
 			disclosure.setAttribute('aria-controls', submenu.id);
 			if (link.parentElement.classList.contains('wp-has-current-submenu')) { link.setAttribute('aria-expanded', 'true'); }
-			var nativeToggle = false;
-			link.addEventListener('click', function (event) {
-				if (mq.matches && !nativeToggle) { event.stopPropagation(); }
-			});
 			disclosure.addEventListener('click', function () {
 				nativeToggle = true; link.click(); nativeToggle = false;
 				disclosure.focus({ preventScroll:true });

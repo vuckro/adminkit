@@ -260,3 +260,10 @@ foreach(array(true,false) as $admin){
  check((bool)$bar->get_node('comments')===!$admin,'Admin/editor comment visibility diverges from the admin context');
 }
 $admin=true;
+
+// A selected anchor glyph replaces the host's inner touch glyph (QM).
+$renderer_overrides->setValue(null,array('wp-admin-bar-query-monitor'=>'clock'));
+$renderer_ab->setValue(null,array('wp-admin-bar-query-monitor'=>true));
+$bar_showing=true;
+ob_start();AdminKit_Toolbar_Renderer::print_css();$css=ob_get_clean();
+check(substr_count($css,'#wp-admin-bar-query-monitor > .ab-item > .ab-icon{display:none !important}')===2,'Custom anchor icon duplicates native touch glyph');

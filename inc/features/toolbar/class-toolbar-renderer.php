@@ -386,6 +386,11 @@ class AdminKit_Toolbar_Renderer {
 			}
 
 			if ( ! empty( $ab_items[ $dom_id ] ) ) {
+				// A host may also ship an inner glyph (Query Monitor on touch).
+				// The chosen anchor icon replaces it rather than duplicating it.
+				$rule = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item > .ab-icon{display:none !important}';
+				$desktop .= $rule;
+				$mobile .= $rule;
 				$sel      = '.wp-admin #wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before,#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before';
 				$desktop .= $sel . '{content:"" !important;background-image:none !important;box-sizing:border-box;float:left;height:32px;width:20px;padding:6px 0;margin-right:6px;position:static;top:auto;' . $mask . '}';
 				$mobile  .= $sel . '{content:"" !important;background-image:none !important;box-sizing:border-box;display:block;float:none;width:52px;height:46px;margin:0;text-indent:0;position:static;top:auto;' . $mask . '-webkit-mask-size:22px 22px;mask-size:22px 22px}';

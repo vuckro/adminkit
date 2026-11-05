@@ -670,6 +670,12 @@ body:not(.wp-admin) #wpadminbar.ak-front-rail > #wp-toolbar { display:flex; flex
 #wpadminbar.ak-front-rail #wp-toolbar > #wp-admin-bar-top-secondary { flex:0 0 auto; margin:0; }
 #wpadminbar.ak-front-rail #wp-toolbar > #wp-admin-bar-root-default > li { position:static; }
 #wpadminbar.ak-front-rail #wp-toolbar > #wp-admin-bar-root-default > li > .ab-item { white-space:nowrap; }
+/* Static command parents let native dropdowns escape the scroll rail. Anchor
+   visually-hidden labels explicitly so their static positions cannot enlarge
+   the mobile viewport as commands slide outside the rail. */
+#wpadminbar.ak-front-rail #wp-admin-bar-root-default .screen-reader-text {
+ inset-inline-start:0; inset-block-start:0;
+}
 #wpadminbar.ak-front-rail #wp-admin-bar-root-default > li > .ab-sub-wrapper { inset-inline-start:0; }
 @media screen and (min-width:783px) {
  #wpadminbar.ak-front-rail #wp-admin-bar-root-default > li > .ab-sub-wrapper { inset-inline-start:var(--ak-front-bar-start,0px); min-width:0; width:max-content; max-width:calc(100% - var(--ak-front-bar-start,0px)); }
@@ -689,6 +695,8 @@ body:not(.wp-admin) #wpadminbar.ak-front-rail > #wp-toolbar { display:flex; flex
  #wpadminbar.ak-front-rail::after { transition:none; }
 }
 @media screen and (max-width:782px) {
+ #wpadminbar.ak-front-rail::before,
+ #wpadminbar.ak-front-rail::after { width:24px; }
  #wpadminbar.ak-front-rail #wp-toolbar > #wp-admin-bar-root-default > li:not(#wp-admin-bar-wp-logo) { display:block; }
  #wpadminbar.ak-front-rail #wp-toolbar > #wp-admin-bar-root-default > li > .ab-item {
   width:auto; min-width:44px; padding-inline:10px; font-size:calc(13px * var(--ak-type-scale,1)); white-space:nowrap;

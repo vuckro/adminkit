@@ -10,3 +10,12 @@
  text-underline-offset: 3px;
 }
 #wpadminbar #wp-admin-bar-woocommerce-site-visibility-badge a.ab-item .woocommerce-site-visibility-badge { background: transparent; color: inherit; }
+
+/* Core's touch target is 46px, while Woo adds 7px above and below its
+   desktop badge. Keep that badge inside the row instead of producing 60px. */
+@media screen and (max-width: 782px) {
+ #wpadminbar #wp-toolbar #wp-admin-bar-woocommerce-site-visibility-badge { padding-block:7px; }
+ #wpadminbar #wp-toolbar #wp-admin-bar-woocommerce-site-visibility-badge > a.ab-item {
+  height:32px; min-height:32px; line-height:24px;
+ }
+}
