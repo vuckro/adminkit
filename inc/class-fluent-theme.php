@@ -42,7 +42,14 @@ class AdminKit_Fluent_Theme {
 	 */
 	public static function allow_assets( $slugs ) {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( is_admin() && self::owns_screen( $screen ) && apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
+		$owners = array(
+			'fluent_crm_asset_listed_slugs' => 'AdminKit_Integration_Fluent_Crm',
+			'fluent_booking/asset_listed_slugs' => 'AdminKit_Integration_Fluent_Booking',
+		);
+		$class = $owners[ current_filter() ] ?? '';
+		// Hosts can build their loader policy before WordPress sets WP_Screen.
+		$owner_ready = $class && class_exists( $class ) && $class::is_active() && $class::host_within_tested_range() && apply_filters( 'adminkit/integration_enabled', true, $class::slug() );
+		if ( is_admin() && $owner_ready && ( ! $screen || $class::owns_screen( $screen ) ) && apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
 			$slugs[] = '\/adminkit\/';
 		}
 		return array_values( array_unique( $slugs ) );

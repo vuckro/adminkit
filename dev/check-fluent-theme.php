@@ -5,6 +5,7 @@ define( 'ABSPATH', __DIR__ . '/' );
 $allowed = true;
 $current_screen = (object) array( 'id' => 'settings_page_fluent-mail' );
 function is_admin() { return true; }
+function current_filter() { return 'fluent_crm_asset_listed_slugs'; }
 function get_current_screen() { global $current_screen; return $current_screen; }
 function apply_filters( $hook, $value, ...$args ) {
 	global $allowed;
@@ -18,6 +19,7 @@ class AdminKit_Integration_Fluent_Smtp {
 	public static function slug() { return 'fluent-smtp'; }
 	public static function owns_screen( $screen ) { return $screen && 'settings_page_fluent-mail' === $screen->id; }
 }
+class AdminKit_Integration_Fluent_Crm extends AdminKit_Integration_Fluent_Smtp {}
 require dirname( __DIR__ ) . '/inc/class-fluent-theme.php';
 $screen = (object) array( 'id' => 'settings_page_fluent-mail' );
 function check_fluent( $condition, $message ) {
@@ -29,6 +31,9 @@ check_fluent( ! AdminKit_Fluent_Theme::owns_screen( (object) array( 'id' => 'das
 $patterns = AdminKit_Fluent_Theme::allow_assets( array( '\/fluent-crm\/' ) );
 check_fluent( 2 === count( $patterns ) && 1 === preg_match( '/' . implode( '|', $patterns ) . '/', '/plugins/adminkit/assets/js/test.js' ), 'Native allowlist did not preserve our exact plugin directory' );
 check_fluent( 0 === preg_match( '/' . implode( '|', $patterns ) . '/', '/plugins/not-adminkit/file.js' ), 'Allowlist matched a different plugin' );
+$current_screen = null;
+check_fluent( count( AdminKit_Fluent_Theme::allow_assets( array() ) ) === 1, 'Early native asset policy lost AdminKit before current_screen' );
+$current_screen = $screen;
 $allowed = false;
 check_fluent( ! AdminKit_Fluent_Theme::owns_screen( $screen ), 'Integration opt-out ignored' );
 check_fluent( array() === AdminKit_Fluent_Theme::allow_assets( array() ), 'Disabled integration changed host asset policy' );
