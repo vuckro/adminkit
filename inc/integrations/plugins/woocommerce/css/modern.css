@@ -386,3 +386,72 @@ body.adminkit.adminkit-woocommerce .blueprint-settings-slotfill .woocommerce-col
 body.adminkit.adminkit-woocommerce .blueprint-settings-slotfill svg { fill: currentColor; }
 body.adminkit.adminkit-woocommerce .blueprint-settings-slotfill .woocommerce-collapsible-content__toggle:hover { background: var(--ak-hover-bg); }
 body.adminkit.adminkit-woocommerce .blueprint-settings-slotfill .blueprint-settings-export-group { border-color: var(--ak-border); }
+
+/* Core profiler: labels use deeper selectors than the shared WP controls. */
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-business-information .woocommerce-profiler-business-information__content :is(.components-base-control__label, .woocommerce-profiler-question-label),
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-user-profile .woocommerce-profiler-choice-sub-options .woocommerce-profiler-question-label {
+ color: var(--ak-text);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-select-control__country-error {
+ background: var(--ak-error-subtle);
+ color: var(--ak-error);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-select-control__country-error .components-button svg { fill: var(--ak-error); }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-business-information .woocommerce-select-control__control-icon,
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-user-profile .woocommerce-select-control__control-icon {
+ color: var(--ak-text-muted);
+ fill: currentColor;
+}
+body.adminkit.adminkit-woocommerce :is(.woocommerce-profiler-business-information, .woocommerce-profiler-user-profile) .woocommerce-select-control__control-icon svg { fill: currentColor; }
+
+/* Platform chips and selected options must not retain the native white fill. */
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-user-profile .woocommerce-experimental-select-control__selected-item {
+ background: var(--ak-elevated);
+ color: var(--ak-text);
+ border-radius: var(--ak-radius-s);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-user-profile .woocommerce-experimental-select-control__selected-item :is(.woocommerce-tag__text, .woocommerce-tag__remove) { color: var(--ak-text); }
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body .woocommerce-experimental-select-control__popover-menu .components-popover__content {
+ background: var(--ak-surface);
+ border-color: var(--ak-border);
+}
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body .woocommerce-experimental-select-control__popover-menu .woocommerce-experimental-select-control__menu-item:has(input:checked),
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body .woocommerce-experimental-select-control__popover-menu .woocommerce-experimental-select-control__menu-item:focus-within { background: var(--ak-hover-bg); }
+/* WooCommerce's profiler pins its option hover background with !important. */
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body .woocommerce-experimental-select-control__popover-menu .components-popover__content ul li:hover { background-color: var(--ak-hover-bg) !important; }
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body .woocommerce-experimental-select-control__popover-menu .woocommerce-experimental-select-control__menu-item :is(.components-checkbox-control, .components-checkbox-control__label) {
+ color: var(--ak-text);
+ background: transparent;
+}
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body .woocommerce-experimental-select-control__popover-menu .woocommerce-experimental-select-control__menu-item .components-checkbox-control__input:checked {
+ background: var(--ak-primary);
+}
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body .woocommerce-experimental-select-control__popover-menu .woocommerce-experimental-select-control__menu-item .components-checkbox-control__checked {
+ color: var(--ak-on-accent);
+ fill: currentColor;
+}
+
+/* Loading copy is secondary text, not a disabled control. */
+body.adminkit.adminkit-woocommerce .woocommerce-onboarding-loader .woocommerce-onboarding-loader__paragraph {
+ color: var(--ak-text-muted);
+ opacity: 1;
+}
+/* The native completion glyph is white, as is the neutral primary in dark mode. */
+body.adminkit.adminkit-woocommerce .woocommerce-task-list__item.complete .woocommerce-task__icon {
+ background: var(--ak-success-subtle);
+ color: var(--ak-success);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-task-list__item.complete .woocommerce-task__icon svg { fill: currentColor; }
+body.adminkit.adminkit-woocommerce .woocommerce-task-import-products .woocommerce-list__item-before {
+ background: var(--ak-info-subtle);
+ color: var(--ak-info);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-task-import-products .woocommerce-list__item-before svg { fill: currentColor; }
+/* Select arrows are separate SVGs from the search glyph. */
+body.adminkit.adminkit-woocommerce.woocommerce-profile-wizard__body :is(.woocommerce-select-control__control .components-base-control__help, .woocommerce-experimental-select-control__suffix-icon) svg {
+ fill: var(--ak-text-muted);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-business-information .components-base-control__help { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-business-information .has-error .components-base-control__help { color: var(--ak-error); }
+body.adminkit.adminkit-woocommerce .components-button.woocommerce-profiler-navigation-skip-link { color: var(--ak-text-muted); }
+body.adminkit.adminkit-woocommerce .components-button.woocommerce-profiler-navigation-skip-link:is(:hover, :focus-visible) { color: var(--ak-heading); }
