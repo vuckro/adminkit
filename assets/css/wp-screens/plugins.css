@@ -14,8 +14,8 @@ body.adminkit.plugins-php .search-plugins .search-box input[type="search"] { flo
 /* Inactive is a normal state, not an error. Reserve warning for updates. */
 body.adminkit.plugins-php .subsubsub li:is(.active,.inactive) .count { color:var(--ak-text-muted); }
 
-/* Activation is expressed by its text status, never by washing entire rows green.
-   Shared hover, focus and checkbox selection retain their native visual priority. */
+/* Native actions and filters express activation. Keep neutral rows and let
+   shared hover, focus and checkbox selection own the interaction states. */
 body.adminkit .wp-list-table.plugins tr,
 body.adminkit .wp-list-table.plugins tr:is(.active,.inactive) > :is(th,td) { background:var(--ak-table-bg); }
 body.adminkit .wp-list-table.plugins tbody :is(th,td) { border-inline-start:none !important; box-shadow:none; }
@@ -34,9 +34,6 @@ body.adminkit .wp-list-table.plugins .plugin-version-author-uri a { color:color-
 body.adminkit .wp-list-table.plugins .plugin-version-author-uri { margin-top:6px; line-height:1.6; }
 body.adminkit .wp-list-table.plugins .plugin-version-author-uri a { text-decoration:underline; text-decoration-color:var(--ak-border); text-underline-offset:2px; }
 body.adminkit .wp-list-table.plugins .plugin-version-author-uri a:is(:hover,:focus-visible) { color:var(--ak-text); text-decoration-color:currentColor; }
-body.adminkit .wp-list-table.plugins .ak-plugin-state { display:inline-flex; align-items:center; gap:5px; color:var(--ak-text-subtle); font-size:var(--ak-text-xs); font-weight:500; white-space:nowrap; }
-body.adminkit .wp-list-table.plugins .ak-plugin-state::before { content:""; width:6px; height:6px; flex:none; border-radius:50%; background:var(--ak-icon); }
-body.adminkit .wp-list-table.plugins .ak-plugin-state--active::before { background:var(--ak-success); }
 @media (min-width:783px) {
  body.adminkit .wp-list-table.plugins .column-name { width:28%; }
  body.adminkit .wp-list-table.plugins .column-auto-updates { width:13rem; }

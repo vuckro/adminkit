@@ -1559,13 +1559,3 @@ msgstr ""
 msgctxt "palette color state"
 msgid "Inherited"
 msgstr ""
-
-#: inc/wp-core/class-plugins-list.php
-msgctxt "plugin status"
-msgid "Active"
-msgstr ""
-
-#: inc/wp-core/class-plugins-list.php
-msgctxt "plugin status"
-msgid "Inactive"
-msgstr ""

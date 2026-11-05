@@ -385,7 +385,5 @@ return array (
     'menu icon optionDefault' => 'Par défaut',
     'palette color stateCustomized' => 'Personnalisée',
     'palette color stateInherited' => 'Héritée',
-    'plugin statusActive' => 'Active',
-    'plugin statusInactive' => 'Inactive',
   ),
 );

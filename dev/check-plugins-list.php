@@ -10,9 +10,6 @@ class Plugins_Test_Redirect extends RuntimeException {}
 $actions=array();$referer='';$filters=array();$active=array('active.php','active2.php');$network_admin=false;
 function apply_filters($hook,$value){global$filters;return $filters[$hook]??$value;}
 function add_action($hook,$callback,$priority=10){global$actions,$registrations;$actions[]=$hook;$registrations[$hook]=array($callback,$priority);}
-function add_filter($hook,$callback,$priority=10,$args=1){global$registered_filters;$registered_filters[]=$hook;}
-function _x($text,$context,$domain){return $text;}
-function esc_html($text){return htmlspecialchars($text,ENT_QUOTES);}
 function wp_get_referer(){global$referer;return $referer;}
 function is_multisite(){return false;}
 function is_network_admin(){global$network_admin;return $network_admin;}
@@ -47,20 +44,7 @@ AdminKit_Settings::$values['active_items_first_enabled']=false;$_GET=array();$ac
 AdminKit_Settings::$values['active_items_first_enabled']=true;$filters=array('adminkit/plugins_active_first/enabled'=>false);AdminKit_Plugins_List::on_plugins_screen();check(!$actions,'Historical plugin gate ignored');
 echo "OK: independent plugin landing/sorting, post-action follow, explicit user views, stable grouping and master/filter gates.\n";
 
-$links=array('<a href="https://example.test">Vendor</a>','Version 1.2');
-foreach(array('active.php'=>'active','off.php'=>'inactive') as $file=>$state){
- $meta=AdminKit_Plugins_List::status_meta($links,$file,array(),'all');
- check(count($meta)===3&&array_slice($meta,1)===$links,'Native plugin metadata or links lost');
- check(strpos($meta[0],'ak-plugin-state--'.$state)!==false,'Plugin state badge disagrees with activation');
-}
-foreach(array('mustuse','dropins') as $status)check(AdminKit_Plugins_List::status_meta($links,'off.php',array(),$status)===$links,'Non-toggleable plugin mislabeled inactive');
-
-// Live search must receive the same status presentation before core renders its
-// authorized response. No replacement handler, output or storage mutation.
-$filters=array();$registrations=array();AdminKit_Plugins_List::init();
-check($registrations['wp_ajax_search-plugins'][1]===0,'Status registration must precede the native AJAX renderer');
-$registered_filters=array();call_user_func($registrations['wp_ajax_search-plugins'][0]);
-check($registered_filters===array('plugin_row_meta'),'AJAX search lost the status metadata filter');
-foreach(array('adminkit/should_load','adminkit/appearance_enabled') as $gate){$filters=array($gate=>false);$registered_filters=array();AdminKit_Plugins_List::register_status_meta();check(!$registered_filters,'AJAX status ignored a native appearance gate');}
-$filters=array();$network_admin=true;$registered_filters=array();AdminKit_Plugins_List::register_status_meta();check(!$registered_filters,'Network admin status policy changed');
-echo "OK: live-search status registration preserves native handler and appearance gates.\n";
+// Plugin presentation belongs to WordPress: no metadata injection or AJAX hook.
+$registrations=array();AdminKit_Plugins_List::init();
+check(array_keys($registrations)===array('load-plugins.php'),'Plugin list adds a presentation/AJAX handler');
+echo "OK: native plugin metadata and AJAX renderer remain untouched.\n";
