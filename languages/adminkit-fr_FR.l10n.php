@@ -364,7 +364,7 @@ return array (
     'Writes and edits their own posts, but cannot publish them or upload media.' => 'Rédige et modifie ses propres articles, sans pouvoir les publier ni ajouter de médias.',
     'Writes, publishes and manages their own posts.' => 'Rédige, publie et gère ses propres articles.',
     'You are editing the WordPress toolbar on the public site, normally visible only to logged-in users. These settings do not change your public pages or site menus.' => 'Vous modifiez la barre WordPress affichée sur le site public, normalement visible uniquement par les utilisateurs connectés. Ces réglages ne modifient ni vos pages publiques ni les menus du site.',
-    'You are editing the toolbar inside the WordPress administration.' => 'Vous modifiez la barre d’outils affichée dans l’administration WordPress.',
+    'You are editing the toolbar inside the WordPress administration, including the block editor.' => 'Vous modifiez la barre d’outils dans l’administration WordPress, éditeur de blocs inclus.',
     'You are not allowed to do that.' => 'Vous n’avez pas l’autorisation d’effectuer cette action.',
     'You are using WordPress classic. These site-wide appearance settings are saved for accounts using AdminKit; enabled tools remain available in both interfaces.' => 'Vous utilisez WordPress classique. Ces réglages d’apparence du site sont conservés pour les comptes utilisant AdminKit ; les outils activés restent disponibles dans les deux interfaces.',
     'Your administration, simply.' => 'Votre administration, simplement.',

@@ -1465,8 +1465,8 @@ msgid "You are editing the WordPress toolbar on the public site, normally visibl
 msgstr "Vous modifiez la barre WordPress affichée sur le site public, normalement visible uniquement par les utilisateurs connectés. Ces réglages ne modifient ni vos pages publiques ni les menus du site."
 
 #: inc/settings/class-settings-i18n.php
-msgid "You are editing the toolbar inside the WordPress administration."
-msgstr "Vous modifiez la barre d’outils affichée dans l’administration WordPress."
+msgid "You are editing the toolbar inside the WordPress administration, including the block editor."
+msgstr "Vous modifiez la barre d’outils dans l’administration WordPress, éditeur de blocs inclus."
 
 #: inc/wp-core/class-user-quick-edit.php
 msgid "You are not allowed to do that."

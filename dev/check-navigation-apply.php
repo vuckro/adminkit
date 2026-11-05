@@ -251,3 +251,12 @@ $submenu=array('source'=>array(array('Route','read','route')),'target'=>array(ar
 AdminKit_Menu_Store::$config=array('top'=>array(),'sub'=>array('target'=>array(array('slug'=>'route','position'=>0))));AdminKit_Menu_Manager::apply();
 check($submenu['source'][0][2]==='route','Child moved into a parent without any authorized entry');$allowed_caps=null;
 echo "OK: toolbar hierarchy, generated CSS scope, cyclic routes and role-aware duplicate fallback.\n";
+
+// The block editor is an admin screen: hiding comments is independent of frontend policy.
+$options[AdminKit_Toolbar_Manager::OPTION]=array('admin'=>array('hidden'=>array('comments')), 'frontend'=>array());
+foreach(array(true,false) as $admin){
+ $bar=new Fixture_Bar();$bar->add_node(array('id'=>'comments','parent'=>'','title'=>'Comments'));
+ AdminKit_Toolbar_Manager::apply($bar);
+ check((bool)$bar->get_node('comments')===!$admin,'Admin/editor comment visibility diverges from the admin context');
+}
+$admin=true;
