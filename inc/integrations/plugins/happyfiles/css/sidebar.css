@@ -137,7 +137,10 @@ body.adminkit #happyfiles-sidebar #happyfiles-title {
 /* Folder tools are secondary controls: neutral at rest, selected and hovered.
    Native SVG groups hardcode their fill, so keep them on the same foreground. */
 body.adminkit #happyfiles-sidebar .icon {
-	color: var(--ak-text);
+	color: var(--ak-text-muted) !important;
+}
+body.adminkit #happyfiles-sidebar .icon i {
+	opacity: 1;
 }
 body.adminkit #happyfiles-sidebar .icon.active,
 body.adminkit #happyfiles-sidebar .icon.has,
