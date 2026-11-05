@@ -614,6 +614,27 @@ body.adminkit #dashboard_right_now .sub {
 	border-color: var(--ak-border);
 }
 
+/* Events are informational rows, not accent selections. Core hardcodes dark
+   text on an accent wash; use the shared surface and metadata roles. */
+body.adminkit .community-events ul {
+	background-color: var(--ak-surface-muted);
+}
+body.adminkit .community-events li,
+body.adminkit .community-events .activity-block > p {
+	color: var(--ak-text);
+}
+body.adminkit .community-events :is(.event-date, .event-time, .event-city),
+body.adminkit .community-events-footer,
+body.adminkit .community-events .event-icon::before {
+	color: var(--ak-text-muted);
+}
+body.adminkit .community-events a:not(.button) {
+	color: var(--ak-text);
+}
+body.adminkit .community-events a:not(.button):is(:hover, :focus-visible) {
+	color: var(--ak-heading);
+}
+
 /* Dashboard widget inset surfaces — Activity comment cards, Right Now
    sub-stats, and striped post lists all hardcode `background: #f6f7f7`,
    a near-white that clashes hard on our dark surface. Route them through

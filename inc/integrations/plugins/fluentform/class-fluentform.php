@@ -98,6 +98,13 @@ class AdminKit_Integration_Fluentform extends AdminKit_Integration_Base {
 			return;
 		}
 		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-fluentform-dashboard',
+			'src'       => 'inc/integrations/plugins/fluentform/css/dashboard.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => static function ( $screen ) { return $screen && 'dashboard' === $screen->id; },
+		) );
+		AdminKit_Assets::register( array(
 			'handle'  => 'adminkit-fluentform-editor',
 			'src'     => 'inc/integrations/plugins/fluentform/css/editor.css',
 			'deps'    => array( AdminKit_Assets::TOKENS_HANDLE ),
