@@ -41,6 +41,8 @@ class AdminKit_Plugins_List {
 	 */
 	public static function init() {
 		add_action( 'load-plugins.php', array( __CLASS__, 'on_plugins_screen' ) );
+		// The native AJAX handler renders the same table without load-plugins.php.
+		add_action( 'wp_ajax_search-plugins', array( __CLASS__, 'register_status_meta' ), 0 );
 	}
 
 	/**
@@ -57,9 +59,7 @@ class AdminKit_Plugins_List {
 	public static function on_plugins_screen() {
 		if ( function_exists( 'is_network_admin' ) && is_network_admin() ) { return; }
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
-		if ( apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
-			add_filter( 'plugin_row_meta', array( __CLASS__, 'status_meta' ), 10, 4 );
-		}
+		self::register_status_meta();
 		if ( ! self::enabled() ) {
 			return;
 		}
@@ -70,6 +70,16 @@ class AdminKit_Plugins_List {
 		if ( AdminKit_Settings::get( 'active_items_first_sort' ) ) {
 			add_action( 'pre_current_active_plugins', array( __CLASS__, 'sort_active_first' ) );
 		}
+	}
+
+	/** Register presentation before either native table renderer; never handle AJAX.
+	 * @return void
+	 */
+	public static function register_status_meta() {
+		if ( function_exists( 'is_network_admin' ) && is_network_admin() ) { return; }
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' )
+			|| ! apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) { return; }
+		add_filter( 'plugin_row_meta', array( __CLASS__, 'status_meta' ), 10, 4 );
 	}
 
 	/** Add a persistent text status without replacing native plugin metadata/links.

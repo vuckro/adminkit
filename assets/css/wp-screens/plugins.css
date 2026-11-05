@@ -43,6 +43,10 @@ body.adminkit .wp-list-table.plugins .ak-plugin-state--active::before { backgrou
  body.adminkit .wp-list-table.plugins tbody > tr:not(.plugin-update-tr) > :is(th,td) { padding-block:12px; }
 }
 
+@media (max-width:782px) {
+ body.adminkit.plugins-php .wp-list-table.plugins .row-actions a { min-height:44px; min-inline-size:44px; }
+}
+
 /* An update belongs to its plugin, not to a nested card. Keep severity, native
    links, live feedback and update lifecycle; only the alert geometry is compact. */
 body.adminkit .wp-list-table.plugins tr.plugin-update-tr > td { height:auto; padding:0; }
