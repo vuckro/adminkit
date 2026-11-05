@@ -47,48 +47,26 @@ body.adminkit .wp-list-table.plugins tbody td {
 	box-shadow: none;
 }
 
-/* Active plugins idle bg — WP core paints
-   `.plugins .active td/th { background-color: rgba(var(--wp-admin-theme-color--rgb), 0.08) }`,
-   and AdminKit remaps --wp-admin-theme-color--rgb to the brand
-   green so that produces a persistent --primary-t-1-looking wash
-   on every active cell. Zero it out — BUT only when not hovered,
-   so the global tr:hover background from tables.css still
-   wins on hover. */
+/* Active rows carry a quiet success tint, backed by an explicit text badge.
+   Hover remains owned by the shared table treatment. */
 body.adminkit .wp-list-table.plugins tr.active:not(:hover) th,
 body.adminkit .wp-list-table.plugins tr.active:not(:hover) td {
-	background: transparent;
+	background: color-mix(in srgb, var(--ak-success) 7%, var(--ak-table-bg));
 }
-
-/* Active rows are still identifiable by the 600-weight --ak-heading
-   title (vs inactive's 500-weight --ak-text-muted) — the contrast
-   lives in the type. */
 body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
 	color: var(--ak-heading);
 	font-weight: 600;
 }
-
-/* Left-edge indicator for active plugins — a slim green bar marking the plugin
-   as active. A BALANCED success tone (color-mix ~60% into the surface): clearly
-   green but not the solid-green that read too flashy on the dark surface. The
-   surface side flips per mode, so it stays balanced in light and dark. Covers
-   the WP default `.check-column` and AME Pro's renamed `.ame-check-column`. Use
-   border-left with !important to beat the `.plugins tbody td/th` reset above. */
 body.adminkit .wp-list-table.plugins tr.active th.check-column,
 body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
-	border-inline-start: 1px solid color-mix(in srgb, var(--ak-success) 60%, var(--ak-table-bg)) !important;
+	border-inline-start: 1px solid var(--ak-success) !important;
 }
-
-/* Inactive plugins — keep the table surface, mute the title.
-   `:not(:hover)` so the global tr:hover background still wins
-   when the row is hovered; without it the inactive rule's
-   higher specificity (.inactive class) beat the hover rule. */
 body.adminkit .wp-list-table.plugins tr.inactive:not(:hover) th,
 body.adminkit .wp-list-table.plugins tr.inactive:not(:hover) td {
 	background: var(--ak-table-bg);
 }
-
 body.adminkit .wp-list-table.plugins tr.inactive .plugin-title strong {
-	color: var(--ak-text-muted);
+	color: var(--ak-text-subtle);
 	font-weight: 500;
 }
 
@@ -120,8 +98,39 @@ body.adminkit .wp-list-table.plugins .plugin-title strong {
 	font-weight: 600;
 }
 
-body.adminkit .wp-list-table.plugins .plugin-version-author-uri {
-	color: var(--ak-text-muted);
+/* Descriptions are secondary to names; version/author metadata is quieter still.
+   Keep links available and underlined so softening text never hides actions. */
+body.adminkit .wp-list-table.plugins .plugin-description,
+body.adminkit .wp-list-table.plugins .plugin-description p {
+	color: var(--ak-text-subtle);
+}
+body.adminkit .wp-list-table.plugins .plugin-version-author-uri,
+body.adminkit .wp-list-table.plugins .plugin-version-author-uri a {
+	color: color-mix(in srgb, var(--ak-text-subtle) 85%, var(--ak-table-bg));
+}
+body.adminkit .wp-list-table.plugins .plugin-version-author-uri a {
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+body.adminkit .wp-list-table.plugins .plugin-version-author-uri a:hover {
+	color: var(--ak-text);
+}
+body.adminkit .wp-list-table.plugins .ak-plugin-state {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 7px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background: var(--ak-surface-muted);
+	color: var(--ak-text-subtle);
+	font-size: var(--ak-text-xs);
+	font-weight: 500;
+	line-height: 1.4;
+}
+body.adminkit .wp-list-table.plugins .ak-plugin-state--active {
+	background: color-mix(in srgb, var(--ak-success) 14%, var(--ak-surface));
+	border-color: color-mix(in srgb, var(--ak-success) 40%, var(--ak-border));
+	color: var(--ak-text);
 }
 
 

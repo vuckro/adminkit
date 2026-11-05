@@ -57,6 +57,9 @@ class AdminKit_Plugins_List {
 	public static function on_plugins_screen() {
 		if ( function_exists( 'is_network_admin' ) && is_network_admin() ) { return; }
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
+		if ( apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
+			add_filter( 'plugin_row_meta', array( __CLASS__, 'status_meta' ), 10, 4 );
+		}
 		if ( ! self::enabled() ) {
 			return;
 		}
@@ -67,6 +70,23 @@ class AdminKit_Plugins_List {
 		if ( AdminKit_Settings::get( 'active_items_first_sort' ) ) {
 			add_action( 'pre_current_active_plugins', array( __CLASS__, 'sort_active_first' ) );
 		}
+	}
+
+	/** Add a persistent text status without replacing native plugin metadata/links.
+	 * Must-use plugins and drop-ins have no ordinary activation switch.
+	 *
+	 * @param string[] $links Native metadata links.
+	 * @param string $file Plugin basename.
+	 * @param array $data Native plugin data.
+	 * @param string $status Current plugins table filter.
+	 * @return string[]
+	 */
+	public static function status_meta( $links, $file, $data, $status ) {
+		if ( in_array( $status, array( 'mustuse', 'dropins' ), true ) ) { return $links; }
+		$active = is_plugin_active( $file );
+		$label = $active ? _x( 'Active', 'plugin status', 'adminkit' ) : _x( 'Inactive', 'plugin status', 'adminkit' );
+		array_unshift( $links, '<span class="ak-plugin-state ak-plugin-state--' . ( $active ? 'active' : 'inactive' ) . '">' . esc_html( $label ) . '</span>' );
+		return $links;
 	}
 
 	/**

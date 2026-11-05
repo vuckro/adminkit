@@ -1559,3 +1559,13 @@ msgstr "Personnalisée"
 msgctxt "palette color state"
 msgid "Inherited"
 msgstr "Héritée"
+
+#: inc/wp-core/class-plugins-list.php
+msgctxt "plugin status"
+msgid "Active"
+msgstr "Active"
+
+#: inc/wp-core/class-plugins-list.php
+msgctxt "plugin status"
+msgid "Inactive"
+msgstr "Inactive"
