@@ -375,7 +375,8 @@ body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer:hover::after {
    Media dialogs retain HappyFiles' own geometry. */
 body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide {
 	box-sizing: border-box;
-	padding-inline: 4px;
+	min-inline-size: 56px;
+	padding-inline: 12px;
 }
 body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide #happyfiles-header {
 	width: 100%;
