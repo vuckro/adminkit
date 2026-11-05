@@ -257,8 +257,8 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
    then re-shows only a hardcoded id whitelist (`#wpadminbar li#wp-admin-bar-X`,
    2,0,1) — our nodes aren't on it. Re-display them at that SAME specificity;
    AdminKit loads after core, so equal specificity wins on order. The whole cell
-   is the tap target: 52×46 (matching WP's own mobile icons, and ≥ the ~44px
-   minimum), with the glyph flex-centred (see the rule above) and bumped a touch
+   is the tap target: 44×46 (matching AdminKit's compact toolbar
+   rhythm), with the glyph flex-centred (see the rule above) and bumped a touch
    for legibility on the taller bar. Search is intentionally NOT re-shown — WP
    hides `#wp-admin-bar-search` here, and we respect that (it expands on tap only
    at desktop widths, where it renders). */
@@ -270,7 +270,7 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
 
 	#wpadminbar li#wp-admin-bar-ak-theme-toggle > .ab-item,
 	#wpadminbar li#wp-admin-bar-ak-view-site > .ab-item {
-		width: 52px;
+		width: 44px;
 		height: 46px;
 		padding: 0;
 		text-align: center;
@@ -670,7 +670,6 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
  }
  #wpadminbar.ak-front-mobile #wp-admin-bar-root-default::-webkit-scrollbar { display:none; }
  #wpadminbar.ak-front-mobile #wp-toolbar > #wp-admin-bar-top-secondary { flex:0 0 auto; margin:0; }
- #wpadminbar.ak-front-mobile #wp-admin-bar-top-secondary > :is(#wp-admin-bar-ak-view-site,#wp-admin-bar-ak-theme-toggle,#wp-admin-bar-my-account) > .ab-item { width:44px; min-width:44px; padding-inline:0; }
  #wpadminbar.ak-front-mobile #wp-toolbar > #wp-admin-bar-root-default > li:not(#wp-admin-bar-wp-logo) { display:block; position:static; }
  #wpadminbar.ak-front-mobile #wp-toolbar > #wp-admin-bar-root-default > li > .ab-item {
   width:auto; min-width:44px; padding-inline:10px; font-size:calc(13px * var(--ak-type-scale,1)); white-space:nowrap;
