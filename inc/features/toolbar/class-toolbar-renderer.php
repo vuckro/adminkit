@@ -52,7 +52,7 @@ class AdminKit_Toolbar_Renderer {
 		// Hide: drop the node (children go with it). Never a protected id.
 		$hidden = array();
 		foreach ( $cfg['hidden'] as $id ) {
-			if ( isset( $protected[ $id ] ) ) {
+			if ( isset( $protected[ $id ] ) || ! AdminKit_Toolbar_Config::is_root_node( $bar->get_node( $id ) ) ) {
 				continue;
 			}
 			$hidden[ $id ] = true;
@@ -66,7 +66,7 @@ class AdminKit_Toolbar_Renderer {
 				continue;
 			}
 			$node = $bar->get_node( $id );
-			if ( ! $node ) {
+			if ( ! AdminKit_Toolbar_Config::is_root_node( $node ) ) {
 				continue;
 			}
 			$props = (array) $node;
@@ -83,7 +83,7 @@ class AdminKit_Toolbar_Renderer {
 		// Otherwise re-adding only saved nodes strands View/Updates before the site.
 		$order = $cfg['order'];
 		foreach ( (array) $bar->get_nodes() as $node ) {
-			if ( empty( $node->group ) && ( empty( $node->parent ) || in_array( $node->parent, array( 'root-default', 'top-secondary' ), true ) ) && ! in_array( $node->id, $order, true ) ) {
+			if ( AdminKit_Toolbar_Config::is_root_node( $node ) && ! in_array( $node->id, $order, true ) ) {
 				$order[] = $node->id;
 			}
 		}
@@ -92,7 +92,7 @@ class AdminKit_Toolbar_Renderer {
 				continue;
 			}
 			$node = $bar->get_node( $id );
-			if ( ! $node ) {
+			if ( ! AdminKit_Toolbar_Config::is_root_node( $node ) ) {
 				continue; // stale / not present this request
 			}
 			$bar->remove_node( $id );
@@ -386,6 +386,11 @@ class AdminKit_Toolbar_Renderer {
 			}
 
 			if ( ! empty( $ab_items[ $dom_id ] ) ) {
+				// A host may also ship an inner glyph (Query Monitor on touch).
+				// The chosen anchor icon replaces it rather than duplicating it.
+				$rule = '#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item > .ab-icon{display:none !important}';
+				$desktop .= $rule;
+				$mobile .= $rule;
 				$sel      = '.wp-admin #wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before,#wpadminbar #wp-toolbar #' . $dom_id . ' > .ab-item.ab-item.ab-item::before';
 				$desktop .= $sel . '{content:"" !important;background-image:none !important;box-sizing:border-box;float:left;height:32px;width:20px;padding:6px 0;margin-right:6px;position:static;top:auto;' . $mask . '}';
 				$mobile  .= $sel . '{content:"" !important;background-image:none !important;box-sizing:border-box;display:block;float:none;width:52px;height:46px;margin:0;text-indent:0;position:static;top:auto;' . $mask . '-webkit-mask-size:22px 22px;mask-size:22px 22px}';
@@ -398,6 +403,10 @@ class AdminKit_Toolbar_Renderer {
 			}
 		}
 
+		// The head runs before native nodes exist; enforce the same tier in CSS.
+		$root_selector = '#wpadminbar #wp-toolbar :is(.ab-top-menu,.ak-mobile-bar-list) > #';
+		$desktop = str_replace( '#wpadminbar #wp-toolbar #', $root_selector, $desktop );
+		$mobile = str_replace( '#wpadminbar #wp-toolbar #', $root_selector, $mobile );
 		$css = '';
 		if ( '' !== $desktop ) {
 			$desktop = str_replace( array( '20px', 'padding:6px 0', 'top:6px' ), array( '16px', 'padding:8px 0', 'top:8px' ), $desktop );

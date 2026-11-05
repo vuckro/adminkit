@@ -9,7 +9,7 @@ class WP_Plugins_List_Table { public $items=array(); }
 class Plugins_Test_Redirect extends RuntimeException {}
 $actions=array();$referer='';$filters=array();$active=array('active.php','active2.php');$network_admin=false;
 function apply_filters($hook,$value){global$filters;return $filters[$hook]??$value;}
-function add_action($hook,$callback){global$actions;$actions[]=$hook;}
+function add_action($hook,$callback,$priority=10){global$actions,$registrations;$actions[]=$hook;$registrations[$hook]=array($callback,$priority);}
 function wp_get_referer(){global$referer;return $referer;}
 function is_multisite(){return false;}
 function is_network_admin(){global$network_admin;return $network_admin;}
@@ -43,3 +43,8 @@ foreach(array('activate'=>'active','deactivate'=>'all')as$flag=>$target){$_GET=a
 AdminKit_Settings::$values['active_items_first_enabled']=false;$_GET=array();$actions=array();AdminKit_Plugins_List::on_plugins_screen();check(!$actions,'Master off registered sorting');
 AdminKit_Settings::$values['active_items_first_enabled']=true;$filters=array('adminkit/plugins_active_first/enabled'=>false);AdminKit_Plugins_List::on_plugins_screen();check(!$actions,'Historical plugin gate ignored');
 echo "OK: independent plugin landing/sorting, post-action follow, explicit user views, stable grouping and master/filter gates.\n";
+
+// Plugin presentation belongs to WordPress: no metadata injection or AJAX hook.
+$registrations=array();AdminKit_Plugins_List::init();
+check(array_keys($registrations)===array('load-plugins.php'),'Plugin list adds a presentation/AJAX handler');
+echo "OK: native plugin metadata and AJAX renderer remain untouched.\n";

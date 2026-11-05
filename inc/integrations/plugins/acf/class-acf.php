@@ -85,6 +85,11 @@ class AdminKit_Integration_Acf extends AdminKit_Integration_Base {
 		return false !== strpos( $screen->id, '_page_acf' );
 	}
 
+	/** Fields also appear on native posts, users and taxonomy screens. */
+	public static function owns_input_screen( $screen ) {
+		return function_exists( 'wp_style_is' ) && wp_style_is( 'acf-input', 'enqueued' );
+	}
+
 	/**
 	 * ACF exposes its version via the ACF_VERSION constant.
 	 *
@@ -113,6 +118,13 @@ class AdminKit_Integration_Acf extends AdminKit_Integration_Base {
 		if ( ! self::host_within_tested_range() ) {
 			return;
 		}
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-acf-fields',
+			'src'       => 'inc/integrations/plugins/acf/css/fields.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_input_screen' ),
+		) );
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-acf-admin',
 			'src'       => 'inc/integrations/plugins/acf/css/admin.css',

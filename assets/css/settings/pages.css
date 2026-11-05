@@ -259,10 +259,9 @@
 .adminkit-app[data-screen="main"] .ak-tabs button[aria-selected="true"] {
  color: var(--ak-heading); border-bottom-color: var(--ak-heading); background: transparent; box-shadow: none;
 }
-.adminkit-app .ak-overview .ak-overview-summary { margin-bottom: 24px; box-shadow: none; }
-.adminkit-app .ak-overview .ak-guide { padding: 20px 24px; box-shadow: none; }
+.adminkit-app .ak-overview .ak-overview-summary { margin-bottom: 24px; }
+.adminkit-app .ak-overview .ak-guide { padding: 20px 24px; }
 .adminkit-app .ak-overview .ak-guide h3 { font-size: var(--ak-text-m); }
-.adminkit-app .ak-overview-groups { box-shadow: none; }
 .adminkit-app .ak-overview-arrow { width: 7px; height: 7px; border-block-start: 1.5px solid currentColor; border-inline-end: 1.5px solid currentColor; transform: rotate(45deg); color: var(--ak-text-muted); margin-inline: 4px 2px; flex-shrink: 0; }
 [dir="rtl"] .adminkit-app .ak-overview-arrow { transform: rotate(-45deg); }
 @media(max-width:782px){

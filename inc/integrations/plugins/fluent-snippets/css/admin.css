@@ -41,10 +41,9 @@
    only the editor CONTAINER/chrome (the .fsnip_code* wrapper + the .cm-editor
    frame) and leaves the syntax tokens to CodeMirror's own theme.
 
-   NO host dark class to fight. FluentSnippets ships NO dark mode of its own (no
-   html.dark / data-theme in the bundle), so the --ak-* flip is what gives this
-   screen one; there is no host dark class to neutralise, hence no theme-sync JS in
-   the PHP.
+   Modern Snippets adds --fsnip-* tokens and a shared Fluent theme switch.
+   The final token block covers that surface; FluentHub's adapter synchronizes
+   theme intent when the replacement shell is mounted.
 
    Why these win. The bundle declares the EP layer in :root (0,1,0). Our §1 block
    targets :root, body.adminkit.toplevel_page_fluent-snippets (0,2,1 for the body
@@ -318,4 +317,62 @@ body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items .menu_logo_ho
 	font-size: calc(18px * var(--ak-type-scale, 1));
 	font-weight: 700;
 	letter-spacing: 0.01em;
+}
+
+/* Snippets 10.58+ owns --fsnip-* tokens and its own native theme switch.
+   Override both native modes with the shared palette; the Hub bridge syncs intent. */
+html body.adminkit.toplevel_page_fluent-snippets {
+	--fsnip-body-bg: var(--ak-bg);
+	--fsnip-surface: var(--ak-surface);
+	--fsnip-surface-sunk: var(--ak-surface-muted);
+	--fsnip-surface-raised: var(--ak-elevated);
+	--fsnip-border: var(--ak-border);
+	--fsnip-border-strong: var(--ak-border-strong);
+	--fsnip-heading: var(--ak-heading);
+	--fsnip-text: var(--ak-text);
+	--fsnip-text-mid: var(--ak-text-muted);
+	--fsnip-text-light: var(--ak-text-muted);
+	--fsnip-link: var(--ak-text);
+	--fsnip-accent: var(--ak-primary);
+	--fsnip-accent-contrast: var(--ak-on-accent);
+	--fsnip-accent-wash: var(--ak-hover-bg);
+	--fsnip-card-line: var(--ak-border);
+	--fsnip-shadow-card: var(--ak-shadow-subtle);
+	--fsnip-shadow-lift: var(--ak-shadow-elevated);
+	--fsnip-shadow-pop: var(--ak-shadow-elevated);
+	--fsnip-neutral-bg: var(--ak-hover-bg);
+	--fsnip-neutral-fg: var(--ak-text-muted);
+	--fsnip-danger-wash: var(--ak-error-subtle);
+	--fsnip-danger-bg: var(--ak-error-subtle);
+	--fsnip-danger-line: var(--ak-error-subtle);
+	--fsnip-danger-fg: var(--ak-error);
+	--fsnip-warning-wash: var(--ak-warning-subtle);
+	--fsnip-warning-bg: var(--ak-warning-subtle);
+	--fsnip-warning-line: var(--ak-warning-subtle);
+	--fsnip-warning-fg: var(--ak-warning);
+	--fsnip-success-wash: var(--ak-success-subtle);
+	--fsnip-success-bg: var(--ak-success-subtle);
+	--fsnip-success-line: var(--ak-success-subtle);
+	--fsnip-success-fg: var(--ak-success);
+}
+
+/* Custom Snippets navigation/actions sit outside Element Plus. Match its
+   keyboard focus treatment without changing code-editor shortcuts or content. */
+body.adminkit.toplevel_page_fluent-snippets :is(.fsnip_app_nav a, .fsnip_secondary_menu button, .fsnip_row_action, .fsnip_row_title, .fsnip_app_bar_toggle, .fsnip_theme_trigger):focus-visible:not(:disabled, [aria-disabled="true"], .is-disabled) {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
+	box-shadow: none;
+}
+
+/* Modern dark-mode defaults hard-code a pale hover on primary actions. */
+body.adminkit.toplevel_page_fluent-snippets .el-button--primary:not(.is-plain,.is-text,.is-link) {
+ --el-button-bg-color:var(--ak-primary);
+ --el-button-border-color:var(--ak-primary);
+ --el-button-text-color:var(--ak-on-accent);
+ --el-button-hover-bg-color:var(--ak-primary-hover);
+ --el-button-hover-border-color:var(--ak-primary-hover);
+ --el-button-hover-text-color:var(--ak-on-accent);
+ --el-button-active-bg-color:var(--ak-primary-hover);
+ --el-button-active-border-color:var(--ak-primary-hover);
+ --el-button-active-text-color:var(--ak-on-accent);
 }

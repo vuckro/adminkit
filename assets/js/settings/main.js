@@ -226,6 +226,7 @@
 			exportSettings: exportSettings,
 			importSettings: importSettings,
 			onSaved: function (scope, data, response) {
+				if (navPart && navPart.onSaved) { navPart.onSaved(scope, data, response); }
 				if (scope === 'settings') { guideMark('configure'); }
 				if (scope === 'settings' && buildFeatures.acknowledge) { buildFeatures.acknowledge((response && response.values) || data.values || {}); }
 			},

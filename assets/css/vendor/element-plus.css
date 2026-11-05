@@ -111,3 +111,40 @@ html body.adminkit {
 	--el-box-shadow-lighter: var( --ak-shadow-elevated );
 	--el-box-shadow-dark: var( --ak-shadow-elevated );
 }
+
+/* Shared Fluent controls: distinguish disabled from enabled content and keep
+   keyboard feedback independent of pointer hover. No action behavior changes. */
+html body.adminkit {
+	--el-disabled-text-color: var(--ak-text-disabled);
+	--el-text-color-disabled: var(--ak-text-disabled);
+	--el-input-focus-border-color: var(--ak-focus);
+	--el-select-input-focus-border-color: var(--ak-focus);
+}
+body.adminkit :is(.el-button, .el-link, .el-dropdown-menu__item, .el-pagination button, .el-tabs__item):focus-visible:not(:disabled, [aria-disabled="true"], .is-disabled) {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
+}
+body.adminkit .el-dropdown-menu__item:not(.is-disabled):is(:hover, :focus-visible) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-text);
+}
+body.adminkit .el-link:not(.is-disabled):hover {
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+body.adminkit :is(.el-switch, .el-switch__core):focus-visible:not(:disabled, [aria-disabled="true"], .is-disabled),
+body.adminkit .el-checkbox:not(.is-disabled) .el-checkbox__input:has(input:focus-visible) .el-checkbox__inner,
+body.adminkit .el-radio:not(.is-disabled) .el-radio__input:has(input:focus-visible) .el-radio__inner {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
+}
+
+/* WP's typed-input selectors otherwise beat Element Plus's inner text colour.
+   Set the actual field, including WebKit fill, rather than recolouring a wrapper. */
+body.adminkit :is(.el-input,.el-textarea,.el-select) :is(.el-input__inner,.el-textarea__inner,.el-select__input) {
+ color:var(--ak-text);
+ -webkit-text-fill-color:currentColor;
+}
+body.adminkit :is(.el-input,.el-textarea,.el-select) :is(.el-input__inner,.el-textarea__inner,.el-select__input):disabled {
+ color:var(--ak-text-disabled);
+}

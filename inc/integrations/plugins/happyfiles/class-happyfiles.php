@@ -50,16 +50,15 @@ class AdminKit_Integration_Happyfiles extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Targets HappyFiles 1.x — admin.css / sidebar.css override its
+	 * Targets HappyFiles through 1.9.x — admin.css / sidebar.css override its
 	 * hardcoded surfaces by selector, which a new major could restructure.
-	 * (Not installed on this site; pinned to the major the skin targets.)
 	 * register_assets() falls back to the native UI on a newer major until
 	 * the skin is re-checked and this is bumped.
 	 *
 	 * @return string|null
 	 */
 	protected static function max_tested_host_version() {
-		return '1.8';
+		return '1.9';
 	}
 
 	/**

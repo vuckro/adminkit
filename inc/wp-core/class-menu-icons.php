@@ -342,10 +342,8 @@ class AdminKit_Core_Menu_Icons {
 			// too. Map it onto the same `search` glyph so it matches the rest.
 			'wp-admin-bar-command-palette' => AdminKit_Icons::svg( 'search' ),
 			// Front-end / edit-screen core nodes. These paint via `> .ab-item::before`.
-			// `edit` (edit this page/post) → a document-with-pencil, a more telling
-			// "edit page" mark; it stays distinct from Articles (newspaper) and Pages
-			// (a plain document). Same node in the front-end toolbar and the back office.
-			'wp-admin-bar-edit'        => AdminKit_Icons::svg( 'document-pencil' ),
+			// A plain pen marks the edit action; custom toolbar overrides still win.
+			'wp-admin-bar-edit'        => AdminKit_Icons::svg( 'pen' ),
 			'wp-admin-bar-customize'   => AdminKit_Icons::svg( 'sliders' ),
 			'wp-admin-bar-site-editor' => AdminKit_Icons::svg( 'app' ),
 			// `archive` → WP's "View Posts"/"View Pages" node on a post-type LIST screen

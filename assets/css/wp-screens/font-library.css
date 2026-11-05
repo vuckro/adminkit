@@ -18,9 +18,31 @@ body.adminkit .font-library-page__tablist {
 	border-bottom-color: var(--ak-border);
 }
 
+/* One shared surface; native rows keep their font previews and hit areas. */
+body.adminkit .font-library__fonts-list {
+	border: var(--ak-border-width) solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	background-color: var(--ak-card-bg);
+	box-shadow: var(--ak-card-shadow);
+	overflow: hidden;
+}
+
 body.adminkit .font-library__font-card {
 	background-color: var(--ak-surface);
-	border-color: var(--ak-border);
+	color: var(--ak-text);
+	border: 0;
+	border-radius: 0;
+	margin-top: 0;
+}
+
+body.adminkit .font-library__fonts-list-item + .font-library__fonts-list-item .font-library__font-card {
+	border-block-start: var(--ak-border-width) solid var(--ak-border);
+}
+
+body.adminkit .font-library__font-card:focus-visible {
+	outline: 2px solid transparent;
+	outline-offset: -2px;
+	box-shadow: inset 0 0 0 2px var(--ak-focus);
 }
 
 body.adminkit .font-library__font-card:hover {
@@ -53,4 +75,10 @@ body.adminkit .boot-layout-container {
 	--wp-components-color-accent-darker-10: var(--ak-primary-hover);
 	--wp-components-color-accent-darker-20: var(--ak-primary-hover);
 	--wp-admin-theme-color: var(--ak-primary);
+}
+
+/* Native checkbox glyphs use a separate fill, not the input's text color. */
+body.adminkit .font-library__tabpanel-layout :is(.components-checkbox-control__checked, .components-checkbox-control__indeterminate) {
+	color: var(--ak-on-accent);
+	fill: var(--ak-on-accent);
 }

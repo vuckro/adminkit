@@ -67,7 +67,7 @@ class AdminKit_Integration_Fluent_Smtp extends AdminKit_Integration_Base {
 	 * @return string|null
 	 */
 	protected static function max_tested_host_version() {
-		return '2.2.95';
+		return '2.4.5';
 	}
 
 	/**
@@ -91,12 +91,39 @@ class AdminKit_Integration_Fluent_Smtp extends AdminKit_Integration_Base {
 		if ( ! static::host_within_tested_range() ) {
 			return;
 		}
+		foreach ( array( 'admin', 'frontend' ) as $context ) {
+			AdminKit_Assets::register( array(
+				'handle'    => 'adminkit-fluent-smtp-toolbar-' . $context,
+				'src'       => 'inc/integrations/plugins/fluent-smtp/css/toolbar.css',
+				'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+				'context'   => $context,
+				'condition' => 'is_admin_bar_showing',
+			) );
+		}
+		$version = static::host_version();
+		$modern = null !== $version && version_compare( $version, '2.4.0', '>=' );
+		// 2.3 changed its app structure; do not apply either unverified skin.
+		if ( null !== $version && version_compare( $version, '2.3.0-alpha', '>=' ) && ! $modern ) {
+			return;
+		}
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-fluent-smtp-admin',
-			'src'       => 'inc/integrations/plugins/fluent-smtp/css/admin.css',
-			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'src'       => 'inc/integrations/plugins/fluent-smtp/css/' . ( $modern ? 'modern.css' : 'admin.css' ),
+			'deps'      => $modern ? array( AdminKit_Assets::TOKENS_HANDLE, AdminKit_Assets::ELEMENT_PLUS_HANDLE ) : array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_screen' ),
 		) );
+	}
+
+	/** Avoid duplicate native input borders on the modern Element Plus app. @return void */
+	protected static function boot() {
+		add_filter( 'adminkit/enqueue_forms', array( __CLASS__, 'bail_forms' ) );
+	}
+
+	/** @param bool $enqueue Whether native controls load. @return bool */
+	public static function bail_forms( $enqueue ) {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		$version = static::host_version();
+		return self::owns_screen( $screen ) && null !== $version && version_compare( $version, '2.4.0', '>=' ) ? false : $enqueue;
 	}
 }

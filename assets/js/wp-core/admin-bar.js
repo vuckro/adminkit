@@ -1,12 +1,11 @@
-/** Responsive toolbar: preserve native nodes, group secondary actions on touch widths. */
+/** Native toolbar: frontend scroll rail and responsive admin actions. */
 (function () {
 	'use strict';
 	var bar = document.getElementById('wpadminbar');
 	var toolbar = document.getElementById('wp-toolbar');
 	var data = window.AdminKitMobileBar || {};
 	if (!bar || !toolbar || !data.more) { return; }
-	var mq = window.matchMedia('(max-width: 782px)');
-	// Public-site toolbars retain their original scroll behavior and native search.
+	// Frontend: one rail at every width; pin identity/tools and scroll native commands.
 	if (!data.admin) {
 		function alignDiagnostic() {
 			var icon = bar.querySelector('#wp-admin-bar-query-monitor > .ab-item > .ab-icon');
@@ -18,19 +17,55 @@
 		}
 		new MutationObserver(alignDiagnostic).observe(toolbar, { childList:true, subtree:true });
 		alignDiagnostic();
+		var primary = document.getElementById('wp-admin-bar-root-default');
+		var secondary = document.getElementById('wp-admin-bar-top-secondary');
+		var brand = document.createElement('ul');
+		brand.className = 'ab-top-menu ak-front-bar-brand';
+		brand.setAttribute('role', 'menu');
+		var logo = null;
 		function updateEdges() {
-			var overflow = toolbar.scrollWidth - toolbar.clientWidth;
-			bar.classList.toggle('ak-bar-no-scroll', mq.matches && overflow <= 1);
-			bar.classList.toggle('ak-bar-at-start', mq.matches && toolbar.scrollLeft <= 1);
-			bar.classList.toggle('ak-bar-at-end', mq.matches && toolbar.scrollLeft >= overflow - 1);
+			var scroller = primary || toolbar;
+			var overflow = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+			// Modern RTL scrollers use negative scrollLeft; clamp Safari overscroll.
+			var position = Math.min(overflow, Math.max(0, Math.abs(scroller.scrollLeft)));
+			bar.classList.toggle('ak-bar-no-scroll', overflow <= 1);
+			bar.classList.toggle('ak-bar-at-start', position <= 1);
+			bar.classList.toggle('ak-bar-at-end', position >= overflow - 1);
+			if (primary) {
+				bar.style.setProperty('--ak-front-bar-start', brand.getBoundingClientRect().width + 'px');
+				bar.style.setProperty('--ak-front-bar-end', (secondary ? secondary.getBoundingClientRect().width : 0) + 'px');
+			}
+		}
+		function syncFrontend() {
+			if (primary) {
+				var nativeLogo = primary.querySelector('#wp-admin-bar-wp-logo');
+				// Automatic branding deliberately hides wp-logo and marks site-name instead.
+				if (!nativeLogo || window.getComputedStyle(nativeLogo).display === 'none') { nativeLogo = primary.querySelector('#wp-admin-bar-site-name'); }
+				if (nativeLogo && !logo) {
+					logo = nativeLogo;
+					brand.appendChild(logo);
+					toolbar.insertBefore(brand, primary);
+				}
+				bar.classList.add('ak-front-rail');
+			}
+			updateEdges();
 		}
 		toolbar.addEventListener('scroll', updateEdges, { passive: true });
-		window.addEventListener('resize', updateEdges);
-		window.addEventListener('load', updateEdges);
-		if (window.ResizeObserver) { new ResizeObserver(updateEdges).observe(toolbar); }
-		updateEdges();
+		if (primary) { primary.addEventListener('scroll', updateEdges, { passive: true }); }
+		window.addEventListener('resize', syncFrontend);
+		window.addEventListener('load', syncFrontend);
+		if (window.ResizeObserver) {
+			var observer = new ResizeObserver(updateEdges);
+			observer.observe(toolbar);
+			if (primary) { observer.observe(primary); }
+			if (secondary) { observer.observe(secondary); }
+			observer.observe(brand);
+		}
+		new MutationObserver(syncFrontend).observe(toolbar, { childList:true, subtree:true });
+		syncFrontend();
 		return;
 	}
+	var mq = window.matchMedia('(max-width: 782px)');
 	var moved = [];
 	var wrapper = document.createElement('div');
 	wrapper.className = 'ak-mobile-bar-tools';
@@ -136,6 +171,12 @@
 		// Keep the native link and give disclosure its own touch/keyboard control.
 		drawer.querySelectorAll('#adminmenu .wp-has-submenu > a.menu-top').forEach(function (link, index) {
 			var submenu = link.parentElement.querySelector(':scope > .wp-submenu');
+			// Empty/hidden submenus still carry Core's submenu class. Their links
+			// must bypass the delegated disclosure handler just like visible ones.
+			var nativeToggle = false;
+			link.addEventListener('click', function (event) {
+				if (mq.matches && !nativeToggle) { event.stopPropagation(); }
+			});
 			if (!submenu || link.parentElement.classList.contains('ak-empty-submenu')) { return; }
 			var disclosure = document.createElement('button');
 			disclosure.type = 'button'; disclosure.className = 'ak-submenu-toggle';
@@ -143,10 +184,6 @@
 			if (!submenu.id) { submenu.id = 'ak-native-submenu-' + index; }
 			disclosure.setAttribute('aria-controls', submenu.id);
 			if (link.parentElement.classList.contains('wp-has-current-submenu')) { link.setAttribute('aria-expanded', 'true'); }
-			var nativeToggle = false;
-			link.addEventListener('click', function (event) {
-				if (mq.matches && !nativeToggle) { event.stopPropagation(); }
-			});
 			disclosure.addEventListener('click', function () {
 				nativeToggle = true; link.click(); nativeToggle = false;
 				disclosure.focus({ preventScroll:true });

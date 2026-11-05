@@ -143,7 +143,7 @@ class AdminKit_Settings_I18n {
 			'toolbarRight'                   => __( 'Right', 'adminkit' ),
 			'toolbarAdminTitle'              => __( 'Toolbar — Administration', 'adminkit' ),
 			'toolbarFrontendTitle'           => __( 'Toolbar — Public site', 'adminkit' ),
-			'toolbarAdminScope'              => __( 'You are editing the toolbar inside the WordPress administration.', 'adminkit' ),
+			'toolbarAdminScope'              => __( 'You are editing the toolbar inside the WordPress administration, including the block editor.', 'adminkit' ),
 			'toolbarFrontendScope'           => __( 'You are editing the WordPress toolbar on the public site, normally visible only to logged-in users. These settings do not change your public pages or site menus.', 'adminkit' ),
 			'toolbarSaveScope'               => __( 'The two views have independent layouts. Saving applies pending changes from both views.', 'adminkit' ),
 			'toolbarContext'                 => __( 'Toolbar context', 'adminkit' ),

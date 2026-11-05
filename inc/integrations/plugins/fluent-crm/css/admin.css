@@ -354,3 +354,32 @@ body.adminkit.toplevel_page_fluentcrm-admin .el-radio.is-checked .el-radio__labe
 /* Element cards share surface elevation; floating poppers keep overlay depth. */
 body.adminkit.toplevel_page_fluentcrm-admin .el-card { box-shadow: var(--ak-card-shadow); border-color: var(--ak-card-border); border-width: var(--ak-border-width); border-radius: var(--ak-card-radius); }
 body.adminkit.toplevel_page_fluentcrm-admin .el-card .el-card { box-shadow: none; }
+
+/* Current native roles; admin only, also inherited by teleported controls. */
+html body.adminkit.toplevel_page_fluentcrm-admin {
+	--fc-ai-background: var(--ak-primary-subtle);
+	--fc-ai-color: var(--ak-primary-text);
+	--fcrm-compose-btn-bg: var(--ak-surface);
+	--fcrm-compose-btn-border: var(--ak-input-border);
+	--fcrm-compose-btn-text: var(--ak-text);
+	--fcrm-compose-btn-hover: var(--ak-hover-bg);
+	--fcrm-sidebar-accent: var(--ak-primary-text);
+	--fcrm-sidebar-accent-soft: var(--ak-primary-subtle);
+	--fcrm-sidebar-accent-hover: var(--ak-hover-bg);
+	--fcrm-sidebar-border: var(--ak-border);
+	--fcrm-sidebar-text: var(--ak-text);
+	--fc-badge-pending-text: var(--ak-warning);
+	--fc-badge-pending-bg: var(--ak-warning-subtle);
+	--fc-badge-subscribed-text: var(--ak-success);
+	--fc-badge-subscribed-bg: var(--ak-success-subtle);
+	--fc-badge-unsubscribed-text: var(--ak-text-muted);
+	--fc-badge-unsubscribed-bg: var(--ak-surface-muted);
+	--fc-badge-transactional-text: var(--ak-info);
+	--fc-badge-transactional-bg: var(--ak-info-subtle);
+	--fc-badge-bounced-text: var(--ak-warning);
+	--fc-badge-bounced-bg: var(--ak-warning-subtle);
+	--fc-badge-complained-text: var(--ak-error);
+	--fc-badge-complained-bg: var(--ak-error-subtle);
+	--fc-badge-spammed-text: var(--ak-error);
+	--fc-badge-spammed-bg: var(--ak-error-subtle);
+}

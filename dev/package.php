@@ -54,7 +54,7 @@ if ( isset( $opts['help'] ) ) {
 }
 
 $root = realpath( __DIR__ . '/..' );
-if ( ! $root || ! is_dir( $root . '/.git' ) ) {
+if ( ! $root || ( ! is_dir( $root . '/.git' ) && ! is_file( $root . '/.git' ) ) ) {
 	fwrite( STDERR, "error: cannot find AdminKit repo root (no .git at $root).\n" );
 	exit( 1 );
 }

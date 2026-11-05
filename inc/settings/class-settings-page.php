@@ -82,7 +82,7 @@ class AdminKit_Settings_Page {
 	 */
 	public static function render_page() {
 		$screen = get_current_screen();
-		if ( $screen && isset( self::$page_tabs[ $screen->id ] ) && 'brand' === self::$page_tabs[ $screen->id ] && ! apply_filters( 'adminkit/customization_available', true ) ) {
+		if ( $screen && 'brand' === self::settings_tab( $screen->id ) && ! apply_filters( 'adminkit/customization_available', true ) ) {
 			echo '<div class="wrap"><h1>' . esc_html__( 'Customization paused', 'adminkit' ) . '</h1><p>' . esc_html__( 'Enable the administration theme or the custom login screen to customize their appearance. Your saved design is kept.', 'adminkit' ) . '</p><a href="' . esc_url( admin_url( 'admin.php?page=adminkit-features' ) ) . '">' . esc_html__( 'Features', 'adminkit' ) . '</a></div>';
 			return;
 		}
@@ -117,16 +117,31 @@ class AdminKit_Settings_Page {
 	 * @return bool
 	 */
 	public static function is_settings_hook( $hook ) {
+		return null !== self::settings_tab( $hook );
+	}
+
+	/** Resolve registered settings screens, including their configured menu parent.
+	 *
+	 * @param string $hook Current WordPress page hook.
+	 * @return string|null Content pane, or null outside our registered pages.
+	 */
+	private static function settings_tab( $hook ) {
 		$hook = (string) $hook;
-		if ( isset( self::$page_tabs[ $hook ] ) || 'settings_page_' . self::SLUG === $hook || 'toplevel_page_' . self::SLUG === $hook ) {
-			return true;
+		if ( isset( self::$page_tabs[ $hook ] ) ) {
+			return self::$page_tabs[ $hook ];
 		}
-		foreach ( array( 'adminkit-features', 'adminkit-design', 'adminkit-navigation', 'adminkit-configuration' ) as $slug ) {
-			if ( self::SLUG . '_page_' . $slug === $hook ) {
-				return true;
+		$pages = array( self::SLUG => 'overview', 'adminkit-features' => 'features', 'adminkit-design' => 'brand', 'adminkit-navigation' => 'navigation', 'adminkit-configuration' => 'configuration' );
+		foreach ( $pages as $slug => $tab ) {
+			if ( self::SLUG . '_page_' . $slug === $hook || ( self::SLUG === $slug && in_array( $hook, array( 'settings_page_' . $slug, 'toplevel_page_' . $slug ), true ) ) ) {
+				return $tab;
+			}
+			// Menu moves update WordPress's parent registry before assets load.
+			// Match its exact hook rather than accepting arbitrary page prefixes.
+			if ( isset( $GLOBALS['_parent_pages'][ $slug ] ) && function_exists( 'get_plugin_page_hookname' ) && get_plugin_page_hookname( $slug, $GLOBALS['_parent_pages'][ $slug ] ) === $hook ) {
+				return $tab;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	/**
@@ -142,7 +157,7 @@ class AdminKit_Settings_Page {
 		if ( ! self::is_settings_hook( $hook ) ) {
 			return;
 		}
-		$initial_tab = isset( self::$page_tabs[ $hook ] ) ? self::$page_tabs[ $hook ] : 'overview';
+		$initial_tab = self::settings_tab( $hook );
 		// Share one draft across all panels; build panels on first visit.
 		$data = self::boot_data( 'main' );
 		$data['initialTab'] = $initial_tab;

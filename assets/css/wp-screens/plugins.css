@@ -3,127 +3,58 @@
    is in screens/_shared/thickbox.css since it's used by other modals
    too. */
 
-/* ===== Plugins list table (plugins.php) =====
-   WP hardcodes `.plugins tr { background: #fff }`. That leaks white through
-   tr.plugin-update-tr (the "update available" row) on our dark surface
-	   because that row's td has no background of its own. Route every plugins
-	   tr through the shared table surface; the per-state rules below still flip
-   active/inactive on tr.active/tr.inactive cells. */
-
-/* Keep search with the status filters instead of floating it across an empty
-   row. A stacked label also accommodates long translated names on mobile. */
+/* ===== Installed plugins: a quiet native list with shared action reveal ===== */
 body.adminkit.plugins-php .search-plugins .search-box {
-	float: none;
-	clear: both;
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	gap: calc(6px * var(--ak-space-scale, 1));
-	width: min(100%, 26rem);
-	margin: calc(16px * var(--ak-space-scale, 1)) 0;
+ float:none; clear:both; display:flex; flex-direction:column; align-items:stretch;
+ gap:calc(6px * var(--ak-space-scale,1)); width:min(100%,26rem);
+ margin:calc(16px * var(--ak-space-scale,1)) 0;
+}
+body.adminkit.plugins-php .search-plugins .search-box label { color:var(--ak-text-muted); font-size:var(--ak-text-s); }
+body.adminkit.plugins-php .search-plugins .search-box input[type="search"] { float:none; width:100%; min-width:0; margin:0; box-sizing:border-box; }
+/* Inactive is a normal state, not an error. Reserve warning for updates. */
+body.adminkit.plugins-php .subsubsub li:is(.active,.inactive) .count { color:var(--ak-text-muted); }
+
+/* Native actions and filters express activation. Keep neutral rows and let
+   shared hover, focus and checkbox selection own the interaction states. */
+body.adminkit .wp-list-table.plugins tr,
+body.adminkit .wp-list-table.plugins tr:is(.active,.inactive) > :is(th,td) { background:var(--ak-table-bg); }
+body.adminkit .wp-list-table.plugins tbody :is(th,td) { border-inline-start:none !important; box-shadow:none; }
+body.adminkit .wp-list-table.plugins .plugin-title strong { color:var(--ak-heading); font-weight:600; }
+
+/* Names/actions lead. Descriptions and source metadata remain fully available,
+   with a readable measure and quieter links rather than competing highlights. */
+body.adminkit .wp-list-table.plugins .plugin-description { max-inline-size:75ch; }
+body.adminkit .wp-list-table.plugins .plugin-description,
+body.adminkit .wp-list-table.plugins .plugin-description p { color:var(--ak-text-subtle); }
+body.adminkit .wp-list-table.plugins .plugin-version-author-uri,
+body.adminkit .wp-list-table.plugins .plugin-version-author-uri a { color:color-mix(in srgb,var(--ak-text-subtle) 85%,var(--ak-table-bg)); }
+body.adminkit .wp-list-table.plugins .plugin-version-author-uri { margin-top:6px; line-height:1.6; }
+body.adminkit .wp-list-table.plugins .plugin-version-author-uri a { text-decoration:underline; text-decoration-color:var(--ak-border); text-underline-offset:2px; }
+body.adminkit .wp-list-table.plugins .plugin-version-author-uri a:is(:hover,:focus-visible) { color:var(--ak-text); text-decoration-color:currentColor; }
+@media (min-width:783px) {
+ body.adminkit .wp-list-table.plugins .column-name { width:28%; }
+ body.adminkit .wp-list-table.plugins .column-auto-updates { width:13rem; }
+ body.adminkit .wp-list-table.plugins tbody > tr:not(.plugin-update-tr) > :is(th,td) { padding-block:12px; }
 }
 
-body.adminkit.plugins-php .search-plugins .search-box label {
-	color: var(--ak-text-muted);
-	font-size: var(--ak-text-s);
+@media (max-width:782px) {
+ body.adminkit.plugins-php .wp-list-table.plugins .row-actions a { min-height:44px; min-inline-size:44px; }
 }
 
-body.adminkit.plugins-php .search-plugins .search-box input[type="search"] {
-	float: none;
-	width: 100%;
-	min-width: 0;
-	margin: 0;
-	box-sizing: border-box;
+/* An update belongs to its plugin, not to a nested card. Keep severity, native
+   links, live feedback and update lifecycle; only the alert geometry is compact. */
+body.adminkit .wp-list-table.plugins tr.plugin-update-tr > td { height:auto; padding:0; }
+body.adminkit .wp-list-table.plugins .plugin-update-tr .notice {
+ margin:0; min-height:44px; padding-block:12px; padding-inline:44px 16px;
+ border:0; border-radius:0; box-shadow:none; background:var(--ak-surface-muted);
 }
-
-body.adminkit .wp-list-table.plugins tr {
-	background: var(--ak-table-bg);
-}
-
-/* Reset WP's per-cell border indicators */
-body.adminkit .wp-list-table.plugins tbody th,
-body.adminkit .wp-list-table.plugins tbody td {
-	border-inline-start: none !important;
-	box-shadow: none;
-}
-
-/* Active plugins idle bg — WP core paints
-   `.plugins .active td/th { background-color: rgba(var(--wp-admin-theme-color--rgb), 0.08) }`,
-   and AdminKit remaps --wp-admin-theme-color--rgb to the brand
-   green so that produces a persistent --primary-t-1-looking wash
-   on every active cell. Zero it out — BUT only when not hovered,
-   so the global tr:hover background from tables.css still
-   wins on hover. */
-body.adminkit .wp-list-table.plugins tr.active:not(:hover) th,
-body.adminkit .wp-list-table.plugins tr.active:not(:hover) td {
-	background: transparent;
-}
-
-/* Active rows are still identifiable by the 600-weight --ak-heading
-   title (vs inactive's 500-weight --ak-text-muted) — the contrast
-   lives in the type. */
-body.adminkit .wp-list-table.plugins tr.active .plugin-title strong {
-	color: var(--ak-heading);
-	font-weight: 600;
-}
-
-/* Left-edge indicator for active plugins — a slim green bar marking the plugin
-   as active. A BALANCED success tone (color-mix ~60% into the surface): clearly
-   green but not the solid-green that read too flashy on the dark surface. The
-   surface side flips per mode, so it stays balanced in light and dark. Covers
-   the WP default `.check-column` and AME Pro's renamed `.ame-check-column`. Use
-   border-left with !important to beat the `.plugins tbody td/th` reset above. */
-body.adminkit .wp-list-table.plugins tr.active th.check-column,
-body.adminkit .wp-list-table.plugins tr.active th.ame-check-column {
-	border-inline-start: 1px solid color-mix(in srgb, var(--ak-success) 60%, var(--ak-table-bg)) !important;
-}
-
-/* Inactive plugins — keep the table surface, mute the title.
-   `:not(:hover)` so the global tr:hover background still wins
-   when the row is hovered; without it the inactive rule's
-   higher specificity (.inactive class) beat the hover rule. */
-body.adminkit .wp-list-table.plugins tr.inactive:not(:hover) th,
-body.adminkit .wp-list-table.plugins tr.inactive:not(:hover) td {
-	background: var(--ak-table-bg);
-}
-
-body.adminkit .wp-list-table.plugins tr.inactive .plugin-title strong {
-	color: var(--ak-text-muted);
-	font-weight: 500;
-}
-
-/* No edge indicator on rows with an available update either —
-   the dedicated tr.plugin-update-tr row below carries the
-   "update available" message with its own warning tint, which is
-   enough signal without a second cue on the row's check-column. */
-
-/* Update message row — aliased to Bricks' warning-t-1 (semi-transparent
-   warning tint, ~9% opacity) so it works on any chrome background */
-body.adminkit .wp-list-table.plugins tr.plugin-update-tr td {
-	padding: 0;
-}
-
-/* Update notices share the global neutral alert and semantic icon. */
-body.adminkit .wp-list-table.plugins .plugin-update-tr .notice { margin: 0; }
-
-/* Don't tint the update-tr row on hover — the warning bg above
-   already paints the cue, and the global row hover would
-   override the orange cue. */
-body.adminkit .wp-list-table.plugins tr.plugin-update-tr:hover,
-body.adminkit .wp-list-table.plugins tr.plugin-update-tr:hover td,
-body.adminkit .wp-list-table.plugins tr.plugin-update-tr:hover th {
-	background: transparent;
-}
-
-body.adminkit .wp-list-table.plugins .plugin-title strong {
-	color: var(--ak-heading);
-	font-weight: 600;
-}
-
-body.adminkit .wp-list-table.plugins .plugin-version-author-uri {
-	color: var(--ak-text-muted);
-}
-
+body.adminkit .wp-list-table.plugins .plugin-update-tr .notice::before { display:none; }
+body.adminkit .wp-list-table.plugins .plugin-update-tr .notice::after { inset-inline-start:16px; top:14px; width:16px; height:16px; }
+/* Let WordPress own its spinning progress glyph, without a second status icon. */
+body.adminkit .wp-list-table.plugins .plugin-update-tr .notice.updating-message::after { display:none; }
+body.adminkit .wp-list-table.plugins .plugin-update-tr .notice.updating-message p::before { position:absolute; inset-inline-start:14px; top:12px; width:20px; height:20px; margin:0; }
+body.adminkit .wp-list-table.plugins .plugin-update-tr .notice > :is(p,h2,h3):first-child { margin-top:0; }
+body.adminkit .wp-list-table.plugins .plugin-update-tr .notice p { margin-block:0; color:var(--ak-text-subtle); }
 
 /* ===== Plugin install (plugin-install.php) =====
    Plugin cards, the filter bar, and the "More details" Thickbox modal

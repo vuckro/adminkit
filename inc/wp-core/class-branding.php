@@ -293,11 +293,9 @@ class AdminKit_Core_Branding {
 	/** Hide duplicate core marks and apply the automatic toolbar identity. */
 	private static function css() {
 		if ( ! AdminKit_Settings::get( 'branding_enabled' ) ) { return ''; }
-		// The top-left WordPress logo is ALWAYS hidden now — the brand mark lives at
-		// the site name instead. Two selectors: the .wp-admin one beats WP's wp-admin
-		// rule, the plain one covers the front end.
-		$css  = '.wp-admin #wpadminbar #wp-admin-bar-wp-logo,';
-		$css .= '#wpadminbar #wp-admin-bar-wp-logo{display:none}';
+		// The identity lives at site-name. Beat core’s responsive ID whitelist in
+		// both contexts so it cannot revive a duplicate WordPress mark.
+		$css = '#wpadminbar #wp-toolbar #wp-admin-bar-wp-logo{display:none}';
 		// Core also prepends a site-icon image; AdminKit supplies its own mark.
 		$css .= '#wpadminbar #wp-admin-bar-site-name > .ab-item > img.site-icon{display:none}';
 
@@ -323,7 +321,7 @@ class AdminKit_Core_Branding {
 		return self::wp_logomark_css();
 	}
 
-	/** Theme-aware wordmark sizing; native compact menu states switch to the icon. */
+	/** Theme-aware wordmark sizing; desktop compact menu states switch to the icon. */
 	private static function brand_logo_css() {
 		$light = AdminKit_Settings::brand_logo( 'light' );
 		$dark  = AdminKit_Settings::brand_logo( 'dark' );
@@ -353,13 +351,13 @@ class AdminKit_Core_Branding {
 			// compact (height/max-width) so it doesn't crowd the right-hand icons.
 			. '@media screen and (max-width:782px){'
 			. $item . '{width:auto;text-indent:0;overflow:visible;padding:0 10px}'
-			. $img . '{height:24px;max-width:100px}'
+			. $img . '{height:24px;max-width:100px;min-inline-size:0}'
 			. '}'
 			. self::compact_mark_css( $item )
 			. self::hide_site_name_glyph();
 	}
 
-	/** CSS follows WordPress's native folded and responsive menu states. */
+	/** Only compact desktop menus use the icon; mobile keeps the configured logo. */
 	private static function compact_mark_css( $item ) {
 		$compact = $item . ' .ak-brand-compact';
 		$folded = 'body.folded ' . $item;
@@ -369,9 +367,9 @@ class AdminKit_Core_Branding {
 				. $selector . ' .ak-brand-compact{display:block;width:20px;height:20px;object-fit:contain;font-size:20px}'
 				. $selector . '{width:36px;justify-content:center;padding:0;text-indent:0}';
 		};
-		return $compact . '{display:none}' . $rules( $folded )
-			. '@media(min-width:783px) and (max-width:960px){' . $rules( $auto ) . '}'
-			. '@media(max-width:782px){' . $rules( $item ) . $item . '{width:52px}}';
+		return $compact . '{display:none}'
+			. '@media(min-width:783px){' . $rules( $folded ) . '}'
+			. '@media(min-width:783px) and (max-width:960px){' . $rules( $auto ) . '}';
 	}
 
 	/**

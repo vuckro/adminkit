@@ -125,6 +125,75 @@ test.describe('wp-admin', () => {
     expect(problems).toEqual([]);
   });
 
+  test('moved AdminKit page boots under Plugins and overview follows shared elevation', async ({ page }) => {
+    test.skip(process.env.AK_DISPOSABLE !== '1', 'Menu writes require an explicitly disposable WordPress.');
+    const problems = watch(page);
+    await page.goto('/wp-admin/admin.php?page=adminkit');
+    await expect(page.locator('#adminkit-app')).not.toHaveAttribute('aria-busy', 'true');
+    await page.evaluate(() => wp.apiFetch({path:'/adminkit/v1/menu',method:'POST',data:{items:[{parent:'plugins.php',slug:'adminkit',position:0}]}}));
+    await page.goto('/wp-admin/plugins.php?page=adminkit');
+    await expect(page.locator('#adminkit-app')).toBeVisible();
+    await expect(page.locator('#adminkit-app')).not.toHaveAttribute('aria-busy', 'true');
+    for (const theme of ['light', 'dark']) {
+      await page.evaluate(t => document.documentElement.setAttribute('data-adminkit-theme', t), theme);
+      const panels = page.locator('.ak-overview-summary, .ak-overview .ak-guide, .ak-overview-groups');
+      expect(await panels.count()).toBeGreaterThan(0);
+      for (const panel of await panels.all()) expect(await panel.evaluate(n => getComputedStyle(n).boxShadow)).not.toBe('none');
+      await page.evaluate(() => document.documentElement.style.setProperty('--ak-design-elevation', 'none'));
+      for (const panel of await panels.all()) expect(await panel.evaluate(n => getComputedStyle(n).boxShadow)).toBe('none');
+      await page.evaluate(() => document.documentElement.style.removeProperty('--ak-design-elevation'));
+    }
+    await page.evaluate(() => wp.apiFetch({path:'/adminkit/v1/menu',method:'POST',data:{items:[]}}));
+    expect(problems).toEqual([]);
+  });
+
+  test('sidebar editor and native moved plugin routes share one visibility policy', async ({ page }) => {
+    test.setTimeout(180000);
+    test.skip(process.env.AK_DISPOSABLE !== '1', 'Menu writes require an explicitly disposable WordPress.');
+    const problems = watch(page);
+    await page.goto('/wp-admin/admin.php?page=adminkit#menu');
+    await expect(page.locator('#adminkit-app')).not.toHaveAttribute('aria-busy','true');
+    const items = [
+      {parent:'',slug:'plugins.php',position:0},
+      {parent:'plugins.php',slug:'ak-fixture-root',title:'Suite',position:0},
+      {parent:'plugins.php',slug:'ak-fixture-shared',hidden:true,position:1},
+      {parent:'plugins.php',slug:'ak-fixture-shared',title:'SEO fixture',hidden:false,url:'admin.php?page=ak-fixture-shared&tab=links',position:2}
+    ];
+    try {
+      await page.evaluate(items => wp.apiFetch({path:'/adminkit/v1/menu',method:'POST',data:{items}}),items);
+      await page.reload();
+      await expect(page.locator('#adminkit-app')).not.toHaveAttribute('aria-busy','true');
+      await page.locator('.ak-menu-row__expand').first().click();
+      const titles = await page.locator('.ak-menu-row--child input.ak-menu-title').evaluateAll(nodes => nodes.map(n => n.value));
+      expect(titles.filter(title => title === 'SEO fixture')).toHaveLength(1);
+      const saved = await page.evaluate(() => window.AdminKitData.menuManager.config.sub['plugins.php'].filter(row => row.slug === 'ak-fixture-shared'));
+      expect(saved).toHaveLength(1);
+      expect(saved[0].title).toBe('SEO fixture');
+      expect(saved[0].hidden).toBe(false);
+      const route = page.locator('#adminmenu .wp-submenu a').filter({hasText:'SEO fixture'});
+      await expect(route).toHaveCount(1);
+      await page.locator('#menu-plugins > a').hover();
+      await expect(route).toBeVisible();
+      await expect(route).toHaveAttribute('href',/admin.php\?page=ak-fixture-shared&tab=links/);
+      await route.click();
+      await expect(page.locator('#ak-fixture-page')).toHaveCount(1);
+      await page.goto('/wp-admin/admin.php?page=adminkit#menu');
+      items[3].hidden=true;
+      await page.evaluate(items => wp.apiFetch({path:'/adminkit/v1/menu',method:'POST',data:{items}}),items);
+      await page.reload();
+      const hidden = page.locator('#adminmenu .wp-submenu a').filter({hasText:'SEO fixture'});
+      await expect(hidden).toHaveCount(1);
+      await expect(hidden).toBeHidden();
+      expect(problems).toEqual([]);
+    } finally {
+      if (!page.isClosed()) {
+        await page.goto('/wp-admin/admin.php?page=adminkit');
+        await expect(page.locator('#adminkit-app')).not.toHaveAttribute('aria-busy','true');
+        await page.evaluate(() => wp.apiFetch({path:'/adminkit/v1/menu',method:'POST',data:{items:[]}}));
+      }
+    }
+  });
+
   test('design page omits wp.media, exposes typography/shape tabs, and persists REST saves across reload', async ({ page }) => {
     const problems = watch(page);
     await page.goto('/wp-admin/admin.php?page=adminkit-design');

@@ -1320,7 +1320,7 @@ msgstr ""
 msgid "To save"
 msgstr ""
 
-#: inc/class-theme-toggle.php inc/integrations/plugins/gutenberg/class-gutenberg.php inc/wp-core/class-login.php
+#: inc/class-fluent-theme.php inc/class-theme-toggle.php inc/integrations/plugins/gutenberg/class-gutenberg.php inc/wp-core/class-login.php
 msgid "Toggle light / dark mode"
 msgstr ""
 
@@ -1465,7 +1465,7 @@ msgid "You are editing the WordPress toolbar on the public site, normally visibl
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
-msgid "You are editing the toolbar inside the WordPress administration."
+msgid "You are editing the toolbar inside the WordPress administration, including the block editor."
 msgstr ""
 
 #: inc/wp-core/class-user-quick-edit.php

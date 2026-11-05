@@ -78,14 +78,14 @@ class AdminKit_Integration_Fluent_Crm extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Verified against FluentCRM 3.x. A new major may rename the `--fc-*` /
+	 * Verified against FluentCRM 3.3.x. A new major may rename the `--fc-*` /
 	 * `--el-*` tokens or reshuffle the brand literals this adapter targets, so
 	 * gate on the major — register_assets() falls back to native UI past it.
 	 *
 	 * @return string|null
 	 */
 	protected static function max_tested_host_version() {
-		return '3.1.0';
+		return '3.3.1';
 	}
 
 	/**

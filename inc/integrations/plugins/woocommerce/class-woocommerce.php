@@ -55,9 +55,37 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 
 	protected static function boot() {
 		if ( self::host_within_tested_range() ) {
+			add_action( 'admin_menu', array( __CLASS__, 'clean_menu_aliases' ), 9997 );
 			add_filter( 'admin_body_class', array( __CLASS__, 'body_class' ) );
 			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_behaviors' ) );
 			add_action( 'admin_head', array( __CLASS__, 'print_product_icons' ) );
+		}
+	}
+
+	/** Exclude WooCommerce transition aliases before the menu editor snapshots them. */
+	public static function clean_menu_aliases() {
+		global $submenu;
+		$config = AdminKit_Menu_Store::get_config();
+		$coupons_moved_here = false;
+		foreach ( isset( $config['sub']['woocommerce'] ) ? $config['sub']['woocommerce'] : array() as $child ) {
+			if ( 'edit.php?post_type=shop_coupon' === ( $child['slug'] ?? '' ) ) {
+				$coupons_moved_here = true;
+			}
+		}
+		$slugs = array();
+		foreach ( (array) $submenu as $children ) {
+			foreach ( (array) $children as $child ) {
+				if ( isset( $child[2] ) ) {
+					$slugs[ (string) $child[2] ] = true;
+				}
+			}
+		}
+		foreach ( isset( $submenu['woocommerce'] ) ? $submenu['woocommerce'] : array() as $key => $child ) {
+			$slug = isset( $child[2] ) ? (string) $child[2] : '';
+			if ( ( 'edit.php?post_type=shop_order' === $slug && isset( $slugs['wc-orders'] ) )
+				|| ( 'coupons-moved' === $slug && $coupons_moved_here && isset( $slugs['edit.php?post_type=shop_coupon'] ) ) ) {
+				unset( $submenu['woocommerce'][ $key ] );
+			}
 		}
 	}
 

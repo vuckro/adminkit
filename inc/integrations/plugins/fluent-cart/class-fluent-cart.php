@@ -214,7 +214,6 @@ class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
 	}
 	function sync(){
 		var dark=akMode()==='dark';
-		try{localStorage.setItem('fluent_theme_mode',dark?'dark':'light');}catch(e){}
 		document.documentElement.classList.toggle('fluent_theme_dark',dark);
 		if(document.body){document.body.classList.toggle('fluent_theme_dark',dark);}
 	}

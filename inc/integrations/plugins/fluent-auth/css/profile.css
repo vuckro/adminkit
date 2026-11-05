@@ -1,0 +1,34 @@
+/* Native profile enrollment UI. Keep authentication, nonces and dialogs host-owned. */
+body.adminkit #fls2fa { color: var(--ak-text); }
+body.adminkit #fls2fa :is(.fls2fa__intro, .fls2fa__meta, .fls2fa__note, .fls2fa__device-meta, .fls2fa__hint, .fls2fa__modal-lead, .fls2fa__status-text) { color: var(--ak-text-muted); }
+body.adminkit #fls2fa :is(.fls2fa__name, .fls2fa__device-name, .fls2fa__field-label) { color: var(--ak-heading); }
+body.adminkit #fls2fa :is(.fls2fa__card, .fls2fa__noscript, .fls2fa-modal__dialog) {
+ background: var(--ak-surface); border-color: var(--ak-border);
+ border-radius: var(--ak-radius-s); box-shadow: none;
+}
+body.adminkit #fls2fa :is(.fls2fa__row, .fls2fa__device, .fls2fa-modal__head) { border-color: var(--ak-border); }
+body.adminkit #fls2fa :is(.fls2fa__icon, .fls2fa__status) { background: var(--ak-surface-muted); color: var(--ak-text-muted); }
+body.adminkit #fls2fa :is(.fls2fa__icon--on, .fls2fa__status--on) { background: var(--ak-success-subtle); color: var(--ak-success); }
+body.adminkit #fls2fa :is(.fls2fa__icon--warn, .fls2fa__status--warn) { background: var(--ak-warning-subtle); color: var(--ak-warning); }
+body.adminkit #fls2fa .fls2fa__hint--warn { color: var(--ak-warning); }
+body.adminkit #fls2fa .fls2fa__danger { color: var(--ak-error); border-color: var(--ak-border); }
+body.adminkit #fls2fa .fls2fa__danger:is(:hover, :focus-visible) { background: var(--ak-error-subtle); border-color: var(--ak-error); color: var(--ak-error); }
+body.adminkit #fls2fa .fls2fa__banner {
+ background: var(--ak-warning-subtle); color: var(--ak-text);
+ border: 1px solid var(--ak-border);
+}
+body.adminkit #fls2fa .fls2fa__banner svg { color: var(--ak-warning); }
+body.adminkit #fls2fa .fls2fa__banner--info { background: var(--ak-info-subtle); }
+body.adminkit #fls2fa .fls2fa__banner--info svg { color: var(--ak-info); }
+body.adminkit #fls2fa .fls2fa__banner--error { background: var(--ak-error-subtle); }
+body.adminkit #fls2fa .fls2fa__banner--error svg { color: var(--ak-error); }
+body.adminkit #fls2fa.fls2fa--js .fls2fa-modal.is-open { background: var(--ak-overlay); }
+body.adminkit #fls2fa.fls2fa--js .fls2fa-modal__dialog { box-shadow: var(--ak-shadow-elevated); }
+body.adminkit #fls2fa .fls2fa-modal__x { color: var(--ak-text-muted); }
+body.adminkit #fls2fa .fls2fa-modal__x:is(:hover, :focus-visible) { color: var(--ak-heading); background: var(--ak-hover-bg); }
+body.adminkit #fls2fa .fls2fa__details summary { color: var(--ak-text); }
+body.adminkit #fls2fa :is(.fls2fa__code-block, .fls2fa__codes) { background: var(--ak-surface-muted); border-color: var(--ak-border); color: var(--ak-text); }
+body.adminkit #fls2fa .fls2fa__codes li { color: var(--ak-text); }
+/* QR contrast is owned by its encoder; retain the native white quiet zone. */
+body.adminkit #fls2fa .fls2fa__qr { border-color: var(--ak-border); }
+body.adminkit #fls2fa :is(.fls2fa-modal__x, .fls2fa__details summary):focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }

@@ -61,7 +61,7 @@
 		}
 
 		function snapshotFlip(container) {
-			var map = {};
+			var map = Object.create(null);
 			if (!container || !container.querySelectorAll) {
 				return map;
 			}
@@ -539,6 +539,7 @@
 			var inp = el('input', {
 				type: 'text',
 				class: 'ak-menu-input ak-menu-title',
+				maxlength: '190',
 				value: item.title || '',
 				placeholder: item.otitle || item.slug || '',
 				title: I.menuRename,

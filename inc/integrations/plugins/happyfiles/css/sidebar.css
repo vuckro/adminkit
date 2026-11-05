@@ -20,6 +20,9 @@ body.adminkit {
 	--hf-bg-dark: var(--ak-elevated);
 	--hf-bg-info: var(--primary-t-1, var(--ak-hover-bg));
 	--hf-bg-success: var(--primary-t-1, var(--ak-hover-bg));
+	--hf-bg-light-8: var(--ak-border);
+	--hf-bg-light-12: var(--ak-text-muted);
+	--hf-bg-light-16: var(--ak-text-muted);
 
 	/* HappyFiles default --hf-border-radius is 2px (very sharp).
 	   Remap to --ak-radius-s so every element that consumes the
@@ -43,6 +46,7 @@ body.adminkit {
    state so it's inert on every other screen. */
 body.adminkit #wpbody.happyfiles-mounted #wpbody-content {
 	min-width: 0;
+	border-inline-start: 0;
 }
 
 /* Phones: HappyFiles ships NO media queries, so the flex layout above persists on
@@ -67,6 +71,50 @@ body.adminkit #happyfiles-sidebar {
 	color: var(--ak-text);
 }
 
+/* Keep the folder rail inset from the admin menu on list screens.
+   Media dialogs own their own sidebar spacing. Preserve the native width and
+   resize/collapse behavior by including the inset in the inner box. */
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner:not(.hide) {
+	box-sizing: border-box;
+	padding-inline-start: var(--ak-space-l);
+}
+
+body.adminkit #happyfiles-header {
+	flex-wrap: wrap;
+	gap: var(--ak-space-s);
+	padding-block: var(--ak-space-l);
+}
+
+body.adminkit #happyfiles-sidebar #happyfiles-title {
+	font-size: calc(18px * var(--ak-type-scale));
+	line-height: 1.4;
+	margin: 0;
+}
+
+body.adminkit #happyfiles-actions {
+	flex-wrap: wrap;
+	gap: var(--ak-space-xs);
+}
+
+/* Equal hit areas with breathing room around the native 16px glyphs. */
+body.adminkit #happyfiles-actions .icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 26px;
+	height: 26px;
+	padding: 5px;
+	flex: 0 0 26px;
+}
+
+body.adminkit #happyfiles-actions .icon :is(i, svg) {
+	width: 16px;
+	height: 16px;
+	font-size: calc(16px * var(--ak-type-scale));
+	line-height: 16px;
+}
+
 /* In-sidebar notification cards (.happyfiles-notification). The bundled
    rule paints them solid --hf-color-info (semantic blue) + white text — too
    loud for a small chrome notice. Route to a soft --ak-info tint with
@@ -86,33 +134,26 @@ body.adminkit #happyfiles-sidebar #happyfiles-title {
 	color: var(--ak-heading);
 }
 
-/* Header action icons (+, sort, eye, …). HappyFiles paints
-   `.icon.active` / `.icon.has` with --hf-bg-dark + #fff text. We
-   remapped --hf-bg-dark to --ak-elevated for general use, but in
-   light mode --ak-elevated is near-white and the white text
-   disappears.
-
-   Inverted hierarchy: the persistent active state stays soft
-   (subtle brand tint) and the transient :hover gets the strong
-   solid primary — hover is the louder feedback. */
+/* Folder tools are secondary controls: neutral at rest, selected and hovered.
+   Native SVG groups hardcode their fill, so keep them on the same foreground. */
+body.adminkit #happyfiles-sidebar .icon {
+	color: var(--ak-text-muted) !important;
+}
+body.adminkit #happyfiles-sidebar .icon i {
+	opacity: 1;
+}
 body.adminkit #happyfiles-sidebar .icon.active,
-body.adminkit #happyfiles-sidebar .icon.has {
-	background-color: var(--primary-t-1, var(--ak-hover-bg)) !important;
-	color: var(--ak-primary) !important;
-}
-
-body.adminkit #happyfiles-sidebar .icon.active svg g,
-body.adminkit #happyfiles-sidebar .icon.has svg g {
-	fill: var(--ak-primary) !important;
-}
-
+body.adminkit #happyfiles-sidebar .icon.has,
 body.adminkit #happyfiles-sidebar .icon:hover {
-	background-color: var(--ak-primary) !important;
-	color: var(--ak-on-accent) !important;
+	background-color: var(--ak-hover-bg) !important;
+	color: var(--ak-heading) !important;
 }
-
-body.adminkit #happyfiles-sidebar .icon:hover svg g {
-	fill: var(--ak-on-accent) !important;
+body.adminkit #happyfiles-sidebar .icon svg g {
+	fill: currentColor !important;
+}
+body.adminkit #happyfiles-sidebar .icon:focus-visible {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
 }
 
 /* Folder row default state — token text */
@@ -128,7 +169,10 @@ body.adminkit #happyfiles-sidebar .folder:hover {
 }
 
 /* Count badge on default state */
-body.adminkit #happyfiles-sidebar .folder .count {
+body.adminkit #happyfiles-sidebar .folder .count,
+body.adminkit #happyfiles-sidebar .folder.open .count,
+body.adminkit #happyfiles-sidebar .folder.context .count,
+body.adminkit #happyfiles-sidebar .folder:hover > .count {
 	color: var(--ak-text);
 }
 
@@ -283,4 +327,89 @@ body.adminkit #happyfiles-sidebar [aria-label]:after {
 body.adminkit #happyfiles-sidebar [aria-label][data-aria-pos="bottom"]:after {
 	border-bottom-color: var(--ak-heading);
 	border-top-color: transparent;
+}
+
+/* One quiet hairline and a small grip define the folder rail without the
+   former double-border empty column. Keep the native drag target and offset.
+   Scope to the list-screen shell; media dialogs retain host geometry. */
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer {
+	border: 0;
+	box-sizing: border-box;
+	width: 12px;
+	/* Native drag math subtracts 20px: keep the grip centre at that offset. */
+	margin-inline: 14px var(--ak-space-s);
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer::before {
+	content: "";
+	position: absolute;
+	inset-block: var(--ak-space-l);
+	inset-inline-start: calc(50% - 0.5px);
+	width: 1px;
+	background-color: color-mix(in srgb, var(--ak-border) 55%, transparent);
+	pointer-events: none;
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer::after {
+	content: "";
+	position: absolute;
+	inset-inline-start: calc(50% - 1px);
+	top: calc(50% - 18px);
+	width: 2px;
+	height: 36px;
+	border-radius: var(--ak-radius-s);
+	background-color: var(--ak-border);
+	pointer-events: none;
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer:hover::after {
+	background-color: var(--ak-text-muted);
+}
+
+/* Collapsed list-screen rail: keep the native toggle, but give it a complete
+   hit area and an inset on both sides instead of a tab stuck to the WP menu.
+   Media dialogs retain HappyFiles' own geometry. */
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide {
+	box-sizing: border-box;
+	min-inline-size: 56px;
+	padding-inline: 12px;
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide #happyfiles-header {
+	width: 100%;
+	padding-block: var(--ak-space-l);
+	padding-inline: 0;
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide #happyfiles-actions {
+	gap: 0;
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide .toggle-sidebar {
+	width: 32px;
+	height: 32px;
+	flex-basis: 32px;
+	padding: 7px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background-color: var(--ak-surface);
+	color: var(--ak-text);
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide .toggle-sidebar:focus-visible {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
+}
+
+/* Header actions sit immediately below the admin bar. Place their tooltips
+   below the button, inside the header's lower breathing room, rather than
+   lifting them underneath the fixed toolbar. Leave media dialogs unchanged. */
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-actions [aria-label]::before {
+	top: calc(100% + 6px);
+	bottom: auto;
+	transform: translate(-50%, 0);
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-actions [aria-label]::after {
+	top: 100%;
+	bottom: auto;
+	transform: translate(-50%, 0);
+	border-top-color: transparent;
+	border-bottom-color: var(--ak-heading);
+}
+/* Reserve the label height as well: it must not cover the search field below. */
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-header {
+	padding-block-end: calc(var(--ak-space-l) + var(--ak-space-m));
 }

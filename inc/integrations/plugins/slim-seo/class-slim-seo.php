@@ -10,7 +10,7 @@
  * surfaces that hardcode white / dark text (header bar, tabs card,
  * feature toggle titles).
  *
- * Loaded only on `settings_page_slim-seo` via `owns_screen()`.
+ * Loaded only on the registered Slim SEO page, including a configured menu move.
  *
  * @package AdminKit
  */
@@ -33,7 +33,7 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 
 	/** @return string[] Host plugin file(s) this adapter themes. */
 	public static function host_files() {
-		return array( 'slim-seo/slim-seo.php' );
+		return array( 'slim-seo/slim-seo.php', 'slim-seo-pro/slim-seo-pro.php' );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 	 * @return bool
 	 */
 	public static function is_active() {
-		return defined( 'SLIM_SEO_VER' );
+		return defined( 'SLIM_SEO_VER' ) || defined( 'SLIM_SEO_PRO_VER' );
 	}
 
 	/**
@@ -54,7 +54,21 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 	 * @return bool
 	 */
 	public static function owns_screen( $screen ) {
-		return $screen && 'settings_page_slim-seo' === $screen->id;
+		if ( ! $screen ) { return false; }
+		if ( 'settings_page_slim-seo' === $screen->id ) { return true; }
+		return isset( $GLOBALS['_parent_pages']['slim-seo'] ) && function_exists( 'get_plugin_page_hookname' )
+			&& get_plugin_page_hookname( 'slim-seo', $GLOBALS['_parent_pages']['slim-seo'] ) === $screen->id;
+	}
+
+	/**
+	 * @param string $classes Native admin classes.
+	 * @return string
+	 */
+	public static function settings_body_class( $classes ) {
+		if ( self::owns_screen( get_current_screen() ) && false === strpos( ' ' . $classes . ' ', ' settings_page_slim-seo ' ) ) {
+			$classes .= ' settings_page_slim-seo';
+		}
+		return $classes;
 	}
 
 	/**
@@ -78,9 +92,28 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * Only load the list adapter alongside the host's real column stylesheet.
+	 *
+	 * @param \WP_Screen|null $screen Screen.
+	 * @return bool
+	 */
+	public static function owns_columns_screen( $screen ) {
+		return $screen && in_array( $screen->base, array( 'edit', 'edit-tags' ), true )
+			&& wp_style_is( 'slim-seo-admin-columns', 'enqueued' );
+	}
+
+	/**
 	 * @return void
 	 */
 	public static function register_assets() {
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-slim-seo-columns',
+			'src'       => 'inc/integrations/plugins/slim-seo/css/columns.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE, 'slim-seo-admin-columns' ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_columns_screen' ),
+		) );
+
 		// Variable remap routing Slim SEO's --ss-color-* vars to our
 		// tokens. Loaded only where Slim SEO actually enqueues a
 		// stylesheet that sets those vars on :root (see owns_global_screen).
@@ -102,4 +135,40 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 			'condition' => array( __CLASS__, 'owns_screen' ),
 		) );
 	}
+	/** @return void */
+	protected static function boot() {
+		add_filter( 'admin_body_class', array( __CLASS__, 'settings_body_class' ) );
+		add_action( 'admin_menu', array( __CLASS__, 'deduplicate_settings_page' ), 10001 );
+	}
+
+	/**
+	 * Bundled legacy modules can register a page alongside the shared core page.
+	 * Keep the canonical renderer/save dispatcher; retain all Pro tab/save hooks.
+	 * This is a no-op when either renderer is absent (including Pro standalone).
+	 *
+	 * @return void
+	 */
+	public static function deduplicate_settings_page() {
+		$core = 'eLightUp\\SlimSEO\\Common\\Settings\\Page';
+		$hook = 'settings_page_slim-seo';
+		if ( false === has_action( $hook, array( $core, 'render' ) ) ) { return; }
+		$removed = false;
+		foreach ( array( 'SlimSEO\\Settings\\Page', 'SlimSEOPro\\Page' ) as $legacy ) {
+			if ( false === has_action( $hook, array( $legacy, 'render' ) ) ) { continue; }
+			remove_action( $hook, array( $legacy, 'render' ) );
+			if ( false !== has_action( 'load-' . $hook, array( $core, 'save' ) ) ) {
+				remove_action( 'load-' . $hook, array( $legacy, 'save' ) );
+			}
+			$removed = true;
+		}
+		if ( ! $removed ) { return; }
+		global $submenu;
+		$seen = false;
+		foreach ( $submenu['options-general.php'] ?? array() as $key => $item ) {
+			if ( 'slim-seo' !== ( $item[2] ?? '' ) ) { continue; }
+			if ( $seen ) { unset( $submenu['options-general.php'][ $key ] ); }
+			$seen = true;
+		}
+	}
+
 }

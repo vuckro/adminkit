@@ -24,6 +24,7 @@
 		var dropZone = controls.dropZone;
 		var titleInput = controls.titleInput;
 
+		var preservedConfig = MM.config || { top: [], sub: {} };
 		state.menu = M.buildMenuModel(MM.menu || [], MM.config || { top: [], sub: {} }, MM.seen || []);
 
 		function nextUid(prefix) {
@@ -43,7 +44,7 @@
 		}
 
 		function gatherMenu() {
-			return M.gatherMenu(state.menu, titleOverride);
+			return M.preserveUnavailable(M.gatherMenu(state.menu, titleOverride), MM.menu, preservedConfig);
 		}
 
 		function buildMenu() {
@@ -90,7 +91,8 @@
 						class: 'ak-btn ak-btn--ghost',
 						text: I.menuReset,
 						onclick: function () {
-							state.menu = M.buildMenuModel(MM.menu, { top: [], sub: {} }, MM.seen || []);
+							preservedConfig = { top: [], sub: {} };
+							state.menu = M.buildMenuModel(MM.menu, preservedConfig, MM.seen || []);
 							renderTree(tree);
 							markDirty('menu');
 						}
@@ -136,7 +138,10 @@
 		}
 
 		function importMenu(file, tree) {
+			if (!file || file.size > 2097152) { setStatus('is-error', I.menuImportError); return; }
+			var draftAtStart = JSON.stringify(gatherMenu());
 			var reader = new FileReader();
+			reader.onerror = function () { setStatus('is-error', I.menuImportError); };
 			reader.onload = function () {
 				var data, items;
 				try {
@@ -148,11 +153,13 @@
 					data && typeof data === 'object' && data._adminkit === 'menu' && Array.isArray(data.items)
 						? data.items
 						: null;
-				if (!items) {
+				items = M.sanitizeImportedItems(items);
+				if (!items || JSON.stringify(gatherMenu()) !== draftAtStart) {
 					setStatus('is-error', I.menuImportError);
 					return;
 				}
-				state.menu = M.buildMenuModel(MM.menu, M.configFromItems(M.sanitizeImportedItems(items)), MM.seen || []);
+				preservedConfig = M.configFromItems(items);
+				state.menu = M.buildMenuModel(MM.menu, preservedConfig, MM.seen || []);
 				renderTree(tree);
 				markDirty('menu');
 			};
@@ -457,6 +464,7 @@
 			row.appendChild(h);
 			row.appendChild(moveControl(moveChildBy(ti, ci, tree), key));
 			row.appendChild(titleInput(child, 'menu', key + ':title'));
+			row.appendChild(urlBtn(child, tree, key + ':url'));
 			row.appendChild(parentSelect(ti, child, ci, tree, key));
 			row.appendChild(hideBtn(child, tree, key + ':hide'));
 			dragSource(h, row, { kind: 'sub', ti: ti, ci: ci });

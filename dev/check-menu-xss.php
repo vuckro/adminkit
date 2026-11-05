@@ -84,9 +84,9 @@ function rest_ensure_response( $v ) {
 	return $v;
 }
 
-function is_wp_error( $v ) {
-	return false;
-}
+class WP_Error { public function __construct( ...$args ) {} }
+function __( $s, $domain ) { return $s; }
+function is_wp_error( $v ) { return $v instanceof WP_Error; }
 
 require ADMINKIT_PATH . 'inc/class-storage.php';
 require ADMINKIT_PATH . 'inc/class-icons.php';
@@ -138,8 +138,8 @@ foreach ( $safe_urls as $good ) {
 	assert_check( $good === AdminKit_Menu_Manager::sanitize_menu_url( $good ), 'Rejected valid menu URL: ' . $good );
 }
 
-// 3. REST write strips malicious link rows and malicious URL overrides.
-AdminKit_Menu_Manager::rest_save(
+// 3. REST rejects the entire malicious payload without discarding other rows.
+$rejected = AdminKit_Menu_Manager::rest_save(
 	new Mock_Menu_Request(
 		array(
 			'items' => array(
@@ -163,9 +163,7 @@ AdminKit_Menu_Manager::rest_save(
 		)
 	)
 );
-assert_check( 2 === count( AdminKit_Menu_Store::$saved ), 'Malicious custom link was persisted' );
-assert_check( '' === AdminKit_Menu_Store::$saved[0]['url'], 'Malicious URL override was persisted' );
-assert_check( 'https://safe.example/help' === AdminKit_Menu_Store::$saved[1]['slug'], 'Safe custom link was dropped' );
+assert_check( is_wp_error( $rejected ) && null === AdminKit_Menu_Store::$saved, 'Invalid import caused a partial menu write' );
 
 // 4. Render-time defence in depth: compromised DB rows cannot inject quotes into $menu or footer JS.
 $menu    = array(

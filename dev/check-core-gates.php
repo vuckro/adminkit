@@ -67,3 +67,15 @@ $admin=false;$bar_showing=false;$current_hook='wp_head';
 ob_start();AdminKit_Theme_Toggle::print_script();AdminKit_Integration_Bricks::print_theme_bridge();$anon_out=ob_get_clean();
 if($anon_out!=='')throw new RuntimeException('Public anonymous frontend leaked script markup');
 echo "OK: WP-Core vetoed callbacks and anonymous frontend emit no markup/assets/writes; user tools register styles through Assets.\n";
+
+// WP 7 native Font Library has screen ID font-library, not the legacy plugin ID.
+AdminKit_Core_Chrome::register();
+$by_handle=array_column($registry->getValue(),null,'handle');
+foreach(array('font-library','appearance_page_font-library','site-editor')as$id){
+ $font_screen=(object)array('id'=>$id);
+ foreach(array('adminkit-wpds','adminkit-font-library')as$handle){
+  if(!call_user_func($by_handle[$handle]['condition'],$font_screen))throw new RuntimeException('Font screen missed skin: '.$id.' '.$handle);
+ }
+}
+if(call_user_func($by_handle['adminkit-font-library']['condition'],(object)array('id'=>'edit-product')))throw new RuntimeException('Font skin leaked to unrelated screen');
+echo "OK: native and legacy Font Library asset gates, unrelated screens excluded.\n";

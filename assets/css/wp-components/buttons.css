@@ -311,3 +311,31 @@ body.adminkit .wrap .page-title-action:hover:focus:not(:focus-visible) {
   border-color: GrayText !important;
  }
 }
+
+/* Taxonomy deletion retains its native confirmation and nonce, with the same
+   quiet danger treatment as the classic Publish box's delete action. */
+body.adminkit.term-php #delete-link a.delete {
+ display: inline-block;
+ box-sizing: border-box;
+ min-height: 30px;
+ padding: 0 calc(10px * var(--ak-space-scale, 1));
+ border: 1px solid transparent;
+ border-radius: var(--ak-radius-s);
+ background: var(--ak-error-subtle);
+ color: var(--ak-error);
+ font-size: var(--ak-text-s);
+ font-weight: 500;
+ line-height: 2.15;
+ text-decoration: none;
+}
+body.adminkit.term-php #delete-link a.delete:is(:hover, :focus-visible) {
+ background: color-mix(in srgb, var(--ak-error) 16%, var(--ak-surface));
+ color: var(--ak-error);
+}
+body.adminkit.term-php #delete-link a.delete:focus-visible {
+ outline: 2px solid var(--ak-focus);
+ outline-offset: 2px;
+}
+@media (forced-colors: active) {
+ body.adminkit.term-php #delete-link a.delete { border-color: ButtonText; }
+}

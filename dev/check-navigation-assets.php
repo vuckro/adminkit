@@ -51,3 +51,15 @@ check(isset($scripts['adminkit-settings-main-design'])&&isset($scripts['adminkit
 $scripts=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>'main','pages'=>$pages_map,'initialTab'=>'navigation'));
 check(isset($scripts['adminkit-settings-navigation-controls'])&&isset($scripts['adminkit-settings-main-navigation'])&&!isset($scripts['adminkit-settings-main-design']),'Navigation page did not load navigation factories cleanly');
 echo "OK: native 5-page mode slices per-tab script factories cleanly.\n";
+
+// Reparented plugin pages keep their exact screen identity and content pane.
+function get_plugin_page_hookname($slug,$parent){return str_replace('.php','',$parent).'_page_'.$slug;}
+$GLOBALS['_parent_pages']['adminkit']='plugins.php';
+$GLOBALS['_parent_pages']['adminkit-design']='tools.php';
+check(AdminKit_Settings_Page::is_settings_hook('plugins_page_adminkit'),'Moved Settings SPA loses assets');
+check(AdminKit_Settings_Page::is_settings_hook('tools_page_adminkit-design'),'Moved design screen loses assets');
+check(!AdminKit_Settings_Page::is_settings_hook('arbitrary_page_adminkit'),'Unregistered parent accepted');
+check(!AdminKit_Settings_Page::is_settings_hook('plugins_page_other-plugin'),'Other plugin screen accepted');
+$resolver=new ReflectionMethod('AdminKit_Settings_Page','settings_tab');$resolver->setAccessible(true);
+check($resolver->invoke(null,'tools_page_adminkit-design')==='brand','Moved design screen loses pane/gate');
+echo "OK: moved settings screens resolve exact registered parent and retain their pane.\n";

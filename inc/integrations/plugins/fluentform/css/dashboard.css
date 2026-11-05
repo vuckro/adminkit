@@ -1,0 +1,32 @@
+/* Native WordPress dashboard widget; keep the Fluent app skin off this page. */
+body.adminkit #fluentform_stat_widget .ff_dashboard_stats li {
+	margin: 0;
+	padding: 0;
+	border-block-end: 1px solid var(--ak-border);
+	background: transparent;
+}
+body.adminkit #fluentform_stat_widget .ff_dashboard_stats li:last-child {
+	border-block-end: 0;
+}
+body.adminkit #fluentform_stat_widget .ff_dashboard_stats li:is(:hover, :focus-within) {
+	background: var(--ak-hover-bg);
+}
+body.adminkit #fluentform_stat_widget .ff_dashboard_stats li a {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--ak-space-m);
+	min-block-size: 44px;
+	padding-inline: var(--ak-space-s);
+	color: var(--ak-text);
+	font-size: inherit;
+}
+body.adminkit #fluentform_stat_widget .ff_dashboard_stats li a:is(:hover, :focus-visible) {
+	color: var(--ak-heading);
+}
+body.adminkit #fluentform_stat_widget .ff_total {
+	float: none;
+	flex-shrink: 0;
+	color: var(--ak-text-muted);
+	font-variant-numeric: tabular-nums;
+}
