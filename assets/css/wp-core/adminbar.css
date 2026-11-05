@@ -658,3 +658,30 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
  #wpadminbar #wp-toolbar > ul > li > .ab-item > .ab-icon { width:16px; }
  #wpadminbar #wp-toolbar > ul > li > .ab-item > .ab-icon::before { font-size:calc(16px * var(--ak-type-scale,1)); }
 }
+
+/* Frontend touch bar: fixed native brand + tools, scrollable commands between.
+   Gradients stay on the bar, never mask the list and its native dropdowns. */
+@media screen and (max-width:782px) {
+ #wpadminbar.ak-front-mobile > #wp-toolbar { overflow:visible; align-items:center; width:100%; }
+ #wpadminbar.ak-front-mobile #wp-toolbar > .ak-front-bar-brand { flex:0 0 auto; margin:0; }
+ #wpadminbar.ak-front-mobile #wp-toolbar > #wp-admin-bar-root-default {
+  flex:1 1 0; min-width:0; overflow-x:auto; overflow-y:hidden;
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+ }
+ #wpadminbar.ak-front-mobile #wp-admin-bar-root-default::-webkit-scrollbar { display:none; }
+ #wpadminbar.ak-front-mobile #wp-toolbar > #wp-admin-bar-top-secondary { flex:0 0 auto; margin:0; }
+ #wpadminbar.ak-front-mobile #wp-toolbar > #wp-admin-bar-root-default > li:not(#wp-admin-bar-wp-logo) { display:block; position:static; }
+ #wpadminbar.ak-front-mobile #wp-toolbar > #wp-admin-bar-root-default > li > .ab-item {
+  width:auto; min-width:44px; padding-inline:10px; font-size:calc(13px * var(--ak-type-scale,1)); white-space:nowrap;
+  text-indent:0; overflow:visible; display:flex; align-items:center; justify-content:center; gap:6px;
+ }
+ #wpadminbar.ak-front-mobile::before { inset-inline-start:var(--ak-front-bar-start,0px); width:16px; }
+ #wpadminbar.ak-front-mobile::after { inset-inline-end:var(--ak-front-bar-end,0px); width:16px; }
+ #wpadminbar.ak-front-mobile .ak-front-bar-brand > li > .ab-item { width:44px; min-width:44px; padding:0; display:flex; align-items:center; justify-content:center; }
+ #wpadminbar.ak-front-mobile .ak-front-bar-brand #wp-admin-bar-site-name > .ab-item { width:auto; padding-inline:8px; font-size:0; text-indent:0; overflow:visible; }
+ #wpadminbar.ak-front-mobile .ak-front-bar-brand #wp-admin-bar-site-name > .ab-item::before { position:static; width:28px; margin:0; padding:0; font-size:calc(28px * var(--ak-type-scale,1)); line-height:46px; }
+ #wpadminbar.ak-front-mobile #wp-admin-bar-root-default > li > .ab-item > .ab-label { position:static; width:auto; height:auto; margin:0; clip:auto; clip-path:none; overflow:visible; }
+ #wpadminbar.ak-front-mobile #wp-admin-bar-root-default > li > .ab-item > .ab-icon { width:22px; flex:0 0 22px; }
+ #wpadminbar.ak-front-mobile #wp-admin-bar-root-default > li > .ab-item > .ab-icon::before { font-size:calc(22px * var(--ak-type-scale,1)); line-height:22px; }
+ #wpadminbar.ak-front-mobile #wp-admin-bar-root-default > li > .ab-item::before { position:static; top:auto; width:22px; margin:0; padding:0; flex:0 0 22px; font-size:calc(22px * var(--ak-type-scale,1)); line-height:22px; }
+}

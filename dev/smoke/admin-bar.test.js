@@ -59,6 +59,32 @@ disabled.window.eval(fs.readFileSync(path.resolve(__dirname,'../../assets/js/wp-
 assert.equal(disabled.window.document.body.classList.contains('ak-frame-enhanced'),false,'stylesheet veto preserves native menu behavior');
 assert.equal(disabled.window.document.querySelector('.ak-admin-menu-scrim'),null);
 disabled.window.close();
-dom.window.close();console.log('OK: mobile disclosure, native handlers/submenus and exact desktop restoration.');
+
+const front=new JSDOM('<div id="wpadminbar"><div id="wp-toolbar"><ul id="wp-admin-bar-root-default" class="ab-top-menu"><li id="wp-admin-bar-wp-logo"><a href="/about">Logo</a></li><li id="wp-admin-bar-edit"><a href="/edit">Edit</a><div class="ab-sub-wrapper">Native submenu</div></li></ul><ul id="wp-admin-bar-top-secondary"><li id="wp-admin-bar-my-account">Account</li></ul></div></div>',{url:'http://localhost',runScripts:'outside-only',pretendToBeVisual:true});
+const fw=front.window,fd=fw.document;let frontResize;const fmq={matches:true,addEventListener(type,fn){frontResize=fn;}};
+fw.matchMedia=()=>fmq;fw.AdminKitMobileBar={admin:false,more:'More'};
+const root=fd.querySelector('#wp-admin-bar-root-default'),frontOriginal=[...root.children],edit=fd.querySelector('#wp-admin-bar-edit');let frontClicks=0;
+edit.querySelector('a').addEventListener('click',e=>{e.preventDefault();frontClicks++;});
+Object.defineProperty(root,'scrollWidth',{get(){return 500;}});Object.defineProperty(root,'clientWidth',{get(){return 120;}});
+fw.eval(fs.readFileSync(path.resolve(__dirname,'../../assets/js/wp-core/admin-bar.js'),'utf8'));
+assert.equal(fd.querySelector('.ak-front-bar-brand').firstElementChild,frontOriginal[0],'pin the original logo, no clone');
+assert.equal(edit.parentElement,root,'commands keep their native list and dropdown');
+assert(fd.querySelector('#wpadminbar').classList.contains('ak-bar-at-start'));
+root.scrollLeft=150;root.dispatchEvent(new fw.Event('scroll'));assert(!fd.querySelector('#wpadminbar').classList.contains('ak-bar-at-start'));
+root.scrollLeft=380;root.dispatchEvent(new fw.Event('scroll'));assert(fd.querySelector('#wpadminbar').classList.contains('ak-bar-at-end'));
+root.scrollLeft=-380;root.dispatchEvent(new fw.Event('scroll'));assert(fd.querySelector('#wpadminbar').classList.contains('ak-bar-at-end'),'RTL negative scroll edges');
+edit.querySelector('a').click();assert.equal(frontClicks,1,'frontend native handler preserved');
+fmq.matches=false;frontResize();assert.deepEqual([...root.children],frontOriginal,'frontend restores exact desktop node order');assert.equal(fd.querySelector('.ak-front-bar-brand'),null);
+fmq.matches=true;frontResize();assert.equal(fd.querySelectorAll('.ak-front-bar-brand').length,1,'frontend repeated resize is idempotent');
+await new Promise(resolve=>setTimeout(resolve,0));assert.equal(fd.querySelectorAll('.ak-front-bar-brand').length,1,'mutation observer does not duplicate the brand');
+
+const branded=new JSDOM('<div id="wpadminbar"><div id="wp-toolbar"><ul id="wp-admin-bar-root-default"><li id="wp-admin-bar-wp-logo" style="display:none">WP</li><li id="wp-admin-bar-site-name"><a>Brand</a></li><li id="wp-admin-bar-edit">Edit</li></ul></div></div>',{url:'http://localhost',runScripts:'outside-only'});
+branded.window.matchMedia=()=>({matches:true,addEventListener(){}});branded.window.AdminKitMobileBar={admin:false,more:'More'};
+branded.window.eval(fs.readFileSync(path.resolve(__dirname,'../../assets/js/wp-core/admin-bar.js'),'utf8'));
+assert.equal(branded.window.document.querySelector('.ak-front-bar-brand').firstElementChild.id,'wp-admin-bar-site-name','automatic branding pins the site identity instead of the hidden duplicate WP mark');
+assert.equal(branded.window.document.querySelector('#wp-admin-bar-wp-logo').style.display,'none','branding visibility policy preserved');
+branded.window.close();
+front.window.close();
+dom.window.close();console.log('OK: mobile disclosure, pinned frontend scroll rail, native handlers/submenus and exact desktop restoration.');
 
 })().catch(error=>{console.error(error);process.exitCode=1;});
