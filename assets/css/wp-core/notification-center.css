@@ -306,6 +306,6 @@ html.ak-nc-editor-active :is(.editor-notices__dismissible, .components-editor-no
  flex-direction: column;
  gap: calc(10px * var(--ak-space-scale, 1));
 }
-.ak-nc-editor-notices {
+.ak-nc-list:not([hidden]) + .ak-nc-editor-notices {
  margin-block-start: calc(10px * var(--ak-space-scale, 1));
 }
