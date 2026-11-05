@@ -492,11 +492,40 @@ body.adminkit #adminmenu li:hover a .awaiting-mod {
 	color: var(--ak-on-accent);
 }
 
-/* Collapse menu */
-body.adminkit #collapse-menu {
-	color: var(--ak-text-muted);
-	border-top: 1px solid var(--ak-border);
+/* Shared inset dividers: a configured separator and the collapse boundary
+   have the same geometry. They remain in native document order. */
+body.adminkit #adminmenu > li.wp-menu-separator {
+	position: relative;
+	height: 1px;
+	margin-block: 10px;
+	padding: 0;
+	pointer-events: none;
 }
+body.adminkit #adminmenu > li.wp-menu-separator > .separator { display: none; }
+body.adminkit #adminmenu > li.wp-menu-separator::before,
+body.adminkit #collapse-menu::before {
+	content: "";
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 12px;
+	border-block-start: 1px solid var(--ak-border);
+	pointer-events: none;
+}
+body.adminkit #collapse-menu {
+	position: relative;
+	color: var(--ak-text-muted);
+	border: 0;
+	margin-block-start: 10px;
+	padding-block-start: 10px;
+}
+body.adminkit #adminmenu > li.wp-menu-separator:not(.ak-mh) + #collapse-menu {
+	margin-block-start: 0;
+	padding-block-start: 0;
+}
+body.adminkit #adminmenu > li.wp-menu-separator:not(.ak-mh) + #collapse-menu::before { display: none; }
+body.adminkit.folded #adminmenu > li.wp-menu-separator::before,
+body.adminkit.folded #collapse-menu::before { inset-inline: 8px; }
+
 
 body.adminkit #collapse-menu:hover {
 	color: var(--ak-heading);

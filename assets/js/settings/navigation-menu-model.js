@@ -126,6 +126,7 @@
 		var pending = [];
 		var prevSlug = null;
 		(snapshot || []).forEach(function (m) {
+			if (hasConfig && m.type === 'separator' && !seen[m.slug]) { return; }
 			if (claimed[m.slug] && claimed[m.slug] !== m.slug) { return; }
 			if (seen[m.slug]) {
 				prevSlug = m.slug;
@@ -222,7 +223,7 @@
 
 	function configFromItems(items) {
 		var top = [],
-			sub = {};
+			sub = Object.create(null);
 		(items || []).forEach(function (it) {
 			if (it && it.parent) {
 				(sub[it.parent] = sub[it.parent] || []).push({
@@ -249,38 +250,48 @@
 	}
 
 	function isSafeMenuUrl(raw) {
-		if (typeof raw !== 'string') {
-			return false;
-		}
+		if (typeof raw !== 'string') { return false; }
 		var s = raw.trim();
-		if (!s || s.length > 2048 || /['"<>`\\\x00-\x20\x7f]/.test(s) || s.indexOf('//') === 0) {
-			return false;
-		}
-		var colon = s.indexOf(':');
-		var boundary = s.search(/[/?#]/);
+		if (!s || s.length > 2048 || /['"<>`\\\x00-\x20\x7f]/.test(s) || s.indexOf('//') === 0) { return false; }
+		var colon = s.indexOf(':'), boundary = s.search(/[/?#]/);
 		if (colon !== -1 && (boundary === -1 || colon < boundary)) {
-			return /^(?:https?|mailto|tel):/i.test(s);
+			if (!/^(?:https?|mailto|tel):/i.test(s)) { return false; }
+			if (/^https?:/i.test(s)) {
+				try { return /^https?:\/\//i.test(s) && !!new URL(s).hostname; } catch (error) { return false; }
+			}
+			return true;
 		}
-		return true;
+		return /^(?:\/[a-zA-Z0-9_.\-\/~%]*|[a-zA-Z0-9_.-]+)(?:[?#].*)?$/.test(s);
 	}
 
+	function byteLength(text) {
+		try { return encodeURIComponent(text).replace(/%[A-F\d]{2}/g, 'x').length; } catch (error) { return Infinity; }
+	}
+
+	// Imports are an atomic replacement draft: a bad row must never be silently lost.
 	function sanitizeImportedItems(items) {
-		return (items || [])
-			.filter(function (it) {
-				if (!it || typeof it !== 'object' || typeof it.slug !== 'string') {
-					return false;
-				}
-				if (it.type === 'link' && !isSafeMenuUrl(it.slug)) {
-					return false;
-				}
-				return true;
-			})
-			.map(function (it) {
-				if (it.url && !isSafeMenuUrl(it.url)) {
-					return Object.assign({}, it, { url: '' });
-				}
-				return it;
-			});
+		if (!Array.isArray(items) || items.length > 1000) { return null; }
+		var valid = items.every(function (it) {
+			if (!it || typeof it !== 'object' || Array.isArray(it) || typeof it.slug !== 'string' || !it.slug.trim()) { return false; }
+			var type = it.type === undefined ? 'item' : it.type;
+			if (['item', 'link', 'separator'].indexOf(type) === -1 || (it.parent && type !== 'item')) { return false; }
+			if (!['parent','title','icon','url'].every(function (key) { return it[key] === undefined || typeof it[key] === 'string'; })) { return false; }
+			if (!['hidden','newTab'].every(function (key) { return it[key] === undefined || typeof it[key] === 'boolean'; })) { return false; }
+			if (it.position !== undefined && (typeof it.position !== 'number' || !Number.isInteger(it.position) || it.position < 0 || it.position > 1000000)) { return false; }
+			if (byteLength(it.parent || '') > 190 || byteLength(it.slug) > (type === 'link' ? 2048 : 190) || Array.from(it.title || '').length > 190 || (it.icon || '').length > 65536) { return false; }
+			return (type !== 'link' || isSafeMenuUrl(it.slug)) && (!it.url || isSafeMenuUrl(it.url));
+		});
+		return valid ? items.slice() : null;
+	}
+
+	function preserveUnavailable(items, snapshot, config) {
+		var available = Object.create(null), included = Object.create(null);
+		(snapshot || []).forEach(function (node) { available[node.slug] = true; (node.children || []).forEach(function (child) { available[child.slug] = true; }); });
+		items.forEach(function (row) { included[row.slug] = true; });
+		var saved = [];
+		(config && config.top || []).forEach(function (row) { if ((!row.type || row.type === 'item') && !available[row.slug] && !included[row.slug]) { saved.push(Object.assign({}, row, {parent:'',newTab:!!row.new_tab})); } });
+		Object.keys(config && config.sub || {}).forEach(function (parent) { config.sub[parent].forEach(function (row) { if (!available[row.slug] && !included[row.slug]) { saved.push(Object.assign({}, row, {parent:parent})); } }); });
+		return items.concat(saved);
 	}
 
 	function demoteTop(menu, fromTi, toTi) {
@@ -298,6 +309,7 @@
 	}
 
 	function promoteChild(menu, ti, ci) {
+		if (!menu[ti] || !Array.isArray(menu[ti].children) || !menu[ti].children[ci]) { return; }
 		var child = menu[ti].children[ci];
 		if (!child.sourceTop) { return; }
 		menu[ti].children.splice(ci, 1);
@@ -305,11 +317,14 @@
 	}
 
 	function moveTop(menu, from, to) {
+		if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || from >= menu.length || to < 0 || to >= menu.length) { return; }
 		var m = menu.splice(from, 1)[0];
 		menu.splice(to, 0, m);
 	}
 
 	function moveChild(menu, fromTi, fromCi, toTi, toCi) {
+		if (!Number.isInteger(toCi) || toCi < 0 || !menu[toTi] || toCi > (menu[toTi].children || []).length) { return; }
+		if (!menu[fromTi] || !Array.isArray(menu[fromTi].children) || !menu[fromTi].children[fromCi] || !menu[toTi] || menu[toTi].type && menu[toTi].type !== 'item') { return; }
 		var c = menu[fromTi].children.splice(fromCi, 1)[0];
 		if (fromTi === toTi && fromCi < toCi) {
 			toCi--;
@@ -323,6 +338,7 @@
 	}
 
 	function moveChildToTop(menu, fromTi, fromCi, toTi) {
+		if (!menu[fromTi] || !Array.isArray(menu[fromTi].children) || !menu[fromTi].children[fromCi] || !menu[toTi] || menu[toTi].type && menu[toTi].type !== 'item') { return; }
 		var c = menu[fromTi].children.splice(fromCi, 1)[0];
 		if (!menu[toTi].children) {
 			menu[toTi].children = [];
@@ -338,6 +354,7 @@
 		configFromItems: configFromItems,
 		isSafeMenuUrl: isSafeMenuUrl,
 		sanitizeImportedItems: sanitizeImportedItems,
+		preserveUnavailable: preserveUnavailable,
 		moveTop: moveTop,
 		demoteTop: demoteTop,
 		promoteChild: promoteChild,

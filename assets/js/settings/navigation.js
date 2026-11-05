@@ -117,6 +117,7 @@
 		}
 
 		return {
+			onSaved: function (scope, data, response) { if (scope === 'toolbar') { toolbar.acknowledge(data, response); } },
 			buildMenu: menu.build,
 			buildToolbar: toolbar.build,
 			buildNavigation: buildNavigation,

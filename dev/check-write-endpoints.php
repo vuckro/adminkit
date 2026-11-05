@@ -66,3 +66,19 @@ $before=$wpdb->reads;
 $editor=AdminKit_Menu_Manager::editor_data();
 check($before === $wpdb->reads && $editor['config'] === array('top'=>array(),'sub'=>array()), 'Disabled menu queried unprovisioned storage');
 echo "OK: route permissions, input rejection, partial updates, write failures and typed legacy reads.\n";
+
+// Valid but malformed row fields must not trigger a destructive replacement.
+foreach(array(
+ array('slug'=>'index.php','parent'=>array('bad')),
+ array('slug'=>'index.php','hidden'=>'false'),
+ array('slug'=>'index.php','position'=>-1),
+ array('slug'=>'index.php','title'=>str_repeat('x',191)),
+ array('slug'=>'index.php','url'=>'javascript:alert(1)'),
+ array('slug'=>'index.php','icon'=>'not-a-real-icon'),
+ array('slug'=>'index.php','type'=>'separator','parent'=>'plugins.php')
+)as$row){$before=$wpdb->deletes;check(is_wp_error(AdminKit_Menu_Manager::rest_save(new Write_Request(array('items'=>array($row))))),'Invalid menu row accepted');check($before===$wpdb->deletes,'Invalid row reached SQL replacement');}
+$options[AdminKit_Toolbar_Manager::OPTION]=array('admin'=>array('order'=>array('site-name'),'icons'=>array('site-name'=>'home')),'frontend'=>array('order'=>array('edit')));
+$result=AdminKit_Toolbar_Manager::rest_save(new Write_Request(array('admin'=>array('titles'=>array('site-name'=>'New label')))));
+check(!is_wp_error($result)&&$result['configByContext']['admin']['order']===array('site-name')&&$result['configByContext']['admin']['icons']['site-name']==='home','Partial toolbar fields reset sibling fields');
+foreach(array(array('admin'=>array('hidden'=>array('my.account'))),array('admin'=>array('order'=>array('x'=>'site-name'))),array('admin'=>array('unexpected'=>true)))as$input){$before=$options;check(is_wp_error(AdminKit_Toolbar_Manager::rest_save(new Write_Request($input))),'Unsupported toolbar input accepted');check($before===$options,'Invalid toolbar input wrote options');}
+echo "OK: atomic row rejection, strict identifiers and partial context field preservation.\n";

@@ -122,7 +122,11 @@ class AdminKit_Menu_Renderer {
 			}
 			$top_slug = (string) $top_item[2];
 			$top_cap  = isset( $top_item[1] ) ? (string) $top_item[1] : '';
-			if ( ( '' !== $top_cap && current_user_can( $top_cap ) ) || ! empty( $submenu[ $top_slug ] ) ) {
+			$child_access = false;
+			foreach ( $submenu[ $top_slug ] ?? array() as $child ) {
+				if ( isset( $child[1] ) && current_user_can( $child[1] ) ) { $child_access = true; break; }
+			}
+			if ( ( '' !== $top_cap && current_user_can( $top_cap ) ) || $child_access ) {
 				$accessible_parents[ $top_slug ] = true;
 			}
 		}

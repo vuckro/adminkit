@@ -30,6 +30,17 @@ class AdminKit_Toolbar_Config {
 		return array_fill_keys( array_map( static function ( $id ) { return preg_replace( '/^wp-admin-bar-/', '', (string) $id ); }, $ids ), true );
 	}
 
+	/** One editable tier: native root actions, never groups or dropdown children.
+	 *
+	 * @param mixed $node Native toolbar node.
+	 * @return bool
+	 */
+	public static function is_root_node( $node ) {
+		return is_object( $node ) && isset( $node->id ) && '' !== self::sanitize_node_id( $node->id ) && self::sanitize_node_id( $node->id ) === $node->id
+			&& ! in_array( $node->id, array( 'root', 'root-default', 'top-secondary' ), true ) && empty( $node->group )
+			&& ( empty( $node->parent ) || in_array( $node->parent, array( 'root', 'root-default', 'top-secondary' ), true ) );
+	}
+
 	/**
 	 * Sanitise a single context slice (`admin` or `frontend`) from raw option or REST data.
 	 *
@@ -128,7 +139,7 @@ class AdminKit_Toolbar_Config {
 	 */
 	private static function sanitize_node_id( $id ) {
 		$id = is_string( $id ) ? trim( $id ) : '';
-		return preg_replace( '/[^a-zA-Z0-9_\-]/', '', $id );
+		return preg_match( '/\A[a-zA-Z0-9_-]{1,190}\z/', $id ) ? $id : '';
 	}
 
 	/**
@@ -157,6 +168,10 @@ class AdminKit_Toolbar_Config {
 		$current     = self::get_config();
 		$admin_in    = $params['admin'] ?? null;
 		$frontend_in = $params['frontend'] ?? null;
+		if ( ( array_key_exists( 'admin', $params ) || array_key_exists( 'frontend', $params ) ) && array_intersect_key( $params, array_flip( array( 'order', 'hidden', 'titles', 'icons' ) ) ) ) {
+			return AdminKit_Storage::error( 'adminkit_invalid_toolbar', 400 );
+		}
+
 
 		foreach ( array( 'admin', 'frontend', 'order', 'hidden', 'titles', 'icons' ) as $key ) {
 			if ( array_key_exists( $key, $params ) && ! is_array( $params[ $key ] ) ) {
@@ -167,6 +182,9 @@ class AdminKit_Toolbar_Config {
 			return AdminKit_Storage::error( 'adminkit_invalid_toolbar', 400 );
 		}
 
+		foreach ( array( $admin_in, $frontend_in ) as $slice ) {
+			if ( is_array( $slice ) && $slice && ! array_intersect_key( $slice, array_flip( array( 'order', 'hidden', 'titles', 'icons' ) ) ) ) { return AdminKit_Storage::error( 'adminkit_invalid_toolbar', 400 ); }
+		}
 		foreach ( array( $admin_in, $frontend_in, $params ) as $slice ) {
 			if ( ! is_array( $slice ) ) { continue; }
 			foreach ( array( 'order', 'hidden', 'titles', 'icons' ) as $field ) {
@@ -174,8 +192,9 @@ class AdminKit_Toolbar_Config {
 				if ( ! is_array( $slice[ $field ] ) ) {
 					return AdminKit_Storage::error( 'adminkit_invalid_toolbar', 400 );
 				}
-				foreach ( $slice[ $field ] as $value ) {
-					if ( ! is_string( $value ) ) {
+				if ( count( $slice[ $field ] ) > 1000 || ( in_array( $field, array( 'order', 'hidden' ), true ) && ! array_is_list( $slice[ $field ] ) ) ) { return AdminKit_Storage::error( 'adminkit_invalid_toolbar', 400 ); }
+				foreach ( $slice[ $field ] as $id => $value ) {
+					if ( ! is_string( $value ) || ( in_array( $field, array( 'order', 'hidden' ), true ) ? '' === self::sanitize_node_id( $value ) : '' === self::sanitize_node_id( (string) $id ) ) || ( 'icons' === $field && '' !== $value && '' === self::sanitize_icon( $value ) ) || ( 'titles' === $field && ( strlen( $value ) > 760 || false === preg_match_all( '/./us', $value, $characters ) || count( $characters[0] ) > 190 ) ) ) {
 						return AdminKit_Storage::error( 'adminkit_invalid_toolbar', 400 );
 					}
 				}
@@ -184,16 +203,11 @@ class AdminKit_Toolbar_Config {
 
 		if ( is_array( $admin_in ) || is_array( $frontend_in ) ) {
 			$saved = array(
-				'admin'    => is_array( $admin_in ) ? self::sanitize_context_slice( $admin_in, $protected ) : $current['admin'],
-				'frontend' => is_array( $frontend_in ) ? self::sanitize_context_slice( $frontend_in, $protected ) : $current['frontend'],
+				'admin'    => is_array( $admin_in ) ? self::sanitize_context_slice( $admin_in ? array_replace( $current['admin'], $admin_in ) : array(), $protected ) : $current['admin'],
+				'frontend' => is_array( $frontend_in ) ? self::sanitize_context_slice( $frontend_in ? array_replace( $current['frontend'], $frontend_in ) : array(), $protected ) : $current['frontend'],
 			);
 		} else {
-			$legacy = array(
-				'order'  => $params['order'] ?? null,
-				'hidden' => $params['hidden'] ?? null,
-				'titles' => $params['titles'] ?? null,
-				'icons'  => $params['icons'] ?? null,
-			);
+			$legacy = array_replace( $current['admin'], array_intersect_key( $params, array_flip( array( 'order', 'hidden', 'titles', 'icons' ) ) ) );
 			$saved  = array(
 				'admin'    => self::sanitize_context_slice( $legacy, $protected ),
 				'frontend' => $current['frontend'],

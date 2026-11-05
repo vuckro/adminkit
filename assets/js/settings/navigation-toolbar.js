@@ -21,13 +21,46 @@
 		var dropZone = controls.dropZone;
 		var titleInput = controls.titleInput;
 
+		var activeCtx = 'admin', loaded = false;
+		var nodesByCtx = { admin: [], frontend: [] }, original = {}, baseline = {};
+		var resets = { admin:0, frontend:0 }, submittedResets = {};
+
+		function signature(slice) {
+			function sorted(map) { return Object.keys(map || {}).sort().map(function (key) { return [key,map[key]]; }); }
+			return JSON.stringify([slice.order, slice.hidden.slice().sort(), sorted(slice.titles), sorted(slice.icons)]);
+		}
+
+		function knownNodes(ctx) {
+			var known = Object.create(null);
+			nodesByCtx[ctx].forEach(function (node) { known[node.id] = true; });
+			return known;
+		}
+
+		function project(slice, known) {
+			var out = {order:[],hidden:[],titles:Object.create(null),icons:Object.create(null)};
+			['order','hidden'].forEach(function (field) { out[field] = (slice[field] || []).filter(function (id) { return known[id]; }); });
+			['titles','icons'].forEach(function (field) { Object.keys(slice[field] || {}).forEach(function (id) { if (known[id]) { out[field][id] = slice[field][id]; } }); });
+			return out;
+		}
+
+		function preserveUnseen(slice, saved, known) {
+			var order = saved.order || [];
+			order.forEach(function (id, index) {
+				if (known[id] || slice.order.indexOf(id) !== -1) { return; }
+				var anchor = order.slice(index + 1).find(function (next) { return known[next] && slice.order.indexOf(next) !== -1; });
+				var at = anchor ? slice.order.indexOf(anchor) : slice.order.length;
+				slice.order.splice(at,0,id);
+			});
+			(saved.hidden || []).forEach(function (id) { if (!known[id] && slice.hidden.indexOf(id) === -1) { slice.hidden.push(id); } });
+			['titles','icons'].forEach(function (field) { Object.keys(saved[field] || {}).forEach(function (id) { if (!known[id]) { slice[field][id] = saved[field][id]; } }); });
+			return slice;
+		}
+
 		state.toolbar = { admin: { left: [], right: [] }, frontend: { left: [], right: [] } };
 
 		function buildToolbar() {
 			var TB = D.toolbar || {};
-			var activeCtx = 'admin';
 			var hasLoaded = false;
-			var nodesByCtx = { admin: [], frontend: [] };
 			var contextTitle = el('h3', { text: I.toolbarAdminTitle });
 			var scopeHint = el('p', { id: 'ak-toolbar-scope', class: 'ak-toolbar-scope', 'aria-live': 'polite', text: I.toolbarAdminScope });
 			var p = el('section', { class: 'ak-panel ak-panel--menu', role: D.pages ? null : 'tabpanel' }, [
@@ -132,6 +165,11 @@
 							admin: toSides(nodesByCtx.admin, cbc.admin || (res && res.config) || {}),
 							frontend: toSides(nodesByCtx.frontend, cbc.frontend || {})
 						};
+						['admin','frontend'].forEach(function (ctx) {
+							original[ctx] = cbc[ctx] || (ctx === 'admin' && res && res.config) || {};
+							baseline[ctx] = signature(gatherToolbarSlice(state.toolbar[ctx]));
+						});
+						loaded = true;
 						hasLoaded = true;
 						resetBtn.disabled = false;
 						render();
@@ -162,13 +200,13 @@
 			// order WITHIN each side, append any new/unseen node in native order, carry hidden,
 			// title overrides, and icon overrides.
 			function toSides(nodes, config) {
-				var hidden = {};
+				var hidden = Object.create(null);
 				((config && config.hidden) || []).forEach(function (id) {
 					hidden[id] = true;
 				});
-				var titles = (config && config.titles) || {};
-				var icons = (config && config.icons) || {};
-				var byId = {};
+				var titles = Object.assign(Object.create(null), (config && config.titles) || {});
+				var icons = Object.assign(Object.create(null), (config && config.icons) || {});
+				var byId = Object.create(null);
 				(nodes || []).forEach(function (n) {
 					var otitle = n.label || n.id;
 					byId[n.id] = {
@@ -184,7 +222,7 @@
 					};
 				});
 				var sides = { left: [], right: [] },
-					seen = {};
+					seen = Object.create(null);
 				function place(it) {
 					sides[it.group === 'secondary' ? 'right' : 'left'].push(it);
 				}
@@ -207,6 +245,7 @@
 				if (!hasLoaded) {
 					return;
 				}
+				resets[activeCtx] += 1;
 				state.toolbar[activeCtx] = toSides(nodesByCtx[activeCtx] || [], {}); // native order, nothing hidden
 				render();
 				markDirty('toolbar');
@@ -368,8 +407,8 @@
 		function gatherToolbarSlice(sides) {
 			var t = sides || { left: [], right: [] };
 			var all = (t.left || []).concat(t.right || []);
-			var titles = {},
-				icons = {};
+			var titles = Object.create(null),
+				icons = Object.create(null);
 			all.forEach(function (m) {
 				var ttl = titleOverride(m);
 				if (ttl) {
@@ -396,16 +435,32 @@
 		}
 
 		function gatherToolbar() {
-			var tb = state.toolbar || {};
-			return {
-				admin: gatherToolbarSlice(tb.admin),
-				frontend: gatherToolbarSlice(tb.frontend)
-			};
+			var data = {};
+			submittedResets = Object.assign({}, resets);
+			['admin','frontend'].forEach(function (ctx) {
+				var slice = gatherToolbarSlice(state.toolbar[ctx]);
+				if (resets[ctx] || signature(slice) !== baseline[ctx]) {
+					data[ctx] = preserveUnseen(slice, resets[ctx] ? {} : original[ctx] || {}, knownNodes(ctx));
+				}
+			});
+			// A manually reverted draft is a valid no-op, scoped to the active context.
+			if (!Object.keys(data).length) { data[activeCtx] = preserveUnseen(gatherToolbarSlice(state.toolbar[activeCtx]), original[activeCtx] || {}, knownNodes(activeCtx)); }
+			return data;
+		}
+
+		function acknowledge(data, response) {
+			['admin','frontend'].forEach(function (ctx) {
+				if (!data[ctx]) { return; }
+				original[ctx] = response && response.configByContext && response.configByContext[ctx] || data[ctx];
+				baseline[ctx] = signature(project(data[ctx],knownNodes(ctx)));
+				if (resets[ctx] === submittedResets[ctx]) { resets[ctx] = 0; }
+			});
 		}
 
 		return {
 			build: buildToolbar,
-			request: function () { return { path: tbPath(), data: gatherToolbar() }; }
+			acknowledge: acknowledge,
+			request: function () { return loaded ? { path: tbPath(), data: gatherToolbar() } : null; }
 		};
 	};
 })();

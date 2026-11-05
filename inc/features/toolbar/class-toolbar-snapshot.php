@@ -55,7 +55,7 @@ class AdminKit_Toolbar_Snapshot {
 	 * @return void
 	 */
 	public static function capture( $bar ) {
-		if ( is_object( $bar ) ) {
+		if ( is_object( $bar ) && current_user_can( AdminKit_Toolbar_Config::capability() ) ) {
 			set_transient( self::SNAPSHOT_KEY, self::extract_nodes( $bar, 'admin' ), HOUR_IN_SECONDS );
 		}
 	}
@@ -70,14 +70,23 @@ class AdminKit_Toolbar_Snapshot {
 	private static function snapshot_nodes() {
 		require_once ABSPATH . WPINC . '/class-wp-admin-bar.php';
 
-		remove_action( 'admin_bar_menu', array( 'AdminKit_Toolbar_Manager', 'capture_frontend' ), 99998 );
-		remove_action( 'admin_bar_menu', array( 'AdminKit_Toolbar_Manager', 'apply' ), 99999 );
-		$bar = new WP_Admin_Bar();
-		$bar->initialize();
-		$bar->add_menus();
-		do_action( 'admin_bar_menu', $bar );
-		add_action( 'admin_bar_menu', array( 'AdminKit_Toolbar_Manager', 'capture_frontend' ), 99998 );
-		add_action( 'admin_bar_menu', array( 'AdminKit_Toolbar_Manager', 'apply' ), 99999 );
+		$detached = array();
+		foreach ( array( 'capture_frontend', 'capture', 'apply' ) as $method ) {
+			$callback = array( 'AdminKit_Toolbar_Manager', $method );
+			$priority = has_action( 'admin_bar_menu', $callback );
+			if ( false !== $priority ) {
+				$detached[] = array( $callback, $priority );
+				remove_action( 'admin_bar_menu', $callback, $priority );
+			}
+		}
+		try {
+			$bar = new WP_Admin_Bar();
+			$bar->initialize();
+			$bar->add_menus();
+			do_action( 'admin_bar_menu', $bar );
+		} finally {
+			foreach ( $detached as $hook ) { add_action( 'admin_bar_menu', $hook[0], $hook[1] ); }
+		}
 
 		return self::extract_nodes( $bar, 'admin' );
 	}
@@ -248,7 +257,7 @@ class AdminKit_Toolbar_Snapshot {
 		$out      = array();
 		foreach ( $nodes as $id => $node ) {
 			$id = (string) $id;
-			if ( 'root' === $id || ! empty( $node->group ) ) {
+			if ( ! AdminKit_Toolbar_Config::is_root_node( $node ) ) {
 				continue; // the root container + group wrappers aren't items
 			}
 			// When AdminKit's automatic toolbar identity is active, `#wp-admin-bar-wp-logo`
@@ -257,7 +266,7 @@ class AdminKit_Toolbar_Snapshot {
 				continue;
 			}
 			$parent = isset( $node->parent ) ? $node->parent : false;
-			if ( false === $parent || '' === $parent || 'root' === $parent ) {
+			if ( false === $parent || '' === $parent || 'root' === $parent || 'root-default' === $parent ) {
 				$side = 'root';
 			} elseif ( 'top-secondary' === $parent ) {
 				$side = 'secondary';

@@ -137,6 +137,68 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 15));
       w.close();
     }
   }
+  // Save only changed toolbar contexts; retain unavailable actions and acknowledge posted snapshots.
+  for (const screen of ['main','toolbar']) {
+    const dom = new JSDOM('<div id="adminkit-app"></div>', {url:'http://localhost/#toolbar',runScripts:'outside-only'});
+    const w = dom.window, posts = [];
+    const nativeTimer=w.setTimeout.bind(w);w.setTimeout=(fn,delay)=>delay===600?0:nativeTimer(fn,delay);
+    const data=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/boot-main.json'),'utf8'));data.screen=screen;data.toolbar.enabled=true;w.AdminKitData=data;
+    const configs={admin:{order:['offline','site-name'],hidden:['offline'],titles:{offline:'Keep offline'},icons:{offline:'home'}},frontend:{order:['site-name'],hidden:[],titles:{},icons:{}}};
+    w.AdminKitParts={design:c=>()=>c.el('section'),features:c=>()=>c.el('section')};
+    w.wp={apiFetch:request=>!request.method?Promise.resolve({nodesByContext:{admin:[{id:'site-name',label:'Site',group:'root'}],frontend:[{id:'site-name',label:'Front',group:'root'}]},configByContext:configs}):new Promise(resolve=>posts.push({request,resolve}))};
+    for(const file of ['navigation-controls','navigation-menu-model','navigation-menu','navigation-toolbar','navigation','main'])w.eval(fs.readFileSync(path.join(root,'assets/js/settings/'+file+'.js'),'utf8'));
+    w.eval(fs.readFileSync(path.join(root,'assets/js/settings.js'),'utf8'));await tick();
+    const pane=screen==='main'?w.document.getElementById('ak-navigation-toolbar'):w.document.querySelector('.ak-panel--menu');
+    const edit=value=>{const input=pane.querySelector('.ak-menu-title');input.value=value;input.dispatchEvent(new w.Event('input'));};
+    const save=()=>w.document.querySelector('.ak-savebar button').click();
+    edit('Admin edit');save();await tick();
+    assert.deepEqual(Object.keys(posts[0].request.data),['admin'],'Untouched frontend must not be overwritten');
+    assert.deepEqual(JSON.parse(JSON.stringify(posts[0].request.data.admin.order)),['offline','site-name']);
+    assert.equal(posts[0].request.data.admin.titles.offline,'Keep offline');
+    assert.equal(posts[0].request.data.admin.icons.offline,'home');
+    pane.querySelectorAll('.ak-menu-toolbar__seg button')[1].click();edit('Front edit');
+    posts[0].resolve({configByContext:{admin:posts[0].request.data.admin}});await tick();save();await tick();
+    assert.deepEqual(Object.keys(posts[1].request.data),['frontend'],'Acknowledged admin draft must not be sent again after an in-flight frontend edit');
+    posts[1].resolve({configByContext:{frontend:posts[1].request.data.frontend}});await tick();
+    pane.querySelectorAll('.ak-menu-toolbar__seg button')[0].click();pane.querySelector('.ak-menu-toolbar__spacer').click();save();await tick();
+    assert.equal(posts[2].request.data.admin.order.includes('offline'),false,'Explicit context reset must also clear unavailable actions');
+    w.close();
+  }
+
+  // Invalid imports are rejected atomically and prototype-like keys stay ordinary data.
+  {
+    const dom=new JSDOM('',{runScripts:'outside-only'}),w=dom.window;
+    w.eval(fs.readFileSync(path.join(root,'assets/js/settings/navigation-menu-model.js'),'utf8'));
+    const M=w.AdminKitParts.navigationMenuModel;
+    for(const row of [{slug:'ok',hidden:'false'},{slug:'ok',parent:[]},{slug:'ok',position:-1},{slug:'https:evil.test',type:'link'},{slug:'ok',url:'//evil.test'}])assert.equal(M.sanitizeImportedItems([{slug:'safe'},row]),null);
+    assert.equal(M.isSafeMenuUrl('/'),true);
+    const snapshot=[{slug:'live',title:'Live',children:[]},{slug:'separator1',type:'separator',children:[]}];
+    const layout=M.buildMenuModel(snapshot,{top:[{slug:'live',type:'item'},{slug:'ak-sep-kept',type:'separator'}],sub:{}},[]);
+    assert.deepEqual(JSON.parse(JSON.stringify(layout.map(row=>row.slug))),['live','ak-sep-kept'],'Deleted native separators must not resurrect in the editor');
+    assert.equal(M.buildMenuModel(snapshot,{top:[],sub:{}},[]).some(row=>row.slug==='separator1'),true,'Reset retains native separator defaults');
+    const cfg=M.configFromItems([{parent:'__proto__',slug:'route'}]);assert.equal(cfg.sub.__proto__[0].slug,'route');assert.equal({}.route,undefined);
+    const unavailable=M.preserveUnavailable([{parent:'',slug:'live'}],[{slug:'live',children:[]}],{top:[{slug:'inactive',type:'item',title:'Kept'}],sub:{live:[{slug:'inactive-child',title:'Child'}]}});
+    assert.equal(unavailable.length,3,'Saving visible rows must retain settings for deactivated plugin routes');w.close();
+  }
+
+  // File read failures and invalid/racing imports leave the actual editor draft intact.
+  {
+    const dom=new JSDOM('<div id="adminkit-app"></div>',{url:'http://localhost/#menu',runScripts:'outside-only'}),w=dom.window;
+    let reader;w.FileReader=class{constructor(){reader=this;}readAsText(){}};
+    const data=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/boot-main.json'),'utf8'));data.screen='menu';data.menuManager.menu=[{slug:'live',title:'Live',children:[]}];data.menuManager.config={top:[],sub:{}};w.AdminKitData=data;
+    w.wp={apiFetch:()=>new Promise(()=>{})};
+    for(const file of ['navigation-controls','navigation-menu-model','navigation-menu','navigation-toolbar','navigation'])w.eval(fs.readFileSync(path.join(root,'assets/js/settings/'+file+'.js'),'utf8'));
+    w.eval(fs.readFileSync(path.join(root,'assets/js/settings.js'),'utf8'));await tick();
+    const input=w.document.querySelector('input[type="file"]');Object.defineProperty(input,'files',{value:[{size:100}],configurable:true});
+    input.dispatchEvent(new w.Event('change'));reader.result=JSON.stringify({_adminkit:'menu',items:[{slug:'live',hidden:'false'}]});reader.onload();
+    assert.equal(w.document.querySelector('.ak-menu-title').value,'Live','Invalid import partially replaced the draft');
+    input.dispatchEvent(new w.Event('change'));const title=w.document.querySelector('.ak-menu-title');title.value='New live edit';title.dispatchEvent(new w.Event('input'));
+    reader.result=JSON.stringify({_adminkit:'menu',items:[]});reader.onload();assert.equal(w.document.querySelector('.ak-menu-title').value,'New live edit','Async import overwrote a newer edit');
+    const M=w.AdminKitParts.navigationMenuModel,tree=[{slug:'a',type:'item',children:[]}],before=JSON.stringify(tree);
+    M.moveTop(tree,9,0);M.moveChild(tree,9,0,0,0);M.moveChildToTop(tree,0,9,0);M.promoteChild(tree,9,0);
+    assert.equal(JSON.stringify(tree),before,'Stale drag indices corrupted the model');w.close();
+  }
+
   // Failed toolbar GET must clear inert, block premature reset, and allow Retry.
   {
     const dom = new JSDOM('<div id="adminkit-app"></div>', { url: 'http://localhost/#toolbar', runScripts: 'outside-only' });

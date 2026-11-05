@@ -57,3 +57,41 @@ Run `php dev/test-all.php` before committing. Relevant checks:
 
 The storage facade and public REST payload shape remain unchanged. Extend this
 contract and the corresponding PHP/JS/browser cases together when adding rules.
+
+## Separators and unavailable registrations
+
+An explicit saved top-level layout owns its separators: the editor must not
+reinsert native separators omitted from that layout. Reset restores the native
+snapshot. Sidebar separators and the collapse control share one inset divider;
+a preceding separator suppresses the collapse control's duplicate line.
+
+Unavailable native plugin rows survive unrelated saves. Explicit deletion of a
+custom link/separator and an explicit reset do not resurrect old rows. Invalid
+or stale drag indices are no-ops. Imports validate the whole bounded payload
+before replacing a draft, and an asynchronous import cannot overwrite newer edits.
+
+## Toolbar contract
+
+Only native root actions can be reordered, renamed, hidden or given an icon.
+Groups, nested actions (including logout), account and mobile controls retain
+their native structure. Early CSS uses the same direct-root boundary. Root IDs
+are validated rather than rewritten into a different identity.
+
+Admin and frontend drafts are independent: save only changed contexts, preserve
+unavailable actions, and acknowledge the submitted draft rather than later edits.
+Missing fields in a context retain their values; an explicit empty context resets
+it. Mixed legacy and contextual payloads are rejected. Concurrent changes to the
+same context still use last-write-wins; this is not a collaborative editor.
+
+## Write and capability boundaries
+
+Menu writes are validated in full before destructive storage replacement. Types,
+lengths, URLs, SVG/icon syntax and collection bounds are checked server-side;
+client validation is feedback, not authorization. WordPress REST cookie nonce
+and capability checks remain mandatory. Moving a page never grants capabilities;
+blocked or cyclic destinations preserve the native route and self-link.
+
+Toolbar fallback snapshots restore detached hooks at their exact original
+priorities in a finally block, including when a third-party hook throws.
+`dev/check-toolbar-snapshot.php` covers success, failure and unauthorized capture.
+`dev/check-write-endpoints.php` covers atomic rejection and partial toolbar writes.

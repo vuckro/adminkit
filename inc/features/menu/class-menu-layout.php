@@ -31,18 +31,21 @@ class AdminKit_Menu_Layout {
 			if ( 1 === count( $parents ) ) { $target[ $slug ] = (string) array_key_first( $parents ); }
 		}
 		$demoted = array();
+		$blocked = array();
 		$rows = array();
 		$removed = array();
 		foreach ( $menu as $position => $item ) {
 			$slug = (string) $item[2];
 			$parent = $target[ $slug ] ?? $slug;
-			if ( isset( $top[ $slug ] ) || 'adminkit' === $slug || $parent === $slug || ! isset( $accessible[ $parent ] ) || ! empty( $top[ $parent ]['hidden'] ) || ! $can_access( $item[1] ) ) { continue; }
+			if ( isset( $top[ $slug ] ) || 'adminkit' === $slug || $parent === $slug ) { continue; }
+			if ( ! isset( $accessible[ $parent ] ) || ! empty( $top[ $parent ]['hidden'] ) || ! $can_access( $item[1] ) ) { $blocked[ $slug ] = true; continue; }
 			// Do not flatten into a parent which is itself configured below another.
-			if ( isset( $target[ $parent ] ) && $target[ $parent ] !== $parent && ! isset( $top[ $parent ] ) ) { continue; }
+			if ( isset( $target[ $parent ] ) && $target[ $parent ] !== $parent && ! isset( $top[ $parent ] ) ) { $blocked[ $slug ] = true; continue; }
 			$demoted[ $slug ] = $parent;
 			$removed[] = $position;
 			$rows[] = array( 'origin' => '', 'fallback' => $parent, 'item' => array( $item[0], $item[1], $slug, $item[3] ?? $item[0] ) );
 		}
+		foreach ( $demoted as $slug => $parent ) { unset( $accessible[ $slug ] ); }
 		foreach ( $submenu as $parent => $children ) {
 			foreach ( $children as $item ) {
 				if ( empty( $item[2] ) || ( isset( $demoted[ $parent ] ) && $item[2] === $parent ) ) { continue; }
@@ -56,12 +59,14 @@ class AdminKit_Menu_Layout {
 			$parent = $row['fallback'];
 			// An explicit local rule wins; otherwise use a unique requested move.
 			$rule = $local[ $parent ][ $slug ] ?? array();
-			if ( ! isset( $local[ $parent ][ $slug ] ) && isset( $target[ $slug ] ) ) {
+			if ( ! isset( $blocked[ $slug ] ) && ! isset( $local[ $parent ][ $slug ] ) && isset( $target[ $slug ] ) ) {
 				$requested = $target[ $slug ];
 				$rule = $local[ $requested ][ $slug ];
 				if ( isset( $accessible[ $requested ] ) ) { $parent = $requested; }
 			}
 			// One physical route per parent, even if a plugin registered it twice.
+			$previous = $output[ $parent ][ $slug ]['item'] ?? null;
+			if ( $previous && $can_access( $previous[1] ) && ! $can_access( $row['item'][1] ) ) { continue; }
 			unset( $output[ $parent ][ $slug ] );
 			$output[ $parent ][ $slug ] = array( 'item' => $row['item'], 'rule' => $rule );
 			if ( $row['origin'] !== $parent ) {

@@ -4,7 +4,7 @@ define('ABSPATH',__DIR__.'/');define('ADMINKIT_PATH',dirname(__DIR__).'/');
 $admin=true;$allowed=true;$options=array();$writes=0;
 function get_option($key,$default=false){global$options;return$options[$key]??$default;}
 function update_option($key,$value,$autoload=null){global$options,$writes;$options[$key]=$value;++$writes;return true;}
-function current_user_can($cap){global$allowed;return$allowed;}
+function current_user_can($cap){global$allowed,$allowed_caps;return is_array($allowed_caps)?in_array($cap,$allowed_caps,true):$allowed;}
 function apply_filters($hook,$value){return$value;}
 function is_admin(){global$admin;return$admin;}
 function sanitize_key($value){return preg_replace('/[^a-z0-9_-]/','',strtolower($value));}
@@ -227,3 +227,27 @@ check(count($submenu['a'])===1&&count($submenu['b'])===1&&count($submenu['c'])==
 
 $menu=$native_menu;$submenu=$native_sub;AdminKit_Menu_Store::$config=array('top'=>array(),'sub'=>array());AdminKit_Menu_Manager::apply();
 check(count($submenu['options-general.php'])===1,'Duplicate native route returned with an empty saved layout');
+
+// Groups and dropdown children are never editable, even via crafted saved layouts.
+$bar=new Fixture_Bar();$bar->add_node(array('id'=>'top-secondary','group'=>true,'parent'=>false,'title'=>'Group'));
+$bar->add_node(array('id'=>'my-account','parent'=>'top-secondary','title'=>'Account'));
+$bar->add_node(array('id'=>'logout','parent'=>'my-account','title'=>'Log out'));
+$cfg=array('hidden'=>array('top-secondary'),'order'=>array('logout','top-secondary'),'titles'=>array('logout'=>'Changed child'),'icons'=>array('logout'=>'home'));
+AdminKit_Toolbar_Renderer::apply($bar,$cfg,AdminKit_Toolbar_Config::protected_nodes(),false);
+check($bar->get_node('top-secondary')&&$bar->get_node('my-account')&&$bar->get_node('logout')->title==='Log out'&&$bar->get_node('logout')->parent==='my-account','Toolbar hierarchy/protected account bypassed');
+$admin=true;$options[AdminKit_Toolbar_Manager::OPTION]=array('admin'=>array('icons'=>array('logout'=>'home')));
+ob_start();AdminKit_Toolbar_Renderer::print_css();$css=ob_get_clean();check(strpos($css,':is(.ab-top-menu,.ak-mobile-bar-list) > #wp-admin-bar-logout')!==false,'Head icon CSS lacks root-tier boundary');
+// Cyclic demotions must retain the native self routes as well as their parents.
+$native=array(1=>item('a','A'),2=>item('b','B'));
+$children=array('a'=>array(array('A','read','a')),'b'=>array(array('B','read','b')));
+$cfg=array('top'=>array(),'sub'=>array('a'=>array(array('slug'=>'b')),'b'=>array(array('slug'=>'a'))));
+$plan=AdminKit_Menu_Layout::plan($native,$children,$cfg,array('a'=>true,'b'=>true),'current_user_can');
+check(empty($plan['removed'])&&empty($plan['moves'])&&isset($plan['children']['a']['a'],$plan['children']['b']['b']),'Cyclic move altered native self links');
+// A later inaccessible duplicate must not erase a valid native capability.
+$plan=AdminKit_Menu_Layout::plan(array(),array('p'=>array(array('Read','read','same'),array('Admin','manage_options','same'))),array('top'=>array(),'sub'=>array()),array('p'=>true),static function($cap){return$cap==='read';});
+check($plan['children']['p']['same']['item'][1]==='read','Duplicate resolution removed an accessible native route');
+$allowed_caps=array('read');$menu=array(1=>item('source','Source'),2=>array('Private','manage_options','target','Private','menu-top','',''));
+$submenu=array('source'=>array(array('Route','read','route')),'target'=>array(array('Private','manage_options','private')));
+AdminKit_Menu_Store::$config=array('top'=>array(),'sub'=>array('target'=>array(array('slug'=>'route','position'=>0))));AdminKit_Menu_Manager::apply();
+check($submenu['source'][0][2]==='route','Child moved into a parent without any authorized entry');$allowed_caps=null;
+echo "OK: toolbar hierarchy, generated CSS scope, cyclic routes and role-aware duplicate fallback.\n";

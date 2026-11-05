@@ -18,7 +18,7 @@ class AdminKit_Menu_Config {
 	public static function unique_rows( array $rows ) {
 		$unique = array();
 		foreach ( $rows as $row ) {
-			if ( empty( $row['slug'] ) ) { continue; }
+			if ( ! is_array( $row ) || empty( $row['slug'] ) || ! is_string( $row['slug'] ) ) { continue; }
 			$slug = (string) $row['slug'];
 			unset( $unique[ $slug ] );
 			$unique[ $slug ] = $row;
@@ -33,10 +33,40 @@ class AdminKit_Menu_Config {
 	 */
 	public static function normalize( array $config ) {
 		$sub = array();
-		foreach ( $config['sub'] ?? array() as $parent => $rows ) {
-			$sub[ $parent ] = self::unique_rows( $rows );
+		foreach ( is_array( $config['sub'] ?? null ) ? $config['sub'] : array() as $parent => $rows ) {
+			$sub[ $parent ] = self::unique_rows( is_array( $rows ) ? $rows : array() );
 		}
-		return array( 'top' => self::unique_rows( $config['top'] ?? array() ), 'sub' => $sub );
+		return array( 'top' => self::unique_rows( is_array( $config['top'] ?? null ) ? $config['top'] : array() ), 'sub' => $sub );
+	}
+
+	/** Reject malformed writes atomically; legacy reads still use normalisation.
+	 *
+	 * @param mixed $items REST rows.
+	 * @return bool
+	 */
+	public static function valid_items( $items ) {
+		if ( ! is_array( $items ) || ! array_is_list( $items ) || count( $items ) > 1000 ) { return false; }
+		foreach ( $items as $row ) {
+			if ( ! is_array( $row ) || ! isset( $row['slug'] ) || ! is_string( $row['slug'] ) || '' === trim( $row['slug'] ) ) { return false; }
+			foreach ( array( 'parent', 'type', 'title', 'icon', 'url' ) as $field ) {
+				if ( isset( $row[ $field ] ) && ! is_string( $row[ $field ] ) ) { return false; }
+				if ( array_key_exists( $field, $row ) && null === $row[ $field ] ) { return false; }
+			}
+			$type = $row['type'] ?? 'item';
+			if ( ! in_array( $type, array( 'item', 'link', 'separator' ), true ) || ( '' !== ( $row['parent'] ?? '' ) && 'item' !== $type ) ) { return false; }
+			foreach ( array( 'hidden', 'newTab' ) as $field ) {
+				if ( array_key_exists( $field, $row ) && ! is_bool( $row[ $field ] ) ) { return false; }
+			}
+			if ( isset( $row['position'] ) && ( ! is_int( $row['position'] ) || $row['position'] < 0 || $row['position'] > 1000000 ) ) { return false; }
+			if ( array_key_exists( 'position', $row ) && null === $row['position'] ) { return false; }
+			if ( strlen( $row['parent'] ?? '' ) > 190 || strlen( $row['slug'] ) > ( 'link' === $type ? 2048 : 190 ) ) { return false; }
+			$title = $row['title'] ?? '';
+			if ( strlen( $title ) > 760 || false === preg_match_all( '/./us', $title, $characters ) || count( $characters[0] ) > 190 ) { return false; }
+			if ( 'link' === $type && '' === self::sanitize_menu_url( $row['slug'] ) ) { return false; }
+			if ( ! empty( $row['url'] ) && '' === self::sanitize_menu_url( $row['url'] ) ) { return false; }
+			if ( ! empty( $row['icon'] ) && '' === self::sanitize_icon( $row['icon'] ) ) { return false; }
+		}
+		return true;
 	}
 
 	/**
@@ -193,7 +223,7 @@ class AdminKit_Menu_Config {
 			}
 			return $url;
 		}
-		return preg_match( '/^(?:\/[a-zA-Z0-9_.\-\/~%]+|[a-zA-Z0-9_.\-]+)(?:[?#][^\x00-\x20\x7f\'"<>`\\\\]*)?$/', $url ) ? $url : '';
+		return preg_match( '/^(?:\/[a-zA-Z0-9_.\-\/~%]*|[a-zA-Z0-9_.\-]+)(?:[?#][^\x00-\x20\x7f\'"<>`\\\\]*)?$/', $url ) ? $url : '';
 	}
 
 	/**

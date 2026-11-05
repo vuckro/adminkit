@@ -188,13 +188,8 @@ class AdminKit_Menu_Manager {
 	 */
 	public static function rest_save( $request ) {
 		$items_in = $request->get_param( 'items' );
-		if ( ! is_array( $items_in ) || array_values( $items_in ) !== $items_in ) {
+		if ( ! AdminKit_Menu_Config::valid_items( $items_in ) ) {
 			return AdminKit_Storage::error( 'adminkit_invalid_menu', 400 );
-		}
-		foreach ( $items_in as $item ) {
-			if ( ! is_array( $item ) || ! isset( $item['slug'] ) || ! is_string( $item['slug'] ) || '' === trim( $item['slug'] ) ) {
-				return AdminKit_Storage::error( 'adminkit_invalid_menu', 400 );
-			}
 		}
 		$items = AdminKit_Menu_Config::sanitize_items( $items_in );
 		if ( ! empty( $items ) && function_exists( 'is_multisite' ) && is_multisite() && function_exists( 'is_super_admin' ) && ! is_super_admin() ) {
