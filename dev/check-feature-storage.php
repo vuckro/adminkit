@@ -31,6 +31,7 @@ class Storage_Test_DB {
  public function get_results($sql, $format) { ++$this->reads; return $this->fail === 'read' ? null : $this->rows; }
 }
 require dirname(__DIR__) . '/inc/class-storage.php';
+require dirname(__DIR__) . '/inc/features/menu/class-menu-config.php';
 require dirname(__DIR__) . '/inc/features/menu/class-menu-store.php';
 function check($condition, $message) { if (!$condition) throw new RuntimeException($message); }
 check(true === AdminKit_Storage::save_option('test', array('x' => false)), 'Initial option save failed');

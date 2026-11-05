@@ -196,3 +196,34 @@ check(strpos($css,'> .ab-item > .ab-icon')!==false,'Custom parent icon could lea
 check(strpos($css,'#wp-admin-bar-plugin-root > .ab-item{background-image:none !important}')!==false,'Native background-image logo survived custom icon replacement');
 
 check(strpos($css,'#wp-admin-bar-plugin-root > .ab-item{padding-inline:calc(8px * var(--ak-space-scale,1)) !important}')!==false,'Native logo spacing survived custom replacement');
+
+// Duplicate registered routes and conflicting legacy rows use one shared policy.
+$native_menu=array(10=>item('options-general.php','Settings'),20=>item('plugins.php','Plugins'));
+$native_sub=array('options-general.php'=>array(array('Slim SEO','manage_options','slim-seo'),array('Slim SEO Pro','manage_options','slim-seo')),'plugins.php'=>array(array('Installed','activate_plugins','plugins.php')));
+$legacy=array('top'=>array(),'sub'=>array('plugins.php'=>array(array('slug'=>'slim-seo','hidden'=>true,'position'=>2),array('slug'=>'slim-seo','hidden'=>false,'title'=>'SEO','position'=>3))));
+$normalized=AdminKit_Menu_Config::normalize($legacy);
+check(count($normalized['sub']['plugins.php'])===1&&!$normalized['sub']['plugins.php'][0]['hidden'],'Legacy policy is not last-row-wins');
+$menu=$native_menu;$submenu=$native_sub;AdminKit_Menu_Store::$config=$legacy;
+AdminKit_Menu_Manager::apply();
+$seo=array_values(array_filter($submenu['plugins.php'],function($row){return$row[2]==='slim-seo';}));
+check(count($seo)===1&&$seo[0][0]==='SEO'&&strpos($seo[0][4]??'','ak-mh')===false,'Editor policy and rendered SEO route diverged');
+check(empty($submenu['options-general.php']),'Moved duplicate left a source entry');
+$legacy['sub']['plugins.php'][1]['hidden']=true;$menu=$native_menu;$submenu=$native_sub;AdminKit_Menu_Store::$config=$legacy;AdminKit_Menu_Manager::apply();
+$seo=array_values(array_filter($submenu['plugins.php'],function($row){return$row[2]==='slim-seo';}));
+check(count($seo)===1&&strpos($seo[0][4],'ak-mh')!==false,'Hidden policy not applied to deduplicated route');
+$snapshot=AdminKit_Menu_Snapshot::build_snapshot($native_menu,$native_sub);
+check(count($snapshot[0]['children'])===1,'Editor snapshot repeats a plugin route');
+// The planner must be pure and must not move ambiguous shared routes by map order.
+$shared=array('a'=>array(array('Shared A','read','shared')),'b'=>array(array('Shared B','read','shared')),'c'=>array(array('Shared C','read','shared')));
+$config=array('top'=>array(),'sub'=>array('a'=>array(array('slug'=>'shared','title'=>'A','position'=>0)),'b'=>array(array('slug'=>'shared','title'=>'B','position'=>0))));
+$copy=$shared;$plan=AdminKit_Menu_Layout::plan(array(),$shared,$config,array('a'=>true,'b'=>true,'c'=>true),'current_user_can');
+check($shared===$copy&&count($plan['children'])===3&&empty($plan['moves']),'Pure layout moved an ambiguous native route');
+$reversed=$config;$reversed['sub']=array_reverse($config['sub'],true);
+check($plan===AdminKit_Menu_Layout::plan(array(),$shared,$reversed,array('a'=>true,'b'=>true,'c'=>true),'current_user_can'),'Config parent iteration order changes route placement');
+echo "OK: unique route identity, legacy conflicts, hidden state, pristine planning and ambiguous-parent fallback.\n";
+
+$menu=array(1=>item('a','A'),2=>item('b','B'),3=>item('c','C'));$submenu=$shared;AdminKit_Menu_Store::$config=$config;AdminKit_Menu_Manager::apply();
+check(count($submenu['a'])===1&&count($submenu['b'])===1&&count($submenu['c'])===1,'Renderer moved ambiguous shared routes after planning');
+
+$menu=$native_menu;$submenu=$native_sub;AdminKit_Menu_Store::$config=array('top'=>array(),'sub'=>array());AdminKit_Menu_Manager::apply();
+check(count($submenu['options-general.php'])===1,'Duplicate native route returned with an empty saved layout');

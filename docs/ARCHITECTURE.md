@@ -315,3 +315,7 @@ in place; their native banner container is hidden only after the bridge mounts.
 Dismissal updates the WordPress store. Actions close the drawer before opening
 editor dialogs. Pinned notices and snackbars retain their native placement.
 Without a toolbar launcher or when the feature is disabled, native notices remain.
+
+## Sidebar placement
+
+The pure `AdminKit_Menu_Layout` planner computes the two-level tree before rendering. Identity, precedence and iteration checks are documented in [NAVIGATION.md](NAVIGATION.md).

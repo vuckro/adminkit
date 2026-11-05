@@ -66,8 +66,8 @@ jobs:
           AK_PASS: password
           AK_DISPOSABLE: '1'
         run: |
-          printf '{"steps":[{"step":"activatePlugin","pluginPath":"adminkit/adminkit.php"}]}' > /tmp/ci-blueprint.json
-          npx --yes @wp-playground/cli@latest server --port=9400 --mount=.:/wordpress/wp-content/plugins/adminkit --blueprint=/tmp/ci-blueprint.json &
+          printf '{"steps":[{"step":"activatePlugin","pluginPath":"adminkit/adminkit.php"},{"step":"activatePlugin","pluginPath":"ak-menu-host/menu-host.php"}]}' > /tmp/ci-blueprint.json
+          npx --yes @wp-playground/cli@latest server --port=9400 --mount=.:/wordpress/wp-content/plugins/adminkit --mount=./dev/smoke/fixtures/menu-host:/wordpress/wp-content/plugins/ak-menu-host --blueprint=/tmp/ci-blueprint.json &
           SERVER_PID=$!
           trap "kill $SERVER_PID 2>/dev/null || true" EXIT
           for i in $(seq 1 60); do

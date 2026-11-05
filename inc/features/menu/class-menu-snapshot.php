@@ -81,12 +81,14 @@ class AdminKit_Menu_Snapshot {
 					if ( empty( $sub[2] ) ) {
 						continue;
 					}
-					$node['children'][] = array(
+					unset( $node['children'][ (string) $sub[2] ] );
+					$node['children'][ (string) $sub[2] ] = array(
 						'slug'  => (string) $sub[2],
 						'title' => self::clean_title( isset( $sub[0] ) ? $sub[0] : '' ),
 					);
 				}
 			}
+			$node['children'] = array_values( $node['children'] );
 			$out[] = $node;
 		}
 		return $out;

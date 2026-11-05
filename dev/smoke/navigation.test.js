@@ -58,6 +58,40 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 15));
     w.close();
   }
 
+  // The same legacy Slim SEO conflict must resolve identically in editor/save/reload.
+  {
+    const dom = new JSDOM('', { runScripts:'outside-only' });
+    const w = dom.window;
+    w.eval(fs.readFileSync(path.join(root, 'assets/js/settings/navigation-menu-model.js'), 'utf8'));
+    const M = w.AdminKitParts.navigationMenuModel;
+    const snapshot = [
+      {slug:'settings',title:'Settings',children:[{slug:'slim-seo',title:'Slim SEO'},{slug:'slim-seo',title:'Slim SEO Pro'}]},
+      {slug:'plugins',title:'Plugins',children:[]}
+    ];
+    const legacy = {top:[],sub:{plugins:[{slug:'slim-seo',hidden:true,position:2},{slug:'slim-seo',title:'SEO',hidden:false,position:3}]}};
+    const model = M.buildMenuModel(snapshot, legacy, []);
+    const rows = model.find(top => top.slug === 'plugins').children;
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0].title, 'SEO');
+    assert.equal(rows[0].hidden, false);
+    const items = M.gatherMenu(model, item => item.title);
+    assert.equal(items.filter(row => row.slug === 'slim-seo').length, 1);
+    const reloaded = M.buildMenuModel(snapshot, M.configFromItems(items), []);
+    assert.deepEqual(JSON.parse(JSON.stringify(reloaded)), JSON.parse(JSON.stringify(model)), 'Legacy cleanup must reach a fixed point after save/reload');
+    // Explicit cross-parent moves replace an existing same-route target, preserving the moved policy.
+    const moves = [{slug:'a',children:[{slug:'same',title:'Moved',hidden:true,url:'tools.php?tab=1'}]},{slug:'b',children:[{slug:'same',title:'Old',hidden:false}]}];
+    M.moveChildToTop(moves,0,0,1);
+    assert.equal(moves[1].children.length,1);
+    assert.equal(moves[1].children[0].title,'Moved');
+    assert.equal(moves[1].children[0].hidden,true);
+    assert.equal(moves[1].children[0].url,'tools.php?tab=1');
+    // Ambiguous shared native routes remain local, independently of config parent order.
+    const shared = ['a','b','c'].map(slug => ({slug:slug,title:slug,children:[{slug:'shared',title:slug}]}));
+    const cfg = {top:[],sub:{a:[{slug:'shared'}],b:[{slug:'shared'}]}};
+    assert.equal(M.buildMenuModel(shared,cfg,[]).find(top => top.slug === 'c').children.length,1);
+    w.close();
+  }
+
   for (const [screen, scope, toolbarContext] of [['main', 'menu', null], ['main', 'toolbar', 'admin'], ['main', 'toolbar', 'frontend'], ['menu', 'menu', null], ['toolbar', 'toolbar', 'admin'], ['toolbar', 'toolbar', 'frontend']]) {
     for (const action of scope === 'menu' ? ['title', 'icon', 'url'] : ['title', 'icon']) {
       const dom = new JSDOM('<div id="adminkit-app"></div>', { url: 'http://localhost/#' + scope, runScripts: 'outside-only' });

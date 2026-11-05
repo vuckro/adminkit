@@ -70,6 +70,7 @@ class AdminKit_Plugin {
 		'features/menu/class-menu-store.php'                   => null, // schema only
 		'features/menu/class-menu-config.php'                  => null,
 		'features/menu/class-menu-snapshot.php'                => null,
+		'features/menu/class-menu-layout.php'                   => null,
 		'features/menu/class-menu-renderer.php'                => null,
 		'features/menu/class-menu-manager.php'                 => 'AdminKit_Menu_Manager::init',
 		'features/toolbar/class-toolbar-config.php'            => null,

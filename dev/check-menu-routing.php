@@ -17,6 +17,7 @@ function has_action( $hook ) { global $hooks; return ! empty( $hooks[$hook] ); }
 function do_action( $hook ) { global $hooks; foreach ( $hooks[$hook] ?? array() as $cb ) { $cb(); } }
 class AdminKit_Menu_Store { public static $config; public static function get_config() { return self::$config; } }
 require dirname( __DIR__ ) . '/inc/features/menu/class-menu-config.php';
+require dirname( __DIR__ ) . '/inc/features/menu/class-menu-layout.php';
 require dirname( __DIR__ ) . '/inc/features/menu/class-menu-renderer.php';
 require dirname( __DIR__ ) . '/inc/integrations/abstract-integration.php';
 require dirname( __DIR__ ) . '/inc/integrations/plugins/woocommerce/class-woocommerce.php';

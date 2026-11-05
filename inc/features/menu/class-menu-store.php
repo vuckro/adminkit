@@ -105,8 +105,8 @@ class AdminKit_Menu_Store {
 
 		$cached = get_transient( self::CACHE_PREFIX . $blog_id );
 		if ( is_array( $cached ) && isset( $cached['top'], $cached['sub'] ) ) {
-			self::$cache[ $blog_id ] = $cached;
-			return $cached;
+			self::$cache[ $blog_id ] = AdminKit_Menu_Config::normalize( $cached );
+			return self::$cache[ $blog_id ];
 		}
 
 		global $wpdb;
@@ -114,7 +114,7 @@ class AdminKit_Menu_Store {
 		// $table is built from $wpdb->base_prefix (trusted), not user input.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT parent, slug, position, icon, url, new_tab, hidden, type, title FROM {$table} WHERE blog_id = %d ORDER BY parent ASC, position ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"SELECT parent, slug, position, icon, url, new_tab, hidden, type, title FROM {$table} WHERE blog_id = %d ORDER BY parent ASC, position ASC, id ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$blog_id
 			),
 			ARRAY_A
@@ -124,7 +124,7 @@ class AdminKit_Menu_Store {
 		if ( ! is_array( $rows ) ) {
 			return array( 'top' => array(), 'sub' => array() );
 		}
-		$config = self::assemble( $rows );
+		$config = AdminKit_Menu_Config::normalize( self::assemble( $rows ) );
 		self::$cache[ $blog_id ] = $config;
 		set_transient( self::CACHE_PREFIX . $blog_id, $config, DAY_IN_SECONDS );
 		return $config;

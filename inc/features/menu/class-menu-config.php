@@ -10,6 +10,35 @@ defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Menu_Config {
 
+	/** Stable identity is parent + slug; the last saved row wins conflicts.
+	 *
+	 * @param array $rows Ordered rows sharing one parent.
+	 * @return array
+	 */
+	public static function unique_rows( array $rows ) {
+		$unique = array();
+		foreach ( $rows as $row ) {
+			if ( empty( $row['slug'] ) ) { continue; }
+			$slug = (string) $row['slug'];
+			unset( $unique[ $slug ] );
+			$unique[ $slug ] = $row;
+		}
+		return array_values( $unique );
+	}
+
+	/** Normalize legacy duplicates on read, without rewriting stored settings.
+	 *
+	 * @param array $config Saved layout.
+	 * @return array
+	 */
+	public static function normalize( array $config ) {
+		$sub = array();
+		foreach ( $config['sub'] ?? array() as $parent => $rows ) {
+			$sub[ $parent ] = self::unique_rows( $rows );
+		}
+		return array( 'top' => self::unique_rows( $config['top'] ?? array() ), 'sub' => $sub );
+	}
+
 	/**
 	 * Sanitise submitted rows. Icons are validated against `AdminKit_Icons`; slugs are
 	 * trimmed/length-capped while preserving query strings (`edit.php?post_type=page`);
@@ -45,7 +74,13 @@ class AdminKit_Menu_Config {
 				'title'    => $title,
 			);
 		}
-		return $clean;
+		$unique = array();
+		foreach ( $clean as $row ) {
+			$key = $row['parent'] . "\0" . $row['slug'];
+			unset( $unique[ $key ] );
+			$unique[ $key ] = $row;
+		}
+		return array_values( $unique );
 	}
 
 	/**

@@ -21,6 +21,7 @@ defined( 'ABSPATH' ) || exit;
 
 require_once __DIR__ . '/class-menu-config.php';
 require_once __DIR__ . '/class-menu-snapshot.php';
+require_once __DIR__ . '/class-menu-layout.php';
 require_once __DIR__ . '/class-menu-renderer.php';
 
 class AdminKit_Menu_Manager {

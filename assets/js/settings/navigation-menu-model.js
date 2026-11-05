@@ -3,10 +3,23 @@
 	'use strict';
 	window.AdminKitParts = window.AdminKitParts || {};
 
+	// Identity is scoped to a parent. Last ordered occurrence wins, as in PHP.
+	function uniqueRows(rows, key) {
+		var last = Object.create(null);
+		(rows || []).forEach(function (row, i) { last[key ? key(row) : row.slug] = i; });
+		return (rows || []).filter(function (row, i) { return last[key ? key(row) : row.slug] === i; });
+	}
+
+	function normalizeConfig(config) {
+		var sub = Object.create(null);
+		Object.keys((config && config.sub) || {}).forEach(function (parent) { sub[parent] = uniqueRows(config.sub[parent]); });
+		return { top: uniqueRows(config && config.top), sub: sub };
+	}
+
 	function makeTop(m, topCfg, subCfg, childTitle, childTitleByParent, claimed, snapBySlug) {
 		topCfg = topCfg || {};
 		var children = [],
-			seenC = {};
+			seenC = Object.create(null);
 		(subCfg[m.slug] || []).forEach(function (s) {
 			var compKey = m.slug + '\0' + s.slug;
 			var hasLocal = Object.prototype.hasOwnProperty.call(childTitleByParent, compKey);
@@ -61,9 +74,11 @@
 	}
 
 	function buildMenuModel(snapshot, config, seenSlugs) {
-		var snapBySlug = {},
-			childTitle = {},
-			childTitleByParent = {};
+		config = normalizeConfig(config);
+		snapshot = uniqueRows(snapshot).map(function (node) { return Object.assign({}, node, { children: uniqueRows(node.children) }); });
+		var snapBySlug = Object.create(null),
+			childTitle = Object.create(null),
+			childTitleByParent = Object.create(null);
 		(snapshot || []).forEach(function (m) {
 			snapBySlug[m.slug] = m;
 			if (m.type !== 'separator') { childTitle[m.slug] = m.title; }
@@ -75,14 +90,17 @@
 			});
 		});
 		var subCfg = (config && config.sub) || {};
-		var claimed = {};
+		var claimed = Object.create(null), destinations = Object.create(null);
 		Object.keys(subCfg).forEach(function (p) {
-			(subCfg[p] || []).forEach(function (s) {
-				claimed[s.slug] = p;
-				claimed[p + '\0' + s.slug] = true;
+			(subCfg[p] || []).forEach(function (row) {
+				claimed[p + '\0' + row.slug] = true;
+				(destinations[row.slug] = destinations[row.slug] || []).push(p);
 			});
 		});
-		var seen = {},
+		Object.keys(destinations).forEach(function (slug) {
+			if (destinations[slug].length === 1) { claimed[slug] = destinations[slug][0]; }
+		});
+		var seen = Object.create(null),
 			model = [];
 		((config && config.top) || []).forEach(function (t) {
 			var m = snapBySlug[t.slug];
@@ -126,7 +144,7 @@
 			model.splice(pos, 0, node);
 			prevSlug = m.slug;
 		});
-		var seenRank = {};
+		var seenRank = Object.create(null);
 		(seenSlugs || []).forEach(function (slug, i) {
 			seenRank[slug] = i;
 		});
@@ -199,7 +217,7 @@
 				});
 			});
 		});
-		return items;
+		return uniqueRows(items, function (row) { return row.parent + '\0' + row.slug; });
 	}
 
 	function configFromItems(items) {
@@ -227,7 +245,7 @@
 				});
 			}
 		});
-		return { top: top, sub: sub };
+		return normalizeConfig({ top: top, sub: sub });
 	}
 
 	function isSafeMenuUrl(raw) {
@@ -269,9 +287,11 @@
 		var source = menu[fromTi], target = menu[toTi];
 		if (!source || !target || source === target || source.type !== 'item' || target.type !== 'item') { return; }
 		var children = target.children || (target.children = []);
-		var moved = [Object.assign({}, source, { sourceTop: { slug: source.slug, title: source.otitle, dashicon: source.dashicon }, children: undefined })].concat(source.children || []);
+		var moved = [Object.assign({}, source, { sourceTop: { slug: source.slug, title: source.otitle, dashicon: source.dashicon }, children: undefined })].concat((source.children || []).filter(function (child) { return child.slug !== source.slug; }));
 		moved.forEach(function (child) {
-			if (!children.some(function (existing) { return existing.slug === child.slug; })) { children.push(child); }
+			var at = children.findIndex(function (existing) { return existing.slug === child.slug; });
+			if (at >= 0) { children.splice(at, 1); }
+			children.push(child);
 		});
 		target.open = true;
 		menu.splice(fromTi, 1);
@@ -297,6 +317,7 @@
 		if (!menu[toTi].children) {
 			menu[toTi].children = [];
 		}
+		if (fromTi !== toTi) { menu[toTi].children = menu[toTi].children.filter(function (entry) { return entry.slug !== c.slug; }); }
 		menu[toTi].children.splice(toCi, 0, c);
 		menu[toTi].open = true;
 	}
@@ -306,6 +327,7 @@
 		if (!menu[toTi].children) {
 			menu[toTi].children = [];
 		}
+		menu[toTi].children = menu[toTi].children.filter(function (entry) { return entry.slug !== c.slug; });
 		menu[toTi].children.push(c);
 		menu[toTi].open = true;
 	}
