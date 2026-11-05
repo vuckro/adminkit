@@ -1,6 +1,6 @@
 <?php
 /**
- * FluentAuth admin app. Authentication and public login forms remain host-owned.
+ * FluentAuth admin app and native profile UI. Authentication remains host-owned.
  *
  * @package AdminKit
  */
@@ -23,6 +23,13 @@ class AdminKit_Integration_Fluent_Auth extends AdminKit_Integration_Base {
 	public static function owns_screen( $screen ) { return $screen && 'toplevel_page_fluent-auth' === $screen->id; }
 	/** @return void */
 	public static function register_assets() {
+		AdminKit_Assets::register( array(
+			'handle' => 'adminkit-fluent-auth-profile',
+			'src' => 'inc/integrations/plugins/fluent-auth/css/profile.css',
+			'deps' => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context' => 'admin',
+			'condition' => static function ( $screen ) { return $screen && in_array( $screen->id, array( 'profile', 'user-edit' ), true ); },
+		) );
 		AdminKit_Assets::register( array(
 			'handle' => 'adminkit-fluent-auth-admin',
 			'src' => 'inc/integrations/plugins/fluent-auth/css/admin.css',
