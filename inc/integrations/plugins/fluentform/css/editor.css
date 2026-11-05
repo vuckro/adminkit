@@ -1,0 +1,62 @@
+/* Fluent Forms Gutenberg inspector and its portaled control popovers only.
+   Do not theme .fluentform-guten-wrapper: it contains the real form preview. */
+body.block-editor-page.adminkit .block-editor-block-inspector :is(.ffblock-label, .ffblock-separator-label, .ffblock-space-label, .ffblock-space-labels),
+body.block-editor-page.adminkit .fluent-typography-control-section label {
+	color: var(--ak-text);
+}
+body.block-editor-page.adminkit .block-editor-block-inspector :is(.ffblock-reset-button, .fluent-typography-edit-btn) {
+	color: var(--ak-text-subtle);
+}
+body.block-editor-page.adminkit .block-editor-block-inspector .fluent-form-block-style-tabs .components-base-control__help {
+	color: var(--ak-text-subtle);
+}
+body.block-editor-page.adminkit .block-editor-block-inspector :is(.ffblock-separator, .ffblock-color-swatch) {
+	border-color: var(--ak-border-strong);
+}
+body.block-editor-page.adminkit .block-editor-block-inspector .ffblock-color-swatch {
+	box-shadow: inset 0 0 0 1px var(--ak-border-strong);
+}
+body.block-editor-page.adminkit .block-editor-block-inspector .fluent-separator {
+	background-color: var(--ak-border);
+}
+body.block-editor-page.adminkit .block-editor-block-inspector .fluent-separator-label {
+	background-color: var(--ak-surface);
+	color: var(--ak-text-subtle);
+}
+body.block-editor-page.adminkit .block-editor-block-inspector :is(.fluent-form-style-tabs, .ffblock-state-tabs) .components-tab-panel__tabs {
+	border-color: var(--ak-border);
+}
+body.block-editor-page.adminkit .block-editor-block-inspector .ffblock-state-tabs .components-tab-panel__tabs-item.is-active {
+	border-bottom-color: var(--ak-primary);
+}
+body.block-editor-page.adminkit :is(.ffblock-color-picker-header, .ffblock-color-picker-footer) {
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.block-editor-page.adminkit .fluent-typography-preview {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+body.block-editor-page.adminkit .block-editor-block-inspector .ffblock-bg-gradient {
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+}
+/* Four linked fields must fit inside the inspector, including translated labels. */
+body.block-editor-page.adminkit .block-editor-block-inspector .ffblock-space-input-row {
+	grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+}
+body.block-editor-page.adminkit .block-editor-block-inspector .ffblock-space-input-row > div {
+	min-width: 0;
+}
+body.block-editor-page.adminkit .block-editor-block-inspector .ffblock-space-input-row :is(.components-base-control, input) {
+	min-inline-size: 0;
+	max-inline-size: 100%;
+	box-sizing: border-box;
+}
+body.block-editor-page.adminkit .block-editor-block-inspector .ffblock-space-label {
+	max-inline-size: 100%;
+	font-size: var(--ak-text-xs);
+	line-height: 1.4;
+	text-align: center;
+	overflow-wrap: anywhere;
+}

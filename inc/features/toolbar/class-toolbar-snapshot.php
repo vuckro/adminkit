@@ -324,7 +324,7 @@ class AdminKit_Toolbar_Snapshot {
 			'updates'             => 'update',
 			'command-palette'     => 'search',
 			'search'              => 'search',
-			'edit'                => 'document-pencil',
+			'edit'                => 'pen',
 			'customize'           => 'sliders',
 			'site-editor'         => 'app',
 			'archive'             => 'eye',

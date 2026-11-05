@@ -369,3 +369,34 @@ body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer::after {
 body.adminkit #wpbody.happyfiles-mounted #happyfiles-resizer:hover::after {
 	background-color: var(--ak-text-muted);
 }
+
+/* Collapsed list-screen rail: keep the native toggle, but give it a complete
+   hit area and an inset on both sides instead of a tab stuck to the WP menu.
+   Media dialogs retain HappyFiles' own geometry. */
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide {
+	box-sizing: border-box;
+	min-inline-size: 56px;
+	padding-inline: 12px;
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide #happyfiles-header {
+	width: 100%;
+	padding-block: var(--ak-space-l);
+	padding-inline: 0;
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide #happyfiles-actions {
+	gap: 0;
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide .toggle-sidebar {
+	width: 32px;
+	height: 32px;
+	flex-basis: 32px;
+	padding: 7px;
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+	background-color: var(--ak-surface);
+	color: var(--ak-text);
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide .toggle-sidebar:focus-visible {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: 2px;
+}
