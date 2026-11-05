@@ -44,3 +44,22 @@ AdminKit_Integration_Fluent_Smtp::$compatible = true;
 AdminKit_Integration_Fluent_Smtp::$active = false;
 check_fluent( ! AdminKit_Fluent_Theme::owns_screen( $screen ), 'Inactive host acquired the bridge' );
 echo "OK: Fluent standalone ownership, unrelated screens, inactive hosts, compatibility and integration opt-out.\n";
+
+// Both native admin hook paths may run; enqueue and inline data must remain unique.
+class AdminKit_Assets {
+ public static $calls = 0;
+ public static function enqueue_script( ...$args ) { ++self::$calls; }
+}
+class AdminKit_Theme_Toggle {
+ public static function attribute() { return 'data-adminkit-theme'; }
+ public static function storage_key() { return 'adminkit-theme'; }
+}
+class AdminKit_Settings { public static function get( $key ) { return true; } }
+function __( $text, $domain ) { return $text; }
+function wp_json_encode( $value ) { return json_encode( $value ); }
+AdminKit_Integration_Fluent_Smtp::$active = true;
+$current_screen = $screen;
+AdminKit_Fluent_Theme::enqueue();
+AdminKit_Fluent_Theme::enqueue();
+check_fluent( 1 === AdminKit_Assets::$calls, 'Multiple native hook paths duplicated the bootstrap' );
+echo "OK: Fluent native hook paths enqueue one bootstrap.\n";

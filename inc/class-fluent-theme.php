@@ -7,10 +7,13 @@
 defined( 'ABSPATH' ) || exit;
 
 class AdminKit_Fluent_Theme {
+	/** @var bool Prevent duplicate inline bootstraps across native hook paths. */
+	private static $enqueued = false;
 	/** @return void */
 	public static function init() {
 		add_filter( 'fluent_crm_asset_listed_slugs', array( __CLASS__, 'allow_assets' ) );
 		add_filter( 'fluent_booking/asset_listed_slugs', array( __CLASS__, 'allow_assets' ) );
+		add_action( 'current_screen', array( __CLASS__, 'enqueue' ), 10001 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ), 10001 );
 	}
 
@@ -58,9 +61,10 @@ class AdminKit_Fluent_Theme {
 	/** @return void */
 	public static function enqueue() {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( ! self::owns_screen( $screen ) || ! apply_filters( 'adminkit/should_load', true, 'admin' ) || ! apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
+		if ( self::$enqueued || ! self::owns_screen( $screen ) || ! apply_filters( 'adminkit/should_load', true, 'admin' ) || ! apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
 			return;
 		}
+		self::$enqueued = true;
 		$data = array(
 			'attr' => AdminKit_Theme_Toggle::attribute(),
 			'key' => AdminKit_Theme_Toggle::storage_key(),
