@@ -416,3 +416,7 @@ body.adminkit #wpbody.happyfiles-mounted #happyfiles-actions [aria-label]::after
 	border-top-color: transparent;
 	border-bottom-color: var(--ak-heading);
 }
+/* Reserve the label height as well: it must not cover the search field below. */
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-header {
+	padding-block-end: calc(var(--ak-space-l) + var(--ak-space-m));
+}
