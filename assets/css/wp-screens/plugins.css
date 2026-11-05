@@ -3,7 +3,7 @@
    is in screens/_shared/thickbox.css since it's used by other modals
    too. */
 
-/* ===== Installed plugins: a quiet native list with visible actions ===== */
+/* ===== Installed plugins: a quiet native list with shared action reveal ===== */
 body.adminkit.plugins-php .search-plugins .search-box {
  float:none; clear:both; display:flex; flex-direction:column; align-items:stretch;
  gap:calc(6px * var(--ak-space-scale,1)); width:min(100%,26rem);
@@ -20,9 +20,6 @@ body.adminkit .wp-list-table.plugins tr,
 body.adminkit .wp-list-table.plugins tr:is(.active,.inactive) > :is(th,td) { background:var(--ak-table-bg); }
 body.adminkit .wp-list-table.plugins tbody :is(th,td) { border-inline-start:none !important; box-shadow:none; }
 body.adminkit .wp-list-table.plugins .plugin-title strong { color:var(--ak-heading); font-weight:600; }
-body.adminkit.plugins-php .wp-list-table.plugins #the-list .plugin-title > strong { translate:none; transition:none; }
-body.adminkit.plugins-php .wp-list-table.plugins .row-actions { visibility:visible; opacity:1; pointer-events:auto; }
-body.adminkit.plugins-php .wp-list-table.plugins .plugin-title > .row-actions { margin-top:4px; padding:0; }
 
 /* Names/actions lead. Descriptions and source metadata remain fully available,
    with a readable measure and quieter links rather than competing highlights. */
