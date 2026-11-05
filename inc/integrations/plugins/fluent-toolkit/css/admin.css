@@ -12,8 +12,8 @@ body.adminkit.ak-fluenthub .fluent_theme_dark {
 	--fui-text-muted: var(--ak-text-muted);
 	--fui-text-soft: var(--ak-text-muted);
 	--fui-text-faint: var(--ak-text-muted);
-	--fui-accent: var(--ak-text);
-	--fui-accent-hover: var(--ak-heading);
+	--fui-accent: var(--ak-primary);
+	--fui-accent-hover: var(--ak-primary-hover);
 	--fui-shadow: var(--ak-shadow-subtle);
 }
 body.adminkit.ak-fluenthub .fui-app-content {
@@ -117,4 +117,10 @@ body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-btn-primary:is(:hover,:fo
 }
 body.adminkit.toplevel_page_fluent-toolkit :is(.ft-view-tab,.ft-btn):focus-visible:not(:disabled) {
  outline:2px solid var(--ak-focus); outline-offset:2px;
+}
+
+/* The host paints an initial on its text colour; on-accent is not its inverse
+   in dark mode. A neutral fallback remains readable without a configured logo. */
+body.adminkit.ak-fluenthub .fui-workspace-icon--initial {
+ background:var(--ak-surface-muted); color:var(--ak-heading);
 }
