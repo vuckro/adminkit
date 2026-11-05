@@ -1,12 +1,11 @@
-/** Responsive toolbar: preserve native nodes, group secondary actions on touch widths. */
+/** Native toolbar: frontend scroll rail and responsive admin actions. */
 (function () {
 	'use strict';
 	var bar = document.getElementById('wpadminbar');
 	var toolbar = document.getElementById('wp-toolbar');
 	var data = window.AdminKitMobileBar || {};
 	if (!bar || !toolbar || !data.more) { return; }
-	var mq = window.matchMedia('(max-width: 782px)');
-	// Frontend: pin the native brand/tools while the original primary list scrolls.
+	// Frontend: one rail at every width; pin identity/tools and scroll native commands.
 	if (!data.admin) {
 		function alignDiagnostic() {
 			var icon = bar.querySelector('#wp-admin-bar-query-monitor > .ab-item > .ab-icon');
@@ -23,40 +22,31 @@
 		var brand = document.createElement('ul');
 		brand.className = 'ab-top-menu ak-front-bar-brand';
 		brand.setAttribute('role', 'menu');
-		var marker = document.createComment('adminkit-native-brand');
 		var logo = null;
 		function updateEdges() {
-			var scroller = primary && mq.matches ? primary : toolbar;
+			var scroller = primary || toolbar;
 			var overflow = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
 			// Modern RTL scrollers use negative scrollLeft; clamp Safari overscroll.
 			var position = Math.min(overflow, Math.max(0, Math.abs(scroller.scrollLeft)));
-			bar.classList.toggle('ak-bar-no-scroll', mq.matches && overflow <= 1);
-			bar.classList.toggle('ak-bar-at-start', mq.matches && position <= 1);
-			bar.classList.toggle('ak-bar-at-end', mq.matches && position >= overflow - 1);
-			if (primary && mq.matches) {
+			bar.classList.toggle('ak-bar-no-scroll', overflow <= 1);
+			bar.classList.toggle('ak-bar-at-start', position <= 1);
+			bar.classList.toggle('ak-bar-at-end', position >= overflow - 1);
+			if (primary) {
 				bar.style.setProperty('--ak-front-bar-start', brand.getBoundingClientRect().width + 'px');
 				bar.style.setProperty('--ak-front-bar-end', (secondary ? secondary.getBoundingClientRect().width : 0) + 'px');
 			}
 		}
 		function syncFrontend() {
-			if (primary && mq.matches) {
+			if (primary) {
 				var nativeLogo = primary.querySelector('#wp-admin-bar-wp-logo');
 				// Automatic branding deliberately hides wp-logo and marks site-name instead.
 				if (!nativeLogo || window.getComputedStyle(nativeLogo).display === 'none') { nativeLogo = primary.querySelector('#wp-admin-bar-site-name'); }
 				if (nativeLogo && !logo) {
 					logo = nativeLogo;
-					primary.insertBefore(marker, logo);
 					brand.appendChild(logo);
 					toolbar.insertBefore(brand, primary);
 				}
-				bar.classList.add('ak-front-mobile');
-			} else {
-				if (logo && marker.parentNode) { marker.parentNode.replaceChild(logo, marker); }
-				logo = null;
-				brand.remove();
-				bar.classList.remove('ak-front-mobile');
-				bar.style.removeProperty('--ak-front-bar-start');
-				bar.style.removeProperty('--ak-front-bar-end');
+				bar.classList.add('ak-front-rail');
 			}
 			updateEdges();
 		}
@@ -64,7 +54,6 @@
 		if (primary) { primary.addEventListener('scroll', updateEdges, { passive: true }); }
 		window.addEventListener('resize', syncFrontend);
 		window.addEventListener('load', syncFrontend);
-		if (mq.addEventListener) { mq.addEventListener('change', syncFrontend); }
 		if (window.ResizeObserver) {
 			var observer = new ResizeObserver(updateEdges);
 			observer.observe(toolbar);
@@ -76,6 +65,7 @@
 		syncFrontend();
 		return;
 	}
+	var mq = window.matchMedia('(max-width: 782px)');
 	var moved = [];
 	var wrapper = document.createElement('div');
 	wrapper.className = 'ak-mobile-bar-tools';

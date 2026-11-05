@@ -293,11 +293,9 @@ class AdminKit_Core_Branding {
 	/** Hide duplicate core marks and apply the automatic toolbar identity. */
 	private static function css() {
 		if ( ! AdminKit_Settings::get( 'branding_enabled' ) ) { return ''; }
-		// The top-left WordPress logo is ALWAYS hidden now — the brand mark lives at
-		// the site name instead. Two selectors: the .wp-admin one beats WP's wp-admin
-		// rule, the plain one covers the front end.
-		$css  = '.wp-admin #wpadminbar #wp-admin-bar-wp-logo,';
-		$css .= '#wpadminbar #wp-admin-bar-wp-logo{display:none}';
+		// The identity lives at site-name. Beat core’s responsive ID whitelist in
+		// both contexts so it cannot revive a duplicate WordPress mark.
+		$css = '#wpadminbar #wp-toolbar #wp-admin-bar-wp-logo{display:none}';
 		// Core also prepends a site-icon image; AdminKit supplies its own mark.
 		$css .= '#wpadminbar #wp-admin-bar-site-name > .ab-item > img.site-icon{display:none}';
 
