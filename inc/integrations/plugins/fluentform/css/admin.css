@@ -1518,3 +1518,79 @@ body.adminkit .el-table td.el-table__cell,
 body.adminkit .el-table th.el-table__cell.is-leaf {
 	border-bottom-color: var(--ak-border);
 }
+
+/* Fluent Forms 6.2 editor: the native canvas rule carries this ID. */
+body.adminkit div#js-form-editor--body .form-editor__body-content {
+ background: var(--ak-surface);
+}
+body.adminkit #form-editor .panel__body--item {
+ background: var(--ak-surface);
+ color: var(--ak-text);
+}
+body.adminkit #form-editor .panel__body--item:is(:hover, .selected) {
+ background: var(--ak-hover-bg);
+ border-color: var(--ak-primary);
+}
+body.adminkit #form-editor .option-fields-section {
+ background: var(--ak-surface);
+ border-color: var(--ak-border);
+}
+body.adminkit #form-editor .option-fields-section :is(.option-fields-section--title, .option-fields-section--content) {
+ background: var(--ak-surface);
+ color: var(--ak-text);
+ border-color: var(--ak-border);
+}
+body.adminkit #form-editor .btn-element {
+ background: var(--ak-surface);
+ border-color: var(--ak-border);
+ color: var(--ak-text);
+}
+body.adminkit #form-editor .btn-element:is(:hover, :focus-visible) {
+ background: var(--ak-hover-bg);
+ border-color: var(--ak-text-muted);
+ color: var(--ak-heading);
+}
+body.adminkit #form-editor .form-editor--sidebar-content :is(input[type="text"], input[type="search"], textarea) {
+ background: var(--ak-input-bg);
+ border-color: var(--ak-input-border);
+ color: var(--ak-text);
+}
+body.adminkit #form-editor .form-editor--sidebar-content input::placeholder { color: var(--ak-text-muted); }
+body.adminkit #form-editor .ff-btn-submit {
+ background: var(--ak-primary);
+ border-color: var(--ak-primary);
+ color: var(--ak-on-accent);
+}
+/* Pair each filled control with its contrasting mark, rather than white on white. */
+body.adminkit .el-switch.is-checked .el-switch__core::after { background: var(--ak-on-accent); }
+body.adminkit .el-radio__input.is-checked .el-radio__inner::after { background: var(--ak-on-accent); }
+body.adminkit .el-checkbox__input.is-checked .el-checkbox__inner::after { border-color: var(--ak-on-accent); }
+body.adminkit .el-radio.is-bordered.is-checked { border-color: var(--ak-primary); }
+/* Inset the cards from the rail without changing the host's overall width. */
+body.adminkit .ff_settings_wrapper .ff_settings_container {
+ box-sizing: border-box;
+ min-width: 0;
+ padding-inline-start: var(--ak-space-l);
+}
+/* Keep the native per-form navigation controls vertically aligned and inset. */
+body.adminkit .form_internal_menu {
+ box-sizing: border-box;
+ padding-inline: var(--ak-space-s);
+}
+body.adminkit .form_internal_menu .ff_form_name {
+ display: flex;
+ align-items: center;
+ gap: var(--ak-space-s);
+ padding-inline: var(--ak-space-m);
+ border-inline-end-color: var(--ak-border);
+}
+body.adminkit .form_internal_menu .ff_form_name_inner { min-width: 0; }
+body.adminkit .form_internal_menu .ff_menu_link {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ min-height: 36px;
+ padding-inline: var(--ak-space-m);
+ line-height: 1.4;
+}
+body.adminkit .form_internal_menu .ff_menu_back { border-color: var(--ak-border); }

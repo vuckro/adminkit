@@ -287,18 +287,31 @@ class AdminKit_Theme_Toggle {
 		if ( ! ( apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) ) {
 			return;
 		}
-		$attr = self::attribute();
+		$attr         = self::attribute();
+		$editor_style = self::editor_content_style( array( 'content_style' => '' ) );
 		?>
 <script id="adminkit-editor-theme">
 (function(){
 	var ATTR = <?php echo wp_json_encode( $attr ); ?>;
+	var CSS = <?php echo wp_json_encode( $editor_style['content_style'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ); ?>;
 	function isDark(){ return document.documentElement.getAttribute(ATTR) === 'dark'; }
 	function apply(ed){
-		try { var d = ed.getDoc(); if (d && d.documentElement) d.documentElement.classList.toggle('ak-editor-dark', isDark()); } catch (e) {}
+		try {
+			var d = ed.getDoc();
+			if (!d || !d.documentElement) return;
+			d.documentElement.classList.toggle('ak-editor-dark', isDark());
+			// Plugin-created editors may bypass tiny_mce_before_init entirely.
+			var nativeStyle = ed.settings && ed.settings.content_style;
+			if (d.head && !(nativeStyle && nativeStyle.indexOf('html.ak-editor-dark') !== -1) && !d.getElementById('adminkit-editor-colors')) {
+				var style = d.createElement('style');
+				style.id = 'adminkit-editor-colors'; style.textContent = CSS; d.head.appendChild(style);
+			}
+		} catch (e) {}
 	}
 	function applyAll(){ if (window.tinymce && tinymce.editors) tinymce.editors.forEach(apply); }
 	if (window.jQuery) { jQuery(document).on('tinymce-editor-init', function(e, ed){ apply(ed); }); }
 	new MutationObserver(applyAll).observe(document.documentElement, { attributes:true, attributeFilter:[ATTR] });
+	applyAll();
 })();
 </script>
 		<?php

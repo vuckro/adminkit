@@ -158,3 +158,17 @@ foreach ( array( '2.2.95' => 3, '2.4.5' => 2, '2.5.0' => 0 ) as $version => $cou
 	}
 }
 echo "OK: FluentSMTP toolbar/settings version boundaries and visible-toolbar condition.\n";
+
+// Embedded ACF fields must be skinned on native screens only when ACF queues them.
+$acf_input_enqueued = false;
+function wp_style_is( $handle, $state ) {
+	global $acf_input_enqueued;
+	return 'acf-input' === $handle && 'enqueued' === $state && $acf_input_enqueued;
+}
+require dirname( __DIR__ ) . '/inc/integrations/plugins/acf/class-acf.php';
+$native_taxonomy = (object) array( 'id' => 'edit-collection_fle', 'post_type' => 'ressource' );
+check_gate( ! AdminKit_Integration_Acf::owns_screen( $native_taxonomy ), 'Native taxonomy was treated as an ACF settings page' );
+check_gate( ! AdminKit_Integration_Acf::owns_input_screen( $native_taxonomy ), 'ACF field styles loaded without native inputs' );
+$acf_input_enqueued = true;
+check_gate( AdminKit_Integration_Acf::owns_input_screen( $native_taxonomy ), 'Embedded native ACF inputs were not detected' );
+echo "OK: ACF embedded-field stylesheet boundary.\n";

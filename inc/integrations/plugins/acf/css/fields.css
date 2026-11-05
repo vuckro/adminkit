@@ -1,0 +1,30 @@
+/* ACF inputs embedded outside its own admin screens. Preserve native field
+   dimensions, AJAX choices and selection semantics; only recolor surfaces. */
+body.adminkit .acf-relationship {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit .acf-relationship .filters {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+body.adminkit .acf-relationship .selection .choices,
+body.adminkit .acf-relationship .selection .choices .list {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+body.adminkit .acf-relationship .selection .values,
+body.adminkit .acf-relationship .selection .values .list {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border);
+}
+body.adminkit .acf-relationship .acf-rel-label { color: var(--ak-text-muted); }
+body.adminkit .acf-relationship .acf-rel-item { color: var(--ak-text); }
+body.adminkit .acf-relationship .acf-rel-item:hover {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+body.adminkit .acf-relationship .acf-rel-item.disabled { color: var(--ak-text-muted); }
+body.adminkit .acf-relationship .selection .list { color: var(--ak-text-muted); }
+body.adminkit .acf-relationship .filters .filter { border-color: var(--ak-border); }

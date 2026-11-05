@@ -1,0 +1,36 @@
+// Plugin-created TinyMCE instances can bypass PHP's tiny_mce_before_init filter.
+const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
+const path = require('node:path');
+const { JSDOM } = require('jsdom');
+(async () => {
+ const root = path.resolve(__dirname, '../..');
+ const php = 'define("ABSPATH", __DIR__ . "/"); function apply_filters($h,$v){return $v;} function is_admin(){return true;} function wp_json_encode($a,$flags=0){return json_encode($a,$flags);} require ' + JSON.stringify(path.join(root, 'inc/class-theme-toggle.php')) + '; AdminKit_Theme_Toggle::print_editor_bridge();';
+ const output = execFileSync('php', ['-r', php], { encoding: 'utf8' });
+ const script = output.match(/<script[^>]*>([\s\S]*?)<\/script>/)[1];
+ const dom = new JSDOM('<html data-adminkit-theme="dark"><body><iframe></iframe><iframe></iframe></body></html>', { runScripts: 'outside-only' });
+ const w = dom.window;
+ const docs = [...w.document.querySelectorAll('iframe')].map(f => f.contentDocument);
+ docs.forEach(d => { d.body.id = 'tinymce'; d.body.innerHTML = '<p>Keep this confirmation <strong>unchanged</strong>.</p>'; });
+ const before = docs.map(d => d.body.innerHTML);
+ let listener;
+ w.jQuery = () => ({ on: (name, callback) => { assert.equal(name, 'tinymce-editor-init'); listener = callback; } });
+ const custom = { settings: {}, getDoc: () => docs[0] };
+ const native = { settings: { content_style: 'html.ak-editor-dark body{color:white}' }, getDoc: () => docs[1] };
+ w.tinymce = { editors: [custom, native] };
+ w.eval(script);
+ assert.ok(docs[0].documentElement.classList.contains('ak-editor-dark'));
+ assert.ok(docs[0].getElementById('adminkit-editor-colors'), 'Plugin-created editor receives missing CSS');
+ assert.equal(docs[1].getElementById('adminkit-editor-colors'), null, 'Native content_style is not duplicated');
+ listener({}, custom); listener({}, custom);
+ assert.equal(docs[0].querySelectorAll('#adminkit-editor-colors').length, 1, 'Repeated init is idempotent');
+ w.document.documentElement.setAttribute('data-adminkit-theme', 'light');
+ await new Promise(resolve => w.setTimeout(resolve, 0));
+ assert.equal(docs[0].documentElement.classList.contains('ak-editor-dark'), false, 'Theme changes reach plugin editor');
+ w.document.documentElement.setAttribute('data-adminkit-theme', 'dark');
+ await new Promise(resolve => w.setTimeout(resolve, 0));
+ assert.ok(docs[0].documentElement.classList.contains('ak-editor-dark'));
+ assert.deepEqual(docs.map(d => d.body.innerHTML), before, 'Theme sync must not change serialized editor content');
+ w.close();
+ console.log('OK: custom TinyMCE CSS fallback, native-style preservation, repeated init, theme changes and untouched content.');
+})().catch(error => { console.error(error); process.exitCode = 1; });
