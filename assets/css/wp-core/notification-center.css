@@ -217,6 +217,7 @@ body.adminkit #wpadminbar #wp-admin-bar-ak-notifications > .ab-item:focus {
 /* The moved nodes are real WP notices — they already carry AdminKit's notice card
    styling from chrome.css. Just neutralise WP's page-context margins in the narrow
    panel and let the list gap handle spacing. */
+.ak-nc-editor-notices .components-notice,
 .ak-nc-list .notice,
 .ak-nc-list .updated,
 .ak-nc-list .update-nag,
@@ -297,4 +298,14 @@ body.adminkit #wpadminbar #wp-admin-bar-ak-notifications > .ab-item:focus {
    Blocking notices and transient snackbars keep their native editor placement. */
 html.ak-nc-editor-active :is(.editor-notices__dismissible, .components-editor-notices__dismissible) {
 	display: none;
+}
+
+/* React notices are siblings in their native NoticeList, not relocated banners. */
+.ak-nc-editor-notices .components-notice-list {
+ display: flex;
+ flex-direction: column;
+ gap: calc(10px * var(--ak-space-scale, 1));
+}
+.ak-nc-editor-notices {
+ margin-block-start: calc(10px * var(--ak-space-scale, 1));
 }

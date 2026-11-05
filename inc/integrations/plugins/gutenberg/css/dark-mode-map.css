@@ -580,18 +580,7 @@ body.block-editor-page.adminkit .block-editor-list-view-leaf.is-branch-selected 
 }
 
 
-/* ========== 14. Notices (in-editor messages) ========== */
-body.block-editor-page.adminkit .components-notice {
-	background: var(--ak-surface);
-	border-color: var(--ak-border);
-	color: var(--ak-text);
-}
-
-body.block-editor-page.adminkit .components-notice.is-success { border-left-color: var(--ak-success); }
-body.block-editor-page.adminkit .components-notice.is-warning { border-left-color: var(--ak-warning); }
-body.block-editor-page.adminkit .components-notice.is-error   { border-left-color: var(--ak-error); }
-body.block-editor-page.adminkit .components-notice.is-info    { border-left-color: var(--ak-info); }
-
+/* Notices use the shared feedback recipe, including semantic icon tiles. */
 
 /* ========== 15. Pre-publish + post-publish panels ========== */
 body.block-editor-page.adminkit .editor-post-publish-panel,
@@ -957,29 +946,10 @@ body.block-editor-page.adminkit .components-drop-zone__content-icon {
 }
 
 
-/* ========== 26. Editor notices (autosave warning, errors) ========== */
-/* The bright yellow "There is an autosave..." bar at the top of the
-   editor uses .components-notice and .editor-notices__pinned. Surface
-   tokens here so it stops glaring against the dark chrome. Severity
-   stays signaled by the left-border color. */
+/* Editor banner containers stay transparent; shared feedback owns each notice. */
 body.block-editor-page.adminkit .editor-notices__pinned,
 body.block-editor-page.adminkit .editor-notices__dismissible {
-	background: transparent;
-}
-
-body.block-editor-page.adminkit .editor-notices__pinned .components-notice,
-body.block-editor-page.adminkit .editor-notices__dismissible .components-notice {
-	background: var(--ak-surface);
-	color: var(--ak-text);
-	border-color: var(--ak-border);
-}
-
-body.block-editor-page.adminkit .components-notice__content {
-	color: var(--ak-text);
-}
-
-body.block-editor-page.adminkit .components-notice__action.is-link {
-	color: var(--ak-primary);
+ background: transparent;
 }
 
 

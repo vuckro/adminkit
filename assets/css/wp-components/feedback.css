@@ -90,3 +90,29 @@ body.adminkit .updating-message p::before { color: var(--ak-info); }
   forced-color-adjust: none;
  }
 }
+
+/* Native Notice actions use the same neutral secondary recipe in the editor
+   and in the grouped drawer; retain the real button and its callback. */
+body.adminkit .components-notice .components-notice__action.is-secondary {
+ max-inline-size: 100%;
+ block-size: auto;
+ min-block-size: 32px;
+ white-space: normal;
+ text-align: start;
+ background: var(--ak-surface);
+ color: var(--ak-btn-text, var(--ak-text));
+ border-radius: var(--ak-radius-s);
+ box-shadow: inset 0 0 0 1px var(--ak-btn-border, var(--ak-border));
+}
+body.adminkit .components-notice .components-notice__action.is-secondary:hover:not(:disabled) {
+ background: var(--ak-btn-hover-bg);
+ color: var(--ak-text);
+ box-shadow: inset 0 0 0 1px var(--ak-btn-hover-border);
+}
+body.adminkit .components-notice .components-notice__action.is-secondary:focus-visible:not(:disabled) {
+ box-shadow: inset 0 0 0 1px var(--ak-btn-hover-border), var(--ak-focus-ring);
+}
+
+@media (max-width: 782px) {
+ body.adminkit .components-notice .components-notice__action.is-secondary { min-block-size: 44px; }
+}
