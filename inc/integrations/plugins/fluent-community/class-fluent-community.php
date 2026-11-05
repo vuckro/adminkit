@@ -88,7 +88,7 @@ class AdminKit_Integration_Fluent_Community extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Verified against FluentCommunity 2.5.x. A new major may rename the wizard's
+	 * Verified against FluentCommunity 2.12.x. A new major may rename the wizard's
 	 * `.fcom_*` classes or reshuffle the brand literals / Element Plus defaults
 	 * this adapter targets, so gate on the major — register_assets() falls back to
 	 * native UI past it.
@@ -96,7 +96,7 @@ class AdminKit_Integration_Fluent_Community extends AdminKit_Integration_Base {
 	 * @return string|null
 	 */
 	protected static function max_tested_host_version() {
-		return '2.5.0';
+		return '2.12.0';
 	}
 
 	/**

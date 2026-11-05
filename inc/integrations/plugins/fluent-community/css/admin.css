@@ -310,3 +310,29 @@ body.adminkit.toplevel_page_fluent-community .pen-underline:after {
 		color-mix( in srgb, var( --ak-primary ) 20%, transparent ) 80%,
 		transparent 100% );
 }
+
+/* Current native roles; admin only, also inherited by teleported controls. */
+html body.adminkit.toplevel_page_fluent-community {
+	--fcom-primary-bg: var(--ak-surface);
+	--fcom-secondary-bg: var(--ak-bg);
+	--fcom-active-bg: var(--ak-hover-bg);
+	--fcom-primary-text: var(--ak-heading);
+	--fcom-secondary-text: var(--ak-text-muted);
+	--fcom-primary-border: var(--ak-border);
+	--fcom-ins-bad: var(--ak-error);
+	--fcom-ins-good: var(--ak-success);
+	--fcom-ins-warn: var(--ak-warning);
+	--fcom-ins-warn-bg: var(--ak-warning-subtle);
+	--fcom-ins-crit-bg: var(--ak-error-subtle);
+	--fcom-ins-info-bg: var(--ak-info-subtle);
+	--fcom-ins-row-bg: var(--ak-surface);
+	--fcom-ins-muted: var(--ak-text-muted);
+	--fcom-ins-s1: var(--ak-info);
+	--fcom-ins-s2: var(--ak-warning);
+	--fcom-ins-s3: var(--ak-success);
+	--fcom-ins-on-s1: var(--ak-on-accent);
+	--fcom-ins-track: var(--ak-border);
+	--fcom-ins-q0: var(--ak-surface-muted);
+	--fcom-ins-q5: var(--ak-primary);
+	--fcom-push-done: var(--ak-success);
+}

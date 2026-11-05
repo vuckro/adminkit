@@ -1339,3 +1339,19 @@ body.adminkit.toplevel_page_fluent-booking .el-card { box-shadow: var(--ak-card-
 body.adminkit.toplevel_page_fluent-booking .el-card .el-card { box-shadow: none; }
 
 body.adminkit.toplevel_page_fluent-booking :is(.fcal_cal_slot, .fcal_settings_card, .fcal_configure_integration_card) { box-shadow: var(--ak-card-shadow) !important; border-color: var(--ak-card-border); border-width: var(--ak-border-width); border-radius: var(--ak-card-radius); }
+
+/* Current native roles; admin only, also inherited by teleported controls. */
+html body.adminkit.toplevel_page_fluent-booking {
+	--fcal-danger-solid: var(--ak-error);
+	--fcal-danger-solid-hover: var(--ak-error);
+	--fcal-focus-ring: var(--ak-primary);
+	--fcal-notice-bg: var(--ak-info-subtle);
+	--fcal-notice-fg: var(--ak-info);
+	--fcal-notice-icon: var(--ak-info);
+	--fcal-notice-line: var(--ak-border);
+	--fcal-success-solid: var(--ak-success);
+	--fcal-switch-active-bg: var(--ak-primary);
+	--fcal-switch-active-shadow: var(--ak-shadow-subtle);
+	--fcal-switch-track: var(--ak-border-strong);
+	--fcal-text-placeholder: var(--ak-text-subtle);
+}

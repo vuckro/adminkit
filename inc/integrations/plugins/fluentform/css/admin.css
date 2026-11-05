@@ -453,10 +453,10 @@ body.adminkit .el-alert {
 	color: var(--ak-text);
 }
 
-body.adminkit .el-alert--success { border-left: 3px solid var(--ak-success); }
-body.adminkit .el-alert--warning { border-left: 3px solid var(--ak-warning); }
-body.adminkit .el-alert--error   { border-left: 3px solid var(--ak-error); }
-body.adminkit .el-alert--info    { border-left: 3px solid var(--ak-info); }
+body.adminkit .el-alert--success { border-inline-start: 1px solid var(--ak-success); }
+body.adminkit .el-alert--warning { border-inline-start: 1px solid var(--ak-warning); }
+body.adminkit .el-alert--error   { border-inline-start: 1px solid var(--ak-error); }
+body.adminkit .el-alert--info    { border-inline-start: 1px solid var(--ak-info); }
 
 
 /* ========== 13. Headings ========== */
@@ -1594,3 +1594,66 @@ body.adminkit .form_internal_menu .ff_menu_link {
  line-height: 1.4;
 }
 body.adminkit .form_internal_menu .ff_menu_back { border-color: var(--ak-border); }
+/* Editor panels use the available canvas width, not an unbounded 40% rail.
+   These rules style builder chrome only; saved fields and submit styles stay native. */
+body.adminkit .ff_screen_editor .form_internal_menu {
+	flex-wrap: wrap;
+	gap: var(--ak-space-xs);
+}
+
+body.adminkit .ff_screen_editor .form_internal_menu .ff_form_name_inner {
+	max-width: none;
+	max-inline-size: 14rem;
+	min-inline-size: 0;
+}
+
+body.adminkit .ff_screen_editor .form-editor-main {
+	align-items: stretch;
+}
+
+body.adminkit .ff_screen_editor .form-editor--sidebar {
+	flex: 0 0 clamp(21rem, 36%, 28rem);
+	inline-size: auto;
+	min-inline-size: 0;
+}
+
+body.adminkit .ff_screen_editor .form-editor--body {
+	flex: 1 1 0;
+	inline-size: auto;
+	min-inline-size: 0;
+}
+
+body.adminkit .ff_screen_editor .form-editor--sidebar-content {
+	border-inline-start-color: var(--ak-border);
+	scrollbar-width: thin;
+	scrollbar-color: var(--ak-border-strong) transparent;
+}
+
+body.adminkit .ff_screen_editor :is(button, a, input, textarea):focus-visible {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+	body.adminkit .ff_screen_editor .form-editor-main {
+		flex-direction: column;
+	}
+
+	body.adminkit .ff_screen_editor .form-editor--body,
+	body.adminkit .ff_screen_editor .form-editor--sidebar {
+		flex: 0 0 auto;
+		inline-size: 100%;
+		block-size: auto;
+	}
+
+	body.adminkit .ff_screen_editor .form-editor--body {
+		min-block-size: 18rem;
+	}
+
+	body.adminkit .ff_screen_editor .form-editor--sidebar-content {
+		block-size: auto;
+		max-block-size: 65vh;
+		overflow: auto;
+		border-block-start: 1px solid var(--ak-border);
+	}
+}

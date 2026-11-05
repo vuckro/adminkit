@@ -52,14 +52,14 @@ class AdminKit_Integration_Fluent_Booking extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Verified against FluentBooking Free 2.5.0. Pro-only settings show their
+	 * Verified against FluentBooking Free 2.6.0. Pro-only settings show their
 	 * native locked state in this environment. Re-check the skin on a
 	 * new major — register_assets() falls back to native UI until you do.
 	 *
 	 * @return string|null
 	 */
 	protected static function max_tested_host_version() {
-		return '2.5.0';
+		return '2.6.0';
 	}
 
 	/**
@@ -219,7 +219,7 @@ class AdminKit_Integration_Fluent_Booking extends AdminKit_Integration_Base {
 	}
 	function sync(){
 		var m=akMode();
-		try{localStorage.setItem('fcal_color_mode',m);localStorage.setItem('fluent_theme_mode',m);}catch(e){}
+		try{localStorage.setItem('fcal_color_mode',m);}catch(e){}
 		[document.documentElement,document.body,document.getElementById('wpbody-content')].forEach(function(el){
 			if(el){
 				el.classList.toggle('dark',m==='dark');

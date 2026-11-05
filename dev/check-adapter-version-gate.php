@@ -17,6 +17,9 @@ function add_action( $hook, $callback, $priority = 10 ) {
 	global $registered_hooks;
 	$registered_hooks[] = array( $hook, $callback, $priority );
 }
+function add_filter( $hook, $callback, $priority = 10 ) {
+	add_action( $hook, $callback, $priority );
+}
 function get_current_screen() {
 	global $current_screen;
 	return $current_screen;
@@ -135,6 +138,7 @@ echo "OK: HappyFiles 1.9 adapter version regression.\n";
 // FluentSMTP toolbar evolves independently from its legacy settings skin.
 class AdminKit_Assets {
 	const TOKENS_HANDLE = 'tokens';
+	const ELEMENT_PLUS_HANDLE = 'element-plus';
 	public static $registered = array();
 	public static function register( $asset ) {
 		self::$registered[] = $asset;
@@ -146,7 +150,7 @@ class Test_Fluent_Smtp_Adapter extends AdminKit_Integration_Fluent_Smtp {
 	public static function is_active() { return true; }
 	protected static function host_version() { return self::$version; }
 }
-foreach ( array( '2.2.95' => 3, '2.4.5' => 2, '2.5.0' => 0 ) as $version => $count ) {
+foreach ( array( '2.2.95' => 3, '2.3.0' => 2, '2.4.5' => 3, '2.5.0' => 0 ) as $version => $count ) {
 	Test_Fluent_Smtp_Adapter::$version = $version;
 	AdminKit_Assets::$registered = array();
 	Test_Fluent_Smtp_Adapter::maybe_init();

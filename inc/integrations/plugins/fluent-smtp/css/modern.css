@@ -1,0 +1,103 @@
+/* FluentSMTP 2.4: native semantic tokens, including body-teleported controls.
+ * Keep delivery settings, chart rendering and native application layout owned
+ * by FluentSMTP. The 2.2 selector skin remains isolated in admin.css. */
+html body.adminkit.settings_page_fluent-mail,
+html body.adminkit.settings_page_fluent-mail.fluent_theme_dark {
+	--fsm-body-bg: var(--ak-bg);
+	--fsm-surface: var(--ak-surface);
+	--fsm-surface-sunk: var(--ak-input-bg);
+	--fsm-surface-raised: var(--ak-elevated);
+	--fsm-border: var(--ak-border);
+	--fsm-border-strong: var(--ak-border-strong);
+	--fsm-field-border: var(--ak-input-border);
+	--fsm-heading: var(--ak-heading);
+	--fsm-text: var(--ak-text);
+	--fsm-text-mid: var(--ak-text-muted);
+	--fsm-text-light: var(--ak-text-muted);
+	--fsm-link: var(--ak-primary-text);
+	--fsm-accent: var(--ak-primary);
+	--fsm-accent-contrast: var(--ak-on-accent);
+	--fsm-accent-wash: var(--ak-primary-subtle);
+	--fsm-card-line: var(--ak-border);
+	--fsm-shadow-card: var(--ak-shadow-subtle);
+	--fsm-shadow-lift: var(--ak-shadow-subtle);
+	--fsm-shadow-pop: var(--ak-shadow-subtle);
+	--fsm-danger-wash: var(--ak-error-subtle);
+	--fsm-danger-bg: var(--ak-error-subtle);
+	--fsm-danger-line: var(--ak-error);
+	--fsm-danger-fg: var(--ak-error);
+	--fsm-warning-wash: var(--ak-warning-subtle);
+	--fsm-warning-bg: var(--ak-warning-subtle);
+	--fsm-warning-line: var(--ak-warning);
+	--fsm-warning-fg: var(--ak-warning);
+	--fsm-success-wash: var(--ak-success-subtle);
+	--fsm-success-bg: var(--ak-success-subtle);
+	--fsm-success-line: var(--ak-success);
+	--fsm-success-fg: var(--ak-success);
+	--fsm-neutral-bg: var(--ak-surface-muted);
+	--fsm-neutral-fg: var(--ak-text-muted);
+	--fsm-tile-sent-bg: var(--ak-info-subtle);
+	--fsm-tile-sent-fg: var(--ak-info);
+	--fsm-tile-failed-bg: var(--ak-error-subtle);
+	--fsm-tile-failed-fg: var(--ak-error);
+	--fsm-tile-connections-bg: var(--ak-primary-subtle);
+	--fsm-tile-connections-fg: var(--ak-primary-text);
+	--fsm-tile-senders-bg: var(--ak-success-subtle);
+	--fsm-tile-senders-fg: var(--ak-success);
+	--fsm-heat-0: var(--ak-surface-muted);
+	--fsm-heat-1: color-mix(in srgb, var(--ak-primary) 18%, var(--ak-surface));
+	--fsm-heat-2: color-mix(in srgb, var(--ak-primary) 35%, var(--ak-surface));
+	--fsm-heat-3: color-mix(in srgb, var(--ak-primary) 55%, var(--ak-surface));
+	--fsm-heat-4: color-mix(in srgb, var(--ak-primary) 75%, var(--ak-surface));
+	--fsm-heat-5: var(--ak-primary);
+	--fsm-chart-line: var(--ak-info);
+	--fsm-chart-line-fill: var(--ak-info-subtle);
+	--fsm-chart-failed: var(--ak-error);
+	--fsm-chart-failed-fill: var(--ak-error-subtle);
+}
+
+body.adminkit.settings_page_fluent-mail .fluent-mail-app {
+	color: var(--ak-text);
+	font-family: var(--ak-font-body);
+}
+
+body.adminkit.settings_page_fluent-mail .el-input__inner:focus,
+body.adminkit.settings_page_fluent-mail .el-textarea__inner:focus {
+	background: var(--ak-input-bg);
+}
+
+body.adminkit.settings_page_fluent-mail :is(button, a, input, select, textarea):focus-visible {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+	body.adminkit.settings_page_fluent-mail :is(button, a, input, select, textarea):focus-visible {
+		outline-color: Highlight;
+	}
+}
+
+/* Break on the application width, not the viewport: Hub consumes a rail. */
+body.adminkit.settings_page_fluent-mail .fluent-mail-app {
+	container: ak-smtp / inline-size;
+}
+
+body.adminkit.settings_page_fluent-mail .fsm_card_head > * {
+	min-inline-size: 0;
+	max-inline-size: 100%;
+}
+
+body.adminkit.settings_page_fluent-mail .fsm_card_head :is(.el-date-editor, .el-range-editor) {
+	max-inline-size: 100%;
+}
+
+@container ak-smtp (max-width: 64rem) {
+	body.adminkit.settings_page_fluent-mail .fsm_split {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-areas: "main" "aside";
+	}
+
+	body.adminkit.settings_page_fluent-mail .fsm_split_aside {
+		position: static;
+	}
+}

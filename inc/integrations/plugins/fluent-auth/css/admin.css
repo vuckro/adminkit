@@ -1,0 +1,46 @@
+/* FluentAuth 3.1 native semantic palette. No public/login styling. */
+html body.adminkit.toplevel_page_fluent-auth,
+html body.adminkit.toplevel_page_fluent-auth.fluent_theme_dark {
+	--fls-body-bg: var(--ak-bg);
+	--fls-surface: var(--ak-surface);
+	--fls-surface-sunk: var(--ak-input-bg);
+	--fls-surface-raised: var(--ak-elevated);
+	--fls-border: var(--ak-border);
+	--fls-border-strong: var(--ak-border-strong);
+	--fls-heading: var(--ak-heading);
+	--fls-text: var(--ak-text);
+	--fls-text-mid: var(--ak-text-muted);
+	--fls-text-light: var(--ak-text-muted);
+	--fls-link: var(--ak-primary-text);
+	--fls-accent: var(--ak-primary);
+	--fls-accent-contrast: var(--ak-on-accent);
+	--fls-accent-wash: var(--ak-primary-subtle);
+	--fls-card-line: var(--ak-border);
+	--fls-shadow-card: var(--ak-shadow-subtle);
+	--fls-shadow-lift: var(--ak-shadow-subtle);
+	--fls-shadow-pop: var(--ak-shadow-subtle);
+	--fls-neutral-bg: var(--ak-surface-muted);
+	--fls-neutral-fg: var(--ak-text-muted);
+	--fls-chart-axis: var(--ak-border);
+	--fls-chart-labels: var(--ak-text-muted);
+	--fls-danger-wash: var(--ak-error-subtle);
+	--fls-danger-bg: var(--ak-error-subtle);
+	--fls-danger-line: var(--ak-error);
+	--fls-danger-fg: var(--ak-error);
+	--fls-warning-wash: var(--ak-warning-subtle);
+	--fls-warning-bg: var(--ak-warning-subtle);
+	--fls-warning-line: var(--ak-warning);
+	--fls-warning-fg: var(--ak-warning);
+	--fls-success-wash: var(--ak-success-subtle);
+	--fls-success-bg: var(--ak-success-subtle);
+	--fls-success-line: var(--ak-success);
+	--fls-success-fg: var(--ak-success);
+	--fls-tile-blocked-bg: var(--ak-warning-subtle);
+	--fls-tile-blocked-fg: var(--ak-warning);
+	--fls-tile-failed-bg: var(--ak-error-subtle);
+	--fls-tile-failed-fg: var(--ak-error);
+	--fls-tile-success-bg: var(--ak-success-subtle);
+	--fls-tile-success-fg: var(--ak-success);
+	--fls-tile-two-fa-bg: var(--ak-info-subtle);
+	--fls-tile-two-fa-fg: var(--ak-info);
+}

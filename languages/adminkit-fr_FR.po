@@ -1320,7 +1320,7 @@ msgstr "Ce nom d’utilisateur ne peut pas être modifié."
 msgid "To save"
 msgstr "À enregistrer"
 
-#: inc/class-theme-toggle.php inc/integrations/plugins/fluent-toolkit/class-fluent-toolkit.php inc/integrations/plugins/gutenberg/class-gutenberg.php inc/wp-core/class-login.php
+#: inc/class-fluent-theme.php inc/class-theme-toggle.php inc/integrations/plugins/gutenberg/class-gutenberg.php inc/wp-core/class-login.php
 msgid "Toggle light / dark mode"
 msgstr "Basculer entre le mode clair et sombre"
 

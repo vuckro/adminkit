@@ -51,6 +51,7 @@ class AdminKit_Plugin {
 		'settings/class-settings-i18n.php'                    => null, // UI string catalog for Settings_Page
 		'settings/class-settings-page.php'                     => 'AdminKit_Settings_Page::init',
 		'class-theme-toggle.php'                               => 'AdminKit_Theme_Toggle::init',
+		'class-fluent-theme.php'                               => 'AdminKit_Fluent_Theme::init',
 
 		// wp-core — restyle of existing WordPress screens.
 		'wp-core/class-profile-account.php'                    => 'AdminKit_Profile_Account::init',

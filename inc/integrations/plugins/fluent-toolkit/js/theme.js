@@ -4,7 +4,8 @@
 		var D = window.AdminKitFluentHub;
 		var root = document.documentElement;
 		var body = document.body;
-		if (!D || !body.classList.contains('adminkit') || !document.querySelector('.fluent_uui')) { return; }
+		if (!D || !body.classList.contains('adminkit') || window.AdminKitFluentThemeReady) { return; }
+		window.AdminKitFluentThemeReady = true;
 		var channel;
 		var media = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
 		var lastNative = '';
@@ -16,11 +17,16 @@
 			var button = document.getElementById('ak-fui-theme-toggle');
 			if (button) { button.setAttribute('aria-pressed', root.getAttribute(D.attr) === 'dark' ? 'true' : 'false'); }
 		}
+		function mirror(next) {
+			root.classList.toggle('fluent_theme_dark', next === 'dark');
+			body.classList.toggle('fluent_theme_dark', next === 'dark');
+		}
 		function adopt(m) {
 			m = mode(m);
 			if (!m) { return; }
 			var next = D.enabled ? resolved(m) : 'light';
-			root.setAttribute(D.attr, next);
+			if (root.getAttribute(D.attr) !== next) { root.setAttribute(D.attr, next); }
+			mirror(next);
 			write(D.key, m === 'system' && D.enabled ? '' : next);
 			render();
 		}
@@ -31,10 +37,13 @@
 			if (channel) { channel.postMessage({ mode: m }); }
 		}
 		if (typeof window.BroadcastChannel !== 'undefined') {
-			channel = new window.BroadcastChannel('fluent_theme_changed:' + window.location.origin);
+			try { channel = new window.BroadcastChannel('fluent_theme_changed:' + window.location.origin); } catch (e) { /* Restricted contexts may reject channels. */ }
+		}
+		if (channel) {
 			channel.onmessage = function (event) {
 				if (event.data && mode(event.data.mode)) {
-					lastNative = read('fluent_theme_mode');
+					lastNative = mode(event.data.mode) === 'system' ? 'system:' + resolved('system') : mode(event.data.mode);
+					write('fluent_theme_mode', lastNative);
 					adopt(event.data.mode);
 				}
 			};
@@ -54,15 +63,19 @@
 			var changed = records.some(function (record) { return record.attributeName === D.attr; });
 			if (!changed) { return; }
 			var current = root.getAttribute(D.attr);
+			mirror(current);
 			if (!D.enabled && current !== 'light') { adopt('light'); return; }
 			if (current !== resolved(mode(lastNative))) { publish(current); }
 			render();
 		}).observe(root, { attributes: true, attributeFilter: [D.attr] });
 		window.addEventListener('storage', function (event) {
-			if (event.key === 'fluent_theme_mode' && mode(event.newValue)) {
-				lastNative = event.newValue;
-				adopt(mode(event.newValue));
+			if (event.key === 'fluent_theme_mode') {
+				if (event.newValue && !mode(event.newValue)) { return; }
+				var nativeIntent = mode(event.newValue) || 'system';
+				lastNative = nativeIntent === 'system' ? 'system:' + resolved('system') : nativeIntent;
+				adopt(nativeIntent);
 			} else if (event.key === D.key) {
+				if (event.newValue && !mode(event.newValue)) { return; }
 				var next = mode(event.newValue) || 'system';
 				adopt(next); publish(next);
 			}

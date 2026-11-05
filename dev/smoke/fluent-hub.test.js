@@ -5,14 +5,15 @@ const path = require('node:path');
 const { JSDOM } = require('jsdom');
 const source = fs.readFileSync(path.resolve(__dirname, '../../inc/integrations/plugins/fluent-toolkit/js/theme.js'), 'utf8');
 const tick = () => new Promise(resolve => setTimeout(resolve, 15));
-async function setup({saved, native, enabled = true, channel = true, storage = true} = {}) {
+async function setup({saved, native, enabled = true, channel = true, storage = true, hub = true, deniedChannel = false} = {}) {
   const dom = new JSDOM('<html data-adminkit-theme="light"><body class="adminkit ak-fluenthub"><div class="fluent_uui"><div class="fui-sidebar-footer--left"></div></div></body></html>', {url:'https://test.invalid/wp-admin/', runScripts:'outside-only'});
   const w = dom.window;
+  if (!hub) w.document.querySelector('.fluent_uui').remove();
   w.AdminKitFluentHub = {attr:'data-adminkit-theme', key:'adminkit-theme', enabled, label:'Toggle theme'};
   const media = {matches:false, addEventListener(type, cb) { this.change = cb; }};
   w.matchMedia = () => media;
   const sent = [];
-  if (channel) { w.BroadcastChannel = class { constructor() { w.bridgeChannel = this; } postMessage(value) { sent.push(value); } }; }
+  if (channel) { w.BroadcastChannel = class { constructor() { if (deniedChannel) throw new Error('channel denied'); w.bridgeChannel = this; } postMessage(value) { sent.push(value); } }; }
   if (saved) w.localStorage.setItem('adminkit-theme', saved);
   if (native) w.localStorage.setItem('fluent_theme_mode', native);
   if (!storage) Object.defineProperty(w, 'localStorage', {get() { throw new Error('denied'); }});
@@ -31,6 +32,8 @@ async function setup({saved, native, enabled = true, channel = true, storage = t
   t.w.document.documentElement.setAttribute('data-adminkit-theme', 'dark');
   await tick();
   assert.equal(t.w.localStorage.getItem('fluent_theme_mode'), 'dark');
+  assert.ok(t.w.document.body.classList.contains('fluent_theme_dark'), 'AdminKit toggle mirrors native body class');
+  assert.ok(t.w.document.documentElement.classList.contains('fluent_theme_dark'), 'AdminKit toggle mirrors native root class');
   assert.equal(t.sent.length, 2, 'No feedback loop');
   t.dom.window.close();
   t = await setup({native:'system:light'});
@@ -58,6 +61,24 @@ async function setup({saved, native, enabled = true, channel = true, storage = t
   t = await setup({storage:false});
   t.w.document.getElementById('ak-fui-theme-toggle').click(); await tick();
   assert.equal(t.mode(), 'dark', 'Storage denial keeps toggle usable');
+  t.dom.window.close();
+  t = await setup({hub:false, saved:'dark'});
+  assert.equal(t.mode(), 'dark', 'Standalone app gets the same bridge');
+  assert.ok(t.w.document.body.classList.contains('fluent_theme_dark'));
+  assert.ok(t.w.document.documentElement.classList.contains('fluent_theme_dark'));
+  assert.equal(t.w.document.getElementById('ak-fui-theme-toggle'), null, 'No Hub footer invented outside Hub');
+  t.w.bridgeChannel.onmessage({data:{mode:'system'}}); await tick();
+  assert.equal(t.w.localStorage.getItem('adminkit-theme'), null);
+  assert.equal(t.mode(), 'light');
+  assert.equal(t.w.document.body.classList.contains('fluent_theme_dark'), false);
+  t.w.dispatchEvent(new t.w.StorageEvent('storage', {key:'fluent_theme_mode',newValue:null}));
+  t.media.matches = true; t.media.change(); await tick();
+  assert.equal(t.mode(), 'dark', 'Removed native preference returns to system');
+  t.w.eval(source); await tick();
+  assert.equal(t.sent.length, 2, 'Repeated script execution stays idempotent');
+  t.dom.window.close();
+  t = await setup({hub:false, deniedChannel:true, saved:'dark'});
+  assert.equal(t.mode(), 'dark', 'Rejected channel falls back to storage/class observation');
   t.dom.window.close();
   console.log('OK: FluentHub native/AdminKit/system sync, no loops, opt-out, fallback and storage denial.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

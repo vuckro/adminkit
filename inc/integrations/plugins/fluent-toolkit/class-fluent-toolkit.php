@@ -23,6 +23,9 @@ class AdminKit_Integration_Fluent_Toolkit extends AdminKit_Integration_Base {
 	public static function owns_screen( $screen ) { return $screen && 'toplevel_page_fluent-toolkit' === $screen->id; }
 	/** Only mount alongside the host's replacement shell. @return bool */
 	public static function has_shell() { return wp_style_is( 'fluent_unified_ui', 'enqueued' ) || wp_style_is( 'fluent_unified_ui', 'done' ); }
+	/** @return bool */
+	public static function needs_styles() { return self::has_shell() || self::owns_screen( get_current_screen() ); }
+
 	/** @return void */
 	public static function register_assets() {
 		AdminKit_Assets::register( array(
@@ -30,22 +33,7 @@ class AdminKit_Integration_Fluent_Toolkit extends AdminKit_Integration_Base {
 			'src' => 'inc/integrations/plugins/fluent-toolkit/css/admin.css',
 			'deps' => array( AdminKit_Assets::TOKENS_HANDLE, 'fluent_unified_ui' ),
 			'context' => 'admin',
-			'condition' => array( __CLASS__, 'has_shell' ),
+			'condition' => array( __CLASS__, 'needs_styles' ),
 		) );
-	}
-	/** @return void */
-	protected static function boot() {
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_bridge' ), 10001 );
-	}
-	/** @return void */
-	public static function enqueue_bridge() {
-		if ( ! self::has_shell() || ! apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) { return; }
-		$data = array(
-			'attr' => AdminKit_Theme_Toggle::attribute(),
-			'key' => AdminKit_Theme_Toggle::storage_key(),
-			'enabled' => (bool) AdminKit_Settings::get( 'theme_toggle_enabled' ),
-			'label' => __( 'Toggle light / dark mode', 'adminkit' ),
-		);
-		AdminKit_Assets::enqueue_script( 'adminkit-fluent-toolkit-theme', 'inc/integrations/plugins/fluent-toolkit/js/theme.js', array(), 'window.AdminKitFluentHub=' . wp_json_encode( $data ) . ';' );
 	}
 }
