@@ -172,3 +172,15 @@ check_gate( ! AdminKit_Integration_Acf::owns_input_screen( $native_taxonomy ), '
 $acf_input_enqueued = true;
 check_gate( AdminKit_Integration_Acf::owns_input_screen( $native_taxonomy ), 'Embedded native ACF inputs were not detected' );
 echo "OK: ACF embedded-field stylesheet boundary.\n";
+
+// A moved Slim SEO page keeps its adapter, without claiming unrelated screens.
+function get_plugin_page_hookname( $slug, $parent ) { return str_replace( '.php', '', $parent ) . '_page_' . $slug; }
+require dirname( __DIR__ ) . '/inc/integrations/plugins/slim-seo/class-slim-seo.php';
+$GLOBALS['_parent_pages']['slim-seo'] = 'plugins.php';
+$current_screen = (object) array( 'id' => 'plugins_page_slim-seo' );
+check_gate( AdminKit_Integration_Slim_Seo::owns_screen( $current_screen ), 'Moved Slim SEO page lost its adapter' );
+$classes = AdminKit_Integration_Slim_Seo::settings_body_class( 'adminkit plugins_page_slim-seo' );
+check_gate( 1 === substr_count( AdminKit_Integration_Slim_Seo::settings_body_class( $classes ), 'settings_page_slim-seo' ), 'Moved native CSS scope missing or repeated' );
+$current_screen = (object) array( 'id' => 'plugins_page_other' );
+check_gate( ! AdminKit_Integration_Slim_Seo::owns_screen( $current_screen ) && 'adminkit' === AdminKit_Integration_Slim_Seo::settings_body_class( 'adminkit' ), 'Slim SEO adapter leaked to another moved page' );
+echo "OK: moved Slim SEO screen and native CSS scope boundaries.\n";

@@ -10,7 +10,7 @@
  * surfaces that hardcode white / dark text (header bar, tabs card,
  * feature toggle titles).
  *
- * Loaded only on `settings_page_slim-seo` via `owns_screen()`.
+ * Loaded only on the registered Slim SEO page, including a configured menu move.
  *
  * @package AdminKit
  */
@@ -54,7 +54,21 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 	 * @return bool
 	 */
 	public static function owns_screen( $screen ) {
-		return $screen && 'settings_page_slim-seo' === $screen->id;
+		if ( ! $screen ) { return false; }
+		if ( 'settings_page_slim-seo' === $screen->id ) { return true; }
+		return isset( $GLOBALS['_parent_pages']['slim-seo'] ) && function_exists( 'get_plugin_page_hookname' )
+			&& get_plugin_page_hookname( 'slim-seo', $GLOBALS['_parent_pages']['slim-seo'] ) === $screen->id;
+	}
+
+	/**
+	 * @param string $classes Native admin classes.
+	 * @return string
+	 */
+	public static function settings_body_class( $classes ) {
+		if ( self::owns_screen( get_current_screen() ) && false === strpos( ' ' . $classes . ' ', ' settings_page_slim-seo ' ) ) {
+			$classes .= ' settings_page_slim-seo';
+		}
+		return $classes;
 	}
 
 	/**
@@ -123,6 +137,7 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 	}
 	/** @return void */
 	protected static function boot() {
+		add_filter( 'admin_body_class', array( __CLASS__, 'settings_body_class' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'deduplicate_settings_page' ), 10001 );
 	}
 
