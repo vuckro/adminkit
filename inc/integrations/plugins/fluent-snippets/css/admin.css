@@ -355,3 +355,11 @@ html body.adminkit.toplevel_page_fluent-snippets {
 	--fsnip-success-line: var(--ak-success-subtle);
 	--fsnip-success-fg: var(--ak-success);
 }
+
+/* Custom Snippets navigation/actions sit outside Element Plus. Match its
+   keyboard focus treatment without changing code-editor shortcuts or content. */
+body.adminkit.toplevel_page_fluent-snippets :is(.fsnip_app_nav a, .fsnip_secondary_menu button, .fsnip_row_action, .fsnip_row_title, .fsnip_app_bar_toggle, .fsnip_theme_trigger):focus-visible:not(:disabled, [aria-disabled="true"], .is-disabled) {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
+	box-shadow: none;
+}

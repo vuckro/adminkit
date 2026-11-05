@@ -5,7 +5,7 @@ body.adminkit.ak-fluenthub .fluent_theme_dark {
 	--fui-bg: var(--ak-bg);
 	--fui-surface: var(--ak-elevated);
 	--fui-surface-hover: var(--ak-hover-bg);
-	--fui-surface-active: var(--ak-hover-bg);
+	--fui-surface-active: var(--ak-primary-subtle);
 	--fui-border: var(--ak-border);
 	--fui-text-inverse: var(--ak-on-accent);
 	--fui-text: var(--ak-text);
@@ -63,4 +63,44 @@ body.adminkit.toplevel_page_fluent-toolkit .ft-topbar {
 }
 body.adminkit.toplevel_page_fluent-toolkit #fluent_app {
 	background-color: var(--ak-bg);
+}
+
+/* One interaction palette for every product hosted by FluentHub. Native links,
+   disclosure behavior and logout URLs stay owned by the host. */
+body.adminkit.ak-fluenthub {
+	--fui-hover-bg: var(--ak-hover-bg);
+}
+body.adminkit.ak-fluenthub :is(.fui-workspace, .fui-workspace-menu-item, .fui-product-header, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item, .fui-wordpress-menu-link, .fui-sidebar-collapse-btn, .fui-sidebar-settings-btn, .fui-theme-toggle, .fui-theme-option, .fui-theme-select, .fui-item-chevron, .fui-mobile-toggle, .fui-sidebar-footer--left a, .fui-sidebar-footer--right a):hover:not(:disabled, [aria-disabled="true"], .is-disabled, .fui-workspace-menu-item--danger) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-text);
+	text-decoration: none;
+}
+body.adminkit.ak-fluenthub :is(.fui-workspace, .fui-workspace-menu-item, .fui-product-header, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item, .fui-wordpress-menu-link, .fui-sidebar-collapse-btn, .fui-sidebar-settings-btn, .fui-theme-toggle, .fui-theme-option, .fui-theme-select, .fui-item-chevron, .fui-mobile-toggle, .fui-sidebar-footer--left a, .fui-sidebar-footer--right a):focus-visible:not(:disabled, [aria-disabled="true"], .is-disabled) {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: -2px;
+	box-shadow: none;
+	color: var(--ak-text);
+}
+body.adminkit.ak-fluenthub :is(.fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item):is(.active, [aria-current="page"]) {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary);
+}
+/* A destructive action uses a soft semantic surface and a readable foreground
+   together. The host's light-only hover fill cannot be paired with white text. */
+body.adminkit.ak-fluenthub .fui-workspace-menu-item--danger:is(:hover, :focus-visible):not(:disabled, [aria-disabled="true"]) {
+	background: color-mix(in srgb, var(--ak-error) 14%, var(--ak-surface));
+	color: var(--ak-text);
+}
+body.adminkit.ak-fluenthub .fui-update-nag:is(:hover, :focus-visible) {
+	background: color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface));
+	border-color: var(--ak-warning);
+	color: var(--ak-text);
+}
+body.adminkit.ak-fluenthub .fui-update-nag:focus-visible {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: -2px;
+}
+
+body.adminkit.ak-fluenthub .fui-workspace-menu-item--danger {
+	color: var(--ak-error);
 }
