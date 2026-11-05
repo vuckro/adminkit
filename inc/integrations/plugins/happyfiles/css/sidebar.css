@@ -400,3 +400,23 @@ body.adminkit #wpbody.happyfiles-mounted #happyfiles-sidebar-inner.hide .toggle-
 	outline: 2px solid var(--ak-primary);
 	outline-offset: 2px;
 }
+
+/* Header actions sit immediately below the admin bar. Place their tooltips
+   below the button, inside the header's lower breathing room, rather than
+   lifting them underneath the fixed toolbar. Leave media dialogs unchanged. */
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-actions [aria-label]::before {
+	top: calc(100% + 6px);
+	bottom: auto;
+	transform: translate(-50%, 0);
+}
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-actions [aria-label]::after {
+	top: 100%;
+	bottom: auto;
+	transform: translate(-50%, 0);
+	border-top-color: transparent;
+	border-bottom-color: var(--ak-heading);
+}
+/* Reserve the label height as well: it must not cover the search field below. */
+body.adminkit #wpbody.happyfiles-mounted #happyfiles-header {
+	padding-block-end: calc(var(--ak-space-l) + var(--ak-space-m));
+}
