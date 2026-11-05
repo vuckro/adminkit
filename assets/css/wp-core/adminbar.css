@@ -670,6 +670,10 @@ body:not(.wp-admin) #wpadminbar.ak-front-rail > #wp-toolbar { display:flex; flex
 #wpadminbar.ak-front-rail #wp-toolbar > #wp-admin-bar-top-secondary { flex:0 0 auto; margin:0; }
 #wpadminbar.ak-front-rail #wp-toolbar > #wp-admin-bar-root-default > li { position:static; }
 #wpadminbar.ak-front-rail #wp-toolbar > #wp-admin-bar-root-default > li > .ab-item { white-space:nowrap; }
+#wpadminbar.ak-front-rail #wp-admin-bar-root-default > li > .ab-sub-wrapper { inset-inline-start:0; }
+@media screen and (min-width:783px) {
+ #wpadminbar.ak-front-rail #wp-admin-bar-root-default > li > .ab-sub-wrapper { inset-inline-start:var(--ak-front-bar-start,0px); min-width:0; width:max-content; max-width:calc(100% - var(--ak-front-bar-start,0px)); }
+}
 #wpadminbar.ak-front-rail::before,
 #wpadminbar.ak-front-rail::after { content:""; position:absolute; top:0; z-index:100000; width:16px; height:100%; pointer-events:none; transition:opacity 150ms ease; }
 #wpadminbar.ak-front-rail::before { inset-inline-start:var(--ak-front-bar-start,0px); background:linear-gradient(to right,var(--ak-surface),transparent); }
