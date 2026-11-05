@@ -455,3 +455,4 @@ body.adminkit.adminkit-woocommerce .woocommerce-profiler-business-information .c
 body.adminkit.adminkit-woocommerce .woocommerce-profiler-business-information .has-error .components-base-control__help { color: var(--ak-error); }
 body.adminkit.adminkit-woocommerce .components-button.woocommerce-profiler-navigation-skip-link { color: var(--ak-text-muted); }
 body.adminkit.adminkit-woocommerce .components-button.woocommerce-profiler-navigation-skip-link:is(:hover, :focus-visible) { color: var(--ak-heading); }
+body.adminkit.adminkit-woocommerce .woocommerce-profiler-question-subtext { color: var(--ak-text-muted); }
