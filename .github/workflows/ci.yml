@@ -64,6 +64,7 @@ jobs:
           AK_URL: http://127.0.0.1:9400
           AK_USER: admin
           AK_PASS: password
+          AK_DISPOSABLE: '1'
         run: |
           printf '{"steps":[{"step":"activatePlugin","pluginPath":"adminkit/adminkit.php"}]}' > /tmp/ci-blueprint.json
           npx --yes @wp-playground/cli@latest server --port=9400 --mount=.:/wordpress/wp-content/plugins/adminkit --blueprint=/tmp/ci-blueprint.json &

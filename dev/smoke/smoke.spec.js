@@ -125,6 +125,28 @@ test.describe('wp-admin', () => {
     expect(problems).toEqual([]);
   });
 
+  test('moved AdminKit page boots under Plugins and overview follows shared elevation', async ({ page }) => {
+    test.skip(process.env.AK_DISPOSABLE !== '1', 'Menu writes require an explicitly disposable WordPress.');
+    const problems = watch(page);
+    await page.goto('/wp-admin/admin.php?page=adminkit');
+    await expect(page.locator('#adminkit-app')).not.toHaveAttribute('aria-busy', 'true');
+    await page.evaluate(() => wp.apiFetch({path:'/adminkit/v1/menu',method:'POST',data:{items:[{parent:'plugins.php',slug:'adminkit',position:0}]}}));
+    await page.goto('/wp-admin/plugins.php?page=adminkit');
+    await expect(page.locator('#adminkit-app')).toBeVisible();
+    await expect(page.locator('#adminkit-app')).not.toHaveAttribute('aria-busy', 'true');
+    for (const theme of ['light', 'dark']) {
+      await page.evaluate(t => document.documentElement.setAttribute('data-adminkit-theme', t), theme);
+      const panels = page.locator('.ak-overview-summary, .ak-overview .ak-guide, .ak-overview-groups');
+      expect(await panels.count()).toBeGreaterThan(0);
+      for (const panel of await panels.all()) expect(await panel.evaluate(n => getComputedStyle(n).boxShadow)).not.toBe('none');
+      await page.evaluate(() => document.documentElement.style.setProperty('--ak-design-elevation', 'none'));
+      for (const panel of await panels.all()) expect(await panel.evaluate(n => getComputedStyle(n).boxShadow)).toBe('none');
+      await page.evaluate(() => document.documentElement.style.removeProperty('--ak-design-elevation'));
+    }
+    await page.evaluate(() => wp.apiFetch({path:'/adminkit/v1/menu',method:'POST',data:{items:[]}}));
+    expect(problems).toEqual([]);
+  });
+
   test('design page omits wp.media, exposes typography/shape tabs, and persists REST saves across reload', async ({ page }) => {
     const problems = watch(page);
     await page.goto('/wp-admin/admin.php?page=adminkit-design');
