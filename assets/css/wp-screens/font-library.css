@@ -76,3 +76,9 @@ body.adminkit .boot-layout-container {
 	--wp-components-color-accent-darker-20: var(--ak-primary-hover);
 	--wp-admin-theme-color: var(--ak-primary);
 }
+
+/* Native checkbox glyphs use a separate fill, not the input's text color. */
+body.adminkit .font-library__tabpanel-layout :is(.components-checkbox-control__checked, .components-checkbox-control__indeterminate) {
+	color: var(--ak-on-accent);
+	fill: var(--ak-on-accent);
+}
