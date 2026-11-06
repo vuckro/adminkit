@@ -66,7 +66,7 @@ return array (
     'Choose how content and plugin tables open, and whether published or active items come first.' => 'Choisissez la vue d’ouverture des tableaux et le regroupement des éléments publiés ou actifs.',
     'Choose how dates and times appear, and the first day of the week.' => 'Choisissez l’affichage des dates et des heures ainsi que le premier jour de la semaine.',
     'Choose how you use the WordPress administration screens.' => 'Personnalisez votre utilisation de l’administration WordPress.',
-    'Choose the accent and its text color for light and dark mode. Other appearance settings are managed by AdminKit. Changes apply after saving.' => 'Choisissez l’accent et la couleur de son texte en mode clair et sombre. Les autres réglages d’apparence sont gérés par AdminKit. Les modifications s’appliquent après enregistrement.',
+    'Choose the accent and its text color. Changes apply after saving.' => 'Choisissez l’accent et la couleur de son texte. Les modifications s’appliquent après enregistrement.',
     'Choose the site language and the timezone used for publishing.' => 'Choisissez la langue du site et le fuseau horaire utilisé pour les publications.',
     'Choose the tools that make your everyday work easier.' => 'Choisissez les outils qui vous simplifient le quotidien.',
     'Choose whether to ask search engines to avoid indexing this site.' => 'Choisissez si vous souhaitez demander aux moteurs de recherche de ne pas indexer ce site.',

@@ -269,8 +269,8 @@ msgid "Choose how you use the WordPress administration screens."
 msgstr "Personnalisez votre utilisation de l’administration WordPress."
 
 #: inc/settings/class-settings-i18n.php
-msgid "Choose the accent and its text color for light and dark mode. Other appearance settings are managed by AdminKit. Changes apply after saving."
-msgstr "Choisissez l’accent et la couleur de son texte en mode clair et sombre. Les autres réglages d’apparence sont gérés par AdminKit. Les modifications s’appliquent après enregistrement."
+msgid "Choose the accent and its text color. Changes apply after saving."
+msgstr "Choisissez l’accent et la couleur de son texte. Les modifications s’appliquent après enregistrement."
 
 #: inc/wp-core/class-options-general.php
 msgid "Choose the site language and the timezone used for publishing."

@@ -278,18 +278,23 @@
  .adminkit-app[data-screen="main"] .ak-tabs button[aria-selected="true"] { border-bottom-color: Highlight; }
 }
 
-/* Theme options expose only accent colors; foundations stay in the shared engine. */
-.adminkit-app .ak-theme-colors { min-width:0; margin-block:24px 0; padding:0; border:0; }
-.adminkit-app .ak-theme-colors { margin-inline:0; }
+/* Theme controls use the current interface palette; edited colors stay in probes. */
+.adminkit-app .ak-theme-colors { min-width:0; margin-block:24px 0; margin-inline:0; padding:0; border:0; }
 .adminkit-app .ak-theme-colors legend { padding:0; font-weight:600; }
-.adminkit-app .ak-theme-colors .ak-color-controls { display:flex; flex-direction:column; align-items:stretch; gap:16px; }
+.adminkit-app .ak-theme-colors .ak-color-controls { display:flex; flex-direction:column; align-items:stretch; gap:12px; margin-bottom:12px; }
 .adminkit-app .ak-theme-colors .ak-foundation-accent { flex:none; width:100%; }
-.adminkit-app .ak-theme-colors .ak-seg { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; }
-.adminkit-app .ak-theme-colors .ak-seg__opt:last-child:nth-child(odd) { grid-column:1/-1; }
-.adminkit-app .ak-theme-color-modes { display:flex; gap:8px; }
+.adminkit-app .ak-theme-color-source-row { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:var(--ak-text-s); }
+.adminkit-app .ak-theme-color-source { max-width:60%; min-height:36px; padding-block:6px; padding-inline:10px 28px; color:var(--ak-text); background-color:var(--ak-input-bg); border:1px solid var(--ak-border); border-radius:var(--ak-radius-s); font:inherit; }
+.adminkit-app .ak-theme-colors .ak-palette-theme-switch { justify-content:flex-start; }
+.adminkit-app .ak-theme-color-modes { display:flex; gap:4px; }
 .adminkit-app .ak-theme-color-modes [aria-pressed="true"] { background:var(--ak-hover-bg); border-color:var(--ak-border-strong); }
-.adminkit-app[data-screen="main"] .ak-theme-colors .ak-palette-theme { display:block; padding:0; background:transparent; }
-.adminkit-app[data-screen="main"] .ak-theme-colors .ak-palette-theme[hidden] { display:none; }
-.adminkit-app .ak-theme-colors .ak-palette-row { grid-template-columns:28px minmax(0,1fr) 76px 28px; gap:8px; }
-.adminkit-app .ak-theme-colors .ak-palette-header { margin-block-start:16px; }
+.adminkit-app .ak-theme-palette[hidden] { display:none; }
+.adminkit-app .ak-theme-colors .ak-color-probes { position:absolute; width:1px; height:1px; overflow:hidden; visibility:hidden; pointer-events:none; padding:0; border:0; }
+.adminkit-app .ak-theme-colors .ak-palette-row { grid-template-columns:28px minmax(0,1fr) 76px 28px; gap:8px; border-color:var(--ak-border); color:var(--ak-text); }
+.adminkit-app .ak-theme-colors .ak-palette-row label { color:var(--ak-text); }
+.adminkit-app .ak-theme-colors .ak-palette-origin { color:var(--ak-text-muted); }
+.adminkit-app .ak-theme-colors .ak-palette-hex { min-height:36px; color:var(--ak-text); background:var(--ak-input-bg); border:1px solid var(--ak-border); border-radius:var(--ak-radius-s); box-shadow:none; }
+.adminkit-app .ak-theme-colors .ak-palette-header { display:flex; justify-content:flex-end; margin-block:8px 0; }
+.adminkit-app .ak-theme-colors .ak-palette-header .ak-btn { min-height:32px; padding:4px 0; border:0; background:transparent; box-shadow:none; color:var(--ak-text-muted); font-size:var(--ak-text-xs); }
+.adminkit-app .ak-theme-colors .ak-palette-header .ak-btn:hover { color:var(--ak-heading); text-decoration:underline; }
 .adminkit-app .ak-theme-colors:disabled { opacity:0.6; }

@@ -116,74 +116,26 @@
 			}
 			sources.push({ v: 'custom', label: I.accentSrcCustom });
 
-			var btns = [];
-			var seg = el('div', { class: 'ak-seg', role: 'radiogroup', 'aria-label': I.accentLabel });
-			seg.style.setProperty('--ak-accent-options', sources.length);
-			seg.addEventListener('keydown', function (event) {
-				var index = btns.indexOf(document.activeElement);
-				if (index < 0) {
-					return;
-				}
-				if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-					index = (index + 1) % btns.length;
-				} else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-					index = (index + btns.length - 1) % btns.length;
-				} else if (event.key === 'Home') {
-					index = 0;
-				} else if (event.key === 'End') {
-					index = btns.length - 1;
-				} else {
-					return;
-				}
-				event.preventDefault();
-				btns[index].click();
-				btns[index].focus();
+			var select = el('select', { class: 'ak-theme-color-source', 'aria-label': I.accentLabel });
+			sources.forEach(function (source) { select.appendChild(el('option', { value: source.v, text: source.label })); });
+			syncSeg = function () { select.value = state.accentSource; };
+			syncSeg();
+			select.addEventListener('change', function () {
+				state.accentSource = select.value;
+				paletteRefresh(); markDirty();
 			});
-			sources.forEach(function (o) {
-				var active = state.accentSource === o.v;
-				var b = el('button', {
-					type: 'button',
-					class: 'ak-seg__opt' + (active ? ' is-active' : ''),
-					role: 'radio',
-					'aria-checked': active ? 'true' : 'false',
-					text: o.label
-				});
-				b.tabIndex = active ? 0 : -1;
-				b._v = o.v;
-				b.addEventListener('click', function () {
-					if (state.accentSource === o.v) {
-						return;
-					}
-					setSource(o.v);
-				});
-				btns.push(b);
-				seg.appendChild(b);
-			});
-
-			syncSeg = function () {
-				btns.forEach(function (b) {
-					var on = b._v === state.accentSource;
-					b.classList.toggle('is-active', on);
-					b.setAttribute('aria-checked', String(on));
-					b.tabIndex = on ? 0 : -1;
-				});
-			};
-			function setSource(newSrc) {
-				state.accentSource = newSrc;
-				paletteRefresh();
-				syncSeg();
-				markDirty();
-			}
-			return seg;
+			return el('label', { class: 'ak-theme-color-source-row' }, [el('span', { text: I.accentLabel }), select]);
 		}
 
 		['light', 'dark'].forEach(function (mode) {
 			var modeLabel = mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark;
-			var scope = el('div', { class: 'ak-bp__frame ak-palette-theme', 'data-preview-theme': mode });
+			var scope = el('div', { class: 'ak-theme-palette' });
+			// Only invisible probes use the edited palette; controls keep the current UI theme.
+			var preview = el('div', { class: 'ak-bp__frame ak-palette-theme ak-color-probes', 'data-preview-theme': mode, 'aria-hidden': 'true' });
+			scope.appendChild(preview);
 			var rows = [],
 				probes = {};
 			var header = el('div', { class: 'ak-palette-header' }, [
-				el('h4', { text: modeLabel }),
 				el('button', {
 					type: 'button',
 					class: 'ak-btn',
@@ -195,7 +147,7 @@
 					}
 				})
 			]);
-			scope.appendChild(header);
+
 			roles.forEach(function (role) {
 				var id = 'ak-palette-' + mode + '-' + role[0];
 				var picker = el('input', { type: 'color', id: id, 'aria-label': role[1] + ' — ' + modeLabel });
@@ -218,7 +170,7 @@
 				var probe = el('span', { class: 'ak-palette-probe', 'aria-hidden': 'true' });
 				probe.style.backgroundColor = 'var(--wk-' + role[0] + ')';
 				probes[role[0]] = probe;
-				scope.appendChild(probe);
+				preview.appendChild(probe);
 				function change(value) {
 					var expanded = value ? expandHex(value) : '';
 					if (value && !isFullHex(expanded)) {
@@ -274,18 +226,19 @@
 				);
 				rows.push({ role: role[0], picker: picker, hex: hex, inherited: inherited, reset: reset, error: error });
 			});
-			paletteCards.push({ mode: mode, scope: scope, rows: rows, probes: probes });
+			scope.appendChild(header);
+			paletteCards.push({ mode: mode, scope: scope, preview: preview, rows: rows, probes: probes });
 		});
 
 		function paletteRefresh() {
 			paletteCards.forEach(function (card) {
 				var overrides = state.accentSource === 'custom' ? state.designSystem.colors[card.mode] : {};
 				var values = state.accentSource === 'custom' ? Object.assign({}, overrides) : providerValues(state.accentSource, card.mode);
-				card.scope.setAttribute('data-preview-accent', state.accentSource === 'adminkit' ? 'waaskit' : 'monochrome');
+				card.preview.setAttribute('data-preview-accent', state.accentSource === 'adminkit' ? 'waaskit' : 'monochrome');
 				Object.keys(state.designSystem.colors[card.mode]).concat(['accent', 'on-accent', 'bg', 'surface']).forEach(function (role) {
-					card.scope.style.removeProperty('--wk-' + role);
+					card.preview.style.removeProperty('--wk-' + role);
 				});
-				card.scope.style.removeProperty('--wk-accent-hover');
+				card.preview.style.removeProperty('--wk-accent-hover');
 				if (state.accentSource === 'custom') {
 					if (!values.accent && isValidHex(state.brandAccent)) {
 						values.accent = state.brandAccent;
@@ -298,7 +251,7 @@
 					}
 				}
 				Object.keys(values).forEach(function (role) {
-					card.scope.style.setProperty('--wk-' + role, values[role]);
+					card.preview.style.setProperty('--wk-' + role, values[role]);
 				});
 				if (!card.scope.isConnected) {
 					return;

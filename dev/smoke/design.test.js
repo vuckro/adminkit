@@ -38,7 +38,9 @@ for(const source of ['monochrome','adminkit','bricks','custom']) {
  assert.equal(state.designSystem.type_scale,1.13);assert.equal(state.designSystem.radius_scale,1.37);
  const frames=[...w.document.querySelectorAll('.ak-palette-theme.ak-bp__frame')];
  assert.equal(frames.length,2);
- assert.equal(w.document.querySelectorAll('.ak-palette-theme input[type=color]').length,4);
+ assert.equal(w.document.querySelectorAll('.ak-color-probes input').length,0,'edited palette must never theme interactive controls');
+ assert.equal(w.document.querySelector('.ak-theme-palette').style.getPropertyValue('--wk-bg'),'','editor keeps the current interface palette');
+ assert.equal(w.document.querySelectorAll('.ak-theme-palette input[type=color]').length,4);
  assert.equal(w.document.querySelector('#ak-type-scale'),null);
  for(const frame of frames) {
   assert.equal(!!frame.style.getPropertyValue('--wk-bg'),source==='custom','inactive custom colors leaked for '+source);
@@ -57,14 +59,14 @@ for(const source of ['monochrome','adminkit','bricks','custom']) {
   hex.value='#123456';hex.dispatchEvent(new w.Event('input'));
   hex.value='#oops';hex.dispatchEvent(new w.Event('change'));
   assert.equal(state.brandAccent,'#123456','invalid text changed last valid accent');
-  w.document.querySelector('.ak-theme-colors [role=radio]').click();
+  var sourceSelect=w.document.querySelector('.ak-theme-color-source');sourceSelect.value='monochrome';sourceSelect.dispatchEvent(new w.Event('change'));
   assert.equal(state.brandAccent,'#123456','source change erased saved accent');
   assert.equal(hex.getAttribute('aria-invalid'),null);
   assert.equal(frames[0].style.getPropertyValue('--wk-bg'),'','inactive legacy custom colors must leave the preview');
   assert.equal(state.designSystem.colors.light.bg,'#abcdef','source changes preserve hidden palette roles');
  }
  const beforeBg=state.designSystem.colors.light.bg;
- frames[0].querySelector('.ak-palette-header button').click();
+ w.document.querySelector('.ak-theme-palette .ak-palette-header button').click();
  assert.equal(state.designSystem.colors.light.bg,beforeBg,'reset visible colors must preserve hidden roles');
  w.auditSurface.exportSettings();
  assert.equal(t.exported._adminkit,'settings');

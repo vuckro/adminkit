@@ -71,7 +71,7 @@ assert(!doc.getElementById('ak-type-font') && !doc.getElementById('ak-google-fon
 doc.getElementById('ak-tab-features').click(); await tick();
 const theme = [...doc.querySelectorAll('.ak-features-item')].find(n => n.textContent.includes('Administration theme'));
 theme.click();
-assert(doc.querySelectorAll('.ak-theme-colors .ak-palette-theme input[type="color"]').length === 4, 'only accent and text on accent are editable for both modes');
+assert(doc.querySelectorAll('.ak-theme-colors .ak-theme-palette input[type="color"]').length === 4, 'only accent and text on accent are editable for both modes');
 doc.querySelector('.ak-feature-dialog-head button').click();
 // Nested controls mount from saved values and use the actual main save payload.
 doc.getElementById('ak-tab-features').click();
