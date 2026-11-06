@@ -18,11 +18,20 @@ body.adminkit.adminkit-funnelkit {
  --xy-attribution-background-color: var(--ak-surface);
 }
 body.adminkit.adminkit-funnelkit :is(#wpbody, #wpbody-content, .wffn-page, .bwfcrm-page, .bwf-container) { background: var(--ak-bg); color: var(--ak-text); }
+/* Error boundaries also render inside lazy/fullscreen routes. Keep the native
+   refresh/support actions visible without masking the underlying failure. */
+body.adminkit.adminkit-funnelkit .bwf-tech-error-component { background: var(--ak-bg); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit .bwf-tech-error-component .bwf-container { width: min(640px, 100%); box-sizing: border-box; padding-inline: calc(16px * var(--ak-space-scale, 1)); }
+body.adminkit.adminkit-funnelkit .bwf-tech-error-component .bwf-container .bwf-description { background: var(--ak-surface-muted); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit .bwf-tech-error-component .bwf-container :is(.bwf-heading-1, .bwf-heading-2, .bwf-error-label) { color: var(--ak-heading); }
+body.adminkit.adminkit-funnelkit .bwf-tech-error-component .bwf-container :is(.bwf-error-detail, .bwf-error-steps li, .bwf-description span) { color: var(--ak-text-muted); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit .bwf-tech-error-component .bwf-container .bwf-error-block { border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit .bwf-tech-error-component .bwf-container a { color: var(--ak-primary-text); }
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) {
  font-family: var(--ak-font-body);
  color: var(--ak-text);
 }
-body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) :is(.bwfan_header, .bwfan_header_l1, .bwf-card, .bwf-card-content, .bwf-table, .bwf-tabs-accordian-wrap, .bwf-tab-section-wrap, .bwf-summary, .bwf-step-sticky, .wffn-side-panel, .bwf-announcements__header, .bwf-announcements__body, .components-modal__frame, .components-modal__content, .components-modal__header, .components-popover__content) {
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) :is(.bwfan_header, .bwfan_header_l1, .bwf-card, .bwf-card-content, .bwf-c-s-collapsible, .bwf-c-s-heading, .bwf-table, .bwf-tabs-accordian-wrap, .bwf-tab-section-wrap, .bwf-summary, .bwf-step-sticky, .wffn-side-panel, .bwf-announcements__header, .bwf-announcements__body, .components-modal__frame, .components-modal__content, .components-modal__header, .components-popover__content) {
  background-color: var(--ak-surface);
  border-color: var(--ak-border);
  color: var(--ak-text);
@@ -32,13 +41,23 @@ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-m
 body.adminkit.adminkit-funnelkit .bwf-header-title { color: var(--ak-heading) !important; }
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) :is(p, .hint, .description, .components-base-control__help, .bwf-description) { color: var(--ak-text-muted); }
 body.adminkit.adminkit-funnelkit :is(.bwf-table-table, .bwf-table-item, .bwf-table-header, .bwf-card-footer, .bwf-card-header, .bwf-table-empty-item) { color: var(--ak-text); border-color: var(--ak-border); background: var(--ak-surface); }
-body.adminkit.adminkit-funnelkit .bwf-table-table :is(td, th, div, span, p, a, strong) { color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit .bwf-table-table :is(tr, td, th, div, span, p, a, strong) { color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-table .bwf-card-action, .bwf-table .bwf-pagination, .bwf-tiles__item-tag) { background: var(--ak-surface-muted); color: var(--ak-text); border-color: var(--ak-border); }
 body.adminkit.adminkit-funnelkit :is(.bwf-table-header, .bwf-table-header-2, .bwf-table-table th, .bwf-table-table th.bwf-table-col-sticky) { background: var(--ak-surface-muted); color: var(--ak-text-muted); }
 body.adminkit.adminkit-funnelkit .bwf-table-table tr td.bwf-table-item.bwf-table-col-sticky { background: var(--ak-surface); }
 body.adminkit.adminkit-funnelkit .bwf-table-table:not(.is-loading) tr:hover :is(td, .bwf-table-col-sticky) { background: var(--ak-hover-bg); }
 body.adminkit.adminkit-funnelkit .bwf-table-table::before,
 body.adminkit.adminkit-funnelkit .bwf-table-table::after { background: none; pointer-events: none; }
 body.adminkit.adminkit-funnelkit .bwf-card { border: 1px solid var(--ak-border); border-radius: var(--ak-radius-m); box-shadow: none; }
+/* Native loading placeholders must not flash white when the app is dark. */
+body.adminkit.adminkit-funnelkit :is(.bwf-placeholder-item, .bwf-placeholder-temp, .bwf-placeholder-content .is-placeholder, .bwf-f-steps .is-placeholder) { background-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(.bwf-chart-placeholder, .bwf-settings-placeholder .wtfb-tab-content-wrapper) { background-color: var(--ak-surface); border-color: var(--ak-border); }
+/* These two placeholders force their light backgrounds important. */
+body.adminkit.adminkit-funnelkit .bwf-notification-wrap.is-placeholder { background: var(--ak-surface) !important; border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit .bwf-onboarding-wrap.bwf-onboarding-placeholder .bwf-onboarding-step-progress { background-color: var(--ak-border) !important; }
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit.adminkit-funnelkit :is(.bwf-placeholder-item, .bwf-placeholder-temp, .bwf-chart-placeholder, .bwf-placeholder-content .is-placeholder, .bwf-f-steps .is-placeholder) { animation: none; }
+}
 body.adminkit.adminkit-funnelkit :is(.components-modal__frame, .components-popover__content) { border-radius: var(--ak-radius-m); }
 /* BWF hardcodes important filled/gray button colors; preserve their semantics. */
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .components-button:is(.is-primary, .is-draft) {
@@ -47,13 +66,13 @@ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-m
  border-color: var(--ak-primary);
  border-radius: var(--ak-radius-s);
 }
-body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .bwf-fullsc-modal, .components-modal__frame, .components-popover__content) .components-button:is(.bwf-btn-gray, .is-gray, .is-white, .is-secondary-gray, .is-light, .is-tertiary, .bwf-funnel-buttons .is-secondary) {
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .bwf-fullsc-modal, .components-modal__frame, .components-popover__content) .components-button:is(.bwf-btn-gray, .is-gray, .is-white, .is-secondary-gray, .is-light, .is-tertiary, .bwf-funnel-buttons .is-secondary, .bwf-button-group > .components-button:not(.is-primary), .bwf-mcp-btn-ghost, .bwf-mcp-step__action .is-secondary) {
  background: var(--ak-surface) !important;
  color: var(--ak-text) !important;
  border-color: var(--ak-border) !important;
  border-radius: var(--ak-radius-s);
 }
-body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .bwf-fullsc-modal, .components-modal__frame, .components-popover__content) .components-button:is(.bwf-btn-gray, .is-gray, .is-white, .is-secondary-gray, .is-light, .is-tertiary, .bwf-funnel-buttons .is-secondary):hover { background: var(--ak-hover-bg) !important; }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .bwf-fullsc-modal, .components-modal__frame, .components-popover__content) .components-button:is(.bwf-btn-gray, .is-gray, .is-white, .is-secondary-gray, .is-light, .is-tertiary, .bwf-funnel-buttons .is-secondary, .bwf-button-group > .components-button:not(.is-primary), .bwf-mcp-btn-ghost, .bwf-mcp-step__action .is-secondary):hover { background: var(--ak-hover-bg) !important; }
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) .components-button.is-link { color: var(--ak-primary-text); }
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]), textarea, select) {
  background-color: var(--ak-surface);
@@ -84,6 +103,11 @@ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-m
 /* Shared dashboard and navigation primitives (the apps use div headings). */
 body.adminkit.adminkit-funnelkit :is(.bwf-dashboard, .wffn-funnel-common, .bwf--settings-tab-content) { background: var(--ak-bg); }
 body.adminkit.adminkit-funnelkit :is(.bwf-tiles, .bwf-chart, .bwf-banner, .bwf-notification-wrap) { background: var(--ak-surface); border-color: var(--ak-border); box-shadow: none; }
+/* Notification secondary actions can be plain anchors, not components-button.
+   Keep their native click handlers and disabled/aria-disabled semantics. */
+body.adminkit.adminkit-funnelkit .bwf-notification-wrap .bwf-notifications-buttons a:not(.is-primary) { background: var(--ak-surface-muted); color: var(--ak-text); border: 1px solid var(--ak-border); border-radius: var(--ak-radius-s); }
+body.adminkit.adminkit-funnelkit .bwf-notification-wrap .bwf-notifications-buttons a:not(.is-primary):not([aria-disabled="true"]):hover { background: var(--ak-hover-bg); border-color: var(--ak-border-strong); }
+body.adminkit.adminkit-funnelkit .bwf-notification-wrap .bwf-notifications-buttons a:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-heading-1, .bwf-heading-2, .bwf-heading-3, .bwf-primary, .bwf-tiles__title, .bwf-tiles__value, .bwf-notifications-title, .bwf-dashboard-card-zero-state__heading, .bwf-user-setup-step__heading) { color: var(--ak-heading); }
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-secondary, .bwf-tiles__item-label, .bwf-dashboard-card-zero-state__subheading, .bwf-notifications-content, .bwf-sidebar-nav-item, .bwf-select-controls-label, .field-label, .wffn_import_description, .wffn_template_meta_right, .bwf-sublium-page__payment-text) { color: var(--ak-text-muted); }
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwfan_navigation a, .bwfan_navigation span, .bwf-header-right-wrap button, .bwf-announcements__header-title) { color: var(--ak-text); }
@@ -184,14 +208,14 @@ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-m
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-brown-light-notice :is(span, a, div) { color: var(--ak-text); }
 @media (max-width: 782px) {
  body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings :is(input, textarea, select, .components-button, .hint, .bwf-brown-light-notice) { margin-left: 0; margin-right: 0; max-width: 100%; box-sizing: border-box; }
- body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings .components-base-control__label { position: static; display: block; width: 100%; max-width: 100%; margin: 0 0 calc(8px * var(--ak-space-scale, 1)); }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings :is(.components-base-control__label, .components-base-control__field > label) { float: none; position: static; display: block; width: 100%; max-width: 100%; margin: 0 0 calc(8px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-pro-container { display: block; }
  body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-pro-container .components-button { width: 100%; margin-top: calc(12px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit .wffn-side-panel { max-width: 100vw; }
 }
 @media (max-width: 782px) {
  /* The host forces a 320px desktop label-column offset on fields and actions. */
- body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings :is(input, textarea, select, .components-button, .hint, .bwf-brown-light-notice, .bwf-error-text) { margin-left: 0 !important; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings :is(input, textarea, select, .components-button, .hint, .bwf-brown-light-notice, .bwf-error-text, .bwf-checkbox-control) { margin-left: 0 !important; }
 }
 body.adminkit.adminkit-funnelkit :is(.tab--title, .bwf-advance-toggle > span):focus-visible { outline: 2px solid var(--ak-text-muted); outline-offset: 2px; border-radius: var(--ak-radius-s); }
 /* Monochrome control icons; keep brand artwork and template previews intact. */
@@ -290,3 +314,28 @@ body.adminkit.adminkit-funnelkit { --ak-funnelkit-motion-duration: 0ms; }
  body.adminkit.adminkit-funnelkit { --ak-funnelkit-motion-duration: 120ms; }
 }
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) .components-button { transition: background-color var(--ak-funnelkit-motion-duration) var(--ak-ease-standard), color var(--ak-funnelkit-motion-duration) var(--ak-ease-standard), border-color var(--ak-funnelkit-motion-duration) var(--ak-ease-standard) !important; }
+
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-c-s-heading:hover { background: var(--ak-hover-bg); }
+/* Empty product/rule states include unclassed nested text nodes. */
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-zero-heading, .bwf-rule-heading, .bwf-zero-heading span, .bwf-zero-heading div, .bwf-rule-heading span, .bwf-rule-heading div) { color: var(--ak-heading); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-zero-content, .bwf-rule-description, .bwf-zero-content span, .bwf-rule-description span) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit .bwf-component-notice.is-warning { background: var(--ak-warning-subtle); border-color: var(--ak-border); color: var(--ak-warning); }
+body.adminkit.adminkit-funnelkit .bwf-component-notice.is-warning :is(p, .bwf-notice-content) { color: var(--ak-warning); }
+body.adminkit.adminkit-funnelkit .bwf-component-notice.is-warning svg path { fill: var(--ak-warning); }
+body.adminkit.adminkit-funnelkit :is(.bwf-or-container, .rules-engine .rules-engine-list .rules-engine__or span) { background: var(--ak-warning-subtle); color: var(--ak-warning); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit .bwf-error-component { background: var(--ak-bg); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit .bwf-error-component :is(.bwf-heading-1, .bwf-heading-2) { color: var(--ak-heading); }
+@media (max-width: 782px) {
+ /* Inline checklists reserve the desktop label column on their outer group,
+    independently of the offset on their individual checkbox controls. */
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-settings :is(.form-group.inline-group, .form-group.checkbox-control-wrap, .component-checklist-option-wrap) { padding-inline-start: 0; }
+}
+body.adminkit.adminkit-funnelkit .bwf-announcements .wffn-side-panel :is(em, b, i, blockquote, ul, ol, li) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit .bwf-announcements .wffn-side-panel :is(h1, h2, h3, h4, h5, h6) { color: var(--ak-heading); }
+@media (max-width: 782px) {
+ /* The bump skin injects a global important position:relative on this core
+    element; restore AdminKit's mobile offcanvas instead of reserving 100vh. */
+ body.adminkit.adminkit-funnelkit.ak-frame-enhanced #adminmenuwrap { position: fixed !important; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-horizontal-menu { max-width: 100%; overflow-x: auto; min-width: 0; }
+ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-horizontal-menu .bwf-tab-item { flex-shrink: 0; white-space: nowrap; }
+}

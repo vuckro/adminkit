@@ -1,5 +1,7 @@
 # FunnelKit — intégration AdminKit
 
+La reprise du 6 novembre 2026 sur Lite 3.18 est décrite en fin de document. Les sections précédentes conservent la recette historique des 29–30 octobre.
+
 Revue locale des 29–30 octobre 2026 sur WordPress 7.1.4 : FunnelKit Builder 3.17.0.1 et FunnelKit Automations Lite 3.8.6.2. Les deux extensions étaient installées ; elles ont été activées après sauvegarde locale de la base.
 
 ## Portée et architecture
@@ -74,3 +76,23 @@ Reprise des écrans `/history`, `/transactional-emails`, `/templates` et `/globa
 Le menu Tools expose un déclencheur clavier distinct des liens : Entrée/Espace basculent son ouverture, Flèche bas place le focus sur le premier lien, Échap ferme et rend le focus au déclencheur. Les événements rejoignent les gestionnaires natifs de FunnelKit. Les filtres qui étaient des `div` cliquables reçoivent le rôle bouton et Entrée/Espace. Aucun libellé métier ajouté.
 
 Preuves : `followup/email-review-complete.log` (20 états, clair/sombre, ordinateur et mobile, sans défaut au dépistage textuel ni débordement du document), captures `email-*`, et `email-keyboard-proof.log`. Les documents d’e-mail et leurs aperçus intégrés restent natifs. Aucune modification de contenu, activation d’email ni sauvegarde des styles globaux.
+
+## Reprise du 6 novembre — Lite 3.18 et éditeurs Pro
+
+La préproduction Flippizz utilise Lite 3.18.0 avec Pro 3.15.0.10 ; Lite déclare un minimum Pro 3.16.0. Aucune mise à jour Pro n’est proposée dans le transient WordPress consulté. Le navigateur isolé authentifié rencontre des HTTP 429 sur de nombreux fichiers CSS/JS, malgré des réponses 200 aux lectures HTTP individuelles. La recette visuelle exhaustive de cette installation distante ne peut donc pas être déclarée acquise.
+
+Le code installé a été inventorié, puis les écrans ont été repris dans des WordPress Playground jetables sous WordPress 7.1.4 / PHP 8.3 / SQLite. Lite 3.18 a été testé séparément ; une copie locale Pro 3.17.0.1 a permis d’ouvrir les éditeurs, avec un tunnel de contrôle, ses étapes et un produit factice. Cette paire Pro ne contient pas la nouvelle route AI & MCP ; sa page absente reste un état natif, pas un défaut que le skin doit contourner. Aucun remplacement de Pro sur Flippizz, aucun import de données réelles, aucune commande, connexion de paiement ou installation recommandée n’est réalisé par cette reprise.
+
+L’inventaire distingue routes d’application, alias, identifiants d’objets et endpoints REST. Les familles examinées comprennent dashboard, listes/imports/galeries, Store Checkout, analyses globales et de tunnel, conversions, référents, UTM et cart upsells, réglages généraux et leurs sous-sections, assistants et pages Panier/Abonnements. Les éditeurs couvrent vente, checkout (design/produits/optimisations/réglages), upsell et offre, remerciement, opt-in (design/personnalisation/actions/réglages), confirmation et order bump. Une galerie de bump sans maquette ne suffit pas à valider ses éditeurs : une maquette et un produit ont donc été appliqués uniquement à la fixture jetable avant le contrôle du vrai formulaire Content/Style.
+
+Corrections : bandeaux de données d’exemple et d’aide des étapes, liens secondaires des alertes, halos de widgets, séparateurs et barres de tableaux, statistiques par référent, accordéons ouverts et vides de produits/règles, nouvelles palettes MCP/AI, témoignages et disques d’icônes des pages produits. Les indicateurs de chargement suivent les tokens et la réduction des mouvements. La barre TinyMCE et les boutons du véritable éditeur de bump sont habillés ; son document éditable, ses couleurs de contenu et son aperçu commercial restent natifs.
+
+Les écrans historiques `wfob_bump` et `wfocu_offer` et les listes correspondantes sont couverts explicitement. Le test de portée vérifie aussi les menus déplacés et le rejet des pages étrangères. Les actions de documentation et les commandes d’annonces rejoignent les clics natifs au clavier. Un panneau d’annonces fermé devient inert ; Échap ferme le panneau ouvert et restitue le focus. Les libellés accessibles proviennent des titres natifs et du bouton de fermeture déjà traduit par AdminKit, sans nouvelle copie métier.
+
+Les corrections mobiles traitent les trois réserves de colonne de 320 px (groupe inline, contrôles et checklist imbriquée), les libellés flottants, les onglets défilables, les fonctionnalités du Panier, le bouton Abonnements et les en-têtes longs des étapes. L’éditeur de bump abandonne sa colonne fixe de 494 px au profit d’une disposition empilée. Le rendu de maquette de bump injecte aussi une règle globale `position:relative !important` sur le menu WordPress ; le skin rétablit le menu mobile fixe d’AdminKit pour éviter presque une hauteur d’écran vide avant le contenu.
+
+L’infobulle Stripe est rendue hors de l’application et peut apparaître sur les autres pages WordPress. Elle est donc traitée dans `menu.css`, chargé à l’échelle de l’admin lorsque l’adaptateur est actif. Ses destinations, son installation, sa connexion et son rejet persistant restent natifs. Le budget passe à 38 exceptions : deux fonds de chargement forcés, le texte forcé de la barre Stripe et la position mobile du menu s’ajoutent aux 34 historiques. Les autres corrections utilisent la spécificité normale et des tokens.
+
+Les captures, états de chargement/erreur, routes et mesures sont conservés dans le workspace `output/funnelkit-audit-20261106/` et `output/playwright/funnelkit-*`. Les captures de squelette, erreurs de chargement de chunk après arrêt d’instance et routes absentes ne sont pas des validations d’écran. Les états Pro et Lite restent distingués ; les statistiques sans données, assistants de paiement et fonctions commerciales ne constituent pas une recette transactionnelle. Les captures ont été complétées par des contrôles de contenu réel, de survol, de clavier et de largeur mobile.
+
+La baseline de dérive est renouvelée sur les 101 fichiers CSS de Lite 3.18.0. La suite comprend désormais un test JSDOM des gestionnaires réels de clavier et de focus du panneau, ainsi que le test PHP de propriété des écrans. Le gate complet et la validation du paquet restent obligatoires avant publication.
