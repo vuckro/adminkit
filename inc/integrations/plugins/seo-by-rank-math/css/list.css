@@ -1,0 +1,28 @@
+/* Rank Math wraps its sorting link and bulk-edit icon in one span.
+   Only the sorting link receives the list-header rhythm, never action links. */
+body.adminkit .wp-list-table :is(thead, tfoot) th:is(#rank_math_seo_details, #rank_math_title, #rank_math_description, #rank_math_image_title, #rank_math_image_alt):not(.bulk-editing) > span:first-child {
+ display: flex;
+ align-items: center;
+ gap: var(--ak-space-xs);
+ padding-inline: calc(16px * var(--ak-space-scale, 1));
+}
+body.adminkit .wp-list-table th:is(#rank_math_seo_details, #rank_math_title, #rank_math_description, #rank_math_image_title, #rank_math_image_alt) > span:first-child > a:not(.dashicons) {
+ display: inline-flex;
+ align-items: center;
+ min-block-size: 40px;
+ padding: 0;
+ color: inherit;
+ font: inherit;
+}
+body.adminkit .wp-list-table th:is(#rank_math_seo_details, #rank_math_title, #rank_math_description, #rank_math_image_title, #rank_math_image_alt) > span:first-child > a.dashicons {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ flex: 0 0 24px;
+ inline-size: 24px;
+ block-size: 24px;
+ padding: 0;
+ color: var(--ak-text-muted);
+ border-radius: var(--ak-radius-s);
+}
+body.adminkit .wp-list-table th > span:first-child > a.dashicons:is(:hover, :focus-visible) { color: var(--ak-heading); background: var(--ak-hover-bg); }

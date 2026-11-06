@@ -24,8 +24,20 @@ class AdminKit_Integration_Seo_By_Rank_Math extends AdminKit_Integration_Base {
   * @return bool
   */
  public static function owns_screen( $screen ) { return $screen && in_array( $screen->base, array( 'post', 'term', 'edit-tags' ), true ); }
+ /**
+  * @param \WP_Screen|null $screen Current screen.
+  * @return bool
+  */
+ public static function owns_list_screen( $screen ) { return $screen && 'edit' === $screen->base; }
  /** @return void */
  public static function register_assets() {
+  AdminKit_Assets::register( array(
+   'handle' => 'adminkit-rankmath-list',
+   'src' => 'inc/integrations/plugins/seo-by-rank-math/css/list.css',
+   'deps' => array( AdminKit_Assets::TOKENS_HANDLE ),
+   'context' => 'admin',
+   'condition' => array( __CLASS__, 'owns_list_screen' ),
+  ) );
   AdminKit_Assets::register( array(
    'handle' => 'adminkit-rankmath-editor',
    'src' => 'inc/integrations/plugins/seo-by-rank-math/css/editor.css',
