@@ -54,6 +54,13 @@
    panel.setAttribute('data-ak-funnelkit-panel-open', String(open));
    if (open && wasClosed && document.activeElement === opener && close) close.focus({ preventScroll: true });
   });
+  document.querySelectorAll('.bwf-funnel-modal .components-modal__header').forEach(function (header) {
+   var nativeClose = header.querySelector('button.has-icon[aria-label]');
+   if (!nativeClose) return;
+   header.querySelectorAll('button:not([aria-label])').forEach(function (button) {
+    if (!button.textContent.trim()) button.setAttribute('aria-label', nativeClose.getAttribute('aria-label'));
+   });
+  });
   document.querySelectorAll('.bwf-hover-submenu:not(.bwf-hover-submenu-php)').forEach(function (host) {
    var trigger = host.querySelector(':scope > span:not(.bwf-hover-suheader-menu)');
    if (!trigger) return;

@@ -14,6 +14,7 @@ function setup(enabled = true) {
       <div class="bwf-announcements__header-close"><svg></svg></div>
       <a href="https://example.invalid/">Release notes</a>
     </div></div>
+    <div class="bwf-funnel-modal"><div class="components-modal__header"><button id="host-close"><svg></svg></button><button id="header-save">Save</button><button class="has-icon" hidden aria-label="Fermer cette fenêtre"></button></div></div>
     <div class="bwf-dashboard-banner"><span class="bwf-link">Documentation</span></div>
   </body>`, {url:'https://test.invalid/wp-admin/', runScripts:'outside-only', pretendToBeVisual:true});
   const w = dom.window, d = w.document;
@@ -34,6 +35,8 @@ function setup(enabled = true) {
 }
 (async () => {
   const t = setup();
+  assert.equal(t.d.getElementById('host-close').getAttribute('aria-label'), 'Fermer cette fenêtre', 'The visible custom close reuses the hidden native close label');
+  assert.equal(t.d.getElementById('header-save').hasAttribute('aria-label'), false, 'Text actions keep their own name');
   assert.equal(t.panel.inert, true, 'Closed host panel cannot receive keyboard focus');
   assert.equal(t.panel.getAttribute('aria-hidden'), 'true');
   assert.equal(t.opener.getAttribute('aria-label'), 'Notifications', 'Keep the host title');
