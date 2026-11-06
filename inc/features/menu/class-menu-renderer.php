@@ -501,9 +501,12 @@ class AdminKit_Menu_Renderer {
 			// the same stable WordPress menu ID, with its override class added.
 			$target = '#adminmenu .' . $cls;
 			foreach ( (array) ( $GLOBALS['menu'] ?? array() ) as $item ) {
-				if ( ! empty( $item[5] ) && preg_match( '/^[a-zA-Z0-9_-]+$/', (string) $item[5] )
+				if ( ! empty( $item[5] )
 					&& in_array( $cls, explode( ' ', $item[4] ?? '' ), true ) ) {
-					$target = '#adminmenu #' . $item[5] . '.' . $cls;
+					// Match WordPress menu-header.php, then escape CSS ID punctuation.
+					$menu_id = preg_replace( '/[^a-zA-Z0-9_:.]/', '-', (string) $item[5] );
+					$menu_id = str_replace( array( ':', '.' ), array( '\:', '\.' ), $menu_id );
+					$target = '#adminmenu #' . $menu_id . '.' . $cls;
 					break;
 				}
 			}

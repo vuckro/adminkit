@@ -287,3 +287,8 @@ AdminKit_Menu_Renderer::apply();
 ob_start();AdminKit_Menu_Renderer::print_css();$css=ob_get_clean();
 check(strpos($css,'#adminmenu #toplevel_page_bricks.ak-mi-1 .wp-menu-image::before')!==false,'Custom menu icon does not outrank integration default');
 echo "OK: configured menu icons outrank integration defaults using stable menu IDs.\n";
+
+AdminKit_Menu_Store::$config=array('top'=>array(array('slug'=>'wc-admin&path=/analytics/overview','icon'=>'chart-spline')));
+$menu=array(20=>array('Statistics','manage_options','wc-admin&path=/analytics/overview','Statistics','','toplevel_page_wc-admin&path=/analytics/overview','none'));$submenu=array();
+AdminKit_Menu_Renderer::apply();ob_start();AdminKit_Menu_Renderer::print_css();$css=ob_get_clean();
+check(strpos($css,'#adminmenu #toplevel_page_wc-admin-path--analytics-overview.ak-mi-1 .wp-menu-image::before')!==false,'WooCommerce menu ID does not match WordPress sanitization');
