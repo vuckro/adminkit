@@ -53,6 +53,7 @@ class AdminKit_Menu_Manager {
 		add_filter( 'parent_file', array( __CLASS__, 'remap_parent_file' ) );
 		add_filter( 'submenu_file', array( __CLASS__, 'remap_submenu_file' ) );
 		add_action( 'admin_head', array( __CLASS__, 'print_css' ), 22 );
+		add_action( 'admin_head', array( 'AdminKit_Menu_Renderer', 'restore_titles' ), PHP_INT_MAX );
 		add_action( 'admin_footer', array( __CLASS__, 'print_url_overrides' ) );
 		add_action( 'wp_uninitialize_site', array( 'AdminKit_Menu_Store', 'delete_site_data' ) );
 	}
