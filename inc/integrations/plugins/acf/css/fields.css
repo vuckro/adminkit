@@ -28,3 +28,16 @@ body.adminkit .acf-relationship .acf-rel-item:hover {
 body.adminkit .acf-relationship .acf-rel-item.disabled { color: var(--ak-text-muted); }
 body.adminkit .acf-relationship .selection .list { color: var(--ak-text-muted); }
 body.adminkit .acf-relationship .filters .filter { border-color: var(--ak-border); }
+/* Embedded field groups keep the same subtle separators as native postboxes. */
+body.adminkit .acf-fields,
+body.adminkit .acf-fields > .acf-field,
+body.adminkit .acf-fields.-left > .acf-field::before {
+	border-color: var(--ak-border);
+}
+body.adminkit .acf-field :is(input[type=text], input[type=url], input[type=email], input[type=number], textarea, select):hover:not(:disabled, :focus) {
+	border-color: var(--ak-border-strong);
+}
+body.adminkit .acf-field :is(input[type=text], input[type=url], input[type=email], input[type=number], textarea, select):focus {
+	border-color: var(--ak-focus);
+	box-shadow: var(--ak-focus-ring);
+}

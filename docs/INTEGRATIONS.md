@@ -324,3 +324,13 @@ routes and 77 available settings/tool/AI tabs in dark mode. It checks correspond
 light/mobile samples and affected WordPress list, taxonomy and editor surfaces.
 Cloud-connected result states, paid-only features, import/restore/delete actions,
 SEO submissions and generated AI output remain outside that visual recipe.
+
+Rank Math editor refinements load through the canonical `rank-math` adapter's
+`css/editor.css` only when the host has editor assets on a post/term screen.
+The bridge includes a translucent modal overlay, token borders, keyboard focus,
+hover states, variable-menu rows and semantic publish-box scores. Social preview
+chrome follows the current palette while the image and SEO values stay host-owned.
+SEO header/bulk-edit-icon spacing lives in `css/columns.css`, conditional on the
+host's real list stylesheet. Avoid installing a second `seo-by-rank-math` adapter
+alongside this one: competing editor rules can make the modal overlay opaque.
+Embedded ACF input separators and text-field states remain owned by the ACF adapter.

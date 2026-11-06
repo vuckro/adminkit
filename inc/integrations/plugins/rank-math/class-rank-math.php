@@ -64,6 +64,28 @@ class AdminKit_Integration_Rank_Math extends AdminKit_Integration_Base {
 		return false;
 	}
 
+	/**
+	 * Editors with actual host assets; list/page styling remains independent.
+	 *
+	 * @param \WP_Screen|null $screen Current screen.
+	 * @return bool
+	 */
+	public static function owns_editor_screen( $screen ) {
+		return $screen && in_array( $screen->base, array( 'post', 'term', 'edit-tags' ), true )
+			&& self::owns_asset_screen( $screen );
+	}
+
+	/**
+	 * Native post lists carrying Rank Math's SEO column stylesheet.
+	 *
+	 * @param \WP_Screen|null $screen Current screen.
+	 * @return bool
+	 */
+	public static function owns_columns_screen( $screen ) {
+		return $screen && 'edit' === $screen->base
+			&& wp_style_is( 'rank-math-post-bulk-edit', 'enqueued' );
+	}
+
 	/** @return void */
 	protected static function boot() {
 		add_filter( 'admin_body_class', array( __CLASS__, 'body_class' ), 100 );
@@ -87,6 +109,20 @@ class AdminKit_Integration_Rank_Math extends AdminKit_Integration_Base {
 			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_asset_screen' ),
+		) );
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-rank-math-editor',
+			'src'       => 'inc/integrations/plugins/rank-math/css/editor.css',
+			'deps'      => array( 'adminkit-rank-math' ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_editor_screen' ),
+		) );
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-rank-math-columns',
+			'src'       => 'inc/integrations/plugins/rank-math/css/columns.css',
+			'deps'      => array( 'adminkit-rank-math' ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_columns_screen' ),
 		) );
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-rank-math-pages',
