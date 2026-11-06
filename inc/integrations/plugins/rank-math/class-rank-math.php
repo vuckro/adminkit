@@ -40,7 +40,7 @@ class AdminKit_Integration_Rank_Math extends AdminKit_Integration_Base {
 	 */
 	public static function owns_screen( $screen ) {
 		if ( ! $screen ) { return false; }
-		if ( 'toplevel_page_rank-math' === $screen->id || preg_match( '/^rank-math_page_rank-math(?:-|$)/', $screen->id ) ) { return true; }
+		if ( in_array( $screen->id, array( 'toplevel_page_rank-math', 'toplevel_page_rank-math-network' ), true ) || preg_match( '/^rank-math_page_rank-math(?:-|$)/', $screen->id ) ) { return true; }
 		foreach ( $GLOBALS['_parent_pages'] ?? array() as $page => $parent ) {
 			if ( preg_match( '/^rank-math(?:-|$)/', $page ) && function_exists( 'get_plugin_page_hookname' )
 				&& get_plugin_page_hookname( $page, $parent ) === $screen->id ) { return true; }
@@ -87,6 +87,13 @@ class AdminKit_Integration_Rank_Math extends AdminKit_Integration_Base {
 			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_asset_screen' ),
+		) );
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-rank-math-pages',
+			'src'       => 'inc/integrations/plugins/rank-math/css/pages.css',
+			'deps'      => array( 'adminkit-rank-math' ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_screen' ),
 		) );
 	}
 }

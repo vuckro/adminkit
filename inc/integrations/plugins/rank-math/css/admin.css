@@ -301,3 +301,25 @@ body.adminkit #editor .rank-math-toolbar-score.good-fk {
 	border-color: var(--ak-success);
 	color: var(--ak-success);
 }
+/* Keyword chips share the score semantics on post, product and term editors. */
+body.adminkit .rank-math-focus-keyword .tagify {
+	--tags-border-color: var(--ak-input-border);
+	--tag-text-color: var(--ak-text);
+	--placeholder-color: var(--ak-text-muted);
+	--placeholder-color-focus: var(--ak-text-muted);
+	background: var(--ak-input-bg);
+	border-color: var(--ak-input-border);
+	color: var(--ak-text);
+}
+body.adminkit .rank-math-focus-keyword .tagify__tag.bad-fk {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
+}
+body.adminkit .rank-math-focus-keyword .tagify__tag.ok-fk {
+	background: var(--ak-warning-subtle);
+	color: var(--ak-warning);
+}
+body.adminkit .rank-math-focus-keyword .tagify__tag.good-fk {
+	background: var(--ak-success-subtle);
+	color: var(--ak-success);
+}

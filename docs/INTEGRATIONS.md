@@ -310,3 +310,17 @@ tokens. Score categories retain their error/warning/success meanings. It preserv
 native module controls, links, editor data, capabilities, nonces and SEO output.
 `dev/check-rank-math.php` covers screen routing, moved pages and asset isolation.
 A CSS drift baseline is included for the installed 1.0.281 host.
+
+Secondary Rank Math pages additionally load `css/pages.css`; the shared editor,
+widget and SEO-column surfaces do not load that bundle. It covers role labels,
+system-status panels and loading states, import/export backup rows, analyzer
+panels, Link Genius tables, settings variable/page selectors and Content AI
+controls/chat/history/usage. The Content AI writing canvas remains owned by the
+content/theme. The network dashboard screen ID is explicitly supported by routing
+regressions; this does not imply a live Multisite visual certification.
+
+The follow-up COOMS Chromium review traverses the 14 available Rank Math page
+routes and 77 available settings/tool/AI tabs in dark mode. It checks corresponding
+light/mobile samples and affected WordPress list, taxonomy and editor surfaces.
+Cloud-connected result states, paid-only features, import/restore/delete actions,
+SEO submissions and generated AI output remain outside that visual recipe.

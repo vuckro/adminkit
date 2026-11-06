@@ -1,0 +1,180 @@
+/* Secondary Rank Math admin pages use separate CSS/React bundles. These rules
+   load only on Rank Math pages, never alongside SEO columns or editor assets. */
+body.adminkit .rank-math-role-manager .components-checkbox-control__label {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit :is(.rank-math-panel, .rank-math-panel .components-panel__body, .rank-math-tools-table.widefat, .rank-math-import-export) {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit .rank-math-panel .components-panel__body > .components-panel__body-title,
+body.adminkit .rank-math-tools-table.widefat tr:nth-child(odd),
+body.adminkit .rank-math-skeleton.rank-math-system-status .components-panel__body {
+	background: var(--ak-surface-muted);
+}
+body.adminkit .rank-math-panel .components-panel__body-toggle.components-button,
+body.adminkit .rank-math-status-table thead tr th {
+	color: var(--ak-heading);
+}
+body.adminkit .rank-math-panel :is(td, th),
+body.adminkit .rank-math-tools-table.widefat :is(td, th) {
+	border-color: var(--ak-border);
+}
+body.adminkit .rank-math-import-export .components-tab-panel__tabs {
+	background: var(--ak-surface-muted);
+}
+body.adminkit .rank-math-import-export .components-tab-panel__tabs-item {
+	color: var(--ak-text-muted);
+}
+body.adminkit .rank-math-import-export .components-tab-panel__tabs-item:is(.is-active, :hover) {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+}
+body.adminkit .rank-math-import-export .components-tab-panel__tabs-item::after {
+	background: var(--ak-border);
+}
+body.adminkit :is(.rank-math-seo-analysis-wrap header, .rank-math-seo-analysis-header, .rank-math-result-graphs, .rank-math-result-filters, .seo-analysis-results) {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit .rank-math-result-graphs .graphs-side,
+body.adminkit .rank-math-result-table .row-content code,
+body.adminkit .rank-math-seo-analysis-wrap .info-list {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+body.adminkit :is(.rank-math-result-filter, .rank-math-result-table .category-title, .seo-analysis-results > .components-tab-panel__tabs .components-tab-panel__tabs-item) {
+	color: var(--ak-heading);
+}
+body.adminkit :is(.rank-math-result-table .table-row, .rank-math-seo-analysis-wrap .serp-preview) {
+	border-color: var(--ak-border);
+}
+body.adminkit .rank-math-seo-analysis-wrap .serp-preview {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+body.adminkit .rank-math-seo-analysis-wrap .serp-title {
+	color: var(--ak-primary-text);
+}
+body.adminkit .rank-math-seo-analysis-wrap :is(.serp-url-wrapper, .serp-description) {
+	color: var(--ak-text-muted);
+}
+/* The title separator is a WP toggle group, not a text input. */
+body.adminkit #wpbody-content .rank-math-toggle-group-control {
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+	border-color: var(--ak-input-border);
+}
+body.adminkit #wpbody-content .rank-math-toggle-group-control [role=radio] {
+	color: var(--ak-text);
+}
+/* AI Link Genius keeps its own table, dropdown and loading-state surfaces. */
+body.adminkit #rank-math-links-page-container :is(.rank-math-section-card, .rank-math-table-card, .rank-math-table, .rank-math-table-row, .rank-math-table-footer, .rank-math-multi-select-button) {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+body.adminkit #rank-math-links-page-container :is(thead, th) {
+	background: var(--ak-surface-muted);
+	color: var(--ak-heading);
+	border-color: var(--ak-border);
+}
+body.adminkit #rank-math-links-page-container .rank-math-table-row:hover {
+	background: var(--ak-hover-bg);
+}
+body.adminkit #rank-math-links-page-container :is(td, tr) {
+	border-color: var(--ak-border);
+}
+body.adminkit #rank-math-links-page-container .rank-math-table-skeleton :is(tr, td) {
+	background: var(--ak-surface-muted);
+}
+body.adminkit #rank-math-content-ai-page .components-search-control__input {
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+/* Shared React settings controls recur across CPT/taxonomy tabs. */
+body.adminkit #wpbody-content .rank-math-tab-panel :is(.rank-math-select-variable, .rank-math-select-with-searchbox) {
+	background: var(--ak-input-bg);
+	border-color: var(--ak-input-border);
+	color: var(--ak-text);
+}
+body.adminkit #wpbody-content .rank-math-tab-panel :is(table, tbody tr) {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit #wpbody-content .rank-math-tab-panel :is(thead, tbody tr:nth-child(even)) {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+body.adminkit #wpbody-content .rank-math-tab-panel :is(th, td) {
+	border-color: var(--ak-border);
+}
+body.adminkit #rank-math-content-ai-page .content-ai-filter .components-search-control :is(input.components-input-control__input, input.components-search-control__input, .components-input-control__suffix) {
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+body.adminkit #rank-math-settings.rank-math-role-manager .components-checkbox-control__label {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+body.adminkit #rank-math-settings.rank-math-role-manager .components-checkbox-control__input {
+	background: var(--ak-input-bg);
+	border-color: var(--ak-input-border);
+}
+body.adminkit #rank-math-settings.rank-math-role-manager .components-checkbox-control__input:checked {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+body.adminkit #rank-math-tools-wrapper .list-table.with-action {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+/* Content AI has its own page root; its editor canvas still belongs to the
+   content/theme, while controls, chat, history and usage follow AdminKit. */
+body.adminkit #rank-math-content-ai-page :is(.tab-header, .chat-container, .chat-sidebar, .chat-input, .chat-input-textarea, .chat-input-buttons, .history-container, .rank-math-usage-item, .interface-interface-skeleton__sidebar, .interface-complementary-area.rank-math-tabs) {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit #rank-math-content-ai-page :is(.rank-math-usage-item-label, .rank-math-usage-item-value) {
+	color: var(--ak-text);
+}
+body.adminkit #rank-math-content-ai-page :is(.rank-math-usage-skeleton-label, .rank-math-usage-skeleton-value) {
+	background: var(--ak-surface-muted);
+}
+body.adminkit #rank-math-content-ai-page .content-ai-tagify .tagify {
+	--tags-border-color: var(--ak-input-border);
+	--tag-bg: var(--ak-surface-muted);
+	--tag-text-color: var(--ak-text);
+	--placeholder-color: var(--ak-text-muted);
+	--placeholder-color-focus: var(--ak-text-muted);
+	background: var(--ak-input-bg);
+	border-color: var(--ak-input-border);
+	color: var(--ak-text);
+}
+body.adminkit #rank-math-content-ai-page .content-ai-tagify .tagify .tagify__tag {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+body.adminkit #rank-math-content-ai-page :is(.rank-math-usage-header, .rank-math-tab-content-history .output-item, .rank-math-tab-content-history .output-actions, .chat-message.user) {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit #rank-math-content-ai-page .rank-math-tab-content-history .output-item .content {
+	color: var(--ak-text);
+}
+body.adminkit #rank-math-content-ai-page .rank-math-tab-content-history .output-item .word-count {
+	color: var(--ak-text-muted);
+}
+body.adminkit #rank-math-content-ai-page .rank-math-tab-content-history .output-item .tool-name {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary-text);
+}
