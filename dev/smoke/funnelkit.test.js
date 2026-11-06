@@ -1,0 +1,33 @@
+// Exercise the shipped enhancer against host-shaped tabs and lazy portal content.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const {JSDOM} = require('jsdom');
+const source = fs.readFileSync(path.resolve(__dirname,'../../inc/integrations/plugins/funnel-builder/js/shared.js'),'utf8');
+(async () => {
+ const dom = new JSDOM('<body class="adminkit adminkit-funnelkit"><div class="bwf-tab-section-wrap"><div class="bwf-tab-section-item active">Steps</div><div class="bwf-tab-section-item">Analytics</div></div><div class="bwf-notification-close"><svg></svg></div></body>',{runScripts:'outside-only',pretendToBeVisual:true});
+ const w=dom.window,d=w.document;
+ const pending=new Set(),raf=w.requestAnimationFrame.bind(w);
+ w.requestAnimationFrame=fn=>{const id=raf(t=>{pending.delete(id);fn(t);});pending.add(id);return id;};
+ w.AdminKitFunnelKitLabels={close:'Fermer'};
+ let clicks=0;
+ const tabs=[...d.querySelectorAll('.bwf-tab-section-item')];
+ tabs.forEach(tab=>tab.addEventListener('click',()=>{clicks++;tabs.forEach(t=>t.classList.toggle('active',t===tab));}));
+ w.eval(source);
+ assert.equal(tabs[0].getAttribute('aria-selected'),'true');
+ assert.equal(tabs[1].tabIndex,-1);
+ tabs[0].focus();tabs[0].dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));
+ await new Promise(r=>w.requestAnimationFrame(r));
+ assert.equal(d.activeElement,tabs[1]);assert.equal(clicks,1,'native handler must run exactly once');
+ assert.equal(tabs[1].getAttribute('aria-selected'),'true');
+ let dismissed=0;const close=d.querySelector('.bwf-notification-close');close.addEventListener('click',()=>dismissed++);
+ assert.equal(close.getAttribute('aria-label'),'Fermer');
+ close.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));assert.equal(dismissed,1);
+ const portal=d.createElement('div');portal.className='components-modal__frame';portal.innerHTML='<div class="bwf-input-label">Contact</div><input>';
+ d.body.appendChild(portal);await new Promise(r=>w.requestAnimationFrame(()=>w.requestAnimationFrame(r)));
+ assert.ok(portal.querySelector('input').getAttribute('aria-labelledby'),'lazy portal fields must receive their visible label');
+ pending.forEach(id=>w.cancelAnimationFrame(id));w.requestAnimationFrame=()=>0;dom.window.close();
+ const native=new JSDOM('<body><div class="bwf-tab-section-wrap"><div class="bwf-tab-section-item">Native</div></div></body>',{runScripts:'outside-only'});
+ native.window.eval(source);assert.equal(native.window.document.querySelector('.bwf-tab-section-item').hasAttribute('role'),false,'enhancer must not run when adapter is disabled');native.window.close();
+ console.log('OK: FunnelKit keyboard tabs, native click ownership, dismiss action, lazy fields and native fallback.');
+})().catch(e=>{console.error(e);process.exitCode=1;});

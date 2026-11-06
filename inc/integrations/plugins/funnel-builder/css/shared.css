@@ -47,13 +47,13 @@ body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-m
  border-color: var(--ak-primary);
  border-radius: var(--ak-radius-s);
 }
-body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .bwf-fullsc-modal, .components-modal__frame, .components-popover__content) .components-button:is(.bwf-btn-gray, .is-gray, .is-white, .is-secondary-gray, .is-light, .is-tertiary, .bwf-funnel-buttons .is-secondary) {
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .bwf-fullsc-modal, .components-modal__frame, .components-popover__content) .components-button:is(.bwf-btn-gray, .is-gray, .is-white, .is-secondary-gray, .is-secondary, .is-light, .is-tertiary, .bwf-funnel-buttons .is-secondary) {
  background: var(--ak-surface) !important;
  color: var(--ak-text) !important;
  border-color: var(--ak-border) !important;
  border-radius: var(--ak-radius-s);
 }
-body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .bwf-fullsc-modal, .components-modal__frame, .components-popover__content) .components-button:is(.bwf-btn-gray, .is-gray, .is-white, .is-secondary-gray, .is-light, .is-tertiary, .bwf-funnel-buttons .is-secondary):hover { background: var(--ak-hover-bg) !important; }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .bwf-fullsc-modal, .components-modal__frame, .components-popover__content) .components-button:is(.bwf-btn-gray, .is-gray, .is-white, .is-secondary-gray, .is-secondary, .is-light, .is-tertiary, .bwf-funnel-buttons .is-secondary):hover { background: var(--ak-hover-bg) !important; }
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame, .components-popover__content) .components-button.is-link { color: var(--ak-primary-text); }
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]), textarea, select) {
  background-color: var(--ak-surface);

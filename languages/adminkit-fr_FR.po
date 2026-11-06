@@ -304,7 +304,7 @@ msgstr "Choisissez le contenu de l’accueil et le nombre d’articles affichés
 msgid "Clean interface"
 msgstr "Interface épurée"
 
-#: inc/features/notifications/class-notification-center.php
+#: inc/features/notifications/class-notification-center.php inc/integrations/trait-funnelkit-integration.php
 msgid "Close"
 msgstr "Fermer"
 

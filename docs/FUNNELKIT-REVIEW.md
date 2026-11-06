@@ -1,10 +1,46 @@
 # FunnelKit — intégration AdminKit
 
+## Mise à jour du 6 novembre 2026 — COOMS local
+
+Les sources installées sont Builder 3.17.0.1 et Automations Lite 3.8.6.2.
+Cette passe ajoute une couche `components.css`, chargée après les styles communs
+et les contrôles par chacun des adaptateurs indépendants :
+
+- pont des variables `--wffn-*` vers les rôles AdminKit ;
+- étiquettes et fenêtre Sublium lisibles en clair/sombre, avec préservation du logo
+  à deux couleurs (les règles génériques de pictogrammes ne l’aplatissent plus) ;
+- badges neutres, succès, erreur, pause et information cohérents dans les listes
+  et le canevas, même après chargement des bundles CSS tardifs ;
+- sélections multiples, boutons secondaires, feedback asynchrone, contours et
+  focus raccordés aux mêmes tokens ;
+- retours à la ligne et fenêtres adaptés aux petits écrans ;
+- onglets `.bwf-tab-section-item` et fermeture des avis utilisables au clavier ;
+- résolution du nom personnalisé par le hook de menu stable après changement
+  de route, et bornes de version mineure explicites.
+
+Validation de cette passe : contrôles automatisés complets, nouvelles régressions
+PHP de routage/version/wordmark et suite JSDOM sur les vrais scripts livrés.
+Prévisualisation isolée des composants avec les feuilles de style natives
+installées et un bundle d’étapes chargé après le skin : mode sombre, clavier,
+fenêtre hors racine et largeur mobile 390 px. La reprise visuelle en mode clair
+a été interrompue par la fermeture de la connexion au navigateur. Les tests vérifient notamment les
+couleurs calculées des cinq états de badge et du canevas, et la conservation des
+couleurs du logo.
+
+Cette prévisualisation utilise une structure représentative des composants ;
+elle ne remplace pas une recette connectée exhaustive de toutes les routes
+React. La session Chrome étant utilisée simultanément, elle a été laissée
+intacte. Les parcours historiques ci-dessous n’ont pas été rejoués intégralement.
+Aucune modification des tunnels, checkout, commandes, campagnes, abonnements,
+licences ou moyens de paiement n’est nécessaire à ces corrections.
+
+## Revue historique des 29–30 octobre 2026
+
 Revue locale des 29–30 octobre 2026 sur WordPress 7.1.4 : FunnelKit Builder 3.17.0.1 et FunnelKit Automations Lite 3.8.6.2. Les deux extensions étaient installées ; elles ont été activées après sauvegarde locale de la base.
 
 ## Portée et architecture
 
-Deux adaptateurs Tier B indépendants, découverts automatiquement, limités à la version majeure 3. Les constantes `WFFN_VERSION` et `BWFAN_VERSION` détectent les hôtes. Les classes de corps et les styles de contenu ne sont ajoutés que sur leurs écrans. Le petit habillage du menu WordPress est partagé dans l’administration. Une future version majeure utilise le repli natif.
+Deux adaptateurs Tier B indépendants, découverts automatiquement, limités aux séries vérifiées Builder 3.17.x et Automations 3.8.x. Les constantes `WFFN_VERSION` et `BWFAN_VERSION` détectent les hôtes. Les classes de corps et les styles de contenu ne sont ajoutés que sur leurs écrans. Le petit habillage du menu WordPress est partagé dans l’administration. Une version mineure ultérieure non vérifiée utilise le repli natif et son indication de skin en pause.
 
 - `funnel-builder/css/shared.css` : composants BWF communs, portails, formulaires, navigation, tableaux, avis, menus, fenêtres, canevas et adaptation mobile.
 - `funnel-builder/css/controls.css` : contrôles natifs, libellés, validation, sélections, recherche et fenêtres imbriquées ; chargé après le skin de chaque application.

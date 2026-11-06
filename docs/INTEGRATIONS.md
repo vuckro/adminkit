@@ -285,7 +285,7 @@ host's own theme attribute (one-way) for `color-scheme`. The
 
 ## FunnelKit Builder et Automations
 
-Les deux adaptateurs Tier B partagent les composants BWF sans exiger que les deux extensions soient actives. Les fichiers communs sont livrés dans `plugins/funnel-builder/` et référencés explicitement par l’adaptateur `wp-marketing-automations`. Les styles de contenu se limitent aux écrans possédés et à leurs portails. `shared.css`, `controls.css` et `shared.js` sont partagés ; `menu.css` ne traite que les entrées FunnelKit du menu WordPress ; aucun habillage de checkout public ou de corps d’e-mail. Versions, couverture et limites : [FUNNELKIT-REVIEW.md](FUNNELKIT-REVIEW.md).
+Les deux adaptateurs Tier B partagent les composants BWF sans exiger que les deux extensions soient actives. Les fichiers communs sont livrés dans `plugins/funnel-builder/` et référencés explicitement par l’adaptateur `wp-marketing-automations`. Les styles de contenu se limitent aux écrans possédés et à leurs portails. `shared.css`, `controls.css`, `components.css` et `shared.js` sont partagés ; `menu.css` ne traite que les entrées FunnelKit du menu WordPress ; aucun habillage de checkout public ou de corps d’e-mail. Versions, couverture et limites : [FUNNELKIT-REVIEW.md](FUNNELKIT-REVIEW.md).
 
 ## Fluent applications
 

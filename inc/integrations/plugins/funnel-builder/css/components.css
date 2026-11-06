@@ -1,0 +1,77 @@
+/* Shared Builder/Automations components, including lazy bundles and body portals.
+   Deliberately limited to the administration adapter, never checkout/email output. */
+body.adminkit.adminkit-funnelkit {
+ --wffn-primary: var(--ak-primary);
+ --wffn-primary-alter: var(--ak-primary-hover);
+ --wffn-text: var(--ak-text);
+ --wffn-desc: var(--ak-text-muted);
+ --wffn-light-bg: var(--ak-surface-muted);
+ --wffn-border: var(--ak-border);
+ --wffn-border-color: var(--ak-border);
+ --wffn-error: var(--ak-error);
+ --wffn-border-radius: var(--ak-radius-m);
+}
+/* Promotional content stays readable and actionable without hiding host links. */
+body.adminkit.adminkit-funnelkit .bwf-notification-wrap.is-sublium {
+ background: var(--ak-surface-muted);
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-m);
+ color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit :is(.bwf-sublium-notif__tag, .bwf-sublium-popup__tag) {
+ background: var(--ak-surface);
+ color: var(--ak-text);
+ border-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit :is(.bwf-sublium-notif__tag, .bwf-sublium-popup__tag) svg { color: inherit; }
+body.adminkit.adminkit-funnelkit :is(.bwf-sublium-notif__title, .bwf-sublium-popup__title) { color: var(--ak-heading); }
+body.adminkit.adminkit-funnelkit :is(.bwf-sublium-notif__desc, .bwf-sublium-notif__tag-more, .bwf-sublium-popup__desc, .bwf-sublium-popup__learn-more) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit .bwf-sublium-notif__learn-more { color: var(--ak-primary-text); }
+body.adminkit.adminkit-funnelkit .bwf-sublium-popup__video { background: var(--ak-surface-muted); border-color: var(--ak-border); box-shadow: none; }
+body.adminkit.adminkit-funnelkit .bwf-sublium-popup__badge { background: var(--ak-success-subtle); color: var(--ak-success); }
+body.adminkit.adminkit-funnelkit .bwf-sublium-popup__badge-dot { background: currentColor; }
+/* State colors must survive both list cards and the lazy canvas stylesheet. */
+body.adminkit.adminkit-funnelkit :is(.bwf-badge, .bwf-st-c-badge-small, .bwf-header-step-type-badge, .bwf-analytics-step-badge, .bwf-count-badge) {
+ --ak-funnelkit-badge-bg: var(--ak-surface-muted);
+ --ak-funnelkit-badge-text: var(--ak-text);
+ background: var(--ak-funnelkit-badge-bg);
+ color: var(--ak-funnelkit-badge-text);
+}
+body.adminkit.adminkit-funnelkit :is(.bwf-badge-green, .bwf-st-c-badge-green, .bwf-st-c-badge-green-alter) { --ak-funnelkit-badge-bg: var(--ak-success-subtle); --ak-funnelkit-badge-text: var(--ak-success); }
+body.adminkit.adminkit-funnelkit :is(.bwf-badge-red, .bwf-st-c-badge-red) { --ak-funnelkit-badge-bg: var(--ak-error-subtle); --ak-funnelkit-badge-text: var(--ak-error); }
+body.adminkit.adminkit-funnelkit :is(.bwf-st-c-badge-yellow, .bwf-exp-paused) { --ak-funnelkit-badge-bg: var(--ak-warning-subtle); --ak-funnelkit-badge-text: var(--ak-warning); }
+body.adminkit.adminkit-funnelkit :is(.bwf-st-c-badge-blue, .bwf-st-c-badge-l-blue) { --ak-funnelkit-badge-bg: var(--ak-info-subtle); --ak-funnelkit-badge-text: var(--ak-info); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-badge, .bwf-header-step-type-badge, .bwf-analytics-step-badge, .bwf-count-badge),
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, .components-modal__frame) .bwf-st-c-wrap .bwf-st-c .bwf-st-c-badge-wrap .bwf-st-c-badge-small,
+body.adminkit.adminkit-funnelkit #bwf-funnel-canvas-wrap .bwf-st-c-badge-small,
+body.adminkit.adminkit-funnelkit #bwf-funnel-canvas-wrap .bwf-node-wrapper .bwf-node-content .bwf-st-c-badge-small {
+ background: var(--ak-funnelkit-badge-bg);
+ color: var(--ak-funnelkit-badge-text);
+}
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-badge > span { color: inherit; }
+/* Native dropdowns, multi-selects and asynchronous feedback use the same roles. */
+body.adminkit.adminkit-funnelkit :is(.bwf-custom-select .bwf-list-options, .multiselect__tags, .multiselect__input, .multiselect__single, .multiselect__content-wrapper) { background: var(--ak-input-bg); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(.multiselect__placeholder, .multiselect__option--disabled) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit :is(.multiselect__option--highlight, .multiselect__option--selected) { background: var(--ak-hover-bg); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit .multiselect__tag { background: var(--ak-primary-subtle); color: var(--ak-primary-text); }
+body.adminkit.adminkit-funnelkit .bwf-global-snackbar { background: var(--ak-elevated); color: var(--ak-text); border: 1px solid var(--ak-border); box-shadow: var(--ak-shadow-elevated); }
+body.adminkit.adminkit-funnelkit .bwf-sidebar-nav .bwf-sidebar-nav-inner { border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit .bwf-tab-section-wrap { box-shadow: inset 0 -1px 0 var(--ak-border); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-tab-section-item.active { color: var(--ak-primary-text); }
+body.adminkit.adminkit-funnelkit .bwf-tab-section-item:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
+body.adminkit.adminkit-funnelkit :is(.bwf-notification-wrap, .bwf-sublium-popup-modal, .bwf-custom-select) :is(a, button, input, select):focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit .bwf-notification-wrap.is-sublium { grid-template-columns: minmax(0, 1fr); padding: 16px; padding-inline-end: 44px; }
+ body.adminkit.adminkit-funnelkit .bwf-sublium-notif { min-width: 0; }
+ body.adminkit.adminkit-funnelkit .bwf-sublium-notif__title { line-height: 1.4; overflow-wrap: anywhere; }
+ body.adminkit.adminkit-funnelkit .bwf-sublium-notif__tag { margin-top: 0; white-space: normal; }
+ body.adminkit.adminkit-funnelkit .bwf-sublium-notif__tags { margin-top: 12px; }
+ body.adminkit.adminkit-funnelkit .bwf-sublium-notif__actions { flex-wrap: wrap; gap: 12px; }
+ body.adminkit.adminkit-funnelkit .bwf-sublium-popup-modal.bwf-admin-modal { width: calc(100vw - 24px); max-width: calc(100vw - 24px); }
+ body.adminkit.adminkit-funnelkit .bwf-sublium-popup__body { padding: 40px 16px 20px; }
+ body.adminkit.adminkit-funnelkit .bwf-sublium-popup__video { height: auto; aspect-ratio: 16 / 9; }
+ body.adminkit.adminkit-funnelkit .bwf-sublium-popup__tag { white-space: normal; }
+}
+@media (forced-colors: active) {
+ body.adminkit.adminkit-funnelkit :is(.bwf-sublium-notif__tag, .bwf-sublium-popup__tag, .bwf-badge, .bwf-st-c-badge-small) { border: 1px solid CanvasText; }
+}
