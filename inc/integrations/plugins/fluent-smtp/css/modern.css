@@ -18,10 +18,10 @@ html body.adminkit.settings_page_fluent-mail.fluent_theme_dark {
 	--fsm-accent: var(--ak-primary);
 	--fsm-accent-contrast: var(--ak-on-accent);
 	--fsm-accent-wash: var(--ak-hover-bg);
-	--fsm-card-line: var(--ak-border);
-	--fsm-shadow-card: var(--ak-shadow-subtle);
+	--fsm-card-line: var(--ak-card-border);
+	--fsm-shadow-card: var(--ak-card-shadow);
 	--fsm-shadow-lift: var(--ak-shadow-subtle);
-	--fsm-shadow-pop: var(--ak-shadow-subtle);
+	--fsm-shadow-pop: var(--ak-shadow-elevated);
 	--fsm-danger-wash: var(--ak-error-subtle);
 	--fsm-danger-bg: var(--ak-error-subtle);
 	--fsm-danger-line: var(--ak-error);
@@ -101,3 +101,9 @@ body.adminkit.settings_page_fluent-mail .fsm_card_head :is(.el-date-editor, .el-
 		position: static;
 	}
 }
+
+/* Shared surface roles: outer contour/contact shadow; inner rows stay flat. */
+body.adminkit.settings_page_fluent-mail :is(.fsm_card, .fsm_tile, .fsm_docs_tile) { background-color: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); }
+body.adminkit.settings_page_fluent-mail .fsm_card :is(.fsm_card, .el-card) { box-shadow: none; }
+body.adminkit.settings_page_fluent-mail .fsm_card_head { border-color: var(--ak-border); }
+body.adminkit.settings_page_fluent-mail .fsm_docs_tile:is(:hover, :focus-visible) { border-color: var(--ak-border-strong); box-shadow: var(--ak-card-shadow); }

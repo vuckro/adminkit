@@ -383,3 +383,13 @@ html body.adminkit.toplevel_page_fluentcrm-admin {
 	--fc-badge-spammed-text: var(--ak-error);
 	--fc-badge-spammed-bg: var(--ak-error-subtle);
 }
+
+/* Shared surface roles: outer contour/contact shadow; inner rows stay flat. */
+body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_base_card, .fcrm_report_card, .fc_sidebar_card, .fcrm_integration_detail_card, .fcrm-widget-section, .fcrm_sequence_hero_card),
+body.adminkit.toplevel_page_fluentcrm-admin ul.fluentcrm_stat_cards > li { background-color: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); }
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_table_wrapper { background-color: var(--ak-table-bg); border: var(--ak-border-width) solid var(--ak-table-border); border-radius: var(--ak-table-radius); box-shadow: var(--ak-table-shadow); }
+body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_base_card, .fcrm_report_card, .fc_sidebar_card) :is(.fcrm_table_wrapper, .el-card) { border: 0; border-radius: 0; box-shadow: none; }
+body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_base_card, .fcrm_report_card).fcrm_danger_border { border-color: var(--ak-error); }
+body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_base_card, .fcrm_report_card).fcrm_warning_border { border-color: var(--ak-warning); }
+body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_base_card, .fcrm_report_card).fcrm_success_border { border-color: var(--ak-success); }
+body.adminkit.toplevel_page_fluentcrm-admin ul.fluentcrm_stat_cards > li:is(.fc_camp_data_revenue, .fc_camp_data_unsubscribe):hover { border-color: var(--ak-border-strong); box-shadow: var(--ak-card-shadow); }

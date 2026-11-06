@@ -767,7 +767,7 @@ body.adminkit .el-date-table td.in-range div:hover {
 /* ========== 22. Reports — cards, stat cards, tabs header ========== */
 /* FF's generic report/report-stat card. .ff_card cores #fff + a soft drop
    shadow (and a transparent 1px border that goes brand on .highlight-border);
-   AdminKit is flat, so surface + token border, no shadow. The .ff_card.primary
+   Outer elevation is provided by the shared surface roles below. The .ff_card.primary
    brand-fill variant is intentional emphasis — leave it. */
 body.adminkit .ff_card {
 	background-color: var(--ak-surface);
@@ -775,7 +775,7 @@ body.adminkit .ff_card {
 	box-shadow: none;
 }
 
-/* Stat cards (.form-stats-section .stats-card) — #fff + shadow → flat surface;
+/* Stat cards (.form-stats-section .stats-card) use shared elevation below;
    the icon chip is a soft #ebf1ff tint → primary-subtle; titles #525866 muted,
    values #1f2937 heading. The up/down deltas keep their semantic colours. */
 body.adminkit .form-stats-section .stats-card {
@@ -1657,3 +1657,12 @@ body.adminkit .ff_screen_editor :is(button, a, input, textarea):focus-visible {
 		border-block-start: 1px solid var(--ak-border);
 	}
 }
+
+/* Shared surface roles: outer contour/contact shadow; inner rows stay flat. */
+body.adminkit :is(.ff_card:not(.primary), .ff-card, .ff_card_s2, .ff_update_card, .ff_each_form, .ff_form_item),
+body.adminkit .form-stats-section .stats-card { background-color: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); }
+body.adminkit .ff_table { background-color: var(--ak-table-bg); border: var(--ak-border-width) solid var(--ak-table-border); border-radius: var(--ak-table-radius); box-shadow: var(--ak-table-shadow); }
+body.adminkit :is(.ff_card, .ff-card, .ff_card_s2) :is(.ff_table, .el-card, .ff_card, .ff-card) { border: 0; border-radius: 0; box-shadow: none; }
+
+body.adminkit .form-stats-section .stats-card:hover { box-shadow: var(--ak-card-shadow); }
+body.adminkit .ff_card.highlight-border { border-color: var(--ak-primary); }

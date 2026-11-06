@@ -124,3 +124,15 @@ body.adminkit.toplevel_page_fluent-toolkit :is(.ft-view-tab,.ft-btn):focus-visib
 body.adminkit.ak-fluenthub .fui-workspace-icon--initial {
  background:var(--ak-surface-muted); color:var(--ak-heading);
 }
+
+/* Shared surface roles: outer contour/contact shadow; inner rows stay flat. */
+body.adminkit.toplevel_page_fluent-toolkit .ft-app :is(.ft-hero, .ft-card, .ft-panel) { background-color: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); }
+body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-list { background: var(--ak-table-bg); border: var(--ak-border-width) solid var(--ak-table-border); border-radius: var(--ak-table-radius); box-shadow: var(--ak-table-shadow); }
+body.adminkit.toplevel_page_fluent-toolkit .ft-app :is(.ft-card, .ft-panel) :is(.ft-card, .ft-panel, .ft-list) { box-shadow: none; }
+body.adminkit.toplevel_page_fluent-toolkit .ft-topbar .ft-theme-dropdown { background: var(--ak-elevated); border-color: var(--ak-border); border-radius: var(--ak-radius-m); box-shadow: var(--ak-shadow-elevated); }
+body.adminkit.ak-fluenthub :is(.fui-workspace-menu, .fui-theme-dropdown) { box-shadow: var(--ak-shadow-elevated); border-color: var(--ak-border); }
+
+/* Anchored chrome stays flat; transient menus retain overlay depth. */
+body.adminkit.ak-fluenthub .fui-sidebar-footer { box-shadow: none; border-color: var(--ak-border); }
+body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-hero::after { background: none; }
+body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-list-head { background: var(--ak-table-header-bg); }
