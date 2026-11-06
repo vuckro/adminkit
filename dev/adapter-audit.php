@@ -32,6 +32,8 @@ require_once __DIR__ . '/css-scan.php';
 // (Tier A). Entries below carry debt FORCED by the host, not a code-quality
 // fault — they are the baseline as of the last review.
 $BUDGET = array(
+	'rank-math'         => 4, // Two host-forced mode text colors; two reduced-motion overrides for host animations.
+
 	'fluent-cart'       => 184, // FC compiles its palette into Tailwind utilities + stock Element Plus literals; every host literal mapped to a token needs !important to beat them (incl. status badges success/warning/danger, neutral checked-checkbox label, textarea + TinyMCE editor backgrounds past FC's dark overrides; composed dashboard SVG illustrations left native)
 	'fluent-booking'    => 108, // ApexCharts chart text/grid/tooltip + Element Plus (host inline styles) + #306ae0 hardcoded across ~126 component states + Vue editor surfaces + neutral settings-sidebar hover
 	'fluent-crm'        => 25,  // FluentCRM is variable-driven (Tier A remap); the !important are literals it hard-codes past its vars (funnel block types/badges/connectors, brand pills, disabled-primary contrast, neutral active-nav, subscriber-profile sidebar-card inline bg) + logo white-label + dark-only toggle hide
