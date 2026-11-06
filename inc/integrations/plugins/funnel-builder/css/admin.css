@@ -1,4 +1,31 @@
 /* FunnelKit Builder — screen-specific refinements, shared components in shared.css. */
+/* 3.18 sample-data notices are shared by all analytics subroutes. Their native
+   cream background conflicts with headings already mapped to AdminKit tokens. */
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) .bwf-lite-noticebar {
+ background: var(--ak-surface-muted);
+ color: var(--ak-text);
+ border: 1px solid var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) .bwf-lite-noticebar :is(.bwf-lite-noticebar__content-wrap, .bwf-lite-noticebar__content-wrap > div) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) .bwf-lite-noticebar .bwf-noticebar-content { color: var(--ak-text-muted); }
+/* This legacy tracking row is inline-block while its checkbox reserves the
+   320px settings-label column. Its shrink-to-fit width collapses to zero. */
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-settings .wfacp_setting_track_and_events_end { display: block; width: 100%; box-sizing: border-box; }
+/* These widget wrappers carry a separate light halo, outside .bwf-card. */
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-dashboard-overview, .bwf-widgets-activity, .bwf-card.bwf-table) { background: var(--ak-surface); border: 1px solid var(--ak-border); box-shadow: none; }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-dashboard-banner .bwf-flex:has(> .bwf-link) { color: var(--ak-primary-text); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-dashboard-banner .bwf-flex:has(> .bwf-link) svg { color: inherit; }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-dashboard-banner .bwf-flex:has(> .bwf-link) svg [stroke]:not([stroke="none"]) { stroke: currentColor; }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-dashboard-banner .bwf-flex:has(> .bwf-link) svg [fill]:not([fill="none"]) { color: inherit; fill: currentColor; }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-dashboard-banner .bwf-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+/* Preserve the host's blur and feature gate; only replace its light scrim. */
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-upgrade-pro-overlay { background: color-mix(in srgb, var(--ak-surface) 92%, transparent); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-upgrade-pro-overlay :is(p, div, span):not(.pro-tag) { color: var(--ak-text); }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) .bwf-lite-noticebar.is-sample-data-notice { flex-wrap: wrap; gap: calc(12px * var(--ak-space-scale, 1)); padding: calc(16px * var(--ak-space-scale, 1)); }
+ body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) .bwf-lite-noticebar .bwf-lite-noticebar__title-wrap { flex-wrap: wrap; }
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-notifications-buttons { flex-wrap: wrap; }
+}
 body.adminkit.adminkit-funnelkit-builder :is(.bwf-selected-header, .bwf-st-c-wrap, .bwf-st-c, .bwf-card-action, .bwf-support-box) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
 body.adminkit.adminkit-funnelkit-builder .bwf-steps-container { background: var(--ak-bg); }
 body.adminkit.adminkit-funnelkit-builder :is(.bwf-st-c, .bwf-st-c-wrap) { border-radius: var(--ak-radius-m); }
@@ -81,4 +108,79 @@ body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) 
  body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-funnel-step-analytics { width: 100%; max-width: 100%; min-width: 0; flex: 1 1 100%; display: flex; justify-content: space-between; }
  body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .bwf-funnel-modal) .bwf-funnel-step-analytics__item { min-width: 0; width: auto; flex: 1; text-align: center; }
  body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .components-modal__header-heading { text-wrap: balance; overflow-wrap: break-word; word-break: normal; }
+}
+
+/* The 3.18 AI & MCP application has an independent component palette. */
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-mcp-section, .bwf-mcp-diagnosis, .bwf-mcp-diagnosis__side-card, .bwf-mcp-diagnosis__check, .bwf-mcp-test-result, .bwf-mcp-pill, .bwf-mcp-fixstep__n) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-mcp-steps, .bwf-mcp-step, .bwf-mcp-ability, .bwf-mcp-connections__row, .bwf-mcp-fixsteps, .bwf-mcp-fixstep, .bwf-mcp-fixstep__action, .bwf-mcp-fixstep__path, .bwf-mcp-diagnosis__sidebar, .bwf-mcp-diagnosis__side-message) { border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-mcp-step__title, .bwf-mcp-connections__client, .bwf-mcp-diagnosis__title, .bwf-mcp-diagnosis__check-label, .bwf-mcp-fixstep__title, .bwf-mcp-test-checks__label, .bwf-mcp-diagnosis__side-head h4, .bwf-mcp-diagnosis__fix-head h3, .bwf-mcp-fixstep__howto strong) { color: var(--ak-heading); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-mcp-step__desc, .bwf-mcp-ability__desc, .bwf-mcp-connections__row, .bwf-mcp-muted, .bwf-mcp-access-row__label, .bwf-mcp-fixstep__hint, .bwf-mcp-fixstep__path span, .bwf-mcp-diagnosis__fix-count, .bwf-mcp-diagnosis__snippet-label, .bwf-mcp-diagnosis__side-card > p, .bwf-mcp-test-checks__message) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-mcp-step__desc strong, .bwf-mcp-ability__desc strong, .bwf-mcp-fixstep__hint strong, .bwf-mcp-diagnosis__lede, .bwf-mcp-diagnosis__note, .bwf-mcp-diagnosis__side-message, .bwf-mcp-fixstep__howto p, .bwf-mcp-step__warning, .bwf-mcp-fixstep__crumb em, .bwf-mcp-fixstep__path code) { color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-mcp-count, .bwf-mcp-pro-cta, .bwf-mcp-fixstep__howto, .bwf-mcp-fixstep__howto ~ .bwf-mcp-fixstep__action, .bwf-mcp-step__marker.is-pending, .bwf-mcp-step__marker.is-locked) { background: var(--ak-surface-muted); color: var(--ak-text-muted); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-mcp-pill.is-active, .bwf-mcp-fixstep.is-active .bwf-mcp-fixstep__n) { background: var(--ak-primary); color: var(--ak-on-accent); border-color: var(--ak-primary); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-mcp-step__marker.is-done, .bwf-mcp-fixstep.is-done .bwf-mcp-fixstep__n) { background: var(--ak-success-subtle); color: var(--ak-success); border-color: var(--ak-success); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-mcp-step__marker.is-failed, .bwf-mcp-diagnosis__head) { background: var(--ak-error-subtle); color: var(--ak-error); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-mcp-connections__revoke, .bwf-mcp-test-result__head, .bwf-mcp-test-checks .is-failed::before, .bwf-mcp-test-checks .is-failed > .bwf-mcp-test-checks__message, .bwf-mcp-diagnosis__check.is-failed .bwf-mcp-diagnosis__check-result) { color: var(--ak-error); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-mcp-diagnosis__check.is-ok .bwf-mcp-diagnosis__check-result { color: var(--ak-success); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-mcp-linkbtn { color: var(--ak-primary-text); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-mcp-diagnosis__snippet { background: var(--ak-surface-muted); border: 1px solid var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-mcp-diagnosis__snippet code, .bwf-mcp-diagnosis__note code) { color: var(--ak-text); background: var(--ak-surface-muted); }
+/* Product landing pages are still admin screens; their testimonials and icon
+   disks are not part of the embedded checkout/template preview content. */
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-product-pitching-page__testimonial, .bwf-product-pitching-page__testimonial p, .bwf-product-pitching-page__testimonial div, .bwf-product-pitching-page__testimonial span) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-product-pitching-page__content-feature-icon { background: var(--ak-surface-muted); color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-product-pitching-page__content-feature-icon svg [fill]:not([fill="none"]) { fill: currentColor; color: inherit; }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-product-pitching-page__content-feature-icon svg [stroke]:not([stroke="none"]) { stroke: currentColor; color: inherit; }
+/* New AI onboarding page and its body-portaled setup guides. Client logos,
+   screenshots and the embedded video retain their original brand artwork. */
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-fkai, .bwf-fkai-hero, .bwf-fkai-connected, .bwf-fkai-hero__media) { background: var(--ak-bg); color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) :is(.bwf-fkai-panel, .bwf-fkai-prompt, .bwf-fkai-setup-box, .bwf-fkai-client) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) :is(.bwf-fkai h1, .bwf-fkai h2, .bwf-fkai h3, .bwf-fkai-panel__head h2, .bwf-fkai-check__label) { color: var(--ak-heading); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) :is(.bwf-fkai-hero p, .bwf-fkai-section__intro p, .bwf-fkai-connected__text p, .bwf-fkai-check__head p, .bwf-fkai-check__list li, .bwf-fkai-check__status, .bwf-fkai-guide__note, .bwf-fkai-help__text, .bwf-fkai-panel__head div, .bwf-fkai-prompt__does, .bwf-fkai-prompts__error, .bwf-fkai-prompts__meta, .bwf-fkai-setup__hint) { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) :is(.bwf-fkai a, .bwf-fkai .components-button.is-link, .bwf-fkai-panel a) { color: var(--ak-primary-text); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-fkai-help__box, .bwf-fkai-prompts__filter, .bwf-fkai-number, .bwf-fkai-hero__eyebrow) { background: var(--ak-surface-muted); color: var(--ak-text-muted); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-fkai-prompts__filter button { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts :is(.bwf-fkai-client.is-active, .bwf-fkai-prompts__filter button.is-active) { background: var(--ak-primary); color: var(--ak-on-accent); border-color: var(--ak-primary); }
+body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-fkai-client:not(.is-active):hover { background: var(--ak-hover-bg); border-color: var(--ak-border-strong); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) .bwf-fkai-command { background: var(--ak-surface-muted); border: 1px solid var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) .bwf-fkai-command :is(code, button) { color: var(--ak-text); border-color: var(--ak-border-strong); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) .bwf-fkai-command button:hover { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-funnelkit-builder :is(#wffn-contacts, .components-modal__frame) :is(.bwf-fkai button, .bwf-fkai-panel button):focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
+body.adminkit.adminkit-funnelkit-builder .bwf-upsell-stripe-notice { background: var(--ak-surface-muted); color: var(--ak-text); border: 1px solid var(--ak-border); }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit-builder .bwf-upsell-stripe-notice { grid-template-columns: minmax(0, 1fr); min-width: 0; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-upsell-stripe-notice .bwf-upsell-stripe-notice__features { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-product-pitching-page__header-features { flex-wrap: wrap; justify-content: center; max-width: 100%; }
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-product-pitching-page__header-feature { flex: 0 1 120px; min-width: 0; max-width: 100%; }
+}
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit-builder #wffn-contacts .bwf-sublium-page__activate-button.components-button { max-width: 100%; min-width: 0; height: auto; min-height: 44px; padding-inline: calc(16px * var(--ak-space-scale, 1)); white-space: normal; box-sizing: border-box; }
+}
+body.adminkit.adminkit-funnelkit-builder .bwf-bump-design-header { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+/* Embedded TinyMCE chrome is administration UI. Its editable document and the
+   checkout/bump preview keep their authored content colors. */
+body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal :is(.mce-toolbar-grp, .mce-menubar, .mce-statusbar, .mce-panel) { background: var(--ak-surface-muted); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .mce-btn { background: var(--ak-surface-muted); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal :is(.mce-ico, .mce-btn button, .mce-btn .mce-txt) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .mce-btn:is(:hover, .mce-active) { background: var(--ak-hover-bg); border-color: var(--ak-border-strong); }
+body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .mce-btn button:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
+body.adminkit.adminkit-funnelkit-builder :is(.mce-menu, .mce-menu-item, .mce-textbox) { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); }
+body.adminkit.adminkit-funnelkit-builder .mce-menu-item :is(.mce-text, .mce-ico) { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder .mce-menu-item:is(:hover, .mce-selected, .mce-active) { background: var(--ak-hover-bg); }
+body.adminkit.adminkit-funnelkit-builder .bwfan_backlink { color: var(--ak-text-muted); }
+body.adminkit.adminkit-funnelkit-builder .bwfan_backlink:hover { color: var(--ak-text); }
+body.adminkit.adminkit-funnelkit-builder .bwfan_backlink svg [fill]:not([fill="none"]) { color: inherit; fill: currentColor; }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit-builder .bwf-funnel-modal .bwf-step-header { display: flex; flex-direction: column; align-items: stretch; width: 100%; min-width: 0; gap: calc(12px * var(--ak-space-scale, 1)); }
+ body.adminkit.adminkit-funnelkit-builder .bwf-step-header > .bwf-flex { flex-wrap: wrap; min-width: 0; max-width: 100%; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-step-header .bwf-header { flex-wrap: wrap; min-width: 0; gap: calc(8px * var(--ak-space-scale, 1)); }
+ body.adminkit.adminkit-funnelkit-builder .bwf-step-header .bwf-step-title { flex: 1 1 auto; min-width: 0; max-width: 100%; white-space: normal; word-break: normal; overflow-wrap: anywhere; }
+}
+body.adminkit.adminkit-funnelkit-builder .bwf-bump-design :is(.bwf-bump-settings-header, .bwf-merge-tags) { background: var(--ak-surface-muted); color: var(--ak-text); border-color: var(--ak-border); }
+@media (max-width: 782px) {
+ body.adminkit.adminkit-funnelkit-builder .bwf-bump-design { grid-template-columns: minmax(0, 1fr); }
+ body.adminkit.adminkit-funnelkit-builder .bwf-bump-design :is(.bwf-left-container, .bwf-right-container) { min-width: 0; max-width: 100%; box-sizing: border-box; }
+ body.adminkit.adminkit-funnelkit-builder .bwf-bump-design .bwf-left-container .bwf-design-options .bwf-product-image-options { grid-template-columns: minmax(0, 120px) minmax(0, 1fr); gap: calc(16px * var(--ak-space-scale, 1)); max-width: 100%; }
 }

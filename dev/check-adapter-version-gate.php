@@ -188,3 +188,17 @@ check_gate( 1 === substr_count( AdminKit_Integration_Slim_Seo::settings_body_cla
 $current_screen = (object) array( 'id' => 'plugins_page_other' );
 check_gate( ! AdminKit_Integration_Slim_Seo::owns_screen( $current_screen ) && 'adminkit' === AdminKit_Integration_Slim_Seo::settings_body_class( 'adminkit' ), 'Slim SEO adapter leaked to another moved page' );
 echo "OK: moved Slim SEO screen and native CSS scope boundaries.\n";
+
+// Builder's legacy bump/offer editors and moved app menus keep their adapter.
+require dirname( __DIR__ ) . '/inc/integrations/plugins/funnel-builder/class-funnel-builder.php';
+foreach ( array( 'woofunnels_page_bwf', 'plugins_page_bwf', 'edit-wfob_bump', 'wfob_bump', 'wfocu_offer', 'wfacp_checkout' ) as $id ) {
+ check_gate( AdminKit_Integration_Funnel_Builder::owns_screen( (object) array( 'id' => $id, 'post_type' => '' ) ), 'FunnelKit screen missed: ' . $id );
+}
+foreach ( array( 'wfob_bump', 'wfocu_offer' ) as $post_type ) {
+ check_gate( AdminKit_Integration_Funnel_Builder::owns_screen( (object) array( 'id' => 'post', 'post_type' => $post_type ) ), 'FunnelKit native editor missed' );
+}
+foreach ( array( 'dashboard', 'edit-post', 'plugins_page_my-bwf-tools' ) as $id ) {
+ check_gate( ! AdminKit_Integration_Funnel_Builder::owns_screen( (object) array( 'id' => $id, 'post_type' => 'post' ) ), 'FunnelKit scope leaked: ' . $id );
+}
+check_gate( ! AdminKit_Integration_Funnel_Builder::owns_screen( null ), 'Null FunnelKit screen accepted' );
+echo "OK: FunnelKit app, legacy editors and unrelated-screen boundaries.\n";

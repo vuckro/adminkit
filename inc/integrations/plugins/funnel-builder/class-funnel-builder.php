@@ -43,7 +43,7 @@ class AdminKit_Integration_Funnel_Builder extends AdminKit_Integration_Base {
 		if ( ! $screen ) {
 			return false;
 		}
-		return (bool) preg_match( '/(?:^|_)(?:bwf|wffn|wfacp|wfty|wfop|wfocu)(?:$|[-_&])/', $screen->id )
-			|| in_array( $screen->post_type, array( 'wffn_funnel', 'wfacp_checkout', 'wffn_landing', 'wffn_optin', 'wffn_ty', 'wffn_optin_ty' ), true );
+		return (bool) preg_match( '/(?:^|^edit-|_)(?:bwf|wffn|wfacp|wfty|wfop|wfocu|wfob)(?:$|[-_&])/', $screen->id )
+			|| in_array( $screen->post_type, array( 'wffn_funnel', 'wfacp_checkout', 'wffn_landing', 'wffn_optin', 'wffn_ty', 'wffn_optin_ty', 'wfocu_offer', 'wfob_bump' ), true );
 	}
 }

@@ -3,3 +3,16 @@
 body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami) .wp-menu-image::before { background-image: none; }
 body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami) .wp-submenu a[target="_blank"] { background-color: var(--ak-funnelkit-menu-bg, transparent) !important; color: var(--ak-text) !important; }
 body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami) .wp-submenu a[target="_blank"]:is(:hover, :focus-visible) { --ak-funnelkit-menu-bg: var(--ak-hover-bg); }
+/* Pro's automatically opened Stripe pointer is portaled outside the app and
+   also appears on WordPress screens. Keep its native actions and brand logo. */
+body.adminkit .fk-stripe-tooltip .wp-pointer-content { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); box-shadow: var(--ak-shadow-elevated); }
+body.adminkit .fk-stripe-tooltip .wp-pointer-content h3 { background: var(--ak-surface-muted); color: var(--ak-heading); border-color: var(--ak-border); }
+body.adminkit .fk-stripe-tooltip .wp-pointer-content :is(p, li) { color: var(--ak-text); }
+body.adminkit .fk-stripe-tooltip .wp-pointer-content h3::before { color: var(--ak-text-muted); }
+body.adminkit .fk-stripe-tooltip .wp-pointer-buttons .close { color: var(--ak-text-muted); }
+body.adminkit .fk-stripe-tooltip .wp-pointer-buttons .close:hover { color: var(--ak-text); }
+body.adminkit .fk-stripe-tooltip .wp-pointer-buttons a:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
+body.adminkit .fk-stripe-tooltip.wp-pointer-top .wp-pointer-arrow { border-block-end-color: var(--ak-border); }
+body.adminkit .fk-stripe-tooltip.wp-pointer-top .wp-pointer-arrow-inner { border-block-end-color: var(--ak-surface-muted); }
+/* The host forces white text on this toolbar item even in the light palette. */
+body.adminkit #wpadminbar #wp-admin-bar-funnelkit-stripe-menu > .ab-item { color: var(--ak-text) !important; }
