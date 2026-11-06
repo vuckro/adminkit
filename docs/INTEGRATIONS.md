@@ -291,3 +291,22 @@ Les deux adaptateurs Tier B partagent les composants BWF sans exiger que les deu
 
 See [Hub and standalone Fluent administration](FLUENT-INTEGRATIONS.md) for theme
 ownership, native asset allowlists, version boundaries and verification.
+
+## Rank Math SEO
+
+The `rank-math` adapter targets Rank Math Free 1.0.281 (minor series 1.0.x).
+It is auto-discovered and respects the host's per-plugin appearance toggle,
+AdminKit's classic-interface/appearance gates and the host-version pause.
+The Pro plugin file is recognized for settings classification; Pro-only screens
+and paid/cloud services have not been certified.
+
+Host pages use a stable `ak-rank-math-page` body scope, including registered menu
+moves. Editor, taxonomy, list and dashboard-widget styling loads only alongside
+Rank Math's enqueued styles. Every rule stays inside AdminKit and a Rank Math
+component; the adapter has no frontend assets or SEO/save hooks.
+
+The stylesheet maps hardcoded page, module, CMB2 and modal surfaces to `--ak-*`
+tokens. Score categories retain their error/warning/success meanings. It preserves
+native module controls, links, editor data, capabilities, nonces and SEO output.
+`dev/check-rank-math.php` covers screen routing, moved pages and asset isolation.
+A CSS drift baseline is included for the installed 1.0.281 host.

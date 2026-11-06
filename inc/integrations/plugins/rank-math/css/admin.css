@@ -1,0 +1,251 @@
+/* Rank Math 1.0.281 hardcodes its palette. Scope every override to AdminKit
+   and host-owned components, including React portals outside the page wrapper.
+   Keep layout, module switches, SEO scores and save behavior owned by Rank Math. */
+body.adminkit.ak-rank-math-page,
+body.adminkit.ak-rank-math-page #wpwrap {
+	background: var(--ak-bg);
+}
+body.adminkit :is(.rank-math-wrap, .rank-math-header, .rank-math-tabs, .rank-math-modal, .rank-math-schema-modal, #rank_math_metabox, #rank_math_dashboard_widget) {
+	color: var(--ak-text);
+}
+body.adminkit :is(.rank-math-header, .rank-math-box, .rank-math-accordion, .rank-math-search-dropdown, .rank-math-modal, .rank-math-schema-modal, .rank-math-tab-panel .components-tab-panel__tab-content .field-wrap, .rank-math-tabs .components-panel__body, .rank-math-tabs .components-panel__header, .rank-math-modal .components-modal__header, .rank-math-schema-modal .components-modal__header, #rank-math-pro-cta .rank-math-cta-box, #rank-math-pro-cta .rank-math-cta-table) {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit :is(.rank-math-wrap, .rank-math-header, .rank-math-tabs, .rank-math-modal, .rank-math-schema-modal, #rank_math_metabox, #rank_math_dashboard_widget) :is(h1, h2, h3, h4, h5, h6, label, .components-panel__body-title) {
+	color: var(--ak-heading);
+}
+body.adminkit :is(.rank-math-wrap, .rank-math-tabs, .rank-math-modal, #rank_math_metabox) :is(.description, .components-base-control__help, .rank-math-text, .rank-math-variables-preview),
+body.adminkit :is(.rank-math-box header p, .rank-math-tab-header p, .rank-math-list-icon li a, #rank-math-pro-cta p, #rank-math-pro-cta ul, #rank-math-pro-cta .rank-math-cta-text) {
+	color: var(--ak-text-muted);
+}
+body.adminkit :is(.rank-math-header .rank-math-logo-text a, .rank-math-breadcrumbs .active, .rank-math-list-icon li strong) {
+	color: var(--ak-heading);
+}
+body.adminkit :is(.rank-math-box footer, .rank-math-box .status, .rank-math-accordion header, .rank-math-tab-header, .rank-math-tab-panel .form-footer, .rank-math-console-db-info, .rank-math-tabs .components-tab-panel__tabs, .rank-math-modal .components-tab-panel__tabs) {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+/* Remove the host's 200vw decorative sheet; it overpaints the admin canvas. */
+body.adminkit.ak-rank-math-page .dashboard-wrapper {
+	background: transparent;
+}
+body.adminkit.ak-rank-math-page .dashboard-wrapper::before {
+	display: none;
+}
+body.adminkit .rank-math-header .rank-math-logo::after {
+	background: var(--ak-border);
+}
+body.adminkit.ak-rank-math-page .rank-math-tab:not(.rank-math-options-panel-content) {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+body.adminkit.ak-rank-math-page .rank-math-tab:not(.rank-math-options-panel-content):is(:hover, :focus, .is-active) {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+body.adminkit .module-listing .rank-math-box i {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text-muted);
+}
+body.adminkit .module-listing .rank-math-box i:is(.rm-icon-content-ai, .rm-icon-ai-visibility)::before {
+	background: none;
+	-webkit-text-fill-color: currentColor;
+}
+/* Promotions remain visible, with the same readable surfaces as other modules. */
+body.adminkit .module-listing .rank-math-box.rank-math-unlock-pro-box,
+body.adminkit .module-listing .rank-math-box.rank-math-unlock-pro-box .status,
+body.adminkit #rank-math-unlock-pro-notice {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+}
+body.adminkit .module-listing .rank-math-box.rank-math-unlock-pro-box :is(h3, ul),
+body.adminkit #rank-math-unlock-pro-notice :is(a, p span) {
+	color: var(--ak-text);
+}
+body.adminkit .module-listing .rank-math-box.rank-math-unlock-pro-box .status .button {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+body.adminkit.ak-rank-math-page :is(.button, .button-secondary, .is-secondary),
+body.adminkit .rank-math-search-dropdown > .rank-math-button.components-button.button-secondary {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+body.adminkit.ak-rank-math-page :is(.button, .button-secondary, .is-secondary):hover:not(:disabled) {
+	background: var(--ak-hover-bg);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+body.adminkit.ak-rank-math-page :is(.button-primary, .is-primary):not(:disabled),
+body.adminkit .rank-math-tabs .components-button.is-primary:not(:disabled) {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+body.adminkit.ak-rank-math-page .rank-math-mode-selector :is(a, button.is-link) {
+	color: var(--ak-text-muted) !important; /* Host forces literal colors. */
+}
+body.adminkit.ak-rank-math-page .rank-math-mode-selector :is(a, button.is-link):is(:hover, .active, .is-active) {
+	color: var(--ak-heading) !important;
+}
+body.adminkit :is(.rank-math-wrap, .rank-math-tabs, .rank-math-modal, .rank-math-schema-modal) :is(input:not([type=checkbox], [type=radio], [type=button], [type=submit]), textarea, select),
+body.adminkit .wp-list-table td .rank-math-column-value {
+	background: var(--ak-input-bg);
+	border-color: var(--ak-input-border);
+	color: var(--ak-text);
+}
+body.adminkit :is(.rank-math-wrap, .rank-math-tabs, .rank-math-modal) :is(input, textarea)::placeholder {
+	color: var(--ak-text-muted);
+}
+body.adminkit :is(.rank-math-wrap, .rank-math-tabs, .rank-math-modal, .rank-math-schema-modal) :focus-visible {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
+}
+body.adminkit .cmb2-toggle input:checked + .cmb2-slider,
+body.adminkit .rank-math-switch input:checked + label {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+body.adminkit .cmb2-toggle input:checked + .cmb2-slider::before,
+body.adminkit .rank-math-switch label::after {
+	background: var(--ak-on-accent);
+}
+body.adminkit .cmb2-toggle .cmb2-slider {
+	border-color: var(--ak-border-strong);
+}
+body.adminkit .cmb2-toggle input:focus-visible + .cmb2-slider,
+body.adminkit .rank-math-switch input:focus-visible + label {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 3px;
+}
+body.adminkit .wp-list-table .rank-math-column-display.seo-score.no-score strong {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text-muted);
+}
+body.adminkit .wp-list-table .rank-math-column-display.seo-score.bad strong {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
+}
+body.adminkit .wp-list-table .rank-math-column-display.seo-score.good strong {
+	background: var(--ak-warning-subtle);
+	color: var(--ak-warning);
+}
+body.adminkit .wp-list-table .rank-math-column-display.seo-score.great strong {
+	background: var(--ak-success-subtle);
+	color: var(--ak-success);
+}
+body.adminkit .wp-list-table .rank-math-column-display.rank-math-link-count .divider {
+	background: var(--ak-border-strong);
+}
+body.adminkit .wp-list-table .rank-math-column-display.rank-math-link-count .rank-math-link-count-clickable:hover {
+	background: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+body.adminkit .wp-list-table .rank-math-column-display.rank-math-link-count .rank-math-link-count-clickable:hover .dashicons {
+	color: inherit;
+}
+body.adminkit :is(.rank-math-modal, .rank-math-schema-modal) {
+	max-inline-size: calc(100vw - 32px);
+}
+body.adminkit :is(#rank-math-schema-item, .schema-builder .schema-group--children > .schema-group-or-property-container > .schema-group-or-property, .rank-math-confirm-delete) {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+@media (prefers-reduced-motion: reduce) {
+	body.adminkit :is(.rank-math-wrap, .rank-math-tabs, .rank-math-modal) *,
+	body.adminkit .cmb2-slider::before {
+		transition: none !important;
+		animation: none !important;
+	}
+}
+@media (forced-colors: active) {
+	body.adminkit .wp-list-table .rank-math-column-display.seo-score strong {
+		border: 1px solid CanvasText;
+	}
+	body.adminkit .cmb2-toggle input:checked + .cmb2-slider {
+		border-color: Highlight;
+	}
+}
+/* Legacy CMB2 options and the classic editor use their own literal palette. */
+body.adminkit [id^=cmb2-metabox-rank] :is(.cmb-th, label) {
+	color: var(--ak-heading);
+}
+body.adminkit [id^=cmb2-metabox-rank] :is(.cmb2-radio-list, .select2-selection, input:not([type=checkbox], [type=radio]), textarea, select),
+body.adminkit #rank-math-metabox-wrapper {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit [id^=cmb2-metabox-rank] :is(.cmb2-radio-list, .cmb2-checkbox-list) input:checked + label {
+	background: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+body.adminkit .rank-math-wrap :is(.rank-math-options-panel, .rank-math-options-panel-content, .rank-math-tabs-navigation, .rank-math-tab-content) {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit .rank-math-wrap .rank-math-tabs-navigation a {
+	color: var(--ak-text-muted);
+	border-color: var(--ak-border);
+}
+body.adminkit .rank-math-wrap .rank-math-tabs-navigation a:is(:hover, .active) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+body.adminkit .rank-math-wrap .rank-math-tabs-navigation:not(.rank-math-custom) :is(a, .separator) {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+body.adminkit .rank-math-wrap .rank-math-tabs-navigation:not(.rank-math-custom) a:is(:hover, :focus, .active) {
+	background: var(--ak-surface);
+	color: var(--ak-heading);
+}
+body.adminkit .rank-math-wrap .rank-math-tabs-navigation:not(.rank-math-custom) a.active::after {
+	background: var(--ak-surface);
+}
+/* Current React options/modules use WP tab and toggle components, whereas the
+   legacy CMB2 screen uses the classes above. Cover both without global resets. */
+body.adminkit #wpbody-content .rank-math-tab-panel .components-tab-panel__tab-content {
+	background: var(--ak-bg);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit #wpbody-content .rank-math-tab-panel .components-tab-panel__tabs-item {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+body.adminkit #wpbody-content .rank-math-tab-panel .components-tab-panel__tabs-item:is(.is-active, :hover, :focus-visible) {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-heading);
+}
+body.adminkit #wpbody-content .rank-math-tab-panel :is(.components-text-control__input, .components-textarea-control__input, .components-select-control__input),
+body.adminkit #wpbody-content .rank-math-tab-panel .components-input-control__container {
+	background: var(--ak-input-bg);
+	border-color: var(--ak-input-border);
+	color: var(--ak-text);
+}
+body.adminkit #wpbody-content :is(.rank-math-tab-panel, .rank-math-tabs) .components-form-toggle.is-checked .components-form-toggle__track {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+body.adminkit #wpbody-content :is(.rank-math-tab-panel, .rank-math-tabs) .components-form-toggle.is-checked .components-form-toggle__thumb {
+	background: var(--ak-on-accent);
+	border-color: var(--ak-on-accent);
+}
+body.adminkit #wpbody-content .rank-math-tab-panel :is(a, button, input, textarea, select):focus-visible {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
+}
