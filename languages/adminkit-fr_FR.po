@@ -1162,7 +1162,7 @@ msgstr "Réglez la pagination et l’ordre d’affichage des commentaires."
 msgid "Set how many posts feeds include and how much content they share."
 msgstr "Définissez le nombre d’articles des flux et le contenu qu’ils diffusent."
 
-#: inc/wp-core/class-profile-account.php
+#: inc/settings/class-settings-page.php inc/wp-core/class-profile-account.php
 msgid "Settings"
 msgstr "Réglages"
 

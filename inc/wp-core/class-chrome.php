@@ -179,6 +179,7 @@ class AdminKit_Core_Chrome {
 			'context' => 'admin',
 			'condition' => static function ( $screen ) { return $screen && 'edit-tags' === $screen->base; },
 		) );
+		self::register_screen( 'dashboard',       array( 'dashboard' ) );
 		self::register_screen( 'themes',          array( 'themes', 'theme-install' ) );
 		self::register_screen( 'theme-install',   array( 'themes', 'theme-install' ) );
 		// user-new.php reports screen id 'user' (WP strips '-new'); the CSS

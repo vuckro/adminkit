@@ -1162,7 +1162,7 @@ msgstr ""
 msgid "Set how many posts feeds include and how much content they share."
 msgstr ""
 
-#: inc/wp-core/class-profile-account.php
+#: inc/settings/class-settings-page.php inc/wp-core/class-profile-account.php
 msgid "Settings"
 msgstr ""
 

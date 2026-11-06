@@ -1,0 +1,46 @@
+/* Third-party dashboard widgets keep their native markup and actions. */
+body.adminkit #funnelkit_widget :is(.bwf-tiles, .bwf-widget-action-box) {
+ border-color: var(--ak-border);
+ border-radius: var(--ak-radius-m);
+ background: var(--ak-surface-muted);
+}
+body.adminkit #funnelkit_widget :is(.bwf-tiles-item, .bwf-tiles-header, .bwf-tiles-value, .bwf-widget-action-box-title) {
+ color: var(--ak-text);
+}
+body.adminkit #funnelkit_widget :is(.bwf-tiles-secondary-text, .bwf-widget-action-box-subtitle, .bwf-widget-footer) {
+ color: var(--ak-text-muted);
+}
+body.adminkit #funnelkit_widget :is(.bwf-widget-footer, .bwf-tiles-item::after, .bwf-widget-footer-l a::after) {
+ border-color: var(--ak-border);
+}
+body.adminkit #funnelkit_widget .bwf-widget-footer a { color: var(--ak-primary-text); }
+body.adminkit #funnelkit_widget .bwf-tiles-header svg rect { fill: var(--ak-surface); }
+body.adminkit #funnelkit_widget .bwf-tiles-header svg path { fill: var(--ak-text-muted); }
+body.adminkit #funnelkit_widget .bwf-button {
+ background: var(--ak-primary);
+ color: var(--ak-on-accent);
+ border-radius: var(--ak-radius-m);
+}
+body.adminkit #funnelkit_widget .bwf-button:hover { background: var(--ak-primary-hover); color: var(--ak-on-accent); }
+body.adminkit #funnelkit_widget .bwf-tiles-item:hover :is(.bwf-tiles-header, .bwf-tiles-value-wrap) { color: var(--ak-primary-text); }
+body.adminkit #funnelkit_widget :is(.bwf-button, .bwf-tiles-item):focus-visible {
+ outline: 2px solid var(--ak-focus);
+ outline-offset: 2px;
+}
+body.adminkit #funnelkit_widget .bwf-placeholder-item { background: var(--ak-border); }
+body.adminkit #rank_math_dashboard_widget .rank-math-dashboard-block > div {
+ border-color: var(--ak-border);
+ background: var(--ak-surface-muted);
+}
+body.adminkit #rank_math_dashboard_widget :is(.text-large, .rank-math-dashboard-block > div h4) { color: var(--ak-text); }
+body.adminkit #rank_math_dashboard_widget :is(.rank-math-item-difference, .rank-math-tooltip, h3 a i) { color: var(--ak-text-muted); }
+body.adminkit #rank_math_dashboard_widget .rank-math-tooltip > span { background: var(--ak-text); color: var(--ak-surface); }
+body.adminkit #rank_math_dashboard_widget .rank-math-tooltip > span::after { border-block-start-color: var(--ak-text); }
+body.adminkit #rank_math_dashboard_widget .rank-math-widget-footer { border-color: var(--ak-border); }
+@media (max-width: 480px) {
+ body.adminkit #funnelkit_widget .bwf-widget-action-box { flex-wrap: wrap; }
+ body.adminkit #funnelkit_widget .bwf-widget-action-box-r { margin-inline-start: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit #funnelkit_widget .bwf-placeholder-item { animation: none; }
+}

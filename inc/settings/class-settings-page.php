@@ -45,7 +45,21 @@ class AdminKit_Settings_Page {
 		add_action( 'admin_menu', array( __CLASS__, 'add_submenu' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( ADMINKIT_FILE ), array( __CLASS__, 'plugin_action_links' ) );
 		AdminKit_Settings_Gate::init();
+	}
+
+	/**
+	 * Keep settings reachable directly from the installed plugins list.
+	 *
+	 * @param string[] $links Existing WordPress and third-party actions.
+	 * @return string[]
+	 */
+	public static function plugin_action_links( $links ) {
+		if ( current_user_can( 'manage_options' ) ) {
+			$links = array( 'settings' => '<a href="' . esc_url( admin_url( 'options-general.php?page=' . self::SLUG ) ) . '">' . esc_html__( 'Settings', 'adminkit' ) . '</a>' ) + $links;
+		}
+		return $links;
 	}
 
 	/**
