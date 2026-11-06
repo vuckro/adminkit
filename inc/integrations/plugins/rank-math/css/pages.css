@@ -178,3 +178,56 @@ body.adminkit #rank-math-content-ai-page .rank-math-tab-content-history .output-
 	background: var(--ak-primary-subtle);
 	color: var(--ak-primary-text);
 }
+@media (max-width: 782px) {
+	body.adminkit #rank-math-settings.rank-math-role-manager .rank-math-box.container {
+		box-sizing: border-box;
+		inline-size: 100%;
+		max-inline-size: 100%;
+	}
+	body.adminkit #rank-math-settings.rank-math-role-manager .field-td {
+		inline-size: 100%;
+		padding-inline: 0;
+	}
+	body.adminkit #rank-math-settings.rank-math-role-manager .rank-math-checkbox-list {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+	}
+	body.adminkit #rank-math-settings.rank-math-role-manager .rank-math-checkbox-list li {
+		float: none;
+		inline-size: auto;
+		min-inline-size: 0;
+	}
+	body.adminkit #rank-math-settings.rank-math-role-manager .components-checkbox-control__label {
+		box-sizing: border-box;
+		inline-size: 100%;
+		overflow-wrap: anywhere;
+	}
+	body.adminkit #rank-math-links-page-container .rank-math-table-wrapper {
+		overflow-x: auto;
+		max-inline-size: 100%;
+	}
+	body.adminkit #rank-math-links-page-container .rank-math-table {
+		min-inline-size: 720px;
+	}
+	body.adminkit #rank-math-links-page-container .rank-math-table thead {
+		display: table-header-group;
+	}
+	body.adminkit #rank-math-links-page-container .rank-math-table tbody {
+		display: table-row-group;
+	}
+	body.adminkit #rank-math-links-page-container .rank-math-table tr {
+		display: table-row;
+	}
+	body.adminkit #rank-math-links-page-container .rank-math-table :is(th, td) {
+		display: table-cell;
+		inline-size: auto;
+	}
+	body.adminkit #rank-math-links-page-container :is(.rank-math-table-toggle-left, .rank-math-table-toggle-right, .rank-math-toggle-button-group, .rank-math-filter-staging) {
+		flex-wrap: wrap;
+		min-inline-size: 0;
+		max-inline-size: 100%;
+	}
+	body.adminkit #rank-math-links-page-container .rank-math-toggle-button {
+		white-space: normal;
+	}
+}
