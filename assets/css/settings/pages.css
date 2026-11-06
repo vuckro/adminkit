@@ -274,3 +274,19 @@
 @media(forced-colors:active){
  .adminkit-app[data-screen="main"] .ak-tabs button[aria-selected="true"] { border-bottom-color: Highlight; }
 }
+
+/* Theme options expose only accent colors; foundations stay in the shared engine. */
+.adminkit-app .ak-theme-colors { min-width:0; margin-block:24px 0; padding:0; border:0; }
+.adminkit-app .ak-theme-colors { margin-inline:0; }
+.adminkit-app .ak-theme-colors legend { padding:0; font-weight:600; }
+.adminkit-app .ak-theme-colors .ak-color-controls { display:flex; flex-direction:column; align-items:stretch; gap:16px; }
+.adminkit-app .ak-theme-colors .ak-foundation-accent { flex:none; width:100%; }
+.adminkit-app .ak-theme-colors .ak-seg { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; }
+.adminkit-app .ak-theme-colors .ak-seg__opt:last-child:nth-child(odd) { grid-column:1/-1; }
+.adminkit-app .ak-theme-color-modes { display:flex; gap:8px; }
+.adminkit-app .ak-theme-color-modes [aria-pressed="true"] { background:var(--ak-hover-bg); border-color:var(--ak-border-strong); }
+.adminkit-app[data-screen="main"] .ak-theme-colors .ak-palette-theme { display:block; padding:0; background:transparent; }
+.adminkit-app[data-screen="main"] .ak-theme-colors .ak-palette-theme[hidden] { display:none; }
+.adminkit-app .ak-theme-colors .ak-palette-row { grid-template-columns:28px minmax(0,1fr) 76px 28px; gap:8px; }
+.adminkit-app .ak-theme-colors .ak-palette-header { margin-block-start:16px; }
+.adminkit-app .ak-theme-colors:disabled { opacity:0.6; }

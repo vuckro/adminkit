@@ -232,6 +232,8 @@ class AdminKit_Settings_I18n {
 			'featuresFilterInactive'         => __( 'Inactive features', 'adminkit' ),
 			'searchFeatures'                 => __( 'Search features…', 'adminkit' ),
 			'searchPlugins'                  => __( 'Search plugins…', 'adminkit' ),
+			'themeColorsHint' => __( 'Choose the accent and its text color for light and dark mode. Other appearance settings are managed by AdminKit. Changes apply after saving.', 'adminkit' ),
+			'pluginSkinsIntro' => __( 'Disable an extension’s AdminKit appearance to restore its original interface. The extension stays active and keeps its data. Changes apply after saving.', 'adminkit' ),
 			'pluginsIntro'                   => __( 'Every plugin installed on your site, plus AdminKit\'s active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit\'s base styling automatically.', 'adminkit' ),
 			'native'                         => _x( 'Native', 'adapter badge', 'adminkit' ),
 			'nativeHint'                     => __( 'AdminKit ships a tuned adapter for this plugin — light and dark.', 'adminkit' ),

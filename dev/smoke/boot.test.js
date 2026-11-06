@@ -20,6 +20,7 @@ window.addEventListener('error', (e) => errors.push(e.error || e.message));
 window.matchMedia = window.matchMedia || (() => ({ matches: false, addEventListener() {}, removeEventListener() {} }));
 window.MutationObserver = window.MutationObserver;
 fixture.designSystem = Object.assign({}, fixture.designSystem, { type_scale: 1.13, radius_scale: 1.37 });
+fixture.features.push({key:'admin_theme_enabled',label:'Administration theme',group:'Appearance',value:true,default:true,bulk:false,options:[]});
 window.AdminKitData = fixture;
 const requests = [];
 window.wp = { apiFetch: request => { requests.push(request); return Promise.resolve({}); } };
@@ -35,8 +36,8 @@ const doc = window.document;
 const assert = (cond, msg) => { if (!cond) { errors.push('ASSERT: ' + msg); } };
 assert(!doc.getElementById('adminkit-app').hasAttribute('aria-busy'), 'app finished booting');
 doc.getElementById('ak-tab-brand').click(); await tick();
-assert(doc.getElementById('ak-type-scale').value === '1.13', 'valid non-preset typography scale survives mounting');
-assert(doc.getElementById('ak-shape-radius').value === '1.37', 'valid non-preset radius scale survives mounting');
+assert(!doc.getElementById('ak-type-scale'), 'typography editor is absent');
+assert(!doc.getElementById('ak-shape-radius'), 'shape editor is absent');
 const tabs = [...doc.querySelectorAll('[role="tab"].ak-tabs button, .ak-tabs [role="tab"]')];
 assert(tabs.length === 5, 'main tabs rendered (' + tabs.length + ')');
 let sectionScrolls = 0; doc.getElementById('adminkit-app').scrollIntoView = () => { sectionScrolls++; };
@@ -63,40 +64,15 @@ assert(navSectionTabs.length === 2, 'navigation sections rendered (' + navSectio
 for (const tab of navSectionTabs) {
   try { tab.click(); await tick(); } catch (e) { errors.push('nav section ' + tab.id + ': ' + e.stack); }
 }
-// Design system sections (Colors, Typography, Shapes & elevation, Plugins).
-const designTab = doc.getElementById('ak-tab-brand');
-if (designTab) { designTab.click(); await tick(); }
-const sectionTabs = [...doc.querySelectorAll('#ak-panel-brand .ak-foundations-nav [role="tab"]')];
-assert(sectionTabs.length === 4, 'design sections rendered (' + sectionTabs.length + ')');
-const sectionPicker = doc.querySelector('#ak-panel-brand .ak-section-picker select');
-assert(sectionPicker && sectionPicker.options.length === 4, 'native mobile picker exposes all foundation sections');
-sectionPicker.value = sectionTabs[1].id; sectionPicker.dispatchEvent(new window.Event('change', {bubbles:true})); await tick();
-assert(sectionTabs[1].getAttribute('aria-selected') === 'true' && sectionPicker.value === sectionTabs[1].id, 'mobile selection uses the original pane routing');
-assert(doc.querySelector('.ak-savebar').hidden, 'section selection alone does not dirty settings');
-for (const tab of sectionTabs) {
-  try { tab.click(); await tick(); } catch (e) { errors.push('section ' + tab.id + ': ' + e.stack); }
-}
-for (const [id, val] of [['ak-type-scale', '1.1'], ['ak-shape-radius', '1.25']]) {
-  const input = doc.getElementById(id);
-  assert(input, id + ' present');
-  if (input) { input.value = val; input.dispatchEvent(new window.Event('change', { bubbles: true })); }
-}
-// GDPR: Google Fonts <option>s stay disabled and no fonts.googleapis.com <link> is injected unless opted in.
-const fontSel = doc.getElementById('ak-type-font');
-const remoteToggle = doc.getElementById('ak-type-remote-fonts');
-assert(fontSel && remoteToggle && !remoteToggle.checked, 'remote Google Fonts opt-in toggle defaults to off');
-assert(fontSel.querySelector('option[value="inter"]').disabled === true, 'Google Font option disabled while opt-in is off');
-assert(!doc.getElementById('ak-google-font-preview'), 'no Google Fonts stylesheet injected while opt-in is off');
-remoteToggle.checked = true;
-remoteToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
-assert(fontSel.querySelector('option[value="inter"]').disabled === false, 'Google Font option enabled after opt-in');
-fontSel.value = 'inter';
-fontSel.dispatchEvent(new window.Event('change', { bubbles: true }));
-assert(!!doc.getElementById('ak-google-font-preview'), 'Google Fonts preview link injected only after explicit opt-in');
-remoteToggle.checked = false;
-remoteToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
-assert(!doc.getElementById('ak-google-font-preview') && fontSel.value === 'geist', 'disabling opt-in removes Google Fonts link and resets to Geist');
-assert(doc.querySelectorAll('.ak-palette-theme input[type="color"]').length >= 22, 'palette shows 11 roles x 2 modes');
+// Extensions are directly accessible, without foundation sub-tabs.
+doc.getElementById('ak-tab-brand').click(); await tick();
+assert(!doc.querySelector('#ak-panel-brand .ak-foundations-nav'), 'extension controls have no foundation navigation');
+assert(!doc.getElementById('ak-type-font') && !doc.getElementById('ak-google-font-preview'), 'advanced appearance controls and remote previews are absent');
+doc.getElementById('ak-tab-features').click(); await tick();
+const theme = [...doc.querySelectorAll('.ak-features-item')].find(n => n.textContent.includes('Administration theme'));
+theme.click();
+assert(doc.querySelectorAll('.ak-theme-colors .ak-palette-theme input[type="color"]').length === 4, 'only accent and text on accent are editable for both modes');
+doc.querySelector('.ak-feature-dialog-head button').click();
 // Nested controls mount from saved values and use the actual main save payload.
 doc.getElementById('ak-tab-features').click();
 const clean = [...doc.querySelectorAll('.ak-features-item')].find(n => n.textContent.includes('Clean interface'));
@@ -118,6 +94,6 @@ if (errors.length) {
   process.exit(1);
 }
 dom.window.close();
-console.log('OK: settings SPA boots in jsdom; ' + tabs.length + ' tabs, ' + sectionTabs.length + ' design sections, edits mark dirty.');
+console.log('OK: settings SPA boots in jsdom; ' + tabs.length + ' tabs, internal foundations preserved, edits mark dirty.');
 
 })();

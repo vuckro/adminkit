@@ -268,6 +268,10 @@ msgstr ""
 msgid "Choose how you use the WordPress administration screens."
 msgstr ""
 
+#: inc/settings/class-settings-i18n.php
+msgid "Choose the accent and its text color for light and dark mode. Other appearance settings are managed by AdminKit. Changes apply after saving."
+msgstr ""
+
 #: inc/wp-core/class-options-general.php
 msgid "Choose the site language and the timezone used for publishing."
 msgstr ""
@@ -368,10 +372,6 @@ msgstr ""
 msgid "Custom link"
 msgstr ""
 
-#: inc/settings/class-settings-page.php
-msgid "Customization paused"
-msgstr ""
-
 #: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Customize"
 msgstr ""
@@ -416,7 +416,7 @@ msgstr ""
 msgid "Default administration interface"
 msgstr ""
 
-#: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Design system"
 msgstr ""
 
@@ -426,6 +426,10 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Disable all tools"
+msgstr ""
+
+#: inc/settings/class-settings-i18n.php
+msgid "Disable an extension’s AdminKit appearance to restore its original interface. The extension stays active and keeps its data. Changes apply after saving."
 msgstr ""
 
 #: inc/wp-core/class-options-discussion.php
@@ -470,10 +474,6 @@ msgstr ""
 
 #: inc/settings/class-settings-i18n.php
 msgid "Enable all tools"
-msgstr ""
-
-#: inc/settings/class-settings-page.php
-msgid "Enable the administration theme or the custom login screen to customize their appearance. Your saved design is kept."
 msgstr ""
 
 #: inc/settings/class-settings-i18n.php
@@ -950,7 +950,7 @@ msgstr ""
 msgid "Plugin inactive"
 msgstr ""
 
-#: inc/settings/class-settings-i18n.php
+#: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Plugins"
 msgstr ""
 

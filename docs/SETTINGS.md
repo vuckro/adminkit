@@ -1,6 +1,6 @@
 # Settings workspace
 
-Settings → AdminKit opens one SPA with Overview, Features, Design system, Navigation
+Settings → AdminKit opens one SPA with Overview, Features, Plugins, Navigation
 and Configuration sections. Desktop tabs share a full-width underline navigation;
 phones use a labelled native section picker synchronized with hash/history navigation.
 Keyboard arrows, Home and End navigate desktop tabs. Switching sections preserves
@@ -32,20 +32,29 @@ uninstallation removes AdminKit storage.
 
 ## Design system
 
-Typography defaults to Geist. Supported fonts are Geist, System, Inter,
-Plus Jakarta Sans, DM Sans, Manrope, Outfit, Poppins, Space Grotesk and IBM Plex Sans.
-Legacy Humanist and Classic both map to local Geist. For GDPR compliance, remote
-Google Fonts are gated behind the explicit `remote_fonts_enabled` toggle (off by
-default in *Design system → Typography*): when off, Google Font options remain
-disabled, zero requests are made to `fonts.googleapis.com` / `fonts.gstatic.com`,
-and stored Google Font selections fall back to Geist (`wp-login.php` never loads
-remote Google Fonts even when enabled). The Design system tab contains
-Colors, Typography, Shapes & elevation, and Plugins sections. Logos remain in
-General Settings (`adminkit_general_logo_url`, saved atomically via `whitelist_options`
+The design system is an internal engine. The user interface exposes only the
+accent source and the `accent` / `on-accent` roles for light and dark mode in
+Features → Administration theme. Colors use the existing draft, validation and
+Save workflow. Resetting these controls clears only those two roles, preserving
+all other stored palette entries, typography, scales and component settings.
+Turning the theme off disables its color controls without erasing them. A classic
+personal interface can still configure the site-wide theme when it is enabled.
+
+The Plugins tab lists installed integrations and generic styling opt-outs. It
+remains accessible when administration/login appearance is disabled, allowing a
+quick return to a host's original interface. It never activates, deactivates or
+deletes the host. The historical `#brand` and `adminkit-design` routes now open
+this tab. There is no Colors/Typography/Shapes sub-navigation.
+
+Geist remains the default font. Existing font settings and the explicit
+`remote_fonts_enabled` privacy gate remain supported by the runtime and import /
+export; the typography editor and remote-font preview are no longer exposed.
+Remote fonts remain off by default, and `wp-login.php` never loads Google Fonts.
+Ordinary feature saves do not rewrite hidden typography. The design profile is
+posted only when edited; complete exports still include it and all hidden values.
+Logos remain in General Settings (`adminkit_general_logo_url`, saved atomically
 without registering the full `adminkit_settings` container on `options.php`).
-Plugins lists installed integrations, without activating hosts, and displays an
-explicit pause badge (`paused`) when a host's version exceeds the adapter's
-tested range.
+Plugins display a pause badge when a host exceeds the adapter's tested range.
 
 `AdminKit_Settings::sanitize_design_system()` allowlists the saved profile:
 
@@ -61,8 +70,7 @@ tested range.
 Unknown profile keys are discarded. No spacing scale is currently persisted.
 Palette roles: `bg`, `surface`, `text`, `text-muted`, `border`, `accent`,
 `on-accent`, `success-text`, `warning-text`, `danger-text`, `info-text`.
-Valid scales between the preset choices remain selectable and are preserved when
-the editor mounts. Missing colors inherit tokens. Invalid hex fields block browser saves and retain
+Valid scales remain supported internally and are preserved when the settings UI mounts. Missing colors inherit tokens. Invalid hex fields block browser saves and retain
 the previous valid draft. Monochrome is the default accent; WordPress blue
 (`adminkit`), custom and the Bricks provider are explicit choices.
 

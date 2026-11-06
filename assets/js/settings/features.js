@@ -79,6 +79,7 @@
 				selected = key; returnFocus = refs[key].button; details.setAttribute('aria-labelledby', refs[key].heading.id); details.hidden = false; refresh();
 				if (typeof details.showModal === 'function') { if (!details.open) { details.showModal(); } } else { details.setAttribute('open', ''); }
 				refs[key].heading.focus();
+				if (refs[key].colorController) { refs[key].colorController.paletteRefresh(); }
 			}
 			features.forEach(function (f, index) {
 				var group = groups.filter(function (g) { return g.label === (f.group || ''); })[0];
@@ -141,9 +142,27 @@
 					optionFooter = el('p', { id: optionHintId, class: 'ak-features-hint', text: I.featureOptionsHint });
 					panel.appendChild(optionFooter);
 				}
+				var colors = null, colorController = null;
+				if (f.key === 'admin_theme_enabled' && window.AdminKitParts.designColors) {
+					var colorMode = 'light', modeButtons = [];
+					function revealMode(mode) {
+						colorMode = mode;
+						colorController.paletteCards.forEach(function (card) { card.scope.hidden = card.mode !== colorMode; });
+						modeButtons.forEach(function (item) { item.button.setAttribute('aria-pressed', String(item.mode === colorMode)); });
+					}
+					colorController = window.AdminKitParts.designColors.createColorsController(context, { onRevealMode: revealMode, onPaletteRefresh: function () {} });
+					var modes = el('div', { class: 'ak-theme-color-modes', role: 'group', 'aria-label': I.studioColors });
+					['light', 'dark'].forEach(function (mode) {
+						var button = el('button', { type: 'button', class: 'ak-btn', text: mode === 'light' ? I.brandPreviewLight : I.brandPreviewDark, onclick: function () { revealMode(mode); } });
+						modeButtons.push({ mode: mode, button: button }); modes.appendChild(button);
+					});
+					colors = el('fieldset', { class: 'ak-theme-colors' }, [el('legend', { text: I.studioColors }), el('p', { class: 'ak-features-hint', text: I.themeColorsHint })].concat(colorController.buildChildren(modes)));
+					panel.appendChild(colors);
+					revealMode(colorMode);
+				}
 				panel.appendChild(el('button', { type: 'button', class: 'ak-btn ak-feature-done', text: I.pageDone, onclick: closeDetail }));
 				details.appendChild(panel);
-				refs[f.key] = { applicability: applicability, button: button, input: input, quickInput: quickInput, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, pendingBadge: pendingBadge, optionNote: optionNote, optionNoteTitle: optionNoteTitle, optionNoteText: optionNoteText, optionFooter: optionFooter, optionSet: optionSet, optionInputs: optionInputs, visible: false };
+				refs[f.key] = { applicability: applicability, button: button, input: input, quickInput: quickInput, panel: panel, heading: heading, status: rowStatus, stateLabel: stateLabel, hint: hint, pendingBadge: pendingBadge, optionNote: optionNote, optionNoteTitle: optionNoteTitle, optionNoteText: optionNoteText, optionFooter: optionFooter, colors: colors, colorController: colorController, optionSet: optionSet, optionInputs: optionInputs, visible: false };
 			});
 			var categoryButtons = [];
 			function syncCategoryHash(value) {
@@ -187,6 +206,7 @@
 					r.visible = matchesStatus && (!category || category === f.group);
 					r.button.hidden = !r.visible; r.button.parentElement.hidden = !r.visible;
 					if (r.visible) { visible.push(f.key); }
+					if (r.colors) { r.colors.disabled = isLocked || !requested; }
 					r.input.checked = !!state.features[f.key];
 					r.input.disabled = isLocked; r.quickInput.disabled = isLocked; r.quickInput.checked = r.input.checked;
 					if (r.optionSet) {

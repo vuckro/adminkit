@@ -268,6 +268,10 @@ msgstr "Choisissez l’affichage des dates et des heures ainsi que le premier jo
 msgid "Choose how you use the WordPress administration screens."
 msgstr "Personnalisez votre utilisation de l’administration WordPress."
 
+#: inc/settings/class-settings-i18n.php
+msgid "Choose the accent and its text color for light and dark mode. Other appearance settings are managed by AdminKit. Changes apply after saving."
+msgstr "Choisissez l’accent et la couleur de son texte en mode clair et sombre. Les autres réglages d’apparence sont gérés par AdminKit. Les modifications s’appliquent après enregistrement."
+
 #: inc/wp-core/class-options-general.php
 msgid "Choose the site language and the timezone used for publishing."
 msgstr "Choisissez la langue du site et le fuseau horaire utilisé pour les publications."
@@ -368,10 +372,6 @@ msgstr "Actuel"
 msgid "Custom link"
 msgstr "Lien personnalisé"
 
-#: inc/settings/class-settings-page.php
-msgid "Customization paused"
-msgstr "Personnalisation en pause"
-
 #: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Customize"
 msgstr "Personnaliser"
@@ -416,7 +416,7 @@ msgstr "Désactivation à enregistrer"
 msgid "Default administration interface"
 msgstr "Interface d’administration par défaut"
 
-#: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Design system"
 msgstr "Système de design"
 
@@ -427,6 +427,10 @@ msgstr "Rubriques du système de design"
 #: inc/settings/class-settings-i18n.php
 msgid "Disable all tools"
 msgstr "Désactiver tous les outils"
+
+#: inc/settings/class-settings-i18n.php
+msgid "Disable an extension’s AdminKit appearance to restore its original interface. The extension stays active and keeps its data. Changes apply after saving."
+msgstr "Désactivez l’habillage AdminKit d’une extension pour retrouver son interface d’origine. L’extension reste active et conserve ses données. Les modifications s’appliquent après enregistrement."
 
 #: inc/wp-core/class-options-discussion.php
 msgid "Display"
@@ -471,10 +475,6 @@ msgstr "E-mail"
 #: inc/settings/class-settings-i18n.php
 msgid "Enable all tools"
 msgstr "Activer tous les outils"
-
-#: inc/settings/class-settings-page.php
-msgid "Enable the administration theme or the custom login screen to customize their appearance. Your saved design is kept."
-msgstr "Activez le thème d’administration ou l’écran de connexion personnalisé pour personnaliser leur apparence. Votre design est conservé."
 
 #: inc/settings/class-settings-i18n.php
 msgid "Enable the feature to apply these options. Your choices are preserved."
@@ -950,7 +950,7 @@ msgstr "Veuillez saisir une adresse e-mail valide."
 msgid "Plugin inactive"
 msgstr "Extension inactive"
 
-#: inc/settings/class-settings-i18n.php
+#: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Plugins"
 msgstr "Extensions"
 

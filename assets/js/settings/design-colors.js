@@ -1,4 +1,4 @@
-/** AdminKit Design system colors module: hex math, accent source picker and 11-role light/dark palettes. */
+/** Theme accent controls: shared palette math and two editable roles per mode. */
 (function () {
 	'use strict';
 	window.AdminKitParts = window.AdminKitParts || {};
@@ -104,19 +104,7 @@
 
 		var syncSeg = function () {};
 		var paletteCards = [];
-		var roles = [
-			['accent', I.foundationAccent],
-			['on-accent', I.foundationOnAccent],
-			['bg', I.foundationBackground],
-			['surface', I.foundationSurface],
-			['text', I.foundationText],
-			['text-muted', I.foundationMuted],
-			['border', I.foundationBorder],
-			['success-text', I.foundationSuccess],
-			['warning-text', I.foundationWarning],
-			['danger-text', I.foundationDanger],
-			['info-text', I.foundationInfo]
-		];
+		var roles = [['accent', I.foundationAccent], ['on-accent', I.foundationOnAccent]];
 
 		function accentPicker() {
 			var sources = [
@@ -172,114 +160,21 @@
 				seg.appendChild(b);
 			});
 
-			var swatch = el('button', {
-				type: 'button',
-				class: 'ak-accent-inline__sw',
-				'aria-label': I.accentLabel
-			});
-			var hexInput = el('input', {
-				type: 'text',
-				class: 'ak-accent-inline__hex',
-				placeholder: '#1549AB',
-				spellcheck: 'false',
-				maxlength: '7',
-				'aria-label': I.accentLabel
-			});
-			hexInput.value = state.brandAccent || '';
-			if (state.accentSource !== 'custom') {
-				hexInput.setAttribute('hidden', '');
-				swatch.setAttribute('hidden', '');
-			}
-			var native = el('input', {
-				type: 'color',
-				class: 'ak-accent-inline__native',
-				tabindex: '-1',
-				'aria-label': I.accentLabel
-			});
-			native.value = isValidHex(state.brandAccent) ? state.brandAccent : D.adminkitBlue || '#1549AB';
-
-			function applyPreview() {
-				swatch.style.background = isValidHex(state.brandAccent) ? state.brandAccent : 'var(--ak-primary)';
-			}
-
 			syncSeg = function () {
 				btns.forEach(function (b) {
 					var on = b._v === state.accentSource;
 					b.classList.toggle('is-active', on);
-					b.setAttribute('aria-checked', on ? 'true' : 'false');
+					b.setAttribute('aria-checked', String(on));
 					b.tabIndex = on ? 0 : -1;
 				});
-				if (state.accentSource === 'custom') {
-					hexInput.removeAttribute('hidden');
-					swatch.removeAttribute('hidden');
-				} else {
-					hexInput.setAttribute('hidden', '');
-					swatch.setAttribute('hidden', '');
-				}
-				applyPreview();
 			};
-
 			function setSource(newSrc) {
 				state.accentSource = newSrc;
-				if (newSrc === 'custom' && !isValidHex(state.brandAccent)) {
-					state.brandAccent = D.adminkitBlue || '#1549ab';
-					hexInput.value = state.brandAccent;
-				}
-				hexInput.value = state.brandAccent;
-				hexInput.removeAttribute('aria-invalid');
+				paletteRefresh();
 				syncSeg();
-				native.value = isValidHex(state.brandAccent) ? state.brandAccent : native.value;
-				paletteRefresh(false);
 				markDirty();
 			}
-
-			function setHex(raw) {
-				var v = expandHex(raw);
-				if (isFullHex(v)) {
-					state.brandAccent = v;
-				}
-				hexInput.setAttribute('aria-invalid', String(!isFullHex(v)));
-				if (hexInput.value !== v) {
-					hexInput.value = v;
-				}
-				if (isFullHex(v)) {
-					native.value = v;
-					delete state.designSystem.colors.light.accent;
-					delete state.designSystem.colors.dark.accent;
-					delete state.designSystem.colors.light['on-accent'];
-					delete state.designSystem.colors.dark['on-accent'];
-				}
-				applyPreview();
-				paletteRefresh(false);
-				markDirty();
-			}
-
-			hexInput.addEventListener('input', function () {
-				var raw = (hexInput.value || '').trim();
-				var normalized = raw && raw.charAt(0) !== '#' ? '#' + raw : raw;
-				if (isFullHex(normalized)) {
-					setHex(normalized);
-				} else if (/^#?[0-9a-f]{0,5}$/i.test(raw)) {
-					hexInput.removeAttribute('aria-invalid');
-				} else {
-					hexInput.setAttribute('aria-invalid', 'true');
-				}
-			});
-			hexInput.addEventListener('change', function () {
-				setHex(hexInput.value);
-			});
-			swatch.addEventListener('click', function () {
-				if (state.accentSource !== 'custom') {
-					setSource('custom');
-				}
-				native.click();
-			});
-			native.addEventListener('input', function () {
-				setHex(native.value);
-			});
-
-			applyPreview();
-			return el('div', { class: 'ak-display-row__field ak-accent-inline' }, [seg, swatch, hexInput, native]);
+			return seg;
 		}
 
 		['light', 'dark'].forEach(function (mode) {
@@ -294,7 +189,7 @@
 					class: 'ak-btn',
 					text: I.foundationPaletteReset,
 					onclick: function () {
-						state.designSystem.colors[mode] = {};
+						roles.forEach(function (role) { delete state.designSystem.colors[mode][role[0]]; });
 						paletteRefresh();
 						markDirty();
 					}
@@ -325,35 +220,32 @@
 				probes[role[0]] = probe;
 				scope.appendChild(probe);
 				function change(value) {
-					if (state.accentSource !== 'custom') {
-						state.accentSource = 'custom';
-						if (!isValidHex(state.brandAccent)) {
-							state.brandAccent = D.adminkitBlue || '#1549ab';
-						}
-						syncSeg();
-					}
-					if (!value) {
-						delete state.designSystem.colors[mode][role[0]];
-						paletteRefresh();
-						markDirty();
-						return;
-					}
-					var expanded = expandHex(value);
-					if (!isFullHex(expanded)) {
-						hex.setAttribute('aria-invalid', 'true');
-						error.hidden = false;
-						return;
+					var expanded = value ? expandHex(value) : '';
+					if (value && !isFullHex(expanded)) {
+						hex.setAttribute('aria-invalid', 'true'); error.hidden = false; return;
 					}
 					hex.removeAttribute('aria-invalid');
-					state.designSystem.colors[mode][role[0]] = expanded;
-					paletteRefresh();
-					markDirty();
+					if (value) {
+						state.accentSource = 'custom';
+						state.designSystem.colors[mode][role[0]] = expanded;
+						syncSeg();
+					} else { delete state.designSystem.colors[mode][role[0]]; }
+					paletteRefresh(); markDirty();
 				}
+
 				hex.addEventListener('adminkit:reveal-field', function () {
 					hooks.onRevealMode(mode);
 				});
 				picker.addEventListener('input', function () {
 					change(picker.value);
+				});
+				hex.addEventListener('input', function () {
+					var raw = hex.value.trim();
+					if (/^#?[0-9a-f]{6}$/i.test(raw)) { change(raw); }
+					else {
+						var invalid = !/^#?[0-9a-f]{0,5}$/i.test(raw);
+						hex.setAttribute('aria-invalid', String(invalid)); error.hidden = !invalid;
+					}
 				});
 				hex.addEventListener('change', function () {
 					change(hex.value.trim());
@@ -390,8 +282,8 @@
 				var overrides = state.accentSource === 'custom' ? state.designSystem.colors[card.mode] : {};
 				var values = state.accentSource === 'custom' ? Object.assign({}, overrides) : providerValues(state.accentSource, card.mode);
 				card.scope.setAttribute('data-preview-accent', state.accentSource === 'adminkit' ? 'waaskit' : 'monochrome');
-				roles.forEach(function (role) {
-					card.scope.style.removeProperty('--wk-' + role[0]);
+				Object.keys(state.designSystem.colors[card.mode]).concat(['accent', 'on-accent', 'bg', 'surface']).forEach(function (role) {
+					card.scope.style.removeProperty('--wk-' + role);
 				});
 				card.scope.style.removeProperty('--wk-accent-hover');
 				if (state.accentSource === 'custom') {
@@ -424,42 +316,9 @@
 			hooks.onPaletteRefresh();
 		}
 
-		function applyPreviewFrameColors(frames) {
-			(frames || []).forEach(function (preview) {
-				preview.setAttribute('data-preview-accent', state.accentSource === 'adminkit' ? 'waaskit' : 'monochrome');
-				roles.forEach(function (role) {
-					preview.style.removeProperty('--wk-' + role[0]);
-				});
-				preview.style.removeProperty('--wk-accent-hover');
-				var values =
-					state.accentSource === 'custom'
-						? Object.assign({}, state.designSystem.colors[preview.dataset.previewTheme])
-						: providerValues(state.accentSource, preview.dataset.previewTheme);
-				if (state.accentSource !== 'custom') {
-					Object.keys(values).forEach(function (role) {
-						preview.style.setProperty('--wk-' + role, values[role]);
-					});
-					return;
-				}
-				if (!values.accent && isValidHex(state.brandAccent)) {
-					values.accent = state.brandAccent;
-				}
-				if (values.accent) {
-					if (!values['on-accent']) {
-						values['on-accent'] = bestOnAccent(values.accent);
-					}
-					preview.style.setProperty('--wk-accent-hover', hoverHex(accentChannels(values.accent), values['on-accent'] === '#000000'));
-				}
-				Object.keys(values).forEach(function (role) {
-					preview.style.setProperty('--wk-' + role, values[role]);
-				});
-			});
-		}
-
 		return {
 			paletteCards: paletteCards,
 			paletteRefresh: paletteRefresh,
-			applyPreviewFrameColors: applyPreviewFrameColors,
 			buildChildren: function (themeSwitchNode) {
 				return [
 					el('div', { class: 'ak-color-controls' }, [

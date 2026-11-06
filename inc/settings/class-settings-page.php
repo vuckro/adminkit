@@ -73,7 +73,7 @@ class AdminKit_Settings_Page {
 		$pages = array(
 			self::SLUG => array( 'overview', __( 'Overview', 'adminkit' ) ),
 			'adminkit-features' => array( 'features', __( 'Features', 'adminkit' ) ),
-			'adminkit-design' => array( 'brand', __( 'Design system', 'adminkit' ) ),
+			'adminkit-design' => array( 'brand', __( 'Plugins', 'adminkit' ) ),
 			'adminkit-navigation' => array( 'navigation', __( 'Navigation', 'adminkit' ) ),
 			'adminkit-configuration' => array( 'configuration', __( 'Configuration', 'adminkit' ) ),
 		);
@@ -95,11 +95,6 @@ class AdminKit_Settings_Page {
 	 * @return void
 	 */
 	public static function render_page() {
-		$screen = get_current_screen();
-		if ( $screen && 'brand' === self::settings_tab( $screen->id ) && ! apply_filters( 'adminkit/customization_available', true ) ) {
-			echo '<div class="wrap"><h1>' . esc_html__( 'Customization paused', 'adminkit' ) . '</h1><p>' . esc_html__( 'Enable the administration theme or the custom login screen to customize their appearance. Your saved design is kept.', 'adminkit' ) . '</p><a href="' . esc_url( admin_url( 'admin.php?page=adminkit-features' ) ) . '">' . esc_html__( 'Features', 'adminkit' ) . '</a></div>';
-			return;
-		}
 		self::render_host( 'main' );
 	}
 
@@ -255,7 +250,7 @@ class AdminKit_Settings_Page {
 				? $parts_for_tab[ $paged_tab ]
 				: array( 'design', 'features', 'plugins', 'navigation' );
 			foreach ( $main_parts as $part ) {
-				if ( 'design' === $part ) {
+				if ( 'features' === $part ) {
 					$colors_js     = 'assets/js/settings/design-colors.js';
 					$colors_handle = $screen_handle . '-design-colors';
 					wp_enqueue_script( $colors_handle, ADMINKIT_URL . $colors_js, array(), self::ver( $colors_js ), true );

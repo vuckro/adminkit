@@ -50,6 +50,9 @@ $scripts=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>'main','pag
 check(isset($scripts['adminkit-settings-main-design'])&&isset($scripts['adminkit-settings-main-plugins'])&&!isset($scripts['adminkit-settings-navigation-controls']),'Design page did not slice factories cleanly');
 $scripts=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>'main','pages'=>$pages_map,'initialTab'=>'navigation'));
 check(isset($scripts['adminkit-settings-navigation-controls'])&&isset($scripts['adminkit-settings-main-navigation'])&&!isset($scripts['adminkit-settings-main-design']),'Navigation page did not load navigation factories cleanly');
+$scripts=array();AdminKit_Settings_Page::enqueue_app(array('screen'=>'main','pages'=>$pages_map,'initialTab'=>'features'));
+check(in_array('adminkit-settings-main-design-colors',$scripts['adminkit-settings-main-features']['deps'],true),'Theme feature lost color-controller dependency');
+check(!isset($scripts['adminkit-settings-main-design']), 'Features page should not load removed foundation UI');
 echo "OK: native 5-page mode slices per-tab script factories cleanly.\n";
 
 // Reparented plugin pages keep their exact screen identity and content pane.
