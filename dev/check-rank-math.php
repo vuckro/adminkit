@@ -38,9 +38,19 @@ foreach ( array( 'rank-math-common', 'rank-math-editor', 'rank-math-post-bulk-ed
 	check_rank_math( AdminKit_Integration_Rank_Math::owns_asset_screen( $GLOBALS['screen'] ), 'Host asset missed: ' . $handle );
 }
 AdminKit_Integration_Rank_Math::register_assets();
-check_rank_math( 2 === count( AdminKit_Assets::$entries ), 'Expected shared and page-only assets' );
+check_rank_math( 4 === count( AdminKit_Assets::$entries ), 'Expected shared and page-only assets' );
 $pages = AdminKit_Assets::$entries['adminkit-rank-math-pages'];
 check_rank_math( ! call_user_func( $pages['condition'], $GLOBALS['screen'] ), 'Page bundle leaked beside host widget/editor assets' );
 check_rank_math( call_user_func( $pages['condition'], (object) array( 'id' => 'rank-math_page_rank-math-status' ) ), 'Secondary page bundle missing' );
 check_rank_math( array( 'adminkit-rank-math' ) === $pages['deps'], 'Secondary bundle must follow shared styles' );
+$editor = AdminKit_Assets::$entries['adminkit-rank-math-editor'];
+check_rank_math( ! call_user_func( $editor['condition'], (object) array( 'id' => 'dashboard', 'base' => 'dashboard' ) ), 'Editor bundle leaked to dashboard' );
+check_rank_math( call_user_func( $editor['condition'], (object) array( 'id' => 'pos', 'base' => 'post' ) ), 'Host editor bundle missing' );
+$enqueued = array();
+check_rank_math( ! call_user_func( $editor['condition'], (object) array( 'id' => 'post', 'base' => 'post' ) ), 'Editor bundle loaded without host assets' );
+$columns = AdminKit_Assets::$entries['adminkit-rank-math-columns'];
+check_rank_math( ! call_user_func( $columns['condition'], (object) array( 'base' => 'edit' ) ), 'Column bundle loaded without host assets' );
+$enqueued = array( 'rank-math-post-bulk-edit' );
+check_rank_math( call_user_func( $columns['condition'], (object) array( 'base' => 'edit' ) ), 'Host columns lost their header styling' );
+check_rank_math( ! call_user_func( $columns['condition'], (object) array( 'base' => 'post' ) ), 'Column bundle leaked to editor' );
 echo "OK: Rank Math host pages, moved pages, editor/list/widget assets and isolation.\n";

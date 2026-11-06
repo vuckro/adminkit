@@ -1,0 +1,153 @@
+/* One editor bridge for classic, block and taxonomy editors. Preserve Rank
+   Math's controls, dialog behavior, preview content and save ownership. */
+body.adminkit .components-modal__screen-overlay.rank-math-modal-overlay {
+	background: var(--ak-overlay);
+}
+body.adminkit .components-modal__frame.rank-math-modal {
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	box-shadow: none;
+}
+body.adminkit .rank-math-modal .components-modal__header {
+	border-block-end: 1px solid var(--ak-border);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) :is(.components-panel__body, .components-tab-panel__tabs, .rank-math-notice, .rank-math-social-preview-item-wrapper) {
+	border-color: var(--ak-border);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) .components-tab-panel__tabs {
+	background: transparent;
+	border-block-end: 1px solid var(--ak-border);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) .components-tab-panel__tabs-item {
+	background: transparent;
+	color: var(--ak-text-muted);
+	border: 0;
+	box-shadow: none;
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) .components-tab-panel__tabs-item:hover:not(:disabled) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) .components-tab-panel__tabs-item.is-active {
+	color: var(--ak-heading);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) .components-tab-panel__tabs-item.is-active::after {
+	background: var(--ak-primary);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) :is(.is-secondary, .button-secondary, .rank-math-edit-snippet) {
+	background: var(--ak-btn-bg, var(--ak-surface));
+	border: 1px solid var(--ak-btn-border, var(--ak-border));
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-btn-text, var(--ak-text));
+	box-shadow: none;
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) :is(.is-secondary, .button-secondary, .rank-math-edit-snippet):hover:not(:disabled, [aria-disabled=true]) {
+	background: var(--ak-btn-hover-bg, var(--ak-hover-bg));
+	border-color: var(--ak-btn-hover-border, var(--ak-border-strong));
+	color: var(--ak-heading);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) :is(input:not([type=checkbox], [type=radio]), textarea, select):hover:not(:disabled, :focus) {
+	border-color: var(--ak-border-strong);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) :is(input:not([type=checkbox], [type=radio]), textarea, select):focus {
+	border-color: var(--ak-focus);
+	box-shadow: var(--ak-focus-ring);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) :is(button, a, input, textarea, select):focus-visible {
+	outline: 2px solid var(--ak-focus);
+	outline-offset: 2px;
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) .components-tab-panel__tabs-item:focus-visible {
+	outline-offset: -3px;
+}
+body.adminkit .rank-math-modal :is(.rank-math-editor .field-group, .serp-preview),
+body.adminkit #rank-math-metabox-wrapper .serp-preview {
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+body.adminkit .rank-math-modal .rank-math-variables-dropdown {
+	background: var(--ak-surface);
+	border: 1px solid var(--ak-border-strong);
+	border-radius: var(--ak-radius-s);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+body.adminkit .rank-math-modal .rank-math-variables-dropdown ul li {
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit .rank-math-modal .rank-math-variables-dropdown ul li span {
+	color: var(--ak-text-muted);
+}
+body.adminkit .rank-math-modal .rank-math-variables-dropdown ul li:is(:hover, .selected, .is-active) {
+	background: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+body.adminkit .rank-math-seo-score {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text-muted);
+	border-color: var(--ak-border);
+}
+body.adminkit .rank-math-seo-score.bad-fk,
+body.adminkit .rank-math-checklist .rank-math-group-score {
+	background: var(--ak-error-subtle);
+	color: var(--ak-error);
+}
+body.adminkit .rank-math-seo-score.ok-fk,
+body.adminkit .rank-math-checklist .rank-math-group-score.test-warning {
+	background: var(--ak-warning-subtle);
+	color: var(--ak-warning);
+}
+body.adminkit .rank-math-seo-score.good-fk,
+body.adminkit .rank-math-checklist .rank-math-group-score.test-ok {
+	background: var(--ak-success-subtle);
+	color: var(--ak-success);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel) .rank-math-notice {
+	border: 1px solid var(--ak-border);
+	border-radius: var(--ak-radius-s);
+}
+@media (max-width: 600px) {
+	body.adminkit .components-modal__frame.rank-math-modal {
+		max-inline-size: calc(100vw - 24px);
+		max-block-size: calc(100dvh - 24px);
+	}
+	body.adminkit .rank-math-modal :is(.components-modal__header button, .components-tab-panel__tabs-item) {
+		min-inline-size: 44px;
+		min-block-size: 44px;
+	}
+}
+@media (forced-colors: active) {
+	body.adminkit .components-modal__frame.rank-math-modal {
+		border-color: CanvasText;
+	}
+	body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-modal) .components-tab-panel__tabs-item.is-active {
+		outline: 1px solid Highlight;
+		outline-offset: -2px;
+	}
+}
+/* Social preview chrome follows the current palette; the supplied image and
+   SEO text remain untouched. Host literals otherwise mix white cards/text. */
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) :is(.rank-math-social-preview-meta, .rank-math-social-preview-item-wrapper, .rank-math-social-preview-caption, .rank-math-notice) {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) .rank-math-social-preview :is(.social-name, .rank-math-social-preview-title) {
+	color: var(--ak-heading);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) .rank-math-social-preview :is(.social-time, .social-username, .rank-math-social-preview-publisher, .rank-math-social-preview-description) {
+	color: var(--ak-text-muted);
+}
+body.adminkit .rank-math-modal .rank-math-variables-dropdown li::after {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text-muted);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) .notice.notice-alt.notice-info {
+	background: var(--ak-surface-muted);
+	border: 1px solid var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit :is(#rank-math-metabox-wrapper, .rank-math-sidebar-panel, .rank-math-modal) .notice.notice-alt.notice-info a {
+	color: var(--ak-primary-text);
+}
