@@ -256,7 +256,10 @@
  transition: color var(--ak-dur-fast) var(--ak-ease), border-color var(--ak-dur-fast) var(--ak-ease);
 }
 .adminkit-app[data-screen="main"] .ak-tabs button:hover { color: var(--ak-heading); background: transparent; }
-.adminkit-app[data-screen="main"] .ak-tabs button[aria-selected="true"] {
+/* Keep the settings underline through focus/hover over the shared pill skin. */
+.adminkit-app[data-screen="main"] .ak-tabs button[aria-selected="true"],
+.adminkit-app[data-screen="main"] .ak-tabs button[aria-selected="true"]:hover,
+.adminkit-app[data-screen="main"] .ak-tabs button[aria-selected="true"]:focus {
  color: var(--ak-heading); border-bottom-color: var(--ak-heading); background: transparent; box-shadow: none;
 }
 .adminkit-app .ak-overview .ak-overview-summary { margin-bottom: 24px; }
