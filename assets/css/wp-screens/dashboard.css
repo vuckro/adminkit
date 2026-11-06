@@ -10,7 +10,10 @@ body.adminkit #funnelkit_widget :is(.bwf-tiles-item, .bwf-tiles-header, .bwf-til
 body.adminkit #funnelkit_widget :is(.bwf-tiles-secondary-text, .bwf-widget-action-box-subtitle, .bwf-widget-footer) {
  color: var(--ak-text-muted);
 }
-body.adminkit #funnelkit_widget :is(.bwf-widget-footer, .bwf-tiles-item::after, .bwf-widget-footer-l a::after) {
+/* Pseudo-elements must sit outside :is(), where they are invalid selectors. */
+body.adminkit #funnelkit_widget .bwf-widget-footer,
+body.adminkit #funnelkit_widget .bwf-tiles-item::after,
+body.adminkit #funnelkit_widget .bwf-widget-footer-l a::after {
  border-color: var(--ak-border);
 }
 body.adminkit #funnelkit_widget .bwf-widget-footer a { color: var(--ak-primary-text); }
@@ -28,6 +31,7 @@ body.adminkit #funnelkit_widget :is(.bwf-button, .bwf-tiles-item):focus-visible 
  outline-offset: 2px;
 }
 body.adminkit #funnelkit_widget .bwf-placeholder-item { background: var(--ak-border); }
+body.adminkit #rank_math_dashboard_widget .hndle .rank-math-icon svg { fill: currentColor; }
 body.adminkit #rank_math_dashboard_widget .rank-math-dashboard-block > div {
  border-color: var(--ak-border);
  background: var(--ak-surface-muted);
