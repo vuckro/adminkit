@@ -249,3 +249,55 @@ body.adminkit #wpbody-content .rank-math-tab-panel :is(a, button, input, textare
 	outline: 2px solid var(--ak-focus);
 	outline-offset: 2px;
 }
+@media (max-width: 782px) {
+	body.adminkit.ak-rank-math-page .rank-math-header {
+		margin-inline: 0;
+		gap: 12px;
+	}
+	body.adminkit.ak-rank-math-page .module-listing .rank-math-box {
+		flex-basis: 100%;
+		min-inline-size: 0;
+	}
+}
+/* Editor portals are outside #wpbody-content. Keep preview text readable and
+   toolbar scores semantic in both the pinned and expanded editor states. */
+body.adminkit :is(.rank-math-modal, .rank-math-tabs) :is(.serp-preview, .serp-preview-bg, .serp-preview-body, .rank-math-variables-dropdown),
+body.adminkit .rank-math-editor .field-group {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit :is(.rank-math-modal, .rank-math-tabs) :is(.serp-title, .serp-title a) {
+	color: var(--ak-primary-text);
+}
+body.adminkit :is(.rank-math-modal, .rank-math-tabs) .serp-url {
+	color: var(--ak-text);
+}
+body.adminkit :is(.rank-math-modal, .rank-math-tabs) :is(.serp-description, .components-base-control__help) {
+	color: var(--ak-text-muted);
+}
+body.adminkit .rank-math-editor .field-group :is(input[type=text], input[type=url], textarea, select) {
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+	border-color: var(--ak-input-border);
+}
+body.adminkit #editor .rank-math-toolbar-score {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit #editor .rank-math-toolbar-score.bad-fk {
+	background: var(--ak-error-subtle);
+	border-color: var(--ak-error);
+	color: var(--ak-error);
+}
+body.adminkit #editor .rank-math-toolbar-score.ok-fk {
+	background: var(--ak-warning-subtle);
+	border-color: var(--ak-warning);
+	color: var(--ak-warning);
+}
+body.adminkit #editor .rank-math-toolbar-score.good-fk {
+	background: var(--ak-success-subtle);
+	border-color: var(--ak-success);
+	color: var(--ak-success);
+}
