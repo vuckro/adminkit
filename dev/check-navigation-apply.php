@@ -279,3 +279,11 @@ check(strpos($menu[20][0],'Tunnels de vente')===0,'Late host rename overrides cu
 check(strpos($menu[20][0],'plugin-count')!==false,'Late badge lost');
 check($menu[20][2]==='bwf'&&count($menu)===1,'Restoring titles changed menu routing/structure');
 echo "OK: late host title rewrites preserve custom labels, badges and routing.\n";
+
+// Integration defaults use #adminmenu #toplevel_page_bricks; custom icons must win.
+AdminKit_Menu_Store::$config=array('top'=>array(array('slug'=>'bricks','icon'=>'blocks')));
+$menu=array(20=>array('Bricks','manage_options','bricks','Bricks','','toplevel_page_bricks','none'));$submenu=array();
+AdminKit_Menu_Renderer::apply();
+ob_start();AdminKit_Menu_Renderer::print_css();$css=ob_get_clean();
+check(strpos($css,'#adminmenu #toplevel_page_bricks.ak-mi-1 .wp-menu-image::before')!==false,'Custom menu icon does not outrank integration default');
+echo "OK: configured menu icons outrank integration defaults using stable menu IDs.\n";

@@ -497,11 +497,21 @@ class AdminKit_Menu_Renderer {
 			if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', (string) $cls ) ) {
 				continue;
 			}
+			// A configured icon outranks the integration's default icon by targeting
+			// the same stable WordPress menu ID, with its override class added.
+			$target = '#adminmenu .' . $cls;
+			foreach ( (array) ( $GLOBALS['menu'] ?? array() ) as $item ) {
+				if ( ! empty( $item[5] ) && preg_match( '/^[a-zA-Z0-9_-]+$/', (string) $item[5] )
+					&& in_array( $cls, explode( ' ', $item[4] ?? '' ), true ) ) {
+					$target = '#adminmenu #' . $item[5] . '.' . $cls;
+					break;
+				}
+			}
 			if ( 0 === strncmp( $icon, 'wp-default', 10 ) ) {
 				$dashicon = strlen( $icon ) > 11 ? substr( $icon, 11 ) : '';
 				if ( '' !== $dashicon && preg_match( '/^dashicons-[a-z0-9-]+$/', $dashicon ) ) {
 					$glyph = isset( AdminKit_Icons::MENU_DASHICON_GLYPHS[ $dashicon ] ) ? AdminKit_Icons::MENU_DASHICON_GLYPHS[ $dashicon ] : '';
-					$sel   = '#adminmenu .' . $cls . ' .wp-menu-image.' . $dashicon;
+					$sel   = $target . ' .wp-menu-image.' . $dashicon;
 					$css  .= $sel . '{box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
 					$css  .= $sel . '::before{-webkit-mask-image:none;mask-image:none;background:transparent;'
 						. 'display:block;width:36px;height:34px;line-height:34px;text-align:center;'
@@ -515,7 +525,7 @@ class AdminKit_Menu_Renderer {
 			if ( '' === $mask ) {
 				continue;
 			}
-			$sel  = '#adminmenu .' . $cls . ' .wp-menu-image';
+			$sel  = $target . ' .wp-menu-image';
 			$css .= $sel . '{box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
 			$css .= $sel . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
 				. 'vertical-align:middle;position:relative;top:-2px;' . $mask . '}';
