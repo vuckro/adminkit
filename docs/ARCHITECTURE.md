@@ -12,9 +12,7 @@ Development tooling is separate from the distributed plugin.
 so third-party plugins can register `adminkit/*` filters before modules boot.
 `MODULES` is the ordered registry: first every file is required, then non-null boot
 callables execute in registry order. Helpers have null boot values. Files under
-`inc/` outside integrations must belong to this registry, except the orchestrator
-and `inc/generated/lucide-paths.php`. The module/package check verifies that
-relationship and every boot callable.
+`inc/` outside integrations belongs to `MODULES` or the explicit data-only `LAZY_MODULES` registry, except the orchestrator. The module/package check verifies both registries, deferred icon loading and every boot callable.
 
 - `inc/settings/`: schema, catalogs, `AdminKit_Settings_I18n`, memoized permission/loading gates and workspace host.
 - `inc/wp-core/`: existing WordPress surfaces and optional native workflow tools.
@@ -233,7 +231,7 @@ worktree, and `dev/check-i18n.php` enforces French typographic apostrophes (`’
 and non-breaking spaces (`\u{00A0}`) before `: ; ? !` and inside `« … »`.
 
 Run `npm ci --prefix dev/smoke` once, then `php dev/test-all.php` (`--fast` skips
-the static-analysis pass during quick iteration). The parallel offline gate (220
+the static-analysis pass during quick iteration). The parallel offline gate (222
 checks) covers PHP/JS syntax, generated tokens, all 23 `dev/check*.php` suites
 (including `check-compliance.php` for GDPR/WP.org rules), editor gating, CSS
 contracts, adapter budgets, 15 jsdom suites, i18n, registry/package integrity, and
@@ -319,3 +317,12 @@ Without a toolbar launcher or when the feature is disabled, native notices remai
 ## Sidebar placement
 
 The pure `AdminKit_Menu_Layout` planner computes the two-level tree before rendering. Identity, precedence and iteration checks are documented in [NAVIGATION.md](NAVIGATION.md).
+
+
+## Deferred icon data and dialog asset boundaries (2026-11-07)
+
+`AdminKit_Plugin::MODULES` contains eager services; `LAZY_MODULES` lists data-only files. The generated 475,377-byte Lucide map remains shipped, but only `AdminKit_Icons::paths()` loads it on first icon use. Registry integrity checks cover both sets and the package CI verifies anonymous WordPress bootstrap leaves the catalog unloaded. Public facades and upgrade migrations remain supported compatibility paths.
+
+Media styling follows the native library screens or an enqueued `media-views` stylesheet/script. ThickBox styling follows an enqueued native ThickBox stylesheet/script. These rules resolve during the late asset dispatcher, preserving dialogs on third-party pages that enqueue WordPress media through its normal hooks. Other screen styles keep their explicit screen/host conditions.
+
+Quick Edit validates scalar field types and positive integer target IDs before sanitization/storage. Its client permits one pending write per editor, resets the pending state after errors, and scopes response-driven closure to the submitting editor. A late successful response can update its own row without destroying a newer editor's draft.

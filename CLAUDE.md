@@ -40,14 +40,14 @@ Keep changes simple, explicit, predictable and compatible with PHP 8.3+ / WordPr
 
 ```sh
 npm ci --prefix dev/smoke
-php dev/test-all.php          # Full gate: 220 checks in ~7.5s
+php dev/test-all.php          # Full gate: 222 checks in ~7.5s
 php dev/test-all.php --fast   # Skip heavy static analysis pass during rapid iteration
 ```
 
 `php dev/test-all.php` runs in parallel:
 1. PHP syntax (`php -l`, 101 files) & JS syntax (`node --check`, 43 files)
 2. Token build drift (`php tokens/build.php --check`)
-3. All 23 regression & compliance scripts (`dev/check-*.php`, `dev/editor-gate-check.php`)
+3. All 33 regression & compliance scripts (`dev/check-*.php`, `dev/editor-gate-check.php`)
 4. CSS contracts & adapter budgets (`dev/css-contract.php`, `dev/adapter-audit.php`)
 5. All 15 JSDOM behavioral suites (`dev/smoke/*.test.js`)
 6. Static analysis: **WPCS Security & i18n** (`.phpcs.xml.dist`), **PHPStan level 5** (`phpstan.neon.dist`), **ESLint** (`dev/smoke/eslint.config.js`), and **Stylelint** (`dev/smoke/.stylelintrc.json`)

@@ -320,7 +320,7 @@ msgstr ""
 msgid "Could not load toolbar items."
 msgstr ""
 
-#: inc/class-storage.php inc/settings/class-settings-i18n.php
+#: inc/class-storage.php inc/settings/class-settings-i18n.php inc/wp-core/class-user-quick-edit.php
 msgid "Could not save"
 msgstr ""
 

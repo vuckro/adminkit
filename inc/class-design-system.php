@@ -125,13 +125,13 @@ class AdminKit_Design_System {
 			$targets = array( $root . ' #wpadminbar', $root . '[data-adminkit-accent] #wpadminbar' );
 			if ( ! $toolbar_only ) { $targets[] = $root; $targets[] = $root . '[data-adminkit-accent]'; }
 			$target = implode( ',', $targets );
-			$css .= $target . '{' . self::palette( $palette, 'dark' === $mode ) . '}';
+			$css .= $target . '{' . self::palette( $palette ) . '}';
 		}
 		return $css;
 	}
 
 	/** Derive interactive states from the editable roles, keeping all aliases in sync. */
-	private static function palette( array $palette, $dark ) {
+	private static function palette( array $palette ) {
 		$map = array( 'bg' => 'bg', 'surface' => 'surface', 'text' => 'text', 'text-muted' => 'text-muted', 'border' => 'border', 'accent' => 'primary', 'on-accent' => 'on-accent', 'success-text' => 'success', 'warning-text' => 'warning', 'danger-text' => 'error', 'info-text' => 'info' );
 		$css = '';
 		foreach ( $palette as $role => $value ) {
@@ -144,7 +144,6 @@ class AdminKit_Design_System {
 		}
 		if ( isset( $palette['border'] ) ) { $css .= '--ak-border-strong:color-mix(in srgb,var(--ak-border) 65%,var(--ak-text));--ak-btn-border:color-mix(in srgb,var(--ak-border) 72%,transparent);--ak-btn-hover-border:var(--ak-border);--wk-border-strong:var(--ak-border-strong);'; }
 		if ( isset( $palette['accent'] ) ) {
-			$mix = $dark ? 'white' : 'black';
 			$hex = $palette['accent'];
 			if ( 4 === strlen( $hex ) ) { $hex = '#' . $hex[1] . $hex[1] . $hex[2] . $hex[2] . $hex[3] . $hex[3]; }
 			$rgb = array( hexdec( substr( $hex, 1, 2 ) ), hexdec( substr( $hex, 3, 2 ) ), hexdec( substr( $hex, 5, 2 ) ) );

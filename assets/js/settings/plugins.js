@@ -7,7 +7,6 @@
 		var I = context.I;
 		var state = context.state;
 		var el = context.el;
-		var intro = context.intro;
 		var markDirty = context.markDirty;
 
 		function buildPlugins() {

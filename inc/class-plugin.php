@@ -33,7 +33,6 @@ class AdminKit_Plugin {
 		// Helpers — loaded for everyone, nothing to boot.
 		'class-storage.php'                                    => null,
 		'class-screen.php'                                     => null,
-		'generated/lucide-paths.php'                           => null,
 		'class-icons.php'                                      => null,
 		'class-design-system.php'                              => null,
 
@@ -79,6 +78,9 @@ class AdminKit_Plugin {
 		'features/toolbar/class-toolbar-renderer.php'          => null,
 		'features/toolbar/class-toolbar-manager.php'           => 'AdminKit_Toolbar_Manager::init',
 	);
+
+	/** Data-only modules loaded by their owning service on first use. */
+	const LAZY_MODULES = array( 'generated/lucide-paths.php' );
 
 	/** @var bool Prevent duplicate boots when `init()` is called both directly and via `plugins_loaded`. */
 	private static $booted = false;

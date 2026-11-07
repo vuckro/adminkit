@@ -320,7 +320,7 @@ msgstr "Définissez les règles d’approbation et filtrez les commentaires ind�
 msgid "Could not load toolbar items."
 msgstr "Impossible de charger les éléments de la barre d’outils."
 
-#: inc/class-storage.php inc/settings/class-settings-i18n.php
+#: inc/class-storage.php inc/settings/class-settings-i18n.php inc/wp-core/class-user-quick-edit.php
 msgid "Could not save"
 msgstr "Échec de l’enregistrement"
 

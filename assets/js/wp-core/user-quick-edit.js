@@ -141,6 +141,8 @@
 		}
 
 		function saveEditor(btn, editor, row) {
+			if (editor.dataset.akSaving === 'true') { return; }
+			editor.dataset.akSaving = 'true';
 			var saveBtn = editor.querySelector('.adminkit-qe-save');
 			var cancel = editor.querySelector('.adminkit-qe-cancel');
 			var spinner = editor.querySelector('.spinner');
@@ -164,6 +166,7 @@
 			fetch(L.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
 				.then(function (r) { return r.json().catch(function () { return null; }); })
 				.then(function (json) {
+					editor.dataset.akSaving = 'false';
 					if (spinner) { spinner.classList.remove('is-active'); }
 					if (!json || !json.success) {
 						if (saveBtn) { saveBtn.disabled = false; }
@@ -173,9 +176,10 @@
 						return;
 					}
 					applyToRow(row, btn, json.data || {});
-					closeEditor();
+					if (openEditor === editor) { closeEditor(); }
 				})
 				.catch(function () {
+					editor.dataset.akSaving = 'false';
 					if (spinner) { spinner.classList.remove('is-active'); }
 					if (saveBtn) { saveBtn.disabled = false; }
 					if (cancel) { cancel.disabled = false; }

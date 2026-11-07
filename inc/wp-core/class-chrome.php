@@ -7,8 +7,7 @@
  *   - wp-core/*           always-loaded chrome (sidebar, postboxes, notices, ...)
  *   - wp-components/*     always-loaded input/button/table primitives
  *   - wp-screens/*        per-screen polish, conditionally loaded by `$screen->id`
- *   - wp-screens/_shared  small components used across several screens (wp-filter,
- *                         thickbox, notification-dialog, cards) — always-loaded
+ *   - wp-screens/_shared  components shared across screens; ThickBox follows its native assets
  *
  * Integration CSS (Gutenberg, WooCommerce, the Fluent suite, ...) lives in
  * each integration's own folder under `inc/integrations/{plugins|themes}/{slug}/css/`
@@ -78,8 +77,8 @@ class AdminKit_Core_Chrome {
 			'context' => 'admin',
 		) );
 
-		// --- wp-screens/_shared/ (always loaded — small, used by several screens) ---
-		foreach ( array( 'wp-filter', 'thickbox', 'notification-dialog', 'cards' ) as $shared ) {
+		// --- Shared surfaces; native dialogs are conditional below. ---
+		foreach ( array( 'wp-filter', 'notification-dialog', 'cards' ) as $shared ) {
 			AdminKit_Assets::register( array(
 				'handle'  => 'adminkit-shared-' . $shared,
 				'src'     => self::ASSETS_BASE . 'wp-screens/_shared/' . $shared . '.css',
@@ -88,9 +87,17 @@ class AdminKit_Core_Chrome {
 			) );
 		}
 
+		AdminKit_Assets::register( array(
+			'handle' => 'adminkit-shared-thickbox',
+			'src' => self::ASSETS_BASE . 'wp-screens/_shared/thickbox.css',
+			'deps' => $tokens,
+			'context' => 'admin',
+			'condition' => static function () { return wp_style_is( 'thickbox', 'enqueued' ) || wp_script_is( 'thickbox', 'enqueued' ); },
+		) );
+
 		// --- wp-screens/ (broad-usage & WPDS/Font Library conditional files; section 'pages') ---
 		// media.css styles the Media modal (Featured image, Site Icon, …), which can
-		// open on almost any screen, plus upload.php chrome (self-scoped via .upload-php).
+		// open wherever media-views is enqueued; upload.php also needs its library skin.
 		foreach ( array( 'wp-components', 'media' ) as $broad ) {
 			AdminKit_Assets::register( array(
 				'handle'  => 'adminkit-' . $broad,
@@ -98,6 +105,7 @@ class AdminKit_Core_Chrome {
 				'deps'    => $tokens,
 				'context' => 'admin',
 				'section' => 'pages',
+				'condition' => 'media' === $broad ? array( __CLASS__, 'needs_media_styles' ) : null,
 			) );
 		}
 		AdminKit_Assets::register( array(
@@ -205,6 +213,12 @@ class AdminKit_Core_Chrome {
 		) );
 
 		add_action( 'adminkit/tokens_enqueued', array( __CLASS__, 'clean_chrome_css' ) );
+	}
+
+	/** Native media surfaces may be opened from any host that enqueues the library. */
+	public static function needs_media_styles( $screen ) {
+		return ( $screen && in_array( $screen->id, array( 'upload', 'media' ), true ) )
+			|| wp_style_is( 'media-views', 'enqueued' ) || wp_script_is( 'media-views', 'enqueued' );
 	}
 
 	/**

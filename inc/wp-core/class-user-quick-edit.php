@@ -243,7 +243,8 @@ class AdminKit_User_Quick_Edit {
 	 */
 	public static function handle_save() {
 		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { wp_send_json_error( array( 'message' => __( 'You are not allowed to do that.', 'adminkit' ) ), 403 ); }
-		$user_id = isset( $_POST['user_id'] ) ? (int) $_POST['user_id'] : 0;
+		$user_id = isset( $_POST['user_id'] ) && ( is_int( $_POST['user_id'] ) || is_string( $_POST['user_id'] ) )
+			? filter_var( wp_unslash( $_POST['user_id'] ), FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 1 ) ) ) : false;
 		if ( ! $user_id ) {
 			wp_send_json_error( array( 'message' => __( 'Missing user id.', 'adminkit' ) ), 400 );
 		}
@@ -251,6 +252,12 @@ class AdminKit_User_Quick_Edit {
 
 		if ( ! current_user_can( 'edit_user', $user_id ) ) {
 			wp_send_json_error( array( 'message' => __( 'You are not allowed to do that.', 'adminkit' ) ), 403 );
+		}
+
+		foreach ( array( 'first_name', 'last_name', 'user_email', 'role' ) as $field ) {
+			if ( array_key_exists( $field, $_POST ) && ! is_string( $_POST[ $field ] ) ) {
+				wp_send_json_error( array( 'message' => __( 'Could not save', 'adminkit' ) ), 400 );
+			}
 		}
 
 		$existing_user = get_userdata( $user_id );
