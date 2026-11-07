@@ -18,6 +18,10 @@ define( 'ADMINKIT_PATH', dirname( __DIR__ ) . '/' );
 require ADMINKIT_PATH . 'inc/class-plugin.php';
 
 $modules = AdminKit_Plugin::MODULES;
+$lazy = array_fill_keys( AdminKit_Plugin::LAZY_MODULES, null );
+foreach ( $lazy as $path => $boot ) {
+ if ( array_key_exists( $path, $modules ) || ! is_file( ADMINKIT_PATH . 'inc/' . $path ) || false !== strpos( $path, '..' ) ) { throw new RuntimeException( 'Invalid lazy module: ' . $path ); }
+}
 foreach ( $modules as $path => $boot ) {
 	if ( false !== strpos( $path, '..' ) || ! is_file( ADMINKIT_PATH . 'inc/' . $path ) ) {
 		throw new RuntimeException( 'Missing/unsafe module: ' . $path );
@@ -41,10 +45,15 @@ foreach ( $inc_files as $file ) {
 		&& 'class-plugin.php' !== $relative
 		&& 0 !== strpos( $relative, 'integrations/' )
 		&& ! array_key_exists( $relative, $modules )
+		&& ! array_key_exists( $relative, $lazy )
 	) {
 		throw new RuntimeException( 'Unregistered module: ' . $relative );
 	}
 }
+
+if ( class_exists( 'AdminKit_Lucide_Paths', false ) ) { throw new RuntimeException( 'Icon data loaded before first icon use' ); }
+AdminKit_Icons::display_svg( 'home' );
+if ( ! class_exists( 'AdminKit_Lucide_Paths', false ) ) { throw new RuntimeException( 'Lazy icon data missing on first use' ); }
 
 // A duplicate associative key in MODULES would disappear before iteration.
 $source   = (string) file_get_contents( ADMINKIT_PATH . 'inc/class-plugin.php' );

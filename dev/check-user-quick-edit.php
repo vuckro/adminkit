@@ -236,3 +236,15 @@ try {
 check( 403 === $response && null === $update, 'Unauthorized target reached update' );
 
 echo "OK: editable role allowlist, multi-role preservation, email validation, self-email guard and PII-safe template.\n";
+
+// Reject type confusion before sanitizers can turn malformed fields into empty writes.
+$allowed=true; $can_promote=true;
+foreach ( array(
+ array('user_id'=>array(8)), array('user_id'=>true), array('user_id'=>'8oops'), array('user_id'=>8.5),
+ array('user_id'=>8,'first_name'=>array('bad')), array('user_id'=>8,'last_name'=>null),
+ array('user_id'=>8,'user_email'=>array('bad')), array('user_id'=>8,'role'=>array('editor'))
+) as $invalid ) {
+ $_POST=$invalid; $update=null; $response=null;
+ try { AdminKit_User_Quick_Edit::handle_save(); } catch ( Quick_Edit_Response $done ) {}
+ check(400===$response && null===$update, 'Malformed Quick Edit payload reached user storage');
+}

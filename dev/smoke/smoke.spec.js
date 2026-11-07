@@ -136,6 +136,18 @@ test.describe('wp-admin', () => {
     expect(problems).toEqual([]);
   });
 
+  test('dialog styles follow native media and ThickBox assets', async ({ page }) => {
+    const problems=watch(page);
+    await page.goto('/wp-admin/options-general.php');
+    await expect(page.locator('#adminkit-media-css')).toHaveCount(1);
+    await page.locator('#ak-general-logo-upload').click();
+    await expect(page.locator('.media-modal')).toBeVisible();
+    await page.locator('.media-modal-close').click();
+    await page.goto('/wp-admin/plugin-install.php');
+    await expect(page.locator('#adminkit-shared-thickbox-css')).toHaveCount(1);
+    expect(problems).toEqual([]);
+  });
+
   test('moved AdminKit page boots under Plugins and overview follows shared elevation', async ({ page }) => {
     test.skip(process.env.AK_DISPOSABLE !== '1', 'Menu writes require an explicitly disposable WordPress.');
     const problems = watch(page);
