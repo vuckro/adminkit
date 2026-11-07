@@ -17,8 +17,6 @@
 		var buildFeatures = window.AdminKitParts && window.AdminKitParts.features ? window.AdminKitParts.features(context) : emptyPanel;
 		var navPart = window.AdminKitParts && window.AdminKitParts.navigation ? window.AdminKitParts.navigation(context) : null;
 		var ICONS = {
-			brand:
-				'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="10.5" r=".9" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".9" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12.5" r=".9" fill="currentColor" stroke="none"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>',
 			plugins:
 				'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v4M15 2v4M7 6h10a1 1 0 0 1 1 1v3a6 6 0 0 1-12 0V7a1 1 0 0 1 1-1zM12 16v6"/></svg>',
 			menu:
@@ -65,6 +63,8 @@
 		state.designSystem.components = { buttons: Object.assign({ highlight: 'always' }, (state.designSystem.components || {}).buttons || {}) };
 
 		state.designSystem.colors = { light: Object.assign({}, state.designSystem.colors && state.designSystem.colors.light), dark: Object.assign({}, state.designSystem.colors && state.designSystem.colors.dark) };
+
+		var savedDesignSystem = JSON.stringify(state.designSystem);
 
 		function exportSettings() {
 			guideMark('export');
@@ -130,8 +130,9 @@
 			v.generic_theming_off = Object.keys(state.genericThemingOff);
 			v.brand_accent = state.brandAccent;
 			v.accent_source = state.accentSource;
-			Object.assign(v, state.appearance);
-			v.design_system = Object.assign({}, state.designSystem);
+			// Hidden foundations are exported, but ordinary tool saves must not rewrite them.
+			if (includeAll) { Object.assign(v, state.appearance); }
+			if (includeAll || JSON.stringify(state.designSystem) !== savedDesignSystem) { v.design_system = Object.assign({}, state.designSystem); }
 			if (D.interfaceDefault) { v.interface_default = state.interfaceDefault; }
 			return v;
 		}
@@ -166,7 +167,7 @@
 				var hide = el('button', { class: 'ak-btn ak-btn--quiet', type: 'button', text: I.pageGuideHide, onclick: function () { guideExpanded = false; guideMark('hidden'); refreshOverview(); overviewPanel.querySelector('.ak-guide-show').focus(); } });
 				var progress = steps.filter(function (key) { return guide[key]; }).length;
 				var list = el('ol', { class: 'ak-guide-steps' });
-				[[I.pageGuideExplore, 'features'], [I.pageGuideConfigure, 'brand'], [I.pageGuideExport, 'configuration']].filter(function (step) { return step[1] !== 'brand' || D.customizationAvailable !== false; }).forEach(function (step, index) {
+				[[I.pageGuideExplore, 'features'], [I.pageGuideConfigure, 'features'], [I.pageGuideExport, 'configuration']].filter(function (step) { return step[1] !== 'brand' || D.customizationAvailable !== false; }).forEach(function (step, index) {
 					list.appendChild(el('li', { class: guide[steps[index]] ? 'is-complete' : '' }, [el('span', { class: 'ak-guide-marker', 'aria-hidden': 'true', text: guide[steps[index]] ? '' : String(index + 1) }), pageLink(step[1], step[0], 'ak-guide-link')]));
 				});
 				overviewPanel.appendChild(el('section', { class: 'ak-guide' }, [el('div', { class: 'ak-guide-head' }, [el('div', {}, [el('h3', { text: I.pageGuideTitle }), el('p', { text: I.pageGuideIntro })]), el('div', { class: 'ak-guide-controls' }, [el('span', { class: 'ak-guide-progress', text: progress + ' / ' + steps.length }), hide])]), list, el('p', { class: 'ak-guide-note', text: I.pageGuideOptional })]));
@@ -175,7 +176,7 @@
 			}
 			overviewPanel.appendChild(el('h3', { class: 'ak-overview-section', text: I.pageCategories }));
 			var categories = el('div', { class: 'ak-overview-groups' });
-			featureGroups().forEach(function (group) {
+			featureGroups().filter(function (group) { return !group.features.some(function (feature) { return feature.key === 'admin_theme_enabled' || feature.key === 'module_login_enabled'; }); }).forEach(function (group) {
 				var link = pageLink('features', '', 'ak-overview-group', '#category=' + encodeURIComponent(group.label));
 				var icon = el('span', { class: 'ak-features-icon', 'aria-hidden': 'true' });
 				// eslint-disable-next-line no-unsanitized/property -- Trusted PHP Lucide SVG icon.
@@ -211,13 +212,12 @@
 		var mainTabs = [
 			{ id: 'overview', label: I.pageOverview, icon: ICONS.menu, build: buildOverview },
 			{ id: 'features', label: I.features, icon: ICONS.plugins, build: buildFeatures },
-			{ id: 'brand', label: I.designSystem, icon: ICONS.brand, build: buildDesign }
+			{ id: 'brand', label: I.plugins, icon: ICONS.plugins, build: buildDesign }
 		];
 		if (navPart || (D.pages && D.pages.navigation)) {
 			mainTabs.push({ id: 'navigation', label: I.navigation || I.menu, icon: ICONS.menu, build: navPart ? navPart.buildNavigation : emptyPanel });
 		}
 
-		mainTabs = mainTabs.filter(function (tab) { return tab.id !== 'brand' || D.customizationAvailable !== false; });
 		mainTabs.push({ id: 'configuration', label: I.pageConfiguration, icon: ICONS.toolbar, build: buildConfiguration });
 		return {
 			tabs: mainTabs,
@@ -227,7 +227,7 @@
 			importSettings: importSettings,
 			onSaved: function (scope, data, response) {
 				if (navPart && navPart.onSaved) { navPart.onSaved(scope, data, response); }
-				if (scope === 'settings') { guideMark('configure'); }
+				if (scope === 'settings') { guideMark('configure'); savedDesignSystem = JSON.stringify(state.designSystem); }
 				if (scope === 'settings' && buildFeatures.acknowledge) { buildFeatures.acknowledge((response && response.values) || data.values || {}); }
 			},
 			onHash: function (rawId) {

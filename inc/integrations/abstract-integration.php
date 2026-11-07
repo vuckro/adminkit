@@ -149,6 +149,10 @@ abstract class AdminKit_Integration_Base {
 		} else {
 			$upper_exclusive = ( (int) $parts[0] ) . '.' . ( (int) $parts[1] + 1 ) . '.0-alpha';
 		}
+		// Treat abbreviated stable versions (3.18) as 3.18.0, not a prerelease.
+		if ( preg_match( '/^\d+(?:\.\d+)?$/', $cur_clean ) ) {
+			$cur_clean .= false === strpos( $cur_clean, '.' ) ? '.0.0' : '.0';
+		}
 		return version_compare( $cur_clean, $upper_exclusive, '<' );
 	}
 
@@ -227,7 +231,7 @@ abstract class AdminKit_Integration_Base {
 		// Top-level items: [ menu_title, cap, menu_slug, ... ].
 		if ( ! empty( $GLOBALS['menu'] ) && is_array( $GLOBALS['menu'] ) ) {
 			foreach ( $GLOBALS['menu'] as $item ) {
-				if ( isset( $item[2], $item[0] ) && $item[2] === $slug ) {
+				if ( isset( $item[2], $item[0] ) && ( $item[2] === $slug || ( isset( $item[5] ) && 'toplevel_page_' . $slug === $item[5] ) ) ) {
 					$title = (string) $item[0];
 					break;
 				}

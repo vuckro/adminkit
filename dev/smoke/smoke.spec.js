@@ -25,6 +25,17 @@ test('public front end emits zero AdminKit markup for anonymous visitors', async
   expect(problems).toEqual([]);
 });
 
+test('anonymous requests cannot read or write AdminKit configuration', async ({ request }) => {
+  const read = await request.get('/wp-json/adminkit/v1/toolbar');
+  expect([401, 403]).toContain(read.status());
+  for (const route of ['settings', 'menu', 'toolbar']) {
+    // An empty body cannot mutate storage even if a permission check regresses.
+    const response = await request.post('/wp-json/adminkit/v1/' + route, { data: {} });
+    expect([401, 403], route + ' must require an authenticated administrator').toContain(response.status());
+    expect((await response.json()).code).toBe('rest_forbidden');
+  }
+});
+
 test('login screen loads without AdminKit errors', async ({ page }) => {
   const problems = watch(page);
   await page.goto('/wp-login.php');
@@ -194,39 +205,53 @@ test.describe('wp-admin', () => {
     }
   });
 
-  test('design page omits wp.media, exposes typography/shape tabs, and persists REST saves across reload', async ({ page }) => {
+  test('simplified theme colors persist without rewriting hidden design foundations', async ({ page }) => {
+    test.skip(process.env.AK_DISPOSABLE !== '1', 'Settings writes require an explicitly disposable WordPress.');
     const problems = watch(page);
     await page.goto('/wp-admin/admin.php?page=adminkit-design');
     await expect(page.locator('#adminkit-app')).not.toHaveAttribute('aria-busy', 'true');
-    expect(await page.evaluate(() => typeof window.wp !== 'undefined' && !!window.wp.media)).toBe(false);
-
-    await page.getByRole('tab', { name: /typograph/i }).first().click();
-    await expect(page.locator('#ak-type-font')).toBeVisible();
-    await expect(page.locator('#ak-type-scale')).toBeVisible();
-
-    await page.getByRole('tab', { name: /shape|forme/i }).first().click();
-    const radiusSelect = page.locator('#ak-shape-radius');
-    await expect(radiusSelect).toBeVisible();
-
-    const originalRadius = await radiusSelect.inputValue();
-    const nextRadius = originalRadius === '0' ? '1' : '0';
-    await radiusSelect.selectOption(nextRadius);
-    const saveBtn = page.locator('.ak-savebar button.ak-btn--primary, .ak-save-bar button.ak-btn--primary, .ak-actions button.ak-btn--primary').first();
-    if (await saveBtn.isVisible()) {
-      await Promise.all([
-        page.waitForResponse((r) => r.url().includes('/adminkit/v1/settings') && r.request().method() === 'POST'),
-        saveBtn.click(),
-      ]);
-      await page.reload();
-      await page.getByRole('tab', { name: /shape|forme/i }).first().click();
-      await expect(page.locator('#ak-shape-radius')).toHaveValue(nextRadius);
-
-      // Restore original setting cleanly.
-      await page.locator('#ak-shape-radius').selectOption(originalRadius);
-      await Promise.all([
-        page.waitForResponse((r) => r.url().includes('/adminkit/v1/settings') && r.request().method() === 'POST'),
-        saveBtn.click(),
-      ]);
+    await expect(page.locator('.ak-panel--plugins')).toBeVisible();
+    await expect(page.locator('#ak-type-font, #ak-type-scale, #ak-shape-radius')).toHaveCount(0);
+    expect(await page.evaluate(() => !!window.wp.media)).toBe(false);
+    const original = await page.evaluate(() => ({
+      design_system: window.AdminKitData.values.design_system,
+      accent_source: window.AdminKitData.values.accent_source,
+      brand_accent: window.AdminKitData.values.brand_accent,
+      admin_theme_enabled: window.AdminKitData.values.admin_theme_enabled
+    }));
+    try {
+      await page.evaluate(original => wp.apiFetch({path:'/adminkit/v1/settings', method:'POST', data:{values:{
+        admin_theme_enabled:true,
+        design_system:Object.assign({}, original.design_system, {
+          type_scale:1.13, radius_scale:1.37,
+          colors:{light:{bg:'#f1f2f3'},dark:{bg:'#112233'}}
+        })
+      }}}), original);
+      await page.goto('/wp-admin/admin.php?page=adminkit-features');
+      await page.locator('.ak-features-item').filter({hasText:/Administration theme/i}).click();
+      await expect(page.locator('.ak-theme-colors input[type="color"]')).toHaveCount(4);
+      await expect(page.locator('#ak-type-font, #ak-type-scale, #ak-shape-radius')).toHaveCount(0);
+      const accent = page.locator('.ak-theme-palette:visible input.ak-palette-hex').first();
+      await accent.fill('#123456');
+      await accent.press('Tab');
+      await page.locator('.ak-feature-dialog-head button').click();
+      const saved = page.waitForResponse(r => r.url().includes('/adminkit/v1/settings') && r.request().method() === 'POST');
+      await Promise.all([page.waitForEvent('load'), page.locator('.ak-savebar button.ak-btn--primary').click()]);
+      expect((await saved).status()).toBe(200);
+      await expect(page.locator('#adminkit-app')).not.toHaveAttribute('aria-busy', 'true');
+      const profile = await page.evaluate(() => window.AdminKitData.designSystem);
+      expect(profile.colors.light.accent).toBe('#123456');
+      expect(profile.colors.light.bg).toBe('#f1f2f3');
+      expect(profile.colors.dark.bg).toBe('#112233');
+      expect(profile.type_scale).toBe(1.13);
+      expect(profile.radius_scale).toBe(1.37);
+      await page.locator('.ak-features-item').filter({hasText:/Administration theme/i}).click();
+      await expect(page.locator('.ak-theme-palette:visible input.ak-palette-hex').first()).toHaveValue('#123456');
+      await page.locator('.ak-feature-dialog-head button').click();
+    } finally {
+      if (!page.isClosed()) {
+        await page.evaluate(values => wp.apiFetch({path:'/adminkit/v1/settings',method:'POST',data:{values}}), original);
+      }
     }
     expect(problems).toEqual([]);
   });

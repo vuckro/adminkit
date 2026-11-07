@@ -45,7 +45,21 @@ class AdminKit_Settings_Page {
 		add_action( 'admin_menu', array( __CLASS__, 'add_submenu' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( ADMINKIT_FILE ), array( __CLASS__, 'plugin_action_links' ) );
 		AdminKit_Settings_Gate::init();
+	}
+
+	/**
+	 * Keep settings reachable directly from the installed plugins list.
+	 *
+	 * @param string[] $links Existing WordPress and third-party actions.
+	 * @return string[]
+	 */
+	public static function plugin_action_links( $links ) {
+		if ( current_user_can( 'manage_options' ) ) {
+			$links = array( 'settings' => '<a href="' . esc_url( admin_url( 'options-general.php?page=' . self::SLUG ) ) . '">' . esc_html__( 'Settings', 'adminkit' ) . '</a>' ) + $links;
+		}
+		return $links;
 	}
 
 	/**
@@ -59,7 +73,7 @@ class AdminKit_Settings_Page {
 		$pages = array(
 			self::SLUG => array( 'overview', __( 'Overview', 'adminkit' ) ),
 			'adminkit-features' => array( 'features', __( 'Features', 'adminkit' ) ),
-			'adminkit-design' => array( 'brand', __( 'Design system', 'adminkit' ) ),
+			'adminkit-design' => array( 'brand', __( 'Plugins', 'adminkit' ) ),
 			'adminkit-navigation' => array( 'navigation', __( 'Navigation', 'adminkit' ) ),
 			'adminkit-configuration' => array( 'configuration', __( 'Configuration', 'adminkit' ) ),
 		);
@@ -81,11 +95,6 @@ class AdminKit_Settings_Page {
 	 * @return void
 	 */
 	public static function render_page() {
-		$screen = get_current_screen();
-		if ( $screen && 'brand' === self::settings_tab( $screen->id ) && ! apply_filters( 'adminkit/customization_available', true ) ) {
-			echo '<div class="wrap"><h1>' . esc_html__( 'Customization paused', 'adminkit' ) . '</h1><p>' . esc_html__( 'Enable the administration theme or the custom login screen to customize their appearance. Your saved design is kept.', 'adminkit' ) . '</p><a href="' . esc_url( admin_url( 'admin.php?page=adminkit-features' ) ) . '">' . esc_html__( 'Features', 'adminkit' ) . '</a></div>';
-			return;
-		}
 		self::render_host( 'main' );
 	}
 
@@ -241,7 +250,7 @@ class AdminKit_Settings_Page {
 				? $parts_for_tab[ $paged_tab ]
 				: array( 'design', 'features', 'plugins', 'navigation' );
 			foreach ( $main_parts as $part ) {
-				if ( 'design' === $part ) {
+				if ( 'features' === $part ) {
 					$colors_js     = 'assets/js/settings/design-colors.js';
 					$colors_handle = $screen_handle . '-design-colors';
 					wp_enqueue_script( $colors_handle, ADMINKIT_URL . $colors_js, array(), self::ver( $colors_js ), true );
@@ -462,7 +471,6 @@ class AdminKit_Settings_Page {
 				'ui_font'              => AdminKit_Settings::get( 'ui_font' ),
 				'remote_fonts_enabled' => (bool) AdminKit_Settings::get( 'remote_fonts_enabled' ),
 			),
-			'fonts'        => AdminKit_Design_System::fonts(),
 			// WaasKit custom-picker seed. The default accent uses native roles. The SPA seeds the swatch
 			// with this when source = 'adminkit' before getComputedStyle resolves.
 			'adminkitBlue' => AdminKit_Assets::ADMINKIT_BLUE,
@@ -475,7 +483,7 @@ class AdminKit_Settings_Page {
 			'i18n'         => AdminKit_Settings_I18n::strings(),
 		);
 		if ( ! $is_main ) {
-			foreach ( array( 'designSystem', 'appearance', 'fonts', 'brandAccent', 'accentSource', 'adminkitBlue', 'bricksConnected', 'features', 'integrations' ) as $key ) {
+			foreach ( array( 'designSystem', 'appearance', 'brandAccent', 'accentSource', 'adminkitBlue', 'bricksConnected', 'features', 'integrations' ) as $key ) {
 				unset( $data[ $key ] );
 			}
 		}

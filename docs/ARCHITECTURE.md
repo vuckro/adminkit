@@ -85,7 +85,7 @@ extra select choices; mounting Design does not mutate them.
 
 ## Settings workspace and writes
 
-The main workspace has Design system, Features and Navigation tabs. Navigation
+The main workspace has Overview, Features, Plugins, Navigation and Configuration tabs. The color editor is inside Features → Administration theme; the design compiler remains internal. Navigation
 contains Menu and Toolbar; disabled features do not fetch or provision their
 storage. Legacy standalone editor host factories remain supported.
 
@@ -233,10 +233,10 @@ worktree, and `dev/check-i18n.php` enforces French typographic apostrophes (`’
 and non-breaking spaces (`\u{00A0}`) before `: ; ? !` and inside `« … »`.
 
 Run `npm ci --prefix dev/smoke` once, then `php dev/test-all.php` (`--fast` skips
-the static-analysis pass during quick iteration). The parallel offline gate (185
+the static-analysis pass during quick iteration). The parallel offline gate (220
 checks) covers PHP/JS syntax, generated tokens, all 23 `dev/check*.php` suites
 (including `check-compliance.php` for GDPR/WP.org rules), editor gating, CSS
-contracts, adapter budgets, 11 jsdom suites, i18n, registry/package integrity, and
+contracts, adapter budgets, 15 jsdom suites, i18n, registry/package integrity, and
 static analysis (**WPCS Security/i18n**, **PHPStan level 5**, **ESLint**, and
 **Stylelint** logical RTL properties). CI (`.github/workflows/ci.yml`) invokes this
 gate across PHP 8.3–8.5 and WordPress 6.0 / latest.
@@ -245,7 +245,7 @@ remain integration checks; a skipped host drift check is not validation.
 
 ### Settings pages inside native WordPress
 
-`AdminKit_Settings_Page` registers Overview, Features, Design system, Navigation and Configuration under the native AdminKit menu. All five share the existing SPA host and REST contracts. The hook-to-pane map selects the initial content; `AdminKitData.pages` supplies native links. No standalone web-app frame is mounted. `assets/css/settings/pages.css` is the content-only override layered after the shared screen styles. The menu manager's pristine snapshot whitelist includes those exact page slugs so its editor works on the new Navigation page. Draft ownership, permissions, nonces, module defaults and saved layouts remain unchanged.
+`AdminKit_Settings_Page` registers one visible Settings → AdminKit workspace. Its sections are Overview, Features, Plugins, Navigation and Configuration. Historical submenu URLs remain hidden aliases with the same `manage_options` permission and SPA/REST contracts. The hook-to-pane map selects the initial content; ordinary navigation preserves the shared draft. No standalone web-app frame is mounted. `assets/css/settings/pages.css` is the content-only override layered after the shared screen styles. The menu manager's pristine snapshot whitelist includes those exact page slugs so its editor works on the new Navigation page. Draft ownership, permissions, nonces, module defaults and saved layouts remain unchanged.
 
 
 Content geometry is scoped to the main settings host: border-box sizing prevents

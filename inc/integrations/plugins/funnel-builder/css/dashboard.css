@@ -1,0 +1,70 @@
+/* Native WordPress widget only; app bundles remain screen-scoped. */
+body.adminkit #funnelkit_widget :is(.bwf-tiles, .bwf-widget-action-box, .bwf-widget-footer),
+body.adminkit #funnelkit_widget .bwf-tiles-item:nth-child(odd)::after,
+body.adminkit #funnelkit_widget .bwf-widget-footer-l a:not(:last-child)::after {
+	border-color: var(--ak-border);
+}
+body.adminkit #funnelkit_widget :is(.bwf-tiles-item, .bwf-tiles-header, .bwf-tiles-value-wrap, .bwf-widget-action-box-title) {
+	color: var(--ak-text);
+}
+body.adminkit #funnelkit_widget :is(.bwf-tiles-secondary-text, .bwf-widget-action-box-subtitle, .bwf-widget-footer) {
+	color: var(--ak-text-muted);
+}
+body.adminkit #funnelkit_widget .bwf-widget-footer a {
+	color: var(--ak-text);
+}
+body.adminkit #funnelkit_widget :is(.bwf-tiles-item, .bwf-widget-footer a):hover {
+	color: var(--ak-heading);
+}
+body.adminkit #funnelkit_widget .bwf-tiles-header svg rect {
+	fill: var(--ak-surface-muted);
+}
+body.adminkit #funnelkit_widget .bwf-tiles-header svg path {
+	fill: var(--ak-text);
+}
+body.adminkit #funnelkit_widget .bwf-tiles-header svg path[stroke] {
+	stroke: var(--ak-text);
+}
+body.adminkit #funnelkit_widget .bwf-widget-action-box-remove svg path {
+	fill: var(--ak-text-muted);
+}
+body.adminkit #funnelkit_widget .bwf-button {
+	background: var(--ak-primary);
+	color: var(--ak-on-accent);
+	border-radius: var(--ak-radius-s);
+	min-height: 44px;
+	height: auto;
+}
+body.adminkit #funnelkit_widget .bwf-button:hover {
+	background: var(--ak-primary-hover);
+	color: var(--ak-on-accent);
+}
+body.adminkit #funnelkit_widget :is(a, button):focus-visible {
+	outline: 2px solid var(--ak-primary);
+	outline-offset: 3px;
+}
+body.adminkit #funnelkit_widget .bwf-tiles-item {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+body.adminkit #funnelkit_widget :is(.bwf-widget-action-box, .bwf-widget-footer) {
+	flex-wrap: wrap;
+}
+body.adminkit #funnelkit_widget .bwf-widget-action-box-r {
+	margin-inline-start: auto;
+}
+@media (max-width: 600px) {
+	body.adminkit #funnelkit_widget .bwf-tiles {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	body.adminkit #funnelkit_widget .bwf-tiles-item:nth-child(odd)::after {
+		display: none;
+	}
+}
+
+body.adminkit #funnelkit_widget .bwf-placeholder-item {
+ background: var(--ak-border);
+}
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit #funnelkit_widget .bwf-placeholder-item { animation: none; }
+}

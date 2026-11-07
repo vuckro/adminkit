@@ -1,0 +1,19 @@
+/* FluentCRM injects toolbar tokens after admin styles. Scope and specificity
+ * keep the lazy search panel on the active palette outside the CRM screen. */
+body.adminkit #wpadminbar li#wp-admin-bar-fcrm_adminbar_search {
+ --fcrm-adminbar-search-bg: var(--ak-surface);
+ --fcrm-adminbar-search-muted-bg: var(--ak-surface-muted);
+ --fcrm-adminbar-search-subtle-bg: var(--ak-surface-muted);
+ --fcrm-adminbar-search-text: var(--ak-text);
+ --fcrm-adminbar-search-secondary-text: var(--ak-text);
+ --fcrm-adminbar-search-muted-text: var(--ak-text-muted);
+ --fcrm-adminbar-search-inverse-text: var(--ak-on-accent);
+ --fcrm-adminbar-search-border: var(--ak-border);
+ --fcrm-adminbar-search-secondary-border: var(--ak-border);
+ --fcrm-adminbar-search-link: var(--ak-primary-text);
+ --fcrm-adminbar-search-radius: var(--ak-radius-m);
+}
+body.adminkit #wpadminbar #wp-admin-bar-fcrm_adminbar_search :is(a, button, input):focus-visible {
+ outline: 2px solid var(--ak-focus);
+ outline-offset: 2px;
+}

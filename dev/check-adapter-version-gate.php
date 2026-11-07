@@ -116,6 +116,11 @@ check_gate(
 	'Wordmark leaked count bubble or raw HTML entities: ' . $wordmark_css
 );
 
+$GLOBALS['menu'][0][2] = 'renamed-host-route';
+$GLOBALS['menu'][0][5] = 'toplevel_page_test-host';
+ob_start();Test_Adapter_Versioned::print_menu_wordmark();$renamed_wordmark=ob_get_clean();
+check_gate(strpos($renamed_wordmark,'AT&T “Orders”')!==false,'Stable menu hook must resolve wordmark after a host rewrites its URL');
+
 echo "OK: adapter version gates (major & major.minor), paused_version_info, maybe_init guard, and wordmark sanitization.\n";
 
 // HappyFiles 1.9 must load the real adapter, while unknown minors stay paused.
@@ -202,3 +207,24 @@ foreach ( array( 'dashboard', 'edit-post', 'plugins_page_my-bwf-tools' ) as $id 
 }
 check_gate( ! AdminKit_Integration_Funnel_Builder::owns_screen( null ), 'Null FunnelKit screen accepted' );
 echo "OK: FunnelKit app, legacy editors and unrelated-screen boundaries.\n";
+
+// Native widget stylesheet must not acquire unrelated screens.
+check_gate( AdminKit_Integration_Funnel_Builder::owns_dashboard( (object) array( 'id' => 'dashboard' ) ), 'Native FunnelKit widget missed' );
+foreach ( array( 'dashboard-network', 'edit-post', 'woofunnels_page_bwf' ) as $id ) {
+ check_gate( ! AdminKit_Integration_Funnel_Builder::owns_dashboard( (object) array( 'id' => $id ) ), 'Widget stylesheet escaped dashboard: ' . $id );
+}
+check_gate( ! AdminKit_Integration_Funnel_Builder::owns_dashboard( null ), 'Null widget screen accepted' );
+
+require dirname(__DIR__).'/inc/integrations/plugins/wp-marketing-automations/class-wp-marketing-automations.php';
+class Test_Funnel_Builder_Host extends AdminKit_Integration_Funnel_Builder {
+ public static $version='3.17.0.1'; protected static function host_version(){return self::$version;}
+}
+class Test_Funnel_Automations_Host extends AdminKit_Integration_Wp_Marketing_Automations {
+ public static $version='3.8.6.2'; protected static function host_version(){return self::$version;}
+}
+check_gate(Test_Funnel_Builder_Host::host_within_tested_range()&&Test_Funnel_Automations_Host::host_within_tested_range(),'Installed FunnelKit versions must be supported');
+Test_Funnel_Builder_Host::$version='3.19';Test_Funnel_Automations_Host::$version='3.9';
+check_gate(!Test_Funnel_Builder_Host::host_within_tested_range()&&!Test_Funnel_Automations_Host::host_within_tested_range(),'Untested FunnelKit minors must retain native UI');
+foreach(array('plugins_page_bwf','toplevel_page_bwf','woofunnels_page_wffn') as $id){check_gate(AdminKit_Integration_Funnel_Builder::owns_screen((object)array('id'=>$id,'post_type'=>'')),'Moved builder screen lost its adapter: '.$id);}
+check_gate(!AdminKit_Integration_Funnel_Builder::owns_screen((object)array('id'=>'plugins','post_type'=>'')),'Builder adapter leaked onto plugin list');
+echo "OK: FunnelKit host ranges, rewritten/moved routes and native fallbacks.\n";

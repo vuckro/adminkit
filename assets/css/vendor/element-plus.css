@@ -148,3 +148,8 @@ body.adminkit :is(.el-input,.el-textarea,.el-select) :is(.el-input__inner,.el-te
 body.adminkit :is(.el-input,.el-textarea,.el-select) :is(.el-input__inner,.el-textarea__inner,.el-select__input):disabled {
  color:var(--ak-text-disabled);
 }
+
+/* Shared cards use the surface role, not the floating-overlay shadow. */
+body.adminkit .el-card { background-color: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); }
+body.adminkit .el-card .el-card { box-shadow: none; }
+body.adminkit .el-card__header { border-color: var(--ak-border); }

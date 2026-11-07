@@ -23,6 +23,11 @@ class AdminKit_Integration_Wp_Marketing_Automations extends AdminKit_Integration
 		return defined( 'BWFAN_VERSION' );
 	}
 
+	/** @return string Verified host minor series; newer minors fall back to native UI. */
+	protected static function max_tested_host_version() {
+		return '3.8';
+	}
+
 	protected static function host_version() {
 		return defined( 'BWFAN_VERSION' ) ? BWFAN_VERSION : null;
 	}

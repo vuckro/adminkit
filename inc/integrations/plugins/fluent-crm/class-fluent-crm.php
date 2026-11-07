@@ -110,6 +110,13 @@ class AdminKit_Integration_Fluent_Crm extends AdminKit_Integration_Base {
 		if ( ! static::host_within_tested_range() ) {
 			return;
 		}
+		// The toolbar search is rendered on every admin screen, outside the SPA.
+		AdminKit_Assets::register( array(
+			'handle'  => 'adminkit-fluent-crm-search',
+			'src'     => 'inc/integrations/plugins/fluent-crm/css/adminbar-search.css',
+			'deps'    => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context' => 'admin',
+		) );
 		AdminKit_Assets::register( array(
 			'handle'    => 'adminkit-fluent-crm-admin',
 			'src'       => 'inc/integrations/plugins/fluent-crm/css/admin.css',
