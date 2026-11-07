@@ -608,7 +608,7 @@ body.adminkit .community-events-footer,
 body.adminkit #activity-widget #the-comment-list .comment-item:first-child,
 body.adminkit #future-posts li,
 body.adminkit #published-posts li,
-body.adminkit .js #dashboard_quick_press .drafts,
+body.adminkit.js #dashboard_quick_press .drafts,
 body.adminkit #dashboard_activity .subsubsub,
 body.adminkit #dashboard_right_now .sub {
 	border-color: var(--ak-border);

@@ -202,3 +202,10 @@ foreach ( array( 'dashboard', 'edit-post', 'plugins_page_my-bwf-tools' ) as $id 
 }
 check_gate( ! AdminKit_Integration_Funnel_Builder::owns_screen( null ), 'Null FunnelKit screen accepted' );
 echo "OK: FunnelKit app, legacy editors and unrelated-screen boundaries.\n";
+
+// Native widget stylesheet must not acquire unrelated screens.
+check_gate( AdminKit_Integration_Funnel_Builder::owns_dashboard( (object) array( 'id' => 'dashboard' ) ), 'Native FunnelKit widget missed' );
+foreach ( array( 'dashboard-network', 'edit-post', 'woofunnels_page_bwf' ) as $id ) {
+ check_gate( ! AdminKit_Integration_Funnel_Builder::owns_dashboard( (object) array( 'id' => $id ) ), 'Widget stylesheet escaped dashboard: ' . $id );
+}
+check_gate( ! AdminKit_Integration_Funnel_Builder::owns_dashboard( null ), 'Null widget screen accepted' );
