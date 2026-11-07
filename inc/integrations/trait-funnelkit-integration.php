@@ -31,7 +31,7 @@ trait AdminKit_FunnelKit_Integration {
 	abstract protected static function funnelkit_menu_icon();
 
 	/**
-	 * Both FunnelKit hosts are verified against their 3.x branch.
+	 * Fallback major range; concrete adapters pin the inspected host minor series.
 	 *
 	 * @return string
 	 */
@@ -81,6 +81,7 @@ trait AdminKit_FunnelKit_Integration {
 				'adminkit-funnelkit-keyboard',
 				'inc/integrations/plugins/funnel-builder/js/shared.js'
 			);
+			wp_localize_script( 'adminkit-funnelkit-keyboard', 'AdminKitFunnelKitLabels', array( 'close' => __( 'Close', 'adminkit' ) ) );
 		}
 	}
 
@@ -144,5 +145,15 @@ trait AdminKit_FunnelKit_Integration {
 				'condition' => array( static::class, 'owns_screen' ),
 			)
 		);
+		AdminKit_Assets::register(
+			array(
+				'handle'    => $prefix . '-components',
+				'src'       => 'inc/integrations/plugins/funnel-builder/css/components.css',
+				'deps'      => array( $prefix . '-controls' ),
+				'context'   => 'admin',
+				'condition' => array( static::class, 'owns_screen' ),
+			)
+		);
+
 	}
 }

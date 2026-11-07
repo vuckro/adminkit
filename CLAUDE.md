@@ -11,10 +11,10 @@ Keep changes simple, explicit, predictable and compatible with PHP 8.3+ / WordPr
   - **Menu (`inc/features/menu/`)**: `AdminKit_Menu_Manager` (public facade, hooks, REST), `AdminKit_Menu_Config` (URL/item normalization, composite `parent::slug` keys, `seen_order`), `AdminKit_Menu_Snapshot` (pristine `$menu`/`$submenu` capture across all 5 AdminKit screens), `AdminKit_Menu_Renderer` (badge-preserving application, cross-parent `$_parent_pages`/`$_registered_pages` hook remapping with role fallback, custom icons/tooltips), and `AdminKit_Menu_Store` (InnoDB & SQLite transactional table storage).
   - **Toolbar (`inc/features/toolbar/`)**: `AdminKit_Toolbar_Manager` (public facade), `AdminKit_Toolbar_Config`, `AdminKit_Toolbar_Snapshot` (hash-deduplicated transient capture + `my-account` anonymization), and `AdminKit_Toolbar_Renderer` (`<head>` CSS hydration from saved config with zero FOUC).
   - **Notifications (`inc/features/notifications/`)**: `AdminKit_Notification_Center` (buffers notice hooks into `#adminkit-nc-origin`; `notification-center.js` moves non-feedback notices into an accessible side drawer with background `inert`).
-- **`inc/integrations/{plugins,themes}/{slug}/`**: Auto-discovered via a memoized manifest in `AdminKit_Plugin`. `AdminKit_Integration_Base::maybe_init()` centrally enforces `host_within_tested_range()` (major/minor `version_compare`) before `register_assets()`, `boot()` and `print_menu_wordmark()`, and surfaces a *Skin paused* badge in *Design system → Plugins* when a host exceeds its tested range. Element Plus hosts share `AdminKit_Assets::ELEMENT_PLUS_HANDLE` (`assets/css/vendor/element-plus.css`); FunnelKit hosts share `AdminKit_FunnelKit_Integration` (`inc/integrations/trait-funnelkit-integration.php`).
+- **`inc/integrations/{plugins,themes}/{slug}/`**: Auto-discovered via a memoized manifest in `AdminKit_Plugin`. `AdminKit_Integration_Base::maybe_init()` centrally enforces `host_within_tested_range()` (major/minor `version_compare`) before `register_assets()`, `boot()` and `print_menu_wordmark()`, and surfaces a *Skin paused* badge in *AdminKit → Plugins* when a host exceeds its tested range. Element Plus hosts share `AdminKit_Assets::ELEMENT_PLUS_HANDLE` (`assets/css/vendor/element-plus.css`); FunnelKit hosts share `AdminKit_FunnelKit_Integration` (`inc/integrations/trait-funnelkit-integration.php`).
 - **`inc/class-assets.php` & `inc/class-design-system.php`**: Owns style registration, `enqueue_script()`, and `print_prepaint()` anti-FOUC inline scripts. Respects `adminkit/should_load` everywhere and emits **zero markup, scripts or CSS on anonymous public views** (`!is_admin_bar_showing()`). Remote Google Fonts are gated behind explicit opt-in (`remote_fonts_enabled`, default `false`) and never load on `wp-login.php`.
 - **`inc/class-icons.php` & `inc/generated/lucide-paths.php`**: `AdminKit_Icons` validates custom SVGs (canonical XML via `DOMDocument::saveXML()`), Dashicon glyph tables, and reads the OPcache-compiled `inc/generated/lucide-paths.php` map (2,275 Lucide icons). The Icon Picker fetches the catalog lazily via `/adminkit/v1/icons` (`assets/icons/lucide.json`).
-- **`inc/settings/` & `assets/js/settings/`**: `AdminKit_Settings` (schema), `AdminKit_Settings_Catalog`, `AdminKit_Settings_Gate` (memoized per-screen & cached `get_plugins()`), `AdminKit_Settings_I18n` (localized UI dictionary), and `AdminKit_Settings_Page` (5 native WP submenu pages: Overview, Features, Design system, Navigation, Configuration). When `AdminKitData.pages` is present, only the active page's JS factories and boot data slices are loaded; when `pages === null` (legacy/offline test host), the full payload is provided.
+- **`inc/settings/` & `assets/js/settings/`**: `AdminKit_Settings` (schema), `AdminKit_Settings_Catalog`, `AdminKit_Settings_Gate` (memoized per-screen & cached `get_plugins()`), `AdminKit_Settings_I18n` (localized UI dictionary), and `AdminKit_Settings_Page` (one Settings → AdminKit SPA: Overview, Features, Plugins, Navigation, Configuration; hidden legacy submenu URLs). When `AdminKitData.pages` is present, only the active page's JS factories and boot data slices are loaded; when `pages === null` (legacy/offline test host), the full payload is provided.
 - **Tokens (`tokens/`)**: Source palettes live in `tokens/palettes/waaskit.json` and `tokens/adminkit.json`. Run `php tokens/build.php` to regenerate `assets/css/waaskit-tokens.css`, `assets/css/waaskit-toolbar-tokens.css` and `assets/css/tokens.css`. Never hand-edit generated CSS.
 
 ## Non-Negotiable Guardrails
@@ -40,7 +40,7 @@ Keep changes simple, explicit, predictable and compatible with PHP 8.3+ / WordPr
 
 ```sh
 npm ci --prefix dev/smoke
-php dev/test-all.php          # Full gate: 185 checks in ~7.5s
+php dev/test-all.php          # Full gate: 220 checks in ~7.5s
 php dev/test-all.php --fast   # Skip heavy static analysis pass during rapid iteration
 ```
 
@@ -49,7 +49,7 @@ php dev/test-all.php --fast   # Skip heavy static analysis pass during rapid ite
 2. Token build drift (`php tokens/build.php --check`)
 3. All 23 regression & compliance scripts (`dev/check-*.php`, `dev/editor-gate-check.php`)
 4. CSS contracts & adapter budgets (`dev/css-contract.php`, `dev/adapter-audit.php`)
-5. All 11 JSDOM behavioral suites (`dev/smoke/*.test.js`)
+5. All 15 JSDOM behavioral suites (`dev/smoke/*.test.js`)
 6. Static analysis: **WPCS Security & i18n** (`.phpcs.xml.dist`), **PHPStan level 5** (`phpstan.neon.dist`), **ESLint** (`dev/smoke/eslint.config.js`), and **Stylelint** (`dev/smoke/.stylelintrc.json`)
 
 Live host drift and browser E2E checks:

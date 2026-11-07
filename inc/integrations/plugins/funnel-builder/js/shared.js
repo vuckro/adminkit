@@ -7,7 +7,7 @@
  var labelId = 0;
  function sync() {
   scheduled = false;
-  var groups = new Set(document.querySelectorAll('.bwf--settings-tab-list, .bwf--settings-subtab-list, .bwf-advance-toggle'));
+  var groups = new Set(document.querySelectorAll('.bwf--settings-tab-list, .bwf--settings-subtab-list, .bwf-tab-section-wrap, .bwf-advance-toggle'));
   document.querySelectorAll('.bwf-tab-item').forEach(function (item) { groups.add(item.parentElement); });
   document.querySelectorAll('.bwf-input-label, .bwf-checkbox-control__label').forEach(function (label) {
    var container = label.classList.contains('bwf-checkbox-control__label') ? label.closest('.bwf-checkbox-control') : label.parentElement;
@@ -17,10 +17,11 @@
    if (!label.id) label.id = 'ak-funnelkit-label-' + (++labelId);
    input.setAttribute('aria-labelledby', label.id);
   });
-  document.querySelectorAll('.bwf-clear-text, .bwf-info-empty-value, .bwf-c-s-tag-add, .bwf-modal-close, .bwf-filter__tag, .bwf-dashboard-banner span.bwf-link, .bwf-announcements__icon, .bwf-announcements__header-close').forEach(function (action) {
+  document.querySelectorAll('.bwf-clear-text, .bwf-info-empty-value, .bwf-c-s-tag-add, .bwf-modal-close, .bwf-notification-close, .bwf-filter__tag, .bwf-dashboard-banner span.bwf-link, .bwf-announcements__icon, .bwf-announcements__header-close').forEach(function (action) {
    if (action.closest('button, a[href]') || action.hasAttribute('role')) return;
    action.setAttribute('role', 'button'); action.tabIndex = 0;
    action.setAttribute('data-ak-funnelkit-action', '');
+   if (action.classList.contains('bwf-notification-close') && !action.hasAttribute('aria-label') && window.AdminKitFunnelKitLabels) { action.setAttribute('aria-label', window.AdminKitFunnelKitLabels.close); }
    if (action.classList.contains('bwf-modal-close')) {
     var modal = action.closest('.components-modal__frame');
     var nativeClose = modal && modal.querySelector('.components-modal__header button[aria-label]');
@@ -81,13 +82,13 @@
    var tabs = !group.classList.contains('bwf-advance-toggle');
    group.setAttribute('role', tabs ? 'tablist' : 'group');
    var items = Array.from(group.children).filter(function (item) {
-    return tabs ? item.matches('.tab--title, .subtab--title, .bwf-tab-item') : item.tagName === 'SPAN';
+    return tabs ? item.matches('.tab--title, .subtab--title, .bwf-tab-item, .bwf-tab-section-item') : item.tagName === 'SPAN';
    });
    items.forEach(function (item, index) {
-    var selected = item.classList.contains('active--tab') || item.classList.contains('bwf-active') || item.classList.contains('active-tab');
+    var selected = item.classList.contains('active--tab') || item.classList.contains('bwf-active') || item.classList.contains('active-tab') || item.classList.contains('active');
     item.setAttribute('role', tabs ? 'tab' : 'button');
     item.setAttribute(tabs ? 'aria-selected' : 'aria-pressed', String(selected));
-    item.tabIndex = selected || (!items.some(function (el) { return el.classList.contains('active--tab') || el.classList.contains('bwf-active') || el.classList.contains('active-tab'); }) && index === 0) ? 0 : -1;
+    item.tabIndex = selected || (!items.some(function (el) { return el.classList.contains('active--tab') || el.classList.contains('bwf-active') || el.classList.contains('active-tab') || el.classList.contains('active'); }) && index === 0) ? 0 : -1;
    });
   });
  }
@@ -121,7 +122,7 @@
   if (action && event.target === action && (event.key === 'Enter' || event.key === ' ')) {
    event.preventDefault(); action.click(); return;
   }
-  var item = event.target.closest('.tab--title, .subtab--title, .bwf-tab-item, .bwf-advance-toggle > span');
+  var item = event.target.closest('.tab--title, .subtab--title, .bwf-tab-item, .bwf-tab-section-item, .bwf-advance-toggle > span');
   if (!item || event.altKey || event.ctrlKey || event.metaKey) return;
   var items = Array.from(item.parentElement.children).filter(function (el) { return el.matches('[role=tab], [role=button]'); });
   var index = items.indexOf(item), next = index;

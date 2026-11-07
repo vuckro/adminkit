@@ -51,9 +51,9 @@ html body.adminkit.toplevel_page_fluent-booking {
 	--fcal-info-bg: var( --ak-info-subtle );
 	--fcal-info-line: var( --ak-info );
 	--fcal-info-fg: var( --ak-info );
-	--fcal-shadow-card: none;
+	--fcal-shadow-card: var(--ak-card-shadow);
 	--fcal-shadow-lift: none;
-	--fcal-shadow-pop: none;
+	--fcal-shadow-pop: var(--ak-shadow-elevated);
 
 	/* --- FluentBooking's own --fcal-* layer --- */
 
@@ -1355,3 +1355,9 @@ html body.adminkit.toplevel_page_fluent-booking {
 	--fcal-switch-track: var(--ak-border-strong);
 	--fcal-text-placeholder: var(--ak-text-subtle);
 }
+
+/* Shared surface roles: outer contour/contact shadow; inner rows stay flat. */
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app :is(.fcal_dashboard_box, .fcal_schedule_event_infos, .fcal_booking_activities, .fcal_card_items),
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_dashboard_overview .overview-widgets .overview-widget { background-color: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); }
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_card_items .fcal_card_item { border-radius: 0; box-shadow: none; }
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app :is(.fcal_dashboard_box, .fcal_schedule_event_infos) .fcal_booking_activities { border: 0; border-radius: 0; box-shadow: none; }

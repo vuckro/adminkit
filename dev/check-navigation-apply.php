@@ -267,3 +267,28 @@ $renderer_ab->setValue(null,array('wp-admin-bar-query-monitor'=>true));
 $bar_showing=true;
 ob_start();AdminKit_Toolbar_Renderer::print_css();$css=ob_get_clean();
 check(substr_count($css,'#wp-admin-bar-query-monitor > .ab-item > .ab-icon{display:none !important}')===2,'Custom anchor icon duplicates native touch glyph');
+
+// FunnelKit rewrites its title and URL late; the page hook stays stable.
+AdminKit_Menu_Store::$config=array('top'=>array(array('slug'=>'woofunnels','title'=>'Tunnels de vente')));
+$menu=array(20=>array('FunnelKit','manage_options','woofunnels','FunnelKit','','toplevel_page_woofunnels'));$submenu=array();
+AdminKit_Menu_Renderer::apply();
+$menu[20][0]='FunnelKit <span class="update-plugins"><span class="plugin-count">2</span></span>';
+$menu[20][2]='bwf';
+AdminKit_Menu_Renderer::restore_titles();
+check(strpos($menu[20][0],'Tunnels de vente')===0,'Late host rename overrides custom menu title');
+check(strpos($menu[20][0],'plugin-count')!==false,'Late badge lost');
+check($menu[20][2]==='bwf'&&count($menu)===1,'Restoring titles changed menu routing/structure');
+echo "OK: late host title rewrites preserve custom labels, badges and routing.\n";
+
+// Integration defaults use #adminmenu #toplevel_page_bricks; custom icons must win.
+AdminKit_Menu_Store::$config=array('top'=>array(array('slug'=>'bricks','icon'=>'blocks')));
+$menu=array(20=>array('Bricks','manage_options','bricks','Bricks','','toplevel_page_bricks','none'));$submenu=array();
+AdminKit_Menu_Renderer::apply();
+ob_start();AdminKit_Menu_Renderer::print_css();$css=ob_get_clean();
+check(strpos($css,'#adminmenu #toplevel_page_bricks.ak-mi-1 .wp-menu-image::before')!==false,'Custom menu icon does not outrank integration default');
+echo "OK: configured menu icons outrank integration defaults using stable menu IDs.\n";
+
+AdminKit_Menu_Store::$config=array('top'=>array(array('slug'=>'wc-admin&path=/analytics/overview','icon'=>'chart-spline')));
+$menu=array(20=>array('Statistics','manage_options','wc-admin&path=/analytics/overview','Statistics','','toplevel_page_wc-admin&path=/analytics/overview','none'));$submenu=array();
+AdminKit_Menu_Renderer::apply();ob_start();AdminKit_Menu_Renderer::print_css();$css=ob_get_clean();
+check(strpos($css,'#adminmenu #toplevel_page_wc-admin-path--analytics-overview.ak-mi-1 .wp-menu-image::before')!==false,'WooCommerce menu ID does not match WordPress sanitization');

@@ -25,6 +25,17 @@ test('public front end emits zero AdminKit markup for anonymous visitors', async
   expect(problems).toEqual([]);
 });
 
+test('anonymous requests cannot read or write AdminKit configuration', async ({ request }) => {
+  const read = await request.get('/wp-json/adminkit/v1/toolbar');
+  expect([401, 403]).toContain(read.status());
+  for (const route of ['settings', 'menu', 'toolbar']) {
+    // An empty body cannot mutate storage even if a permission check regresses.
+    const response = await request.post('/wp-json/adminkit/v1/' + route, { data: {} });
+    expect([401, 403], route + ' must require an authenticated administrator').toContain(response.status());
+    expect((await response.json()).code).toBe('rest_forbidden');
+  }
+});
+
 test('login screen loads without AdminKit errors', async ({ page }) => {
   const problems = watch(page);
   await page.goto('/wp-login.php');

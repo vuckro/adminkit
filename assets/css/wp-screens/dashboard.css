@@ -1,0 +1,11 @@
+/* Rank Math dashboard widget; host actions remain native. */
+body.adminkit #rank_math_dashboard_widget .hndle .rank-math-icon svg { fill: currentColor; }
+body.adminkit #rank_math_dashboard_widget .rank-math-dashboard-block > div {
+ border-color: var(--ak-border);
+ background: var(--ak-surface-muted);
+}
+body.adminkit #rank_math_dashboard_widget :is(.text-large, .rank-math-dashboard-block > div h4) { color: var(--ak-text); }
+body.adminkit #rank_math_dashboard_widget :is(.rank-math-item-difference, .rank-math-tooltip, h3 a i) { color: var(--ak-text-muted); }
+body.adminkit #rank_math_dashboard_widget .rank-math-tooltip > span { background: var(--ak-text); color: var(--ak-surface); }
+body.adminkit #rank_math_dashboard_widget .rank-math-tooltip > span::after { border-block-start-color: var(--ak-text); }
+body.adminkit #rank_math_dashboard_widget .rank-math-widget-footer { border-color: var(--ak-border); }

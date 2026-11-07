@@ -73,7 +73,7 @@ body.adminkit .wp-list-table :is(thead, tfoot) :is(th, td) {
 	vertical-align: middle;
 }
 body.adminkit .wp-list-table :is(thead, tfoot) th:is(.sortable, .sorted) { padding: 0; }
-body.adminkit .wp-list-table :is(thead, tfoot) th a {
+body.adminkit .wp-list-table :is(thead, tfoot) th > a {
 	display: flex;
 	align-items: center;
 	gap: calc(4px * var(--ak-space-scale, 1));
@@ -83,7 +83,7 @@ body.adminkit .wp-list-table :is(thead, tfoot) th a {
 	color: inherit;
 	border-radius: var(--ak-radius-s);
 }
-body.adminkit .wp-list-table :is(thead, tfoot) th a:hover {
+body.adminkit .wp-list-table :is(thead, tfoot) th > a:hover {
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
 }

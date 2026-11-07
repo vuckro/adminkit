@@ -54,3 +54,10 @@ $enqueued = array( 'rank-math-post-bulk-edit' );
 check_rank_math( call_user_func( $columns['condition'], (object) array( 'base' => 'edit' ) ), 'Host columns lost their header styling' );
 check_rank_math( ! call_user_func( $columns['condition'], (object) array( 'base' => 'post' ) ), 'Column bundle leaked to editor' );
 echo "OK: Rank Math host pages, moved pages, editor/list/widget assets and isolation.\n";
+
+// Discovery must not reintroduce a competing adapter for the same native host.
+$rank_hosts = array();
+foreach ( glob( dirname( __DIR__ ) . '/inc/integrations/plugins/*/class-*.php' ) as $file ) {
+ if ( false !== strpos( file_get_contents( $file ), "'seo-by-rank-math/rank-math.php'" ) ) { $rank_hosts[] = $file; }
+}
+check_rank_math( 1 === count( $rank_hosts ), 'Duplicate Rank Math host adapters would compete at runtime' );

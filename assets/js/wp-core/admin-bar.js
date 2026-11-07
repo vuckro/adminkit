@@ -5,6 +5,15 @@
 	var toolbar = document.getElementById('wp-toolbar');
 	var data = window.AdminKitMobileBar || {};
 	if (!bar || !toolbar || !data.more) { return; }
+	// WP groups are emitted in registration order; saved nodes can register the
+	// secondary group first. Keep DOM and keyboard order aligned with left/right.
+	var primary = document.getElementById('wp-admin-bar-root-default');
+	var secondary = document.getElementById('wp-admin-bar-top-secondary');
+	if (primary && secondary && primary.parentNode === toolbar && secondary.parentNode === toolbar &&
+		(primary.compareDocumentPosition(secondary) & Node.DOCUMENT_POSITION_PRECEDING)) {
+		toolbar.insertBefore(primary, secondary);
+	}
+
 	// Frontend: one rail at every width; pin identity/tools and scroll native commands.
 	if (!data.admin) {
 		function alignDiagnostic() {
@@ -17,8 +26,6 @@
 		}
 		new MutationObserver(alignDiagnostic).observe(toolbar, { childList:true, subtree:true });
 		alignDiagnostic();
-		var primary = document.getElementById('wp-admin-bar-root-default');
-		var secondary = document.getElementById('wp-admin-bar-top-secondary');
 		var brand = document.createElement('ul');
 		brand.className = 'ab-top-menu ak-front-bar-brand';
 		brand.setAttribute('role', 'menu');

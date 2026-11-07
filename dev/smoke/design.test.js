@@ -6,7 +6,7 @@ const { JSDOM } = require('jsdom');
 const root = path.resolve(__dirname, '../..');
 const base = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json')));
 function boot(source, native = false, overrides = {}) {
- const dom = new JSDOM('<div id="adminkit-app"></div>', { url:'http://localhost/#brand',runScripts:'outside-only',pretendToBeVisual:true });
+ const dom = new JSDOM('<div id="adminkit-app"></div>', { url:'http://localhost/#features',runScripts:'outside-only',pretendToBeVisual:true });
  const w=dom.window;
  const data=JSON.parse(JSON.stringify(base));
  if(native){data.interfaceMode='wordpress';data.interfaceDefault='adminkit';data.profileUrl='/wp-admin/profile.php';}
@@ -14,6 +14,7 @@ function boot(source, native = false, overrides = {}) {
  data.values={ logo_url:'https://example.test/logo.svg',integration_hidden_enabled:false,extension_key:'keep' };
  data.designSystem={ type_scale:1.13,radius_scale:1.37,colors:{light:{bg:'#abcdef',accent:'#ffffff'},dark:{bg:'#112233'}} };
  if(source==='bricks'){w.document.documentElement.style.setProperty('--accent','#224466');w.document.documentElement.style.setProperty('--accent-hover','#335577');}
+ data.features.push({key:'admin_theme_enabled',label:'Administration theme',group:'Appearance',value:true,default:true,bulk:false,options:[]});
  Object.assign(data,overrides);
  w.AdminKitData=data; w.matchMedia=()=>({matches:false,addEventListener(){}});
  w.HTMLCanvasElement.prototype.getContext=()=>({ fillRect(){},getImageData(){return {data:[0,0,0,255]};} });
@@ -33,9 +34,14 @@ function boot(source, native = false, overrides = {}) {
 for(const source of ['monochrome','adminkit','bricks','custom']) {
  const t=boot(source); const w=t.w, state=w.auditState;
  await new Promise(resolve=>w.requestAnimationFrame(resolve));
+ w.document.querySelectorAll('.ak-features-item').forEach(n=>{if(n.textContent.includes('Administration theme'))n.click();});
  assert.equal(state.designSystem.type_scale,1.13);assert.equal(state.designSystem.radius_scale,1.37);
  const frames=[...w.document.querySelectorAll('.ak-palette-theme.ak-bp__frame')];
- assert.ok(frames.length>=2);
+ assert.equal(frames.length,2);
+ assert.equal(w.document.querySelectorAll('.ak-color-probes input').length,0,'edited palette must never theme interactive controls');
+ assert.equal(w.document.querySelector('.ak-theme-palette').style.getPropertyValue('--wk-bg'),'','editor keeps the current interface palette');
+ assert.equal(w.document.querySelectorAll('.ak-theme-palette input[type=color]').length,4);
+ assert.equal(w.document.querySelector('#ak-type-scale'),null);
  for(const frame of frames) {
   assert.equal(!!frame.style.getPropertyValue('--wk-bg'),source==='custom','inactive custom colors leaked for '+source);
  }
@@ -44,25 +50,32 @@ for(const source of ['monochrome','adminkit','bricks','custom']) {
   assert.equal(frames[0].style.getPropertyValue('--wk-on-accent'),'#000000','per-mode accent determines automatic foreground');
   assert.equal(frames[0].style.getPropertyValue('--wk-accent-hover'),'#ffffff','derived hover follows the active palette foreground');
   assert.equal(frames[1].style.getPropertyValue('--wk-accent-hover'),'#0f2b47','dark custom hover matches server compiler');
-  const hex=w.document.querySelector('.ak-accent-inline__hex');
+  const hex=w.document.querySelector('#ak-palette-light-accent').parentElement.querySelector('.ak-palette-hex');
   hex.value='#154';hex.dispatchEvent(new w.Event('input'));
   assert.equal(state.brandAccent,'#123456','typing 3-digit prefix must not prematurely overwrite accent');
   assert.equal(state.designSystem.colors.light.accent,'#ffffff','typing 3-digit prefix must not erase custom palette overrides');
   hex.value='#abc';hex.dispatchEvent(new w.Event('change'));
-  assert.equal(state.brandAccent,'#aabbcc','3-digit hex expands to 6-digit on change');
+  assert.equal(state.designSystem.colors.light.accent,'#aabbcc','3-digit hex expands to 6-digit on change');
   hex.value='#123456';hex.dispatchEvent(new w.Event('input'));
-  hex.value='#oops';hex.dispatchEvent(new w.Event('input'));
+  hex.value='#oops';hex.dispatchEvent(new w.Event('change'));
   assert.equal(state.brandAccent,'#123456','invalid text changed last valid accent');
-  w.document.querySelector('.ak-accent-inline [role=radio]').click();
+  var sourceSelect=w.document.querySelector('.ak-theme-color-source');sourceSelect.value='monochrome';sourceSelect.dispatchEvent(new w.Event('change'));
   assert.equal(state.brandAccent,'#123456','source change erased saved accent');
   assert.equal(hex.getAttribute('aria-invalid'),null);
+  assert.equal(frames[0].style.getPropertyValue('--wk-bg'),'','inactive legacy custom colors must leave the preview');
+  assert.equal(state.designSystem.colors.light.bg,'#abcdef','source changes preserve hidden palette roles');
  }
+ const beforeBg=state.designSystem.colors.light.bg;
+ w.document.querySelector('.ak-theme-palette .ak-palette-header button').click();
+ assert.equal(state.designSystem.colors.light.bg,beforeBg,'reset visible colors must preserve hidden roles');
  w.auditSurface.exportSettings();
  assert.equal(t.exported._adminkit,'settings');
  assert.equal(t.exported.values.logo_url,'https://example.test/logo.svg');
  assert.equal(t.exported.values.integration_hidden_enabled,false);
  assert.equal(t.exported.values.extension_key,'keep');
  assert.equal(t.exported.values.design_system.type_scale,1.13);
+ assert.equal(t.exported.values.design_system.radius_scale,1.37);
+ assert.equal(w.auditSurface.requests().settings.data.values.ui_font,undefined,'hidden typography must not be rewritten by ordinary saves');
  assert.equal(w.auditSurface.requests().settings.data.values.logo_url,undefined,'normal save must not overwrite General Settings logo');
  t.dom.window.close();
 }
@@ -100,6 +113,11 @@ sd.querySelectorAll('.ak-features-bulk button')[1].click();
 assert.equal(statusCase.w.auditState.features.admin_theme_enabled,true,'Bulk tools action disabled the theme');
 assert.equal(statusCase.w.auditState.features.notification_center_enabled,false,'Bulk tools action missed a tool');
 statusCase.dom.window.close();
+const paused=boot('monochrome',true,{customizationAvailable:false,adminThemeEnabled:false});
+assert.ok(paused.w.document.getElementById('ak-tab-brand'),'Extensions remain reachable with appearance disabled');
+paused.w.document.getElementById('ak-tab-overview').click();
+assert.ok(![...paused.w.document.querySelectorAll('.ak-overview-group')].some(n=>n.textContent.includes('Appearance')),'Overview omits appearance category');
+paused.dom.window.close();
 const native=boot('monochrome',true);
 await new Promise(resolve=>native.w.requestAnimationFrame(resolve));
 assert.equal(native.w.document.documentElement.style.cssText,'','native design editor must not modify global appearance');

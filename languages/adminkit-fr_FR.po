@@ -142,10 +142,6 @@ msgstr "Toutes"
 msgid "Allow administrators to rename a user login on Users → Edit (single-site only; signs the user out)."
 msgstr "Permet aux administrateurs de modifier un identifiant dans Utilisateurs → Modifier (site unique uniquement ; déconnecte l’utilisateur)."
 
-#: inc/settings/class-settings-i18n.php
-msgid "Always"
-msgstr "Permanent"
-
 #: inc/settings/class-settings-catalog.php
 msgid "Appearance"
 msgstr "Apparence"
@@ -153,10 +149,6 @@ msgstr "Apparence"
 #: inc/wp-core/class-profile-account.php
 msgid "Application passwords"
 msgstr "Mots de passe d’application"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Applies after saving changes."
-msgstr "S’applique après l’enregistrement des modifications."
 
 #: inc/settings/class-settings-i18n.php
 msgid "Applies to accounts following the site default. Each person can choose their own interface in their profile. Enabled tools and saved settings are kept."
@@ -177,18 +169,6 @@ msgstr "À votre rythme. Ces étapes sont facultatives."
 #: inc/wp-core/class-options-discussion.php
 msgid "Avatars"
 msgstr "Avatars"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Back to features"
-msgstr "Retour aux fonctionnalités"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Background"
-msgstr "Fond"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Border"
-msgstr "Bordure"
 
 #: inc/settings/class-settings-i18n.php
 msgid "Brand color"
@@ -213,10 +193,6 @@ msgstr "Publication de ses propres articles"
 #: inc/wp-core/class-user-quick-edit.php inc/wp-core/class-username-changer.php
 msgid "Cancel"
 msgstr "Annuler"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Card"
-msgstr "Carte"
 
 #: inc/wp-core/class-username-changer.php
 msgid "Change username"
@@ -252,10 +228,6 @@ msgstr "Choisir une section"
 msgid "Choose an icon"
 msgstr "Choisir une icône"
 
-#: inc/settings/class-settings-i18n.php
-msgid "Choose colors for light and dark. Custom lets you choose the accent and edit each palette color. Save to apply your changes."
-msgstr "Choisissez les couleurs en clair et en sombre. Personnalisé permet de choisir l’accent et de modifier chaque couleur de la palette. Enregistrez pour appliquer vos modifications."
-
 #: inc/settings/class-settings-catalog.php
 msgid "Choose how content and plugin tables open, and whether published or active items come first."
 msgstr "Choisissez la vue d’ouverture des tableaux et le regroupement des éléments publiés ou actifs."
@@ -267,6 +239,10 @@ msgstr "Choisissez l’affichage des dates et des heures ainsi que le premier jo
 #: inc/wp-core/class-profile-account.php
 msgid "Choose how you use the WordPress administration screens."
 msgstr "Personnalisez votre utilisation de l’administration WordPress."
+
+#: inc/settings/class-settings-i18n.php
+msgid "Choose the accent and its text color. Changes apply after saving."
+msgstr "Choisissez l’accent et la couleur de son texte. Les modifications s’appliquent après enregistrement."
 
 #: inc/wp-core/class-options-general.php
 msgid "Choose the site language and the timezone used for publishing."
@@ -300,7 +276,7 @@ msgstr "Choisissez le contenu de l’accueil et le nombre d’articles affichés
 msgid "Clean interface"
 msgstr "Interface épurée"
 
-#: inc/features/notifications/class-notification-center.php
+#: inc/features/notifications/class-notification-center.php inc/integrations/trait-funnelkit-integration.php
 msgid "Close"
 msgstr "Fermer"
 
@@ -319,10 +295,6 @@ msgstr "Regroupe les notifications d’administration dans un tiroir de la barre
 #: inc/settings/class-settings-i18n.php
 msgid "Colors"
 msgstr "Couleurs"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Colors, typography and components"
-msgstr "Couleurs, typographie et composants"
 
 #: inc/wp-core/class-options-discussion.php
 msgid "Comment settings"
@@ -345,14 +317,6 @@ msgid "Control approval rules and filter unwanted comments."
 msgstr "Définissez les règles d’approbation et filtrez les commentaires indésirables."
 
 #: inc/settings/class-settings-i18n.php
-msgid "Corner scale"
-msgstr "Échelle des arrondis"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Corner shapes, outlines and depth for buttons, fields, cards and tables."
-msgstr "Arrondis, contours et profondeur des boutons, champs, cartes et tableaux."
-
-#: inc/settings/class-settings-i18n.php
 msgid "Could not load toolbar items."
 msgstr "Impossible de charger les éléments de la barre d’outils."
 
@@ -368,10 +332,6 @@ msgstr "Actuel"
 msgid "Custom link"
 msgstr "Lien personnalisé"
 
-#: inc/settings/class-settings-page.php
-msgid "Customization paused"
-msgstr "Personnalisation en pause"
-
 #: inc/features/toolbar/class-toolbar-snapshot.php
 msgid "Customize"
 msgstr "Personnaliser"
@@ -379,18 +339,6 @@ msgstr "Personnaliser"
 #: inc/settings/class-settings-i18n.php
 msgid "Customize the WordPress sidebar menu and top admin toolbar."
 msgstr "Personnalisez le menu latéral et la barre d’outils supérieure de WordPress."
-
-#: inc/settings/class-settings-i18n.php
-msgid "Customize the design"
-msgstr "Personnaliser le design"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Customize the foundations and components of your interface."
-msgstr "Personnalisez les fondations et les composants de votre interface."
-
-#: inc/settings/class-settings-i18n.php
-msgid "Danger text"
-msgstr "Texte de danger"
 
 #: inc/settings/class-settings-i18n.php
 msgid "Dark"
@@ -416,17 +364,17 @@ msgstr "Désactivation à enregistrer"
 msgid "Default administration interface"
 msgstr "Interface d’administration par défaut"
 
-#: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
+#: inc/settings/class-settings-i18n.php
 msgid "Design system"
 msgstr "Système de design"
 
 #: inc/settings/class-settings-i18n.php
-msgid "Design system sections"
-msgstr "Rubriques du système de design"
-
-#: inc/settings/class-settings-i18n.php
 msgid "Disable all tools"
 msgstr "Désactiver tous les outils"
+
+#: inc/settings/class-settings-i18n.php
+msgid "Disable an extension’s AdminKit appearance to restore its original interface. The extension stays active and keeps its data. Changes apply after saving."
+msgstr "Désactivez l’habillage AdminKit d’une extension pour retrouver son interface d’origine. L’extension reste active et conserve ses données. Les modifications s’appliquent après enregistrement."
 
 #: inc/wp-core/class-options-discussion.php
 msgid "Display"
@@ -460,10 +408,6 @@ msgstr "Modifier le site"
 msgid "Edit first name, last name, email and role inline from the users list."
 msgstr "Modifiez le prénom, le nom, l’e-mail et le rôle directement dans la liste des utilisateurs."
 
-#: inc/settings/class-settings-i18n.php
-msgid "Elevation"
-msgstr "Élévation"
-
 #: inc/wp-core/class-user-quick-edit.php
 msgid "Email"
 msgstr "E-mail"
@@ -471,10 +415,6 @@ msgstr "E-mail"
 #: inc/settings/class-settings-i18n.php
 msgid "Enable all tools"
 msgstr "Activer tous les outils"
-
-#: inc/settings/class-settings-page.php
-msgid "Enable the administration theme or the custom login screen to customize their appearance. Your saved design is kept."
-msgstr "Activez le thème d’administration ou l’écran de connexion personnalisé pour personnaliser leur apparence. Votre design est conservé."
 
 #: inc/settings/class-settings-i18n.php
 msgid "Enable the feature to apply these options. Your choices are preserved."
@@ -491,14 +431,6 @@ msgstr "Activé pour le site. Votre compte utilise WordPress classique."
 #: inc/settings/class-settings-i18n.php
 msgid "Enabled in the saved configuration."
 msgstr "Active dans la configuration enregistrée."
-
-#: inc/settings/class-settings-i18n.php
-msgid "Every plugin installed on your site, plus AdminKit's active theme adapters. Native ones have a tuned adapter you can switch per host; the rest carry a Generic badge and inherit AdminKit's base styling automatically."
-msgstr "Toutes les extensions installées sur votre site, ainsi que les adaptateurs de thème actifs d’AdminKit. Les natifs ont un adaptateur dédié, activable par hôte ; les autres portent un badge Générique et héritent automatiquement du style de base d’AdminKit."
-
-#: inc/settings/class-settings-i18n.php
-msgid "Explore features"
-msgstr "Explorer les fonctionnalités"
 
 #: inc/settings/class-settings-i18n.php
 msgid "Explore the possibilities"
@@ -544,21 +476,9 @@ msgstr "Recherchez, modifiez et organisez les termes existants."
 msgid "First name"
 msgstr "Prénom"
 
-#: inc/settings/class-settings-i18n.php
-msgid "Flat"
-msgstr "À plat"
-
 #: inc/class-interface.php
 msgid "Follow site default"
 msgstr "Suivre le réglage du site"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Font family"
-msgstr "Police"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Font family and text scale."
-msgstr "Famille de caractères et échelle du texte."
 
 #: inc/wp-core/class-profile-account.php
 msgid "Full access"
@@ -644,10 +564,6 @@ msgstr "Dans Toutes, place les contenus publiés et les extensions actives avant
 msgid "Inactive features"
 msgstr "Inactives"
 
-#: inc/settings/class-settings-i18n.php
-msgid "Info text"
-msgstr "Texte d’information"
-
 #: inc/wp-core/class-profile-account.php
 msgid "Information"
 msgstr "Informations"
@@ -701,10 +617,6 @@ msgstr "Clair"
 #: inc/settings/class-settings-catalog.php
 msgid "Lists and tables"
 msgstr "Listes et tableaux"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Load Google Fonts from Google servers"
-msgstr "Charger les polices Google Fonts depuis les serveurs Google"
 
 #: inc/settings/class-settings-i18n.php
 msgid "Load a menu layout from a JSON file"
@@ -842,14 +754,6 @@ msgstr "Centre de notifications"
 msgid "Notifications"
 msgstr "Notifications"
 
-#: inc/settings/class-settings-i18n.php
-msgid "Off"
-msgstr "Désactivé"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Off by default for privacy (GDPR). Enable to load remote font families from fonts.googleapis.com."
-msgstr "Désactivé par défaut pour la confidentialité (RGPD). Activez pour charger les polices distantes depuis fonts.googleapis.com."
-
 #: inc/settings/class-settings-catalog.php
 msgid "On arrival, show active plugins. After activation or deactivation, keep the changed plugin visible."
 msgstr "À l’ouverture, affiche les extensions actives. Après une activation ou une désactivation, conserve l’extension modifiée dans la vue affichée."
@@ -857,10 +761,6 @@ msgstr "À l’ouverture, affiche les extensions actives. Après une activation 
 #: inc/settings/class-settings-catalog.php
 msgid "On arrival, show published posts, pages and custom content. Searches and chosen filters stay unchanged."
 msgstr "À l’ouverture, affiche les articles, pages et contenus personnalisés publiés. Les recherches et les filtres choisis restent prioritaires."
-
-#: inc/settings/class-settings-i18n.php
-msgid "On hover"
-msgstr "Au survol"
 
 #: inc/wp-core/class-admin-bar.php
 msgid "Open administration menu"
@@ -897,10 +797,6 @@ msgstr "Options à enregistrer"
 #: inc/wp-core/class-options-discussion.php inc/wp-core/class-options-general.php inc/wp-core/class-profile-account.php
 msgid "Other settings"
 msgstr "Autres réglages"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Outline width"
-msgstr "Épaisseur des contours"
 
 #: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Overview"
@@ -950,7 +846,7 @@ msgstr "Veuillez saisir une adresse e-mail valide."
 msgid "Plugin inactive"
 msgstr "Extension inactive"
 
-#: inc/settings/class-settings-i18n.php
+#: inc/settings/class-settings-i18n.php inc/settings/class-settings-page.php
 msgid "Plugins"
 msgstr "Extensions"
 
@@ -966,21 +862,13 @@ msgstr "Aperçus des publications"
 msgid "Prepare default feature choices"
 msgstr "Préparer les choix par défaut"
 
-#: inc/settings/class-settings-i18n.php inc/wp-core/class-post-previews.php
+#: inc/wp-core/class-post-previews.php
 msgid "Preview"
 msgstr "Aperçu"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Preview changes here, then save to apply them. Elevation affects cards and tables; focus indicators stay visible."
-msgstr "Prévisualisez les changements ici, puis enregistrez pour les appliquer. L’élévation concerne les cartes et les tableaux ; les indicateurs de focus restent visibles."
 
 #: inc/wp-core/class-post-previews.php
 msgid "Preview unavailable"
 msgstr "Aperçu indisponible"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Primary action"
-msgstr "Action principale"
 
 #: inc/wp-core/class-profile-account.php
 msgid "Profile access only"
@@ -1005,10 +893,6 @@ msgstr "Modification rapide"
 #: inc/wp-core/class-reading-layout.php
 msgid "RSS feeds"
 msgstr "Flux RSS"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Raised"
-msgstr "Élevée"
 
 #: inc/settings/class-settings-i18n.php inc/wp-core/class-options-general.php
 msgid "Remove"
@@ -1091,10 +975,6 @@ msgid "Roles, language and preferences."
 msgstr "Rôles, langue et préférences."
 
 #: inc/settings/class-settings-i18n.php
-msgid "Sample content — preview only"
-msgstr "Contenu de démonstration — aperçu uniquement"
-
-#: inc/settings/class-settings-i18n.php
 msgid "Save changes"
 msgstr "Enregistrer les modifications"
 
@@ -1134,14 +1014,6 @@ msgstr "Rechercher une extension…"
 msgid "Search…"
 msgstr "Rechercher…"
 
-#: inc/settings/class-settings-i18n.php
-msgid "Secondary action"
-msgstr "Action secondaire"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Secondary text"
-msgstr "Texte secondaire"
-
 #: inc/wp-core/class-profile-account.php
 msgid "Security"
 msgstr "Sécurité"
@@ -1162,13 +1034,9 @@ msgstr "Réglez la pagination et l’ordre d’affichage des commentaires."
 msgid "Set how many posts feeds include and how much content they share."
 msgstr "Définissez le nombre d’articles des flux et le contenu qu’ils diffusent."
 
-#: inc/wp-core/class-profile-account.php
+#: inc/settings/class-settings-page.php inc/wp-core/class-profile-account.php
 msgid "Settings"
 msgstr "Réglages"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Shapes & elevation"
-msgstr "Formes et élévation"
 
 #: inc/settings/class-settings-i18n.php
 msgid "Show"
@@ -1194,10 +1062,6 @@ msgstr "Affiché lorsque le menu est déplié. L’icône du site prend le relai
 msgid "Sidebar menu"
 msgstr "Menu latéral"
 
-#: inc/settings/class-settings-i18n.php
-msgid "Sidebar menu and toolbar"
-msgstr "Menu latéral et barre d’outils"
-
 #: inc/wp-core/class-options-general.php
 msgid "Site Icon"
 msgstr "Icône du site"
@@ -1217,10 +1081,6 @@ msgid "Site language plus the timezone and formats used wherever dates appear."
 msgstr "La langue du site ainsi que le fuseau horaire et les formats utilisés partout où des dates apparaissent."
 
 #: inc/settings/class-settings-i18n.php
-msgid "Site name"
-msgstr "Nom du site"
-
-#: inc/settings/class-settings-i18n.php
 msgid "Skin paused"
 msgstr "Habillage en pause"
 
@@ -1229,32 +1089,8 @@ msgid "Style wp-login.php to match the administration (logo, dark mode and focus
 msgstr "Habille wp-login.php comme l’administration (logo, mode sombre et états de focus)."
 
 #: inc/settings/class-settings-i18n.php
-msgid "Subtle"
-msgstr "Discrète"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Success text"
-msgstr "Texte de succès"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Surface"
-msgstr "Surface"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Table"
-msgstr "Tableau"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Text"
-msgstr "Texte"
-
-#: inc/settings/class-settings-i18n.php
 msgid "Text on accent"
 msgstr "Texte sur accent"
-
-#: inc/settings/class-settings-i18n.php
-msgid "Text scale"
-msgstr "Échelle du texte"
 
 #: inc/settings/class-settings-i18n.php
 msgid "That file isn’t a valid AdminKit menu export."
@@ -1271,10 +1107,6 @@ msgstr "Le thème d’administration est désactivé sur ce site. Les outils res
 #: inc/class-interface.php
 msgid "The administration theme is disabled for this site. Your personal preference is kept for reactivation."
 msgstr "Le thème d’administration est désactivé sur ce site. Votre préférence personnelle est conservée pour sa réactivation."
-
-#: inc/settings/class-settings-i18n.php
-msgid "The administration theme is disabled. These appearance settings currently apply only to the custom login screen."
-msgstr "Le thème d’administration est désactivé. Ces réglages d’apparence s’appliquent uniquement à l’écran de connexion personnalisé."
 
 #: inc/settings/class-settings-i18n.php
 msgid "The notification bell is hidden by the toolbar manager. Notices remain inline."
@@ -1295,10 +1127,6 @@ msgstr "Ces actions s’appliquent à tous les outils disponibles, y compris ceu
 #: inc/settings/class-settings-i18n.php
 msgid "These choices are preserved when the feature is off and apply after saving."
 msgstr "Ces choix sont conservés lorsque la fonctionnalité est désactivée et s’appliquent après l’enregistrement."
-
-#: inc/settings/class-settings-i18n.php
-msgid "These settings apply to WordPress administration and supported extensions after saving. Your public website keeps its own design."
-msgstr "Ces réglages s’appliquent à l’administration WordPress et aux extensions prises en charge après enregistrement. Votre site public conserve son propre design."
 
 #: inc/wp-core/class-user-quick-edit.php
 msgid "This email address is already registered."
@@ -1349,20 +1177,12 @@ msgid "Top level"
 msgstr "Premier niveau"
 
 #: inc/settings/class-settings-i18n.php
-msgid "Top-edge highlight"
-msgstr "Reflet sur le bord supérieur"
-
-#: inc/settings/class-settings-i18n.php
 msgid "Turn AdminKit modules on or off."
 msgstr "Activez ou désactivez les modules AdminKit."
 
 #: inc/wp-core/class-username-changer.php
 msgid "Type the new username, then click \"Update User\" below to save."
 msgstr "Saisissez le nouveau nom d’utilisateur, puis cliquez sur « Mettre à jour l’utilisateur » ci-dessous pour enregistrer."
-
-#: inc/settings/class-settings-i18n.php
-msgid "Typography"
-msgstr "Typographie"
 
 #: inc/settings/class-settings-i18n.php
 msgid "Unavailable"
@@ -1421,10 +1241,6 @@ msgid "WaasKit"
 msgstr "WaasKit"
 
 #: inc/settings/class-settings-i18n.php
-msgid "Warning text"
-msgstr "Texte d’avertissement"
-
-#: inc/settings/class-settings-i18n.php
 msgid "What this feature does"
 msgstr "Ce que fait cette fonctionnalité"
 
@@ -1477,10 +1293,6 @@ msgid "You are using WordPress classic. These site-wide appearance settings are 
 msgstr "Vous utilisez WordPress classique. Ces réglages d’apparence du site sont conservés pour les comptes utilisant AdminKit ; les outils activés restent disponibles dans les deux interfaces."
 
 #: inc/settings/class-settings-i18n.php
-msgid "Your administration, simply."
-msgstr "Votre administration, simplement."
-
-#: inc/settings/class-settings-i18n.php
 msgid "Your changes are kept. Try again."
 msgstr "Vos modifications sont conservées. Réessayez."
 
@@ -1517,16 +1329,6 @@ msgid "System"
 msgstr "Système"
 
 #: inc/settings/class-settings-i18n.php
-msgctxt "button preview state"
-msgid "Disabled"
-msgstr "Désactivé"
-
-#: inc/settings/class-settings-i18n.php
-msgctxt "design preset"
-msgid "Default"
-msgstr "Par défaut"
-
-#: inc/settings/class-settings-i18n.php
 msgctxt "feature option state"
 msgid "Disabled"
 msgstr "Désactivée"
@@ -1535,11 +1337,6 @@ msgstr "Désactivée"
 msgctxt "feature option state"
 msgid "Enabled"
 msgstr "Activée"
-
-#: inc/settings/class-settings-i18n.php
-msgctxt "font family"
-msgid "System"
-msgstr "Système"
 
 #: inc/settings/class-settings-i18n.php
 msgid "https://…"

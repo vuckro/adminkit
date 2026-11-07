@@ -26,6 +26,25 @@ class AdminKit_Menu_Renderer {
 	/** @var array<string,string> Submenu slug => new parent, for items moved across sections. */
 	private static $moved = array();
 
+	/** @var array<string,string> Stable page hook => configured title. */
+	private static $title_overrides = array();
+
+	/**
+	 * Restore labels after hosts rewrite them in admin_head. Page hooks survive
+	 * host changes to the menu URL; only titles are reapplied, never structure.
+	 *
+	 * @return void
+	 */
+	public static function restore_titles() {
+		global $menu;
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) ) { return; }
+		foreach ( (array) $menu as $position => $item ) {
+			if ( isset( $item[5], self::$title_overrides[ $item[5] ] ) ) {
+				$menu[ $position ][0] = self::apply_menu_title( $item[0], self::$title_overrides[ $item[5] ] );
+			}
+		}
+	}
+
 	/**
 	 * Remove WordPress's legacy Link Manager menu when `link_manager_enabled` is off.
 	 *
@@ -55,6 +74,7 @@ class AdminKit_Menu_Renderer {
 	 * @return void
 	 */
 	public static function apply() {
+		self::$title_overrides = array();
 		self::$icon_overrides = array();
 		self::$url_overrides  = array();
 		self::$new_tab        = array();
@@ -78,6 +98,7 @@ class AdminKit_Menu_Renderer {
 			$cfg = $top_by_slug[ $item[2] ];
 			if ( isset( $cfg['title'] ) && '' !== $cfg['title'] ) {
 				$menu[ $pos ][0] = self::apply_menu_title( isset( $item[0] ) ? $item[0] : '', $cfg['title'] );
+				if ( ! empty( $item[5] ) ) { self::$title_overrides[ $item[5] ] = $cfg['title']; }
 			}
 			if ( ! empty( $cfg['hidden'] ) ) {
 				if ( AdminKit_Settings_Page::SLUG !== $item[2] ) {
@@ -476,11 +497,24 @@ class AdminKit_Menu_Renderer {
 			if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', (string) $cls ) ) {
 				continue;
 			}
+			// A configured icon outranks the integration's default icon by targeting
+			// the same stable WordPress menu ID, with its override class added.
+			$target = '#adminmenu .' . $cls;
+			foreach ( (array) ( $GLOBALS['menu'] ?? array() ) as $item ) {
+				if ( ! empty( $item[5] )
+					&& in_array( $cls, explode( ' ', $item[4] ?? '' ), true ) ) {
+					// Match WordPress menu-header.php, then escape CSS ID punctuation.
+					$menu_id = preg_replace( '/[^a-zA-Z0-9_:.]/', '-', (string) $item[5] );
+					$menu_id = str_replace( array( ':', '.' ), array( '\:', '\.' ), $menu_id );
+					$target = '#adminmenu #' . $menu_id . '.' . $cls;
+					break;
+				}
+			}
 			if ( 0 === strncmp( $icon, 'wp-default', 10 ) ) {
 				$dashicon = strlen( $icon ) > 11 ? substr( $icon, 11 ) : '';
 				if ( '' !== $dashicon && preg_match( '/^dashicons-[a-z0-9-]+$/', $dashicon ) ) {
 					$glyph = isset( AdminKit_Icons::MENU_DASHICON_GLYPHS[ $dashicon ] ) ? AdminKit_Icons::MENU_DASHICON_GLYPHS[ $dashicon ] : '';
-					$sel   = '#adminmenu .' . $cls . ' .wp-menu-image.' . $dashicon;
+					$sel   = $target . ' .wp-menu-image.' . $dashicon;
 					$css  .= $sel . '{box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
 					$css  .= $sel . '::before{-webkit-mask-image:none;mask-image:none;background:transparent;'
 						. 'display:block;width:36px;height:34px;line-height:34px;text-align:center;'
@@ -494,7 +528,7 @@ class AdminKit_Menu_Renderer {
 			if ( '' === $mask ) {
 				continue;
 			}
-			$sel  = '#adminmenu .' . $cls . ' .wp-menu-image';
+			$sel  = $target . ' .wp-menu-image';
 			$css .= $sel . '{box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
 			$css .= $sel . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
 				. 'vertical-align:middle;position:relative;top:-2px;' . $mask . '}';

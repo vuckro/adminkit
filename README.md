@@ -50,8 +50,8 @@ npm ci --prefix dev/smoke
 php dev/test-all.php
 ```
 
-The unified gate (185 checks) includes syntax, all 23 regression/compliance scripts,
-CSS/token contracts, i18n/typography drift, module/package integrity, 11 jsdom suites,
+The unified gate (220 checks) includes syntax, all 32 regression/compliance scripts,
+CSS/token contracts, i18n/typography drift, module/package integrity, 15 jsdom suites,
 and static analysis (WPCS Security/i18n, PHPStan level 5, ESLint, Stylelint logical RTL).
 Browser-check affected screens and persistence before deploying. Host drift checks
 require the corresponding third-party plugin/theme to be installed.

@@ -61,3 +61,10 @@ body.adminkit #funnelkit_widget .bwf-widget-action-box-r {
 		display: none;
 	}
 }
+
+body.adminkit #funnelkit_widget .bwf-placeholder-item {
+ background: var(--ak-border);
+}
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit #funnelkit_widget .bwf-placeholder-item { animation: none; }
+}

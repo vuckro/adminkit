@@ -25,6 +25,11 @@ class AdminKit_Integration_Funnel_Builder extends AdminKit_Integration_Base {
 		return defined( 'WFFN_VERSION' );
 	}
 
+	/** @return string Verified host minor series; newer minors fall back to native UI. */
+	protected static function max_tested_host_version() {
+		return '3.18';
+	}
+
 	protected static function host_version() {
 		return defined( 'WFFN_VERSION' ) ? WFFN_VERSION : null;
 	}
