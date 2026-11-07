@@ -142,11 +142,17 @@
 
 		function saveEditor(btn, editor, row) {
 			if (editor.dataset.akSaving === 'true') { return; }
-			editor.dataset.akSaving = 'true';
 			var saveBtn = editor.querySelector('.adminkit-qe-save');
 			var cancel = editor.querySelector('.adminkit-qe-cancel');
 			var spinner = editor.querySelector('.spinner');
 			var errEl = editor.querySelector('.adminkit-qe-error');
+			function setPending(pending) {
+				editor.dataset.akSaving = String(pending);
+				btn.disabled = pending;
+				if (saveBtn) { saveBtn.disabled = pending; }
+				if (cancel) { cancel.disabled = pending; }
+				if (spinner) { spinner.classList.toggle('is-active', pending); }
+			}
 			if (errEl) { errEl.textContent = ''; }
 
 			var fd = new FormData();
@@ -159,18 +165,13 @@
 			var roleEl = editor.querySelector('.adminkit-qe-role');
 			if (roleEl && !roleEl.disabled) { fd.append('role', roleEl.value); }
 
-			if (saveBtn) { saveBtn.disabled = true; }
-			if (cancel) { cancel.disabled = true; }
-			if (spinner) { spinner.classList.add('is-active'); }
+			setPending(true);
 
 			fetch(L.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
 				.then(function (r) { return r.json().catch(function () { return null; }); })
 				.then(function (json) {
-					editor.dataset.akSaving = 'false';
-					if (spinner) { spinner.classList.remove('is-active'); }
+					setPending(false);
 					if (!json || !json.success) {
-						if (saveBtn) { saveBtn.disabled = false; }
-						if (cancel) { cancel.disabled = false; }
 						var msg = (json && json.data && json.data.message) || L.genericErr;
 						if (errEl) { errEl.textContent = msg; }
 						return;
@@ -179,10 +180,7 @@
 					if (openEditor === editor) { closeEditor(); }
 				})
 				.catch(function () {
-					editor.dataset.akSaving = 'false';
-					if (spinner) { spinner.classList.remove('is-active'); }
-					if (saveBtn) { saveBtn.disabled = false; }
-					if (cancel) { cancel.disabled = false; }
+					setPending(false);
 					if (errEl) { errEl.textContent = L.genericErr; }
 				});
 		}

@@ -65,10 +65,13 @@ const source = fs.readFileSync(path.resolve(__dirname, '../../assets/js/wp-core/
   const enter=()=>first.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));
   enter();enter();assert.equal(requests.length,1,'Repeated Enter created a duplicate write');
   first.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+  assert.equal(buttons[0].disabled,true,'Pending row must not reopen for another conflicting write');
+  buttons[0].click();assert.equal(d.querySelector('.adminkit-qe-first-name'),null);
   buttons[1].click();const newer=d.querySelector('.adminkit-qe-first-name');newer.value='Unsaved second editor';
   requests[0].resolve({json:async()=>({success:true,data:{first_name:'Saved first editor'}})});
   await new Promise(resolve=>setTimeout(resolve,0));
   assert.equal(newer.isConnected,true,'Old response closed the newer editor');
+  assert.equal(buttons[0].disabled,false,'Completed row must become editable again');
   assert.equal(newer.value,'Unsaved second editor');
   assert.equal(buttons[1].getAttribute('aria-expanded'),'true');
   const save=d.querySelector('.adminkit-qe-save');save.click();
