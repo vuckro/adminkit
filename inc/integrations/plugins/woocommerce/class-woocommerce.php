@@ -108,9 +108,9 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 		foreach ( $icons as $tab => $icon ) {
 			$css .= 'body.adminkit.adminkit-woocommerce .wc-tabs li.' . $tab . '_options a::before{content:"";display:inline-block;width:16px;height:16px;vertical-align:middle;' . AdminKit_Icons::mask( AdminKit_Icons::svg( $icon ) ) . '}';
 		}
-		$status_icons = array( 'pending' => 'clock', 'processing' => 'loader', 'on-hold' => 'pause', 'completed' => 'circle-check', 'cancelled' => 'circle-x', 'failed' => 'circle-alert', 'refunded' => 'rotate-ccw', 'checkout-draft' => 'file-text' );
+		$status_icons = array( 'pending' => 'clock', 'processing' => 'loader', 'on-hold' => 'pause', 'completed' => 'circle-check', 'cancelled' => 'circle-x', 'failed' => 'circle-alert', 'refunded' => 'rotate-ccw', 'checkout-draft' => 'file-text', 'active' => 'circle-check', 'pending-cancel' => 'calendar-x', 'expired' => 'history', 'switched' => 'arrow-left-right', 'trash' => 'trash-2' );
 		foreach ( $status_icons as $status => $icon ) {
-			$css .= 'body.adminkit.adminkit-woocommerce .order-status.status-' . $status . '::before{' . str_replace( '20px 20px', '14px 14px', AdminKit_Icons::mask( AdminKit_Icons::svg( $icon ) ) ) . '}';
+			$css .= 'body.adminkit.adminkit-woocommerce .order-status.status-' . $status . '::before{content:"";' . str_replace( '20px 20px', '14px 14px', AdminKit_Icons::mask( AdminKit_Icons::svg( $icon ) ) ) . '}';
 		}
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Trusted internal selectors and URL-encoded registry SVGs.
 		echo '<style id="adminkit-woocommerce-icons">' . $css . '</style>';
@@ -167,7 +167,7 @@ class AdminKit_Integration_Woocommerce extends AdminKit_Integration_Base {
 		if ( ! $screen || false !== strpos( $screen->id, 'wc-admin' ) ) {
 			return false;
 		}
-		$post_types = array( 'product', 'shop_coupon', 'shop_order' );
+		$post_types = array( 'product', 'shop_coupon', 'shop_order', 'shop_subscription' );
 		if ( ! empty( $screen->post_type ) && in_array( $screen->post_type, $post_types, true ) ) {
 			return true;
 		}

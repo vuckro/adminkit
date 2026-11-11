@@ -1318,25 +1318,164 @@ body.adminkit.adminkit-woocommerce #message.updated > p {
 }
 body.adminkit.adminkit-woocommerce #message.updated { padding-block: calc(16px * var(--ak-space-scale, 1)); }
 
-/* Semantic compact order badges; the native label remains the accessible name. */
+/* Semantic compact order & subscription badges; the native label remains the accessible name. */
 body.adminkit.adminkit-woocommerce .order-status {
  display: inline-flex;
  align-items: center;
- gap: 6px;
- padding: 4px 10px;
+ gap: calc(6px * var(--ak-space-scale, 1));
+ padding: calc(4px * var(--ak-space-scale, 1)) calc(10px * var(--ak-space-scale, 1));
  border-radius: var(--ak-radius-full);
- background: var(--ak-elevated);
- color: var(--ak-text);
+ background: var(--ak-surface-muted);
+ color: var(--ak-text-muted);
+ box-shadow: inset 0 0 0 1px var(--ak-border);
  font-size: var(--ak-text-xs);
  line-height: 1.5;
  font-weight: 500;
  white-space: nowrap;
 }
 body.adminkit.adminkit-woocommerce .order-status > span { margin: 0; }
-body.adminkit.adminkit-woocommerce .order-status::before { content: ''; flex: 0 0 14px; width: 14px; height: 14px; }
-body.adminkit.adminkit-woocommerce .order-status:is(.status-completed, .status-processing) { background: var(--ak-success-subtle); color: var(--ak-success); }
-body.adminkit.adminkit-woocommerce .order-status:is(.status-pending, .status-on-hold) { background: var(--ak-warning-subtle); color: var(--ak-warning); }
-body.adminkit.adminkit-woocommerce .order-status:is(.status-failed, .status-cancelled) { background: var(--ak-error-subtle); color: var(--ak-error); }
+body.adminkit.adminkit-woocommerce .order-status::before { flex: 0 0 14px; width: 14px; height: 14px; }
+body.adminkit.adminkit-woocommerce .order-status:is(.status-completed, .status-processing, .status-active) { background: var(--ak-success-subtle); color: var(--ak-success); box-shadow: none; }
+body.adminkit.adminkit-woocommerce .order-status:is(.status-pending, .status-on-hold, .status-pending-cancel) { background: var(--ak-warning-subtle); color: var(--ak-warning); box-shadow: none; }
+body.adminkit.adminkit-woocommerce .order-status:is(.status-failed, .status-cancelled, .status-trash) { background: var(--ak-error-subtle); color: var(--ak-error); box-shadow: none; }
+body.adminkit.adminkit-woocommerce .order-status.status-switched { background: var(--ak-info-subtle); color: var(--ak-info); box-shadow: none; }
+
+/* Subscriptions list table: center status pill at rest and reveal row actions cleanly on hover/focus. */
+body.adminkit.adminkit-woocommerce .wp-list-table .column-status .row-actions:empty { display: none; }
+body.adminkit.adminkit-woocommerce .wp-list-table .column-status > .row-actions {
+ padding: calc(4px * var(--ak-space-scale, 1)) 0 0;
+ margin-top: 0;
+}
+body.adminkit.adminkit-woocommerce .wp-list-table .row-actions .cancelled a { color: var(--ak-error); }
+@media (hover: hover) and (min-width: 783px) {
+ body.adminkit.adminkit-woocommerce .wp-list-table .column-status:has(> .row-actions:not(:empty)) > .order-status {
+  translate: 0 13px;
+  transition: background-color 120ms var(--ak-ease-standard), color 120ms var(--ak-ease-standard), border-color 120ms var(--ak-ease-standard), translate 200ms var(--ak-ease-standard);
+ }
+ body.adminkit.adminkit-woocommerce .wp-list-table tr:is(:hover, :focus-within) .column-status:has(> .row-actions:not(:empty)) > .order-status,
+ body.adminkit.adminkit-woocommerce .wp-list-table .column-status:has(> .row-actions.visible) > .order-status {
+  translate: 0 0;
+ }
+}
+@media (prefers-reduced-motion: reduce) {
+ body.adminkit.adminkit-woocommerce .wp-list-table .column-status > .order-status { transition: none; }
+}
+
+/* Order & Subscription list-table filter bars (tablenav + search-box + select2 alignment). */
+body.adminkit.adminkit-woocommerce p.search-box {
+ display: inline-flex;
+ flex-wrap: wrap;
+ align-items: center;
+ gap: calc(6px * var(--ak-space-scale, 1));
+ margin: 0 0 calc(12px * var(--ak-space-scale, 1));
+}
+body.adminkit.adminkit-woocommerce p.search-box > :is(input, select, .button) {
+ float: none;
+ margin: 0;
+}
+body.adminkit.adminkit-woocommerce .tablenav {
+ flex-wrap: wrap;
+ overflow: visible;
+ height: auto;
+ row-gap: calc(8px * var(--ak-space-scale, 1));
+}
+body.adminkit.adminkit-woocommerce .tablenav .actions {
+ display: flex;
+ flex-wrap: wrap;
+ align-items: center;
+ gap: calc(8px * var(--ak-space-scale, 1));
+ padding: 0;
+}
+body.adminkit.adminkit-woocommerce .tablenav .actions > :is(select, input, .button, .select2-container) {
+ float: none;
+ margin: 0;
+ font-size: var(--ak-text-s);
+}
+body.adminkit.adminkit-woocommerce .tablenav .select2-container {
+ max-width: 200px;
+}
+body.adminkit.adminkit-woocommerce .tablenav .select2-container .select2-selection--single {
+ height: var(--ak-control-height);
+ min-height: var(--ak-control-height);
+ margin: 0;
+}
+body.adminkit.adminkit-woocommerce .tablenav .select2-container .select2-selection--single .select2-selection__rendered {
+ line-height: calc(var(--ak-control-height) - 2px);
+ padding-inline: calc(10px * var(--ak-space-scale, 1)) calc(28px * var(--ak-space-scale, 1));
+}
+body.adminkit.adminkit-woocommerce .tablenav .select2-container .select2-selection--single .select2-selection__arrow {
+ height: calc(var(--ak-control-height) - 2px);
+}
+
+/* Subscriptions & Orders list metadata, related orders, schedule metabox, modals and settings cards. */
+body.adminkit.adminkit-woocommerce table.wp-list-table :is(small.meta, span.normal_order, .subscription_resubscribe_order::after) {
+ color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-woocommerce .wp-list-table :is(.column-order_total, .column-recurring_total, .column-orders, .column-start_date, .column-trial_end_date, .column-next_payment_date, .column-last_payment_date, .column-end_date) {
+ font-variant-numeric: tabular-nums;
+}
+body.adminkit.adminkit-woocommerce :is(.wcs-payment-overdue, .woocommerce-subscriptions-deprecation-notice) {
+ color: var(--ak-error);
+}
+body.adminkit.adminkit-woocommerce a.close-subscriptions-search {
+ background: var(--ak-error-subtle);
+ color: var(--ak-error);
+}
+body.adminkit.adminkit-woocommerce .woocommerce_subscriptions_related_orders table {
+ background: var(--ak-surface);
+ color: var(--ak-text);
+}
+body.adminkit.adminkit-woocommerce .woocommerce_subscriptions_related_orders table thead th {
+ background: var(--ak-elevated);
+ color: var(--ak-text-muted);
+ border-bottom: 1px solid var(--ak-border);
+}
+body.adminkit.adminkit-woocommerce .woocommerce_subscriptions_related_orders table :is(tbody th, td) {
+ color: var(--ak-text);
+ border-bottom: 1px solid var(--ak-border);
+}
+body.adminkit.adminkit-woocommerce #woocommerce-subscription-schedule :is(.wcs-edit-date, .wcs-delete-date)::before {
+ color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-woocommerce #woocommerce-subscription-schedule .wcs-edit-date:is(:hover, :focus)::before {
+ color: var(--ak-heading);
+}
+body.adminkit.adminkit-woocommerce #woocommerce-subscription-schedule .wcs-delete-date:is(:hover, :focus)::before {
+ color: var(--ak-error);
+}
+body.adminkit.adminkit-woocommerce #woocommerce-subscription-schedule .date-fields.has-error input {
+ border-color: var(--ak-error);
+ box-shadow: none;
+}
+body.adminkit.adminkit-woocommerce #woocommerce-subscription-schedule .date-fields .wcs-date-input-error {
+ color: var(--ak-error);
+}
+body.adminkit.adminkit-woocommerce .wcs-modal .content-wrapper,
+body.adminkit.adminkit-woocommerce :is(.woocommerce-subscriptions-settings__card, .wcsatt-plans-table-wrapper, .wcsatt-storewide-plans-table-wrapper),
+body.adminkit.adminkit-woocommerce .woocommerce-subscriptions-health-check-tab :is(.wcs-health-check-summary-card, .wcs-health-check-info-box, .wcs-health-check-empty-state, .wcs-health-check-modal__dialog) {
+ background: var(--ak-surface);
+ border-color: var(--ak-border);
+ color: var(--ak-text);
+ border-radius: var(--ak-radius-m);
+ box-shadow: none;
+}
+body.adminkit.adminkit-woocommerce .woocommerce-subscriptions-settings__card-header {
+ border-bottom-color: var(--ak-border);
+}
+body.adminkit.adminkit-woocommerce :is(.wcsatt-plans-table-wrapper, .wcsatt-storewide-plans-table-wrapper) :is(.wcsatt-plans-table-header, .wcsatt-plans-table-footer) {
+ background: var(--ak-elevated);
+ border-color: var(--ak-border);
+ color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-subscriptions-settings :is(h2, h3, .woocommerce-subscriptions-settings__card-title, .woocommerce-subscriptions-settings__section-title, .wcs-FeatureCard__title),
+body.adminkit.adminkit-woocommerce .woocommerce-subscriptions-health-check-tab :is(.wcs-health-check-summary-card__title, .wcs-health-check-summary-card__value, .wcs-health-check-modal__header h2) {
+ color: var(--ak-heading);
+}
+body.adminkit.adminkit-woocommerce .woocommerce-subscriptions-settings :is(p, .description, .woocommerce-subscriptions-settings__section-description, .wcs-FeatureCard__description, .wcs-FeatureCard__badge),
+body.adminkit.adminkit-woocommerce .woocommerce-subscriptions-health-check-tab :is(.wcs-health-check-summary-card__meta, .wcs-health-check-subtitle, .wcs-health-check-col-muted) {
+ color: var(--ak-text-muted);
+}
+
 body.adminkit.adminkit-woocommerce .wc-shipping-zone-settings :is(th p, .description),
 body.adminkit.adminkit-woocommerce .wc-shipping-zone-heading a { color: var(--ak-text-muted); }
 

@@ -20,10 +20,10 @@ body.adminkit .dashboard-widget-finish-setup .progress-wrapper > span {
 }
 
 /* Native status widget keeps legible totals and quiet separators in both themes. */
-body.adminkit #woocommerce_dashboard_status .wc_status_list li { color: var(--ak-text-muted); border-color: var(--ak-border); }
+body.adminkit #woocommerce_dashboard_status .wc_status_list :is(li, li.signup-count, li.renewal-count) { color: var(--ak-text-muted); border-color: var(--ak-border); }
 body.adminkit #woocommerce_dashboard_status .wc_status_list li a { color: var(--ak-text-muted); }
 body.adminkit #woocommerce_dashboard_status .wc_status_list li a strong { color: var(--ak-heading); }
-body.adminkit #woocommerce_dashboard_status .wc_status_list li a::before { color: var(--ak-text-muted); }
+body.adminkit #woocommerce_dashboard_status .wc_status_list :is(li, li.signup-count, li.renewal-count) a::before { color: var(--ak-text-muted); }
 body.adminkit #woocommerce_dashboard_status .wc_status_list li a:is(:hover, :focus-visible) { background: var(--ak-hover-bg); }
 body.adminkit #woocommerce_dashboard_status .wc_status_list li a:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: -3px; }
 body.adminkit .dashboard-widget-finish-setup p { color: var(--ak-text-muted); }

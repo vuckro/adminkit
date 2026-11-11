@@ -20,6 +20,7 @@ body.adminkit .select2-container--classic .select2-selection--single,
 body.adminkit .select2-container--classic .select2-selection--multiple {
 	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
+	border-radius: var(--ak-radius-s);
 }
 
 /* Rendered value + placeholder + the caret triangle. */
@@ -39,6 +40,7 @@ body.adminkit .select2-container--default .select2-selection--single .select2-se
 body.adminkit .select2-dropdown {
 	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
+	border-radius: var(--ak-radius-s);
 }
 
 /* Highlighted (keyboard / hover) + already-selected option. */
@@ -105,11 +107,17 @@ body.adminkit.wp-admin .select2-dropdown--below {
 	box-shadow: none;
 }
 
+body.adminkit.wp-admin .select2-container .select2-selection--single:hover,
+body.adminkit.wp-admin .select2-container .select2-selection--multiple:hover,
 body.adminkit.wp-admin .select2-container.select2-container--focus .select2-selection--single,
 body.adminkit.wp-admin .select2-container.select2-container--open .select2-selection--single,
 body.adminkit.wp-admin .select2-container.select2-container--open .select2-selection--multiple {
 	border-color: var(--ak-border-strong);
 	box-shadow: none;
+}
+
+body.adminkit.wp-admin .select2-selection--single .select2-selection__rendered:hover {
+	color: var(--ak-heading);
 }
 /* Empty/loading search results are portaled outside the owning field. */
 body.adminkit .select2-results__options .select2-results__option { color: var(--ak-text); }
