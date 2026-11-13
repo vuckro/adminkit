@@ -197,42 +197,42 @@
 
 	function mountProfilePictureHero(form) {
 		var row = firstMatch(form, '.user-profile-picture');
-		if (!row) {
-			return;
-		}
-		var cell = row.querySelector('td');
-		if (!cell) {
-			return;
-		}
+		var hero = null;
+		if (row) {
+			var cell = row.querySelector('td');
+			if (cell) {
+				hero = document.createElement('div');
+				hero.className = 'ak-profile-picture-hero';
+				var content = document.createElement('div');
+				content.className = 'ak-profile-picture-hero__content';
+				while (cell.firstChild) {
+					content.appendChild(cell.firstChild);
+				}
+				hero.appendChild(content);
+				row.remove();
 
-		var hero = document.createElement('div');
-		hero.className = 'ak-profile-picture-hero';
-		var content = document.createElement('div');
-		content.className = 'ak-profile-picture-hero__content';
-		while (cell.firstChild) {
-			content.appendChild(cell.firstChild);
-		}
-		hero.appendChild(content);
-		row.remove();
-
-		var heroImg = content.querySelector('img');
-		if (heroImg && !heroImg.id) {
-			heroImg.id = 'ak-hero-avatar';
+				var heroImg = content.querySelector('img');
+				if (heroImg && !heroImg.id) {
+					heroImg.id = 'ak-hero-avatar';
+				}
+			}
 		}
 
 		var title = document.querySelector('.wrap h1');
-		if (title && title.parentNode) {
+		if (title && title.parentNode && (hero || form.id === 'your-profile')) {
 			var wrap = title.parentNode;
-			var action = wrap.querySelector('.page-title-action');
+			var actions = Array.prototype.slice.call(wrap.querySelectorAll('.page-title-action'));
 			var header = document.createElement('div');
 			header.className = 'ak-profile-header';
 			wrap.insertBefore(header, title);
-			header.appendChild(hero);
-			header.appendChild(title);
-			if (action) {
-				header.appendChild(action);
+			if (hero) {
+				header.appendChild(hero);
 			}
-		} else {
+			header.appendChild(title);
+			actions.forEach(function (action) {
+				header.appendChild(action);
+			});
+		} else if (hero) {
 			form.insertBefore(hero, form.firstChild);
 		}
 	}

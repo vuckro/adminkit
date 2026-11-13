@@ -26,6 +26,7 @@ body.adminkit .wrap .page-title-action {
 	font-weight: 500;
 	line-height: 2.15;
 	min-height: var(--ak-control-height);
+	text-decoration: none;
 	box-shadow: none;
 	cursor: pointer;
 }
@@ -97,7 +98,8 @@ body.adminkit .wrap .page-title-action:hover {
    brand --ak-primary border on hover/focus as every other secondary button
    (homogenized). (This override is also needed because the .button-primary rule
    above matches every .page-title-action and would otherwise fill them.) */
-body.adminkit .wrap .page-title-action ~ .page-title-action {
+body.adminkit .wrap .page-title-action ~ .page-title-action,
+body.adminkit .wrap .page-title-action.ak-page-action-secondary {
 	background: var(--ak-btn-bg);
 	border-color: var(--ak-btn-border, var(--ak-border));
 	color: var(--ak-btn-text, var(--ak-text));
@@ -105,7 +107,9 @@ body.adminkit .wrap .page-title-action ~ .page-title-action {
 }
 
 body.adminkit .wrap .page-title-action ~ .page-title-action:hover,
-body.adminkit .wrap .page-title-action ~ .page-title-action:focus {
+body.adminkit .wrap .page-title-action ~ .page-title-action:focus,
+body.adminkit .wrap .page-title-action.ak-page-action-secondary:hover,
+body.adminkit .wrap .page-title-action.ak-page-action-secondary:focus {
 	background: var(--ak-btn-hover-bg);
 	border-color: var(--ak-btn-hover-border);
 	color: var(--ak-text);
@@ -267,6 +271,13 @@ body.adminkit .wrap .page-title-action:active {
 	border-color: var(--ak-primary-hover);
 	color: var(--ak-on-accent-hover);
 }
+body.adminkit .wrap .page-title-action ~ .page-title-action:active,
+body.adminkit .wrap .page-title-action.ak-page-action-secondary:active {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-text);
+	box-shadow: none;
+}
 
 /* Primary relief and keyboard focus are independent of surface elevation. */
 body.adminkit .button-primary:focus-visible,
@@ -289,10 +300,24 @@ body.adminkit .wrap .page-title-action:hover:focus:not(:focus-visible) {
  box-shadow: var(--ak-btn-primary-shadow-hover);
 }
 
+body.adminkit .wrap .page-title-action ~ .page-title-action:focus-visible,
+body.adminkit .wrap .page-title-action.ak-page-action-secondary:focus-visible,
+body.adminkit .wrap .page-title-action ~ .page-title-action:hover:focus-visible,
+body.adminkit .wrap .page-title-action.ak-page-action-secondary:hover:focus-visible {
+ box-shadow: var(--ak-focus-ring);
+}
+
+body.adminkit .wrap .page-title-action ~ .page-title-action:focus:not(:focus-visible),
+body.adminkit .wrap .page-title-action.ak-page-action-secondary:focus:not(:focus-visible),
+body.adminkit .wrap .page-title-action ~ .page-title-action:hover:focus:not(:focus-visible),
+body.adminkit .wrap .page-title-action.ak-page-action-secondary:hover:focus:not(:focus-visible) {
+ box-shadow: none;
+}
+
 @media (forced-colors: active) {
  body.adminkit .button-primary,
  body.adminkit.wp-core-ui .button-primary,
- body.adminkit .wrap .page-title-action:not(.page-title-action ~ .page-title-action) {
+ body.adminkit .wrap .page-title-action:not(.page-title-action ~ .page-title-action):not(.ak-page-action-secondary) {
   background: Highlight;
   color: HighlightText;
   border-color: Highlight;

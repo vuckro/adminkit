@@ -525,25 +525,79 @@
 	);
 	activate(tabFor(bootHash) || buttons[0].dataset.target);
 
-	var pageActions = Array.prototype.slice.call(document.querySelectorAll('.page-title-action'));
-	if (pageActions.length) {
-		var actionHome = pageActions[0].parentNode;
-		var narrow = window.matchMedia('(max-width: 782px)');
-		var placeAction = function () {
-			pageActions.forEach(function (a) {
-				if (narrow.matches) {
-					box.appendChild(a);
-				} else if (a.parentNode !== actionHome) {
-					actionHome.appendChild(a);
+	var wrapEl = form.closest('.wrap') || document.querySelector('.wrap');
+	var headerEl = wrapEl ? wrapEl.querySelector('.ak-profile-header') : null;
+	var narrow = window.matchMedia('(max-width: 782px)');
+	var actionObserver = null;
+
+	function isPrimaryUserAction(el) {
+		var href = el.getAttribute('href') || '';
+		return /(?:^|\/)user-new\.php(?:$|[?#])/.test(href);
+	}
+
+	function normalizePageAction(el) {
+		if (!isPrimaryUserAction(el)) {
+			el.classList.add('ak-page-action-secondary');
+			if (el.style) {
+				['background', 'background-color', 'color', 'border', 'border-color', 'box-shadow'].forEach(function (prop) {
+					el.style.removeProperty(prop);
+				});
+			}
+		}
+	}
+
+	function syncPageActions() {
+		if (!wrapEl) {
+			return;
+		}
+		if (actionObserver) {
+			actionObserver.disconnect();
+		}
+		var actions = Array.prototype.slice.call(wrapEl.querySelectorAll('.page-title-action'));
+		if (actions.length) {
+			var desktopHome = headerEl || wrapEl;
+			var beforeAnchor = desktopHome === wrapEl ? wrapEl.querySelector(':scope > .wp-header-end') : null;
+			var primaries = [];
+			var secondaries = [];
+			actions.forEach(function (a) {
+				normalizePageAction(a);
+				if (a.classList.contains('ak-page-action-secondary')) {
+					secondaries.push(a);
+				} else {
+					primaries.push(a);
 				}
 			});
-		};
-		placeAction();
-		if (narrow.addEventListener) {
-			narrow.addEventListener('change', placeAction);
-		} else if (narrow.addListener) {
-			narrow.addListener(placeAction);
+			var ordered = primaries.concat(secondaries);
+			var target = narrow.matches ? box : desktopHome;
+			ordered.forEach(function (a, idx) {
+				if (target === headerEl || target === box) {
+					var prev = idx > 0 ? ordered[idx - 1] : null;
+					if (a.parentNode !== target || (prev && prev.nextElementSibling !== a)) {
+						target.appendChild(a);
+					}
+				} else if (a.parentNode !== wrapEl) {
+					if (beforeAnchor) {
+						wrapEl.insertBefore(a, beforeAnchor);
+					} else {
+						wrapEl.appendChild(a);
+					}
+				}
+			});
 		}
+		if (actionObserver) {
+			actionObserver.observe(wrapEl, { childList: true });
+		}
+	}
+
+	syncPageActions();
+	if (narrow.addEventListener) {
+		narrow.addEventListener('change', syncPageActions);
+	} else if (narrow.addListener) {
+		narrow.addListener(syncPageActions);
+	}
+	if (wrapEl && typeof MutationObserver !== 'undefined') {
+		actionObserver = new MutationObserver(syncPageActions);
+		actionObserver.observe(wrapEl, { childList: true });
 	}
 
 	reveal();
