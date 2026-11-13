@@ -1,0 +1,739 @@
+/* AdminKit FluentBoards 2.3.x adapter: token bridge, canvas, controls, tables, calendar, Milkdown & Gantt. */
+
+/* ==========================================================================
+   1. Token Remap (FluentBoards + Embedded CRM Widget + Element Plus)
+   ========================================================================== */
+
+body.adminkit.ak-fluent-boards,
+body.adminkit.ak-fluent-boards:is(.fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark),
+body.adminkit.ak-fluent-boards :is(.fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark),
+body.adminkit :is(
+	.fbs-crm-label-picker-popper,
+	.fbs-crm-contact-drawer,
+	.fbs-crm-task-composer-backdrop,
+	.fbs-crm-contact-create-task-dialog,
+	.fbs-task-date-control-popper,
+	.fbs-crm-contact-app3
+),
+body.adminkit:is(.fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark) :is(
+	.fbs-crm-label-picker-popper,
+	.fbs-crm-contact-drawer,
+	.fbs-crm-task-composer-backdrop,
+	.fbs-crm-contact-create-task-dialog,
+	.fbs-task-date-control-popper,
+	.fbs-crm-contact-app3
+) {
+	--fbs-primary-bg: var(--ak-surface);
+	--fbs-secondary-bg: var(--ak-surface-muted);
+	--fbs-light-bg: var(--ak-border);
+	--fbs-deep-bg: var(--ak-heading);
+	--fbs-weak-bg-25: var(--ak-elevated);
+	--fbs-body-bg: var(--ak-bg);
+	--fbs-primary-text: var(--ak-text);
+	--fbs-board-title-text: var(--ak-heading);
+	--fbs-secondary-text: var(--ak-text-muted);
+	--fbs-board-main-text: var(--ak-text);
+	--fbs-board-muted-text: var(--ak-text-muted);
+	--fbs-text-muted: var(--ak-text-muted);
+	--fbs-text-inverse: var(--ak-on-accent);
+	--fbs-primary-border: var(--ak-border);
+	--fbs-board-muted-border: var(--ak-border);
+	--fbs-secondary-border: var(--ak-border-strong);
+	--fbs-primary-button: var(--ak-primary);
+	--fbs-checkbox-checked: var(--ak-primary);
+	--fbs-switch-off-bg: var(--ak-border-strong);
+	--fbs-text-link: var(--ak-primary-text);
+	--fbs-text-link-bg: var(--ak-primary-subtle);
+	--fbs-ai-background: var(--ak-primary-subtle);
+	--fbs-ai-background-hover: color-mix(in srgb, var(--ak-primary) 18%, transparent);
+	--fbs-ai-color: var(--ak-primary-text);
+	--fbs-template-bg: var(--ak-primary-subtle);
+	--fbs-template-text: var(--ak-primary-text);
+	--fbs-stage-action-hover-bg: var(--ak-hover-bg);
+	--fbs-task-highlight-ring: var(--ak-focus-ring);
+	--fbs-focus-border: var(--ak-focus);
+	--fbs-task-reminder: var(--ak-primary-text);
+	--fbs-dashboard-date-bg: var(--ak-surface-muted);
+	--fbs-date-bg: var(--ak-surface-muted);
+	--fbs-date-soft-bg: var(--ak-surface-muted);
+	--fbs-date-icon: var(--ak-text-muted);
+	--fbs-subtle-button-bg: var(--ak-btn-bg);
+	--fbs-subtle-button-text: var(--ak-btn-text);
+	--fbs-menu-muted-text: var(--ak-text-muted);
+	--fbs-menu-card-shadow: var(--ak-border);
+	--fbs-menu-tab-bg: var(--ak-surface-muted);
+	--fbs-description-border: var(--ak-border-strong);
+	--fbs-shortcode-text: var(--ak-text-muted);
+	--fbs-board-stage-count-bg: var(--ak-surface-muted);
+	--fbs-board-stage-surface: var(--ak-surface-muted);
+	--fbs-board-footer-border: var(--ak-border);
+	--fbs-board-member-bg: var(--ak-surface-muted);
+	--fbs-board-member-text: var(--ak-text);
+	--fbs-board-archive-bg: var(--ak-warning-subtle);
+	--fbs-board-type-bg: var(--ak-surface-muted);
+	--fbs-board-header-bg: var(--ak-elevated);
+	--fbs-board-header-border: var(--ak-border);
+	--fbs-board-header-text: var(--ak-text-muted);
+	--fbs-board-bg-muted: var(--ak-surface-muted);
+	--fbs-board-bg-badge: var(--ak-primary-subtle);
+	--fbs-board-border-hover: var(--ak-border-strong);
+	--fbs-board-dialog-text: var(--ak-text);
+	--fbs-board-dialog-bg: var(--ak-elevated);
+	--fbs-board-dialog-border: var(--ak-border);
+	--fbs-board-dialog-muted: var(--ak-text-muted);
+	--fbs-board-glass-bg: var(--ak-elevated);
+	--fbs-board-glass-border: var(--ak-border);
+	--fbs-board-overlay-dark: var(--ak-overlay);
+	--fbs-calendar-task-pill-bg: var(--ak-elevated);
+	--fbs-folder-accent: var(--ak-warning);
+	--fbs-folder-bg: var(--ak-surface-muted);
+	--fbs-folder-border: var(--ak-border);
+	--fbs-folder-link: var(--ak-primary-text);
+	--fbs-folder-link-hover: var(--ak-primary-text);
+	--fbs-folder-link-bg: var(--ak-primary-subtle);
+	--fbs-folder-title-bg: var(--ak-hover-bg);
+	--fbs-success: var(--ak-success);
+	--fbs-success-bg: var(--ak-success-subtle);
+	--fbs-warning: var(--ak-warning);
+	--fbs-warning-bg: var(--ak-warning-subtle);
+	--fbs-error: var(--ak-error);
+	--fbs-error-bg: var(--ak-error-subtle);
+	--fbs-overdue-bg: var(--ak-error-subtle);
+	--fbs-overdue-border: color-mix(in srgb, var(--ak-error) 35%, var(--ak-border));
+	--fbs-overdue-text: var(--ak-error);
+	--fbs-overdue-icon: var(--ak-error);
+	--fbs-blocked-bg: var(--ak-warning-subtle);
+	--fbs-blocked-banner-bg: var(--ak-warning-subtle);
+	--fbs-blocked-border: color-mix(in srgb, var(--ak-warning) 35%, var(--ak-border));
+	--fbs-blocked-text: var(--ak-warning);
+	--fbs-blocked-icon: var(--ak-warning);
+	--fbs-task-no-description-bg: var(--ak-surface-muted);
+	--fbs-task-no-description-text: var(--ak-text-muted);
+	--fbs-priority-urgent-text: var(--ak-error);
+	--fbs-priority-urgent-bg: var(--ak-error-subtle);
+	--fbs-priority-high-text: var(--ak-warning);
+	--fbs-priority-high-bg: var(--ak-warning-subtle);
+	--fbs-priority-medium-text: var(--ak-info);
+	--fbs-priority-medium-bg: var(--ak-info-subtle);
+	--fbs-priority-low-text: var(--ak-text-muted);
+	--fbs-priority-low-bg: var(--ak-surface-muted);
+	--fbs-status-counter-bg: var(--ak-primary-subtle);
+	--fbs-status-counter-text: var(--ak-primary-text);
+	--fbs-report-chart-primary: var(--ak-primary);
+	--fbs-report-chart-primary-soft: var(--ak-primary-subtle);
+	--fbs-report-chart-medium: var(--ak-warning);
+	--fbs-report-chart-neutral: var(--ak-text-muted);
+	--fbs-report-chart-custom: var(--ak-info);
+	--fbs-report-chart-track: var(--ak-border);
+	--fbs-badge-unsubscribed-text: var(--ak-text-muted);
+	--fbs-badge-unsubscribed-bg: var(--ak-surface-muted);
+	--fbs-badge-subscribed-text: var(--ak-success);
+	--fbs-badge-subscribed-bg: var(--ak-success-subtle);
+	--fbs-badge-pending-text: var(--ak-warning);
+	--fbs-badge-pending-bg: var(--ak-warning-subtle);
+	--fbs-badge-transactional-text: var(--ak-info);
+	--fbs-badge-transactional-bg: var(--ak-info-subtle);
+	--fbs-badge-bounced-text: var(--ak-info);
+	--fbs-badge-bounced-bg: var(--ak-info-subtle);
+	--fbs-badge-complained-text: var(--ak-warning);
+	--fbs-badge-complained-bg: var(--ak-warning-subtle);
+	--fbs-badge-spammed-text: var(--ak-error);
+	--fbs-badge-spammed-bg: var(--ak-error-subtle);
+	--fbs-shadow-xs: var(--ak-shadow-subtle);
+	--fbs-shadow-sm: var(--ak-shadow-subtle);
+	--fbs-shadow-button: var(--ak-btn-primary-shadow);
+	--fbs-shadow-card-hover: var(--ak-shadow-elevated);
+	--fbs-shadow-drag-preview: var(--ak-shadow-elevated);
+	--fbs-shadow-bulk-bar: var(--ak-shadow-elevated);
+	--fbs-shadow-stage-top: none;
+	--fbs-crm-contact-app3-primary: var(--ak-primary);
+	--fbs-crm-contact-app3-primary-soft: var(--ak-primary-subtle);
+	--primary-purple: var(--ak-primary);
+
+	/* Re-assert Element Plus tokens against FluentBoards `.fbs-dark` overrides */
+	--el-color-primary: var(--ak-primary);
+	--el-color-primary-light-3: color-mix(in srgb, var(--ak-primary) 70%, var(--ak-surface));
+	--el-color-primary-light-5: color-mix(in srgb, var(--ak-primary) 50%, var(--ak-surface));
+	--el-color-primary-light-7: color-mix(in srgb, var(--ak-primary) 30%, var(--ak-surface));
+	--el-color-primary-light-8: color-mix(in srgb, var(--ak-primary) 20%, var(--ak-surface));
+	--el-color-primary-light-9: var(--ak-primary-subtle);
+	--el-color-primary-dark-2: var(--ak-primary-hover);
+	--el-color-white: var(--ak-on-accent);
+	--el-color-success: var(--ak-success);
+	--el-color-warning: var(--ak-warning);
+	--el-color-danger: var(--ak-error);
+	--el-color-error: var(--ak-error);
+	--el-color-info: var(--ak-text-muted);
+	--el-color-info-light-9: var(--ak-surface-muted);
+	--el-color-danger-light-5: color-mix(in srgb, var(--ak-error) 50%, var(--ak-surface));
+	--el-color-danger-light-8: color-mix(in srgb, var(--ak-error) 22%, var(--ak-surface));
+	--el-color-danger-light-9: var(--ak-error-subtle);
+	--el-bg-color: var(--ak-surface);
+	--el-bg-color-page: var(--ak-bg);
+	--el-bg-color-overlay: var(--ak-elevated);
+	--el-fill-color-blank: var(--ak-surface);
+	--el-fill-color-light: var(--ak-surface-muted);
+	--el-fill-color-lighter: var(--ak-elevated);
+	--el-text-color-primary: var(--ak-text);
+	--el-text-color-regular: var(--ak-text-muted);
+	--el-text-color-secondary: var(--ak-text);
+	--el-text-color-placeholder: var(--ak-text-muted);
+	--el-text-color-disabled: var(--ak-text-disabled);
+	--el-border-color: var(--ak-border);
+	--el-border-color-light: var(--ak-border);
+	--el-border-color-lighter: var(--ak-border);
+	--el-border-color-extra-light: var(--ak-surface-muted);
+	--el-border-color-dark: var(--ak-border-strong);
+	--el-button-text-color: var(--ak-btn-text);
+	--el-mask-color: var(--ak-overlay);
+	--el-skeleton-color: var(--ak-surface-muted);
+	--el-skeleton-to-color: var(--ak-elevated);
+	--el-table-bg-color: var(--ak-table-bg);
+	--el-table-tr-bg-color: var(--ak-table-bg);
+	--el-table-border-color: var(--ak-table-border);
+	--el-table-header-bg-color: var(--ak-table-header-bg);
+	--el-table-header-text-color: var(--ak-text-muted);
+	--el-table-text-color: var(--ak-text);
+	--el-table-row-hover-bg-color: var(--ak-hover-bg);
+	--el-font-family: var(--ak-font-body);
+}
+
+body.adminkit :is(
+	.fbs-crm-label-picker-popper,
+	.fbs-crm-contact-drawer,
+	.fbs-crm-task-composer-backdrop,
+	.fbs-crm-contact-create-task-dialog,
+	.fbs-task-date-control-popper,
+	.fbs-crm-contact-app3
+) .el-switch {
+	--el-switch-on-color: var(--ak-primary);
+	--el-switch-off-color: var(--ak-border-strong);
+}
+
+/* ==========================================================================
+   2. Canvas, Topbar, White-Label Wordmark & Theme Toggle
+   ========================================================================== */
+
+body.adminkit.ak-fluent-boards #wpcontent,
+body.adminkit.ak-fluent-boards.fbs-dark #wpcontent,
+body.adminkit.ak-fluent-boards.fluent_boards_theme_dark #wpcontent,
+body.adminkit.ak-fluent-boards #wpbody-content,
+body.adminkit.ak-fluent-boards #fluent-boards-app,
+body.adminkit.ak-fluent-boards #fluent-framework-app {
+	background-color: var(--ak-bg);
+	color: var(--ak-text);
+}
+
+@media (min-width: 783px) {
+
+	body.adminkit.ak-fluent-boards .fframe_main-menu-items {
+		margin-left: 0;
+	}
+
+	body.adminkit.ak-fluent-boards .fframe_body {
+		margin-left: 0 !important;
+	}
+}
+
+body.adminkit.ak-fluent-boards .fframe_main-menu-items {
+	background-color: var(--ak-surface);
+	border-bottom-color: var(--ak-border);
+}
+
+body.adminkit.ak-fluent-boards .fframe_main-menu-items .menu_logo_holder,
+body.adminkit.ak-fluent-boards .fframe_main-menu-items .menu_logo_holder a {
+	flex: 0 0 auto;
+	width: auto;
+	gap: 8px;
+	color: var(--ak-heading);
+}
+
+body.adminkit.ak-fluent-boards .fframe_main-menu-items .menu_logo_holder a > img {
+	display: none;
+}
+
+body.adminkit.ak-fluent-boards .fframe_main-menu-items .menu_logo_holder a::before {
+	content: var(--ak-wordmark, "FluentBoards");
+	color: var(--ak-heading);
+	font-size: calc(16px * var(--ak-type-scale, 1));
+	font-weight: 600;
+	line-height: 1.2;
+	white-space: nowrap;
+}
+
+body.adminkit.ak-fluent-boards .fframe_main-menu-items ul.fframe_menu .fframe_menu_primary {
+	background-color: transparent;
+	border-radius: var(--ak-radius-m);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.ak-fluent-boards .fframe_main-menu-items ul.fframe_menu li.fframe_menu_item.active_item > .fframe_menu_primary {
+	background-color: var(--ak-elevated);
+	color: var(--ak-heading);
+}
+
+body.adminkit.ak-fluent-boards .fframe_main-menu-items ul.fframe_menu .fframe_menu_primary:is(:hover, :focus-visible) {
+	background-color: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+body.adminkit.ak-fluent-boards .fframe_main-menu-items ul.fframe_menu li.fframe_has_sub_items:hover > .fframe_submenu_items {
+	background-color: var(--ak-elevated);
+	border: var(--ak-border-width) solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+	box-shadow: var(--ak-shadow-elevated);
+}
+
+/* AdminKit controls color mode; hide duplicate host switcher in dark & FluentHub modes */
+:root[data-adminkit-theme="dark"] body.adminkit.ak-fluent-boards .fbs-theme-mode,
+body.adminkit.ak-fluent-boards.ak-fluenthub .fbs-theme-mode {
+	display: none;
+}
+
+/* ==========================================================================
+   3. Controls, Buttons, Inputs, Checkboxes, Radios, Switches & Segmented
+   ========================================================================== */
+
+body.adminkit.ak-fluent-boards .el-button.el-button--primary,
+body.adminkit.ak-fluent-boards.fbs-dark .el-button.el-button--primary,
+body.adminkit .fbs-crm-contact-create-task-dialog .el-button.el-button--primary,
+body.adminkit .fbs-crm-contact-drawer .el-button.el-button--primary {
+	--el-button-bg-color: var(--ak-primary);
+	--el-button-border-color: var(--ak-primary);
+	--el-button-text-color: var(--ak-on-accent);
+	--el-button-hover-bg-color: var(--ak-primary-hover);
+	--el-button-hover-border-color: var(--ak-primary-hover);
+	--el-button-hover-text-color: var(--ak-on-accent-hover);
+	--el-button-active-bg-color: var(--ak-primary-hover);
+	--el-button-active-border-color: var(--ak-primary-hover);
+	--el-button-active-text-color: var(--ak-on-accent-hover);
+	--el-color-white: var(--ak-on-accent);
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+	box-shadow: var(--ak-btn-primary-shadow);
+}
+
+body.adminkit.ak-fluent-boards .el-button.el-button--primary:hover,
+body.adminkit.ak-fluent-boards.fbs-dark .el-button.el-button--primary:hover,
+body.adminkit.ak-fluent-boards .el-button.el-button--primary:focus-visible,
+body.adminkit.ak-fluent-boards.fbs-dark .el-button.el-button--primary:focus-visible,
+body.adminkit .fbs-crm-contact-create-task-dialog .el-button.el-button--primary:hover,
+body.adminkit .fbs-crm-contact-drawer .el-button.el-button--primary:hover {
+	background-color: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
+	color: var(--ak-on-accent-hover);
+	box-shadow: var(--ak-btn-primary-shadow-hover);
+}
+
+body.adminkit.ak-fluent-boards :is(
+	.fbs-settings-action--primary,
+	.el-button.fbs-settings-action--primary,
+	.fbs-settings-primary-action,
+	.fbs-settings-primary-action.el-button,
+	.fbs-settings-pro-notice__button,
+	.fbs_board_section_container .fbs_board_section_table_view .fbs_table_view_header .fbs_table_view_add_task .fbs_table_view_add_task_button
+) {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+
+body.adminkit.ak-fluent-boards :is(
+	.fbs-settings-action--primary,
+	.el-button.fbs-settings-action--primary,
+	.fbs-settings-primary-action,
+	.fbs-settings-primary-action.el-button,
+	.fbs-settings-pro-notice__button
+):is(:hover, :focus, :active) {
+	background-color: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
+	color: var(--ak-on-accent-hover);
+}
+
+body.adminkit.ak-fluent-boards .fbs-webhook-create-button.el-button {
+	background: var(--ak-primary) !important;
+	color: var(--ak-on-accent) !important;
+}
+
+body.adminkit.ak-fluent-boards .fbs-webhook-create-button.el-button:is(:hover, :focus, :active) {
+	background: var(--ak-primary-hover) !important;
+	color: var(--ak-on-accent-hover) !important;
+}
+
+body.adminkit.ak-fluent-boards .fbs_cancel_button,
+body.adminkit.ak-fluent-boards .fbs__delete_confirm_modal .fbs_delete_dialog-footer .el-button:first-child {
+	background-color: var(--ak-btn-bg);
+	border-color: var(--ak-btn-border);
+	color: var(--ak-btn-text);
+}
+
+body.adminkit.ak-fluent-boards .fbs_cancel_button:is(:hover, :active, :focus, :focus-visible),
+body.adminkit.ak-fluent-boards .fbs__delete_confirm_modal .fbs_delete_dialog-footer .el-button:first-child:is(:hover, :focus) {
+	background: var(--ak-btn-hover-bg) !important;
+	border-color: var(--ak-btn-hover-border) !important;
+	color: var(--ak-btn-text) !important;
+}
+
+body.adminkit.ak-fluent-boards .fbs__delete_confirm_modal .fbs_delete_dialog-footer .el-button:last-child:is(:hover, :focus) {
+	background: var(--ak-error) !important;
+	border-color: var(--ak-error) !important;
+	color: var(--ak-on-accent) !important;
+}
+
+body.adminkit.ak-fluent-boards .el-input__wrapper,
+body.adminkit.ak-fluent-boards .el-textarea__inner,
+body.adminkit.ak-fluent-boards .el-select__wrapper {
+	background-color: var(--ak-input-bg);
+	box-shadow: 0 0 0 1px var(--ak-input-border) inset;
+	color: var(--ak-text);
+}
+
+body.adminkit.ak-fluent-boards :is(.el-input__wrapper, .el-select__wrapper).is-focus,
+body.adminkit.ak-fluent-boards .el-textarea__inner:focus {
+	box-shadow: 0 0 0 1px var(--ak-focus) inset, 0 0 0 3px var(--ak-focus-ring);
+}
+
+body.adminkit.ak-fluent-boards :is(.el-checkbox, .el-radio) {
+	--el-checkbox-checked-bg-color: var(--ak-primary);
+	--el-checkbox-checked-input-border-color: var(--ak-primary);
+	--el-checkbox-checked-icon-color: var(--ak-on-accent);
+	--el-checkbox-checked-text-color: var(--ak-text);
+	--el-radio-input-border-color-hover: var(--ak-primary);
+}
+
+body.adminkit.ak-fluent-boards .el-checkbox.is-checked .el-checkbox__label,
+body.adminkit.ak-fluent-boards .el-radio.is-checked .el-radio__label {
+	color: var(--ak-text);
+}
+
+body.adminkit.ak-fluent-boards .el-checkbox__input.is-checked .el-checkbox__inner::after {
+	border-color: var(--ak-on-accent);
+}
+
+body.adminkit.ak-fluent-boards .el-checkbox__input.is-indeterminate .el-checkbox__inner::before {
+	background-color: var(--ak-on-accent) !important;
+	border-color: var(--ak-on-accent) !important;
+}
+
+body.adminkit.ak-fluent-boards .el-radio__input.is-checked .el-radio__inner {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+
+body.adminkit.ak-fluent-boards .el-radio__input.is-checked .el-radio__inner::after {
+	background-color: var(--ak-on-accent);
+}
+
+body.adminkit.ak-fluent-boards .el-switch.is-checked .el-switch__core {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+
+body.adminkit.ak-fluent-boards .el-switch.is-checked .el-switch__core .el-switch__action,
+body.adminkit.ak-fluent-boards.fbs-dark .el-switch.is-checked .el-switch__core .el-switch__action {
+	background-color: var(--ak-on-accent);
+}
+
+body.adminkit.ak-fluent-boards .fbs-settings-segmented.el-radio-group {
+	background-color: var(--ak-surface-muted);
+	border: var(--ak-border-width) solid var(--ak-border);
+	border-radius: var(--ak-radius-m);
+}
+
+body.adminkit.ak-fluent-boards .fbs-settings-segmented .el-radio-button__inner {
+	background: transparent;
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.ak-fluent-boards .fbs-settings-segmented .el-radio-button.is-active .el-radio-button__inner {
+	background: var(--ak-surface) !important;
+	color: var(--ak-text) !important;
+	box-shadow: var(--ak-shadow-subtle);
+}
+
+body.adminkit.ak-fluent-boards .fbs_task_repeat_container_week_options .el-checkbox-button.is-checked .el-checkbox-button__inner {
+	background: var(--ak-primary) !important;
+	border-color: var(--ak-primary) !important;
+	color: var(--ak-on-accent) !important;
+}
+
+body.adminkit.ak-fluent-boards .fbs_board_title_bar .fbs-boards-actions .fbs_tasks_view_layout_icon .fbs_tasks_view_layout_active_button {
+	background: var(--ak-surface) !important;
+	border-color: var(--ak-primary) !important;
+	color: var(--ak-primary-text);
+}
+
+body.adminkit.ak-fluent-boards .fbs_board_title_bar .fbs-boards-actions .fbs_tasks_view_layout_icon .fbs_tasks_view_layout_icon_button:hover {
+	border-color: var(--ak-primary) !important;
+	color: var(--ak-primary-text);
+}
+
+/* ==========================================================================
+   4. Boards Grid, Kanban Cards, Tables, Calendar, Modals & Preserved Covers
+   ========================================================================== */
+
+body.adminkit.ak-fluent-boards .fluentboards_databox:not(.fbs-is-blur) {
+	background-color: var(--ak-bg);
+}
+
+/* Preserve inline photo/gradient/solid cover contrast on .fbs-is-blur boards */
+body.adminkit.ak-fluent-boards .fluentboards_databox.fbs-is-blur .fbs_board_title_bar :is(.fbs_board_title_text, .fbs-quick-description-btn) {
+	color: var(--ak-heading);
+}
+
+body.adminkit.ak-fluent-boards .fbs_board_card__body,
+body.adminkit.ak-fluent-boards .fbs_task_card__inner,
+body.adminkit.ak-fluent-boards .fbs_board_section_container .fbs_board_section_table_view {
+	background-color: var(--ak-card-bg);
+	border-color: var(--ak-card-border);
+	box-shadow: var(--ak-card-shadow);
+}
+
+body.adminkit.ak-fluent-boards .fbs_board_section_container .fbs_board_section_table_view .fbs_table_view_header h1 {
+	color: var(--ak-heading);
+}
+
+body.adminkit.ak-fluent-boards .fbs_board_section_container .fbs_board_section_table_view .fbs_tasks_table {
+	background-color: var(--ak-table-bg);
+}
+
+body.adminkit.ak-fluent-boards .fbs_board_section_container .fbs_board_section_table_view .fbs_tasks_table thead {
+	background-color: var(--ak-table-header-bg);
+}
+
+body.adminkit.ak-fluent-boards .fbs_board_section_container .fbs_board_section_table_view .fbs_tasks_table thead tr th {
+	color: var(--ak-text-muted);
+	border-bottom: var(--ak-border-width) solid var(--ak-table-border);
+}
+
+body.adminkit.ak-fluent-boards .fbs_board_section_container .fbs_board_section_table_view .fbs_tasks_table tbody {
+	background-color: var(--ak-table-bg);
+}
+
+body.adminkit.ak-fluent-boards .fbs_board_section_container .fbs_board_section_table_view .fbs_tasks_table tbody tr td {
+	border-bottom: var(--ak-border-width) solid var(--ak-table-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.ak-fluent-boards table.fbs_tasks_table .fbs_status_col .el-dropdown .fbs_status_block {
+	background-color: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+
+body.adminkit.ak-fluent-boards table.fbs_tasks_table .fbs_status_block.fbs_status_block_in_progress {
+	background-color: var(--ak-warning-subtle) !important;
+	color: var(--ak-warning) !important;
+}
+
+body.adminkit.ak-fluent-boards table.fbs_tasks_table .fbs_status_block.fbs_status_block_completed {
+	background-color: var(--ak-success-subtle) !important;
+	color: var(--ak-success) !important;
+}
+
+body.adminkit.ak-fluent-boards .task_overdue_table_header {
+	background-color: var(--ak-error-subtle) !important;
+	color: var(--ak-error);
+}
+
+body.adminkit.ak-fluent-boards .task_high_priority_upcoming_table_header {
+	background-color: var(--ak-info-subtle) !important;
+	color: var(--ak-info);
+}
+
+body.adminkit.ak-fluent-boards .board_dashboard__tabel_row-color-oldlace {
+	background-color: var(--ak-warning-subtle) !important;
+}
+
+body.adminkit.ak-fluent-boards .board_dashboard__tabel_row-color-lightgreen {
+	background-color: var(--ak-success-subtle) !important;
+}
+
+body.adminkit.ak-fluent-boards .fbs_card_wrapper .fbs_card:hover {
+	border-color: var(--ak-primary);
+	color: var(--ak-text);
+	box-shadow: var(--ak-shadow-elevated) !important;
+}
+
+body.adminkit.ak-fluent-boards .fbs-empty-state__message {
+	color: var(--ak-text-muted) !important;
+}
+
+body.adminkit.ak-fluent-boards .fbs-calendar-view {
+	color: var(--ak-text);
+}
+
+body.adminkit.ak-fluent-boards .fbs-pro {
+	background-color: var(--ak-warning-subtle);
+	color: var(--ak-warning) !important;
+}
+
+body.adminkit.ak-fluent-boards .fbs-pro-btn {
+	background: var(--ak-warning-subtle) !important;
+	color: var(--ak-warning) !important;
+}
+
+body.adminkit.ak-fluent-boards .fbs-pro-btn:is(:hover, :focus) {
+	background: color-mix(in srgb, var(--ak-warning) 20%, transparent) !important;
+	color: var(--ak-warning) !important;
+}
+
+/* ==========================================================================
+   5. Milkdown / Crepe Editor & Gantt Chart
+   ========================================================================== */
+
+body.adminkit.ak-fluent-boards .fbs-milkdown-content .milkdown,
+body.adminkit.ak-fluent-boards.fbs-dark .fbs-milkdown-content .milkdown {
+	--crepe-color-background: var(--ak-input-bg);
+	--crepe-color-on-background: var(--ak-text);
+	--crepe-color-surface: var(--ak-elevated);
+	--crepe-color-surface-low: var(--ak-surface-muted);
+	--crepe-color-on-surface: var(--ak-text);
+	--crepe-color-on-surface-variant: var(--ak-text-muted);
+	--crepe-color-outline: var(--ak-border-strong);
+	--crepe-color-primary: var(--ak-primary);
+	--crepe-color-secondary: var(--ak-surface-muted);
+	--crepe-color-on-secondary: var(--ak-text);
+	--crepe-color-inverse: var(--ak-heading);
+	--crepe-color-on-inverse: var(--ak-surface);
+	--crepe-color-inline-code: var(--ak-error);
+	--crepe-color-error: var(--ak-error);
+	--crepe-color-hover: var(--ak-hover-bg);
+	--crepe-color-selected: var(--ak-primary-subtle);
+	--crepe-color-inline-area: var(--ak-surface-muted);
+	--crepe-font-default: var(--ak-font-body);
+	--crepe-font-title: var(--ak-font-body);
+	--crepe-font-code: var(--ak-font-mono);
+	--crepe-shadow-1: var(--ak-shadow-subtle);
+	--crepe-shadow-2: var(--ak-shadow-elevated);
+	--fbs-milkdown-menu-bg: var(--ak-elevated);
+	--fbs-milkdown-menu-item-bg: var(--ak-surface);
+	--fbs-milkdown-menu-text: var(--ak-text);
+	--fbs-milkdown-menu-muted: var(--ak-text-muted);
+	--fbs-milkdown-menu-divider: var(--ak-border);
+	--fbs-milkdown-menu-shadow: var(--ak-shadow-elevated);
+	--fbs-milkdown-image-upload-surface: var(--ak-surface);
+}
+
+body.adminkit.ak-fluent-boards .fbs-milkdown-content .milkdown .ProseMirror code {
+	background-color: var(--ak-surface-muted);
+	color: var(--ak-primary-text);
+}
+
+body.adminkit.ak-fluent-boards .fbs-milkdown-content .milkdown .ProseMirror pre {
+	background-color: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+
+body.adminkit.ak-fluent-boards .fbs-milkdown-content .milkdown milkdown-image-block .image-edit {
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border) !important;
+}
+
+body.adminkit.ak-fluent-boards .fbs-milkdown-content .milkdown milkdown-image-block .image-edit .link-importer .placeholder,
+body.adminkit.ak-fluent-boards .fbs-milkdown-content .milkdown milkdown-image-block .image-edit .link-importer .placeholder .text {
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.ak-fluent-boards .fbs-milkdown-content .milkdown milkdown-image-block .image-edit .link-importer .placeholder .uploader {
+	color: var(--ak-primary-text);
+}
+
+body.adminkit.ak-fluent-boards .fbs-milkdown-content .milkdown milkdown-image-block .image-edit .confirm {
+	background: var(--ak-primary) !important;
+	border-color: var(--ak-primary) !important;
+	color: var(--ak-on-accent) !important;
+}
+
+/* Gantt tokens: beat scoped `[data-theme=dark][data-v-*]` (0,3,0) without !important */
+html body.adminkit.ak-fluent-boards :is(
+	.gantt-root,
+	.gantt-root[data-theme="dark"],
+	.fbs-gantt-chart-view [data-theme="dark"],
+	.fbs-gantt-chart-view .drawer-overlay[data-theme="dark"]
+) {
+	--gantt-bg-primary: var(--ak-surface);
+	--gantt-bg-secondary: var(--ak-surface-muted);
+	--gantt-bg-tertiary: var(--ak-elevated);
+	--gantt-bg-hover: var(--ak-hover-bg);
+	--gantt-bg-hover-parent: var(--ak-surface-muted);
+	--gantt-bg-toolbar: var(--ak-surface);
+	--gantt-text-primary: var(--ak-text);
+	--gantt-text-secondary: var(--ak-text-muted);
+	--gantt-text-muted: var(--ak-text-muted);
+	--gantt-text-white: var(--ak-text);
+	--gantt-text-parent: var(--ak-heading);
+	--gantt-text-header: var(--ak-heading);
+	--gantt-border-light: var(--ak-border);
+	--gantt-border-medium: var(--ak-border);
+	--gantt-border-dark: var(--ak-border-strong);
+	--gantt-border-color: var(--ak-border);
+	--gantt-primary: var(--ak-primary);
+	--gantt-primary-color: var(--ak-primary);
+	--gantt-primary-light: var(--ak-primary-subtle);
+	--gantt-primary-lightest: var(--ak-primary-subtle);
+	--gantt-primary-dark: var(--ak-primary-subtle);
+	--gantt-success: var(--ak-success);
+	--gantt-warning: var(--ak-warning);
+	--gantt-warning-light: var(--ak-warning-subtle);
+	--gantt-danger: var(--ak-error);
+	--gantt-danger-light: var(--ak-error-subtle);
+	--gantt-scrollbar-thumb: var(--ak-border-strong);
+	--gantt-scrollbar-thumb-hover: var(--ak-text-muted);
+}
+
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .gantt-root[data-theme="dark"] {
+	color: var(--ak-text) !important;
+}
+
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view :is(.gantt-btn-default, .gantt-root[data-theme="dark"] .gantt-btn-default) {
+	background: var(--ak-btn-bg) !important;
+	border-color: var(--ak-btn-border) !important;
+	color: var(--ak-btn-text) !important;
+}
+
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view :is(.gantt-btn-default, .gantt-root[data-theme="dark"] .gantt-btn-default):hover:not(:disabled) {
+	background: var(--ak-btn-hover-bg) !important;
+	border-color: var(--ak-btn-hover-border) !important;
+	color: var(--ak-text) !important;
+}
+
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .gantt-btn-primary,
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .timeline-day.today,
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .timeline-week.today,
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .timeline-hour-item.today,
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .gantt-root .avatar,
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .gantt-root .flag-content {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent) !important;
+}
+
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .gantt-btn-primary:hover:not(:disabled) {
+	background-color: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
+	color: var(--ak-on-accent-hover) !important;
+}
+
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .timeline-day.today .day-label,
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .timeline-week.today .week-label,
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .timeline-hour-item.today .hour-label {
+	color: var(--ak-on-accent) !important;
+}
+
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .fbs-gantt-library-overrides .today,
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .fbs-gantt-library-overrides .today-line {
+	border-color: var(--ak-primary) !important;
+}
+
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .fbs-gantt-library-overrides .task-bar.completed {
+	background: var(--ak-success-subtle) !important;
+	border-color: color-mix(in srgb, var(--ak-success) 35%, var(--ak-border)) !important;
+	color: var(--ak-success);
+}
+
+html body.adminkit.ak-fluent-boards .fbs-gantt-chart-view .fbs-gantt-library-overrides .task-bar:has(.fbs-gantt-bar-content.is-overdue):not(.completed) {
+	background: var(--ak-error-subtle) !important;
+	border-color: color-mix(in srgb, var(--ak-error) 35%, var(--ak-border)) !important;
+	color: var(--ak-error) !important;
+}

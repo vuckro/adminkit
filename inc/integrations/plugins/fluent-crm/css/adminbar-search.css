@@ -17,3 +17,34 @@ body.adminkit #wpadminbar #wp-admin-bar-fcrm_adminbar_search :is(a, button, inpu
  outline: 2px solid var(--ak-focus);
  outline-offset: 2px;
 }
+
+/* FluentCRM's adminbar-search.js also injects a "View CRM Profile" link on user
+ * edit/profile screens as `.page-title-action` (inline purple styles are cleared
+ * by profile-account.js when relocated into `.ak-profile-header`). Keep it styled
+ * as a secondary AdminKit button even when no primary "Add User" CTA precedes it. */
+body.adminkit .wrap a.page-title-action[href*="page=fluentcrm-admin"] {
+ background: var(--ak-btn-bg);
+ border-color: var(--ak-btn-border, var(--ak-border));
+ color: var(--ak-btn-text, var(--ak-text));
+ box-shadow: none;
+}
+
+body.adminkit .wrap a.page-title-action[href*="page=fluentcrm-admin"]:is(:hover, :focus) {
+ background: var(--ak-btn-hover-bg);
+ border-color: var(--ak-btn-hover-border);
+ color: var(--ak-text);
+ box-shadow: none;
+}
+
+body.adminkit .wrap a.page-title-action[href*="page=fluentcrm-admin"]:active {
+ background: var(--ak-surface-muted);
+ border-color: var(--ak-border-strong);
+ color: var(--ak-text);
+ box-shadow: none;
+}
+
+body.adminkit .wrap a.page-title-action[href*="page=fluentcrm-admin"]:focus-visible {
+ outline: 2px solid transparent;
+ outline-offset: 2px;
+ box-shadow: var(--ak-focus-ring);
+}

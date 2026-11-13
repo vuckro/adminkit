@@ -8,7 +8,7 @@ const domHelperSource = fs.readFileSync(path.resolve(__dirname, '../../assets/js
 const profileSource = fs.readFileSync(path.resolve(__dirname, '../../assets/js/wp-core/profile-account.js'), 'utf8');
 
 const html = `<!doctype html><html class="ak-account-pending"><body class="wp-admin profile-php">
-<div class="wrap"><h1>Profile</h1>
+<div class="wrap" id="profile-page"><h1>Profile</h1><a href="user-new.php" class="page-title-action">Add User</a><hr class="wp-header-end">
 <form id="your-profile">
   <h2>Personal Options</h2>
   <table class="form-table"><tbody>
@@ -107,5 +107,28 @@ shippingInput.dispatchEvent(new w.Event('invalid', { bubbles: false, cancelable:
 assert.equal(shippingDetails.open, true, 'Invalid input inside collapsed <details> must auto-open it');
 assert.equal(w.document.getElementById('ak-account-panel-addresses').hidden, false, 'Invalid input must activate its owning tab');
 
-w.close();
-console.log('OK: profile-account groups .pw-weak with password, orders tabs, preserves 3rd-party sections and opens <details> on invalid.');
+// Simulate FluentCRM adminbar-search.js injecting "View CRM Profile" after profile-account.js ran.
+const crmLink = w.document.createElement('a');
+crmLink.setAttribute('style', 'background: #7757e6;color: white;border-color: #7757e6;');
+crmLink.className = 'page-title-action';
+crmLink.href = 'http://localhost/wp-admin/admin.php?page=fluentcrm-admin#/subscribers/13';
+crmLink.textContent = 'View CRM Profile';
+const headerEnd = w.document.querySelector('#profile-page > .wp-header-end');
+headerEnd.parentNode.insertBefore(crmLink, headerEnd);
+
+Promise.resolve().then(() => {
+  const header = w.document.querySelector('.ak-profile-header');
+  assert.ok(header, '.ak-profile-header must wrap title and actions on profile/user-edit');
+  const headerActions = Array.from(header.querySelectorAll(':scope > .page-title-action'));
+  assert.equal(headerActions.length, 2, 'Late-injected CRM button must be adopted into .ak-profile-header');
+  assert.equal(headerActions[0].textContent, 'Add User', 'Primary Add User stays first in DOM');
+  assert.equal(headerActions[0].classList.contains('ak-page-action-secondary'), false);
+  assert.equal(headerActions[1].textContent, 'View CRM Profile', 'Secondary CRM action sits after primary in DOM');
+  assert.equal(headerActions[1].classList.contains('ak-page-action-secondary'), true);
+  assert.equal(headerActions[1].style.background, '', 'Inline purple background must be stripped');
+  assert.equal(headerActions[1].style.color, '', 'Inline white color must be stripped');
+  assert.equal(headerActions[1].style.borderColor, '', 'Inline purple border-color must be stripped');
+
+  w.close();
+  console.log('OK: profile-account groups .pw-weak with password, orders tabs, adopts late page-title-actions and opens <details> on invalid.');
+});

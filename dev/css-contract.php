@@ -47,7 +47,7 @@ $ep_path = $root . '/assets/css/vendor/element-plus.css';
 if ( ! is_file( $ep_path ) || ! preg_match( '/--el-color-primary\s*:\s*var\(\s*--ak-primary\s*\)/', (string) file_get_contents( $ep_path ) ) ) {
 	$failures[] = 'Shared Element Plus bridge stylesheet missing or invalid';
 }
-foreach ( array( 'fluent-affiliate', 'fluent-booking', 'fluent-cart', 'fluent-community', 'fluent-crm', 'fluent-snippets' ) as $fluent_slug ) {
+foreach ( array( 'fluent-affiliate', 'fluent-boards', 'fluent-booking', 'fluent-cart', 'fluent-community', 'fluent-crm', 'fluent-snippets' ) as $fluent_slug ) {
 	$php_file = $root . '/inc/integrations/plugins/' . $fluent_slug . '/class-' . $fluent_slug . '.php';
 	if ( ! is_file( $php_file ) || false === strpos( (string) file_get_contents( $php_file ), 'ELEMENT_PLUS_HANDLE' ) ) {
 		$failures[] = $fluent_slug . ': missing AdminKit_Assets::ELEMENT_PLUS_HANDLE dependency';

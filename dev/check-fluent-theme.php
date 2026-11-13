@@ -3,9 +3,10 @@
 declare( strict_types=1 );
 define( 'ABSPATH', __DIR__ . '/' );
 $allowed = true;
+$current_filter = 'fluent_crm_asset_listed_slugs';
 $current_screen = (object) array( 'id' => 'settings_page_fluent-mail' );
 function is_admin() { return true; }
-function current_filter() { return 'fluent_crm_asset_listed_slugs'; }
+function current_filter() { global $current_filter; return $current_filter; }
 function get_current_screen() { global $current_screen; return $current_screen; }
 function apply_filters( $hook, $value, ...$args ) {
 	global $allowed;
@@ -20,6 +21,19 @@ class AdminKit_Integration_Fluent_Smtp {
 	public static function owns_screen( $screen ) { return $screen && 'settings_page_fluent-mail' === $screen->id; }
 }
 class AdminKit_Integration_Fluent_Crm extends AdminKit_Integration_Fluent_Smtp {}
+class AdminKit_Integration_Fluent_Boards {
+	public static $active = true;
+	public static $compatible = true;
+	public static function is_active() { return self::$active; }
+	public static function host_within_tested_range() { return self::$compatible; }
+	public static function slug() { return 'fluent-boards'; }
+	public static function owns_screen( $screen ) {
+		if ( ! $screen || empty( $screen->id ) ) {
+			return false;
+		}
+		return 'toplevel_page_fluent-boards' === $screen->id || '_page_fluent-boards' === substr( $screen->id, -19 );
+	}
+}
 require dirname( __DIR__ ) . '/inc/class-fluent-theme.php';
 $screen = (object) array( 'id' => 'settings_page_fluent-mail' );
 function check_fluent( $condition, $message ) {
@@ -43,6 +57,15 @@ check_fluent( ! AdminKit_Fluent_Theme::owns_screen( $screen ), 'Paused integrati
 AdminKit_Integration_Fluent_Smtp::$compatible = true;
 AdminKit_Integration_Fluent_Smtp::$active = false;
 check_fluent( ! AdminKit_Fluent_Theme::owns_screen( $screen ), 'Inactive host acquired the bridge' );
+$current_filter = 'fluent_boards/asset_listed_slugs';
+$current_screen = (object) array( 'id' => 'toplevel_page_fluent-boards' );
+check_fluent( AdminKit_Fluent_Theme::owns_screen( $current_screen ), 'FluentBoards standalone screen failed bridge ownership' );
+check_fluent( array( '\\/adminkit\\/' ) === AdminKit_Fluent_Theme::allow_assets( array() ), 'FluentBoards standalone screen failed allowlist' );
+$current_screen = (object) array( 'id' => 'fluentcrm-admin_page_fluent-boards' );
+check_fluent( AdminKit_Fluent_Theme::owns_screen( $current_screen ), 'FluentBoards CRM submenu failed bridge ownership' );
+check_fluent( array( '\\/adminkit\\/' ) === AdminKit_Fluent_Theme::allow_assets( array() ), 'FluentBoards CRM submenu failed allowlist' );
+$current_filter = 'fluent_crm_asset_listed_slugs';
+$current_screen = null;
 echo "OK: Fluent standalone ownership, unrelated screens, inactive hosts, compatibility and integration opt-out.\n";
 
 // Both native admin hook paths may run; enqueue and inline data must remain unique.

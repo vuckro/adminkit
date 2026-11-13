@@ -2,7 +2,7 @@
  *
  * Registered via `AdminKit_Assets::ELEMENT_PLUS_HANDLE` and enqueued ONLY on
  * screens owned by Element-Plus-based Fluent adapters (`fluent-affiliate`,
- * `fluent-booking`, `fluent-cart`, `fluent-community`, `fluent-crm`,
+ * `fluent-boards`, `fluent-booking`, `fluent-cart`, `fluent-community`, `fluent-crm`,
  * `fluent-snippets`), emitting zero HTTP requests elsewhere.
  *
  * Selector `:root, html body.adminkit` (0,1,2) beats host `:root` (0,1,0),
