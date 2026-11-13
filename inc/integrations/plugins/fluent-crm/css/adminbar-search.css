@@ -48,3 +48,117 @@ body.adminkit .wrap a.page-title-action[href*="page=fluentcrm-admin"]:focus-visi
  outline-offset: 2px;
  box-shadow: var(--ak-focus-ring);
 }
+
+/* External contact profile widget (`fluentcrm_get_crm_profile_html()`) rendered
+ * inside WooCommerce (`#fluentcrm_woo_order_widget`), EDD, and LMS metaboxes.
+ * FluentCRM prints an inline `<style>` block right after `.fc_profile_external`
+ * with hardcoded light-mode colors (#e6ebf0 avatar ring, #ecf5ff/#409eff stats,
+ * #d3e7ff/#2196F3 tag pills); `body.adminkit .fc_profile_external` beats those
+ * rules by specificity without `!important` (except the inline `style` attribute
+ * on the optional Lifetime Value badge). */
+body.adminkit .fc_profile_external {
+ color: var(--ak-text);
+}
+
+body.adminkit .fc_profile_external .fluentcrm_profile-photo {
+ max-width: 88px;
+ margin: 4px auto 10px;
+}
+
+body.adminkit .fc_profile_external .fluentcrm_profile-photo img {
+ width: 72px;
+ height: 72px;
+ border: 2px solid var(--ak-border);
+ border-radius: var(--ak-radius-full);
+ background-color: var(--ak-surface-muted);
+ box-shadow: none;
+}
+
+body.adminkit .fc_profile_external .profile_title {
+ margin-bottom: 12px;
+ text-align: center;
+}
+
+body.adminkit .fc_profile_external .profile_title h3 {
+ margin: 0 0 2px;
+ font-size: var(--ak-text-m);
+ font-weight: 600;
+ line-height: 1.35;
+}
+
+body.adminkit .fc_profile_external .profile_title a {
+ color: var(--ak-text);
+ text-decoration: none;
+}
+
+body.adminkit .fc_profile_external .profile_title a:is(:hover, :focus-visible) {
+ color: var(--ak-primary-text);
+}
+
+body.adminkit .fc_profile_external .profile_title p {
+ margin: 0 0 8px;
+ color: var(--ak-text-muted);
+ font-size: var(--ak-text-xs);
+ text-transform: capitalize;
+}
+
+body.adminkit .fc_profile_external .fc_stats {
+ display: flex;
+ flex-wrap: wrap;
+ justify-content: center;
+ gap: 6px;
+ margin: 0 0 14px;
+ padding: 0;
+}
+
+body.adminkit .fc_profile_external .fc_stats span {
+ margin: 0;
+ padding: 3px 8px;
+ background: var(--ak-surface-muted);
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-s);
+ color: var(--ak-text-muted);
+ font-size: var(--ak-text-xs);
+ line-height: 1.4;
+}
+
+body.adminkit .fc_profile_external .profile_title .fc_stats span[style] {
+ background: var(--ak-success-subtle);
+ border-color: color-mix(in srgb, var(--ak-success) 28%, var(--ak-border)) !important;
+ color: var(--ak-success) !important;
+}
+
+body.adminkit .fc_profile_external .fc_taggables {
+ display: flex;
+ flex-wrap: wrap;
+ align-items: center;
+ gap: 6px;
+ margin-top: 8px;
+}
+
+body.adminkit .fc_profile_external .fc_taggables + .fc_taggables {
+ margin-top: 10px;
+ padding-top: 10px;
+ border-top: 1px solid var(--ak-border);
+}
+
+body.adminkit .fc_profile_external .fc_taggables i.dashicons {
+ margin: 0 2px 0 0;
+ width: 16px;
+ height: 16px;
+ font-size: var(--ak-text-m);
+ line-height: 16px;
+ color: var(--ak-text-muted);
+}
+
+body.adminkit .fc_profile_external .fc_taggables span {
+ margin: 0;
+ padding: 2px 8px;
+ background: var(--ak-surface-muted);
+ border: 1px solid var(--ak-border);
+ border-radius: var(--ak-radius-s);
+ color: var(--ak-text);
+ font-size: var(--ak-text-xs);
+ line-height: 1.45;
+}
+
