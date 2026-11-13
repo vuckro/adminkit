@@ -1,0 +1,36 @@
+/* Injected into FluentBoards TinyMCE iframe editors for dark/light/accent parity. */
+html,
+body {
+	background-color: var(--ak-input-bg);
+	color: var(--ak-text);
+	font-family: var(--ak-font-body);
+}
+
+a {
+	color: var(--ak-primary-text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: var(--ak-heading);
+}
+
+blockquote {
+	border-left-color: var(--ak-border-strong);
+	color: var(--ak-text-muted);
+}
+
+pre,
+code {
+	background-color: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+
+::selection {
+	background-color: var(--ak-primary-subtle);
+	color: var(--ak-primary-text);
+}

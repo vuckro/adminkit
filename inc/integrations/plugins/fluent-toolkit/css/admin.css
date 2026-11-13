@@ -1,6 +1,11 @@
 /* FluentHub 2.1 replacement shell. Keep host layout and navigation ownership. */
 body.adminkit.ak-fluenthub,
-body.adminkit.ak-fluenthub .fluent_theme_dark {
+body.adminkit.ak-fluenthub.fluent_theme_dark,
+body.adminkit.ak-fluenthub.fluent_boards_theme_dark,
+body.adminkit.ak-fluenthub.fbs-dark,
+body.adminkit.ak-fluenthub .fluent_theme_dark,
+body.adminkit.ak-fluenthub .fluent_boards_theme_dark,
+body.adminkit.ak-fluenthub .fbs-dark {
 	--fui-primary-bg: var(--ak-surface);
 	--fui-bg: var(--ak-bg);
 	--fui-surface: var(--ak-elevated);
