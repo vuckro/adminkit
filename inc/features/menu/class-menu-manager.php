@@ -21,8 +21,10 @@ defined( 'ABSPATH' ) || exit;
 
 require_once __DIR__ . '/class-menu-config.php';
 require_once __DIR__ . '/class-menu-snapshot.php';
-require_once __DIR__ . '/class-menu-layout.php';
-require_once __DIR__ . '/class-menu-renderer.php';
+if ( ! function_exists( 'is_admin' ) || is_admin() ) {
+	require_once __DIR__ . '/class-menu-layout.php';
+	require_once __DIR__ . '/class-menu-renderer.php';
+}
 
 class AdminKit_Menu_Manager {
 
@@ -41,21 +43,21 @@ class AdminKit_Menu_Manager {
 			return;
 		}
 
-		if ( is_admin() ) {
-			add_action( 'init', array( __CLASS__, 'maybe_ensure_schema' ) );
-		}
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
-		add_action( 'admin_menu', array( __CLASS__, 'hide_legacy_link_manager' ), 9990 );
-		add_action( 'admin_menu', array( __CLASS__, 'capture_snapshot' ), 9998 );
-		add_action( 'admin_menu', array( __CLASS__, 'apply' ), 9999 );
-		add_filter( 'custom_menu_order', '__return_true' );
-		add_filter( 'menu_order', array( __CLASS__, 'order_top_level' ) );
-		add_filter( 'parent_file', array( __CLASS__, 'remap_parent_file' ) );
-		add_filter( 'submenu_file', array( __CLASS__, 'remap_submenu_file' ) );
-		add_action( 'admin_head', array( __CLASS__, 'print_css' ), 22 );
-		add_action( 'admin_head', array( 'AdminKit_Menu_Renderer', 'restore_titles' ), PHP_INT_MAX );
-		add_action( 'admin_footer', array( __CLASS__, 'print_url_overrides' ) );
 		add_action( 'wp_uninitialize_site', array( 'AdminKit_Menu_Store', 'delete_site_data' ) );
+		if ( ! function_exists( 'is_admin' ) || is_admin() ) {
+			add_action( 'init', array( __CLASS__, 'maybe_ensure_schema' ) );
+			add_action( 'admin_menu', array( __CLASS__, 'hide_legacy_link_manager' ), 9990 );
+			add_action( 'admin_menu', array( __CLASS__, 'capture_snapshot' ), 9998 );
+			add_action( 'admin_menu', array( __CLASS__, 'apply' ), 9999 );
+			add_filter( 'custom_menu_order', '__return_true' );
+			add_filter( 'menu_order', array( __CLASS__, 'order_top_level' ) );
+			add_filter( 'parent_file', array( __CLASS__, 'remap_parent_file' ) );
+			add_filter( 'submenu_file', array( __CLASS__, 'remap_submenu_file' ) );
+			add_action( 'admin_head', array( __CLASS__, 'print_css' ), 22 );
+			add_action( 'admin_head', array( 'AdminKit_Menu_Renderer', 'restore_titles' ), PHP_INT_MAX );
+			add_action( 'admin_footer', array( __CLASS__, 'print_url_overrides' ) );
+		}
 	}
 
 	/**

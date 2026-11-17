@@ -52,8 +52,14 @@ foreach ( $inc_files as $file ) {
 }
 
 if ( class_exists( 'AdminKit_Lucide_Paths', false ) ) { throw new RuntimeException( 'Icon data loaded before first icon use' ); }
+if ( class_exists( 'AdminKit_Integrations_Manifest', false ) ) { throw new RuntimeException( 'Integrations manifest loaded before use' ); }
 AdminKit_Icons::display_svg( 'home' );
 if ( ! class_exists( 'AdminKit_Lucide_Paths', false ) ) { throw new RuntimeException( 'Lazy icon data missing on first use' ); }
+foreach ( AdminKit_Plugin::ADMIN_ONLY_MODULES as $admin_mod => $flag ) {
+	if ( ! array_key_exists( $admin_mod, $modules ) ) {
+		throw new RuntimeException( 'Admin-only module missing from MODULES: ' . $admin_mod );
+	}
+}
 
 // A duplicate associative key in MODULES would disappear before iteration.
 $source   = (string) file_get_contents( ADMINKIT_PATH . 'inc/class-plugin.php' );
@@ -110,11 +116,15 @@ $required_runtime_assets = array(
 	'assets/js/settings/design-colors.js',
 	'assets/js/wp-core/profile-account-dom.js',
 	'assets/css/vendor/element-plus.css',
+	'assets/icons/LUCIDE-LICENSE',
 );
 foreach ( $required_runtime_assets as $part ) {
 	if ( ! in_array( $part, $working, true ) ) {
 		throw new RuntimeException( 'Runtime asset excluded from working package: ' . $part );
 	}
+}
+if ( in_array( 'assets/icons/lucide.json', $working, true ) ) {
+	throw new RuntimeException( 'Dev icon source assets/icons/lucide.json must be excluded from working package' );
 }
 
 foreach ( $modules as $path => $boot ) {

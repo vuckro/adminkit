@@ -80,7 +80,28 @@ class AdminKit_Plugin {
 	);
 
 	/** Data-only modules loaded by their owning service on first use. */
-	const LAZY_MODULES = array( 'generated/lucide-paths.php' );
+	const LAZY_MODULES = array(
+		'generated/lucide-paths.php',
+		'generated/integrations-manifest.php',
+	);
+
+	/** Admin-only modules skipped on frontend, REST, cron, and login requests. */
+	const ADMIN_ONLY_MODULES = array(
+		'class-fluent-theme.php'                               => true,
+		'wp-core/class-profile-account.php'                    => true,
+		'wp-core/class-list-table-chrome.php'                  => true,
+		'wp-core/class-options-general.php'                    => true,
+		'wp-core/class-reading-layout.php'                     => true,
+		'wp-core/class-options-discussion.php'                 => true,
+		'wp-core/class-post-previews.php'                      => true,
+		'wp-core/class-user-quick-edit.php'                    => true,
+		'wp-core/class-username-changer.php'                   => true,
+		'features/notifications/class-notification-center.php' => true,
+		'wp-core/class-plugins-list.php'                       => true,
+		'wp-core/class-content-list.php'                       => true,
+		'features/menu/class-menu-layout.php'                  => true,
+		'features/menu/class-menu-renderer.php'                => true,
+	);
 
 	/** @var bool Prevent duplicate boots when `init()` is called both directly and via `plugins_loaded`. */
 	private static $booted = false;
@@ -99,16 +120,24 @@ class AdminKit_Plugin {
 
 		add_action( 'init', array( __CLASS__, 'load_textdomain' ) );
 
-		// Pass 1: load every module file. Pass 2: boot the ones with an entry
-		// point, in registry order. Splitting the passes means a module's boot
-		// can safely reference any other module's class (all are loaded first).
+		// Pass 1: load every active module file. Pass 2: boot the ones with an entry
+		// point, in registry order. On frontend/REST/cron (`! is_admin()`), skip
+		// admin-only modules so visitor traffic pays zero file-I/O cost for them.
+		$skip_admin = function_exists( 'is_admin' ) && ! is_admin();
 		foreach ( self::MODULES as $path => $boot ) {
+			if ( $skip_admin && isset( self::ADMIN_ONLY_MODULES[ $path ] ) ) {
+				continue;
+			}
 			require_once ADMINKIT_PATH . 'inc/' . $path;
 		}
-		foreach ( self::MODULES as $boot ) {
-			if ( null !== $boot ) {
-				call_user_func( $boot );
+		foreach ( self::MODULES as $path => $boot ) {
+			if ( null === $boot ) {
+				continue;
 			}
+			if ( $skip_admin && isset( self::ADMIN_ONLY_MODULES[ $path ] ) ) {
+				continue;
+			}
+			call_user_func( $boot );
 		}
 
 		self::boot_integrations();
@@ -134,38 +163,64 @@ class AdminKit_Plugin {
 	}
 
 	/**
-	 * Require the integration base class, then every
-	 * `inc/integrations/{plugins|themes}/{slug}/class-{slug}.php` file, and
-	 * queue each integration's `maybe_init()` on `after_setup_theme`. The
-	 * deferred hook ensures the host's own constants (e.g. BRICKS_VERSION) are
-	 * defined by the time the integration checks for them — plugins
-	 * load before themes.
+	 * Load a single integration adapter class on demand from the compiled manifest.
 	 *
-	 * Convention:
-	 *   Folder        inc/integrations/{plugins|themes}/{slug}/
-	 *   File          inc/integrations/{plugins|themes}/{slug}/class-{slug}.php
-	 *   Class         AdminKit_Integration_{Slug}  (Studly_Case_With_Underscores)
-	 *                 extends AdminKit_Integration_Base
-	 *
-	 * The class name derives from the file's basename, so the {plugins,themes}
-	 * grouping is purely organizational — it does not affect discovery.
-	 * Adding a new integration = drop one folder under the right group. No edits here.
+	 * @param string $slug Integration slug.
+	 * @return string|null Resolved adapter class name, or null if unknown/missing.
+	 */
+	public static function load_integration( $slug ) {
+		if ( ! class_exists( 'AdminKit_Integrations_Manifest', false ) ) {
+			require_once ADMINKIT_PATH . 'inc/generated/integrations-manifest.php';
+		}
+		if ( ! isset( AdminKit_Integrations_Manifest::ITEMS[ $slug ] ) ) {
+			return null;
+		}
+		if ( ! class_exists( 'AdminKit_Integration_Base', false ) ) {
+			require_once ADMINKIT_PATH . 'inc/integrations/abstract-integration.php';
+		}
+		$entry = AdminKit_Integrations_Manifest::ITEMS[ $slug ];
+		$class = $entry['class'];
+		if ( ! class_exists( $class, false ) ) {
+			$file = ADMINKIT_PATH . 'inc/' . $entry['file'];
+			if ( ! is_file( $file ) ) {
+				return null;
+			}
+			require_once $file;
+		}
+		return class_exists( $class ) ? $class : null;
+	}
+
+	/**
+	 * Defer adapter loading and initialization until `after_setup_theme`, when host
+	 * constants and theme bootstraps are ready. Only adapters matching the request
+	 * context and an active host are included at runtime.
 	 *
 	 * @return void
 	 */
 	private static function boot_integrations() {
-		require_once ADMINKIT_PATH . 'inc/integrations/abstract-integration.php';
+		add_action( 'after_setup_theme', array( __CLASS__, 'run_integrations' ) );
+	}
 
-		$files = AdminKit_Settings_Catalog::integration_files();
-		if ( empty( $files ) ) {
-			return;
+	/**
+	 * Initialize every adapter whose host plugin/theme is active in the current context.
+	 *
+	 * @return void
+	 */
+	public static function run_integrations() {
+		if ( ! class_exists( 'AdminKit_Integrations_Manifest', false ) ) {
+			require_once ADMINKIT_PATH . 'inc/generated/integrations-manifest.php';
 		}
-		foreach ( $files as $slug => $file ) {
-			require_once $file;
-			$class = 'AdminKit_Integration_' . str_replace( '-', '_', ucwords( $slug, '-' ) );
-			$callback = array( $class, 'maybe_init' );
-			if ( class_exists( $class ) && is_callable( $callback ) ) {
-				add_action( 'after_setup_theme', $callback );
+		$is_admin = ! function_exists( 'is_admin' ) || is_admin();
+		foreach ( AdminKit_Integrations_Manifest::ITEMS as $slug => $entry ) {
+			if ( ! $is_admin && empty( $entry['frontend'] ) ) {
+				continue;
+			}
+			if ( ! AdminKit_Integrations_Manifest::is_host_active( $slug ) ) {
+				continue;
+			}
+			$class = self::load_integration( $slug );
+			if ( $class && method_exists( $class, 'maybe_init' ) ) {
+				call_user_func( array( $class, 'maybe_init' ) );
 			}
 		}
 	}

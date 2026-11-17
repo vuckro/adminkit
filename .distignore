@@ -30,6 +30,8 @@ README.md
 dev
 tokens
 **/baseline.json
+assets/icons/lucide.json
+assets/icons/lucide-version.json
 
 # Build / dependency artifacts (not used at runtime — adminkit has no JS or PHP deps)
 node_modules

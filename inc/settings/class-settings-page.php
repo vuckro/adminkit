@@ -31,9 +31,10 @@ class AdminKit_Settings_Page {
 	/** Native WordPress page hooks mapped to their content pane. */
 	private static $page_tabs = array();
 
-	/** REST namespace + route the SPA saves to. */
-	const REST_NS    = 'adminkit/v1';
-	const REST_ROUTE = '/settings';
+	/** REST namespace + routes the SPA uses. */
+	const REST_NS          = 'adminkit/v1';
+	const REST_ROUTE       = '/settings';
+	const REST_ICONS_ROUTE = '/icons';
 
 	/**
 	 * Hook the menu, the SPA assets and the REST route. All admin/REST-only.
@@ -288,6 +289,26 @@ class AdminKit_Settings_Page {
 				},
 			)
 		);
+		register_rest_route(
+			self::REST_NS,
+			self::REST_ICONS_ROUTE,
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( __CLASS__, 'rest_icons' ),
+				'permission_callback' => static function () {
+					return current_user_can( 'manage_options' );
+				},
+			)
+		);
+	}
+
+	/**
+	 * Return the Lucide icon path catalog for the lazy navigation icon picker.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public static function rest_icons() {
+		return rest_ensure_response( AdminKit_Icons::catalog() );
 	}
 
 	/**

@@ -177,6 +177,8 @@ class AdminKit_Icons {
 	}
 
 	public static function names() { return array_keys( self::paths() ); }
+	/** Raw Lucide catalog (excluding role aliases) served via `/adminkit/v1/icons`. @return array<string, string> */
+	public static function catalog() { return array_diff_key( self::paths(), self::ALIASES ); }
 	public static function has( $name ) { return is_string( $name ) && isset( self::paths()[ $name ] ); }
 	public static function svg( $name ) { return self::render( $name, '#000' ); }
 	public static function display_svg( $name ) { return self::render( $name, 'currentColor' ); }

@@ -227,6 +227,9 @@ class AdminKit_Settings {
 		foreach ( array(
 			'admin_theme_enabled',
 			'theme_toggle_enabled',
+			'menu_manager_enabled',
+			'toolbar_manager_enabled',
+			'notification_center_enabled',
 			'clean_chrome_enabled',
 			'clean_chrome_hide_footer',
 			'clean_chrome_hide_help',
@@ -244,7 +247,7 @@ class AdminKit_Settings {
 
 		// Opt-in login styling and workflow enhancements keep native screens
 		// untouched until explicitly enabled.
-		foreach ( array( 'module_login_enabled', 'active_items_first_enabled', 'quick_edit_users_enabled', 'username_changer_enabled' ) as $opt_in ) {
+		foreach ( array( 'module_login_enabled', 'post_previews_enabled', 'active_items_first_enabled', 'quick_edit_users_enabled', 'username_changer_enabled' ) as $opt_in ) {
 			self::register( $opt_in, array(
 				'type'     => 'toggle',
 				'group'    => 'features',

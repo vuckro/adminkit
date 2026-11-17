@@ -10,7 +10,7 @@
 		var MM = D.menuManager || { icons: {} };
 		MM.icons = MM.icons || {};
 		var dragState = null, openPicker = null;
-		var catalogLoaded = !MM.iconsUrl;
+		var catalogLoaded = !MM.iconsRoute && !MM.iconsUrl;
 		var catalogPromise = null;
 
 		function svgFromPath(inner) {
@@ -22,18 +22,23 @@
 		}
 
 		function ensureIconCatalog() {
-			if (catalogLoaded || !MM.iconsUrl || typeof window.fetch !== 'function') {
+			var canRest = MM.iconsRoute && window.wp && typeof window.wp.apiFetch === 'function';
+			var canUrl = MM.iconsUrl && typeof window.fetch === 'function';
+			if (catalogLoaded || (!canRest && !canUrl)) {
 				catalogLoaded = true;
 				return Promise.resolve(MM.icons);
 			}
 			if (catalogPromise) {
 				return catalogPromise;
 			}
-			catalogPromise = window
-				.fetch(MM.iconsUrl, { credentials: 'same-origin', cache: 'force-cache' })
-				.then(function (res) {
-					return res && res.ok ? res.json() : null;
-				})
+			var loader = canRest
+				? window.wp.apiFetch({ path: MM.iconsRoute })
+				: window
+					.fetch(MM.iconsUrl, { credentials: 'same-origin', cache: 'force-cache' })
+					.then(function (res) {
+						return res && res.ok ? res.json() : null;
+					});
+			catalogPromise = loader
 				.then(function (raw) {
 					if (raw && typeof raw === 'object') {
 						var aliases = MM.iconAliases || {};

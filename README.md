@@ -50,7 +50,8 @@ npm ci --prefix dev/smoke
 php dev/test-all.php
 ```
 
-The unified gate (222 checks) includes syntax, all 33 regression/compliance scripts,
+The unified gate (`php dev/test-all.php`) includes syntax, generated artifacts checks,
+all regression/compliance scripts (`dev/check-*.php` & `dev/checks/check-*.php`),
 CSS/token contracts, i18n/typography drift, module/package integrity, 15 jsdom suites,
 and static analysis (WPCS Security/i18n, PHPStan level 5, ESLint, Stylelint logical RTL).
 Browser-check affected screens and persistence before deploying. Host drift checks
@@ -59,11 +60,12 @@ require the corresponding third-party plugin/theme to be installed.
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
-- [Personal interface choice and recovery](docs/INTERFACE.md)
+- [Settings & Interface](docs/SETTINGS.md)
 - [Tokens and generation](docs/TOKENS.md)
-- [WaasKit design reference](docs/WAASKIT-DESIGN-SYSTEM.md)
+- [Icons](docs/ICONS.md)
 - [Integrations](docs/INTEGRATIONS.md)
 - [Extension API and hooks](docs/EXTENDING.md)
+- [Installation and packaging](docs/INSTALL.md)
 - [Contributor guide](CLAUDE.md)
 
 ## Roadmap

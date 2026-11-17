@@ -199,9 +199,23 @@ verification. Native user tools retain their form/AJAX nonce and target checks.
 
 ## Verification
 
-Run the commands in [FUNCTIONAL-AUDIT.md](FUNCTIONAL-AUDIT.md). Offline tests cover
-persistence failures and draft behavior. They do not prove third-party host
-compatibility, live email delivery or live account-renaming behavior.
+Run the unified quality gate with `php dev/test-all.php` (offline checks cover persistence failures, draft behavior, navigation layout/routing, interface isolation, and capability boundaries). Browser E2E tests (`npm test --prefix dev/smoke`) cover live WordPress Playground interactions.
+
+## Personal interface choice and resolution
+
+AdminKit appearance is optional and decoupled from tool functionality:
+
+- Under **Profile → Settings** (`profile.php#settings`), each user can pick **AdminKit**, **WordPress classic**, or **Follow site default** (saved as site-scoped user meta via WordPress's native profile update hook with `edit_user` check).
+- Under **AdminKit → Configuration**, `interface_default` controls the site default (`adminkit` for existing installs).
+- Under **Features → Appearance**, disabling `admin_theme_enabled` restores WordPress classic site-wide without erasing saved personal preferences or design settings.
+- Tools (`notification_center`, `menu_manager`, `toolbar_manager`, quick edit, username changer, previews, active-items-first, clean interface) keep independent switches and load local component tokens (`assets/css/component-tokens.css`) when rendered inside native WordPress classic mode.
+- Presentation can be vetoed globally per context via `adminkit/appearance_enabled`.
+
+## Sidebar & Toolbar layout contracts
+
+- **Identity & precedence**: Submenu items are identified by composite `parent::slug` keys (never display labels); cross-parent moves infer only unambiguous single destinations, and duplicate historical rows normalize on read without destructive migration. Missing or restricted parents preserve native routing and capabilities (hidden navigation is decluttering only, never access control).
+- **Planning pipeline**: `Menu_Snapshot` captures pristine `$menu`/`$submenu`, `Menu_Config` sanitizes/validates (rejecting unsafe URLs and overlong strings), `Menu_Layout::plan()` computes the two-level tree purely, and `Menu_Renderer` applies labels, icons, tooltips, and hook forwarding.
+- **Toolbar contexts**: Only root toolbar nodes can be reordered, renamed, hidden, or re-iconed (`admin` and `frontend` layouts save independently; omitted contexts stay intact). Snapshot hooks restore detached callbacks at original priorities inside a `finally` guard.
 
 ## Translation catalogs
 

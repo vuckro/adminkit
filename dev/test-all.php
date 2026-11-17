@@ -223,14 +223,20 @@ ak_test_group(
 );
 
 ak_test_group(
-	'Generated tokens',
-	array( array( PHP_BINARY, 'tokens/build.php', '--check' ) ),
-	1
+	'Generated artifacts',
+	array(
+		array( PHP_BINARY, 'tokens/build.php', '--check' ),
+		array( PHP_BINARY, 'dev/build-icons.php', '--check' ),
+		array( PHP_BINARY, 'dev/build-integrations-manifest.php', '--check' ),
+	),
+	3
 );
 
-$regression_tests   = glob( 'dev/check*.php' ) ?: array();
+$regression_tests = array_merge(
+	glob( 'dev/check*.php' ) ?: array(),
+	glob( 'dev/checks/check*.php' ) ?: array()
+);
 sort( $regression_tests );
-$regression_tests[] = 'dev/editor-gate-check.php';
 
 ak_test_group(
 	'Regression checks (including i18n/modules/packaging)',

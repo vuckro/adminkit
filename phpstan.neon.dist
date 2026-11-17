@@ -9,9 +9,11 @@ parameters:
 		- dev/phpstan-bootstrap.php
 	scanFiles:
 		- inc/generated/lucide-paths.php
+		- inc/generated/integrations-manifest.php
 	paths:
 		- adminkit.php
 		- uninstall.php
 		- inc
 	excludePaths:
 		- inc/generated/lucide-paths.php
+		- inc/generated/integrations-manifest.php

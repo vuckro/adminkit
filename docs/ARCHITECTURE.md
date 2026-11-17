@@ -10,23 +10,16 @@ Development tooling is separate from the distributed plugin.
 `adminkit.php` defines paths/version and hooks `AdminKit_Plugin::init()` onto
 `plugins_loaded` (priority 5, with an idempotent immediate fallback if already fired)
 so third-party plugins can register `adminkit/*` filters before modules boot.
-`MODULES` is the ordered registry: first every file is required, then non-null boot
-callables execute in registry order. Helpers have null boot values. Files under
-`inc/` outside integrations belongs to `MODULES` or the explicit data-only `LAZY_MODULES` registry, except the orchestrator. The module/package check verifies both registries, deferred icon loading and every boot callable.
+`MODULES` is the ordered registry: non-null boot callables execute in registry order, while `ADMIN_ONLY_MODULES` skips loading/booting admin-only files on non-admin requests (frontend, REST, cron). Helpers have null boot values. Files under `inc/` outside integrations belong to `MODULES` or the explicit data-only `LAZY_MODULES` registry (`generated/lucide-paths.php` and `generated/integrations-manifest.php`), except the orchestrator. `dev/check-modules.php` verifies both registries, deferred icon/manifest loading, and every boot callable.
 
-- `inc/settings/`: schema, catalogs, `AdminKit_Settings_I18n`, memoized permission/loading gates and workspace host.
-- `inc/wp-core/`: existing WordPress surfaces and optional native workflow tools.
+- `inc/settings/`: schema, catalogs, `AdminKit_Settings_I18n`, memoized permission/loading gates and workspace host (including `/adminkit/v1/settings` and `/adminkit/v1/icons`).
+- `inc/wp-core/`: existing WordPress surfaces (`chrome.css` merges core chrome, links, cards, `.wp-filter` and `.notification-dialog` Chrome; `themes.css` includes `theme-install` overlays) and optional native workflow tools.
 - `inc/features/`: Menu (`Manager` + `Config`/`Snapshot`/`Renderer`/`Store`), Toolbar (`Manager` + `Config`/`Snapshot`/`Renderer`) and the notification drawer.
-- `inc/integrations/{plugins,themes}/{slug}/`: auto-discovered host adapters (memoized manifest, `AdminKit_FunnelKit_Integration` trait, shared `assets/css/vendor/element-plus.css`).
+- `inc/integrations/{plugins,themes}/{slug}/`: compiled manifest (`AdminKit_Integrations_Manifest`, generated via `php dev/build-integrations-manifest.php`), loading only context-matching active adapters on `after_setup_theme`, backed by `AdminKit_Integration_Base` (`bails_core_forms()`, `menu_icon()`, `print_menu_wordmark()`), `AdminKit_FunnelKit_Integration`, `AdminKit_Fluent_Theme::print_spa_sync()`, and shared `assets/css/vendor/element-plus.css`.
 - `inc/class-assets.php`, `class-icons.php`, `class-design-system.php`,
-  `class-storage.php`: shared services (`inc/generated/lucide-paths.php` provides OPcache icon paths).
+  `class-storage.php`: shared services (`inc/generated/lucide-paths.php` provides OPcache icon paths and `/adminkit/v1/icons` data without shipping `lucide.json`).
 
-Settings registers integration keys immediately from adapter filenames, without
-loading translated labels or consulting host activation. Adapter files load after
-the modules; `maybe_init()` runs on `after_setup_theme`, when host constants are
-available. Catalog labels/host state resolve later for the UI. `adminkit/loaded`
-fires once module hooks are wired and integration initialization is queued.
-Class names and public `adminkit/*` hooks remain stable.
+Settings registers integration keys immediately from `AdminKit_Integrations_Manifest` without filesystem `glob()`, without loading translated labels, and without requiring adapter PHP classes until `after_setup_theme` (when host constants exist) or when the Plugins catalog resolves labels. `adminkit/loaded` fires once module hooks are wired and integration initialization is queued. Class names and public `adminkit/*` hooks remain stable.
 
 ## Assets and CSS contracts
 
@@ -231,13 +224,14 @@ worktree, and `dev/check-i18n.php` enforces French typographic apostrophes (`’
 and non-breaking spaces (`\u{00A0}`) before `: ; ? !` and inside `« … »`.
 
 Run `npm ci --prefix dev/smoke` once, then `php dev/test-all.php` (`--fast` skips
-the static-analysis pass during quick iteration). The parallel offline gate (222
-checks) covers PHP/JS syntax, generated tokens, all 23 `dev/check*.php` suites
-(including `check-compliance.php` for GDPR/WP.org rules), editor gating, CSS
-contracts, adapter budgets, 15 jsdom suites, i18n, registry/package integrity, and
-static analysis (**WPCS Security/i18n**, **PHPStan level 5**, **ESLint**, and
-**Stylelint** logical RTL properties). CI (`.github/workflows/ci.yml`) invokes this
-gate across PHP 8.3–8.5 and WordPress 6.0 / latest.
+the static-analysis pass during quick iteration). The parallel offline gate
+covers PHP/JS syntax, generated tokens/icons/manifest artifacts, all `dev/check*.php`
+and `dev/checks/check*.php` regression suites (including `check-compliance.php`
+for GDPR/WP.org rules), CSS contracts, adapter budgets, 15 jsdom suites, i18n,
+registry/package integrity, and static analysis (**WPCS Security/i18n**,
+**PHPStan level 5**, **ESLint**, and **Stylelint** logical RTL properties). CI
+(`.github/workflows/ci.yml`) invokes this gate across PHP 8.3–8.5 and WordPress
+6.0 / latest.
 Real browser saves, user/session behavior, multisite and active host visual checks
 remain integration checks; a skipped host drift check is not validation.
 
@@ -316,12 +310,11 @@ Without a toolbar launcher or when the feature is disabled, native notices remai
 
 ## Sidebar placement
 
-The pure `AdminKit_Menu_Layout` planner computes the two-level tree before rendering. Identity, precedence and iteration checks are documented in [NAVIGATION.md](NAVIGATION.md).
+The pure `AdminKit_Menu_Layout` planner computes the two-level tree before rendering; see [SETTINGS.md](SETTINGS.md) for the navigation layout contract.
 
+## Deferred icon data, manifest and dialog asset boundaries
 
-## Deferred icon data and dialog asset boundaries (2026-11-07)
-
-`AdminKit_Plugin::MODULES` contains eager services; `LAZY_MODULES` lists data-only files. The generated 475,377-byte Lucide map remains shipped, but only `AdminKit_Icons::paths()` loads it on first icon use. Registry integrity checks cover both sets and the package CI verifies anonymous WordPress bootstrap leaves the catalog unloaded. Public facades and upgrade migrations remain supported compatibility paths.
+`AdminKit_Plugin::MODULES` registers core modules (`ADMIN_ONLY_MODULES` skips admin-only modules when `! is_admin()`); `LAZY_MODULES` lists OPcache data tables (`generated/lucide-paths.php` and `generated/integrations-manifest.php`). Only `AdminKit_Icons::paths()` loads the compiled Lucide catalog on first icon use or when serving `GET /adminkit/v1/icons`, so `assets/icons/lucide.json` is excluded from packaged zips via `.distignore`. Registry integrity checks verify both registries, and package CI confirms anonymous bootstrap leaves icon data unloaded. Public facades and upgrade migrations remain supported compatibility paths.
 
 Media styling follows the native library screens or an enqueued `media-views` stylesheet/script. ThickBox styling follows an enqueued native ThickBox stylesheet/script. These rules resolve during the late asset dispatcher, preserving dialogs on third-party pages that enqueue WordPress media through its normal hooks. Other screen styles keep their explicit screen/host conditions.
 

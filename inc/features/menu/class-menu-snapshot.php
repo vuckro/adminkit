@@ -148,16 +148,12 @@ class AdminKit_Menu_Snapshot {
 				}
 			}
 		}
-		$json_file = ADMINKIT_PATH . 'assets/icons/lucide.json';
-		$icons_url = defined( 'ADMINKIT_URL' ) && is_file( $json_file )
-			? ADMINKIT_URL . 'assets/icons/lucide.json?ver=' . (string) filemtime( $json_file )
-			: '';
-
 		return array(
 			'menu'        => self::$snapshot,
 			'config'      => $config,
 			'icons'       => AdminKit_Icons::subset( $initial ),
-			'iconsUrl'    => $icons_url,
+			'iconsRoute'  => '/adminkit/v1/icons',
+			'iconsUrl'    => '',
 			'iconAliases' => AdminKit_Icons::ALIASES,
 			'dashicons'   => $dashicons,
 			'route'       => '/adminkit/v1/menu',

@@ -1,6 +1,6 @@
 # Tokens AdminKit
 
-Le système actuel est décrit dans [WAASKIT-DESIGN-SYSTEM.md](WAASKIT-DESIGN-SYSTEM.md). Les anciennes palettes Bricks ne sont plus la source du thème par défaut.
+AdminKit s’appuie sur le design system WaasKit ([export CSS natif](https://design.waaskit.site/wp-content/uploads/waaskit-exports/wk-ui.css)), dont l’instantané complet et le condensé SHA-256 sont conservés dans `tokens/palettes/waaskit.json` (couleurs OKLCH, polices locales Geist / Geist Mono sous SIL OFL, contrôle natif compact `--ak-control-height` 32 px / tactile 44 px). Les onze rôles neutres sombres conservent fidèlement les valeurs OKLCH amont ; les anciennes palettes Bricks ne sont plus la source du thème par défaut.
 
 ## Chaîne de génération
 

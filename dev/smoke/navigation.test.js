@@ -257,6 +257,35 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 15));
     assert.ok(w.document.querySelector('.ak-icon-pop__sw[title="rocketship"]'), 'alias icon swatch rendered from raw paths');
     w.close();
   }
+  // Lazy Icon Picker REST route fetch populates icons on demand when iconsRoute is provided.
+  {
+    const dom = new JSDOM('<div id="adminkit-app"></div>', { url: 'http://localhost/#menu', runScripts: 'outside-only' });
+    const w = dom.window;
+    const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/boot-main.json'), 'utf8'));
+    data.screen = 'menu';
+    data.menuManager.menu = [{ slug: 'tools.php', title: 'Tools', children: [] }];
+    data.menuManager.icons = { app: '<svg viewBox="0 0 24 24"></svg>' };
+    data.menuManager.iconsRoute = '/adminkit/v1/icons';
+    data.menuManager.iconsUrl = '';
+    data.menuManager.iconAliases = { rocketship: 'rocket' };
+    let fetchedPath = '';
+    w.AdminKitData = data;
+    w.wp = {
+      apiFetch: req => {
+        fetchedPath = req.path;
+        return Promise.resolve({ rocket: '<path d="M1 1l2 2"/>' });
+      },
+    };
+    for (const file of ['assets/js/settings/navigation-controls.js', 'assets/js/settings/navigation-menu-model.js', 'assets/js/settings/navigation-menu.js', 'assets/js/settings/navigation-toolbar.js', 'assets/js/settings/navigation.js', 'assets/js/settings.js']) w.eval(fs.readFileSync(path.join(root, file), 'utf8'));
+    await tick();
+    assert.equal(fetchedPath, '', 'REST catalog is not fetched before opening the icon picker');
+    w.document.querySelector('.ak-menu-icon').click();
+    await tick();
+    assert.equal(fetchedPath, '/adminkit/v1/icons', 'opening picker fetches REST icon catalog');
+    assert.ok(w.document.querySelector('.ak-icon-pop__sw[title="rocket"]'), 'REST lazy-loaded icon swatch rendered');
+    assert.ok(w.document.querySelector('.ak-icon-pop__sw[title="rocketship"]'), 'REST alias icon swatch rendered from raw paths');
+    w.close();
+  }
   // Keyboard reorder preserves focus, and submenu parent <select> moves submenus across parents without drag-and-drop.
   {
     const dom = new JSDOM('<div id="adminkit-app"></div>', { url: 'http://localhost/#menu', runScripts: 'outside-only' });

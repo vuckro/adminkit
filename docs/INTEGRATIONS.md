@@ -17,7 +17,7 @@ plugin and badges the Native ones:
   admin-wide component CSS (buttons, inputs, tables, `form-table`, chrome), a
   WordPress / `@wordpress-components` CSS-variable remap (`assets/css/tokens.css`),
   and shared surfaces — `.card`, `.welcome-panel`, inline `code` / `kbd` / `pre` —
-  in `assets/css/wp-screens/_shared/cards.css`. A plugin built on standard WP
+  in `assets/css/wp-core/chrome.css`. A plugin built on standard WP
   markup and the WordPress component variables lands here looking right with zero
   per-host work.
 - **Native** — a plugin (or theme) with a tuned adapter under
@@ -42,12 +42,12 @@ inc/integrations/{plugins|themes}/{slug}/class-{slug}.php
        baseline.json   (optional) host CSS snapshot for drift detection
 ```
 
-The boot orchestrator globs `inc/integrations/*/*/class-*.php`, derives the class
-name from the file basename (`fluent-crm` → `AdminKit_Integration_Fluent_Crm`),
-and queues `maybe_init()` on `after_setup_theme`. **No loader edit is needed** —
-drop the folder under `plugins/` or `themes/` and it's live. The group is purely
-organizational; the class name must match the file basename or the folder
-silently never loads.
+`php dev/build-integrations-manifest.php` compiles `inc/generated/integrations-manifest.php`
+from `inc/integrations/{plugins,themes}/*/class-*.php`. On `after_setup_theme`,
+`AdminKit_Plugin::run_integrations()` checks each adapter's fast `is_host_active()`
+probe and request context, requiring only the active adapters' PHP files and running
+`maybe_init()`. The `{plugins,themes}` group is organizational; the class name must
+match the file basename (`fluent-crm` → `AdminKit_Integration_Fluent_Crm`).
 
 ## The minimum integration
 
@@ -71,9 +71,11 @@ does nothing. Override only what you need; the base no-ops the rest:
 | `register_assets()` | Declare CSS via `AdminKit_Assets::register()`. |
 | `boot()` | Wire non-asset filters/actions. |
 | `owns_screen( $screen )` | True on screens the integration cares about; used in `condition` closures. |
+| `bails_core_forms()` | Return `true` to skip `adminkit/enqueue_forms` on `owns_screen()` (Element Plus / Tailwind SPAs). |
+| `menu_icon()` / `menu_icon_selector()` | Return an `AdminKit_Icons` glyph name or raw `<svg…>` to mask a base64 menu icon. |
 | `host_version()` + `max_tested_host_version()` | Tier B only — version gate (see below). |
 
-`maybe_init()` (concrete) runs `is_active → register_assets → boot`. Don't override it.
+`maybe_init()` (concrete) enforces `host_within_tested_range()` and runs `register_assets → boot` plus optional form-bail, menu-icon, and wordmark hooks. Don't override it.
 
 ---
 
@@ -273,24 +275,22 @@ host's own theme attribute (one-way) for `color-scheme`. The
 
 ## Reference implementations
 
-- [fluent-booking](../inc/integrations/plugins/fluent-booking/) — FluentBooking 2.5 semantic tokens, legacy aliases, Element Plus and same-origin TinyMCE theme synchronization. [Visual review](FLUENTBOOKING-REVIEW.md).
-
+- [fluent-booking](../inc/integrations/plugins/fluent-booking/) — FluentBooking 2.5–2.6 semantic tokens, legacy aliases, Element Plus and same-origin TinyMCE theme synchronization via `AdminKit_Fluent_Theme::print_spa_sync()`.
 - [bricks](../inc/integrations/themes/bricks/class-bricks.php) — token injection + opt-in builder theming (with a baseline fallback when the builder's colours are cleared).
 - [gutenberg](../inc/integrations/plugins/gutenberg/class-gutenberg.php) — core editor chrome always accompanies the admin skin, independent of third-party integration opt-outs. It is excluded from the plugin integration catalog, and never touches the editor content canvas (`.editor-styles-wrapper`); `adminkit/integration_enabled` can still disable the adapter explicitly.
 - [wpcode](../inc/integrations/plugins/wpcode/class-wpcode.php) — minimal Tier A (remap `--wpcode-*`, zero `!important`).
 - [acf](../inc/integrations/plugins/acf/class-acf.php) — clean Tier B (host hardcodes hex), screen-scoped + version-gated.
-- [woocommerce](../inc/integrations/plugins/woocommerce) — WooCommerce 10/11: onboarding, React/WPDS, classic products, HPOS orders, settings, SelectWoo and shared toolbar. [Coverage and verification](WOOCOMMERCE-REVIEW.md).
+- [woocommerce](../inc/integrations/plugins/woocommerce) — WooCommerce 10/11: onboarding, React/WPDS, classic products, HPOS orders, settings, SelectWoo and shared toolbar.
 - [flying-press](../inc/integrations/plugins/flying-press/class-flying-press.php) — Tier B against a Tailwind app compiled `important: true`.
 - [query-monitor](../inc/integrations/plugins/query-monitor/) — Tier A delivered into an open shadow root via a JS bridge.
 
 ## FunnelKit Builder, Automations et Cart
 
-Les trois adaptateurs Tier B (`funnel-builder`, `wp-marketing-automations` et `cart-for-woocommerce`, vérifié jusqu’à `1.9.x`) partagent les composants BWF sans exiger que les autres extensions soient actives. Les fichiers communs sont livrés dans `plugins/funnel-builder/` et référencés explicitement via `AdminKit_FunnelKit_Integration`. Les styles de contenu se limitent aux écrans possédés et à leurs portails (`shared.css`, `controls.css`, `components.css`, `shared.js`) ; `menu.css` ne traite que les entrées FunnelKit du menu WordPress ; aucun habillage de checkout public, de corps d’e-mail ou de l’aperçu en direct du panier boutique (`#fkcart-modal`). Versions, couverture et limites : [FUNNELKIT-REVIEW.md](FUNNELKIT-REVIEW.md).
+Les trois adaptateurs Tier B (`funnel-builder` `<= 3.18.x`, `wp-marketing-automations` `<= 3.8.x` et `cart-for-woocommerce` `<= 1.9.x`) partagent les composants BWF via le trait `AdminKit_FunnelKit_Integration` sans exiger que les extensions compagnes soient actives. Les fichiers communs livrés dans `plugins/funnel-builder/` (`shared.css`, `controls.css`, `components.css`, `shared.js`) se limitent aux écrans possédés et à leurs portails ; `menu.css` ne traite que les entrées FunnelKit du menu WordPress ; aucun habillage de checkout public, de corps d’e-mail ou de l’aperçu en direct du panier boutique (`#fkcart-modal`).
 
-## Fluent applications
+## Fluent applications (Hub & standalone)
 
-See [Hub and standalone Fluent administration](FLUENT-INTEGRATIONS.md) for theme
-ownership, native asset allowlists, version boundaries and verification.
+Les adaptateurs Fluent (`fluent-toolkit` Hub, `fluent-booking`, `fluent-boards`, `fluent-cart`, `fluent-crm`, `fluent-affiliate`, `fluent-community`, `fluent-snippets`, `fluent-smtp`, `fluent-auth`, `fluentform`) partagent le pont Element Plus `AdminKit_Assets::ELEMENT_PLUS_HANDLE` (`assets/css/vendor/element-plus.css`) et `AdminKit_Fluent_Theme` (`inc/class-fluent-theme.php`), qui synchronise `fluent_theme_mode` / `BroadcastChannel`, inscrit `/adminkit/` dans les allowlists d’assets natives (`fluent_crm_asset_listed_slugs`, `fluent_booking/asset_listed_slugs`, `fluent_boards/asset_listed_slugs`) et synchronise les classes sombres SPA ainsi que les iframes TinyMCE (`print_spa_sync()`). Les portails publics (`/portal`, formulaires de réservation/paiement/connexion publics) restent intégralement gérés par leurs extensions hôtes.
 
 ## Rank Math SEO
 
@@ -308,7 +308,7 @@ component; the adapter has no frontend assets or SEO/save hooks.
 The stylesheet maps hardcoded page, module, CMB2 and modal surfaces to `--ak-*`
 tokens. Score categories retain their error/warning/success meanings. It preserves
 native module controls, links, editor data, capabilities, nonces and SEO output.
-`dev/check-rank-math.php` covers screen routing, moved pages and asset isolation.
+`dev/checks/check-rank-math.php` covers screen routing, moved pages and asset isolation.
 A CSS drift baseline is included for the installed 1.0.281 host.
 
 Secondary Rank Math pages additionally load `css/pages.css`; the shared editor,

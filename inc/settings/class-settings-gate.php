@@ -58,7 +58,7 @@ class AdminKit_Settings_Gate {
 		if ( '' !== $screen_id && array_key_exists( $memo_key, $memo ) ) {
 			return $memo[ $memo_key ];
 		}
-		foreach ( AdminKit_Settings_Catalog::integration_specs() as $s ) {
+		foreach ( AdminKit_Settings_Catalog::integration_specs( true ) as $s ) {
 			if ( ! method_exists( $s['class'], 'owns_screen' ) || ! call_user_func( array( $s['class'], 'is_active' ) ) ) {
 				continue;
 			}

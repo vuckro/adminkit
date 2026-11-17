@@ -187,10 +187,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		// so the first flip is caught and the bar paints in sync.
 		add_action( 'wp_head', array( __CLASS__, 'print_theme_bridge' ), 2 );
 
-		// When the AdminKit "icons" feature is on, give Bricks's own menu item a "B"
-		// mark so it matches the set (priority 22 = just after AdminKit_Core_Menu_Icons).
-		add_action( 'admin_head', array( __CLASS__, 'print_menu_icon' ), 22 );
-
 		// Bricks's front-end admin-bar nodes ("Edit with Bricks", "Rendered with
 		// Bricks"). Register cohesive AdminKit glyphs for them and flag them as
 		// text-only nodes so the icon CSS paints on the link's own ::before. The
@@ -198,6 +194,11 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		add_filter( 'adminkit/toolbar_icons', array( __CLASS__, 'toolbar_icons' ) );
 		add_filter( 'adminkit/toolbar_icon_ab_item_nodes', array( __CLASS__, 'toolbar_ab_item_nodes' ) );
 
+	}
+
+	/** @return string */
+	protected static function menu_icon() {
+		return self::LAYOUT_SVG;
 	}
 
 	/**
@@ -232,31 +233,6 @@ class AdminKit_Integration_Bricks extends AdminKit_Integration_Base {
 		$nodes['wp-admin-bar-edit_with_bricks'] = true;
 		$nodes['wp-admin-bar-editor_mode']      = true;
 		return $nodes;
-	}
-
-	/**
-	 * Replace Bricks's admin-menu icon with a clean layout/grid glyph (masked, like
-	 * the AdminKit icon set) when the icons feature is on — so it stops standing out
-	 * as a base64 SVG. Bricks sets that icon as an INLINE background, so `!important`
-	 * is the only way to clear it: a deliberate, scoped exception for a masked icon.
-	 *
-	 * @return void
-	 */
-	public static function print_menu_icon() {
-		if ( ! AdminKit_Settings::get( 'replace_icons_enabled' ) ) {
-			return;
-		}
-		if ( ! ( apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) ) {
-			return;
-		}
-		$uri = 'url("data:image/svg+xml,' . rawurlencode( self::LAYOUT_SVG ) . '")';
-		$css = '#adminmenu #toplevel_page_bricks .wp-menu-image{background-image:none!important;'
-			. 'box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}'
-			. '#adminmenu #toplevel_page_bricks .wp-menu-image::before{content:"";display:inline-block;'
-			. 'width:20px;height:20px;vertical-align:middle;background-color:currentColor;'
-			. '-webkit-mask:' . $uri . ' center/20px 20px no-repeat;mask:' . $uri . ' center/20px 20px no-repeat}';
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static selectors and rawurlencoded SVG constant.
-		echo '<style id="adminkit-bricks-menu-icon">' . $css . "</style>\n";
 	}
 
 	/**

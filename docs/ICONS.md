@@ -19,20 +19,21 @@ prioritaires ; les filtres `adminkit/menu_icons` et `adminkit/toolbar_icons` son
 conservés.
 
 Le sélecteur utilise une modale `<dialog>` native (`showModal()`) et charge le
-catalogue complet à la demande via `/adminkit/v1/icons` (`assets/icons/lucide.json`,
-alors que le PHP utilise la table précompilée OPcache `inc/generated/lucide-paths.php`)
-avec une recherche par nom et des équivalents français courants. Il crée 120 boutons
-à la fois et ajoute la suite au défilement. La recherche sans résultat affiche un
-message traduit. Échap ferme le sélecteur et rend le focus au bouton d’origine. La
-palette native WordPress ne propose pas les glyphes remappés, pour que son aperçu
-reste fidèle.
+catalogue complet à la demande via la route REST `GET /adminkit/v1/icons`
+(`AdminKit_Icons::catalog()`, servie depuis la table précompilée OPcache
+`inc/generated/lucide-paths.php` afin de ne pas livrer `assets/icons/lucide.json`
+dans le paquet distribué) avec une recherche par nom et des équivalents français
+courants. Il crée 120 boutons à la fois et ajoute la suite au défilement. La
+recherche sans résultat affiche un message traduit. Échap ferme le sélecteur et
+rend le focus au bouton d’origine. La palette native WordPress ne propose pas les
+glyphes remappés, pour que son aperçu reste fidèle.
 
 Les rôles `--ak-icon` et `--ak-icon-active` modèrent le contraste décoratif et
 ses états. Les champs utilisent `--ak-input-border` au repos ; le focus conserve
 l’accent et l’anneau WaasKit. La sélection du menu utilise une teinte à 8 % et
 un repère de 2 px. La palette publique WaasKit n’est pas modifiée.
 
-Vérification : `php dev/check-icons.php` valide tous les noms, les anciens alias,
+Vérification : `php dev/checks/check-icons.php` valide tous les noms, les anciens alias,
 la géométrie en contour et l’absence de balises/attributs exécutables dans le SVG.
 Les captures et scripts de revue locale sont dans `output/` du dossier Adminkit.
 

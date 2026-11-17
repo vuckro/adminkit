@@ -7,6 +7,7 @@
 	<file>inc</file>
 
 	<exclude-pattern>inc/generated/lucide-paths\.php$</exclude-pattern>
+	<exclude-pattern>inc/generated/integrations-manifest\.php$</exclude-pattern>
 	<exclude-pattern>dev/*</exclude-pattern>
 	<exclude-pattern>node_modules/*</exclude-pattern>
 	<exclude-pattern>vendor/*</exclude-pattern>

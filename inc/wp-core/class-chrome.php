@@ -31,16 +31,10 @@ class AdminKit_Core_Chrome {
 	public static function register() {
 		$tokens = array( AdminKit_Assets::TOKENS_HANDLE );
 
-		// --- wp-core/ (always loaded in admin) ---
+		// --- wp-core/ (always loaded in admin; includes links + shared card/filter/dialog chrome) ---
 		AdminKit_Assets::register( array(
 			'handle'  => 'adminkit-chrome',
 			'src'     => self::ASSETS_BASE . 'wp-core/chrome.css',
-			'deps'    => $tokens,
-			'context' => 'admin',
-		) );
-		AdminKit_Assets::register( array(
-			'handle'  => 'adminkit-links',
-			'src'     => self::ASSETS_BASE . 'wp-core/links.css',
 			'deps'    => $tokens,
 			'context' => 'admin',
 		) );
@@ -77,16 +71,7 @@ class AdminKit_Core_Chrome {
 			'context' => 'admin',
 		) );
 
-		// --- Shared surfaces; native dialogs are conditional below. ---
-		foreach ( array( 'wp-filter', 'notification-dialog', 'cards' ) as $shared ) {
-			AdminKit_Assets::register( array(
-				'handle'  => 'adminkit-shared-' . $shared,
-				'src'     => self::ASSETS_BASE . 'wp-screens/_shared/' . $shared . '.css',
-				'deps'    => $tokens,
-				'context' => 'admin',
-			) );
-		}
-
+		// --- Native dialogs; ThickBox loads only when enqueued by a host/screen. ---
 		AdminKit_Assets::register( array(
 			'handle' => 'adminkit-shared-thickbox',
 			'src' => self::ASSETS_BASE . 'wp-screens/_shared/thickbox.css',
@@ -189,7 +174,6 @@ class AdminKit_Core_Chrome {
 		) );
 		self::register_screen( 'dashboard',       array( 'dashboard' ) );
 		self::register_screen( 'themes',          array( 'themes', 'theme-install' ) );
-		self::register_screen( 'theme-install',   array( 'themes', 'theme-install' ) );
 		// user-new.php reports screen id 'user' (WP strips '-new'); the CSS
 		// still scopes via the .user-new-php body class. Keep 'user-new' too.
 		self::register_screen( 'profile',         array( 'profile', 'user-edit', 'user', 'user-new' ) );

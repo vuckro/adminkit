@@ -149,45 +149,35 @@ body.adminkit:is(.fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark) :is(
 	--fbs-crm-contact-app3-primary: var(--ak-primary);
 	--fbs-crm-contact-app3-primary-soft: var(--ak-primary-subtle);
 	--primary-purple: var(--ak-primary);
+}
 
-	/* Re-assert Element Plus tokens against FluentBoards `.fbs-dark` overrides */
-	--el-color-primary: var(--ak-primary);
+/* Re-assert table + font Element Plus tokens against FluentBoards `.fbs-dark` overrides (core --el-* comes from vendor/element-plus.css). */
+body.adminkit.ak-fluent-boards,
+body.adminkit.ak-fluent-boards:is(.fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark),
+body.adminkit.ak-fluent-boards :is(.fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark),
+body.adminkit :is(
+	.fbs-crm-label-picker-popper,
+	.fbs-crm-contact-drawer,
+	.fbs-crm-task-composer-backdrop,
+	.fbs-crm-contact-create-task-dialog,
+	.fbs-task-date-control-popper,
+	.fbs-crm-contact-app3
+) {
 	--el-color-primary-light-3: color-mix(in srgb, var(--ak-primary) 70%, var(--ak-surface));
 	--el-color-primary-light-5: color-mix(in srgb, var(--ak-primary) 50%, var(--ak-surface));
 	--el-color-primary-light-7: color-mix(in srgb, var(--ak-primary) 30%, var(--ak-surface));
 	--el-color-primary-light-8: color-mix(in srgb, var(--ak-primary) 20%, var(--ak-surface));
-	--el-color-primary-light-9: var(--ak-primary-subtle);
-	--el-color-primary-dark-2: var(--ak-primary-hover);
-	--el-color-white: var(--ak-on-accent);
-	--el-color-success: var(--ak-success);
-	--el-color-warning: var(--ak-warning);
-	--el-color-danger: var(--ak-error);
-	--el-color-error: var(--ak-error);
-	--el-color-info: var(--ak-text-muted);
-	--el-color-info-light-9: var(--ak-surface-muted);
 	--el-color-danger-light-5: color-mix(in srgb, var(--ak-error) 50%, var(--ak-surface));
 	--el-color-danger-light-8: color-mix(in srgb, var(--ak-error) 22%, var(--ak-surface));
-	--el-color-danger-light-9: var(--ak-error-subtle);
-	--el-bg-color: var(--ak-surface);
-	--el-bg-color-page: var(--ak-bg);
 	--el-bg-color-overlay: var(--ak-elevated);
-	--el-fill-color-blank: var(--ak-surface);
 	--el-fill-color-light: var(--ak-surface-muted);
 	--el-fill-color-lighter: var(--ak-elevated);
 	--el-text-color-primary: var(--ak-text);
 	--el-text-color-regular: var(--ak-text-muted);
 	--el-text-color-secondary: var(--ak-text);
-	--el-text-color-placeholder: var(--ak-text-muted);
-	--el-text-color-disabled: var(--ak-text-disabled);
-	--el-border-color: var(--ak-border);
-	--el-border-color-light: var(--ak-border);
-	--el-border-color-lighter: var(--ak-border);
 	--el-border-color-extra-light: var(--ak-surface-muted);
-	--el-border-color-dark: var(--ak-border-strong);
 	--el-button-text-color: var(--ak-btn-text);
 	--el-mask-color: var(--ak-overlay);
-	--el-skeleton-color: var(--ak-surface-muted);
-	--el-skeleton-to-color: var(--ak-elevated);
 	--el-table-bg-color: var(--ak-table-bg);
 	--el-table-tr-bg-color: var(--ak-table-bg);
 	--el-table-border-color: var(--ak-table-border);
@@ -195,7 +185,6 @@ body.adminkit:is(.fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark) :is(
 	--el-table-header-text-color: var(--ak-text-muted);
 	--el-table-text-color: var(--ak-text);
 	--el-table-row-hover-bg-color: var(--ak-hover-bg);
-	--el-font-family: var(--ak-font-body);
 }
 
 body.adminkit :is(

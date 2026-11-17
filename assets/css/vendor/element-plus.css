@@ -13,7 +13,10 @@
  */
 
 :root,
-html body.adminkit {
+html body.adminkit,
+html.dark body.adminkit,
+html body.adminkit:is(.dark, .fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark),
+html body.adminkit :is(.dark, .fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark) {
 	/* Brand & primary ramp */
 	--el-color-primary: var( --ak-primary );
 	--el-color-primary-rgb: var( --ak-primary-rgb );
@@ -114,7 +117,9 @@ html body.adminkit {
 
 /* Shared Fluent controls: distinguish disabled from enabled content and keep
    keyboard feedback independent of pointer hover. No action behavior changes. */
-html body.adminkit {
+html body.adminkit,
+html.dark body.adminkit,
+html body.adminkit:is(.dark, .fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark) {
 	--el-disabled-text-color: var(--ak-text-disabled);
 	--el-text-color-disabled: var(--ak-text-disabled);
 	--el-input-focus-border-color: var(--ak-focus);

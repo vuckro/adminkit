@@ -192,6 +192,79 @@ abstract class AdminKit_Integration_Base {
 	protected static function boot() {}
 
 	/**
+	 * Whether core WP form component CSS (`adminkit/enqueue_forms`) should bail on `owns_screen()`.
+	 *
+	 * @return bool
+	 */
+	protected static function bails_core_forms() {
+		return false;
+	}
+
+	/**
+	 * Bail `adminkit/enqueue_forms` on owned SPA screens so core form styles do not fight host widgets.
+	 *
+	 * @param bool            $enqueue Whether core form primitives load.
+	 * @param \WP_Screen|null $screen  Optional current screen override.
+	 * @return bool
+	 */
+	public static function filter_enqueue_forms( $enqueue, $screen = null ) {
+		if ( ! $screen && function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+		}
+		return static::owns_screen( $screen ) ? false : $enqueue;
+	}
+
+	/**
+	 * Optional AdminKit icon name (e.g. `'money'`) or raw `<svg…>` markup replacing a base64 menu icon.
+	 *
+	 * @return string
+	 */
+	protected static function menu_icon() {
+		return '';
+	}
+
+	/**
+	 * CSS selector for the `.wp-menu-image` box targeted by `print_menu_icon()`.
+	 *
+	 * @return string
+	 */
+	protected static function menu_icon_selector() {
+		return '#adminmenu #toplevel_page_' . static::wordmark_menu_slug() . ' .wp-menu-image';
+	}
+
+	/**
+	 * Mask an AdminKit/Heroicon glyph into the host's WP sidebar menu item across all admin pages.
+	 *
+	 * @return void
+	 */
+	public static function print_menu_icon() {
+		$icon = (string) static::menu_icon();
+		if ( '' === $icon || ! class_exists( 'AdminKit_Settings' ) || ! AdminKit_Settings::get( 'replace_icons_enabled' ) ) {
+			return;
+		}
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) || ! apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
+			return;
+		}
+		if ( ! class_exists( 'AdminKit_Icons' ) ) {
+			return;
+		}
+		$svg = 0 === strpos( $icon, '<svg' ) ? $icon : AdminKit_Icons::svg( $icon );
+		if ( '' === $svg ) {
+			return;
+		}
+		$box  = static::menu_icon_selector();
+		$css  = $box . '{background-image:none !important;box-sizing:border-box;width:36px;height:34px;line-height:34px;text-align:center}';
+		$css .= $box . ' img{display:none !important}';
+		$css .= $box . '::before{content:"";display:inline-block;width:20px;height:20px;margin:0;padding:0;'
+			. 'vertical-align:middle;position:relative;top:-2px;' . AdminKit_Icons::mask( $svg ) . '}';
+		printf(
+			'<style id="adminkit-%1$s-menu-icon">%2$s</style>' . "\n",
+			esc_attr( static::slug() ),
+			$css // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static selectors and URL-encoded SVG in mask().
+		);
+	}
+
+	/**
 	 * The top-level admin-menu slug whose TITLE feeds the white-label wordmark.
 	 * Defaults to slug(); override when the host registers its menu under a
 	 * different slug (e.g. FluentCRM uses `fluentcrm-admin`, FluentSMTP the
@@ -300,6 +373,12 @@ abstract class AdminKit_Integration_Base {
 		}
 		static::register_assets();
 		static::boot();
+		if ( static::bails_core_forms() ) {
+			add_filter( 'adminkit/enqueue_forms', array( static::class, 'filter_enqueue_forms' ), 10, 2 );
+		}
+		if ( '' !== static::menu_icon() ) {
+			add_action( 'admin_head', array( static::class, 'print_menu_icon' ), 21 );
+		}
 		// Expose the menu title as --ak-wordmark on the owned screen, so any
 		// white-label logo (content: var(--ak-wordmark, …)) tracks the menu name.
 		add_action( 'admin_head', array( static::class, 'print_menu_wordmark' ) );
