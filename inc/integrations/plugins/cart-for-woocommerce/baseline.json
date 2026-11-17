@@ -1,0 +1,417 @@
+{
+    "slug": "cart-for-woocommerce",
+    "host_dir": "cart-for-woocommerce",
+    "host_version": "1.9.1.2",
+    "captured_at": "2026-11-13",
+    "files": 2,
+    "brand": "0073aa@1.00",
+    "variables": {
+        "--current-checkbox-color": "#0073aa",
+        "--wp-admin-theme-color": "#0085ba",
+        "--wp-admin-theme-color-darker-10": "rgb(0, 114.7661290323, 160.5)",
+        "--wp-admin-theme-color-darker-20": "rgb(0, 96.5322580645, 135)",
+        "--wp-components-color-accent": "#0073aa"
+    },
+    "colors": {
+        "ffffff@1.00": {
+            "count": 157,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "0073aa@1.00": {
+            "count": 99,
+            "cat": "text",
+            "token": "--ak-primary"
+        },
+        "353030@1.00": {
+            "count": 82,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "dedfea@1.00": {
+            "count": 78,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "82838e@1.00": {
+            "count": 37,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "ebf2f6@1.00": {
+            "count": 30,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "000000@1.00": {
+            "count": 27,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "5ba238@1.00": {
+            "count": 14,
+            "cat": "bg",
+            "token": "--ak-success"
+        },
+        "000000@0.15": {
+            "count": 13,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "e15334@1.00": {
+            "count": 12,
+            "cat": "border",
+            "token": "--ak-error"
+        },
+        "666666@1.00": {
+            "count": 9,
+            "cat": "bg",
+            "token": "--ak-text"
+        },
+        "dedede@1.00": {
+            "count": 9,
+            "cat": "bg",
+            "token": "--ak-border"
+        },
+        "eca717@1.00": {
+            "count": 8,
+            "cat": "text",
+            "token": "--ak-warning"
+        },
+        "333333@1.00": {
+            "count": 8,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "f0f0f0@1.00": {
+            "count": 7,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "e7e7e7@1.00": {
+            "count": 6,
+            "cat": "shadow",
+            "token": "--ak-elevated"
+        },
+        "000000@0.10": {
+            "count": 6,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "cccccc@1.00": {
+            "count": 6,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "0170b9@1.00": {
+            "count": 6,
+            "cat": "bg",
+            "token": "--ak-primary"
+        },
+        "ffffff@0.20": {
+            "count": 6,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "f6f6f6@1.00": {
+            "count": 5,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "fafafa@1.00": {
+            "count": 5,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "ffc65c@1.00": {
+            "count": 5,
+            "cat": "bg",
+            "token": "--ak-warning"
+        },
+        "ebeff1@1.00": {
+            "count": 5,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "999999@1.00": {
+            "count": 5,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "ff6a6a@1.00": {
+            "count": 5,
+            "cat": "bg",
+            "token": "--ak-error"
+        },
+        "09b29c@1.00": {
+            "count": 4,
+            "cat": "text",
+            "token": "--ak-info"
+        },
+        "757575@1.00": {
+            "count": 4,
+            "cat": "text",
+            "token": "--ak-text"
+        },
+        "35495e@1.00": {
+            "count": 4,
+            "cat": "text",
+            "token": "--ak-primary"
+        },
+        "f1f1f1@1.00": {
+            "count": 3,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "fefaf1@1.00": {
+            "count": 3,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "6dbe45@1.00": {
+            "count": 3,
+            "cat": "bg",
+            "token": "--ak-success"
+        },
+        "f1f2f9@1.00": {
+            "count": 3,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "2ea2cc@1.00": {
+            "count": 3,
+            "cat": "text",
+            "token": "--ak-info"
+        },
+        "007cba@1.00": {
+            "count": 3,
+            "cat": "bg",
+            "token": "--ak-info"
+        },
+        "f6f7f7@1.00": {
+            "count": 3,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "cfcfcf@1.00": {
+            "count": 3,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "f3f3f3@1.00": {
+            "count": 3,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "ededed@1.00": {
+            "count": 3,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "3875d7@1.00": {
+            "count": 3,
+            "cat": "bg",
+            "token": "--ak-primary"
+        },
+        "000000@0.05": {
+            "count": 3,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "f27474@1.00": {
+            "count": 2,
+            "cat": "text",
+            "token": "--ak-error"
+        },
+        "444444@1.00": {
+            "count": 2,
+            "cat": "border",
+            "token": "--ak-border-strong"
+        },
+        "5f6381@1.00": {
+            "count": 2,
+            "cat": "text",
+            "token": "--ak-primary"
+        },
+        "dcf2ed@1.00": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "ffe9e9@1.00": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-error-subtle"
+        },
+        "d94f4f@1.00": {
+            "count": 2,
+            "cat": "border",
+            "token": "--ak-error"
+        },
+        "d3d3d3@1.00": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-border"
+        },
+        "000000@0.35": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "3c434a@1.00": {
+            "count": 2,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "f1f3f4@1.00": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "fef7e8@1.00": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "e5e5e5@1.00": {
+            "count": 2,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "636d75@1.00": {
+            "count": 2,
+            "cat": "text",
+            "token": "--ak-text"
+        },
+        "c9c9c9@1.00": {
+            "count": 2,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "e8e8e8@1.00": {
+            "count": 2,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "a6a6a6@1.00": {
+            "count": 2,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "2a62bc@1.00": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-primary"
+        },
+        "e4e4e4@1.00": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "000000@0.30": {
+            "count": 2,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "008000@1.00": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-success"
+        },
+        "eff1f3@1.00": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "e4e4e4@0.50": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "d3dade@1.00": {
+            "count": 1,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "807e7e@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-text-muted"
+        },
+        "ececec@1.00": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "f9fdff@1.00": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-surface"
+        },
+        "2a2a2a@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-heading"
+        },
+        "135e96@1.00": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-primary"
+        },
+        "f2f2f2@1.00": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-elevated"
+        },
+        "dddddd@1.00": {
+            "count": 1,
+            "cat": "border",
+            "token": "--ak-border"
+        },
+        "fc7626@1.00": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-warning"
+        },
+        "ff1e4c@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-error"
+        },
+        "2fa73f@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-success"
+        },
+        "d72d1d@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-error"
+        },
+        "e7e5e5@0.50": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "fff9ec@1.00": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "e6d8bc@1.00": {
+            "count": 1,
+            "cat": "border",
+            "token": "--ak-warning"
+        },
+        "d59207@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-warning"
+        },
+        "def5d3@1.00": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-success"
+        }
+    }
+}

@@ -283,9 +283,9 @@ host's own theme attribute (one-way) for `color-scheme`. The
 - [flying-press](../inc/integrations/plugins/flying-press/class-flying-press.php) — Tier B against a Tailwind app compiled `important: true`.
 - [query-monitor](../inc/integrations/plugins/query-monitor/) — Tier A delivered into an open shadow root via a JS bridge.
 
-## FunnelKit Builder et Automations
+## FunnelKit Builder, Automations et Cart
 
-Les deux adaptateurs Tier B partagent les composants BWF sans exiger que les deux extensions soient actives. Les fichiers communs sont livrés dans `plugins/funnel-builder/` et référencés explicitement par l’adaptateur `wp-marketing-automations`. Les styles de contenu se limitent aux écrans possédés et à leurs portails. `shared.css`, `controls.css`, `components.css` et `shared.js` sont partagés ; `menu.css` ne traite que les entrées FunnelKit du menu WordPress ; aucun habillage de checkout public ou de corps d’e-mail. Versions, couverture et limites : [FUNNELKIT-REVIEW.md](FUNNELKIT-REVIEW.md).
+Les trois adaptateurs Tier B (`funnel-builder`, `wp-marketing-automations` et `cart-for-woocommerce`, vérifié jusqu’à `1.9.x`) partagent les composants BWF sans exiger que les autres extensions soient actives. Les fichiers communs sont livrés dans `plugins/funnel-builder/` et référencés explicitement via `AdminKit_FunnelKit_Integration`. Les styles de contenu se limitent aux écrans possédés et à leurs portails (`shared.css`, `controls.css`, `components.css`, `shared.js`) ; `menu.css` ne traite que les entrées FunnelKit du menu WordPress ; aucun habillage de checkout public, de corps d’e-mail ou de l’aperçu en direct du panier boutique (`#fkcart-modal`). Versions, couverture et limites : [FUNNELKIT-REVIEW.md](FUNNELKIT-REVIEW.md).
 
 ## Fluent applications
 

@@ -1,0 +1,413 @@
+/* FunnelKit Cart — scoped Tier B skin, verified against host 1.9.x.
+   Storefront live cart previews (#fkcart-modal, .fkcart-icon-preview) retain
+   merchant-configured --fkcart-* variables untouched. */
+
+/* App shell, navigation & top header */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-wrapper {
+	--wp-components-color-accent: var(--ak-primary);
+	--wp-admin-theme-color: var(--ak-primary);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-wrap {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content a {
+	color: var(--ak-primary-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page #fkcart-modal a {
+	color: var(--fkcart-primary-text-color);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-sidebar-nav {
+	background: transparent;
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-sidebar-nav .bwf-sidebar-nav-inner {
+	border-inline-start-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-top-header {
+	background: var(--ak-bg);
+	border-block-end: 1px solid var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-left-header-label {
+	color: var(--ak-heading);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-right-header .fkcart-preview-label {
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-tooglecontrol-advance .components-base-control__field .components-form-toggle__track {
+	background-color: var(--ak-border-strong);
+	border-color: var(--ak-border-strong);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-tooglecontrol-advance .components-base-control__field.is-checked .components-form-toggle__track {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-tooglecontrol-advance .components-base-control__field .components-form-toggle__thumb {
+	background-color: var(--ak-on-accent);
+	border-color: var(--ak-on-accent);
+}
+
+/* Status tags, popover, zero state & notices */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-tag {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-tag.fkcart-published {
+	background: var(--ak-success-subtle);
+	color: var(--ak-success);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-status .components-popover,
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-status .components-popover .components-popover__content {
+	background: var(--ak-elevated);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+	box-shadow: var(--ak-shadow-elevated);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-disable-cart-info {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-disabled-message,
+body.adminkit.adminkit-funnelkit-cart .fkcart-preview-notice {
+	background-color: var(--ak-elevated);
+	color: var(--ak-text);
+	border: 1px solid var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-zero-state .fkcart-heading {
+	color: var(--ak-heading);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-zero-state .fkcart-description {
+	color: var(--ak-text-muted);
+}
+
+/* Settings panels, labels, color fields & error validation */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content .fkcart-setting-wrap .fkcart-setting-header {
+	color: var(--ak-heading);
+	border-block-end-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content :is(.fkcart-settings-field-label, .components-radio-control__label) {
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content :is(.fkcart-help-text, .components-base-control__help) {
+	color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content .fkcart-settings-field.has-error .bwf-error-msg {
+	color: var(--ak-error);
+}
+/* Host forces error border & box-shadow important on validation fields. */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content .fkcart-settings-field.has-error :is(.bwf-searchlist-controller, .components-text-control__input) {
+	border-color: var(--ak-error) !important;
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content .fkcart-settings-field.has-error :is(.bwf-searchlist-controller:focus, .components-text-control__input:focus) {
+	box-shadow: 0 0 0 1px var(--ak-error) !important;
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content textarea.components-textarea-control__input {
+	border-color: var(--ak-input-border);
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+/* Host forces focus box-shadow important on settings textareas. */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content textarea.components-textarea-control__input:focus {
+	border-color: var(--ak-primary);
+	box-shadow: var(--ak-focus-ring) !important;
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content .fkcart-shortcode-text-wrap,
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content .fkcart-shortcode-preview {
+	border-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content .fkcart-shortcode-text-wrap {
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content .fkcart-shortcode-text-wrap .fkcart-duplicate-icon > svg {
+	fill: var(--ak-text-muted);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-page-content .bwf-select-control .components-base-control {
+	border-color: var(--ak-border);
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart .components-color-field .component-color-field-inner {
+	border-color: var(--ak-border);
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart .components-color-field .component-color-field-inner .component-color-indicator {
+	box-shadow: inset 0 0 0 1px var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart .components-color-field .component-color-field-inner .component-color-indicator.is-empty::after {
+	border-block-start-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart .components-color-field .component-color-field-inner .indicator-text {
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart .components-color-field .component-color-field-inner > input[type="number"] {
+	border-inline-start-color: var(--ak-border);
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+/* Host forces a literal inset border shadow important on color-picker inputs. */
+body.adminkit.adminkit-funnelkit-cart .components-color-picker .components-input-control .components-input-control__container .components-input-control__backdrop {
+	box-shadow: 0 0 0 1px var(--ak-border) !important;
+}
+body.adminkit.adminkit-funnelkit-cart .components-color-picker .components-input-control .components-input-control__container .components-input-control__input {
+	color: var(--ak-text);
+	background: var(--ak-input-bg);
+}
+
+/* Preview column & live storefront cart isolation */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-wrap .fkcart-page-wrapper.fkcart-cart-page-wrapper .fkcart-preview-wrapper {
+	background: var(--ak-surface-muted);
+	border-inline-start: 1px solid var(--ak-border);
+	box-shadow: none;
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page #fkcart-modal :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea) {
+	background-color: var(--fkcart-bg-color);
+	border-color: var(--fkcart-border-color);
+	color: var(--fkcart-primary-text-color);
+	color-scheme: light;
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page #fkcart-modal :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea):focus {
+	border-color: var(--fkcart-accent-color);
+	box-shadow: none;
+}
+
+/* Upsells */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper :is(.bwf-upsell-header, .fkcart-upsell-search-wrap) {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper .fkcart-upsell-list-header-label {
+	color: var(--ak-heading);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper .fkcart-upsell-list-item {
+	border-color: var(--ak-border);
+	background: var(--ak-surface);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper .fkcart-upsell-list-item-header-img img {
+	border-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper .fkcart-upsell-list-item-header-label {
+	color: var(--ak-primary-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper .fkcart-upsell-list-item-header-count-tag {
+	background: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper .fkcart-upsell-list-content-wrap {
+	border-block-start-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper .fkcart-upsell-list-content {
+	border-inline-end-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper .fkcart-upsell-list-content-header {
+	color: var(--ak-heading);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper .fkcart-upsell-list-content-data {
+	border-color: var(--ak-border);
+	background: var(--ak-surface);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper .fkcart-add-product {
+	border-color: var(--ak-primary);
+	color: var(--ak-primary-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-upsell-list-wrapper .fkcart-upsell-tag {
+	border-color: var(--ak-border);
+	background: var(--ak-primary-subtle);
+	color: var(--ak-text);
+}
+
+/* Rewards */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-reward-wrap .fkcart-reward-list {
+	border-block-end-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-reward-wrap .fkcart-reward-list-header {
+	color: var(--ak-heading);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-reward-wrap .fkcart-reward--list-label {
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-reward-wrap .bwf-search.is-searchable .components-base-control i {
+	color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-reward-wrap .bwf-search.is-searchable .bwf-select-control__control {
+	border-color: var(--ak-border);
+	background: var(--ak-input-bg);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-reward-wrap .fkcart-txt-select {
+	border-color: var(--ak-border);
+	background: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+
+/* Languages & modal */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-language-wrap .fkcart-language-row {
+	border-color: var(--ak-border);
+	background: var(--ak-surface);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-language-wrap .fkcart-language-row-header {
+	border-block-end-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart .fkcart-language-modal .components-modal__content :is(.modal-title, label.components-input-control__label, label.components-base-control__label, .fkcart-language-field-header) {
+	color: var(--ak-heading);
+}
+body.adminkit.adminkit-funnelkit-cart .fkcart-language-modal .components-modal__content :is(input.components-text-control__input, select.components-select-control__input, .components-input-control__backdrop) {
+	border-color: var(--ak-border);
+	background: var(--ak-input-bg);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart .bwf-admin-modal .fkcart-modal-footer {
+	background: var(--ak-surface);
+	border-block-start: 1px solid var(--ak-border);
+}
+
+/* Express checkout & FunnelKit Cart notices */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-express-checkout-wrap .fkcart-express-stripe-install-wrap__heading {
+	color: var(--ak-heading);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-express-checkout-wrap .fkcart-express-stripe-install-wrap__sub-heading {
+	color: var(--ak-text-muted);
+}
+/* Host forces Stripe purple background important across hover & focus states. */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-express-checkout-wrap .components-button.is-primary.fkcart-activate-express-btn.fkcart-activate-express-stripe-btn {
+	background: var(--ak-primary) !important;
+	color: var(--ak-on-accent) !important;
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-component-notice {
+	background: var(--ak-warning-subtle);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-component-notice.is-info {
+	background: var(--ak-info-subtle);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-component-notice :is(p, .bwf-notice-content, .fkcart-notice-message) {
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-component-notice .fkcart-notice-btn {
+	background: var(--ak-elevated);
+	color: var(--ak-text);
+	border: 1px solid var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-component-notice.is-info .fkcart-notice-btn {
+	background: var(--ak-primary);
+	color: var(--ak-on-accent);
+	border-color: var(--ak-primary);
+}
+/* Host forces warning outline button text important. */
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-component-notice .fkcart-template-notice-btn {
+	border-color: var(--ak-warning);
+	color: var(--ak-warning) !important;
+}
+
+/* Checkout template picker & preview chrome (iframe body stays untouched) */
+body.adminkit.adminkit-funnelkit-cart .fkcart-template-list-modal .fkcart-template-header {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-block-end: 1px solid var(--ak-border);
+	box-shadow: none !important;
+}
+body.adminkit.adminkit-funnelkit-cart .fkcart-template-list-modal .wffn_tab-content {
+	background: var(--ak-bg);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap :is(.wffn_template_preview_header, .wffn_template_preview_sidebar, .wffn_template_preview_close) {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_template_nav_btn {
+	background: var(--ak-elevated);
+	color: var(--ak-text);
+	border: 1px solid var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_template_nav_text {
+	color: var(--ak-primary-text);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_viewport_icons {
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_viewport_icons:hover {
+	border-color: var(--ak-primary);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_viewport_icons.active {
+	border-color: var(--ak-primary);
+	background: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_template_preview_inner.wffn_funnel_preview {
+	background: var(--ak-bg);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_template_page_options {
+	color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_template_name {
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_template_page_options.active_preview .wffn_template_name {
+	color: var(--ak-primary-text);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_template_page_options:is(:hover, .active_preview) .wffn_preview_thumbnail {
+	box-shadow: 0 0 0 2px var(--ak-primary);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_page_counts {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary-text);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn_global_loader {
+	background: var(--ak-surface);
+	border-inline-end-color: var(--ak-border);
+}
+/* Host forces card inset outline important. */
+body.adminkit.adminkit-funnelkit-cart .wffn_tab-content .wffn_pick_template .wffn_temp_card :is(.wffn_template_sec, .wffn_template_sec.wffn_build_from_scratch, .wffn_build_from_scratch .wffn_template_sec_design) {
+	background: var(--ak-surface);
+	box-shadow: 0 0 0 1px var(--ak-border) !important;
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_tab-content .wffn_pick_template .wffn_build_from_scratch .wffn_temp_overlay {
+	border-color: var(--ak-border-strong);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_tab-content .wffn_pick_template .wffn_build_from_scratch .wffn_temp_overlay :is(.wffn_p.witha a, .wffn_p.wffn_import_template) {
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_sec_meta {
+	background: var(--ak-surface);
+	border-block-start-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_sec_meta :is(.wffn_template_meta_left, .wffn_template_sec_meta_name) {
+	color: var(--ak-heading);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_sec_meta .wffn_template_meta_right {
+	color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_sec_meta_group {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary-text);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_sec_ribbon {
+	background: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_sec_ribbon.wffn-pro {
+	background: var(--ak-success);
+	color: var(--ak-on-accent);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_editor_selector span {
+	color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-funnelkit-cart .wffn_template_editor_selector span.is-selected {
+	color: var(--ak-text);
+}
+/* Host forces green background important on import-template hover/focus/disabled states. */
+body.adminkit.adminkit-funnelkit-cart .wffn_template_preview_wrap .wffn-import-template-btn {
+	background: var(--ak-primary) !important;
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}

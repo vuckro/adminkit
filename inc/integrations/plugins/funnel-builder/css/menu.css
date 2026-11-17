@@ -1,8 +1,8 @@
 /* Shared menu chrome, also on core WordPress pages. External upgrade links keep
    their native destination; inline promotional paint follows the admin palette. */
-body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami) .wp-menu-image::before { background-image: none; }
-body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami) .wp-submenu a[target="_blank"] { background-color: var(--ak-funnelkit-menu-bg, transparent) !important; color: var(--ak-text) !important; }
-body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami) .wp-submenu a[target="_blank"]:is(:hover, :focus-visible) { --ak-funnelkit-menu-bg: var(--ak-hover-bg); }
+body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami, #toplevel_page_fkcart) .wp-menu-image::before { background-image: none; }
+body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami, #toplevel_page_fkcart) .wp-submenu a[target="_blank"] { background-color: var(--ak-funnelkit-menu-bg, transparent) !important; color: var(--ak-text) !important; }
+body.adminkit #adminmenu :is(#toplevel_page_woofunnels, #toplevel_page_autonami, #toplevel_page_fkcart) .wp-submenu a[target="_blank"]:is(:hover, :focus-visible) { --ak-funnelkit-menu-bg: var(--ak-hover-bg); }
 /* Pro's automatically opened Stripe pointer is portaled outside the app and
    also appears on WordPress screens. Keep its native actions and brand logo. */
 body.adminkit .fk-stripe-tooltip .wp-pointer-content { background: var(--ak-surface); color: var(--ak-text); border-color: var(--ak-border); box-shadow: var(--ak-shadow-elevated); }

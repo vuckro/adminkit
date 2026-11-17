@@ -41,14 +41,14 @@ body.adminkit.adminkit-funnelkit :is(.bwf-badge-green, .bwf-st-c-badge-green, .b
 body.adminkit.adminkit-funnelkit :is(.bwf-badge-red, .bwf-st-c-badge-red) { --ak-funnelkit-badge-bg: var(--ak-error-subtle); --ak-funnelkit-badge-text: var(--ak-error); }
 body.adminkit.adminkit-funnelkit :is(.bwf-st-c-badge-yellow, .bwf-exp-paused) { --ak-funnelkit-badge-bg: var(--ak-warning-subtle); --ak-funnelkit-badge-text: var(--ak-warning); }
 body.adminkit.adminkit-funnelkit :is(.bwf-st-c-badge-blue, .bwf-st-c-badge-l-blue) { --ak-funnelkit-badge-bg: var(--ak-info-subtle); --ak-funnelkit-badge-text: var(--ak-info); }
-body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) :is(.bwf-badge, .bwf-header-step-type-badge, .bwf-analytics-step-badge, .bwf-count-badge),
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, #fkcart-page, .components-modal__frame) :is(.bwf-badge, .bwf-header-step-type-badge, .bwf-analytics-step-badge, .bwf-count-badge),
 body.adminkit.adminkit-funnelkit :is(#wffn-contacts, .components-modal__frame) .bwf-st-c-wrap .bwf-st-c .bwf-st-c-badge-wrap .bwf-st-c-badge-small,
 body.adminkit.adminkit-funnelkit #bwf-funnel-canvas-wrap .bwf-st-c-badge-small,
 body.adminkit.adminkit-funnelkit #bwf-funnel-canvas-wrap .bwf-node-wrapper .bwf-node-content .bwf-st-c-badge-small {
  background: var(--ak-funnelkit-badge-bg);
  color: var(--ak-funnelkit-badge-text);
 }
-body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-badge > span { color: inherit; }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, #fkcart-page, .components-modal__frame) .bwf-badge > span { color: inherit; }
 /* Native dropdowns, multi-selects and asynchronous feedback use the same roles. */
 body.adminkit.adminkit-funnelkit :is(.bwf-custom-select .bwf-list-options, .multiselect__tags, .multiselect__input, .multiselect__single, .multiselect__content-wrapper) { background: var(--ak-input-bg); color: var(--ak-text); border-color: var(--ak-border); }
 body.adminkit.adminkit-funnelkit :is(.multiselect__placeholder, .multiselect__option--disabled) { color: var(--ak-text-muted); }
@@ -57,7 +57,7 @@ body.adminkit.adminkit-funnelkit .multiselect__tag { background: var(--ak-primar
 body.adminkit.adminkit-funnelkit .bwf-global-snackbar { background: var(--ak-elevated); color: var(--ak-text); border: 1px solid var(--ak-border); box-shadow: var(--ak-shadow-elevated); }
 body.adminkit.adminkit-funnelkit .bwf-sidebar-nav .bwf-sidebar-nav-inner { border-color: var(--ak-border); }
 body.adminkit.adminkit-funnelkit .bwf-tab-section-wrap { box-shadow: inset 0 -1px 0 var(--ak-border); }
-body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, .components-modal__frame) .bwf-tab-section-item.active { color: var(--ak-primary-text); }
+body.adminkit.adminkit-funnelkit :is(#wffn-contacts, #bwfcrm-page, #fkcart-page, .components-modal__frame) .bwf-tab-section-item.active { color: var(--ak-primary-text); }
 body.adminkit.adminkit-funnelkit .bwf-tab-section-item:focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
 body.adminkit.adminkit-funnelkit :is(.bwf-notification-wrap, .bwf-sublium-popup-modal, .bwf-custom-select) :is(a, button, input, select):focus-visible { outline: 2px solid var(--ak-focus); outline-offset: 2px; }
 @media (max-width: 782px) {
