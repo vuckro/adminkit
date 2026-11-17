@@ -18,7 +18,7 @@ class AdminKit_Integration_Fluent_Toolkit extends AdminKit_Integration_Base {
 	/** @return string|null */
 	protected static function host_version() { return defined( 'FLUENT_TOOLKIT_VERSION' ) ? FLUENT_TOOLKIT_VERSION : null; }
 	/** @return string */
-	protected static function max_tested_host_version() { return '2.1'; }
+	protected static function max_tested_host_version() { return '2.2'; }
 	/** @param \WP_Screen|null $screen Screen. @return bool */
 	public static function owns_screen( $screen ) { return $screen && 'toplevel_page_fluent-toolkit' === $screen->id; }
 	/** Only mount alongside the host's replacement shell. @return bool */

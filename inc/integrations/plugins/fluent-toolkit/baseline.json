@@ -1,0 +1,167 @@
+{
+    "slug": "fluent-toolkit",
+    "host_dir": "fluent-toolkit",
+    "host_version": "2.2.0",
+    "captured_at": "2026-11-17",
+    "files": 1,
+    "brand": "c4321a@1.00",
+    "variables": {
+        "--fls-chrome-bottom": "var(--fls-chrome)",
+        "--fui-accent": "#635bff",
+        "--fui-accent-hover": "#5851e6",
+        "--fui-bg": "var(--fc-secondary-bg,#f5f7fa)",
+        "--fui-border": "var(--fc-primary-border,#e1e4ea)",
+        "--fui-primary-bg": "var(--fc-primary-bg,#fff)",
+        "--fui-shadow": "0 0 0 1px rgba(0,0,0,.02),0 1px 3px hsla(0,0%,6%,.04)",
+        "--fui-surface": "#fff",
+        "--fui-surface-active": "#f1edff",
+        "--fui-surface-hover": "#f6f5f4",
+        "--fui-text": "var(--fc-primary-text,#0e121b)",
+        "--fui-text-faint": "#a8a7ad",
+        "--fui-text-inverse": "var(--fc-text-inverse,#fff)",
+        "--fui-text-muted": "var(--fc-text-muted,#99a0ae)",
+        "--fui-text-soft": "var(--fc-secondary-text,#525866)"
+    },
+    "colors": {
+        "635bff@0.35": {
+            "count": 7,
+            "cat": "shadow",
+            "token": "--ak-primary-subtle"
+        },
+        "000000@0.06": {
+            "count": 2,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "0f0f0f@0.12": {
+            "count": 2,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "0f0f0f@0.05": {
+            "count": 2,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "000000@0.25": {
+            "count": 1,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "000000@0.08": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "c4321a@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-primary"
+        },
+        "a32814@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-error"
+        },
+        "ffffff@0.06": {
+            "count": 1,
+            "cat": "border",
+            "token": "--ak-hover-bg"
+        },
+        "ffffff@0.04": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "ffffff@0.08": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "333333@0.08": {
+            "count": 1,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "0f0f0f@0.35": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-hover-bg"
+        },
+        "f59e0b@0.10": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "f59e0b@0.28": {
+            "count": 1,
+            "cat": "border",
+            "token": "--ak-primary-subtle"
+        },
+        "966412@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-warning"
+        },
+        "f59e0b@0.16": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "f59e0b@0.40": {
+            "count": 1,
+            "cat": "border",
+            "token": "--ak-primary-subtle"
+        },
+        "7d520c@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-warning"
+        },
+        "f59e0b@1.00": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-warning"
+        },
+        "f59e0b@0.45": {
+            "count": 1,
+            "cat": "shadow",
+            "token": "--ak-primary-subtle"
+        },
+        "f59e0b@0.12": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "f59e0b@0.30": {
+            "count": 1,
+            "cat": "border",
+            "token": "--ak-primary-subtle"
+        },
+        "fbbf24@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-warning"
+        },
+        "f59e0b@0.18": {
+            "count": 1,
+            "cat": "bg",
+            "token": "--ak-primary-subtle"
+        },
+        "fcd34d@1.00": {
+            "count": 1,
+            "cat": "text",
+            "token": "--ak-warning"
+        },
+        "0f0f0f@0.15": {
+            "count": 1,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        },
+        "0f0f0f@0.18": {
+            "count": 1,
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
+        }
+    }
+}

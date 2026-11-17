@@ -227,4 +227,22 @@ Test_Funnel_Builder_Host::$version='3.19';Test_Funnel_Automations_Host::$version
 check_gate(!Test_Funnel_Builder_Host::host_within_tested_range()&&!Test_Funnel_Automations_Host::host_within_tested_range(),'Untested FunnelKit minors must retain native UI');
 foreach(array('plugins_page_bwf','toplevel_page_bwf','woofunnels_page_wffn') as $id){check_gate(AdminKit_Integration_Funnel_Builder::owns_screen((object)array('id'=>$id,'post_type'=>'')),'Moved builder screen lost its adapter: '.$id);}
 check_gate(!AdminKit_Integration_Funnel_Builder::owns_screen((object)array('id'=>'plugins','post_type'=>'')),'Builder adapter leaked onto plugin list');
+require dirname(__DIR__).'/inc/integrations/plugins/cart-for-woocommerce/class-cart-for-woocommerce.php';
+class Test_Funnel_Cart_Host extends AdminKit_Integration_Cart_For_Woocommerce {
+ public static $version='1.9.1.2'; protected static function host_version(){return self::$version;}
+}
+check_gate(Test_Funnel_Cart_Host::host_within_tested_range(),'Installed FunnelKit Cart 1.9.1.2 must be supported');
+Test_Funnel_Cart_Host::$version='1.10.0';
+check_gate(!Test_Funnel_Cart_Host::host_within_tested_range(),'Untested FunnelKit Cart minor 1.10.0 must retain native UI');
+Test_Funnel_Cart_Host::$version='2.0.0';
+check_gate(!Test_Funnel_Cart_Host::host_within_tested_range(),'Untested FunnelKit Cart major 2.0.0 must retain native UI');
+foreach(array('toplevel_page_fkcart','woofunnels_page_fkcart','plugins_page_fkcart') as $id){check_gate(AdminKit_Integration_Cart_For_Woocommerce::owns_screen((object)array('id'=>$id,'post_type'=>'')),'FunnelKit Cart screen missed: '.$id);}
+foreach(array('dashboard','plugins') as $id){check_gate(!AdminKit_Integration_Cart_For_Woocommerce::owns_screen((object)array('id'=>$id,'post_type'=>'')),'FunnelKit Cart adapter leaked: '.$id);}
+require dirname(__DIR__).'/inc/integrations/plugins/fluent-toolkit/class-fluent-toolkit.php';
+class Test_Fluent_Toolkit_Host extends AdminKit_Integration_Fluent_Toolkit {
+ public static $version='2.2.0'; protected static function host_version(){return self::$version;}
+}
+check_gate(Test_Fluent_Toolkit_Host::host_within_tested_range(),'Installed FluentHub 2.2.0 must be supported');
+Test_Fluent_Toolkit_Host::$version='2.3.0';
+check_gate(!Test_Fluent_Toolkit_Host::host_within_tested_range(),'Untested FluentHub minor 2.3.0 must retain native UI');
 echo "OK: FunnelKit host ranges, rewritten/moved routes and native fallbacks.\n";

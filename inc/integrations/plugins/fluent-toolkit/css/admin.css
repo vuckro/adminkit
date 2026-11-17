@@ -1,8 +1,9 @@
-/* FluentHub 2.1 replacement shell. Keep host layout and navigation ownership. */
+/* FluentHub 2.2 replacement shell. Keep host layout and navigation ownership. */
 body.adminkit.ak-fluenthub,
 body.adminkit.ak-fluenthub.fluent_theme_dark,
 body.adminkit.ak-fluenthub.fluent_boards_theme_dark,
 body.adminkit.ak-fluenthub.fbs-dark,
+html.dark body.adminkit.ak-fluenthub,
 body.adminkit.ak-fluenthub .fluent_theme_dark,
 body.adminkit.ak-fluenthub .fluent_boards_theme_dark,
 body.adminkit.ak-fluenthub .fbs-dark {
@@ -75,18 +76,18 @@ body.adminkit.toplevel_page_fluent-toolkit #fluent_app {
 body.adminkit.ak-fluenthub {
 	--fui-hover-bg: var(--ak-hover-bg);
 }
-body.adminkit.ak-fluenthub :is(.fui-workspace, .fui-workspace-menu-item, .fui-product-header, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item, .fui-wordpress-menu-link, .fui-sidebar-collapse-btn, .fui-sidebar-settings-btn, .fui-theme-toggle, .fui-theme-option, .fui-theme-select, .fui-item-chevron, .fui-mobile-toggle, .fui-sidebar-footer--left a, .fui-sidebar-footer--right a):hover:not(:disabled, [aria-disabled="true"], .is-disabled, .fui-workspace-menu-item--danger) {
-	background: var(--ak-hover-bg);
+body.adminkit.ak-fluenthub :is(.fui-workspace, .fui-workspace-menu-item, .fui-product-header, .fui-product-header--flat, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item, .fui-wordpress-menu-link, .fui-sidebar-collapse-btn, .fui-sidebar-settings-btn, .fui-theme-toggle, .fui-theme-option, .fui-theme-select, .fui-item-chevron, .fui-mobile-toggle, .fui-sidebar-footer--left a, .fui-sidebar-footer--right a):hover:not(:disabled, [aria-disabled="true"], .is-disabled, .fui-workspace-menu-item--danger) {
+	background-color: var(--ak-hover-bg);
 	color: var(--ak-text);
 	text-decoration: none;
 }
-body.adminkit.ak-fluenthub :is(.fui-workspace, .fui-workspace-menu-item, .fui-product-header, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item, .fui-wordpress-menu-link, .fui-sidebar-collapse-btn, .fui-sidebar-settings-btn, .fui-theme-toggle, .fui-theme-option, .fui-theme-select, .fui-item-chevron, .fui-mobile-toggle, .fui-sidebar-footer--left a, .fui-sidebar-footer--right a):focus-visible:not(:disabled, [aria-disabled="true"], .is-disabled) {
+body.adminkit.ak-fluenthub :is(.fui-workspace, .fui-workspace-menu-item, .fui-product-header, .fui-product-header--flat, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item, .fui-wordpress-menu-link, .fui-sidebar-collapse-btn, .fui-sidebar-settings-btn, .fui-theme-toggle, .fui-theme-option, .fui-theme-select, .fui-item-chevron, .fui-mobile-toggle, .fui-sidebar-footer--left a, .fui-sidebar-footer--right a):focus-visible:not(:disabled, [aria-disabled="true"], .is-disabled) {
 	outline: 2px solid var(--ak-focus);
 	outline-offset: -2px;
 	box-shadow: none;
 	color: var(--ak-text);
 }
-body.adminkit.ak-fluenthub :is(.fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item):is(.active, [aria-current="page"]) {
+body.adminkit.ak-fluenthub :is(.fui-product-header--flat, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item):is(.active, .is-active, [aria-current="page"]) {
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
 }
@@ -139,5 +140,7 @@ body.adminkit.ak-fluenthub :is(.fui-workspace-menu, .fui-theme-dropdown) { box-s
 
 /* Anchored chrome stays flat; transient menus retain overlay depth. */
 body.adminkit.ak-fluenthub .fui-sidebar-footer { box-shadow: none; border-color: var(--ak-border); }
+body.adminkit.ak-fluenthub .fui-mobile-nav { border-block-start: 1px solid var(--ak-border); box-shadow: none; }
+body.adminkit.ak-fluenthub .fui-rail-tip { background: var(--ak-elevated); color: var(--ak-text); border: 1px solid var(--ak-border); box-shadow: var(--ak-shadow-elevated); }
 body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-hero::after { background: none; }
 body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-list-head { background: var(--ak-table-header-bg); }
