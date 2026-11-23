@@ -69,7 +69,7 @@ class AdminKit_Integration_Wp_Migrate_Db_Pro extends AdminKit_Integration_Base {
 	 * @return string|null
 	 */
 	protected static function max_tested_host_version() {
-		return '2.7.7';
+		return '2';
 	}
 
 	/**

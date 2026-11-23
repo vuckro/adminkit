@@ -24,7 +24,7 @@ class AdminKit_Integration_Wpcode extends AdminKit_Integration_Base {
 
 	/** @return string[] Host plugin file(s) this adapter themes. */
 	public static function host_files() {
-		return array( 'wpcode/wpcode.php', 'insert-headers-and-footers/ihaf.php' );
+		return array( 'wpcode/wpcode.php', 'wpcode-premium/wpcode.php', 'insert-headers-and-footers/ihaf.php' );
 	}
 
 	/**

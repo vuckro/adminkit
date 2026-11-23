@@ -153,26 +153,27 @@ body.adminkit.block-editor-page.is-fullscreen-mode #wpwrap::after {
 }
 
 /* FluentHub replaces the native toolbar/sidebar junction with its own shell.
-   The native 32px/160px frame would cross that shell. The shell marker is set from its enqueued
-   stylesheet, so ordinary Fluent pages retain the frame when Hub is disabled. */
-body.adminkit.ak-fluenthub #wpwrap::before,
-body.adminkit.ak-fluenthub #wpwrap::after {
+   The native 32px/160px frame would cross that shell. Match both the enqueued-style
+   body class and `.fluent_uui` directly so ordinary Fluent pages retain the frame
+   when Hub is disabled while Hub-hosted screens never show a stray frame line. */
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) #wpwrap::before,
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) #wpwrap::after {
 	display: none;
 }
-body.adminkit.ak-fluenthub #wpbody-content {
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) #wpbody-content {
 	border-top: 0;
 	border-inline-start: 0;
 	border-start-start-radius: 0;
 }
 
 /* Hub owns its light/dark palette independently of AdminKit's toolbar theme. */
-body.adminkit.ak-fluenthub .fui-wordpress-menu-link {
+body.adminkit :is(.ak-fluenthub, .fluent_uui) .fui-wordpress-menu-link {
 	color: var(--fui-text-soft);
 }
-body.adminkit.ak-fluenthub .fui-wordpress-menu-link:is(:hover, :focus-visible) {
+body.adminkit :is(.ak-fluenthub, .fluent_uui) .fui-wordpress-menu-link:is(:hover, :focus-visible) {
 	color: var(--fui-text);
 }
-body.adminkit.ak-fluenthub .fui-wordpress-menu-link .fui-wp-mark {
+body.adminkit :is(.ak-fluenthub, .fluent_uui) .fui-wordpress-menu-link .fui-wp-mark {
 	color: inherit;
 	fill: currentColor;
 }

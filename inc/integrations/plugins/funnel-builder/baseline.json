@@ -1,8 +1,8 @@
 {
     "slug": "funnel-builder",
     "host_dir": "funnel-builder",
-    "host_version": "3.18.0",
-    "captured_at": "2026-11-06",
+    "host_version": "3.18.0.1",
+    "captured_at": "2026-11-18",
     "files": 101,
     "brand": "dedfea@1.00",
     "variables": {
@@ -176,15 +176,15 @@
             "cat": "text",
             "token": "--ak-heading"
         },
-        "ffe9e9@1.00": {
-            "count": 32,
-            "cat": "bg",
-            "token": "--ak-error-subtle"
-        },
         "f1f1f1@1.00": {
             "count": 32,
             "cat": "bg",
             "token": "--ak-elevated"
+        },
+        "ffe9e9@1.00": {
+            "count": 32,
+            "cat": "bg",
+            "token": "--ak-error-subtle"
         },
         "bfbfbf@1.00": {
             "count": 32,
@@ -271,15 +271,15 @@
             "cat": "bg",
             "token": "--ak-elevated"
         },
-        "ffc65c@1.00": {
-            "count": 17,
-            "cat": "text",
-            "token": "--ak-warning"
-        },
         "e7e7e7@1.00": {
             "count": 17,
             "cat": "border",
             "token": "--ak-border"
+        },
+        "ffc65c@1.00": {
+            "count": 17,
+            "cat": "text",
+            "token": "--ak-warning"
         },
         "414349@1.00": {
             "count": 17,

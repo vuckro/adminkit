@@ -123,7 +123,7 @@ check_gate(strpos($renamed_wordmark,'AT&T “Orders”')!==false,'Stable menu ho
 
 echo "OK: adapter version gates (major & major.minor), paused_version_info, maybe_init guard, and wordmark sanitization.\n";
 
-// HappyFiles 1.9 must load the real adapter, while unknown minors stay paused.
+// HappyFiles 1.x must load the real adapter across minor/patch updates, while 2.x pauses.
 require dirname( __DIR__, 2 ) . '/inc/integrations/plugins/happyfiles/class-happyfiles.php';
 class Test_Happyfiles_Adapter extends AdminKit_Integration_Happyfiles {
 	public static $version = '1.9';
@@ -135,10 +135,10 @@ check_gate( Test_Happyfiles_Adapter::host_within_tested_range(), 'HappyFiles 1.9
 Test_Happyfiles_Adapter::$version = '1.9.99';
 check_gate( Test_Happyfiles_Adapter::host_within_tested_range(), 'HappyFiles 1.9 patch skin unexpectedly paused' );
 Test_Happyfiles_Adapter::$version = '1.10.0';
-check_gate( ! Test_Happyfiles_Adapter::host_within_tested_range(), 'Untested HappyFiles minor was allowed' );
+check_gate( Test_Happyfiles_Adapter::host_within_tested_range(), 'HappyFiles 1.10 minor unexpectedly paused' );
 Test_Happyfiles_Adapter::$version = '2.0.0';
 check_gate( ! Test_Happyfiles_Adapter::host_within_tested_range(), 'Untested HappyFiles major was allowed' );
-echo "OK: HappyFiles 1.9 adapter version regression.\n";
+echo "OK: HappyFiles 1.x adapter version regression.\n";
 
 // FluentSMTP toolbar evolves independently from its legacy settings skin.
 class AdminKit_Assets {
@@ -155,7 +155,7 @@ class Test_Fluent_Smtp_Adapter extends AdminKit_Integration_Fluent_Smtp {
 	public static function is_active() { return true; }
 	protected static function host_version() { return self::$version; }
 }
-foreach ( array( '2.2.95' => 3, '2.3.0' => 2, '2.4.5' => 3, '2.5.0' => 0 ) as $version => $count ) {
+foreach ( array( '2.2.95' => 3, '2.3.0' => 2, '2.4.5' => 3, '2.5.0' => 3, '3.0.0' => 0 ) as $version => $count ) {
 	Test_Fluent_Smtp_Adapter::$version = $version;
 	AdminKit_Assets::$registered = array();
 	Test_Fluent_Smtp_Adapter::maybe_init();
@@ -223,8 +223,10 @@ class Test_Funnel_Automations_Host extends AdminKit_Integration_Wp_Marketing_Aut
  public static $version='3.8.6.2'; protected static function host_version(){return self::$version;}
 }
 check_gate(Test_Funnel_Builder_Host::host_within_tested_range()&&Test_Funnel_Automations_Host::host_within_tested_range(),'Installed FunnelKit versions must be supported');
-Test_Funnel_Builder_Host::$version='3.19';Test_Funnel_Automations_Host::$version='3.9';
-check_gate(!Test_Funnel_Builder_Host::host_within_tested_range()&&!Test_Funnel_Automations_Host::host_within_tested_range(),'Untested FunnelKit minors must retain native UI');
+Test_Funnel_Builder_Host::$version='3.19';Test_Funnel_Automations_Host::$version='3.9.0.1';
+check_gate(Test_Funnel_Builder_Host::host_within_tested_range()&&Test_Funnel_Automations_Host::host_within_tested_range(),'FunnelKit 3.x minor updates must remain supported');
+Test_Funnel_Builder_Host::$version='4.0.0';Test_Funnel_Automations_Host::$version='4.0.0';
+check_gate(!Test_Funnel_Builder_Host::host_within_tested_range()&&!Test_Funnel_Automations_Host::host_within_tested_range(),'Untested FunnelKit majors must retain native UI');
 foreach(array('plugins_page_bwf','toplevel_page_bwf','woofunnels_page_wffn') as $id){check_gate(AdminKit_Integration_Funnel_Builder::owns_screen((object)array('id'=>$id,'post_type'=>'')),'Moved builder screen lost its adapter: '.$id);}
 check_gate(!AdminKit_Integration_Funnel_Builder::owns_screen((object)array('id'=>'plugins','post_type'=>'')),'Builder adapter leaked onto plugin list');
 require dirname(__DIR__, 2).'/inc/integrations/plugins/cart-for-woocommerce/class-cart-for-woocommerce.php';
@@ -233,7 +235,7 @@ class Test_Funnel_Cart_Host extends AdminKit_Integration_Cart_For_Woocommerce {
 }
 check_gate(Test_Funnel_Cart_Host::host_within_tested_range(),'Installed FunnelKit Cart 1.9.1.2 must be supported');
 Test_Funnel_Cart_Host::$version='1.10.0';
-check_gate(!Test_Funnel_Cart_Host::host_within_tested_range(),'Untested FunnelKit Cart minor 1.10.0 must retain native UI');
+check_gate(Test_Funnel_Cart_Host::host_within_tested_range(),'FunnelKit Cart 1.x minor updates must remain supported');
 Test_Funnel_Cart_Host::$version='2.0.0';
 check_gate(!Test_Funnel_Cart_Host::host_within_tested_range(),'Untested FunnelKit Cart major 2.0.0 must retain native UI');
 foreach(array('toplevel_page_fkcart','woofunnels_page_fkcart','plugins_page_fkcart') as $id){check_gate(AdminKit_Integration_Cart_For_Woocommerce::owns_screen((object)array('id'=>$id,'post_type'=>'')),'FunnelKit Cart screen missed: '.$id);}
@@ -244,5 +246,7 @@ class Test_Fluent_Toolkit_Host extends AdminKit_Integration_Fluent_Toolkit {
 }
 check_gate(Test_Fluent_Toolkit_Host::host_within_tested_range(),'Installed FluentHub 2.2.0 must be supported');
 Test_Fluent_Toolkit_Host::$version='2.3.0';
-check_gate(!Test_Fluent_Toolkit_Host::host_within_tested_range(),'Untested FluentHub minor 2.3.0 must retain native UI');
+check_gate(Test_Fluent_Toolkit_Host::host_within_tested_range(),'FluentHub 2.x minor updates must remain supported');
+Test_Fluent_Toolkit_Host::$version='3.0.0';
+check_gate(!Test_Fluent_Toolkit_Host::host_within_tested_range(),'Untested FluentHub major 3.0.0 must retain native UI');
 echo "OK: FunnelKit host ranges, rewritten/moved routes and native fallbacks.\n";

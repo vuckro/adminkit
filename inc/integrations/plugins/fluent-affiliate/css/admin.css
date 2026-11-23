@@ -45,7 +45,9 @@
    ============================================================ */
 
 :root,
-body.adminkit.toplevel_page_fluent-affiliate {
+html body.adminkit.toplevel_page_fluent-affiliate,
+html:is(.dark, .fluent_theme_dark) body.adminkit.toplevel_page_fluent-affiliate,
+html body.adminkit.toplevel_page_fluent-affiliate.fluent_theme_dark {
 	/* --- FluentAffiliate's own --fla-* layer --- */
 
 	/* Surfaces */
@@ -82,6 +84,24 @@ body.adminkit.toplevel_page_fluent-affiliate #fluent-framework-app {
 	background-color: var( --ak-bg );
 }
 
+@media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluent-affiliate :is(#fluent-affiliate-app, .fframe_app) {
+		margin-inline-start: 0;
+	}
+}
+
+/* White-label onboarding header banner logo so dark mode never shows a white logo box */
+html body.adminkit.toplevel_page_fluent-affiliate .fa_onboarding_wrapper .fa_onboarding_header .header_banner img.fa_onboarding_logo {
+	display: none;
+}
+html body.adminkit.toplevel_page_fluent-affiliate .fa_onboarding_wrapper .fa_onboarding_header .header_banner::before {
+	content: var( --ak-wordmark, "FluentAffiliate" );
+	color: var( --ak-heading );
+	font-size: calc( 18px * var( --ak-type-scale, 1 ) );
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+
 /* The sticky navbar (.fa-navbar) and the app body (.fframe_body) carry their own
    12-20px internal padding and the navbar is z-index:99 — BELOW AdminKit's z-101
    corner overlay — so unlike the FluentCRM/FluentCart top bars it needs no manual
@@ -108,7 +128,7 @@ body.adminkit.toplevel_page_fluent-affiliate .el-select .el-input.is-focus input
    class. AdminKit drives dark via the token remap, so in AdminKit-dark that
    control is redundant/confusing — hide it (dark only; left available in light).
    Same approach as the FluentBooking / FluentCRM in-app toggles. */
-:root[data-adminkit-theme="dark"] body.adminkit.toplevel_page_fluent-affiliate .fa-navbar__link.fa_color_mode {
+body.adminkit.toplevel_page_fluent-affiliate :is(.fa-navbar__link.fa_color_mode, .fa_color_mode, .fa_theme_trigger, .fls_theme_trigger, [data-fluent-theme-toggle], .fa-navbar__settings [aria-label*="Theme"], .fa-navbar__settings [title*="Theme"]) {
 	display: none !important;
 }
 
@@ -398,6 +418,41 @@ body.adminkit.toplevel_page_fluent-affiliate .text-info {
 	color: var( --ak-text-muted );
 }
 
-/* Element cards share surface elevation; floating poppers keep overlay depth. */
-body.adminkit.toplevel_page_fluent-affiliate .el-card { box-shadow: var(--ak-card-shadow); border-color: var(--ak-card-border); border-width: var(--ak-border-width); border-radius: var(--ak-card-radius); }
-body.adminkit.toplevel_page_fluent-affiliate .el-card .el-card { box-shadow: none; }
+/* Shared outer card & KPI stat elevation + balanced 4-up / 2x2 grid (zero new !important). */
+html body.adminkit.toplevel_page_fluent-affiliate :is(
+	.el-card,
+	.fa-card,
+	.fa_chart_card,
+	.fa_card_container,
+	.fa_card_wrap:not(.fa_card_container .fa_card_wrap),
+	.fa_dashboard__card-wrap,
+	.fa_app_widget,
+	.fa_graph_container,
+	.fa_layout_single,
+	.fa_settings_wrapper,
+	.fa_onboarding_wrapper,
+	.fsl_license_card,
+	.fa-affiliate-wrap .fa-affiliate-body,
+	.fa-referral-customer-details
+) {
+	background-color: var( --ak-card-bg );
+	border: var( --ak-border-width ) solid var( --ak-card-border );
+	border-radius: var( --ak-card-radius );
+	box-shadow: var( --ak-card-shadow );
+}
+
+html body.adminkit.toplevel_page_fluent-affiliate :is(.el-card, .fa-card, .fa_dashboard__card-wrap, .fa_settings_wrapper) :is(.el-card, .fa-card, .fa_card_wrap) {
+	box-shadow: none;
+}
+
+html body.adminkit.toplevel_page_fluent-affiliate .fa_card_wrap .fa_card_icon {
+	background-color: var( --ak-primary-subtle );
+	color: var( --ak-primary-text );
+}
+html body.adminkit.toplevel_page_fluent-affiliate .fa_card_wrap .fa_card_title {
+	color: var( --ak-text-muted );
+}
+html body.adminkit.toplevel_page_fluent-affiliate .fa_card_wrap .fa_card_value {
+	color: var( --ak-heading );
+	font-variant-numeric: tabular-nums;
+}

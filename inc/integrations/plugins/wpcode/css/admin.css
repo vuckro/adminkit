@@ -29,6 +29,7 @@ body.adminkit.wpcode-admin-page {
 
 	/* ---- Borders ---- */
 	--wpcode-border-color: var(--ak-border);
+	--wpcode-input-border: 1px solid var(--ak-input-border);
 
 	/* ---- Text ---- */
 	--wpcode-text-color-heading: var(--ak-heading);
@@ -36,7 +37,7 @@ body.adminkit.wpcode-admin-page {
 	--wpcode-text-color-paragraph: var(--ak-text-muted);
 	--wpcode-text-color-light-bg: var(--ak-text-muted);
 	--wpcode-text-color-placeholder: var(--ak-text-muted);
-	--wpcode-text-color-highlight: var(--ak-primary);
+	--wpcode-text-color-highlight: var(--ak-primary-text);
 
 	/* ---- Brand / accent ---- */
 	--wpcode-color-primary: var(--ak-primary);
@@ -46,18 +47,20 @@ body.adminkit.wpcode-admin-page {
 	--wpcode-color-red: var(--ak-error);
 	--wpcode-color-red-darker: var(--ak-error);
 	--wpcode-background-red: var(--ak-error);
-	--wpcode-notice-success-bg: var(--ak-success);
-	--wpcode-notice-success-text: var(--ak-on-accent);
+	--wpcode-notice-success-bg: var(--ak-success-solid);
+	--wpcode-notice-success-text: var(--ak-on-success-solid);
 
-	/* ---- Primary button ---- */
+	/* ---- Primary button (`:root` resolves `--wpcode-button-primary-bg` early, so redeclare explicitly) ---- */
+	--wpcode-button-primary-bg: var(--ak-primary);
 	--wpcode-button-primary-bg-hover: var(--ak-primary-hover);
 	--wpcode-button-primary-text: var(--ak-on-accent);
-	--wpcode-button-primary-text-hover: var(--ak-on-accent);
+	--wpcode-button-primary-text-hover: var(--ak-on-accent-hover, var(--ak-on-accent));
 
 	/* ---- Secondary button ---- */
-	--wpcode-button-secondary-bg: var(--ak-surface);
-	--wpcode-button-secondary-bg-hover: var(--ak-elevated);
-	--wpcode-button-secondary-text: var(--ak-text-muted);
+	--wpcode-button-secondary-bg: var(--ak-btn-bg);
+	--wpcode-button-secondary-bg-hover: var(--ak-btn-hover-bg);
+	--wpcode-button-secondary-border: 1px solid var(--ak-btn-border);
+	--wpcode-button-secondary-text: var(--ak-btn-text);
 	--wpcode-button-secondary-text-hover: var(--ak-heading);
 
 	/* ---- "Upgrade" CTA — fold into the brand ---- */
@@ -65,6 +68,160 @@ body.adminkit.wpcode-admin-page {
 	--wpcode-button-orange-bg-hover: var(--ak-primary-hover);
 
 	/* ---- Disabled ---- */
-	--wpcode-button-disabled-bg: var(--ak-surface);
-	--wpcode-button-disabled-text: var(--ak-text-muted);
+	--wpcode-button-disabled-bg: var(--ak-surface-muted);
+	--wpcode-button-disabled-border: 1px solid var(--ak-border);
+	--wpcode-button-disabled-text: var(--ak-text-disabled);
+}
+
+/* Monochrome topbar logo (`</>` + `WPCode` paths) in both Light & Dark. */
+body.adminkit.wpcode-admin-page #wpcode-header-logo path {
+	fill: var(--ak-heading);
+}
+
+/* Snippet Library top tabs — WPCode hardcodes `background: #fff; border-bottom-color: #fff`
+   which turns the active tab white-on-white when `--ak-heading` flips in Dark mode. */
+body.adminkit.wpcode-admin-page .wpcode-library-tab-button {
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+
+body.adminkit.wpcode-admin-page .wpcode-library-tab-button:is(:hover, :focus) {
+	background-color: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+body.adminkit.wpcode-admin-page .wpcode-library-tab-button.wpcode-library-tab-button-active {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+	border-block-end-color: var(--ak-surface);
+	color: var(--ak-heading);
+}
+
+body.adminkit.wpcode-admin-page .wpcode-admin-tabs li :is(button, a) {
+	border-block-end-color: transparent;
+}
+
+body.adminkit.wpcode-admin-page .wpcode-admin-tabs li :is(button, a).active {
+	border-block-end-color: var(--ak-primary);
+	color: var(--ak-heading);
+}
+
+/* Snippet & tab pills (`NEW`, `PRO`, category badges) — WPCode hardcodes `color: #fff`
+   against `--wpcode-color-primary` / `--wpcode-text-color-heading` (both light in Dark mode). */
+body.adminkit.wpcode-admin-page :is(
+	.wpcode-list-item .wpcode-list-item-pill.wpcode-list-item-pill-blue,
+	.wpcode-list-item .wpcode-list-item-pill.wpcode-list-item-pill-gray,
+	.wpcode-items-metabox-inside .wpcode-list-item-pill,
+	.wpcode-tab-new-pill,
+	.wpcode-pro-pill
+) {
+	background-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+
+body.adminkit.wpcode-admin-page .wpcode-list-item .wpcode-list-item-pill.wpcode-list-item-pill-green {
+	background-color: var(--ak-success-subtle);
+	color: var(--ak-success);
+}
+
+body.adminkit.wpcode-admin-page .wpcode-list-item .wpcode-list-item-pill.wpcode-list-item-pill-light {
+	background-color: var(--ak-surface-muted);
+	color: var(--ak-text-muted);
+}
+
+/* Preserve left icon inset on WPCode search inputs past AdminKit's global input padding. */
+body.adminkit.wpcode-admin-page .wpcode-items-search input:is([type="search"], [type="text"]) {
+	padding-inline-start: 34px;
+}
+
+/* Anchor CTAs (`<a class="wpcode-button">`) — AdminKit's `body.adminkit a` link rule `(0,1,2)`
+   beats WPCode's `.wpcode-button` `(0,1,0)` and paints `color: var(--ak-primary-text)` on top of
+   `--wpcode-button-primary-bg: var(--ak-primary)`. Restore `--ak-on-accent` cleanly. */
+body.adminkit.wpcode-admin-page :not(.wpcode-button-toggle) > a.wpcode-button:not(.wpcode-button-secondary):not(.wpcode-button-text):not(.wpcode-button-just-icon):is(:link, :visited, :hover, :focus, :active) {
+	color: var(--ak-on-accent);
+}
+
+body.adminkit.wpcode-admin-page :not(.wpcode-button-toggle) > a.wpcode-button:not(.wpcode-button-secondary):not(.wpcode-button-text):not(.wpcode-button-just-icon) svg path {
+	fill: currentColor;
+}
+
+body.adminkit.wpcode-admin-page :not(.wpcode-button-toggle) > a.wpcode-button.wpcode-button-secondary:is(:link, :visited) {
+	color: var(--ak-btn-text);
+}
+
+body.adminkit.wpcode-admin-page :not(.wpcode-button-toggle) > a.wpcode-button.wpcode-button-secondary:is(:hover, :focus, :active) {
+	color: var(--ak-heading);
+}
+
+/* AI button & alerts */
+body.adminkit.wpcode-admin-page #wpbody-content .wpcode-button-ai-generate {
+	background: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+
+body.adminkit.wpcode-admin-page #wpbody-content .wpcode-button-ai-generate:is(:hover, :focus) {
+	background: var(--ak-primary-hover);
+	color: var(--ak-on-accent);
+}
+
+body.adminkit.wpcode-admin-page #wpbody-content .wpcode-button-ai-generate::before {
+	display: none;
+}
+
+body.adminkit.wpcode-admin-page #wpbody-content .wpcode-button-ai-generate svg path {
+	fill: currentColor;
+}
+
+body.adminkit.wpcode-admin-page .wpcode-alert.wpcode-alert-info {
+	background-color: var(--ak-info-subtle);
+	border-color: var(--ak-info-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.wpcode-admin-page .wpcode-alert.wpcode-alert-success {
+	background-color: var(--ak-success-subtle);
+	border-color: var(--ak-success-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.wpcode-admin-page .wpcode-alert.wpcode-alert-warning {
+	background-color: var(--ak-warning-subtle);
+	border-color: var(--ak-warning-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.wpcode-admin-page .wpcode-alert.wpcode-alert-danger {
+	background-color: var(--ak-error-subtle);
+	border-color: var(--ak-error-border);
+	color: var(--ak-text);
+}
+
+/* CodeMirror editors (`wpcode-headers-footers`, snippet editor) in Dark mode
+   when WPCode's internal dark toggle is off. */
+:root[data-adminkit-theme="dark"] body.adminkit.wpcode-admin-page .CodeMirror {
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit.wpcode-admin-page .CodeMirror-gutters {
+	background-color: var(--ak-surface);
+	border-inline-end-color: var(--ak-border);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit.wpcode-admin-page .CodeMirror-linenumber {
+	color: var(--ak-text-muted);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit.wpcode-admin-page .CodeMirror-cursor {
+	border-inline-start-color: var(--ak-heading);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit.wpcode-admin-page .CodeMirror-activeline-background {
+	background-color: var(--ak-hover-bg);
+}
+
+:root[data-adminkit-theme="dark"] body.adminkit.wpcode-admin-page .CodeMirror-selected {
+	background-color: var(--ak-primary-subtle);
 }

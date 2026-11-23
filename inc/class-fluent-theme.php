@@ -14,6 +14,9 @@ class AdminKit_Fluent_Theme {
 		add_filter( 'fluent_crm_asset_listed_slugs', array( __CLASS__, 'allow_assets' ) );
 		add_filter( 'fluent_booking/asset_listed_slugs', array( __CLASS__, 'allow_assets' ) );
 		add_filter( 'fluent_boards/asset_listed_slugs', array( __CLASS__, 'allow_assets' ) );
+		add_filter( 'fluent_support/asset_listed_slugs', array( __CLASS__, 'allow_assets' ) );
+		add_filter( 'fluent_snippets_asset_listed_slugs', array( __CLASS__, 'allow_assets' ) );
+		add_filter( 'fluentform/exclude_js_slugs_from_dequeue', array( __CLASS__, 'allow_assets' ) );
 		add_action( 'current_screen', array( __CLASS__, 'enqueue' ), 10001 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ), 10001 );
 	}
@@ -25,7 +28,7 @@ class AdminKit_Fluent_Theme {
 	 * @return bool
 	 */
 	public static function owns_screen( $screen ) {
-		foreach ( array( 'Fluent_Auth', 'Fluent_Toolkit', 'Fluent_Smtp', 'Fluent_Snippets', 'Fluentform', 'Fluent_Crm', 'Fluent_Booking', 'Fluent_Boards', 'Fluent_Community', 'Fluent_Cart', 'Fluent_Affiliate' ) as $name ) {
+		foreach ( array( 'Fluent_Auth', 'Fluent_Toolkit', 'Fluent_Smtp', 'Fluent_Snippets', 'Fluentform', 'Fluent_Crm', 'Fluent_Booking', 'Fluent_Boards', 'Fluent_Community', 'Fluent_Cart', 'Fluent_Affiliate', 'Fluent_Support' ) as $name ) {
 			$class = 'AdminKit_Integration_' . $name;
 			if ( ! class_exists( $class ) || ! $class::is_active() || ! $class::host_within_tested_range() || ! apply_filters( 'adminkit/integration_enabled', true, $class::slug() ) ) {
 				continue;
@@ -47,15 +50,19 @@ class AdminKit_Fluent_Theme {
 	public static function allow_assets( $slugs ) {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 		$owners = array(
-			'fluent_crm_asset_listed_slugs'     => 'AdminKit_Integration_Fluent_Crm',
-			'fluent_booking/asset_listed_slugs' => 'AdminKit_Integration_Fluent_Booking',
-			'fluent_boards/asset_listed_slugs'  => 'AdminKit_Integration_Fluent_Boards',
+			'fluent_crm_asset_listed_slugs'          => 'AdminKit_Integration_Fluent_Crm',
+			'fluent_booking/asset_listed_slugs'      => 'AdminKit_Integration_Fluent_Booking',
+			'fluent_boards/asset_listed_slugs'       => 'AdminKit_Integration_Fluent_Boards',
+			'fluent_support/asset_listed_slugs'      => 'AdminKit_Integration_Fluent_Support',
+			'fluent_snippets_asset_listed_slugs'     => 'AdminKit_Integration_Fluent_Snippets',
+			'fluentform/exclude_js_slugs_from_dequeue' => 'AdminKit_Integration_Fluentform',
 		);
-		$class = $owners[ current_filter() ] ?? '';
+		$filter = current_filter();
+		$class  = $owners[ $filter ] ?? '';
 		// Hosts can build their loader policy before WordPress sets WP_Screen.
 		$owner_ready = $class && class_exists( $class ) && $class::is_active() && $class::host_within_tested_range() && apply_filters( 'adminkit/integration_enabled', true, $class::slug() );
 		if ( is_admin() && $owner_ready && ( ! $screen || $class::owns_screen( $screen ) ) && apply_filters( 'adminkit/should_load', true, 'admin' ) && apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
-			$slugs[] = '\/adminkit\/';
+			$slugs[] = 'fluentform/exclude_js_slugs_from_dequeue' === $filter ? '/adminkit/' : '\/adminkit\/';
 		}
 		return array_values( array_unique( $slugs ) );
 	}

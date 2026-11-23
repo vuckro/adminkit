@@ -35,6 +35,22 @@ body.adminkit.wp-core-ui select {
 	box-shadow: none;
 }
 
+/* Always suppress native/UA select chrome (including Chromium's customizable-select
+   `::picker-icon` triangle) and keep single-select labels on one line so they never
+   wrap or render a second chevron beside our SVG arrow / React's suffix SVG. */
+body.adminkit select:not([multiple]):not([size]),
+body.adminkit.wp-core-ui select:not([multiple]):not([size]) {
+	-webkit-appearance: none !important;
+	appearance: none !important;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+body.adminkit select::picker-icon {
+	display: none !important;
+	content: none !important;
+}
+
 /* Dropdown arrow — WP's forms.css ships one, but our base rule above used
    to use the `background` shorthand which cleared it. Restore an AdminKit
    arrow with per-mode fills (data-URI SVG can't use `currentColor`, so we
@@ -51,8 +67,8 @@ body.adminkit.wp-core-ui select {
    that thread (background shorthand resets, or specificity ties). Pinning
    these three with `!important` keeps exactly one chevron, right-aligned,
    in every state. */
-body.adminkit select,
-body.adminkit.wp-core-ui select {
+body.adminkit select:not(:where(.components-select-control__input)),
+body.adminkit.wp-core-ui select:not(:where(.components-select-control__input)) {
 	-webkit-appearance: none;
 	appearance: none;
 	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c8f94' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
@@ -62,16 +78,16 @@ body.adminkit.wp-core-ui select {
 	padding-inline-end: calc(28px * var(--ak-space-scale, 1));
 }
 
-:is([dir="rtl"] body.adminkit, body.rtl.adminkit) select,
-:is([dir="rtl"] body.adminkit, body.rtl.adminkit).wp-core-ui select {
+:is([dir="rtl"] body.adminkit, body.rtl.adminkit) select:not(:where(.components-select-control__input)),
+:is([dir="rtl"] body.adminkit, body.rtl.adminkit).wp-core-ui select:not(:where(.components-select-control__input)) {
 	background-position: left 8px center !important;
 }
 
 /* Dark mode chevron — fill bumped to the muted-text colour so it reads
    on the light-muted surface (#2e2e2e) without going so bright that it
    competes with the option text rendered just to its left. */
-:root[data-adminkit-theme="dark"] body.adminkit select,
-:root[data-adminkit-theme="dark"] body.adminkit.wp-core-ui select {
+:root[data-adminkit-theme="dark"] body.adminkit select:not(:where(.components-select-control__input)),
+:root[data-adminkit-theme="dark"] body.adminkit.wp-core-ui select:not(:where(.components-select-control__input)) {
 	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c8f94' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
 }
 
@@ -235,7 +251,7 @@ body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__in
 	padding: 0;
 	border: none;
 	border-radius: var(--ak-radius-full);
-	background: var(--ak-border-strong);
+	background: var(--ak-switch-track, var(--ak-border-strong));
 	cursor: pointer;
 	vertical-align: middle;
 }
@@ -249,7 +265,8 @@ body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__in
 	height: 16px;
 	margin: 0;
 	border-radius: var(--ak-radius-full);
-	background: var(--ak-input-bg);
+	background: var(--ak-switch-knob, var(--ak-input-bg));
+	box-shadow: var(--ak-switch-knob-shadow, none);
 }
 
 body.adminkit input[type="checkbox"]:not(:where(.components-checkbox-control__input)):checked {

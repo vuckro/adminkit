@@ -21,7 +21,9 @@
    ============================================================ */
 
 :root,
-body.adminkit.toplevel_page_fluent-cart {
+html body.adminkit.toplevel_page_fluent-cart,
+html:is(.dark, .fluent_theme_dark) body.adminkit.toplevel_page_fluent-cart,
+html body.adminkit.toplevel_page_fluent-cart.fluent_theme_dark {
 	/* FC's own design tokens (`--el-*` layer comes from `assets/css/vendor/element-plus.css`) */
 	--color-primary:   var( --ak-primary );
 	--color-secondary: var( --ak-secondary );
@@ -32,7 +34,7 @@ body.adminkit.toplevel_page_fluent-cart {
 	--body-bg-dark:    var( --ak-bg );
 	--table-header-bg:       var( --ak-elevated );
 	--table-cell-bg-lighter: var( --ak-surface );
-	--el-box-shadow-lighter: none;
+	--el-box-shadow-lighter: var( --ak-card-shadow );
 }
 
 
@@ -142,13 +144,14 @@ body.adminkit.toplevel_page_fluent-cart .fct_admin_menu_wrap {
 	}
 }
 
-/* Logo → text wordmark. */
-body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a img {
+/* Logo → text wordmark (hide both 1.x `<img>` and 2.3 `<span class="logo-light|logo-dark"><svg>`, plus collapse raw link text so Pro badge text never collides with `::after`). */
+body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a :is(img, svg, .logo-light, .logo-dark) {
 	display: none !important;
 }
 body.adminkit.toplevel_page_fluent-cart .fct_admin_logo_wrap a {
 	display: inline-flex;
 	align-items: center;
+	font-size: 0;
 	line-height: normal;
 	overflow: visible;
 	text-decoration: none;
@@ -468,9 +471,10 @@ body.adminkit.toplevel_page_fluent-cart .fct-admin-sidebar .sidebar-title {
 	color: var( --ak-heading ) !important;
 }
 
-/* Active fluid-tab underline bar. */
+/* Active fluid-tab pill (classic-tab-style on Orders/Products is a pill bar, not a hairline). */
 body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab.classic-tab-style .fct-fluid-tab-active-bar {
-	background-color: var( --ak-border-strong ) !important;
+	background-color: var( --ak-hover-bg ) !important;
+	box-shadow: inset 0 0 0 1px var( --ak-border );
 }
 
 /* a:hover/focus handled by AdminKit's global body.adminkit a rule — no override needed. */
@@ -530,9 +534,18 @@ body.adminkit.toplevel_page_fluent-cart .fct-report-order-summary .summary-item:
 	background-color: var( --ak-hover-bg ) !important;
 }
 
-/* Fluid-tab active bar (all variants). */
-body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab-active-bar {
-	background-color: var( --ak-border-strong ) !important;
+/* Fluid-tab active bar (pill variants use raised surface + directional bevel; classic underline uses heading). */
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab:not(.classic-tab-style) .fct-fluid-tab-active-bar {
+	background-color: var( --ak-surface ) !important;
+	box-shadow: var( --ak-btn-shadow );
+}
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab .fct-fluid-tab-item.active {
+	color: var( --ak-heading );
+	font-weight: 600;
+}
+body.adminkit.toplevel_page_fluent-cart [role="progressbar"] > div,
+body.adminkit.toplevel_page_fluent-cart .el-progress-bar__inner {
+	background-color: var( --ak-primary );
 }
 
 /* Global-search button. */
@@ -576,10 +589,12 @@ body.adminkit.toplevel_page_fluent-cart .fct_menu_item > button:hover {
 	background-color: var( --ak-hover-bg ) !important;
 }
 
-/* "More" dropdown submenu + fluid-tab container → raised surface. */
-body.adminkit.toplevel_page_fluent-cart .fct_menu_item .fct_menu_child,
-body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab {
+/* "More" dropdown submenu → raised surface; fluid-tab track → sunken muted track so active surface pill contrasts cleanly. */
+body.adminkit.toplevel_page_fluent-cart .fct_menu_item .fct_menu_child {
 	background-color: var( --ak-elevated ) !important;
+}
+body.adminkit.toplevel_page_fluent-cart .fct-fluid-tab:not(.classic-tab-style) {
+	background-color: var( --ak-surface-muted );
 }
 
 /* More component borders — the soft border (these read better without the
@@ -961,4 +976,68 @@ body.adminkit.toplevel_page_fluent-cart code {
 body.adminkit.toplevel_page_fluent-cart .fct-advanced-filter-container .fct-condition-or-wrap .fct-condition-or {
 	background-color: var( --ak-surface );
 	color: var( --ak-text );
+}
+
+/* Shared outer card & KPI stat elevation + balanced 4-up / 2x2 grid (zero !important). */
+html body.adminkit.toplevel_page_fluent-cart :is(
+	.fct-card,
+	.fct-card-border,
+	.fct-content-card,
+	.fct-stat,
+	.fct-dashboard-stat-widget__inner,
+	.fct-order-stats-card:not(.fct-card .fct-order-stats-card),
+	.fct-report-card,
+	.fct-report-global-filter-wrap,
+	.fct-report-avg-wrap,
+	.fct-onboarding-card-body,
+	.fct-storage-activated-card,
+	.fct-tab-item-wrapper,
+	.fct-plugin-addon-card,
+	.fct-attr-split-card,
+	.fct-mc-pricing-panel,
+	.fct-mcp-content-box,
+	.fct-appearance-component-section,
+	.fc_dashboard_onboarding_wrap,
+	.el-card
+) {
+	background-color: var( --ak-card-bg );
+	border: var( --ak-border-width ) solid var( --ak-card-border );
+	border-radius: var( --ak-card-radius );
+	box-shadow: var( --ak-card-shadow );
+}
+
+html body.adminkit.toplevel_page_fluent-cart :is(.fct-card, .fct-report-card, .el-card) :is(.fct-card, .el-card, .fct-order-stats-card) {
+	box-shadow: none;
+}
+
+html body.adminkit.toplevel_page_fluent-cart .fct-dashboard-stat-widget__icon {
+	background-color: var( --ak-primary-subtle );
+	color: var( --ak-primary-text );
+}
+
+html body.adminkit.toplevel_page_fluent-cart .fct-order-stats-card-head-content .value {
+	color: var( --ak-heading );
+}
+
+html body.adminkit.toplevel_page_fluent-cart .fct-order-stats-card-head-content .text {
+	color: var( --ak-text-muted );
+}
+
+html body.adminkit.toplevel_page_fluent-cart :has(> .fct-stat-grid) {
+	container-type: inline-size;
+}
+html body.adminkit.toplevel_page_fluent-cart .fct-stat-grid:has(> :nth-child(4):last-child) {
+	grid-template-columns: repeat( 4, minmax( 0, 1fr ) );
+	gap: 16px;
+}
+@container (max-width: 520px) {
+	html body.adminkit.toplevel_page_fluent-cart .fct-stat-grid:has(> :nth-child(4):last-child) {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+		gap: 12px;
+	}
+}
+@container (max-width: 280px) {
+	html body.adminkit.toplevel_page_fluent-cart .fct-stat-grid:has(> :nth-child(4):last-child) {
+		grid-template-columns: minmax( 0, 1fr );
+	}
 }

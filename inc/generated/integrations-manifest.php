@@ -42,6 +42,12 @@ final class AdminKit_Integrations_Manifest {
 			'type'     => 'plugin',
 			'frontend' => false,
 		),
+		'etch' => array(
+			'file'     => 'integrations/plugins/etch/class-etch.php',
+			'class'    => 'AdminKit_Integration_Etch',
+			'type'     => 'plugin',
+			'frontend' => true,
+		),
 		'fluent-affiliate' => array(
 			'file'     => 'integrations/plugins/fluent-affiliate/class-fluent-affiliate.php',
 			'class'    => 'AdminKit_Integration_Fluent_Affiliate',
@@ -93,6 +99,12 @@ final class AdminKit_Integrations_Manifest {
 		'fluent-snippets' => array(
 			'file'     => 'integrations/plugins/fluent-snippets/class-fluent-snippets.php',
 			'class'    => 'AdminKit_Integration_Fluent_Snippets',
+			'type'     => 'plugin',
+			'frontend' => false,
+		),
+		'fluent-support' => array(
+			'file'     => 'integrations/plugins/fluent-support/class-fluent-support.php',
+			'class'    => 'AdminKit_Integration_Fluent_Support',
 			'type'     => 'plugin',
 			'frontend' => false,
 		),
@@ -200,6 +212,8 @@ final class AdminKit_Integrations_Manifest {
 				return defined( 'FKCART_VERSION' ) || class_exists( '\FKCart\Plugin', false ) || class_exists( '\FKCart\Admin\Admin_App', false );
 			case 'elementor':
 				return defined( 'ELEMENTOR_VERSION' );
+			case 'etch':
+				return defined( 'ETCH_PLUGIN_FILE' );
 			case 'fluent-affiliate':
 				return defined( 'FLUENT_AFFILIATE_VERSION' );
 			case 'fluent-auth':
@@ -218,6 +232,8 @@ final class AdminKit_Integrations_Manifest {
 				return defined( 'FLUENTMAIL_PLUGIN_FILE' );
 			case 'fluent-snippets':
 				return defined( 'FLUENT_SNIPPETS_PLUGIN_VERSION' );
+			case 'fluent-support':
+				return defined( 'FLUENT_SUPPORT_VERSION' );
 			case 'fluent-toolkit':
 				return defined( 'FLUENT_TOOLKIT_VERSION' );
 			case 'fluentform':

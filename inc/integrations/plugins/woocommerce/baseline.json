@@ -1,14 +1,15 @@
 {
     "slug": "woocommerce",
     "host_dir": "woocommerce",
-    "host_version": "11.2.1",
-    "captured_at": "2026-10-29",
-    "files": 225,
+    "host_version": "11.3.0",
+    "captured_at": "2026-11-18",
+    "files": 226,
     "brand": "3858e9@1.00",
     "variables": {
         "--checkmark-size": "var(--checkbox-size)",
         "--color-error": "#cc1818",
         "--cover--color-background": "var(--woocommerce-coming-soon-color)",
+        "--focus-color": "var(--wpds-color-stroke-interactive-error, #cc1818)",
         "--jp-black": "#000",
         "--jp-black-80": "#2c3338",
         "--jp-blue-5": "#ced9f2",
@@ -81,7 +82,7 @@
         "--wc-red": "#a00",
         "--wc-secondary": "#e9e6ed",
         "--wc-secondary-text": "#515151",
-        "--wc-settings-ui-shell-gutter": "var(--wpds-dimension-padding-2xl)",
+        "--wc-settings-ui-shell-gutter": "var(--wpds-dimension-padding-2xl, 24px)",
         "--wc-subtext": "#767676",
         "--wc-vg-border": "#dcdcde",
         "--wc-vg-border-dashed": "#c3c4c7",
@@ -221,52 +222,52 @@
     },
     "colors": {
         "ffffff@1.00": {
-            "count": 940,
+            "count": 948,
             "cat": "bg",
             "token": "--ak-surface"
         },
         "1e1e1e@1.00": {
-            "count": 431,
+            "count": 447,
             "cat": "text",
             "token": "--ak-heading"
         },
         "757575@1.00": {
-            "count": 357,
+            "count": 331,
             "cat": "text",
             "token": "--ak-text"
         },
         "000000@1.00": {
-            "count": 301,
+            "count": 315,
             "cat": "text",
             "token": "--ak-heading"
         },
+        "3858e9@1.00": {
+            "count": 216,
+            "cat": "border",
+            "token": "--ak-primary"
+        },
         "f0f0f0@1.00": {
-            "count": 191,
+            "count": 195,
             "cat": "bg",
             "token": "--ak-elevated"
         },
         "e0e0e0@1.00": {
-            "count": 157,
+            "count": 155,
             "cat": "border",
             "token": "--ak-border"
         },
         "dddddd@1.00": {
-            "count": 134,
+            "count": 127,
             "cat": "border",
             "token": "--ak-border"
         },
-        "3858e9@1.00": {
-            "count": 109,
-            "cat": "bg",
-            "token": "--ak-primary"
-        },
         "cccccc@1.00": {
-            "count": 104,
+            "count": 102,
             "cat": "border",
             "token": "--ak-border"
         },
         "007cba@1.00": {
-            "count": 103,
+            "count": 93,
             "cat": "border",
             "token": "--ak-info"
         },
@@ -276,22 +277,22 @@
             "token": "--ak-hover-bg"
         },
         "cc1818@1.00": {
-            "count": 79,
+            "count": 82,
             "cat": "text",
             "token": "--ak-error"
         },
         "eeeeee@1.00": {
-            "count": 67,
+            "count": 68,
             "cat": "border",
             "token": "--ak-border"
         },
         "000000@0.10": {
-            "count": 64,
+            "count": 61,
             "cat": "shadow",
             "token": "--ak-hover-bg"
         },
         "949494@1.00": {
-            "count": 63,
+            "count": 59,
             "cat": "border",
             "token": "--ak-border-strong"
         },
@@ -305,15 +306,25 @@
             "cat": "text",
             "token": "--ak-primary"
         },
+        "dbdbdb@1.00": {
+            "count": 57,
+            "cat": "bg",
+            "token": "--ak-border"
+        },
         "999999@1.00": {
             "count": 55,
             "cat": "text",
             "token": "--ak-text-muted"
         },
         "2f2f2f@1.00": {
-            "count": 54,
+            "count": 46,
             "cat": "text",
             "token": "--ak-heading"
+        },
+        "707070@1.00": {
+            "count": 46,
+            "cat": "text",
+            "token": "--ak-text"
         },
         "444444@1.00": {
             "count": 42,
@@ -325,15 +336,15 @@
             "cat": "text",
             "token": "--ak-success"
         },
-        "dcdcde@1.00": {
-            "count": 38,
-            "cat": "border",
-            "token": "--ak-border"
-        },
         "d94f4f@1.00": {
             "count": 36,
             "cat": "text",
             "token": "--ak-error"
+        },
+        "dcdcde@1.00": {
+            "count": 35,
+            "cat": "border",
+            "token": "--ak-border"
         },
         "0675c4@1.00": {
             "count": 35,
@@ -344,11 +355,6 @@
             "count": 31,
             "cat": "text",
             "token": "--ak-text"
-        },
-        "1e1e1e@0.62": {
-            "count": 31,
-            "cat": "text",
-            "token": "--ak-hover-bg"
         },
         "f6f7f7@1.00": {
             "count": 30,
@@ -376,7 +382,7 @@
             "token": "--ak-text-muted"
         },
         "000000@0.05": {
-            "count": 24,
+            "count": 25,
             "cat": "shadow",
             "token": "--ak-hover-bg"
         },
@@ -384,11 +390,6 @@
             "count": 24,
             "cat": "bg",
             "token": "--ak-info"
-        },
-        "50575e@1.00": {
-            "count": 24,
-            "cat": "text",
-            "token": "--ak-text"
         },
         "555555@1.00": {
             "count": 24,
@@ -405,16 +406,6 @@
             "cat": "bg",
             "token": "--ak-hover-bg"
         },
-        "dbdbdb@1.00": {
-            "count": 23,
-            "cat": "bg",
-            "token": "--ak-border"
-        },
-        "2c3338@1.00": {
-            "count": 22,
-            "cat": "text",
-            "token": "--ak-heading"
-        },
         "8c8f94@1.00": {
             "count": 22,
             "cat": "text",
@@ -425,15 +416,30 @@
             "cat": "text",
             "token": "--ak-heading"
         },
-        "1d2327@1.00": {
+        "1e1e1e@0.62": {
+            "count": 21,
+            "cat": "text",
+            "token": "--ak-hover-bg"
+        },
+        "2c3338@1.00": {
             "count": 21,
             "cat": "text",
             "token": "--ak-heading"
+        },
+        "8d8d8d@1.00": {
+            "count": 21,
+            "cat": "border",
+            "token": "--ak-border-strong"
         },
         "f2f2f2@1.00": {
             "count": 20,
             "cat": "border",
             "token": "--ak-border"
+        },
+        "50575e@1.00": {
+            "count": 20,
+            "cat": "text",
+            "token": "--ak-text"
         },
         "43454b@1.00": {
             "count": 20,
@@ -444,6 +450,11 @@
             "count": 19,
             "cat": "border",
             "token": "--ak-border"
+        },
+        "1d2327@1.00": {
+            "count": 19,
+            "cat": "text",
+            "token": "--ak-heading"
         },
         "1e85be@1.00": {
             "count": 18,
@@ -480,6 +491,11 @@
             "cat": "border",
             "token": "--ak-border-strong"
         },
+        "aa0000@1.00": {
+            "count": 17,
+            "cat": "text",
+            "token": "--ak-error"
+        },
         "666666@1.00": {
             "count": 16,
             "cat": "text",
@@ -495,23 +511,18 @@
             "cat": "text",
             "token": "--ak-text-muted"
         },
-        "aa0000@1.00": {
+        "fcfcfc@1.00": {
             "count": 16,
-            "cat": "text",
-            "token": "--ak-error"
+            "cat": "bg",
+            "token": "--ak-surface"
         },
         "111111@1.00": {
             "count": 15,
             "cat": "text",
             "token": "--ak-heading"
         },
-        "707070@1.00": {
-            "count": 15,
-            "cat": "text",
-            "token": "--ak-text"
-        },
         "000000@0.03": {
-            "count": 13,
+            "count": 14,
             "cat": "shadow",
             "token": "--ak-hover-bg"
         },
@@ -535,16 +546,6 @@
             "cat": "text",
             "token": "--ak-heading"
         },
-        "183ad6@1.00": {
-            "count": 12,
-            "cat": "border",
-            "token": "--ak-primary"
-        },
-        "f7f7f7@1.00": {
-            "count": 11,
-            "cat": "bg",
-            "token": "--ak-surface"
-        },
         "0f0f0f@1.00": {
             "count": 11,
             "cat": "shadow",
@@ -554,6 +555,11 @@
             "count": 11,
             "cat": "text",
             "token": "--ak-warning"
+        },
+        "f7f7f7@1.00": {
+            "count": 10,
+            "cat": "bg",
+            "token": "--ak-surface"
         },
         "000000@0.75": {
             "count": 10,
@@ -570,10 +576,10 @@
             "cat": "bg",
             "token": "--ak-primary"
         },
-        "f8f8f8@1.00": {
+        "000000@0.04": {
             "count": 10,
-            "cat": "bg",
-            "token": "--ak-surface"
+            "cat": "shadow",
+            "token": "--ak-hover-bg"
         },
         "cacccd@1.00": {
             "count": 10,
@@ -585,15 +591,15 @@
             "cat": "text",
             "token": "--ak-on-accent"
         },
-        "a7aaad@1.00": {
+        "6e6e6e@1.00": {
             "count": 9,
-            "cat": "text",
-            "token": "--ak-text-muted"
+            "cat": "border",
+            "token": "--ak-border-strong"
         },
-        "000000@0.04": {
+        "ededed@1.00": {
             "count": 9,
-            "cat": "shadow",
-            "token": "--ak-hover-bg"
+            "cat": "bg",
+            "token": "--ak-elevated"
         },
         "484848@1.00": {
             "count": 9,
@@ -611,11 +617,6 @@
             "token": "--ak-text"
         },
         "f9f9f9@1.00": {
-            "count": 8,
-            "cat": "bg",
-            "token": "--ak-surface"
-        },
-        "fcfcfc@1.00": {
             "count": 8,
             "cat": "bg",
             "token": "--ak-surface"

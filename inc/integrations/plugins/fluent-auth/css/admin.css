@@ -1,5 +1,6 @@
 /* FluentAuth 3.1 native semantic palette. No public/login styling. */
 html body.adminkit.toplevel_page_fluent-auth,
+html.fluent_theme_dark body.adminkit.toplevel_page_fluent-auth,
 html body.adminkit.toplevel_page_fluent-auth.fluent_theme_dark {
 	--fls-body-bg: var(--ak-bg);
 	--fls-surface: var(--ak-surface);
@@ -15,10 +16,10 @@ html body.adminkit.toplevel_page_fluent-auth.fluent_theme_dark {
 	--fls-accent: var(--ak-primary);
 	--fls-accent-contrast: var(--ak-on-accent);
 	--fls-accent-wash: var(--ak-hover-bg);
-	--fls-card-line: var(--ak-border);
-	--fls-shadow-card: var(--ak-shadow-subtle);
-	--fls-shadow-lift: var(--ak-shadow-subtle);
-	--fls-shadow-pop: var(--ak-shadow-subtle);
+	--fls-card-line: var(--ak-card-border);
+	--fls-shadow-card: var(--ak-card-shadow);
+	--fls-shadow-lift: var(--ak-card-shadow);
+	--fls-shadow-pop: var(--ak-shadow-elevated);
 	--fls-neutral-bg: var(--ak-surface-muted);
 	--fls-neutral-fg: var(--ak-text-muted);
 	--fls-chart-axis: var(--ak-border);
@@ -54,4 +55,59 @@ body.adminkit.toplevel_page_fluent-auth .fls_sub_bar .fls_sub_nav a.is_active {
 }
 body.adminkit.toplevel_page_fluent-auth .fls_settings_nav .fls_settings_subnav a::before {
  background-color:var(--ak-heading);
+}
+body.adminkit.toplevel_page_fluent-auth :is(.fls_theme_trigger, [aria-label*="Theme"], [title*="Theme"]) {
+ display:none;
+}
+body.adminkit.toplevel_page_fluent-auth select {
+ -webkit-appearance:none;
+ appearance:none;
+}
+
+/* Shared card & KPI stat elevation + balanced 4-up / 2x2 grid */
+html body.adminkit.toplevel_page_fluent-auth :is(
+	.fls_card,
+	.fls_dcard,
+	.fls_dashboard .fls_dcard,
+	.fls_list_card,
+	.fls_page_aside,
+	.fls_stat_tile:not(.fls_dashboard .fls_stat_tile),
+	.fls_security .fls_security_summary,
+	.fls_security .fls_security_results,
+	.fls_find_list,
+	.fls_recover_steps,
+	.fls_onb_done_next,
+	.fls_onb_done_optin
+) {
+	background-color: var(--ak-card-bg);
+	border: var(--ak-border-width) solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
+}
+
+html body.adminkit.toplevel_page_fluent-auth :has(> .fls_stat_tiles:not(.fls_dashboard .fls_stat_tiles)) {
+	container-type: inline-size;
+}
+html body.adminkit.toplevel_page_fluent-auth .fls_stat_tiles:not(.fls_dashboard .fls_stat_tiles):has(> :nth-child(4):last-child) {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 16px;
+}
+@container (max-width: 520px) {
+	html body.adminkit.toplevel_page_fluent-auth .fls_stat_tiles:not(.fls_dashboard .fls_stat_tiles):has(> :nth-child(4):last-child) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+	}
+}
+@container (max-width: 280px) {
+	html body.adminkit.toplevel_page_fluent-auth .fls_stat_tiles:not(.fls_dashboard .fls_stat_tiles):has(> :nth-child(4):last-child) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+html body.adminkit.toplevel_page_fluent-auth .fls_dashboard__range select {
+	background-image: var(--ak-select-chevron);
+	background-position: right 10px center;
+	background-repeat: no-repeat;
+	background-size: 12px;
+	padding-inline-end: 30px;
 }

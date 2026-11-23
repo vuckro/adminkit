@@ -1,16 +1,17 @@
 {
     "slug": "rank-math",
     "host_dir": "seo-by-rank-math",
-    "host_version": "1.0.281",
-    "captured_at": "2026-11-06",
-    "files": 42,
+    "host_version": "1.0.282",
+    "captured_at": "2026-11-18",
+    "files": 44,
     "brand": "069de3@1.00",
     "variables": {
-        "--c": "linear-gradient(#fff 0 0) no-repeat"
+        "--c": "linear-gradient(#fff 0 0) no-repeat",
+        "--wap-link-color": "var(--color-link, var(--color-body-on-default, #1e1d1f))"
     },
     "colors": {
         "ffffff@1.00": {
-            "count": 966,
+            "count": 981,
             "cat": "bg",
             "token": "--ak-surface"
         },

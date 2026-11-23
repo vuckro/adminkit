@@ -29,7 +29,7 @@ class AdminKit_Integration_Rank_Math extends AdminKit_Integration_Base {
 	}
 
 	/** @return string */
-	protected static function max_tested_host_version() { return '1.0.281'; }
+	protected static function max_tested_host_version() { return '1'; }
 
 	/**
 	 * Use registered page hooks, including pages moved by a menu manager.

@@ -1,17 +1,18 @@
-/* FluentHub 2.2 replacement shell. Keep host layout and navigation ownership. */
-body.adminkit.ak-fluenthub,
-body.adminkit.ak-fluenthub.fluent_theme_dark,
-body.adminkit.ak-fluenthub.fluent_boards_theme_dark,
-body.adminkit.ak-fluenthub.fbs-dark,
-html.dark body.adminkit.ak-fluenthub,
-body.adminkit.ak-fluenthub .fluent_theme_dark,
-body.adminkit.ak-fluenthub .fluent_boards_theme_dark,
-body.adminkit.ak-fluenthub .fbs-dark {
+/* FluentHub 2.2 replacement shell. Keep host layout and navigation ownership.
+   Match both `body.adminkit.ak-fluenthub` and `.fluent_uui` directly so the
+   sidebar and workspace chrome always inherit AdminKit tokens in Light & Dark. */
+html body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)),
+html body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)):is(.fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark),
+html:is(.dark, .fluent_theme_dark) body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)),
+html body.adminkit .fluent_uui,
+html:is(.dark, .fluent_theme_dark) body.adminkit .fluent_uui,
+html body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) :is(.fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark) {
 	--fui-primary-bg: var(--ak-surface);
 	--fui-bg: var(--ak-bg);
 	--fui-surface: var(--ak-elevated);
 	--fui-surface-hover: var(--ak-hover-bg);
 	--fui-surface-active: var(--ak-hover-bg);
+	--fui-hover-bg: var(--ak-hover-bg);
 	--fui-border: var(--ak-border);
 	--fui-text-inverse: var(--ak-on-accent);
 	--fui-text: var(--ak-text);
@@ -22,11 +23,15 @@ body.adminkit.ak-fluenthub .fbs-dark {
 	--fui-accent-hover: var(--ak-primary-hover);
 	--fui-shadow: var(--ak-shadow-subtle);
 }
-body.adminkit.ak-fluenthub .fui-app-content {
+body.adminkit .fluent_uui,
+body.adminkit .fui-rail-tip {
+	font-family: var(--ak-font-body);
+}
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-app-content {
 	background-color: var(--ak-bg);
 	color: var(--ak-text);
 }
-body.adminkit.ak-fluenthub .ak-fui-theme-toggle {
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .ak-fui-theme-toggle {
 	background: transparent;
 	border: 0;
 	border-radius: var(--ak-radius-s);
@@ -35,79 +40,140 @@ body.adminkit.ak-fluenthub .ak-fui-theme-toggle {
 	padding: var(--ak-space-s);
 	line-height: 1;
 }
-body.adminkit.ak-fluenthub .ak-fui-theme-toggle:hover {
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .ak-fui-theme-toggle:hover {
 	background: var(--ak-hover-bg);
 }
-body.adminkit.ak-fluenthub .ak-fui-theme-toggle:focus-visible {
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .ak-fui-theme-toggle:focus-visible {
 	outline: 2px solid var(--ak-primary);
 	outline-offset: 2px;
 }
-body.adminkit.ak-fluenthub .ak-fui-theme-toggle svg {
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .ak-fui-theme-toggle svg {
 	inline-size: 18px;
 	block-size: 18px;
 }
 
-/* Hub dashboard and MCP screens define their palette on these two roots. */
-body.adminkit.toplevel_page_fluent-toolkit .ft-app,
-body.adminkit.toplevel_page_fluent-toolkit .ft-topbar {
+/* Hub dashboard and MCP screens define their palette on these two roots, and
+   app.js injects a runtime style block with `.fluent_theme_dark .ft-app` + `#wpwrap`
+   overrides. Beat that specificity cleanly without `!important`. */
+html body.adminkit.toplevel_page_fluent-toolkit :is(.ft-app, .ft-topbar),
+html body.adminkit.toplevel_page_fluent-toolkit.fluent_theme_dark :is(.ft-app, .ft-topbar),
+html.fluent_theme_dark body.adminkit.toplevel_page_fluent-toolkit :is(.ft-app, .ft-topbar) {
 	--bg: var(--ak-bg);
 	--surface: var(--ak-surface);
 	--surface-2: var(--ak-surface-muted);
+	--hover: var(--ak-hover-bg);
 	--border: var(--ak-border);
 	--border-strong: var(--ak-border-strong);
 	--text: var(--ak-text);
 	--text-muted: var(--ak-text-muted);
 	--text-soft: var(--ak-text-muted);
+	--primary: var(--ak-primary);
+	--primary-hover: var(--ak-primary-hover);
+	--primary-text: var(--ak-on-accent);
 	--accent: var(--ak-primary);
 	--accent-soft: var(--ak-hover-bg);
 	--accent-border: var(--ak-border);
+	--link: var(--ak-primary-text);
 	--ok: var(--ak-success);
+	--ok-text: var(--ak-success);
 	--ok-soft: var(--ak-success-subtle);
+	--ok-border: var(--ak-success-border);
 	--warn: var(--ak-warning);
+	--warn-text: var(--ak-warning);
 	--warn-soft: var(--ak-warning-subtle);
+	--warn-border: var(--ak-warning-border);
 	--danger: var(--ak-error);
+	--el-color-primary: var(--ak-primary);
 }
-body.adminkit.toplevel_page_fluent-toolkit #fluent_app {
+html body.adminkit.toplevel_page_fluent-toolkit,
+html body.adminkit.toplevel_page_fluent-toolkit.fluent_theme_dark,
+html body.adminkit.toplevel_page_fluent-toolkit :is(#wpwrap, #wpcontent, #wpbody, #wpbody-content, #fluent_app),
+html body.adminkit.toplevel_page_fluent-toolkit.fluent_theme_dark :is(#wpwrap, #wpcontent, #wpbody, #wpbody-content, #fluent_app) {
 	background-color: var(--ak-bg);
+}
+/* AdminKit's toolbar switch owns color mode; hide duplicate topbar theme dropdown & white-label brand mark. */
+html body.adminkit.toplevel_page_fluent-toolkit .ft-topbar .ft-theme-wrap,
+html body.adminkit.toplevel_page_fluent-toolkit .ft-topbar .ft-brand .ft-brand-logo {
+	display: none;
+}
+html body.adminkit.toplevel_page_fluent-toolkit .ft-topbar .ft-brand::before {
+	content: var(--ak-wordmark, "FluentHub");
+	color: var(--ak-heading);
+	font-size: calc(17px * var(--ak-type-scale, 1));
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+html body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-switch span {
+	background: var(--ak-switch-track, var(--ak-border-strong));
+	box-shadow: none;
+}
+html body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-switch span::after {
+	background: var(--ak-switch-knob, var(--wk-neutral-0));
+}
+html body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-switch input:checked + span {
+	background: var(--ak-primary);
+}
+html body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-switch input:checked + span::after {
+	background: var(--ak-on-accent);
 }
 
 /* One interaction palette for every product hosted by FluentHub. Native links,
    disclosure behavior and logout URLs stay owned by the host. */
-body.adminkit.ak-fluenthub {
-	--fui-hover-bg: var(--ak-hover-bg);
-}
-body.adminkit.ak-fluenthub :is(.fui-workspace, .fui-workspace-menu-item, .fui-product-header, .fui-product-header--flat, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item, .fui-wordpress-menu-link, .fui-sidebar-collapse-btn, .fui-sidebar-settings-btn, .fui-theme-toggle, .fui-theme-option, .fui-theme-select, .fui-item-chevron, .fui-mobile-toggle, .fui-sidebar-footer--left a, .fui-sidebar-footer--right a):hover:not(:disabled, [aria-disabled="true"], .is-disabled, .fui-workspace-menu-item--danger) {
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) :is(.fui-workspace, .fui-workspace-menu-item, .fui-product-header, .fui-product-header--flat, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item, .fui-wordpress-menu-link, .fui-sidebar-collapse-btn, .fui-sidebar-settings-btn, .fui-theme-toggle, .fui-theme-option, .fui-theme-select, .fui-item-chevron, .fui-mobile-toggle, .fui-sidebar-footer--left a, .fui-sidebar-footer--right a):hover:not(:disabled, [aria-disabled="true"], .is-disabled, .fui-workspace-menu-item--danger) {
 	background-color: var(--ak-hover-bg);
 	color: var(--ak-text);
 	text-decoration: none;
 }
-body.adminkit.ak-fluenthub :is(.fui-workspace, .fui-workspace-menu-item, .fui-product-header, .fui-product-header--flat, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item, .fui-wordpress-menu-link, .fui-sidebar-collapse-btn, .fui-sidebar-settings-btn, .fui-theme-toggle, .fui-theme-option, .fui-theme-select, .fui-item-chevron, .fui-mobile-toggle, .fui-sidebar-footer--left a, .fui-sidebar-footer--right a):focus-visible:not(:disabled, [aria-disabled="true"], .is-disabled) {
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) :is(.fui-workspace, .fui-workspace-menu-item, .fui-product-header, .fui-product-header--flat, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item, .fui-wordpress-menu-link, .fui-sidebar-collapse-btn, .fui-sidebar-settings-btn, .fui-theme-toggle, .fui-theme-option, .fui-theme-select, .fui-item-chevron, .fui-mobile-toggle, .fui-sidebar-footer--left a, .fui-sidebar-footer--right a):focus-visible:not(:disabled, [aria-disabled="true"], .is-disabled) {
 	outline: 2px solid var(--ak-focus);
 	outline-offset: -2px;
 	box-shadow: none;
 	color: var(--ak-text);
 }
-body.adminkit.ak-fluenthub :is(.fui-product-header--flat, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item):is(.active, .is-active, [aria-current="page"]) {
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) :is(.fui-product-header--flat, .fui-apps-menu-item, .fui-apps-submenu-item, .fui-mobile-nav-item):is(.active, .is-active, [aria-current="page"]),
+html.fui-sidebar-collapsed body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-product-section--current > .fui-product-header {
 	background: var(--ak-hover-bg);
 	color: var(--ak-heading);
 }
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-workspace-menu-theme .fui-theme-select {
+	-webkit-appearance: none;
+	appearance: none;
+	background-color: var(--ak-input-bg);
+	background-image: var(--ak-select-chevron);
+	background-position: right 8px center;
+	background-repeat: no-repeat;
+	background-size: 14px 14px;
+	border-color: var(--ak-input-border);
+	color: var(--ak-text);
+	padding-inline-end: 28px;
+}
 /* A destructive action uses a soft semantic surface and a readable foreground
    together. The host's light-only hover fill cannot be paired with white text. */
-body.adminkit.ak-fluenthub .fui-workspace-menu-item--danger:is(:hover, :focus-visible):not(:disabled, [aria-disabled="true"]) {
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-workspace-menu-item--danger:is(:hover, :focus-visible):not(:disabled, [aria-disabled="true"]) {
 	background: color-mix(in srgb, var(--ak-error) 14%, var(--ak-surface));
 	color: var(--ak-text);
 }
-body.adminkit.ak-fluenthub .fui-update-nag:is(:hover, :focus-visible) {
-	background: color-mix(in srgb, var(--ak-warning) 14%, var(--ak-surface));
-	border-color: var(--ak-warning);
-	color: var(--ak-text);
+html body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-update-nag,
+html:is(.dark, .fluent_theme_dark) body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-update-nag {
+	background: var(--ak-warning-subtle);
+	border-color: var(--ak-warning-border);
+	color: var(--ak-warning);
 }
-body.adminkit.ak-fluenthub .fui-update-nag:focus-visible {
+html body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-update-nag-dot {
+	background: var(--ak-warning);
+}
+html body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-update-nag:is(:hover, :focus-visible),
+html:is(.dark, .fluent_theme_dark) body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-update-nag:is(:hover, :focus-visible) {
+	background: color-mix(in srgb, var(--ak-warning) 16%, var(--ak-surface));
+	border-color: var(--ak-warning);
+	color: var(--ak-heading);
+}
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-update-nag:focus-visible {
 	outline: 2px solid var(--ak-focus);
 	outline-offset: -2px;
 }
 
-body.adminkit.ak-fluenthub .fui-workspace-menu-item--danger {
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-workspace-menu-item--danger {
 	color: var(--ak-error);
 }
 
@@ -127,7 +193,7 @@ body.adminkit.toplevel_page_fluent-toolkit :is(.ft-view-tab,.ft-btn):focus-visib
 
 /* The host paints an initial on its text colour; on-accent is not its inverse
    in dark mode. A neutral fallback remains readable without a configured logo. */
-body.adminkit.ak-fluenthub .fui-workspace-icon--initial {
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-workspace-icon--initial {
  background:var(--ak-surface-muted); color:var(--ak-heading);
 }
 
@@ -136,11 +202,11 @@ body.adminkit.toplevel_page_fluent-toolkit .ft-app :is(.ft-hero, .ft-card, .ft-p
 body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-list { background: var(--ak-table-bg); border: var(--ak-border-width) solid var(--ak-table-border); border-radius: var(--ak-table-radius); box-shadow: var(--ak-table-shadow); }
 body.adminkit.toplevel_page_fluent-toolkit .ft-app :is(.ft-card, .ft-panel) :is(.ft-card, .ft-panel, .ft-list) { box-shadow: none; }
 body.adminkit.toplevel_page_fluent-toolkit .ft-topbar .ft-theme-dropdown { background: var(--ak-elevated); border-color: var(--ak-border); border-radius: var(--ak-radius-m); box-shadow: var(--ak-shadow-elevated); }
-body.adminkit.ak-fluenthub :is(.fui-workspace-menu, .fui-theme-dropdown) { box-shadow: var(--ak-shadow-elevated); border-color: var(--ak-border); }
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) :is(.fui-workspace-menu, .fui-theme-dropdown) { box-shadow: var(--ak-shadow-elevated); border-color: var(--ak-border); }
 
 /* Anchored chrome stays flat; transient menus retain overlay depth. */
-body.adminkit.ak-fluenthub .fui-sidebar-footer { box-shadow: none; border-color: var(--ak-border); }
-body.adminkit.ak-fluenthub .fui-mobile-nav { border-block-start: 1px solid var(--ak-border); box-shadow: none; }
-body.adminkit.ak-fluenthub .fui-rail-tip { background: var(--ak-elevated); color: var(--ak-text); border: 1px solid var(--ak-border); box-shadow: var(--ak-shadow-elevated); }
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-sidebar-footer { box-shadow: none; border-color: var(--ak-border); }
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-mobile-nav { border-block-start: 1px solid var(--ak-border); box-shadow: none; }
+body.adminkit:is(.ak-fluenthub, :has(.fluent_uui)) .fui-rail-tip { background: var(--ak-elevated); color: var(--ak-text); border: 1px solid var(--ak-border); box-shadow: var(--ak-shadow-elevated); }
 body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-hero::after { background: none; }
 body.adminkit.toplevel_page_fluent-toolkit .ft-app .ft-list-head { background: var(--ak-table-header-bg); }

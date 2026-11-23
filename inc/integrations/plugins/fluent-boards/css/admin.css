@@ -139,8 +139,8 @@ body.adminkit:is(.fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark) :is(
 	--fbs-badge-complained-bg: var(--ak-warning-subtle);
 	--fbs-badge-spammed-text: var(--ak-error);
 	--fbs-badge-spammed-bg: var(--ak-error-subtle);
-	--fbs-shadow-xs: var(--ak-shadow-subtle);
-	--fbs-shadow-sm: var(--ak-shadow-subtle);
+	--fbs-shadow-xs: var(--ak-card-shadow);
+	--fbs-shadow-sm: var(--ak-card-shadow);
 	--fbs-shadow-button: var(--ak-btn-primary-shadow);
 	--fbs-shadow-card-hover: var(--ak-shadow-elevated);
 	--fbs-shadow-drag-preview: var(--ak-shadow-elevated);
@@ -149,6 +149,47 @@ body.adminkit:is(.fluent_theme_dark, .fluent_boards_theme_dark, .fbs-dark) :is(
 	--fbs-crm-contact-app3-primary: var(--ak-primary);
 	--fbs-crm-contact-app3-primary-soft: var(--ak-primary-subtle);
 	--primary-purple: var(--ak-primary);
+	--bg-white-0: var(--ak-surface);
+	--bg-weak-50: var(--ak-surface-muted);
+	--bg-weak-25: var(--ak-elevated);
+	--bg-soft-200: var(--ak-border);
+	--stroke-soft-200: var(--ak-border);
+	--text-strong-950: var(--ak-heading);
+	--text-sub-600: var(--ak-text-muted);
+	--text-soft-400: var(--ak-text-subtle);
+	--alpha-white-alpha-10: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+/* Primary shortcut chip (`⌘S`), disabled buttons, report chart containers & date-range width */
+body.adminkit.ak-fluent-boards .el-button--primary .cmd {
+	color: inherit;
+	background: color-mix(in srgb, currentColor 14%, transparent);
+}
+body.adminkit.ak-fluent-boards .el-button.is-disabled,
+body.adminkit.ak-fluent-boards .el-button.is-disabled:hover {
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text-disabled);
+}
+body.adminkit.ak-fluent-boards :is(.fbs_report_chart, .fbs_report_chart--canvas) {
+	background: transparent;
+}
+body.adminkit.ak-fluent-boards :is(.fbs-recommended-addons-panel, .fbs-recommended-addons-panel__body) {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+body.adminkit.ak-fluent-boards .fbs-recommended-addons-panel__header {
+	background: var(--ak-surface-muted);
+	border-block-end-color: var(--ak-border);
+}
+body.adminkit.ak-fluent-boards :is(.el-date-editor--daterange, .el-date-editor.fbs_report_filterbar--range) {
+	inline-size: auto;
+	min-inline-size: min(356px, 100%);
+}
+body.adminkit.ak-fluent-boards .el-date-editor.fbs_report_filterbar--range .el-range-input {
+	flex: 1 1 auto;
+	inline-size: auto;
+	min-inline-size: 128px;
 }
 
 /* Re-assert table + font Element Plus tokens against FluentBoards `.fbs-dark` overrides (core --el-* comes from vendor/element-plus.css). */
@@ -177,7 +218,6 @@ body.adminkit :is(
 	--el-text-color-secondary: var(--ak-text);
 	--el-border-color-extra-light: var(--ak-surface-muted);
 	--el-button-text-color: var(--ak-btn-text);
-	--el-mask-color: var(--ak-overlay);
 	--el-table-bg-color: var(--ak-table-bg);
 	--el-table-tr-bg-color: var(--ak-table-bg);
 	--el-table-border-color: var(--ak-table-border);
@@ -471,12 +511,128 @@ body.adminkit.ak-fluent-boards .fluentboards_databox.fbs-is-blur .fbs_board_titl
 	color: var(--ak-heading);
 }
 
-body.adminkit.ak-fluent-boards .fbs_board_card__body,
-body.adminkit.ak-fluent-boards .fbs_task_card__inner,
-body.adminkit.ak-fluent-boards .fbs_board_section_container .fbs_board_section_table_view {
+html body.adminkit.ak-fluent-boards :is(
+	.fbs_board_card__body,
+	.fbs_task_card__inner,
+	.fbs_board_section_container .fbs_board_section_table_view,
+	.fbs_base_card,
+	.fbs-dashboard-stat-card,
+	.fbs_stat_widget,
+	.fbs_report_stat,
+	.fbs_report_panel,
+	.fbs-onboarding,
+	.fbs-recommended-addons-panel,
+	table.fbs_horizontal_table
+) {
 	background-color: var(--ak-card-bg);
-	border-color: var(--ak-card-border);
+	border: var(--ak-border-width) solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
 	box-shadow: var(--ak-card-shadow);
+}
+
+html body.adminkit.ak-fluent-boards :is(.fbs_base_card, .fbs_report_panel) :is(.fbs_base_card, .fbs-dashboard-stat-card, .fbs_stat_widget, .fbs_report_stat, .el-card) {
+	box-shadow: none;
+}
+
+/* Balanced 4-up / 2x2 KPI stat grid + tokenized icon surfaces */
+html body.adminkit.ak-fluent-boards :is(.fbs-dashboard-my-tasks-wrap, :has(> .fbs-dashboard-stat-grid)) {
+	container-type: inline-size;
+}
+html body.adminkit.ak-fluent-boards .fbs-dashboard-stat-grid:has(> :nth-child(4):last-child) {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 16px;
+}
+@container (max-width: 520px) {
+	html body.adminkit.ak-fluent-boards .fbs-dashboard-stat-grid:has(> :nth-child(4):last-child) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+	}
+}
+@container (max-width: 280px) {
+	html body.adminkit.ak-fluent-boards .fbs-dashboard-stat-grid:has(> :nth-child(4):last-child) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+html body.adminkit.ak-fluent-boards .fbs-dashboard-stat-card__icon-surface {
+	background-color: var(--ak-primary-subtle);
+	color: var(--ak-primary-text);
+}
+html body.adminkit.ak-fluent-boards .fbs-dashboard-stat-card__icon-surface--warning {
+	background-color: var(--ak-warning-subtle);
+	color: var(--ak-warning);
+}
+html body.adminkit.ak-fluent-boards .fbs-dashboard-stat-card__icon-surface--danger {
+	background-color: var(--ak-error-subtle);
+	color: var(--ak-error);
+}
+html body.adminkit.ak-fluent-boards .fbs-dashboard-stat-card__icon-surface--success {
+	background-color: var(--ak-success-subtle);
+	color: var(--ak-success);
+}
+
+/* Onboarding wizard (`#/onboarding`) — replace hardcoded #fff / #6268f1 / #1B2533 literals */
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-banner {
+	background: linear-gradient(135deg, var(--ak-primary), var(--ak-primary-hover));
+	border-bottom: var(--ak-border-width) solid var(--ak-border);
+	border-radius: calc(var(--ak-card-radius) - 1px) calc(var(--ak-card-radius) - 1px) 0 0;
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-banner :is(.fbs-onboarding-banner-welcome, .fbs-onboarding-banner-text) {
+	color: var(--ak-on-accent);
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create h2,
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-step .fbs-onboarding-step-banner .fbs-onboarding-step-banner-text,
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-step .fbs-onboarding-step-form .fbs-onboarding-step-form-label {
+	color: var(--ak-heading);
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-board-create-steps .fbs-onboarding-board-create-step :is(.fbs-onboarding-board-create-step-number, .fbs-onboarding-board-create-step-name),
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-step-form-action .fbs-step-action-skip-step {
+	border-color: var(--ak-border);
+	color: var(--ak-text-muted);
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-board-create-steps svg :is(path, line, polyline) {
+	stroke: var(--ak-text-muted);
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-board-create-steps .fbs-onboarding-board-create-step .fbs-active-step-number,
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-board-create-steps .el-progress .el-progress-bar .el-progress-bar__inner,
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-step-form-action .fbs-step-action-next-step {
+	background: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+	box-shadow: var(--ak-btn-primary-shadow);
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-step-form-action .fbs-step-action-next-step:hover {
+	background: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
+	color: var(--ak-on-accent-hover);
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-board-create-steps .fbs-onboarding-board-create-step .fbs-active-step-text {
+	color: var(--ak-heading);
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-step .fbs-onboarding-step-banner {
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-step .fbs-onboarding-step-form {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-step .fbs-onboarding-step-form .fbs-onboarding-step-form-input .fbs-onboarding-input-error {
+	color: var(--ak-error);
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-step .fbs-onboarding-step-form .fbs-onboarding-step-form-input .fbs-delete-onboarding-stage,
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-step .fbs-onboarding-step-form .fbs-onboarding-stage-add-action .el-button.fbs-add-stage,
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-step-form-action .fbs-step-action-go-back {
+	background-color: var(--ak-btn-bg);
+	border: var(--ak-border-width) solid var(--ak-btn-border);
+	color: var(--ak-btn-text);
+}
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-step .fbs-onboarding-step-form .fbs-onboarding-step-form-input .fbs-delete-onboarding-stage:hover,
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-board-create .fbs-onboarding-step .fbs-onboarding-step-form .fbs-onboarding-stage-add-action .el-button.fbs-add-stage:is(:hover, :focus),
+html body.adminkit.ak-fluent-boards .fbs-onboarding .fbs-onboarding-step-form-action .fbs-step-action-go-back:hover {
+	background-color: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
+	color: var(--ak-heading);
 }
 
 body.adminkit.ak-fluent-boards .fbs_board_section_container .fbs_board_section_table_view .fbs_table_view_header h1 {

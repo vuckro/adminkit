@@ -36,7 +36,7 @@ class AdminKit_Integration_Flying_Press extends AdminKit_Integration_Base {
 
 	/** @return string|null */
 	protected static function max_tested_host_version() {
-		return '5.4.5';
+		return '5';
 	}
 
 	/**

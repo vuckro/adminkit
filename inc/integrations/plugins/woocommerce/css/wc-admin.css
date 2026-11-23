@@ -1236,7 +1236,12 @@ body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__t
  flex: 0 0 auto;
  width: auto;
  max-width: 100%;
- white-space: normal;
+ white-space: nowrap;
+}
+body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__trigger .components-button {
+ block-size: auto;
+ min-block-size: 36px;
+ white-space: nowrap;
 }
 body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__label { color: var(--ak-text-muted); white-space: normal; }
 body.adminkit.woocommerce-admin-page .woocommerce-analytics-import-status-bar__value { color: var(--ak-text); white-space: normal; }

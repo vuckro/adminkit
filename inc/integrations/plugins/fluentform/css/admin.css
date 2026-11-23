@@ -1584,6 +1584,11 @@ body.adminkit .form_internal_menu .ff_form_name {
  padding-inline: var(--ak-space-m);
  border-inline-end-color: var(--ak-border);
 }
+body.adminkit .form_internal_menu .ff_form_name .el-icon-edit {
+ position: static;
+ inset-inline-start: auto;
+ flex-shrink: 0;
+}
 body.adminkit .form_internal_menu .ff_form_name_inner { min-width: 0; }
 body.adminkit .form_internal_menu .ff_menu_link {
  display: inline-flex;
@@ -1594,6 +1599,13 @@ body.adminkit .form_internal_menu .ff_menu_link {
  line-height: 1.4;
 }
 body.adminkit .form_internal_menu .ff_menu_back { border-color: var(--ak-border); }
+body.adminkit .form_internal_menu .ff_menu_back .ff_menu_link {
+	min-height: 0;
+	padding-inline: 0 var(--ak-space-xs);
+}
+body.adminkit .ff-input-s1 .el-input .el-select__caret {
+	color: var(--ak-text-muted);
+}
 /* Editor panels use the available canvas width, not an unbounded 40% rail.
    These rules style builder chrome only; saved fields and submit styles stay native. */
 body.adminkit .ff_screen_editor .form_internal_menu {
@@ -1601,10 +1613,27 @@ body.adminkit .ff_screen_editor .form_internal_menu {
 	gap: var(--ak-space-xs);
 }
 
+body.adminkit .ff_screen_editor .form_internal_menu .ff_form_name {
+	max-width: none;
+}
 body.adminkit .ff_screen_editor .form_internal_menu .ff_form_name_inner {
 	max-width: none;
 	max-inline-size: 14rem;
 	min-inline-size: 0;
+}
+body.adminkit .ff_screen_editor .form_internal_menu .ff_shortcode_btn,
+body.adminkit .ff_screen_editor .form_internal_menu .ff-navigation-right :is(.ff_shortcode_btn, .ff_shortcode_btn_md) {
+	flex-shrink: 0;
+	width: auto;
+	max-width: none;
+	max-inline-size: none;
+	background-color: var(--ak-surface-muted);
+	color: var(--ak-text);
+}
+body.adminkit .ff_screen_editor .form_internal_menu .ff_shortcode_btn span {
+	width: auto;
+	max-inline-size: none;
+	white-space: nowrap;
 }
 
 body.adminkit .ff_screen_editor .form-editor-main {
@@ -1659,10 +1688,54 @@ body.adminkit .ff_screen_editor :is(button, a, input, textarea):focus-visible {
 }
 
 /* Shared surface roles: outer contour/contact shadow; inner rows stay flat. */
-body.adminkit :is(.ff_card:not(.primary), .ff-card, .ff_card_s2, .ff_update_card, .ff_each_form, .ff_form_item),
-body.adminkit .form-stats-section .stats-card { background-color: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); }
+body.adminkit :is(
+	.ff_card:not(.primary),
+	.ff-card,
+	.ff_card_s2,
+	.ff_update_card,
+	.ff_each_form,
+	.ff_form_item,
+	.ff-add-on-box,
+	.ff_pagination,
+	.ff_nav_top.ff_advanced_search,
+	#ff_notice_migration_notice,
+	#ff_notice_review_query
+),
+body.adminkit .form-stats-section .stats-card {
+	background-color: var(--ak-card-bg);
+	border: var(--ak-border-width) solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
+}
 body.adminkit .ff_table { background-color: var(--ak-table-bg); border: var(--ak-border-width) solid var(--ak-table-border); border-radius: var(--ak-table-radius); box-shadow: var(--ak-table-shadow); }
-body.adminkit :is(.ff_card, .ff-card, .ff_card_s2) :is(.ff_table, .el-card, .ff_card, .ff-card) { border: 0; border-radius: 0; box-shadow: none; }
+body.adminkit :is(.ff_card, .ff-card, .ff_card_s2) :is(.ff_table, .el-card, .ff_card, .ff-card, .ff_pagination) { border: 0; border-radius: 0; box-shadow: none; }
+body.adminkit :is(.el-select-dropdown, .el-dropdown-menu, .el-popover, .el-picker-panel, .ff_advanced_search:not(.ff_nav_top), .form_internal_menu_inner, .el-dialog, .el-message-box) {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+	box-shadow: var(--ak-shadow-elevated);
+}
 
-body.adminkit .form-stats-section .stats-card:hover { box-shadow: var(--ak-card-shadow); }
+body.adminkit .form-stats-section {
+	container-type: inline-size;
+}
+body.adminkit .form-stats-section .stats-grid:has(> :nth-child(4):last-child) {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 16px;
+}
+@container (max-width: 520px) {
+	body.adminkit .form-stats-section .stats-grid:has(> :nth-child(4):last-child) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+	}
+}
+@container (max-width: 280px) {
+	body.adminkit .form-stats-section .stats-grid:has(> :nth-child(4):last-child) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+body.adminkit .form-stats-section .stats-card .stats-icon {
+	background-color: var(--ak-primary-subtle);
+	color: var(--ak-primary-text);
+}
+body.adminkit .form-stats-section .stats-card:hover { border-color: var(--ak-border-strong); box-shadow: var(--ak-card-shadow); }
 body.adminkit .ff_card.highlight-border { border-color: var(--ak-primary); }

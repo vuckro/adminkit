@@ -37,14 +37,16 @@
    ============================================================ */
 
 :root,
-body.adminkit.toplevel_page_fluent-community {
+html body.adminkit.toplevel_page_fluent-community,
+html:is(.dark, .fluent_theme_dark) body.adminkit.toplevel_page_fluent-community,
+html body.adminkit.toplevel_page_fluent-community.fluent_theme_dark {
 	/* `--el-*` layer comes from `assets/css/vendor/element-plus.css`; define
-	   FluentCommunity's unset brand var and keep the onboarding wizard flat. */
+	   FluentCommunity's unset brand var and map card shadows to AdminKit elevation. */
 	--fcom-primary-button: var( --ak-primary );
-	--el-box-shadow: none;
-	--el-box-shadow-light: none;
-	--el-box-shadow-lighter: none;
-	--el-box-shadow-dark: none;
+	--el-box-shadow: var( --ak-shadow-elevated );
+	--el-box-shadow-light: var( --ak-shadow-elevated );
+	--el-box-shadow-lighter: var( --ak-card-shadow );
+	--el-box-shadow-dark: var( --ak-shadow-elevated );
 }
 
 
@@ -75,10 +77,11 @@ body.adminkit.toplevel_page_fluent-community #fcom_onboarding_app {
    content card ships `background:white` → elevated (it sits raised on the panel).
    The #f6faff input-prefix tint → recessed surface. */
 body.adminkit.toplevel_page_fluent-community .fcom_onboarding_wrapper {
-	background: var( --ak-surface ) !important;
+	background: var( --ak-card-bg ) !important;
 	background-image: none !important;
-	border-color: var( --ak-border ) !important;
-	box-shadow: none !important;
+	border-color: var( --ak-card-border ) !important;
+	border-radius: var( --ak-card-radius );
+	box-shadow: var( --ak-card-shadow ) !important;
 }
 body.adminkit.toplevel_page_fluent-community .fcom_content_wrapper {
 	background: var( --ak-elevated ) !important;
@@ -172,7 +175,7 @@ body.adminkit.toplevel_page_fluent-community .fcom_logo_remove {
 /* Card hover ships a box-shadow (AdminKit is flat) — drop it; the border shift
    above carries the hover affordance. */
 body.adminkit.toplevel_page_fluent-community .fcom_card:hover {
-	box-shadow: none !important;
+	box-shadow: var( --ak-card-shadow ) !important;
 }
 
 /* 3f. Error notice. `.fcom_notice` hard-codes a pink callout (#f8d7da bg, #f5c6cb
@@ -277,9 +280,20 @@ body.adminkit.toplevel_page_fluent-community .fcom_template_group .el-radio.is-c
 /* Cards (.fcom_card / the .fcom_cards a card link) — `background:white` + #e2e4ea
    border + a faint shadow → surface card. (Host has no !important on these, so the
    scoped selector wins on its own.) */
-body.adminkit.toplevel_page_fluent-community .fcom_card {
-	background: var( --ak-surface );
-	border-color: var( --ak-border );
+body.adminkit.toplevel_page_fluent-community :is(
+	.fcom_card,
+	.fcom_course_module_intro,
+	.fcom_getting_started,
+	.fcom_document_upload_form,
+	.player_settings_collapse,
+	.el-card
+) {
+	background: var( --ak-card-bg );
+	border: var( --ak-border-width ) solid var( --ak-card-border );
+	border-radius: var( --ak-card-radius );
+	box-shadow: var( --ak-card-shadow );
+}
+body.adminkit.toplevel_page_fluent-community .el-card .el-card {
 	box-shadow: none;
 }
 

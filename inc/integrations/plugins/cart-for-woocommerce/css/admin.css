@@ -33,15 +33,20 @@ body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-left-header-label {
 body.adminkit.adminkit-funnelkit-cart #fkcart-page .fkcart-right-header .fkcart-preview-label {
 	color: var(--ak-text);
 }
-body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-tooglecontrol-advance .components-base-control__field .components-form-toggle__track {
-	background-color: var(--ak-border-strong);
-	border-color: var(--ak-border-strong);
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-tooglecontrol-advance .components-form-toggle .components-form-toggle__track {
+	background-color: var(--ak-switch-track, var(--ak-border-strong));
+	border-color: var(--ak-switch-track, var(--ak-border-strong));
 }
-body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-tooglecontrol-advance .components-base-control__field.is-checked .components-form-toggle__track {
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-tooglecontrol-advance .components-form-toggle.is-checked .components-form-toggle__track {
 	background-color: var(--ak-primary);
 	border-color: var(--ak-primary);
 }
-body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-tooglecontrol-advance .components-base-control__field .components-form-toggle__thumb {
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-tooglecontrol-advance .components-form-toggle .components-form-toggle__thumb {
+	background-color: var(--ak-switch-knob, var(--wk-neutral-0));
+	border-color: var(--ak-switch-knob, var(--wk-neutral-0));
+	box-shadow: var(--ak-switch-knob-shadow);
+}
+body.adminkit.adminkit-funnelkit-cart #fkcart-page .bwf-tooglecontrol-advance .components-form-toggle.is-checked .components-form-toggle__thumb {
 	background-color: var(--ak-on-accent);
 	border-color: var(--ak-on-accent);
 }

@@ -666,9 +666,18 @@ body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[a
 }
 
 /* Drag-to-resize handle: no background needed — keeps the native
-   transparent grip shape, no slab. */
+   transparent grip shape, no slab; route the `::before` grip pill
+   from hardcoded `#ddd` / `--wp-admin-theme-color` (`#3858e9`) to tokens. */
 body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[role="separator"] {
 	background: transparent;
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[role="separator"]::before {
+	background-color: var(--ak-border-strong);
+}
+
+body.block-editor-page.adminkit .edit-post-meta-boxes-main__presenter > button[role="separator"]:is(:hover, :focus)::before {
+	background-color: var(--ak-primary);
 }
 
 body.block-editor-page.adminkit .edit-post-meta-boxes-area .postbox,

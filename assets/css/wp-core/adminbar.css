@@ -659,6 +659,58 @@ body:not(.wp-admin) #wpadminbar #wp-admin-bar-ak-view-site .ak-theme-icon {
  #wpadminbar #wp-toolbar > ul > li > .ab-item > .ab-icon::before { font-size:calc(16px * var(--ak-type-scale,1)); }
 }
 
+/* Desktop wp-admin: keep #wp-toolbar on a single 32px row even when many plugins
+   inject toolbar items simultaneously, preventing a 2nd wrapped row from overlapping
+   32px-anchored headers (Gutenberg, Elementor, #wpwrap::before). Hover dropdowns
+   (.ab-sub-wrapper) remain unclipped because `<ul>` and `<li>` stay `overflow: visible`. */
+@media screen and (min-width: 783px) {
+	.wp-admin #wpadminbar > #wp-toolbar {
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
+		inline-size: 100%;
+	}
+	.wp-admin #wpadminbar > #wp-toolbar > #wp-admin-bar-root-default {
+		display: flex;
+		flex-wrap: nowrap;
+		float: none;
+		flex: 1 1 auto;
+		min-inline-size: 0;
+	}
+	.wp-admin #wpadminbar > #wp-toolbar > #wp-admin-bar-root-default > li {
+		float: none;
+		flex: 0 1 auto;
+		min-inline-size: 28px;
+	}
+	.wp-admin #wpadminbar > #wp-toolbar > #wp-admin-bar-root-default > :is(
+		#wp-admin-bar-menu-toggle,
+		#wp-admin-bar-wp-logo,
+		#wp-admin-bar-site-name,
+		#wp-admin-bar-updates,
+		#wp-admin-bar-comments,
+		#wp-admin-bar-new-content,
+		#wp-admin-bar-ak-command-palette
+	) {
+		flex-shrink: 0;
+	}
+	.wp-admin #wpadminbar > #wp-toolbar > #wp-admin-bar-root-default > li > .ab-item {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.wp-admin #wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary {
+		display: flex;
+		flex-wrap: nowrap;
+		float: none;
+		flex: 0 0 auto;
+		margin-inline-start: auto;
+	}
+	.wp-admin #wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary > li {
+		float: none;
+		flex: 0 0 auto;
+	}
+}
+
 /* Frontend: one line at every width, even with long plugin labels. Native
    dropdowns escape the scroller because command parents remain static. */
 body:not(.wp-admin) #wpadminbar.ak-front-rail > #wp-toolbar { display:flex; flex-wrap:nowrap; overflow:visible; align-items:center; width:100%; }

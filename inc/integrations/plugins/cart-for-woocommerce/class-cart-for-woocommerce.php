@@ -23,9 +23,9 @@ class AdminKit_Integration_Cart_For_Woocommerce extends AdminKit_Integration_Bas
 		return defined( 'FKCART_VERSION' ) || class_exists( '\FKCart\Plugin', false ) || class_exists( '\FKCart\Admin\Admin_App', false );
 	}
 
-	/** @return string Verified host minor series; newer minors fall back to native UI. */
+	/** @return string Verified host major series; newer majors fall back to native UI. */
 	protected static function max_tested_host_version() {
-		return '1.9';
+		return '1';
 	}
 
 	protected static function host_version() {

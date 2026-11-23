@@ -39,7 +39,7 @@ class AdminKit_Integration_Fluent_Cart extends AdminKit_Integration_Base {
 
 	/** @return string|null */
 	protected static function max_tested_host_version() {
-		return '1.3.28';
+		return '2';
 	}
 
 	/**

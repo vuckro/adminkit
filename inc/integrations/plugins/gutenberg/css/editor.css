@@ -7,6 +7,15 @@
    toggle. dark-mode-map.css (same `editor` context) patches the surfaces WP
    hardcodes (popovers, modals, inserter, list view, form controls) so the whole
    editor flips coherently in both modes. */
+body.adminkit:is(.block-editor-page, .widgets-php) .interface-interface-skeleton {
+	--wp-admin-theme-color: var(--ak-primary);
+	--wp-admin-theme-color-darker-10: var(--ak-primary-hover);
+	--wp-admin-theme-color-darker-20: var(--ak-primary-hover);
+	--wp-components-color-accent: var(--ak-primary);
+	--wp-components-color-accent-darker-10: var(--ak-primary-hover);
+	--wp-components-color-accent-darker-20: var(--ak-primary-hover);
+}
+
 body.adminkit:is(.block-editor-page, .widgets-php) .edit-post-header,
 body.adminkit:is(.block-editor-page, .widgets-php) .editor-header,
 body.adminkit:is(.block-editor-page, .widgets-php) .interface-interface-skeleton__header {

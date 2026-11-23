@@ -39,7 +39,7 @@ class AdminKit_Integration_Fluent_Boards extends AdminKit_Integration_Base {
 
 	/** @return string|null */
 	protected static function max_tested_host_version() {
-		return '2.3.0';
+		return '2';
 	}
 
 	/**

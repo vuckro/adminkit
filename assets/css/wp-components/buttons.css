@@ -27,7 +27,7 @@ body.adminkit .wrap .page-title-action {
 	line-height: 2.15;
 	min-height: var(--ak-control-height);
 	text-decoration: none;
-	box-shadow: none;
+	box-shadow: var(--ak-btn-shadow);
 	cursor: pointer;
 }
 
@@ -38,13 +38,14 @@ body.adminkit.wp-core-ui .button-secondary:hover {
 	background: var(--ak-btn-hover-bg);
 	border-color: var(--ak-btn-hover-border);
 	color: var(--ak-text);
+	box-shadow: var(--ak-btn-shadow);
 }
 
 body.adminkit .button:focus,
 body.adminkit.wp-core-ui .button:focus,
 body.adminkit .button-secondary:focus,
 body.adminkit.wp-core-ui .button-secondary:focus {
-	box-shadow: none;
+	box-shadow: var(--ak-btn-shadow);
 	outline: none;
 }
 

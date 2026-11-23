@@ -67,10 +67,10 @@ body.adminkit :is(.edit-site-layout__area, .edit-site-layout__mobile) [data-wpds
 	--wpds-color-bg-interactive-brand-strong: var(--ak-primary);
 	--wpds-color-bg-interactive-brand-strong-active: var(--ak-primary-hover);
 	--wpds-color-bg-interactive-brand-weak-active: var(--ak-primary-subtle);
-	--wpds-color-fg-interactive-brand: var(--ak-primary);
-	--wpds-color-fg-interactive-brand-active: var(--ak-primary-hover);
+	--wpds-color-fg-interactive-brand: var(--ak-primary-text);
+	--wpds-color-fg-interactive-brand-active: var(--ak-primary-text);
 	--wpds-color-fg-interactive-brand-strong: var(--ak-on-accent);
-	--wpds-color-fg-interactive-brand-strong-active: var(--ak-on-accent);
+	--wpds-color-fg-interactive-brand-strong-active: var(--ak-on-accent-hover);
 	--wpds-color-bg-thumb-brand: var(--ak-primary);
 	--wpds-color-bg-thumb-brand-active: var(--ak-primary-hover);
 	--wpds-color-stroke-focus-brand: var(--ak-primary);
@@ -81,42 +81,42 @@ body.adminkit :is(.edit-site-layout__area, .edit-site-layout__mobile) [data-wpds
 	--wpds-color-bg-surface-brand: var(--ak-primary-subtle);
 
 	/* Info */
-	--wpds-color-bg-surface-info-weak: rgba(40, 149, 212, 0.06);
-	--wpds-color-bg-surface-info: rgba(40, 149, 212, 0.12);
+	--wpds-color-bg-surface-info-weak: var(--ak-info-subtle);
+	--wpds-color-bg-surface-info: var(--ak-info-subtle);
 	--wpds-color-fg-content-info: var(--ak-info);
 	--wpds-color-fg-content-info-weak: var(--ak-info);
-	--wpds-color-stroke-surface-info: var(--ak-info);
+	--wpds-color-stroke-surface-info: var(--ak-info-border);
 	--wpds-color-stroke-surface-info-strong: var(--ak-info);
 
 	/* Success */
-	--wpds-color-bg-surface-success-weak: rgba(17, 183, 107, 0.06);
-	--wpds-color-bg-surface-success: rgba(17, 183, 107, 0.12);
+	--wpds-color-bg-surface-success-weak: var(--ak-success-subtle);
+	--wpds-color-bg-surface-success: var(--ak-success-subtle);
 	--wpds-color-fg-content-success: var(--ak-success);
 	--wpds-color-fg-content-success-weak: var(--ak-success);
-	--wpds-color-stroke-surface-success: var(--ak-success);
+	--wpds-color-stroke-surface-success: var(--ak-success-border);
 	--wpds-color-stroke-surface-success-strong: var(--ak-success);
 
 	/* Caution (yellow) */
-	--wpds-color-bg-surface-caution-weak: rgba(255, 161, 0, 0.06);
-	--wpds-color-bg-surface-caution: rgba(255, 161, 0, 0.12);
+	--wpds-color-bg-surface-caution-weak: var(--ak-warning-subtle);
+	--wpds-color-bg-surface-caution: var(--ak-warning-subtle);
 	--wpds-color-fg-content-caution: var(--ak-warning);
 	--wpds-color-fg-content-caution-weak: var(--ak-warning);
 
 	/* Warning (orange) */
-	--wpds-color-bg-surface-warning-weak: rgba(255, 161, 0, 0.06);
-	--wpds-color-bg-surface-warning: rgba(255, 161, 0, 0.12);
+	--wpds-color-bg-surface-warning-weak: var(--ak-warning-subtle);
+	--wpds-color-bg-surface-warning: var(--ak-warning-subtle);
 	--wpds-color-fg-content-warning: var(--ak-warning);
 	--wpds-color-fg-content-warning-weak: var(--ak-warning);
-	--wpds-color-stroke-surface-warning: var(--ak-warning);
+	--wpds-color-stroke-surface-warning: var(--ak-warning-border);
 	--wpds-color-stroke-surface-warning-strong: var(--ak-warning);
 
 	/* Error */
 	--wpds-color-bg-interactive-error-strong: var(--ak-danger-solid);
 	--wpds-color-bg-interactive-error-strong-active: var(--ak-danger-solid);
-	--wpds-color-bg-interactive-error-active: rgba(240, 70, 98, 0.04);
-	--wpds-color-bg-interactive-error-weak-active: rgba(240, 70, 98, 0.08);
-	--wpds-color-bg-surface-error-weak: rgba(240, 70, 98, 0.04);
-	--wpds-color-bg-surface-error: rgba(240, 70, 98, 0.10);
+	--wpds-color-bg-interactive-error-active: var(--ak-error-subtle);
+	--wpds-color-bg-interactive-error-weak-active: var(--ak-error-subtle);
+	--wpds-color-bg-surface-error-weak: var(--ak-error-subtle);
+	--wpds-color-bg-surface-error: var(--ak-error-subtle);
 	--wpds-color-fg-content-error: var(--ak-error);
 	--wpds-color-fg-content-error-weak: var(--ak-error);
 	--wpds-color-fg-interactive-error: var(--ak-error);

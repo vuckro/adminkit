@@ -1,0 +1,60 @@
+/* Etch (`toplevel_page_etch`) settings/license screen — clean AdminKit card layout.
+ *
+ * Etch's unscoped dark-only `etch-admin-styles` is dequeued on this screen so
+ * WordPress chrome retains normal typography and Light/Dark tokens apply cleanly.
+ */
+
+body.adminkit.toplevel_page_etch .etch-wrapper {
+	max-width: min( 760px, var( --ak-layout-wide ) );
+}
+
+body.adminkit.toplevel_page_etch .etch-wrapper .nav-tab-wrapper {
+	display: none;
+}
+
+body.adminkit.toplevel_page_etch .etch-wrapper .tab-content {
+	margin-block-start: var( --ak-space-l );
+	padding: calc( 24px * var( --ak-space-scale, 1 ) );
+	background: var( --ak-card-bg );
+	border: var( --ak-border-width ) solid var( --ak-card-border );
+	border-radius: var( --ak-card-radius );
+	box-shadow: var( --ak-card-shadow );
+}
+
+body.adminkit.toplevel_page_etch .etch-wrapper .form-table {
+	margin: 0;
+}
+
+body.adminkit.toplevel_page_etch .etch-wrapper .form-table th {
+	padding-block: calc( 8px * var( --ak-space-scale, 1 ) );
+	color: var( --ak-heading );
+	font-weight: 500;
+}
+
+body.adminkit.toplevel_page_etch .etch-wrapper .form-table td {
+	display: flex;
+	flex-direction: column;
+	gap: var( --ak-space-s );
+	padding-block: calc( 8px * var( --ak-space-scale, 1 ) );
+}
+
+body.adminkit.toplevel_page_etch .etch-license__field-group p {
+	margin: 0;
+	color: var( --ak-text-muted );
+	font-size: var( --ak-text-xs );
+}
+
+body.adminkit.toplevel_page_etch .etch-license__field-group .success {
+	color: var( --ak-success );
+	font-weight: 500;
+}
+
+body.adminkit.toplevel_page_etch .etch-license__field-group .error {
+	color: var( --ak-error );
+	font-weight: 500;
+}
+
+body.adminkit.toplevel_page_etch .etch-wrapper p.submit {
+	margin-block: var( --ak-space-l ) 0;
+	padding: 0;
+}

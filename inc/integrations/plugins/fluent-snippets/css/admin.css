@@ -61,11 +61,8 @@
 
 :root,
 body.adminkit.toplevel_page_fluent-snippets {
-	/* `--el-*` layer comes from `assets/css/vendor/element-plus.css`; keep FluentSnippets flat. */
-	--el-box-shadow: none;
-	--el-box-shadow-light: none;
-	--el-box-shadow-lighter: none;
-	--el-box-shadow-dark: none;
+	/* `--el-*` layer (including directional card & overlay shadows) comes from `assets/css/vendor/element-plus.css`. */
+	--el-box-shadow-lighter: var(--ak-card-shadow);
 }
 
 
@@ -321,7 +318,9 @@ body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items .menu_logo_ho
 
 /* Snippets 10.58+ owns --fsnip-* tokens and its own native theme switch.
    Override both native modes with the shared palette; the Hub bridge syncs intent. */
-html body.adminkit.toplevel_page_fluent-snippets {
+html body.adminkit.toplevel_page_fluent-snippets,
+html.fluent_theme_dark body.adminkit.toplevel_page_fluent-snippets,
+html body.adminkit.toplevel_page_fluent-snippets.fluent_theme_dark {
 	--fsnip-body-bg: var(--ak-bg);
 	--fsnip-surface: var(--ak-surface);
 	--fsnip-surface-sunk: var(--ak-surface-muted);
@@ -332,28 +331,36 @@ html body.adminkit.toplevel_page_fluent-snippets {
 	--fsnip-text: var(--ak-text);
 	--fsnip-text-mid: var(--ak-text-muted);
 	--fsnip-text-light: var(--ak-text-muted);
-	--fsnip-link: var(--ak-text);
+	--fsnip-link: var(--ak-primary-text);
 	--fsnip-accent: var(--ak-primary);
 	--fsnip-accent-contrast: var(--ak-on-accent);
 	--fsnip-accent-wash: var(--ak-hover-bg);
-	--fsnip-card-line: var(--ak-border);
-	--fsnip-shadow-card: var(--ak-shadow-subtle);
+	--fsnip-card-line: var(--ak-card-border);
+	--fsnip-shadow-card: var(--ak-card-shadow);
 	--fsnip-shadow-lift: var(--ak-shadow-elevated);
 	--fsnip-shadow-pop: var(--ak-shadow-elevated);
 	--fsnip-neutral-bg: var(--ak-hover-bg);
 	--fsnip-neutral-fg: var(--ak-text-muted);
 	--fsnip-danger-wash: var(--ak-error-subtle);
 	--fsnip-danger-bg: var(--ak-error-subtle);
-	--fsnip-danger-line: var(--ak-error-subtle);
+	--fsnip-danger-line: var(--ak-error-border);
 	--fsnip-danger-fg: var(--ak-error);
 	--fsnip-warning-wash: var(--ak-warning-subtle);
 	--fsnip-warning-bg: var(--ak-warning-subtle);
-	--fsnip-warning-line: var(--ak-warning-subtle);
+	--fsnip-warning-line: var(--ak-warning-border);
 	--fsnip-warning-fg: var(--ak-warning);
 	--fsnip-success-wash: var(--ak-success-subtle);
 	--fsnip-success-bg: var(--ak-success-subtle);
-	--fsnip-success-line: var(--ak-success-subtle);
+	--fsnip-success-line: var(--ak-success-border);
 	--fsnip-success-fg: var(--ak-success);
+	--fsnip-lang-php-bg: var(--ak-primary-subtle);
+	--fsnip-lang-php-fg: var(--ak-primary-text);
+	--fsnip-lang-content-bg: var(--ak-success-subtle);
+	--fsnip-lang-content-fg: var(--ak-success);
+	--fsnip-lang-css-bg: var(--ak-info-subtle);
+	--fsnip-lang-css-fg: var(--ak-info);
+	--fsnip-lang-js-bg: var(--ak-warning-subtle);
+	--fsnip-lang-js-fg: var(--ak-warning);
 }
 
 /* Custom Snippets navigation/actions sit outside Element Plus. Match its
@@ -364,15 +371,51 @@ body.adminkit.toplevel_page_fluent-snippets :is(.fsnip_app_nav a, .fsnip_seconda
 	box-shadow: none;
 }
 
-/* Modern dark-mode defaults hard-code a pale hover on primary actions. */
-body.adminkit.toplevel_page_fluent-snippets .el-button--primary:not(.is-plain,.is-text,.is-link) {
+body.adminkit.toplevel_page_fluent-snippets :is(.fsnip_theme_trigger, .fls_theme_trigger, [aria-label*="Theme"], [title*="Theme"]),
+body.adminkit.toplevel_page_fluent-snippets .fsnip_main-menu-items .menu_logo_holder a svg,
+body.adminkit.toplevel_page_fluent-snippets #wpbody-content .fsnip_app_bar .fsnip_app_logo :is(img, svg, .fsnip_brand_mark, .fsnip_wordmark) {
+	display: none;
+}
+body.adminkit.toplevel_page_fluent-snippets #wpbody-content .fsnip_app_bar .fsnip_app_logo > :first-child {
+	font-size: 0;
+	gap: 0;
+	text-decoration: none;
+	box-shadow: none;
+}
+body.adminkit.toplevel_page_fluent-snippets #wpbody-content .fsnip_app_bar .fsnip_app_logo > :first-child::after {
+	content: var(--ak-wordmark, "FluentSnippets");
+	color: var(--ak-heading);
+	font-size: calc(17px * var(--ak-type-scale, 1));
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+html body.adminkit.toplevel_page_fluent-snippets .el-button--primary:not(.is-plain,.is-text,.is-link),
+html.fluent_theme_dark body.adminkit.toplevel_page_fluent-snippets .el-button--primary:not(.is-plain,.is-text,.is-link) {
  --el-button-bg-color:var(--ak-primary);
  --el-button-border-color:var(--ak-primary);
  --el-button-text-color:var(--ak-on-accent);
  --el-button-hover-bg-color:var(--ak-primary-hover);
  --el-button-hover-border-color:var(--ak-primary-hover);
- --el-button-hover-text-color:var(--ak-on-accent);
+ --el-button-hover-text-color:var(--ak-on-accent-hover);
  --el-button-active-bg-color:var(--ak-primary-hover);
  --el-button-active-border-color:var(--ak-primary-hover);
- --el-button-active-text-color:var(--ak-on-accent);
+ --el-button-active-text-color:var(--ak-on-accent-hover);
+}
+
+/* Shared surface roles: outer contour/contact shadow; inner rows stay flat. */
+body.adminkit.toplevel_page_fluent-snippets :is(.box, .fc_rich_container .fc_rich_filter, .el-card) {
+	background-color: var(--ak-card-bg);
+	border: var(--ak-border-width) solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
+}
+body.adminkit.toplevel_page_fluent-snippets .box :is(.box, .fc_rich_filter, .el-card) {
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+body.adminkit.toplevel_page_fluent-snippets .fsnip_error_panel pre {
+	background: var(--ak-surface-muted);
+	border: 1px solid var(--ak-border);
+	color: var(--ak-heading);
 }

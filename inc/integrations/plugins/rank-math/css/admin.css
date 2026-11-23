@@ -1,9 +1,90 @@
-/* Rank Math 1.0.281 hardcodes its palette. Scope every override to AdminKit
+/* Rank Math 1.0.281+ hardcodes its palette. Scope every override to AdminKit
    and host-owned components, including React portals outside the page wrapper.
    Keep layout, module switches, SEO scores and save behavior owned by Rank Math. */
 body.adminkit.ak-rank-math-page,
 body.adminkit.ak-rank-math-page #wpwrap {
 	background: var(--ak-bg);
+	--wap-link-color: var(--ak-primary-text);
+}
+
+/* AdminKit zeroes `#wpcontent` inline padding on desktop, so Rank Math's
+   `margin-left: -20px` on `.rank-math-header` bleeds 20px behind `#adminmenu`.
+   Keep `.rank-math-header` flush with `#wpcontent` and align breadcrumbs + `.rank-math-wrap`
+   on a shared 24px content axis. */
+body.adminkit.ak-rank-math-page .rank-math-header {
+	margin-inline: 0;
+	padding-inline: 24px;
+}
+
+body.adminkit.ak-rank-math-page .rank-math-breadcrumbs-wrap {
+	box-sizing: border-box;
+	padding-inline: 24px;
+}
+
+body.adminkit.ak-rank-math-page .wrap.rank-math-wrap {
+	margin-inline-start: 24px;
+}
+
+/* Neutralize Rank Math's seasonal `#10AC84` green submenu banner (Black Friday / Pro Upgrade)
+   without hiding the link (`(2,4,2)` beats Rank Math's `#adminmenu #toplevel_page_rank-math a` `(2,2,1)`). */
+body.adminkit #adminmenu #toplevel_page_rank-math .wp-submenu a:is([href*="rankmath.com"], [href*="upgrade-dashboard-notifications-menu"]):is(:link, :visited) {
+	background-color: transparent;
+	color: var(--ak-text-muted);
+}
+
+body.adminkit #adminmenu #toplevel_page_rank-math .wp-submenu a:is([href*="rankmath.com"], [href*="upgrade-dashboard-notifications-menu"]):is(:hover, :focus) {
+	background-color: var(--ak-hover-bg);
+	color: var(--ak-heading);
+}
+
+/* React `.rank-math-notice` callouts (e.g. Sitemap XML URL notice) */
+body.adminkit #wpbody-content .rank-math-tab-panel .rank-math-notice,
+body.adminkit .wrap .rank-math-accordion-content .rank-math-notice {
+	background-color: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+	box-shadow: none;
+}
+
+body.adminkit #wpbody-content .rank-math-tab-panel .rank-math-notice:is(.is-info, .notice-info) {
+	background-color: var(--ak-info-subtle);
+	border-color: var(--ak-info-border);
+	border-inline-start-color: var(--ak-info);
+}
+
+body.adminkit #wpbody-content .rank-math-tab-panel .rank-math-notice:is(.is-info, .notice-info) .rank-math-notice__icon {
+	color: var(--ak-info);
+}
+
+body.adminkit #wpbody-content .rank-math-tab-panel .rank-math-notice:is(.is-warning, .notice-warning) {
+	background-color: var(--ak-warning-subtle);
+	border-color: var(--ak-warning-border);
+	border-inline-start-color: var(--ak-warning);
+}
+
+body.adminkit #wpbody-content .rank-math-tab-panel .rank-math-notice:is(.is-error, .notice-error) {
+	background-color: var(--ak-error-subtle);
+	border-color: var(--ak-error-border);
+	border-inline-start-color: var(--ak-error);
+}
+
+body.adminkit #wpbody-content .rank-math-tab-panel .rank-math-notice:is(.is-success, .notice-success) {
+	background-color: var(--ak-success-subtle);
+	border-color: var(--ak-success-border);
+	border-inline-start-color: var(--ak-success);
+}
+
+/* React & CMB2 checked checkboxes inside Rank Math options/tabs */
+body.adminkit #wpbody-content :is(.rank-math-tab-panel, .rank-math-tabs, .rank-math-wrap) .components-checkbox-control__input[type="checkbox"]:checked,
+body.adminkit [id^="cmb2-metabox-rank"] input[type="checkbox"]:checked {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+}
+
+body.adminkit #wpbody-content :is(.rank-math-tab-panel, .rank-math-tabs, .rank-math-wrap) .components-checkbox-control__input-container svg.components-checkbox-control__checked {
+	fill: var(--ak-on-accent);
+	color: var(--ak-on-accent);
 }
 body.adminkit :is(.rank-math-wrap, .rank-math-header, .rank-math-tabs, .rank-math-modal, .rank-math-schema-modal, #rank_math_metabox, #rank_math_dashboard_widget) {
 	color: var(--ak-text);

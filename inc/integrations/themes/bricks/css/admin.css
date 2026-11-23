@@ -9,22 +9,17 @@
         with the theme toggle automatically.
      2. Patch the selectors that bypass the variables with hardcoded hex. */
 
-/* ----- 1. Variable remap — surfaces + message boxes (light + dark) ----- */
-/* These pin Bricks surface and message-box semantics to AdminKit tokens.
-   Background / border / status overrides need to fire in BOTH modes:
-   Bricks hardcodes a #fff surface that breaks the visual cohesion with
-   wp-admin in light AND becomes a glaring white slab in dark. */
-body.adminkit {
+/* ----- 1. Variable remap — Bricks 1.x (`--bricks-*`) & Bricks 2.4+ (`--brx-admin-*` / `--bricks-admin-color-*`) ----- */
+/* Bricks 2.4+ defines `--brx-admin-*` and `--bricks-admin-color-*` on `body`.
+   Scoping to `html body.adminkit` (`(0,1,2)`) beats `body` (`(0,0,1)`) in both Light
+   and Dark modes with zero `!important`, re-pointing every surface, border, text,
+   focus, and status role to AdminKit's semantic tokens. */
+html body.adminkit {
 	--bricks-bg-light: var(--ak-surface);
 	--bricks-bg-dark: var(--ak-surface);
 	--bricks-border-color: var(--ak-border);
 	--admin-color-border: var(--ak-border);
 
-	/* Inline message boxes (.message.info / .success / .error, etc.). Bricks
-	   leaves these semantic vars at light hardcoded values that don't flip in
-	   dark mode — route each to the matching AdminKit -subtle fill (WaasKit's
-	   opaque pale status role, dark-remapped in tokens.css) plus the base token
-	   for the text. */
 	--bricks-bg-info: var(--ak-info-subtle);
 	--bricks-text-info: var(--ak-info);
 	--bricks-bg-success: var(--ak-success-subtle);
@@ -33,19 +28,118 @@ body.adminkit {
 	--bricks-text-warning: var(--ak-warning);
 	--bricks-bg-danger: var(--ak-error-subtle);
 	--bricks-text-danger: var(--ak-error);
+
+	/* Bricks 2.4+ `--brx-admin-*` palette */
+	--brx-admin-accent: var(--ak-primary);
+	--brx-admin-accent-hover: var(--ak-primary-hover);
+	--brx-admin-brand: var(--ak-primary);
+	--brx-admin-fg: var(--ak-heading);
+	--brx-admin-fg-muted: var(--ak-text-muted);
+	--brx-admin-fg-faint: var(--ak-text-subtle);
+	--brx-admin-bg: var(--ak-surface);
+	--brx-admin-bg-hover: var(--ak-hover-bg);
+	--brx-admin-bg-muted: var(--ak-surface-muted);
+	--brx-admin-bg-page: var(--ak-bg);
+	--brx-admin-border: var(--ak-border);
+	--brx-admin-border-muted: var(--ak-border);
+	--brx-admin-border-input: var(--ak-input-border);
+
+	--brx-admin-info: var(--ak-info);
+	--brx-admin-info-bg: var(--ak-info-subtle);
+	--brx-admin-info-text: var(--ak-info);
+	--brx-admin-success: var(--ak-success);
+	--brx-admin-success-bg: var(--ak-success-subtle);
+	--brx-admin-success-text: var(--ak-success);
+	--brx-admin-warning: var(--ak-warning);
+	--brx-admin-warning-fg: var(--ak-on-warning-solid);
+	--brx-admin-warning-bg: var(--ak-warning-subtle);
+	--brx-admin-warning-text: var(--ak-warning);
+	--brx-admin-error: var(--ak-error);
+	--brx-admin-error-bg: var(--ak-error-subtle);
+	--brx-admin-error-text: var(--ak-error);
+
+	--brx-admin-elevation-sm: var(--ak-card-shadow);
+	--brx-admin-elevation-md: var(--ak-shadow-elevated);
+	--brx-admin-elevation-lg: var(--ak-shadow-elevated);
+
+	/* Bricks 2.4+ `--bricks-admin-color-*` aliases (resolved on `body`) */
+	--bricks-admin-color-border: var(--ak-border);
+	--bricks-admin-color-surface: var(--ak-surface);
+	--bricks-admin-color-surface-muted: var(--ak-surface-muted);
+	--bricks-admin-color-neutral-surface: var(--ak-hover-bg);
+	--bricks-admin-color-text: var(--ak-heading);
+	--bricks-admin-color-text-muted: var(--ak-text-muted);
+	--bricks-admin-color-text-light: var(--ak-text-subtle);
+	--bricks-admin-color-primary: var(--ak-primary);
+	--bricks-admin-color-primary-contrast: var(--ak-on-accent);
+	--bricks-admin-color-primary-subtle: var(--ak-primary-subtle);
+	--bricks-admin-color-warning: var(--ak-warning);
+	--bricks-admin-color-warning-text: var(--ak-warning);
+	--bricks-admin-color-warning-surface: var(--ak-warning-subtle);
+	--bricks-admin-color-success: var(--ak-success);
+	--bricks-admin-color-success-surface: var(--ak-success-subtle);
+	--bricks-admin-color-error: var(--ak-error);
+	--bricks-admin-color-error-surface: var(--ak-error-subtle);
+	--bricks-admin-shadow: var(--ak-card-shadow);
 }
 
-/* Text-colour remaps (dark only).
-   Bricks's hardcoded text colours (`#1d2327` etc.) are perfectly fine on
-   light surfaces — replacing them with the slightly-different `--ak-heading`
-   in light mode just produced a visible "shift to muted" after every paint
-   (FOUC). In dark mode they're invisible on dark surfaces and MUST be
-   re-pointed. Scope the remap to dark only: no FOUC in light, readable in
-   dark, no extra runtime cost. */
+/* Text-colour remaps (dark only). */
 :root[data-adminkit-theme="dark"] body.adminkit {
 	--bricks-text-dark:   var(--ak-heading);
 	--bricks-text-medium: var(--ak-text);
+	--bricks-text-muted:  var(--ak-text-muted);
 	--bricks-text-light:  var(--ak-text-muted);
+}
+
+/* Bricks 2.4+ primary & secondary buttons (`admin.min.css` hardcodes `color: #fff` on
+   `[class*=bricks_page_bricks-] .button.button-primary` and accent borders on `.button`). */
+html body.adminkit:is([class*="bricks_page_bricks-"], [class*="page_bricks-form-submissions"], .toplevel_page_bricks) :is(.button, .button-secondary):not(.button-primary):not([name="reset"]):not(.delete) {
+	background-color: var(--ak-btn-bg);
+	border-color: var(--ak-btn-border);
+	color: var(--ak-btn-text);
+	box-shadow: var(--ak-btn-shadow);
+}
+
+html body.adminkit:is([class*="bricks_page_bricks-"], [class*="page_bricks-form-submissions"], .toplevel_page_bricks) :is(.button, .button-secondary):not(.button-primary):not([name="reset"]):not(.delete):hover:not(:disabled) {
+	background-color: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
+	color: var(--ak-heading);
+}
+
+html body.adminkit:is([class*="bricks_page_bricks-"], [class*="page_bricks-form-submissions"], .toplevel_page_bricks) .button.button-primary:not(:disabled) {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
+	box-shadow: var(--ak-btn-primary-shadow);
+}
+
+html body.adminkit:is([class*="bricks_page_bricks-"], [class*="page_bricks-form-submissions"], .toplevel_page_bricks) .button.button-primary:hover:not(:disabled) {
+	background-color: var(--ak-primary-hover);
+	border-color: var(--ak-primary-hover);
+	color: var(--ak-on-accent-hover, var(--ak-on-accent));
+}
+
+html body.adminkit .bricks-settings-actions .page-title-action {
+	background-color: var(--ak-btn-bg);
+	border-color: var(--ak-btn-border);
+	color: var(--ak-btn-text);
+	box-shadow: var(--ak-btn-shadow);
+}
+
+html body.adminkit .bricks-settings-actions .page-title-action:hover {
+	background-color: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
+	color: var(--ak-heading);
+}
+
+/* Preserve search icon clearance in Bricks Settings & Bricks AI search inputs. */
+body.adminkit .bricks-settings-tab-search input[type="search"] {
+	padding-inline-start: 40px;
+	padding-inline-end: 40px;
+}
+
+body.adminkit .bricks-ai-search input:is([type="search"], [type="text"]) {
+	padding-inline-start: 34px;
 }
 
 
@@ -164,7 +258,9 @@ body.adminkit #bricks-settings .section p.help {
 }
 
 
-/* ----- 5. Settings inputs (Bricks's own spec overrides ours) ----- */
+/* ----- 5. Settings inputs (Bricks's own spec overrides ours) -----
+   Use `background-color` (NOT the `background` shorthand) so `<select>` keeps
+   AdminKit's right-aligned SVG chevron from `wp-components/inputs.css`. */
 body.adminkit #bricks-settings input[type="text"],
 body.adminkit #bricks-settings input[type="email"],
 body.adminkit #bricks-settings input[type="url"],
@@ -172,50 +268,40 @@ body.adminkit #bricks-settings input[type="number"],
 body.adminkit #bricks-settings input[type="password"],
 body.adminkit #bricks-settings textarea,
 body.adminkit #bricks-settings select {
-	background: var(--ak-surface);
-	border-color: var(--ak-border);
+	background-color: var(--ak-input-bg);
+	border-color: var(--ak-input-border);
 	color: var(--ak-text);
 }
 
-/* iOS-style toggle checkbox — Bricks renders <input type=checkbox> with
-   `appearance:none` + a pill track. AdminKit's global toggle and Bricks's own
-   ship DIFFERENT geometries (a 34×20 track whose knob slides via `left`, vs a
-   26×16 track whose knob slides via `transform:translateX`). Both target these
-   inputs, so the per-property cascade mixes them and the checked knob lands
-   mid-track. Pin the knob travel explicitly here — on Bricks's own 26×16 track
-   — so it's coherent no matter which file wins each property. */
+/* iOS-style toggle checkbox — Bricks 2.4+ uses 32×18 (`--bricks-admin-ai-toggle-width: 32px`,
+   `height: 18px`, `knob: 12px`). Pin clean geometry so AdminKit's global 34×20 toggle
+   doesn't mix half its properties with Bricks's. */
 body.adminkit #bricks-settings input[type="checkbox"] {
 	position: relative;
-	/* Pin Bricks's own 26px track. Without this, AdminKit's global
-	   `min-width: 34px` (components/inputs.css) widens the used width to 34px,
-	   and the knob's `left: 12px` (below) can't reach flush right. */
-	width: 26px;
-	min-width: 26px;
-	/* Off-state track — same `--ak-border-strong` as AdminKit's global toggle
-	   (components/inputs.css), so a Bricks toggle and a generic admin toggle
-	   read as the same component. */
-	background-color: var(--ak-border-strong);
+	width: 32px;
+	min-width: 32px;
+	height: 18px;
+	background-color: var(--ak-switch-track, var(--ak-border-strong));
+	border-color: var(--ak-switch-track, var(--ak-border-strong));
 }
 
 body.adminkit #bricks-settings input[type="checkbox"]:checked {
 	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
 }
 
-/* Knob: a 12px disc, 2px inset on the 16px-tall track. `transform:none` cancels
-   Bricks's translateX so position is driven solely by `left`. */
 body.adminkit #bricks-settings input[type="checkbox"]::before {
 	position: absolute;
-	top: 2px;
-	left: 2px;
+	inset-block-start: 2px;
+	inset-inline-start: 2px;
 	width: 12px;
 	height: 12px;
 	transform: none;
-	background: var(--ak-surface);
+	background: var(--ak-switch-knob, var(--ak-surface));
 }
 
-/* On: slide flush right (12 + 12px knob + 2px = 26px track width). */
 body.adminkit #bricks-settings input[type="checkbox"]:checked::before {
-	left: 12px;
+	inset-inline-start: 16px;
 	background: var(--ak-on-accent);
 }
 
@@ -261,60 +347,53 @@ body.adminkit #bricks-settings #tab-custom-code tr.sep {
 
 
 /* ----- 6. Element manager (bricks-elements page) ----- */
-/* `.wp-list-table.elements` rows + the sticky "Save" bar — both
-   bypass our standard list-table styling because Bricks applies
-   higher-spec overrides. */
-body.bricks_page_bricks-elements.adminkit form#bricks-element-manager .submit-wrapper.sticky {
-	background-color: var(--ak-surface);
+/* Match Bricks 2.4+ `body.bricks_page_bricks-elements form#bricks-element-manager ...`
+   ID-scoped selectors so surfaces, row borders, and sticky save bar theme cleanly. */
+body.bricks_page_bricks-elements.adminkit form#bricks-element-manager .submit-wrapper,
+body.adminkit #bricks-settings .submit-wrapper {
+	background-color: var(--ak-elevated);
 	border-color: var(--ak-border);
-	border-radius: var(--ak-radius-s);
-	box-shadow: none;
+	border-radius: var(--ak-radius-m);
+	box-shadow: var(--ak-shadow-elevated);
 }
 
-/* Outer table shell — token surface + border + radius matching the
-   rest of AdminKit's list tables. */
+body.bricks_page_bricks-elements.adminkit form#bricks-element-manager .wp-list-table,
 body.adminkit .wp-list-table.elements {
 	background-color: var(--ak-surface);
 	border: 1px solid var(--ak-border);
-	border-radius: var(--ak-radius-s);
+	border-radius: var(--ak-table-radius);
 	border-collapse: separate;
 	border-spacing: 0;
 	overflow: hidden;
 }
 
-/* Header band — recessed surface, heading color */
+body.bricks_page_bricks-elements.adminkit form#bricks-element-manager .wp-list-table thead th,
 body.adminkit .wp-list-table.elements thead th {
-	background-color: var(--ak-surface);
-	border-bottom: 1px solid var(--ak-border);
+	background-color: var(--ak-table-header-bg);
+	border-block-end: 1px solid var(--ak-border);
 	color: var(--ak-heading);
 	font-weight: 600;
 }
 
-/* Per-row cell borders + token text */
+body.bricks_page_bricks-elements.adminkit form#bricks-element-manager .wp-list-table tbody :is(td, th),
 body.adminkit .wp-list-table.elements tbody td {
-	border-top: 1px solid var(--ak-border);
+	background-color: var(--ak-surface);
+	border-block-start: 1px solid var(--ak-border);
 	color: var(--ak-text);
 }
 
+body.bricks_page_bricks-elements.adminkit form#bricks-element-manager .wp-list-table tbody tr:first-child :is(td, th),
 body.adminkit .wp-list-table.elements tbody tr:first-child td {
-	border-top: none;
+	border-block-start: none;
 }
 
-/* Bricks paints `tr:not(:last-child) { box-shadow: 0 1px 0 0 #e6e6e6 }`
-   to fake a row separator. The hex stays as a bright line in dark
-   mode and doubles with our --ak-border row top. Route to the
-   token (or kill it — keeping it ensures the separator survives
-   when our border-top fails to render via Bricks's overrides). */
 body.adminkit.bricks_page_bricks-elements form#bricks-element-manager tr:not(:last-child) {
-	box-shadow: 0 1px 0 0 var(--ak-border);
+	box-shadow: none;
 }
 
-/* Row hover — --ak-elevated, matching the global list-table hover (plugins,
-   posts) in components/tables.css. Bricks paints its own #f6f6f6 bg + 1px
-   box-shadow separator on hover; both are replaced here. */
 body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover,
-body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover td {
-	background-color: var(--ak-elevated);
+body.bricks_page_bricks-elements.adminkit form#bricks-element-manager tbody tr:hover :is(td, th) {
+	background-color: var(--ak-hover-bg);
 	box-shadow: none;
 }
 

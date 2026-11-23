@@ -239,12 +239,37 @@ body.adminkit.settings_page_slim-seo .ss-toggle input:checked + .ss-toggle__swit
 @media (max-width: 782px) {
 	body.adminkit.settings_page_slim-seo .ss-content {
 		margin-inline: var(--ak-space-s);
+		max-inline-size: calc(100% - 2 * var(--ak-space-s));
+		box-sizing: border-box;
+	}
+	body.adminkit.settings_page_slim-seo .ss-tabs {
+		max-inline-size: 100%;
+		overflow: hidden;
+	}
+	body.adminkit.settings_page_slim-seo .ss-tab-list {
+		max-inline-size: 100%;
+		box-sizing: border-box;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		padding-inline: 16px;
+		gap: 16px;
+	}
+	body.adminkit.settings_page_slim-seo .ss-tab-pane {
+		padding-inline: 16px;
+	}
+	body.adminkit.settings_page_slim-seo .ss-tab-pane > .submit.submit {
+		margin-inline: -16px;
+		padding-inline: 16px;
+	}
+	body.adminkit.settings_page_slim-seo .ss-general-tab-content {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0;
 	}
 	body.adminkit.settings_page_slim-seo .ss-tab-pane:has(.ss-table) {
 		overflow-x: auto;
 	}
 	body.adminkit.settings_page_slim-seo .ss-table {
-		min-width: 720px;
+		min-inline-size: 720px;
 	}
 }
 

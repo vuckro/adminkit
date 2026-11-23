@@ -1,0 +1,252 @@
+/* Fluent Support (`--fs-*`) → AdminKit (`--ak-*`) Tier A token bridge.
+ *
+ * Loaded only on `toplevel_page_fluent-support` alongside shared `element-plus.css`.
+ * Beats both `:root` and `body.fluent_theme_dark` at `(0,2,2)` with zero `!important`.
+ */
+
+:root,
+html body.adminkit.toplevel_page_fluent-support,
+html.fluent_theme_dark body.adminkit.toplevel_page_fluent-support,
+html body.adminkit.toplevel_page_fluent-support.fluent_theme_dark {
+	/* Surfaces & canvas */
+	--fs-global-component-bg: var( --ak-bg );
+	--fs-bg-primary: var( --ak-surface );
+	--fs-bg-subtle: var( --ak-surface-muted );
+	--fs-bg-muted: var( --ak-hover-bg );
+	--fs-bg-selected: var( --ak-primary-subtle );
+	--fs-bg-strong: var( --ak-primary );
+	--fs-bg-internal-note: var( --ak-warning-subtle );
+	--fs-bg-warning: var( --ak-warning-subtle );
+	--fs-bg-upgrade-to-pro: var( --ak-primary );
+	--fs-table-header-bg: var( --ak-surface-muted );
+	--fs-table-hover-bg: var( --ak-hover-bg );
+	--fs-tooltip-bg: var( --ak-elevated );
+
+	/* Borders & strokes */
+	--fs-border-default: var( --ak-border );
+	--fs-stroke-soft: var( --ak-border );
+	--fs-stroke-strong: var( --ak-border-strong );
+
+	/* Typography & links */
+	--fs-text-primary: var( --ak-heading );
+	--fs-primary-text-color: var( --ak-heading );
+	--fs-text-black: var( --ak-heading );
+	--fs-text-secondary: var( --ak-text );
+	--fs-text-muted: var( --ak-text-muted );
+	--fs-text-gray: var( --ak-text-muted );
+	--fs-gray-600: var( --ak-text-muted );
+	--fs-text-link: var( --ak-primary-text );
+	--fs-text-green: var( --ak-success );
+	--fs-text-info: var( --ak-info );
+	--fs-text-red: var( --ak-error );
+	--fs-text-white: var( --ak-on-accent );
+
+	/* Buttons & bulk bar — pair filled bg (`--ak-primary`) with `--ak-on-accent` in both modes */
+	--fs-btn-primary-bg: var( --ak-primary );
+	--fs-btn-filled-bg: var( --ak-primary );
+	--fs-btn-filled-hover-bg: var( --ak-primary-hover );
+	--fs-btn-filled-text: var( --ak-on-accent );
+	--fs-btn-hover-bg: var( --ak-btn-hover-bg );
+	--fs-btn-border-black: var( --ak-border-strong );
+	--fs-btn-border-red: var( --ak-error-border );
+	--fs-btn-disabled: var( --ak-text-disabled );
+	--fs-plain-button-text: var( --ak-text );
+	--fs-subtle-btn-bg: var( --ak-btn-bg );
+	--fs-subtle-btn-text: var( --ak-btn-text );
+	--fs-bb-bg: var( --ak-elevated );
+	--fs-bb-border: var( --ak-border );
+	--fs-bb-text: var( --ak-heading );
+	--fs-bb-muted: var( --ak-text-muted );
+	--fs-bb-hover: var( --ak-hover-bg );
+	--fs-bb-focus: var( --ak-focus );
+	--fs-bb-danger: var( --ak-error );
+
+	/* Switches & radii */
+	--fs-pro-switch-off-knob: var( --ak-switch-knob );
+	--fs-pro-switch-on-knob: var( --ak-on-accent );
+	--fs-radius-sm: max( 0px, calc( var( --ak-radius-s ) * 0.5 ) );
+	--fs-radius-6: max( 0px, calc( var( --ak-radius-s ) * 0.75 ) );
+	--fs-radius-md: var( --ak-radius-s );
+	--fs-radius-md-lg: var( --ak-radius-s );
+	--fs-radius-lg: var( --ak-radius-m );
+	--fs-radius-xl: var( --ak-radius-l );
+	--fs-radius-full: var( --ak-radius-full );
+
+	/* Shadows */
+	--fs-pro-preview-shadow: var( --ak-card-shadow );
+	--fs-shadow-toggle: var( --ak-btn-shadow );
+
+	/* Status & badges */
+	--fs-badge-faded-text: var( --ak-text );
+	--fs-primary-tags-bg: var( --ak-surface-muted );
+	--fs-badge-sm-success-bg: var( --ak-success-subtle );
+	--fs-badge-sm-success-text: var( --ak-success );
+	--fs-badge-success-bg: var( --ak-success-subtle );
+	--fs-badge-success-text: var( --ak-success );
+	--fs-badge-sm-warning-bg: var( --ak-warning-subtle );
+	--fs-badge-sm-warning-text: var( --ak-warning );
+	--fs-badge-sm-danger-bg: var( --ak-error-subtle );
+	--fs-badge-sm-danger-text: var( --ak-error );
+	--fs-badge-sm-info-bg: var( --ak-info-subtle );
+	--fs-badge-sm-info-text: var( --ak-info );
+	--fs-status-active: var( --ak-success );
+	--fs-status-active-bg: var( --ak-success-subtle );
+	--fs-status-active-dot: var( --ak-success );
+	--fs-status-active-text: var( --ak-success );
+	--fs-status-pending: var( --ak-warning );
+	--fs-status-pending-bg: var( --ak-warning-subtle );
+	--fs-status-pending-dot: var( --ak-warning );
+	--fs-status-waiting-bg: var( --ak-warning-subtle );
+	--fs-status-waiting-color: var( --ak-warning );
+	--fs-status-blocked: var( --ak-text-muted );
+	--fs-status-blocked-bg: var( --ak-surface-muted );
+	--fs-status-blocked-border: var( --ak-border );
+	--fs-status-inactive: var( --ak-text-muted );
+	--fs-status-inactive-bg: var( --ak-surface-muted );
+	--fs-status-info-bg: var( --ak-info-subtle );
+	--fs-status-info-text: var( --ak-info );
+	--fs-stat-icon-bg: var( --ak-surface-muted );
+	--fs-stat-icon-color: var( --ak-text-muted );
+	--fs-state-information-lighter: var( --ak-info-subtle );
+	--fs-state-warning-lighter: var( --ak-warning-subtle );
+	--fs-state-away-lighter: var( --ak-warning-subtle );
+	--fs-state-highlighted-lighter: var( --ak-primary-subtle );
+	--fs-state-feature-lighter: var( --ak-primary-subtle );
+	--fs-state-success-light: var( --ak-success-subtle );
+	--fs-state-success-dark: var( --ak-success );
+	--fs-state-information-light: var( --ak-error-subtle );
+	--fs-state-information-dark: var( --ak-error );
+	--fs-stat-icon-warning-color: var( --ak-warning );
+	--fs-chart-primary: var( --ak-primary );
+	--fs-chart-info: var( --ak-info );
+	--fs-chart-success: var( --ak-success );
+	--fs-chart-warning: var( --ak-warning );
+}
+
+/* Fluent Support sets `--el-button-bg-color: #0cbe7e` on its app root; restore AdminKit button tokens. */
+body.adminkit.toplevel_page_fluent-support :is(#alpha_app, .fs_main_wrapper, .fluent_support_app) {
+	--el-color-primary: var( --ak-primary );
+	--el-button-bg-color: var( --ak-btn-bg );
+	--el-button-border-color: var( --ak-btn-border );
+	--el-button-text-color: var( --ak-btn-text );
+	--el-button-hover-bg-color: var( --ak-btn-hover-bg );
+	--el-button-hover-border-color: var( --ak-btn-hover-border );
+	--el-button-hover-text-color: var( --ak-heading );
+	--el-switch-off-color: var( --ak-switch-track );
+	--el-switch-on-color: var( --ak-primary );
+}
+
+/* Explicit filled CTA pairing across Create Ticket / Create New / Next / Save Settings in Light & Dark. */
+html body.adminkit.toplevel_page_fluent-support #alpha_app .el-button:is(.fs_filled_btn, .fs_save_settings_btn, .el-button--primary):not(.is-disabled):not([aria-disabled="true"]) {
+	background: var( --ak-primary );
+	background-color: var( --ak-primary );
+	border-color: var( --ak-primary );
+	color: var( --ak-on-accent );
+	box-shadow: var( --ak-btn-primary-shadow );
+}
+html body.adminkit.toplevel_page_fluent-support #alpha_app .el-button:is(.fs_filled_btn, .fs_save_settings_btn, .el-button--primary):not(.is-disabled):not([aria-disabled="true"]):is(:hover, :focus-visible) {
+	background: var( --ak-primary-hover );
+	background-color: var( --ak-primary-hover );
+	border-color: var( --ak-primary-hover );
+	color: var( --ak-on-accent-hover );
+	box-shadow: var( --ak-btn-primary-shadow-hover );
+}
+html body.adminkit.toplevel_page_fluent-support #alpha_app .el-button:is(.fs_filled_btn, .fs_save_settings_btn, .el-button--primary) :is(span, svg) {
+	color: inherit;
+}
+
+/* Symmetric content gutters inside AdminKit's flush `#wpcontent` frame (prevents 1px left edge & right table clip). */
+@media screen and (min-width: 783px) {
+	body.adminkit.toplevel_page_fluent-support #alpha_app .fframe_body {
+		box-sizing: border-box;
+		padding-inline: calc( 24px * var( --ak-space-scale, 1 ) );
+	}
+}
+body.adminkit.toplevel_page_fluent-support #alpha_app .el-table th .cell {
+	white-space: nowrap;
+	padding-inline: 8px;
+}
+
+/* White-label navbar logo + hide redundant inner theme toggle. */
+body.adminkit.toplevel_page_fluent-support .fs_main_navbar .menu_logo_holder a :is(img, svg),
+body.adminkit.toplevel_page_fluent-support #wpbody-content > .update-nag,
+body.adminkit.toplevel_page_fluent-support :is(.fs_theme_switcher, [data-fluent-theme-toggle], .fluent-theme-switcher) {
+	display: none;
+}
+body.adminkit.toplevel_page_fluent-support .fs_main_navbar .menu_logo_holder a {
+	font-size: 0;
+	text-decoration: none;
+	box-shadow: none;
+}
+body.adminkit.toplevel_page_fluent-support .fs_main_navbar .menu_logo_holder a::after {
+	content: var( --ak-wordmark, "Fluent Support" );
+	color: var( --ak-heading );
+	font-size: calc( 17px * var( --ak-type-scale, 1 ) );
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+
+/* Shared card, KPI stat & table elevation + balanced 4-up / 2x2 grid (Tier A: zero !important). */
+html body.adminkit.toplevel_page_fluent-support :is(
+	.fs_stat_card_tile,
+	.fs_dashboard_wrapper .fs_stat_card,
+	.fs_stat_box,
+	.fs_box_wrapper:has(> .fs_box_header + .fs_box_body):not(.fs_dashboard_wrapper .fs_box_wrapper):not(.fs_setup .fs_box_wrapper):not(.fs_system_tools),
+	.fs_box_wrapper.fs_system_tools :is(.fs_st_card, .fs_st_placeholder, .fs_st_notice),
+	.fs_table_container:not(.fs_setup .fs_table_container),
+	.fs_setup .fs_table_wrapper,
+	.fs_pro_preview_card,
+	.fs_pro_showcase_hero,
+	.fs_narrow_promo,
+	.fs_license_card,
+	.fs_customers .fs_customers_card,
+	.fs_customer_page .fs_customer_profile_card,
+	.fs_view_ticket .fs_ticket_body,
+	.fs_tickets_tiny_nav .fs_ticket_card,
+	.fs_fb_meeting_card,
+	.fs_wf_step,
+	.el-card
+) {
+	background-color: var( --ak-card-bg );
+	border: var( --ak-border-width ) solid var( --ak-card-border );
+	border-radius: var( --ak-card-radius );
+	box-shadow: var( --ak-card-shadow );
+}
+
+html body.adminkit.toplevel_page_fluent-support .el-card .el-card {
+	box-shadow: none;
+}
+
+html body.adminkit.toplevel_page_fluent-support :is(.fs_table, .fs_webhook_info_table) {
+	background-color: var( --ak-table-bg );
+	border-color: var( --ak-table-border );
+}
+
+html body.adminkit.toplevel_page_fluent-support :is(.fs_stat_label, .fs_stat_value, .fs_stat_card_tile, .fs_stat_box) {
+	font-family: var( --ak-font-body );
+}
+
+html body.adminkit.toplevel_page_fluent-support .fs_stat_card_icon--information { color: var( --ak-info ); }
+html body.adminkit.toplevel_page_fluent-support .fs_stat_card_icon--warning { color: var( --ak-warning ); }
+html body.adminkit.toplevel_page_fluent-support .fs_stat_card_icon--away { color: var( --ak-warning ); }
+html body.adminkit.toplevel_page_fluent-support :is(.fs_stat_card_icon--highlighted, .fs_stat_card_icon--feature) { color: var( --ak-primary-text ); }
+
+html body.adminkit.toplevel_page_fluent-support :has(> :is(.fs_stat_boxes_row_4, .fs_stats_grid, .fs_stat_cards_grid)) {
+	container-type: inline-size;
+}
+html body.adminkit.toplevel_page_fluent-support :is(.fs_stat_boxes_row_4, .fs_stats_grid:has(> :nth-child(4):last-child), .fs_stat_cards_grid:has(> :nth-child(4):last-child)) {
+	display: grid;
+	grid-template-columns: repeat( 4, minmax( 0, 1fr ) );
+	gap: 16px;
+}
+@container (max-width: 520px) {
+	html body.adminkit.toplevel_page_fluent-support :is(.fs_stat_boxes_row_4, .fs_stats_grid:has(> :nth-child(4):last-child), .fs_stat_cards_grid:has(> :nth-child(4):last-child)) {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+		gap: 12px;
+	}
+}
+@container (max-width: 280px) {
+	html body.adminkit.toplevel_page_fluent-support :is(.fs_stat_boxes_row_4, .fs_stats_grid:has(> :nth-child(4):last-child), .fs_stat_cards_grid:has(> :nth-child(4):last-child)) {
+		grid-template-columns: minmax( 0, 1fr );
+	}
+}

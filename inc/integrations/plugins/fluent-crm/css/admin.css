@@ -35,7 +35,11 @@
    ============================================================ */
 
 :root,
-body.adminkit.toplevel_page_fluentcrm-admin {
+body.fluentcrm-setup,
+html body.adminkit.toplevel_page_fluentcrm-admin,
+html.fluent_theme_dark body.adminkit.toplevel_page_fluentcrm-admin,
+html body.adminkit.toplevel_page_fluentcrm-admin:is(.fluent_theme_dark, .fcrm-dark),
+html body.adminkit.toplevel_page_fluentcrm-admin :is(.fluent_theme_dark, .fcrm-dark) {
 	/* --- FluentCRM's own --fc-* layer --- */
 
 	/* Surfaces */
@@ -55,9 +59,9 @@ body.adminkit.toplevel_page_fluentcrm-admin {
 	--fc-primary-border: var( --ak-border );
 	--fc-secondary-border: var( --ak-border-strong );
 
-	/* Brand — link blue + filled-button color both → one AdminKit brand. */
+	/* Brand — filled controls use `--ak-primary`; inline text links use contrast-safe `--ak-primary-text`. */
 	--fc-primary-button: var( --ak-primary );
-	--fc-text-link: var( --ak-primary );
+	--fc-text-link: var( --ak-primary-text );
 	--fc-text-link-bg: var( --ak-primary-subtle );
 
 	/* Semantic + their pale tints (`--el-*` layer comes from `assets/css/vendor/element-plus.css`). */
@@ -76,6 +80,22 @@ body.adminkit.toplevel_page_fluentcrm-admin {
    strip and the app shell the page token so the area behind the SPA flips.
    ============================================================ */
 
+body.fluentcrm-setup {
+	background-color: var( --ak-bg );
+	color: var( --ak-text );
+	font-family: var( --ak-font-body );
+}
+body.fluentcrm-setup .fcrm_onboarding_container {
+	background-color: var( --ak-card-bg );
+	border-color: var( --ak-card-border );
+	box-shadow: var( --ak-card-shadow );
+}
+:root[data-adminkit-theme="dark"] body.fluentcrm-setup .fcrm_onboarding_header_bar img {
+	filter: brightness(0) invert(1);
+}
+body.adminkit.toplevel_page_fluentcrm-admin .el-table th .cell {
+	white-space: nowrap;
+}
 body.adminkit.toplevel_page_fluentcrm-admin #wpcontent,
 body.adminkit.toplevel_page_fluentcrm-admin #fluentcrm_app {
 	background-color: var( --ak-bg );
@@ -165,7 +185,9 @@ body.adminkit.toplevel_page_fluentcrm-admin .el-skeleton__item {
    block titles/descriptions (invisible on a dark surface). Route titles to the
    heading token, descriptions to body text. */
 body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_block .fluentcrm_block_title,
-body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_blocks_wrapper .fluentcrm_blockin .fluentcrm_block_title {
+body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_block .fluentcrm_block_title i,
+body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_blocks_wrapper .fluentcrm_blockin .fluentcrm_block_title,
+body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_blocks_wrapper .fluentcrm_blockin .fluentcrm_block_title i {
 	color: var( --ak-heading ) !important;
 }
 body.adminkit.toplevel_page_fluentcrm-admin .fluentcrm_block .fluentcrm_block_desc,
@@ -206,7 +228,7 @@ body.adminkit.toplevel_page_fluentcrm-admin .fcrm_contact_companies .fcrm_compan
 
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a img,
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a span {
-	display: none !important;
+	display: none;
 }
 
 body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a,
@@ -239,6 +261,24 @@ body.adminkit.toplevel_page_fluentcrm-admin .fcrm_topbar_left a::after {
 	display: none !important;
 }
 
+/* FluentCRM 3.3+ pins `.el-switch.is-checked .el-switch__core` to `--fc-primary-text !important`
+   (white in dark mode, colliding with white `--ak-on-accent` knobs). Pair with `--ak-primary`. */
+body.adminkit.toplevel_page_fluentcrm-admin .el-switch.is-checked .el-switch__core {
+	background-color: var( --ak-primary ) !important;
+	border-color: var( --ak-primary ) !important;
+}
+
+/* Onboarding checklist ("Premiers pas") completed steps: host pairs `--fc-primary-text`
+   with `--fc-text-inverse`, producing blind white-on-white circles in dark mode when
+   a custom brand accent sets `--ak-on-accent: #ffffff`. Route to brand + on-accent. */
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_onboarding_steps--item.completed_step .icon {
+	background: var( --ak-primary );
+	border-color: var( --ak-primary );
+}
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_onboarding_steps--item .icon .el-icon {
+	color: var( --ak-on-accent );
+}
+
 /* Disabled primary button — FluentCRM derives its disabled bg from
    --el-color-primary-light-5 (a pale brand tint) but keeps white text → poor
    contrast. Route to a neutral muted control instead. */
@@ -252,12 +292,12 @@ body.adminkit.toplevel_page_fluentcrm-admin .el-button--primary.is-disabled:focu
 
 /* Primary button label → --ak-on-accent (the contrast-correct ink for the brand
    fill). FluentCRM ties it to --el-button-text-color: var(--el-color-white),
-   then flips --el-color-white to near-black #0E121B inside its own .fcrm-dark
-   class. Override the button var directly so the label is legible on the brand
-   fill in BOTH modes, regardless of the host's dark class. */
-body.adminkit.toplevel_page_fluentcrm-admin .el-button--primary {
+   then flips --el-color-white to near-black #0E121B inside `.fluent_theme_dark .el-button.el-button--primary`.
+   Beat that `(0,3,0)` rule and keep primary labels legible across every custom accent. */
+body.adminkit.toplevel_page_fluentcrm-admin .el-button.el-button--primary:not(.is-plain):not(.is-text):not(.is-link) {
+	--el-color-white: var( --ak-on-accent );
 	--el-button-text-color: var( --ak-on-accent );
-	--el-button-hover-text-color: var( --ak-on-accent );
+	--el-button-hover-text-color: var( --ak-on-accent-hover );
 }
 
 /* Topbar nav — active + hover item → neutral elevated surface (the host paints
@@ -290,9 +330,9 @@ body.adminkit.toplevel_page_fluentcrm-admin .fcrm_icon_btn:focus {
 /* Funnel badge — host paints bg with --fc-primary-text (near-black) + white
    text. --fc-primary-text → --ak-heading, which FLIPS light in dark → an
    invisible white-on-white pill. Route to a solid brand pill instead. */
-body.adminkit.toplevel_page_fluentcrm-admin .ff_funnel_badge {
-	background: var( --ak-primary ) !important;
-	color: var( --ak-on-accent ) !important;
+html body.adminkit.toplevel_page_fluentcrm-admin .ff_funnel_badge {
+	background: var( --ak-primary );
+	color: var( --ak-on-accent );
 }
 
 /* Segmented control active item — FluentCRM styles these as TAB-style controls
@@ -385,11 +425,89 @@ html body.adminkit.toplevel_page_fluentcrm-admin {
 }
 
 /* Shared surface roles: outer contour/contact shadow; inner rows stay flat. */
-body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_base_card, .fcrm_report_card, .fc_sidebar_card, .fcrm_integration_detail_card, .fcrm-widget-section, .fcrm_sequence_hero_card),
-body.adminkit.toplevel_page_fluentcrm-admin ul.fluentcrm_stat_cards > li { background-color: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); }
-body.adminkit.toplevel_page_fluentcrm-admin .fcrm_table_wrapper { background-color: var(--ak-table-bg); border: var(--ak-border-width) solid var(--ak-table-border); border-radius: var(--ak-table-radius); box-shadow: var(--ak-table-shadow); }
-body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_base_card, .fcrm_report_card, .fc_sidebar_card) :is(.fcrm_table_wrapper, .el-card) { border: 0; border-radius: 0; box-shadow: none; }
+body.adminkit.toplevel_page_fluentcrm-admin :is(
+	.fcrm_base_card,
+	.fcrm_report_card,
+	.fc_sidebar_card,
+	.fcrm_integration_detail_card,
+	.fcrm-widget-section,
+	.fcrm_sequence_hero_card,
+	.fcrm_notice,
+	.fcrm_stat_widget,
+	.fcrm_card_widgets .fcrm_card_widget,
+	.fc_card_widgets .fc_card_widget,
+	.fcrm_settings .fcrm_body .fcrm_content_card,
+	.fcrm_configured_card,
+	.fcrm_review_card,
+	.fcrm_order_preview .fcrm_order_preview_card,
+	.fcrm_act_wrap .fcrm_act_card,
+	.fcrm_first_run_card,
+	.fcrm_sms_campaign_view--progress-card,
+	.fcrm_sms_campaign_view--processing-status-details,
+	.fcrm_empty_state,
+	.fcrm-server-stats,
+	.fcrm_upgrade_banner,
+	.fcrm_no_permission
+),
+body.adminkit.toplevel_page_fluentcrm-admin ul.fluentcrm_stat_cards > li {
+	background-color: var(--ak-card-bg);
+	border: var(--ak-border-width) solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
+}
+body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_table_wrapper, table.fc_horizontal_table) {
+	background-color: var(--ak-table-bg);
+	border: var(--ak-border-width) solid var(--ak-table-border);
+	border-radius: var(--ak-table-radius);
+	box-shadow: var(--ak-table-shadow);
+}
+body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_base_card, .fcrm_report_card, .fc_sidebar_card, .fcrm_content_card, .fcrm-widget-section) :is(.fcrm_table_wrapper, table.fc_horizontal_table, .el-card, .fcrm_empty_state, .fcrm_sms_campaign_view--progress-card) {
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
 body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_base_card, .fcrm_report_card).fcrm_danger_border { border-color: var(--ak-error); }
 body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_base_card, .fcrm_report_card).fcrm_warning_border { border-color: var(--ak-warning); }
 body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_base_card, .fcrm_report_card).fcrm_success_border { border-color: var(--ak-success); }
-body.adminkit.toplevel_page_fluentcrm-admin ul.fluentcrm_stat_cards > li:is(.fc_camp_data_revenue, .fc_camp_data_unsubscribe):hover { border-color: var(--ak-border-strong); box-shadow: var(--ak-card-shadow); }
+body.adminkit.toplevel_page_fluentcrm-admin :is(
+	.fcrm_stat_widget:not(.pointer-auto),
+	.fcrm_card_widgets .fcrm_card_widget:not(.pointer-auto),
+	.fc_card_widgets .fc_card_widget,
+	.fcrm_first_run_card,
+	ul.fluentcrm_stat_cards > li:is(.fc_camp_data_revenue, .fc_camp_data_unsubscribe)
+):hover {
+	border-color: var(--ak-border-strong);
+	box-shadow: var(--ak-card-shadow);
+}
+
+/* Balanced 4-card KPI grid: prevent 3+1 orphan wrap when FluentHub + right rail share 1280-1440px. */
+body.adminkit.toplevel_page_fluentcrm-admin :has(> .fcrm_card_widgets) {
+	container-type: inline-size;
+}
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_card_widgets:has(> :nth-child(4):last-child) {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 16px;
+}
+@container (max-width: 520px) {
+	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_card_widgets:has(> :nth-child(4):last-child) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+	}
+}
+@container (max-width: 280px) {
+	body.adminkit.toplevel_page_fluentcrm-admin .fcrm_card_widgets:has(> :nth-child(4):last-child) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+body.adminkit.toplevel_page_fluentcrm-admin :is(.fcrm_card_widgets .fcrm_card_widget, .fcrm_stat_widget) .fcrm_icon_background_total_automations {
+	background: var(--ak-info-subtle);
+	color: var(--ak-info);
+}
+
+/* Settings vertical rail: keep active indicator pill unclipped inside overflow-x:hidden rail. */
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_settings_sidebar .el-menu-item.is-active::before,
+body.adminkit.toplevel_page_fluentcrm-admin .fcrm_settings_sidebar .fcrm-admin-tools-submenu.is-parent-active .el-sub-menu__title::before {
+	inset-inline-start: 0;
+	background: var(--ak-primary);
+	border-radius: 0 4px 4px 0;
+}

@@ -232,6 +232,46 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn.delete {
 	color: var(--ak-on-danger-solid);
 }
 
+/* `.btn.new-migration` renders an `<svg>` whose `<path>`s set inline `style={{ fill: "#fff" }}`
+   in React — route to `currentColor` so the `+` glyph matches `--ak-on-accent` in Dark mode too. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .btn svg path[style*="fill"] {
+	fill: currentColor !important;
+}
+
+
+/* ===== Semantic `.migrate-notice` callouts =====
+   Bundled CSS hardcodes `.migrate-notice.warning { background: #fffbea; color: #ab5a19 }`
+   (and light pastels on `.info` / `.success` / `.danger`), turning inline `--ak-primary`
+   links white-on-cream in Dark mode. Route through AdminKit semantic tokens. */
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .migrate-notice.warning {
+	background: var(--ak-warning-subtle);
+	border-color: var(--ak-warning-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .migrate-notice.info {
+	background: var(--ak-info-subtle);
+	border-color: var(--ak-info-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .migrate-notice.success {
+	background: var(--ak-success-subtle);
+	border-color: var(--ak-success-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .migrate-notice.danger {
+	background: var(--ak-error-subtle);
+	border-color: var(--ak-error-border);
+	color: var(--ak-text);
+}
+
+body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .migrate-notice :is(a, .link, button) {
+	color: var(--ak-heading);
+	text-decoration: underline;
+}
+
 
 /* ===== Inline links ===== */
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .link {
@@ -554,4 +594,27 @@ body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .text-grey-light {
 
 body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .text-grey-dark {
 	color: var(--ak-text-muted);
+}
+
+/* ===== Responsive mobile / tablet containment =====
+   Bundled CSS pins `.wpmdb { min-width: 800px }`, `.wpmdb .wrapper { min-width: 920px; margin: 0 30px }`,
+   and `.wpmdb .accordion-wrap { min-width: 70rem }`. Relax those fixed minimums below 960px. */
+@media (max-width: 960px) {
+	body.adminkit.tools_page_wp-migrate-db-pro :is(.wpmdb, .wpmdb .wrapper, .wpmdb .accordion-wrap) {
+		min-inline-size: 0;
+		max-inline-size: 100%;
+		box-sizing: border-box;
+	}
+}
+
+@media (max-width: 782px) {
+	body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .wrapper {
+		margin-inline: 12px;
+	}
+
+	body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .nav,
+	body.adminkit.tools_page_wp-migrate-db-pro .wpmdb .subnav {
+		flex-wrap: wrap;
+		row-gap: 4px;
+	}
 }

@@ -64,13 +64,25 @@ body.adminkit .rank-math-seo-analysis-wrap :is(.serp-url-wrapper, .serp-descript
 	color: var(--ak-text-muted);
 }
 /* The title separator is a WP toggle group, not a text input. */
-body.adminkit #wpbody-content .rank-math-toggle-group-control {
+body.adminkit #wpbody-content .components-base-control .components-base-control__field .rank-math-toggle-group-control.components-toggle-group-control {
 	background: var(--ak-input-bg);
 	color: var(--ak-text);
 	border-color: var(--ak-input-border);
 }
-body.adminkit #wpbody-content .rank-math-toggle-group-control [role=radio] {
+body.adminkit #wpbody-content .components-base-control .components-base-control__field .rank-math-toggle-group-control.components-toggle-group-control .components-toggle-group-control-option-base {
+	background-color: var(--ak-surface);
+	border-color: var(--ak-border);
 	color: var(--ak-text);
+}
+body.adminkit #wpbody-content .components-base-control .components-base-control__field .rank-math-toggle-group-control.components-toggle-group-control .components-toggle-group-control-option-base:hover {
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+body.adminkit #wpbody-content .components-base-control .components-base-control__field .rank-math-toggle-group-control.components-toggle-group-control .components-toggle-group-control-option-base[aria-checked="true"],
+body.adminkit #wpbody-content .components-base-control .components-base-control__field .rank-math-toggle-group-control.components-toggle-group-control .components-toggle-group-control-option-base[aria-checked="true"]:hover {
+	background-color: var(--ak-primary);
+	border-color: var(--ak-primary);
+	color: var(--ak-on-accent);
 }
 /* AI Link Genius keeps its own table, dropdown and loading-state surfaces. */
 body.adminkit #rank-math-links-page-container :is(.rank-math-section-card, .rank-math-table-card, .rank-math-table, .rank-math-table-row, .rank-math-table-footer, .rank-math-multi-select-button) {

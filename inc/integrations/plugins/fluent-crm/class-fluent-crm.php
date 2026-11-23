@@ -44,7 +44,13 @@ class AdminKit_Integration_Fluent_Crm extends AdminKit_Integration_Base {
 
 	/** @return string|null */
 	protected static function max_tested_host_version() {
-		return '3.3.1';
+		return '3';
+	}
+
+	/** @return bool */
+	public static function is_setup_wizard() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only FluentCRM setup wizard route check.
+		return is_admin() && isset( $_GET['page'] ) && 'fluentcrm-setup' === $_GET['page'];
 	}
 
 	/**
@@ -52,7 +58,27 @@ class AdminKit_Integration_Fluent_Crm extends AdminKit_Integration_Base {
 	 * @return bool
 	 */
 	public static function owns_screen( $screen ) {
-		return $screen && 'toplevel_page_fluentcrm-admin' === $screen->id;
+		return ( $screen && ( 'toplevel_page_fluentcrm-admin' === $screen->id || false !== strpos( $screen->id, 'fluentcrm-setup' ) ) )
+			|| self::is_setup_wizard();
+	}
+
+	/** @return void */
+	protected static function boot() {
+		parent::boot();
+		add_action( 'admin_print_styles', array( __CLASS__, 'dispatch_setup_wizard_assets' ), 1 );
+	}
+
+	/**
+	 * FluentCRM's standalone Setup Wizard (`index.php?page=fluentcrm-setup`) renders on
+	 * `admin_init` and exits before `admin_enqueue_scripts`; trigger AdminKit's admin
+	 * asset dispatch on `admin_print_styles` so tokens + adapter CSS load cleanly.
+	 *
+	 * @return void
+	 */
+	public static function dispatch_setup_wizard_assets() {
+		if ( self::is_setup_wizard() ) {
+			AdminKit_Assets::dispatch_admin();
+		}
 	}
 
 	/** @return void */

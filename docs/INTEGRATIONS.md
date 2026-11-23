@@ -276,7 +276,8 @@ host's own theme attribute (one-way) for `color-scheme`. The
 ## Reference implementations
 
 - [fluent-booking](../inc/integrations/plugins/fluent-booking/) — FluentBooking 2.5–2.6 semantic tokens, legacy aliases, Element Plus and same-origin TinyMCE theme synchronization via `AdminKit_Fluent_Theme::print_spa_sync()`.
-- [bricks](../inc/integrations/themes/bricks/class-bricks.php) — token injection + opt-in builder theming (with a baseline fallback when the builder's colours are cleared).
+- [bricks](../inc/integrations/themes/bricks/class-bricks.php) — token injection + opt-in builder theming (with a baseline fallback when the builder's colours are cleared), plus Bricks 2.4+ `--brx-admin-*` / `--bricks-admin-color-*` variable bridge (`0 !important`).
+- [etch](../inc/integrations/plugins/etch/class-etch.php) — Tier A adapter (`0 !important`) covering Etch's settings shell while leaving the visual frontend builder canvas untouched.
 - [gutenberg](../inc/integrations/plugins/gutenberg/class-gutenberg.php) — core editor chrome always accompanies the admin skin, independent of third-party integration opt-outs. It is excluded from the plugin integration catalog, and never touches the editor content canvas (`.editor-styles-wrapper`); `adminkit/integration_enabled` can still disable the adapter explicitly.
 - [wpcode](../inc/integrations/plugins/wpcode/class-wpcode.php) — minimal Tier A (remap `--wpcode-*`, zero `!important`).
 - [acf](../inc/integrations/plugins/acf/class-acf.php) — clean Tier B (host hardcodes hex), screen-scoped + version-gated.
@@ -286,15 +287,15 @@ host's own theme attribute (one-way) for `color-scheme`. The
 
 ## FunnelKit Builder, Automations et Cart
 
-Les trois adaptateurs Tier B (`funnel-builder` `<= 3.18.x`, `wp-marketing-automations` `<= 3.8.x` et `cart-for-woocommerce` `<= 1.9.x`) partagent les composants BWF via le trait `AdminKit_FunnelKit_Integration` sans exiger que les extensions compagnes soient actives. Les fichiers communs livrés dans `plugins/funnel-builder/` (`shared.css`, `controls.css`, `components.css`, `shared.js`) se limitent aux écrans possédés et à leurs portails ; `menu.css` ne traite que les entrées FunnelKit du menu WordPress ; aucun habillage de checkout public, de corps d’e-mail ou de l’aperçu en direct du panier boutique (`#fkcart-modal`).
+Les trois adaptateurs Tier B (`funnel-builder` majeure `3`, `wp-marketing-automations` majeure `3` et `cart-for-woocommerce` majeure `1`) partagent les composants BWF via le trait `AdminKit_FunnelKit_Integration` sans exiger que les extensions compagnes soient actives. Les fichiers communs livrés dans `plugins/funnel-builder/` (`shared.css`, `controls.css`, `components.css`, `shared.js`) se limitent aux écrans possédés et à leurs portails ; `menu.css` ne traite que les entrées FunnelKit du menu WordPress ; aucun habillage de checkout public, de corps d’e-mail ou de l’aperçu en direct du panier boutique (`#fkcart-modal`).
 
 ## Fluent applications (Hub & standalone)
 
-Les adaptateurs Fluent (`fluent-toolkit` Hub, `fluent-booking`, `fluent-boards`, `fluent-cart`, `fluent-crm`, `fluent-affiliate`, `fluent-community`, `fluent-snippets`, `fluent-smtp`, `fluent-auth`, `fluentform`) partagent le pont Element Plus `AdminKit_Assets::ELEMENT_PLUS_HANDLE` (`assets/css/vendor/element-plus.css`) et `AdminKit_Fluent_Theme` (`inc/class-fluent-theme.php`), qui synchronise `fluent_theme_mode` / `BroadcastChannel`, inscrit `/adminkit/` dans les allowlists d’assets natives (`fluent_crm_asset_listed_slugs`, `fluent_booking/asset_listed_slugs`, `fluent_boards/asset_listed_slugs`) et synchronise les classes sombres SPA ainsi que les iframes TinyMCE (`print_spa_sync()`). Les portails publics (`/portal`, formulaires de réservation/paiement/connexion publics) restent intégralement gérés par leurs extensions hôtes.
+Les 12 adaptateurs Fluent (`fluent-toolkit` Hub, `fluent-booking`, `fluent-boards`, `fluent-cart`, `fluent-crm`, `fluent-affiliate`, `fluent-community`, `fluent-support`, `fluent-snippets`, `fluent-smtp`, `fluent-auth`, `fluentform`) partagent le pont Element Plus `AdminKit_Assets::ELEMENT_PLUS_HANDLE` (`assets/css/vendor/element-plus.css`) et `AdminKit_Fluent_Theme` (`inc/class-fluent-theme.php`), qui synchronise `fluent_theme_mode` / `BroadcastChannel`, inscrit `/adminkit/` dans les allowlists d’assets natives (`fluent_crm_asset_listed_slugs`, `fluent_booking/asset_listed_slugs`, `fluent_boards/asset_listed_slugs`, `fluent_support/asset_listed_slugs`, `fluent_snippets_asset_listed_slugs`) et synchronise les classes sombres SPA ainsi que les iframes TinyMCE (`print_spa_sync()`). Les portails publics (`/portal`, formulaires de réservation/paiement/connexion publics) restent intégralement gérés par leurs extensions hôtes.
 
 ## Rank Math SEO
 
-The `rank-math` adapter targets Rank Math Free 1.0.281 (minor series 1.0.x).
+The `rank-math` adapter targets Rank Math Free 1.0.282 (major series `1`).
 It is auto-discovered and respects the host's per-plugin appearance toggle,
 AdminKit's classic-interface/appearance gates and the host-version pause.
 The Pro plugin file is recognized for settings classification; Pro-only screens

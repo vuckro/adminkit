@@ -2,6 +2,7 @@
  * Keep delivery settings, chart rendering and native application layout owned
  * by FluentSMTP. The 2.2 selector skin remains isolated in admin.css. */
 html body.adminkit.settings_page_fluent-mail,
+html.fluent_theme_dark body.adminkit.settings_page_fluent-mail,
 html body.adminkit.settings_page_fluent-mail.fluent_theme_dark {
 	--fsm-body-bg: var(--ak-bg);
 	--fsm-surface: var(--ak-surface);
@@ -103,7 +104,47 @@ body.adminkit.settings_page_fluent-mail .fsm_card_head :is(.el-date-editor, .el-
 }
 
 /* Shared surface roles: outer contour/contact shadow; inner rows stay flat. */
-body.adminkit.settings_page_fluent-mail :is(.fsm_card, .fsm_tile, .fsm_docs_tile) { background-color: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); }
-body.adminkit.settings_page_fluent-mail .fsm_card :is(.fsm_card, .el-card) { box-shadow: none; }
+body.adminkit.settings_page_fluent-mail :is(.fsm_card, .fsm_tile, .fsm_docs_tile, .fluent-mail-app .fss_content, .fss_config_section, .fsmtp_recommended, .el-card) {
+	background-color: var(--ak-card-bg);
+	border: var(--ak-border-width) solid var(--ak-card-border);
+	border-radius: var(--ak-card-radius);
+	box-shadow: var(--ak-card-shadow);
+}
+body.adminkit.settings_page_fluent-mail :is(.fsm_card, .fluent-mail-app .fss_content) :is(.fsm_card, .fss_config_section, .el-card) { box-shadow: none; }
+body.adminkit.settings_page_fluent-mail :is(.el-dialog, .el-message-box, .el-select-dropdown, .el-dropdown-menu, .el-popover, .el-picker-panel) {
+	background-color: var(--ak-elevated);
+	border-color: var(--ak-border);
+	box-shadow: var(--ak-shadow-elevated);
+}
 body.adminkit.settings_page_fluent-mail .fsm_card_head { border-color: var(--ak-border); }
-body.adminkit.settings_page_fluent-mail .fsm_docs_tile:is(:hover, :focus-visible) { border-color: var(--ak-border-strong); box-shadow: var(--ak-card-shadow); }
+body.adminkit.settings_page_fluent-mail :is(.fsm_tile, .fsm_docs_tile):is(:hover, :focus-visible) { border-color: var(--ak-border-strong); box-shadow: var(--ak-card-shadow); }
+
+/* Provider logos, monochrome app wordmark, hidden redundant theme toggle & log date-range spacing. */
+.fluent_theme_dark body.adminkit.settings_page_fluent-mail img[src*="/images/provider-"],
+body.adminkit.settings_page_fluent-mail.fluent_theme_dark img[src*="/images/provider-"] {
+	background: transparent;
+	padding: 0;
+}
+:root[data-adminkit-theme="dark"] body.adminkit.settings_page_fluent-mail img:is([src*="provider-smtp"], [src*="provider-php"], [src*="provider-postmark"], [src*="provider-aws-ses"], [src*="provider-mailgun"]) {
+	filter: brightness(0) invert(0.92);
+}
+body.adminkit.settings_page_fluent-mail .fsm_theme_trigger {
+	display: none;
+}
+body.adminkit.settings_page_fluent-mail .fsm_app_bar .fsm_app_logo a img {
+	display: none;
+}
+body.adminkit.settings_page_fluent-mail .fsm_app_bar .fsm_app_logo a {
+	text-decoration: none;
+	box-shadow: none;
+}
+body.adminkit.settings_page_fluent-mail .fsm_app_bar .fsm_app_logo a::after {
+	content: var(--ak-wordmark, "FluentSMTP");
+	color: var(--ak-heading);
+	font-size: calc(17px * var(--ak-type-scale, 1));
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+body.adminkit.settings_page_fluent-mail .el-date-editor.fsm_log_filter_dates .el-range__icon {
+	margin-inline-end: 6px;
+}

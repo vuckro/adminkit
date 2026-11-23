@@ -30,7 +30,7 @@ class AdminKit_Integration_Happyfiles extends AdminKit_Integration_Base {
 
 	/** @return string[] Host plugin file(s) this adapter themes. */
 	public static function host_files() {
-		return array( 'happyfiles/happyfiles.php', 'happyfiles-pro/happyfiles.php' );
+		return array( 'happyfiles/happyfiles.php', 'happyfiles-pro/happyfiles-pro.php', 'happyfiles-pro/happyfiles.php' );
 	}
 
 	/**
@@ -58,7 +58,7 @@ class AdminKit_Integration_Happyfiles extends AdminKit_Integration_Base {
 	 * @return string|null
 	 */
 	protected static function max_tested_host_version() {
-		return '1.9';
+		return '1';
 	}
 
 	/**

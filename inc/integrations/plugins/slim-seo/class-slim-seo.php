@@ -33,7 +33,7 @@ class AdminKit_Integration_Slim_Seo extends AdminKit_Integration_Base {
 
 	/** @return string[] Host plugin file(s) this adapter themes. */
 	public static function host_files() {
-		return array( 'slim-seo/slim-seo.php', 'slim-seo-pro/slim-seo-pro.php' );
+		return array( 'slim-seo/slim-seo.php', 'slim-seo-pro/slim-seo-pro.php', 'slim-seo-link-manager/slim-seo-link-manager.php' );
 	}
 
 	/**

@@ -36,7 +36,7 @@ class AdminKit_Integration_Fluent_Auth extends AdminKit_Integration_Base {
 
 	/** @return string */
 	protected static function max_tested_host_version() {
-		return '3.1.1';
+		return '3';
 	}
 
 	/**

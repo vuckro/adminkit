@@ -648,6 +648,31 @@ body.adminkit.settings_page_menu_editor .ws-ame-postbox-content {
 
 /* ===== Easy Hide module (?page=ame-easy-hide) ===== */
 
+/* Top actor bar + Save Changes button — AME hardcodes `width: 129px` on
+   `#ame-eh-top-save-button` and `margin-right: 130px` on `#ws_actor_selector_container`,
+   which clips localized labels ("Enregistrer les modifications") or collides with
+   the trailing "Choose users..." actor link. Let the button size naturally and make
+   `#ws_actor_selector_container` a BFC so actor links wrap cleanly beside it. */
+body.adminkit.settings_page_ame-easy-hide #ame-eh-top-save-button {
+	inline-size: auto;
+	padding-inline-start: 16px;
+}
+
+body.adminkit.settings_page_ame-easy-hide #ame-eh-top-save-button input[type="submit"] {
+	max-inline-size: none;
+}
+
+body.adminkit.settings_page_ame-easy-hide #ame-easy-hide #ws_actor_selector_container {
+	margin-inline-end: 0;
+	overflow: hidden;
+}
+
+body.adminkit:is(.settings_page_menu_editor, .settings_page_ame-easy-hide, .settings_page_ame-admin-customizer) #ws_actor_selector.subsubsub {
+	flex-wrap: wrap;
+	inline-size: auto;
+	max-inline-size: 100%;
+}
+
 /* Two-column layout shell — sidebar (categories) + main area. */
 body.adminkit.settings_page_ame-easy-hide #ame-easy-hide-ui {
 	border-color: var(--ak-border);

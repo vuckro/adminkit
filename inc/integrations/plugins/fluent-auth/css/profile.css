@@ -2,9 +2,13 @@
 body.adminkit #fls2fa { color: var(--ak-text); }
 body.adminkit #fls2fa :is(.fls2fa__intro, .fls2fa__meta, .fls2fa__note, .fls2fa__device-meta, .fls2fa__hint, .fls2fa__modal-lead, .fls2fa__status-text) { color: var(--ak-text-muted); }
 body.adminkit #fls2fa :is(.fls2fa__name, .fls2fa__device-name, .fls2fa__field-label) { color: var(--ak-heading); }
-body.adminkit #fls2fa :is(.fls2fa__card, .fls2fa__noscript, .fls2fa-modal__dialog) {
- background: var(--ak-surface); border-color: var(--ak-border);
- border-radius: var(--ak-radius-s); box-shadow: none;
+body.adminkit #fls2fa :is(.fls2fa__card, .fls2fa__noscript) {
+ background: var(--ak-card-bg); border-color: var(--ak-card-border);
+ border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow);
+}
+body.adminkit #fls2fa .fls2fa-modal__dialog {
+ background: var(--ak-elevated); border-color: var(--ak-border);
+ border-radius: var(--ak-radius-m); box-shadow: var(--ak-shadow-elevated);
 }
 body.adminkit #fls2fa :is(.fls2fa__row, .fls2fa__device, .fls2fa-modal__head) { border-color: var(--ak-border); }
 body.adminkit #fls2fa :is(.fls2fa__icon, .fls2fa__status) { background: var(--ak-surface-muted); color: var(--ak-text-muted); }

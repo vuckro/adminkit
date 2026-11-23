@@ -93,3 +93,87 @@ body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-global-s-s-item-l
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs-list-item-r { display: flex; width: 100%; justify-content: flex-end; align-items: center; gap: calc(8px * var(--ak-space-scale, 1)); }
  body.adminkit.adminkit-funnelkit-automations #bwfcrm-page .bwf-email-notifs-list-item-r .components-base-control { flex: 0 0 auto; width: auto; min-width: 0; max-width: none; margin: 0; }
 }
+
+/* Recipe picker modal ("Add Automation"), template library & broadcast filters.
+   7155.*.css loads as a runtime Webpack chunk with 4-class selectors; match at
+   6+ classes under `.components-modal__frame` so it wins without `!important`. */
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-modal-header {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+	border-block-end: 1px solid var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-modal-header :is(.bwf-recipe-modal-title, div, span, label, button, svg) {
+	color: var(--ak-heading);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-filters :is(.components-input-control__label, .components-input-control__label span) {
+	color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-modal-header .bwf-recipe-search-field {
+	background: var(--ak-input-bg);
+	border-color: var(--ak-input-border);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-modal-header .bwf-recipe-search-field.is-focus {
+	border-color: var(--ak-primary);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper {
+	background: var(--ak-bg);
+	border-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-sidebar {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-sidebar ul .bwf-recipe-filter-item {
+	color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-sidebar ul .bwf-recipe-filter-item.bwf-active-filter {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary-text);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-item-wrapper,
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-item-wrapper .bwf-recipe-group-wrap {
+	background: var(--ak-bg);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-item-wrapper .bwf-recipe-group-wrap .bwf-recipe-group {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-item-wrapper .bwf-recipe-group-wrap .bwf-recipe-group.bwf-active-group {
+	background: var(--ak-primary-subtle);
+	border-color: var(--ak-primary);
+	color: var(--ak-primary-text);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-item-wrapper .bwf-recipe-items .bwf-recipe-item {
+	background: var(--ak-surface);
+	border-color: var(--ak-border);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-item-wrapper .bwf-recipe-items .bwf-recipe-item :is(.bwf-recipe-title, h2) {
+	color: var(--ak-heading);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-item-wrapper .bwf-recipe-items .bwf-recipe-item p {
+	color: var(--ak-text-muted);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-item-wrapper .bwf-recipe-items .bwf-recipe-item.scratch-recipe {
+	background: var(--ak-surface);
+	border-color: var(--ak-border-strong);
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-wrapper .bwf-recipe-item-wrapper .bwf-recipe-items .bwf-recipe-item.scratch-recipe :is(svg, svg *) {
+	color: var(--ak-heading);
+	fill: currentColor;
+}
+body.adminkit.adminkit-funnelkit-automations .components-modal__frame .bwf-recipe-tags .bwf-recipe-tag {
+	background: var(--ak-primary-subtle);
+	color: var(--ak-primary-text);
+}
+body.adminkit.adminkit-funnelkit-automations .bwf-template-modal :is(.bwf-template-header, .bwf-template-main .bwf-template-content-wrap .bwf-filter-section .bwf-header-option.active) {
+	background: var(--ak-surface);
+	color: var(--ak-text);
+}
+body.adminkit.adminkit-funnelkit-automations .bwf-template-modal .bwf-template-main .bwf-template-content-wrap .bwf-filter-section {
+	background: var(--ak-surface-muted);
+}
+body.adminkit.adminkit-funnelkit-automations .bwf-campaign-wrapper .bwf-campaign-step-2 .bwf-filters-advanced-filters .bwf-c-campaign-rule-selector .bwf-c-campaign-rule-container .bwf-filters-advanced :is(.bwf-filters-advanced-add-filter, .bwf-filters-advanced-line-item) {
+	background: var(--ak-surface-muted);
+}

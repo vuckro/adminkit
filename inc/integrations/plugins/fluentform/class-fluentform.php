@@ -41,7 +41,7 @@ class AdminKit_Integration_Fluentform extends AdminKit_Integration_Base {
 
 	/** @return string|null */
 	protected static function max_tested_host_version() {
-		return '6.2.2';
+		return '6';
 	}
 
 	/**

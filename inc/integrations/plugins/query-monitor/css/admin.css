@@ -124,3 +124,20 @@
 	background: color-mix(in srgb, var(--ak-on-accent) 20%, transparent);
 	color: var(--ak-on-accent);
 }
+
+/* Row-level `[+]` / `[-]` caller expand toggles inside data tables — QM shares
+   `--qm-button-bg` (`--ak-primary`) between filter buttons and `.qm-toggle`, which
+   paints a glaring solid-white square on every Dark-mode query row. Keep row expand
+   toggles as calm secondary chips with crisp `--ak-heading` glyph contrast. */
+#query-monitor-main .qm-toggle {
+	background: var(--ak-elevated);
+	border-color: var(--ak-border-strong);
+	color: var(--ak-heading);
+}
+
+#query-monitor-main .qm-toggle:is(:hover, :focus-visible) {
+	background: var(--ak-hover-bg);
+	border-color: var(--ak-primary);
+	color: var(--ak-heading);
+	box-shadow: none;
+}

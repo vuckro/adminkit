@@ -122,9 +122,24 @@ body.adminkit .components-text-control__input,
 body.adminkit .components-input-control__input,
 body.adminkit .components-textarea-control__input,
 body.adminkit .components-select-control__input {
-	background: var(--ak-surface);
+	background-color: var(--ak-surface);
 	border-color: var(--ak-border);
 	color: var(--ak-text);
+}
+
+/* SelectControl renders its own React SVG chevron suffix; suppress both native OS
+   arrows and WP core's `.wp-core-ui select` background-image arrow. */
+body.adminkit select.components-select-control__input,
+body.adminkit.wp-core-ui select.components-select-control__input {
+	-webkit-appearance: none !important;
+	appearance: none !important;
+	background-image: none !important;
+}
+
+body.adminkit :is(.components-text-control__input, .components-input-control__input, .components-textarea-control__input, .components-select-control__input):is(:disabled, [disabled], [aria-disabled="true"]) {
+	background: var(--ak-surface-muted);
+	border-color: var(--ak-border);
+	color: var(--ak-text-disabled);
 }
 
 body.adminkit .components-text-control__input:focus,
@@ -153,19 +168,26 @@ body.adminkit .components-modal__header-heading {
 
 /* Notices use the shared wp-components/feedback.css recipe. */
 
-/* Toggle */
+/* Toggle — unified switch track & knob tokens across Light and Dark */
 body.adminkit .components-form-toggle .components-form-toggle__track {
-	background: var(--ak-border-strong);
-	border-color: var(--ak-border-strong);
+	background: var(--ak-switch-track, var(--ak-border-strong));
+	border-color: var(--ak-switch-track, var(--ak-border-strong));
 }
 
 body.adminkit .components-form-toggle .components-form-toggle__thumb {
-	background: var(--ak-text);
+	background: var(--ak-switch-knob, var(--wk-neutral-0));
+	border-color: var(--ak-switch-knob, var(--wk-neutral-0));
+	box-shadow: var(--ak-switch-knob-shadow);
 }
 
 body.adminkit .components-form-toggle.is-checked .components-form-toggle__track {
 	background: var(--ak-primary);
 	border-color: var(--ak-primary);
+}
+
+body.adminkit .components-form-toggle.is-checked .components-form-toggle__thumb {
+	background: var(--ak-on-accent);
+	border-color: var(--ak-on-accent);
 }
 
 /* Popover + dropdown — content wrapper bg stays transparent so it

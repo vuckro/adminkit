@@ -45,16 +45,27 @@ class AdminKit_Integration_Elementor extends AdminKit_Integration_Base {
 	}
 
 	/**
-	 * Elementor admin screens: the top-level "Elementor" menu (the React Home
-	 * app) plus every elementor_page_* sub-page (settings, tools, role manager,
-	 * system info, the Theme Builder / Templates lists…). All carry 'elementor'
-	 * in the screen id. The live editor runs on a 'post' screen, so it's excluded.
+	 * Elementor admin screens: the top-level "Elementor" / "Website Builder" menu,
+	 * every elementor_page_* sub-page, Elementor CPT screens (`elementor_library`,
+	 * `elementor_font`, `elementor_icons`, `elementor_snippet`, `e-floating-buttons`),
+	 * and Pro sub-pages (`e-form-submissions`, `e-custom-*`) regardless of how a
+	 * locale translates the parent menu title. The live frontend visual editor runs
+	 * on a `post` screen (or `?action=elementor`), so it stays excluded.
 	 *
 	 * @param \WP_Screen|null $screen
 	 * @return bool
 	 */
 	public static function owns_screen( $screen ) {
-		return $screen && false !== strpos( $screen->id, 'elementor' );
+		if ( ! $screen ) {
+			return false;
+		}
+		$id        = (string) $screen->id;
+		$post_type = property_exists( $screen, 'post_type' ) ? (string) $screen->post_type : '';
+		if ( false !== strpos( $id, 'elementor' ) || false !== strpos( $post_type, 'elementor' ) ) {
+			return true;
+		}
+		return (bool) preg_match( '/(?:^|_page_|edit-)(?:e-floating-buttons|e-form-submissions|e-custom-fonts|e-custom-icons|e-custom-code)(?:$|\b)/', $id )
+			|| 'e-floating-buttons' === $post_type;
 	}
 
 	/**
@@ -75,6 +86,72 @@ class AdminKit_Integration_Elementor extends AdminKit_Integration_Base {
 	}
 
 	/**
+	 * Elementor's full-screen App (`admin.php?page=elementor-app`, Theme Builder /
+	 * Kit Library / Import-Export) renders its own `<!DOCTYPE html>` and exits on
+	 * `admin_init` before `admin_enqueue_scripts` or `admin_head` run. Hook its
+	 * `elementor/app/init` lifecycle so AdminKit's theme bootstrap and token skin
+	 * load there too.
+	 *
+	 * @return void
+	 */
+	protected static function boot() {
+		if ( ! static::host_within_tested_range() ) {
+			return;
+		}
+		add_action( 'elementor/app/init', array( __CLASS__, 'setup_elementor_app' ) );
+	}
+
+	/**
+	 * Enqueue AdminKit tokens + Elementor skin inside `admin.php?page=elementor-app`.
+	 *
+	 * @return void
+	 */
+	public static function setup_elementor_app() {
+		if ( ! apply_filters( 'adminkit/should_load', true, 'admin' ) || ! apply_filters( 'adminkit/appearance_enabled', true, 'admin' ) ) {
+			return;
+		}
+		add_action( 'wp_print_styles', array( __CLASS__, 'print_elementor_app_assets' ), 1 );
+	}
+
+	/**
+	 * Runs right inside `elementor/app/view.php` (`wp_print_styles()`), after
+	 * `App::enqueue_assets()` has registered `elementor-app`.
+	 *
+	 * @return void
+	 */
+	public static function print_elementor_app_assets() {
+		AdminKit_Theme_Toggle::print_script();
+		wp_enqueue_style( AdminKit_Assets::FONTS_HANDLE, ADMINKIT_URL . AdminKit_Assets::FONTS_SRC, array(), (string) filemtime( ADMINKIT_PATH . AdminKit_Assets::FONTS_SRC ) );
+		wp_enqueue_style( AdminKit_Assets::WAASKIT_HANDLE, ADMINKIT_URL . AdminKit_Assets::WAASKIT_SRC, array(), (string) filemtime( ADMINKIT_PATH . AdminKit_Assets::WAASKIT_SRC ) );
+		wp_enqueue_style( AdminKit_Assets::TOKENS_HANDLE, ADMINKIT_URL . AdminKit_Assets::TOKENS_SRC, array( AdminKit_Assets::WAASKIT_HANDLE ), (string) filemtime( ADMINKIT_PATH . AdminKit_Assets::TOKENS_SRC ) );
+		AdminKit_Assets::inject_accent_family( 'admin' );
+		$src  = 'inc/integrations/plugins/elementor/css/admin.css';
+		$deps = wp_style_is( 'elementor-app', 'registered' ) ? array( AdminKit_Assets::TOKENS_HANDLE, 'elementor-app' ) : array( AdminKit_Assets::TOKENS_HANDLE );
+		wp_enqueue_style( 'adminkit-elementor-admin', ADMINKIT_URL . $src, $deps, (string) filemtime( ADMINKIT_PATH . $src ) );
+		if ( wp_script_is( 'elementor-app', 'registered' ) ) {
+			wp_add_inline_script(
+				'elementor-app',
+				'(function(){var d=document.documentElement.getAttribute("data-adminkit-theme")==="dark";document.body.classList.add("adminkit");document.body.classList.toggle("eps-theme-dark",d);})();',
+				'before'
+			);
+		}
+	}
+
+	/**
+	 * Screens where Elementor's `ai-media-library` mounts AI triggers (`upload.php`
+	 * and screens enqueuing `wp-mediaelement` / media modals alongside Elementor AI).
+	 *
+	 * @param \WP_Screen|null $screen
+	 * @return bool
+	 */
+	public static function owns_media_ai_screen( $screen ) {
+		if ( wp_script_is( 'elementor-ai-media-library', 'enqueued' ) ) {
+			return true;
+		}
+		return $screen && in_array( $screen->id, array( 'upload', 'attachment' ), true );
+	}
+
+	/**
 	 * @return void
 	 */
 	public static function register_assets() {
@@ -87,6 +164,13 @@ class AdminKit_Integration_Elementor extends AdminKit_Integration_Base {
 			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
 			'context'   => 'admin',
 			'condition' => array( __CLASS__, 'owns_screen' ),
+		) );
+		AdminKit_Assets::register( array(
+			'handle'    => 'adminkit-elementor-media-ai',
+			'src'       => 'inc/integrations/plugins/elementor/css/media-ai.css',
+			'deps'      => array( AdminKit_Assets::TOKENS_HANDLE ),
+			'context'   => 'admin',
+			'condition' => array( __CLASS__, 'owns_media_ai_screen' ),
 		) );
 	}
 }

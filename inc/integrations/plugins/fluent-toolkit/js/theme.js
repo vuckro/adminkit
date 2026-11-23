@@ -13,9 +13,15 @@
 		function write(key, value) { try { if (value) { localStorage.setItem(key, value); } else { localStorage.removeItem(key); } } catch (e) { /* Storage may be unavailable. */ } }
 		function mode(value) { var m = (value || '').split(':')[0]; return /^(light|dark|system)$/.test(m) ? m : ''; }
 		function resolved(m) { return m === 'system' ? (media && media.matches ? 'dark' : 'light') : m; }
+		var MOON_D = 'M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401';
+		var SUN_D = 'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41';
 		function render() {
 			var button = document.getElementById('ak-fui-theme-toggle');
-			if (button) { button.setAttribute('aria-pressed', root.getAttribute(D.attr) === 'dark' ? 'true' : 'false'); }
+			if (!button) { return; }
+			var isDark = root.getAttribute(D.attr) === 'dark';
+			button.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+			var iconPath = button.querySelector('path');
+			if (iconPath) { iconPath.setAttribute('d', isDark ? MOON_D : SUN_D); }
 		}
 		function mirror(next) {
 			root.classList.toggle('fluent_theme_dark', next === 'dark');
@@ -100,9 +106,11 @@
 			svg.setAttribute('fill', 'none');
 			svg.setAttribute('stroke', 'currentColor');
 			svg.setAttribute('stroke-width', '1.75');
+			svg.setAttribute('stroke-linecap', 'round');
+			svg.setAttribute('stroke-linejoin', 'round');
 			svg.setAttribute('aria-hidden', 'true');
 			var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-			path.setAttribute('d', 'M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401');
+			path.setAttribute('d', MOON_D);
 			svg.appendChild(path); button.appendChild(svg); footer.appendChild(button);
 			button.addEventListener('click', function () {
 				var next = root.getAttribute(D.attr) === 'dark' ? 'light' : 'dark';

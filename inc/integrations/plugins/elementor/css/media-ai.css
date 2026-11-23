@@ -1,0 +1,33 @@
+/* Elementor AI Media Library integration (`upload.php` + Media Modal).
+   Elementor's `ai-media-library.js` mounts Emotion `StyledButton` triggers into
+   `#e-image-ai-media-library`, `#e-image-ai-attachment-details`, and `#e-image-ai-insert-media`
+   with hardcoded `#f6f7f7` background and neon magenta `--e-a-color-primary-bold` border.
+   Route those triggers to AdminKit's secondary button tokens (`0 !important`, `0 hex`). */
+
+body.adminkit :is(#e-image-ai-media-library, #e-image-ai-attachment-details, #e-image-ai-insert-media) a {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: var(--ak-btn-bg);
+	border: 1px solid var(--ak-btn-border);
+	border-radius: var(--ak-btn-radius, var(--ak-radius-s));
+	box-shadow: var(--ak-btn-shadow);
+	color: var(--ak-btn-text);
+	font-size: var(--ak-text-s);
+	font-weight: 500;
+	line-height: 1.4;
+	padding-block: 6px;
+	padding-inline: 12px;
+	text-decoration: none;
+}
+
+body.adminkit :is(#e-image-ai-media-library, #e-image-ai-attachment-details, #e-image-ai-insert-media) a:is(:hover, :focus) {
+	background: var(--ak-btn-hover-bg);
+	border-color: var(--ak-btn-hover-border);
+	color: var(--ak-heading);
+}
+
+body.adminkit :is(#e-image-ai-media-library, #e-image-ai-attachment-details, #e-image-ai-insert-media) a:focus-visible {
+	outline: none;
+	box-shadow: var(--ak-focus-ring);
+}

@@ -13,7 +13,9 @@
    ============================================================ */
 
 :root,
-html body.adminkit.toplevel_page_fluent-booking {
+html body.adminkit.toplevel_page_fluent-booking,
+html:is(.dark, .fluent_theme_dark) body.adminkit.toplevel_page_fluent-booking,
+html body.adminkit.toplevel_page_fluent-booking.fluent_theme_dark {
 	/* FluentBooking 2.5–2.6 semantic layer (the legacy aliases below remain
 	   in use by event forms). Keep both generations on the same roles. */
 	--fcal-body-bg: var( --ak-bg );
@@ -26,30 +28,38 @@ html body.adminkit.toplevel_page_fluent-booking {
 	--fcal-text: var( --ak-text );
 	--fcal-text-mid: var( --ak-text-muted );
 	--fcal-text-light: var( --ak-text-muted );
+	--fcal-text-placeholder: var( --ak-text-subtle );
 	--fcal-accent: var( --ak-primary );
 	--fcal-accent-hover: var( --ak-primary-hover );
 	--fcal-accent-contrast: var( --ak-on-accent );
 	--fcal-accent-wash: var( --ak-primary-subtle );
+	--fcal-focus-ring: var( --ak-focus );
 	--fcal-card-line: var( --ak-card-border );
 	--fcal-neutral-bg: var( --ak-surface-muted );
 	--fcal-neutral-fg: var( --ak-text-muted );
+	--fcal-switch-track: var( --ak-switch-track );
+	--fcal-switch-active-bg: var( --ak-surface );
+	--fcal-switch-active-shadow: var( --ak-btn-shadow );
 	--fcal-link: var( --ak-primary-text );
 	--fcal-link-hover: var( --ak-primary-text );
 	--fcal-success-wash: var( --ak-success-subtle );
 	--fcal-success-bg: var( --ak-success-subtle );
-	--fcal-success-line: var( --ak-success );
+	--fcal-success-line: var( --ak-success-border );
 	--fcal-success-fg: var( --ak-success );
+	--fcal-success-solid: var( --ak-success-solid );
 	--fcal-warning-wash: var( --ak-warning-subtle );
 	--fcal-warning-bg: var( --ak-warning-subtle );
-	--fcal-warning-line: var( --ak-warning );
+	--fcal-warning-line: var( --ak-warning-border );
 	--fcal-warning-fg: var( --ak-warning );
 	--fcal-danger-wash: var( --ak-error-subtle );
 	--fcal-danger-bg: var( --ak-error-subtle );
-	--fcal-danger-line: var( --ak-error );
+	--fcal-danger-line: var( --ak-error-border );
 	--fcal-danger-fg: var( --ak-error );
+	--fcal-danger-solid: var( --ak-danger-solid );
+	--fcal-danger-solid-hover: color-mix( in srgb, var( --ak-danger-solid ) 86%, black );
 	--fcal-info-wash: var( --ak-info-subtle );
 	--fcal-info-bg: var( --ak-info-subtle );
-	--fcal-info-line: var( --ak-info );
+	--fcal-info-line: var( --ak-info-border );
 	--fcal-info-fg: var( --ak-info );
 	--fcal-shadow-card: var( --ak-card-shadow );
 	--fcal-shadow-lift: none;
@@ -1338,10 +1348,18 @@ html body.adminkit.toplevel_page_fluent-booking {
 }
 
 /* Shared surface roles: outer contour/contact shadow; inner rows stay flat. */
-body.adminkit.toplevel_page_fluent-booking #fluent-booking-app :is(.fcal_dashboard_box, .fcal_schedule_event_infos, .fcal_booking_activities, .fcal_card_items),
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app :is(.fcal_dashboard_box, .fcal_schedule_event_infos, .fcal_booking_activities, .fcal_card_items, .fcal_white_box, .fcal_single_integration_body, .fcal_single_integration_body_wrap .el-aside, .fcal_schedule_wrapper, .fcal_schedule_event_infos_body, .fcal_schedule_profile_box, .fcal_create_calendar_wrap .el-aside),
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_each_cal:not(.fcal_host_event_types .fcal_each_cal),
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_host_event_types .fcal_slots--grid .fcal_slot,
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_dashboard_overview .overview-widgets .overview-widget { background-color: var(--ak-card-bg); border: var(--ak-border-width) solid var(--ak-card-border); border-radius: var(--ak-card-radius); box-shadow: var(--ak-card-shadow); }
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_dashboard_overview { container-type: inline-size; }
+body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_dashboard_overview .overview-widgets:has(> :nth-child(4):last-child) { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@container (max-width: 520px) {
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_dashboard_overview .overview-widgets:has(> :nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+}
+@container (max-width: 280px) {
+	body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_dashboard_overview .overview-widgets:has(> :nth-child(4):last-child) { grid-template-columns: minmax(0, 1fr); }
+}
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_each_cal:not(.fcal_host_event_types .fcal_each_cal) .fcal_slots--grid .fcal_slot { background-color: var(--ak-surface); border: var(--ak-border-width) solid var(--ak-border); border-radius: var(--ak-radius-s); box-shadow: none; }
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_slots--grid .fcal_slot:hover { border-color: var(--ak-border-strong); }
 body.adminkit.toplevel_page_fluent-booking #fluent-booking-app .fcal_card_items .fcal_card_item { border-radius: 0; box-shadow: none; }

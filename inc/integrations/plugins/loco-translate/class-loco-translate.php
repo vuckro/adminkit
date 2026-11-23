@@ -84,7 +84,7 @@ class AdminKit_Integration_Loco_Translate extends AdminKit_Integration_Base {
 	 * @return string|null
 	 */
 	protected static function max_tested_host_version() {
-		return '3.0';
+		return '2';
 	}
 
 	/**

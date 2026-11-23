@@ -125,13 +125,13 @@ class AdminKit_Design_System {
 			$targets = array( $root . ' #wpadminbar', $root . '[data-adminkit-accent] #wpadminbar' );
 			if ( ! $toolbar_only ) { $targets[] = $root; $targets[] = $root . '[data-adminkit-accent]'; }
 			$target = implode( ',', $targets );
-			$css .= $target . '{' . self::palette( $palette ) . '}';
+			$css .= $target . '{' . self::palette( $palette, 'dark' === $mode ) . '}';
 		}
 		return $css;
 	}
 
 	/** Derive interactive states from the editable roles, keeping all aliases in sync. */
-	private static function palette( array $palette ) {
+	private static function palette( array $palette, $is_dark = false ) {
 		$map = array( 'bg' => 'bg', 'surface' => 'surface', 'text' => 'text', 'text-muted' => 'text-muted', 'border' => 'border', 'accent' => 'primary', 'on-accent' => 'on-accent', 'success-text' => 'success', 'warning-text' => 'warning', 'danger-text' => 'error', 'info-text' => 'info' );
 		$css = '';
 		foreach ( $palette as $role => $value ) {
@@ -140,9 +140,11 @@ class AdminKit_Design_System {
 		if ( isset( $palette['text'] ) ) { $css .= '--ak-heading:var(--ak-text);'; }
 		if ( isset( $palette['text-muted'] ) ) { $css .= '--ak-text-subtle:var(--ak-text-muted);--ak-text-disabled:color-mix(in srgb,var(--ak-text-muted) 65%,var(--ak-surface));'; }
 		if ( isset( $palette['surface'] ) || isset( $palette['bg'] ) ) {
-			$css .= '--ak-elevated:var(--ak-surface);--ak-input-bg:var(--ak-surface);--ak-btn-bg:var(--ak-surface);--ak-surface-muted:color-mix(in srgb,var(--ak-text) 4%,var(--ak-surface));--ak-hover-bg:color-mix(in srgb,var(--ak-text) 7%,var(--ak-surface));--ak-btn-hover-bg:color-mix(in srgb,var(--ak-text) 2.5%,var(--ak-surface));--wk-surface-raised:var(--ak-elevated);--wk-surface-sunken:var(--ak-surface-muted);--wk-surface-hover:var(--ak-hover-bg);';
+			$elevated = $is_dark ? 'color-mix(in srgb,var(--ak-text) 4.5%,var(--ak-surface))' : 'var(--ak-surface)';
+			$btn_bg   = $is_dark ? 'var(--ak-elevated)' : 'var(--ak-surface)';
+			$css .= '--ak-elevated:' . $elevated . ';--ak-input-bg:var(--ak-surface);--ak-btn-bg:' . $btn_bg . ';--ak-surface-muted:color-mix(in srgb,var(--ak-text) 4%,var(--ak-surface));--ak-hover-bg:color-mix(in srgb,var(--ak-text) 7%,var(--ak-surface));--ak-btn-hover-bg:var(--ak-hover-bg);--wk-surface-raised:var(--ak-elevated);--wk-surface-sunken:var(--ak-surface-muted);--wk-surface-hover:var(--ak-hover-bg);';
 		}
-		if ( isset( $palette['border'] ) ) { $css .= '--ak-border-strong:color-mix(in srgb,var(--ak-border) 65%,var(--ak-text));--ak-btn-border:color-mix(in srgb,var(--ak-border) 72%,transparent);--ak-btn-hover-border:var(--ak-border);--wk-border-strong:var(--ak-border-strong);'; }
+		if ( isset( $palette['border'] ) ) { $css .= '--ak-border-strong:color-mix(in srgb,var(--ak-border) 65%,var(--ak-text));--ak-btn-border:var(--ak-border);--ak-btn-hover-border:var(--ak-border-strong);--wk-border-strong:var(--ak-border-strong);'; }
 		if ( isset( $palette['accent'] ) ) {
 			$hex = $palette['accent'];
 			if ( 4 === strlen( $hex ) ) { $hex = '#' . $hex[1] . $hex[1] . $hex[2] . $hex[2] . $hex[3] . $hex[3]; }
