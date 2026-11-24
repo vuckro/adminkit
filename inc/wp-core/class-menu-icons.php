@@ -432,6 +432,9 @@ class AdminKit_Core_Menu_Icons {
 		return apply_filters( 'adminkit/menu_slug_icons', array(
 			// FluentSnippets (easy-code-manager) — ships a base64 data-URI icon.
 			'fluent-snippets' => AdminKit_Icons::svg( 'bolt' ),
+			// Bricks Builder & FluentHub — ship custom SVG/image icons.
+			'bricks'          => AdminKit_Icons::svg( 'brick-wall' ),
+			'fluent-toolkit'  => AdminKit_Icons::svg( 'laptop-2' ),
 		) );
 	}
 
